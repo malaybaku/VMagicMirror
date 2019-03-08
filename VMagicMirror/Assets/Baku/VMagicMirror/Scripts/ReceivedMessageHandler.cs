@@ -12,6 +12,9 @@ namespace Baku.VMagicMirror
         [SerializeField]
         BackgroundColorController bgController = null;
 
+        [SerializeField]
+        InputDeviceReceiver inputDeviceReceiver = null;
+
         private MessageHandler[] _handlers;
 
         private void Start()
@@ -33,6 +36,24 @@ namespace Baku.VMagicMirror
                         .ToArray();
                     bgController.ChangeColor(argb[0], argb[1], argb[2], argb[3]);
                 }),
+
+                new MessageHandler(Messages.KeyDown, c =>
+                {
+                    inputDeviceReceiver.UpdateKeycodeIndication(c);
+                }),
+
+                new MessageHandler(Messages.MouseButton, c =>
+                {
+                    inputDeviceReceiver.UpdateMouseButton(c);
+                }),
+
+                //new MessageHandler(Messages.MouseMoved, c =>
+                //{
+                //    int[] xy = c.Split(',')
+                //        .Select(v => int.Parse(v))
+                //        .ToArray();
+                //    inputDeviceReceiver.UpdatePositionIndication(xy[0], xy[1]);
+                //}),
             };
         }
 
@@ -43,6 +64,17 @@ namespace Baku.VMagicMirror
                 .FirstOrDefault(h => h.Command == command)
                 ?.Action
                 ?.Invoke(message.Substring(command.Length + 1));
+        }
+
+        static class Messages
+        {
+            public static string OpenVrmPreview => nameof(OpenVrmPreview);
+            public static string OpenVrm => nameof(OpenVrm);
+            public static string UpdateChromakey => nameof(UpdateChromakey);
+
+            public static string KeyDown => nameof(KeyDown);
+            public static string MouseMoved => nameof(MouseMoved);
+            public static string MouseButton => nameof(MouseButton);
         }
 
         class MessageHandler
@@ -59,12 +91,6 @@ namespace Baku.VMagicMirror
 
         }
 
-        static class Messages
-        {
-            public static string OpenVrmPreview => nameof(OpenVrmPreview);
-            public static string OpenVrm => nameof(OpenVrm);
-            public static string UpdateChromakey => nameof(UpdateChromakey);
-        } 
     }
 }
 

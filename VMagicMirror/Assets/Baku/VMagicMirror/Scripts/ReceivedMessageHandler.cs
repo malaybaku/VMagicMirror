@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
     public class ReceivedMessageHandler : MonoBehaviour
     {
         [SerializeField]
-        ViewerWithReceiver viewer = null;
+        VRMLoadController loadController = null;
 
         [SerializeField]
         BackgroundColorController bgController = null;
@@ -23,11 +23,11 @@ namespace Baku.VMagicMirror
             {
                 new MessageHandler(Messages.OpenVrmPreview, path =>
                 {
-                    viewer.LoadModelOnlyForPreview(path);
+                    loadController.LoadModelOnlyForPreview(path);
                 }),
                 new MessageHandler(Messages.OpenVrm, path =>
                 {
-                    viewer.LoadModel(path);
+                    loadController.LoadModel(path);
                 }),
                 new MessageHandler(Messages.UpdateChromakey, c =>
                 {
@@ -39,12 +39,12 @@ namespace Baku.VMagicMirror
 
                 new MessageHandler(Messages.KeyDown, c =>
                 {
-                    inputDeviceReceiver.UpdateKeycodeIndication(c);
+                    inputDeviceReceiver.ReceiveKeyPressed(c);
                 }),
 
                 new MessageHandler(Messages.MouseButton, c =>
                 {
-                    inputDeviceReceiver.UpdateMouseButton(c);
+                    inputDeviceReceiver.ReceiveMouseButton(c);
                 }),
 
                 //new MessageHandler(Messages.MouseMoved, c =>

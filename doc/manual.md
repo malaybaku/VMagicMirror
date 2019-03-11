@@ -13,7 +13,7 @@
 
 `VMagicMirror.exe`を起動すると、小さな設定ウィンドウと大きなキャラクター表示ウィンドウが表示されます。
 
-(TODO: スクリーンショット)
+![Start Image](https://github.com/malaybaku/VMagicMirror/blob/master/doc/pic/started.png)
 
 設定ウィンドウの「VRM読込」ボタンを押し、PC上の`.vrm`ファイルを選択します。
 

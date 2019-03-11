@@ -228,6 +228,7 @@ namespace Baku.VMagicMirror
                     headTarget = head,
                     inputToMotion = _inputToMotion,
                 });
+                _inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
             }
         }
     }

@@ -5,13 +5,17 @@ namespace Baku.VMagicMirror
 {
     public class InputDeviceToMotion : MonoBehaviour
     {
+        private const string RDown = "RDown";
+        private const string MDown = "MDown";
+        private const string LDown = "LDown";
+
         #region settings 
 
-        [SerializeField]
-        private KeyboardProvider keyboard = null;
+        public KeyboardProvider keyboard = null;
 
-        [SerializeField]
-        private TouchPadProvider touchPad = null;
+        public TouchPadProvider touchPad = null;
+
+        public FingerAnimator fingerAnimator = null;
 
         [SerializeField]
         private Transform leftHandTarget = null;
@@ -139,6 +143,9 @@ namespace Baku.VMagicMirror
                 _rightHandMoveCoroutine = StartCoroutine(MoveTargetToKeyboard(rightHandTarget, targetPos));
                 _headTransformToTrack = rightHandTarget;
             }
+
+            int fingerNumber = keyboard.GetFingerNumberOfKey(key);
+            fingerAnimator?.StartMoveFinger(fingerNumber);
         }
 
         public void GrabMouseMotion(int x, int y)
@@ -167,6 +174,18 @@ namespace Baku.VMagicMirror
             }
 
             _clickMoveCoroutine = StartCoroutine(ClickMotionByRightHand());
+
+            if (fingerAnimator != null)
+            {
+                if (info == RDown)
+                {
+                    fingerAnimator.StartMoveFinger(FingerConsts.RightMiddle);
+                }
+                else if (info == MDown || info == LDown)
+                {
+                    fingerAnimator.StartMoveFinger(FingerConsts.RightIndex);
+                }
+            }
         }
 
         private IEnumerator MoveTargetToKeyboard(Transform t, Vector3 targetPos)
@@ -230,4 +249,5 @@ namespace Baku.VMagicMirror
         }
 
     }
+
 }

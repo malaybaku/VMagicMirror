@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -19,16 +20,174 @@ namespace Baku.VMagicMirror
             new string[] { "Escape", "_", "_", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",                                                       "Printscreen", "Scroll", "Pause", },
         };
 
-        //スペーサーに注意しつつ、左手で打鍵できる限界のキーのひとつ右のインデックスを列順に指定する。
-        private readonly static int[] LeftHandKeyThresholds = new int[]
+        //指番号。FingerAnimator.Fingersの値を書いてもいいが、字が増えすぎてもアレなので番号で入れてます
+        //TOOD: ここのマップを可変にしてもいいかも(ぜんぶ人差し指にしたら一本指打法になるとか)
+        private readonly static Dictionary<string, int> fingerMapper = new Dictionary<string, int>()
         {
-            7,
-            7,
-            8,
-            7,
-            8,
-            8,
+
+            #region 1列目の左側
+
+            ["LControlKey"] = 4,
+            ["LWin"] = 4,
+            ["Alt"] = 4,
+
+            ["Space"] = 0,
+
+            ["RControlKey"] = 9,
+
+            #endregion
+
+            #region 2列目の左側
+
+            ["LShiftKey"] = 4,
+            ["Z"] = 4,
+            ["X"] = 3,
+            ["C"] = 2,
+            ["V"] = 1,
+            ["B"] = 1,
+            ["N"] = 6,
+            ["M"] = 6,
+            ["Oemcomma"] = 6,
+            ["OemPeriod"] = 7,
+            ["OemQuestion"] = 7,
+            ["OemBackslash"] = 8,
+            ["RShiftKey"] = 9,
+
+            #endregion
+
+            #region 3列目の左側
+
+            ["CapsLock"] = 4,
+            ["A"] = 4,
+            ["S"] = 3,
+            ["D"] = 2,
+            ["F"] = 1,
+            ["G"] = 1,
+            ["H"] = 6,
+            ["J"] = 6,
+            ["K"] = 7,
+            ["L"] = 8,
+            ["Oemplus"] = 8,
+            ["OemSemicolon"] = 8,
+            ["OemCloserackets"] = 8,
+            ["Enter"] = 9,
+
+            #endregion
+
+            #region 4列目の左側
+
+            ["Tab"] = 4,
+            ["Q"] = 4,
+            ["W"] = 3,
+            ["E"] = 2,
+            ["R"] = 1, 
+            ["T"] = 1,
+            ["Y"] = 6,
+            ["U"] = 6,
+            ["I"] = 6,
+            ["O"] = 7,
+            ["P"] = 8,
+            ["Oemtilde"] = 8,
+            ["OemOpenBrackets"] = 8,
+
+            #endregion
+
+            #region 5列目の左側
+
+            ["D1"] = 4,
+            ["D2"] = 3,
+            ["D3"] = 2,
+            ["D4"] = 1,
+            ["D5"] = 1,
+            ["D6"] = 1,
+            ["D7"] = 6,
+            ["D8"] = 7,
+            ["D9"] = 7,
+            ["D0"] = 8,
+            ["OemMinus"] = 8,
+            ["OemQuotes"] = 8,
+            ["OemPipe"] = 8,
+            ["Back"] = 8,
+
+            #endregion
+
+            #region 6列目
+            ["Escape"] = 4,
+
+            ["F1"] = 3,
+            ["F2"] = 3,
+            ["F3"] = 2,
+            ["F4"] = 2,
+            ["F5"] = 1,
+            ["F6"] = 1,
+            ["F7"] = 6,
+            ["F8"] = 6,
+            ["F9"] = 7,
+            ["F10"] = 7,
+            ["F11"] = 8,
+            ["F12"] = 8,
+
+            ["PrintScreen"] = 7,
+            ["Scroll"] = 7,
+            ["Pause"] = 7,
+            #endregion
+
+            #region 矢印キーとかのあるエリア
+
+            ["Left"] = 6,
+            ["Down"] = 7,
+            ["Right"] = 8,
+
+            ["Up"] = 7,
+
+            ["Delete"] = 6,
+            ["End"] = 7,
+            ["PageDown"] = 8,
+
+            ["Insert"] = 6,
+            ["Home"] = 7,
+            ["PageUp"] = 8,
+
+            #endregion
+
+            #region テンキー
+
+            ["NumPad0"] = 6,
+            ["Decimal"] = 8,
+
+            ["NumPad1"] = 6,
+            ["NumPad2"] = 7,
+            ["NumPad3"] = 8,
+
+            ["NumPad4"] = 6,
+            ["NumPad5"] = 7,
+            ["NumPad6"] = 8,
+
+            ["NumPad7"] = 6,
+            ["NumPad8"] = 7,
+            ["NumPad9"] = 8,
+
+            ["NumLock"] = 6,
+            ["Divide"] = 7,
+            ["Multiply"] = 8,
+
+            ["Subtract"] = 8,
+            ["Add"] = 8,
+
+            #endregion
+
         };
+
+        //スペーサーに注意しつつ、左手で打鍵できる限界のキーのひとつ右のインデックスを列順に指定する。
+        //private readonly static int[] LeftHandKeyThresholds = new int[]
+        //{
+        //    7,
+        //    7,
+        //    8,
+        //    7,
+        //    8,
+        //    8,
+        //};
 
         [SerializeField]
         Transform keyPrefab = null;
@@ -115,20 +274,34 @@ namespace Baku.VMagicMirror
         public bool IsLeftHandPreffered(string key)
         {
             string sanitized = SanitizeKey(key);
-            for (int i = 0; i < keyCodeNames.Length; i++)
-            {
-                int len = keyCodeNames[i].Length;
-                for (int j = 0; j < keyCodeNames[i].Length; j++)
-                {
-                    if (keyCodeNames[i][j] == sanitized)
-                    {
-                        return (j < LeftHandKeyThresholds[i]);
-                    }
-                }
-            }
-
             //不明な場合は[0][0]扱いになるので左手扱いが妥当
-            return true;
+            return fingerMapper.ContainsKey(sanitized) ?
+                fingerMapper[sanitized] < 5 :
+                true;
+        
+            //for (int i = 0; i < keyCodeNames.Length; i++)
+            //{
+            //    int len = keyCodeNames[i].Length;
+            //    for (int j = 0; j < keyCodeNames[i].Length; j++)
+            //    {
+            //        if (keyCodeNames[i][j] == sanitized)
+            //        {
+            //            return (j < LeftHandKeyThresholds[i]);
+            //        }
+            //    }
+            //}
+
+            ////不明な場合は[0][0]扱いになるので左手扱いが妥当
+            //return true;
+        }
+
+        public int GetFingerNumberOfKey(string key)
+        {
+            string sanitized = SanitizeKey(key);
+            //不明な場合は[0][0]なので左手小指にしておけばOK
+            return fingerMapper.ContainsKey(sanitized) ?
+                fingerMapper[sanitized] :
+                FingerConsts.LeftLittle;
         }
 
         private Transform GetTransformOfKey(string key)

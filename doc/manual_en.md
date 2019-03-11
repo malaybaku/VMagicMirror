@@ -18,7 +18,7 @@ After start the application by double click `VMagicMirror.exe`, two windows will
 
 (TODO: スクリーンショット)
 
-From config window, choose "VRM読込" button and then select `.vrm` file in your PC.
+From config window, choose "VRMロード" button and then select `.vrm` file in your PC.
 
 Then Character window shows meta data including license notation. Confirm the license and click `OK` to proceed actual loading.
 
@@ -29,12 +29,7 @@ Then, the character will appear and he / she will move according to your mouse a
 
 Choose "背景色と光" on the config window to open detail.
 
-(TODO: 書く)
-(TODO: リアルタイムに変更反映)
-
-`Save (.mvv_light)` button can save the current setting, and saved data is available by click `Load (.mvv_light)`.
-
-
+`設定を保存` can save the setting to the file, and `設定をロード` can load the saved setting.
 
 ## 3. Adjust Character Motion and Camera Position
 
@@ -43,7 +38,7 @@ Choose "動き方/カメラ" on the config window to open detail.
 (TODO: 書く)
 (TODO: リアルタイムに変更反映)
 
-`Save (.mvv_move)` button can save the current setting, and saved data is available by click `Load (.mvv_move)`.
+`設定を保存` can save the setting to the file, and `設定をロード` can load the saved setting.
 
 ## 4. Startup Setting
 

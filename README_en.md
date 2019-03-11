@@ -4,7 +4,7 @@
 # VMagicMirror
 
 * Author: Baxter
-* 2019/Mar/xx
+* 2019/Mar/14
 
 The VRM avatar application without any special device.
 
@@ -33,7 +33,7 @@ It will be helpful in the following situations.
 
 [Booth](https://baku-dreameater.booth.pm/).
 
-Windows 10 is supported.
+Run on Windows 10.
 
 Please see [Manual](https://github.com/malaybaku/VMagicMirror/blob/master/doc/manual_en.md) for the detail.
 

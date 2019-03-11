@@ -96,6 +96,11 @@ namespace Baku.VMagicMirror
                     inputDeviceReceiver.SetLengthFromWristToTip(Centimeter(c));
                 }),
 
+                new MessageHandler(Messages.EnableTouchTyping, c =>
+                {
+                    inputDeviceReceiver.EnableTouchTypingHeadMotion(bool.Parse(c));
+                }),
+
                 new MessageHandler(Messages.CameraHeight, c =>
                 {
                     cam.transform.position = new Vector3(
@@ -170,6 +175,7 @@ namespace Baku.VMagicMirror
 
             public static string LengthFromWristToTip => nameof(LengthFromWristToTip);
             public static string LengthFromWristToPalm => nameof(LengthFromWristToPalm);
+            public static string EnableTouchTyping => nameof(EnableTouchTyping);
 
             public static string CameraHeight => nameof(CameraHeight);
             public static string CameraDistance => nameof(CameraDistance);

@@ -64,6 +64,10 @@ namespace Baku.VMagicMirror
                     metaDataCanvas.enabled = false;
                     loadController.LoadModel(path);
                 }),
+                new MessageHandler(Messages.CancelLoadVrm, c =>
+                {
+                    metaDataCanvas.enabled = false;
+                }),
 
                 #endregion
 
@@ -169,6 +173,7 @@ namespace Baku.VMagicMirror
 
             public static string OpenVrmPreview => nameof(OpenVrmPreview);
             public static string OpenVrm => nameof(OpenVrm);
+            public static string CancelLoadVrm => nameof(CancelLoadVrm);
 
             public static string Chromakey => nameof(Chromakey);
             public static string LightIntensity = nameof(LightIntensity);

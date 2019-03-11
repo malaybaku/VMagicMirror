@@ -1,5 +1,4 @@
-﻿using Mebiustos.BreathController;
-using System;
+﻿using System;
 using System.IO;
 using UniHumanoid;
 using UnityEngine;
@@ -12,9 +11,6 @@ namespace Baku.VMagicMirror
     {
         [SerializeField]
         HumanPoseTransfer m_src;
-
-        //[SerializeField]
-        //GameObject m_target;
 
         [SerializeField]
         GameObject Root;

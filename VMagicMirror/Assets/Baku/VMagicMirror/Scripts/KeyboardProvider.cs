@@ -69,7 +69,7 @@ namespace Baku.VMagicMirror
             ["L"] = 8,
             ["Oemplus"] = 8,
             ["OemSemicolon"] = 8,
-            ["OemCloserackets"] = 8,
+            ["OemCloseBrackets"] = 8,
             ["Enter"] = 9,
 
             #endregion

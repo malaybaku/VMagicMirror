@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Baku.VMagicMirror
@@ -21,9 +20,14 @@ namespace Baku.VMagicMirror
         [SerializeField]
         Text keyCode = null;
 
+        private const float TouchPadVerticalOffset = 0.05f;
+
         private bool mousePositionInitialized = false;
         private int mousePositionX = 0;
         private int mousePositionY = 0;
+
+        private Transform _keyboardRoot => _motion.keyboard.transform;
+        private Transform _touchPadRoot => _motion.touchPad.transform.parent;
 
         public void ReceiveKeyPressed(string keyCodeName)
         {
@@ -88,5 +92,35 @@ namespace Baku.VMagicMirror
             }
         }
 
+        public void SetLengthFromWristToPalm(float v)
+        {
+            _motion.handToPalmLength = v;
+        }
+
+        public void SetLengthFromWristToTip(float v)
+        {
+            _motion.handToTipLength = v;
+        }
+
+        public void SetHidHeight(float v)
+        {
+            var keyboardPos = _keyboardRoot.position;
+            _keyboardRoot.position = new Vector3(keyboardPos.x, v, keyboardPos.z);
+
+            var touchPadPos = _touchPadRoot.position;
+            _touchPadRoot.position = new Vector3(touchPadPos.x, v + TouchPadVerticalOffset, touchPadPos.z);
+        }
+
+        public void SetHidHorizontalScale(float v)
+        {
+            _keyboardRoot.localScale = new Vector3(v, 1.0f, v);
+            _touchPadRoot.localScale = new Vector3(v, 1.0f, v);
+        }
+
+        public void SetHidVisibility(bool v)
+        {
+            _motion.keyboard.gameObject.SetActive(v);
+            _motion.touchPad.gameObject.SetActive(v);
+        }
     }
 }

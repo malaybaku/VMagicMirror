@@ -62,22 +62,20 @@ namespace Baku.VMagicMirror
             int x = (int)pos.x;
             int y = (int)pos.y;
 
-            if (!mousePositionInitialized)
+            _motion.UpdateMouseBasedHeadTarget(x, y);
+            UpdateMousePostionIndication(x, y);
+
+            if (
+                mousePositionInitialized &&
+                (mousePositionX != x || mousePositionY != y)
+                )
             {
-                UpdateMousePostionIndication(x, y);
-                mousePositionX = x;
-                mousePositionY = y;
-                mousePositionInitialized = true;
-                return;
+                _motion.GrabMouseMotion(x, y);
             }
 
-            if (mousePositionX != x || mousePositionY != y)
-            {
-                UpdateMousePostionIndication(x, y);
-                mousePositionX = x;
-                mousePositionY = y;
-                _motion?.GrabMouseMotion(x, y);
-            }
+            mousePositionX = x;
+            mousePositionY = y;
+            mousePositionInitialized = true;
         }
 
         private void UpdateMousePostionIndication(int x, int y)
@@ -100,6 +98,11 @@ namespace Baku.VMagicMirror
         public void SetLengthFromWristToTip(float v)
         {
             _motion.handToTipLength = v;
+        }
+
+        public void EnableTouchTypingHeadMotion(bool v)
+        {
+            _motion.enableTouchTypingHeadMotion = v;
         }
 
         public void SetHidHeight(float v)

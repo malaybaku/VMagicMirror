@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 namespace Baku.VMagicMirror
 {
@@ -15,6 +16,8 @@ namespace Baku.VMagicMirror
 
         public TouchPadProvider touchPad = null;
 
+        public Transform head = null;
+
         public FingerAnimator fingerAnimator = null;
 
         [SerializeField]
@@ -24,7 +27,10 @@ namespace Baku.VMagicMirror
         private Transform rightHandTarget = null;
 
         [SerializeField]
-        private Transform headTarget = null;
+        private Transform headTarget = null;       
+
+        [SerializeField]
+        private Transform headLookTargetWhenTouchTyping = null;
 
         [SerializeField]
         private AnimationCurve keyboardHorizontalApproachCurve = new AnimationCurve(new Keyframe[]
@@ -85,6 +91,9 @@ namespace Baku.VMagicMirror
         //こっちはマウス用
         public float handToPalmLength = 0.05f;
 
+        //コレがtrueのときは
+        public bool enableTouchTypingHeadMotion;
+
         //クリック時にクイッとさせたいので。
         public Transform rightHandBone = null;
 
@@ -96,7 +105,7 @@ namespace Baku.VMagicMirror
 
         private bool _touchPadTargetEnabled = false;
         private Vector3 _touchPadTargetPosition = Vector3.zero;
-        private Transform _headTransformToTrack = null;
+        private Transform _headTrackTargetWhenNotTouchTyping = null;
 
         private void Update()
         {
@@ -109,11 +118,16 @@ namespace Baku.VMagicMirror
                     );
             }
 
-            if (_headTransformToTrack != null)
+            Transform headTargetTo =
+                enableTouchTypingHeadMotion ?
+                headLookTargetWhenTouchTyping :
+                _headTrackTargetWhenNotTouchTyping;
+
+            if (headTargetTo != null)
             {
                 headTarget.position = Vector3.Lerp(
                     headTarget.position,
-                    _headTransformToTrack.position,
+                    headTargetTo.position,
                     headTargetMoveSpeedFactor
                     );
             }
@@ -131,7 +145,7 @@ namespace Baku.VMagicMirror
                     StopCoroutine(_leftHandMoveCoroutine);
                 }
                 _leftHandMoveCoroutine = StartCoroutine(MoveTargetToKeyboard(leftHandTarget, targetPos));
-                _headTransformToTrack = leftHandTarget;
+                _headTrackTargetWhenNotTouchTyping = leftHandTarget;
             }
             else
             {
@@ -141,11 +155,28 @@ namespace Baku.VMagicMirror
                     StopCoroutine(_rightHandMoveCoroutine);
                 }
                 _rightHandMoveCoroutine = StartCoroutine(MoveTargetToKeyboard(rightHandTarget, targetPos));
-                _headTransformToTrack = rightHandTarget;
+                _headTrackTargetWhenNotTouchTyping = rightHandTarget;
             }
 
             int fingerNumber = keyboard.GetFingerNumberOfKey(key);
             fingerAnimator?.StartMoveFinger(fingerNumber);
+        }
+
+        public void UpdateMouseBasedHeadTarget(int x, int y)
+        {
+            float xClamped = -Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
+            float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -1000, 1000) / 1000.0f;
+
+            xClamped *= 0.8f;
+            yClamped *= 0.8f;
+        
+            if (head != null)
+            {
+                //ちょっと前方にターゲットを置いておく(画面から少し離れてるようなイメージ)
+                headLookTargetWhenTouchTyping.position =
+                    new Vector3(head.position.x, head.position.y, 0) +
+                    new Vector3(xClamped, yClamped, 0.6f);
+            }
         }
 
         public void GrabMouseMotion(int x, int y)
@@ -155,7 +186,6 @@ namespace Baku.VMagicMirror
             var targetPos = touchPad.GetHandTipPosFromScreenPoint(xClamped, yClamped) + yOffsetAlwaysVec;
             targetPos -= handToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
-
             if (_rightHandMoveCoroutine != null)
             {
                 StopCoroutine(_rightHandMoveCoroutine);
@@ -163,7 +193,7 @@ namespace Baku.VMagicMirror
             _touchPadTargetPosition = targetPos;
             _touchPadTargetEnabled = true;
 
-            _headTransformToTrack = rightHandTarget;
+            _headTrackTargetWhenNotTouchTyping = rightHandTarget;
         }
 
         public void ClickMotion(string info)

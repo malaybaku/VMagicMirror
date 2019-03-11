@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mebiustos.BreathController;
+using System;
 using System.IO;
 using UniHumanoid;
 using UnityEngine;
@@ -228,7 +229,9 @@ namespace Baku.VMagicMirror
                     headTarget = head,
                     inputToMotion = _inputToMotion,
                 });
+
                 _inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
+                _inputToMotion.head = go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Neck);
             }
         }
     }

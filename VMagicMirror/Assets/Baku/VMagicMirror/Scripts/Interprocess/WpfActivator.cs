@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -9,7 +8,7 @@ namespace Baku.VMagicMirror
 {
     public class WpfActivator : MonoBehaviour
     {
-        private static readonly string ConfigExePath = "..\\ConfigApp\\VMagicMirrorConfig.exe";
+        private static readonly string ConfigExePath = "ConfigApp\\VMagicMirrorConfig.exe";
 
         private static string GetWpfPath() 
             => Path.Combine(
@@ -31,7 +30,10 @@ namespace Baku.VMagicMirror
 
             if (File.Exists(path))
             {
-                Process.Start(path);
+                Process.Start(new ProcessStartInfo()
+                {
+                    FileName = path,
+                });
             }
         }
     }

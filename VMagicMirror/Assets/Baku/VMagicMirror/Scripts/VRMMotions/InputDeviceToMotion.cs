@@ -6,6 +6,8 @@ namespace Baku.VMagicMirror
 {
     public class InputDeviceToMotion : MonoBehaviour
     {
+        private const float HeadTargetForwardOffsetWhenLookKeyboard = 0.3f;
+
         private const string RDown = "RDown";
         private const string MDown = "MDown";
         private const string LDown = "LDown";
@@ -19,6 +21,9 @@ namespace Baku.VMagicMirror
         public Transform head = null;
 
         public FingerAnimator fingerAnimator = null;
+
+        [SerializeField]
+        private Transform cam = null;
 
         [SerializeField]
         private Transform leftHandTarget = null;
@@ -123,11 +128,16 @@ namespace Baku.VMagicMirror
                 headLookTargetWhenTouchTyping :
                 _headTrackTargetWhenNotTouchTyping;
 
+            Vector3 targetPos =
+                enableTouchTypingHeadMotion ?
+                headLookTargetWhenTouchTyping.position + HeadTargetForwardOffsetWhenLookKeyboard * Vector3.forward :
+                _headTrackTargetWhenNotTouchTyping.position;
+
             if (headTargetTo != null)
             {
                 headTarget.position = Vector3.Lerp(
                     headTarget.position,
-                    headTargetTo.position,
+                    targetPos,
                     headTargetMoveSpeedFactor
                     );
             }
@@ -164,19 +174,16 @@ namespace Baku.VMagicMirror
 
         public void UpdateMouseBasedHeadTarget(int x, int y)
         {
-            float xClamped = -Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
+            float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
             float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -1000, 1000) / 1000.0f;
 
-            xClamped *= 0.8f;
-            yClamped *= 0.8f;
-        
-            if (head != null)
-            {
-                //ちょっと前方にターゲットを置いておく(画面から少し離れてるようなイメージ)
-                headLookTargetWhenTouchTyping.position =
-                    new Vector3(head.position.x, head.position.y, 0) +
-                    new Vector3(xClamped, yClamped, 0.6f);
-            }
+            //xClamped *= 0.8f;
+            //yClamped *= 0.8f;
+
+            //画面中央 = カメラ位置なのでコレで空間的にだいたい正しくなる
+            headLookTargetWhenTouchTyping.position =
+                cam.TransformPoint(xClamped, yClamped, 0);
+
         }
 
         public void GrabMouseMotion(int x, int y)

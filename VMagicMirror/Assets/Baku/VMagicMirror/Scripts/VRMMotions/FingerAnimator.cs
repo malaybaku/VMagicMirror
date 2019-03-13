@@ -4,7 +4,7 @@ namespace Baku.VMagicMirror
 {
     public class FingerAnimator : MonoBehaviour
     {
-        public float defaultBendingAngle = 10f;
+        public float defaultBendingAngle = 10.0f;
 
         public float duration = 0.25f;
 
@@ -137,24 +137,25 @@ namespace Baku.VMagicMirror
 
             for (int i = 0; i < _isAnimating.Length; i++)
             {
-                if (!_isAnimating[i])
+                float angle = defaultBendingAngle;
+
+                if (_isAnimating[i])
                 {
-                    continue;
+                    float time = Time.time - _animationStartedTime[i];
+                    if (time > duration)
+                    {
+                        _isAnimating[i] = false;
+                        time = duration;
+                    }
+                    angle = angleCurve.Evaluate(time);
                 }
 
-                float time = Time.time - _animationStartedTime[i];
-                if (time > duration)
-                {
-                    _isAnimating[i] = false;
-                    time = duration;
-                }
-
-                float angle = angleCurve.Evaluate(time);
                 //左右の手で回転方向が逆
                 if (i > 4)
                 {
                     angle = -angle;
                 }
+
                 foreach(var t in _fingers[i])
                 {
                     t.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);

@@ -1,35 +1,40 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    public class WpfActivator : MonoBehaviour
+    public class WpfStartAndQuit : MonoBehaviour
     {
         private static readonly string ConfigExePath = "ConfigApp\\VMagicMirrorConfig.exe";
 
-        private static string GetWpfPath() 
+        private static string GetWpfPath()
             => Path.Combine(
-                Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
+                Path.GetDirectoryName(Application.dataPath),
                 ConfigExePath
                 );
 
         void Start()
         {
-            //Startが全部終わって落ち着いた状態でロードしたいので遅延付ける
+            //Startが全部終わって落ち着いた状態でロードしたいので遅延つける
             StartCoroutine(ActivateWpf());
+        }
+
+        private void OnDestroy()
+        {
+            Process.GetProcesses()
+                .FirstOrDefault(p => p.ProcessName == "VMagicMirrorConfig")
+                ?.CloseMainWindow();
         }
 
         private IEnumerator ActivateWpf()
         {
             string path = GetWpfPath();
-
-            yield return new WaitForSeconds(1.0f);
-
             if (File.Exists(path))
             {
+                yield return new WaitForSeconds(0.5f);
                 Process.Start(new ProcessStartInfo()
                 {
                     FileName = path,

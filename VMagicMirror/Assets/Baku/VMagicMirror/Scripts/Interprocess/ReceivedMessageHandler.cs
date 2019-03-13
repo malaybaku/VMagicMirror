@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
         VRMLoadController loadController = null;
 
         [SerializeField]
-        BackgroundColorController bgController = null;
+        BackgroundController bgController = null;
 
         [SerializeField]
         InputDeviceReceiver inputDeviceReceiver = null;
@@ -19,7 +19,8 @@ namespace Baku.VMagicMirror
         Canvas metaDataCanvas = null;
 
         [SerializeField]
-        Light mainLight = null;
+        LightingController lightingController = null;
+        //Light mainLight = null;
 
         [SerializeField]
         Camera cam = null;
@@ -71,19 +72,69 @@ namespace Baku.VMagicMirror
 
                 #endregion
 
-                #region 背景色と光
+                #region 背景色と光とウィンドウ周り
 
                 new MessageHandler(Messages.Chromakey, c =>
                 {
-                    float[] argb = c.Split(',')
-                        .Select(e => int.Parse(e) / 255.0f)
+                    int[] argb = c.Split(',')
+                        .Select(e => int.Parse(e))
                         .ToArray();
                     bgController.ChangeColor(argb[0], argb[1], argb[2], argb[3]);
                 }),
 
                 new MessageHandler(Messages.LightIntensity, c =>
                 {
-                    mainLight.intensity = Percentage(c);
+                    lightingController.SetLightIntensity(Percentage(c));
+                }),
+
+                new MessageHandler(Messages.LightColor, c =>
+                {
+                    float[] rgb = c.Split(',')
+                        .Select(v => int.Parse(v) / 255.0f)
+                        .ToArray();
+                    lightingController.SetLightColor(rgb[0], rgb[1], rgb[2]);
+                }),
+
+                new MessageHandler(Messages.BloomIntensity, c =>
+                {
+                    lightingController.SetBloomIntensity(Percentage(c));
+                }),
+
+                new MessageHandler(Messages.BloomThreshold, c =>
+                {
+                    lightingController.SetBloomThreshold(Percentage(c));
+                }),
+
+                new MessageHandler(Messages.BloomColor, c =>
+                {
+                    float[] rgb = c.Split(',')
+                        .Select(v => int.Parse(v) / 255.0f)
+                        .ToArray();
+                    lightingController.SetBloomColor(rgb[0], rgb[1], rgb[2]);
+                }),
+
+                #endregion
+
+                #region ウィンドウ
+
+                new MessageHandler(Messages.WindowFrameVisibility, c =>
+                {
+                    bgController.SetWindowFrameVisibility(bool.Parse(c));
+                }),
+
+                new MessageHandler(Messages.IgnoreMouse, c =>
+                {
+                    bgController.SetIgnoreMouseInput(bool.Parse(c));
+                }),
+
+                new MessageHandler(Messages.TopMost, c =>
+                {
+                    bgController.SetTopMost(bool.Parse(c));
+                }),
+
+                new MessageHandler(Messages.WindowDraggable, c =>
+                {
+                    bgController.SetWindowDraggable(bool.Parse(c));
                 }),
 
                 #endregion
@@ -148,7 +199,6 @@ namespace Baku.VMagicMirror
                 }),
 
                 #endregion
-
             };
         }
 
@@ -177,6 +227,15 @@ namespace Baku.VMagicMirror
 
             public static string Chromakey => nameof(Chromakey);
             public static string LightIntensity = nameof(LightIntensity);
+            public static string LightColor => nameof(LightColor);
+            public static string BloomIntensity => nameof(BloomIntensity);
+            public static string BloomThreshold => nameof(BloomThreshold);
+            public static string BloomColor => nameof(BloomColor);
+
+            public static string WindowFrameVisibility => nameof(WindowFrameVisibility);
+            public static string IgnoreMouse => nameof(IgnoreMouse);
+            public static string TopMost => nameof(TopMost);
+            public static string WindowDraggable => nameof(WindowDraggable);
 
             public static string LengthFromWristToTip => nameof(LengthFromWristToTip);
             public static string LengthFromWristToPalm => nameof(LengthFromWristToPalm);

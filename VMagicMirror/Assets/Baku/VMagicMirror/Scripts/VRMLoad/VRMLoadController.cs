@@ -227,7 +227,7 @@ namespace Baku.VMagicMirror
                 });
 
                 _inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
-                _inputToMotion.head = go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Neck);
+                //_inputToMotion.head = go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Neck);
             }
         }
     }

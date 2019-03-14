@@ -12,7 +12,24 @@ namespace Baku.VMagicMirror
         private const string MDown = "MDown";
         private const string LDown = "LDown";
 
-        #region settings 
+        #region settings (WPFから飛んでくる想定のもの)
+
+        //手首をIKすると(指先じゃなくて)手首がキー位置に行ってしまうので、その手首位置を原点方向にずらすための長さ。
+        public float handToTipLength = 0.1f;
+
+        //こっちはマウス用
+        public float handToPalmLength = 0.05f;
+
+        //コレがtrueのときは頭の注視先がカーソルベースになる
+        public bool enableTouchTypingHeadMotion;
+
+        public float yOffsetAlways = 0.05f;
+
+        public float yOffsetAfterKeyDown = 0.08f;
+
+        #endregion
+
+        #region settings (Unityで閉じてる想定のもの)
 
         public KeyboardProvider keyboard = null;
 
@@ -62,14 +79,6 @@ namespace Baku.VMagicMirror
         });
 
         [SerializeField]
-        private float yOffsetAlways = 0.05f;
-
-        private Vector3 yOffsetAlwaysVec => yOffsetAlways * Vector3.up;
-
-        [SerializeField]
-        private float yOffsetAfterKeyDown = 0.08f;
-
-        [SerializeField]
         private float keyboardMotionDuration = 0.25f;
 
         [SerializeField]
@@ -89,18 +98,10 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private float clickHandRotationDuration = 0.2f;
 
-        //手首をIKすると(指先じゃなくて)手首がキー位置に行ってしまうので、その手首位置を原点方向にずらすための長さ。
-        //できれば決め打ちじゃなくてVRMの読み込み直後に長さを調べてほしい
-        public float handToTipLength = 0.1f;
-
-        //こっちはマウス用
-        public float handToPalmLength = 0.05f;
-
-        //コレがtrueのときは
-        public bool enableTouchTypingHeadMotion;
-
         //クリック時にクイッとさせたいので。
         public Transform rightHandBone = null;
+
+        private Vector3 yOffsetAlwaysVec => yOffsetAlways * Vector3.up;
 
         #endregion
 

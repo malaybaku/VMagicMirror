@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Baku.VMagicMirror
@@ -124,6 +125,16 @@ namespace Baku.VMagicMirror
         {
             _motion.keyboard.gameObject.SetActive(v);
             _motion.touchPad.gameObject.SetActive(v);
+        }
+
+        public void SetHandYOffsetBasic(float yoffset)
+        {
+            _motion.yOffsetAlways = yoffset;
+        }
+
+        public void SetHandYOffsetAfterKeyDown(float yoffset)
+        {
+            _motion.yOffsetAfterKeyDown = yoffset;
         }
     }
 }

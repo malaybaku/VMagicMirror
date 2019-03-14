@@ -1200,7 +1200,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 535, y: 0}
+  m_SizeDelta: {x: 400, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &644517402
 CanvasRenderer:
@@ -1334,7 +1334,7 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 0
   m_Spacing: 0
-  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
@@ -3026,8 +3026,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 535, y: 0}
-  m_SizeDelta: {x: 560, y: 0}
+  m_AnchoredPosition: {x: 400, y: 0}
+  m_SizeDelta: {x: 400, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1273875438
 MonoBehaviour:
@@ -4758,6 +4758,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88b42b2ba7b8f6c41bbd632816466d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handToTipLength: 0.09
+  handToPalmLength: 0.05
+  enableTouchTypingHeadMotion: 1
+  yOffsetAlways: 0.06
+  yOffsetAfterKeyDown: 0.02
   keyboard: {fileID: 1169325487}
   touchPad: {fileID: 2059529786}
   head: {fileID: 0}
@@ -4857,8 +4862,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  yOffsetAlways: 0.06
-  yOffsetAfterKeyDown: 0.02
   keyboardMotionDuration: 0.25
   touchPadApproachSpeedFactor: 0.2
   headTargetMoveSpeedFactor: 0.1
@@ -4896,9 +4899,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   clickHandRotationDuration: 0.2
-  handToTipLength: 0.09
-  handToPalmLength: 0.05
-  enableTouchTypingHeadMotion: 1
   rightHandBone: {fileID: 0}
 --- !u!114 &1855229417
 MonoBehaviour:

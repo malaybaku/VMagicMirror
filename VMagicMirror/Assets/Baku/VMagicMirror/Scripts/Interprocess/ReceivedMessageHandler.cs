@@ -139,7 +139,7 @@ namespace Baku.VMagicMirror
 
                 #endregion
 
-                #region レイアウト
+                #region レイアウト: キャラ体型まわり
 
                 new MessageHandler(Messages.LengthFromWristToPalm, c =>
                 {
@@ -151,10 +151,24 @@ namespace Baku.VMagicMirror
                     inputDeviceReceiver.SetLengthFromWristToTip(Centimeter(c));
                 }),
 
+                new MessageHandler(Messages.HandYOffsetBasic, c =>
+                {
+                    inputDeviceReceiver.SetHandYOffsetBasic(Centimeter(c));
+                }),
+
+                new MessageHandler(Messages.HandYOffsetAfterKeyDown, c =>
+                {
+                    inputDeviceReceiver.SetHandYOffsetAfterKeyDown(Centimeter(c));
+                }),
+
                 new MessageHandler(Messages.EnableTouchTyping, c =>
                 {
                     inputDeviceReceiver.EnableTouchTypingHeadMotion(bool.Parse(c));
                 }),
+
+                #endregion
+
+                #region レイアウト: カメラ配置
 
                 new MessageHandler(Messages.CameraHeight, c =>
                 {
@@ -178,6 +192,10 @@ namespace Baku.VMagicMirror
                 {
                     cam.transform.rotation = Quaternion.Euler(int.Parse(c), 180, 0);
                 }),
+
+                #endregion
+
+                #region レイアウト: HID配置
 
                 new MessageHandler(Messages.HidHeight, c =>
                 {
@@ -239,6 +257,8 @@ namespace Baku.VMagicMirror
 
             public static string LengthFromWristToTip => nameof(LengthFromWristToTip);
             public static string LengthFromWristToPalm => nameof(LengthFromWristToPalm);
+            public static string HandYOffsetBasic => nameof(HandYOffsetBasic);
+            public static string HandYOffsetAfterKeyDown => nameof(HandYOffsetAfterKeyDown);
             public static string EnableTouchTyping => nameof(EnableTouchTyping);
 
             public static string CameraHeight => nameof(CameraHeight);

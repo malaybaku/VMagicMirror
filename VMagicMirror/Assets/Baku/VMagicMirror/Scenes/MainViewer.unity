@@ -4761,7 +4761,7 @@ MonoBehaviour:
   handToTipLength: 0.09
   handToPalmLength: 0.05
   enableTouchTypingHeadMotion: 1
-  yOffsetAlways: 0.06
+  yOffsetAlways: 0.04
   yOffsetAfterKeyDown: 0.02
   keyboard: {fileID: 1169325487}
   touchPad: {fileID: 2059529786}

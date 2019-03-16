@@ -59,6 +59,13 @@ namespace Baku.VMagicMirror
             }
         }
 
+        public void MoveWindow(int x, int y)
+        {
+#if !UNITY_EDITOR
+            SetUnityWindowPosition(x, y);
+#endif
+        }
+
         public void SetWindowFrameVisibility(bool isVisible)
         {
             _isWindowFrameHidden = !isVisible;

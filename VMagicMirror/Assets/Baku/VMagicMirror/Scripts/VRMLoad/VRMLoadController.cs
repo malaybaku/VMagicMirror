@@ -97,12 +97,15 @@ namespace Baku.VMagicMirror
         //TODO: この辺はちょっと分けたい気がしないでもないが。
         [SerializeField]
         RuntimeAnimatorController runtimeController;
+
         [SerializeField]
-        Transform rightHand;
+        Transform bodyTarget;
         [SerializeField]
-        Transform leftHand;
+        Transform rightHandTarget;
         [SerializeField]
-        Transform head;
+        Transform leftHandTarget;
+        [SerializeField]
+        Transform headTarget;
 
         HumanPoseTransfer m_loaded;
 
@@ -220,9 +223,10 @@ namespace Baku.VMagicMirror
                 VRMLoadControllerHelper.SetupVrm(go, new VRMLoadControllerHelper.VrmLoadSetting()
                 {
                     runtimeAnimatorController = runtimeController,
-                    leftHandTarget = leftHand,
-                    rightHandTarget = rightHand,
-                    headTarget = head,
+                    bodyTarget = bodyTarget,
+                    leftHandTarget = leftHandTarget,
+                    rightHandTarget = rightHandTarget,
+                    headTarget = headTarget,
                     inputToMotion = _inputToMotion,
                 });
 

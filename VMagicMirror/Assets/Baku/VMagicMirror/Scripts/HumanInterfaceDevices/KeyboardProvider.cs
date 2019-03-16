@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
             new string[] { "CapsLock", "_",  "A",    "S",   "D",  "F",  "G",  "H",     "J",  "K",        "L",      "Oemplus",     "OemSemicolon", "OemCloseBrackets", "Enter",  "_",      "_",    "_",            "NumPad4", "NumPad5", "NumPad6",  "_"},
             new string[] { "Tab",         "Q",    "W",   "E",  "R",  "T",  "Y",     "U",  "I",        "O",         "P",           "Oemtilde", "OemOpenBrackets",     "_", "_",  "Delete", "End",  "PageDown",     "NumPad7", "NumPad8", "NumPad9",  "Add", },
             new string[] { "_",           "D1",   "D2",  "D3", "D4", "D5", "D6",    "D7", "D8",       "D9",        "D0",          "OemMinus", "OemQuotes", "OemPipe",  "Back",  "Insert", "Home", "PageUp",       "NumLock", "Divide",  "Multiply", "Subtract", },
-            new string[] { "Escape", "_", "_", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",                                                       "Printscreen", "Scroll", "Pause", },
+            new string[] { "Escape", "_", "_", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",                                                       "PrintScreen", "Scroll", "Pause", },
         };
 
         //指番号。FingerAnimator.Fingersの値を書いてもいいが、字が増えすぎてもアレなので番号で入れてます
@@ -178,17 +178,6 @@ namespace Baku.VMagicMirror
 
         };
 
-        //スペーサーに注意しつつ、左手で打鍵できる限界のキーのひとつ右のインデックスを列順に指定する。
-        //private readonly static int[] LeftHandKeyThresholds = new int[]
-        //{
-        //    7,
-        //    7,
-        //    8,
-        //    7,
-        //    8,
-        //    8,
-        //};
-
         [SerializeField]
         Transform keyPrefab = null;
 
@@ -278,21 +267,6 @@ namespace Baku.VMagicMirror
             return fingerMapper.ContainsKey(sanitized) ?
                 fingerMapper[sanitized] < 5 :
                 true;
-        
-            //for (int i = 0; i < keyCodeNames.Length; i++)
-            //{
-            //    int len = keyCodeNames[i].Length;
-            //    for (int j = 0; j < keyCodeNames[i].Length; j++)
-            //    {
-            //        if (keyCodeNames[i][j] == sanitized)
-            //        {
-            //            return (j < LeftHandKeyThresholds[i]);
-            //        }
-            //    }
-            //}
-
-            ////不明な場合は[0][0]扱いになるので左手扱いが妥当
-            //return true;
         }
 
         public int GetFingerNumberOfKey(string key)

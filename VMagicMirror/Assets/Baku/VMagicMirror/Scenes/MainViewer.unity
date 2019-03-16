@@ -5276,7 +5276,7 @@ MonoBehaviour:
   loadController: {fileID: 1787938567}
   bgController: {fileID: 1629460663}
   inputDeviceReceiver: {fileID: 1855229417}
-  waitMotionReceiver: {fileID: 0}
+  waitMotionReceiver: {fileID: 1674567172}
   metaDataCanvas: {fileID: 1787938565}
   lightingController: {fileID: 148983028}
   cam: {fileID: 1629460661}

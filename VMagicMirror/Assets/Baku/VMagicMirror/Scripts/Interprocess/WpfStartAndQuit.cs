@@ -24,9 +24,12 @@ namespace Baku.VMagicMirror
 
         private void OnDestroy()
         {
-            Process.GetProcesses()
-                .FirstOrDefault(p => p.ProcessName == "VMagicMirrorConfig")
-                ?.CloseMainWindow();
+            //いったん停止: この方法で止めると設定ファイルが保存されないため
+#if !UNITY_EDITOR
+            //Process.GetProcesses()
+            //    .FirstOrDefault(p => p.ProcessName == "VMagicMirrorConfig")
+            //    ?.CloseMainWindow();
+#endif
         }
 
         private IEnumerator ActivateWpf()
@@ -35,10 +38,12 @@ namespace Baku.VMagicMirror
             if (File.Exists(path))
             {
                 yield return new WaitForSeconds(0.5f);
+#if !UNITY_EDITOR
                 Process.Start(new ProcessStartInfo()
                 {
                     FileName = path,
                 });
+#endif
             }
         }
     }

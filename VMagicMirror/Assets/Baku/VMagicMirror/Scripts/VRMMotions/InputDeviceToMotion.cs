@@ -122,6 +122,9 @@ namespace Baku.VMagicMirror
                     _touchPadTargetPosition,
                     touchPadApproachSpeedFactor
                     );
+                rightHandTarget.rotation = Quaternion.Euler(
+                    0, -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) * Mathf.Rad2Deg, 0
+                    );
             }
 
             Transform headTargetTo =
@@ -155,7 +158,7 @@ namespace Baku.VMagicMirror
                 {
                     StopCoroutine(_leftHandMoveCoroutine);
                 }
-                _leftHandMoveCoroutine = StartCoroutine(MoveTargetToKeyboard(leftHandTarget, targetPos));
+                _leftHandMoveCoroutine = StartCoroutine(MoveTargetToKeyboard(leftHandTarget, targetPos, true));
                 _headTrackTargetWhenNotTouchTyping = leftHandTarget;
             }
             else
@@ -165,7 +168,7 @@ namespace Baku.VMagicMirror
                 {
                     StopCoroutine(_rightHandMoveCoroutine);
                 }
-                _rightHandMoveCoroutine = StartCoroutine(MoveTargetToKeyboard(rightHandTarget, targetPos));
+                _rightHandMoveCoroutine = StartCoroutine(MoveTargetToKeyboard(rightHandTarget, targetPos, false));
                 _headTrackTargetWhenNotTouchTyping = rightHandTarget;
             }
 
@@ -226,7 +229,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private IEnumerator MoveTargetToKeyboard(Transform t, Vector3 targetPos)
+        private IEnumerator MoveTargetToKeyboard(Transform t, Vector3 targetPos, bool isLeftHand)
         {
             float startTime = Time.time;
             Vector3 startPos = t.position;
@@ -252,6 +255,13 @@ namespace Baku.VMagicMirror
                     t.position = new Vector3(horizontal.x, verticalTarget, horizontal.z);
                 }
 
+                //どちらの場合でも放射方向にターゲットを向かせる必要がある。
+                //かつ、左手は方向が180度ずれてしまうので直す
+                t.rotation = Quaternion.Euler(
+                    0,
+                    -Mathf.Atan2(t.position.z, t.position.x) * Mathf.Rad2Deg + 
+                        (isLeftHand ? 180 : 0), 
+                    0);
                 yield return null;
             }
 

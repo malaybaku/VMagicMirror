@@ -16,6 +16,9 @@ namespace Baku.VMagicMirror
         InputDeviceReceiver inputDeviceReceiver = null;
 
         [SerializeField]
+        WaitMotionReceiver waitMotionReceiver = null;
+
+        [SerializeField]
         Canvas metaDataCanvas = null;
 
         [SerializeField]
@@ -137,9 +140,15 @@ namespace Baku.VMagicMirror
                     bgController.SetWindowDraggable(bool.Parse(c));
                 }),
 
+                new MessageHandler(Messages.MoveWindow, c =>
+                {
+                    int[] xy = c.Split(',').Select(v => int.Parse(v)).ToArray();
+                    bgController.MoveWindow(xy[0], xy[1]);
+                }),
+
                 #endregion
 
-                #region レイアウト: キャラ体型まわり
+                #region レイアウト: キャラ体型
 
                 new MessageHandler(Messages.LengthFromWristToPalm, c =>
                 {
@@ -159,6 +168,26 @@ namespace Baku.VMagicMirror
                 new MessageHandler(Messages.HandYOffsetAfterKeyDown, c =>
                 {
                     inputDeviceReceiver.SetHandYOffsetAfterKeyDown(Centimeter(c));
+                }),
+
+                #endregion
+
+                #region レイアウト: キャラの動きについて
+
+                new MessageHandler(Messages.EnableWaitMotion, c =>
+                {
+                    waitMotionReceiver.EnableWaitMotion(bool.Parse(c));
+                }),
+
+                new MessageHandler(Messages.WaitMotionScale, c =>
+                {
+                    waitMotionReceiver.SetWaitMotionScale(Percentage(c));
+                }),
+
+                new MessageHandler(Messages.WaitMotionPeriod, c =>
+                {
+                    //秒単位で送られてくる点に注意
+                    waitMotionReceiver.SetWaitMotionDuration(int.Parse(c));
                 }),
 
                 new MessageHandler(Messages.EnableTouchTyping, c =>
@@ -254,11 +283,13 @@ namespace Baku.VMagicMirror
             public static string IgnoreMouse => nameof(IgnoreMouse);
             public static string TopMost => nameof(TopMost);
             public static string WindowDraggable => nameof(WindowDraggable);
+            public static string MoveWindow => nameof(MoveWindow);
 
             public static string LengthFromWristToTip => nameof(LengthFromWristToTip);
             public static string LengthFromWristToPalm => nameof(LengthFromWristToPalm);
             public static string HandYOffsetBasic => nameof(HandYOffsetBasic);
             public static string HandYOffsetAfterKeyDown => nameof(HandYOffsetAfterKeyDown);
+
             public static string EnableTouchTyping => nameof(EnableTouchTyping);
 
             public static string CameraHeight => nameof(CameraHeight);
@@ -269,6 +300,9 @@ namespace Baku.VMagicMirror
             public static string HidHorizontalScale => nameof(HidHorizontalScale);
             public static string HidVisibility => nameof(HidVisibility);
 
+            public static string EnableWaitMotion => nameof(EnableWaitMotion);
+            public static string WaitMotionScale => nameof(WaitMotionScale);
+            public static string WaitMotionPeriod => nameof(WaitMotionPeriod);
         }
 
         class MessageHandler

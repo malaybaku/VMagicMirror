@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -32,6 +33,9 @@ namespace Baku.VMagicMirror
 
         public void SetWindowDraggable(bool v)
             => _windowStyleController.SetWindowDraggable(v);
+
+        public void MoveWindow(int x, int y)
+            => _windowStyleController.MoveWindow(x, y);
     }
 }
 

@@ -4,14 +4,14 @@
 # VMagicMirror
 
 * Author: Baxter
-* 2019/Mar/14
+* 2019/Mar/17
 
 The VRM avatar application without any special device.
 
 1. Features
 2. Download
 3. Contact
-4. (For Developers) Please import FinalIK to build
+4. (For Developers) Build
 
 
 ## 1. Features
@@ -44,7 +44,27 @@ Please see [Manual](https://github.com/malaybaku/VMagicMirror/blob/master/doc/ma
 
 note: Contact in English or Japanese is very helpful for the author.
 
-## 4. (For Developers) Please import FinalIK to build
+## 4. (Developer) How to build
 
-The project needs [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290), so if you want to build the application please purchase and import from Unity asset store.
+### 4.1. Folder structure
 
+Set the folder as following.
+
++ `Bin`
+    + (Empty directory)
++ `Unity`
+    + This repository
++ `WPF`
+    + [WPF repository](https://github.com/malaybaku/VMAgicMirrorConfig)
+
+### 4.2. Asset install
+
+* [UniVRM](https://dwango.github.io/vrm/)
+* [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
+
+### 4.3. Build
+
+* Unity: Specify `Bin` folder for the output.
+* WPF build creates exe on `Bin` folder in `ConfigApp` (create if it does not exist).
+
+note: zip file distributed in BOOTH consists of the files of `Bin`, without some unnecessary files.

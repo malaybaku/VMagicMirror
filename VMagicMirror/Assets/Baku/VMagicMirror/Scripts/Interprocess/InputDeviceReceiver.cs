@@ -60,12 +60,19 @@ namespace Baku.VMagicMirror
             // - マウスクリック: NG, グローバルフック必須
             // - キーボード: NG, グローバルフック必須
             var pos = Input.mousePosition;
-            int x = (int)pos.x;
-            int y = (int)pos.y;
+            UpdateByXY((int)pos.x, (int)pos.y);
+        }
 
+        public void ReceiveMouseMove(int x, int y)
+        {
+            //WPFからマウスイベントをとる場合はこちらを使うが、今は無視
+            //UpdateByXY(x, y);
+        }
+
+        private void UpdateByXY(int x, int y)
+        {
             _motion.UpdateMouseBasedHeadTarget(x, y);
             UpdateMousePostionIndication(x, y);
-
             if (
                 mousePositionInitialized &&
                 (mousePositionX != x || mousePositionY != y)
@@ -78,6 +85,7 @@ namespace Baku.VMagicMirror
             mousePositionY = y;
             mousePositionInitialized = true;
         }
+
 
         private void UpdateMousePostionIndication(int x, int y)
         {

@@ -1725,6 +1725,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 808458845}
   m_CullTransparentMesh: 0
+--- !u!1001 &819192695
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 452380, guid: 4dd277bd9572488489906165e0931952, type: 3}
+      propertyPath: m_RootOrder
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 452380, guid: 4dd277bd9572488489906165e0931952, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 452380, guid: 4dd277bd9572488489906165e0931952, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 452380, guid: 4dd277bd9572488489906165e0931952, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 135588, guid: 4dd277bd9572488489906165e0931952, type: 3}
+      propertyPath: m_Name
+      value: LipSyncInterface
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4dd277bd9572488489906165e0931952, type: 3}
 --- !u!1 &827174940
 GameObject:
   m_ObjectHideFlags: 0
@@ -4539,6 +4568,7 @@ GameObject:
   - component: {fileID: 1787938564}
   - component: {fileID: 1787938563}
   - component: {fileID: 1787938567}
+  - component: {fileID: 1787938568}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -4661,6 +4691,35 @@ MonoBehaviour:
   rightHandTarget: {fileID: 500754461}
   leftHandTarget: {fileID: 1842530517}
   headTarget: {fileID: 1383182300}
+  animMorphTarget: {fileID: 1809547436}
+--- !u!114 &1787938568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1787938562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecb0aa76b5723c9458763830ad977505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  texts:
+    textInfoHeader: {fileID: 491613102}
+    m_textModelTitle: {fileID: 1636340565}
+    m_textModelVersion: {fileID: 2105159133}
+    m_textModelAuthor: {fileID: 827174942}
+    m_textModelContact: {fileID: 1922159877}
+    m_textModelReference: {fileID: 806723450}
+    permissionHeader: {fileID: 310000827}
+    m_textPermissionAllowed: {fileID: 1633219309}
+    m_textPermissionViolent: {fileID: 935554082}
+    m_textPermissionSexual: {fileID: 928757302}
+    m_textPermissionCommercial: {fileID: 773923920}
+    m_textPermissionOther: {fileID: 1172469240}
+    textDistributionHeader: {fileID: 926214997}
+    m_textDistributionLicense: {fileID: 1007924637}
+    m_textDistributionOther: {fileID: 1199975014}
 --- !u!1 &1805733769
 GameObject:
   m_ObjectHideFlags: 0
@@ -4742,6 +4801,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1805733769}
   m_CullTransparentMesh: 0
+--- !u!114 &1809547436 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+    type: 3}
+  m_PrefabInstance: {fileID: 2111463476}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42d427f4cef3cff4fb8a6c52e2e90091, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1842530516
 GameObject:
   m_ObjectHideFlags: 0
@@ -5279,6 +5350,7 @@ MonoBehaviour:
   waitMotionReceiver: {fileID: 1674567172}
   metaDataCanvas: {fileID: 1787938565}
   lightingController: {fileID: 148983028}
+  previewLanguageSetter: {fileID: 1787938568}
   cam: {fileID: 1629460661}
 --- !u!1 &1943931264
 GameObject:
@@ -5561,6 +5633,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2105159131}
   m_CullTransparentMesh: 0
+--- !u!1001 &2111463476
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4972947313584778, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
+      propertyPath: m_RootOrder
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4972947313584778, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4972947313584778, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4972947313584778, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: frameRate
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 1516789342381002, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
+      propertyPath: m_Name
+      value: AniLipSync-VRM
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
 --- !u!1 &2141451816
 GameObject:
   m_ObjectHideFlags: 0

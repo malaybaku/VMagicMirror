@@ -23,7 +23,9 @@ namespace Baku.VMagicMirror
 
         [SerializeField]
         LightingController lightingController = null;
-        //Light mainLight = null;
+
+        [SerializeField]
+        VRMPreviewLanguage previewLanguageSetter = null;
 
         [SerializeField]
         Camera cam = null;
@@ -46,13 +48,13 @@ namespace Baku.VMagicMirror
                     inputDeviceReceiver.ReceiveMouseButton(c);
                 }),
 
-                //new MessageHandler(Messages.MouseMoved, c =>
-                //{
-                //    int[] xy = c.Split(',')
-                //        .Select(v => int.Parse(v))
-                //        .ToArray();
-                //    inputDeviceReceiver.UpdatePositionIndication(xy[0], xy[1]);
-                //}),
+                new MessageHandler(Messages.MouseMoved, c =>
+                {
+                    int[] xy = c.Split(',')
+                        .Select(v => int.Parse(v))
+                        .ToArray();
+                    inputDeviceReceiver.ReceiveMouseMove(xy[0], xy[1]);
+                }),
 
                 #endregion
 
@@ -74,6 +76,11 @@ namespace Baku.VMagicMirror
                 }),
 
                 #endregion
+
+                new MessageHandler(Messages.Language, c =>
+                {
+                    previewLanguageSetter.SetLanguage(c);
+                }),
 
                 #region 背景色と光とウィンドウ周り
 
@@ -271,6 +278,8 @@ namespace Baku.VMagicMirror
             public static string OpenVrmPreview => nameof(OpenVrmPreview);
             public static string OpenVrm => nameof(OpenVrm);
             public static string CancelLoadVrm => nameof(CancelLoadVrm);
+
+            public static string Language => nameof(Language);
 
             public static string Chromakey => nameof(Chromakey);
             public static string LightIntensity = nameof(LightIntensity);

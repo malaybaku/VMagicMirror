@@ -28,6 +28,9 @@ namespace Baku.VMagicMirror
         VRMPreviewLanguage previewLanguageSetter = null;
 
         [SerializeField]
+        LipSyncController lipSyncController = null;
+
+        [SerializeField]
         Camera cam = null;
 
         private MessageHandler[] _handlers;
@@ -202,6 +205,11 @@ namespace Baku.VMagicMirror
                     inputDeviceReceiver.EnableTouchTypingHeadMotion(bool.Parse(c));
                 }),
 
+                new MessageHandler(Messages.EnableLipSync, c =>
+                {
+                    lipSyncController.SetLipSyncEnable(bool.Parse(c));
+                }),
+
                 #endregion
 
                 #region レイアウト: カメラ配置
@@ -300,6 +308,7 @@ namespace Baku.VMagicMirror
             public static string HandYOffsetAfterKeyDown => nameof(HandYOffsetAfterKeyDown);
 
             public static string EnableTouchTyping => nameof(EnableTouchTyping);
+            public static string EnableLipSync => nameof(EnableLipSync);
 
             public static string CameraHeight => nameof(CameraHeight);
             public static string CameraDistance => nameof(CameraDistance);

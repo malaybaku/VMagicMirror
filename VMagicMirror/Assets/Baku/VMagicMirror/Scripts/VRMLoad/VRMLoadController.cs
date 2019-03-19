@@ -107,6 +107,9 @@ namespace Baku.VMagicMirror
         [SerializeField]
         Transform headTarget;
 
+        [SerializeField]
+        AniLipSync.VRM.AnimMorphTarget animMorphTarget;
+
         HumanPoseTransfer m_loaded;
 
         private void Start()
@@ -200,6 +203,8 @@ namespace Baku.VMagicMirror
             if (loaded != null)
             {
                 Debug.LogFormat("destroy {0}", loaded);
+                //多分コレやらないとAniLipSyncが破棄済みオブジェクトを触りに行ってしまうので。
+                animMorphTarget.blendShapeProxy = null;
                 GameObject.Destroy(loaded.gameObject);
             }
 
@@ -231,7 +236,7 @@ namespace Baku.VMagicMirror
                 });
 
                 _inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
-                //_inputToMotion.head = go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Neck);
+                animMorphTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
             }
         }
     }

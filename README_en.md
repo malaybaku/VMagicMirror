@@ -29,9 +29,7 @@ It will be helpful in the following situations.
 
 ## 2. Download
 
-(**NOTE**: not published yet)
-
-[Booth](https://baku-dreameater.booth.pm/).
+[Booth](https://booth.pm/en/items/1272298).
 
 Run on Windows 10.
 

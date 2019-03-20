@@ -25,7 +25,7 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 
 ## 2. ダウンロード
 
-[Booth](https://baku-dreameater.booth.pm/)に公開しています。
+[Booth](https://booth.pm/ja/items/1272298)から取得可能です。
 
 Windows 10環境でお使いいただけます。
 

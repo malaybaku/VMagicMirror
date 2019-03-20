@@ -1732,6 +1732,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 135588, guid: 4dd277bd9572488489906165e0931952, type: 3}
+      propertyPath: m_Name
+      value: LipSyncInterface
+      objectReference: {fileID: 0}
     - target: {fileID: 452380, guid: 4dd277bd9572488489906165e0931952, type: 3}
       propertyPath: m_RootOrder
       value: 11
@@ -1747,10 +1751,6 @@ PrefabInstance:
     - target: {fileID: 452380, guid: 4dd277bd9572488489906165e0931952, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 135588, guid: 4dd277bd9572488489906165e0931952, type: 3}
-      propertyPath: m_Name
-      value: LipSyncInterface
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4dd277bd9572488489906165e0931952, type: 3}
@@ -3646,6 +3646,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1476033060}
   m_CullTransparentMesh: 0
+--- !u!1001 &1497406195
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1107550552573410, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_Name
+      value: XinputGamePadListener
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_RootOrder
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4404219019538004, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4f82b00eb5a76334f8ecf97b1676747d, type: 3}
 --- !u!1 &1502583210
 GameObject:
   m_ObjectHideFlags: 0
@@ -5659,6 +5716,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1516789342381002, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
+      propertyPath: m_Name
+      value: AniLipSync-VRM
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: frameRate
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: 4972947313584778, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
       propertyPath: m_RootOrder
       value: 12
@@ -5674,15 +5740,6 @@ PrefabInstance:
     - target: {fileID: 4972947313584778, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
-        type: 3}
-      propertyPath: frameRate
-      value: 24
-      objectReference: {fileID: 0}
-    - target: {fileID: 1516789342381002, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
-      propertyPath: m_Name
-      value: AniLipSync-VRM
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}

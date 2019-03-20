@@ -1,4 +1,3 @@
-
 [English Readme](https://github.com/malaybaku/VMagicMirror/blob/master/README_en.md)
 
 # VMagicMirror
@@ -26,7 +25,7 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 
 ## 2. ダウンロード
 
-[Booth](https://baku-dreameater.booth.pm/)に公開予定です。
+[Booth](https://baku-dreameater.booth.pm/)に公開しています。
 
 Windows 10環境でお使いいただけます。
 

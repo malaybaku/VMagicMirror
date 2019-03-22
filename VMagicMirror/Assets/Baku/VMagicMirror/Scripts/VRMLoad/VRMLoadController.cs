@@ -111,7 +111,7 @@ namespace Baku.VMagicMirror
         VRoidSDK.Example.VRoidHubController vroidHub = null;
 
         [SerializeField]
-        AniLipSync.VRM.AnimMorphTarget animMorphTarget;
+        AnimMorphEasedTarget animMorphEasedTarget;
 
         HumanPoseTransfer m_loaded;
 
@@ -188,7 +188,7 @@ namespace Baku.VMagicMirror
             {
                 Debug.LogFormat("destroy {0}", loaded);
                 //多分コレやらないとAniLipSyncが破棄済みオブジェクトを触りに行ってしまうので。
-                animMorphTarget.blendShapeProxy = null;
+                animMorphEasedTarget.blendShapeProxy = null;
                 GameObject.Destroy(loaded.gameObject);
             }
         }
@@ -228,7 +228,7 @@ namespace Baku.VMagicMirror
             });
 
             _inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
-            animMorphTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
+            animMorphEasedTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
         }
     }
 }

@@ -1,16 +1,14 @@
-﻿using AniLipSync.VRM;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(AnimMorphTarget))]
     public class LipSyncController : MonoBehaviour
     {
-        private AnimMorphTarget _animMorphTarget = null;
+        private AnimMorphEasedTarget _animMorphTarget = null;
 
         private void Start()
         {
-            _animMorphTarget = GetComponent<AnimMorphTarget>();
+            _animMorphTarget = GetComponent<AnimMorphEasedTarget>();
         }
 
         public void SetLipSyncEnable(bool isEnabled)

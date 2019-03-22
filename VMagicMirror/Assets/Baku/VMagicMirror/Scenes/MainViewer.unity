@@ -4773,7 +4773,8 @@ MonoBehaviour:
   leftHandTarget: {fileID: 1842530517}
   headTarget: {fileID: 1383182300}
   vroidHub: {fileID: 395034290}
-  animMorphTarget: {fileID: 1809547436}
+  animMorphTarget: {fileID: 0}
+  animMorphEasedTarget: {fileID: 1809547436}
 --- !u!114 &1787938568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4889,18 +4890,46 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2111463476}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1809547436 stripped
+--- !u!114 &1809547436
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
-    type: 3}
-  m_PrefabInstance: {fileID: 2111463476}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1809547435}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42d427f4cef3cff4fb8a6c52e2e90091, type: 3}
+  m_Script: {fileID: 11500000, guid: 8e9e4f80a19330e43ba0d5f22ea22ed5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  transitionCurves:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  cancelSpeedFactor: 15
+  weightThreashold: 2
+  blendShapeProxy: {fileID: 0}
+  smoothAmount: 100
 --- !u!114 &1809547437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5749,8 +5778,88 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
         type: 3}
+      propertyPath: transitionCurves.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
       propertyPath: frameRate
-      value: 24
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[0].m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[0].m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[0].m_Curve.Array.data[1].time
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[1].m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[1].m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[1].m_Curve.Array.data[1].time
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[2].m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[2].m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[2].m_Curve.Array.data[1].time
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[3].m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[3].m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[3].m_Curve.Array.data[1].time
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[4].m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[4].m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780,
+        type: 3}
+      propertyPath: transitionCurves.Array.data[4].m_Curve.Array.data[1].time
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4972947313584778, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
       propertyPath: m_RootOrder
@@ -5768,7 +5877,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114343669779808818, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7244be351a52e2641ac583ccf5c32780, type: 3}
 --- !u!1 &2141451816
 GameObject:

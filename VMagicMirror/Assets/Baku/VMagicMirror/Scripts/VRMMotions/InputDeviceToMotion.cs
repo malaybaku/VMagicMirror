@@ -113,6 +113,12 @@ namespace Baku.VMagicMirror
         private Vector3 _touchPadTargetPosition = Vector3.zero;
         private Transform _headTrackTargetWhenNotTouchTyping = null;
 
+        private void Start()
+        {
+            //nullを避けておく
+            _headTrackTargetWhenNotTouchTyping = rightHandTarget;
+        }
+
         private void Update()
         {
             if (_touchPadTargetEnabled)

@@ -25,10 +25,16 @@ namespace Baku.VMagicMirror
         LightingController lightingController = null;
 
         [SerializeField]
-        VRMPreviewLanguage previewLanguageSetter = null;
+        VRMPreviewLanguage previewLanguage = null;
+
+        [SerializeField]
+        VRoidHubLanguage vroidHubLanguage = null;
 
         [SerializeField]
         LipSyncController lipSyncController = null;
+
+        [SerializeField]
+        VRoidSDK.Example.VRoidHubController vroidHub = null;
 
         [SerializeField]
         Camera cam = null;
@@ -77,12 +83,17 @@ namespace Baku.VMagicMirror
                 {
                     metaDataCanvas.enabled = false;
                 }),
+                new MessageHandler(Messages.AccessToVRoidHub, c =>
+                {
+                    vroidHub.Open();
+                }),
 
                 #endregion
 
                 new MessageHandler(Messages.Language, c =>
                 {
-                    previewLanguageSetter.SetLanguage(c);
+                    previewLanguage.SetLanguage(c);
+                    vroidHubLanguage.SetLanguage(c);
                 }),
 
                 #region 背景色と光とウィンドウ周り
@@ -321,6 +332,8 @@ namespace Baku.VMagicMirror
             public static string EnableWaitMotion => nameof(EnableWaitMotion);
             public static string WaitMotionScale => nameof(WaitMotionScale);
             public static string WaitMotionPeriod => nameof(WaitMotionPeriod);
+
+            public static string AccessToVRoidHub => nameof(AccessToVRoidHub);
         }
 
         class MessageHandler

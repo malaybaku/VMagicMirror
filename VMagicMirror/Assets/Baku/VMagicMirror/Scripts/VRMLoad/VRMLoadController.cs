@@ -108,6 +108,9 @@ namespace Baku.VMagicMirror
         Transform headTarget;
 
         [SerializeField]
+        VRoidSDK.Example.VRoidHubController vroidHub = null;
+
+        [SerializeField]
         AniLipSync.VRM.AnimMorphTarget animMorphTarget;
 
         HumanPoseTransfer m_loaded;
@@ -115,15 +118,7 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             m_texts.Start();
-        }
-
-        private void Update()
-        {
-            //note: ここでやらんでWPFの指示でオンオフすべきでは
-            if (Input.GetKeyDown(KeyCode.Tab))
-            {
-                Root?.SetActive(!Root.activeSelf);
-            }
+            vroidHub.SetOnLoadHandler(OnVrmLoadedFromVRoidHub);
         }
 
         public void LoadModelOnlyForPreview(string path)
@@ -158,43 +153,32 @@ namespace Baku.VMagicMirror
             }
 
             Debug.LogFormat("{0}", path);
-            var ext = Path.GetExtension(path).ToLower();
-            switch (ext)
+            string ext = Path.GetExtension(path).ToLower();
+            if (ext != ".vrm")
             {
-                case ".vrm":
-                    {
-                        var context = new VRMImporterContext();
-                        var file = File.ReadAllBytes(path);
-                        context.ParseGlb(file);
-                        m_texts.UpdateMeta(context);
-                        context.Load();
-                        context.ShowMeshes();
-                        context.EnableUpdateWhenOffscreen();
-                        context.ShowMeshes();
-                        SetModel(context.Root);
-                        break;
-                    }
-
-                //case ".glb":
-                //    {
-                //        var context = new UniGLTF.ImporterContext();
-                //        var file = File.ReadAllBytes(path);
-                //        context.ParseGlb(file);
-                //        context.Load();
-                //        context.ShowMeshes();
-                //        context.EnableUpdateWhenOffscreen();
-                //        context.ShowMeshes();
-                //        SetModel(context.Root);
-                //        break;
-                //    }
-
-                default:
-                    Debug.LogWarningFormat("unknown file type: {0}", path);
-                    break;
+                Debug.LogWarning($"unknown file type: {path}");
+                return;
             }
+
+            var context = new VRMImporterContext();
+            var file = File.ReadAllBytes(path);
+            context.ParseGlb(file);
+            m_texts.UpdateMeta(context);
+
+            context.Load();
+            context.ShowMeshes();
+            context.EnableUpdateWhenOffscreen();
+            context.ShowMeshes();
+            SetModel(context.Root);
         }
 
-        void SetModel(GameObject go)
+        private void OnVrmLoadedFromVRoidHub(string modelId, GameObject vrmObject)
+        {
+            //TODO: Debug
+            SetModel(vrmObject);
+        }
+
+        private void ReleaseCurrentVrm()
         {
             // cleanup
             var loaded = m_loaded;
@@ -207,37 +191,44 @@ namespace Baku.VMagicMirror
                 animMorphTarget.blendShapeProxy = null;
                 GameObject.Destroy(loaded.gameObject);
             }
+        }
 
-            if (go != null)
+        void SetModel(GameObject go)
+        {
+            ReleaseCurrentVrm();
+
+            if (go == null)
             {
-                var lookAt = go.GetComponent<VRMLookAtHead>();
-                if (lookAt != null)
-                {
-                    m_loaded = go.AddComponent<HumanPoseTransfer>();
-                    m_loaded.Source = m_src;
-                    m_loaded.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.HumanPoseTransfer;
-                }
-
-                var animation = go.GetComponent<Animation>();
-                if (animation && animation.clip != null)
-                {
-                    animation.Play(animation.clip.name);
-                }
-
-                //セットアップの過程でFinalIKに少し触るので(規約クリアになるよう)ファイルを分離
-                VRMLoadControllerHelper.SetupVrm(go, new VRMLoadControllerHelper.VrmLoadSetting()
-                {
-                    runtimeAnimatorController = runtimeController,
-                    bodyTarget = bodyTarget,
-                    leftHandTarget = leftHandTarget,
-                    rightHandTarget = rightHandTarget,
-                    headTarget = headTarget,
-                    inputToMotion = _inputToMotion,
-                });
-
-                _inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
-                animMorphTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
+                return;
             }
+
+            var lookAt = go.GetComponent<VRMLookAtHead>();
+            if (lookAt != null)
+            {
+                m_loaded = go.AddComponent<HumanPoseTransfer>();
+                m_loaded.Source = m_src;
+                m_loaded.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.HumanPoseTransfer;
+            }
+
+            var animation = go.GetComponent<Animation>();
+            if (animation && animation.clip != null)
+            {
+                animation.Play(animation.clip.name);
+            }
+
+            //セットアップの過程でFinalIKに少し触るので(規約クリアになるよう)ファイルを分離
+            VRMLoadControllerHelper.SetupVrm(go, new VRMLoadControllerHelper.VrmLoadSetting()
+            {
+                runtimeAnimatorController = runtimeController,
+                bodyTarget = bodyTarget,
+                leftHandTarget = leftHandTarget,
+                rightHandTarget = rightHandTarget,
+                headTarget = headTarget,
+                inputToMotion = _inputToMotion,
+            });
+
+            _inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
+            animMorphTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
         }
     }
 }

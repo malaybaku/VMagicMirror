@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -8,18 +6,6 @@ namespace Baku.VMagicMirror
     {
         [SerializeField]
         InputDeviceToMotion _motion = null;
-
-        [SerializeField]
-        Text posX = null;
-
-        [SerializeField]
-        Text posY = null;
-
-        [SerializeField]
-        Text mouseButton = null;
-
-        [SerializeField]
-        Text keyCode = null;
 
         private const float TouchPadVerticalOffset = 0.05f;
 
@@ -32,21 +18,11 @@ namespace Baku.VMagicMirror
 
         public void ReceiveKeyPressed(string keyCodeName)
         {
-            if (keyCode!= null)
-            {
-                keyCode.text = keyCodeName;
-            }
-
             _motion?.PressKeyMotion(keyCodeName);
         }
 
         public void ReceiveMouseButton(string info)
         {
-            if (mouseButton != null)
-            {
-                mouseButton.text = info;
-            }
-
             if (info.Contains("Down"))
             {
                 _motion?.ClickMotion(info);
@@ -72,7 +48,7 @@ namespace Baku.VMagicMirror
         private void UpdateByXY(int x, int y)
         {
             _motion.UpdateMouseBasedHeadTarget(x, y);
-            UpdateMousePostionIndication(x, y);
+
             if (
                 mousePositionInitialized &&
                 (mousePositionX != x || mousePositionY != y)
@@ -84,19 +60,6 @@ namespace Baku.VMagicMirror
             mousePositionX = x;
             mousePositionY = y;
             mousePositionInitialized = true;
-        }
-
-
-        private void UpdateMousePostionIndication(int x, int y)
-        {
-            if (posX != null)
-            {
-                posX.text = x.ToString();
-            }
-            if (posY != null)
-            {
-                posY.text = y.ToString();
-            }
         }
 
         public void SetLengthFromWristToPalm(float v)

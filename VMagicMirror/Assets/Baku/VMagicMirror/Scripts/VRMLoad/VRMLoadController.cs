@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using TMPro;
 using UniHumanoid;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,33 +20,33 @@ namespace Baku.VMagicMirror
         struct TextFields
         {
             [SerializeField, Header("Info")]
-            Text m_textModelTitle;
+            TextMeshProUGUI m_textModelTitle;
             [SerializeField]
-            Text m_textModelVersion;
+            TextMeshProUGUI m_textModelVersion;
             [SerializeField]
-            Text m_textModelAuthor;
+            TextMeshProUGUI m_textModelAuthor;
             [SerializeField]
-            Text m_textModelContact;
+            TextMeshProUGUI m_textModelContact;
             [SerializeField]
-            Text m_textModelReference;
+            TextMeshProUGUI m_textModelReference;
             [SerializeField]
             RawImage m_thumbnail;
 
             [SerializeField, Header("CharacterPermission")]
-            Text m_textPermissionAllowed;
+            TextMeshProUGUI m_textPermissionAllowed;
             [SerializeField]
-            Text m_textPermissionViolent;
+            TextMeshProUGUI m_textPermissionViolent;
             [SerializeField]
-            Text m_textPermissionSexual;
+            TextMeshProUGUI m_textPermissionSexual;
             [SerializeField]
-            Text m_textPermissionCommercial;
+            TextMeshProUGUI m_textPermissionCommercial;
             [SerializeField]
-            Text m_textPermissionOther;
+            TextMeshProUGUI m_textPermissionOther;
 
             [SerializeField, Header("DistributionLicense")]
-            Text m_textDistributionLicense;
+            TextMeshProUGUI m_textDistributionLicense;
             [SerializeField]
-            Text m_textDistributionOther;
+            TextMeshProUGUI m_textDistributionOther;
 
             public void Start()
             {

@@ -59,8 +59,22 @@ Set the folder as following.
 
 * [UniVRM](https://dwango.github.io/vrm/)
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
+* [UniVRM](https://dwango.github.io/vrm/)
+* [UniRx](https://github.com/neuecc/UniRx)
+* [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
+* Text Mesh Pro
 
-### 4.3. Build
+Should be noted that FinalIK is paid asset, and you need to submit the application to get VRoid SDK.
+
+### 4.3. Apply Noto font
+
+develop branch uses Noto font for the TextMeshPro, so you need the asset but it is very large so the file is not included in the repository.
+
+Please output the font asset file from `Assets/Fonts/NotoSansJP-Regular.otf`.
+
+You will see the way to create asset by google with two words, "TextMeshPro" and "Font Asset Creator".
+
+### 4.4. Build
 
 * Unity: Specify `Bin` folder for the output.
 * WPF build creates exe on `Bin` folder in `ConfigApp` (create if it does not exist).

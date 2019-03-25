@@ -187,6 +187,8 @@ namespace Baku.VMagicMirror
 
             if (loaded != null)
             {
+                _inputToMotion.fingerAnimator = null;
+                _inputToMotion.vrmRoot = null;
                 Debug.LogFormat("destroy {0}", loaded);
                 //多分コレやらないとAniLipSyncが破棄済みオブジェクトを触りに行ってしまうので。
                 animMorphEasedTarget.blendShapeProxy = null;
@@ -229,7 +231,9 @@ namespace Baku.VMagicMirror
             });
 
             _inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
+            _inputToMotion.vrmRoot = go.transform;
             animMorphEasedTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
+
         }
     }
 }

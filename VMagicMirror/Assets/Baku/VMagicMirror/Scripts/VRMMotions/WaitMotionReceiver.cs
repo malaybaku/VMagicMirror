@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
     public class WaitMotionReceiver : MonoBehaviour
     {
         [SerializeField]
-        BodyTargetMove bodyTargetMove = null;
+        private ReceivedMessageHandler handler = null;
+
+        [SerializeField]
+        private BodyTargetMove bodyTargetMove = null;
 
         private Vector3 _defaultSize;
         private float _scale;
@@ -14,6 +18,24 @@ namespace Baku.VMagicMirror
         {
             _scale = 1.0f;
             _defaultSize = bodyTargetMove.motionSize;
+
+            handler.Messages.Subscribe(message =>
+            {
+                switch (message.Command)
+                {
+                    case MessageCommandNames.EnableWaitMotion:
+                        EnableWaitMotion(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.WaitMotionScale:
+                        SetWaitMotionScale(message.ParseAsPercentage());
+                        break;
+                    case MessageCommandNames.WaitMotionPeriod:
+                        SetWaitMotionDuration(message.ToInt());
+                        break;
+                    default:
+                        break;
+                }
+            });
         }
 
         public void EnableWaitMotion(bool isEnabled)

@@ -1,27 +1,30 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
     public class VRoidHubLanguage : MonoBehaviour
     {
-        [Serializable]
-        struct CaptionItem
-        {
-            public Text text;
-            public string japanese;
-            public string english;
-        }
+        [SerializeField]
+        private ReceivedMessageHandler handler = null;
 
         [SerializeField]
-        CaptionItem[] translations;
+        private CaptionItem[] translations = null;
 
         public string LanguageName { get; private set; } = "";
 
         private void Start()
         {
             SetLanguage("Japanese");
+            handler.Messages.Subscribe(message =>
+            {
+                if (message.Command == MessageCommandNames.Language)
+                {
+                    SetLanguage(message.Content);
+                }
+            });
         }
 
         public void SetLanguage(string languageName)
@@ -52,6 +55,14 @@ namespace Baku.VMagicMirror
 
             //}
         }
-    }
 
+
+        [Serializable]
+        struct CaptionItem
+        {
+            public Text text;
+            public string japanese;
+            public string english;
+        }
+    }
 }

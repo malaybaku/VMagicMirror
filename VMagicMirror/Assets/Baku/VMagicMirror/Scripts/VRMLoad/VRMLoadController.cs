@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
-using TMPro;
-using UniHumanoid;
 using UnityEngine;
-using UnityEngine.UI;
+using UniRx;
+using UniHumanoid;
 using VRM;
 
 namespace Baku.VMagicMirror
@@ -11,151 +10,79 @@ namespace Baku.VMagicMirror
     public class VRMLoadController : MonoBehaviour
     {
         [SerializeField]
-        HumanPoseTransfer m_src;
+        private ReceivedMessageHandler handler = null;
 
         [SerializeField]
-        GameObject Root;
+        private VRMInformation vrmInformation = null;
 
-        [Serializable]
-        struct TextFields
-        {
-            [SerializeField, Header("Info")]
-            TextMeshProUGUI m_textModelTitle;
-            [SerializeField]
-            TextMeshProUGUI m_textModelVersion;
-            [SerializeField]
-            TextMeshProUGUI m_textModelAuthor;
-            [SerializeField]
-            TextMeshProUGUI m_textModelContact;
-            [SerializeField]
-            TextMeshProUGUI m_textModelReference;
-            [SerializeField]
-            RawImage m_thumbnail;
-
-            [SerializeField, Header("CharacterPermission")]
-            TextMeshProUGUI m_textPermissionAllowed;
-            [SerializeField]
-            TextMeshProUGUI m_textPermissionViolent;
-            [SerializeField]
-            TextMeshProUGUI m_textPermissionSexual;
-            [SerializeField]
-            TextMeshProUGUI m_textPermissionCommercial;
-            [SerializeField]
-            TextMeshProUGUI m_textPermissionOther;
-
-            [SerializeField, Header("DistributionLicense")]
-            TextMeshProUGUI m_textDistributionLicense;
-            [SerializeField]
-            TextMeshProUGUI m_textDistributionOther;
-
-            public void Start()
-            {
-                m_textModelTitle.text = "";
-                m_textModelVersion.text = "";
-                m_textModelAuthor.text = "";
-                m_textModelContact.text = "";
-                m_textModelReference.text = "";
-
-                m_textPermissionAllowed.text = "";
-                m_textPermissionViolent.text = "";
-                m_textPermissionSexual.text = "";
-                m_textPermissionCommercial.text = "";
-                m_textPermissionOther.text = "";
-
-                m_textDistributionLicense.text = "";
-                m_textDistributionOther.text = "";
-            }
-
-            public void UpdateMeta(VRMImporterContext context)
-            {
-                var meta = context.ReadMeta(true);
-
-                m_textModelTitle.text = meta.Title;
-                m_textModelVersion.text = meta.Version;
-                m_textModelAuthor.text = meta.Author;
-                m_textModelContact.text = meta.ContactInformation;
-                m_textModelReference.text = meta.Reference;
-
-                m_textPermissionAllowed.text = meta.AllowedUser.ToString();
-                m_textPermissionViolent.text = meta.ViolentUssage.ToString();
-                m_textPermissionSexual.text = meta.SexualUssage.ToString();
-                m_textPermissionCommercial.text = meta.CommercialUssage.ToString();
-                m_textPermissionOther.text = meta.OtherPermissionUrl;
-
-                m_textDistributionLicense.text = meta.LicenseType.ToString();
-                m_textDistributionOther.text = meta.OtherLicenseUrl;
-
-                m_thumbnail.texture = meta.Thumbnail;
-            }
-        }
+        //TODO: この辺はちょっと分けたい気がしないでもない
+        [SerializeField]
+        private VrmLoadSetting loadSetting;
 
         [SerializeField]
-        TextFields m_texts;
+        private AnimMorphEasedTarget animMorphEasedTarget = null;
 
         [SerializeField]
-        InputDeviceToMotion _inputToMotion;
+        private VRoidSDK.Example.VRoidHubController vroidHub = null;
 
-        //TODO: この辺はちょっと分けたい気がしないでもないが。
-        [SerializeField]
-        RuntimeAnimatorController runtimeController;
-
-        [SerializeField]
-        Transform bodyTarget;
-        [SerializeField]
-        Transform rightHandTarget;
-        [SerializeField]
-        Transform leftHandTarget;
-        [SerializeField]
-        Transform headTarget;
-
-        [SerializeField]
-        VRoidSDK.Example.VRoidHubController vroidHub = null;
-
-        [SerializeField]
-        AnimMorphEasedTarget animMorphEasedTarget;
-
-        HumanPoseTransfer m_loaded;
+        private HumanPoseTransfer m_loaded = null;
 
         private void Start()
         {
-            m_texts.Start();
             vroidHub.SetOnLoadHandler(OnVrmLoadedFromVRoidHub);
+
+            handler.Messages.Subscribe(message =>
+            {
+                switch (message.Command)
+                {
+                    case MessageCommandNames.OpenVrmPreview:
+                        LoadModelForPreview(message.Content);
+                        break;
+                    case MessageCommandNames.OpenVrm:
+                        vrmInformation.Hide();
+                        LoadModel(message.Content);
+                        break;
+                    case MessageCommandNames.CancelLoadVrm:
+                        vrmInformation.Hide();
+                        break;
+                    case MessageCommandNames.AccessToVRoidHub:
+                        vroidHub.Open();
+                        break;
+                    default:
+                        break;
+                }
+            });
         }
 
-        public void LoadModelOnlyForPreview(string path)
+        private void LoadModelForPreview(string path)
         {
             if (!File.Exists(path))
             {
                 return;
             }
 
-            Debug.LogFormat("{0}", path);
-            var ext = Path.GetExtension(path).ToLower();
-            switch (ext)
+            if (Path.GetExtension(path).ToLower() == ".vrm")
             {
-                case ".vrm":
-                    using (var context = new VRMImporterContext())
-                    {
-                        context.ParseGlb(File.ReadAllBytes(path));
-                        m_texts.UpdateMeta(context);
-                    }
-                    break;
-                default:
-                    Debug.LogWarningFormat("unknown file type: {0}", path);
-                    break;
+                using (var context = new VRMImporterContext())
+                {
+                    context.ParseGlb(File.ReadAllBytes(path));
+                    vrmInformation.ShowMetaData(context);
+                }
+            }
+            else
+            {
+                Debug.LogWarningFormat("unknown file type: {0}", path);
             }
         }
 
-        public void LoadModel(string path)
+        private void LoadModel(string path)
         {
             if (!File.Exists(path))
             {
                 return;
             }
 
-            Debug.LogFormat("{0}", path);
-            string ext = Path.GetExtension(path).ToLower();
-            if (ext != ".vrm")
+            if (Path.GetExtension(path).ToLower() != ".vrm")
             {
                 Debug.LogWarning($"unknown file type: {path}");
                 return;
@@ -164,7 +91,6 @@ namespace Baku.VMagicMirror
             var context = new VRMImporterContext();
             var file = File.ReadAllBytes(path);
             context.ParseGlb(file);
-            m_texts.UpdateMeta(context);
 
             context.Load();
             context.ShowMeshes();
@@ -187,16 +113,16 @@ namespace Baku.VMagicMirror
 
             if (loaded != null)
             {
-                _inputToMotion.fingerAnimator = null;
-                _inputToMotion.vrmRoot = null;
-                Debug.LogFormat("destroy {0}", loaded);
-                //多分コレやらないとAniLipSyncが破棄済みオブジェクトを触りに行ってしまうので。
+                //破棄済みオブジェクトに触らせないためにnullize
+                loadSetting.inputToMotion.fingerAnimator = null;
+                loadSetting.inputToMotion.vrmRoot = null;
                 animMorphEasedTarget.blendShapeProxy = null;
-                GameObject.Destroy(loaded.gameObject);
+
+                Destroy(loaded.gameObject);
             }
         }
 
-        void SetModel(GameObject go)
+        private void SetModel(GameObject go)
         {
             ReleaseCurrentVrm();
 
@@ -209,31 +135,26 @@ namespace Baku.VMagicMirror
             if (lookAt != null)
             {
                 m_loaded = go.AddComponent<HumanPoseTransfer>();
-                m_loaded.Source = m_src;
-                m_loaded.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.HumanPoseTransfer;
+                m_loaded.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
             }
 
-            var animation = go.GetComponent<Animation>();
-            if (animation && animation.clip != null)
-            {
-                animation.Play(animation.clip.name);
-            }
+            //セットアップの過程でFinalIKに触るため、(有償アセットなので取り外しの事も考えつつ)ファイル分離
+            VRMLoadControllerHelper.SetupVrm(go, loadSetting);
 
-            //セットアップの過程でFinalIKに少し触るので(規約クリアになるよう)ファイルを分離
-            VRMLoadControllerHelper.SetupVrm(go, new VRMLoadControllerHelper.VrmLoadSetting()
-            {
-                runtimeAnimatorController = runtimeController,
-                bodyTarget = bodyTarget,
-                leftHandTarget = leftHandTarget,
-                rightHandTarget = rightHandTarget,
-                headTarget = headTarget,
-                inputToMotion = _inputToMotion,
-            });
-
-            _inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
-            _inputToMotion.vrmRoot = go.transform;
+            loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
+            loadSetting.inputToMotion.vrmRoot = go.transform;
             animMorphEasedTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
-
         }
+
+        [Serializable]
+        public struct VrmLoadSetting
+        {
+            public Transform bodyTarget;
+            public Transform leftHandTarget;
+            public Transform rightHandTarget;
+            public Transform headTarget;
+            public InputDeviceToMotion inputToMotion;
+        }
+
     }
 }

@@ -1,11 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using UniRx;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
     public class InputDeviceReceiver : MonoBehaviour
     {
         [SerializeField]
-        InputDeviceToMotion _motion = null;
+        InputDeviceToMotion motion = null;
+
+        [SerializeField]
+        StatefulXinputGamePad gamePad = null;
 
         private const float TouchPadVerticalOffset = 0.05f;
 
@@ -13,19 +18,58 @@ namespace Baku.VMagicMirror
         private int mousePositionX = 0;
         private int mousePositionY = 0;
 
-        private Transform _keyboardRoot => _motion.keyboard.transform;
-        private Transform _touchPadRoot => _motion.touchPad.transform.parent;
+        private Transform _keyboardRoot => motion.keyboard.transform;
+        private Transform _touchPadRoot => motion.touchPad.transform.parent;
 
         public void ReceiveKeyPressed(string keyCodeName)
         {
-            _motion?.PressKeyMotion(keyCodeName);
+            motion?.PressKeyMotion(keyCodeName);
         }
 
         public void ReceiveMouseButton(string info)
         {
             if (info.Contains("Down"))
             {
-                _motion?.ClickMotion(info);
+                motion?.ClickMotion(info);
+            }
+        }
+
+        public void ReceiveMouseMove(int x, int y)
+        {
+            //WPFからマウスイベントをとる場合はこちらを使うが、今は無視
+            //UpdateByXY(x, y);
+        }
+
+        private void Start()
+        {
+            gamePad.ButtonUpDown.Subscribe(data =>
+            {
+                if (data.IsPressed)
+                {
+                    motion.GamepadButtonDown(data.Key);
+                }
+                else
+                {
+                    motion.GamepadButtonUp(data.Key);
+                }
+            });
+
+            gamePad.LeftStickPosition.Subscribe(pos =>
+            {
+                //Debug.Log($"LStick: {pos.x}, {pos.y}");
+                motion.GamepadLeftStick(FromShortVector2Int(pos));
+            });
+
+            gamePad.RightStickPosition.Subscribe(pos =>
+            {
+                //Debug.Log($"RStick: {pos.x}, {pos.y}");
+                motion.GamepadRightStick(FromShortVector2Int(pos));
+            });
+
+            Vector2 FromShortVector2Int(Vector2Int v)
+            {
+                const float Factor = 1.0f / 32768.0f;
+                return new Vector2(v.x * Factor, v.y * Factor);
             }
         }
 
@@ -39,22 +83,16 @@ namespace Baku.VMagicMirror
             UpdateByXY((int)pos.x, (int)pos.y);
         }
 
-        public void ReceiveMouseMove(int x, int y)
-        {
-            //WPFからマウスイベントをとる場合はこちらを使うが、今は無視
-            //UpdateByXY(x, y);
-        }
-
         private void UpdateByXY(int x, int y)
         {
-            _motion.UpdateMouseBasedHeadTarget(x, y);
+            motion.UpdateMouseBasedHeadTarget(x, y);
 
             if (
                 mousePositionInitialized &&
                 (mousePositionX != x || mousePositionY != y)
                 )
             {
-                _motion.GrabMouseMotion(x, y);
+                motion.GrabMouseMotion(x, y);
             }
 
             mousePositionX = x;
@@ -64,17 +102,17 @@ namespace Baku.VMagicMirror
 
         public void SetLengthFromWristToPalm(float v)
         {
-            _motion.handToPalmLength = v;
+            motion.handToPalmLength = v;
         }
 
         public void SetLengthFromWristToTip(float v)
         {
-            _motion.handToTipLength = v;
+            motion.handToTipLength = v;
         }
 
         public void EnableTouchTypingHeadMotion(bool v)
         {
-            _motion.enableTouchTypingHeadMotion = v;
+            motion.enableTouchTypingHeadMotion = v;
         }
 
         public void SetHidHeight(float v)
@@ -94,18 +132,18 @@ namespace Baku.VMagicMirror
 
         public void SetHidVisibility(bool v)
         {
-            _motion.keyboard.gameObject.SetActive(v);
-            _motion.touchPad.gameObject.SetActive(v);
+            motion.keyboard.gameObject.SetActive(v);
+            motion.touchPad.gameObject.SetActive(v);
         }
 
         public void SetHandYOffsetBasic(float yoffset)
         {
-            _motion.yOffsetAlways = yoffset;
+            motion.yOffsetAlways = yoffset;
         }
 
         public void SetHandYOffsetAfterKeyDown(float yoffset)
         {
-            _motion.yOffsetAfterKeyDown = yoffset;
+            motion.yOffsetAfterKeyDown = yoffset;
         }
     }
 }

@@ -1,13 +1,37 @@
 ﻿using System;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
     public class VRMPreviewLanguage : MonoBehaviour
     {
+        [SerializeField]
+        private ReceivedMessageHandler handler = null;
+
+        [SerializeField]
+        private Texts texts;
+
         public string Language { get; private set; } = "Japanese";
+
+        private void Start()
+        {
+            texts.SetLanguage("Japanese");
+            handler.Messages.Subscribe(message =>
+            {
+                if (message.Command == MessageCommandNames.Language)
+                {
+                    SetLanguage(message.Content);
+                }
+            });
+        }
+
+        private void SetLanguage(string languageName)
+        {
+            Language = languageName;
+            texts.SetLanguage(languageName);
+        }
 
         [Serializable]
         struct Texts
@@ -102,18 +126,5 @@ namespace Baku.VMagicMirror
             }
         }
 
-        [SerializeField]
-        private Texts texts;
-
-        private void Start()
-        {
-            texts.SetLanguage("Japanese");
-        }
-
-        public void SetLanguage(string languageName)
-        {
-            Language = languageName;
-            texts.SetLanguage(languageName);
-        }
     }
 }

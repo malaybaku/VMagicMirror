@@ -492,7 +492,7 @@ GameObject:
   - component: {fileID: 69629079}
   - component: {fileID: 69629078}
   m_Layer: 5
-  m_Name: Sexcual Acts Label
+  m_Name: Sexual Acts Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1001,6 +1001,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainLight: {fileID: 2141451817}
   postProcess: {fileID: 749678942}
+  handler: {fileID: 1930233619}
 --- !u!1 &151413879
 GameObject:
   m_ObjectHideFlags: 0
@@ -2064,96 +2065,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 525847740}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &586745219
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 586745220}
-  - component: {fileID: 586745223}
-  - component: {fileID: 586745222}
-  - component: {fileID: 586745221}
-  m_Layer: 0
-  m_Name: TouchPad_BG
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &586745220
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 586745219}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0.501}
-  m_LocalScale: {x: 0.3, y: 0.29999998, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1960418845}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!114 &586745221
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 586745219}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a9f0f1f180ccd042b4da57caba696d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!23 &586745222
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 586745219}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: c1ee7b603ee51e544abca224497593a8, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!33 &586745223
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 586745219}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &613384584
 GameObject:
   m_ObjectHideFlags: 0
@@ -3143,18 +3054,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4dd277bd9572488489906165e0931952, type: 3}
---- !u!114 &827053228 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 827053228, guid: cd085e5cc0c5d2c43af1166ccdb03bc4,
-    type: 3}
-  m_PrefabInstance: {fileID: 2211795903659376970}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 869aa9d9cbc982b4b90b45acb99bcbef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &863131289
 GameObject:
   m_ObjectHideFlags: 0
@@ -3400,7 +3299,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 953451440}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.014593661, y: 0.5527735, z: 0.4250964}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -6569,12 +6468,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1629460662}
   - component: {fileID: 1629460661}
-  - component: {fileID: 1629460660}
   - component: {fileID: 1629460659}
   - component: {fileID: 1629460658}
+  - component: {fileID: 1629460664}
   - component: {fileID: 1629460657}
   - component: {fileID: 1629460663}
-  - component: {fileID: 1629460664}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -6594,6 +6492,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fac3e0a69c22e347ab8a8e7135c3cae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handler: {fileID: 1930233619}
 --- !u!81 &1629460658
 AudioListener:
   m_ObjectHideFlags: 0
@@ -6603,14 +6502,6 @@ AudioListener:
   m_GameObject: {fileID: 1629460656}
   m_Enabled: 1
 --- !u!124 &1629460659
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1629460656}
-  m_Enabled: 1
---- !u!92 &1629460660
 Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6683,9 +6574,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1629460656}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a58982b20edacfe43a536b00e16a82fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 402a480edc7368e4fab24434a0d83e5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handler: {fileID: 1930233619}
 --- !u!114 &1629460664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6999,6 +6891,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 753f8742c2b70034198d642c5a95cf9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handler: {fileID: 1930233619}
   bodyTargetMove: {fileID: 1411716778}
 --- !u!1 &1687041055
 GameObject:
@@ -7851,6 +7744,7 @@ GameObject:
   - component: {fileID: 1787938563}
   - component: {fileID: 1787938567}
   - component: {fileID: 1787938568}
+  - component: {fileID: 1787938569}
   m_Layer: 5
   m_Name: LoadConfirmPanel
   m_TagString: Untagged
@@ -7950,30 +7844,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91cd6285b69da1e46a0a90d72eab7fc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_src: {fileID: 0}
-  Root: {fileID: 124675793}
-  m_texts:
-    m_textModelTitle: {fileID: 1000406466}
-    m_textModelVersion: {fileID: 2077533771}
-    m_textModelAuthor: {fileID: 40083893}
-    m_textModelContact: {fileID: 1453908565}
-    m_textModelReference: {fileID: 682044686}
-    m_thumbnail: {fileID: 800895694}
-    m_textPermissionAllowed: {fileID: 1235030995}
-    m_textPermissionViolent: {fileID: 1814003135}
-    m_textPermissionSexual: {fileID: 1408621663}
-    m_textPermissionCommercial: {fileID: 1455503033}
-    m_textPermissionOther: {fileID: 1282481919}
-    m_textDistributionLicense: {fileID: 1730396264}
-    m_textDistributionOther: {fileID: 1656672324}
-  _inputToMotion: {fileID: 1855229416}
-  runtimeController: {fileID: 0}
-  bodyTarget: {fileID: 1411716777}
-  rightHandTarget: {fileID: 500754461}
-  leftHandTarget: {fileID: 1842530517}
-  headTarget: {fileID: 1383182300}
-  vroidHub: {fileID: 395034290}
+  handler: {fileID: 1930233619}
+  vrmInformation: {fileID: 1787938569}
+  loadSetting:
+    bodyTarget: {fileID: 1411716777}
+    leftHandTarget: {fileID: 1842530517}
+    rightHandTarget: {fileID: 500754461}
+    headTarget: {fileID: 1383182300}
+    inputToMotion: {fileID: 1855229416}
   animMorphEasedTarget: {fileID: 1809547436}
+  vroidHub: {fileID: 395034290}
 --- !u!114 &1787938568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7986,6 +7866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecb0aa76b5723c9458763830ad977505, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handler: {fileID: 1930233619}
   texts:
     textInfoHeader: {fileID: 378238432}
     m_textModelTitle: {fileID: 349820098}
@@ -8004,6 +7885,32 @@ MonoBehaviour:
     textDistributionHeader: {fileID: 988042960}
     m_textDistributionLicense: {fileID: 695867513}
     m_textDistributionOther: {fileID: 1506851796}
+--- !u!114 &1787938569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1787938562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 778d2a3bfa59f3c4c9d8fe3deab2720d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 1787938565}
+  textModelTitle: {fileID: 1000406466}
+  textModelVersion: {fileID: 2077533771}
+  textModelAuthor: {fileID: 40083893}
+  textModelContact: {fileID: 1453908565}
+  textModelReference: {fileID: 682044686}
+  thumbnail: {fileID: 800895694}
+  textPermissionAllowed: {fileID: 1235030995}
+  textPermissionViolent: {fileID: 1814003135}
+  textPermissionSexual: {fileID: 1408621663}
+  textPermissionCommercial: {fileID: 1455503033}
+  textPermissionOther: {fileID: 1282481919}
+  textDistributionLicense: {fileID: 1730396264}
+  textDistributionOther: {fileID: 1656672324}
 --- !u!1 &1798368041
 GameObject:
   m_ObjectHideFlags: 0
@@ -8171,6 +8078,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22e0a61ea7cc8df41828ba8c224381ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handler: {fileID: 1930233619}
 --- !u!1 &1814003133
 GameObject:
   m_ObjectHideFlags: 0
@@ -8534,6 +8442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1855229418}
   - component: {fileID: 1855229417}
+  - component: {fileID: 1855229419}
   - component: {fileID: 1855229416}
   m_Layer: 0
   m_Name: HIDProcess
@@ -8712,6 +8621,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 108caba7e03ac1d4db601ea3f4939917, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handler: {fileID: 1930233619}
   motion: {fileID: 1855229416}
   gamePad: {fileID: 953451441}
 --- !u!4 &1855229418
@@ -8728,6 +8638,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1855229419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1855229415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c43672cf46e1954cb280461a69ea74f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handler: {fileID: 1930233619}
+  keyboard: {fileID: 1169325487}
+  touchpad: {fileID: 2059529786}
+  gamepad: {fileID: 1798368043}
 --- !u!1 &1930233616
 GameObject:
   m_ObjectHideFlags: 0
@@ -8788,17 +8714,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5adbbf360a341c49822f4b41ea84c7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadController: {fileID: 1787938567}
-  bgController: {fileID: 1629460663}
-  inputDeviceReceiver: {fileID: 1855229417}
-  waitMotionReceiver: {fileID: 1674567172}
-  metaDataCanvas: {fileID: 1787938565}
-  lightingController: {fileID: 148983028}
-  previewLanguage: {fileID: 1787938568}
-  vroidHubLanguage: {fileID: 827053228}
-  lipSyncController: {fileID: 1809547437}
-  vroidHub: {fileID: 395034290}
-  cam: {fileID: 1629460661}
 --- !u!1 &1943931264
 GameObject:
   m_ObjectHideFlags: 0
@@ -8870,7 +8785,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2059529785}
-  - {fileID: 586745220}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 50, z: 0}
@@ -9821,6 +9735,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 827053228, guid: cd085e5cc0c5d2c43af1166ccdb03bc4, type: 3}
+      propertyPath: handler
+      value: 
+      objectReference: {fileID: 1930233619}
     - target: {fileID: 2138298970008185403, guid: cd085e5cc0c5d2c43af1166ccdb03bc4,
         type: 3}
       propertyPath: m_LocalPosition.x

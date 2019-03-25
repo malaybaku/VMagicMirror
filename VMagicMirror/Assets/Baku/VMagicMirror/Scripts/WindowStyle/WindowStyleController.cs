@@ -1,5 +1,5 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -7,6 +7,9 @@ namespace Baku.VMagicMirror
 
     public class WindowStyleController : MonoBehaviour
     {
+        [SerializeField]
+        private ReceivedMessageHandler handler = null;
+
         private uint defaultWindowStyle;
         private uint defaultExWindowStyle;
 
@@ -19,12 +22,43 @@ namespace Baku.VMagicMirror
 
         private void Awake()
         {
+#if !UNITY_EDITOR
             defaultWindowStyle = GetWindowLong(GetUnityWindowHandle(), GWL_STYLE);
             defaultExWindowStyle = GetWindowLong(GetUnityWindowHandle(), GWL_EXSTYLE);
+#endif
+        }
 
-            _isTransparent = false;
-            _isWindowFrameHidden = false;
-            _windowDraggableWhenFrameHidden = true;
+        private void Start()
+        {
+            handler.Messages.Subscribe(message =>
+            {
+                switch (message.Command)
+                {
+                    case MessageCommandNames.Chromakey:
+                        var argb = message.ToColorFloats();
+                        SetWindowTransparency(argb[0] == 0);
+                        break;
+                    case MessageCommandNames.WindowFrameVisibility:
+                        SetWindowFrameVisibility(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.IgnoreMouse:
+                        SetIgnoreMouseInput(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.TopMost:
+                        SetTopMost(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.WindowDraggable:
+                        SetWindowDraggable(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.MoveWindow:
+                        int[] xy = message.ToIntArray();
+                        MoveWindow(xy[0], xy[1]);
+                        break;
+                    default:
+                        break;
+                }
+
+            });
         }
 
         private void Update()
@@ -59,14 +93,14 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void MoveWindow(int x, int y)
+        private void MoveWindow(int x, int y)
         {
 #if !UNITY_EDITOR
             SetUnityWindowPosition(x, y);
 #endif
         }
 
-        public void SetWindowFrameVisibility(bool isVisible)
+        private void SetWindowFrameVisibility(bool isVisible)
         {
             _isWindowFrameHidden = !isVisible;
 
@@ -80,16 +114,15 @@ namespace Baku.VMagicMirror
 #endif
         }
 
-        public void SetWindowTransparency(bool isTransparent)
+        private void SetWindowTransparency(bool isTransparent)
         {
             _isTransparent = isTransparent;
-            Debug.Log($"{nameof(SetWindowTransparency)}:{isTransparent}");
 #if !UNITY_EDITOR
             SetDwmTransparent(isTransparent);
 #endif
         }
 
-        public void SetIgnoreMouseInput(bool ignoreMouseInput)
+        private void SetIgnoreMouseInput(bool ignoreMouseInput)
         {
             var hwnd = GetUnityWindowHandle();
             uint exWindowStyle = ignoreMouseInput ?
@@ -101,14 +134,14 @@ namespace Baku.VMagicMirror
 #endif
         }
 
-        public void SetTopMost(bool isTopMost)
+        private void SetTopMost(bool isTopMost)
         {
 #if !UNITY_EDITOR
         SetUnityWindowTopMost(isTopMost);
 #endif
         }
 
-        public void SetWindowDraggable(bool isDraggable)
+        private void SetWindowDraggable(bool isDraggable)
         {
             if (!isDraggable)
             {

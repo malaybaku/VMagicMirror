@@ -22,6 +22,25 @@ namespace Baku.VMagicMirror
         /// </summary>
         public IObservable<Vector2Int> LeftStickPosition => _leftStick;
 
+        /// <summary>
+        /// 矢印キーの押下状態からスティック位置に相当する情報を作成し、取得する。
+        /// </summary>
+        public Vector2Int ArrowButtonsStickPosition
+        {          
+            get
+            {
+                if (!_hasValidArrowButtons)
+                {
+                    return Vector2Int.zero;
+                }
+
+                return new Vector2Int(
+                    (_arrowRight.IsPressed ? 32767 : 0) - (_arrowLeft.IsPressed ? 32768 : 0),
+                    (_arrowUp.IsPressed ? 32767 : 0) - (_arrowDown.IsPressed ? 32768 : 0)
+                    );
+            }
+        }
+
         private readonly HashSet<ObservableButton> _buttons = new HashSet<ObservableButton>();
         private readonly Subject<XinputKeyData> _buttonSubject = new Subject<XinputKeyData>();
 
@@ -31,16 +50,29 @@ namespace Baku.VMagicMirror
         private Vector2Int _rightStickPosition = Vector2Int.zero;
         private Vector2Int _leftStickPosition = Vector2Int.zero;
 
+        private bool _hasValidArrowButtons = false;
+        private ObservableButton _arrowRight;
+        private ObservableButton _arrowDown;
+        private ObservableButton _arrowLeft;
+        private ObservableButton _arrowUp;
+
         private void Start()
         {
             _buttons.Add(new ObservableButton(XinputKey.B, InputConst.XINPUT_GAMEPAD_B, _buttonSubject));
             _buttons.Add(new ObservableButton(XinputKey.A, InputConst.XINPUT_GAMEPAD_A, _buttonSubject));
             _buttons.Add(new ObservableButton(XinputKey.X, InputConst.XINPUT_GAMEPAD_X, _buttonSubject));
             _buttons.Add(new ObservableButton(XinputKey.Y, InputConst.XINPUT_GAMEPAD_Y, _buttonSubject));
-            _buttons.Add(new ObservableButton(XinputKey.RIGHT, InputConst.XINPUT_GAMEPAD_DPAD_RIGHT, _buttonSubject));
-            _buttons.Add(new ObservableButton(XinputKey.DOWN, InputConst.XINPUT_GAMEPAD_DPAD_DOWN, _buttonSubject));
-            _buttons.Add(new ObservableButton(XinputKey.LEFT, InputConst.XINPUT_GAMEPAD_DPAD_LEFT, _buttonSubject));
-            _buttons.Add(new ObservableButton(XinputKey.UP, InputConst.XINPUT_GAMEPAD_DPAD_UP, _buttonSubject));
+
+            _arrowRight = new ObservableButton(XinputKey.RIGHT, InputConst.XINPUT_GAMEPAD_DPAD_RIGHT, _buttonSubject);
+            _arrowDown = new ObservableButton(XinputKey.DOWN, InputConst.XINPUT_GAMEPAD_DPAD_DOWN, _buttonSubject);
+            _arrowLeft = new ObservableButton(XinputKey.LEFT, InputConst.XINPUT_GAMEPAD_DPAD_LEFT, _buttonSubject);
+            _arrowUp = new ObservableButton(XinputKey.UP, InputConst.XINPUT_GAMEPAD_DPAD_UP, _buttonSubject);
+
+            _buttons.Add(_arrowRight);
+            _buttons.Add(_arrowDown);
+            _buttons.Add(_arrowLeft);
+            _buttons.Add(_arrowUp);
+            _hasValidArrowButtons = true;
         }
 
         private void Update()
@@ -56,7 +88,7 @@ namespace Baku.VMagicMirror
             UpdateLeftStick();
         }
 
-        public void Reset()
+        public void ResetControllerState()
         {
             foreach (var button in _buttons)
             {
@@ -66,7 +98,7 @@ namespace Baku.VMagicMirror
             _leftStickPosition = Vector2Int.zero;
         }
 
-        public XinputTriger GetTriger() => new XinputTriger
+        public XinputTriger GetTrigger() => new XinputTriger
         {
             Right = DllConst.GetRightTrigger(DeviceNumber),
             Left = DllConst.GetLeftTrigger(DeviceNumber)

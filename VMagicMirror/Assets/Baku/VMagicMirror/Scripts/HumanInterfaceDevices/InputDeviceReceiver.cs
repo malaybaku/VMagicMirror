@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UniRx;
+using System;
 
 namespace Baku.VMagicMirror
 {
@@ -18,6 +19,10 @@ namespace Baku.VMagicMirror
         private int mousePositionX = 0;
         private int mousePositionY = 0;
 
+        private GamepadLeanModes _leanMode = GamepadLeanModes.GamepadLeanLeftStick;
+        private bool _reverseGamepadStickLeanHorizontal = false;
+        private bool _reverseGamepadStickLeanVertical = false;
+
         private void Start()
         {
             SubscribeMessageHandler();
@@ -32,39 +37,6 @@ namespace Baku.VMagicMirror
             // - キーボード: NG, グローバルフック必須
             var pos = Input.mousePosition;
             UpdateByXY((int)pos.x, (int)pos.y);
-        }
-
-        private void SubscribeGamepad()
-        {
-            gamePad.ButtonUpDown.Subscribe(data =>
-            {
-                if (data.IsPressed)
-                {
-                    motion.GamepadButtonDown(data.Key);
-                }
-                else
-                {
-                    motion.GamepadButtonUp(data.Key);
-                }
-            });
-
-            gamePad.LeftStickPosition.Subscribe(pos =>
-            {
-                //Debug.Log($"LStick: {pos.x}, {pos.y}");
-                motion.GamepadLeftStick(FromShortVector2Int(pos));
-            });
-
-            gamePad.RightStickPosition.Subscribe(pos =>
-            {
-                //Debug.Log($"RStick: {pos.x}, {pos.y}");
-                motion.GamepadRightStick(FromShortVector2Int(pos));
-            });
-
-            Vector2 FromShortVector2Int(Vector2Int v)
-            {
-                const float Factor = 1.0f / 32768.0f;
-                return new Vector2(v.x * Factor, v.y * Factor);
-            }
         }
 
         private void SubscribeMessageHandler()
@@ -98,11 +70,91 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.EnableTouchTyping:
                         EnableTouchTypingHeadMotion(message.ToBoolean());
                         break;
+                    case MessageCommandNames.EnableGamepad:
+                        EnableGamepad(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.GamepadLeanMode:
+                        SetGamepadLeanMode(message.Content);
+                        break;
+                    case MessageCommandNames.GamepadLeanReverseHorizontal:
+                        SetGamepadLeanReverseHorizontal(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.GamepadLeanReverseVertical:
+                        SetGamepadLeanReverseVertical(message.ToBoolean());
+                        break;
                     default:
                         break;
                 }
 
             });
+        }
+
+        private void SubscribeGamepad()
+        {
+            gamePad.ButtonUpDown.Subscribe(data =>
+            {
+                if (data.IsPressed)
+                {
+                    motion.GamepadButtonDown(data.Key);
+                    if (_leanMode == GamepadLeanModes.GamepadLeanLeftButtons)
+                    {
+                        ApplyLeanMotion(
+                            NormalizedStickPos(gamePad.ArrowButtonsStickPosition)
+                            );
+                    }
+                }
+                else
+                {
+                    motion.GamepadButtonUp(data.Key);
+                    if (_leanMode == GamepadLeanModes.GamepadLeanLeftButtons)
+                    {
+                        ApplyLeanMotion(
+                            NormalizedStickPos(gamePad.ArrowButtonsStickPosition)
+                            );
+                    }
+                }
+            });
+
+            gamePad.LeftStickPosition.Subscribe(pos =>
+            {
+                var stickPos = NormalizedStickPos(pos);
+                motion.GamepadLeftStick(stickPos);
+
+                if (_leanMode == GamepadLeanModes.GamepadLeanLeftStick)
+                {
+                    ApplyLeanMotion(stickPos);
+                }
+            });
+
+            gamePad.RightStickPosition.Subscribe(pos =>
+            {
+                var stickPos = NormalizedStickPos(pos);
+                motion.GamepadRightStick(stickPos);
+
+                if (_leanMode == GamepadLeanModes.GamepadLeanRightStick)
+                {
+                    ApplyLeanMotion(stickPos);
+                }
+            });
+
+       
+        }
+
+        private static Vector2 NormalizedStickPos(Vector2Int v)
+        {
+            const float Factor = 1.0f / 32768.0f;
+            return new Vector2(v.x * Factor, v.y * Factor);
+        }
+
+        private void ApplyLeanMotion(Vector2 pos)
+        {
+            var reverseConsideredPos = new Vector2(
+                pos.x * (_reverseGamepadStickLeanHorizontal ? -1f : 1f),
+                pos.y * (_reverseGamepadStickLeanVertical ? -1f : 1f)
+                );
+
+
+            motion.GamepadLeanMotion(reverseConsideredPos);
         }
 
         private void UpdateByXY(int x, int y)
@@ -165,5 +217,44 @@ namespace Baku.VMagicMirror
         {
             motion.yOffsetAfterKeyDown = yoffset;
         }
+
+
+        private void SetGamepadLeanMode(string leanModeName)
+        {
+            _leanMode =
+                Enum.TryParse<GamepadLeanModes>(leanModeName, out var result) ?
+                result :
+                GamepadLeanModes.GamepadLeanNone;
+
+            if (_leanMode == GamepadLeanModes.GamepadLeanNone)
+            {
+                ApplyLeanMotion(Vector2.zero);
+            }
+        }
+
+        private void SetGamepadLeanReverseHorizontal(bool reverse)
+        {
+            _reverseGamepadStickLeanHorizontal = reverse;
+        }
+
+        private void SetGamepadLeanReverseVertical(bool reverse)
+        {
+            _reverseGamepadStickLeanVertical = reverse;
+        }
+
+        private void EnableGamepad(bool isEnabled)
+        {
+            gamePad.enabled = isEnabled;
+        }
+
+
+        private enum GamepadLeanModes
+        {
+            GamepadLeanNone,
+            GamepadLeanLeftButtons,
+            GamepadLeanLeftStick,
+            GamepadLeanRightStick,
+        }
+        
     }
 }

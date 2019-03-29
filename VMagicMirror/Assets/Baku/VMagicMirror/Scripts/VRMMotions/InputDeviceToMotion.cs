@@ -424,13 +424,6 @@ namespace Baku.VMagicMirror
 
         public void GamepadLeftStick(Vector2 stickPos)
         {
-            _leftHandTargetType = HandTargetTypes.GamepadStick;
-            _bodyLeanTargetEulerAngle = new Vector3(
-                stickPos.y * bodyLeanMaxAngleDegree, 
-                0,
-                -stickPos.x * bodyLeanMaxAngleDegree
-                );
-
             var targetPos = gamePad.GetLeftStickPosition(stickPos.x, stickPos.y) + yOffsetAlwaysVec;
             targetPos -= handToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
@@ -449,6 +442,16 @@ namespace Baku.VMagicMirror
 
             StopRightHandMoveCoroutine();
             _rightHandTargetType = HandTargetTypes.GamepadStick;
+        }
+
+        public void GamepadLeanMotion(Vector2 stickPos)
+        {
+            _bodyLeanTargetEulerAngle = new Vector3(
+                stickPos.y * bodyLeanMaxAngleDegree,
+                0,
+                -stickPos.x * bodyLeanMaxAngleDegree
+                );
+
         }
 
         private IEnumerator GamepadButtonDownRoutine(Transform hand, Vector3 targetPos, bool isLeftHand)

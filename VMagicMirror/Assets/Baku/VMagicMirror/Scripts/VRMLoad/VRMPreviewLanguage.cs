@@ -1,48 +1,78 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
     public class VRMPreviewLanguage : MonoBehaviour
     {
+        [SerializeField]
+        private ReceivedMessageHandler handler = null;
+
+        [SerializeField]
+        private Texts texts;
+
         public string Language { get; private set; } = "Japanese";
+
+        private void Start()
+        {
+            texts.SetLanguage("Japanese");
+            handler.Messages.Subscribe(message =>
+            {
+                if (message.Command == MessageCommandNames.Language)
+                {
+                    SetLanguage(message.Content);
+                }
+            });
+        }
+
+        private void SetLanguage(string languageName)
+        {
+            Language = languageName;
+            texts.SetLanguage(languageName);
+        }
 
         [Serializable]
         struct Texts
         {
             [SerializeField, Header("Info")]
-            Text textInfoHeader;
+            TextMeshProUGUI textInfoHeader;
             [SerializeField]
-            Text m_textModelTitle;
+            TextMeshProUGUI m_textModelTitle;
             [SerializeField]
-            Text m_textModelVersion;
+            TextMeshProUGUI m_textModelVersion;
             [SerializeField]
-            Text m_textModelAuthor;
+            TextMeshProUGUI m_textModelAuthor;
             [SerializeField]
-            Text m_textModelContact;
+            TextMeshProUGUI m_textModelContact;
             [SerializeField]
-            Text m_textModelReference;
+            TextMeshProUGUI m_textModelReference;
+            [SerializeField]
+            TextMeshProUGUI m_textModelThumbnail;
+
+            [SerializeField, Header("License")]
+            TextMeshProUGUI m_textLicenseHeader;
 
             [SerializeField, Header("CharacterPermission")]
-            Text permissionHeader;
+            TextMeshProUGUI permissionHeader;
             [SerializeField]
-            Text m_textPermissionAllowed;
+            TextMeshProUGUI m_textPermissionAllowed;
             [SerializeField]
-            Text m_textPermissionViolent;
+            TextMeshProUGUI m_textPermissionViolent;
             [SerializeField]
-            Text m_textPermissionSexual;
+            TextMeshProUGUI m_textPermissionSexual;
             [SerializeField]
-            Text m_textPermissionCommercial;
+            TextMeshProUGUI m_textPermissionCommercial;
             [SerializeField]
-            Text m_textPermissionOther;
+            TextMeshProUGUI m_textPermissionOther;
 
             [SerializeField, Header("DistributionLicense")]
-            Text textDistributionHeader;
+            TextMeshProUGUI textDistributionHeader;
             [SerializeField]
-            Text m_textDistributionLicense;
+            TextMeshProUGUI m_textDistributionLicense;
             [SerializeField]
-            Text m_textDistributionOther;
+            TextMeshProUGUI m_textDistributionOther;
 
             //量が大したことないのでベタ打ちで…
             public void SetLanguage(string languageName)
@@ -56,7 +86,9 @@ namespace Baku.VMagicMirror
                         m_textModelAuthor.text = "作者";
                         m_textModelContact.text = "連絡先";
                         m_textModelReference.text = "参照";
+                        m_textModelThumbnail.text = "サムネイル";
 
+                        m_textLicenseHeader.text = "ライセンス";
                         permissionHeader.text = "アバターの人格に関する許諾範囲";
                         m_textPermissionAllowed.text = "許諾範囲";
                         m_textPermissionViolent.text = "暴力表現";
@@ -76,34 +108,23 @@ namespace Baku.VMagicMirror
                         m_textModelAuthor.text = "Author";
                         m_textModelContact.text = "Contact";
                         m_textModelReference.text = "Reference";
+                        m_textModelThumbnail.text = "Thumbnail";
 
+                        m_textLicenseHeader.text = "License";
                         permissionHeader.text = "Personation / Charaterization Permission";
                         m_textPermissionAllowed.text = "Avatar Permission";
                         m_textPermissionViolent.text = "Violent Acts";
-                        m_textPermissionSexual.text = "Sexuality Acts";
+                        m_textPermissionSexual.text = "Sexual Acts";
                         m_textPermissionCommercial.text = "Commercial use";
-                        m_textPermissionOther.text = "Other License Url";
+                        m_textPermissionOther.text = "License Url";
 
                         textDistributionHeader.text = "Redistribution / Modifications License";
                         m_textDistributionLicense.text = "License";
-                        m_textDistributionOther.text = "Other License Url";
+                        m_textDistributionOther.text = "License Url";
                         break;
                 }
             }
         }
 
-        [SerializeField]
-        private Texts texts;
-
-        private void Start()
-        {
-            texts.SetLanguage("Japanese");
-        }
-
-        public void SetLanguage(string languageName)
-        {
-            Language = languageName;
-            texts.SetLanguage(languageName);
-        }
     }
 }

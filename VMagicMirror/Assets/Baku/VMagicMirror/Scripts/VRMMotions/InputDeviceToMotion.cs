@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using XinputGamePad;
 
 namespace Baku.VMagicMirror
 {
@@ -34,6 +35,8 @@ namespace Baku.VMagicMirror
         public KeyboardProvider keyboard = null;
 
         public TouchPadProvider touchPad = null;
+
+        public GamepadProvider gamePad = null;
 
         public Transform head = null;
 
@@ -101,6 +104,11 @@ namespace Baku.VMagicMirror
         //クリック時にクイッとさせたいので。
         public Transform rightHandBone = null;
 
+        //アナログスティックに反応して傾ける為
+        public Transform vrmRoot = null;
+        public float bodyLeanSpeedFactor = 0.1f;
+        public float bodyLeanMaxAngleDegree = 5.0f;
+
         private Vector3 yOffsetAlwaysVec => yOffsetAlways * Vector3.up;
 
         #endregion
@@ -109,9 +117,17 @@ namespace Baku.VMagicMirror
         private Coroutine _rightHandMoveCoroutine = null;
         private Coroutine _clickMoveCoroutine = null;
 
-        private bool _touchPadTargetEnabled = false;
+        private HandTargetTypes _leftHandTargetType = HandTargetTypes.Keyboard;
+        private HandTargetTypes _rightHandTargetType = HandTargetTypes.Keyboard;
+
         private Vector3 _touchPadTargetPosition = Vector3.zero;
         private Transform _headTrackTargetWhenNotTouchTyping = null;
+
+        private int _leftHandPressedGamepadKeyCount = 0;
+        private int _rightHandPressedGamepadKeyCount = 0;
+        private Vector3 _leftGamepadStickPosition = Vector3.zero;
+        private Vector3 _rightGamepadStickPosition = Vector3.zero;
+        private Vector3 _bodyLeanTargetEulerAngle = Vector3.zero;
 
         private void Start()
         {
@@ -121,16 +137,46 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (_touchPadTargetEnabled)
+            switch (_leftHandTargetType)
             {
-                rightHandTarget.position = Vector3.Lerp(
-                    rightHandTarget.position,
-                    _touchPadTargetPosition,
-                    touchPadApproachSpeedFactor
-                    );
-                rightHandTarget.rotation = Quaternion.Euler(
-                    0, -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) * Mathf.Rad2Deg, 0
-                    );
+                case HandTargetTypes.GamepadStick:
+                    leftHandTarget.position = Vector3.Lerp(
+                        leftHandTarget.position,
+                        _leftGamepadStickPosition,
+                        touchPadApproachSpeedFactor
+                        );
+                    leftHandTarget.rotation = Quaternion.Euler(
+                        0, -Mathf.Atan2(leftHandTarget.position.z, leftHandTarget.position.x) * Mathf.Rad2Deg + 180, 0
+                        );
+                    break;
+                default:
+                    break;
+            }
+
+            switch (_rightHandTargetType)
+            {
+                case HandTargetTypes.MousePad:
+                    rightHandTarget.position = Vector3.Lerp(
+                        rightHandTarget.position,
+                        _touchPadTargetPosition,
+                        touchPadApproachSpeedFactor
+                        );
+                    rightHandTarget.rotation = Quaternion.Euler(
+                        0, -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) * Mathf.Rad2Deg, 0
+                        );
+                    break;
+                case HandTargetTypes.GamepadStick:
+                    rightHandTarget.position = Vector3.Lerp(
+                        rightHandTarget.position,
+                        _rightGamepadStickPosition,
+                        touchPadApproachSpeedFactor
+                        );
+                    rightHandTarget.rotation = Quaternion.Euler(
+                        0, -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) * Mathf.Rad2Deg, 0
+                        );
+                    break;
+                default:
+                    break;
             }
 
             Transform headTargetTo =
@@ -151,7 +197,18 @@ namespace Baku.VMagicMirror
                     headTargetMoveSpeedFactor
                     );
             }
+            
+            if (vrmRoot != null)
+            {
+                vrmRoot.localRotation = Quaternion.Slerp(
+                    vrmRoot.localRotation,
+                    Quaternion.Euler(_bodyLeanTargetEulerAngle),
+                    bodyLeanSpeedFactor
+                    );
+            }
         }
+
+        #region Keyboard
 
         public void PressKeyMotion(string key)
         {
@@ -160,27 +217,73 @@ namespace Baku.VMagicMirror
 
             if (keyboard.IsLeftHandPreffered(key))
             {
-                if (_leftHandMoveCoroutine != null)
-                {
-                    StopCoroutine(_leftHandMoveCoroutine);
-                }
-                _leftHandMoveCoroutine = StartCoroutine(MoveTargetToKeyboard(leftHandTarget, targetPos, true));
+                _leftHandTargetType = HandTargetTypes.Keyboard;
+                UpdateLeftHandMoveCoroutine(
+                    KeyPressRoutine(leftHandTarget, targetPos, true)
+                    );
                 _headTrackTargetWhenNotTouchTyping = leftHandTarget;
             }
             else
             {
-                _touchPadTargetEnabled = false;
-                if (_rightHandMoveCoroutine != null)
-                {
-                    StopCoroutine(_rightHandMoveCoroutine);
-                }
-                _rightHandMoveCoroutine = StartCoroutine(MoveTargetToKeyboard(rightHandTarget, targetPos, false));
+                _rightHandTargetType = HandTargetTypes.Keyboard;
+                UpdateRightHandMoveCoroutine(
+                    KeyPressRoutine(rightHandTarget, targetPos, false)
+                    );
                 _headTrackTargetWhenNotTouchTyping = rightHandTarget;
             }
 
             int fingerNumber = keyboard.GetFingerNumberOfKey(key);
             fingerAnimator?.StartMoveFinger(fingerNumber);
         }
+
+        private IEnumerator KeyPressRoutine(Transform hand, Vector3 targetPos, bool isLeftHand)
+        {
+            float startTime = Time.time;
+            Vector3 startPos = hand.position;
+
+            while (Time.time - startTime < keyboardMotionDuration)
+            {
+                float rate = (Time.time - startTime) / keyboardMotionDuration;
+
+                Vector3 horizontal = Vector3.Lerp(startPos, targetPos, keyboardHorizontalApproachCurve.Evaluate(rate));
+
+                if (rate < 0.5f)
+                {
+                    //アプローチ中: yのカーブに重みを付けつつ近づく
+
+                    float verticalTarget = Mathf.Lerp(startPos.y, targetPos.y, keyboardVerticalApproachCurve.Evaluate(rate));
+                    float vertical = Mathf.Lerp(hand.position.y, verticalTarget, keyboardVerticalWeightCurve.Evaluate(rate));
+                    hand.position = new Vector3(horizontal.x, vertical, horizontal.z);
+                }
+                else
+                {
+                    //離れるとき: yを引き上げる。気持ち的には(targetPos.y + yOffset)がスタート位置側にあたるので、ウェイトを1から0に引き戻す感じ
+                    float verticalTarget = Mathf.Lerp(targetPos.y + yOffsetAfterKeyDown, targetPos.y, keyboardVerticalApproachCurve.Evaluate(rate));
+                    hand.position = new Vector3(horizontal.x, verticalTarget, horizontal.z);
+                }
+
+                //どちらの場合でも放射方向にターゲットを向かせる必要がある。
+                //かつ、左手は方向が180度ずれてしまうので直す
+                hand.rotation = Quaternion.Euler(
+                    0,
+                    -Mathf.Atan2(hand.position.z, hand.position.x) * Mathf.Rad2Deg +
+                        (isLeftHand ? 180 : 0),
+                    0);
+                yield return null;
+            }
+
+            //ターゲットを動かすやつはいないので不要…なはず…
+            //var finalTarget = new Vector3(targetPos.x, targetPos.y + yOffset, targetPos.z);
+            //while (true)
+            //{
+            //    t.position = finalTarget;
+            //    yield return null;
+            //}
+        }
+
+        #endregion
+
+        #region Mouse
 
         public void UpdateMouseBasedHeadTarget(int x, int y)
         {
@@ -208,7 +311,7 @@ namespace Baku.VMagicMirror
                 StopCoroutine(_rightHandMoveCoroutine);
             }
             _touchPadTargetPosition = targetPos;
-            _touchPadTargetEnabled = true;
+            _rightHandTargetType = HandTargetTypes.MousePad;
 
             _headTrackTargetWhenNotTouchTyping = rightHandTarget;
         }
@@ -235,51 +338,6 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private IEnumerator MoveTargetToKeyboard(Transform t, Vector3 targetPos, bool isLeftHand)
-        {
-            float startTime = Time.time;
-            Vector3 startPos = t.position;
-
-            while (Time.time - startTime < keyboardMotionDuration)
-            {
-                float rate = (Time.time - startTime) / keyboardMotionDuration;
-
-                Vector3 horizontal = Vector3.Lerp(startPos, targetPos, keyboardHorizontalApproachCurve.Evaluate(rate));
-
-                if (rate < 0.5f)
-                {
-                    //アプローチ中: yのカーブに重みを付けつつ近づく
-              
-                    float verticalTarget = Mathf.Lerp(startPos.y, targetPos.y, keyboardVerticalApproachCurve.Evaluate(rate));
-                    float vertical = Mathf.Lerp(t.position.y, verticalTarget, keyboardVerticalWeightCurve.Evaluate(rate));
-                    t.position = new Vector3(horizontal.x, vertical, horizontal.z);
-                }
-                else
-                {
-                    //離れるとき: yを引き上げる。気持ち的には(targetPos.y + yOffset)がスタート位置側にあたるので、ウェイトを1から0に引き戻す感じ
-                    float verticalTarget = Mathf.Lerp(targetPos.y + yOffsetAfterKeyDown, targetPos.y, keyboardVerticalApproachCurve.Evaluate(rate));
-                    t.position = new Vector3(horizontal.x, verticalTarget, horizontal.z);
-                }
-
-                //どちらの場合でも放射方向にターゲットを向かせる必要がある。
-                //かつ、左手は方向が180度ずれてしまうので直す
-                t.rotation = Quaternion.Euler(
-                    0,
-                    -Mathf.Atan2(t.position.z, t.position.x) * Mathf.Rad2Deg + 
-                        (isLeftHand ? 180 : 0), 
-                    0);
-                yield return null;
-            }
-
-            //ターゲットを動かすやつはいないので不要…なはず…
-            //var finalTarget = new Vector3(targetPos.x, targetPos.y + yOffset, targetPos.z);
-            //while (true)
-            //{
-            //    t.position = finalTarget;
-            //    yield return null;
-            //}
-        }
-
         private IEnumerator ClickMotionByRightHand()
         {
             if (rightHandBone == null)
@@ -292,7 +350,7 @@ namespace Baku.VMagicMirror
             {
                 rightHandBone.localRotation = Quaternion.Euler(
                     0,
-                    0, 
+                    0,
                     clickHandRotationAnimation.Evaluate(Time.time - startTime)
                     );
                 yield return null;
@@ -302,6 +360,197 @@ namespace Baku.VMagicMirror
             rightHandBone.localRotation = Quaternion.Euler(0, 0, 0);
         }
 
+        #endregion
+
+        #region Gamepad
+
+        public void GamepadButtonDown(XinputKey key)
+        {
+            Vector3 targetPos = gamePad.GetButtonPosition(key) + yOffsetAlwaysVec;
+            targetPos -= handToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
+
+            if (gamePad.IsLeftHandPreffered(key))
+            {
+                _leftHandPressedGamepadKeyCount++;
+                if (_leftHandPressedGamepadKeyCount == 1)
+                {
+                    _leftHandTargetType = HandTargetTypes.GamepadButton;
+                    UpdateLeftHandMoveCoroutine(
+                        GamepadButtonDownRoutine(leftHandTarget, targetPos, true)
+                        );
+                    _headTrackTargetWhenNotTouchTyping = leftHandTarget;
+                }
+            }
+            else
+            {
+                _rightHandPressedGamepadKeyCount++;
+                if (_rightHandPressedGamepadKeyCount == 1)
+                {
+                    _rightHandTargetType = HandTargetTypes.GamepadButton;
+                    UpdateRightHandMoveCoroutine(
+                        GamepadButtonDownRoutine(rightHandTarget, targetPos, false)
+                        );
+                    _headTrackTargetWhenNotTouchTyping = rightHandTarget;
+                }
+            }
+        }
+
+        public void GamepadButtonUp(XinputKey key)
+        {
+            Vector3 targetPos = gamePad.GetButtonPosition(key) + yOffsetAlwaysVec;
+            targetPos -= handToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
+
+            if (gamePad.IsLeftHandPreffered(key))
+            {
+                _leftHandPressedGamepadKeyCount--;
+                if (_leftHandPressedGamepadKeyCount == 0)
+                {
+                    UpdateLeftHandMoveCoroutine(
+                        GamepadButtonUpRoutine(leftHandTarget, targetPos, true)
+                        );
+                }
+            }
+            else
+            {
+                _rightHandPressedGamepadKeyCount--;
+                if (_rightHandPressedGamepadKeyCount == 0)
+                {
+                    UpdateRightHandMoveCoroutine(
+                        GamepadButtonUpRoutine(rightHandTarget, targetPos, false)
+                        );
+                }
+            }
+        }
+
+        public void GamepadLeftStick(Vector2 stickPos)
+        {
+            var targetPos = gamePad.GetLeftStickPosition(stickPos.x, stickPos.y) + yOffsetAlwaysVec;
+            targetPos -= handToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
+
+            _leftGamepadStickPosition = targetPos;
+
+            StopLeftHandMoveCoroutine();
+            _leftHandTargetType = HandTargetTypes.GamepadStick;
+        }
+
+        public void GamepadRightStick(Vector2 stickPos)
+        {
+            var targetPos = gamePad.GetRightStickPosition(stickPos.x, stickPos.y) + yOffsetAlwaysVec;
+            targetPos -= handToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
+
+            _rightGamepadStickPosition = targetPos;
+
+            StopRightHandMoveCoroutine();
+            _rightHandTargetType = HandTargetTypes.GamepadStick;
+        }
+
+        public void GamepadLeanMotion(Vector2 stickPos)
+        {
+            _bodyLeanTargetEulerAngle = new Vector3(
+                stickPos.y * bodyLeanMaxAngleDegree,
+                0,
+                -stickPos.x * bodyLeanMaxAngleDegree
+                );
+
+        }
+
+        private IEnumerator GamepadButtonDownRoutine(Transform hand, Vector3 targetPos, bool isLeftHand)
+        {
+            float startTime = Time.time;
+            Vector3 startPos = hand.position;
+
+            //NOTE: KeyPressRoutineの前半に相当する押下のモーションまででストップ
+            float duration = keyboardMotionDuration * 0.5f;
+            while (Time.time - startTime < duration)
+            {
+                float rate = (Time.time - startTime) / keyboardMotionDuration;
+
+                Vector3 horizontal = Vector3.Lerp(startPos, targetPos, keyboardHorizontalApproachCurve.Evaluate(rate));
+
+                //yのカーブに重みを付けつつ近づく
+                float verticalTarget = Mathf.Lerp(startPos.y, targetPos.y, keyboardVerticalApproachCurve.Evaluate(rate));
+                float vertical = Mathf.Lerp(hand.position.y, verticalTarget, keyboardVerticalWeightCurve.Evaluate(rate));
+                hand.position = new Vector3(horizontal.x, vertical, horizontal.z);
+
+                //放射方向にターゲットを向かせる。左手は方向が180度ずれてしまうので直す
+                hand.rotation = Quaternion.Euler(
+                    0,
+                    -Mathf.Atan2(hand.position.z, hand.position.x) * Mathf.Rad2Deg +
+                        (isLeftHand ? 180 : 0),
+                    0);
+                yield return null;
+            }
+
+        }
+
+        private IEnumerator GamepadButtonUpRoutine(Transform hand, Vector3 targetPos, bool isLeftHand)
+        {
+            float startTime = Time.time;
+            Vector3 startPos = hand.position;
+
+            //NOTE: KeyPressRoutineの後半に相当するモーション
+            float duration = keyboardMotionDuration * 0.5f;
+            while (Time.time - startTime < duration)
+            {
+                float rate = 0.5f + (Time.time - startTime) / keyboardMotionDuration;
+
+                Vector3 horizontal = Vector3.Lerp(startPos, targetPos, keyboardHorizontalApproachCurve.Evaluate(rate));
+
+                //rate == 0.5の時点でLerpのWeightが1になっているので、それを0側に戻すことで手が上がる
+                float verticalTarget = Mathf.Lerp(targetPos.y + yOffsetAfterKeyDown, targetPos.y, keyboardVerticalApproachCurve.Evaluate(rate));
+                hand.position = new Vector3(horizontal.x, verticalTarget, horizontal.z);
+
+                //どちらの場合でも放射方向にターゲットを向かせる必要がある。
+                //かつ、左手は方向が180度ずれてしまうので直す
+                hand.rotation = Quaternion.Euler(
+                    0,
+                    -Mathf.Atan2(hand.position.z, hand.position.x) * Mathf.Rad2Deg +
+                        (isLeftHand ? 180 : 0),
+                    0);
+                yield return null;
+            }
+        }
+
+
+
+        #endregion
+
+
+        private void UpdateLeftHandMoveCoroutine(IEnumerator routine)
+        {
+            StopLeftHandMoveCoroutine();
+            _leftHandMoveCoroutine = StartCoroutine(routine);
+        }
+
+        private void UpdateRightHandMoveCoroutine(IEnumerator routine)
+        {
+            StopRightHandMoveCoroutine();
+            _rightHandMoveCoroutine = StartCoroutine(routine);
+        }
+
+        private void StopLeftHandMoveCoroutine()
+        {
+            if (_leftHandMoveCoroutine != null)
+            {
+                StopCoroutine(_leftHandMoveCoroutine);
+            }
+        }
+
+        private void StopRightHandMoveCoroutine()
+        {
+            if (_rightHandMoveCoroutine != null)
+            {
+                StopCoroutine(_rightHandMoveCoroutine);
+            }
+        }
+
+        private enum HandTargetTypes
+        {
+            Keyboard,
+            MousePad,
+            GamepadButton,
+            GamepadStick,
+        }
     }
 
 }

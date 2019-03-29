@@ -41,6 +41,7 @@ sysinfo.txt
 /VMagicMirror/Assets/Oculus/
 /VMagicMirror/Assets/Plugins/
 /VMagicMirror/Assets/Raw Mocap Data/
+/VMagicMirror/Assets/TextMesh Pro/
 /VMagicMirror/Assets/VRM/
 /VMagicMirror/Assets/VRoidSDK/
 /VMagicMirror/Assets/XinputGamepad/
@@ -49,6 +50,7 @@ sysinfo.txt
 /VMagicMirror/Assets/Oculus.meta
 /VMagicMirror/Assets/Plugins.meta
 /VMagicMirror/Assets/Raw Mocap Data.meta
+/VMagicMirror/Assets/TextMesh Pro.meta
 /VMagicMirror/Assets/VRM.meta
 /VMagicMirror/Assets/VRoidSDK.meta
 /VMagicMirror/Assets/XinputGamepad.meta

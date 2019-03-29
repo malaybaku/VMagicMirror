@@ -1,45 +1,40 @@
-﻿using RootMotion;
-using RootMotion.FinalIK;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
+using RootMotion;
+using RootMotion.FinalIK;
 using VRM;
 
 namespace Baku.VMagicMirror
 {
     public static class VRMLoadControllerHelper
     {
-        public static void SetupVrm(GameObject go, VrmLoadSetting setting)
+        public static void SetupVrm(GameObject go, VRMLoadController.VrmLoadSetting setting)
         {
             var animator = go.GetComponent<Animator>();
             animator.applyRootMotion = false;
-            animator.runtimeAnimatorController = setting.runtimeAnimatorController;
 
             var bipedReferences = LoadReferencesFromVrm(go.transform, animator);
-
-            //FBBIKの前と後どっちだと適切に動くか要チェック
-            AddTwistRelaxers(go, animator);
-
             AddFBBIK(go, setting, bipedReferences);
 
             var vrmLookAt = go.GetComponent<VRMLookAtHead>();
             vrmLookAt.Target = setting.headTarget;
 
             AddLookAtIK(go, setting.headTarget, animator, bipedReferences.root);
-            //要らない: FBBIKのrotation weightでやった方がよい
-            //AddHorizontalHand(go, animator);
-            AddFingerAnimator(go, animator);
+
+            var fingerAnimator = go.AddComponent<FingerAnimator>();
+            fingerAnimator.Initialize(animator);
 
             go.AddComponent<VRMBlink>();
             setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
         }
 
-        private static void AddFBBIK(GameObject go, VrmLoadSetting setting, BipedReferences reference)
+        private static void AddFBBIK(GameObject go, VRMLoadController.VrmLoadSetting setting, BipedReferences reference)
         {
             var fbbik = go.AddComponent<FullBodyBipedIK>();
             fbbik.SetReferences(reference, null);
 
-            //weightを仕込んでも最初でいきなり動かないようにする。
-            //このとき、bodyTarget自体は(呼吸ライクに動かしたいので)別のスクリプトが入ってるため、親を移動する
+            //IK目標をロードしたVRMのspineに合わせることで、BodyIKがいきなり動いてしまうのを防ぐ。
+            //bodyTarget自体は(呼吸ライクに動かすための)別スクリプトが入ってるため、親を移動する
             setting.bodyTarget.parent.position = reference.spine[0].position;
             fbbik.solver.bodyEffector.target = setting.bodyTarget;
             fbbik.solver.bodyEffector.positionWeight = 0.5f;
@@ -53,15 +48,6 @@ namespace Baku.VMagicMirror
             fbbik.solver.rightHandEffector.target = setting.rightHandTarget;
             fbbik.solver.rightHandEffector.positionWeight = 1.0f;
             fbbik.solver.rightHandEffector.rotationWeight = 1.0f;
-        }
-
-        private static void AddTwistRelaxers(GameObject go, Animator animator)
-        {
-            //var rightLowerArm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
-            //var rightArmRelaxer = rightLowerArm.gameObject.AddComponent<TwistRelaxer>();
-
-            //var leftLowerArm = animator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
-            //var leftArmRelaxer = leftLowerArm.gameObject.AddComponent<TwistRelaxer>();
         }
 
         private static void AddLookAtIK(GameObject go, Transform headTarget, Animator animator, Transform referenceRoot)
@@ -84,20 +70,6 @@ namespace Baku.VMagicMirror
 
             lookAtIk.solver.target = headTarget;
             lookAtIk.solver.headWeight = 0.7f;
-        }
-
-        private static void AddHorizontalHand(GameObject go, Animator animator)
-        {
-            var horizontalHand = go.AddComponent<HorizontalHand>();
-            horizontalHand.leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
-            horizontalHand.rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
-            horizontalHand.animator = animator;
-        }
-
-        private static void AddFingerAnimator(GameObject go, Animator animator)
-        {
-            var fingerAnimator = go.AddComponent<FingerAnimator>();
-            fingerAnimator.Initialize(animator);
         }
 
         private static BipedReferences LoadReferencesFromVrm(Transform root, Animator animator)
@@ -134,14 +106,5 @@ namespace Baku.VMagicMirror
             };
         }
 
-        public struct VrmLoadSetting
-        {
-            public RuntimeAnimatorController runtimeAnimatorController;
-            public Transform bodyTarget;
-            public Transform leftHandTarget;
-            public Transform rightHandTarget;
-            public Transform headTarget;
-            public InputDeviceToMotion inputToMotion;
-        }
     }
 }

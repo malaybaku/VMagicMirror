@@ -63,8 +63,7 @@ FinalIKが有償アセットであること、およびVRoid SDKは2019年3月�
 
 ### 4.3. Notoフォントの適用
 
-developブランチ以降のブランチでビルドするには
-`Assets/Fonts/NotoSansJP-Regular.otf`をもとにText Mesh Pro用のフォントを生成します。
+`Assets/Fonts/NotoSansJP-Regular.otf`をもとにText Mesh Pro用のフォントアセットを生成します。
 
 やり方は[UnityのText Mesh Proアセットで日本語を使うときの手順](https://qiita.com/thorikawa/items/03b65b75fa9461b53efd)などを参考にしてください。
 

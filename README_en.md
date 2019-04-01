@@ -68,7 +68,7 @@ Should be noted that FinalIK is paid asset, and you need to submit the applicati
 
 ### 4.3. Apply Noto font
 
-develop branch uses Noto font for the TextMeshPro, so you need the asset but it is very large so the file is not included in the repository.
+VMagicMirror uses Noto font for the TextMeshPro and Japanese font asset is required to show the texts. You need the asset but it is very large so the file is not included in the repository.
 
 Please output the font asset file from `Assets/Fonts/NotoSansJP-Regular.otf`.
 

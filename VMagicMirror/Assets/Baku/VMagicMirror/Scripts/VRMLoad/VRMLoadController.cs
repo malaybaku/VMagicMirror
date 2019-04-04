@@ -23,6 +23,12 @@ namespace Baku.VMagicMirror
         private AnimMorphEasedTarget animMorphEasedTarget = null;
 
         [SerializeField]
+        private FaceBlendShapeController faceBlendShapeController = null;
+
+        [SerializeField]
+        private FaceAttitudeController faceAttitudeController = null;
+
+        [SerializeField]
         private VRoidSDK.Example.VRoidHubController vroidHub = null;
 
         private HumanPoseTransfer m_loaded = null;
@@ -117,6 +123,8 @@ namespace Baku.VMagicMirror
                 loadSetting.inputToMotion.fingerAnimator = null;
                 loadSetting.inputToMotion.vrmRoot = null;
                 animMorphEasedTarget.blendShapeProxy = null;
+                faceBlendShapeController.DisposeProxy();
+                faceAttitudeController.DisposeHead();
 
                 Destroy(loaded.gameObject);
             }
@@ -143,7 +151,11 @@ namespace Baku.VMagicMirror
 
             loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
             loadSetting.inputToMotion.vrmRoot = go.transform;
-            animMorphEasedTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
+
+            var blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
+            animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
+            faceBlendShapeController.Initialize(blendShapeProxy);
+            faceAttitudeController.Initialize(go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Neck));
         }
 
         [Serializable]

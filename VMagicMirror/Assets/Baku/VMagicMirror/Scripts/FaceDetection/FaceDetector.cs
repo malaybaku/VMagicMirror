@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DlibFaceLandmarkDetector;
+using System.Linq;
 
 namespace Baku.VMagicMirror
 {
@@ -24,6 +24,7 @@ namespace Baku.VMagicMirror
         public int requestedFPS = 30;
         public bool requestedIsFrontFacing = false;
 
+        public FaceParts FaceParts { get; } = new FaceParts();
 
         private WebCamTexture webCamTexture;
         private WebCamDevice webCamDevice;
@@ -86,8 +87,8 @@ namespace Baku.VMagicMirror
             {
                 Debug.Log("Cannot find camera device " + requestedDeviceName + ".");
                 isInitWaiting = false;
+                yield break;
             }
-
 
             // Starts the camera
             webCamTexture.Play();
@@ -106,7 +107,7 @@ namespace Baku.VMagicMirror
             }
 
             texture = new Texture2D(webCamTexture.width, webCamTexture.height, TextureFormat.RGBA32, false);
-            GetComponent<Renderer>().material.mainTexture = texture;
+            //GetComponent<Renderer>().material.mainTexture = texture;
             transform.localScale = new Vector3(texture.width, texture.height, 1);
         }
 
@@ -129,48 +130,49 @@ namespace Baku.VMagicMirror
             }
         }
 
-
         void Update()
         {
             if (!hasInitDone ||
                 !webCamTexture.isPlaying || 
-                !webCamTexture.didUpdateThisFrame
+                !webCamTexture.didUpdateThisFrame ||
+                _colors == null
                 )
             {
                 return;
             }
 
             webCamTexture.GetPixels32(_colors);
-            //同じ_colorsを画像検出のたびに使いまわしてOK
-            Color32[] colors = _colors;
-                
-            if (colors != null)
+            UpdateFaceParts(_colors);
+        }
+
+        private void UpdateFaceParts(Color32[] colors)
+        {
+            faceLandmarkDetector.SetImage(colors, texture.width, texture.height, 4, true);
+
+            List<Rect> faceRects = faceLandmarkDetector.Detect();
+            if (faceRects == null || faceRects.Count == 0)
             {
-
-                faceLandmarkDetector.SetImage(colors, texture.width, texture.height, 4, true);
-
-                //detect face rects
-                List<Rect> detectResult = faceLandmarkDetector.Detect();
-
-                //TODO: 68ランドマークの構成に基づいて眉の形とか目の開き具合をパラメータ化する
-
-                foreach (var rect in detectResult)
-                {
-                    //Debug.Log ("face : " + rect);
-
-                    //detect landmark points
-                    faceLandmarkDetector.DetectLandmark(rect);
-
-                    //draw landmark points
-                    faceLandmarkDetector.DrawDetectLandmarkResult(colors, texture.width, texture.height, 4, true, 0, 255, 0, 255);
-                }
-
-                //draw face rect
-                faceLandmarkDetector.DrawDetectResult(colors, texture.width, texture.height, 4, true, 255, 0, 0, 255, 2);
-
-                texture.SetPixels32(colors);
-                texture.Apply(false);
+                return;
             }
+
+            Rect mainPersonRect = faceRects[0];
+
+            //通常来ないが、複数人居たらいちばん大きく映っている人を採用
+            if (faceRects.Count > 1)
+            {
+                mainPersonRect = faceRects
+                    .OrderByDescending(r => r.width * r.height)
+                    .First();
+            }
+
+            var landmarks = faceLandmarkDetector.DetectLandmark(mainPersonRect);
+            FaceParts.Update(landmarks);
+
+            //結果の描画: 基本的に要らないので禁止
+            //faceLandmarkDetector.DrawDetectLandmarkResult(colors, texture.width, texture.height, 4, true, 0, 255, 0, 255);
+            //faceLandmarkDetector.DrawDetectResult(colors, texture.width, texture.height, 4, true, 255, 0, 0, 255, 2);
+            //texture.SetPixels32(colors);
+            //texture.Apply(false);
         }
 
         void OnDestroy()

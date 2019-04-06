@@ -7853,6 +7853,8 @@ MonoBehaviour:
     headTarget: {fileID: 1383182300}
     inputToMotion: {fileID: 1855229416}
   animMorphEasedTarget: {fileID: 1809547436}
+  faceBlendShapeController: {fileID: 0}
+  faceAttitudeController: {fileID: 0}
   vroidHub: {fileID: 395034290}
 --- !u!114 &1787938568
 MonoBehaviour:

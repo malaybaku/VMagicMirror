@@ -123,8 +123,8 @@ namespace Baku.VMagicMirror
                 loadSetting.inputToMotion.fingerAnimator = null;
                 loadSetting.inputToMotion.vrmRoot = null;
                 animMorphEasedTarget.blendShapeProxy = null;
-                faceBlendShapeController.DisposeProxy();
-                faceAttitudeController.DisposeHead();
+                faceBlendShapeController?.DisposeProxy();
+                faceAttitudeController?.DisposeHead();
 
                 Destroy(loaded.gameObject);
             }
@@ -154,8 +154,8 @@ namespace Baku.VMagicMirror
 
             var blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
             animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
-            faceBlendShapeController.Initialize(blendShapeProxy);
-            faceAttitudeController.Initialize(go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Neck));
+            faceBlendShapeController?.Initialize(blendShapeProxy);
+            faceAttitudeController?.Initialize(go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Neck));
         }
 
         [Serializable]

@@ -2,13 +2,13 @@
 
 namespace Baku.VMagicMirror
 {
-    public struct ReceivedMessage
+    public struct ReceivedCommand
     {
-        public ReceivedMessage(string command) : this(command, "")
+        public ReceivedCommand(string command) : this(command, "")
         {
         }
 
-        public ReceivedMessage(string command, string content)
+        public ReceivedCommand(string command, string content)
         {
             Command = command ?? "";
             Content = content ?? "";

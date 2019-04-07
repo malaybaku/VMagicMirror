@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror
         {
             vroidHub.SetOnLoadHandler(OnVrmLoadedFromVRoidHub);
 
-            handler.Messages.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {

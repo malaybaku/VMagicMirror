@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _animMorphTarget = GetComponent<AnimMorphEasedTarget>();
-            handler.Messages.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 if (message.Command == MessageCommandNames.EnableLipSync)
                 {

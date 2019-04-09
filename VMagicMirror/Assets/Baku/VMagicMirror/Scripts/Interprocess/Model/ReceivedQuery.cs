@@ -2,7 +2,7 @@
 
 namespace Baku.VMagicMirror
 {
-    public struct ReceivedQuery
+    public class ReceivedQuery
     {
         public ReceivedQuery(string command) : this(command, "")
         {

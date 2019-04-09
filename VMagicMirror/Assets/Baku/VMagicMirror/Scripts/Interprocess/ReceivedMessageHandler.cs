@@ -34,11 +34,10 @@ namespace Baku.VMagicMirror
                 ProcessCommand(ReceivedCommands.Dequeue());
             }
 
-            while(ReceivedCommands.Count > 0)
+            while(ReceivedQueries.Count > 0)
             {
                 ProcessQuery(ReceivedQueries.Dequeue());
             }
-
         }
 
         public void ReceiveCommand(string message)
@@ -51,13 +50,6 @@ namespace Baku.VMagicMirror
         public void ReceiveCommand(ReceivedCommand command)
         {
             ReceivedCommands.Enqueue(command);
-        }
-
-        public IObservable<string> ReceiveQuery(string query)
-        {
-            string command = query.Split(':')[0];
-            string content = query.Substring(command.Length + 1);
-            return ReceiveQuery(new ReceivedQuery(command, content));
         }
 
         public IObservable<string> ReceiveQuery(ReceivedQuery query)

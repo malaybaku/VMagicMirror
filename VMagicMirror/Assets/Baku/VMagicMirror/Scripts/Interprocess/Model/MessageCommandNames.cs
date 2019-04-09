@@ -39,6 +39,7 @@
         // Layout, other motion
         public const string EnableTouchTyping = nameof(EnableTouchTyping);
         public const string EnableLipSync = nameof(EnableLipSync);
+        public const string SetMicrophoneDeviceName = nameof(SetMicrophoneDeviceName);
 
         // Layout, camera
         public const string CameraHeight = nameof(CameraHeight);

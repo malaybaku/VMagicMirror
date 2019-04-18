@@ -1,4 +1,5 @@
-﻿using System;
+﻿using mattatz.TransformControl;
+using System;
 using UnityEngine;
 using XinputGamePad;
 
@@ -18,6 +19,7 @@ namespace Baku.VMagicMirror
             public Transform Down;
             public Transform Left;
             public Transform Up;
+
         }
 
         [SerializeField]
@@ -28,6 +30,18 @@ namespace Baku.VMagicMirror
 
         [SerializeField]
         Transform rightStick;
+
+        private TransformControl _transformControl;
+
+        private void Start()
+        {
+            //_transformControl = GetComponent<TransformControl>();
+        }
+
+        private void Update()
+        {
+            _transformControl?.Control();
+        }
 
         public Vector3 GetButtonPosition(XinputKey key)
         {

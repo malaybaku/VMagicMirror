@@ -62,6 +62,14 @@
         public const string GamepadLeanReverseHorizontal = nameof(GamepadLeanReverseHorizontal);
         public const string GamepadLeanReverseVertical = nameof(GamepadLeanReverseVertical);
 
+        //Layout, Free Layout
+        public const string EnableCustomCameraPosition = nameof(EnableCustomCameraPosition);
+        public const string EnableCustomDevicePositions = nameof(EnableCustomDevicePositions);
+        public const string SetCustomCameraPosition = nameof(SetCustomCameraPosition);
+        public const string SetCustomDevicePositions = nameof(SetCustomDevicePositions);
+        public const string EnableFreeCameraMode = nameof(EnableFreeCameraMode);
+        public const string EnableFreeDevicesMode = nameof(EnableFreeDevicesMode);
+
         // Lighting 
         public const string LightIntensity = nameof(LightIntensity);
         public const string LightColor = nameof(LightColor);

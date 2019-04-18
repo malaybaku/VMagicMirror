@@ -103,7 +103,10 @@ namespace Baku.VMagicMirror
                 float angle = (i < 5) ? defaultBendingAngle : -defaultBendingAngle;
                 for (int j = 0; j < _fingers[i].Length; j++)
                 {
-                    _fingers[i][j].localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                    if (_fingers[i][j] != null)
+                    {
+                        _fingers[i][j].localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                    }
                 }
             }
 
@@ -158,7 +161,10 @@ namespace Baku.VMagicMirror
 
                 foreach(var t in _fingers[i])
                 {
-                    t.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                    if (t != null)
+                    {
+                        t.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                    }
                 }
             }
         }

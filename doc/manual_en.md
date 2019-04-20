@@ -8,7 +8,7 @@ Contents
 * 1: Load Character
 * 2: Window
 * Tips 1: Fix the character position in desktop when started
-* 3: Layout
+* 3: Layout and character motion
 * 4: Light
 * 5: Startup
 * Tips 2: How to make VMagicMirror a desktop mascot
@@ -53,7 +53,9 @@ Choose "Layout" tab to adjust parameters about character's proportion, or motion
 
 Character's motion parameters should be changed when your character looks strange when typing the keyboard, like fingers float above, or go too below the keyboard.
 
-Waiting motion is designed to look like breathing motion, but it might also look as if the character floats, when you set the large value for `Scale [%]`.
+`Waiting motion` is designed to look like breathing motion, but it might also look as if the character floats, when you set the large value for `Scale [%]`.
+
+`Other Motion` supports to change where the character looks by mouse position, and lip sync. For the lip sync, please set the microphone input to enable function.
 
 For the tall character, increase `Height` of the `Camera` to show the face, and increase `Height` and `Size` of the `Keyboard & Mouse Pad` so that typing motion looks more natural.
 

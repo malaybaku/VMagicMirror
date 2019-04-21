@@ -41,7 +41,7 @@ namespace Baku.VMagicMirror
 
         private void SubscribeMessageHandler()
         {
-            handler.Messages.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {
@@ -67,6 +67,12 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.HandYOffsetAfterKeyDown:
                         SetHandYOffsetAfterKeyDown(message.ParseAsCentimeter());
                         break;
+                    case MessageCommandNames.EnablePresenterMotion:
+                        EnablePresenterMotion(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.PresentationArmMotionScale:
+                        SetPresentationArmMotionScale(message.ParseAsPercentage());
+                        break;
                     case MessageCommandNames.EnableTouchTyping:
                         EnableTouchTypingHeadMotion(message.ToBoolean());
                         break;
@@ -87,6 +93,16 @@ namespace Baku.VMagicMirror
                 }
 
             });
+        }
+
+        private void SetPresentationArmMotionScale(float v)
+        {
+            motion.presentationArmMotionScale = v;
+        }
+
+        private void EnablePresenterMotion(bool v)
+        {
+            motion.EnablePresentationMotion = v;
         }
 
         private void SubscribeGamepad()

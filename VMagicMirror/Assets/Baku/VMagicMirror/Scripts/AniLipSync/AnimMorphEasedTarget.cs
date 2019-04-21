@@ -62,6 +62,7 @@ namespace Baku.VMagicMirror
         void Update()
         {
             if (context == null ||
+                !context.enabled ||
                 blendShapeProxy == null || 
                 !(context.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame)
                 )

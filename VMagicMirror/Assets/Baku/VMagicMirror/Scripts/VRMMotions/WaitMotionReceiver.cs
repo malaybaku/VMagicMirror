@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror
             _scale = 1.0f;
             _defaultSize = bodyTargetMove.motionSize;
 
-            handler.Messages.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {

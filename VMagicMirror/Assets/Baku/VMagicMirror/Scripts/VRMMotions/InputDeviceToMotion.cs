@@ -8,6 +8,8 @@ namespace Baku.VMagicMirror
     public class InputDeviceToMotion : MonoBehaviour
     {
         private const float HeadTargetForwardOffsetWhenLookKeyboard = 0.3f;
+        //この量だけ、プレゼンモードではスライドが背後にあるように扱う
+        private const float PresentationSlideAssumedZOffset = 0.1f;
 
         private const string RDown = "RDown";
         private const string MDown = "MDown";
@@ -28,6 +30,25 @@ namespace Baku.VMagicMirror
 
         public float yOffsetAfterKeyDown = 0.08f;
 
+        public float presentationArmMotionScale = 0.3f;
+
+        private bool _enablePresentationMotion = false;
+        public bool EnablePresentationMotion
+        {
+            get => _enablePresentationMotion;
+            set
+            {
+                if (_enablePresentationMotion != value)
+                {
+                    _enablePresentationMotion = value;
+                    if (!value)
+                    {
+                        fingerAnimator.FixRightHandToPresentationMode(false);
+                    }
+                }
+            }
+        } 
+
         #endregion
 
         #region settings (Unityで閉じてる想定のもの)
@@ -39,6 +60,9 @@ namespace Baku.VMagicMirror
         public GamepadProvider gamePad = null;
 
         public Transform head = null;
+
+        //プレゼン中に肩からの位置ベースで手の向きを制御したいので
+        public Transform rightShoulder = null;
 
         public FingerAnimator fingerAnimator = null;
 
@@ -121,6 +145,7 @@ namespace Baku.VMagicMirror
         private HandTargetTypes _rightHandTargetType = HandTargetTypes.Keyboard;
 
         private Vector3 _touchPadTargetPosition = Vector3.zero;
+        private Vector3 _presentationSlideTargetPosition = Vector3.zero;
         private Transform _headTrackTargetWhenNotTouchTyping = null;
 
         private int _leftHandPressedGamepadKeyCount = 0;
@@ -156,14 +181,41 @@ namespace Baku.VMagicMirror
             switch (_rightHandTargetType)
             {
                 case HandTargetTypes.MousePad:
-                    rightHandTarget.position = Vector3.Lerp(
-                        rightHandTarget.position,
-                        _touchPadTargetPosition,
-                        touchPadApproachSpeedFactor
-                        );
-                    rightHandTarget.rotation = Quaternion.Euler(
-                        0, -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) * Mathf.Rad2Deg, 0
-                        );
+                    if (EnablePresentationMotion)
+                    {
+                        rightHandTarget.position = Vector3.Lerp(
+                            rightHandTarget.position,
+                            _presentationSlideTargetPosition,
+                            touchPadApproachSpeedFactor
+                            );
+                        //NOTE: 手首がスライドの方を向くようにしたい(何もしないと手首が水平になってしまう)
+                        if (rightShoulder != null)
+                        {
+                            //NOTE: 40degまわしてるのは手の甲側を向ける為
+                            rightHandTarget.rotation = Quaternion.FromToRotation(
+                                Vector3.right,
+                                (rightHandTarget.position - rightShoulder.position).normalized
+                                ) * Quaternion.AngleAxis(40.0f, Vector3.right);
+                        }
+                        else
+                        {
+                            rightHandTarget.rotation = Quaternion.FromToRotation(
+                                Vector3.right,
+                                rightHandTarget.position.normalized
+                                );
+                        }
+                    }
+                    else
+                    {
+                        rightHandTarget.position = Vector3.Lerp(
+                            rightHandTarget.position,
+                            _touchPadTargetPosition,
+                            touchPadApproachSpeedFactor
+                            );
+                        rightHandTarget.rotation = Quaternion.Euler(
+                            0, -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) * Mathf.Rad2Deg, 0
+                            );
+                    }
                     break;
                 case HandTargetTypes.GamepadStick:
                     rightHandTarget.position = Vector3.Lerp(
@@ -225,6 +277,9 @@ namespace Baku.VMagicMirror
             }
             else
             {
+                //右手でキーを触るため、指の形はプレゼン状態ではなくす(ただしマウスがまた動いたらプレゼン状態になる)
+                fingerAnimator.FixRightHandToPresentationMode(false);
+
                 _rightHandTargetType = HandTargetTypes.Keyboard;
                 UpdateRightHandMoveCoroutine(
                     KeyPressRoutine(rightHandTarget, targetPos, false)
@@ -290,10 +345,8 @@ namespace Baku.VMagicMirror
             float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
             float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -1000, 1000) / 1000.0f;
 
-            //xClamped *= 0.8f;
-            //yClamped *= 0.8f;
-
-            //画面中央 = カメラ位置なのでコレで空間的にだいたい正しくなる
+            //画面中央 = カメラ位置なのでコレで空間的にだいたい正しいハズ
+            //カメラ座標のz=0平面を見ようとするので、斜め前のどこかを見るような体裁。
             headLookTargetWhenTouchTyping.position =
                 cam.TransformPoint(xClamped, yClamped, 0);
 
@@ -301,23 +354,57 @@ namespace Baku.VMagicMirror
 
         public void GrabMouseMotion(int x, int y)
         {
-            float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
-            float yClamped = Mathf.Clamp(y - Screen.height * 0.5f , -1000, 1000) / 1000.0f;
-            var targetPos = touchPad.GetHandTipPosFromScreenPoint(xClamped, yClamped) + yOffsetAlwaysVec;
-            targetPos -= handToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
-
-            if (_rightHandMoveCoroutine != null)
+            if (EnablePresentationMotion)
             {
-                StopCoroutine(_rightHandMoveCoroutine);
-            }
-            _touchPadTargetPosition = targetPos;
-            _rightHandTargetType = HandTargetTypes.MousePad;
+                //先にスケールダウンすることで、clampをやって手が体にめり込まなくする処理を活かす
+                float scaledX = presentationArmMotionScale * (x - Screen.width * 0.5f);
+                float scaledY = presentationArmMotionScale * (y - Screen.height * 0.5f);
+                //NOTE: コンセプトは頭をnon-touchtypingで動かしたときと同じ。
+                float xClamped = Mathf.Clamp(scaledX, -3000, -200) / 1000.0f;
+                float yClamped = Mathf.Clamp(scaledY, -250, 3000) / 1000.0f;
 
-            _headTrackTargetWhenNotTouchTyping = rightHandTarget;
+                //NOTE: Zの値はキャラのルート位置が零点であることを使って補正してる点に注意
+                float depthFromCamera = 
+                    new Vector2(cam.position.x, cam.position.z).magnitude +
+                    PresentationSlideAssumedZOffset;
+
+                _presentationSlideTargetPosition = cam.TransformPoint(xClamped, yClamped, depthFromCamera);
+
+                if (_rightHandMoveCoroutine != null)
+                {
+                    StopCoroutine(_rightHandMoveCoroutine);
+                }
+
+                //NOTE: 実態としてはマウスパッド持ってるのに近い状態なのでコレでOKとする
+                _rightHandTargetType = HandTargetTypes.MousePad;
+
+                fingerAnimator.FixRightHandToPresentationMode(true);
+            }
+            else
+            {
+                //NOTE: マウスパッド上で腕が置かれてて欲しい場所を指定し、IKモードによってはLookAtもそっちに向くようにする
+                float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
+                float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -1000, 1000) / 1000.0f;
+                var targetPos = touchPad.GetHandTipPosFromScreenPoint(xClamped, yClamped) + yOffsetAlwaysVec;
+                targetPos -= handToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
+
+                if (_rightHandMoveCoroutine != null)
+                {
+                    StopCoroutine(_rightHandMoveCoroutine);
+                }
+                _touchPadTargetPosition = targetPos;
+                _rightHandTargetType = HandTargetTypes.MousePad;
+
+                _headTrackTargetWhenNotTouchTyping = rightHandTarget;
+            }
+
         }
 
         public void ClickMotion(string info)
         {
+            //指さしモード中は無視
+            if (fingerAnimator.RightHandPresentationMode) { return; }
+
             if (_clickMoveCoroutine != null)
             {
                 StopCoroutine(_clickMoveCoroutine);

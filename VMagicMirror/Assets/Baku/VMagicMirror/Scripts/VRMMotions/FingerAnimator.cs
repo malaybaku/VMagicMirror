@@ -1,9 +1,20 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
     public class FingerAnimator : MonoBehaviour
     {
+        //NOTE: 曲げ角度の符号に注意。左右で意味変わるのと、親指とそれ以外の差にも注意
+        private static Dictionary<int, float[]> _fingerIdToPointingAngle = new Dictionary<int, float[]>()
+        {
+            [FingerConsts.RightThumb] = new float[] { 20, 20, 20 },
+            [FingerConsts.RightIndex] = new float[] { -10, -10, -10 },
+            [FingerConsts.RightMiddle] = new float[] { -80, -80, -80 },
+            [FingerConsts.RightRing] = new float[] { -80, -80, -80 },
+            [FingerConsts.RightLittle] = new float[] { -80, -80, -80 },
+        };
+
         public float defaultBendingAngle = 10.0f;
 
         public float duration = 0.25f;
@@ -24,6 +35,8 @@ namespace Baku.VMagicMirror
         //...
         //右手小指 = 9
         private Transform[][] _fingers = null;
+
+        public bool RightHandPresentationMode { get; private set; } = false;
 
         private bool[] _isAnimating = null;
         private float[] _animationStartedTime = null;
@@ -125,6 +138,12 @@ namespace Baku.VMagicMirror
             }
         }
 
+
+        public void FixRightHandToPresentationMode(bool fix)
+        {
+            RightHandPresentationMode = fix;
+        }
+
         private void Start()
         {
             _isAnimating = new bool[10];
@@ -140,6 +159,12 @@ namespace Baku.VMagicMirror
 
             for (int i = 0; i < _isAnimating.Length; i++)
             {
+                if (i > 4 && RightHandPresentationMode)
+                {
+                    FixPointingHand(i);
+                    continue;
+                }
+
                 float angle = defaultBendingAngle;
 
                 if (_isAnimating[i])
@@ -167,6 +192,28 @@ namespace Baku.VMagicMirror
                     }
                 }
             }
+        }
+
+        private void FixPointingHand(int index)
+        {
+            float[] angles = _fingerIdToPointingAngle[index];
+            Transform[] targets = _fingers[index];
+
+            for (int i = 0; i < angles.Length; i++)
+            {
+                if (targets[i] == null)
+                {
+                    continue;
+                }
+
+                //親指だけはy軸で回さないと指がうまく閉じない(※そもそもあまり触らない方がいいという説もある)
+                Vector3 axis = (index == FingerConsts.RightThumb) ?
+                    Vector3.up :
+                    Vector3.forward;
+
+                targets[i].localRotation = Quaternion.AngleAxis(angles[i], axis);
+            }
+
         }
     }
 

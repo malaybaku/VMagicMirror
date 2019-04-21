@@ -70,6 +70,9 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.EnablePresenterMotion:
                         EnablePresenterMotion(message.ToBoolean());
                         break;
+                    case MessageCommandNames.PresentationArmMotionScale:
+                        SetPresentationArmMotionScale(message.ParseAsPercentage());
+                        break;
                     case MessageCommandNames.EnableTouchTyping:
                         EnableTouchTypingHeadMotion(message.ToBoolean());
                         break;
@@ -90,6 +93,11 @@ namespace Baku.VMagicMirror
                 }
 
             });
+        }
+
+        private void SetPresentationArmMotionScale(float v)
+        {
+            motion.presentationArmMotionScale = v;
         }
 
         private void EnablePresenterMotion(bool v)

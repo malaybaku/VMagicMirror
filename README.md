@@ -57,9 +57,16 @@ Windows 10環境でお使いいただけます。
 * [UniVRM](https://dwango.github.io/vrm/)
 * [UniRx](https://github.com/neuecc/UniRx)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
-* Text Mesh Pro
+* [gRPC](https://github.com/grpc/grpc)
+* [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
+    + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
+* Text Mesh Pro Essentials and Extra
 
 FinalIKが有償アセットであること、およびVRoid SDKは2019年3月時点でSDKの取得に個別の申請が必須であることに注意してください。
+
+gRPCについては、UnityPackageをデイリービルドのアーカイブから入手してインストールします。
+詳細は[gRPCの実験的サポートのページ](https://github.com/grpc/grpc/tree/master/src/csharp/experimental)を参照してください。
+
 
 ### 4.3. Notoフォントの適用
 

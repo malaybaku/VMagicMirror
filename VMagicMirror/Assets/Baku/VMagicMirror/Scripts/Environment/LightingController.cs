@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror
         {
             _bloom = postProcess.profile.GetSetting<Bloom>();
 
-            handler.Messages.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {

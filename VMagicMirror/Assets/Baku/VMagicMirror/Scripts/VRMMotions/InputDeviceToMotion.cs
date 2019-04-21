@@ -30,6 +30,8 @@ namespace Baku.VMagicMirror
 
         public float yOffsetAfterKeyDown = 0.08f;
 
+        public float presentationArmMotionScale = 0.3f;
+
         private bool _enablePresentationMotion = false;
         public bool EnablePresentationMotion
         {
@@ -354,18 +356,20 @@ namespace Baku.VMagicMirror
         {
             if (EnablePresentationMotion)
             {
-                //NOTE: 頭をnon-touchtypingで動かしたときと同じ。
-                //z座標をマイナスにするのは、スライドがキャラ背後にあると物理的に正しい気がするため。
-                float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, -150) / 1000.0f;
-                float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -300, 1000) / 1000.0f;
+                //先にスケールダウンすることで、clampをやって手が体にめり込まなくする処理を活かす
+                float scaledX = presentationArmMotionScale * (x - Screen.width * 0.5f);
+                float scaledY = presentationArmMotionScale * (y - Screen.height * 0.5f);
+                //NOTE: コンセプトは頭をnon-touchtypingで動かしたときと同じ。
+                float xClamped = Mathf.Clamp(scaledX, -3000, -200) / 1000.0f;
+                float yClamped = Mathf.Clamp(scaledY, -250, 3000) / 1000.0f;
 
-                //NOTE: Zの値はキャラのルート位置が零点であることを使って
+                //NOTE: Zの値はキャラのルート位置が零点であることを使って補正してる点に注意
                 float depthFromCamera = 
                     new Vector2(cam.position.x, cam.position.z).magnitude +
                     PresentationSlideAssumedZOffset;
 
                 _presentationSlideTargetPosition = cam.TransformPoint(xClamped, yClamped, depthFromCamera);
-                
+
                 if (_rightHandMoveCoroutine != null)
                 {
                     StopCoroutine(_rightHandMoveCoroutine);

@@ -58,7 +58,9 @@ Windows 10環境でお使いいただけます。
 * [UniRx](https://github.com/neuecc/UniRx)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
 * [gRPC](https://github.com/grpc/grpc)
-* Text Mesh Pro
+* [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
+    + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
+* Text Mesh Pro Essentials and Extra
 
 FinalIKが有償アセットであること、およびVRoid SDKは2019年3月時点でSDKの取得に個別の申請が必須であることに注意してください。
 

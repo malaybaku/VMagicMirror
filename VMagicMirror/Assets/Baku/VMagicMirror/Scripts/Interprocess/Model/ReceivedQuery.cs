@@ -2,20 +2,22 @@
 
 namespace Baku.VMagicMirror
 {
-    public struct ReceivedMessage
+    public class ReceivedQuery
     {
-        public ReceivedMessage(string command) : this(command, "")
+        public ReceivedQuery(string command) : this(command, "")
         {
         }
 
-        public ReceivedMessage(string command, string content)
+        public ReceivedQuery(string command, string content)
         {
             Command = command ?? "";
             Content = content ?? "";
+            Result = "";
         }
 
         public string Command { get; }
         public string Content { get; }
+        public string Result { get; set; }
 
         public bool ToBoolean()
             => bool.TryParse(Content, out bool result) ?

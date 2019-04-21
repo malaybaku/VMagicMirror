@@ -18,7 +18,7 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             SetLanguage("Japanese");
-            handler.Messages.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 if (message.Command == MessageCommandNames.Language)
                 {

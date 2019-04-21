@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         void Start()
         {
             _cam = GetComponent<Camera>();
-            handler.Messages.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 switch(message.Command)
                 {

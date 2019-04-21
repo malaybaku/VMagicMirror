@@ -25,7 +25,7 @@ namespace Baku.VMagicMirror
 
         void Start()
         {
-            handler.Messages.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {

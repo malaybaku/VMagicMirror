@@ -26,6 +26,8 @@ namespace Baku.VMagicMirror
 
             go.AddComponent<VRMBlink>();
             setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
+
+            SetupAimIk(go, animator, setting);
         }
 
         private static void AddFBBIK(GameObject go, VRMLoadController.VrmLoadSetting setting, BipedReferences reference)
@@ -48,6 +50,8 @@ namespace Baku.VMagicMirror
             fbbik.solver.rightHandEffector.target = setting.rightHandTarget;
             fbbik.solver.rightHandEffector.positionWeight = 1.0f;
             fbbik.solver.rightHandEffector.rotationWeight = 1.0f;
+            //small pull: プレゼンモード中にキャラが吹っ飛んでいかないための対策です
+            fbbik.solver.rightArmChain.pull = 0.1f;
         }
 
         private static void AddLookAtIK(GameObject go, Transform headTarget, Animator animator, Transform referenceRoot)
@@ -106,5 +110,23 @@ namespace Baku.VMagicMirror
             };
         }
 
+        private static void SetupAimIk(GameObject go, Animator animator, VRMLoadController.VrmLoadSetting setting)
+        {
+            return;
+
+            var aim = go.AddComponent<AimIK>();
+            aim.solver.target = setting.presentationTarget;
+
+            var bones = new Transform[]
+            {
+                animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
+                animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
+                animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
+                animator.GetBoneTransform(HumanBodyBones.RightHand),
+            };
+
+            aim.solver.transform = bones.FirstOrDefault(b => b != null);
+                
+        }
     }
 }

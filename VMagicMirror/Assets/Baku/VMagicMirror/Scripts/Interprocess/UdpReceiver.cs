@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -21,37 +20,16 @@ namespace Baku.VMagicMirror
         [SerializeField]
         int port = 53241;
 
+        //NOTE: 受信部分でハングすると終了できないケースあるのでタイムアウト大事
         [SerializeField]
         int receiveTimeoutMillisec = 2000;
 
         private CancellationTokenSource _cts;
 
-        private readonly object _receivedMessagesLock = new object();
-        private Queue<string> _receivedMessages;
-        public Queue<string> ReceivedMessages
-        {
-            get { lock(_receivedMessagesLock) return _receivedMessages; }
-            set { lock (_receivedMessagesLock) _receivedMessages = value; }
-        }
-
         void Start()
         {
-            ReceivedMessages = new Queue<string>();
             _cts = new CancellationTokenSource();
             Task.Run(() => ReceiveUdpMessage(_cts.Token));
-        }
-
-        void Update()
-        {
-            if (ReceivedMessages.Count == 0)
-            {
-                return;
-            }
-
-            while (ReceivedMessages.Count > 0)
-            {
-                handler?.Receive(ReceivedMessages.Dequeue());
-            }
         }
 
         private void OnDestroy() 
@@ -61,7 +39,6 @@ namespace Baku.VMagicMirror
         {
             var endPoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
             var client = new UdpClient(endPoint);
-            //ポイント: タイムアウトつけてないとThread.Abortできないんですよコレが
             client.Client.ReceiveTimeout = receiveTimeoutMillisec;
 
             //Origin情報は使う予定ない
@@ -71,7 +48,7 @@ namespace Baku.VMagicMirror
                 try
                 {
                     byte[] received = client.Receive(ref endPointOrigin);
-                    ReceivedMessages.Enqueue(Encoding.UTF8.GetString(received));
+                    handler.ReceiveCommand(Encoding.UTF8.GetString(received));
                 }
 
                 catch (SocketException)

@@ -30,6 +30,8 @@
         public const string LengthFromWristToPalm = nameof(LengthFromWristToPalm);
         public const string HandYOffsetBasic = nameof(HandYOffsetBasic);
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
+        public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
+        public const string PresentationArmMotionScale = nameof(PresentationArmMotionScale);
 
         // Layout, waiting motion
         public const string EnableWaitMotion = nameof(EnableWaitMotion);
@@ -39,6 +41,7 @@
         // Layout, other motion
         public const string EnableTouchTyping = nameof(EnableTouchTyping);
         public const string EnableLipSync = nameof(EnableLipSync);
+        public const string SetMicrophoneDeviceName = nameof(SetMicrophoneDeviceName);
 
         // Layout, camera
         public const string CameraHeight = nameof(CameraHeight);

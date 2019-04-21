@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            vroidHub.SetOnLoadHandler(OnVrmLoadedFromVRoidHub);
+            vroidHub?.SetOnLoadHandler(OnVrmLoadedFromVRoidHub);
 
             handler.Commands.Subscribe(message =>
             {
@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror
                         vrmInformation.Hide();
                         break;
                     case MessageCommandNames.AccessToVRoidHub:
-                        vroidHub.Open();
+                        vroidHub?.Open();
                         break;
                     default:
                         break;
@@ -116,6 +116,7 @@ namespace Baku.VMagicMirror
                 //破棄済みオブジェクトに触らせないためにnullize
                 loadSetting.inputToMotion.fingerAnimator = null;
                 loadSetting.inputToMotion.vrmRoot = null;
+                loadSetting.inputToMotion.rightShoulder = null;
                 animMorphEasedTarget.blendShapeProxy = null;
 
                 Destroy(loaded.gameObject);
@@ -143,6 +144,7 @@ namespace Baku.VMagicMirror
 
             loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
             loadSetting.inputToMotion.vrmRoot = go.transform;
+            loadSetting.inputToMotion.rightShoulder = go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.RightShoulder);
             animMorphEasedTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
         }
 
@@ -154,6 +156,7 @@ namespace Baku.VMagicMirror
             public Transform rightHandTarget;
             public Transform headTarget;
             public InputDeviceToMotion inputToMotion;
+            public Transform presentationTarget;
         }
 
     }

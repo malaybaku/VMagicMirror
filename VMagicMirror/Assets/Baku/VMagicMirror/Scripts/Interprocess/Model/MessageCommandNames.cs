@@ -30,6 +30,7 @@
         public const string LengthFromWristToPalm = nameof(LengthFromWristToPalm);
         public const string HandYOffsetBasic = nameof(HandYOffsetBasic);
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
+        public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
 
         // Layout, waiting motion
         public const string EnableWaitMotion = nameof(EnableWaitMotion);

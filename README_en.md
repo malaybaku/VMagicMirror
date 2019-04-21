@@ -63,6 +63,9 @@ Set the folder as following.
 * [UniRx](https://github.com/neuecc/UniRx)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
 * [gRPC](https://github.com/grpc/grpc)
+* [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
+    + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
+* Text Mesh Pro Essentials and Extra
 * Text Mesh Pro
 
 Should be noted that FinalIK is paid asset, and you need to submit the application to get VRoid SDK.

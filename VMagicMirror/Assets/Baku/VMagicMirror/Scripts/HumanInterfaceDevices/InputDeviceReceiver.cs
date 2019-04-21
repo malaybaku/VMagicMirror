@@ -67,6 +67,9 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.HandYOffsetAfterKeyDown:
                         SetHandYOffsetAfterKeyDown(message.ParseAsCentimeter());
                         break;
+                    case MessageCommandNames.EnablePresenterMotion:
+                        EnablePresenterMotion(message.ToBoolean());
+                        break;
                     case MessageCommandNames.EnableTouchTyping:
                         EnableTouchTypingHeadMotion(message.ToBoolean());
                         break;
@@ -87,6 +90,11 @@ namespace Baku.VMagicMirror
                 }
 
             });
+        }
+
+        private void EnablePresenterMotion(bool v)
+        {
+            motion.EnablePresentationMotion = v;
         }
 
         private void SubscribeGamepad()

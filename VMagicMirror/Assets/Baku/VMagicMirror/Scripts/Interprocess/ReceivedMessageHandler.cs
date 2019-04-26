@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using System.Collections.Concurrent;
 
 namespace Baku.VMagicMirror
 {
@@ -13,30 +14,19 @@ namespace Baku.VMagicMirror
         //NOTE: 初期版では、購読側はクエリを即時処理するよう義務付ける。分かりやすいので。
         public event EventHandler<QueryEventArgs> QueryRequested;
 
-        private readonly object _receivedCommandsLock = new object();
-        private Queue<ReceivedCommand> _receivedCommands = new Queue<ReceivedCommand>();
-        private Queue<ReceivedCommand> ReceivedCommands
-        {
-            get { lock (_receivedCommandsLock) return _receivedCommands; }
-        }
-
-        private readonly object _receivedQueriesLock = new object();
-        private readonly Queue<QueryQueueItem> _receivedQueries = new Queue<QueryQueueItem>();
-        private Queue<QueryQueueItem> ReceivedQueries
-        {
-            get { lock (_receivedQueriesLock) return _receivedQueries; }
-        }
+        private readonly ConcurrentQueue<ReceivedCommand> _receivedCommands = new ConcurrentQueue<ReceivedCommand>();
+        private readonly ConcurrentQueue<QueryQueueItem> _receivedQueries = new ConcurrentQueue<QueryQueueItem>();
 
         private void Update()
         {
-            while (ReceivedCommands.Count > 0)
+            while (_receivedCommands.TryDequeue(out var command))
             {
-                ProcessCommand(ReceivedCommands.Dequeue());
+                ProcessCommand(command);
             }
 
-            while(ReceivedQueries.Count > 0)
+            while(_receivedQueries.TryDequeue(out var query))
             {
-                ProcessQuery(ReceivedQueries.Dequeue());
+                ProcessQuery(query);
             }
         }
 
@@ -49,13 +39,13 @@ namespace Baku.VMagicMirror
 
         public void ReceiveCommand(ReceivedCommand command)
         {
-            ReceivedCommands.Enqueue(command);
+            _receivedCommands.Enqueue(command);
         }
 
         public IObservable<string> ReceiveQuery(ReceivedQuery query)
         {
             var item = new QueryQueueItem(query);
-            ReceivedQueries.Enqueue(item);
+            _receivedQueries.Enqueue(item);
             return item.ResultSubject;
         }
 

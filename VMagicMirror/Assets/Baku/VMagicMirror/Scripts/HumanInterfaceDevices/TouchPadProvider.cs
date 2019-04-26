@@ -4,6 +4,11 @@ namespace Baku.VMagicMirror
 {
     public class TouchPadProvider : MonoBehaviour
     {
+        private void Start()
+        {
+            GetComponent<MeshRenderer>().material = HIDMaterialUtil.Instance.GetPadMaterial();
+        }
+
         /// <summary>
         /// 
         /// </summary>

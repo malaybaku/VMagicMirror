@@ -32,6 +32,7 @@
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
         public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
         public const string PresentationArmMotionScale = nameof(PresentationArmMotionScale);
+        public const string PresentationArmRadiusMin = nameof(PresentationArmRadiusMin);
 
         // Layout, waiting motion
         public const string EnableWaitMotion = nameof(EnableWaitMotion);

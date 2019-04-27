@@ -8742,7 +8742,7 @@ MonoBehaviour:
   yOffsetAlways: 0.04
   yOffsetAfterKeyDown: 0.02
   presentationArmMotionScale: 0.3
-  presentationArmRadiusMin: 0.4
+  presentationArmRadiusMin: 0.2
   keyboard: {fileID: 1169325487}
   touchPad: {fileID: 2059529786}
   gamePad: {fileID: 1798368043}

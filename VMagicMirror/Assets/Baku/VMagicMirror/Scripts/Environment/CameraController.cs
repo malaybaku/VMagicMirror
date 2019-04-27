@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UniRx;
+using System.Linq;
 
 namespace Baku.VMagicMirror
 {
@@ -128,6 +129,13 @@ namespace Baku.VMagicMirror
 
         private void SetCustomCameraPosition(float[] values)
         {
+            //ぜんぶ0な場合、無効値として無視
+            if (values.Length >= 6 && 
+                values.All(v => Mathf.Abs(v) < Mathf.Epsilon))
+            {
+                return;
+            }
+
             if (values.Length >= 6)
             {
                 _customCameraPosition = new Vector3(
@@ -149,7 +157,10 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            if (_customCameraPositionEnabled)
+            //NOTE: 2つ目の条件は、WPFが完全な未設定だと6DoF=0,0,0,0,0,0を指定してくることがあり、その場合は無視してほしいという意味
+            if (_customCameraPositionEnabled && 
+                (_customCameraPosition.magnitude > Mathf.Epsilon || _customCameraRotationEuler.magnitude > Mathf.Epsilon)
+                )
             {
                 _cam.transform.position = _customCameraPosition;
                 _cam.transform.rotation = Quaternion.Euler(_customCameraRotationEuler);

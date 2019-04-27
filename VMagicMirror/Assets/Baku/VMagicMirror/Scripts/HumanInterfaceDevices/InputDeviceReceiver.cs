@@ -102,7 +102,6 @@ namespace Baku.VMagicMirror
         private void SetPresentationArmMotionScale(float v) => motion.presentationArmMotionScale = v;
         private void SetPresentationArmRadiusMin(float v) => motion.presentationArmRadiusMin = v;
 
-
         private void SubscribeGamepad()
         {
             gamePad.ButtonUpDown.Subscribe(data =>

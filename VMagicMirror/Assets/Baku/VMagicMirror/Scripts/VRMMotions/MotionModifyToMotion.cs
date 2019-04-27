@@ -10,12 +10,6 @@ namespace Baku.VMagicMirror
         private MotionModifyReceiver _receiver = null;
         private FullBodyBipedIK _ik;
 
-        private void Awake()
-        {
-            _leftArmBendGoal = new GameObject().transform;
-            _rightArmBendGoal = new GameObject().transform;
-        }
-
         private void Update() => UpdateElbowParameters();
 
         public void SetReceiver(MotionModifyReceiver receiver)
@@ -28,10 +22,12 @@ namespace Baku.VMagicMirror
         {
             _ik = ik;
 
+            _rightArmBendGoal = new GameObject().transform;
             _rightArmBendGoal.SetParent(spineBone);
             _rightArmBendGoal.localRotation = Quaternion.identity;
             _ik.solver.rightArmChain.bendConstraint.bendGoal = _rightArmBendGoal;
 
+            _leftArmBendGoal = new GameObject().transform;
             _leftArmBendGoal.SetParent(spineBone);
             _leftArmBendGoal.localRotation = Quaternion.identity;
             _ik.solver.leftArmChain.bendConstraint.bendGoal = _leftArmBendGoal;

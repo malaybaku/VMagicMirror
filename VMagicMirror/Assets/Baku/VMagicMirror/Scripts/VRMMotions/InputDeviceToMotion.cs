@@ -37,7 +37,7 @@ namespace Baku.VMagicMirror
 
         public float presentationArmMotionScale = 0.3f;
 
-        public float presentationArmRadiusMin = 0.4f;
+        public float presentationArmRadiusMin = 0.2f;
 
         private bool _enablePresentationMotion = false;
         public bool EnablePresentationMotion

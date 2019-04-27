@@ -1,21 +1,19 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UniRx;
 
 namespace Baku.VMagicMirror
 {
     public class MotionModifyReceiver : MonoBehaviour
     {
+        [SerializeField]
+        private ReceivedMessageHandler handler = null;
+
         public float WaistWidthHalf { get; private set; } = 0.15f;
         public float ElbowCloseStrength { get; private set; } = 0.30f;
 
-        private IDisposable _observer = null;
-        private void OnDestroy() => _observer?.Dispose();
-
-        public void SetHandler(ReceivedMessageHandler handler)
+        private void Start()
         {
-            _observer?.Dispose();
-            _observer = handler.Commands.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {

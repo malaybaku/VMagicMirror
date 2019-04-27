@@ -197,26 +197,21 @@ namespace Baku.VMagicMirror
                 case HandTargetTypes.MousePad:
                     if (EnablePresentationMotion)
                     {
-                        rightHandTarget.position = Vector3.Lerp(
-                            rightHandTarget.position,
-                            _presentationSlideTargetPosition,
-                            touchPadApproachSpeedFactor
-                            );
-                        //NOTE: 手首がスライドの方を向くようにしたい(何もしないと手首が水平になってしまう)
-                        if (rightShoulder != null)
+                        //プレゼンモードになってから一回もマウスに触ってない場合や、モデルのロード状況が微妙な場合は無視
+                        if (rightShoulder != null && 
+                            _presentationSlideTargetPosition.magnitude > Mathf.Epsilon)
                         {
+                            rightHandTarget.position = Vector3.Lerp(
+                                rightHandTarget.position,
+                                _presentationSlideTargetPosition,
+                                touchPadApproachSpeedFactor
+                                );
+
                             //NOTE: 追加で回しているのは手の甲を内側にひねる成分(プレゼン的な動作として見栄えがよい…はず…)
                             rightHandTarget.rotation = Quaternion.FromToRotation(
                                 Vector3.right,
                                 (rightHandTarget.position - rightShoulder.position).normalized
                                 ) * Quaternion.AngleAxis(PresentationArmRollFixedAngle, Vector3.right);
-                        }
-                        else
-                        {
-                            rightHandTarget.rotation = Quaternion.FromToRotation(
-                                Vector3.right,
-                                rightHandTarget.position.normalized
-                                );
                         }
                     }
                     else

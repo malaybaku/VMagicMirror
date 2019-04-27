@@ -9,7 +9,9 @@ namespace Baku.VMagicMirror
     {
         private const float HeadTargetForwardOffsetWhenLookKeyboard = 0.3f;
         //この量だけ、プレゼンモードではスライドが背後にあるように扱う
-        private const float PresentationSlideAssumedZOffset = 0.1f;
+        private const float PresentationSlideAssumedZOffset = 0.0f;
+
+        private const float PresentationArmRollFixedAngle = 25.0f;
 
         private const string RDown = "RDown";
         private const string MDown = "MDown";
@@ -31,6 +33,8 @@ namespace Baku.VMagicMirror
         public float yOffsetAfterKeyDown = 0.08f;
 
         public float presentationArmMotionScale = 0.3f;
+
+        public float presentationArmRadiusMin = 0.4f;
 
         private bool _enablePresentationMotion = false;
         public bool EnablePresentationMotion
@@ -68,6 +72,9 @@ namespace Baku.VMagicMirror
 
         [SerializeField]
         private Transform cam = null;
+
+        [SerializeField]
+        private LayerMask raycastMask;
 
         [SerializeField]
         private Transform leftHandTarget = null;
@@ -195,7 +202,7 @@ namespace Baku.VMagicMirror
                             rightHandTarget.rotation = Quaternion.FromToRotation(
                                 Vector3.right,
                                 (rightHandTarget.position - rightShoulder.position).normalized
-                                ) * Quaternion.AngleAxis(40.0f, Vector3.right);
+                                ) * Quaternion.AngleAxis(PresentationArmRollFixedAngle, Vector3.right);
                         }
                         else
                         {
@@ -356,19 +363,54 @@ namespace Baku.VMagicMirror
         {
             if (EnablePresentationMotion)
             {
-                //先にスケールダウンすることで、clampをやって手が体にめり込まなくする処理を活かす
-                float scaledX = presentationArmMotionScale * (x - Screen.width * 0.5f);
-                float scaledY = presentationArmMotionScale * (y - Screen.height * 0.5f);
-                //NOTE: コンセプトは頭をnon-touchtypingで動かしたときと同じ。
-                float xClamped = Mathf.Clamp(scaledX, -3000, -200) / 1000.0f;
-                float yClamped = Mathf.Clamp(scaledY, -250, 3000) / 1000.0f;
+                float scaledX = presentationArmMotionScale * (x - Screen.width * 0.5f) / Screen.width;
+                float scaledY = presentationArmMotionScale * (y - Screen.height * 0.5f) / Screen.height;
+
+
+                var ray = new Ray(cam.TransformPoint(scaledX, scaledY, 0), cam.forward);
+                float depthFromCamera = 1.0f;
+                if (Physics.Raycast(ray, out RaycastHit hit))//, 1000, raycastMask.value))
+                {
+                    depthFromCamera = hit.distance;
+                    //depthFromCamera = Vector3.Distance(ray.origin, hit.point);
+                }
 
                 //NOTE: Zの値はキャラのルート位置が零点であることを使って補正してる点に注意
-                float depthFromCamera = 
-                    new Vector2(cam.position.x, cam.position.z).magnitude +
-                    PresentationSlideAssumedZOffset;
+                //float depthFromCamera = 
+                //    new Vector2(cam.position.x, cam.position.z).magnitude +
+                //    PresentationSlideAssumedZOffset;
 
-                _presentationSlideTargetPosition = cam.TransformPoint(xClamped, yClamped, depthFromCamera);
+                var targetPosition = cam.TransformPoint(scaledX, scaledY, depthFromCamera);
+                //NOTE: 右腕を強引に左側に引っ張らないためのガード
+                if (!(targetPosition.x > 0))
+                {
+                    targetPosition = new Vector3(0.01f, targetPosition.y, 0);
+                }
+
+                //NOTE: 手を肩よりも後ろに回すのはあまり自然じゃないのでガード
+                if (targetPosition.z < 0)
+                {
+                    targetPosition = new Vector3(targetPosition.x, targetPosition.y, 0);
+                }
+
+                //手が体に近すぎるとめり込むのをガード
+                var horizontalVec = new Vector2(targetPosition.x, targetPosition.z);
+                if (horizontalVec.magnitude < presentationArmRadiusMin)
+                {
+                    if (horizontalVec.magnitude < Mathf.Epsilon)
+                    {
+                        horizontalVec = new Vector2(1, 0);
+                    }
+                    horizontalVec = presentationArmRadiusMin * horizontalVec.normalized;
+
+                    targetPosition = new Vector3(
+                        horizontalVec.x,
+                        targetPosition.y,
+                        horizontalVec.y
+                        );
+                }
+
+                _presentationSlideTargetPosition = targetPosition;
 
                 if (_rightHandMoveCoroutine != null)
                 {

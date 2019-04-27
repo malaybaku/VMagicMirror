@@ -73,6 +73,9 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.PresentationArmMotionScale:
                         SetPresentationArmMotionScale(message.ParseAsPercentage());
                         break;
+                    case MessageCommandNames.PresentationArmRadiusMin:
+                        SetPresentationArmRadiusMin(message.ParseAsCentimeter());
+                        break;
                     case MessageCommandNames.EnableTouchTyping:
                         EnableTouchTypingHeadMotion(message.ToBoolean());
                         break;
@@ -95,15 +98,9 @@ namespace Baku.VMagicMirror
             });
         }
 
-        private void SetPresentationArmMotionScale(float v)
-        {
-            motion.presentationArmMotionScale = v;
-        }
-
-        private void EnablePresenterMotion(bool v)
-        {
-            motion.EnablePresentationMotion = v;
-        }
+        private void EnablePresenterMotion(bool v) => motion.EnablePresentationMotion = v;
+        private void SetPresentationArmMotionScale(float v) => motion.presentationArmMotionScale = v;
+        private void SetPresentationArmRadiusMin(float v) => motion.presentationArmRadiusMin = v;
 
         private void SubscribeGamepad()
         {

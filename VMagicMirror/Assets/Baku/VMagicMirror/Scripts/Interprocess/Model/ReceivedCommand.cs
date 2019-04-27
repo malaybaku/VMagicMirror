@@ -40,6 +40,11 @@ namespace Baku.VMagicMirror
                 .Select(e => int.TryParse(e, out int result) ? result : 0)
                 .ToArray();
 
+        public float[] ToFloatArray()
+            => Content.Split(',')
+                .Select(e => float.TryParse(e, out float result) ? result : 0)
+                .ToArray();
+
         /// <summary>
         /// コマンドによってLength==3(RGB)の場合とLength==4(ARGB)の場合があるので注意
         /// </summary>

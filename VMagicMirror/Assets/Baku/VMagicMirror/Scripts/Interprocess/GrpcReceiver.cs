@@ -38,7 +38,7 @@ namespace Baku.VMagicMirror
 
         private void OnDestroy()
         {
-            _server.ShutdownAsync().Wait();
+            _server?.ShutdownAsync()?.Wait();
         }
     }
 }

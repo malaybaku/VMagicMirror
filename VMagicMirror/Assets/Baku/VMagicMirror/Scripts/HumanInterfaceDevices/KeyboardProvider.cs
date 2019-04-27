@@ -236,6 +236,7 @@ namespace Baku.VMagicMirror
                 {
                     float angle = (j * anglePerItem[i] + angleAdjust) * Mathf.Deg2Rad;
                     var key = Instantiate(keyPrefab, this.transform);
+                    key.GetComponentInChildren<MeshRenderer>().material = HIDMaterialUtil.Instance.GetKeyMaterial();
 
                     key.localPosition = radius[i] * new Vector3(
                         Mathf.Sin(angle),

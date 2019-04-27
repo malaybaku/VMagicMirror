@@ -5,7 +5,7 @@ namespace Baku.VMagicMirror
 {
     public class HidTransformController : MonoBehaviour
     {
-        private const float TouchPadVerticalOffset = 0.05f;
+        private const float TouchPadVerticalOffset = 0.01f;
 
         [SerializeField]
         private ReceivedMessageHandler handler = null;

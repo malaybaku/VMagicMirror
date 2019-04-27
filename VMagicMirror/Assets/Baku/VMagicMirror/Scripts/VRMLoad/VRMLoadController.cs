@@ -146,6 +146,7 @@ namespace Baku.VMagicMirror
             loadSetting.inputToMotion.vrmRoot = go.transform;
             loadSetting.inputToMotion.rightShoulder = go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.RightShoulder);
             animMorphEasedTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
+            go.GetComponent<MotionModifyReceiver>().SetHandler(handler);
         }
 
         [Serializable]
@@ -156,7 +157,6 @@ namespace Baku.VMagicMirror
             public Transform rightHandTarget;
             public Transform headTarget;
             public InputDeviceToMotion inputToMotion;
-            public Transform presentationTarget;
         }
 
     }

@@ -8026,7 +8026,6 @@ MonoBehaviour:
     rightHandTarget: {fileID: 500754461}
     headTarget: {fileID: 1383182300}
     inputToMotion: {fileID: 1855229416}
-    presentationTarget: {fileID: 0}
   animMorphEasedTarget: {fileID: 1809547436}
   vroidHub: {fileID: 395034290}
 --- !u!114 &1787938568

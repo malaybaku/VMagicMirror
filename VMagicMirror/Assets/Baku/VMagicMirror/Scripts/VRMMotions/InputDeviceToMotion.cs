@@ -198,7 +198,7 @@ namespace Baku.VMagicMirror
                         //NOTE: 手首がスライドの方を向くようにしたい(何もしないと手首が水平になってしまう)
                         if (rightShoulder != null)
                         {
-                            //NOTE: 40degまわしてるのは手の甲側を向ける為
+                            //NOTE: 追加で回しているのは手の甲を内側にひねる成分(プレゼン的な動作として見栄えがよい…はず…)
                             rightHandTarget.rotation = Quaternion.FromToRotation(
                                 Vector3.right,
                                 (rightHandTarget.position - rightShoulder.position).normalized

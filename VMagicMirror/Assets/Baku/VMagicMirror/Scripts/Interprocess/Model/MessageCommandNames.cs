@@ -30,6 +30,9 @@
         public const string LengthFromWristToPalm = nameof(LengthFromWristToPalm);
         public const string HandYOffsetBasic = nameof(HandYOffsetBasic);
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
+
+        public const string SetWaistWidth = nameof(SetWaistWidth);
+        public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);
         public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
         public const string PresentationArmMotionScale = nameof(PresentationArmMotionScale);
         public const string PresentationArmRadiusMin = nameof(PresentationArmRadiusMin);

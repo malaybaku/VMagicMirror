@@ -146,7 +146,10 @@ namespace Baku.VMagicMirror
             loadSetting.inputToMotion.vrmRoot = go.transform;
             loadSetting.inputToMotion.rightShoulder = go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.RightShoulder);
             animMorphEasedTarget.blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
-            go.GetComponent<MotionModifyReceiver>().SetHandler(handler);
+            go.GetComponent<MotionModifyToMotion>()
+                .SetReceiver(GetComponent<MotionModifyReceiver>());
+            loadSetting.inputToMotion.PressKeyMotion("LControlKey");
+            loadSetting.inputToMotion.PressKeyMotion("RControlKey");
         }
 
         [Serializable]

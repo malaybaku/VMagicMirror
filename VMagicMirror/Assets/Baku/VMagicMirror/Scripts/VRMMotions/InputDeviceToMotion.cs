@@ -13,6 +13,9 @@ namespace Baku.VMagicMirror
 
         private const float PresentationArmRollFixedAngle = 25.0f;
 
+        //手をあまり厳格にキーボードに沿わせると曲がり過ぎるのでゼロ回転側に寄せるファクター
+        private const float WristYawFactor = 0.5f;
+
         private const string RDown = "RDown";
         private const string MDown = "MDown";
         private const string LDown = "LDown";
@@ -177,9 +180,13 @@ namespace Baku.VMagicMirror
                         _leftGamepadStickPosition,
                         touchPadApproachSpeedFactor
                         );
-                    leftHandTarget.rotation = Quaternion.Euler(
-                        0, -Mathf.Atan2(leftHandTarget.position.z, leftHandTarget.position.x) * Mathf.Rad2Deg + 180, 0
-                        );
+
+                    leftHandTarget.rotation = Quaternion.Euler(Vector3.up * (
+                        -(Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) + 180) *
+                        Mathf.Rad2Deg *
+                        WristYawFactor
+                        ));
+
                     break;
                 default:
                     break;
@@ -219,9 +226,12 @@ namespace Baku.VMagicMirror
                             _touchPadTargetPosition,
                             touchPadApproachSpeedFactor
                             );
-                        rightHandTarget.rotation = Quaternion.Euler(
-                            0, -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) * Mathf.Rad2Deg, 0
-                            );
+
+                        rightHandTarget.rotation = Quaternion.Euler(Vector3.up * (
+                            -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) *
+                            Mathf.Rad2Deg *
+                            WristYawFactor
+                            ));
                     }
                     break;
                 case HandTargetTypes.GamepadStick:
@@ -230,9 +240,12 @@ namespace Baku.VMagicMirror
                         _rightGamepadStickPosition,
                         touchPadApproachSpeedFactor
                         );
-                    rightHandTarget.rotation = Quaternion.Euler(
-                        0, -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) * Mathf.Rad2Deg, 0
-                        );
+
+                    rightHandTarget.rotation = Quaternion.Euler(Vector3.up * (
+                        -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) *
+                        Mathf.Rad2Deg *
+                        WristYawFactor
+                        ));
                     break;
                 default:
                     break;

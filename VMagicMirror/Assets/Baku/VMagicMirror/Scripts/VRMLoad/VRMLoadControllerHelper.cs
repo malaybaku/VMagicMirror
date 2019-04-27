@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror
             go.AddComponent<VRMBlink>();
             setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
 
-            var motionModifier = go.AddComponent<MotionModifyReceiver>();
+            var motionModifier = go.AddComponent<MotionModifyToMotion>();
             motionModifier.InitializeIK(animator.GetBoneTransform(HumanBodyBones.Spine), ik);
         }
 

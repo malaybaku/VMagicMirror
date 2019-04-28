@@ -14,7 +14,8 @@ namespace Baku.VMagicMirror
         private const float PresentationArmRollFixedAngle = 25.0f;
 
         //手をあまり厳格にキーボードに沿わせると曲がり過ぎるのでゼロ回転側に寄せるファクター
-        private const float WristYawFactor = 0.5f;
+        private const float WristYawApplyFactor = 0.5f;
+        private const float WristYawSpeedFactor = 0.2f;
 
         private const string RDown = "RDown";
         private const string MDown = "MDown";
@@ -181,11 +182,15 @@ namespace Baku.VMagicMirror
                         touchPadApproachSpeedFactor
                         );
 
-                    leftHandTarget.rotation = Quaternion.Euler(Vector3.up * (
-                        -(Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) + 180) *
-                        Mathf.Rad2Deg *
-                        WristYawFactor
-                        ));
+                    var lhRot = Quaternion.Slerp(
+                        Quaternion.Euler(Vector3.up * (
+                            Mathf.Atan2(leftHandTarget.position.z, leftHandTarget.position.x) *
+                            Mathf.Rad2Deg)),
+                        Quaternion.Euler(Vector3.up * 90),
+                        WristYawApplyFactor
+                        );
+
+                    leftHandTarget.rotation = Quaternion.Slerp(leftHandTarget.rotation, lhRot, WristYawSpeedFactor);
 
                     break;
                 default:
@@ -222,11 +227,14 @@ namespace Baku.VMagicMirror
                             touchPadApproachSpeedFactor
                             );
 
-                        rightHandTarget.rotation = Quaternion.Euler(Vector3.up * (
-                            -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) *
-                            Mathf.Rad2Deg *
-                            WristYawFactor
-                            ));
+                        var rhRot = Quaternion.Slerp(
+                            Quaternion.Euler(Vector3.up * (
+                                -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) *
+                                Mathf.Rad2Deg)),
+                            Quaternion.Euler(Vector3.up * (-90)),
+                            WristYawApplyFactor
+                            );
+                        rightHandTarget.rotation = Quaternion.Slerp(rightHandTarget.rotation, rhRot, WristYawSpeedFactor);
                     }
                     break;
                 case HandTargetTypes.GamepadStick:
@@ -236,11 +244,14 @@ namespace Baku.VMagicMirror
                         touchPadApproachSpeedFactor
                         );
 
-                    rightHandTarget.rotation = Quaternion.Euler(Vector3.up * (
-                        -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) *
-                        Mathf.Rad2Deg *
-                        WristYawFactor
-                        ));
+                    var rhRot2 = Quaternion.Slerp(
+                        Quaternion.Euler(Vector3.up * (
+                            -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) *
+                            Mathf.Rad2Deg)),
+                        Quaternion.Euler(Vector3.up * (-90)),
+                        WristYawApplyFactor
+                        );
+                    rightHandTarget.rotation = Quaternion.Slerp(rightHandTarget.rotation, rhRot2, WristYawSpeedFactor);
                     break;
                 default:
                     break;
@@ -392,7 +403,7 @@ namespace Baku.VMagicMirror
                 //NOTE: 右腕を強引に左側に引っ張らないためのガード
                 if (!(targetPosition.x > 0))
                 {
-                    targetPosition = new Vector3(0.01f, targetPosition.y, 0);
+                    targetPosition = new Vector3(0.01f, targetPosition.y, targetPosition.z);
                 }
 
                 //NOTE: 手を肩よりも後ろに回すのはあまり自然じゃないのでガード

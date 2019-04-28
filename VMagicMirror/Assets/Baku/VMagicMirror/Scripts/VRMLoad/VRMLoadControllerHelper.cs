@@ -19,6 +19,18 @@ namespace Baku.VMagicMirror
             var vrmLookAt = go.GetComponent<VRMLookAtHead>();
             vrmLookAt.Target = setting.headTarget;
 
+            var vrmLookAtBoneApplier = go.GetComponent<VRMLookAtBoneApplyer>();
+            foreach(var curveMapper in new[]
+            {
+                vrmLookAtBoneApplier.HorizontalInner,
+                vrmLookAtBoneApplier.HorizontalOuter,
+                vrmLookAtBoneApplier.VerticalDown,
+                vrmLookAtBoneApplier.VerticalUp,
+            })
+            {
+                curveMapper.CurveYRangeDegree = 30;
+            }
+
             AddLookAtIK(go, setting.headTarget, animator, bipedReferences.root);
 
             var fingerAnimator = go.AddComponent<FingerAnimator>();
@@ -76,7 +88,8 @@ namespace Baku.VMagicMirror
                 );
 
             lookAtIk.solver.target = headTarget;
-            lookAtIk.solver.headWeight = 0.7f;
+            lookAtIk.solver.bodyWeight = 0.2f;
+            lookAtIk.solver.headWeight = 0.5f;
         }
 
         private static BipedReferences LoadReferencesFromVrm(Transform root, Animator animator)

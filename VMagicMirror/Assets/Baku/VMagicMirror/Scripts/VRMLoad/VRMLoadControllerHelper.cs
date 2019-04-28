@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
             animator.applyRootMotion = false;
 
             var bipedReferences = LoadReferencesFromVrm(go.transform, animator);
-            AddFBBIK(go, setting, bipedReferences);
+            var ik = AddFBBIK(go, setting, bipedReferences);
 
             var vrmLookAt = go.GetComponent<VRMLookAtHead>();
             vrmLookAt.Target = setting.headTarget;
@@ -27,10 +27,11 @@ namespace Baku.VMagicMirror
             go.AddComponent<VRMBlink>();
             setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
 
-            SetupAimIk(go, animator, setting);
+            var motionModifier = go.AddComponent<MotionModifyToMotion>();
+            motionModifier.InitializeIK(animator.GetBoneTransform(HumanBodyBones.Spine), ik);
         }
 
-        private static void AddFBBIK(GameObject go, VRMLoadController.VrmLoadSetting setting, BipedReferences reference)
+        private static FullBodyBipedIK AddFBBIK(GameObject go, VRMLoadController.VrmLoadSetting setting, BipedReferences reference)
         {
             var fbbik = go.AddComponent<FullBodyBipedIK>();
             fbbik.SetReferences(reference, null);
@@ -52,6 +53,8 @@ namespace Baku.VMagicMirror
             fbbik.solver.rightHandEffector.rotationWeight = 1.0f;
             //small pull: プレゼンモード中にキャラが吹っ飛んでいかないための対策です
             fbbik.solver.rightArmChain.pull = 0.1f;
+
+            return fbbik;
         }
 
         private static void AddLookAtIK(GameObject go, Transform headTarget, Animator animator, Transform referenceRoot)
@@ -108,25 +111,6 @@ namespace Baku.VMagicMirror
 
                 eyes = new Transform[0],
             };
-        }
-
-        private static void SetupAimIk(GameObject go, Animator animator, VRMLoadController.VrmLoadSetting setting)
-        {
-            return;
-
-            var aim = go.AddComponent<AimIK>();
-            aim.solver.target = setting.presentationTarget;
-
-            var bones = new Transform[]
-            {
-                animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
-                animator.GetBoneTransform(HumanBodyBones.RightHand),
-            };
-
-            aim.solver.transform = bones.FirstOrDefault(b => b != null);
-                
         }
     }
 }

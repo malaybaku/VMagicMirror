@@ -30,8 +30,12 @@
         public const string LengthFromWristToPalm = nameof(LengthFromWristToPalm);
         public const string HandYOffsetBasic = nameof(HandYOffsetBasic);
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
+
+        public const string SetWaistWidth = nameof(SetWaistWidth);
+        public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);
         public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
         public const string PresentationArmMotionScale = nameof(PresentationArmMotionScale);
+        public const string PresentationArmRadiusMin = nameof(PresentationArmRadiusMin);
 
         // Layout, waiting motion
         public const string EnableWaitMotion = nameof(EnableWaitMotion);
@@ -63,6 +67,14 @@
         public const string GamepadLeanMode = nameof(GamepadLeanMode);
         public const string GamepadLeanReverseHorizontal = nameof(GamepadLeanReverseHorizontal);
         public const string GamepadLeanReverseVertical = nameof(GamepadLeanReverseVertical);
+
+        //Layout, Free Layout
+        public const string EnableCustomCameraPosition = nameof(EnableCustomCameraPosition);
+        public const string EnableCustomDevicePositions = nameof(EnableCustomDevicePositions);
+        public const string SetCustomCameraPosition = nameof(SetCustomCameraPosition);
+        public const string SetCustomDevicePositions = nameof(SetCustomDevicePositions);
+        public const string EnableFreeCameraMode = nameof(EnableFreeCameraMode);
+        public const string EnableFreeDevicesMode = nameof(EnableFreeDevicesMode);
 
         // Lighting 
         public const string LightIntensity = nameof(LightIntensity);

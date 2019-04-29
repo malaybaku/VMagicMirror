@@ -59,8 +59,29 @@ Set the folder as following.
 
 * [UniVRM](https://dwango.github.io/vrm/)
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
+* [UniVRM](https://dwango.github.io/vrm/)
+* [UniRx](https://github.com/neuecc/UniRx)
+* [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
+* [gRPC](https://github.com/grpc/grpc)
+* [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
+    + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
+* Text Mesh Pro Essentials and Extra
+* Text Mesh Pro
 
-### 4.3. Build
+Should be noted that FinalIK is paid asset, and you need to submit the application to get VRoid SDK.
+
+gRPC install is available from daily builds. 
+Please see the detail at [gRPC instruction](https://github.com/grpc/grpc/tree/master/src/csharp/experimental).
+
+### 4.3. Apply Noto font
+
+VMagicMirror uses Noto font for the TextMeshPro and Japanese font asset is required to show the texts. You need the asset but it is very large so the file is not included in the repository.
+
+Please output the font asset file from `Assets/Fonts/NotoSansJP-Regular.otf`.
+
+You will see the way to create asset by google with two words, "TextMeshPro" and "Font Asset Creator".
+
+### 4.4. Build
 
 * Unity: Specify `Bin` folder for the output.
 * WPF build creates exe on `Bin` folder in `ConfigApp` (create if it does not exist).

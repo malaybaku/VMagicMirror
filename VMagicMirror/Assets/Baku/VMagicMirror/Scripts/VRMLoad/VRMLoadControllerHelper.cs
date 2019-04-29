@@ -14,10 +14,22 @@ namespace Baku.VMagicMirror
             animator.applyRootMotion = false;
 
             var bipedReferences = LoadReferencesFromVrm(go.transform, animator);
-            AddFBBIK(go, setting, bipedReferences);
+            var ik = AddFBBIK(go, setting, bipedReferences);
 
             var vrmLookAt = go.GetComponent<VRMLookAtHead>();
             vrmLookAt.Target = setting.headTarget;
+
+            var vrmLookAtBoneApplier = go.GetComponent<VRMLookAtBoneApplyer>();
+            foreach(var curveMapper in new[]
+            {
+                vrmLookAtBoneApplier.HorizontalInner,
+                vrmLookAtBoneApplier.HorizontalOuter,
+                vrmLookAtBoneApplier.VerticalDown,
+                vrmLookAtBoneApplier.VerticalUp,
+            })
+            {
+                curveMapper.CurveYRangeDegree = 30;
+            }
 
             AddLookAtIK(go, setting.headTarget, animator, bipedReferences.root);
 
@@ -26,9 +38,12 @@ namespace Baku.VMagicMirror
 
             go.AddComponent<VRMBlink>();
             setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
+
+            var motionModifier = go.AddComponent<MotionModifyToMotion>();
+            motionModifier.InitializeIK(animator.GetBoneTransform(HumanBodyBones.Spine), ik);
         }
 
-        private static void AddFBBIK(GameObject go, VRMLoadController.VrmLoadSetting setting, BipedReferences reference)
+        private static FullBodyBipedIK AddFBBIK(GameObject go, VRMLoadController.VrmLoadSetting setting, BipedReferences reference)
         {
             var fbbik = go.AddComponent<FullBodyBipedIK>();
             fbbik.SetReferences(reference, null);
@@ -48,6 +63,10 @@ namespace Baku.VMagicMirror
             fbbik.solver.rightHandEffector.target = setting.rightHandTarget;
             fbbik.solver.rightHandEffector.positionWeight = 1.0f;
             fbbik.solver.rightHandEffector.rotationWeight = 1.0f;
+            //small pull: プレゼンモード中にキャラが吹っ飛んでいかないための対策です
+            fbbik.solver.rightArmChain.pull = 0.1f;
+
+            return fbbik;
         }
 
         private static void AddLookAtIK(GameObject go, Transform headTarget, Animator animator, Transform referenceRoot)
@@ -69,7 +88,8 @@ namespace Baku.VMagicMirror
                 );
 
             lookAtIk.solver.target = headTarget;
-            lookAtIk.solver.headWeight = 0.7f;
+            lookAtIk.solver.bodyWeight = 0.2f;
+            lookAtIk.solver.headWeight = 0.5f;
         }
 
         private static BipedReferences LoadReferencesFromVrm(Transform root, Animator animator)
@@ -105,6 +125,5 @@ namespace Baku.VMagicMirror
                 eyes = new Transform[0],
             };
         }
-
     }
 }

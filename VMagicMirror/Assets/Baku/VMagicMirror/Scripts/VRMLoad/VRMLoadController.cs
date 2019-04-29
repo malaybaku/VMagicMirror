@@ -35,9 +35,9 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            vroidHub.SetOnLoadHandler(OnVrmLoadedFromVRoidHub);
+            vroidHub?.SetOnLoadHandler(OnVrmLoadedFromVRoidHub);
 
-            handler.Messages.Subscribe(message =>
+            handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {
@@ -52,7 +52,7 @@ namespace Baku.VMagicMirror
                         vrmInformation.Hide();
                         break;
                     case MessageCommandNames.AccessToVRoidHub:
-                        vroidHub.Open();
+                        vroidHub?.Open();
                         break;
                     default:
                         break;
@@ -122,6 +122,7 @@ namespace Baku.VMagicMirror
                 //破棄済みオブジェクトに触らせないためにnullize
                 loadSetting.inputToMotion.fingerAnimator = null;
                 loadSetting.inputToMotion.vrmRoot = null;
+                loadSetting.inputToMotion.rightShoulder = null;
                 animMorphEasedTarget.blendShapeProxy = null;
                 faceBlendShapeController?.DisposeProxy();
                 faceAttitudeController?.DisposeHead();
@@ -156,6 +157,12 @@ namespace Baku.VMagicMirror
             animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
             faceBlendShapeController?.Initialize(blendShapeProxy);
             faceAttitudeController?.Initialize(go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Neck));
+            
+            loadSetting.inputToMotion.rightShoulder = go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.RightShoulder);
+            go.GetComponent<MotionModifyToMotion>()
+                .SetReceiver(GetComponent<MotionModifyReceiver>());
+            loadSetting.inputToMotion.PressKeyMotion("LControlKey");
+            loadSetting.inputToMotion.PressKeyMotion("RControlKey");
         }
 
         [Serializable]

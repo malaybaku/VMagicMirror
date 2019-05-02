@@ -6,6 +6,10 @@ namespace Baku.VMagicMirror
 {
     public class InputDeviceReceiver : MonoBehaviour
     {
+        const string UseLookAtPointNone = nameof(UseLookAtPointNone);
+        const string UseLookAtPointMousePointer = nameof(UseLookAtPointMousePointer);
+        const string UseLookAtPointMainCamera = nameof(UseLookAtPointMainCamera);
+
         [SerializeField]
         private ReceivedMessageHandler handler = null;
 
@@ -76,8 +80,8 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.PresentationArmRadiusMin:
                         SetPresentationArmRadiusMin(message.ParseAsCentimeter());
                         break;
-                    case MessageCommandNames.EnableTouchTyping:
-                        EnableTouchTypingHeadMotion(message.ToBoolean());
+                    case MessageCommandNames.LookAtStyle:
+                        SetLookAtStyle(message.Content);
                         break;
                     case MessageCommandNames.EnableGamepad:
                         EnableGamepad(message.ToBoolean());
@@ -216,9 +220,13 @@ namespace Baku.VMagicMirror
             motion.handToTipLength = v;
         }
 
-        private void EnableTouchTypingHeadMotion(bool v)
+        private void SetLookAtStyle(string content)
         {
-            motion.enableTouchTypingHeadMotion = v;
+            motion.lookAtStyle =
+                (content == UseLookAtPointNone) ? InputDeviceToMotion.HeadLookAtStyles.Fixed :
+                (content == UseLookAtPointMousePointer) ? InputDeviceToMotion.HeadLookAtStyles.MousePointer :
+                (content == UseLookAtPointMainCamera) ? InputDeviceToMotion.HeadLookAtStyles.MainCamera :
+                InputDeviceToMotion.HeadLookAtStyles.MousePointer;
         }
 
         private void SetHandYOffsetBasic(float yoffset)

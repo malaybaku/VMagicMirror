@@ -18,5 +18,7 @@ namespace Baku.VMagicMirror
             => new Message(command, content);
 
         public Message CloseConfigWindow() => NoArg();
+
+        public Message SetCalibrateFaceData(string data) => WithArg(data);
     }
 }

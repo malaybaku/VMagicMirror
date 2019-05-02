@@ -11,6 +11,10 @@
 
         // Device Positions
         public const string CurrentDevicePositions = nameof(CurrentDevicePositions);
+
+        // Web Camera
+        public const string CameraDeviceNames = nameof(CameraDeviceNames);
+
     }
 }
 

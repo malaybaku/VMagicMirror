@@ -29,6 +29,9 @@ namespace Baku.VMagicMirror
         private FaceAttitudeController faceAttitudeController = null;
 
         [SerializeField]
+        private FaceDetector faceDetector = null;
+
+        [SerializeField]
         private VRoidSDK.Example.VRoidHubController vroidHub = null;
 
         private HumanPoseTransfer m_loaded = null;
@@ -122,6 +125,7 @@ namespace Baku.VMagicMirror
                 //破棄済みオブジェクトに触らせないためにnullize
                 loadSetting.inputToMotion.fingerAnimator = null;
                 loadSetting.inputToMotion.vrmRoot = null;
+                loadSetting.inputToMotion.head = null;
                 loadSetting.inputToMotion.rightShoulder = null;
                 animMorphEasedTarget.blendShapeProxy = null;
                 faceBlendShapeController?.DisposeProxy();
@@ -148,27 +152,38 @@ namespace Baku.VMagicMirror
             }
 
             //セットアップの過程でFinalIKに触るため、(有償アセットなので取り外しの事も考えつつ)ファイル分離
-            VRMLoadControllerHelper.SetupVrm(go, loadSetting);
+            VRMLoadControllerHelper.SetupVrm(go, loadSetting, faceDetector);
 
             loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
             loadSetting.inputToMotion.vrmRoot = go.transform;
 
+            var animator = go.GetComponent<Animator>();
             var blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
             animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
             faceBlendShapeController?.Initialize(blendShapeProxy);
-            faceAttitudeController?.Initialize(go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Neck));
-            
-            loadSetting.inputToMotion.rightShoulder = go.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.RightShoulder);
+            faceAttitudeController?.Initialize(animator.GetBoneTransform(HumanBodyBones.Neck));
+
+            loadSetting.inputToMotion.head = animator.GetBoneTransform(HumanBodyBones.Head);
+            loadSetting.inputToMotion.rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);
             go.GetComponent<MotionModifyToMotion>()
                 .SetReceiver(GetComponent<MotionModifyReceiver>());
             loadSetting.inputToMotion.PressKeyMotion("LControlKey");
             loadSetting.inputToMotion.PressKeyMotion("RControlKey");
+
+            go.AddComponent<EyeDownOnBlink>()
+                .Initialize(
+                    blendShapeProxy,
+                    faceDetector,
+                    animator.GetBoneTransform(HumanBodyBones.RightEye),
+                    animator.GetBoneTransform(HumanBodyBones.LeftEye)
+                    );
         }
 
         [Serializable]
         public struct VrmLoadSetting
         {
-            public Transform bodyTarget;
+            public Transform bodyEndTarget;
+            public Transform bodyRootTarget;
             public Transform leftHandTarget;
             public Transform rightHandTarget;
             public Transform headTarget;

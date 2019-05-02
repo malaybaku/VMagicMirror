@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UniRx;
 using VRM;
 
@@ -6,6 +7,8 @@ namespace Baku.VMagicMirror
 {
     public class FaceBlendShapeController : MonoBehaviour
     {
+        private const float EyeCloseHeight = 0.02f;
+
         [SerializeField]
         private FaceDetector faceDetector = null;
 
@@ -40,6 +43,10 @@ namespace Baku.VMagicMirror
         public void Initialize(VRMBlendShapeProxy proxy)
         {
             _blendShapeProxy = proxy;
+
+            //HACK: Funに表情を寄せて仏頂面を回避。やり過ぎると他モーフとの組み合わせで破綻することがあるので、やりすぎない。
+            StartCoroutine(DelayedSetFunBlendShape());
+
             //瞬きとは競合するので上書きする
             if (proxy.GetComponent<VRMBlink>() is VRMBlink blink)
             {
@@ -102,36 +109,40 @@ namespace Baku.VMagicMirror
         //FaceDetector側では目の開き具合を出力しているので反転
         private void OnLeftEyeOpenValueChanged(float value)
         {
-            _latestLeftBlinkInput = 1 - value;
-            //if (value < blinkForceMinThreshold)
-            //{
-            //    _latestLeftBlinkInput = 0;
-            //}
-            //else if (value > blinkForceMaxThreshold)
-            //{
-            //    _latestLeftBlinkInput = 1;
-            //}
-            //else if (Mathf.Abs(_latestLeftBlinkInput - value) > blinkMoveThreshold)
-            //{ 
-            //    _latestLeftBlinkInput = 1 - value;
-            //}
+            SetEyeOpenValue(ref _latestLeftBlinkInput, value);
         }
 
         private void OnRightEyeOpenValueChanged(float value)
         {
-            _latestRightBlinkInput = 1 - value;
-            //if (value < blinkForceMinThreshold)
-            //{
-            //    _latestRightBlinkInput = 0;
-            //}
-            //else if (value > blinkForceMaxThreshold)
-            //{
-            //    _latestRightBlinkInput = 1;
-            //}
-            //else if (Mathf.Abs(_latestRightBlinkInput - value) > blinkMoveThreshold)
-            //{
-            //    _latestRightBlinkInput = 1 - value;
-            //}
+            SetEyeOpenValue(ref _latestRightBlinkInput, value);
+        }
+
+        private void SetEyeOpenValue(ref float target, float value)
+        {
+            float clamped = Mathf.Clamp(value, EyeCloseHeight, faceDetector.CalibrationData.eyeOpenHeight);
+            if (value > faceDetector.CalibrationData.eyeOpenHeight)
+            {
+                target = 0;
+            }
+            else
+            {
+                float range = faceDetector.CalibrationData.eyeOpenHeight - EyeCloseHeight;
+                //細目すぎてrangeが負になるケースも想定してる: このときはまばたき自体無効にしておく
+                if (range < Mathf.Epsilon)
+                {
+                    target = 0;
+                }
+                else
+                {
+                    target = 1 - (clamped - EyeCloseHeight) / range;
+                }
+            }
+        }
+
+        private IEnumerator DelayedSetFunBlendShape()
+        {
+            yield return new WaitForSeconds(0.2f);
+            _blendShapeProxy?.ImmediatelySetValue(BlendShapePreset.Fun, 0.4f);
         }
     }
 }

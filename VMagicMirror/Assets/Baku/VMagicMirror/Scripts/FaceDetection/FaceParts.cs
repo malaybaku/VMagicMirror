@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror
         public InnerMouthPart InnerMouth { get; }
         public OuterMouthPart OuterMouth { get; }
 
-        //輪郭は顔サイズの計算のために特別扱いしたいから外す
+        //輪郭は顔サイズと傾き除去のために特別扱いしたいので外す
         private FacePartBase[] PartsWithoutOutline => new FacePartBase[]
         {
             RightEyebrow,
@@ -75,14 +75,18 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void Update(IList<Vector2> landmarks)
+        public void Update(Rect mainPersonRect, IList<Vector2> landmarks)
         {
             if (landmarks == null || landmarks.Count < FaceLandmarkCount)
             {
                 return;
             }
 
-            var landmarksArray = landmarks.ToArray();
+            //顔の中心でオフセット取る : たぶん回転の除去とかで都合がよいのでこのスタイルで行きます
+            var offset = mainPersonRect.center;
+            var landmarksArray = landmarks
+                .Select(l => l - offset)
+                .ToArray();
             Outline.Update(landmarksArray);
             FaceSize = Outline.FaceSize;
             foreach (var facePart in PartsWithoutOutline)
@@ -125,6 +129,19 @@ namespace Baku.VMagicMirror
                 Array.Copy(rects, LandmarkStartIndex, _positions, 0, LandmarkLength);
                 OnUpdated();
             }
+
+            protected void CancelRollRotation()
+            {
+                float angle = -Parent.Outline.CurrentFaceOrientation;
+                for(int i = 0; i < _positions.Length; i++)
+                {
+                    var p = _positions[i];
+                    _positions[i] = new Vector2(
+                        p.x * Mathf.Cos(angle) - p.y * Mathf.Sin(angle),
+                        p.x * Mathf.Sin(angle) + p.y * Mathf.Cos(angle)
+                        );
+                }
+            }
         
             protected virtual void OnCalibrated() { }
             protected virtual void OnUpdated() { }
@@ -144,6 +161,9 @@ namespace Baku.VMagicMirror
 
             public Vector2 FaceSize { get; private set; } = Vector2.one;
 
+            private readonly Subject<Vector2> _faceSize = new Subject<Vector2>();
+            public IObservable<Vector2> FaceSizeObservable => _faceSize;
+
             private readonly Subject<float> _faceOrientationOffset = new Subject<float>();
             public IObservable<float> FaceOrientationOffset => _faceOrientationOffset;
 
@@ -152,20 +172,23 @@ namespace Baku.VMagicMirror
                 base.OnUpdated();
 
                 var positions = Positions;
+
+                //アゴがどっちに向いているのかを、輪郭の端と真ん中でざっくりした方向ベクトルを作って判別
+                Vector2 diffVecSum = 2 * positions[8] - positions[0] - positions[16];
+                CurrentFaceOrientation = Mathf.Atan2(-diffVecSum.x, diffVecSum.y);
+                _faceOrientationOffset.OnNext(CurrentFaceOrientation);
+
                 FaceSize = new Vector2(
                     positions.Max(p => p.x) - positions.Min(p => p.x),
                     positions.Max(p => p.y) - positions.Min(p => p.y)
                     );
-
-                //アゴがどっちに向いているのかを、輪郭の端と真ん中でざっくりした方向ベクトルを作って判別
-                Vector2 diffVecSum = 2 * positions[8] - positions[0] - positions[16];
-                _faceOrientationOffset.OnNext(
-                    Mathf.Atan2(-diffVecSum.x, diffVecSum.y)
-                    );
+                _faceSize.OnNext(FaceSize);
             }
 
             public override int LandmarkStartIndex => 0;
             public override int LandmarkLength => 17;
+
+            public float CurrentFaceOrientation { get; private set; }
         }
 
         public abstract class EyebrowPartBase : FacePartBase
@@ -173,7 +196,24 @@ namespace Baku.VMagicMirror
             public EyebrowPartBase(FaceParts parent) : base(parent)
             {
             }
-    }
+
+            protected override void OnUpdated()
+            {
+                base.OnUpdated();
+                CancelRollRotation();
+
+                var positions = Positions;
+                float height = positions.Sum(p => p.y) / positions.Length;
+                float normalizedHeight = (Parent.FaceSize.y - height) / Parent.FaceSize.y;
+                CurrentHeight = normalizedHeight;
+                _height.OnNext(normalizedHeight);
+            }
+
+            public float CurrentHeight { get; private set; }
+
+            protected Subject<float> _height = new Subject<float>();
+            public IObservable<float> Height => _height;
+        }
 
         public class RightEyebrowPart : EyebrowPartBase
         {
@@ -200,6 +240,37 @@ namespace Baku.VMagicMirror
             }
             public override int LandmarkStartIndex => 27;
             public override int LandmarkLength => 9;
+
+            /// <summary>Index 30に鼻先のとがった所の位置が入る</summary>
+            public const int NoseBaseTopIndex = 3;
+            /// <summary>Index 33に下側の鼻の付け根の位置が入る</summary>
+            public const int NoseBaseBottomIndex = 6;
+
+            public float GetNoseBaseHeightValue()
+            {
+                var positions = Positions;
+                //画像座標だと下に行くほどプラスなので、こうやると値がプラスになって都合がよい
+                float rawValue = positions[NoseBaseBottomIndex].y - positions[NoseBaseTopIndex].y;
+                float normalizedValue = rawValue / Parent.FaceSize.y;
+                return normalizedValue;
+            }
+
+            protected override void OnUpdated()
+            {
+                base.OnUpdated();
+                CurrentNoseBaseHeightValue = GetNoseBaseHeightValue();
+                _noseBaseHeightValue.OnNext(CurrentNoseBaseHeightValue);
+            }
+
+            private readonly Subject<float> _noseBaseHeightValue = new Subject<float>();
+            public float CurrentNoseBaseHeightValue { get; private set; }
+
+            /// <summary>
+            /// 鼻底が作るタコ型四角形の、タテ方向の長さを顔の長さで割って正規化した(0.1程度の)値。
+            /// 顔の前後の傾斜の指標として利用可能。
+            /// </summary>
+            /// <returns></returns>
+            public IObservable<float> NoseBaseHeightValue => _noseBaseHeightValue;
         }
 
         public abstract class EyePartBase : FacePartBase
@@ -215,10 +286,9 @@ namespace Baku.VMagicMirror
                 var positions = Positions;
                 float rawValue = positions.Max(r => r.y) - positions.Min(r => r.y);
                 float normalizedValue = rawValue / Parent.FaceSize.y;
+                CurrentEyeOpenValue = normalizedValue;
 
-                return Mathf.Clamp(
-                    (normalizedValue - EyeOpenSizeMin) / (EyeOpenSizeMax - EyeOpenSizeMin), 0, 1
-                    );
+                return normalizedValue;
             }
 
             protected override void OnUpdated()

@@ -1,21 +1,19 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using UniRx;
-using System.Linq;
 
 namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(Camera))]
-    [RequireComponent(typeof(CameraTransformController))]
     public class CameraController : MonoBehaviour
     {
         [SerializeField]
         private ReceivedMessageHandler handler = null;
 
+        [SerializeField]
         private Camera _cam = null;
-        private CameraTransformController _transformController = null;
 
-        private bool _isInFreeCameraMode = false;
-        private bool _customCameraPositionEnabled = false;
+        [SerializeField]
+        private CameraTransformController _transformController = null;
 
         private Vector3 _defaultCameraPosition = Vector3.zero;
         private Vector3 _defaultCameraRotationEuler = Vector3.zero;
@@ -23,14 +21,14 @@ namespace Baku.VMagicMirror
         private Vector3 _customCameraPosition = Vector3.zero;
         private Vector3 _customCameraRotationEuler = Vector3.zero;
 
+        public bool IsInFreeCameraMode { get; private set; } = false;
+
+        public Vector3 BaseCameraPosition => _customCameraPosition;
 
         void Start()
         {
-            _cam = GetComponent<Camera>();
             _defaultCameraPosition = _cam.transform.position;
             _defaultCameraRotationEuler = _cam.transform.rotation.eulerAngles;
-
-            _transformController = GetComponent<CameraTransformController>();
 
             handler.Commands.Subscribe(message =>
             {
@@ -40,23 +38,14 @@ namespace Baku.VMagicMirror
                         var argb = message.ToColorFloats();
                         SetCameraBackgroundColor(argb[0], argb[1], argb[2], argb[3]);
                         break;
-                    case MessageCommandNames.CameraHeight:
-                        SetCameraHeight(message.ParseAsCentimeter());
-                        break;
-                    case MessageCommandNames.CameraDistance:
-                        SetCameraDistance(message.ParseAsCentimeter());
-                        break;
-                    case MessageCommandNames.CameraVerticalAngle:
-                        SetCameraVerticalAngle(message.ToInt());
-                        break;
                     case MessageCommandNames.EnableFreeCameraMode:
                         EnableFreeCameraMode(message.ToBoolean());
                         break;
-                    case MessageCommandNames.EnableCustomCameraPosition:
-                        EnableCustomCameraPosition(message.ToBoolean());
-                        break;
                     case MessageCommandNames.SetCustomCameraPosition:
                         SetCustomCameraPosition(message.ToFloatArray());
+                        break;
+                    case MessageCommandNames.ResetCameraPosition:
+                        ResetCameraPosition();
                         break;
                     default:
                         break;
@@ -89,43 +78,19 @@ namespace Baku.VMagicMirror
             _cam.backgroundColor = new Color(r, g, b, a);
         }
 
-        private void SetCameraHeight(float height)
-        {
-            _defaultCameraPosition = new Vector3(
-                _defaultCameraPosition.x,
-                height,
-                _defaultCameraPosition.z
-                );
-            UpdateCameraTransform();
-        }
-
-        private void SetCameraDistance(float distance)
-        {
-            _defaultCameraPosition = new Vector3(
-                _defaultCameraPosition.x,
-                _defaultCameraPosition.y,
-                distance
-                );
-            UpdateCameraTransform();
-        }
-
-        private void SetCameraVerticalAngle(int angleDegree)
-        {
-            _defaultCameraRotationEuler = new Vector3(angleDegree, 180, 0);
-            UpdateCameraTransform();
-        }
-
-        private void EnableCustomCameraPosition(bool v)
-        {
-            _customCameraPositionEnabled = v;
-            UpdateCameraTransform();
-        }
-
         private void EnableFreeCameraMode(bool v)
         {
-            _isInFreeCameraMode = v;
+            IsInFreeCameraMode = v;
             _transformController.enabled = v;
         }
+
+        private void ResetCameraPosition()
+        {
+            _customCameraPosition = _defaultCameraPosition;
+            _customCameraRotationEuler = _defaultCameraRotationEuler;
+            UpdateCameraTransform(true);
+        }
+
 
         private void SetCustomCameraPosition(float[] values)
         {
@@ -146,20 +111,20 @@ namespace Baku.VMagicMirror
                     values[3], values[4], values[5]
                     );
 
-                UpdateCameraTransform();
+                UpdateCameraTransform(false);
             }
         }
 
-        private void UpdateCameraTransform()
+        private void UpdateCameraTransform(bool forceUpdateInFreeCameraMode)
         {
-            if (_isInFreeCameraMode)
+            if (IsInFreeCameraMode && !forceUpdateInFreeCameraMode)
             {
                 return;
             }
 
-            //NOTE: 2つ目の条件は、WPFが完全な未設定だと6DoF=0,0,0,0,0,0を指定してくることがあり、その場合は無視してほしいという意味
-            if (_customCameraPositionEnabled && 
-                (_customCameraPosition.magnitude > Mathf.Epsilon || _customCameraRotationEuler.magnitude > Mathf.Epsilon)
+            //NOTE: WPF側がきちんと設定を持ってないと6DoF=0,0,0,0,0,0を指定したようになるため、そのときに入力を無視する
+            if (_customCameraPosition.magnitude > Mathf.Epsilon ||
+                _customCameraRotationEuler.magnitude > Mathf.Epsilon
                 )
             {
                 _cam.transform.position = _customCameraPosition;

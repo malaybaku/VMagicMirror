@@ -25,32 +25,45 @@
         public const string WindowDraggable = nameof(WindowDraggable);
         public const string MoveWindow = nameof(MoveWindow);
 
-        // Layout, character motion
+        // Motion
+
+        // Motion, Hand
         public const string LengthFromWristToTip = nameof(LengthFromWristToTip);
         public const string LengthFromWristToPalm = nameof(LengthFromWristToPalm);
         public const string HandYOffsetBasic = nameof(HandYOffsetBasic);
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
 
+        // Motion, Arm
         public const string SetWaistWidth = nameof(SetWaistWidth);
         public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);
         public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
         public const string PresentationArmMotionScale = nameof(PresentationArmMotionScale);
         public const string PresentationArmRadiusMin = nameof(PresentationArmRadiusMin);
 
-        // Layout, waiting motion
+        // Motion, Wait
         public const string EnableWaitMotion = nameof(EnableWaitMotion);
         public const string WaitMotionScale = nameof(WaitMotionScale);
         public const string WaitMotionPeriod = nameof(WaitMotionPeriod);
 
-        // Layout, other motion
-        public const string EnableTouchTyping = nameof(EnableTouchTyping);
+        // Motion, Face
+        public const string EnableFaceTracking = nameof(EnableFaceTracking);
+        public const string SetCameraDeviceName = nameof(SetCameraDeviceName);
+        public const string CalibrateFace = nameof(CalibrateFace);
+        public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
+
+        // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);
         public const string SetMicrophoneDeviceName = nameof(SetMicrophoneDeviceName);
 
+        // Motion, Eye
+        public const string LookAtStyle = nameof(LookAtStyle);
+
+        //public const string EnableTouchTyping = nameof(EnableTouchTyping);
+
         // Layout, camera
-        public const string CameraHeight = nameof(CameraHeight);
-        public const string CameraDistance = nameof(CameraDistance);
-        public const string CameraVerticalAngle = nameof(CameraVerticalAngle);
+        public const string SetCustomCameraPosition = nameof(SetCustomCameraPosition);
+        public const string EnableFreeCameraMode = nameof(EnableFreeCameraMode);
+        public const string ResetCameraPosition = nameof(ResetCameraPosition);
 
         // Layout, HID (keyboard and mousepad)
         public const string HidHeight = nameof(HidHeight);
@@ -69,11 +82,8 @@
         public const string GamepadLeanReverseVertical = nameof(GamepadLeanReverseVertical);
 
         //Layout, Free Layout
-        public const string EnableCustomCameraPosition = nameof(EnableCustomCameraPosition);
         public const string EnableCustomDevicePositions = nameof(EnableCustomDevicePositions);
-        public const string SetCustomCameraPosition = nameof(SetCustomCameraPosition);
         public const string SetCustomDevicePositions = nameof(SetCustomDevicePositions);
-        public const string EnableFreeCameraMode = nameof(EnableFreeCameraMode);
         public const string EnableFreeDevicesMode = nameof(EnableFreeDevicesMode);
 
         // Lighting 

@@ -30,7 +30,9 @@ namespace Baku.VMagicMirror
         public float handToPalmLength = 0.05f;
 
         //コレがtrueのときは頭の注視先がカーソルベースになる
-        public bool enableTouchTypingHeadMotion;
+        //public bool enableTouchTypingHeadMotion;
+
+        public HeadLookAtStyles lookAtStyle = HeadLookAtStyles.MousePointer;
 
         public float yOffsetAlways = 0.05f;
 
@@ -257,18 +259,34 @@ namespace Baku.VMagicMirror
                     break;
             }
 
-            Transform headTargetTo =
-                enableTouchTypingHeadMotion ?
-                headLookTargetWhenTouchTyping :
-                _headTrackTargetWhenNotTouchTyping;
+            bool canSetHeadTarget =
+                (lookAtStyle == HeadLookAtStyles.Fixed && head != null) ||
+                (lookAtStyle == HeadLookAtStyles.MainCamera && cam != null) ||
+                (lookAtStyle == HeadLookAtStyles.MousePointer);
 
-            Vector3 targetPos =
-                enableTouchTypingHeadMotion ?
-                headLookTargetWhenTouchTyping.position + HeadTargetForwardOffsetWhenLookKeyboard * Vector3.forward :
-                _headTrackTargetWhenNotTouchTyping.position;
+            //Transform headTargetTo =
+            //    enableTouchTypingHeadMotion ?
+            //    headLookTargetWhenTouchTyping :
+            //    _headTrackTargetWhenNotTouchTyping;
 
-            if (headTargetTo != null)
+            //Vector3 targetPos =
+            //    enableTouchTypingHeadMotion ?
+            //    headLookTargetWhenTouchTyping.position + HeadTargetForwardOffsetWhenLookKeyboard * Vector3.forward :
+            //    _headTrackTargetWhenNotTouchTyping.position;
+
+
+            if (canSetHeadTarget)
             {
+                Vector3 targetPos =
+                    (lookAtStyle == HeadLookAtStyles.Fixed) ?
+                        head.position + head.forward * 2.0f :
+                    (lookAtStyle == HeadLookAtStyles.MousePointer) ?
+                        headLookTargetWhenTouchTyping.position + HeadTargetForwardOffsetWhenLookKeyboard * Vector3.forward :
+                    (lookAtStyle == HeadLookAtStyles.MainCamera) ?
+                        cam.position :
+                        //NOTE: フォールバックはマウスベースの動きにしておく(WPF側でもそれがデフォルト扱いなので)
+                        headLookTargetWhenTouchTyping.position + HeadTargetForwardOffsetWhenLookKeyboard * Vector3.forward;
+
                 headTarget.position = Vector3.Lerp(
                     headTarget.position,
                     targetPos,
@@ -463,8 +481,9 @@ namespace Baku.VMagicMirror
 
         public void ClickMotion(string info)
         {
-            //指さしモード中は無視
-            if (fingerAnimator.RightHandPresentationMode) { return; }
+
+            //指さしモード中も無視することに注意
+            if (fingerAnimator == null ||  fingerAnimator.RightHandPresentationMode) { return; }
 
             if (_clickMoveCoroutine != null)
             {
@@ -473,16 +492,13 @@ namespace Baku.VMagicMirror
 
             _clickMoveCoroutine = StartCoroutine(ClickMotionByRightHand());
 
-            if (fingerAnimator != null)
+            if (info == RDown)
             {
-                if (info == RDown)
-                {
-                    fingerAnimator.StartMoveFinger(FingerConsts.RightMiddle);
-                }
-                else if (info == MDown || info == LDown)
-                {
-                    fingerAnimator.StartMoveFinger(FingerConsts.RightIndex);
-                }
+                fingerAnimator.StartMoveFinger(FingerConsts.RightMiddle);
+            }
+            else if (info == MDown || info == LDown)
+            {
+                fingerAnimator.StartMoveFinger(FingerConsts.RightIndex);
             }
         }
 
@@ -699,6 +715,14 @@ namespace Baku.VMagicMirror
             GamepadButton,
             GamepadStick,
         }
+
+        public enum HeadLookAtStyles
+        {
+            Fixed,
+            MousePointer,
+            MainCamera,
+        }
+
     }
 
 }

@@ -1,33 +1,37 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UniRx;
+using System;
 
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(FaceDetector))]
     public class FaceAttitudeController : MonoBehaviour
     {
+        public float speedLerpFactor = 0.2f;
+        [Range(0.05f, 1.0f)]
+        public float timeScaleFactor = 1.0f;
+
+        private const float NoseBaseHeightDifToAngleDegFactor = 400f;
+            
         private FaceDetector _faceDetector;
-
-        [SerializeField]
-        private Transform headRotationReferenceTransform = null;
-
-        public float speedFactor = 0.2f;
-        public float rotationUpdateInterval = 0.19f;
-
         private Transform _vrmHeadTransform = null;
 
-        private float _latestHeadRotationZ = 0f;
-        private float _goalHeadRotationZ = 0f;
-        private float _easedHeadRotationZ = 0f;
-        private float _count = 0;
+        //値の出どころが異なる都合でRadとDegが混在してます
+        private float _headRollRad = 0;
+        private float _headPitchDeg = 0;
+        private float _prevSpeed = 0;
+
+        private Quaternion _prevRotation = Quaternion.identity;
 
         void Start()
         {
             _faceDetector = GetComponent<FaceDetector>();
-
             _faceDetector.FaceParts.Outline.FaceOrientationOffset.Subscribe(
-                v => UpdateFaceOrientation(v)
+                //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
+                v => _headRollRad = -v
+                );
+            _faceDetector.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
+                v => _headPitchDeg = NoseBaseHeightToNeckPitch(v)
                 );
         }
 
@@ -35,42 +39,68 @@ namespace Baku.VMagicMirror
         {
             if (_vrmHeadTransform == null)
             {
+                _headRollRad = 0;
+                //_prevAngle = 0;
+                _prevSpeed = 0;
+                _prevRotation = Quaternion.identity;
                 return;
             }
 
-            _count -= Time.deltaTime;
-            if (_count < 0)
-            {
-                _count = rotationUpdateInterval;
-                _goalHeadRotationZ = _latestHeadRotationZ;
-            }
-
-            _easedHeadRotationZ = Mathf.Lerp(_easedHeadRotationZ, _goalHeadRotationZ, speedFactor);
-
-            _vrmHeadTransform.localRotation *= Quaternion.AngleAxis(
-                _easedHeadRotationZ * Mathf.Rad2Deg,
-                Vector3.forward
+            Quaternion goalRotation = Quaternion.Euler(
+                _headPitchDeg, 
+                0,
+                _headRollRad * Mathf.Rad2Deg
                 );
-        }
 
-        private void UpdateFaceOrientation(float angleRad)
-        {
-            _latestHeadRotationZ = angleRad;
-            //headRotationReferenceTransform.localRotation = Quaternion.AngleAxis(
-            //    angleRad * Mathf.Rad2Deg,
+            //_vrmHeadTransform.localRotation = goalRotation;
+
+            Quaternion totalDiffRotation = goalRotation * Quaternion.Inverse(_prevRotation);
+            totalDiffRotation.ToAngleAxis(out float diffAngle, out Vector3 diffAxis);
+
+            //このへんのスピードはぜんぶ[deg/sec]が単位
+            float idealSpeed = diffAngle / timeScaleFactor;
+            float speed = Mathf.Lerp(_prevSpeed, idealSpeed, speedLerpFactor);
+            Quaternion difRotation = Quaternion.AngleAxis(Time.deltaTime * speed, diffAxis);
+            Quaternion rotation = difRotation * _prevRotation;
+
+            _vrmHeadTransform.localRotation = rotation;
+            _prevRotation = rotation;
+            _prevSpeed = speed;
+
+
+            #region 1 dof 
+            //float idealSpeed = (_headRollRad - _prevAngle) / timeScaleFactor;
+            //float speed = Mathf.Lerp(_prevSpeed, idealSpeed, speedLerpFactor);
+            //float angle = _prevAngle + Time.deltaTime * speed;
+
+            //_vrmHeadTransform.localRotation *= Quaternion.AngleAxis(
+            //    angle * Mathf.Rad2Deg,
             //    Vector3.forward
             //    );
+
+            //_prevAngle = angle;
+            //_prevSpeed = speed;
+            #endregion
         }
 
-        internal void DisposeHead()
+        public void Initialize(Transform transform) => _vrmHeadTransform = transform;
+
+        public void DisposeHead() => _vrmHeadTransform = null;
+
+        private float NoseBaseHeightToNeckPitch(float noseBaseHeight)
         {
-            _vrmHeadTransform = null;
+            if (_faceDetector != null)
+            {
+                return -(noseBaseHeight - _faceDetector.CalibrationData.noseHeight) * NoseBaseHeightDifToAngleDegFactor;
+            }
+            else
+            {
+                //とりあえず顔が取れないなら水平にしとけばOK
+                return 0;
+            }
         }
 
-        internal void Initialize(Transform transform)
-        {
-            _vrmHeadTransform = transform;
-        }
+
     }
 }
 

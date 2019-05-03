@@ -59,6 +59,9 @@ namespace Baku.VMagicMirror
                 }
 
             });
+
+            //既定で最前面に表示
+            SetTopMost(true);
         }
 
         private void Update()

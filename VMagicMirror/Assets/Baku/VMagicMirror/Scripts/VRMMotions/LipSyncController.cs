@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
         private AnimMorphEasedTarget _animMorphTarget = null;
 
         private string _receivedDeviceName = "";
-        private bool _isLipSyncActive = false;
+        private bool _isLipSyncActive = true;
 
         private void Start()
         {

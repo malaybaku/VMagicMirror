@@ -130,6 +130,7 @@ namespace Baku.VMagicMirror
                 animMorphEasedTarget.blendShapeProxy = null;
                 faceBlendShapeController?.DisposeProxy();
                 faceAttitudeController?.DisposeHead();
+                faceDetector.DisposeNonCameraBlinkComponent();
 
                 Destroy(loaded.gameObject);
             }

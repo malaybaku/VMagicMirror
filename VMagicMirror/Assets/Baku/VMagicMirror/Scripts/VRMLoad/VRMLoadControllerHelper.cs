@@ -36,7 +36,7 @@ namespace Baku.VMagicMirror
             var fingerAnimator = go.AddComponent<FingerAnimator>();
             fingerAnimator.Initialize(animator);
 
-            go.AddComponent<VRMBlink>();
+            faceDetector.SetNonCameraBlinkComponent(go.AddComponent<VRMBlink>());
             setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
 
             var motionModifier = go.AddComponent<MotionModifyToMotion>();

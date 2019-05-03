@@ -1,10 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using DlibFaceLandmarkDetector;
-using System;
 
 namespace Baku.VMagicMirror
 {
@@ -25,6 +25,7 @@ namespace Baku.VMagicMirror
         public int requestedFPS = 30;
         public bool requestedIsFrontFacing = false;
 
+        private VRMBlink _conflictableBlink = null;
         private bool _calibrationRequested = false;
 
         public FaceParts FaceParts { get; } = new FaceParts();
@@ -92,6 +93,18 @@ namespace Baku.VMagicMirror
             Dispose();
         }
 
+        public void SetNonCameraBlinkComponent(VRMBlink blink)
+        {
+            _conflictableBlink = blink;
+            //カメラが使えてないなら自動まばたきに頑張ってもらう、という意味
+            _conflictableBlink.enabled = !hasInitDone;
+        }
+
+        public void DisposeNonCameraBlinkComponent()
+        {
+            _conflictableBlink = null;
+        }
+
         void Start()
         {
             CalibrationData.SetDefaultValues();
@@ -116,7 +129,6 @@ namespace Baku.VMagicMirror
                 }
             }
         }
-
 
         void OnDestroy()
         {
@@ -178,6 +190,10 @@ namespace Baku.VMagicMirror
 
             isInitWaiting = false;
             hasInitDone = true;
+            if (_conflictableBlink != null)
+            {
+                _conflictableBlink.enabled = false;
+            }
 
             if (_colors == null || _colors.Length != webCamTexture.width * webCamTexture.height)
             {
@@ -192,6 +208,10 @@ namespace Baku.VMagicMirror
         {
             isInitWaiting = false;
             hasInitDone = false;
+            if (_conflictableBlink != null)
+            {
+                _conflictableBlink.enabled = true;
+            }
 
             if (webCamTexture != null)
             {

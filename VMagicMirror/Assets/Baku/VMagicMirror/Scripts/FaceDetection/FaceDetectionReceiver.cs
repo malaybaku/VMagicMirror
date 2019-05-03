@@ -7,12 +7,15 @@ namespace Baku.VMagicMirror
 {
 
     [RequireComponent(typeof(FaceDetector))]
+    [RequireComponent(typeof(FaceBlendShapeController))]
     public class FaceDetectionReceiver : MonoBehaviour
     {
         [SerializeField]
         private ReceivedMessageHandler handler;
 
-        private FaceDetector _faceDetector;
+        private FaceDetector _faceDetector = null;
+        private FaceBlendShapeController _blendShapeController = null;
+
 
         private bool _enableFaceTracking = true;
         private string _cameraDeviceName = "";
@@ -20,6 +23,7 @@ namespace Baku.VMagicMirror
         void Start()
         {
             _faceDetector = GetComponent<FaceDetector>();
+            _blendShapeController = GetComponent<FaceBlendShapeController>();
 
             handler.Commands.Subscribe(message =>
             {
@@ -36,6 +40,9 @@ namespace Baku.VMagicMirror
                         break;
                     case MessageCommandNames.SetCalibrateFaceData:
                         SetCalibrateFaceData(message.Content);
+                        break;
+                    case MessageCommandNames.FaceDefaultFun:
+                        SetFaceDefaultFunValue(message.ParseAsPercentage());
                         break;
                     default:
                         break;
@@ -98,5 +105,12 @@ namespace Baku.VMagicMirror
             => WebCamTexture.devices
             .Select(d => d.name)
             .ToArray();
+
+        private void SetFaceDefaultFunValue(float v)
+        {
+            _blendShapeController.FaceDefaultFunValue = v;
+        }
+
+
     }
 }

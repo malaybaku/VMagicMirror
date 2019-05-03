@@ -50,6 +50,7 @@
         public const string SetCameraDeviceName = nameof(SetCameraDeviceName);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
+        public const string FaceDefaultFun = nameof(FaceDefaultFun);
 
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);

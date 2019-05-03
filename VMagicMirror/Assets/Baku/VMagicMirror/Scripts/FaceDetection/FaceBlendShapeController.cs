@@ -9,6 +9,20 @@ namespace Baku.VMagicMirror
     {
         private const float EyeCloseHeight = 0.02f;
 
+        private float _faceDefaultFunValue = 0.2f;
+        public float FaceDefaultFunValue
+        {
+            get => _faceDefaultFunValue;
+            set
+            {
+                if (Mathf.Abs(_faceDefaultFunValue - value) > Mathf.Epsilon)
+                {
+                    _faceDefaultFunValue = value;
+                    _blendShapeProxy?.ImmediatelySetValue(BlendShapePreset.Fun, value);
+                }
+            }
+        }
+
         [SerializeField]
         private FaceDetector faceDetector = null;
 
@@ -142,7 +156,7 @@ namespace Baku.VMagicMirror
         private IEnumerator DelayedSetFunBlendShape()
         {
             yield return new WaitForSeconds(0.2f);
-            _blendShapeProxy?.ImmediatelySetValue(BlendShapePreset.Fun, 0.4f);
+            _blendShapeProxy?.ImmediatelySetValue(BlendShapePreset.Fun, FaceDefaultFunValue);
         }
     }
 }

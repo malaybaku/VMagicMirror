@@ -28,7 +28,7 @@ namespace Baku.VMagicMirror
                 vrmLookAtBoneApplier.VerticalUp,
             })
             {
-                curveMapper.CurveYRangeDegree = 30;
+                curveMapper.CurveYRangeDegree = 20;
             }
 
             AddLookAtIK(go, setting.headTarget, animator, bipedReferences.root);

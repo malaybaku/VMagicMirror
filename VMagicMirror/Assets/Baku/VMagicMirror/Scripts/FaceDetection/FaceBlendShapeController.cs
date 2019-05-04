@@ -60,12 +60,6 @@ namespace Baku.VMagicMirror
 
             //HACK: Funに表情を寄せて仏頂面を回避。やり過ぎると他モーフとの組み合わせで破綻することがあるので、やりすぎない。
             StartCoroutine(DelayedSetFunBlendShape());
-
-            //瞬きとは競合するので上書きする
-            if (proxy.GetComponent<VRMBlink>() is VRMBlink blink)
-            {
-                blink.enabled = false;
-            }
         }
 
         public void DisposeProxy()

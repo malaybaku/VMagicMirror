@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Baku.VMagicMirror
 {
@@ -20,5 +21,7 @@ namespace Baku.VMagicMirror
         public Message CloseConfigWindow() => NoArg();
 
         public Message SetCalibrateFaceData(string data) => WithArg(data);
+
+        public Message SetBlendShapeNames(string v) => WithArg(v);
     }
 }

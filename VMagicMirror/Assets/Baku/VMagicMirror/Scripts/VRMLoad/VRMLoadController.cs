@@ -32,6 +32,9 @@ namespace Baku.VMagicMirror
         private FaceDetector faceDetector = null;
 
         [SerializeField]
+        private BlendShapeAssignController blendShapeAssignController = null;
+
+        [SerializeField]
         private VRoidSDK.Example.VRoidHubController vroidHub = null;
 
         private HumanPoseTransfer m_loaded = null;
@@ -131,6 +134,7 @@ namespace Baku.VMagicMirror
                 faceBlendShapeController?.DisposeProxy();
                 faceAttitudeController?.DisposeHead();
                 faceDetector.DisposeNonCameraBlinkComponent();
+                blendShapeAssignController.DisposeModel();
 
                 Destroy(loaded.gameObject);
             }
@@ -171,10 +175,12 @@ namespace Baku.VMagicMirror
             loadSetting.inputToMotion.PressKeyMotion("LControlKey");
             loadSetting.inputToMotion.PressKeyMotion("RControlKey");
 
+            blendShapeAssignController.InitializeModel(go.transform);
             go.AddComponent<EyeDownOnBlink>()
                 .Initialize(
                     blendShapeProxy,
                     faceDetector,
+                    blendShapeAssignController.EyebrowBlendShape,
                     animator.GetBoneTransform(HumanBodyBones.RightEye),
                     animator.GetBoneTransform(HumanBodyBones.LeftEye)
                     );

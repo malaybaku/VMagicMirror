@@ -6094,6 +6094,8 @@ GameObject:
   - component: {fileID: 1534341276}
   - component: {fileID: 1534341280}
   - component: {fileID: 1534341281}
+  - component: {fileID: 1534341283}
+  - component: {fileID: 1534341282}
   m_Layer: 0
   m_Name: FaceController
   m_TagString: Untagged
@@ -6190,6 +6192,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   messageSender: {fileID: 161296355}
+--- !u!114 &1534341282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534341275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a446eeff5899e4b96893c70a5f7693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1534341283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534341275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcf6b464b4d783c44a19bdce46109df1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handler: {fileID: 1930233619}
+  sender: {fileID: 161296355}
 --- !u!1 &1538415587
 GameObject:
   m_ObjectHideFlags: 0
@@ -8195,6 +8223,7 @@ MonoBehaviour:
   faceBlendShapeController: {fileID: 1534341278}
   faceAttitudeController: {fileID: 1534341276}
   faceDetector: {fileID: 1534341277}
+  blendShapeAssignController: {fileID: 1534341283}
   vroidHub: {fileID: 395034290}
 --- !u!114 &1787938568
 MonoBehaviour:

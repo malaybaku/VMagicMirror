@@ -52,6 +52,16 @@
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
 
+        // Moition, Face, Eyebrow
+        public const string EyebrowLeftUpKey = nameof(EyebrowLeftUpKey);
+        public const string EyebrowLeftDownKey = nameof(EyebrowLeftDownKey);
+        public const string UseSeparatedKeyForEyebrow = nameof(UseSeparatedKeyForEyebrow);
+        public const string EyebrowRightUpKey = nameof(EyebrowRightUpKey);
+        public const string EyebrowRightDownKey = nameof(EyebrowRightDownKey);
+        public const string EyebrowUpScale = nameof(EyebrowUpScale);
+        public const string EyebrowDownScale = nameof(EyebrowDownScale);
+
+
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);
         public const string SetMicrophoneDeviceName = nameof(SetMicrophoneDeviceName);

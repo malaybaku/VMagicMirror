@@ -15,6 +15,7 @@
         // Web Camera
         public const string CameraDeviceNames = nameof(CameraDeviceNames);
 
+        public const string GetBlendShapeNames = nameof(GetBlendShapeNames);
     }
 }
 

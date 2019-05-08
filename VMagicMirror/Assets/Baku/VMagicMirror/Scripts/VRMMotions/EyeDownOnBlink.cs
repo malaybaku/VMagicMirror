@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 using UniRx;
 using VRM;
@@ -8,24 +7,18 @@ namespace Baku.VMagicMirror
 {
     public class EyeDownOnBlink : MonoBehaviour
     {
-        //TODO: ブレンドシェイプの名前を可変にする: 下記はあくまでVRoid Studioの(v0.6.3の)出力で用いられてる名前であって仕様ではないため
-        private const string EyeBrowUpBlendShapeKey = "Face.M_F00_000_00_Fcl_BRW_Surprised";
-        private const string EyeBrowDownBlendShapeKey = "Face.M_F00_000_00_Fcl_BRW_Angry";
-
-        [SerializeField]
-        private float eyeBrowAmplify = 0.3f;
-
         [SerializeField]
         private float eyeBrowDiffSize = 0.05f;
 
+        //ちょっとデフォルトで眉を上げとこう的な値。目の全開きは珍しいという仮説による。
         [SerializeField]
-        private float defaultOffset = 20f;
+        private float defaultOffset = 0.2f;
             
         [SerializeField]
-        private float eyeBrowDownOffsetWhenEyeClosed = 80f;
+        private float eyeBrowDownOffsetWhenEyeClosed = 0.8f;
 
         [SerializeField]
-        private float angleDegreeWhenEyeClosed = 10f;
+        private float eyeAngleDegreeWhenEyeClosed = 10f;
 
         [SerializeField]
         private float speedLerpFactor = 0.2f;
@@ -34,20 +27,23 @@ namespace Baku.VMagicMirror
         private float timeScaleFactor = 0.3f;
 
         private VRMBlendShapeProxy _blendShapeProxy = null;
+        private EyebrowBlendShapeSet _blendShapeSet = null;
         private FaceDetector _faceDetector = null;
         private Transform _rightEyeBone = null;
         private Transform _leftEyeBone = null;
 
-        private BlendShapeTarget _eyeBrowUpBlendShapeTarget;
-        private BlendShapeTarget _eyeBrowDownBlendShapeTarget;
+        //private BlendShapeTarget _eyeBrowUpBlendShapeTarget;
+        //private BlendShapeTarget _eyeBrowDownBlendShapeTarget;
 
         private float _rightEyeBrowValue = 0.0f;
         private float _leftEyeBrowValue = 0.0f;
 
         //単位: %
-        private float _prevEyeBrowWeight = 0;
+        private float _prevLeftEyeBrowWeight = 0;
+        private float _prevRightEyeBrowWeight = 0;
         //単位: %/s
-        private float _prevEyeBrowSpeed = 0;
+        private float _prevLeftEyeBrowSpeed = 0;
+        private float _prevRightEyeBrowSpeed = 0;
 
         private IDisposable _rightEyeBrowHeight = null;
         private IDisposable _leftEyeBrowHeight = null;
@@ -57,16 +53,18 @@ namespace Baku.VMagicMirror
         public void Initialize(
             VRMBlendShapeProxy proxy,
             FaceDetector faceDetector,
+            EyebrowBlendShapeSet blendShapeSet,
             Transform rightEyeBone, 
             Transform leftEyeBone
             )
         {
             _blendShapeProxy = proxy;
             _faceDetector = faceDetector;
+            _blendShapeSet = blendShapeSet;
             _rightEyeBone = rightEyeBone;
             _leftEyeBone = leftEyeBone;
 
-            InitializeEyeBrowBlendShapes();
+            //InitializeEyeBrowBlendShapes();
 
             _rightEyeBrowHeight?.Dispose();
             _leftEyeBrowHeight?.Dispose();
@@ -84,16 +82,13 @@ namespace Baku.VMagicMirror
 
         private void LateUpdate()
         {
-            if (!IsInitialized || 
-                _rightEyeBone == null || 
-                _leftEyeBone == null
-                )
+            if (!IsInitialized)
             {
                 return;
             }
 
             AdjustEyeRotation();
-            AdjustEyeBrow();
+            AdjustEyebrow();
         }
 
         private void OnDestroy()
@@ -105,118 +100,116 @@ namespace Baku.VMagicMirror
             _leftEyeBrowHeight = null;
         }
 
-        private void InitializeEyeBrowBlendShapes()
-        {
-            var renderers = _blendShapeProxy
-                .gameObject
-                .GetComponentsInChildren<SkinnedMeshRenderer>()
-                .ToArray();
+        //private void InitializeEyeBrowBlendShapes()
+        //{
+        //    var renderers = _blendShapeProxy
+        //        .gameObject
+        //        .GetComponentsInChildren<SkinnedMeshRenderer>()
+        //        .ToArray();
 
-            _eyeBrowUpBlendShapeTarget.isValid = false;
-            _eyeBrowDownBlendShapeTarget.isValid = false;
+        //    _eyeBrowUpBlendShapeTarget.isValid = false;
+        //    _eyeBrowDownBlendShapeTarget.isValid = false;
 
-            bool _upInitialized = false;
-            bool _downInitialized = false;
+        //    bool _upInitialized = false;
+        //    bool _downInitialized = false;
 
-            for(int i = 0; i < renderers.Length; i++)
-            {
-                var renderer = renderers[i];
-                var mesh = renderer.sharedMesh;
-                for (int j = 0; j < mesh.blendShapeCount; j++)
-                {
-                    string blendShapeName = mesh.GetBlendShapeName(j);
-                    if (blendShapeName == EyeBrowUpBlendShapeKey)
-                    {
-                        _eyeBrowUpBlendShapeTarget = new BlendShapeTarget()
-                        {
-                            isValid = true,
-                            index = mesh.GetBlendShapeIndex(blendShapeName),
-                            renderer = renderer,
-                        };
-                        _upInitialized = true;
-                    }
+        //    for(int i = 0; i < renderers.Length; i++)
+        //    {
+        //        var renderer = renderers[i];
+        //        var mesh = renderer.sharedMesh;
+        //        for (int j = 0; j < mesh.blendShapeCount; j++)
+        //        {
+        //            string blendShapeName = mesh.GetBlendShapeName(j);
+        //            if (blendShapeName == EyeBrowUpBlendShapeKey)
+        //            {
+        //                _eyeBrowUpBlendShapeTarget = new BlendShapeTarget()
+        //                {
+        //                    isValid = true,
+        //                    index = mesh.GetBlendShapeIndex(blendShapeName),
+        //                    renderer = renderer,
+        //                };
+        //                _upInitialized = true;
+        //            }
 
-                    if (blendShapeName == EyeBrowDownBlendShapeKey)
-                    {
-                        _eyeBrowDownBlendShapeTarget = new BlendShapeTarget()
-                        {
-                            isValid = true,
-                            index = mesh.GetBlendShapeIndex(blendShapeName),
-                            renderer = renderer,
-                        };
-                        _downInitialized = true;
-                    }
+        //            if (blendShapeName == EyeBrowDownBlendShapeKey)
+        //            {
+        //                _eyeBrowDownBlendShapeTarget = new BlendShapeTarget()
+        //                {
+        //                    isValid = true,
+        //                    index = mesh.GetBlendShapeIndex(blendShapeName),
+        //                    renderer = renderer,
+        //                };
+        //                _downInitialized = true;
+        //            }
 
-                    if (_upInitialized && _downInitialized)
-                    {
-                        return;
-                    }
-                }
-            }
-        }
+        //            if (_upInitialized && _downInitialized)
+        //            {
+        //                return;
+        //            }
+        //        }
+        //    }
+        //}
 
         private void AdjustEyeRotation()
         {
+            if (_rightEyeBone == null && _leftEyeBone == null)
+            {
+                return;
+            }
+
             float leftBlink = _blendShapeProxy.GetValue(BlendShapePreset.Blink_L);
             float rightBlink = _blendShapeProxy.GetValue(BlendShapePreset.Blink_R);
 
             //NOTE: 毎回LookAtで値がうまく設定されてる前提でこういう記法になっている事に注意
             _leftEyeBone.localRotation *= Quaternion.AngleAxis(
-                angleDegreeWhenEyeClosed * leftBlink,
+                eyeAngleDegreeWhenEyeClosed * leftBlink,
                 Vector3.right
                 );
 
             _rightEyeBone.localRotation *= Quaternion.AngleAxis(
-                angleDegreeWhenEyeClosed * rightBlink,
+                eyeAngleDegreeWhenEyeClosed * rightBlink,
                 Vector3.right
                 );
         }
 
-        private void AdjustEyeBrow()
+        private void AdjustEyebrow()
         {
             if (_faceDetector == null)
             {
                 return;
             }
 
-            float mean = (_leftEyeBrowValue + _rightEyeBrowValue) * 0.5f;
-            float meanWithOffset = mean - _faceDetector.CalibrationData.eyeBrowPosition;
-            float shapeValue = Mathf.Clamp(meanWithOffset / eyeBrowDiffSize, -1, 1) * 100f * eyeBrowAmplify;
+            //NOTE: ここスケールファクタないと非常に小さい値しか入らないのでは？？？
+            float left = _leftEyeBrowValue - _faceDetector.CalibrationData.eyeBrowPosition;
+            float right = _rightEyeBrowValue - _faceDetector.CalibrationData.eyeBrowPosition;
 
-            //まばたき分の閉じ値とオフセットも追加: もともと画像処理で眉の位置を取ってるが、それをさらに強調することになる
-            float goalWeight = shapeValue;
-            float idealSpeed = (goalWeight - _prevEyeBrowWeight) / timeScaleFactor;
-            float speed = Mathf.Lerp(_prevEyeBrowSpeed, idealSpeed, speedLerpFactor);
-            float weight = _prevEyeBrowWeight + Time.deltaTime * speed;
 
-            weight = Mathf.Clamp(weight, -100, 100);
+            float goalLeft = left;
+            float idealLeft = (goalLeft - _prevLeftEyeBrowWeight) / timeScaleFactor;
+            float speedLeft = Mathf.Lerp(_prevLeftEyeBrowSpeed, idealLeft, speedLerpFactor);
+            float weightLeft = _prevLeftEyeBrowWeight + Time.deltaTime * speedLeft;
+            weightLeft = Mathf.Clamp(weightLeft, -1, 1);
 
+            float goalRight = right;
+            float idealRight = (goalRight - _prevRightEyeBrowWeight) / timeScaleFactor;
+            float speedRight = Mathf.Lerp(_prevRightEyeBrowSpeed, idealRight, speedLerpFactor);
+            float weightRight = _prevRightEyeBrowWeight + Time.deltaTime * speedRight;
+            weightRight = Mathf.Clamp(weightRight, -1, 1);
+
+            //まばたき量に応じた値も足す: こちらはまばたき側の計算時にすでにローパスされてるから、そのまま足してOK
             //weightToAssignのオフセット項は後付けの補正なので速度の計算基準に使わないよう、計算から外している
-            float blink =
-                (_blendShapeProxy.GetValue(BlendShapePreset.Blink_L) +
-                _blendShapeProxy.GetValue(BlendShapePreset.Blink_R)
-                ) * 0.5f;
-            float weightToAssign = weight + defaultOffset - blink * eyeBrowDownOffsetWhenEyeClosed;
+            float blinkLeft = _blendShapeProxy.GetValue(BlendShapePreset.Blink_L);
+            float weightLeftToAssign = weightLeft + defaultOffset - blinkLeft * eyeBrowDownOffsetWhenEyeClosed;
 
-            if (_eyeBrowUpBlendShapeTarget.isValid)
-            {
-                _eyeBrowUpBlendShapeTarget.renderer.SetBlendShapeWeight(
-                    _eyeBrowUpBlendShapeTarget.index,
-                    weightToAssign > 0 ? weightToAssign : 0
-                    );
-            }
+            float blinkRight = _blendShapeProxy.GetValue(BlendShapePreset.Blink_R);
+            float weightRightToAssign = weightRight + defaultOffset - blinkRight * eyeBrowDownOffsetWhenEyeClosed;
 
-            if (_eyeBrowDownBlendShapeTarget.isValid)
-            {
-                _eyeBrowDownBlendShapeTarget.renderer.SetBlendShapeWeight(
-                    _eyeBrowDownBlendShapeTarget.index,
-                    weightToAssign < 0 ? -weightToAssign : 0
-                    );
-            }
+            _blendShapeSet.UpdateEyebrowBlendShape(weightLeftToAssign, weightRightToAssign);
 
-            _prevEyeBrowWeight = weight;
-            _prevEyeBrowSpeed = speed;
-
+            _prevLeftEyeBrowWeight = weightLeft;
+            _prevLeftEyeBrowSpeed = speedLeft;
+            _prevRightEyeBrowWeight = weightRight;
+            _prevRightEyeBrowSpeed = speedRight;
         }
 
         struct BlendShapeTarget

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -23,5 +24,8 @@ namespace Baku.VMagicMirror
         public Message SetCalibrateFaceData(string data) => WithArg(data);
 
         public Message SetBlendShapeNames(string v) => WithArg(v);
+
+        public Message AutoAdjustResults(AutoAdjustParameters parameters) 
+            => WithArg(JsonUtility.ToJson(parameters));
     }
 }

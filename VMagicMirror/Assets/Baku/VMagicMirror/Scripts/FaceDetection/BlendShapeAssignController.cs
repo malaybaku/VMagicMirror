@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UniRx;
-using System;
 
 namespace Baku.VMagicMirror
 {
@@ -73,6 +71,8 @@ namespace Baku.VMagicMirror
             EyebrowBlendShape.Reset();
         }
 
+        public string[] TryGetBlendShapeNames() => _blendShapeStore.GetBlendShapeNames();
+
         private void OnQueryReceived(object sender, ReceivedMessageHandler.QueryEventArgs e)
         {
             switch(e.Query.Command)
@@ -84,14 +84,6 @@ namespace Baku.VMagicMirror
                     break;
             }
         }
-
-        //private IEnumerator SendBlendShapeNamesDelay(float delaySec, string[] blendShapeNames)
-        //{
-        //    yield return new WaitForSeconds(delaySec);
-        //    sender.SendCommand(
-        //        MessageFactory.Instance.SetBlendShapeNames(string.Join("\t", blendShapeNames))
-        //        );
-        //}
 
     }
 }

@@ -35,6 +35,9 @@ namespace Baku.VMagicMirror
         private BlendShapeAssignController blendShapeAssignController = null;
 
         [SerializeField]
+        private SettingAutoAdjuster settingAdjuster = null;
+
+        [SerializeField]
         private VRoidSDK.Example.VRoidHubController vroidHub = null;
 
         private HumanPoseTransfer m_loaded = null;
@@ -125,6 +128,7 @@ namespace Baku.VMagicMirror
 
             if (loaded != null)
             {
+                //TODO: スケールしなくなってるのでそろそろReleaseイベント化したい
                 //破棄済みオブジェクトに触らせないためにnullize
                 loadSetting.inputToMotion.fingerAnimator = null;
                 loadSetting.inputToMotion.vrmRoot = null;
@@ -135,6 +139,7 @@ namespace Baku.VMagicMirror
                 faceAttitudeController?.DisposeHead();
                 faceDetector.DisposeNonCameraBlinkComponent();
                 blendShapeAssignController.DisposeModel();
+                settingAdjuster.DisposeModelRoot();
 
                 Destroy(loaded.gameObject);
             }
@@ -162,6 +167,7 @@ namespace Baku.VMagicMirror
             loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
             loadSetting.inputToMotion.vrmRoot = go.transform;
 
+            //TODO: スケールしなくなってるのでそろそろLoaded的なイベント化したい
             var animator = go.GetComponent<Animator>();
             var blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
             animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
@@ -184,6 +190,8 @@ namespace Baku.VMagicMirror
                     animator.GetBoneTransform(HumanBodyBones.RightEye),
                     animator.GetBoneTransform(HumanBodyBones.LeftEye)
                     );
+
+            settingAdjuster.AssignModelRoot(go.transform);
         }
 
         [Serializable]

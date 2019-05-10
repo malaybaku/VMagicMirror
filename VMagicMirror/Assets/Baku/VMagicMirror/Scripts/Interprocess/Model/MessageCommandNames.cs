@@ -16,6 +16,7 @@
         public const string OpenVrm = nameof(OpenVrm);
         public const string CancelLoadVrm = nameof(CancelLoadVrm);
         public const string AccessToVRoidHub = nameof(AccessToVRoidHub);
+        public const string RequestAutoAdjust = nameof(RequestAutoAdjust);
 
         // Window
         public const string Chromakey = nameof(Chromakey);

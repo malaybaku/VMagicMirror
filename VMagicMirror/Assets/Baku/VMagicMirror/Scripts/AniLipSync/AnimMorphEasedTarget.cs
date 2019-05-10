@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using VRM;
 
@@ -24,6 +25,9 @@ namespace Baku.VMagicMirror
 
         [Tooltip("OVRLipSyncに渡すSmoothing amountの値")]
         public int smoothAmount = 100;
+
+        //このフラグがtrueだと何も言ってないときの口の形になる。
+        public bool ForceClosedMouth { get; set; } = false;
 
         private readonly Dictionary<BlendShapeKey, float> blendShapeWeights = new Dictionary<BlendShapeKey, float>
         {
@@ -61,8 +65,20 @@ namespace Baku.VMagicMirror
 
         void Update()
         {
-            if (context == null ||
-                !context.enabled ||
+            if (context == null || blendShapeProxy == null)
+            {
+                return;
+            }
+
+            //口閉じの場合: とにかく閉じるのが良いので閉じて終わり
+            if (ForceClosedMouth)
+            {
+                UpdateToClosedMouth();
+                return;
+            }
+
+            //ちゃんとリップシンクしたい場合、
+            if (!context.enabled ||
                 blendShapeProxy == null || 
                 !(context.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame)
                 )
@@ -122,6 +138,15 @@ namespace Baku.VMagicMirror
                 }
             }
 
+            blendShapeProxy.SetValues(blendShapeWeights);
+        }
+
+        private void UpdateToClosedMouth()
+        {
+            foreach(var key in keys)
+            {
+                blendShapeWeights[key] = 0.0f;
+            }
             blendShapeProxy.SetValues(blendShapeWeights);
         }
     }

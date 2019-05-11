@@ -192,6 +192,7 @@ namespace Baku.VMagicMirror
                     );
 
             settingAdjuster.AssignModelRoot(go.transform);
+            blendShapeAssignController.SendBlendShapeNames();
         }
 
         [Serializable]

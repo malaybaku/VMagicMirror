@@ -17,6 +17,7 @@
         public const string CancelLoadVrm = nameof(CancelLoadVrm);
         public const string AccessToVRoidHub = nameof(AccessToVRoidHub);
         public const string RequestAutoAdjust = nameof(RequestAutoAdjust);
+        public const string RequestAutoAdjustEyebrow = nameof(RequestAutoAdjustEyebrow);
 
         // Window
         public const string Chromakey = nameof(Chromakey);

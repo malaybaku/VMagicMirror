@@ -10,11 +10,12 @@ namespace Baku.VMagicMirror
         private const string VRoid_Ver0_6_2_Or_Older_Up = "Face.M_F00_000_Fcl_BRW_Surprised";
         private const string VRoid_Ver0_6_2_Or_Older_Down = "Face.M_F00_000_Fcl_BRW_Angry";
 
-        private const string Alicia_Up = "eyebrow_up";
-        private const string Alicia_Down = "eyebrow_down";
+        private const string Alicia_Up = "eyeblow_up";
+        private const string Alicia_Down = "eyeblow_down";
 
         public class EyebrowPreferredSettings
         {
+            public bool IsValidPreset { get; set; } = false;
             public string EyebrowLeftUpKey { get; set; } = "";
             public string EyebrowLeftDownKey { get; set; } = "";
             public bool UseSeparatedKeyForEyebrow { get; set; } = false;
@@ -37,6 +38,7 @@ namespace Baku.VMagicMirror
                 case EstimatedModelTypes.VRoidVer0_6_3:
                     return new EyebrowPreferredSettings()
                     {
+                        IsValidPreset = true,
                         EyebrowLeftUpKey = VRoid_Ver0_6_3_Up,
                         EyebrowLeftDownKey = VRoid_Ver0_6_3_Down,
                         EyebrowUpScale = 150,
@@ -44,12 +46,14 @@ namespace Baku.VMagicMirror
                 case EstimatedModelTypes.VRoidVer0_6_2_Or_Older:
                     return new EyebrowPreferredSettings()
                     {
+                        IsValidPreset = true,
                         EyebrowLeftUpKey = VRoid_Ver0_6_2_Or_Older_Up,
                         EyebrowLeftDownKey = VRoid_Ver0_6_2_Or_Older_Down,
                     };
                 case EstimatedModelTypes.Alicia:
                     return new EyebrowPreferredSettings()
                     {
+                        IsValidPreset = true,
                         EyebrowLeftUpKey = Alicia_Up,
                         EyebrowLeftDownKey = Alicia_Down,
                     };

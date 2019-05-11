@@ -73,6 +73,11 @@ namespace Baku.VMagicMirror
 
         public string[] TryGetBlendShapeNames() => _blendShapeStore.GetBlendShapeNames();
 
+        public void SendBlendShapeNames()
+            => sender.SendCommand(MessageFactory.Instance.SetBlendShapeNames(
+                string.Join("\t", TryGetBlendShapeNames())
+                ));
+
         private void OnQueryReceived(object sender, ReceivedMessageHandler.QueryEventArgs e)
         {
             switch(e.Query.Command)

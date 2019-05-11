@@ -75,7 +75,7 @@ namespace Baku.VMagicMirror
         private Color32[] _colors;
 
         private bool isInitWaiting = false;
-        private bool hasInitDone = false;
+        public bool HasInitDone { get; private set; } = false;
 
         private FaceLandmarkDetector faceLandmarkDetector;
 
@@ -97,7 +97,7 @@ namespace Baku.VMagicMirror
         {
             _conflictableBlink = blink;
             //カメラが使えてないなら自動まばたきに頑張ってもらう、という意味
-            _conflictableBlink.enabled = !hasInitDone;
+            _conflictableBlink.enabled = !HasInitDone;
         }
 
         public void DisposeNonCameraBlinkComponent()
@@ -114,7 +114,7 @@ namespace Baku.VMagicMirror
 
         void Update()
         {
-            if (hasInitDone &&
+            if (HasInitDone &&
                 webCamTexture.isPlaying &&
                 webCamTexture.didUpdateThisFrame &&
                 _colors != null
@@ -146,7 +146,7 @@ namespace Baku.VMagicMirror
 
         private IEnumerator _Initialize()
         {
-            if (hasInitDone)
+            if (HasInitDone)
             {
                 Dispose();
             }
@@ -189,7 +189,7 @@ namespace Baku.VMagicMirror
             }
 
             isInitWaiting = false;
-            hasInitDone = true;
+            HasInitDone = true;
             if (_conflictableBlink != null)
             {
                 _conflictableBlink.enabled = false;
@@ -207,7 +207,7 @@ namespace Baku.VMagicMirror
         private void Dispose()
         {
             isInitWaiting = false;
-            hasInitDone = false;
+            HasInitDone = false;
             if (_conflictableBlink != null)
             {
                 _conflictableBlink.enabled = true;

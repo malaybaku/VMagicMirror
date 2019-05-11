@@ -46,6 +46,9 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.RequestAutoAdjust:
                         AutoAdjust();
                         break;
+                    case MessageCommandNames.RequestAutoAdjustEyebrow:
+                        AutoAdjustOnlyEyebrow();
+                        break;
                     default:
                         break;
                 }
@@ -85,11 +88,30 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private void SendParameterRelatedCommands(AutoAdjustParameters parameters)
+        private void AutoAdjustOnlyEyebrow()
         {
-            var commands = new ReceivedCommand[]
+            if (_vrmRoot == null)
             {
-                #region Motion
+                return;
+            }
+
+            var parameters = new AutoAdjustParameters();
+            try
+            {
+                SetEyebrowParameters(parameters);
+                SendParameterRelatedCommands(parameters, true);
+                sender.SendCommand(MessageFactory.Instance.AutoAdjustEyebrowResults(parameters));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+        }
+
+        private void SendParameterRelatedCommands(AutoAdjustParameters parameters, bool onlyEyebrow)
+        {
+            var eyebrowCommands = new ReceivedCommand[]
+            {
                 new ReceivedCommand(
                     MessageCommandNames.EyebrowLeftUpKey,
                     parameters.EyebrowLeftUpKey
@@ -126,8 +148,19 @@ namespace Baku.VMagicMirror
                     MessageCommandNames.LengthFromWristToTip,
                     $"{parameters.LengthFromWristToTip}"
                     ),
-                #endregion
-                #region Layout
+            };
+            foreach (var cmd in eyebrowCommands)
+            {
+                handler.ReceiveCommand(cmd);
+            }
+
+            if (onlyEyebrow)
+            {
+                return;
+            }
+
+            var nonEyebrowCommands = new ReceivedCommand[]
+            {
                 new ReceivedCommand(
                     MessageCommandNames.HidHeight,
                     $"{parameters.HidHeight}"
@@ -144,15 +177,15 @@ namespace Baku.VMagicMirror
                     MessageCommandNames.GamepadHorizontalScale,
                     $"{parameters.GamepadHorizontalScale}"
                     ),
-                #endregion
             };
-
-            //いまのとこ全てが単なるValue Setterなので即時で処理させて大丈夫
-            foreach(var cmd in commands)
+            foreach(var cmd in nonEyebrowCommands)
             {
                 handler.ReceiveCommand(cmd);
             }
         }
+
+        private void SendParameterRelatedCommands(AutoAdjustParameters parameters)
+            => SendParameterRelatedCommands(parameters, false);
 
         private void AdjustCameraPosition(Animator animator)
         {
@@ -166,6 +199,7 @@ namespace Baku.VMagicMirror
             var blendShapeNames = blendShapeAssignController.TryGetBlendShapeNames();
             var adjuster = new EyebrowBlendShapeAdjuster(blendShapeNames);
             var settings = adjuster.CreatePreferredSettings();
+            parameters.EyebrowIsValidPreset = settings.IsValidPreset;
             parameters.EyebrowLeftUpKey = settings.EyebrowLeftUpKey;
             parameters.EyebrowLeftDownKey = settings.EyebrowLeftDownKey;
             parameters.UseSeparatedKeyForEyebrow = settings.UseSeparatedKeyForEyebrow;
@@ -210,8 +244,6 @@ namespace Baku.VMagicMirror
             parameters.LengthFromWristToTip = (int)(parameters.LengthFromWristToTip * factor);
 
         }
-
-
 
     }
 }

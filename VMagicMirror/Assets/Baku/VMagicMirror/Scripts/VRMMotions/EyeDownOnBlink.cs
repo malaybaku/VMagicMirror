@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
         private float defaultOffset = 0.2f;
             
         [SerializeField]
-        private float eyeBrowDownOffsetWhenEyeClosed = 0.8f;
+        private float eyeBrowDownOffsetWhenEyeClosed = 0.7f;
 
         [SerializeField]
         private float eyeAngleDegreeWhenEyeClosed = 10f;
@@ -31,9 +31,6 @@ namespace Baku.VMagicMirror
         private FaceDetector _faceDetector = null;
         private Transform _rightEyeBone = null;
         private Transform _leftEyeBone = null;
-
-        //private BlendShapeTarget _eyeBrowUpBlendShapeTarget;
-        //private BlendShapeTarget _eyeBrowDownBlendShapeTarget;
 
         private float _rightEyeBrowValue = 0.0f;
         private float _leftEyeBrowValue = 0.0f;
@@ -182,7 +179,11 @@ namespace Baku.VMagicMirror
             //NOTE: ここスケールファクタないと非常に小さい値しか入らないのでは？？？
             float left = _leftEyeBrowValue - _faceDetector.CalibrationData.eyeBrowPosition;
             float right = _rightEyeBrowValue - _faceDetector.CalibrationData.eyeBrowPosition;
-
+            if (!_faceDetector.HasInitDone)
+            {
+                left = 0;
+                right = 0;
+            }
 
             float goalLeft = left;
             float idealLeft = (goalLeft - _prevLeftEyeBrowWeight) / timeScaleFactor;

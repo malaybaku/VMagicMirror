@@ -2,28 +2,28 @@
 
 namespace Baku.VMagicMirror
 {
-    //NOTE: このクラスはUnityとWPFで同じメンバ構成にすること
+    //NOTE: このクラスはUnityとWPFで同じメンバ構成にするが、シリアライザの都合でUnity: フィールド, WPF: プロパティとかの使い分けは適宜行う。
     [Serializable]
     public class AutoAdjustParameters
     {
-        public bool EyebrowIsValidPreset { get; set; } = false;
-        public string EyebrowLeftUpKey { get; set; } = "";
-        public string EyebrowLeftDownKey { get; set; } = "";
-        public bool UseSeparatedKeyForEyebrow { get; set; } = false;
-        public string EyebrowRightUpKey { get; set; } = "";
-        public string EyebrowRightDownKey { get; set; } = "";
-        public int EyebrowUpScale { get; set; } = 100;
-        public int EyebrowDownScale { get; set; } = 100;
+        public bool EyebrowIsValidPreset = false;
+        public string EyebrowLeftUpKey = "";
+        public string EyebrowLeftDownKey = "";
+        public bool UseSeparatedKeyForEyebrow = false;
+        public string EyebrowRightUpKey = "";
+        public string EyebrowRightDownKey = "";
+        public int EyebrowUpScale = 100;
+        public int EyebrowDownScale = 100;
 
-        public int LengthFromWristToTip { get; set; } = 12;
-        public int LengthFromWristToPalm { get; set; } = 6;
+        public int LengthFromWristToTip = 12;
+        public int LengthFromWristToPalm = 6;
 
         //カメラ位置は不要: ポーリングで取得してるから勝手に反映される
 
-        public int HidHeight { get; set; } = 90;
-        public int HidHorizontalScale { get; set; } = 70;
-        public int GamepadHeight { get; set; } = 90;
-        public int GamepadHorizontalScale { get; set; } = 100;
+        public int HidHeight = 90;
+        public int HidHorizontalScale = 70;
+        public int GamepadHeight = 90;
+        public int GamepadHorizontalScale = 100;
 
     }
 }

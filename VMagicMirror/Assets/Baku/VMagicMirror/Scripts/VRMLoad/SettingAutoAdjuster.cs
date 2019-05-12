@@ -211,8 +211,11 @@ namespace Baku.VMagicMirror
 
         private void SetBodyHeightRelatedParameters(Animator animator, AutoAdjustParameters parameters)
         {
-            var chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
-            parameters.HidHeight = Mathf.RoundToInt(chestBone.position.y * 100);
+            //高さ基準がSpineだとちょっと低くなるが、VRM(というかUnity Humanoid)の要件上Chestが無い事があるので…
+            var heightBaseBone =
+                animator.GetBoneTransform(HumanBodyBones.Chest) ??
+                animator.GetBoneTransform(HumanBodyBones.Spine);
+            parameters.HidHeight = Mathf.RoundToInt(heightBaseBone.position.y * 100);
             parameters.GamepadHeight = parameters.HidHeight + 5;
         }
 

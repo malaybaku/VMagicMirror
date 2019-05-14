@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UniRx;
 
 namespace Baku.VMagicMirror
@@ -7,6 +8,10 @@ namespace Baku.VMagicMirror
 
     public class WindowStyleController : MonoBehaviour
     {
+        //Player Settingで決められるデフォルトウィンドウサイズと合わせてるが、常識的な値であれば多少ズレても害はないです
+        const int DefaultWindowWidth = 800;
+        const int DefaultWindowHeight = 600;
+
         [SerializeField]
         private ReceivedMessageHandler handler = null;
 
@@ -53,6 +58,9 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.MoveWindow:
                         int[] xy = message.ToIntArray();
                         MoveWindow(xy[0], xy[1]);
+                        break;
+                    case MessageCommandNames.ResetWindowSize:
+                        ResetWindowSize();
                         break;
                     default:
                         break;
@@ -102,6 +110,14 @@ namespace Baku.VMagicMirror
             SetUnityWindowPosition(x, y);
 #endif
         }
+
+        private void ResetWindowSize()
+        {
+#if !UNITY_EDITOR
+            SetUnityWindowSize(DefaultWindowWidth, DefaultWindowHeight);
+#endif
+        }
+
 
         private void SetWindowFrameVisibility(bool isVisible)
         {

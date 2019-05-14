@@ -26,6 +26,7 @@
         public const string TopMost = nameof(TopMost);
         public const string WindowDraggable = nameof(WindowDraggable);
         public const string MoveWindow = nameof(MoveWindow);
+        public const string ResetWindowSize = nameof(ResetWindowSize);
 
         // Motion
 

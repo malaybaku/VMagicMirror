@@ -50,7 +50,7 @@ namespace Baku.VMagicMirror
             }
             catch(Exception ex)
             {
-                Debug.LogException(ex);
+                LogOutput.Instance.Write(ex);
             }
 
         }
@@ -169,7 +169,7 @@ namespace Baku.VMagicMirror
 
             if (webCamTexture == null)
             {
-                Debug.Log("Cannot find camera device " + requestedDeviceName + ".");
+                LogOutput.Instance.Write("Cannot find camera device " + requestedDeviceName + ".");
                 isInitWaiting = false;
                 yield break;
             }

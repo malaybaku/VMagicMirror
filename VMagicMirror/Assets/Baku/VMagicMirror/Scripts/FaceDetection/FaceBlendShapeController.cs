@@ -110,7 +110,7 @@ namespace Baku.VMagicMirror
         {
             foreach (var device in WebCamTexture.devices)
             {
-                Debug.Log($"Webcam Device Name:{device.name}");
+                LogOutput.Instance.Write($"Webcam Device Name:{device.name}");
             }
         }
 

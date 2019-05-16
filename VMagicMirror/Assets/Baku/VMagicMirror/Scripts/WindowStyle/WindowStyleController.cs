@@ -198,7 +198,7 @@ namespace Baku.VMagicMirror
         {
             _isWindowFrameHidden = !isVisible;
 
-            Debug.Log($"{nameof(SetWindowFrameVisibility)}:{isVisible}");
+            LogOutput.Instance.Write($"{nameof(SetWindowFrameVisibility)}:{isVisible}");
             var hwnd = GetUnityWindowHandle();
             uint windowStyle = isVisible ?
                 defaultWindowStyle :

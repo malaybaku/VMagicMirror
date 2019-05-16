@@ -84,7 +84,7 @@ namespace Baku.VMagicMirror
             }
             catch(Exception ex)
             {
-                Debug.LogException(ex);
+                LogOutput.Instance.Write(ex);
             }
         }
 
@@ -104,7 +104,7 @@ namespace Baku.VMagicMirror
             }
             catch (Exception ex)
             {
-                Debug.LogException(ex);
+                LogOutput.Instance.Write(ex);
             }
         }
 

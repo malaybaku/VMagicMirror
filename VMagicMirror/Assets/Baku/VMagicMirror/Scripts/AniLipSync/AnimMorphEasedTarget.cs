@@ -57,7 +57,7 @@ namespace Baku.VMagicMirror
             context = GetComponent<OVRLipSyncContextBase>();
             if (context == null)
             {
-                Debug.LogError("同じGameObjectにOVRLipSyncContextBaseを継承したクラスが見つかりません。", this);
+                LogOutput.Instance.Write("同じGameObjectにOVRLipSyncContextBaseを継承したクラスが見つかりません。");
             }
 
             context.Smoothing = smoothAmount;

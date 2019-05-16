@@ -7,6 +7,8 @@ using VRM;
 
 namespace Baku.VMagicMirror
 {
+    using static ExceptionUtils;
+
     public class VRMLoadController : MonoBehaviour
     {
         [SerializeField]
@@ -76,18 +78,21 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            if (Path.GetExtension(path).ToLower() == ".vrm")
+            TryWithoutException(() =>
             {
-                using (var context = new VRMImporterContext())
+                if (Path.GetExtension(path).ToLower() == ".vrm")
                 {
-                    context.ParseGlb(File.ReadAllBytes(path));
-                    vrmInformation.ShowMetaData(context);
+                    using (var context = new VRMImporterContext())
+                    {
+                        context.ParseGlb(File.ReadAllBytes(path));
+                        vrmInformation.ShowMetaData(context);
+                    }
                 }
-            }
-            else
-            {
-                Debug.LogWarningFormat("unknown file type: {0}", path);
-            }
+                else
+                {
+                    LogOutput.Instance.Write("unknown file type: " + path);
+                }
+            });
         }
 
         private void LoadModel(string path)
@@ -99,19 +104,22 @@ namespace Baku.VMagicMirror
 
             if (Path.GetExtension(path).ToLower() != ".vrm")
             {
-                Debug.LogWarning($"unknown file type: {path}");
+                LogOutput.Instance.Write($"unknown file type: {path}");
                 return;
             }
 
-            var context = new VRMImporterContext();
-            var file = File.ReadAllBytes(path);
-            context.ParseGlb(file);
+            TryWithoutException(() =>
+            {
+                var context = new VRMImporterContext();
+                var file = File.ReadAllBytes(path);
+                context.ParseGlb(file);
 
-            context.Load();
-            context.ShowMeshes();
-            context.EnableUpdateWhenOffscreen();
-            context.ShowMeshes();
-            SetModel(context.Root);
+                context.Load();
+                context.ShowMeshes();
+                context.EnableUpdateWhenOffscreen();
+                context.ShowMeshes();
+                SetModel(context.Root);
+            });
         }
 
         private void OnVrmLoadedFromVRoidHub(string modelId, GameObject vrmObject)
@@ -161,38 +169,52 @@ namespace Baku.VMagicMirror
                 m_loaded.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
             }
 
-            //セットアップの過程でFinalIKに触るため、(有償アセットなので取り外しの事も考えつつ)ファイル分離
-            VRMLoadControllerHelper.SetupVrm(go, loadSetting, faceDetector);
-
-            loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
-            loadSetting.inputToMotion.vrmRoot = go.transform;
-
+            //NOTE: ここからは一部がコケても他のセットアップを続けて欲しいので、やや細かくTry Catchしていく
             //TODO: スケールしなくなってるのでそろそろLoaded的なイベント化したい
+
+            TryWithoutException(() =>
+                VRMLoadControllerHelper.SetupVrm(go, loadSetting, faceDetector)
+                );
+            //セットアップの過程でFinalIKに触るため、(有償アセットなので取り外しの事も考えつつ)ファイル分離
+
+            TryWithoutException(() =>
+            {
+                loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
+                loadSetting.inputToMotion.vrmRoot = go.transform;
+            });
+
             var animator = go.GetComponent<Animator>();
             var blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
-            animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
-            faceBlendShapeController?.Initialize(blendShapeProxy);
-            faceAttitudeController?.Initialize(animator.GetBoneTransform(HumanBodyBones.Neck));
 
-            loadSetting.inputToMotion.head = animator.GetBoneTransform(HumanBodyBones.Head);
-            loadSetting.inputToMotion.rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);
-            go.GetComponent<MotionModifyToMotion>()
-                .SetReceiver(GetComponent<MotionModifyReceiver>());
-            loadSetting.inputToMotion.PressKeyMotion("LControlKey");
-            loadSetting.inputToMotion.PressKeyMotion("RControlKey");
+            TryWithoutException(() =>
+            {
+                animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
+                faceBlendShapeController?.Initialize(blendShapeProxy);
+                faceAttitudeController?.Initialize(animator.GetBoneTransform(HumanBodyBones.Neck));
 
-            blendShapeAssignController.InitializeModel(go.transform);
-            go.AddComponent<EyeDownOnBlink>()
-                .Initialize(
-                    blendShapeProxy,
-                    faceDetector,
-                    blendShapeAssignController.EyebrowBlendShape,
-                    animator.GetBoneTransform(HumanBodyBones.RightEye),
-                    animator.GetBoneTransform(HumanBodyBones.LeftEye)
-                    );
+                loadSetting.inputToMotion.head = animator.GetBoneTransform(HumanBodyBones.Head);
+                loadSetting.inputToMotion.rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);
+                go.GetComponent<MotionModifyToMotion>()
+                    .SetReceiver(GetComponent<MotionModifyReceiver>());
+                loadSetting.inputToMotion.PressKeyMotion("LControlKey");
+                loadSetting.inputToMotion.PressKeyMotion("RControlKey");
+            });
 
-            settingAdjuster.AssignModelRoot(go.transform);
-            blendShapeAssignController.SendBlendShapeNames();
+            TryWithoutException(() =>
+            {
+                blendShapeAssignController.InitializeModel(go.transform);
+                go.AddComponent<EyeDownOnBlink>()
+                    .Initialize(
+                        blendShapeProxy,
+                        faceDetector,
+                        blendShapeAssignController.EyebrowBlendShape,
+                        animator.GetBoneTransform(HumanBodyBones.RightEye),
+                        animator.GetBoneTransform(HumanBodyBones.LeftEye)
+                        );
+
+                settingAdjuster.AssignModelRoot(go.transform);
+                blendShapeAssignController.SendBlendShapeNames();
+            });
         }
 
         [Serializable]

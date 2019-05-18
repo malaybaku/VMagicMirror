@@ -256,6 +256,19 @@ namespace Baku.VMagicMirror
             }
         }
 
+        public KeyTargetData GetKeyTargetData(string key)
+        {
+            var keyTransform = GetTransformOfKey(key);
+            int fingerNumber = GetFingerNumberOfKey(key);
+            Vector3 offset = FingerNumberToOffset(fingerNumber);
+            return new KeyTargetData()
+            {
+                fingerNumber = fingerNumber,
+                keyTransform = keyTransform,
+                positionWithOffset = keyTransform.position + offset,
+            };
+        }
+
         public Vector3 GetPositionOfKey(string key)
         {
             return GetTransformOfKey(key).position;
@@ -298,6 +311,52 @@ namespace Baku.VMagicMirror
             return _keys[0][0];
         }
 
+        private Vector3 FingerNumberToOffset(int fingerNumber)
+        {
+            //NOTE: いったん面倒なので決め打ちする。指と指の間隔。
+            const float fingerHorizontalLengthUnit = 0.015f;
+
+            //何もしないと中指の位置で合わせに行くと考え、そこから隣の指を使うときに横へ調整
+            float length = 0;
+            switch (fingerNumber)
+            {
+                case FingerConsts.LeftThumb:
+                    length = -2 * fingerHorizontalLengthUnit;
+                    break;
+                case FingerConsts.LeftIndex:
+                    length = -2 * fingerHorizontalLengthUnit;
+                    break;
+                case FingerConsts.LeftMiddle:
+                    length = 0 * fingerHorizontalLengthUnit;
+                    break;
+                case FingerConsts.LeftRing:
+                    length = 1 * fingerHorizontalLengthUnit;
+                    break;
+                case FingerConsts.LeftLittle:
+                    length = 2 * fingerHorizontalLengthUnit;
+                    break;
+                case FingerConsts.RightThumb:
+                    length = 2 * fingerHorizontalLengthUnit;
+                    break;
+                case FingerConsts.RightIndex:
+                    length = 2 * fingerHorizontalLengthUnit;
+                    break;
+                case FingerConsts.RightMiddle:
+                    length = 0 * fingerHorizontalLengthUnit;
+                    break;
+                case FingerConsts.RightRing:
+                    length = -1 * fingerHorizontalLengthUnit;
+                    break;
+                case FingerConsts.RightLittle:
+                    length = -2 * fingerHorizontalLengthUnit;
+                    break;
+                default:
+                    break;
+            }
+
+            return Vector3.right * length;
+        }
+
         private string SanitizeKey(string key)
         {
             //note: エイリアスのあるキー名を一方向に倒す。
@@ -334,5 +393,11 @@ namespace Baku.VMagicMirror
             }
         }
 
+        public struct KeyTargetData
+        {
+            public int fingerNumber;
+            public Transform keyTransform;
+            public Vector3 positionWithOffset;
+        }
     }
 }

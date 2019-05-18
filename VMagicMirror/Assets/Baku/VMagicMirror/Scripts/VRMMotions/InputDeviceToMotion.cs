@@ -339,7 +339,9 @@ namespace Baku.VMagicMirror
 
         public void PressKeyMotion(string key)
         {
-            Vector3 targetPos = keyboard.GetPositionOfKey(key) + yOffsetAlwaysVec;
+            var keyData = keyboard.GetKeyTargetData(key);
+            Vector3 targetPos = keyData.positionWithOffset + yOffsetAlwaysVec;
+            //Vector3 targetPos = keyboard.GetPositionOfKey(key) + yOffsetAlwaysVec;
             targetPos -= handToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
             if (keyboard.IsLeftHandPreffered(key))
@@ -362,8 +364,9 @@ namespace Baku.VMagicMirror
                 _headTrackTargetWhenNotTouchTyping = rightHandTarget;
             }
 
-            int fingerNumber = keyboard.GetFingerNumberOfKey(key);
-            fingerAnimator?.StartMoveFinger(fingerNumber);
+            //int fingerNumber = keyboard.GetFingerNumberOfKey(key);
+            //fingerAnimator?.StartMoveFinger(fingerNumber);
+            fingerAnimator?.StartMoveFinger(keyData.fingerNumber);
         }
 
         private IEnumerator KeyPressRoutine(Transform hand, Vector3 targetPos, bool isLeftHand)

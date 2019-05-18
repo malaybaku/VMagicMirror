@@ -7,6 +7,8 @@ namespace Baku.VMagicMirror
 {
     public class FaceBlendShapeController : MonoBehaviour
     {
+        private const float EyeBlendShapeCloseThreshold = 0.6f;
+
         private const float EyeCloseHeight = 0.02f;
 
         private float _faceDefaultFunValue = 0.2f;
@@ -98,11 +100,17 @@ namespace Baku.VMagicMirror
             }
             
             float left = Mathf.Lerp(_prevLeftBlink, _leftBlinkTarget, speedFactor);
-            _blendShapeProxy.ImmediatelySetValue(BlendShapePreset.Blink_L, left);
+
+            _blendShapeProxy.ImmediatelySetValue(
+                BlendShapePreset.Blink_L, 
+                left > EyeBlendShapeCloseThreshold ? 1.0f : left);
             _prevLeftBlink = left;
 
             float right = Mathf.Lerp(_prevRightBlink, _rightBlinkTarget, speedFactor);
-            _blendShapeProxy.ImmediatelySetValue(BlendShapePreset.Blink_R, right);
+            _blendShapeProxy.ImmediatelySetValue(
+                BlendShapePreset.Blink_R, 
+                right > EyeBlendShapeCloseThreshold ? 1.0f : right
+                );
             _prevRightBlink = right;
         }
 

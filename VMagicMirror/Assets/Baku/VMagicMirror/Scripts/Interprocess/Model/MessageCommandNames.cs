@@ -78,6 +78,7 @@
         public const string SetCustomCameraPosition = nameof(SetCustomCameraPosition);
         public const string EnableFreeCameraMode = nameof(EnableFreeCameraMode);
         public const string ResetCameraPosition = nameof(ResetCameraPosition);
+        public const string CameraFov = nameof(CameraFov);
 
         // Layout, HID (keyboard and mousepad)
         public const string HidHeight = nameof(HidHeight);

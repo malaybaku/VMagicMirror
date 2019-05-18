@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 using UniRx;
+using System;
 
 namespace Baku.VMagicMirror
 {
@@ -46,6 +47,9 @@ namespace Baku.VMagicMirror
                         break;
                     case MessageCommandNames.ResetCameraPosition:
                         ResetCameraPosition();
+                        break;
+                    case MessageCommandNames.CameraFov:
+                        SetCameraFov(message.ToInt());
                         break;
                     default:
                         break;
@@ -136,6 +140,13 @@ namespace Baku.VMagicMirror
                 _cam.transform.rotation = Quaternion.Euler(_defaultCameraRotationEuler);
             }
         }
+
+        private void SetCameraFov(int fovDeg)
+        {
+            _cam.fieldOfView = fovDeg;
+        }
+
+
     }
 }
 

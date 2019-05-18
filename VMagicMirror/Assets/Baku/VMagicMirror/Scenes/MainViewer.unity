@@ -2508,7 +2508,7 @@ Transform:
   m_Children:
   - {fileID: 1383182300}
   m_Father: {fileID: 1674567171}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &644517399
 GameObject:
@@ -2690,7 +2690,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1674567171}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &682044684
 GameObject:
@@ -3589,6 +3589,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 917346326}
   m_CullTransparentMesh: 0
+--- !u!1 &935302417
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 935302418}
+  m_Layer: 0
+  m_Name: Right Index
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &935302418
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 935302417}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1674567171}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &953451440
 GameObject:
   m_ObjectHideFlags: 0
@@ -7005,6 +7035,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handler: {fileID: 1930233619}
+  sender: {fileID: 0}
+  windowPositionCheckInterval: 5
 --- !u!81 &1629460658
 AudioListener:
   m_ObjectHideFlags: 0
@@ -7403,6 +7435,7 @@ Transform:
   m_Children:
   - {fileID: 1134663116}
   - {fileID: 500754461}
+  - {fileID: 935302418}
   - {fileID: 1842530517}
   - {fileID: 638373946}
   - {fileID: 666295719}
@@ -8382,6 +8415,7 @@ MonoBehaviour:
     bodyRootTarget: {fileID: 1134663116}
     leftHandTarget: {fileID: 1842530517}
     rightHandTarget: {fileID: 500754461}
+    rightIndexTarget: {fileID: 935302418}
     headTarget: {fileID: 1383182300}
     inputToMotion: {fileID: 1855229416}
   animMorphEasedTarget: {fileID: 1809547436}
@@ -8812,7 +8846,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1674567171}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1843758871
 GameObject:
@@ -9117,6 +9151,7 @@ MonoBehaviour:
     m_Bits: 512
   leftHandTarget: {fileID: 1842530517}
   rightHandTarget: {fileID: 500754461}
+  rightIndexTarget: {fileID: 935302418}
   headTarget: {fileID: 638373946}
   headLookTargetWhenTouchTyping: {fileID: 666295719}
   keyboardHorizontalApproachCurve:

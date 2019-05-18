@@ -40,7 +40,7 @@ namespace Baku.VMagicMirror
             // - マウスクリック: NG, グローバルフック必須
             // - キーボード: NG, グローバルフック必須
             var pos = Input.mousePosition;
-            UpdateByXY((int)pos.x, (int)pos.y);
+            UpdateByMousePosition(pos);
         }
 
         private void SubscribeMessageHandler()
@@ -174,8 +174,11 @@ namespace Baku.VMagicMirror
             motion.GamepadLeanMotion(reverseConsideredPos);
         }
 
-        private void UpdateByXY(int x, int y)
+        private void UpdateByMousePosition(Vector3 mousePosition)
         {
+            int x = (int)mousePosition.x;
+            int y = (int)mousePosition.y;
+
             motion.UpdateMouseBasedHeadTarget(x, y);
 
             if (
@@ -183,7 +186,7 @@ namespace Baku.VMagicMirror
                 (mousePositionX != x || mousePositionY != y)
                 )
             {
-                motion.GrabMouseMotion(x, y);
+                motion.GrabMouseMotion(mousePosition);
             }
 
             mousePositionX = x;

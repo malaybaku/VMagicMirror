@@ -3,6 +3,7 @@ using UnityEngine;
 using RootMotion;
 using RootMotion.FinalIK;
 using VRM;
+using System;
 
 namespace Baku.VMagicMirror
 {
@@ -44,6 +45,8 @@ namespace Baku.VMagicMirror
 
             var bodyPositionAdjust = go.AddComponent<FaceBasedBodyIKAdjuster>();
             bodyPositionAdjust.Initialize(faceDetector, animator, ik);
+
+            AddFingerRigToRightIndex(animator, setting);
         }
 
         private static FullBodyBipedIK AddFBBIK(GameObject go, VRMLoadController.VrmLoadSetting setting, BipedReferences reference)
@@ -128,5 +131,26 @@ namespace Baku.VMagicMirror
                 eyes = new Transform[0],
             };
         }
+
+        private static void AddFingerRigToRightIndex(Animator animator, VRMLoadController.VrmLoadSetting setting)
+        {
+            //NOTE: FinalIKのサンプルにあるFingerRigを持ち込んでみる。
+            var rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+
+            var fingerRig = rightHand.gameObject.AddComponent<FingerRig>();
+            fingerRig.AddFinger(
+                animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
+                animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
+                animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
+                setting.rightIndexTarget
+                );
+            //とりあえず無効化し、有効にするのはInputDeviceToMotionの責務にする
+            fingerRig.weight = 0.0f;
+            fingerRig.fingers[0].rotationDOF = Finger.DOF.One;
+            fingerRig.fingers[0].weight = 1.0f;
+            fingerRig.fingers[0].rotationWeight = 0;
+        }
+
+
     }
 }

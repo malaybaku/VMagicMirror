@@ -194,6 +194,9 @@ namespace Baku.VMagicMirror
 
                 loadSetting.inputToMotion.head = animator.GetBoneTransform(HumanBodyBones.Head);
                 loadSetting.inputToMotion.rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);
+                loadSetting.inputToMotion.fingerRig = animator
+                    .GetBoneTransform(HumanBodyBones.RightHand)
+                    .GetComponent<RootMotion.FinalIK.FingerRig>();
                 go.GetComponent<MotionModifyToMotion>()
                     .SetReceiver(GetComponent<MotionModifyReceiver>());
                 loadSetting.inputToMotion.PressKeyMotion("LControlKey");
@@ -224,6 +227,7 @@ namespace Baku.VMagicMirror
             public Transform bodyRootTarget;
             public Transform leftHandTarget;
             public Transform rightHandTarget;
+            public Transform rightIndexTarget;
             public Transform headTarget;
             public InputDeviceToMotion inputToMotion;
         }

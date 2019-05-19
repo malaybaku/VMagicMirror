@@ -15,15 +15,16 @@ namespace Baku.VMagicMirror
         const string InitialPositionXKey = "InitialPositionX";
         const string InitialPositionYKey = "InitialPositionY";
 
+        //Alphaは保持しない事に留意
+        private int _chromakeyR = 0;
+        private int _chromakeyG = 255;
+        private int _chromakeyB = 0;
+
         [SerializeField]
         private ReceivedMessageHandler handler = null;
 
         [SerializeField]
-        private GrpcSender sender = null;
-
-        [SerializeField]
         private float windowPositionCheckInterval = 5.0f;
-
 
         private float _windowPositionCheckCount = 0;
         private Vector2Int _prevWindowPosition = Vector2Int.zero;
@@ -43,6 +44,7 @@ namespace Baku.VMagicMirror
 #if !UNITY_EDITOR
             defaultWindowStyle = GetWindowLong(GetUnityWindowHandle(), GWL_STYLE);
             defaultExWindowStyle = GetWindowLong(GetUnityWindowHandle(), GWL_EXSTYLE);
+            LogOutput.Instance.Write($"Default Window Style non-ex: {defaultWindowStyle}, ex: {defaultExWindowStyle}");
 #endif
         }
 
@@ -54,7 +56,8 @@ namespace Baku.VMagicMirror
                 switch (message.Command)
                 {
                     case MessageCommandNames.Chromakey:
-                        var argb = message.ToColorFloats();
+                        var argb = message.ToIntArray();
+                        SetChromakey(argb);
                         SetWindowTransparency(argb[0] == 0);
                         break;
                     case MessageCommandNames.WindowFrameVisibility:
@@ -84,6 +87,7 @@ namespace Baku.VMagicMirror
 
             //既定で最前面に表示
             SetTopMost(true);
+            SetIgnoreMouseInput(false);
 
             InitializeWindowPositionCheckStatus();
         }
@@ -204,15 +208,25 @@ namespace Baku.VMagicMirror
                 defaultWindowStyle :
                 WS_POPUP | WS_VISIBLE;
 #if !UNITY_EDITOR
-            SetWindowLong(hwnd, GWL_STYLE, windowStyle);
+            //SetWindowLong(hwnd, GWL_STYLE, windowStyle);
 #endif
+        }
+
+        private void SetChromakey(int[] argb)
+        {
+            if (argb != null && argb.Length >= 4)
+            {
+                _chromakeyR = argb[1];
+                _chromakeyG = argb[2];
+                _chromakeyB = argb[3];
+            }
         }
 
         private void SetWindowTransparency(bool isTransparent)
         {
             _isTransparent = isTransparent;
 #if !UNITY_EDITOR
-            SetDwmTransparent(isTransparent);
+            //SetDwmTransparent(isTransparent);
 #endif
         }
 
@@ -221,10 +235,19 @@ namespace Baku.VMagicMirror
             var hwnd = GetUnityWindowHandle();
             uint exWindowStyle = ignoreMouseInput ?
                 WS_EX_LAYERED | WS_EX_TRANSPARENT :
-                defaultExWindowStyle;
+                //NOTE: これで怒られる場合、WS_EX_LAYEREDだけにする
+                defaultExWindowStyle | WS_EX_LAYERED;
+
+            Color32 chromaKeyColor = new Color32(
+                (byte)_chromakeyR, (byte)_chromakeyG, (byte)_chromakeyB, 0
+                );
 
 #if !UNITY_EDITOR
             SetWindowLong(hwnd, GWL_EXSTYLE, exWindowStyle);
+            if (!ignoreMouseInput)
+            {
+                EnableUnityWindowHittestChromakey(chromaKeyColor);
+            }
 #endif
         }
 

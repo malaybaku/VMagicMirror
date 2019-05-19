@@ -119,6 +119,10 @@ namespace Baku.VMagicMirror
         public const uint WS_EX_LAYERED = 0x00080000;
         public const uint WS_EX_TRANSPARENT = 0x00000020;
 
+        // SetLayeredWindowAttributesのクロマキー指定するときのフラグ
+        public const int LWA_COLORKEY = 0x0000_0001;
+        // SetLayeredWindowAttributesで透明度指定するときのフラグ(基本使わないでもよさげ)
+        public const int LWA_ALPHA = 0x0000_0002;
 
         public delegate bool EnumWindowsDelegate(IntPtr hWnd, IntPtr lparam);
 
@@ -131,6 +135,20 @@ namespace Baku.VMagicMirror
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int GetWindowTextLength(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+
+        public static void EnableUnityWindowHittestChromakey(Color32 color)
+        {
+            uint crKey = (uint)((color.b << 4) | (color.g << 2) | color.r);
+            SetLayeredWindowAttributes(GetUnityWindowHandle(), crKey, 0, LWA_COLORKEY);
+        }
+
+        public static void DisableUnityWindowHittestChromakey()
+        {
+            SetLayeredWindowAttributes(GetUnityWindowHandle(), 0, 0, 0);
+        }
 
         public static Dictionary<IntPtr, string> GetAllWindowHandle()
         {

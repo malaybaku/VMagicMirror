@@ -19,6 +19,9 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class FaceDetector : MonoBehaviour
     {
+        //const string FaceTrackingDataFileName = "sp_human_face_68.dat";
+        const string FaceTrackingDataFileName = "sp_human_face_68_for_mobile.dat";
+
         public string requestedDeviceName = null;
         public int requestedWidth = 320;
         public int requestedHeight = 240;
@@ -123,7 +126,7 @@ namespace Baku.VMagicMirror
         void Start()
         {
             CalibrationData.SetDefaultValues();
-            string predictorFilePath = Path.Combine(Application.streamingAssetsPath, "sp_human_face_68.dat");
+            string predictorFilePath = Path.Combine(Application.streamingAssetsPath, FaceTrackingDataFileName);
             faceLandmarkDetector = new FaceLandmarkDetector(predictorFilePath);
         }
 

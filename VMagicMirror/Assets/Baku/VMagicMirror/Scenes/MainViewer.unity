@@ -6329,6 +6329,7 @@ MonoBehaviour:
   requestedHeight: 240
   requestedFPS: 30
   requestedIsFrontFacing: 0
+  halfResizeWidthThreshold: 640
 --- !u!114 &1534341278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9145,6 +9146,7 @@ MonoBehaviour:
   head: {fileID: 0}
   rightShoulder: {fileID: 0}
   fingerAnimator: {fileID: 0}
+  fingerRig: {fileID: 0}
   cam: {fileID: 1629460662}
   raycastMask:
     serializedVersion: 2

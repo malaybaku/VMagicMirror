@@ -45,14 +45,14 @@ namespace Baku.VMagicMirror
         public Rect DetectedRect { get; private set; }
 
         private int TextureWidth =>
-            (webCamTexture != null && webCamTexture.width >= halfResizeWidthThreshold) ?
-            requestedWidth / 2 :
-            requestedWidth;
+            (webCamTexture == null) ? requestedWidth :
+            (webCamTexture.width >= halfResizeWidthThreshold) ? webCamTexture.width / 2 :
+            webCamTexture.width;
 
         private int TextureHeight =>
-            (webCamTexture != null && webCamTexture.width >= halfResizeWidthThreshold) ?
-            requestedHeight / 2 :
-            requestedHeight;
+            (webCamTexture == null) ? requestedHeight :
+            (webCamTexture.width >= halfResizeWidthThreshold) ? webCamTexture.height / 2 :
+            webCamTexture.height;
 
         private VRMBlink _nonTrackingBlink = null;
         private bool _calibrationRequested = false;
@@ -135,17 +135,23 @@ namespace Baku.VMagicMirror
                 _colors != null
                 )
             {
-                if (webCamTexture.width >= halfResizeWidthThreshold)
+                try
                 {
-                    webCamTexture.GetPixels32(_rawSizeColors);
-                    SetHalfSizePixels(_rawSizeColors, _colors, webCamTexture.width, webCamTexture.height);
-                    UpdateFaceParts(_colors);
-
+                    if (webCamTexture.width >= halfResizeWidthThreshold)
+                    {
+                        webCamTexture.GetPixels32(_rawSizeColors);
+                        SetHalfSizePixels(_rawSizeColors, _colors, webCamTexture.width, webCamTexture.height);
+                        UpdateFaceParts(_colors);
+                    }
+                    else
+                    {
+                        webCamTexture.GetPixels32(_colors);
+                        UpdateFaceParts(_colors);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    webCamTexture.GetPixels32(_colors);
-                    UpdateFaceParts(_colors);
+                    LogOutput.Instance.Write(ex);
                 }
 
                 if (_calibrationRequested)
@@ -265,7 +271,6 @@ namespace Baku.VMagicMirror
 
         private void UpdateFaceParts(Color32[] colors)
         {
-            //faceLandmarkDetector.SetImage(colors, texture.width, texture.height, 4, true);
             faceLandmarkDetector.SetImage(colors, TextureWidth, TextureHeight, 4, true);
 
             List<Rect> faceRects = faceLandmarkDetector.Detect();

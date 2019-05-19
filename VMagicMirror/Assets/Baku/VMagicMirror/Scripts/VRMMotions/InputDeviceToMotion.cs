@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror
 
         public float yOffsetAfterKeyDown = 0.08f;
 
-        public float presentationArmMotionScale = 0.3f;
+        public float presentationArmMotionScale = 0.5f;
 
         public float presentationArmRadiusMin = 0.2f;
 

@@ -73,7 +73,7 @@ namespace Baku.VMagicMirror
         private void SetHidVisibility(bool v)
         {
             keyboard.gameObject.SetActive(v);
-            touchpad.gameObject.SetActive(v);
+            //touchpad.gameObject.SetActive(v);
         }
 
         private void SetGamepadHeight(float v)

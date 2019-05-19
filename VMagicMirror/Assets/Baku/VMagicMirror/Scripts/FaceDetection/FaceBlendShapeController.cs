@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
 {
     public class FaceBlendShapeController : MonoBehaviour
     {
-        private const float EyeBlendShapeCloseThreshold = 0.6f;
+        private const float EyeBlendShapeCloseThreshold = 0.7f;
 
         private const float EyeCloseHeight = 0.02f;
 

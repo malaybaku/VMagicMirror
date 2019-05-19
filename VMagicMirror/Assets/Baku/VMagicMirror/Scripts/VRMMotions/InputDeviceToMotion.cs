@@ -474,12 +474,18 @@ namespace Baku.VMagicMirror
                 );
 
             //指先がここに合って欲しい、という位置がコレ
-            var originalTargetPosition = CameraAsComponent.ScreenToWorldPoint(mousePositionWithDepth);
+            var idealFingerTargetPosition = CameraAsComponent.ScreenToWorldPoint(mousePositionWithDepth);
+            //スケールを適用。
+            var fingerTargetPosition = Vector3.Lerp(
+                rightShoulderPosition,
+                idealFingerTargetPosition,
+                presentationArmMotionScale
+                );
 
             //手首を肩の方向に寄せ、引いたぶんの距離は指を向けることで補償したい
             var targetPosition = 
-                originalTargetPosition - 
-                (originalTargetPosition - rightShoulderPosition).normalized * handToTipLength;
+                fingerTargetPosition - 
+                (fingerTargetPosition - rightShoulderPosition).normalized * handToTipLength;
 
             //NOTE: 右腕を強引に左側に引っ張らないためのガード
             if (!(targetPosition.x > 0))
@@ -512,7 +518,7 @@ namespace Baku.VMagicMirror
 
             _presentationSlideRightHandTargetPosition = targetPosition;
             //手の長さぶんだけ、人差し指が伸びるように仕向ける(ちゃんと動くか分かんないが)
-            _presentationSlideRightIndexTargetPosition = originalTargetPosition;
+            _presentationSlideRightIndexTargetPosition = fingerTargetPosition;
                 //_presentationSlideRightHandTargetPosition +
                 //(originalTargetPosition - _presentationSlideRightHandTargetPosition).normalized * handToTipLength;
 

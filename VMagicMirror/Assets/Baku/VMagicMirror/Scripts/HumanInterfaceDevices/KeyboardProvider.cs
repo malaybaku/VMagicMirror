@@ -255,9 +255,6 @@ namespace Baku.VMagicMirror
                 }
             }
         }
-
-<<<<<<< HEAD
-=======
         public KeyTargetData GetKeyTargetData(string key)
         {
             var keyTransform = GetTransformOfKey(key);
@@ -271,7 +268,6 @@ namespace Baku.VMagicMirror
             };
         }
 
->>>>>>> feature/facedetector
         public Vector3 GetPositionOfKey(string key)
         {
             return GetTransformOfKey(key).position;
@@ -314,8 +310,6 @@ namespace Baku.VMagicMirror
             return _keys[0][0];
         }
 
-<<<<<<< HEAD
-=======
         private Vector3 FingerNumberToOffset(int fingerNumber)
         {
             //NOTE: いったん面倒なので決め打ちする。指と指の間隔。
@@ -362,7 +356,6 @@ namespace Baku.VMagicMirror
             return Vector3.right * length;
         }
 
->>>>>>> feature/facedetector
         private string SanitizeKey(string key)
         {
             //note: エイリアスのあるキー名を一方向に倒す。
@@ -399,14 +392,11 @@ namespace Baku.VMagicMirror
             }
         }
 
-<<<<<<< HEAD
-=======
         public struct KeyTargetData
         {
             public int fingerNumber;
             public Transform keyTransform;
             public Vector3 positionWithOffset;
         }
->>>>>>> feature/facedetector
     }
 }

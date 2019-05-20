@@ -3,8 +3,10 @@
 
 # VMagicMirror
 
+v0.8.2
+
 * Author: Baxter
-* 2019/Mar/17
+* 2019/May/20
 
 The VRM avatar application without any special device.
 
@@ -59,6 +61,7 @@ Set the folder as following.
 
 * [UniVRM](https://dwango.github.io/vrm/)
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
+* [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [UniVRM](https://dwango.github.io/vrm/)
 * [UniRx](https://github.com/neuecc/UniRx)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
@@ -68,7 +71,9 @@ Set the folder as following.
 * Text Mesh Pro Essentials and Extra
 * Text Mesh Pro
 
-Should be noted that FinalIK is paid asset, and you need to submit the application to get VRoid SDK.
+Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
+
+Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
 
 gRPC install is available from daily builds. 
 Please see the detail at [gRPC instruction](https://github.com/grpc/grpc/tree/master/src/csharp/experimental).

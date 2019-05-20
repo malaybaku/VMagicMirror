@@ -35,9 +35,14 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
+# Streaming Assets (now only include DlibFaceLandmarkDetector, so it must be ignored)
+/VMagicMirror/Assets/StreamingAssets/
+/VMagicMirror/Assets/StreamingAssets.meta
+
 # Assets to ignore
 
 /VMagicMirror/Assets/AniLipSync-VRM/
+/VMagicMirror/Assets/DlibFaceLandmarkDetector/
 /VMagicMirror/Assets/Oculus/
 /VMagicMirror/Assets/Plugins/
 /VMagicMirror/Assets/Raw Mocap Data/
@@ -47,6 +52,7 @@ sysinfo.txt
 /VMagicMirror/Assets/XinputGamepad/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
+/VMagicMirror/Assets/DlibFaceLandmarkDetector.meta
 /VMagicMirror/Assets/Oculus.meta
 /VMagicMirror/Assets/Plugins.meta
 /VMagicMirror/Assets/Raw Mocap Data.meta

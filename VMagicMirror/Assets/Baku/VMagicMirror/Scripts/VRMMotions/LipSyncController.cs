@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
         private AnimMorphEasedTarget _animMorphTarget = null;
 
         private string _receivedDeviceName = "";
-        private bool _isLipSyncActive = false;
+        private bool _isLipSyncActive = true;
 
         private void Start()
         {
@@ -57,7 +57,8 @@ namespace Baku.VMagicMirror
 
         private void SetLipSyncEnable(bool isEnabled)
         {
-            _animMorphTarget.enabled = isEnabled;
+            _animMorphTarget.ForceClosedMouth = !isEnabled;
+            //_animMorphTarget.enabled = isEnabled;
             _isLipSyncActive = isEnabled;
             if (isEnabled)
             {

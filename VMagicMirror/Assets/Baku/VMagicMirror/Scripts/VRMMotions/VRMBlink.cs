@@ -89,7 +89,8 @@ namespace Baku.VMagicMirror
                 {
                     count += Time.deltaTime;
                     float blendRate = blink.curve.Evaluate(count / blink.duration);
-                    blendShapeProxy.ImmediatelySetValue(BlendShapePreset.Blink, blendRate);
+                    blendShapeProxy.ImmediatelySetValue(BlendShapePreset.Blink_L, blendRate);
+                    blendShapeProxy.ImmediatelySetValue(BlendShapePreset.Blink_R, blendRate);
                     yield return null;
                 }
             }

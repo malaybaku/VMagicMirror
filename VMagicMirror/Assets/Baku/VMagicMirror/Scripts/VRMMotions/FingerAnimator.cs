@@ -159,11 +159,20 @@ namespace Baku.VMagicMirror
 
             for (int i = 0; i < _isAnimating.Length; i++)
             {
+                //右手人差し指はプレゼン中はプレゼンモードの指IKに任せたいので下手にいじらない
+                if (i == FingerConsts.RightIndex && RightHandPresentationMode)
+                {
+                    continue;
+                }
+
+                //プレゼンモード中、右手の指はギュッと握った状態になっていてほしい
                 if (i > 4 && RightHandPresentationMode)
                 {
                     FixPointingHand(i);
                     continue;
                 }
+
+
 
                 float angle = defaultBendingAngle;
 

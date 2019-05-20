@@ -3,12 +3,13 @@ using UnityEngine;
 using RootMotion;
 using RootMotion.FinalIK;
 using VRM;
+using System;
 
 namespace Baku.VMagicMirror
 {
     public static class VRMLoadControllerHelper
     {
-        public static void SetupVrm(GameObject go, VRMLoadController.VrmLoadSetting setting)
+        public static void SetupVrm(GameObject go, VRMLoadController.VrmLoadSetting setting, FaceDetector faceDetector)
         {
             var animator = go.GetComponent<Animator>();
             animator.applyRootMotion = false;
@@ -28,7 +29,7 @@ namespace Baku.VMagicMirror
                 vrmLookAtBoneApplier.VerticalUp,
             })
             {
-                curveMapper.CurveYRangeDegree = 30;
+                curveMapper.CurveYRangeDegree = 20;
             }
 
             AddLookAtIK(go, setting.headTarget, animator, bipedReferences.root);
@@ -36,11 +37,16 @@ namespace Baku.VMagicMirror
             var fingerAnimator = go.AddComponent<FingerAnimator>();
             fingerAnimator.Initialize(animator);
 
-            go.AddComponent<VRMBlink>();
+            faceDetector.SetNonCameraBlinkComponent(go.AddComponent<VRMBlink>());
             setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
 
             var motionModifier = go.AddComponent<MotionModifyToMotion>();
             motionModifier.InitializeIK(animator.GetBoneTransform(HumanBodyBones.Spine), ik);
+
+            var bodyPositionAdjust = go.AddComponent<FaceBasedBodyIKAdjuster>();
+            bodyPositionAdjust.Initialize(faceDetector, animator, ik);
+
+            AddFingerRigToRightIndex(animator, setting);
         }
 
         private static FullBodyBipedIK AddFBBIK(GameObject go, VRMLoadController.VrmLoadSetting setting, BipedReferences reference)
@@ -49,9 +55,9 @@ namespace Baku.VMagicMirror
             fbbik.SetReferences(reference, null);
 
             //IK目標をロードしたVRMのspineに合わせることで、BodyIKがいきなり動いてしまうのを防ぐ。
-            //bodyTarget自体は(呼吸ライクに動かすための)別スクリプトが入ってるため、親を移動する
-            setting.bodyTarget.parent.position = reference.spine[0].position;
-            fbbik.solver.bodyEffector.target = setting.bodyTarget;
+            //bodyTargetは実際には多階層なので当て方に注意
+            setting.bodyRootTarget.position = reference.spine[0].position;
+            fbbik.solver.bodyEffector.target = setting.bodyEndTarget;
             fbbik.solver.bodyEffector.positionWeight = 0.5f;
             //Editorで "FBBIK > Body > Mapping > Maintain Head Rot"を選んだ時の値を↓で入れてる(デフォルト0、ある程度大きくするとLook Atの見栄えがよい)
             fbbik.solver.boneMappings[0].maintainRotationWeight = 0.7f;
@@ -125,5 +131,26 @@ namespace Baku.VMagicMirror
                 eyes = new Transform[0],
             };
         }
+
+        private static void AddFingerRigToRightIndex(Animator animator, VRMLoadController.VrmLoadSetting setting)
+        {
+            //NOTE: FinalIKのサンプルにあるFingerRigを持ち込んでみる。
+            var rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+
+            var fingerRig = rightHand.gameObject.AddComponent<FingerRig>();
+            fingerRig.AddFinger(
+                animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
+                animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
+                animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
+                setting.rightIndexTarget
+                );
+            //とりあえず無効化し、有効にするのはInputDeviceToMotionの責務にする
+            fingerRig.weight = 0.0f;
+            fingerRig.fingers[0].rotationDOF = Finger.DOF.One;
+            fingerRig.fingers[0].weight = 1.0f;
+            fingerRig.fingers[0].rotationWeight = 0;
+        }
+
+
     }
 }

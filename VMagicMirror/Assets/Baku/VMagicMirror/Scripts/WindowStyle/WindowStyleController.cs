@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using System;
+using UnityEngine;
 using UniRx;
 
 namespace Baku.VMagicMirror
@@ -7,8 +8,25 @@ namespace Baku.VMagicMirror
 
     public class WindowStyleController : MonoBehaviour
     {
+        //Player Settingで決められるデフォルトウィンドウサイズと合わせてるが、常識的な値であれば多少ズレても害はないです
+        const int DefaultWindowWidth = 800;
+        const int DefaultWindowHeight = 600;
+
+        const string InitialPositionXKey = "InitialPositionX";
+        const string InitialPositionYKey = "InitialPositionY";
+
         [SerializeField]
         private ReceivedMessageHandler handler = null;
+
+        [SerializeField]
+        private GrpcSender sender = null;
+
+        [SerializeField]
+        private float windowPositionCheckInterval = 5.0f;
+
+
+        private float _windowPositionCheckCount = 0;
+        private Vector2Int _prevWindowPosition = Vector2Int.zero;
 
         private uint defaultWindowStyle;
         private uint defaultExWindowStyle;
@@ -54,18 +72,41 @@ namespace Baku.VMagicMirror
                         int[] xy = message.ToIntArray();
                         MoveWindow(xy[0], xy[1]);
                         break;
+                    case MessageCommandNames.ResetWindowSize:
+                        ResetWindowSize();
+                        break;
                     default:
                         break;
                 }
 
             });
+
+            //既定で最前面に表示
+            SetTopMost(true);
+
+            InitializeWindowPositionCheckStatus();
         }
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0) && 
-                _isWindowFrameHidden && 
-                _windowDraggableWhenFrameHidden)
+            UpdateDragStatus();
+            UpdateWindowPositionCheck();
+        }
+
+        private void OnDestroy()
+        {
+#if !UNITY_EDITOR
+            var windowPosition = GetUnityWindowPosition();
+            PlayerPrefs.SetInt(InitialPositionXKey, windowPosition.x);
+            PlayerPrefs.SetInt(InitialPositionYKey, windowPosition.y);
+#endif
+        }
+
+        private void UpdateDragStatus()
+        {
+            if (Input.GetMouseButtonDown(0) &&
+                   _isWindowFrameHidden &&
+                   _windowDraggableWhenFrameHidden)
             {
                 _isDragging = true;
 #if !UNITY_EDITOR
@@ -93,6 +134,51 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void InitializeWindowPositionCheckStatus()
+        {
+            _windowPositionCheckCount = windowPositionCheckInterval;
+            if (PlayerPrefs.HasKey(InitialPositionXKey) &&
+                PlayerPrefs.HasKey(InitialPositionYKey)
+                )
+            {
+#if !UNITY_EDITOR
+                int x = PlayerPrefs.GetInt(InitialPositionXKey);
+                int y = PlayerPrefs.GetInt(InitialPositionYKey);
+                _prevWindowPosition = new Vector2Int(x, y);
+                SetUnityWindowPosition(x, y);
+#endif
+            }
+            else
+            {
+#if !UNITY_EDITOR
+                _prevWindowPosition = GetUnityWindowPosition();
+                PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
+                PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
+#endif
+            }
+        }
+
+        private void UpdateWindowPositionCheck()
+        {
+            _windowPositionCheckCount -= Time.deltaTime;
+            if (_windowPositionCheckCount > 0)
+            {
+                return;
+            }
+            _windowPositionCheckCount = windowPositionCheckInterval;
+
+#if !UNITY_EDITOR
+            var pos = GetUnityWindowPosition();
+            if (pos.x != _prevWindowPosition.x ||
+                pos.y != _prevWindowPosition.y)
+            {
+                _prevWindowPosition = pos;
+                PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
+                PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
+            }
+#endif
+        }
+
         private void MoveWindow(int x, int y)
         {
 #if !UNITY_EDITOR
@@ -100,11 +186,18 @@ namespace Baku.VMagicMirror
 #endif
         }
 
+        private void ResetWindowSize()
+        {
+#if !UNITY_EDITOR
+            SetUnityWindowSize(DefaultWindowWidth, DefaultWindowHeight);
+#endif
+        }
+
         private void SetWindowFrameVisibility(bool isVisible)
         {
             _isWindowFrameHidden = !isVisible;
 
-            Debug.Log($"{nameof(SetWindowFrameVisibility)}:{isVisible}");
+            LogOutput.Instance.Write($"{nameof(SetWindowFrameVisibility)}:{isVisible}");
             var hwnd = GetUnityWindowHandle();
             uint windowStyle = isVisible ?
                 defaultWindowStyle :

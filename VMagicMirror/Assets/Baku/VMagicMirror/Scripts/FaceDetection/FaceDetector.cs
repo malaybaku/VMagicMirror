@@ -3,6 +3,8 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 using UnityEngine;
 using DlibFaceLandmarkDetector;
 
@@ -71,9 +73,103 @@ namespace Baku.VMagicMirror
 
         private FaceLandmarkDetector faceLandmarkDetector;
 
-        //TODO: textureは結果描画用のものなので最終的に消してよい
-        //private Texture2D texture;
+        #region Multi Thread Face Detection
 
+        private CancellationTokenSource _cts = null;
+        private readonly object _faceDetectPreparedLock = new object();
+        private bool _faceDetectPrepared = false;
+        private bool FaceDetectPrepared
+        {
+            get { lock (_faceDetectPreparedLock) return _faceDetectPrepared; }
+            set { lock (_faceDetectPreparedLock) _faceDetectPrepared = value; }
+        }
+
+        private readonly object _faceDetectCompletedLock = new object();
+        private bool _faceDetectCompleted = false;
+        private bool FaceDetectCompleted
+        {
+            get { lock (_faceDetectCompletedLock) return _faceDetectCompleted; }
+            set { lock (_faceDetectCompletedLock) _faceDetectCompleted = value; }
+        }
+
+        //UIスレッドが書き込み、Dlibの呼び出しスレッドが読み込む
+        private Color32[] _inputColors = null;
+        private int _inputWidth = 0;
+        private int _inputHeight = 0;
+
+        //DLibのスレッドだけが使う
+        private Color32[] _dlibInputColors = null;
+
+        //Dlibの呼び出しスレッドが書き込み、UIスレッドが読み込む
+        private Rect _mainPersonRect;
+        private List<Vector2> _mainPersonLandmarks = null;
+
+        #endregion
+
+
+        void Start()
+        {
+            CalibrationData.SetDefaultValues();
+            string predictorFilePath = Path.Combine(Application.streamingAssetsPath, FaceTrackingDataFileName);
+            faceLandmarkDetector = new FaceLandmarkDetector(predictorFilePath);
+
+            //顔検出を別スレッドに退避
+            _cts = new CancellationTokenSource();
+            Task.Run(FaceDetectionRoutine);
+        }
+
+        void Update()
+        {
+            //Update処理はランドマークの検出スレッドとの通信をやります
+            // 1. データを送る準備が出来たら送る
+            // 2. 結果が戻ってきてたら使う。キャリブが必要ならついでに実施
+
+            if (HasInitDone &&
+                webCamTexture.isPlaying &&
+                webCamTexture.didUpdateThisFrame &&
+                _colors != null &&
+                !FaceDetectPrepared
+                )
+            {
+                try
+                {
+                    if (webCamTexture.width >= halfResizeWidthThreshold)
+                    {
+                        webCamTexture.GetPixels32(_rawSizeColors);
+                        SetHalfSizePixels(_rawSizeColors, _colors, webCamTexture.width, webCamTexture.height);
+                        RequestUpdateFaceParts(_colors, TextureWidth, TextureHeight);
+                        //UpdateFaceParts(_colors);
+                    }
+                    else
+                    {
+                        webCamTexture.GetPixels32(_colors);
+                        RequestUpdateFaceParts(_colors, TextureWidth, TextureHeight);
+                        //UpdateFaceParts(_colors);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogOutput.Instance.Write(ex);
+                }
+            }
+
+            if (FaceDetectCompleted)
+            {
+                GetFaceDetectResult();
+                if (_calibrationRequested)
+                {
+                    _calibrationRequested = false;
+                    UpdateCalibrationData();
+                }
+            }
+        }
+
+        void OnDestroy()
+        {
+            Dispose();
+            faceLandmarkDetector?.Dispose();
+            _cts?.Cancel();
+        }
 
         public void StartCalibration()
         {
@@ -91,11 +187,10 @@ namespace Baku.VMagicMirror
                 CalibrationData.faceCenter = calib.faceCenter;
                 CalibrationData.faceSize = calib.faceSize;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogOutput.Instance.Write(ex);
             }
-
         }
 
         public event EventHandler<CalibrationCompletedEventArgs> CalibrationCompleted;
@@ -106,69 +201,18 @@ namespace Baku.VMagicMirror
             Initialize();
         }
 
-        public void StopCamera()
-        {
-            Dispose();
-        }
+        public void StopCamera() => Dispose();
 
         public void SetNonCameraBlinkComponent(VRMBlink blink)
         {
             _nonTrackingBlink = blink;
-            //カメラが使えてないなら自動まばたきに頑張ってもらう、という意味
+            //カメラが使えてないなら自動まばたきに頑張ってもらう
             _nonTrackingBlink.enabled = !HasInitDone;
         }
 
         public void DisposeNonCameraBlinkComponent()
         {
             _nonTrackingBlink = null;
-        }
-
-        void Start()
-        {
-            CalibrationData.SetDefaultValues();
-            string predictorFilePath = Path.Combine(Application.streamingAssetsPath, FaceTrackingDataFileName);
-            faceLandmarkDetector = new FaceLandmarkDetector(predictorFilePath);
-        }
-
-        void Update()
-        {
-            if (HasInitDone &&
-                webCamTexture.isPlaying &&
-                webCamTexture.didUpdateThisFrame &&
-                _colors != null
-                )
-            {
-                try
-                {
-                    if (webCamTexture.width >= halfResizeWidthThreshold)
-                    {
-                        webCamTexture.GetPixels32(_rawSizeColors);
-                        SetHalfSizePixels(_rawSizeColors, _colors, webCamTexture.width, webCamTexture.height);
-                        UpdateFaceParts(_colors);
-                    }
-                    else
-                    {
-                        webCamTexture.GetPixels32(_colors);
-                        UpdateFaceParts(_colors);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LogOutput.Instance.Write(ex);
-                }
-
-                if (_calibrationRequested)
-                {
-                    _calibrationRequested = false;
-                    UpdateCalibrationData();
-                }
-            }
-        }
-
-        void OnDestroy()
-        {
-            Dispose();
-            faceLandmarkDetector?.Dispose();
         }
 
         private void Initialize()
@@ -244,9 +288,55 @@ namespace Baku.VMagicMirror
                     _colors = new Color32[webCamTexture.width * webCamTexture.height];
                 }
             }
+        }
 
-            //texture = new Texture2D(webCamTexture.width, webCamTexture.height, TextureFormat.RGBA32, false);
-            //transform.localScale = new Vector3(texture.width, texture.height, 1);
+        private async void FaceDetectionRoutine()
+        {
+            while (!_cts.IsCancellationRequested)
+            {
+                await Task.Delay(16);
+                //書いてある通りだが、UIスレッド側からテクスチャが来ない場合や、
+                //テクスチャはあるが出力読み出し待ちになってる場合は無視
+                if (!FaceDetectPrepared || FaceDetectCompleted)
+                {
+                    continue;
+                }
+
+                int width = _inputWidth;
+                int height = _inputHeight;
+                if (_dlibInputColors == null || 
+                    _dlibInputColors.Length != _inputColors.Length
+                    )
+                {
+                    _dlibInputColors = new Color32[_inputColors.Length];
+                }
+                Array.Copy(_inputColors, _dlibInputColors, _inputColors.Length);
+
+                //この時点で入力データを抜き終わっているので、次のデータがあればセットしても大丈夫
+                FaceDetectPrepared = false;
+
+                faceLandmarkDetector.SetImage(_dlibInputColors, width, height, 4, true);
+
+                List<Rect> faceRects = faceLandmarkDetector.Detect();
+                //顔が取れないのでCompletedフラグは立てないままでOK
+                if (faceRects == null || faceRects.Count == 0)
+                {
+                    continue;
+                }
+
+                Rect mainPersonRect = faceRects[0];
+                //通常来ないが、複数人居たらいちばん大きく映っている人を採用
+                if (faceRects.Count > 1)
+                {
+                    mainPersonRect = faceRects
+                        .OrderByDescending(r => r.width * r.height)
+                        .First();
+                }
+                _mainPersonRect = mainPersonRect;
+                _mainPersonLandmarks = faceLandmarkDetector.DetectLandmark(mainPersonRect);
+
+                FaceDetectCompleted = true;
+            }
         }
 
         private void Dispose()
@@ -264,12 +354,38 @@ namespace Baku.VMagicMirror
                 Destroy(webCamTexture);
                 webCamTexture = null;
             }
+        }
 
-            //if (texture != null)
-            //{
-            //    Destroy(texture);
-            //    texture = null;
-            //}
+        private void RequestUpdateFaceParts(Color32[] colors, int width, int height)
+        {
+            if (_inputColors == null || _inputColors.Length != colors.Length)
+            {
+                _inputColors = new Color32[colors.Length];
+            }
+            Array.Copy(colors, _inputColors, colors.Length);
+            _inputWidth = width;
+            _inputHeight = height;
+            FaceDetectPrepared = true;
+        }
+
+        private void GetFaceDetectResult()
+        {
+            var mainPersonRect = _mainPersonRect;
+            //特徴点リストは参照ごと受け取ってOK(Completedフラグが降りるまでは競合しない)
+            var landmarks = _mainPersonLandmarks;
+            _mainPersonLandmarks = null;
+
+            //出力を拾い終わった時点で次の処理に入ってもらって大丈夫
+            FaceDetectCompleted = false;
+
+            DetectedRect = new Rect(
+                (mainPersonRect.xMin - TextureWidth / 2) / TextureWidth,
+                -(mainPersonRect.yMax - TextureHeight / 2) / TextureWidth,
+                mainPersonRect.width / TextureWidth,
+                mainPersonRect.height / TextureWidth
+                );
+
+            FaceParts.Update(mainPersonRect, landmarks);
         }
 
         private void UpdateFaceParts(Color32[] colors)
@@ -284,14 +400,6 @@ namespace Baku.VMagicMirror
 
             Rect mainPersonRect = faceRects[0];
 
-            //Yは上下逆にしないと物理的なY方向にあわない点に注意
-            DetectedRect = new Rect(
-                (mainPersonRect.xMin - TextureWidth / 2) / TextureWidth,
-                -(mainPersonRect.yMax - TextureHeight / 2) / TextureWidth,
-                mainPersonRect.width / TextureWidth,
-                mainPersonRect.height / TextureWidth
-                );
-
             //通常来ないが、複数人居たらいちばん大きく映っている人を採用
             if (faceRects.Count > 1)
             {
@@ -300,14 +408,16 @@ namespace Baku.VMagicMirror
                     .First();
             }
 
+            //Yは上下逆にしないと物理的なY方向にあわない点に注意
+            DetectedRect = new Rect(
+                (mainPersonRect.xMin - TextureWidth / 2) / TextureWidth,
+                -(mainPersonRect.yMax - TextureHeight / 2) / TextureWidth,
+                mainPersonRect.width / TextureWidth,
+                mainPersonRect.height / TextureWidth
+                );
+
             var landmarks = faceLandmarkDetector.DetectLandmark(mainPersonRect);
             FaceParts.Update(mainPersonRect, landmarks);
-
-            //結果の描画: 基本的に要らないので禁止
-            //faceLandmarkDetector.DrawDetectLandmarkResult(colors, texture.width, texture.height, 4, true, 0, 255, 0, 255);
-            //faceLandmarkDetector.DrawDetectResult(colors, texture.width, texture.height, 4, true, 255, 0, 0, 255, 2);
-            //texture.SetPixels32(colors);
-            //texture.Apply(false);
         }
 
         private void UpdateCalibrationData()
@@ -340,56 +450,18 @@ namespace Baku.VMagicMirror
             // - もう少しマシ: 4ピクセルの画素を平均(※通常ありえないが生テクスチャが奇数サイズのときの処理で要注意)
             int destWidth = srcWidth / 2;
             int destHeight = srcHeight / 2;
-            //相当ヘンなカメラじゃないとこうはならないが…(4で割り切れないケースがほとんどありえない)
-            //bool isEvenSize = (srcWidth % 2 == 0) && (srcHeight % 2 == 0);
-
             for (int y = 0; y < destHeight; y++)
             {
                 int destRowOffset = y * destWidth;
                 int srcRowOffset = y * 2 * srcWidth;
-                //int nextSrcRowOffset = (y * 2 + 1) * srcWidth;
                 for (int x = 0; x < destWidth; x++)
                 {
                     //左上ピクセルをそのまま使う
                     dest[destRowOffset + x] = src[srcRowOffset + x * 2];
-
-                    ////4ピクセル分の平均とる(これやらないとダメ…?)
-                    //if (isEvenSize)
-                    //{
-                    //    //画面端の奇数要素に気を付けないといけないケース
-                    //    Color32 leftUp = src[srcRowOffset + x * 2];
-                    //    Color32 rightUp = (x * 2 + 1 < srcWidth) ? src[srcRowOffset + x * 2 + 1] : leftUp;
-                    //    Color32 leftDown = (y * 2 + 1 < srcHeight) ? src[nextSrcRowOffset + x * 2] : leftUp;
-                    //    Color32 rightDown =
-                    //        (x * 2 + 1 < srcWidth) && (y * 2 + 1 < srcHeight) ?
-                    //        src[nextSrcRowOffset + x * 2 + 1] :
-                    //        leftUp;
-
-                    //    dest[destRowOffset + x] = MeanColor(leftUp, rightUp, leftDown, rightDown);
-                    //}
-                    //else
-                    //{
-                    //    Color32 leftUp = src[srcRowOffset + x * 2];
-                    //    Color32 rightUp = src[srcRowOffset + x * 2 + 1];
-                    //    Color32 leftDown = src[nextSrcRowOffset + x * 2];
-                    //    Color32 rightDown = src[nextSrcRowOffset + x * 2 + 1];
-                    //    dest[destRowOffset + x] = MeanColor(leftUp, rightUp, leftDown, rightDown);
-                    //}
+                    //NOTE: 周辺ピクセルを平均する事も考えられるが、重いわりに効果ないのでやらない
                 }
             }
         }
-
-        private Color32 MeanColor(Color32 c1, Color32 c2, Color32 c3, Color32 c4)
-        {
-            //">> 2"は"/ 4"を思いつきで高速化したフリなので特に意味はないです
-            return new Color32(
-                (byte)((c1.r + c2.r + c3.r + c4.r) >> 2),
-                (byte)((c1.g + c2.g + c3.g + c4.g) >> 2),
-                (byte)((c1.b + c2.b + c3.b + c4.b) >> 2),
-                (byte)((c1.a + c2.a + c3.a + c4.a) >> 2)
-                );
-        }
-
 
         public class CalibrationCompletedEventArgs : EventArgs
         {

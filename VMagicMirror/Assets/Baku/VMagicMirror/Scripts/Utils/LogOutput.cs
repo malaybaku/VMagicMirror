@@ -66,6 +66,9 @@ namespace Baku.VMagicMirror
                 ex.StackTrace
                 );
 
+#if UNITY_EDITOR
+            Debug.LogException(ex);
+#endif
         }
 
 

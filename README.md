@@ -56,16 +56,19 @@ Windows 10環境でお使いいただけます。
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [VRoid SDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
-* [UniVRM](https://dwango.github.io/vrm/)
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.51.0
+* [VRoid SDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) v0.0.17
 * [UniRx](https://github.com/neuecc/UniRx)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
 * [gRPC](https://github.com/grpc/grpc)
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
+* [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
 * Text Mesh Pro Essentials and Extra
 
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであること、およびVRoid SDKは2019年3月時点でSDKの取得に個別の申請が必須であることに注意してください。
+
+VRoid SDKはUniVRMより後でインポートし、UniVRMのフォルダ以下を対象にしたスクリプト等はインポート対象から外します。
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
 

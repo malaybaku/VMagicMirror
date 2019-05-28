@@ -65,6 +65,7 @@ Set the folder as following.
 * [gRPC](https://github.com/grpc/grpc)
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
+* [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * Text Mesh Pro Essentials and Extra
 * Text Mesh Pro
 

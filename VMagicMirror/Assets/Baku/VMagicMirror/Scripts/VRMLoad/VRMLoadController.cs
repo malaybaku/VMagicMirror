@@ -14,9 +14,6 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private ReceivedMessageHandler handler = null;
 
-        [SerializeField]
-        private VRMInformation vrmInformation = null;
-
         //TODO: この辺はちょっと分けたい気がしないでもない
         [SerializeField]
         private VrmLoadSetting loadSetting;
@@ -42,6 +39,9 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private VRoidSDK.Example.VRoidHubController vroidHub = null;
 
+        [SerializeField]
+        private VRMPreviewCanvas previewCanvas = null;
+
         private HumanPoseTransfer m_loaded = null;
 
         private void Start()
@@ -56,11 +56,11 @@ namespace Baku.VMagicMirror
                         LoadModelForPreview(message.Content);
                         break;
                     case MessageCommandNames.OpenVrm:
-                        vrmInformation.Hide();
+                        previewCanvas.Hide();
                         LoadModel(message.Content);
                         break;
                     case MessageCommandNames.CancelLoadVrm:
-                        vrmInformation.Hide();
+                        previewCanvas.Hide();
                         break;
                     case MessageCommandNames.AccessToVRoidHub:
                         vroidHub?.Open();
@@ -85,7 +85,7 @@ namespace Baku.VMagicMirror
                     using (var context = new VRMImporterContext())
                     {
                         context.ParseGlb(File.ReadAllBytes(path));
-                        vrmInformation.ShowMetaData(context);
+                        previewCanvas.Show(context);
                     }
                 }
                 else

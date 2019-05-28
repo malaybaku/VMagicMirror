@@ -71,6 +71,8 @@ namespace Baku.VMagicMirror
         public bool HasInitDone { get; private set; } = false;
         private bool isInitWaiting = false;
 
+        public bool FaceDetectedAtLeastOnce { get; private set; } = false;
+
         private FaceLandmarkDetector faceLandmarkDetector;
 
         #region Multi Thread Face Detection
@@ -386,6 +388,8 @@ namespace Baku.VMagicMirror
                 );
 
             FaceParts.Update(mainPersonRect, landmarks);
+
+            FaceDetectedAtLeastOnce = true;
         }
 
         private void UpdateFaceParts(Color32[] colors)

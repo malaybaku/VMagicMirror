@@ -104,6 +104,15 @@
         // Lighting 
         public const string LightIntensity = nameof(LightIntensity);
         public const string LightColor = nameof(LightColor);
+        public const string LightYaw = nameof(LightYaw);
+        public const string LightPitch = nameof(LightPitch);
+
+        public const string ShadowEnable = nameof(ShadowEnable);
+        public const string ShadowIntensity = nameof(ShadowIntensity);
+        public const string ShadowYaw = nameof(ShadowYaw);
+        public const string ShadowPitch = nameof(ShadowPitch);
+        public const string ShadowDepthOffset = nameof(ShadowDepthOffset);
+
         public const string BloomIntensity = nameof(BloomIntensity);
         public const string BloomThreshold = nameof(BloomThreshold);
         public const string BloomColor = nameof(BloomColor);

@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using XinputGamePad;
-using mattatz.TransformControl;
-using System.Linq;
 
 namespace Baku.VMagicMirror
 {
@@ -36,11 +35,8 @@ namespace Baku.VMagicMirror
         [SerializeField]
         Transform rightStick;
 
-        private TransformControl _transformControl;
-
         private void Start()
         {
-            //_transformControl = GetComponent<TransformControl>();
             var buttonMat = HIDMaterialUtil.Instance.GetButtonMaterial();
             foreach(var renderer in buttons
                 .GetTransforms()
@@ -53,11 +49,6 @@ namespace Baku.VMagicMirror
             var stickAreaMat = HIDMaterialUtil.Instance.GetStickAreaMaterial();
             leftStick.GetComponent<MeshRenderer>().material = stickAreaMat;
             rightStick.GetComponent<MeshRenderer>().material = stickAreaMat;
-        }
-
-        private void Update()
-        {
-            _transformControl?.Control();
         }
 
         public Vector3 GetButtonPosition(XinputKey key)

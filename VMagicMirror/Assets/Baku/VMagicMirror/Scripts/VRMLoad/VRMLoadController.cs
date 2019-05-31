@@ -37,17 +37,12 @@ namespace Baku.VMagicMirror
         private SettingAutoAdjuster settingAdjuster = null;
 
         [SerializeField]
-        private VRoidSDK.Example.VRoidHubController vroidHub = null;
-
-        [SerializeField]
         private VRMPreviewCanvas previewCanvas = null;
 
         private HumanPoseTransfer m_loaded = null;
 
         private void Start()
         {
-            vroidHub?.SetOnLoadHandler(OnVrmLoadedFromVRoidHub);
-
             handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
@@ -63,7 +58,7 @@ namespace Baku.VMagicMirror
                         previewCanvas.Hide();
                         break;
                     case MessageCommandNames.AccessToVRoidHub:
-                        vroidHub?.Open();
+                        //何もしない: ちゃんとUI整うまでは完全非サポート化する
                         break;
                     default:
                         break;

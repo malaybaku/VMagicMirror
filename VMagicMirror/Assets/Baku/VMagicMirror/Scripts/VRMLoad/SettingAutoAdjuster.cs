@@ -190,7 +190,7 @@ namespace Baku.VMagicMirror
         private void AdjustCameraPosition(Animator animator)
         {
             var head = animator.GetBoneTransform(HumanBodyBones.Neck);
-            cam.position = new Vector3(0, head.position.y, 1);
+            cam.position = new Vector3(0, head.position.y, 1.3f);
             cam.rotation = Quaternion.Euler(0, 180, 0);
         }
 

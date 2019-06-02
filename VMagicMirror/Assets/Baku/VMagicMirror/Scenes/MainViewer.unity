@@ -159,7 +159,7 @@ MonoBehaviour:
   mainLight: {fileID: 2141451817}
   mainLightLocalEulerAngle: {x: 50, y: -30, z: 0}
   shadowLight: {fileID: 1971722878}
-  shadowLightLocalEulerAngle: {x: 15, y: -30, z: 0}
+  shadowLightLocalEulerAngle: {x: 8, y: -20, z: 0}
   shadowBoardMotion: {fileID: 1057131357}
   postProcess: {fileID: 749678942}
   handler: {fileID: 1930233619}

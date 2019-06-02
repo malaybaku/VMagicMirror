@@ -1780,9 +1780,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fac3e0a69c22e347ab8a8e7135c3cae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  opaqueThreshold: 0.1
   handler: {fileID: 1930233619}
-  sender: {fileID: 0}
   windowPositionCheckInterval: 5
+  cam: {fileID: 1629460661}
 --- !u!81 &1629460658
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1838,7 +1839,7 @@ Camera:
     height: 1
   near clip plane: 0.05
   far clip plane: 100
-  field of view: 60
+  field of view: 40
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1864,7 +1865,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1629460656}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 0, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 1.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2141451818}
@@ -2844,13 +2845,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1971722876}
-  m_LocalRotation: {x: 0.12607859, y: -0.2566048, z: 0.03378265, w: 0.9576622}
+  m_LocalRotation: {x: 0.06869671, y: -0.17322525, z: 0.012113088, w: 0.9824088}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1629460662}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 15, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 8, y: -20, z: 0}
 --- !u!108 &1971722878
 Light:
   m_ObjectHideFlags: 0

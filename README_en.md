@@ -3,10 +3,10 @@
 
 # VMagicMirror
 
-v0.8.2
+v0.8.3
 
 * Author: Baxter
-* 2019/May/20
+* 2019/Jun/03
 
 The VRM avatar application without any special device.
 
@@ -71,27 +71,22 @@ Set the folder as following.
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
 * [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
-* Text Mesh Pro Essentials and Extra
-* Text Mesh Pro
+
+*note: until v0.8.2a following libraries are required, but from v0.8.3 you can build the app without them.
+
+* TextMesh Pro Essentials and Extra
+* [VRoid SDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) v0.0.17
+* [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
+
 
 Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
-
-VRoidSDK should be imported after UniVRM. VRoidSDK includes the scripts to overwrite UniVRM folder, but you must exclude them.
 
 Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
 
 gRPC install is available from daily builds. 
-Please see the detail at [gRPC instruction](https://github.com/grpc/grpc/tree/master/src/csharp/experimental).
+Please see the detail at [gRPC instruction](https://github.com/grpc/grpc/tree/master/src/csharp/experimental). Current version uses `v1.12.0-dev`, but might work with newer build.
 
-### 4.3. Apply Noto font
-
-VMagicMirror uses Noto font for the TextMeshPro and Japanese font asset is required to show the texts. You need the asset but it is very large so the file is not included in the repository.
-
-Please output the font asset file from `Assets/Fonts/NotoSansJP-Regular.otf`.
-
-You will see the way to create asset by google with two words, "TextMeshPro" and "Font Asset Creator".
-
-### 4.4. Build
+### 4.3. Build
 
 * Unity: Specify `Bin` folder for the output.
 * WPF build creates exe on `Bin` folder in `ConfigApp` (create if it does not exist).

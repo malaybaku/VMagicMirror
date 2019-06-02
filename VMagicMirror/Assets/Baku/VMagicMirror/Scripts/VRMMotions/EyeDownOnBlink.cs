@@ -179,7 +179,7 @@ namespace Baku.VMagicMirror
             //NOTE: ここスケールファクタないと非常に小さい値しか入らないのでは？？？
             float left = _leftEyeBrowValue - _faceDetector.CalibrationData.eyeBrowPosition;
             float right = _rightEyeBrowValue - _faceDetector.CalibrationData.eyeBrowPosition;
-            if (!_faceDetector.HasInitDone)
+            if (!_faceDetector.HasInitDone || !_faceDetector.FaceDetectedAtLeastOnce)
             {
                 left = 0;
                 right = 0;

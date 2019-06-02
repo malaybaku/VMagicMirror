@@ -14,9 +14,6 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private ReceivedMessageHandler handler = null;
 
-        [SerializeField]
-        private VRMInformation vrmInformation = null;
-
         //TODO: この辺はちょっと分けたい気がしないでもない
         [SerializeField]
         private VrmLoadSetting loadSetting;
@@ -40,14 +37,12 @@ namespace Baku.VMagicMirror
         private SettingAutoAdjuster settingAdjuster = null;
 
         [SerializeField]
-        private VRoidSDK.Example.VRoidHubController vroidHub = null;
+        private VRMPreviewCanvas previewCanvas = null;
 
         private HumanPoseTransfer m_loaded = null;
 
         private void Start()
         {
-            vroidHub?.SetOnLoadHandler(OnVrmLoadedFromVRoidHub);
-
             handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
@@ -56,14 +51,14 @@ namespace Baku.VMagicMirror
                         LoadModelForPreview(message.Content);
                         break;
                     case MessageCommandNames.OpenVrm:
-                        vrmInformation.Hide();
+                        previewCanvas.Hide();
                         LoadModel(message.Content);
                         break;
                     case MessageCommandNames.CancelLoadVrm:
-                        vrmInformation.Hide();
+                        previewCanvas.Hide();
                         break;
                     case MessageCommandNames.AccessToVRoidHub:
-                        vroidHub?.Open();
+                        //何もしない: ちゃんとUI整うまでは完全非サポート化する
                         break;
                     default:
                         break;
@@ -85,7 +80,7 @@ namespace Baku.VMagicMirror
                     using (var context = new VRMImporterContext())
                     {
                         context.ParseGlb(File.ReadAllBytes(path));
-                        vrmInformation.ShowMetaData(context);
+                        previewCanvas.Show(context);
                     }
                 }
                 else

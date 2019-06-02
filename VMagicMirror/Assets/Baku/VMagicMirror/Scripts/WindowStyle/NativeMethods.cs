@@ -51,6 +51,9 @@ namespace Baku.VMagicMirror
         public static extern IntPtr GetActiveWindow();
 
         [DllImport("user32.dll")]
+        public static extern IntPtr SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string className, string windowName);
         public static IntPtr CurrentWindowHandle = IntPtr.Zero;
         public static IntPtr GetUnityWindowHandle() => CurrentWindowHandle == IntPtr.Zero ? CurrentWindowHandle = FindWindow(null, Application.productName) : CurrentWindowHandle;
@@ -99,6 +102,7 @@ namespace Baku.VMagicMirror
             return new Vector2Int(rect.left, rect.top);
         }
 
+        public static void SetUnityWindowActive() => SetForegroundWindow(GetUnityWindowHandle());
         public static void SetUnityWindowPosition(int x, int y) => SetWindowPos(GetUnityWindowHandle(), IntPtr.Zero, x, y, 0, 0, SetWindowPosFlags.IgnoreResize);
         public static void SetUnityWindowSize(int width, int height) => SetWindowPos(GetUnityWindowHandle(), IntPtr.Zero, 0, 0, width, height, SetWindowPosFlags.IgnoreMove);
         public static void SetUnityWindowTopMost(bool enable) => SetWindowPos(GetUnityWindowHandle(), enable ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SetWindowPosFlags.IgnoreMoveAndResize);

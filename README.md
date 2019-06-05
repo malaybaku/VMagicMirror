@@ -56,7 +56,7 @@ Windows 10環境でお使いいただけます。
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.52.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.53.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
 * [gRPC](https://github.com/grpc/grpc)

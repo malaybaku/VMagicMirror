@@ -59,7 +59,7 @@ Set the folder as following.
 
 ### 4.2. Asset install
 
-* [UniVRM](https://dwango.github.io/vrm/) v0.52.0
+* [UniVRM](https://dwango.github.io/vrm/) v0.53.0
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [UniVRM](https://dwango.github.io/vrm/)

@@ -59,8 +59,7 @@ Set the folder as following.
 
 ### 4.2. Asset install
 
-* [UniVRM](https://dwango.github.io/vrm/) v0.51.0
-* [VRoidSDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) v0.0.17
+* [UniVRM](https://dwango.github.io/vrm/) v0.52.0
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [UniVRM](https://dwango.github.io/vrm/)
@@ -69,7 +68,6 @@ Set the folder as following.
 * [gRPC](https://github.com/grpc/grpc)
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
-* [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 
 *note: until v0.8.2a following libraries are required, but from v0.8.3 you can build the app without them.

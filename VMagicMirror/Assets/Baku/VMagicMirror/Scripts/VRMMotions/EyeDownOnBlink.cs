@@ -7,6 +7,9 @@ namespace Baku.VMagicMirror
 {
     public class EyeDownOnBlink : MonoBehaviour
     {
+        private BlendShapeKey BlinkLKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_L);
+        private BlendShapeKey BlinkRKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_R);
+
         [SerializeField]
         private float eyeBrowDiffSize = 0.05f;
 
@@ -154,8 +157,8 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            float leftBlink = _blendShapeProxy.GetValue(BlendShapePreset.Blink_L);
-            float rightBlink = _blendShapeProxy.GetValue(BlendShapePreset.Blink_R);
+            float leftBlink = _blendShapeProxy.GetValue(BlinkLKey);
+            float rightBlink = _blendShapeProxy.GetValue(BlinkRKey);
 
             //NOTE: 毎回LookAtで値がうまく設定されてる前提でこういう記法になっている事に注意
             _leftEyeBone.localRotation *= Quaternion.AngleAxis(
@@ -199,10 +202,10 @@ namespace Baku.VMagicMirror
 
             //まばたき量に応じた値も足す: こちらはまばたき側の計算時にすでにローパスされてるから、そのまま足してOK
             //weightToAssignのオフセット項は後付けの補正なので速度の計算基準に使わないよう、計算から外している
-            float blinkLeft = _blendShapeProxy.GetValue(BlendShapePreset.Blink_L);
+            float blinkLeft = _blendShapeProxy.GetValue(BlinkLKey);
             float weightLeftToAssign = weightLeft + defaultOffset - blinkLeft * eyeBrowDownOffsetWhenEyeClosed;
 
-            float blinkRight = _blendShapeProxy.GetValue(BlendShapePreset.Blink_R);
+            float blinkRight = _blendShapeProxy.GetValue(BlinkRKey);
             float weightRightToAssign = weightRight + defaultOffset - blinkRight * eyeBrowDownOffsetWhenEyeClosed;
 
             _blendShapeSet.UpdateEyebrowBlendShape(weightLeftToAssign, weightRightToAssign);

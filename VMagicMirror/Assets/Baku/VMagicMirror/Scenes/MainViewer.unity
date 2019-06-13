@@ -1500,7 +1500,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   motionSize: {x: 0, y: 0.01, z: 0.01}
-  durations: {x: 1, y: 20, z: 20}
+  durations: {x: 1, y: 10, z: 10}
 --- !u!1 &1461652144
 GameObject:
   m_ObjectHideFlags: 0

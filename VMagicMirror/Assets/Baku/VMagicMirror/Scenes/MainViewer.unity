@@ -2330,6 +2330,7 @@ MonoBehaviour:
   faceAttitudeController: {fileID: 1534341276}
   faceDetector: {fileID: 1534341277}
   blendShapeAssignController: {fileID: 1534341283}
+  windowStyleController: {fileID: 1629460657}
   settingAdjuster: {fileID: 478567140}
   previewCanvas: {fileID: 1281394296}
 --- !u!114 &1787938568

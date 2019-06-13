@@ -205,7 +205,13 @@ namespace Baku.VMagicMirror
             TryWithoutException(() =>
             {
                 blendShapeAssignController.InitializeModel(go.transform);
-                windowStyleController.InitializeModelRenderers(go.GetComponentsInChildren<Renderer>());
+                var renderers = go.GetComponentsInChildren<Renderer>();
+                foreach (var renderer in renderers)
+                {
+                    //セルフシャドウは明示的に切る: ちょっとでも軽量化したい
+                    renderer.receiveShadows = false;
+                }
+                windowStyleController.InitializeModelRenderers(renderers);
                 go.AddComponent<EyeDownOnBlink>()
                     .Initialize(
                         blendShapeProxy,

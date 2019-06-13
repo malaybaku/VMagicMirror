@@ -7,6 +7,10 @@ namespace Baku.VMagicMirror
 {
     public class FaceBlendShapeController : MonoBehaviour
     {
+        private BlendShapeKey BlinkLKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_L);
+        private BlendShapeKey BlinkRKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_R);
+        private BlendShapeKey FunKey { get; } = new BlendShapeKey(BlendShapePreset.Fun);
+
         private const float EyeBlendShapeCloseThreshold = 0.7f;
 
         private const float EyeCloseHeight = 0.02f;
@@ -20,7 +24,7 @@ namespace Baku.VMagicMirror
                 if (Mathf.Abs(_faceDefaultFunValue - value) > Mathf.Epsilon)
                 {
                     _faceDefaultFunValue = value;
-                    _blendShapeProxy?.ImmediatelySetValue(BlendShapePreset.Fun, value);
+                    _blendShapeProxy?.ImmediatelySetValue(FunKey, value);
                 }
             }
         }
@@ -102,13 +106,13 @@ namespace Baku.VMagicMirror
             float left = Mathf.Lerp(_prevLeftBlink, _leftBlinkTarget, speedFactor);
 
             _blendShapeProxy.ImmediatelySetValue(
-                BlendShapePreset.Blink_L, 
+                BlinkLKey, 
                 left > EyeBlendShapeCloseThreshold ? 1.0f : left);
             _prevLeftBlink = left;
 
             float right = Mathf.Lerp(_prevRightBlink, _rightBlinkTarget, speedFactor);
             _blendShapeProxy.ImmediatelySetValue(
-                BlendShapePreset.Blink_R, 
+                BlinkRKey, 
                 right > EyeBlendShapeCloseThreshold ? 1.0f : right
                 );
             _prevRightBlink = right;
@@ -158,7 +162,7 @@ namespace Baku.VMagicMirror
         private IEnumerator DelayedSetFunBlendShape()
         {
             yield return new WaitForSeconds(0.2f);
-            _blendShapeProxy?.ImmediatelySetValue(BlendShapePreset.Fun, FaceDefaultFunValue);
+            _blendShapeProxy?.ImmediatelySetValue(FunKey, FaceDefaultFunValue);
         }
     }
 }

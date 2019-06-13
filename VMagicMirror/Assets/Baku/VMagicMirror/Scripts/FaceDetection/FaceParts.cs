@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+//using System.Linq;
 using UniRx;
 using UnityEngine;
 
@@ -14,6 +14,8 @@ namespace Baku.VMagicMirror
     public class FaceParts
     {
         public const int FaceLandmarkCount = 68;
+
+        private readonly Vector2[] _landmarks = new Vector2[FaceLandmarkCount];
 
         public FaceParts()
         {
@@ -29,6 +31,17 @@ namespace Baku.VMagicMirror
 
             InnerMouth = new InnerMouthPart(this);
             OuterMouth = new OuterMouthPart(this);
+
+            PartsWithoutOutline = new FacePartBase[]
+            {
+                RightEyebrow,
+                LeftEyebrow,
+                Nose,
+                RightEye,
+                LeftEye,
+                InnerMouth,
+                OuterMouth,
+            };
         }
 
         public Vector2 FaceSize { get; private set; } = Vector2.one;
@@ -47,16 +60,7 @@ namespace Baku.VMagicMirror
         public OuterMouthPart OuterMouth { get; }
 
         //輪郭は顔サイズと傾き除去のために特別扱いしたいので外す
-        private FacePartBase[] PartsWithoutOutline => new FacePartBase[]
-        {
-            RightEyebrow,
-            LeftEyebrow,
-            Nose,
-            RightEye,
-            LeftEye,
-            InnerMouth,
-            OuterMouth,
-        };
+        private FacePartBase[] PartsWithoutOutline { get; }
 
         //todo: 通常、目閉じ、目の見開き、で3つのキャリブがあった方がよさそうな…
         public void Calibrate(IList<Vector2> landmarks)
@@ -66,7 +70,11 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var landmarksArray = landmarks.ToArray();
+            var landmarksArray = new Vector2[FaceLandmarkCount];
+            for(int i = 0; i < landmarksArray.Length; i++)
+            {
+                landmarksArray[i] = landmarks[i];
+            }
 
             Outline.Calibrate(landmarksArray);
             foreach (var facePart in PartsWithoutOutline)
@@ -75,7 +83,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void Update(Rect mainPersonRect, IList<Vector2> landmarks)
+        public void Update(Rect mainPersonRect, List<Vector2> landmarks)
         {
             if (landmarks == null || landmarks.Count < FaceLandmarkCount)
             {
@@ -84,14 +92,16 @@ namespace Baku.VMagicMirror
 
             //顔の中心でオフセット取る : たぶん回転の除去とかで都合がよいのでこのスタイルで行きます
             var offset = mainPersonRect.center;
-            var landmarksArray = landmarks
-                .Select(l => l - offset)
-                .ToArray();
-            Outline.Update(landmarksArray);
-            FaceSize = Outline.FaceSize;
-            foreach (var facePart in PartsWithoutOutline)
+            for(int i = 0; i < _landmarks.Length; i++)
             {
-                facePart.Update(landmarksArray);
+                _landmarks[i] = landmarks[i] - offset;
+            }
+
+            Outline.Update(_landmarks);
+            FaceSize = Outline.FaceSize;
+            for (int i = 0; i < PartsWithoutOutline.Length; i++)
+            {
+                PartsWithoutOutline[i].Update(_landmarks);
             }
         }
  
@@ -107,15 +117,10 @@ namespace Baku.VMagicMirror
 
             public FaceParts Parent { get; }
 
-            public Vector2[] Positions
-            {
-                get
-                {
-                    var result = new Vector2[_positions.Length];
-                    Array.Copy(_positions, result, _positions.Length);
-                    return result;
-                }
-            }
+            /// <summary>
+            /// WARN: GCAllocをラクに避けるためにこう書いてるが書き込みはダメ！
+            /// </summary>
+            public Vector2[] Positions => _positions;
 
             public void Calibrate(Vector2[] rects)
             {
@@ -132,13 +137,15 @@ namespace Baku.VMagicMirror
 
             protected void CancelRollRotation()
             {
-                float angle = -Parent.Outline.CurrentFaceOrientation;
+                //sinにマイナスがつくのは、キャンセル回転のためにもとの角度を(-1)倍した値のsin,cosをセットで得るため
+                float cos = Parent.Outline.CurrentFaceOrientationCos;
+                float sin = -Parent.Outline.CurrentFaceOrientationSin;
                 for(int i = 0; i < _positions.Length; i++)
                 {
                     var p = _positions[i];
                     _positions[i] = new Vector2(
-                        p.x * Mathf.Cos(angle) - p.y * Mathf.Sin(angle),
-                        p.x * Mathf.Sin(angle) + p.y * Mathf.Cos(angle)
+                        p.x * cos - p.y * sin,
+                        p.x * sin + p.y * cos
                         );
                 }
             }
@@ -169,19 +176,22 @@ namespace Baku.VMagicMirror
 
             protected override void OnUpdated()
             {
-                base.OnUpdated();
-
                 var positions = Positions;
 
                 //アゴがどっちに向いているのかを、輪郭の端と真ん中でざっくりした方向ベクトルを作って判別
                 Vector2 diffVecSum = 2 * positions[8] - positions[0] - positions[16];
                 CurrentFaceOrientation = Mathf.Atan2(-diffVecSum.x, diffVecSum.y);
+                CurrentFaceOrientationSin = Mathf.Sin(CurrentFaceOrientation);
+                CurrentFaceOrientationCos = Mathf.Cos(CurrentFaceOrientation);
+
                 _faceOrientationOffset.OnNext(CurrentFaceOrientation);
 
+                //外形の3点だけで顔の矩形計算には足りる(しかもその方が回転不変で良い)
                 FaceSize = new Vector2(
-                    positions.Max(p => p.x) - positions.Min(p => p.x),
-                    positions.Max(p => p.y) - positions.Min(p => p.y)
+                    Vector2.Distance(positions[0], positions[16]),
+                    Vector2.Distance(0.5f * (positions[16] + positions[0]), positions[8])
                     );
+
                 _faceSize.OnNext(FaceSize);
             }
 
@@ -189,6 +199,10 @@ namespace Baku.VMagicMirror
             public override int LandmarkLength => 17;
 
             public float CurrentFaceOrientation { get; private set; }
+
+            //NOTE: sin, cosは回転計算で何度も欲しいのでキャッシュしとく
+            public float CurrentFaceOrientationSin { get; private set; }
+            public float CurrentFaceOrientationCos { get; private set; }
         }
 
         public abstract class EyebrowPartBase : FacePartBase
@@ -199,11 +213,16 @@ namespace Baku.VMagicMirror
 
             protected override void OnUpdated()
             {
-                base.OnUpdated();
                 CancelRollRotation();
 
                 var positions = Positions;
-                float height = positions.Sum(p => p.y) / positions.Length;
+                float ySum = 0;
+                for (int i = 0; i < positions.Length; i++)
+                {
+                    ySum += positions[i].y;
+                }
+
+                float height = ySum / positions.Length;
                 float normalizedHeight = (Parent.FaceSize.y - height) / Parent.FaceSize.y;
                 CurrentHeight = normalizedHeight;
                 _height.OnNext(normalizedHeight);
@@ -257,7 +276,6 @@ namespace Baku.VMagicMirror
 
             protected override void OnUpdated()
             {
-                base.OnUpdated();
                 CurrentNoseBaseHeightValue = GetNoseBaseHeightValue();
                 _noseBaseHeightValue.OnNext(CurrentNoseBaseHeightValue);
             }
@@ -284,7 +302,22 @@ namespace Baku.VMagicMirror
             public float GetEyeOpenValue()
             {
                 var positions = Positions;
-                float rawValue = positions.Max(r => r.y) - positions.Min(r => r.y);
+                float yMax = positions[0].y;
+                float yMin = positions[0].y;
+                for (int i = 1; i < positions.Length; i++)
+                {
+                    if (yMax < positions[i].y)
+                    {
+                        yMax = positions[i].y;
+                    }
+                    if (yMin > positions[i].y)
+                    {
+                        yMin = positions[i].y;
+                    }
+                }
+
+                float rawValue = yMax - yMin;
+                //float rawValue = positions.Max(r => r.y) - positions.Min(r => r.y);
                 float normalizedValue = rawValue / Parent.FaceSize.y;
                 CurrentEyeOpenValue = normalizedValue;
 

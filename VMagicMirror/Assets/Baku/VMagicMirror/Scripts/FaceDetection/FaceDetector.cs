@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using UnityEngine;
 using DlibFaceLandmarkDetector;
+using UniRx.Async;
 
 namespace Baku.VMagicMirror
 {
@@ -292,11 +293,13 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private async void FaceDetectionRoutine()
+        private void FaceDetectionRoutine()
         {
             while (!_cts.IsCancellationRequested)
             {
-                await Task.Delay(16);
+                Thread.Sleep(16);
+                //await UniTask.DelayFrame(1);
+                //await Task.Delay(16);
                 //書いてある通りだが、UIスレッド側からテクスチャが来ない場合や、
                 //テクスチャはあるが出力読み出し待ちになってる場合は無視
                 if (!FaceDetectPrepared || FaceDetectCompleted)
@@ -390,38 +393,6 @@ namespace Baku.VMagicMirror
             FaceParts.Update(mainPersonRect, landmarks);
 
             FaceDetectedAtLeastOnce = true;
-        }
-
-        private void UpdateFaceParts(Color32[] colors)
-        {
-            faceLandmarkDetector.SetImage(colors, TextureWidth, TextureHeight, 4, true);
-
-            List<Rect> faceRects = faceLandmarkDetector.Detect();
-            if (faceRects == null || faceRects.Count == 0)
-            {
-                return;
-            }
-
-            Rect mainPersonRect = faceRects[0];
-
-            //通常来ないが、複数人居たらいちばん大きく映っている人を採用
-            if (faceRects.Count > 1)
-            {
-                mainPersonRect = faceRects
-                    .OrderByDescending(r => r.width * r.height)
-                    .First();
-            }
-
-            //Yは上下逆にしないと物理的なY方向にあわない点に注意
-            DetectedRect = new Rect(
-                (mainPersonRect.xMin - TextureWidth / 2) / TextureWidth,
-                -(mainPersonRect.yMax - TextureHeight / 2) / TextureWidth,
-                mainPersonRect.width / TextureWidth,
-                mainPersonRect.height / TextureWidth
-                );
-
-            var landmarks = faceLandmarkDetector.DetectLandmark(mainPersonRect);
-            FaceParts.Update(mainPersonRect, landmarks);
         }
 
         private void UpdateCalibrationData()

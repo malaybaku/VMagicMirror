@@ -182,6 +182,12 @@ namespace Baku.VMagicMirror
         Transform keyPrefab = null;
 
         [SerializeField]
+        Vector3 initialPosition;
+
+        [SerializeField]
+        Vector3 initialScale;
+
+        [SerializeField]
         float[] radius = new float[]
         {
             0.2f,
@@ -220,6 +226,9 @@ namespace Baku.VMagicMirror
             if (keyPrefab != null)
             {
                 InitializeKeys();
+                CombineMeshes();
+                transform.position = initialPosition;
+                transform.localScale = initialScale;
             }
         }
 
@@ -255,6 +264,30 @@ namespace Baku.VMagicMirror
                 }
             }
         }
+
+        private void CombineMeshes()
+        {
+            int len = transform.childCount;
+            var meshFilters = new MeshFilter[len];
+            for (int i = 0; i < len; i++)
+            {
+                meshFilters[i] = transform.GetChild(i).GetComponentInChildren<MeshFilter>();
+            }
+            CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+            for (int i = 0; i < meshFilters.Length; i++)
+            {
+                combine[i].mesh = meshFilters[i].sharedMesh;
+                combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+                meshFilters[i].gameObject.SetActive(false);
+            }
+
+            var meshFilter = GetComponent<MeshFilter>();
+            meshFilter.mesh = new Mesh();
+            meshFilter.mesh.CombineMeshes(combine);
+        }
+
+
         public KeyTargetData GetKeyTargetData(string key)
         {
             var keyTransform = GetTransformOfKey(key);

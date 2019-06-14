@@ -8,6 +8,8 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(VRMBlendShapeProxy))]
     public class VRMBlink : MonoBehaviour
     {
+        private BlendShapeKey BlinkLKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_L);
+        private BlendShapeKey BlinkRKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_R);
 
         [SerializeField]
         AnimationCurve closeCurve = new AnimationCurve(new[]
@@ -89,8 +91,8 @@ namespace Baku.VMagicMirror
                 {
                     count += Time.deltaTime;
                     float blendRate = blink.curve.Evaluate(count / blink.duration);
-                    blendShapeProxy.ImmediatelySetValue(BlendShapePreset.Blink_L, blendRate);
-                    blendShapeProxy.ImmediatelySetValue(BlendShapePreset.Blink_R, blendRate);
+                    blendShapeProxy.ImmediatelySetValue(BlinkLKey, blendRate);
+                    blendShapeProxy.ImmediatelySetValue(BlinkRKey, blendRate);
                     yield return null;
                 }
             }

@@ -44,6 +44,11 @@ namespace Baku.VMagicMirror
         private bool _isDragging = false;
         private Vector2Int _dragStartMouseOffset = Vector2Int.zero;
 
+        private bool _prevMousePositionInitialized = false;
+        private Vector2 _prevMousePosition = Vector2.zero;
+
+        private Renderer[] _renderers = new Renderer[0];
+
         private Texture2D _colorPickerTexture = null;
         private bool _isOnOpaquePixel = false;
 
@@ -121,6 +126,16 @@ namespace Baku.VMagicMirror
             PlayerPrefs.SetInt(InitialPositionXKey, windowPosition.x);
             PlayerPrefs.SetInt(InitialPositionYKey, windowPosition.y);
 #endif
+        }
+
+        public void InitializeModelRenderers(Renderer[] renderers)
+        {
+            _renderers = renderers;
+        }
+
+        public void DisposeModelRenderers()
+        {
+            _renderers = new Renderer[0];
         }
 
         private void UpdateClickThrough()
@@ -322,10 +337,24 @@ namespace Baku.VMagicMirror
         /// <param name="cam"></param>
         private void ObservePixelUnderCursor(Camera cam)
         {
-            Vector2 mousePos = Input.mousePosition;
-            Rect camRect = cam.pixelRect;
+            if (!_prevMousePositionInitialized)
+            {
+                _prevMousePositionInitialized = true;
+                _prevMousePosition = Input.mousePosition;
+            }
 
-            if (!camRect.Contains(mousePos))
+            Vector2 mousePos = Input.mousePosition;
+            //mouse does not move => not need to udpate opacity information
+            if ((mousePos - _prevMousePosition).sqrMagnitude < Mathf.Epsilon)
+            {
+                return;
+            }
+            _prevMousePosition = mousePos;
+
+            //書いてる通りマウスがウィンドウ外にあるか、またはウィンドウ内であっても明らかに
+            //キャラクター上にマウスがないと判断出来る場合は続きを処理しない。
+            if (!cam.pixelRect.Contains(mousePos) ||
+                !CheckMouseMightBeOnCharacter(mousePos))
             {
                 _isOnOpaquePixel = false;
                 return;
@@ -343,9 +372,25 @@ namespace Baku.VMagicMirror
             catch (Exception ex)
             {
                 // 稀に範囲外になるとのこと(元ブログに記載あり)
+#if UNITY_EDITOR
                 Debug.LogError(ex.Message);
+#endif
                 _isOnOpaquePixel = false;
             }
+        }
+
+        private bool CheckMouseMightBeOnCharacter(Vector2 mousePosition)
+        {
+            var ray = cam.ScreenPointToRay(mousePosition);
+            //個別のメッシュでバウンディングボックスを調べることで大まかな判定になる仕組み。
+            for (int i = 0; i < _renderers.Length; i++)
+            {
+                if (_renderers[i].bounds.IntersectRay(ray))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void SetClickThrough(bool through)

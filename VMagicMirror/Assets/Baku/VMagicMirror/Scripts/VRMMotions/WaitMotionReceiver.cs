@@ -16,8 +16,8 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            _scale = 1.0f;
             _defaultSize = bodyTargetMove.motionSize;
+            SetWaitMotionScale(1.25f);
 
             handler.Commands.Subscribe(message =>
             {

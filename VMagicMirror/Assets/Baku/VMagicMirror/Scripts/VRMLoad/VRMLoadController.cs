@@ -34,6 +34,9 @@ namespace Baku.VMagicMirror
         private BlendShapeAssignController blendShapeAssignController = null;
 
         [SerializeField]
+        private WindowStyleController windowStyleController = null;
+
+        [SerializeField]
         private SettingAutoAdjuster settingAdjuster = null;
 
         [SerializeField]
@@ -142,6 +145,7 @@ namespace Baku.VMagicMirror
                 faceAttitudeController?.DisposeHead();
                 faceDetector.DisposeNonCameraBlinkComponent();
                 blendShapeAssignController.DisposeModel();
+                windowStyleController.DisposeModelRenderers();
                 settingAdjuster.DisposeModelRoot();
 
                 Destroy(loaded.gameObject);
@@ -201,6 +205,13 @@ namespace Baku.VMagicMirror
             TryWithoutException(() =>
             {
                 blendShapeAssignController.InitializeModel(go.transform);
+                var renderers = go.GetComponentsInChildren<Renderer>();
+                foreach (var renderer in renderers)
+                {
+                    //セルフシャドウは明示的に切る: ちょっとでも軽量化したい
+                    renderer.receiveShadows = false;
+                }
+                windowStyleController.InitializeModelRenderers(renderers);
                 go.AddComponent<EyeDownOnBlink>()
                     .Initialize(
                         blendShapeProxy,

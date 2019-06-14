@@ -185,6 +185,9 @@ namespace Baku.VMagicMirror
         Vector3 initialPosition;
 
         [SerializeField]
+        Vector3 initialRotation;
+
+        [SerializeField]
         Vector3 initialScale;
 
         [SerializeField]
@@ -228,6 +231,7 @@ namespace Baku.VMagicMirror
                 InitializeKeys();
                 CombineMeshes();
                 transform.position = initialPosition;
+                transform.rotation = Quaternion.Euler(initialRotation);
                 transform.localScale = initialScale;
             }
         }

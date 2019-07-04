@@ -123,6 +123,17 @@ namespace Baku.VMagicMirror
         public const uint WS_EX_LAYERED = 0x00080000;
         public const uint WS_EX_TRANSPARENT = 0x00000020;
 
+        [DllImport("user32.dll")]
+        public static extern bool SetLayeredWindowAttributes(IntPtr hWnd, uint crKey, byte bAlpha, uint dwFlags);
+
+        private const int LWA_COLORKEY = 0x0001;
+        private const int LWA_ALPHA = 0x0002;
+
+        public static void SetWindowAlpha(byte alpha)
+        {
+            SetLayeredWindowAttributes(GetUnityWindowHandle(), 0, alpha, LWA_ALPHA);
+        }
+
 
         public delegate bool EnumWindowsDelegate(IntPtr hWnd, IntPtr lparam);
 

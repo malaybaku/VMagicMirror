@@ -27,6 +27,8 @@
         public const string WindowDraggable = nameof(WindowDraggable);
         public const string MoveWindow = nameof(MoveWindow);
         public const string ResetWindowSize = nameof(ResetWindowSize);
+        public const string SetWholeWindowTransparencyLevel = nameof(SetWholeWindowTransparencyLevel);
+        public const string SetAlphaValueOnTransparent = nameof(SetAlphaValueOnTransparent);
 
         // Motion
 

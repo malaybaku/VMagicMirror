@@ -9,6 +9,15 @@ namespace Baku.VMagicMirror
 
     public class WindowStyleController : MonoBehaviour
     {
+        static class TransparencyLevel
+        {
+            public const int None = 0;
+            public const int WhenDragDisabledAndOnCharacter = 1;
+            public const int WhenOnCharacter = 2;
+            public const int WhenDragDisabled = 3;
+            public const int Always = 4;
+        }
+
         //Player Settingで決められるデフォルトウィンドウサイズと合わせてるが、常識的な値であれば多少ズレても害はないです
         const int DefaultWindowWidth = 800;
         const int DefaultWindowHeight = 600;
@@ -51,14 +60,23 @@ namespace Baku.VMagicMirror
 
         private Texture2D _colorPickerTexture = null;
         private bool _isOnOpaquePixel = false;
-
         private bool _isClickThrough = false;
+
+        int _wholeWindowTransparencyLevel = TransparencyLevel.WhenOnCharacter;
+        byte _wholeWindowAlphaWhenTransparent = 0x80;
+        //ふつうに起動したら不透明ウィンドウ
+        byte _currentWindowAlpha = 0xFF;
+        const float AlphaLerpFactor = 0.2f;
 
         private void Awake()
         {
+            IntPtr hWnd = GetUnityWindowHandle();
 #if !UNITY_EDITOR
-            defaultWindowStyle = GetWindowLong(GetUnityWindowHandle(), GWL_STYLE);
-            defaultExWindowStyle = GetWindowLong(GetUnityWindowHandle(), GWL_EXSTYLE);
+            defaultWindowStyle = GetWindowLong(hWnd, GWL_STYLE);
+            defaultExWindowStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+            //半透明許可のため、デフォルトで常時レイヤードウィンドウにしておく
+            defaultExWindowStyle |= WS_EX_LAYERED;
+            SetWindowLong(hWnd, GWL_EXSTYLE, defaultExWindowStyle);
 #endif
         }
 
@@ -99,6 +117,12 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.ResetWindowSize:
                         ResetWindowSize();
                         break;
+                    case MessageCommandNames.SetWholeWindowTransparencyLevel:
+                        SetTransparencyLevel(message.ToInt());
+                        break;
+                    case MessageCommandNames.SetAlphaValueOnTransparent:
+                        SetAlphaOnTransparent(message.ToInt());
+                        break;
                     default:
                         break;
                 }
@@ -117,6 +141,7 @@ namespace Baku.VMagicMirror
             UpdateClickThrough();
             UpdateDragStatus();
             UpdateWindowPositionCheck();
+            UpdateWindowTransparency();
         }
 
         private void OnDestroy()
@@ -248,6 +273,51 @@ namespace Baku.VMagicMirror
 #endif
         }
 
+        private void UpdateWindowTransparency()
+        {
+            byte alpha = 0xFF;
+            switch (_wholeWindowTransparencyLevel)
+            {
+                case TransparencyLevel.None:
+                    //何もしない: 0xFFで不透明になればOK
+                    break;
+                case TransparencyLevel.WhenDragDisabledAndOnCharacter:
+                    if (!_windowDraggableWhenFrameHidden &&
+                        _isOnOpaquePixel)
+                    {
+                        alpha = _wholeWindowAlphaWhenTransparent;
+                    }
+                    break;
+                case TransparencyLevel.WhenOnCharacter:
+                    if (_isOnOpaquePixel)
+                    {
+                        alpha = _wholeWindowAlphaWhenTransparent;
+                    }
+                    break;
+                case TransparencyLevel.WhenDragDisabled:
+                    if (!_windowDraggableWhenFrameHidden)
+                    {
+                        alpha = _wholeWindowAlphaWhenTransparent;
+                    }
+                    break;
+                case TransparencyLevel.Always:
+                    alpha = _wholeWindowAlphaWhenTransparent;
+                    break;
+                default:
+                    break;
+            }
+
+            //ウィンドウが矩形なままになっているときは透けさせない
+            //(ウィンドウが矩形なときはクリックスルーも認めてないので、透けさせないほうが一貫性が出る)
+            if (!_isWindowFrameHidden)
+            {
+                alpha = 0xFF;
+            }
+
+            SetAlpha(alpha);
+        }
+
+
         private void MoveWindow(int x, int y)
         {
 #if !UNITY_EDITOR
@@ -304,6 +374,16 @@ namespace Baku.VMagicMirror
             }
 
             _windowDraggableWhenFrameHidden = isDraggable;
+        }
+
+        private void SetAlphaOnTransparent(int alpha)
+        {
+            _wholeWindowAlphaWhenTransparent = (byte)alpha;
+        }
+
+        private void SetTransparencyLevel(int level)
+        {
+            _wholeWindowTransparencyLevel = level;
         }
 
         private void ReserveHitTestJudgeOnNextFrame()
@@ -410,6 +490,27 @@ namespace Baku.VMagicMirror
 #if !UNITY_EDITOR
             SetWindowLong(hwnd, GWL_EXSTYLE, exWindowStyle);
 #endif
+        }
+
+        private void SetAlpha(byte alpha)
+        {
+            if (alpha == _currentWindowAlpha)
+            {
+                return;
+            }
+
+            byte newAlpha = (byte)Mathf.Clamp(
+                Mathf.Lerp(_currentWindowAlpha, alpha, AlphaLerpFactor), 0, 255
+                );
+            //バイト値刻みで値が変わらないときは、最低でも1ずつ目標値のほうにずらしていく
+            if (newAlpha == _currentWindowAlpha &&
+                newAlpha != alpha)
+            {
+                newAlpha += (byte)Mathf.Sign(alpha - newAlpha);
+            }
+
+            _currentWindowAlpha = newAlpha;
+            SetWindowAlpha(newAlpha);
         }
     }
 }

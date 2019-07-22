@@ -3,10 +3,10 @@
 
 # VMagicMirror
 
-v0.8.5
+v0.8.6
 
 * Author: Baxter
-* 2019/Jun/15
+* 2019/Jul/22
 
 The VRM avatar application without any special device.
 

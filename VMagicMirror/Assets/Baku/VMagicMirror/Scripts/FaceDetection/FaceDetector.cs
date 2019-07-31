@@ -50,6 +50,30 @@ namespace Baku.VMagicMirror
         /// </remarks>
         public Rect DetectedRect { get; private set; }
 
+        public bool HasInitDone { get; private set; } = false;
+        private bool isInitWaiting = false;
+
+        public bool FaceDetectedAtLeastOnce { get; private set; } = false;
+
+        private bool _autoBlinkDuringFaceTracking = false;
+        public bool AutoBlinkDuringFaceTracking
+        {
+            get => _autoBlinkDuringFaceTracking;
+            set
+            {
+                if (_autoBlinkDuringFaceTracking == value)
+                {
+                    return;
+                }
+
+                _autoBlinkDuringFaceTracking = value;
+                if (_nonTrackingBlink != null)
+                {
+                    _nonTrackingBlink.enabled = AutoBlinkDuringFaceTracking || !HasInitDone;
+                }
+            }
+        }
+
         private int TextureWidth =>
             (webCamTexture == null) ? requestedWidth :
             (webCamTexture.width >= halfResizeWidthThreshold) ? webCamTexture.width / 2 :
@@ -69,10 +93,6 @@ namespace Baku.VMagicMirror
         private Color32[] _colors;
         private Color32[] _rawSizeColors;
 
-        public bool HasInitDone { get; private set; } = false;
-        private bool isInitWaiting = false;
-
-        public bool FaceDetectedAtLeastOnce { get; private set; } = false;
 
         private FaceLandmarkDetector faceLandmarkDetector;
 
@@ -209,8 +229,8 @@ namespace Baku.VMagicMirror
         public void SetNonCameraBlinkComponent(VRMBlink blink)
         {
             _nonTrackingBlink = blink;
-            //カメラが使えてないなら自動まばたきに頑張ってもらう
-            _nonTrackingBlink.enabled = !HasInitDone;
+            //カメラが使えてないか、またはオーバーライド設定が明示的にあれば自動まばたき
+            _nonTrackingBlink.enabled = AutoBlinkDuringFaceTracking || !HasInitDone;
         }
 
         public void DisposeNonCameraBlinkComponent()
@@ -274,7 +294,7 @@ namespace Baku.VMagicMirror
             HasInitDone = true;
             if (_nonTrackingBlink != null)
             {
-                _nonTrackingBlink.enabled = false;
+                _nonTrackingBlink.enabled = AutoBlinkDuringFaceTracking;
             }
 
             if (_colors == null || _colors.Length != webCamTexture.width * webCamTexture.height)

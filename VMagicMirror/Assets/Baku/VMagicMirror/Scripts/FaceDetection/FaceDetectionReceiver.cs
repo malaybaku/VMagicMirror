@@ -35,6 +35,9 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.EnableFaceTracking:
                         EnableFaceTracking(message.ToBoolean());
                         break;
+                    case MessageCommandNames.AutoBlinkDuringFaceTracking:
+                        SetAutoBlinkDuringFaceTracking(message.ToBoolean());
+                        break;
                     case MessageCommandNames.CalibrateFace:
                         CalibrateFace();
                         break;
@@ -87,6 +90,11 @@ namespace Baku.VMagicMirror
         {
             _cameraDeviceName = content;
             UpdateFaceDetectorState();
+        }
+
+        private void SetAutoBlinkDuringFaceTracking(bool enable)
+        {
+            _faceDetector.AutoBlinkDuringFaceTracking = enable;
         }
 
         private void UpdateFaceDetectorState()

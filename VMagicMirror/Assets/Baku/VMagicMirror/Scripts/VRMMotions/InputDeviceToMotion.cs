@@ -6,6 +6,7 @@ using RootMotion.FinalIK;
 
 namespace Baku.VMagicMirror
 {
+    //TODO: プロパティ多すぎるので構造化してください
     public class InputDeviceToMotion : MonoBehaviour
     {
         private const float HeadTargetForwardOffsetWhenLookKeyboard = 0.3f;
@@ -144,10 +145,6 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private float clickHandRotationDuration = 0.2f;
 
-        private Camera _cam = null;
-        private Camera CameraAsComponent
-            => _cam ?? (_cam = cam.GetComponent<Camera>());
-
         //クリック時にクイッとさせたいので。
         public Transform rightHandBone = null;
 
@@ -155,6 +152,13 @@ namespace Baku.VMagicMirror
         public Transform vrmRoot = null;
         public float bodyLeanSpeedFactor = 0.1f;
         public float bodyLeanMaxAngleDegree = 5.0f;
+
+        [SerializeField]
+        ParticleStore _particleStore = null;
+
+        private Camera _cam = null;
+        private Camera CameraAsComponent
+            => _cam ?? (_cam = cam.GetComponent<Camera>());
 
         private Vector3 yOffsetAlwaysVec => yOffsetAlways * Vector3.up;
 
@@ -367,6 +371,8 @@ namespace Baku.VMagicMirror
             //int fingerNumber = keyboard.GetFingerNumberOfKey(key);
             //fingerAnimator?.StartMoveFinger(fingerNumber);
             fingerAnimator?.StartMoveFinger(keyData.fingerNumber);
+
+            _particleStore?.RequestParticleStart(keyData.position);
         }
 
         private IEnumerator KeyPressRoutine(Transform hand, Vector3 targetPos, bool isLeftHand)

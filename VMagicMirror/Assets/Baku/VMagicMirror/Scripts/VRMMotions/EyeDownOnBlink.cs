@@ -202,6 +202,13 @@ namespace Baku.VMagicMirror
             float speedRight = Mathf.Lerp(_prevRightEyeBrowSpeed, idealRight, speedLerpFactor);
             float weightRight = _prevRightEyeBrowWeight + Time.deltaTime * speedRight;
             weightRight = Mathf.Clamp(weightRight, -1, 1);
+            if (_faceDetector.AutoBlinkDuringFaceTracking)
+            {
+                speedLeft = 0;
+                weightLeft = 0;
+                speedRight = 0;
+                weightRight = 0;
+            }
 
             //まばたき量に応じた値も足す: こちらはまばたき側の計算時にすでにローパスされてるから、そのまま足してOK
             //weightToAssignのオフセット項は後付けの補正なので速度の計算基準に使わないよう、計算から外している

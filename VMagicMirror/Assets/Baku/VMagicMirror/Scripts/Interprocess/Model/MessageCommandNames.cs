@@ -87,6 +87,7 @@
         public const string HidHeight = nameof(HidHeight);
         public const string HidHorizontalScale = nameof(HidHorizontalScale);
         public const string HidVisibility = nameof(HidVisibility);
+        public const string SetKeyboardTypingEffectType = nameof(SetKeyboardTypingEffectType);
 
         // Layout, Gamepad
         public const string EnableGamepad = nameof(EnableGamepad);

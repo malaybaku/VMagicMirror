@@ -189,7 +189,10 @@ namespace Baku.VMagicMirror
             {
                 animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
                 faceBlendShapeController?.Initialize(blendShapeProxy);
-                faceAttitudeController?.Initialize(animator.GetBoneTransform(HumanBodyBones.Neck));
+                faceAttitudeController?.Initialize(
+                    animator.GetBoneTransform(HumanBodyBones.Neck),
+                    animator.GetBoneTransform(HumanBodyBones.Head)
+                    );
 
                 loadSetting.inputToMotion.head = animator.GetBoneTransform(HumanBodyBones.Head);
                 loadSetting.inputToMotion.rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);

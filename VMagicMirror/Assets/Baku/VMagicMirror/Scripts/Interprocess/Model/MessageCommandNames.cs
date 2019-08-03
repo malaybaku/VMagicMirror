@@ -53,6 +53,7 @@
         // Motion, Face
         public const string EnableFaceTracking = nameof(EnableFaceTracking);
         public const string SetCameraDeviceName = nameof(SetCameraDeviceName);
+        public const string AutoBlinkDuringFaceTracking = nameof(AutoBlinkDuringFaceTracking);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
         public const string FaceDefaultFun = nameof(FaceDefaultFun);

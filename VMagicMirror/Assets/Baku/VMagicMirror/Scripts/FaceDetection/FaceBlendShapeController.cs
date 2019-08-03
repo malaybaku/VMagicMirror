@@ -90,7 +90,7 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (_blendShapeProxy == null)
+            if (_blendShapeProxy == null || faceDetector.AutoBlinkDuringFaceTracking)
             {
                 return;
             }

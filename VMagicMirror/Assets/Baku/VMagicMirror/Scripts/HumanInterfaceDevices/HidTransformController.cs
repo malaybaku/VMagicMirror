@@ -41,7 +41,6 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.HidVisibility:
                         SetHidVisibility(message.ToBoolean());
                         break;
-
                     case MessageCommandNames.GamepadHeight:
                         SetGamepadHeight(message.ParseAsCentimeter());
                         break;

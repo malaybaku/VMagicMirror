@@ -5,6 +5,8 @@ namespace Baku.VMagicMirror
 {
     public class ParticleStore : MonoBehaviour
     {
+        public const int InvalidTypingEffectIndex = -1;
+
         [Serializable]
         struct ParticlePrefabInfo
         {
@@ -26,7 +28,7 @@ namespace Baku.VMagicMirror
         int _nextParticleIndex = 0;
 
         //-1はパーティクル無効、0~(particlePrefabs.Length - 1)は有効な状態を表す
-        private int _currentSelectedParticlePrefabIndex = -1;
+        private int _currentSelectedParticlePrefabIndex = InvalidTypingEffectIndex;
 
         //キャッシュして多数同時に実行できるようにしたパーティクル群
         private ParticleSystem[] _particles = new ParticleSystem[0];

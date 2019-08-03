@@ -63,12 +63,12 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //やりたい事: ロール、ヨー、ピッチそれぞれを独立にPD制御ライクにトラックさせてから合わせに行く
+            //やりたい事: ロール、ヨー、ピッチそれぞれを独立にsmoothingしてから最終的に適用する
 
-            //直線的に動かす場合の速度
+            //直線的に動かす場合の速度。ここが差分ベースで、PD制御のPっぽい感じ
             var idealSpeedEuler = (_latestRotationEuler - _prevRotationEuler) / timeScaleFactor;
 
-            //QuaternionならSlerpでやってるやつ。
+            //慣性っぽい動きを付けてからチャタリング防止用のダンピング(PD制御のDっぽい項)
             var speed = Vector3.Lerp(
                 _prevRotationSpeedEuler,
                 idealSpeedEuler,
@@ -79,12 +79,11 @@ namespace Baku.VMagicMirror
             speed *= speedDumpFactor;
 
             var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
-            var nextRotation = Quaternion.Euler(rotationEuler);
 
-            //首と頭のトータルで曲がり過ぎてないかチェック
+            //このスクリプトより先にLookAtIKが走るハズなので、その回転と合成
+            var nextRotation = Quaternion.Euler(rotationEuler) * _vrmHeadTransform.localRotation;
 
-            //1: Headに代入するケース
-            nextRotation *= _vrmHeadTransform.localRotation;
+            //首と頭のトータルで曲がり過ぎを防止
             (_vrmNeckTransform.localRotation * nextRotation).ToAngleAxis(
                 out float totalHeadRotDeg,
                 out Vector3 totalHeadRotAxis
@@ -92,29 +91,12 @@ namespace Baku.VMagicMirror
 
             if (Mathf.Abs(totalHeadRotDeg) > HeadTotalRotationLimitDeg)
             {
-                //トータルの回転が上限になるよう調整
                 nextRotation =
                     Quaternion.Inverse(_vrmNeckTransform.localRotation) *
                     Quaternion.AngleAxis(HeadTotalRotationLimitDeg, totalHeadRotAxis);
             }
+
             _vrmHeadTransform.localRotation = nextRotation;
-
-            //2: Neckに代入するケース
-            //nextRotation *= _vrmNeckTransform.localRotation;
-            //(nextRotation * _vrmHeadTransform.localRotation).ToAngleAxis(
-            //    out float totalHeadRotDeg,
-            //    out Vector3 totalHeadRotAxis
-            //    );
-
-            //if (Mathf.Abs(totalHeadRotDeg) > HeadTotalRotationLimitDeg)
-            //{
-            //    //トータルの回転が上限になるよう調整
-            //    nextRotation =
-            //        Quaternion.AngleAxis(HeadTotalRotationLimitDeg, totalHeadRotAxis) *
-            //        Quaternion.Inverse(_vrmHeadTransform.localRotation);
-
-            //}
-            //_vrmNeckTransform.localRotation = nextRotation;
 
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;

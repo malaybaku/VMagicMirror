@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UniRx;
-using System;
 
 namespace Baku.VMagicMirror
 {
@@ -11,79 +10,114 @@ namespace Baku.VMagicMirror
         private float speedLerpFactor = 0.2f;
 
         [SerializeField]
+        [Range(0.1f, 1.0f)]
+        private float speedDumpFactor = 0.8f;
+
+        [SerializeField]
         [Range(0.05f, 1.0f)]
         private float timeScaleFactor = 1.0f;        
 
-        private const float HeadYawRateToDegFactor = 40.0f;
-        private const float HeadTotalYawLimitDeg = 40.0f;
-
+        private const float HeadYawRateToDegFactor = 50.00f;
+        private const float HeadTotalRotationLimitDeg = 40.0f;
         private const float NoseBaseHeightDifToAngleDegFactor = 400f;
             
         private FaceDetector _faceDetector;
         private Transform _vrmNeckTransform = null;
         private Transform _vrmHeadTransform = null;
 
-        //値の出どころが異なる都合でRadと比率値とDegが混在してる
-        private float _headRollRad = 0;
-        private float _headYawRate = 0;
-        private float _headPitchDeg = 0;
+        private void SetHeadRollDeg(float value) => _latestRotationEuler.z = value;
+        private void SetHeadYawDeg(float value) => _latestRotationEuler.y = value;
+        private void SetHeadPitchDeg(float value) => _latestRotationEuler.x = value;
 
+        //NOTE: Quaternionを使わないのは角度別にローパスっぽい処理するのに都合がよいため
+        private Vector3 _latestRotationEuler;
+        private Vector3 _prevRotationEuler;
+        private Vector3 _prevRotationSpeedEuler;
 
-        private float _prevSpeed = 0;
-
-        private Quaternion _goalRotation = Quaternion.identity;
-        private Quaternion _prevRotation = Quaternion.identity;
-
-        void Start()
+        private void Start()
         {
             _faceDetector = GetComponent<FaceDetector>();
+            
+            //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
             _faceDetector.FaceParts.Outline.HeadRollRad.Subscribe(
-                //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
-                v => _headRollRad = -v
+                v => SetHeadRollDeg(-v * Mathf.Rad2Deg)
                 );
+            
+            //もとの値は角度ではなく[-1, 1]の無次元量であることに注意
             _faceDetector.FaceParts.Outline.HeadYawRate.Subscribe(
-                v => _headYawRate = v
-                );
-            _faceDetector.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
-                v => _headPitchDeg = NoseBaseHeightToNeckPitch(v)
+                v => SetHeadYawDeg(v * HeadYawRateToDegFactor)
                 );
 
+            _faceDetector.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
+                v => SetHeadPitchDeg(NoseBaseHeightToNeckPitchDeg(v))
+                );
         }
 
         private void LateUpdate()
         {
-            if (_vrmHeadTransform == null)
+            if (_vrmHeadTransform == null || !_faceDetector.HasInitDone)
             {
-                _headRollRad = 0;
-                _headYawRate = 0;
-                //_prevAngle = 0;
-                _prevSpeed = 0;
-                _prevRotation = Quaternion.identity;
+                _latestRotationEuler = Vector3.zero;
+                _prevRotationEuler = Vector3.zero;
+                _prevRotationSpeedEuler = Vector3.zero;
                 return;
             }
 
-            var latestGoalRotation = Quaternion.Euler(
-                _headPitchDeg, 
-                HeadYawRateToDeg(),
-                _headRollRad * Mathf.Rad2Deg
+            //やりたい事: ロール、ヨー、ピッチそれぞれを独立にPD制御ライクにトラックさせてから合わせに行く
+
+            //直線的に動かす場合の速度
+            var idealSpeedEuler = (_latestRotationEuler - _prevRotationEuler) / timeScaleFactor;
+
+            //QuaternionならSlerpでやってるやつ。
+            var speed = Vector3.Lerp(
+                _prevRotationSpeedEuler,
+                idealSpeedEuler,
+                speedLerpFactor
                 );
 
-            _goalRotation = latestGoalRotation;
+            //チャタリング防止
+            speed *= speedDumpFactor;
 
-            Quaternion totalDiffRotation = _goalRotation * Quaternion.Inverse(_prevRotation);
-            totalDiffRotation.ToAngleAxis(out float diffAngle, out Vector3 diffAxis);
+            var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
+            var nextRotation = Quaternion.Euler(rotationEuler);
 
-            //このへんのスピードはぜんぶ[deg/sec]が単位
-            float idealSpeed = diffAngle / timeScaleFactor;
-            float speed = Mathf.Lerp(_prevSpeed, idealSpeed, speedLerpFactor);
-            Quaternion difRotation = Quaternion.AngleAxis(Time.deltaTime * speed, diffAxis);
-            Quaternion rotation = difRotation * _prevRotation;
+            //首と頭のトータルで曲がり過ぎてないかチェック
 
-            _vrmHeadTransform.localRotation = rotation;
-            _prevRotation = rotation;
-            _prevSpeed = speed;
+            //1: Headに代入するケース
+            nextRotation *= _vrmHeadTransform.localRotation;
+            (_vrmNeckTransform.localRotation * nextRotation).ToAngleAxis(
+                out float totalHeadRotDeg,
+                out Vector3 totalHeadRotAxis
+                );
 
-            Debug.Log($"Prev Speed: {_prevSpeed:00.00}");
+            if (Mathf.Abs(totalHeadRotDeg) > HeadTotalRotationLimitDeg)
+            {
+                //トータルの回転が上限になるよう調整
+                nextRotation =
+                    Quaternion.Inverse(_vrmNeckTransform.localRotation) *
+                    Quaternion.AngleAxis(HeadTotalRotationLimitDeg, totalHeadRotAxis);
+            }
+            _vrmHeadTransform.localRotation = nextRotation;
+
+            //2: Neckに代入するケース
+            //nextRotation *= _vrmNeckTransform.localRotation;
+            //(nextRotation * _vrmHeadTransform.localRotation).ToAngleAxis(
+            //    out float totalHeadRotDeg,
+            //    out Vector3 totalHeadRotAxis
+            //    );
+
+            //if (Mathf.Abs(totalHeadRotDeg) > HeadTotalRotationLimitDeg)
+            //{
+            //    //トータルの回転が上限になるよう調整
+            //    nextRotation =
+            //        Quaternion.AngleAxis(HeadTotalRotationLimitDeg, totalHeadRotAxis) *
+            //        Quaternion.Inverse(_vrmHeadTransform.localRotation);
+
+            //}
+            //_vrmNeckTransform.localRotation = nextRotation;
+
+            _prevRotationEuler = rotationEuler;
+            _prevRotationSpeedEuler = speed;
         }
 
         public void Initialize(Transform neckTransform, Transform headTransform)
@@ -98,7 +132,7 @@ namespace Baku.VMagicMirror
             _vrmHeadTransform = null;
         }
 
-        private float NoseBaseHeightToNeckPitch(float noseBaseHeight)
+        private float NoseBaseHeightToNeckPitchDeg(float noseBaseHeight)
         {
             if (_faceDetector != null)
             {
@@ -109,25 +143,6 @@ namespace Baku.VMagicMirror
                 //とりあえず顔が取れないなら水平にしとけばOK
                 return 0;
             }
-        }
-
-        private float HeadYawRateToDeg()
-        {
-            float result = _headYawRate * HeadYawRateToDegFactor;
-            //考え方: 方向によらず、LookAtで首がじゅうぶん曲がっている場合、それ以上ムリして角度をつけないようにする
-            _vrmNeckTransform.localRotation.ToAngleAxis(out float neckBendingAngleDeg, out var _);
-
-            neckBendingAngleDeg = Mathf.Repeat(neckBendingAngleDeg, 360);
-            if (neckBendingAngleDeg > 180)
-            {
-                neckBendingAngleDeg = 360f - neckBendingAngleDeg;
-            }
-
-            return Mathf.Clamp(
-                result,
-                -HeadTotalYawLimitDeg - neckBendingAngleDeg,
-                HeadTotalYawLimitDeg + neckBendingAngleDeg
-                );
         }
     }
 }

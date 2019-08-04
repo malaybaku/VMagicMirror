@@ -301,6 +301,7 @@ namespace Baku.VMagicMirror
             {
                 fingerNumber = fingerNumber,
                 keyTransform = keyTransform,
+                position = keyTransform.position,
                 positionWithOffset = keyTransform.position + offset,
             };
         }
@@ -433,6 +434,7 @@ namespace Baku.VMagicMirror
         {
             public int fingerNumber;
             public Transform keyTransform;
+            public Vector3 position;
             public Vector3 positionWithOffset;
         }
     }

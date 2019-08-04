@@ -1236,6 +1236,75 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &1268007391
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1268007392}
+  - component: {fileID: 1268007394}
+  - component: {fileID: 1268007393}
+  m_Layer: 0
+  m_Name: ParticleStore
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1268007392
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268007391}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1268007393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268007391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67c9afeaa27b49f458407f84d6dd1e87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _particleStoreCount: 16
+  _particlePrefabs:
+  - prefab: {fileID: 4353481273975885782, guid: 2a2c22bd0015525489aa6305c15b3469,
+      type: 3}
+    scale: {x: 1, y: 1, z: 1}
+    useCollisionPlane: 1
+    collisionTransform: {fileID: 1169325486}
+  - prefab: {fileID: 7218671144545294627, guid: 773b33f661c35c24183e00d82532a670,
+      type: 3}
+    scale: {x: 1, y: 1, z: 1}
+    useCollisionPlane: 0
+    collisionTransform: {fileID: 0}
+--- !u!114 &1268007394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268007391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfd37789e02ac7843b7055662b478200, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _handler: {fileID: 1930233619}
 --- !u!1 &1281394291
 GameObject:
   m_ObjectHideFlags: 0
@@ -2693,6 +2762,7 @@ MonoBehaviour:
   vrmRoot: {fileID: 0}
   bodyLeanSpeedFactor: 0.03
   bodyLeanMaxAngleDegree: 5
+  _particleStore: {fileID: 1268007393}
 --- !u!114 &1855229417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2738,6 +2808,7 @@ MonoBehaviour:
   keyboard: {fileID: 1169325487}
   touchpad: {fileID: 2059529786}
   gamepad: {fileID: 1798368043}
+  particleStore: {fileID: 1268007393}
 --- !u!1 &1930233616
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,6 +19,9 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private GamepadProvider gamepad = null;
 
+        [SerializeField]
+        private ParticleStore particleStore = null;
+
         private Transform _keyboardRoot => keyboard.transform;
         private Transform _touchPadRoot => touchpad.transform.parent;
         private Transform _gamepadRoot => gamepad.transform;
@@ -38,7 +41,6 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.HidVisibility:
                         SetHidVisibility(message.ToBoolean());
                         break;
-
                     case MessageCommandNames.GamepadHeight:
                         SetGamepadHeight(message.ParseAsCentimeter());
                         break;
@@ -68,6 +70,9 @@ namespace Baku.VMagicMirror
         {
             _keyboardRoot.localScale = new Vector3(v, 1.0f, v);
             _touchPadRoot.localScale = new Vector3(v, 1.0f, v);
+
+            //NOTE: パーティクルの高さは縮めといた方が自然
+            particleStore.ParticleScale = new Vector3(v, v, v);
         }
 
         private void SetHidVisibility(bool v)

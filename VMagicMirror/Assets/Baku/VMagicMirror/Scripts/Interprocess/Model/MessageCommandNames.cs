@@ -53,6 +53,7 @@
         // Motion, Face
         public const string EnableFaceTracking = nameof(EnableFaceTracking);
         public const string SetCameraDeviceName = nameof(SetCameraDeviceName);
+        public const string AutoBlinkDuringFaceTracking = nameof(AutoBlinkDuringFaceTracking);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
@@ -86,6 +87,7 @@
         public const string HidHeight = nameof(HidHeight);
         public const string HidHorizontalScale = nameof(HidHorizontalScale);
         public const string HidVisibility = nameof(HidVisibility);
+        public const string SetKeyboardTypingEffectType = nameof(SetKeyboardTypingEffectType);
 
         // Layout, Gamepad
         public const string EnableGamepad = nameof(EnableGamepad);

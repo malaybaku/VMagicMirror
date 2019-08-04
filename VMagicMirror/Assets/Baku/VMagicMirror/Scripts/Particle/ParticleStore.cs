@@ -101,12 +101,5 @@ namespace Baku.VMagicMirror
                 _nextParticleIndex = 0;
             }
         }
-
-        private void Start()
-        {
-            //デフォルトでライトのパーティクルが出てくる設定にしようとしてます
-            SetParticleIndex(1);
-        }
-
     }
 }

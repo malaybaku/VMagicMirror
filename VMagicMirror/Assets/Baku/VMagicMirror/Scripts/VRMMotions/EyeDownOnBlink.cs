@@ -52,6 +52,8 @@ namespace Baku.VMagicMirror
         private IDisposable _rightEyeBrowHeight = null;
         private IDisposable _leftEyeBrowHeight = null;
 
+        private bool _hasBlinkBlendShape = false;
+
         public bool IsInitialized { get; private set; } = false;
 
         public void Initialize(
@@ -83,6 +85,8 @@ namespace Baku.VMagicMirror
                 v => _leftEyeBrowValue = v
                 );
 
+            _hasBlinkBlendShape = CheckBlinkBlendShapeClips(proxy);
+
             IsInitialized = true;
         }
 
@@ -108,7 +112,7 @@ namespace Baku.VMagicMirror
 
         private void AdjustEyeRotation()
         {
-            if (_rightEyeBone == null || _leftEyeBone == null)
+            if (_rightEyeBone == null || _leftEyeBone == null || !_hasBlinkBlendShape)
             {
                 return;
             }

@@ -32,6 +32,7 @@ namespace Baku.VMagicMirror
         private VRMBlendShapeProxy _blendShapeProxy = null;
         private EyebrowBlendShapeSet _blendShapeSet = null;
         private FaceDetector _faceDetector = null;
+        private WordToMotionController _wordToMotion = null;
         private Transform _rightEyeBone = null;
         private Transform _leftEyeBone = null;
 
@@ -45,6 +46,9 @@ namespace Baku.VMagicMirror
         private float _prevLeftEyeBrowSpeed = 0;
         private float _prevRightEyeBrowSpeed = 0;
 
+        //このクラス上でリセットされていないBlendShapeを送った状態かどうかのフラグ
+        private bool _hasAppliedEyebrowBlendShape = false;
+
         private IDisposable _rightEyeBrowHeight = null;
         private IDisposable _leftEyeBrowHeight = null;
 
@@ -53,6 +57,7 @@ namespace Baku.VMagicMirror
         public void Initialize(
             VRMBlendShapeProxy proxy,
             FaceDetector faceDetector,
+            WordToMotionController wordToMotion,
             EyebrowBlendShapeSet blendShapeSet,
             Transform rightEyeBone, 
             Transform leftEyeBone
@@ -60,6 +65,7 @@ namespace Baku.VMagicMirror
         {
             _blendShapeProxy = proxy;
             _faceDetector = faceDetector;
+            _wordToMotion = wordToMotion;
             _blendShapeSet = blendShapeSet;
             _rightEyeBone = rightEyeBone;
             _leftEyeBone = leftEyeBone;
@@ -100,59 +106,14 @@ namespace Baku.VMagicMirror
             _leftEyeBrowHeight = null;
         }
 
-        //private void InitializeEyeBrowBlendShapes()
-        //{
-        //    var renderers = _blendShapeProxy
-        //        .gameObject
-        //        .GetComponentsInChildren<SkinnedMeshRenderer>()
-        //        .ToArray();
-
-        //    _eyeBrowUpBlendShapeTarget.isValid = false;
-        //    _eyeBrowDownBlendShapeTarget.isValid = false;
-
-        //    bool _upInitialized = false;
-        //    bool _downInitialized = false;
-
-        //    for(int i = 0; i < renderers.Length; i++)
-        //    {
-        //        var renderer = renderers[i];
-        //        var mesh = renderer.sharedMesh;
-        //        for (int j = 0; j < mesh.blendShapeCount; j++)
-        //        {
-        //            string blendShapeName = mesh.GetBlendShapeName(j);
-        //            if (blendShapeName == EyeBrowUpBlendShapeKey)
-        //            {
-        //                _eyeBrowUpBlendShapeTarget = new BlendShapeTarget()
-        //                {
-        //                    isValid = true,
-        //                    index = mesh.GetBlendShapeIndex(blendShapeName),
-        //                    renderer = renderer,
-        //                };
-        //                _upInitialized = true;
-        //            }
-
-        //            if (blendShapeName == EyeBrowDownBlendShapeKey)
-        //            {
-        //                _eyeBrowDownBlendShapeTarget = new BlendShapeTarget()
-        //                {
-        //                    isValid = true,
-        //                    index = mesh.GetBlendShapeIndex(blendShapeName),
-        //                    renderer = renderer,
-        //                };
-        //                _downInitialized = true;
-        //            }
-
-        //            if (_upInitialized && _downInitialized)
-        //            {
-        //                return;
-        //            }
-        //        }
-        //    }
-        //}
-
         private void AdjustEyeRotation()
         {
-            if (_rightEyeBone == null && _leftEyeBone == null)
+            if (_rightEyeBone == null || _leftEyeBone == null)
+            {
+                return;
+            }
+
+            if (_wordToMotion.EnablePreview || _wordToMotion.IsPlayingBlendShape)
             {
                 return;
             }
@@ -176,6 +137,18 @@ namespace Baku.VMagicMirror
         {
             if (_faceDetector == null)
             {
+                return;
+            }
+
+            //プレビューやクリップで指定されたモーフの実行時: 眉毛が動いてるとジャマなので戻してから放置。
+            //毎フレームやるとクリップ指定動作を上書きしてしまうため、それを防ぐべく最初の1回だけリセットするのがポイント
+            if (_wordToMotion.EnablePreview || _wordToMotion.IsPlayingBlendShape)
+            {
+                if (_hasAppliedEyebrowBlendShape)
+                {
+                    _blendShapeSet.UpdateEyebrowBlendShape(0, 0);
+                    _hasAppliedEyebrowBlendShape = false;
+                }
                 return;
             }
 
@@ -219,11 +192,22 @@ namespace Baku.VMagicMirror
             float weightRightToAssign = weightRight + defaultOffset - blinkRight * eyeBrowDownOffsetWhenEyeClosed;
 
             _blendShapeSet.UpdateEyebrowBlendShape(weightLeftToAssign, weightRightToAssign);
+            _hasAppliedEyebrowBlendShape = true;
 
             _prevLeftEyeBrowWeight = weightLeft;
             _prevLeftEyeBrowSpeed = speedLeft;
             _prevRightEyeBrowWeight = weightRight;
             _prevRightEyeBrowSpeed = speedRight;
+        }
+
+        private bool CheckBlinkBlendShapeClips(VRMBlendShapeProxy proxy)
+        {
+            var avatar = proxy.BlendShapeAvatar;
+            return (
+                (avatar.GetClip(BlinkLKey).Values.Length > 0) &&
+                (avatar.GetClip(BlinkRKey).Values.Length > 0) &&
+                (avatar.GetClip(BlendShapePreset.Blink).Values.Length > 0)
+                );
         }
 
         struct BlendShapeTarget

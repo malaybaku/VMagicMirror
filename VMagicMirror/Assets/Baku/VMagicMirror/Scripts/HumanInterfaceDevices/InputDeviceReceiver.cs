@@ -49,6 +49,9 @@ namespace Baku.VMagicMirror
             {
                 switch (message.Command)
                 {
+                    case MessageCommandNames.EnableHidArmMotion:
+                        EnableHidArmMotion(message.ToBoolean());
+                        break;
                     case MessageCommandNames.KeyDown:
                         ReceiveKeyPressed(message.Content);
                         break;
@@ -101,6 +104,8 @@ namespace Baku.VMagicMirror
 
             });
         }
+
+        private void EnableHidArmMotion(bool v) => motion.EnableHidArmMotion = v;
 
         private void EnablePresenterMotion(bool v) => motion.EnablePresentationMotion = v;
         private void SetPresentationArmMotionScale(float v) => motion.presentationArmMotionScale = v;

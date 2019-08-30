@@ -42,7 +42,13 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private VRMPreviewCanvas previewCanvas = null;
 
-        private HumanPoseTransfer m_loaded = null;
+        [SerializeField]
+        private WordToMotionController wordToMotion = null;
+
+        [SerializeField]
+        private RuntimeAnimatorController animatorController = null;
+
+        private HumanPoseTransfer _humanPoseTransferTarget = null;
 
         private void Start()
         {
@@ -113,7 +119,7 @@ namespace Baku.VMagicMirror
                 context.ParseGlb(file);
 
                 context.Load();
-                context.ShowMeshes();
+                //context.ShowMeshes();
                 context.EnableUpdateWhenOffscreen();
                 context.ShowMeshes();
                 SetModel(context.Root);
@@ -129,8 +135,8 @@ namespace Baku.VMagicMirror
         private void ReleaseCurrentVrm()
         {
             // cleanup
-            var loaded = m_loaded;
-            m_loaded = null;
+            var loaded = _humanPoseTransferTarget;
+            _humanPoseTransferTarget = null;
 
             if (loaded != null)
             {
@@ -147,6 +153,8 @@ namespace Baku.VMagicMirror
                 blendShapeAssignController.DisposeModel();
                 windowStyleController.DisposeModelRenderers();
                 settingAdjuster.DisposeModelRoot();
+                wordToMotion.Dispose();
+                loadSetting.ikWeightCrossFade.DisposeIk();
 
                 Destroy(loaded.gameObject);
             }
@@ -164,8 +172,8 @@ namespace Baku.VMagicMirror
             var lookAt = go.GetComponent<VRMLookAtHead>();
             if (lookAt != null)
             {
-                m_loaded = go.AddComponent<HumanPoseTransfer>();
-                m_loaded.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
+                _humanPoseTransferTarget = go.AddComponent<HumanPoseTransfer>();
+                _humanPoseTransferTarget.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
             }
 
             //NOTE: ここからは一部がコケても他のセットアップを続けて欲しいので、やや細かくTry Catchしていく
@@ -219,6 +227,7 @@ namespace Baku.VMagicMirror
                     .Initialize(
                         blendShapeProxy,
                         faceDetector,
+                        wordToMotion,
                         blendShapeAssignController.EyebrowBlendShape,
                         animator.GetBoneTransform(HumanBodyBones.RightEye),
                         animator.GetBoneTransform(HumanBodyBones.LeftEye)
@@ -226,6 +235,12 @@ namespace Baku.VMagicMirror
 
                 settingAdjuster.AssignModelRoot(go.transform);
                 blendShapeAssignController.SendBlendShapeNames();
+
+                var simpleAnimation = go.AddComponent<SimpleAnimation>();
+                simpleAnimation.playAutomatically = false;
+                wordToMotion.Initialize(simpleAnimation, blendShapeProxy, _humanPoseTransferTarget, animator);
+
+                animator.runtimeAnimatorController = animatorController;
             });
         }
 
@@ -239,6 +254,7 @@ namespace Baku.VMagicMirror
             public Transform rightIndexTarget;
             public Transform headTarget;
             public InputDeviceToMotion inputToMotion;
+            public IkWeightCrossFade ikWeightCrossFade;
         }
 
     }

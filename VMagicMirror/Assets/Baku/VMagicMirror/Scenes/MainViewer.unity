@@ -412,6 +412,7 @@ GameObject:
   - component: {fileID: 497940799}
   - component: {fileID: 497940796}
   - component: {fileID: 497940797}
+  - component: {fileID: 497940801}
   m_Layer: 0
   m_Name: WordToMotion
   m_TagString: Untagged
@@ -503,6 +504,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _handler: {fileID: 1930233619}
   _controller: {fileID: 497940797}
+--- !u!114 &497940801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497940794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb2688e317573b44192d8549c56ca0a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &500754460
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,6 +12,9 @@ namespace Baku.VMagicMirror
     // - プレビューではないワードベースモーションのon/off :
     //   - プレビューがオフでワードベースモーションが有効な間は
     //     コレを使ってモデルの体や表情を操る
+
+    //NOTE2: Bvhによる動作については「ほんとにBvhでいいのか」問題が浮上しているため、いったんGUI側で選択不可にしている。そのため実装が凄くいい加減。
+    [RequireComponent(typeof(LateMotionTransfer))]
     public class WordToMotionController : MonoBehaviour
     {
 
@@ -28,6 +31,8 @@ namespace Baku.VMagicMirror
         //コレが必要なのは、デフォルトアニメーションが無いと下半身を動かさないアニメーションで脚が骨折するため
         [SerializeField]
         private AnimationClip _defaultAnimation = null;
+
+        private LateMotionTransfer _motionTransfer = null;
 
         /// <summary>キー押下イベントをちゃんと読み込むか否か</summary>
         public bool EnableReadKey { get; set; } = true;
@@ -55,6 +60,7 @@ namespace Baku.VMagicMirror
                 else
                 {
                     _blendShape.ResetBlendShape();
+                    StopPreviewBuiltInMotion();
                 }
             }
         }
@@ -73,8 +79,6 @@ namespace Baku.VMagicMirror
         private WordToMotionBlendShape _blendShape = null;
 
         private SimpleAnimation _simpleAnimation = null;
-        private HumanPoseTransfer _humanPoseTransferTarget = null;
-        private Animator _animator = null;
 
         //いまの動作の種類: MotionRequest.MotionTypeXXXのどれかの値になる
         private int _currentMotionType = MotionRequest.MotionTypeNone;
@@ -82,14 +86,17 @@ namespace Baku.VMagicMirror
         //ビルトインモーションの実行中だと意味のある文字列になる
         private string _currentBuiltInMotionName = "";
         //BVHモーションの実行中だと非nullになる
-        private HumanPoseTransfer _humanPoseTransferSource = null;
-
+        
         private readonly WordAnalyzer _analyzer = new WordAnalyzer();
         private float _count = 0f;
         private float _ikFadeInCountDown = 0f;
         private float _blendShapeResetCountDown = 0f;
         private float _bvhStopCountDown = 0f;
 
+        private void Awake()
+        {
+            _motionTransfer = GetComponent<LateMotionTransfer>();
+        }
 
         public void Initialize(
             SimpleAnimation simpleAnimation,
@@ -101,16 +108,13 @@ namespace Baku.VMagicMirror
             _simpleAnimation = simpleAnimation;
             _simpleAnimation.AddState(_defaultAnimation, "Default");
             _blendShape.Initialize(proxy);
-            _humanPoseTransferTarget = humanPoseTransfer;
-            _animator = animator;
+            _motionTransfer.Target = humanPoseTransfer;
         }
 
         public void Dispose()
         {
-            _simpleAnimation = null;
             _blendShape.DisposeProxy();
-            _humanPoseTransferTarget = null;
-            _animator = null;
+            _motionTransfer.Target = null;
         }
 
         public void LoadItems(MotionRequestCollection motionRequests)
@@ -200,7 +204,7 @@ namespace Baku.VMagicMirror
                 _analyzer.Clear();
             }
 
-            if (_ikFadeInCountDown > 0)
+            if (!EnablePreview && _ikFadeInCountDown > 0)
             {
                 _ikFadeInCountDown -= Time.deltaTime;
                 if (_ikFadeInCountDown <= 0)
@@ -211,21 +215,36 @@ namespace Baku.VMagicMirror
                 }
             }
 
+            if (EnablePreview && PreviewRequest != null)
+            {
+                if (PreviewRequest.MotionType == MotionRequest.MotionTypeBuiltInClip && 
+                    !string.IsNullOrEmpty(PreviewRequest.BuiltInAnimationClipName))
+                {
+                    StartPreviewBuiltInMotion(PreviewRequest.BuiltInAnimationClipName);
+                }
+                else
+                {
+                    StopPreviewBuiltInMotion();
+                }
+            }
+
+            //note: BVHは一旦ないことにしてるのでここは来ません
             if (_bvhStopCountDown > 0)
             {
                 _bvhStopCountDown -= Time.deltaTime;
                 if (_bvhStopCountDown <= 0)
                 {
-                    if (_humanPoseTransferTarget != null)
+                    if (_motionTransfer.Target != null)
                     {
-                        _humanPoseTransferTarget.Source = null;
-                        _humanPoseTransferTarget.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
+                        _motionTransfer.Target.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
+                        _motionTransfer.Fade(false);
                     }
 
-                    if (_humanPoseTransferSource != null)
+                    if (_motionTransfer.Source != null)
                     {
-                        Destroy(_humanPoseTransferSource.gameObject);
-                        _humanPoseTransferSource = null;
+
+                        Destroy(_motionTransfer.Source.gameObject);
+                        _motionTransfer.Source = null;
                     }
                 }
             }
@@ -291,9 +310,61 @@ namespace Baku.VMagicMirror
             }
         }
 
+        //note: このメソッドは実行中に何度呼び出してもOKな設計です
+        private void StartPreviewBuiltInMotion(string clipName)
+        {
+            //もうやってる場合: そのまま放置
+            if (IsPlayingMotion && _currentBuiltInMotionName == clipName)
+            {
+                return;
+            }
+
+            //プレビュー動作Aからプレビュー動作Bに変える、みたいな処理をやってるときの対応
+            if (!string.IsNullOrEmpty(_currentBuiltInMotionName) &&
+                _currentBuiltInMotionName != clipName
+                )
+            {
+                _simpleAnimation.Stop(_currentBuiltInMotionName);
+            }
+
+            var clip = _mapper.FindBuiltInAnimationClipOrDefault(clipName);
+            if (clip == null) { return; }
+
+            if (_simpleAnimation.GetState(clipName) == null)
+            {
+                _simpleAnimation.AddState(clip, clipName);
+            }
+            else
+            {
+                //いちおう直す方が心臓に優しいので
+                _simpleAnimation.Rewind(clipName);
+            }
+
+            IsPlayingMotion = true;
+            _simpleAnimation.Play(clipName);
+            _currentBuiltInMotionName = clipName;
+            //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
+            _ikWeightCrossFade.FadeOutArmIkWeightsImmediately();
+        }
+
+        private void StopPreviewBuiltInMotion()
+        {
+            if (!IsPlayingMotion || string.IsNullOrEmpty(_currentBuiltInMotionName))
+            {
+                return;
+            }
+
+            IsPlayingMotion = false;
+            _simpleAnimation.Stop(_currentBuiltInMotionName);
+            _currentBuiltInMotionName = "";
+            //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
+            _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
+        }
+
+
         private void StartBvhFileMotion(string bvhFilePath)
         {
-            if (_humanPoseTransferTarget == null || _simpleAnimation == null || _animator == null)
+            if (_motionTransfer.Target == null)
             {
                 return;
             }
@@ -304,19 +375,15 @@ namespace Baku.VMagicMirror
                 var context = new BvhImporterContext();
                 context.Parse(bvhFilePath);
                 context.Load();
-                if (_humanPoseTransferSource != null)
+                if (_motionTransfer.Source  != null)
                 {
-                    Destroy(_humanPoseTransferSource.gameObject);
+                    Destroy(_motionTransfer.Source.gameObject);
                 }
-                _humanPoseTransferSource = context.Root.GetComponent<HumanPoseTransfer>();
+                _motionTransfer.Source = context.Root.GetComponent<HumanPoseTransfer>();
                 //box-manというのが出てくるけど出したくないので隠します。
-                _humanPoseTransferSource.GetComponent<SkinnedMeshRenderer>().enabled = false;
-
-                _humanPoseTransferTarget.Source = _humanPoseTransferSource;
-                _humanPoseTransferTarget.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.HumanPoseTransfer;
-                //競合するので。
-                _simpleAnimation.enabled = false;
-                _animator.enabled = false;
+                _motionTransfer.Source.GetComponent<SkinnedMeshRenderer>().enabled = false;
+                _motionTransfer.Target.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.HumanPoseTransfer;
+                _motionTransfer.Fade(true);
 
                 //いったんIKからアニメーションにブレンディングし、後で元に戻す
                 _ikWeightCrossFade.FadeOutArmIkWeights(_ikFadeDuration);
@@ -340,6 +407,9 @@ namespace Baku.VMagicMirror
 
         private void StopCurrentMotion()
         {
+            //プレビュー中は通常動作は開始も停止もしないので、何もしないでOK
+            if (EnablePreview) { return; }
+
             switch (_currentMotionType)
             {
                 case MotionRequest.MotionTypeBuiltInClip:
@@ -350,26 +420,19 @@ namespace Baku.VMagicMirror
                     _currentBuiltInMotionName = "";
                     break;
                 case MotionRequest.MotionTypeBvhFile:
-                    if (_humanPoseTransferTarget != null)
+                    if (_motionTransfer.Target != null)
                     {
-                        _humanPoseTransferTarget.Source = null;
-                        _humanPoseTransferTarget.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
+                        _motionTransfer.Target.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
+                        _motionTransfer.Fade(false);
                     }
 
-                    if (_humanPoseTransferSource != null)
+                    if (_motionTransfer.Source != null)
                     {
-                        Destroy(_humanPoseTransferSource.gameObject);
-                        _humanPoseTransferSource = null;
+
+                        Destroy(_motionTransfer.Source.gameObject);
+                        _motionTransfer.Source = null;
                     }
                     _bvhStopCountDown = 0f;
-                    if (_animator != null)
-                    {
-                        _animator.enabled = true;
-                    }
-                    if (_simpleAnimation != null)
-                    {
-                        _simpleAnimation.enabled = true;
-                    }
                     break;
                 case MotionRequest.MotionTypeNone:
                 default:
@@ -396,6 +459,7 @@ namespace Baku.VMagicMirror
             }
             _blendShapeResetCountDown = CalculateDuration(request);
         }
+
 
         private char KeyName2Char(string keyName)
         {

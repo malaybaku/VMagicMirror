@@ -70,5 +70,27 @@ namespace Baku.VMagicMirror
             _ik.solver.rightHandEffector.positionWeight = _originRightHandPositionWeight * rate;
             _ik.solver.rightHandEffector.rotationWeight = _originRightHandRotationWeight * rate;
         }
+
+        /// <summary>直ちにIKのウェイトを0にします。</summary>
+        public void FadeOutArmIkWeightsImmediately()
+        {
+            _ik.solver.leftHandEffector.positionWeight = 0;
+            _ik.solver.leftHandEffector.rotationWeight = 0;
+            _ik.solver.rightHandEffector.positionWeight = 0;
+            _ik.solver.rightHandEffector.rotationWeight = 0;
+            _fadeCount = _fadeDuration;
+            _isFadeOut = true;
+        }
+
+        /// <summary>直ちにIKのウェイトをもとの値に戻します。</summary>
+        public void FadeInArmIkWeightsImmediately()
+        {
+            _ik.solver.leftHandEffector.positionWeight = _originLeftHandPositionWeight;
+            _ik.solver.leftHandEffector.rotationWeight = _originLeftHandRotationWeight;
+            _ik.solver.rightHandEffector.positionWeight = _originRightHandPositionWeight;
+            _ik.solver.rightHandEffector.rotationWeight = _originRightHandRotationWeight;
+            _fadeCount = _fadeDuration;
+            _isFadeOut = false;
+        }
     }
 }

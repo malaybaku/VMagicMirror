@@ -72,6 +72,8 @@ namespace Baku.VMagicMirror
             //small pull: プレゼンモード中にキャラが吹っ飛んでいかないための対策です
             fbbik.solver.rightArmChain.pull = 0.1f;
 
+            //AssignIkは最後に呼び出す必要がある: 設定したウェイトを使うため
+            setting.ikWeightCrossFade.AssignIk(fbbik);
             return fbbik;
         }
 

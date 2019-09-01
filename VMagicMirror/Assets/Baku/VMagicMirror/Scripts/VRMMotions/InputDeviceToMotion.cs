@@ -44,6 +44,8 @@ namespace Baku.VMagicMirror
 
         public float presentationArmRadiusMin = 0.2f;
 
+        public bool EnableHidArmMotion { get; set; } = true;
+
         private bool _enablePresentationMotion = false;
         public bool EnablePresentationMotion
         {
@@ -233,51 +235,7 @@ namespace Baku.VMagicMirror
             switch (_rightHandTargetType)
             {
                 case HandTargetTypes.MousePad:
-                    if (EnablePresentationMotion)
-                    {
-                        //プレゼンモードになってから一回もマウスに触ってない場合や、モデルのロード状況が微妙な場合は無視
-                        if (rightShoulder != null &&
-                            _presentationSlideRightHandTargetPosition.magnitude > Mathf.Epsilon &&
-                            _presentationSlideRightIndexTargetPosition.magnitude > Mathf.Epsilon)
-                        {
-                            rightHandTarget.position = Vector3.Lerp(
-                                rightHandTarget.position,
-                                _presentationSlideRightHandTargetPosition,
-                                touchPadApproachSpeedFactor
-                                );
-
-                            //NOTE: 追加で回しているのは手の甲を内側にひねる成分(プレゼン的な動作として見栄えがよい…はず…)
-                            rightHandTarget.rotation = Quaternion.FromToRotation(
-                                Vector3.right,
-                                (rightHandTarget.position - rightShoulder.position).normalized
-                                ) * Quaternion.AngleAxis(PresentationArmRollFixedAngle, Vector3.right);
-
-                            //Positionだけでいい: RotationWeightは付けてないので
-
-                            rightIndexTarget.position = Vector3.Lerp(
-                                rightIndexTarget.position,
-                                _presentationSlideRightIndexTargetPosition,
-                                touchPadApproachSpeedFactor
-                                );
-                        }
-                    }
-                    else
-                    {
-                        rightHandTarget.position = Vector3.Lerp(
-                            rightHandTarget.position,
-                            _touchPadTargetPosition,
-                            touchPadApproachSpeedFactor
-                            );
-
-                        var rhRot = Quaternion.Slerp(
-                            Quaternion.Euler(Vector3.up * (
-                                -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) *
-                                Mathf.Rad2Deg)),
-                            Quaternion.Euler(Vector3.up * (-90)),
-                            WristYawApplyFactor
-                            );
-                        rightHandTarget.rotation = Quaternion.Slerp(rightHandTarget.rotation, rhRot, WristYawSpeedFactor);
-                    }
+                    UpdateRightHandMouseBasedTarget();
                     break;
                 case HandTargetTypes.GamepadStick:
                     rightHandTarget.position = Vector3.Lerp(
@@ -297,6 +255,59 @@ namespace Baku.VMagicMirror
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void UpdateRightHandMouseBasedTarget()
+        {
+            //プレゼンモードではない : マウス位置による動き
+            if (!EnablePresentationMotion && EnableHidArmMotion)
+            {
+                rightHandTarget.position = Vector3.Lerp(
+                    rightHandTarget.position,
+                    _touchPadTargetPosition,
+                    touchPadApproachSpeedFactor
+                    );
+
+                var rhRot = Quaternion.Slerp(
+                    Quaternion.Euler(Vector3.up * (
+                        -Mathf.Atan2(rightHandTarget.position.z, rightHandTarget.position.x) *
+                        Mathf.Rad2Deg)),
+                    Quaternion.Euler(Vector3.up * (-90)),
+                    WristYawApplyFactor
+                    );
+                rightHandTarget.rotation = Quaternion.Slerp(rightHandTarget.rotation, rhRot, WristYawSpeedFactor);
+
+                return;
+            }
+
+            //条件が多いのは以下ケースをガードするため:
+            // - プレゼンモードになってから一回もマウスに触ってない
+            // - モデルのロード状況が怪しい
+            if (EnablePresentationMotion &&
+                rightShoulder != null &&
+                _presentationSlideRightHandTargetPosition.magnitude > Mathf.Epsilon &&
+                _presentationSlideRightIndexTargetPosition.magnitude > Mathf.Epsilon)
+            {
+                rightHandTarget.position = Vector3.Lerp(
+                    rightHandTarget.position,
+                    _presentationSlideRightHandTargetPosition,
+                    touchPadApproachSpeedFactor
+                    );
+
+                //NOTE: 追加で回しているのは手の甲を内側にひねる成分(プレゼン的な動作として見栄えがよい…はず…)
+                rightHandTarget.rotation = Quaternion.FromToRotation(
+                    Vector3.right,
+                    (rightHandTarget.position - rightShoulder.position).normalized
+                    ) * Quaternion.AngleAxis(PresentationArmRollFixedAngle, Vector3.right);
+
+                //Positionだけでいい: RotationWeightは付けてないので
+
+                rightIndexTarget.position = Vector3.Lerp(
+                    rightIndexTarget.position,
+                    _presentationSlideRightIndexTargetPosition,
+                    touchPadApproachSpeedFactor
+                    );
             }
         }
 
@@ -343,6 +354,8 @@ namespace Baku.VMagicMirror
 
         public void PressKeyMotion(string key)
         {
+            if (!EnableHidArmMotion) { return; }
+
             var keyData = keyboard.GetKeyTargetData(key);
             Vector3 targetPos = keyData.positionWithOffset + yOffsetAlwaysVec;
             //Vector3 targetPos = keyboard.GetPositionOfKey(key) + yOffsetAlwaysVec;

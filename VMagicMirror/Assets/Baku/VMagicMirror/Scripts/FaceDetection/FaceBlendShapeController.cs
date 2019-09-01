@@ -15,19 +15,7 @@ namespace Baku.VMagicMirror
 
         private const float EyeCloseHeight = 0.02f;
 
-        private float _faceDefaultFunValue = 0.2f;
-        public float FaceDefaultFunValue
-        {
-            get => _faceDefaultFunValue;
-            set
-            {
-                if (Mathf.Abs(_faceDefaultFunValue - value) > Mathf.Epsilon)
-                {
-                    _faceDefaultFunValue = value;
-                    _blendShapeProxy?.ImmediatelySetValue(FunKey, value);
-                }
-            }
-        }
+        public float FaceDefaultFunValue { get; set; } = 0.2f;
 
         [SerializeField]
         private FaceDetector faceDetector = null;
@@ -116,6 +104,9 @@ namespace Baku.VMagicMirror
                 right > EyeBlendShapeCloseThreshold ? 1.0f : right
                 );
             _prevRightBlink = right;
+
+            //NOTE: 毎フレーム適用しちゃってるが実際は他スクリプトのLateUpdateとかでオーバーライドされる
+            _blendShapeProxy.ImmediatelySetValue(FunKey, FaceDefaultFunValue);
         }
 
         private void ShowAllCameraInfo()

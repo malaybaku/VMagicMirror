@@ -398,6 +398,124 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &497940794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 497940795}
+  - component: {fileID: 497940800}
+  - component: {fileID: 497940798}
+  - component: {fileID: 497940799}
+  - component: {fileID: 497940796}
+  - component: {fileID: 497940797}
+  - component: {fileID: 497940801}
+  m_Layer: 0
+  m_Name: WordToMotion
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &497940795
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497940794}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &497940796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497940794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89d1bbb0f990ef1499fe92c4fe53699d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _builtInClips:
+  - name: Wave
+    clip: {fileID: 7400000, guid: 2d2936a1fb0e17749bf614ef1a4fd964, type: 2}
+  - name: Rokuro
+    clip: {fileID: 7400000, guid: e0b3e1faef6abbf43827847a27014cff, type: 2}
+--- !u!114 &497940797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497940794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13a4ee0c650df5d45aa64c4995587120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _forgetTime: 1
+  _ikFadeDuration: 0.5
+  _defaultAnimation: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc, type: 2}
+--- !u!114 &497940798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497940794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fea24974c6c68c74597dc46bd6bf070e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &497940799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497940794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf0d3d5a76a8dce45a64935054a8fd04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &497940800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497940794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f928e9d992226aa418b5cca138df9b0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _handler: {fileID: 1930233619}
+  _controller: {fileID: 497940797}
+--- !u!114 &497940801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497940794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb2688e317573b44192d8549c56ca0a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &500754460
 GameObject:
   m_ObjectHideFlags: 0
@@ -2396,6 +2514,7 @@ MonoBehaviour:
     rightIndexTarget: {fileID: 935302418}
     headTarget: {fileID: 1383182300}
     inputToMotion: {fileID: 1855229416}
+    ikWeightCrossFade: {fileID: 497940798}
   animMorphEasedTarget: {fileID: 1809547436}
   faceBlendShapeController: {fileID: 1534341278}
   faceAttitudeController: {fileID: 1534341276}
@@ -2404,6 +2523,8 @@ MonoBehaviour:
   windowStyleController: {fileID: 1629460657}
   settingAdjuster: {fileID: 478567140}
   previewCanvas: {fileID: 1281394296}
+  wordToMotion: {fileID: 497940797}
+  animatorController: {fileID: 9100000, guid: 8274142a1807f5848a5dd1166db7d615, type: 2}
 --- !u!114 &1787938568
 MonoBehaviour:
   m_ObjectHideFlags: 0

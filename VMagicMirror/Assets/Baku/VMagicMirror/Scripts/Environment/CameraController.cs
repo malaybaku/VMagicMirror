@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
@@ -43,7 +44,7 @@ namespace Baku.VMagicMirror
                         EnableFreeCameraMode(message.ToBoolean());
                         break;
                     case MessageCommandNames.SetCustomCameraPosition:
-                        SetCustomCameraPosition(message.ToFloatArray());
+                        SetCustomCameraPosition(message.Content);
                         break;
                     case MessageCommandNames.ResetCameraPosition:
                         ResetCameraPosition();
@@ -61,7 +62,7 @@ namespace Baku.VMagicMirror
                 {
                     case MessageQueryNames.CurrentCameraPosition:
                         var angles = _cam.transform.rotation.eulerAngles;
-                        e.Query.Result = string.Join(",", new float[]
+                        e.Query.Result = JsonUtility.ToJson(new SerializedCameraPosition(new float[]
                         {
                             _cam.transform.position.x,
                             _cam.transform.position.y,
@@ -69,7 +70,7 @@ namespace Baku.VMagicMirror
                             angles.x,
                             angles.y,
                             angles.z,
-                        });
+                        }));
                         break;
                     default:
                         break;
@@ -96,27 +97,58 @@ namespace Baku.VMagicMirror
         }
 
 
-        private void SetCustomCameraPosition(float[] values)
+        private void SetCustomCameraPosition(string content)
         {
-            //ぜんぶ0な場合、無効値として無視
-            if (values.Length >= 6 && 
-                values.All(v => Mathf.Abs(v) < Mathf.Epsilon))
+            //note: ここはv0.9.0以降ではシリアライズしたJson、それより前ではfloatのカンマ区切り配列。
+            //Jsonシリアライズを導入したのは、OSのロケールによっては(EU圏とかで)floatの小数点が","になる問題をラクして避けるため。
+            float[] values = new float[0];
+            try
+            {
+                //シリアライズ: 普通はこれで通る
+                values = JsonUtility.FromJson<SerializedCameraPosition>(content)
+                    .values
+                    .ToArray();
+            }
+            catch(Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
+
+            if (values.Length != 6)
+            {
+                try
+                {
+                    //旧バージョンから設定をインポートしたときはこれでうまくいく
+                    values = content.Split(',')
+                        .Select(w => float.Parse(w))
+                        .ToArray();
+                }
+                catch (Exception ex)
+                {
+                    LogOutput.Instance.Write(ex);
+                }
+            }
+
+            if (values.Length != 6)
             {
                 return;
             }
 
-            if (values.Length >= 6)
+            //ぜんぶ0な場合、無効値として無視
+            if (values.All(v => Mathf.Abs(v) < Mathf.Epsilon))
             {
-                _customCameraPosition = new Vector3(
-                    values[0], values[1], values[2]
-                    );
-
-                _customCameraRotationEuler = new Vector3(
-                    values[3], values[4], values[5]
-                    );
-
-                UpdateCameraTransform(false);
+                return;
             }
+
+            _customCameraPosition = new Vector3(
+                values[0], values[1], values[2]
+                );
+
+            _customCameraRotationEuler = new Vector3(
+                values[3], values[4], values[5]
+                );
+
+            UpdateCameraTransform(false);
         }
 
         private void UpdateCameraTransform(bool forceUpdateInFreeCameraMode)
@@ -147,6 +179,23 @@ namespace Baku.VMagicMirror
         }
 
 
+    }
+
+    [Serializable]
+    public class SerializedCameraPosition
+    {
+        public List<float> values = new List<float>();
+
+        public SerializedCameraPosition(float[] v)
+        {
+            if (v != null)
+            {
+                for(int i = 0; i < v.Length; i++)
+                {
+                    values.Add(v[i]);
+                }
+            }
+        }
     }
 }
 

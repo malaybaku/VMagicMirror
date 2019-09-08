@@ -10,14 +10,15 @@ namespace Baku.VMagicMirror
     {
         [SerializeField]
         private ElbowMotionModifyReceiver receiver = null;
-        
+
+        private bool _isInitialized = false;
         private Transform _leftArmBendGoal = null;
         private Transform _rightArmBendGoal = null;
         private FullBodyBipedIK _ik;
 
         private void Update()
         {
-            if (receiver == null || _ik == null || _rightArmBendGoal == null || _leftArmBendGoal == null)
+            if (!_isInitialized)
             {
                 return;
             }
@@ -43,6 +44,8 @@ namespace Baku.VMagicMirror
             _leftArmBendGoal.SetParent(spineBone);
             _leftArmBendGoal.localRotation = Quaternion.identity;
             _ik.solver.leftArmChain.bendConstraint.bendGoal = _leftArmBendGoal;
+
+            _isInitialized = true;
         }
 
         public void OnVrmDisposing()
@@ -50,6 +53,7 @@ namespace Baku.VMagicMirror
             _ik = null;
             _rightArmBendGoal = null;
             _leftArmBendGoal = null;
+            _isInitialized = false;
         }
         
     }

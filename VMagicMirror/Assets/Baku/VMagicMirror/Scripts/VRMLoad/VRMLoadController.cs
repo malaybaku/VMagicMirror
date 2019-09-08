@@ -151,7 +151,6 @@ namespace Baku.VMagicMirror
                 vrmDisposing.Invoke();
 
                 //TODO: イベントハンドラ頼みになるよう直す
-                animMorphEasedTarget.blendShapeProxy = null;
                 faceBlendShapeController?.DisposeProxy();
                 faceAttitudeController?.DisposeHead();
                 faceDetector.DisposeNonCameraBlinkComponent();
@@ -194,7 +193,6 @@ namespace Baku.VMagicMirror
 
             TryWithoutException(() =>
             {
-                animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
                 faceBlendShapeController?.Initialize(blendShapeProxy);
                 faceAttitudeController?.Initialize(
                     animator.GetBoneTransform(HumanBodyBones.Neck),

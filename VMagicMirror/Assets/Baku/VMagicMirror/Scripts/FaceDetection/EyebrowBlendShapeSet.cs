@@ -29,6 +29,7 @@ namespace Baku.VMagicMirror
         private BlendShapeTarget _rightUp;
         private BlendShapeTarget _rightDown;
 
+        //TODO: こっちのオーバーロードはそのうち消してね
         public void RefreshTarget(BlendShapeStore blendShapeStore)
         {
             Reset();
@@ -69,6 +70,47 @@ namespace Baku.VMagicMirror
 
         }
 
+        //NOTE: こっちが最終的に生き残るよ
+        public void RefreshTarget(VRMBlendShapeStore blendShapeStore)
+        {
+            Reset();
+
+            var items = blendShapeStore.GetBlendShapeStoreItems();
+            int goalCount = UseSeparatedTarget ? 4 : 2;
+            int foundCount = 0;
+
+            for (int i = 0; i < items.Length; i++)
+            {
+                var item = items[i];
+                if (item.name == LeftUpKey && !_leftUp.isValid)
+                {
+                    _leftUp = new BlendShapeTarget(item);
+                    foundCount++;
+                }
+                else if (item.name == LeftDownKey && !_leftDown.isValid)
+                {
+                    _leftDown = new BlendShapeTarget(item);
+                    foundCount++;
+                }
+                else if (UseSeparatedTarget && item.name == RightUpKey && !_rightUp.isValid)
+                {
+                    _rightUp = new BlendShapeTarget(item);
+                    foundCount++;
+                }
+                else if (UseSeparatedTarget && item.name == RightDownKey && !_rightDown.isValid)
+                {
+                    _rightDown = new BlendShapeTarget(item);
+                    foundCount++;
+                }
+
+                if (foundCount >= goalCount)
+                {
+                    return;
+                }
+            }
+
+        }
+        
         public void Reset()
         {
             _leftUp.SetWeight(0);

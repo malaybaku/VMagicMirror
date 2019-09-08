@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VRM;
@@ -18,7 +17,7 @@ namespace Baku.VMagicMirror
         public float cancelSpeedFactor = 8.0f;
 
         [Range(0.0f, 100.0f), Tooltip("この閾値未満の音素の重みは無視する")]
-        public float weightThreashold = 2.0f;
+        public float weightThreshold = 2.0f;
 
         [Tooltip("BlendShapeの値を変化させるSkinnedMeshRenderer")]
         public VRMBlendShapeProxy blendShapeProxy;
@@ -27,8 +26,8 @@ namespace Baku.VMagicMirror
         public int smoothAmount = 100;
 
         //このフラグがtrueだと何も言ってないときの口の形になる。
-        public bool ForceClosedMouth { get; set; } = false;
-
+        public bool ForceClosedMouth { get; set; }
+        
         private readonly Dictionary<BlendShapeKey, float> blendShapeWeights = new Dictionary<BlendShapeKey, float>
         {
             [new BlendShapeKey(BlendShapePreset.A)] = 0.0f,
@@ -38,7 +37,7 @@ namespace Baku.VMagicMirror
             [new BlendShapeKey(BlendShapePreset.U)] = 0.0f,
         };
 
-        private readonly BlendShapeKey[] keys = new BlendShapeKey[]
+        private readonly BlendShapeKey[] keys = new[]
         {
             new BlendShapeKey(BlendShapePreset.A),
             new BlendShapeKey(BlendShapePreset.E),
@@ -48,11 +47,20 @@ namespace Baku.VMagicMirror
         };
 
         OVRLipSyncContextBase context;
-        OVRLipSync.Viseme previousViseme = OVRLipSync.Viseme.sil;
+        OVRLipSync.Viseme _previousViseme = OVRLipSync.Viseme.sil;
         float transitionTimer = 0.0f;
 
+        public void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            blendShapeProxy = info.blendShape;
+        }
 
-        void Start()
+        public void OnVrmDisposing()
+        {
+            blendShapeProxy = null;
+        }
+        
+        private void Start()
         {
             context = GetComponent<OVRLipSyncContextBase>();
             if (context == null)
@@ -63,9 +71,9 @@ namespace Baku.VMagicMirror
             context.Smoothing = smoothAmount;
         }
 
-        void Update()
+        private void Update()
         {
-            if (context == null || blendShapeProxy == null)
+            if (blendShapeProxy == null)
             {
                 return;
             }
@@ -77,9 +85,8 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //ちゃんとリップシンクしたい場合、
-            if (!context.enabled ||
-                blendShapeProxy == null || 
+            if (context == null || 
+                !context.enabled || 
                 !(context.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame)
                 )
             {
@@ -102,16 +109,16 @@ namespace Baku.VMagicMirror
             }
 
             // 音素の重みが小さすぎる場合は口を閉じる
-            if (maxVisemeWeight * 100.0f < weightThreashold)
+            if (maxVisemeWeight * 100.0f < weightThreshold)
             {
                 transitionTimer = 0.0f;
             }
 
             // 音素の切り替わりでタイマーをリセットする
-            if (previousViseme != (OVRLipSync.Viseme)maxVisemeIndex)
+            if (_previousViseme != (OVRLipSync.Viseme)maxVisemeIndex)
             {
                 transitionTimer = 0.0f;
-                previousViseme = (OVRLipSync.Viseme)maxVisemeIndex;
+                _previousViseme = (OVRLipSync.Viseme)maxVisemeIndex;
             }
 
             int visemeIndex = maxVisemeIndex - (int)OVRLipSync.Viseme.aa;

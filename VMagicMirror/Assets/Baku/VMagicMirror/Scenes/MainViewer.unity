@@ -317,15 +317,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 490c1efb2102ed046b6bf4aa41187f4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blendShapeAssign: {fileID: 1534341283}
+  faceDetector: {fileID: 1534341277}
+  wordToMotion: {fileID: 497940797}
   eyeBrowDiffSize: 0.05
   defaultOffset: 0.2
   eyeBrowDownOffsetWhenEyeClosed: 0.7
   eyeAngleDegreeWhenEyeClosed: 10
   speedLerpFactor: 0.2
   timeScaleFactor: 0.3
-  blendShapeAssign: {fileID: 1534341283}
-  faceDetector: {fileID: 1534341277}
-  wordToMotion: {fileID: 497940797}
 --- !u!1 &402429506
 GameObject:
   m_ObjectHideFlags: 0
@@ -448,7 +448,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &497940794
 GameObject:
@@ -1166,7 +1166,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1057131352
 GameObject:
@@ -1268,6 +1268,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1130871115}
+  - component: {fileID: 1130871118}
+  - component: {fileID: 1130871117}
+  - component: {fileID: 1130871116}
   m_Layer: 0
   m_Name: FaceControlLogics
   m_TagString: Untagged
@@ -1287,9 +1290,62 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 295217317}
+  - {fileID: 4972949287635646}
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1130871116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130871114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f70ffaaedebba469e2ca096803c838, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  closeDuration: 0.1
+  openDuration: 0.1
+  minInterval: 3
+  maxInterval: 12
+  doubleBlinkPossibility: 0.2
+--- !u!114 &1130871117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130871114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 361f1b0adb1a379449acbb4d0a28bcdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  faceDetector: {fileID: 1534341277}
+  blinkMoveThreshold: 0.2
+  blinkForceMinThreshold: 0.1
+  blinkForceMaxThreshold: 0.9
+  blinkUpdateInterval: 0.3
+  speedFactor: 0.2
+--- !u!114 &1130871118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130871114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47ea0b13d96595749870bb28cca4af0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  faceDetector: {fileID: 1534341277}
+  eyeDownController: {fileID: 295217318}
+  animMorphEasedTarget: {fileID: 1809547436}
+  blinkController: {fileID: 1130871117}
+  autoBlink: {fileID: 1130871116}
 --- !u!1 &1134663115
 GameObject:
   m_ObjectHideFlags: 0
@@ -1467,7 +1523,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1268007393
 MonoBehaviour:
@@ -1935,7 +1991,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1534341280
 MonoBehaviour:
@@ -2506,7 +2562,7 @@ Transform:
   - {fileID: 497940795}
   - {fileID: 1993346253}
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1787938562
 GameObject:
@@ -2665,6 +2721,28 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1809547436}
+        m_MethodName: OnVrmLoaded
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1993346254}
+        m_MethodName: OnVrmLoaded
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: Baku.VMagicMirror.VRMLoadController+VrmLoadedEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   vrmDisposing:
@@ -2682,6 +2760,28 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 295217318}
+        m_MethodName: OnVrmDisposing
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1809547436}
+        m_MethodName: OnVrmDisposing
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1993346254}
         m_MethodName: OnVrmDisposing
         m_Mode: 1
         m_Arguments:
@@ -2821,7 +2921,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cancelSpeedFactor: 15
-  weightThreashold: 2
+  weightThreshold: 2
   blendShapeProxy: {fileID: 0}
   smoothAmount: 100
 --- !u!114 &1809547437
@@ -3700,12 +3800,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1516791124313086}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_Father: {fileID: 1130871115}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &82061638244460618
 AudioSource:

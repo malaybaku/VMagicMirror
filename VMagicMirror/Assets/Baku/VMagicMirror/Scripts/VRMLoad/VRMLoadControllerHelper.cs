@@ -3,7 +3,6 @@ using UnityEngine;
 using RootMotion;
 using RootMotion.FinalIK;
 using VRM;
-using System;
 
 namespace Baku.VMagicMirror
 {
@@ -38,7 +37,7 @@ namespace Baku.VMagicMirror
             fingerAnimator.Initialize(animator);
 
             faceDetector.SetNonCameraBlinkComponent(go.AddComponent<VRMBlink>());
-            setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
+            //setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
 
             var motionModifier = go.AddComponent<MotionModifyToMotion>();
             motionModifier.InitializeIK(animator.GetBoneTransform(HumanBodyBones.Spine), ik);

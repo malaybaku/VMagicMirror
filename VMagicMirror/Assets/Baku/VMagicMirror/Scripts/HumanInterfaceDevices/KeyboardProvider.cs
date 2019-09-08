@@ -315,9 +315,7 @@ namespace Baku.VMagicMirror
         {
             string sanitized = SanitizeKey(key);
             //不明な場合は[0][0]扱いになるので左手扱いが妥当
-            return fingerMapper.ContainsKey(sanitized) ?
-                fingerMapper[sanitized] < 5 :
-                true;
+            return !fingerMapper.ContainsKey(sanitized) || fingerMapper[sanitized] < 5;
         }
 
         public int GetFingerNumberOfKey(string key)

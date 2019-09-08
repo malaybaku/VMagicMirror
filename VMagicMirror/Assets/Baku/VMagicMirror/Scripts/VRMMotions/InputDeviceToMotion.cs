@@ -36,9 +36,9 @@ namespace Baku.VMagicMirror
 
         public HeadLookAtStyles lookAtStyle = HeadLookAtStyles.MousePointer;
 
-        public float yOffsetAlways = 0.05f;
+        public float yOffsetAlways = 0.03f;
 
-        public float yOffsetAfterKeyDown = 0.08f;
+        public float yOffsetAfterKeyDown = 0.03f;
 
         public float presentationArmMotionScale = 0.5f;
 

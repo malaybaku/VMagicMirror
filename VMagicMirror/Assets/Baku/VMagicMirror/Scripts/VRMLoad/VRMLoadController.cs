@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Events;
 using UniRx;
 using UniHumanoid;
 using VRM;
@@ -47,6 +48,13 @@ namespace Baku.VMagicMirror
 
         [SerializeField]
         private RuntimeAnimatorController animatorController = null;
+
+        [Serializable]
+        public class VrmLoadedEvent : UnityEvent<Transform>{}
+        
+        [SerializeField] private VrmLoadedEvent vrmLoaded = new VrmLoadedEvent();
+
+        [SerializeField] private UnityEvent vrmDisposing = new UnityEvent();
 
         private HumanPoseTransfer _humanPoseTransferTarget = null;
 
@@ -140,12 +148,14 @@ namespace Baku.VMagicMirror
 
             if (loaded != null)
             {
-                //TODO: スケールしなくなってるのでそろそろReleaseイベント化したい
+                vrmDisposing.Invoke();
+
+                //TODO: イベントハンドラ頼みになるよう直す
                 //破棄済みオブジェクトに触らせないためにnullize
-                loadSetting.inputToMotion.fingerAnimator = null;
-                loadSetting.inputToMotion.vrmRoot = null;
-                loadSetting.inputToMotion.head = null;
-                loadSetting.inputToMotion.rightShoulder = null;
+//                loadSetting.inputToMotion.fingerAnimator = null;
+//                loadSetting.inputToMotion.vrmRoot = null;1
+//                loadSetting.inputToMotion.head = null;
+//                loadSetting.inputToMotion.rightShoulder = null;
                 animMorphEasedTarget.blendShapeProxy = null;
                 faceBlendShapeController?.DisposeProxy();
                 faceAttitudeController?.DisposeHead();
@@ -184,11 +194,11 @@ namespace Baku.VMagicMirror
                 );
             //セットアップの過程でFinalIKに触るため、(有償アセットなので取り外しの事も考えつつ)ファイル分離
 
-            TryWithoutException(() =>
-            {
-                loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
-                loadSetting.inputToMotion.vrmRoot = go.transform;
-            });
+//            TryWithoutException(() =>
+//            {
+//                loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
+//                loadSetting.inputToMotion.vrmRoot = go.transform;
+//            });
 
             var animator = go.GetComponent<Animator>();
             var blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
@@ -202,15 +212,15 @@ namespace Baku.VMagicMirror
                     animator.GetBoneTransform(HumanBodyBones.Head)
                     );
 
-                loadSetting.inputToMotion.head = animator.GetBoneTransform(HumanBodyBones.Head);
-                loadSetting.inputToMotion.rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);
-                loadSetting.inputToMotion.fingerRig = animator
-                    .GetBoneTransform(HumanBodyBones.RightHand)
-                    .GetComponent<RootMotion.FinalIK.FingerRig>();
+//                loadSetting.inputToMotion.head = animator.GetBoneTransform(HumanBodyBones.Head);
+//                loadSetting.inputToMotion.rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);
+//                loadSetting.inputToMotion.fingerRig = animator
+//                    .GetBoneTransform(HumanBodyBones.RightHand)
+//                    .GetComponent<RootMotion.FinalIK.FingerRig>();
                 go.GetComponent<MotionModifyToMotion>()
                     .SetReceiver(GetComponent<MotionModifyReceiver>());
-                loadSetting.inputToMotion.PressKeyMotion("LControlKey");
-                loadSetting.inputToMotion.PressKeyMotion("RControlKey");
+//                loadSetting.inputToMotion.PressKeyMotion("LControlKey");
+//                loadSetting.inputToMotion.PressKeyMotion("RControlKey");
             });
 
             TryWithoutException(() =>
@@ -242,6 +252,8 @@ namespace Baku.VMagicMirror
 
                 animator.runtimeAnimatorController = animatorController;
             });
+            
+            vrmLoaded.Invoke(go.transform);
         }
 
         [Serializable]
@@ -253,7 +265,7 @@ namespace Baku.VMagicMirror
             public Transform rightHandTarget;
             public Transform rightIndexTarget;
             public Transform headTarget;
-            public InputDeviceToMotion inputToMotion;
+            //public InputDeviceToMotion inputToMotion;
             public IkWeightCrossFade ikWeightCrossFade;
         }
 

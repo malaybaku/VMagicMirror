@@ -3,8 +3,23 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    public class FingerAnimator : MonoBehaviour
+    /// <summary>指の制御をFKベースでどうにかするやつ</summary>
+    /// <remarks>
+    /// 指の動きは現状けっこう単純なのでいい加減に作ってます(その方が処理も軽いので)
+    /// 指の角度を既定値に戻したいときは
+    /// <see cref="ResetAllAngles"/>を呼んでから<see cref="Behaviour.enabled"/>をfalseにするとかでOK。
+    /// </remarks>
+    public class FingerController : MonoBehaviour
     {
+        #region consts / readonly 
+
+        private const string RDown = nameof(RDown);
+        private const string MDown = nameof(MDown);
+        private const string LDown = nameof(LDown);
+
+        private const float DefaultBendingAngle = 10.0f;
+        private const float Duration = 0.25f;
+
         //NOTE: 曲げ角度の符号に注意。左右で意味変わるのと、親指とそれ以外の差にも注意
         private static Dictionary<int, float[]> _fingerIdToPointingAngle = new Dictionary<int, float[]>()
         {
@@ -15,18 +30,19 @@ namespace Baku.VMagicMirror
             [FingerConsts.RightLittle] = new float[] { -80, -80, -80 },
         };
 
-        public float defaultBendingAngle = 10.0f;
-
-        public float duration = 0.25f;
-
-        public AnimationCurve angleCurve = new AnimationCurve(new Keyframe[]
+        private static AnimationCurve _angleCurve = new AnimationCurve(new Keyframe[]
         {
             new Keyframe(0, 10f, 1, 1),
             new Keyframe(0.125f, 25f, 1, -1),
             new Keyframe(0.25f, 10f, -1, -1),
         });
 
-        private Animator _animator;
+        #endregion
+
+        [SerializeField]
+        private KeyboardProvider keyboard = null;
+
+        private Animator _animator = null;
 
         //左手親指 = 0,
         //左手人差し指 = 1,
@@ -36,17 +52,25 @@ namespace Baku.VMagicMirror
         //右手小指 = 9
         private Transform[][] _fingers = null;
 
-        public bool RightHandPresentationMode { get; private set; } = false;
+        private readonly bool[] _isAnimating = new bool[10];
+        private readonly float[] _animationStartedTime = new float[10];
 
-        private bool[] _isAnimating = null;
-        private float[] _animationStartedTime = null;
+        #region API
+
+        public bool RightHandPresentationMode { get; set; } = false;
 
         public void Initialize(Animator animator)
         {
-            _isAnimating = new bool[10];
-            _animationStartedTime = new float[10];
+            if(animator == null) { return; }
 
             _animator = animator;
+
+            for (int i = 0; i < _isAnimating.Length; i++)
+            {
+                _isAnimating[i] = false;
+                _animationStartedTime[i] = 0;
+            }
+
             _fingers = new Transform[][]
             {
                 new Transform[]
@@ -111,9 +135,41 @@ namespace Baku.VMagicMirror
                 },
             };
 
+            ResetAllAngles();
+        }
+
+        public void Dispose()
+        {
+            if (_animator == null)
+            {
+                return;
+            }
+            _animator = null;
+            _fingers = null;
+        }
+
+        public void StartPressKeyMotion(string key)
+        {
+            StartMoveFinger(keyboard.GetKeyTargetData(key).fingerNumber);
+        }
+
+        public void StartClickMotion(string info)
+        {
+            if (info == RDown)
+            {
+                StartMoveFinger(FingerConsts.RightMiddle);
+            }
+            else if (info == MDown || info == LDown)
+            {
+                StartMoveFinger(FingerConsts.RightIndex);
+            }
+        }
+
+        public void ResetAllAngles()
+        {
             for (int i = 0; i < _fingers.Length; i++)
             {
-                float angle = (i < 5) ? defaultBendingAngle : -defaultBendingAngle;
+                float angle = (i < 5) ? DefaultBendingAngle : -DefaultBendingAngle;
                 for (int j = 0; j < _fingers[i].Length; j++)
                 {
                     if (_fingers[i][j] != null)
@@ -124,32 +180,9 @@ namespace Baku.VMagicMirror
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="fingerIndex">Finger index to move, from 0 (Left Thumb) to 9 (Right Little).</param>
-        public void StartMoveFinger(int fingerIndex)
-        {
-            if (fingerIndex >= 0 && fingerIndex < _isAnimating.Length)
-            {
-                _isAnimating[fingerIndex] = true;
-                _animationStartedTime[fingerIndex] = Time.time;
-            }
-        }
+        #endregion
 
-
-        public void FixRightHandToPresentationMode(bool fix)
-        {
-            RightHandPresentationMode = fix;
-        }
-
-        private void Start()
-        {
-            _isAnimating = new bool[10];
-            _animationStartedTime = new float[10];
-        }
-
-        void LateUpdate()
+        private void LateUpdate()
         {
             if (_animator == null || _fingers == null)
             {
@@ -158,32 +191,23 @@ namespace Baku.VMagicMirror
 
             for (int i = 0; i < _isAnimating.Length; i++)
             {
-                //右手人差し指はプレゼン中はプレゼンモードの指IKに任せたいので下手にいじらない
-                if (i == FingerConsts.RightIndex && RightHandPresentationMode)
-                {
-                    continue;
-                }
-
-                //プレゼンモード中、右手の指はギュッと握った状態になっていてほしい
+                //プレゼンモード中、右手の形はギュッと握った状態
                 if (i > 4 && RightHandPresentationMode)
                 {
                     FixPointingHand(i);
                     continue;
                 }
 
-
-
-                float angle = defaultBendingAngle;
-
+                float angle = DefaultBendingAngle;
                 if (_isAnimating[i])
                 {
                     float time = Time.time - _animationStartedTime[i];
-                    if (time > duration)
+                    if (time > Duration)
                     {
                         _isAnimating[i] = false;
-                        time = duration;
+                        time = Duration;
                     }
-                    angle = angleCurve.Evaluate(time);
+                    angle = _angleCurve.Evaluate(time);
                 }
 
                 //左右の手で回転方向が逆
@@ -192,13 +216,26 @@ namespace Baku.VMagicMirror
                     angle = -angle;
                 }
 
-                foreach(var t in _fingers[i])
+                foreach (var t in _fingers[i])
                 {
                     if (t != null)
                     {
                         t.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// インデックスで指定した指を動かす(0: Left Thumb, ..., 9: Right Little).
+        /// </summary>
+        /// <param name="fingerIndex"></param>
+        private void StartMoveFinger(int fingerIndex)
+        {
+            if (fingerIndex >= 0 && fingerIndex < _isAnimating.Length)
+            {
+                _isAnimating[fingerIndex] = true;
+                _animationStartedTime[fingerIndex] = Time.time;
             }
         }
 
@@ -221,21 +258,6 @@ namespace Baku.VMagicMirror
 
                 targets[i].localRotation = Quaternion.AngleAxis(angles[i], axis);
             }
-
         }
-    }
-
-    public static class FingerConsts
-    {
-        public const int LeftThumb = 0;
-        public const int LeftIndex = 1;
-        public const int LeftMiddle = 2;
-        public const int LeftRing = 3;
-        public const int LeftLittle = 4;
-        public const int RightThumb = 5;
-        public const int RightIndex = 6;
-        public const int RightMiddle = 7;
-        public const int RightRing = 8;
-        public const int RightLittle = 9;
     }
 }

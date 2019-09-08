@@ -3,7 +3,7 @@ using UniRx;
 
 namespace Baku.VMagicMirror
 {
-    public class MotionModifyReceiver : MonoBehaviour
+    public class ElbowMotionModifyReceiver : MonoBehaviour
     {
         [SerializeField]
         private ReceivedMessageHandler handler = null;
@@ -22,8 +22,6 @@ namespace Baku.VMagicMirror
                         break;
                     case MessageCommandNames.SetElbowCloseStrength:
                         SetElbowCloseStrength(message.ParseAsPercentage());
-                        break;
-                    default:
                         break;
                 }
             });

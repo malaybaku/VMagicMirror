@@ -33,14 +33,8 @@ namespace Baku.VMagicMirror
 
             AddLookAtIK(go, setting.headTarget, animator, bipedReferences.root);
 
-            var fingerAnimator = go.AddComponent<FingerAnimator>();
-            fingerAnimator.Initialize(animator);
-
+            //TODO: ここは消す。faceDetectorは顔検出だけやるように書きかえなければならない
             faceDetector.SetNonCameraBlinkComponent(go.AddComponent<VRMBlink>());
-            //setting.inputToMotion.rightHandBone = animator.GetBoneTransform(HumanBodyBones.RightHand);
-
-            var motionModifier = go.AddComponent<MotionModifyToMotion>();
-            motionModifier.InitializeIK(animator.GetBoneTransform(HumanBodyBones.Spine), ik);
 
             var bodyPositionAdjust = go.AddComponent<FaceBasedBodyIKAdjuster>();
             bodyPositionAdjust.Initialize(faceDetector, animator, ik);

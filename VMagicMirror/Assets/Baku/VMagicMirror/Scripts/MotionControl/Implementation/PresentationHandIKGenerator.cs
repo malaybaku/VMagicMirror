@@ -47,9 +47,8 @@ namespace Baku.VMagicMirror
 
         #endregion
 
-        public void Initialize(Transform vrmRoot)
+        public void Initialize(Animator animator)
         {
-            var animator = vrmRoot.GetComponent<Animator>();
             _head = animator.GetBoneTransform(HumanBodyBones.Head);
             _rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);
         }

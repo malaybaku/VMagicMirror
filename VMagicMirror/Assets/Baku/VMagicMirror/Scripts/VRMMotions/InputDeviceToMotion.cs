@@ -57,7 +57,7 @@ namespace Baku.VMagicMirror
                     _enablePresentationMotion = value;
                     if (!value)
                     {
-                        fingerAnimator.FixRightHandToPresentationMode(false);
+                        //fingerAnimator.FixRightHandToPresentationMode(false);
                     }
                 }
             }
@@ -78,7 +78,7 @@ namespace Baku.VMagicMirror
         //プレゼン中に肩からの位置ベースで手の向きを制御したいので
         public Transform rightShoulder = null;
 
-        public FingerAnimator fingerAnimator = null;
+        //public FingerAnimator fingerAnimator = null;
 
         public FingerRig fingerRig = null;
 
@@ -372,7 +372,7 @@ namespace Baku.VMagicMirror
             else
             {
                 //右手でキーを触るため、指の形はプレゼン状態ではなくす(ただしマウスがまた動いたらプレゼン状態になる)
-                fingerAnimator.FixRightHandToPresentationMode(false);
+                //fingerAnimator.FixRightHandToPresentationMode(false);
 
                 _rightHandTargetType = HandTargetTypes.Keyboard;
                 UpdateRightHandMoveCoroutine(
@@ -383,7 +383,7 @@ namespace Baku.VMagicMirror
 
             //int fingerNumber = keyboard.GetFingerNumberOfKey(key);
             //fingerAnimator?.StartMoveFinger(fingerNumber);
-            fingerAnimator?.StartMoveFinger(keyData.fingerNumber);
+            //fingerAnimator?.StartMoveFinger(keyData.fingerNumber);
 
             _particleStore?.RequestParticleStart(keyData.position);
         }
@@ -549,14 +549,14 @@ namespace Baku.VMagicMirror
             //NOTE: 実態としてはマウスパッド持ってるのに近い状態なのでコレでOKとする
             _rightHandTargetType = HandTargetTypes.MousePad;
 
-            fingerAnimator.FixRightHandToPresentationMode(true);
+            //fingerAnimator.FixRightHandToPresentationMode(true);
         }
 
         public void ClickMotion(string info)
         {
 
             //指さしモード中も無視することに注意
-            if (fingerAnimator == null ||  fingerAnimator.RightHandPresentationMode) { return; }
+//            if (fingerAnimator == null ||  fingerAnimator.RightHandPresentationMode) { return; }
 
             if (_clickMoveCoroutine != null)
             {
@@ -567,11 +567,11 @@ namespace Baku.VMagicMirror
 
             if (info == RDown)
             {
-                fingerAnimator.StartMoveFinger(FingerConsts.RightMiddle);
+                //fingerAnimator.StartMoveFinger(FingerConsts.RightMiddle);
             }
             else if (info == MDown || info == LDown)
             {
-                fingerAnimator.StartMoveFinger(FingerConsts.RightIndex);
+                //fingerAnimator.StartMoveFinger(FingerConsts.RightIndex);
             }
         }
 

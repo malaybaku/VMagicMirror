@@ -5,34 +5,32 @@ using VRM;
 
 namespace Baku.VMagicMirror
 {
-    public class EyeDownOnBlink : MonoBehaviour
+    /// <summary> 瞬きに対して目と眉を下げる処理をするやつ </summary>
+    public class EyeDownBlendShapeController : MonoBehaviour
     {
-        private BlendShapeKey BlinkLKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_L);
-        private BlendShapeKey BlinkRKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_R);
+        private static readonly BlendShapeKey BlinkLKey = new BlendShapeKey(BlendShapePreset.Blink_L);
+        private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
 
-        [SerializeField]
-        private float eyeBrowDiffSize = 0.05f;
+        [SerializeField] private BlendShapeAssignController blendShapeAssign = null;
+        [SerializeField] private FaceDetector faceDetector = null;
+        [SerializeField] private WordToMotionController wordToMotion = null;
+
+        [SerializeField] private float eyeBrowDiffSize = 0.05f;
 
         //ちょっとデフォルトで眉を上げとこう的な値。目の全開きは珍しいという仮説による。
-        [SerializeField]
-        private float defaultOffset = 0.2f;
-            
-        [SerializeField]
-        private float eyeBrowDownOffsetWhenEyeClosed = 0.7f;
+        [SerializeField] private float defaultOffset = 0.2f;
 
-        [SerializeField]
-        private float eyeAngleDegreeWhenEyeClosed = 10f;
+        [SerializeField] private float eyeBrowDownOffsetWhenEyeClosed = 0.7f;
 
-        [SerializeField]
-        private float speedLerpFactor = 0.2f;
-        [SerializeField]
-        [Range(0.05f, 1.0f)]
-        private float timeScaleFactor = 0.3f;
+        [SerializeField] private float eyeAngleDegreeWhenEyeClosed = 10f;
+
+        [SerializeField] private float speedLerpFactor = 0.2f;
+        [SerializeField] [Range(0.05f, 1.0f)] private float timeScaleFactor = 0.3f;
+
+        private EyebrowBlendShapeSet EyebrowBlendShape => blendShapeAssign.EyebrowBlendShape;
+
 
         private VRMBlendShapeProxy _blendShapeProxy = null;
-        private EyebrowBlendShapeSet _blendShapeSet = null;
-        private FaceDetector _faceDetector = null;
-        private WordToMotionController _wordToMotion = null;
         private Transform _rightEyeBone = null;
         private Transform _leftEyeBone = null;
 
@@ -41,53 +39,62 @@ namespace Baku.VMagicMirror
 
         //単位: %
         private float _prevLeftEyeBrowWeight = 0;
+
         private float _prevRightEyeBrowWeight = 0;
+
         //単位: %/s
         private float _prevLeftEyeBrowSpeed = 0;
         private float _prevRightEyeBrowSpeed = 0;
 
-        //このクラス上でリセットされていないBlendShapeを送った状態かどうかのフラグ
+        //このクラス上でリセットされていないBlendShapeを送った状態かどうかのフラグ。
         private bool _hasAppliedEyebrowBlendShape = false;
 
         private IDisposable _rightEyeBrowHeight = null;
         private IDisposable _leftEyeBrowHeight = null;
 
-        private bool _hasBlinkBlendShape = false;
+        //「目ボーンがある + まばたきブレンドシェイプがある」の2つで判定
+        private bool _hasValidEyeSettings = false;
 
         public bool IsInitialized { get; private set; } = false;
 
-        public void Initialize(
-            VRMBlendShapeProxy proxy,
-            FaceDetector faceDetector,
-            WordToMotionController wordToMotion,
-            EyebrowBlendShapeSet blendShapeSet,
-            Transform rightEyeBone, 
-            Transform leftEyeBone
-            )
+        public void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _blendShapeProxy = proxy;
-            _faceDetector = faceDetector;
-            _wordToMotion = wordToMotion;
-            _blendShapeSet = blendShapeSet;
-            _rightEyeBone = rightEyeBone;
-            _leftEyeBone = leftEyeBone;
-
-            //InitializeEyeBrowBlendShapes();
+            _blendShapeProxy = info.blendShape;
+            _rightEyeBone = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
+            _leftEyeBone = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
 
             _rightEyeBrowHeight?.Dispose();
-            _leftEyeBrowHeight?.Dispose();
-
             _rightEyeBrowHeight = faceDetector.FaceParts.RightEyebrow.Height.Subscribe(
                 v => _rightEyeBrowValue = v
-                );
+            );
 
+            _leftEyeBrowHeight?.Dispose();
             _leftEyeBrowHeight = faceDetector.FaceParts.LeftEyebrow.Height.Subscribe(
                 v => _leftEyeBrowValue = v
-                );
+            );
 
-            _hasBlinkBlendShape = CheckBlinkBlendShapeClips(proxy);
+            _hasValidEyeSettings =
+                _rightEyeBone != null &&
+                _leftEyeBone != null &&
+                CheckBlinkBlendShapeClips(_blendShapeProxy);
 
             IsInitialized = true;
+        }
+
+        public void OnVrmDisposing()
+        {
+            _blendShapeProxy = null;
+            _rightEyeBone = null;
+            _leftEyeBone = null;
+            _hasValidEyeSettings = false;
+
+            _rightEyeBrowHeight?.Dispose();
+            _rightEyeBrowHeight = null;
+
+            _leftEyeBrowHeight?.Dispose();
+            _leftEyeBrowHeight = null;
+
+            IsInitialized = false;
         }
 
         private void LateUpdate()
@@ -101,23 +108,11 @@ namespace Baku.VMagicMirror
             AdjustEyebrow();
         }
 
-        private void OnDestroy()
-        {
-            _rightEyeBrowHeight?.Dispose();
-            _rightEyeBrowHeight = null;
-
-            _leftEyeBrowHeight?.Dispose();
-            _leftEyeBrowHeight = null;
-        }
-
         private void AdjustEyeRotation()
         {
-            if (_rightEyeBone == null || _leftEyeBone == null || !_hasBlinkBlendShape)
-            {
-                return;
-            }
-
-            if (_wordToMotion.EnablePreview || _wordToMotion.IsPlayingBlendShape)
+            if (!_hasValidEyeSettings ||
+                wordToMotion.EnablePreview ||
+                wordToMotion.IsPlayingBlendShape)
             {
                 return;
             }
@@ -129,40 +124,36 @@ namespace Baku.VMagicMirror
             _leftEyeBone.localRotation *= Quaternion.AngleAxis(
                 eyeAngleDegreeWhenEyeClosed * leftBlink,
                 Vector3.right
-                );
+            );
 
             _rightEyeBone.localRotation *= Quaternion.AngleAxis(
                 eyeAngleDegreeWhenEyeClosed * rightBlink,
                 Vector3.right
-                );
+            );
         }
 
         private void AdjustEyebrow()
         {
-            if (_faceDetector == null)
-            {
-                return;
-            }
-
             //プレビューやクリップで指定されたモーフの実行時: 眉毛が動いてるとジャマなので戻してから放置。
             //毎フレームやるとクリップ指定動作を上書きしてしまうため、それを防ぐべく最初の1回だけリセットするのがポイント
-            if (_wordToMotion.EnablePreview || _wordToMotion.IsPlayingBlendShape)
+            if (wordToMotion.EnablePreview || wordToMotion.IsPlayingBlendShape)
             {
                 if (_hasAppliedEyebrowBlendShape)
                 {
-                    _blendShapeSet.UpdateEyebrowBlendShape(0, 0);
+                    EyebrowBlendShape.UpdateEyebrowBlendShape(0, 0);
                     _hasAppliedEyebrowBlendShape = false;
                 }
+
                 return;
             }
 
             //NOTE: ここスケールファクタないと非常に小さい値しか入らないのでは？？？
-            float left = _leftEyeBrowValue - _faceDetector.CalibrationData.eyeBrowPosition;
-            float right = _rightEyeBrowValue - _faceDetector.CalibrationData.eyeBrowPosition;
+            float left = _leftEyeBrowValue - faceDetector.CalibrationData.eyeBrowPosition;
+            float right = _rightEyeBrowValue - faceDetector.CalibrationData.eyeBrowPosition;
             //顔トラッキングしない場合、つねに0が入るようにしとく
-            if (!_faceDetector.HasInitDone || 
-                !_faceDetector.FaceDetectedAtLeastOnce ||
-                _faceDetector.AutoBlinkDuringFaceTracking)
+            if (!faceDetector.HasInitDone ||
+                !faceDetector.FaceDetectedAtLeastOnce ||
+                faceDetector.AutoBlinkDuringFaceTracking)
             {
                 left = 0;
                 right = 0;
@@ -179,7 +170,7 @@ namespace Baku.VMagicMirror
             float speedRight = Mathf.Lerp(_prevRightEyeBrowSpeed, idealRight, speedLerpFactor);
             float weightRight = _prevRightEyeBrowWeight + Time.deltaTime * speedRight;
             weightRight = Mathf.Clamp(weightRight, -1, 1);
-            if (_faceDetector.AutoBlinkDuringFaceTracking)
+            if (faceDetector.AutoBlinkDuringFaceTracking)
             {
                 speedLeft = 0;
                 weightLeft = 0;
@@ -195,7 +186,7 @@ namespace Baku.VMagicMirror
             float blinkRight = _blendShapeProxy.GetValue(BlinkRKey);
             float weightRightToAssign = weightRight + defaultOffset - blinkRight * eyeBrowDownOffsetWhenEyeClosed;
 
-            _blendShapeSet.UpdateEyebrowBlendShape(weightLeftToAssign, weightRightToAssign);
+            EyebrowBlendShape.UpdateEyebrowBlendShape(weightLeftToAssign, weightRightToAssign);
             _hasAppliedEyebrowBlendShape = true;
 
             _prevLeftEyeBrowWeight = weightLeft;
@@ -204,21 +195,14 @@ namespace Baku.VMagicMirror
             _prevRightEyeBrowSpeed = speedRight;
         }
 
-        private bool CheckBlinkBlendShapeClips(VRMBlendShapeProxy proxy)
+        private static bool CheckBlinkBlendShapeClips(VRMBlendShapeProxy proxy)
         {
             var avatar = proxy.BlendShapeAvatar;
             return (
                 (avatar.GetClip(BlinkLKey).Values.Length > 0) &&
                 (avatar.GetClip(BlinkRKey).Values.Length > 0) &&
                 (avatar.GetClip(BlendShapePreset.Blink).Values.Length > 0)
-                );
-        }
-
-        struct BlendShapeTarget
-        {
-            public bool isValid;
-            public SkinnedMeshRenderer renderer;
-            public int index;
+            );
         }
     }
 }

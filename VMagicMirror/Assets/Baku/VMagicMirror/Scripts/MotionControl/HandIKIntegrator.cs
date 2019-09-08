@@ -56,10 +56,10 @@ namespace Baku.VMagicMirror
 
         #region API
 
-        public void OnVrmLoaded(Transform vrmRoot)
+        public void OnVrmLoaded(VrmLoadedInfo info)
         {
-            fingerController.Initialize(vrmRoot.GetComponent<Animator>());
-            presentation.Initialize(vrmRoot);
+            fingerController.Initialize(info.animator);
+            presentation.Initialize(info.animator);
 
             //ホームポジションを押させてIK位置を整える
             PressKey("F");

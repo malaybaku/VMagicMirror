@@ -50,7 +50,7 @@ namespace Baku.VMagicMirror
         private RuntimeAnimatorController animatorController = null;
 
         [Serializable]
-        public class VrmLoadedEvent : UnityEvent<Transform>{}
+        public class VrmLoadedEvent : UnityEvent<VrmLoadedInfo>{}
         
         [SerializeField] private VrmLoadedEvent vrmLoaded = new VrmLoadedEvent();
 
@@ -151,11 +151,6 @@ namespace Baku.VMagicMirror
                 vrmDisposing.Invoke();
 
                 //TODO: イベントハンドラ頼みになるよう直す
-                //破棄済みオブジェクトに触らせないためにnullize
-//                loadSetting.inputToMotion.fingerAnimator = null;
-//                loadSetting.inputToMotion.vrmRoot = null;1
-//                loadSetting.inputToMotion.head = null;
-//                loadSetting.inputToMotion.rightShoulder = null;
                 animMorphEasedTarget.blendShapeProxy = null;
                 faceBlendShapeController?.DisposeProxy();
                 faceAttitudeController?.DisposeHead();
@@ -194,12 +189,6 @@ namespace Baku.VMagicMirror
                 );
             //セットアップの過程でFinalIKに触るため、(有償アセットなので取り外しの事も考えつつ)ファイル分離
 
-//            TryWithoutException(() =>
-//            {
-//                loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
-//                loadSetting.inputToMotion.vrmRoot = go.transform;
-//            });
-
             var animator = go.GetComponent<Animator>();
             var blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
 
@@ -211,37 +200,18 @@ namespace Baku.VMagicMirror
                     animator.GetBoneTransform(HumanBodyBones.Neck),
                     animator.GetBoneTransform(HumanBodyBones.Head)
                     );
-
-//                loadSetting.inputToMotion.head = animator.GetBoneTransform(HumanBodyBones.Head);
-//                loadSetting.inputToMotion.rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);
-//                loadSetting.inputToMotion.fingerRig = animator
-//                    .GetBoneTransform(HumanBodyBones.RightHand)
-//                    .GetComponent<RootMotion.FinalIK.FingerRig>();
-                go.GetComponent<MotionModifyToMotion>()
-                    .SetReceiver(GetComponent<MotionModifyReceiver>());
-//                loadSetting.inputToMotion.PressKeyMotion("LControlKey");
-//                loadSetting.inputToMotion.PressKeyMotion("RControlKey");
             });
 
             TryWithoutException(() =>
             {
                 blendShapeAssignController.InitializeModel(go.transform);
                 var renderers = go.GetComponentsInChildren<Renderer>();
-                foreach (var renderer in renderers)
+                foreach (var r in renderers)
                 {
                     //セルフシャドウは明示的に切る: ちょっとでも軽量化したい
-                    renderer.receiveShadows = false;
+                    r.receiveShadows = false;
                 }
                 windowStyleController.InitializeModelRenderers(renderers);
-                go.AddComponent<EyeDownOnBlink>()
-                    .Initialize(
-                        blendShapeProxy,
-                        faceDetector,
-                        wordToMotion,
-                        blendShapeAssignController.EyebrowBlendShape,
-                        animator.GetBoneTransform(HumanBodyBones.RightEye),
-                        animator.GetBoneTransform(HumanBodyBones.LeftEye)
-                        );
 
                 settingAdjuster.AssignModelRoot(go.transform);
                 blendShapeAssignController.SendBlendShapeNames();
@@ -253,9 +223,14 @@ namespace Baku.VMagicMirror
                 animator.runtimeAnimatorController = animatorController;
             });
             
-            vrmLoaded.Invoke(go.transform);
+            vrmLoaded.Invoke(new VrmLoadedInfo()
+            {
+                vrmRoot = go.transform,
+                animator = animator,
+                blendShape = blendShapeProxy,
+            });
         }
-
+        
         [Serializable]
         public struct VrmLoadSetting
         {
@@ -268,6 +243,13 @@ namespace Baku.VMagicMirror
             //public InputDeviceToMotion inputToMotion;
             public IkWeightCrossFade ikWeightCrossFade;
         }
-
+    }
+    
+    [Serializable]
+    public struct VrmLoadedInfo
+    {
+        public Transform vrmRoot;
+        public Animator animator;
+        public VRMBlendShapeProxy blendShape;
     }
 }

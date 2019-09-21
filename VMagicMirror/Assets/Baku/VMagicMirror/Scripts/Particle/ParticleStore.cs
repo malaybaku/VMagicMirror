@@ -8,23 +8,28 @@ namespace Baku.VMagicMirror
         public const int InvalidTypingEffectIndex = -1;
 
         [Serializable]
-        class ParticlePrefabInfo
+        struct ParticlePrefabInfo
         {
-            public Transform prefab = null;
-            public Vector3 scale = Vector3.one;
-            public bool useCollisionPlane = false;
-            public Transform collisionTransform = null;
+            public Transform prefab;
+            public Vector3 scale;
+            public bool useCollisionPlane;
+            public Transform collisionTransform;
         }
 
+        [SerializeField]
         [Tooltip("同時に表示するエフェクト数の上限。増やすと表示が破綻しにくくなるかわりメモリとCPU負荷が増える。")]
-        [SerializeField] private int particleStoreCount = 16;
-        [SerializeField] private ParticlePrefabInfo[] particlePrefabs = null;
+        private int _particleStoreCount = 16;
+
+        [SerializeField]
+        private ParticlePrefabInfo[] _particlePrefabs = null;
 
         public Vector3 ParticleScale { get; set; } = new Vector3(0.7f, 1.0f, 0.7f);
 
-        private int _nextParticleIndex = 0;
+        int _nextParticleIndex = 0;
+
         //-1はパーティクル無効、0~(particlePrefabs.Length - 1)は有効な状態を表す
         private int _currentSelectedParticlePrefabIndex = InvalidTypingEffectIndex;
+
         //キャッシュして多数同時に実行できるようにしたパーティクル群
         private ParticleSystem[] _particles = new ParticleSystem[0];
         
@@ -44,16 +49,16 @@ namespace Baku.VMagicMirror
             }
 
             //パーティクルを無効化したい場合はコレで終わり
-            if (index < 0 || index >= particlePrefabs.Length)
+            if (index < 0 || index >= _particlePrefabs.Length)
             {
                 _particles = new ParticleSystem[0];
                 return;
             }
 
-            var prefabSource = particlePrefabs[index];
+            var prefabSource = _particlePrefabs[index];
 
             //パーティクルを有効化する場合
-            _particles = new ParticleSystem[particleStoreCount];
+            _particles = new ParticleSystem[_particleStoreCount];
             for (int i = 0; i < _particles.Length; i++)
             {
                 _particles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();

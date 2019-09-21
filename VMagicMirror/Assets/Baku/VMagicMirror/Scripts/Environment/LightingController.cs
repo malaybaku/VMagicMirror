@@ -6,15 +6,26 @@ namespace Baku.VMagicMirror
 {
     public class LightingController : MonoBehaviour
     {
-        [SerializeField] private Light mainLight = null;
-        [SerializeField] private Vector3 mainLightLocalEulerAngle = default;
-        
-        [SerializeField] private Light shadowLight = null;
-        [SerializeField] private Vector3 shadowLightLocalEulerAngle = default;
-        [SerializeField] private ShadowBoardMotion shadowBoardMotion = null;
+        [SerializeField]
+        private Light mainLight = null;
 
-        [SerializeField] private PostProcessVolume postProcess = null;
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [SerializeField]
+        private Vector3 mainLightLocalEulerAngle;
+
+        [SerializeField]
+        private Light shadowLight = null;
+
+        [SerializeField]
+        private Vector3 shadowLightLocalEulerAngle;
+
+        [SerializeField]
+        private ShadowBoardMotion shadowBoardMotion = null;
+
+        [SerializeField]
+        private PostProcessVolume postProcess = null;
+
+        [SerializeField]
+        private ReceivedMessageHandler handler = null;
 
 
         private Bloom _bloom;
@@ -32,7 +43,7 @@ namespace Baku.VMagicMirror
                         SetLightIntensity(message.ParseAsPercentage());
                         break;
                     case MessageCommandNames.LightColor:
-                        var lightRgb = message.ToColorFloats();
+                        float[] lightRgb = message.ToColorFloats();
                         SetLightColor(lightRgb[0], lightRgb[1], lightRgb[2]);
                         break;
                     case MessageCommandNames.LightYaw:
@@ -65,6 +76,8 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.BloomColor:
                         float[] bloomRgb = message.ToColorFloats();
                         SetBloomColor(bloomRgb[0], bloomRgb[1], bloomRgb[2]);
+                        break;
+                    default:
                         break;
                 }
             });

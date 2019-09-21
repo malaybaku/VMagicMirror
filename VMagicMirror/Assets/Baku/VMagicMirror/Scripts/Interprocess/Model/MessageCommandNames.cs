@@ -32,9 +32,6 @@
 
         // Motion
 
-        // Motion, Enable
-        public const string EnableHidArmMotion = nameof(EnableHidArmMotion);
-
         // Motion, Hand
         public const string LengthFromWristToTip = nameof(LengthFromWristToTip);
         public const string LengthFromWristToPalm = nameof(LengthFromWristToPalm);
@@ -124,13 +121,6 @@
         public const string BloomThreshold = nameof(BloomThreshold);
         public const string BloomColor = nameof(BloomColor);
 
-        // Word to Motion
-        public const string EnableWordToMotion = nameof(EnableWordToMotion);
-        public const string ReloadMotionRequests = nameof(ReloadMotionRequests);
-
-        public const string PlayWordToMotionItem = nameof(PlayWordToMotionItem);
-        public const string EnableWordToMotionPreview = nameof(EnableWordToMotionPreview);
-        public const string SendWordToMotionPreviewInfo = nameof(SendWordToMotionPreviewInfo);
 
     }
 }

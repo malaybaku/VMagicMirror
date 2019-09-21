@@ -3,9 +3,10 @@ using UniRx;
 
 namespace Baku.VMagicMirror
 {
-    public class VrmPreviewLanguage : MonoBehaviour
+    public class VRMPreviewLanguage : MonoBehaviour
     {
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [SerializeField]
+        private ReceivedMessageHandler handler = null;
 
         public string Language { get; private set; } = "Japanese";
 
@@ -15,7 +16,7 @@ namespace Baku.VMagicMirror
             {
                 if (message.Command == MessageCommandNames.Language)
                 {
-                    Language = message.Content;
+                    Language =message.Content;
                 }
             });
         }

@@ -24,9 +24,6 @@ ExportedObj/
 *.pdb
 *.opendb
 
-# For JetBrains IDE
-.idea
-
 # Unity3D generated meta files
 *.pidb.meta
 *.pdb.meta

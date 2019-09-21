@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Events;
 using UniRx;
 using UniHumanoid;
 using VRM;
@@ -10,28 +9,40 @@ namespace Baku.VMagicMirror
 {
     using static ExceptionUtils;
 
-    /// <summary>VRMのロード処理をやるやつ</summary>
     public class VRMLoadController : MonoBehaviour
     {
-        [Serializable]
-        public class VrmLoadedEvent : UnityEvent<VrmLoadedInfo>{}
-        
-        [SerializeField] private ReceivedMessageHandler handler = null;
-        [SerializeField] private VrmLoadSetting loadSetting = default;
-        [SerializeField] private VrmPreviewCanvas previewCanvas = null;
-        [SerializeField] private RuntimeAnimatorController animatorController = null;
+        [SerializeField]
+        private ReceivedMessageHandler handler = null;
 
-        //NOTE: 下の2つは参照外せなくもないが残している。他と同じでイベントで初期化/破棄するスタイルでもよい
-        // - WindowStyleControllerは受け取るデータがちょっと特別なため
-        // - SettingAutoAdjusterはロード直後に特殊処理が入る可能性があるため
-        [SerializeField] private WindowStyleController windowStyleController = null;
-        [SerializeField] private SettingAutoAdjuster settingAdjuster = null;
+        //TODO: この辺はちょっと分けたい気がしないでもない
+        [SerializeField]
+        private VrmLoadSetting loadSetting;
 
-        
-        [SerializeField] private VrmLoadedEvent vrmLoaded = new VrmLoadedEvent();
-        [SerializeField] private UnityEvent vrmDisposing = new UnityEvent();
+        [SerializeField]
+        private AnimMorphEasedTarget animMorphEasedTarget = null;
 
-        private HumanPoseTransfer _humanPoseTransferTarget = null;
+        [SerializeField]
+        private FaceBlendShapeController faceBlendShapeController = null;
+
+        [SerializeField]
+        private FaceAttitudeController faceAttitudeController = null;
+
+        [SerializeField]
+        private FaceDetector faceDetector = null;
+
+        [SerializeField]
+        private BlendShapeAssignController blendShapeAssignController = null;
+
+        [SerializeField]
+        private WindowStyleController windowStyleController = null;
+
+        [SerializeField]
+        private SettingAutoAdjuster settingAdjuster = null;
+
+        [SerializeField]
+        private VRMPreviewCanvas previewCanvas = null;
+
+        private HumanPoseTransfer m_loaded = null;
 
         private void Start()
         {
@@ -102,6 +113,7 @@ namespace Baku.VMagicMirror
                 context.ParseGlb(file);
 
                 context.Load();
+                context.ShowMeshes();
                 context.EnableUpdateWhenOffscreen();
                 context.ShowMeshes();
                 SetModel(context.Root);
@@ -114,18 +126,28 @@ namespace Baku.VMagicMirror
             SetModel(vrmObject);
         }
 
-        //モデルの破棄
         private void ReleaseCurrentVrm()
         {
-            var loaded = _humanPoseTransferTarget;
-            _humanPoseTransferTarget = null;
+            // cleanup
+            var loaded = m_loaded;
+            m_loaded = null;
 
             if (loaded != null)
             {
-                vrmDisposing.Invoke();
-
+                //TODO: スケールしなくなってるのでそろそろReleaseイベント化したい
+                //破棄済みオブジェクトに触らせないためにnullize
+                loadSetting.inputToMotion.fingerAnimator = null;
+                loadSetting.inputToMotion.vrmRoot = null;
+                loadSetting.inputToMotion.head = null;
+                loadSetting.inputToMotion.rightShoulder = null;
+                animMorphEasedTarget.blendShapeProxy = null;
+                faceBlendShapeController?.DisposeProxy();
+                faceAttitudeController?.DisposeHead();
+                faceDetector.DisposeNonCameraBlinkComponent();
+                blendShapeAssignController.DisposeModel();
                 windowStyleController.DisposeModelRenderers();
                 settingAdjuster.DisposeModelRoot();
+
                 Destroy(loaded.gameObject);
             }
         }
@@ -140,51 +162,84 @@ namespace Baku.VMagicMirror
             }
 
             var lookAt = go.GetComponent<VRMLookAtHead>();
-            _humanPoseTransferTarget = go.AddComponent<HumanPoseTransfer>();
-            _humanPoseTransferTarget.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
-            lookAt.UpdateType = UpdateType.LateUpdate;
-            
-            //セットアップのうちFinalIKに思い切り依存した所が別スクリプトになってます
-            VRMLoadControllerHelper.SetupVrm(go, loadSetting);
+            if (lookAt != null)
+            {
+                m_loaded = go.AddComponent<HumanPoseTransfer>();
+                m_loaded.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
+            }
+
+            //NOTE: ここからは一部がコケても他のセットアップを続けて欲しいので、やや細かくTry Catchしていく
+            //TODO: スケールしなくなってるのでそろそろLoaded的なイベント化したい
+
+            TryWithoutException(() =>
+                VRMLoadControllerHelper.SetupVrm(go, loadSetting, faceDetector)
+                );
+            //セットアップの過程でFinalIKに触るため、(有償アセットなので取り外しの事も考えつつ)ファイル分離
+
+            TryWithoutException(() =>
+            {
+                loadSetting.inputToMotion.fingerAnimator = go.GetComponent<FingerAnimator>();
+                loadSetting.inputToMotion.vrmRoot = go.transform;
+            });
 
             var animator = go.GetComponent<Animator>();
-            animator.runtimeAnimatorController = animatorController;
-            
             var blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
-            
-            var renderers = go.GetComponentsInChildren<Renderer>();
-            foreach (var r in renderers)
+
+            TryWithoutException(() =>
             {
-                //セルフシャドウは明示的に切る: ちょっとでも軽量化したい
-                r.receiveShadows = false;
-            }
-            windowStyleController.InitializeModelRenderers(renderers);
-            settingAdjuster.AssignModelRoot(go.transform);
-            
-            vrmLoaded.Invoke(new VrmLoadedInfo()
+                animMorphEasedTarget.blendShapeProxy = blendShapeProxy;
+                faceBlendShapeController?.Initialize(blendShapeProxy);
+                faceAttitudeController?.Initialize(
+                    animator.GetBoneTransform(HumanBodyBones.Neck),
+                    animator.GetBoneTransform(HumanBodyBones.Head)
+                    );
+
+                loadSetting.inputToMotion.head = animator.GetBoneTransform(HumanBodyBones.Head);
+                loadSetting.inputToMotion.rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightShoulder);
+                loadSetting.inputToMotion.fingerRig = animator
+                    .GetBoneTransform(HumanBodyBones.RightHand)
+                    .GetComponent<RootMotion.FinalIK.FingerRig>();
+                go.GetComponent<MotionModifyToMotion>()
+                    .SetReceiver(GetComponent<MotionModifyReceiver>());
+                loadSetting.inputToMotion.PressKeyMotion("LControlKey");
+                loadSetting.inputToMotion.PressKeyMotion("RControlKey");
+            });
+
+            TryWithoutException(() =>
             {
-                vrmRoot = go.transform,
-                animator = animator,
-                blendShape = blendShapeProxy,
+                blendShapeAssignController.InitializeModel(go.transform);
+                var renderers = go.GetComponentsInChildren<Renderer>();
+                foreach (var renderer in renderers)
+                {
+                    //セルフシャドウは明示的に切る: ちょっとでも軽量化したい
+                    renderer.receiveShadows = false;
+                }
+                windowStyleController.InitializeModelRenderers(renderers);
+                go.AddComponent<EyeDownOnBlink>()
+                    .Initialize(
+                        blendShapeProxy,
+                        faceDetector,
+                        blendShapeAssignController.EyebrowBlendShape,
+                        animator.GetBoneTransform(HumanBodyBones.RightEye),
+                        animator.GetBoneTransform(HumanBodyBones.LeftEye)
+                        );
+
+                settingAdjuster.AssignModelRoot(go.transform);
+                blendShapeAssignController.SendBlendShapeNames();
             });
         }
-        
+
         [Serializable]
         public struct VrmLoadSetting
         {
-            public Transform bodyTarget;
+            public Transform bodyEndTarget;
+            public Transform bodyRootTarget;
             public Transform leftHandTarget;
             public Transform rightHandTarget;
             public Transform rightIndexTarget;
             public Transform headTarget;
+            public InputDeviceToMotion inputToMotion;
         }
-    }
-    
-    [Serializable]
-    public struct VrmLoadedInfo
-    {
-        public Transform vrmRoot;
-        public Animator animator;
-        public VRMBlendShapeProxy blendShape;
+
     }
 }

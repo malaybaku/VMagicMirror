@@ -21,17 +21,11 @@ namespace Baku.VMagicMirror
 
             var vrmLookAtBoneApplier = go.GetComponent<VRMLookAtBoneApplyer>();
 
-            foreach(var curveMapper in new[]
-            {
-                vrmLookAtBoneApplier.HorizontalInner,
-                vrmLookAtBoneApplier.HorizontalOuter,
-                vrmLookAtBoneApplier.VerticalDown,
-                vrmLookAtBoneApplier.VerticalUp,
-            })
-            {
-                curveMapper.CurveYRangeDegree = 20;
-            }
-
+            vrmLookAtBoneApplier.HorizontalInner.CurveYRangeDegree = 15;
+            vrmLookAtBoneApplier.HorizontalOuter.CurveYRangeDegree = 15;
+            vrmLookAtBoneApplier.VerticalUp.CurveYRangeDegree = 10;
+            vrmLookAtBoneApplier.VerticalDown.CurveYRangeDegree = 20;
+            
             AddLookAtIK(go, setting.headTarget, animator, bipedReferences.root);
             AddFingerRigToRightIndex(animator, setting);
         }

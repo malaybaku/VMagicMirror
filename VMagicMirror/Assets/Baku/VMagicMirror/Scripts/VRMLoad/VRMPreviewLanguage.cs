@@ -5,8 +5,7 @@ namespace Baku.VMagicMirror
 {
     public class VrmPreviewLanguage : MonoBehaviour
     {
-        [SerializeField]
-        private ReceivedMessageHandler handler;
+        [SerializeField] private ReceivedMessageHandler handler = null;
 
         public string Language { get; private set; } = "Japanese";
 

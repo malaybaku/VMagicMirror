@@ -368,7 +368,6 @@ MonoBehaviour:
   faceControlManager: {fileID: 1130871118}
   faceTracker: {fileID: 1335587171}
   wordToMotion: {fileID: 1963776212}
-  eyeBrowDiffSize: 0.05
   defaultOffset: 0.2
   eyeBrowDownOffsetWhenEyeClosed: 0.7
   eyeAngleDegreeWhenEyeClosed: 10
@@ -478,7 +477,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d8171c0e71f7004285ec3eedc0c3fd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faceTracker: {fileID: 1335587171}
   bodyIk: {fileID: 1134663116}
   imageBasedBodyMotion: {fileID: 306547511}
   waitingBodyMotion: {fileID: 306547510}
@@ -1523,7 +1521,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleStoreCount: 16
-  particlePrefabs: []
+  particlePrefabs:
+  - prefab: {fileID: 4353481273975885782, guid: 2a2c22bd0015525489aa6305c15b3469,
+      type: 3}
+    scale: {x: 1, y: 1, z: 1}
+    useCollisionPlane: 1
+    collisionTransform: {fileID: 1169325486}
+  - prefab: {fileID: 7218671144545294627, guid: 773b33f661c35c24183e00d82532a670,
+      type: 3}
+    scale: {x: 1, y: 1, z: 1}
+    useCollisionPlane: 0
+    collisionTransform: {fileID: 0}
 --- !u!114 &1268007394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2878,7 +2886,6 @@ MonoBehaviour:
   handler: {fileID: 1930233619}
   ipAddress: 127.0.0.1
   port: 53241
-  receiveTimeoutMillisec: 2000
 --- !u!114 &1930233619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3038,9 +3045,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   builtInClips:
-  - name: wave
+  - name: Wave
     clip: {fileID: 7400000, guid: 2d2936a1fb0e17749bf614ef1a4fd964, type: 2}
-  - name: rokuro
+  - name: Rokuro
     clip: {fileID: 7400000, guid: e0b3e1faef6abbf43827847a27014cff, type: 2}
 --- !u!114 &1963776212
 MonoBehaviour:
@@ -3565,6 +3572,7 @@ MonoBehaviour:
   gamePadBasedBodyLean: {fileID: 2042410941}
   handIkIntegrator: {fileID: 2042410944}
   headIkIntegrator: {fileID: 2042410943}
+  ikWeightCrossFade: {fileID: 1963776208}
   gamePad: {fileID: 953451441}
 --- !u!114 &2042410946
 MonoBehaviour:

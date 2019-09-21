@@ -34,7 +34,8 @@ namespace Baku.VMagicMirror
         /// <returns></returns>
         public AnimationClip FindBuiltInAnimationClipOrDefault(string clipName)
         {
-            for (int i = 0; i< builtInClips.Length; i++)
+            Debug.Log("Requested clip name = " + clipName);
+            for (int i = 0; i < builtInClips.Length; i++)
             {
                 if (builtInClips[i].name == clipName)
                 {

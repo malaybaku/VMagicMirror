@@ -13,6 +13,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
 
         [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
+
+        [SerializeField] private IkWeightCrossFade ikWeightCrossFade = null;
         
         [SerializeField] private StatefulXinputGamePad gamePad = null;
 
@@ -24,6 +26,7 @@ namespace Baku.VMagicMirror
                 {
                     case MessageCommandNames.EnableHidArmMotion:
                         handIkIntegrator.EnableHidArmMotion = message.ToBoolean();
+                        ikWeightCrossFade.ForceStopHandIk = !message.ToBoolean();
                         break;
                     case MessageCommandNames.LengthFromWristToPalm:
                         SetLengthFromWristToPalm(message.ParseAsCentimeter());
@@ -60,8 +63,6 @@ namespace Baku.VMagicMirror
                         break;
                     case MessageCommandNames.GamepadLeanReverseVertical:
                         gamePadBasedBodyLean.ReverseGamepadStickLeanVertical = message.ToBoolean();
-                        break;
-                    default:
                         break;
                 }
 

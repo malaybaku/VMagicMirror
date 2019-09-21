@@ -30,7 +30,6 @@ namespace Baku.VMagicMirror
         public PresentationHandIKGenerator Presentation => presentation;
 
         [SerializeField] private FingerController fingerController = null;
-        public FingerController FingerController => fingerController;
 
         [SerializeField] private ParticleStore particleStore = null;
 
@@ -83,8 +82,11 @@ namespace Baku.VMagicMirror
             {
                 SetRightHandIk(HandTargetType.Keyboard);
             }
-            
-            FingerController.StartPressKeyMotion(keyName);
+
+            if (EnableHidArmMotion)
+            {
+                fingerController.StartPressKeyMotion(keyName);
+            }
 
             if (hand != ReactedHand.None && EnableHidArmMotion)
             {
@@ -101,7 +103,7 @@ namespace Baku.VMagicMirror
 
         public void ClickMouse(string button)
         {
-            if (!EnablePresentationMode)
+            if (!EnablePresentationMode && EnableHidArmMotion)
             {
                 fingerController.StartClickMotion(button);
                 SetRightHandIk(HandTargetType.Mouse);   
@@ -271,7 +273,7 @@ namespace Baku.VMagicMirror
             _currentRightHand = ik;
             _rightHandStateBlendCount = 0f;
 
-            FingerController.RightHandPresentationMode = (targetType == HandTargetType.Presentation);
+            fingerController.RightHandPresentationMode = (targetType == HandTargetType.Presentation);
         }
 
         /// <summary>

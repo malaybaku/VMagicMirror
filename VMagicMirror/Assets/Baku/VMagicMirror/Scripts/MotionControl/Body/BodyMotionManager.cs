@@ -7,7 +7,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class BodyMotionManager : MonoBehaviour
     {
-        [SerializeField] private FaceTracker faceTracker = null;
         [SerializeField] private Transform bodyIk = null;
 
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;

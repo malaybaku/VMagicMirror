@@ -15,8 +15,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private FaceTracker faceTracker = null;
         [SerializeField] private WordToMotionManager wordToMotion = null;
 
-        [SerializeField] private float eyeBrowDiffSize = 0.05f;
-
         //ちょっとデフォルトで眉を上げとこう的な値。目の全開きは珍しいという仮説による。
         [SerializeField] private float defaultOffset = 0.2f;
 

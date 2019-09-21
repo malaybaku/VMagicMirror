@@ -319,7 +319,7 @@ MonoBehaviour:
   faceTracker: {fileID: 1335587171}
   speedLerpFactor: 18
   speedDumpFactor: 0.86
-  timeScaleFactor: 0.3
+  timeScaleFactor: 0.2
 --- !u!1 &295217316
 GameObject:
   m_ObjectHideFlags: 0

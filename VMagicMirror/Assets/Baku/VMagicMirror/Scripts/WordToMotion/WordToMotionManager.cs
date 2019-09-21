@@ -41,6 +41,12 @@ namespace Baku.VMagicMirror
 
         private LateMotionTransfer _motionTransfer = null;
 
+        /// <summary>
+        /// モーション実行後、単にIKを切るのではなくデフォルト(=立ち)状態に戻すべきかどうか判断するフラグを指定します。
+        /// note: これは実際には、タイピング動作が無効化されているときに使いたい
+        /// </summary>
+        public bool ShouldSetDefaultClipAfterMotion { get; set; } = false;
+
         /// <summary>キー押下イベントをちゃんと読み込むか否か</summary>
         public bool EnableReadKey { get; set; } = true;
 
@@ -103,6 +109,7 @@ namespace Baku.VMagicMirror
             _simpleAnimation = info.vrmRoot.gameObject.AddComponent<SimpleAnimation>();
             _simpleAnimation.playAutomatically = false;
             _simpleAnimation.AddState(defaultAnimation, "Default");
+            _simpleAnimation.Play("Default");
 
             _blendShape.Initialize(info.blendShape);
             _motionTransfer.Target = info.vrmRoot.GetComponent<HumanPoseTransfer>();
@@ -215,6 +222,11 @@ namespace Baku.VMagicMirror
                     //フェードさせ終わる前に完了扱いにする: やや荒っぽいが、高精度に使うフラグではないのでOK
                     IsPlayingMotion = false;
                     _ikWeightCrossFade.FadeInArmIkWeights(ikFadeDuration);
+                    if (ShouldSetDefaultClipAfterMotion)
+                    {
+                        Debug.Log("End animation, return to default");
+                       _simpleAnimation.CrossFade("Default", ikFadeDuration);
+                    }
                 }
             }
 
@@ -300,7 +312,15 @@ namespace Baku.VMagicMirror
             }
 
             IsPlayingMotion = true;
-            _simpleAnimation.Play(clipName);
+
+            if (ShouldSetDefaultClipAfterMotion)
+            {
+                _simpleAnimation.CrossFade(clipName, ikFadeDuration);
+            }
+            else
+            {
+                _simpleAnimation.Play(clipName);
+            }
             _currentBuiltInMotionName = clipName;
 
             //いったんIKからアニメーションにブレンディングし、後で元に戻す

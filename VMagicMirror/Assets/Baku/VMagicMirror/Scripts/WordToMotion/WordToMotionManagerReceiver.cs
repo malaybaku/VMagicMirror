@@ -36,6 +36,10 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.SendWordToMotionPreviewInfo:
                         ReceiveWordToMotionPreviewInfo(message.Content);
                         break;
+                    case MessageCommandNames.EnableHidArmMotion:
+                        //腕アニメーションが無効なとき、アニメーションの終了処理をちょっと切り替える
+                        manager.ShouldSetDefaultClipAfterMotion = !message.ToBoolean();
+                        break;
                     default:
                         break;
                 }

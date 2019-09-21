@@ -23,8 +23,8 @@ namespace Baku.VMagicMirror
 
             vrmLookAtBoneApplier.HorizontalInner.CurveYRangeDegree = 15;
             vrmLookAtBoneApplier.HorizontalOuter.CurveYRangeDegree = 15;
-            vrmLookAtBoneApplier.VerticalUp.CurveYRangeDegree = 10;
-            vrmLookAtBoneApplier.VerticalDown.CurveYRangeDegree = 20;
+            vrmLookAtBoneApplier.VerticalDown.CurveYRangeDegree = 10;
+            vrmLookAtBoneApplier.VerticalUp.CurveYRangeDegree = 20;
             
             AddLookAtIK(go, setting.headTarget, animator, bipedReferences.root);
             AddFingerRigToRightIndex(animator, setting);

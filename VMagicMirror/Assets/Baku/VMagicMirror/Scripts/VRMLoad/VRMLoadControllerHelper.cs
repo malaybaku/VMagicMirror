@@ -20,6 +20,7 @@ namespace Baku.VMagicMirror
             vrmLookAt.Target = setting.headTarget;
 
             var vrmLookAtBoneApplier = go.GetComponent<VRMLookAtBoneApplyer>();
+
             foreach(var curveMapper in new[]
             {
                 vrmLookAtBoneApplier.HorizontalInner,

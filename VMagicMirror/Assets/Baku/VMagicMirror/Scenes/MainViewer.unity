@@ -317,7 +317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faceTracker: {fileID: 1335587171}
-  speedLerpFactor: 0.3
+  speedLerpFactor: 18
   speedDumpFactor: 0.86
   timeScaleFactor: 0.3
 --- !u!1 &295217316
@@ -365,7 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 490c1efb2102ed046b6bf4aa41187f4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blendShapeAssign: {fileID: 295217319}
+  faceControlManager: {fileID: 1130871118}
   faceTracker: {fileID: 1335587171}
   wordToMotion: {fileID: 1963776212}
   eyeBrowDiffSize: 0.05
@@ -388,6 +388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handler: {fileID: 1930233619}
   sender: {fileID: 161296355}
+  faceControlManager: {fileID: 1130871118}
 --- !u!114 &295217320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -589,7 +590,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handler: {fileID: 1930233619}
   sender: {fileID: 161296355}
-  blendShapeAssignController: {fileID: 295217319}
+  blendShapeAssignReceiver: {fileID: 295217319}
   cam: {fileID: 1629460662}
 --- !u!4 &478567141
 Transform:
@@ -1282,7 +1283,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faceTracker: {fileID: 1335587171}
   speedFactor: 12
-  blinkUpdateInterval: 0.3
+  blinkUpdateInterval: 0
 --- !u!114 &1130871118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1355,6 +1356,7 @@ GameObject:
   - component: {fileID: 1169325488}
   - component: {fileID: 1169325489}
   - component: {fileID: 1169325487}
+  - component: {fileID: 1169325490}
   m_Layer: 0
   m_Name: Keyboard
   m_TagString: Untagged
@@ -1459,6 +1461,23 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &1169325490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169325485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c43672cf46e1954cb280461a69ea74f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handler: {fileID: 1930233619}
+  keyboard: {fileID: 1169325487}
+  touchpad: {fileID: 2059529786}
+  gamepad: {fileID: 1798368043}
+  particleStore: {fileID: 1268007393}
 --- !u!1 &1268007391
 GameObject:
   m_ObjectHideFlags: 0

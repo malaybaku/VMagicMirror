@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror
         private GrpcSender sender;
 
         [SerializeField]
-        private BlendShapeAssignController blendShapeAssignController;
+        private BlendShapeAssignReceiver blendShapeAssignReceiver;
 
         [SerializeField]
         private Transform cam;
@@ -196,7 +196,7 @@ namespace Baku.VMagicMirror
 
         private void SetEyebrowParameters(AutoAdjustParameters parameters)
         {
-            var blendShapeNames = blendShapeAssignController.TryGetBlendShapeNames();
+            var blendShapeNames = blendShapeAssignReceiver.TryGetBlendShapeNames();
             var adjuster = new EyebrowBlendShapeAdjuster(blendShapeNames);
             var settings = adjuster.CreatePreferredSettings();
             parameters.EyebrowIsValidPreset = settings.IsValidPreset;

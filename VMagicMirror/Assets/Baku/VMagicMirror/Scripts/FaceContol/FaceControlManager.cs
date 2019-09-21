@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using VRM;
 
 namespace Baku.VMagicMirror
@@ -16,9 +17,13 @@ namespace Baku.VMagicMirror
         [SerializeField] private AnimMorphEasedTarget animMorphEasedTarget = null;
         [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
+//        [SerializeField] private WordToMotionManager wortToMotion = null;
 
-//        [SerializeField] private WordToMotionController wortToMotion = null;
-        
+        /// <summary>
+        /// VRMロード時の初期化が済んだら発火
+        /// </summary>
+        public event Action VrmInitialized;
+
         public VRMBlendShapeStore BlendShapeStore { get; } = new VRMBlendShapeStore();
         public EyebrowBlendShapeSet EyebrowBlendShape { get; } = new EyebrowBlendShapeSet();
 
@@ -48,6 +53,8 @@ namespace Baku.VMagicMirror
             
             BlendShapeStore.OnVrmLoaded(info);
             EyebrowBlendShape.RefreshTarget(BlendShapeStore);
+
+            VrmInitialized?.Invoke();
         }
 
         public void OnVrmDisposing()

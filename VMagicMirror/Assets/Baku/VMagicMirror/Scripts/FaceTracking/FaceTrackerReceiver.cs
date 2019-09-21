@@ -35,9 +35,6 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.SetCalibrateFaceData:
                         _faceTracker.SetCalibrateData(message.Content);
                         break;
-                    case MessageCommandNames.FaceDefaultFun:
-                        Debug.LogWarning($"{nameof(MessageCommandNames.FaceDefaultFun)}のハンドラがまだないんじゃないかな？？");
-                        break;
                 }
             });
 

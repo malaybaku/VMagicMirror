@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
     {
         [SerializeField] private FaceTracker faceTracker = null;
         
-        [SerializeField] private float speedLerpFactor = 0.2f;
+        [SerializeField] private float speedLerpFactor = 12f;
 
         [SerializeField]
         [Range(0.1f, 1.0f)]
@@ -69,7 +69,7 @@ namespace Baku.VMagicMirror
             var speed = Vector3.Lerp(
                 _prevRotationSpeedEuler,
                 idealSpeedEuler,
-                speedLerpFactor
+                speedLerpFactor * Time.deltaTime
                 );
 
             //チャタリング防止

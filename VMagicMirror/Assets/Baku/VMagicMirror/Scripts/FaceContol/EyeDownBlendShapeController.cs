@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror
         private static readonly BlendShapeKey BlinkLKey = new BlendShapeKey(BlendShapePreset.Blink_L);
         private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
 
-        [SerializeField] private BlendShapeAssignController blendShapeAssign = null;
+        [SerializeField] private FaceControlManager faceControlManager = null;
         [SerializeField] private FaceTracker faceTracker = null;
         [SerializeField] private WordToMotionManager wordToMotion = null;
 
@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private float speedLerpFactor = 0.2f;
         [SerializeField] [Range(0.05f, 1.0f)] private float timeScaleFactor = 0.3f;
 
-        private EyebrowBlendShapeSet EyebrowBlendShape => blendShapeAssign.EyebrowBlendShape;
+        private EyebrowBlendShapeSet EyebrowBlendShape => faceControlManager.EyebrowBlendShape;
 
         private VRMBlendShapeProxy _blendShapeProxy = null;
         private Transform _rightEyeBone = null;

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Baku.VMagicMirror
 {
-    public class VRMPreviewUISupport : MonoBehaviour
+    public class VrmPreviewUISupport : MonoBehaviour
     {
         [SerializeField]
         private RawImage thumbnailImage = null;

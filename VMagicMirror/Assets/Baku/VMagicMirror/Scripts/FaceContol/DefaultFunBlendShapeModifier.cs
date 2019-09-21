@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using VRM;
+﻿using VRM;
 
 namespace Baku.VMagicMirror
 {

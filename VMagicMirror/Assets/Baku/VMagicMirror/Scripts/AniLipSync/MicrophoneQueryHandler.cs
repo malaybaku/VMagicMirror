@@ -20,17 +20,15 @@ namespace Baku.VMagicMirror
             handler.QueryRequested -= OnQueryRequested;
         }
 
-        private void OnQueryRequested(object sender, ReceivedMessageHandler.QueryEventArgs e)
+        private void OnQueryRequested(ReceivedQuery query)
         {
-            switch (e.Query.Command)
+            switch (query.Command)
             {
                 case MessageQueryNames.CurrentMicrophoneDeviceName:
-                    e.Query.Result = lipSyncContext.DeviceName;
+                    query.Result = lipSyncContext.DeviceName;
                     break;
                 case MessageQueryNames.MicrophoneDeviceNames:
-                    e.Query.Result = string.Join("\t", Microphone.devices);
-                    break;
-                default:
+                    query.Result = string.Join("\t", Microphone.devices);
                     break;
             }
         }

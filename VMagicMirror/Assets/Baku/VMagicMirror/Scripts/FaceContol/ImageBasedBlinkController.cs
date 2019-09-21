@@ -1,85 +1,62 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UniRx;
 using VRM;
 
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// <see cref="FaceDetector"/>の入力からまばたき値を出力するやつ
+    /// <see cref="FaceTracker"/>の入力からまばたき値を出力するやつ
     /// </summary>
     public class ImageBasedBlinkController : MonoBehaviour
     {
-        private BlendShapeKey BlinkLKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_L);
-        private BlendShapeKey BlinkRKey { get; } = new BlendShapeKey(BlendShapePreset.Blink_R);
-
-        private const float EyeBlendShapeCloseThreshold = 0.7f;
-
         private const float EyeCloseHeight = 0.02f;
 
-        [SerializeField]
-        private FaceDetector faceDetector = null;
+        private static readonly BlendShapeKey BlinkLKey = new BlendShapeKey(BlendShapePreset.Blink_L);
+        private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
 
+        [SerializeField] private FaceTracker faceTracker;
+        
+        [Tooltip("ブレンドシェイプを変化させていく速度ファクター")]
         [SerializeField]
-        [Tooltip("指定した値だけ目の開閉が変化しないうちは目の開閉度を変えない")]
-        private float blinkMoveThreshold = 0.2f;
-
-        [SerializeField]
-        [Tooltip("この値よりBlink値が小さい場合は目が開き切ったのと同様に扱う")]
-        private float blinkForceMinThreshold = 0.1f;
-
-        [SerializeField]
-        [Tooltip("この値よりBlink値が大きい場合は目が閉じ切ったのと同様に扱う")]
-        private float blinkForceMaxThreshold = 0.9f;
-
+        private float speedFactor = 12f;
+        
         public float blinkUpdateInterval = 0.3f;
         private float _count = 0;
 
-        public float speedFactor = 0.2f;
 
-        private VRMBlendShapeProxy _blendShapeProxy = null;
-
-        private float _prevLeftBlink = 0f;
-        private float _prevRightBlink = 0f;
-
-        private float _leftBlinkTarget = 0f;
-        private float _rightBlinkTarget = 0f;
-
+        //顔トラッキングで得たとにかく最新の値
         private float _latestLeftBlinkInput = 0f;
         private float _latestRightBlinkInput = 0f;
 
-        public void OnVrmLoaded(VrmLoadedInfo info)
+        //一定間隔で_latestな値をコピーしてきた、当面ターゲットとすべきまばたきブレンドシェイプの値
+        private float _leftBlinkTarget = 0f;
+        private float _rightBlinkTarget = 0f;
+        
+        //スムージングとかやった状態のまばたきブレンドシェイプの値
+        private float _currentLeftBlink = 0f;
+        private float _currentRightBlink = 0f;
+
+        public void Apply(VRMBlendShapeProxy proxy)
         {
-            _blendShapeProxy = info.blendShape;
+            proxy.AccumulateValue(BlinkLKey, _currentLeftBlink);
+            proxy.AccumulateValue(BlinkRKey, _currentRightBlink);
         }
 
-        public void OnVrmDisposing()
-        {
-            _blendShapeProxy = null;
-        }
-        
         private void Start()
         {
-            ShowAllCameraInfo();
-
-            faceDetector.FaceParts
+            faceTracker.FaceParts
                 .LeftEye
                 .EyeOpenValue
-                .Subscribe(v => OnLeftEyeOpenValueChanged(v));
+                .Subscribe(OnLeftEyeOpenValueChanged);
 
-            faceDetector.FaceParts
+            faceTracker.FaceParts
                 .RightEye
                 .EyeOpenValue
-                .Subscribe(v => OnRightEyeOpenValueChanged(v));
+                .Subscribe(OnRightEyeOpenValueChanged);
         }
 
         private void Update()
         {
-            if (_blendShapeProxy == null || faceDetector.AutoBlinkDuringFaceTracking)
-            {
-                return;
-            }
-
             _count -= Time.deltaTime;
             if (_count < 0)
             {
@@ -88,58 +65,35 @@ namespace Baku.VMagicMirror
                 _count = blinkUpdateInterval;                
             }
             
-            float left = Mathf.Lerp(_prevLeftBlink, _leftBlinkTarget, speedFactor);
-
-            _blendShapeProxy.ImmediatelySetValue(
-                BlinkLKey, 
-                left > EyeBlendShapeCloseThreshold ? 1.0f : left);
-            _prevLeftBlink = left;
-
-            float right = Mathf.Lerp(_prevRightBlink, _rightBlinkTarget, speedFactor);
-            _blendShapeProxy.ImmediatelySetValue(
-                BlinkRKey, 
-                right > EyeBlendShapeCloseThreshold ? 1.0f : right
-                );
-            _prevRightBlink = right;
+            _currentLeftBlink = Mathf.Lerp(_currentLeftBlink, _leftBlinkTarget, speedFactor * Time.deltaTime);
+            _currentRightBlink = Mathf.Lerp(_currentRightBlink, _rightBlinkTarget, speedFactor * Time.deltaTime);
         }
 
-        private void ShowAllCameraInfo()
+        //FaceDetector側では目の開き具合を出力しているのでブレンドシェイプ的には反転が必要なことに注意
+        private void OnLeftEyeOpenValueChanged(float value) 
+            => _latestLeftBlinkInput = GetEyeOpenValue(value);
+
+        private void OnRightEyeOpenValueChanged(float value) 
+            => _latestRightBlinkInput = GetEyeOpenValue(value);
+
+        private float GetEyeOpenValue(float value)
         {
-            foreach (var device in WebCamTexture.devices)
+            float clamped = Mathf.Clamp(value, EyeCloseHeight, faceTracker.CalibrationData.eyeOpenHeight);
+            if (value > faceTracker.CalibrationData.eyeOpenHeight)
             {
-                LogOutput.Instance.Write($"Webcam Device Name:{device.name}");
-            }
-        }
-
-        //FaceDetector側では目の開き具合を出力しているので反転
-        private void OnLeftEyeOpenValueChanged(float value)
-        {
-            SetEyeOpenValue(ref _latestLeftBlinkInput, value);
-        }
-
-        private void OnRightEyeOpenValueChanged(float value)
-        {
-            SetEyeOpenValue(ref _latestRightBlinkInput, value);
-        }
-
-        private void SetEyeOpenValue(ref float target, float value)
-        {
-            float clamped = Mathf.Clamp(value, EyeCloseHeight, faceDetector.CalibrationData.eyeOpenHeight);
-            if (value > faceDetector.CalibrationData.eyeOpenHeight)
-            {
-                target = 0;
+                return 0;
             }
             else
             {
-                float range = faceDetector.CalibrationData.eyeOpenHeight - EyeCloseHeight;
+                float range = faceTracker.CalibrationData.eyeOpenHeight - EyeCloseHeight;
                 //細目すぎてrangeが負になるケースも想定してる: このときはまばたき自体無効にしておく
                 if (range < Mathf.Epsilon)
                 {
-                    target = 0;
+                    return 0;
                 }
                 else
                 {
-                    target = 1 - (clamped - EyeCloseHeight) / range;
+                    return 1 - (clamped - EyeCloseHeight) / range;
                 }
             }
         }

@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror
 {
     public static class VRMLoadControllerHelper
     {
-        public static void SetupVrm(GameObject go, VRMLoadController.VrmLoadSetting setting, FaceDetector faceDetector)
+        public static void SetupVrm(GameObject go, VRMLoadController.VrmLoadSetting setting)
         {
             var animator = go.GetComponent<Animator>();
             animator.applyRootMotion = false;
@@ -32,13 +32,6 @@ namespace Baku.VMagicMirror
             }
 
             AddLookAtIK(go, setting.headTarget, animator, bipedReferences.root);
-
-            //TODO: ここは消す。faceDetectorは顔検出だけやるように書きかえなければならない
-            faceDetector.SetNonCameraBlinkComponent(go.AddComponent<VRMBlink>());
-
-            var bodyPositionAdjust = go.AddComponent<FaceBasedBodyIKAdjuster>();
-            bodyPositionAdjust.Initialize(faceDetector, animator, ik);
-
             AddFingerRigToRightIndex(animator, setting);
         }
 
@@ -49,8 +42,8 @@ namespace Baku.VMagicMirror
 
             //IK目標をロードしたVRMのspineに合わせることで、BodyIKがいきなり動いてしまうのを防ぐ。
             //bodyTargetは実際には多階層なので当て方に注意
-            setting.bodyRootTarget.position = reference.spine[0].position;
-            fbbik.solver.bodyEffector.target = setting.bodyEndTarget;
+            setting.bodyTarget.position = reference.spine[0].position;
+            fbbik.solver.bodyEffector.target = setting.bodyTarget;
             fbbik.solver.bodyEffector.positionWeight = 0.5f;
             //Editorで "FBBIK > Body > Mapping > Maintain Head Rot"を選んだ時の値を↓で入れてる(デフォルト0、ある程度大きくするとLook Atの見栄えがよい)
             fbbik.solver.boneMappings[0].maintainRotationWeight = 0.7f;
@@ -62,11 +55,10 @@ namespace Baku.VMagicMirror
             fbbik.solver.rightHandEffector.target = setting.rightHandTarget;
             fbbik.solver.rightHandEffector.positionWeight = 1.0f;
             fbbik.solver.rightHandEffector.rotationWeight = 1.0f;
-            //small pull: プレゼンモード中にキャラが吹っ飛んでいかないための対策です
-            fbbik.solver.rightArmChain.pull = 0.1f;
 
-            //AssignIkは最後に呼び出す必要がある: 設定したウェイトを使うため
-            setting.ikWeightCrossFade.AssignIk(fbbik);
+            //small pull: プレゼンモード中にキャラが吹っ飛んでいかないための対策
+            fbbik.solver.rightArmChain.pull = 0.1f;
+            
             return fbbik;
         }
 
@@ -145,7 +137,5 @@ namespace Baku.VMagicMirror
             fingerRig.fingers[0].weight = 1.0f;
             fingerRig.fingers[0].rotationWeight = 0;
         }
-
-
     }
 }

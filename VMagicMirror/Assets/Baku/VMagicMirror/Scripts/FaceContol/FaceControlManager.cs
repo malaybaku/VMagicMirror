@@ -1,5 +1,4 @@
-﻿using UniGLTF;
-using UnityEngine;
+﻿using UnityEngine;
 using VRM;
 
 namespace Baku.VMagicMirror
@@ -9,21 +8,34 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class FaceControlManager : MonoBehaviour
     {
-        [SerializeField] private FaceDetector faceDetector = null;
+        [SerializeField] private FaceTracker faceTracker = null;
         
         //ブレンドシェイプ生成するやつ各位
         //TODO: MonoBehaviour継承を外すと改善という事になります。大体は。
         [SerializeField] private EyeDownBlendShapeController eyeDownController = null;
         [SerializeField] private AnimMorphEasedTarget animMorphEasedTarget = null;
-        [SerializeField] private ImageBasedBlinkController blinkController = null;
+        [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
-        //TODO: この辺にWord To Motionベースの何かが入るんじゃないかな？
 
+//        [SerializeField] private WordToMotionController wortToMotion = null;
+        
         public VRMBlendShapeStore BlendShapeStore { get; } = new VRMBlendShapeStore();
         public EyebrowBlendShapeSet EyebrowBlendShape { get; } = new EyebrowBlendShapeSet();
 
-        private VRMBlendShapeProxy _proxy = null;
+        private VRMBlendShapeProxy _proxy;
 
+        private bool _preferAutoBlink = false;
+
+        /// <summary> 顔トラッキング中であっても自動まばたきを優先するかどうか </summary>
+        public bool PreferAutoBlink
+        {
+            get => _preferAutoBlink;
+            set
+            {
+                _preferAutoBlink = value;
+                eyeDownController.PreferAutoBlink = value;
+            }
+        } 
         
         public DefaultFunBlendShapeModifier DefaultBlendShape { get; } 
             = new DefaultFunBlendShapeModifier();
@@ -33,7 +45,6 @@ namespace Baku.VMagicMirror
             _proxy = info.blendShape;
             eyeDownController.OnVrmLoaded(info);
             animMorphEasedTarget.OnVrmLoaded(info);
-            blinkController.OnVrmLoaded(info);
             
             BlendShapeStore.OnVrmLoaded(info);
             EyebrowBlendShape.RefreshTarget(BlendShapeStore);
@@ -44,13 +55,13 @@ namespace Baku.VMagicMirror
             _proxy = null;
             eyeDownController.OnVrmDisposing();
             animMorphEasedTarget.OnVrmDisposing();
-            blinkController.OnVrmDisposing();
             
             BlendShapeStore.OnVrmDisposing();
             EyebrowBlendShape.Reset();
         }
 
         private bool _overrideByMotion = false;
+        
         public bool OverrideByMotion
         {
             get => _overrideByMotion;
@@ -69,13 +80,33 @@ namespace Baku.VMagicMirror
                     //なんかリセット系のやつあれば他にも呼ぶ
                     
                 }
+                else
+                {
+                    //DefaultBlendShapeの適用とかしないとダメ?毎フレーム評価するなら不要だが
+                }
             }
         }
         
         private void Update()
         {
-        
+            if (_proxy == null)
+            {
+                return;
+            }
+
+            if (!OverrideByMotion)
+            {
+                DefaultBlendShape.Apply(_proxy);
+                
+                if (!PreferAutoBlink && faceTracker.FaceDetectedAtLeastOnce)
+                {
+                    imageBasedBlinkController.Apply(_proxy);
+                }
+                else
+                {
+                    autoBlink.Apply(_proxy);
+                }
+            }
         }
     }
-
 }

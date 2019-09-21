@@ -1,29 +1,23 @@
 ﻿using System.Linq;
 using UnityEngine;
 using UniRx;
-using System;
 
 namespace Baku.VMagicMirror
 {
-
-    [RequireComponent(typeof(FaceDetector))]
-    [RequireComponent(typeof(FaceBlendShapeController))]
-    public class FaceDetectionReceiver : MonoBehaviour
+    [RequireComponent(typeof(FaceTracker))]
+    public class FaceTrackerReceiver : MonoBehaviour
     {
         [SerializeField]
         private ReceivedMessageHandler handler;
 
-        private FaceDetector _faceDetector = null;
-        private FaceBlendShapeController _blendShapeController = null;
-
+        private FaceTracker _faceTracker;
 
         private bool _enableFaceTracking = true;
         private string _cameraDeviceName = "";
 
-        void Start()
+        private void Start()
         {
-            _faceDetector = GetComponent<FaceDetector>();
-            _blendShapeController = GetComponent<FaceBlendShapeController>();
+            _faceTracker = GetComponent<FaceTracker>();
 
             handler.Commands.Subscribe(message =>
             {
@@ -35,19 +29,14 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.EnableFaceTracking:
                         EnableFaceTracking(message.ToBoolean());
                         break;
-                    case MessageCommandNames.AutoBlinkDuringFaceTracking:
-                        SetAutoBlinkDuringFaceTracking(message.ToBoolean());
-                        break;
                     case MessageCommandNames.CalibrateFace:
-                        CalibrateFace();
+                        _faceTracker.StartCalibration();
                         break;
                     case MessageCommandNames.SetCalibrateFaceData:
-                        SetCalibrateFaceData(message.Content);
+                        _faceTracker.SetCalibrateData(message.Content);
                         break;
                     case MessageCommandNames.FaceDefaultFun:
-                        SetFaceDefaultFunValue(message.ParseAsPercentage());
-                        break;
-                    default:
+                        Debug.LogWarning($"{nameof(MessageCommandNames.FaceDefaultFun)}のハンドラがまだないんじゃないかな？？");
                         break;
                 }
             });
@@ -59,16 +48,6 @@ namespace Baku.VMagicMirror
                     query.Result = string.Join("\t", GetCameraDeviceNames());
                 }
             };
-        }
-
-        private void SetCalibrateFaceData(string content)
-        {
-            _faceDetector.SetCalibrateData(content);
-        }
-
-        private void CalibrateFace()
-        {
-            _faceDetector.StartCalibration();
         }
 
         private void EnableFaceTracking(bool enable)
@@ -87,21 +66,16 @@ namespace Baku.VMagicMirror
             _cameraDeviceName = content;
             UpdateFaceDetectorState();
         }
-
-        private void SetAutoBlinkDuringFaceTracking(bool enable)
-        {
-            _faceDetector.AutoBlinkDuringFaceTracking = enable;
-        }
-
+        
         private void UpdateFaceDetectorState()
         {
             if (_enableFaceTracking && !string.IsNullOrWhiteSpace(_cameraDeviceName))
             {
-                _faceDetector.ActivateCamera(_cameraDeviceName);
+                _faceTracker.ActivateCamera(_cameraDeviceName);
             }
             else
             {
-                _faceDetector.StopCamera();
+                _faceTracker.StopCamera();
             }
         }
 
@@ -109,12 +83,6 @@ namespace Baku.VMagicMirror
             => WebCamTexture.devices
             .Select(d => d.name)
             .ToArray();
-
-        private void SetFaceDefaultFunValue(float v)
-        {
-            _blendShapeController.FaceDefaultFunValue = v;
-        }
-
-
+        
     }
 }

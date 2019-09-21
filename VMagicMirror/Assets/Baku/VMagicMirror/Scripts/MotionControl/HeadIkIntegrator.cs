@@ -26,17 +26,16 @@ namespace Baku.VMagicMirror
         //TODO: ここに画像ベースでLateUpdate時に首曲げるやつを持ってきたほうがよさそう
 
         private LookAtStyles _lookAtStyle = LookAtStyles.MousePointer;
+        private Transform _head = null;
         
-        private Transform head = null;
-        
-        public void Initialize(Transform vrmRoot)
+        public void OnVrmLoaded(VrmLoadedInfo info)
         {
-            head = vrmRoot.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head);
+            _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
         }
 
-        public void Dispose()
+        public void OnVrmDisposing()
         {
-            head = null;
+            _head = null;
         }
         
         public void MoveMouse(int x, int y)
@@ -59,12 +58,17 @@ namespace Baku.VMagicMirror
                 LookAtStyles.MousePointer;
         }
 
+        private void Start()
+        {
+            _camBasedLookAt.Camera = cam;
+        }
+
         private void Update()
         {
             Vector3 pos = 
                 (_lookAtStyle == LookAtStyles.MousePointer) ? _mouseBasedLookAt.Position :
                 (_lookAtStyle == LookAtStyles.MainCamera) ? _camBasedLookAt.Position :
-                (head != null) ? head.position + head.forward * 1.0f : 
+                (_head != null) ? _head.position + _head.forward * 1.0f : 
                 new Vector3(1, 0, 1);
 
 
@@ -79,9 +83,9 @@ namespace Baku.VMagicMirror
         {
             public Transform Camera { get; set; }
 
-            public Vector3 Position => Camera?.position ?? Vector3.zero;
-
-            public Quaternion Rotation => Camera?.rotation ?? Quaternion.identity;
+            public Vector3 Position => Camera.position;
+                
+            public Quaternion Rotation => Camera.rotation;
 
             public IKTargets Target => IKTargets.HeadLookAt;
         }

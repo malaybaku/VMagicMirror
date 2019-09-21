@@ -3,11 +3,11 @@ using UniRx;
 
 namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(FaceDetector))]
     public class FaceAttitudeController : MonoBehaviour
     {
-        [SerializeField]
-        private float speedLerpFactor = 0.2f;
+        [SerializeField] private FaceTracker faceTracker = null;
+        
+        [SerializeField] private float speedLerpFactor = 0.2f;
 
         [SerializeField]
         [Range(0.1f, 1.0f)]
@@ -21,7 +21,6 @@ namespace Baku.VMagicMirror
         private const float HeadTotalRotationLimitDeg = 40.0f;
         private const float NoseBaseHeightDifToAngleDegFactor = 400f;
             
-        private FaceDetector _faceDetector;
         private Transform _vrmNeckTransform = null;
         private Transform _vrmHeadTransform = null;
 
@@ -36,26 +35,24 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            _faceDetector = GetComponent<FaceDetector>();
-            
             //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
-            _faceDetector.FaceParts.Outline.HeadRollRad.Subscribe(
+            faceTracker.FaceParts.Outline.HeadRollRad.Subscribe(
                 v => SetHeadRollDeg(-v * Mathf.Rad2Deg)
                 );
             
             //もとの値は角度ではなく[-1, 1]の無次元量であることに注意
-            _faceDetector.FaceParts.Outline.HeadYawRate.Subscribe(
+            faceTracker.FaceParts.Outline.HeadYawRate.Subscribe(
                 v => SetHeadYawDeg(v * HeadYawRateToDegFactor)
                 );
 
-            _faceDetector.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
+            faceTracker.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
                 v => SetHeadPitchDeg(NoseBaseHeightToNeckPitchDeg(v))
                 );
         }
 
         private void LateUpdate()
         {
-            if (_vrmHeadTransform == null || !_faceDetector.HasInitDone)
+            if (_vrmHeadTransform == null || !faceTracker.HasInitDone)
             {
                 _latestRotationEuler = Vector3.zero;
                 _prevRotationEuler = Vector3.zero;
@@ -102,23 +99,24 @@ namespace Baku.VMagicMirror
             _prevRotationSpeedEuler = speed;
         }
 
-        public void Initialize(Transform neckTransform, Transform headTransform)
+        public void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _vrmNeckTransform = neckTransform;
-            _vrmHeadTransform = headTransform;
+            var animator = info.animator;
+            _vrmNeckTransform = animator.GetBoneTransform(HumanBodyBones.Neck);
+            _vrmHeadTransform = animator.GetBoneTransform(HumanBodyBones.Head);
         }
 
-        public void DisposeHead()
+        public void OnVrmDisposing()
         {
             _vrmNeckTransform = null;
             _vrmHeadTransform = null;
         }
-
+        
         private float NoseBaseHeightToNeckPitchDeg(float noseBaseHeight)
         {
-            if (_faceDetector != null)
+            if (faceTracker != null)
             {
-                return -(noseBaseHeight - _faceDetector.CalibrationData.noseHeight) * NoseBaseHeightDifToAngleDegFactor;
+                return -(noseBaseHeight - faceTracker.CalibrationData.noseHeight) * NoseBaseHeightDifToAngleDegFactor;
             }
             else
             {

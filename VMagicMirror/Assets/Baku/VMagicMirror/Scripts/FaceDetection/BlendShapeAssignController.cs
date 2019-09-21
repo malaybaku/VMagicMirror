@@ -4,8 +4,6 @@ using UniRx;
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(BlendShapeStore))]
-    [RequireComponent(typeof(FaceDetector))]
-    [RequireComponent(typeof(FaceBlendShapeController))]
     public class BlendShapeAssignController : MonoBehaviour
     {
         [SerializeField]
@@ -14,11 +12,11 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private GrpcSender sender;
 
-        private BlendShapeStore _blendShapeStore = null;
+        private BlendShapeStore _blendShapeStore;
 
         public EyebrowBlendShapeSet EyebrowBlendShape { get; } = new EyebrowBlendShapeSet();
 
-        void Start()
+        private void Start()
         {
             _blendShapeStore = GetComponent<BlendShapeStore>();
             handler.Commands.Subscribe(message =>
@@ -51,21 +49,19 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.EyebrowDownScale:
                         EyebrowBlendShape.DownScale = message.ParseAsPercentage();
                         break;
-                    default:
-                        break;
                 }
             });
             handler.QueryRequested += OnQueryReceived;
         }
 
-        public void InitializeModel(Transform vrmRoot)
+        public void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _blendShapeStore.Initialize(vrmRoot);
+            _blendShapeStore.Initialize(info.vrmRoot);
             EyebrowBlendShape.RefreshTarget(_blendShapeStore);
-            //StartCoroutine(SendBlendShapeNamesDelay(0.5f, _blendShapeStore.GetBlendShapeNames()));
+            SendBlendShapeNames();
         }
 
-        public void DisposeModel()
+        public void OnVrmDisposing()
         {
             _blendShapeStore.Dispose();
             EyebrowBlendShape.Reset();
@@ -78,15 +74,11 @@ namespace Baku.VMagicMirror
                 string.Join("\t", TryGetBlendShapeNames())
                 ));
 
-        private void OnQueryReceived(object sender, ReceivedMessageHandler.QueryEventArgs e)
+        private void OnQueryReceived(ReceivedQuery query)
         {
-            switch(e.Query.Command)
+            if (query.Command == MessageQueryNames.GetBlendShapeNames)
             {
-                case MessageQueryNames.GetBlendShapeNames:
-                    e.Query.Result = string.Join("\t", _blendShapeStore.GetBlendShapeNames());
-                    break;
-                default:
-                    break;
+                query.Result = string.Join("\t", _blendShapeStore.GetBlendShapeNames());
             }
         }
 

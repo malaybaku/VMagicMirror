@@ -16,6 +16,14 @@ namespace Baku.VMagicMirror
         private float _fadeCount = 0f;
         private float _fadeDuration = 0f;
 
+        public void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            AssignIk(info.vrmRoot.GetComponent<FullBodyBipedIK>());
+        }
+
+        public void OnVrmDisposing() => _ik = null;
+
+
         public void AssignIk(FullBodyBipedIK ik)
         {
             _ik = ik;

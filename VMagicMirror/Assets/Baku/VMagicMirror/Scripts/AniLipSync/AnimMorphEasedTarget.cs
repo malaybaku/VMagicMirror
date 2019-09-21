@@ -28,7 +28,7 @@ namespace Baku.VMagicMirror
         //このフラグがtrueだと何も言ってないときの口の形になる。
         public bool ForceClosedMouth { get; set; }
         
-        private readonly Dictionary<BlendShapeKey, float> blendShapeWeights = new Dictionary<BlendShapeKey, float>
+        private readonly Dictionary<BlendShapeKey, float> _blendShapeWeights = new Dictionary<BlendShapeKey, float>
         {
             [new BlendShapeKey(BlendShapePreset.A)] = 0.0f,
             [new BlendShapeKey(BlendShapePreset.E)] = 0.0f,
@@ -37,7 +37,7 @@ namespace Baku.VMagicMirror
             [new BlendShapeKey(BlendShapePreset.U)] = 0.0f,
         };
 
-        private readonly BlendShapeKey[] keys = new[]
+        private readonly BlendShapeKey[] _keys = new[]
         {
             new BlendShapeKey(BlendShapePreset.A),
             new BlendShapeKey(BlendShapePreset.E),
@@ -46,9 +46,9 @@ namespace Baku.VMagicMirror
             new BlendShapeKey(BlendShapePreset.U),
         };
 
-        OVRLipSyncContextBase context;
-        OVRLipSync.Viseme _previousViseme = OVRLipSync.Viseme.sil;
-        float transitionTimer = 0.0f;
+        private OVRLipSyncContextBase _context;
+        private OVRLipSync.Viseme _previousViseme = OVRLipSync.Viseme.sil;
+        private float _transitionTimer = 0.0f;
 
         public void OnVrmLoaded(VrmLoadedInfo info)
         {
@@ -62,13 +62,13 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            context = GetComponent<OVRLipSyncContextBase>();
-            if (context == null)
+            _context = GetComponent<OVRLipSyncContextBase>();
+            if (_context == null)
             {
                 LogOutput.Instance.Write("同じGameObjectにOVRLipSyncContextBaseを継承したクラスが見つかりません。");
             }
 
-            context.Smoothing = smoothAmount;
+            _context.Smoothing = smoothAmount;
         }
 
         private void Update()
@@ -85,15 +85,15 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            if (context == null || 
-                !context.enabled || 
-                !(context.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame)
+            if (_context == null || 
+                !_context.enabled || 
+                !(_context.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame)
                 )
             {
                 return;
             }
 
-            transitionTimer += Time.deltaTime;
+            _transitionTimer += Time.deltaTime;
 
             // 最大の重みを持つ音素を探す
             int maxVisemeIndex = 0;
@@ -111,25 +111,25 @@ namespace Baku.VMagicMirror
             // 音素の重みが小さすぎる場合は口を閉じる
             if (maxVisemeWeight * 100.0f < weightThreshold)
             {
-                transitionTimer = 0.0f;
+                _transitionTimer = 0.0f;
             }
 
             // 音素の切り替わりでタイマーをリセットする
             if (_previousViseme != (OVRLipSync.Viseme)maxVisemeIndex)
             {
-                transitionTimer = 0.0f;
+                _transitionTimer = 0.0f;
                 _previousViseme = (OVRLipSync.Viseme)maxVisemeIndex;
             }
 
             int visemeIndex = maxVisemeIndex - (int)OVRLipSync.Viseme.aa;
             bool hasValidMaxViseme = (visemeIndex >= 0);
 
-            for(int i = 0; i < keys.Length; i++)
+            for(int i = 0; i < _keys.Length; i++)
             {
-                var key = keys[i];
+                var key = _keys[i];
 
-                blendShapeWeights[key] = Mathf.Lerp(
-                    blendShapeWeights[key],
+                _blendShapeWeights[key] = Mathf.Lerp(
+                    _blendShapeWeights[key],
                     0.0f,
                     Time.deltaTime * cancelSpeedFactor
                     );
@@ -138,23 +138,23 @@ namespace Baku.VMagicMirror
                 //「あぁあぁぁあ」みたいな声の出し方した場合にEvaluateだけ使うとヘンテコになる可能性が高い為。
                 if (hasValidMaxViseme && i == visemeIndex)
                 {
-                    blendShapeWeights[key] = Mathf.Max(
-                        blendShapeWeights[key],
-                        transitionCurves.Evaluate(transitionTimer)
+                    _blendShapeWeights[key] = Mathf.Max(
+                        _blendShapeWeights[key],
+                        transitionCurves.Evaluate(_transitionTimer)
                         );
                 }
             }
 
-            blendShapeProxy.SetValues(blendShapeWeights);
+            blendShapeProxy.SetValues(_blendShapeWeights);
         }
 
         private void UpdateToClosedMouth()
         {
-            foreach(var key in keys)
+            foreach(var key in _keys)
             {
-                blendShapeWeights[key] = 0.0f;
+                _blendShapeWeights[key] = 0.0f;
             }
-            blendShapeProxy.SetValues(blendShapeWeights);
+            blendShapeProxy.SetValues(_blendShapeWeights);
         }
     }
 }

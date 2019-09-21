@@ -6,10 +6,10 @@ namespace Baku.VMagicMirror
     public class LipSyncController : MonoBehaviour
     {
         [SerializeField]
-        private ReceivedMessageHandler handler = null;
+        private ReceivedMessageHandler handler;
 
-        private DeviceSelectableLipSyncContext _lipSyncContext = null;
-        private AnimMorphEasedTarget _animMorphTarget = null;
+        private DeviceSelectableLipSyncContext _lipSyncContext;
+        private AnimMorphEasedTarget _animMorphTarget;
 
         private string _receivedDeviceName = "";
         private bool _isLipSyncActive = true;
@@ -28,8 +28,6 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.SetMicrophoneDeviceName:
                         SetMicrophoneDeviceName(message.Content);
                         break;
-                    default:
-                        break;
                 }
             });
             handler.QueryRequested += OnQueryRequested;
@@ -40,17 +38,15 @@ namespace Baku.VMagicMirror
             handler.QueryRequested -= OnQueryRequested;
         }
 
-        private void OnQueryRequested(object sender, ReceivedMessageHandler.QueryEventArgs e)
+        private void OnQueryRequested(ReceivedQuery query)
         {
-            switch (e.Query.Command)
+            switch (query.Command)
             {
                 case MessageQueryNames.CurrentMicrophoneDeviceName:
-                    e.Query.Result = _lipSyncContext.DeviceName;
+                    query.Result = _lipSyncContext.DeviceName;
                     break;
                 case MessageQueryNames.MicrophoneDeviceNames:
-                    e.Query.Result = string.Join("\t", Microphone.devices);
-                    break;
-                default:
+                    query.Result = string.Join("\t", Microphone.devices);
                     break;
             }
         }
@@ -58,7 +54,6 @@ namespace Baku.VMagicMirror
         private void SetLipSyncEnable(bool isEnabled)
         {
             _animMorphTarget.ForceClosedMouth = !isEnabled;
-            //_animMorphTarget.enabled = isEnabled;
             _isLipSyncActive = isEnabled;
             if (isEnabled)
             {

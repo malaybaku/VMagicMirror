@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using UnityEngine;
 using UniRx;
-using System.Collections.Concurrent;
 
 namespace Baku.VMagicMirror
 {
+    /// <summary> メッセージを受け取ってUIスレッドで再配布する </summary>
     public class ReceivedMessageHandler : MonoBehaviour
     {
         private readonly Subject<ReceivedCommand> _commandsSubject = new Subject<ReceivedCommand>();
         public IObservable<ReceivedCommand> Commands => _commandsSubject;
 
         //NOTE: 初期版では、購読側はクエリを即時処理するよう義務付ける。分かりやすいので。
-        public event EventHandler<QueryEventArgs> QueryRequested;
+        public event Action<ReceivedQuery> QueryRequested;
 
         private readonly ConcurrentQueue<ReceivedCommand> _receivedCommands = new ConcurrentQueue<ReceivedCommand>();
         private readonly ConcurrentQueue<QueryQueueItem> _receivedQueries = new ConcurrentQueue<QueryQueueItem>();
@@ -28,13 +28,6 @@ namespace Baku.VMagicMirror
             {
                 ProcessQuery(query);
             }
-        }
-
-        public void ReceiveCommand(string message)
-        {
-            string command = message.Split(':')[0];
-            string content = message.Substring(command.Length + 1);
-            ReceiveCommand(new ReceivedCommand(command, content));
         }
 
         public void ReceiveCommand(ReceivedCommand command)
@@ -56,18 +49,9 @@ namespace Baku.VMagicMirror
 
         private void ProcessQuery(QueryQueueItem item)
         {
-            QueryRequested?.Invoke(this, new QueryEventArgs(item.Query));
+            QueryRequested?.Invoke(item.Query);
             item.ResultSubject.OnNext(item.Query.Result);
             item.ResultSubject.OnCompleted();
-        }
-
-        public class QueryEventArgs : EventArgs
-        {
-            public QueryEventArgs(ReceivedQuery receivedQuery)
-            {
-                Query = receivedQuery;
-            }
-            public ReceivedQuery Query { get; }
         }
 
         class QueryQueueItem

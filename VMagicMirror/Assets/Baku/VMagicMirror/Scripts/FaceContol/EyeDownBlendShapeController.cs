@@ -12,8 +12,8 @@ namespace Baku.VMagicMirror
         private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
 
         [SerializeField] private BlendShapeAssignController blendShapeAssign = null;
-        [SerializeField] private FaceDetector faceDetector = null;
-        [SerializeField] private WordToMotionController wordToMotion = null;
+        [SerializeField] private FaceTracker faceTracker = null;
+        [SerializeField] private WordToMotionManager wordToMotion = null;
 
         [SerializeField] private float eyeBrowDiffSize = 0.05f;
 
@@ -28,7 +28,6 @@ namespace Baku.VMagicMirror
         [SerializeField] [Range(0.05f, 1.0f)] private float timeScaleFactor = 0.3f;
 
         private EyebrowBlendShapeSet EyebrowBlendShape => blendShapeAssign.EyebrowBlendShape;
-
 
         private VRMBlendShapeProxy _blendShapeProxy = null;
         private Transform _rightEyeBone = null;
@@ -57,6 +56,11 @@ namespace Baku.VMagicMirror
 
         public bool IsInitialized { get; private set; } = false;
 
+        /// <summary>
+        /// 顔トラッキング時にも自動まばたきを優先するかどうか
+        /// </summary>
+        public bool PreferAutoBlink { get; set; } = false;
+
         public void OnVrmLoaded(VrmLoadedInfo info)
         {
             _blendShapeProxy = info.blendShape;
@@ -64,12 +68,12 @@ namespace Baku.VMagicMirror
             _leftEyeBone = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
 
             _rightEyeBrowHeight?.Dispose();
-            _rightEyeBrowHeight = faceDetector.FaceParts.RightEyebrow.Height.Subscribe(
+            _rightEyeBrowHeight = faceTracker.FaceParts.RightEyebrow.Height.Subscribe(
                 v => _rightEyeBrowValue = v
             );
 
             _leftEyeBrowHeight?.Dispose();
-            _leftEyeBrowHeight = faceDetector.FaceParts.LeftEyebrow.Height.Subscribe(
+            _leftEyeBrowHeight = faceTracker.FaceParts.LeftEyebrow.Height.Subscribe(
                 v => _leftEyeBrowValue = v
             );
 
@@ -110,6 +114,7 @@ namespace Baku.VMagicMirror
 
         private void AdjustEyeRotation()
         {
+            //NOTE: どっちかというとWordToMotion用に"Disable/Enable"系のAPI出す方がいいかも
             if (!_hasValidEyeSettings ||
                 wordToMotion.EnablePreview ||
                 wordToMotion.IsPlayingBlendShape)
@@ -148,12 +153,12 @@ namespace Baku.VMagicMirror
             }
 
             //NOTE: ここスケールファクタないと非常に小さい値しか入らないのでは？？？
-            float left = _leftEyeBrowValue - faceDetector.CalibrationData.eyeBrowPosition;
-            float right = _rightEyeBrowValue - faceDetector.CalibrationData.eyeBrowPosition;
+            float left = _leftEyeBrowValue - faceTracker.CalibrationData.eyeBrowPosition;
+            float right = _rightEyeBrowValue - faceTracker.CalibrationData.eyeBrowPosition;
             //顔トラッキングしない場合、つねに0が入るようにしとく
-            if (!faceDetector.HasInitDone ||
-                !faceDetector.FaceDetectedAtLeastOnce ||
-                faceDetector.AutoBlinkDuringFaceTracking)
+            if (!faceTracker.HasInitDone ||
+                !faceTracker.FaceDetectedAtLeastOnce ||
+                PreferAutoBlink)
             {
                 left = 0;
                 right = 0;
@@ -170,7 +175,7 @@ namespace Baku.VMagicMirror
             float speedRight = Mathf.Lerp(_prevRightEyeBrowSpeed, idealRight, speedLerpFactor);
             float weightRight = _prevRightEyeBrowWeight + Time.deltaTime * speedRight;
             weightRight = Mathf.Clamp(weightRight, -1, 1);
-            if (faceDetector.AutoBlinkDuringFaceTracking)
+            if (PreferAutoBlink)
             {
                 speedLeft = 0;
                 weightLeft = 0;

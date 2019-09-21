@@ -6,31 +6,28 @@ namespace Baku.VMagicMirror
 {
     //NOTE: 表示するキャンバスに貼り付ける前提のスクリプトであることに注意
     [RequireComponent(typeof(Canvas))]
-    public class VRMPreviewCanvas : MonoBehaviour
+    public class VrmPreviewCanvas : MonoBehaviour
     {
         // define VRMLoaderUI/Prefabs/LoadConfirmModal
-        [SerializeField]
-        GameObject m_modalWindow;
+        [SerializeField] private GameObject modalWindow;
 
-        [SerializeField]
-        VRMPreviewLanguage m_previewLanguage = null;
+        [SerializeField] private VrmPreviewLanguage previewLanguage;
 
-        Canvas m_canvas;
-
-        VRMPreviewUISupport uiSupport = null;
+        private Canvas _canvas;
+        private VrmPreviewUISupport _uiSupport;
 
         private string _otherPermissionUrl = "";
         private string _otherLicenseUrl = "";
 
         private void Start()
         {
-            m_canvas = GetComponent<Canvas>();
+            _canvas = GetComponent<Canvas>();
 
-            uiSupport = m_modalWindow.GetComponentInChildren<VRMPreviewUISupport>();
-            uiSupport.ButtonOpenOtherPermissionUrl
+            _uiSupport = modalWindow.GetComponentInChildren<VrmPreviewUISupport>();
+            _uiSupport.ButtonOpenOtherPermissionUrl
                 .onClick
                 .AddListener(() => Application.OpenURL(_otherPermissionUrl));
-            uiSupport.ButtonOpenOtherLicenseUrl
+            _uiSupport.ButtonOpenOtherLicenseUrl
                 .onClick
                 .AddListener(() => Application.OpenURL(_otherLicenseUrl));
         }
@@ -41,37 +38,37 @@ namespace Baku.VMagicMirror
 
             _otherPermissionUrl = meta.OtherPermissionUrl ?? "";
             _otherLicenseUrl = meta.OtherLicenseUrl ?? "";
-            uiSupport.ButtonOpenOtherPermissionUrl.interactable = !string.IsNullOrEmpty(_otherPermissionUrl);
-            uiSupport.ButtonOpenOtherLicenseUrl.interactable = !string.IsNullOrEmpty(_otherLicenseUrl);
+            _uiSupport.ButtonOpenOtherPermissionUrl.interactable = !string.IsNullOrEmpty(_otherPermissionUrl);
+            _uiSupport.ButtonOpenOtherLicenseUrl.interactable = !string.IsNullOrEmpty(_otherLicenseUrl);
 
             //サムネが無いVRMをロードするとき、前回のサムネが残っちゃうのを防ぐ
-            uiSupport.ResetThumbnail();
+            _uiSupport.ResetThumbnail();
 
-            m_modalWindow
+            modalWindow
                 .GetComponent<VRMPreviewLocale>()
                 .SetLocale(
-                    LanguageNameToLocaleName(m_previewLanguage.Language)
+                    LanguageNameToLocaleName(previewLanguage.Language)
                     );
             
-            m_modalWindow
+            modalWindow
                 .GetComponent<VRMPreviewUI>()
                 .setMeta(meta);
 
-            m_canvas.enabled = true;
+            _canvas.enabled = true;
         }
 
         public void Hide()
         {
-            m_canvas.enabled = false;
+            _canvas.enabled = false;
         }
 
-        private string LanguageNameToLocaleName(string languageName)
+        private static string LanguageNameToLocaleName(string languageName)
         {
             switch (languageName)
             {
                 case "Japanese":
                     return "ja";
-                case "English":
+                //case "English":
                 default:
                     return "en";
             }

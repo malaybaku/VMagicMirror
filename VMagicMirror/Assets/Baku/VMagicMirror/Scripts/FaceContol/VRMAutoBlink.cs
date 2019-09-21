@@ -33,7 +33,7 @@ namespace Baku.VMagicMirror
         /// 指定されたブレンドシェイプに、現在計算したまばたきブレンドシェイプの値を適用する
         /// </summary>
         /// <param name="proxy"></param>
-        public void SetBlendShapeTo(VRMBlendShapeProxy proxy)
+        public void Apply(VRMBlendShapeProxy proxy)
         {
             proxy.AccumulateValue(BlinkLKey, _currentBlinkValue);
             proxy.AccumulateValue(BlinkRKey, _currentBlinkValue);

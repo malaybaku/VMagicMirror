@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private GrpcSender sender;
 
-        [SerializeField] private FaceControlManager faceControlManager = null;
+        [SerializeField] private FaceControlManager faceControlManager;
         
         private void Start()
         {
@@ -53,8 +53,6 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.EyebrowDownScale:
                         faceControlManager.EyebrowBlendShape.DownScale = message.ParseAsPercentage();
                         break;
-                    default:
-                        break;
                 }
             });
             
@@ -68,11 +66,11 @@ namespace Baku.VMagicMirror
                 );
         }
 
-        private void OnQueryReceived(object sender, ReceivedMessageHandler.QueryEventArgs e)
+        private void OnQueryReceived(ReceivedQuery query)
         {
-            if (e.Query.Command == MessageQueryNames.GetBlendShapeNames)
+            if (query.Command == MessageQueryNames.GetBlendShapeNames)
             {
-                e.Query.Result = GetTabSeparatedBlendShapeNames();
+                query.Result = GetTabSeparatedBlendShapeNames();
             }
         }
 

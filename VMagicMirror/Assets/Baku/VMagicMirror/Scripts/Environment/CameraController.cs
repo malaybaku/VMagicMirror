@@ -8,14 +8,9 @@ namespace Baku.VMagicMirror
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField]
-        private ReceivedMessageHandler handler = null;
-
-        [SerializeField]
-        private Camera _cam = null;
-
-        [SerializeField]
-        private CameraTransformController _transformController = null;
+        [SerializeField] private ReceivedMessageHandler handler = null;
+        [SerializeField] private Camera cam = null;
+        [SerializeField] private CameraTransformController transformController = null;
 
         private Vector3 _defaultCameraPosition = Vector3.zero;
         private Vector3 _defaultCameraRotationEuler = Vector3.zero;
@@ -23,14 +18,15 @@ namespace Baku.VMagicMirror
         private Vector3 _customCameraPosition = Vector3.zero;
         private Vector3 _customCameraRotationEuler = Vector3.zero;
 
-        public bool IsInFreeCameraMode { get; private set; } = false;
+        public bool IsInFreeCameraMode { get; private set; }
 
         public Vector3 BaseCameraPosition => _customCameraPosition;
 
-        void Start()
+        private void Start()
         {
-            _defaultCameraPosition = _cam.transform.position;
-            _defaultCameraRotationEuler = _cam.transform.rotation.eulerAngles;
+            var camTransform = cam.transform;
+            _defaultCameraPosition = camTransform.position;
+            _defaultCameraRotationEuler = camTransform.rotation.eulerAngles;
 
             handler.Commands.Subscribe(message =>
             {
@@ -52,41 +48,37 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.CameraFov:
                         SetCameraFov(message.ToInt());
                         break;
-                    default:
-                        break;
                 }
             });
-            handler.QueryRequested += (_, e) =>
+            handler.QueryRequested += query =>
             {
-                switch (e.Query.Command)
+                if (query.Command == MessageQueryNames.CurrentCameraPosition)
                 {
-                    case MessageQueryNames.CurrentCameraPosition:
-                        var angles = _cam.transform.rotation.eulerAngles;
-                        e.Query.Result = JsonUtility.ToJson(new SerializedCameraPosition(new float[]
-                        {
-                            _cam.transform.position.x,
-                            _cam.transform.position.y,
-                            _cam.transform.position.z,
-                            angles.x,
-                            angles.y,
-                            angles.z,
-                        }));
-                        break;
-                    default:
-                        break;
+                    var t = cam.transform;
+                    var angles = t.rotation.eulerAngles;
+                    var pos = t.position;
+                    query.Result = JsonUtility.ToJson(new SerializedCameraPosition(new[]
+                    {
+                        pos.x,
+                        pos.y,
+                        pos.z,
+                        angles.x,
+                        angles.y,
+                        angles.z,
+                    }));
                 }
             };
         }
 
         private void SetCameraBackgroundColor(float a, float r, float g, float b)
         {
-            _cam.backgroundColor = new Color(r, g, b, a);
+            cam.backgroundColor = new Color(r, g, b, a);
         }
 
         private void EnableFreeCameraMode(bool v)
         {
             IsInFreeCameraMode = v;
-            _transformController.enabled = v;
+            transformController.enabled = v;
         }
 
         private void ResetCameraPosition()
@@ -120,7 +112,7 @@ namespace Baku.VMagicMirror
                 {
                     //旧バージョンから設定をインポートしたときはこれでうまくいく
                     values = content.Split(',')
-                        .Select(w => float.Parse(w))
+                        .Select(float.Parse)
                         .ToArray();
                 }
                 catch (Exception ex)
@@ -163,19 +155,19 @@ namespace Baku.VMagicMirror
                 _customCameraRotationEuler.magnitude > Mathf.Epsilon
                 )
             {
-                _cam.transform.position = _customCameraPosition;
-                _cam.transform.rotation = Quaternion.Euler(_customCameraRotationEuler);
+                cam.transform.position = _customCameraPosition;
+                cam.transform.rotation = Quaternion.Euler(_customCameraRotationEuler);
             }
             else
             {
-                _cam.transform.position = _defaultCameraPosition;
-                _cam.transform.rotation = Quaternion.Euler(_defaultCameraRotationEuler);
+                cam.transform.position = _defaultCameraPosition;
+                cam.transform.rotation = Quaternion.Euler(_defaultCameraRotationEuler);
             }
         }
 
         private void SetCameraFov(int fovDeg)
         {
-            _cam.fieldOfView = fovDeg;
+            cam.fieldOfView = fovDeg;
         }
 
 
@@ -188,12 +180,14 @@ namespace Baku.VMagicMirror
 
         public SerializedCameraPosition(float[] v)
         {
-            if (v != null)
+            if (v == null)
             {
-                for(int i = 0; i < v.Length; i++)
-                {
-                    values.Add(v[i]);
-                }
+                return;
+            }
+            
+            for(int i = 0; i < v.Length; i++)
+            {
+                values.Add(v[i]);
             }
         }
     }

@@ -83,6 +83,7 @@ namespace Baku.VMagicMirror
             if (_proxy == null || _blendShape.Count == 0)
             {
                 //オーバーライド不要
+                _proxy?.Apply();
                 return;
             }
 

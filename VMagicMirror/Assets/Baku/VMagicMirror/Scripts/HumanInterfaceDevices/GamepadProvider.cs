@@ -26,24 +26,19 @@ namespace Baku.VMagicMirror
             };
         }
 
-        [SerializeField]
-        ButtonTransforms buttons;
-
-        [SerializeField]
-        Transform leftStick;
-
-        [SerializeField]
-        Transform rightStick;
+        [SerializeField] private ButtonTransforms buttons;
+        [SerializeField] private Transform leftStick = null;
+        [SerializeField] private Transform rightStick = null;
 
         private void Start()
         {
             var buttonMat = HIDMaterialUtil.Instance.GetButtonMaterial();
-            foreach(var renderer in buttons
+            foreach(var r in buttons
                 .GetTransforms()
                 .Select(v => v.GetComponent<MeshRenderer>())
                 )
             {
-                renderer.material = buttonMat;
+                r.material = buttonMat;
             }
 
             var stickAreaMat = HIDMaterialUtil.Instance.GetStickAreaMaterial();
@@ -78,7 +73,7 @@ namespace Baku.VMagicMirror
 
         }
 
-        public bool IsLeftHandPreffered(XinputKey key)
+        public static bool IsLeftHandPreferred(XinputKey key)
         {
             switch (key)
             {

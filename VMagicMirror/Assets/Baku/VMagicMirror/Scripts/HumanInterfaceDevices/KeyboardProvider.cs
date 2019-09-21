@@ -178,17 +178,10 @@ namespace Baku.VMagicMirror
 
         };
 
-        [SerializeField]
-        Transform keyPrefab = null;
-
-        [SerializeField]
-        Vector3 initialPosition;
-
-        [SerializeField]
-        Vector3 initialRotation;
-
-        [SerializeField]
-        Vector3 initialScale;
+        [SerializeField] private Transform keyPrefab = null;
+        [SerializeField] private Vector3 initialPosition = Vector3.zero;
+        [SerializeField] private Vector3 initialRotation = Vector3.zero;
+        [SerializeField] private Vector3 initialScale = Vector3.one;
 
         [SerializeField]
         float[] radius = new float[]
@@ -224,7 +217,7 @@ namespace Baku.VMagicMirror
 
         private Transform[][] _keys = null;
 
-        void Start()
+        private void Start()
         {
             if (keyPrefab != null)
             {
@@ -311,13 +304,11 @@ namespace Baku.VMagicMirror
             return GetTransformOfKey(key).position;
         }
 
-        public bool IsLeftHandPreffered(string key)
+        public bool IsLeftHandPreferred(string key)
         {
             string sanitized = SanitizeKey(key);
             //不明な場合は[0][0]扱いになるので左手扱いが妥当
-            return fingerMapper.ContainsKey(sanitized) ?
-                fingerMapper[sanitized] < 5 :
-                true;
+            return !fingerMapper.ContainsKey(sanitized) || fingerMapper[sanitized] < 5;
         }
 
         public int GetFingerNumberOfKey(string key)

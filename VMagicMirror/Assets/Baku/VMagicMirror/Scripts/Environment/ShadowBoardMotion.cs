@@ -4,7 +4,7 @@ namespace Baku.VMagicMirror
 {
     public class ShadowBoardMotion : MonoBehaviour
     {
-        [SerializeField] private Transform cam;
+        [SerializeField] private Transform cam = null;
 
         public float ShadowBoardWaistDepthOffset { get; set; } = 0.4f;
 

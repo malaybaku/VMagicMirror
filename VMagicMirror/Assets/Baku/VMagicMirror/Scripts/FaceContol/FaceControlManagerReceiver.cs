@@ -6,8 +6,7 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(FaceControlManager))]
     public class FaceControlManagerReceiver : MonoBehaviour
     {
-        [SerializeField]
-        private ReceivedMessageHandler handler;
+        [SerializeField] private ReceivedMessageHandler handler = null;
 
         private FaceControlManager _faceControlManager;
 

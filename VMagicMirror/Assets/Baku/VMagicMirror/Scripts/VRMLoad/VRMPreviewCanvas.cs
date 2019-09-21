@@ -8,10 +8,8 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(Canvas))]
     public class VrmPreviewCanvas : MonoBehaviour
     {
-        // define VRMLoaderUI/Prefabs/LoadConfirmModal
-        [SerializeField] private GameObject modalWindow;
-
-        [SerializeField] private VrmPreviewLanguage previewLanguage;
+        [SerializeField] private GameObject modalWindow = null;
+        [SerializeField] private VrmPreviewLanguage previewLanguage = null;
 
         private Canvas _canvas;
         private VrmPreviewUISupport _uiSupport;

@@ -16,19 +16,10 @@ namespace Baku.VMagicMirror
         private Transform _rightArmBendGoal = null;
         private FullBodyBipedIK _ik;
 
-        private void Update()
-        {
-            if (!_isInitialized)
-            {
-                return;
-            }
-
-            _ik.solver.rightArmChain.bendConstraint.weight = receiver.ElbowCloseStrength;
-            _ik.solver.leftArmChain.bendConstraint.weight = receiver.ElbowCloseStrength;
-
-            _rightArmBendGoal.localPosition = new Vector3(receiver.WaistWidthHalf, 0, 0);
-            _leftArmBendGoal.localPosition = new Vector3(-receiver.WaistWidthHalf, 0, 0);            
-        }
+        /// <summary>
+        /// IKの効きを補正するファクターで0から1の値を指定します。
+        /// </summary>
+        public float ElbowIkRate { get; set; } = 1.0f;
 
         public void OnVrmLoaded(VrmLoadedInfo info)
         {
@@ -44,7 +35,7 @@ namespace Baku.VMagicMirror
             _leftArmBendGoal.SetParent(spineBone);
             _leftArmBendGoal.localRotation = Quaternion.identity;
             _ik.solver.leftArmChain.bendConstraint.bendGoal = _leftArmBendGoal;
-
+            
             _isInitialized = true;
         }
 
@@ -55,6 +46,21 @@ namespace Baku.VMagicMirror
             _leftArmBendGoal = null;
             _isInitialized = false;
         }
+
+        private void Update()
+        {
+            if (!_isInitialized)
+            {
+                return;
+            }
+
+            _ik.solver.rightArmChain.bendConstraint.weight = receiver.ElbowCloseStrength * ElbowIkRate;
+            _ik.solver.leftArmChain.bendConstraint.weight = receiver.ElbowCloseStrength * ElbowIkRate;
+
+            _rightArmBendGoal.localPosition = new Vector3(receiver.WaistWidthHalf, 0, 0);
+            _leftArmBendGoal.localPosition = new Vector3(-receiver.WaistWidthHalf, 0, 0);            
+        }
+
         
     }
 }

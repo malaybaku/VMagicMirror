@@ -1522,18 +1522,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c9afeaa27b49f458407f84d6dd1e87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _particleStoreCount: 16
-  _particlePrefabs:
-  - prefab: {fileID: 4353481273975885782, guid: 2a2c22bd0015525489aa6305c15b3469,
-      type: 3}
-    scale: {x: 1, y: 1, z: 1}
-    useCollisionPlane: 1
-    collisionTransform: {fileID: 1169325486}
-  - prefab: {fileID: 7218671144545294627, guid: 773b33f661c35c24183e00d82532a670,
-      type: 3}
-    scale: {x: 1, y: 1, z: 1}
-    useCollisionPlane: 0
-    collisionTransform: {fileID: 0}
+  particleStoreCount: 16
+  particlePrefabs: []
 --- !u!114 &1268007394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3010,6 +3000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea24974c6c68c74597dc46bd6bf070e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  elbowMotionModifier: {fileID: 0}
 --- !u!114 &1963776209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3046,10 +3037,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89d1bbb0f990ef1499fe92c4fe53699d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _builtInClips:
-  - name: Wave
+  builtInClips:
+  - name: wave
     clip: {fileID: 7400000, guid: 2d2936a1fb0e17749bf614ef1a4fd964, type: 2}
-  - name: Rokuro
+  - name: rokuro
     clip: {fileID: 7400000, guid: e0b3e1faef6abbf43827847a27014cff, type: 2}
 --- !u!114 &1963776212
 MonoBehaviour:

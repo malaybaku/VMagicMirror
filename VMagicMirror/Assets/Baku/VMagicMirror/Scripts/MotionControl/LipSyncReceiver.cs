@@ -3,10 +3,10 @@ using UniRx;
 
 namespace Baku.VMagicMirror
 {
-    public class LipSyncController : MonoBehaviour
+    public class LipSyncReceiver : MonoBehaviour
     {
         [SerializeField]
-        private ReceivedMessageHandler handler;
+        private ReceivedMessageHandler handler = null;
 
         private DeviceSelectableLipSyncContext _lipSyncContext;
         private AnimMorphEasedTarget _animMorphTarget;
@@ -31,11 +31,6 @@ namespace Baku.VMagicMirror
                 }
             });
             handler.QueryRequested += OnQueryRequested;
-        }
-
-        private void OnDestroy()
-        {
-            handler.QueryRequested -= OnQueryRequested;
         }
 
         private void OnQueryRequested(ReceivedQuery query)

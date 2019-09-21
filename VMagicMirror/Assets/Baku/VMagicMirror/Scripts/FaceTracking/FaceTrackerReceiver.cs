@@ -7,11 +7,9 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(FaceTracker))]
     public class FaceTrackerReceiver : MonoBehaviour
     {
-        [SerializeField]
-        private ReceivedMessageHandler handler;
+        [SerializeField] private ReceivedMessageHandler handler = null;
 
         private FaceTracker _faceTracker;
-
         private bool _enableFaceTracking = true;
         private string _cameraDeviceName = "";
 

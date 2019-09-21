@@ -74,7 +74,7 @@ namespace Baku.VMagicMirror
             Vector3 targetPos = keyData.positionWithOffset + YOffsetAlwaysVec;
             targetPos -= HandToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
-            if (keyboard.IsLeftHandPreffered(key))
+            if (keyboard.IsLeftHandPreferred(key))
             {
                 UpdateLeftHandCoroutine(KeyPressRoutine(IKTargets.LHand, targetPos));
                 return (ReactedHand.Left, keyData.position);

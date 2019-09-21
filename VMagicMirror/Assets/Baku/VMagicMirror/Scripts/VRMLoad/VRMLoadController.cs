@@ -10,32 +10,25 @@ namespace Baku.VMagicMirror
 {
     using static ExceptionUtils;
 
+    /// <summary>VRMのロード処理をやるやつ</summary>
     public class VRMLoadController : MonoBehaviour
     {
-        [SerializeField]
-        private ReceivedMessageHandler handler = null;
-
-        //TODO: この辺はちょっと分けたい気がしないでもない
-        [SerializeField]
-        private VrmLoadSetting loadSetting;
-
-        [SerializeField]
-        private WindowStyleController windowStyleController = null;
-
-        [SerializeField]
-        private SettingAutoAdjuster settingAdjuster = null;
-
-        [SerializeField]
-        private VrmPreviewCanvas previewCanvas = null;
-        
-        [SerializeField]
-        private RuntimeAnimatorController animatorController = null;
-
         [Serializable]
         public class VrmLoadedEvent : UnityEvent<VrmLoadedInfo>{}
         
-        [SerializeField] private VrmLoadedEvent vrmLoaded = new VrmLoadedEvent();
+        [SerializeField] private ReceivedMessageHandler handler = null;
+        [SerializeField] private VrmLoadSetting loadSetting = default;
+        [SerializeField] private VrmPreviewCanvas previewCanvas = null;
+        [SerializeField] private RuntimeAnimatorController animatorController = null;
 
+        //NOTE: 下の2つは参照外せなくもないが残している。他と同じでイベントで初期化/破棄するスタイルでもよい
+        // - WindowStyleControllerは受け取るデータがちょっと特別なため
+        // - SettingAutoAdjusterはロード直後に特殊処理が入る可能性があるため
+        [SerializeField] private WindowStyleController windowStyleController = null;
+        [SerializeField] private SettingAutoAdjuster settingAdjuster = null;
+
+        
+        [SerializeField] private VrmLoadedEvent vrmLoaded = new VrmLoadedEvent();
         [SerializeField] private UnityEvent vrmDisposing = new UnityEvent();
 
         private HumanPoseTransfer _humanPoseTransferTarget = null;
@@ -109,7 +102,6 @@ namespace Baku.VMagicMirror
                 context.ParseGlb(file);
 
                 context.Load();
-                //context.ShowMeshes();
                 context.EnableUpdateWhenOffscreen();
                 context.ShowMeshes();
                 SetModel(context.Root);
@@ -122,9 +114,9 @@ namespace Baku.VMagicMirror
             SetModel(vrmObject);
         }
 
+        //モデルの破棄
         private void ReleaseCurrentVrm()
         {
-            // cleanup
             var loaded = _humanPoseTransferTarget;
             _humanPoseTransferTarget = null;
 
@@ -132,7 +124,6 @@ namespace Baku.VMagicMirror
             {
                 vrmDisposing.Invoke();
 
-                //TODO: イベントハンドラ頼みになるよう直す
                 windowStyleController.DisposeModelRenderers();
                 settingAdjuster.DisposeModelRoot();
                 Destroy(loaded.gameObject);

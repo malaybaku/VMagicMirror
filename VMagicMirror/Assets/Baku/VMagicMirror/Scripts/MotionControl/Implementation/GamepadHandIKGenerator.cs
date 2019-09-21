@@ -85,7 +85,7 @@ namespace Baku.VMagicMirror
             Vector3 targetPos = _gamePad.GetButtonPosition(key) + yOffsetAlwaysVec;
             targetPos -= HandToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
-            if (_gamePad.IsLeftHandPreffered(key))
+            if (GamepadProvider.IsLeftHandPreferred(key))
             {
                 _leftHandPressedGamepadKeyCount++;
                 if (_leftHandPressedGamepadKeyCount == 1)
@@ -116,7 +116,7 @@ namespace Baku.VMagicMirror
             Vector3 targetPos = _gamePad.GetButtonPosition(key) + yOffsetAlwaysVec;
             targetPos -= HandToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
-            if (_gamePad.IsLeftHandPreffered(key))
+            if (GamepadProvider.IsLeftHandPreferred(key))
             {
                 _leftHandPressedGamepadKeyCount--;
                 if (_leftHandPressedGamepadKeyCount == 0)

@@ -28,8 +28,7 @@ namespace Baku.VMagicMirror
         public bool UseBlendShape;
 
         //NOTE: 辞書にしないでこのまま使う手も無くはないです
-        [SerializeField]
-        private BlendShapeValues BlendShapeValues;
+        [SerializeField] private BlendShapeValues BlendShapeValues = null;
 
         [NonSerialized]
         private Dictionary<string, float> _blendShapeValues = null;

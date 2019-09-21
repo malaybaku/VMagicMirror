@@ -5,18 +5,11 @@ namespace Baku.VMagicMirror
 {
     public class GrpcReceiver : MonoBehaviour
     {
-        [SerializeField]
-        private ReceivedMessageHandler handler = null;
-
-        [SerializeField]
-        string ipAddress = "127.0.0.1";
-
+        [SerializeField] private ReceivedMessageHandler handler = null;
+        [SerializeField] private string ipAddress = "127.0.0.1";
         //NOTE: ポート番号に深い意味はない
-        [SerializeField]
-        int port = 53241;
-
-        [SerializeField]
-        int receiveTimeoutMillisec = 2000;
+        [SerializeField] private int port = 53241;
+        [SerializeField] private int receiveTimeoutMillisec = 2000;
 
         private Server _server;
 

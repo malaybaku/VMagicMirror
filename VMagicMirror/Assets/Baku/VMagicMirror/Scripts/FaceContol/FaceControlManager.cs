@@ -17,7 +17,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private AnimMorphEasedTarget animMorphEasedTarget = null;
         [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
-//        [SerializeField] private WordToMotionManager wortToMotion = null;
 
         /// <summary>
         /// VRMロード時の初期化が済んだら発火

@@ -12,17 +12,10 @@ namespace Baku.VMagicMirror
         //Hand (Wrist) to Middle Distal
         private const float ReferenceHandLength = 0.114f;
 
-        [SerializeField]
-        private ReceivedMessageHandler handler;
-
-        [SerializeField]
-        private GrpcSender sender;
-
-        [SerializeField]
-        private BlendShapeAssignReceiver blendShapeAssignReceiver;
-
-        [SerializeField]
-        private Transform cam;
+        [SerializeField] private ReceivedMessageHandler handler = null;
+        [SerializeField] private GrpcSender sender = null;
+        [SerializeField] private BlendShapeAssignReceiver blendShapeAssignReceiver = null;
+        [SerializeField] private Transform cam = null;
 
         private Transform _vrmRoot = null;
 
@@ -36,7 +29,6 @@ namespace Baku.VMagicMirror
             _vrmRoot = null;
         }
 
-        // Start is called before the first frame update
         private void Start()
         {
             handler.Commands.Subscribe(message =>
@@ -48,8 +40,6 @@ namespace Baku.VMagicMirror
                         break;
                     case MessageCommandNames.RequestAutoAdjustEyebrow:
                         AutoAdjustOnlyEyebrow();
-                        break;
-                    default:
                         break;
                 }
             });

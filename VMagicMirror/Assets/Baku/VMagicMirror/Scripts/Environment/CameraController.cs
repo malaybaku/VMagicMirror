@@ -8,14 +8,9 @@ namespace Baku.VMagicMirror
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField]
-        private ReceivedMessageHandler handler;
-
-        [SerializeField]
-        private Camera cam;
-
-        [SerializeField]
-        private CameraTransformController transformController;
+        [SerializeField] private ReceivedMessageHandler handler = null;
+        [SerializeField] private Camera cam = null;
+        [SerializeField] private CameraTransformController transformController = null;
 
         private Vector3 _defaultCameraPosition = Vector3.zero;
         private Vector3 _defaultCameraRotationEuler = Vector3.zero;

@@ -40,8 +40,8 @@ namespace Baku.VMagicMirror
         private float _windowPositionCheckCount = 0;
         private Vector2Int _prevWindowPosition = Vector2Int.zero;
 
-        private uint defaultWindowStyle;
-        private uint defaultExWindowStyle;
+        private uint defaultWindowStyle = 0;
+        private uint defaultExWindowStyle = 0;
 
         private bool _isTransparent = false;
         private bool _isWindowFrameHidden = false;

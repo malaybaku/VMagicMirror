@@ -6,26 +6,15 @@ namespace Baku.VMagicMirror
 {
     public class LightingController : MonoBehaviour
     {
-        [SerializeField]
-        private Light mainLight;
+        [SerializeField] private Light mainLight = null;
+        [SerializeField] private Vector3 mainLightLocalEulerAngle = default;
+        
+        [SerializeField] private Light shadowLight = null;
+        [SerializeField] private Vector3 shadowLightLocalEulerAngle = default;
+        [SerializeField] private ShadowBoardMotion shadowBoardMotion = null;
 
-        [SerializeField]
-        private Vector3 mainLightLocalEulerAngle;
-
-        [SerializeField]
-        private Light shadowLight;
-
-        [SerializeField]
-        private Vector3 shadowLightLocalEulerAngle;
-
-        [SerializeField]
-        private ShadowBoardMotion shadowBoardMotion;
-
-        [SerializeField]
-        private PostProcessVolume postProcess;
-
-        [SerializeField]
-        private ReceivedMessageHandler handler;
+        [SerializeField] private PostProcessVolume postProcess = null;
+        [SerializeField] private ReceivedMessageHandler handler = null;
 
 
         private Bloom _bloom;

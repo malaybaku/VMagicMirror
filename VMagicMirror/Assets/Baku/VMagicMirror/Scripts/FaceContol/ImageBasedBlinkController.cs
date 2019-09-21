@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         private static readonly BlendShapeKey BlinkLKey = new BlendShapeKey(BlendShapePreset.Blink_L);
         private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
 
-        [SerializeField] private FaceTracker faceTracker;
+        [SerializeField] private FaceTracker faceTracker = null;
         
         [Tooltip("ブレンドシェイプを変化させていく速度ファクター")]
         [SerializeField]

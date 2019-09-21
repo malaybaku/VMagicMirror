@@ -2397,7 +2397,7 @@ GameObject:
   - component: {fileID: 1787938563}
   - component: {fileID: 1787938568}
   - component: {fileID: 1787938567}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: LoadController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2437,10 +2437,10 @@ MonoBehaviour:
     rightHandTarget: {fileID: 500754461}
     rightIndexTarget: {fileID: 935302418}
     headTarget: {fileID: 638373946}
-  windowStyleController: {fileID: 1629460657}
-  settingAdjuster: {fileID: 478567140}
   previewCanvas: {fileID: 1281394296}
   animatorController: {fileID: 9100000, guid: 8274142a1807f5848a5dd1166db7d615, type: 2}
+  windowStyleController: {fileID: 1629460657}
+  settingAdjuster: {fileID: 478567140}
   vrmLoaded:
     m_PersistentCalls:
       m_Calls:
@@ -3000,7 +3000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea24974c6c68c74597dc46bd6bf070e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  elbowMotionModifier: {fileID: 0}
+  elbowMotionModifier: {fileID: 1993346254}
 --- !u!114 &1963776209
 MonoBehaviour:
   m_ObjectHideFlags: 0

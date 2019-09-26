@@ -161,7 +161,6 @@ MonoBehaviour:
   shadowLightLocalEulerAngle: {x: 8, y: -20, z: 0}
   shadowBoardMotion: {fileID: 1057131357}
   postProcess: {fileID: 749678942}
-  handler: {fileID: 1930233619}
 --- !u!1 &161296353
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,7 +385,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf6b464b4d783c44a19bdce46109df1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
   sender: {fileID: 161296355}
   faceControlManager: {fileID: 1130871118}
 --- !u!114 &295217320
@@ -603,7 +601,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81677ea49f21b6b4d986acc1d310bd8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
   sender: {fileID: 161296355}
   blendShapeAssignReceiver: {fileID: 295217319}
   cam: {fileID: 1629460662}
@@ -912,6 +909,72 @@ Transform:
   m_Father: {fileID: 1674567171}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &708291027
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 708291029}
+  - component: {fileID: 708291028}
+  - component: {fileID: 708291030}
+  m_Layer: 0
+  m_Name: SceneContext
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &708291028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 708291027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89715ad69b973a14899afa2c6730b30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scriptableObjectInstallers: []
+  _monoInstallers:
+  - {fileID: 708291030}
+  _installerPrefabs: []
+  _autoRun: 1
+  _parentNewObjectsUnderSceneContext: 0
+  _contractNames: []
+  _parentContractNames: []
+--- !u!4 &708291029
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 708291027}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &708291030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 708291027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85437e04ea991b7489648a48de5da11f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messageHandler: {fileID: 1930233619}
+  loadController: {fileID: 1787938567}
 --- !u!1 &749678940
 GameObject:
   m_ObjectHideFlags: 0
@@ -1328,7 +1391,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b883912af74d8df4ab86b0739678c879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
 --- !u!1 &1134663115
 GameObject:
   m_ObjectHideFlags: 0
@@ -1488,7 +1550,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c43672cf46e1954cb280461a69ea74f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
   keyboard: {fileID: 1169325487}
   touchpad: {fileID: 2059529786}
   gamepad: {fileID: 1798368043}
@@ -1561,7 +1622,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfd37789e02ac7843b7055662b478200, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _handler: {fileID: 1930233619}
 --- !u!1 &1281394291
 GameObject:
   m_ObjectHideFlags: 0
@@ -1738,7 +1798,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3aee8e450bba3b4db544ed198ae226d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
 --- !u!114 &1335587173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2125,7 +2184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 402a480edc7368e4fab24434a0d83e5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
   cam: {fileID: 1629460661}
   transformController: {fileID: 1629460660}
 --- !u!114 &1629460664
@@ -2455,7 +2513,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d0c8ece50ffcbc41b86f8994e837292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
 --- !u!114 &1787938567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2468,7 +2525,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91cd6285b69da1e46a0a90d72eab7fc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
   loadSetting:
     bodyTarget: {fileID: 1134663116}
     leftHandTarget: {fileID: 1842530517}
@@ -2479,258 +2535,6 @@ MonoBehaviour:
   animatorController: {fileID: 9100000, guid: 8274142a1807f5848a5dd1166db7d615, type: 2}
   windowStyleController: {fileID: 1629460657}
   settingAdjuster: {fileID: 478567140}
-  vrmLoaded:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2042410944}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 295217318}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1809547436}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1993346254}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 306547512}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1130871118}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 238267461}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 295217319}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1963776212}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 2042410943}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 295217321}
-        m_MethodName: OnVrmLoaded
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: Baku.VMagicMirror.VRMLoadController+VrmLoadedEvent, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  vrmDisposing:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2042410944}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 295217318}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1809547436}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1993346254}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 306547512}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1130871118}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 238267461}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 295217319}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1963776212}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 2042410943}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 295217321}
-        m_MethodName: OnVrmDisposing
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!1 &1798368041
 GameObject:
   m_ObjectHideFlags: 0
@@ -2847,7 +2651,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22e0a61ea7cc8df41828ba8c224381ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
 --- !u!1 &1842530516
 GameObject:
   m_ObjectHideFlags: 0
@@ -3115,7 +2918,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8060a04e4473d34d867afecf5747f34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
   manager: {fileID: 1963776212}
 --- !u!4 &1963776214
 Transform:
@@ -3257,7 +3059,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9838934ad278ba4a92a84679291438b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
 --- !u!1 &2042410935
 GameObject:
   m_ObjectHideFlags: 0
@@ -3607,7 +3408,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06fcbc682dad80141953923a215f8b28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
   gamePadBasedBodyLean: {fileID: 2042410941}
   handIkIntegrator: {fileID: 2042410944}
   headIkIntegrator: {fileID: 2042410943}
@@ -3625,7 +3425,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e27dcaac7204d74cb9cf10b7ec999d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handler: {fileID: 1930233619}
   gamePad: {fileID: 953451441}
   handIkIntegrator: {fileID: 2042410944}
   headIkIntegrator: {fileID: 2042410943}

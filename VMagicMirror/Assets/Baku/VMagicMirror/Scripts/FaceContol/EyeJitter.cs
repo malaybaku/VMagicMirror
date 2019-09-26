@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Zenject;
 
 //ref: https://gist.github.com/GOROman/51ee32887bd1d3248b7610f845904b30
 namespace Baku.VMagicMirror
@@ -20,6 +21,8 @@ namespace Baku.VMagicMirror
         [Tooltip("微細運動をスムージングする速度ファクタ")]
         [SerializeField] private float speedFactor = 11.0f;
 
+        [Inject] private IVRMLoadable _vrmLoadable = null;
+
         private Transform _rightEye = null;
         private Transform _leftEye = null;
         private bool _hasValidEyeBone = false;
@@ -28,20 +31,12 @@ namespace Baku.VMagicMirror
         private Quaternion _targetRotation;
         public Quaternion CurrentRotation { get; private set; }
         
-        public void OnVrmLoaded(VrmLoadedInfo info)
+        private void Start()
         {
-            _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
-            _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
-            _hasValidEyeBone = (_rightEye != null && _leftEye != null);
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+            _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
-
-        public void OnVrmDisposing()
-        {
-            _rightEye = null;
-            _leftEye = null;
-            _hasValidEyeBone = false;
-        }
-
+        
         private void LateUpdate()
         {
             _count -= Time.deltaTime;
@@ -68,6 +63,20 @@ namespace Baku.VMagicMirror
                 _rightEye.localRotation *= CurrentRotation;
                 _leftEye.localRotation *= CurrentRotation;
             }
+        }
+        
+        private void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
+            _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
+            _hasValidEyeBone = (_rightEye != null && _leftEye != null);
+        }
+
+        private void OnVrmDisposing()
+        {
+            _rightEye = null;
+            _leftEye = null;
+            _hasValidEyeBone = false;
         }
     }
 }

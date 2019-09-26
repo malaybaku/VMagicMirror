@@ -1,22 +1,19 @@
 ﻿using System;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Events;
 using UniRx;
 using UniHumanoid;
 using VRM;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     using static ExceptionUtils;
 
     /// <summary>VRMのロード処理をやるやつ</summary>
-    public class VRMLoadController : MonoBehaviour
+    public class VRMLoadController : MonoBehaviour, IVRMLoadable
     {
-        [Serializable]
-        public class VrmLoadedEvent : UnityEvent<VrmLoadedInfo>{}
-        
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
         [SerializeField] private VrmLoadSetting loadSetting = default;
         [SerializeField] private VrmPreviewCanvas previewCanvas = null;
         [SerializeField] private RuntimeAnimatorController animatorController = null;
@@ -26,11 +23,10 @@ namespace Baku.VMagicMirror
         // - SettingAutoAdjusterはロード直後に特殊処理が入る可能性があるため
         [SerializeField] private WindowStyleController windowStyleController = null;
         [SerializeField] private SettingAutoAdjuster settingAdjuster = null;
-
         
-        [SerializeField] private VrmLoadedEvent vrmLoaded = new VrmLoadedEvent();
-        [SerializeField] private UnityEvent vrmDisposing = new UnityEvent();
-
+        public event Action<VrmLoadedInfo> VrmLoaded; 
+        public event Action VrmDisposing;
+        
         private HumanPoseTransfer _humanPoseTransferTarget = null;
 
         private void Start()
@@ -122,7 +118,7 @@ namespace Baku.VMagicMirror
 
             if (loaded != null)
             {
-                vrmDisposing.Invoke();
+                VrmDisposing?.Invoke();
 
                 windowStyleController.DisposeModelRenderers();
                 settingAdjuster.DisposeModelRoot();
@@ -161,7 +157,7 @@ namespace Baku.VMagicMirror
             windowStyleController.InitializeModelRenderers(renderers);
             settingAdjuster.AssignModelRoot(go.transform);
             
-            vrmLoaded.Invoke(new VrmLoadedInfo()
+            VrmLoaded?.Invoke(new VrmLoadedInfo()
             {
                 vrmRoot = go.transform,
                 animator = animator,

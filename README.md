@@ -63,6 +63,7 @@ Windows 10環境でお使いいただけます。
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
+* Zenject (アセットストアからダウンロード可)
 
 ※v0.8.2時点ではビルド時に下記が必要でしたが、v0.8.3時点でビルド時の必須ライブラリから外しています。
 

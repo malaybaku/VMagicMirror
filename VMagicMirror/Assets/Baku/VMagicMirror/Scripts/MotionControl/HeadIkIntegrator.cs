@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -16,6 +17,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private Transform cam = null;
         [SerializeField] private Transform lookAtTarget = null;
         [SerializeField] private float lookAtSpeedFactor = 6.0f;
+        [Inject] private IVRMLoadable _vrmLoadable = null;
         
         private readonly IKDataRecord _mouseBasedLookAt = new IKDataRecord();
         public IIKGenerator MouseBasedLookAt => _mouseBasedLookAt;
@@ -27,16 +29,6 @@ namespace Baku.VMagicMirror
 
         private LookAtStyles _lookAtStyle = LookAtStyles.MousePointer;
         private Transform _head = null;
-        
-        public void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
-        }
-
-        public void OnVrmDisposing()
-        {
-            _head = null;
-        }
         
         public void MoveMouse(int x, int y)
         {
@@ -61,6 +53,8 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _camBasedLookAt.Camera = cam;
+            _vrmLoadable.VrmLoaded += info => _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
+            _vrmLoadable.VrmDisposing += () =>  _head = null;
         }
 
         private void Update()

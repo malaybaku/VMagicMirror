@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -12,31 +13,19 @@ namespace Baku.VMagicMirror
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
         [SerializeField] private WaitingBodyMotion waitingBodyMotion = null;
 
+        [Inject] private IVRMLoadable _vrmLoadable = null;
+
         public WaitingBodyMotion WaitingBodyMotion => waitingBodyMotion;
 
         private Transform _vrmRoot = null;
         private Vector3 _defaultBodyIkPosition;
         private bool _isVrmLoaded = false;
         
-        public void OnVrmLoaded(VrmLoadedInfo info)
+        private void Start()
         {
-            //NOTE: VRMLoadControllerがロード時点でbodyIkの位置をキャラのHipsあたりに調整しているので、それを貰う
-            _defaultBodyIkPosition = bodyIk.position;
-            imageBasedBodyMotion.OnVrmLoaded(info);
-            _vrmRoot = info.vrmRoot;
-
-            _isVrmLoaded = true;
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+            _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
-
-        public void OnVrmDisposing()
-        {
-            _isVrmLoaded = false;
-
-            _vrmRoot = null;
-            imageBasedBodyMotion.OnVrmDisposing();
-        }
-        
-        
 
         private void Update()
         {
@@ -52,6 +41,24 @@ namespace Baku.VMagicMirror
 
             //全体でズラさないと整合しなさそうなので…
             _vrmRoot.position = imageBasedBodyMotion.BodyIkOffset;
+        }
+        
+        private void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            //NOTE: VRMLoadControllerがロード時点でbodyIkの位置をキャラのHipsあたりに調整しているので、それを貰う
+            _defaultBodyIkPosition = bodyIk.position;
+            imageBasedBodyMotion.OnVrmLoaded(info);
+            _vrmRoot = info.vrmRoot;
+
+            _isVrmLoaded = true;
+        }
+
+        private void OnVrmDisposing()
+        {
+            _isVrmLoaded = false;
+
+            _vrmRoot = null;
+            imageBasedBodyMotion.OnVrmDisposing();
         }
     }
 }

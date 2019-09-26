@@ -1,13 +1,14 @@
 ﻿using System.Linq;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(FaceTracker))]
     public class FaceTrackerReceiver : MonoBehaviour
     {
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
 
         private FaceTracker _faceTracker;
         private bool _enableFaceTracking = true;

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UniRx;
 using VRM;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -24,6 +25,8 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private float speedLerpFactor = 0.2f;
         [SerializeField] [Range(0.05f, 1.0f)] private float timeScaleFactor = 0.3f;
+
+        [Inject] private IVRMLoadable _vrmLoadable = null;
 
         private EyebrowBlendShapeSet EyebrowBlendShape => faceControlManager.EyebrowBlendShape;
 
@@ -59,7 +62,24 @@ namespace Baku.VMagicMirror
         /// </summary>
         public bool PreferAutoBlink { get; set; } = false;
 
-        public void OnVrmLoaded(VrmLoadedInfo info)
+        private void Start()
+        {
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+        }
+        
+        private void LateUpdate()
+        {
+            if (!IsInitialized)
+            {
+                return;
+            }
+
+            AdjustEyeRotation();
+            AdjustEyebrow();
+        }
+
+        private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _blendShapeProxy = info.blendShape;
             _rightEyeBone = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
@@ -83,7 +103,7 @@ namespace Baku.VMagicMirror
             IsInitialized = true;
         }
 
-        public void OnVrmDisposing()
+        private void OnVrmDisposing()
         {
             _blendShapeProxy = null;
             _rightEyeBone = null;
@@ -97,17 +117,6 @@ namespace Baku.VMagicMirror
             _leftEyeBrowHeight = null;
 
             IsInitialized = false;
-        }
-
-        private void LateUpdate()
-        {
-            if (!IsInitialized)
-            {
-                return;
-            }
-
-            AdjustEyeRotation();
-            AdjustEyebrow();
         }
 
         private void AdjustEyeRotation()

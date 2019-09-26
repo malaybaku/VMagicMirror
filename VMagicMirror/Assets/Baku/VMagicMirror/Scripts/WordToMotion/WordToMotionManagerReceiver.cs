@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -9,7 +10,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class WordToMotionManagerReceiver : MonoBehaviour
     {
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
         [SerializeField] private WordToMotionManager manager = null;
 
         void Start()

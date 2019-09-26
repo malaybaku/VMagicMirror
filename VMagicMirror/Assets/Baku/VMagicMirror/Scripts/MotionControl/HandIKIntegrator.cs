@@ -1,6 +1,7 @@
 ﻿using RootMotion.FinalIK;
 using UnityEngine;
 using XinputGamePad;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -50,26 +51,12 @@ namespace Baku.VMagicMirror
         private HandTargetType _leftTargetType = HandTargetType.Keyboard;
         private HandTargetType _rightTargetType = HandTargetType.Keyboard;
 
+        [Inject] private IVRMLoadable _vrmLoadable = null;
+
         public bool EnablePresentationMode { get; set; }
 
 
         #region API
-
-        public void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            fingerController.Initialize(info.animator);
-            presentation.Initialize(info.animator);
-
-            //ホームポジションを押させてIK位置を整える
-            PressKey("F");
-            PressKey("J");
-        }
-
-        public void OnVrmDisposing()
-        {
-            fingerController.Dispose();
-            presentation.Dispose();
-        }
 
         public void PressKey(string keyName)
         {
@@ -166,8 +153,27 @@ namespace Baku.VMagicMirror
             _currentLeftHand = Typing.LeftHand;
             _leftHandStateBlendCount = HandIkToggleDuration;
             _rightHandStateBlendCount = HandIkToggleDuration;
+
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+        }
+        
+        private void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            fingerController.Initialize(info.animator);
+            presentation.Initialize(info.animator);
+
+            //ホームポジションを押させてIK位置を整える
+            PressKey("F");
+            PressKey("J");
         }
 
+        private void OnVrmDisposing()
+        {
+            fingerController.Dispose();
+            presentation.Dispose();
+        }
+        
         private void Update()
         {
             //ねらい: 前のステートと今のステートをブレンドしながら実際にIKターゲットの位置、姿勢を更新する

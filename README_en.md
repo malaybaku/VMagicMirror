@@ -69,6 +69,7 @@ Set the folder as following.
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
+* Zenject (from asset store)
 
 *note: until v0.8.2a following libraries are required, but from v0.8.3 you can build the app without them.
 

@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class BodyMotionManagerReceiver : MonoBehaviour
     {
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
 
         [SerializeField] private BodyMotionManager bodyMotionManager = null;
 

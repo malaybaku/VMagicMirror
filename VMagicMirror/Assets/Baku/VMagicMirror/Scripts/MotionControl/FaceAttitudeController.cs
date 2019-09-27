@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -15,7 +16,9 @@ namespace Baku.VMagicMirror
 
         [SerializeField]
         [Range(0.05f, 1.0f)]
-        private float timeScaleFactor = 1.0f;        
+        private float timeScaleFactor = 1.0f;
+
+        [Inject] private IVRMLoadable _vrmLoadable = null;
 
         private const float HeadYawRateToDegFactor = 50.00f;
         private const float HeadTotalRotationLimitDeg = 40.0f;
@@ -48,6 +51,8 @@ namespace Baku.VMagicMirror
             faceTracker.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
                 v => SetHeadPitchDeg(NoseBaseHeightToNeckPitchDeg(v))
                 );
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+            _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
 
         private void LateUpdate()
@@ -99,14 +104,14 @@ namespace Baku.VMagicMirror
             _prevRotationSpeedEuler = speed;
         }
 
-        public void OnVrmLoaded(VrmLoadedInfo info)
+        private void OnVrmLoaded(VrmLoadedInfo info)
         {
             var animator = info.animator;
             _vrmNeckTransform = animator.GetBoneTransform(HumanBodyBones.Neck);
             _vrmHeadTransform = animator.GetBoneTransform(HumanBodyBones.Head);
         }
 
-        public void OnVrmDisposing()
+        private void OnVrmDisposing()
         {
             _vrmNeckTransform = null;
             _vrmHeadTransform = null;

@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class ElbowMotionModifyReceiver : MonoBehaviour
     {
-        [SerializeField]
-        private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
 
         public float WaistWidthHalf { get; private set; } = 0.15f;
         public float ElbowCloseStrength { get; private set; } = 0.30f;

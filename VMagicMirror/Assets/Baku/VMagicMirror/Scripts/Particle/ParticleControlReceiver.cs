@@ -1,5 +1,6 @@
 ﻿using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -8,8 +9,7 @@ namespace Baku.VMagicMirror
     {
         private const int InvalidTypingEffectIndex = ParticleStore.InvalidTypingEffectIndex;
 
-        [SerializeField]
-        private ReceivedMessageHandler _handler = null;
+        [Inject] private ReceivedMessageHandler _handler = null;
 
         private ParticleStore _particleStore = null;
 

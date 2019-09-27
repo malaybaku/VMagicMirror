@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using VRM;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -17,6 +18,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private AnimMorphEasedTarget animMorphEasedTarget = null;
         [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
+
+        [Inject] private IVRMLoadable _vrmLoadable = null;
 
         /// <summary>
         /// VRMロード時の初期化が済んだら発火
@@ -44,28 +47,6 @@ namespace Baku.VMagicMirror
         public DefaultFunBlendShapeModifier DefaultBlendShape { get; } 
             = new DefaultFunBlendShapeModifier();
         
-        public void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _proxy = info.blendShape;
-            eyeDownController.OnVrmLoaded(info);
-            animMorphEasedTarget.OnVrmLoaded(info);
-            
-            BlendShapeStore.OnVrmLoaded(info);
-            EyebrowBlendShape.RefreshTarget(BlendShapeStore);
-
-            VrmInitialized?.Invoke();
-        }
-
-        public void OnVrmDisposing()
-        {
-            _proxy = null;
-            eyeDownController.OnVrmDisposing();
-            animMorphEasedTarget.OnVrmDisposing();
-            
-            BlendShapeStore.OnVrmDisposing();
-            EyebrowBlendShape.Reset();
-        }
-
         private bool _overrideByMotion = false;
         
         public bool OverrideByMotion
@@ -92,6 +73,12 @@ namespace Baku.VMagicMirror
                 }
             }
         }
+
+        private void Start()
+        {
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+        }
         
         private void Update()
         {
@@ -113,6 +100,22 @@ namespace Baku.VMagicMirror
                     autoBlink.Apply(_proxy);
                 }
             }
+        }
+                
+        private void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            _proxy = info.blendShape;
+            BlendShapeStore.OnVrmLoaded(info);
+            EyebrowBlendShape.RefreshTarget(BlendShapeStore);
+
+            VrmInitialized?.Invoke();
+        }
+
+        private void OnVrmDisposing()
+        {
+            _proxy = null;
+            BlendShapeStore.OnVrmDisposing();
+            EyebrowBlendShape.Reset();
         }
     }
 }

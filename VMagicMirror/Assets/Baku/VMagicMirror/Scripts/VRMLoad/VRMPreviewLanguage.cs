@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class VrmPreviewLanguage : MonoBehaviour
     {
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
 
         public string Language { get; private set; } = "Japanese";
 

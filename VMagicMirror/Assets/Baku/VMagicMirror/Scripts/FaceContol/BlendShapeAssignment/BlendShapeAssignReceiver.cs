@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class BlendShapeAssignReceiver : MonoBehaviour
     {
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
         [SerializeField] private GrpcSender sender = null;
         [SerializeField] private FaceControlManager faceControlManager = null;
 

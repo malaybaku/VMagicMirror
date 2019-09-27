@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class HidTransformController : MonoBehaviour
     {
         private const float TouchPadVerticalOffset = 0.01f;
-
-        [SerializeField]
+        
+        [Inject]
         private ReceivedMessageHandler handler = null;
 
         [SerializeField]

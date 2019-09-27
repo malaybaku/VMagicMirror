@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -12,7 +13,7 @@ namespace Baku.VMagicMirror
         //Hand (Wrist) to Middle Distal
         private const float ReferenceHandLength = 0.114f;
 
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
         [SerializeField] private GrpcSender sender = null;
         [SerializeField] private BlendShapeAssignReceiver blendShapeAssignReceiver = null;
         [SerializeField] private Transform cam = null;

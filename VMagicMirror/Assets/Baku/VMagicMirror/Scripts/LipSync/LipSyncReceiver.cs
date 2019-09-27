@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class LipSyncReceiver : MonoBehaviour
     {
-        [SerializeField]
+        [Inject]
         private ReceivedMessageHandler handler = null;
 
         private DeviceSelectableLipSyncContext _lipSyncContext;

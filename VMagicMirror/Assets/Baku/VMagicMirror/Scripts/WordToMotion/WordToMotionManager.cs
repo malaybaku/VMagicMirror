@@ -4,6 +4,7 @@ using UnityEngine;
 using UniRx;
 using VRM;
 using UniHumanoid;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -38,6 +39,8 @@ namespace Baku.VMagicMirror
         //コレが必要なのは、デフォルトアニメーションが無いと下半身を動かさないアニメーションで脚が骨折するため
         [SerializeField]
         private AnimationClip defaultAnimation = null;
+
+        [Inject] private IVRMLoadable _vrmLoadable = null;
 
         private LateMotionTransfer _motionTransfer = null;
 
@@ -103,27 +106,6 @@ namespace Baku.VMagicMirror
         private float _ikFadeInCountDown = 0f;
         private float _blendShapeResetCountDown = 0f;
         private float _bvhStopCountDown = 0f;
-        
-        public void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _simpleAnimation = info.vrmRoot.gameObject.AddComponent<SimpleAnimation>();
-            _simpleAnimation.playAutomatically = false;
-            _simpleAnimation.AddState(defaultAnimation, "Default");
-            _simpleAnimation.Play("Default");
-
-            _blendShape.Initialize(info.blendShape);
-            _motionTransfer.Target = info.vrmRoot.GetComponent<HumanPoseTransfer>();
-            
-            _ikWeightCrossFade.OnVrmLoaded(info);
-        }
-        
-        public void OnVrmDisposing()
-        {
-            _ikWeightCrossFade.OnVrmDisposing();
-            
-            _blendShape.DisposeProxy();
-            _motionTransfer.Target = null;
-        }
         
         public void LoadItems(MotionRequestCollection motionRequests)
         {
@@ -203,6 +185,9 @@ namespace Baku.VMagicMirror
                     PlayItem(request);
                 }
             });
+
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+            _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
 
         private void Update()
@@ -280,6 +265,28 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            _simpleAnimation = info.vrmRoot.gameObject.AddComponent<SimpleAnimation>();
+            _simpleAnimation.playAutomatically = false;
+            _simpleAnimation.AddState(defaultAnimation, "Default");
+            _simpleAnimation.Play("Default");
+
+            _blendShape.Initialize(info.blendShape);
+            _motionTransfer.Target = info.vrmRoot.GetComponent<HumanPoseTransfer>();
+            
+            _ikWeightCrossFade.OnVrmLoaded(info);
+        }
+        
+        private void OnVrmDisposing()
+        {
+            _ikWeightCrossFade.OnVrmDisposing();
+            
+            _blendShape.DisposeProxy();
+            _motionTransfer.Target = null;
+        }
+
+        
         private void ApplyPreviewBlendShape()
         {
             if (PreviewRequest.UseBlendShape)
@@ -383,8 +390,7 @@ namespace Baku.VMagicMirror
             //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
             _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
         }
-
-
+        
         private void StartBvhFileMotion(string bvhFilePath)
         {
             if (_motionTransfer.Target == null)
@@ -484,7 +490,7 @@ namespace Baku.VMagicMirror
         }
 
 
-        private char KeyName2Char(string keyName)
+        private static char KeyName2Char(string keyName)
         {
             if (keyName.Length == 1)
             {

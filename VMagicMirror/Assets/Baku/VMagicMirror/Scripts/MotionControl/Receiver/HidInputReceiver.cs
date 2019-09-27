@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -10,7 +11,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class HidInputReceiver : MonoBehaviour
     {
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
         
         [SerializeField] private StatefulXinputGamePad gamePad = null;
 

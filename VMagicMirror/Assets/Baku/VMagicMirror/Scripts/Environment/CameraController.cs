@@ -3,12 +3,13 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
         [SerializeField] private Camera cam = null;
         [SerializeField] private CameraTransformController transformController = null;
 

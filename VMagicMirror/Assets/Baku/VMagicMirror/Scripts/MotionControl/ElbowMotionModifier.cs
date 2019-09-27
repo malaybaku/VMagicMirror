@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using RootMotion.FinalIK;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -8,8 +9,8 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ElbowMotionModifier : MonoBehaviour
     {
-        [SerializeField]
-        private ElbowMotionModifyReceiver receiver = null;
+        [SerializeField] private ElbowMotionModifyReceiver receiver = null;
+        [Inject] private IVRMLoadable _vrmLoadable = null;
 
         private bool _isInitialized = false;
         private Transform _leftArmBendGoal = null;
@@ -21,7 +22,27 @@ namespace Baku.VMagicMirror
         /// </summary>
         public float ElbowIkRate { get; set; } = 1.0f;
 
-        public void OnVrmLoaded(VrmLoadedInfo info)
+        private void Start()
+        {
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+        }
+
+        private void Update()
+        {
+            if (!_isInitialized)
+            {
+                return;
+            }
+
+            _ik.solver.rightArmChain.bendConstraint.weight = receiver.ElbowCloseStrength * ElbowIkRate;
+            _ik.solver.leftArmChain.bendConstraint.weight = receiver.ElbowCloseStrength * ElbowIkRate;
+
+            _rightArmBendGoal.localPosition = new Vector3(receiver.WaistWidthHalf, 0, 0);
+            _leftArmBendGoal.localPosition = new Vector3(-receiver.WaistWidthHalf, 0, 0);            
+        }
+
+        private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _ik = info.vrmRoot.GetComponent<FullBodyBipedIK>();
             var spineBone = info.animator.GetBoneTransform(HumanBodyBones.Spine);
@@ -39,28 +60,12 @@ namespace Baku.VMagicMirror
             _isInitialized = true;
         }
 
-        public void OnVrmDisposing()
+        private void OnVrmDisposing()
         {
             _ik = null;
             _rightArmBendGoal = null;
             _leftArmBendGoal = null;
             _isInitialized = false;
         }
-
-        private void Update()
-        {
-            if (!_isInitialized)
-            {
-                return;
-            }
-
-            _ik.solver.rightArmChain.bendConstraint.weight = receiver.ElbowCloseStrength * ElbowIkRate;
-            _ik.solver.leftArmChain.bendConstraint.weight = receiver.ElbowCloseStrength * ElbowIkRate;
-
-            _rightArmBendGoal.localPosition = new Vector3(receiver.WaistWidthHalf, 0, 0);
-            _leftArmBendGoal.localPosition = new Vector3(-receiver.WaistWidthHalf, 0, 0);            
-        }
-
-        
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UniRx;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -14,7 +15,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private ShadowBoardMotion shadowBoardMotion = null;
 
         [SerializeField] private PostProcessVolume postProcess = null;
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
 
 
         private Bloom _bloom;

@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     /// <summary> モーション関係で、操作ではなく設定値を受け取るレシーバクラス </summary>
     public class MotionSettingReceiver : MonoBehaviour
     {
-        [SerializeField] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler handler = null;
 
         [SerializeField] private GamepadBasedBodyLean gamePadBasedBodyLean = null;
 

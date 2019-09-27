@@ -27,6 +27,17 @@ namespace Baku.VMagicMirror
         /// </summary>
         public bool UseBlendShape;
 
+        /// <summary>
+        /// アニメーションの終了後にブレンドシェイプをそのままの状態にすべきか否か
+        /// </summary>
+        public bool HoldBlendShape;
+
+        /// <summary>
+        /// リップシンクに関係あるブレンドシェイプについて、リップシンクのブレンドシェイプ指定を優先するか否か
+        /// </summary>
+        /// <remarks>この設定を反映するには(Proxyではない本来の)ブレンドシェイプ解析が必要なことに注意</remarks>
+        public bool PreferLipSync;
+
         //NOTE: 辞書にしないでこのまま使う手も無くはないです
         [SerializeField] private BlendShapeValues BlendShapeValues = null;
 

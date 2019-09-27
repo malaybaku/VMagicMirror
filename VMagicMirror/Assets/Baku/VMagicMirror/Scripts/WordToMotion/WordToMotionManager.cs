@@ -37,12 +37,9 @@ namespace Baku.VMagicMirror
 
         //棒立ちポーズが指定されたアニメーション。
         //コレが必要なのは、デフォルトアニメーションが無いと下半身を動かさないアニメーションで脚が骨折するため
-        [SerializeField]
-        private AnimationClip defaultAnimation = null;
+        [SerializeField] private AnimationClip defaultAnimation = null;
 
         [Inject] private IVRMLoadable _vrmLoadable = null;
-
-        private LateMotionTransfer _motionTransfer = null;
 
         /// <summary>
         /// モーション実行後、単にIKを切るのではなくデフォルト(=立ち)状態に戻すべきかどうか判断するフラグを指定します。
@@ -75,6 +72,7 @@ namespace Baku.VMagicMirror
                 }
                 else
                 {
+                    IsPlayingBlendShape = false;
                     _blendShape.ResetBlendShape();
                     StopPreviewBuiltInMotion();
                 }
@@ -90,12 +88,16 @@ namespace Baku.VMagicMirror
         /// <summary>プレビュー動作の内容。</summary>
         public MotionRequest PreviewRequest { get; set; }
 
+        private LateMotionTransfer _motionTransfer = null;
+
         private WordToMotionMapper _mapper = null;
         private IkWeightCrossFade _ikWeightCrossFade = null;
         private WordToMotionBlendShape _blendShape = null;
 
         private SimpleAnimation _simpleAnimation = null;
 
+        private MotionRequest _currentMotionRequest = null;
+        
         //いまの動作の種類: MotionRequest.MotionTypeXXXのどれかの値になる
         private int _currentMotionType = MotionRequest.MotionTypeNone;
         //ビルトインモーションの実行中だと意味のある文字列になる
@@ -122,6 +124,8 @@ namespace Baku.VMagicMirror
         public void PlayItem(MotionRequest request)
         {
             if (EnablePreview) { return; }
+
+            _currentMotionRequest = request;
 
             //モーションを適用
             switch (request.MotionType)
@@ -252,7 +256,10 @@ namespace Baku.VMagicMirror
             if (!EnablePreview && _blendShapeResetCountDown > 0)
             {
                 _blendShapeResetCountDown -= Time.deltaTime;
-                if (_blendShapeResetCountDown <= 0)
+                //HoldBlendShapeフラグが立ってる場合、ここでブレンドシェイプを変えっぱなしにすることに注意
+                if (_blendShapeResetCountDown <= 0 &&
+                    _currentMotionRequest != null && 
+                    !_currentMotionRequest.HoldBlendShape)
                 {
                     IsPlayingBlendShape = false;
                     _blendShape.ResetBlendShape();

@@ -1984,7 +1984,7 @@ GameObject:
   - component: {fileID: 404531968682039352}
   - component: {fileID: 405275998096970358}
   - component: {fileID: 405087019222207320}
-  - component: {fileID: 3214832228796965221}
+  - component: {fileID: 3974632451602210243}
   m_Layer: 5
   m_Name: LoadConfirmModal Modified
   m_TagString: Untagged
@@ -2106,7 +2106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae8e0d9dd431e64bad52ad44ad2b1ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3214832228796965221
+--- !u!114 &3974632451602210243
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2115,7 +2115,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 292067419132429316}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a03eee905684de44ab8e3e480f5e3d50, type: 3}
+  m_Script: {fileID: 11500000, guid: 7ff5aa87c317fd0468009d262f4ebdb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   thumbnailImage: {fileID: 405150939872836444}

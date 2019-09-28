@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public class VrmPreviewLanguage : MonoBehaviour
+    public class VRMPreviewLanguage : MonoBehaviour
     {
         [Inject] private ReceivedMessageHandler handler = null;
 

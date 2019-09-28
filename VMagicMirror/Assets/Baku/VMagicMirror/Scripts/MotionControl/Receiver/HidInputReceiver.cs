@@ -56,8 +56,13 @@ namespace Baku.VMagicMirror
                 {
                     handIkIntegrator.GamepadButtonUp(data.Key);
                 }
-            });
 
+                if (data.IsArrowKey)
+                {
+                    gamepadBasedBodyLean.ButtonStick(gamePad.ArrowButtonsStickPosition);
+                }
+            });
+            
             gamePad.LeftStickPosition.Subscribe(pos =>
             {
                 var stickPos = NormalizedStickPos(pos);

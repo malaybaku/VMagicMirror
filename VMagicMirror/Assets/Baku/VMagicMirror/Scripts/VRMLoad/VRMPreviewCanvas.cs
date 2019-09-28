@@ -6,13 +6,13 @@ namespace Baku.VMagicMirror
 {
     //NOTE: 表示するキャンバスに貼り付ける前提のスクリプトであることに注意
     [RequireComponent(typeof(Canvas))]
-    public class VrmPreviewCanvas : MonoBehaviour
+    public class VRMPreviewCanvas : MonoBehaviour
     {
         [SerializeField] private GameObject modalWindow = null;
-        [SerializeField] private VrmPreviewLanguage previewLanguage = null;
+        [SerializeField] private VRMPreviewLanguage previewLanguage = null;
 
         private Canvas _canvas;
-        private VrmPreviewUISupport _uiSupport;
+        private VRMPreviewUISupport _uiSupport;
 
         private string _otherPermissionUrl = "";
         private string _otherLicenseUrl = "";
@@ -21,7 +21,7 @@ namespace Baku.VMagicMirror
         {
             _canvas = GetComponent<Canvas>();
 
-            _uiSupport = modalWindow.GetComponentInChildren<VrmPreviewUISupport>();
+            _uiSupport = modalWindow.GetComponentInChildren<VRMPreviewUISupport>();
             _uiSupport.ButtonOpenOtherPermissionUrl
                 .onClick
                 .AddListener(() => Application.OpenURL(_otherPermissionUrl));

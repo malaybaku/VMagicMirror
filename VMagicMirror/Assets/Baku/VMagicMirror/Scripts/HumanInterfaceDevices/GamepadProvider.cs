@@ -86,6 +86,25 @@ namespace Baku.VMagicMirror
                     return true;
             }
         }
+
+        public static ReactedHand GetPreferredReactionHand(XinputKey key)
+        {
+            switch (key)
+            {
+                case XinputKey.B:
+                case XinputKey.A:
+                case XinputKey.X:
+                case XinputKey.Y:
+                    return ReactedHand.Right;
+                case XinputKey.UP:
+                case XinputKey.RIGHT:
+                case XinputKey.DOWN:
+                case XinputKey.LEFT:
+                    return ReactedHand.Left;
+                default:
+                    return ReactedHand.None;
+            }
+        }
         
         //値を半分にする理由: Stick相当の位置にはQuadを置いており、一辺の長さが1に相当するので±0.5で押さえたい
         public Vector3 GetRightStickPosition(float x, float y) 

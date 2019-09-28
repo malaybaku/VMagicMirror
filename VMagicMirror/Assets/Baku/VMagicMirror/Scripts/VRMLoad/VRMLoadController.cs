@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
     {
         [Inject] private ReceivedMessageHandler handler = null;
         [SerializeField] private VrmLoadSetting loadSetting = default;
-        [SerializeField] private VrmPreviewCanvas previewCanvas = null;
+        [SerializeField] private VRMPreviewCanvas previewCanvas = null;
         [SerializeField] private RuntimeAnimatorController animatorController = null;
 
         //NOTE: 下の2つは参照外せなくもないが残している。他と同じでイベントで初期化/破棄するスタイルでもよい

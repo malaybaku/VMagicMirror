@@ -33,7 +33,7 @@ namespace Baku.VMagicMirror
                         SetLengthFromWristToPalm(message.ParseAsCentimeter());
                         break;
                     case MessageCommandNames.LengthFromWristToTip:
-                        handIkIntegrator.Typing.HandToTipLength = message.ParseAsCentimeter();
+                        SetLengthFromWristToTip(message.ParseAsCentimeter());
                         break;
                     case MessageCommandNames.HandYOffsetBasic:
                         SetHandYOffsetBasic(message.ParseAsCentimeter());
@@ -71,6 +71,13 @@ namespace Baku.VMagicMirror
         }
         
         //以下については適用先が1つじゃないことに注意
+
+        private void SetLengthFromWristToTip(float v)
+        {
+            handIkIntegrator.Presentation.HandToTipLength = v;
+            handIkIntegrator.Gamepad.HandToTipLength = v;
+            handIkIntegrator.Typing.HandToTipLength = v;
+        }
         
         private void SetLengthFromWristToPalm(float v)
         {

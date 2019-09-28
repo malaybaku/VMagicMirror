@@ -11,23 +11,26 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class GamepadHandIKGenerator : MonoBehaviour
     {
+        //手をあまり厳格にキーボードに沿わせると曲がり過ぎるのでゼロ回転側に寄せるファクター
+        private const float WristYawApplyFactor = 0.5f;
+        private const float WristYawSpeedFactor = 0.2f;
+        
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKGenerator LeftHand => _leftHand;
 
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         public IIKGenerator RightHand => _rightHand;
 
-        //手をあまり厳格にキーボードに沿わせると曲がり過ぎるのでゼロ回転側に寄せるファクター
-        private const float WristYawApplyFactor = 0.5f;
-        private const float WristYawSpeedFactor = 0.2f;
+        private bool _rightHandShouldOnStick = false;
+        private bool _leftHandShouldOnStick = false;
 
         #region settings (WPFから飛んでくる想定のもの)
 
         //この辺のパラメータはキーボードやマウスのIKで使ってる補正値と被っている点に注意
         public float HandToTipLength { get; set; } = 0.1f;
         public float HandToPalmLength { get; set; } = 0.05f;
-        public float YOffsetAlways { get; set; } = 0.05f;
-        public float YOffsetAfterKeyDown { get; set; } = 0.08f;
+        public float YOffsetAlways { get; set; } = 0.03f;
+        public float YOffsetAfterKeyDown { get; set; } = 0.03f;
 
         #endregion
 
@@ -82,45 +85,54 @@ namespace Baku.VMagicMirror
 
         public ReactedHand ButtonDown(XinputKey key)
         {
+            var hand = GamepadProvider.GetPreferredReactionHand(key);
+            if (hand == ReactedHand.None)
+            {
+                return hand;
+            }
+            
             Vector3 targetPos = _gamePad.GetButtonPosition(key) + yOffsetAlwaysVec;
             targetPos -= HandToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
-            if (GamepadProvider.IsLeftHandPreferred(key))
+            //押下動作については、複数ボタンを押してたら最後に押したボタンの位置に手を動かす
+            if (hand == ReactedHand.Left)
             {
                 _leftHandPressedGamepadKeyCount++;
-                if (_leftHandPressedGamepadKeyCount == 1)
-                {
-                    StartLeftHandCoroutine(
-                        ButtonDownRoutine(_leftHand, targetPos, true)
-                        );
-                    return ReactedHand.Left;
-                }
+                _leftHandShouldOnStick = false;
+                StartLeftHandCoroutine(
+                    ButtonDownRoutine(_leftHand, targetPos, true)
+                    );
             }
-            else
+            else 
             {
                 _rightHandPressedGamepadKeyCount++;
-                if (_rightHandPressedGamepadKeyCount == 1)
-                {
-                    StartRightHandCoroutine(
-                        ButtonDownRoutine(_rightHand, targetPos, false)
-                        );
-                    return ReactedHand.Right;
-                }
+                _rightHandShouldOnStick = false;
+                StartRightHandCoroutine(
+                    ButtonDownRoutine(_rightHand, targetPos, false)
+                    );
             }
-
-            return ReactedHand.None;
+            return hand;
         }
 
         public ReactedHand ButtonUp(XinputKey key)
         {
+            var hand = GamepadProvider.GetPreferredReactionHand(key);
+            if (hand == ReactedHand.None)
+            {
+                return hand;
+            }
+
             Vector3 targetPos = _gamePad.GetButtonPosition(key) + yOffsetAlwaysVec;
             targetPos -= HandToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
-            if (GamepadProvider.IsLeftHandPreferred(key))
+            //2つボタンを押していたのを片方離す => 無視
+            //1つボタンを押していたのを離す => そのボタンの上に手を上げる。このときスティックから明示的に手を離す
+            if (hand == ReactedHand.Left)
             {
                 _leftHandPressedGamepadKeyCount--;
                 if (_leftHandPressedGamepadKeyCount == 0)
                 {
+                    _leftHandShouldOnStick = false;
                     StartLeftHandCoroutine(
                         ButtonUpRoutine(_leftHand, targetPos, true)
                         );
@@ -132,6 +144,7 @@ namespace Baku.VMagicMirror
                 _rightHandPressedGamepadKeyCount--;
                 if (_rightHandPressedGamepadKeyCount == 0)
                 {
+                    _rightHandShouldOnStick = false;
                     StartRightHandCoroutine(
                         ButtonUpRoutine(_rightHand, targetPos, false)
                         );
@@ -144,6 +157,7 @@ namespace Baku.VMagicMirror
 
         public void LeftStick(Vector2 stickPos)
         {
+            _leftHandShouldOnStick = true;
             var targetPos = _gamePad.GetLeftStickPosition(stickPos.x, stickPos.y) + yOffsetAlwaysVec;
             targetPos -= HandToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
@@ -154,6 +168,7 @@ namespace Baku.VMagicMirror
 
         public void RightStick(Vector2 stickPos)
         {
+            _rightHandShouldOnStick = true;
             var targetPos = _gamePad.GetRightStickPosition(stickPos.x, stickPos.y) + yOffsetAlwaysVec;
             targetPos -= HandToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
@@ -166,11 +181,18 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            UpdateLeftHand();
-            UpdateRightHand();
+            if (_leftHandShouldOnStick)
+            {
+                UpdateLeftHandToStick();
+            }
+
+            if (_rightHandShouldOnStick)
+            {
+                UpdateRightHand();
+            }
         }
 
-        private void UpdateLeftHand()
+        private void UpdateLeftHandToStick()
         {
             _leftHand.Position = Vector3.Lerp(
                 _leftHand.Position,
@@ -195,7 +217,7 @@ namespace Baku.VMagicMirror
                 _rightHand.Position,
                 _rightGamepadStickPosition,
                 _horizontalSpeedFactor
-                );
+            );
 
             var rhRot2 = Quaternion.Slerp(
                 Quaternion.Euler(Vector3.up * (

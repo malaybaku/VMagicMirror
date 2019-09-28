@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using XinputGamePad;
 
 namespace Baku.VMagicMirror
 {
@@ -83,12 +82,17 @@ namespace Baku.VMagicMirror
 
         #region API
 
-        public ReactedHand ButtonDown(XinputKey key)
+        public ReactedHand ButtonDown(GamepadKey key)
         {
             var hand = GamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.None)
             {
                 return hand;
+            }
+
+            if (GamepadProvider.IsSideKey(key))
+            {
+                return ReactedHand.None;
             }
             
             Vector3 targetPos = _gamePad.GetButtonPosition(key) + yOffsetAlwaysVec;
@@ -114,7 +118,7 @@ namespace Baku.VMagicMirror
             return hand;
         }
 
-        public ReactedHand ButtonUp(XinputKey key)
+        public ReactedHand ButtonUp(GamepadKey key)
         {
             var hand = GamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.None)
@@ -122,6 +126,11 @@ namespace Baku.VMagicMirror
                 return hand;
             }
 
+            if (GamepadProvider.IsSideKey(key))
+            {
+                return ReactedHand.None;
+            }
+            
             Vector3 targetPos = _gamePad.GetButtonPosition(key) + yOffsetAlwaysVec;
             targetPos -= HandToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 

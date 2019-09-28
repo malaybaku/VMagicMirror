@@ -8,8 +8,9 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class GamepadBasedBodyLean : MonoBehaviour
     {
-        private const float BodyLeanSpeedFactor = 6.0f;
-        private const float BodyLeanMaxAngleDegree = 5.0f;
+        private const float BodyLeanSpeedFactor = 3.0f;
+        
+        [SerializeField] private Vector2 bodyLeanMaxAngle = new Vector2(2.0f, 2.0f);
         
         public Quaternion BodyLeanSuggest { get; private set; } = Quaternion.identity;
         public bool ReverseGamepadStickLeanHorizontal { get; set; } = false;
@@ -78,9 +79,9 @@ namespace Baku.VMagicMirror
                 );
             
             _target = Quaternion.Euler(
-                pos.y * BodyLeanMaxAngleDegree,
+                pos.y * bodyLeanMaxAngle.y,
                 0,
-                -pos.x * BodyLeanMaxAngleDegree
+                -pos.x * bodyLeanMaxAngle.x
                 );
         }
 

@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         [Inject] private ReceivedMessageHandler handler = null;
         
         [SerializeField] private StatefulXinputGamePad gamePad = null;
-
+        
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
 
         [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
@@ -60,6 +60,7 @@ namespace Baku.VMagicMirror
                 if (data.IsArrowKey)
                 {
                     gamepadBasedBodyLean.ButtonStick(gamePad.ArrowButtonsStickPosition);
+                    handIkIntegrator.ButtonStick(gamePad.ArrowButtonsStickPosition);
                 }
             });
             

@@ -9,19 +9,31 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ElbowMotionModifier : MonoBehaviour
     {
-        [SerializeField] private ElbowMotionModifyReceiver receiver = null;
+        private const float WidthFactorLerp = 6.0f;
+        
+        [SerializeField] private HandIKIntegrator handIkIntegrator = null;
         [Inject] private IVRMLoadable _vrmLoadable = null;
+
+        public float WaistWidthHalf { get; private set; } = 0.15f;
+        public float ElbowCloseStrength { get; private set; } = 0.30f;
+        
+        /// <summary>
+        /// IKの効きを補正するファクターで0から1の値を指定します。
+        /// </summary>
+        public float ElbowIkRate { get; set; } = 1.0f;
+
+        private float _leftWidthFactor = 1.0f;
+        private float _rightWidthFactor = 1.0f;
 
         private bool _isInitialized = false;
         private Transform _leftArmBendGoal = null;
         private Transform _rightArmBendGoal = null;
         private FullBodyBipedIK _ik;
 
-        /// <summary>
-        /// IKの効きを補正するファクターで0から1の値を指定します。
-        /// </summary>
-        public float ElbowIkRate { get; set; } = 1.0f;
 
+        public void SetWaistWidth(float width) => WaistWidthHalf = width * 0.5f;
+        public void SetElbowCloseStrength(float strength) => ElbowCloseStrength = strength;
+        
         private void Start()
         {
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
@@ -35,11 +47,23 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            _ik.solver.rightArmChain.bendConstraint.weight = receiver.ElbowCloseStrength * ElbowIkRate;
-            _ik.solver.leftArmChain.bendConstraint.weight = receiver.ElbowCloseStrength * ElbowIkRate;
+            _leftWidthFactor = Mathf.Lerp(
+                _leftWidthFactor,
+                handIkIntegrator.IsLeftHandGripGamepad ? 2.0f : 1.0f,
+                WidthFactorLerp * Time.deltaTime
+            );
 
-            _rightArmBendGoal.localPosition = new Vector3(receiver.WaistWidthHalf, 0, 0);
-            _leftArmBendGoal.localPosition = new Vector3(-receiver.WaistWidthHalf, 0, 0);            
+            _rightWidthFactor = Mathf.Lerp(
+                _rightWidthFactor,
+                handIkIntegrator.IsRightHandGripGamepad ? 2.0f : 1.0f,
+                WidthFactorLerp * Time.deltaTime
+            );
+
+            _ik.solver.rightArmChain.bendConstraint.weight = ElbowCloseStrength * ElbowIkRate;
+            _ik.solver.leftArmChain.bendConstraint.weight = ElbowCloseStrength * ElbowIkRate;
+
+            _rightArmBendGoal.localPosition = new Vector3(WaistWidthHalf * _rightWidthFactor, 0, 0);            
+            _leftArmBendGoal.localPosition = new Vector3(-WaistWidthHalf * _leftWidthFactor, 0, 0);
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)

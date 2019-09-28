@@ -2,22 +2,22 @@
 
 namespace Baku.VMagicMirror
 {
-    public struct XinputKeyData
+    public struct GamepadKeyData
     {
-        public XinputKeyData(XinputKey key, bool isPressed) : this()
+        public GamepadKeyData(GamepadKey key, bool isPressed) : this()
         {
             Key = key;
             IsPressed = isPressed;
         }
 
-        public readonly XinputKey Key;
+        public readonly GamepadKey Key;
         public readonly bool IsPressed;
 
         public bool IsArrowKey =>
-            Key == XinputKey.UP ||
-            Key == XinputKey.RIGHT ||
-            Key == XinputKey.DOWN ||
-            Key == XinputKey.LEFT;
+            Key == GamepadKey.UP ||
+            Key == GamepadKey.RIGHT ||
+            Key == GamepadKey.DOWN ||
+            Key == GamepadKey.LEFT;
     }
 }
 

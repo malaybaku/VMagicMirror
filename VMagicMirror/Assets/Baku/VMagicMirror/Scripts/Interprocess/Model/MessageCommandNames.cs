@@ -132,6 +132,10 @@
         public const string EnableWordToMotionPreview = nameof(EnableWordToMotionPreview);
         public const string SendWordToMotionPreviewInfo = nameof(SendWordToMotionPreviewInfo);
 
+        // Screenshot
+        public const string TakeScreenshot = nameof(TakeScreenshot);
+        public const string OpenScreenshotFolder = nameof(OpenScreenshotFolder);
+
     }
 }
 

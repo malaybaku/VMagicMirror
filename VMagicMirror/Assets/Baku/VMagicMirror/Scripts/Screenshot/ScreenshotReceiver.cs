@@ -9,12 +9,18 @@ namespace Baku.VMagicMirror
 {
     public class ScreenshotReceiver : MonoBehaviour
     {
+        private const int ScreenshotCountSec = 3;
+        
         [Inject] private ReceivedMessageHandler handler = null;
 
         //普段使ってるカメラ
         [SerializeField] private Camera normalMainCam = null;
         //スクショ専用の高解像度カメラ
         [SerializeField] private Camera screenShotCam = null;
+
+        [SerializeField] private ScreenshotCountDownCanvas countDownCanvas = null;
+        private float _screenshotCountDown = 0f;
+
         
         private void Start()
         {
@@ -23,7 +29,7 @@ namespace Baku.VMagicMirror
                 switch (message.Command)
                 {
                     case MessageCommandNames.TakeScreenshot:
-                        TakeScreenshot();
+                        StartScreenshotCountDown();
                         break;
                     case MessageCommandNames.OpenScreenshotFolder:
                         OpenScreenshotFolder();
@@ -32,6 +38,28 @@ namespace Baku.VMagicMirror
             });
         }
 
+        private void Update()
+        {
+            if (_screenshotCountDown > 0)
+            {
+                _screenshotCountDown -= Time.deltaTime;
+                if (_screenshotCountDown <= 0)
+                {
+                    countDownCanvas.Hide();
+                    TakeScreenshot();
+                }
+                countDownCanvas.SetCount(Mathf.FloorToInt(_screenshotCountDown) + 1);
+                countDownCanvas.SetMod(Mathf.Repeat(_screenshotCountDown, 1.0f));
+            }
+        }
+        
+        private void StartScreenshotCountDown()
+        {
+            countDownCanvas.Show();
+            countDownCanvas.SetCount(ScreenshotCountSec);
+            _screenshotCountDown = ScreenshotCountSec;
+        }
+        
         private void TakeScreenshot()
         {
             //見た目の通りだが、

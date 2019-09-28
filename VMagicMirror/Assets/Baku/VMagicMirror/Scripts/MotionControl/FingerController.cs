@@ -19,6 +19,8 @@ namespace Baku.VMagicMirror
 
         private const float DefaultBendingAngle = 10.0f;
         private const float Duration = 0.25f;
+        private const float MaxBendingAngle = 25f;
+        private const float HoldOperationSpeedFactor = 18.0f;
 
         //NOTE: 曲げ角度の符号に注意。左右で意味変わるのと、親指とそれ以外の差にも注意
         private static Dictionary<int, float[]> _fingerIdToPointingAngle = new Dictionary<int, float[]>()
@@ -54,6 +56,9 @@ namespace Baku.VMagicMirror
 
         private readonly bool[] _isAnimating = new bool[10];
         private readonly float[] _animationStartedTime = new float[10];
+        private readonly bool[] _shouldHoldPressedMode = new bool[10];
+        //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
+        private readonly float[] _holdOperationBendingAngle = new float[10];
 
         #region API
 
@@ -180,6 +185,31 @@ namespace Baku.VMagicMirror
             }
         }
 
+        /// <summary>
+        /// 特定の指を下げっぱなしにします。ゲームパッドの入力を表現するために使うのを想定しています。
+        /// </summary>
+        /// <param name="fingerNumber"></param>
+        public void PressAndHold(int fingerNumber)
+        {
+            if (fingerNumber > 0 && fingerNumber < 11)
+            {
+                _shouldHoldPressedMode[fingerNumber - 1] = true;
+            }
+        }
+
+        /// <summary>
+        /// <see cref="PressAndHold"/>で下げた指を上げます。
+        /// </summary>
+        /// <param name="fingerNumber"></param>
+        public void ReleaseHoldedFinger(int fingerNumber)
+        {
+            if (fingerNumber > 0 && fingerNumber < 11)
+            {
+                _shouldHoldPressedMode[fingerNumber - 1] = false;
+            }
+        }
+        
+        
         #endregion
 
         private void LateUpdate()
@@ -199,6 +229,13 @@ namespace Baku.VMagicMirror
                 }
 
                 float angle = DefaultBendingAngle;
+
+                _holdOperationBendingAngle[i] = Mathf.Lerp(
+                    _holdOperationBendingAngle[i],
+                    _shouldHoldPressedMode[i] ? MaxBendingAngle : DefaultBendingAngle,
+                    HoldOperationSpeedFactor * Time.deltaTime
+                    );
+                
                 if (_isAnimating[i])
                 {
                     float time = Time.time - _animationStartedTime[i];
@@ -209,6 +246,10 @@ namespace Baku.VMagicMirror
                     }
                     angle = _angleCurve.Evaluate(time);
                 }
+                else
+                {
+                    angle = _holdOperationBendingAngle[i];
+                }
 
                 //左右の手で回転方向が逆
                 if (i > 4)
@@ -218,6 +259,7 @@ namespace Baku.VMagicMirror
 
                 foreach (var t in _fingers[i])
                 {
+                    _holdOperationBendingAngle[i] = angle;
                     if (t != null)
                     {
                         t.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);

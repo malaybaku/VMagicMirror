@@ -8,9 +8,11 @@ namespace Baku.VMagicMirror
 {
     public class StatefulXinputGamePad : MonoBehaviour
     {
+        [SerializeField] private int TriggerDownThreshold = 30;
+        
         public int DeviceNumber;
 
-        public IObservable<XinputKeyData> ButtonUpDown => _buttonSubject;
+        public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
         /// <summary>
         /// Position is (x, y), and both x and y are in short (MIN=-32768, MAX=+32767)
@@ -42,7 +44,7 @@ namespace Baku.VMagicMirror
         }
 
         private readonly HashSet<ObservableButton> _buttons = new HashSet<ObservableButton>();
-        private readonly Subject<XinputKeyData> _buttonSubject = new Subject<XinputKeyData>();
+        private readonly Subject<GamepadKeyData> _buttonSubject = new Subject<GamepadKeyData>();
 
         private readonly Subject<Vector2Int> _rightStick = new Subject<Vector2Int>();
         private readonly Subject<Vector2Int> _leftStick = new Subject<Vector2Int>();
@@ -56,17 +58,23 @@ namespace Baku.VMagicMirror
         private ObservableButton _arrowLeft;
         private ObservableButton _arrowUp;
 
+        private bool _isLeftTriggerDown = false;
+        private bool _isRightTriggerDown = false;
+
         private void Start()
         {
-            _buttons.Add(new ObservableButton(XinputKey.B, InputConst.XINPUT_GAMEPAD_B, _buttonSubject));
-            _buttons.Add(new ObservableButton(XinputKey.A, InputConst.XINPUT_GAMEPAD_A, _buttonSubject));
-            _buttons.Add(new ObservableButton(XinputKey.X, InputConst.XINPUT_GAMEPAD_X, _buttonSubject));
-            _buttons.Add(new ObservableButton(XinputKey.Y, InputConst.XINPUT_GAMEPAD_Y, _buttonSubject));
+            _buttons.Add(new ObservableButton(GamepadKey.B, InputConst.XINPUT_GAMEPAD_B, _buttonSubject));
+            _buttons.Add(new ObservableButton(GamepadKey.A, InputConst.XINPUT_GAMEPAD_A, _buttonSubject));
+            _buttons.Add(new ObservableButton(GamepadKey.X, InputConst.XINPUT_GAMEPAD_X, _buttonSubject));
+            _buttons.Add(new ObservableButton(GamepadKey.Y, InputConst.XINPUT_GAMEPAD_Y, _buttonSubject));
 
-            _arrowRight = new ObservableButton(XinputKey.RIGHT, InputConst.XINPUT_GAMEPAD_DPAD_RIGHT, _buttonSubject);
-            _arrowDown = new ObservableButton(XinputKey.DOWN, InputConst.XINPUT_GAMEPAD_DPAD_DOWN, _buttonSubject);
-            _arrowLeft = new ObservableButton(XinputKey.LEFT, InputConst.XINPUT_GAMEPAD_DPAD_LEFT, _buttonSubject);
-            _arrowUp = new ObservableButton(XinputKey.UP, InputConst.XINPUT_GAMEPAD_DPAD_UP, _buttonSubject);
+            _buttons.Add(new ObservableButton(GamepadKey.RShoulder, InputConst.XINPUT_GAMEPAD_RIGHT_SHOULDER, _buttonSubject));
+            _buttons.Add(new ObservableButton(GamepadKey.LShoulder, InputConst.XINPUT_GAMEPAD_LEFT_SHOULDER, _buttonSubject));
+            
+            _arrowRight = new ObservableButton(GamepadKey.RIGHT, InputConst.XINPUT_GAMEPAD_DPAD_RIGHT, _buttonSubject);
+            _arrowDown = new ObservableButton(GamepadKey.DOWN, InputConst.XINPUT_GAMEPAD_DPAD_DOWN, _buttonSubject);
+            _arrowLeft = new ObservableButton(GamepadKey.LEFT, InputConst.XINPUT_GAMEPAD_DPAD_LEFT, _buttonSubject);
+            _arrowUp = new ObservableButton(GamepadKey.UP, InputConst.XINPUT_GAMEPAD_DPAD_UP, _buttonSubject);
 
             _buttons.Add(_arrowRight);
             _buttons.Add(_arrowDown);
@@ -86,6 +94,7 @@ namespace Baku.VMagicMirror
 
             UpdateRightStick();
             UpdateLeftStick();
+            UpdateTriggerAsButtons();
         }
 
         public void ResetControllerState()
@@ -100,8 +109,6 @@ namespace Baku.VMagicMirror
 
         public XinputTriger GetTrigger() => new XinputTriger
         {
-            Right = DllConst.GetRightTrigger(DeviceNumber),
-            Left = DllConst.GetLeftTrigger(DeviceNumber)
         };
 
         private void UpdateRightStick()
@@ -132,18 +139,37 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void UpdateTriggerAsButtons()
+        {
+            int right = DllConst.GetRightTrigger(DeviceNumber);
+            bool isRightDown = (right > TriggerDownThreshold);
+            if (_isRightTriggerDown != isRightDown)
+            {
+                _isRightTriggerDown = isRightDown;
+                _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.RTrigger, isRightDown));
+            }
+            
+            int left = DllConst.GetLeftTrigger(DeviceNumber);
+            bool isLeftDown = (left > TriggerDownThreshold);
+            if (_isLeftTriggerDown != isLeftDown)
+            {
+                _isLeftTriggerDown = isLeftDown;
+                _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.LTrigger, isLeftDown));
+            }
+        }
+        
         class ObservableButton
         {
-            public ObservableButton(XinputKey key, int flag, Subject<XinputKeyData> subject)
+            public ObservableButton(GamepadKey key, int flag, Subject<GamepadKeyData> subject)
             {
                 _key = key;
                 _flag = flag;
                 _subject = subject;
             }
 
-            private readonly XinputKey _key;
+            private readonly GamepadKey _key;
             private readonly int _flag;
-            private readonly Subject<XinputKeyData> _subject;
+            private readonly Subject<GamepadKeyData> _subject;
 
             private bool _isPressed = false;
             public bool IsPressed
@@ -154,7 +180,7 @@ namespace Baku.VMagicMirror
                     if (_isPressed != value)
                     {
                         _isPressed = value;
-                        _subject.OnNext(new XinputKeyData(_key, IsPressed));
+                        _subject.OnNext(new GamepadKeyData(_key, IsPressed));
                     }
                 }
             }
@@ -167,6 +193,26 @@ namespace Baku.VMagicMirror
 
         }
 
+    }
+
+    /// <summary>
+    /// NOTE: Baku.VMagicMirror内部でのボタンの呼称。DirectInputに後で対応したときもコレを使う
+    /// </summary>
+    public enum GamepadKey
+    {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN,
+        A,
+        B,
+        X,
+        Y,
+        RShoulder,
+        LShoulder,
+        //NOTE: トリガーキーも便宜的にon/offのボタン扱いする
+        RTrigger,
+        LTrigger,
     }
 }
 

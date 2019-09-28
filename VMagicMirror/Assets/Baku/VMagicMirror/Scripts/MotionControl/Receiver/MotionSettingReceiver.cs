@@ -75,26 +75,26 @@ namespace Baku.VMagicMirror
         private void SetLengthFromWristToTip(float v)
         {
             handIkIntegrator.Presentation.HandToTipLength = v;
-            handIkIntegrator.Gamepad.HandToTipLength = v;
+            handIkIntegrator.GamepadHand.HandToTipLength = v;
             handIkIntegrator.Typing.HandToTipLength = v;
         }
         
         private void SetLengthFromWristToPalm(float v)
         {
-            handIkIntegrator.Gamepad.HandToPalmLength = v;
+            handIkIntegrator.GamepadHand.HandToPalmLength = v;
             handIkIntegrator.MouseMove.HandToPalmLength = v;
         }
         
         private void SetHandYOffsetBasic(float offset)
         {
-            handIkIntegrator.Gamepad.YOffsetAlways = offset;
+            handIkIntegrator.GamepadHand.YOffsetAlways = offset;
             handIkIntegrator.Typing.YOffsetAlways = offset;
             handIkIntegrator.MouseMove.YOffset = offset;
         }
 
         private void SetHandYOffsetAfterKeyDown(float offset)
         {
-            handIkIntegrator.Gamepad.YOffsetAfterKeyDown = offset;
+            handIkIntegrator.GamepadHand.YOffsetAfterKeyDown = offset;
             handIkIntegrator.Typing.YOffsetAfterKeyDown = offset;
         }
     }

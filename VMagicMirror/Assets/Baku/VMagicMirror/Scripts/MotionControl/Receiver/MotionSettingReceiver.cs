@@ -10,6 +10,7 @@ namespace Baku.VMagicMirror
         [Inject] private ReceivedMessageHandler handler = null;
 
         [SerializeField] private GamepadBasedBodyLean gamePadBasedBodyLean = null;
+        [SerializeField] private SmallGamepadHandIKGenerator smallGamepadHandIk = null;
 
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
 
@@ -58,12 +59,15 @@ namespace Baku.VMagicMirror
                         break;
                     case MessageCommandNames.GamepadLeanMode:
                         gamePadBasedBodyLean.SetGamepadLeanMode(message.Content);
+                        smallGamepadHandIk.SetGamepadLeanMode(message.Content);
                         break;
                     case MessageCommandNames.GamepadLeanReverseHorizontal:
                         gamePadBasedBodyLean.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
+                        smallGamepadHandIk.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
                         break;
                     case MessageCommandNames.GamepadLeanReverseVertical:
                         gamePadBasedBodyLean.ReverseGamepadStickLeanVertical = message.ToBoolean();
+                        smallGamepadHandIk.ReverseGamepadStickLeanVertical = message.ToBoolean();
                         break;
                 }
 
@@ -75,26 +79,22 @@ namespace Baku.VMagicMirror
         private void SetLengthFromWristToTip(float v)
         {
             handIkIntegrator.Presentation.HandToTipLength = v;
-            handIkIntegrator.GamepadHand.HandToTipLength = v;
             handIkIntegrator.Typing.HandToTipLength = v;
         }
         
         private void SetLengthFromWristToPalm(float v)
         {
-            handIkIntegrator.GamepadHand.HandToPalmLength = v;
             handIkIntegrator.MouseMove.HandToPalmLength = v;
         }
         
         private void SetHandYOffsetBasic(float offset)
         {
-            handIkIntegrator.GamepadHand.YOffsetAlways = offset;
             handIkIntegrator.Typing.YOffsetAlways = offset;
             handIkIntegrator.MouseMove.YOffset = offset;
         }
 
         private void SetHandYOffsetAfterKeyDown(float offset)
         {
-            handIkIntegrator.GamepadHand.YOffsetAfterKeyDown = offset;
             handIkIntegrator.Typing.YOffsetAfterKeyDown = offset;
         }
     }

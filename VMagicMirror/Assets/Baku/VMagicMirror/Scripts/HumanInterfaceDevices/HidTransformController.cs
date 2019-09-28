@@ -16,16 +16,14 @@ namespace Baku.VMagicMirror
 
         [SerializeField]
         private TouchPadProvider touchpad = null;
-
-        [SerializeField]
-        private GamepadProvider gamepad = null;
+        
+        [SerializeField] private SmallGamepadProvider smallGamepad = null;
 
         [SerializeField]
         private ParticleStore particleStore = null;
 
         private Transform _keyboardRoot => keyboard.transform;
         private Transform _touchPadRoot => touchpad.transform.parent;
-        private Transform _gamepadRoot => gamepad.transform;
 
         void Start()
         {
@@ -43,15 +41,15 @@ namespace Baku.VMagicMirror
                         SetHidVisibility(message.ToBoolean());
                         break;
                     case MessageCommandNames.GamepadHeight:
-                        SetGamepadHeight(message.ParseAsCentimeter());
+                        smallGamepad.SetHeight(message.ParseAsCentimeter());
                         break;
                     case MessageCommandNames.GamepadHorizontalScale:
-                        SetGamepadHorizontalScale(message.ParseAsPercentage());
+                        smallGamepad.SetHorizontalScale(message.ParseAsPercentage());
                         break;
                     case MessageCommandNames.GamepadVisibility:
-                        SetGamepadVisibility(message.ToBoolean());
+                        //何もしない: ゲームパッドのメッシュが無くなったので
+//                        SetGamepadVisibility(message.ToBoolean());
                         break;
-
                     default:
                         break;
                 }
@@ -80,25 +78,6 @@ namespace Baku.VMagicMirror
         {
             keyboard.gameObject.SetActive(v);
             //touchpad.gameObject.SetActive(v);
-        }
-
-        private void SetGamepadHeight(float v)
-        {
-            var gamepadPos = _gamepadRoot.position;
-            _gamepadRoot.position = new Vector3(gamepadPos.x, v, gamepadPos.z);
-        }
-
-        private void SetGamepadHorizontalScale(float v)
-        {
-            _gamepadRoot.localScale = new Vector3(v, 1.0f, v);
-        }
-
-        private void SetGamepadVisibility(bool v)
-        {
-            foreach(var renderer in _gamepadRoot.GetComponentsInChildren<MeshRenderer>())
-            {
-                renderer.enabled = v;
-            }
         }
     }
 

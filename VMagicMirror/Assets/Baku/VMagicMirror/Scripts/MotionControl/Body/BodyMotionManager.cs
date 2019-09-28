@@ -13,9 +13,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private GamepadBasedBodyLean gamepadBasedBodyLean = null;
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
         [SerializeField] private WaitingBodyMotion waitingBodyMotion = null;
-
-        [SerializeField] private float gamePadBodyLeanSpeedFactor = 6.0f;
-
         [Inject] private IVRMLoadable _vrmLoadable = null;
 
         public WaitingBodyMotion WaitingBodyMotion => waitingBodyMotion;

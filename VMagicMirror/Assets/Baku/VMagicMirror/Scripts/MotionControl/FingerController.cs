@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror
 
         private const float DefaultBendingAngle = 10.0f;
         private const float Duration = 0.25f;
-        private const float MaxBendingAngle = 25f;
+        private const float ThumbProximalMaxBendAngle = 30f;
         private const float HoldOperationSpeedFactor = 18.0f;
 
         //NOTE: 曲げ角度の符号に注意。左右で意味変わるのと、親指とそれ以外の差にも注意
@@ -57,6 +57,7 @@ namespace Baku.VMagicMirror
         private readonly bool[] _isAnimating = new bool[10];
         private readonly float[] _animationStartedTime = new float[10];
         private readonly bool[] _shouldHoldPressedMode = new bool[10];
+        private readonly float[] _holdAngles = new float[10];
         //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
         private readonly float[] _holdOperationBendingAngle = new float[10];
 
@@ -186,26 +187,29 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary>
-        /// 特定の指を下げっぱなしにします。ゲームパッドの入力を表現するために使うのを想定しています。
+        /// 特定の指の曲げ角度を固定します。ゲームパッドの入力を表現するために使うのを想定しています。
         /// </summary>
         /// <param name="fingerNumber"></param>
-        public void PressAndHold(int fingerNumber)
+        /// <param name="angle"></param>
+        public void Hold(int fingerNumber, float angle)
         {
-            if (fingerNumber > 0 && fingerNumber < 11)
+            if (fingerNumber >= 0 && fingerNumber < _shouldHoldPressedMode.Length)
             {
-                _shouldHoldPressedMode[fingerNumber - 1] = true;
+                _shouldHoldPressedMode[fingerNumber] = true;
+                _holdAngles[fingerNumber] = angle;
             }
         }
 
         /// <summary>
-        /// <see cref="PressAndHold"/>で下げた指を上げます。
+        /// <see cref="Hold"/>で押していた指を解放します。
         /// </summary>
         /// <param name="fingerNumber"></param>
-        public void ReleaseHoldedFinger(int fingerNumber)
+        public void Release(int fingerNumber)
         {
-            if (fingerNumber > 0 && fingerNumber < 11)
+            if (fingerNumber >= 0 && fingerNumber < _shouldHoldPressedMode.Length)
             {
-                _shouldHoldPressedMode[fingerNumber - 1] = false;
+                _shouldHoldPressedMode[fingerNumber] = false;
+                _holdAngles[fingerNumber] = 0;
             }
         }
         
@@ -232,7 +236,7 @@ namespace Baku.VMagicMirror
 
                 _holdOperationBendingAngle[i] = Mathf.Lerp(
                     _holdOperationBendingAngle[i],
-                    _shouldHoldPressedMode[i] ? MaxBendingAngle : DefaultBendingAngle,
+                    _shouldHoldPressedMode[i] ? _holdAngles[i] : DefaultBendingAngle,
                     HoldOperationSpeedFactor * Time.deltaTime
                     );
                 
@@ -257,12 +261,16 @@ namespace Baku.VMagicMirror
                     angle = -angle;
                 }
 
-                foreach (var t in _fingers[i])
+                
+                for (int j = 0; j < _fingers[i].Length; j++)
                 {
-                    _holdOperationBendingAngle[i] = angle;
+                    var t = _fingers[i][j];
+                    //Holdのほうの値は正負考えずに入れるようになってるため、常にプラスで保存
+                    _holdOperationBendingAngle[i] = Mathf.Abs(angle);
+                    angle = LimitThumbBendAngle(angle, i, j);
                     if (t != null)
                     {
-                        t.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                        t.localRotation = Quaternion.AngleAxis(angle, GetRotationAxis(i, j));
                     }
                 }
             }
@@ -300,6 +308,36 @@ namespace Baku.VMagicMirror
 
                 targets[i].localRotation = Quaternion.AngleAxis(angles[i], axis);
             }
+        }
+
+        private static Vector3 GetRotationAxis(int fingerNumber, int jointIndex)
+        {
+            if ((fingerNumber == FingerConsts.LeftThumb || fingerNumber == FingerConsts.RightThumb) && 
+                jointIndex < 2
+                )
+            {
+                return Vector3.down;
+            }
+            else
+            {
+                return Vector3.forward;
+            }
+        }
+
+        private static float LimitThumbBendAngle(float angle, int fingerNumber, int jointIndex)
+        {
+            if (fingerNumber != FingerConsts.LeftThumb &&
+                fingerNumber != FingerConsts.RightThumb)
+            {
+                return angle;
+            }
+
+            if (jointIndex != 2)
+            {
+                return angle;
+            }
+
+            return Mathf.Clamp(angle, -ThumbProximalMaxBendAngle, ThumbProximalMaxBendAngle);
         }
     }
 }

@@ -10,6 +10,11 @@ namespace Baku.VMagicMirror
     public class ScreenshotReceiver : MonoBehaviour
     {
         [Inject] private ReceivedMessageHandler handler = null;
+
+        //普段使ってるカメラ
+        [SerializeField] private Camera normalMainCam = null;
+        //スクショ専用の高解像度カメラ
+        [SerializeField] private Camera screenShotCam = null;
         
         private void Start()
         {
@@ -40,8 +45,11 @@ namespace Baku.VMagicMirror
 
             GetAndCreateScreenshotFolderPath();
 
+            //この1フレームだけレンダリングする。重たいので普段は切っておくのがポイント
+            SetupScreenshotCamera(superSize);
+            screenShotCam.enabled = true;
+            
             StartCoroutine(CaptureWithAlpha(
-                superSize,
                 Path.Combine(
                     GetAndCreateScreenshotFolderPath(),
                     DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png"
@@ -49,15 +57,43 @@ namespace Baku.VMagicMirror
             ));
         }
 
-        private IEnumerator CaptureWithAlpha(int superSize, string savePath)
+        private void SetupScreenshotCamera(int superSize)
+        {
+            screenShotCam.fieldOfView = normalMainCam.fieldOfView;
+            screenShotCam.backgroundColor = normalMainCam.backgroundColor;
+            screenShotCam.targetTexture = new RenderTexture(
+                Screen.width * superSize,
+                Screen.height * superSize,
+                32,
+                RenderTextureFormat.ARGB32
+                );
+        }
+
+        private IEnumerator CaptureWithAlpha(string savePath)
         {
             yield return new WaitForEndOfFrame();
 
-            var texture = ScreenCapture.CaptureScreenshotAsTexture(superSize);
-            var bytes = texture.EncodeToPNG();
-            Destroy(texture);
-
-            File.WriteAllBytes(savePath, bytes);
+            var src = screenShotCam.targetTexture;
+            var dst = new Texture2D(src.width, src.height, TextureFormat.ARGB32, false);
+            var prevActive = RenderTexture.active;
+            try
+            {
+                RenderTexture.active = src;
+                dst.ReadPixels(new Rect(0, 0, src.width, src.height), 0, 0);
+                File.WriteAllBytes(savePath, dst.EncodeToPNG());
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
+            finally
+            {
+                RenderTexture.active = prevActive;
+                Destroy(screenShotCam.targetTexture);
+                screenShotCam.targetTexture = null;
+                screenShotCam.enabled = false;
+                Destroy(dst);
+            }
         }
 
         private static void OpenScreenshotFolder() 

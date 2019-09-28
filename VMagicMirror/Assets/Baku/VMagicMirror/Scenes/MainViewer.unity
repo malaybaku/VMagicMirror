@@ -424,9 +424,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 306547509}
+  - component: {fileID: 306547513}
   - component: {fileID: 306547512}
   - component: {fileID: 306547511}
   - component: {fileID: 306547510}
+  - component: {fileID: 306547514}
   m_Layer: 0
   m_Name: BodyMotion
   m_TagString: Untagged
@@ -495,6 +497,31 @@ MonoBehaviour:
   bodyIk: {fileID: 1134663116}
   imageBasedBodyMotion: {fileID: 306547511}
   waitingBodyMotion: {fileID: 306547510}
+--- !u!114 &306547513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306547508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a586a6b63530d746ab02cbc14ba2d66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bodyMotionManager: {fileID: 306547512}
+--- !u!114 &306547514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306547508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7721bdd88242aa439fa64a2e1a034a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &402429506
 GameObject:
   m_ObjectHideFlags: 0

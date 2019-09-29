@@ -22,8 +22,8 @@ namespace Baku.VMagicMirror
 
         public int HidHeight = 90;
         public int HidHorizontalScale = 70;
-        public int GamepadHeight = 90;
-        public int GamepadHorizontalScale = 100;
+        public int GamepadHeight = 100;
+        public int GamepadHorizontalScale = 80;
 
     }
 }

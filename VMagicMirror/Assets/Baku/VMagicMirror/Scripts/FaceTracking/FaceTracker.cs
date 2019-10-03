@@ -331,6 +331,7 @@ namespace Baku.VMagicMirror
         {
             _isInitWaiting = false;
             HasInitDone = false;
+            FaceDetectedAtLeastOnce = false;
 
             if (_webCamTexture != null)
             {

@@ -18,6 +18,9 @@ namespace Baku.VMagicMirror
             {
                 switch (message.Command)
                 {
+                    case MessageCommandNames.EnableFaceTracking:
+                        _faceControlManager.IsFaceTrackingActive = message.ToBoolean();
+                        break;
                     case MessageCommandNames.AutoBlinkDuringFaceTracking:
                         _faceControlManager.PreferAutoBlink = message.ToBoolean();
                         break;

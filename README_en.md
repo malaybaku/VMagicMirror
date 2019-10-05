@@ -57,6 +57,13 @@ Set the folder as following.
 + `WPF`
     + [WPF repository](https://github.com/malaybaku/VMAgicMirrorConfig)
 
+Open Unity project with Unity 2018.3.x, and open WPF project with Visual Studio 2019.
+
+Maintainer's environment is as following.
+
+* Unity 2018.3.7f1 Personal
+* Visual Studio Community 2019
+
 ### 4.2. Asset install
 
 * [UniVRM](https://dwango.github.io/vrm/) v0.53.0

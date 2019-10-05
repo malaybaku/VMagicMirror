@@ -52,6 +52,13 @@ Windows 10環境でお使いいただけます。
 + `WPF`
     + [WPFのレポジトリ](https://github.com/malaybaku/VMAgicMirrorConfig)
 
+Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプロジェクトを開きます。
+
+メンテナの開発環境は以下の通りです。
+
+* Unity 2018.3.7f1 Personal
+* Visual Studio Community 2019
+
 ### 4.2. アセットの導入
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)

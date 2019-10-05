@@ -105,6 +105,13 @@ namespace Baku.VMagicMirror
             const float factor = 1.0f / 32768.0f;
             return new Vector2(v.x * factor, v.y * factor);
         }
+
+        private void Start()
+        {
+            //とりあえず初期位置までゲームコントローラIKの場所を持ち上げておく:
+            //やらないとIK位置が0,0,0のままになって良くない
+            ApplyStickPosition(Vector2.zero);   
+        }
         
         private void Update()
         {

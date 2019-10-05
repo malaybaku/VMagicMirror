@@ -97,12 +97,10 @@ namespace Baku.VMagicMirror
                     faceTracker.FaceDetectedAtLeastOnce
                     )
                 {
-                    Debug.Log("ImageBasedBlink");
                     imageBasedBlinkController.Apply(_proxy);
                 }
                 else
                 {
-                    Debug.Log("AutoBlink");
                     autoBlink.Apply(_proxy);
                 }
             }

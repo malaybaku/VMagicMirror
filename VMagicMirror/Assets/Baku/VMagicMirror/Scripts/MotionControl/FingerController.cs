@@ -154,9 +154,9 @@ namespace Baku.VMagicMirror
             _fingers = null;
         }
 
-        public void StartPressKeyMotion(string key)
+        public void StartPressKeyMotion(string key, bool isLeftHandOnly)
         {
-            StartMoveFinger(keyboard.GetKeyTargetData(key).fingerNumber);
+            StartMoveFinger(keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber);
         }
 
         public void StartClickMotion(string info)

@@ -44,6 +44,13 @@ namespace Baku.VMagicMirror
         public bool EnableHidArmMotion { get; set; } = true;
 
         public bool UseGamepadForWordToMotion { get; set; } = false;
+        
+        public bool EnablePresentationMode { get; set; }
+
+        public bool IsLeftHandGripGamepad => _leftTargetType == HandTargetType.Gamepad;
+        public bool IsRightHandGripGamepad => _rightTargetType == HandTargetType.Gamepad;
+
+        [Inject] private IVRMLoadable _vrmLoadable = null;
 
         //NOTE: 初めて手がキーボードから離れるまではnull
         private IIKGenerator _prevRightHand = null;
@@ -56,19 +63,12 @@ namespace Baku.VMagicMirror
 
         private HandTargetType _leftTargetType = HandTargetType.Keyboard;
         private HandTargetType _rightTargetType = HandTargetType.Keyboard;
-
-        [Inject] private IVRMLoadable _vrmLoadable = null;
-
-        public bool EnablePresentationMode { get; set; }
-
-        public bool IsLeftHandGripGamepad => _leftTargetType == HandTargetType.Gamepad;
-        public bool IsRightHandGripGamepad => _rightTargetType == HandTargetType.Gamepad;
-
+        
         #region API
 
         public void PressKey(string keyName)
         {
-            var (hand, pos) = typing.PressKey(keyName);
+            var (hand, pos) = typing.PressKey(keyName, EnablePresentationMode);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.Keyboard);
@@ -80,7 +80,7 @@ namespace Baku.VMagicMirror
 
             if (EnableHidArmMotion)
             {
-                fingerController.StartPressKeyMotion(keyName);
+                fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);
             }
 
             if (hand != ReactedHand.None && EnableHidArmMotion)

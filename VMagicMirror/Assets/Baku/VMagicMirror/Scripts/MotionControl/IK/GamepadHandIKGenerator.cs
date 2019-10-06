@@ -26,10 +26,10 @@ namespace Baku.VMagicMirror
         #region settings (WPFから飛んでくる想定のもの)
 
         //この辺のパラメータはキーボードやマウスのIKで使ってる補正値と被っている点に注意
-        public float HandToTipLength { get; set; } = 0.1f;
-        public float HandToPalmLength { get; set; } = 0.05f;
+        public float HandToTipLength { get; set; } = 0.12f;
+        public float HandToPalmLength { get; set; } = 0.06f;
         public float YOffsetAlways { get; set; } = 0.03f;
-        public float YOffsetAfterKeyDown { get; set; } = 0.03f;
+        public float YOffsetAfterKeyDown { get; set; } = 0.02f;
 
         #endregion
 

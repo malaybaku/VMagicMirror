@@ -34,9 +34,9 @@ namespace Baku.VMagicMirror
         #region settings 
 
         /// <summary>手首から指先までの距離[m]</summary>
-        public float HandToTipLength { get; set; } = 0.1f;
+        public float HandToTipLength { get; set; } = 0.12f;
 
-        //TODO: このスケール値を使わずに腕を動かしたい
+        //NOTE: いまは使ってない
         /// <summary>腕モーションのスケーリング値。モニターが大きいときに用いる</summary>
         public float PresentationArmMotionScale { get; set; } = 0.5f;
 

@@ -14,18 +14,17 @@ namespace Baku.VMagicMirror
 
         //手をあまり厳格にキーボードに沿わせると曲がり過ぎるのでゼロ回転側に寄せるファクター
         private const float WristYawApplyFactor = 0.5f;
-        private const float WristYawSpeedFactor = 0.2f;
 
         #region settings (WPFから飛んでくる想定のもの)
 
         /// <summary>手首から指先までの距離[m]。キーボードを打ってる位置をそれらしく補正するために使う。</summary>
-        public float HandToTipLength { get; set; } = 0.1f;
+        public float HandToTipLength { get; set; } = 0.12f;
 
         /// <summary>キーボードに対する手のY方向オフセット[m]。大きくするとタイピング動作が大げさになる。</summary>
         public float YOffsetAlways { get; set; } = 0.03f;
 
         /// <summary>打鍵直後のキーボードに対する手のY方向オフセット[m]。</summary>
-        public float YOffsetAfterKeyDown { get; set; } = 0.03f;
+        public float YOffsetAfterKeyDown { get; set; } = 0.02f;
 
         #endregion
 
@@ -118,8 +117,9 @@ namespace Baku.VMagicMirror
                 //かつ、左手は方向が180度ずれてしまうので直す
                 ikTarget.Rotation = Quaternion.Euler(
                     0,
-                    -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) * Mathf.Rad2Deg +
-                        (isLeftHand ? 180 : 0),
+                    -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) 
+                        * WristYawApplyFactor * Mathf.Rad2Deg
+                        + (isLeftHand ? 180 : 0),
                     0);
                 yield return null;
             }

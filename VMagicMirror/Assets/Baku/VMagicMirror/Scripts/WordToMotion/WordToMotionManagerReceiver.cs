@@ -41,6 +41,9 @@ namespace Baku.VMagicMirror
                         //腕アニメーションが無効なとき、アニメーションの終了処理をちょっと切り替える
                         manager.ShouldSetDefaultClipAfterMotion = !message.ToBoolean();
                         break;
+                    case MessageCommandNames.UseGamepadToStartWordToMotion:
+                        manager.UseGamepadForWordToMotion = message.ToBoolean();
+                        break;
                     default:
                         break;
                 }

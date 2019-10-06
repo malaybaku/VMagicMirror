@@ -15,6 +15,23 @@ namespace Baku.VMagicMirror
         public Quaternion BodyLeanSuggest { get; private set; } = Quaternion.identity;
         public bool ReverseGamepadStickLeanHorizontal { get; set; } = false;
         public bool ReverseGamepadStickLeanVertical { get; set; } = false;
+
+        private bool _useGamepadForWordToMotion = false;
+        public bool UseGamepadForWordToMotion
+        {
+            get => _useGamepadForWordToMotion;
+            set
+            {
+                if (_useGamepadForWordToMotion != value)
+                {
+                    _useGamepadForWordToMotion = value;
+                    if (value)
+                    {
+                        ApplyLeanMotion(Vector2Int.zero);
+                    }
+                }
+            }
+        }
         
         private Quaternion _target = Quaternion.identity;
         private GamepadLeanModes _leanMode = GamepadLeanModes.GamepadLeanLeftStick;
@@ -43,6 +60,11 @@ namespace Baku.VMagicMirror
         
         public void LeftStick(Vector2Int stickPos)
         {
+            if (UseGamepadForWordToMotion)
+            {
+                return;
+            }
+            
             if (_leanMode == GamepadLeanModes.GamepadLeanLeftStick)
             {
                 ApplyLeanMotion(stickPos);
@@ -51,6 +73,11 @@ namespace Baku.VMagicMirror
 
         public void RightStick(Vector2Int stickPos)
         {
+            if (UseGamepadForWordToMotion)
+            {
+                return;
+            }
+            
             if (_leanMode == GamepadLeanModes.GamepadLeanRightStick)
             {
                 ApplyLeanMotion(stickPos);
@@ -63,6 +90,11 @@ namespace Baku.VMagicMirror
         /// <param name="buttonStickPos"></param>
         public void ButtonStick(Vector2Int buttonStickPos)
         {
+            if (UseGamepadForWordToMotion)
+            {
+                return;
+            }
+            
             if (_leanMode == GamepadLeanModes.GamepadLeanLeftButtons)
             {
                 ApplyLeanMotion(buttonStickPos);

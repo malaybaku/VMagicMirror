@@ -63,6 +63,8 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
+            _buttons.Add(new ObservableButton(GamepadKey.Start, InputConst.XINPUT_GAMEPAD_START, _buttonSubject));
+            
             _buttons.Add(new ObservableButton(GamepadKey.B, InputConst.XINPUT_GAMEPAD_B, _buttonSubject));
             _buttons.Add(new ObservableButton(GamepadKey.A, InputConst.XINPUT_GAMEPAD_A, _buttonSubject));
             _buttons.Add(new ObservableButton(GamepadKey.X, InputConst.XINPUT_GAMEPAD_X, _buttonSubject));
@@ -213,6 +215,8 @@ namespace Baku.VMagicMirror
         //NOTE: トリガーキーも便宜的にon/offのボタン扱いする
         RTrigger,
         LTrigger,
+        Start,
+        Select,
     }
 }
 

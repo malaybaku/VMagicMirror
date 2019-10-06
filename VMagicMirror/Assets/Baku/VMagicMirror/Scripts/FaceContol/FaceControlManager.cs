@@ -31,8 +31,9 @@ namespace Baku.VMagicMirror
 
         private VRMBlendShapeProxy _proxy;
 
-        public bool IsFaceTrackingActive { get; set; }
-
+        //NOTE: 顔トラッキングは既定で有効になっていることに注意(※ただしカメラ名がセットされてないと検出は走らない)
+        public bool IsFaceTrackingActive { get; set; } = true;
+        
         private bool _preferAutoBlink = false;
         /// <summary> 顔トラッキング中であっても自動まばたきを優先するかどうか </summary>
         public bool PreferAutoBlink
@@ -91,7 +92,7 @@ namespace Baku.VMagicMirror
             if (!OverrideByMotion)
             {
                 DefaultBlendShape.Apply(_proxy);
-                
+
                 if (IsFaceTrackingActive &&
                     !PreferAutoBlink && 
                     faceTracker.FaceDetectedAtLeastOnce

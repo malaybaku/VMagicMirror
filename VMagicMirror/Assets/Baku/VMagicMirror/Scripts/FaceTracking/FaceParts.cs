@@ -380,9 +380,6 @@ namespace Baku.VMagicMirror
             public float CurrentEyeOpenValue { get; private set; }
 
             public IObservable<float> EyeOpenValue => _eyeOpenValue;
-
-            public const float EyeOpenSizeMin = 0.02f;
-            public const float EyeOpenSizeMax = 0.06f;
         }
 
         public class RightEyePart : EyePartBase

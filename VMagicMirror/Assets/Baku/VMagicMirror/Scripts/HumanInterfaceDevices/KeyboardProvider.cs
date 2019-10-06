@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror
 
         //指番号。FingerAnimator.Fingersの値を書いてもいいが、字が増えすぎてもアレなので番号で入れてます
         //TOOD: ここのマップを可変にしてもいいかも(ぜんぶ人差し指にしたら一本指打法になるとか)
-        private readonly static Dictionary<string, int> fingerMapper = new Dictionary<string, int>()
+        private static readonly Dictionary<string, int> fingerMapper = new Dictionary<string, int>()
         {
 
             #region 1列目の左側
@@ -178,6 +178,31 @@ namespace Baku.VMagicMirror
 
         };
 
+        //キーボードの各行において、左手で叩く事になっているいちばん右のキーの(keyCodeNamesの中での)列番号
+        //スペーサー("_"扱いのキー)がある関係で物理キーボードの値とはズレてる事に注意
+        private static readonly int[] _leftHandFingerIndexLimits = new[]
+        {
+            6,
+            6,
+            7,
+            5,
+            6,
+            8,
+        };
+
+        //左手のみで打鍵するとき、_lefHandFingerIndexLimitsのインデックスまでの各行のキーをどの指で叩くか決めた一覧。
+        //スペーサーになってる(本来存在しない)キーを叩く可能性があるのでfingerMapperとは別に定義する必要がある
+        private static readonly int[][] _leftHandOnlyFingerMapper = new[]
+        {
+            new int[] { 4, 4, 3, 3, 2, 2, 0, },
+            new int[] { 4, 3, 3, 2, 2, 1, 1, },
+            new int[] { 4, 3, 3, 2, 2, 1, 1, 1, },
+            new int[] { 4, 3, 3, 2, 1, 1, },
+            new int[] { 4, 3, 3, 2, 2, 1, 1, },
+            new int[] { 4, 4, 3, 3, 2, 2, 1, 1, 1, },
+        };
+
+        
         [SerializeField] private Transform keyPrefab = null;
         [SerializeField] private Vector3 initialPosition = Vector3.zero;
         [SerializeField] private Vector3 initialRotation = Vector3.zero;
@@ -284,34 +309,54 @@ namespace Baku.VMagicMirror
             meshFilter.mesh.CombineMeshes(combine);
         }
 
-
-        public KeyTargetData GetKeyTargetData(string key)
+        public KeyTargetData GetKeyTargetData(string key, bool isLeftHandOnly = false)
+            => isLeftHandOnly ? GetLeftHandTargetData(key) : GetTwoHandKeyTargetData(key);
+        
+        private KeyTargetData GetTwoHandKeyTargetData(string key)
         {
-            var keyTransform = GetTransformOfKey(key);
+            var (row, col) = GetKeyIndex(key);
+            var keyTransform = _keys[row][col];
+
             int fingerNumber = GetFingerNumberOfKey(key);
-            Vector3 offset = FingerNumberToOffset(fingerNumber);
             return new KeyTargetData()
             {
+                row = row,
+                col = col,
                 fingerNumber = fingerNumber,
                 keyTransform = keyTransform,
                 position = keyTransform.position,
-                positionWithOffset = keyTransform.position + offset,
+                positionWithOffset = keyTransform.position + FingerNumberToOffset(fingerNumber),
             };
         }
 
-        public Vector3 GetPositionOfKey(string key)
+        public KeyTargetData GetLeftHandTargetData(string key)
         {
-            return GetTransformOfKey(key).position;
+            var rawData = GetTwoHandKeyTargetData(key);
+            //元から左手で叩くキーはそのままでOK
+            if (rawData.IsLeftHandPreffered)
+            {
+                return rawData;
+            }
+
+            //剰余により、右側にあるはずのキーを勝手に左側のキーに充て直す
+            int limitIndex = _leftHandFingerIndexLimits[rawData.row];
+            int modCol = rawData.col % (limitIndex + 1);
+            var keyTransform = _keys[rawData.row][modCol];
+            //割り当てたキーがスペーサー("_")の場合があるため、専用の方法で指を割り当てる。
+            int fingerNumber = _leftHandOnlyFingerMapper[rawData.row][modCol];
+            
+            return new KeyTargetData()
+            {
+                row = rawData.row,
+                col = modCol,
+                fingerNumber = fingerNumber,
+                keyTransform = keyTransform,
+                position = keyTransform.position,
+                positionWithOffset = keyTransform.position + FingerNumberToOffset(fingerNumber),
+            };
         }
 
-        public bool IsLeftHandPreferred(string key)
-        {
-            string sanitized = SanitizeKey(key);
-            //不明な場合は[0][0]扱いになるので左手扱いが妥当
-            return !fingerMapper.ContainsKey(sanitized) || fingerMapper[sanitized] < 5;
-        }
-
-        public int GetFingerNumberOfKey(string key)
+        private static int GetFingerNumberOfKey(string key)
         {
             string sanitized = SanitizeKey(key);
             //不明な場合は[0][0]なので左手小指にしておけばOK
@@ -320,7 +365,9 @@ namespace Baku.VMagicMirror
                 FingerConsts.LeftLittle;
         }
 
-        private Transform GetTransformOfKey(string key)
+        //row: 手前から数えた0始まりの行、例えばASDFキーがあるのは第2行
+        //col: 左から数えた0始まりの列、例えばFキーは第4列
+        private (int row, int col) GetKeyIndex(string key)
         {
             string sanitized = SanitizeKey(key);
             for (int i = 0; i < keyCodeNames.Length; i++)
@@ -330,16 +377,16 @@ namespace Baku.VMagicMirror
                 {
                     if (keyCodeNames[i][j] == sanitized)
                     {
-                        return _keys[i][j];
+                        return (i, j);
                     }
                 }
             }
-
+            
             //ランダムとかでもいいが。
-            return _keys[0][0];
+            return (0, 0);
         }
-
-        private Vector3 FingerNumberToOffset(int fingerNumber)
+        
+        private static Vector3 FingerNumberToOffset(int fingerNumber)
         {
             //NOTE: いったん面倒なので決め打ちする。指と指の間隔。
             const float fingerHorizontalLengthUnit = 0.015f;
@@ -385,7 +432,7 @@ namespace Baku.VMagicMirror
             return Vector3.right * length;
         }
 
-        private string SanitizeKey(string key)
+        private static string SanitizeKey(string key)
         {
             //note: エイリアスのあるキー名を一方向に倒す。
             switch (key)
@@ -423,10 +470,14 @@ namespace Baku.VMagicMirror
 
         public struct KeyTargetData
         {
+            public int row;
+            public int col;
             public int fingerNumber;
             public Transform keyTransform;
             public Vector3 position;
             public Vector3 positionWithOffset;
+
+            public bool IsLeftHandPreffered => fingerNumber < 5;
         }
     }
 }

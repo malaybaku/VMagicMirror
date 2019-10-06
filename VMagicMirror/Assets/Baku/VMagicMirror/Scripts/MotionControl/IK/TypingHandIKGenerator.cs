@@ -67,13 +67,14 @@ namespace Baku.VMagicMirror
         private Coroutine _leftHandMoveCoroutine = null;
         private Coroutine _rightHandMoveCoroutine = null;
         
-        public (ReactedHand, Vector3) PressKey(string key)
+        public (ReactedHand, Vector3) PressKey(string key, bool isLeftHandOnlyMode)
         {
-            var keyData = keyboard.GetKeyTargetData(key);
+            var keyData = keyboard.GetKeyTargetData(key, isLeftHandOnlyMode);
+            
             Vector3 targetPos = keyData.positionWithOffset + YOffsetAlwaysVec;
             targetPos -= HandToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
-            if (keyboard.IsLeftHandPreferred(key))
+            if (keyData.IsLeftHandPreffered)
             {
                 UpdateLeftHandCoroutine(KeyPressRoutine(IKTargets.LHand, targetPos));
                 return (ReactedHand.Left, keyData.position);
@@ -117,8 +118,7 @@ namespace Baku.VMagicMirror
                 //かつ、左手は方向が180度ずれてしまうので直す
                 ikTarget.Rotation = Quaternion.Euler(
                     0,
-                    -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) 
-                        * WristYawApplyFactor * Mathf.Rad2Deg
+                    -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) * Mathf.Rad2Deg
                         + (isLeftHand ? 180 : 0),
                     0);
                 yield return null;

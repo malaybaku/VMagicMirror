@@ -69,8 +69,11 @@ namespace Baku.VMagicMirror
                         gamePadBasedBodyLean.ReverseGamepadStickLeanVertical = message.ToBoolean();
                         smallGamepadHandIk.ReverseGamepadStickLeanVertical = message.ToBoolean();
                         break;
+                    case MessageCommandNames.UseGamepadToStartWordToMotion:
+                        gamePadBasedBodyLean.UseGamepadForWordToMotion = message.ToBoolean();
+                        handIkIntegrator.UseGamepadForWordToMotion = message.ToBoolean();
+                        break;
                 }
-
             });
         }
         

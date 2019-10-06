@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4465791, g: 0.4964133, b: 0.57481784, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465791, g: 0.49641317, b: 0.57481784, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -609,8 +609,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 50
@@ -774,6 +772,18 @@ MonoBehaviour:
   - {fileID: 708291030}
   _installerPrefabs: []
   _autoRun: 1
+  OnPreInstall:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostInstall:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPreResolve:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPostResolve:
+    m_PersistentCalls:
+      m_Calls: []
   _parentNewObjectsUnderSceneContext: 0
   _contractNames: []
   _parentContractNames: []
@@ -999,8 +1009,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 50
@@ -2312,8 +2320,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 15ca6ee393cc45f43806d3f49d2cd7f4, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
@@ -2531,8 +2537,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Texture: {fileID: 2800000, guid: 15ca6ee393cc45f43806d3f49d2cd7f4, type: 3}
   m_UVRect:
     serializedVersion: 2
@@ -2727,6 +2731,7 @@ GameObject:
   - component: {fileID: 1963776210}
   - component: {fileID: 1963776209}
   - component: {fileID: 1963776208}
+  - component: {fileID: 1963776215}
   m_Layer: 0
   m_Name: WordToMotionController
   m_TagString: Untagged
@@ -2800,6 +2805,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf54680fc9289344eaf680af61075aeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gamepad: {fileID: 1963776215}
   forgetTime: 1
   ikFadeDuration: 0.5
   defaultAnimation: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc, type: 2}
@@ -2830,6 +2836,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1963776215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963776207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 793cdd0b156d6764dbdef193411de76c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gamepadInput: {fileID: 953451441}
+  cooldownTime: 0
 --- !u!1 &1971722876
 GameObject:
   m_ObjectHideFlags: 0

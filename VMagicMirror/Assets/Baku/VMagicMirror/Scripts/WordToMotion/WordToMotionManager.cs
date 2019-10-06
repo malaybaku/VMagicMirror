@@ -26,6 +26,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class WordToMotionManager : MonoBehaviour
     {
+        [SerializeField] private GamepadToWordToMotion gamepad = null;
 
         [SerializeField]
         [Tooltip("この時間だけキー入力が無かったらワードが途切れたものとして入力履歴をクリアする。")]
@@ -46,6 +47,15 @@ namespace Baku.VMagicMirror
         /// note: これは実際には、タイピング動作が無効化されているときに使いたい
         /// </summary>
         public bool ShouldSetDefaultClipAfterMotion { get; set; } = false;
+
+        /// <summary>
+        /// ゲームパッド入力をWord to Motionに用いるかどうかを取得、設定します。
+        /// </summary>
+        public bool UseGamepadForWordToMotion
+        {
+            get => gamepad.UseGamepadInput;
+            set => gamepad.UseGamepadInput = value;
+        }
 
         /// <summary>キー押下イベントをちゃんと読み込むか否か</summary>
         public bool EnableReadKey { get; set; } = true;
@@ -190,6 +200,15 @@ namespace Baku.VMagicMirror
                 }
             });
 
+            gamepad.RequestExecuteWordToMotionItem += i =>
+            {
+                var request = _mapper.FindMotionByIndex(i);
+                if (request != null)
+                {
+                    PlayItem(request);
+                }
+            };
+
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
@@ -284,16 +303,15 @@ namespace Baku.VMagicMirror
             
             _ikWeightCrossFade.OnVrmLoaded(info);
         }
-        
+
         private void OnVrmDisposing()
         {
             _ikWeightCrossFade.OnVrmDisposing();
-            
+
             _blendShape.DisposeProxy();
             _motionTransfer.Target = null;
         }
 
-        
         private void ApplyPreviewBlendShape()
         {
             if (PreviewRequest.UseBlendShape)

@@ -61,7 +61,7 @@ Open Unity project with Unity 2018.3.x, and open WPF project with Visual Studio 
 
 Maintainer's environment is as following.
 
-* Unity 2018.4.10f1 Personal
+* Unity 2018.3.7f1 Personal
 * Visual Studio Community 2019
 
 ### 4.2. Asset install
@@ -72,7 +72,6 @@ Maintainer's environment is as following.
 * [UniVRM](https://dwango.github.io/vrm/)
 * [UniRx](https://github.com/neuecc/UniRx)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
-* [gRPC](https://github.com/grpc/grpc)
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
@@ -84,13 +83,13 @@ Maintainer's environment is as following.
 * [VRoid SDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) v0.0.17
 * [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
 
+*note: until v0.9.0 following library is required, but now it is no more necessary.
+
+* [gRPC](https://github.com/grpc/grpc)
 
 Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
 
 Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
-
-gRPC install is available from daily builds. 
-Please see the detail at [gRPC instruction](https://github.com/grpc/grpc/tree/master/src/csharp/experimental). Current version uses `v1.12.0-dev`, but might work with newer build.
 
 ### 4.3. Build
 

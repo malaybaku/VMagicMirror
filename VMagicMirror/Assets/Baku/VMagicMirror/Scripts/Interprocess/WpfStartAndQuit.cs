@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.IO;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class WpfStartAndQuit : MonoBehaviour
     {
-        [SerializeField]
-        GrpcSender sender = null;
-
+        [Inject] private IMessageSender sender = null;
+        
         private static readonly string ConfigExePath = "ConfigApp\\VMagicMirrorConfig.exe";
 
         private static string GetWpfPath()

@@ -5,7 +5,7 @@ using System;
 
 namespace Baku.VMagicMirror
 {
-    public class GrpcSender : MonoBehaviour
+    public class GrpcSender : MonoBehaviour, IMessageSender
     {
         [SerializeField]
         private string targetIpAddress = "127.0.0.1";

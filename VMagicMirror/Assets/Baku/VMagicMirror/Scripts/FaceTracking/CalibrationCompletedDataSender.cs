@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(FaceTracker))]
     public class CalibrationCompletedDataSender : MonoBehaviour
     {
-        [SerializeField]
-        GrpcSender messageSender = null;
-        void Start()
+        [Inject] private IMessageSender sender = null;
+
+        private void Start()
         {
             GetComponent<FaceTracker>().CalibrationCompleted += 
-                data => messageSender.SendCommand(MessageFactory.Instance.SetCalibrateFaceData(data));
+                data => sender.SendCommand(MessageFactory.Instance.SetCalibrateFaceData(data));
         }
     }
 }

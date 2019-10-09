@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         private const float ReferenceHandLength = 0.114f;
 
         [Inject] private ReceivedMessageHandler handler = null;
-        [SerializeField] private GrpcSender sender = null;
+        [Inject] private IMessageSender sender = null;
         [SerializeField] private BlendShapeAssignReceiver blendShapeAssignReceiver = null;
         [SerializeField] private Transform cam = null;
 

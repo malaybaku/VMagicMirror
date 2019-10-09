@@ -7,6 +7,7 @@ namespace Baku.VMagicMirror
     {
         [SerializeField] private ReceivedMessageHandler messageHandler = null;
         [SerializeField] private VRMLoadController loadController = null;
+        [SerializeField] private MmfServer mmfServer = null;
         
         public override void InstallBindings()
         {
@@ -17,6 +18,12 @@ namespace Baku.VMagicMirror
             Container
                 .Bind<IVRMLoadable>()
                 .FromInstance(loadController)
+                .AsSingle();
+
+            //プロセス間通信の送り手はMemoryMappedFileベースのIPCでやる
+            Container
+                .Bind<IMessageSender>()
+                .FromInstance(mmfServer)
                 .AsSingle();
         }
     }

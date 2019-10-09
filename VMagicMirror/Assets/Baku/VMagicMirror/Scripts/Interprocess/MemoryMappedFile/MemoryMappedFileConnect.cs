@@ -205,8 +205,8 @@ namespace Baku.VMagicMirror.Mmf
                 while (!cts.Token.IsCancellationRequested)
                 {
                     Message msg = null;
-                    //書いた通りだが、送るものがない or 受信側が終わってない場合は待つ
-                    while (!writeMessageQueue.TryDequeue(out msg) || senderAccessor.ReadByte(0) != 0)
+                    //送るものが無いうちは待ち
+                    while (!writeMessageQueue.TryDequeue(out msg))
                     {
                         if (cts.Token.IsCancellationRequested)
                         {
@@ -219,6 +219,16 @@ namespace Baku.VMagicMirror.Mmf
                     {
                         //来ないはずだが念のため
                         continue;
+                    }
+
+                    //書き込みOKになるまで待ち
+                    while (senderAccessor.ReadByte(0) != 0)
+                    {
+                        if (cts.Token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+                        Thread.Sleep(1);
                     }
 
                     WriteMessage(msg);

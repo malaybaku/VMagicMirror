@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UniRx;
@@ -40,6 +41,8 @@ namespace Baku.VMagicMirror
         //コレが必要なのは、デフォルトアニメーションが無いと下半身を動かさないアニメーションで脚が骨折するため
         [SerializeField] private AnimationClip defaultAnimation = null;
 
+        [SerializeField] private FingerController fingerController = null;
+        
         [Inject] private IVRMLoadable _vrmLoadable = null;
 
         /// <summary>
@@ -230,6 +233,7 @@ namespace Baku.VMagicMirror
                     //フェードさせ終わる前に完了扱いにする: やや荒っぽいが、高精度に使うフラグではないのでOK
                     IsPlayingMotion = false;
                     _ikWeightCrossFade.FadeInArmIkWeights(ikFadeDuration);
+                    fingerController.FadeInWeight(ikFadeDuration);
                     if (ShouldSetDefaultClipAfterMotion)
                     {
                         Debug.Log("End animation, return to default");
@@ -357,6 +361,7 @@ namespace Baku.VMagicMirror
 
             //いったんIKからアニメーションにブレンディングし、後で元に戻す
             _ikWeightCrossFade.FadeOutArmIkWeights(ikFadeDuration);
+            fingerController.FadeOutWeight(ikFadeDuration);
             _ikFadeInCountDown = clip.length - ikFadeDuration;
             //ここは短すぎるモーションを指定されたときの対策
             if (_ikFadeInCountDown <= 0)
@@ -400,6 +405,7 @@ namespace Baku.VMagicMirror
             _currentBuiltInMotionName = clipName;
             //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
             _ikWeightCrossFade.FadeOutArmIkWeightsImmediately();
+            fingerController.FadeOutWeight(0);
         }
 
         private void StopPreviewBuiltInMotion()
@@ -414,6 +420,7 @@ namespace Baku.VMagicMirror
             _currentBuiltInMotionName = "";
             //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
             _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
+            fingerController.FadeInWeight(0);
         }
         
         private void StartBvhFileMotion(string bvhFilePath)
@@ -441,6 +448,7 @@ namespace Baku.VMagicMirror
 
                 //いったんIKからアニメーションにブレンディングし、後で元に戻す
                 _ikWeightCrossFade.FadeOutArmIkWeights(ikFadeDuration);
+                fingerController.FadeOutWeight(0);
 
                 float duration = context.Bvh.FrameCount * Time.deltaTime;
                 Debug.Log("duration = " + duration.ToString("00.000"));

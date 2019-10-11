@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &63281799879253565
+--- !u!1 &8657378269927355717
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,78 +8,69 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 63281799879253560}
-  - component: {fileID: 63281799879253567}
-  - component: {fileID: 63281799879253566}
-  - component: {fileID: 63281799879253561}
+  - component: {fileID: 8657378269927355718}
+  - component: {fileID: 8657378269927355712}
+  - component: {fileID: 8657378269927355713}
+  - component: {fileID: 8657378269927355719}
   m_Layer: 0
-  m_Name: FaceController
+  m_Name: FaceTracker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
---- !u!4 &63281799879253560
+--- !u!4 &8657378269927355718
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 63281799879253565}
+  m_GameObject: {fileID: 8657378269927355717}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.009430427, y: 0.7245203, z: -0.4960636}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &63281799879253567
+--- !u!114 &8657378269927355712
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 63281799879253565}
+  m_GameObject: {fileID: 8657378269927355717}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f23a90ddb9a22d4e8e304083ffa7a40, type: 3}
+  m_Script: {fileID: 11500000, guid: b3aee8e450bba3b4db544ed198ae226d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faceDetector: {fileID: 63281799879253566}
-  blinkMoveThreshold: 0.2
-  blinkForceMinThreshold: 0.1
-  blinkForceMaxThreshold: 0.9
-  blinkUpdateInterval: 0.2
-  speedFactor: 0.2
---- !u!114 &63281799879253566
+--- !u!114 &8657378269927355713
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 63281799879253565}
+  m_GameObject: {fileID: 8657378269927355717}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d9ea3e6ad5b9394a86f7c63b67a6cf2, type: 3}
+  m_Script: {fileID: 11500000, guid: c617b46681848f6409211b57469ea453, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  requestedDeviceName: c922 Pro Stream Webcam
+--- !u!114 &8657378269927355719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8657378269927355717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c46089e00f194442983c97c9bdedd65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  requestedDeviceName: 
   requestedWidth: 320
   requestedHeight: 240
-  requestedFPS: 30
-  requestedIsFrontFacing: 0
---- !u!114 &63281799879253561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 63281799879253565}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ccd5f299c1abbd4bb7387e98b79aefa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  headRotationReferenceTransform: {fileID: 0}
-  speedFactor: 0.2
-  rotationUpdateInterval: 0.19
+  requestedFps: 30
+  halfResizeWidthThreshold: 640

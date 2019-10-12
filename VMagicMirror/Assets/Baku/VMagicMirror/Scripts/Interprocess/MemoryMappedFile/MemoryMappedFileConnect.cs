@@ -62,39 +62,41 @@ namespace Baku.VMagicMirror.Mmf
         private readonly byte[] _readBuffer = new byte[65536];
 
         //送りたいメッセージ(クエリとコマンド両方)の一覧
-        private readonly ConcurrentQueue<Message> writeMessageQueue = new ConcurrentQueue<Message>();
+        private readonly ConcurrentQueue<Message> _writeMessageQueue = new ConcurrentQueue<Message>();
 
-        //変身待ちクエリの一覧
-        private readonly ConcurrentDictionary<int, TaskCompletionSource<string>> sendedQueries
+        //返信待ちクエリの一覧
+        private readonly ConcurrentDictionary<int, TaskCompletionSource<string>> _sendedQueries
             = new ConcurrentDictionary<int, TaskCompletionSource<string>>();
 
-        private readonly object requestIdLock = new object();
-        private int requestId = 0;
+        private readonly object _requestIdLock = new object();
+        private int _requestId = 0;
         private int RequestId
         {
-            get { lock (requestIdLock) return requestId; }
+            get { lock (_requestIdLock) return _requestId; }
         }
 
         private void IncrementRequestId()
         {
-            lock (requestIdLock)
+            lock (_requestIdLock)
             {
-                requestId++;
+                _requestId++;
                 //クエリのIDは1 ~ (int.MaxValue - 1)の範囲で回るようにしておく
-                if (requestId == int.MaxValue)
+                if (_requestId == int.MaxValue)
                 {
-                    requestId = 1;
+                    _requestId = 1;
                 }
             }
         }
 
-        private MemoryMappedFile receiver;
-        private MemoryMappedViewAccessor receiverAccessor;
+        private readonly object _receiverLock = new object();
+        private MemoryMappedFile _receiver;
+        private MemoryMappedViewAccessor _receiverAccessor;
 
-        private MemoryMappedFile sender;
-        private MemoryMappedViewAccessor senderAccessor;
+        private readonly object _senderLock = new object();
+        private MemoryMappedFile _sender;
+        private MemoryMappedViewAccessor _senderAccessor;
 
-        private CancellationTokenSource cts;
+        private CancellationTokenSource _cts;
 
         public event EventHandler<ReceiveCommandEventArgs> ReceiveCommand;
         public event EventHandler<ReceiveQueryEventArgs> ReceiveQuery;
@@ -103,11 +105,11 @@ namespace Baku.VMagicMirror.Mmf
 
         public async Task StartInternal(string pipeName, bool isServer)
         {
-            cts = new CancellationTokenSource();
+            _cts = new CancellationTokenSource();
             if (isServer)
             {
-                receiver = MemoryMappedFile.CreateOrOpen(pipeName + "_receiver", MemoryMappedFileCapacity);
-                sender = MemoryMappedFile.CreateOrOpen(pipeName + "_sender", MemoryMappedFileCapacity);
+                _receiver = MemoryMappedFile.CreateOrOpen(pipeName + "_receiver", MemoryMappedFileCapacity);
+                _sender = MemoryMappedFile.CreateOrOpen(pipeName + "_sender", MemoryMappedFileCapacity);
             }
             else
             {
@@ -116,28 +118,28 @@ namespace Baku.VMagicMirror.Mmf
                     try
                     {
                         //サーバーと逆方向
-                        receiver = MemoryMappedFile.OpenExisting(pipeName + "_sender");
-                        sender = MemoryMappedFile.OpenExisting(pipeName + "_receiver");
+                        _receiver = MemoryMappedFile.OpenExisting(pipeName + "_sender");
+                        _sender = MemoryMappedFile.OpenExisting(pipeName + "_receiver");
                         break;
                     }
                     catch (System.IO.FileNotFoundException)
                     {
                     }
 
-                    if (cts.Token.IsCancellationRequested)
+                    if (_cts.Token.IsCancellationRequested)
                     {
                         return;
                     }
                     await Task.Delay(100);
                 }
             }
-            receiverAccessor = receiver.CreateViewAccessor();
-            senderAccessor = sender.CreateViewAccessor();
+            _receiverAccessor = _receiver.CreateViewAccessor();
+            _senderAccessor = _sender.CreateViewAccessor();
             if (isServer)
             {
                 //前回実行時のデータが残る可能性があるので、明示的に未書き込み状態にする
-                receiverAccessor.Write(0, (byte)0);
-                senderAccessor.Write(0, (byte)0);
+                _receiverAccessor.Write(0, (byte)0);
+                _senderAccessor.Write(0, (byte)0);
             }
             new Thread(() => ReadThread()).Start();
             new Thread(() => WriteThread()).Start();
@@ -145,16 +147,16 @@ namespace Baku.VMagicMirror.Mmf
         }
 
         public void SendCommand(string command)
-            => writeMessageQueue.Enqueue(Message.Command(command));
+            => _writeMessageQueue.Enqueue(Message.Command(command));
 
         public Task<string> SendQueryAsync(string command)
         {
             IncrementRequestId();
-            writeMessageQueue.Enqueue(Message.Query(command, RequestId));
+            _writeMessageQueue.Enqueue(Message.Query(command, RequestId));
 
             //すぐには返せないので完了予約だけ投げておしまい
             var source = new TaskCompletionSource<string>();
-            sendedQueries.TryAdd(RequestId, source);
+            _sendedQueries.TryAdd(RequestId, source);
 
             return source.Task;
         }
@@ -162,29 +164,37 @@ namespace Baku.VMagicMirror.Mmf
         public void Stop()
         {
             IsConnected = false;
-            cts?.Cancel();
-            receiverAccessor?.Dispose();
-            senderAccessor?.Dispose();
-            receiver?.Dispose();
-            sender?.Dispose();
-            receiverAccessor = null;
-            senderAccessor = null;
-            receiver = null;
-            sender = null;
+            _cts?.Cancel();
+            
+            lock (_receiverLock)
+            {
+                _receiverAccessor?.Dispose();
+                _receiver?.Dispose();
+                _receiverAccessor = null;
+                _receiver = null;
+            }
+
+            lock (_senderLock)
+            {
+                _senderAccessor?.Dispose();
+                _sender?.Dispose();
+                _senderAccessor = null;
+                _sender = null;
+            }
         }
 
         private void SendQueryResponse(string command, int id)
-            => writeMessageQueue.Enqueue(Message.Response(command, id));
+            => _writeMessageQueue.Enqueue(Message.Response(command, id));
 
         private void ReadThread()
         {
             try
             {
-                while (!cts.Token.IsCancellationRequested)
+                while (!_cts.Token.IsCancellationRequested)
                 {
-                    while (receiverAccessor.ReadByte(0) != 1)
+                    while (!CheckReceivedMessageExists())
                     {
-                        if (cts.Token.IsCancellationRequested)
+                        if (_cts.Token.IsCancellationRequested)
                         {
                             return;
                         }
@@ -198,58 +208,39 @@ namespace Baku.VMagicMirror.Mmf
             }
         }
 
-        private void WriteThread()
+        private bool CheckReceivedMessageExists()
         {
-            try
+            lock (_receiverLock)
             {
-                while (!cts.Token.IsCancellationRequested)
-                {
-                    Message msg = null;
-                    //送るものが無いうちは待ち
-                    while (!writeMessageQueue.TryDequeue(out msg))
-                    {
-                        if (cts.Token.IsCancellationRequested)
-                        {
-                            return;
-                        }
-                        Thread.Sleep(1);
-                    }
-
-                    if (msg == null)
-                    {
-                        //来ないはずだが念のため
-                        continue;
-                    }
-
-                    //書き込みOKになるまで待ち
-                    while (senderAccessor.ReadByte(0) != 0)
-                    {
-                        if (cts.Token.IsCancellationRequested)
-                        {
-                            return;
-                        }
-                        Thread.Sleep(1);
-                    }
-
-                    WriteMessage(msg);
-                }
-            }
-            catch (NullReferenceException)
-            {
+                return 
+                    _receiverAccessor != null && 
+                    _receiverAccessor.ReadByte(0) == 1;
             }
         }
-
+  
         private void ReadMessage()
         {
-            short messageType = receiverAccessor.ReadInt16(2);
-            bool isReply = messageType > 0;
-            int id = receiverAccessor.ReadInt32(4);
-            int bodyLength = receiverAccessor.ReadInt32(8);
+            string message = "";
+            bool isReply = false;
+            int id = 0;
 
-            receiverAccessor.ReadArray(12, _readBuffer, 0, bodyLength);
-            string message = Encoding.UTF8.GetString(_readBuffer, 0, bodyLength);
+            lock (_receiverLock)
+            {
+                if (_receiverAccessor == null)
+                {
+                    return;
+                }
+                
+                short messageType = _receiverAccessor.ReadInt16(2);
+                isReply = messageType > 0;
+                id = _receiverAccessor.ReadInt32(4);
+                int bodyLength = _receiverAccessor.ReadInt32(8);
 
-            receiverAccessor.Write(0, (byte)0);
+                _receiverAccessor.ReadArray(12, _readBuffer, 0, bodyLength);
+                message = Encoding.UTF8.GetString(_readBuffer, 0, bodyLength);
+                _receiverAccessor.Write(0, (byte)0);
+            }
+
 
             //3パターンある
             // - こちらが投げたQueryの返答が戻ってきた
@@ -257,7 +248,7 @@ namespace Baku.VMagicMirror.Mmf
             // - Queryを受け取った
             if (isReply)
             {
-                if (sendedQueries.TryRemove(id, out var src))
+                if (_sendedQueries.TryRemove(id, out var src))
                 {
                     //戻ってきた結果によってTaskが完了となる
                     src.SetResult(message);
@@ -274,6 +265,57 @@ namespace Baku.VMagicMirror.Mmf
             }
         }
 
+        private void WriteThread()
+        {
+            try
+            {
+                while (!_cts.Token.IsCancellationRequested)
+                {
+                    Message msg = null;
+                    //送るものが無いうちは待ち
+                    while (!_writeMessageQueue.TryDequeue(out msg))
+                    {
+                        if (_cts.Token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+                        Thread.Sleep(1);
+                    }
+
+                    if (msg == null)
+                    {
+                        //来ないはずだが念のため
+                        continue;
+                    }
+
+                    //書き込みOKになるまで待ち
+                    while (!CheckCanWriteMessage())
+                    {
+                        if (_cts.Token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+                        Thread.Sleep(1);
+                    }
+
+                    WriteMessage(msg);
+                }
+            }
+            catch (NullReferenceException)
+            {
+            }
+        }
+
+        private bool CheckCanWriteMessage()
+        {
+            lock (_senderLock)
+            {
+                return
+                    _senderAccessor != null &&
+                    _senderAccessor.ReadByte(0) == 0;
+            }
+        }
+
         private void WriteMessage(Message msg)
         {
             if (!IsConnected)
@@ -281,16 +323,24 @@ namespace Baku.VMagicMirror.Mmf
                 return;
             }
 
-            senderAccessor.Write(2, (short)(msg.IsReply ? 1 : 0));
-            senderAccessor.Write(4, msg.Id);
+            lock (_senderLock)
+            {
+                if (_senderAccessor == null)
+                {
+                    return;
+                }
+                
+                _senderAccessor.Write(2, (short)(msg.IsReply ? 1 : 0));
+                _senderAccessor.Write(4, msg.Id);
 
-            byte[] data = Encoding.UTF8.GetBytes(msg.Text);
-            senderAccessor.Write(8, data.Length);
-            senderAccessor.WriteArray(12, data, 0, data.Length);
+                byte[] data = Encoding.UTF8.GetBytes(msg.Text);
+                _senderAccessor.Write(8, data.Length);
+                _senderAccessor.WriteArray(12, data, 0, data.Length);
 
-            senderAccessor.Write(0, (byte)1);
+                _senderAccessor.Write(0, (byte)1);
+            }
         }
-
+        
         public class ReceivedQuery
         {
             public ReceivedQuery(string content, int id, MemoryMappedNamedConnectBase pipe)

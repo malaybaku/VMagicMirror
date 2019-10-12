@@ -13,17 +13,13 @@ namespace Baku.VMagicMirror
          
         [Tooltip("スティックを限界まで倒したときにゲームパッドが傾くべき角度")]
         [SerializeField] private Vector2 posToEulerAngle = new Vector2(20f,20f);
+        
+        [Tooltip("ゲームパッドの初期のローカル座標")]
+        [SerializeField] private Vector3 gamepadCenterInitialLocalPosition = new Vector3(0, 0, 0.3f);
 
         [SerializeField] private Transform gamepadCenter = null;
         [SerializeField] private Transform rightHand = null;
-        [SerializeField] private Transform leftHand = null;
-
-        private Vector3 _gamePadCenterInitialPosition;
-        
-        private void Start()
-        {
-            _gamePadCenterInitialPosition = gamepadCenter.localPosition;
-        }
+        [SerializeField] private Transform leftHand = null; 
         
         /// <summary>
         /// [-1, 1]の範囲で表現されたスティック情報をもとにゲームパッドの位置を変更します。
@@ -32,7 +28,7 @@ namespace Baku.VMagicMirror
         public void SetHorizontalPosition(Vector2 pos)
         {
             gamepadCenter.localPosition =
-                _gamePadCenterInitialPosition +
+                gamepadCenterInitialLocalPosition +
                 new Vector3(
                     moveRange.x * pos.x,
                     0.0f,

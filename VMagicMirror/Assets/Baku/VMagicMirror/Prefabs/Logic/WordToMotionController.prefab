@@ -21,7 +21,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &7427902273662735820
 Transform:
@@ -66,6 +66,7 @@ MonoBehaviour:
   forgetTime: 1
   ikFadeDuration: 0.5
   defaultAnimation: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc, type: 2}
+  fingerController: {fileID: 0}
 --- !u!114 &7427902273662735817
 MonoBehaviour:
   m_ObjectHideFlags: 0

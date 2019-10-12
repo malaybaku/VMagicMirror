@@ -18,7 +18,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &3748028266611161172
 Transform:
@@ -62,7 +62,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faceTracker: {fileID: 0}
   eyeDownController: {fileID: 3748028267383499193}
-  animMorphEasedTarget: {fileID: 3748028265945039283}
   imageBasedBlinkController: {fileID: 3748028266611161170}
   autoBlink: {fileID: 3748028266611161171}
 --- !u!114 &3748028266611161170
@@ -118,7 +117,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &3748028267383499194
 Transform:
@@ -213,7 +212,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &3752062569261173665
 Transform:

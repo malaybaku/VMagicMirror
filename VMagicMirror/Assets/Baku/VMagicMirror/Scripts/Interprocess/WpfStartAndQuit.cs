@@ -35,8 +35,9 @@ namespace Baku.VMagicMirror
             string path = GetWpfPath();
             if (File.Exists(path))
             {
-                //Startが全部終わって落ち着いた状態でロードしたいので遅延つける
-                yield return new WaitForSeconds(0.5f);
+                //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
+                yield return null;
+                yield return null;
 #if !UNITY_EDITOR
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
                 {

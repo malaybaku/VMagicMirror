@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror
 {
     public class CameraController : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler handler = null;
+        [Inject] private ReceivedMessageHandler _handler = null;
         [SerializeField] private Camera cam = null;
         [SerializeField] private CameraTransformController transformController = null;
 
@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror
             _defaultCameraPosition = camTransform.position;
             _defaultCameraRotationEuler = camTransform.rotation.eulerAngles;
 
-            handler.Commands.Subscribe(message =>
+            _handler.Commands.Subscribe(message =>
             {
                 switch(message.Command)
                 {
@@ -51,7 +51,7 @@ namespace Baku.VMagicMirror
                         break;
                 }
             });
-            handler.QueryRequested += query =>
+            _handler.QueryRequested += query =>
             {
                 if (query.Command == MessageQueryNames.CurrentCameraPosition)
                 {
@@ -71,8 +71,9 @@ namespace Baku.VMagicMirror
             };
         }
 
-        private void SetCameraBackgroundColor(float a, float r, float g, float b)
+        public void SetCameraBackgroundColor(float a, float r, float g, float b)
         {
+            LogOutput.Instance.Write(nameof(SetCameraBackgroundColor) + $": {a:0.00},{r:0.00},{g:0.00},{b:0.00}");
             cam.backgroundColor = new Color(r, g, b, a);
         }
 

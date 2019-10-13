@@ -3,10 +3,10 @@
 
 # VMagicMirror
 
-v0.9.0
+v0.9.1
 
 * Author: Baxter
-* 2019/Sep/29
+* 2019/Oct/14
 
 The VRM avatar application without any special device.
 
@@ -75,7 +75,7 @@ Maintainer's environment is as following.
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
-* Zenject (from asset store)
+* [Zenject](https://github.com/svermeulen/Extenject)
 
 *note: until v0.8.2a following libraries are required, but from v0.8.3 you can build the app without them.
 

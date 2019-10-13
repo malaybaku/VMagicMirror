@@ -5,7 +5,7 @@
 v0.9.0
 
 * 作成: 獏星(ばくすたー)
-* 2019/09/29
+* 2019/10/14
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -69,7 +69,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
-* Zenject (アセットストアからダウンロード可)
+* [Zenject](https://github.com/svermeulen/Extenject)
 
 ※v0.8.2時点ではビルド時に下記が必要でしたが、v0.8.3時点でビルド時の必須ライブラリから外しています。
 

@@ -13,9 +13,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private FaceTracker faceTracker = null;
         
         //ブレンドシェイプ生成するやつ各位
-        //TODO: MonoBehaviour継承を外すと改善という事になります。大体は。
         [SerializeField] private EyeDownBlendShapeController eyeDownController = null;
-        [SerializeField] private AnimMorphEasedTarget animMorphEasedTarget = null;
         [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
 

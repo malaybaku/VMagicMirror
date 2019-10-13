@@ -452,9 +452,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   opaqueThreshold: 0.1
-  handler: {fileID: 0}
   windowPositionCheckInterval: 5
   cam: {fileID: 1574337991341618299}
+  cameraController: {fileID: 1574337991341618297}
 --- !u!114 &1574337991341618297
 MonoBehaviour:
   m_ObjectHideFlags: 0

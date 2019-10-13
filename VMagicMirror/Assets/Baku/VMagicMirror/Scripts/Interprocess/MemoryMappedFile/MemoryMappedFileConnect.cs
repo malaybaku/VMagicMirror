@@ -135,12 +135,6 @@ namespace Baku.VMagicMirror.Mmf
             }
             _receiverAccessor = _receiver.CreateViewAccessor();
             _senderAccessor = _sender.CreateViewAccessor();
-            if (isServer)
-            {
-                //前回実行時のデータが残る可能性があるので、明示的に未書き込み状態にする
-                _receiverAccessor.Write(0, (byte)0);
-                _senderAccessor.Write(0, (byte)0);
-            }
             new Thread(() => ReadThread()).Start();
             new Thread(() => WriteThread()).Start();
             IsConnected = true;

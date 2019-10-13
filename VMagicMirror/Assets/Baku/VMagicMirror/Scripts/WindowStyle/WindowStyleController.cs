@@ -167,12 +167,8 @@ namespace Baku.VMagicMirror
             reader.Load();
             if (reader.TransparentBackground)
             {
-                LogOutput.Instance.Write("Set Transparency by direct setting file input");
                 //NOTE: このif文の中身には、WPF側で「背景を透過」にチェックを入れた時の挙動の一部を入れているが、
                 //見た目に関するものだけにしている(全部やるとクリックスルー設定が絡んで難しくなるので)
-                
-                //全部ではない(
-                //UI操作は1つでも処理がけっこう多いので要注意。
                 SetWindowTransparency(true);
                 SetWindowFrameVisibility(false);
                 cameraController.SetCameraBackgroundColor(0, 0, 0, 0);

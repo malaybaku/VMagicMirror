@@ -73,7 +73,6 @@ namespace Baku.VMagicMirror
 
         public void SetCameraBackgroundColor(float a, float r, float g, float b)
         {
-            LogOutput.Instance.Write(nameof(SetCameraBackgroundColor) + $": {a:0.00},{r:0.00},{g:0.00},{b:0.00}");
             cam.backgroundColor = new Color(r, g, b, a);
         }
 

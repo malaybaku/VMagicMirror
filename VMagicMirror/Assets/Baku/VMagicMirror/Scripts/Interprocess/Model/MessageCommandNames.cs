@@ -132,10 +132,14 @@
         public const string EnableWordToMotionPreview = nameof(EnableWordToMotionPreview);
         public const string SendWordToMotionPreviewInfo = nameof(SendWordToMotionPreviewInfo);
 
+        public const string UseGamepadToStartWordToMotion = nameof(UseGamepadToStartWordToMotion);
+
         // Screenshot
         public const string TakeScreenshot = nameof(TakeScreenshot);
         public const string OpenScreenshotFolder = nameof(OpenScreenshotFolder);
 
+        // Meta message
+        public const string CommandArray = nameof(CommandArray);
     }
 }
 

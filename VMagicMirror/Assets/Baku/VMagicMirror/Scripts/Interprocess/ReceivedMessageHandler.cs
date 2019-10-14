@@ -29,10 +29,23 @@ namespace Baku.VMagicMirror
                 ProcessQuery(query);
             }
         }
-
+        
         public void ReceiveCommand(ReceivedCommand command)
         {
-            _receivedCommands.Enqueue(command);
+            if (command.Command == MessageCommandNames.CommandArray)
+            {
+                //コマンドの一括送信を受け取ったとき: バラバラにしてキューに詰めておく
+                var commands = CommandArrayParser.ParseCommandArray(command.Content);
+                foreach (var c in commands)
+                {
+                    _receivedCommands.Enqueue(c);
+                }
+            }
+            else
+            {
+                //普通の受信
+                _receivedCommands.Enqueue(command);
+            }
         }
 
         public IObservable<string> ReceiveQuery(ReceivedQuery query)

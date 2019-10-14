@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -25,17 +26,13 @@ namespace Baku.VMagicMirror
         const string InitialPositionXKey = "InitialPositionX";
         const string InitialPositionYKey = "InitialPositionY";
 
-        [SerializeField]
-        private float opaqueThreshold = 0.1f;
+        [SerializeField] private float opaqueThreshold = 0.1f;
+        [SerializeField] private float windowPositionCheckInterval = 5.0f;
+        [SerializeField] private Camera cam = null;
+        [SerializeField] private CameraController cameraController = null;
 
-        [SerializeField]
-        private ReceivedMessageHandler handler = null;
-
-        [SerializeField]
-        private float windowPositionCheckInterval = 5.0f;
-
-        [SerializeField]
-        private Camera cam = null;
+        [Inject]
+        private ReceivedMessageHandler _handler = null;
 
         private float _windowPositionCheckCount = 0;
         private Vector2Int _prevWindowPosition = Vector2Int.zero;
@@ -78,12 +75,14 @@ namespace Baku.VMagicMirror
             defaultExWindowStyle |= WS_EX_LAYERED;
             SetWindowLong(hWnd, GWL_EXSTYLE, defaultExWindowStyle);
 #endif
+            CheckSettingFileDirect();
+            InitializeWindowPositionCheckStatus();
         }
 
         private void Start()
         {
             _colorPickerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            handler.Commands.Subscribe(message =>
+            _handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {
@@ -132,7 +131,6 @@ namespace Baku.VMagicMirror
             //既定で最前面に表示
             SetTopMost(true);
 
-            InitializeWindowPositionCheckStatus();
             StartCoroutine(PickColorCoroutine());
         }
 
@@ -161,6 +159,20 @@ namespace Baku.VMagicMirror
         public void DisposeModelRenderers()
         {
             _renderers = new Renderer[0];
+        }
+
+        private void CheckSettingFileDirect()
+        {
+            var reader = new DirectSettingFileReader();
+            reader.Load();
+            if (reader.TransparentBackground)
+            {
+                //NOTE: このif文の中身には、WPF側で「背景を透過」にチェックを入れた時の挙動の一部を入れているが、
+                //見た目に関するものだけにしている(全部やるとクリックスルー設定が絡んで難しくなるので)
+                SetWindowTransparency(true);
+                SetWindowFrameVisibility(false);
+                cameraController.SetCameraBackgroundColor(0, 0, 0, 0);
+            }
         }
 
         private void UpdateClickThrough()
@@ -335,8 +347,6 @@ namespace Baku.VMagicMirror
         private void SetWindowFrameVisibility(bool isVisible)
         {
             _isWindowFrameHidden = !isVisible;
-
-            LogOutput.Instance.Write($"{nameof(SetWindowFrameVisibility)}:{isVisible}");
             var hwnd = GetUnityWindowHandle();
             uint windowStyle = isVisible ?
                 defaultWindowStyle :

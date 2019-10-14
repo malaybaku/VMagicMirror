@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
     public class BlendShapeAssignReceiver : MonoBehaviour
     {
         [Inject] private ReceivedMessageHandler handler = null;
-        [SerializeField] private GrpcSender sender = null;
+        [Inject] private IMessageSender sender = null;
         [SerializeField] private FaceControlManager faceControlManager = null;
 
         private EyebrowBlendShapeSet EyebrowBlendShape => faceControlManager.EyebrowBlendShape;

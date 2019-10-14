@@ -43,6 +43,15 @@ namespace Baku.VMagicMirror
 
         public bool EnableHidArmMotion { get; set; } = true;
 
+        public bool UseGamepadForWordToMotion { get; set; } = false;
+        
+        public bool EnablePresentationMode { get; set; }
+
+        public bool IsLeftHandGripGamepad => _leftTargetType == HandTargetType.Gamepad;
+        public bool IsRightHandGripGamepad => _rightTargetType == HandTargetType.Gamepad;
+
+        [Inject] private IVRMLoadable _vrmLoadable = null;
+
         //NOTE: 初めて手がキーボードから離れるまではnull
         private IIKGenerator _prevRightHand = null;
 
@@ -54,19 +63,12 @@ namespace Baku.VMagicMirror
 
         private HandTargetType _leftTargetType = HandTargetType.Keyboard;
         private HandTargetType _rightTargetType = HandTargetType.Keyboard;
-
-        [Inject] private IVRMLoadable _vrmLoadable = null;
-
-        public bool EnablePresentationMode { get; set; }
-
-        public bool IsLeftHandGripGamepad => _leftTargetType == HandTargetType.Gamepad;
-        public bool IsRightHandGripGamepad => _rightTargetType == HandTargetType.Gamepad;
-
+        
         #region API
 
         public void PressKey(string keyName)
         {
-            var (hand, pos) = typing.PressKey(keyName);
+            var (hand, pos) = typing.PressKey(keyName, EnablePresentationMode);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.Keyboard);
@@ -78,7 +80,7 @@ namespace Baku.VMagicMirror
 
             if (EnableHidArmMotion)
             {
-                fingerController.StartPressKeyMotion(keyName);
+                fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);
             }
 
             if (hand != ReactedHand.None && EnableHidArmMotion)
@@ -103,8 +105,16 @@ namespace Baku.VMagicMirror
             }
         }
 
+        #region Gamepad
+        
+        //NOTE: 表情コントロール用にゲームパッドを使っている間は入力を無視する
+        
         public void MoveLeftGamepadStick(Vector2 v)
         {
+            if (UseGamepadForWordToMotion)
+            {
+                return;
+            }
             smallGamepadHand.LeftStick(v);
             gamepadFinger.LeftStick(v);
             SetLeftHandIk(HandTargetType.Gamepad);
@@ -112,6 +122,10 @@ namespace Baku.VMagicMirror
 
         public void MoveRightGamepadStick(Vector2 v)
         {
+            if (UseGamepadForWordToMotion)
+            {
+                return;
+            }
             smallGamepadHand.RightStick(v);
             gamepadFinger.RightStick(v);
             SetRightHandIk(HandTargetType.Gamepad);
@@ -119,6 +133,10 @@ namespace Baku.VMagicMirror
 
         public void GamepadButtonDown(GamepadKey key)
         {
+            if (UseGamepadForWordToMotion)
+            {
+                return;
+            }
             var hand = GamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.Left)
             {
@@ -133,6 +151,10 @@ namespace Baku.VMagicMirror
 
         public void GamepadButtonUp(GamepadKey key)
         {
+            if (UseGamepadForWordToMotion)
+            {
+                return;
+            }
             var hand = GamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.Left)
             {
@@ -147,10 +169,15 @@ namespace Baku.VMagicMirror
 
         public void ButtonStick(Vector2Int pos)
         {
+            if (UseGamepadForWordToMotion)
+            {
+                return;
+            }
             smallGamepadHand.ButtonStick(pos);
             SetLeftHandIk(HandTargetType.Gamepad);
         }
         
+        #endregion
         
         /// <summary> 既定の秒数をかけて手のIKを無効化します。 </summary>
         public void DisableHandIk()

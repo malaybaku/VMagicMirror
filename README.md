@@ -2,10 +2,10 @@
 
 # VMagicMirror
 
-v0.9.0
+v0.9.1
 
 * 作成: 獏星(ばくすたー)
-* 2019/09/29
+* 2019/10/14
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -52,6 +52,13 @@ Windows 10環境でお使いいただけます。
 + `WPF`
     + [WPFのレポジトリ](https://github.com/malaybaku/VMAgicMirrorConfig)
 
+Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプロジェクトを開きます。
+
+メンテナの開発環境は以下の通りです。
+
+* Unity 2018.3.7f1 Personal
+* Visual Studio Community 2019
+
 ### 4.2. アセットの導入
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
@@ -59,11 +66,10 @@ Windows 10環境でお使いいただけます。
 * [UniVRM](https://github.com/vrm-c/UniVRM) v0.53.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
-* [gRPC](https://github.com/grpc/grpc)
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
-* Zenject (アセットストアからダウンロード可)
+* [Zenject](https://github.com/svermeulen/Extenject)
 
 ※v0.8.2時点ではビルド時に下記が必要でしたが、v0.8.3時点でビルド時の必須ライブラリから外しています。
 
@@ -71,12 +77,12 @@ Windows 10環境でお使いいただけます。
 * [VRoid SDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) v0.0.17
 * [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
 
+※v0.9.0時点ではビルド時に下記が必要でしたが、現在は不要です。
+* [gRPC](https://github.com/grpc/grpc)
+
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
-
-gRPCについては、UnityPackageをデイリービルドのアーカイブから入手してインストールします。
-詳細は[gRPCの実験的サポートのページ](https://github.com/grpc/grpc/tree/master/src/csharp/experimental)を参照してください。手元環境で使っているgRPCのバージョンは`v1.21.0-dev`ですが、より新しいバージョンでも動くかもしれません。
 
 
 ### 4.3. ビルド

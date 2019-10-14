@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UniRx;
@@ -26,6 +27,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class WordToMotionManager : MonoBehaviour
     {
+        [SerializeField] private GamepadToWordToMotion gamepad = null;
 
         [SerializeField]
         [Tooltip("この時間だけキー入力が無かったらワードが途切れたものとして入力履歴をクリアする。")]
@@ -39,6 +41,8 @@ namespace Baku.VMagicMirror
         //コレが必要なのは、デフォルトアニメーションが無いと下半身を動かさないアニメーションで脚が骨折するため
         [SerializeField] private AnimationClip defaultAnimation = null;
 
+        [SerializeField] private FingerController fingerController = null;
+        
         [Inject] private IVRMLoadable _vrmLoadable = null;
 
         /// <summary>
@@ -46,6 +50,15 @@ namespace Baku.VMagicMirror
         /// note: これは実際には、タイピング動作が無効化されているときに使いたい
         /// </summary>
         public bool ShouldSetDefaultClipAfterMotion { get; set; } = false;
+
+        /// <summary>
+        /// ゲームパッド入力をWord to Motionに用いるかどうかを取得、設定します。
+        /// </summary>
+        public bool UseGamepadForWordToMotion
+        {
+            get => gamepad.UseGamepadInput;
+            set => gamepad.UseGamepadInput = value;
+        }
 
         /// <summary>キー押下イベントをちゃんと読み込むか否か</summary>
         public bool EnableReadKey { get; set; } = true;
@@ -190,6 +203,15 @@ namespace Baku.VMagicMirror
                 }
             });
 
+            gamepad.RequestExecuteWordToMotionItem += i =>
+            {
+                var request = _mapper.FindMotionByIndex(i);
+                if (request != null)
+                {
+                    PlayItem(request);
+                }
+            };
+
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
@@ -211,6 +233,7 @@ namespace Baku.VMagicMirror
                     //フェードさせ終わる前に完了扱いにする: やや荒っぽいが、高精度に使うフラグではないのでOK
                     IsPlayingMotion = false;
                     _ikWeightCrossFade.FadeInArmIkWeights(ikFadeDuration);
+                    fingerController.FadeInWeight(ikFadeDuration);
                     if (ShouldSetDefaultClipAfterMotion)
                     {
                         Debug.Log("End animation, return to default");
@@ -284,16 +307,15 @@ namespace Baku.VMagicMirror
             
             _ikWeightCrossFade.OnVrmLoaded(info);
         }
-        
+
         private void OnVrmDisposing()
         {
             _ikWeightCrossFade.OnVrmDisposing();
-            
+
             _blendShape.DisposeProxy();
             _motionTransfer.Target = null;
         }
 
-        
         private void ApplyPreviewBlendShape()
         {
             if (PreviewRequest.UseBlendShape)
@@ -339,6 +361,7 @@ namespace Baku.VMagicMirror
 
             //いったんIKからアニメーションにブレンディングし、後で元に戻す
             _ikWeightCrossFade.FadeOutArmIkWeights(ikFadeDuration);
+            fingerController.FadeOutWeight(ikFadeDuration);
             _ikFadeInCountDown = clip.length - ikFadeDuration;
             //ここは短すぎるモーションを指定されたときの対策
             if (_ikFadeInCountDown <= 0)
@@ -382,6 +405,7 @@ namespace Baku.VMagicMirror
             _currentBuiltInMotionName = clipName;
             //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
             _ikWeightCrossFade.FadeOutArmIkWeightsImmediately();
+            fingerController.FadeOutWeight(0);
         }
 
         private void StopPreviewBuiltInMotion()
@@ -396,6 +420,7 @@ namespace Baku.VMagicMirror
             _currentBuiltInMotionName = "";
             //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
             _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
+            fingerController.FadeInWeight(0);
         }
         
         private void StartBvhFileMotion(string bvhFilePath)
@@ -423,6 +448,7 @@ namespace Baku.VMagicMirror
 
                 //いったんIKからアニメーションにブレンディングし、後で元に戻す
                 _ikWeightCrossFade.FadeOutArmIkWeights(ikFadeDuration);
+                fingerController.FadeOutWeight(0);
 
                 float duration = context.Bvh.FrameCount * Time.deltaTime;
                 Debug.Log("duration = " + duration.ToString("00.000"));

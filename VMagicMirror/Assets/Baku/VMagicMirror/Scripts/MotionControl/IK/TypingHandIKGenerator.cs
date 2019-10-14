@@ -12,20 +12,19 @@ namespace Baku.VMagicMirror
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         public IIKGenerator RightHand => _rightHand;
 
-        //手をあまり厳格にキーボードに沿わせると曲がり過ぎるのでゼロ回転側に寄せるファクター
-        private const float WristYawApplyFactor = 0.5f;
-        private const float WristYawSpeedFactor = 0.2f;
+        //手を正面方向に向くよう補正するファクター。1に近いほど手が正面向きになる
+        private const float WristForwardFactor = 0.5f;
 
         #region settings (WPFから飛んでくる想定のもの)
 
         /// <summary>手首から指先までの距離[m]。キーボードを打ってる位置をそれらしく補正するために使う。</summary>
-        public float HandToTipLength { get; set; } = 0.1f;
+        public float HandToTipLength { get; set; } = 0.12f;
 
         /// <summary>キーボードに対する手のY方向オフセット[m]。大きくするとタイピング動作が大げさになる。</summary>
         public float YOffsetAlways { get; set; } = 0.03f;
 
         /// <summary>打鍵直後のキーボードに対する手のY方向オフセット[m]。</summary>
-        public float YOffsetAfterKeyDown { get; set; } = 0.03f;
+        public float YOffsetAfterKeyDown { get; set; } = 0.02f;
 
         #endregion
 
@@ -68,13 +67,21 @@ namespace Baku.VMagicMirror
         private Coroutine _leftHandMoveCoroutine = null;
         private Coroutine _rightHandMoveCoroutine = null;
         
-        public (ReactedHand, Vector3) PressKey(string key)
+        public (ReactedHand, Vector3) PressKey(string key, bool isLeftHandOnlyMode)
         {
-            var keyData = keyboard.GetKeyTargetData(key);
+            var keyData = keyboard.GetKeyTargetData(key, isLeftHandOnlyMode);
+            
             Vector3 targetPos = keyData.positionWithOffset + YOffsetAlwaysVec;
-            targetPos -= HandToTipLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
-            if (keyboard.IsLeftHandPreferred(key))
+            var handOrientation = Vector3.Lerp(
+                new Vector3(targetPos.x, 0, targetPos.z).normalized,
+                Vector3.forward,
+                WristForwardFactor
+                ).normalized;
+            
+            targetPos -= HandToTipLength * handOrientation;
+
+            if (keyData.IsLeftHandPreffered)
             {
                 UpdateLeftHandCoroutine(KeyPressRoutine(IKTargets.LHand, targetPos));
                 return (ReactedHand.Left, keyData.position);
@@ -93,6 +100,7 @@ namespace Baku.VMagicMirror
 
             float startTime = Time.time;
             Vector3 startPos = ikTarget.Position;
+            float forwardDeg = isLeftHand ? 90 : -90;
             
             while (Time.time - startTime < keyboardMotionDuration)
             {
@@ -114,22 +122,31 @@ namespace Baku.VMagicMirror
                     ikTarget.Position = new Vector3(horizontal.x, verticalTarget, horizontal.z);
                 }
 
+                float angleDeg =
+                    -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) * Mathf.Rad2Deg + 
+                    (isLeftHand ? 180 : 0);
+                angleDeg = Mathf.Repeat(angleDeg + 180f, 360f) - 180f;
+                
                 //どちらの場合でも放射方向にターゲットを向かせる必要がある。
                 //かつ、左手は方向が180度ずれてしまうので直す
                 ikTarget.Rotation = Quaternion.Euler(
                     0,
-                    -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) * Mathf.Rad2Deg +
-                        (isLeftHand ? 180 : 0),
+                    Mathf.Lerp(angleDeg, forwardDeg, WristForwardFactor),
                     0);
                 yield return null;
             }
 
             //最後: ピッタリ合わせておしまい
             ikTarget.Position = new Vector3(targetPos.x, targetPos.y + YOffsetAfterKeyDown, targetPos.z);
+            
+            float finishAngleDeg = 
+                -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) * Mathf.Rad2Deg + 
+                (isLeftHand ? 180 : 0);
+            finishAngleDeg = Mathf.Repeat(finishAngleDeg + 180f, 360f) - 180f;
+            
             ikTarget.Rotation = Quaternion.Euler(
                 0,
-                -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) * Mathf.Rad2Deg +
-                    (isLeftHand ? 180 : 0),
+                Mathf.Lerp(finishAngleDeg, forwardDeg, WristForwardFactor),
                 0);
         }
 

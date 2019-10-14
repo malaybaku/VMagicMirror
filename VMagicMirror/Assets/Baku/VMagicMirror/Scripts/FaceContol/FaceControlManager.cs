@@ -13,9 +13,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private FaceTracker faceTracker = null;
         
         //ブレンドシェイプ生成するやつ各位
-        //TODO: MonoBehaviour継承を外すと改善という事になります。大体は。
         [SerializeField] private EyeDownBlendShapeController eyeDownController = null;
-        [SerializeField] private AnimMorphEasedTarget animMorphEasedTarget = null;
         [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
 
@@ -31,8 +29,10 @@ namespace Baku.VMagicMirror
 
         private VRMBlendShapeProxy _proxy;
 
+        //NOTE: 顔トラッキングは既定で有効になっていることに注意(※ただしカメラ名がセットされてないと検出は走らない)
+        public bool IsFaceTrackingActive { get; set; } = true;
+        
         private bool _preferAutoBlink = false;
-
         /// <summary> 顔トラッキング中であっても自動まばたきを優先するかどうか </summary>
         public bool PreferAutoBlink
         {
@@ -90,8 +90,11 @@ namespace Baku.VMagicMirror
             if (!OverrideByMotion)
             {
                 DefaultBlendShape.Apply(_proxy);
-                
-                if (!PreferAutoBlink && faceTracker.FaceDetectedAtLeastOnce)
+
+                if (IsFaceTrackingActive &&
+                    !PreferAutoBlink && 
+                    faceTracker.FaceDetectedAtLeastOnce
+                    )
                 {
                     imageBasedBlinkController.Apply(_proxy);
                 }

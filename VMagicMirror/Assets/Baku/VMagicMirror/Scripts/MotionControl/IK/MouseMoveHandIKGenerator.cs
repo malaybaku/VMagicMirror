@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
         private const float WristYawSpeedFactor = 12f;
         
         //手首ではなく手のひらあたりにマウスがあるように見えるための補正値
-        public float HandToPalmLength { get; set; } = 0.05f;
+        public float HandToPalmLength { get; set; } = 0.06f;
 
         public float YOffset { get; set; } = 0.03f;
 

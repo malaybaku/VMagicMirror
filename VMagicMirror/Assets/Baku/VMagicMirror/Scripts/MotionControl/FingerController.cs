@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -61,7 +63,17 @@ namespace Baku.VMagicMirror
         //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
         private readonly float[] _holdOperationBendingAngle = new float[10];
 
+        private Coroutine _coroutine = null;
+        
         #region API
+
+        /// <summary>
+        /// モーション再生中などに、一時的に曲げ角度の適用をストップするとき立てるフラグ。
+        /// </summary>
+        public float ApplyRate { get; private set; } = 1.0f;
+
+        public void FadeInWeight(float duration) => SetCoroutine(FadeFingerRate(1.0f, duration));
+        public void FadeOutWeight(float duration) => SetCoroutine(FadeFingerRate(0.0f, duration));
 
         public bool RightHandPresentationMode { get; set; } = false;
 
@@ -154,9 +166,9 @@ namespace Baku.VMagicMirror
             _fingers = null;
         }
 
-        public void StartPressKeyMotion(string key)
+        public void StartPressKeyMotion(string key, bool isLeftHandOnly)
         {
-            StartMoveFinger(keyboard.GetKeyTargetData(key).fingerNumber);
+            StartMoveFinger(keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber);
         }
 
         public void StartClickMotion(string info)
@@ -268,9 +280,20 @@ namespace Baku.VMagicMirror
                     //Holdのほうの値は正負考えずに入れるようになってるため、常にプラスで保存
                     _holdOperationBendingAngle[i] = Mathf.Abs(angle);
                     angle = LimitThumbBendAngle(angle, i, j);
-                    if (t != null)
+                    if (t != null && ApplyRate > 0)
                     {
-                        t.localRotation = Quaternion.AngleAxis(angle, GetRotationAxis(i, j));
+                        if (ApplyRate >= 1.0f)
+                        {
+                            t.localRotation = Quaternion.AngleAxis(angle, GetRotationAxis(i, j));
+                        }
+                        else
+                        {
+                            t.localRotation = Quaternion.Slerp(
+                                t.localRotation, 
+                                Quaternion.AngleAxis(angle, GetRotationAxis(i, j)),
+                                ApplyRate
+                                );
+                        }
                     }
                 }
             }
@@ -338,6 +361,34 @@ namespace Baku.VMagicMirror
             }
 
             return Mathf.Clamp(angle, -ThumbProximalMaxBendAngle, ThumbProximalMaxBendAngle);
+        }
+
+        private void SetCoroutine(IEnumerator coroutine)
+        {
+            if (_coroutine != null)
+            {
+                StopCoroutine(_coroutine);
+            }
+            _coroutine = StartCoroutine(coroutine);
+        }
+        
+        private IEnumerator FadeFingerRate(float goal, float duration)
+        {
+            if (duration <= 0)
+            {
+                ApplyRate = goal;
+                yield break;
+            }
+            
+            float startRate = ApplyRate;
+            float start = Time.time;
+            while (Time.time - start < duration)
+            {
+                float timeRate = (Time.time - start) / duration;
+                ApplyRate = Mathf.Lerp(startRate, goal, timeRate);
+                yield return null;
+            }
+            ApplyRate = goal;
         }
     }
 }

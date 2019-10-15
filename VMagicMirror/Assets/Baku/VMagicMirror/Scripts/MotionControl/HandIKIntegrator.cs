@@ -19,9 +19,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private TypingHandIKGenerator typing = null;
         public TypingHandIKGenerator Typing => typing;
 
-//        [SerializeField] private GamepadHandIKGenerator gamepadHand = null;
-//        public GamepadHandIKGenerator GamepadHand => gamepadHand;
-//
         [SerializeField] private SmallGamepadHandIKGenerator smallGamepadHand = null;
         public SmallGamepadHandIKGenerator SmallGamepadHand => smallGamepadHand;
         

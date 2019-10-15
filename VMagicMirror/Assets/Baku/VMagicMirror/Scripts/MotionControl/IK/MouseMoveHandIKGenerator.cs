@@ -27,6 +27,14 @@ namespace Baku.VMagicMirror
 
         private Vector3 _targetPosition = Vector3.zero;
 
+        private void Start()
+        {
+            //NOTE: この値は初期値が大外れしていないことを保証するものなので、多少ズレていてもOK
+            _rightHand.Position = _touchPad.GetHandTipPosFromScreenPoint(0, 0) + YOffsetAlwaysVec;
+            _targetPosition = _rightHand.Position;
+        }
+            
+
         private void Update()
         {
             _rightHand.Position = Vector3.Lerp(

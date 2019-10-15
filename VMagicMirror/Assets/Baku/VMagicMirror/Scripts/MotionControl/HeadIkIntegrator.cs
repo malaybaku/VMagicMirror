@@ -55,6 +55,10 @@ namespace Baku.VMagicMirror
             _camBasedLookAt.Camera = cam;
             _vrmLoadable.VrmLoaded += info => _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
             _vrmLoadable.VrmDisposing += () =>  _head = null;
+
+            //起動後にマウスを動かさないとLookAtの先が原点になっちゃうので、それを防ぐためにやる
+            _mouseBasedLookAt.Position = cam.position;
+            lookAtTarget.localPosition = _camBasedLookAt.Position;
         }
 
         private void Update()

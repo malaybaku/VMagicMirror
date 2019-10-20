@@ -28,6 +28,7 @@ namespace Baku.VMagicMirror
     public class WordToMotionManager : MonoBehaviour
     {
         [SerializeField] private GamepadToWordToMotion gamepad = null;
+        [SerializeField] private KeyboardToWordToMotion keyboard = null;
 
         [SerializeField]
         [Tooltip("この時間だけキー入力が無かったらワードが途切れたものとして入力履歴をクリアする。")]
@@ -58,6 +59,15 @@ namespace Baku.VMagicMirror
         {
             get => gamepad.UseGamepadInput;
             set => gamepad.UseGamepadInput = value;
+        }
+
+        /// <summary>
+        /// キーボード入力をWord to Motionに用いるかどうかを取得、設定します。
+        /// </summary>
+        public bool UseKeyboardForWordToMotion
+        {
+            get => keyboard.UseKeyboardInput;
+            set => keyboard.UseKeyboardInput = value;
         }
 
         /// <summary>キー押下イベントをちゃんと読み込むか否か</summary>
@@ -203,14 +213,16 @@ namespace Baku.VMagicMirror
                 }
             });
 
-            gamepad.RequestExecuteWordToMotionItem += i =>
+            void ExecuteSelectedItem(int i)
             {
                 var request = _mapper.FindMotionByIndex(i);
                 if (request != null)
                 {
                     PlayItem(request);
                 }
-            };
+            }
+            gamepad.RequestExecuteWordToMotionItem += ExecuteSelectedItem;
+            keyboard.RequestExecuteWordToMotionItem += ExecuteSelectedItem;
 
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmDisposing;

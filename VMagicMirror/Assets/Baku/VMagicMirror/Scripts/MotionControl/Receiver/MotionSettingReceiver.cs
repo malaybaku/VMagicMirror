@@ -7,7 +7,12 @@ namespace Baku.VMagicMirror
     /// <summary> モーション関係で、操作ではなく設定値を受け取るレシーバクラス </summary>
     public class MotionSettingReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler handler = null;
+        //Word to Motionの専用入力に使うデバイスを指定する定数値
+        private const int DeviceTypeNone = 0;
+        private const int DeviceTypeGamepad = 1;
+        private const int DeviceTypeKeyboard = 2;
+
+        [Inject] private ReceivedMessageHandler _handler = null;
 
         [SerializeField] private GamepadBasedBodyLean gamePadBasedBodyLean = null;
         [SerializeField] private SmallGamepadHandIKGenerator smallGamepadHandIk = null;
@@ -22,7 +27,7 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            handler.Commands.Subscribe(message =>
+            _handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {
@@ -69,14 +74,37 @@ namespace Baku.VMagicMirror
                         gamePadBasedBodyLean.ReverseGamepadStickLeanVertical = message.ToBoolean();
                         smallGamepadHandIk.ReverseGamepadStickLeanVertical = message.ToBoolean();
                         break;
-                    case MessageCommandNames.UseGamepadToStartWordToMotion:
-                        gamePadBasedBodyLean.UseGamepadForWordToMotion = message.ToBoolean();
-                        handIkIntegrator.UseGamepadForWordToMotion = message.ToBoolean();
+                    case MessageCommandNames.SetDeviceTypeToStartWordToMotion:
+                        SetDeviceTypeForWordToMotion(message.ToInt());
                         break;
                 }
             });
         }
-        
+
+        private void SetDeviceTypeForWordToMotion(int deviceType)
+        {
+            switch (deviceType)
+            {
+                case DeviceTypeNone:
+                    gamePadBasedBodyLean.UseGamepadForWordToMotion = false;
+                    handIkIntegrator.UseGamepadForWordToMotion = false;
+                    handIkIntegrator.UseKeyboardForWordToMotion = false;
+                    break;
+                case DeviceTypeGamepad:
+                    gamePadBasedBodyLean.UseGamepadForWordToMotion = true;
+                    handIkIntegrator.UseGamepadForWordToMotion = true;
+                    handIkIntegrator.UseKeyboardForWordToMotion = false;
+                    break;
+                case DeviceTypeKeyboard:
+                    gamePadBasedBodyLean.UseGamepadForWordToMotion = false;
+                    handIkIntegrator.UseGamepadForWordToMotion = false;
+                    handIkIntegrator.UseKeyboardForWordToMotion = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         //以下については適用先が1つじゃないことに注意
 
         private void SetLengthFromWristToTip(float v)

@@ -132,7 +132,8 @@
         public const string EnableWordToMotionPreview = nameof(EnableWordToMotionPreview);
         public const string SendWordToMotionPreviewInfo = nameof(SendWordToMotionPreviewInfo);
 
-        public const string UseGamepadToStartWordToMotion = nameof(UseGamepadToStartWordToMotion);
+        public const string SetDeviceTypeToStartWordToMotion = nameof(SetDeviceTypeToStartWordToMotion);
+        
 
         // Screenshot
         public const string TakeScreenshot = nameof(TakeScreenshot);

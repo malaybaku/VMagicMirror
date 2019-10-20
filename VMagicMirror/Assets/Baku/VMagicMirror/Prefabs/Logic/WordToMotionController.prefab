@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 7427902273662735819}
   - component: {fileID: 7427902273662735818}
   - component: {fileID: 7427902273662735821}
+  - component: {fileID: 4195983317812337395}
   m_Layer: 0
   m_Name: WordToMotionController
   m_TagString: Untagged
@@ -63,6 +64,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamepad: {fileID: 7427902273662735821}
+  keyboard: {fileID: 4195983317812337395}
   forgetTime: 1
   ikFadeDuration: 0.5
   defaultAnimation: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc, type: 2}
@@ -136,4 +138,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamepadInput: {fileID: 0}
+  cooldownTime: 0
+--- !u!114 &4195983317812337395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7427902273662735829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a27d6ae3a3e79845940da8cc571003b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   cooldownTime: 0

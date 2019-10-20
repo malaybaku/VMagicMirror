@@ -6,7 +6,7 @@ using VRM;
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// Type To Motionのブレンドシェイプを適用する。
+    /// Word To Motionのブレンドシェイプを適用する。
     /// </summary>
     /// <remarks>
     /// このクラスは実行タイミングが遅く、有効時には他の表情制御をほぼ完全にオーバーライドする。
@@ -82,24 +82,23 @@ namespace Baku.VMagicMirror
         {
             if (_proxy == null || _blendShape.Count == 0)
             {
-                //オーバーライド不要
+                //オーバーライド不要なケース
                 _proxy?.Apply();
                 return;
             }
 
+            //一回ApplyすることでAccumulateした値を捨てさせる
+            _proxy.Apply();
+            
+            //実際に適用したい値を入れなおして再度Applyすると完全上書きになる
             for(int i = 0; i < _allBlendShapeKeys.Length; i++)
             {
                 if (_blendShape.TryGetValue(_allBlendShapeKeys[i], out float value))
                 {
                     _proxy.AccumulateValue(_allBlendShapeKeys[i], value);
                 }
-                else
-                {
-                    //ここがポイント: オーバーライドなので関係ないブレンドシェイプは叩き落す
-                    _proxy.AccumulateValue(_allBlendShapeKeys[i], 0f);
-                }
             }
-            _proxy?.Apply();
+            _proxy.Apply();
         }
 
     }

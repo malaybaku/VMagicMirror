@@ -130,10 +130,13 @@ namespace Baku.VMagicMirror
 
         public void GamepadButtonDown(GamepadKey key)
         {
+            smallGamepadHand.ButtonDown(key);
+
             if (UseGamepadForWordToMotion)
             {
                 return;
             }
+            
             var hand = GamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.Left)
             {
@@ -148,10 +151,13 @@ namespace Baku.VMagicMirror
 
         public void GamepadButtonUp(GamepadKey key)
         {
+            smallGamepadHand.ButtonUp(key);
+
             if (UseGamepadForWordToMotion)
             {
                 return;
             }
+            
             var hand = GamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.Left)
             {

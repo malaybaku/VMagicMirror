@@ -42,6 +42,9 @@ namespace Baku.VMagicMirror
 
         public bool UseGamepadForWordToMotion { get; set; } = false;
         
+        //NOTE: このフラグではキーボードのみならずマウス入力も無視することに注意
+        public bool UseKeyboardForWordToMotion { get; set; } = false;
+        
         public bool EnablePresentationMode { get; set; }
 
         public bool IsLeftHandGripGamepad => _leftTargetType == HandTargetType.Gamepad;
@@ -63,8 +66,15 @@ namespace Baku.VMagicMirror
         
         #region API
 
+        #region Keyboard and Mouse
+        
         public void PressKey(string keyName)
         {
+            if (UseKeyboardForWordToMotion)
+            {
+                return;
+            }
+            
             var (hand, pos) = typing.PressKey(keyName, EnablePresentationMode);
             if (hand == ReactedHand.Left)
             {
@@ -88,6 +98,11 @@ namespace Baku.VMagicMirror
 
         public void MoveMouse(Vector3 mousePosition)
         {
+            if (UseKeyboardForWordToMotion)
+            {
+                return;
+            }
+            
             mouseMove.MoveMouse(mousePosition);
             presentation.MoveMouse(mousePosition);
             SetRightHandIk(EnablePresentationMode ? HandTargetType.Presentation : HandTargetType.Mouse);
@@ -95,13 +110,15 @@ namespace Baku.VMagicMirror
 
         public void ClickMouse(string button)
         {
-            if (!EnablePresentationMode && EnableHidArmMotion)
+            if (!EnablePresentationMode && EnableHidArmMotion && !UseKeyboardForWordToMotion)
             {
                 fingerController.StartClickMotion(button);
                 SetRightHandIk(HandTargetType.Mouse);   
             }
         }
 
+        #endregion
+        
         #region Gamepad
         
         //NOTE: 表情コントロール用にゲームパッドを使っている間は入力を無視する

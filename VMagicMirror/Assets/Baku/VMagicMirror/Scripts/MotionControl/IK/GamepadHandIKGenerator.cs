@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class GamepadHandIKGenerator : MonoBehaviour
     {
-        //手をあまり厳格にキーボードに沿わせると曲がり過ぎるのでゼロ回転側に寄せるファクター
+        //手を正面方向に向けさせる強さを定義するファクター
         private const float WristYawApplyFactor = 0.5f;
         private const float WristYawSpeedFactor = 0.2f;
         

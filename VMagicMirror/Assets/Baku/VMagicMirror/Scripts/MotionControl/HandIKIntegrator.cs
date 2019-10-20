@@ -70,7 +70,7 @@ namespace Baku.VMagicMirror
         
         public void PressKey(string keyName)
         {
-            if (!UseKeyboardForWordToMotion)
+            if (UseKeyboardForWordToMotion)
             {
                 return;
             }
@@ -98,7 +98,7 @@ namespace Baku.VMagicMirror
 
         public void MoveMouse(Vector3 mousePosition)
         {
-            if (!UseKeyboardForWordToMotion)
+            if (UseKeyboardForWordToMotion)
             {
                 return;
             }

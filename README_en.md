@@ -6,7 +6,7 @@
 v0.9.1
 
 * Author: Baxter
-* 2019/Oct/14
+* 2019/Oct/22
 
 The VRM avatar application without any special device.
 

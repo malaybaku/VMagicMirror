@@ -31,8 +31,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private Camera cam = null;
         [SerializeField] private CameraController cameraController = null;
 
-        [Inject]
-        private ReceivedMessageHandler _handler = null;
+        [Inject] private ReceivedMessageHandler _handler = null;
+        [Inject] private RawInputChecker _rawInputChecker = null;
 
         private float _windowPositionCheckCount = 0;
         private Vector2Int _prevWindowPosition = Vector2Int.zero;
@@ -86,13 +86,6 @@ namespace Baku.VMagicMirror
             {
                 switch (message.Command)
                 {
-                    case MessageCommandNames.MouseButton:
-                        string info = message.Content;
-                        if (info == "LDown")
-                        {
-                            ReserveHitTestJudgeOnNextFrame();
-                        }
-                        break;
                     case MessageCommandNames.Chromakey:
                         var argb = message.ToColorFloats();
                         SetWindowTransparency(argb[0] == 0);
@@ -126,6 +119,14 @@ namespace Baku.VMagicMirror
                         break;
                 }
 
+            });
+
+            _rawInputChecker.MouseButton.Subscribe(info =>
+            {
+                if (info == "LDown")
+                {
+                    ReserveHitTestJudgeOnNextFrame();
+                }
             });
 
             //既定で最前面に表示

@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class HidInputReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler handler = null;
+        [Inject] private RawInputChecker _rawInputChecker = null;
         
         [SerializeField] private StatefulXinputGamePad gamePad = null;
         
@@ -21,30 +21,14 @@ namespace Baku.VMagicMirror
         
         [SerializeField] private GamepadBasedBodyLean gamepadBasedBodyLean = null;
         
-        private bool mousePositionInitialized = false;
+        private bool _mousePositionInitialized = false;
         private int _mouseX = 0;
         private int _mouseY = 0;
         
         private void Start()
         {
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.KeyDown:
-                        ReceiveKeyPressed(message.Content);
-                        break;
-                    case MessageCommandNames.MouseButton:
-                        ReceiveMouseButton(message.Content);
-                        break;
-                    case MessageCommandNames.MouseMoved:
-                        int[] xy = message.ToIntArray();
-                        ReceiveMouseMove(xy[0], xy[1]);
-                        break;
-                    default:
-                        break;
-                }
-            });
+            _rawInputChecker.PressedKeys.Subscribe(ReceiveKeyPressed);
+            _rawInputChecker.MouseButton.Subscribe(ReceiveMouseButton);
             
             gamePad.ButtonUpDown.Subscribe(data =>
             {
@@ -86,11 +70,11 @@ namespace Baku.VMagicMirror
             // - マウスクリック: NG, グローバルフック必須
             // - キーボード: NG, グローバルフック必須
             var pos = Input.mousePosition;
-            if (!mousePositionInitialized)
+            if (!_mousePositionInitialized)
             {
                 _mouseX = (int)pos.x;
                 _mouseY = (int)pos.y;
-                mousePositionInitialized = true;
+                _mousePositionInitialized = true;
             }
 
             if (_mouseX != (int)pos.x || 
@@ -121,11 +105,6 @@ namespace Baku.VMagicMirror
             {
                 handIkIntegrator.ClickMouse(info);
             }
-        }
-
-        private void ReceiveMouseMove(int x, int y)
-        {
-            //WPFからマウスイベントをとる場合はこちらを使うが、今は無視
         }
     }
 }

@@ -16,17 +16,17 @@ namespace Baku.VMagicMirror
         private const int DeviceTypeKeyboard = 2;
 
         [Inject] private ReceivedMessageHandler _handler = null;
+        [Inject] private RawInputChecker _rawInputChecker = null;
         [SerializeField] private WordToMotionManager manager = null;
 
         void Start()
         {
+            _rawInputChecker.PressedKeys.Subscribe(info => manager.ReceiveKeyDown(info));
+            
             _handler.Commands.Subscribe(message =>
             {
                 switch(message.Command)
                 {
-                    case MessageCommandNames.KeyDown:
-                        manager.ReceiveKeyDown(message.Content);
-                        break;
                     case MessageCommandNames.EnableWordToMotion:
                         manager.EnableReadKey = message.ToBoolean();
                         break;
@@ -53,6 +53,7 @@ namespace Baku.VMagicMirror
                         break;
                 }
             });
+            
         }
 
         private void SetWordToMotionInputType(int deviceType)

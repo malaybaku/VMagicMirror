@@ -1442,6 +1442,45 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 948e310483123da43ab4787ee2ac6688, type: 3}
+--- !u!1001 &6339733921808589193
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7939309247728220475, guid: ee92b6c9100e05d4d88246a79d8af1d9,
+        type: 3}
+      propertyPath: m_Name
+      value: RawInputChecker
+      objectReference: {fileID: 0}
+    - target: {fileID: 982365954410614437, guid: ee92b6c9100e05d4d88246a79d8af1d9,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 982365954410614437, guid: ee92b6c9100e05d4d88246a79d8af1d9,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 982365954410614437, guid: ee92b6c9100e05d4d88246a79d8af1d9,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 982365954410614437, guid: ee92b6c9100e05d4d88246a79d8af1d9,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2947756352855395158, guid: ee92b6c9100e05d4d88246a79d8af1d9,
+        type: 3}
+      propertyPath: handler
+      value: 
+      objectReference: {fileID: 1930233619}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ee92b6c9100e05d4d88246a79d8af1d9, type: 3}
 --- !u!1001 &6717032854632493185
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -7,9 +7,9 @@
         public const string Language = nameof(Language);
 
         // Input 
-        public const string KeyDown = nameof(KeyDown);
-        public const string MouseMoved = nameof(MouseMoved);
-        public const string MouseButton = nameof(MouseButton);
+        //public const string KeyDown = nameof(KeyDown);
+        //public const string MouseMoved = nameof(MouseMoved);
+        //public const string MouseButton = nameof(MouseButton);
 
         // Load VRM
         public const string OpenVrmPreview = nameof(OpenVrmPreview);

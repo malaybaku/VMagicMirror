@@ -40,23 +40,19 @@ namespace Baku.VMagicMirror
         
         public bool UseKeyboardInput { get; set; } = false;
         
-        [Inject] private ReceivedMessageHandler _handler = null;
+        [Inject] private RawInputChecker _rawInputChecker = null;
         private float _cooldownCount = 0;
 
         private void Start()
         {
-            _handler.Commands.Subscribe(c =>
+            _rawInputChecker.PressedKeys.Subscribe(keyName =>
             {
-                if (!UseKeyboardInput ||
-                    _cooldownCount > 0 || 
-                    c.Command != MessageCommandNames.KeyDown
-                    )
+                if (!UseKeyboardInput || _cooldownCount > 0)
                 {
                     return;
                 }
                 
                 //NOTE: D0-D8とNumPad系のキーはサニタイズ対象じゃないので、そのまま受け取っても大丈夫
-                string keyName = c.Content;
                 if (_keyToItemIndex.ContainsKey(keyName))
                 {
                     RequestExecuteWordToMotionItem?.Invoke(_keyToItemIndex[keyName]);

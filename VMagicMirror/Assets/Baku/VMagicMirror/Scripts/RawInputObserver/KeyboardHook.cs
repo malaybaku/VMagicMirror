@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -85,9 +86,11 @@ namespace Baku.VMagicMirror
             KeyboardHookDelegate callback = new KeyboardHookDelegate(CallNextHook);
             hookDelegate = GCHandle.Alloc(callback);
 
-//            IntPtr module = Marshal.GetHINSTANCE(typeof(KeyboardHook).Assembly.GetModules()[0]);
-//            hook = SetWindowsHookEx(KeyboardHookType, callback, module, 0);
-            hook = SetWindowsHookEx(KeyboardHookType, callback, IntPtr.Zero, 0);
+            string moduleName = Process.GetCurrentProcess().MainModule?.ModuleName ?? "";
+            IntPtr hModule = string.IsNullOrEmpty(moduleName)
+                ? IntPtr.Zero
+                : WindowsAPI.GetModuleHandle(moduleName);
+            hook = SetWindowsHookEx(KeyboardHookType, callback, hModule, 0);
         }
 
         ///<summary>

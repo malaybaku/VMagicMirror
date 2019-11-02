@@ -5,11 +5,13 @@ using System.Runtime.InteropServices;
 
 namespace Baku.VMagicMirror
 {
+    //NOTE: マウス位置関係の処理は「人が動かしたのかプログラムでマウスが動いたのか」の判定をしようと頑張った残骸で、
+    //再利用する可能性があるので残している
     class MouseHook : IDisposable
     {
-        private IntPtr hHook;
+        private IntPtr _hHook;
         //明示的に参照保持しないとデリゲートがGCされてしまうのでわざわざ参照を持つ(アンマネージ感がすごい)
-        private WindowsAPI.HOOKPROC _hookProc;
+        private readonly WindowsAPI.HOOKPROC _hookProc;
 
         public int FilteredX => X + DX;
         public int FilteredY => Y + DY;
@@ -86,75 +88,89 @@ namespace Baku.VMagicMirror
 
         public bool SetHook()
         {
-            var hModule = WindowsAPI.GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
-            hHook = WindowsAPI.SetWindowsHookEx(
+            string moduleName = Process.GetCurrentProcess().MainModule?.ModuleName ?? "";
+            IntPtr hModule = string.IsNullOrEmpty(moduleName)
+                ? IntPtr.Zero
+                : WindowsAPI.GetModuleHandle(moduleName);
+            
+            _hHook = WindowsAPI.SetWindowsHookEx(
                 (int)WindowsAPI.HookType.WH_MOUSE_LL,
                 _hookProc, 
                 hModule,
                 IntPtr.Zero
                 );
 
-            return (hHook != IntPtr.Zero);
+            return (_hHook != IntPtr.Zero);
         }
 
         private IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode == WindowsAPI.HC_ACTION)
+            if (nCode != WindowsAPI.HC_ACTION)
             {
-                try
+                return WindowsAPI.CallNextHookEx(_hHook, nCode, wParam, lParam);
+            }
+            
+            try
+            {
+                //TODO: ここ文字列経由するのパフォーマンス的に勿体ないような
+                int wParamVal = wParam.ToInt32();
+                string info =
+                    (wParamVal == WindowsAPI.MouseMessages.WM_LBUTTONDOWN) ? "LDown" :
+                    (wParamVal == WindowsAPI.MouseMessages.WM_LBUTTONUP) ? "LUp" :
+                    (wParamVal == WindowsAPI.MouseMessages.WM_RBUTTONDOWN) ? "RDown" :
+                    (wParamVal == WindowsAPI.MouseMessages.WM_RBUTTONUP) ? "RUp" :
+                    (wParamVal == WindowsAPI.MouseMessages.WM_MBUTTONDOWN) ? "MDown" :
+                    (wParamVal == WindowsAPI.MouseMessages.WM_MBUTTONUP) ? "MUp" :
+                    "";
+
+                if (!string.IsNullOrEmpty(info))
                 {
-                    int wParamVal = wParam.ToInt32();
-
-                    string info =
-                        (wParamVal == WindowsAPI.MouseMessages.WM_LBUTTONDOWN) ? "LDown" :
-                        (wParamVal == WindowsAPI.MouseMessages.WM_LBUTTONUP) ? "LUp" :
-                        (wParamVal == WindowsAPI.MouseMessages.WM_RBUTTONDOWN) ? "RDown" :
-                        (wParamVal == WindowsAPI.MouseMessages.WM_RBUTTONUP) ? "RUp" :
-                        (wParamVal == WindowsAPI.MouseMessages.WM_MBUTTONDOWN) ? "MDown" :
-                        (wParamVal == WindowsAPI.MouseMessages.WM_MBUTTONUP) ? "MUp" :
-                        "";
-
-                    var mouseHook = Marshal.PtrToStructure<WindowsAPI.MSLLHOOKSTRUCT>(lParam);
-
-                    if (wParamVal == WindowsAPI.MouseMessages.WM_MOUSEMOVE)
-                    {
-                        //ソフトが動かした場合、勝手に動かした分を差分として保存することで
-                        //「手だけで動かしてたらここにマウスがあったはず」という情報が残るようにしたい
-                        if ((mouseHook.flags & WindowsAPI.MouseFlags.LLMHF_INJECTED) != 0)
-                        {
-                            //動きが怪しいのでDX,DYに非ゼロ値が入らないようにしておく
-                            //DX += X - mouseHook.pt.x;
-                            //DY += Y - mouseHook.pt.y;
-                        }
-                        X = mouseHook.pt.x;
-                        Y = mouseHook.pt.y;
-                    }
-                    else if (!string.IsNullOrEmpty(info))
-                    {
-                        //クリック時にDXとDYをリセットする = クリック時点で一旦マウスやタッチパッドから手を離したものと扱う
-                        MouseButton?.Invoke(this, new MouseButtonEventArgs(info));
-                        DX = 0;
-                        DY = 0;
-                        X = mouseHook.pt.x;
-                        Y = mouseHook.pt.y;
-                    }
-
+                    MouseButton?.Invoke(this, new MouseButtonEventArgs(info));
                 }
-                catch (Exception ex)
-                {
-                    //ここはLogOutputに流さない: キーボード叩くたびにファイルI/Oは流石にまずい
-                    Debug.Write(ex.Message);
-                }
+                
+//                CheckMousePositionEvent(wParamVal, lParam, info);
+            }
+            catch (Exception)
+            {
+                //ここはLogOutputに流さない: キーボード叩くたびにファイルI/Oは流石にまずい
             }
 
-            return WindowsAPI.CallNextHookEx(hHook, nCode, wParam, lParam);
+            return WindowsAPI.CallNextHookEx(_hHook, nCode, wParam, lParam);
         }
 
-        public void RemoveHook() => WindowsAPI.UnhookWindowsHookEx(hHook);
+        public void RemoveHook() => WindowsAPI.UnhookWindowsHookEx(_hHook);
 
         public void Dispose() => RemoveHook();
 
         public event EventHandler<MouseButtonEventArgs> MouseButton;
+
+        private void CheckMousePositionEvent(int wParamVal, IntPtr lParam, string info)
+        {
+            var mouseHook = Marshal.PtrToStructure<WindowsAPI.MSLLHOOKSTRUCT>(lParam);
+
+            if (wParamVal == WindowsAPI.MouseMessages.WM_MOUSEMOVE)
+            {
+                //ソフトが動かした場合、勝手に動かした分を差分として保存することで
+                //「手だけで動かしてたらここにマウスがあったはず」という情報が残るようにしたい
+                if ((mouseHook.flags & WindowsAPI.MouseFlags.LLMHF_INJECTED) != 0)
+                {
+                    //動きが怪しいのでDX,DYに非ゼロ値が入らないようにしておく
+                    //DX += X - mouseHook.pt.x;
+                    //DY += Y - mouseHook.pt.y;
+                }
+                X = mouseHook.pt.x;
+                Y = mouseHook.pt.y;
+            }
+            
+            if (!string.IsNullOrEmpty(info))
+            {
+                //クリック時にDXとDYをリセットする = クリック時点で一旦マウスやタッチパッドから手を離したものと扱う
+                DX = 0;
+                DY = 0;
+                X = mouseHook.pt.x;
+                Y = mouseHook.pt.y;
+            }
+        }
     }
 
     class MouseButtonEventArgs : EventArgs

@@ -62,6 +62,8 @@ namespace Baku.VMagicMirror
         //輪郭は顔サイズと傾き除去のために特別扱いしたいので外す
         private FacePartBase[] PartsWithoutOutline { get; }
 
+        public bool DisableHorizontalFlip { get; set; }
+
         //todo: 通常、目閉じ、目の見開き、で3つのキャリブがあった方がよさそうな…
         public void Calibrate(IList<Vector2> landmarks)
         {
@@ -203,10 +205,14 @@ namespace Baku.VMagicMirror
                 //輪郭の端、つまり両こめかみ付近に線を引いてみたときの傾きをとっている。
                 //以前はアゴ先の位置も考慮していたが、それだとヨー運動と合成されてしまうため、使わないようにした。
                 Vector2 diffVecSum = positions[16] - positions[0];
-                CurrentFaceRollRad = Mathf.Atan2(diffVecSum.y, diffVecSum.x);
-                CurrentFaceRollSin = Mathf.Sin(CurrentFaceRollRad);
-                CurrentFaceRollCos = Mathf.Cos(CurrentFaceRollRad);
-
+                
+                float faceRollRad = Mathf.Atan2(diffVecSum.y, diffVecSum.x);
+                
+                //Radは外部で使う値なので左右反転の設定に基づいてひっくり返し、Sin/Cosは内部計算用なのでそのままにする
+                CurrentFaceRollSin = Mathf.Sin(faceRollRad);
+                CurrentFaceRollCos = Mathf.Cos(faceRollRad);
+                CurrentFaceRollRad = Parent.DisableHorizontalFlip ? -faceRollRad : faceRollRad;
+                
                 _headRollRad.OnNext(CurrentFaceRollRad);
 
                 //外形の3点だけで顔の矩形計算には足りる(しかもその方が回転不変で良い)
@@ -225,12 +231,15 @@ namespace Baku.VMagicMirror
 
                 //ピクセル単位のハズなので1以下ならどちらかの点に被っている(※通常は起きない)
                 //通常ケースでは(遠いほうの距離 / 近いほうの距離)の比率をうまく畳んで[-1, 1]の範囲に収めようとしている
-                CurrentFaceYawRate =
+
+                float yawRate =
                     (diffLeft < 1f) ? -1f :
                     (diffRight < 1f) ? 1f :
                     (diffLeft < diffRight) ? 
                         -Mathf.Clamp(diffRight / diffLeft - 1, 0, YawMouthDistanceRatio) / YawMouthDistanceRatio :
                         Mathf.Clamp(diffLeft / diffRight - 1, 0, YawMouthDistanceRatio) / YawMouthDistanceRatio;
+
+                CurrentFaceYawRate = Parent.DisableHorizontalFlip ? -yawRate : yawRate;
                 _headYawRate.OnNext(CurrentFaceYawRate);
             }
 

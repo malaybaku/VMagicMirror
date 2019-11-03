@@ -34,6 +34,9 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.SetCalibrateFaceData:
                         _faceTracker.SetCalibrateData(message.Content);
                         break;
+                    case MessageCommandNames.DisableFaceTrackingHorizontalFlip:
+                        _faceTracker.DisableHorizontalFlip = message.ToBoolean();
+                        break;
                 }
             });
 

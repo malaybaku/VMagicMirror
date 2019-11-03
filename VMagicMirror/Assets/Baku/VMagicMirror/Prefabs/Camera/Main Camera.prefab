@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1574337989898446741}
   - component: {fileID: 1574337989898446740}
   - component: {fileID: 1574337989898446739}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ShadowBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}

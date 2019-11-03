@@ -5,9 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Baku/VMagicMirror/Scenes/MainViewer.unity
     guid: 73b14cfb1fb42b546a3ebfcb5775d713

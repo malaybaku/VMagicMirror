@@ -13,6 +13,7 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 2. ダウンロード
 3. 質問など
 4. (開発者向け)ビルド手順
+5. (開発者向け)MODを作成する手順
 
 ## 1. できること
 
@@ -24,6 +25,7 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 
 * 機材の準備が面倒な時の配信
 * ライブコーディング中の賑やかし
+* デスクトップマスコット
 
 ## 2. ダウンロード
 
@@ -57,7 +59,8 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 メンテナの開発環境は以下の通りです。
 
 * Unity 2018.3.7f1 Personal
-* Visual Studio Community 2019
+* Visual Studio Community 2019 16.3.7
+    * .NET Core 3.0 SDKがインストール済みであること
 
 ### 4.2. アセットの導入
 
@@ -88,6 +91,20 @@ Dlib FaceLandmark Detectorについては、アセットに含まれるデータ
 ### 4.3. ビルド
 
 * Unityでのビルド時には`Bin`フォルダを指定します。
-* WPFでのビルドでは、ビルド設定で`Bin`以下の`ConfigApp`フォルダに実行ファイルが出力されます。
+* WPFでのビルドでは、`VMagicMirrorConfig`プロジェクトを右クリックし、`発行`を指定してフォルダ上にアプリケーションを配置します。
+    - プロファイル設定は次のようにします。
+        - 構成: `Debug | x86`
+        - ターゲットフレームワーク: `netcoreapp3.0`
+        - 配置モード: `自己完結`
+        - ターゲットランタイム: `win10-x86`
+        - ターゲットの場所: PC上の適当なフォルダ
+    - 上記の設定で発行すると、単一化された実行ファイルの`VMagicMirrorConfig.exe`が出力されます。このexeファイルを`Bin/ConfigApp/`以下に配置します。
 
-※BOOTHで配布されているzipの内容は、`Bin`フォルダ以下から不要なファイルを除いたものです。
+フォルダ構成については配布されているVMagicMirrorも参考にしてください。
+
+## 5. MODを作成する手順
+
+VMagicMirror v0.9.3以降ではライブラリ(dll)形式のMOD読み込みがサポートされているため、VMagicMirror自体を編集する代わりにMODで機能を追加することもできます。
+
+詳細は[VMagicMirrorModExample](https://github.com/malaybaku/VMagicMirrorModExample)を参照下さい。
+

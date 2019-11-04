@@ -11,18 +11,24 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class VRMWind : MonoBehaviour
     {
-        [SerializeField] private bool enableWind = false;
+        [SerializeField] private bool enableWind = true;
         
-        //風の基本の方向と、方向をランダムでズラすファクタ
-        [SerializeField] private Vector3 windBaseOrientation = Vector3.left;
+        //風の基本の方向と、生成したベクトルを適当にずらすファクタ
+        //ヨーが0付近のときは正面からの風になる
+        //ヨーにプラスの角度を指定すると、画面の右から風が吹いているように扱う
+        [SerializeField] private float windYawDegree = 90f;
         [SerializeField] private float windOrientationRandomPower = 0.2f;
 
-        //風の発生頻度、強さ、立ち上がりと立ち下がりの時間を、それぞれ全てRandom.Rangeに通すために幅付きの値にする
-        [SerializeField] private Vector2 windIntervalRange = new Vector2(0.55f, 1.25f);
-        [SerializeField] private Vector2 windStrengthRange = new Vector2(0.03f, 0.06f);
+        //風の強さ、発生頻度、立ち上がりと立ち下がりの時間を、それぞれ全てRandom.Rangeに通すために幅付きの値にする
+        [SerializeField] private Vector2 windStrengthRange = new Vector2(0.1f, 0.2f);
+        [SerializeField] private Vector2 windIntervalRange = new Vector2(0.7f, 1.9f);
         [SerializeField] private Vector2 windRiseCountRange = new Vector2(0.4f, 0.6f);
-        [SerializeField] private Vector2 windSitCountRange = new Vector2(0.9f, 1.1f);
+        [SerializeField] private Vector2 windSitCountRange = new Vector2(1.3f, 1.8f);
 
+        //上記の強さと時間に対して定数倍するファクタ
+        [SerializeField] private float strengthFactor = 0.3f;
+        [SerializeField] private float timeFactor = 1.0f;
+        
         [Inject] private IVRMLoadable _vrmLoadController;
         
         class WindItem
@@ -58,11 +64,18 @@ namespace Baku.VMagicMirror
 
         public bool WindEnabled { get; private set; }
 
+        public float WindYawDegree
+        {
+            get => windYawDegree;
+            set => windYawDegree = value;
+        }
+
         public void EnableWind(bool enable)
         {
             if (WindEnabled != enable)
             {
                 WindEnabled = enable;
+                enableWind = enable;
                 if (!WindEnabled)
                 {
                     DisableWind();
@@ -70,6 +83,15 @@ namespace Baku.VMagicMirror
             }
         }
 
+        public void SetStrength(float strengthPercentage)
+        {
+            strengthFactor = strengthPercentage;
+        }
+
+        public void SetIntercal(float intervalPercentage)
+        {
+            timeFactor = intervalPercentage;
+        }        
         private void DisableWind()
         {
             for (int i = 0; i < _springBones.Length; i++)
@@ -121,7 +143,11 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            _windGenerateCount = Random.Range(windIntervalRange.x, windIntervalRange.y);
+            _windGenerateCount = Random.Range(windIntervalRange.x, windIntervalRange.y) * timeFactor;
+            
+            var windBaseOrientation = new Vector3(
+                -Mathf.Sin(WindYawDegree * Mathf.Deg2Rad), 0, Mathf.Cos(WindYawDegree * Mathf.Deg2Rad)
+                );
 
             var windOrientation = (
                 windBaseOrientation + 
@@ -135,7 +161,7 @@ namespace Baku.VMagicMirror
                 windOrientation,    
                 Random.Range(windRiseCountRange.x, windRiseCountRange.y),
                 Random.Range(windSitCountRange.x, windSitCountRange.y),
-                Random.Range(windStrengthRange.x, windStrengthRange.y)
+                Random.Range(windStrengthRange.x, windStrengthRange.y) * strengthFactor
             ));
         }
 

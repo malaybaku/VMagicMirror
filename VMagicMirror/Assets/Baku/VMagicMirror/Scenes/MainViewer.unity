@@ -866,6 +866,11 @@ PrefabInstance:
       propertyPath: postProcess
       value: 
       objectReference: {fileID: 749678942}
+    - target: {fileID: 7848325067811684568, guid: 74b68522ff1e6a64ab9ccb23c66175b9,
+        type: 3}
+      propertyPath: windDuration
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74b68522ff1e6a64ab9ccb23c66175b9, type: 3}
 --- !u!1001 &2119741372807721884

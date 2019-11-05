@@ -125,6 +125,11 @@
         public const string BloomThreshold = nameof(BloomThreshold);
         public const string BloomColor = nameof(BloomColor);
 
+        public const string WindEnable = nameof(WindEnable);
+        public const string WindStrength = nameof(WindStrength);
+        public const string WindInterval = nameof(WindInterval);
+        public const string WindYaw = nameof(WindYaw);
+        
         // Word to Motion
         public const string EnableWordToMotion = nameof(EnableWordToMotion);
         public const string ReloadMotionRequests = nameof(ReloadMotionRequests);

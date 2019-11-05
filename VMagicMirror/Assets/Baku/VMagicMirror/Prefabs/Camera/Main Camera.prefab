@@ -694,9 +694,9 @@ MonoBehaviour:
   enableWind: 1
   windYawDegree: 90
   windOrientationRandomPower: 0.2
-  windStrengthRange: {x: 0.1, y: 0.2}
+  windStrengthRange: {x: 0.03, y: 0.06}
   windIntervalRange: {x: 0.7, y: 1.9}
   windRiseCountRange: {x: 0.4, y: 0.6}
   windSitCountRange: {x: 1.3, y: 1.8}
-  strengthFactor: 0.3
+  strengthFactor: 1
   timeFactor: 1

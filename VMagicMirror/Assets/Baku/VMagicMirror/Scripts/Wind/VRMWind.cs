@@ -20,13 +20,13 @@ namespace Baku.VMagicMirror
         [SerializeField] private float windOrientationRandomPower = 0.2f;
 
         //風の強さ、発生頻度、立ち上がりと立ち下がりの時間を、それぞれ全てRandom.Rangeに通すために幅付きの値にする
-        [SerializeField] private Vector2 windStrengthRange = new Vector2(0.1f, 0.2f);
+        [SerializeField] private Vector2 windStrengthRange = new Vector2(0.03f, 0.06f);
         [SerializeField] private Vector2 windIntervalRange = new Vector2(0.7f, 1.9f);
         [SerializeField] private Vector2 windRiseCountRange = new Vector2(0.4f, 0.6f);
         [SerializeField] private Vector2 windSitCountRange = new Vector2(1.3f, 1.8f);
 
         //上記の強さと時間に対して定数倍するファクタ
-        [SerializeField] private float strengthFactor = 0.3f;
+        [SerializeField] private float strengthFactor = 1.0f;
         [SerializeField] private float timeFactor = 1.0f;
         
         [Inject] private IVRMLoadable _vrmLoadController;

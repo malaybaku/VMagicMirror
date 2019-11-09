@@ -3,10 +3,10 @@
 
 # VMagicMirror
 
-v0.9.2
+v0.9.3
 
 * Author: Baxter
-* 2019/Oct/26
+* 2019/Nov/09
 
 The VRM avatar application without any special device.
 
@@ -77,16 +77,6 @@ Maintainer's environment is as following.
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
-
-*note: until v0.8.2a following libraries are required, but from v0.8.3 you can build the app without them.
-
-* TextMesh Pro Essentials and Extra
-* [VRoid SDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) v0.0.17
-* [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
-
-*note: until v0.9.0 following library is required, but now it is no more necessary.
-
-* [gRPC](https://github.com/grpc/grpc)
 
 Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
 

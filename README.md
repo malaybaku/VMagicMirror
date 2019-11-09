@@ -2,10 +2,10 @@
 
 # VMagicMirror
 
-v0.9.2
+v0.9.3
 
 * 作成: 獏星(ばくすたー)
-* 2019/10/26
+* 2019/11/09
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -73,15 +73,6 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
-
-※v0.8.2時点ではビルド時に下記が必要でしたが、v0.8.3時点でビルド時の必須ライブラリから外しています。
-
-* TextMesh Pro Essentials and Extra
-* [VRoid SDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) v0.0.17
-* [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
-
-※v0.9.0時点ではビルド時に下記が必要でしたが、現在は不要です。
-* [gRPC](https://github.com/grpc/grpc)
 
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
 

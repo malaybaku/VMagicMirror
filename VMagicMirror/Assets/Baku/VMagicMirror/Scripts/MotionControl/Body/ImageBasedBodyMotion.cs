@@ -54,7 +54,10 @@ namespace Baku.VMagicMirror
 
         private FullBodyBipedIK _ik = null;
         
-        /// <summary>体のIKに適用したいオフセット値を取得します。</summary>
+        /// <summary>体のIKに適用したいXY軸要素のみが入ったオフセット値を取得します。</summary>
+        public Vector3 BodyIkXyOffset { get; private set; }
+        
+        /// <summary>体のIKに適用したいZ軸要素のみが適用されたオフセット値を取得します。</summary>
         public Vector3 BodyIkOffset { get; private set; }
         
         public void OnVrmLoaded(VrmLoadedInfo info)
@@ -160,9 +163,10 @@ namespace Baku.VMagicMirror
             Vector3 speed = Vector3.Lerp(_prevSpeed, idealSpeed, speedFactor * Time.deltaTime);
             Vector3 pos = _prevPosition + Time.deltaTime * speed;
 
-            BodyIkOffset = new Vector3(pos.x, pos.y, 0);
+            BodyIkXyOffset = new Vector3(pos.x, pos.y, 0);
+            BodyIkOffset = pos;
+
             var zOffset = _vrmRoot.forward * pos.z;
-            
             //NOTE: IKをこの段階で適用しているが、PositionWeightに依存してホントに見た目に反映されるかが決まる
             _leftShoulderEffector.localPosition = _leftShoulderDefaultOffset + zOffset;
             _rightShoulderEffector.localPosition = _rightShoulderDefaultOffset + zOffset;

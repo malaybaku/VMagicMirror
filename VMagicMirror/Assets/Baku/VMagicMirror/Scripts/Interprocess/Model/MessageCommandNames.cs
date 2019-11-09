@@ -7,9 +7,9 @@
         public const string Language = nameof(Language);
 
         // Input 
-        public const string KeyDown = nameof(KeyDown);
-        public const string MouseMoved = nameof(MouseMoved);
-        public const string MouseButton = nameof(MouseButton);
+        //public const string KeyDown = nameof(KeyDown);
+        //public const string MouseMoved = nameof(MouseMoved);
+        //public const string MouseButton = nameof(MouseButton);
 
         // Load VRM
         public const string OpenVrmPreview = nameof(OpenVrmPreview);
@@ -57,6 +57,7 @@
         public const string EnableFaceTracking = nameof(EnableFaceTracking);
         public const string SetCameraDeviceName = nameof(SetCameraDeviceName);
         public const string AutoBlinkDuringFaceTracking = nameof(AutoBlinkDuringFaceTracking);
+        public const string DisableFaceTrackingHorizontalFlip = nameof(DisableFaceTrackingHorizontalFlip);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
@@ -124,6 +125,11 @@
         public const string BloomThreshold = nameof(BloomThreshold);
         public const string BloomColor = nameof(BloomColor);
 
+        public const string WindEnable = nameof(WindEnable);
+        public const string WindStrength = nameof(WindStrength);
+        public const string WindInterval = nameof(WindInterval);
+        public const string WindYaw = nameof(WindYaw);
+        
         // Word to Motion
         public const string EnableWordToMotion = nameof(EnableWordToMotion);
         public const string ReloadMotionRequests = nameof(ReloadMotionRequests);
@@ -132,7 +138,8 @@
         public const string EnableWordToMotionPreview = nameof(EnableWordToMotionPreview);
         public const string SendWordToMotionPreviewInfo = nameof(SendWordToMotionPreviewInfo);
 
-        public const string UseGamepadToStartWordToMotion = nameof(UseGamepadToStartWordToMotion);
+        public const string SetDeviceTypeToStartWordToMotion = nameof(SetDeviceTypeToStartWordToMotion);
+        
 
         // Screenshot
         public const string TakeScreenshot = nameof(TakeScreenshot);

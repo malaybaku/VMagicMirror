@@ -2,10 +2,10 @@
 
 # VMagicMirror
 
-v0.9.1
+v0.9.3
 
 * 作成: 獏星(ばくすたー)
-* 2019/10/14
+* 2019/11/09
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -13,6 +13,7 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 2. ダウンロード
 3. 質問など
 4. (開発者向け)ビルド手順
+5. (開発者向け)MODを作成する手順
 
 ## 1. できること
 
@@ -24,6 +25,7 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 
 * 機材の準備が面倒な時の配信
 * ライブコーディング中の賑やかし
+* デスクトップマスコット
 
 ## 2. ダウンロード
 
@@ -57,7 +59,8 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 メンテナの開発環境は以下の通りです。
 
 * Unity 2018.3.7f1 Personal
-* Visual Studio Community 2019
+* Visual Studio Community 2019 16.3.7
+    * .NET Core 3.0 SDKがインストール済みであること
 
 ### 4.2. アセットの導入
 
@@ -71,15 +74,6 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
 
-※v0.8.2時点ではビルド時に下記が必要でしたが、v0.8.3時点でビルド時の必須ライブラリから外しています。
-
-* TextMesh Pro Essentials and Extra
-* [VRoid SDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) v0.0.17
-* [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
-
-※v0.9.0時点ではビルド時に下記が必要でしたが、現在は不要です。
-* [gRPC](https://github.com/grpc/grpc)
-
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
@@ -88,6 +82,20 @@ Dlib FaceLandmark Detectorについては、アセットに含まれるデータ
 ### 4.3. ビルド
 
 * Unityでのビルド時には`Bin`フォルダを指定します。
-* WPFでのビルドでは、ビルド設定で`Bin`以下の`ConfigApp`フォルダに実行ファイルが出力されます。
+* WPFでのビルドでは、`VMagicMirrorConfig`プロジェクトを右クリックし、`発行`を指定してフォルダ上にアプリケーションを配置します。
+    - プロファイル設定は次のようにします。
+        - 構成: `Debug | x86`
+        - ターゲットフレームワーク: `netcoreapp3.0`
+        - 配置モード: `自己完結`
+        - ターゲットランタイム: `win10-x86`
+        - ターゲットの場所: PC上の適当なフォルダ
+    - 上記の設定で発行すると、単一化された実行ファイルの`VMagicMirrorConfig.exe`が出力されます。このexeファイルを`Bin/ConfigApp/`以下に配置します。
 
-※BOOTHで配布されているzipの内容は、`Bin`フォルダ以下から不要なファイルを除いたものです。
+フォルダ構成については配布されているVMagicMirrorも参考にしてください。
+
+## 5. MODを作成する手順
+
+VMagicMirror v0.9.3以降ではライブラリ(dll)形式のMOD読み込みがサポートされているため、VMagicMirror自体を編集する代わりにMODで機能を追加することもできます。
+
+詳細は[VMagicMirrorModExample](https://github.com/malaybaku/VMagicMirrorModExample)を参照下さい。
+

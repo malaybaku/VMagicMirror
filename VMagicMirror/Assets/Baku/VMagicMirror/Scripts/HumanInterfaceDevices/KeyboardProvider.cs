@@ -242,7 +242,7 @@ namespace Baku.VMagicMirror
 
         private Transform[][] _keys = null;
 
-        private void Start()
+        private void Awake()
         {
             if (keyPrefab != null)
             {

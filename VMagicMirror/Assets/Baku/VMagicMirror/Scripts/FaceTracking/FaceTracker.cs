@@ -58,6 +58,12 @@ namespace Baku.VMagicMirror
         /// <summary> カメラを起動してから1度以上顔が検出されたかどうか </summary>
         public bool FaceDetectedAtLeastOnce { get; private set; } = false;
 
+        public bool DisableHorizontalFlip
+        {
+            get => FaceParts.DisableHorizontalFlip;
+            set => FaceParts.DisableHorizontalFlip = value;
+        }
+
         private int TextureWidth =>
             (_webCamTexture == null) ? requestedWidth :
             (_webCamTexture.width >= halfResizeWidthThreshold) ? _webCamTexture.width / 2 :
@@ -96,7 +102,7 @@ namespace Baku.VMagicMirror
             get { lock (_faceDetectCompletedLock) return _faceDetectCompleted; }
             set { lock (_faceDetectCompletedLock) _faceDetectCompleted = value; }
         }
-
+        
         //UIスレッドが書き込み、Dlibの呼び出しスレッドが読み込む
         private Color32[] _inputColors = null;
         private int _inputWidth = 0;
@@ -363,8 +369,14 @@ namespace Baku.VMagicMirror
             //出力を拾い終わった時点で次の処理に入ってもらって大丈夫
             FaceDetectCompleted = false;
 
+            float x = (mainPersonRect.xMin - TextureWidth / 2) / TextureWidth;
+            if (DisableHorizontalFlip)
+            {
+                x = -x;
+            }
+            
             DetectedRect = new Rect(
-                (mainPersonRect.xMin - TextureWidth / 2) / TextureWidth,
+                x,
                 -(mainPersonRect.yMax - TextureHeight / 2) / TextureWidth,
                 mainPersonRect.width / TextureWidth,
                 mainPersonRect.height / TextureWidth

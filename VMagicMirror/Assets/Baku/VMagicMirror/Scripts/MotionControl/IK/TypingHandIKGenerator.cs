@@ -66,6 +66,14 @@ namespace Baku.VMagicMirror
         //要るかなコレ。なくてもいいのでは？
         private Coroutine _leftHandMoveCoroutine = null;
         private Coroutine _rightHandMoveCoroutine = null;
+
+        private void Start()
+        {
+            //初期位置がゼロだとヘンな動きになるので、それを防ぐ
+            _leftHand.Position = keyboard.GetKeyTargetData("F").positionWithOffset;
+            _rightHand.Position = keyboard.GetKeyTargetData("J").positionWithOffset;
+        }
+        
         
         public (ReactedHand, Vector3) PressKey(string key, bool isLeftHandOnlyMode)
         {

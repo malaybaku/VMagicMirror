@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1574337989898446741}
   - component: {fileID: 1574337989898446740}
   - component: {fileID: 1574337989898446739}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ShadowBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -318,6 +318,7 @@ Transform:
   - {fileID: 1574337991148058291}
   - {fileID: 1574337989898446738}
   - {fileID: 1574337991882445226}
+  - {fileID: 3589418729740590996}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -633,3 +634,69 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!1 &4638350262946269639
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3589418729740590996}
+  - component: {fileID: 2980388060628184797}
+  - component: {fileID: 7848325067811684568}
+  m_Layer: 0
+  m_Name: Wind
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3589418729740590996
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4638350262946269639}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1574337991341618296}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2980388060628184797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4638350262946269639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af09dc0fa84050941886b776f844d7af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wind: {fileID: 7848325067811684568}
+--- !u!114 &7848325067811684568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4638350262946269639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 752235699b7671346bf4d47f8b1b2e1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableWind: 1
+  windYawDegree: 90
+  windOrientationRandomPower: 0.2
+  windStrengthRange: {x: 0.03, y: 0.06}
+  windIntervalRange: {x: 0.7, y: 1.9}
+  windRiseCountRange: {x: 0.4, y: 0.6}
+  windSitCountRange: {x: 1.3, y: 1.8}
+  strengthFactor: 1
+  timeFactor: 1

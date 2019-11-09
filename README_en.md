@@ -3,10 +3,10 @@
 
 # VMagicMirror
 
-v0.9.1
+v0.9.3
 
 * Author: Baxter
-* 2019/Oct/14
+* 2019/Nov/09
 
 The VRM avatar application without any special device.
 
@@ -14,7 +14,7 @@ The VRM avatar application without any special device.
 2. Download
 3. Contact
 4. (For Developers) Build
-
+5. (For Developers) Create MOD
 
 ## 1. Features
 
@@ -28,6 +28,7 @@ It will be helpful in the following situations.
 
 * Casting with almost no preparation
 * Tech presentation with live coding
+* Desktop mascot
 
 ## 2. Download
 
@@ -77,16 +78,6 @@ Maintainer's environment is as following.
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
 
-*note: until v0.8.2a following libraries are required, but from v0.8.3 you can build the app without them.
-
-* TextMesh Pro Essentials and Extra
-* [VRoid SDK](https://vroid.pixiv.help/hc/ja/sections/360002815734-VRoid-SDK-SDK%E9%80%A3%E6%90%BA%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) v0.0.17
-* [Unity Transform Control](https://github.com/mattatz/unity-transform-control)
-
-*note: until v0.9.0 following library is required, but now it is no more necessary.
-
-* [gRPC](https://github.com/grpc/grpc)
-
 Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
 
 Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
@@ -94,6 +85,20 @@ Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAsse
 ### 4.3. Build
 
 * Unity: Specify `Bin` folder for the output.
-* WPF build creates exe on `Bin` folder in `ConfigApp` (create if it does not exist).
+* To build WPF project, right click `VMagicMirrorConfig` project on the solution explorer and select `publish`.
+    - Use following profile setting as `Folder Profile`.
+        - Configuration: `Debug | x86`
+        - Target Framework: `netcoreapp3.0`
+        - Deployment Mode: `Self Contained`
+        - Target Runtime: `win10-x86`
+        - Target Location: choose somewhere on your PC folder
+    - By the publish you will get the single exe `VMagicMirrorConfig.exe`, so copy the .exe file to `Bin/ConfigApp/` folder.
 
-note: zip file distributed in BOOTH consists of the files of `Bin`, without some unnecessary files.
+Distributed VMagicMirror (v0.9.3 or later) also would be a reference of the folder structure.
+
+## 5. (For Developers) Create MOD
+
+VMagicMirror v0.9.3 or later supports MOD library (dll) loading system. In this way you can add your new feature without editing VMagicMirror itself.
+
+Please see the detail at [VMagicMirrorModExample](https://github.com/malaybaku/VMagicMirrorModExample) repository.
+

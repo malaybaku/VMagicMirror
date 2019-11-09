@@ -10,6 +10,7 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private BodyMotionManager bodyMotionManager = null;
 
+        private bool _isWaitMotionEnabled = true;
         private float _scale = 1.0f;
         private Vector3 _waitingMotionSize;
         
@@ -39,15 +40,19 @@ namespace Baku.VMagicMirror
 
         public void EnableWaitMotion(bool isEnabled)
         {
+            _isWaitMotionEnabled = isEnabled;
+            
             //isEnabled == falseでもビヘイビアは止めちゃダメ(動きかけのところで固定されてしまうので)
             bodyMotionManager.WaitingBodyMotion.MotionSize =
-                isEnabled ? _scale * _waitingMotionSize : Vector3.zero;
+                _isWaitMotionEnabled ? _scale * _waitingMotionSize : Vector3.zero;
         }
 
         public void SetWaitMotionScale(float scale)
         {
             _scale = scale;
-            bodyMotionManager.WaitingBodyMotion.MotionSize = _scale * _waitingMotionSize;
+            
+            bodyMotionManager.WaitingBodyMotion.MotionSize = 
+                _isWaitMotionEnabled ? _scale * _waitingMotionSize : Vector3.zero;
         }
 
         public void SetWaitMotionDuration(float period)

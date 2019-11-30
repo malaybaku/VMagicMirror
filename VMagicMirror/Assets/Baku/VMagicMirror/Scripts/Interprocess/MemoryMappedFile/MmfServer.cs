@@ -14,12 +14,13 @@ namespace Baku.VMagicMirror
         
         private MemoryMappedFileConnectServer _server;
         
-        private void Start()
+        private async void Start()
         {
             _server = new MemoryMappedFileConnectServer();
             _server.ReceiveCommand += OnReceiveCommand;
             _server.ReceiveQuery += OnReceiveQuery;
-            _server.Start(ChannelName);
+            //NOTE: awaitに特に意味は無いことに注意！
+            await _server.Start(ChannelName);
         }
 
         private void OnDestroy()

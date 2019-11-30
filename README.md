@@ -58,7 +58,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 
 メンテナの開発環境は以下の通りです。
 
-* Unity 2018.3.7f1 Personal
+* Unity 2018.4.13f1 Personal
 * Visual Studio Community 2019 16.3.7
     * .NET Core 3.0 SDKがインストール済みであること
 

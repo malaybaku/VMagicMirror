@@ -83,6 +83,7 @@
 
         // Layout, camera
         public const string SetCustomCameraPosition = nameof(SetCustomCameraPosition);
+        public const string QuickLoadViewPoint = nameof(QuickLoadViewPoint);
         public const string EnableFreeCameraMode = nameof(EnableFreeCameraMode);
         public const string ResetCameraPosition = nameof(ResetCameraPosition);
         public const string CameraFov = nameof(CameraFov);

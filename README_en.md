@@ -62,7 +62,7 @@ Open Unity project with Unity 2018.3.x, and open WPF project with Visual Studio 
 
 Maintainer's environment is as following.
 
-* Unity 2018.3.7f1 Personal
+* Unity 2018.4.13f1 Personal
 * Visual Studio Community 2019
 
 ### 4.2. Asset install

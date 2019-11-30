@@ -29,7 +29,13 @@ namespace Baku.VMagicMirror
         [SerializeField] private float strengthFactor = 1.0f;
         [SerializeField] private float timeFactor = 1.0f;
         
-        [Inject] private IVRMLoadable _vrmLoadController;
+        private IVRMLoadable _vrmLoadController;
+
+        [Inject]
+        public void InitializeLoadController(IVRMLoadable vrmLoadController)
+        {
+            _vrmLoadController = vrmLoadController;
+        }
         
         class WindItem
         {

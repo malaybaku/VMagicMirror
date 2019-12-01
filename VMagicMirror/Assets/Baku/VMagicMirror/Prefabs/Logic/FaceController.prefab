@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3748028266611161169}
   - component: {fileID: 3748028266611161170}
   - component: {fileID: 3748028266611161171}
+  - component: {fileID: 6830160226256021837}
   m_Layer: 0
   m_Name: FaceController
   m_TagString: Untagged
@@ -94,11 +95,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02f70ffaaedebba469e2ca096803c838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeDuration: 0.1
-  openDuration: 0.1
-  minInterval: 3
-  maxInterval: 12
-  doubleBlinkPossibility: 0.2
+  closeDuration: 0.05
+  openDuration: 0.2
+  minInterval: 7
+  maxInterval: 15
+  doubleBlinkPossibility: 0.15
+--- !u!114 &6830160226256021837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028266611161173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8af05bc5c45204fa27e7a692e57cb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  headRotThreshold: 25
+  headRotResetSpeed: 15
+  headRotBlinkProbability: 1
+  lipSyncContext: {fileID: 0}
+  lipSyncVisemeThreshold: 0.2
+  lipSyncOnCountThreshold: 10
+  lipSyncOffCountThreshold: 2
+  lipSyncBlinkProbability: 0.7
+  coolDown: 1
+  autoBlink: {fileID: 3748028266611161171}
 --- !u!1 &3748028267383499195
 GameObject:
   m_ObjectHideFlags: 0

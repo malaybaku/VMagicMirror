@@ -114,13 +114,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   headRotThreshold: 25
   headRotResetSpeed: 15
-  headRotBlinkProbability: 1
+  headRotBlinkProbability: 0.6
+  eyeRotBlinkSpeedThreshold: 20
+  eyeRotBlinkProbability: 0.8
   lipSyncContext: {fileID: 0}
   lipSyncVisemeThreshold: 0.2
   lipSyncOnCountThreshold: 10
   lipSyncOffCountThreshold: 2
   lipSyncBlinkProbability: 0.7
-  coolDown: 1
+  coolDown: 0.8
   autoBlink: {fileID: 3748028266611161171}
 --- !u!1 &3748028267383499195
 GameObject:

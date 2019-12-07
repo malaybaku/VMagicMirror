@@ -32,8 +32,6 @@ namespace Baku.VMagicMirror
 
         private const float ButtonDownAnimationY = 0.01f;
         
-        private Coroutine _buttonDownIkMotionCoroutine = null;
-
         //NOTE: raw系の値はゲームパッドの位置からただちに求まる、ローパスされていない値
         private Vector3 _rawLeftPos = Vector3.zero;
         private Quaternion _rawLeftRot = Quaternion.identity;

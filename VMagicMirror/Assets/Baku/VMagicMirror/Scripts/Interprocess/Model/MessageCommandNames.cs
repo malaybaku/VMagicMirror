@@ -57,10 +57,13 @@
         public const string EnableFaceTracking = nameof(EnableFaceTracking);
         public const string SetCameraDeviceName = nameof(SetCameraDeviceName);
         public const string AutoBlinkDuringFaceTracking = nameof(AutoBlinkDuringFaceTracking);
+        public const string EnableHeadRotationBasedBlinkAdjust = nameof(EnableHeadRotationBasedBlinkAdjust);
+        public const string EnableLipSyncBasedBlinkAdjust = nameof(EnableLipSyncBasedBlinkAdjust);
         public const string DisableFaceTrackingHorizontalFlip = nameof(DisableFaceTrackingHorizontalFlip);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
+
 
         // Moition, Face, Eyebrow
         public const string EyebrowLeftUpKey = nameof(EyebrowLeftUpKey);
@@ -83,6 +86,7 @@
 
         // Layout, camera
         public const string SetCustomCameraPosition = nameof(SetCustomCameraPosition);
+        public const string QuickLoadViewPoint = nameof(QuickLoadViewPoint);
         public const string EnableFreeCameraMode = nameof(EnableFreeCameraMode);
         public const string ResetCameraPosition = nameof(ResetCameraPosition);
         public const string CameraFov = nameof(CameraFov);

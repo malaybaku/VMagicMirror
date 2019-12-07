@@ -41,7 +41,10 @@ namespace Baku.VMagicMirror
                         EnableFreeCameraMode(message.ToBoolean());
                         break;
                     case MessageCommandNames.SetCustomCameraPosition:
-                        SetCustomCameraPosition(message.Content);
+                        SetCustomCameraPosition(message.Content, false);
+                        break;
+                    case MessageCommandNames.QuickLoadViewPoint:
+                        SetCustomCameraPosition(message.Content, true);
                         break;
                     case MessageCommandNames.ResetCameraPosition:
                         ResetCameraPosition();
@@ -90,7 +93,7 @@ namespace Baku.VMagicMirror
         }
 
 
-        private void SetCustomCameraPosition(string content)
+        private void SetCustomCameraPosition(string content, bool forceUpdateInFreeCameraMode)
         {
             //note: ここはv0.9.0以降ではシリアライズしたJson、それより前ではfloatのカンマ区切り配列。
             //Jsonシリアライズを導入したのは、OSのロケールによっては(EU圏とかで)floatの小数点が","になる問題をラクして避けるため。
@@ -141,7 +144,7 @@ namespace Baku.VMagicMirror
                 values[3], values[4], values[5]
                 );
 
-            UpdateCameraTransform(false);
+            UpdateCameraTransform(forceUpdateInFreeCameraMode);
         }
 
         private void UpdateCameraTransform(bool forceUpdateInFreeCameraMode)

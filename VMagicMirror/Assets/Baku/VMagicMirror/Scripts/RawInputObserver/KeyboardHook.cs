@@ -79,7 +79,7 @@ namespace Baku.VMagicMirror
         }
 
         ///<summary>
-        ///新しいインスタンスを作成する。
+        /// インスタンスを初期化する。
         ///</summary>
         public KeyboardHook()
         {
@@ -92,16 +92,7 @@ namespace Baku.VMagicMirror
                 : WindowsAPI.GetModuleHandle(moduleName);
             hook = SetWindowsHookEx(KeyboardHookType, callback, hModule, 0);
         }
-
-        ///<summary>
-        ///キーボードが操作されたときに実行するデリゲートを指定してインスタンスを作成する。
-        ///</summary>
-        ///<param name="handler">キーボードが操作されたときに実行するメソッドを表すイベントハンドラ。</param>
-        public KeyboardHook(KeyboardHookedEventHandler handler) : this()
-        {
-            KeyboardHooked += handler;
-        }
-
+        
         private int CallNextHook(int code, KeyboardMessage message, ref KeyboardState state)
         {
             if (code >= 0)

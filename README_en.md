@@ -3,10 +3,10 @@
 
 # VMagicMirror
 
-v0.9.3
+v0.9.4
 
 * Author: Baxter
-* 2019/Nov/09
+* 2019/Dec/07
 
 The VRM avatar application without any special device.
 
@@ -62,7 +62,7 @@ Open Unity project with Unity 2018.3.x, and open WPF project with Visual Studio 
 
 Maintainer's environment is as following.
 
-* Unity 2018.3.7f1 Personal
+* Unity 2018.4.13f1 Personal
 * Visual Studio Community 2019
 
 ### 4.2. Asset install
@@ -92,7 +92,7 @@ Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAsse
         - Deployment Mode: `Self Contained`
         - Target Runtime: `win10-x86`
         - Target Location: choose somewhere on your PC folder
-    - By the publish you will get the single exe `VMagicMirrorConfig.exe`, so copy the .exe file to `Bin/ConfigApp/` folder.
+    - By the publish you will get the files at target location folder. Then, copy the files to `Bin/ConfigApp/` folder.
 
 Distributed VMagicMirror (v0.9.3 or later) also would be a reference of the folder structure.
 

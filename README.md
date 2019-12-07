@@ -2,10 +2,10 @@
 
 # VMagicMirror
 
-v0.9.3
+v0.9.4
 
 * 作成: 獏星(ばくすたー)
-* 2019/11/09
+* 2019/12/07
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -58,7 +58,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 
 メンテナの開発環境は以下の通りです。
 
-* Unity 2018.3.7f1 Personal
+* Unity 2018.4.13f1 Personal
 * Visual Studio Community 2019 16.3.7
     * .NET Core 3.0 SDKがインストール済みであること
 
@@ -89,7 +89,7 @@ Dlib FaceLandmark Detectorについては、アセットに含まれるデータ
         - 配置モード: `自己完結`
         - ターゲットランタイム: `win10-x86`
         - ターゲットの場所: PC上の適当なフォルダ
-    - 上記の設定で発行すると、単一化された実行ファイルの`VMagicMirrorConfig.exe`が出力されます。このexeファイルを`Bin/ConfigApp/`以下に配置します。
+    - 上記の設定で発行すると、ターゲットのフォルダ上に`VMagicMirror.exe`を含むファイル群が出力されます。れらのファイルを`Bin/ConfigApp/`以下にコピーします。
 
 フォルダ構成については配布されているVMagicMirrorも参考にしてください。
 

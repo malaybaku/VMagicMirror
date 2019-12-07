@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faceTracker: {fileID: 0}
-  speedLerpFactor: 18
+  speedLerpFactor: 9
   speedDumpFactor: 0.86
   timeScaleFactor: 0.2
 --- !u!1 &5813678810248240003
@@ -469,7 +469,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePad: {fileID: 0}
+  imageBasedBodyMotion: {fileID: 0}
   speedFactor: 3
+  buttonDownSpeedFactor: 8
+  bodyMotionToGamepadPosApplyFactor: 0.5
 --- !u!114 &5813678810404708593
 MonoBehaviour:
   m_ObjectHideFlags: 0

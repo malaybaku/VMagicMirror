@@ -32,7 +32,7 @@ namespace Baku.VMagicMirror
         //NOTE: 顔トラッキングは既定で有効になっていることに注意(※ただしカメラ名がセットされてないと検出は走らない)
         public bool IsFaceTrackingActive { get; set; } = true;
         
-        private bool _preferAutoBlink = false;
+        private bool _preferAutoBlink = true;
         /// <summary> 顔トラッキング中であっても自動まばたきを優先するかどうか </summary>
         public bool PreferAutoBlink
         {

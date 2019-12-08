@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 711029217796913465}
   - component: {fileID: 711029217796913447}
   - component: {fileID: 711029217796913466}
+  - component: {fileID: 8598583368947466578}
   m_Layer: 0
   m_Name: Keyboard
   m_TagString: Untagged
@@ -133,3 +134,19 @@ MonoBehaviour:
   touchpad: {fileID: 0}
   smallGamepad: {fileID: 0}
   particleStore: {fileID: 0}
+--- !u!114 &8598583368947466578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 711029217796913445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acc6365877f8440a2933de30abb074cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 0
+  global: 0
+  useDistance: 1
+  distance: 10

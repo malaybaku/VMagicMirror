@@ -55,6 +55,9 @@ namespace Baku.VMagicMirror
         //右手小指 = 9
         private Transform[][] _fingers = null;
 
+        //右手首の位置。フォールバック系の処理で使うのでとっておく
+        private Transform _rightWrist = null;
+
         private readonly bool[] _isAnimating = new bool[10];
         private readonly float[] _animationStartedTime = new float[10];
         private readonly bool[] _shouldHoldPressedMode = new bool[10];
@@ -88,6 +91,7 @@ namespace Baku.VMagicMirror
                 _animationStartedTime[i] = 0;
             }
 
+            _rightWrist = animator.GetBoneTransform(HumanBodyBones.RightHand);
             _fingers = new Transform[][]
             {
                 new Transform[]
@@ -163,6 +167,7 @@ namespace Baku.VMagicMirror
             }
             _animator = null;
             _fingers = null;
+            _rightWrist = null;
         }
 
         public void StartPressKeyMotion(string key, bool isLeftHandOnly)
@@ -223,7 +228,43 @@ namespace Baku.VMagicMirror
                 _holdAngles[fingerNumber] = 0;
             }
         }
-        
+
+        /// <summary>
+        /// 右手指先の位置を取得しようとします。
+        /// モデルが未初期化だったり、VRM自体に指ボーンが入っていなかったりすると無効な値を返します。
+        /// </summary>
+        public void TryGetRightIndexTipPosition(out Vector3 result, out bool isValid)
+        {
+            Transform t = _fingers?[6]?[0];
+            if (t != null)
+            {
+                result = t.position;
+                isValid = true;
+            }
+            else
+            {
+                result = Vector3.zero;
+                isValid = false;
+            }
+        }
+
+        /// <summary>
+        /// 右手首の位置を取得しようとします。
+        /// モデルが未初期化の場合は無効な値を返します。
+        /// </summary>
+        public void TryGetRightWristPosition(out Vector3 result, out bool isValid)
+        {
+            if (_rightWrist != null)
+            {
+                result = _rightWrist.position;
+                isValid = true;
+            }
+            else
+            {
+                result = Vector3.zero;
+                isValid = false;
+            }
+        }
         
         #endregion
 

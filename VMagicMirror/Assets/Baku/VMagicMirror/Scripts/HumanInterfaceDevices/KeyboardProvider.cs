@@ -267,7 +267,10 @@ namespace Baku.VMagicMirror
                 {
                     float angle = (j * anglePerItem[i] + angleAdjust) * Mathf.Deg2Rad;
                     var key = Instantiate(keyPrefab, this.transform);
-                    key.GetComponentInChildren<MeshRenderer>().material = HIDMaterialUtil.Instance.GetKeyMaterial();
+                    foreach (var r in key.GetComponentsInChildren<MeshRenderer>())
+                    {
+                        r.material = HIDMaterialUtil.Instance.GetKeyMaterial();
+                    }
 
                     key.localPosition = radius[i] * new Vector3(
                         Mathf.Sin(angle),
@@ -290,10 +293,13 @@ namespace Baku.VMagicMirror
         private void CombineMeshes()
         {
             int len = transform.childCount;
-            var meshFilters = new MeshFilter[len];
+            var meshFilters = new MeshFilter[len * 2];
             for (int i = 0; i < len; i++)
             {
-                meshFilters[i] = transform.GetChild(i).GetComponentInChildren<MeshFilter>();
+                //NOTE: 表裏で2つメッシュフィルタがあることに注意
+                var filters = transform.GetChild(i).GetComponentsInChildren<MeshFilter>();
+                meshFilters[2 * i] = filters[0];
+                meshFilters[2 * i + 1] = filters[1];
             }
             CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 

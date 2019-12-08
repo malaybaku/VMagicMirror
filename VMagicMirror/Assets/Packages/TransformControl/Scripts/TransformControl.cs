@@ -43,7 +43,7 @@ namespace mattatz.TransformControl {
 
 	    protected const string SHADER = "Hidden/Internal-Colored";
 	    protected const float THRESHOLD = 10f;
-	    protected const float HANDLER_SIZE = 0.2f;
+	    protected const float HANDLER_SIZE = 0.15f;
 
 	    protected Material material {
 	        get {
@@ -61,7 +61,13 @@ namespace mattatz.TransformControl {
 	    public bool global, useDistance;
         public float distance = 10f;
 
-	    Color[] colors = new Color[] { Color.red, Color.green, Color.blue, Color.yellow };
+	    Color[] colors = new Color[]
+	    {
+		    new Color(0.8f, 0.4f, 0.2f),
+		    new Color(0.2f, 0.7f, 0.2f),
+		    new Color(0.5f, 0.5f, 0.8f), 
+		    new Color(0.8f, 0.8f, 0.2f), 
+	    };
 
 		Dictionary<TransformDirection, Vector3> axes = new Dictionary<TransformDirection, Vector3>() {
 			{ TransformDirection.X, Vector3.right },

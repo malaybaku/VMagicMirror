@@ -37,6 +37,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private float mouseContinueParticleCount = 0.5f;
         
         public Vector3 ParticleScale { get; set; } = new Vector3(0.7f, 1.0f, 0.7f);
+        public Quaternion ParticleRotation { get; set; } = Quaternion.identity;
 
         private int _nextParticleIndex = 0;
         //-1はパーティクル無効、0~(particlePrefabs.Length - 1)は有効な状態を表す
@@ -106,8 +107,10 @@ namespace Baku.VMagicMirror
                 particle.Stop();
             }
 
-            particle.transform.position = worldPosition;
-            particle.transform.localScale = ParticleScale;
+            var t = particle.transform;
+            t.position = worldPosition;
+            t.localRotation = ParticleRotation;
+            t.localScale = ParticleScale;
             particle.Play();
 
             _nextParticleIndex++;

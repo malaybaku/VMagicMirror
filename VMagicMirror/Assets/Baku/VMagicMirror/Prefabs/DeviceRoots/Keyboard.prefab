@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &711029217796913445
+--- !u!1 &1224206899735044969
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,12 +8,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 711029217796913446}
-  - component: {fileID: 711029217796913464}
-  - component: {fileID: 711029217796913465}
-  - component: {fileID: 711029217796913447}
-  - component: {fileID: 711029217796913466}
-  - component: {fileID: 8598583368947466578}
+  - component: {fileID: 1224206899735044970}
+  - component: {fileID: 1224206899735044980}
+  - component: {fileID: 1224206899735044981}
+  - component: {fileID: 1224206899735044971}
+  - component: {fileID: 7959860528724925214}
   m_Layer: 0
   m_Name: Keyboard
   m_TagString: Untagged
@@ -21,13 +20,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &711029217796913446
+--- !u!4 &1224206899735044970
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711029217796913445}
+  m_GameObject: {fileID: 1224206899735044969}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,21 +34,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &711029217796913464
+--- !u!33 &1224206899735044980
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711029217796913445}
+  m_GameObject: {fileID: 1224206899735044969}
   m_Mesh: {fileID: 0}
---- !u!23 &711029217796913465
+--- !u!23 &1224206899735044981
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711029217796913445}
+  m_GameObject: {fileID: 1224206899735044969}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 1
@@ -80,13 +79,13 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &711029217796913447
+--- !u!114 &1224206899735044971
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711029217796913445}
+  m_GameObject: {fileID: 1224206899735044969}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 468e8ff9ed7bf7b40aca1963a0a94b57, type: 3}
@@ -94,9 +93,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keyPrefab: {fileID: 3449811931784253164, guid: 3547bf710bc73ca4988c7bbf78b43783,
     type: 3}
-  initialPosition: {x: 0, y: 0.9, z: 0}
-  initialRotation: {x: 0, y: 15, z: 0}
-  initialScale: {x: 0.7, y: 1, z: 0.7}
+  initialPosition: {x: 0, y: 0.9, z: 0.28}
+  initialRotation: {x: 0, y: 0, z: 0}
+  initialScale: {x: 0.5, y: 1, z: 0.5}
   radius:
   - 0.4
   - 0.43
@@ -118,29 +117,13 @@ MonoBehaviour:
   - 4
   - 3
   - 3
---- !u!114 &711029217796913466
+--- !u!114 &7959860528724925214
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711029217796913445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c43672cf46e1954cb280461a69ea74f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  keyboard: {fileID: 711029217796913447}
-  touchpad: {fileID: 0}
-  smallGamepad: {fileID: 0}
-  particleStore: {fileID: 0}
---- !u!114 &8598583368947466578
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711029217796913445}
+  m_GameObject: {fileID: 1224206899735044969}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acc6365877f8440a2933de30abb074cf, type: 3}

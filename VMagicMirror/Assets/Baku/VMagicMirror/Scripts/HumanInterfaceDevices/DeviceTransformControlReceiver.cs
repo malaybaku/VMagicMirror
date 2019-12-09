@@ -3,6 +3,7 @@ using UnityEngine;
 using UniRx;
 using Zenject;
 using mattatz.TransformControl;
+using UnityEngine.UI;
 
 namespace Baku.VMagicMirror
 {
@@ -15,7 +16,21 @@ namespace Baku.VMagicMirror
     {
         [Inject] private ReceivedMessageHandler _handler;
 
-        [SerializeField] private TransformControl[] transformControls = null;
+        //NOTE: このクラスでanimatorとかを直読みしたくないので、リセット処理を外注します
+        [SerializeField] private SettingAutoAdjuster settingAutoAdjuster = null;
+
+        [SerializeField] private TransformControl keyboardControl = null;
+        [SerializeField] private TransformControl touchPadControl = null;
+        [SerializeField] private TransformControl gamepadControl= null;
+        [SerializeField] private Transform gamepadModelScaleTarget = null;
+        [SerializeField] private Slider gamepadModelScaleSlider = null;
+        
+        private TransformControl[] _transformControls => new[]
+        {
+            keyboardControl,
+            touchPadControl,
+            gamepadControl,
+        };
 
         private bool _isDeviceFreeLayoutEnabled = false;
         private bool _preferWorldCoordinate = false;
@@ -27,20 +42,36 @@ namespace Baku.VMagicMirror
             _canvas = GetComponent<Canvas>();
             _handler.Commands.Subscribe(command =>
             {
-                if (command.Command == MessageCommandNames.EnableDeviceFreeLayout)
+                switch (command.Command)
                 {
-                    EnableDeviceFreeLayout(command.ToBoolean());
+                    case MessageCommandNames.EnableDeviceFreeLayout:
+                        EnableDeviceFreeLayout(command.ToBoolean());
+                        break;
+                    case MessageCommandNames.SetDeviceLayout:
+                        SetDeviceLayout(command.Content);
+                        break;
+                    case MessageCommandNames.ResetDeviceLayout:
+                        ResetDeviceLayout();
+                        break;
                 }
             });
+
+            _handler.QueryRequested += query =>
+            {
+                if (query.Command == MessageQueryNames.CurrentDeviceLayout)
+                {
+                    query.Result = GetDeviceLayouts(); 
+                }
+            };
         }
 
         private void Update()
         {
             if (_isDeviceFreeLayoutEnabled)
             {
-                for (int i = 0; i < transformControls.Length; i++)
+                for (int i = 0; i < _transformControls.Length; i++)
                 {
-                    transformControls[i].Control();
+                    _transformControls[i].Control();
                 }
             }
         }
@@ -55,12 +86,77 @@ namespace Baku.VMagicMirror
             
             _isDeviceFreeLayoutEnabled = enable;
             _canvas.enabled = enable;
-            for (int i = 0; i < transformControls.Length; i++)
+            for (int i = 0; i < _transformControls.Length; i++)
             {
-                transformControls[i].enabled = enable;
-                transformControls[i].mode = enable ? _mode : TransformControl.TransformMode.None;
+                _transformControls[i].enabled = enable;
+                _transformControls[i].mode = enable ? _mode : TransformControl.TransformMode.None;
             }
         }
+
+        private string GetDeviceLayouts()
+        {
+            return JsonUtility.ToJson(new DeviceLayoutsData()
+            {
+                keyboard = ToItem(keyboardControl.transform),
+                touchPad = ToItem(touchPadControl.transform),
+                gamepad =  ToItem(gamepadControl.transform),
+                gamepadModelScale = gamepadModelScaleTarget.localScale.x,
+            });
+
+            DeviceLayoutItem ToItem(Transform t)
+            {
+                //NOTE: localScaleだけローカルだが、そもそも3つのTransformControlはぜんぶルート階層にある前提になってます
+                return new DeviceLayoutItem()
+                {
+                    pos = t.position,
+                    rot = t.rotation.eulerAngles,
+                    scale = t.localScale,
+                };
+            }
+        }
+        
+        private void SetDeviceLayout(string content)
+        {
+            try
+            {
+                var data = JsonUtility.FromJson<DeviceLayoutsData>(content);
+                ApplyItem(data.keyboard, keyboardControl.transform);
+                ApplyItem(data.touchPad, touchPadControl.transform);
+                ApplyItem(data.gamepad, gamepadControl.transform);
+                gamepadModelScaleSlider.value = Mathf.Clamp(
+                    data.gamepadModelScale,
+                    gamepadModelScaleSlider.minValue,
+                    gamepadModelScaleSlider.maxValue);
+                //NOTE: ここは念押しでやってるが、ほんとはスライダーのonValueChangedが呼ばれるはずなので、呼ばないでもOK
+                gamepadModelScaleTarget.localScale = gamepadModelScaleSlider.value * Vector3.one;
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
+
+            void ApplyItem(DeviceLayoutItem item, Transform target)
+            {
+                if (item == null)
+                {
+                    return;
+                }
+
+                target.position = item.pos;
+                target.rotation = Quaternion.Euler(item.rot);
+                target.localScale = item.scale;
+            }
+        }
+        
+        private void ResetDeviceLayout()
+        {
+            var parameters = settingAutoAdjuster.GetDeviceLayoutParameters();
+            FindObjectOfType<HidTransformController>().SetHidLayoutByParameter(parameters);
+            FindObjectOfType<SmallGamepadProvider>().SetLayoutByParameter(parameters);
+        }
+
+        public void GamepadScaleChanged(float scale) 
+            => gamepadModelScaleTarget.localScale = scale * Vector3.one;
 
         //ラジオボタンのイベントハンドラっぽいやつ
         
@@ -87,11 +183,28 @@ namespace Baku.VMagicMirror
             }
 
             act();
-            for (int i = 0; i < transformControls.Length; i++)
+            for (int i = 0; i < _transformControls.Length; i++)
             {
-                transformControls[i].global = _preferWorldCoordinate;
-                transformControls[i].mode = _mode;
+                _transformControls[i].global = _preferWorldCoordinate;
+                _transformControls[i].mode = _mode;
             }
         }
+    }
+    
+    [Serializable]
+    public class DeviceLayoutsData
+    {
+        public DeviceLayoutItem keyboard;
+        public DeviceLayoutItem touchPad;
+        public DeviceLayoutItem gamepad;
+        public float gamepadModelScale;
+    }
+
+    [Serializable]
+    public class DeviceLayoutItem
+    {
+        public Vector3 pos;
+        public Vector3 rot;
+        public Vector3 scale;
     }
 }

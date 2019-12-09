@@ -91,6 +91,10 @@
         public const string ResetCameraPosition = nameof(ResetCameraPosition);
         public const string CameraFov = nameof(CameraFov);
 
+        // Layout, device layouts
+        public const string SetDeviceLayout = nameof(SetDeviceLayout);
+        public const string ResetDeviceLayout = nameof(ResetDeviceLayout);
+        
         // Layout, HID (keyboard and mousepad)
         public const string HidHeight = nameof(HidHeight);
         public const string HidHorizontalScale = nameof(HidHorizontalScale);

@@ -208,6 +208,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 initialRotation = Vector3.zero;
         [SerializeField] private Vector3 initialScale = Vector3.one;
 
+        //NOTE: 最前列のradiusを使ってキー全体の位置をクイッとずらしたりするので注意
         [SerializeField]
         float[] radius = new float[]
         {
@@ -248,14 +249,18 @@ namespace Baku.VMagicMirror
             {
                 InitializeKeys();
                 CombineMeshes();
-                transform.position = initialPosition;
-                transform.rotation = Quaternion.Euler(initialRotation);
-                transform.localScale = initialScale;
+                
+                var t = transform;
+                t.position = initialPosition;
+                t.rotation = Quaternion.Euler(initialRotation);
+                t.localScale = initialScale;
             }
         }
 
         private void InitializeKeys()
         {
+            Vector3 zOffset = -radius[0] * Vector3.forward;
+            
             _keys = new Transform[keyCodeNames.Length][];
 
             for (int i = 0; i < keyCodeNames.Length; i++)
@@ -272,11 +277,9 @@ namespace Baku.VMagicMirror
                         r.material = HIDMaterialUtil.Instance.GetKeyMaterial();
                     }
 
-                    key.localPosition = radius[i] * new Vector3(
-                        Mathf.Sin(angle),
-                        0,
-                        Mathf.Cos(angle)
-                        );
+                    key.localPosition = 
+                        radius[i] * new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)) + 
+                        zOffset;
 
                     var child = key.GetChild(0);
                     child.localRotation = Quaternion.Euler(

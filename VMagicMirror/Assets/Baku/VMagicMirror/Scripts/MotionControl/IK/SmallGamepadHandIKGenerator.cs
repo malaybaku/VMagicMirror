@@ -31,6 +31,9 @@ namespace Baku.VMagicMirror
         public IIKGenerator RightHand => _rightHand;
 
         private const float ButtonDownAnimationY = 0.01f;
+
+        private Vector2 _rawStickPos = Vector2.zero;
+        private Vector2 _filterStickPos = Vector2.zero;
         
         //NOTE: raw系の値はゲームパッドの位置からただちに求まる、ローパスされていない値
         private Vector3 _rawLeftPos = Vector3.zero;
@@ -124,8 +127,10 @@ namespace Baku.VMagicMirror
                 stickPos.x * (ReverseGamepadStickLeanHorizontal ? -1f : 1f),
                 stickPos.y * (ReverseGamepadStickLeanVertical ? -1f : 1f)
                 );
-            
+
+            _rawStickPos = pos;
             gamePad.SetHorizontalPosition(pos);
+            
             (_rawLeftPos, _rawLeftRot) = gamePad.GetLeftHand();
             (_rawRightPos, _rawRightRot) = gamePad.GetRightHand();   
         }
@@ -151,6 +156,7 @@ namespace Baku.VMagicMirror
             UpdateButtowDownYOffset();
             
             //とりあえず全部Lerp
+            _filterStickPos = Vector2.Lerp(_filterStickPos, _rawStickPos, speedFactor * Time.deltaTime);
             _filterLeftPos = Vector3.Lerp(_filterLeftPos, _rawLeftPos, speedFactor * Time.deltaTime);
             _filterLeftRot = Quaternion.Slerp(_filterLeftRot, _rawLeftRot, speedFactor * Time.deltaTime);
             _filterRightPos = Vector3.Lerp(_filterRightPos, _rawRightPos, speedFactor * Time.deltaTime);
@@ -168,6 +174,8 @@ namespace Baku.VMagicMirror
                 Vector3.up * _offsetY +
                 imageBasedBodyMotion.BodyIkOffset * bodyMotionToGamepadPosApplyFactor;
             _rightHand.Rotation = _filterRightRot;
+
+            gamePad.SetFilteredHorizontalPosition(_filterStickPos);
         }
 
         private void UpdateButtowDownYOffset()

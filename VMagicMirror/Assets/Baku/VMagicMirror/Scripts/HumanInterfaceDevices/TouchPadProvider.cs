@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -27,6 +26,7 @@ namespace Baku.VMagicMirror
             //hackな方法: Windowsの全画面の領域と比較して「マウスがこの辺」という計算をする。入力値は捨てます
             
             //懸念事項: ここ毎フレーム呼んだら重くなったりしない？なんか重そうな気がする
+            // -> そうでもなかった
             var p = NativeMethods.GetWindowsMousePosition();
             int left = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_XVIRTUALSCREEN);
             int top = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_YVIRTUALSCREEN);

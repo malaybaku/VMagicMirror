@@ -31,10 +31,6 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.HidVisibility:
                         SetHidVisibility(message.ToBoolean());
                         break;
-                    //NOTE: ここ復活させたい
-//                    case MessageCommandNames.GamepadVisibility:
-//                        SetGamepadVisibility(message.ToBoolean());
-//                        break;
                 }
             });
         }

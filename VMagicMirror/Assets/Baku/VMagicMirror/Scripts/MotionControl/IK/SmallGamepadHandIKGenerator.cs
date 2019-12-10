@@ -162,20 +162,16 @@ namespace Baku.VMagicMirror
             _filterRightPos = Vector3.Lerp(_filterRightPos, _rawRightPos, speedFactor * Time.deltaTime);
             _filterRightRot = Quaternion.Slerp(_filterRightRot, _rawRightRot, speedFactor * Time.deltaTime);
 
+            var offset = Vector3.up * _offsetY + imageBasedBodyMotion.BodyIkOffset * bodyMotionToGamepadPosApplyFactor;
+
             //ボタン押し状態、および体の動きを考慮して最終的なIKを適用
-            _leftHand.Position = 
-                _filterLeftPos +
-                Vector3.up * _offsetY +
-                imageBasedBodyMotion.BodyIkOffset * bodyMotionToGamepadPosApplyFactor;
+            _leftHand.Position = _filterLeftPos + offset;
             _leftHand.Rotation = _filterLeftRot;
-            
-            _rightHand.Position = 
-                _filterRightPos +
-                Vector3.up * _offsetY +
-                imageBasedBodyMotion.BodyIkOffset * bodyMotionToGamepadPosApplyFactor;
+            _rightHand.Position = _filterRightPos + offset;
             _rightHand.Rotation = _filterRightRot;
 
-            gamePad.SetFilteredHorizontalPosition(_filterStickPos);
+            //手の実際の位置を与えてゲームパッドのモデル位置を再調整
+            gamePad.SetFilteredPosition(_filterStickPos, offset);
         }
 
         private void UpdateButtowDownYOffset()

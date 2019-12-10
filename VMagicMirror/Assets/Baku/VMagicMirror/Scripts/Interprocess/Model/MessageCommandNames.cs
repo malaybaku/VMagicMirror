@@ -112,12 +112,7 @@
         public const string GamepadLeanMode = nameof(GamepadLeanMode);
         public const string GamepadLeanReverseHorizontal = nameof(GamepadLeanReverseHorizontal);
         public const string GamepadLeanReverseVertical = nameof(GamepadLeanReverseVertical);
-
-        //Layout, Free Layout
-        public const string EnableCustomDevicePositions = nameof(EnableCustomDevicePositions);
-        public const string SetCustomDevicePositions = nameof(SetCustomDevicePositions);
-        public const string EnableFreeDevicesMode = nameof(EnableFreeDevicesMode);
-
+        
         // Lighting 
         public const string LightIntensity = nameof(LightIntensity);
         public const string LightColor = nameof(LightColor);

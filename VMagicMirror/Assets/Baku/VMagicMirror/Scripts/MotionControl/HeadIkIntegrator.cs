@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
         private const string UseLookAtPointMousePointer = nameof(UseLookAtPointMousePointer);
         private const string UseLookAtPointMainCamera = nameof(UseLookAtPointMainCamera);
         //手のIKよりLookAtのIKをやや前方にずらして見栄えを調整する決め打ちのパラメータ
-        private const float ZOffsetOnHeadIk = 0.3f;
+        private const float ZOffsetOnHeadIk = 0.6f;
 
         [SerializeField] private Transform cam = null;
         [SerializeField] private Transform lookAtTarget = null;

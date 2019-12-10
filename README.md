@@ -93,7 +93,17 @@ Dlib FaceLandmark Detectorについては、アセットに含まれるデータ
 
 フォルダ構成については配布されているVMagicMirrorも参考にしてください。
 
-## 5. MODを作成する手順
+## 5. SketchFabから取得しているモデルについて
+
+このレポジトリに含まれる`xbox_controller.fbx`はSketchFabにてAttribution 4.0 International (CC BY 4.0)で公開されているものを用いています。
+
+作成者: Criegrrunov
+モデル取得元URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
+
+VMagicMirrorでは元モデルに対し、マテリアルを差し替えたものを用いています。これは他のキーボード、タッチパッド等と見た目の一貫性をはかるためです。
+
+
+## 6. MODを作成する手順
 
 VMagicMirror v0.9.3以降ではライブラリ(dll)形式のMOD読み込みがサポートされているため、VMagicMirror自体を編集する代わりにMODで機能を追加することもできます。
 

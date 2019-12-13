@@ -9983,7 +9983,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   update: 1
-  factor: 0
+  factor: 0.5
   falloff: 0.2
   center: {fileID: 5253142755745637109}
 --- !u!1 &5253142756584320728

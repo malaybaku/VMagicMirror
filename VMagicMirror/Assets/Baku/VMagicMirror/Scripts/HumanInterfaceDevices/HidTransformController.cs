@@ -21,9 +21,15 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 refTouchpadPosition = new Vector3(0.25f, 0.98f, 0.25f);
         [SerializeField] private Vector3 refTouchpadRotation = new Vector3(60, 30, 0);
         [SerializeField] private Vector3 refTouchpadScale = new Vector3(0.15f, 0.15f, 1.0f);
+
+        private KeyboardVisibility _keyboardVisibility = null;
+        private TouchpadVisibility _touchpadVisibility = null;
         
         private void Start()
         {
+            _keyboardVisibility = keyboard.GetComponent<KeyboardVisibility>();
+            _touchpadVisibility = touchpad.GetComponent<TouchpadVisibility>();
+            
             handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
@@ -77,8 +83,8 @@ namespace Baku.VMagicMirror
         
         private void SetHidVisibility(bool v)
         {
-            keyboard.gameObject.SetActive(v);
-            touchpad.gameObject.SetActive(v);
+            _keyboardVisibility.SetVisibility(v);
+            _touchpadVisibility.SetVisibility(v);
         }
     }
 

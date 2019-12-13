@@ -13,6 +13,9 @@ GameObject:
   - component: {fileID: 1224206899735044981}
   - component: {fileID: 1224206899735044971}
   - component: {fileID: 7959860528724925214}
+  - component: {fileID: 3905114142533524313}
+  - component: {fileID: 8336005670953532689}
+  - component: {fileID: 7421822548321400570}
   m_Layer: 0
   m_Name: Keyboard
   m_TagString: Untagged
@@ -133,3 +136,71 @@ MonoBehaviour:
   global: 0
   useDistance: 1
   distance: 10
+--- !u!114 &3905114142533524313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224206899735044969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed3b0ca782ac90447977ba1eb2b74c7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  update: 1
+  factor: 0
+  falloff: 0.5
+  center: {fileID: 0}
+--- !u!114 &8336005670953532689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224206899735044969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 0}
+    Target:
+      meshFilter: {fileID: 1224206899735044980}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 0
+    originalManaged:
+      Vertices: []
+      Normals: []
+      Tangents: []
+      UVs: []
+      Colors: []
+      Triangles: 
+      Bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+  deformerElements:
+  - component: {fileID: 3905114142533524313}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+--- !u!114 &7421822548321400570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1224206899735044969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab7d509162c6e3640b622fe24876c5d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

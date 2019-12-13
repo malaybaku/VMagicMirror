@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.beans.deform": "https://github.com/keenanwoodall/Deform.git",
     "com.unity.ads": "2.3.1",
     "com.unity.analytics": "3.2.2",
     "com.unity.collab-proxy": "1.2.15",
@@ -37,5 +38,11 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
+  },
+  "lock": {
+    "com.beans.deform": {
+      "hash": "5c7ccda4236aec3ff1e7ada04879bca945eba466",
+      "revision": "HEAD"
+    }
   }
 }

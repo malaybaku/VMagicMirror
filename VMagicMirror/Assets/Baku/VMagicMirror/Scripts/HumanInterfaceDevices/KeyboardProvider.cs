@@ -318,6 +318,17 @@ namespace Baku.VMagicMirror
             meshFilter.mesh.CombineMeshes(combine);
         }
 
+        /// <summary>
+        /// キーボードのワールド回転を取得します。
+        /// </summary>
+        /// <returns></returns>
+        public Quaternion GetKeyboardRotation() => transform.rotation;
+
+        /// <summary>キーボード座標での前方向ワールド座標ベースで取得します。</summary>
+        public Vector3 KeyboardForward => transform.forward;
+        /// <summary>キーボード座標での上方向をワールド座標ベースで取得します。</summary>
+        public Vector3 KeyboardUp => transform.up;
+
         public KeyTargetData GetKeyTargetData(string key, bool isLeftHandOnly = false)
             => isLeftHandOnly ? GetLeftHandTargetData(key) : GetTwoHandKeyTargetData(key);
         
@@ -338,7 +349,7 @@ namespace Baku.VMagicMirror
             };
         }
 
-        public KeyTargetData GetLeftHandTargetData(string key)
+        private KeyTargetData GetLeftHandTargetData(string key)
         {
             var rawData = GetTwoHandKeyTargetData(key);
             //元から左手で叩くキーはそのままでOK

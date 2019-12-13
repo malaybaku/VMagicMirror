@@ -59,8 +59,6 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private float keyboardMotionDuration = 0.25f;
 
-        private Vector3 YOffsetAlwaysVec => YOffsetAlways * Vector3.up;
-
         #endregion
 
         //要るかなコレ。なくてもいいのでは？
@@ -73,21 +71,15 @@ namespace Baku.VMagicMirror
             _leftHand.Position = keyboard.GetKeyTargetData("F").positionWithOffset;
             _rightHand.Position = keyboard.GetKeyTargetData("J").positionWithOffset;
         }
-        
-        
+
         public (ReactedHand, Vector3) PressKey(string key, bool isLeftHandOnlyMode)
         {
             var keyData = keyboard.GetKeyTargetData(key, isLeftHandOnlyMode);
             
-            Vector3 targetPos = keyData.positionWithOffset + YOffsetAlwaysVec;
-
-            var handOrientation = Vector3.Lerp(
-                new Vector3(targetPos.x, 0, targetPos.z).normalized,
-                Vector3.forward,
-                WristForwardFactor
-                ).normalized;
-            
-            targetPos -= HandToTipLength * handOrientation;
+            Vector3 targetPos =
+                keyData.positionWithOffset + 
+                YOffsetAlways * keyboard.KeyboardUp -
+                HandToTipLength * keyboard.KeyboardForward;
 
             if (keyData.IsLeftHandPreffered)
             {
@@ -105,57 +97,62 @@ namespace Baku.VMagicMirror
         {
             bool isLeftHand = (target == IKTargets.LHand);
             IKDataRecord ikTarget = isLeftHand ? _leftHand : _rightHand;
+            //NOTE: 第2項は手首を正面に向けるための前処理みたいなファクターです
+            var keyboardRot = 
+                keyboard.GetKeyboardRotation() * 
+                Quaternion.AngleAxis(isLeftHand ? 90 : -90, Vector3.up);
+            var keyboardRootPos = keyboard.transform.position;
+            var keyboardUp = keyboard.KeyboardUp;
 
             float startTime = Time.time;
             Vector3 startPos = ikTarget.Position;
-            float forwardDeg = isLeftHand ? 90 : -90;
+            float startVertical = Vector3.Dot(startPos - keyboardRootPos, keyboardUp);
+            float targetVertical = Vector3.Dot(targetPos - keyboardRootPos, keyboardUp);
             
             while (Time.time - startTime < keyboardMotionDuration)
             {
                 float rate = (Time.time - startTime) / keyboardMotionDuration;
 
-                Vector3 horizontal = Vector3.Lerp(startPos, targetPos, horizontalApproachCurve.Evaluate(rate));
+                Vector3 lerpApproach = Vector3.Lerp(startPos, targetPos, horizontalApproachCurve.Evaluate(rate));
+                //Y成分に相当するところをキャンセルしておく
+                lerpApproach -= keyboardUp * Vector3.Dot(lerpApproach - keyboardRootPos, keyboardUp);
 
                 if (rate < 0.5f)
                 {
-                    //アプローチ中: yのカーブに重みを付けつつ近づく
-                    float verticalTarget = Mathf.Lerp(startPos.y, targetPos.y, verticalApproachCurve.Evaluate(rate));
-                    float vertical = Mathf.Lerp(ikTarget.Position.y, verticalTarget, keyboardVerticalWeightCurve.Evaluate(rate));
-                    ikTarget.Position = new Vector3(horizontal.x, vertical, horizontal.z);
+                    //アプローチ中: 垂直方向のカーブのつけかたをいい感じにする。
+                    float verticalTarget = Mathf.Lerp(
+                        startVertical, targetVertical, verticalApproachCurve.Evaluate(rate)
+                        );
+                    float vertical = Mathf.Lerp(
+                        Vector3.Dot(ikTarget.Position - keyboardRootPos, keyboardUp),
+                        verticalTarget,
+                        keyboardVerticalWeightCurve.Evaluate(rate)
+                        );
+                    ikTarget.Position = lerpApproach + keyboardUp * vertical;
                 }
                 else
                 {
-                    //離れるとき: yを引き上げる。気持ち的には(targetPos.y + yOffset)がスタート位置側にあたるので、ウェイトを1から0に引き戻す感じ
-                    float verticalTarget = Mathf.Lerp(targetPos.y + YOffsetAfterKeyDown, targetPos.y, verticalApproachCurve.Evaluate(rate));
-                    ikTarget.Position = new Vector3(horizontal.x, verticalTarget, horizontal.z);
+                    //離れるとき: キーボードから垂直方向に手を引き上げる。Lerpの係数は1から0に戻っていくことに注意
+                    float vertical = Mathf.Lerp(
+                        targetVertical + YOffsetAfterKeyDown, 
+                        targetVertical,
+                        verticalApproachCurve.Evaluate(rate));
+                    ikTarget.Position = lerpApproach + keyboardUp * vertical;
                 }
-
-                float angleDeg =
-                    -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) * Mathf.Rad2Deg + 
-                    (isLeftHand ? 180 : 0);
-                angleDeg = Mathf.Repeat(angleDeg + 180f, 360f) - 180f;
                 
-                //どちらの場合でも放射方向にターゲットを向かせる必要がある。
-                //かつ、左手は方向が180度ずれてしまうので直す
-                ikTarget.Rotation = Quaternion.Euler(
-                    0,
-                    Mathf.Lerp(angleDeg, forwardDeg, WristForwardFactor),
-                    0);
+                //一応Lerpしてるけどあんまり必要ないかもね
+                ikTarget.Rotation = Quaternion.Slerp(
+                    ikTarget.Rotation,
+                    keyboardRot,
+                    0.2f
+                );
+
                 yield return null;
             }
 
             //最後: ピッタリ合わせておしまい
-            ikTarget.Position = new Vector3(targetPos.x, targetPos.y + YOffsetAfterKeyDown, targetPos.z);
-            
-            float finishAngleDeg = 
-                -Mathf.Atan2(ikTarget.Position.z, ikTarget.Position.x) * Mathf.Rad2Deg + 
-                (isLeftHand ? 180 : 0);
-            finishAngleDeg = Mathf.Repeat(finishAngleDeg + 180f, 360f) - 180f;
-            
-            ikTarget.Rotation = Quaternion.Euler(
-                0,
-                Mathf.Lerp(finishAngleDeg, forwardDeg, WristForwardFactor),
-                0);
+            ikTarget.Position = targetPos + keyboardUp * YOffsetAfterKeyDown; 
+            ikTarget.Rotation = keyboardRot;
         }
 
         private void UpdateLeftHandCoroutine(IEnumerator routine)

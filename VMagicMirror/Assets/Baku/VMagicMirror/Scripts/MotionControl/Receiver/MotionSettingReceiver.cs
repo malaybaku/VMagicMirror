@@ -111,11 +111,12 @@ namespace Baku.VMagicMirror
         {
             handIkIntegrator.Presentation.HandToTipLength = v;
             handIkIntegrator.Typing.HandToTipLength = v;
+            handIkIntegrator.MouseMove.HandToTipLength = v;
         }
         
         private void SetLengthFromWristToPalm(float v)
         {
-            handIkIntegrator.MouseMove.HandToPalmLength = v;
+            //handIkIntegrator.MouseMove.HandToPalmLength = v;
         }
         
         private void SetHandYOffsetBasic(float offset)

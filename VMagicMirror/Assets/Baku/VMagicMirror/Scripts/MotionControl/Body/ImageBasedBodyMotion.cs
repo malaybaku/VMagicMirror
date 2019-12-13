@@ -57,7 +57,7 @@ namespace Baku.VMagicMirror
         /// <summary>体のIKに適用したいXY軸要素のみが入ったオフセット値を取得します。</summary>
         public Vector3 BodyIkXyOffset { get; private set; }
         
-        /// <summary>体のIKに適用したいZ軸要素のみが適用されたオフセット値を取得します。</summary>
+        /// <summary>体のIKに適用したいオフセット値を取得します。</summary>
         public Vector3 BodyIkOffset { get; private set; }
         
         public void OnVrmLoaded(VrmLoadedInfo info)

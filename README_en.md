@@ -96,7 +96,17 @@ Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAsse
 
 Distributed VMagicMirror (v0.9.3 or later) also would be a reference of the folder structure.
 
-## 5. (For Developers) Create MOD
+## 5. About Model Data from SketchFab
+
+The model data `xbox_controller.fbx` included in this repository is from SketchFab, with Attribution 4.0 International (CC BY 4.0).
+
+Creator: Criegrrunov
+URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
+
+In VMagicMirror, the materials are replaced for the visual consistency.
+
+
+## 6. (For Developers) Create MOD
 
 VMagicMirror v0.9.3 or later supports MOD library (dll) loading system. In this way you can add your new feature without editing VMagicMirror itself.
 

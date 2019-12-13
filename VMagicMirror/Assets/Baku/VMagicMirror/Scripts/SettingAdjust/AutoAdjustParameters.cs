@@ -19,11 +19,15 @@ namespace Baku.VMagicMirror
         public int LengthFromWristToPalm = 6;
 
         //カメラ位置は不要: ポーリングで取得してるから勝手に反映される
+    }
 
-        public int HidHeight = 90;
-        public int HidHorizontalScale = 70;
-        public int GamepadHeight = 100;
-        public int GamepadHorizontalScale = 80;
-
+    /// <summary>
+    /// デバイス配置を決めるときに使う、体格補正パラメータ。
+    /// リファレンスはMegumi Baxterさんです
+    /// </summary>
+    public class DeviceLayoutAutoAdjustParameters
+    {
+        public float HeightFactor { get; set; } = 1.0f;
+        public float ArmLengthFactor { get; set; }= 1.0f;
     }
 }

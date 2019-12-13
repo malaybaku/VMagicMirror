@@ -91,11 +91,16 @@
         public const string ResetCameraPosition = nameof(ResetCameraPosition);
         public const string CameraFov = nameof(CameraFov);
 
+        // Layout, device layouts
+        public const string SetDeviceLayout = nameof(SetDeviceLayout);
+        public const string ResetDeviceLayout = nameof(ResetDeviceLayout);
+        
         // Layout, HID (keyboard and mousepad)
         public const string HidHeight = nameof(HidHeight);
         public const string HidHorizontalScale = nameof(HidHorizontalScale);
         public const string HidVisibility = nameof(HidVisibility);
         public const string SetKeyboardTypingEffectType = nameof(SetKeyboardTypingEffectType);
+        public const string EnableDeviceFreeLayout = nameof(EnableDeviceFreeLayout);
 
         // Layout, Gamepad
         public const string EnableGamepad = nameof(EnableGamepad);
@@ -107,12 +112,7 @@
         public const string GamepadLeanMode = nameof(GamepadLeanMode);
         public const string GamepadLeanReverseHorizontal = nameof(GamepadLeanReverseHorizontal);
         public const string GamepadLeanReverseVertical = nameof(GamepadLeanReverseVertical);
-
-        //Layout, Free Layout
-        public const string EnableCustomDevicePositions = nameof(EnableCustomDevicePositions);
-        public const string SetCustomDevicePositions = nameof(SetCustomDevicePositions);
-        public const string EnableFreeDevicesMode = nameof(EnableFreeDevicesMode);
-
+        
         // Lighting 
         public const string LightIntensity = nameof(LightIntensity);
         public const string LightColor = nameof(LightColor);

@@ -59,8 +59,11 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 メンテナの開発環境は以下の通りです。
 
 * Unity 2018.4.13f1 Personal
-* Visual Studio Community 2019 16.3.7
-    * .NET Core 3.0 SDKがインストール済みであること
+* Visual Studio Community 2019 16.4.1
+    * .NET Core 3.1 SDKがインストール済みであること
+    * Visual Studioのコンポーネントで「C++によるデスクトップ開発」をインストール済みであること
+        - UnityのBurstコンパイラ向けに必要なセットアップです。
+
 
 ### 4.2. アセットの導入
 
@@ -73,6 +76,10 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
+* [Deform](https://github.com/keenanwoodall/Deform)
+* DOTween (アセットストアから)
+
+上記のうちDeformはパッケージマネージャで導入されるため、導入作業は不要です。
 
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
 

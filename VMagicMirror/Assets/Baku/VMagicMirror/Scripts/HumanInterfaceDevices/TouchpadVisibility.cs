@@ -1,42 +1,28 @@
 ﻿using Deform;
 using DG.Tweening;
 using UnityEngine;
-using Zenject;
-using UniRx;
 
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(MagnetDeformer))]
-    public class GamepadVisibilityReceiver : MonoBehaviour
+    public class TouchpadVisibility : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler;
-
         private MagnetDeformer _deformer = null;
-        private Renderer[] _renderers = new Renderer[0];
-        
+        private Renderer[] _renderers = null;
+
         private void Start()
         {
-            _handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.GamepadVisibility:
-                        SetGamepadVisibility(message.ToBoolean());
-                        break;
-                }
-            });
-
             _deformer = GetComponent<MagnetDeformer>();
             _renderers = GetComponentsInChildren<Renderer>();
         }
 
-        private void SetGamepadVisibility(bool visible)
+        public void SetVisibility(bool visible)
         {
             DOTween
                 .To(
                     () => _deformer.Factor, 
                     v => _deformer.Factor = v, 
-                    visible ? 0.0f : 0.5f, 
+                    visible ? 0.0f : 1.0f, 
                     0.5f)
                 .SetEase(Ease.OutCubic)
                 .OnStart(() =>

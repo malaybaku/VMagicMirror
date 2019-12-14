@@ -64,6 +64,8 @@ Maintainer's environment is as following.
 
 * Unity 2018.4.13f1 Personal
 * Visual Studio Community 2019
+    * .NET Core 3.1 SDK
+    * Visual Studio Component "C++ Desktop Development" is required in install.
 
 ### 4.2. Asset install
 
@@ -77,6 +79,10 @@ Maintainer's environment is as following.
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
+* [Deform](https://github.com/keenanwoodall/Deform)
+* DOTween (from Asset Store)
+
+`Deform` is downloaded by package manager style.
 
 Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
 

@@ -13,6 +13,7 @@ namespace Baku.VMagicMirror
 
         private MagnetDeformer _deformer = null;
         private Renderer[] _renderers = new Renderer[0];
+        private bool _latestVisibility = false;
         
         private void Start()
         {
@@ -32,6 +33,7 @@ namespace Baku.VMagicMirror
 
         private void SetGamepadVisibility(bool visible)
         {
+            _latestVisibility = visible;
             DOTween
                 .To(
                     () => _deformer.Factor, 
@@ -53,7 +55,7 @@ namespace Baku.VMagicMirror
                 {
                     foreach (var r in _renderers)
                     {
-                        r.enabled = visible;
+                        r.enabled = _latestVisibility;
                     }
                 });
         }

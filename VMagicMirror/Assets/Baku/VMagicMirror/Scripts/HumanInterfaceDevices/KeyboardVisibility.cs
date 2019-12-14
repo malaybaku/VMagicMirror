@@ -10,6 +10,7 @@ namespace Baku.VMagicMirror
     {
         private MagnetDeformer _deformer = null;
         private Renderer _renderer = null;
+        private bool _latestVisibility = true;
 
         private void Start()
         {
@@ -19,6 +20,7 @@ namespace Baku.VMagicMirror
 
         public void SetVisibility(bool visible)
         {
+            _latestVisibility = visible;
             DOTween
                 .To(
                     () => _deformer.Factor,
@@ -33,7 +35,7 @@ namespace Baku.VMagicMirror
                         _renderer.enabled = true;
                     }
                 })
-                .OnComplete(() => _renderer.enabled = visible);
+                .OnComplete(() => _renderer.enabled = _latestVisibility);
         }
     }
 }

@@ -2,10 +2,10 @@
 
 # VMagicMirror
 
-v0.9.4
+v0.9.5
 
 * 作成: 獏星(ばくすたー)
-* 2019/12/07
+* 2019/12/14
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -59,8 +59,11 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 メンテナの開発環境は以下の通りです。
 
 * Unity 2018.4.13f1 Personal
-* Visual Studio Community 2019 16.3.7
-    * .NET Core 3.0 SDKがインストール済みであること
+* Visual Studio Community 2019 16.4.1
+    * .NET Core 3.1 SDKがインストール済みであること
+    * Visual Studioのコンポーネントで「C++によるデスクトップ開発」をインストール済みであること
+        - UnityのBurstコンパイラ向けに必要なセットアップです。
+
 
 ### 4.2. アセットの導入
 
@@ -73,6 +76,10 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
+* [Deform](https://github.com/keenanwoodall/Deform)
+* DOTween (アセットストアから)
+
+上記のうちDeformはパッケージマネージャで導入されるため、導入作業は不要です。
 
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
 
@@ -93,7 +100,17 @@ Dlib FaceLandmark Detectorについては、アセットに含まれるデータ
 
 フォルダ構成については配布されているVMagicMirrorも参考にしてください。
 
-## 5. MODを作成する手順
+## 5. SketchFabから取得しているモデルについて
+
+このレポジトリに含まれる`xbox_controller.fbx`はSketchFabにてAttribution 4.0 International (CC BY 4.0)で公開されているものを用いています。
+
+作成者: Criegrrunov
+モデル取得元URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
+
+VMagicMirrorでは元モデルに対し、マテリアルを差し替えたものを用いています。これは他のキーボード、タッチパッド等と見た目の一貫性をはかるためです。
+
+
+## 6. MODを作成する手順
 
 VMagicMirror v0.9.3以降ではライブラリ(dll)形式のMOD読み込みがサポートされているため、VMagicMirror自体を編集する代わりにMODで機能を追加することもできます。
 

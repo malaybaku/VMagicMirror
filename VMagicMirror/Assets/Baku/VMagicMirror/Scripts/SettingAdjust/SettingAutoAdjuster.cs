@@ -8,6 +8,8 @@ namespace Baku.VMagicMirror
     public class SettingAutoAdjuster : MonoBehaviour
     {
         //基準長はMegumi Baxterさんの体型。(https://hub.vroid.com/characters/9003440353945198963/models/7418874241157618732)
+        private const float ReferenceChestHeight = 0.89008f;
+        private const float ReferenceSpineHeight = 0.78448f;
         //UpperArm to Hand
         private const float ReferenceArmLength = 0.378f;
         //Hand (Wrist) to Middle Distal
@@ -20,14 +22,43 @@ namespace Baku.VMagicMirror
 
         private Transform _vrmRoot = null;
 
-        public void AssignModelRoot(Transform vrmRoot)
-        {
-            _vrmRoot = vrmRoot;
-        }
+        public void AssignModelRoot(Transform vrmRoot) => _vrmRoot = vrmRoot;
 
-        public void DisposeModelRoot()
+        public void DisposeModelRoot() => _vrmRoot = null;
+
+        /// <summary>
+        /// VRMがロード済みの状態で呼び出すと、
+        /// キーボード、マウス用のレイアウトパラメータと、ゲームパッド用のレイアウトパラメータを計算します。
+        /// VRMがロードされていない場合はnullを返します。
+        /// </summary>
+        /// <returns></returns>
+        public DeviceLayoutAutoAdjustParameters GetDeviceLayoutParameters()
         {
-            _vrmRoot = null;
+            if (_vrmRoot == null)
+            {
+                return null;
+            }
+            
+            var result = new DeviceLayoutAutoAdjustParameters();
+
+            var animator = _vrmRoot.GetComponent<Animator>();
+            
+            Transform chest = animator.GetBoneTransform(HumanBodyBones.Chest);
+            result.HeightFactor = 
+               (chest != null) ? 
+               chest.position.y / ReferenceChestHeight :
+               animator.GetBoneTransform(HumanBodyBones.Spine).position.y / ReferenceSpineHeight;
+            
+            var upperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
+            var lowerArm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position;
+            var wrist = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
+            float armLength =
+                Vector3.Distance(upperArm, lowerArm) +
+                Vector3.Distance(lowerArm, wrist);
+
+            result.ArmLengthFactor = armLength / ReferenceArmLength;
+
+            return result;
         }
 
         private void Start()
@@ -62,8 +93,6 @@ namespace Baku.VMagicMirror
 
                 //3つのサブルーチンではanimatorのHumanoidBoneを使うが、部位である程度分けられるので分けておく
                 SetHandSizeRelatedParameters(animator, parameters);
-                SetArmLengthRelatedParameters(animator, parameters);
-                SetBodyHeightRelatedParameters(animator, parameters);
                 //眉毛はブレンドシェイプ
                 SetEyebrowParameters(parameters);
                 AdjustCameraPosition(animator);
@@ -150,33 +179,14 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var nonEyebrowCommands = new ReceivedCommand[]
-            {
-                new ReceivedCommand(
-                    MessageCommandNames.HidHeight,
-                    $"{parameters.HidHeight}"
-                    ),
-                new ReceivedCommand(
-                    MessageCommandNames.HidHorizontalScale,
-                    $"{parameters.HidHorizontalScale}"
-                    ),
-                new ReceivedCommand(
-                    MessageCommandNames.GamepadHeight,
-                    $"{parameters.GamepadHeight}"
-                    ),
-                new ReceivedCommand(
-                    MessageCommandNames.GamepadHorizontalScale,
-                    $"{parameters.GamepadHorizontalScale}"
-                    ),
-            };
-            foreach(var cmd in nonEyebrowCommands)
-            {
-                handler.ReceiveCommand(cmd);
-            }
+            //レイアウト調整はコレ一発でおしまいです
+            handler.ReceiveCommand(new ReceivedCommand(MessageCommandNames.ResetDeviceLayout));
         }
 
         private void SendParameterRelatedCommands(AutoAdjustParameters parameters)
-            => SendParameterRelatedCommands(parameters, false);
+        {
+            SendParameterRelatedCommands(parameters, false);
+        }
 
         private void AdjustCameraPosition(Animator animator)
         {
@@ -198,30 +208,6 @@ namespace Baku.VMagicMirror
             parameters.EyebrowRightDownKey = settings.EyebrowRightDownKey;
             parameters.EyebrowUpScale = settings.EyebrowUpScale;
             parameters.EyebrowDownScale = settings.EyebrowDownScale;
-        }
-
-        private void SetBodyHeightRelatedParameters(Animator animator, AutoAdjustParameters parameters)
-        {
-            //高さ基準がSpineだとちょっと低くなるが、VRM(というかUnity Humanoid)の要件上Chestが無い事があるので…
-            var heightBaseBone =
-                animator.GetBoneTransform(HumanBodyBones.Chest) ??
-                animator.GetBoneTransform(HumanBodyBones.Spine);
-            parameters.HidHeight = Mathf.RoundToInt(heightBaseBone.position.y * 100);
-            parameters.GamepadHeight = parameters.HidHeight + 5;
-        }
-
-        private void SetArmLengthRelatedParameters(Animator animator, AutoAdjustParameters parameters)
-        {
-            var upperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
-            var lowerArm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
-            var wrist = animator.GetBoneTransform(HumanBodyBones.RightHand);
-            float armLength =
-                Vector3.Distance(upperArm.position, lowerArm.position) +
-                Vector3.Distance(lowerArm.position, wrist.position);
-
-            float factor = armLength / ReferenceArmLength;
-            parameters.HidHorizontalScale = (int)(parameters.HidHorizontalScale * factor);
-            parameters.GamepadHorizontalScale = (int)(parameters.GamepadHorizontalScale * factor);
         }
 
         private void SetHandSizeRelatedParameters(Animator animator, AutoAdjustParameters parameters)

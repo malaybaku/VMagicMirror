@@ -46,6 +46,8 @@ sysinfo.txt
 
 /VMagicMirror/Assets/AniLipSync-VRM/
 /VMagicMirror/Assets/DlibFaceLandmarkDetector/
+/VMagicMirror/Assets/Demigiant/
+/VMagicMirror/Assets/Deform/
 /VMagicMirror/Assets/Oculus/
 /VMagicMirror/Assets/Plugins/
 /VMagicMirror/Assets/Raw Mocap Data/
@@ -57,6 +59,8 @@ sysinfo.txt
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
 /VMagicMirror/Assets/DlibFaceLandmarkDetector.meta
+/VMagicMirror/Assets/Demigiant.meta
+/VMagicMirror/Assets/Deform.meta
 /VMagicMirror/Assets/Oculus.meta
 /VMagicMirror/Assets/Plugins.meta
 /VMagicMirror/Assets/Raw Mocap Data.meta

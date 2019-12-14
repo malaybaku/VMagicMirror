@@ -92,7 +92,7 @@ namespace Baku.VMagicMirror
 
             if (hand != ReactedHand.None && EnableHidArmMotion)
             {
-                particleStore.RequestParticleStart(pos);
+                particleStore.RequestKeyboardParticleStart(pos);
             }
         }
 
@@ -106,6 +106,10 @@ namespace Baku.VMagicMirror
             mouseMove.MoveMouse(mousePosition);
             presentation.MoveMouse(mousePosition);
             SetRightHandIk(EnablePresentationMode ? HandTargetType.Presentation : HandTargetType.Mouse);
+            if (_rightTargetType == HandTargetType.Mouse)
+            {
+                particleStore.RequestMouseMoveParticle(mouseMove.ReferenceTouchpadPosition);
+            }
         }
 
         public void ClickMouse(string button)
@@ -114,6 +118,10 @@ namespace Baku.VMagicMirror
             {
                 fingerController.StartClickMotion(button);
                 SetRightHandIk(HandTargetType.Mouse);   
+                if (_rightTargetType == HandTargetType.Mouse)
+                {
+                    particleStore.RequestMouseClickParticle();
+                }
             }
         }
 

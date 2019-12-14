@@ -9,13 +9,20 @@ namespace Baku.VMagicMirror
         public IIKGenerator RightHand => _rightHand;
 
         //手をあまり厳格にキーボードに沿わせると曲がり過ぎるのでゼロ回転側に寄せるファクター
-        private const float WristYawApplyFactor = 0.5f;
+        private const float WristYawApplyFactor = 0f; //0.5f;
         private const float WristYawSpeedFactor = 12f;
         
         //手首ではなく手のひらあたりにマウスがあるように見えるための補正値
-        public float HandToPalmLength { get; set; } = 0.06f;
+//        public float HandToPalmLength { get; set; } = 0.06f;
+
+        public float HandToTipLength { get; set; } = 0.12f;
 
         public float YOffset { get; set; } = 0.03f;
+        
+        /// <summary>
+        /// 直近で参照したタッチパッドのワールド座標。
+        /// </summary>
+        public Vector3 ReferenceTouchpadPosition { get; private set; }
 
         [SerializeField]
         public TouchPadProvider _touchPad = null;
@@ -26,6 +33,7 @@ namespace Baku.VMagicMirror
         private Vector3 YOffsetAlwaysVec => YOffset * Vector3.up;
 
         private Vector3 _targetPosition = Vector3.zero;
+        private Quaternion _targetRotation = Quaternion.identity;
 
         private void Start()
         {
@@ -45,9 +53,7 @@ namespace Baku.VMagicMirror
 
             //体の中心、手首、中指の先が1直線になるような向きへ水平に手首を曲げたい
             var rot = Quaternion.Slerp(
-                Quaternion.Euler(Vector3.up * (
-                    -Mathf.Atan2(_rightHand.Position.z, _rightHand.Position.x) *
-                    Mathf.Rad2Deg)),
+                _touchPad.GetWristRotation(_rightHand.Position),
                 Quaternion.Euler(Vector3.up * (-90)),
                 WristYawApplyFactor
                 );
@@ -64,8 +70,12 @@ namespace Baku.VMagicMirror
 
             float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
             float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -1000, 1000) / 1000.0f;
-            var targetPos = _touchPad.GetHandTipPosFromScreenPoint(xClamped, yClamped) + YOffsetAlwaysVec;
-            targetPos -= HandToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
+
+            ReferenceTouchpadPosition = _touchPad.GetHandTipPosFromScreenPoint(xClamped, yClamped);
+
+            var targetPos = ReferenceTouchpadPosition + _touchPad.GetOffsetVector(YOffset, HandToTipLength);
+
+//            targetPos -= HandToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
 
             _targetPosition = targetPos;
         }

@@ -68,3 +68,14 @@ MonoBehaviour:
     scale: {x: 1, y: 1, z: 1}
     useCollisionPlane: 0
     collisionTransform: {fileID: 0}
+  mouseParticlePrefabs:
+  - continueParticlePrefab: {fileID: 8164677620388347355, guid: 2ae63ce2a0ead3f488e0eb9fd4c1ce8d,
+      type: 3}
+    clickParticlePrefab: {fileID: 4215742952227913172, guid: f66c05d0da730d749a440184c526648f,
+      type: 3}
+  - continueParticlePrefab: {fileID: 8164677620388347355, guid: 2ae63ce2a0ead3f488e0eb9fd4c1ce8d,
+      type: 3}
+    clickParticlePrefab: {fileID: 4215742952227913172, guid: f66c05d0da730d749a440184c526648f,
+      type: 3}
+  mouseParticlePrefabParent: {fileID: 0}
+  mouseContinueParticleCount: 0.5

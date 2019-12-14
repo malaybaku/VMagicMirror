@@ -25,6 +25,7 @@ namespace Baku.VMagicMirror
             public int X;
             public int Y;
         }
+ 
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
@@ -74,6 +75,7 @@ namespace Baku.VMagicMirror
         public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
         public static readonly IntPtr HWND_TOP = new IntPtr(0);
         public static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+
         [Flags()]
         public enum SetWindowPosFlags : uint
         {
@@ -94,6 +96,17 @@ namespace Baku.VMagicMirror
             ShowWindow = 0x0040,
             NoFlag = 0x0000,
             IgnoreMoveAndResize = IgnoreMove | IgnoreResize,
+        }
+
+        [DllImport("user32.dll")]
+        public static extern int GetSystemMetrics(int index);
+        
+        public static class SystemMetricsConsts
+        {
+            public const int SM_XVIRTUALSCREEN = 76;
+            public const int SM_YVIRTUALSCREEN = 77;
+            public const int SM_CXVIRTUALSCREEN = 78;
+            public const int SM_CYVIRTUALSCREEN = 79;
         }
 
         public static Vector2Int GetUnityWindowPosition()

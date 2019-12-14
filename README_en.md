@@ -3,10 +3,10 @@
 
 # VMagicMirror
 
-v0.9.4
+v0.9.5
 
 * Author: Baxter
-* 2019/Dec/07
+* 2019/Dec/14
 
 The VRM avatar application without any special device.
 
@@ -64,6 +64,8 @@ Maintainer's environment is as following.
 
 * Unity 2018.4.13f1 Personal
 * Visual Studio Community 2019
+    * .NET Core 3.1 SDK
+    * Visual Studio Component "C++ Desktop Development" is required in install.
 
 ### 4.2. Asset install
 
@@ -77,6 +79,10 @@ Maintainer's environment is as following.
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
+* [Deform](https://github.com/keenanwoodall/Deform)
+* DOTween (from Asset Store)
+
+`Deform` is downloaded by package manager style.
 
 Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
 
@@ -96,7 +102,17 @@ Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAsse
 
 Distributed VMagicMirror (v0.9.3 or later) also would be a reference of the folder structure.
 
-## 5. (For Developers) Create MOD
+## 5. About Model Data from SketchFab
+
+The model data `xbox_controller.fbx` included in this repository is from SketchFab, with Attribution 4.0 International (CC BY 4.0).
+
+Creator: Criegrrunov
+URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
+
+In VMagicMirror, the materials are replaced for the visual consistency.
+
+
+## 6. (For Developers) Create MOD
 
 VMagicMirror v0.9.3 or later supports MOD library (dll) loading system. In this way you can add your new feature without editing VMagicMirror itself.
 

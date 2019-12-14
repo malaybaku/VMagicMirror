@@ -208,6 +208,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 initialRotation = Vector3.zero;
         [SerializeField] private Vector3 initialScale = Vector3.one;
 
+        //NOTE: 最前列のradiusを使ってキー全体の位置をクイッとずらしたりするので注意
         [SerializeField]
         float[] radius = new float[]
         {
@@ -248,14 +249,18 @@ namespace Baku.VMagicMirror
             {
                 InitializeKeys();
                 CombineMeshes();
-                transform.position = initialPosition;
-                transform.rotation = Quaternion.Euler(initialRotation);
-                transform.localScale = initialScale;
+                
+                var t = transform;
+                t.position = initialPosition;
+                t.rotation = Quaternion.Euler(initialRotation);
+                t.localScale = initialScale;
             }
         }
 
         private void InitializeKeys()
         {
+            Vector3 zOffset = -radius[0] * Vector3.forward;
+            
             _keys = new Transform[keyCodeNames.Length][];
 
             for (int i = 0; i < keyCodeNames.Length; i++)
@@ -267,13 +272,14 @@ namespace Baku.VMagicMirror
                 {
                     float angle = (j * anglePerItem[i] + angleAdjust) * Mathf.Deg2Rad;
                     var key = Instantiate(keyPrefab, this.transform);
-                    key.GetComponentInChildren<MeshRenderer>().material = HIDMaterialUtil.Instance.GetKeyMaterial();
+                    foreach (var r in key.GetComponentsInChildren<MeshRenderer>())
+                    {
+                        r.material = HIDMaterialUtil.Instance.GetKeyMaterial();
+                    }
 
-                    key.localPosition = radius[i] * new Vector3(
-                        Mathf.Sin(angle),
-                        0,
-                        Mathf.Cos(angle)
-                        );
+                    key.localPosition = 
+                        radius[i] * new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)) + 
+                        zOffset;
 
                     var child = key.GetChild(0);
                     child.localRotation = Quaternion.Euler(
@@ -290,10 +296,13 @@ namespace Baku.VMagicMirror
         private void CombineMeshes()
         {
             int len = transform.childCount;
-            var meshFilters = new MeshFilter[len];
+            var meshFilters = new MeshFilter[len * 2];
             for (int i = 0; i < len; i++)
             {
-                meshFilters[i] = transform.GetChild(i).GetComponentInChildren<MeshFilter>();
+                //NOTE: 表裏で2つメッシュフィルタがあることに注意
+                var filters = transform.GetChild(i).GetComponentsInChildren<MeshFilter>();
+                meshFilters[2 * i] = filters[0];
+                meshFilters[2 * i + 1] = filters[1];
             }
             CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 
@@ -308,6 +317,17 @@ namespace Baku.VMagicMirror
             meshFilter.mesh = new Mesh();
             meshFilter.mesh.CombineMeshes(combine);
         }
+
+        /// <summary>
+        /// キーボードのワールド回転を取得します。
+        /// </summary>
+        /// <returns></returns>
+        public Quaternion GetKeyboardRotation() => transform.rotation;
+
+        /// <summary>キーボード座標での前方向ワールド座標ベースで取得します。</summary>
+        public Vector3 KeyboardForward => transform.forward;
+        /// <summary>キーボード座標での上方向をワールド座標ベースで取得します。</summary>
+        public Vector3 KeyboardUp => transform.up;
 
         public KeyTargetData GetKeyTargetData(string key, bool isLeftHandOnly = false)
             => isLeftHandOnly ? GetLeftHandTargetData(key) : GetTwoHandKeyTargetData(key);
@@ -329,7 +349,7 @@ namespace Baku.VMagicMirror
             };
         }
 
-        public KeyTargetData GetLeftHandTargetData(string key)
+        private KeyTargetData GetLeftHandTargetData(string key)
         {
             var rawData = GetTwoHandKeyTargetData(key);
             //元から左手で叩くキーはそのままでOK

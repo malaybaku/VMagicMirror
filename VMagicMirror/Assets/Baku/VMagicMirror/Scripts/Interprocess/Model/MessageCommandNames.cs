@@ -112,7 +112,10 @@
         public const string GamepadLeanMode = nameof(GamepadLeanMode);
         public const string GamepadLeanReverseHorizontal = nameof(GamepadLeanReverseHorizontal);
         public const string GamepadLeanReverseVertical = nameof(GamepadLeanReverseVertical);
-        
+
+        // Image Quality
+        public const string SetImageQuality = nameof(SetImageQuality);
+
         // Lighting 
         public const string LightIntensity = nameof(LightIntensity);
         public const string LightColor = nameof(LightColor);

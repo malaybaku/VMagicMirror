@@ -19,6 +19,8 @@
         public const string CurrentDeviceLayout = nameof(CurrentDeviceLayout);
 
         public const string GetBlendShapeNames = nameof(GetBlendShapeNames);
+
+        public const string GetQualitySettingsInfo = nameof(GetQualitySettingsInfo);
     }
 }
 

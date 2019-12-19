@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 7427902273662735818}
   - component: {fileID: 7427902273662735821}
   - component: {fileID: 4195983317812337395}
+  - component: {fileID: 3568705224926989393}
   m_Layer: 0
   m_Name: WordToMotionController
   m_TagString: Untagged
@@ -152,3 +153,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cooldownTime: 0
+--- !u!114 &3568705224926989393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7427902273662735829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7016c8ee0b158eb4bb338088d37ff488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

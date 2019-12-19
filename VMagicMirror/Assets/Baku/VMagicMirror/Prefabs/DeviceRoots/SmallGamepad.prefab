@@ -9942,6 +9942,8 @@ MonoBehaviour:
   basePosition: {x: 0, y: 1, z: 0.24}
   baseRotation: {x: -15, y: 0, z: 0}
   baseScale: 0.8
+  bodyRenderer: {fileID: 7564037767959676113}
+  buttonRenderer: {fileID: 3566628229502325779}
 --- !u!114 &6460605521299412919
 MonoBehaviour:
   m_ObjectHideFlags: 0

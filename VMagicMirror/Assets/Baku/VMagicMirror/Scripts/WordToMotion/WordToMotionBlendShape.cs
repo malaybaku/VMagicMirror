@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VRM;
 
@@ -14,19 +14,27 @@ namespace Baku.VMagicMirror
     public class WordToMotionBlendShape : MonoBehaviour
     {
         private VRMBlendShapeProxy _proxy = null;
-
-        private BlendShapeKey[] _allBlendShapeKeys = null;
+        private BlendShapeKey[] _allBlendShapeKeys = new BlendShapeKey[0];
 
         private readonly Dictionary<BlendShapeKey, float> _blendShape = new Dictionary<BlendShapeKey, float>();
 
         private bool _reserveBlendShapeReset = false;
-
+        
         public void Initialize(VRMBlendShapeProxy proxy)
         {
             _proxy = proxy;
+            _allBlendShapeKeys = _proxy
+                .BlendShapeAvatar
+                .Clips
+                .Select(c => new BlendShapeKey(c.BlendShapeName))
+                .ToArray();
         }
 
-        public void DisposeProxy() => _proxy = null;
+        public void DisposeProxy()
+        {
+            _proxy = null;
+            _allBlendShapeKeys = new BlendShapeKey[0];
+        }
 
         /// <summary>
         /// Word To Motionによるブレンドシェイプを指定します。
@@ -36,7 +44,10 @@ namespace Baku.VMagicMirror
         /// <remarks>1つ以上のブレンドシェイプを指定すると通常の表情制御をオーバーライドする。</remarks>
         public void Add(BlendShapeKey key, float value)
         {
-            _blendShape[key] = value;
+            if (_allBlendShapeKeys.Any(k => k.Name == key.Name))
+            {
+                _blendShape[key] = value;
+            }
         }
 
         /// <summary>Word To Motionによる表情制御を無効化(終了)します。</summary>
@@ -47,24 +58,13 @@ namespace Baku.VMagicMirror
 
         public void ResetBlendShape()
         {
-            //事前に
             if (_blendShape.Count > 0)
             {
                 _reserveBlendShapeReset = true;
                 Clear();
             }
         }
-
-        private void Start()
-        {
-            var presets = Enum.GetValues(typeof(BlendShapePreset));
-            _allBlendShapeKeys = new BlendShapeKey[presets.Length];
-            for(int i = 0; i < _allBlendShapeKeys.Length; i++)
-            {
-                _allBlendShapeKeys[i] = new BlendShapeKey((BlendShapePreset)presets.GetValue(i));
-            }
-        }
-
+        
         private void Update()
         {
             if (_reserveBlendShapeReset)
@@ -96,6 +96,11 @@ namespace Baku.VMagicMirror
                 if (_blendShape.TryGetValue(_allBlendShapeKeys[i], out float value))
                 {
                     _proxy.AccumulateValue(_allBlendShapeKeys[i], value);
+                }
+                else
+                {
+                    //完全な排他制御をしたいので、指定がない値は明示的にゼロ書き込みする
+                    _proxy.AccumulateValue(_allBlendShapeKeys[i], 0);
                 }
             }
             _proxy.Apply();

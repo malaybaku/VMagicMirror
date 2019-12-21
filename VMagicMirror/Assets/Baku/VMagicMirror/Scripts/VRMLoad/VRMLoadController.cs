@@ -23,7 +23,8 @@ namespace Baku.VMagicMirror
         // - SettingAutoAdjusterはロード直後に特殊処理が入る可能性があるため
         [SerializeField] private WindowStyleController windowStyleController = null;
         [SerializeField] private SettingAutoAdjuster settingAdjuster = null;
-        
+
+        public event Action<VrmLoadedInfo> PreVrmLoaded;
         public event Action<VrmLoadedInfo> VrmLoaded; 
         public event Action VrmDisposing;
         
@@ -156,13 +157,16 @@ namespace Baku.VMagicMirror
             }
             windowStyleController.InitializeModelRenderers(renderers);
             settingAdjuster.AssignModelRoot(go.transform);
-            
-            VrmLoaded?.Invoke(new VrmLoadedInfo()
+
+            var info = new VrmLoadedInfo()
             {
                 vrmRoot = go.transform,
                 animator = animator,
                 blendShape = blendShapeProxy,
-            });
+            };
+            
+            PreVrmLoaded?.Invoke(info);
+            VrmLoaded?.Invoke(info);
         }
         
         [Serializable]

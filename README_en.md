@@ -80,6 +80,7 @@ Maintainer's environment is as following.
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
 * [Deform](https://github.com/keenanwoodall/Deform)
+* [VRMSpringBone-Optimize](https://github.com/mao-test-h/VRMSpringBone-Optimize) : `v1.1` in `release` 
 * DOTween (from Asset Store)
 
 `Deform` is downloaded by package manager style.

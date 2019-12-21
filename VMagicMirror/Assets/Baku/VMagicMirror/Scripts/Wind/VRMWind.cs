@@ -94,7 +94,7 @@ namespace Baku.VMagicMirror
             strengthFactor = strengthPercentage;
         }
 
-        public void SetIntercal(float intervalPercentage)
+        public void SetInterval(float intervalPercentage)
         {
             timeFactor = intervalPercentage;
         }        

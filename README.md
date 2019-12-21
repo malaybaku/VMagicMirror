@@ -77,6 +77,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
 * [Deform](https://github.com/keenanwoodall/Deform)
+* [VRMSpringBone-Optimize](https://github.com/mao-test-h/VRMSpringBone-Optimize) : `release`の`v1.1`
 * DOTween (アセットストアから)
 
 上記のうちDeformはパッケージマネージャで導入されるため、導入作業は不要です。

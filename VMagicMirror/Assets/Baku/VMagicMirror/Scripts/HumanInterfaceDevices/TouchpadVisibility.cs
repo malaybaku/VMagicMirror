@@ -8,13 +8,13 @@ namespace Baku.VMagicMirror
     public class TouchpadVisibility : MonoBehaviour
     {
         private MagnetDeformer _deformer = null;
-        private Renderer[] _renderers = null;
+        private Renderer _renderer = null;
         private bool _latestVisibility = true;
 
         private void Start()
         {
             _deformer = GetComponent<MagnetDeformer>();
-            _renderers = GetComponentsInChildren<Renderer>();
+            _renderer = GetComponentInChildren<Renderer>();
         }
 
         public void SetVisibility(bool visible)
@@ -31,18 +31,12 @@ namespace Baku.VMagicMirror
                 {
                     if (visible)
                     {
-                        foreach (var r in _renderers)
-                        {
-                            r.enabled = true;
-                        }
+                        _renderer.enabled = true;
                     }
                 })
                 .OnComplete(() =>
                 {
-                    foreach (var r in _renderers)
-                    {
-                        r.enabled = _latestVisibility;
-                    }
+                    _renderer.enabled = _latestVisibility;
                 });
         }
     }

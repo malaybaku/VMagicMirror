@@ -73,7 +73,7 @@ namespace Baku.VMagicMirror
         
         public void ButtonDown(GamepadKey key)
         {
-            if (GamepadProvider.IsSideKey(key))
+            if (SmallGamepadProvider.IsSideKey(key))
             {
                 return;
             }
@@ -83,7 +83,7 @@ namespace Baku.VMagicMirror
 
         public void ButtonUp(GamepadKey key)
         {
-            if (GamepadProvider.IsSideKey(key))
+            if (SmallGamepadProvider.IsSideKey(key))
             {
                 return;
             }

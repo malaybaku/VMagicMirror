@@ -9,7 +9,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private VRMLoadController loadController = null;
         [SerializeField] private MmfServer mmfServer = null;
         [SerializeField] private RawInputChecker rawInputChecker = null;
-        
+        [SerializeField] private DeformableCounter deformableCounterPrefab = null; 
+
         public override void InstallBindings()
         {
             //メッセージハンドラの依存はここで注入(偽レシーバを入れたい場合、interfaceを切って別インスタンスを捻じ込めばOK)
@@ -18,6 +19,11 @@ namespace Baku.VMagicMirror
             //かつてメッセージハンドラの一部だった、キーボード/マウスボタン入力のソースが別になったので、ハンドラに準ずる方法で登録
             Container.BindInstance(rawInputChecker);
 
+            //Deformを使うオブジェクトがここを参照することで、DeformableManagerを必要な時だけ動かせるようにする
+            Container.Bind<DeformableCounter>()
+                .FromComponentInNewPrefab(deformableCounterPrefab)
+                .AsSingle();
+            
             //VRMLoadControllerがIVRMLoadable(VRMのロード/破棄イベント送信元)の実装を提供する
             Container
                 .Bind<IVRMLoadable>()

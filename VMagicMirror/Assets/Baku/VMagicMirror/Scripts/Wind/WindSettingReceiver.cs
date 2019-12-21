@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror
                         wind.SetStrength(c.ParseAsPercentage());
                         break;
                     case MessageCommandNames.WindInterval:
-                        wind.SetIntercal(c.ParseAsPercentage());
+                        wind.SetInterval(c.ParseAsPercentage());
                         break;
                     case MessageCommandNames.WindYaw:
                         wind.WindYawDegree = c.ToInt();

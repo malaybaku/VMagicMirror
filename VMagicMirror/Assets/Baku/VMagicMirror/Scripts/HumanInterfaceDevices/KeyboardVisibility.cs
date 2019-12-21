@@ -1,6 +1,7 @@
 ﻿using Deform;
 using DG.Tweening;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -8,10 +9,13 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(Renderer))]
     public class KeyboardVisibility : MonoBehaviour
     {
+        [Inject] private DeformableCounter _deformableCounter = null;
+        
         private MagnetDeformer _deformer = null;
         private Renderer _renderer = null;
         private bool _latestVisibility = true;
 
+        
         private void Start()
         {
             _deformer = GetComponent<MagnetDeformer>();
@@ -30,12 +34,17 @@ namespace Baku.VMagicMirror
                 .SetEase(Ease.OutCubic)
                 .OnStart(() =>
                 {
+                    _deformableCounter.Increment();
                     if (visible)
                     {
                         _renderer.enabled = true;
                     }
                 })
-                .OnComplete(() => _renderer.enabled = _latestVisibility);
+                .OnComplete(() =>
+                {
+                    _renderer.enabled = _latestVisibility;
+                    _deformableCounter.Decrement();
+                });
         }
     }
 }

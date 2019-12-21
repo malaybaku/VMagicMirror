@@ -21,6 +21,7 @@ namespace Baku.VMagicMirror
                 }
             });
             _handler.QueryRequested += OnQueryReceived;
+            SetFrameRateWithQuality(QualitySettings.GetQualityLevel());
         }
 
         private void OnQueryReceived(ReceivedQuery q)
@@ -44,9 +45,17 @@ namespace Baku.VMagicMirror
                 if (names[i] == name)
                 {
                     QualitySettings.SetQualityLevel(i, true);
+                    SetFrameRateWithQuality(i);
                     return;
                 }
             }
+        }
+
+        private void SetFrameRateWithQuality(int qualityLevel)
+        {
+            //Very LowまたはLowの場合は明示的にCPU負荷を抑えたいはずなので、FPSも30まで下げる。
+            //Medium以上の場合、デフォルト挙動に戻す
+            Application.targetFrameRate = (qualityLevel < 2) ? 30 : -1;
         }
     }
     

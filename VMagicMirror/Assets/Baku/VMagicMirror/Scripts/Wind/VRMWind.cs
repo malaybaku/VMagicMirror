@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using VRM;
 using Zenject;
+using VRM.Optimize.Jobs;
 
 namespace Baku.VMagicMirror
 {
@@ -63,7 +63,7 @@ namespace Baku.VMagicMirror
         }
         
         private float _windGenerateCount = 0;
-        private VRMSpringBone[] _springBones = new VRMSpringBone[] { };
+        private VRMSpringBoneJob[] _springBones = new VRMSpringBoneJob[] { };
         private Vector3[] _originalGravityDirections = new Vector3[] { };
         private float[] _originalGravityFactors = new float[] { };
         private readonly List<WindItem> _windItems = new List<WindItem>();
@@ -187,14 +187,14 @@ namespace Baku.VMagicMirror
         
         private void OnVrmUnloading()
         {
-            _springBones = new VRMSpringBone[] { };
+            _springBones = new VRMSpringBoneJob[] { };
             _originalGravityDirections = new Vector3[]{ };
             _originalGravityFactors = new float[] { };
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _springBones = info.vrmRoot.GetComponentsInChildren<VRMSpringBone>();
+            _springBones = info.vrmRoot.GetComponentsInChildren<VRMSpringBoneJob>();
             _originalGravityDirections = _springBones.Select(b => b.m_gravityDir).ToArray();
             _originalGravityFactors = _springBones.Select(b => b.m_gravityPower).ToArray();
         }

@@ -105,13 +105,12 @@
 
         #region // Unity Events
 
-#if UNITY_EDITOR && ENABLE_DEBUG
         /// <summary>
         /// MonoBehaviour.Update
         /// </summary>
         void Update()
         {
-            // Editor上でのみInspectorからの動的変更を考慮する
+            // VRMWindでのパラメータ書き換えに対応するために、動的変更をその都度反映する
             if (this._blittableFieldsPtr == null)
             {
                 return;
@@ -119,7 +118,6 @@
 
             this.CopyBlittableFields();
         }
-#endif
 
         #endregion // Unity Events
 

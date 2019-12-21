@@ -1,12 +1,15 @@
 ﻿using Deform;
 using DG.Tweening;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(MagnetDeformer))]
     public class TouchpadVisibility : MonoBehaviour
     {
+        [Inject] private DeformableCounter _deformableCounter = null;
+
         private MagnetDeformer _deformer = null;
         private Renderer _renderer = null;
         private bool _latestVisibility = true;
@@ -29,6 +32,7 @@ namespace Baku.VMagicMirror
                 .SetEase(Ease.OutCubic)
                 .OnStart(() =>
                 {
+                    _deformableCounter.Increment();
                     if (visible)
                     {
                         _renderer.enabled = true;
@@ -36,6 +40,7 @@ namespace Baku.VMagicMirror
                 })
                 .OnComplete(() =>
                 {
+                    _deformableCounter.Decrement();
                     _renderer.enabled = _latestVisibility;
                 });
         }

@@ -10,6 +10,7 @@ namespace Baku.VMagicMirror
     public class GamepadVisibilityReceiver : MonoBehaviour
     {
         [Inject] private ReceivedMessageHandler _handler;
+        [Inject] private DeformableCounter _deformableCounter;
 
         private MagnetDeformer _deformer = null;
         private Renderer[] _renderers = new Renderer[0];
@@ -43,6 +44,7 @@ namespace Baku.VMagicMirror
                 .SetEase(Ease.OutCubic)
                 .OnStart(() =>
                 {
+                    _deformableCounter.Increment();
                     if (visible)
                     {
                         foreach (var r in _renderers)
@@ -53,6 +55,7 @@ namespace Baku.VMagicMirror
                 })
                 .OnComplete(() =>
                 {
+                    _deformableCounter.Decrement();
                     foreach (var r in _renderers)
                     {
                         r.enabled = _latestVisibility;

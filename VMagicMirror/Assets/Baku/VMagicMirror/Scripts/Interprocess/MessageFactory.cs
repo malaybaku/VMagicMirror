@@ -32,5 +32,7 @@ namespace Baku.VMagicMirror
             => WithArg(JsonUtility.ToJson(parameters));
 
         public Message ExtraBlendShapeClipNames(string names) => WithArg(names);
+
+        public Message MidiNoteOn(int noteNumber) => WithArg($"{noteNumber}");
     }
 }

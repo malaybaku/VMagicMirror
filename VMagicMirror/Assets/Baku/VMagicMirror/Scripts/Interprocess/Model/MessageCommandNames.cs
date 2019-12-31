@@ -101,6 +101,10 @@
         public const string HidVisibility = nameof(HidVisibility);
         public const string SetKeyboardTypingEffectType = nameof(SetKeyboardTypingEffectType);
         public const string EnableDeviceFreeLayout = nameof(EnableDeviceFreeLayout);
+        
+        // Layout, MIDI Controller
+        public const string MidiControllerVisibility = nameof(MidiControllerVisibility);
+        public const string EnableMidiRead = nameof(EnableMidiRead);
 
         // Layout, Gamepad
         public const string EnableGamepad = nameof(EnableGamepad);
@@ -146,7 +150,9 @@
         public const string SendWordToMotionPreviewInfo = nameof(SendWordToMotionPreviewInfo);
 
         public const string SetDeviceTypeToStartWordToMotion = nameof(SetDeviceTypeToStartWordToMotion);
-        
+
+        public const string LoadMidiNoteToMotionMap = nameof(LoadMidiNoteToMotionMap);
+        public const string RequireMidiNoteOnMessage = nameof(RequireMidiNoteOnMessage);
 
         // Screenshot
         public const string TakeScreenshot = nameof(TakeScreenshot);

@@ -77,9 +77,12 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
+* [MidiJack](https://github.com/malaybaku/MidiJack)
 * DOTween (アセットストアから)
 
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
+
+また、MidiJackはForkしたものを使っているので、この点にも注意して下さい。
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
 

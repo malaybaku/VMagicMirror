@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Zenject;
 using UniRx;
+using MidiJack;
 
 namespace Baku.VMagicMirror
 {
@@ -22,10 +24,12 @@ namespace Baku.VMagicMirror
             });
         }
 
-        private void SetMidiReadEnable(bool enable)
+        private void OnDestroy()
         {
-            //TODO: ここでMidiMasterをブッ殺したい…ブッ殺したくない？
-//            MidiMaster.
+            WindowsMidiInterop.Instance.SetActive(false);
         }
+
+        private void SetMidiReadEnable(bool enable) 
+            => WindowsMidiInterop.Instance.SetActive(enable);
     }
 }

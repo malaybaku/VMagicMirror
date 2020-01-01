@@ -21,6 +21,7 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private TransformControl keyboardControl = null;
         [SerializeField] private TransformControl touchPadControl = null;
+        [SerializeField] private TransformControl midiControl = null;
         [SerializeField] private TransformControl gamepadControl= null;
         [SerializeField] private Transform gamepadModelScaleTarget = null;
         [SerializeField] private Slider gamepadModelScaleSlider = null;
@@ -29,6 +30,7 @@ namespace Baku.VMagicMirror
         {
             keyboardControl,
             touchPadControl,
+            midiControl,
             gamepadControl,
         };
 
@@ -99,6 +101,7 @@ namespace Baku.VMagicMirror
             {
                 keyboard = ToItem(keyboardControl.transform),
                 touchPad = ToItem(touchPadControl.transform),
+                midi = ToItem(midiControl.transform),
                 gamepad =  ToItem(gamepadControl.transform),
                 gamepadModelScale = gamepadModelScaleTarget.localScale.x,
             });
@@ -122,6 +125,7 @@ namespace Baku.VMagicMirror
                 var data = JsonUtility.FromJson<DeviceLayoutsData>(content);
                 ApplyItem(data.keyboard, keyboardControl.transform);
                 ApplyItem(data.touchPad, touchPadControl.transform);
+                ApplyItem(data.midi, midiControl.transform);
                 ApplyItem(data.gamepad, gamepadControl.transform);
                 gamepadModelScaleSlider.value = Mathf.Clamp(
                     data.gamepadModelScale,
@@ -196,6 +200,7 @@ namespace Baku.VMagicMirror
     {
         public DeviceLayoutItem keyboard;
         public DeviceLayoutItem touchPad;
+        public DeviceLayoutItem midi;
         public DeviceLayoutItem gamepad;
         public float gamepadModelScale;
     }

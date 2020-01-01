@@ -80,9 +80,12 @@ Maintainer's environment is as following.
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
+* [MidiJack](https://github.com/malaybaku/MidiJack)
 * DOTween (from Asset Store)
 
 Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
+
+Also should be careful that `MidiJack` used in VMagicMirror is forked one.
 
 Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
 

@@ -68,6 +68,17 @@ MonoBehaviour:
     scale: {x: 1, y: 1, z: 1}
     useCollisionPlane: 0
     collisionTransform: {fileID: 0}
+  midiParticlePrefabs:
+  - prefab: {fileID: 4353481273975885782, guid: 2a2c22bd0015525489aa6305c15b3469,
+      type: 3}
+    scale: {x: 1, y: 1, z: 1}
+    useCollisionPlane: 1
+    collisionTransform: {fileID: 0}
+  - prefab: {fileID: 7218671144545294627, guid: 773b33f661c35c24183e00d82532a670,
+      type: 3}
+    scale: {x: 1, y: 1, z: 1}
+    useCollisionPlane: 0
+    collisionTransform: {fileID: 0}
   mouseParticlePrefabs:
   - continueParticlePrefab: {fileID: 8164677620388347355, guid: 2ae63ce2a0ead3f488e0eb9fd4c1ce8d,
       type: 3}

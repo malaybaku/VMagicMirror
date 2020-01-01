@@ -28,6 +28,9 @@ namespace Baku.VMagicMirror
         [SerializeField] private MouseMoveHandIKGenerator mouseMove = null;
         public MouseMoveHandIKGenerator MouseMove => mouseMove;
 
+        [SerializeField] private MidiHandIkGenerator midi = null;
+        public MidiHandIkGenerator MidiHand => midi;
+
         [SerializeField] private PresentationHandIKGenerator presentation = null;
         public PresentationHandIKGenerator Presentation => presentation;
 
@@ -44,6 +47,7 @@ namespace Baku.VMagicMirror
         
         //NOTE: このフラグではキーボードのみならずマウス入力も無視することに注意
         public bool UseKeyboardForWordToMotion { get; set; } = false;
+        public bool UseMidiControllerForWordToMotion { get; set; } = false;
         
         public bool EnablePresentationMode { get; set; }
 
@@ -207,6 +211,48 @@ namespace Baku.VMagicMirror
         
         #endregion
         
+        #region Midi Controller
+        
+        public void KnobValueChange(int knobNumber, float value)
+        {
+            if (UseMidiControllerForWordToMotion)
+            {
+                return;
+            }
+            
+            var hand = midi.KnobValueChange(knobNumber, value);
+            if (hand == ReactedHand.Left)
+            {
+                SetLeftHandIk(HandTargetType.MidiController);
+            }
+            else
+            {
+                SetRightHandIk(HandTargetType.MidiController);
+            }
+        }
+        
+        public void NoteOn(int noteNumber)
+        {
+            if (UseMidiControllerForWordToMotion)
+            {
+                return;
+            }
+            
+            var (hand, pos) = midi.NoteOn(noteNumber);
+            if (hand == ReactedHand.Left)
+            {
+                SetLeftHandIk(HandTargetType.MidiController);
+            }
+            else
+            {
+                SetRightHandIk(HandTargetType.MidiController);
+            }
+            particleStore.RequestMidiParticleStart(pos);
+        }
+
+        
+        #endregion
+        
         /// <summary> 既定の秒数をかけて手のIKを無効化します。 </summary>
         public void DisableHandIk()
         {
@@ -325,6 +371,7 @@ namespace Baku.VMagicMirror
             var ik =
                 (targetType == HandTargetType.Keyboard) ? Typing.LeftHand :
                 (targetType == HandTargetType.Gamepad) ? SmallGamepadHand.LeftHand :
+                (targetType == HandTargetType.MidiController) ? midi.LeftHand : 
                 Typing.LeftHand;
 
             _prevLeftHand = _currentLeftHand;
@@ -357,6 +404,7 @@ namespace Baku.VMagicMirror
                 (targetType == HandTargetType.Keyboard) ? Typing.RightHand :
                 (targetType == HandTargetType.Gamepad) ? SmallGamepadHand.RightHand :
                 (targetType == HandTargetType.Presentation) ? Presentation.RightHand :
+                (targetType == HandTargetType.MidiController) ? midi.RightHand :
                 Typing.RightHand;
 
             _prevRightHand = _currentRightHand;
@@ -389,6 +437,7 @@ namespace Baku.VMagicMirror
             Keyboard,
             Presentation,
             Gamepad,
+            MidiController,
         }
 
     }

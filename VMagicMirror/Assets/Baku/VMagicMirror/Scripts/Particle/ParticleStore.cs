@@ -29,21 +29,27 @@ namespace Baku.VMagicMirror
         [Tooltip("同時に表示するエフェクト数の上限。増やすと表示が破綻しにくくなるかわりメモリとCPU負荷が増える。")]
         [SerializeField] private int particleStoreCount = 16;
         [SerializeField] private ParticlePrefabInfo[] particlePrefabs = null;
-
+        [SerializeField] private ParticlePrefabInfo[] midiParticlePrefabs = null;
         [SerializeField] private MouseParticlePrefabInfo[] mouseParticlePrefabs = null;
         [SerializeField] private Transform mouseParticlePrefabParent = null;
 
         //NOTE: この秒数だけPlayMouseParticleが呼ばれなかった場合、マウスが止まっているのでパーティクルを止める
         [SerializeField] private float mouseContinueParticleCount = 0.5f;
         
-        public Vector3 ParticleScale { get; set; } = new Vector3(0.7f, 1.0f, 0.7f);
-        public Quaternion ParticleRotation { get; set; } = Quaternion.identity;
+        public Vector3 KeyboardParticleScale { get; set; } = new Vector3(0.7f, 1.0f, 0.7f);
+        public Quaternion KeyboardParticleRotation { get; set; } = Quaternion.identity;
+        public Vector3 MidiParticleScale { get; set; } = new Vector3(0.7f, 1.0f, 0.7f);
+        public Quaternion MidiParticleRotation { get; set; } = Quaternion.identity;
 
-        private int _nextParticleIndex = 0;
+        private int _nextKeyboardParticleIndex = 0;
+        private int _nextMidiParticleIndex = 0;
         //-1はパーティクル無効、0~(particlePrefabs.Length - 1)は有効な状態を表す
-        private int _currentSelectedParticlePrefabIndex = InvalidTypingEffectIndex;
+        private int _currentKeyAndPadParticleIndex = InvalidTypingEffectIndex;
+        private int _currentMidiParticleIndex = InvalidTypingEffectIndex;
+        
         //キャッシュして多数同時に実行できるようにしたパーティクル群
         private ParticleSystem[] _particles = new ParticleSystem[0];
+        private ParticleSystem[] _midiParticles = new ParticleSystem[0];
         //マウスのパーティクル
         private ParticleSystem _mouseContinueParticle = null;
         private ParticleSystem _mouseEndParticle = null;
@@ -66,28 +72,34 @@ namespace Baku.VMagicMirror
         }
         
         //-1を指定したらパーティクル無し、0以上で配列内を指定したら有効なパーティクルで初期化
-        public void SetParticleIndex(int index)
+        public void SetParticleIndex(int keyAndPadIndex, int midiIndex)
         {
-            if (_currentSelectedParticlePrefabIndex == index)
+            if (_currentKeyAndPadParticleIndex != keyAndPadIndex)
             {
-                return;
+                _currentKeyAndPadParticleIndex = keyAndPadIndex;
+                ClearKeyAndPadParticles();
+                if (keyAndPadIndex >= 0 && keyAndPadIndex < particlePrefabs.Length)
+                {
+                    SetupKeyboardParticle(keyAndPadIndex);
+                    SetupMouseParticle(keyAndPadIndex);
+                }
             }
 
-            _currentSelectedParticlePrefabIndex = index;
-
-            ClearParticles();
-            
-            //パーティクルを無効化したい場合はコレで終わり
-            if (index < 0 || index >= particlePrefabs.Length)
+            if (_currentMidiParticleIndex != midiIndex)
             {
-                return;
+                _currentMidiParticleIndex = midiIndex;
+                ClearMidiParticles();
+                if (midiIndex >= 0 && midiIndex < midiParticlePrefabs.Length)
+                {
+                    SetupMidiParticle(midiIndex);
+                }
             }
-            
-            SetupKeyboardParticle(index);
-            SetupMouseParticle(index);
         }
 
-        //指定した場所でキーボードパーティクルを起動します。
+        /// <summary>
+        /// 指定した場所でキーボードパーティクルを起動します。
+        /// </summary>
+        /// <param name="worldPosition"></param>
         public void RequestKeyboardParticleStart(Vector3 worldPosition)
         {
             if (_particles.Length == 0)
@@ -96,12 +108,12 @@ namespace Baku.VMagicMirror
             }
 
             //パーティクルの切り替えタイミングによっては配列外参照するリスクがあるのでその対策
-            if (_nextParticleIndex >= _particles.Length)
+            if (_nextKeyboardParticleIndex >= _particles.Length)
             {
-                _nextParticleIndex = 0;
+                _nextKeyboardParticleIndex = 0;
             }
 
-            var particle = _particles[_nextParticleIndex];
+            var particle = _particles[_nextKeyboardParticleIndex];
             if (particle.isPlaying)
             {
                 particle.Stop();
@@ -109,17 +121,53 @@ namespace Baku.VMagicMirror
 
             var t = particle.transform;
             t.position = worldPosition;
-            t.localRotation = ParticleRotation;
-            t.localScale = ParticleScale;
+            t.localRotation = KeyboardParticleRotation;
+            t.localScale = KeyboardParticleScale;
             particle.Play();
 
-            _nextParticleIndex++;
-            if (_nextParticleIndex >= _particles.Length)
+            _nextKeyboardParticleIndex++;
+            if (_nextKeyboardParticleIndex >= _particles.Length)
             {
-                _nextParticleIndex = 0;
+                _nextKeyboardParticleIndex = 0;
             }
         }
 
+        /// <summary>
+        /// 指定した場所でMIDIコントローラパーティクルを起動します。
+        /// </summary>
+        /// <param name="worldPosition"></param>
+        public void RequestMidiParticleStart(Vector3 worldPosition)
+        {
+            if (_midiParticles.Length == 0)
+            {
+                return;
+            }
+
+            //パーティクルの切り替えタイミングによっては配列外参照するリスクがあるのでその対策
+            if (_nextMidiParticleIndex >= _midiParticles.Length)
+            {
+                _nextMidiParticleIndex = 0;
+            }
+
+            var particle = _midiParticles[_nextMidiParticleIndex];
+            if (particle.isPlaying)
+            {
+                particle.Stop();
+            }
+
+            var t = particle.transform;
+            t.position = worldPosition;
+            t.localRotation = MidiParticleRotation;
+            t.localScale = MidiParticleScale;
+            particle.Play();
+
+            _nextMidiParticleIndex++;
+            if (_nextMidiParticleIndex >= _midiParticles.Length)
+            {
+                _nextMidiParticleIndex = 0;
+            }
+        }
+        
         /// <summary>
         /// マウスが移動したときのパーティクル実行をリクエストします。
         /// </summary>
@@ -152,7 +200,7 @@ namespace Baku.VMagicMirror
             }
         }
         
-        private void ClearParticles()
+        private void ClearKeyAndPadParticles()
         {
             for (int i = 0; i < _particles.Length; i++)
             {
@@ -173,6 +221,15 @@ namespace Baku.VMagicMirror
             }
         }
         
+        private void ClearMidiParticles()
+        {
+            for (int i = 0; i < _midiParticles.Length; i++)
+            {
+                Destroy(_midiParticles[i].gameObject);
+            }
+            _midiParticles = new ParticleSystem[0];
+        }
+        
         private void SetupKeyboardParticle(int index)
         {
             var prefabSource = particlePrefabs[index];
@@ -188,10 +245,29 @@ namespace Baku.VMagicMirror
                 }
 
                 //NOTE: ここではパーティクルの基準サイズのみを適用し、実行段階でキーボードのサイズに即したスケーリングを追加的に調整。
-                this.transform.localScale = prefabSource.scale;
+                //this.transform.localScale = prefabSource.scale;
             }
         }
 
+        private void SetupMidiParticle(int index)
+        {
+            var prefabSource = midiParticlePrefabs[index];
+
+            _midiParticles = new ParticleSystem[particleStoreCount];
+            for (int i = 0; i < _midiParticles.Length; i++)
+            {
+                _midiParticles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
+                if (prefabSource.useCollisionPlane)
+                {
+                    _midiParticles[i].collision.SetPlane(0, prefabSource.collisionTransform);
+                }
+
+                //NOTE: ここではパーティクルの基準サイズのみを適用し、実行段階でキーボードのサイズに即したスケーリングを追加的に調整。
+                //this.transform.localScale = prefabSource.scale;
+            }
+        }
+        
+        
         private void SetupMouseParticle(int index)
         {
             _mouseContinueParticle = Instantiate(

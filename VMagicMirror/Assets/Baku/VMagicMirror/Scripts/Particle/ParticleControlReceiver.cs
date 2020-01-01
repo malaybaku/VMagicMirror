@@ -13,8 +13,9 @@ namespace Baku.VMagicMirror
 
         private ParticleStore _particleStore = null;
 
-        private bool _keyboardIsVisible = true;
         private int _selectedIndex = -1;
+        private bool _keyboardIsVisible = true;
+        private bool _midiVisible = false;
 
         void Start()
         {
@@ -29,6 +30,9 @@ namespace Baku.VMagicMirror
                         break;
                     case MessageCommandNames.HidVisibility:
                         SetKeyboardVisibility(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.MidiControllerVisibility:
+                        SetMidiVisibility(message.ToBoolean());
                         break;
                     default:
                         break;
@@ -48,10 +52,17 @@ namespace Baku.VMagicMirror
             UpdateParticleIndex();
         }
 
+        private void SetMidiVisibility(bool visible)
+        {
+            _midiVisible = visible;
+            UpdateParticleIndex();
+        }
+
         private void UpdateParticleIndex()
         {
             _particleStore.SetParticleIndex(
-                _keyboardIsVisible ? _selectedIndex : InvalidTypingEffectIndex
+                _keyboardIsVisible ? _selectedIndex : InvalidTypingEffectIndex,
+                _midiVisible ? _selectedIndex : InvalidTypingEffectIndex
                 );
         }
 

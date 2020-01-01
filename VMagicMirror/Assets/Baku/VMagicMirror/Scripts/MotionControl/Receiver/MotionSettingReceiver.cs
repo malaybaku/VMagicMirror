@@ -8,9 +8,11 @@ namespace Baku.VMagicMirror
     public class MotionSettingReceiver : MonoBehaviour
     {
         //Word to Motionの専用入力に使うデバイスを指定する定数値
-        private const int DeviceTypeNone = 0;
+//        private const int DeviceTypeNone = -1;
+        private const int DeviceTypeKeyboardWord = 0;
         private const int DeviceTypeGamepad = 1;
-        private const int DeviceTypeKeyboard = 2;
+        private const int DeviceTypeKeyboardTenKey = 2;
+        private const int DeviceTypeMidiController = 3;
 
         [Inject] private ReceivedMessageHandler _handler = null;
 
@@ -83,26 +85,10 @@ namespace Baku.VMagicMirror
 
         private void SetDeviceTypeForWordToMotion(int deviceType)
         {
-            switch (deviceType)
-            {
-                case DeviceTypeNone:
-                    gamePadBasedBodyLean.UseGamepadForWordToMotion = false;
-                    handIkIntegrator.UseGamepadForWordToMotion = false;
-                    handIkIntegrator.UseKeyboardForWordToMotion = false;
-                    break;
-                case DeviceTypeGamepad:
-                    gamePadBasedBodyLean.UseGamepadForWordToMotion = true;
-                    handIkIntegrator.UseGamepadForWordToMotion = true;
-                    handIkIntegrator.UseKeyboardForWordToMotion = false;
-                    break;
-                case DeviceTypeKeyboard:
-                    gamePadBasedBodyLean.UseGamepadForWordToMotion = false;
-                    handIkIntegrator.UseGamepadForWordToMotion = false;
-                    handIkIntegrator.UseKeyboardForWordToMotion = true;
-                    break;
-                default:
-                    break;
-            }
+            gamePadBasedBodyLean.UseGamepadForWordToMotion = (deviceType == DeviceTypeGamepad);
+            handIkIntegrator.UseGamepadForWordToMotion = (deviceType == DeviceTypeGamepad);
+            handIkIntegrator.UseKeyboardForWordToMotion = (deviceType == DeviceTypeKeyboardTenKey);
+            handIkIntegrator.UseMidiControllerForWordToMotion = (deviceType == DeviceTypeMidiController);
         }
 
         //以下については適用先が1つじゃないことに注意
@@ -112,6 +98,7 @@ namespace Baku.VMagicMirror
             handIkIntegrator.Presentation.HandToTipLength = v;
             handIkIntegrator.Typing.HandToTipLength = v;
             handIkIntegrator.MouseMove.HandToTipLength = v;
+            handIkIntegrator.MidiHand.WristToTipLength = v;
         }
         
         private void SetLengthFromWristToPalm(float v)
@@ -123,11 +110,13 @@ namespace Baku.VMagicMirror
         {
             handIkIntegrator.Typing.YOffsetAlways = offset;
             handIkIntegrator.MouseMove.YOffset = offset;
+            handIkIntegrator.MidiHand.HandOffsetAlways = offset;
         }
 
         private void SetHandYOffsetAfterKeyDown(float offset)
         {
             handIkIntegrator.Typing.YOffsetAfterKeyDown = offset;
+            handIkIntegrator.MidiHand.HandOffsetAfterKeyDown = offset;
         }
     }
 }

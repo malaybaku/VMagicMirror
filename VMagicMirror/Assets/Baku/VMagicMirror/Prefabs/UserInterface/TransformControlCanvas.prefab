@@ -1516,6 +1516,7 @@ MonoBehaviour:
   settingAutoAdjuster: {fileID: 0}
   keyboardControl: {fileID: 0}
   touchPadControl: {fileID: 0}
+  midiControl: {fileID: 0}
   gamepadControl: {fileID: 0}
   gamepadModelScaleTarget: {fileID: 0}
   gamepadModelScaleSlider: {fileID: 8918121376556138050}
@@ -1533,6 +1534,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keyboard: {fileID: 0}
   touchpad: {fileID: 0}
+  midiController: {fileID: 0}
   particleStore: {fileID: 0}
   refKeyboardPosition: {x: 0, y: 0.9, z: 0.28}
   refKeyboardRotation: {x: 0, y: 0, z: 0}
@@ -1540,6 +1542,9 @@ MonoBehaviour:
   refTouchpadPosition: {x: 0.25, y: 0.98, z: 0.25}
   refTouchpadRotation: {x: 60, y: 30, z: 0}
   refTouchpadScale: {x: 0.15, y: 0.15, z: 0}
+  refMidiPosition: {x: 0, y: 0.92, z: 0.27}
+  refMidiRotation: {x: 0, y: 0, z: 0}
+  refMidiScale: {x: 0.35, y: 0.35, z: 0.35}
 --- !u!1 &3660422695488541056
 GameObject:
   m_ObjectHideFlags: 0

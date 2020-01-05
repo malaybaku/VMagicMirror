@@ -10,13 +10,12 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class FaceControlManager : MonoBehaviour
     {
-        [SerializeField] private FaceTracker faceTracker = null;
-        
         //ブレンドシェイプ生成するやつ各位
         [SerializeField] private EyeDownBlendShapeController eyeDownController = null;
         [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
 
+        [Inject] private FaceTracker _faceTracker = null;
         [Inject] private IVRMLoadable _vrmLoadable = null;
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace Baku.VMagicMirror
 
                 if (IsFaceTrackingActive &&
                     !PreferAutoBlink && 
-                    faceTracker.FaceDetectedAtLeastOnce
+                    _faceTracker.FaceDetectedAtLeastOnce
                     )
                 {
                     imageBasedBlinkController.Apply(_proxy);

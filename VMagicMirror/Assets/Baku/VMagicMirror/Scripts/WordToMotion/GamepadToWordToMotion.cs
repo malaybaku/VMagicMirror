@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -23,10 +24,10 @@ namespace Baku.VMagicMirror
             [GamepadKey.LEFT] = 8,
         };
         
-        [SerializeField] private StatefulXinputGamePad gamepadInput = null;
-
         [Tooltip("ボタン押下イベントが押されたらしばらくイベント送出をストップするクールダウンタイム")]
         [SerializeField] private float cooldownTime = 0.3f;
+
+        [Inject] private StatefulXinputGamePad _gamepadInput = null;
 
         /// <summary>Word to Motionの要素を実行してほしいとき、アイテムのインデックスを引数にして発火する。</summary>
         public event Action<int> RequestExecuteWordToMotionItem;
@@ -37,7 +38,7 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            gamepadInput.ButtonUpDown.Subscribe(data =>
+            _gamepadInput.ButtonUpDown.Subscribe(data =>
             {
                 if (UseGamepadInput &&
                     data.IsPressed &&

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UniRx;
 using VRM;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -14,7 +15,7 @@ namespace Baku.VMagicMirror
         private static readonly BlendShapeKey BlinkLKey = new BlendShapeKey(BlendShapePreset.Blink_L);
         private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
 
-        [SerializeField] private FaceTracker faceTracker = null;
+        [Inject] private FaceTracker _faceTracker = null;
         
         [Tooltip("ブレンドシェイプを変化させていく速度ファクター")]
         [SerializeField]
@@ -63,12 +64,12 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            faceTracker.FaceParts
+            _faceTracker.FaceParts
                 .LeftEye
                 .EyeOpenValue
                 .Subscribe(OnLeftEyeOpenValueChanged);
 
-            faceTracker.FaceParts
+            _faceTracker.FaceParts
                 .RightEye
                 .EyeOpenValue
                 .Subscribe(OnRightEyeOpenValueChanged);
@@ -108,14 +109,14 @@ namespace Baku.VMagicMirror
 
         private float GetEyeOpenValue(float value)
         {
-            float clamped = Mathf.Clamp(value, EyeCloseHeight, faceTracker.CalibrationData.eyeOpenHeight);
-            if (value > faceTracker.CalibrationData.eyeOpenHeight)
+            float clamped = Mathf.Clamp(value, EyeCloseHeight, _faceTracker.CalibrationData.eyeOpenHeight);
+            if (value > _faceTracker.CalibrationData.eyeOpenHeight)
             {
                 return 0;
             }
             else
             {
-                float range = faceTracker.CalibrationData.eyeOpenHeight - EyeCloseHeight;
+                float range = _faceTracker.CalibrationData.eyeOpenHeight - EyeCloseHeight;
                 //細目すぎてrangeが負になるケースも想定してる: このときはまばたき自体無効にしておく
                 if (range < Mathf.Epsilon)
                 {

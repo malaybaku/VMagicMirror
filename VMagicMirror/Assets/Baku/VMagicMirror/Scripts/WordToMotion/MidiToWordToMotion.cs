@@ -10,13 +10,12 @@ namespace Baku.VMagicMirror
     {
         private readonly Dictionary<int, int> _noteNumberToMotionMap = new Dictionary<int, int>();
 
-        [SerializeField] private MidiInputObserver midiInputObserver = null;
-        
         [Tooltip("ボタン押下イベントが押されたらしばらくイベント送出をストップするクールダウンタイム")]
         [SerializeField] private float cooldownTime = 0.3f;
 
         [Inject] private ReceivedMessageHandler _handler;
         [Inject] private IMessageSender _sender;
+        [Inject] private MidiInputObserver _midiInputObserver = null;
 
         private bool _redirectNoteOnMessageToIpc = false;
 
@@ -41,7 +40,7 @@ namespace Baku.VMagicMirror
                 }
             });
             
-            midiInputObserver.NoteOn.Subscribe(noteNumber =>
+            _midiInputObserver.NoteOn.Subscribe(noteNumber =>
             {
                 if (_redirectNoteOnMessageToIpc)
                 {

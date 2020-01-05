@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using RootMotion.FinalIK;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -35,12 +36,13 @@ namespace Baku.VMagicMirror
             0.1f
             );
 
-        [SerializeField] private FaceTracker faceTracker = null;
         [SerializeField] private float speedFactor = 12f;
 
         [Range(0.05f, 1.0f)]
         [SerializeField]
         private float timeScaleFactor = 0.3f;
+
+        [Inject] private FaceTracker _faceTracker = null;
 
         private bool _isVrmLoaded = false;
         private Transform _vrmRoot = null;
@@ -136,14 +138,14 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (!_isVrmLoaded || !faceTracker.FaceDetectedAtLeastOnce)
+            if (!_isVrmLoaded || !_faceTracker.FaceDetectedAtLeastOnce)
             {
                 return;
             }
 
             float forwardLength = 0.0f;
-            float faceSize = faceTracker.DetectedRect.width * faceTracker.DetectedRect.height;
-            float faceSizeFactor = Mathf.Sqrt(faceSize / faceTracker.CalibrationData.faceSize);
+            float faceSize = _faceTracker.DetectedRect.width * _faceTracker.DetectedRect.height;
+            float faceSizeFactor = Mathf.Sqrt(faceSize / _faceTracker.CalibrationData.faceSize);
 
             //とりあえず簡単に。値域はもっと決めようあるよねここは。
             forwardLength = Mathf.Clamp(
@@ -152,7 +154,7 @@ namespace Baku.VMagicMirror
                 offsetUpperLimit.z
                 );
 
-            var center = faceTracker.DetectedRect.center - faceTracker.CalibrationData.faceCenter;
+            var center = _faceTracker.DetectedRect.center - _faceTracker.CalibrationData.faceCenter;
             var idealPosition = new Vector3(
                 center.x * offsetAmplifier.x,
                 center.y * offsetAmplifier.y,

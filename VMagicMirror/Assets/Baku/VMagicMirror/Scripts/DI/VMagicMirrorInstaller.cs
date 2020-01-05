@@ -8,7 +8,12 @@ namespace Baku.VMagicMirror
         [SerializeField] private ReceivedMessageHandler messageHandler = null;
         [SerializeField] private VRMLoadController loadController = null;
         [SerializeField] private MmfServer mmfServer = null;
+
         [SerializeField] private RawInputChecker rawInputChecker = null;
+        [SerializeField] private FaceTracker faceTracker = null;
+        [SerializeField] private MidiInputObserver midiInputObserver = null;
+        [SerializeField] private StatefulXinputGamePad gamepad = null;
+        
         [SerializeField] private DeformableCounter deformableCounterPrefab = null; 
 
         public override void InstallBindings()
@@ -16,8 +21,11 @@ namespace Baku.VMagicMirror
             //メッセージハンドラの依存はここで注入(偽レシーバを入れたい場合、interfaceを切って別インスタンスを捻じ込めばOK)
             Container.BindInstance(messageHandler);
 
-            //かつてメッセージハンドラの一部だった、キーボード/マウスボタン入力のソースが別になったので、ハンドラに準ずる方法で登録
+            //入力監視系のコードはメッセージハンドラと同格くらいに扱えそうなので、ここでバインドする
             Container.BindInstance(rawInputChecker);
+            Container.BindInstance(faceTracker);
+            Container.BindInstance(midiInputObserver);
+            Container.BindInstance(gamepad);
 
             //Deformを使うオブジェクトがここを参照することで、DeformableManagerを必要な時だけ動かせるようにする
             Container.Bind<DeformableCounter>()

@@ -7,19 +7,17 @@ namespace Baku.VMagicMirror
     //note: こう書いてて思ったが、顔認識もReceiver的なフローに載せた方がいい？
     
     /// <summary>
-    /// プロセス内外の両方から飛んできたHID(現状ではキーボード、マウス、コントローラ)の入力を集約して投げるクラス
+    /// プロセス内外の両方から飛んできたHID(キーボード、マウス、コントローラ、MIDI)の入力を集約して投げるクラス
     /// </summary>
     public class HidInputReceiver : MonoBehaviour
     {
-        [Inject] private RawInputChecker _rawInputChecker = null;
-        
-        [SerializeField] private StatefulXinputGamePad gamePad = null;
-        
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
-
         [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
-        
         [SerializeField] private GamepadBasedBodyLean gamepadBasedBodyLean = null;
+        
+        [Inject] private RawInputChecker _rawInput = null;
+        [Inject] private StatefulXinputGamePad _gamePad = null;
+        [Inject] private MidiInputObserver _midiInput = null;
         
         private bool _mousePositionInitialized = false;
         private int _mouseX = 0;
@@ -27,10 +25,10 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _rawInputChecker.PressedKeys.Subscribe(ReceiveKeyPressed);
-            _rawInputChecker.MouseButton.Subscribe(ReceiveMouseButton);
+            _rawInput.PressedKeys.Subscribe(ReceiveKeyPressed);
+            _rawInput.MouseButton.Subscribe(ReceiveMouseButton);
             
-            gamePad.ButtonUpDown.Subscribe(data =>
+            _gamePad.ButtonUpDown.Subscribe(data =>
             {
                 if (data.IsPressed)
                 {
@@ -43,24 +41,33 @@ namespace Baku.VMagicMirror
 
                 if (data.IsArrowKey)
                 {
-                    gamepadBasedBodyLean.ButtonStick(gamePad.ArrowButtonsStickPosition);
-                    handIkIntegrator.ButtonStick(gamePad.ArrowButtonsStickPosition);
+                    gamepadBasedBodyLean.ButtonStick(_gamePad.ArrowButtonsStickPosition);
+                    handIkIntegrator.ButtonStick(_gamePad.ArrowButtonsStickPosition);
                 }
             });
             
-            gamePad.LeftStickPosition.Subscribe(pos =>
+            _gamePad.LeftStickPosition.Subscribe(pos =>
             {
                 var stickPos = NormalizedStickPos(pos);
                 handIkIntegrator.MoveLeftGamepadStick(stickPos);
                 gamepadBasedBodyLean.LeftStick(pos);
             });
 
-            gamePad.RightStickPosition.Subscribe(pos =>
+            _gamePad.RightStickPosition.Subscribe(pos =>
             {
                 var stickPos = NormalizedStickPos(pos);
                 handIkIntegrator.MoveRightGamepadStick(stickPos);
                 gamepadBasedBodyLean.RightStick(pos);
             });
+
+            _midiInput.NoteOn.Subscribe(note =>
+            {
+                handIkIntegrator.NoteOn(note);
+            });
+
+            _midiInput.KnobValue.Subscribe(OnKnob);
+            void OnKnob((int knob, float value) data) 
+                => handIkIntegrator.KnobValueChange(data.knob, data.value);
         }
 
         private void Update()

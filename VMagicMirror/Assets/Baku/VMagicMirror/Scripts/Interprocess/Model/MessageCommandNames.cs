@@ -52,6 +52,9 @@
         public const string EnableWaitMotion = nameof(EnableWaitMotion);
         public const string WaitMotionScale = nameof(WaitMotionScale);
         public const string WaitMotionPeriod = nameof(WaitMotionPeriod);
+        
+        // Motion, Body
+        public const string EnableBodyLeanZ = nameof(EnableBodyLeanZ);
 
         // Motion, Face
         public const string EnableFaceTracking = nameof(EnableFaceTracking);
@@ -64,8 +67,7 @@
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
 
-
-        // Moition, Face, Eyebrow
+        // Motion, Face, Eyebrow
         public const string EyebrowLeftUpKey = nameof(EyebrowLeftUpKey);
         public const string EyebrowLeftDownKey = nameof(EyebrowLeftDownKey);
         public const string UseSeparatedKeyForEyebrow = nameof(UseSeparatedKeyForEyebrow);

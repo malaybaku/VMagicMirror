@@ -32,6 +32,9 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.WaitMotionPeriod:
                         SetWaitMotionDuration(message.ToInt());
                         break;
+                    case MessageCommandNames.EnableBodyLeanZ:
+                        bodyMotionManager.EnableImageBaseBodyLeanZ(message.ToBoolean());
+                        break;
                     default:
                         break;
                 }

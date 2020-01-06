@@ -267,7 +267,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e27dcaac7204d74cb9cf10b7ec999d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePad: {fileID: 0}
   handIkIntegrator: {fileID: 5813678810404708495}
   headIkIntegrator: {fileID: 5813678810404708592}
   gamepadBasedBodyLean: {fileID: 5813678808713813108}
@@ -471,7 +470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePad: {fileID: 0}
-  imageBasedBodyMotion: {fileID: 0}
+  imageBasedBodyMotion: {fileID: 5813678808713813112}
   speedFactor: 3
   buttonDownSpeedFactor: 8
   bodyMotionToGamepadPosApplyFactor: 0.5
@@ -526,7 +525,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5813678810510073683}
   m_Layer: 0
-  m_Name: MotionController
+  m_Name: MotionControlLogics
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

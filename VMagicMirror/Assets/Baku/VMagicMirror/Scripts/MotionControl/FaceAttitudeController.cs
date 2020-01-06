@@ -6,8 +6,6 @@ namespace Baku.VMagicMirror
 {
     public class FaceAttitudeController : MonoBehaviour
     {
-        [SerializeField] private FaceTracker faceTracker = null;
-        
         [SerializeField] private float speedLerpFactor = 12f;
 
         [SerializeField]
@@ -18,6 +16,7 @@ namespace Baku.VMagicMirror
         [Range(0.05f, 1.0f)]
         private float timeScaleFactor = 1.0f;
 
+        [Inject] private FaceTracker _faceTracker = null;
         [Inject] private IVRMLoadable _vrmLoadable = null;
 
         private const float HeadYawRateToDegFactor = 50.00f;
@@ -39,16 +38,16 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
-            faceTracker.FaceParts.Outline.HeadRollRad.Subscribe(
+            _faceTracker.FaceParts.Outline.HeadRollRad.Subscribe(
                 v => SetHeadRollDeg(-v * Mathf.Rad2Deg)
                 );
             
             //もとの値は角度ではなく[-1, 1]の無次元量であることに注意
-            faceTracker.FaceParts.Outline.HeadYawRate.Subscribe(
+            _faceTracker.FaceParts.Outline.HeadYawRate.Subscribe(
                 v => SetHeadYawDeg(v * HeadYawRateToDegFactor)
                 );
 
-            faceTracker.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
+            _faceTracker.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
                 v => SetHeadPitchDeg(NoseBaseHeightToNeckPitchDeg(v))
                 );
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
@@ -57,7 +56,7 @@ namespace Baku.VMagicMirror
 
         private void LateUpdate()
         {
-            if (_vrmHeadTransform == null || !faceTracker.HasInitDone)
+            if (_vrmHeadTransform == null || !_faceTracker.HasInitDone)
             {
                 _latestRotationEuler = Vector3.zero;
                 _prevRotationEuler = Vector3.zero;
@@ -119,9 +118,9 @@ namespace Baku.VMagicMirror
         
         private float NoseBaseHeightToNeckPitchDeg(float noseBaseHeight)
         {
-            if (faceTracker != null)
+            if (_faceTracker != null)
             {
-                return -(noseBaseHeight - faceTracker.CalibrationData.noseHeight) * NoseBaseHeightDifToAngleDegFactor;
+                return -(noseBaseHeight - _faceTracker.CalibrationData.noseHeight) * NoseBaseHeightDifToAngleDegFactor;
             }
             else
             {

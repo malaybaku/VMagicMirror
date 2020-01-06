@@ -7,12 +7,7 @@ namespace Baku.VMagicMirror
 {
     public class MidiInputObserver : MonoBehaviour
     {
-        //NOTE: MIDI入力はWPF側からUWPのAPIで読み取った方がいい気がしてきた
-        //(MidijackだとAPI的にちょっと困るので)
-        //でも実験的にやるぶんにはMidijackでやりたいので、ここではMidijackを使います
-
-        [SerializeField] private HandIKIntegrator handIk = null;
-        
+        //NOTE: MIDI入力はWPF側からUWPのAPIで読み取った方がいいかもしれないので、気になったら変える
         private readonly Subject<int> _noteOn = new Subject<int>();
         public IObservable<int> NoteOn => _noteOn;
         
@@ -25,16 +20,10 @@ namespace Baku.VMagicMirror
             MidiMaster.knobDelegate += OnKnobValue;
         }
 
-        private void OnNoteOn(MidiChannel channel, int note, float velocity)
-        {
-            _noteOn.OnNext(note);
-            handIk?.NoteOn(note);
-        }
-        
-        private void OnKnobValue(MidiChannel channel, int knobnumber, float knobvalue)
-        {
-            _knobValue.OnNext((knobnumber, knobvalue));
-            handIk?.KnobValueChange(knobnumber, knobvalue);
-        }
+        private void OnNoteOn(MidiChannel channel, int note, float velocity) 
+            => _noteOn.OnNext(note);
+
+        private void OnKnobValue(MidiChannel channel, int knobNumber, float knobValue) 
+            => _knobValue.OnNext((knobNumber, knobValue));
     }
 }

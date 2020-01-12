@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
     {
         //Word to Motionの専用入力に使うデバイスを指定する定数値
         private const int DeviceTypeNone = -1;
-        private const int DeviceTypeKeyboardTyping = 2;
+        private const int DeviceTypeKeyboardTyping = 0;
         private const int DeviceTypeGamepad = 1;
         private const int DeviceTypeKeyboardTenKey = 2;
         private const int DeviceTypeMidi = 3;
@@ -29,9 +29,6 @@ namespace Baku.VMagicMirror
             {
                 switch(message.Command)
                 {
-                    case MessageCommandNames.EnableWordToMotion:
-                        manager.UseKeyboardWordTypingForWordToMotion = message.ToBoolean();
-                        break;
                     case MessageCommandNames.ReloadMotionRequests:
                         ReloadMotionRequests(message.Content);
                         break;

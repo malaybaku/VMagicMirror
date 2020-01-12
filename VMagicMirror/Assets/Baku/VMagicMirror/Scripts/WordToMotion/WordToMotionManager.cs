@@ -9,7 +9,6 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    
     //NOTE: このクラスが(半分神になっちゃうのが気に入らんが)やること
     // - プレビューのon/off : プレビューがオンの場合、プレビューが全てに優先する
     // - プレビューではないワードベースモーションのon/off :
@@ -17,9 +16,6 @@ namespace Baku.VMagicMirror
     //     コレを使ってモデルの体や表情を操る
 
     //NOTE2: Bvhによる動作については「ほんとにBvhでいいのか」問題が浮上しているため、いったんGUI側で選択不可にしている。そのため実装が凄くいい加減。
-//    [RequireComponent(typeof(LateMotionTransfer))]
-
-
 
     /// <summary>
     /// <see cref="WordToMotionController"/>と同じ目的でWord To Motionを動かすが、
@@ -191,7 +187,6 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-
             _count = forgetTime;
             _analyzer.Add(KeyName2Char(keyName));
         }

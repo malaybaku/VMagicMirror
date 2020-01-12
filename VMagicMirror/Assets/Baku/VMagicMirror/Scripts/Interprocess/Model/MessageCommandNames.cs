@@ -144,7 +144,6 @@
         public const string WindYaw = nameof(WindYaw);
         
         // Word to Motion
-        public const string EnableWordToMotion = nameof(EnableWordToMotion);
         public const string ReloadMotionRequests = nameof(ReloadMotionRequests);
 
         public const string PlayWordToMotionItem = nameof(PlayWordToMotionItem);

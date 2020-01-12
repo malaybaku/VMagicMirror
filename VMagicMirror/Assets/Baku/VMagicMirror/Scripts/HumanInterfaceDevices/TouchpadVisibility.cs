@@ -13,6 +13,8 @@ namespace Baku.VMagicMirror
         private MagnetDeformer _deformer = null;
         private Renderer _renderer = null;
         private bool _latestVisibility = true;
+        
+        public bool IsVisible => _latestVisibility;
 
         private void Start()
         {

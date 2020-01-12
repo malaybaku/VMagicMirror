@@ -16,6 +16,8 @@ namespace Baku.VMagicMirror
         private Renderer[] _renderers = new Renderer[0];
         private bool _latestVisibility = false;
         
+        public bool IsVisible => _latestVisibility;
+
         private void Start()
         {
             _handler.Commands.Subscribe(message =>

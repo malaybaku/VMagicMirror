@@ -1414,6 +1414,7 @@ GameObject:
   - component: {fileID: 938861643318919385}
   - component: {fileID: 63078896318268246}
   - component: {fileID: 4136669779275994853}
+  - component: {fileID: 5838226657027795473}
   m_Layer: 5
   m_Name: TransformControlCanvas
   m_TagString: Untagged
@@ -1545,6 +1546,18 @@ MonoBehaviour:
   refMidiPosition: {x: 0, y: 0.92, z: 0.27}
   refMidiRotation: {x: 0, y: 0, z: 0}
   refMidiScale: {x: 0.35, y: 0.35, z: 0.35}
+--- !u!114 &5838226657027795473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3543419340843832733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ce11c87738fe47419d2d3f83dddc0ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3660422695488541056
 GameObject:
   m_ObjectHideFlags: 0

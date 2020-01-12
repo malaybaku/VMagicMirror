@@ -18,6 +18,8 @@ namespace Baku.VMagicMirror
         private bool _latestVisibility = false;
         private Renderer[] _knobRenderers = new Renderer[0];
         
+        public bool IsVisible => _latestVisibility;
+        
         private void Start()
         {
             _deformer = GetComponent<MagnetDeformer>();

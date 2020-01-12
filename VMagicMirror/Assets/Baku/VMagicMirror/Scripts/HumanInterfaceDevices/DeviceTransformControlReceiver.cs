@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 using UniRx;
 using Zenject;
 using mattatz.TransformControl;
-using UnityEngine.UI;
 
 namespace Baku.VMagicMirror
 {
@@ -25,7 +25,17 @@ namespace Baku.VMagicMirror
         [SerializeField] private TransformControl gamepadControl= null;
         [SerializeField] private Transform gamepadModelScaleTarget = null;
         [SerializeField] private Slider gamepadModelScaleSlider = null;
-        
+
+        public TransformControl KeyboardControl => keyboardControl;
+        public TransformControl TouchPadControl => touchPadControl;
+        public TransformControl GamepadControl => gamepadControl;
+        public TransformControl MidiControl => midiControl;
+
+        public bool CanShowKeyboardControl { get; set; } = true;
+        public bool CanShowTouchpadControl { get; set; } = true;
+        public bool CanShowGamepadControl { get; set; } = true;
+        public bool CanShowMidiControl { get; set; } = true;
+
         private TransformControl[] _transformControls => new[]
         {
             keyboardControl,
@@ -34,7 +44,8 @@ namespace Baku.VMagicMirror
             gamepadControl,
         };
 
-        private bool _isDeviceFreeLayoutEnabled = false;
+        public bool IsDeviceFreeLayoutEnabled { get; private set; }
+        
         private bool _preferWorldCoordinate = false;
         private TransformControl.TransformMode _mode = TransformControl.TransformMode.Translate;
         private Canvas _canvas = null;
@@ -69,24 +80,31 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (_isDeviceFreeLayoutEnabled)
+            if (!IsDeviceFreeLayoutEnabled)
             {
-                for (int i = 0; i < _transformControls.Length; i++)
-                {
-                    _transformControls[i].Control();
-                }
+                return;
+            }
+
+            keyboardControl.mode = CanShowKeyboardControl ? _mode : TransformControl.TransformMode.None;
+            touchPadControl.mode = CanShowTouchpadControl ? _mode : TransformControl.TransformMode.None;
+            gamepadControl.mode = CanShowGamepadControl ? _mode : TransformControl.TransformMode.None;
+            midiControl.mode = CanShowMidiControl ? _mode : TransformControl.TransformMode.None;
+            
+            for (int i = 0; i < _transformControls.Length; i++)
+            {
+                _transformControls[i].Control();
             }
         }
 
         private void EnableDeviceFreeLayout(bool enable)
         {
             Debug.Log("Enable Device Free Layout: " + enable);
-            if (_isDeviceFreeLayoutEnabled == enable)
+            if (IsDeviceFreeLayoutEnabled == enable)
             {
                 return;
             }
             
-            _isDeviceFreeLayoutEnabled = enable;
+            IsDeviceFreeLayoutEnabled = enable;
             _canvas.enabled = enable;
             for (int i = 0; i < _transformControls.Length; i++)
             {

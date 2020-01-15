@@ -39,7 +39,10 @@ namespace Baku.VMagicMirror
         public bool PreferLipSync;
 
         //NOTE: 辞書にしないでこのまま使う手も無くはないです
-        [SerializeField] private BlendShapeValues BlendShapeValues = null;
+        
+        public BlendShapeValues BlendShapeValues = null;
+
+        public List<MotionRequestBlendShapeItem> ExtraBlendShapeValues = null;
 
         [NonSerialized]
         private Dictionary<string, float> _blendShapeValues = null;
@@ -52,29 +55,11 @@ namespace Baku.VMagicMirror
             {
                 if (_blendShapeValues == null)
                 {
-                    _blendShapeValues = new Dictionary<string, float>()
+                    _blendShapeValues = BlendShapeValues.ToDic();
+                    foreach (var pair in ExtraBlendShapeValues)
                     {
-                        ["Joy"] = BlendShapeValues.Joy * 0.01f,
-                        ["Angry"] = BlendShapeValues.Angry * 0.01f,
-                        ["Sorrow"] = BlendShapeValues.Sorrow * 0.01f,
-                        ["Fun"] = BlendShapeValues.Fun * 0.01f,
-                        ["Neutral"] = BlendShapeValues.Neutral * 0.01f,
-
-                        ["Blink"] = BlendShapeValues.Blink * 0.01f,
-                        ["Blink_L"] = BlendShapeValues.Blink_L * 0.01f,
-                        ["Blink_R"] = BlendShapeValues.Blink_R * 0.01f,
-
-                        ["A"] = BlendShapeValues.A * 0.01f,
-                        ["I"] = BlendShapeValues.I * 0.01f,
-                        ["U"] = BlendShapeValues.U * 0.01f,
-                        ["E"] = BlendShapeValues.E * 0.01f,
-                        ["O"] = BlendShapeValues.O * 0.01f,
-
-                        ["LookUp"] = BlendShapeValues.LookUp * 0.01f,
-                        ["LookDown"] = BlendShapeValues.LookDown * 0.01f,
-                        ["LookLeft"] = BlendShapeValues.LookLeft * 0.01f,
-                        ["LookRight"] = BlendShapeValues.LookRight * 0.01f,
-                    };
+                        _blendShapeValues[pair.Name] = pair.Value * 0.01f;
+                    }
                 }
                 return _blendShapeValues;
             }
@@ -87,6 +72,13 @@ namespace Baku.VMagicMirror
             //TODO: ちょっとここ安定性低いからtry catchしないとダメじゃないかな！
             return JsonUtility.FromJson<MotionRequest>(content);
         }
+    }
+
+    [Serializable]
+    public class MotionRequestBlendShapeItem
+    {
+        public string Name;
+        public int Value;
     }
 
     /// <summary>
@@ -121,5 +113,26 @@ namespace Baku.VMagicMirror
         public int LookDown;
         public int LookLeft;
         public int LookRight;
+
+        public Dictionary<string, float> ToDic() => new Dictionary<string, float>()
+        {
+            [nameof(Joy)] = Joy * 0.01f,
+            [nameof(Neutral)] = Neutral * 0.01f,
+            [nameof(Angry)] = Angry * 0.01f,
+            [nameof(Sorrow)] = Sorrow * 0.01f,
+            [nameof(Fun)] = Fun * 0.01f,
+            [nameof(Blink)] = Blink * 0.01f,
+            [nameof(Blink_L)] = Blink_L * 0.01f,
+            [nameof(Blink_R)] = Blink_R * 0.01f,
+            [nameof(A)] = A * 0.01f,
+            [nameof(I)] = I * 0.01f,
+            [nameof(U)] = U * 0.01f,
+            [nameof(E)] = E * 0.01f,
+            [nameof(O)] = O * 0.01f,
+            [nameof(LookUp)] = LookUp * 0.01f,
+            [nameof(LookDown)] = LookDown * 0.01f,
+            [nameof(LookLeft)] = LookLeft * 0.01f,
+            [nameof(LookRight)] = LookRight * 0.01f,
+        };
     }
 }

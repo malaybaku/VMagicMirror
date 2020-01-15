@@ -22,6 +22,22 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 basePosition = new Vector3(0f, 1f, 0.24f);
         [SerializeField] private Vector3 baseRotation = new Vector3(-15, 0, 0);
         [SerializeField] private float baseScale = 0.8f;
+
+        [SerializeField] private MeshRenderer bodyRenderer = null;
+        [SerializeField] private MeshRenderer buttonRenderer = null;
+
+        private void Start()
+        {
+            //note: 事前知識としてボディ部はマテリアル3つ、ボタン部分はマテリアル1つを使っているのがわかっててこういう書き方
+            var mats = new Material[bodyRenderer.materials.Length];
+            for (int i = 0; i < mats.Length; i++)
+            {
+                mats[i] = HIDMaterialUtil.Instance.GetGamepadBodyMaterial();
+            }
+
+            bodyRenderer.materials = mats;
+            buttonRenderer.material = HIDMaterialUtil.Instance.GetGamepadButtonMaterial();
+        }
         
         /// <summary>
         /// リセット処理などで明示的に呼ばれた場合、指定されたパラメタベースでゲームパッドの位置を初期化します。
@@ -83,6 +99,43 @@ namespace Baku.VMagicMirror
         //ワールドのを渡す点に注意
         public (Vector3, Quaternion) GetRightHand() => (rightHand.position, rightHand.rotation);
         public (Vector3, Quaternion) GetLeftHand() => (leftHand.position, leftHand.rotation);
+
+        public static ReactedHand GetPreferredReactionHand(GamepadKey key)
+        {
+            switch (key)
+            {
+                case GamepadKey.B:
+                case GamepadKey.A:
+                case GamepadKey.X:
+                case GamepadKey.Y:
+                case GamepadKey.RShoulder:
+                case GamepadKey.RTrigger:
+                    return ReactedHand.Right;
+                case GamepadKey.UP:
+                case GamepadKey.RIGHT:
+                case GamepadKey.DOWN:
+                case GamepadKey.LEFT:
+                case GamepadKey.LShoulder:
+                case GamepadKey.LTrigger:
+                    return ReactedHand.Left;
+                default:
+                    return ReactedHand.None;
+            }
+        }
+
+        public static bool IsSideKey(GamepadKey key)
+        {
+            switch (key)
+            {
+                case GamepadKey.RShoulder:
+                case GamepadKey.RTrigger:
+                case GamepadKey.LShoulder:
+                case GamepadKey.LTrigger:
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
     }
 }

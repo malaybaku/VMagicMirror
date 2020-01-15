@@ -63,5 +63,8 @@ namespace Baku.VMagicMirror
             _vrmRoot = null;
             imageBasedBodyMotion.OnVrmDisposing();
         }
+
+        public void EnableImageBaseBodyLeanZ(bool enable)
+            => imageBasedBodyMotion.EnableBodyLeanZ = enable;
     }
 }

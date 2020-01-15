@@ -52,6 +52,9 @@
         public const string EnableWaitMotion = nameof(EnableWaitMotion);
         public const string WaitMotionScale = nameof(WaitMotionScale);
         public const string WaitMotionPeriod = nameof(WaitMotionPeriod);
+        
+        // Motion, Body
+        public const string EnableBodyLeanZ = nameof(EnableBodyLeanZ);
 
         // Motion, Face
         public const string EnableFaceTracking = nameof(EnableFaceTracking);
@@ -64,8 +67,7 @@
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
 
-
-        // Moition, Face, Eyebrow
+        // Motion, Face, Eyebrow
         public const string EyebrowLeftUpKey = nameof(EyebrowLeftUpKey);
         public const string EyebrowLeftDownKey = nameof(EyebrowLeftDownKey);
         public const string UseSeparatedKeyForEyebrow = nameof(UseSeparatedKeyForEyebrow);
@@ -101,6 +103,10 @@
         public const string HidVisibility = nameof(HidVisibility);
         public const string SetKeyboardTypingEffectType = nameof(SetKeyboardTypingEffectType);
         public const string EnableDeviceFreeLayout = nameof(EnableDeviceFreeLayout);
+        
+        // Layout, MIDI Controller
+        public const string MidiControllerVisibility = nameof(MidiControllerVisibility);
+        public const string EnableMidiRead = nameof(EnableMidiRead);
 
         // Layout, Gamepad
         public const string EnableGamepad = nameof(EnableGamepad);
@@ -112,7 +118,10 @@
         public const string GamepadLeanMode = nameof(GamepadLeanMode);
         public const string GamepadLeanReverseHorizontal = nameof(GamepadLeanReverseHorizontal);
         public const string GamepadLeanReverseVertical = nameof(GamepadLeanReverseVertical);
-        
+
+        // Image Quality
+        public const string SetImageQuality = nameof(SetImageQuality);
+
         // Lighting 
         public const string LightIntensity = nameof(LightIntensity);
         public const string LightColor = nameof(LightColor);
@@ -135,7 +144,6 @@
         public const string WindYaw = nameof(WindYaw);
         
         // Word to Motion
-        public const string EnableWordToMotion = nameof(EnableWordToMotion);
         public const string ReloadMotionRequests = nameof(ReloadMotionRequests);
 
         public const string PlayWordToMotionItem = nameof(PlayWordToMotionItem);
@@ -143,7 +151,9 @@
         public const string SendWordToMotionPreviewInfo = nameof(SendWordToMotionPreviewInfo);
 
         public const string SetDeviceTypeToStartWordToMotion = nameof(SetDeviceTypeToStartWordToMotion);
-        
+
+        public const string LoadMidiNoteToMotionMap = nameof(LoadMidiNoteToMotionMap);
+        public const string RequireMidiNoteOnMessage = nameof(RequireMidiNoteOnMessage);
 
         // Screenshot
         public const string TakeScreenshot = nameof(TakeScreenshot);

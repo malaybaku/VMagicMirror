@@ -117,7 +117,7 @@ MonoBehaviour:
   headRotBlinkProbability: 0.6
   eyeRotBlinkSpeedThreshold: 15
   eyeRotBlinkProbability: 0.8
-  lipSyncContext: {fileID: 0}
+  lipSyncContext: {fileID: 3748904030990320927}
   lipSyncVisemeThreshold: 0.2
   lipSyncOnCountThreshold: 10
   lipSyncOffCountThreshold: 2

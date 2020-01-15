@@ -13,7 +13,6 @@ namespace Baku.VMagicMirror
         private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
 
         [SerializeField] private FaceControlManager faceControlManager = null;
-        [SerializeField] private FaceTracker faceTracker = null;
         [SerializeField] private WordToMotionManager wordToMotion = null;
 
         //ちょっとデフォルトで眉を上げとこう的な値。目の全開きは珍しいという仮説による。
@@ -26,6 +25,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private float speedLerpFactor = 0.2f;
         [SerializeField] [Range(0.05f, 1.0f)] private float timeScaleFactor = 0.3f;
 
+        [Inject] private FaceTracker _faceTracker = null;
         [Inject] private IVRMLoadable _vrmLoadable = null;
 
         private EyebrowBlendShapeSet EyebrowBlendShape => faceControlManager.EyebrowBlendShape;
@@ -86,12 +86,12 @@ namespace Baku.VMagicMirror
             _leftEyeBone = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
 
             _rightEyeBrowHeight?.Dispose();
-            _rightEyeBrowHeight = faceTracker.FaceParts.RightEyebrow.Height.Subscribe(
+            _rightEyeBrowHeight = _faceTracker.FaceParts.RightEyebrow.Height.Subscribe(
                 v => _rightEyeBrowValue = v
             );
 
             _leftEyeBrowHeight?.Dispose();
-            _leftEyeBrowHeight = faceTracker.FaceParts.LeftEyebrow.Height.Subscribe(
+            _leftEyeBrowHeight = _faceTracker.FaceParts.LeftEyebrow.Height.Subscribe(
                 v => _leftEyeBrowValue = v
             );
 
@@ -160,11 +160,11 @@ namespace Baku.VMagicMirror
             }
 
             //NOTE: ここスケールファクタないと非常に小さい値しか入らないのでは？？？
-            float left = _leftEyeBrowValue - faceTracker.CalibrationData.eyeBrowPosition;
-            float right = _rightEyeBrowValue - faceTracker.CalibrationData.eyeBrowPosition;
+            float left = _leftEyeBrowValue - _faceTracker.CalibrationData.eyeBrowPosition;
+            float right = _rightEyeBrowValue - _faceTracker.CalibrationData.eyeBrowPosition;
             //顔トラッキングしない場合、つねに0が入るようにしとく
-            if (!faceTracker.HasInitDone ||
-                !faceTracker.FaceDetectedAtLeastOnce ||
+            if (!_faceTracker.HasInitDone ||
+                !_faceTracker.FaceDetectedAtLeastOnce ||
                 PreferAutoBlink)
             {
                 left = 0;

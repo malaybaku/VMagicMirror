@@ -15,19 +15,34 @@ namespace Baku.VMagicMirror
         private Material _padMaterial;
         private Material _buttonMaterial;
         private Material _stickAreaMaterial;
+        private Material _midiNoteMaterial;
+        private Material _midiKnobMaterial;
 
         public Material GetKeyMaterial()
-            => _keyMaterial ?? (_keyMaterial = LoadMaterial("key.png", "Key", "Key"));
+            => _keyMaterial ?? (_keyMaterial = LoadMaterial(
+                   "key.png", "Key", "Key"));
 
         public Material GetPadMaterial()
-            => _padMaterial ?? (_padMaterial = LoadMaterial("pad.png", "Pad", "Pad"));
+            => _padMaterial ?? (_padMaterial = LoadMaterial(
+                   "pad.png", "Pad", "Pad"));
 
-        public Material GetButtonMaterial()
-            => _buttonMaterial ?? (_buttonMaterial = LoadMaterial("button.png", "Button", "Key"));
+        public Material GetGamepadBodyMaterial()
+            => _buttonMaterial ?? (_buttonMaterial = LoadMaterial(
+                   "gamepad_body.png", "GamepadBody", "GamepadBody"));
 
-        public Material GetStickAreaMaterial()
-            => _stickAreaMaterial ?? (_stickAreaMaterial = LoadMaterial("stickArea.png", "StickArea", "Key"));
+        public Material GetGamepadButtonMaterial()
+            => _stickAreaMaterial ?? (_stickAreaMaterial = LoadMaterial(
+                   "gamepad_button.png", "GamepadButton", "GamepadButton"));
 
+        public Material GetMidiNoteMaterial()
+            => _midiNoteMaterial ?? (_midiNoteMaterial = LoadMaterial(
+                   "midi_note.png", "MidiNote", "MidiNote"));
+
+        public Material GetMidiKnobMaterial()
+            => _midiKnobMaterial ?? (_midiKnobMaterial = LoadMaterial(
+                   "midi_knob.png", "MidiKnob", "MidiKnob"));
+        
+        
         private Material LoadMaterial(string textureFileName, string materialName, string defaultTextureName)
         {
             var result = Resources.Load<Material>("Materials/" + materialName);

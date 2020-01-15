@@ -56,6 +56,7 @@ sysinfo.txt
 /VMagicMirror/Assets/VRMLoaderUI/
 /VMagicMirror/Assets/VRoidSDK/
 /VMagicMirror/Assets/XinputGamepad/
+/VMagicMirror/Assets/MidiJack/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
 /VMagicMirror/Assets/DlibFaceLandmarkDetector.meta
@@ -69,3 +70,4 @@ sysinfo.txt
 /VMagicMirror/Assets/VRMLoaderUI.meta
 /VMagicMirror/Assets/VRoidSDK.meta
 /VMagicMirror/Assets/XinputGamepad.meta
+/VMagicMirror/Assets/MidiJack.meta

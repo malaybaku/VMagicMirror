@@ -2,10 +2,10 @@
 
 # VMagicMirror
 
-v0.9.5
+v0.9.6
 
 * 作成: 獏星(ばくすたー)
-* 2019/12/14
+* 2020/01/13
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -13,7 +13,8 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 2. ダウンロード
 3. 質問など
 4. (開発者向け)ビルド手順
-5. (開発者向け)MODを作成する手順
+5. OSS等のライセンス
+6. (開発者向け)MODを作成する手順
 
 ## 1. できること
 
@@ -76,12 +77,12 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
-* [Deform](https://github.com/keenanwoodall/Deform)
+* [MidiJack](https://github.com/malaybaku/MidiJack)
 * DOTween (アセットストアから)
 
-上記のうちDeformはパッケージマネージャで導入されるため、導入作業は不要です。
-
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
+
+また、MidiJackはForkしたものを使っているので、この点にも注意して下さい。
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
 
@@ -100,7 +101,20 @@ Dlib FaceLandmark Detectorについては、アセットに含まれるデータ
 
 フォルダ構成については配布されているVMagicMirrorも参考にしてください。
 
-## 5. SketchFabから取得しているモデルについて
+## 5. OSS等のライセンス
+
+### 5.1. OSSライセンス
+
+設定UIであるWPFプロジェクト内でOSSライセンスを掲載しています。
+
+[https://github.com/malaybaku/VMagicMirrorConfig](https://github.com/malaybaku/VMagicMirrorConfig)
+
+プレーンテキストとしては下記を参照下さい。
+
+https://github.com/malaybaku/VMagicMirrorConfig/blob/master/VMagicMirrorConfig/VMagicMirrorConfig/Resources/LicenseTextResource.xaml
+
+
+### 5.2. SketchFabから取得しているモデルについて
 
 このレポジトリに含まれる`xbox_controller.fbx`はSketchFabにてAttribution 4.0 International (CC BY 4.0)で公開されているものを用いています。
 

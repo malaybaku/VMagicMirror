@@ -233,6 +233,7 @@ GameObject:
   - component: {fileID: 5813678810404708594}
   - component: {fileID: 5813678810404708593}
   - component: {fileID: 5813678810404708492}
+  - component: {fileID: 1563715659255556209}
   m_Layer: 0
   m_Name: HandAndHeadIK
   m_TagString: Untagged
@@ -266,7 +267,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e27dcaac7204d74cb9cf10b7ec999d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePad: {fileID: 0}
   handIkIntegrator: {fileID: 5813678810404708495}
   headIkIntegrator: {fileID: 5813678810404708592}
   gamepadBasedBodyLean: {fileID: 5813678808713813108}
@@ -306,6 +306,7 @@ MonoBehaviour:
   smallGamepadHand: {fileID: 5813678810404708594}
   gamepadFinger: {fileID: 5813678810404708492}
   mouseMove: {fileID: 5813678810404708598}
+  midi: {fileID: 1563715659255556209}
   presentation: {fileID: 5813678810404708597}
   fingerController: {fileID: 5813678810404708593}
   particleStore: {fileID: 0}
@@ -469,7 +470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePad: {fileID: 0}
-  imageBasedBodyMotion: {fileID: 0}
+  imageBasedBodyMotion: {fileID: 5813678808713813112}
   speedFactor: 3
   buttonDownSpeedFactor: 8
   bodyMotionToGamepadPosApplyFactor: 0.5
@@ -499,6 +500,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fingerController: {fileID: 5813678810404708593}
+--- !u!114 &1563715659255556209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678810404708600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b1c946304478864da3e7bb5f60cd9d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  provider: {fileID: 0}
+  noteMotionDuration: 0.3
+  knobMotionLerpFactor: 12
 --- !u!1 &5813678810510073684
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,7 +525,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5813678810510073683}
   m_Layer: 0
-  m_Name: MotionController
+  m_Name: MotionControlLogics
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

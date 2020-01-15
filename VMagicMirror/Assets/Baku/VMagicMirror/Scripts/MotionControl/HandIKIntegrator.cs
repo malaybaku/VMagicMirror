@@ -12,6 +12,7 @@ namespace Baku.VMagicMirror
 
         /// <summary> IK種類が変わるときのブレンディングに使う時間。IK自体の無効化/有効化もこの時間で行う </summary>
         private const float HandIkToggleDuration = 0.25f;
+        private const float HandIkTypeChangeCoolDown = 0.3f;
 
         [SerializeField] private Transform rightHandTarget = null;
         [SerializeField] private Transform leftHandTarget = null;
@@ -28,6 +29,9 @@ namespace Baku.VMagicMirror
         [SerializeField] private MouseMoveHandIKGenerator mouseMove = null;
         public MouseMoveHandIKGenerator MouseMove => mouseMove;
 
+        [SerializeField] private MidiHandIkGenerator midi = null;
+        public MidiHandIkGenerator MidiHand => midi;
+
         [SerializeField] private PresentationHandIKGenerator presentation = null;
         public PresentationHandIKGenerator Presentation => presentation;
 
@@ -38,12 +42,16 @@ namespace Baku.VMagicMirror
         private float _leftHandStateBlendCount = 0f;
         private float _rightHandStateBlendCount = 0f;
 
+        private float _leftHandIkChangeCoolDown = 0f;
+        private float _rightHandIkChangeCoolDown = 0f;
+
         public bool EnableHidArmMotion { get; set; } = true;
 
         public bool UseGamepadForWordToMotion { get; set; } = false;
         
         //NOTE: このフラグではキーボードのみならずマウス入力も無視することに注意
         public bool UseKeyboardForWordToMotion { get; set; } = false;
+        public bool UseMidiControllerForWordToMotion { get; set; } = false;
         
         public bool EnablePresentationMode { get; set; }
 
@@ -76,6 +84,11 @@ namespace Baku.VMagicMirror
             }
             
             var (hand, pos) = typing.PressKey(keyName, EnablePresentationMode);
+            if (!CheckCoolDown(hand, HandTargetType.Keyboard))
+            {
+                return;
+            }
+            
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.Keyboard);
@@ -99,6 +112,14 @@ namespace Baku.VMagicMirror
         public void MoveMouse(Vector3 mousePosition)
         {
             if (UseKeyboardForWordToMotion)
+            {
+                return;
+            }
+            
+            if (!CheckCoolDown(
+                ReactedHand.Right, 
+                EnablePresentationMode ? HandTargetType.Presentation : HandTargetType.Mouse
+                ))
             {
                 return;
             }
@@ -133,7 +154,7 @@ namespace Baku.VMagicMirror
         
         public void MoveLeftGamepadStick(Vector2 v)
         {
-            if (UseGamepadForWordToMotion)
+            if (UseGamepadForWordToMotion || !CheckCoolDown(ReactedHand.Left, HandTargetType.Gamepad))
             {
                 return;
             }
@@ -144,7 +165,7 @@ namespace Baku.VMagicMirror
 
         public void MoveRightGamepadStick(Vector2 v)
         {
-            if (UseGamepadForWordToMotion)
+            if (UseGamepadForWordToMotion || !CheckCoolDown(ReactedHand.Right, HandTargetType.Gamepad))
             {
                 return;
             }
@@ -162,7 +183,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            var hand = GamepadProvider.GetPreferredReactionHand(key);
+            var hand = SmallGamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.Gamepad);
@@ -183,7 +204,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            var hand = GamepadProvider.GetPreferredReactionHand(key);
+            var hand = SmallGamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.Gamepad);
@@ -204,6 +225,48 @@ namespace Baku.VMagicMirror
             smallGamepadHand.ButtonStick(pos);
             SetLeftHandIk(HandTargetType.Gamepad);
         }
+        
+        #endregion
+        
+        #region Midi Controller
+        
+        public void KnobValueChange(int knobNumber, float value)
+        {
+            if (UseMidiControllerForWordToMotion)
+            {
+                return;
+            }
+            
+            var hand = midi.KnobValueChange(knobNumber, value);
+            if (hand == ReactedHand.Left)
+            {
+                SetLeftHandIk(HandTargetType.MidiController);
+            }
+            else
+            {
+                SetRightHandIk(HandTargetType.MidiController);
+            }
+        }
+        
+        public void NoteOn(int noteNumber)
+        {
+            if (UseMidiControllerForWordToMotion)
+            {
+                return;
+            }
+            
+            var (hand, pos) = midi.NoteOn(noteNumber);
+            if (hand == ReactedHand.Left)
+            {
+                SetLeftHandIk(HandTargetType.MidiController);
+            }
+            else
+            {
+                SetRightHandIk(HandTargetType.MidiController);
+            }
+            particleStore.RequestMidiParticleStart(pos);
+        }
+
         
         #endregion
         
@@ -257,6 +320,11 @@ namespace Baku.VMagicMirror
 
         private void UpdateLeftHand()
         {
+            if (_leftHandIkChangeCoolDown > 0)
+            {
+                _leftHandIkChangeCoolDown -= Time.deltaTime;
+            }
+            
             //普通の状態: 複数ステートのブレンドはせず、今のモードをそのまま通す
             if (_leftHandStateBlendCount >= HandIkToggleDuration)
             {
@@ -285,6 +353,11 @@ namespace Baku.VMagicMirror
 
         private void UpdateRightHand()
         {
+            if (_rightHandIkChangeCoolDown > 0f)
+            {
+                _rightHandIkChangeCoolDown -= Time.deltaTime;
+            }
+            
             //普通の状態: 複数ステートのブレンドはせず、今のモードをそのまま通す
             if (_rightHandStateBlendCount >= HandIkToggleDuration)
             {
@@ -319,12 +392,15 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            _leftHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
+
             var prevType = _leftTargetType;
             _leftTargetType = targetType;
 
             var ik =
                 (targetType == HandTargetType.Keyboard) ? Typing.LeftHand :
                 (targetType == HandTargetType.Gamepad) ? SmallGamepadHand.LeftHand :
+                (targetType == HandTargetType.MidiController) ? midi.LeftHand : 
                 Typing.LeftHand;
 
             _prevLeftHand = _currentLeftHand;
@@ -349,6 +425,8 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            _rightHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
+
             var prevType = _rightTargetType;
             _rightTargetType = targetType;
 
@@ -357,6 +435,7 @@ namespace Baku.VMagicMirror
                 (targetType == HandTargetType.Keyboard) ? Typing.RightHand :
                 (targetType == HandTargetType.Gamepad) ? SmallGamepadHand.RightHand :
                 (targetType == HandTargetType.Presentation) ? Presentation.RightHand :
+                (targetType == HandTargetType.MidiController) ? midi.RightHand :
                 Typing.RightHand;
 
             _prevRightHand = _currentRightHand;
@@ -375,6 +454,22 @@ namespace Baku.VMagicMirror
             }
         }
 
+        //クールダウンタイムを考慮したうえで、モーションを適用してよいかどうかを確認します。
+        private bool CheckCoolDown(ReactedHand hand, HandTargetType targetType)
+        {
+            if ((hand == ReactedHand.Left && targetType == _leftTargetType) ||
+                (hand == ReactedHand.Right && targetType == _rightTargetType)
+            )
+            {
+                //同じデバイスを続けて触っている -> 素通しでOK
+                return true;
+            }
+
+            return
+                (hand == ReactedHand.Left && _leftHandIkChangeCoolDown <= 0) ||
+                (hand == ReactedHand.Right && _rightHandIkChangeCoolDown <= 0);
+        }
+        
         /// <summary>
         /// x in [0, 1] を y in [0, 1]へ3次補間するやつ
         /// </summary>
@@ -389,6 +484,7 @@ namespace Baku.VMagicMirror
             Keyboard,
             Presentation,
             Gamepad,
+            MidiController,
         }
 
     }

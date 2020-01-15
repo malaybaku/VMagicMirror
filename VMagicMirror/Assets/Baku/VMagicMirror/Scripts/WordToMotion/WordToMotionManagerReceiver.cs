@@ -11,9 +11,11 @@ namespace Baku.VMagicMirror
     public class WordToMotionManagerReceiver : MonoBehaviour
     {
         //Word to Motionの専用入力に使うデバイスを指定する定数値
-        private const int DeviceTypeNone = 0;
+        private const int DeviceTypeNone = -1;
+        private const int DeviceTypeKeyboardTyping = 0;
         private const int DeviceTypeGamepad = 1;
-        private const int DeviceTypeKeyboard = 2;
+        private const int DeviceTypeKeyboardTenKey = 2;
+        private const int DeviceTypeMidi = 3;
 
         [Inject] private ReceivedMessageHandler _handler = null;
         [Inject] private RawInputChecker _rawInputChecker = null;
@@ -27,9 +29,6 @@ namespace Baku.VMagicMirror
             {
                 switch(message.Command)
                 {
-                    case MessageCommandNames.EnableWordToMotion:
-                        manager.EnableReadKey = message.ToBoolean();
-                        break;
                     case MessageCommandNames.ReloadMotionRequests:
                         ReloadMotionRequests(message.Content);
                         break;
@@ -58,23 +57,10 @@ namespace Baku.VMagicMirror
 
         private void SetWordToMotionInputType(int deviceType)
         {
-            switch (deviceType)
-            {
-                case DeviceTypeNone:
-                    manager.UseGamepadForWordToMotion = false;
-                    manager.UseKeyboardForWordToMotion = false;
-                    break;
-                case DeviceTypeGamepad:
-                    manager.UseGamepadForWordToMotion = true;
-                    manager.UseKeyboardForWordToMotion = false;
-                    break;
-                case DeviceTypeKeyboard:
-                    manager.UseGamepadForWordToMotion = false;
-                    manager.UseKeyboardForWordToMotion = true;
-                    break;
-                default:
-                    break;
-            }
+            manager.UseKeyboardWordTypingForWordToMotion = (deviceType == DeviceTypeKeyboardTyping);
+            manager.UseGamepadForWordToMotion = (deviceType == DeviceTypeGamepad);
+            manager.UseKeyboardForWordToMotion = (deviceType == DeviceTypeKeyboardTenKey);
+            manager.UseMidiForWordToMotion = (deviceType == DeviceTypeMidi);
         }
 
         private void ReloadMotionRequests(string json)

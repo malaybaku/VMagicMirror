@@ -9,7 +9,6 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    
     //NOTE: このクラスが(半分神になっちゃうのが気に入らんが)やること
     // - プレビューのon/off : プレビューがオンの場合、プレビューが全てに優先する
     // - プレビューではないワードベースモーションのon/off :
@@ -17,9 +16,6 @@ namespace Baku.VMagicMirror
     //     コレを使ってモデルの体や表情を操る
 
     //NOTE2: Bvhによる動作については「ほんとにBvhでいいのか」問題が浮上しているため、いったんGUI側で選択不可にしている。そのため実装が凄くいい加減。
-//    [RequireComponent(typeof(LateMotionTransfer))]
-
-
 
     /// <summary>
     /// <see cref="WordToMotionController"/>と同じ目的でWord To Motionを動かすが、
@@ -29,7 +25,8 @@ namespace Baku.VMagicMirror
     {
         [SerializeField] private GamepadToWordToMotion gamepad = null;
         [SerializeField] private KeyboardToWordToMotion keyboard = null;
-
+        [SerializeField] private MidiToWordToMotion midi = null;
+        
         [SerializeField]
         [Tooltip("この時間だけキー入力が無かったらワードが途切れたものとして入力履歴をクリアする。")]
         private float forgetTime = 1.0f;
@@ -70,8 +67,14 @@ namespace Baku.VMagicMirror
             set => keyboard.UseKeyboardInput = value;
         }
 
+        public bool UseMidiForWordToMotion
+        {
+            get => midi.UseMidiInput;
+            set => midi.UseMidiInput = value;
+        }
+
         /// <summary>キー押下イベントをちゃんと読み込むか否か</summary>
-        public bool EnableReadKey { get; set; } = true;
+        public bool UseKeyboardWordTypingForWordToMotion { get; set; } = true;
 
         private bool _enablePreview = false;
         /// <summary>
@@ -180,11 +183,10 @@ namespace Baku.VMagicMirror
         /// <param name="keyName"></param>
         public void ReceiveKeyDown(string keyName)
         {
-            if (!EnableReadKey)
+            if (!UseKeyboardWordTypingForWordToMotion)
             {
                 return;
             }
-
             _count = forgetTime;
             _analyzer.Add(KeyName2Char(keyName));
         }
@@ -223,6 +225,7 @@ namespace Baku.VMagicMirror
             }
             gamepad.RequestExecuteWordToMotionItem += ExecuteSelectedItem;
             keyboard.RequestExecuteWordToMotionItem += ExecuteSelectedItem;
+            midi.RequestExecuteWordToMotionItem += ExecuteSelectedItem;
 
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmDisposing;

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using RootMotion.FinalIK;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -13,34 +14,18 @@ namespace Baku.VMagicMirror
         private const float PositionWeightWhenValid = 0.5f;
         
         //カメラ領域のうち標準では(320x240のうち)30% x 30%の領域くらいが顔の標準の映り込みかなー、という意味。要調整。
-        //const float BaseFaceSizeFactor = 0.1f;
-
-        public Vector3 offsetAmplifier = new Vector3(
-            0.3f,
-            0.3f,
-            1.0f
-            );
-
-        [SerializeField]
-        private Vector3 offsetLowerLimit = new Vector3(
-            -1.0f,
-            -1.0f,
-            -0.05f
-            );
-
-        [SerializeField]
-        private Vector3 offsetUpperLimit = new Vector3(
-            1.0f,
-            1.0f,
-            0.1f
-            );
-
-        [SerializeField] private FaceTracker faceTracker = null;
+        [SerializeField] private Vector3 offsetAmplifier = new Vector3(0.3f, 0.3f, 1.0f);
+        [SerializeField] private Vector3 offsetLowerLimit = new Vector3(-1.0f, -1.0f, -0.05f);
+        [SerializeField] private Vector3 offsetUpperLimit = new Vector3(1.0f, 1.0f, 0.1f);
         [SerializeField] private float speedFactor = 12f;
 
         [Range(0.05f, 1.0f)]
-        [SerializeField]
-        private float timeScaleFactor = 0.3f;
+        [SerializeField] private float timeScaleFactor = 0.3f;
+
+        [SerializeField] private bool enableBodyLeanZ = false;
+
+        [Inject]
+        private FaceTracker _faceTracker = null;
 
         private bool _isVrmLoaded = false;
         private Transform _vrmRoot = null;
@@ -53,6 +38,13 @@ namespace Baku.VMagicMirror
         private Vector3 _prevSpeed;
 
         private FullBodyBipedIK _ik = null;
+        
+        /// <summary>体をZ方向に動かしてもよいかどうかを取得、設定します。</summary>
+        public bool EnableBodyLeanZ
+        {
+            get => enableBodyLeanZ;
+            set => enableBodyLeanZ = value;
+        }
         
         /// <summary>体のIKに適用したいXY軸要素のみが入ったオフセット値を取得します。</summary>
         public Vector3 BodyIkXyOffset { get; private set; }
@@ -136,23 +128,25 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (!_isVrmLoaded || !faceTracker.FaceDetectedAtLeastOnce)
+            if (!_isVrmLoaded || !_faceTracker.FaceDetectedAtLeastOnce)
             {
                 return;
             }
 
             float forwardLength = 0.0f;
-            float faceSize = faceTracker.DetectedRect.width * faceTracker.DetectedRect.height;
-            float faceSizeFactor = Mathf.Sqrt(faceSize / faceTracker.CalibrationData.faceSize);
+            float faceSize = _faceTracker.DetectedRect.width * _faceTracker.DetectedRect.height;
+            float faceSizeFactor = Mathf.Sqrt(faceSize / _faceTracker.CalibrationData.faceSize);
 
             //とりあえず簡単に。値域はもっと決めようあるよねここは。
-            forwardLength = Mathf.Clamp(
-                (faceSizeFactor - 1.0f) * offsetAmplifier.z,
-                offsetLowerLimit.z,
-                offsetUpperLimit.z
-                );
+            forwardLength = enableBodyLeanZ
+                ? Mathf.Clamp(
+                    (faceSizeFactor - 1.0f) * offsetAmplifier.z,
+                    offsetLowerLimit.z, 
+                    offsetUpperLimit.z
+                    )
+                : 0f;
 
-            var center = faceTracker.DetectedRect.center - faceTracker.CalibrationData.faceCenter;
+            var center = _faceTracker.DetectedRect.center - _faceTracker.CalibrationData.faceCenter;
             var idealPosition = new Vector3(
                 center.x * offsetAmplifier.x,
                 center.y * offsetAmplifier.y,

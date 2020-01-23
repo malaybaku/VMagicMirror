@@ -27,6 +27,6 @@ permalink: /tips/change_textures
 
 画像ファイルを配置したあとで`VMagicMirror.exe`を実行することで、配置した画像が読み込まれます。
 
-{% include docimg.html file="./images/tips/change_texture.png" %}
+{% include docimg.html file="/images/tips/change_texture.png" %}
 
 もとに戻したいときは、配置した画像ファイルを削除してからVMagicMirrorを再び起動します。

@@ -9,12 +9,12 @@ lang_prefix: /en/
 
 # Change Log
 
-#### -
+#### - (not an .exe update)
 {: .doc-sec2 }
 
-????/??/??
+2020/01/24
 
-* Change: Update whole web page 
+* Change: Update web page 
 
 #### v0.9.6
 {: .doc-sec2 }

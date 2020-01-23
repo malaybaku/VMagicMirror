@@ -1,0 +1,22 @@
+<nav class="blue" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" class="brand-logo" href="{{ "/" | relative_url }}">VMagicMirror</a>
+          <ul class="right hide-on-med-and-down">
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}">Home</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}download">Download</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}get_started">Get Started</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}docs">Docs</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}tips">Tips</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}questions">FAQ</a></li>
+          </ul>
+
+          <ul id="nav-mobile" class="side-nav">
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}">Home</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}download">Download</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}get_started">Get Started</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}docs">Docs</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}tips">Tips</a></li>
+            <li><a href="{{ page.lang_prefix | default: "/" | relative_url }}questions">FAQ</a></li>
+          </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+</nav>

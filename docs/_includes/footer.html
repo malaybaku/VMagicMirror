@@ -1,0 +1,39 @@
+<footer class="page-footer blue darken-2">
+  <div class="container">
+    <div class="row">
+      <div class="col l6 s12">
+        <h5 class="white-text">About {{ site.title }}</h5>
+        <p class="grey-text text-lighten-4">{{ site.description }}</p>
+        <p class="grey-text text-lighten-4">Latest Release: {{ site.latest_version }}, at {{ site.latest_update }}</p>
+      </div>
+      <div class="col l3 s12">
+        <h5 class="white-text">VMagicMirror</h5>
+        <ul>
+          <li><a class="white-text" target="_blank" href="https://github.com/malaybaku/VMagicMirror">Source Code(GitHub)</a></li>
+          <li><a class="white-text" href="{{ page.lang_prefix | default: "/" | relative_url }}changelog">Change Log</a></li>
+          <li><a class="white-text" href="{{ page.lang_prefix | default: "/" | relative_url }}license">License</a></li>
+          <li><a class="white-text" href="{{ page.lang_prefix | default: "/" | relative_url }}contact">Contact</a></li>
+          <li><a class="white-text" href="{{ "/credit_license" | relative_url }}">3rd Party License</a></li>
+        </ul>
+      </div>
+      <div class="col l3 s12">
+        <h5 class="white-text">獏星(ばくすたー)</h5>
+        <ul>
+          <li><a class="white-text" target="_blank" href="https://twitter.com/baku_dreameater">Twitter: @baku_dreameter</a></li>
+          <li><a class="white-text" target="_blank" href="https://github.com/malaybaku">GitHub: malaybaku</a></li>
+          <li><a class="white-text" target="_blank" href="https://www.baku-dreameater.net">Blog</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      <div>
+        Made by <a target="_blank" class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+        <span style="text-align: right; float: right">
+          Copyright © 2019-2020 獏星(ばくすたー). Powered by <a target="_blank" href="http://jekyllrb.com/" class="orange-text text-lighten-3">Jekyll</a>
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Word to Motion
+title: Expressions
 permalink: /docs/expressions
 ---
 

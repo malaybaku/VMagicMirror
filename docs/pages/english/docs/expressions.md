@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Docs
+title: Expressions
 permalink: /en/docs/expressions
 lang_prefix: /en/
 ---

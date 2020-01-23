@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Effects
-permalink: /en/docs/window
+permalink: /en/docs/effects
 lang_prefix: /en/
 ---
 

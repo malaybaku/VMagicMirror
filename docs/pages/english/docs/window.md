@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Docs
+title: Window
 permalink: /en/docs/window
 lang_prefix: /en/
 ---

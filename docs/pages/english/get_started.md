@@ -10,11 +10,11 @@ lang_prefix: /en/
 
 # Get Started
 
-This page shows the basic usage of `VMagicMirror` after download.
+This page is about the basic usage of `VMagicMirror` after download.
 
-The video below shows the setup process, though it is a bit old.
+This video also shows the setup process.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/PFalrIig-RM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kYk-YHqPeMU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 ### 1. Start and Load Character

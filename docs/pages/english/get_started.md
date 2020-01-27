@@ -14,8 +14,7 @@ This page is about the basic usage of `VMagicMirror` after download.
 
 This video also shows the setup process.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/kYk-YHqPeMU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+<iframe width="560" height="315" data-src="https://www.youtube.com/embed/kYk-YHqPeMU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### 1. Start and Load Character
 {: .doc-sec1 }

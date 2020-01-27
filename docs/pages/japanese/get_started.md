@@ -12,8 +12,7 @@ permalink: /get_started
 
 また、一連のセットアップを行っていく様子をこちらの動画でも紹介しています。
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/kYk-YHqPeMU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+<iframe width="560" height="315" data-src="https://www.youtube.com/embed/kYk-YHqPeMU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### 1. 起動してキャラクターを表示する
 {: .doc-sec1 }

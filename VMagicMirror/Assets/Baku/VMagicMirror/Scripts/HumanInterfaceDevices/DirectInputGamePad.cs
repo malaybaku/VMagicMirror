@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 using SharpDX.DirectInput;
 
 namespace Baku.VMagicMirror
@@ -7,7 +6,7 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// 本来はXInputで取得するはずのゲームパッド状態を代わりにDirectInputで取得するやつだよ
     /// </summary>
-    public class DirectInputGamePad : MonoBehaviour
+    public class DirectInputGamePad
     {
         public GamepadState CurrentState { get; } = new GamepadState();
 
@@ -67,7 +66,7 @@ namespace Baku.VMagicMirror
         }
         
         /// <summary> コントローラに接続済みの場合、そのコントローラの状態を読み取る。 </summary>
-        public void UpdateState()
+        public void Update()
         {
             if (!_joystickReady)
             {
@@ -108,8 +107,6 @@ namespace Baku.VMagicMirror
                 SetPov(state.PointOfViewControllers[0]);
             }
         }
-
-        private void OnDestroy() => Stop();
 
         private void SetPov(int povValue)
         {

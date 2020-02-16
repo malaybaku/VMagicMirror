@@ -11,12 +11,8 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class StatefulXinputGamePad : MonoBehaviour
     {
-        [SerializeField] private int TriggerDownThreshold = 30;
-        
-        [Tooltip("DirectInputによって入力キャプチャをこっそり代行してくれるやつ")]
-        [SerializeField] private DirectInputGamePad directInputAlternative = null;
-        
-        public int DeviceNumber;
+        [SerializeField] private int triggerDownThreshold = 30;
+        [SerializeField] private int deviceNumber;
 
         public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
@@ -49,6 +45,9 @@ namespace Baku.VMagicMirror
             }
         }
 
+        //DirectInputによって入力キャプチャをこっそり代行してくれるやつ
+        private DirectInputGamePad _directInputAlternative = null;
+        
         //このクラス自身がforeachで使うときはこっち
         private HashSet<ObservableButton> _buttons = new HashSet<ObservableButton>();
         //DirectInput入力で代わりに上書きするときはここからアクセス
@@ -83,11 +82,11 @@ namespace Baku.VMagicMirror
             {
                 if (enableGamepad)
                 {
-                    directInputAlternative.ConnectToDevice(NativeMethods.GetUnityWindowHandle());
+                    _directInputAlternative.ConnectToDevice(NativeMethods.GetUnityWindowHandle());
                 }
                 else
                 {
-                    directInputAlternative.Stop();
+                    _directInputAlternative.Stop();
                 }
             }
         }
@@ -100,11 +99,11 @@ namespace Baku.VMagicMirror
             {
                 if (preferDirectInput)
                 {
-                    directInputAlternative.ConnectToDevice(NativeMethods.GetUnityWindowHandle());
+                    _directInputAlternative.ConnectToDevice(NativeMethods.GetUnityWindowHandle());
                 }
                 else
                 {
-                    directInputAlternative.Stop();
+                    _directInputAlternative.Stop();
                 }
             }
         }        
@@ -145,14 +144,14 @@ namespace Baku.VMagicMirror
             if (_preferDirectInput)
             {
                 //DirectInputの読み取り機能で更新
-                directInputAlternative.UpdateState();
-                UpdateByState(directInputAlternative.CurrentState);
+                _directInputAlternative.Update();
+                UpdateByState(_directInputAlternative.CurrentState);
             }
             else
             {
                 //普通にXInputの読み取り
                 DllConst.Capture();
-                int buttonFlags = DllConst.GetButtons(DeviceNumber);
+                int buttonFlags = DllConst.GetButtons(deviceNumber);
                 foreach(var button in _buttons)
                 {
                     button.UpdatePressedState(buttonFlags);
@@ -162,7 +161,9 @@ namespace Baku.VMagicMirror
                 UpdateTriggerAsButtons();
             }
         }
-        
+
+        private void OnDestroy() => _directInputAlternative.Stop();
+
         private void UpdateByState(GamepadState state)
         {
             //NOTE: ボタンの順序はStart()で初期化してる順番と揃えてます
@@ -196,21 +197,11 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void ResetControllerState()
-        {
-            foreach (var button in _buttons)
-            {
-                button.Reset();
-            }
-            _rightStickPosition = Vector2Int.zero;
-            _leftStickPosition = Vector2Int.zero;
-        }
-
         private void UpdateRightStick()
         {
             var position = new Vector2Int(
-                DllConst.GetThumbRX(DeviceNumber),
-                DllConst.GetThumbRY(DeviceNumber)
+                DllConst.GetThumbRX(deviceNumber),
+                DllConst.GetThumbRY(deviceNumber)
                 );
             
             if (_rightStickPosition != position)
@@ -223,8 +214,8 @@ namespace Baku.VMagicMirror
         private void UpdateLeftStick()
         {
             var position = new Vector2Int(
-                DllConst.GetThumbLX(DeviceNumber),
-                DllConst.GetThumbLY(DeviceNumber)
+                DllConst.GetThumbLX(deviceNumber),
+                DllConst.GetThumbLY(deviceNumber)
                 );
 
             if (_leftStickPosition != position)
@@ -236,16 +227,16 @@ namespace Baku.VMagicMirror
 
         private void UpdateTriggerAsButtons()
         {
-            int right = DllConst.GetRightTrigger(DeviceNumber);
-            bool isRightDown = (right > TriggerDownThreshold);
+            int right = DllConst.GetRightTrigger(deviceNumber);
+            bool isRightDown = (right > triggerDownThreshold);
             if (_isRightTriggerDown != isRightDown)
             {
                 _isRightTriggerDown = isRightDown;
                 _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.RTrigger, isRightDown));
             }
             
-            int left = DllConst.GetLeftTrigger(DeviceNumber);
-            bool isLeftDown = (left > TriggerDownThreshold);
+            int left = DllConst.GetLeftTrigger(deviceNumber);
+            bool isLeftDown = (left > triggerDownThreshold);
             if (_isLeftTriggerDown != isLeftDown)
             {
                 _isLeftTriggerDown = isLeftDown;

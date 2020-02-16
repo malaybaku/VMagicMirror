@@ -81,6 +81,9 @@ Maintainer's environment is as following.
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
+* SharpDX.DirectInput 4.2.0
+    * [SharpDX](https://www.nuget.org/packages/SharpDX)
+    * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
 * DOTween (from Asset Store)
 
 Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
@@ -88,6 +91,11 @@ Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, 
 Also should be careful that `MidiJack` used in VMagicMirror is forked one.
 
 Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
+
+Install SharpDX by following steps.
+
+- From 2 URLs get `.nupkg` file by `Download package`, and expand them as zip file.
+- In the expanded zip, see `lib/netstandard1.3/` to get file `SharpDX.dll` and `SharpDX.DirectInput.dll`. Put these file in anywhere on the Unity project.
 
 ### 4.3. Build
 

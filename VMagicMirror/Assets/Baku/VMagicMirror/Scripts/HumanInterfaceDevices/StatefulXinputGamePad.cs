@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror
         }
 
         //DirectInputによって入力キャプチャをこっそり代行してくれるやつ
-        private DirectInputGamePad _directInputAlternative = null;
+        private readonly DirectInputGamePad _directInputAlternative = new DirectInputGamePad();
         
         //このクラス自身がforeachで使うときはこっち
         private HashSet<ObservableButton> _buttons = new HashSet<ObservableButton>();

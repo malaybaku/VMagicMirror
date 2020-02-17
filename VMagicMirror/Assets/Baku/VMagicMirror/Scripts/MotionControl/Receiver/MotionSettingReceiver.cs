@@ -26,7 +26,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private IkWeightCrossFade ikWeightCrossFade = null;
         
         [SerializeField] private StatefulXinputGamePad gamePad = null;
-        [SerializeField] private DirectInputGamePad directInputGamePad = null;
 
         private void Start()
         {

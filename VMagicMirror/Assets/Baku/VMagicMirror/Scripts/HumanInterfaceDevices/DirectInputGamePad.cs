@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using SharpDX.DirectInput;
+using DeviceType = SharpDX.DirectInput.DeviceType;
 
 namespace Baku.VMagicMirror
 {
@@ -20,42 +22,49 @@ namespace Baku.VMagicMirror
         /// <param name="mainWindowHandle"></param>
         public void ConnectToDevice(IntPtr mainWindowHandle)
         {
+            LogOutput.Instance.Write("Connect to Gamepad..");
             Stop();
             _directInput = new DirectInput();
 
             //使えそうなゲームパッド or ジョイスティックを探す
-            var joystickGuid = Guid.Empty;
-            foreach (var deviceInstance in _directInput.GetDevices(SharpDX.DirectInput.DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
-            {
-                joystickGuid = deviceInstance.InstanceGuid;
-            }
-            if (joystickGuid == Guid.Empty)
-            {
-                foreach (var deviceInstance in _directInput.GetDevices(SharpDX.DirectInput.DeviceType.Joystick, DeviceEnumerationFlags.AllDevices))
-                {
-                    joystickGuid = deviceInstance.InstanceGuid;
-                }
-            }
+            //Gamepad, Joystick, どっちも無ければGameControlクラスを順に探します
+            var devices = _directInput
+                .GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices)
+                .Concat(_directInput.GetDevices(DeviceType.Joystick, DeviceEnumerationFlags.AllDevices))
+                .Concat(_directInput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices))
+                .ToList();
 
-            //ないので諦める
-            if (joystickGuid == Guid.Empty)
+            if (devices.Count == 0)
             {
+                LogOutput.Instance.Write("No Gamepad Found");
                 _directInput?.Dispose();
                 _directInput = null;
+                return;
             }
 
+            var joystickGuid = devices[0].InstanceGuid;
             _joystick = new Joystick(_directInput, joystickGuid);
-
-            //初期設定: バックグラウンドで非占有にすることで常時読み取れるようにする
-            _joystick.SetCooperativeLevel(mainWindowHandle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
-            _joystick.Acquire();
-
-            _joystickReady = true;
+            LogOutput.Instance.Write("Gamepad Found, name = " + _joystick.Properties.ProductName);
+                
+            try
+            {
+                //初期設定: バックグラウンドで非占有にすることで常時読み取れるようにする
+                //CAUTION: コントローラによってはこの設定を無視する。例えばXBox OneコントローラはForegroundじゃないとダメ。
+                _joystick.SetCooperativeLevel(mainWindowHandle,
+                    CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+                _joystick.Acquire();
+                _joystickReady = true;
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
         }
         
         /// <summary> データを読み取っている場合、それを停止する </summary>
         public void Stop()
         {
+            LogOutput.Instance.Write("Stop Reading Gamepad");
             _joystick?.Dispose();
             _joystick = null;
             
@@ -102,8 +111,8 @@ namespace Baku.VMagicMirror
 
             CurrentState.LeftX = state.X - 32767;
             CurrentState.LeftY = 32767 - state.Y;
-            CurrentState.RightX = state.RotationX - 32767;
-            CurrentState.RightY = 32767 - state.RotationY;
+            CurrentState.RightX = state.Z - 32767;
+            CurrentState.RightY = 32767 - state.RotationZ;
 
             //NOTE: 通常ないが、十字キーのないコントローラあると困るな～というガードつき
             if (state.PointOfViewControllers.Length > 0)
@@ -133,3 +142,5 @@ namespace Baku.VMagicMirror
         }
     }
 }
+
+    

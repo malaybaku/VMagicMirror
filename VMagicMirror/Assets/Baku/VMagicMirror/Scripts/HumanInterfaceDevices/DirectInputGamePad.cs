@@ -78,30 +78,34 @@ namespace Baku.VMagicMirror
 
             var state = _joystick.GetCurrentState();
             CurrentState.IsValid = true;
-            
-            CurrentState.A = state.Buttons[0];
-            CurrentState.B = state.Buttons[1];
-            CurrentState.X = state.Buttons[2];
+
+            //NOTE: ボタンの対応付けはDUAL SHOCK 4を手元環境でさした時のレイアウトに基づきます。
+            CurrentState.X = state.Buttons[0];
+            CurrentState.A = state.Buttons[1];
+            CurrentState.B = state.Buttons[2];
             CurrentState.Y = state.Buttons[3];
             
             CurrentState.L1 = state.Buttons[4];
             CurrentState.R1 = state.Buttons[5];
+
+            CurrentState.L2 = state.Buttons[6];
+            CurrentState.R2 = state.Buttons[7];
             
-            CurrentState.Select = state.Buttons[6];
-            CurrentState.Start = state.Buttons[7];
+            //NOTE: 物理的にはShare[8]とOption[9]ボタンがSelect, Startに近い位置にあるが、
+            //かなり押しにくいので代わりにタッチ部分[13]もStartボタン扱いするよ、という意図です
+            //※PSボタン[12]は押すとSteamが起動したりするので割り当てナシです。
+            CurrentState.Select = state.Buttons[8];
+            CurrentState.Start = state.Buttons[9] || state.Buttons[13];
             
-            CurrentState.L3 = state.Buttons[8];
-            CurrentState.R3 = state.Buttons[9];
+            CurrentState.L3 = state.Buttons[10];
+            CurrentState.R3 = state.Buttons[11];
 
             CurrentState.LeftX = state.X - 32767;
             CurrentState.LeftY = 32767 - state.Y;
             CurrentState.RightX = state.RotationX - 32767;
             CurrentState.RightY = 32767 - state.RotationY;
 
-            //TODO: L2とR2は本物のDirectInputなパッドだとボタン[10],[11]に割り当たってそうな気がするので保留。
-            //いったん「反応しませ～ん！」でリリースするのもアリだと思いますよ
-
-            //NOTE: 通常ないが、十字キーのないコントローラあると困るな～というガードです
+            //NOTE: 通常ないが、十字キーのないコントローラあると困るな～というガードつき
             if (state.PointOfViewControllers.Length > 0)
             {
                 SetPov(state.PointOfViewControllers[0]);

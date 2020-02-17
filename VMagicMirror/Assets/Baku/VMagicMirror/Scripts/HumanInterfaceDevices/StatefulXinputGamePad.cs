@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using UniRx;
 using UnityEngine;
+using UniRx;
 using XinputGamePad;
 
 namespace Baku.VMagicMirror
@@ -14,6 +14,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private int triggerDownThreshold = 30;
         [SerializeField] private int deviceNumber;
 
+        private const int StickPositionDiffThreshold = 1000;
+        
         public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
         /// <summary>
@@ -76,6 +78,7 @@ namespace Baku.VMagicMirror
 
         public void SetEnableGamepad(bool enableGamepad)
         {
+            LogOutput.Instance.Write("SetEnableGamepad");
             _updateEnabled = enableGamepad;
             //DirectInputの場合、明示的にデバイスを捕まえる必要があるので捕まえておく
             if (_preferDirectInput)
@@ -93,6 +96,7 @@ namespace Baku.VMagicMirror
         
         public void SetPreferDirectInputGamepad(bool preferDirectInput)
         {
+            LogOutput.Instance.Write("SetPreferDirectInputGamepad");
             _preferDirectInput = preferDirectInput;
             //読み取り中のままXInputとDirectInputを切り替え: この場合、DirectInput側だけ読み取り開始や停止が起きる
             if (_updateEnabled)
@@ -183,17 +187,33 @@ namespace Baku.VMagicMirror
             _buttonsList[10].IsPressed = state.Up;
             
             var right = new Vector2Int(state.RightX, state.RightY);
-            if (right != _rightStickPosition)
+            if (Mathf.Abs(right.x - _rightStickPosition.x) + 
+                Mathf.Abs(right.y - _rightStickPosition.y) > StickPositionDiffThreshold)
             {
                 _rightStickPosition = right;
                 _rightStick.OnNext(right);
             }
             
             var left = new Vector2Int(state.LeftX, state.LeftY);
-            if (left != _leftStickPosition)
+            if (Mathf.Abs(left.x - _leftStickPosition.x) + 
+                Mathf.Abs(left.y - _leftStickPosition.y) > StickPositionDiffThreshold)
             {
                 _leftStickPosition = left;
                 _leftStick.OnNext(left);
+            }
+
+            //トリガー情報はDirectInputの場合ボタンベースで取得する。
+            //DUAL SHOCK 4のトリガーは連続値+ボタン情報で渡ってくるのでボタン情報だけ拾って使っている、という感じ。
+            if (_isRightTriggerDown != state.R2)
+            {
+                _isRightTriggerDown = state.R2;
+                _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.RTrigger, _isRightTriggerDown));
+            }
+            
+            if (_isLeftTriggerDown != state.L2)
+            {
+                _isLeftTriggerDown = state.L2;
+                _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.LTrigger, _isLeftTriggerDown));
             }
         }
 
@@ -204,7 +224,8 @@ namespace Baku.VMagicMirror
                 DllConst.GetThumbRY(deviceNumber)
                 );
             
-            if (_rightStickPosition != position)
+            if (Mathf.Abs(_rightStickPosition.x - position.x) +
+                Mathf.Abs(_rightStickPosition.y - position.y) > StickPositionDiffThreshold)
             {
                 _rightStickPosition = position;
                 _rightStick.OnNext(position);
@@ -218,7 +239,8 @@ namespace Baku.VMagicMirror
                 DllConst.GetThumbLY(deviceNumber)
                 );
 
-            if (_leftStickPosition != position)
+            if (Mathf.Abs(_leftStickPosition.x - position.x) +
+                Mathf.Abs(_leftStickPosition.y - position.y) > StickPositionDiffThreshold)
             {
                 _leftStickPosition = position;
                 _leftStick.OnNext(position);

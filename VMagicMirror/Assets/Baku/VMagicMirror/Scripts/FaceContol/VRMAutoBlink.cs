@@ -102,6 +102,9 @@ namespace Baku.VMagicMirror
                     yield return null;
                 }
             }
+
+            //途中の動作がカクカクになった場合も最後は目を開いた状態で辻褄をあわせる
+            _currentBlinkValue = 0;
             _isBlinking = false;
         }
 

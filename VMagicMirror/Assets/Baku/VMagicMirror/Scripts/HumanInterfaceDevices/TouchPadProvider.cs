@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class TouchPadProvider : MonoBehaviour
     {
+        [Inject] private MousePositionProvider _mousePositionProvider = null;
+        
         private void Start()
         {
             foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
@@ -20,25 +23,7 @@ namespace Baku.VMagicMirror
         /// <returns></returns>
         public Vector3 GetHandTipPosFromScreenPoint(float x, float y)
         {
-            //ベーシックな方法: ウィンドウのサイズとの比較で場所を決める
-            //return transform.TransformPoint(new Vector2(x * 0.5f, y * 0.5f));
-            
-            //hackな方法: Windowsの全画面の領域と比較して「マウスがこの辺」という計算をする。入力値は捨てます
-            
-            //懸念事項: ここ毎フレーム呼んだら重くなったりしない？なんか重そうな気がする
-            // -> そうでもなかった
-            var p = NativeMethods.GetWindowsMousePosition();
-            int left = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_XVIRTUALSCREEN);
-            int top = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_YVIRTUALSCREEN);
-            int width = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_CXVIRTUALSCREEN);
-            int height = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_CYVIRTUALSCREEN);
-
-            //NOTE: 右方向を+X, 上方向を+Y, 値域を(-0.5, 0.5)にするための変形がかかってます
-            Vector2 cursorPosInVirtualScreen = new Vector2(
-                (p.x - left) * 1.0f / width - 0.5f,
-                0.5f - (p.y - top) * 1.0f / height
-            );
-
+            var cursorPosInVirtualScreen = _mousePositionProvider.NormalizedCursorPosition;
             //NOTE: 0.95をかけて何が嬉しいかというと、パッドのギリギリのエリアを避けてくれるようになります
             return transform.TransformPoint(cursorPosInVirtualScreen * 0.95f);
         }

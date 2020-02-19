@@ -22,11 +22,11 @@ namespace Baku.VMagicMirror
             Container.BindInstance(messageHandler);
 
             //入力監視系のコードはメッセージハンドラと同格くらいに扱えそうなので、ここでバインドする: 未登録ならシーン上を探して入れる
-            Container.BindInstance(rawInputChecker || FindObjectOfType<RawInputChecker>());
-            Container.BindInstance(mousePositionProvider || FindObjectOfType<MousePositionProvider>());
-            Container.BindInstance(faceTracker || FindObjectOfType<FaceTracker>());
-            Container.BindInstance(midiInputObserver || FindObjectOfType<MidiInputObserver>());
-            Container.BindInstance(gamepad || FindObjectOfType<StatefulXinputGamePad>());
+            Container.BindInstance(rawInputChecker ?? FindObjectOfType<RawInputChecker>());
+            Container.BindInstance(mousePositionProvider ?? FindObjectOfType<MousePositionProvider>());
+            Container.BindInstance(faceTracker ?? FindObjectOfType<FaceTracker>());
+            Container.BindInstance(midiInputObserver ?? FindObjectOfType<MidiInputObserver>());
+            Container.BindInstance(gamepad ?? FindObjectOfType<StatefulXinputGamePad>());
 
             //Deformを使うオブジェクトがここを参照することで、DeformableManagerを必要な時だけ動かせるようにする
             Container.Bind<DeformableCounter>()

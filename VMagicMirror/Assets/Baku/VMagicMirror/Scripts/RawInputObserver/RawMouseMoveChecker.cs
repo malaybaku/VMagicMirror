@@ -78,7 +78,15 @@ namespace Baku.VMagicMirror
                     RawInputDeviceFlags.InputSink | RawInputDeviceFlags.NoLegacy, 
                     window.Handle
                     );
-                Forms.Application.Run();
+
+                //NOTE: Application.Runだと怒られるので素のイベントループを書いてみました
+                MSG msg;
+                while (GetMessage(out msg, IntPtr.Zero, 0, 0))
+                {
+                    TranslateMessage(ref msg);
+                    DispatchMessage(ref msg);
+                }
+                // Forms.Application.Run();
             }
             finally
             {
@@ -86,10 +94,33 @@ namespace Baku.VMagicMirror
             }
         }
         
+        
+        [DllImport("user32.dll")]
+        static extern bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
         [DllImport("user32.dll")]
         static extern bool PostThreadMessage(int idThread, uint msg, IntPtr wParam, IntPtr lParam);
 
+        [DllImport("user32.dll")]
+        static extern bool TranslateMessage(ref MSG lpMsg);
+
+        [DllImport("user32.dll")]
+        static extern bool DispatchMessage(ref MSG lpMsg);
+        
         const int WM_QUIT = 0x0012;
+        const int WM_INPUT = 0x00FF;
+        
+        public struct MSG
+        {
+            public IntPtr hwnd;
+            public int message;
+            public IntPtr wParam;
+            public IntPtr lParam;
+            public uint time;
+            public int px;
+            public int py;
+            public IntPtr refobject;
+        }
     }
 
     /// <summary>

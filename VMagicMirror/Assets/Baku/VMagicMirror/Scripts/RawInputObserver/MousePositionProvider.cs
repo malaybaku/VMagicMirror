@@ -44,6 +44,8 @@ namespace Baku.VMagicMirror
             //NOTE: マウスがプログラム的に動かされちゃってる場合のみ、_dxや_dyに非ゼロの値が加算される
             //マウスの移動が制限されていない場合、absDifとdx, dyは同じ値になる
             var absDif = p - _prevCursosPos;
+            _prevCursosPos = p;
+            
             _dx += dx - absDif.x;
             _dy += dy - absDif.y;
             
@@ -70,9 +72,9 @@ namespace Baku.VMagicMirror
             
             //NOTE: 右方向を+X, 上方向を+Y, 値域を(-0.5, 0.5)にするための変形をやって完成
             NormalizedCursorPosition = new Vector2(
-                (_x - left) * 1.0f / width - 0.5f,
-                0.5f - (_y - top) * 1.0f / height
-            );           
+                Mathf.Clamp((_x - left) * 1.0f / width - 0.5f, -0.5f, 0.5f),
+                Mathf.Clamp(0.5f - (_y - top) * 1.0f / height, -0.5f, 0.5f)
+                );           
         }
     }
 }

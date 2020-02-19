@@ -5,7 +5,7 @@
 namespace System.Windows.Forms
 {
     [Flags]
-    public enum Keys
+    public enum _Obsolete_Keys
     {
         //
         // 概要:

@@ -58,6 +58,7 @@ sysinfo.txt
 /VMagicMirror/Assets/XinputGamepad/
 /VMagicMirror/Assets/MidiJack/
 /VMagicMirror/Assets/SharpDX/
+/VMagicMirror/Assets/RawInputSharp/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
 /VMagicMirror/Assets/DlibFaceLandmarkDetector.meta
@@ -73,3 +74,4 @@ sysinfo.txt
 /VMagicMirror/Assets/XinputGamepad.meta
 /VMagicMirror/Assets/MidiJack.meta
 /VMagicMirror/Assets/SharpDX.meta
+/VMagicMirror/Assets/RawInputSharp.meta

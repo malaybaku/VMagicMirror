@@ -81,6 +81,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * SharpDX.DirectInput 4.2.0
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
+* [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
 * DOTween (アセットストアから)
 
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
@@ -93,6 +94,11 @@ SharpDXは次の手順で導入します。
 
 - 2つのNuGetギャラリーの`Download package`から`.nupkg`ファイルを取得し、それぞれ`.zip`ファイルとして展開します。
 - 展開したzip内の`lib/netstandard1.3/`フォルダにそれぞれ`SharpDX.dll`および`SharpDX.DirectInput.dll`があるので、これらをUnityプロジェクト上の適当な場所に追加します。
+
+RawInput.Sharpもほぼ同様の手順です。
+
+- NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
+- 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
 
 ### 4.3. ビルド
 

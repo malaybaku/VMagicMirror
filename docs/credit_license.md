@@ -54,6 +54,8 @@ In VMagicMirror, the materials are replaced for the visual consistency.
 
 [SharpDX](https://github.com/sharpdx/SharpDX)
 
+[RawInput.Sharp](https://github.com/mfakane/rawinput-sharp), by zlib license
+
 [Jekyll Materialize Starter Template](https://github.com/macrod68/jekyll-materialize-starter-template)
 
 ### License Notes

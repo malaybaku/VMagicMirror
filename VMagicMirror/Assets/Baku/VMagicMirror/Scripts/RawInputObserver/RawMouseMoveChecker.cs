@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Windows.Forms;
-using Forms = System.Windows.Forms;
 using UnityEngine;
 using Linearstar.Windows.RawInput;
 using Linearstar.Windows.RawInput.Native;
@@ -10,14 +6,18 @@ using Linearstar.Windows.RawInput.Native;
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// RawInput方式でマウス移動イベントを取得するすごいやつだよ
+    /// RawInput的なマウス情報を返してくるやつ
     /// </summary>
+    [RequireComponent(typeof(WindowProcedureHook))]
     public class RawMouseMoveChecker : MonoBehaviour
     {
-        private Thread _thread = null;
+        // [Inject] private ReceivedMessageHandler _handler;
+
+        private WindowProcedureHook _windowProcedureHook = null;
+
         private int _dx;
         private int _dy;
-        private readonly object _difLock = new object();
+        private readonly object _diffLock = new object();
 
         /// <summary>
         /// 前回呼び出してからの間にマウス移動が積分された合計値を取得します。
@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror
         /// <returns></returns>
         public (int dx, int dy) GetAndReset()
         {
-            lock (_difLock)
+            lock (_diffLock)
             {
                 int x = _dx;
                 int y = _dy;
@@ -38,120 +38,27 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _thread = new Thread(ObserveRoutine);
-            _thread.Start();
+            //NOTE: このイベントはエディタ実行では飛んできません(Window Procedureに関わるので)
+            _windowProcedureHook = GetComponent<WindowProcedureHook>();
+            _windowProcedureHook.ReceiveRawInput += OnReceiveRawInput;
         }
-        
-        private void OnDestroy()
+
+        private void OnReceiveRawInput(IntPtr lParam)
         {
-            PostThreadMessage(_thread.ManagedThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+            if (RawInputData.FromHandle(lParam) is RawInputMouseData data &&
+                data.Mouse.Flags.HasFlag(RawMouseFlags.MoveRelative))
+            {
+                AddDif(data.Mouse.LastX, data.Mouse.LastY);
+            }
         }
 
         private void AddDif(int dx, int dy)
         {
-            lock (_difLock)
+            lock (_diffLock)
             {
                 _dx += dx;
-                _dy += dy;
+                _dy += dy;                
             }
-        }
-        
-        private void ObserveRoutine()
-        {
-            var window = new ReceiverWindow();
-            window.Input += data =>
-            {
-                if (data is RawInputMouseData mouseData &&
-                    mouseData.Mouse.Flags.HasFlag(RawMouseFlags.MoveRelative))
-                {
-                    AddDif(
-                        mouseData.Mouse.LastX,
-                        mouseData.Mouse.LastY
-                    );
-                }
-            };
-
-            try
-            {
-                RawInputDevice.RegisterDevice(
-                    HidUsageAndPage.Mouse, 
-                    RawInputDeviceFlags.InputSink | RawInputDeviceFlags.NoLegacy, 
-                    window.Handle
-                    );
-
-                //NOTE: Application.Runだと怒られるので素のイベントループを書いてみました
-                MSG msg;
-                while (GetMessage(out msg, IntPtr.Zero, 0, 0))
-                {
-                    TranslateMessage(ref msg);
-                    DispatchMessage(ref msg);
-                }
-                // Forms.Application.Run();
-            }
-            finally
-            {
-                RawInputDevice.UnregisterDevice(HidUsageAndPage.Mouse);
-            }
-        }
-        
-        
-        [DllImport("user32.dll")]
-        static extern bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
-
-        [DllImport("user32.dll")]
-        static extern bool PostThreadMessage(int idThread, uint msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        static extern bool TranslateMessage(ref MSG lpMsg);
-
-        [DllImport("user32.dll")]
-        static extern bool DispatchMessage(ref MSG lpMsg);
-        
-        const int WM_QUIT = 0x0012;
-        const int WM_INPUT = 0x00FF;
-        
-        public struct MSG
-        {
-            public IntPtr hwnd;
-            public int message;
-            public IntPtr wParam;
-            public IntPtr lParam;
-            public uint time;
-            public int px;
-            public int py;
-            public IntPtr refobject;
         }
     }
-
-    /// <summary>
-    /// RawInputのイベントを受け取るために立てるWindow
-    /// </summary>
-    public class ReceiverWindow : NativeWindow
-    {
-        private const int WM_INPUT = 0x00FF;
-        
-        public event Action<RawInputData> Input;
-
-        public ReceiverWindow()
-        {
-            CreateHandle(new CreateParams
-            {
-                X = 0,
-                Y = 0,
-                Width = 0,
-                Height = 0,
-                Style = 0x800000,
-            });
-        }
-
-        protected override void WndProc(ref System.Windows.Forms.Message m)
-        {
-            if (m.Msg == WM_INPUT)
-            {
-                Input?.Invoke(RawInputData.FromHandle(m.LParam));
-            }
-            base.WndProc(ref m);
-        }        
-    }
-    
 }

@@ -41,13 +41,19 @@ namespace Baku.VMagicMirror
             (int dx, int dy) = _rawMouseMoveChecker.GetAndReset();
             var p = NativeMethods.GetWindowsMousePosition();
 
-            //NOTE: マウスがプログラム的に動かされちゃってる場合のみ、_dxや_dyに非ゼロの値が加算される
-            //マウスの移動が制限されていない場合、absDifとdx, dyは同じ値になる
+            //NOTE: (dx, dy)とabsDifが異なるケース == マウスがプログラム的に動かされちゃってるケース
+            //FPSとかで遊んでない限りは2つの値は一致する
             var absDif = p - _prevCursosPos;
             _prevCursosPos = p;
             
             _dx += dx - absDif.x;
             _dy += dy - absDif.y;
+
+#if UNITY_EDITOR
+            //エディタではdx, dyが取れない(常時0になってしまう)ので_dx, _dyは捨てて、絶対座標だけに頼る
+            _dx = 0;
+            _dy = 0;
+#endif
             
             float rate = 1.0f - diffValueDiminishRate * Time.deltaTime;
             _dx *= rate;

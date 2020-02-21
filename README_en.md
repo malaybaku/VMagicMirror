@@ -84,6 +84,7 @@ Maintainer's environment is as following.
 * SharpDX.DirectInput 4.2.0
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
+* [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
 * DOTween (from Asset Store)
 
 Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
@@ -96,6 +97,11 @@ Install SharpDX by following steps.
 
 - From 2 URLs get `.nupkg` file by `Download package`, and expand them as zip file.
 - In the expanded zip, see `lib/netstandard1.3/` to get file `SharpDX.dll` and `SharpDX.DirectInput.dll`. Put these file in anywhere on the Unity project.
+
+RawInput.Sharp can be installed with almost same work flow.
+
+- Get `.nupkg` from NuGet gallery and expand as zip to get `lib/netstandard1.1/RawInput.Sharp.dll`
+- Create `RawInputSharp` folder in Unity project's Assets folder, and put dll into the folder.
 
 ### 4.3. Build
 

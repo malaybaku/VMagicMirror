@@ -1,0 +1,20 @@
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@baku_dreameater" />
+
+{% if page.title %}
+  <meta name="twitter:title" content="{{ page.title }}" />
+{% else %}
+  <meta name="twitter:title" content="{{ site.title }}" />
+{% endif %}
+
+{% if page.summary %}
+  <meta name="twitter:description" content="{{ page.summary }}" />
+{% else %}
+  <meta name="twitter:description" content="{{ site.summary }}" />
+{% endif %}
+
+{% if page.image %}
+  <meta name="twitter:image" content="{{ page.image | absolute_url }}" />
+{% else %}
+  <meta name="twitter:image" content="{{ "/images/home/gallery_00.png" | absolute_url }}" />
+{% endif %}

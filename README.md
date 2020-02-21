@@ -34,7 +34,7 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 
 Windows 10環境でお使いいただけます。
 
-操作方法については[マニュアル](https://github.com/malaybaku/VMagicMirror/blob/master/doc/manual.md)をご覧下さい。
+操作方法については[マニュアル](https://malaybaku.github.io/VMagicMirror/)をご覧下さい。
 
 ## 3. 質問など
 

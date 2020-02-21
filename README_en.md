@@ -37,7 +37,7 @@ It will be helpful in the following situations.
 
 Run on Windows 10.
 
-Please see [Manual](https://github.com/malaybaku/VMagicMirror/blob/master/doc/manual_en.md) for the detail.
+Please see [Manual](https://malaybaku.github.io/VMagicMirror/) for the detail.
 
 ## 3. Contact
 

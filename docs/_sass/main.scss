@@ -1,0 +1,119 @@
+@charset "utf-8";
+@import "materialize/materialize";
+
+@font-face {
+    font-display: swap;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    -webkit-font-smoothing: antialiased;
+}
+
+.doc-sec1 {
+    margin-top: 24px;
+    margin-bottom: 24px;    
+}
+
+.doc-sec2 {
+    margin-top: 36px;
+    margin-bottom: 24px;
+}
+
+code {
+    font-family: "Roboto", sans-serif;
+    font-weight: bolder;
+    background: #ddd;
+    padding: 4px;
+    border-radius: 4px;
+    margin: 4px;
+}
+
+.carousel .indicators {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+img.home-gallery {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.doc-img {
+    @extend .z-depth-2;
+    max-width: 75%;
+} 
+
+.fit-doc-img {
+    @extend .z-depth-2;
+    max-width: 100%;
+}
+
+.doc-a {
+    margin: 24px;
+}
+
+.video-from-youtube {
+    width: 50vw;
+    height: calc(50vw * 0.5);
+    margin: 24px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.icon-block {
+  padding: 0 15px;
+}
+.icon-block .material-icons {
+	font-size: inherit;
+}
+h1.page-title {
+    font-weight: 500;
+    font-size: 2.3em;
+    text-align: center;
+    color: #29b6f6;
+}
+.col.grid-example {
+    border: 1px solid #eee;
+    margin: 7px 0;
+    text-align: center;
+    line-height: 50px;
+    font-size: 28px;
+    background-color: tomato;
+    color: white;
+    padding: 0;
+}
+.collection .collection-item.avatar {
+    padding-right: 30px;
+}
+.last-post {
+    padding: 10px 0 15px;
+}
+.last-post .collection .collection-item.avatar>.date-post {
+    position: absolute;
+    width: 54px;
+    height: 54px;
+    overflow: hidden;
+    left: 10px;
+    display: inline-block;
+    padding: 16px 0;
+    vertical-align: middle;
+    background: #ad1457;
+    color: #fff;
+    text-align: center;
+}
+.txt-center {
+    text-align: center;
+}
+.post-header h1.post-title {
+    color: #29b6f6;
+    font-size: 2.8em;
+    font-weight: 800;
+}
+.post-header time {
+    color: #cacaca;
+    font-size: 0.9em;
+}
+p.rss-subscribe {
+    margin: 0;
+}

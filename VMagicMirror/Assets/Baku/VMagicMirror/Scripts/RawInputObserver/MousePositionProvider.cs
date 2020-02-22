@@ -45,9 +45,19 @@ namespace Baku.VMagicMirror
             //FPSとかで遊んでない限りは2つの値は一致する
             var absDif = p - _prevCursosPos;
             _prevCursosPos = p;
-            
-            _dx += dx - absDif.x;
-            _dy += dy - absDif.y;
+
+            if (_rawMouseMoveChecker.EnableFpsAssumedRightHand)
+            {
+                //FPS対策モードの場合、マウスの情報を信用してやるぞ、的な補正をする
+                _dx += dx - absDif.x;
+                _dy += dy - absDif.y;
+            }
+            else
+            {
+                //FPS対策モードでない場合、マウスの移動量とマウスの位置はズレてないよ、という扱いにする
+                _dx = 0;
+                _dy = 0;
+            }
 
 #if UNITY_EDITOR
             //エディタではdx, dyが取れない(常時0になってしまう)ので_dx, _dyは捨てて、絶対座標だけに頼る

@@ -44,6 +44,7 @@
         // Motion, Arm
         public const string SetWaistWidth = nameof(SetWaistWidth);
         public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);
+        public const string EnableFpsAssumedRightHand = nameof(EnableFpsAssumedRightHand);
         public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
         public const string PresentationArmMotionScale = nameof(PresentationArmMotionScale);
         public const string PresentationArmRadiusMin = nameof(PresentationArmRadiusMin);

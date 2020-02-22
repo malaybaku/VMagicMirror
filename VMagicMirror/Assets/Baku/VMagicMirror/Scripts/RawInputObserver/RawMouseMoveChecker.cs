@@ -2,6 +2,8 @@
 using UnityEngine;
 using Linearstar.Windows.RawInput;
 using Linearstar.Windows.RawInput.Native;
+using Zenject;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -11,13 +13,15 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(WindowProcedureHook))]
     public class RawMouseMoveChecker : MonoBehaviour
     {
-        // [Inject] private ReceivedMessageHandler _handler;
+        [Inject] private ReceivedMessageHandler _handler = null;
 
         private WindowProcedureHook _windowProcedureHook = null;
 
         private int _dx;
         private int _dy;
         private readonly object _diffLock = new object();
+
+        public bool EnableFpsAssumedRightHand { get; private set; } = false;
 
         /// <summary>
         /// 前回呼び出してからの間にマウス移動が積分された合計値を取得します。
@@ -41,6 +45,14 @@ namespace Baku.VMagicMirror
             //NOTE: このイベントはエディタ実行では飛んできません(Window Procedureに関わるので)
             _windowProcedureHook = GetComponent<WindowProcedureHook>();
             _windowProcedureHook.ReceiveRawInput += OnReceiveRawInput;
+
+            _handler.Commands.Subscribe(c =>
+            {
+                if (c.Command == MessageCommandNames.EnableFpsAssumedRightHand)
+                {
+                    EnableFpsAssumedRightHand = c.ToBoolean();
+                }
+            });
         }
 
         private void OnReceiveRawInput(IntPtr lParam)

@@ -9,6 +9,14 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v0.9.7a
+
+2020/02/22
+
+* Add: Toggle UI to turn on /off the feature in v0.9.7, "Fix: Fix issue the right hand almost fixed when playing some first person view games, which uses mouse move to viewpoint control."
+    - In setting window turn on `Motion` > `Arm` > `Enable mouse motion to FPS assumed mode` to enable the feature.
+    - This feature is off by default, because it maybe disturb the pen tablet based motion.
+
 #### v0.9.7
 
 2020/02/22

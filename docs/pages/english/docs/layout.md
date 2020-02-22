@@ -47,6 +47,8 @@ In `Layout` tab you can access to the parameters to adjust surrounding device la
 
 `Enable Input Capture`: On by default, but if you do not use game controller and you want to save CPU usage, then turn off.
 
+`Use DirectInput (check for DUAL SHOCK 4)`: Turn on to use DUAL SHOCK 4. If your controller is not recognized by default, please try to turn on.
+
 `Visible`: Show or hide game controller. Available in `Streaming` tab of control panel.
 
 `Lean by Stick`: Set by which input avatar leans.

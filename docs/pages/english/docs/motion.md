@@ -57,6 +57,8 @@ Please see the following example of default value, close elbow, or open elbow.
 {% include docimg.html file="/images/docs/arm_side_open.png" customclass="col s12 m4 l4" imgclass="fit-doc-img" %}
 </div>
 
+`Enable mouse motion to FPS assumed mode`: When this checkbox is turned on, the hand will still move when you are playing PC FPS game. This option also has disadvantage that pen tablet or screen touch operation maybe become unnatural.
+
 `Presentation-like hand`: Check to move the charactrer's right hand as if he/she talks in presentation.
 
 `Presentation-like motion scale [%]`: This property is not used currently, and will be removed in future update.

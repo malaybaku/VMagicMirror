@@ -9,6 +9,14 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v0.9.7
+
+2020/02/22
+
+* Add: Support PS4 Controller (DUAL SHOCK 4). In setting window turn on `Layout` > `Gamepad` > `Use DirectInput` to enable the controller.
+* Change: Change right hand move when mouse moved. With this change, the hand will slightly drift by the quick mouse move. This change is because of the fix.
+* Fix: Fix issue the right hand almost fixed when playing some first person view games, which uses mouse move to viewpoint control.
+
 #### - (not an .exe update)
 {: .doc-sec2 }
 

@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror
     {
         private BlendShapeKey FunKey { get; } = new BlendShapeKey(BlendShapePreset.Fun);
 
-        public float FaceDefaultFunValue { get; set; } = 0.2f;
+        public float FaceDefaultFunValue { get; set; } = 0.0f;
 
         public void Apply(VRMBlendShapeProxy proxy)
         {

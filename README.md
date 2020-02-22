@@ -2,10 +2,10 @@
 
 # VMagicMirror
 
-v0.9.6
+v0.9.7
 
 * 作成: 獏星(ばくすたー)
-* 2020/01/13
+* 2020/02/22
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -78,6 +78,10 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
 * [Zenject](https://github.com/svermeulen/Extenject)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
+* SharpDX.DirectInput 4.2.0
+    * [SharpDX](https://www.nuget.org/packages/SharpDX)
+    * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
+* [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
 * DOTween (アセットストアから)
 
 FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
@@ -86,6 +90,15 @@ FinalIKおよびDlib FaceLandmark Detectorが有償アセットであること�
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
 
+SharpDXは次の手順で導入します。
+
+- 2つのNuGetギャラリーの`Download package`から`.nupkg`ファイルを取得し、それぞれ`.zip`ファイルとして展開します。
+- 展開したzip内の`lib/netstandard1.3/`フォルダにそれぞれ`SharpDX.dll`および`SharpDX.DirectInput.dll`があるので、これらをUnityプロジェクト上の適当な場所に追加します。
+
+RawInput.Sharpもほぼ同様の手順です。
+
+- NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
+- 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
 
 ### 4.3. ビルド
 

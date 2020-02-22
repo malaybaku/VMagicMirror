@@ -45,6 +45,8 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
+            MoveMouse(Vector3.zero);
+            
             _rightHand.Position = Vector3.Lerp(
                 _rightHand.Position,
                 _targetPosition,

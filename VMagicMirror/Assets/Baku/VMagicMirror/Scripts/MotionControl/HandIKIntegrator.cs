@@ -124,7 +124,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            mouseMove.MoveMouse(mousePosition);
+            //mouseMove.MoveMouse(mousePosition);
             presentation.MoveMouse(mousePosition);
             SetRightHandIk(EnablePresentationMode ? HandTargetType.Presentation : HandTargetType.Mouse);
             if (_rightTargetType == HandTargetType.Mouse)

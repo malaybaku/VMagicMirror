@@ -49,10 +49,6 @@ namespace Baku.VMagicMirror
                     //諦める
                 }
             }
-
-#if UNITY_EDITOR
-            Debug.Log(text);
-#endif
         }
 
         public void Write(Exception ex)
@@ -65,10 +61,6 @@ namespace Baku.VMagicMirror
                 ex.Message + "\n" +
                 ex.StackTrace
                 );
-
-#if UNITY_EDITOR
-            Debug.LogException(ex);
-#endif
         }
 
 

@@ -62,7 +62,10 @@ namespace Baku.VMagicMirror
                         headIkIntegrator.SetLookAtStyle(message.Content);
                         break;
                     case MessageCommandNames.EnableGamepad:
-                        gamePad.enabled = message.ToBoolean();
+                        gamePad.SetEnableGamepad(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.PreferDirectInputGamepad:
+                        gamePad.SetPreferDirectInputGamepad(message.ToBoolean());
                         break;
                     case MessageCommandNames.GamepadLeanMode:
                         gamePadBasedBodyLean.SetGamepadLeanMode(message.Content);

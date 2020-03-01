@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
             {
                 if (!_hasDeformableManager)
                 {
-                    _deformableManager = FindObjectOfType<DeformableManager>();
+                    _deformableManager = DeformableManager.GetDefaultManager(true);
                     if (_deformableManager != null)
                     {
                         _deformableManager.update = _deformableCount > 0;
@@ -23,6 +23,15 @@ namespace Baku.VMagicMirror
                     }
                 }
                 return _deformableManager;
+            }
+        }
+
+        private void Start()
+        {
+            //起動直後は0になってるはずだからupdateを切っておきたい、という処理
+            if (Manager != null)
+            {
+                Manager.update = _deformableCount > 0;
             }
         }
         

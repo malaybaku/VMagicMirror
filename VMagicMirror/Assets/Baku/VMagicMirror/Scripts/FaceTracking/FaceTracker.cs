@@ -51,6 +51,11 @@ namespace Baku.VMagicMirror
         /// </remarks>
         public Rect DetectedRect { get; private set; }
 
+        /// <summary>
+        /// 顔検出スレッド上で、顔情報がアップデートされると発火します。
+        /// </summary>
+        public event Action<FaceDetectionUpdateStatus> FaceDetectionUpdated;
+
         /// <summary> カメラが初期化済みかどうか </summary>
         public bool HasInitDone { get; private set; } = false;
         private bool _isInitWaiting = false;
@@ -315,6 +320,13 @@ namespace Baku.VMagicMirror
                 //顔が取れないのでCompletedフラグは立てないままでOK
                 if (faceRects == null || faceRects.Count == 0)
                 {
+                    RaiseFaceDetectionUpdate(new FaceDetectionUpdateStatus()
+                    {
+                        Image = _dlibInputColors,
+                        Width = width,
+                        Height = height,
+                        HasValidFaceArea = false,
+                    });
                     continue;
                 }
 
@@ -328,6 +340,15 @@ namespace Baku.VMagicMirror
                 }
                 _mainPersonRect = mainPersonRect;
                 _mainPersonLandmarks = _faceLandmarkDetector.DetectLandmark(mainPersonRect);
+                
+                RaiseFaceDetectionUpdate(new FaceDetectionUpdateStatus()
+                {
+                    Image = _dlibInputColors,
+                    Width = width,
+                    Height = height,
+                    HasValidFaceArea = true,
+                    FaceArea = mainPersonRect,
+                });
 
                 FaceDetectCompleted = true;
             }
@@ -427,5 +448,27 @@ namespace Baku.VMagicMirror
                 }
             }
         }
+
+        private void RaiseFaceDetectionUpdate(FaceDetectionUpdateStatus status)
+        {
+            try
+            {
+                FaceDetectionUpdated?.Invoke(status);
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
+        }
+    }
+
+    public struct FaceDetectionUpdateStatus
+    {
+        //public WebCamTexture WebCam { get; set; }
+        public Color32[] Image { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public bool HasValidFaceArea { get; set; }
+        public Rect FaceArea { get; set; }
     }
 }

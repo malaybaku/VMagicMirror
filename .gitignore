@@ -45,6 +45,7 @@ sysinfo.txt
 # Assets to ignore
 
 /VMagicMirror/Assets/AniLipSync-VRM/
+/VMagicMirror/Assets/OpenCVforUnity/
 /VMagicMirror/Assets/DlibFaceLandmarkDetector/
 /VMagicMirror/Assets/Demigiant/
 /VMagicMirror/Assets/Deform/
@@ -61,6 +62,7 @@ sysinfo.txt
 /VMagicMirror/Assets/RawInputSharp/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
+/VMagicMirror/Assets/OpenCVforUnity.meta
 /VMagicMirror/Assets/DlibFaceLandmarkDetector.meta
 /VMagicMirror/Assets/Demigiant.meta
 /VMagicMirror/Assets/Deform.meta

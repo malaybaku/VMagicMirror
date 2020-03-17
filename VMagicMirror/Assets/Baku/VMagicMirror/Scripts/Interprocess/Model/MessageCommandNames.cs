@@ -86,7 +86,7 @@
         public const string LookAtStyle = nameof(LookAtStyle);
 
         // Motion, Image-based Hand
-        public const string EnableImageBaseHandTracking = nameof(EnableImageBaseHandTracking);
+        public const string EnableImageBasedHandTracking = nameof(EnableImageBasedHandTracking);
 
         //public const string EnableTouchTyping = nameof(EnableTouchTyping);
 

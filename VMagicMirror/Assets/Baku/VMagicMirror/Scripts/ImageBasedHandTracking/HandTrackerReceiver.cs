@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror
             {
                 switch (c.Command)
                 {
-                    case MessageCommandNames.EnableImageBaseHandTracking:
+                    case MessageCommandNames.EnableImageBasedHandTracking:
                         handTracker.ImageProcessEnabled = c.ToBoolean();
                         break;
                 }

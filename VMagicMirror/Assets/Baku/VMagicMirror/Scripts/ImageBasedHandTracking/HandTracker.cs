@@ -2,9 +2,6 @@
 using UnityEngine;
 using Zenject;
 
-//TODO: このクラスはほぼ全プロパティがマルチスレッドアクセスになりそうな気がする。
-//ので、
-
 namespace Baku.VMagicMirror
 {
     /// <summary>
@@ -32,13 +29,7 @@ namespace Baku.VMagicMirror
             _faceTracker = faceTracker;
             _faceTracker.FaceDetectionUpdated += OnFaceDetectionUpdated;
         }
-
-        private void Start()
-        {
-            //DEBUG: UI側がまだないので強制的に画像処理をオンにします
-            ImageProcessEnabled = true;
-        }
-
+        
         private readonly object _imageProcessEnabledLock = new object();
         private bool _imageProcessEnabled = false;
         /// <summary> 画像による手検出を行うかどうかを取得、設定します。デフォルトではfalseです。 </summary>
@@ -103,20 +94,13 @@ namespace Baku.VMagicMirror
             get => _handTopOrientation.Value;
             private set => _handTopOrientation.Value = value;
         }
-
-        private void Update()
-        {
-            //Debug.Log("Has Valid Hand Position? " + HasValidHandDetectResult);
-        }
-
+        
         private void OnFaceDetectionUpdated(FaceDetectionUpdateStatus status)
         {
-            LogOutput.Instance.Write("OnFaceDetectionUpdated");
             try
             {
                 if (!ImageProcessEnabled)
                 {
-                    LogOutput.Instance.Write("Not Enabled!!");
                     return;
                 }
 
@@ -132,12 +116,10 @@ namespace Baku.VMagicMirror
                 HasValidHandDetectResult = _handAreaDetector.HasValidHandArea;
                 if (!HasValidHandDetectResult)
                 {
-                    LogOutput.Instance.Write("Hand was not detected.");
                     return;
                 }
 
-                //NOTE: こっから先では座標系を直しながらアレしていきます
-                //とりあえずテキトーに書いてから考えましょうか。
+                //NOTE: こっから先では座標系の正規化をやってます
                 ReferenceFacePosition = new Vector2(
                     status.FaceArea.center.x / status.Width - 0.5f,
                     status.FaceArea.center.y / status.Height - 0.5f

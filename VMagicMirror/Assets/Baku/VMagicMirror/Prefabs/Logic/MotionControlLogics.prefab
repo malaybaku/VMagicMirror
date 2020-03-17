@@ -1,5 +1,61 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5455894112181466256
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4919419003873974731}
+  - component: {fileID: 7830865391416833507}
+  - component: {fileID: 2171101519611571038}
+  m_Layer: 0
+  m_Name: Finger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4919419003873974731
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5455894112181466256}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5813678810510073683}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7830865391416833507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5455894112181466256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7742343c44e3dc342992157b522d7cf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2171101519611571038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5455894112181466256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ef4c2a21b6782646a4924891f7a097a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5813678808713813115
 GameObject:
   m_ObjectHideFlags: 0
@@ -528,15 +584,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec6e231faeb946e43bb54724f38f17c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handPositionScale: 1
+  handShapeSetter: {fileID: 2171101519611571038}
+  handPositionScale: 0.5
   handNonTrackedCountDown: 0.6
-  rightHandForwardRotEuler: {x: 0, y: -90, z: 90}
-  leftHandForwardRotEuler: {x: 0, y: 90, z: -90}
-  rightHandHipOffsetWhenNotDetected: {x: 0.2, y: 0, z: 0.1}
-  rightHandDownRotEuler: {x: 0, y: 0, z: -80}
-  leftHandDownRotEuler: {x: 0, y: 0, z: 80}
-  posLerpFactor: 18
-  rotLerpFactor: 18
+  handNonTrackedSlideDownCount: 0.4
+  rightBaseRotAppliedDistance: {x: 0.3, y: 0}
+  trackLostSpeed: {x: 0, y: -0.1, z: 0}
+  rotRateByDistanceFromBase: {x: -150, y: -100}
+  aPoseArmDownAngleDeg: 70
+  aPoseArmPositionOffset: {x: 0, y: 0.05, z: 0.05}
+  ikLerpFactor: 15
+  nonTrackRotLerpFactor: 3
+  speedLowPassFactor: 8
+  speedTimeRate: 0.2
+  speedRotRate: 20
+  ikSpeedLimit: 1.5
+  nonTrackCountMax: 1
 --- !u!1 &5813678810510073684
 GameObject:
   m_ObjectHideFlags: 0
@@ -568,6 +631,7 @@ Transform:
   - {fileID: 5813678809054739211}
   - {fileID: 5813678808713813114}
   - {fileID: 5813678810248240002}
+  - {fileID: 4919419003873974731}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

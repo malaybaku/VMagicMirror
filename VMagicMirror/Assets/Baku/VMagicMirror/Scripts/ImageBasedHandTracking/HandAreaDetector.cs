@@ -56,16 +56,22 @@ namespace Baku.VMagicMirror
         
         #region IHandAreaDetector
         
-        public bool HasValidHandArea { get; private set; }
+        private readonly RecordHandDetectResult _leftResult = new RecordHandDetectResult();
+        public IHandDetectResult LeftSideResult => _leftResult;
         
-        public Vector2 HandAreaCenter { get; private set; }
+        private readonly RecordHandDetectResult _rightResult = new RecordHandDetectResult();
+        public IHandDetectResult RightSideResult => _rightResult;
 
-        public Vector2 HandAreaSize { get; private set; }
+        // public bool HasValidHandArea { get; private set; }
+        //
+        // public Vector2 HandAreaCenter { get; private set; }
+        //
+        // public Vector2 HandAreaSize { get; private set; }
+        //
+        // public float HandAreaRotation { get; private set; }
+        //
+        // public List<Vector2> ConvexDefectVectors { get; } = new List<Vector2>();
 
-        public float HandAreaRotation { get; private set; }
-        
-        public List<Vector2> ConvexDefectVectors { get; } = new List<Vector2>();
-        
         public void UpdateHandDetection(Color32[] colors, int width, int height, Rect faceRect)
         {
             if (_mat == null || _mat.width() != width || _mat.height() != height)
@@ -77,7 +83,7 @@ namespace Baku.VMagicMirror
 
             EstimateSkinColor(_mat, faceRect);
             PaintBlackOnFace(_mat, faceRect);
-            EstimateHandPose(_mat);
+            EstimateHandPoses(_mat, faceRect);
         }
 
         /// <summary>
@@ -85,7 +91,8 @@ namespace Baku.VMagicMirror
         /// </summary>
         public void UpdateHandDetectionWithoutFace()
         {
-            HasValidHandArea = false;
+            _leftResult.HasValidHandArea = false;
+            _rightResult.HasValidHandArea = false;
         }
 
         #endregion
@@ -167,14 +174,46 @@ namespace Baku.VMagicMirror
             _rectBr.y = mat.height();
             Imgproc.rectangle(mat, _rectLt, _rectBr, _colorBlack, -1);  
         }
-        
-        private void EstimateHandPose(Mat mat)
+
+        private void EstimateHandPoses(Mat mat, Rect faceRect)
         {
             var contours = GetSkinColorContours(mat);
             if (contours.Count <= 0)
             {
                 //肌色領域が(顔以外に)なかった = 手は写ってないので終了
-                HasValidHandArea = false;
+                _leftResult.HasValidHandArea = false;
+                _rightResult.HasValidHandArea = false;
+                return;
+            }
+
+            //contourを画像左側のモノと画像右側のモノに分割します
+            var leftContours = new List<MatOfPoint>();
+            var rightContours = new List<MatOfPoint>();
+
+            var pos = new int[2];
+            foreach (var c in contours)
+            {
+                c.get(0, 0, pos);
+                if (pos[0] < faceRect.center.x)
+                {
+                    leftContours.Add(c);
+                }
+                else
+                {
+                    rightContours.Add(c);
+                }
+            }
+            
+            EstimateHand(mat, leftContours, _leftResult);
+            EstimateHand(mat, rightContours, _rightResult);
+        }
+
+        private void EstimateHand(Mat mat, List<MatOfPoint> contours, RecordHandDetectResult resultSetter)
+        {
+            //画像処理としてはcontourがあったが、今調べてる側については
+            if (contours.Count == 0)
+            {
+                resultSetter.HasValidHandArea = false;
                 return;
             }
             
@@ -191,9 +230,10 @@ namespace Baku.VMagicMirror
             var handArea = Imgproc.minAreaRect(pointMat);
             var handAreaCenter = handArea.center;
             var handAreaSize = handArea.size;
-            HandAreaCenter = new Vector2((float)handAreaCenter.x, (float)handAreaCenter.y);
-            HandAreaSize = new Vector2((float)handAreaSize.width, (float)handAreaSize.height);
-            HandAreaRotation = (float)handArea.angle;            
+            
+            resultSetter.HandAreaCenter = new Vector2((float)handAreaCenter.x, (float)handAreaCenter.y);
+            resultSetter.HandAreaSize = new Vector2((float)handAreaSize.width, (float)handAreaSize.height);
+            resultSetter.HandAreaRotation = (float)handArea.angle;            
             
             Imgproc.convexHull(contour, _hullIndices);
             var hullIndicesArray = _hullIndices.toArray();
@@ -201,11 +241,45 @@ namespace Baku.VMagicMirror
             //通常ありえないが、凸包がちゃんと作れてないケース
             if (hullIndicesArray.Length < 3)
             {
-                HasValidHandArea = false;
+                resultSetter.HasValidHandArea = false;
                 return;
             }
 
-            UpdateConvexityDefection(contour, _hullIndices, defectMinY);
+            UpdateConvexityDefection(contour, _hullIndices, defectMinY, resultSetter);
+        }
+
+        private void UpdateConvexityDefection(
+            MatOfPoint contour, MatOfInt hullIndices, double defectMinY, RecordHandDetectResult resultSetter
+            )
+        {
+            var contourArray = contour.toArray();
+            var convexDefect = new MatOfInt4();
+            Imgproc.convexityDefects(contour, hullIndices, convexDefect);
+            
+            resultSetter.ConvexDefectVectors.Clear();
+            
+            int convexDefectCount = convexDefect.rows();
+            if (convexDefectCount > 0)
+            {
+                for (int i = 0; i < convexDefectCount; i++)
+                {
+                    convexDefect.get(i, 0, _convexityDefectSetValues);
+                    Point farPoint = contourArray[_convexityDefectSetValues[2]];
+                    int depth = _convexityDefectSetValues[3];
+                    if (depth > DefectThreasholdValue && farPoint.y < defectMinY)
+                    {
+                        var nearPoint1 = contourArray[_convexityDefectSetValues[0]];
+                        var nearPoint2 = contourArray[_convexityDefectSetValues[1]];
+                        resultSetter.ConvexDefectVectors.Add(new Vector2(
+                            (float)(nearPoint1.x * 0.5f + nearPoint2.x * 0.5 - farPoint.x),
+                            (float)(nearPoint1.y * 0.5f + nearPoint2.y * 0.5 - farPoint.y)
+                        ));
+                    }
+                }
+            }
+
+            //ここまでやりきると全データが有効に更新されている。
+            resultSetter.HasValidHandArea = true;
         }
         
         private List<MatOfPoint> GetSkinColorContours(Mat mat)
@@ -238,38 +312,16 @@ namespace Baku.VMagicMirror
             
             return contours[boundPos];
         }
-        
-        private void UpdateConvexityDefection(MatOfPoint contour, MatOfInt hullIndices, double defectMinY)
-        {
-            var contourArray = contour.toArray();
-            var convexDefect = new MatOfInt4();
-            Imgproc.convexityDefects(contour, hullIndices, convexDefect);
-            
-            ConvexDefectVectors.Clear();
-            
-            int convexDefectCount = convexDefect.rows();
-            if (convexDefectCount > 0)
-            {
-                for (int i = 0; i < convexDefectCount; i++)
-                {
-                    convexDefect.get(i, 0, _convexityDefectSetValues);
-                    Point farPoint = contourArray[_convexityDefectSetValues[2]];
-                    int depth = _convexityDefectSetValues[3];
-                    if (depth > DefectThreasholdValue && farPoint.y < defectMinY)
-                    {
-                        var nearPoint1 = contourArray[_convexityDefectSetValues[0]];
-                        var nearPoint2 = contourArray[_convexityDefectSetValues[1]];
-                        ConvexDefectVectors.Add(new Vector2(
-                            (float)(nearPoint1.x * 0.5f + nearPoint2.x * 0.5 - farPoint.x),
-                            (float)(nearPoint1.y * 0.5f + nearPoint2.y * 0.5 - farPoint.y)
-                        ));
-                    }
-                }
-            }
+    }
 
-            //ここまでやりきると全データが有効に更新されている。
-            HasValidHandArea = true;
-        }
+    /// <summary> すべてのデータが実際にはpublicにアクセス可能なデータであるような、手の検出結果の実装です。 </summary>
+    public class RecordHandDetectResult : IHandDetectResult
+    {
+        public bool HasValidHandArea { get; set; }
+        public Vector2 HandAreaCenter { get; set; }
+        public Vector2 HandAreaSize { get; set; }
+        public float HandAreaRotation { get; set; }
+        public List<Vector2> ConvexDefectVectors { get; } = new List<Vector2>();
     }
 }
 

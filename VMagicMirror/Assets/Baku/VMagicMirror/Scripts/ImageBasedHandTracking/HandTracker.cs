@@ -22,7 +22,17 @@ namespace Baku.VMagicMirror
 #else
             new EmptyHandAreaDetector();
 #endif
+        
+        /// <summary>
+        /// 画像座標ベースで顔の左側で検出された手の情報を取得します。これは実世界における右手を意味すると考えられます。
+        /// </summary>
+        public TrackedHand LeftSideHand { get; } = new TrackedHand();
 
+        /// <summary>
+        /// 画像座標ベースで顔の右側で検出された手の情報を取得します。これは実世界における左手を意味すると考えられます。
+        /// </summary>
+        public TrackedHand RightSideHand { get; } = new TrackedHand();
+        
         [Inject]
         public void Initialize(FaceTracker faceTracker)
         {
@@ -46,55 +56,14 @@ namespace Baku.VMagicMirror
                     //フラグが下がった時点で手自体が検出できない状態に落としておく: このほうが色々と安全かな～と。
                     if (_imageProcessEnabled && !value)
                     {
-                        HasValidHandDetectResult = false;
+                        LeftSideHand.HasValidHandDetectResult = false;
+                        RightSideHand.HasValidHandDetectResult = false;
                     }
                     _imageProcessEnabled = value;                    
                 }
             }
         }
 
-        private readonly Atomic<bool> _hasValidHandDetectResult = new Atomic<bool>();
-        public bool HasValidHandDetectResult
-        {
-            get => _hasValidHandDetectResult.Value;
-            set => _hasValidHandDetectResult.Value = value;
-        }
-        
-        private readonly Atomic<Vector2> _referenceFacePosition = new Atomic<Vector2>();
-        public Vector2 ReferenceFacePosition
-        {
-            get => _referenceFacePosition.Value;
-            private set => _referenceFacePosition.Value = value;
-        }
-        
-        private readonly Atomic<Vector2> _handPosition = new Atomic<Vector2>();
-        public Vector2 HandPosition
-        {
-            get => _handPosition.Value;
-            private set => _handPosition.Value = value;
-        }
-
-        private readonly Atomic<Vector2> _handSize = new Atomic<Vector2>();
-        public Vector2 HandSize
-        {
-            get => _handSize.Value;
-            private set => _handSize.Value = value;
-        }
-
-        private readonly Atomic<int> _convexDefectCount = new Atomic<int>();
-        public int ConvexDefectCount
-        {
-            get => _convexDefectCount.Value;
-            private set => _convexDefectCount.Value = value;
-        }
-
-        private readonly Atomic<Vector2> _handTopOrientation = new Atomic<Vector2>();
-        public Vector2 HandTopOrientation
-        {
-            get => _handTopOrientation.Value;
-            private set => _handTopOrientation.Value = value;
-        }
-        
         private void OnFaceDetectionUpdated(FaceDetectionUpdateStatus status)
         {
             try
@@ -113,37 +82,95 @@ namespace Baku.VMagicMirror
                     _handAreaDetector.UpdateHandDetectionWithoutFace();
                 }
 
-                HasValidHandDetectResult = _handAreaDetector.HasValidHandArea;
-                if (!HasValidHandDetectResult)
-                {
-                    return;
-                }
-
-                //NOTE: こっから先では座標系の正規化をやってます
-                ReferenceFacePosition = new Vector2(
-                    status.FaceArea.center.x / status.Width - 0.5f,
-                    status.FaceArea.center.y / status.Height - 0.5f
-                );
-                
-                HandPosition = new Vector2(
-                    _handAreaDetector.HandAreaCenter.x / status.Width - 0.5f,
-                    -_handAreaDetector.HandAreaCenter.y / status.Height + 0.5f
-                );
-
-                HandSize = new Vector2(
-                    _handAreaDetector.HandAreaSize.x / status.Width,
-                    _handAreaDetector.HandAreaSize.y / status.Height
-                );
-
-                //NOTE: いったん信用できない値として扱っちゃいます
-                HandTopOrientation = new Vector2(0, 1);
-
-                ConvexDefectCount = _handAreaDetector.ConvexDefectVectors.Count;
+                SetDetectResult(_handAreaDetector.LeftSideResult, status, LeftSideHand);
+                SetDetectResult(_handAreaDetector.RightSideResult, status, RightSideHand);
             }
             catch (Exception ex)
             {
                 LogOutput.Instance.Write(ex);
             }
+        }
+
+        private void SetDetectResult(IHandDetectResult source, FaceDetectionUpdateStatus status, TrackedHand dest)
+        {
+            dest.HasValidHandDetectResult = source.HasValidHandArea;
+            if (!dest.HasValidHandDetectResult)
+            {
+                return;
+            }
+
+            //NOTE: こっから先では座標系の正規化をやってます
+            dest.ReferenceFacePosition = new Vector2(
+                
+                status.FaceArea.center.x / status.Width - 0.5f,
+                status.FaceArea.center.y / status.Height - 0.5f
+            );
+                
+            dest.HandPosition = new Vector2(
+                source.HandAreaCenter.x / status.Width - 0.5f,
+                -source.HandAreaCenter.y / status.Height + 0.5f
+            );
+            
+            dest.HandSize = new Vector2(
+                source.HandAreaSize.x / status.Width,
+                source.HandAreaSize.y / status.Height
+            );
+
+            //NOTE: いったん信用できない値として扱っちゃいます
+            dest.HandTopOrientation = new Vector2(0, 1);
+
+            dest.ConvexDefectCount = source.ConvexDefectVectors.Count;            
+        }
+    }
+
+    
+    /// <summary> 画像座標ベースで顔の左、または右にある手の検出結果をスレッドセーフに保持するためのクラス </summary>
+    /// <remarks>
+    /// HasValidDetectResultはいろいろなクラスから触ってよいです。
+    /// それ以外は、setはHandTrackerで呼び出し、他のクラスはgetだけする、という使い方を想定してます。
+    /// </remarks>
+    public class TrackedHand
+    {
+        private readonly Atomic<bool> _hasValidHandDetectResult = new Atomic<bool>();
+        public bool HasValidHandDetectResult
+        {
+            get => _hasValidHandDetectResult.Value;
+            set => _hasValidHandDetectResult.Value = value;
+        }
+        
+        private readonly Atomic<Vector2> _referenceFacePosition = new Atomic<Vector2>();
+        public Vector2 ReferenceFacePosition
+        {
+            get => _referenceFacePosition.Value;
+            set => _referenceFacePosition.Value = value;
+        }
+        
+        private readonly Atomic<Vector2> _handPosition = new Atomic<Vector2>();
+        public Vector2 HandPosition
+        {
+            get => _handPosition.Value;
+            set => _handPosition.Value = value;
+        }
+
+        private readonly Atomic<Vector2> _handSize = new Atomic<Vector2>();
+        public Vector2 HandSize
+        {
+            get => _handSize.Value;
+            set => _handSize.Value = value;
+        }
+
+        private readonly Atomic<int> _convexDefectCount = new Atomic<int>();
+        public int ConvexDefectCount
+        {
+            get => _convexDefectCount.Value;
+            set => _convexDefectCount.Value = value;
+        }
+
+        private readonly Atomic<Vector2> _handTopOrientation = new Atomic<Vector2>();
+        public Vector2 HandTopOrientation
+        {
+            get => _handTopOrientation.Value;
+            set => _handTopOrientation.Value = value;
         }
     }
 }

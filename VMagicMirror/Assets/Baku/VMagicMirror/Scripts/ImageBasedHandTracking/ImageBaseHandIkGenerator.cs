@@ -223,68 +223,93 @@ namespace Baku.VMagicMirror
 
         private void ConsumeUpdatedHandPosture()
         {
-            //左なら左手、右なら右手、という感じで分けている 
-            //※両手も別にやって良さそうなんでそのうち改修が入ります。
+            ConsumeLeftHandUpdate();
+            ConsumeRightHandUpdate();
+        }
+
+        private void ConsumeLeftHandUpdate()
+        {
+            //NOTE: 画像上で右側に写ってるのが左手です。
+            var src = _handTracker.RightSideHand;
             
-            if (!_handTracker.HasValidHandDetectResult)
+            if (!src.HasValidHandDetectResult)
             {
                 return;
             }
 
             //フラグを下げることで、今入っているデータを消費する。Produce/Consumeみたいなアレですね。
-            _handTracker.HasValidHandDetectResult = false;
+            src.HasValidHandDetectResult = false;
 
             var handShape =
-                _handTracker.ConvexDefectCount > 1 ? HandShapeSetter.HandShapeTypes.Paper :
-                _handTracker.ConvexDefectCount > 0 ? HandShapeSetter.HandShapeTypes.Scissors :
+                src.ConvexDefectCount > 1 ? HandShapeSetter.HandShapeTypes.Paper :
+                src.ConvexDefectCount > 0 ? HandShapeSetter.HandShapeTypes.Scissors :
                 HandShapeSetter.HandShapeTypes.Rock;
            
-            var handPos = _handTracker.HandPosition - _handTracker.ReferenceFacePosition;
+            var handPos = src.HandPosition - src.ReferenceFacePosition;
             //NOTE: ここで反転処理をかます事により、鏡像反転していない状態に持ち込む。
             //鏡像反転をさせちゃうと「左手をふりながらマウスを動かす」とかの動きがすげー破綻するので、それを防ぐのが狙い
             handPos.x = -handPos.x;
             
-            if (handPos.x > 0)
-            {
-                HasRightHandUpdate = true;
-                _rawRightHandPos =
-                    _head.position +
-                    new Vector3(0, 0, 0.2f) +
-                    handPositionScale * new Vector3(handPos.x, handPos.y, 0);
+            HasLeftHandUpdate = true;
+            _rawLeftHandPos =
+                _head.position +
+                new Vector3(0, 0, 0.2f) +
+                handPositionScale * new Vector3(handPos.x, handPos.y, 0);
 
-                _rawRightHandRot =
-                    Quaternion.AngleAxis((handPos.x - rightBaseRotAppliedDistance.x) * rotRateByDistanceFromBase.x, Vector3.forward) * 
-                    ((handPos.y - rightBaseRotAppliedDistance.y > 0) 
-                        ? Quaternion.identity 
-                        : Quaternion.AngleAxis((handPos.y - rightBaseRotAppliedDistance.y) * rotRateByDistanceFromBase.y, Vector3.right)
-                        ) * 
-                    Quaternion.Euler(RightHandForwardRotEuler);
-
-                _rightHandNonTrackCountDown = handNonTrackedCountDown;
-
-                AccumulateRightHandShape(handShape);
-            }
-            else
-            {
-                HasLeftHandUpdate = true;
-                _rawLeftHandPos =
-                    _head.position +
-                    new Vector3(0, 0, 0.2f) +
-                    handPositionScale * new Vector3(handPos.x, handPos.y, 0);
-
-                _rawLeftHandRot =
-                    Quaternion.AngleAxis((handPos.x - leftBaseRotAppliedDistance.x) * rotRateByDistanceFromBase.x, Vector3.forward) * 
-                    ((handPos.y - leftBaseRotAppliedDistance.y > 0) 
-                        ? Quaternion.identity 
-                        : Quaternion.AngleAxis((handPos.y - leftBaseRotAppliedDistance.y) * rotRateByDistanceFromBase.y, Vector3.right)
-                    ) * 
-                    Quaternion.Euler(LeftHandForwardRotEuler);
-                
-                _leftHandNonTrackCountDown = handNonTrackedCountDown;
-                AccumulateLeftHandShape(handShape);
-            }
+            _rawLeftHandRot =
+                Quaternion.AngleAxis((handPos.x - leftBaseRotAppliedDistance.x) * rotRateByDistanceFromBase.x, Vector3.forward) * 
+                ((handPos.y - leftBaseRotAppliedDistance.y > 0) 
+                    ? Quaternion.identity 
+                    : Quaternion.AngleAxis((handPos.y - leftBaseRotAppliedDistance.y) * rotRateByDistanceFromBase.y, Vector3.right)
+                ) * 
+                Quaternion.Euler(LeftHandForwardRotEuler);
+            
+            _leftHandNonTrackCountDown = handNonTrackedCountDown;
+            AccumulateLeftHandShape(handShape);
         }
+     
+        private void ConsumeRightHandUpdate()
+        {
+            //NOTE: 画像上で右側に写ってるのが左手です。
+            var src = _handTracker.LeftSideHand;
+            
+            if (!src.HasValidHandDetectResult)
+            {
+                return;
+            }
 
+            //フラグを下げることで、今入っているデータを消費する。Produce/Consumeみたいなアレですね。
+            src.HasValidHandDetectResult = false;
+
+            var handShape =
+                src.ConvexDefectCount > 1 ? HandShapeSetter.HandShapeTypes.Paper :
+                src.ConvexDefectCount > 0 ? HandShapeSetter.HandShapeTypes.Scissors :
+                HandShapeSetter.HandShapeTypes.Rock;
+           
+            var handPos = src.HandPosition - src.ReferenceFacePosition;
+            //NOTE: ここで反転処理をかます事により、鏡像反転していない状態に持ち込む。
+            //鏡像反転をさせちゃうと「左手をふりながらマウスを動かす」とかの動きがすげー破綻するので、それを防ぐのが狙い
+            handPos.x = -handPos.x;
+            
+            HasRightHandUpdate = true;
+            _rawRightHandPos =
+                _head.position +
+                new Vector3(0, 0, 0.2f) +
+                handPositionScale * new Vector3(handPos.x, handPos.y, 0);
+
+            _rawRightHandRot =
+                Quaternion.AngleAxis((handPos.x - rightBaseRotAppliedDistance.x) * rotRateByDistanceFromBase.x, Vector3.forward) * 
+                ((handPos.y - rightBaseRotAppliedDistance.y > 0) 
+                    ? Quaternion.identity 
+                    : Quaternion.AngleAxis((handPos.y - rightBaseRotAppliedDistance.y) * rotRateByDistanceFromBase.y, Vector3.right)
+                ) * 
+                Quaternion.Euler(RightHandForwardRotEuler);
+
+            _rightHandNonTrackCountDown = handNonTrackedCountDown;
+
+            AccumulateRightHandShape(handShape);
+        }
+        
         private void UpdateTrackCount()
         {
             if (_leftHandNonTrackCountDown > 0)

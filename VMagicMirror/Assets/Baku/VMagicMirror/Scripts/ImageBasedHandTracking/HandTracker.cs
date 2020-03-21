@@ -15,13 +15,8 @@ namespace Baku.VMagicMirror
     public class HandTracker : MonoBehaviour
     {
         private FaceTracker _faceTracker = null;
-        
-        private readonly IHandAreaDetector _handAreaDetector = 
-#if VMAGICMIRROR_USE_OPENCV
-            new HandAreaDetector();
-#else
-            new EmptyHandAreaDetector();
-#endif
+
+        private IHandAreaDetector _handAreaDetector = null;
         
         /// <summary>
         /// 画像座標ベースで顔の左側で検出された手の情報を取得します。これは実世界における右手を意味すると考えられます。
@@ -38,6 +33,16 @@ namespace Baku.VMagicMirror
         {
             _faceTracker = faceTracker;
             _faceTracker.FaceDetectionUpdated += OnFaceDetectionUpdated;
+        }
+
+        private void Start()
+        {
+            _handAreaDetector = 
+#if VMAGICMIRROR_USE_OPENCV
+                new HandAreaDetector();
+#else
+                new EmptyHandAreaDetector();
+#endif
         }
         
         private readonly object _imageProcessEnabledLock = new object();

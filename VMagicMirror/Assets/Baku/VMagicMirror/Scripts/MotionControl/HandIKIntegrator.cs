@@ -47,7 +47,17 @@ namespace Baku.VMagicMirror
         private float _leftHandIkChangeCoolDown = 0f;
         private float _rightHandIkChangeCoolDown = 0f;
 
-        public bool EnableHidArmMotion { get; set; } = true;
+        private bool _enableHidArmMotion = true;
+
+        public bool EnableHidArmMotion
+        {
+            get => _enableHidArmMotion;
+            set
+            {
+                _enableHidArmMotion = value;
+                mouseMove.EnableUpdate = value;
+            }
+        }
 
         public bool UseGamepadForWordToMotion { get; set; } = false;
         

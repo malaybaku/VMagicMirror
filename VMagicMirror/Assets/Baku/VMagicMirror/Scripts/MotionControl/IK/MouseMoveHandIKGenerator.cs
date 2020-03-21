@@ -18,6 +18,8 @@ namespace Baku.VMagicMirror
         public float HandToTipLength { get; set; } = 0.12f;
 
         public float YOffset { get; set; } = 0.03f;
+
+        public bool EnableUpdate { get; set; } = true;
         
         /// <summary>
         /// 直近で参照したタッチパッドのワールド座標。
@@ -38,14 +40,20 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             //NOTE: この値は初期値が大外れしていないことを保証するものなので、多少ズレていてもOK
-            _rightHand.Position = _touchPad.GetHandTipPosFromScreenPoint(0, 0) + YOffsetAlwaysVec;
+            _rightHand.Position = _touchPad.GetHandTipPosFromScreenPoint() + YOffsetAlwaysVec;
             _targetPosition = _rightHand.Position;
         }
             
 
         private void Update()
         {
-            MoveMouse(Vector3.zero);
+            if (!EnableUpdate)
+            {
+                return;
+            }
+
+            ReferenceTouchpadPosition = _touchPad.GetHandTipPosFromScreenPoint();
+            _targetPosition = ReferenceTouchpadPosition + _touchPad.GetOffsetVector(YOffset, HandToTipLength);
             
             _rightHand.Position = Vector3.Lerp(
                 _rightHand.Position,
@@ -64,24 +72,6 @@ namespace Baku.VMagicMirror
                 _rightHand.Rotation, rot, WristYawSpeedFactor * Time.deltaTime
                 );
         }
-
-        public void MoveMouse(Vector3 mousePosition)
-        {
-            int x = (int)mousePosition.x;
-            int y = (int)mousePosition.y;
-
-            float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
-            float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -1000, 1000) / 1000.0f;
-
-            ReferenceTouchpadPosition = _touchPad.GetHandTipPosFromScreenPoint(xClamped, yClamped);
-
-            var targetPos = ReferenceTouchpadPosition + _touchPad.GetOffsetVector(YOffset, HandToTipLength);
-
-//            targetPos -= HandToPalmLength * new Vector3(targetPos.x, 0, targetPos.z).normalized;
-
-            _targetPosition = targetPos;
-        }
-
     }
 }
 

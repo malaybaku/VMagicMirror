@@ -33,6 +33,12 @@
         // Motion
 
         // Motion, Enable
+        
+        
+        /// <summary>
+        /// NOTE: 歴史的経緯により、このキーは名前に反してキーボード/マウスの動作反映のオンオフのみを指定します。
+        /// (ゲームパッドやMIDIコンの単体指定はなく、これらのオンオフは現在デバイスの読み取りオンオフで設定します)
+        /// </summary>
         public const string EnableHidArmMotion = nameof(EnableHidArmMotion);
 
         // Motion, Hand

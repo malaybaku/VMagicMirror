@@ -52,6 +52,7 @@ namespace Baku.VMagicMirror
         public bool UseGamepadForWordToMotion { get; set; } = false;
         
         //NOTE: このフラグではキーボードのみならずマウス入力も無視することに注意
+        /// <summary> NOTE: 歴史的経緯によって「受け取ってるけど使わないフラグ」になってます。 </summary>
         public bool UseKeyboardForWordToMotion { get; set; } = false;
         public bool UseMidiControllerForWordToMotion { get; set; } = false;
         
@@ -80,7 +81,7 @@ namespace Baku.VMagicMirror
         
         public void PressKey(string keyName)
         {
-            if (UseKeyboardForWordToMotion)
+            if (!EnableHidArmMotion)
             {
                 return;
             }
@@ -99,12 +100,7 @@ namespace Baku.VMagicMirror
             {
                 SetRightHandIk(HandTargetType.Keyboard);
             }
-
-            if (EnableHidArmMotion)
-            {
-                fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);
-            }
-
+            
             if (hand != ReactedHand.None && EnableHidArmMotion)
             {
                 particleStore.RequestKeyboardParticleStart(pos);
@@ -113,7 +109,7 @@ namespace Baku.VMagicMirror
 
         public void MoveMouse(Vector3 mousePosition)
         {
-            if (UseKeyboardForWordToMotion)
+            if (!EnableHidArmMotion)
             {
                 return;
             }
@@ -137,7 +133,7 @@ namespace Baku.VMagicMirror
 
         public void ClickMouse(string button)
         {
-            if (!EnablePresentationMode && EnableHidArmMotion && !UseKeyboardForWordToMotion)
+            if (!EnablePresentationMode && EnableHidArmMotion)
             {
                 fingerController.StartClickMotion(button);
                 SetRightHandIk(HandTargetType.Mouse);   

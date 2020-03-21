@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
                 {
                     case MessageCommandNames.EnableHidArmMotion:
                         handIkIntegrator.EnableHidArmMotion = message.ToBoolean();
-                        ikWeightCrossFade.ForceStopHandIk = !message.ToBoolean();
+                        //ikWeightCrossFade.ForceStopHandIk = !message.ToBoolean();
                         break;
                     case MessageCommandNames.LengthFromWristToPalm:
                         SetLengthFromWristToPalm(message.ParseAsCentimeter());

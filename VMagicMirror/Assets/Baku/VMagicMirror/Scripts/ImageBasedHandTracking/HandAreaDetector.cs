@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
         #region 画像処理で使う設定値
         
         /// <summary> 立っている指を判定するためのしきい値で、低いほど指が立っていると判定しやすくなる </summary>
-        public float DefectThreasholdValue { get; set; } = 8500f;
+        public float DefectThreasholdValue { get; set; } = 7500f;
 
         /// <summary> 肌の色推定値を鳴らすときに使う0~1の値。低いほど推定値がゆっくり推移する </summary>
         public float SkinColorLowPassRate { get; set; }= 0.1f;
@@ -38,6 +38,12 @@ namespace Baku.VMagicMirror
         public int DownScaleCount { get; set; }
         
         #endregion
+
+        /// <summary>
+        /// 顔の検出領域の面積に対して、肌色のColorBlobのBoundingBox面積が比率としてｓコレ以上大きかった場合、
+        /// その大きすぎた領域の下側を真っ黒に塗りつぶします。
+        /// </summary>
+        private const float LargeBlobCutLimitFactor = 2.0f;
         
         private Scalar _skinColorRgba;
         private readonly ColorBlobDetector _detector = new ColorBlobDetector();
@@ -61,16 +67,6 @@ namespace Baku.VMagicMirror
         
         private readonly RecordHandDetectResult _rightResult = new RecordHandDetectResult();
         public IHandDetectResult RightSideResult => _rightResult;
-
-        // public bool HasValidHandArea { get; private set; }
-        //
-        // public Vector2 HandAreaCenter { get; private set; }
-        //
-        // public Vector2 HandAreaSize { get; private set; }
-        //
-        // public float HandAreaRotation { get; private set; }
-        //
-        // public List<Vector2> ConvexDefectVectors { get; } = new List<Vector2>();
 
         public void UpdateHandDetection(Color32[] colors, int width, int height, Rect faceRect)
         {
@@ -186,6 +182,22 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            bool shouldReloadContour = PaintBlackForTooLargeBlobs(
+                mat, contours, (int)(faceRect.width * faceRect.height * LargeBlobCutLimitFactor)
+                );
+
+            if (shouldReloadContour)
+            {
+                contours = GetSkinColorContours(mat);
+                if (contours.Count <= 0)
+                {
+                    //(通常ないが)再計算したBlobに肌色領域がない = おしまい
+                    _leftResult.HasValidHandArea = false;
+                    _rightResult.HasValidHandArea = false;
+                    return;
+                }
+            }
+
             //contourを画像左側のモノと画像右側のモノに分割します
             var leftContours = new List<MatOfPoint>();
             var rightContours = new List<MatOfPoint>();
@@ -206,6 +218,36 @@ namespace Baku.VMagicMirror
             
             EstimateHand(mat, leftContours, _leftResult);
             EstimateHand(mat, rightContours, _rightResult);
+        }
+
+        //大きすぎる肌色エリアがある場合、ついて、手首～ひじの肌が露出しているものと推定し、画像の低い側を塗りつぶします。
+        //塗りつぶしを1回以上行った場合はtrueを返します。
+        private bool PaintBlackForTooLargeBlobs(Mat mat, List<MatOfPoint> contours, int sizeUpperLimit)
+        {
+            bool result = false;
+            
+            foreach (var c in contours)
+            {
+                var bound = Imgproc.boundingRect(c);
+                int boundSize = bound.width * bound.height;
+                
+                //ちっちゃいbound: 無視
+                if (boundSize < sizeUpperLimit)
+                {
+                    continue;
+                }
+                
+                //でかいbound: ナイーブに、bounding boxの面積が上限に収まるように下部を塗りつぶす。
+                //oriented boundの形がナナメな場合にこの処理を呼ぶとBlobが必要以上に縮む事もあるが、それは諦める
+                int limitedHeight = sizeUpperLimit / bound.width;
+                var tl = bound.tl();
+                _rectLt.x = tl.x;
+                _rectLt.y = tl.y + limitedHeight;
+                Imgproc.rectangle(mat, _rectLt, bound.br(), _colorBlack, -1);
+                result = true;
+            }
+
+            return result;
         }
 
         private void EstimateHand(Mat mat, List<MatOfPoint> contours, RecordHandDetectResult resultSetter)
@@ -231,9 +273,15 @@ namespace Baku.VMagicMirror
             var handAreaCenter = handArea.center;
             var handAreaSize = handArea.size;
             
-            resultSetter.HandAreaCenter = new Vector2((float)handAreaCenter.x, (float)handAreaCenter.y);
-            resultSetter.HandAreaSize = new Vector2((float)handAreaSize.width, (float)handAreaSize.height);
+            //方向固定のBoundを使うとこう。
+            resultSetter.HandAreaCenter = new Vector2(boundRect.x + boundRect.width / 2, boundRect.y + boundRect.height / 2);
+            resultSetter.HandAreaSize = new Vector2(boundRect.width, boundRect.height);
             resultSetter.HandAreaRotation = (float)handArea.angle;            
+            
+            //OBBを使うとこうなるが、これだけだとangleが45度超えてるときの挙動が直感に反する事があるので要注意
+            // resultSetter.HandAreaCenter = new Vector2((float)handAreaCenter.x, (float)handAreaCenter.y);
+            // resultSetter.HandAreaSize = new Vector2((float)handAreaSize.width, (float)handAreaSize.height);
+            // resultSetter.HandAreaRotation = (float)handArea.angle;            
             
             Imgproc.convexHull(contour, _hullIndices);
             var hullIndicesArray = _hullIndices.toArray();

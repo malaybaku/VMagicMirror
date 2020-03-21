@@ -105,8 +105,7 @@ namespace Baku.VMagicMirror
         
         private static readonly float[] _rockBendAngles = new float[]
         {
-            0f, 0f, 0f, 0f, 0f,
-            // 30f, 55f, 55f, 60f, 70f,
+            30f, 55f, 55f, 60f, 70f,
         };
 
         private static readonly float[] _scissorsBendAngles = new float[]

@@ -442,6 +442,10 @@ namespace Baku.VMagicMirror
                 gamepadFinger.GripLeftHand();
             }
 
+            if (targetType == HandTargetType.ImageBaseHand)
+            {
+                imageBaseHand.InitializeHandPosture(ReactedHand.Left, _prevLeftHand);
+            }
         }
 
         private void SetRightHandIk(HandTargetType targetType)
@@ -478,6 +482,12 @@ namespace Baku.VMagicMirror
             if (targetType == HandTargetType.Gamepad)
             {
                 gamepadFinger.GripRightHand();
+            }
+
+            //ブレンディングをきれいにするために直前で手があった位置を拾って渡してあげる
+            if (targetType == HandTargetType.ImageBaseHand)
+            {
+                imageBaseHand.InitializeHandPosture(ReactedHand.Right, _prevRightHand);
             }
         }
 

@@ -23,6 +23,13 @@ namespace Baku.VMagicMirror
         private static readonly Vector3 RightHandForwardRotEuler = new Vector3(0, -90, 90);
         private static readonly Vector3 LeftHandForwardRotEuler = new Vector3(0, 90, -90);
 
+        //手の検出面積が顔とくらべてこれ以上デカい場合、無条件にパーとして扱う、というしきい値。
+        private const float PaperHandFaceSizeFactor = 2.0f;
+        //手の検出領域がこれ以上タテ方向に細長い場合はパーとみなしますよ、というしきい値。
+        private const float PaperHandAspectRatio = 2.2f;
+        //手の検出領域の横幅が顔の横幅と比べてこれ以上ならばパーとみなします、というしきい値
+        private const float PaperHandWidthRateMin = 0.8f;
+
         [SerializeField] private HandShapeSetter handShapeSetter = null;
         
         [Tooltip("ウェブカメラ上での顔と手が画面の両端にあるとしたら頭と手をどのくらいの距離にしますか、という値(m)")]
@@ -123,6 +130,29 @@ namespace Baku.VMagicMirror
         /// </summary>
         public bool HasRightHandUpdate { get; set; } = false;
 
+        /// <summary>
+        /// 他のIKから画像ベースIKに移動するときの遷移を滑らかにするために、前のIKで使っていた位置情報を使って姿勢を初期化します。
+        /// </summary>
+        public void InitializeHandPosture(ReactedHand hand, IIKGenerator src)
+        {
+            if (src == null)
+            {
+                return;
+            }
+            
+            switch (hand)
+            {
+                case ReactedHand.Left:
+                    _leftHand.Position = src.Position;
+                    _leftHand.Rotation = src.Rotation;
+                    break;
+                case ReactedHand.Right:
+                    _rightHand.Position = src.Position;
+                    _rightHand.Rotation = src.Rotation;
+                    break;
+            }
+        }
+        
 
         private void AccumulateLeftHandShape(HandShapeSetter.HandShapeTypes type)
         {
@@ -240,11 +270,6 @@ namespace Baku.VMagicMirror
             //フラグを下げることで、今入っているデータを消費する。Produce/Consumeみたいなアレですね。
             src.HasValidHandDetectResult = false;
 
-            var handShape =
-                src.ConvexDefectCount > 1 ? HandShapeSetter.HandShapeTypes.Paper :
-                src.ConvexDefectCount > 0 ? HandShapeSetter.HandShapeTypes.Scissors :
-                HandShapeSetter.HandShapeTypes.Rock;
-           
             var handPos = src.HandPosition - src.ReferenceFacePosition;
             //NOTE: ここで反転処理をかます事により、鏡像反転していない状態に持ち込む。
             //鏡像反転をさせちゃうと「左手をふりながらマウスを動かす」とかの動きがすげー破綻するので、それを防ぐのが狙い
@@ -265,7 +290,7 @@ namespace Baku.VMagicMirror
                 Quaternion.Euler(LeftHandForwardRotEuler);
             
             _leftHandNonTrackCountDown = handNonTrackedCountDown;
-            AccumulateLeftHandShape(handShape);
+            AccumulateLeftHandShape(JudgeHandShapeType(src));
         }
      
         private void ConsumeRightHandUpdate()
@@ -280,12 +305,7 @@ namespace Baku.VMagicMirror
 
             //フラグを下げることで、今入っているデータを消費する。Produce/Consumeみたいなアレですね。
             src.HasValidHandDetectResult = false;
-
-            var handShape =
-                src.ConvexDefectCount > 1 ? HandShapeSetter.HandShapeTypes.Paper :
-                src.ConvexDefectCount > 0 ? HandShapeSetter.HandShapeTypes.Scissors :
-                HandShapeSetter.HandShapeTypes.Rock;
-           
+            
             var handPos = src.HandPosition - src.ReferenceFacePosition;
             //NOTE: ここで反転処理をかます事により、鏡像反転していない状態に持ち込む。
             //鏡像反転をさせちゃうと「左手をふりながらマウスを動かす」とかの動きがすげー破綻するので、それを防ぐのが狙い
@@ -307,7 +327,45 @@ namespace Baku.VMagicMirror
 
             _rightHandNonTrackCountDown = handNonTrackedCountDown;
 
-            AccumulateRightHandShape(handShape);
+            AccumulateRightHandShape(JudgeHandShapeType(src));
+        }
+
+        private HandShapeSetter.HandShapeTypes JudgeHandShapeType(TrackedHand src)
+        {
+            //手が十分大きく映っていたり、convexの検出数が十分あるならば、手の形はパーと考えられる
+            if (src.HandSize.x * src.HandSize.y >
+                src.ReferenceFaceSize.x * src.ReferenceFaceSize.y * PaperHandFaceSizeFactor)
+            {
+                Debug.Log("手がでかいのでパー");
+                return HandShapeSetter.HandShapeTypes.Paper;
+            }
+
+            if (src.ConvexDefectCount > 2)
+            {
+                Debug.Log("Convexが多いのでパー");
+                return HandShapeSetter.HandShapeTypes.Paper;
+            }
+
+            if (src.HandSize.x > src.ReferenceFaceSize.x * PaperHandWidthRateMin)
+            {
+                Debug.Log("手が横方向に十分広がってるのでパー");
+                return HandShapeSetter.HandShapeTypes.Paper;
+            }
+
+            //NOTE: 凹みが2つのケースというのは、人差し-中指間にくわえて、チョキの中指と薬指のあいだが凹んでると判定されるケース。
+            if (src.ConvexDefectCount > 0)
+            {
+                Debug.Log("Convexが1または2なのでチョキ");
+                return HandShapeSetter.HandShapeTypes.Scissors;
+            }
+            
+            //NOTE: ここはconvexがゼロなので普通はグーのハズ。ただし「指をぴっちり閉めたパー」かもしれないので、そのケースをケアします
+
+            Debug.Log("アス比で判定してます: " + (src.HandSize.y * 1.0f / src.HandSize.x).ToString("0.00"));
+            //ここまでで判断がつかない場合はアスペクト比を見て、縦長ならパー、正方形に近ければグー、とする
+            return src.HandSize.y > src.HandSize.x * PaperHandAspectRatio
+                ? HandShapeSetter.HandShapeTypes.Paper 
+                : HandShapeSetter.HandShapeTypes.Rock;
         }
         
         private void UpdateTrackCount()
@@ -340,7 +398,6 @@ namespace Baku.VMagicMirror
             var hipsPos = _hips.position;
             UpdateLeftHandIk(hipsPos);
             UpdateRightHandIk(hipsPos);
-            
         }
         
         private void UpdateLeftHandIk(Vector3 hipPos)

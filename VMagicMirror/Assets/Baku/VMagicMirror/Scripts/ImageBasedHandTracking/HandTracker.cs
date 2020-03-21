@@ -103,8 +103,12 @@ namespace Baku.VMagicMirror
             dest.ReferenceFacePosition = new Vector2(
                 
                 status.FaceArea.center.x / status.Width - 0.5f,
-                status.FaceArea.center.y / status.Height - 0.5f
+                -status.FaceArea.center.y / status.Height + 0.5f
             );
+            dest.ReferenceFaceSize = new Vector2(
+                status.FaceArea.width / status.Width,
+                status.FaceArea.height / status.Height
+                );
                 
             dest.HandPosition = new Vector2(
                 source.HandAreaCenter.x / status.Width - 0.5f,
@@ -145,6 +149,13 @@ namespace Baku.VMagicMirror
             set => _referenceFacePosition.Value = value;
         }
         
+        private readonly Atomic<Vector2> _referenceFaceSize = new Atomic<Vector2>();
+        public Vector2 ReferenceFaceSize
+        {
+            get => _referenceFaceSize.Value;
+            set => _referenceFaceSize.Value = value;
+        }
+
         private readonly Atomic<Vector2> _handPosition = new Atomic<Vector2>();
         public Vector2 HandPosition
         {

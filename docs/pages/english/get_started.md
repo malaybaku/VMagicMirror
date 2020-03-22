@@ -106,14 +106,7 @@ In default, please try typing "joy" and see what results on your avatar. Also yo
 
 Please see the detail in [Expressions](./docs/expressions).
 
-`Device Assignment` expects several use cases.
-
-`None` or `Keboard (word)`: Just placing avatar on PC. This setups most well mimes your motion.
-
-`Gamepad` or `MIDI Controller`: Work streaming matches for these options.
-
-`Keyboard (num 0-8)`: The case when you want to disable keyboard based motion but want to input. You can keep the character always gripping gamepad, and you can still use keyboard and mouse!
-
+When choosing `Device Assignment` to `Gamepad` or `MIDI Controller`, selected device arm motion is disabled. This helps you to hide what you do to change face expression from audience.
 
 
 #### 2.4. Screenshot

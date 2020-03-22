@@ -21,12 +21,14 @@ namespace Baku.VMagicMirror
         private HumanPose _defaultHumanPose = default;
         //毎フレーム書き換えるポーズ情報
         private HumanPose _humanPose = default;
+
+        private Transform[][] _fingers = null;
         
         private readonly bool[] _hold = new bool[10];
         private readonly float[] _targetAngles = new float[10];
         //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
         private readonly float[] _holdOperationBendingAngle = new float[10];
-        
+
         /// <summary>
         /// 特定の指の曲げ角度を固定します。
         /// </summary>
@@ -56,21 +58,7 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _vrmLoadable.VrmLoaded += info =>
-            {
-                _animator = info.animator;
-                _humanPoseHandler = new HumanPoseHandler(_animator.avatar, _animator.transform);
-                //とりあえず現在の値を拾っておく
-                _humanPoseHandler.GetHumanPose(ref _humanPose);
-                _defaultHumanPose = _humanPose;
-
-                for (int i = 0; i < 10; i++)
-                {
-                    _hold[i] = false;
-                    _targetAngles[i] = DefaultBendingAngle;
-                }
-            };
-            
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += () =>
             {
                 if (_animator == null)
@@ -79,6 +67,86 @@ namespace Baku.VMagicMirror
                 }
                 _animator = null;
                 _humanPoseHandler = null;
+                _fingers = null;
+            };
+        }
+
+        private void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            _animator = info.animator;
+            _humanPoseHandler = new HumanPoseHandler(_animator.avatar, _animator.transform);
+            //とりあえず現在の値を拾っておく
+            _humanPoseHandler.GetHumanPose(ref _humanPose);
+            _defaultHumanPose = _humanPose;
+
+            for (int i = 0; i < 10; i++)
+            {
+                _hold[i] = false;
+                _targetAngles[i] = DefaultBendingAngle;
+            }
+            
+            _fingers = new Transform[][]
+            {
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.LeftThumbDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftThumbIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftThumbProximal),
+                },
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.LeftIndexDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftIndexIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftIndexProximal),
+                },
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.LeftMiddleDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal),
+                },
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.LeftRingDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftRingIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftRingProximal),
+                },
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.LeftLittleDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftLittleIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftLittleProximal),
+                },
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.RightThumbDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightThumbIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightThumbProximal),
+                },
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
+                },
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal),
+                },
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.RightRingDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightRingIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightRingProximal),
+                },
+                new Transform[]
+                {
+                    _animator.GetBoneTransform(HumanBodyBones.RightLittleDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightLittleIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightLittleProximal),
+                },
             };
         }
 
@@ -88,6 +156,7 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+            
             
             _humanPoseHandler.GetHumanPose(ref _humanPose);
 
@@ -110,8 +179,44 @@ namespace Baku.VMagicMirror
                 //常にマイナスの値を入れればOK: デフォルトから曲げ方向に動かすため
                 float rate = -angle * BendDegToMuscle;
                 FingerMuscleSetter.BendFinger(in _defaultHumanPose, ref _humanPose, i, rate);
+                //BendFinger(i, angle);
             }
             _humanPoseHandler.SetHumanPose(ref _humanPose);
+        }
+
+        private void BendFinger(int fingerIndex, float angle)
+        {
+            if (fingerIndex > 4)
+            {
+                angle = -angle;
+            }
+            
+            var fingerTransforms = _fingers[fingerIndex];
+            for (int i = 0; i < fingerTransforms.Length; i++)
+            {
+                if (fingerTransforms[i] == null)
+                {
+                    continue;
+                }
+                fingerTransforms[i].localRotation = Quaternion.AngleAxis(
+                    angle,
+                    GetRotationAxis(fingerIndex, i)
+                );
+            }
+        }
+        
+        private static Vector3 GetRotationAxis(int fingerNumber, int jointIndex)
+        {
+            if ((fingerNumber == FingerConsts.LeftThumb || fingerNumber == FingerConsts.RightThumb) && 
+                jointIndex < 2
+            )
+            {
+                return Vector3.down;
+            }
+            else
+            {
+                return Vector3.forward;
+            }
         }
     }
 }

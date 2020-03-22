@@ -336,33 +336,31 @@ namespace Baku.VMagicMirror
             if (src.HandSize.x * src.HandSize.y >
                 src.ReferenceFaceSize.x * src.ReferenceFaceSize.y * PaperHandFaceSizeFactor)
             {
-                Debug.Log("手がでかいのでパー");
+                //手がでかいのでパー
                 return HandShapeSetter.HandShapeTypes.Paper;
             }
 
             if (src.ConvexDefectCount > 2)
             {
-                Debug.Log("Convexが多いのでパー");
+                // Convexが多いのでパー
                 return HandShapeSetter.HandShapeTypes.Paper;
             }
 
             if (src.HandSize.x > src.ReferenceFaceSize.x * PaperHandWidthRateMin)
             {
-                Debug.Log("手が横方向に十分広がってるのでパー");
+                //手が横方向に十分広がってるのでパー
                 return HandShapeSetter.HandShapeTypes.Paper;
             }
 
             //NOTE: 凹みが2つのケースというのは、人差し-中指間にくわえて、チョキの中指と薬指のあいだが凹んでると判定されるケース。
             if (src.ConvexDefectCount > 0)
             {
-                Debug.Log("Convexが1または2なのでチョキ");
+                //Convexが1または2なのでチョキ
                 return HandShapeSetter.HandShapeTypes.Scissors;
             }
             
-            //NOTE: ここはconvexがゼロなので普通はグーのハズ。ただし「指をぴっちり閉めたパー」かもしれないので、そのケースをケアします
-
-            Debug.Log("アス比で判定してます: " + (src.HandSize.y * 1.0f / src.HandSize.x).ToString("0.00"));
-            //ここまでで判断がつかない場合はアスペクト比を見て、縦長ならパー、正方形に近ければグー、とする
+            //NOTE: ここはconvexがゼロなので普通はグーのハズ。ただし「指をぴっちり閉めたパー」かもしれないので、そのケースをケアする
+            //アスペクト比を見て、縦長ならパー、正方形に近ければグー、とする
             return src.HandSize.y > src.HandSize.x * PaperHandAspectRatio
                 ? HandShapeSetter.HandShapeTypes.Paper 
                 : HandShapeSetter.HandShapeTypes.Rock;

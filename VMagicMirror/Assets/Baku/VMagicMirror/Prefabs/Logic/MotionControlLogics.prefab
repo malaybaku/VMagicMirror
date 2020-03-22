@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4919419003873974731}
+  - component: {fileID: 2951044793089892564}
   - component: {fileID: 7830865391416833507}
   - component: {fileID: 2171101519611571038}
   m_Layer: 0
@@ -32,6 +33,19 @@ Transform:
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2951044793089892564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5455894112181466256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0caf9d78986ded343bb1e507cae2d2ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyboard: {fileID: 0}
 --- !u!114 &7830865391416833507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,7 +300,6 @@ GameObject:
   - component: {fileID: 5813678810404708597}
   - component: {fileID: 5813678810404708598}
   - component: {fileID: 5813678810404708594}
-  - component: {fileID: 5813678810404708593}
   - component: {fileID: 5813678810404708492}
   - component: {fileID: 1563715659255556209}
   - component: {fileID: 3817731646809221862}
@@ -365,7 +378,7 @@ MonoBehaviour:
   midi: {fileID: 1563715659255556209}
   presentation: {fileID: 5813678810404708597}
   imageBaseHand: {fileID: 3817731646809221862}
-  fingerController: {fileID: 5813678810404708593}
+  fingerController: {fileID: 2951044793089892564}
   particleStore: {fileID: 0}
 --- !u!114 &5813678810404708592
 MonoBehaviour:
@@ -531,19 +544,6 @@ MonoBehaviour:
   speedFactor: 3
   buttonDownSpeedFactor: 8
   bodyMotionToGamepadPosApplyFactor: 0.5
---- !u!114 &5813678810404708593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678810404708600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0caf9d78986ded343bb1e507cae2d2ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  keyboard: {fileID: 0}
 --- !u!114 &5813678810404708492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -556,7 +556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd6fafd68189eb42825229844eea4fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fingerController: {fileID: 5813678810404708593}
+  fingerController: {fileID: 2951044793089892564}
 --- !u!114 &1563715659255556209
 MonoBehaviour:
   m_ObjectHideFlags: 0

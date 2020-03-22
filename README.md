@@ -2,10 +2,10 @@
 
 # VMagicMirror
 
-v0.9.7
+v0.9.9
 
 * 作成: 獏星(ばくすたー)
-* 2020/02/22
+* 2020/03/24
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -70,6 +70,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
+* [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [UniVRM](https://github.com/vrm-c/UniVRM) v0.53.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
@@ -84,7 +85,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
 * DOTween (アセットストアから)
 
-FinalIKおよびDlib FaceLandmark Detectorが有償アセットであることに注意してください。
+FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。OpenCV for Unityは無くてもビルド可能ですが、画像ベースのハンドトラッキングは使えなくなります。
 
 また、MidiJackはForkしたものを使っているので、この点にも注意して下さい。
 
@@ -102,10 +103,11 @@ RawInput.Sharpもほぼ同様の手順です。
 
 ### 4.3. ビルド
 
+* もしOpenCV for Unityを導入しない場合、`Player Settings`で、スクリプトシンボルから`VMAGICMIRROR_USE_OPENCV`シンボルを削除します。
 * Unityでのビルド時には`Bin`フォルダを指定します。
 * WPFでのビルドでは、`VMagicMirrorConfig`プロジェクトを右クリックし、`発行`を指定してフォルダ上にアプリケーションを配置します。
     - プロファイル設定は次のようにします。
-        - 構成: `Debug | x86`
+        - 構成: `Release | x86`
         - ターゲットフレームワーク: `netcoreapp3.0`
         - 配置モード: `自己完結`
         - ターゲットランタイム: `win10-x86`

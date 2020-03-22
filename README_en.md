@@ -3,10 +3,10 @@
 
 # VMagicMirror
 
-v0.9.7
+v0.9.8
 
 * Author: Baxter
-* 2020/Feb/22
+* 2020/Mar/24
 
 The VRM avatar application without any special device.
 
@@ -72,6 +72,7 @@ Maintainer's environment is as following.
 
 * [UniVRM](https://dwango.github.io/vrm/) v0.53.0
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
+* [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [UniVRM](https://dwango.github.io/vrm/)
 * [UniRx](https://github.com/neuecc/UniRx)
@@ -87,7 +88,7 @@ Maintainer's environment is as following.
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
 * DOTween (from Asset Store)
 
-Should be noted that `FinalIK` and `Dlib FaceLandmark Detector` are paid asset, and you need to submit the application to get VRoid SDK.
+Should be noted that `FinalIK`, `Dlib FaceLandmark Detector`, and `OpenCV for Unity` are paid assets. `OpenCV for Unity` is optional.
 
 Also should be careful that `MidiJack` used in VMagicMirror is forked one.
 
@@ -105,10 +106,12 @@ RawInput.Sharp can be installed with almost same work flow.
 
 ### 4.3. Build
 
-* Unity: Specify `Bin` folder for the output.
+* In Unity,
+    - If you do not use OpenCV for Unity, then open `Player Settings` and remove script symbol `VMAGICMIRROR_USE_OPENCV`.
+    - Specify `Bin` folder for the output.
 * To build WPF project, right click `VMagicMirrorConfig` project on the solution explorer and select `publish`.
     - Use following profile setting as `Folder Profile`.
-        - Configuration: `Debug | x86`
+        - Configuration: `Release | x86`
         - Target Framework: `netcoreapp3.0`
         - Deployment Mode: `Self Contained`
         - Target Runtime: `win10-x86`

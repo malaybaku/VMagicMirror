@@ -70,7 +70,7 @@ If you want to dragging feature, then turn off `Drag the character` after placin
 </div>
 
 
-#### 2.2. 顔・表情
+#### 2.2. Face
 {: .doc-sec2 }
 
 `Face` can setup your VRM's face expressions.
@@ -83,8 +83,9 @@ If you want to dragging feature, then turn off `Drag the character` after placin
 
 `Track Face`: Select webcam to track your head motion
 
-If your face is not at the center for the web camera, or you are too near/far to the camera, the character indication might be unnatural. In this case, click `Calibrate position` to adjust.
+`Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking.
 
+If your face is not at the center for the web camera, or you are too near/far to the camera, the character indication might be unnatural. In this case, click `Calibrate position` to adjust.
 
 **Hint:** When your character always look downward then look down and `Calibrate position` to adjust. It makes your avatar to look up always.
 

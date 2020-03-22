@@ -592,7 +592,7 @@ MonoBehaviour:
   trackLostSpeed: {x: 0, y: -0.1, z: 0}
   rotRateByDistanceFromBase: {x: -150, y: -100}
   aPoseArmDownAngleDeg: 70
-  aPoseArmPositionOffset: {x: 0, y: 0.05, z: 0.05}
+  aPoseArmPositionOffset: {x: 0, y: 0.02, z: 0.02}
   ikLerpFactor: 15
   nonTrackRotLerpFactor: 3
   speedLowPassFactor: 8

@@ -36,6 +36,12 @@ namespace Baku.VMagicMirror
         /// 0, 1, 2のいずれかを指定すると、ColorBlob検出時に画像を指定した回数だけダウンスケールして高速処理します。
         /// </summary>
         public int DownScaleCount { get; set; }
+
+        /// <summary>
+        /// ここで指定したピクセル幅のぶん、顔の両脇にマージンをとって塗りつぶす。
+        /// これはDLibが提示してくる顔領域がやや狭めに作られているのに対処するための値です。
+        /// </summary>
+        public int FacePaintWidthMargin { get; set; } = 7;
         
         #endregion
 
@@ -164,9 +170,9 @@ namespace Baku.VMagicMirror
         /// </remarks>
         private void PaintBlackOnFace(Mat mat, Rect rect)
         {
-            _rectLt.x = rect.xMin;
+            _rectLt.x = Mathf.Max(rect.xMin - FacePaintWidthMargin, 0);
             _rectLt.y = 0;
-            _rectBr.x = rect.xMax;
+            _rectBr.x = Mathf.Min(rect.xMax + FacePaintWidthMargin, mat.width());
             _rectBr.y = mat.height();
             Imgproc.rectangle(mat, _rectLt, _rectBr, _colorBlack, -1);  
         }

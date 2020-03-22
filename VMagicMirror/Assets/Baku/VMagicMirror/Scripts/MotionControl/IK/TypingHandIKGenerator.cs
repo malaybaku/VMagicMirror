@@ -67,9 +67,12 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            //初期位置がゼロだとヘンな動きになるので、それを防ぐ
+            //これらのIKは初期値から動かない事があるので、その場合にあまりに変になるのを防ぐのが狙い。
             _leftHand.Position = keyboard.GetKeyTargetData("F").positionWithOffset;
+            _leftHand.Rotation = Quaternion.Euler(0, 90, 0);
+            
             _rightHand.Position = keyboard.GetKeyTargetData("J").positionWithOffset;
+            _rightHand.Rotation = Quaternion.Euler(0, -90, 0);
         }
 
         public (ReactedHand, Vector3) PressKey(string key, bool isLeftHandOnlyMode)

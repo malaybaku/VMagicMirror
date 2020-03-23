@@ -111,6 +111,8 @@ namespace Baku.VMagicMirror
                 SetRightHandIk(HandTargetType.Keyboard);
             }
             
+            fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);	
+            
             if (hand != ReactedHand.None && EnableHidArmMotion)
             {
                 particleStore.RequestKeyboardParticleStart(pos);

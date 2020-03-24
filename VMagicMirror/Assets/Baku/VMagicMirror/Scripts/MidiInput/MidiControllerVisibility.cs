@@ -35,6 +35,7 @@ namespace Baku.VMagicMirror
             {
                 deformable.AddDeformer(_deformer);
             }
+            SetVisibility(false);
         }
 
         public void SetVisibility(bool visible)

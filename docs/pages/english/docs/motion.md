@@ -20,6 +20,8 @@ lang_prefix: /en/
 
 `Track Face`: Choose WebCam to use face tracking feature. Available in Streaming tab.
 
+`Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking. Available in Streaming tab.
+
 `Auto blink during face tracking`: Checked by default, and by turn off it, character blinks based on image processing.
 
 `Enable forward / backward motion`: Check to see horizontal forward / backward motion.

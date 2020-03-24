@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -153,7 +152,7 @@ namespace Baku.VMagicMirror
         
         private void Update()
         {
-            UpdateButtowDownYOffset();
+            UpdateButtonDownYOffset();
             
             //とりあえず全部Lerp
             _filterStickPos = Vector2.Lerp(_filterStickPos, _rawStickPos, speedFactor * Time.deltaTime);
@@ -174,7 +173,7 @@ namespace Baku.VMagicMirror
             gamePad.SetFilteredPosition(_filterStickPos, offset);
         }
 
-        private void UpdateButtowDownYOffset()
+        private void UpdateButtonDownYOffset()
         {
             float offsetGoal =
                 (_buttonDownCount > 0) ? -ButtonDownAnimationY : 0;

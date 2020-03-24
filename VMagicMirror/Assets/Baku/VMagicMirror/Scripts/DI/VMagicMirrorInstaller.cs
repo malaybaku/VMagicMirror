@@ -12,6 +12,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private RawInputChecker rawInputChecker = null;
         [SerializeField] private MousePositionProvider mousePositionProvider = null;
         [SerializeField] private FaceTracker faceTracker = null;
+        [SerializeField] private HandTracker handTracker = null;
         [SerializeField] private MidiInputObserver midiInputObserver = null;
         [SerializeField] private StatefulXinputGamePad gamepad = null;
         [SerializeField] private DeformableCounter deformableCounterPrefab = null; 
@@ -25,6 +26,7 @@ namespace Baku.VMagicMirror
             Container.BindInstance(rawInputChecker ?? FindObjectOfType<RawInputChecker>());
             Container.BindInstance(mousePositionProvider ?? FindObjectOfType<MousePositionProvider>());
             Container.BindInstance(faceTracker ?? FindObjectOfType<FaceTracker>());
+            Container.BindInstance(handTracker ?? FindObjectOfType<HandTracker>());
             Container.BindInstance(midiInputObserver ?? FindObjectOfType<MidiInputObserver>());
             Container.BindInstance(gamepad ?? FindObjectOfType<StatefulXinputGamePad>());
 

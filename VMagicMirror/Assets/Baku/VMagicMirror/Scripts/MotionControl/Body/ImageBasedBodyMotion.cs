@@ -100,32 +100,6 @@ namespace Baku.VMagicMirror
             _rightShoulderEffector = null;
         }
 
-        //一気に切り替えるとキモい可能性あるよねコレ
-
-        /// <summary>VRMに顔ベースの移動処理の適用を開始します。</summary>
-        public void StartApply()
-        {
-            if (_ik == null)
-            {
-                return;
-            }
-
-            _ik.solver.rightShoulderEffector.positionWeight = PositionWeightWhenValid;
-            _ik.solver.leftShoulderEffector.positionWeight = PositionWeightWhenValid;
-        }
-
-        /// <summary>VRMの顔ベースの移動処理の適用を停止します。</summary>
-        public void StopApply()
-        {
-            if (_ik == null)
-            {
-                return;
-            }
-
-            _ik.solver.rightShoulderEffector.positionWeight = 0f;
-            _ik.solver.leftShoulderEffector.positionWeight = 0f;
-        }
-
         private void Update()
         {
             if (!_isVrmLoaded || !_faceTracker.FaceDetectedAtLeastOnce)

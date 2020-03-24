@@ -70,7 +70,7 @@ If you want to dragging feature, then turn off `Drag the character` after placin
 </div>
 
 
-#### 2.2. 顔・表情
+#### 2.2. Face
 {: .doc-sec2 }
 
 `Face` can setup your VRM's face expressions.
@@ -83,8 +83,9 @@ If you want to dragging feature, then turn off `Drag the character` after placin
 
 `Track Face`: Select webcam to track your head motion
 
-If your face is not at the center for the web camera, or you are too near/far to the camera, the character indication might be unnatural. In this case, click `Calibrate position` to adjust.
+`Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking.
 
+If your face is not at the center for the web camera, or you are too near/far to the camera, the character indication might be unnatural. In this case, click `Calibrate position` to adjust.
 
 **Hint:** When your character always look downward then look down and `Calibrate position` to adjust. It makes your avatar to look up always.
 
@@ -105,14 +106,7 @@ In default, please try typing "joy" and see what results on your avatar. Also yo
 
 Please see the detail in [Expressions](./docs/expressions).
 
-`Device Assignment` expects several use cases.
-
-`None` or `Keboard (word)`: Just placing avatar on PC. This setups most well mimes your motion.
-
-`Gamepad` or `MIDI Controller`: Work streaming matches for these options.
-
-`Keyboard (num 0-8)`: The case when you want to disable keyboard based motion but want to input. You can keep the character always gripping gamepad, and you can still use keyboard and mouse!
-
+When choosing `Device Assignment` to `Gamepad` or `MIDI Controller`, selected device arm motion is disabled. This helps you to hide what you do to change face expression from audience.
 
 
 #### 2.4. Screenshot

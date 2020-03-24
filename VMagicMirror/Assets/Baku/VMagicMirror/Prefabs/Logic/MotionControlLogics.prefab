@@ -1,5 +1,75 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5455894112181466256
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4919419003873974731}
+  - component: {fileID: 2951044793089892564}
+  - component: {fileID: 7830865391416833507}
+  - component: {fileID: 2171101519611571038}
+  m_Layer: 0
+  m_Name: Finger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4919419003873974731
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5455894112181466256}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5813678810510073683}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2951044793089892564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5455894112181466256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0caf9d78986ded343bb1e507cae2d2ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  keyboard: {fileID: 0}
+--- !u!114 &7830865391416833507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5455894112181466256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7742343c44e3dc342992157b522d7cf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2171101519611571038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5455894112181466256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ef4c2a21b6782646a4924891f7a097a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5813678808713813115
 GameObject:
   m_ObjectHideFlags: 0
@@ -79,9 +149,9 @@ MonoBehaviour:
   offsetAmplifier: {x: 0.3, y: 0.3, z: 1}
   offsetLowerLimit: {x: -1, y: -1, z: -0.05}
   offsetUpperLimit: {x: 1, y: 1, z: 0.1}
-  faceTracker: {fileID: 0}
   speedFactor: 12
   timeScaleFactor: 0.3
+  enableBodyLeanZ: 0
 --- !u!114 &5813678808713813113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +222,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ccd5f299c1abbd4bb7387e98b79aefa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faceTracker: {fileID: 0}
   speedLerpFactor: 9
   speedDumpFactor: 0.86
   timeScaleFactor: 0.2
@@ -231,9 +300,9 @@ GameObject:
   - component: {fileID: 5813678810404708597}
   - component: {fileID: 5813678810404708598}
   - component: {fileID: 5813678810404708594}
-  - component: {fileID: 5813678810404708593}
   - component: {fileID: 5813678810404708492}
   - component: {fileID: 1563715659255556209}
+  - component: {fileID: 3817731646809221862}
   m_Layer: 0
   m_Name: HandAndHeadIK
   m_TagString: Untagged
@@ -308,7 +377,8 @@ MonoBehaviour:
   mouseMove: {fileID: 5813678810404708598}
   midi: {fileID: 1563715659255556209}
   presentation: {fileID: 5813678810404708597}
-  fingerController: {fileID: 5813678810404708593}
+  imageBaseHand: {fileID: 3817731646809221862}
+  fingerController: {fileID: 2951044793089892564}
   particleStore: {fileID: 0}
 --- !u!114 &5813678810404708592
 MonoBehaviour:
@@ -474,19 +544,6 @@ MonoBehaviour:
   speedFactor: 3
   buttonDownSpeedFactor: 8
   bodyMotionToGamepadPosApplyFactor: 0.5
---- !u!114 &5813678810404708593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678810404708600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0caf9d78986ded343bb1e507cae2d2ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  keyboard: {fileID: 0}
 --- !u!114 &5813678810404708492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -499,7 +556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd6fafd68189eb42825229844eea4fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fingerController: {fileID: 5813678810404708593}
+  fingerController: {fileID: 2951044793089892564}
 --- !u!114 &1563715659255556209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -515,6 +572,34 @@ MonoBehaviour:
   provider: {fileID: 0}
   noteMotionDuration: 0.3
   knobMotionLerpFactor: 12
+--- !u!114 &3817731646809221862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678810404708600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec6e231faeb946e43bb54724f38f17c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handShapeSetter: {fileID: 2171101519611571038}
+  handPositionScale: 0.5
+  handNonTrackedCountDown: 0.6
+  handNonTrackedSlideDownCount: 0.4
+  rightBaseRotAppliedDistance: {x: 0.3, y: 0}
+  trackLostSpeed: {x: 0, y: -0.1, z: 0}
+  rotRateByDistanceFromBase: {x: -150, y: -100}
+  aPoseArmDownAngleDeg: 70
+  aPoseArmPositionOffset: {x: 0, y: 0.02, z: 0.02}
+  ikLerpFactor: 15
+  nonTrackRotLerpFactor: 3
+  speedLowPassFactor: 8
+  speedTimeRate: 0.2
+  speedRotRate: 20
+  ikSpeedLimit: 1.5
+  nonTrackCountMax: 1
 --- !u!1 &5813678810510073684
 GameObject:
   m_ObjectHideFlags: 0
@@ -546,6 +631,7 @@ Transform:
   - {fileID: 5813678809054739211}
   - {fileID: 5813678808713813114}
   - {fileID: 5813678810248240002}
+  - {fileID: 4919419003873974731}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

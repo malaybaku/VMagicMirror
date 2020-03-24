@@ -85,7 +85,6 @@ namespace Baku.VMagicMirror
         {
             modelRoot.localPosition = new Vector3(moveRange.x * pos.x, 0.0f, moveRange.y * pos.y);
             modelRoot.position += offset;
-//            modelRoot.position += offsetY * Vector3.up;
             
             //並進に合わせて回転もする
             modelRoot.localRotation = Quaternion.Euler(

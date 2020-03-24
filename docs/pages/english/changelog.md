@@ -7,6 +7,17 @@ lang_prefix: /en/
 
 [Japanese](../changelog)
 
+#### v0.9.8
+
+2020/03/24
+
+* Add: Hand tracking with web camera. Requires camera to use this feature.
+    - Check `Streaming` tab > `Image based hand tracking` in `Face` menu.
+* Change: Now arms continues to react mouse / keyboard inputs, even when choose `keyboard (num 0-8) ` for `Device Assign` in Word to Motion selection.
+    - If you want to stop keyboard and mouse reaction, turn off Setting Window > `Motion` > `Arms` > `Motion` > `Enable Typing / Mouse Motion`.
+* Change: Made minor performance improvement.
+* Fix: Fix the issue the character's wrists are unnaturally banded on application start, if typing / mouse motion is disabled.
+
 # Change Log
 
 #### v0.9.7a

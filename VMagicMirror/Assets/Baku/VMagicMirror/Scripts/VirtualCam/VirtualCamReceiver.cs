@@ -23,14 +23,14 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.SetVirtualCamWidth:
                         //NOTE: 4の倍数だけ通すのはストライドとかそういうアレです
                         int width = c.ToInt();
-                        if (width >= 80 && width % 4 == 0)
+                        if (width >= 80 && width <= 1920 && width % 4 == 0)
                         {
                             capture.Width = width;
                         }
                         break;
                     case MessageCommandNames.SetVirtualCamHeight:
                         int height = c.ToInt();
-                        if (height >= 80 && height % 4 == 0)
+                        if (height >= 80 && height < 1920 && height % 4 == 0)
                         {
                             capture.Height = height;
                         }

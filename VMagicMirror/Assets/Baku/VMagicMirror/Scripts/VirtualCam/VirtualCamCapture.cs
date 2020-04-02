@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         private const int TimeoutMillisec = 1000;
         private const EMirrorMode MirrorMode = EMirrorMode.Disabled;
         private const EResizeMode ResizeMode = EResizeMode.Disabled;
-        private const bool UseDoubleBuffering = false;
+        private const bool UseDoubleBuffering = true;
 
         private const int RenderTextureDepth = 24;
 

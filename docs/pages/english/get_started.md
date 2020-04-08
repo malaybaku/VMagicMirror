@@ -85,6 +85,10 @@ If you want to dragging feature, then turn off `Drag the character` after placin
 
 `Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking.
 
+If the model's face does not rotate in face tracking, please open [FAQ](./questions) and see "Face not rotate when using face tracking" section.
+
+Hand tracking has some limitations, please see [Using Hand Tracking](./tips/using_hand_tracking).
+
 If your face is not at the center for the web camera, or you are too near/far to the camera, the character indication might be unnatural. In this case, click `Calibrate position` to adjust.
 
 **Hint:** When your character always look downward then look down and `Calibrate position` to adjust. It makes your avatar to look up always.

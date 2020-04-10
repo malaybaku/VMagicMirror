@@ -115,6 +115,13 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.SetAlphaValueOnTransparent:
                         SetAlphaOnTransparent(message.ToInt());
                         break;
+                    case MessageCommandNames.SetVirtualCamBasedWindowSize:
+                        int[] wh = message.ToIntArray();
+                        if (wh != null && wh.Length > 1)
+                        {
+                            SetUnityWindowSize(wh[0], wh[1]);
+                        }
+                        break;
                     default:
                         break;
                 }

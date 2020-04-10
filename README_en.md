@@ -70,7 +70,7 @@ Maintainer's environment is as following.
 
 ### 4.2. Asset install
 
-* [UniVRM](https://dwango.github.io/vrm/) v0.53.0
+* [UniVRM](https://dwango.github.io/vrm/) v0.55.0
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
@@ -103,6 +103,20 @@ RawInput.Sharp can be installed with almost same work flow.
 
 - Get `.nupkg` from NuGet gallery and expand as zip to get `lib/netstandard1.1/RawInput.Sharp.dll`
 - Create `RawInputSharp` folder in Unity project's Assets folder, and put dll into the folder.
+
+For the UniVRM, please add a line after install. In `Assets/VRM/UniHumanoid/Scripts/HumanPoseTransfer.cs` and see at L68,
+
+```
+//...
+        HumanPoseHandler m_handler;
+    
+        //Add following line
+        public HumanPoseHandler PoseHandler => m_handler;
+    
+        public void OnEnable()
+        {
+//...
+```
 
 ### 4.3. Build
 

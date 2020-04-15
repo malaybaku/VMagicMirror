@@ -109,6 +109,26 @@ namespace Baku.VMagicMirror
             _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
 
+        private bool _enableRotationModification = true;
+        public bool EnableRotationModification
+        {
+            get => _enableRotationModification;
+            set
+            {
+                if (_enableRotationModification == value)
+                {
+                    return;
+                }
+
+                _enableRotationModification = value;
+                if (!value && _hasValidShoulderBone)
+                {
+                    _leftShoulder.localRotation = Quaternion.identity;
+                    _rightShoulder.localRotation = Quaternion.identity;
+                }
+            }
+        }
+        
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _leftShoulder = info.animator.GetBoneTransform(HumanBodyBones.LeftShoulder);
@@ -155,7 +175,7 @@ namespace Baku.VMagicMirror
 
         private void LateUpdate()
         {
-            if (!_hasValidShoulderBone)
+            if (!_hasValidShoulderBone || !_enableRotationModification)
             {
                 return;
             }

@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   motionSize: {x: 0, y: 0.01, z: 0.01}
-  durations: {x: 1, y: 10, z: 10}
+  duration: 10
 --- !u!114 &5813678808713813108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -646,6 +646,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1859467759501820996}
   - component: {fileID: 7095047294135285911}
+  - component: {fileID: 2566716797311140027}
   m_Layer: 0
   m_Name: Shoulder
   m_TagString: Untagged
@@ -690,4 +691,17 @@ MonoBehaviour:
   handDiffMaxRollDeg: 3
   handDiffYDecreaseFactor: 0.6
   handDiffIntegrateFactor: 2
-  waitMotionBasedAngleDeg: 3
+  waitMotionBasedAngleDeg: 5
+  waitMotionPhaseDelay: 0.125
+--- !u!114 &2566716797311140027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7492520328184788948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3619e5f59c9d8fe429612417cfac2d91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

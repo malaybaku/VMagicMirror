@@ -59,6 +59,6 @@ namespace Baku.VMagicMirror
         }
 
         public void SetWaitMotionDuration(float period)
-            => bodyMotionManager.WaitingBodyMotion.Durations = new Vector3(period, period, period);
+            => bodyMotionManager.WaitingBodyMotion.Duration = period;
     }
 }

@@ -687,12 +687,12 @@ MonoBehaviour:
   yawMinDeg: -15
   yawMaxDeg: 10
   angleScale: 0.2
-  handDiffMax: 0.03
-  handDiffMaxRollDeg: 3
+  handDiffMaxBase: 0.03
+  handDiffMaxRollDeg: 5
   handDiffYDecreaseFactor: 0.6
   handDiffIntegrateFactor: 2
   waitMotionBasedAngleDeg: 5
-  waitMotionPhaseDelay: 0.125
+  waitMotionPhaseDelay: 0.18
 --- !u!114 &2566716797311140027
 MonoBehaviour:
   m_ObjectHideFlags: 0

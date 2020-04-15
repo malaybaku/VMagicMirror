@@ -2,9 +2,6 @@
 using UnityEngine;
 using Zenject;
 
-//TODO: handDiffMaxに身長ファクターを入れる(身長に比例してればOK)
-//TODO: ゲームパッド動かしてるときヘンにならないことのチェック
-
 namespace Baku.VMagicMirror
 {
     /// <summary>
@@ -16,6 +13,11 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class ShoulderRotationModifier : MonoBehaviour
     {
+
+        //基準長はMegumi Baxterさんの体型。(https://hub.vroid.com/characters/9003440353945198963/models/7418874241157618732)
+        //Headボーンの高さ. コレ以外の値はSettingAutoAdjusterとかにも載ってます
+        public const float ReferenceHeadHeight = 1.176175f;
+        
         [SerializeField] private HandIKIntegrator handIk = null;
         [SerializeField] private WaitingBodyMotion waitMotion = null;
 
@@ -32,9 +34,9 @@ namespace Baku.VMagicMirror
         [Tooltip("ヒジの向き先の角度にあわせて肩を曲げるときの適用率")] [Range(0f, 1f)] [SerializeField]
         private float angleScale = 0.2f;
 
-        [Tooltip("手IKのY座標が一気にこの値だけ動いたら、肩のロール角がmaxになる(単位:m)")] 
+        [Tooltip("リファレンス体型(Megumi Baxterちゃん)の場合に手IKのY座標が一気にこの値だけ動いたら、肩のロール角をmaxにする(単位:m)")] 
         [Range(0.01f, 0.5f)] [SerializeField]
-        private float handDiffMax = 0.03f;
+        private float handDiffMaxBase = 0.03f;
 
         [Tooltip("手IKの速度ベースで肩に対して追加できる最大のロール角度(プラスマイナス共通)")] 
         [Range(0f, 20f)] [SerializeField]
@@ -70,6 +72,9 @@ namespace Baku.VMagicMirror
         private Transform _rightUpperArm = null;
         private Transform _rightLowerArm = null;
 
+        //handDiffMaxBaseに身長分の補正がかかった値です
+        private float _handDiffMax = 0.01f;
+        
         #endregion
 
         #region 毎フレーム変わる値
@@ -139,7 +144,17 @@ namespace Baku.VMagicMirror
             _rightUpperArm = info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
             _rightLowerArm = info.animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
             
+            _handDiffMax = handDiffMaxBase * 
+                info.animator.GetBoneTransform(HumanBodyBones.Head).position.y / ReferenceHeadHeight;
+            //値が0寄りすぎると危ないので念のため。
+            if (_handDiffMax < 0.001f)
+            {
+                _handDiffMax = 0.001f;
+            }
+            
             _hasValidShoulderBone = (handIk != null && _leftShoulder != null && _rightShoulder != null);
+
+
             InitializeBoneParameters(info.animator);
         }
 
@@ -248,25 +263,25 @@ namespace Baku.VMagicMirror
                 float leftY =  handIk.LeftHandPosition.y;
                 _leftHandDiffY += leftY - _prevLeftHandY;
                 _diffBasedLeftRollDeg =
-                    Mathf.Clamp(-_leftHandDiffY / handDiffMax, -1, 1) * handDiffMaxRollDeg;
+                    Mathf.Clamp(-_leftHandDiffY / _handDiffMax, -1, 1) * handDiffMaxRollDeg;
                 
                 float rightY =  handIk.RightHandPosition.y;
                 _rightHandDiffY += rightY - _prevRightHandY;
                 _diffBasedRightRollDeg =
-                    Mathf.Clamp(_rightHandDiffY / handDiffMax, -1, 1) * handDiffMaxRollDeg;
+                    Mathf.Clamp(_rightHandDiffY / _handDiffMax, -1, 1) * handDiffMaxRollDeg;
 
                 
                 _leftHandDiffY = Mathf.Clamp(
                     _leftHandDiffY,
-                    -handDiffIntegrateFactor * handDiffMax,
-                    handDiffIntegrateFactor * handDiffMax
+                    -handDiffIntegrateFactor * _handDiffMax,
+                    handDiffIntegrateFactor * _handDiffMax
                     );
                 _leftHandDiffY = Mathf.Lerp(_leftHandDiffY, 0f, handDiffYDecreaseFactor * Time.deltaTime);
 
                 _rightHandDiffY = Mathf.Clamp(
                     _rightHandDiffY,
-                    -handDiffIntegrateFactor * handDiffMax,
-                    handDiffIntegrateFactor * handDiffMax
+                    -handDiffIntegrateFactor * _handDiffMax,
+                    handDiffIntegrateFactor * _handDiffMax
                 );
                 _rightHandDiffY = Mathf.Lerp(_rightHandDiffY, 0f, handDiffYDecreaseFactor * Time.deltaTime);
 

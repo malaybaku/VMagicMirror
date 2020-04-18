@@ -71,6 +71,10 @@ namespace Baku.VMagicMirror
         public bool IsLeftHandGripGamepad => _leftTargetType == HandTargetType.Gamepad;
         public bool IsRightHandGripGamepad => _rightTargetType == HandTargetType.Gamepad;
 
+        public Vector3 RightHandPosition => rightHandTarget.position;
+        public Vector3 LeftHandPosition => leftHandTarget.position;
+        
+        
         [Inject] private IVRMLoadable _vrmLoadable = null;
 
         //NOTE: 初めて手がキーボードから離れるまではnull

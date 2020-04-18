@@ -23,3 +23,5 @@ permalink: /tips
 [キーボードやタッチパッドの見た目を変更する](./tips/change_textures)
 
 [MacでVMagicMirrorを使う](./tips/use_on_mac)
+
+[仮想カメラを使う](./tips/virtual_camera)

@@ -47,6 +47,8 @@ lang_prefix: /en/
 
 `Enable Typing / Mouse Motion`: On by default. If turned off, the avatar stops to react to typing, mouse pointer move, or gamepad input. If you want to set the avatar always simply standing, turn off this checkbox.
 
+`Modify shoulder motion`: Make shoulder motion richer. On by default, but please disable it when your avatar does not suit for this feature.
+
 `Waist width [cm]`: Set how much the character put his/her elbow outside.
 
 `Strength to keep upper arm to body [%]`: If set larger value, the character's pose obeys more strictly to `Waits width [cm]` value.

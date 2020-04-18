@@ -297,7 +297,8 @@ namespace Baku.VMagicMirror
                 );
                 
                 //半角公式みたいな形にする: 肩は落とすと見栄えがわるいので、上げるほうにだけ動かすための式がコレです。
-                float angle = waitMotionBasedAngleDeg * 0.5f * (1f - Mathf.Cos(phase));
+                // float angle = waitMotionBasedAngleDeg * 0.5f * (1f - Mathf.Cos(phase));
+                float angle = - waitMotionBasedAngleDeg * Mathf.Cos(phase);
                 _waitMotionBasedLeftRollDeg = -angle;
                 _waitMotionBasedRightRollDeg = angle;
             }

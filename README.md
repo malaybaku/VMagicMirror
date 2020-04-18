@@ -71,7 +71,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.55.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.53.0
 * [UniRx](https://github.com/neuecc/UniRx) (アセットストアから)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad/releases) v0.3b
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM/releases) v1.0.1

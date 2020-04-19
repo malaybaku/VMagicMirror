@@ -1,7 +1,7 @@
 ---
 layout: page
 title: 仮想カメラを使う
-permalink: /tips/virtual_camera/
+permalink: /tips/virtual_camera
 ---
 
 [English](../en/tips/virtual_camera)

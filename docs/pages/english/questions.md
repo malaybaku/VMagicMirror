@@ -117,3 +117,10 @@ In the setting window `Motion` tab, see `Arm` and turn off `Show Pointer Support
 VMagicMirror might crash if you unplug the game controller during VMagicMirror is active.
 
 Please restart VMagicMirror to recover. If VMagicMirror repeats to crash, then please reboot PC.
+
+#### Face not rotate when using face tracking
+{: .doc-sec2 }
+
+This issue happens when VMagicMirror folder is put in the path which include multi-byte character.
+
+Please quit VMagicMirror, move the folder to another (multi-byte character free) folder, and retry.

@@ -24,4 +24,6 @@ permalink: /tips
 
 [MacでVMagicMirrorを使う](./tips/use_on_mac)
 
+[ハンドトラッキングの使用について](./tips/using_hand_tracking)
+
 [仮想カメラを使う](./tips/virtual_camera)

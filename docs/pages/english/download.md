@@ -34,6 +34,12 @@ Gamepad: Support XInput style gamepad. XBox controller is a popular one supporte
 
 VMagicMirror requires few for the CPU and GPU specs, but it maybe better for the middle-end PC to concern the CPU usage.
 
+At v0.9.8, there are a few known issue.
+
+issue1: Old AMD CPU may crash the program on startup.
+
+issue2: When using old GPU the face texture might not be loaded.
+
 The developer checks VMagicMirror performance on the following environments. Please contact if there is bug-like performance issue.
 
 

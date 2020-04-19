@@ -72,12 +72,12 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [UniVRM](https://github.com/vrm-c/UniVRM) v0.53.0
-* [UniRx](https://github.com/neuecc/UniRx)
-* [XinputGamepad](https://github.com/kaikikazu/XinputGamePad)
-* [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM)
+* [UniRx](https://github.com/neuecc/UniRx) (アセットストアから)
+* [XinputGamepad](https://github.com/kaikikazu/XinputGamePad/releases) v0.3b
+* [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM/releases) v1.0.1
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
-* [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI)
-* [Zenject](https://github.com/svermeulen/Extenject)
+* [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
+* [Zenject](https://github.com/svermeulen/Extenject) (アセットストアから)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
 * SharpDX.DirectInput 4.2.0
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
@@ -100,6 +100,21 @@ RawInput.Sharpもほぼ同様の手順です。
 
 - NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
 - 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
+
+UniVRMについては、導入後に`Assets/VRM/UniHumanoid/Scripts/HumanPoseTransfer.cs`の68行目付近に次のようなコードを追記します。
+
+```
+//...
+        HumanPoseHandler m_handler;
+    
+        //下記の1行を追加
+        public HumanPoseHandler PoseHandler => m_handler;
+    
+        public void OnEnable()
+        {
+//...
+```
+
 
 ### 4.3. ビルド
 

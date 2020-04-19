@@ -7,6 +7,19 @@ lang_prefix: /en/
 
 [Japanese](../changelog)
 
+# Change Log
+
+#### v0.9.9
+
+2020/04/19
+
+* Add: Virtual Camera Output
+* Change: Improvement for shoulder motion.
+* Change: Show warning when installed folder path includes multi byte character, to notify face tracking might fail.
+* Fix: Fix the issue that some PC environment fails to load face texture.
+
+Shoulder motion improvement is applied by default, but you can turn off it for the case that it does not suit for your avatar. Please check at Setting Window > `Motion` > `Arm` > `Modify shoulder motion`.
+
 #### v0.9.8
 
 2020/03/24
@@ -17,8 +30,6 @@ lang_prefix: /en/
     - If you want to stop keyboard and mouse reaction, turn off Setting Window > `Motion` > `Arms` > `Motion` > `Enable Typing / Mouse Motion`.
 * Change: Made minor performance improvement.
 * Fix: Fix the issue the character's wrists are unnaturally banded on application start, if typing / mouse motion is disabled.
-
-# Change Log
 
 #### v0.9.7a
 

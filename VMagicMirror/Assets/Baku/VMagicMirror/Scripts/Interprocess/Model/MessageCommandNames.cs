@@ -30,6 +30,16 @@
         public const string SetWholeWindowTransparencyLevel = nameof(SetWholeWindowTransparencyLevel);
         public const string SetAlphaValueOnTransparent = nameof(SetAlphaValueOnTransparent);
 
+        // VirtualCamera
+
+
+        public const string SetVirtualCamEnable = nameof(SetVirtualCamEnable);
+        public const string SetVirtualCamWidth = nameof(SetVirtualCamWidth);
+        public const string SetVirtualCamHeight = nameof(SetVirtualCamHeight);
+        //NOTE: this one should be handled by window style controller (so it is different from other 3 messages)
+        public const string SetVirtualCamBasedWindowSize = nameof(SetVirtualCamBasedWindowSize);
+        
+        
         // Motion
 
         // Motion, Enable
@@ -48,6 +58,7 @@
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
 
         // Motion, Arm
+        public const string EnableShoulderMotionModify = nameof(EnableShoulderMotionModify);
         public const string SetWaistWidth = nameof(SetWaistWidth);
         public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);
         public const string EnableFpsAssumedRightHand = nameof(EnableFpsAssumedRightHand);

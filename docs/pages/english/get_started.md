@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Download
+title: Get Started
 permalink: /en/get_started
 lang_prefix: /en/
 ---
@@ -70,7 +70,19 @@ If you want to dragging feature, then turn off `Drag the character` after placin
 </div>
 
 
-#### 2.2. Face
+#### 2.2. Virtual Camera Output
+{: .doc-sec2 }
+
+`Virtual Camera Output` is a feature mainly for online meeting systems.
+
+<div class="row">
+{% include docimg.html file="./images/get_started/img00_095_virtual_cam_out.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+</div>
+
+This feature is a bit advanced. If you are interested, see the detail at [Tips: Use Virtual Camera](./tips/virtual_camera).
+
+
+#### 2.3. Face
 {: .doc-sec2 }
 
 `Face` can setup your VRM's face expressions.
@@ -97,7 +109,7 @@ If your face is not at the center for the web camera, or you are too near/far to
 `Eye Look Target` sets where to see. In default you can use `Mouse` so that the character looks the orientation mouse pointer exists.
 
 
-#### 2.3. Word To Motion
+#### 2.4. Word To Motion
 {: .doc-sec2 }
 
 `Word To Motion` is feature to control face expression.
@@ -113,7 +125,7 @@ Please see the detail in [Expressions](./docs/expressions).
 When choosing `Device Assignment` to `Gamepad` or `MIDI Controller`, selected device arm motion is disabled. This helps you to hide what you do to change face expression from audience.
 
 
-#### 2.4. Screenshot
+#### 2.5. Screenshot
 {: .doc-sec2 }
 
 Press camera icon `Take Picture` button to start 3 second count down, and the screenshot will be captured.
@@ -126,7 +138,7 @@ Screenshot is saved to the `Screenshots` folder in the folder where `VMagicMirro
 </div>
 
 
-#### 2.5. View
+#### 2.6. View
 {: .doc-sec2 }
 
 Toggle the checks to set which device is visible and which is invisible.
@@ -139,7 +151,7 @@ Especially you can see the effect when keyboard is shown and selecting `Typing E
 
 **Hint:** If shadow looks bad, please check [FAQ](./questions) and "Shadow looks not good". If this does not help, then disable shadow.
 
-#### 2.6. Camera
+#### 2.7. Camera
 {: .doc-sec2 }
 
 This "Camera" means eyesight on the character window.
@@ -172,7 +184,7 @@ During this setup you can use `Quick Save` and `Quick Load` buttons to save or l
 
 In this process you might get trouble the character is cut off or going out of character window. In this case press `Reset Position`, or turn off `Transparent Window` to see the actual layout.
 
-#### 2.7. Device Layout
+#### 2.8. Device Layout
 {: .doc-sec2 }
 
 Turn on `Free Layout` to enter device free layout mode.
@@ -192,7 +204,7 @@ During this mode the control UI appears at the top-left corner of character wind
 `Reset`: Use this command to recover the standard layout.
 
 
-#### 2.8. Motion
+#### 2.9. Motion
 {: .doc-sec2 }
 
 Check on `Presentation-like hand` to move VRM's right hand as if he / she is on a presentation.

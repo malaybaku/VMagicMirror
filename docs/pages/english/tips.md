@@ -24,3 +24,5 @@ Here shows several tips based on expected use case of `VMagicMirror`.
 [Use VMagicMirror on Mac](./tips/use_on_mac)
 
 [Using Hand Tracking](./tips/using_hand_tracking)
+
+[Use Virtual Camera](./tips/virtual_camera)

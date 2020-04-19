@@ -23,6 +23,8 @@ lang_prefix: /en/
 
 `Reset Position`: Press this button to move character window just right to the control panel window. Use this function when you lost where the character window is.
 
+`Virtual Camera Output`: Support same menu as `Streaming` tab. Please see the detail at [Tips: Use Virtual Camera](../tips/virtual_camera).
+
 `Transparent Level`: Select the character transparency condition from level 0 to 4. Default value is level 2. Level 0 means always NOT transparent, and level 4 makes character always transparent.
 
 `Alpha when Transpanrent`: Set the transparency when the character is transparent. Higher value means opaque.

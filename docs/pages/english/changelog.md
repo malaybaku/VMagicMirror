@@ -15,7 +15,7 @@ lang_prefix: /en/
 
 * Add: Virtual Camera Output
 * Change: Improvement for shoulder motion.
-* Change: Show warning when VMagicMirror is put in multi-byte character included path. This warning to notify the face tracker might fail in such situation.
+* Change: Show warning when installed folder path includes multi byte character, to notify face tracking might fail.
 * Fix: Fix the issue that some PC environment fails to load face texture.
 
 Shoulder motion improvement is applied by default, but you can turn off it for the case that it does not suit for your avatar. Please check at Setting Window > `Motion` > `Arm` > `Modify shoulder motion`.

@@ -79,7 +79,7 @@ If you want to dragging feature, then turn off `Drag the character` after placin
 {% include docimg.html file="./images/get_started/img00_095_virtual_cam_out.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-This feature is advanced. Please see the detail at [Tips: Use Virtual Camera](./tips/virtual_camera).
+This feature is a bit advanced. If you are interested, see the detail at [Tips: Use Virtual Camera](./tips/virtual_camera).
 
 
 #### 2.3. Face

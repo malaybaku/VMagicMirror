@@ -79,9 +79,7 @@ permalink: /get_started
 {% include docimg.html file="./images/get_started/img00_095_virtual_cam_out.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-この項目は「興味のある人限定」の側面が強い機能のため、使う予定がなければ無視して構いません。
-
-詳細は[Tips: 仮想カメラを使う](./tips/virtual_camera)をご覧下さい。
+この機能はとくに興味がなければスキップして構いません。詳細は[Tips: 仮想カメラを使う](./tips/virtual_camera)をご覧下さい。
 
 
 #### 2.3. 顔・表情

@@ -79,6 +79,7 @@ namespace Baku.VMagicMirror
             //Alphaは仮想カメラの場合は不要かな～と思うので意識的に切ります。
             _resizedTexture = new RenderTexture(Width, Height, RenderTextureDepth);
             _captureInterface = new NativeCaptureInterface(CaptureDeviceIndex);
+            DisableWindowGhosting();
         }
 
         private void OnDestroy()
@@ -96,65 +97,80 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            Texture srcTexture = null;
-            if (source.width == Width && source.height == Height)
+            try
             {
-                srcTexture = source;
-            }
-            else 
-            {
-                if (_resizedTexture.width != Width || _resizedTexture.height != Height)
+                Texture srcTexture = null;
+                if (source.width == Width && source.height == Height)
                 {
-                    _resizedTexture.Release();
-                    _resizedTexture = new RenderTexture(Width, Height, RenderTextureDepth);
+                    srcTexture = source;
                 }
-                //NOTE: これ通るっけ？？まあわかんないし見るしかないか。
-                Graphics.Blit(source, _resizedTexture);
-                srcTexture = _resizedTexture;
+                else
+                {
+                    if (_resizedTexture.width != Width || _resizedTexture.height != Height)
+                    {
+                        _resizedTexture.Release();
+                        _resizedTexture = new RenderTexture(Width, Height, RenderTextureDepth);
+                    }
+
+                    //NOTE: これ通るっけ？？まあわかんないし見るしかないか。
+                    Graphics.Blit(source, _resizedTexture);
+                    srcTexture = _resizedTexture;
+                }
+
+                switch (_captureInterface.SendTexture(srcTexture, TimeoutMillisec, UseDoubleBuffering, ResizeMode,
+                    MirrorMode))
+                {
+                    case ECaptureSendResult.SUCCESS:
+                        break;
+                    case ECaptureSendResult.WARNING_FRAMESKIP:
+                        if (showWarnings)
+                        {
+                            WriteLog(
+                                "[UnityCapture] Capture device did skip a frame read, capture frame rate will not match render frame rate.");
+                        }
+
+                        break;
+                    case ECaptureSendResult.WARNING_CAPTUREINACTIVE:
+                        if (showWarnings)
+                        {
+                            WriteLog("[UnityCapture] Capture device is inactive");
+                        }
+
+                        break;
+                    case ECaptureSendResult.ERROR_UNSUPPORTEDGRAPHICSDEVICE:
+                        WriteLog("[UnityCapture] Unsupported graphics device (only D3D11 supported)");
+                        break;
+                    case ECaptureSendResult.ERROR_PARAMETER:
+                        WriteLog("[UnityCapture] Input parameter error");
+                        break;
+                    case ECaptureSendResult.ERROR_TOOLARGERESOLUTION:
+                        WriteLog("[UnityCapture] Render resolution is too large to send to capture device");
+                        break;
+                    case ECaptureSendResult.ERROR_TEXTUREFORMAT:
+                        WriteLog(
+                            "[UnityCapture] Render texture format is unsupported (only basic non-HDR (ARGB32) and HDR (FP16/ARGB Half) formats are supported)");
+                        break;
+                    case ECaptureSendResult.ERROR_READTEXTURE:
+                        WriteLog("[UnityCapture] Error while reading texture image data");
+                        break;
+                    case ECaptureSendResult.ERROR_INVALIDCAPTUREINSTANCEPTR:
+                        WriteLog("[UnityCapture] Invalid Capture Instance Pointer");
+                        break;
+                    default:
+                        WriteLog("[UnityCapture] 不明な状態です");
+                        //NOTE: ここには来ないはず
+                        break;
+
+                }
+
             }
-            
-            switch (_captureInterface.SendTexture(srcTexture, TimeoutMillisec, UseDoubleBuffering, ResizeMode, MirrorMode))
+            catch (Exception ex)
             {
-                case ECaptureSendResult.SUCCESS: 
-                    break;
-                case ECaptureSendResult.WARNING_FRAMESKIP:
-                    if (showWarnings)
-                    {
-                        Debug.LogWarning(
-                            "[UnityCapture] Capture device did skip a frame read, capture frame rate will not match render frame rate.");
-                    }
-                    break;
-                case ECaptureSendResult.WARNING_CAPTUREINACTIVE:
-                    if (showWarnings)
-                    {
-                        Debug.LogWarning("[UnityCapture] Capture device is inactive");
-                    }
-                    break;
-                case ECaptureSendResult.ERROR_UNSUPPORTEDGRAPHICSDEVICE:
-                    Debug.LogError("[UnityCapture] Unsupported graphics device (only D3D11 supported)");
-                    break;
-                case ECaptureSendResult.ERROR_PARAMETER:
-                    Debug.LogError("[UnityCapture] Input parameter error");
-                    break;
-                case ECaptureSendResult.ERROR_TOOLARGERESOLUTION:
-                    Debug.LogError("[UnityCapture] Render resolution is too large to send to capture device");
-                    break;
-                case ECaptureSendResult.ERROR_TEXTUREFORMAT:
-                    Debug.LogError(
-                        "[UnityCapture] Render texture format is unsupported (only basic non-HDR (ARGB32) and HDR (FP16/ARGB Half) formats are supported)");
-                    break;
-                case ECaptureSendResult.ERROR_READTEXTURE:
-                    Debug.LogError("[UnityCapture] Error while reading texture image data");
-                    break;
-                case ECaptureSendResult.ERROR_INVALIDCAPTUREINSTANCEPTR:
-                    Debug.LogError("[UnityCapture] Invalid Capture Instance Pointer");
-                    break;
-                default:
-                    Debug.LogError("[UnityCapture] 不明な状態です");
-                    //NOTE: ここには来ないはず
-                    break;
+                LogOutput.Instance.Write(ex);
             }
         }
+
+        private void WriteLog(string msg) => LogOutput.Instance.Write("VCamCapture Error: " + msg);
 
         private class NativeCaptureInterface
         {
@@ -208,6 +224,17 @@ namespace Baku.VMagicMirror
                 }
             }
         }
+
+        //NOTE: 仮想カメラ有効時にアプリフォーカスが切れるとウィンドウが止まることがあるのを対策するために叩くWin32API
+        [DllImport("user32.dll")]  
+        private static extern void DisableProcessWindowsGhosting();
         
+        private static void DisableWindowGhosting()
+        {
+            if (!Application.isEditor)
+            {
+                DisableProcessWindowsGhosting();
+            }
+        }
     }
 }

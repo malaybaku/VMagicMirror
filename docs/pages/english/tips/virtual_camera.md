@@ -1,7 +1,8 @@
 ---
 layout: page
 title: Use Virtual Camera
-permalink: /en/tips/virtual_camera/
+permalink: /en/tips/virtual_camera
+lang_prefix: /en/
 ---
 
 [Japanese](../../tips/virtual_camera)

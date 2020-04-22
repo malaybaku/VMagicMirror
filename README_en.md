@@ -3,10 +3,10 @@
 
 # VMagicMirror
 
-v0.9.8
+v0.9.9a
 
 * Author: Baxter
-* 2020/Mar/24
+* 2020/Apr/19
 
 The VRM avatar application without any special device.
 
@@ -15,7 +15,6 @@ The VRM avatar application without any special device.
 3. Contact
 4. (For Developers) Build
 5. Third-Party License
-6. (For Developers) Create MOD
 
 ## 1. Features
 
@@ -156,9 +155,10 @@ URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c
 In VMagicMirror, the materials are replaced for the visual consistency.
 
 
-## 6. (For Developers) Create MOD
+## (Deprecated) MOD support
 
-VMagicMirror v0.9.3 or later supports MOD library (dll) loading system. In this way you can add your new feature without editing VMagicMirror itself.
+Previous version had supported MOD library by dll, but MOD feature is no more supported.
 
-Please see the detail at [VMagicMirrorModExample](https://github.com/malaybaku/VMagicMirrorModExample) repository.
+The sample repository at following URL has deleted.
 
+https://github.com/malaybaku/VMagicMirrorModExample

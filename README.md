@@ -2,10 +2,10 @@
 
 # VMagicMirror
 
-v0.9.8
+v0.9.9a
 
 * 作成: 獏星(ばくすたー)
-* 2020/03/24
+* 2020/04/19
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -14,7 +14,6 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 3. 質問など
 4. (開発者向け)ビルド手順
 5. OSS等のライセンス
-6. (開発者向け)MODを作成する手順
 
 ## 1. できること
 
@@ -154,9 +153,10 @@ https://github.com/malaybaku/VMagicMirrorConfig/blob/master/VMagicMirrorConfig/V
 VMagicMirrorでは元モデルに対し、マテリアルを差し替えたものを用いています。これは他のキーボード、タッチパッド等と見た目の一貫性をはかるためです。
 
 
-## 6. MODを作成する手順
+## MODの廃止について
 
-VMagicMirror v0.9.3以降ではライブラリ(dll)形式のMOD読み込みがサポートされているため、VMagicMirror自体を編集する代わりにMODで機能を追加することもできます。
+以前のバージョンではMOD機能の追加を想定してサンプルを公開していましたが、廃止しました。
 
-詳細は[VMagicMirrorModExample](https://github.com/malaybaku/VMagicMirrorModExample)を参照下さい。
+※すでにレポジトリを削除しています
+https://github.com/malaybaku/VMagicMirrorModExample
 

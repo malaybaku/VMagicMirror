@@ -21,6 +21,10 @@ This video also shows the setup process.
 
 Start `VMagicMirror.exe` to show GUI window ("Control Panel"), and Green window to show character ("Character Window").
 
+**NOTE:** If `VMagicMirror.exe` does not start correctly please check unzip settings. Right-click zip file to select `Property`, and check whether `Security` area exists at the bottom part. Check `Allow` and click `OK` to apply setting, then retry to unzip file.
+
+{% include docimg.html file="./images/get_started/img00_005_before_unzip.png" customclass="col s12 m12 s12" imgclass="fit-doc-img" %}
+
 When you close one of the window, the other window also closes and VMagicMirror quits. If you do not want to show control panel, then minimize it.
 
 Click `Load VRM` button on `Home` tab in control panel to select your `.vrm` file on PC.

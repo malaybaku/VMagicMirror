@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror
             _allBlendShapeKeys = _proxy
                 .BlendShapeAvatar
                 .Clips
-                .Select(c => new BlendShapeKey(c.BlendShapeName))
+                .Select(c => BlendShapeKeyFactory.CreateFrom(c.BlendShapeName))
                 .ToArray();
         }
 

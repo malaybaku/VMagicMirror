@@ -337,7 +337,7 @@ namespace Baku.VMagicMirror
             {
                 foreach (var pair in PreviewRequest.BlendShapeValuesDic)
                 {
-                    _blendShape.Add(new BlendShapeKey(pair.Key), pair.Value);
+                    _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
                 }
             }
             else
@@ -532,7 +532,7 @@ namespace Baku.VMagicMirror
             _blendShape.Clear();
             foreach (var pair in request.BlendShapeValuesDic)
             {
-                _blendShape.Add(new BlendShapeKey(pair.Key), pair.Value);
+                _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
             }
             _blendShapeResetCountDown = CalculateDuration(request);
         }

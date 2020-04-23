@@ -9,6 +9,12 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v0.9.9a
+
+2020/04/19
+
+* Fix: Fix the issue that when virtual camera output is enabled, character window seems to be stopped in about 5 seconds, after losing window focus.
+
 #### v0.9.9
 
 2020/04/19

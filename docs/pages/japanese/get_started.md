@@ -21,7 +21,7 @@ permalink: /get_started
 
 **注意:** `VMagicMirror.exe`が正常に起動しない場合、Windows OSのセキュリティ処理でzipの解凍に失敗した可能性があります。zipファイルを右クリックして`プロパティ`を選び、`セキュリティ`の項目があるかどうか確認します。もし項目があれば`許可する`をチェックを入れて`OK`で変更を適用し、その後あらためてzipを解凍してください。
 
-{% include docimg.html file="./images/get_started/img00_005_before_unzip.png" customclass="col s12 m12 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_005_before_unzip.png" customclass="col l6 m6 s6" imgclass="fit-doc-img" %}
 
 コントロールパネルかキャラクター表示ウィンドウの一方を閉じると、もう片方の画面も閉じて`VMagicMirror`が終了します。コントロールパネルが邪魔な場合は最小化しておきます。
 

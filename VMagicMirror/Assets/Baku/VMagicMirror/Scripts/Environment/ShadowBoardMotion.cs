@@ -2,11 +2,21 @@
 
 namespace Baku.VMagicMirror
 {
+    [RequireComponent(typeof(Renderer))]
     public class ShadowBoardMotion : MonoBehaviour
     {
         [SerializeField] private Transform cam = null;
 
         public float ShadowBoardWaistDepthOffset { get; set; } = 0.4f;
+
+        public Renderer ShadowRenderer => _renderer;
+
+        private Renderer _renderer;
+
+        private void Start()
+        {
+            _renderer = GetComponent<Renderer>();
+        }
 
         private void Update()
         {

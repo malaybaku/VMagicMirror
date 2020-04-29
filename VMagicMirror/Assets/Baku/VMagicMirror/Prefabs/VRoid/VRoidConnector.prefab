@@ -43,5 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ed33807f96f31345861da7180e558ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPrefab: {fileID: 3765591871195427918, guid: bd91b73a66d8c464eb7f7322384e2145,
+  targetPrefab: {fileID: 7003577136554780290, guid: 3ec00e9d1e3991a4abc906bf8481af52,
+    type: 3}
+  fallbackPrefab: {fileID: 3765591871195427912, guid: bd91b73a66d8c464eb7f7322384e2145,
     type: 3}

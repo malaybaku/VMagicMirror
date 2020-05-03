@@ -11,7 +11,7 @@ lang_prefix: /en/
 
 VMagicMirror ("The Software") has official license note as `License Note` section.
 
-`Preamble` is not a part of license note, but will help to understand the concept.
+`Preamble` and `About added license for binary distribution` is not a part of license note, but will help to understand the concept.
 
 ## Preamble
 
@@ -22,7 +22,29 @@ VMagicMirror ("The Software") has official license note as `License Note` sectio
 5. The Software usage as streaming or video output will be an avatar usage.
 6. User must also comply to the VRM model license.
 
+## About added license for binary distribution
+
+The term "License for the binary distribution" is added on v1.0.0.
+
+The term focuses to clarify that the build output, especially the binary  available at BOOTH, includes paid assets and closed-distributed SDKs. These resources are not OSS, and must be protected. 
+
+The term only applies to v1.0.0 or later version to avoid changing past version licenses, but reverse engineering for any version will lead the same issue. Note the user must have all the responsibility for it (because Basic License includes disclaimer).
+
+
 ## License Note
+
+### License for the binary distribution
+
+This term is applied to v1.0.0 or later version of the software.
+
+1. For the software as distributed in the form of binary, do not try any kind of the reverse engineering such as decompiling.
+
+2. However, for the part of the software whose implementation can be referred in GitHub, the next term "Basic License" is applied, even when the software is distributed as binary style.
+
+
+### Basic License
+
+This term is applied to all of the version of the software.
 
 MIT License
 

@@ -329,6 +329,7 @@ namespace Baku.VMagicMirror
 
             _blendShape.DisposeProxy();
             _motionTransfer.Target = null;
+            _simpleAnimation = null;
         }
 
         private void ApplyPreviewBlendShape()
@@ -348,6 +349,12 @@ namespace Baku.VMagicMirror
 
         private void StartBuiltInMotion(string clipName)
         {
+            //キャラのロード前に数字キーとか叩いたケースをガードしています
+            if (_simpleAnimation == null)
+            {
+                return;
+            }
+            
             var clip = _mapper.FindBuiltInAnimationClipOrDefault(clipName);
             if (clip == null) { return; }
 

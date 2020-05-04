@@ -58,7 +58,7 @@ permalink: /get_started
 
 キャラクターをロードしたら色々な基本機能を試してみましょう。
 
-{% include docimg.html file="./images/get_started/streaming_tab_overview.png" %}
+{% include docimg.html file="./images/get_started/img00_050_streaming_tab.png" %}
 
 #### 2.1. ウィンドウ
 {: .doc-sec2 }
@@ -130,22 +130,7 @@ permalink: /get_started
 とくに`デバイスの割り当て`で`ゲームパッド`や`MIDIコントローラ`を選ぶことにより、こっそりと表情を切り替えられます。
 
 
-#### 2.5. スクリーンショット
-{: .doc-sec2 }
-
-`撮影`ボタンであるカメラアイコンのボタンを押すと、3秒間のカウントダウンののちスクリーンショットを撮影します。
-
-スクリーンショットの保存先は`VMagicMirror.exe`があるフォルダ以下の`Screenshots`フォルダです。(スクリーンショットを1枚も撮った事が無い場合、フォルダが存在しないことがあります)
-
-スクリーンショットは透過画像で、影の表示/非表示も反映されるため、影ごと他の画像と合成できます。
-
-<div class="row">
-{% include docimg.html file="./images/get_started/img00_180_screenshot.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_190_screenshot_shadow.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-</div>
-
-
-#### 2.6. 表示
+#### 2.5. 表示
 {: .doc-sec2 }
 
 `表示`では`VMagicMirror`の対応デバイスやエフェクトのオン・オフを切り替えます。
@@ -159,7 +144,7 @@ permalink: /get_started
 **Hint:** 影の見栄えが悪い場合、[FAQ](./questions)の"影が綺麗に映らない"の項目を確認してください。それでも見栄えが改善しない場合、影の表示をオフにします。
 
 
-#### 2.7. カメラ
+#### 2.6. カメラ
 {: .doc-sec2 }
 
 カメラ機能では、キャラクターをうつす視点を操作できます。
@@ -193,7 +178,7 @@ permalink: /get_started
 ただし、この操作方法では気づかないうちにキャラクターがキャラクター表示ウィンドウから見切れることがあります。キャラクターを見失ってしまい、直し方がわからなくなった場合は`位置をリセット`ボタンを押してやり直すか、`背景を透過`をオフにしてウィンドウの表示を確認します。
 
 
-#### 2.8. デバイスのレイアウト
+#### 2.7. デバイスのレイアウト
 {: .doc-sec2 }
 
 `フリーレイアウトモード`のチェックをオンにするとキーボード、タッチパッド、ゲームコントローラなどの位置を調整できます。
@@ -212,7 +197,7 @@ permalink: /get_started
 
 レイアウトが極端に崩れてしまった場合、`リセット`で標準的なレイアウトに戻します。
 
-#### 2.9. モーション
+#### 2.8. モーション
 {: .doc-sec2 }
 
 `プレゼン風に右手を動かす`のチェックをオンにしてマウスを動かすと、キャラクターが右手でマウスポインタの方向を指し示します。

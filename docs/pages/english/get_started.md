@@ -58,7 +58,7 @@ If you want to load the character automatically on next boot, then check `Load c
 
 `Streaming` tab in control panel is to access all of main features of `VMagicMirror`.
 
-{% include docimg.html file="./images/get_started/streaming_tab_overview.png" %}
+{% include docimg.html file="./images/get_started/img00_050_streaming_tab.png" %}
 
 #### 2.1. Window
 {: .doc-sec2 }
@@ -131,20 +131,7 @@ Please see the detail in [Expressions](./docs/expressions).
 When choosing `Device Assignment` to `Gamepad` or `MIDI Controller`, selected device arm motion is disabled. This helps you to hide what you do to change face expression from audience.
 
 
-#### 2.5. Screenshot
-{: .doc-sec2 }
-
-Press camera icon `Take Picture` button to start 3 second count down, and the screenshot will be captured.
-
-Screenshot is saved to the `Screenshots` folder in the folder where `VMagicMirror.exe` exists.
-
-<div class="row">
-{% include docimg.html file="./images/get_started/img00_180_screenshot.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_190_screenshot_shadow.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-</div>
-
-
-#### 2.6. View
+#### 2.5. View
 {: .doc-sec2 }
 
 Toggle the checks to set which device is visible and which is invisible.
@@ -157,7 +144,7 @@ Especially you can see the effect when keyboard is shown and selecting `Typing E
 
 **Hint:** If shadow looks bad, please check [FAQ](./questions) and "Shadow looks not good". If this does not help, then disable shadow.
 
-#### 2.7. Camera
+#### 2.6. Camera
 {: .doc-sec2 }
 
 This "Camera" means eyesight on the character window.
@@ -190,7 +177,7 @@ During this setup you can use `Quick Save` and `Quick Load` buttons to save or l
 
 In this process you might get trouble the character is cut off or going out of character window. In this case press `Reset Position`, or turn off `Transparent Window` to see the actual layout.
 
-#### 2.8. Device Layout
+#### 2.7. Device Layout
 {: .doc-sec2 }
 
 Turn on `Free Layout` to enter device free layout mode.
@@ -210,7 +197,7 @@ During this mode the control UI appears at the top-left corner of character wind
 `Reset`: Use this command to recover the standard layout.
 
 
-#### 2.9. Motion
+#### 2.8. Motion
 {: .doc-sec2 }
 
 Check on `Presentation-like hand` to move VRM's right hand as if he / she is on a presentation.

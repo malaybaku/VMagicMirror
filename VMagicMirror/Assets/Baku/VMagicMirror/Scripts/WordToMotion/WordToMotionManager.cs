@@ -329,6 +329,7 @@ namespace Baku.VMagicMirror
 
             _blendShape.DisposeProxy();
             _motionTransfer.Target = null;
+            _simpleAnimation = null;
         }
 
         private void ApplyPreviewBlendShape()
@@ -337,7 +338,7 @@ namespace Baku.VMagicMirror
             {
                 foreach (var pair in PreviewRequest.BlendShapeValuesDic)
                 {
-                    _blendShape.Add(new BlendShapeKey(pair.Key), pair.Value);
+                    _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
                 }
             }
             else
@@ -348,6 +349,12 @@ namespace Baku.VMagicMirror
 
         private void StartBuiltInMotion(string clipName)
         {
+            //キャラのロード前に数字キーとか叩いたケースをガードしています
+            if (_simpleAnimation == null)
+            {
+                return;
+            }
+            
             var clip = _mapper.FindBuiltInAnimationClipOrDefault(clipName);
             if (clip == null) { return; }
 
@@ -532,7 +539,7 @@ namespace Baku.VMagicMirror
             _blendShape.Clear();
             foreach (var pair in request.BlendShapeValuesDic)
             {
-                _blendShape.Add(new BlendShapeKey(pair.Key), pair.Value);
+                _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
             }
             _blendShapeResetCountDown = CalculateDuration(request);
         }

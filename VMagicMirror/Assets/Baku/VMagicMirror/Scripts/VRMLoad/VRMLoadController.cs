@@ -46,9 +46,6 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.CancelLoadVrm:
                         previewCanvas.Hide();
                         break;
-                    case MessageCommandNames.AccessToVRoidHub:
-                        //何もしない: ちゃんとUI整うまでは完全非サポート化する
-                        break;
                     default:
                         break;
                 }
@@ -105,9 +102,8 @@ namespace Baku.VMagicMirror
             });
         }
 
-        private void OnVrmLoadedFromVRoidHub(string modelId, GameObject vrmObject)
+        public void OnVrmLoadedFromVRoidHub(string modelId, GameObject vrmObject)
         {
-            //TODO: Debug
             SetModel(vrmObject);
         }
 

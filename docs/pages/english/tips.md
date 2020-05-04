@@ -9,7 +9,11 @@ lang_prefix: /en/
 
 # Tips
 
-Here shows several tips based on expected use case of `VMagicMirror`.
+Here shows several tips about `VMagicMirror`. 
+
+For the basic usage, please see [Get Started](./get_started).
+
+[Use VRoid Hub Avatar](./tips/use_vroid_hub)
 
 [Use VMagicMirror for Streaming](./tips/streaming)
 

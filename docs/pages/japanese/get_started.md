@@ -27,16 +27,30 @@ permalink: /get_started
 
 コントロールパネルかキャラクター表示ウィンドウの一方を閉じると、もう片方の画面も閉じて`VMagicMirror`が終了します。コントロールパネルが邪魔な場合は最小化しておきます。
 
-キャラクターをロードするにはコントロールパネルの`ホーム`タブの`VRMロード`ボタンをクリックし、PC上の`.vrm`ファイルを選択します。
+キャラクターはPC上のVRMファイル、またはVRoid Hubからロードできます。
+
+※VRoid Hubはv1.0.0以降で利用可能です。
+
+PC上のVRMファイルをロードする場合、`ホーム`タブの`PC上のファイルをロード`ボタンをクリックし、PC上の`.vrm`ファイルを選択します。キャラクター表示ウィンドウに表示される規約を確認して`OK`をクリックすると、キャラクターをロードします。
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_015_started.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
 {% include docimg.html file="./images/get_started/img00_020_load_vrm.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-キャラクター表示ウィンドウに表示される規約を確認して`OK`をクリックすると、キャラクターをロードします。
+VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロード`ボタンをクリックするとブラウザ上でアプリ連携を行ったのち、認可コードが表示されます。認可コードをコピーし、VMagicMirrorの入力欄にペーストしてログインします。
 
-ロード後、同じキャラクターを次回以降も使いたい場合、`VRMロード`ボタンの下にある`次回の起動時にも同じVRMを読み込む`のチェックをオンにします。
+ログイン後、キャラクター表示ウィンドウ側にキャラクター選択画面が表示されます。自分でアップロードしたキャラクター、「いいね」したキャラクター、ピックアップされたキャラクターのいずれかを選択し、規約を確認してロードします。
+
+<div class="row">
+{% include docimg.html file="./images/get_started/img00_032_connect_vroid_hub.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_034_vroid_hub_characters.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_037_vroid_hub_confirmation.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+</div>
+
+※他者によるキャラクターの一部は「いいね」をしていても非表示になることがあります。詳細は[VRoid Hubのアバター利用について](./tips/use_vroid_hub)を参照して下さい。
+
+ロード後、同じキャラクターを次回以降も使いたい場合、`次回の起動時にも同じVRMを読み込む`のチェックをオンにします。
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_030_load_vrm_confirmation.png" customclass="col s12 m6" imgclass="fit-doc-img" %}

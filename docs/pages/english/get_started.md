@@ -29,14 +29,29 @@ Start `VMagicMirror.exe` to show GUI window ("Control Panel"), and Green window 
 
 When you close one of the window, the other window also closes and VMagicMirror quits. If you do not want to show control panel, then minimize it.
 
-Click `Load VRM` button on `Home` tab in control panel to select your `.vrm` file on PC.
+There are 2 ways to load character, from VRM file on the PC or from VRoid Hub.
+
+**NOTE:** VRoid Hub is available from v1.0.0.
+
+To use VRM file, click `Load from File` to select file. Confirm the license and click `OK` to load the character.
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_015_started.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
 {% include docimg.html file="./images/get_started/img00_020_load_vrm.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-After select the character you will see the license for the model. Confirm it and click `OK` to load character.
+To use the model in VRoid Hub click `Load from VRoid Hub`, then character window will shows VRoid Hub loader UI, with authentication instruction in the first time.
+
+After login, choose the avatar and check condition of use, then load.
+
+<div class="row">
+{% include docimg.html file="./images/get_started/img00_032_connect_vroid_hub.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_034_vroid_hub_characters.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_037_vroid_hub_confirmation.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+</div>
+
+**NOTE:** Some avatars by others does not appear on the available avatar list. Please see the detail at [Tips: Use VRoid Hub Avatar](./tips/use_vroid_hub).
+
 
 If you want to load the character automatically on next boot, then check `Load current VRM on next startup`.
 

@@ -9,6 +9,15 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v1.0.0
+
+2020/05/xx
+
+* Add: VRoid Hub collaboration
+* Change: Add license about restriction of reverse engineering for binary data.
+* Fix: Fix issue some face parts might disappear when shadow depth offset is small. This issue still happens when shadow is enabled, but not happen when shadow is off.
+* Fix: Fix issue Standard shader might fail to load correctly
+
 #### v0.9.9a
 
 2020/04/19

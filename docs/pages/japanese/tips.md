@@ -12,6 +12,8 @@ permalink: /tips
 
 基本的な使い方については[Get Started](./get_started)を参照ください。
 
+[VRoid Hubのアバター利用について](./tips/use_vroid_hub)
+
 [配信にVMagicMirrorを使う](./tips/streaming)
 
 [プレゼンテーションに使う](./tips/presentation)

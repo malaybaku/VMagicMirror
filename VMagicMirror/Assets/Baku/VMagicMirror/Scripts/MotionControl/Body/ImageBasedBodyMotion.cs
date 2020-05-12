@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         private const float PositionWeightWhenValid = 0.5f;
         
         //カメラ領域のうち標準では(320x240のうち)30% x 30%の領域くらいが顔の標準の映り込みかなー、という意味。要調整。
-        [SerializeField] private Vector3 offsetAmplifier = new Vector3(0.3f, 0.3f, 1.0f);
+        [SerializeField] private Vector3 offsetAmplifier = new Vector3(0.2f, 0.2f, 0.5f);
         [SerializeField] private Vector3 offsetLowerLimit = new Vector3(-1.0f, -1.0f, -0.05f);
         [SerializeField] private Vector3 offsetUpperLimit = new Vector3(1.0f, 1.0f, 0.1f);
         [SerializeField] private float speedFactor = 12f;

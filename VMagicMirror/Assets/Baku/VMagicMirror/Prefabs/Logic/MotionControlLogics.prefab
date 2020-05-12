@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0678b307db8ea584098fa503696aa6e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offsetAmplifier: {x: 0.3, y: 0.3, z: 1}
+  offsetAmplifier: {x: 0.2, y: 0.2, z: 0.5}
   offsetLowerLimit: {x: -1, y: -1, z: -0.05}
   offsetUpperLimit: {x: 1, y: 1, z: 0.1}
   speedFactor: 12

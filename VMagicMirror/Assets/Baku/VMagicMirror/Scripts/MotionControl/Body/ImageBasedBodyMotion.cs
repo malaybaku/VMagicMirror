@@ -14,9 +14,11 @@ namespace Baku.VMagicMirror
         private const float PositionWeightWhenValid = 0.5f;
         
         //カメラ領域のうち標準では(320x240のうち)30% x 30%の領域くらいが顔の標準の映り込みかなー、という意味。要調整。
-        [SerializeField] private Vector3 offsetAmplifier = new Vector3(0.2f, 0.2f, 0.5f);
+        [SerializeField] private Vector3 offsetAmplifier = new Vector3(0.2f, 0.1f, 0.5f);
         [SerializeField] private Vector3 offsetLowerLimit = new Vector3(-1.0f, -1.0f, -0.05f);
         [SerializeField] private Vector3 offsetUpperLimit = new Vector3(1.0f, 1.0f, 0.1f);
+        [Tooltip("体オフセットの値(m)に対して体傾き(deg)を適用する比率。xはロール、yはピッチ、zは使う予定なし、みたいな割り当てで、普通はxにだけ非ゼロ値を入れます")]
+        [SerializeField] private Vector3 offsetToBodyRotEulerFactor = new Vector3(10f, 0f, 0f);
         [SerializeField] private float speedFactor = 12f;
 
         [Range(0.05f, 1.0f)]
@@ -45,6 +47,9 @@ namespace Baku.VMagicMirror
             get => enableBodyLeanZ;
             set => enableBodyLeanZ = value;
         }
+        
+        /// <summary>顔のx座標を参考に、体のロールをこのくらい曲げたらいいんでない？というのを計算して回転情報にしたやつ </summary>
+        public Quaternion BodyLeanSuggest { get; private set; } = Quaternion.identity;
         
         /// <summary>体のIKに適用したいXY軸要素のみが入ったオフセット値を取得します。</summary>
         public Vector3 BodyIkXyOffset { get; private set; }
@@ -141,7 +146,8 @@ namespace Baku.VMagicMirror
 
             _prevPosition = pos;
             _prevSpeed = speed;
-        }
 
+            BodyLeanSuggest = Quaternion.Euler(0, 0, BodyIkOffset.x * offsetToBodyRotEulerFactor.x);
+        }
     }
 }

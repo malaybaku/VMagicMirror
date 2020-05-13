@@ -16,9 +16,16 @@ namespace Baku.VMagicMirror
         [Range(0.05f, 1.0f)]
         private float timeScaleFactor = 1.0f;
 
+        [Tooltip("首ロールの一部を体ロールにすり替える比率です")]
+        [SerializeField] private float rollToBodyRollFactor = 0.1f;
+
         [Inject] private FaceTracker _faceTracker = null;
         [Inject] private IVRMLoadable _vrmLoadable = null;
+        
+        public Quaternion BodyLeanSuggest { get; private set; } = Quaternion.identity;
 
+        //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
+        private const float HeadRollRateApplyFactor = 0.7f;
         private const float HeadYawRateToDegFactor = 50.00f;
         private const float HeadTotalRotationLimitDeg = 40.0f;
         private const float NoseBaseHeightDifToAngleDegFactor = 400f;
@@ -39,7 +46,7 @@ namespace Baku.VMagicMirror
         {
             //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
             _faceTracker.FaceParts.Outline.HeadRollRad.Subscribe(
-                v => SetHeadRollDeg(-v * Mathf.Rad2Deg)
+                v => SetHeadRollDeg(-v * Mathf.Rad2Deg * HeadRollRateApplyFactor)
                 );
             
             //もとの値は角度ではなく[-1, 1]の無次元量であることに注意
@@ -98,6 +105,7 @@ namespace Baku.VMagicMirror
             }
 
             _vrmHeadTransform.localRotation = nextRotation;
+            BodyLeanSuggest = Quaternion.Euler(0, 0, rotationEuler.z * rollToBodyRollFactor);
 
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;

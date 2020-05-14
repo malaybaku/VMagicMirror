@@ -86,8 +86,8 @@ namespace Baku.VMagicMirror
         private IIKGenerator _prevLeftHand = null;
         private IIKGenerator _currentLeftHand = null;
 
-        private HandTargetType _leftTargetType = HandTargetType.ImageBaseHand;
-        private HandTargetType _rightTargetType = HandTargetType.ImageBaseHand;
+        private HandTargetType _leftTargetType = HandTargetType.Keyboard;
+        private HandTargetType _rightTargetType = HandTargetType.Keyboard;
         
         #region API
 

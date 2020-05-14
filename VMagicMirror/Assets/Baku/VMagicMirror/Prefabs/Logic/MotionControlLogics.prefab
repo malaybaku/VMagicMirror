@@ -243,6 +243,7 @@ MonoBehaviour:
   speedDumpFactor: 0.86
   timeScaleFactor: 0.2
   rollToBodyRollFactor: 0.1
+  yawToBodyYawFactor: 0.2
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0

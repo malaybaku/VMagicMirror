@@ -15,7 +15,11 @@ namespace Baku.VMagicMirror
         
         private void Update()
         {
-            //NOTE: 「3つとも角度は小さい+X軸回転だけのハズだし適当に全部かけちゃえー！」という大らかなプログラムです
+            //NOTE:
+            // faceAttitude: ヨーとロール
+            // imageBasedBodyMotion: ロール
+            // gamePadBasedBodyLean: ロールとピッチ
+            // どれも角度は小さめなので雑にかけてます
             BodyLeanSuggest =
                 _faceAttitudeController.BodyLeanSuggest *
                 _imageBasedBodyMotion.BodyLeanSuggest *

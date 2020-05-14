@@ -7,6 +7,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class BodyLeanIntegrator : MonoBehaviour
     {
+        [SerializeField] private FaceYawToBodyYaw _faceYawToBodyYaw = null;
         [SerializeField] private GamepadBasedBodyLean _gamepadBasedBodyLean = null;
         [SerializeField] private ImageBasedBodyMotion _imageBasedBodyMotion = null;
         [SerializeField] private FaceAttitudeController _faceAttitudeController = null;
@@ -16,11 +17,13 @@ namespace Baku.VMagicMirror
         private void Update()
         {
             //NOTE:
-            // faceAttitude: ヨーとロール
+            // faceAttitudeToBodyYaw: ヨー
+            // faceAttitudeController: ロール
             // imageBasedBodyMotion: ロール
             // gamePadBasedBodyLean: ロールとピッチ
             // どれも角度は小さめなので雑にかけてます
             BodyLeanSuggest =
+                _faceYawToBodyYaw.BodyYawSuggest *
                 _faceAttitudeController.BodyLeanSuggest *
                 _imageBasedBodyMotion.BodyLeanSuggest *
                 _gamepadBasedBodyLean.BodyLeanSuggest;

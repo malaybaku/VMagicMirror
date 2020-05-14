@@ -29,7 +29,9 @@ namespace Baku.VMagicMirror
 
         //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
         private const float HeadRollRateApplyFactor = 0.7f;
-        private const float HeadYawRateToDegFactor = 40.00f;
+        //NOTE: もとは50だったんだけど、腰曲げに反映する値があることを想定して小さくしてます
+        private const float HeadYawRateToDegFactor = 28.00f; 
+
         private const float HeadTotalRotationLimitDeg = 40.0f;
         private const float NoseBaseHeightDifToAngleDegFactor = 400f;
             
@@ -108,11 +110,7 @@ namespace Baku.VMagicMirror
             }
 
             _vrmHeadTransform.localRotation = nextRotation;
-            BodyLeanSuggest = Quaternion.Euler(
-                0, 
-                rotationEuler.y * yawToBodyYawFactor, 
-                rotationEuler.z * rollToBodyRollFactor
-                );
+            BodyLeanSuggest = Quaternion.Euler(0, 0, rotationEuler.z * rollToBodyRollFactor);
 
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;

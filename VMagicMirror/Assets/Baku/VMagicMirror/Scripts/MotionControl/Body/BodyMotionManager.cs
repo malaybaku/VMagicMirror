@@ -37,6 +37,7 @@ namespace Baku.VMagicMirror
             bodyIk.localPosition =
                 _defaultBodyIkPosition + 
                 imageBasedBodyMotion.BodyIkXyOffset + 
+                bodyLeanIntegrator.BodyOffsetSuggest + 
                 waitingBodyMotion.Offset;
 
             //画像ベースの移動量はIKと体に利かす -> 体に移動量を足さないと腰だけ動いて見た目が怖くなります

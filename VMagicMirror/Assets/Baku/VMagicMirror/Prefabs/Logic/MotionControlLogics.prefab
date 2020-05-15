@@ -152,6 +152,9 @@ MonoBehaviour:
   _gamepadBasedBodyLean: {fileID: 5813678808713813108}
   _imageBasedBodyMotion: {fileID: 5813678808713813112}
   _faceAttitudeController: {fileID: 5813678809054739210}
+  _bodyRollDegToXOffsetFactor: 0.007
+  _bodyRollReflectMaxDeg: 4
+  x2y: 0.3
 --- !u!114 &5813678808713813112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,9 +261,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ccd5f299c1abbd4bb7387e98b79aefa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedLerpFactor: 6
-  speedDumpFactor: 0.93
-  timeScaleFactor: 0.2
   speedDumpForceFactor: 10
   posDumpForceFactor: 20
   rollToBodyRollFactor: 0.1
@@ -322,6 +322,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handIkIntegrator: {fileID: 5813678810404708495}
+  bodyLeanIntegrator: {fileID: 8506340368463674577}
+  bodyRollRateToElbowWidthPlusFactor: -0.2
+  bodyRollRateToElbowWidthMinusFactor: 1
 --- !u!1 &5813678810404708600
 GameObject:
   m_ObjectHideFlags: 0

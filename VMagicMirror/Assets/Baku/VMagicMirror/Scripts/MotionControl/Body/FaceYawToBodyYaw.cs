@@ -79,10 +79,11 @@ namespace Baku.VMagicMirror
 
         private IEnumerator CheckHeadYawAngle()
         {
+            var wait = new WaitForEndOfFrame();
             while (true)
             {
+                yield return wait;
                 //フレーム終わりでチェックすることで、全ての回転が載った(=描画された)回転値を拾うのが狙いです
-                yield return new WaitForEndOfFrame();
                 if (!_hasVrmBone)
                 {
                     _headYawAngleDegree = 0;

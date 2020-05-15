@@ -421,9 +421,10 @@ namespace Baku.VMagicMirror
         /// <returns></returns>
         private IEnumerator PickColorCoroutine()
         {
+            var wait = new WaitForEndOfFrame();
             while (Application.isPlaying)
             {
-                yield return new WaitForEndOfFrame();
+                yield return wait;
                 ObservePixelUnderCursor(cam);
             }
             yield return null;

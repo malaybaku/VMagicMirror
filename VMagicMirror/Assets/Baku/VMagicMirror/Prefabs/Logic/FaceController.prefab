@@ -61,7 +61,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47ea0b13d96595749870bb28cca4af0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faceTracker: {fileID: 0}
   eyeDownController: {fileID: 3748028267383499193}
   imageBasedBlinkController: {fileID: 3748028266611161170}
   autoBlink: {fileID: 3748028266611161171}
@@ -77,7 +76,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 361f1b0adb1a379449acbb4d0a28bcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faceTracker: {fileID: 0}
   speedFactor: 18
   speedDumpFactor: 0.95
   blinkUpdateTimeScale: 0.1
@@ -172,7 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   changeTime: 0.4
   changeTimeRange: 3
-  range: {x: 1, y: 1}
+  range: {x: 2, y: 1}
   speedFactor: 4
 --- !u!114 &3748028267383499192
 MonoBehaviour:
@@ -200,7 +198,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faceControlManager: {fileID: 3748028266611161169}
-  faceTracker: {fileID: 0}
   wordToMotion: {fileID: 0}
   defaultOffset: 0.2
   eyeBrowDownOffsetWhenEyeClosed: 0.7

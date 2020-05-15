@@ -6,20 +6,23 @@ namespace Baku.VMagicMirror
 {
     public class FaceAttitudeController : MonoBehaviour
     {
-        [SerializeField] private float speedLerpFactor = 12f;
-
-        [SerializeField]
-        [Range(0.1f, 1.0f)]
-        private float speedDumpFactor = 0.8f;
-
-        [SerializeField]
-        [Range(0.05f, 1.0f)]
-        private float timeScaleFactor = 1.0f;
-
+        //NOTE: バネマス系のパラメータ(いわゆるcとk)
+        [SerializeField] private float speedDumpForceFactor = 10.0f;
+        [SerializeField] private float posDumpForceFactor = 20.0f;
+        
+        [Tooltip("首ロールの一部を体ロールにすり替える比率です")]
+        [SerializeField] private float rollToBodyRollFactor = 0.1f;
+        
         [Inject] private FaceTracker _faceTracker = null;
         [Inject] private IVRMLoadable _vrmLoadable = null;
+        
+        public Quaternion BodyLeanSuggest { get; private set; } = Quaternion.identity;
 
-        private const float HeadYawRateToDegFactor = 50.00f;
+        //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
+        private const float HeadRollRateApplyFactor = 0.8f;
+        //NOTE: もとは50だったんだけど、腰曲げに反映する値があることを想定して小さくしてます
+        private const float HeadYawRateToDegFactor = 28.00f; 
+
         private const float HeadTotalRotationLimitDeg = 40.0f;
         private const float NoseBaseHeightDifToAngleDegFactor = 400f;
             
@@ -39,7 +42,7 @@ namespace Baku.VMagicMirror
         {
             //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
             _faceTracker.FaceParts.Outline.HeadRollRad.Subscribe(
-                v => SetHeadRollDeg(-v * Mathf.Rad2Deg)
+                v => SetHeadRollDeg(-v * Mathf.Rad2Deg * HeadRollRateApplyFactor)
                 );
             
             //もとの値は角度ではなく[-1, 1]の無次元量であることに注意
@@ -65,22 +68,14 @@ namespace Baku.VMagicMirror
             }
 
             //やりたい事: ロール、ヨー、ピッチそれぞれを独立にsmoothingしてから最終的に適用する
-
-            //直線的に動かす場合の速度。ここが差分ベースで、PD制御のPっぽい感じ
-            var idealSpeedEuler = (_latestRotationEuler - _prevRotationEuler) / timeScaleFactor;
-
-            //慣性っぽい動きを付けてからチャタリング防止用のダンピング(PD制御のDっぽい項)
-            var speed = Vector3.Lerp(
-                _prevRotationSpeedEuler,
-                idealSpeedEuler,
-                speedLerpFactor * Time.deltaTime
-                );
-
-            //チャタリング防止
-            speed *= speedDumpFactor;
-
+            
+            // いわゆるバネマス系扱いで陽的オイラー法を回す。やや過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
+            var accel = 
+                -_prevRotationSpeedEuler * speedDumpForceFactor -
+                (_prevRotationEuler - _latestRotationEuler) * posDumpForceFactor;
+            var speed = _prevRotationSpeedEuler + Time.deltaTime * accel;
             var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
-
+            
             //このスクリプトより先にLookAtIKが走るハズなので、その回転と合成
             var nextRotation = Quaternion.Euler(rotationEuler) * _vrmHeadTransform.localRotation;
 
@@ -98,6 +93,7 @@ namespace Baku.VMagicMirror
             }
 
             _vrmHeadTransform.localRotation = nextRotation;
+            BodyLeanSuggest = Quaternion.Euler(0, 0, rotationEuler.z * rollToBodyRollFactor);
 
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;

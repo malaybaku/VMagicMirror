@@ -13,8 +13,12 @@ lang_prefix: /en/
 
 2020/05/xx
 
+* Add: License about restriction of reverse engineering for binary distribution.
 * Add: VRoid Hub collaboration
-* Change: Add license about restriction of reverse engineering for binary data.
+* Add: Return to default position feature, when face tracking is enabled but not detected.
+* Change: Body motion improved.
+* Change: The pose just after the model is loaded is now hand down pose. With this update, you can use VMagicMirror with just standing model viewer if you uncheck `Motion` > `Arm` > `Enable Typing / Mouse Motion`.
+* Change: In setting window, `Motion` > `Arm` > `Presentation-like hand` > `Show Pointer Support` is unchecked now by default.
 * Fix: Fix issue some face parts might disappear when shadow depth offset is small. This issue still happens when shadow is enabled, but not happen when shadow is off.
 * Fix: Fix issue Standard shader might fail to load correctly
 

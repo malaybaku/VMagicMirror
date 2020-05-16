@@ -11,7 +11,7 @@ lang_prefix: /en/
 
 #### v1.0.0
 
-2020/05/16
+2020/05/xx
 
 * Add: License about restriction of reverse engineering for binary distribution.
 * Add: VRoid Hub collaboration

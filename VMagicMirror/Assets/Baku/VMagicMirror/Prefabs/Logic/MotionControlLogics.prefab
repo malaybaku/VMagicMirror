@@ -152,7 +152,7 @@ MonoBehaviour:
   _gamepadBasedBodyLean: {fileID: 5813678808713813108}
   _imageBasedBodyMotion: {fileID: 5813678808713813112}
   _faceAttitudeController: {fileID: 5813678809054739210}
-  _bodyRollDegToXOffsetFactor: 0.007
+  _bodyRollDegToXOffsetFactor: 0.002
   _bodyRollReflectMaxDeg: 4
   x2y: 0.3
 --- !u!114 &5813678808713813112

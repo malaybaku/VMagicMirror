@@ -11,9 +11,9 @@ lang_prefix: /en/
 
 #### v1.0.0
 
-2020/05/xx
+2020/05/22
 
-* Add: License about restriction of reverse engineering for binary distribution.
+* Add: Add license preamble about reverse engineering.
 * Add: VRoid Hub collaboration
 * Add: Return to default position feature, when face tracking is enabled but not detected.
 * Change: Body motion improved.

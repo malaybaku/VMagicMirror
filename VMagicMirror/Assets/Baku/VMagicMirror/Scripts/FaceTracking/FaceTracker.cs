@@ -33,6 +33,12 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private int halfResizeWidthThreshold = 640;
 
+        [Tooltip("顔トラッキングがオンであるにも関わらず表情データが降ってこない状態が続き、異常値と判定するまでの秒数")]
+        [SerializeField] private float activeButNotTrackedCount = 1.0f;
+        
+        [Tooltip("顔トラッキングが外れたとき、色々なパラメータを基準位置に戻すためのLerpファクター(これにTime.deltaTimeをかけた値を用いる")]
+        [SerializeField] private float notTrackedResetSpeedFactor = 3.0f;
+        
         /// <summary> 検出した顔パーツそれぞれ </summary>
         public FaceParts FaceParts { get; } = new FaceParts();
 
@@ -80,6 +86,7 @@ namespace Baku.VMagicMirror
             _webCamTexture.height;
 
         private bool _calibrationRequested = false;
+        private float _faceNotDetectedCountDown = 0.0f;
 
         private WebCamTexture _webCamTexture;
         private WebCamDevice _webCamDevice;
@@ -177,6 +184,21 @@ namespace Baku.VMagicMirror
                     UpdateCalibrationData();
                 }
             }
+
+            //顔トラ起動中はつねに「実は顔トラッキング出来てないのでは？」というのをチェックする
+            if (HasInitDone)
+            {
+                if (_faceNotDetectedCountDown >= 0)
+                {
+                    _faceNotDetectedCountDown -= Time.deltaTime;
+                }
+                
+                if (_faceNotDetectedCountDown < 0)
+                {
+                    //顔トラが全然更新されない -> ヘンなとこで固まってる可能性が高いので、正面姿勢に戻って頂く
+                    LerpToDefaultFace();
+                }
+            }
         }
 
         private void OnDestroy()
@@ -272,6 +294,7 @@ namespace Baku.VMagicMirror
 
             _isInitWaiting = false;
             HasInitDone = true;
+            _faceNotDetectedCountDown = activeButNotTrackedCount;
 
             if (_colors == null || _colors.Length != _webCamTexture.width * _webCamTexture.height)
             {
@@ -406,8 +429,24 @@ namespace Baku.VMagicMirror
             FaceParts.Update(mainPersonRect, landmarks);
 
             FaceDetectedAtLeastOnce = true;
+            //顔が検出できてるので、未検出カウントダウンは最初からやり直し
+            _faceNotDetectedCountDown = activeButNotTrackedCount;
         }
 
+        private void LerpToDefaultFace()
+        {
+            float lerpFactor = notTrackedResetSpeedFactor * Time.deltaTime;
+
+            //キャリブ状態と同じ位置に顔を徐々に持っていく
+            var center = Vector2.Lerp(DetectedRect.center, CalibrationData.faceCenter, lerpFactor);
+            float edgeLen = Mathf.Sqrt(CalibrationData.faceSize);
+            var size = Vector2.Lerp(DetectedRect.size, new Vector2(edgeLen, edgeLen), lerpFactor);
+            //NOTE: centerじゃなくてbottom leftを指定するんですね…はい。
+            DetectedRect = new Rect(center - 0.5f * size, size);
+            
+            FaceParts.LerpToDefault(CalibrationData, lerpFactor);
+        }
+        
         private void UpdateCalibrationData()
         {
             CalibrationData.faceSize = DetectedRect.width * DetectedRect.height;
@@ -429,7 +468,7 @@ namespace Baku.VMagicMirror
 
             CalibrationCompleted?.Invoke(JsonUtility.ToJson(CalibrationData));
         }
-
+        
         //画像をタテヨコ半分にする。(通常ありえないが)奇数サイズのピクセル数だった場合は切り捨て。
         private void SetHalfSizePixels(Color32[] src, Color32[] dest, int srcWidth, int srcHeight)
         {

@@ -74,3 +74,5 @@ MonoBehaviour:
   requestedHeight: 240
   requestedFps: 30
   halfResizeWidthThreshold: 640
+  activeButNotTrackedCount: 1
+  notTrackedResetSpeedFactor: 3

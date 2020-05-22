@@ -332,10 +332,14 @@ namespace Baku.VMagicMirror
         {
             fingerController.Initialize(info.animator);
             presentation.Initialize(info.animator);
+            
+            //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にします。
+            //棒立ちサポートをめちゃ適当にやっちゃえ！というのがモチベです
+            imageBaseHand.HasRightHandUpdate = false;
+            SetRightHandIk(HandTargetType.ImageBaseHand);
 
-            //ホームポジションを押させてIK位置を整える
-            PressKey("F");
-            PressKey("J");
+            imageBaseHand.HasLeftHandUpdate = false;
+            SetLeftHandIk(HandTargetType.ImageBaseHand);
         }
 
         private void OnVrmDisposing()

@@ -12,6 +12,14 @@ namespace Baku.VMagicMirror
         private const float WidthFactorLerp = 6.0f;
         
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
+        [SerializeField] private BodyLeanIntegrator bodyLeanIntegrator = null;
+        
+        [Range(-5f, 5f)]
+        [SerializeField] private float bodyRollRateToElbowWidthPlusFactor = 1.0f;
+
+        [Range(-5f, 5f)]
+        [SerializeField] private float bodyRollRateToElbowWidthMinusFactor = 1.0f;
+        
         [Inject] private IVRMLoadable _vrmLoadable = null;
 
         public float WaistWidthHalf { get; private set; } = 0.15f;
@@ -47,15 +55,32 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            float leftWidthFactorGoal =
+                1.0f +
+                (handIkIntegrator.IsLeftHandGripGamepad ? 1 : 0) +
+                (bodyLeanIntegrator.BodyRollRate > 0
+                    ? bodyLeanIntegrator.BodyRollRate * bodyRollRateToElbowWidthPlusFactor
+                    : -bodyLeanIntegrator.BodyRollRate * bodyRollRateToElbowWidthMinusFactor
+                );
+
             _leftWidthFactor = Mathf.Lerp(
                 _leftWidthFactor,
-                handIkIntegrator.IsLeftHandGripGamepad ? 2.0f : 1.0f,
+                leftWidthFactorGoal,
                 WidthFactorLerp * Time.deltaTime
             );
 
+            //leftのときとプラスマイナスのファクターのかけかたが逆になることに注意
+            float rightWidthFactorGoal = 
+                1.0f + 
+                (handIkIntegrator.IsRightHandGripGamepad ? 1 : 0) + 
+                (bodyLeanIntegrator.BodyRollRate > 0
+                    ? bodyLeanIntegrator.BodyRollRate * bodyRollRateToElbowWidthMinusFactor
+                    : -bodyLeanIntegrator.BodyRollRate * bodyRollRateToElbowWidthPlusFactor
+                );
+
             _rightWidthFactor = Mathf.Lerp(
                 _rightWidthFactor,
-                handIkIntegrator.IsRightHandGripGamepad ? 2.0f : 1.0f,
+                rightWidthFactorGoal,
                 WidthFactorLerp * Time.deltaTime
             );
 

@@ -15,7 +15,6 @@
         public const string OpenVrmPreview = nameof(OpenVrmPreview);
         public const string OpenVrm = nameof(OpenVrm);
         public const string CancelLoadVrm = nameof(CancelLoadVrm);
-        public const string AccessToVRoidHub = nameof(AccessToVRoidHub);
         public const string RequestAutoAdjust = nameof(RequestAutoAdjust);
         public const string RequestAutoAdjustEyebrow = nameof(RequestAutoAdjustEyebrow);
 
@@ -181,6 +180,10 @@
         public const string TakeScreenshot = nameof(TakeScreenshot);
         public const string OpenScreenshotFolder = nameof(OpenScreenshotFolder);
 
+        // VRoidHub
+        public const string OpenVRoidSdkUi = nameof(OpenVRoidSdkUi);
+        public const string RequestLoadVRoidWithId = nameof(RequestLoadVRoidWithId);
+        
         // Meta message
         public const string CommandArray = nameof(CommandArray);
     }

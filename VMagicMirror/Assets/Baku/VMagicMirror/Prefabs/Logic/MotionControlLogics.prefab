@@ -81,9 +81,11 @@ GameObject:
   - component: {fileID: 5813678808713813114}
   - component: {fileID: 5813678808713813110}
   - component: {fileID: 5813678808713813111}
+  - component: {fileID: 8506340368463674577}
   - component: {fileID: 5813678808713813112}
   - component: {fileID: 5813678808713813113}
   - component: {fileID: 5813678808713813108}
+  - component: {fileID: 3088723817282594664}
   m_Layer: 0
   m_Name: BodyMotion
   m_TagString: Untagged
@@ -131,9 +133,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bodyIk: {fileID: 0}
-  gamepadBasedBodyLean: {fileID: 5813678808713813108}
+  bodyLeanIntegrator: {fileID: 8506340368463674577}
   imageBasedBodyMotion: {fileID: 5813678808713813112}
   waitingBodyMotion: {fileID: 5813678808713813113}
+--- !u!114 &8506340368463674577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678808713813115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c2d0b190eeb1524c8e8f20de0ec5794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _faceYawToBodyYaw: {fileID: 3088723817282594664}
+  _gamepadBasedBodyLean: {fileID: 5813678808713813108}
+  _imageBasedBodyMotion: {fileID: 5813678808713813112}
+  _faceAttitudeController: {fileID: 5813678809054739210}
+  _bodyRollDegToXOffsetFactor: 0.002
+  _bodyRollReflectMaxDeg: 4
+  x2y: 0.3
 --- !u!114 &5813678808713813112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,9 +167,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0678b307db8ea584098fa503696aa6e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offsetAmplifier: {x: 0.3, y: 0.3, z: 1}
+  offsetAmplifier: {x: 0.05, y: 0.1, z: 0.5}
   offsetLowerLimit: {x: -1, y: -1, z: -0.05}
   offsetUpperLimit: {x: 1, y: 1, z: 0.1}
+  offsetToBodyRotEulerFactor: {x: -80, y: 0, z: 0}
   speedFactor: 12
   timeScaleFactor: 0.3
   enableBodyLeanZ: 0
@@ -179,6 +201,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bodyLeanMaxAngle: {x: 2, y: 2}
+--- !u!114 &3088723817282594664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678808713813115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f7406faae6ad154dbeb076e93b04e48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goalRate: 0.3
+  timeFactor: 0.1
+  speedDumpFactor: 0.95
+  speedLerpFactor: 6
+  lerpFactor: 3
 --- !u!1 &5813678809054739212
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,9 +261,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ccd5f299c1abbd4bb7387e98b79aefa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedLerpFactor: 9
-  speedDumpFactor: 0.86
-  timeScaleFactor: 0.2
+  speedDumpForceFactor: 10
+  posDumpForceFactor: 20
+  rollToBodyRollFactor: 0.1
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,6 +322,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handIkIntegrator: {fileID: 5813678810404708495}
+  bodyLeanIntegrator: {fileID: 8506340368463674577}
+  bodyRollRateToElbowWidthPlusFactor: -0.2
+  bodyRollRateToElbowWidthMinusFactor: 1
 --- !u!1 &5813678810404708600
 GameObject:
   m_ObjectHideFlags: 0

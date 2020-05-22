@@ -306,10 +306,11 @@ namespace Baku.VMagicMirror
 
         private IEnumerator CheckElbowPostureOnEndOfFrame()
         {
+            var wait = new WaitForEndOfFrame();
             while (true)
             {
                 //NOTE: EndOfFrameにするのはIKが適用された状態の値が知りたいから。
-                yield return new WaitForEndOfFrame();
+                yield return wait;
                 if (!_hasValidShoulderBone)
                 {
                     continue;

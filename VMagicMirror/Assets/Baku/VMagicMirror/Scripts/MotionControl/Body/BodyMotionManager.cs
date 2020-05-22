@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
     {
         [SerializeField] private Transform bodyIk = null;
 
-        [SerializeField] private GamepadBasedBodyLean gamepadBasedBodyLean = null;
+        [SerializeField] private BodyLeanIntegrator bodyLeanIntegrator = null;
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
         [SerializeField] private WaitingBodyMotion waitingBodyMotion = null;
         [Inject] private IVRMLoadable _vrmLoadable = null;
@@ -37,13 +37,14 @@ namespace Baku.VMagicMirror
             bodyIk.localPosition =
                 _defaultBodyIkPosition + 
                 imageBasedBodyMotion.BodyIkXyOffset + 
+                bodyLeanIntegrator.BodyOffsetSuggest + 
                 waitingBodyMotion.Offset;
 
             //画像ベースの移動量はIKと体に利かす -> 体に移動量を足さないと腰だけ動いて見た目が怖くなります
             _vrmRoot.position = imageBasedBodyMotion.BodyIkXyOffset;
 
             //スムージングはサブクラスの方でやっているのでコッチでは処理不要。
-            _vrmRoot.localRotation = gamepadBasedBodyLean.BodyLeanSuggest;
+            _vrmRoot.localRotation = bodyLeanIntegrator.BodyLeanSuggest;
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)

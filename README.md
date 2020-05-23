@@ -1,6 +1,8 @@
 [English Readme](https://github.com/malaybaku/VMagicMirror/blob/master/README_en.md)
 
-# VMagicMirror
+![Logo](./docs/images/vmagicmirror_logo.png)
+
+Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
 v1.0.0
 

@@ -51,7 +51,7 @@ In setting window,
 
 1. (Middle effect): `Effects` tab, set `Quality` to lower option.
 2. (Small effect): `Layout` tab, disable gamepad input capture and MIDI input reading. 
-3. (Small effect): `Effects` tab, set `Quality` to lower one.
+3. (Small effect): `Effects` tab, set `Image Quality` to lower one.
 4. (Small effect): `Effects` tab, set `Bloom`'s `Intensity` to 0.
 
 #### Consider How to Place the Character

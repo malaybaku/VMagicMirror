@@ -12,12 +12,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
     /// <summary> iFacialMocapから顔トラッキングデータを受け取ってVMagicMirrorのデータ形状に整形するクラスです。 </summary>
     public class iFacialMocapReceiver : ExternalTrackSourceProvider
     {
-        //NOTE: iFacialMocapはPCサイドの中間UIがとーっても難しいのでポート番号を固定します。下手にいじらせると死人が出そう…。
-        private const int LOCAL_PORT = 50003;
-
-        //NOTE: ちょっと倒錯してるんだけど、目のrotation情報からもとのブレンドシェイプを推定するためにこの値を使います。
-        [SerializeField] private float eyeHorizontalRotationToBlendShapeFactor = 5.0f;
-        [SerializeField] private float eyeVerticalRotationToBlendShapeFactor = 5.0f;
+        private const int PortNumber = 49983;
         
         private readonly RecordFaceTrackSource _faceTrackSource = new RecordFaceTrackSource();
         public override IFaceTrackSource FaceTrackSource => _faceTrackSource;
@@ -42,87 +37,82 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         //NOTE: 最終的に無くてよい。あくまでデバッグ用なので
         private ConcurrentQueue<string> _messages = new ConcurrentQueue<string>();
         
-        
         private readonly Dictionary<string, float> _blendShapes = new Dictionary<string, float>()
         {
             //目
-            [RawBlendShapeNames.eyeBlinkLeft] = 0.0f,
-            [RawBlendShapeNames.eyeLookUpLeft] = 0.0f,
-            [RawBlendShapeNames.eyeLookDownLeft] = 0.0f,
-            [RawBlendShapeNames.eyeLookInLeft] = 0.0f,
-            [RawBlendShapeNames.eyeLookOutLeft] = 0.0f,
-            [RawBlendShapeNames.eyeWideLeft] = 0.0f,
-            [RawBlendShapeNames.eyeSquintLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeBlinkLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeLookUpLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeLookDownLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeLookInLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeLookOutLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeWideLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeSquintLeft] = 0.0f,
 
-            [RawBlendShapeNames.eyeBlinkRight] = 0.0f,
-            [RawBlendShapeNames.eyeLookUpRight] = 0.0f,
-            [RawBlendShapeNames.eyeLookDownRight] = 0.0f,
-            [RawBlendShapeNames.eyeLookInRight] = 0.0f,
-            [RawBlendShapeNames.eyeLookOutRight] = 0.0f,
-            [RawBlendShapeNames.eyeWideRight] = 0.0f,
-            [RawBlendShapeNames.eyeSquintRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeBlinkRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeLookUpRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeLookDownRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeLookInRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeLookOutRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeWideRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.eyeSquintRight] = 0.0f,
 
             //あご
-            [RawBlendShapeNames.jawOpen] = 0.0f,
-            [RawBlendShapeNames.jawForward] = 0.0f,
-            [RawBlendShapeNames.jawLeft] = 0.0f,
-            [RawBlendShapeNames.jawRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.jawOpen] = 0.0f,
+            [iFacialMocapBlendShapeNames.jawForward] = 0.0f,
+            [iFacialMocapBlendShapeNames.jawLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.jawRight] = 0.0f,
 
             //まゆげ
-            [RawBlendShapeNames.browDownLeft] = 0.0f,
-            [RawBlendShapeNames.browOuterUpLeft] = 0.0f,
-            [RawBlendShapeNames.browDownRight] = 0.0f,
-            [RawBlendShapeNames.browOuterUpRight] = 0.0f,
-            [RawBlendShapeNames.browInnerUp] = 0.0f,
+            [iFacialMocapBlendShapeNames.browDownLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.browOuterUpLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.browDownRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.browOuterUpRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.browInnerUp] = 0.0f,
 
             //口(多い)
-            [RawBlendShapeNames.mouthLeft] = 0.0f,
-            [RawBlendShapeNames.mouthSmileLeft] = 0.0f,
-            [RawBlendShapeNames.mouthFrownLeft] = 0.0f,
-            [RawBlendShapeNames.mouthPressLeft] = 0.0f,
-            [RawBlendShapeNames.mouthUpperUpLeft] = 0.0f,
-            [RawBlendShapeNames.mouthLowerDownLeft] = 0.0f,
-            [RawBlendShapeNames.mouthStretchLeft] = 0.0f,
-            [RawBlendShapeNames.mouthDimpleLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthSmileLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthFrownLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthPressLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthUpperUpLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthLowerDownLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthStretchLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthDimpleLeft] = 0.0f,
 
-            [RawBlendShapeNames.mouthRight] = 0.0f,
-            [RawBlendShapeNames.mouthSmileRight] = 0.0f,
-            [RawBlendShapeNames.mouthFrownRight] = 0.0f,
-            [RawBlendShapeNames.mouthPressRight] = 0.0f,
-            [RawBlendShapeNames.mouthUpperUpRight] = 0.0f,
-            [RawBlendShapeNames.mouthLowerDownRight] = 0.0f,
-            [RawBlendShapeNames.mouthStretchRight] = 0.0f,
-            [RawBlendShapeNames.mouthDimpleRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthSmileRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthFrownRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthPressRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthUpperUpRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthLowerDownRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthStretchRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthDimpleRight] = 0.0f,
             
-            [RawBlendShapeNames.mouthClose] = 0.0f,
-            [RawBlendShapeNames.mouthFunnel] = 0.0f,
-            [RawBlendShapeNames.mouthPucker] = 0.0f,
-            [RawBlendShapeNames.mouthShrugUpper] = 0.0f,
-            [RawBlendShapeNames.mouthShrugLower] = 0.0f,
-            [RawBlendShapeNames.mouthRollUpper] = 0.0f,
-            [RawBlendShapeNames.mouthRollLower] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthClose] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthFunnel] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthPucker] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthShrugUpper] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthShrugLower] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthRollUpper] = 0.0f,
+            [iFacialMocapBlendShapeNames.mouthRollLower] = 0.0f,
 
             //鼻
-            [RawBlendShapeNames.noseSneerLeft] = 0.0f,
-            [RawBlendShapeNames.noseSneerRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.noseSneerLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.noseSneerRight] = 0.0f,
 
             //ほお
-            [RawBlendShapeNames.cheekPuff] = 0.0f,
-            [RawBlendShapeNames.cheekSquintLeft] = 0.0f,
-            [RawBlendShapeNames.cheekSquintRight] = 0.0f,
+            [iFacialMocapBlendShapeNames.cheekPuff] = 0.0f,
+            [iFacialMocapBlendShapeNames.cheekSquintLeft] = 0.0f,
+            [iFacialMocapBlendShapeNames.cheekSquintRight] = 0.0f,
             
             //舌
-            [RawBlendShapeNames.tongueOut] = 0.0f,         
+            [iFacialMocapBlendShapeNames.tongueOut] = 0.0f,         
         };
 
-        //NOTE: headとneckは分けてるが最終的に合成値を公開する予定。
-        //(ARKit的には単一の回転値だけ取る仕様だった気がするので、iFacialMocap側が勝手に値を分配している、と想定してそうする)
+        //NOTE: 生データでは目のオイラー角表現が入ってるけど無視(ブレンドシェイプ側の情報を使う為)
         private readonly Dictionary<string, Vector3> _rotationData = new Dictionary<string, Vector3>()
         {
             [iFacialMocapRotationNames.head] = Vector3.zero,
-            //[iFacialMocapRotationNames.neck] = Vector3.zero,
-            [iFacialMocapRotationNames.leftEye] = Vector3.zero,
-            [iFacialMocapRotationNames.rightEye] = Vector3.zero,
         };
         
         private void Update()
@@ -174,7 +164,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 
         private void ThreadMethod(CancellationToken token)
         {
-            var client = new UdpClient(LOCAL_PORT);
+            var client = new UdpClient(PortNumber);
             client.Client.ReceiveTimeout = 500;
 
             while (!token.IsCancellationRequested)
@@ -183,6 +173,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 {
                     IPEndPoint remoteEndPoint = null;
                     byte[] data = client.Receive(ref remoteEndPoint);
+                    //NOTE: GetStringをメインスレッドでやるようにしたほうが負荷が下がるかもしれない(UDPの受信が超高速で回ってたら検討すべき)
                     string message = Encoding.ASCII.GetString(data);
                     _messages.Enqueue(message);
                     RawMessage = message;
@@ -222,11 +213,11 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             {
                 var item = blendShapes[i].Split('-');
                 if (item.Length == 2 && 
-                    _blendShapes.ContainsKey(item[0]) &&
-                    int.TryParse(item[1], out int value)
+                    _blendShapes.ContainsKey(item[0].TrimEnd()) &&
+                    int.TryParse(item[1].TrimStart(), out int value)
                     )
                 {
-                    _blendShapes[item[0]] = Mathf.Clamp01(value * 0.01f);
+                    _blendShapes[item[0].TrimEnd()] = Mathf.Clamp01(value * 0.01f);
                 }
             }
             
@@ -235,19 +226,19 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             for (int i = 0; i < rotations.Length; i++)
             {
                 var item = rotations[i].Split('#');
-                if (item.Length != 2 || !_rotationData.ContainsKey(item[0]))
+                if (item.Length != 2 || !_rotationData.ContainsKey(item[0].TrimEnd()))
                 {
                     continue;
                 }
 
-                var rotEuler = item[1].Split(',');
+                var rotEuler = item[1].TrimStart().Split(',');
                 if (rotEuler.Length == 3 && 
                     float.TryParse(rotEuler[0], out float x) && 
                     float.TryParse(rotEuler[1], out float y) && 
                     float.TryParse(rotEuler[2], out float z)
                     )
                 {
-                    _rotationData[item[0]] = new Vector3(x, y, z);
+                    _rotationData[item[0].TrimEnd()] = new Vector3(x, y, z);
                 }
             }
 
@@ -266,122 +257,80 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 _faceTrackSource.FaceTransform.HasValidPosition = false;
                 _faceTrackSource.FaceTransform.Rotation =
                     Quaternion.Euler(_rotationData[iFacialMocapRotationNames.head]);
-                //* Quaternion.Euler(_rotationData[iFacialMocapRotationNames.neck]);
             }
             
-            //目: みどころは回転 to ブレンドシェイプの逆変換(ちょっと面倒な話だけどね。)
+            //目
             void ApplyEyes()
             {
-                _faceTrackSource.Eye.LeftBlink = _blendShapes[RawBlendShapeNames.eyeBlinkLeft];
-                _faceTrackSource.Eye.LeftSquint = _blendShapes[RawBlendShapeNames.eyeSquintLeft];
-                _faceTrackSource.Eye.LeftWide = _blendShapes[RawBlendShapeNames.eyeWideLeft];
-                var leftEyeEuler = _rotationData[iFacialMocapRotationNames.leftEye];
-                float leftEyeHorizontal = Mathf.Clamp(leftEyeEuler.y * eyeHorizontalRotationToBlendShapeFactor, -1, 1);
-                if (leftEyeHorizontal > 0)
-                {
-                    _faceTrackSource.Eye.LeftLookIn = 0;
-                    _faceTrackSource.Eye.LeftLookOut = leftEyeHorizontal;
-                }
-                else
-                {
-                    _faceTrackSource.Eye.LeftLookIn = -leftEyeHorizontal;
-                    _faceTrackSource.Eye.LeftLookOut = 0;
-                }
+                _faceTrackSource.Eye.LeftBlink = _blendShapes[iFacialMocapBlendShapeNames.eyeBlinkLeft];
+                _faceTrackSource.Eye.LeftSquint = _blendShapes[iFacialMocapBlendShapeNames.eyeSquintLeft];
+                _faceTrackSource.Eye.LeftWide = _blendShapes[iFacialMocapBlendShapeNames.eyeWideLeft];
+                _faceTrackSource.Eye.LeftLookIn = _blendShapes[iFacialMocapBlendShapeNames.eyeLookInLeft];
+                _faceTrackSource.Eye.LeftLookOut =  _blendShapes[iFacialMocapBlendShapeNames.eyeLookOutLeft];
+                _faceTrackSource.Eye.LeftLookUp =  _blendShapes[iFacialMocapBlendShapeNames.eyeLookUpLeft];
+                _faceTrackSource.Eye.LeftLookDown =  _blendShapes[iFacialMocapBlendShapeNames.eyeLookDownLeft];
 
-                float leftEyeVertical = Mathf.Clamp(leftEyeEuler.x * eyeVerticalRotationToBlendShapeFactor, -1, 1);
-                if (leftEyeVertical > 0)
-                {
-                    _faceTrackSource.Eye.LeftLookUp = 0;
-                    _faceTrackSource.Eye.LeftLookDown = leftEyeVertical;
-                }
-                else
-                {
-                    _faceTrackSource.Eye.LeftLookUp = -leftEyeVertical;
-                    _faceTrackSource.Eye.LeftLookDown = 0;
-                }
-
-                _faceTrackSource.Eye.RightBlink = _blendShapes[RawBlendShapeNames.eyeBlinkRight];
-                _faceTrackSource.Eye.RightSquint = _blendShapes[RawBlendShapeNames.eyeSquintRight];
-                _faceTrackSource.Eye.RightWide = _blendShapes[RawBlendShapeNames.eyeWideRight];
-                var rightEyeEuler = _rotationData[iFacialMocapRotationNames.rightEye];
-                float rightEyeHorizontal =
-                    Mathf.Clamp(rightEyeEuler.y * eyeHorizontalRotationToBlendShapeFactor, -1, 1);
-                if (rightEyeHorizontal > 0)
-                {
-                    _faceTrackSource.Eye.RightLookIn = 0;
-                    _faceTrackSource.Eye.RightLookOut = rightEyeHorizontal;
-                }
-                else
-                {
-                    _faceTrackSource.Eye.RightLookIn = -rightEyeHorizontal;
-                    _faceTrackSource.Eye.RightLookOut = 0;
-                }
-
-                float rightEyeVertical = Mathf.Clamp(rightEyeEuler.x * eyeVerticalRotationToBlendShapeFactor, -1, 1);
-                if (rightEyeVertical > 0)
-                {
-                    _faceTrackSource.Eye.RightLookUp = 0;
-                    _faceTrackSource.Eye.RightLookDown = rightEyeVertical;
-                }
-                else
-                {
-                    _faceTrackSource.Eye.RightLookUp = -rightEyeVertical;
-                    _faceTrackSource.Eye.RightLookDown = 0;
-                }            
+                _faceTrackSource.Eye.RightBlink = _blendShapes[iFacialMocapBlendShapeNames.eyeBlinkRight];
+                _faceTrackSource.Eye.RightSquint = _blendShapes[iFacialMocapBlendShapeNames.eyeSquintRight];
+                _faceTrackSource.Eye.RightWide = _blendShapes[iFacialMocapBlendShapeNames.eyeWideRight];
+                _faceTrackSource.Eye.RightLookIn = _blendShapes[iFacialMocapBlendShapeNames.eyeLookInRight];
+                _faceTrackSource.Eye.RightLookOut =  _blendShapes[iFacialMocapBlendShapeNames.eyeLookOutRight];
+                _faceTrackSource.Eye.RightLookUp =  _blendShapes[iFacialMocapBlendShapeNames.eyeLookUpRight];
+                _faceTrackSource.Eye.RightLookDown =  _blendShapes[iFacialMocapBlendShapeNames.eyeLookDownRight];
             }
 
             //口: 単純に数が多い！
             void ApplyMouth()
             {
-                _faceTrackSource.Mouth.Left = _blendShapes[RawBlendShapeNames.mouthLeft];
-                _faceTrackSource.Mouth.LeftSmile = _blendShapes[RawBlendShapeNames.mouthSmileLeft];
-                _faceTrackSource.Mouth.LeftFrown = _blendShapes[RawBlendShapeNames.mouthFrownLeft];
-                _faceTrackSource.Mouth.LeftPress = _blendShapes[RawBlendShapeNames.mouthPressLeft];
-                _faceTrackSource.Mouth.LeftUpperUp = _blendShapes[RawBlendShapeNames.mouthUpperUpLeft];
-                _faceTrackSource.Mouth.LeftLowerDown = _blendShapes[RawBlendShapeNames.mouthLowerDownLeft];
-                _faceTrackSource.Mouth.LeftStretch = _blendShapes[RawBlendShapeNames.mouthStretchLeft];
-                _faceTrackSource.Mouth.LeftDimple = _blendShapes[RawBlendShapeNames.mouthDimpleLeft];
+                _faceTrackSource.Mouth.Left = _blendShapes[iFacialMocapBlendShapeNames.mouthLeft];
+                _faceTrackSource.Mouth.LeftSmile = _blendShapes[iFacialMocapBlendShapeNames.mouthSmileLeft];
+                _faceTrackSource.Mouth.LeftFrown = _blendShapes[iFacialMocapBlendShapeNames.mouthFrownLeft];
+                _faceTrackSource.Mouth.LeftPress = _blendShapes[iFacialMocapBlendShapeNames.mouthPressLeft];
+                _faceTrackSource.Mouth.LeftUpperUp = _blendShapes[iFacialMocapBlendShapeNames.mouthUpperUpLeft];
+                _faceTrackSource.Mouth.LeftLowerDown = _blendShapes[iFacialMocapBlendShapeNames.mouthLowerDownLeft];
+                _faceTrackSource.Mouth.LeftStretch = _blendShapes[iFacialMocapBlendShapeNames.mouthStretchLeft];
+                _faceTrackSource.Mouth.LeftDimple = _blendShapes[iFacialMocapBlendShapeNames.mouthDimpleLeft];
 
-                _faceTrackSource.Mouth.Right = _blendShapes[RawBlendShapeNames.mouthRight];
-                _faceTrackSource.Mouth.RightSmile = _blendShapes[RawBlendShapeNames.mouthSmileRight];
-                _faceTrackSource.Mouth.RightFrown = _blendShapes[RawBlendShapeNames.mouthFrownRight];
-                _faceTrackSource.Mouth.RightPress = _blendShapes[RawBlendShapeNames.mouthPressRight];
-                _faceTrackSource.Mouth.RightUpperUp = _blendShapes[RawBlendShapeNames.mouthUpperUpRight];
-                _faceTrackSource.Mouth.RightLowerDown = _blendShapes[RawBlendShapeNames.mouthLowerDownRight];
-                _faceTrackSource.Mouth.RightStretch = _blendShapes[RawBlendShapeNames.mouthStretchRight];
-                _faceTrackSource.Mouth.RightDimple = _blendShapes[RawBlendShapeNames.mouthDimpleRight];
+                _faceTrackSource.Mouth.Right = _blendShapes[iFacialMocapBlendShapeNames.mouthRight];
+                _faceTrackSource.Mouth.RightSmile = _blendShapes[iFacialMocapBlendShapeNames.mouthSmileRight];
+                _faceTrackSource.Mouth.RightFrown = _blendShapes[iFacialMocapBlendShapeNames.mouthFrownRight];
+                _faceTrackSource.Mouth.RightPress = _blendShapes[iFacialMocapBlendShapeNames.mouthPressRight];
+                _faceTrackSource.Mouth.RightUpperUp = _blendShapes[iFacialMocapBlendShapeNames.mouthUpperUpRight];
+                _faceTrackSource.Mouth.RightLowerDown = _blendShapes[iFacialMocapBlendShapeNames.mouthLowerDownRight];
+                _faceTrackSource.Mouth.RightStretch = _blendShapes[iFacialMocapBlendShapeNames.mouthStretchRight];
+                _faceTrackSource.Mouth.RightDimple = _blendShapes[iFacialMocapBlendShapeNames.mouthDimpleRight];
 
-                _faceTrackSource.Mouth.Close = _blendShapes[RawBlendShapeNames.mouthClose];
-                _faceTrackSource.Mouth.Funnel = _blendShapes[RawBlendShapeNames.mouthFunnel];
-                _faceTrackSource.Mouth.Pucker = _blendShapes[RawBlendShapeNames.mouthPucker];
-                _faceTrackSource.Mouth.ShrugUpper = _blendShapes[RawBlendShapeNames.mouthShrugUpper];
-                _faceTrackSource.Mouth.ShrugLower = _blendShapes[RawBlendShapeNames.mouthShrugLower];
-                _faceTrackSource.Mouth.RollUpper = _blendShapes[RawBlendShapeNames.mouthRollUpper];
-                _faceTrackSource.Mouth.RollLower = _blendShapes[RawBlendShapeNames.mouthRollLower];
+                _faceTrackSource.Mouth.Close = _blendShapes[iFacialMocapBlendShapeNames.mouthClose];
+                _faceTrackSource.Mouth.Funnel = _blendShapes[iFacialMocapBlendShapeNames.mouthFunnel];
+                _faceTrackSource.Mouth.Pucker = _blendShapes[iFacialMocapBlendShapeNames.mouthPucker];
+                _faceTrackSource.Mouth.ShrugUpper = _blendShapes[iFacialMocapBlendShapeNames.mouthShrugUpper];
+                _faceTrackSource.Mouth.ShrugLower = _blendShapes[iFacialMocapBlendShapeNames.mouthShrugLower];
+                _faceTrackSource.Mouth.RollUpper = _blendShapes[iFacialMocapBlendShapeNames.mouthRollUpper];
+                _faceTrackSource.Mouth.RollLower = _blendShapes[iFacialMocapBlendShapeNames.mouthRollLower];
             }
 
             //その他いろいろ
             void ApplyOtherBlendShapes()
             {
-                _faceTrackSource.Brow.InnerUp = _blendShapes[RawBlendShapeNames.browInnerUp];
-                _faceTrackSource.Brow.LeftDown = _blendShapes[RawBlendShapeNames.browDownLeft];
-                _faceTrackSource.Brow.LeftOuterUp = _blendShapes[RawBlendShapeNames.browOuterUpLeft];
-                _faceTrackSource.Brow.RightDown = _blendShapes[RawBlendShapeNames.browDownRight];
-                _faceTrackSource.Brow.RightOuterUp = _blendShapes[RawBlendShapeNames.browOuterUpRight];
+                _faceTrackSource.Brow.InnerUp = _blendShapes[iFacialMocapBlendShapeNames.browInnerUp];
+                _faceTrackSource.Brow.LeftDown = _blendShapes[iFacialMocapBlendShapeNames.browDownLeft];
+                _faceTrackSource.Brow.LeftOuterUp = _blendShapes[iFacialMocapBlendShapeNames.browOuterUpLeft];
+                _faceTrackSource.Brow.RightDown = _blendShapes[iFacialMocapBlendShapeNames.browDownRight];
+                _faceTrackSource.Brow.RightOuterUp = _blendShapes[iFacialMocapBlendShapeNames.browOuterUpRight];
             
-                _faceTrackSource.Jaw.Open = _blendShapes[RawBlendShapeNames.jawOpen];
-                _faceTrackSource.Jaw.Forward = _blendShapes[RawBlendShapeNames.jawForward];
-                _faceTrackSource.Jaw.Left = _blendShapes[RawBlendShapeNames.jawLeft];
-                _faceTrackSource.Jaw.Right = _blendShapes[RawBlendShapeNames.jawRight];
+                _faceTrackSource.Jaw.Open = _blendShapes[iFacialMocapBlendShapeNames.jawOpen];
+                _faceTrackSource.Jaw.Forward = _blendShapes[iFacialMocapBlendShapeNames.jawForward];
+                _faceTrackSource.Jaw.Left = _blendShapes[iFacialMocapBlendShapeNames.jawLeft];
+                _faceTrackSource.Jaw.Right = _blendShapes[iFacialMocapBlendShapeNames.jawRight];
                 
-                _faceTrackSource.Nose.LeftSneer = _blendShapes[RawBlendShapeNames.noseSneerLeft];
-                _faceTrackSource.Nose.RightSneer = _blendShapes[RawBlendShapeNames.noseSneerRight];
+                _faceTrackSource.Nose.LeftSneer = _blendShapes[iFacialMocapBlendShapeNames.noseSneerLeft];
+                _faceTrackSource.Nose.RightSneer = _blendShapes[iFacialMocapBlendShapeNames.noseSneerRight];
 
-                _faceTrackSource.Cheek.Puff = _blendShapes[RawBlendShapeNames.cheekPuff];
-                _faceTrackSource.Cheek.LeftSquint = _blendShapes[RawBlendShapeNames.cheekSquintLeft];
-                _faceTrackSource.Cheek.RightSquint = _blendShapes[RawBlendShapeNames.cheekSquintRight];
+                _faceTrackSource.Cheek.Puff = _blendShapes[iFacialMocapBlendShapeNames.cheekPuff];
+                _faceTrackSource.Cheek.LeftSquint = _blendShapes[iFacialMocapBlendShapeNames.cheekSquintLeft];
+                _faceTrackSource.Cheek.RightSquint = _blendShapes[iFacialMocapBlendShapeNames.cheekSquintRight];
                 
-                _faceTrackSource.Tongue.TongueOut = _blendShapes[RawBlendShapeNames.tongueOut];
+                _faceTrackSource.Tongue.TongueOut = _blendShapes[iFacialMocapBlendShapeNames.tongueOut];
             }
         }
 

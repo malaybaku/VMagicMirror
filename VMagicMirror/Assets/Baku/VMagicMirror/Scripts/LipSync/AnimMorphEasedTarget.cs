@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VRM;
@@ -20,15 +21,31 @@ namespace Baku.VMagicMirror
         [Range(0.0f, 100.0f), Tooltip("この閾値未満の音素の重みは無視する")]
         public float weightThreshold = 2.0f;
 
-        [Tooltip("BlendShapeの値を変化させるSkinnedMeshRenderer")]
-        public VRMBlendShapeProxy blendShapeProxy;
-
         [Tooltip("OVRLipSyncに渡すSmoothing amountの値")]
         public int smoothAmount = 100;
-
-        //このフラグがtrueだと何も言ってないときの口の形になる。
-        public bool ForceClosedMouth { get; set; }
         
+        private bool _shouldReceiveData = true;
+        public bool ShouldReceiveData
+        {
+            get => _shouldReceiveData;
+            set
+            {
+                if (_shouldReceiveData == value)
+                {
+                    return;
+                }
+
+                _shouldReceiveData = value;
+                if (!value)
+                {
+                    UpdateToClosedMouth();
+                }
+            }
+        }
+
+        private readonly RecordLipSyncSource _lipSyncSource = new RecordLipSyncSource();
+        public IMouthLipSyncSource LipSyncSource => _lipSyncSource;
+
         private readonly Dictionary<BlendShapeKey, float> _blendShapeWeights = new Dictionary<BlendShapeKey, float>
         {
             [new BlendShapeKey(BlendShapePreset.A)] = 0.0f,
@@ -61,20 +78,12 @@ namespace Baku.VMagicMirror
                 LogOutput.Instance.Write("同じGameObjectにOVRLipSyncContextBaseを継承したクラスが見つかりません。");
             }
             _context.Smoothing = smoothAmount;
-
-            _loadable.VrmLoaded += info => blendShapeProxy = info.blendShape;
-            _loadable.VrmDisposing += () => blendShapeProxy = null;
         }
 
         private void Update()
         {
-            if (blendShapeProxy == null)
-            {
-                return;
-            }
-
             //口閉じの場合: とにかく閉じるのが良いので閉じて終わり
-            if (ForceClosedMouth)
+            if (!ShouldReceiveData)
             {
                 UpdateToClosedMouth();
                 return;
@@ -140,7 +149,12 @@ namespace Baku.VMagicMirror
                 }
             }
 
-            blendShapeProxy.SetValues(_blendShapeWeights);
+            //順番に注意: visemeのキーに合わせてます
+            _lipSyncSource.A = _blendShapeWeights[_keys[0]];
+            _lipSyncSource.E = _blendShapeWeights[_keys[1]];
+            _lipSyncSource.I = _blendShapeWeights[_keys[2]];
+            _lipSyncSource.O = _blendShapeWeights[_keys[3]];
+            _lipSyncSource.U = _blendShapeWeights[_keys[4]];
         }
 
         private void UpdateToClosedMouth()
@@ -149,7 +163,12 @@ namespace Baku.VMagicMirror
             {
                 _blendShapeWeights[key] = 0.0f;
             }
-            blendShapeProxy.SetValues(_blendShapeWeights);
+
+            _lipSyncSource.A = 0;
+            _lipSyncSource.I = 0;
+            _lipSyncSource.U = 0;
+            _lipSyncSource.E = 0;
+            _lipSyncSource.O = 0;
         }
     }
 }

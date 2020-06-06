@@ -9,11 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3748028266611161172}
+  - component: {fileID: 9099593349603738149}
   - component: {fileID: 3748028266611161168}
   - component: {fileID: 3748028266611161169}
-  - component: {fileID: 3748028266611161170}
-  - component: {fileID: 3748028266611161171}
-  - component: {fileID: 6830160226256021837}
   m_Layer: 0
   m_Name: FaceController
   m_TagString: Untagged
@@ -34,9 +32,22 @@ Transform:
   m_Children:
   - {fileID: 3748028267383499194}
   - {fileID: 3752062569261173665}
+  - {fileID: 5388738453658021582}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9099593349603738149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028266611161173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4caa3fae1325d07459bc848272f275c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3748028266611161168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,67 +72,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47ea0b13d96595749870bb28cca4af0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeDownController: {fileID: 3748028267383499193}
-  imageBasedBlinkController: {fileID: 3748028266611161170}
-  autoBlink: {fileID: 3748028266611161171}
---- !u!114 &3748028266611161170
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3748028266611161173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 361f1b0adb1a379449acbb4d0a28bcdd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speedFactor: 18
-  speedDumpFactor: 0.95
-  blinkUpdateTimeScale: 0.1
-  closeThreshold: 0.7
-  blinkUpdateInterval: 0
---- !u!114 &3748028266611161171
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3748028266611161173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02f70ffaaedebba469e2ca096803c838, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  closeDuration: 0.05
-  openDuration: 0.2
-  minInterval: 7
-  maxInterval: 15
-  doubleBlinkPossibility: 0.15
---- !u!114 &6830160226256021837
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3748028266611161173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d8af05bc5c45204fa27e7a692e57cb3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  headRotThreshold: 25
-  headRotResetSpeed: 15
-  headRotBlinkProbability: 0.6
-  eyeRotBlinkSpeedThreshold: 15
-  eyeRotBlinkProbability: 0.8
-  lipSyncContext: {fileID: 3748904030990320927}
-  lipSyncVisemeThreshold: 0.2
-  lipSyncOnCountThreshold: 10
-  lipSyncOffCountThreshold: 2
-  lipSyncBlinkProbability: 0.7
-  coolDown: 0.8
-  autoBlink: {fileID: 3748028266611161171}
+  externalTrackerBlink: {fileID: 7456683640387377309}
+  imageBasedBlinkController: {fileID: 4936425215266607946}
+  autoBlink: {fileID: 2335327280039312852}
+  eyeDownController: {fileID: 8409558381188498024}
+  randomEyeJitter: {fileID: 3748028267383499190}
+  externalTrackEyeJitter: {fileID: 1428360342779558990}
 --- !u!1 &3748028267383499195
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,9 +88,11 @@ GameObject:
   m_Component:
   - component: {fileID: 3748028267383499194}
   - component: {fileID: 3748028267383499190}
-  - component: {fileID: 3748028267383499192}
-  - component: {fileID: 3748028267383499193}
-  - component: {fileID: 3748028267383499191}
+  - component: {fileID: 4936425215266607946}
+  - component: {fileID: 2335327280039312852}
+  - component: {fileID: 5356487033938143835}
+  - component: {fileID: 7456683640387377309}
+  - component: {fileID: 1428360342779558990}
   m_Layer: 0
   m_Name: EyeController
   m_TagString: Untagged
@@ -172,7 +130,7 @@ MonoBehaviour:
   changeTimeRange: 3
   range: {x: 2, y: 1}
   speedFactor: 4
---- !u!114 &3748028267383499192
+--- !u!114 &4936425215266607946
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -181,11 +139,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 3748028267383499195}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcf6b464b4d783c44a19bdce46109df1, type: 3}
+  m_Script: {fileID: 11500000, guid: 361f1b0adb1a379449acbb4d0a28bcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faceControlManager: {fileID: 3748028266611161169}
---- !u!114 &3748028267383499193
+  speedFactor: 18
+  speedDumpFactor: 0.95
+  blinkUpdateTimeScale: 0.1
+  closeThreshold: 0.7
+  blinkUpdateInterval: 0
+--- !u!114 &2335327280039312852
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -194,17 +156,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 3748028267383499195}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 490c1efb2102ed046b6bf4aa41187f4a, type: 3}
+  m_Script: {fileID: 11500000, guid: 02f70ffaaedebba469e2ca096803c838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  faceControlManager: {fileID: 3748028266611161169}
-  wordToMotion: {fileID: 0}
-  defaultOffset: 0.2
-  eyeBrowDownOffsetWhenEyeClosed: 0.7
-  eyeAngleDegreeWhenEyeClosed: 10
-  speedLerpFactor: 0.2
-  timeScaleFactor: 0.3
---- !u!114 &3748028267383499191
+  closeDuration: 0.05
+  openDuration: 0.2
+  minInterval: 7
+  maxInterval: 15
+  doubleBlinkPossibility: 0.15
+--- !u!114 &5356487033938143835
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -213,7 +173,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 3748028267383499195}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0a446eeff5899e4b96893c70a5f7693, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d8af05bc5c45204fa27e7a692e57cb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  headRotThreshold: 25
+  headRotResetSpeed: 15
+  headRotBlinkProbability: 0.6
+  eyeRotBlinkSpeedThreshold: 15
+  eyeRotBlinkProbability: 0.8
+  lipSyncContext: {fileID: 3748904030990320927}
+  lipSyncVisemeThreshold: 0.2
+  lipSyncOnCountThreshold: 10
+  lipSyncOffCountThreshold: 2
+  lipSyncBlinkProbability: 0.7
+  coolDown: 0.8
+  autoBlink: {fileID: 2335327280039312852}
+--- !u!114 &7456683640387377309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028267383499195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1412fd5e498d39946aef38e9acb1afd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eyeCloseRate: 0.85
+  eyeReopenRate: 0.75
+--- !u!114 &1428360342779558990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028267383499195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f973d8153abf846afa3506168d14c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3748904030990320353
@@ -226,11 +224,13 @@ GameObject:
   m_Component:
   - component: {fileID: 3752062569261173665}
   - component: {fileID: 3828096490885343573}
-  - component: {fileID: 3748028265945039283}
   - component: {fileID: 3748028265945039282}
+  - component: {fileID: 6125060425342205146}
+  - component: {fileID: 3748028265945039283}
+  - component: {fileID: 5008622417410694531}
   - component: {fileID: 3748904030990320927}
   m_Layer: 0
-  m_Name: AniLipSync-VRM
+  m_Name: MouthController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -346,6 +346,32 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &3748028265945039282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748904030990320353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22e0a61ea7cc8df41828ba8c224381ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6125060425342205146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748904030990320353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 215a41cfa9dd75143876b69bfb929410, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animMorphEasedTarget: {fileID: 3748028265945039283}
+  externalTrackerLipSync: {fileID: 5008622417410694531}
 --- !u!114 &3748028265945039283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,9 +410,8 @@ MonoBehaviour:
     m_RotationOrder: 4
   cancelSpeedFactor: 15
   weightThreshold: 2
-  blendShapeProxy: {fileID: 0}
   smoothAmount: 100
---- !u!114 &3748028265945039282
+--- !u!114 &5008622417410694531
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -395,7 +420,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3748904030990320353}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22e0a61ea7cc8df41828ba8c224381ac, type: 3}
+  m_Script: {fileID: 11500000, guid: a7c5269bcd6cd1e45a994ed021e7733c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &3748904030990320927
@@ -412,3 +437,79 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
   provider: 0
+--- !u!1 &6423115407833010372
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5388738453658021582}
+  - component: {fileID: 6751521603940666747}
+  - component: {fileID: 3661698413814763000}
+  - component: {fileID: 8409558381188498024}
+  m_Layer: 0
+  m_Name: EyeDownMotionController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &5388738453658021582
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6423115407833010372}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3748028266611161172}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6751521603940666747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6423115407833010372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcf6b464b4d783c44a19bdce46109df1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  faceControlManager: {fileID: 3748028266611161169}
+--- !u!114 &3661698413814763000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6423115407833010372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a446eeff5899e4b96893c70a5f7693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8409558381188498024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6423115407833010372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 490c1efb2102ed046b6bf4aa41187f4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  faceControlManager: {fileID: 3748028266611161169}
+  defaultOffset: 0.2
+  eyeBrowDownOffsetWhenEyeClosed: 0.7
+  eyeAngleDegreeWhenEyeClosed: 10
+  speedLerpFactor: 0.2
+  timeScaleFactor: 0.3

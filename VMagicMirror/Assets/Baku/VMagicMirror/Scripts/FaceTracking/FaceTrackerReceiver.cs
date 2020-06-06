@@ -5,6 +5,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
+    /// <summary> ウェブカメラによる顔トラッキングの制御に関するプロセス間通信を受信します。 </summary>
     [RequireComponent(typeof(FaceTracker))]
     public class FaceTrackerReceiver : MonoBehaviour
     {
@@ -13,6 +14,7 @@ namespace Baku.VMagicMirror
         private FaceTracker _faceTracker;
         private bool _enableFaceTracking = true;
         private string _cameraDeviceName = "";
+        private bool _enableExTracker = false;
 
         private void Start()
         {
@@ -26,7 +28,10 @@ namespace Baku.VMagicMirror
                         SetCameraDeviceName(message.Content);
                         break;
                     case MessageCommandNames.EnableFaceTracking:
-                        EnableFaceTracking(message.ToBoolean());
+                        SetEnableFaceTracking(message.ToBoolean());
+                        break;
+                    case MessageCommandNames.ExTrackerEnable:
+                        SetEnableExTracker(message.ToBoolean());
                         break;
                     case MessageCommandNames.CalibrateFace:
                         _faceTracker.StartCalibration();
@@ -37,6 +42,7 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.DisableFaceTrackingHorizontalFlip:
                         _faceTracker.DisableHorizontalFlip = message.ToBoolean();
                         break;
+                        
                 }
             });
 
@@ -49,7 +55,7 @@ namespace Baku.VMagicMirror
             };
         }
 
-        private void EnableFaceTracking(bool enable)
+        private void SetEnableFaceTracking(bool enable)
         {
             if (_enableFaceTracking == enable)
             {
@@ -57,6 +63,17 @@ namespace Baku.VMagicMirror
             }
 
             _enableFaceTracking = enable;
+            UpdateFaceDetectorState();
+        }
+
+        private void SetEnableExTracker(bool enable)
+        {
+            if (_enableExTracker == enable)
+            {
+                return;
+            }
+
+            _enableExTracker = enable;
             UpdateFaceDetectorState();
         }
 
@@ -68,7 +85,7 @@ namespace Baku.VMagicMirror
         
         private void UpdateFaceDetectorState()
         {
-            if (_enableFaceTracking && !string.IsNullOrWhiteSpace(_cameraDeviceName))
+            if (_enableFaceTracking && !_enableExTracker && !string.IsNullOrWhiteSpace(_cameraDeviceName))
             {
                 _faceTracker.ActivateCamera(_cameraDeviceName);
             }

@@ -11,6 +11,7 @@ namespace Baku.VMagicMirror
         private const float ReferenceHipsHeight = 0.6f;
         
         [SerializeField] private FaceYawToBodyYaw _faceYawToBodyYaw = null;
+        [SerializeField] private FaceRollToBodyRoll _faceRollToBodyRoll = null;
         [SerializeField] private GamepadBasedBodyLean _gamepadBasedBodyLean = null;
         [SerializeField] private ImageBasedBodyMotion _imageBasedBodyMotion = null;
         [SerializeField] private FaceAttitudeController _faceAttitudeController = null;
@@ -60,13 +61,15 @@ namespace Baku.VMagicMirror
         {
             //NOTE:
             // faceAttitudeToBodyYaw: ヨー
-            // faceAttitudeController: ロール
+            // (faceAttitudeController: ロール, 廃止)
+            // faceRollToBodyRoll: ロール
             // imageBasedBodyMotion: ロール
             // gamePadBasedBodyLean: ロールとピッチ
             // どれも角度は小さめなので雑にかけてます
             BodyLeanSuggest =
                 _faceYawToBodyYaw.BodyYawSuggest *
-                _faceAttitudeController.BodyLeanSuggest *
+                _faceRollToBodyRoll.BodyRollSuggest *
+//                _faceAttitudeController.BodyLeanSuggest *
                 _imageBasedBodyMotion.BodyLeanSuggest *
                 _gamepadBasedBodyLean.BodyLeanSuggest;
             

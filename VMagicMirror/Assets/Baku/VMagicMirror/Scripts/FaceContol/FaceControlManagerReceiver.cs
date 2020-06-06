@@ -9,6 +9,7 @@ namespace Baku.VMagicMirror
     public class FaceControlManagerReceiver : MonoBehaviour
     {
         [Inject] private ReceivedMessageHandler handler = null;
+        [Inject] private FaceControlConfiguration _config = null;
 
         private FaceControlManager _faceControlManager;
         private BehaviorBasedAutoBlinkAdjust _autoBlinkAdjust;
@@ -21,11 +22,8 @@ namespace Baku.VMagicMirror
             {
                 switch (message.Command)
                 {
-                    case MessageCommandNames.EnableFaceTracking:
-                        _faceControlManager.IsFaceTrackingActive = message.ToBoolean();
-                        break;
                     case MessageCommandNames.AutoBlinkDuringFaceTracking:
-                        _faceControlManager.PreferAutoBlink = message.ToBoolean();
+                        _faceControlManager.PreferAutoBlinkOnWebCamTracking = message.ToBoolean();
                         break;
                     case MessageCommandNames.FaceDefaultFun:
                         _faceControlManager.DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage();

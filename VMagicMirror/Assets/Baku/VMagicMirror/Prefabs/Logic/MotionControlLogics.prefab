@@ -86,6 +86,7 @@ GameObject:
   - component: {fileID: 5813678808713813113}
   - component: {fileID: 5813678808713813108}
   - component: {fileID: 3088723817282594664}
+  - component: {fileID: 4217680156869205001}
   m_Layer: 0
   m_Name: BodyMotion
   m_TagString: Untagged
@@ -149,6 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _faceYawToBodyYaw: {fileID: 3088723817282594664}
+  _faceRollToBodyRoll: {fileID: 4217680156869205001}
   _gamepadBasedBodyLean: {fileID: 5813678808713813108}
   _imageBasedBodyMotion: {fileID: 5813678808713813112}
   _faceAttitudeController: {fileID: 5813678809054739210}
@@ -218,6 +220,23 @@ MonoBehaviour:
   speedDumpFactor: 0.95
   speedLerpFactor: 6
   lerpFactor: 3
+--- !u!114 &4217680156869205001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678808713813115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a28d14f92520384e8343ac537bfaad1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goalRate: 0.1
+  timeFactor: 0.3
+  speedDumpFactor: 0.95
+  speedLerpFactor: 18
+  lerpFactor: 3
 --- !u!1 &5813678809054739212
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,7 +246,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5813678809054739211}
+  - component: {fileID: 7319070492286949183}
   - component: {fileID: 5813678809054739210}
+  - component: {fileID: 1338865419136667663}
   m_Layer: 0
   m_Name: HeadFK
   m_TagString: Untagged
@@ -249,6 +270,20 @@ Transform:
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7319070492286949183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678809054739212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cc37234a8ae192469b161d13ee5cb80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  imageAttitude: {fileID: 5813678809054739210}
+  externalTrackerAttitude: {fileID: 1338865419136667663}
 --- !u!114 &5813678809054739210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,6 +298,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedDumpForceFactor: 10
   posDumpForceFactor: 20
+  rollToBodyRollFactor: 0.1
+--- !u!114 &1338865419136667663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678809054739212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c15deca4e07f524b8e9cdcb40566e3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   rollToBodyRollFactor: 0.1
 --- !u!1 &5813678810248240003
 GameObject:

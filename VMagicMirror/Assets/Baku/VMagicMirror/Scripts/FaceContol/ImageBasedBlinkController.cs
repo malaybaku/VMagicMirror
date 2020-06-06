@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UniRx;
-using VRM;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -11,10 +10,10 @@ namespace Baku.VMagicMirror
     public class ImageBasedBlinkController : MonoBehaviour
     {
         private const float EyeCloseHeight = 0.02f;
-
-        private static readonly BlendShapeKey BlinkLKey = new BlendShapeKey(BlendShapePreset.Blink_L);
-        private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
-
+        
+        private readonly RecordBlinkSource _blinkSource = new RecordBlinkSource();
+        public IBlinkSource BlinkSource => _blinkSource;
+        
         [Inject] private FaceTracker _faceTracker = null;
         
         [Tooltip("ブレンドシェイプを変化させていく速度ファクター")]
@@ -35,7 +34,6 @@ namespace Baku.VMagicMirror
         public float blinkUpdateInterval = 0.3f;
         private float _count = 0;
 
-
         //顔トラッキングで得たとにかく最新の値
         private float _latestLeftBlinkInput = 0f;
         private float _latestRightBlinkInput = 0f;
@@ -47,21 +45,7 @@ namespace Baku.VMagicMirror
         //_current(Left|Right)Blinkをターゲット値に持って行くときの速度。PD制御チックに動かす為に使います
         private float _leftBlinkSpeed = 0f;
         private float _rightBlinkSpeed = 0f;
-
-        //スムージングとかやった状態のまばたきブレンドシェイプの値
-        private float _currentLeftBlink = 0f;
-        private float _currentRightBlink = 0f;
-
         
-
-        public void Apply(VRMBlendShapeProxy proxy)
-        {
-            float left = _currentLeftBlink > closeThreshold ? 1.0f : _currentLeftBlink;
-            float right = _currentRightBlink > closeThreshold ? 1.0f : _currentRightBlink;
-            proxy.AccumulateValue(BlinkLKey, left);
-            proxy.AccumulateValue(BlinkRKey, right);
-        }
-
         private void Start()
         {
             _faceTracker.FaceParts
@@ -85,8 +69,8 @@ namespace Baku.VMagicMirror
                 _count = blinkUpdateInterval;                
             }
 
-            float leftSpeed = (_leftBlinkTarget - _currentLeftBlink) / blinkUpdateTimeScale;
-            float rightSpeed = (_rightBlinkTarget - _currentRightBlink) / blinkUpdateTimeScale;
+            float leftSpeed = (_leftBlinkTarget - _blinkSource.Left) / blinkUpdateTimeScale;
+            float rightSpeed = (_rightBlinkTarget - _blinkSource.Right) / blinkUpdateTimeScale;
 
             _leftBlinkSpeed = Mathf.Lerp(_leftBlinkSpeed, leftSpeed, speedFactor * Time.deltaTime);
             _rightBlinkSpeed = Mathf.Lerp(_rightBlinkSpeed, rightSpeed, speedFactor * Time.deltaTime);
@@ -94,10 +78,8 @@ namespace Baku.VMagicMirror
             _leftBlinkSpeed *= speedDumpFactor;
             _rightBlinkSpeed *= speedDumpFactor;
 
-            _currentLeftBlink += _leftBlinkSpeed * Time.deltaTime;
-            _currentRightBlink += _rightBlinkSpeed * Time.deltaTime;
-//            _currentLeftBlink = Mathf.Lerp(_currentLeftBlink, _leftBlinkTarget, speedFactor * Time.deltaTime);
-//            _currentRightBlink = Mathf.Lerp(_currentRightBlink, _rightBlinkTarget, speedFactor * Time.deltaTime);
+            _blinkSource.Left += _leftBlinkSpeed * Time.deltaTime;
+            _blinkSource.Right += _rightBlinkSpeed * Time.deltaTime;
         }
 
         //FaceDetector側では目の開き具合を出力しているのでブレンドシェイプ的には反転が必要なことに注意

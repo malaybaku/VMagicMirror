@@ -179,7 +179,18 @@
         // Screenshot
         public const string TakeScreenshot = nameof(TakeScreenshot);
         public const string OpenScreenshotFolder = nameof(OpenScreenshotFolder);
-
+        
+        // External Tracker
+        public const string ExTrackerEnable = nameof(ExTrackerEnable);
+        public const string ExTrackerEnableLipSync = nameof(ExTrackerEnableLipSync);
+        public const string ExTrackerCalibrate = nameof(ExTrackerCalibrate);
+        public const string ExTrackerSetCalibrationData = nameof(ExTrackerSetCalibrationData);
+        public const string ExTrackerSetSource = nameof(ExTrackerSetSource);
+        /// <summary> 今のとこ使ってません (アプリ固有設定をいちいち記憶しない設計なので) </summary>
+        public const string ExTrackerSetApplicationValue = nameof(ExTrackerSetApplicationValue);
+        public const string ExTrackerSetFaceSwitchSetting = nameof(ExTrackerSetFaceSwitchSetting);
+        
+        
         // VRoidHub
         public const string OpenVRoidSdkUi = nameof(OpenVRoidSdkUi);
         public const string RequestLoadVRoidWithId = nameof(RequestLoadVRoidWithId);

@@ -120,7 +120,7 @@ namespace Baku.VMagicMirror.ExternalTracker.Waidayo
         private Vector3 _trackerRotationEulerAngle = Vector3.zero;
         private Quaternion _offsetRotation = Quaternion.identity;
         
-        public string CalibrationData
+        public override string CalibrationData
         {
             get
             {

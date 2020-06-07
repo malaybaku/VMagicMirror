@@ -83,7 +83,7 @@ namespace Baku.VMagicMirror.ExternalTracker
 
             _faceSwitchExtractor.Update(CurrentSource);
             _config.FaceSwitchActive = !string.IsNullOrEmpty(FaceSwitchClipName);
-            _config.FaceSwitchRequestStopLipSync = _faceSwitchExtractor.KeepLipSync;
+            _config.FaceSwitchRequestStopLipSync = _config.FaceSwitchActive && !_faceSwitchExtractor.KeepLipSync;
         }
 
         #region IPCで受け取る処理

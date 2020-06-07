@@ -341,13 +341,14 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         public override void Calibrate()
         {
             _trackerRotationEulerAngle = Quaternion.Inverse(_faceTrackSource.FaceTransform.Rotation).eulerAngles;
+            _offsetRotation = Quaternion.Euler(_trackerRotationEulerAngle);
         }
 
         //NOTE: キャリブ情報の実態 = トラッカーデバイスがUnity空間にあったとみなした場合のワールド回転をオイラー角表現したもの。
         //こういう値だとUnity空間上にモノを置いて図示する余地があり、筋がいい
         private Vector3 _trackerRotationEulerAngle = Vector3.zero;
         private Quaternion _offsetRotation = Quaternion.identity;
-        public string CalibrationData
+        public override string CalibrationData
         {
             get
             {
@@ -365,10 +366,11 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 {
                     var data = JsonUtility.FromJson<IFacialMocapCalibrationData>(value);
                     _trackerRotationEulerAngle = new Vector3(data.rotX, data.rotY, data.rotZ);
-                    _offsetRotation = Quaternion.Inverse(Quaternion.Euler(_trackerRotationEulerAngle));
+                    _offsetRotation = Quaternion.Euler(_trackerRotationEulerAngle);
                 }
                 catch (Exception ex)
                 {
+                    Debug.LogException(ex);
                     LogOutput.Instance.Write(ex);
                 }
             }

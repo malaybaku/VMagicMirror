@@ -1,14 +1,15 @@
-﻿using Baku.VMagicMirror.ExternalTracker;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
+using Baku.VMagicMirror.ExternalTracker;
 
 namespace Baku.VMagicMirror
 {
     /// <summary> 外部トラッキングによる眼球運動をやるやつです </summary>
     public class ExternalTrackerEyeJitter : MonoBehaviour
     {
-        private const float HorizontalShapeToAngle = 4.0f;
-        private const float VerticalShapeToAngle = 4.0f;
+        //NOTE: けっこう大きくしてもいいんですねえコレ…知らんかった
+        private const float HorizontalShapeToAngle = 10.0f;
+        private const float VerticalShapeToAngle = 10.0f;
         private ExternalTrackerDataSource _tracker;
 
         [Inject]
@@ -52,16 +53,16 @@ namespace Baku.VMagicMirror
             {
                 var leftX = 
                     _tracker.CurrentSource.Eye.LeftLookOut - _tracker.CurrentSource.Eye.LeftLookIn;
-                var leftY = 
-                    _tracker.CurrentSource.Eye.LeftLookUp - _tracker.CurrentSource.Eye.LeftLookDown;
+                var leftY =
+                    _tracker.CurrentSource.Eye.LeftLookDown - _tracker.CurrentSource.Eye.LeftLookUp;
             
                 var rightX = 
                     _tracker.CurrentSource.Eye.RightLookIn - _tracker.CurrentSource.Eye.RightLookOut;
                 var rightY = 
-                    _tracker.CurrentSource.Eye.RightLookUp - _tracker.CurrentSource.Eye.RightLookDown;
+                    _tracker.CurrentSource.Eye.RightLookDown - _tracker.CurrentSource.Eye.RightLookUp;
             
-                _leftRotation = Quaternion.Euler(leftX * HorizontalShapeToAngle, leftY * VerticalShapeToAngle, 0);
-                _rightRotation = Quaternion.Euler(rightX * HorizontalShapeToAngle, rightY * VerticalShapeToAngle, 0);
+                _leftRotation = Quaternion.Euler(leftY * VerticalShapeToAngle, leftX * HorizontalShapeToAngle, 0);
+                _rightRotation = Quaternion.Euler(rightY * VerticalShapeToAngle, rightX * HorizontalShapeToAngle, 0);
             }
             else
             {

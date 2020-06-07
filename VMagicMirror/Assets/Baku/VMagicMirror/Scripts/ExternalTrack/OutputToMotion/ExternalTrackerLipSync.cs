@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror
                 _source.U = 0;
                 _source.E = 0;
                 _source.O = 0;
-                Debug.Log("ex tracker seems not connected!");
+                //Debug.Log("ex tracker seems not connected!");
                 return;
             }
 
@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
      
             //ということなので、ひとまずAにjaw.Openを入れるだけの残念実装にします。
             _source.A = a;
-            Debug.Log($"jaw open = {jaw.Open:0.000}");
+            //Debug.Log($"jaw open = {jaw.Open:0.000}");
             
             //TODO: せめてA/I/Uくらいは使い分けるように…
             

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -60,8 +62,12 @@ namespace Baku.VMagicMirror.ExternalTracker
                 return;
             }
 
-            var newItems = new List<FaceSwitchItem>();
-
+            //拾うモノ: 設定に乗っており、かつブレンドシェイプが実際に今のアバターに存在するもの。
+            _itemsToCheck = Setting.items
+                .Where(i => AvatarBlendShapeNames.Contains(i.clipName))
+                .ToArray();
+            Debug.Log("Refresh FaceSwitch Item full = " + JsonUtility.ToJson(Setting));
+            Debug.Log("Refresh FaceSwitch Item filtered = " + JsonUtility.ToJson(new FaceSwitchSettings(){ items = _itemsToCheck}));
         }
         
         /// <summary>
@@ -70,12 +76,15 @@ namespace Baku.VMagicMirror.ExternalTracker
         /// <param name="source"></param>
         public void Update(IFaceTrackSource source)
         {
+            // float smile = 0.5f * (source.Mouth.LeftSmile + source.Mouth.RightSmile);
+
             for (int i = 0; i < _itemsToCheck.Length; i++)
             {
                 if (ExtractSpecifiedBlendShape(source, _itemsToCheck[i].source) > _itemsToCheck[i].threshold * 0.01f)
                 {
                     ClipName = _itemsToCheck[i].clipName;
                     KeepLipSync = _itemsToCheck[i].keepLipSync;
+                    Debug.Log($"face switch applied to {ClipName}");
                     return;
                 }
             }

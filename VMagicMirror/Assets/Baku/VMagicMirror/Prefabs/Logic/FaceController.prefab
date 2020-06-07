@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 9099593349603738149}
   - component: {fileID: 3748028266611161168}
   - component: {fileID: 3748028266611161169}
+  - component: {fileID: 8701057551241780110}
+  - component: {fileID: 7797473119978373343}
   m_Layer: 0
   m_Name: FaceController
   m_TagString: Untagged
@@ -78,6 +80,30 @@ MonoBehaviour:
   eyeDownController: {fileID: 8409558381188498024}
   randomEyeJitter: {fileID: 3748028267383499190}
   externalTrackEyeJitter: {fileID: 1428360342779558990}
+--- !u!114 &8701057551241780110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028266611161173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d80971aa6a886324db1bfcf2a2c34bd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7797473119978373343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028266611161173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a125f000c2a422b4c88a36e60296385a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3748028267383499195
 GameObject:
   m_ObjectHideFlags: 0

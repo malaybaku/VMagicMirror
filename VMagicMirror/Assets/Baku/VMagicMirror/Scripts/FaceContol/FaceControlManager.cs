@@ -59,7 +59,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            if (!_config.ShouldSkipNonMouthBlendShape)
+            if (_config.ShouldSkipNonMouthBlendShape)
             {
                 //TODO: これ系の「非ゼロにしたいBlendShapeを明示的に切る」処理をどこに入れるか、というのは悩みどころ
                 //ResetBlink();

@@ -53,8 +53,14 @@ namespace Baku.VMagicMirror
                 _latestKey = CreateKey(_externalTracker.FaceSwitchClipName);
                 _latestClipName = _externalTracker.FaceSwitchClipName;
             }
-            
+
+            if (!string.IsNullOrEmpty(_latestClipName))
+            {
+                Debug.Log($"current FaceSwitch = {_latestClipName}");
+            }
             //NOTE: 最終的な適用はWordToMotionBlendShapeがやる。ので、ここではその前処理だけやってればよい
+            
+            
             _proxy.AccumulateValue(_latestKey, 1.0f);
         }
 
@@ -65,7 +71,8 @@ namespace Baku.VMagicMirror
 
         private static readonly Dictionary<string, BlendShapePreset> _presets = new Dictionary<string, BlendShapePreset>()
         {
-            ["BLINK_L"] = BlendShapePreset.Blink_L,
+            ["Blink"] = BlendShapePreset.Blink,
+            ["Blink_L"] = BlendShapePreset.Blink_L,
             ["Blink_R"] = BlendShapePreset.Blink_R,
 
             ["LookLeft"] = BlendShapePreset.LookLeft,

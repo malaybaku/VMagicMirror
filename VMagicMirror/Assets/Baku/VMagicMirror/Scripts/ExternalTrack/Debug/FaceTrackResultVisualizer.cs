@@ -11,17 +11,19 @@ namespace Baku.VMagicMirror.ExternalTracker
     /// </remarks>
     public class FacePoseAdaptor : MonoBehaviour
     {
-        [SerializeField] private FaceTrackToPose trackToPose = null;
+        public IFaceTrackSource Source { get; set; } = null;
 
         private void Update()
         {
-            //NOTE: これがウソになるかもしれない、ということ。右手系とか軸の差とか色々あるので。
+            if (Source == null)
+            {
+                return;
+            }
+            
+            //NOTE: 右手系/左手系の差とか軸の扱いによってはここがウソになるかもしれないので注意
             var t = transform;
-            t.localPosition = trackToPose.FaceRelativePosition;
-            t.localRotation = Quaternion.AngleAxis(
-                trackToPose.FaceRotationAngle * Mathf.Rad2Deg, 
-                trackToPose.FaceRotationAxis
-                );
+            t.localPosition = Source.FaceTransform.Position;
+            t.localRotation = Source.FaceTransform.Rotation;
         }
     }
 }

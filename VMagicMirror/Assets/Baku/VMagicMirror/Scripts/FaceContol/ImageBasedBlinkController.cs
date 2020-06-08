@@ -45,7 +45,10 @@ namespace Baku.VMagicMirror
         //_current(Left|Right)Blinkをターゲット値に持って行くときの速度。PD制御チックに動かす為に使います
         private float _leftBlinkSpeed = 0f;
         private float _rightBlinkSpeed = 0f;
-        
+
+        private float _latestFilteredLeft = 0f;
+        private float _latestFilteredRight = 0f;
+
         private void Start()
         {
             _faceTracker.FaceParts
@@ -69,8 +72,8 @@ namespace Baku.VMagicMirror
                 _count = blinkUpdateInterval;                
             }
 
-            float leftSpeed = (_leftBlinkTarget - _blinkSource.Left) / blinkUpdateTimeScale;
-            float rightSpeed = (_rightBlinkTarget - _blinkSource.Right) / blinkUpdateTimeScale;
+            float leftSpeed = (_leftBlinkTarget - _latestFilteredLeft) / blinkUpdateTimeScale;
+            float rightSpeed = (_rightBlinkTarget - _latestFilteredRight) / blinkUpdateTimeScale;
 
             _leftBlinkSpeed = Mathf.Lerp(_leftBlinkSpeed, leftSpeed, speedFactor * Time.deltaTime);
             _rightBlinkSpeed = Mathf.Lerp(_rightBlinkSpeed, rightSpeed, speedFactor * Time.deltaTime);
@@ -78,8 +81,11 @@ namespace Baku.VMagicMirror
             _leftBlinkSpeed *= speedDumpFactor;
             _rightBlinkSpeed *= speedDumpFactor;
 
-            _blinkSource.Left += _leftBlinkSpeed * Time.deltaTime;
-            _blinkSource.Right += _rightBlinkSpeed * Time.deltaTime;
+            _latestFilteredLeft += _leftBlinkSpeed * Time.deltaTime;
+            _latestFilteredRight += _rightBlinkSpeed * Time.deltaTime;
+
+            _blinkSource.Left = (_latestFilteredLeft > closeThreshold) ? 1.0f : _latestFilteredLeft;
+            _blinkSource.Right = (_latestFilteredRight > closeThreshold) ? 1.0f : _latestFilteredRight;
         }
 
         //FaceDetector側では目の開き具合を出力しているのでブレンドシェイプ的には反転が必要なことに注意

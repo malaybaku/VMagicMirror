@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VRM;
-using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -67,8 +65,6 @@ namespace Baku.VMagicMirror
         private OVRLipSyncContextBase _context;
         private OVRLipSync.Viseme _previousViseme = OVRLipSync.Viseme.sil;
         private float _transitionTimer = 0.0f;
-
-        [Inject] private IVRMLoadable _loadable = null;
         
         private void Start()
         {

@@ -28,7 +28,7 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.ExTrackerCalibrate:
                         dataSource.Calibrate();
                         break;
-                    case MessageCommandNames.ExTrackerSetCalibrationData:
+                    case MessageCommandNames.ExTrackerSetCalibrateData:
                         dataSource.SetCalibrationData(c.Content);
                         break;
                     case MessageCommandNames.ExTrackerSetSource:

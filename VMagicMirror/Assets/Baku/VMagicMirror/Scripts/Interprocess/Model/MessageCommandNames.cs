@@ -184,7 +184,7 @@
         public const string ExTrackerEnable = nameof(ExTrackerEnable);
         public const string ExTrackerEnableLipSync = nameof(ExTrackerEnableLipSync);
         public const string ExTrackerCalibrate = nameof(ExTrackerCalibrate);
-        public const string ExTrackerSetCalibrationData = nameof(ExTrackerSetCalibrationData);
+        public const string ExTrackerSetCalibrateData = nameof(ExTrackerSetCalibrateData);
         public const string ExTrackerSetSource = nameof(ExTrackerSetSource);
         /// <summary> 今のとこ使ってません (アプリ固有設定をいちいち記憶しない設計なので) </summary>
         public const string ExTrackerSetApplicationValue = nameof(ExTrackerSetApplicationValue);

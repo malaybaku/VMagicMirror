@@ -9,8 +9,15 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(MagnetDeformer))]
     public class GamepadVisibilityReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler;
-        [Inject] private DeformableCounter _deformableCounter;
+        private ReceivedMessageHandler _handler;
+        private DeformableCounter _deformableCounter;
+        
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler, DeformableCounter deformableCounter)
+        {
+            _handler = handler;
+            _deformableCounter = deformableCounter;
+        }
 
         private MagnetDeformer _deformer = null;
         private Renderer[] _renderers = new Renderer[0];

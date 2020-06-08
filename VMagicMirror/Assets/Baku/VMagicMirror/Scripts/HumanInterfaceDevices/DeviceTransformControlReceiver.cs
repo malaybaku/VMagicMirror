@@ -14,7 +14,10 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(Canvas))]
     public class DeviceTransformControlReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler;
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
+        private ReceivedMessageHandler _handler;
+        
 
         //NOTE: このクラスでanimatorとかを直読みしたくないので、リセット処理を外注します
         [SerializeField] private SettingAutoAdjuster settingAutoAdjuster = null;

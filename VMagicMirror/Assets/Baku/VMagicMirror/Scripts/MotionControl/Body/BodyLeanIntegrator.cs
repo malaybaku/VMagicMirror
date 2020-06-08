@@ -14,7 +14,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private FaceRollToBodyRoll _faceRollToBodyRoll = null;
         [SerializeField] private GamepadBasedBodyLean _gamepadBasedBodyLean = null;
         [SerializeField] private ImageBasedBodyMotion _imageBasedBodyMotion = null;
-        [SerializeField] private FaceAttitudeController _faceAttitudeController = null;
         
         [Tooltip("腰が1度傾いてたら0.01m=1cmだけ腰をずらす、みたいな比率。" +
                  "適当に決めた基準モデル向けに調整し、他モデルについてはHipsの高さベースで倍率かけて適用。")]
@@ -69,7 +68,6 @@ namespace Baku.VMagicMirror
             BodyLeanSuggest =
                 _faceYawToBodyYaw.BodyYawSuggest *
                 _faceRollToBodyRoll.BodyRollSuggest *
-//                _faceAttitudeController.BodyLeanSuggest *
                 _imageBasedBodyMotion.BodyLeanSuggest *
                 _gamepadBasedBodyLean.BodyLeanSuggest;
             

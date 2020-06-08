@@ -22,9 +22,6 @@ namespace Baku.VMagicMirror
         [Tooltip("ゴール回転値に持っていくとき、スピードをどのくらい素早く適用するか")]
         [SerializeField] private float speedLerpFactor = 18.0f;
         
-        [Tooltip("ゴールの回転値に持っていくときのlerpファクター")]
-        [SerializeField] private float lerpFactor = 3.0f;
-        
         public Quaternion BodyRollSuggest { get; private set; } = Quaternion.identity;
 
         private float _bodyRollAngleSpeedDegreePerSec = 0;

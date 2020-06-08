@@ -13,9 +13,17 @@ namespace Baku.VMagicMirror
         [Tooltip("ボタン押下イベントが押されたらしばらくイベント送出をストップするクールダウンタイム")]
         [SerializeField] private float cooldownTime = 0.3f;
 
-        [Inject] private ReceivedMessageHandler _handler;
-        [Inject] private IMessageSender _sender;
-        [Inject] private MidiInputObserver _midiInputObserver = null;
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler, IMessageSender sender, MidiInputObserver midiObserver)
+        {
+            _handler = handler;
+            _sender = sender;
+            _midiInputObserver = midiObserver;
+        }
+
+        private ReceivedMessageHandler _handler;
+        private IMessageSender _sender;
+        private MidiInputObserver _midiInputObserver = null;
 
         private bool _redirectNoteOnMessageToIpc = false;
 

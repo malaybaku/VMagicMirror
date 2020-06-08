@@ -8,8 +8,13 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(CentralizedJobScheduler))]
     public class ReplacedVRMSpringBoneScheduler : MonoBehaviour
     {
-        [Inject] private IVRMLoadable _vrmLoadable;
-
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable)
+        {
+            _vrmLoadable = vrmLoadable;
+        }
+        
+        private IVRMLoadable _vrmLoadable;
         private CentralizedJobScheduler _scheduler = null;
         private GameObject _vrm = null;
 

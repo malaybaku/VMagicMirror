@@ -10,7 +10,9 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ExternalTrackerSettingReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler;
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
+        private ReceivedMessageHandler _handler;
 
         [SerializeField] private ExternalTrackerDataSource dataSource = null;
         

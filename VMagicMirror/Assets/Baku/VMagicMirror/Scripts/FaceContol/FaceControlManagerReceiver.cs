@@ -8,8 +8,9 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(BehaviorBasedAutoBlinkAdjust))]
     public class FaceControlManagerReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler handler = null;
-        [Inject] private FaceControlConfiguration _config = null;
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
+        private ReceivedMessageHandler _handler = null;
 
         private FaceControlManager _faceControlManager;
         private BehaviorBasedAutoBlinkAdjust _autoBlinkAdjust;
@@ -18,7 +19,7 @@ namespace Baku.VMagicMirror
         {
             _faceControlManager = GetComponent<FaceControlManager>();
             _autoBlinkAdjust = GetComponent<BehaviorBasedAutoBlinkAdjust>();
-            handler.Commands.Subscribe(message =>
+            _handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {

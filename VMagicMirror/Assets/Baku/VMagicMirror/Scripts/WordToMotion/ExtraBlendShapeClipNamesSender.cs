@@ -9,8 +9,16 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ExtraBlendShapeClipNamesSender : MonoBehaviour
     {
-        [Inject] private IVRMLoadable _vrmLoadable;
-        [Inject] private IMessageSender _sender;
+
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageSender sender)
+        {
+            _vrmLoadable = vrmLoadable;
+            _sender = sender;
+        }
+        
+        private IVRMLoadable _vrmLoadable;
+        private IMessageSender _sender;
 
         private void Start()
         {

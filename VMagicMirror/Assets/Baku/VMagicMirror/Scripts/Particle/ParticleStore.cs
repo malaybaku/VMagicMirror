@@ -20,10 +20,12 @@ namespace Baku.VMagicMirror
         [Serializable]
         class MouseParticlePrefabInfo
         {
+#pragma warning disable CS0649            
             //マウスボタンが押されている間はPlayされるやつ
             public ParticleSystem continueParticlePrefab;
             //マウスのボタンを離した瞬間に一度さけPlayされるやつ
             public ParticleSystem clickParticlePrefab;
+#pragma warning restore CS0649
         }
 
         [Tooltip("同時に表示するエフェクト数の上限。増やすと表示が破綻しにくくなるかわりメモリとCPU負荷が増える。")]

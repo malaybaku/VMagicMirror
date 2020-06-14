@@ -31,12 +31,14 @@ namespace Baku.VMagicMirror
         private Quaternion _targetRotation;
         public Quaternion CurrentRotation { get; private set; }
         
+        public bool IsActive { get; set; }
+        
         private void Start()
         {
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
-        
+
         private void LateUpdate()
         {
             _count -= Time.deltaTime;
@@ -55,10 +57,8 @@ namespace Baku.VMagicMirror
                 speedFactor * Time.deltaTime
                 );
             
-            if (_hasValidEyeBone)
+            if (_hasValidEyeBone && IsActive)
             {
-                //NOTE: Eyeのボーンをいじるスクリプトがもう1つ増えたらCompositor的なクラスに責務を譲る(腕IKとかと同じ)
-                
                 //この呼び出しより前の時点でVRMLookAtが毎フレームEyeの位置をいい感じにするため、毎フレームごとに補正してればOK
                 _rightEye.localRotation *= CurrentRotation;
                 _leftEye.localRotation *= CurrentRotation;

@@ -2,6 +2,8 @@
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine.SceneManagement;
+
 #endif
 
 //Source: http://tsubakit1.hateblo.jp/entry/2014/10/24/220610
@@ -73,10 +75,12 @@ namespace Baku.VMagicMirror
 				meshfilter.sharedMesh = mesh;
 				newObject.transform.parent = generatedObject.transform;
 
-				Debug.Log(Application.loadedLevelName);
-				System.IO.Directory.CreateDirectory("Assets/" + Application.loadedLevelName + "/" + name);
+				// string loadedLevelName = Application.loadedLevelName;
+				string loadedLevelName = SceneManager.GetActiveScene().name;
+				Debug.Log(loadedLevelName);
+				System.IO.Directory.CreateDirectory("Assets/" + loadedLevelName + "/" + name);
 				AssetDatabase.CreateAsset(mesh,
-					"Assets/" + Application.loadedLevelName + "/" + name + "/" + dic.Key.name + ".asset");
+					"Assets/" + loadedLevelName + "/" + name + "/" + dic.Key.name + ".asset");
 			}
 		}
 

@@ -12,9 +12,41 @@ namespace Baku.VMagicMirror
         
         [Tooltip("首ロールの一部を体ロールにすり替える比率です")]
         [SerializeField] private float rollToBodyRollFactor = 0.1f;
+
+        private FaceTracker _faceTracker = null;
         
-        [Inject] private FaceTracker _faceTracker = null;
-        [Inject] private IVRMLoadable _vrmLoadable = null;
+        [Inject]
+        public void Initialize(FaceTracker faceTracker, IVRMLoadable vrmLoadable)
+        {
+            _faceTracker = faceTracker;
+            
+            //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
+            faceTracker.FaceParts.Outline.HeadRollRad.Subscribe(
+                v => SetHeadRollDeg(-v * Mathf.Rad2Deg * HeadRollRateApplyFactor)
+            );
+            
+            //もとの値は角度ではなく[-1, 1]の無次元量であることに注意
+            faceTracker.FaceParts.Outline.HeadYawRate.Subscribe(
+                v => SetHeadYawDeg(v * HeadYawRateToDegFactor)
+            );
+
+            faceTracker.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
+                v => SetHeadPitchDeg(NoseBaseHeightToNeckPitchDeg(v))
+            );
+            
+            vrmLoadable.VrmLoaded += info =>
+            {
+                var animator = info.animator;
+                _vrmNeckTransform = animator.GetBoneTransform(HumanBodyBones.Neck);
+                _vrmHeadTransform = animator.GetBoneTransform(HumanBodyBones.Head);
+            };
+            
+            vrmLoadable.VrmDisposing += () =>
+            {
+                _vrmNeckTransform = null;
+                _vrmHeadTransform = null;
+            };
+        }
         
         public Quaternion BodyLeanSuggest { get; private set; } = Quaternion.identity;
 
@@ -38,28 +70,11 @@ namespace Baku.VMagicMirror
         private Vector3 _prevRotationEuler;
         private Vector3 _prevRotationSpeedEuler;
 
-        private void Start()
-        {
-            //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
-            _faceTracker.FaceParts.Outline.HeadRollRad.Subscribe(
-                v => SetHeadRollDeg(-v * Mathf.Rad2Deg * HeadRollRateApplyFactor)
-                );
-            
-            //もとの値は角度ではなく[-1, 1]の無次元量であることに注意
-            _faceTracker.FaceParts.Outline.HeadYawRate.Subscribe(
-                v => SetHeadYawDeg(v * HeadYawRateToDegFactor)
-                );
-
-            _faceTracker.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
-                v => SetHeadPitchDeg(NoseBaseHeightToNeckPitchDeg(v))
-                );
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
-        }
+        public bool IsActive { get; set; } = true;
 
         private void LateUpdate()
         {
-            if (_vrmHeadTransform == null || !_faceTracker.HasInitDone)
+            if (_vrmHeadTransform == null || !_faceTracker.HasInitDone || !IsActive)
             {
                 _latestRotationEuler = Vector3.zero;
                 _prevRotationEuler = Vector3.zero;
@@ -97,19 +112,6 @@ namespace Baku.VMagicMirror
 
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;
-        }
-
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            var animator = info.animator;
-            _vrmNeckTransform = animator.GetBoneTransform(HumanBodyBones.Neck);
-            _vrmHeadTransform = animator.GetBoneTransform(HumanBodyBones.Head);
-        }
-
-        private void OnVrmDisposing()
-        {
-            _vrmNeckTransform = null;
-            _vrmHeadTransform = null;
         }
         
         private float NoseBaseHeightToNeckPitchDeg(float noseBaseHeight)

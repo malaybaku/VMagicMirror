@@ -17,18 +17,35 @@ namespace Baku.VMagicMirror
         [SerializeField] private Transform cam = null;
         [SerializeField] private Transform lookAtTarget = null;
         [SerializeField] private float lookAtSpeedFactor = 6.0f;
-        [Inject] private IVRMLoadable _vrmLoadable = null;
         
         private readonly IKDataRecord _mouseBasedLookAt = new IKDataRecord();
         public IIKGenerator MouseBasedLookAt => _mouseBasedLookAt;
 
         private readonly CameraBasedLookAtIk _camBasedLookAt = new CameraBasedLookAtIk();
         public IIKGenerator CameraBasedLookAt => _camBasedLookAt;
-
-        //TODO: ここに画像ベースでLateUpdate時に首曲げるやつを持ってきたほうがよさそう
-
+        
         private LookAtStyles _lookAtStyle = LookAtStyles.MousePointer;
         private Transform _head = null;
+        private bool _hasModel = false;
+
+        private FaceControlConfiguration _faceControlConfig;
+
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable, FaceControlConfiguration faceControlConfig)
+        {
+            _faceControlConfig = faceControlConfig;
+            vrmLoadable.VrmLoaded += info =>
+            {
+                _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                _hasModel = true;
+            };
+            vrmLoadable.VrmDisposing += () =>
+            {
+                _hasModel = false;
+                _head = null;
+            };
+        }
+        
         
         public void MoveMouse(int x, int y)
         {
@@ -78,25 +95,28 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _camBasedLookAt.Camera = cam;
-            _vrmLoadable.VrmLoaded += info => _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
-            _vrmLoadable.VrmDisposing += () =>  _head = null;
-
             //起動後にマウスを動かさないとLookAtの先が原点になっちゃうので、それを防ぐためにやる
             _mouseBasedLookAt.Position = cam.position;
             lookAtTarget.localPosition = _camBasedLookAt.Position;
         }
 
+        //NOTE: タイミングがIKの適用前になることに注意: つまりTボーンっぽい状態
         private void Update()
         {
             _camBasedLookAt.CheckDepthAndWeight(_head);
+
+            if (_hasModel && _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker)
+            {
+                lookAtTarget.localPosition = _head.position + _head.forward * 10.0f;
+                return;
+            }
             
             Vector3 pos = 
                 (_lookAtStyle == LookAtStyles.MousePointer) ? _mouseBasedLookAt.Position :
                 (_lookAtStyle == LookAtStyles.MainCamera) ? _camBasedLookAt.Position :
-                (_head != null) ? _head.position + _head.forward * 1.0f : 
+                _hasModel ? _head.position + _head.forward * 10.0f : 
                 new Vector3(1, 0, 1);
-
-
+            
             lookAtTarget.localPosition = Vector3.Lerp(
                 lookAtTarget.localPosition,
                 pos,
@@ -159,7 +179,7 @@ namespace Baku.VMagicMirror
             public IKTargets Target => IKTargets.HeadLookAt;
         }
 
-        enum LookAtStyles
+        private enum LookAtStyles
         {
             Fixed,
             MousePointer,

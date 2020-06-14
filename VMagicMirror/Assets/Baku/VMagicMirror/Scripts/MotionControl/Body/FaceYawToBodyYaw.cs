@@ -22,16 +22,15 @@ namespace Baku.VMagicMirror
         [Tooltip("ゴール回転値に持っていくとき、スピードをどのくらい素早く適用するか")]
         [SerializeField] private float speedLerpFactor = 18.0f;
         
-        [Tooltip("ゴールの回転値に持っていくときのlerpファクター")]
-        [SerializeField] private float lerpFactor = 3.0f;
-        
         public Quaternion BodyYawSuggest { get; private set; } = Quaternion.identity;
 
         private float _bodyYawAngleSpeedDegreePerSec = 0;
         private float _bodyYawAngleDegree = 0;
 
         private bool _hasVrmBone = false;
+        private bool _hasNeck = false;
         private Transform _head = null;
+        private Transform _neck = null;
         //NOTE: この値は
         private float _headYawAngleDegree = 0;
         
@@ -45,15 +44,19 @@ namespace Baku.VMagicMirror
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
+            _neck = info.animator.GetBoneTransform(HumanBodyBones.Neck);
             _headYawAngleDegree = 0;
+            _hasNeck = (_neck != null);
             _hasVrmBone = true;
         }
         
         private void OnVrmUnloaded()
         {
             _hasVrmBone = false;
+            _hasNeck = false;
             _headYawAngleDegree = 0;
             _head = null;
+            _neck = null;
         }
 
         private void Start()
@@ -89,8 +92,13 @@ namespace Baku.VMagicMirror
                     _headYawAngleDegree = 0;
                     continue;
                 }
+                
+                var headRotation = _hasNeck
+                    ? _neck.localRotation * _head.localRotation
+                    : _head.localRotation;
 
-                var headForward = _head.forward;
+                //首の回転ベースで正面向きがどうなったか見る: コレでうまく動きます
+                var headForward = headRotation * Vector3.forward;
                 _headYawAngleDegree = -(Mathf.Atan2(headForward.z, headForward.x) * Mathf.Rad2Deg - 90);
             }
         }

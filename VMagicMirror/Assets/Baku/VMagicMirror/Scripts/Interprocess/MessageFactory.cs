@@ -34,6 +34,8 @@ namespace Baku.VMagicMirror
         public Message ExtraBlendShapeClipNames(string names) => WithArg(names);
 
         public Message MidiNoteOn(int noteNumber) => WithArg($"{noteNumber}");
+
+        public Message ExTrackerCalibrateComplete(string data) => WithArg(data);
         
         #region VRoid
 

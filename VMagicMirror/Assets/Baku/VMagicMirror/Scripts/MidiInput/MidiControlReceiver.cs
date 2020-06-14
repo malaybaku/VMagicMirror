@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
 using UniRx;
 using MidiJack;
@@ -8,7 +7,9 @@ namespace Baku.VMagicMirror
 {
     public class MidiControlReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler;
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
+        private ReceivedMessageHandler _handler;
 
         private void Start()
         {

@@ -11,9 +11,10 @@ namespace Baku.VMagicMirror
         private const float ReferenceHipsHeight = 0.6f;
         
         [SerializeField] private FaceYawToBodyYaw _faceYawToBodyYaw = null;
+        [SerializeField] private FacePitchToBodyPitch _facePitchToBodyPitch = null;
+        [SerializeField] private FaceRollToBodyRoll _faceRollToBodyRoll = null;
         [SerializeField] private GamepadBasedBodyLean _gamepadBasedBodyLean = null;
         [SerializeField] private ImageBasedBodyMotion _imageBasedBodyMotion = null;
-        [SerializeField] private FaceAttitudeController _faceAttitudeController = null;
         
         [Tooltip("腰が1度傾いてたら0.01m=1cmだけ腰をずらす、みたいな比率。" +
                  "適当に決めた基準モデル向けに調整し、他モデルについてはHipsの高さベースで倍率かけて適用。")]
@@ -60,13 +61,15 @@ namespace Baku.VMagicMirror
         {
             //NOTE:
             // faceAttitudeToBodyYaw: ヨー
-            // faceAttitudeController: ロール
+            // (faceAttitudeController: ロール, 廃止)
+            // faceRollToBodyRoll: ロール
             // imageBasedBodyMotion: ロール
             // gamePadBasedBodyLean: ロールとピッチ
             // どれも角度は小さめなので雑にかけてます
             BodyLeanSuggest =
                 _faceYawToBodyYaw.BodyYawSuggest *
-                _faceAttitudeController.BodyLeanSuggest *
+                _facePitchToBodyPitch.BodyPitchSuggest *
+                _faceRollToBodyRoll.BodyRollSuggest *
                 _imageBasedBodyMotion.BodyLeanSuggest *
                 _gamepadBasedBodyLean.BodyLeanSuggest;
             

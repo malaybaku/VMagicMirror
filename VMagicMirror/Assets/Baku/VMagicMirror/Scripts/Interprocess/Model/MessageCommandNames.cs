@@ -57,6 +57,7 @@
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
 
         // Motion, Arm
+        public const string EnableHidRandomTyping = nameof(EnableHidRandomTyping);
         public const string EnableShoulderMotionModify = nameof(EnableShoulderMotionModify);
         public const string SetWaistWidth = nameof(SetWaistWidth);
         public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);

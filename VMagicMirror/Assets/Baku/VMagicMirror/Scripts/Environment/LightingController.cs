@@ -100,7 +100,7 @@ namespace Baku.VMagicMirror
         private void EnableShadow(bool enable)
         {
             shadowLight.enabled = enable;
-            shadowBoardMotion.ShadowRenderer.enabled = enable;
+            shadowBoardMotion.EnableShadowRenderer = enable;
         }
 
         private void SetShadowIntensity(float shadowStrength)

@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -13,6 +14,14 @@ namespace Baku.VMagicMirror
     /// <summary> キーボード/マウスボタンイベントを監視してUIスレッドで発火してくれる凄いやつだよ </summary>
     public class RawInputChecker : MonoBehaviour
     {
+        //NOTE: ランダム打鍵で全部のキーを叩かせる理由がない(それだと腕が動きすぎる懸念がある)ので絞っておく
+        private static readonly string[] RandomKeyNames　= new []
+        {
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
+            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+            "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D0", 
+        };
+
         private static readonly Dictionary<int, string> MouseEventNumberToEventName = new Dictionary<int, string>()
         {
             [WindowsAPI.MouseMessages.WM_LBUTTONDOWN] = "LDown",
@@ -33,6 +42,20 @@ namespace Baku.VMagicMirror
         private readonly ConcurrentQueue<string> _mouseButtonConcurrent = new ConcurrentQueue<string>();
 
         private Thread _thread;
+
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler)
+        {
+            handler.Commands.Subscribe(c =>
+            {
+                if (c.Command == MessageCommandNames.EnableHidRandomTyping)
+                {
+                    RandomizeKey = c.ToBoolean();
+                }
+            });
+        }
+        
+        public bool RandomizeKey { get; set; } 
         
         private void Start()
         {
@@ -44,6 +67,10 @@ namespace Baku.VMagicMirror
         {
             while (_pressedKeysConcurrent.TryDequeue(out string key))
             {
+                if (RandomizeKey)
+                {
+                    key = RandomKeyNames[UnityEngine.Random.Range(0, RandomKeyNames.Length)];
+                }
                 _pressedKeys.OnNext(key);
             }
 

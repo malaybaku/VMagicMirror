@@ -312,7 +312,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedDumpForceFactor: 20
-  posDumpForceFactor: 70
+  posDumpForceFactor: 50
+  headRate: 0.5
 --- !u!114 &1338865419136667663
 MonoBehaviour:
   m_ObjectHideFlags: 0

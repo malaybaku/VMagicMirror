@@ -56,42 +56,38 @@ namespace Baku.VMagicMirror
             
             _externalTracker.HeadRotation.ToAngleAxis(out float rawAngle, out var rawAxis);
 
-            var currentCombinedRot = _hasNeck
-                ? _neck.localRotation * _head.localRotation
-                : _head.localRotation;
+            //ちょっと角度を弱めつつ、鏡像反転する
+            var rot = Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
+            rot.y *= -1;
+            rot.z *= -1;
+
+            //曲がりすぎを防止しつつ、首と頭に回転を割り振る(首が無いモデルなら頭に全振り)
+            var totalRot = _hasNeck
+                ? rot * _neck.localRotation * _head.localRotation
+                : rot * _head.localRotation;
             
-            //首と頭に半分ずつ回転適用すると具合がいいのでは、という説です
-            var halfRot = Quaternion.AngleAxis(rawAngle * angleApplyFactor * 0.5f, rawAxis);
-            halfRot.y *= -1;
-            halfRot.z *= -1;
-            
-            //※この計算は実はちょっとヘンです(実際はhalfRot * neck * halfRot * neckを適用するので)が、
-            //首の曲げすぎ判定の前後でとる姿勢を連続にしようとするとコレが比較的ラクなので、こうしてます
-            var totalRot = halfRot * halfRot * currentCombinedRot;
             totalRot.ToAngleAxis(
                 out float totalHeadRotDeg,
                 out Vector3 totalHeadRotAxis
             );
-
+            
             //素朴に値を適用すると首が曲がりすぎる、と判断されたケース
             if (Mathf.Abs(totalHeadRotDeg) > HeadTotalRotationLimitDeg)
             {
-                var limitedRotation =
-                    Quaternion.Inverse(currentCombinedRot) *
-                    Quaternion.AngleAxis(HeadTotalRotationLimitDeg, totalHeadRotAxis);
-                limitedRotation.ToAngleAxis(out var limitedAngle, out var limitedAxis);
-                halfRot = Quaternion.AngleAxis(limitedAngle * 0.5f, limitedAxis);
+                totalHeadRotDeg = Mathf.Sign(totalHeadRotDeg) * HeadTotalRotationLimitDeg;
             }
 
             if (_hasNeck)
             {
-                _neck.localRotation = halfRot * _neck.localRotation;
-                _head.localRotation = halfRot * _head.localRotation;
+                var halfRot = Quaternion.AngleAxis(totalHeadRotDeg * 0.5f, totalHeadRotAxis);
+                _neck.localRotation = halfRot;
+                _head.localRotation = halfRot;
             }
             else
             {
-                _head.localRotation = halfRot * halfRot * _head.localRotation;
+                _head.localRotation = Quaternion.AngleAxis(totalHeadRotDeg, totalHeadRotAxis);
             }
+
         }
     }
 }

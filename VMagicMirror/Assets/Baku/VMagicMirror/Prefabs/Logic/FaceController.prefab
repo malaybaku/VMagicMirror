@@ -77,7 +77,6 @@ MonoBehaviour:
   externalTrackerBlink: {fileID: 7456683640387377309}
   imageBasedBlinkController: {fileID: 4936425215266607946}
   autoBlink: {fileID: 2335327280039312852}
-  eyeDownController: {fileID: 8409558381188498024}
   randomEyeJitter: {fileID: 3748028267383499190}
   externalTrackEyeJitter: {fileID: 1428360342779558990}
 --- !u!114 &8701057551241780110
@@ -227,8 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eyeMapMin: 0.25
-  eyeMapMax: 0.75
-  blinkCloseSpeedMax: 0.34
+  eyeMapMax: 0.7
   blinkOpenSpeedMax: 0.1
 --- !u!114 &1428360342779558990
 MonoBehaviour:

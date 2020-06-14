@@ -9,6 +9,10 @@ namespace Baku.VMagicMirror
         //NOTE: バネマス系のパラメータ(いわゆるcとk)
         [SerializeField] private float speedDumpForceFactor = 10.0f;
         [SerializeField] private float posDumpForceFactor = 20.0f;
+
+        [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")]
+        [Range(0f, 1f)]
+        [SerializeField] private float headRate = 0.5f;
         
         private FaceTracker _faceTracker = null;
         
@@ -34,14 +38,18 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 var animator = info.animator;
-                _vrmNeckTransform = animator.GetBoneTransform(HumanBodyBones.Neck);
-                _vrmHeadTransform = animator.GetBoneTransform(HumanBodyBones.Head);
+                _neck = animator.GetBoneTransform(HumanBodyBones.Neck);
+                _head = animator.GetBoneTransform(HumanBodyBones.Head);
+                _hasNeck = (_neck != null);
+                _hasModel = true;
             };
             
             vrmLoadable.VrmDisposing += () =>
             {
-                _vrmNeckTransform = null;
-                _vrmHeadTransform = null;
+                _hasModel = false;
+                _hasNeck = false;
+                _neck = null;
+                _head = null;
             };
         }
         
@@ -52,9 +60,11 @@ namespace Baku.VMagicMirror
 
         private const float HeadTotalRotationLimitDeg = 40.0f;
         private const float NoseBaseHeightDifToAngleDegFactor = 300f;
-            
-        private Transform _vrmNeckTransform = null;
-        private Transform _vrmHeadTransform = null;
+
+        private bool _hasModel = false;
+        private bool _hasNeck = false;
+        private Transform _neck = null;
+        private Transform _head = null;
 
         private void SetHeadRollDeg(float value) => _latestRotationEuler.z = value;
         private void SetHeadYawDeg(float value) => _latestRotationEuler.y = value;
@@ -69,7 +79,7 @@ namespace Baku.VMagicMirror
 
         private void LateUpdate()
         {
-            if (_vrmHeadTransform == null || !_faceTracker.HasInitDone || !IsActive)
+            if (!(_hasModel && _faceTracker.HasInitDone && IsActive))
             {
                 _latestRotationEuler = Vector3.zero;
                 _prevRotationEuler = Vector3.zero;
@@ -78,7 +88,6 @@ namespace Baku.VMagicMirror
             }
 
             //やりたい事: ロール、ヨー、ピッチそれぞれを独立にsmoothingしてから最終的に適用する
-            
             // いわゆるバネマス系扱いで陽的オイラー法を回す。やや過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
             var accel = 
                 -_prevRotationSpeedEuler * speedDumpForceFactor -
@@ -86,27 +95,42 @@ namespace Baku.VMagicMirror
             var speed = _prevRotationSpeedEuler + Time.deltaTime * accel;
             var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
             
-            //このスクリプトより先にLookAtIKが走るハズなので、その回転と合成
-            var nextRotation = Quaternion.Euler(rotationEuler) * _vrmHeadTransform.localRotation;
+            //このスクリプトより先にLookAtIKが走るハズなので、その回転と合成していく
+            var rot = Quaternion.Euler(rotationEuler);
 
-            //首と頭のトータルで曲がり過ぎを防止
-            (_vrmNeckTransform.localRotation * nextRotation).ToAngleAxis(
+            //特に首と頭を一括で回すにあたって、コーナーケースを安全にするため以下のアプローチを取る
+            // - 一旦今の回転値を混ぜて、
+            // - 角度制限つきの最終的な回転値を作り、
+            // - その回転値を角度ベースで首と頭に配り直す
+            var totalRot = _hasNeck
+                ? rot * _neck.localRotation * _head.localRotation
+                : rot * _head.localRotation;
+            
+            totalRot.ToAngleAxis(
                 out float totalHeadRotDeg,
                 out Vector3 totalHeadRotAxis
-                );
-
+            );
+            
+            //素朴に値を適用すると首が曲がりすぎる、と判断されたケース
             if (Mathf.Abs(totalHeadRotDeg) > HeadTotalRotationLimitDeg)
             {
-                nextRotation =
-                    Quaternion.Inverse(_vrmNeckTransform.localRotation) *
-                    Quaternion.AngleAxis(HeadTotalRotationLimitDeg, totalHeadRotAxis);
+                totalHeadRotDeg = Mathf.Sign(totalHeadRotDeg) * HeadTotalRotationLimitDeg;
             }
 
-            _vrmHeadTransform.localRotation = nextRotation;
+            if (_hasNeck)
+            {
+                _neck.localRotation = Quaternion.AngleAxis(totalHeadRotDeg * (1 - headRate), totalHeadRotAxis);
+                _head.localRotation = Quaternion.AngleAxis(totalHeadRotDeg * headRate, totalHeadRotAxis);
+            }
+            else
+            {
+                _head.localRotation = Quaternion.AngleAxis(totalHeadRotDeg, totalHeadRotAxis);
+            }
+            
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;
         }
-        
+ 
         private float NoseBaseHeightToNeckPitchDeg(float noseBaseHeight)
         {
             if (_faceTracker != null)

@@ -9,6 +9,7 @@ namespace Baku.VMagicMirror
     public class BackgroundImageLoaderLogic : MonoBehaviour
     {
         [SerializeField] private Image image = null;
+        [SerializeField] private AspectRatioFitter fitter = null;
         
         private void Start()
         {
@@ -43,6 +44,8 @@ namespace Baku.VMagicMirror
                 new Rect(0, 0, texture.width, texture.height), 
                 new Vector2(0, 0)
             );
+            image.preserveAspect = true;
+            fitter.aspectRatio = texture.width * 1.0f / texture.height;
             canvas.enabled = true;
 
             //HACK: 背景を読み込むと影機能はもはや使えない(使うと背景が映らなくなってしまう)ので、

@@ -17,10 +17,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private ExternalTrackerBlink externalTrackerBlink = null;
         [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
-
-        //TODO: コイツの有効/無効をこのマネージャクラスで制御すべきか、というのが悩みどころ(止めて良い気もするし動かしっぱなしでいい気もする)
-        [SerializeField] private EyeDownBlendShapeController eyeDownController = null;
-
+        
         [SerializeField] private EyeJitter randomEyeJitter = null;
         [SerializeField] private ExternalTrackerEyeJitter externalTrackEyeJitter = null;
         

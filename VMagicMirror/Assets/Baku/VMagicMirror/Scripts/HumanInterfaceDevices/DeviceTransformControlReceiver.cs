@@ -171,6 +171,10 @@ namespace Baku.VMagicMirror
                     gamepadModelScaleSlider.maxValue);
                 //NOTE: ここは念押しでやってるが、ほんとはスライダーのonValueChangedが呼ばれるはずなので、呼ばないでもOK
                 gamepadModelScaleTarget.localScale = gamepadModelScaleSlider.value * Vector3.one;
+                
+                //タイミングバグを踏むと嫌 + Setによって実際にレイアウトが変わるので、
+                //「確かに受け取ったよ」という主旨で受信値をエコーバック
+                _sender?.SendCommand(MessageFactory.Instance.UpdateDeviceLayout(data));
             }
             catch (Exception ex)
             {

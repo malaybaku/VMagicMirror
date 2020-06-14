@@ -10,9 +10,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private float speedDumpForceFactor = 10.0f;
         [SerializeField] private float posDumpForceFactor = 20.0f;
         
-        [Tooltip("首ロールの一部を体ロールにすり替える比率です")]
-        [SerializeField] private float rollToBodyRollFactor = 0.1f;
-
         private FaceTracker _faceTracker = null;
         
         [Inject]
@@ -48,15 +45,13 @@ namespace Baku.VMagicMirror
             };
         }
         
-        public Quaternion BodyLeanSuggest { get; private set; } = Quaternion.identity;
-
         //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
         private const float HeadRollRateApplyFactor = 0.8f;
         //NOTE: もとは50だったんだけど、腰曲げに反映する値があることを想定して小さくしてます
         private const float HeadYawRateToDegFactor = 28.00f; 
 
         private const float HeadTotalRotationLimitDeg = 40.0f;
-        private const float NoseBaseHeightDifToAngleDegFactor = 400f;
+        private const float NoseBaseHeightDifToAngleDegFactor = 300f;
             
         private Transform _vrmNeckTransform = null;
         private Transform _vrmHeadTransform = null;
@@ -108,8 +103,6 @@ namespace Baku.VMagicMirror
             }
 
             _vrmHeadTransform.localRotation = nextRotation;
-            BodyLeanSuggest = Quaternion.Euler(0, 0, rotationEuler.z * rollToBodyRollFactor);
-
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;
         }

@@ -8,12 +8,40 @@ namespace Baku.VMagicMirror
         [SerializeField] private Transform cam = null;
 
         public float ShadowBoardWaistDepthOffset { get; set; } = 0.4f;
+        
+        private bool _enableShadowRenderer = true;
+        public bool EnableShadowRenderer
+        {
+            get => _enableShadowRenderer;
+            set
+            {
+                if (_enableShadowRenderer == value)
+                {
+                    return;
+                }
+                _enableShadowRenderer = value;
+                RefreshRendererEnable();
+            }
+        }
 
-        public Renderer ShadowRenderer => _renderer;
+        private bool _forceKillShadowRenderer;
+        public bool ForceKillShadowRenderer
+        {
+            get => _forceKillShadowRenderer;
+            set
+            {
+                if (_forceKillShadowRenderer == value)
+                {
+                    return;
+                }
+                _forceKillShadowRenderer = value;
+                RefreshRendererEnable();
+            }
+        }
 
         private Renderer _renderer;
 
-        private void Start()
+        private void Awake()
         {
             _renderer = GetComponent<Renderer>();
         }
@@ -31,5 +59,9 @@ namespace Baku.VMagicMirror
 
             transform.localPosition = Mathf.Max(depthByWaist, depthByFoot) * Vector3.forward;
         }
+
+
+        private void RefreshRendererEnable() 
+        => _renderer.enabled = EnableShadowRenderer && !ForceKillShadowRenderer;
     }
 }

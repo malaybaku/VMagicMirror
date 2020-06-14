@@ -30,6 +30,8 @@ namespace Baku.VMagicMirror
         //NOTE: 冗長なパラメータが入ってるが、冗長な部分はWPF側に捨てさせる(どうせ既定値しか入ってない)
         public Message AutoAdjustEyebrowResults(AutoAdjustParameters parameters)
             => WithArg(JsonUtility.ToJson(parameters));
+        
+        public Message UpdateDeviceLayout(DeviceLayoutsData data) => WithArg(JsonUtility.ToJson(data));
 
         public Message ExtraBlendShapeClipNames(string names) => WithArg(names);
 

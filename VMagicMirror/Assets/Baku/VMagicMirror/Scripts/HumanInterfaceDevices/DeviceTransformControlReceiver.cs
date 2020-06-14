@@ -15,8 +15,14 @@ namespace Baku.VMagicMirror
     public class DeviceTransformControlReceiver : MonoBehaviour
     {
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
+        public void Initialize(ReceivedMessageHandler handler, IMessageSender sender)
+        {
+            _handler = handler;
+            _sender = sender;
+        }
+
         private ReceivedMessageHandler _handler;
+        private IMessageSender _sender;
         
 
         //NOTE: このクラスでanimatorとかを直読みしたくないので、リセット処理を外注します
@@ -47,7 +53,25 @@ namespace Baku.VMagicMirror
             gamepadControl,
         };
 
-        public bool IsDeviceFreeLayoutEnabled { get; private set; }
+        private bool _isDeviceFreeLayoutEnabled = false;
+
+        public bool IsDeviceFreeLayoutEnabled
+        {
+            get => _isDeviceFreeLayoutEnabled;
+            private set
+            {
+                if (_isDeviceFreeLayoutEnabled == value)
+                {
+                    return;
+                }
+
+                _isDeviceFreeLayoutEnabled = value;
+                if (!value)
+                {
+                    SendDeviceLayoutData();
+                }
+            }
+        }
         
         private bool _preferWorldCoordinate = false;
         private TransformControl.TransformMode _mode = TransformControl.TransformMode.Translate;
@@ -71,14 +95,6 @@ namespace Baku.VMagicMirror
                         break;
                 }
             });
-
-            _handler.QueryRequested += query =>
-            {
-                if (query.Command == MessageQueryNames.CurrentDeviceLayout)
-                {
-                    query.Result = GetDeviceLayouts(); 
-                }
-            };
         }
 
         private void Update()
@@ -116,16 +132,17 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private string GetDeviceLayouts()
+        private void SendDeviceLayoutData()
         {
-            return JsonUtility.ToJson(new DeviceLayoutsData()
+            var data = new DeviceLayoutsData()
             {
                 keyboard = ToItem(keyboardControl.transform),
                 touchPad = ToItem(touchPadControl.transform),
                 midi = ToItem(midiControl.transform),
                 gamepad =  ToItem(gamepadControl.transform),
                 gamepadModelScale = gamepadModelScaleTarget.localScale.x,
-            });
+            };
+            _sender?.SendCommand(MessageFactory.Instance.UpdateDeviceLayout(data));
 
             DeviceLayoutItem ToItem(Transform t)
             {
@@ -138,7 +155,7 @@ namespace Baku.VMagicMirror
                 };
             }
         }
-        
+                
         private void SetDeviceLayout(string content)
         {
             try
@@ -178,6 +195,8 @@ namespace Baku.VMagicMirror
             var parameters = settingAutoAdjuster.GetDeviceLayoutParameters();
             FindObjectOfType<HidTransformController>().SetHidLayoutByParameter(parameters);
             FindObjectOfType<SmallGamepadProvider>().SetLayoutByParameter(parameters);
+            //デバイス移動が入るので必ず送信
+            SendDeviceLayoutData();
         }
 
         public void GamepadScaleChanged(float scale) 

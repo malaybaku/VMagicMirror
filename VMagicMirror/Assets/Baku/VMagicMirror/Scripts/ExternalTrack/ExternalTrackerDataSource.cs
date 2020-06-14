@@ -19,15 +19,29 @@ namespace Baku.VMagicMirror.ExternalTracker
         private const int SourceTypeNone = 0;
         private const int SourceTypeIFacialMocap = 1;
         private const int SourceTypeWaidayo = 2;
-            
+
+        //いちど適用したFaceSwitchは最小でもこの秒数だけ維持するよ、という下限値。チャタリングを防ぐのが狙い。
+        private const float FaceSwitchMinimumKeepDuration = 0.5f;
+
+        [Tooltip("顔トラがロスした場合、これにtime.deltaTimeをかけた分のLerpファクターで値を減衰させていく")]
+        [SerializeField] private float lossBreakRate = 3.0f;
+        
         [SerializeField] private iFacialMocapReceiver iFacialMocapReceiver = null;
         [SerializeField] private WaidayoReceiver waidayoReceiver = null;
 
         [Tooltip("この秒数だけトラッキングの更新イベントが来なかった場合は受動的にロスト扱いする")]
         [SerializeField] private float notTrackCountLimit = 0.5f;
 
+        [Tooltip("トラッキングロス後に再度トラッキングが開始したとき、この秒数をかけてリカバー用のブレンディングを行う")]
+        [SerializeField] private float trackRecoverDuration = 1.0f;
+        
+        
         //顔トラッキングが更新されなかった秒数
         private float _notTrackCount = 0f;
+        //顔トラッキングがされた秒数
+        private float _trackedCount = 0f;
+        
+        private float _faceSwitchKeepCount = 0f;
         
         //ソースが「なし」のときに便宜的に割り当てるための、常に顔が中央にあり、無表情であるとみなせるような顔トラッキングデータ
         private readonly EmptyExternalTrackSourceProvider _emptyProvider = new EmptyExternalTrackSourceProvider();
@@ -75,10 +89,33 @@ namespace Baku.VMagicMirror.ExternalTracker
                 _notTrackCount += Time.deltaTime;
             }
 
+            if (_faceSwitchKeepCount > 0)
+            {
+                _faceSwitchKeepCount -= Time.deltaTime;
+            }
+            
+            if (_faceSwitchKeepCount <= 0 && FaceSwitchClipName != _faceSwitchExtractor.ClipName)
+            {
+                _faceSwitchClipName = _faceSwitchExtractor.ClipName;
+                _faceSwitchKeepCount = FaceSwitchMinimumKeepDuration;
+            }
+
             //空トラッカーを仮想的に更新するやつ
             if (CurrentProvider == _emptyProvider)
             {
                 _emptyProvider.RaiseFaceTrackUpdated();
+            }
+
+            //接続が継続しているほど、生センサーの値を信じるようになる
+            _trackedCount = Connected 
+                ? Mathf.Clamp(_trackedCount + Time.deltaTime, 0, trackRecoverDuration)
+                : 0;
+            CurrentProvider.UpdateApplyRate = _trackedCount / trackRecoverDuration;
+            
+            //データが来なくなったら基準位置まで戻しておく
+            if (!Connected)
+            {
+                CurrentProvider.BreakToBasePosition(1 - lossBreakRate * Time.deltaTime);
             }
 
             _faceSwitchExtractor.Update(CurrentSource);
@@ -121,6 +158,10 @@ namespace Baku.VMagicMirror.ExternalTracker
             _sender.SendCommand(MessageFactory.Instance.ExTrackerCalibrateComplete(
                 JsonUtility.ToJson(data)
                 ));   
+
+            //POINT: キャリブレーションした直後は値がジャンプしがちになるので、
+            //対策としてトラッキングロスからの復帰直後と同じように値をブレンドしていく
+            _trackedCount = 0f;
         }
 
         public void SetCalibrationData(string json)
@@ -245,8 +286,12 @@ namespace Baku.VMagicMirror.ExternalTracker
         public Quaternion HeadRotation => CurrentProvider.HeadRotation;
         public Vector3 HeadPositionOffset => CurrentProvider.HeadPositionOffset;
 
+        private string _faceSwitchClipName = "";
         /// <summary> FaceSwitch機能で指定されたブレンドシェイプがあればその名称を取得し、なければ空文字を取得します。 </summary>
-        public string FaceSwitchClipName => Connected ? _faceSwitchExtractor.ClipName : "";
+        public string FaceSwitchClipName => Connected ? _faceSwitchClipName : "";
+        
+        public bool KeepLipSyncForFaceSwitch =>
+            !string.IsNullOrEmpty(FaceSwitchClipName) && _faceSwitchExtractor.KeepLipSync;
 
         #endregion
     }
@@ -258,6 +303,10 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
         }
         public void StopReceive()
+        {
+        }
+
+        public void BreakToBasePosition(float breakRate)
         {
         }
 
@@ -275,8 +324,10 @@ namespace Baku.VMagicMirror.ExternalTracker
         public void Calibrate()
         {
         }
-        public string CalibrationData { get; set; } 
-        
+        public string CalibrationData { get; set; }
+
+        public float UpdateApplyRate { get; set; }
+
         /// <summary>
         /// イベントを強制発火します。Updateなどで呼び出すことで、常時データがアップデートされているように取り扱う事が出来ます。
         /// </summary>

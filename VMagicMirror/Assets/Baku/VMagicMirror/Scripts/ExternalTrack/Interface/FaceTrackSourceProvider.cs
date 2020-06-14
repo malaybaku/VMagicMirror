@@ -22,11 +22,15 @@ namespace Baku.VMagicMirror.ExternalTracker
         public virtual void Calibrate() { }
         public virtual string CalibrationData { get; set; }
 
+        public abstract void BreakToBasePosition(float breakRate);
+
         //NOTE: 角度はデータ形式によってやることが変わるため、実装必須でございます。
         public abstract Quaternion HeadRotation { get; }
         
         //NOTE: オフセットはサポートしてない場合zeroのままでいいのでvirtual
         public virtual Vector3 HeadPositionOffset => Vector3.zero;
+        
+        public float UpdateApplyRate { get; set; }
     }
 
     public interface IExternalTrackSourceProvider
@@ -60,5 +64,19 @@ namespace Baku.VMagicMirror.ExternalTracker
         void Calibrate();
         /// <summary> 文字列としてキャリブレーション情報を取得したり保存したりします。 </summary>
         string CalibrationData { get; set; }
+
+        
+        /// <summary>
+        /// 1付近の値(0.95とか)を指定して、表情や首の姿勢を原点(正面直立 + 無表情)に引き寄せます。
+        /// </summary>
+        /// <param name="breakRate"></param>
+        /// <remarks>
+        /// この処理はトラッキングがロストしていると見られるときに呼び出されます。
+        /// </remarks>
+        void BreakToBasePosition(float breakRate);
+        
+        /// <summary> 更新データを現在の値とLerpさせるファクターです。0-1の範囲の値を指定します。 </summary>
+        float UpdateApplyRate { get; set; }
+
     }
 }

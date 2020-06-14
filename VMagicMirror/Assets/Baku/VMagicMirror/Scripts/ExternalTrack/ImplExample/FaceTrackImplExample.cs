@@ -13,7 +13,11 @@ namespace Baku.VMagicMirror.ExternalTracker.ImplExample
         public override void StopReceive()
         {
         }
-        
+
+        public override void BreakToBasePosition(float breakRate)
+        {
+        }
+
         private bool _hasOutputError = false;
         private readonly RecordFaceTrackSource _faceTrackSource = new RecordFaceTrackSource();
         public override IFaceTrackSource FaceTrackSource => _faceTrackSource;

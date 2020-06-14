@@ -226,8 +226,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1412fd5e498d39946aef38e9acb1afd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeCloseRate: 0.85
-  eyeReopenRate: 0.75
+  eyeMapMin: 0.25
+  eyeMapMax: 0.75
+  blinkCloseSpeedMax: 0.34
+  blinkOpenSpeedMax: 0.1
 --- !u!114 &1428360342779558990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,6 +451,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7c5269bcd6cd1e45a994ed021e7733c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bsMin: 0.15
+  bsMax: 0.6
 --- !u!114 &3748904030990320927
 MonoBehaviour:
   m_ObjectHideFlags: 0

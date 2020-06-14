@@ -51,8 +51,10 @@ namespace Baku.VMagicMirror
         private void Update()
         {
             //眼球運動もモード別で切り替えていく
-            randomEyeJitter.IsActive = _config.ControlMode != FaceControlModes.ExternalTracker;
-            externalTrackEyeJitter.IsActive = _config.ControlMode == FaceControlModes.ExternalTracker;
+            bool canUseExternalEyeJitter =
+                _config.ControlMode == FaceControlModes.ExternalTracker && externalTrackEyeJitter.IsTracked;
+            randomEyeJitter.IsActive = !canUseExternalEyeJitter;
+            externalTrackEyeJitter.IsActive = canUseExternalEyeJitter;
 
             if (!_hasModel)
             {

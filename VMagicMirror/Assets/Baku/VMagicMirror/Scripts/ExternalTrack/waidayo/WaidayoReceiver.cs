@@ -148,7 +148,11 @@ namespace Baku.VMagicMirror.ExternalTracker.Waidayo
         }
 
         #endregion
-        
+
+        public override void BreakToBasePosition(float breakRate)
+        {
+            //TODO: やる
+        }
     }
     
     

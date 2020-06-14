@@ -5,6 +5,9 @@ using System.Text;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
@@ -12,13 +15,14 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
     /// <summary> iFacialMocapから顔トラッキングデータを受け取ってVMagicMirrorのデータ形状に整形するクラスです。 </summary>
     public class iFacialMocapReceiver : ExternalTrackSourceProvider
     {
+        private const float CalibrateReflectDuration = 0.6f;
         private const int PortNumber = 49983;
         
         private readonly RecordFaceTrackSource _faceTrackSource = new RecordFaceTrackSource();
         public override IFaceTrackSource FaceTrackSource => _faceTrackSource;
         public override bool SupportHandTracking => false;
         public override bool SupportFacePositionOffset => false;
-        public override Quaternion HeadRotation => _offsetRotation * _faceTrackSource.FaceTransform.Rotation;
+        public override Quaternion HeadRotation => SmoothOffsetRotation * _faceTrackSource.FaceTransform.Rotation;
 
         private CancellationTokenSource _cts = null;
         private readonly object _rawMessageLock = new object();
@@ -133,7 +137,8 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             {
                 RawMessage = "";
                 DeserializeFaceMessage(message);
-                ApplyDeserializeResult();
+                //Lerpファクタが1ぴったりならLerp要らん(しかもその状況は発生頻度が高い)、みたいな話です。
+                ApplyDeserializeResult(UpdateApplyRate < 0.999f);
                 RaiseFaceTrackUpdated();
             }
         }
@@ -143,8 +148,86 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             StopReceive();
         }
 
+        public override void BreakToBasePosition(float breakRate)
+        {
+            _faceTrackSource.FaceTransform.Rotation = Quaternion.Slerp(
+                _faceTrackSource.FaceTransform.Rotation,
+                Quaternion.Inverse(SmoothOffsetRotation), 
+                1 - breakRate
+            );
+            
+            //目
+            {
+                _faceTrackSource.Eye.LeftBlink *= breakRate;
+                _faceTrackSource.Eye.LeftSquint *= breakRate;
+                _faceTrackSource.Eye.LeftWide *= breakRate;
+                _faceTrackSource.Eye.LeftLookIn *= breakRate;
+                _faceTrackSource.Eye.LeftLookOut *= breakRate;
+                _faceTrackSource.Eye.LeftLookUp *= breakRate;
+                _faceTrackSource.Eye.LeftLookDown *= breakRate;
 
-        
+                _faceTrackSource.Eye.RightBlink *= breakRate;
+                _faceTrackSource.Eye.RightSquint *= breakRate;
+                _faceTrackSource.Eye.RightWide *= breakRate;
+                _faceTrackSource.Eye.RightLookIn *= breakRate;
+                _faceTrackSource.Eye.RightLookOut *= breakRate;
+                _faceTrackSource.Eye.RightLookUp *= breakRate;
+                _faceTrackSource.Eye.RightLookDown *= breakRate;
+            }
+
+            //口
+            {
+                _faceTrackSource.Mouth.Left *= breakRate;
+                _faceTrackSource.Mouth.LeftSmile *= breakRate;
+                _faceTrackSource.Mouth.LeftFrown *= breakRate;
+                _faceTrackSource.Mouth.LeftPress *= breakRate;
+                _faceTrackSource.Mouth.LeftUpperUp *= breakRate;
+                _faceTrackSource.Mouth.LeftLowerDown *= breakRate;
+                _faceTrackSource.Mouth.LeftStretch *= breakRate;
+                _faceTrackSource.Mouth.LeftDimple *= breakRate;
+
+                _faceTrackSource.Mouth.Right *= breakRate;
+                _faceTrackSource.Mouth.RightSmile *= breakRate;
+                _faceTrackSource.Mouth.RightFrown *= breakRate;
+                _faceTrackSource.Mouth.RightPress *= breakRate;
+                _faceTrackSource.Mouth.RightUpperUp *= breakRate;
+                _faceTrackSource.Mouth.RightLowerDown *= breakRate;
+                _faceTrackSource.Mouth.RightStretch *= breakRate;
+                _faceTrackSource.Mouth.RightDimple *= breakRate;
+
+                _faceTrackSource.Mouth.Close *= breakRate;
+                _faceTrackSource.Mouth.Funnel *= breakRate;
+                _faceTrackSource.Mouth.Pucker *= breakRate;
+                _faceTrackSource.Mouth.ShrugUpper *= breakRate;
+                _faceTrackSource.Mouth.ShrugLower *= breakRate;
+                _faceTrackSource.Mouth.RollUpper *= breakRate;
+                _faceTrackSource.Mouth.RollLower *= breakRate;
+            }
+
+            //その他いろいろ
+            {
+                _faceTrackSource.Brow.InnerUp *= breakRate;
+                _faceTrackSource.Brow.LeftDown *= breakRate;
+                _faceTrackSource.Brow.LeftOuterUp *= breakRate;
+                _faceTrackSource.Brow.RightDown *= breakRate;
+                _faceTrackSource.Brow.RightOuterUp *= breakRate;
+            
+                _faceTrackSource.Jaw.Open *= breakRate;
+                _faceTrackSource.Jaw.Forward *= breakRate;
+                _faceTrackSource.Jaw.Left *= breakRate;
+                _faceTrackSource.Jaw.Right *= breakRate;
+                
+                _faceTrackSource.Nose.LeftSneer *= breakRate;
+                _faceTrackSource.Nose.RightSneer *= breakRate;
+
+                _faceTrackSource.Cheek.Puff *= breakRate;
+                _faceTrackSource.Cheek.LeftSquint *= breakRate;
+                _faceTrackSource.Cheek.RightSquint *= breakRate;
+                
+                _faceTrackSource.Tongue.TongueOut *= breakRate;
+            }
+        }
+
         #region 受信ルーチンまわり
         
         public override void StartReceive()
@@ -246,21 +329,10 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 
         private void ApplyDeserializeResult()
         {
-            //NOTE: iFacialMocap特有の処理として、目が回転情報で飛んできてしまうので、それをあえて逆算します。
-            ApplyHeadTransform();
-            ApplyEyes();
-            ApplyMouth();
-            ApplyOtherBlendShapes();
-
-            void ApplyHeadTransform()
-            {
-                _faceTrackSource.FaceTransform.HasValidPosition = false;
-                _faceTrackSource.FaceTransform.Rotation =
-                    Quaternion.Euler(_rotationData[iFacialMocapRotationNames.head]);
-            }
+            _faceTrackSource.FaceTransform.Rotation =
+                Quaternion.Euler(_rotationData[iFacialMocapRotationNames.head]);
             
             //目
-            void ApplyEyes()
             {
                 _faceTrackSource.Eye.LeftBlink = _blendShapes[iFacialMocapBlendShapeNames.eyeBlinkLeft];
                 _faceTrackSource.Eye.LeftSquint = _blendShapes[iFacialMocapBlendShapeNames.eyeSquintLeft];
@@ -280,7 +352,6 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             }
 
             //口: 単純に数が多い！
-            void ApplyMouth()
             {
                 _faceTrackSource.Mouth.Left = _blendShapes[iFacialMocapBlendShapeNames.mouthLeft];
                 _faceTrackSource.Mouth.LeftSmile = _blendShapes[iFacialMocapBlendShapeNames.mouthSmileLeft];
@@ -310,7 +381,6 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             }
 
             //その他いろいろ
-            void ApplyOtherBlendShapes()
             {
                 _faceTrackSource.Brow.InnerUp = _blendShapes[iFacialMocapBlendShapeNames.browInnerUp];
                 _faceTrackSource.Brow.LeftDown = _blendShapes[iFacialMocapBlendShapeNames.browDownLeft];
@@ -334,29 +404,147 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             }
         }
 
+        //NOTE: Lerp版の処理がわざわざ別関数になっているのは、Lerpするのが特殊なシチュエーションだけだからです
+        private void ApplyDeserializeResult(bool considerApplyRate)
+        {
+            if (!considerApplyRate)
+            {
+                ApplyDeserializeResult();
+                return;
+            }
+            
+            //NOTE: 引数なし版と違い、地獄のようなLerpが続きます
+            
+            _faceTrackSource.FaceTransform.Rotation = Quaternion.Slerp(
+                _faceTrackSource.FaceTransform.Rotation,
+                Quaternion.Euler(_rotationData[iFacialMocapRotationNames.head]),
+                UpdateApplyRate
+                );
+
+            //目
+            {
+                _faceTrackSource.Eye.LeftBlink = Mathf.Lerp(_faceTrackSource.Eye.LeftBlink,_blendShapes[iFacialMocapBlendShapeNames.eyeBlinkLeft], UpdateApplyRate);
+                _faceTrackSource.Eye.LeftSquint = Mathf.Lerp(_faceTrackSource.Eye.LeftSquint,_blendShapes[iFacialMocapBlendShapeNames.eyeSquintLeft], UpdateApplyRate);
+                _faceTrackSource.Eye.LeftWide = Mathf.Lerp(_faceTrackSource.Eye.LeftWide,_blendShapes[iFacialMocapBlendShapeNames.eyeWideLeft], UpdateApplyRate);
+                _faceTrackSource.Eye.LeftLookIn = Mathf.Lerp(_faceTrackSource.Eye.LeftLookIn,_blendShapes[iFacialMocapBlendShapeNames.eyeLookInLeft], UpdateApplyRate);
+                _faceTrackSource.Eye.LeftLookOut = Mathf.Lerp(_faceTrackSource.Eye.LeftLookOut, _blendShapes[iFacialMocapBlendShapeNames.eyeLookOutLeft], UpdateApplyRate);
+                _faceTrackSource.Eye.LeftLookUp = Mathf.Lerp(_faceTrackSource.Eye.LeftLookUp, _blendShapes[iFacialMocapBlendShapeNames.eyeLookUpLeft], UpdateApplyRate);
+                _faceTrackSource.Eye.LeftLookDown = Mathf.Lerp(_faceTrackSource.Eye.LeftLookDown, _blendShapes[iFacialMocapBlendShapeNames.eyeLookDownLeft], UpdateApplyRate);
+
+                _faceTrackSource.Eye.RightBlink = Mathf.Lerp(_faceTrackSource.Eye.RightBlink,_blendShapes[iFacialMocapBlendShapeNames.eyeBlinkRight], UpdateApplyRate);
+                _faceTrackSource.Eye.RightSquint = Mathf.Lerp(_faceTrackSource.Eye.RightSquint,_blendShapes[iFacialMocapBlendShapeNames.eyeSquintRight], UpdateApplyRate);
+                _faceTrackSource.Eye.RightWide = Mathf.Lerp(_faceTrackSource.Eye.RightWide,_blendShapes[iFacialMocapBlendShapeNames.eyeWideRight], UpdateApplyRate);
+                _faceTrackSource.Eye.RightLookIn = Mathf.Lerp(_faceTrackSource.Eye.RightLookIn,_blendShapes[iFacialMocapBlendShapeNames.eyeLookInRight], UpdateApplyRate);
+                _faceTrackSource.Eye.RightLookOut = Mathf.Lerp(_faceTrackSource.Eye.RightLookOut, _blendShapes[iFacialMocapBlendShapeNames.eyeLookOutRight], UpdateApplyRate);
+                _faceTrackSource.Eye.RightLookUp = Mathf.Lerp(_faceTrackSource.Eye.RightLookUp, _blendShapes[iFacialMocapBlendShapeNames.eyeLookUpRight], UpdateApplyRate);
+                _faceTrackSource.Eye.RightLookDown = Mathf.Lerp(_faceTrackSource.Eye.RightLookDown, _blendShapes[iFacialMocapBlendShapeNames.eyeLookDownRight], UpdateApplyRate);
+            }
+
+            //口: 単純に数が多い！
+            {
+                _faceTrackSource.Mouth.Left = Mathf.Lerp(_faceTrackSource.Mouth.Left,_blendShapes[iFacialMocapBlendShapeNames.mouthLeft], UpdateApplyRate);
+                _faceTrackSource.Mouth.LeftSmile = Mathf.Lerp(_faceTrackSource.Mouth.LeftSmile,_blendShapes[iFacialMocapBlendShapeNames.mouthSmileLeft], UpdateApplyRate);
+                _faceTrackSource.Mouth.LeftFrown = Mathf.Lerp(_faceTrackSource.Mouth.LeftFrown,_blendShapes[iFacialMocapBlendShapeNames.mouthFrownLeft], UpdateApplyRate);
+                _faceTrackSource.Mouth.LeftPress = Mathf.Lerp(_faceTrackSource.Mouth.LeftPress,_blendShapes[iFacialMocapBlendShapeNames.mouthPressLeft], UpdateApplyRate);
+                _faceTrackSource.Mouth.LeftUpperUp = Mathf.Lerp(_faceTrackSource.Mouth.LeftUpperUp,_blendShapes[iFacialMocapBlendShapeNames.mouthUpperUpLeft], UpdateApplyRate);
+                _faceTrackSource.Mouth.LeftLowerDown = Mathf.Lerp(_faceTrackSource.Mouth.LeftLowerDown,_blendShapes[iFacialMocapBlendShapeNames.mouthLowerDownLeft], UpdateApplyRate);
+                _faceTrackSource.Mouth.LeftStretch = Mathf.Lerp(_faceTrackSource.Mouth.LeftStretch,_blendShapes[iFacialMocapBlendShapeNames.mouthStretchLeft], UpdateApplyRate);
+                _faceTrackSource.Mouth.LeftDimple = Mathf.Lerp(_faceTrackSource.Mouth.LeftDimple,_blendShapes[iFacialMocapBlendShapeNames.mouthDimpleLeft], UpdateApplyRate);
+
+                _faceTrackSource.Mouth.Right = Mathf.Lerp(_faceTrackSource.Mouth.Right,_blendShapes[iFacialMocapBlendShapeNames.mouthRight], UpdateApplyRate);
+                _faceTrackSource.Mouth.RightSmile = Mathf.Lerp(_faceTrackSource.Mouth.RightSmile,_blendShapes[iFacialMocapBlendShapeNames.mouthSmileRight], UpdateApplyRate);
+                _faceTrackSource.Mouth.RightFrown = Mathf.Lerp(_faceTrackSource.Mouth.RightFrown,_blendShapes[iFacialMocapBlendShapeNames.mouthFrownRight], UpdateApplyRate);
+                _faceTrackSource.Mouth.RightPress = Mathf.Lerp(_faceTrackSource.Mouth.RightPress,_blendShapes[iFacialMocapBlendShapeNames.mouthPressRight], UpdateApplyRate);
+                _faceTrackSource.Mouth.RightUpperUp = Mathf.Lerp(_faceTrackSource.Mouth.RightUpperUp,_blendShapes[iFacialMocapBlendShapeNames.mouthUpperUpRight], UpdateApplyRate);
+                _faceTrackSource.Mouth.RightLowerDown = Mathf.Lerp(_faceTrackSource.Mouth.RightLowerDown,_blendShapes[iFacialMocapBlendShapeNames.mouthLowerDownRight], UpdateApplyRate);
+                _faceTrackSource.Mouth.RightStretch = Mathf.Lerp(_faceTrackSource.Mouth.RightStretch,_blendShapes[iFacialMocapBlendShapeNames.mouthStretchRight], UpdateApplyRate);
+                _faceTrackSource.Mouth.RightDimple = Mathf.Lerp(_faceTrackSource.Mouth.RightDimple,_blendShapes[iFacialMocapBlendShapeNames.mouthDimpleRight], UpdateApplyRate);
+
+                _faceTrackSource.Mouth.Close = Mathf.Lerp(_faceTrackSource.Mouth.Close,_blendShapes[iFacialMocapBlendShapeNames.mouthClose], UpdateApplyRate);
+                _faceTrackSource.Mouth.Funnel = Mathf.Lerp(_faceTrackSource.Mouth.Funnel,_blendShapes[iFacialMocapBlendShapeNames.mouthFunnel], UpdateApplyRate);
+                _faceTrackSource.Mouth.Pucker = Mathf.Lerp(_faceTrackSource.Mouth.Pucker,_blendShapes[iFacialMocapBlendShapeNames.mouthPucker], UpdateApplyRate);
+                _faceTrackSource.Mouth.ShrugUpper = Mathf.Lerp(_faceTrackSource.Mouth.ShrugUpper,_blendShapes[iFacialMocapBlendShapeNames.mouthShrugUpper], UpdateApplyRate);
+                _faceTrackSource.Mouth.ShrugLower = Mathf.Lerp(_faceTrackSource.Mouth.ShrugLower,_blendShapes[iFacialMocapBlendShapeNames.mouthShrugLower], UpdateApplyRate);
+                _faceTrackSource.Mouth.RollUpper = Mathf.Lerp(_faceTrackSource.Mouth.RollUpper,_blendShapes[iFacialMocapBlendShapeNames.mouthRollUpper], UpdateApplyRate);
+                _faceTrackSource.Mouth.RollLower = Mathf.Lerp(_faceTrackSource.Mouth.RollLower,_blendShapes[iFacialMocapBlendShapeNames.mouthRollLower], UpdateApplyRate);
+            }
+
+            //その他いろいろ
+            {
+                _faceTrackSource.Brow.InnerUp = Mathf.Lerp(_faceTrackSource.Brow.InnerUp,_blendShapes[iFacialMocapBlendShapeNames.browInnerUp], UpdateApplyRate);
+                _faceTrackSource.Brow.LeftDown = Mathf.Lerp(_faceTrackSource.Brow.LeftDown,_blendShapes[iFacialMocapBlendShapeNames.browDownLeft], UpdateApplyRate);
+                _faceTrackSource.Brow.LeftOuterUp = Mathf.Lerp(_faceTrackSource.Brow.LeftOuterUp,_blendShapes[iFacialMocapBlendShapeNames.browOuterUpLeft], UpdateApplyRate);
+                _faceTrackSource.Brow.RightDown = Mathf.Lerp(_faceTrackSource.Brow.RightDown,_blendShapes[iFacialMocapBlendShapeNames.browDownRight], UpdateApplyRate);
+                _faceTrackSource.Brow.RightOuterUp = Mathf.Lerp(_faceTrackSource.Brow.RightOuterUp,_blendShapes[iFacialMocapBlendShapeNames.browOuterUpRight], UpdateApplyRate);
+            
+                _faceTrackSource.Jaw.Open = Mathf.Lerp(_faceTrackSource.Jaw.Open,_blendShapes[iFacialMocapBlendShapeNames.jawOpen], UpdateApplyRate);
+                _faceTrackSource.Jaw.Forward = Mathf.Lerp(_faceTrackSource.Jaw.Forward,_blendShapes[iFacialMocapBlendShapeNames.jawForward], UpdateApplyRate);
+                _faceTrackSource.Jaw.Left = Mathf.Lerp(_faceTrackSource.Jaw.Left,_blendShapes[iFacialMocapBlendShapeNames.jawLeft], UpdateApplyRate);
+                _faceTrackSource.Jaw.Right = Mathf.Lerp(_faceTrackSource.Jaw.Right,_blendShapes[iFacialMocapBlendShapeNames.jawRight], UpdateApplyRate);
+                
+                _faceTrackSource.Nose.LeftSneer = Mathf.Lerp(_faceTrackSource.Nose.LeftSneer,_blendShapes[iFacialMocapBlendShapeNames.noseSneerLeft], UpdateApplyRate);
+                _faceTrackSource.Nose.RightSneer = Mathf.Lerp(_faceTrackSource.Nose.RightSneer,_blendShapes[iFacialMocapBlendShapeNames.noseSneerRight], UpdateApplyRate);
+
+                _faceTrackSource.Cheek.Puff = Mathf.Lerp(_faceTrackSource.Cheek.Puff,_blendShapes[iFacialMocapBlendShapeNames.cheekPuff], UpdateApplyRate);
+                _faceTrackSource.Cheek.LeftSquint = Mathf.Lerp(_faceTrackSource.Cheek.LeftSquint,_blendShapes[iFacialMocapBlendShapeNames.cheekSquintLeft], UpdateApplyRate);
+                _faceTrackSource.Cheek.RightSquint = Mathf.Lerp(_faceTrackSource.Cheek.RightSquint,_blendShapes[iFacialMocapBlendShapeNames.cheekSquintRight], UpdateApplyRate);
+                
+                _faceTrackSource.Tongue.TongueOut = Mathf.Lerp(_faceTrackSource.Tongue.TongueOut,_blendShapes[iFacialMocapBlendShapeNames.tongueOut], UpdateApplyRate);
+            }
+        }
+        
         #endregion
         
         #region キャリブレーション
 
         public override void Calibrate()
         {
-            _trackerRotationEulerAngle = Quaternion.Inverse(_faceTrackSource.FaceTransform.Rotation).eulerAngles;
-            _offsetRotation = Quaternion.Euler(_trackerRotationEulerAngle);
+            //NOTE: iFacialMocapはロールとピッチが補正済みの姿勢を送ってくる。
+            //デバイス座標的な解釈としては、iOS機器がつねに垂直に立っているものと捉えたうえで
+            //デバイスの方向をキャリブしてるんですよ、と考えるとよい
+            YawOffset = -_rotationData[iFacialMocapRotationNames.head].y;
         }
+
 
         //NOTE: キャリブ情報の実態 = トラッカーデバイスがUnity空間にあったとみなした場合のワールド回転をオイラー角表現したもの。
         //こういう値だとUnity空間上にモノを置いて図示する余地があり、筋がいい
-        private Vector3 _trackerRotationEulerAngle = Vector3.zero;
-        private Quaternion _offsetRotation = Quaternion.identity;
+        private float _yawOffset = 0;
+        private float YawOffset
+        {
+            get => _yawOffset;
+            set
+            {
+                if (Mathf.Abs(_yawOffset - value) < Mathf.Epsilon)
+                {
+                    return;
+                }
+                
+                _yawOffset = value;
+                _yawOffsetTween?.Kill();
+                _yawOffsetTween = DOTween.To(
+                    () => _smoothYawOffset,
+                    v => _smoothYawOffset = v,
+                    _yawOffset,
+                    CalibrateReflectDuration
+                )
+                    .SetEase(Ease.OutCubic);
+            }
+        }
+
+        //NOTE: この値はふだんYawOffsetに一致するが、
+        //キャリブレーション時などに値が急に飛ばないようTweenつきでアップデートされる
+        private float _smoothYawOffset = 0;
+        private Quaternion SmoothOffsetRotation => Quaternion.AngleAxis(_smoothYawOffset, Vector3.up);
+        //NOTE: 連打とかでTweenが多重に走るのを防止するやつです
+        private TweenerCore<float, float, FloatOptions> _yawOffsetTween = null;
+        
         public override string CalibrationData
         {
             get
             {
                 var data = new IFacialMocapCalibrationData()
                 {
-                    rotX = _trackerRotationEulerAngle.x,
-                    rotY = _trackerRotationEulerAngle.y,
-                    rotZ = _trackerRotationEulerAngle.z,
+                    yawOffset = YawOffset,
                 };
                 return JsonUtility.ToJson(data);
             }
@@ -365,8 +553,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 try
                 {
                     var data = JsonUtility.FromJson<IFacialMocapCalibrationData>(value);
-                    _trackerRotationEulerAngle = new Vector3(data.rotX, data.rotY, data.rotZ);
-                    _offsetRotation = Quaternion.Euler(_trackerRotationEulerAngle);
+                    YawOffset = data.yawOffset;
                 }
                 catch (Exception ex)
                 {
@@ -382,8 +569,6 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
     [Serializable]
     public class IFacialMocapCalibrationData
     {
-        public float rotX;
-        public float rotY;
-        public float rotZ;
+        public float yawOffset;
     }
 }

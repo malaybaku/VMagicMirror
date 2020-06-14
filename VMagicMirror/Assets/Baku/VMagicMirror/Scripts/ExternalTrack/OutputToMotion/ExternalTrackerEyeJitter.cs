@@ -11,6 +11,7 @@ namespace Baku.VMagicMirror
         private const float HorizontalShapeToAngle = 10.0f;
         private const float VerticalShapeToAngle = 10.0f;
         private ExternalTrackerDataSource _tracker;
+        private const float TotalBoneRotationLimit = 10.0f;
 
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable, ExternalTrackerDataSource externalTracker)
@@ -26,9 +27,9 @@ namespace Baku.VMagicMirror
             
             vrmLoadable.VrmDisposing += () =>
             {
+                _hasValidEyeBone = false;
                 _rightEye = null;
                 _leftEye = null;
-                _hasValidEyeBone = false;
             };
         }
         
@@ -38,6 +39,8 @@ namespace Baku.VMagicMirror
 
         private Quaternion _leftRotation = Quaternion.identity;
         private Quaternion _rightRotation = Quaternion.identity;
+
+        public bool IsTracked => (_tracker != null) && _tracker.Connected;
         
         public bool IsActive { get; set; }
 
@@ -49,33 +52,45 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            if (_tracker.Connected)
-            {
-                var leftX = 
-                    _tracker.CurrentSource.Eye.LeftLookOut - _tracker.CurrentSource.Eye.LeftLookIn;
-                var leftY =
-                    _tracker.CurrentSource.Eye.LeftLookDown - _tracker.CurrentSource.Eye.LeftLookUp;
+            var leftX = 
+                _tracker.CurrentSource.Eye.LeftLookIn - _tracker.CurrentSource.Eye.LeftLookOut;
+            var leftY =
+                _tracker.CurrentSource.Eye.LeftLookDown - _tracker.CurrentSource.Eye.LeftLookUp;
+        
+            var rightX = 
+                _tracker.CurrentSource.Eye.RightLookOut - _tracker.CurrentSource.Eye.RightLookIn;
+            var rightY = 
+                _tracker.CurrentSource.Eye.RightLookDown - _tracker.CurrentSource.Eye.RightLookUp;
+        
+            _leftRotation = Quaternion.Euler(leftY * VerticalShapeToAngle, leftX * HorizontalShapeToAngle, 0);
+            _rightRotation = Quaternion.Euler(rightY * VerticalShapeToAngle, rightX * HorizontalShapeToAngle, 0);
             
-                var rightX = 
-                    _tracker.CurrentSource.Eye.RightLookIn - _tracker.CurrentSource.Eye.RightLookOut;
-                var rightY = 
-                    _tracker.CurrentSource.Eye.RightLookDown - _tracker.CurrentSource.Eye.RightLookUp;
-            
-                _leftRotation = Quaternion.Euler(leftY * VerticalShapeToAngle, leftX * HorizontalShapeToAngle, 0);
-                _rightRotation = Quaternion.Euler(rightY * VerticalShapeToAngle, rightX * HorizontalShapeToAngle, 0);
-            }
-            else
+            //NOTE: 二重チェックは冗長なんだけど、「最初のガード文はのちのち外しそう」という予測も兼ねてガード
+            if (!(_hasValidEyeBone && IsActive))
             {
-                _leftRotation = Quaternion.identity;
-                _rightRotation = Quaternion.identity;
+                return;
             }
+
+            //ボーンの曲げすぎをガードしつつ後付回転で適用
             
-            //NOTE: 二重チェックは冗長なんだけど、「最初のガード文はのちのち外しそう」という予測も兼ねてガードしておきます
-            if (_hasValidEyeBone && IsActive)
+            var resultLeftRotation = _leftRotation * _leftEye.localRotation;
+            resultLeftRotation.ToAngleAxis(out var leftAngle, out var leftAxis);
+            if (Mathf.Abs(leftAngle) > TotalBoneRotationLimit)
             {
-                _rightEye.localRotation *= _leftRotation;
-                _leftEye.localRotation *= _rightRotation;
+                leftAngle = Mathf.Sign(leftAngle) * TotalBoneRotationLimit;
+                resultLeftRotation = Quaternion.AngleAxis(leftAngle, leftAxis);
             }
+            _leftEye.localRotation = resultLeftRotation;
+
+            
+            var resultRightRotation = _rightRotation * _rightEye.localRotation;
+            resultRightRotation.ToAngleAxis(out var rightAngle, out var rightAxis);
+            if (Mathf.Abs(rightAngle) > TotalBoneRotationLimit)
+            {
+                rightAngle = Mathf.Sign(rightAngle) * TotalBoneRotationLimit;
+                resultRightRotation = Quaternion.AngleAxis(rightAngle, rightAxis);
+            }
+            _rightEye.localRotation = resultRightRotation;
         }
     }
 }

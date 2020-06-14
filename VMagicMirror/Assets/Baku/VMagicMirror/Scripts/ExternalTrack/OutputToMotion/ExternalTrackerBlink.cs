@@ -9,78 +9,33 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ExternalTrackerBlink : MonoBehaviour
     {
-        //NOTE: チャタリング防止のパラメタを思いつきで書いてます…が、最初の実装では要らんわな。
+        [Range(0f, 0.4f)] [SerializeField] private float eyeMapMin = 0.2f;
+        [Range(0.6f, 1f)] [SerializeField] private float eyeMapMax = 0.8f;
         
-        [Tooltip("この比率を超えたら目を閉じる")]
-        [SerializeField] private float eyeCloseRate = 0.85f;
-
-        [Tooltip("目を閉じたあと、この比率を下回ったら目を開く")]
-        [SerializeField] private float eyeReopenRate = 0.75f;
+        [Tooltip("目が開く方向へブレンドシェイプ値を変更するとき、60FPSの1フレームあたりで変更できる値の上限")]
+        [SerializeField] private float blinkOpenSpeedMax = 0.1f;
         
         [Inject] private ExternalTrackerDataSource _externalTracker = null;
         
         private readonly RecordBlinkSource _blinkSource = new RecordBlinkSource();
         public IBlinkSource BlinkSource => _blinkSource;
-
-        private bool _leftClosed = false;
-        private bool _rightClosed = false;
         
         private void Update()
         {
-            float left = _externalTracker.CurrentSource.Eye.LeftBlink;
-            float right = _externalTracker.CurrentSource.Eye.RightBlink;
+            float subLimit = blinkOpenSpeedMax * Time.deltaTime * 60f;
+            
+            //NOTE: 開くほうは速度制限があるけど閉じるほうは一瞬でいいよ、という方式。右目も同様。
+            float left = MapClamp(_externalTracker.CurrentSource.Eye.LeftBlink);
+            left = Mathf.Clamp(left, _blinkSource.Left - subLimit, 1.0f);
+            _blinkSource.Left = Mathf.Clamp01(left);
 
-            if (_leftClosed)
-            {
-                if (left < eyeReopenRate)
-                {
-                    _leftClosed = false;
-                    _blinkSource.Left = left;
-                }
-                else
-                {
-                    _blinkSource.Left = 1.0f;
-                }
-            }
-            else
-            {
-                if (left > eyeCloseRate)
-                {
-                    _leftClosed = true;
-                    _blinkSource.Left = 1.0f;
-                }
-                else
-                {
-                    _blinkSource.Left = left;
-                }
-            }
-
-            if (_rightClosed)
-            {
-                if (right < eyeReopenRate)
-                {
-                    _rightClosed = false;
-                    _blinkSource.Right = right;
-                }
-                else
-                {
-                    _blinkSource.Right = 1.0f;
-                }
-            }
-            else
-            {
-                if (right > eyeCloseRate)
-                {
-                    _rightClosed = true;
-                    _blinkSource.Right = 1.0f;
-                }
-                else
-                {
-                    _blinkSource.Right = right;
-                }
-            }
-
-
+            float right = MapClamp(_externalTracker.CurrentSource.Eye.RightBlink);
+            right = Mathf.Clamp(right, _blinkSource.Right - subLimit, 1.0f);
+            _blinkSource.Right = Mathf.Clamp01(right);
         }
+
+        //0-1の範囲の値をmin-maxの幅のなかにギュッとあれします
+        private float MapClamp(float value) 
+            => Mathf.Clamp01((value - eyeMapMin) / (eyeMapMax - eyeMapMin));
     } 
 }

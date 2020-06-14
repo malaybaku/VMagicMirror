@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 5813678808713813108}
   - component: {fileID: 3088723817282594664}
   - component: {fileID: 4217680156869205001}
+  - component: {fileID: 497782763707271901}
   m_Layer: 0
   m_Name: BodyMotion
   m_TagString: Untagged
@@ -150,10 +151,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _faceYawToBodyYaw: {fileID: 3088723817282594664}
+  _facePitchToBodyPitch: {fileID: 497782763707271901}
   _faceRollToBodyRoll: {fileID: 4217680156869205001}
   _gamepadBasedBodyLean: {fileID: 5813678808713813108}
   _imageBasedBodyMotion: {fileID: 5813678808713813112}
-  _faceAttitudeController: {fileID: 5813678809054739210}
   _bodyRollDegToXOffsetFactor: 0.002
   _bodyRollReflectMaxDeg: 4
   x2y: 0.3
@@ -216,10 +217,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goalRate: 0.3
-  timeFactor: 0.1
-  speedDumpFactor: 0.95
-  speedLerpFactor: 6
-  lerpFactor: 3
+  timeFactor: 0.15
+  speedDumpFactor: 0.98
+  speedLerpFactor: 12
 --- !u!114 &4217680156869205001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,7 +236,23 @@ MonoBehaviour:
   timeFactor: 0.3
   speedDumpFactor: 0.95
   speedLerpFactor: 18
-  lerpFactor: 3
+--- !u!114 &497782763707271901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678808713813115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f8806990fea2f14bbc57ec6fddd312e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goalRate: -0.05
+  timeFactor: 0.2
+  speedDumpFactor: 0.95
+  speedLerpFactor: 12
+  debugPitchDeg: 33
 --- !u!1 &5813678809054739212
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,7 +327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c15deca4e07f524b8e9cdcb40566e3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rollToBodyRollFactor: 0.1
+  angleApplyFactor: 0.8
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0
@@ -445,7 +461,6 @@ MonoBehaviour:
   smallGamepadHandIk: {fileID: 5813678810404708594}
   handIkIntegrator: {fileID: 5813678810404708495}
   headIkIntegrator: {fileID: 5813678810404708592}
-  ikWeightCrossFade: {fileID: 0}
   gamePad: {fileID: 0}
 --- !u!114 &5813678810404708495
 MonoBehaviour:

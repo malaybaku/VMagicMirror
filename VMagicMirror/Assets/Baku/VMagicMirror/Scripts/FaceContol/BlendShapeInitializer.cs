@@ -37,6 +37,15 @@ namespace Baku.VMagicMirror
             ["Fun"] = new BlendShapeKey(BlendShapePreset.Fun),
         };
 
+        private static readonly BlendShapeKey[] _lipSyncKeys = new[]
+        {
+            new BlendShapeKey(BlendShapePreset.A),
+            new BlendShapeKey(BlendShapePreset.I),
+            new BlendShapeKey(BlendShapePreset.U),
+            new BlendShapeKey(BlendShapePreset.E),
+            new BlendShapeKey(BlendShapePreset.O),
+        };
+        
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable)
         {
@@ -62,6 +71,23 @@ namespace Baku.VMagicMirror
         private VRMBlendShapeProxy _proxy;
         private BlendShapeKey[] _keys = new BlendShapeKey[0];
 
+        public void InitializeBlendShapes(bool keepLipSync)
+        {
+            if (!_hasModel)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _keys.Length; i++)
+            {
+                if (keepLipSync && _lipSyncKeys.Contains(_keys[i]))
+                {
+                    continue;
+                }
+                _proxy.AccumulateValue(_keys[i], 0);
+            }
+        }
+        
         private void Update()
         {
             if (!_hasModel)
@@ -78,6 +104,7 @@ namespace Baku.VMagicMirror
                 }
             }
         }
+
 
         private static BlendShapeKey[] CreateKeys(IEnumerable<string> names)
         {

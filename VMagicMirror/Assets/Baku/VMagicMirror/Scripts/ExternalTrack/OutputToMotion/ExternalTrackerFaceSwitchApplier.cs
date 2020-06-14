@@ -37,6 +37,14 @@ namespace Baku.VMagicMirror
                 _proxy = null;
             };
         }
+
+        //zenjectのDI対象にする？か、このスクリプトにもリセット系の処理を書くか。
+        private BlendShapeInitializer _initializer = null;
+
+        private void Start()
+        {
+            _initializer = FindObjectOfType<BlendShapeInitializer>();
+        }
         
         private void LateUpdate()
         {
@@ -47,6 +55,9 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+            
+            _proxy.Apply();
+            _initializer.InitializeBlendShapes(_externalTracker.KeepLipSyncForFaceSwitch);
 
             if (_latestClipName != _externalTracker.FaceSwitchClipName)
             {
@@ -54,13 +65,7 @@ namespace Baku.VMagicMirror
                 _latestClipName = _externalTracker.FaceSwitchClipName;
             }
 
-            if (!string.IsNullOrEmpty(_latestClipName))
-            {
-                Debug.Log($"current FaceSwitch = {_latestClipName}");
-            }
             //NOTE: 最終的な適用はWordToMotionBlendShapeがやる。ので、ここではその前処理だけやってればよい
-            
-            
             _proxy.AccumulateValue(_latestKey, 1.0f);
         }
 

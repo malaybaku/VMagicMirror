@@ -232,7 +232,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         
         public override void StartReceive()
         {
-            Debug.Log("Start iFacialMocap receiver");
+            LogOutput.Instance.Write("Start iFacialMocap receiver");
             StopReceive();
             _cts = new CancellationTokenSource();
             new Thread(() => ThreadMethod(_cts.Token)).Start();

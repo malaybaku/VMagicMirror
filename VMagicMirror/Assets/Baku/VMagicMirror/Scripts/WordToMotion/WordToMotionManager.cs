@@ -340,6 +340,7 @@ namespace Baku.VMagicMirror
                 {
                     _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
                 }
+                _blendShape.SkipLipSyncKeys = PreviewRequest.PreferLipSync;
             }
             else
             {
@@ -541,6 +542,7 @@ namespace Baku.VMagicMirror
             {
                 _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
             }
+            _blendShape.SkipLipSyncKeys = PreviewRequest.PreferLipSync;
             _blendShapeResetCountDown = CalculateDuration(request);
         }
 

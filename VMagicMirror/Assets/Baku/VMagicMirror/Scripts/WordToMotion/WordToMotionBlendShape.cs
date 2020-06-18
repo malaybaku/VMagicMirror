@@ -13,6 +13,15 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class WordToMotionBlendShape : MonoBehaviour
     {
+        private static readonly BlendShapeKey[] _lipSyncKeys = new []
+        {
+            new BlendShapeKey(BlendShapePreset.A),
+            new BlendShapeKey(BlendShapePreset.I),
+            new BlendShapeKey(BlendShapePreset.U),
+            new BlendShapeKey(BlendShapePreset.E),
+            new BlendShapeKey(BlendShapePreset.O),
+        };
+        
         private VRMBlendShapeProxy _proxy = null;
         private BlendShapeKey[] _allBlendShapeKeys = new BlendShapeKey[0];
 
@@ -35,6 +44,8 @@ namespace Baku.VMagicMirror
             _proxy = null;
             _allBlendShapeKeys = new BlendShapeKey[0];
         }
+        
+        public bool SkipLipSyncKeys { get; set; }
 
         /// <summary>
         /// Word To Motionによるブレンドシェイプを指定します。
@@ -71,7 +82,11 @@ namespace Baku.VMagicMirror
             {
                 for (int i = 0; i < _allBlendShapeKeys.Length; i++)
                 {
-                    _proxy.AccumulateValue(_allBlendShapeKeys[i], 0f);
+                    var key = _allBlendShapeKeys[i];
+                    if (!SkipLipSyncKeys || !_lipSyncKeys.Contains(key))
+                    {
+                        _proxy.AccumulateValue(key, 0f);                        
+                    }
                 }
                 _proxy?.Apply();
                 _reserveBlendShapeReset = false;
@@ -93,14 +108,20 @@ namespace Baku.VMagicMirror
             //実際に適用したい値を入れなおして再度Applyすると完全上書きになる
             for(int i = 0; i < _allBlendShapeKeys.Length; i++)
             {
-                if (_blendShape.TryGetValue(_allBlendShapeKeys[i], out float value))
+                var key = _allBlendShapeKeys[i];
+                if (SkipLipSyncKeys && _lipSyncKeys.Contains(key))
                 {
-                    _proxy.AccumulateValue(_allBlendShapeKeys[i], value);
+                    continue;
+                }
+                    
+                if (_blendShape.TryGetValue(key, out float value))
+                {
+                    _proxy.AccumulateValue(key, value);
                 }
                 else
                 {
                     //完全な排他制御をしたいので、指定がない値は明示的にゼロ書き込みする
-                    _proxy.AccumulateValue(_allBlendShapeKeys[i], 0);
+                    _proxy.AccumulateValue(key, 0);
                 }
             }
             _proxy.Apply();

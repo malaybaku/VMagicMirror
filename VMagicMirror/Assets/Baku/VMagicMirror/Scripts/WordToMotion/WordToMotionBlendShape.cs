@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using VRM;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -28,6 +29,14 @@ namespace Baku.VMagicMirror
         private readonly Dictionary<BlendShapeKey, float> _blendShape = new Dictionary<BlendShapeKey, float>();
 
         private bool _reserveBlendShapeReset = false;
+
+        private EyeBoneResetter _eyeBoneResetter;
+        
+        [Inject]
+        public void Initialize(EyeBoneResetter eyeBoneResetter)
+        {
+            _eyeBoneResetter = eyeBoneResetter;
+        }
         
         public void Initialize(VRMBlendShapeProxy proxy)
         {
@@ -44,9 +53,10 @@ namespace Baku.VMagicMirror
             _proxy = null;
             _allBlendShapeKeys = new BlendShapeKey[0];
         }
-        
-        public bool SkipLipSyncKeys { get; set; }
 
+        /// <summary> trueの場合、このスクリプトではリップシンクのブレンドシェイプに書き込みを行いません。 </summary>
+        public bool SkipLipSyncKeys { get; set; }
+        
         /// <summary>
         /// Word To Motionによるブレンドシェイプを指定します。
         /// </summary>
@@ -83,10 +93,7 @@ namespace Baku.VMagicMirror
                 for (int i = 0; i < _allBlendShapeKeys.Length; i++)
                 {
                     var key = _allBlendShapeKeys[i];
-                    if (!SkipLipSyncKeys || !_lipSyncKeys.Contains(key))
-                    {
-                        _proxy.AccumulateValue(key, 0f);                        
-                    }
+                    _proxy.AccumulateValue(key, 0f);                        
                 }
                 _proxy?.Apply();
                 _reserveBlendShapeReset = false;
@@ -109,6 +116,7 @@ namespace Baku.VMagicMirror
             for(int i = 0; i < _allBlendShapeKeys.Length; i++)
             {
                 var key = _allBlendShapeKeys[i];
+                //リップシンクをそのままにするかどうかは場合による
                 if (SkipLipSyncKeys && _lipSyncKeys.Contains(key))
                 {
                     continue;
@@ -125,7 +133,7 @@ namespace Baku.VMagicMirror
                 }
             }
             _proxy.Apply();
+            _eyeBoneResetter.ReserveReset = true;
         }
-
     }
 }

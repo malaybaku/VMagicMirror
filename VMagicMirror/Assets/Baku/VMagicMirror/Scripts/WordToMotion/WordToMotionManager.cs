@@ -100,6 +100,7 @@ namespace Baku.VMagicMirror
                 {
                     IsPlayingBlendShape = false;
                     _blendShape.ResetBlendShape();
+                    _blendShape.SkipLipSyncKeys = false;
                     StopPreviewBuiltInMotion();
                 }
             }
@@ -300,6 +301,7 @@ namespace Baku.VMagicMirror
                     !_currentMotionRequest.HoldBlendShape)
                 {
                     IsPlayingBlendShape = false;
+                    _blendShape.SkipLipSyncKeys = false;
                     _blendShape.ResetBlendShape();
                 }
             }
@@ -542,7 +544,7 @@ namespace Baku.VMagicMirror
             {
                 _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
             }
-            _blendShape.SkipLipSyncKeys = PreviewRequest.PreferLipSync;
+            _blendShape.SkipLipSyncKeys = request.PreferLipSync;
             _blendShapeResetCountDown = CalculateDuration(request);
         }
 

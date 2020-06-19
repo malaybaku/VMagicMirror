@@ -12,6 +12,7 @@ namespace Baku.VMagicMirror
         private VRMBlendShapeProxy _proxy;
         private FaceControlConfiguration _config;
         private ExternalTrackerDataSource _externalTracker;
+        private EyeBoneResetter _eyeBoneResetter;
 
         //NOTE: 毎回Keyを生成するとGCAlloc警察に怒られるので、回数が減るように書いてます
         private string _latestClipName = "";
@@ -19,11 +20,15 @@ namespace Baku.VMagicMirror
         
         [Inject]
         public void Initialize(
-            IVRMLoadable vrmLoadable, FaceControlConfiguration config, ExternalTrackerDataSource externalTracker
+            IVRMLoadable vrmLoadable, 
+            FaceControlConfiguration config,
+            ExternalTrackerDataSource externalTracker,
+            EyeBoneResetter eyeBoneResetter
             )
         {
             _config = config;
             _externalTracker = externalTracker;
+            _eyeBoneResetter = eyeBoneResetter;
 
             vrmLoadable.VrmLoaded += info =>
             {
@@ -67,6 +72,8 @@ namespace Baku.VMagicMirror
 
             //NOTE: 最終的な適用はWordToMotionBlendShapeがやる。ので、ここではその前処理だけやってればよい
             _proxy.AccumulateValue(_latestKey, 1.0f);
+            //表情を適用した = 目ボーンは正面向きになってほしい
+            _eyeBoneResetter.ReserveReset = true;
         }
 
         private static BlendShapeKey CreateKey(string name) => 

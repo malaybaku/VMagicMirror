@@ -17,7 +17,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private ExternalTrackerDataSource externalTracker = null;
         [SerializeField] private MidiInputObserver midiInputObserver = null;
         [SerializeField] private StatefulXinputGamePad gamepad = null;
-        [SerializeField] private DeformableCounter deformableCounterPrefab = null; 
+        [SerializeField] private DeformableCounter deformableCounterPrefab = null;
+        [SerializeField] private EyeBoneResetter eyeBoneResetter = null;
         
         public override void InstallBindings()
         {
@@ -32,6 +33,7 @@ namespace Baku.VMagicMirror
             Container.BindInstance(midiInputObserver ?? FindObjectOfType<MidiInputObserver>());
             Container.BindInstance(gamepad ?? FindObjectOfType<StatefulXinputGamePad>());
             Container.BindInstance(externalTracker ?? FindObjectOfType<ExternalTrackerDataSource>());
+            Container.BindInstance(eyeBoneResetter ?? FindObjectOfType<EyeBoneResetter>());
 
             //Deformを使うオブジェクトがここを参照することで、DeformableManagerを必要な時だけ動かせるようにする
             Container.Bind<DeformableCounter>()

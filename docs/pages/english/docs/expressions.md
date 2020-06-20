@@ -54,6 +54,7 @@ In custom window you can take 4 actions.
 3. Face expression setting.
     * Turn on `Enable Face Expression` check to play some face expression in this item.
     * `Duration when Body Motion is None [sec]` defines how long the character keep the face.
+    * `Keep LipSync active` enables lipsync during the face expression is applied, for the blendshape without mouth motion.
     * If `Keep face after motion` is on, then character face does not change after the duration.
 4. Set BlendShapes. 
     * **NOTE:** Basically, set only one blend shape to non-zero, and set other values to zero.

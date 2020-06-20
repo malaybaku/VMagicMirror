@@ -9,6 +9,21 @@ lang_prefix: /en/
 
 # Docs
 
+This page introduces two advanced settings in VMagicMirror.
+
+For the basic usage, please see [Get Started](./get_started).
+
+
+#### External Tracker
+{: .doc-sec2 }
+
+VMagicMirror v1.1.0 and later version supports external application to move avatar.
+
+Currently v1.1.0 supports iOS app `iFacialMocap`.
+
+Please see the detail at [External Tracker App](./docs/external_tracker).
+
+
 #### Setting Window
 {: .doc-sec2 }
 
@@ -28,7 +43,7 @@ Setting Window consists of 5 tabs.
 | [Expressions](./docs/expressions)| Feature to move the character face and motion                 |
 |==================================|===============================================================|
 
-#### Reset Settings to default
+#### Setting Window: Reset Settings to default
 {: .doc-sec2 }
 
 In setting window, many of the setting category supports reset settings by click `Reset` button at the right of category name.

@@ -124,3 +124,15 @@ Please restart VMagicMirror to recover. If VMagicMirror repeats to crash, then p
 This issue happens when VMagicMirror folder is put in the path which include multi-byte character.
 
 Please quit VMagicMirror, move the folder to another (multi-byte character free) folder, and retry.
+
+
+#### Select Transparent background, but get black background color
+{: .doc-sec2 }
+
+This issue happens by NVIDIA control panel setting.
+
+Quit VMagicMirror, and open NVIDIA control panel (right-click on desktop) to turn off:
+
+> `3D Setting` > `3D Setting Management` > `Anti-Aliasing FXAA`
+
+Then, restart VMagicMirror.

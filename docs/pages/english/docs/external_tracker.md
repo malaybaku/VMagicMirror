@@ -7,14 +7,33 @@ lang_prefix: /en/
 
 [English](../../docs/external_tracker)
 
-# Tips: Exteral Tracker App
+# Exteral Tracker App
 
 `VMagicMirror` v1.1.0 and later supports external tracking apps to move the avatar.
 
 Currently only iOS application is supported.
 
-#### 
+
+#### Advantage and Limitation
 {: .doc-sec2 }
+
+Please check following points about external tracker app.
+
+Advantages:
+
+**Precise Tracking**: Much more precise than VMagicMirror's webcam based tracking.
+
+**Less CPU usage**: Heavy task of face tracking does not run anymore on PC (, instead iOS device take it).
+
+**Can Detach Webcam**: You can detach webcam if you only use this feature. This will prevent unexpected face exposure to others, when your screen is shared.
+
+Limitations:
+
+**Device Required**: You need Face ID supported iPhone or iPad. (cf: [Supported Models](https://support.apple.com/en-us/HT209183))
+
+**Less Stable**: Less stable than conventional webcam based tracking. This is because of the inter-device LAN communication.
+
+**Risk of Bug by App Update**: If iOS application have some update, it maybe lead issue.
 
 
 #### Preparation

@@ -11,7 +11,7 @@ lang_prefix: /en/
 
 This page introduces two advanced settings in VMagicMirror.
 
-For the basic usage please see [Get Started](./get_started).
+For the basic usage, please see [Get Started](./get_started).
 
 
 #### External Tracker
@@ -19,10 +19,9 @@ For the basic usage please see [Get Started](./get_started).
 
 VMagicMirror v1.1.0 and later version supports external application to move avatar.
 
-v1.1.0 supports iOS app `iFacialMocap`.
+Currently v1.1.0 supports iOS app `iFacialMocap`.
 
-Please see the detail in [External Tracker App](./docs/external_tracker).
-
+Please see the detail at [External Tracker App](./docs/external_tracker).
 
 
 #### Setting Window

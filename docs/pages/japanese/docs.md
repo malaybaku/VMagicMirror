@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Documents
+title: Docs
 permalink: /docs
 ---
 
@@ -9,6 +9,7 @@ permalink: /docs
 # 詳細設定
 
 ここでは[Get Started](./get_started)で紹介したものより高度な機能を2つ紹介します。
+
 
 #### 外部トラッキング (External Tracker)
 {: .doc-sec2 }

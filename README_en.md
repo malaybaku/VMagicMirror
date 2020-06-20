@@ -1,12 +1,14 @@
 
 [Japanese Readme](https://github.com/malaybaku/VMagicMirror/blob/master/README.md)
 
-# VMagicMirror
+![Logo](./docs/images/vmagicmirror_logo.png)
 
-v0.9.9a
+Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
+
+v1.0.0
 
 * Author: Baxter
-* 2020/Apr/19
+* 2020/May/22
 
 The VRM avatar application without any special device.
 

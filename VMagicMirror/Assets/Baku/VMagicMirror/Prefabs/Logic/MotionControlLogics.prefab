@@ -248,7 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f8806990fea2f14bbc57ec6fddd312e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goalRate: -0.05
+  goalRate: -0.02
   timeFactor: 0.2
   speedDumpFactor: 0.95
   speedLerpFactor: 12

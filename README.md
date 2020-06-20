@@ -1,11 +1,13 @@
 [English Readme](https://github.com/malaybaku/VMagicMirror/blob/master/README_en.md)
 
-# VMagicMirror
+![Logo](./docs/images/vmagicmirror_logo.png)
 
-v0.9.9a
+Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
+
+v1.0.0
 
 * 作成: 獏星(ばくすたー)
-* 2020/04/19
+* 2020/05/22
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 

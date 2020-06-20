@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using VRM;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -13,12 +14,29 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class WordToMotionBlendShape : MonoBehaviour
     {
+        private static readonly BlendShapeKey[] _lipSyncKeys = new []
+        {
+            new BlendShapeKey(BlendShapePreset.A),
+            new BlendShapeKey(BlendShapePreset.I),
+            new BlendShapeKey(BlendShapePreset.U),
+            new BlendShapeKey(BlendShapePreset.E),
+            new BlendShapeKey(BlendShapePreset.O),
+        };
+        
         private VRMBlendShapeProxy _proxy = null;
         private BlendShapeKey[] _allBlendShapeKeys = new BlendShapeKey[0];
 
         private readonly Dictionary<BlendShapeKey, float> _blendShape = new Dictionary<BlendShapeKey, float>();
 
         private bool _reserveBlendShapeReset = false;
+
+        private EyeBoneResetter _eyeBoneResetter;
+        
+        [Inject]
+        public void Initialize(EyeBoneResetter eyeBoneResetter)
+        {
+            _eyeBoneResetter = eyeBoneResetter;
+        }
         
         public void Initialize(VRMBlendShapeProxy proxy)
         {
@@ -36,6 +54,9 @@ namespace Baku.VMagicMirror
             _allBlendShapeKeys = new BlendShapeKey[0];
         }
 
+        /// <summary> trueの場合、このスクリプトではリップシンクのブレンドシェイプに書き込みを行いません。 </summary>
+        public bool SkipLipSyncKeys { get; set; }
+        
         /// <summary>
         /// Word To Motionによるブレンドシェイプを指定します。
         /// </summary>
@@ -71,7 +92,8 @@ namespace Baku.VMagicMirror
             {
                 for (int i = 0; i < _allBlendShapeKeys.Length; i++)
                 {
-                    _proxy.AccumulateValue(_allBlendShapeKeys[i], 0f);
+                    var key = _allBlendShapeKeys[i];
+                    _proxy.AccumulateValue(key, 0f);                        
                 }
                 _proxy?.Apply();
                 _reserveBlendShapeReset = false;
@@ -93,18 +115,25 @@ namespace Baku.VMagicMirror
             //実際に適用したい値を入れなおして再度Applyすると完全上書きになる
             for(int i = 0; i < _allBlendShapeKeys.Length; i++)
             {
-                if (_blendShape.TryGetValue(_allBlendShapeKeys[i], out float value))
+                var key = _allBlendShapeKeys[i];
+                //リップシンクをそのままにするかどうかは場合による
+                if (SkipLipSyncKeys && _lipSyncKeys.Contains(key))
                 {
-                    _proxy.AccumulateValue(_allBlendShapeKeys[i], value);
+                    continue;
+                }
+                    
+                if (_blendShape.TryGetValue(key, out float value))
+                {
+                    _proxy.AccumulateValue(key, value);
                 }
                 else
                 {
                     //完全な排他制御をしたいので、指定がない値は明示的にゼロ書き込みする
-                    _proxy.AccumulateValue(_allBlendShapeKeys[i], 0);
+                    _proxy.AccumulateValue(key, 0);
                 }
             }
             _proxy.Apply();
+            _eyeBoneResetter.ReserveReset = true;
         }
-
     }
 }

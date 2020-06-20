@@ -9,9 +9,9 @@ lang_prefix: /en/
 
 # Tips
 
-Here shows several tips about `VMagicMirror`. 
+Here shows several tips about `VMagicMirror`, including advanced features without user interface support.
 
-For the basic usage, please see [Get Started](./get_started).
+Basic usage is in [Get Started](./get_started), and setting window detail is in [Docs](./docs).
 
 [Use VRoid Hub Avatar](./tips/use_vroid_hub)
 
@@ -24,6 +24,8 @@ For the basic usage, please see [Get Started](./get_started).
 [Load Previous Version Setting](./tips/load_prev_setting)
 
 [Change Keyboard and Touchpad Appearance](./tips/change_textures)
+
+[Load Background Image](./tips/load_background_image)
 
 [Use VMagicMirror on Mac](./tips/use_on_mac)
 

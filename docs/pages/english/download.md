@@ -22,7 +22,7 @@ You can download source code on [GitHub](https://github.com/malaybaku/VMagicMirr
 ### Environments
 {: .doc-sec2 }
 
-Supports Windows PC.
+Supports Windows 10. Windows 8.1 or previous OS, and 32bit edition might not work.
 
 For the optional devices:
 

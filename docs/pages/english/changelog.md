@@ -9,6 +9,17 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v1.1.0
+
+2020/06/26
+
+* Add: External tracking app (iFacialMocap) collaboration.
+* Add: Option to continue lipsync during Word to Motion face expression is applied.
+* Add: Keyboard typing randomize mode (setting window `Motion` > `Arm`).
+* Add: Load background image feature, when the file `background.jpg` or `background.png` is put on the folder where `VMagicMirror.exe` exists.
+* Fix: Fix issue the free layout edit result often fails to be saved.
+
+
 #### v1.0.0
 
 2020/05/22

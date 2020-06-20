@@ -43,9 +43,9 @@ For the preparetion check following:
 
 1. PC and the tracking device (iPhone/iPad) are in the same network (LAN).
 
-2. LAN environment is stable
+2. LAN environment is stable.
 
-3. There is a stand for the device, so that the device can capture your face via front camera.
+3. There is a iPhone / iPad stand, so that the device can capture your face via front camera.
 
 #### How to Setup
 {: .doc-sec2 }
@@ -53,7 +53,7 @@ For the preparetion check following:
 Select `Ex Tracker` tab on the control panel, then turn on `Enable External Tracker`.
 
 <div class="row">
-{% include docimg.html file="./images/tips/ex_tracker_00_enable_feature.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_00_enable_feature.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
 By checking this, VMagicMirror become ready to connect with external apps.
@@ -62,7 +62,7 @@ Please see per-app specific setup process.
 
 [iFacialMocap](./external_tracker_ifacialmocap)
 
-(*when other app supported, the link will come here.)
+(*This area will be updated when other app supported.)
 
 
 #### Use LipSync with External Tracking App
@@ -71,12 +71,12 @@ Please see per-app specific setup process.
 Check `Apply LipSync using External Tracker Data`, to utilize mouth motion capture from the external app.
 
 <div class="row">
-{% include docimg.html file="./images/tips/ex_tracker_40_replace_lipsync.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_40_replace_lipsync.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
 This feature turns off microphone based lipsync automatically, which leads less CPU load on the PC.
 
-There is also another feature that, the external app gets mouth shape by camera, so your motion will be reflected when your mouth moves silently.
+There is also another feature that, the external app gets mouth shape by camera, so your motion will be reflected even when your mouth moves silently.
 
 
 On the other hand, the tracking precision decreases when the device cannot see your mouth (mainly because of mic or hop guard).
@@ -90,10 +90,10 @@ In this case turn off `Apply LipSync using External Tracker Data` to use convent
 Face Switch is a feature to switch avatar's face by user expression.
 
 <div class="row">
-{% include docimg.html file="./images/tips/ex_tracker_50_face_switch.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_50_face_switch.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-You need to setup 3 parameters "threshold", "BlendShape", and "Keep Lipsync or not".
+Face switch has parameters to setup.
 
 `Threshold`: Select from 10% to 90%, to specify when the face switch is triggered. Higher value means you have to more clear expression.
 

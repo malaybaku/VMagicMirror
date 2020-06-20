@@ -42,14 +42,14 @@ Go to PC and `Ex Tracker` tab > `Connect to App` > select `iFacialMocap`.
 Then input the IP address shown in iOS device, and click `Connect` to complete connection.
 
 <div class="row">
-{% include docimg.html file="./images/tips/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
 If your avatar looks wrong orientatoin please execute `Cralibrate Face Pose` to calibrate face position.
 
 <div class="row">
-{% include docimg.html file="./images/tips/ex_tracker_20_calibration_before.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/tips/ex_tracker_30_calibration_after.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_20_calibration_before.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_30_calibration_after.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
 

@@ -1,15 +1,15 @@
 ---
 layout: page
 title: Connect to iFacialMocap
-permalink: /en/tips/external_tracker_ifacialmocap
+permalink: /en/docs/external_tracker_ifacialmocap
 lang_prefix: /en/
 ---
 
-[English](../../tips/external_tracker_ifacialmocap)
+[English](../../docs/external_tracker_ifacialmocap)
 
 # Connect to iFacialMocap
 
-Show how to setup iFacialMocap for [Using External Tracker App](./external_tracker).
+Show how to setup iFacialMocap for [External Tracker App](./external_tracker).
 
 
 #### What is iFacialMocap?
@@ -19,7 +19,7 @@ iFacialMocap is a paid application for face tracking in iOS.
 
 This required Face ID supported devices. See the following page to get what devices are supported.
 
-[Face ID に対応している iPhone と iPad のモデル](https://support.apple.com/en-us/HT209183)
+[iPhone and iPad models that support Face ID](https://support.apple.com/en-us/HT209183)
 
 iFacialMocap is available on App Store.
 
@@ -56,15 +56,15 @@ If your avatar looks wrong orientatoin please execute `Cralibrate Face Pose` to 
 #### Troubleshooting
 {: .doc-sec2 }
 
-##### Q1. セットアップが正しいはずなのに接続に失敗する
+##### Q1. Fails to connect
 
-A. Windowsファイアウォールの設定によって、VMagicMirrorとiOSの通信が不許可となっている可能性があります。
+A. Windows Firewall might block the connection between the PC and iOS device.
 
-Windowsのコントロールパネルで`ファイアウォール`を検索して`Windows Defender ファイアウォール`項目を開き、`詳細設定`を選びます。
+Open Firewall settings in Windows control panel and open security management window.
 
-表示されたセキュリティ管理ウィンドウで`受信の規則`から`vmagicmirror.exe`を探し、`プロパティ`でウィンドウを開きます。
+In the `Receive Rule`, find `vmagicmirror.exe` and open `Properties`.
 
-`接続を許可する`を選択して`OK`でウィンドウを閉じ、`vmagicmirror.exe`の左側が緑色のチェックマークになれば設定完了です。
+Check `Allow connection` and `OK` to close. After setup, confirm the left side mark of `vmagicmirror.exe` becomes green check.
 
 <div class="row">
 {% include docimg.html file="./images/tips/firewall_open_settings.png" customclass="col l4 m4 s6" imgclass="fit-doc-img" %}
@@ -72,22 +72,21 @@ Windowsのコントロールパネルで`ファイアウォール`を検索し�
 {% include docimg.html file="./images/tips/firewall_allow_connection.png" customclass="col l4 m4 s6" imgclass="fit-doc-img" %}
 </div>
 
-**NOTE:** `受信の規則`に複数の`vmagicmirror.exe`があった場合、すべてに対して同じ操作を行ってください。
+**NOTE:** If you find multiple `vmagicmirror.exe` items in the setting, please setup for all.
 
 
-##### Q2. Window用に配布されているiFacialMocapのソフトは必要？
+##### Q2. Do I also have to download iFacialMocap Window software?
 
-A. 不要です。VMagicMirror自体がiOS端末と直接通信するためです。
+A. No, because VMagicMirror directly connects to iOS device.
 
-もしWindows用のiFacialMocapソフトをPCへインストール済みの場合、VMagicMirrorの使用中には立ち上げないよう注意してください。
-
-
-##### Q3. 2回目以降の使用時に注意することは？
-
-A. 前回の使用時とことなる位置にiPhoneやiPadを置いた場合、キャリブレーションをやり直す必要があります。
+Please avoid to start iFacialMocap windows software during using VMagicMirror, as it will lead to data receive communication issue.
 
 
-##### Q3. iOS端末の調子が悪い
+##### Q3. Is there something to be careful in 2nd or later use?
 
-A. `iFacialMocap`のアプリを完全に終了したのち、`VMagicMirrorと接続する`の手順に沿って再度接続してください。
+A. If you have put the iOS device other place than previous time, avatar maybe looks left or right. In this case please go through calibration process again.
 
+
+##### Q3. iOS device works incorrectly, how to recover?
+
+A. Quit `iFacialMocap` app, and try `Connect to VMagicMirror` process again.

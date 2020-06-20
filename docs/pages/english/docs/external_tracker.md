@@ -1,19 +1,20 @@
 ---
 layout: page
-title: Using External Tracker App
-permalink: /en/tips/external_tracker
+title: External Tracker App
+permalink: /en/docs/external_tracker
 lang_prefix: /en/
 ---
 
-[English](../../tips/external_tracker)
+[English](../../docs/external_tracker)
 
-# Tips: Using Exteral Tracker App
+# Tips: Exteral Tracker App
 
 `VMagicMirror` v1.1.0 and later supports external tracking apps to move the avatar.
 
-Currently only iOS application supported.
+Currently only iOS application is supported.
 
-*(may some tweet will come here, to show how the feature works.)
+#### 
+{: .doc-sec2 }
 
 
 #### Preparation

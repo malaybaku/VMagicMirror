@@ -1,14 +1,14 @@
 ---
 layout: page
 title: iFacialMocapとの連携
-permalink: /tips/external_tracker_ifacialmocap
+permalink: /docs/external_tracker_ifacialmocap
 ---
 
-[English](../en/tips/external_tracker_ifacialmocap)
+[English](../en/docs/external_tracker_ifacialmocap)
 
 # iFacialMocapとの連携
 
-[外部トラッキングアプリとの連携](./external_tracker)のうち、特にiFacialMocapとVMagicMirrorを連携する方法です。
+[外部トラッキングアプリとの連携](./external_tracker)のうち、特にiFacialMocapとVMagicMirrorを連携する方法にかんするページです。
 
 
 #### iFacialMocapとは
@@ -44,7 +44,7 @@ iOS端末のアプリ上に表示されたIPアドレスを入力し、`Connect`
 {% include docimg.html file="./images/tips/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-接続後にアバターが横を向いてしまった場合、ユーザーが真正面を向いた状態で「現在位置で顔をキャリブレーション」をクリックすることにより、アバターの顔の向きをリセットします。
+接続後にアバターが横を向いてしまった場合、ユーザーが真正面を向いた状態で`現在位置で顔をキャリブレーション`をクリックし、アバターの顔の向きをリセットします。
 
 <div class="row">
 {% include docimg.html file="./images/tips/ex_tracker_20_calibration_before.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
@@ -83,10 +83,10 @@ A. 不要です。VMagicMirror自体がiOS端末と直接通信するためで�
 
 ##### Q3. 2回目以降の使用時に注意することは？
 
-A. 前回の使用時とことなる位置にiPhoneやiPadを置いた場合、キャリブレーションをやり直す必要があります。
+A. 前回の使用時と異なる位置にiPhoneやiPadを置いた場合、顔の方向が間違って表示されます。この場合はキャリブレーションをやり直してください。
 
 
 ##### Q3. iOS端末の調子が悪い
 
-A. `iFacialMocap`のアプリを完全に終了したのち、`VMagicMirrorと接続する`の手順に沿って再度接続してください。
+A. `iFacialMocap`のアプリを完全に終了したのち、このページの`VMagicMirrorと接続する`の手順に沿って再び接続してください。
 

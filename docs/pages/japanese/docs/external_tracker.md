@@ -1,16 +1,20 @@
 ---
 layout: page
 title: 外部トラッキングアプリとの連携
-permalink: /tips/external_tracker
+permalink: /docs/external_tracker
 ---
 
-[English](../en/tips/external_tracker)
+[English](../en/docs/external_tracker)
 
 # Tips: 外部トラッキングアプリとの連携
 
 `VMagicMirror` v1.1.0以降ではWebカメラを用いる代わり、外部トラッキングアプリを用いてもアバターを操作できます。
 
 v1.1.0の時点ではiOSアプリにのみ対応しています。
+
+#### 外部トラッキングアプリとの連携
+{: .doc-sec2 }
+
 
 ※tweetをここに貼るかもしれません
 

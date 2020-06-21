@@ -47,6 +47,11 @@ For the preparetion check following:
 
 3. There is a iPhone / iPad stand, so that the device can capture your face via front camera.
 
+4. If you wear glasses put off, or use one with thin frame.
+
+Glasses maybe leads less eye move tracking preciseness, including blink tracking.
+
+
 #### How to Setup
 {: .doc-sec2 }
 

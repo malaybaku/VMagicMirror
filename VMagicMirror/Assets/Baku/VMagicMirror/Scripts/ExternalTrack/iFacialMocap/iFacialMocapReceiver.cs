@@ -2,7 +2,6 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using DG.Tweening;
@@ -17,6 +16,9 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
     {
         private const float CalibrateReflectDuration = 0.6f;
         private const int PortNumber = 49983;
+
+        //テキストのGCAllocを避けるやつ
+        private readonly StringBuilder _sb = new StringBuilder(2048);
         
         private readonly RecordFaceTrackSource _faceTrackSource = new RecordFaceTrackSource();
         public override IFaceTrackSource FaceTrackSource => _faceTrackSource;
@@ -38,8 +40,6 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 lock (_rawMessageLock) _rawMessage = value;
             }
         }
-        //NOTE: 最終的に無くてよい。あくまでデバッグ用なので
-        private ConcurrentQueue<string> _messages = new ConcurrentQueue<string>();
         
         private readonly Dictionary<string, float> _blendShapes = new Dictionary<string, float>()
         {
@@ -121,11 +121,6 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         
         private void Update()
         {
-            while (_messages.TryDequeue(out string msg))
-            {
-                //Debug.Log("iFacialMocap: " + msg);
-            }
-
             //明確にStartしてからStopするまでの途中でのみデシリアライズを行うようガード
             if (_cts == null)
             {
@@ -133,14 +128,16 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             }
 
             string message = RawMessage;
-            if (!string.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message))
             {
-                RawMessage = "";
-                DeserializeFaceMessage(message);
-                //Lerpファクタが1ぴったりならLerp要らん(しかもその状況は発生頻度が高い)、みたいな話です。
-                ApplyDeserializeResult(UpdateApplyRate < 0.999f);
-                RaiseFaceTrackUpdated();
+                return;
             }
+            
+            RawMessage = "";
+            DeserializeMessageWithLessGcAlloc(message);
+            //Lerpファクタが1ぴったりならLerp要らん(しかもその状況は発生頻度が高い)、みたいな話です。
+            ApplyDeserializeResult(UpdateApplyRate < 0.999f);
+            RaiseFaceTrackUpdated();
         }
 
         private void OnDestroy()
@@ -258,7 +255,6 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                     byte[] data = client.Receive(ref remoteEndPoint);
                     //NOTE: GetStringをメインスレッドでやるようにしたほうが負荷が下がるかもしれない(UDPの受信が超高速で回ってたら検討すべき)
                     string message = Encoding.ASCII.GetString(data);
-                    _messages.Enqueue(message);
                     RawMessage = message;
                 }
                 catch (Exception ex)
@@ -281,9 +277,9 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         
         #region デシリアライズまわり
         
+        //NOTE: この処理が何気にGCAlloc多いので書き直した関数を使ってます(直した後の処理もちょっと重いけど)
         private void DeserializeFaceMessage(string msg)
         {
-            //NOTE: この処理Allocちょっと多いので注意。多分ボトルネックにはならないだろ、と思って適当にやってるけど。
             var phrases = msg.Split('=');
             if (phrases.Length != 2)
             {
@@ -325,6 +321,165 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 }
             }
 
+        }
+
+        //string.Split禁止バージョン
+        private void DeserializeMessageWithLessGcAlloc(string msg)
+        {
+            _sb.Clear();
+            //サニタイズとしてスペース文字を全部消しながら詰める
+            for (int i = 0; i < msg.Length; i++)
+            {
+                if (msg[i] != ' ')
+                {
+                    _sb.Append(msg[i]);
+                }
+            }
+
+            //"="の位置を調べつつvalidate
+            int equalIndex = FindEqualCharIndex(_sb);
+            if (equalIndex == -1 || equalIndex == _sb.Length - 1)
+            {
+                return;
+            }
+            
+            //validateされたらブレンドシェイプと頭部回転をチェック
+            ParseBlendShapes(_sb, 0, equalIndex);
+            ParseRotations(_sb, equalIndex + 1, _sb.Length);
+         
+            //NOTE: これだけpureな処理
+            int FindEqualCharIndex(StringBuilder src)
+            {
+                int findCount = 0;
+                int result = -1;
+                for (int i = 0; i < src.Length; i++)
+                {
+                    if (src[i] == '=')
+                    {
+                        if (findCount == 0)
+                        {
+                            findCount = 1;
+                            result = i;
+                        }
+                        else
+                        {
+                            return -1;
+                        }
+                    }
+                }
+                return result;
+            }
+            
+            void ParseBlendShapes(StringBuilder src,int startIndex, int endIndex)
+            {
+                int sectionStartIndex = startIndex;
+                for (int i = startIndex; i < endIndex; i++)
+                {
+                    if (src[i] != '|')
+                    {
+                        continue;
+                    }
+
+                    //0 ~ 100のブレンドシェイプが載っている部分を引っ張り出す。
+                    //Substringの時点でこんな感じのハズ(スペースは入ってたり入ってなかったり):
+                    //"L_eyeSquint-42"
+                    string section = src.ToString(sectionStartIndex, i - sectionStartIndex);
+                    sectionStartIndex = i + 1;
+
+                    for (int j = 0; j < section.Length; j++)
+                    {
+                        if (section[j] != '-')
+                        {
+                            continue;
+                        }
+
+                        string key = section.Substring(0, j);
+                        if (int.TryParse(section.Substring(j + 1), out int blendShapeValue))
+                        {
+                            _blendShapes[key] = blendShapeValue * 0.01f;
+                        }
+                    }
+                }
+            }
+
+            void ParseRotations(StringBuilder src, int startIndex, int endIndex)
+            {  
+                int sectionStartIndex = startIndex;
+                for (int i = startIndex; i < endIndex; i++)
+                {
+                    //NOTE: 末尾要素の後にもちゃんと"|"が入ってます
+                    if (src[i] != '|')
+                    {
+                        continue;
+                    }
+
+                    //個別のデータはこんな感じ
+                    //"head # 1.00,-2.345,6.789"
+                    string section = src.ToString(sectionStartIndex, i - sectionStartIndex);
+                    sectionStartIndex = i + 1;
+
+                    //区切り文字の位置をピックアップしていく
+                    int hashIndex = -1;
+                    int xCommaIndex = -1;
+                    int yCommaIndex = -1;
+                    string key = "";
+
+                    for (int j = 0; j < section.Length; j++)
+                    {
+                        var c = section[j];
+                        if (c == '#')
+                        {
+                            hashIndex = j;
+                            key = section.Substring(0, hashIndex);
+                            if (key != "head")
+                            {
+                                key = "";
+                                //頭のデータではない: このforの後のif文で弾いて無視
+                                break;
+                            }
+                        }
+
+                        if (c == ',')
+                        {
+                            if (xCommaIndex == -1)
+                            {
+                                xCommaIndex = j;
+                            }
+                            else
+                            {
+                                yCommaIndex = j;
+                            }
+                        }
+                    }
+
+                    //キーが欲しいのと違う
+                    if (string.IsNullOrEmpty(key))
+                    {
+                        continue;
+                    }
+                    
+                    //データが不正だったケース
+                    if (hashIndex < 0 || xCommaIndex < 0 || yCommaIndex < 0)
+                    {
+                        continue;
+                    }
+
+                    //後半の数値のとこを取得
+                    if (float.TryParse(
+                            section.Substring(hashIndex + 1, xCommaIndex - hashIndex - 1),
+                            out var x) &&
+                        float.TryParse(
+                            section.Substring(xCommaIndex + 1, yCommaIndex - xCommaIndex - 1),
+                            out var y) &&
+                        float.TryParse(
+                            section.Substring(yCommaIndex + 1),
+                            out var z)
+                    )
+                    {
+                        _rotationData[key] = new Vector3(x, y, z);
+                    }
+                }
+            }
         }
 
         private void ApplyDeserializeResult()

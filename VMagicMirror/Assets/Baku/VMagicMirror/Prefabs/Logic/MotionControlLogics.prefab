@@ -326,7 +326,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c15deca4e07f524b8e9cdcb40566e3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angleApplyFactor: 0.8
+  angleApplyFactor: 1
+  pitchFactor: 0.8
+  pitchLimitDeg: 25
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,6 +16,13 @@ namespace Baku.VMagicMirror
         [Range(0f, 1f)]
         [SerializeField] private float angleApplyFactor = 0.8f;
 
+        [Range(0f, 1f)]
+        [SerializeField] private float pitchFactor = 0.8f;
+        
+        [Tooltip("ピッチにのみ別途適用する角度制限")]
+        [Range(0f, 40f)]
+        [SerializeField] private float pitchLimitDeg = 25f;
+        
         public bool IsActive { get; set; } = true;
 
         private bool _hasModel = false;
@@ -55,9 +62,22 @@ namespace Baku.VMagicMirror
             }
             
             _externalTracker.HeadRotation.ToAngleAxis(out float rawAngle, out var rawAxis);
-
-            //ちょっと角度を弱めつつ、鏡像反転する
+            
+            //角度を0側に寄せる: 動きが激しすぎるとアレなので
             var rot = Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
+            
+            //ピッチだけ追加で絞る
+            var pitchCheck = rot * Vector3.forward;
+            var pitchAngle = Mathf.Asin(-pitchCheck.y) * Mathf.Rad2Deg;
+
+            var reducedPitch = Mathf.Clamp(pitchAngle * pitchFactor, -pitchLimitDeg, pitchLimitDeg);
+            var pitchResetRot = Quaternion.AngleAxis(
+                reducedPitch - pitchAngle,
+                Vector3.right
+                );
+            rot *= pitchResetRot;
+
+            //鏡像反転
             rot.y *= -1;
             rot.z *= -1;
 

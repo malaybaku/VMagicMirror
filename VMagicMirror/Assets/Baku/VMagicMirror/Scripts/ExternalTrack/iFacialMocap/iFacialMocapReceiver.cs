@@ -257,9 +257,10 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                     string message = Encoding.ASCII.GetString(data);
                     RawMessage = message;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    LogOutput.Instance.Write(ex);
+                    //ここは通信待ち状態とかで頻繁に来る(SocketExceptionが出る)ので、ログを出してはいけない
+                    //LogOutput.Instance.Write(ex);
                 }
             }
 

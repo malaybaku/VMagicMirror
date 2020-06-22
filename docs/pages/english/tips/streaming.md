@@ -33,6 +33,8 @@ If your avatar has green part, you might need to change chromakey color. In sett
 
 Keyboard and touchpad objects are semi-transparent and thus maybe looks not good, when in composit image. In this case hide them, or replace the device textures (see [Change Device Textures](./change_textures)).
 
+**NOTE:** OBS has one more useful choice of "Game Capture". Game capture supports to capture transparent window as is, and this feature will work very well for VMagicMirror with transparent background. If your PC has enough capacity to do so, please consider using game capture instead of normal window capture.
+
 #### Check CPU Usage
 {: .doc-sec2 }
 

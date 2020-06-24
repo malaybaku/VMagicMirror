@@ -23,8 +23,26 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         private readonly RecordFaceTrackSource _faceTrackSource = new RecordFaceTrackSource();
         public override IFaceTrackSource FaceTrackSource => _faceTrackSource;
         public override bool SupportHandTracking => false;
-        public override bool SupportFacePositionOffset => false;
-        public override Quaternion HeadRotation => SmoothOffsetRotation * _faceTrackSource.FaceTransform.Rotation;
+        public override bool SupportFacePositionOffset => true;
+        public override Quaternion HeadRotation 
+            => _smoothOffsetRotation * _faceTrackSource.FaceTransform.Rotation;
+
+        public override Vector3 HeadPositionOffset
+        {
+            get
+            {
+                if (_hasReceiveRawPosition)
+                {
+                    return 
+                        _smoothOffsetRotation * 
+                        (_smoothOffsetPosition + _faceTrackSource.FaceTransform.Position);
+                }
+                else
+                {
+                    return Vector3.zero;
+                }
+            }
+        }
 
         private CancellationTokenSource _cts = null;
         private readonly object _rawMessageLock = new object();
@@ -118,6 +136,9 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         {
             [iFacialMocapRotationNames.head] = Vector3.zero,
         };
+
+        private bool _hasReceiveRawPosition = false;
+        private Vector3 _rawPosition = Vector3.zero;
         
         private void Update()
         {
@@ -149,7 +170,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         {
             _faceTrackSource.FaceTransform.Rotation = Quaternion.Slerp(
                 _faceTrackSource.FaceTransform.Rotation,
-                Quaternion.Inverse(SmoothOffsetRotation), 
+                Quaternion.Inverse(_smoothOffsetRotation), 
                 1 - breakRate
             );
             
@@ -257,9 +278,10 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                     string message = Encoding.ASCII.GetString(data);
                     RawMessage = message;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    LogOutput.Instance.Write(ex);
+                    //ここは通信待ち状態とかで頻繁に来る(SocketExceptionが出る)ので、ログを出してはいけない
+                    //LogOutput.Instance.Write(ex);
                 }
             }
 
@@ -345,7 +367,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             
             //validateされたらブレンドシェイプと頭部回転をチェック
             ParseBlendShapes(_sb, 0, equalIndex);
-            ParseRotations(_sb, equalIndex + 1, _sb.Length);
+            ParseHeadData(_sb, equalIndex + 1, _sb.Length);
          
             //NOTE: これだけpureな処理
             int FindEqualCharIndex(StringBuilder src)
@@ -402,7 +424,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 }
             }
 
-            void ParseRotations(StringBuilder src, int startIndex, int endIndex)
+            void ParseHeadData(StringBuilder src, int startIndex, int endIndex)
             {  
                 int sectionStartIndex = startIndex;
                 for (int i = startIndex; i < endIndex; i++)
@@ -414,69 +436,43 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                     }
 
                     //個別のデータはこんな感じ
-                    //"head # 1.00,-2.345,6.789"
+                    //"head#1.00,-2.345,6.789"
                     string section = src.ToString(sectionStartIndex, i - sectionStartIndex);
                     sectionStartIndex = i + 1;
-
-                    //区切り文字の位置をピックアップしていく
-                    int hashIndex = -1;
-                    int xCommaIndex = -1;
-                    int yCommaIndex = -1;
-                    string key = "";
-
-                    for (int j = 0; j < section.Length; j++)
-                    {
-                        var c = section[j];
-                        if (c == '#')
-                        {
-                            hashIndex = j;
-                            key = section.Substring(0, hashIndex);
-                            if (key != "head")
-                            {
-                                key = "";
-                                //頭のデータではない: このforの後のif文で弾いて無視
-                                break;
-                            }
-                        }
-
-                        if (c == ',')
-                        {
-                            if (xCommaIndex == -1)
-                            {
-                                xCommaIndex = j;
-                            }
-                            else
-                            {
-                                yCommaIndex = j;
-                            }
-                        }
-                    }
-
-                    //キーが欲しいのと違う
-                    if (string.IsNullOrEmpty(key))
-                    {
-                        continue;
-                    }
-                    
-                    //データが不正だったケース
-                    if (hashIndex < 0 || xCommaIndex < 0 || yCommaIndex < 0)
+                    //IMPORTANT: iFacialMocap 1.0.6からrot + positionが飛んでくるようになった。
+                    //この差分を真剣に捌くのはすげー辛いので、適当にやります。
+                    if (!section.StartsWith("head#"))
                     {
                         continue;
                     }
 
-                    //後半の数値のとこを取得
-                    if (float.TryParse(
-                            section.Substring(hashIndex + 1, xCommaIndex - hashIndex - 1),
-                            out var x) &&
-                        float.TryParse(
-                            section.Substring(xCommaIndex + 1, yCommaIndex - xCommaIndex - 1),
-                            out var y) &&
-                        float.TryParse(
-                            section.Substring(yCommaIndex + 1),
-                            out var z)
-                    )
+                    var items = section.Substring(5).Split(',');
+                    if (items.Length > 5 && 
+                        float.TryParse(items[0], out var rx) &&
+                        float.TryParse(items[1], out var ry) &&
+                        float.TryParse(items[2], out var rz) &&
+                        float.TryParse(items[3], out var px) &&
+                        float.TryParse(items[4], out var py) &&
+                        float.TryParse(items[5], out var pz))
                     {
-                        _rotationData[key] = new Vector3(x, y, z);
+                        _rotationData[iFacialMocapRotationNames.head] = new Vector3(rx, ry, rz);
+                        _hasReceiveRawPosition = true;
+                        _rawPosition = new Vector3(px, py, pz);
+                    }
+                    else if (
+                        items.Length > 2 &&
+                        float.TryParse(items[0], out var x) &&
+                        float.TryParse(items[1], out var y) &&
+                        float.TryParse(items[2], out var z))
+                    {
+                        _rotationData[iFacialMocapRotationNames.head] = new Vector3(x, y, z);
+                        _hasReceiveRawPosition = false;
+                        _rawPosition = Vector3.zero;
+                    }
+                    else
+                    {
+                        _hasReceiveRawPosition = false;
+                        _rawPosition = Vector3.zero;
                     }
                 }
             }
@@ -486,6 +482,8 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         {
             _faceTrackSource.FaceTransform.Rotation =
                 Quaternion.Euler(_rotationData[iFacialMocapRotationNames.head]);
+            _faceTrackSource.FaceTransform.HasValidPosition = _hasReceiveRawPosition;
+            _faceTrackSource.FaceTransform.Position = _rawPosition;
             
             //目
             {
@@ -576,6 +574,14 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 UpdateApplyRate
                 );
 
+            _faceTrackSource.FaceTransform.HasValidPosition = _hasReceiveRawPosition;
+            //NOTE: 有効か無効かによらずLerpしとく
+            _faceTrackSource.FaceTransform.Position = Vector3.Lerp(
+                _faceTrackSource.FaceTransform.Position,
+                _rawPosition,
+                UpdateApplyRate
+                );
+
             //目
             {
                 _faceTrackSource.Eye.LeftBlink = Mathf.Lerp(_faceTrackSource.Eye.LeftBlink,_blendShapes[iFacialMocapBlendShapeNames.eyeBlinkLeft], UpdateApplyRate);
@@ -654,52 +660,24 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 
         public override void Calibrate()
         {
-            //NOTE: iFacialMocapはロールとピッチが補正済みの姿勢を送ってくる。
-            //デバイス座標的な解釈としては、iOS機器がつねに垂直に立っているものと捉えたうえで
-            //デバイスの方向をキャリブしてるんですよ、と考えるとよい
-            YawOffset = -_rotationData[iFacialMocapRotationNames.head].y;
+            //NOTE: iFacialMocapは端末座標系でpos/rotを送ってくる。ので、記録すべきデータはそのpos/rotそのもの。
+            RotOffset = Quaternion.Inverse(Quaternion.Euler(_rotationData[iFacialMocapRotationNames.head]));
+            PosOffset = -_rawPosition;
         }
-
-
-        //NOTE: キャリブ情報の実態 = トラッカーデバイスがUnity空間にあったとみなした場合のワールド回転をオイラー角表現したもの。
-        //こういう値だとUnity空間上にモノを置いて図示する余地があり、筋がいい
-        private float _yawOffset = 0;
-        private float YawOffset
-        {
-            get => _yawOffset;
-            set
-            {
-                if (Mathf.Abs(_yawOffset - value) < Mathf.Epsilon)
-                {
-                    return;
-                }
-                
-                _yawOffset = value;
-                _yawOffsetTween?.Kill();
-                _yawOffsetTween = DOTween.To(
-                    () => _smoothYawOffset,
-                    v => _smoothYawOffset = v,
-                    _yawOffset,
-                    CalibrateReflectDuration
-                )
-                    .SetEase(Ease.OutCubic);
-            }
-        }
-
-        //NOTE: この値はふだんYawOffsetに一致するが、
-        //キャリブレーション時などに値が急に飛ばないようTweenつきでアップデートされる
-        private float _smoothYawOffset = 0;
-        private Quaternion SmoothOffsetRotation => Quaternion.AngleAxis(_smoothYawOffset, Vector3.up);
-        //NOTE: 連打とかでTweenが多重に走るのを防止するやつです
-        private TweenerCore<float, float, FloatOptions> _yawOffsetTween = null;
-        
+      
         public override string CalibrationData
         {
             get
             {
+                var rEuler = _rotOffset.eulerAngles;
                 var data = new IFacialMocapCalibrationData()
                 {
-                    yawOffset = YawOffset,
+                    rx = rEuler.x,
+                    ry = rEuler.y,
+                    rz = rEuler.z,
+                    px = _posOffset.x,
+                    py = _posOffset.y,
+                    pz = _posOffset.z,
                 };
                 return JsonUtility.ToJson(data);
             }
@@ -708,7 +686,8 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 try
                 {
                     var data = JsonUtility.FromJson<IFacialMocapCalibrationData>(value);
-                    YawOffset = data.yawOffset;
+                    RotOffset = Quaternion.Euler(data.rx, data.ry, data.rz);
+                    PosOffset = new Vector3(data.px, data.py, data.pz);
                 }
                 catch (Exception ex)
                 {
@@ -717,6 +696,53 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 }
             }
         }
+        
+        //Updateとかで使っていいキャリブオフセット: キャリブ前後で値が吹っ飛ばないよう対策されている。
+        private Vector3 _smoothOffsetPosition;
+        private Quaternion _smoothOffsetRotation;
+        
+        
+        //生のキャリブ値
+        private Vector3 _posOffset = new Vector3(0, 0, 0.5f);
+        private Quaternion _rotOffset = Quaternion.identity;
+        
+        //キャリブデータの読み書きをここに入れるとスムージングが走る
+        private Vector3 PosOffset
+        {
+            get => _posOffset;
+            set
+            {
+                _posOffset = value;
+                _posOffsetTween?.Kill();
+                _posOffsetTween = DOTween.To(
+                        () => _smoothOffsetPosition,
+                        v => _smoothOffsetPosition = v,
+                        _posOffset,
+                        CalibrateReflectDuration
+                    )
+                    .SetEase(Ease.OutCubic);
+            }
+        }
+        private Quaternion RotOffset
+        {
+            get => _rotOffset;
+            set
+            {
+                _rotOffset = value;
+                _rotOffsetTween?.Kill();
+                _rotOffsetTween = DOTween.To(
+                        () => _smoothOffsetRotation,
+                        v => _smoothOffsetRotation = v,
+                        _rotOffset.eulerAngles,
+                        CalibrateReflectDuration
+                    )
+                    .SetEase(Ease.OutCubic);
+            }
+        }        
+        
+        //NOTE: 多重Tweenを防止するためにTweenerを保持する
+        private TweenerCore<Vector3, Vector3, VectorOptions> _posOffsetTween = null;
+        private TweenerCore<Quaternion, Vector3, QuaternionOptions> _rotOffsetTween = null;
 
         #endregion
     }
@@ -724,6 +750,11 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
     [Serializable]
     public class IFacialMocapCalibrationData
     {
-        public float yawOffset;
+        public float rx;
+        public float ry;
+        public float rz;
+        public float px;
+        public float py;
+        public float pz;
     }
 }

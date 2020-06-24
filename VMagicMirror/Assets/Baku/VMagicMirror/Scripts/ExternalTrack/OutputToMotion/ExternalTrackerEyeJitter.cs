@@ -75,6 +75,7 @@ namespace Baku.VMagicMirror
             
             var resultLeftRotation = _leftRotation * _leftEye.localRotation;
             resultLeftRotation.ToAngleAxis(out var leftAngle, out var leftAxis);
+            leftAngle = Mathf.Repeat(leftAngle + 180f, 360f) - 180f;
             if (Mathf.Abs(leftAngle) > TotalBoneRotationLimit)
             {
                 leftAngle = Mathf.Sign(leftAngle) * TotalBoneRotationLimit;
@@ -85,6 +86,7 @@ namespace Baku.VMagicMirror
             
             var resultRightRotation = _rightRotation * _rightEye.localRotation;
             resultRightRotation.ToAngleAxis(out var rightAngle, out var rightAxis);
+            rightAngle = Mathf.Repeat(rightAngle + 180f, 360f) - 180f;
             if (Mathf.Abs(rightAngle) > TotalBoneRotationLimit)
             {
                 rightAngle = Mathf.Sign(rightAngle) * TotalBoneRotationLimit;

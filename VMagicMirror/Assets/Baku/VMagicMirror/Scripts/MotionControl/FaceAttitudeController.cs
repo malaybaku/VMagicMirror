@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UniRx;
 using Zenject;
 
@@ -110,6 +111,7 @@ namespace Baku.VMagicMirror
                 out float totalHeadRotDeg,
                 out Vector3 totalHeadRotAxis
             );
+            totalHeadRotDeg = Mathf.Repeat(totalHeadRotDeg + 180f, 360f) - 180f;
             
             //素朴に値を適用すると首が曲がりすぎる、と判断されたケース
             if (Mathf.Abs(totalHeadRotDeg) > HeadTotalRotationLimitDeg)

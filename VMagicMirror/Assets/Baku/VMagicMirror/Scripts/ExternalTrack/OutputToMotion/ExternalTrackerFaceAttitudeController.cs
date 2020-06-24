@@ -62,6 +62,9 @@ namespace Baku.VMagicMirror
             }
             
             _externalTracker.HeadRotation.ToAngleAxis(out float rawAngle, out var rawAxis);
+            rawAngle = Mathf.Repeat(rawAngle + 180f, 360f) - 180f;
+            
+            Debug.Log($"ex face, rawAngle={rawAngle:0.00}");
             
             //角度を0側に寄せる: 動きが激しすぎるとアレなので
             var rot = Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
@@ -81,6 +84,28 @@ namespace Baku.VMagicMirror
             rot.y *= -1;
             rot.z *= -1;
 
+            //もう一度角度をチェックし、合計がデカすぎたら絞る
+            rot.ToAngleAxis(out float totalDeg, out var totalAxis);
+            totalDeg = Mathf.Repeat(totalDeg + 180f, 360f) - 180f;
+            totalDeg = Mathf.Clamp(totalDeg, -HeadTotalRotationLimitDeg, HeadTotalRotationLimitDeg);
+
+            _head.localRotation = Quaternion.AngleAxis(totalDeg, totalAxis);
+            return;
+
+            if (_hasNeck)
+            {
+                var halfRot = Quaternion.AngleAxis(totalDeg * 0.5f, totalAxis);
+                _neck.localRotation = halfRot;
+                _head.localRotation = halfRot;
+            }
+            else
+            {
+                _head.localRotation = Quaternion.AngleAxis(totalDeg, totalAxis);
+            }
+
+            
+            return;
+            
             //曲がりすぎを防止しつつ、首と頭に回転を割り振る(首が無いモデルなら頭に全振り)
             var totalRot = _hasNeck
                 ? rot * _neck.localRotation * _head.localRotation

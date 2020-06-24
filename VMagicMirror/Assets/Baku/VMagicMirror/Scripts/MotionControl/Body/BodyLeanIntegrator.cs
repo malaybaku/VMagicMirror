@@ -75,6 +75,7 @@ namespace Baku.VMagicMirror
             
             //ロール角を拾う。
             BodyLeanSuggest.ToAngleAxis(out float angle, out Vector3 axis);
+            angle = Mathf.Repeat(angle + 180f, 360f) - 180f;
 
             //NOTE: これは近似計算になるハズだけど、まあ十分だろうと。
             float rollAngle = angle * axis.z;

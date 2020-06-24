@@ -12,6 +12,7 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private BodyLeanIntegrator bodyLeanIntegrator = null;
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
+        [SerializeField] private ExternalTrackerBodyOffset exTrackerBodyMotion = null;
         [SerializeField] private WaitingBodyMotion waitingBodyMotion = null;
         [Inject] private IVRMLoadable _vrmLoadable = null;
 
@@ -37,11 +38,12 @@ namespace Baku.VMagicMirror
             bodyIk.localPosition =
                 _defaultBodyIkPosition + 
                 imageBasedBodyMotion.BodyIkXyOffset + 
-                bodyLeanIntegrator.BodyOffsetSuggest + 
+                bodyLeanIntegrator.BodyOffsetSuggest + 　
+                exTrackerBodyMotion.BodyOffset +
                 waitingBodyMotion.Offset;
 
             //画像ベースの移動量はIKと体に利かす -> 体に移動量を足さないと腰だけ動いて見た目が怖くなります
-            _vrmRoot.position = imageBasedBodyMotion.BodyIkXyOffset;
+            _vrmRoot.position = imageBasedBodyMotion.BodyIkXyOffset + exTrackerBodyMotion.BodyOffset;
 
             //スムージングはサブクラスの方でやっているのでコッチでは処理不要。
             _vrmRoot.localRotation = bodyLeanIntegrator.BodyLeanSuggest;

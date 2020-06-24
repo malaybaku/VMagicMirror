@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 3088723817282594664}
   - component: {fileID: 4217680156869205001}
   - component: {fileID: 497782763707271901}
+  - component: {fileID: 6238302672375872197}
   m_Layer: 0
   m_Name: BodyMotion
   m_TagString: Untagged
@@ -137,6 +138,7 @@ MonoBehaviour:
   bodyIk: {fileID: 0}
   bodyLeanIntegrator: {fileID: 8506340368463674577}
   imageBasedBodyMotion: {fileID: 5813678808713813112}
+  exTrackerBodyMotion: {fileID: 6238302672375872197}
   waitingBodyMotion: {fileID: 5813678808713813113}
 --- !u!114 &8506340368463674577
 MonoBehaviour:
@@ -252,6 +254,22 @@ MonoBehaviour:
   timeFactor: 0.2
   speedDumpFactor: 0.95
   speedLerpFactor: 12
+--- !u!114 &6238302672375872197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678808713813115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8083d8157945c54192da0f823530b96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  applyScale: {x: -0.15, y: 0.15, z: 0.1}
+  applyMin: {x: -0.02, y: -0.02, z: -0.01}
+  applyMax: {x: 0.02, y: 0.02, z: 0.01}
+  lerpFactor: 18
 --- !u!1 &5813678809054739212
 GameObject:
   m_ObjectHideFlags: 0

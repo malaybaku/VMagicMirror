@@ -64,8 +64,6 @@ namespace Baku.VMagicMirror
             _externalTracker.HeadRotation.ToAngleAxis(out float rawAngle, out var rawAxis);
             rawAngle = Mathf.Repeat(rawAngle + 180f, 360f) - 180f;
             
-            Debug.Log($"ex face, rawAngle={rawAngle:0.00}");
-            
             //角度を0側に寄せる: 動きが激しすぎるとアレなので
             var rot = Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
             

@@ -46,8 +46,6 @@ namespace Baku.VMagicMirror
                 )
                 : Vector3.zero;
 
-            Debug.Log($"body motion goal[cm] = {100 * goal}");
-            
             BodyOffset = Vector3.Lerp(BodyOffset, goal, lerpFactor * Time.deltaTime);
         }
     }

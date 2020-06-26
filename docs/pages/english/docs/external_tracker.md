@@ -5,7 +5,7 @@ permalink: /en/docs/external_tracker
 lang_prefix: /en/
 ---
 
-[English](../../docs/external_tracker)
+[Japanese](../../docs/external_tracker)
 
 # Exteral Tracker App
 

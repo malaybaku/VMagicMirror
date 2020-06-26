@@ -35,6 +35,7 @@ Limitations:
 
 **Risk of Bug by App Update**: If iOS application have some update, it maybe lead issue.
 
+**A Bit Complicated Setup**: This feature involve a bit difficult setup, because of inter-device communication.
 
 #### Preparation
 {: .doc-sec2 }

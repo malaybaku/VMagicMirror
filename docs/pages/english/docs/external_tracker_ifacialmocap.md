@@ -5,7 +5,7 @@ permalink: /en/docs/external_tracker_ifacialmocap
 lang_prefix: /en/
 ---
 
-[English](../../docs/external_tracker_ifacialmocap)
+[Japanese](../../docs/external_tracker_ifacialmocap)
 
 # Connect to iFacialMocap
 

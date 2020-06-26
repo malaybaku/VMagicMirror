@@ -7,7 +7,9 @@ namespace Baku.VMagicMirror
 {
     public class ImageQualitySettingReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler;
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
+        private ReceivedMessageHandler _handler;
 
         private void Start()
         {

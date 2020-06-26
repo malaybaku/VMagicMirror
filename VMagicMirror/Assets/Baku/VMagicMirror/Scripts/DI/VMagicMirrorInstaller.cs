@@ -1,3 +1,4 @@
+using Baku.VMagicMirror.ExternalTracker;
 using UnityEngine;
 using Zenject;
 
@@ -13,10 +14,12 @@ namespace Baku.VMagicMirror
         [SerializeField] private MousePositionProvider mousePositionProvider = null;
         [SerializeField] private FaceTracker faceTracker = null;
         [SerializeField] private HandTracker handTracker = null;
+        [SerializeField] private ExternalTrackerDataSource externalTracker = null;
         [SerializeField] private MidiInputObserver midiInputObserver = null;
         [SerializeField] private StatefulXinputGamePad gamepad = null;
-        [SerializeField] private DeformableCounter deformableCounterPrefab = null; 
-
+        [SerializeField] private DeformableCounter deformableCounterPrefab = null;
+        [SerializeField] private EyeBoneResetter eyeBoneResetter = null;
+        
         public override void InstallBindings()
         {
             //メッセージハンドラの依存はここで注入(偽レシーバを入れたい場合、interfaceを切って別インスタンスを捻じ込めばOK)
@@ -29,6 +32,8 @@ namespace Baku.VMagicMirror
             Container.BindInstance(handTracker ?? FindObjectOfType<HandTracker>());
             Container.BindInstance(midiInputObserver ?? FindObjectOfType<MidiInputObserver>());
             Container.BindInstance(gamepad ?? FindObjectOfType<StatefulXinputGamePad>());
+            Container.BindInstance(externalTracker ?? FindObjectOfType<ExternalTrackerDataSource>());
+            Container.BindInstance(eyeBoneResetter ?? FindObjectOfType<EyeBoneResetter>());
 
             //Deformを使うオブジェクトがここを参照することで、DeformableManagerを必要な時だけ動かせるようにする
             Container.Bind<DeformableCounter>()
@@ -46,7 +51,12 @@ namespace Baku.VMagicMirror
                 .Bind<IMessageSender>()
                 .FromInstance(mmfServer)
                 .AsSingle();
+
             
+            //表情制御の優先度が今どうなってるか
+            Container
+                .BindInstance(new FaceControlConfiguration())
+                .AsSingle();
         }
     }
 }

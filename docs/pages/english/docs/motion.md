@@ -47,6 +47,8 @@ lang_prefix: /en/
 
 `Enable Typing / Mouse Motion`: On by default. If turned off, the avatar stops to react to typing, mouse pointer move, or gamepad input. If you want to set the avatar always simply standing, turn off this checkbox.
 
+`Random typing to hide key input`: When checked, the avatar keyboard input becomes random to hide what key you pressed actually.
+
 `Modify shoulder motion`: Make shoulder motion richer. Enabled by default.
 
 `Waist width [cm]`: Set how much the character put his/her elbow outside.

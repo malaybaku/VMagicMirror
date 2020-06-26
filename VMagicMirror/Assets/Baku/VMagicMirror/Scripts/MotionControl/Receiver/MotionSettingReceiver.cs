@@ -20,10 +20,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private SmallGamepadHandIKGenerator smallGamepadHandIk = null;
 
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
-
         [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
-
-        [SerializeField] private IkWeightCrossFade ikWeightCrossFade = null;
         
         [SerializeField] private StatefulXinputGamePad gamePad = null;
 

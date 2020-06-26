@@ -9,7 +9,9 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class HandTrackerReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler;
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
+        private ReceivedMessageHandler _handler;
 
         [SerializeField] private HandTracker handTracker = null;
         

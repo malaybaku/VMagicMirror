@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Documents
+title: Docs
 permalink: /docs
 ---
 
@@ -8,7 +8,18 @@ permalink: /docs
 
 # 詳細設定
 
-ここでは[Get Started](./get_started)で紹介したものより詳細な調整機能を紹介します。
+ここでは[Get Started](./get_started)で紹介したものより高度な機能を2つ紹介します。
+
+
+#### 外部トラッキング (External Tracker)
+{: .doc-sec2 }
+
+VMagicMirror v1.1.0以降では他アプリと連携したモーション、および表情トラッキングが利用できます。
+
+v1.1.0の時点ではiOSアプリの`iFacialMocap`をサポートしています。
+
+詳細は[外部トラッキング](./docs/external_tracker)を参照ください。
+
 
 #### 設定ウィンドウ
 {: .doc-sec2 }

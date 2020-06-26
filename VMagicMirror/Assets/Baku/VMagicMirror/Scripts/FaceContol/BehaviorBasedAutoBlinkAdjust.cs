@@ -268,11 +268,12 @@ namespace Baku.VMagicMirror
             void ReadHeadRotation()
             {
                 var rot = _head.rotation;
-                (rot * Quaternion.Inverse(_prevHeadRotation)).ToAngleAxis(out float difAngle, out _);
+                (rot * Quaternion.Inverse(_prevHeadRotation)).ToAngleAxis(out float diffAngle, out _);
+                diffAngle = Mathf.Repeat(diffAngle + 180f, 360f) - 180f;
                 
                 if (_headRotBlinkCoolDownCount <= 0)
                 {
-                    _headRotationDegree += difAngle;
+                    _headRotationDegree += diffAngle;
                 }
                 
                 if (_headRotationDegree > headRotThreshold)
@@ -296,10 +297,11 @@ namespace Baku.VMagicMirror
 
                 Quaternion
                     .FromToRotation(_prev2EyeLookOrientation, orientation)
-                    .ToAngleAxis(out float difAngle, out _);
+                    .ToAngleAxis(out float diffAngle, out _);
+                diffAngle = Mathf.Repeat(diffAngle + 180f, 360f) - 180f;
 
                 //2フレームぶんの時間差で拾った値を使っているので0.5をかけてます
-                float rotSpeed = 0.5f * difAngle / Time.deltaTime;
+                float rotSpeed = 0.5f * diffAngle / Time.deltaTime;
                 
                 if (_eyeRotBlinkCoolDownCount <= 0 &&
                     _prevEyeRotSpeed < eyeRotBlinkSpeedThreshold &&

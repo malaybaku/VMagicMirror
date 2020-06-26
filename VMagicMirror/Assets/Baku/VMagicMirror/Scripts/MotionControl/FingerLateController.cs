@@ -12,8 +12,6 @@ namespace Baku.VMagicMirror
         //観察ベースで「マッスル値をいくつ変えたら90度ぶん動くかな～」と調べてます
         private const float BendDegToMuscle = 1.65f / 90f;
         
-        [Inject] private IVRMLoadable _vrmLoadable;
-        
         private Animator _animator = null;
         //角度入力時に使うマッスル系の情報
         private HumanPoseHandler _humanPoseHandler = null;
@@ -28,6 +26,22 @@ namespace Baku.VMagicMirror
         private readonly float[] _targetAngles = new float[10];
         //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
         private readonly float[] _holdOperationBendingAngle = new float[10];
+
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable)
+        {
+            vrmLoadable.VrmLoaded += OnVrmLoaded;
+            vrmLoadable.VrmDisposing += () =>
+            {
+                if (_animator == null)
+                {
+                    return;
+                }
+                _animator = null;
+                _humanPoseHandler = null;
+                _fingers = null;
+            };
+        }
 
         /// <summary>
         /// 特定の指の曲げ角度を固定します。
@@ -54,21 +68,6 @@ namespace Baku.VMagicMirror
                 _hold[fingerNumber] = false;
                 _targetAngles[fingerNumber] = 0;
             }
-        }
-        
-        private void Start()
-        {
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += () =>
-            {
-                if (_animator == null)
-                {
-                    return;
-                }
-                _animator = null;
-                _humanPoseHandler = null;
-                _fingers = null;
-            };
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)

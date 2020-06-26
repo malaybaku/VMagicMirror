@@ -126,8 +126,9 @@ If your face is not at the center for the web camera, or you are too near/far to
 
 **Hint:** When your character always look downward then look down and `Calibrate position` to adjust. It makes your avatar to look up always.
 
-
 `Eye Look Target` sets where to see. In default you can use `Mouse` so that the character looks the orientation mouse pointer exists.
+
+**NOTE:** VMagicMirror v1.1.0 and later also supports iOS app based face tracking, see detail at [External Tracker App ](./docs/external_tracker).
 
 
 #### 2.4. Word To Motion

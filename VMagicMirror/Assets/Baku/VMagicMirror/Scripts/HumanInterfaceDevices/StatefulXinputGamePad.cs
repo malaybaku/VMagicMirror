@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
     public class StatefulXinputGamePad : MonoBehaviour
     {
         [SerializeField] private int triggerDownThreshold = 30;
-        [SerializeField] private int deviceNumber;
+        [SerializeField] private int deviceNumber = 0;
 
         private const int StickPositionDiffThreshold = 1000;
         

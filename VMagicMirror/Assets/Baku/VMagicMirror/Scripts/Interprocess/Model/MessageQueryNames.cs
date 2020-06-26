@@ -8,15 +8,9 @@
 
         // Camera
         public const string CurrentCameraPosition = nameof(CurrentCameraPosition);
-
-        // Device Positions
-        public const string CurrentDevicePositions = nameof(CurrentDevicePositions);
-
+        
         // Web Camera
         public const string CameraDeviceNames = nameof(CameraDeviceNames);
-
-        // keyboard / touch pad / gamepad layout
-        public const string CurrentDeviceLayout = nameof(CurrentDeviceLayout);
 
         public const string GetBlendShapeNames = nameof(GetBlendShapeNames);
 

@@ -10,98 +10,70 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class FaceControlManager : MonoBehaviour
     {
-        //ブレンドシェイプ生成するやつ各位
-        [SerializeField] private EyeDownBlendShapeController eyeDownController = null;
+        private static readonly BlendShapeKey BlinkLKey = new BlendShapeKey(BlendShapePreset.Blink_L);
+        private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
+
+        //NOTE: まばたき自体は3種類どれかが排他で適用される。複数走っている場合、external > image > autoの優先度で適用する。
+        [SerializeField] private ExternalTrackerBlink externalTrackerBlink = null;
         [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
+        
+        [SerializeField] private EyeJitter randomEyeJitter = null;
+        [SerializeField] private ExternalTrackerEyeJitter externalTrackEyeJitter = null;
+        
+        private bool _hasModel = false;
+        private VRMBlendShapeProxy _proxy;
+        private FaceControlConfiguration _config;
 
-        [Inject] private FaceTracker _faceTracker = null;
-        [Inject] private IVRMLoadable _vrmLoadable = null;
-
-        /// <summary>
-        /// VRMロード時の初期化が済んだら発火
-        /// </summary>
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable, FaceControlConfiguration config)
+        {
+            _config = config;
+            vrmLoadable.VrmLoaded += OnVrmLoaded;
+            vrmLoadable.VrmDisposing += OnVrmDisposing;
+        }
+        
+        /// <summary> VRMロード時の初期化が済んだら発火 </summary>
         public event Action VrmInitialized;
 
         public VRMBlendShapeStore BlendShapeStore { get; } = new VRMBlendShapeStore();
         public EyebrowBlendShapeSet EyebrowBlendShape { get; } = new EyebrowBlendShapeSet();
 
-        private VRMBlendShapeProxy _proxy;
-
-        //NOTE: 顔トラッキングは既定で有効になっていることに注意(※ただしカメラ名がセットされてないと検出は走らない)
-        public bool IsFaceTrackingActive { get; set; } = true;
-        
-        private bool _preferAutoBlink = true;
-        /// <summary> 顔トラッキング中であっても自動まばたきを優先するかどうか </summary>
-        public bool PreferAutoBlink
-        {
-            get => _preferAutoBlink;
-            set
-            {
-                _preferAutoBlink = value;
-                eyeDownController.PreferAutoBlink = value;
-            }
-        } 
-        
         public DefaultFunBlendShapeModifier DefaultBlendShape { get; } 
             = new DefaultFunBlendShapeModifier();
-        
-        private bool _overrideByMotion = false;
-        
-        public bool OverrideByMotion
-        {
-            get => _overrideByMotion;
-            set
-            {
-                if (_overrideByMotion == value)
-                {
-                    return;
-                }
 
-                _overrideByMotion = value;
-                if (value)
-                {
-                    DefaultBlendShape.Reset(_proxy);
-                    autoBlink.Reset(_proxy);
-                    //なんかリセット系のやつあれば他にも呼ぶ
-                    
-                }
-                else
-                {
-                    //DefaultBlendShapeの適用とかしないとダメ?毎フレーム評価するなら不要だが
-                }
-            }
-        }
+        /// <summary> WebCamベースのトラッキング中でも自動まばたきを優先するかどうかを取得、設定します。 </summary>
+        public bool PreferAutoBlinkOnWebCamTracking { get; set; } = true;
 
-        private void Start()
-        {
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
-        }
-        
         private void Update()
         {
-            if (_proxy == null)
+            //眼球運動もモード別で切り替えていく
+            bool canUseExternalEyeJitter =
+                _config.ControlMode == FaceControlModes.ExternalTracker && externalTrackEyeJitter.IsTracked;
+            randomEyeJitter.IsActive = !canUseExternalEyeJitter;
+            externalTrackEyeJitter.IsActive = canUseExternalEyeJitter;
+
+            if (!_hasModel)
             {
                 return;
             }
-
-            if (!OverrideByMotion)
+            
+            if (_config.ShouldSkipNonMouthBlendShape)
             {
-                DefaultBlendShape.Apply(_proxy);
-
-                if (IsFaceTrackingActive &&
-                    !PreferAutoBlink && 
-                    _faceTracker.FaceDetectedAtLeastOnce
-                    )
-                {
-                    imageBasedBlinkController.Apply(_proxy);
-                }
-                else
-                {
-                    autoBlink.Apply(_proxy);
-                }
+                //TODO: これ系の「非ゼロにしたいBlendShapeを明示的に切る」処理をどこに入れるか、というのは悩みどころ
+                //ResetBlink();
+                return;
             }
+
+            DefaultBlendShape.Apply(_proxy);
+            
+            var blinkSource =
+                _config.ControlMode == FaceControlModes.ExternalTracker ? externalTrackerBlink.BlinkSource :
+                (_config.ControlMode == FaceControlModes.WebCam && !PreferAutoBlinkOnWebCamTracking) ? imageBasedBlinkController.BlinkSource :
+                autoBlink.BlinkSource;
+            
+            _proxy.AccumulateValue(BlinkLKey, blinkSource.Left);
+            _proxy.AccumulateValue(BlinkRKey, blinkSource.Right);
         }
                 
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -109,15 +81,40 @@ namespace Baku.VMagicMirror
             _proxy = info.blendShape;
             BlendShapeStore.OnVrmLoaded(info);
             EyebrowBlendShape.RefreshTarget(BlendShapeStore);
-
             VrmInitialized?.Invoke();
+            _hasModel = true;
         }
 
         private void OnVrmDisposing()
         {
+            _hasModel = false;
             _proxy = null;
             BlendShapeStore.OnVrmDisposing();
             EyebrowBlendShape.Reset();
         }
+
+        private void ResetBlink()
+        {
+            if (_hasModel)
+            {
+                _proxy.AccumulateValue(BlinkLKey, 0);
+                _proxy.AccumulateValue(BlinkRKey, 0);
+            }
+        }
+    }
+    
+    
+    /// <summary> まばたき状態の値を提供します。 </summary>
+    public interface IBlinkSource
+    {
+        float Left { get; }
+        float Right { get; }
+    }
+
+    /// <summary> 単なるプロパティで<see cref="IBlinkSource"/>を実装します。 </summary>
+    public class RecordBlinkSource : IBlinkSource
+    {
+        public float Left { get; set; }
+        public float Right { get; set; }
     }
 }

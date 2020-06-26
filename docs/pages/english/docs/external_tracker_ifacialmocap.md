@@ -55,10 +55,10 @@ If your avatar looks wrong orientatoin or face motion does not start, execute `C
 </div>
 
 
-#### Troubleshooting
-{: .doc-sec2 }
+### Troubleshooting
 
-##### Q1. Failed to connect for the first setup
+#### Q1. Failed to connect for the first setup
+{: .doc-sec2 }
 
 A. This issue happens by Windows firewall setting, which block LAN communication between PC and iOS device.
 
@@ -73,7 +73,8 @@ In the next boot of VMagicMirror, you will see the firewall permission dialog.
 `Allow Access` and retry setup to establish connection.
 
 
-##### Q2. After Q1 setup still fails to connect
+#### Q2. After Q1 setup still fails to connect
+{: .doc-sec2 }
 
 A. This case also will be related to Windows firewall setting.
 
@@ -92,18 +93,21 @@ Check `Allow connection` and `OK` to close. After setup, confirm the left side m
 **NOTE:** If you find multiple `vmagicmirror.exe` items in the setting, please setup for all.
 
 
-##### Q3. Do I also have to download iFacialMocap Window software?
+#### Q3. Do I also have to download iFacialMocap Window software?
+{: .doc-sec2 }
 
 A. No, because VMagicMirror directly connects to iOS device.
 
 Please avoid to start iFacialMocap windows software during using VMagicMirror, as it will lead to data receive communication issue.
 
 
-##### Q4. Is there something to be careful in 2nd or later use?
+#### Q4. Is there something to be careful in 2nd or later use?
+{: .doc-sec2 }
 
 A. If you have put the iOS device other place than previous time, avatar maybe looks left or right. In this case please go through calibration process again.
 
 
-##### Q5. iOS device works incorrectly, how to recover?
+#### Q5. iOS device works incorrectly, how to recover?
+{: .doc-sec2 }
 
 A. Quit `iFacialMocap` app, and try `Connect to VMagicMirror` process again.

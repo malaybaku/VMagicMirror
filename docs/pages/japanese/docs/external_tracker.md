@@ -65,9 +65,13 @@ VMagicMirrorのコントロールパネルで`Ex Tracker`タブを選択し、`�
 
 `外部トラッキングを有効化`チェックをオンにすることで、外部アプリと接続できる状態になります。
 
-各アプリの連携方法については以下のリンクを参照ください。
+#### 各アプリの連携方法
+{: .doc-sec2 }
 
-[iFacialMocapとの連携](./external_tracker_ifacialmocap)
+アプリごとの連携方法は、以下のリンクを参照ください。
+
+**[iFacialMocapとの連携](./external_tracker_ifacialmocap)**
+
 
 (※他のアプリケーションがサポートされた場合、ここに随時追記されます。)
 

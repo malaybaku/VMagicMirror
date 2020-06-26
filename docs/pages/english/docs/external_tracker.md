@@ -64,9 +64,12 @@ Select `Ex Tracker` tab on the control panel, then turn on `Enable External Trac
 
 By checking this, VMagicMirror become ready to connect with external apps.
 
+#### How to Setup each App
+{: .doc-sec2 }
+
 Please see per-app specific setup process.
 
-[iFacialMocap](./external_tracker_ifacialmocap)
+**[iFacialMocap](./external_tracker_ifacialmocap)**
 
 (*This area will be updated when other app supported.)
 

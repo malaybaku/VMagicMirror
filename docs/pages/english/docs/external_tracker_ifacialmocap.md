@@ -67,7 +67,7 @@ Please quit VMagicMirror and iFacialMocap to retry setup.
 In the next boot of VMagicMirror, you will see the firewall permission dialog.
 
 <div class="row">
-{% include docimg.html file="./images/docs/ex_tracker_firewall_dialog.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_firewall_dialog.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
 </div>
 
 `Allow Access` and retry setup to establish connection.

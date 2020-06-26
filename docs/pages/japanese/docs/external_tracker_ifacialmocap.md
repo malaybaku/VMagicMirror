@@ -65,7 +65,7 @@ A. この問題はWindowsファイアウォールによって、PCとiOSデバ�
 ここで、VMagicMirrorを起動し直すとファイアウォールの設定ダイアログが表示されます。
 
 <div class="row">
-{% include docimg.html file="./images/docs/ex_tracker_firewall_dialog.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_firewall_dialog.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
 </div>
 
 `アクセスを許可する`をクリックし、ふたたび接続を試みることで、接続できます。

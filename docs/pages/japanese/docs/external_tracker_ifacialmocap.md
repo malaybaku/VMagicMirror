@@ -34,14 +34,14 @@ iFacialMocapを起動し、画面上部にiOS端末自身のIPアドレスが表
 {% include docimg.html file="./images/docs/ex_tracker_ifm_ip_address.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-iFacialMocapを開いたまま、安定する場所にデバイスを設置します。
+iFacialMocapを開いたまま、安定する場所にiOS端末を設置します。
 
 PC画面に戻り、`Ex Tracker`タブ > `アプリとの連携`で、`iFacialMocap`を選択します。
 
 iOS端末のアプリ上に表示されたIPアドレスを入力し、`Connect`ボタンをクリックすると接続します。
 
 <div class="row">
-{% include docimg.html file="./images/tips/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
 **重要: ここでキャラクターが反応しない場合、本ページ下部のトラブルシューティングでQ1およびQ2を確認してください。**

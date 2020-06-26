@@ -32,7 +32,7 @@ iFacialMocap is available on App Store.
 Start iFacialMocap and see the IP address at the top.
 
 <div class="row">
-{% include docimg.html file="./images/tips/ex_tracker_ifm_ip_address.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_ifm_ip_address.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
 Leave the iOS device with iFacialMocap is opened, and put it on the stable place.

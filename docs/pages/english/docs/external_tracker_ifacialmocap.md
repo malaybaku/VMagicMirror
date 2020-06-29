@@ -5,7 +5,7 @@ permalink: /en/docs/external_tracker_ifacialmocap
 lang_prefix: /en/
 ---
 
-[English](../../docs/external_tracker_ifacialmocap)
+[Japanese](../../docs/external_tracker_ifacialmocap)
 
 # Connect to iFacialMocap
 
@@ -32,7 +32,7 @@ iFacialMocap is available on App Store.
 Start iFacialMocap and see the IP address at the top.
 
 <div class="row">
-{% include docimg.html file="./images/tips/ex_tracker_ifm_ip_address.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_ifm_ip_address.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
 Leave the iOS device with iFacialMocap is opened, and put it on the stable place.
@@ -45,7 +45,9 @@ Then input the IP address shown in iOS device, and click `Connect` to complete c
 {% include docimg.html file="./images/docs/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-If your avatar looks wrong orientatoin please execute `Cralibrate Face Pose` to calibrate face position.
+**IMPORTANT:** If you cannot check avatar motion, please check below `TroubleShooting`, especially Q1 and Q2.
+
+If your avatar looks wrong orientatoin or face motion does not start, execute `Cralibrate Face Pose` to calibrate.
 
 <div class="row">
 {% include docimg.html file="./images/docs/ex_tracker_20_calibration_before.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
@@ -53,12 +55,28 @@ If your avatar looks wrong orientatoin please execute `Cralibrate Face Pose` to 
 </div>
 
 
-#### Troubleshooting
+### Troubleshooting
+
+#### Q1. Failed to connect for the first setup
 {: .doc-sec2 }
 
-##### Q1. Fails to connect
+A. This issue happens by Windows firewall setting, which block LAN communication between PC and iOS device.
 
-A. Windows Firewall might block the connection between the PC and iOS device.
+Please quit VMagicMirror and iFacialMocap to retry setup.
+
+In the next boot of VMagicMirror, you will see the firewall permission dialog.
+
+<div class="row">
+{% include docimg.html file="./images/docs/ex_tracker_firewall_dialog.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
+
+`Allow Access` and retry setup to establish connection.
+
+
+#### Q2. After Q1 setup still fails to connect
+{: .doc-sec2 }
+
+A. This case also will be related to Windows firewall setting.
 
 Open Firewall settings in Windows control panel and open security management window.
 
@@ -75,18 +93,21 @@ Check `Allow connection` and `OK` to close. After setup, confirm the left side m
 **NOTE:** If you find multiple `vmagicmirror.exe` items in the setting, please setup for all.
 
 
-##### Q2. Do I also have to download iFacialMocap Window software?
+#### Q3. Do I also have to download iFacialMocap Window software?
+{: .doc-sec2 }
 
 A. No, because VMagicMirror directly connects to iOS device.
 
 Please avoid to start iFacialMocap windows software during using VMagicMirror, as it will lead to data receive communication issue.
 
 
-##### Q3. Is there something to be careful in 2nd or later use?
+#### Q4. Is there something to be careful in 2nd or later use?
+{: .doc-sec2 }
 
 A. If you have put the iOS device other place than previous time, avatar maybe looks left or right. In this case please go through calibration process again.
 
 
-##### Q3. iOS device works incorrectly, how to recover?
+#### Q5. iOS device works incorrectly, how to recover?
+{: .doc-sec2 }
 
 A. Quit `iFacialMocap` app, and try `Connect to VMagicMirror` process again.

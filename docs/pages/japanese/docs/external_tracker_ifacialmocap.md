@@ -34,30 +34,47 @@ iFacialMocapを起動し、画面上部にiOS端末自身のIPアドレスが表
 {% include docimg.html file="./images/docs/ex_tracker_ifm_ip_address.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-iFacialMocapを開いたまま、安定する場所にデバイスを設置します。
+iFacialMocapを開いたまま、安定する場所にiOS端末を設置します。
 
 PC画面に戻り、`Ex Tracker`タブ > `アプリとの連携`で、`iFacialMocap`を選択します。
 
 iOS端末のアプリ上に表示されたIPアドレスを入力し、`Connect`ボタンをクリックすると接続します。
 
 <div class="row">
-{% include docimg.html file="./images/tips/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-接続後にアバターが横を向いてしまった場合、ユーザーが真正面を向いた状態で`現在位置で顔をキャリブレーション`をクリックし、アバターの顔の向きをリセットします。
+**重要: ここでキャラクターが反応しない場合、本ページ下部のトラブルシューティングでQ1およびQ2を確認してください。**
+
+接続後にアバターが横を向いてしまう場合や首が動かない場合は、ユーザーが真正面を向いた状態で`現在位置で顔をキャリブレーション`をクリックし、アバターの顔の向きをリセットします。
 
 <div class="row">
 {% include docimg.html file="./images/docs/ex_tracker_20_calibration_before.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
 {% include docimg.html file="./images/docs/ex_tracker_30_calibration_after.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
+### トラブルシューティング
 
-#### トラブルシューティング
+#### Q1. はじめて接続操作を行ったが、キャラクターが反応しない
 {: .doc-sec2 }
 
-##### Q1. セットアップが正しいはずなのに接続に失敗する
+A. この問題はWindowsファイアウォールによって、PCとiOSデバイス間の通信がブロックされると発生します。
 
-A. Windowsファイアウォールの設定によって、VMagicMirrorとiOSの通信が不許可となっている可能性があります。
+このばあい、一度VMagicMirrorおよびiFacialMocapを終了し、再び接続を試みてください。
+
+ここで、VMagicMirrorを起動し直すとファイアウォールの設定ダイアログが表示されます。
+
+<div class="row">
+{% include docimg.html file="./images/docs/ex_tracker_firewall_dialog.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
+
+`アクセスを許可する`をクリックし、ふたたび接続を試みることで、接続できます。
+
+
+#### Q2. Q1に記載されたファイアウォール設定が表示されず、接続に失敗する
+{: .doc-sec2 }
+
+A. この場合もWindowsファイアウォールの設定によって、VMagicMirrorとiOSの通信が不許可となっている可能性があります。
 
 Windowsのコントロールパネルで`ファイアウォール`を検索して`Windows Defender ファイアウォール`項目を開き、`詳細設定`を選びます。
 
@@ -74,19 +91,22 @@ Windowsのコントロールパネルで`ファイアウォール`を検索し�
 **NOTE:** `受信の規則`に複数の`vmagicmirror.exe`があった場合、すべてに対して同じ操作を行ってください。
 
 
-##### Q2. Window用に配布されているiFacialMocapのソフトは必要？
+#### Q3. Window用に配布されているiFacialMocapのソフトは必要？
+{: .doc-sec2 }
 
 A. 不要です。VMagicMirror自体がiOS端末と直接通信するためです。
 
 もしWindows用のiFacialMocapソフトをPCへインストール済みの場合、VMagicMirrorの使用中には立ち上げないよう注意してください。
 
 
-##### Q3. 2回目以降の使用時に注意することは？
+#### Q4. 2回目以降の使用時に注意することは？
+{: .doc-sec2 }
 
 A. 前回の使用時と異なる位置にiPhoneやiPadを置いた場合、顔の方向が間違って表示されます。この場合はキャリブレーションをやり直してください。
 
 
-##### Q3. iOS端末の調子が悪い
+#### Q5. iOS端末の調子が悪い
+{: .doc-sec2 }
 
 A. `iFacialMocap`のアプリを完全に終了したのち、このページの`VMagicMirrorと接続する`の手順に沿って再び接続してください。
 

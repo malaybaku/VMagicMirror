@@ -5,7 +5,7 @@ permalink: /en/docs/external_tracker
 lang_prefix: /en/
 ---
 
-[English](../../docs/external_tracker)
+[Japanese](../../docs/external_tracker)
 
 # Exteral Tracker App
 
@@ -35,6 +35,7 @@ Limitations:
 
 **Risk of Bug by App Update**: If iOS application have some update, it maybe lead issue.
 
+**A Bit Complicated Setup**: This feature involve a bit difficult setup, because of inter-device communication.
 
 #### Preparation
 {: .doc-sec2 }
@@ -63,9 +64,12 @@ Select `Ex Tracker` tab on the control panel, then turn on `Enable External Trac
 
 By checking this, VMagicMirror become ready to connect with external apps.
 
+#### How to Setup each App
+{: .doc-sec2 }
+
 Please see per-app specific setup process.
 
-[iFacialMocap](./external_tracker_ifacialmocap)
+**[iFacialMocap](./external_tracker_ifacialmocap)**
 
 (*This area will be updated when other app supported.)
 

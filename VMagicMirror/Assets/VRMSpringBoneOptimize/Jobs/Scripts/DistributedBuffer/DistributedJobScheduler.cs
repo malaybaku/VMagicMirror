@@ -146,7 +146,7 @@
                 var handle = new UpdateColliderHashJob
                 {
                     GroupParams = buff.ColliderGroupJobDataValue.GroupParams,
-                    ColliderHashMap = buff.ColliderHashMap.ToConcurrent(),
+                    ColliderHashMap = buff.ColliderHashMap.AsParallelWriter(),
                 }.Schedule(buff.ColliderGroupJobDataValue.TransformAccessArray);
 
                 // 親の回転の取得

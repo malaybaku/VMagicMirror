@@ -173,7 +173,7 @@
             var updateColliderHashJobHandle = new UpdateColliderHashJob
             {
                 GroupParams = this._colliderGroupJobData.GroupParams,
-                ColliderHashMap = this._colliderHashMap.ToConcurrent(),
+                ColliderHashMap = this._colliderHashMap.AsParallelWriter(),
             }.Schedule(this._colliderGroupJobData.TransformAccessArray);
 
             // 親の回転の取得

@@ -1,47 +1,46 @@
 ﻿using UnityEngine;
-using UniRx;
 using Zenject;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
     public class BodyMotionManagerReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler handler = null;
-
+        //TODO: このマネージャコードにぶら下げて非MonoBehaviour化したい
         [SerializeField] private BodyMotionManager bodyMotionManager = null;
 
         private bool _isWaitMotionEnabled = true;
         private float _scale = 1.0f;
         private Vector3 _waitingMotionSize;
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
+        {
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableWaitMotion,
+                message => EnableWaitMotion(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.WaitMotionScale,
+                message => SetWaitMotionScale(message.ParseAsPercentage())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.WaitMotionPeriod,
+                message => SetWaitMotionDuration(message.ToInt())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableBodyLeanZ,
+                message => bodyMotionManager.EnableImageBaseBodyLeanZ(message.ToBoolean())
+                );
+        }
         
         private void Start()
         {
             _waitingMotionSize = bodyMotionManager.WaitingBodyMotion.MotionSize;
             SetWaitMotionScale(1.25f);
-
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.EnableWaitMotion:
-                        EnableWaitMotion(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.WaitMotionScale:
-                        SetWaitMotionScale(message.ParseAsPercentage());
-                        break;
-                    case MessageCommandNames.WaitMotionPeriod:
-                        SetWaitMotionDuration(message.ToInt());
-                        break;
-                    case MessageCommandNames.EnableBodyLeanZ:
-                        bodyMotionManager.EnableImageBaseBodyLeanZ(message.ToBoolean());
-                        break;
-                    default:
-                        break;
-                }
-            });
         }
 
-        public void EnableWaitMotion(bool isEnabled)
+        private void EnableWaitMotion(bool isEnabled)
         {
             _isWaitMotionEnabled = isEnabled;
             
@@ -50,7 +49,7 @@ namespace Baku.VMagicMirror
                 _isWaitMotionEnabled ? _scale * _waitingMotionSize : Vector3.zero;
         }
 
-        public void SetWaitMotionScale(float scale)
+        private void SetWaitMotionScale(float scale)
         {
             _scale = scale;
             
@@ -58,7 +57,7 @@ namespace Baku.VMagicMirror
                 _isWaitMotionEnabled ? _scale * _waitingMotionSize : Vector3.zero;
         }
 
-        public void SetWaitMotionDuration(float period)
+        private void SetWaitMotionDuration(float period)
             => bodyMotionManager.WaitingBodyMotion.Duration = period;
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
-using UniRx;
 using Zenject;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
@@ -9,50 +9,48 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(FaceTracker))]
     public class FaceTrackerReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler handler = null;
-
         private FaceTracker _faceTracker;
         private bool _enableFaceTracking = true;
         private string _cameraDeviceName = "";
         private bool _enableExTracker = false;
 
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
+        {
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetCameraDeviceName,
+                message => SetCameraDeviceName(message.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableFaceTracking,
+                message => SetEnableFaceTracking(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ExTrackerEnable,
+                message => SetEnableExTracker(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.CalibrateFace,
+                message => _faceTracker.StartCalibration()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetCalibrateFaceData,
+                message => _faceTracker.SetCalibrateData(message.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.DisableFaceTrackingHorizontalFlip,
+                message => _faceTracker.DisableHorizontalFlip = message.ToBoolean()
+                );
+         
+            receiver.AssignQueryHandler(
+                MessageQueryNames.CameraDeviceNames,
+                query => query.Result = string.Join("\t", GetCameraDeviceNames())
+                );
+        }
+        
         private void Start()
         {
             _faceTracker = GetComponent<FaceTracker>();
-
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.SetCameraDeviceName:
-                        SetCameraDeviceName(message.Content);
-                        break;
-                    case MessageCommandNames.EnableFaceTracking:
-                        SetEnableFaceTracking(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.ExTrackerEnable:
-                        SetEnableExTracker(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.CalibrateFace:
-                        _faceTracker.StartCalibration();
-                        break;
-                    case MessageCommandNames.SetCalibrateFaceData:
-                        _faceTracker.SetCalibrateData(message.Content);
-                        break;
-                    case MessageCommandNames.DisableFaceTrackingHorizontalFlip:
-                        _faceTracker.DisableHorizontalFlip = message.ToBoolean();
-                        break;
-                        
-                }
-            });
-
-            handler.QueryRequested += query =>
-            {
-                if (query.Command == MessageQueryNames.CameraDeviceNames)
-                {
-                    query.Result = string.Join("\t", GetCameraDeviceNames());
-                }
-            };
         }
 
         private void SetEnableFaceTracking(bool enable)

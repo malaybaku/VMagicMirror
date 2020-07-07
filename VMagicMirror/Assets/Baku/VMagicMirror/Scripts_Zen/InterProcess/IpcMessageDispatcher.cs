@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Baku.VMagicMirror.InterProcess
 {
-    public class IpcMessageDispatcher : IMessageReceiver
+    public class IpcMessageDispatcher : IMessageReceiver, IMessageDispatcher
     {
         private readonly Dictionary<string, Action<ReceivedCommand>> _commandHandlers
             = new Dictionary<string, Action<ReceivedCommand>>();

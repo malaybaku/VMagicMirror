@@ -14,14 +14,21 @@ namespace Baku.VMagicMirror
         [SerializeField] private float cooldownTime = 0.3f;
 
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler, IMessageSender sender, MidiInputObserver midiObserver)
+        public void Initialize(InterProcess.IMessageReceiver receiver, IMessageSender sender, MidiInputObserver midiObserver)
         {
-            _handler = handler;
             _sender = sender;
             _midiInputObserver = midiObserver;
+
+            receiver.AssignCommandHandler(
+                MessageCommandNames.LoadMidiNoteToMotionMap,
+                c => LoadMidiNoteToMotionMap(c.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.RequireMidiNoteOnMessage,
+                c => _redirectNoteOnMessageToIpc = c.ToBoolean()
+                );
         }
 
-        private ReceivedMessageHandler _handler;
         private IMessageSender _sender;
         private MidiInputObserver _midiInputObserver = null;
 
@@ -35,19 +42,6 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _handler.Commands.Subscribe(c =>
-            {
-                switch (c.Command)
-                {
-                    case MessageCommandNames.LoadMidiNoteToMotionMap:
-                        LoadMidiNoteToMotionMap(c.Content);
-                        break;
-                    case MessageCommandNames.RequireMidiNoteOnMessage:
-                        _redirectNoteOnMessageToIpc = c.ToBoolean();
-                        break;
-                }
-            });
-            
             _midiInputObserver.NoteOn.Subscribe(noteNumber =>
             {
                 if (_redirectNoteOnMessageToIpc)

@@ -2,14 +2,14 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using UniRx;
 using Zenject;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
     public class CameraController : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler = null;
+        //[Inject] private ReceivedMessageHandler _handler = null;
         [SerializeField] private Camera cam = null;
         [SerializeField] private CameraTransformController transformController = null;
 
@@ -23,40 +23,48 @@ namespace Baku.VMagicMirror
 
         public Vector3 BaseCameraPosition => _customCameraPosition;
 
-        private void Start()
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
         {
-            var camTransform = cam.transform;
-            _defaultCameraPosition = camTransform.position;
-            _defaultCameraRotationEuler = camTransform.rotation.eulerAngles;
-
-            _handler.Commands.Subscribe(message =>
-            {
-                switch(message.Command)
+            receiver.AssignCommandHandler(
+                MessageCommandNames.Chromakey, 
+                message =>
                 {
-                    case MessageCommandNames.Chromakey:
-                        var argb = message.ToColorFloats();
-                        SetCameraBackgroundColor(argb[0], argb[1], argb[2], argb[3]);
-                        break;
-                    case MessageCommandNames.EnableFreeCameraMode:
-                        EnableFreeCameraMode(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.SetCustomCameraPosition:
-                        SetCustomCameraPosition(message.Content, false);
-                        break;
-                    case MessageCommandNames.QuickLoadViewPoint:
-                        SetCustomCameraPosition(message.Content, true);
-                        break;
-                    case MessageCommandNames.ResetCameraPosition:
-                        ResetCameraPosition();
-                        break;
-                    case MessageCommandNames.CameraFov:
-                        SetCameraFov(message.ToInt());
-                        break;
-                }
-            });
-            _handler.QueryRequested += query =>
-            {
-                if (query.Command == MessageQueryNames.CurrentCameraPosition)
+                    var argb = message.ToColorFloats();
+                    SetCameraBackgroundColor(argb[0], argb[1], argb[2], argb[3]);
+                });
+
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableFreeCameraMode,
+                message => EnableFreeCameraMode(message.ToBoolean())
+            );
+
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetCustomCameraPosition, 
+                message => 
+                    SetCustomCameraPosition(message.Content, false)
+                    );
+
+            receiver.AssignCommandHandler(
+                MessageCommandNames.QuickLoadViewPoint, 
+                message => 
+                    SetCustomCameraPosition(message.Content, true)
+                    );
+
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ResetCameraPosition, 
+                message => ResetCameraPosition()
+                );
+
+            receiver.AssignCommandHandler(
+                MessageCommandNames.CameraFov, 
+                message => SetCameraFov(message.ToInt())
+                );
+
+
+            receiver.AssignQueryHandler(
+                MessageQueryNames.CurrentCameraPosition, 
+                query =>
                 {
                     var t = cam.transform;
                     var angles = t.rotation.eulerAngles;
@@ -70,8 +78,15 @@ namespace Baku.VMagicMirror
                         angles.y,
                         angles.z,
                     }));
-                }
-            };
+                });
+        }
+
+        private void Start()
+        {
+            var camTransform = cam.transform;
+            _defaultCameraPosition = camTransform.position;
+            _defaultCameraRotationEuler = camTransform.rotation.eulerAngles;
+
         }
 
         public void SetCameraBackgroundColor(float a, float r, float g, float b)

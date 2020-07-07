@@ -3,7 +3,7 @@ using UnityEngine;
 using Linearstar.Windows.RawInput;
 using Linearstar.Windows.RawInput.Native;
 using Zenject;
-using UniRx;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
@@ -13,8 +13,6 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(WindowProcedureHook))]
     public class RawMouseMoveChecker : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler = null;
-
         private WindowProcedureHook _windowProcedureHook = null;
 
         private int _dx;
@@ -39,20 +37,21 @@ namespace Baku.VMagicMirror
                 return (x, y);
             }
         }
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
+        {
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableFpsAssumedRightHand,
+                c => EnableFpsAssumedRightHand = c.ToBoolean()
+                );
+        }
         
         private void Start()
         {
             //NOTE: このイベントはエディタ実行では飛んできません(Window Procedureに関わるので)
             _windowProcedureHook = GetComponent<WindowProcedureHook>();
             _windowProcedureHook.ReceiveRawInput += OnReceiveRawInput;
-
-            _handler.Commands.Subscribe(c =>
-            {
-                if (c.Command == MessageCommandNames.EnableFpsAssumedRightHand)
-                {
-                    EnableFpsAssumedRightHand = c.ToBoolean();
-                }
-            });
         }
 
         private void OnReceiveRawInput(IntPtr lParam)

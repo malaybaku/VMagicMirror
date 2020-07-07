@@ -1,51 +1,78 @@
-﻿using UnityEngine;
-using UniRx;
+﻿using Baku.VMagicMirror.InterProcess;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class BlendShapeAssignReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler handler = null;
-        [Inject] private IMessageSender sender = null;
         [SerializeField] private FaceControlManager faceControlManager = null;
 
         private EyebrowBlendShapeSet EyebrowBlendShape => faceControlManager.EyebrowBlendShape;
-        
-        private void Start()
+        private IMessageSender _sender;
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver, IMessageSender sender)
         {
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
+            _sender = sender;
+
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EyebrowLeftUpKey,
+                message =>
                 {
-                    case MessageCommandNames.EyebrowLeftUpKey:
-                        EyebrowBlendShape.LeftUpKey = message.Content;
-                        break;
-                    case MessageCommandNames.EyebrowLeftDownKey:
-                        EyebrowBlendShape.LeftDownKey = message.Content;
-                        RefreshTarget();
-                        break;
-                    case MessageCommandNames.UseSeparatedKeyForEyebrow:
-                        EyebrowBlendShape.UseSeparatedTarget = message.ToBoolean();
-                        RefreshTarget();
-                        break;
-                    case MessageCommandNames.EyebrowRightUpKey:
-                        EyebrowBlendShape.RightUpKey = message.Content;
-                        RefreshTarget();
-                        break;
-                    case MessageCommandNames.EyebrowRightDownKey:
-                        EyebrowBlendShape.RightDownKey = message.Content;
-                        RefreshTarget();
-                        break;
-                    case MessageCommandNames.EyebrowUpScale:
-                        EyebrowBlendShape.UpScale = message.ParseAsPercentage();
-                        break;
-                    case MessageCommandNames.EyebrowDownScale:
-                        EyebrowBlendShape.DownScale = message.ParseAsPercentage();
-                        break;
-                }
-            });
-            handler.QueryRequested += OnQueryReceived;
+                    EyebrowBlendShape.LeftUpKey = message.Content;
+                    RefreshTarget();
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EyebrowLeftDownKey,
+                message =>
+                {
+                    EyebrowBlendShape.LeftDownKey = message.Content;
+                    RefreshTarget();
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EyebrowLeftDownKey,
+                message =>
+                {
+                    EyebrowBlendShape.LeftDownKey = message.Content;
+                    RefreshTarget();
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.UseSeparatedKeyForEyebrow,
+                message =>
+                {
+                    EyebrowBlendShape.UseSeparatedTarget = message.ToBoolean();
+                    RefreshTarget();
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EyebrowRightUpKey,
+                message =>
+                {
+                    EyebrowBlendShape.RightUpKey = message.Content;
+                    RefreshTarget();
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EyebrowRightDownKey,
+                message =>
+                {
+                    EyebrowBlendShape.RightDownKey = message.Content;
+                    RefreshTarget();
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EyebrowUpScale,
+                message => EyebrowBlendShape.UpScale = message.ParseAsPercentage()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EyebrowDownScale, 
+                message => EyebrowBlendShape.DownScale = message.ParseAsPercentage()
+                );
+            
+            receiver.AssignQueryHandler(
+                MessageQueryNames.GetBlendShapeNames,
+                query => query.Result = string.Join("\t", TryGetBlendShapeNames())
+                );
+            
+
             faceControlManager.VrmInitialized += SendBlendShapeNames;
         }
         
@@ -54,16 +81,8 @@ namespace Baku.VMagicMirror
         public string[] TryGetBlendShapeNames() => faceControlManager.BlendShapeStore.GetBlendShapeNames();
         
         private void SendBlendShapeNames()
-            => sender.SendCommand(MessageFactory.Instance.SetBlendShapeNames(
+            => _sender.SendCommand(MessageFactory.Instance.SetBlendShapeNames(
                 string.Join("\t", TryGetBlendShapeNames())
                 ));
-
-        private void OnQueryReceived(ReceivedQuery query)
-        {
-            if (query.Command == MessageQueryNames.GetBlendShapeNames)
-            {
-                query.Result = string.Join("\t", TryGetBlendShapeNames());
-            }
-        }
     }
 }

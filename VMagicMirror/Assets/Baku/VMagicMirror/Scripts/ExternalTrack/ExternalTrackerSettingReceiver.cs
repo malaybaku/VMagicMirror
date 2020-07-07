@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Baku.VMagicMirror.ExternalTracker;
+using Baku.VMagicMirror.InterProcess;
 using Zenject;
-using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -10,41 +10,33 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ExternalTrackerSettingReceiver : MonoBehaviour
     {
+        //TODO: 非MonoBehaviour化できそう
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
-        private ReceivedMessageHandler _handler;
-
-        [SerializeField] private ExternalTrackerDataSource dataSource = null;
-        
-        private void Start()
+        public void Initialize(IMessageReceiver receiver, ExternalTrackerDataSource dataSource)
         {
-            _handler.Commands.Subscribe(c =>
-            {
-                switch (c.Command)
-                {
-                    case MessageCommandNames.ExTrackerEnable:
-                        dataSource.EnableTracking(c.ToBoolean());
-                        break;
-                    case MessageCommandNames.ExTrackerCalibrate:
-                        dataSource.Calibrate();
-                        break;
-                    case MessageCommandNames.ExTrackerSetCalibrateData:
-                        dataSource.SetCalibrationData(c.Content);
-                        break;
-                    case MessageCommandNames.ExTrackerSetSource:
-                        dataSource.SetSourceType(c.ToInt());
-                        break;
-                    case MessageCommandNames.ExTrackerSetFaceSwitchSetting:
-                        dataSource.SetFaceSwitchSetting(c.Content);
-                        break;
-                    case MessageCommandNames.ExTrackerSetApplicationValue:
-                        //NOTE: アプリ別の設定を受けられる、が今のところ必要なデータが無いので無視。
-                        //ポート番号とか可変にしたいかって話なんだけど、そんなに嬉しくないんですよねえ…
-                        break;
-                    default:
-                        break;
-                }
-            });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ExTrackerEnable,
+                c => dataSource.EnableTracking(c.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ExTrackerCalibrate,
+                _ => dataSource.Calibrate()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ExTrackerSetCalibrateData,
+                c => dataSource.SetCalibrationData(c.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ExTrackerSetSource,
+                c => dataSource.SetSourceType(c.ToInt())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ExTrackerSetFaceSwitchSetting,
+                c => dataSource.SetFaceSwitchSetting(c.Content)
+                );
+            
+            //NOTE: 以下は今のところハンドリングしたい内容が無いため無視
+            //MessageCommandNames.ExTrackerSetApplicationValue:
         }
     }
 }

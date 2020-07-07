@@ -1,15 +1,13 @@
-﻿using UniRx;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(ParticleStore))]
     public class ParticleControlReceiver : MonoBehaviour
     {
+        //TODO: 非MonoBehaviour化
         private const int InvalidTypingEffectIndex = ParticleStore.InvalidTypingEffectIndex;
-
-        [Inject] private ReceivedMessageHandler _handler = null;
 
         private ParticleStore _particleStore = null;
 
@@ -17,27 +15,22 @@ namespace Baku.VMagicMirror
         private bool _keyboardIsVisible = true;
         private bool _midiVisible = false;
 
-        void Start()
+        [Inject]
+        public void Initialize(IMessageReceiver receiver, ParticleStore particleStore)
         {
-            _particleStore = GetComponent<ParticleStore>();
-
-            _handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.SetKeyboardTypingEffectType:
-                        SetParticleType(message.ToInt());
-                        break;
-                    case MessageCommandNames.HidVisibility:
-                        SetKeyboardVisibility(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.MidiControllerVisibility:
-                        SetMidiVisibility(message.ToBoolean());
-                        break;
-                    default:
-                        break;
-                }
-            });
+            _particleStore = particleStore;
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetKeyboardTypingEffectType,
+                message => SetParticleType(message.ToInt())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.HidVisibility,
+                message => SetKeyboardVisibility(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.MidiControllerVisibility,
+                message => SetMidiVisibility(message.ToBoolean())
+                );
         }
 
         private void SetParticleType(int typeIndex)

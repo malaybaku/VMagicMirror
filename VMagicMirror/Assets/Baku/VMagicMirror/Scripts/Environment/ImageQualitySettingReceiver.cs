@@ -1,43 +1,33 @@
 ﻿using System;
+using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
 using Zenject;
-using UniRx;
 
 namespace Baku.VMagicMirror
 {
     public class ImageQualitySettingReceiver : MonoBehaviour
     {
+        //TODO: 非monobehaviour化できそう
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
-        private ReceivedMessageHandler _handler;
-
-        private void Start()
+        public void Initialize(IMessageReceiver receiver)
         {
-            _handler.Commands.Subscribe(c =>
-            {
-                switch (c.Command)
+            receiver.AssignCommandHandler(MessageCommandNames.SetImageQuality,
+                c => SetImageQuality(c.Content)
+            );
+
+            receiver.AssignQueryHandler(
+                MessageQueryNames.GetQualitySettingsInfo,
+                q =>
                 {
-                    case MessageCommandNames.SetImageQuality:
-                        SetImageQuality(c.Content);
-                        break;
-                }
-            });
-            _handler.QueryRequested += OnQueryReceived;
+                    q.Result = JsonUtility.ToJson(new ImageQualityInfo()
+                    {
+                        ImageQualityNames = QualitySettings.names,
+                        CurrentQualityIndex = QualitySettings.GetQualityLevel(),
+                    });
+                });
             SetFrameRateWithQuality(QualitySettings.GetQualityLevel());
         }
-
-        private void OnQueryReceived(ReceivedQuery q)
-        {
-            if (q.Command == MessageQueryNames.GetQualitySettingsInfo)
-            {
-                q.Result = JsonUtility.ToJson(new ImageQualityInfo()
-                {
-                    ImageQualityNames = QualitySettings.names,
-                    CurrentQualityIndex = QualitySettings.GetQualityLevel(),
-                });
-            }
-        }
-
+        
         private void SetImageQuality(string name)
         {
             var names = QualitySettings.names;

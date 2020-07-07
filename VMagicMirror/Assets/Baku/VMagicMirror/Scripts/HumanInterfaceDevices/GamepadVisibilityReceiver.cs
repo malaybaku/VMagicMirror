@@ -1,22 +1,25 @@
-﻿using Deform;
+﻿using Baku.VMagicMirror.InterProcess;
+using Deform;
 using DG.Tweening;
 using UnityEngine;
 using Zenject;
-using UniRx;
 
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(MagnetDeformer))]
     public class GamepadVisibilityReceiver : MonoBehaviour
     {
-        private ReceivedMessageHandler _handler;
         private DeformableCounter _deformableCounter;
         
+        //TODO: 非MonoBehaviour化できそう
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler, DeformableCounter deformableCounter)
+        public void Initialize(IMessageReceiver receiver, DeformableCounter deformableCounter)
         {
-            _handler = handler;
             _deformableCounter = deformableCounter;
+            receiver.AssignCommandHandler(
+                MessageCommandNames.GamepadVisibility,
+                message => SetGamepadVisibility(message.ToBoolean())
+                );
         }
 
         private MagnetDeformer _deformer = null;
@@ -27,16 +30,6 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            _handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.GamepadVisibility:
-                        SetGamepadVisibility(message.ToBoolean());
-                        break;
-                }
-            });
-
             _deformer = GetComponent<MagnetDeformer>();
             _renderers = GetComponentsInChildren<Renderer>();
         }

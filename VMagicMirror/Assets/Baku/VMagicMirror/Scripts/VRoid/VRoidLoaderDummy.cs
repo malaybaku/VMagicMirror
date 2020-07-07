@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using UniRx;
 using Zenject;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
-    
     /// <summary>
     /// VRoidHubへの接続リクエストが来たら即座にキャンセルで返すダミー。
     /// </summary>
@@ -13,30 +12,22 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class VRoidLoaderDummy : MonoBehaviour
     {
-        private ReceivedMessageHandler _receiver = null;
         private IMessageSender _sender = null;
         
+        //TODO: 非MonoBehaviour化
+        
         [Inject]
-        public void Initialize(ReceivedMessageHandler receiver, IMessageSender sender)
+        public void Initialize(IMessageReceiver receiver, IMessageSender sender)
         {
-            _receiver = receiver;
             _sender = sender;
-        }
-
-        private void Start()
-        {
-            _receiver.Commands.Subscribe(c =>
-            {
-                switch (c.Command)
-                {
-                    case MessageCommandNames.OpenVRoidSdkUi:
-                        _sender?.SendCommand(MessageFactory.Instance.VRoidModelLoadCanceled());
-                        break;
-                    case MessageCommandNames.RequestLoadVRoidWithId:
-                        _sender?.SendCommand(MessageFactory.Instance.VRoidModelLoadCanceled());
-                        break;
-                }
-            });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.OpenVRoidSdkUi,
+                _ => _sender?.SendCommand(MessageFactory.Instance.VRoidModelLoadCanceled())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.RequestLoadVRoidWithId,
+                _ => _sender?.SendCommand(MessageFactory.Instance.VRoidModelLoadCanceled())
+                );
         }
     }
 }

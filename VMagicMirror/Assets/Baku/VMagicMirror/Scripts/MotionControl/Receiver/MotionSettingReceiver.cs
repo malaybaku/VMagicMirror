@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
-using UniRx;
 using Zenject;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
+    //TODO: このクラスは設計に問題抱えてそう…なんだけど一瞬で治る問題ではないのが何とも。
+
     /// <summary> モーション関係で、操作ではなく設定値を受け取るレシーバクラス </summary>
     public class MotionSettingReceiver : MonoBehaviour
     {
@@ -22,61 +24,75 @@ namespace Baku.VMagicMirror
         private StatefulXinputGamePad _gamePad = null;
 
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler, StatefulXinputGamePad gamePad)
+        public void Initialize(IMessageReceiver receiver, StatefulXinputGamePad gamePad)
         {
             _gamePad = gamePad;
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableHidArmMotion,
+                message => handIkIntegrator.EnableHidArmMotion = message.ToBoolean()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.LengthFromWristToPalm,
+                message => SetLengthFromWristToPalm(message.ParseAsCentimeter())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.LengthFromWristToTip,
+                message => SetLengthFromWristToTip(message.ParseAsCentimeter())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.HandYOffsetBasic,
+                message => SetHandYOffsetBasic(message.ParseAsCentimeter())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.HandYOffsetAfterKeyDown,
+                message => SetHandYOffsetAfterKeyDown(message.ParseAsCentimeter())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnablePresenterMotion,
+                message => handIkIntegrator.EnablePresentationMode = message.ToBoolean()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.PresentationArmRadiusMin,
+                message =>
+                    handIkIntegrator.Presentation.PresentationArmRadiusMin = message.ParseAsCentimeter()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.LookAtStyle,
+                message => headIkIntegrator.SetLookAtStyle(message.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableGamepad,
+                message => _gamePad.SetEnableGamepad(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.PreferDirectInputGamepad,
+                message => _gamePad.SetPreferDirectInputGamepad(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.GamepadLeanMode,
+                message =>
                 {
-                    case MessageCommandNames.EnableHidArmMotion:
-                        handIkIntegrator.EnableHidArmMotion = message.ToBoolean();
-                        //ikWeightCrossFade.ForceStopHandIk = !message.ToBoolean();
-                        break;
-                    case MessageCommandNames.LengthFromWristToPalm:
-                        SetLengthFromWristToPalm(message.ParseAsCentimeter());
-                        break;
-                    case MessageCommandNames.LengthFromWristToTip:
-                        SetLengthFromWristToTip(message.ParseAsCentimeter());
-                        break;
-                    case MessageCommandNames.HandYOffsetBasic:
-                        SetHandYOffsetBasic(message.ParseAsCentimeter());
-                        break;
-                    case MessageCommandNames.HandYOffsetAfterKeyDown:
-                        SetHandYOffsetAfterKeyDown(message.ParseAsCentimeter());
-                        break;
-                    case MessageCommandNames.EnablePresenterMotion:
-                        handIkIntegrator.EnablePresentationMode = message.ToBoolean();
-                        break;
-                    case MessageCommandNames.PresentationArmRadiusMin:
-                        handIkIntegrator.Presentation.PresentationArmRadiusMin = message.ParseAsCentimeter();
-                        break;
-                    case MessageCommandNames.LookAtStyle:
-                        headIkIntegrator.SetLookAtStyle(message.Content);
-                        break;
-                    case MessageCommandNames.EnableGamepad:
-                        _gamePad.SetEnableGamepad(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.PreferDirectInputGamepad:
-                        _gamePad.SetPreferDirectInputGamepad(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.GamepadLeanMode:
-                        gamePadBasedBodyLean.SetGamepadLeanMode(message.Content);
-                        smallGamepadHandIk.SetGamepadLeanMode(message.Content);
-                        break;
-                    case MessageCommandNames.GamepadLeanReverseHorizontal:
-                        gamePadBasedBodyLean.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
-                        smallGamepadHandIk.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
-                        break;
-                    case MessageCommandNames.GamepadLeanReverseVertical:
-                        gamePadBasedBodyLean.ReverseGamepadStickLeanVertical = message.ToBoolean();
-                        smallGamepadHandIk.ReverseGamepadStickLeanVertical = message.ToBoolean();
-                        break;
-                    case MessageCommandNames.SetDeviceTypeToStartWordToMotion:
-                        SetDeviceTypeForWordToMotion(message.ToInt());
-                        break;
-                }
-            });
+                    gamePadBasedBodyLean.SetGamepadLeanMode(message.Content);
+                    smallGamepadHandIk.SetGamepadLeanMode(message.Content);
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.GamepadLeanReverseHorizontal,
+                message =>
+                {
+                    gamePadBasedBodyLean.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
+                    smallGamepadHandIk.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.GamepadLeanReverseVertical,
+                message =>
+                {
+                    gamePadBasedBodyLean.ReverseGamepadStickLeanVertical = message.ToBoolean();
+                    smallGamepadHandIk.ReverseGamepadStickLeanVertical = message.ToBoolean();
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetDeviceTypeToStartWordToMotion,
+                message => SetDeviceTypeForWordToMotion(message.ToInt())
+                );
         }
 
         private void SetDeviceTypeForWordToMotion(int deviceType)

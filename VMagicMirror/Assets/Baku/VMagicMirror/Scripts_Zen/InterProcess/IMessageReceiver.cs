@@ -21,4 +21,14 @@ namespace Baku.VMagicMirror.InterProcess
 
         //NOTE: 現状Unregister的なものは不要。繋ぎっぱなしでよいため。
     }
+
+    /// <summary> Unity内部の処理で、あたかも外部からメッセージが来たように捌きたいときに使えるインターフェース </summary>
+    public interface IMessageDispatcher
+    {
+        /// <summary>
+        /// アプリ外部から受け取ったという扱いでメッセージを流します
+        /// </summary>
+        /// <param name="command"></param>
+        void ReceiveCommand(ReceivedCommand command);
+    }
 }

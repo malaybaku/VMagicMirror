@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using UniRx;
 using Zenject;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror
 
         [Inject]
         public void Initialize(
-            ReceivedMessageHandler handler,
+            IMessageReceiver receiver,
             KeyboardProvider keyboard, 
             TouchPadProvider touchPad,
             MidiControllerProvider midiController, 
@@ -46,18 +46,14 @@ namespace Baku.VMagicMirror
             _touchPadVisibility = touchPad.GetComponent<TouchpadVisibility>();
             _midiControllerVisibility = midiController.GetComponent<MidiControllerVisibility>();
             
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.HidVisibility:
-                        SetHidVisibility(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.MidiControllerVisibility:
-                        SetMidiVisibility(message.ToBoolean());
-                        break;
-                }
-            });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.HidVisibility,
+                message => SetHidVisibility(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.MidiControllerVisibility,
+                message => SetMidiVisibility(message.ToBoolean())
+                );
         }
 
         private void Update()

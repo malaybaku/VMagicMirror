@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
-using UniRx;
 using Zenject;
 using mattatz.TransformControl;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
@@ -17,7 +17,6 @@ namespace Baku.VMagicMirror
         //NOTE: このクラスでanimatorとかを直読みしたくないので、リセット処理を外注します
         [SerializeField] private Slider gamepadModelScaleSlider = null;
         
-        private ReceivedMessageHandler _handler;
         private IMessageSender _sender;
         
         private SettingAutoAdjuster _settingAutoAdjuster = null;
@@ -29,15 +28,15 @@ namespace Baku.VMagicMirror
         
         [Inject]
         public void Initialize(
-            ReceivedMessageHandler handler, IMessageSender sender,
+            IMessageReceiver receiver,
+            IMessageSender sender,
             SettingAutoAdjuster settingAutoAdjuster,
             KeyboardProvider keyboard,
             TouchPadProvider touchPad,
             MidiControllerProvider midiController,
             SmallGamepadProvider gamepad
-        )
+            )
         {
-            _handler = handler;
             _sender = sender;
             _settingAutoAdjuster = settingAutoAdjuster;
 
@@ -46,6 +45,19 @@ namespace Baku.VMagicMirror
             _midiControl = midiController.TransformControl;
             _gamepadControl = gamepad.TransformControl;
             _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
+            
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableDeviceFreeLayout,
+                command => EnableDeviceFreeLayout(command.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetDeviceLayout,
+                command => SetDeviceLayout(command.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ResetDeviceLayout,
+                command => ResetDeviceLayout()
+                );
         }
 
         public TransformControl KeyboardControl => _keyboardControl;
@@ -93,21 +105,6 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _canvas = GetComponent<Canvas>();
-            _handler.Commands.Subscribe(command =>
-            {
-                switch (command.Command)
-                {
-                    case MessageCommandNames.EnableDeviceFreeLayout:
-                        EnableDeviceFreeLayout(command.ToBoolean());
-                        break;
-                    case MessageCommandNames.SetDeviceLayout:
-                        SetDeviceLayout(command.Content);
-                        break;
-                    case MessageCommandNames.ResetDeviceLayout:
-                        ResetDeviceLayout();
-                        break;
-                }
-            });
         }
 
         private void Update()

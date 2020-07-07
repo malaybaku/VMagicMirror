@@ -6,9 +6,9 @@ namespace Baku.VMagicMirror
 {
     public class VMagicMirrorInstaller : MonoInstaller
     {
-        [SerializeField] private ReceivedMessageHandler messageHandler = null;
+        //[SerializeField] private ReceivedMessageHandler messageHandler = null;
         [SerializeField] private VRMLoadController loadController = null;
-        [SerializeField] private MmfServer mmfServer = null;
+        //[SerializeField] private MmfServer mmfServer = null;
 
         [SerializeField] private RawInputChecker rawInputChecker = null;
         [SerializeField] private MousePositionProvider mousePositionProvider = null;
@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror
         public override void InstallBindings()
         {
             //メッセージハンドラの依存はここで注入(偽レシーバを入れたい場合、interfaceを切って別インスタンスを捻じ込めばOK)
-            Container.BindInstance(messageHandler);
+            //Container.BindInstance(messageHandler);
 
             //入力監視系のコードはメッセージハンドラと同格くらいに扱えそうなので、ここでバインドする: 未登録ならシーン上を探して入れる
             Container.BindInstance(rawInputChecker ?? FindObjectOfType<RawInputChecker>());
@@ -47,10 +47,10 @@ namespace Baku.VMagicMirror
                 .AsSingle();
 
             //プロセス間通信の送り手はMemoryMappedFileベースのIPCでやる
-            Container
-                .Bind<IMessageSender>()
-                .FromInstance(mmfServer)
-                .AsSingle();
+            // Container
+            //     .Bind<IMessageSender>()
+            //     .FromInstance(mmfServer)
+            //     .AsSingle();
 
             
             //表情制御の優先度が今どうなってるか

@@ -31,9 +31,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private Camera cam = null;
         [SerializeField] private CameraController cameraController = null;
 
-        [Inject] private ReceivedMessageHandler _handler = null;
-        [Inject] private RawInputChecker _rawInputChecker = null;
-
         private float _windowPositionCheckCount = 0;
         private Vector2Int _prevWindowPosition = Vector2Int.zero;
 
@@ -65,6 +62,73 @@ namespace Baku.VMagicMirror
         byte _currentWindowAlpha = 0xFF;
         const float AlphaLerpFactor = 0.2f;
 
+        private IDisposable _mouseObserve;
+
+        [Inject]
+        public void Initialize(InterProcess.IMessageReceiver receiver, RawInputChecker rawInputChecker)
+        {
+            receiver.AssignCommandHandler(
+                MessageCommandNames.Chromakey,
+                message =>
+                {
+                    var argb = message.ToColorFloats();
+                    SetWindowTransparency(argb[0] == 0);
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.WindowFrameVisibility,
+                message => SetWindowFrameVisibility(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.IgnoreMouse,
+                message => SetIgnoreMouseInput(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.TopMost,
+                message => SetTopMost(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.WindowDraggable,
+                message => SetWindowDraggable(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.MoveWindow,
+                message =>
+                {
+                    int[] xy = message.ToIntArray();
+                    MoveWindow(xy[0], xy[1]);
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ResetWindowSize,
+                _ => ResetWindowSize()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetWholeWindowTransparencyLevel,
+                message => SetTransparencyLevel(message.ToInt())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetAlphaValueOnTransparent,
+                message => SetAlphaOnTransparent(message.ToInt())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetVirtualCamBasedWindowSize,
+                message =>
+                {
+                    int[] wh = message.ToIntArray();
+                    if (wh != null && wh.Length > 1)
+                    {
+                        SetUnityWindowSize(wh[0], wh[1]);
+                    }
+                });
+
+            _mouseObserve = rawInputChecker.MouseButton.Subscribe(info =>
+            {
+                if (info == "LDown")
+                {
+                    ReserveHitTestJudgeOnNextFrame();
+                }
+            });
+        }
+
         private void Awake()
         {
             IntPtr hWnd = GetUnityWindowHandle();
@@ -82,59 +146,6 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _colorPickerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            _handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.Chromakey:
-                        var argb = message.ToColorFloats();
-                        SetWindowTransparency(argb[0] == 0);
-                        break;
-                    case MessageCommandNames.WindowFrameVisibility:
-                        SetWindowFrameVisibility(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.IgnoreMouse:
-                        SetIgnoreMouseInput(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.TopMost:
-                        SetTopMost(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.WindowDraggable:
-                        SetWindowDraggable(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.MoveWindow:
-                        int[] xy = message.ToIntArray();
-                        MoveWindow(xy[0], xy[1]);
-                        break;
-                    case MessageCommandNames.ResetWindowSize:
-                        ResetWindowSize();
-                        break;
-                    case MessageCommandNames.SetWholeWindowTransparencyLevel:
-                        SetTransparencyLevel(message.ToInt());
-                        break;
-                    case MessageCommandNames.SetAlphaValueOnTransparent:
-                        SetAlphaOnTransparent(message.ToInt());
-                        break;
-                    case MessageCommandNames.SetVirtualCamBasedWindowSize:
-                        int[] wh = message.ToIntArray();
-                        if (wh != null && wh.Length > 1)
-                        {
-                            SetUnityWindowSize(wh[0], wh[1]);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-
-            });
-
-            _rawInputChecker.MouseButton.Subscribe(info =>
-            {
-                if (info == "LDown")
-                {
-                    ReserveHitTestJudgeOnNextFrame();
-                }
-            });
 
             //既定で最前面に表示
             SetTopMost(true);

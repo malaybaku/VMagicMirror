@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Baku.VMagicMirror.Mmf;
+using Zenject;
 
 namespace Baku.VMagicMirror.InterProcess
 {
-    public class MmfBasedMessageIo : IMessageReceiver, IMessageSender, IReleaseBeforeQuit
+    public class MmfBasedMessageIo : 
+        IMessageReceiver, IMessageSender, IMessageDispatcher,
+        IReleaseBeforeQuit, ITickable
     {
         private const string ChannelName = "Baku.VMagicMirror";
 
@@ -13,8 +16,11 @@ namespace Baku.VMagicMirror.InterProcess
             _server = new MemoryMappedFileConnectServer();
             _server.ReceiveCommand += OnReceiveCommand;
             _server.ReceiveQuery += OnReceiveQuery;
-            //NOTE: awaitに特に意味は無いことに注意！
+            //NOTE: awaitする意味がないのでawaitをつけず、かつコレは警告が出るので止めてます。
+            //コンストラクタでいきなりStartするのがマナー悪い、というのは無くもないです
+#pragma warning disable CS4014
             _server.Start(ChannelName);
+#pragma warning restore CS4014
         }
 
         private readonly IpcMessageDispatcher _dispatcher = new IpcMessageDispatcher();
@@ -31,7 +37,9 @@ namespace Baku.VMagicMirror.InterProcess
 
         public void AssignQueryHandler(string query, Action<ReceivedQuery> handler)
             => _dispatcher.AssignQueryHandler(query, handler);
-        
+
+        public void ReceiveCommand(ReceivedCommand command) => _dispatcher.ReceiveCommand(command);
+
         public Task ReleaseResources()
         {
             _server.Stop();
@@ -73,6 +81,5 @@ namespace Baku.VMagicMirror.InterProcess
             }
             return -1;
         }
-
     }
 }

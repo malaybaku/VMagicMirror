@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using Zenject;
-using UniRx;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
@@ -12,23 +12,24 @@ namespace Baku.VMagicMirror
         private bool _enableWebCamTracking = true;
         private bool _enableExTracker = false;
 
+        //TODO: 非MonoBehaviour化できそう
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler, FaceControlConfiguration config)
+        public void Initialize(IMessageReceiver receiver, FaceControlConfiguration config)
         {
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableFaceTracking,
+                message =>
                 {
-                    case MessageCommandNames.EnableFaceTracking:
-                        _enableWebCamTracking = message.ToBoolean();
-                        SetFaceControlMode();
-                        break;
-                    case MessageCommandNames.ExTrackerEnable:
-                        _enableExTracker = message.ToBoolean();
-                        SetFaceControlMode();
-                        break;
-                }
-            });
+                    _enableWebCamTracking = message.ToBoolean();
+                    SetFaceControlMode();
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ExTrackerEnable,
+                message =>
+                {
+                    _enableExTracker = message.ToBoolean();
+                    SetFaceControlMode();
+                });
             
             void SetFaceControlMode()
             {

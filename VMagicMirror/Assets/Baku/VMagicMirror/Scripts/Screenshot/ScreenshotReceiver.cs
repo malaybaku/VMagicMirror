@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
-using UniRx;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -20,21 +20,17 @@ namespace Baku.VMagicMirror
         private float _screenshotCountDown = 0f;
 
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler, ScreenshotCountDownCanvas countDownCanvas)
+        public void Initialize(IMessageReceiver receiver, ScreenshotCountDownCanvas countDownCanvas)
         {
             _countDownCanvas = countDownCanvas;
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.TakeScreenshot:
-                        StartScreenshotCountDown();
-                        break;
-                    case MessageCommandNames.OpenScreenshotFolder:
-                        OpenScreenshotFolder();
-                        break;
-                }
-            });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.TakeScreenshot,
+                _ => StartScreenshotCountDown()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.OpenScreenshotFolder,
+                _ => OpenScreenshotFolder()
+                );
         }
 
         private void Update()

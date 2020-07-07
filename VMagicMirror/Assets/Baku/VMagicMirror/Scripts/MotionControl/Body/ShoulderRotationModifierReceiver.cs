@@ -1,25 +1,26 @@
-﻿using System;
-using UnityEngine;
-using UniRx;
+﻿using UnityEngine;
 using Zenject;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(ShoulderRotationModifier))]
     public class ShoulderRotationModifierReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler = null;
+        //TODO: 非MonoBehaviour化
+        private ShoulderRotationModifier _modifier = null;
 
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
+        {
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableShoulderMotionModify,
+                command => _modifier.EnableRotationModification = command.ToBoolean()
+                );
+        }
         private void Start()
         {
-            var modifier = GetComponent<ShoulderRotationModifier>();
-            _handler.Commands.Subscribe(c =>
-            {
-                if (c.Command == MessageCommandNames.EnableShoulderMotionModify)
-                {
-                    modifier.EnableRotationModification = c.ToBoolean();
-                }
-            });
+            _modifier = GetComponent<ShoulderRotationModifier>();
         }
     }
 }

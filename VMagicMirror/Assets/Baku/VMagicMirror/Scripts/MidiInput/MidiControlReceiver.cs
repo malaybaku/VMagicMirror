@@ -1,28 +1,20 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.InterProcess;
+using UnityEngine;
 using Zenject;
-using UniRx;
 using MidiJack;
 
 namespace Baku.VMagicMirror
 {
     public class MidiControlReceiver : MonoBehaviour
     {
+        //TODO: 非MonoBehaviour化 + OnDestroyの所もいい感じにしたい
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
-        private ReceivedMessageHandler _handler;
-
-        private void Start()
+        public void Initialize(IMessageReceiver receiver)
         {
-            //NOTE: WPFとUnityどっちで入力リードするか未確定なので不明。何も要らない可能性もあり。
-            _handler.Commands.Subscribe(command =>
-            {
-                switch (command.Command)
-                {
-                    case MessageCommandNames.EnableMidiRead:
-                        SetMidiReadEnable(command.ToBoolean());
-                        break;
-                }
-            });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableMidiRead,
+                command => SetMidiReadEnable(command.ToBoolean())
+                );
         }
 
         private void OnDestroy()

@@ -43,7 +43,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private float _speedFactor = 12f;
         
         private Camera _cam = null;
-        private IVRMLoadable _vrmLoadable = null;
 
         //プレゼンの腕位置をいい感じに計算するために用いる。
         //TODO: スケール値を廃止するときには肩～右指先までの長さをきっちり使うことになるかも

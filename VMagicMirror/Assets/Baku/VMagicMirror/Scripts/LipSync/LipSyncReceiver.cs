@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UniRx;
+﻿using Baku.VMagicMirror.InterProcess;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -11,9 +11,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class LipSyncReceiver : MonoBehaviour
     {
-        [Inject]
-        private ReceivedMessageHandler handler = null;
-
         private DeviceSelectableLipSyncContext _lipSyncContext;
         private AnimMorphEasedTarget _animMorphEasedTarget;
         private LipSyncIntegrator _lipSyncIntegrator;
@@ -23,46 +20,44 @@ namespace Baku.VMagicMirror
         private bool _isExTrackerActive = false;
         private bool _isExTrackerLipSyncActive = false;
 
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
+        {
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableLipSync,
+                message => SetLipSyncEnable(message.ToBoolean())
+            );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetMicrophoneDeviceName,
+                message => SetMicrophoneDeviceName(message.Content)
+            );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ExTrackerEnable,
+                message => SetExTrackerEnable(message.ToBoolean())
+            );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ExTrackerEnableLipSync,
+                message => SetExTrackerLipSyncEnable(message.ToBoolean())
+            );
+
+            receiver.AssignQueryHandler(
+                MessageQueryNames.CurrentMicrophoneDeviceName,
+                query => query.Result = _lipSyncContext.DeviceName
+            );
+            receiver.AssignQueryHandler(
+                MessageQueryNames.MicrophoneDeviceNames,
+                query => query.Result = string.Join("\t", Microphone.devices)
+            );
+        }
+        
         private void Start()
         {
             _lipSyncContext = GetComponent<DeviceSelectableLipSyncContext>();
             _animMorphEasedTarget = GetComponent<AnimMorphEasedTarget>();
             _lipSyncIntegrator = GetComponent<LipSyncIntegrator>();
-            
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.EnableLipSync:
-                        SetLipSyncEnable(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.SetMicrophoneDeviceName:
-                        SetMicrophoneDeviceName(message.Content);
-                        break;
-                    case MessageCommandNames.ExTrackerEnable:
-                        SetExTrackerEnable(message.ToBoolean());
-                        break;
-                    case MessageCommandNames.ExTrackerEnableLipSync:
-                        SetExTrackerLipSyncEnable(message.ToBoolean());
-                        break;
-                }
-            });
-            handler.QueryRequested += OnQueryRequested;
         }
 
-        private void OnQueryRequested(ReceivedQuery query)
-        {
-            switch (query.Command)
-            {
-                case MessageQueryNames.CurrentMicrophoneDeviceName:
-                    query.Result = _lipSyncContext.DeviceName;
-                    break;
-                case MessageQueryNames.MicrophoneDeviceNames:
-                    query.Result = string.Join("\t", Microphone.devices);
-                    break;
-            }
-        }
-        
+
         private void SetLipSyncEnable(bool isEnabled)
         {
             _isLipSyncActive = isEnabled;

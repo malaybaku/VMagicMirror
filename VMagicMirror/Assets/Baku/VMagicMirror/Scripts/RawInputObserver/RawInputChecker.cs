@@ -44,15 +44,12 @@ namespace Baku.VMagicMirror
         private Thread _thread;
 
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler)
+        public void Initialize(InterProcess.IMessageReceiver receiver)
         {
-            handler.Commands.Subscribe(c =>
-            {
-                if (c.Command == MessageCommandNames.EnableHidRandomTyping)
-                {
-                    RandomizeKey = c.ToBoolean();
-                }
-            });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableHidRandomTyping,
+                c => RandomizeKey = c.ToBoolean()
+            );
         }
         
         public bool RandomizeKey { get; set; } 

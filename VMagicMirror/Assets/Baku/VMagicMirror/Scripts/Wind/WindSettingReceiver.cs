@@ -1,35 +1,34 @@
 ﻿using UnityEngine;
 using Zenject;
-using UniRx;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
     public class WindSettingReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler _handler = null;
+        //TODO: 非MonoBehaviour化
 
         [SerializeField] private VRMWind wind = null;
 
-        private void Start()
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
         {
-            _handler.Commands.Subscribe(c =>
-            {
-                switch (c.Command)
-                {
-                    case MessageCommandNames.WindEnable:
-                        wind.EnableWind(c.ToBoolean());
-                        break;
-                    case MessageCommandNames.WindStrength:
-                        wind.SetStrength(c.ParseAsPercentage());
-                        break;
-                    case MessageCommandNames.WindInterval:
-                        wind.SetInterval(c.ParseAsPercentage());
-                        break;
-                    case MessageCommandNames.WindYaw:
-                        wind.WindYawDegree = c.ToInt();
-                        break;
-                }
-            });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.WindEnable,
+                c => wind.EnableWind(c.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.WindStrength,
+                c => wind.SetStrength(c.ParseAsPercentage())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.WindInterval, 
+                c => wind.SetInterval(c.ParseAsPercentage())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.WindYaw,
+                c => wind.WindYawDegree = c.ToInt()
+                );
         }
     }
 }

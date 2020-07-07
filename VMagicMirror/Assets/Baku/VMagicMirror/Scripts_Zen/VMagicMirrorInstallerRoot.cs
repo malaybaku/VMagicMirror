@@ -6,14 +6,14 @@ namespace Baku.VMagicMirror.Installer
     //TODO: このクソダサい名前を治すまではコミット禁止です。
     public class VMagicMirrorInstallerRoot : MonoInstaller
     {
-        [SerializeField] private DevicesInstaller devices;
-        [SerializeField] private EnvironmentInstaller environment;
-        [SerializeField] private IKInstaller ik;
-        [SerializeField] private MonitoringInstaller monitoring;
-        [SerializeField] private ModelLoadInstaller modelLoad;
-        [SerializeField] private ScreenshotCountDownUiInstaller screenshotCountDown;
+        [SerializeField] private DevicesInstaller devices = null;
+        [SerializeField] private EnvironmentInstaller environment = null;
+        [SerializeField] private IKInstaller ik = null;
+        [SerializeField] private MonitoringInstaller monitoring = null;
+        [SerializeField] private ModelLoadInstaller modelLoad = null;
+        [SerializeField] private ScreenshotCountDownUiInstaller screenshotCountDown = null;
         [SerializeField] private DeformableCounter deformableCounterPrefab = null;
-        [SerializeField] private InterProcessCommunicationInstaller interProcess;
+        [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
         
         public override void InstallBindings()
         {

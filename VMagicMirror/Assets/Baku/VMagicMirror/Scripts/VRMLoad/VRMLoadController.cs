@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using Baku.VMagicMirror.IK;
+using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
-using UniRx;
 using UniHumanoid;
 using VRM;
 using Zenject;
@@ -33,29 +33,28 @@ namespace Baku.VMagicMirror
 
         [Inject]
         public void Initialize(
-            ReceivedMessageHandler handler,
+            IMessageReceiver receiver,
             VRMPreviewCanvas previewCanvas,
             IKTargetTransforms ikTargets
             )
         {
             _previewCanvas = previewCanvas;
             _ikTargets = ikTargets;
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
+            receiver.AssignCommandHandler(
+                MessageCommandNames.OpenVrmPreview,
+                message => LoadModelForPreview(message.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.OpenVrm,
+                message =>
                 {
-                    case MessageCommandNames.OpenVrmPreview:
-                        LoadModelForPreview(message.Content);
-                        break;
-                    case MessageCommandNames.OpenVrm:
-                        previewCanvas.Hide();
-                        LoadModel(message.Content);
-                        break;
-                    case MessageCommandNames.CancelLoadVrm:
-                        previewCanvas.Hide();
-                        break;
-                }
-            });
+                    previewCanvas.Hide();
+                    LoadModel(message.Content);
+                });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.CancelLoadVrm,
+                _ => previewCanvas.Hide()
+                );
         }
 
         private void LoadModelForPreview(string path)

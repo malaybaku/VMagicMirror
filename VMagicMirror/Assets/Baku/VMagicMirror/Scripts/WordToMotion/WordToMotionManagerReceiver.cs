@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
-using UniRx;
 using Zenject;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -17,43 +17,46 @@ namespace Baku.VMagicMirror
         private const int DeviceTypeKeyboardTenKey = 2;
         private const int DeviceTypeMidi = 3;
 
-        [Inject] private ReceivedMessageHandler _handler = null;
-        [Inject] private RawInputChecker _rawInputChecker = null;
+        private RawInputChecker _rawInputChecker = null;
         [SerializeField] private WordToMotionManager manager = null;
 
-        void Start()
+        [Inject]
+        public void Initialize(InterProcess.IMessageReceiver receiver, RawInputChecker rawInputChecker)
+        {
+            _rawInputChecker = rawInputChecker;
+            receiver.AssignCommandHandler(
+                MessageCommandNames.ReloadMotionRequests,
+                message => ReloadMotionRequests(message.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.PlayWordToMotionItem,
+                message => PlayWordToMotionItem(message.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableWordToMotionPreview,
+                message => manager.EnablePreview = message.ToBoolean()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SendWordToMotionPreviewInfo,
+                message => ReceiveWordToMotionPreviewInfo(message.Content)
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetDeviceTypeToStartWordToMotion,
+                message => SetWordToMotionInputType(message.ToInt())
+                );
+            
+            //NOTE: 残骸コードを残しときます。ビルトインモーション後の手の動きがちょっと心配ではあるよね、という話
+            
+            //NOTE: キーボード/マウスだけ消し、ゲームパッドや画像ハンドトラッキングがある、というケースでは多分無理にいじらないでも大丈夫です。 
+            // case MessageCommandNames.EnableHidArmMotion:
+            //     //腕アニメーションが無効なとき、アニメーションの終了処理をちょっと切り替える
+            //     manager.ShouldSetDefaultClipAfterMotion = !message.ToBoolean();
+            //     break;
+        }
+        
+        private void Start()
         {
             _rawInputChecker.PressedKeys.Subscribe(info => manager.ReceiveKeyDown(info));
-            
-            _handler.Commands.Subscribe(message =>
-            {
-                switch(message.Command)
-                {
-                    case MessageCommandNames.ReloadMotionRequests:
-                        ReloadMotionRequests(message.Content);
-                        break;
-                    case MessageCommandNames.PlayWordToMotionItem:
-                        PlayWordToMotionItem(message.Content);
-                        break;
-                    case MessageCommandNames.EnableWordToMotionPreview:
-                        manager.EnablePreview = message.ToBoolean();
-                        break;
-                    case MessageCommandNames.SendWordToMotionPreviewInfo:
-                        ReceiveWordToMotionPreviewInfo(message.Content);
-                        break;
-                    //NOTE: キーボード/マウスだけ消し、ゲームパッドや画像ハンドトラッキングがある、というケースでは多分無理にいじらないでも大丈夫です。 
-                    // case MessageCommandNames.EnableHidArmMotion:
-                    //     //腕アニメーションが無効なとき、アニメーションの終了処理をちょっと切り替える
-                    //     manager.ShouldSetDefaultClipAfterMotion = !message.ToBoolean();
-                    //     break;
-                    case MessageCommandNames.SetDeviceTypeToStartWordToMotion:
-                        SetWordToMotionInputType(message.ToInt());
-                        break;
-                    default:
-                        break;
-                }
-            });
-            
         }
 
         private void SetWordToMotionInputType(int deviceType)

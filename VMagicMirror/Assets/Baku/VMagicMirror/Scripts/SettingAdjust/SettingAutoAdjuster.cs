@@ -1,7 +1,9 @@
 ﻿using System;
+using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
 using UniRx;
 using Zenject;
+using IMessageReceiver = Baku.VMagicMirror.InterProcess.IMessageReceiver;
 
 namespace Baku.VMagicMirror
 {
@@ -15,11 +17,12 @@ namespace Baku.VMagicMirror
         //Hand (Wrist) to Middle Distal
         private const float ReferenceHandLength = 0.114f;
 
-        [Inject] private ReceivedMessageHandler handler = null;
-        [Inject] private IMessageSender sender = null;
         [SerializeField] private BlendShapeAssignReceiver blendShapeAssignReceiver = null;
         [SerializeField] private Transform cam = null;
 
+        private IMessageSender _sender = null;
+        private IMessageDispatcher _dispatcher = null;
+        
         private Transform _vrmRoot = null;
 
         public void AssignModelRoot(Transform vrmRoot) => _vrmRoot = vrmRoot;
@@ -61,20 +64,20 @@ namespace Baku.VMagicMirror
             return result;
         }
 
-        private void Start()
+        [Inject]
+        public void Initialize(IMessageReceiver receiver, IMessageSender sender, IMessageDispatcher dispatcher)
         {
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.RequestAutoAdjust:
-                        AutoAdjust();
-                        break;
-                    case MessageCommandNames.RequestAutoAdjustEyebrow:
-                        AutoAdjustOnlyEyebrow();
-                        break;
-                }
-            });
+            _sender = sender;
+            _dispatcher = dispatcher;
+            
+            receiver.AssignCommandHandler(
+                MessageCommandNames.RequestAutoAdjust,
+                _ => AutoAdjust()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.RequestAutoAdjustEyebrow,
+                _ => AutoAdjustOnlyEyebrow()
+            );
         }
 
         private void AutoAdjust()
@@ -100,7 +103,7 @@ namespace Baku.VMagicMirror
                 SendParameterRelatedCommands(parameters);
 
                 //3. 決定したパラメータをコンフィグ側に送る
-                sender.SendCommand(MessageFactory.Instance.AutoAdjustResults(parameters));
+                _sender.SendCommand(MessageFactory.Instance.AutoAdjustResults(parameters));
             }
             catch(Exception ex)
             {
@@ -120,7 +123,7 @@ namespace Baku.VMagicMirror
             {
                 SetEyebrowParameters(parameters);
                 SendParameterRelatedCommands(parameters, true);
-                sender.SendCommand(MessageFactory.Instance.AutoAdjustEyebrowResults(parameters));
+                _sender.SendCommand(MessageFactory.Instance.AutoAdjustEyebrowResults(parameters));
             }
             catch (Exception ex)
             {
@@ -171,7 +174,7 @@ namespace Baku.VMagicMirror
             };
             foreach (var cmd in eyebrowCommands)
             {
-                handler.ReceiveCommand(cmd);
+                _dispatcher.ReceiveCommand(cmd);
             }
 
             if (onlyEyebrow)
@@ -180,7 +183,7 @@ namespace Baku.VMagicMirror
             }
 
             //レイアウト調整はコレ一発でおしまいです
-            handler.ReceiveCommand(new ReceivedCommand(MessageCommandNames.ResetDeviceLayout));
+            _dispatcher.ReceiveCommand(new ReceivedCommand(MessageCommandNames.ResetDeviceLayout));
         }
 
         private void SendParameterRelatedCommands(AutoAdjustParameters parameters)

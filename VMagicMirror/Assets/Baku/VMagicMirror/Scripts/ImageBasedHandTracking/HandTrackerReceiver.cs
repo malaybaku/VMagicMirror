@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using Zenject;
-using UniRx;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
@@ -9,24 +9,16 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class HandTrackerReceiver : MonoBehaviour
     {
+        //TODO: HandTracker側にこれ生やしてコンストラクタインジェクションにしたいな～
         [Inject]
-        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
-        private ReceivedMessageHandler _handler;
+        public void Initialize(IMessageReceiver receiver)
+        {
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableImageBasedHandTracking,
+                c => handTracker.ImageProcessEnabled = c.ToBoolean()
+            );
+        }
 
         [SerializeField] private HandTracker handTracker = null;
-        
-        private void Start()
-        {
-            _handler.Commands.Subscribe(c =>
-            {
-                switch (c.Command)
-                {
-                    case MessageCommandNames.EnableImageBasedHandTracking:
-                        handTracker.ImageProcessEnabled = c.ToBoolean();
-                        break;
-                }
-            });
-
-        }
     }
 }

@@ -1,28 +1,25 @@
-﻿using UnityEngine;
-using UniRx;
+﻿using Baku.VMagicMirror.InterProcess;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class ElbowMotionModifyReceiver : MonoBehaviour
     {
-        [Inject] private ReceivedMessageHandler handler = null;
+        //TODO: 非MonoBehaviour化
         [SerializeField] private ElbowMotionModifier modifier = null;
-        
-        private void Start()
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
         {
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.SetWaistWidth:
-                        modifier.SetWaistWidth(message.ParseAsCentimeter());
-                        break;
-                    case MessageCommandNames.SetElbowCloseStrength:
-                        modifier.SetElbowCloseStrength(message.ParseAsPercentage());
-                        break;
-                }
-            });
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetWaistWidth,
+                message => modifier.SetWaistWidth(message.ParseAsCentimeter())
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.SetElbowCloseStrength,
+                message => modifier.SetElbowCloseStrength(message.ParseAsPercentage())
+            );
         }
     }
 }

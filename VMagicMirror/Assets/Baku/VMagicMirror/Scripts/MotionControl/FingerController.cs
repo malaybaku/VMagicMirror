@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -42,9 +43,7 @@ namespace Baku.VMagicMirror
 
         #endregion
 
-        [SerializeField]
-        private KeyboardProvider keyboard = null;
-
+        private KeyboardProvider _keyboard = null;
         private Animator _animator = null;
 
         //左手親指 = 0,
@@ -66,6 +65,12 @@ namespace Baku.VMagicMirror
         private readonly float[] _holdOperationBendingAngle = new float[10];
 
         private Coroutine _coroutine = null;
+
+        [Inject]
+        public void Initialize(KeyboardProvider keyboard)
+        {
+            _keyboard = keyboard;
+        }
         
         #region API
 
@@ -172,7 +177,7 @@ namespace Baku.VMagicMirror
 
         public void StartPressKeyMotion(string key, bool isLeftHandOnly)
         {
-            StartMoveFinger(keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber);
+            StartMoveFinger(_keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber);
         }
 
         public void StartClickMotion(string info)

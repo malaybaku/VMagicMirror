@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.IK;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -8,26 +9,27 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class BodyMotionManager : MonoBehaviour
     {
-        [SerializeField] private Transform bodyIk = null;
-
         [SerializeField] private BodyLeanIntegrator bodyLeanIntegrator = null;
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
         [SerializeField] private ExternalTrackerBodyOffset exTrackerBodyMotion = null;
         [SerializeField] private WaitingBodyMotion waitingBodyMotion = null;
-        [Inject] private IVRMLoadable _vrmLoadable = null;
 
         public WaitingBodyMotion WaitingBodyMotion => waitingBodyMotion;
+
+        private Transform _bodyIk = null;
 
         private Transform _vrmRoot = null;
         private Vector3 _defaultBodyIkPosition;
         private bool _isVrmLoaded = false;
-        
-        private void Start()
-        {
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
-        }
 
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable, IKTargetTransforms ikTargets)
+        {
+            _bodyIk = ikTargets.Body;
+            vrmLoadable.VrmLoaded += OnVrmLoaded;
+            vrmLoadable.VrmDisposing += OnVrmDisposing;
+        }
+        
         private void Update()
         {
             if (!_isVrmLoaded)
@@ -35,7 +37,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            bodyIk.localPosition =
+            _bodyIk.localPosition =
                 _defaultBodyIkPosition + 
                 imageBasedBodyMotion.BodyIkXyOffset + 
                 bodyLeanIntegrator.BodyOffsetSuggest + 　
@@ -52,7 +54,7 @@ namespace Baku.VMagicMirror
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             //NOTE: VRMLoadControllerがロード時点でbodyIkの位置をキャラのHipsあたりに調整しているので、それを貰う
-            _defaultBodyIkPosition = bodyIk.position;
+            _defaultBodyIkPosition = _bodyIk.position;
             imageBasedBodyMotion.OnVrmLoaded(info);
             _vrmRoot = info.vrmRoot;
 

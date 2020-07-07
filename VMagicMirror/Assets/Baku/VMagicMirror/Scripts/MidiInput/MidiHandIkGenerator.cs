@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -9,13 +10,11 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class MidiHandIkGenerator : MonoBehaviour
     {
-        [SerializeField] private MidiControllerProvider provider = null;
-
         //NOTE: キーの押し+離しで2モーションぶんの長さです
         [SerializeField] private float noteMotionDuration = 0.3f;
-        
         [SerializeField] private float knobMotionLerpFactor = 12.0f;
         
+        private MidiControllerProvider _provider = null;
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         private Coroutine _leftHandCoroutine = null;
@@ -33,11 +32,17 @@ namespace Baku.VMagicMirror
         private MidiKnobTargetData _leftHandKnobTarget;
         private MidiKnobTargetData _rightHandKnobTarget;
 
+        [Inject]
+        public void Initialize(MidiControllerProvider provider)
+        {
+            _provider = provider;
+        }
+
         private void Start()
         {
             //NOTE: ここは初期位置をふっとばさないための処置なので、あんまり高精度ではないです
-            KnobValueChange(provider.LeftKnobCenterIndex, 0);
-            KnobValueChange(provider.RightKnobCenterIndex, 0);
+            KnobValueChange(_provider.LeftKnobCenterIndex, 0);
+            KnobValueChange(_provider.RightKnobCenterIndex, 0);
         }
         
         private void Update()
@@ -93,7 +98,7 @@ namespace Baku.VMagicMirror
         /// <returns></returns>
         public ReactedHand KnobValueChange(int knobNumber, float value)
         {
-            var data = provider.GetKnobTargetData(knobNumber, value);
+            var data = _provider.GetKnobTargetData(knobNumber, value);
             if (data.isLeftHandPreferred)
             {
                 _isLeftHandOnKnob = true;
@@ -123,7 +128,7 @@ namespace Baku.VMagicMirror
         /// <returns></returns>
         public (ReactedHand, Vector3) NoteOn(int noteNumber)
         {
-            var data = provider.GetNoteTargetData(noteNumber);
+            var data = _provider.GetNoteTargetData(noteNumber);
             var notePos = data.positionWithOffset
                           - data.noteTransform.forward * WristToTipLength
                           + data.noteTransform.up * HandOffsetAlways;

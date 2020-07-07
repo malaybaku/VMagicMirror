@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.Installer;
+using mattatz.TransformControl;
+using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -25,6 +28,15 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private MeshRenderer bodyRenderer = null;
         [SerializeField] private MeshRenderer buttonRenderer = null;
+        
+        [SerializeField] private TransformControl transformControl = null;
+        public TransformControl TransformControl => transformControl;
+
+        [SerializeField] private Transform modelScaleTarget = null;
+        public Transform ModelScaleTarget => modelScaleTarget;
+
+        [Inject]
+        public void Initialize(IDevicesRoot parent) => transform.parent = parent.Transform;
 
         private void Start()
         {

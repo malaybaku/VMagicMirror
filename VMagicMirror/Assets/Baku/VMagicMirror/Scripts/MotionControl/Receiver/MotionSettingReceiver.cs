@@ -13,20 +13,19 @@ namespace Baku.VMagicMirror
         private const int DeviceTypeGamepad = 1;
         private const int DeviceTypeKeyboardTenKey = 2;
         private const int DeviceTypeMidiController = 3;
-
-        [Inject] private ReceivedMessageHandler _handler = null;
-
+        
         [SerializeField] private GamepadBasedBodyLean gamePadBasedBodyLean = null;
         [SerializeField] private SmallGamepadHandIKGenerator smallGamepadHandIk = null;
-
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
         [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
         
-        [SerializeField] private StatefulXinputGamePad gamePad = null;
+        private StatefulXinputGamePad _gamePad = null;
 
-        private void Start()
+        [Inject]
+        public void Initialize(ReceivedMessageHandler handler, StatefulXinputGamePad gamePad)
         {
-            _handler.Commands.Subscribe(message =>
+            _gamePad = gamePad;
+            handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
                 {
@@ -49,9 +48,6 @@ namespace Baku.VMagicMirror
                     case MessageCommandNames.EnablePresenterMotion:
                         handIkIntegrator.EnablePresentationMode = message.ToBoolean();
                         break;
-                    case MessageCommandNames.PresentationArmMotionScale:
-                        handIkIntegrator.Presentation.PresentationArmMotionScale = message.ParseAsPercentage();
-                        break;
                     case MessageCommandNames.PresentationArmRadiusMin:
                         handIkIntegrator.Presentation.PresentationArmRadiusMin = message.ParseAsCentimeter();
                         break;
@@ -59,10 +55,10 @@ namespace Baku.VMagicMirror
                         headIkIntegrator.SetLookAtStyle(message.Content);
                         break;
                     case MessageCommandNames.EnableGamepad:
-                        gamePad.SetEnableGamepad(message.ToBoolean());
+                        _gamePad.SetEnableGamepad(message.ToBoolean());
                         break;
                     case MessageCommandNames.PreferDirectInputGamepad:
-                        gamePad.SetPreferDirectInputGamepad(message.ToBoolean());
+                        _gamePad.SetPreferDirectInputGamepad(message.ToBoolean());
                         break;
                     case MessageCommandNames.GamepadLeanMode:
                         gamePadBasedBodyLean.SetGamepadLeanMode(message.Content);

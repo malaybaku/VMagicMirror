@@ -14,31 +14,44 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(Canvas))]
     public class DeviceTransformControlReceiver : MonoBehaviour
     {
-        [Inject]
-        public void Initialize(ReceivedMessageHandler handler, IMessageSender sender)
-        {
-            _handler = handler;
-            _sender = sender;
-        }
-
+        //NOTE: このクラスでanimatorとかを直読みしたくないので、リセット処理を外注します
+        [SerializeField] private Slider gamepadModelScaleSlider = null;
+        
         private ReceivedMessageHandler _handler;
         private IMessageSender _sender;
         
+        private SettingAutoAdjuster _settingAutoAdjuster = null;
+        private TransformControl _keyboardControl = null;
+        private TransformControl _touchPadControl = null;
+        private TransformControl _midiControl = null;
+        private TransformControl _gamepadControl= null;
+        private Transform _gamepadModelScaleTarget = null;
+        
+        [Inject]
+        public void Initialize(
+            ReceivedMessageHandler handler, IMessageSender sender,
+            SettingAutoAdjuster settingAutoAdjuster,
+            KeyboardProvider keyboard,
+            TouchPadProvider touchPad,
+            MidiControllerProvider midiController,
+            SmallGamepadProvider gamepad
+        )
+        {
+            _handler = handler;
+            _sender = sender;
+            _settingAutoAdjuster = settingAutoAdjuster;
 
-        //NOTE: このクラスでanimatorとかを直読みしたくないので、リセット処理を外注します
-        [SerializeField] private SettingAutoAdjuster settingAutoAdjuster = null;
+            _keyboardControl = keyboard.TransformControl;
+            _touchPadControl = touchPad.TransformControl;
+            _midiControl = midiController.TransformControl;
+            _gamepadControl = gamepad.TransformControl;
+            _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
+        }
 
-        [SerializeField] private TransformControl keyboardControl = null;
-        [SerializeField] private TransformControl touchPadControl = null;
-        [SerializeField] private TransformControl midiControl = null;
-        [SerializeField] private TransformControl gamepadControl= null;
-        [SerializeField] private Transform gamepadModelScaleTarget = null;
-        [SerializeField] private Slider gamepadModelScaleSlider = null;
-
-        public TransformControl KeyboardControl => keyboardControl;
-        public TransformControl TouchPadControl => touchPadControl;
-        public TransformControl GamepadControl => gamepadControl;
-        public TransformControl MidiControl => midiControl;
+        public TransformControl KeyboardControl => _keyboardControl;
+        public TransformControl TouchPadControl => _touchPadControl;
+        public TransformControl GamepadControl => _gamepadControl;
+        public TransformControl MidiControl => _midiControl;
 
         public bool CanShowKeyboardControl { get; set; } = true;
         public bool CanShowTouchpadControl { get; set; } = true;
@@ -47,10 +60,10 @@ namespace Baku.VMagicMirror
 
         private TransformControl[] _transformControls => new[]
         {
-            keyboardControl,
-            touchPadControl,
-            midiControl,
-            gamepadControl,
+            _keyboardControl,
+            _touchPadControl,
+            _midiControl,
+            _gamepadControl,
         };
 
         private bool _isDeviceFreeLayoutEnabled = false;
@@ -104,10 +117,10 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            keyboardControl.mode = CanShowKeyboardControl ? _mode : TransformControl.TransformMode.None;
-            touchPadControl.mode = CanShowTouchpadControl ? _mode : TransformControl.TransformMode.None;
-            gamepadControl.mode = CanShowGamepadControl ? _mode : TransformControl.TransformMode.None;
-            midiControl.mode = CanShowMidiControl ? _mode : TransformControl.TransformMode.None;
+            _keyboardControl.mode = CanShowKeyboardControl ? _mode : TransformControl.TransformMode.None;
+            _touchPadControl.mode = CanShowTouchpadControl ? _mode : TransformControl.TransformMode.None;
+            _gamepadControl.mode = CanShowGamepadControl ? _mode : TransformControl.TransformMode.None;
+            _midiControl.mode = CanShowMidiControl ? _mode : TransformControl.TransformMode.None;
             
             for (int i = 0; i < _transformControls.Length; i++)
             {
@@ -136,11 +149,11 @@ namespace Baku.VMagicMirror
         {
             var data = new DeviceLayoutsData()
             {
-                keyboard = ToItem(keyboardControl.transform),
-                touchPad = ToItem(touchPadControl.transform),
-                midi = ToItem(midiControl.transform),
-                gamepad =  ToItem(gamepadControl.transform),
-                gamepadModelScale = gamepadModelScaleTarget.localScale.x,
+                keyboard = ToItem(_keyboardControl.transform),
+                touchPad = ToItem(_touchPadControl.transform),
+                midi = ToItem(_midiControl.transform),
+                gamepad =  ToItem(_gamepadControl.transform),
+                gamepadModelScale = _gamepadModelScaleTarget.localScale.x,
             };
             _sender?.SendCommand(MessageFactory.Instance.UpdateDeviceLayout(data));
 
@@ -161,16 +174,16 @@ namespace Baku.VMagicMirror
             try
             {
                 var data = JsonUtility.FromJson<DeviceLayoutsData>(content);
-                ApplyItem(data.keyboard, keyboardControl.transform);
-                ApplyItem(data.touchPad, touchPadControl.transform);
-                ApplyItem(data.midi, midiControl.transform);
-                ApplyItem(data.gamepad, gamepadControl.transform);
+                ApplyItem(data.keyboard, _keyboardControl.transform);
+                ApplyItem(data.touchPad, _touchPadControl.transform);
+                ApplyItem(data.midi, _midiControl.transform);
+                ApplyItem(data.gamepad, _gamepadControl.transform);
                 gamepadModelScaleSlider.value = Mathf.Clamp(
                     data.gamepadModelScale,
                     gamepadModelScaleSlider.minValue,
                     gamepadModelScaleSlider.maxValue);
                 //NOTE: ここは念押しでやってるが、ほんとはスライダーのonValueChangedが呼ばれるはずなので、呼ばないでもOK
-                gamepadModelScaleTarget.localScale = gamepadModelScaleSlider.value * Vector3.one;
+                _gamepadModelScaleTarget.localScale = gamepadModelScaleSlider.value * Vector3.one;
                 
                 //タイミングバグを踏むと嫌 + Setによって実際にレイアウトが変わるので、
                 //「確かに受け取ったよ」という主旨で受信値をエコーバック
@@ -196,7 +209,7 @@ namespace Baku.VMagicMirror
         
         private void ResetDeviceLayout()
         {
-            var parameters = settingAutoAdjuster.GetDeviceLayoutParameters();
+            var parameters = _settingAutoAdjuster.GetDeviceLayoutParameters();
             FindObjectOfType<HidTransformController>().SetHidLayoutByParameter(parameters);
             FindObjectOfType<SmallGamepadProvider>().SetLayoutByParameter(parameters);
             //デバイス移動が入るので必ず送信
@@ -204,7 +217,7 @@ namespace Baku.VMagicMirror
         }
 
         public void GamepadScaleChanged(float scale) 
-            => gamepadModelScaleTarget.localScale = scale * Vector3.one;
+            => _gamepadModelScaleTarget.localScale = scale * Vector3.one;
 
         //ラジオボタンのイベントハンドラっぽいやつ
         

@@ -1,16 +1,20 @@
 ﻿using System.Collections.Generic;
+using Baku.VMagicMirror.Installer;
+using mattatz.TransformControl;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
-
-    public class KeyboardProvider : MonoBehaviour
+    public sealed class KeyboardProvider : MonoBehaviour
     {
+        #region static readonlyなキーマッピング
+        
         //System.Windows.Forms.Keysの値を見ながら、手元のキーボードを参考に。
         //"_"とあるのは基本的に叩かれないスペーサー
         //ここの表記が日本語キーボードを上下逆にしたようなジャグ配列になっていればOK
         //見た目で確認できるようにあえて横長に書いておく。
-        private readonly static string[][] keyCodeNames = new string[][]
+        private static readonly string[][] keyCodeNames = new string[][]
         {
             new string[] { "LControlKey", "LWin", "Alt", "_",  "_", "_", "Space", "_",  "_", "_", "_", "_",         "_",                             "_",       "RControlKey",  "Left",   "Down", "Right",        "NumPad0", "_",       "Decimal",  "_", },
             new string[] { "LShiftKey", "_", "Z", "X",   "C",  "V",  "B",  "N",     "M",  "Oemcomma", "OemPeriod", "OemQuestion", "OemBackslash",    "_",         "RShiftKey",  "_",      "Up",   "_",            "NumPad1", "NumPad2", "NumPad3",  "_" },
@@ -202,12 +206,13 @@ namespace Baku.VMagicMirror
             new int[] { 4, 4, 3, 3, 2, 2, 1, 1, 1, },
         };
 
+        #endregion
         
         [SerializeField] private Transform keyPrefab = null;
         [SerializeField] private Vector3 initialPosition = Vector3.zero;
         [SerializeField] private Vector3 initialRotation = Vector3.zero;
         [SerializeField] private Vector3 initialScale = Vector3.one;
-
+        
         //NOTE: 最前列のradiusを使ってキー全体の位置をクイッとずらしたりするので注意
         [SerializeField]
         float[] radius = new float[]
@@ -240,8 +245,13 @@ namespace Baku.VMagicMirror
             3.0f,
         };
 
-
+        [SerializeField] private TransformControl transformControl = null;
+        public TransformControl TransformControl => transformControl;
+        
         private Transform[][] _keys = null;
+
+        [Inject]
+        public void Initialize(IDevicesRoot parent) => transform.parent = parent.Transform;
 
         private void Awake()
         {

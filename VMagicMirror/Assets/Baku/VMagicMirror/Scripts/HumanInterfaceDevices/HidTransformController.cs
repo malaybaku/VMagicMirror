@@ -6,14 +6,6 @@ namespace Baku.VMagicMirror
 {
     public class HidTransformController : MonoBehaviour
     {
-        [Inject]
-        private ReceivedMessageHandler handler = null;
-
-        [SerializeField] private KeyboardProvider keyboard = null;
-        [SerializeField] private TouchPadProvider touchpad = null;
-        [SerializeField] private MidiControllerProvider midiController = null;
-        [SerializeField] private ParticleStore particleStore = null;
-        
         //NOTE: この辺の基準値はMegumi Baxterさんの表示時にちょうどよくなる値
         [SerializeField] private Vector3 refKeyboardPosition = new Vector3(0, 0.9f, 0.28f);
         [SerializeField] private Vector3 refKeyboardRotation = Vector3.zero;
@@ -27,14 +19,31 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 refMidiRotation = Vector3.zero;
         [SerializeField] private Vector3 refMidiScale = new Vector3(0.5f, 0.5f, 0.5f);
         
-        private KeyboardVisibility _keyboardVisibility = null;
-        private TouchpadVisibility _touchpadVisibility = null;
-        private MidiControllerVisibility _midiControllerVisibility = null;
+        private KeyboardProvider _keyboard = null;
+        private TouchPadProvider _touchPad = null;
+        private MidiControllerProvider _midiController = null;
+        private ParticleStore _particleStore = null;
         
-        private void Start()
+        private KeyboardVisibility _keyboardVisibility = null;
+        private TouchpadVisibility _touchPadVisibility = null;
+        private MidiControllerVisibility _midiControllerVisibility = null;
+
+
+        [Inject]
+        public void Initialize(
+            ReceivedMessageHandler handler,
+            KeyboardProvider keyboard, 
+            TouchPadProvider touchPad,
+            MidiControllerProvider midiController, 
+            ParticleStore particleStore
+            )
         {
+            _keyboard = keyboard;
+            _touchPad = touchPad;
+            _midiController = midiController;
+            _particleStore = particleStore;
             _keyboardVisibility = keyboard.GetComponent<KeyboardVisibility>();
-            _touchpadVisibility = touchpad.GetComponent<TouchpadVisibility>();
+            _touchPadVisibility = touchPad.GetComponent<TouchpadVisibility>();
             _midiControllerVisibility = midiController.GetComponent<MidiControllerVisibility>();
             
             handler.Commands.Subscribe(message =>
@@ -53,10 +62,10 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            particleStore.KeyboardParticleScale = keyboard.transform.localScale;
-            particleStore.KeyboardParticleRotation = keyboard.transform.rotation;
-            particleStore.MidiParticleScale = midiController.transform.localScale;
-            particleStore.MidiParticleRotation = midiController.transform.rotation;
+            _particleStore.KeyboardParticleScale = _keyboard.transform.localScale;
+            _particleStore.KeyboardParticleRotation = _keyboard.transform.rotation;
+            _particleStore.MidiParticleScale = _midiController.transform.localScale;
+            _particleStore.MidiParticleRotation = _midiController.transform.rotation;
         }
 
         /// <summary>
@@ -71,7 +80,7 @@ namespace Baku.VMagicMirror
             
             void SetKeyboardLayout(DeviceLayoutAutoAdjustParameters p)
             {
-                var keyboardTransform = keyboard.transform;
+                var keyboardTransform = _keyboard.transform;
 
                 keyboardTransform.localRotation = Quaternion.Euler(refKeyboardRotation);
                 keyboardTransform.localPosition = new Vector3(
@@ -88,7 +97,7 @@ namespace Baku.VMagicMirror
 
             void SetTouchPadLayout(DeviceLayoutAutoAdjustParameters p)
             {
-                var touchpadTransform = touchpad.transform;
+                var touchpadTransform = _touchPad.transform;
             
                 touchpadTransform.localRotation = Quaternion.Euler(refTouchpadRotation);
                 touchpadTransform.localPosition = new Vector3(
@@ -105,7 +114,7 @@ namespace Baku.VMagicMirror
 
             void SetMidiControllerLayout(DeviceLayoutAutoAdjustParameters p)
             {
-                var midiTransform = midiController.transform;
+                var midiTransform = _midiController.transform;
 
                 midiTransform.localRotation = Quaternion.Euler(refMidiRotation);
                 midiTransform.localPosition = new Vector3(
@@ -120,7 +129,7 @@ namespace Baku.VMagicMirror
         private void SetHidVisibility(bool v)
         {
             _keyboardVisibility.SetVisibility(v);
-            _touchpadVisibility.SetVisibility(v);
+            _touchPadVisibility.SetVisibility(v);
         }
 
         private void SetMidiVisibility(bool v)

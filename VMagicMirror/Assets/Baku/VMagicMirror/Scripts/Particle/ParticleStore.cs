@@ -1,5 +1,7 @@
 ﻿using System;
+using Baku.VMagicMirror.Installer;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -13,7 +15,8 @@ namespace Baku.VMagicMirror
             public Transform prefab = null;
             public Vector3 scale = Vector3.one;
             public bool useCollisionPlane = false;
-            public Transform collisionTransform = null;
+            //NOTE: コレは非nullにする場合InjectしたKeyboardなりMidiControllerなりを使うため、プロパティでよい(serializableじゃなくていい)
+            public Transform CollisionTransform { get; set; }= null;
         }
 
         //NOTE: マウスのprefabはボタンが1つ以上クリックされているとき、インデックスに対応して発火します。
@@ -33,7 +36,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private ParticlePrefabInfo[] particlePrefabs = null;
         [SerializeField] private ParticlePrefabInfo[] midiParticlePrefabs = null;
         [SerializeField] private MouseParticlePrefabInfo[] mouseParticlePrefabs = null;
-        [SerializeField] private Transform mouseParticlePrefabParent = null;
 
         //NOTE: この秒数だけPlayMouseParticleが呼ばれなかった場合、マウスが止まっているのでパーティクルを止める
         [SerializeField] private float mouseContinueParticleCount = 0.5f;
@@ -42,6 +44,9 @@ namespace Baku.VMagicMirror
         public Quaternion KeyboardParticleRotation { get; set; } = Quaternion.identity;
         public Vector3 MidiParticleScale { get; set; } = new Vector3(0.7f, 1.0f, 0.7f);
         public Quaternion MidiParticleRotation { get; set; } = Quaternion.identity;
+        
+        private Transform _keyboardParticleParent = null;
+        private Transform _mouseParticlePrefabParent = null;
 
         private int _nextKeyboardParticleIndex = 0;
         private int _nextMidiParticleIndex = 0;
@@ -56,6 +61,22 @@ namespace Baku.VMagicMirror
         private ParticleSystem _mouseContinueParticle = null;
         private ParticleSystem _mouseEndParticle = null;
         private float _mouseContinueParticleCountDown = 0f;
+
+        [Inject]
+        public void Initialize(IDevicesRoot devicesRoot, KeyboardProvider keyboard, TouchPadProvider touchPad)
+        {
+            transform.parent = devicesRoot.Transform;
+            _keyboardParticleParent = keyboard.transform;
+            _mouseParticlePrefabParent = touchPad.transform;
+        }
+
+        private void Start()
+        {
+            for (int i = 0; i < particlePrefabs.Length; i++)
+            {
+                particlePrefabs[i].CollisionTransform = _keyboardParticleParent;
+            }
+        }
 
         private void Update()
         {
@@ -243,7 +264,7 @@ namespace Baku.VMagicMirror
                 _particles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
                 if (prefabSource.useCollisionPlane)
                 {
-                    _particles[i].collision.SetPlane(0, prefabSource.collisionTransform);
+                    _particles[i].collision.SetPlane(0, prefabSource.CollisionTransform);
                 }
 
                 //NOTE: ここではパーティクルの基準サイズのみを適用し、実行段階でキーボードのサイズに即したスケーリングを追加的に調整。
@@ -261,7 +282,7 @@ namespace Baku.VMagicMirror
                 _midiParticles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
                 if (prefabSource.useCollisionPlane)
                 {
-                    _midiParticles[i].collision.SetPlane(0, prefabSource.collisionTransform);
+                    _midiParticles[i].collision.SetPlane(0, prefabSource.CollisionTransform);
                 }
 
                 //NOTE: ここではパーティクルの基準サイズのみを適用し、実行段階でキーボードのサイズに即したスケーリングを追加的に調整。
@@ -274,14 +295,14 @@ namespace Baku.VMagicMirror
         {
             _mouseContinueParticle = Instantiate(
                 mouseParticlePrefabs[index].continueParticlePrefab, 
-                mouseParticlePrefabParent
+                _mouseParticlePrefabParent
             );
             _mouseContinueParticle.transform.localPosition = Vector3.zero;
             _mouseContinueParticle.transform.localRotation = Quaternion.identity;
 
             _mouseEndParticle = Instantiate(
                 mouseParticlePrefabs[index].clickParticlePrefab,
-                mouseParticlePrefabParent
+                _mouseParticlePrefabParent
             );
             _mouseEndParticle.transform.localPosition = Vector3.zero;
             _mouseEndParticle.transform.localRotation = Quaternion.identity;

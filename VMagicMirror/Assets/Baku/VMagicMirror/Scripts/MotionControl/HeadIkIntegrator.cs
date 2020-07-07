@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.IK;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -14,8 +15,6 @@ namespace Baku.VMagicMirror
         //手のIKよりLookAtのIKをやや前方にずらして見栄えを調整する決め打ちのパラメータ
         private const float ZOffsetOnHeadIk = 0.6f;
 
-        [SerializeField] private Transform cam = null;
-        [SerializeField] private Transform lookAtTarget = null;
         [SerializeField] private float lookAtSpeedFactor = 6.0f;
         
         private readonly IKDataRecord _mouseBasedLookAt = new IKDataRecord();
@@ -28,12 +27,21 @@ namespace Baku.VMagicMirror
         private Transform _head = null;
         private bool _hasModel = false;
 
+        private Transform _camera = null;
+        private Transform _lookAtTarget = null;
         private FaceControlConfiguration _faceControlConfig;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, FaceControlConfiguration faceControlConfig)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            Camera mainCam,
+            IKTargetTransforms ikTargets,
+            FaceControlConfiguration faceControlConfig)
         {
+            _camera = mainCam.transform;
+            _lookAtTarget = ikTargets.LookAt;
             _faceControlConfig = faceControlConfig;
+
             vrmLoadable.VrmLoaded += info =>
             {
                 _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
@@ -53,11 +61,11 @@ namespace Baku.VMagicMirror
             float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
             float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -1000, 1000) / 1000.0f;
             var baseLookAtPosition =
-                cam.TransformPoint(xClamped, yClamped, 0) + 
+                _camera.TransformPoint(xClamped, yClamped, 0) + 
                 ZOffsetOnHeadIk * Vector3.forward;
 
             //Zの決め方に注意: キャラを正面から見ているときと後ろから見ているときで、手前にLookAtさせるか奥にLookAtさせるかを変更
-            var camForward = cam.forward;
+            var camForward = _camera.forward;
             var horizontalCamForward = new Vector3(camForward.x, 0, camForward.z).normalized;
             
             //zの値が小さい = カメラは真横、または後ろを向いている = キャラを正面から見ているハズ
@@ -75,7 +83,7 @@ namespace Baku.VMagicMirror
             }
             
             //キャラを背後から映してるハズ: 奥行き方向にLookAtをずらしていく
-            var camPosition = cam.position;
+            var camPosition = _camera.position;
             //Vector3.Dotのとこ = カメラからみてキャラが立ってる位置の奥行き。Yを考慮すると面倒なことになるため、XZ平面でやってます
             float depth = (2 * depthFactor) * Mathf.Abs(Vector3.Dot(
                 new Vector3(camPosition.x, 0, camPosition.z), horizontalCamForward
@@ -94,10 +102,10 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            _camBasedLookAt.Camera = cam;
+            _camBasedLookAt.Camera = _camera;
             //起動後にマウスを動かさないとLookAtの先が原点になっちゃうので、それを防ぐためにやる
-            _mouseBasedLookAt.Position = cam.position;
-            lookAtTarget.localPosition = _camBasedLookAt.Position;
+            _mouseBasedLookAt.Position = _camera.position;
+            _lookAtTarget.localPosition = _camBasedLookAt.Position;
         }
 
         //NOTE: タイミングがIKの適用前になることに注意: つまりTボーンっぽい状態
@@ -107,7 +115,7 @@ namespace Baku.VMagicMirror
 
             if (_hasModel && _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker)
             {
-                lookAtTarget.localPosition = _head.position + _head.forward * 10.0f;
+                _lookAtTarget.localPosition = _head.position + _head.forward * 10.0f;
                 return;
             }
             
@@ -117,8 +125,8 @@ namespace Baku.VMagicMirror
                 _hasModel ? _head.position + _head.forward * 10.0f : 
                 new Vector3(1, 0, 1);
             
-            lookAtTarget.localPosition = Vector3.Lerp(
-                lookAtTarget.localPosition,
+            _lookAtTarget.localPosition = Vector3.Lerp(
+                _lookAtTarget.localPosition,
                 pos,
                 lookAtSpeedFactor * Time.deltaTime
             );

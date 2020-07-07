@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.Installer;
+using mattatz.TransformControl;
+using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -23,14 +26,19 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 initPos = new Vector3(0, 1.0f, 0.3f);
         [SerializeField] private Vector3 initRot = new Vector3(0, 0, 0);
         [SerializeField] private Vector3 initScale = new Vector3(0.7f, 0.7f, 0.7f);
-        
-        
+
+        [SerializeField] private TransformControl _transformControl = null;
+        public TransformControl TransformControl => _transformControl;
+
         private Transform[] _notes = null;
         private MidiKnob[] _knobs = null;
         public MidiKnob[] Knobs => _knobs ?? new MidiKnob[0];
 
         public int LeftKnobCenterIndex => Mathf.Clamp(knobCount / 2 - 1, 0, knobCount - 1);
         public int RightKnobCenterIndex => knobCount / 2;        
+
+        [Inject]
+        public void Initialize(IDevicesRoot parent) => transform.parent = parent.Transform;
 
         private void Awake()
         {

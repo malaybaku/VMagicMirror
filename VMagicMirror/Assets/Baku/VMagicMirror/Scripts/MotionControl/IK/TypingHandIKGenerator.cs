@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -30,9 +31,7 @@ namespace Baku.VMagicMirror
 
         #region 静的に決め打ちするもの
 
-        public KeyboardProvider keyboard = null;
-
-       [SerializeField]
+        [SerializeField]
         private AnimationCurve horizontalApproachCurve = new AnimationCurve(new Keyframe[]
         {
             new Keyframe(0.0f, 1, -1, -1),
@@ -61,28 +60,36 @@ namespace Baku.VMagicMirror
 
         #endregion
 
+        private KeyboardProvider _keyboard = null;
+        
         //要るかなコレ。なくてもいいのでは？
         private Coroutine _leftHandMoveCoroutine = null;
         private Coroutine _rightHandMoveCoroutine = null;
 
+        [Inject]
+        public void Initialize(KeyboardProvider provider)
+        {
+            _keyboard = provider;
+        }
+        
         private void Start()
         {
             //これらのIKは初期値から動かない事があるので、その場合にあまりに変になるのを防ぐのが狙い。
-            _leftHand.Position = keyboard.GetKeyTargetData("F").positionWithOffset;
+            _leftHand.Position = _keyboard.GetKeyTargetData("F").positionWithOffset;
             _leftHand.Rotation = Quaternion.Euler(0, 90, 0);
             
-            _rightHand.Position = keyboard.GetKeyTargetData("J").positionWithOffset;
+            _rightHand.Position = _keyboard.GetKeyTargetData("J").positionWithOffset;
             _rightHand.Rotation = Quaternion.Euler(0, -90, 0);
         }
 
         public (ReactedHand, Vector3) PressKey(string key, bool isLeftHandOnlyMode)
         {
-            var keyData = keyboard.GetKeyTargetData(key, isLeftHandOnlyMode);
+            var keyData = _keyboard.GetKeyTargetData(key, isLeftHandOnlyMode);
             
             Vector3 targetPos =
                 keyData.positionWithOffset + 
-                YOffsetAlways * keyboard.KeyboardUp -
-                HandToTipLength * keyboard.KeyboardForward;
+                YOffsetAlways * _keyboard.KeyboardUp -
+                HandToTipLength * _keyboard.KeyboardForward;
 
             if (keyData.IsLeftHandPreffered)
             {
@@ -102,10 +109,10 @@ namespace Baku.VMagicMirror
             IKDataRecord ikTarget = isLeftHand ? _leftHand : _rightHand;
             //NOTE: 第2項は手首を正面に向けるための前処理みたいなファクターです
             var keyboardRot = 
-                keyboard.GetKeyboardRotation() * 
+                _keyboard.GetKeyboardRotation() * 
                 Quaternion.AngleAxis(isLeftHand ? 90 : -90, Vector3.up);
-            var keyboardRootPos = keyboard.transform.position;
-            var keyboardUp = keyboard.KeyboardUp;
+            var keyboardRootPos = _keyboard.transform.position;
+            var keyboardUp = _keyboard.KeyboardUp;
 
             float startTime = Time.time;
             Vector3 startPos = ikTarget.Position;

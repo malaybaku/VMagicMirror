@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -26,17 +27,22 @@ namespace Baku.VMagicMirror
         /// </summary>
         public Vector3 ReferenceTouchpadPosition { get; private set; }
 
-        [SerializeField]
-        public TouchPadProvider _touchPad = null;
-
-        [SerializeField]
-        private float _speedFactor = 12f;
         
+        [SerializeField] private float _speedFactor = 12f;
+        
+        private TouchPadProvider _touchPad = null;
+
         private Vector3 YOffsetAlwaysVec => YOffset * Vector3.up;
 
         private Vector3 _targetPosition = Vector3.zero;
         private Quaternion _targetRotation = Quaternion.identity;
 
+        [Inject]
+        public void Initialize(TouchPadProvider provider)
+        {
+            _touchPad = provider;
+        }
+        
         private void Start()
         {
             //NOTE: この値は初期値が大外れしていないことを保証するものなので、多少ズレていてもOK

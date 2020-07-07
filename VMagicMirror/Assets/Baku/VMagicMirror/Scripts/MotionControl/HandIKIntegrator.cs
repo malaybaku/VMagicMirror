@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.IK;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -13,9 +14,6 @@ namespace Baku.VMagicMirror
         /// <summary> IK種類が変わるときのブレンディングに使う時間。IK自体の無効化/有効化もこの時間で行う </summary>
         private const float HandIkToggleDuration = 0.25f;
         private const float HandIkTypeChangeCoolDown = 0.3f;
-
-        [SerializeField] private Transform rightHandTarget = null;
-        [SerializeField] private Transform leftHandTarget = null;
 
         [SerializeField] private TypingHandIKGenerator typing = null;
         public TypingHandIKGenerator Typing => typing;
@@ -39,7 +37,9 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private FingerController fingerController = null;
 
-        [SerializeField] private ParticleStore particleStore = null;
+        private Transform _rightHandTarget = null;
+        private Transform _leftHandTarget = null;
+        private ParticleStore _particleStore = null;
 
         private float _leftHandStateBlendCount = 0f;
         private float _rightHandStateBlendCount = 0f;
@@ -71,11 +71,19 @@ namespace Baku.VMagicMirror
         public bool IsLeftHandGripGamepad => _leftTargetType == HandTargetType.Gamepad;
         public bool IsRightHandGripGamepad => _rightTargetType == HandTargetType.Gamepad;
 
-        public Vector3 RightHandPosition => rightHandTarget.position;
-        public Vector3 LeftHandPosition => leftHandTarget.position;
-        
-        
-        [Inject] private IVRMLoadable _vrmLoadable = null;
+        public Vector3 RightHandPosition => _rightHandTarget.position;
+        public Vector3 LeftHandPosition => _leftHandTarget.position;
+
+
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable, IKTargetTransforms ikTargets, ParticleStore particleStore)
+        {
+            _rightHandTarget = ikTargets.RightHand;
+            _leftHandTarget = ikTargets.LeftHand;
+            _particleStore = particleStore;
+            vrmLoadable.VrmLoaded += OnVrmLoaded;
+            vrmLoadable.VrmDisposing += OnVrmDisposing;        
+        }
 
         //NOTE: 初めて手がキーボードから離れるまではnull
         private IIKGenerator _prevRightHand = null;
@@ -119,7 +127,7 @@ namespace Baku.VMagicMirror
             
             if (hand != ReactedHand.None && EnableHidArmMotion)
             {
-                particleStore.RequestKeyboardParticleStart(pos);
+                _particleStore.RequestKeyboardParticleStart(pos);
             }
         }
 
@@ -143,7 +151,7 @@ namespace Baku.VMagicMirror
             SetRightHandIk(EnablePresentationMode ? HandTargetType.Presentation : HandTargetType.Mouse);
             if (_rightTargetType == HandTargetType.Mouse)
             {
-                particleStore.RequestMouseMoveParticle(mouseMove.ReferenceTouchpadPosition);
+                _particleStore.RequestMouseMoveParticle(mouseMove.ReferenceTouchpadPosition);
             }
         }
 
@@ -155,7 +163,7 @@ namespace Baku.VMagicMirror
                 SetRightHandIk(HandTargetType.Mouse);   
                 if (_rightTargetType == HandTargetType.Mouse)
                 {
-                    particleStore.RequestMouseClickParticle();
+                    _particleStore.RequestMouseClickParticle();
                 }
             }
         }
@@ -278,7 +286,7 @@ namespace Baku.VMagicMirror
             {
                 SetRightHandIk(HandTargetType.MidiController);
             }
-            particleStore.RequestMidiParticleStart(pos);
+            _particleStore.RequestMidiParticleStart(pos);
         }
 
         
@@ -323,9 +331,6 @@ namespace Baku.VMagicMirror
             _currentLeftHand = Typing.LeftHand;
             _leftHandStateBlendCount = HandIkToggleDuration;
             _rightHandStateBlendCount = HandIkToggleDuration;
-
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -369,8 +374,8 @@ namespace Baku.VMagicMirror
             //普通の状態: 複数ステートのブレンドはせず、今のモードをそのまま通す
             if (_leftHandStateBlendCount >= HandIkToggleDuration)
             {
-                leftHandTarget.localPosition = _currentLeftHand.Position;
-                leftHandTarget.localRotation = _currentLeftHand.Rotation;
+                _leftHandTarget.localPosition = _currentLeftHand.Position;
+                _leftHandTarget.localRotation = _currentLeftHand.Rotation;
                 return;
             }
 
@@ -379,13 +384,13 @@ namespace Baku.VMagicMirror
             _leftHandStateBlendCount += Time.deltaTime;
             //prevStateと混ぜるための比率
             float t = CubicEase(_leftHandStateBlendCount / HandIkToggleDuration);
-            leftHandTarget.localPosition = Vector3.Lerp(
+            _leftHandTarget.localPosition = Vector3.Lerp(
                 _prevLeftHand.Position,
                 _currentLeftHand.Position,
                 t
             );
 
-            leftHandTarget.localRotation = Quaternion.Slerp(
+            _leftHandTarget.localRotation = Quaternion.Slerp(
                 _prevLeftHand.Rotation,
                 _currentLeftHand.Rotation,
                 t
@@ -402,8 +407,8 @@ namespace Baku.VMagicMirror
             //普通の状態: 複数ステートのブレンドはせず、今のモードをそのまま通す
             if (_rightHandStateBlendCount >= HandIkToggleDuration)
             {
-                rightHandTarget.localPosition = _currentRightHand.Position;
-                rightHandTarget.localRotation = _currentRightHand.Rotation;
+                _rightHandTarget.localPosition = _currentRightHand.Position;
+                _rightHandTarget.localRotation = _currentRightHand.Rotation;
                 return;
             }
 
@@ -413,13 +418,13 @@ namespace Baku.VMagicMirror
             //prevStateと混ぜるための比率
             float t = CubicEase(_rightHandStateBlendCount / HandIkToggleDuration);
             
-            rightHandTarget.localPosition = Vector3.Lerp(
+            _rightHandTarget.localPosition = Vector3.Lerp(
                 _prevRightHand.Position,
                 _currentRightHand.Position,
                 t
             );
 
-            rightHandTarget.localRotation = Quaternion.Slerp(
+            _rightHandTarget.localRotation = Quaternion.Slerp(
                 _prevRightHand.Rotation,
                 _currentRightHand.Rotation,
                 t

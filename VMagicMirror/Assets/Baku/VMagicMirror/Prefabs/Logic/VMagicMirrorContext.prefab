@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8218640737285604641}
   - component: {fileID: 8218640737285604640}
-  - component: {fileID: 8218640737285604642}
+  - component: {fileID: 42090108536346765}
+  - component: {fileID: 2683631619848515584}
   m_Layer: 0
   m_Name: VMagicMirrorContext
   m_TagString: Untagged
@@ -46,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers: []
   _monoInstallers:
-  - {fileID: 8218640737285604642}
+  - {fileID: 42090108536346765}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -64,7 +65,7 @@ MonoBehaviour:
   _parentNewObjectsUnderSceneContext: 0
   _contractNames: []
   _parentContractNames: []
---- !u!114 &8218640737285604642
+--- !u!114 &42090108536346765
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,12 +74,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 8218640737285604647}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85437e04ea991b7489648a48de5da11f, type: 3}
+  m_Script: {fileID: 11500000, guid: 8731b5f4fc6536c4187460d73cb85215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  messageHandler: {fileID: 0}
-  loadController: {fileID: 0}
-  mmfServer: {fileID: 0}
-  rawInputChecker: {fileID: 0}
+  devices: {fileID: 0}
+  environment: {fileID: 0}
+  ik: {fileID: 0}
+  monitoring: {fileID: 0}
+  modelLoad: {fileID: 0}
   deformableCounterPrefab: {fileID: 7689942653974604740, guid: 70558d4eae9159e459981bcfa4091921,
     type: 3}
+  interProcess: {fileID: 2683631619848515584}
+--- !u!114 &2683631619848515584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8218640737285604647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8567d6cb62371714e8e942528bc18d00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

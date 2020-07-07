@@ -35,27 +35,16 @@ namespace Baku.VMagicMirror
 
         /// <summary>手首から指先までの距離[m]</summary>
         public float HandToTipLength { get; set; } = 0.12f;
-
-        //NOTE: いまは使ってない
-        /// <summary>腕モーションのスケーリング値。モニターが大きいときに用いる</summary>
-        public float PresentationArmMotionScale { get; set; } = 0.5f;
-
+        
         /// <summary>腕がめり込まないための、胴体を円柱とみなした時の半径に相当する値[m]</summary>
         public float PresentationArmRadiusMin { get; set; } = 0.2f;
 
-        
-        //ここから下の設定はUnityの中で勝手にやる
-
-        [SerializeField]
-        private Camera _cam = null;
-
         //Time.deltaTimeを掛けた値をLerpに適用する
-        [SerializeField]
-        private float _speedFactor = 12f;
-
-        [Inject]
-        private IVRMLoadable _vrmLoadable = null;
+        [SerializeField] private float _speedFactor = 12f;
         
+        private Camera _cam = null;
+        private IVRMLoadable _vrmLoadable = null;
+
         //プレゼンの腕位置をいい感じに計算するために用いる。
         //TODO: スケール値を廃止するときには肩～右指先までの長さをきっちり使うことになるかも
         private Transform _head = null;
@@ -70,7 +59,32 @@ namespace Baku.VMagicMirror
 
         private Vector3 _targetPosition = Vector3.zero;
         private Vector3 _rightIndexTargetPosition = Vector3.zero;
-        
+
+        [Inject]
+        public void Construct(IVRMLoadable vrmLoadable, Camera cam)
+        {
+            _cam = cam;
+            vrmLoadable.VrmLoaded += info =>
+            {
+                //NOTE: Shoulderが必須ボーンでは無い事に注意
+                var bones = new List<Transform>()
+                    {
+                        info.animator.GetBoneTransform(HumanBodyBones.RightShoulder),
+                        info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm),
+                        info.animator.GetBoneTransform(HumanBodyBones.RightLowerArm),
+                        info.animator.GetBoneTransform(HumanBodyBones.RightHand),
+                    }
+                    .Where(t => t != null)
+                    .ToArray();
+
+                float sum = 0;
+                for (int i = 0; i < bones.Length - 1; i++)
+                {
+                    sum += Vector3.Distance(bones[i].position, bones[i + 1].position);
+                }
+                _lengthFromShoulderToWrist = sum;
+            };
+        }
         
         public void Initialize(Animator animator)
         {
@@ -151,30 +165,6 @@ namespace Baku.VMagicMirror
             _rightIndexTargetPosition = fingerTargetPosition;
         }
 
-        private void Start()
-        {
-            _vrmLoadable.VrmLoaded += info =>
-            {
-                //NOTE: Shoulderが必須ボーンでは無い事に注意
-                var bones = new List<Transform>()
-                    {
-                        info.animator.GetBoneTransform(HumanBodyBones.RightShoulder),
-                        info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm),
-                        info.animator.GetBoneTransform(HumanBodyBones.RightLowerArm),
-                        info.animator.GetBoneTransform(HumanBodyBones.RightHand),
-                    }
-                    .Where(t => t != null)
-                    .ToArray();
-
-                float sum = 0;
-                for (int i = 0; i < bones.Length - 1; i++)
-                {
-                    sum += Vector3.Distance(bones[i].position, bones[i + 1].position);
-                }
-                _lengthFromShoulderToWrist = sum;
-            };
-        }
-        
         private void Update()
         {
             if (_head == null || _rightShoulder == null)

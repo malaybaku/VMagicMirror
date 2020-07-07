@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Baku.VMagicMirror.IK;
 using UnityEngine;
 using UniRx;
 using UniHumanoid;
@@ -13,9 +14,7 @@ namespace Baku.VMagicMirror
     /// <summary>VRMのロード処理をやるやつ</summary>
     public class VRMLoadController : MonoBehaviour, IVRMLoadable
     {
-        [Inject] private ReceivedMessageHandler handler = null;
-        [SerializeField] private VrmLoadSetting loadSetting = default;
-        [SerializeField] private VRMPreviewCanvas previewCanvas = null;
+        //[SerializeField] private VrmLoadSetting loadSetting = default;
         [SerializeField] private RuntimeAnimatorController animatorController = null;
 
         //NOTE: 下の2つは参照外せなくもないが残している。他と同じでイベントで初期化/破棄するスタイルでもよい
@@ -27,11 +26,20 @@ namespace Baku.VMagicMirror
         public event Action<VrmLoadedInfo> PreVrmLoaded;
         public event Action<VrmLoadedInfo> VrmLoaded; 
         public event Action VrmDisposing;
-        
+
+        private IKTargetTransforms _ikTargets = null;
+        private VRMPreviewCanvas _previewCanvas = null;
         private HumanPoseTransfer _humanPoseTransferTarget = null;
 
-        private void Start()
+        [Inject]
+        public void Initialize(
+            ReceivedMessageHandler handler,
+            VRMPreviewCanvas previewCanvas,
+            IKTargetTransforms ikTargets
+            )
         {
+            _previewCanvas = previewCanvas;
+            _ikTargets = ikTargets;
             handler.Commands.Subscribe(message =>
             {
                 switch (message.Command)
@@ -45,8 +53,6 @@ namespace Baku.VMagicMirror
                         break;
                     case MessageCommandNames.CancelLoadVrm:
                         previewCanvas.Hide();
-                        break;
-                    default:
                         break;
                 }
             });
@@ -66,7 +72,7 @@ namespace Baku.VMagicMirror
                     using (var context = new VRMImporterContext())
                     {
                         context.ParseGlb(File.ReadAllBytes(path));
-                        previewCanvas.Show(context);
+                        _previewCanvas.Show(context);
                     }
                 }
                 else
@@ -138,7 +144,7 @@ namespace Baku.VMagicMirror
             lookAt.UpdateType = UpdateType.LateUpdate;
             
             //セットアップのうちFinalIKに思い切り依存した所が別スクリプトになってます
-            VRMLoadControllerHelper.SetupVrm(go, loadSetting);
+            VRMLoadControllerHelper.SetupVrm(go, _ikTargets);
 
             var animator = go.GetComponent<Animator>();
             animator.runtimeAnimatorController = animatorController;

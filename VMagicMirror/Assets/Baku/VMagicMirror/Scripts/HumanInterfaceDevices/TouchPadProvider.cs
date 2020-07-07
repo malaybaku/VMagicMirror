@@ -1,12 +1,24 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.Installer;
+using mattatz.TransformControl;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class TouchPadProvider : MonoBehaviour
     {
-        [Inject] private MousePositionProvider _mousePositionProvider = null;
-        
+        private MousePositionProvider _mousePositionProvider = null;
+
+        [SerializeField] private TransformControl transformControl = null;
+        public TransformControl TransformControl => transformControl;
+
+        [Inject]
+        public void Initialize(MousePositionProvider mousePositionProvider, IDevicesRoot parent)
+        {
+            _mousePositionProvider = mousePositionProvider;
+            transform.parent = parent.Transform;
+        }
+
         private void Start()
         {
             foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
@@ -45,7 +57,6 @@ namespace Baku.VMagicMirror
         {
             var t = transform;
             return (-yOffset) * t.forward + (-palmToTipLength) * t.up;
-
         }
     }
 }

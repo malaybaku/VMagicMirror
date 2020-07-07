@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6312515010370811259}
   - component: {fileID: 6312515010370811260}
   - component: {fileID: 6312515010370811263}
+  - component: {fileID: 5640999407990057317}
   m_Layer: 0
   m_Name: LoadController
   m_TagString: Untagged
@@ -66,3 +67,20 @@ MonoBehaviour:
   animatorController: {fileID: 9100000, guid: 8274142a1807f5848a5dd1166db7d615, type: 2}
   windowStyleController: {fileID: 0}
   settingAdjuster: {fileID: 0}
+--- !u!114 &5640999407990057317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6312515010370811258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8c86c789fa99a4d8bda2ca79ddde59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loadController: {fileID: 6312515010370811263}
+  settingAutoAdjuster: {fileID: 0}
+  vrmPreviewLanguage: {fileID: 6312515010370811260}
+  vrmPreviewCanvasPrefab: {fileID: 4226044117769235611, guid: 4821f596a86990e47ae70722be7ac5ae,
+    type: 3}

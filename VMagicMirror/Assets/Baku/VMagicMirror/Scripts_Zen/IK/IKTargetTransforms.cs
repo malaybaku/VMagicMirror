@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror.IK
     /// IKのターゲットを取得する処理です。
     /// 使っていいクラスは非常に限られる(最終的に適用する人くらいである)ことに注意してください。
     /// </summary>
-    public class IKTargets : MonoBehaviour
+    public class IKTargetTransforms : MonoBehaviour
     {
         [SerializeField] private Transform lookAt = default;
         [SerializeField] private Transform rightHand = default;

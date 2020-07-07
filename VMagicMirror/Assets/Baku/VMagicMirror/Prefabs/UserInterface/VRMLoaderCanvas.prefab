@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 40091189062906551}
   - component: {fileID: 40091189062906548}
   - component: {fileID: 40091189062906549}
-  - component: {fileID: 40091189062906553}
   m_Layer: 5
   m_Name: VRMLoaderCanvas
   m_TagString: Untagged
@@ -70,7 +69,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 40091189062906546}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 1
@@ -92,7 +91,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 40091189062906546}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreReversedGraphics: 1
@@ -100,20 +99,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &40091189062906553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 40091189062906546}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0360c06369d28f4296229d79b75880e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  modalWindow: {fileID: 6578106336392684971}
-  previewLanguage: {fileID: 0}
 --- !u!1001 &6865598103415955887
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -234,12 +219,6 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 3214832228796965221, guid: 7f42a964f4a773a4da3d42a3b542a372, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7f42a964f4a773a4da3d42a3b542a372, type: 3}
---- !u!1 &6578106336392684971 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 292067419132429316, guid: 7f42a964f4a773a4da3d42a3b542a372,
-    type: 3}
-  m_PrefabInstance: {fileID: 6865598103415955887}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &6363944714529350459 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 510814519871341204, guid: 7f42a964f4a773a4da3d42a3b542a372,

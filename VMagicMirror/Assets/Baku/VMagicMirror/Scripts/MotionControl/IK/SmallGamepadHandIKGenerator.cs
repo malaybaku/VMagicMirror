@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -9,7 +10,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class SmallGamepadHandIKGenerator : MonoBehaviour
     {
-        [SerializeField] private SmallGamepadProvider gamePad = null;
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
         
         [Tooltip("ゲームパッド全体を動かす速度ファクタ")]
@@ -21,7 +21,14 @@ namespace Baku.VMagicMirror
         [Tooltip("体が動いた量をゲームパッドの移動量に反映するファクター")]
         [Range(0f, 1f)]
         [SerializeField] private float bodyMotionToGamepadPosApplyFactor = 0.5f;
+
+        [Inject]
+        public void Initialize(SmallGamepadProvider provider)
+        {
+            _gamePad = provider;
+        }
         
+        private SmallGamepadProvider _gamePad = null;
         
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKGenerator LeftHand => _leftHand;
@@ -128,10 +135,10 @@ namespace Baku.VMagicMirror
                 );
 
             _rawStickPos = pos;
-            gamePad.SetHorizontalPosition(pos);
+            _gamePad.SetHorizontalPosition(pos);
             
-            (_rawLeftPos, _rawLeftRot) = gamePad.GetLeftHand();
-            (_rawRightPos, _rawRightRot) = gamePad.GetRightHand();   
+            (_rawLeftPos, _rawLeftRot) = _gamePad.GetLeftHand();
+            (_rawRightPos, _rawRightRot) = _gamePad.GetRightHand();   
         }
 
         private static Vector2 NormalizedStickPos(Vector2Int v)
@@ -170,7 +177,7 @@ namespace Baku.VMagicMirror
             _rightHand.Rotation = _filterRightRot;
 
             //手の実際の位置を与えてゲームパッドのモデル位置を再調整
-            gamePad.SetFilteredPosition(_filterStickPos, offset);
+            _gamePad.SetFilteredPosition(_filterStickPos, offset);
         }
 
         private void UpdateButtonDownYOffset()

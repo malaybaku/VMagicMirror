@@ -16,21 +16,17 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
         
         public override void InstallBindings()
-        {
-            base.InstallBindings();
-
-            var installers = new InstallerBase[]
-            {
-                devices,
-                environment,
-                ik,
-                monitoring,
-                modelLoad,
-                interProcess,
-                screenshotCountDown,
-            };
-
-            foreach (var installer in installers)
+        { 
+            foreach (var installer in new InstallerBase[]
+                {
+                    devices,
+                    environment,
+                    ik,
+                    monitoring,
+                    modelLoad,
+                    interProcess,
+                    screenshotCountDown,
+                })
             {
                 installer.Install(Container);
             }

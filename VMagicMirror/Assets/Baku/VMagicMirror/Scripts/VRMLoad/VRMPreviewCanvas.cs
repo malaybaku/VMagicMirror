@@ -67,7 +67,13 @@ namespace Baku.VMagicMirror
             _canvas.gameObject.SetActive(true);
         }
 
-        public void Hide() => _canvas.gameObject.SetActive(false);
+        public void Hide()
+        {
+            if (_canvas != null)
+            {
+                _canvas.gameObject.SetActive(false);
+            }
+        }
 
         private static string LanguageNameToLocaleName(string languageName)
         {

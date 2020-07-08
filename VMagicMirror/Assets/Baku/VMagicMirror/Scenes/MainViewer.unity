@@ -496,30 +496,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 7220499517934239985}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1930233618 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4403582645749538044, guid: 8089eb7a4f09ec147961c4ed8f093c27,
-    type: 3}
-  m_PrefabInstance: {fileID: 4403582645463997422}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fb6aa4a21c16094f91aac076bb5f5e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1930233619 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4403582645749538045, guid: 8089eb7a4f09ec147961c4ed8f093c27,
-    type: 3}
-  m_PrefabInstance: {fileID: 4403582645463997422}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5adbbf360a341c49822f4b41ea84c7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1963776208 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7427902273662735818, guid: 1e7e415b712b9b041be3596ae23c356e,
@@ -689,7 +665,7 @@ PrefabInstance:
         type: 3}
       propertyPath: handler
       value: 
-      objectReference: {fileID: 1930233619}
+      objectReference: {fileID: 0}
     - target: {fileID: 7848325067811684568, guid: 74b68522ff1e6a64ab9ccb23c66175b9,
         type: 3}
       propertyPath: windDuration
@@ -1199,10 +1175,40 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6032028867499354520, guid: 606785967cf370247880a3acd0b7c36d,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6032028867499354520, guid: 606785967cf370247880a3acd0b7c36d,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6032028867499354520, guid: 606785967cf370247880a3acd0b7c36d,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6032028867499354520, guid: 606785967cf370247880a3acd0b7c36d,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6032028867499354520, guid: 606785967cf370247880a3acd0b7c36d,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6032028867499354524, guid: 606785967cf370247880a3acd0b7c36d,
         type: 3}
       propertyPath: m_Name
       value: ScreenshotCountDownCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6032028867499354524, guid: 606785967cf370247880a3acd0b7c36d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 606785967cf370247880a3acd0b7c36d, type: 3}
@@ -1379,7 +1385,7 @@ PrefabInstance:
         type: 3}
       propertyPath: messageHandler
       value: 
-      objectReference: {fileID: 1930233619}
+      objectReference: {fileID: 0}
     - target: {fileID: 8218640737285604642, guid: 790d84fdbc606c944ad6592cf84f1ea9,
         type: 3}
       propertyPath: loadController
@@ -1389,7 +1395,7 @@ PrefabInstance:
         type: 3}
       propertyPath: mmfServer
       value: 
-      objectReference: {fileID: 1930233618}
+      objectReference: {fileID: 0}
     - target: {fileID: 8218640737285604642, guid: 790d84fdbc606c944ad6592cf84f1ea9,
         type: 3}
       propertyPath: rawInputChecker

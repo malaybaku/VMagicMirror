@@ -17,12 +17,24 @@ namespace Baku.VMagicMirror.Installer
         public override void Install(DiContainer container)
         {
             //prefabの各要素がワールド直下じゃなくてこのオブジェクト以下にぶら下がれるように、親っぽい雰囲気を出しておく
-            container.Bind<IDevicesRoot>().FromInstance(this).AsCached();
-            container.Bind<SmallGamepadProvider>().FromComponentInNewPrefab(gamepadProvider);
-            container.Bind<KeyboardProvider>().FromComponentInNewPrefab(keyboardProvider);
-            container.Bind<TouchPadProvider>().FromComponentInNewPrefab(touchPadProvider);
-            container.Bind<MidiControllerProvider>().FromComponentInNewPrefab(midiControllerProvider);
-            container.Bind<ParticleStore>().FromComponentInNewPrefab(particleStore);
+            container.Bind<IDevicesRoot>()
+                .FromInstance(this)
+                .AsCached();
+            container.Bind<SmallGamepadProvider>()
+                .FromComponentInNewPrefab(gamepadProvider)
+                .AsCached();
+            container.Bind<KeyboardProvider>()
+                .FromComponentInNewPrefab(keyboardProvider)
+                .AsCached();
+            container.Bind<TouchPadProvider>()
+                .FromComponentInNewPrefab(touchPadProvider)
+                .AsCached();
+            container.Bind<MidiControllerProvider>()
+                .FromComponentInNewPrefab(midiControllerProvider)
+                .AsCached();
+            container.Bind<ParticleStore>()
+                .FromComponentInNewPrefab(particleStore)
+                .AsCached();
         }
     }
 

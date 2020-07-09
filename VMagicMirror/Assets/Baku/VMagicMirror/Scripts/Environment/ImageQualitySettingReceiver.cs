@@ -1,15 +1,14 @@
 ﻿using System;
-using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
-using Zenject;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
-    public class ImageQualitySettingReceiver : MonoBehaviour
+    public class ImageQualitySettingReceiver
     {
-        //TODO: 非monobehaviour化できそう
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        
+        
+        public ImageQualitySettingReceiver(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(MessageCommandNames.SetImageQuality,
                 c => SetImageQuality(c.Content)

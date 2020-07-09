@@ -63,11 +63,17 @@ namespace Baku.VMagicMirror
         private float _mouseContinueParticleCountDown = 0f;
 
         [Inject]
-        public void Initialize(IDevicesRoot devicesRoot, KeyboardProvider keyboard, TouchPadProvider touchPad)
+        public void Initialize(
+            IMessageReceiver receiver,
+            IDevicesRoot devicesRoot, 
+            KeyboardProvider keyboard,
+            TouchPadProvider touchPad)
         {
             transform.parent = devicesRoot.Transform;
             _keyboardParticleParent = keyboard.transform;
             _mouseParticlePrefabParent = touchPad.transform;
+            
+            var _ = new ParticleControlReceiver(receiver, this);
         }
 
         private void Start()

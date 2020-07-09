@@ -29,12 +29,12 @@ namespace Baku.VMagicMirror
         [SerializeField] private float strengthFactor = 1.0f;
         [SerializeField] private float timeFactor = 1.0f;
         
-        private IVRMLoadable _vrmLoadController;
-
         [Inject]
-        public void InitializeLoadController(IVRMLoadable vrmLoadController)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver)
         {
-            _vrmLoadController = vrmLoadController;
+            vrmLoadable.VrmLoaded += OnVrmLoaded;
+            vrmLoadable.VrmDisposing += OnVrmUnloading;
+            var _ = new WindSettingReceiver(receiver, this);
         }
         
         class WindItem
@@ -107,13 +107,7 @@ namespace Baku.VMagicMirror
                 bone.m_gravityPower = _originalGravityFactors[i];
             }
         }
-
-        private void Start()
-        {
-            _vrmLoadController.VrmLoaded += OnVrmLoaded;
-            _vrmLoadController.VrmDisposing += OnVrmUnloading;
-        }
-
+        
         private void Update()
         {
             EnableWind(enableWind);

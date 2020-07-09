@@ -342,9 +342,7 @@ GameObject:
   - component: {fileID: 1574337991341618297}
   - component: {fileID: 1574337991341618298}
   - component: {fileID: 1574337991341618295}
-  - component: {fileID: 7763175600262813625}
   - component: {fileID: 1048790551284028973}
-  - component: {fileID: 3053693405846003699}
   - component: {fileID: 6114829519876496421}
   m_Layer: 0
   m_Name: Main Camera
@@ -544,19 +542,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   normalMainCam: {fileID: 1574337991341618299}
   screenShotCam: {fileID: 1574337991882445227}
-  countDownCanvas: {fileID: 0}
---- !u!114 &7763175600262813625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1574337991341618302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6631469b113da6c4b832da1b2809f43c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1048790551284028973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -573,18 +558,6 @@ MonoBehaviour:
   width: 640
   height: 480
   showWarnings: 0
---- !u!114 &3053693405846003699
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1574337991341618302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 345056bf5c537744794c6cf6a9c28fd9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6114829519876496421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -742,7 +715,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3589418729740590996}
-  - component: {fileID: 2980388060628184797}
   - component: {fileID: 7848325067811684568}
   m_Layer: 0
   m_Name: Wind
@@ -765,19 +737,6 @@ Transform:
   m_Father: {fileID: 1574337991341618296}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2980388060628184797
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4638350262946269639}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af09dc0fa84050941886b776f844d7af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wind: {fileID: 7848325067811684568}
 --- !u!114 &7848325067811684568
 MonoBehaviour:
   m_ObjectHideFlags: 0

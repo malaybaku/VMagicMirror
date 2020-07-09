@@ -1,5 +1,4 @@
-﻿using Baku.VMagicMirror.InterProcess;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -9,13 +8,10 @@ namespace Baku.VMagicMirror
         [SerializeField] private FaceControlManager faceControlManager = null;
 
         private EyebrowBlendShapeSet EyebrowBlendShape => faceControlManager.EyebrowBlendShape;
-        private IMessageSender _sender;
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver, IMessageSender sender)
+        public void Initialize(IMessageReceiver receiver)
         {
-            _sender = sender;
-
             receiver.AssignCommandHandler(
                 MessageCommandNames.EyebrowLeftUpKey,
                 message =>
@@ -66,23 +62,11 @@ namespace Baku.VMagicMirror
                 MessageCommandNames.EyebrowDownScale, 
                 message => EyebrowBlendShape.DownScale = message.ParseAsPercentage()
                 );
-            
-            receiver.AssignQueryHandler(
-                MessageQueryNames.GetBlendShapeNames,
-                query => query.Result = string.Join("\t", TryGetBlendShapeNames())
-                );
-            
-
-            faceControlManager.VrmInitialized += SendBlendShapeNames;
         }
         
         private void RefreshTarget() => EyebrowBlendShape.RefreshTarget(faceControlManager.BlendShapeStore);
 
         public string[] TryGetBlendShapeNames() => faceControlManager.BlendShapeStore.GetBlendShapeNames();
         
-        private void SendBlendShapeNames()
-            => _sender.SendCommand(MessageFactory.Instance.SetBlendShapeNames(
-                string.Join("\t", TryGetBlendShapeNames())
-                ));
     }
 }

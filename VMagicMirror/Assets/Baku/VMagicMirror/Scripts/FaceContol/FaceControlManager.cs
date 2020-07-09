@@ -1,4 +1,5 @@
 ﻿using System;
+using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
 using VRM;
 using Zenject;
@@ -24,13 +25,17 @@ namespace Baku.VMagicMirror
         private bool _hasModel = false;
         private VRMBlendShapeProxy _proxy;
         private FaceControlConfiguration _config;
+        private FaceControlManagerMessageIo _messageIo;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, FaceControlConfiguration config)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, IMessageSender sender, FaceControlConfiguration config)
         {
             _config = config;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
+            
+            var _ = new FaceControlConfigurationReceiver(receiver, config);
+            _messageIo = new FaceControlManagerMessageIo(receiver, sender, this);
         }
         
         /// <summary> VRMロード時の初期化が済んだら発火 </summary>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Baku.VMagicMirror.InterProcess
+namespace Baku.VMagicMirror
 {
     /// <summary> IPCによるメッセージを受け取ってリダイレクトする処理を定義します。 </summary>
     public interface IMessageReceiver

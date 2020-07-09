@@ -59,8 +59,6 @@ namespace Baku.VMagicMirror
         
         #endregion
 
-        private IVRMLoadable _vrmLoadable = null;
-
         #region モデルロード時に値を決めるやつ
 
         private bool _hasValidShoulderBone = false;
@@ -107,12 +105,15 @@ namespace Baku.VMagicMirror
         #endregion
         
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver)
         {
-            _vrmLoadable = vrmLoadable;
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
-        }
+            vrmLoadable.VrmLoaded += OnVrmLoaded;
+            vrmLoadable.VrmDisposing += OnVrmDisposing;
+            
+            receiver.AssignCommandHandler(
+                MessageCommandNames.EnableShoulderMotionModify,
+                command => EnableRotationModification = command.ToBoolean()
+            );        }
 
         private bool _enableRotationModification = true;
         public bool EnableRotationModification

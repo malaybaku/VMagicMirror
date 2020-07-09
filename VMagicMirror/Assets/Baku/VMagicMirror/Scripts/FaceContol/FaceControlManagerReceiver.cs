@@ -1,48 +1,49 @@
-﻿using UnityEngine;
-using Zenject;
-using Baku.VMagicMirror.InterProcess;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(FaceControlManager))]
-    [RequireComponent(typeof(BehaviorBasedAutoBlinkAdjust))]
-    public class FaceControlManagerReceiver : MonoBehaviour
+    public class FaceControlManagerMessageIo
     {
-        private FaceControlManager _faceControlManager;
-        private BehaviorBasedAutoBlinkAdjust _autoBlinkAdjust;
-
-        //TODO: ManagerコードとかAdjusterクラスからうまくインスタンス作ったら非MonoBehaviour化できそうな。
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public FaceControlManagerMessageIo(IMessageReceiver receiver, IMessageSender sender, FaceControlManager faceControlManager)
         {
             receiver.AssignCommandHandler(
                 MessageCommandNames.AutoBlinkDuringFaceTracking,
                 message => 
-                    _faceControlManager.PreferAutoBlinkOnWebCamTracking = message.ToBoolean()
+                    faceControlManager.PreferAutoBlinkOnWebCamTracking = message.ToBoolean()
                 );
 
             receiver.AssignCommandHandler(
                 MessageCommandNames.FaceDefaultFun,
                 message =>
-                    _faceControlManager.DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage()
+                    faceControlManager.DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage()
                 );
+                       
+            receiver.AssignQueryHandler(
+                MessageQueryNames.GetBlendShapeNames,
+                query => query.Result = string.Join("\t", faceControlManager.BlendShapeStore.GetBlendShapeNames())
+            );
+
+            faceControlManager.VrmInitialized += () =>
+            {
+                sender.SendCommand(MessageFactory.Instance.SetBlendShapeNames(
+                    string.Join("\t", faceControlManager.BlendShapeStore.GetBlendShapeNames())
+                ));
+            };
+        }
+    }
+
+    public class BehaviorBasedBlinkReceiver
+    {
+        public BehaviorBasedBlinkReceiver(IMessageReceiver receiver, BehaviorBasedAutoBlinkAdjust autoBlinkAdjust)
+        {
             receiver.AssignCommandHandler(
                 MessageCommandNames.EnableHeadRotationBasedBlinkAdjust,
                 message 
-                    => _autoBlinkAdjust.EnableHeadRotationBasedBlinkAdjust = message.ToBoolean()
-                );
+                    => autoBlinkAdjust.EnableHeadRotationBasedBlinkAdjust = message.ToBoolean()
+            );
             receiver.AssignCommandHandler(
                 MessageCommandNames.EnableLipSyncBasedBlinkAdjust,
                 message =>
-                    _autoBlinkAdjust.EnableLipSyncBasedBlinkAdjust = message.ToBoolean()
-                );
-        }
-        
-        
-        private void Start()
-        {
-            _faceControlManager = GetComponent<FaceControlManager>();
-            _autoBlinkAdjust = GetComponent<BehaviorBasedAutoBlinkAdjust>();
+                    autoBlinkAdjust.EnableLipSyncBasedBlinkAdjust = message.ToBoolean()
+            );
         }
     }
 }

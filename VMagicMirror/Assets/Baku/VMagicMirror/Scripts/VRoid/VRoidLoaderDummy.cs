@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Zenject;
-using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
@@ -13,8 +12,6 @@ namespace Baku.VMagicMirror
     public class VRoidLoaderDummy : MonoBehaviour
     {
         private IMessageSender _sender = null;
-        
-        //TODO: 非MonoBehaviour化
         
         [Inject]
         public void Initialize(IMessageReceiver receiver, IMessageSender sender)

@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         private string[] _blendShapeNames = new string[0];
 
         public bool IsInitialized { get; private set; } = false;
-
+        
         public void OnVrmLoaded(VrmLoadedInfo info)
         {
             InitializeBlendShapeItems(info.vrmRoot);

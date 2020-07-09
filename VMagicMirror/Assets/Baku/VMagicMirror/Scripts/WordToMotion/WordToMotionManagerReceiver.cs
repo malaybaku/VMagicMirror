@@ -21,7 +21,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private WordToMotionManager manager = null;
 
         [Inject]
-        public void Initialize(InterProcess.IMessageReceiver receiver, RawInputChecker rawInputChecker)
+        public void Initialize(IMessageReceiver receiver, RawInputChecker rawInputChecker)
         {
             _rawInputChecker = rawInputChecker;
             receiver.AssignCommandHandler(

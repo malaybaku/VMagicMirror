@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
 using Zenject;
 
@@ -82,7 +83,7 @@ namespace Baku.VMagicMirror
         public bool EnableLipSyncBasedBlinkAdjust { get; set; } = true;
  
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver)
         {
             vrmLoadable.VrmLoaded += vrm =>
             {
@@ -118,6 +119,8 @@ namespace Baku.VMagicMirror
                 _leftEye = null;
                 _rightEye = null;
             };
+            
+            var _ = new BehaviorBasedBlinkReceiver(receiver, this);
         }
 
         private void Start()

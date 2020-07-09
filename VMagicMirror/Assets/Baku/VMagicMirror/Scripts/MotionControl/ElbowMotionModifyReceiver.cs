@@ -1,16 +1,8 @@
-﻿using Baku.VMagicMirror.InterProcess;
-using UnityEngine;
-using Zenject;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
-    public class ElbowMotionModifyReceiver : MonoBehaviour
+    public class ElbowMotionModifyReceiver
     {
-        //TODO: 非MonoBehaviour化
-        [SerializeField] private ElbowMotionModifier modifier = null;
-
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public ElbowMotionModifyReceiver(IMessageReceiver receiver, ElbowMotionModifier modifier)
         {
             receiver.AssignCommandHandler(
                 MessageCommandNames.SetWaistWidth,

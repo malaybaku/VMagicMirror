@@ -8,7 +8,6 @@ namespace Baku.VMagicMirror.Installer
     {
         [SerializeField] private VRMLoadController loadController = null;
         [SerializeField] private SettingAutoAdjuster settingAutoAdjuster = null;
-        [SerializeField] private VRMPreviewLanguage vrmPreviewLanguage = null;
         [SerializeField] private VRMPreviewCanvas vrmPreviewCanvasPrefab = null;
 
         public override void Install(DiContainer container)
@@ -21,9 +20,10 @@ namespace Baku.VMagicMirror.Installer
                 .FromComponentInNewPrefab(vrmPreviewCanvasPrefab)
                 .AsCached();
             
+            container.Bind<VRMPreviewLanguage>().AsCached();
+
             //TODO: こいつら非MonoBehaviour化できそう
             container.BindInstance(settingAutoAdjuster);
-            container.BindInstance(vrmPreviewLanguage);
             
         }
     }

@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private float cooldownTime = 0.3f;
 
         [Inject]
-        public void Initialize(InterProcess.IMessageReceiver receiver, IMessageSender sender, MidiInputObserver midiObserver)
+        public void Initialize(IMessageReceiver receiver, IMessageSender sender, MidiInputObserver midiObserver)
         {
             _sender = sender;
             _midiInputObserver = midiObserver;

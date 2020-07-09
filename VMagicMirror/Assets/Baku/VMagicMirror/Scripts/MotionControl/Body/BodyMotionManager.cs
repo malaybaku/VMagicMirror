@@ -23,11 +23,12 @@ namespace Baku.VMagicMirror
         private bool _isVrmLoaded = false;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IKTargetTransforms ikTargets)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, IKTargetTransforms ikTargets)
         {
             _bodyIk = ikTargets.Body;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
+            var _ = new BodyMotionManagerReceiver(receiver, this);
         }
         
         private void Update()

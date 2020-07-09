@@ -65,7 +65,7 @@ namespace Baku.VMagicMirror
         private IDisposable _mouseObserve;
 
         [Inject]
-        public void Initialize(InterProcess.IMessageReceiver receiver, RawInputChecker rawInputChecker)
+        public void Initialize(IMessageReceiver receiver, RawInputChecker rawInputChecker)
         {
             receiver.AssignCommandHandler(
                 MessageCommandNames.Chromakey,

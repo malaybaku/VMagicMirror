@@ -1,9 +1,6 @@
 ﻿using System;
-using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
-using UniRx;
 using Zenject;
-using IMessageReceiver = Baku.VMagicMirror.InterProcess.IMessageReceiver;
 
 namespace Baku.VMagicMirror
 {

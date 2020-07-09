@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8787302697188517924}
-  - component: {fileID: 4377638765846174095}
   - component: {fileID: 1741065671539273212}
   - component: {fileID: 3105770716100891395}
   - component: {fileID: 2227461144775415255}
@@ -34,19 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4377638765846174095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7517924886113761768}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a355be965a7983a49a84c44e71c767b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dataSource: {fileID: 1741065671539273212}
 --- !u!114 &1741065671539273212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,9 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db30c191a903018439a0097834029d87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lossBreakRate: 3
   iFacialMocapReceiver: {fileID: 3105770716100891395}
   waidayoReceiver: {fileID: 2227461144775415255}
   notTrackCountLimit: 0.5
+  trackRecoverDuration: 1
 --- !u!114 &3105770716100891395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,8 +62,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee6bb180360c53b4baa13a2bcb3e6114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeHorizontalRotationToBlendShapeFactor: 5
-  eyeVerticalRotationToBlendShapeFactor: 5
 --- !u!114 &2227461144775415255
 MonoBehaviour:
   m_ObjectHideFlags: 0

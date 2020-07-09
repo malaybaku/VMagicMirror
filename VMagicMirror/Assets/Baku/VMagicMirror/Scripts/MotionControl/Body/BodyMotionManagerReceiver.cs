@@ -1,21 +1,13 @@
 ﻿using UnityEngine;
-using Zenject;
-using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
-    public class BodyMotionManagerReceiver : MonoBehaviour
+    public class BodyMotionManagerReceiver
     {
-        //TODO: このマネージャコードにぶら下げて非MonoBehaviour化したい
-        [SerializeField] private BodyMotionManager bodyMotionManager = null;
-
-        private bool _isWaitMotionEnabled = true;
-        private float _scale = 1.0f;
-        private Vector3 _waitingMotionSize;
-
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public BodyMotionManagerReceiver(IMessageReceiver receiver, BodyMotionManager bodyMotionManager)
         {
+            _bodyMotionManager = bodyMotionManager;
+
             receiver.AssignCommandHandler(
                 MessageCommandNames.EnableWaitMotion,
                 message => EnableWaitMotion(message.ToBoolean())
@@ -32,32 +24,34 @@ namespace Baku.VMagicMirror
                 MessageCommandNames.EnableBodyLeanZ,
                 message => bodyMotionManager.EnableImageBaseBodyLeanZ(message.ToBoolean())
                 );
-        }
-        
-        private void Start()
-        {
-            _waitingMotionSize = bodyMotionManager.WaitingBodyMotion.MotionSize;
+            
+            _waitingMotionSize = _bodyMotionManager.WaitingBodyMotion.MotionSize;
             SetWaitMotionScale(1.25f);
         }
 
+        private readonly BodyMotionManager _bodyMotionManager;
+        private readonly Vector3 _waitingMotionSize;
+        
+        private bool _isWaitMotionEnabled = true;
+        private float _scale = 1.0f;
+        
         private void EnableWaitMotion(bool isEnabled)
         {
             _isWaitMotionEnabled = isEnabled;
             
             //isEnabled == falseでもビヘイビアは止めちゃダメ(動きかけのところで固定されてしまうので)
-            bodyMotionManager.WaitingBodyMotion.MotionSize =
+            _bodyMotionManager.WaitingBodyMotion.MotionSize =
                 _isWaitMotionEnabled ? _scale * _waitingMotionSize : Vector3.zero;
         }
 
         private void SetWaitMotionScale(float scale)
         {
             _scale = scale;
-            
-            bodyMotionManager.WaitingBodyMotion.MotionSize = 
+            _bodyMotionManager.WaitingBodyMotion.MotionSize = 
                 _isWaitMotionEnabled ? _scale * _waitingMotionSize : Vector3.zero;
         }
 
         private void SetWaitMotionDuration(float period)
-            => bodyMotionManager.WaitingBodyMotion.Duration = period;
+            => _bodyMotionManager.WaitingBodyMotion.Duration = period;
     }
 }

@@ -1,17 +1,8 @@
-﻿using UnityEngine;
-using Zenject;
-using Baku.VMagicMirror.InterProcess;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
-    public class WindSettingReceiver : MonoBehaviour
+    public class WindSettingReceiver
     {
-        //TODO: 非MonoBehaviour化
-
-        [SerializeField] private VRMWind wind = null;
-
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public WindSettingReceiver(IMessageReceiver receiver, VRMWind wind)
         {
             receiver.AssignCommandHandler(
                 MessageCommandNames.WindEnable,

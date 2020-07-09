@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0caf9d78986ded343bb1e507cae2d2ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keyboard: {fileID: 0}
 --- !u!114 &7830865391416833507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,7 +78,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5813678808713813114}
-  - component: {fileID: 5813678808713813110}
   - component: {fileID: 5813678808713813111}
   - component: {fileID: 8506340368463674577}
   - component: {fileID: 5813678808713813112}
@@ -110,19 +108,6 @@ Transform:
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5813678808713813110
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678808713813115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a586a6b63530d746ab02cbc14ba2d66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bodyMotionManager: {fileID: 5813678808713813111}
 --- !u!114 &5813678808713813111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,7 +120,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d8171c0e71f7004285ec3eedc0c3fd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyIk: {fileID: 0}
   bodyLeanIntegrator: {fileID: 8506340368463674577}
   imageBasedBodyMotion: {fileID: 5813678808713813112}
   exTrackerBodyMotion: {fileID: 6238302672375872197}
@@ -356,7 +340,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5813678810248240002}
-  - component: {fileID: 5813678810248240000}
   - component: {fileID: 5813678810248240001}
   m_Layer: 0
   m_Name: ElbowMotionModifier
@@ -379,19 +362,6 @@ Transform:
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5813678810248240000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678810248240003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9838934ad278ba4a92a84679291438b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  modifier: {fileID: 5813678810248240001}
 --- !u!114 &5813678810248240001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -480,7 +450,6 @@ MonoBehaviour:
   smallGamepadHandIk: {fileID: 5813678810404708594}
   handIkIntegrator: {fileID: 5813678810404708495}
   headIkIntegrator: {fileID: 5813678810404708592}
-  gamePad: {fileID: 0}
 --- !u!114 &5813678810404708495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,8 +462,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3552a65e20d8b4f48a32c43a4b922e3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightHandTarget: {fileID: 0}
-  leftHandTarget: {fileID: 0}
   typing: {fileID: 5813678810404708595}
   smallGamepadHand: {fileID: 5813678810404708594}
   gamepadFinger: {fileID: 5813678810404708492}
@@ -503,7 +470,6 @@ MonoBehaviour:
   presentation: {fileID: 5813678810404708597}
   imageBaseHand: {fileID: 3817731646809221862}
   fingerController: {fileID: 2951044793089892564}
-  particleStore: {fileID: 0}
 --- !u!114 &5813678810404708592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,8 +482,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42ec32203ee4941478b39e621dcbdc65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 0}
-  lookAtTarget: {fileID: 0}
   lookAtSpeedFactor: 6
 --- !u!114 &5813678810404708595
 MonoBehaviour:
@@ -531,7 +495,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d02550320e3f9eb4a9ba2339d777ca4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keyboard: {fileID: 0}
   horizontalApproachCurve:
     serializedVersion: 2
     m_Curve:
@@ -635,7 +598,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b42e5b5ec29fcd4c93ff504bcd611a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cam: {fileID: 0}
   _speedFactor: 12
 --- !u!114 &5813678810404708598
 MonoBehaviour:
@@ -649,7 +611,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7152d68a9d1211a41bdd25e6633b2cee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _touchPad: {fileID: 0}
   _speedFactor: 12
 --- !u!114 &5813678810404708594
 MonoBehaviour:
@@ -663,7 +624,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b305eeb1911da1f4cae5b779b5c81287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePad: {fileID: 0}
   imageBasedBodyMotion: {fileID: 5813678808713813112}
   speedFactor: 3
   buttonDownSpeedFactor: 8
@@ -693,7 +653,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b1c946304478864da3e7bb5f60cd9d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  provider: {fileID: 0}
   noteMotionDuration: 0.3
   knobMotionLerpFactor: 12
 --- !u!114 &3817731646809221862
@@ -770,7 +729,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1859467759501820996}
   - component: {fileID: 7095047294135285911}
-  - component: {fileID: 2566716797311140027}
   m_Layer: 0
   m_Name: Shoulder
   m_TagString: Untagged
@@ -817,15 +775,3 @@ MonoBehaviour:
   handDiffIntegrateFactor: 2
   waitMotionBasedAngleDeg: 2.5
   waitMotionPhaseDelay: 0.18
---- !u!114 &2566716797311140027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7492520328184788948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3619e5f59c9d8fe429612417cfac2d91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

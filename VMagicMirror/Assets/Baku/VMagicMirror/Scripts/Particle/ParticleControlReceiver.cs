@@ -1,22 +1,10 @@
-﻿using UnityEngine;
-using Zenject;
-using Baku.VMagicMirror.InterProcess;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
-    public class ParticleControlReceiver : MonoBehaviour
+    public class ParticleControlReceiver
     {
-        //TODO: 非MonoBehaviour化
         private const int InvalidTypingEffectIndex = ParticleStore.InvalidTypingEffectIndex;
 
-        private ParticleStore _particleStore = null;
-
-        private int _selectedIndex = -1;
-        private bool _keyboardIsVisible = true;
-        private bool _midiVisible = false;
-
-        [Inject]
-        public void Initialize(IMessageReceiver receiver, ParticleStore particleStore)
+        public ParticleControlReceiver(IMessageReceiver receiver, ParticleStore particleStore)
         {
             _particleStore = particleStore;
             receiver.AssignCommandHandler(
@@ -33,6 +21,12 @@ namespace Baku.VMagicMirror
                 );
         }
 
+        private readonly ParticleStore _particleStore = null;
+
+        private int _selectedIndex = -1;
+        private bool _keyboardIsVisible = true;
+        private bool _midiVisible = false;
+        
         private void SetParticleType(int typeIndex)
         {
             _selectedIndex = typeIndex;

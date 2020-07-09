@@ -4,6 +4,7 @@ using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker.iFacialMocap;
 using Baku.VMagicMirror.ExternalTracker.Waidayo;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -54,12 +55,18 @@ namespace Baku.VMagicMirror.ExternalTracker
         private FaceControlConfiguration _config = null;
         
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageSender sender, FaceControlConfiguration config)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            IMessageReceiver receiver, 
+            IMessageSender sender,
+            FaceControlConfiguration config)
         {
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmUnloaded;
             _sender = sender;
             _config = config;
+            
+            var _ = new ExternalTrackerSettingReceiver(receiver, this);
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)

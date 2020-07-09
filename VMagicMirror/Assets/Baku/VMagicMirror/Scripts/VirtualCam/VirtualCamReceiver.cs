@@ -1,21 +1,12 @@
-﻿using UnityEngine;
-using Zenject;
-using Baku.VMagicMirror.InterProcess;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(VirtualCamCapture))]
-    public class VirtualCamReceiver : MonoBehaviour
+    public class VirtualCamReceiver
     {
-        private VirtualCamCapture _capture;
-        
-        //TODO: 非MonoBehaviour化
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public VirtualCamReceiver(IMessageReceiver receiver, VirtualCamCapture capture)
         {
             receiver.AssignCommandHandler(
                 MessageCommandNames.SetVirtualCamEnable,
-                c => _capture.EnableCaptureWrite = c.ToBoolean()
+                c => capture.EnableCaptureWrite = c.ToBoolean()
                 );
             receiver.AssignCommandHandler(
                 MessageCommandNames.SetVirtualCamWidth,
@@ -25,7 +16,7 @@ namespace Baku.VMagicMirror
                     int width = c.ToInt();
                     if (width >= 80 && width <= 1920 && width % 4 == 0)
                     {
-                        _capture.Width = width;
+                        capture.Width = width;
                     }
                 });
             receiver.AssignCommandHandler(
@@ -34,14 +25,9 @@ namespace Baku.VMagicMirror
                     int height = c.ToInt();
                     if (height >= 80 && height < 1920 && height % 4 == 0)
                     {
-                        _capture.Height = height;
+                        capture.Height = height;
                     }
                 });            
-        }
-
-        private void Start()
-        {
-            _capture = GetComponent<VirtualCamCapture>();
         }
     }
 }

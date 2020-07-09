@@ -1,16 +1,10 @@
-﻿using Baku.VMagicMirror.InterProcess;
-using UnityEngine;
-using Zenject;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
-    public class VRMPreviewLanguage : MonoBehaviour
+    public class VRMPreviewLanguage
     {
-        //TODO: 非MonoBehaviour化
         public string Language { get; private set; } = "Japanese";
 
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public VRMPreviewLanguage(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
                 MessageCommandNames.Language,

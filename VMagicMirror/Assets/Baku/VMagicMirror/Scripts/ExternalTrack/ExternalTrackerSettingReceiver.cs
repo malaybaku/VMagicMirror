@@ -1,18 +1,11 @@
-﻿using UnityEngine;
-using Baku.VMagicMirror.ExternalTracker;
-using Baku.VMagicMirror.InterProcess;
-using Zenject;
+﻿using Baku.VMagicMirror.ExternalTracker;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// 外部デバイスによる顔トラの設定を受け取るレシーバクラスです。
-    /// </summary>
-    public class ExternalTrackerSettingReceiver : MonoBehaviour
+    /// <summary> 外部デバイスによる顔トラの設定を受け取るレシーバー </summary>
+    public class ExternalTrackerSettingReceiver
     {
-        //TODO: 非MonoBehaviour化できそう
-        [Inject]
-        public void Initialize(IMessageReceiver receiver, ExternalTrackerDataSource dataSource)
+        public ExternalTrackerSettingReceiver(IMessageReceiver receiver, ExternalTrackerDataSource dataSource)
         {
             receiver.AssignCommandHandler(
                 MessageCommandNames.ExTrackerEnable,
@@ -34,9 +27,6 @@ namespace Baku.VMagicMirror
                 MessageCommandNames.ExTrackerSetFaceSwitchSetting,
                 c => dataSource.SetFaceSwitchSetting(c.Content)
                 );
-            
-            //NOTE: 以下は今のところハンドリングしたい内容が無いため無視
-            //MessageCommandNames.ExTrackerSetApplicationValue:
         }
     }
 }

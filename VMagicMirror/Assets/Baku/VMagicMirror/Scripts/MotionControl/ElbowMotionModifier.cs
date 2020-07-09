@@ -20,8 +20,6 @@ namespace Baku.VMagicMirror
         [Range(-5f, 5f)]
         [SerializeField] private float bodyRollRateToElbowWidthMinusFactor = 1.0f;
         
-        [Inject] private IVRMLoadable _vrmLoadable = null;
-
         public float WaistWidthHalf { get; private set; } = 0.15f;
         public float ElbowCloseStrength { get; private set; } = 0.30f;
         
@@ -41,11 +39,13 @@ namespace Baku.VMagicMirror
 
         public void SetWaistWidth(float width) => WaistWidthHalf = width * 0.5f;
         public void SetElbowCloseStrength(float strength) => ElbowCloseStrength = strength;
-        
-        private void Start()
+
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver)
         {
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+            vrmLoadable.VrmLoaded += OnVrmLoaded;
+            vrmLoadable.VrmDisposing += OnVrmDisposing;
+            var _ = new ElbowMotionModifyReceiver(receiver, this);
         }
 
         private void Update()

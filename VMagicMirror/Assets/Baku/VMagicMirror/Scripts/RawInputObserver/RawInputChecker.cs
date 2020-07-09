@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror
         private Thread _thread;
 
         [Inject]
-        public void Initialize(InterProcess.IMessageReceiver receiver)
+        public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
                 MessageCommandNames.EnableHidRandomTyping,

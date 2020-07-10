@@ -47,11 +47,11 @@ namespace Baku.VMagicMirror
             _midiControllerVisibility = midiController.GetComponent<MidiControllerVisibility>();
             
             receiver.AssignCommandHandler(
-                MessageCommandNames.HidVisibility,
+                VmmCommands.HidVisibility,
                 message => SetHidVisibility(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.MidiControllerVisibility,
+                VmmCommands.MidiControllerVisibility,
                 message => SetMidiVisibility(message.ToBoolean())
                 );
         }

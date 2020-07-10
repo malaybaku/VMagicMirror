@@ -18,11 +18,11 @@ namespace Baku.VMagicMirror
         {
             _sender = sender;
             receiver.AssignCommandHandler(
-                MessageCommandNames.OpenVRoidSdkUi,
+                VmmCommands.OpenVRoidSdkUi,
                 _ => _sender?.SendCommand(MessageFactory.Instance.VRoidModelLoadCanceled())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.RequestLoadVRoidWithId,
+                VmmCommands.RequestLoadVRoidWithId,
                 _ => _sender?.SendCommand(MessageFactory.Instance.VRoidModelLoadCanceled())
                 );
         }

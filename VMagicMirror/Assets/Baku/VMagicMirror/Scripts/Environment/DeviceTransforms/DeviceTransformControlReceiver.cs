@@ -46,15 +46,15 @@ namespace Baku.VMagicMirror
             _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
             
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableDeviceFreeLayout,
+                VmmCommands.EnableDeviceFreeLayout,
                 command => EnableDeviceFreeLayout(command.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetDeviceLayout,
+                VmmCommands.SetDeviceLayout,
                 command => SetDeviceLayout(command.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ResetDeviceLayout,
+                VmmCommands.ResetDeviceLayout,
                 command => ResetDeviceLayout()
                 );
         }

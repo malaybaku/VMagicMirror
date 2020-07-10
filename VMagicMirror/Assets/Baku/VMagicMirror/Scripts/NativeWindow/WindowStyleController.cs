@@ -69,49 +69,49 @@ namespace Baku.VMagicMirror
         public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, RawInputChecker rawInputChecker)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.Chromakey,
+                VmmCommands.Chromakey,
                 message =>
                 {
                     var argb = message.ToColorFloats();
                     SetWindowTransparency(argb[0] == 0);
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.WindowFrameVisibility,
+                VmmCommands.WindowFrameVisibility,
                 message => SetWindowFrameVisibility(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.IgnoreMouse,
+                VmmCommands.IgnoreMouse,
                 message => SetIgnoreMouseInput(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.TopMost,
+                VmmCommands.TopMost,
                 message => SetTopMost(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.WindowDraggable,
+                VmmCommands.WindowDraggable,
                 message => SetWindowDraggable(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.MoveWindow,
+                VmmCommands.MoveWindow,
                 message =>
                 {
                     int[] xy = message.ToIntArray();
                     MoveWindow(xy[0], xy[1]);
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.ResetWindowSize,
+                VmmCommands.ResetWindowSize,
                 _ => ResetWindowSize()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetWholeWindowTransparencyLevel,
+                VmmCommands.SetWholeWindowTransparencyLevel,
                 message => SetTransparencyLevel(message.ToInt())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetAlphaValueOnTransparent,
+                VmmCommands.SetAlphaValueOnTransparent,
                 message => SetAlphaOnTransparent(message.ToInt())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetVirtualCamBasedWindowSize,
+                VmmCommands.SetVirtualCamBasedWindowSize,
                 message =>
                 {
                     int[] wh = message.ToIntArray();

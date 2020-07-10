@@ -1,6 +1,6 @@
 ﻿namespace Baku.VMagicMirror
 {
-    public static class MessageQueryNames
+    public static class VmmQueries
     {
         // Microphone
         public const string CurrentMicrophoneDeviceName = nameof(CurrentMicrophoneDeviceName);

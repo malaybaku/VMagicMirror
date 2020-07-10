@@ -7,53 +7,53 @@
             _faceControlManager = faceControlManager;
             
             receiver.AssignCommandHandler(
-                MessageCommandNames.EyebrowLeftUpKey,
+                VmmCommands.EyebrowLeftUpKey,
                 message =>
                 {
                     EyebrowBlendShape.LeftUpKey = message.Content;
                     RefreshTarget();
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.EyebrowLeftDownKey,
+                VmmCommands.EyebrowLeftDownKey,
                 message =>
                 {
                     EyebrowBlendShape.LeftDownKey = message.Content;
                     RefreshTarget();
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.EyebrowLeftDownKey,
+                VmmCommands.EyebrowLeftDownKey,
                 message =>
                 {
                     EyebrowBlendShape.LeftDownKey = message.Content;
                     RefreshTarget();
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.UseSeparatedKeyForEyebrow,
+                VmmCommands.UseSeparatedKeyForEyebrow,
                 message =>
                 {
                     EyebrowBlendShape.UseSeparatedTarget = message.ToBoolean();
                     RefreshTarget();
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.EyebrowRightUpKey,
+                VmmCommands.EyebrowRightUpKey,
                 message =>
                 {
                     EyebrowBlendShape.RightUpKey = message.Content;
                     RefreshTarget();
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.EyebrowRightDownKey,
+                VmmCommands.EyebrowRightDownKey,
                 message =>
                 {
                     EyebrowBlendShape.RightDownKey = message.Content;
                     RefreshTarget();
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.EyebrowUpScale,
+                VmmCommands.EyebrowUpScale,
                 message => EyebrowBlendShape.UpScale = message.ParseAsPercentage()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.EyebrowDownScale, 
+                VmmCommands.EyebrowDownScale, 
                 message => EyebrowBlendShape.DownScale = message.ParseAsPercentage()
                 );
         }

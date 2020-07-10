@@ -24,11 +24,11 @@ namespace Baku.VMagicMirror
         {
             _countDownCanvas = countDownCanvas;
             receiver.AssignCommandHandler(
-                MessageCommandNames.TakeScreenshot,
+                VmmCommands.TakeScreenshot,
                 _ => StartScreenshotCountDown()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.OpenScreenshotFolder,
+                VmmCommands.OpenScreenshotFolder,
                 _ => OpenScreenshotFolder()
                 );
         }

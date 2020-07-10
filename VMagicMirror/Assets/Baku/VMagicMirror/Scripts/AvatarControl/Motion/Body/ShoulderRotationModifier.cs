@@ -111,7 +111,7 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableShoulderMotionModify,
+                VmmCommands.EnableShoulderMotionModify,
                 command => EnableRotationModification = command.ToBoolean()
             );        }
 

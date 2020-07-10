@@ -5,11 +5,11 @@
         public VirtualCamReceiver(IMessageReceiver receiver, VirtualCamCapture capture)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetVirtualCamEnable,
+                VmmCommands.SetVirtualCamEnable,
                 c => capture.EnableCaptureWrite = c.ToBoolean()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetVirtualCamWidth,
+                VmmCommands.SetVirtualCamWidth,
                 c =>
                 {
                     //NOTE: 4の倍数だけ通すのはストライドとかそういうアレです
@@ -20,7 +20,7 @@
                     }
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetVirtualCamHeight,
+                VmmCommands.SetVirtualCamHeight,
                 c => {
                     int height = c.ToInt();
                     if (height >= 80 && height < 1920 && height % 4 == 0)

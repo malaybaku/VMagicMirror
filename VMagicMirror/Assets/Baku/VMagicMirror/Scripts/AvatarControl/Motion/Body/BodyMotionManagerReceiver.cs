@@ -9,19 +9,19 @@ namespace Baku.VMagicMirror
             _bodyMotionManager = bodyMotionManager;
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableWaitMotion,
+                VmmCommands.EnableWaitMotion,
                 message => EnableWaitMotion(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.WaitMotionScale,
+                VmmCommands.WaitMotionScale,
                 message => SetWaitMotionScale(message.ParseAsPercentage())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.WaitMotionPeriod,
+                VmmCommands.WaitMotionPeriod,
                 message => SetWaitMotionDuration(message.ToInt())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableBodyLeanZ,
+                VmmCommands.EnableBodyLeanZ,
                 message => bodyMotionManager.EnableImageBaseBodyLeanZ(message.ToBoolean())
                 );
             

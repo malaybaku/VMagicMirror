@@ -57,7 +57,7 @@ namespace Baku.VMagicMirror.InterProcess
         
         public void ReceiveCommand(ReceivedCommand command)
         {
-            if (command.Command == MessageCommandNames.CommandArray)
+            if (command.Command == VmmCommands.CommandArray)
             {
                 //コマンドの一括送信を受け取ったとき: バラバラにしてキューに詰めておく
                 var commands = CommandArrayParser.ParseCommandArray(command.Content);

@@ -5,11 +5,11 @@
         public ElbowMotionModifyReceiver(IMessageReceiver receiver, ElbowMotionModifier modifier)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetWaistWidth,
+                VmmCommands.SetWaistWidth,
                 message => modifier.SetWaistWidth(message.ParseAsCentimeter())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetElbowCloseStrength,
+                VmmCommands.SetElbowCloseStrength,
                 message => modifier.SetElbowCloseStrength(message.ParseAsPercentage())
             );
         }

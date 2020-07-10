@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableMidiRead,
+                VmmCommands.EnableMidiRead,
                 command => SetMidiReadEnable(command.ToBoolean())
                 );
         }

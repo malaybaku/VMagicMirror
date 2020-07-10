@@ -8,23 +8,23 @@ namespace Baku.VMagicMirror
         public ExternalTrackerSettingReceiver(IMessageReceiver receiver, ExternalTrackerDataSource dataSource)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.ExTrackerEnable,
+                VmmCommands.ExTrackerEnable,
                 c => dataSource.EnableTracking(c.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ExTrackerCalibrate,
+                VmmCommands.ExTrackerCalibrate,
                 _ => dataSource.Calibrate()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ExTrackerSetCalibrateData,
+                VmmCommands.ExTrackerSetCalibrateData,
                 c => dataSource.SetCalibrationData(c.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ExTrackerSetSource,
+                VmmCommands.ExTrackerSetSource,
                 c => dataSource.SetSourceType(c.ToInt())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ExTrackerSetFaceSwitchSetting,
+                VmmCommands.ExTrackerSetFaceSwitchSetting,
                 c => dataSource.SetFaceSwitchSetting(c.Content)
                 );
         }

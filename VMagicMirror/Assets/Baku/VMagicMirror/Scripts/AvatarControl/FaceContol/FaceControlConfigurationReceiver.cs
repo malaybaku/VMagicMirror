@@ -13,14 +13,14 @@ namespace Baku.VMagicMirror
         public FaceControlConfigurationReceiver(IMessageReceiver receiver, FaceControlConfiguration config)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableFaceTracking,
+                VmmCommands.EnableFaceTracking,
                 message =>
                 {
                     _enableWebCamTracking = message.ToBoolean();
                     SetFaceControlMode();
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.ExTrackerEnable,
+                VmmCommands.ExTrackerEnable,
                 message =>
                 {
                     _enableExTracker = message.ToBoolean();

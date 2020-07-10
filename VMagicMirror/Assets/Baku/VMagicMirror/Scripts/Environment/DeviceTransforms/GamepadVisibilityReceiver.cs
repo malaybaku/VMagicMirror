@@ -16,7 +16,7 @@ namespace Baku.VMagicMirror
         {
             _deformableCounter = deformableCounter;
             receiver.AssignCommandHandler(
-                MessageCommandNames.GamepadVisibility,
+                VmmCommands.GamepadVisibility,
                 message => SetGamepadVisibility(message.ToBoolean())
                 );
         }

@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.Chromakey, 
+                VmmCommands.Chromakey, 
                 message =>
                 {
                     var argb = message.ToColorFloats();
@@ -34,35 +34,35 @@ namespace Baku.VMagicMirror
                 });
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableFreeCameraMode,
+                VmmCommands.EnableFreeCameraMode,
                 message => EnableFreeCameraMode(message.ToBoolean())
             );
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetCustomCameraPosition, 
+                VmmCommands.SetCustomCameraPosition, 
                 message => 
                     SetCustomCameraPosition(message.Content, false)
                     );
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.QuickLoadViewPoint, 
+                VmmCommands.QuickLoadViewPoint, 
                 message => 
                     SetCustomCameraPosition(message.Content, true)
                     );
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.ResetCameraPosition, 
+                VmmCommands.ResetCameraPosition, 
                 message => ResetCameraPosition()
                 );
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.CameraFov, 
+                VmmCommands.CameraFov, 
                 message => SetCameraFov(message.ToInt())
                 );
 
 
             receiver.AssignQueryHandler(
-                MessageQueryNames.CurrentCameraPosition, 
+                VmmQueries.CurrentCameraPosition, 
                 query =>
                 {
                     var t = cam.transform;

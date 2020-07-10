@@ -5,19 +5,19 @@
         public WindSettingReceiver(IMessageReceiver receiver, VRMWind wind)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.WindEnable,
+                VmmCommands.WindEnable,
                 c => wind.EnableWind(c.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.WindStrength,
+                VmmCommands.WindStrength,
                 c => wind.SetStrength(c.ParseAsPercentage())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.WindInterval, 
+                VmmCommands.WindInterval, 
                 c => wind.SetInterval(c.ParseAsPercentage())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.WindYaw,
+                VmmCommands.WindYaw,
                 c => wind.WindYawDegree = c.ToInt()
                 );
         }

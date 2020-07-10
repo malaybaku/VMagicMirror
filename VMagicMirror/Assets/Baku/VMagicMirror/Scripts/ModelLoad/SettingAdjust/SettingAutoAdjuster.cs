@@ -29,11 +29,11 @@ namespace Baku.VMagicMirror
             _dispatcher = dispatcher;
             
             receiver.AssignCommandHandler(
-                MessageCommandNames.RequestAutoAdjust,
+                VmmCommands.RequestAutoAdjust,
                 _ => AutoAdjust()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.RequestAutoAdjustEyebrow,
+                VmmCommands.RequestAutoAdjustEyebrow,
                 _ => AutoAdjustOnlyEyebrow()
             );
 
@@ -140,39 +140,39 @@ namespace Baku.VMagicMirror
             var eyebrowCommands = new ReceivedCommand[]
             {
                 new ReceivedCommand(
-                    MessageCommandNames.EyebrowLeftUpKey,
+                    VmmCommands.EyebrowLeftUpKey,
                     parameters.EyebrowLeftUpKey
                     ),
                 new ReceivedCommand(
-                    MessageCommandNames.EyebrowLeftDownKey,
+                    VmmCommands.EyebrowLeftDownKey,
                     parameters.EyebrowLeftDownKey
                     ),
                 new ReceivedCommand(
-                    MessageCommandNames.UseSeparatedKeyForEyebrow,
+                    VmmCommands.UseSeparatedKeyForEyebrow,
                     $"{parameters.UseSeparatedKeyForEyebrow}"
                     ),
                 new ReceivedCommand(
-                    MessageCommandNames.EyebrowRightUpKey,
+                    VmmCommands.EyebrowRightUpKey,
                     parameters.EyebrowRightUpKey
                     ),
                 new ReceivedCommand(
-                    MessageCommandNames.EyebrowRightDownKey,
+                    VmmCommands.EyebrowRightDownKey,
                     parameters.EyebrowRightDownKey
                     ),
                 new ReceivedCommand(
-                    MessageCommandNames.EyebrowUpScale,
+                    VmmCommands.EyebrowUpScale,
                     $"{parameters.EyebrowUpScale}"
                     ),
                 new ReceivedCommand(
-                    MessageCommandNames.EyebrowDownScale,
+                    VmmCommands.EyebrowDownScale,
                     $"{parameters.EyebrowDownScale}"
                     ),
                 new ReceivedCommand(
-                    MessageCommandNames.LengthFromWristToPalm,
+                    VmmCommands.LengthFromWristToPalm,
                     $"{parameters.LengthFromWristToPalm}"
                     ),
                 new ReceivedCommand(
-                    MessageCommandNames.LengthFromWristToTip,
+                    VmmCommands.LengthFromWristToTip,
                     $"{parameters.LengthFromWristToTip}"
                     ),
             };
@@ -187,7 +187,7 @@ namespace Baku.VMagicMirror
             }
 
             //レイアウト調整はコレ一発でおしまいです
-            _dispatcher.ReceiveCommand(new ReceivedCommand(MessageCommandNames.ResetDeviceLayout));
+            _dispatcher.ReceiveCommand(new ReceivedCommand(VmmCommands.ResetDeviceLayout));
         }
 
         private void SendParameterRelatedCommands(AutoAdjustParameters parameters)

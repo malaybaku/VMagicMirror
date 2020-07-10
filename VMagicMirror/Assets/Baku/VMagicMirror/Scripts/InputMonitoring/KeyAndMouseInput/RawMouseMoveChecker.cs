@@ -42,7 +42,7 @@ namespace Baku.VMagicMirror
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableFpsAssumedRightHand,
+                VmmCommands.EnableFpsAssumedRightHand,
                 c => EnableFpsAssumedRightHand = c.ToBoolean()
                 );
         }

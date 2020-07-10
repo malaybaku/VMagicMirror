@@ -8,15 +8,15 @@
         {
             _particleStore = particleStore;
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetKeyboardTypingEffectType,
+                VmmCommands.SetKeyboardTypingEffectType,
                 message => SetParticleType(message.ToInt())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.HidVisibility,
+                VmmCommands.HidVisibility,
                 message => SetKeyboardVisibility(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.MidiControllerVisibility,
+                VmmCommands.MidiControllerVisibility,
                 message => SetMidiVisibility(message.ToBoolean())
                 );
         }

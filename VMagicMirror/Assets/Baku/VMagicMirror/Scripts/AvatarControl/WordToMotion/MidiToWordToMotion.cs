@@ -20,11 +20,11 @@ namespace Baku.VMagicMirror
             _midiInputObserver = midiObserver;
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.LoadMidiNoteToMotionMap,
+                VmmCommands.LoadMidiNoteToMotionMap,
                 c => LoadMidiNoteToMotionMap(c.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.RequireMidiNoteOnMessage,
+                VmmCommands.RequireMidiNoteOnMessage,
                 c => _redirectNoteOnMessageToIpc = c.ToBoolean()
                 );
         }

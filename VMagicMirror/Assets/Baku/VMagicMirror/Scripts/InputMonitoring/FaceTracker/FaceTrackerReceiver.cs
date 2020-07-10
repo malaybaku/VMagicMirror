@@ -18,32 +18,32 @@ namespace Baku.VMagicMirror
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetCameraDeviceName,
+                VmmCommands.SetCameraDeviceName,
                 message => SetCameraDeviceName(message.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableFaceTracking,
+                VmmCommands.EnableFaceTracking,
                 message => SetEnableFaceTracking(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ExTrackerEnable,
+                VmmCommands.ExTrackerEnable,
                 message => SetEnableExTracker(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.CalibrateFace,
+                VmmCommands.CalibrateFace,
                 message => _faceTracker.StartCalibration()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetCalibrateFaceData,
+                VmmCommands.SetCalibrateFaceData,
                 message => _faceTracker.SetCalibrateData(message.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.DisableFaceTrackingHorizontalFlip,
+                VmmCommands.DisableFaceTrackingHorizontalFlip,
                 message => _faceTracker.DisableHorizontalFlip = message.ToBoolean()
                 );
          
             receiver.AssignQueryHandler(
-                MessageQueryNames.CameraDeviceNames,
+                VmmQueries.CameraDeviceNames,
                 query => query.Result = string.Join("\t", GetCameraDeviceNames())
                 );
         }

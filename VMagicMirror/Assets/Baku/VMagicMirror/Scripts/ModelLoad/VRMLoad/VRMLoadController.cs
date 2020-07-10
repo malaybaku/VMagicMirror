@@ -34,18 +34,18 @@ namespace Baku.VMagicMirror
             _previewCanvas = previewCanvas;
             _ikTargets = ikTargets;
             receiver.AssignCommandHandler(
-                MessageCommandNames.OpenVrmPreview,
+                VmmCommands.OpenVrmPreview,
                 message => LoadModelForPreview(message.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.OpenVrm,
+                VmmCommands.OpenVrm,
                 message =>
                 {
                     previewCanvas.Hide();
                     LoadModel(message.Content);
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.CancelLoadVrm,
+                VmmCommands.CancelLoadVrm,
                 _ => previewCanvas.Hide()
                 );
         }

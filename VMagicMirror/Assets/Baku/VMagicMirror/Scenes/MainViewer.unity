@@ -490,49 +490,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d792dff3b9d00a46ba79e5cb27c3ac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &2050575445
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2050575446}
-  - component: {fileID: 2050575447}
-  m_Layer: 0
-  m_Name: PureCodeInjector
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2050575446
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2050575445}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 13
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2050575447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2050575445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee1fda748a414bf48a80cca37bccfd24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &464634161653977221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1224,6 +1181,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 606785967cf370247880a3acd0b7c36d, type: 3}
+--- !u!114 &6032028866761887135 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8390970132901456943, guid: 606785967cf370247880a3acd0b7c36d,
+    type: 3}
+  m_PrefabInstance: {fileID: 6032028866761887134}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db37e7d2ac7b4834ca3f30211993c5de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7220499517934239985
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1360,7 +1329,7 @@ PrefabInstance:
         type: 3}
       propertyPath: screenshotCountDown
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 6032028866761887135}
     - target: {fileID: 42090108536346765, guid: 790d84fdbc606c944ad6592cf84f1ea9,
         type: 3}
       propertyPath: faceControl

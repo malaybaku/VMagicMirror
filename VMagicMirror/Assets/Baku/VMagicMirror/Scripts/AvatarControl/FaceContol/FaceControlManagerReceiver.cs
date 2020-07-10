@@ -5,19 +5,19 @@
         public FaceControlManagerMessageIo(IMessageReceiver receiver, IMessageSender sender, FaceControlManager faceControlManager)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.AutoBlinkDuringFaceTracking,
+                VmmCommands.AutoBlinkDuringFaceTracking,
                 message => 
                     faceControlManager.PreferAutoBlinkOnWebCamTracking = message.ToBoolean()
                 );
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.FaceDefaultFun,
+                VmmCommands.FaceDefaultFun,
                 message =>
                     faceControlManager.DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage()
                 );
                        
             receiver.AssignQueryHandler(
-                MessageQueryNames.GetBlendShapeNames,
+                VmmQueries.GetBlendShapeNames,
                 query => query.Result = string.Join("\t", faceControlManager.BlendShapeStore.GetBlendShapeNames())
             );
 
@@ -38,12 +38,12 @@
         public BehaviorBasedBlinkReceiver(IMessageReceiver receiver, BehaviorBasedAutoBlinkAdjust autoBlinkAdjust)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableHeadRotationBasedBlinkAdjust,
+                VmmCommands.EnableHeadRotationBasedBlinkAdjust,
                 message 
                     => autoBlinkAdjust.EnableHeadRotationBasedBlinkAdjust = message.ToBoolean()
             );
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableLipSyncBasedBlinkAdjust,
+                VmmCommands.EnableLipSyncBasedBlinkAdjust,
                 message =>
                     autoBlinkAdjust.EnableLipSyncBasedBlinkAdjust = message.ToBoolean()
             );

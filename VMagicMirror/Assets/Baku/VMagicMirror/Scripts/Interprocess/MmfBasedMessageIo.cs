@@ -5,6 +5,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror.InterProcess
 {
+    /// <summary> MemoryMappedFile越しでWPFと通信するクラス </summary>
     public class MmfBasedMessageIo : 
         IMessageReceiver, IMessageSender, IMessageDispatcher,
         IReleaseBeforeQuit, ITickable

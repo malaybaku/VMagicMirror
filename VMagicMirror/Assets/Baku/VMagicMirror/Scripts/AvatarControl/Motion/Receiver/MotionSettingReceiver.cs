@@ -28,69 +28,69 @@ namespace Baku.VMagicMirror
         {
             _gamePad = gamePad;
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableHidArmMotion,
+                VmmCommands.EnableHidArmMotion,
                 message => handIkIntegrator.EnableHidArmMotion = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.LengthFromWristToPalm,
+                VmmCommands.LengthFromWristToPalm,
                 message => SetLengthFromWristToPalm(message.ParseAsCentimeter())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.LengthFromWristToTip,
+                VmmCommands.LengthFromWristToTip,
                 message => SetLengthFromWristToTip(message.ParseAsCentimeter())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.HandYOffsetBasic,
+                VmmCommands.HandYOffsetBasic,
                 message => SetHandYOffsetBasic(message.ParseAsCentimeter())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.HandYOffsetAfterKeyDown,
+                VmmCommands.HandYOffsetAfterKeyDown,
                 message => SetHandYOffsetAfterKeyDown(message.ParseAsCentimeter())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnablePresenterMotion,
+                VmmCommands.EnablePresenterMotion,
                 message => handIkIntegrator.EnablePresentationMode = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.PresentationArmRadiusMin,
+                VmmCommands.PresentationArmRadiusMin,
                 message =>
                     handIkIntegrator.Presentation.PresentationArmRadiusMin = message.ParseAsCentimeter()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.LookAtStyle,
+                VmmCommands.LookAtStyle,
                 message => headIkIntegrator.SetLookAtStyle(message.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableGamepad,
+                VmmCommands.EnableGamepad,
                 message => _gamePad.SetEnableGamepad(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.PreferDirectInputGamepad,
+                VmmCommands.PreferDirectInputGamepad,
                 message => _gamePad.SetPreferDirectInputGamepad(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.GamepadLeanMode,
+                VmmCommands.GamepadLeanMode,
                 message =>
                 {
                     gamePadBasedBodyLean.SetGamepadLeanMode(message.Content);
                     smallGamepadHandIk.SetGamepadLeanMode(message.Content);
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.GamepadLeanReverseHorizontal,
+                VmmCommands.GamepadLeanReverseHorizontal,
                 message =>
                 {
                     gamePadBasedBodyLean.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
                     smallGamepadHandIk.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.GamepadLeanReverseVertical,
+                VmmCommands.GamepadLeanReverseVertical,
                 message =>
                 {
                     gamePadBasedBodyLean.ReverseGamepadStickLeanVertical = message.ToBoolean();
                     smallGamepadHandIk.ReverseGamepadStickLeanVertical = message.ToBoolean();
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetDeviceTypeToStartWordToMotion,
+                VmmCommands.SetDeviceTypeToStartWordToMotion,
                 message => SetDeviceTypeForWordToMotion(message.ToInt())
                 );
         }

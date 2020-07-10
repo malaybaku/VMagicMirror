@@ -2,7 +2,7 @@
 
 namespace Baku.VMagicMirror
 {
-    public static class MessageCommandNames
+    public static class VmmCommands
     {
         //NOTE: 順番をほぼVMagicMirrorConfigのMessageFactoryクラスに合わせているが、そこまで重要ではない
 

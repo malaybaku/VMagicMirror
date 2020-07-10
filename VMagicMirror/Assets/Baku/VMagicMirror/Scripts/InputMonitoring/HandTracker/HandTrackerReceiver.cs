@@ -8,7 +8,7 @@
         public HandTrackerReceiver(IMessageReceiver receiver, HandTracker handTracker)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableImageBasedHandTracking,
+                VmmCommands.EnableImageBasedHandTracking,
                 c => handTracker.ImageProcessEnabled = c.ToBoolean()
             );
         }

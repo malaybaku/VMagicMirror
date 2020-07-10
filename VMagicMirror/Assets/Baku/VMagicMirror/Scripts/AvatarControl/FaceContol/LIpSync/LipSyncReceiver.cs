@@ -23,28 +23,28 @@ namespace Baku.VMagicMirror
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableLipSync,
+                VmmCommands.EnableLipSync,
                 message => SetLipSyncEnable(message.ToBoolean())
             );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetMicrophoneDeviceName,
+                VmmCommands.SetMicrophoneDeviceName,
                 message => SetMicrophoneDeviceName(message.Content)
             );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ExTrackerEnable,
+                VmmCommands.ExTrackerEnable,
                 message => SetExTrackerEnable(message.ToBoolean())
             );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ExTrackerEnableLipSync,
+                VmmCommands.ExTrackerEnableLipSync,
                 message => SetExTrackerLipSyncEnable(message.ToBoolean())
             );
 
             receiver.AssignQueryHandler(
-                MessageQueryNames.CurrentMicrophoneDeviceName,
+                VmmQueries.CurrentMicrophoneDeviceName,
                 query => query.Result = _lipSyncContext.DeviceName
             );
             receiver.AssignQueryHandler(
-                MessageQueryNames.MicrophoneDeviceNames,
+                VmmQueries.MicrophoneDeviceNames,
                 query => query.Result = string.Join("\t", Microphone.devices)
             );
         }

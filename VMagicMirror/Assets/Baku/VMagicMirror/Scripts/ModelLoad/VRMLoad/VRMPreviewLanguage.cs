@@ -7,7 +7,7 @@
         public VRMPreviewLanguage(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.Language,
+                VmmCommands.Language,
                 message => Language = message.Content
             );
         }

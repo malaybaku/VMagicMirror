@@ -25,23 +25,23 @@ namespace Baku.VMagicMirror
         {
             _rawInputChecker = rawInputChecker;
             receiver.AssignCommandHandler(
-                MessageCommandNames.ReloadMotionRequests,
+                VmmCommands.ReloadMotionRequests,
                 message => ReloadMotionRequests(message.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.PlayWordToMotionItem,
+                VmmCommands.PlayWordToMotionItem,
                 message => PlayWordToMotionItem(message.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.EnableWordToMotionPreview,
+                VmmCommands.EnableWordToMotionPreview,
                 message => manager.EnablePreview = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SendWordToMotionPreviewInfo,
+                VmmCommands.SendWordToMotionPreviewInfo,
                 message => ReceiveWordToMotionPreviewInfo(message.Content)
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.SetDeviceTypeToStartWordToMotion,
+                VmmCommands.SetDeviceTypeToStartWordToMotion,
                 message => SetWordToMotionInputType(message.ToInt())
                 );
             

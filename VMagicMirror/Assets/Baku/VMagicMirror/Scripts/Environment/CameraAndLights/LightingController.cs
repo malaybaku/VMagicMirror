@@ -21,56 +21,56 @@ namespace Baku.VMagicMirror
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
-                MessageCommandNames.LightIntensity,
+                VmmCommands.LightIntensity,
                 message => SetLightIntensity(message.ParseAsPercentage())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.LightColor,
+                VmmCommands.LightColor,
                 message =>
                 {
                     var lightRgb = message.ToColorFloats();
                     SetLightColor(lightRgb[0], lightRgb[1], lightRgb[2]);
                 });
             receiver.AssignCommandHandler(
-                MessageCommandNames.LightYaw,
+                VmmCommands.LightYaw,
                 message => SetLightYaw(message.ToInt())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.LightPitch,
+                VmmCommands.LightPitch,
                 message=> SetLightPitch(message.ToInt())
                 );
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.ShadowEnable,
+                VmmCommands.ShadowEnable,
                 message => EnableShadow(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ShadowIntensity,
+                VmmCommands.ShadowIntensity,
                 message => SetShadowIntensity(message.ParseAsPercentage())
             );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ShadowYaw,
+                VmmCommands.ShadowYaw,
                 message => SetShadowYaw(message.ToInt())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ShadowPitch,
+                VmmCommands.ShadowPitch,
                 message => SetShadowPitch(message.ToInt())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.ShadowDepthOffset,
+                VmmCommands.ShadowDepthOffset,
                 message => SetShadowDepthOffset(message.ParseAsCentimeter())
                );
 
             receiver.AssignCommandHandler(
-                MessageCommandNames.BloomIntensity,
+                VmmCommands.BloomIntensity,
                 message => SetBloomIntensity(message.ParseAsPercentage())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.BloomThreshold,
+                VmmCommands.BloomThreshold,
                 message => SetBloomThreshold(message.ParseAsPercentage())
                 );
             receiver.AssignCommandHandler(
-                MessageCommandNames.BloomColor,
+                VmmCommands.BloomColor,
                 message =>
                 {
                     float[] bloomRgb = message.ToColorFloats();

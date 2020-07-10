@@ -10,12 +10,12 @@ namespace Baku.VMagicMirror
         
         public ImageQualitySettingReceiver(IMessageReceiver receiver)
         {
-            receiver.AssignCommandHandler(MessageCommandNames.SetImageQuality,
+            receiver.AssignCommandHandler(VmmCommands.SetImageQuality,
                 c => SetImageQuality(c.Content)
             );
 
             receiver.AssignQueryHandler(
-                MessageQueryNames.GetQualitySettingsInfo,
+                VmmQueries.GetQualitySettingsInfo,
                 q =>
                 {
                     q.Result = JsonUtility.ToJson(new ImageQualityInfo()

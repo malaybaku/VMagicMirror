@@ -33,7 +33,7 @@ namespace Baku.VMagicMirror
             KeyboardProvider keyboard,
             TouchPadProvider touchPad,
             MidiControllerProvider midiController,
-            SmallGamepadProvider gamepad
+            GamepadProvider gamepad
             )
         {
             _sender = sender;
@@ -207,7 +207,7 @@ namespace Baku.VMagicMirror
         {
             var parameters = _settingAutoAdjuster.GetDeviceLayoutParameters();
             FindObjectOfType<HidTransformController>().SetHidLayoutByParameter(parameters);
-            FindObjectOfType<SmallGamepadProvider>().SetLayoutByParameter(parameters);
+            FindObjectOfType<GamepadProvider>().SetLayoutByParameter(parameters);
             //デバイス移動が入るので必ず送信
             SendDeviceLayoutData();
         }

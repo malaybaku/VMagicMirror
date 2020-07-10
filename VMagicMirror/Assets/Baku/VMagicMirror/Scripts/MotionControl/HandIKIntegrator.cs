@@ -205,7 +205,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            var hand = SmallGamepadProvider.GetPreferredReactionHand(key);
+            var hand = GamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.Gamepad);
@@ -226,7 +226,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            var hand = SmallGamepadProvider.GetPreferredReactionHand(key);
+            var hand = GamepadProvider.GetPreferredReactionHand(key);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.Gamepad);

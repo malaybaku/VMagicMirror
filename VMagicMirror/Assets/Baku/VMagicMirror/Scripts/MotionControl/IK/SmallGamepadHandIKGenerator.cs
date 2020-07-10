@@ -23,12 +23,12 @@ namespace Baku.VMagicMirror
         [SerializeField] private float bodyMotionToGamepadPosApplyFactor = 0.5f;
 
         [Inject]
-        public void Initialize(SmallGamepadProvider provider)
+        public void Initialize(GamepadProvider provider)
         {
             _gamePad = provider;
         }
         
-        private SmallGamepadProvider _gamePad = null;
+        private GamepadProvider _gamePad = null;
         
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKGenerator LeftHand => _leftHand;
@@ -79,7 +79,7 @@ namespace Baku.VMagicMirror
         
         public void ButtonDown(GamepadKey key)
         {
-            if (SmallGamepadProvider.IsSideKey(key))
+            if (GamepadProvider.IsSideKey(key))
             {
                 return;
             }
@@ -89,7 +89,7 @@ namespace Baku.VMagicMirror
 
         public void ButtonUp(GamepadKey key)
         {
-            if (SmallGamepadProvider.IsSideKey(key))
+            if (GamepadProvider.IsSideKey(key))
             {
                 return;
             }

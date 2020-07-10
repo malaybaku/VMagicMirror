@@ -9,6 +9,5 @@ namespace Baku.VMagicMirror.ExternalTracker
     public class ExternalTrackerCalibrationData
     {
         public string iFacialMocap;
-        public string waidayo;
     }
 }

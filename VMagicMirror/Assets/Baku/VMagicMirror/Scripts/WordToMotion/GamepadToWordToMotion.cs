@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror
         [Tooltip("ボタン押下イベントが押されたらしばらくイベント送出をストップするクールダウンタイム")]
         [SerializeField] private float cooldownTime = 0.3f;
 
-        [Inject] private StatefulXinputGamePad _gamepadInput = null;
+        [Inject] private XInputGamePad _gamepadInput = null;
 
         /// <summary>Word to Motionの要素を実行してほしいとき、アイテムのインデックスを引数にして発火する。</summary>
         public event Action<int> RequestExecuteWordToMotionItem;

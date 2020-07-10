@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// ゲームパッドの状態を通知してくれるやつ
     /// </summary>
-    public class StatefulXinputGamePad : MonoBehaviour
+    public class XInputGamePad : MonoBehaviour
     {
         [SerializeField] private int triggerDownThreshold = 30;
         [SerializeField] private int deviceNumber = 0;

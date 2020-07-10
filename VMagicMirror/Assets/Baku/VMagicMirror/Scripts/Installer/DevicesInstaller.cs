@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror.Installer
     /// <summary> デバイスの座標周りの処理をインジェクトしてくれるすごいやつだよ </summary>
     public class DevicesInstaller : InstallerBase, IDevicesRoot
     {
-        [SerializeField] private SmallGamepadProvider gamepadProvider = null;
+        [SerializeField] private GamepadProvider gamepadProvider = null;
         [SerializeField] private KeyboardProvider keyboardProvider = null;
         [SerializeField] private TouchPadProvider touchPadProvider = null;
         [SerializeField] private MidiControllerProvider midiControllerProvider = null;
@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<IDevicesRoot>()
                 .FromInstance(this)
                 .AsCached();
-            container.Bind<SmallGamepadProvider>()
+            container.Bind<GamepadProvider>()
                 .FromComponentInNewPrefab(gamepadProvider)
                 .AsCached();
             container.Bind<KeyboardProvider>()

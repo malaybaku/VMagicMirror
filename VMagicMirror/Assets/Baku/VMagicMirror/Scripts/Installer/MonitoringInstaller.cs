@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private FaceTracker faceTracker = null;
         [SerializeField] private HandTracker handTracker = null;
         [SerializeField] private ExternalTrackerDataSource externalTracker = null;
-        [SerializeField] private StatefulXinputGamePad gamepadListener = null;
+        [SerializeField] private XInputGamePad gamepadListener = null;
         [SerializeField] private MidiInputObserver midiInputObserver = null;
         
         public override void Install(DiContainer container)

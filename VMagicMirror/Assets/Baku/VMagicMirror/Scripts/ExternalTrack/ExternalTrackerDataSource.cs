@@ -3,8 +3,6 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker.iFacialMocap;
-using Baku.VMagicMirror.ExternalTracker.Waidayo;
-using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -19,7 +17,6 @@ namespace Baku.VMagicMirror.ExternalTracker
     {
         private const int SourceTypeNone = 0;
         private const int SourceTypeIFacialMocap = 1;
-        private const int SourceTypeWaidayo = 2;
 
         //いちど適用したFaceSwitchは最小でもこの秒数だけ維持するよ、という下限値。チャタリングを防ぐのが狙い。
         private const float FaceSwitchMinimumKeepDuration = 0.5f;
@@ -28,7 +25,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         [SerializeField] private float lossBreakRate = 3.0f;
         
         [SerializeField] private iFacialMocapReceiver iFacialMocapReceiver = null;
-        [SerializeField] private WaidayoReceiver waidayoReceiver = null;
 
         [Tooltip("この秒数だけトラッキングの更新イベントが来なかった場合は受動的にロスト扱いする")]
         [SerializeField] private float notTrackCountLimit = 0.5f;
@@ -160,7 +156,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             var data = new ExternalTrackerCalibrationData()
             {
                 iFacialMocap = iFacialMocapReceiver.CalibrationData,
-                waidayo = waidayoReceiver.CalibrationData,
             };
             _sender.SendCommand(MessageFactory.Instance.ExTrackerCalibrateComplete(
                 JsonUtility.ToJson(data)
@@ -177,7 +172,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             {
                 var data = JsonUtility.FromJson<ExternalTrackerCalibrationData>(json);
                 iFacialMocapReceiver.CalibrationData = data.iFacialMocap;
-                waidayoReceiver.CalibrationData = data.waidayo;
             }
             catch (Exception ex)
             {
@@ -189,7 +183,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
             if (sourceType == _currentSourceType || 
                 sourceType < 0 ||
-                sourceType > SourceTypeWaidayo)
+                sourceType > SourceTypeIFacialMocap)
             {
                 return;
             }
@@ -249,10 +243,6 @@ namespace Baku.VMagicMirror.ExternalTracker
                 {
                     case SourceTypeIFacialMocap:
                         _currentProvider = iFacialMocapReceiver;
-                        _notTrackCount = notTrackCountLimit;
-                        break;
-                    case SourceTypeWaidayo:
-                        _currentProvider = waidayoReceiver;
                         _notTrackCount = notTrackCountLimit;
                         break;
                     case SourceTypeNone:

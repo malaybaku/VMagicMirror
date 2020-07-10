@@ -29,10 +29,11 @@ namespace Baku.VMagicMirror
         public TrackedHand RightSideHand { get; } = new TrackedHand();
         
         [Inject]
-        public void Initialize(FaceTracker faceTracker)
+        public void Initialize(IMessageReceiver receiver, FaceTracker faceTracker)
         {
             _faceTracker = faceTracker;
             _faceTracker.FaceDetectionUpdated += OnFaceDetectionUpdated;
+            var _ = new HandTrackerReceiver(receiver, this);
         }
 
         private void Start()

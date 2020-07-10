@@ -21,10 +21,10 @@ namespace Baku.VMagicMirror
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
         [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
         
-        private StatefulXinputGamePad _gamePad = null;
+        private XInputGamePad _gamePad = null;
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver, StatefulXinputGamePad gamePad)
+        public void Initialize(IMessageReceiver receiver, XInputGamePad gamePad)
         {
             _gamePad = gamePad;
             receiver.AssignCommandHandler(

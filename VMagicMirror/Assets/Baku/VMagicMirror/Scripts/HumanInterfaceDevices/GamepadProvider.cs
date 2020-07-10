@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// 小さく、手で持って動かせるゲームパッドの位置と回転を表現するためのクラス
     /// </summary>
-    public class SmallGamepadProvider : MonoBehaviour
+    public class GamepadProvider : MonoBehaviour
     {
         //このx, zはスケーリングの影響を受けて、スケールが小さいと動きも小さくなる
         [Tooltip("スティックを限界まで倒したときにゲームパッドが並進すべき距離(x, z)。")]

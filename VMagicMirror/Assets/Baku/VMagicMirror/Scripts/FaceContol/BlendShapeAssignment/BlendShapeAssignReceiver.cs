@@ -1,17 +1,11 @@
-﻿using UnityEngine;
-using Zenject;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
-    public class BlendShapeAssignReceiver : MonoBehaviour
+    public class BlendShapeAssignReceiver
     {
-        [SerializeField] private FaceControlManager faceControlManager = null;
-
-        private EyebrowBlendShapeSet EyebrowBlendShape => faceControlManager.EyebrowBlendShape;
-
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public BlendShapeAssignReceiver(IMessageReceiver receiver, FaceControlManager faceControlManager)
         {
+            _faceControlManager = faceControlManager;
+            
             receiver.AssignCommandHandler(
                 MessageCommandNames.EyebrowLeftUpKey,
                 message =>
@@ -64,9 +58,9 @@ namespace Baku.VMagicMirror
                 );
         }
         
-        private void RefreshTarget() => EyebrowBlendShape.RefreshTarget(faceControlManager.BlendShapeStore);
-
-        public string[] TryGetBlendShapeNames() => faceControlManager.BlendShapeStore.GetBlendShapeNames();
+        private readonly FaceControlManager _faceControlManager;
+        private EyebrowBlendShapeSet EyebrowBlendShape => _faceControlManager.EyebrowBlendShape;
         
+        private void RefreshTarget() => EyebrowBlendShape.RefreshTarget(_faceControlManager.BlendShapeStore);
     }
 }

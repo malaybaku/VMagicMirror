@@ -3,7 +3,6 @@ using Zenject;
 
 namespace Baku.VMagicMirror.Installer
 {
-    //TODO: このクソダサい名前を治すまではコミット禁止です。
     public class VMagicMirrorInstallerRoot : MonoInstaller
     {
         [SerializeField] private DevicesInstaller devices = null;
@@ -12,6 +11,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private MonitoringInstaller monitoring = null;
         [SerializeField] private ModelLoadInstaller modelLoad = null;
         [SerializeField] private ScreenshotCountDownUiInstaller screenshotCountDown = null;
+        [SerializeField] private FaceControlInstaller faceControl = null;
         [SerializeField] private DeformableCounter deformableCounterPrefab = null;
         [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
         
@@ -26,6 +26,7 @@ namespace Baku.VMagicMirror.Installer
                     modelLoad,
                     interProcess,
                     screenshotCountDown,
+                    faceControl,
                 })
             {
                 installer.Install(Container);

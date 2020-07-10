@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Baku.VMagicMirror.IK;
-using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
 using UniHumanoid;
 using VRM;
@@ -16,12 +15,6 @@ namespace Baku.VMagicMirror
     {
         //[SerializeField] private VrmLoadSetting loadSetting = default;
         [SerializeField] private RuntimeAnimatorController animatorController = null;
-
-        //NOTE: 下の2つは参照外せなくもないが残している。他と同じでイベントで初期化/破棄するスタイルでもよい
-        // - WindowStyleControllerは受け取るデータがちょっと特別なため
-        // - SettingAutoAdjusterはロード直後に特殊処理が入る可能性があるため
-        [SerializeField] private WindowStyleController windowStyleController = null;
-        [SerializeField] private SettingAutoAdjuster settingAdjuster = null;
 
         public event Action<VrmLoadedInfo> PreVrmLoaded;
         public event Action<VrmLoadedInfo> VrmLoaded; 
@@ -121,9 +114,6 @@ namespace Baku.VMagicMirror
             if (loaded != null)
             {
                 VrmDisposing?.Invoke();
-
-                windowStyleController.DisposeModelRenderers();
-                settingAdjuster.DisposeModelRoot();
                 Destroy(loaded.gameObject);
             }
         }
@@ -156,14 +146,13 @@ namespace Baku.VMagicMirror
                 //セルフシャドウは明示的に切る: ちょっとでも軽量化したい
                 r.receiveShadows = false;
             }
-            windowStyleController.InitializeModelRenderers(renderers);
-            settingAdjuster.AssignModelRoot(go.transform);
-
+            
             var info = new VrmLoadedInfo()
             {
                 vrmRoot = go.transform,
                 animator = animator,
                 blendShape = blendShapeProxy,
+                renderers = renderers,
             };
             
             PreVrmLoaded?.Invoke(info);
@@ -187,5 +176,6 @@ namespace Baku.VMagicMirror
         public Transform vrmRoot;
         public Animator animator;
         public VRMBlendShapeProxy blendShape;
+        public Renderer[] renderers;
     }
 }

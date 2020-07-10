@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {

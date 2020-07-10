@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3748028266611161172}
+  - component: {fileID: 5395904245375780253}
   - component: {fileID: 3748028266611161169}
   - component: {fileID: 8701057551241780110}
   - component: {fileID: 7797473119978373343}
@@ -37,6 +38,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5395904245375780253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028266611161173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 528308ecc8af46647b68473c1f06c11b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3748028266611161169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,7 +475,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5388738453658021582}
-  - component: {fileID: 6751521603940666747}
   - component: {fileID: 8409558381188498024}
   m_Layer: 0
   m_Name: EyeDownMotionController
@@ -485,19 +497,6 @@ Transform:
   m_Father: {fileID: 3748028266611161172}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6751521603940666747
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6423115407833010372}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcf6b464b4d783c44a19bdce46109df1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  faceControlManager: {fileID: 3748028266611161169}
 --- !u!114 &8409558381188498024
 MonoBehaviour:
   m_ObjectHideFlags: 0

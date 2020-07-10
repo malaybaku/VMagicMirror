@@ -1,10 +1,9 @@
 ﻿using System;
 using UnityEngine;
-using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public class SettingAutoAdjuster : MonoBehaviour
+    public class SettingAutoAdjuster
     {
         //基準長はMegumi Baxterさんの体型。(https://hub.vroid.com/characters/9003440353945198963/models/7418874241157618732)
         private const float ReferenceChestHeight = 0.89008f;
@@ -14,17 +13,41 @@ namespace Baku.VMagicMirror
         //Hand (Wrist) to Middle Distal
         private const float ReferenceHandLength = 0.114f;
 
-        [SerializeField] private BlendShapeAssignReceiver blendShapeAssignReceiver = null;
-        [SerializeField] private Transform cam = null;
+        public SettingAutoAdjuster(
+            IVRMLoadable vrmLoadable,
+            IMessageReceiver receiver,
+            IMessageSender sender, 
+            IMessageDispatcher dispatcher, 
+            VRMBlendShapeStore blendShapeStore,
+            Camera mainCam
+            )
+        {
+            _mainCam = mainCam.transform;
+            _blendShapeStore = blendShapeStore;
+            
+            _sender = sender;
+            _dispatcher = dispatcher;
+            
+            receiver.AssignCommandHandler(
+                MessageCommandNames.RequestAutoAdjust,
+                _ => AutoAdjust()
+                );
+            receiver.AssignCommandHandler(
+                MessageCommandNames.RequestAutoAdjustEyebrow,
+                _ => AutoAdjustOnlyEyebrow()
+            );
 
-        private IMessageSender _sender = null;
-        private IMessageDispatcher _dispatcher = null;
+
+            vrmLoadable.PreVrmLoaded += info => _vrmRoot = info.vrmRoot;
+            vrmLoadable.VrmDisposing += () => _vrmRoot = null;
+        }
+        
+        private readonly IMessageSender _sender;
+        private readonly IMessageDispatcher _dispatcher;
+        private readonly Transform _mainCam;
+        private readonly VRMBlendShapeStore _blendShapeStore;
         
         private Transform _vrmRoot = null;
-
-        public void AssignModelRoot(Transform vrmRoot) => _vrmRoot = vrmRoot;
-
-        public void DisposeModelRoot() => _vrmRoot = null;
 
         /// <summary>
         /// VRMがロード済みの状態で呼び出すと、
@@ -45,9 +68,9 @@ namespace Baku.VMagicMirror
             
             Transform chest = animator.GetBoneTransform(HumanBodyBones.Chest);
             result.HeightFactor = 
-               (chest != null) ? 
-               chest.position.y / ReferenceChestHeight :
-               animator.GetBoneTransform(HumanBodyBones.Spine).position.y / ReferenceSpineHeight;
+                (chest != null) ? 
+                    chest.position.y / ReferenceChestHeight :
+                    animator.GetBoneTransform(HumanBodyBones.Spine).position.y / ReferenceSpineHeight;
             
             var upperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
             var lowerArm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position;
@@ -60,23 +83,7 @@ namespace Baku.VMagicMirror
 
             return result;
         }
-
-        [Inject]
-        public void Initialize(IMessageReceiver receiver, IMessageSender sender, IMessageDispatcher dispatcher)
-        {
-            _sender = sender;
-            _dispatcher = dispatcher;
-            
-            receiver.AssignCommandHandler(
-                MessageCommandNames.RequestAutoAdjust,
-                _ => AutoAdjust()
-                );
-            receiver.AssignCommandHandler(
-                MessageCommandNames.RequestAutoAdjustEyebrow,
-                _ => AutoAdjustOnlyEyebrow()
-            );
-        }
-
+    
         private void AutoAdjust()
         {
             if (_vrmRoot == null) { return; }
@@ -191,13 +198,13 @@ namespace Baku.VMagicMirror
         private void AdjustCameraPosition(Animator animator)
         {
             var head = animator.GetBoneTransform(HumanBodyBones.Neck);
-            cam.position = new Vector3(0, head.position.y, 1.3f);
-            cam.rotation = Quaternion.Euler(0, 180, 0);
+            _mainCam.position = new Vector3(0, head.position.y, 1.3f);
+            _mainCam.rotation = Quaternion.Euler(0, 180, 0);
         }
 
         private void SetEyebrowParameters(AutoAdjustParameters parameters)
         {
-            var blendShapeNames = blendShapeAssignReceiver.TryGetBlendShapeNames();
+            var blendShapeNames = _blendShapeStore.GetBlendShapeNames();
             var adjuster = new EyebrowBlendShapeAdjuster(blendShapeNames);
             var settings = adjuster.CreatePreferredSettings();
             parameters.EyebrowIsValidPreset = settings.IsValidPreset;

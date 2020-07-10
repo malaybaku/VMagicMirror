@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using mattatz.TransformControl;
-using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {

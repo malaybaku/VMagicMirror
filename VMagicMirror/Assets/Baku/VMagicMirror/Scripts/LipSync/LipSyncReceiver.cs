@@ -1,5 +1,4 @@
-﻿using Baku.VMagicMirror.InterProcess;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror

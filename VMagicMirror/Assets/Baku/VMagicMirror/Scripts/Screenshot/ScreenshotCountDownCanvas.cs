@@ -9,10 +9,10 @@ namespace Baku.VMagicMirror
         [SerializeField] private Text foregroundtext = null;
         
         [SerializeField] private Image image = null;
-        private Canvas _canvas = null;
+        [SerializeField] private Canvas canvas = null;
         
-        public void Show() => _canvas.gameObject.SetActive(true);
-        public void Hide() => _canvas.gameObject.SetActive(false);
+        public void Show() => canvas.gameObject.SetActive(true);
+        public void Hide() => canvas.gameObject.SetActive(false);
 
         public void SetCount(int count)
         {
@@ -24,7 +24,5 @@ namespace Baku.VMagicMirror
         {
             image.fillAmount = mod;
         }
-
-        private void Start() => _canvas = GetComponent<Canvas>();
     }
 }

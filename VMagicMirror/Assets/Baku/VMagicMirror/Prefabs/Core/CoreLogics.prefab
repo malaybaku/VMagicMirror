@@ -29,7 +29,6 @@ Transform:
   m_Children:
   - {fileID: 4403582645890784493}
   - {fileID: 4403582645735969391}
-  - {fileID: 4403582645119910155}
   - {fileID: 5952249983603830923}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -74,68 +73,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5203461303792189549}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &5344397271176686717
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 914461298883566549}
-    m_Modifications:
-    - target: {fileID: 8590535016390274416, guid: 3557259a993244142be1c6cbd9f1f38c,
-        type: 3}
-      propertyPath: m_Name
-      value: SettingAdjuster
-      objectReference: {fileID: 0}
-    - target: {fileID: 8590535016390274422, guid: 3557259a993244142be1c6cbd9f1f38c,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8590535016390274422, guid: 3557259a993244142be1c6cbd9f1f38c,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8590535016390274422, guid: 3557259a993244142be1c6cbd9f1f38c,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8590535016390274422, guid: 3557259a993244142be1c6cbd9f1f38c,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8590535016390274423, guid: 3557259a993244142be1c6cbd9f1f38c,
-        type: 3}
-      propertyPath: blendShapeAssignReceiver
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8590535016390274423, guid: 3557259a993244142be1c6cbd9f1f38c,
-        type: 3}
-      propertyPath: cam
-      value: 
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 3557259a993244142be1c6cbd9f1f38c, type: 3}
---- !u!4 &4403582645119910155 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8590535016390274422, guid: 3557259a993244142be1c6cbd9f1f38c,
-    type: 3}
-  m_PrefabInstance: {fileID: 5344397271176686717}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4403582645119910154 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8590535016390274423, guid: 3557259a993244142be1c6cbd9f1f38c,
-    type: 3}
-  m_PrefabInstance: {fileID: 5344397271176686717}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81677ea49f21b6b4d986acc1d310bd8c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6280833885169497037
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -146,7 +83,7 @@ PrefabInstance:
     - target: {fileID: 410006747659649862, guid: 48e4e24e48cf43543ab508e6a42a1591,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 410006747659649862, guid: 48e4e24e48cf43543ab508e6a42a1591,
         type: 3}
@@ -247,7 +184,7 @@ PrefabInstance:
         type: 3}
       propertyPath: settingAdjuster
       value: 
-      objectReference: {fileID: 4403582645119910154}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 948e310483123da43ab4787ee2ac6688, type: 3}
 --- !u!4 &4403582645890784493 stripped

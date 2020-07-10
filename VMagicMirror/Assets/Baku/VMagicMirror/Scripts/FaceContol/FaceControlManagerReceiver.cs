@@ -27,6 +27,9 @@
                     string.Join("\t", faceControlManager.BlendShapeStore.GetBlendShapeNames())
                 ));
             };
+
+            //特に眉まわりのブレンドシェイプ割り当てだけは別途やる
+            var _ = new BlendShapeAssignReceiver(receiver, faceControlManager);
         }
     }
 

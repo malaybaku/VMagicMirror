@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UniRx;
 using Zenject;
@@ -65,7 +66,7 @@ namespace Baku.VMagicMirror
         private IDisposable _mouseObserve;
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver, RawInputChecker rawInputChecker)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, RawInputChecker rawInputChecker)
         {
             receiver.AssignCommandHandler(
                 MessageCommandNames.Chromakey,
@@ -127,6 +128,9 @@ namespace Baku.VMagicMirror
                     ReserveHitTestJudgeOnNextFrame();
                 }
             });
+            
+            vrmLoadable.PreVrmLoaded += info => _renderers = info.renderers;
+            vrmLoadable.VrmDisposing += () => _renderers = new Renderer[0];
         }
 
         private void Awake()
@@ -168,16 +172,6 @@ namespace Baku.VMagicMirror
             PlayerPrefs.SetInt(InitialPositionXKey, windowPosition.x);
             PlayerPrefs.SetInt(InitialPositionYKey, windowPosition.y);
 #endif
-        }
-
-        public void InitializeModelRenderers(Renderer[] renderers)
-        {
-            _renderers = renderers;
-        }
-
-        public void DisposeModelRenderers()
-        {
-            _renderers = new Renderer[0];
         }
 
         private void CheckSettingFileDirect()

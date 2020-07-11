@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using Linearstar.Windows.RawInput;
 using Linearstar.Windows.RawInput.Native;
 using Zenject;
-using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror
     /// RawInput的なマウス情報を返してくるやつ
     /// </summary>
     [RequireComponent(typeof(WindowProcedureHook))]
-    public class RawMouseMoveChecker : MonoBehaviour
+    public class RawMouseMoveChecker : MonoBehaviour, IReleaseBeforeQuit
     {
         private WindowProcedureHook _windowProcedureHook = null;
 
@@ -70,6 +70,16 @@ namespace Baku.VMagicMirror
                 _dx += dx;
                 _dy += dy;                
             }
+        }
+
+        public void ReleaseBeforeCloseConfig()
+        {
+            _windowProcedureHook.StopObserve();
+        }
+
+        public Task ReleaseResources()
+        {
+            return Task.CompletedTask;
         }
     }
 }

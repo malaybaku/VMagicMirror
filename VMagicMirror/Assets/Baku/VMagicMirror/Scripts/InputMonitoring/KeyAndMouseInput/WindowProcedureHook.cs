@@ -20,6 +20,9 @@ namespace Baku.VMagicMirror
         private IntPtr _newWndProcPtr;
         private WndProcDelegate _newWndProc;
         
+        //起動時に1回だけスタートし、その後Disableまたは明示的な呼び出しによって止まる、という1回きりのオンオフを想定
+        private bool _hasStopped = false;
+        
         private void Start() 
         {
             // ウインドウプロシージャをフックする
@@ -32,6 +35,8 @@ namespace Baku.VMagicMirror
 #endif
         }
         
+        private void OnDisable()  => StopObserve();
+
         private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         {
             if (msg == WM_INPUT)
@@ -41,8 +46,14 @@ namespace Baku.VMagicMirror
             return CallWindowProc(_oldWndProcPtr, hWnd, msg, wParam, lParam);
         }
      
-        private void OnDisable() 
+        /// <summary> マウスの監視を停止します。 </summary>
+        public void StopObserve()
         {
+            if (_hasStopped)
+            {
+                return;
+            }
+            
             // ウィンドウプロシージャを元に戻す
 #if !UNITY_EDITOR            
             SetWindowLongPtr(NativeMethods.GetUnityWindowHandle(), GWLP_WNDPROC, _oldWndProcPtr);
@@ -50,6 +61,7 @@ namespace Baku.VMagicMirror
             _oldWndProcPtr = IntPtr.Zero;
             _newWndProcPtr = IntPtr.Zero;
             _newWndProc = null;
+            _hasStopped = true;
         }
 
         private const uint WM_INPUT = 0x00FF;

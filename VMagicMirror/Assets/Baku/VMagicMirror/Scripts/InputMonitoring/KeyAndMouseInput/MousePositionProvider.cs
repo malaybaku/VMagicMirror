@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -9,7 +10,7 @@ namespace Baku.VMagicMirror
     /// マウスの絶対位置に対してRawInputの差分情報を載せることで、FPSゲーで遊んでいるときの動作を補償するのが狙いです
     /// </remarks>
     [RequireComponent(typeof(RawMouseMoveChecker))]
-    public class MousePositionProvider : MonoBehaviour
+    public class MousePositionProvider : MonoBehaviour, IReleaseBeforeQuit
     {
         [Tooltip("差分値を徐々にゼロ方向に近づけていく係数")]
         [SerializeField] private float diffValueDiminishRate = 6f;
@@ -91,6 +92,16 @@ namespace Baku.VMagicMirror
                 Mathf.Clamp((_x - left) * 1.0f / width - 0.5f, -0.5f, 0.5f),
                 Mathf.Clamp(0.5f - (_y - top) * 1.0f / height, -0.5f, 0.5f)
                 );           
+        }
+
+        public void ReleaseBeforeCloseConfig()
+        {
+            _rawMouseMoveChecker.ReleaseBeforeCloseConfig();
+        }
+
+        public Task ReleaseResources()
+        {
+            return _rawMouseMoveChecker.ReleaseResources();
         }
     }
 }

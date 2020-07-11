@@ -40,11 +40,15 @@ namespace Baku.VMagicMirror.InterProcess
             => _dispatcher.AssignQueryHandler(query, handler);
 
         public void ReceiveCommand(ReceivedCommand command) => _dispatcher.ReceiveCommand(command);
-
-        public Task ReleaseResources()
+        
+        public void ReleaseBeforeCloseConfig()
         {
-            _server.Stop();
-            return Task.CompletedTask;
+            //何もしない: この時点でメッセージI/Oは停止しないでもOK
+        }
+
+        public async Task ReleaseResources()
+        {
+            await _server.StopAsync();
         }
 
         public void Tick() => _dispatcher.Tick();

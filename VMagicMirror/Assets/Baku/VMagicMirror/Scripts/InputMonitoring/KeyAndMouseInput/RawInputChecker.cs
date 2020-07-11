@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -12,7 +13,7 @@ namespace Baku.VMagicMirror
     //NOTE: とくに管理してないが、このクラスは複数あるとマズイです(グローバルフックが二重にかかってしまうので)
     
     /// <summary> キーボード/マウスボタンイベントを監視してUIスレッドで発火してくれる凄いやつだよ </summary>
-    public class RawInputChecker : MonoBehaviour
+    public class RawInputChecker : MonoBehaviour, IReleaseBeforeQuit
     {
         //NOTE: ランダム打鍵で全部のキーを叩かせる理由がない(それだと腕が動きすぎる懸念がある)ので絞っておく
         private static readonly string[] RandomKeyNames　= new []
@@ -42,17 +43,46 @@ namespace Baku.VMagicMirror
         private readonly ConcurrentQueue<string> _mouseButtonConcurrent = new ConcurrentQueue<string>();
 
         private Thread _thread;
+        private bool _hasStopped = false;
+
+        private bool _randomizeKey;
+
+        private readonly Atomic<bool> _shouldStop = new Atomic<bool>();
 
         [Inject]
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
                 VmmCommands.EnableHidRandomTyping,
-                c => RandomizeKey = c.ToBoolean()
+                c => _randomizeKey = c.ToBoolean()
             );
         }
+
+        public void ReleaseBeforeCloseConfig()
+        {
+        }
+
+        public async Task ReleaseResources()
+        {
+            StopObserve();
+            if (_thread != null)
+            {
+                await Task.Run(() => _thread.Join());
+            }
+        }
         
-        public bool RandomizeKey { get; set; } 
+        private void StopObserve()
+        {
+            if (_thread == null || _hasStopped)
+            {
+                return;
+            }
+            
+            _hasStopped = true;
+            _shouldStop.Value = true;
+            //NOTE: このメッセージは無効値をブン投げてエラーまたはメッセージループを回す(=次でwhileを抜ける)よう仕向けるもの
+            WinApi.PostThreadMessage(_thread.ManagedThreadId, WinApi.WM_INPUT, IntPtr.Zero, IntPtr.Zero);
+        }
         
         private void Start()
         {
@@ -64,7 +94,7 @@ namespace Baku.VMagicMirror
         {
             while (_pressedKeysConcurrent.TryDequeue(out string key))
             {
-                if (RandomizeKey)
+                if (_randomizeKey)
                 {
                     key = RandomKeyNames[UnityEngine.Random.Range(0, RandomKeyNames.Length)];
                 }
@@ -77,11 +107,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private void OnDestroy()
-        {
-            int threadId = _thread.ManagedThreadId;
-            WinApi.PostThreadMessage(threadId, WinApi.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
-        }
+        private void OnDestroy() => StopObserve();
 
         private void OnKeyboardHookEvent(object sender, KeyboardHookedEventArgs e)
         {
@@ -104,8 +130,16 @@ namespace Baku.VMagicMirror
             mouseHook.MouseButton += OnMouseButtonEvent;
 
             IntPtr msgPtr = IntPtr.Zero;
-            while (WinApi.GetMessage(msgPtr, IntPtr.Zero, 0, 0))
+            while (!_shouldStop.Value)
             {
+                int res = WinApi.GetMessage(msgPtr, IntPtr.Zero, 0, 0);
+                //0: WM_QUITの受信
+                //-1: エラー
+                if (res == 0 || res == -1)
+                {
+                    break;
+                }
+                LogOutput.Instance.Write("recv input message");
                 WinApi.TranslateMessage(msgPtr);
                 WinApi.DispatchMessage(msgPtr);
             }
@@ -119,7 +153,7 @@ namespace Baku.VMagicMirror
         static class WinApi
         {
             [DllImport("user32.dll")]
-            public static extern bool GetMessage(IntPtr lpMsg, IntPtr hWnd, uint filterMin, uint filterMax);
+            public static extern int GetMessage(IntPtr lpMsg, IntPtr hWnd, uint filterMin, uint filterMax);
             
             [DllImport("user32.dll")]
             public static extern bool TranslateMessage(IntPtr lpMsg);
@@ -131,6 +165,7 @@ namespace Baku.VMagicMirror
             public static extern bool PostThreadMessage(int idThread, uint msg, IntPtr wParam, IntPtr lParam);
 
             public const int WM_QUIT = 0x0012;
+            public const int WM_INPUT = 0x00FF;
         }
     }
 }

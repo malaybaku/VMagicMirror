@@ -23,6 +23,14 @@ namespace Baku.VMagicMirror.Installer
             container.BindInstance(externalTracker);
             container.BindInstance(gamepadListener);
             container.BindInstance(midiInputObserver);
+
+            //終了前に監視処理を安全にストップさせたいものは呼んでおく
+            container.Bind<IReleaseBeforeQuit>()
+                .FromInstance(mousePositionProvider)
+                .AsCached();
+            container.Bind<IReleaseBeforeQuit>()
+                .FromInstance(rawInputChecker)
+                .AsCached();
         }
     }
 }

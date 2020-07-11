@@ -47,6 +47,7 @@ namespace Baku.VMagicMirror
 
         private bool _randomizeKey;
 
+        private readonly Atomic<uint> _threadId = new Atomic<uint>();
         private readonly Atomic<bool> _shouldStop = new Atomic<bool>();
 
         [Inject]
@@ -62,27 +63,7 @@ namespace Baku.VMagicMirror
         {
         }
 
-        public async Task ReleaseResources()
-        {
-            StopObserve();
-            if (_thread != null)
-            {
-                await Task.Run(() => _thread.Join());
-            }
-        }
-        
-        private void StopObserve()
-        {
-            if (_thread == null || _hasStopped)
-            {
-                return;
-            }
-            
-            _hasStopped = true;
-            _shouldStop.Value = true;
-            //NOTE: このメッセージは無効値をブン投げてエラーまたはメッセージループを回す(=次でwhileを抜ける)よう仕向けるもの
-            WinApi.PostThreadMessage(_thread.ManagedThreadId, WinApi.WM_INPUT, IntPtr.Zero, IntPtr.Zero);
-        }
+        public Task ReleaseResources() => Task.CompletedTask;
         
         private void Start()
         {
@@ -107,7 +88,18 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private void OnDestroy() => StopObserve();
+        private void OnDestroy()
+        {
+            if (_thread == null || _hasStopped)
+            {
+                return;
+            }
+            
+            _hasStopped = true;
+            _shouldStop.Value = true;
+            // var threadId = _threadId.Value;
+            // WinApi.PostThreadMessage(threadId, WinApi.WM_APP_THREAD_QUIT, IntPtr.Zero, IntPtr.Zero);
+        }
 
         private void OnKeyboardHookEvent(object sender, KeyboardHookedEventArgs e)
         {
@@ -124,24 +116,33 @@ namespace Baku.VMagicMirror
 
         private void InputObserveThread()
         {
+            _threadId.Value = WinApi.GetCurrentThreadId();
             var keyboardHook = new KeyboardHook();
             var mouseHook = new MouseHook();
             keyboardHook.KeyboardHooked += OnKeyboardHookEvent; 
             mouseHook.MouseButton += OnMouseButtonEvent;
 
-            IntPtr msgPtr = IntPtr.Zero;
-            while (!_shouldStop.Value)
+            try
             {
-                int res = WinApi.GetMessage(msgPtr, IntPtr.Zero, 0, 0);
-                //0: WM_QUITの受信
-                //-1: エラー
-                if (res == 0 || res == -1)
+                IntPtr msgPtr = IntPtr.Zero;
+                WinApi.PeekMessage(msgPtr, IntPtr.Zero, 0, 0, WinApi.PM_NOREMOVE);
+                while (!_shouldStop.Value)
                 {
-                    break;
+                    int res = WinApi.GetMessage(msgPtr, IntPtr.Zero, 0, 0);
+                    //NOTE: res == 0, -1は普通起きない
+                    if (_shouldStop.Value || res == 0 || res == -1)
+                    {
+                        break;
+                    }
+                    
+                    LogOutput.Instance.Write("recv input message");
+                    WinApi.TranslateMessage(msgPtr);
+                    WinApi.DispatchMessage(msgPtr);
                 }
-                LogOutput.Instance.Write("recv input message");
-                WinApi.TranslateMessage(msgPtr);
-                WinApi.DispatchMessage(msgPtr);
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
             }
 
             keyboardHook.KeyboardHooked -= OnKeyboardHookEvent; 
@@ -153,6 +154,9 @@ namespace Baku.VMagicMirror
         static class WinApi
         {
             [DllImport("user32.dll")]
+            public static extern bool PeekMessage(IntPtr lpMsg, IntPtr hWnd, uint filterMin, uint filterMax, uint wRemoveMsg);
+            
+            [DllImport("user32.dll")]
             public static extern int GetMessage(IntPtr lpMsg, IntPtr hWnd, uint filterMin, uint filterMax);
             
             [DllImport("user32.dll")]
@@ -162,10 +166,15 @@ namespace Baku.VMagicMirror
             public static extern int DispatchMessage(IntPtr lpMsg);
 
             [DllImport("user32.dll")]
-            public static extern bool PostThreadMessage(int idThread, uint msg, IntPtr wParam, IntPtr lParam);
+            public static extern bool PostThreadMessage(uint idThread, uint msg, IntPtr wParam, IntPtr lParam);
+            
+            [DllImport("kernel32.dll")]
+            public static extern uint GetCurrentThreadId();
+            
+            public const int WM_APP = 0x8000;
+            public const int WM_APP_THREAD_QUIT = WM_APP + 0x0001;
+            public const int PM_NOREMOVE = 0x0000;
 
-            public const int WM_QUIT = 0x0012;
-            public const int WM_INPUT = 0x00FF;
         }
     }
 }

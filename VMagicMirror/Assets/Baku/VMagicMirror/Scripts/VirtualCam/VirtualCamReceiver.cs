@@ -1,42 +1,33 @@
-﻿using UnityEngine;
-using Zenject;
-using UniRx;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(VirtualCamCapture))]
-    public class VirtualCamReceiver : MonoBehaviour
+    public class VirtualCamReceiver
     {
-        [Inject] private ReceivedMessageHandler _handler = null;
-
-        private void Start()
+        public VirtualCamReceiver(IMessageReceiver receiver, VirtualCamCapture capture)
         {
-            var capture = GetComponent<VirtualCamCapture>();
-            
-            _handler.Commands.Subscribe(c =>
-            {
-                switch (c.Command)
+            receiver.AssignCommandHandler(
+                VmmCommands.SetVirtualCamEnable,
+                c => capture.EnableCaptureWrite = c.ToBoolean()
+                );
+            receiver.AssignCommandHandler(
+                VmmCommands.SetVirtualCamWidth,
+                c =>
                 {
-                    case MessageCommandNames.SetVirtualCamEnable:
-                        capture.EnableCaptureWrite = c.ToBoolean();
-                        break;
-                    case MessageCommandNames.SetVirtualCamWidth:
-                        //NOTE: 4の倍数だけ通すのはストライドとかそういうアレです
-                        int width = c.ToInt();
-                        if (width >= 80 && width <= 1920 && width % 4 == 0)
-                        {
-                            capture.Width = width;
-                        }
-                        break;
-                    case MessageCommandNames.SetVirtualCamHeight:
-                        int height = c.ToInt();
-                        if (height >= 80 && height < 1920 && height % 4 == 0)
-                        {
-                            capture.Height = height;
-                        }
-                        break;
-                }
-            });
+                    //NOTE: 4の倍数だけ通すのはストライドとかそういうアレです
+                    int width = c.ToInt();
+                    if (width >= 80 && width <= 1920 && width % 4 == 0)
+                    {
+                        capture.Width = width;
+                    }
+                });
+            receiver.AssignCommandHandler(
+                VmmCommands.SetVirtualCamHeight,
+                c => {
+                    int height = c.ToInt();
+                    if (height >= 80 && height < 1920 && height % 4 == 0)
+                    {
+                        capture.Height = height;
+                    }
+                });            
         }
     }
 }

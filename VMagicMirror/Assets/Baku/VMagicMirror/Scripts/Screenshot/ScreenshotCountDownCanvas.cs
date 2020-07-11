@@ -3,18 +3,17 @@ using UnityEngine.UI;
 
 namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(Canvas))]
     public class ScreenshotCountDownCanvas : MonoBehaviour
     {
         [SerializeField] private Text backgroundText = null;
         [SerializeField] private Text foregroundtext = null;
         
         [SerializeField] private Image image = null;
-        private Canvas _canvas = null;
+        [SerializeField] private Canvas canvas = null;
         
+        public void Show() => canvas.gameObject.SetActive(true);
+        public void Hide() => canvas.gameObject.SetActive(false);
 
-        public void Show() => _canvas.enabled = true;
-        public void Hide() => _canvas.enabled = false;
         public void SetCount(int count)
         {
             backgroundText.text = count.ToString();
@@ -25,7 +24,5 @@ namespace Baku.VMagicMirror
         {
             image.fillAmount = mod;
         }
-
-        private void Start() => _canvas = GetComponent<Canvas>();
     }
 }

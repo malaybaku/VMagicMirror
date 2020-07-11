@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -73,6 +74,12 @@ namespace Baku.VMagicMirror
         private NativeCaptureInterface _captureInterface;
 
         private RenderTexture _resizedTexture = null;
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
+        {
+            var _ = new VirtualCamReceiver(receiver, this);
+        }
         
         private void Start()
         {

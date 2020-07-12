@@ -13,14 +13,14 @@ namespace Baku.VMagicMirror
         [SerializeField] private float goalRate = 0.3f;
 
         [Tooltip("ゴールに持ってくときの速度基準にする時定数っぽいやつ")]
-        [SerializeField] private float timeFactor = 0.3f;
+        [SerializeField] private float timeFactor = 0.15f;
         
         [Tooltip("ゴール回転値に持ってくとき、スピードに掛けるダンピング項")]
         [Range(0f, 1f)]
-        [SerializeField] private float speedDumpFactor = 0.95f;
+        [SerializeField] private float speedDumpFactor = 0.98f;
 
         [Tooltip("ゴール回転値に持っていくとき、スピードをどのくらい素早く適用するか")]
-        [SerializeField] private float speedLerpFactor = 18.0f;
+        [SerializeField] private float speedLerpFactor = 12.0f;
         
         public Quaternion BodyYawSuggest { get; private set; } = Quaternion.identity;
 

@@ -1,106 +1,51 @@
-﻿using System.Collections;
-using UnityEngine;
-using Zenject;
+﻿using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
     /// <summary>
     /// 画像ベースの顔のヨー回転を体の自然な(無意識運動としての)ヨー回転に変換するすごいやつだよ
     /// </summary>
-    public class FaceYawToBodyYaw : MonoBehaviour
+    public sealed class FaceYawToBodyYaw
     {
-        [Tooltip("最終的に胴体ヨーは頭ヨーの何倍であるべきか、という値")]
-        [SerializeField] private float goalRate = 0.3f;
+        //最終的に胴体ヨーは頭ヨーの何倍であるべきか、という値
+        private const float GoalRate = 0.3f;
+        //ゴールに持ってくときの速度基準にする時定数っぽいやつ
+        private const float TimeFactor = 0.15f;
+        //ゴール回転値に持ってくとき、スピードに掛けるダンピング項
+        private const float SpeedDumpFactor = 0.98f;
+        //ゴール回転値に持っていくとき、スピードをどのくらい素早く適用するか
+        private const float SpeedLerpFactor = 12.0f;
 
-        [Tooltip("ゴールに持ってくときの速度基準にする時定数っぽいやつ")]
-        [SerializeField] private float timeFactor = 0.15f;
+        private float _speedDegreePerSec = 0;
+        public float YawAngleDegree { get; private set; }
+
+        //NOTE: この値はフィルタされてない生のやつ
+        private float _targetAngleDegree = 0;
         
-        [Tooltip("ゴール回転値に持ってくとき、スピードに掛けるダンピング項")]
-        [Range(0f, 1f)]
-        [SerializeField] private float speedDumpFactor = 0.98f;
-
-        [Tooltip("ゴール回転値に持っていくとき、スピードをどのくらい素早く適用するか")]
-        [SerializeField] private float speedLerpFactor = 12.0f;
-        
-        public Quaternion BodyYawSuggest { get; private set; } = Quaternion.identity;
-
-        private float _bodyYawAngleSpeedDegreePerSec = 0;
-        private float _bodyYawAngleDegree = 0;
-
-        private bool _hasVrmBone = false;
-        private bool _hasNeck = false;
-        private Transform _head = null;
-        private Transform _neck = null;
-        //NOTE: この値は
-        private float _headYawAngleDegree = 0;
-        
-        [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable)
-        {
-            vrmLoadable.VrmLoaded += OnVrmLoaded;
-            vrmLoadable.VrmDisposing += OnVrmUnloaded;
-        }
-
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
-            _neck = info.animator.GetBoneTransform(HumanBodyBones.Neck);
-            _headYawAngleDegree = 0;
-            _hasNeck = (_neck != null);
-            _hasVrmBone = true;
-        }
-        
-        private void OnVrmUnloaded()
-        {
-            _hasVrmBone = false;
-            _hasNeck = false;
-            _headYawAngleDegree = 0;
-            _head = null;
-            _neck = null;
-        }
-
-        private void Start()
-        {
-            StartCoroutine(CheckHeadYawAngle());
-        }
-
-        private void Update()
+        public void UpdateSuggestAngle()
         {
             //やること: headYawをbodyYawに変換し、それをQuaternionとして人に見せられる形にする
-            float idealSpeed = (_headYawAngleDegree * goalRate - _bodyYawAngleDegree) / timeFactor;
-            _bodyYawAngleSpeedDegreePerSec = Mathf.Lerp(
-                _bodyYawAngleSpeedDegreePerSec,
+            float idealSpeed = (_targetAngleDegree * GoalRate - YawAngleDegree) / TimeFactor;
+            _speedDegreePerSec = Mathf.Lerp(
+                _speedDegreePerSec,
                 idealSpeed,
-                speedLerpFactor * Time.deltaTime
+                SpeedLerpFactor * Time.deltaTime
             );
 
-            _bodyYawAngleSpeedDegreePerSec *= speedDumpFactor;
-            _bodyYawAngleDegree += _bodyYawAngleSpeedDegreePerSec * Time.deltaTime;
-            
-            BodyYawSuggest = Quaternion.AngleAxis(_bodyYawAngleDegree, Vector3.up);
+            _speedDegreePerSec *= SpeedDumpFactor;
+            YawAngleDegree += _speedDegreePerSec * Time.deltaTime;
         }
 
-        private IEnumerator CheckHeadYawAngle()
+        public void SetZeroTarget()
         {
-            var wait = new WaitForEndOfFrame();
-            while (true)
-            {
-                yield return wait;
-                //フレーム終わりでチェックすることで、全ての回転が載った(=描画された)回転値を拾うのが狙いです
-                if (!_hasVrmBone)
-                {
-                    _headYawAngleDegree = 0;
-                    continue;
-                }
-                
-                var headRotation = _hasNeck
-                    ? _neck.localRotation * _head.localRotation
-                    : _head.localRotation;
+            _targetAngleDegree = 0;
+        }
 
-                //首の回転ベースで正面向きがどうなったか見る: コレでうまく動きます
-                var headForward = headRotation * Vector3.forward;
-                _headYawAngleDegree = -(Mathf.Atan2(headForward.z, headForward.x) * Mathf.Rad2Deg - 90);
-            }
+        public void CheckAngle(Quaternion headRotation)
+        {
+            //首の回転ベースで正面向きがどうなったか見る: コレでうまく動きます
+            var headForward = headRotation * Vector3.forward;
+            _targetAngleDegree = -(Mathf.Atan2(headForward.z, headForward.x) * Mathf.Rad2Deg - 90);
         }
     }
 }

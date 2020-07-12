@@ -83,9 +83,7 @@ GameObject:
   - component: {fileID: 5813678808713813112}
   - component: {fileID: 5813678808713813113}
   - component: {fileID: 5813678808713813108}
-  - component: {fileID: 3088723817282594664}
-  - component: {fileID: 4217680156869205001}
-  - component: {fileID: 497782763707271901}
+  - component: {fileID: 3376032428813691452}
   - component: {fileID: 6238302672375872197}
   m_Layer: 0
   m_Name: BodyMotion
@@ -136,9 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c2d0b190eeb1524c8e8f20de0ec5794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _faceYawToBodyYaw: {fileID: 3088723817282594664}
-  _facePitchToBodyPitch: {fileID: 497782763707271901}
-  _faceRollToBodyRoll: {fileID: 4217680156869205001}
+  _faceAngleToBodyAngle: {fileID: 3376032428813691452}
   _gamepadBasedBodyLean: {fileID: 5813678808713813108}
   _imageBasedBodyMotion: {fileID: 5813678808713813112}
   _bodyRollDegToXOffsetFactor: 0.002
@@ -190,7 +186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bodyLeanMaxAngle: {x: 2, y: 2}
---- !u!114 &3088723817282594664
+--- !u!114 &3376032428813691452
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -199,45 +195,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5813678808713813115}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7406faae6ad154dbeb076e93b04e48, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bbdd2fbea6cf0d418922ea17298b564, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goalRate: 0.3
-  timeFactor: 0.15
-  speedDumpFactor: 0.98
-  speedLerpFactor: 12
---- !u!114 &4217680156869205001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678808713813115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a28d14f92520384e8343ac537bfaad1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  goalRate: 0.1
-  timeFactor: 0.3
-  speedDumpFactor: 0.95
-  speedLerpFactor: 18
---- !u!114 &497782763707271901
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678808713813115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f8806990fea2f14bbc57ec6fddd312e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  goalRate: -0.05
-  timeFactor: 0.2
-  speedDumpFactor: 0.95
-  speedLerpFactor: 12
 --- !u!114 &6238302672375872197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -693,7 +653,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5813678810510073683}
   m_Layer: 0
-  m_Name: MotionControlLogics
+  m_Name: MotionController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

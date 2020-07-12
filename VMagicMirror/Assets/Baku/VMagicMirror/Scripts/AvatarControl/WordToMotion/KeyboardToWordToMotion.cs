@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Zenject;
 using UniRx;
 
 namespace Baku.VMagicMirror
 {
-    public class KeyboardToWordToMotion : MonoBehaviour
+    public sealed class KeyboardToWordToMotion
     {
         //決め打ち設計された、ボタンと実行するアイテムのインデックスのマッピング。
         //このクラスでは配列外とかそういうのは考慮しないことに注意
@@ -32,41 +30,21 @@ namespace Baku.VMagicMirror
             ["NumPad8"] = 8,
         };
 
-        [Tooltip("ボタン押下イベントが押されたらしばらくイベント送出をストップするクールダウンタイム")]
-        [SerializeField] private float cooldownTime = 0.3f;
-
         /// <summary>Word to Motionの要素を実行してほしいとき、アイテムのインデックスを引数にして発火する。</summary>
         public event Action<int> RequestExecuteWordToMotionItem;
         
-        public bool UseKeyboardInput { get; set; } = false;
-        
-        [Inject] private RawInputChecker _rawInputChecker = null;
-        private float _cooldownCount = 0;
+        private IDisposable _inputObserver;
 
-        private void Start()
+        public KeyboardToWordToMotion(RawInputChecker rawInputChecker)
         {
-            _rawInputChecker.PressedRawKeys.Subscribe(keyName =>
+            _inputObserver = rawInputChecker.PressedRawKeys.Subscribe(keyName =>
             {
-                if (!UseKeyboardInput || _cooldownCount > 0)
-                {
-                    return;
-                }
-                
                 //NOTE: D0-D8とNumPad系のキーはサニタイズ対象じゃないので、そのまま受け取っても大丈夫
                 if (_keyToItemIndex.ContainsKey(keyName))
                 {
                     RequestExecuteWordToMotionItem?.Invoke(_keyToItemIndex[keyName]);
-                    _cooldownCount = cooldownTime;
                 }
             });
-        }
-
-        private void Update()
-        {
-            if (_cooldownCount > 0)
-            {
-                _cooldownCount -= Time.deltaTime;
-            }
         }
     }
 }

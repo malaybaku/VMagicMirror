@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using Zenject;
-using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -17,13 +16,11 @@ namespace Baku.VMagicMirror
         private const int DeviceTypeKeyboardTenKey = 2;
         private const int DeviceTypeMidi = 3;
 
-        private RawInputChecker _rawInputChecker = null;
         [SerializeField] private WordToMotionManager manager = null;
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver, RawInputChecker rawInputChecker)
+        public void Initialize(IMessageReceiver receiver)
         {
-            _rawInputChecker = rawInputChecker;
             receiver.AssignCommandHandler(
                 VmmCommands.ReloadMotionRequests,
                 message => ReloadMotionRequests(message.Content)
@@ -54,11 +51,6 @@ namespace Baku.VMagicMirror
             //     break;
         }
         
-        private void Start()
-        {
-            _rawInputChecker.PressedRawKeys.Subscribe(info => manager.ReceiveKeyDown(info));
-        }
-
         private void SetWordToMotionInputType(int deviceType)
         {
             manager.UseKeyboardWordTypingForWordToMotion = (deviceType == DeviceTypeKeyboardTyping);

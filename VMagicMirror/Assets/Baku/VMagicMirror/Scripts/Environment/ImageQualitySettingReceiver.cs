@@ -45,8 +45,8 @@ namespace Baku.VMagicMirror
         private void SetFrameRateWithQuality(int qualityLevel)
         {
             //Very LowまたはLowの場合は明示的にCPU負荷を抑えたいはずなので、FPSも30まで下げる。
-            //Medium以上の場合、デフォルト挙動に戻す
-            Application.targetFrameRate = (qualityLevel < 2) ? 30 : -1;
+            //Medium以上の場合、60にする。VRじゃないから90とか要らんし、下手に高速になるとCPU食うからね。
+            Application.targetFrameRate = (qualityLevel < 2) ? 30 : 60;
         }
     }
     

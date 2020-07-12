@@ -56,7 +56,7 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _rawInputChecker.PressedKeys.Subscribe(info => manager.ReceiveKeyDown(info));
+            _rawInputChecker.PressedRawKeys.Subscribe(info => manager.ReceiveKeyDown(info));
         }
 
         private void SetWordToMotionInputType(int deviceType)

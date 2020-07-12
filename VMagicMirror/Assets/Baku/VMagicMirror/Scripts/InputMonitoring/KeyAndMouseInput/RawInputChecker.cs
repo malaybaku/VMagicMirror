@@ -32,10 +32,12 @@ namespace Baku.VMagicMirror
             [WindowsAPI.MouseMessages.WM_MBUTTONDOWN] = "MDown",
             [WindowsAPI.MouseMessages.WM_MBUTTONUP] = "MUp",
         };
-        
+
+        public IObservable<string> PressedRawKeys => _pressedRawKeys;
         public IObservable<string> PressedKeys => _pressedKeys;
         public IObservable<string> MouseButton => _mouseButton;
         
+        private readonly Subject<string> _pressedRawKeys = new Subject<string>();
         private readonly Subject<string> _pressedKeys = new Subject<string>();
         private readonly Subject<string> _mouseButton = new Subject<string>();
         
@@ -75,6 +77,7 @@ namespace Baku.VMagicMirror
         {
             while (_pressedKeysConcurrent.TryDequeue(out string key))
             {
+                _pressedRawKeys.OnNext(key);
                 if (_randomizeKey)
                 {
                     key = RandomKeyNames[UnityEngine.Random.Range(0, RandomKeyNames.Length)];

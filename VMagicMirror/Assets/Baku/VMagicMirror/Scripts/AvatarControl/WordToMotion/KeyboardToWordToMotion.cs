@@ -45,7 +45,7 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            _rawInputChecker.PressedKeys.Subscribe(keyName =>
+            _rawInputChecker.PressedRawKeys.Subscribe(keyName =>
             {
                 if (!UseKeyboardInput || _cooldownCount > 0)
                 {

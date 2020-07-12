@@ -9,35 +9,23 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ExtraBlendShapeClipNamesSender : MonoBehaviour
     {
-
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable, IMessageSender sender)
         {
-            _vrmLoadable = vrmLoadable;
-            _sender = sender;
-        }
-        
-        private IVRMLoadable _vrmLoadable;
-        private IMessageSender _sender;
-
-        private void Start()
-        {
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-        }
-
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            string names = string.Join(",",
-                info.blendShape
-                    .BlendShapeAvatar
-                    .Clips
-                    .Select(c => c.BlendShapeName)
-                    .Where(n => !BasicNames.Contains(n))
-            );
-
-            _sender.SendCommand(
-                MessageFactory.Instance.ExtraBlendShapeClipNames(names)
+            vrmLoadable.VrmLoaded += info =>
+            {
+                string names = string.Join(",",
+                    info.blendShape
+                        .BlendShapeAvatar
+                        .Clips
+                        .Select(c => c.BlendShapeName)
+                        .Where(n => !BasicNames.Contains(n))
                 );
+                
+                sender.SendCommand(
+                    MessageFactory.Instance.ExtraBlendShapeClipNames(names)
+                );
+            };
         }
 
         private static readonly string[] BasicNames = new[]

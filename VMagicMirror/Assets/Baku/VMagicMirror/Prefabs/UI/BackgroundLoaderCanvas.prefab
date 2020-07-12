@@ -55,12 +55,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 280648265313750003}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -73,6 +74,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &5595510426406834690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,7 +84,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 280648265313750003}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -1254083943, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_AspectMode: 4
@@ -98,7 +100,7 @@ GameObject:
   - component: {fileID: 6305328975186363235}
   - component: {fileID: 3209096521753484901}
   - component: {fileID: 7704019388311717877}
-  - component: {fileID: 8313988280484916778}
+  - component: {fileID: 4348817282053363743}
   m_Layer: 5
   m_Name: BackgroundLoaderCanvas
   m_TagString: Untagged
@@ -133,7 +135,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9078555837931523449}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 0}
@@ -156,7 +158,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9078555837931523449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
@@ -169,7 +171,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
---- !u!114 &8313988280484916778
+--- !u!114 &4348817282053363743
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -178,8 +180,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 9078555837931523449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e9456ed51956434a9360f4614bf0a51, type: 3}
+  m_Script: {fileID: 11500000, guid: 64fb79243afb6d743a08b055b619355b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 3209096521753484901}
   image: {fileID: 7192404352949171281}
   fitter: {fileID: 5595510426406834690}

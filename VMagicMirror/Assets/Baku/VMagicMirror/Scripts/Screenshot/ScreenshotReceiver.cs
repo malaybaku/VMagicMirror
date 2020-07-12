@@ -16,11 +16,11 @@ namespace Baku.VMagicMirror
         //スクショ専用の高解像度カメラ
         [SerializeField] private Camera screenShotCam = null;
 
-        private ScreenshotCountDownCanvas _countDownCanvas = null;
+        private ScreenshotCountDownCanvasRoot _countDownCanvas = null;
         private float _screenshotCountDown = 0f;
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver, ScreenshotCountDownCanvas countDownCanvas)
+        public void Initialize(IMessageReceiver receiver, ScreenshotCountDownCanvasRoot countDownCanvas)
         {
             _countDownCanvas = countDownCanvas;
             receiver.AssignCommandHandler(

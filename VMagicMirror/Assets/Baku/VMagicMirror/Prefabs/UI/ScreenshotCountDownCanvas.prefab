@@ -169,7 +169,6 @@ GameObject:
   - component: {fileID: 6032028867499354522}
   - component: {fileID: 6032028867499354525}
   - component: {fileID: 6032028867499354521}
-  - component: {fileID: 8390970132901456943}
   m_Layer: 5
   m_Name: ScreenshotCountDownCanvas
   m_TagString: Untagged
@@ -273,20 +272,7 @@ MonoBehaviour:
   backgroundText: {fileID: 6032028867177144635}
   foregroundtext: {fileID: 6032028866401464641}
   image: {fileID: 6032028868289718418}
-  canvas: {fileID: 0}
---- !u!114 &8390970132901456943
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6032028867499354524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db37e7d2ac7b4834ca3f30211993c5de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  countDownCanvas: {fileID: 6032028867499354521}
+  canvas: {fileID: 6032028867499354523}
 --- !u!1 &6032028868289718422
 GameObject:
   m_ObjectHideFlags: 0

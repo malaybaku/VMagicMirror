@@ -13,10 +13,31 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(Canvas))]
     public class DeviceTransformControlReceiver : MonoBehaviour
     {
-        //NOTE: このクラスでanimatorとかを直読みしたくないので、リセット処理を外注します
+        private const float GamePadModelMinScale = 0.1f;
+        private const float GamePadModelMaxScale = 3.0f;
+        
+        [SerializeField] private DeviceTransformControlCanvas canvasPrefab = null;
+
+        //NOTE: いちおうserializefieldも公開してるけど使わない想定
         [SerializeField] private Slider gamepadModelScaleSlider = null;
+        public Slider GamepadModelScaleSlider
+        {
+            get => gamepadModelScaleSlider;
+            set => gamepadModelScaleSlider = value;
+        }
+
+        //同上
+        [SerializeField] private Canvas rawCanvas = null;
+        public Canvas RawCanvas
+        {
+            get => rawCanvas;
+            set => rawCanvas = value;
+        }
         
         private IMessageSender _sender;
+        
+        private bool _hasCanvas = false;
+        private float _gamepadModelScale = 1.0f;
         
         private SettingAutoAdjuster _settingAutoAdjuster = null;
         private TransformControl _keyboardControl = null;
@@ -25,39 +46,8 @@ namespace Baku.VMagicMirror
         private TransformControl _gamepadControl= null;
         private Transform _gamepadModelScaleTarget = null;
         
-        [Inject]
-        public void Initialize(
-            IMessageReceiver receiver,
-            IMessageSender sender,
-            SettingAutoAdjuster settingAutoAdjuster,
-            KeyboardProvider keyboard,
-            TouchPadProvider touchPad,
-            MidiControllerProvider midiController,
-            GamepadProvider gamepad
-            )
-        {
-            _sender = sender;
-            _settingAutoAdjuster = settingAutoAdjuster;
-
-            _keyboardControl = keyboard.TransformControl;
-            _touchPadControl = touchPad.TransformControl;
-            _midiControl = midiController.TransformControl;
-            _gamepadControl = gamepad.TransformControl;
-            _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
-            
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableDeviceFreeLayout,
-                command => EnableDeviceFreeLayout(command.ToBoolean())
-                );
-            receiver.AssignCommandHandler(
-                VmmCommands.SetDeviceLayout,
-                command => SetDeviceLayout(command.Content)
-                );
-            receiver.AssignCommandHandler(
-                VmmCommands.ResetDeviceLayout,
-                command => ResetDeviceLayout()
-                );
-        }
+        private bool _preferWorldCoordinate = false;
+        private TransformControl.TransformMode _mode = TransformControl.TransformMode.Translate;
 
         public TransformControl KeyboardControl => _keyboardControl;
         public TransformControl TouchPadControl => _touchPadControl;
@@ -97,13 +87,39 @@ namespace Baku.VMagicMirror
             }
         }
         
-        private bool _preferWorldCoordinate = false;
-        private TransformControl.TransformMode _mode = TransformControl.TransformMode.Translate;
-        private Canvas _canvas = null;
-        
-        private void Start()
+                
+        [Inject]
+        public void Initialize(
+            IMessageReceiver receiver,
+            IMessageSender sender,
+            SettingAutoAdjuster settingAutoAdjuster,
+            KeyboardProvider keyboard,
+            TouchPadProvider touchPad,
+            MidiControllerProvider midiController,
+            GamepadProvider gamepad
+        )
         {
-            _canvas = GetComponent<Canvas>();
+            _sender = sender;
+            _settingAutoAdjuster = settingAutoAdjuster;
+
+            _keyboardControl = keyboard.TransformControl;
+            _touchPadControl = touchPad.TransformControl;
+            _midiControl = midiController.TransformControl;
+            _gamepadControl = gamepad.TransformControl;
+            _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableDeviceFreeLayout,
+                command => EnableDeviceFreeLayout(command.ToBoolean())
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.SetDeviceLayout,
+                command => SetDeviceLayout(command.Content)
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.ResetDeviceLayout,
+                command => ResetDeviceLayout()
+            );
         }
 
         private void Update()
@@ -124,6 +140,17 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void CreateCanvasIfNotExist()
+        {
+            if (!_hasCanvas)
+            {
+                var canvas = Instantiate(canvasPrefab, transform);
+                canvas.Connect(this);
+                GamepadModelScaleSlider.value = _gamepadModelScale;
+                _hasCanvas = true;
+            }
+        }
+        
         private void EnableDeviceFreeLayout(bool enable)
         {
             Debug.Log("Enable Device Free Layout: " + enable);
@@ -133,7 +160,13 @@ namespace Baku.VMagicMirror
             }
             
             IsDeviceFreeLayoutEnabled = enable;
-            _canvas.enabled = enable;
+
+            //NOTE: 1回もUIを作ってないときに非表示指定をされたとき、わざわざInstantiateをしなくてもいいよね、という主旨のガード
+            if (_hasCanvas || enable)
+            {
+                CreateCanvasIfNotExist();
+            }
+
             for (int i = 0; i < _transformControls.Length; i++)
             {
                 _transformControls[i].enabled = enable;
@@ -174,12 +207,17 @@ namespace Baku.VMagicMirror
                 ApplyItem(data.touchPad, _touchPadControl.transform);
                 ApplyItem(data.midi, _midiControl.transform);
                 ApplyItem(data.gamepad, _gamepadControl.transform);
-                gamepadModelScaleSlider.value = Mathf.Clamp(
+
+                _gamepadModelScale = Mathf.Clamp(
                     data.gamepadModelScale,
-                    gamepadModelScaleSlider.minValue,
-                    gamepadModelScaleSlider.maxValue);
-                //NOTE: ここは念押しでやってるが、ほんとはスライダーのonValueChangedが呼ばれるはずなので、呼ばないでもOK
-                _gamepadModelScaleTarget.localScale = gamepadModelScaleSlider.value * Vector3.one;
+                    GamePadModelMinScale,
+                    GamePadModelMaxScale
+                );
+                _gamepadModelScaleTarget.localScale = _gamepadModelScale * Vector3.one;
+                if (_hasCanvas)
+                {
+                    gamepadModelScaleSlider.value = _gamepadModelScale;
+                }
                 
                 //タイミングバグを踏むと嫌 + Setによって実際にレイアウトが変わるので、
                 //「確かに受け取ったよ」という主旨で受信値をエコーバック

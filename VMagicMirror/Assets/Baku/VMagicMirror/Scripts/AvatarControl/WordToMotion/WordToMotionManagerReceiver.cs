@@ -1,13 +1,10 @@
 ﻿using System;
 using UnityEngine;
-using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// <see cref="WordToMotionManager"/>の設定用メッセージのハンドラ
-    /// </summary>
-    public class WordToMotionManagerReceiver : MonoBehaviour
+    /// <summary> <see cref="WordToMotionManager"/>の設定用メッセージのハンドラ </summary>
+    public class WordToMotionManagerReceiver
     {
         //Word to Motionの専用入力に使うデバイスを指定する定数値
         private const int DeviceTypeNone = -1;
@@ -15,12 +12,10 @@ namespace Baku.VMagicMirror
         private const int DeviceTypeGamepad = 1;
         private const int DeviceTypeKeyboardTenKey = 2;
         private const int DeviceTypeMidi = 3;
-
-        [SerializeField] private WordToMotionManager manager = null;
-
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        
+        public WordToMotionManagerReceiver(IMessageReceiver receiver, WordToMotionManager manager)
         {
+            _manager = manager;
             receiver.AssignCommandHandler(
                 VmmCommands.ReloadMotionRequests,
                 message => ReloadMotionRequests(message.Content)
@@ -31,7 +26,7 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.EnableWordToMotionPreview,
-                message => manager.EnablePreview = message.ToBoolean()
+                message => _manager.EnablePreview = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.SendWordToMotionPreviewInfo,
@@ -51,19 +46,21 @@ namespace Baku.VMagicMirror
             //     break;
         }
         
+        private readonly WordToMotionManager _manager;
+
         private void SetWordToMotionInputType(int deviceType)
         {
-            manager.UseKeyboardWordTypingForWordToMotion = (deviceType == DeviceTypeKeyboardTyping);
-            manager.UseGamepadForWordToMotion = (deviceType == DeviceTypeGamepad);
-            manager.UseKeyboardForWordToMotion = (deviceType == DeviceTypeKeyboardTenKey);
-            manager.UseMidiForWordToMotion = (deviceType == DeviceTypeMidi);
+            _manager.UseKeyboardWordTypingForWordToMotion = (deviceType == DeviceTypeKeyboardTyping);
+            _manager.UseGamepadForWordToMotion = (deviceType == DeviceTypeGamepad);
+            _manager.UseKeyboardForWordToMotion = (deviceType == DeviceTypeKeyboardTenKey);
+            _manager.UseMidiForWordToMotion = (deviceType == DeviceTypeMidi);
         }
 
         private void ReloadMotionRequests(string json)
         {
             try
             {
-                manager.LoadItems(
+                _manager.LoadItems(
                     JsonUtility.FromJson<MotionRequestCollection>(json)
                     );
             }
@@ -77,7 +74,7 @@ namespace Baku.VMagicMirror
         {
             try
             {
-                manager.PlayItem(
+                _manager.PlayItem(
                     JsonUtility.FromJson<MotionRequest>(json)
                     );
             }
@@ -91,7 +88,7 @@ namespace Baku.VMagicMirror
         {
             try
             {
-                manager.PreviewRequest = JsonUtility.FromJson<MotionRequest>(json);
+                _manager.PreviewRequest = JsonUtility.FromJson<MotionRequest>(json);
             }
             catch (Exception ex)
             {

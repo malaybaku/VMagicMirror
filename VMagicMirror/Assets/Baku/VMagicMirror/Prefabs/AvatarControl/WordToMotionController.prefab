@@ -9,16 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7427902273662735820}
-  - component: {fileID: 7427902273662735823}
   - component: {fileID: 7427902273662735822}
-  - component: {fileID: 7427902273662735817}
   - component: {fileID: 7427902273662735816}
   - component: {fileID: 7427902273662735819}
   - component: {fileID: 7427902273662735818}
-  - component: {fileID: 7427902273662735821}
-  - component: {fileID: 4195983317812337395}
+  - component: {fileID: 8644862359786213227}
   - component: {fileID: 3568705224926989393}
-  - component: {fileID: 5252229571456098934}
   m_Layer: 0
   m_Name: WordToMotionController
   m_TagString: Untagged
@@ -40,19 +36,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7427902273662735823
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7427902273662735829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8060a04e4473d34d867afecf5747f34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  manager: {fileID: 7427902273662735822}
 --- !u!114 &7427902273662735822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,32 +48,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf54680fc9289344eaf680af61075aeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamepad: {fileID: 7427902273662735821}
-  keyboard: {fileID: 4195983317812337395}
-  midi: {fileID: 5252229571456098934}
-  forgetTime: 1
+  triggers: {fileID: 8644862359786213227}
   ikFadeDuration: 0.5
   defaultAnimation: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc, type: 2}
   fingerController: {fileID: 0}
---- !u!114 &7427902273662735817
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7427902273662735829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89d1bbb0f990ef1499fe92c4fe53699d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  builtInClips:
-  - name: Wave
-    clip: {fileID: 7400000, guid: 2d2936a1fb0e17749bf614ef1a4fd964, type: 2}
-  - name: Rokuro
-    clip: {fileID: 7400000, guid: e0b3e1faef6abbf43827847a27014cff, type: 2}
-  - name: Good
-    clip: {fileID: 7400000, guid: d1cde24e01c095c428e6d07bd418683b, type: 2}
 --- !u!114 &7427902273662735816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,7 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elbowMotionModifier: {fileID: 0}
---- !u!114 &7427902273662735821
+--- !u!114 &8644862359786213227
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,24 +98,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7427902273662735829}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 793cdd0b156d6764dbdef193411de76c, type: 3}
+  m_Script: {fileID: 11500000, guid: f8ce054022baff1439f4daf15a04b81a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamepadInput: {fileID: 0}
-  cooldownTime: 0
---- !u!114 &4195983317812337395
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7427902273662735829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a27d6ae3a3e79845940da8cc571003b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cooldownTime: 0
+  cooldownTime: 0.3
+  forgetTime: 1
 --- !u!114 &3568705224926989393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,17 +115,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7016c8ee0b158eb4bb338088d37ff488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5252229571456098934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7427902273662735829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdd2c3b70407e974998d3dd5465feb39, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  midiInputObserver: {fileID: 0}
-  cooldownTime: 0.3

@@ -35,8 +35,6 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private FingerController fingerController = null;
         
-        [Inject] private IVRMLoadable _vrmLoadable = null;
-
         /// <summary>
         /// モーション実行後、単にIKを切るのではなくデフォルト(=立ち)状態に戻すべきかどうか判断するフラグを指定します。
         /// note: これは実際には、タイピング動作が無効化されているときに使いたい
@@ -128,7 +126,16 @@ namespace Baku.VMagicMirror
         private float _ikFadeInCountDown = 0f;
         private float _blendShapeResetCountDown = 0f;
         private float _bvhStopCountDown = 0f;
-        
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable, BuiltInMotionClipData builtInClips)
+        {
+            var _ = new WordToMotionManagerReceiver(receiver, this);
+            vrmLoadable.VrmLoaded += OnVrmLoaded;
+            vrmLoadable.VrmDisposing += OnVrmDisposing;
+            _mapper = new WordToMotionMapper(builtInClips);
+        }
+
         public void LoadItems(MotionRequestCollection motionRequests)
         {
             _mapper.Requests = motionRequests.Requests;
@@ -171,33 +178,27 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _mapper = GetComponent<WordToMotionMapper>();
             _blendShape = GetComponent<WordToMotionBlendShape>();
             _motionTransfer = GetComponent<LateMotionTransfer>();
             _ikWeightCrossFade = GetComponent<IkWeightCrossFade>();
-
-            void ExecuteSelectedWord(string word)
+            
+            triggers.RequestExecuteWord += word =>
             {
                 var request = _mapper.FindMotionRequest(word);
                 if (request != null)
                 {
                     PlayItem(request);
                 }
-            }
+            };
 
-            void ExecuteSelectedItem(int i)
+            triggers.RequestExecuteWordToMotionItem += i =>
             {
                 var request = _mapper.FindMotionByIndex(i);
                 if (request != null)
                 {
                     PlayItem(request);
                 }
-            }
-            
-            triggers.RequestExecuteWordToMotionItem += ExecuteSelectedItem;
-            triggers.RequestExecuteWord += ExecuteSelectedWord;
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+            };
         }
 
         private void Update()

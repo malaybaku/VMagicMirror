@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using UnityEngine;
 using DlibFaceLandmarkDetector;
+using Zenject;
 
 namespace Baku.VMagicMirror
 { 
@@ -128,6 +129,13 @@ namespace Baku.VMagicMirror
         private List<Vector2> _mainPersonLandmarks = null;
 
         #endregion
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver, IMessageSender sender)
+        {
+            var _ = new FaceTrackerReceiver(receiver, this);
+            var __ = new CalibrationCompletedDataSender(sender, this);
+        }
         
         private void Start()
         {

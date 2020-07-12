@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror
     /// ゲームパッドの入力状況に対して望ましい腕IKを指定するやつ。
     /// 従来版と違い、小さなゲームパッドを握っている状態を再現する狙いで実装している
     /// </summary>
-    public class SmallGamepadHandIKGenerator : MonoBehaviour
+    public class GamepadHandIKGenerator : MonoBehaviour
     {
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
         

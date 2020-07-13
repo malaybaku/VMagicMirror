@@ -30,7 +30,7 @@ namespace Baku.VMagicMirror
 
             _keyboard.RequestExecuteWordToMotionItem += v =>
             {
-                if (UseKeyboardInput && cooldownTime <= 0)
+                if (UseKeyboardInput && _coolDownCount <= 0)
                 {
                     _coolDownCount = cooldownTime;
                     RequestExecuteWordToMotionItem?.Invoke(v);
@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror
 
             _midi.RequestExecuteWordToMotionItem += v =>
             {
-                if (UseMidiInput && cooldownTime <= 0)
+                if (UseMidiInput && _coolDownCount <= 0)
                 {
                     _coolDownCount = cooldownTime;
                     RequestExecuteWordToMotionItem?.Invoke(v);
@@ -48,7 +48,7 @@ namespace Baku.VMagicMirror
             
             _gamepad.RequestExecuteWordToMotionItem += v =>
             {
-                if (UseGamepadInput && cooldownTime <= 0)
+                if (UseGamepadInput && _coolDownCount <= 0)
                 {
                     _coolDownCount = cooldownTime;
                     RequestExecuteWordToMotionItem?.Invoke(v);

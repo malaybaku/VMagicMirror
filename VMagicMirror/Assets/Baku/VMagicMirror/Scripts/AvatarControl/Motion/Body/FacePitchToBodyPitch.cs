@@ -22,7 +22,6 @@ namespace Baku.VMagicMirror
 
         public void UpdateSuggestAngle()
         {
-            //やること: headRollをbodyRollに変換し、それをQuaternionとして人に見せられる形にする
             float idealSpeed = (_targetAngleDegree * GoalRate - PitchAngleDegree) / TimeFactor;
             _speedDegreePerSec = Mathf.Lerp(
                 _speedDegreePerSec,

@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
         private const float SpeedDumpFactor = 0.98f;
         //ゴール回転値に持っていくとき、スピードをどのくらい素早く適用するか
         private const float SpeedLerpFactor = 12.0f;
-
+        
         private float _speedDegreePerSec = 0;
         public float YawAngleDegree { get; private set; }
 
@@ -23,8 +23,7 @@ namespace Baku.VMagicMirror
         private float _targetAngleDegree = 0;
         
         public void UpdateSuggestAngle()
-        {
-            //やること: headYawをbodyYawに変換し、それをQuaternionとして人に見せられる形にする
+        {            
             float idealSpeed = (_targetAngleDegree * GoalRate - YawAngleDegree) / TimeFactor;
             _speedDegreePerSec = Mathf.Lerp(
                 _speedDegreePerSec,

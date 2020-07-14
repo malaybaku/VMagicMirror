@@ -473,11 +473,15 @@ namespace Baku.VMagicMirror
                 // アルファ値がしきい値以上ならば不透過
                 _isOnOpaquePixel = (color.a >= opaqueThreshold);
             }
+#if UNITY_EDITOR
             catch (Exception ex)
             {
                 // 稀に範囲外になるとのこと(元ブログに記載あり)
-#if UNITY_EDITOR
                 Debug.LogError(ex.Message);
+#else
+            catch (Exception)
+            {
+                // こっちのケースではex使う用事がないので、コンパイラのご機嫌為にこう書いてます
 #endif
                 _isOnOpaquePixel = false;
             }

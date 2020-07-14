@@ -5,7 +5,7 @@ namespace Baku.VMagicMirror.Installer
 {
     public class VMagicMirrorInstallerRoot : MonoInstaller
     {
-        [SerializeField] private BuiltInMotionClipData builtInClip;
+        [SerializeField] private BuiltInMotionClipData builtInClip = null;
         [SerializeField] private DevicesInstaller devices = null;
         [SerializeField] private EnvironmentInstaller environment = null;
         [SerializeField] private IKInstaller ik = null;

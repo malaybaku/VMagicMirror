@@ -86,23 +86,6 @@ namespace Baku.VMagicMirror
             rot.ToAngleAxis(out float totalDeg, out var totalAxis);
             totalDeg = Mathf.Repeat(totalDeg + 180f, 360f) - 180f;
             totalDeg = Mathf.Clamp(totalDeg, -HeadTotalRotationLimitDeg, HeadTotalRotationLimitDeg);
-
-            _head.localRotation = Quaternion.AngleAxis(totalDeg, totalAxis);
-            return;
-
-            if (_hasNeck)
-            {
-                var halfRot = Quaternion.AngleAxis(totalDeg * 0.5f, totalAxis);
-                _neck.localRotation = halfRot;
-                _head.localRotation = halfRot;
-            }
-            else
-            {
-                _head.localRotation = Quaternion.AngleAxis(totalDeg, totalAxis);
-            }
-
-            
-            return;
             
             //曲がりすぎを防止しつつ、首と頭に回転を割り振る(首が無いモデルなら頭に全振り)
             var totalRot = _hasNeck
@@ -113,12 +96,10 @@ namespace Baku.VMagicMirror
                 out float totalHeadRotDeg,
                 out Vector3 totalHeadRotAxis
             );
-            
-            //素朴に値を適用すると首が曲がりすぎる、と判断されたケース
-            if (Mathf.Abs(totalHeadRotDeg) > HeadTotalRotationLimitDeg)
-            {
-                totalHeadRotDeg = Mathf.Sign(totalHeadRotDeg) * HeadTotalRotationLimitDeg;
-            }
+
+            totalHeadRotDeg = Mathf.Repeat(totalHeadRotDeg + 180f, 360f) - 180f;
+            //合計値ベースであらためて制限
+            totalHeadRotDeg = Mathf.Clamp(totalHeadRotDeg, -HeadTotalRotationLimitDeg, HeadTotalRotationLimitDeg);
 
             if (_hasNeck)
             {

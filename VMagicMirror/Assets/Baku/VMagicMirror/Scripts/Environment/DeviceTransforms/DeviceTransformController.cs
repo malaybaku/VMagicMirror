@@ -151,6 +151,11 @@ namespace Baku.VMagicMirror
                 CreateCanvasIfNotExist();
             }
 
+            if (_hasCanvas)
+            {
+                RawCanvas.gameObject.SetActive(IsDeviceFreeLayoutEnabled);
+            }
+
             for (int i = 0; i < _transformControls.Length; i++)
             {
                 _transformControls[i].enabled = enable;
@@ -197,6 +202,7 @@ namespace Baku.VMagicMirror
                     GamePadModelMinScale,
                     GamePadModelMaxScale
                 );
+                
                 _gamepadModelScaleTarget.localScale = _gamepadModelScale * Vector3.one;
                 if (_hasCanvas)
                 {

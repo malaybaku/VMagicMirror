@@ -15,16 +15,16 @@ namespace Baku.VMagicMirror
         [SerializeField] private Slider gamepadModelScaleSlider = null;
  
         //NOTE: こういう設計なのは、もともとreceiverが直にUIを触る挙動だったのを地続きで遅延初期化するようにいじくったため。
-        public void Connect(DeviceTransformControlReceiver receiver)
+        public void Connect(DeviceTransformController controller)
         {
-            receiver.RawCanvas = canvas;
-            receiver.GamepadModelScaleSlider = gamepadModelScaleSlider;
-            gamepadModelScaleSlider.onValueChanged.AddListener(receiver.GamepadScaleChanged);
-            localCoordinateToggle.onValueChanged.AddListener(receiver.EnableLocalCoordinate);
-            worldCoordinateToggle.onValueChanged.AddListener(receiver.EnableWorldCoordinate);
-            translateModeToggle.onValueChanged.AddListener(receiver.EnableTranslateMode);
-            rotationModeToggle.onValueChanged.AddListener(receiver.EnableRotateMode);
-            scaleModeToggle.onValueChanged.AddListener(receiver.EnableScaleMode);
+            controller.RawCanvas = canvas;
+            controller.GamepadModelScaleSlider = gamepadModelScaleSlider;
+            gamepadModelScaleSlider.onValueChanged.AddListener(controller.GamepadScaleChanged);
+            localCoordinateToggle.onValueChanged.AddListener(controller.EnableLocalCoordinate);
+            worldCoordinateToggle.onValueChanged.AddListener(controller.EnableWorldCoordinate);
+            translateModeToggle.onValueChanged.AddListener(controller.EnableTranslateMode);
+            rotationModeToggle.onValueChanged.AddListener(controller.EnableRotateMode);
+            scaleModeToggle.onValueChanged.AddListener(controller.EnableScaleMode);
         }
     }
 }

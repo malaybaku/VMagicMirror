@@ -10,29 +10,15 @@ namespace Baku.VMagicMirror
     /// キーボードやマウスパッドの位置をユーザーが自由に編集できるかどうかを設定するレシーバークラス
     /// UIが必要になるので、そのUIの操作もついでにここでやります
     /// </summary>
-    [RequireComponent(typeof(Canvas))]
-    public class DeviceTransformControlReceiver : MonoBehaviour
+    public class DeviceTransformController : MonoBehaviour
     {
         private const float GamePadModelMinScale = 0.1f;
         private const float GamePadModelMaxScale = 3.0f;
         
         [SerializeField] private DeviceTransformControlCanvas canvasPrefab = null;
 
-        //NOTE: いちおうserializefieldも公開してるけど使わない想定
-        [SerializeField] private Slider gamepadModelScaleSlider = null;
-        public Slider GamepadModelScaleSlider
-        {
-            get => gamepadModelScaleSlider;
-            set => gamepadModelScaleSlider = value;
-        }
-
-        //同上
-        [SerializeField] private Canvas rawCanvas = null;
-        public Canvas RawCanvas
-        {
-            get => rawCanvas;
-            set => rawCanvas = value;
-        }
+        public Slider GamepadModelScaleSlider { get; set; }
+        public Canvas RawCanvas { get; set; }
         
         private IMessageSender _sender;
         
@@ -49,16 +35,6 @@ namespace Baku.VMagicMirror
         private bool _preferWorldCoordinate = false;
         private TransformControl.TransformMode _mode = TransformControl.TransformMode.Translate;
 
-        public TransformControl KeyboardControl => _keyboardControl;
-        public TransformControl TouchPadControl => _touchPadControl;
-        public TransformControl GamepadControl => _gamepadControl;
-        public TransformControl MidiControl => _midiControl;
-
-        public bool CanShowKeyboardControl { get; set; } = true;
-        public bool CanShowTouchpadControl { get; set; } = true;
-        public bool CanShowGamepadControl { get; set; } = true;
-        public bool CanShowMidiControl { get; set; } = true;
-
         private TransformControl[] _transformControls => new[]
         {
             _keyboardControl,
@@ -68,7 +44,6 @@ namespace Baku.VMagicMirror
         };
 
         private bool _isDeviceFreeLayoutEnabled = false;
-
         public bool IsDeviceFreeLayoutEnabled
         {
             get => _isDeviceFreeLayoutEnabled;
@@ -87,6 +62,10 @@ namespace Baku.VMagicMirror
             }
         }
         
+        private KeyboardVisibility _keyboardVisibility;
+        private TouchpadVisibility _touchPadVisibility;
+        private GamepadVisibilityReceiver _gamepadVisibility;
+        private MidiControllerVisibility _midiControllerVisibility;
                 
         [Inject]
         public void Initialize(
@@ -107,6 +86,11 @@ namespace Baku.VMagicMirror
             _midiControl = midiController.TransformControl;
             _gamepadControl = gamepad.TransformControl;
             _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
+            
+            _keyboardVisibility = _keyboardControl.GetComponent<KeyboardVisibility>();
+            _touchPadVisibility =  _touchPadControl.GetComponent<TouchpadVisibility>();
+            _gamepadVisibility = _gamepadControl.GetComponent<GamepadVisibilityReceiver>();
+            _midiControllerVisibility = _midiControl.GetComponent<MidiControllerVisibility>();            
             
             receiver.AssignCommandHandler(
                 VmmCommands.EnableDeviceFreeLayout,
@@ -129,11 +113,11 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            _keyboardControl.mode = CanShowKeyboardControl ? _mode : TransformControl.TransformMode.None;
-            _touchPadControl.mode = CanShowTouchpadControl ? _mode : TransformControl.TransformMode.None;
-            _gamepadControl.mode = CanShowGamepadControl ? _mode : TransformControl.TransformMode.None;
-            _midiControl.mode = CanShowMidiControl ? _mode : TransformControl.TransformMode.None;
-            
+            _keyboardControl.mode = _keyboardVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            _touchPadControl.mode = _touchPadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            _gamepadControl.mode = _gamepadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            _midiControl.mode = _midiControllerVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+
             for (int i = 0; i < _transformControls.Length; i++)
             {
                 _transformControls[i].Control();
@@ -216,7 +200,7 @@ namespace Baku.VMagicMirror
                 _gamepadModelScaleTarget.localScale = _gamepadModelScale * Vector3.one;
                 if (_hasCanvas)
                 {
-                    gamepadModelScaleSlider.value = _gamepadModelScale;
+                    GamepadModelScaleSlider.value = _gamepadModelScale;
                 }
                 
                 //タイミングバグを踏むと嫌 + Setによって実際にレイアウトが変わるので、

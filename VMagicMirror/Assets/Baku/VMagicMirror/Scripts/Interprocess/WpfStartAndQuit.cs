@@ -61,7 +61,7 @@ namespace Baku.VMagicMirror
                 item.ReleaseBeforeCloseConfig();
             }
             
-            CloseWpfWindow();
+            _sender?.SendCommand(MessageFactory.Instance.CloseConfigWindow());
 
             //特にリリースするものがないケース: 本来ありえないんだけど、理屈上はほしいので書いておく
             if (_releaseItems.Count == 0)

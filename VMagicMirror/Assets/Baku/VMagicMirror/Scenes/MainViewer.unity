@@ -407,11 +407,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1574337991341618294, guid: 74b68522ff1e6a64ab9ccb23c66175b9,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1574337991341618295, guid: 74b68522ff1e6a64ab9ccb23c66175b9,
         type: 3}
       propertyPath: countDownCanvas

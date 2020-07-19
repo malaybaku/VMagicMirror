@@ -6,7 +6,7 @@
         {
             receiver.AssignCommandHandler(
                 VmmCommands.SetVirtualCamEnable,
-                c => capture.EnableCaptureWrite = c.ToBoolean()
+                c => capture.EnableCapture = c.ToBoolean()
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.SetVirtualCamWidth,

@@ -9,10 +9,8 @@ namespace Baku.VMagicMirror
     public class BodyLeanIntegrator : MonoBehaviour
     {
         private const float ReferenceHipsHeight = 0.6f;
-        
-        [SerializeField] private FaceYawToBodyYaw _faceYawToBodyYaw = null;
-        [SerializeField] private FacePitchToBodyPitch _facePitchToBodyPitch = null;
-        [SerializeField] private FaceRollToBodyRoll _faceRollToBodyRoll = null;
+
+        [SerializeField] private FaceAngleToBodyAngle _faceAngleToBodyAngle = null;
         [SerializeField] private GamepadBasedBodyLean _gamepadBasedBodyLean = null;
         [SerializeField] private ImageBasedBodyMotion _imageBasedBodyMotion = null;
         
@@ -60,16 +58,12 @@ namespace Baku.VMagicMirror
         private void Update()
         {
             //NOTE:
-            // faceAttitudeToBodyYaw: ヨー
-            // (faceAttitudeController: ロール, 廃止)
-            // faceRollToBodyRoll: ロール
+            // _faceAngleToBodyAngle: 3DOFぜんぶ
             // imageBasedBodyMotion: ロール
             // gamePadBasedBodyLean: ロールとピッチ
             // どれも角度は小さめなので雑にかけてます
             BodyLeanSuggest =
-                _faceYawToBodyYaw.BodyYawSuggest *
-                _facePitchToBodyPitch.BodyPitchSuggest *
-                _faceRollToBodyRoll.BodyRollSuggest *
+                _faceAngleToBodyAngle.BodyLeanSuggest *
                 _imageBasedBodyMotion.BodyLeanSuggest *
                 _gamepadBasedBodyLean.BodyLeanSuggest;
             
@@ -78,8 +72,7 @@ namespace Baku.VMagicMirror
             angle = Mathf.Repeat(angle + 180f, 360f) - 180f;
 
             //NOTE: これは近似計算になるハズだけど、まあ十分だろうと。
-            float rollAngle = angle * axis.z;
-            rollAngle = Mathf.Clamp(rollAngle, -_bodyRollReflectMaxDeg, _bodyRollReflectMaxDeg);
+            float rollAngle = Mathf.Clamp(angle * axis.z, -_bodyRollReflectMaxDeg, _bodyRollReflectMaxDeg);
 
             BodyRollRate = rollAngle / _bodyRollReflectMaxDeg;
             BodyHorizontalOffsetSuggest = rollAngle * _bodyRollDegToXOffsetFactor * _hipsHeightRate;

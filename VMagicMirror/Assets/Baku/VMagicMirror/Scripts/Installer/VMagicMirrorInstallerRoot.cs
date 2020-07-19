@@ -5,6 +5,7 @@ namespace Baku.VMagicMirror.Installer
 {
     public class VMagicMirrorInstallerRoot : MonoInstaller
     {
+        [SerializeField] private BuiltInMotionClipData builtInClip = null;
         [SerializeField] private DevicesInstaller devices = null;
         [SerializeField] private EnvironmentInstaller environment = null;
         [SerializeField] private IKInstaller ik = null;
@@ -31,9 +32,10 @@ namespace Baku.VMagicMirror.Installer
             {
                 installer.Install(Container);
             }
-            
+
             
             //TEMP: ここから下もサブクラスにしたほうが良いのでは
+            Container.BindInstance(builtInClip);
 
             //Deformを使うオブジェクトがここを参照することで、DeformableManagerを必要な時だけ動かせるようにする
             Container.Bind<DeformableCounter>()

@@ -1,25 +1,17 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// 単語一覧とモーションのマッピングを管理するクラス
-    /// </summary>
-    /// <remarks>
-    /// 機能上はMonoBehaviorの必然性があまりないが、陽に組み込みクリップ一覧が定義できて良いのでこうしている。
-    /// </remarks>
-    public class WordToMotionMapper : MonoBehaviour
+    /// <summary> 単語一覧とモーションのマッピングを管理するクラス </summary>
+    public class WordToMotionMapper 
     {
-        [Serializable]
-        class BuiltInAnimationClip
-        {
-            public string name = "";
-            public AnimationClip clip = null;
-        }
+        private readonly BuiltInMotionClipItem[] _builtInClips;
 
-        [SerializeField] private BuiltInAnimationClip[] builtInClips = null;
+        public WordToMotionMapper(BuiltInMotionClipData builtInClips)
+        {
+            _builtInClips = builtInClips.items.ToArray();
+        }
 
         //note: アロケーション都合で配列として公開するが、他所からは書きかえない想定
         public MotionRequest[] Requests { get; set; } = new MotionRequest[0];
@@ -41,18 +33,17 @@ namespace Baku.VMagicMirror
             => (Requests != null && index >= 0 && index < Requests.Length) ? Requests[index] : null;
 
         /// <summary>
-        /// ビルトインアニメーションを、名称を指定して取得します。
+        /// ビルトインアニメーションを、名称を指定して取得します。見つからない場合はnullを返します。
         /// </summary>
         /// <param name="clipName"></param>
         /// <returns></returns>
         public AnimationClip FindBuiltInAnimationClipOrDefault(string clipName)
         {
-            Debug.Log("Requested clip name = " + clipName);
-            for (int i = 0; i < builtInClips.Length; i++)
+            for (int i = 0; i < _builtInClips.Length; i++)
             {
-                if (builtInClips[i].name == clipName)
+                if (_builtInClips[i].name == clipName)
                 {
-                    return builtInClips[i].clip;
+                    return _builtInClips[i].clip;
                 }
             }
             return null;

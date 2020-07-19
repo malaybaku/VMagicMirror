@@ -23,17 +23,11 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class WordToMotionManager : MonoBehaviour
     {
-        [SerializeField] private GamepadToWordToMotion gamepad = null;
-        [SerializeField] private KeyboardToWordToMotion keyboard = null;
-        [SerializeField] private MidiToWordToMotion midi = null;
-        
-        [SerializeField]
-        [Tooltip("この時間だけキー入力が無かったらワードが途切れたものとして入力履歴をクリアする。")]
-        private float forgetTime = 1.0f;
+        [Tooltip("Word To Motionの発動イベントを管理しているトリガークラス")]
+        [SerializeField] private WordToMotionTriggers triggers = null;
 
-        [SerializeField]
         [Tooltip("ワード由来のモーションに入る時にIKを無効化するときの所要時間")]
-        private float ikFadeDuration = 0.5f;
+        [SerializeField] private float ikFadeDuration = 0.5f;
 
         //棒立ちポーズが指定されたアニメーション。
         //コレが必要なのは、デフォルトアニメーションが無いと下半身を動かさないアニメーションで脚が骨折するため
@@ -41,40 +35,39 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private FingerController fingerController = null;
         
-        [Inject] private IVRMLoadable _vrmLoadable = null;
-
         /// <summary>
         /// モーション実行後、単にIKを切るのではなくデフォルト(=立ち)状態に戻すべきかどうか判断するフラグを指定します。
         /// note: これは実際には、タイピング動作が無効化されているときに使いたい
         /// </summary>
         public bool ShouldSetDefaultClipAfterMotion { get; set; } = false;
 
-        /// <summary>
-        /// ゲームパッド入力をWord to Motionに用いるかどうかを取得、設定します。
-        /// </summary>
+        /// <summary> ゲームパッド入力をWord to Motionに用いるかどうかを取得、設定します。 </summary>
         public bool UseGamepadForWordToMotion
         {
-            get => gamepad.UseGamepadInput;
-            set => gamepad.UseGamepadInput = value;
+            get => triggers.UseGamepadInput;
+            set => triggers.UseGamepadInput = value;
         }
 
-        /// <summary>
-        /// キーボード入力をWord to Motionに用いるかどうかを取得、設定します。
-        /// </summary>
+        /// <summary> キーボード入力をWord to Motionに用いるかどうかを取得、設定します。 </summary>
         public bool UseKeyboardForWordToMotion
         {
-            get => keyboard.UseKeyboardInput;
-            set => keyboard.UseKeyboardInput = value;
+            get => triggers.UseKeyboardInput;
+            set => triggers.UseKeyboardInput = value;
         }
 
+        /// <summary> MIDI入力をWord to Motionに用いるかどうかを取得、設定します。 </summary>
         public bool UseMidiForWordToMotion
         {
-            get => midi.UseMidiInput;
-            set => midi.UseMidiInput = value;
+            get => triggers.UseMidiInput;
+            set => triggers.UseMidiInput = value;
         }
 
-        /// <summary>キー押下イベントをちゃんと読み込むか否か</summary>
-        public bool UseKeyboardWordTypingForWordToMotion { get; set; } = true;
+        /// <summary> 単語ベースの入力をWord to Motionに用いるかどうかを取得、設定します。 </summary>
+        public bool UseKeyboardWordTypingForWordToMotion
+        {
+            get => triggers.UseKeyboardWordTypingForWordToMotion;
+            set => triggers.UseKeyboardWordTypingForWordToMotion = value;
+        } 
 
         private bool _enablePreview = false;
         /// <summary>
@@ -130,18 +123,23 @@ namespace Baku.VMagicMirror
         //ビルトインモーションの実行中だと意味のある文字列になる
         private string _currentBuiltInMotionName = "";
 
-        private readonly WordAnalyzer _analyzer = new WordAnalyzer();
-        private float _count = 0f;
         private float _ikFadeInCountDown = 0f;
         private float _blendShapeResetCountDown = 0f;
         private float _bvhStopCountDown = 0f;
-        
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable, BuiltInMotionClipData builtInClips)
+        {
+            var _ = new WordToMotionManagerReceiver(receiver, this);
+            vrmLoadable.VrmLoaded += OnVrmLoaded;
+            vrmLoadable.VrmDisposing += OnVrmDisposing;
+            _mapper = new WordToMotionMapper(builtInClips);
+        }
+
         public void LoadItems(MotionRequestCollection motionRequests)
         {
             _mapper.Requests = motionRequests.Requests;
-            _analyzer.LoadWordSet(
-                motionRequests.Requests.Select(r => r.Word).ToArray()
-                );
+            triggers.LoadItems(motionRequests);
         }
 
         /// <summary>
@@ -177,70 +175,34 @@ namespace Baku.VMagicMirror
                 StartApplyBlendShape(request);
             }
         }
-
-        /// <summary>
-        /// キー押下の処理: 実際はパーサー的なクラスに素通しするだけ
-        /// </summary>
-        /// <param name="keyName"></param>
-        public void ReceiveKeyDown(string keyName)
-        {
-            if (!UseKeyboardWordTypingForWordToMotion)
-            {
-                return;
-            }
-            _count = forgetTime;
-            _analyzer.Add(KeyName2Char(keyName));
-        }
-
-
+        
         private void Start()
         {
-            _count = forgetTime;
-
-            _mapper = GetComponent<WordToMotionMapper>();
             _blendShape = GetComponent<WordToMotionBlendShape>();
             _motionTransfer = GetComponent<LateMotionTransfer>();
             _ikWeightCrossFade = GetComponent<IkWeightCrossFade>();
             
-            _analyzer.WordDetected.Subscribe(word =>
+            triggers.RequestExecuteWord += word =>
             {
-                if (_simpleAnimation == null)
-                {
-                    return;
-                }
-
                 var request = _mapper.FindMotionRequest(word);
                 if (request != null)
                 {
                     PlayItem(request);
                 }
-            });
+            };
 
-            void ExecuteSelectedItem(int i)
+            triggers.RequestExecuteWordToMotionItem += i =>
             {
                 var request = _mapper.FindMotionByIndex(i);
                 if (request != null)
                 {
                     PlayItem(request);
                 }
-            }
-            gamepad.RequestExecuteWordToMotionItem += ExecuteSelectedItem;
-            keyboard.RequestExecuteWordToMotionItem += ExecuteSelectedItem;
-            midi.RequestExecuteWordToMotionItem += ExecuteSelectedItem;
-
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+            };
         }
 
         private void Update()
         {
-            _count -= Time.deltaTime;
-            if (_count < 0)
-            {
-                _count = forgetTime;
-                _analyzer.Clear();
-            }
-
             if (!EnablePreview && _ikFadeInCountDown > 0)
             {
                 _ikFadeInCountDown -= Time.deltaTime;
@@ -546,31 +508,6 @@ namespace Baku.VMagicMirror
             }
             _blendShape.SkipLipSyncKeys = request.PreferLipSync;
             _blendShapeResetCountDown = CalculateDuration(request);
-        }
-
-
-        private static char KeyName2Char(string keyName)
-        {
-            if (keyName.Length == 1)
-            {
-                //a-z
-                return keyName.ToLower()[0];
-            }
-            else if (keyName.Length == 2 && keyName[0] == 'D' && char.IsDigit(keyName[1]))
-            {
-                //D0 ~ D9 (テンキーじゃないほうの0~9)
-                return keyName[1];
-            }
-            else if (keyName.Length == 7 && keyName.StartsWith("NumPad") && char.IsDigit(keyName[6]))
-            {
-                //NumPad0 ~ NumPad9 (テンキーの0~9)
-                return keyName[6];
-            }
-            else
-            {
-                //TEMP: 「ヘンな文字でワードが途切れた」という情報だけ残す
-                return ' ';
-            }
         }
 
         private float CalculateDuration(MotionRequest request)

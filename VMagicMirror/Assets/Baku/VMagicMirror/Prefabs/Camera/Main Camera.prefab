@@ -549,12 +549,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1574337991341618302}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ad17fa9aaaae8942b449f307726e644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableCaptureWrite: 0
   width: 640
   height: 480
   showWarnings: 0
@@ -571,6 +570,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCam: {fileID: 1574337991341618299}
+  postProcessLayer: {fileID: 1574337991341618294}
 --- !u!1 &1574337991882445229
 GameObject:
   m_ObjectHideFlags: 0

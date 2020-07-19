@@ -28,7 +28,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 8691073115883508913}
+  - {fileID: 6432728701393205835}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -249,7 +249,7 @@ PrefabInstance:
     - target: {fileID: 3543419340843832733, guid: acd3fd0b869ac9943a796b6ec1d24506,
         type: 3}
       propertyPath: m_Name
-      value: TransformControlCanvas
+      value: TransformControlCanvasRoot
       objectReference: {fileID: 0}
     - target: {fileID: 3897987861865513651, guid: acd3fd0b869ac9943a796b6ec1d24506,
         type: 3}
@@ -411,11 +411,12 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5838226657027795473, guid: acd3fd0b869ac9943a796b6ec1d24506, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: acd3fd0b869ac9943a796b6ec1d24506, type: 3}
---- !u!224 &8691073115883508913 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 1663699831484444365, guid: acd3fd0b869ac9943a796b6ec1d24506,
+--- !u!4 &6432728701393205835 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3949628796980592695, guid: acd3fd0b869ac9943a796b6ec1d24506,
     type: 3}
   m_PrefabInstance: {fileID: 8037310001979521660}
   m_PrefabAsset: {fileID: 0}

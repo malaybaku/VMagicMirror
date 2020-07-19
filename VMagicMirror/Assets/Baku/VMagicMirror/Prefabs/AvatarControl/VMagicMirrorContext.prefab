@@ -77,11 +77,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8731b5f4fc6536c4187460d73cb85215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  builtInClip: {fileID: 11400000, guid: a7e679b285f19f14db2cc956a8e9eb79, type: 2}
   devices: {fileID: 0}
   environment: {fileID: 0}
   ik: {fileID: 0}
   monitoring: {fileID: 0}
   modelLoad: {fileID: 0}
+  screenshotCountDown: {fileID: 0}
+  faceControl: {fileID: 0}
   deformableCounterPrefab: {fileID: 7689942653974604740, guid: 70558d4eae9159e459981bcfa4091921,
     type: 3}
   interProcess: {fileID: 2683631619848515584}

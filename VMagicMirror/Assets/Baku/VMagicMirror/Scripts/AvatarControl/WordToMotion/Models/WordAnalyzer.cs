@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -11,13 +10,12 @@ namespace Baku.VMagicMirror
         //検出対象ワードの最長の文字数
         private int _longestWordLength = 0;
 
-        private Subject<string> _wordDetected = new Subject<string>();
         /// <summary>単語を検出すると発火します。</summary>
-        public IObservable<string> WordDetected => _wordDetected;
+        public event Action<string> WordDetected;
 
         //キューの方がいいかも
-        private StringBuilder _sb = new StringBuilder(64);
-
+        private readonly StringBuilder _sb = new StringBuilder(64);
+        
         /// <summary>文字を入力します。</summary>
         /// <param name="c"></param>
         public void Add(char c)
@@ -28,9 +26,9 @@ namespace Baku.VMagicMirror
             string s = _sb.ToString();
             for(int i = 0; i < _wordSet.Length; i++)
             {
-                if (s.IndexOf(_wordSet[i]) >= 0)
+                if (s.IndexOf(_wordSet[i], StringComparison.Ordinal) >= 0)
                 {
-                    _wordDetected.OnNext(_wordSet[i]);
+                    WordDetected?.Invoke(_wordSet[i]);
                     //ふつう末尾で一致しているハズだから、全消しでも無害
                     Clear();
                 }
@@ -76,6 +74,5 @@ namespace Baku.VMagicMirror
             _wordSet = new string[0];
             _longestWordLength = 0;
         }
-
     }
 }

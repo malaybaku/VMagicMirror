@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -18,20 +19,31 @@ namespace Baku.VMagicMirror
         private const bool UseDoubleBuffering = true;
 
         private const int RenderTextureDepth = 24;
-
         //VMagicMirrorはひとまずGammaのままでいいので
         private const bool IsLinearColorSpace = false;
 
-        [SerializeField] private bool enableCaptureWrite = false;
+        //NOTE: Unity 2019で仮想カメラとPostProcessingLayerの相性が悪い(画面が真っ黒になっちゃう)問題があり、
+        //その対策として仮想カメラがオンだったらPostProcessを無理やりオフにするために参照してます。
+        private PostProcessLayer _postProcessLayer = null;
+
         [SerializeField] private int width = 640;
         [SerializeField] private int height = 480;
-
         [SerializeField] private bool showWarnings = false;
-
-        public bool EnableCaptureWrite
+        
+        private bool _enableCapture = false;
+        public bool EnableCapture
         {
-            get => enableCaptureWrite;
-            set => enableCaptureWrite = value;
+            get => _enableCapture;
+            set
+            {
+                if (_enableCapture == value)
+                {
+                    return;
+                }
+                _enableCapture = value;
+                enabled = value;
+                _postProcessLayer.enabled = !value;
+            }
         }
 
         public int Width
@@ -76,9 +88,10 @@ namespace Baku.VMagicMirror
         private RenderTexture _resizedTexture = null;
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public void Initialize(IMessageReceiver receiver, PostProcessLayer postProcessLayer)
         {
             var _ = new VirtualCamReceiver(receiver, this);
+            _postProcessLayer = postProcessLayer;
         }
         
         private void Start()
@@ -99,7 +112,7 @@ namespace Baku.VMagicMirror
             Graphics.Blit(source, destination);
 
             //送信不要扱いなので何もしない
-            if (!EnableCaptureWrite)
+            if (!EnableCapture)
             {
                 return;
             }

@@ -1,27 +1,16 @@
 ﻿using System;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(Canvas))]
+    /// <summary> アプリ起動時に背景画像が所定位置にあったら表示し、なければ自滅するクラス </summary>
     public class BackgroundImageLoaderLogic : MonoBehaviour
     {
-        [SerializeField] private Image image = null;
-        [SerializeField] private AspectRatioFitter fitter = null;
+        [SerializeField] private BackgroundImageCanvas canvasPrefab = null;
         
         private void Start()
         {
-            var canvas = GetComponent<Canvas>();
-            if (canvas.worldCamera == null)
-            {
-                canvas.worldCamera = Camera.main;
-            }
-
-            //NOTE: カメラのFar Clipが100とか、そこそこ大きい値であることを前提にした書き方です。
-            canvas.planeDistance = canvas.worldCamera.farClipPlane - 1.0f;
-            
             var filePath = GetBackgroundImageFilePath();
             Texture2D texture = null;
             for (int i = 0; i < filePath.Length; i++)
@@ -39,15 +28,9 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            image.sprite = Sprite.Create(
-                texture,
-                new Rect(0, 0, texture.width, texture.height), 
-                new Vector2(0, 0)
-            );
-            image.preserveAspect = true;
-            fitter.aspectRatio = texture.width * 1.0f / texture.height;
-            canvas.enabled = true;
-
+            var canvas = Instantiate(canvasPrefab, transform);
+            canvas.SetImage(texture);
+            
             //HACK: 背景を読み込むと影機能はもはや使えない(使うと背景が映らなくなってしまう)ので、
             //UIからなんと言われても影を切るモードに落とす
             var shadowMotion = FindObjectOfType<ShadowBoardMotion>();
@@ -56,7 +39,6 @@ namespace Baku.VMagicMirror
                 shadowMotion.ForceKillShadowRenderer = true;
             }
         }
-        
 
         private static Texture2D LoadTexture(string filePath)
         {

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
     /// <summary>
     /// RawInput用のWindowsメッセージだけイベントとして取り出す事ができるようにウィンドウプロシージャを差し替えるやつです
     /// </summary>
-    public class WindowProcedureHook : MonoBehaviour
+    public class WindowProcedureHook
     {
         delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
@@ -23,7 +22,8 @@ namespace Baku.VMagicMirror
         //起動時に1回だけスタートし、その後Disableまたは明示的な呼び出しによって止まる、という1回きりのオンオフを想定
         private bool _hasStopped = false;
         
-        private void Start() 
+        /// <summary> マウスの監視を開始します。 </summary>
+        public void StartObserve()
         {
             // ウインドウプロシージャをフックする
             _newWndProc = WndProc;
@@ -34,18 +34,7 @@ namespace Baku.VMagicMirror
                 );
 #endif
         }
-        
-        private void OnDisable()  => StopObserve();
 
-        private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
-        {
-            if (msg == WM_INPUT)
-            {
-                ReceiveRawInput?.Invoke(lParam);
-            }
-            return CallWindowProc(_oldWndProcPtr, hWnd, msg, wParam, lParam);
-        }
-     
         /// <summary> マウスの監視を停止します。 </summary>
         public void StopObserve()
         {
@@ -63,7 +52,16 @@ namespace Baku.VMagicMirror
             _newWndProc = null;
             _hasStopped = true;
         }
-
+        
+        private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+        {
+            if (msg == WM_INPUT)
+            {
+                ReceiveRawInput?.Invoke(lParam);
+            }
+            return CallWindowProc(_oldWndProcPtr, hWnd, msg, wParam, lParam);
+        }
+        
         private const uint WM_INPUT = 0x00FF;
         private const int GWLP_WNDPROC = -4;
         

@@ -1,22 +1,21 @@
 ﻿using System.Linq;
 using UnityEngine;
-using Zenject;
-using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
     /// <summary> ウェブカメラによる顔トラッキングの制御に関するプロセス間通信を受信します。 </summary>
-    [RequireComponent(typeof(FaceTracker))]
-    public class FaceTrackerReceiver : MonoBehaviour
+    public sealed class FaceTrackerReceiver 
     {
-        private FaceTracker _faceTracker;
+        private readonly FaceTracker _faceTracker;
+        
         private bool _enableFaceTracking = true;
         private string _cameraDeviceName = "";
         private bool _enableExTracker = false;
 
-        [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public FaceTrackerReceiver(IMessageReceiver receiver, FaceTracker faceTracker)
         {
+            _faceTracker = faceTracker;
+            
             receiver.AssignCommandHandler(
                 VmmCommands.SetCameraDeviceName,
                 message => SetCameraDeviceName(message.Content)
@@ -46,11 +45,6 @@ namespace Baku.VMagicMirror
                 VmmQueries.CameraDeviceNames,
                 query => query.Result = string.Join("\t", GetCameraDeviceNames())
                 );
-        }
-        
-        private void Start()
-        {
-            _faceTracker = GetComponent<FaceTracker>();
         }
 
         private void SetEnableFaceTracking(bool enable)

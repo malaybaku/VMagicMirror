@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
     public class MousePositionProvider : MonoBehaviour, IReleaseBeforeQuit
     {
         [Tooltip("差分値を徐々にゼロ方向に近づけていく係数")]
-        [SerializeField] private float diffValueDiminishRate = 6f;
+        [SerializeField] private float diffValueDiminishRate = 2f;
 
         /// <summary>
         /// _x, _yを対スクリーン比率で[-0.5, 0.5]の区間に収まる値になおしたもの

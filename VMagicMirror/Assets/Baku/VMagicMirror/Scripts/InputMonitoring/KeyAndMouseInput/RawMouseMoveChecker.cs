@@ -7,10 +7,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// RawInput的なマウス情報を返してくるやつ
-    /// </summary>
-    [RequireComponent(typeof(WindowProcedureHook))]
+    /// <summary> RawInput的なマウス情報を返してくるやつ </summary>
     public class RawMouseMoveChecker : MonoBehaviour, IReleaseBeforeQuit
     {
         private WindowProcedureHook _windowProcedureHook = null;
@@ -50,8 +47,14 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             //NOTE: このイベントはエディタ実行では飛んできません(Window Procedureに関わるので)
-            _windowProcedureHook = GetComponent<WindowProcedureHook>();
+            _windowProcedureHook = new WindowProcedureHook();
+            _windowProcedureHook.StartObserve();
             _windowProcedureHook.ReceiveRawInput += OnReceiveRawInput;
+        }
+
+        private void OnDisable()
+        {
+            _windowProcedureHook.StopObserve();
         }
 
         private void OnReceiveRawInput(IntPtr lParam)

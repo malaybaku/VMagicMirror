@@ -20,6 +20,8 @@ namespace Baku.VMagicMirror
             var vrmLookAt = go.GetComponent<VRMLookAtHead>();
             vrmLookAt.Target = ikTargets.LookAt;
             
+            //NOTE: BlendShape式のはパラメータ調整をしない:
+            //VRoidがBone方式を採用しているので、そっちだけやっとけばよいかなあという判断です。
             var vrmLookAtBoneApplier = go.GetComponent<VRMLookAtBoneApplyer>();
             if (vrmLookAtBoneApplier != null)
             {

@@ -13,9 +13,10 @@ lang_prefix: /en/
 
 2020/07/30
 
+* Fix: Fix issue related to External Tracker especially for first use.
 * Change: Change colorspace from Gamma to Linear. This improves the appearance especially for the models which expect linear colorspace.
 * Change: Unity version updated to 2019.4, which leads the improve performance.
-* Change: Internal fix for performance improvement.
+* Change: Internal fix performance improvement.
 
 #### v1.1.0
 

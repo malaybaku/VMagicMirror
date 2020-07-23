@@ -20,12 +20,17 @@ namespace Baku.VMagicMirror
             var vrmLookAt = go.GetComponent<VRMLookAtHead>();
             vrmLookAt.Target = ikTargets.LookAt;
             
+            //NOTE: BlendShape式のはパラメータ調整をしない:
+            //VRoidがBone方式を採用しているので、そっちだけやっとけばよいかなあという判断です。
             var vrmLookAtBoneApplier = go.GetComponent<VRMLookAtBoneApplyer>();
+            if (vrmLookAtBoneApplier != null)
+            {
+                vrmLookAtBoneApplier.HorizontalInner.CurveYRangeDegree = 15;
+                vrmLookAtBoneApplier.HorizontalOuter.CurveYRangeDegree = 15;
+                vrmLookAtBoneApplier.VerticalDown.CurveYRangeDegree = 10;
+                vrmLookAtBoneApplier.VerticalUp.CurveYRangeDegree = 20;
+            }
 
-            vrmLookAtBoneApplier.HorizontalInner.CurveYRangeDegree = 15;
-            vrmLookAtBoneApplier.HorizontalOuter.CurveYRangeDegree = 15;
-            vrmLookAtBoneApplier.VerticalDown.CurveYRangeDegree = 10;
-            vrmLookAtBoneApplier.VerticalUp.CurveYRangeDegree = 20;
             
             AddLookAtIK(go, ikTargets.LookAt, animator, bipedReferences.root);
             AddFingerRigToRightIndex(animator, ikTargets);

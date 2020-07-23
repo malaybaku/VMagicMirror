@@ -699,7 +699,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         
         //Updateとかで使っていいキャリブオフセット: キャリブ前後で値が吹っ飛ばないよう対策されている。
         private Vector3 _smoothOffsetPosition;
-        private Quaternion _smoothOffsetRotation;
+        private Quaternion _smoothOffsetRotation = Quaternion.identity;
         
         
         //生のキャリブ値

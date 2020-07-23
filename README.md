@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.1.0
+v1.2.0
 
 * 作成: 獏星(ばくすたー)
-* 2020/06/26
+* 2020/07/23
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -56,12 +56,12 @@ Windows 10環境でお使いいただけます。
 + `WPF`
     + [WPFのレポジトリ](https://github.com/malaybaku/VMAgicMirrorConfig)
 
-Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプロジェクトを開きます。
+Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプロジェクトを開きます。
 
 メンテナの開発環境は以下の通りです。
 
-* Unity 2018.4.13f1 Personal
-* Visual Studio Community 2019 16.4.1
+* Unity 2019.4.1f1 Personal
+* Visual Studio Community 2019 16.6.3
     * .NET Core 3.1 SDKがインストール済みであること
     * Visual Studioのコンポーネントで「C++によるデスクトップ開発」をインストール済みであること
         - UnityのBurstコンパイラ向けに必要なセットアップです。
@@ -72,7 +72,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.53.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.55.0
 * [UniRx](https://github.com/neuecc/UniRx) (アセットストアから)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad/releases) v0.3b
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM/releases) v1.0.1
@@ -88,7 +88,7 @@ Unity 2018.3系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 
 FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。OpenCV for Unityは無くてもビルド可能ですが、画像ベースのハンドトラッキングは使えなくなります。
 
-また、MidiJackはForkしたものを使っているので、この点にも注意して下さい。
+MidiJackはForkしたものを使っている点に注意して下さい。
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
 
@@ -97,7 +97,7 @@ SharpDXは次の手順で導入します。
 - 2つのNuGetギャラリーの`Download package`から`.nupkg`ファイルを取得し、それぞれ`.zip`ファイルとして展開します。
 - 展開したzip内の`lib/netstandard1.3/`フォルダにそれぞれ`SharpDX.dll`および`SharpDX.DirectInput.dll`があるので、これらをUnityプロジェクト上の適当な場所に追加します。
 
-RawInput.Sharpもほぼ同様の手順です。
+RawInput.Sharpもほぼ同様の導入手順です。
 
 - NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
 - 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
@@ -128,7 +128,7 @@ UniVRMについては、導入後に`Assets/VRM/UniHumanoid/Scripts/HumanPoseTra
         - 配置モード: `自己完結`
         - ターゲットランタイム: `win10-x86`
         - ターゲットの場所: PC上の適当なフォルダ
-    - 上記の設定で発行すると、ターゲットのフォルダ上に`VMagicMirror.exe`を含むファイル群が出力されます。れらのファイルを`Bin/ConfigApp/`以下にコピーします。
+    - 上記の設定で発行すると、ターゲットのフォルダ上に`VMagicMirror.exe`を含むファイル群が出力されます。これらのファイルを`Bin/ConfigApp/`以下にコピーします。
 
 フォルダ構成については配布されているVMagicMirrorも参考にしてください。
 
@@ -153,12 +153,3 @@ https://github.com/malaybaku/VMagicMirrorConfig/blob/master/VMagicMirrorConfig/V
 モデル取得元URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
 
 VMagicMirrorでは元モデルに対し、マテリアルを差し替えたものを用いています。これは他のキーボード、タッチパッド等と見た目の一貫性をはかるためです。
-
-
-## MODの廃止について
-
-以前のバージョンではMOD機能の追加を想定してサンプルを公開していましたが、廃止しました。
-
-※すでにレポジトリを削除しています
-https://github.com/malaybaku/VMagicMirrorModExample
-

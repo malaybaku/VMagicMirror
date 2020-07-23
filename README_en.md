@@ -60,21 +60,21 @@ Set the folder as following.
 + `WPF`
     + [WPF repository](https://github.com/malaybaku/VMAgicMirrorConfig)
 
-Open Unity project with Unity 2018.3.x, and open WPF project with Visual Studio 2019.
+Open Unity project with Unity 2019.4.x, and open WPF project with Visual Studio 2019.
 
 Maintainer's environment is as following.
 
-* Unity 2018.4.13f1 Personal
-* Visual Studio Community 2019
+* Unity 2019.4.1f1 Personal
+* Visual Studio Community 2019.16.6.3
     * .NET Core 3.1 SDK
-    * Visual Studio Component "C++ Desktop Development" is required in install.
+    * Visual Studio Component "C++ Desktop Development" is required.
 
 ### 4.2. Asset install
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [UniVRM](https://dwango.github.io/vrm/) v0.53.0
+* [UniVRM](https://dwango.github.io/vrm/) v0.55.0
 * [UniRx](https://github.com/neuecc/UniRx) (from Asset Store)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad/releases) v0.3b
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM/releases) v1.0.1
@@ -155,12 +155,3 @@ Creator: Criegrrunov
 URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
 
 In VMagicMirror, the materials are replaced for the visual consistency.
-
-
-## (Deprecated) MOD support
-
-Previous version had supported MOD library by dll, but MOD feature is no more supported.
-
-The sample repository at following URL has deleted.
-
-https://github.com/malaybaku/VMagicMirrorModExample

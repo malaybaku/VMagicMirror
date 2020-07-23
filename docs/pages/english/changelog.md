@@ -9,6 +9,14 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v1.2.0
+
+2020/07/30
+
+* Change: Change colorspace from Gamma to Linear. This improves the appearance especially for the models which expect linear colorspace.
+* Change: Unity version updated to 2019.4, which leads the improve performance.
+* Change: Internal fix for performance improvement.
+
 #### v1.1.0
 
 2020/06/26

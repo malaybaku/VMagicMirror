@@ -22,6 +22,9 @@ namespace Baku.VMagicMirror
         [Tooltip("ピッチにのみ別途適用する角度制限")]
         [Range(0f, 40f)]
         [SerializeField] private float pitchLimitDeg = 25f;
+
+        [Tooltip("ちょっとだけ直前フレームとの補間でならすファクター")]
+        [SerializeField] private float lerpFactor = 18.0f;
         
         public bool IsActive { get; set; } = true;
 
@@ -30,6 +33,7 @@ namespace Baku.VMagicMirror
         private Transform _neck = null;
         private Transform _head = null;
         private ExternalTrackerDataSource _externalTracker = null;
+        private Quaternion _prevRotation = Quaternion.identity;
         
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable, ExternalTrackerDataSource externalTracker)
@@ -57,7 +61,7 @@ namespace Baku.VMagicMirror
         {
             if (!_hasModel || !IsActive)
             {
-                //NOTE: 画像ベースの方みたくフィルタリングをする場合、ここのガード時にフィルタの値をリセットするが、今は不要
+                _prevRotation = Quaternion.identity;
                 return;
             }
             
@@ -86,6 +90,10 @@ namespace Baku.VMagicMirror
             rot.ToAngleAxis(out float totalDeg, out var totalAxis);
             totalDeg = Mathf.Repeat(totalDeg + 180f, 360f) - 180f;
             totalDeg = Mathf.Clamp(totalDeg, -HeadTotalRotationLimitDeg, HeadTotalRotationLimitDeg);
+            rot = Quaternion.AngleAxis(totalDeg, totalAxis);
+
+            rot = Quaternion.Slerp(_prevRotation, rot, lerpFactor * Time.deltaTime);
+            _prevRotation = rot;
             
             //曲がりすぎを防止しつつ、首と頭に回転を割り振る(首が無いモデルなら頭に全振り)
             var totalRot = _hasNeck
@@ -111,7 +119,6 @@ namespace Baku.VMagicMirror
             {
                 _head.localRotation = Quaternion.AngleAxis(totalHeadRotDeg, totalHeadRotAxis);
             }
-
         }
     }
 }

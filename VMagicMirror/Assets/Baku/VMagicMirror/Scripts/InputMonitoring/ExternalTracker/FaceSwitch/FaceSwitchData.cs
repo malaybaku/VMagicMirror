@@ -9,6 +9,30 @@ namespace Baku.VMagicMirror.ExternalTracker
     public class FaceSwitchSettings
     {
         public FaceSwitchItem[] items;
+
+        public static FaceSwitchSettings LoadDefault()
+        {
+            return new FaceSwitchSettings()
+            {
+                items = new[]
+                {
+                    new FaceSwitchItem()
+                    {
+                        source = FaceSwitchKeys.MouthSmile,
+                        threshold = 70,
+                        clipName = "Joy",
+                        keepLipSync = false,
+                    },
+                    new FaceSwitchItem()
+                    {
+                        source = FaceSwitchKeys.BrowDown,
+                        threshold = 70,
+                        clipName = "Sorrow",
+                        keepLipSync = false,
+                    }
+                },
+            };
+        }
     }
 
     /// <summary>
@@ -21,5 +45,16 @@ namespace Baku.VMagicMirror.ExternalTracker
         public int threshold;
         public string clipName;
         public bool keepLipSync;
+    }
+    
+    public static class FaceSwitchKeys
+    {
+        public const string MouthSmile = "mouthSmile";
+        public const string EyeSquint = "eyeSquint";
+        public const string EyeWide = "eyeWide";
+        public const string BrowUp = "browUp";
+        public const string BrowDown = "browDown";
+        public const string CheekPuff = "cheekPuff";
+        public const string TongueOut = "tongueOut";
     }
 }

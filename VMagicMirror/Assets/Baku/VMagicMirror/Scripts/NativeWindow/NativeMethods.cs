@@ -57,11 +57,16 @@ namespace Baku.VMagicMirror
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string className, string windowName);
         public static IntPtr CurrentWindowHandle = IntPtr.Zero;
-        public static IntPtr GetUnityWindowHandle() => CurrentWindowHandle == IntPtr.Zero 
-            ? CurrentWindowHandle = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle
-            //? CurrentWindowHandle = FindWindow(null, Application.productName) 
-            : CurrentWindowHandle;
 
+        public static IntPtr GetUnityWindowHandle()
+        {
+            if (CurrentWindowHandle == IntPtr.Zero)
+            {
+                int id = System.Diagnostics.Process.GetCurrentProcess().Id;
+                CurrentWindowHandle = GetSelfWindowHandle(id);
+            }
+            return CurrentWindowHandle;
+        }
         [DllImport("user32.dll")]
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong); /*x uint o int unchecked*/
         [DllImport("user32.dll")]
@@ -150,38 +155,33 @@ namespace Baku.VMagicMirror
             SetLayeredWindowAttributes(GetUnityWindowHandle(), 0, alpha, LWA_ALPHA);
         }
 
-
         public delegate bool EnumWindowsDelegate(IntPtr hWnd, IntPtr lparam);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private extern static bool EnumWindows(EnumWindowsDelegate lpEnumFunc, IntPtr lparam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetWindowTextLength(IntPtr hWnd);
-
-        public static Dictionary<IntPtr, string> GetAllWindowHandle()
+        [DllImport("user32.dll")]
+        private static extern int GetWindowThreadProcessId(IntPtr hWnd, ref int processId);
+        
+        private static IntPtr GetSelfWindowHandle(int processId)
         {
-            var ret = new Dictionary<IntPtr, string>();
-            Func<IntPtr, IntPtr, bool> func = new Func<IntPtr, IntPtr, bool>((hWnd, lparam) =>
-            {
-                int textLen = GetWindowTextLength(hWnd);
-                if (0 < textLen)
-                {
-                    //ウィンドウのタイトルを取得する
-                    StringBuilder tsb = new StringBuilder(textLen + 1);
-                    GetWindowText(hWnd, tsb, tsb.Capacity);
+            var ret = IntPtr.Zero;
 
-                    ret.Add(hWnd, tsb.ToString());
+            bool Func(IntPtr hWnd, IntPtr lParam)
+            {
+                int id = -1;
+                GetWindowThreadProcessId(hWnd, ref id);
+                if (id == processId)
+                {
+                    ret = hWnd;
+                    return false;
                 }
                 return true;
-            });
-            EnumWindows(new EnumWindowsDelegate(func), IntPtr.Zero);
-
-            return ret;
+            }
+            
+            EnumWindows(Func, IntPtr.Zero);
+            return ret;            
         }
 
         #endregion

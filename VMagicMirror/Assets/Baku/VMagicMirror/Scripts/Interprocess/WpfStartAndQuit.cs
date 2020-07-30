@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using System.Threading.Tasks;
+using Baku.VMagicMirror.Mmf;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -95,11 +96,13 @@ namespace Baku.VMagicMirror
                 //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
                 yield return null;
                 yield return null;
-#if !UNITY_EDITOR
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+                var startInfo = new ProcessStartInfo()
                 {
                     FileName = path,
-                });
+                    Arguments = "/channelId " + MmfChannelIdSource.ChannelId
+                };
+#if !UNITY_EDITOR
+                Process.Start(startInfo);
 #endif
             }
         }

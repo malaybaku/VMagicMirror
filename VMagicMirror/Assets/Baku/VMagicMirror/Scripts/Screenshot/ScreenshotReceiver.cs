@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
-using UniRx;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -11,31 +11,26 @@ namespace Baku.VMagicMirror
     {
         private const int ScreenshotCountSec = 3;
         
-        [Inject] private ReceivedMessageHandler handler = null;
-
         //普段使ってるカメラ
         [SerializeField] private Camera normalMainCam = null;
         //スクショ専用の高解像度カメラ
         [SerializeField] private Camera screenShotCam = null;
 
-        [SerializeField] private ScreenshotCountDownCanvas countDownCanvas = null;
+        private ScreenshotCountDownCanvasRoot _countDownCanvas = null;
         private float _screenshotCountDown = 0f;
 
-        
-        private void Start()
+        [Inject]
+        public void Initialize(IMessageReceiver receiver, ScreenshotCountDownCanvasRoot countDownCanvas)
         {
-            handler.Commands.Subscribe(message =>
-            {
-                switch (message.Command)
-                {
-                    case MessageCommandNames.TakeScreenshot:
-                        StartScreenshotCountDown();
-                        break;
-                    case MessageCommandNames.OpenScreenshotFolder:
-                        OpenScreenshotFolder();
-                        break;
-                }
-            });
+            _countDownCanvas = countDownCanvas;
+            receiver.AssignCommandHandler(
+                VmmCommands.TakeScreenshot,
+                _ => StartScreenshotCountDown()
+                );
+            receiver.AssignCommandHandler(
+                VmmCommands.OpenScreenshotFolder,
+                _ => OpenScreenshotFolder()
+                );
         }
 
         private void Update()
@@ -45,18 +40,18 @@ namespace Baku.VMagicMirror
                 _screenshotCountDown -= Time.deltaTime;
                 if (_screenshotCountDown <= 0)
                 {
-                    countDownCanvas.Hide();
+                    _countDownCanvas.Hide();
                     TakeScreenshot();
                 }
-                countDownCanvas.SetCount(Mathf.FloorToInt(_screenshotCountDown) + 1);
-                countDownCanvas.SetMod(Mathf.Repeat(_screenshotCountDown, 1.0f));
+                _countDownCanvas.SetCount(Mathf.FloorToInt(_screenshotCountDown) + 1);
+                _countDownCanvas.SetMod(Mathf.Repeat(_screenshotCountDown, 1.0f));
             }
         }
         
         private void StartScreenshotCountDown()
         {
-            countDownCanvas.Show();
-            countDownCanvas.SetCount(ScreenshotCountSec);
+            _countDownCanvas.Show();
+            _countDownCanvas.SetCount(ScreenshotCountSec);
             _screenshotCountDown = ScreenshotCountSec;
         }
         

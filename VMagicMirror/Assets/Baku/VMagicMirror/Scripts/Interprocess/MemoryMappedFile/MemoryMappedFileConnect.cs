@@ -96,6 +96,8 @@ namespace Baku.VMagicMirror.Mmf
         private MemoryMappedFile _sender;
         private MemoryMappedViewAccessor _senderAccessor;
 
+        private Thread _sendThread = null;
+        private Thread _receiveThread = null;
         private CancellationTokenSource _cts;
 
         public event EventHandler<ReceiveCommandEventArgs> ReceiveCommand;
@@ -135,8 +137,11 @@ namespace Baku.VMagicMirror.Mmf
             }
             _receiverAccessor = _receiver.CreateViewAccessor();
             _senderAccessor = _sender.CreateViewAccessor();
-            new Thread(() => ReadThread()).Start();
-            new Thread(() => WriteThread()).Start();
+
+            _receiveThread = new Thread(() => ReadThread());
+            _receiveThread.Start();
+            _sendThread = new Thread(() => WriteThread());
+            _sendThread.Start();
             IsConnected = true;
         }
 
@@ -155,7 +160,7 @@ namespace Baku.VMagicMirror.Mmf
             return source.Task;
         }
 
-        public void Stop()
+        public async Task StopAsync()
         {
             IsConnected = false;
             _cts?.Cancel();
@@ -175,6 +180,12 @@ namespace Baku.VMagicMirror.Mmf
                 _senderAccessor = null;
                 _sender = null;
             }
+
+            await Task.Run(() =>
+            {
+                _receiveThread.Join();
+                _sendThread.Join();
+            });
         }
 
         private void SendQueryResponse(string command, int id)

@@ -8,7 +8,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Baku/VMagicMirror/Scenes/MainViewer.unity
     guid: 73b14cfb1fb42b546a3ebfcb5775d713
-  - enabled: 1
-    path: Assets/Baku/VMagicMirror/Scenes/DummyScene.unity
-    guid: dedd98ec938c62b4d8842add6a1fda69
   m_configObjects: {}

@@ -10,7 +10,7 @@
     public struct UpdateColliderHashJob : IJobParallelForTransform
     {
         [ReadOnly] public NativeArray<ColliderGroupJobData.GroupParam> GroupParams;
-        public NativeMultiHashMap<int, SphereCollider>.Concurrent ColliderHashMap;
+        public NativeMultiHashMap<int, SphereCollider>.ParallelWriter ColliderHashMap;
 
         void IJobParallelForTransform.Execute(int index, TransformAccess trsAccess)
         {

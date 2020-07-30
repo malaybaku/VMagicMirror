@@ -1,43 +1,32 @@
 ﻿using System;
 using UnityEngine;
-using Zenject;
-using UniRx;
+using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
-    public class ImageQualitySettingReceiver : MonoBehaviour
+    public class ImageQualitySettingReceiver
     {
-        [Inject]
-        public void Initialize(ReceivedMessageHandler handler) => _handler = handler;
-        private ReceivedMessageHandler _handler;
-
-        private void Start()
+        
+        
+        public ImageQualitySettingReceiver(IMessageReceiver receiver)
         {
-            _handler.Commands.Subscribe(c =>
-            {
-                switch (c.Command)
+            receiver.AssignCommandHandler(VmmCommands.SetImageQuality,
+                c => SetImageQuality(c.Content)
+            );
+
+            receiver.AssignQueryHandler(
+                VmmQueries.GetQualitySettingsInfo,
+                q =>
                 {
-                    case MessageCommandNames.SetImageQuality:
-                        SetImageQuality(c.Content);
-                        break;
-                }
-            });
-            _handler.QueryRequested += OnQueryReceived;
+                    q.Result = JsonUtility.ToJson(new ImageQualityInfo()
+                    {
+                        ImageQualityNames = QualitySettings.names,
+                        CurrentQualityIndex = QualitySettings.GetQualityLevel(),
+                    });
+                });
             SetFrameRateWithQuality(QualitySettings.GetQualityLevel());
         }
-
-        private void OnQueryReceived(ReceivedQuery q)
-        {
-            if (q.Command == MessageQueryNames.GetQualitySettingsInfo)
-            {
-                q.Result = JsonUtility.ToJson(new ImageQualityInfo()
-                {
-                    ImageQualityNames = QualitySettings.names,
-                    CurrentQualityIndex = QualitySettings.GetQualityLevel(),
-                });
-            }
-        }
-
+        
         private void SetImageQuality(string name)
         {
             var names = QualitySettings.names;
@@ -56,8 +45,8 @@ namespace Baku.VMagicMirror
         private void SetFrameRateWithQuality(int qualityLevel)
         {
             //Very LowまたはLowの場合は明示的にCPU負荷を抑えたいはずなので、FPSも30まで下げる。
-            //Medium以上の場合、デフォルト挙動に戻す
-            Application.targetFrameRate = (qualityLevel < 2) ? 30 : -1;
+            //Medium以上の場合、60にする。VRじゃないから90とか要らんし、下手に高速になるとCPU食うからね。
+            Application.targetFrameRate = (qualityLevel < 2) ? 30 : 60;
         }
     }
     

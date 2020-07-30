@@ -104,7 +104,7 @@ namespace Baku.VMagicMirror
 
         private void OnDestroy()
         {
-            _captureInterface.Close();
+            _captureInterface?.Close();
         }
 
         private void OnRenderImage(RenderTexture source, RenderTexture destination)

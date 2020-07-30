@@ -1,16 +1,14 @@
 ﻿using UnityEngine;
 using VRM;
-using VRMLoader;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class VRMPreviewCanvas : MonoBehaviour
     {
-        [SerializeField] private Canvas canvasPrefab = null;
+        [SerializeField] private VRMPreviewCanvasView canvasPrefab = null;
     
-        private Canvas _canvas;
-        private VRMPreviewUISupport _uiSupport;
+        private VRMPreviewCanvasView _canvas;
         private VRMPreviewLanguage _previewLanguage;
 
         private string _otherPermissionUrl = "";
@@ -30,14 +28,14 @@ namespace Baku.VMagicMirror
             }
             
             _canvas = Instantiate(canvasPrefab, transform);
-            _uiSupport = canvasPrefab.GetComponentInChildren<VRMPreviewUISupport>();
-            _uiSupport.ButtonOpenOtherPermissionUrl
+            _canvas.UISupport
+                .ButtonOpenOtherPermissionUrl
                 .onClick
                 .AddListener(() => Application.OpenURL(_otherPermissionUrl));
-            _uiSupport.ButtonOpenOtherLicenseUrl
+            _canvas.UISupport
+                .ButtonOpenOtherLicenseUrl
                 .onClick
                 .AddListener(() => Application.OpenURL(_otherLicenseUrl));
-            
         }
 
         public void Show(VRMImporterContext context)
@@ -47,23 +45,14 @@ namespace Baku.VMagicMirror
             var meta = context.ReadMeta(true);
             _otherPermissionUrl = meta.OtherPermissionUrl ?? "";
             _otherLicenseUrl = meta.OtherLicenseUrl ?? "";
-            _uiSupport.ButtonOpenOtherPermissionUrl.interactable = !string.IsNullOrEmpty(_otherPermissionUrl);
-            _uiSupport.ButtonOpenOtherLicenseUrl.interactable = !string.IsNullOrEmpty(_otherLicenseUrl);
+            _canvas.UISupport.ButtonOpenOtherPermissionUrl.interactable = !string.IsNullOrEmpty(_otherPermissionUrl);
+            _canvas.UISupport.ButtonOpenOtherLicenseUrl.interactable = !string.IsNullOrEmpty(_otherLicenseUrl);
 
             //サムネが無いVRMをロードするとき、前回のサムネが残っちゃうのを防ぐ
-            _uiSupport.ResetThumbnail();
-
-            _canvas
-                .GetComponent<VRMPreviewLocale>()
-                .SetLocale(
-                    LanguageNameToLocaleName(_previewLanguage.Language)
-                    );
+            _canvas.UISupport.ResetThumbnail();
             
-            _canvas
-                .GetComponent<VRMPreviewUI>()
-                .setMeta(meta);
-
-            _canvas.enabled = true;
+            _canvas.Locale.SetLocale(LanguageNameToLocaleName(_previewLanguage.Language));
+            _canvas.PreviewUI.setMeta(meta);
             _canvas.gameObject.SetActive(true);
         }
 

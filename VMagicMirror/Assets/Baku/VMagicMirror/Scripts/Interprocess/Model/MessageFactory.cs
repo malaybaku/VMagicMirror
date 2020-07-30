@@ -18,8 +18,6 @@ namespace Baku.VMagicMirror
         private static Message WithArg(string content, [CallerMemberName]string command = "")
             => new Message(command, content);
 
-        public Message SetUnityProcessId(int id) => WithArg(id.ToString());
-        
         public Message CloseConfigWindow() => NoArg();
 
         public Message SetCalibrateFaceData(string data) => WithArg(data);

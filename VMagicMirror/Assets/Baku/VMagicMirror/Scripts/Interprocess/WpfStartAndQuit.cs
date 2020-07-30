@@ -103,6 +103,7 @@ namespace Baku.VMagicMirror
                 };
 #if !UNITY_EDITOR
                 Process.Start(startInfo);
+                _sender.SendCommand(MessageFactory.Instance.SetUnityProcessId(Process.GetCurrentProcess().Id));
 #endif
             }
         }

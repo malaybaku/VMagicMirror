@@ -57,10 +57,7 @@ namespace Baku.VMagicMirror
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string className, string windowName);
         public static IntPtr CurrentWindowHandle = IntPtr.Zero;
-        public static IntPtr GetUnityWindowHandle() => CurrentWindowHandle == IntPtr.Zero 
-            ? CurrentWindowHandle = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle
-            //? CurrentWindowHandle = FindWindow(null, Application.productName) 
-            : CurrentWindowHandle;
+        public static IntPtr GetUnityWindowHandle() => CurrentWindowHandle == IntPtr.Zero ? CurrentWindowHandle = FindWindow(null, Application.productName) : CurrentWindowHandle;
 
         [DllImport("user32.dll")]
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong); /*x uint o int unchecked*/

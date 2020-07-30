@@ -10,6 +10,8 @@ namespace Baku.VMagicMirror.InterProcess
         IMessageReceiver, IMessageSender, IMessageDispatcher,
         IReleaseBeforeQuit, ITickable
     {
+        private const string ChannelName = "Baku.VMagicMirror";
+
         private MmfBasedMessageIo()
         {
             _server = new MemoryMappedFileConnectServer();
@@ -18,7 +20,7 @@ namespace Baku.VMagicMirror.InterProcess
             //NOTE: awaitする意味がないのでawaitをつけず、かつコレは警告が出るので止めてます。
             //コンストラクタでいきなりStartするのがマナー悪い、というのは無くもないです
 #pragma warning disable CS4014
-            _server.Start(MmfChannelIdSource.ChannelId);
+            _server.Start(ChannelName);
 #pragma warning restore CS4014
         }
 

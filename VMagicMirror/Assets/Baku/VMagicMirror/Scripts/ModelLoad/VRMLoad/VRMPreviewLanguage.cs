@@ -2,7 +2,10 @@
 {
     public class VRMPreviewLanguage
     {
-        public string Language { get; private set; } = "Japanese";
+        public const string Japanese = nameof(Japanese);
+        public const string English = nameof(English);
+        
+        public string Language { get; private set; } = Japanese;
 
         public VRMPreviewLanguage(IMessageReceiver receiver)
         {
@@ -11,5 +14,6 @@
                 message => Language = message.Content
             );
         }
+
     }
 }

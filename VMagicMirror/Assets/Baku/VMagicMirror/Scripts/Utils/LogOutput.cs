@@ -31,6 +31,15 @@ namespace Baku.VMagicMirror
         private readonly string _logFileDir;
         private readonly string _logFilePath;
 
+        public static string ExToString(Exception ex)
+        {
+            return DateTime.Now.ToString("yyyyMMdd_HHmmss") + "\n" +
+               ex.GetType().Name + "\n" +
+               ex.Message + "\n" +
+               ex.StackTrace;
+            
+        }   
+        
         public void Write(string text)
         {
             if (!File.Exists(_logFilePath)) { return; }
@@ -53,16 +62,11 @@ namespace Baku.VMagicMirror
 
         public void Write(Exception ex)
         {
-            if (ex == null) { return; }
-
-            Write(
-                DateTime.Now.ToString("yyyyMMdd_HHmmss") + "\n" +
-                ex.GetType().Name + "\n" +
-                ex.Message + "\n" +
-                ex.StackTrace
-                );
+            if (ex != null)
+            {
+                Write(ExToString(ex));
+            }
         }
-
 
         private string GetLogFileDir()
         {
@@ -81,5 +85,6 @@ namespace Baku.VMagicMirror
             => File.Exists(Path.Combine(dirPath, "VmagicMirror.exe")) ? 
             Path.Combine(dirPath, LogTextName) : 
             "";
+        
     }
 }

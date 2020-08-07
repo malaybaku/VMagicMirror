@@ -8,8 +8,6 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    using static ExceptionUtils;
-
     /// <summary>VRMのロード処理をやるやつ</summary>
     public class VRMLoadController : MonoBehaviour, IVRMLoadable
     {
@@ -23,16 +21,24 @@ namespace Baku.VMagicMirror
         private IKTargetTransforms _ikTargets = null;
         private VRMPreviewCanvas _previewCanvas = null;
         private HumanPoseTransfer _humanPoseTransferTarget = null;
+        private ErrorIndicateSender _errorSender = null;
+        private ErrorInfoFactory _errorInfoFactory = null;
 
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
             VRMPreviewCanvas previewCanvas,
-            IKTargetTransforms ikTargets
+            IKTargetTransforms ikTargets,
+            ErrorIndicateSender errorSender,
+            ErrorInfoFactory errorInfoFactory
             )
         {
             _previewCanvas = previewCanvas;
             _ikTargets = ikTargets;
+
+            _errorSender = errorSender;
+            _errorInfoFactory = errorInfoFactory;
+            
             receiver.AssignCommandHandler(
                 VmmCommands.OpenVrmPreview,
                 message => LoadModelForPreview(message.Content)
@@ -57,7 +63,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            TryWithoutException(() =>
+            try
             {
                 if (Path.GetExtension(path).ToLower() == ".vrm")
                 {
@@ -71,7 +77,19 @@ namespace Baku.VMagicMirror
                 {
                     LogOutput.Instance.Write("unknown file type: " + path);
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                string logContent =
+                    _errorInfoFactory.LoadVrmErrorContentPrefix() + 
+                    "--\n" + LogOutput.ExToString(ex) + "\n--";
+                LogOutput.Instance.Write(logContent);
+                _errorSender.SendError(
+                    _errorInfoFactory.LoadVrmErrorTitle(),
+                    logContent,
+                    ErrorIndicateSender.ErrorLevel.Error
+                    );
+            }
         }
 
         private void LoadModel(string path)
@@ -87,7 +105,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            TryWithoutException(() =>
+            try 
             {
                 var context = new VRMImporterContext();
                 var file = File.ReadAllBytes(path);
@@ -97,7 +115,19 @@ namespace Baku.VMagicMirror
                 context.EnableUpdateWhenOffscreen();
                 context.ShowMeshes();
                 SetModel(context.Root);
-            });
+            }
+            catch (Exception ex)
+            {
+                string logContent =
+                    _errorInfoFactory.LoadVrmErrorContentPrefix() + 
+                    "--\n" + LogOutput.ExToString(ex) + "\n--";
+                LogOutput.Instance.Write(logContent);
+                _errorSender.SendError(
+                    _errorInfoFactory.LoadVrmErrorTitle(),
+                    logContent,
+                    ErrorIndicateSender.ErrorLevel.Error
+                );
+            }
         }
 
         public void OnVrmLoadedFromVRoidHub(string modelId, GameObject vrmObject)

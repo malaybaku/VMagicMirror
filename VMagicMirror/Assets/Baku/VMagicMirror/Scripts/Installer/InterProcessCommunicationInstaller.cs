@@ -14,6 +14,14 @@ namespace Baku.VMagicMirror.Installer
             container
                 .BindInterfacesTo<MmfBasedMessageIo>()
                 .AsCached();
+
+            container
+                .Bind<ErrorIndicateSender>()
+                .AsCached();
+
+            container
+                .Bind<ErrorInfoFactory>()
+                .AsCached();
         }
     }
 }

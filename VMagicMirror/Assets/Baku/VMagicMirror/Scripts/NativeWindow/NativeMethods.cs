@@ -163,8 +163,7 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary>
-        /// ウィンドウサイズをそのままに保ちつつ、リサイズイベントを発生させます。
-        /// 透過モードのオンオフ切り替え時に呼び出すことで、画像の歪みを防げます。
+        /// ウィンドウサイズを設定します。
         /// </summary>
         /// <param name="cx"></param>
         /// <param name="cy"></param>

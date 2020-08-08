@@ -372,13 +372,10 @@ namespace Baku.VMagicMirror
             _isTransparent = isTransparent;
 #if !UNITY_EDITOR
             SetDwmTransparent(isTransparent);
-            StartCoroutine(RefreshWindowSizeWithDelay());
-
-            IEnumerator RefreshWindowSizeWithDelay()
-            {
-                yield return new WaitForSeconds(0.2f);
-                RefreshWindowSize();
-            }
+            //NOTE: リサイズイベントが発生しないケースを確実に潰しつつ、ウィンドウサイズは維持するための処置。
+            //透過→不透過の切り替え時に歪まないための対策です
+            RefreshWindowSize(-1);
+            RefreshWindowSize(1);
 #endif
         }
         

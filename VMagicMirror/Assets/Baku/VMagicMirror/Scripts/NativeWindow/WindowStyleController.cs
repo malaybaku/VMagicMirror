@@ -56,6 +56,8 @@ namespace Baku.VMagicMirror
         private Texture2D _colorPickerTexture = null;
         private bool _isOnOpaquePixel = false;
         private bool _isClickThrough = false;
+        //既定値がtrueになる(デフォルトでは常時最前面である)ことに注意
+        private bool _isTopMost = true;
 
         int _wholeWindowTransparencyLevel = TransparencyLevel.WhenOnCharacter;
         byte _wholeWindowAlphaWhenTransparent = 0x80;
@@ -151,9 +153,7 @@ namespace Baku.VMagicMirror
         {
             _colorPickerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
 
-            //既定で最前面に表示
-            SetTopMost(true);
-
+            SetTopMost(_isTopMost);
             StartCoroutine(PickColorCoroutine());
         }
 
@@ -164,7 +164,7 @@ namespace Baku.VMagicMirror
             UpdateWindowPositionCheck();
             UpdateWindowTransparency();
         }
-
+        
         private void OnDestroy()
         {
 #if !UNITY_EDITOR
@@ -361,9 +361,7 @@ namespace Baku.VMagicMirror
         {
             _isWindowFrameHidden = !isVisible;
             var hwnd = GetUnityWindowHandle();
-            uint windowStyle = isVisible ?
-                defaultWindowStyle :
-                WS_POPUP | WS_VISIBLE;
+            uint windowStyle = isVisible ? defaultWindowStyle : WS_POPUP | WS_VISIBLE;
 #if !UNITY_EDITOR
             SetWindowLong(hwnd, GWL_STYLE, windowStyle);
 #endif
@@ -374,9 +372,16 @@ namespace Baku.VMagicMirror
             _isTransparent = isTransparent;
 #if !UNITY_EDITOR
             SetDwmTransparent(isTransparent);
+            StartCoroutine(RefreshWindowSizeWithDelay());
+
+            IEnumerator RefreshWindowSizeWithDelay()
+            {
+                yield return new WaitForSeconds(0.2f);
+                RefreshWindowSize();
+            }
 #endif
         }
-
+        
         private void SetIgnoreMouseInput(bool ignoreMouseInput)
         {
             _preferIgnoreMouseInput = ignoreMouseInput;
@@ -384,8 +389,9 @@ namespace Baku.VMagicMirror
 
         private void SetTopMost(bool isTopMost)
         {
+            _isTopMost = isTopMost;
 #if !UNITY_EDITOR
-        SetUnityWindowTopMost(isTopMost);
+            SetUnityWindowTopMost(isTopMost);
 #endif
         }
 

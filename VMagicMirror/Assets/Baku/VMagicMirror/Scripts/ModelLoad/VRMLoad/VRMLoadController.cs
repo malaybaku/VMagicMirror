@@ -80,15 +80,7 @@ namespace Baku.VMagicMirror
             }
             catch (Exception ex)
             {
-                string logContent =
-                    _errorInfoFactory.LoadVrmErrorContentPrefix() + 
-                    "--\n" + LogOutput.ExToString(ex) + "\n--";
-                LogOutput.Instance.Write(logContent);
-                _errorSender.SendError(
-                    _errorInfoFactory.LoadVrmErrorTitle(),
-                    logContent,
-                    ErrorIndicateSender.ErrorLevel.Error
-                    );
+                HandleLoadError(ex);
             }
         }
 
@@ -118,21 +110,20 @@ namespace Baku.VMagicMirror
             }
             catch (Exception ex)
             {
-                string logContent =
-                    _errorInfoFactory.LoadVrmErrorContentPrefix() + 
-                    "--\n" + LogOutput.ExToString(ex) + "\n--";
-                LogOutput.Instance.Write(logContent);
-                _errorSender.SendError(
-                    _errorInfoFactory.LoadVrmErrorTitle(),
-                    logContent,
-                    ErrorIndicateSender.ErrorLevel.Error
-                );
+                HandleLoadError(ex);
             }
         }
 
         public void OnVrmLoadedFromVRoidHub(string modelId, GameObject vrmObject)
         {
-            SetModel(vrmObject);
+            try 
+            {
+                SetModel(vrmObject);
+            }
+            catch (Exception ex)
+            {    
+                HandleLoadError(ex);
+            }
         }
 
         //モデルの破棄
@@ -187,6 +178,20 @@ namespace Baku.VMagicMirror
             
             PreVrmLoaded?.Invoke(info);
             VrmLoaded?.Invoke(info);
+        }
+
+        private void HandleLoadError(Exception ex)
+        {
+            string logContent =
+                _errorInfoFactory.LoadVrmErrorContentPrefix() +
+                "--\n" + LogOutput.ExToString(ex) + "\n--";
+
+            LogOutput.Instance.Write(logContent);
+            _errorSender.SendError(
+                _errorInfoFactory.LoadVrmErrorTitle(),
+                logContent,
+                ErrorIndicateSender.ErrorLevel.Error
+                );
         }
         
         [Serializable]

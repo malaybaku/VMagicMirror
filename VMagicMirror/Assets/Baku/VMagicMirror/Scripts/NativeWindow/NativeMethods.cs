@@ -133,16 +133,23 @@ namespace Baku.VMagicMirror
         public static extern uint DwmExtendFrameIntoClientArea(IntPtr hWnd, ref DwmMargin margins);
         public static void SetDwmTransparent(bool enable)
         {
-            var margins = new DwmMargin() { cxLeftWidth = enable ? -1 : 0 };
+            int margin = enable ? -1 : 0;
+            var margins = new DwmMargin()
+            {
+                cxLeftWidth = margin,
+                cxRightWidth = margin,
+                cyTopHeight = margin,
+                cyBottomHeight = margin,
+            };
             DwmExtendFrameIntoClientArea(GetUnityWindowHandle(), ref margins);
         }
 
         public const int GWL_STYLE = -16;
-        public const uint WS_POPUP = 0x80000000;
-        public const uint WS_VISIBLE = 0x10000000;
+        public const uint WS_POPUP = 0x8000_0000;
+        public const uint WS_VISIBLE = 0x1000_0000;
         public const int GWL_EXSTYLE = -20;
-        public const uint WS_EX_LAYERED = 0x00080000;
-        public const uint WS_EX_TRANSPARENT = 0x00000020;
+        public const uint WS_EX_LAYERED = 0x0008_0000;
+        public const uint WS_EX_TRANSPARENT = 0x0000_0020;
 
         [DllImport("user32.dll")]
         public static extern bool SetLayeredWindowAttributes(IntPtr hWnd, uint crKey, byte bAlpha, uint dwFlags);
@@ -153,6 +160,31 @@ namespace Baku.VMagicMirror
         public static void SetWindowAlpha(byte alpha)
         {
             SetLayeredWindowAttributes(GetUnityWindowHandle(), 0, alpha, LWA_ALPHA);
+        }
+
+        /// <summary>
+        /// ウィンドウサイズをそのままに保ちつつ、リサイズイベントを発生させます。
+        /// 透過モードのオンオフ切り替え時に呼び出すことで、画像の歪みを防げます。
+        /// </summary>
+        /// <param name="dx"></param>
+        public static void RefreshWindowSize(int dx)
+        {
+            var handle = GetUnityWindowHandle();
+            if (!GetWindowRect(handle, out var rect))
+            {
+                return;
+            }
+            
+            SetWindowPos(GetUnityWindowHandle(),
+                IntPtr.Zero,
+                0, 0, rect.right - rect.left + dx, rect.bottom - rect.top,
+                SetWindowPosFlags.IgnoreMove | 
+                    SetWindowPosFlags.IgnoreZOrder | 
+                    SetWindowPosFlags.FrameChanged | 
+                    SetWindowPosFlags.DoNotChangeOwnerZOrder |
+                    SetWindowPosFlags.DoNotActivate | 
+                    SetWindowPosFlags.AsynchronousWindowPosition
+            );
         }
 
         public delegate bool EnumWindowsDelegate(IntPtr hWnd, IntPtr lparam);

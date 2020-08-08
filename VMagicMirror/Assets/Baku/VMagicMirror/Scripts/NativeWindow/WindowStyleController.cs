@@ -372,11 +372,24 @@ namespace Baku.VMagicMirror
             _isTransparent = isTransparent;
 #if !UNITY_EDITOR
             SetDwmTransparent(isTransparent);
-            //NOTE: リサイズイベントが発生しないケースを確実に潰しつつ、ウィンドウサイズは維持するための処置。
-            //透過→不透過の切り替え時に歪まないための対策です
-            RefreshWindowSize(-1);
-            RefreshWindowSize(1);
+            ForceWindowResizeEvent();
 #endif
+        }
+
+        private void ForceWindowResizeEvent()
+        {
+            //NOTE: リサイズ処理は「ズラしてから元に戻す」方式で呼ぶと透過→不透過の切り替え時に画像が歪むのを防げるため、
+            //わざと2回呼ぶようにしてます
+            if (!GetWindowRect(GetUnityWindowHandle(), out var rect))
+            {
+                return;
+            }
+
+            int cx = rect.right - rect.left;
+            int cy = rect.bottom - rect.top;
+            
+            RefreshWindowSize(cx - 1, cy - 1);
+            RefreshWindowSize(cx, cy);
         }
         
         private void SetIgnoreMouseInput(bool ignoreMouseInput)

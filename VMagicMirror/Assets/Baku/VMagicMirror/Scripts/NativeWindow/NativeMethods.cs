@@ -166,18 +166,13 @@ namespace Baku.VMagicMirror
         /// ウィンドウサイズをそのままに保ちつつ、リサイズイベントを発生させます。
         /// 透過モードのオンオフ切り替え時に呼び出すことで、画像の歪みを防げます。
         /// </summary>
-        /// <param name="dx"></param>
-        public static void RefreshWindowSize(int dx)
+        /// <param name="cx"></param>
+        /// <param name="cy"></param>
+        public static void RefreshWindowSize(int cx, int cy)
         {
-            var handle = GetUnityWindowHandle();
-            if (!GetWindowRect(handle, out var rect))
-            {
-                return;
-            }
-            
             SetWindowPos(GetUnityWindowHandle(),
                 IntPtr.Zero,
-                0, 0, rect.right - rect.left + dx, rect.bottom - rect.top,
+                0, 0, cx, cy,
                 SetWindowPosFlags.IgnoreMove | 
                     SetWindowPosFlags.IgnoreZOrder | 
                     SetWindowPosFlags.FrameChanged | 

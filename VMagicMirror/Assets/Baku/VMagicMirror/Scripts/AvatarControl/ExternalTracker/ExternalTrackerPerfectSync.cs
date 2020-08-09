@@ -374,6 +374,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             if (!IsActive || !UseVRoidSetting)
             {
                 _blendShape.BlendShapeAvatar.Clips = _modelBaseClips.ToList();
+                //TODO: このリロードがUniVRM書き換えになるのがヤなので、別の方法があれば検討したい…
                 _blendShape.ReloadBlendShape();
                 return;
             }

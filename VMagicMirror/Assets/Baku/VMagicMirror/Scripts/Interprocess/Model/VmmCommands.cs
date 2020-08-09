@@ -104,6 +104,7 @@ namespace Baku.VMagicMirror
 
         // Motion, Eye
         public const string LookAtStyle = nameof(LookAtStyle);
+        public const string SetEyeBoneRotationScale = nameof(SetEyeBoneRotationScale);
 
         // Motion, Image-based Hand
         public const string EnableImageBasedHandTracking = nameof(EnableImageBasedHandTracking);

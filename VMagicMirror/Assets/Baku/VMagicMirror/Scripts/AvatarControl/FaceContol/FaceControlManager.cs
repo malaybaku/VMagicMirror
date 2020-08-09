@@ -28,14 +28,16 @@ namespace Baku.VMagicMirror
         private FaceControlManagerMessageIo _messageIo;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, IMessageSender sender, FaceControlConfiguration config)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, IMessageReceiver receiver, IMessageSender sender, 
+            FaceControlConfiguration config, EyeBonePostProcess eyeBonePostProcess)
         {
             _config = config;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             
             var _ = new FaceControlConfigurationReceiver(receiver, config);
-            _messageIo = new FaceControlManagerMessageIo(receiver, sender, this);
+            _messageIo = new FaceControlManagerMessageIo(receiver, sender, eyeBonePostProcess, this);
         }
         
         /// <summary> VRMロード時の初期化が済んだら発火 </summary>
@@ -96,15 +98,6 @@ namespace Baku.VMagicMirror
             _proxy = null;
             BlendShapeStore.OnVrmDisposing();
             EyebrowBlendShape.Reset();
-        }
-
-        private void ResetBlink()
-        {
-            if (_hasModel)
-            {
-                _proxy.AccumulateValue(BlinkLKey, 0);
-                _proxy.AccumulateValue(BlinkRKey, 0);
-            }
         }
     }
     

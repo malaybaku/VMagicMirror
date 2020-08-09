@@ -2,7 +2,11 @@
 {
     public class FaceControlManagerMessageIo
     {
-        public FaceControlManagerMessageIo(IMessageReceiver receiver, IMessageSender sender, FaceControlManager faceControlManager)
+        public FaceControlManagerMessageIo(
+            IMessageReceiver receiver, IMessageSender sender, 
+            EyeBonePostProcess eyeBonePostProcess,
+            FaceControlManager faceControlManager
+            )
         {
             receiver.AssignCommandHandler(
                 VmmCommands.AutoBlinkDuringFaceTracking,
@@ -15,6 +19,11 @@
                 message =>
                     faceControlManager.DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage()
                 );
+
+            receiver.AssignCommandHandler(
+                VmmCommands.SetEyeBoneRotationScale,
+                message => eyeBonePostProcess.Scale = message.ParseAsPercentage()
+            );
                        
             receiver.AssignQueryHandler(
                 VmmQueries.GetBlendShapeNames,

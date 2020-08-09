@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror.Installer
                 .AsSingle();
             
             //TODO: FindObjectOfTypeを卒業しろ…というか目ボーンの処理自体を統合したい…
-            Container.BindInstance(FindObjectOfType<EyeBoneResetter>());
+            Container.BindInstance(FindObjectOfType<EyeBonePostProcess>());
         }
     }
 }

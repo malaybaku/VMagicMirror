@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
         private VRMBlendShapeProxy _proxy;
         private FaceControlConfiguration _config;
         private ExternalTrackerDataSource _externalTracker;
-        private EyeBoneResetter _eyeBoneResetter;
+        private EyeBonePostProcess _eyeBoneResetter;
 
         //NOTE: 毎回Keyを生成するとGCAlloc警察に怒られるので、回数が減るように書いてます
         private string _latestClipName = "";
@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable, 
             FaceControlConfiguration config,
             ExternalTrackerDataSource externalTracker,
-            EyeBoneResetter eyeBoneResetter
+            EyeBonePostProcess eyeBoneResetter
             )
         {
             _config = config;

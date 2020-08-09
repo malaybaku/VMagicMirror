@@ -16,6 +16,7 @@ namespace Baku.VMagicMirror
 
         public event Action<VrmLoadedInfo> PreVrmLoaded;
         public event Action<VrmLoadedInfo> VrmLoaded; 
+        public event Action<VrmLoadedInfo> PostVrmLoaded; 
         public event Action VrmDisposing;
 
         private IKTargetTransforms _ikTargets = null;
@@ -178,6 +179,7 @@ namespace Baku.VMagicMirror
             
             PreVrmLoaded?.Invoke(info);
             VrmLoaded?.Invoke(info);
+            PostVrmLoaded?.Invoke(info);
         }
 
         private void HandleLoadError(Exception ex)

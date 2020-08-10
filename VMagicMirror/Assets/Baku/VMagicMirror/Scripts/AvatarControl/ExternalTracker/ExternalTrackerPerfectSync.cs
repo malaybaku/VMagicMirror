@@ -85,6 +85,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 _modelBaseClips = info.blendShape.BlendShapeAvatar.Clips.ToList();
                 _modelClipsWithVRoidSetting = CreateClipsWithVRoidDefault();
                 _hasModel = true;
+                ParseClipCompletenessToSendMessage();
             };
 
             vrmLoadable.PostVrmLoaded += info =>
@@ -252,7 +253,29 @@ namespace Baku.VMagicMirror.ExternalTracker
             //TODO: このリロードの実装のためにUniVRMを書き換えているが、本当は書き換えたくない…
             _blendShape.ReloadBlendShape();
         }
+        
+        private void ParseClipCompletenessToSendMessage()
+        {
+            //やること: パーフェクトシンク用に定義されていてほしいにも関わらず、定義が漏れたクリップがないかチェックする。
+            var modelBlendShapeNames = _modelBaseClips.Select(c => c.BlendShapeName).ToArray(); 
+            var missedBlendShapeNames = Keys.BlendShapeNames
+                .Where(n => !modelBlendShapeNames.Contains(n))
+                .ToList();
 
+            if (missedBlendShapeNames.Count > 0)
+            {
+                _sender.SendCommand(MessageFactory.Instance.ExTrackerSetPerfectSyncMissedClipNames(
+                    string.Join("\n", missedBlendShapeNames)
+                    ));
+            }
+            else
+            {
+                //空文字列を送ることでエラーが解消したことを通知する
+                _sender.SendCommand(MessageFactory.Instance.ExTrackerSetPerfectSyncMissedClipNames(""));
+            }
+                
+        }
+        
         private List<BlendShapeClip> CreateClipsWithVRoidDefault()
         {
             var overwriteClipKeys = Keys.PerfectSyncKeys;
@@ -271,6 +294,78 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
             static Keys()
             {
+                BlendShapeNames = new[]
+                {
+                    //目
+                    nameof(EyeBlinkLeft),
+                    nameof(EyeLookUpLeft),
+                    nameof(EyeLookDownLeft),
+                    nameof(EyeLookInLeft),
+                    nameof(EyeLookOutLeft),
+                    nameof(EyeWideLeft),
+                    nameof(EyeSquintLeft),
+
+                    nameof(EyeBlinkRight),
+                    nameof(EyeLookUpRight),
+                    nameof(EyeLookDownRight),
+                    nameof(EyeLookInRight),
+                    nameof(EyeLookOutRight),
+                    nameof(EyeWideRight),
+                    nameof(EyeSquintRight),
+
+                    //口(多い)
+                    nameof(MouthLeft),
+                    nameof(MouthSmileLeft),
+                    nameof(MouthFrownLeft),
+                    nameof(MouthPressLeft),
+                    nameof(MouthUpperUpLeft),
+                    nameof(MouthLowerDownLeft),
+                    nameof(MouthStretchLeft),
+                    nameof(MouthDimpleLeft),
+
+                    nameof(MouthRight),
+                    nameof(MouthSmileRight),
+                    nameof(MouthFrownRight),
+                    nameof(MouthPressRight),
+                    nameof(MouthUpperUpRight),
+                    nameof(MouthLowerDownRight),
+                    nameof(MouthStretchRight),
+                    nameof(MouthDimpleRight),
+
+                    nameof(MouthClose),
+                    nameof(MouthFunnel),
+                    nameof(MouthPucker),
+                    nameof(MouthShrugUpper),
+                    nameof(MouthShrugLower),
+                    nameof(MouthRollUpper),
+                    nameof(MouthRollLower),
+
+                    //あご
+                    nameof(JawOpen),
+                    nameof(JawForward),
+                    nameof(JawLeft),
+                    nameof(JawRight),
+
+                    //鼻
+                    nameof(NoseSneerLeft),
+                    nameof(NoseSneerRight),
+
+                    //ほお
+                    nameof(CheekPuff),
+                    nameof(CheekSquintLeft),
+                    nameof(CheekSquintRight),
+
+                    //舌
+                    nameof(TongueOut),
+
+                    //まゆげ
+                    nameof(BrowDownLeft),
+                    nameof(BrowOuterUpLeft),
+                    nameof(BrowDownRight),
+                    nameof(BrowOuterUpRight),
+                    nameof(BrowInnerUp),
+                };             
+                
                 PerfectSyncKeys = new[]
                 {
                     //目
@@ -343,7 +438,15 @@ namespace Baku.VMagicMirror.ExternalTracker
                     BrowInnerUp,
                 };                
             }
-        
+
+            /// <summary>
+            /// Perfect Syncでいじる対象のブレンドシェイプキー名の一覧を、大文字化される前の状態で取得します。
+            /// </summary>
+            /// <remarks>
+            /// UniVRMが0.55.0でも動くようにしてます(0.56.0ならPerfectSyncKeysのKeyのNameとかでも大丈夫)
+            /// </remarks>
+            public static string[] BlendShapeNames { get; }
+            
             /// <summary> Perfect Syncでいじる対象のブレンドシェイプキー一覧を取得します。 </summary>
             public static BlendShapeKey[] PerfectSyncKeys { get; }
             

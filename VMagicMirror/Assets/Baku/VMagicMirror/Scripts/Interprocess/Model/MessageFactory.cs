@@ -43,6 +43,8 @@ namespace Baku.VMagicMirror
 
         public Message ExTrackerCalibrateComplete(string data) => WithArg(data);
         
+        public Message ExTrackerSetPerfectSyncMissedClipNames(string data) => WithArg(data);
+        
         #region VRoid
 
         public Message VRoidModelLoadCompleted(string modelInfo) => WithArg(modelInfo);

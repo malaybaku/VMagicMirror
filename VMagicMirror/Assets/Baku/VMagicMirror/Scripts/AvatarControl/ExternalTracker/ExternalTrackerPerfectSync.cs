@@ -17,158 +17,6 @@ namespace Baku.VMagicMirror.ExternalTracker
     /// </remarks>
     public class ExternalTrackerPerfectSync : MonoBehaviour
     {
-        /// <summary> 決め打ちされた、パーフェクトシンクで使うブレンドシェイプの一覧 </summary>
-        static class Keys
-        {
-            static Keys()
-            {
-                PerfectSyncKeys = new[]
-                {
-                    //目
-                    EyeBlinkLeft,
-                    EyeLookUpLeft,
-                    EyeLookDownLeft,
-                    EyeLookInLeft,
-                    EyeLookOutLeft,
-                    EyeWideLeft,
-                    EyeSquintLeft,
-
-                    EyeBlinkRight,
-                    EyeLookUpRight,
-                    EyeLookDownRight,
-                    EyeLookInRight,
-                    EyeLookOutRight,
-                    EyeWideRight,
-                    EyeSquintRight,
-
-                    //口(多い)
-                    MouthLeft,
-                    MouthSmileLeft,
-                    MouthFrownLeft,
-                    MouthPressLeft,
-                    MouthUpperUpLeft,
-                    MouthLowerDownLeft,
-                    MouthStretchLeft,
-                    MouthDimpleLeft,
-
-                    MouthRight,
-                    MouthSmileRight,
-                    MouthFrownRight,
-                    MouthPressRight,
-                    MouthUpperUpRight,
-                    MouthLowerDownRight,
-                    MouthStretchRight,
-                    MouthDimpleRight,
-
-                    MouthClose,
-                    MouthFunnel,
-                    MouthPucker,
-                    MouthShrugUpper,
-                    MouthShrugLower,
-                    MouthRollUpper,
-                    MouthRollLower,
-
-                    //あご
-                    JawOpen,
-                    JawForward,
-                    JawLeft,
-                    JawRight,
-
-                    //鼻
-                    NoseSneerLeft,
-                    NoseSneerRight,
-
-                    //ほお
-                    CheekPuff,
-                    CheekSquintLeft,
-                    CheekSquintRight,
-
-                    //舌
-                    TongueOut,
-
-                    //まゆげ
-                    BrowDownLeft,
-                    BrowOuterUpLeft,
-                    BrowDownRight,
-                    BrowOuterUpRight,
-                    BrowInnerUp,
-                };                
-            }
-        
-            /// <summary> Perfect Syncでいじる対象のブレンドシェイプキー一覧を取得します。 </summary>
-            public static BlendShapeKey[] PerfectSyncKeys { get; }
-            
-            //TODO: 名前はあとで調べて直すこと！絶対に間違った名前が入ってるぞ！
-            
-            //目
-            public static readonly BlendShapeKey EyeBlinkLeft = new BlendShapeKey("eyeBlink_L");
-            public static readonly BlendShapeKey EyeLookUpLeft = new BlendShapeKey("eyeLookUp_L");
-            public static readonly BlendShapeKey EyeLookDownLeft = new BlendShapeKey("eyeLookDown_L");
-            public static readonly BlendShapeKey EyeLookInLeft = new BlendShapeKey("eyeLookIn_L");
-            public static readonly BlendShapeKey EyeLookOutLeft = new BlendShapeKey("eyeLookOut_L");
-            public static readonly BlendShapeKey EyeWideLeft = new BlendShapeKey("eyeWide_L");
-            public static readonly BlendShapeKey EyeSquintLeft = new BlendShapeKey("eyeSquint_L");
-
-            public static readonly BlendShapeKey EyeBlinkRight = new BlendShapeKey("eyeBlink_R");
-            public static readonly BlendShapeKey EyeLookUpRight = new BlendShapeKey("eyeLookUp_R");
-            public static readonly BlendShapeKey EyeLookDownRight = new BlendShapeKey("eyeLookDown_R");
-            public static readonly BlendShapeKey EyeLookInRight = new BlendShapeKey("eyeLookIn_R");
-            public static readonly BlendShapeKey EyeLookOutRight = new BlendShapeKey("eyeLookOut_R");
-            public static readonly BlendShapeKey EyeWideRight = new BlendShapeKey("eyeWide_R");
-            public static readonly BlendShapeKey EyeSquintRight = new BlendShapeKey("eyeSquint_R");
-
-            //口(多い)
-            public static readonly BlendShapeKey MouthLeft = new BlendShapeKey(nameof(MouthLeft));
-            public static readonly BlendShapeKey MouthSmileLeft = new BlendShapeKey("mouthSmile_L");
-            public static readonly BlendShapeKey MouthFrownLeft = new BlendShapeKey("mouthFrown_L");
-            public static readonly BlendShapeKey MouthPressLeft = new BlendShapeKey("mouthPress_L");
-            public static readonly BlendShapeKey MouthUpperUpLeft = new BlendShapeKey("mouthUpperUp_L");
-            public static readonly BlendShapeKey MouthLowerDownLeft = new BlendShapeKey("mouthLowerDown_L");
-            public static readonly BlendShapeKey MouthStretchLeft = new BlendShapeKey("mouthStretch_L");
-            public static readonly BlendShapeKey MouthDimpleLeft = new BlendShapeKey("mouthDimple_L");
-
-            public static readonly BlendShapeKey MouthRight = new BlendShapeKey(nameof(MouthRight));
-            public static readonly BlendShapeKey MouthSmileRight = new BlendShapeKey("mouthSmile_R");
-            public static readonly BlendShapeKey MouthFrownRight = new BlendShapeKey("mouthFrown_R");
-            public static readonly BlendShapeKey MouthPressRight = new BlendShapeKey("mouthPress_R");
-            public static readonly BlendShapeKey MouthUpperUpRight = new BlendShapeKey("mouthUpperUp_R");
-            public static readonly BlendShapeKey MouthLowerDownRight = new BlendShapeKey("mouthLowerDown_R");
-            public static readonly BlendShapeKey MouthStretchRight = new BlendShapeKey("mouthStretch_R");
-            public static readonly BlendShapeKey MouthDimpleRight = new BlendShapeKey("mouthDimple_R");
-            
-            public static readonly BlendShapeKey MouthClose = new BlendShapeKey(nameof(MouthClose));
-            public static readonly BlendShapeKey MouthFunnel = new BlendShapeKey(nameof(MouthFunnel));
-            public static readonly BlendShapeKey MouthPucker = new BlendShapeKey(nameof(MouthPucker));
-            public static readonly BlendShapeKey MouthShrugUpper = new BlendShapeKey(nameof(MouthShrugUpper));
-            public static readonly BlendShapeKey MouthShrugLower = new BlendShapeKey(nameof(MouthShrugLower));
-            public static readonly BlendShapeKey MouthRollUpper = new BlendShapeKey(nameof(MouthRollUpper));
-            public static readonly BlendShapeKey MouthRollLower = new BlendShapeKey(nameof(MouthRollLower));
-            
-            //あご
-            public static readonly BlendShapeKey JawOpen = new BlendShapeKey(nameof(JawOpen));
-            public static readonly BlendShapeKey JawForward = new BlendShapeKey(nameof(JawForward));
-            public static readonly BlendShapeKey JawLeft = new BlendShapeKey(nameof(JawLeft));
-            public static readonly BlendShapeKey JawRight = new BlendShapeKey(nameof(JawRight));
-            
-            //鼻
-            public static readonly BlendShapeKey NoseSneerLeft = new BlendShapeKey("noseSneer_L");
-            public static readonly BlendShapeKey NoseSneerRight = new BlendShapeKey("noseSneer_R");
-
-            //ほお
-            public static readonly BlendShapeKey CheekPuff = new BlendShapeKey(nameof(CheekPuff));
-            public static readonly BlendShapeKey CheekSquintLeft = new BlendShapeKey("cheekSquint_L");
-            public static readonly BlendShapeKey CheekSquintRight = new BlendShapeKey("cheekSquint_R");
-            
-            //舌
-            public static readonly BlendShapeKey TongueOut = new BlendShapeKey(nameof(TongueOut));
-            
-            //まゆげ
-            public static readonly BlendShapeKey BrowDownLeft = new BlendShapeKey("browDown_L");
-            public static readonly BlendShapeKey BrowOuterUpLeft = new BlendShapeKey("browOuterUp_L");
-            public static readonly BlendShapeKey BrowDownRight = new BlendShapeKey("browDown_Right");
-            public static readonly BlendShapeKey BrowOuterUpRight = new BlendShapeKey("browOuterUp_R");
-            public static readonly BlendShapeKey BrowInnerUp = new BlendShapeKey(nameof(BrowInnerUp));
-        }
 
         [Tooltip("VRoidデフォルト設定が使いたいとき、元アバターのClipとこのAvatarのClipを融合させる")]
         [SerializeField] private BlendShapeAvatar vroidDefaultBlendShapeAvatar = null;
@@ -199,7 +47,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         }
         
         private bool _useVRoidSetting = false;
-        public bool UseVRoidSetting
+        public bool UseVRoidDefaultSetting
         {
             get => _useVRoidSetting;
             set
@@ -236,7 +84,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             vrmLoadable.PostVrmLoaded += info =>
             {
                 //ロード直後にクリップ差し替えが必要ならやっておく
-                if (UseVRoidSetting && IsActive)
+                if (UseVRoidDefaultSetting && IsActive)
                 {
                     RefreshClips();
                 }
@@ -255,27 +103,31 @@ namespace Baku.VMagicMirror.ExternalTracker
             );
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerUseVRoidDefaultForPerfectSync,
-                command => UseVRoidSetting = command.ToBoolean()
+                command => UseVRoidDefaultSetting = command.ToBoolean()
                 );
+
+            //VRoidのデフォルト設定クリップにはAIUEOとかのクリップも入っちゃってるので、
+            //それを取り除き、パーフェクトシンク用のだけ残す
+            var perfectSyncKeys = Keys.PerfectSyncKeys;
+            _vroidDefaultClips = vroidDefaultBlendShapeAvatar.Clips
+                .Where(c =>
+                    c.Preset == BlendShapePreset.Unknown &&
+                    perfectSyncKeys.Any(k => k.Name == c.BlendShapeName && k.Preset == c.Preset))
+                .ToList();
         }
 
         private void LateUpdate()
         {
-            if (!_hasModel || !IsActive)
+            if (_hasModel && IsActive && _externalTracker.Connected)
             {
-                return;
+                // Debug.Log("Map to BlendShape Clips");
+                MapToBlendShapeClips();
             }
-            MapToBlendShapeClips();
         }
         
         /// <summary> 外部トラッキングで取得したブレンドシェイプをアバターに反映します。 </summary>
         private void MapToBlendShapeClips()
         {
-            if (!_hasModel || _externalTracker.Connected)
-            {
-                return;
-            }
-            
             //とりあえず捨て
             _blendShapeInitializer.InitializeBlendShapes(false);
             _blendShape.Apply();
@@ -371,7 +223,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             _blendShape.Apply();
 
             //パーフェクトシンクが不要とか、モデル本体に設定がある場合、本来のクリップが入ってればOK
-            if (!IsActive || !UseVRoidSetting)
+            if (!IsActive || !UseVRoidDefaultSetting)
             {
                 _blendShape.BlendShapeAvatar.Clips = _modelBaseClips.ToList();
                 //TODO: このリロードがUniVRM書き換えになるのがヤなので、別の方法があれば検討したい…
@@ -391,5 +243,159 @@ namespace Baku.VMagicMirror.ExternalTracker
                 .ToList();
             _blendShape.ReloadBlendShape();
         }
+        
+        /// <summary> 決め打ちされた、パーフェクトシンクで使うブレンドシェイプの一覧 </summary>
+        static class Keys
+        {
+            static Keys()
+            {
+                PerfectSyncKeys = new[]
+                {
+                    //目
+                    EyeBlinkLeft,
+                    EyeLookUpLeft,
+                    EyeLookDownLeft,
+                    EyeLookInLeft,
+                    EyeLookOutLeft,
+                    EyeWideLeft,
+                    EyeSquintLeft,
+
+                    EyeBlinkRight,
+                    EyeLookUpRight,
+                    EyeLookDownRight,
+                    EyeLookInRight,
+                    EyeLookOutRight,
+                    EyeWideRight,
+                    EyeSquintRight,
+
+                    //口(多い)
+                    MouthLeft,
+                    MouthSmileLeft,
+                    MouthFrownLeft,
+                    MouthPressLeft,
+                    MouthUpperUpLeft,
+                    MouthLowerDownLeft,
+                    MouthStretchLeft,
+                    MouthDimpleLeft,
+
+                    MouthRight,
+                    MouthSmileRight,
+                    MouthFrownRight,
+                    MouthPressRight,
+                    MouthUpperUpRight,
+                    MouthLowerDownRight,
+                    MouthStretchRight,
+                    MouthDimpleRight,
+
+                    MouthClose,
+                    MouthFunnel,
+                    MouthPucker,
+                    MouthShrugUpper,
+                    MouthShrugLower,
+                    MouthRollUpper,
+                    MouthRollLower,
+
+                    //あご
+                    JawOpen,
+                    JawForward,
+                    JawLeft,
+                    JawRight,
+
+                    //鼻
+                    NoseSneerLeft,
+                    NoseSneerRight,
+
+                    //ほお
+                    CheekPuff,
+                    CheekSquintLeft,
+                    CheekSquintRight,
+
+                    //舌
+                    TongueOut,
+
+                    //まゆげ
+                    BrowDownLeft,
+                    BrowOuterUpLeft,
+                    BrowDownRight,
+                    BrowOuterUpRight,
+                    BrowInnerUp,
+                };                
+            }
+        
+            /// <summary> Perfect Syncでいじる対象のブレンドシェイプキー一覧を取得します。 </summary>
+            public static BlendShapeKey[] PerfectSyncKeys { get; }
+            
+            //TODO: 名前はあとで調べて直すこと！絶対に間違った名前が入ってるぞ！
+            
+            //目
+            public static readonly BlendShapeKey EyeBlinkLeft = new BlendShapeKey(nameof(EyeBlinkLeft));
+            public static readonly BlendShapeKey EyeLookUpLeft = new BlendShapeKey(nameof(EyeLookUpLeft));
+            public static readonly BlendShapeKey EyeLookDownLeft = new BlendShapeKey(nameof(EyeLookDownLeft));
+            public static readonly BlendShapeKey EyeLookInLeft = new BlendShapeKey(nameof(EyeLookInLeft));
+            public static readonly BlendShapeKey EyeLookOutLeft = new BlendShapeKey(nameof(EyeLookOutLeft));
+            public static readonly BlendShapeKey EyeWideLeft = new BlendShapeKey(nameof(EyeWideLeft));
+            public static readonly BlendShapeKey EyeSquintLeft = new BlendShapeKey(nameof(EyeSquintLeft));
+
+            public static readonly BlendShapeKey EyeBlinkRight = new BlendShapeKey(nameof(EyeBlinkRight));
+            public static readonly BlendShapeKey EyeLookUpRight = new BlendShapeKey(nameof(EyeLookUpRight));
+            public static readonly BlendShapeKey EyeLookDownRight = new BlendShapeKey(nameof(EyeLookDownRight));
+            public static readonly BlendShapeKey EyeLookInRight = new BlendShapeKey(nameof(EyeLookInRight));
+            public static readonly BlendShapeKey EyeLookOutRight = new BlendShapeKey(nameof(EyeLookOutRight));
+            public static readonly BlendShapeKey EyeWideRight = new BlendShapeKey(nameof(EyeWideRight));
+            public static readonly BlendShapeKey EyeSquintRight = new BlendShapeKey(nameof(EyeSquintRight));
+
+            //口(多い)
+            public static readonly BlendShapeKey MouthLeft = new BlendShapeKey(nameof(MouthLeft));
+            public static readonly BlendShapeKey MouthSmileLeft = new BlendShapeKey(nameof(MouthSmileLeft));
+            public static readonly BlendShapeKey MouthFrownLeft = new BlendShapeKey(nameof(MouthFrownLeft));
+            public static readonly BlendShapeKey MouthPressLeft = new BlendShapeKey(nameof(MouthPressLeft));
+            public static readonly BlendShapeKey MouthUpperUpLeft = new BlendShapeKey(nameof(MouthUpperUpLeft));
+            public static readonly BlendShapeKey MouthLowerDownLeft = new BlendShapeKey(nameof(MouthLowerDownLeft));
+            public static readonly BlendShapeKey MouthStretchLeft = new BlendShapeKey(nameof(MouthStretchLeft));
+            public static readonly BlendShapeKey MouthDimpleLeft = new BlendShapeKey(nameof(MouthDimpleLeft));
+
+            public static readonly BlendShapeKey MouthRight = new BlendShapeKey(nameof(MouthRight));
+            public static readonly BlendShapeKey MouthSmileRight = new BlendShapeKey(nameof(MouthSmileRight));
+            public static readonly BlendShapeKey MouthFrownRight = new BlendShapeKey(nameof(MouthFrownRight));
+            public static readonly BlendShapeKey MouthPressRight = new BlendShapeKey(nameof(MouthPressRight));
+            public static readonly BlendShapeKey MouthUpperUpRight = new BlendShapeKey(nameof(MouthUpperUpRight));
+            public static readonly BlendShapeKey MouthLowerDownRight = new BlendShapeKey(nameof(MouthLowerDownRight));
+            public static readonly BlendShapeKey MouthStretchRight = new BlendShapeKey(nameof(MouthStretchRight));
+            public static readonly BlendShapeKey MouthDimpleRight = new BlendShapeKey(nameof(MouthDimpleRight));
+            
+            public static readonly BlendShapeKey MouthClose = new BlendShapeKey(nameof(MouthClose));
+            public static readonly BlendShapeKey MouthFunnel = new BlendShapeKey(nameof(MouthFunnel));
+            public static readonly BlendShapeKey MouthPucker = new BlendShapeKey(nameof(MouthPucker));
+            public static readonly BlendShapeKey MouthShrugUpper = new BlendShapeKey(nameof(MouthShrugUpper));
+            public static readonly BlendShapeKey MouthShrugLower = new BlendShapeKey(nameof(MouthShrugLower));
+            public static readonly BlendShapeKey MouthRollUpper = new BlendShapeKey(nameof(MouthRollUpper));
+            public static readonly BlendShapeKey MouthRollLower = new BlendShapeKey(nameof(MouthRollLower));
+            
+            //あご
+            public static readonly BlendShapeKey JawOpen = new BlendShapeKey(nameof(JawOpen));
+            public static readonly BlendShapeKey JawForward = new BlendShapeKey(nameof(JawForward));
+            public static readonly BlendShapeKey JawLeft = new BlendShapeKey(nameof(JawLeft));
+            public static readonly BlendShapeKey JawRight = new BlendShapeKey(nameof(JawRight));
+            
+            //鼻
+            public static readonly BlendShapeKey NoseSneerLeft = new BlendShapeKey(nameof(NoseSneerLeft));
+            public static readonly BlendShapeKey NoseSneerRight = new BlendShapeKey(nameof(NoseSneerRight));
+
+            //ほお
+            public static readonly BlendShapeKey CheekPuff = new BlendShapeKey(nameof(CheekPuff));
+            public static readonly BlendShapeKey CheekSquintLeft = new BlendShapeKey(nameof(CheekSquintLeft));
+            public static readonly BlendShapeKey CheekSquintRight = new BlendShapeKey(nameof(CheekSquintRight));
+            
+            //舌
+            public static readonly BlendShapeKey TongueOut = new BlendShapeKey(nameof(TongueOut));
+            
+            //まゆげ
+            public static readonly BlendShapeKey BrowDownLeft = new BlendShapeKey(nameof(BrowDownLeft));
+            public static readonly BlendShapeKey BrowOuterUpLeft = new BlendShapeKey(nameof(BrowOuterUpLeft));
+            public static readonly BlendShapeKey BrowDownRight = new BlendShapeKey(nameof(BrowDownRight));
+            public static readonly BlendShapeKey BrowOuterUpRight = new BlendShapeKey(nameof(BrowOuterUpRight));
+            public static readonly BlendShapeKey BrowInnerUp = new BlendShapeKey(nameof(BrowInnerUp));
+        }
+        
     }
 }

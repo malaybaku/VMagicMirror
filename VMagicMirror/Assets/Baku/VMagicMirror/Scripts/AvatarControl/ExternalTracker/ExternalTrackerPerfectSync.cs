@@ -17,19 +17,22 @@ namespace Baku.VMagicMirror.ExternalTracker
     /// </remarks>
     public class ExternalTrackerPerfectSync : MonoBehaviour
     {
-
         [Tooltip("VRoidデフォルト設定が使いたいとき、元アバターのClipとこのAvatarのClipを融合させる")]
         [SerializeField] private BlendShapeAvatar vroidDefaultBlendShapeAvatar = null;
 
         private ExternalTrackerDataSource _externalTracker = null;
         private BlendShapeInitializer _blendShapeInitializer = null;
+        private FaceControlConfiguration _faceControlConfig = null;
         private IMessageSender _sender = null;
         //VRoid向けのデフォルト設定に入ってるクリップのうち、パーフェクトシンクの分だけ抜き出したもの
         private List<BlendShapeClip> _vroidDefaultClips = null;
-        
+        private bool _canOverwriteMouthBlendShape = false;
+
         private VRMBlendShapeProxy _blendShape = null;
-        //このクラスがClipsを魔改造する前の時点でのクリップ一覧
+        //モデル本来のクリップ一覧
         private List<BlendShapeClip> _modelBaseClips = null;
+        //モデル本来のクリップにVRoidのデフォルト設定を書き込んだクリップ一覧
+        private List<BlendShapeClip> _modelClipsWithVRoidSetting = null;
         private bool _hasModel = false;
 
         private bool _isActive = false;
@@ -51,7 +54,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
             get => _useVRoidSetting;
             set
-            {
+            {  
                 if (_useVRoidSetting != value)
                 {
                     _useVRoidSetting = value;
@@ -66,18 +69,21 @@ namespace Baku.VMagicMirror.ExternalTracker
             IMessageSender sender,
             IVRMLoadable vrmLoadable,
             ExternalTrackerDataSource externalTracker,
-            BlendShapeInitializer blendShapeInitializer
+            BlendShapeInitializer blendShapeInitializer,
+            FaceControlConfiguration faceControlConfig
             )
         {
             _sender = sender;
             _externalTracker = externalTracker;
             _blendShapeInitializer = blendShapeInitializer;
+            _faceControlConfig = faceControlConfig;
 
             vrmLoadable.VrmLoaded += info =>
             {
                 _blendShape = info.blendShape;
                 //参照じゃなくて値コピーしとくことに注意(なにかと安全なので)
                 _modelBaseClips = info.blendShape.BlendShapeAvatar.Clips.ToList();
+                _modelClipsWithVRoidSetting = CreateClipsWithVRoidDefault();
                 _hasModel = true;
             };
 
@@ -105,14 +111,22 @@ namespace Baku.VMagicMirror.ExternalTracker
                 VmmCommands.ExTrackerUseVRoidDefaultForPerfectSync,
                 command => UseVRoidDefaultSetting = command.ToBoolean()
                 );
+            receiver.AssignCommandHandler(
+                VmmCommands.ExTrackerEnableLipSync,
+                message => _canOverwriteMouthBlendShape = message.ToBoolean()
+            );
 
             //VRoidのデフォルト設定クリップにはAIUEOとかのクリップも入っちゃってるので、
             //それを取り除き、パーフェクトシンク用のだけ残す
             var perfectSyncKeys = Keys.PerfectSyncKeys;
             _vroidDefaultClips = vroidDefaultBlendShapeAvatar.Clips
                 .Where(c =>
-                    c.Preset == BlendShapePreset.Unknown &&
-                    perfectSyncKeys.Any(k => k.Name == c.BlendShapeName && k.Preset == c.Preset))
+                {
+                    var key = BlendShapeKey.CreateFrom(c);
+                    return
+                        c.Preset == BlendShapePreset.Unknown &&
+                        perfectSyncKeys.Any(k => k.Name == key.Name && k.Preset == key.Preset);
+                })
                 .ToList();
         }
 
@@ -120,7 +134,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
             if (_hasModel && IsActive && _externalTracker.Connected)
             {
-                // Debug.Log("Map to BlendShape Clips");
                 MapToBlendShapeClips();
             }
         }
@@ -128,9 +141,10 @@ namespace Baku.VMagicMirror.ExternalTracker
         /// <summary> 外部トラッキングで取得したブレンドシェイプをアバターに反映します。 </summary>
         private void MapToBlendShapeClips()
         {
-            //とりあえず捨て
-            _blendShapeInitializer.InitializeBlendShapes(false);
+            //現行ブレンドシェイプを捨てて上書きするが、
+            //もしマイクベースのリップシンクが優先ならそちらを勝たせて、口まわりの形は保持してあげる
             _blendShape.Apply();
+            _blendShapeInitializer.InitializeBlendShapes(!_canOverwriteMouthBlendShape);
             
             //NOTE: とくにVRoidデフォルト設定を使わない場合、本来ほしいブレンドシェイプの一部が定義されてないと
             //「実際にはアバターが持ってないキーを指定してしまう」ということが起きるが、
@@ -154,52 +168,10 @@ namespace Baku.VMagicMirror.ExternalTracker
             _blendShape.AccumulateValue(Keys.EyeLookOutRight, eye.RightLookOut);
             _blendShape.AccumulateValue(Keys.EyeWideRight, eye.RightWide);
             _blendShape.AccumulateValue(Keys.EyeSquintRight, eye.RightSquint);
-            
-            //口(多い)
-            var mouth = source.Mouth;
-            _blendShape.AccumulateValue(Keys.MouthLeft, mouth.Left);
-            _blendShape.AccumulateValue(Keys.MouthSmileLeft, mouth.LeftSmile);
-            _blendShape.AccumulateValue(Keys.MouthFrownLeft, mouth.LeftFrown);
-            _blendShape.AccumulateValue(Keys.MouthPressLeft, mouth.LeftPress);
-            _blendShape.AccumulateValue(Keys.MouthUpperUpLeft, mouth.LeftUpperUp);
-            _blendShape.AccumulateValue(Keys.MouthLowerDownLeft, mouth.LeftLowerDown);
-            _blendShape.AccumulateValue(Keys.MouthStretchLeft, mouth.LeftStretch);
-            _blendShape.AccumulateValue(Keys.MouthDimpleLeft, mouth.LeftDimple);
-
-            _blendShape.AccumulateValue(Keys.MouthRight, mouth.Right);
-            _blendShape.AccumulateValue(Keys.MouthSmileRight, mouth.RightSmile);
-            _blendShape.AccumulateValue(Keys.MouthFrownRight, mouth.RightFrown);
-            _blendShape.AccumulateValue(Keys.MouthPressRight, mouth.RightPress);
-            _blendShape.AccumulateValue(Keys.MouthUpperUpRight, mouth.RightUpperUp);
-            _blendShape.AccumulateValue(Keys.MouthLowerDownRight, mouth.RightLowerDown);
-            _blendShape.AccumulateValue(Keys.MouthStretchRight, mouth.RightStretch);
-            _blendShape.AccumulateValue(Keys.MouthDimpleRight, mouth.RightDimple);
-
-            _blendShape.AccumulateValue(Keys.MouthClose, mouth.Close);
-            _blendShape.AccumulateValue(Keys.MouthFunnel, mouth.Funnel);
-            _blendShape.AccumulateValue(Keys.MouthPucker, mouth.Pucker);
-            _blendShape.AccumulateValue(Keys.MouthShrugUpper, mouth.ShrugUpper);
-            _blendShape.AccumulateValue(Keys.MouthShrugLower, mouth.ShrugLower);
-            _blendShape.AccumulateValue(Keys.MouthRollUpper, mouth.RollUpper);
-            _blendShape.AccumulateValue(Keys.MouthRollLower, mouth.RollLower);
-
-            //あご
-            _blendShape.AccumulateValue(Keys.JawOpen, source.Jaw.Open);
-            _blendShape.AccumulateValue(Keys.JawForward, source.Jaw.Forward);
-            _blendShape.AccumulateValue(Keys.JawLeft, source.Jaw.Left);
-            _blendShape.AccumulateValue(Keys.JawRight, source.Jaw.Right);
 
             //鼻
             _blendShape.AccumulateValue(Keys.NoseSneerLeft, source.Nose.LeftSneer);
             _blendShape.AccumulateValue(Keys.NoseSneerRight, source.Nose.RightSneer);
-
-            //ほお
-            _blendShape.AccumulateValue(Keys.CheekPuff, source.Cheek.Puff);
-            _blendShape.AccumulateValue(Keys.CheekSquintLeft, source.Cheek.LeftSquint);
-            _blendShape.AccumulateValue(Keys.CheekSquintRight, source.Cheek.RightSquint);
-
-            //舌
-            _blendShape.AccumulateValue(Keys.TongueOut, source.Tongue.TongueOut);
 
             //まゆげ
             _blendShape.AccumulateValue(Keys.BrowDownLeft, source.Brow.LeftDown);
@@ -207,6 +179,53 @@ namespace Baku.VMagicMirror.ExternalTracker
             _blendShape.AccumulateValue(Keys.BrowDownRight, source.Brow.RightDown);
             _blendShape.AccumulateValue(Keys.BrowOuterUpRight, source.Brow.RightOuterUp);
             _blendShape.AccumulateValue(Keys.BrowInnerUp, source.Brow.InnerUp);
+
+            // 口、顎、頬はどれもマイクリップシンクと競合リスクがあるので、口までPerfect Syncのときだけやっておく
+            if (_canOverwriteMouthBlendShape)
+            {
+                //口(多い)
+                var mouth = source.Mouth;
+                _blendShape.AccumulateValue(Keys.MouthLeft, mouth.Left);
+                _blendShape.AccumulateValue(Keys.MouthSmileLeft, mouth.LeftSmile);
+                _blendShape.AccumulateValue(Keys.MouthFrownLeft, mouth.LeftFrown);
+                _blendShape.AccumulateValue(Keys.MouthPressLeft, mouth.LeftPress);
+                _blendShape.AccumulateValue(Keys.MouthUpperUpLeft, mouth.LeftUpperUp);
+                _blendShape.AccumulateValue(Keys.MouthLowerDownLeft, mouth.LeftLowerDown);
+                _blendShape.AccumulateValue(Keys.MouthStretchLeft, mouth.LeftStretch);
+                _blendShape.AccumulateValue(Keys.MouthDimpleLeft, mouth.LeftDimple);
+
+                _blendShape.AccumulateValue(Keys.MouthRight, mouth.Right);
+                _blendShape.AccumulateValue(Keys.MouthSmileRight, mouth.RightSmile);
+                _blendShape.AccumulateValue(Keys.MouthFrownRight, mouth.RightFrown);
+                _blendShape.AccumulateValue(Keys.MouthPressRight, mouth.RightPress);
+                _blendShape.AccumulateValue(Keys.MouthUpperUpRight, mouth.RightUpperUp);
+                _blendShape.AccumulateValue(Keys.MouthLowerDownRight, mouth.RightLowerDown);
+                _blendShape.AccumulateValue(Keys.MouthStretchRight, mouth.RightStretch);
+                _blendShape.AccumulateValue(Keys.MouthDimpleRight, mouth.RightDimple);
+
+                _blendShape.AccumulateValue(Keys.MouthClose, mouth.Close);
+                _blendShape.AccumulateValue(Keys.MouthFunnel, mouth.Funnel);
+                _blendShape.AccumulateValue(Keys.MouthPucker, mouth.Pucker);
+                _blendShape.AccumulateValue(Keys.MouthShrugUpper, mouth.ShrugUpper);
+                _blendShape.AccumulateValue(Keys.MouthShrugLower, mouth.ShrugLower);
+                _blendShape.AccumulateValue(Keys.MouthRollUpper, mouth.RollUpper);
+                _blendShape.AccumulateValue(Keys.MouthRollLower, mouth.RollLower);
+
+                //あご
+                _blendShape.AccumulateValue(Keys.JawOpen, source.Jaw.Open);
+                _blendShape.AccumulateValue(Keys.JawForward, source.Jaw.Forward);
+                _blendShape.AccumulateValue(Keys.JawLeft, source.Jaw.Left);
+                _blendShape.AccumulateValue(Keys.JawRight, source.Jaw.Right);
+
+                //舌
+                _blendShape.AccumulateValue(Keys.TongueOut, source.Tongue.TongueOut);
+
+                //ほお
+                _blendShape.AccumulateValue(Keys.CheekPuff, source.Cheek.Puff);
+                _blendShape.AccumulateValue(Keys.CheekSquintLeft, source.Cheek.LeftSquint);
+                _blendShape.AccumulateValue(Keys.CheekSquintRight, source.Cheek.RightSquint);
+            }
+
         }
 
         
@@ -222,26 +241,29 @@ namespace Baku.VMagicMirror.ExternalTracker
             _blendShapeInitializer.InitializeBlendShapes(false);
             _blendShape.Apply();
 
-            //パーフェクトシンクが不要とか、モデル本体に設定がある場合、本来のクリップが入ってればOK
-            if (!IsActive || !UseVRoidDefaultSetting)
-            {
-                _blendShape.BlendShapeAvatar.Clips = _modelBaseClips.ToList();
-                //TODO: このリロードがUniVRM書き換えになるのがヤなので、別の方法があれば検討したい…
-                _blendShape.ReloadBlendShape();
-                return;
-            }
+            _blendShape.BlendShapeAvatar.Clips = !IsActive || !UseVRoidDefaultSetting
+                ? _modelBaseClips.ToList()
+                : _modelClipsWithVRoidSetting.ToList();
 
-            //オリジナルをベースにしつつ、パーフェクトシンク用のクリップだけはVRoidデフォルトので上書きしていく
-            var overwriteClips = Keys.PerfectSyncKeys;
-            _blendShape.BlendShapeAvatar.Clips = _modelBaseClips
+            //BlendShapeInitializerは切り替わったあとのClip一覧を理解しているべき。
+            //そうじゃないとFaceSwitchとかWord to Motionとの組み合わせで破綻するため。
+            _blendShapeInitializer.ReloadClips();
+            
+            //TODO: このリロードの実装のためにUniVRMを書き換えているが、本当は書き換えたくない…
+            _blendShape.ReloadBlendShape();
+        }
+
+        private List<BlendShapeClip> CreateClipsWithVRoidDefault()
+        {
+            var overwriteClipKeys = Keys.PerfectSyncKeys;
+            return _modelBaseClips
                 .Where(c =>
                 {
                     var key = new BlendShapeKey(c.BlendShapeName, c.Preset);
-                    return !overwriteClips.Contains(key);
+                    return !overwriteClipKeys.Contains(key);
                 })
                 .Concat(_vroidDefaultClips)
                 .ToList();
-            _blendShape.ReloadBlendShape();
         }
         
         /// <summary> 決め打ちされた、パーフェクトシンクで使うブレンドシェイプの一覧 </summary>

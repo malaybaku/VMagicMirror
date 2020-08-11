@@ -106,8 +106,12 @@ namespace Baku.VMagicMirror.ExternalTracker
             
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerEnablePerfectSync,
-                command => IsActive = command.ToBoolean()
-            );
+                command =>
+                {
+                    IsActive = command.ToBoolean();
+                    //パーフェクトシンク中はまばたき目下げを切る: 切らないと動きすぎになる為
+                    _faceControlConfig.ShouldStopEyeDownOnBlink = IsActive;
+                });
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerUseVRoidDefaultForPerfectSync,
                 command => UseVRoidDefaultSetting = command.ToBoolean()

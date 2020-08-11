@@ -1,4 +1,5 @@
 ﻿using System;
+using Baku.VMagicMirror.ExternalTracker;
 using UnityEngine;
 using UniRx;
 using VRM;
@@ -25,16 +26,22 @@ namespace Baku.VMagicMirror
         [SerializeField] [Range(0.05f, 1.0f)] private float timeScaleFactor = 0.3f;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, FaceTracker faceTracker, FaceControlConfiguration config)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            FaceTracker faceTracker, 
+            ExternalTrackerDataSource exTracker,
+            FaceControlConfiguration config)
         {
             _config = config;
             _faceTracker = faceTracker;
+            _exTracker = exTracker;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
 
         private FaceControlConfiguration _config;
         private FaceTracker _faceTracker = null;
+        private ExternalTrackerDataSource _exTracker = null;
 
         private EyebrowBlendShapeSet EyebrowBlendShape => faceControlManager.EyebrowBlendShape;
 
@@ -72,8 +79,22 @@ namespace Baku.VMagicMirror
         
         private void LateUpdate()
         {
+            //モデルロードの前
             if (!IsInitialized)
             {
+                return;
+            }
+
+            //モデルロード後で、パーフェクトシンクが動いてるとき
+            if (_exTracker.Connected && _config.ShouldStopEyeDownOnBlink)
+            {
+                //自前で動かしたぶんは直しておく:
+                //  パーフェクトシンクの最初のLateUpdateが走る前にここを通すと破綻を防げるはず
+                if (_hasAppliedEyebrowBlendShape)
+                {
+                    EyebrowBlendShape.UpdateEyebrowBlendShape(0, 0);
+                    _hasAppliedEyebrowBlendShape = false;
+                }
                 return;
             }
 

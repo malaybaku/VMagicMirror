@@ -58,6 +58,22 @@ namespace Baku.VMagicMirror
         /// setterを使っていいのは<see cref="ExternalTrackerPerfectSync"/>だけです。
         /// </remarks>
         public bool ShouldStopEyeDownOnBlink { get; set; }
+        
+        /// <summary>
+        /// <see cref="ShouldStopEyeDownOnBlink"/>がtrueのとき、代わりに使うべきLBlinkの値が入ります。
+        /// </summary>
+        /// <remarks>
+        /// setterを使っていいのは<see cref="ExternalTrackerPerfectSync"/>だけです。
+        /// </remarks>
+        public float AlternativeBlinkL { get; set; }
+
+        /// <summary>
+        /// <see cref="ShouldStopEyeDownOnBlink"/>がtrueのとき、代わりに使うべきRBlinkの値が入ります。
+        /// </summary>
+        /// <remarks>
+        /// setterを使っていいのは<see cref="ExternalTrackerPerfectSync"/>だけです。
+        /// </remarks>
+        public float AlternativeBlinkR { get; set; }
 
         #endregion
         

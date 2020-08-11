@@ -149,13 +149,16 @@ namespace Baku.VMagicMirror.ExternalTracker
             //現行ブレンドシェイプを捨てて上書きするが、
             //もしマイクベースのリップシンクが優先ならそちらを勝たせて、口まわりの形は保持してあげる
             _blendShape.Apply();
-            _blendShapeInitializer.InitializeBlendShapes(!_canOverwriteMouthBlendShape);
+            
+            var lipSyncValues = new LipSyncValues(_blendShape);
+            //NOTE: ブレンドシェイプが色々と競合するリスクがあるので、リップシンクを残す場合もいったん全部ゼロ埋めする
+            _blendShapeInitializer.InitializeBlendShapes(false);
             
             //NOTE: とくにVRoidデフォルト設定を使わない場合、本来ほしいブレンドシェイプの一部が定義されてないと
             //「実際にはアバターが持ってないキーを指定してしまう」ということが起きるが、
             //これはBlendShapeMergerのレベルで実質無視してくれるので、気にせず指定しちゃってOK
             var source = _externalTracker.CurrentSource;
-
+            
             //目
             var eye = source.Eye;
             _blendShape.AccumulateValue(Keys.EyeBlinkLeft, eye.LeftBlink);
@@ -174,6 +177,11 @@ namespace Baku.VMagicMirror.ExternalTracker
             _blendShape.AccumulateValue(Keys.EyeWideRight, eye.RightWide);
             _blendShape.AccumulateValue(Keys.EyeSquintRight, eye.RightSquint);
 
+            //NOTE: 瞬き時の目下げ処理に使うためにセット
+            _faceControlConfig.AlternativeBlinkL = eye.LeftBlink;
+            _faceControlConfig.AlternativeBlinkR = eye.RightBlink;
+            
+            
             //鼻
             _blendShape.AccumulateValue(Keys.NoseSneerLeft, source.Nose.LeftSneer);
             _blendShape.AccumulateValue(Keys.NoseSneerRight, source.Nose.RightSneer);
@@ -230,7 +238,17 @@ namespace Baku.VMagicMirror.ExternalTracker
                 _blendShape.AccumulateValue(Keys.CheekSquintLeft, source.Cheek.LeftSquint);
                 _blendShape.AccumulateValue(Keys.CheekSquintRight, source.Cheek.RightSquint);
             }
-
+            else
+            {
+                //リップシンクの維持は一旦ゼロに戻してから同じ値を入れ直すことで実現する。
+                //こうするとClip間でブレンドシェイプが干渉していても正しく動くので、
+                //特にVRoid + VRoidデフォルト設定の組み合わせで動きがよい。
+                _blendShape.AccumulateValue(LipSyncValues.AKey, lipSyncValues.A);
+                _blendShape.AccumulateValue(LipSyncValues.IKey, lipSyncValues.I);
+                _blendShape.AccumulateValue(LipSyncValues.UKey, lipSyncValues.U);
+                _blendShape.AccumulateValue(LipSyncValues.EKey, lipSyncValues.E);
+                _blendShape.AccumulateValue(LipSyncValues.OKey, lipSyncValues.O);
+            }
         }
 
         
@@ -526,5 +544,28 @@ namespace Baku.VMagicMirror.ExternalTracker
             public static readonly BlendShapeKey BrowInnerUp = new BlendShapeKey(nameof(BrowInnerUp));
         }
         
+        /// <summary> ブレンドシェイプの上書き処理で使うための、リップシンクのブレンドシェイプキー </summary>
+        struct LipSyncValues
+        {
+            public LipSyncValues(VRMBlendShapeProxy proxy)
+            {
+                A = proxy.GetValue(AKey);
+                I = proxy.GetValue(IKey);
+                U = proxy.GetValue(UKey);
+                E = proxy.GetValue(EKey);
+                O = proxy.GetValue(OKey);
+            }
+            public float A { get; set; }
+            public float I { get; set; }
+            public float U { get; set; }
+            public float E { get; set; }
+            public float O { get; set; }
+            
+            public static readonly BlendShapeKey AKey = new BlendShapeKey(BlendShapePreset.A);
+            public static readonly BlendShapeKey IKey = new BlendShapeKey(BlendShapePreset.I);
+            public static readonly BlendShapeKey UKey = new BlendShapeKey(BlendShapePreset.U);
+            public static readonly BlendShapeKey EKey = new BlendShapeKey(BlendShapePreset.E);
+            public static readonly BlendShapeKey OKey = new BlendShapeKey(BlendShapePreset.O);
+        }
     }
 }

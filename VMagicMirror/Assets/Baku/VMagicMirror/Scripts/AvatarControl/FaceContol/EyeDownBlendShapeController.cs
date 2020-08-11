@@ -85,7 +85,9 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //モデルロード後で、パーフェクトシンクが動いてるとき
+            AdjustEyeRotation();
+
+            //パーフェクトシンクが動いてるとき、眉は眉単体で動かせるため、このスクリプトの仕事はない
             if (_exTracker.Connected && _config.ShouldStopEyeDownOnBlink)
             {
                 //自前で動かしたぶんは直しておく:
@@ -95,11 +97,11 @@ namespace Baku.VMagicMirror
                     EyebrowBlendShape.UpdateEyebrowBlendShape(0, 0);
                     _hasAppliedEyebrowBlendShape = false;
                 }
-                return;
             }
-
-            AdjustEyeRotation();
-            AdjustEyebrow();
+            else
+            {
+                AdjustEyebrow();                
+            }
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -150,8 +152,14 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            float leftBlink = _blendShapeProxy.GetValue(BlinkLKey);
-            float rightBlink = _blendShapeProxy.GetValue(BlinkRKey);
+            bool shouldUseAlternativeBlink = _exTracker.Connected && _config.ShouldStopEyeDownOnBlink;
+            
+            float leftBlink = shouldUseAlternativeBlink
+                ? _config.AlternativeBlinkL
+                : _blendShapeProxy.GetValue(BlinkLKey);
+            float rightBlink = shouldUseAlternativeBlink
+                ? _config.AlternativeBlinkR
+                : _blendShapeProxy.GetValue(BlinkRKey);
 
             //NOTE: 毎回LookAtで値がうまく設定されてる前提でこういう記法になっている事に注意
             _leftEyeBone.localRotation *= Quaternion.AngleAxis(

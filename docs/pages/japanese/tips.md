@@ -32,3 +32,4 @@ permalink: /tips
 
 [仮想カメラを使う](./tips/virtual_camera)
 
+[外部トラッキングでパーフェクトシンクを使う](./tips/perfect_sync)

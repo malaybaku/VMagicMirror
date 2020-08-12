@@ -9,6 +9,10 @@ namespace Baku.VMagicMirror
         event Action<VrmLoadedInfo> PreVrmLoaded;
         /// <summary>VRMがロードされると呼び出されます。</summary>
         event Action<VrmLoadedInfo> VrmLoaded;
+
+        /// <summary>VRMがロードされると呼び出されます。VrmLoadedが完全に呼び終わったあとで呼ばれます。</summary>
+        event Action<VrmLoadedInfo> PostVrmLoaded;
+        
         /// <summary>VRMをアンロードするときに呼び出されます。</summary>
         event Action VrmDisposing;
     }

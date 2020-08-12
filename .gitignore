@@ -54,6 +54,7 @@ sysinfo.txt
 /VMagicMirror/Assets/Raw Mocap Data/
 /VMagicMirror/Assets/TextMesh Pro/
 /VMagicMirror/Assets/VRM/
+/VMagicMirror/Assets/VRMModels/
 /VMagicMirror/Assets/VRMLoaderUI/
 /VMagicMirror/Assets/VRoidSDK/
 /VMagicMirror/Assets/XinputGamepad/
@@ -71,6 +72,7 @@ sysinfo.txt
 /VMagicMirror/Assets/Raw Mocap Data.meta
 /VMagicMirror/Assets/TextMesh Pro.meta
 /VMagicMirror/Assets/VRM.meta
+/VMagicMirror/Assets/VRMModels.meta
 /VMagicMirror/Assets/VRMLoaderUI.meta
 /VMagicMirror/Assets/VRoidSDK.meta
 /VMagicMirror/Assets/XinputGamepad.meta

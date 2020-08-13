@@ -237,6 +237,7 @@ namespace Baku.VMagicMirror
                 CalibrationData.eyeOpenHeight = calibrationData.eyeOpenHeight;
                 CalibrationData.eyeBrowPosition = calibrationData.eyeBrowPosition;
                 CalibrationData.noseHeight = calibrationData.noseHeight;
+                CalibrationData.eyeFaceYDiff = calibrationData.eyeFaceYDiff;
                 CalibrationData.faceCenter = calibrationData.faceCenter;
                 CalibrationData.faceSize = calibrationData.faceSize;
             }
@@ -472,7 +473,8 @@ namespace Baku.VMagicMirror
 
             CalibrationData.noseHeight =
                 FaceParts.Nose.CurrentNoseBaseHeightValue;
-
+            CalibrationData.eyeFaceYDiff =
+                FaceParts.Outline.EyeFaceYDiff;
 
             CalibrationCompleted?.Invoke(JsonUtility.ToJson(CalibrationData));
         }

@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror
         [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")]
         [Range(0f, 1f)]
         [SerializeField] private float headRate = 0.5f;
-        
+
         private FaceTracker _faceTracker = null;
         
         [Inject]
@@ -32,9 +32,13 @@ namespace Baku.VMagicMirror
                 v => SetHeadYawDeg(v * HeadYawRateToDegFactor)
             );
 
-            faceTracker.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
-                v => SetHeadPitchDeg(NoseBaseHeightToNeckPitchDeg(v))
-            );
+            //こっちは顔サイズで正規化された無次元量が飛んでくるので更に注意: だいたい-0.12 * 0.12くらい
+            faceTracker.FaceParts.Outline.HeadPitchRate.Subscribe(
+                v =>
+                {
+                    float rate = Mathf.Clamp(v - _faceTracker.CalibrationData.eyeFaceYDiff, -1f, 1f);
+                    SetHeadPitchDeg(rate * HeadPitchRateToDegFactor);
+                });
             
             vrmLoadable.VrmLoaded += info =>
             {
@@ -56,9 +60,10 @@ namespace Baku.VMagicMirror
         
         //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
         private const float HeadRollRateApplyFactor = 0.8f;
-        //NOTE: もとは50だったんだけど、腰曲げに反映する値があることを想定して小さくしてます
+        //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整してます
         private const float HeadYawRateToDegFactor = 28.00f; 
-
+        private const float HeadPitchRateToDegFactor = 25.0f;
+        
         private const float HeadTotalRotationLimitDeg = 40.0f;
         private const float NoseBaseHeightDifToAngleDegFactor = 300f;
 

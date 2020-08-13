@@ -273,7 +273,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ccd5f299c1abbd4bb7387e98b79aefa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedDumpForceFactor: 20
+  speedDumpForceFactor: 10
   posDumpForceFactor: 50
   headRate: 0.5
 --- !u!114 &1338865419136667663
@@ -291,6 +291,7 @@ MonoBehaviour:
   angleApplyFactor: 1
   pitchFactor: 0.8
   pitchLimitDeg: 25
+  lerpFactor: 18
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0

@@ -61,7 +61,7 @@ namespace Baku.VMagicMirror
         //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
         private const float HeadRollRateApplyFactor = 0.8f;
         //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整してます
-        private const float HeadYawRateToDegFactor = 28.00f; 
+        private const float HeadYawRateToDegFactor = 25.00f; 
         private const float HeadPitchRateToDegFactor = 25.0f;
         
         private const float HeadTotalRotationLimitDeg = 40.0f;

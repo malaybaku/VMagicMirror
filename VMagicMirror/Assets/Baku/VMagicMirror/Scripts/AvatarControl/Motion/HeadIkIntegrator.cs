@@ -1,5 +1,7 @@
 ﻿using Baku.VMagicMirror.IK;
+using RootMotion.FinalIK;
 using UnityEngine;
+using VRM;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -31,6 +33,9 @@ namespace Baku.VMagicMirror
         private Transform _lookAtTarget = null;
         private FaceControlConfiguration _faceControlConfig;
 
+        private LookAtIK _lookAtIk = null;
+        private VRMLookAtHead _vrmLookAtHead = null;
+
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
@@ -45,11 +50,15 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                _lookAtIk = info.vrmRoot.GetComponent<LookAtIK>();
+                _vrmLookAtHead = info.vrmRoot.GetComponent<VRMLookAtHead>();
                 _hasModel = true;
             };
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
+                _lookAtIk = null;
+                _vrmLookAtHead = null;
                 _head = null;
             };
         }
@@ -113,16 +122,30 @@ namespace Baku.VMagicMirror
         {
             _camBasedLookAt.CheckDepthAndWeight(_head);
 
-            if (_hasModel && _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker)
+            //動かし方が「固定」かそれに準ずる(=外部トラッキングのため暗黙に固定にすべき)状態のとき、LookAtを完全に殺す
+            if (_hasModel && (
+                    _lookAtStyle == LookAtStyles.Fixed ||
+                    _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker
+                    )
+                )
             {
-                _lookAtTarget.localPosition = _head.position + _head.forward * 10.0f;
+                _vrmLookAtHead.enabled = false;
+                _lookAtIk.enabled = false;
+                //NOTE: 正面向きに持っていけば安全、という考え方
+                _lookAtTarget.localPosition = _head.position + Vector3.forward * 10.0f;
                 return;
             }
-            
+
+            if (_hasModel)
+            {
+                _vrmLookAtHead.enabled = true;
+                _lookAtIk.enabled = true;
+            }
+
             Vector3 pos = 
                 (_lookAtStyle == LookAtStyles.MousePointer) ? _mouseBasedLookAt.Position :
                 (_lookAtStyle == LookAtStyles.MainCamera) ? _camBasedLookAt.Position :
-                _hasModel ? _head.position + _head.forward * 10.0f : 
+                _hasModel ? _head.position + Vector3.forward * 10.0f : 
                 new Vector3(1, 0, 1);
             
             _lookAtTarget.localPosition = Vector3.Lerp(

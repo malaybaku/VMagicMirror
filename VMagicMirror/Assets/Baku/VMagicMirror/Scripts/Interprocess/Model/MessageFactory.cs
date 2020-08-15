@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror
         
         public Message CloseConfigWindow() => NoArg();
 
-        public Message SetCalibrateFaceData(string data) => WithArg(data);
+        public Message SetCalibrationFaceData(string data) => WithArg(data);
 
         public Message SetBlendShapeNames(string v) => WithArg(v);
 

@@ -93,6 +93,7 @@ namespace Baku.VMagicMirror
                 PartsWithoutOutline[i].Update(_landmarks);
             }
             Outline.UpdateYaw(InnerMouth.CurrentCenterPosition);
+            Outline.UpdatePitch(LeftEye.Center, RightEye.Center);
         }
 
         /// <summary>
@@ -148,6 +149,17 @@ namespace Baku.VMagicMirror
                 }
             }
 
+            protected Vector2 GetRollCanceled(Vector2 p)
+            {
+                //sinにマイナスがつくのは、キャンセル回転のためにもとの角度を(-1)倍した値のsin,cosをセットで得るため
+                float cos = Parent.Outline.CurrentFaceRollCos;
+                float sin = -Parent.Outline.CurrentFaceRollSin;
+                return new Vector2(
+                    p.x * cos - p.y * sin,
+                    p.x * sin + p.y * cos
+                    );
+            }
+
             /// <summary>この顔パーツが属している特徴点の図心を計算する。</summary>
             /// <returns></returns>
             protected Vector2 GetCenterPosition()
@@ -179,9 +191,11 @@ namespace Baku.VMagicMirror
             //値が大きいほど、ヨー角が小さくなる。
             private const float YawMouthDistanceRatio = 3.0f;
 
+            //EyeFaceYDiffがとる値の限界値の目安。この値で割って正規化する
+            private const float EyeFaceYDiffMax = 0.12f;
+
             public FaceOutlinePart(FaceParts parent) : base(parent)
             {
-
             }
 
             public Vector2 FaceSize { get; private set; } = Vector2.one;
@@ -190,11 +204,22 @@ namespace Baku.VMagicMirror
             //public IObservable<Vector2> FaceSizeObservable => _faceSize;
 
             private readonly Subject<float> _headRollRad = new Subject<float>();
+            /// <summary> 頭部ロールをラジアンベースで表したもの。 </summary>
             public IObservable<float> HeadRollRad => _headRollRad;
 
             private readonly Subject<float> _headYawRate = new Subject<float>();
+            /// <summary> 頭部ヨーを[-1, 1]の範囲で表したもの。</summary>
             public IObservable<float> HeadYawRate => _headYawRate;
+            
+            private readonly Subject<float> _headPitchRate = new Subject<float>();
+            /// <summary>頭部ピッチを[-1, 1]くらいの範囲で表したもの。</summary>
+            /// <remarks>
+            /// この値からキャリブデータを引き算した値をMathf.Clamp01して使う想定
+            /// </remarks>
+            public IObservable<float> HeadPitchRate => _headPitchRate;
 
+            public float EyeFaceYDiff { get; private set; }
+            
             protected override void OnUpdated()
             {
                 var positions = Positions;
@@ -238,6 +263,16 @@ namespace Baku.VMagicMirror
                 
                 CurrentFaceYawRate = Parent.DisableHorizontalFlip ? -yawRate : yawRate;
                 _headYawRate.OnNext(CurrentFaceYawRate);
+            }
+
+            public void UpdatePitch(Vector2 leftEyeCenter, Vector2 rightEyeCenter)
+            {
+                //目と、目の両脇のランドマーク(こめかみ付近)の、画像上の高低を比べる。
+                //目のほうが上なら上を見上げており、目のほうが下ならうつむいている。
+                var faceSideY = 0.25f * GetRollCanceled(Positions[0] + Positions[1] + Positions[15] + Positions[16]).y;
+                var eyesY = 0.5f * GetRollCanceled(leftEyeCenter + rightEyeCenter).y;
+                EyeFaceYDiff = (eyesY - faceSideY) / FaceSize.y / EyeFaceYDiffMax;
+                _headPitchRate.OnNext(EyeFaceYDiff);
             }
 
             public override void LerpToDefault(CalibrationData calibration, float lerpFactor)
@@ -403,10 +438,13 @@ namespace Baku.VMagicMirror
 
                 return normalizedValue;
             }
+            
+            public Vector2 Center { get; private set; }
 
             protected override void OnUpdated()
             {
                 base.OnUpdated();
+                Center = GetCenterPosition();
                 _eyeOpenValue.OnNext(GetEyeOpenValue());
             }
 

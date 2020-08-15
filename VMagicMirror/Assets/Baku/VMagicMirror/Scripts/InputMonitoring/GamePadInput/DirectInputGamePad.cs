@@ -27,9 +27,13 @@ namespace Baku.VMagicMirror
             _directInput = new DirectInput();
 
             //使えそうなゲームパッド or ジョイスティックを探す
-            //Gamepad, Joystick, どっちも無ければGameControlクラスを順に探します
-            var devices = _directInput
-                .GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices)
+            //FirstPersonが最初なのは暗黙にDUAL SHOCK 4の優先度を上げるため。
+            //(手元環境だとDUAL SHOCK 4はなぜかFirstPersonにヒットする)
+            //他のGamepadとかだとフットペダルみたいなのが先に引っかかることがあるので、それを予防してます。
+            //またGameControlは「拾いすぎ」になりやすいんだけど、これは仕方ないということで今は許容します
+            var devices = 
+                _directInput.GetDevices(DeviceType.FirstPerson, DeviceEnumerationFlags.AllDevices)
+                .Concat(_directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
                 .Concat(_directInput.GetDevices(DeviceType.Joystick, DeviceEnumerationFlags.AllDevices))
                 .Concat(_directInput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices))
                 .ToList();

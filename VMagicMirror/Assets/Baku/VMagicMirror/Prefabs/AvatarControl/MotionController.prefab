@@ -226,6 +226,7 @@ GameObject:
   - component: {fileID: 7319070492286949183}
   - component: {fileID: 5813678809054739210}
   - component: {fileID: 1338865419136667663}
+  - component: {fileID: 3373783041301125446}
   m_Layer: 0
   m_Name: HeadFK
   m_TagString: Untagged
@@ -261,6 +262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   imageAttitude: {fileID: 5813678809054739210}
   externalTrackerAttitude: {fileID: 1338865419136667663}
+  nonImageBasedMotion: {fileID: 3373783041301125446}
 --- !u!114 &5813678809054739210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,6 +294,26 @@ MonoBehaviour:
   pitchFactor: 0.8
   pitchLimitDeg: 25
   lerpFactor: 18
+--- !u!114 &3373783041301125446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678809054739212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ba4c64cddec4e041a53d723de666b70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionEndCountMin: 30
+  actionEndCountMax: 240
+  activeSpeedFactor: 6
+  inactiveSpeedFactor: 3
+  motionBlendDuration: 0.3
+  keepEyeCenterProbability: 0.5
+  eyeRotationFactor: 0.5
+  eyeOrientationVaryRange: 10
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0

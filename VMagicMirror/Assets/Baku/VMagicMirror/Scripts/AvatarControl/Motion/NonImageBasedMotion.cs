@@ -34,7 +34,7 @@ namespace Baku.VMagicMirror
 
         //active/inactiveが1回切り替わったらしばらくフラグ状態を維持する長さ
         [SerializeField] private float activeSwitchCoolDownDuration = 1.0f;
-        
+
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
@@ -43,6 +43,9 @@ namespace Baku.VMagicMirror
             )
         {
             //TODO: オプトアウトをreceiverからやるのでは？
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableVoiceBasedMotion,
+                command => _operationEnabled = command.ToBoolean());
 
             _voiceOnOffParser = new VoiceOnOffParser(lipSync)
             {
@@ -76,21 +79,25 @@ namespace Baku.VMagicMirror
         private bool _active = false;
         private float _activeSwitchCountDown = 0f;
 
-        private bool _isBehaviourActive = true;
+        //GUI上からこの処理を許可されてるかどうか
+        private bool _operationEnabled = true;
+        
+        //現在webカメラも外部トラッキングも無効のとき、つまりこの処理の出番っぽいときはtrueになる
+        private bool _isNoTrackingApplied = true;
 
         /// <summary> Updateで有効な姿勢制御を行ってもよいかどうかを取得、設定します。 </summary>
-        public bool IsBehaviourActive
+        public bool IsNoTrackingApplied
         {
-            get => _isBehaviourActive;
+            get => _isNoTrackingApplied;
             set
             {
-                if (_isBehaviourActive == value)
+                if (_isNoTrackingApplied == value)
                 {
                     return;
                 }
                 
-                _isBehaviourActive = value;
-                if (!_isBehaviourActive)
+                _isNoTrackingApplied = value;
+                if (!_isNoTrackingApplied)
                 {
                     _voiceOnOffParser.Reset(false);
                     _rawActive = false;
@@ -158,6 +165,12 @@ namespace Baku.VMagicMirror
 
         private void LateUpdate()
         {
+            //オプションで止められている場合、本格的に何もやらない
+            if (!_operationEnabled)
+            {
+                return;
+            }
+            
             //NOTE: ちょっとイビツな処理だが、これらのカウントは秒数と深いかかわりがあるので許してくれ…
             if (Application.targetFrameRate == 30)
             {
@@ -177,7 +190,7 @@ namespace Baku.VMagicMirror
             _activeJitter.PositionFactor = activeFactors.y;
             
             CalculateAngles();
-            if (IsBehaviourActive)
+            if (IsNoTrackingApplied)
             {
                 _motionApplier.Apply(HeadRotation, EyeRotation);
             }
@@ -185,7 +198,7 @@ namespace Baku.VMagicMirror
         
         private void CalculateAngles()
         {
-            if (!IsBehaviourActive)
+            if (!IsNoTrackingApplied)
             {
                 return;
             }

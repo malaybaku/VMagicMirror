@@ -26,17 +26,17 @@ namespace Baku.VMagicMirror
             case FaceControlModes.ExternalTracker:
                 externalTrackerAttitude.IsActive = true;
                 imageAttitude.IsActive = false;
-                nonImageBasedMotion.IsBehaviourActive = false;
+                nonImageBasedMotion.IsNoTrackingApplied = false;
                 break;
             case FaceControlModes.WebCam:
                 externalTrackerAttitude.IsActive = false;
                 imageAttitude.IsActive = true;
-                nonImageBasedMotion.IsBehaviourActive = false;
+                nonImageBasedMotion.IsNoTrackingApplied = false;
                 break;
             default:
                 externalTrackerAttitude.IsActive = false;
                 imageAttitude.IsActive = false;
-                nonImageBasedMotion.IsBehaviourActive = true;
+                nonImageBasedMotion.IsNoTrackingApplied = true;
                 break;
             }
         }

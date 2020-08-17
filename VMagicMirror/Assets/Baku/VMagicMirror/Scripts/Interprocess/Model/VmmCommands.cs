@@ -83,6 +83,7 @@ namespace Baku.VMagicMirror
         public const string AutoBlinkDuringFaceTracking = nameof(AutoBlinkDuringFaceTracking);
         public const string EnableHeadRotationBasedBlinkAdjust = nameof(EnableHeadRotationBasedBlinkAdjust);
         public const string EnableLipSyncBasedBlinkAdjust = nameof(EnableLipSyncBasedBlinkAdjust);
+        public const string EnableVoiceBasedMotion = nameof(EnableVoiceBasedMotion);
         public const string DisableFaceTrackingHorizontalFlip = nameof(DisableFaceTrackingHorizontalFlip);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);

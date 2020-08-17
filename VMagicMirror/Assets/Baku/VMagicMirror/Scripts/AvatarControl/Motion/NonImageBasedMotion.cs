@@ -106,7 +106,6 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            //NOTE: このへんSerializeFieldに公開するのも手
             _inactiveJitter.AngleRange = new Vector3(4f, 4f, 4f);
             _inactiveJitter.ChangeTimeMin = 6.0f;
             _inactiveJitter.ChangeTimeMax = 18.0f;
@@ -114,7 +113,7 @@ namespace Baku.VMagicMirror
             _inactiveJitter.PositionFactor = inactiveFactors.y;
             _inactiveJitter.UseZAngle = true;
 
-            _activeJitter.AngleRange = new Vector3(10f, 10f, 10f);
+            _activeJitter.AngleRange = new Vector3(5f, 8f, 8f);
             _activeJitter.ChangeTimeMin = 0.5f;
             _activeJitter.ChangeTimeMax = 2.0f;
             _activeJitter.DumpFactor = activeFactors.x;

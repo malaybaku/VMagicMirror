@@ -309,7 +309,7 @@ MonoBehaviour:
   eyeSpeedFactor: 4
   motionBlendDuration: 0.5
   keepEyeCenterProbability: 0.5
-  eyeRotationFactor: 0.5
+  eyeRotationFactor: 0.4
   eyeOrientationVaryRange: 10
   inactiveFactors: {x: 10, y: 10}
   activeFactors: {x: 10, y: 10}

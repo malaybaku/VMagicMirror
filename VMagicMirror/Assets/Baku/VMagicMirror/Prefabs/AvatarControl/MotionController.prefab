@@ -306,14 +306,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ba4c64cddec4e041a53d723de666b70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionEndCountMin: 30
-  actionEndCountMax: 240
-  activeSpeedFactor: 6
-  inactiveSpeedFactor: 3
-  motionBlendDuration: 0.3
+  eyeSpeedFactor: 4
+  motionBlendDuration: 0.5
   keepEyeCenterProbability: 0.5
   eyeRotationFactor: 0.5
   eyeOrientationVaryRange: 10
+  inactiveFactors: {x: 10, y: 10}
+  activeFactors: {x: 10, y: 10}
+  activeSwitchCoolDownDuration: 1
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0

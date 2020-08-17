@@ -14,13 +14,8 @@ namespace Baku.VMagicMirror
         private FaceControlConfiguration _faceConfig;
         private VoiceOnOffParser _voiceOnOffParser = null;
 
-        [Tooltip("離散的なアクション(ボタン押しとか)が終わったあとでアクション完了を判断するまでのフレーム数の下限")]
-        [SerializeField] private int actionEndCountMin = 30;
-        [Tooltip("離散的なアクション(ボタン押しとか)が終わったあとでアクション完了を判断するまでのフレーム数の上限")]
-        [SerializeField] private int actionEndCountMax = 240;
-
-        [SerializeField] private float activeSpeedFactor = 6.0f;
-        [SerializeField] private float inactiveSpeedFactor = 3.0f;
+        //NOTE: 首の動きがeaseされるのを踏まえて気持ちゆっくりめ
+        [SerializeField] private float eyeSpeedFactor = 4.0f;
 
         [Tooltip("アクション中/非アクション中のモーションを遷移させる時間")]
         [Range(0.1f, 2.0f)] [SerializeField] private float motionBlendDuration = 0.3f;
@@ -34,6 +29,11 @@ namespace Baku.VMagicMirror
         [Tooltip("目を首と順方向/逆方向に動かすとき、その方向ピッタリから角度を多少ランダムにしてもいいよね、という値")]
         [SerializeField] private float eyeOrientationVaryRange = 20f;
         
+        [SerializeField] private Vector2 inactiveFactors = new Vector2(10, 10);
+        [SerializeField] private Vector2 activeFactors = new Vector2(10, 10);
+
+        //active/inactiveが1回切り替わったらしばらくフラグ状態を維持する長さ
+        [SerializeField] private float activeSwitchCoolDownDuration = 1.0f;
         
         [Inject]
         public void Initialize(
@@ -46,8 +46,10 @@ namespace Baku.VMagicMirror
 
             _voiceOnOffParser = new VoiceOnOffParser(lipSync)
             {
+                //そこそこちゃんと喋ってないと検出しない、という設定のつもり
+                VisemeThreshold = 0.2f,
                 OnCountThreshold = 8,
-                OffCountThreshold = 20,
+                OffCountThreshold = 16,
             };
             
             _motionApplier = new NonImageBasedMotionApplier(vrmLoadable);
@@ -69,31 +71,60 @@ namespace Baku.VMagicMirror
         private float _actionBlendWeight = 0f;
         
         //音声またはキー入力とかによって「ユーザーが何かしら動いてるらしい」と判断できてる間はtrueになる値
-        private bool _isActive = false;
-        private int _actionEndCountdown = 0;
+        private bool _rawActive = false;
+        //rawActiveをもとに、頻繁なチャタリングが起きないように加工されたフラグ
+        private bool _active = false;
+        private float _activeSwitchCountDown = 0f;
+
+        private bool _isBehaviourActive = true;
 
         /// <summary> Updateで有効な姿勢制御を行ってもよいかどうかを取得、設定します。 </summary>
-        public bool IsBehaviourActive { get; set; } = true;
+        public bool IsBehaviourActive
+        {
+            get => _isBehaviourActive;
+            set
+            {
+                if (_isBehaviourActive == value)
+                {
+                    return;
+                }
+                
+                _isBehaviourActive = value;
+                if (!_isBehaviourActive)
+                {
+                    _voiceOnOffParser.Reset(false);
+                    _rawActive = false;
+                    _active = false;
+                    _activeSwitchCountDown = 0f;
+                    EyeRotation = Quaternion.identity;
+                    HeadRotation = Quaternion.identity;
+                    _activeJitter.Reset();
+                    _inactiveJitter.Reset();
+                }
+            }
+        }
 
         private void Start()
         {
             //NOTE: このへんSerializeFieldに公開するのも手
-            _inactiveJitter.AngleRange = new Vector3(5f, 5f, 5f);
-            _inactiveJitter.SpeedFactor = inactiveSpeedFactor;
-            _inactiveJitter.ChangeTimeMin = 2.0f;
-            _inactiveJitter.ChangeTimeMax = 8.0f;
+            _inactiveJitter.AngleRange = new Vector3(4f, 4f, 4f);
+            _inactiveJitter.ChangeTimeMin = 6.0f;
+            _inactiveJitter.ChangeTimeMax = 18.0f;
+            _inactiveJitter.DumpFactor = inactiveFactors.x;
+            _inactiveJitter.PositionFactor = inactiveFactors.y;
             _inactiveJitter.UseZAngle = true;
 
             _activeJitter.AngleRange = new Vector3(10f, 10f, 10f);
-            _activeJitter.SpeedFactor = activeSpeedFactor;
-            _activeJitter.ChangeTimeMin = 0.8f;
-            _activeJitter.ChangeTimeMax = 5.0f;
+            _activeJitter.ChangeTimeMin = 0.5f;
+            _activeJitter.ChangeTimeMax = 2.0f;
+            _activeJitter.DumpFactor = activeFactors.x;
+            _activeJitter.PositionFactor = activeFactors.y;
             _activeJitter.UseZAngle = true;
 
             _activeJitter.JitterTargetEulerUpdated += euler =>
             {
                 //注視点目標によってやることを変える
-                bool keepEyeCenter = UnityEngine.Random.Range(0f, 1f) < keepEyeCenterProbability;
+                bool keepEyeCenter = Random.Range(0f, 1f) < keepEyeCenterProbability;
                 
                 var sign = keepEyeCenter ? -1f : 1f;
 
@@ -111,7 +142,7 @@ namespace Baku.VMagicMirror
                 {
                     //視線を首と同じ方向に動かすとき、注視点がテキトーに離れるので向きがぴったり揃う必要はない。
                     //そこで、ぴったり同じ方向にせず、適当に汚す。
-                    var angle = UnityEngine.Random.Range(
+                    var angle = Random.Range(
                         -eyeOrientationVaryRange * Mathf.Deg2Rad, eyeOrientationVaryRange * Mathf.Deg2Rad
                     );
 
@@ -128,6 +159,24 @@ namespace Baku.VMagicMirror
 
         private void LateUpdate()
         {
+            //NOTE: ちょっとイビツな処理だが、これらのカウントは秒数と深いかかわりがあるので許してくれ…
+            if (Application.targetFrameRate == 30)
+            {
+                _voiceOnOffParser.OnCountThreshold = 4;
+                _voiceOnOffParser.OffCountThreshold = 8;
+            }
+            else
+            {
+                _voiceOnOffParser.OnCountThreshold = 8;
+                _voiceOnOffParser.OffCountThreshold = 16;
+            }
+
+            //DEBUG: パラメータ感を知りたい
+            _inactiveJitter.DumpFactor = inactiveFactors.x;
+            _inactiveJitter.PositionFactor = inactiveFactors.y;
+            _activeJitter.DumpFactor = activeFactors.x;
+            _activeJitter.PositionFactor = activeFactors.y;
+            
             CalculateAngles();
             if (IsBehaviourActive)
             {
@@ -139,60 +188,52 @@ namespace Baku.VMagicMirror
         {
             if (!IsBehaviourActive)
             {
-                _voiceOnOffParser.Reset(false);
-                _isActive = false;
-                _actionEndCountdown = 0;
-                EyeRotation = Quaternion.identity;
-                HeadRotation = Quaternion.identity;
                 return;
             }
 
             //NOTE: 初期実装で声パーサーしか使わないのをいいことにこういう実装。
             _voiceOnOffParser.Update();
-            if (_voiceOnOffParser.IsTalking)
+            _rawActive = _voiceOnOffParser.IsTalking;
+
+            //チャタリングを防ぐようにして_activeに適用
+            if (_activeSwitchCountDown > 0)
             {
-                _isActive = true;
-                //NOTE: 声のパース処理はそれ自体がある程度余裕を持った処理なので、
-                //声が切れたらほぼ直ちにアクション無し状態にする
-                _actionEndCountdown = Mathf.Max(_actionEndCountdown, 1);
+                _activeSwitchCountDown -= Time.deltaTime;
             }
-            
-            //カウントダウン + フラグ折り
-            if (_actionEndCountdown >= 0)
+            if (_rawActive != _active && _activeSwitchCountDown <= 0f)
             {
-                _actionEndCountdown--;
-            }
-            if (_actionEndCountdown < 0)
-            {
-                _isActive = false;
+                _active = _rawActive;
+                _activeSwitchCountDown = activeSwitchCoolDownDuration;
             }
 
             //アクション中かどうかでブレンドウェイトが片側に寄っていく(最後は0か1で落ち着く)
             _actionBlendWeight = Mathf.Clamp01(
-                Time.deltaTime / motionBlendDuration * (_isActive ? 1 : 0)
+                _actionBlendWeight + Time.deltaTime / motionBlendDuration * (_active ? 1 : -1)
             );
             
-            //個別のJitter群のアップデート
+            //個別の動きのアップデート
             _inactiveJitter.Update(Time.deltaTime);
             _activeJitter.Update(Time.deltaTime);
             _activeEyeRotation = Quaternion.Slerp(
                 _activeEyeRotation,
                 _activeEyeRotationTarget,
-                activeSpeedFactor * Time.deltaTime
+                eyeSpeedFactor * Time.deltaTime
             );
 
+            float blendWeight = Mathf.SmoothStep(0, 1, _actionBlendWeight);
+            
             //アクティブ用と非アクティブ用の計算がどちらもキレイに走っているので、それらをブレンディングすれば勝ち
             HeadRotation = Quaternion.Slerp(
                 _inactiveJitter.CurrentRotation,
                 _activeJitter.CurrentRotation,
-                _actionBlendWeight
+                blendWeight
             );
             
             //非アクティブの目は便宜的に正面向き: ここは後で変わるかも。
             EyeRotation = Quaternion.Slerp(
                 Quaternion.identity,
                 _activeEyeRotation,
-                _actionBlendWeight
+                blendWeight
             );
         }
 

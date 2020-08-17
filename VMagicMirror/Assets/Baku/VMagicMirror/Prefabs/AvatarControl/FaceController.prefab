@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blendShapeInitializer: {fileID: 7797473119978373343}
+  lipSyncContext: {fileID: 3748904030990320927}
 --- !u!114 &3748028266611161169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,6 +244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eyeMapMin: 0.25
   eyeMapMax: 0.7
+  blinkValueOnSquint: 0.5
   blinkOpenSpeedMax: 0.1
 --- !u!114 &1428360342779558990
 MonoBehaviour:

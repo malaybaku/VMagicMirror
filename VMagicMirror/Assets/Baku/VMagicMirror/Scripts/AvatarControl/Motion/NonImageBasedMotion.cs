@@ -35,14 +35,18 @@ namespace Baku.VMagicMirror
         //active/inactiveが1回切り替わったらしばらくフラグ状態を維持する長さ
         [SerializeField] private float activeSwitchCoolDownDuration = 1.0f;
 
+        private FaceTracker _faceTracker = null;
+        
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
+            FaceTracker faceTracker,
             DeviceSelectableLipSyncContext lipSync
             )
         {
-            //TODO: オプトアウトをreceiverからやるのでは？
+            _faceTracker = faceTracker;
+            
             receiver.AssignCommandHandler(
                 VmmCommands.EnableVoiceBasedMotion,
                 command => _operationEnabled = command.ToBoolean());
@@ -81,6 +85,37 @@ namespace Baku.VMagicMirror
 
         //GUI上からこの処理を許可されてるかどうか
         private bool _operationEnabled = true;
+
+        
+        private bool _shouldApply = true;
+        //NOTE: 判断基準としては
+        //「トラッキングが全く無いか、または顔トラッキングのチェック自体はオンだけど
+        //(カメラ選びが不適切とかで)実質的に動いてない」
+        //という状況なら処理を適用してもいいよね、と判断する
+        private bool ShouldApply
+        {
+            get => _shouldApply;
+            set
+            {
+                if (_shouldApply == value)
+                {
+                    return;
+                }
+
+                _shouldApply = value;
+                if (!_shouldApply)
+                {
+                    _voiceOnOffParser.Reset(false);
+                    _rawActive = false;
+                    _active = false;
+                    _activeSwitchCountDown = 0f;
+                    EyeRotation = Quaternion.identity;
+                    HeadRotation = Quaternion.identity;
+                    _activeJitter.Reset();
+                    _inactiveJitter.Reset();   
+                }
+            }
+        }
         
         //現在webカメラも外部トラッキングも無効のとき、つまりこの処理の出番っぽいときはtrueになる
         private bool _isNoTrackingApplied = true;
@@ -95,19 +130,8 @@ namespace Baku.VMagicMirror
                 {
                     return;
                 }
-                
                 _isNoTrackingApplied = value;
-                if (!_isNoTrackingApplied)
-                {
-                    _voiceOnOffParser.Reset(false);
-                    _rawActive = false;
-                    _active = false;
-                    _activeSwitchCountDown = 0f;
-                    EyeRotation = Quaternion.identity;
-                    HeadRotation = Quaternion.identity;
-                    _activeJitter.Reset();
-                    _inactiveJitter.Reset();
-                }
+                ShouldApply = IsNoTrackingApplied || !_faceTracker.FaceDetectedAtLeastOnce;
             }
         }
 
@@ -171,6 +195,12 @@ namespace Baku.VMagicMirror
                 return;
             }
             
+            ShouldApply = IsNoTrackingApplied || !_faceTracker.FaceDetectedAtLeastOnce;
+            if (!ShouldApply)
+            {
+                return;
+            }
+            
             //NOTE: ちょっとイビツな処理だが、これらのカウントは秒数と深いかかわりがあるので許してくれ…
             if (Application.targetFrameRate == 30)
             {
@@ -190,10 +220,7 @@ namespace Baku.VMagicMirror
             _activeJitter.PositionFactor = activeFactors.y;
             
             CalculateAngles();
-            if (IsNoTrackingApplied)
-            {
-                _motionApplier.Apply(HeadRotation, EyeRotation);
-            }
+            _motionApplier.Apply(HeadRotation, EyeRotation);
         }
         
         private void CalculateAngles()

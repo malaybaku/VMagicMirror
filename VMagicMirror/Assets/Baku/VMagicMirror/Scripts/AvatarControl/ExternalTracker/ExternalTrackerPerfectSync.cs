@@ -287,6 +287,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             if (missedBlendShapeNames.Count > 0)
             {
                 _sender.SendCommand(MessageFactory.Instance.ExTrackerSetPerfectSyncMissedClipNames(
+                    $"Missing Count: {missedBlendShapeNames.Count} / 52,\n" + 
                     string.Join("\n", missedBlendShapeNames)
                     ));
             }

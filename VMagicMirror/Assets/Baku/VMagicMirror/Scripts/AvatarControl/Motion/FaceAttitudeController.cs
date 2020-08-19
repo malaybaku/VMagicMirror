@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UniRx;
 using Zenject;
 
@@ -8,13 +7,13 @@ namespace Baku.VMagicMirror
     public class FaceAttitudeController : MonoBehaviour
     {
         //NOTE: バネマス系のパラメータ(いわゆるcとk)
-        [SerializeField] private float speedDumpForceFactor = 10.0f;
-        [SerializeField] private float posDumpForceFactor = 20.0f;
+        [SerializeField] private float speedDumpForceFactor = 10f;
+        [SerializeField] private float posDumpForceFactor = 50f;
 
         [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")]
         [Range(0f, 1f)]
         [SerializeField] private float headRate = 0.5f;
-        
+
         private FaceTracker _faceTracker = null;
         
         [Inject]
@@ -37,11 +36,6 @@ namespace Baku.VMagicMirror
                 v =>
                 {
                     float rate = Mathf.Clamp(v - _faceTracker.CalibrationData.eyeFaceYDiff, -1f, 1f);
-                    //HACK: うつむきについては検出が鈍いのでちょっと強調する
-                    if (rate < 0)
-                    {
-                        rate = Mathf.Clamp(rate * 1.2f, -1f, 1f);
-                    }
                     SetHeadPitchDeg(rate * HeadPitchRateToDegFactor);
                 });
             
@@ -66,7 +60,7 @@ namespace Baku.VMagicMirror
         //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
         private const float HeadRollRateApplyFactor = 0.8f;
         //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整してます
-        private const float HeadYawRateToDegFactor = 28.00f; 
+        private const float HeadYawRateToDegFactor = 28.00f;
         private const float HeadPitchRateToDegFactor = 28.0f;
         
         private const float HeadTotalRotationLimitDeg = 40.0f;
@@ -99,13 +93,13 @@ namespace Baku.VMagicMirror
                 _prevRotationSpeedEuler = Vector3.zero;
                 return;
             }
-
-            //やりたい事: ロール、ヨー、ピッチそれぞれを独立にsmoothingしてから最終的に適用する
-            // いわゆるバネマス系扱いで陽的オイラー法を回す。やや過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
-            var accel = 
-                -_prevRotationSpeedEuler * speedDumpForceFactor -
-                (_prevRotationEuler - _latestRotationEuler) * posDumpForceFactor;
-            var speed = _prevRotationSpeedEuler + Time.deltaTime * accel;
+            
+            //やりたい事: バネマス系扱いで陽的オイラー法を回してスムージングする。
+            //過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
+            var acceleration =
+                - speedDumpForceFactor * _prevRotationSpeedEuler -
+                posDumpForceFactor * (_prevRotationEuler - _latestRotationEuler);
+            var speed = _prevRotationSpeedEuler + Time.deltaTime * acceleration;
             var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
 
             var rotationAdjusted = new Vector3(

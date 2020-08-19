@@ -30,11 +30,13 @@ lang_prefix: /en/
 
 `Calibrate Position`: Press to calibrate the position by current user position captured by web camera.
 
-`Blink adjust by head motion`: Check to enable auto blink action when the avatar moves head quickly.
+`Blink adjust by head motion and lip sync`: Check to enable auto blink action, when the avatar moves head quickly or detect the end of speech by microphone.
 
-`Blink adjust by lip sync`: Check to enable auto blink when detect the end of speech.
+`Voice based motion when webcam not used`: When image based head tracking is not used, avatar moves automatically by voice input.
 
 `Eye Look Target`: Select where the character look to. Available in Streaming tab.
+
+`Eye Motion Scale[%]`: Set how eye (eye bone) moves by mouse gaze, or by ExTracker. Recommend default (100%) for VRoid model. If avatar eyes motion is too small, try larger value.
 
 `Default Fun Blend Shape [%]`: Specifies the default fun expression rate. As the value increases the character will become always smile, but some character's facial expression will be unnatural when combined to blink or other face motions. In those cases, decrease the value.
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Linq;
 using UniRx;
 using UnityEngine;
 
@@ -70,8 +69,6 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="mainPersonRect"></param>
         /// <param name="landmarks"></param>
-        /// <param name="calibration"></param>
-        /// <param name="blendRate"></param>
         public void Update(Rect mainPersonRect, List<Vector2> landmarks)
         {
             if (landmarks == null || landmarks.Count < FaceLandmarkCount)
@@ -93,7 +90,7 @@ namespace Baku.VMagicMirror
                 PartsWithoutOutline[i].Update(_landmarks);
             }
             Outline.UpdateYaw(InnerMouth.CurrentCenterPosition);
-            Outline.UpdatePitch(LeftEye.Center, RightEye.Center);
+            Outline.UpdatePitch(LeftEye.GetCenter(), RightEye.GetCenter());
         }
 
         /// <summary>
@@ -267,11 +264,15 @@ namespace Baku.VMagicMirror
 
             public void UpdatePitch(Vector2 leftEyeCenter, Vector2 rightEyeCenter)
             {
-                //目と、目の両脇のランドマーク(こめかみ付近)の、画像上の高低を比べる。
-                //目のほうが上なら上を見上げており、目のほうが下ならうつむいている。
-                var faceSideY = 0.25f * GetRollCanceled(Positions[0] + Positions[1] + Positions[15] + Positions[16]).y;
+                //顔のY平均と、目のY平均の上下関係から推定する。
+                //目のほうが上にある場合は上をむいており、逆もしかり。
+                var faceY = 0.5f * GetRollCanceled(Positions[0] + Positions[16]).y;
                 var eyesY = 0.5f * GetRollCanceled(leftEyeCenter + rightEyeCenter).y;
-                EyeFaceYDiff = (eyesY - faceSideY) / FaceSize.y / EyeFaceYDiffMax;
+                
+                //POINT: FaceSize.yではなくxによって正規化する。
+                //Yは口の開閉とか、鎖骨付近を誤検出したときにブレちゃうので、
+                //そうした外れ値を完全に避けるのが狙い。
+                EyeFaceYDiff = (eyesY - faceY) / FaceSize.x / EyeFaceYDiffMax;
                 _headPitchRate.OnNext(EyeFaceYDiff);
             }
 
@@ -281,12 +282,14 @@ namespace Baku.VMagicMirror
                 CurrentFaceRollSin = Mathf.Sin(CurrentFaceRollSin);
                 CurrentFaceRollCos = Mathf.Cos(CurrentFaceRollCos);
                 CurrentFaceYawRate = Mathf.Lerp(CurrentFaceYawRate, 0, lerpFactor);
+                EyeFaceYDiff = Mathf.Lerp(EyeFaceYDiff, calibration.eyeFaceYDiff, lerpFactor);
 
                 float faceLen = Mathf.Sqrt(calibration.faceSize);
                 FaceSize = Vector2.Lerp(FaceSize, new Vector2(faceLen, faceLen), lerpFactor);
                 
                 _headRollRad.OnNext(CurrentFaceRollRad);
                 _headYawRate.OnNext(CurrentFaceYawRate);
+                _headPitchRate.OnNext(EyeFaceYDiff);
             }
             
             public override int LandmarkStartIndex => 0;
@@ -366,44 +369,14 @@ namespace Baku.VMagicMirror
             public NosePart(FaceParts parent) : base(parent)
             {
             }
-            public override int LandmarkStartIndex => 27;
-            public override int LandmarkLength => 9;
-
-            /// <summary>Index 30に鼻先のとがった所の位置が入る</summary>
-            public const int NoseBaseTopIndex = 3;
-            /// <summary>Index 33に下側の鼻の付け根の位置が入る</summary>
-            public const int NoseBaseBottomIndex = 6;
-
-            public float GetNoseBaseHeightValue()
-            {
-                var positions = Positions;
-                //画像座標だと下に行くほどプラスなので、こうやると値がプラスになって都合がよい
-                float rawValue = positions[NoseBaseBottomIndex].y - positions[NoseBaseTopIndex].y;
-                float normalizedValue = rawValue / Parent.FaceSize.y;
-                return normalizedValue;
-            }
 
             public override void LerpToDefault(CalibrationData calibration, float lerpFactor)
             {
-                CurrentNoseBaseHeightValue = Mathf.Lerp(CurrentNoseBaseHeightValue, calibration.noseHeight, lerpFactor);
-                _noseBaseHeightValue.OnNext(CurrentNoseBaseHeightValue);
+                //何もしないでOK
             }
 
-            protected override void OnUpdated()
-            {
-                CurrentNoseBaseHeightValue = GetNoseBaseHeightValue();
-                _noseBaseHeightValue.OnNext(CurrentNoseBaseHeightValue);
-            }
-
-            private readonly Subject<float> _noseBaseHeightValue = new Subject<float>();
-            public float CurrentNoseBaseHeightValue { get; private set; }
-
-            /// <summary>
-            /// 鼻底が作るタコ型四角形の、タテ方向の長さを顔の長さで割って正規化した(0.1程度の)値。
-            /// 顔の前後の傾斜の指標として利用可能。
-            /// </summary>
-            /// <returns></returns>
-            public IObservable<float> NoseBaseHeightValue => _noseBaseHeightValue;
+            public override int LandmarkStartIndex => 27;
+            public override int LandmarkLength => 9;
         }
 
         public abstract class EyePartBase : FacePartBase
@@ -438,13 +411,12 @@ namespace Baku.VMagicMirror
 
                 return normalizedValue;
             }
-            
-            public Vector2 Center { get; private set; }
 
+            public Vector2 GetCenter() => GetCenterPosition();
+            
             protected override void OnUpdated()
             {
                 base.OnUpdated();
-                Center = GetCenterPosition();
                 _eyeOpenValue.OnNext(GetEyeOpenValue());
             }
 
@@ -478,8 +450,8 @@ namespace Baku.VMagicMirror
         {
             public OuterMouthPart(FaceParts parent) : base(parent) { }
 
-            public override int LandmarkStartIndex => 60;
-            public override int LandmarkLength => 8;
+            public override int LandmarkStartIndex => 48;
+            public override int LandmarkLength => 12;
             
             public override void LerpToDefault(CalibrationData calibration, float lerpFactor)
             {
@@ -501,11 +473,11 @@ namespace Baku.VMagicMirror
             {
                 //何もしない: そもそもプロパティとして外に出してない
             }
-            
+
             public Vector2 CurrentCenterPosition { get; private set; }
 
-            public override int LandmarkStartIndex => 48;
-            public override int LandmarkLength => 12;
+            public override int LandmarkStartIndex => 60;
+            public override int LandmarkLength => 8;
         }
     }
 

@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror
             {
                 //そこそこちゃんと喋ってないと検出しない、という設定のつもり
                 VisemeThreshold = 0.2f,
-                OnCountThreshold = 8,
+                OnCountThreshold = 6,
                 OffCountThreshold = 16,
             };
             
@@ -139,12 +139,12 @@ namespace Baku.VMagicMirror
         {
             _inactiveJitter.AngleRange = new Vector3(4f, 4f, 4f);
             _inactiveJitter.ChangeTimeMin = 6.0f;
-            _inactiveJitter.ChangeTimeMax = 18.0f;
+            _inactiveJitter.ChangeTimeMax = 15.0f;
             _inactiveJitter.DumpFactor = inactiveFactors.x;
             _inactiveJitter.PositionFactor = inactiveFactors.y;
             _inactiveJitter.UseZAngle = true;
 
-            _activeJitter.AngleRange = new Vector3(5f, 8f, 8f);
+            _activeJitter.AngleRange = new Vector3(6f, 12f, 12f);
             _activeJitter.ChangeTimeMin = 0.5f;
             _activeJitter.ChangeTimeMax = 2.0f;
             _activeJitter.DumpFactor = activeFactors.x;
@@ -204,12 +204,12 @@ namespace Baku.VMagicMirror
             //NOTE: ちょっとイビツな処理だが、これらのカウントは秒数と深いかかわりがあるので許してくれ…
             if (Application.targetFrameRate == 30)
             {
-                _voiceOnOffParser.OnCountThreshold = 4;
+                _voiceOnOffParser.OnCountThreshold = 3;
                 _voiceOnOffParser.OffCountThreshold = 8;
             }
             else
             {
-                _voiceOnOffParser.OnCountThreshold = 8;
+                _voiceOnOffParser.OnCountThreshold = 6;
                 _voiceOnOffParser.OffCountThreshold = 16;
             }
 

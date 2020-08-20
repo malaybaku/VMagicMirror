@@ -225,7 +225,7 @@ namespace Baku.VMagicMirror
         
         private void CalculateAngles()
         {
-            if (!IsNoTrackingApplied)
+            if (!ShouldApply)
             {
                 return;
             }

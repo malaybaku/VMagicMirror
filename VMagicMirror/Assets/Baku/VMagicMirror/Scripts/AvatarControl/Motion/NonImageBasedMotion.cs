@@ -88,10 +88,6 @@ namespace Baku.VMagicMirror
 
         
         private bool _shouldApply = true;
-        //NOTE: 判断基準としては
-        //「トラッキングが全く無いか、または顔トラッキングのチェック自体はオンだけど
-        //(カメラ選びが不適切とかで)実質的に動いてない」
-        //という状況なら処理を適用してもいいよね、と判断する
         private bool ShouldApply
         {
             get => _shouldApply;
@@ -116,25 +112,28 @@ namespace Baku.VMagicMirror
                 }
             }
         }
-        
-        //現在webカメラも外部トラッキングも無効のとき、つまりこの処理の出番っぽいときはtrueになる
-        private bool _isNoTrackingApplied = true;
 
-        /// <summary> Updateで有効な姿勢制御を行ってもよいかどうかを取得、設定します。 </summary>
-        public bool IsNoTrackingApplied
+        //外部トラッキングについては接続できてる/できてないが明確なほうがバリューありそうなので、適用しない。
+        //いっぽうwebカメラで顔トラが動く前 == 初期インストール直後を意味し、ここは親切にしたいので適用する。
+        private void UpdateShouldApply() => ShouldApply = 
+            FaceControlMode == FaceControlModes.None || 
+            (FaceControlMode == FaceControlModes.WebCam && !_faceTracker.FaceDetectedAtLeastOnce);
+        
+        private FaceControlModes _faceControlMode = FaceControlModes.WebCam;
+        public FaceControlModes FaceControlMode
         {
-            get => _isNoTrackingApplied;
+            get => _faceControlMode;
             set
             {
-                if (_isNoTrackingApplied == value)
+                if (_faceControlMode == value)
                 {
                     return;
                 }
-                _isNoTrackingApplied = value;
-                ShouldApply = IsNoTrackingApplied || !_faceTracker.FaceDetectedAtLeastOnce;
+                _faceControlMode = value;
+                UpdateShouldApply();
             }
         }
-
+        
         private void Start()
         {
             _inactiveJitter.AngleRange = new Vector3(4f, 4f, 4f);
@@ -186,7 +185,7 @@ namespace Baku.VMagicMirror
                 }
             };
         }
-
+        
         private void LateUpdate()
         {
             //オプションで止められている場合、本格的に何もやらない
@@ -195,7 +194,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            ShouldApply = IsNoTrackingApplied || !_faceTracker.FaceDetectedAtLeastOnce;
+            UpdateShouldApply();
             if (!ShouldApply)
             {
                 return;
@@ -225,11 +224,6 @@ namespace Baku.VMagicMirror
         
         private void CalculateAngles()
         {
-            if (!ShouldApply)
-            {
-                return;
-            }
-
             //NOTE: 初期実装で声パーサーしか使わないのをいいことにこういう実装。
             _voiceOnOffParser.Update();
             _rawActive = _voiceOnOffParser.IsTalking;

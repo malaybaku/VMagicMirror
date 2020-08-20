@@ -102,7 +102,9 @@ RawInput.Sharpもほぼ同様の導入手順です。
 - NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
 - 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
 
-UniVRMについては、導入後に`Assets/VRM/UniHumanoid/Scripts/HumanPoseTransfer.cs`の68行目付近に次のようなコードを追記します。
+UniVRMについては、導入後に2箇所を変更します。
+
+`Assets/VRM/UniHumanoid/Scripts/HumanPoseTransfer.cs`の68行目付近に次のようなコードを追記します。
 
 ```
 //...
@@ -116,6 +118,21 @@ UniVRMについては、導入後に`Assets/VRM/UniHumanoid/Scripts/HumanPoseTra
 //...
 ```
 
+また、`Assets/VRM/UniVRM/Scripts/BlendShape/VRMBlendShapeProxy.cs`の20行目付近に次のようなコードを追記します。
+
+```
+//...
+        //この関数を追記
+        public void ReloadBlendShape()
+        {
+            m_merger?.RestoreMaterialInitialValues(BlendShapeAvatar.Clips);
+            if (BlendShapeAvatar != null)
+            {
+                m_merger = new BlendShapeMerger(BlendShapeAvatar.Clips, transform);                
+            }
+        }
+//...
+```
 
 ### 4.3. ビルド
 

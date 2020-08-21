@@ -275,8 +275,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ccd5f299c1abbd4bb7387e98b79aefa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedDumpForceFactor: 10
-  posDumpForceFactor: 50
+  speedDumpForceFactor: {x: 16, y: 16, z: 16}
+  posDumpForceFactor: {x: 50, y: 60, z: 60}
   headRate: 0.5
 --- !u!114 &1338865419136667663
 MonoBehaviour:

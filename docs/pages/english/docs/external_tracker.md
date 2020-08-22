@@ -92,6 +92,12 @@ On the other hand, the tracking precision decreases when the device cannot see y
 
 In this case turn off `Apply LipSync using External Tracker Data` to use conventional microphone based lipsync.
 
+#### Perfect Sync
+
+Perfect Sync is an advanced feature supported from v1.3.0, to move the avatar very rich with external tracking.
+
+See the detail at [Use Perfect Sync for External Tracking](../tips/perfect_sync).
+
 
 #### Face Switch
 {: .doc-sec2 }

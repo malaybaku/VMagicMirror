@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Use Perfect Sync for External Tracking
-permalink: /en/tips/use_vroid_hub
+permalink: /en/tips/perfect_sync
 lang_prefix: /en/
 ---
 
@@ -14,18 +14,18 @@ Perfect Sync is supported from v1.3.0.
 #### What is Perfect Sync?
 {: .doc-sec2 }
 
-"Perfect Sync" is the feature to achieve rich expression using [External Tracking](../docs/external_tracker). The feature is based on External Tracking, so it requires Face ID supported iPhone or iPad.
+"Perfect Sync" is an advanced feature of [External Tracking](../docs/external_tracker), to achieve rich facial expressions. The feature is based on External Tracking, so it requires Face ID supported iPhone or iPad.
 
 Please see [External Tracking](../docs/external_tracker) beforehand, to understand how to use the system.
 
-From the technical view, Perfect Sync maps the blendshapes from iOS ARKit FaceTracking to VRM's BlendShapeClips.
+From the technical view, Perfect Sync maps the all blendshapes obtained by iOS ARKit FaceTracking to VRM's BlendShapeClips.
 
 　
 
 #### Try Perfect Sync
 {: .doc-sec2 }
 
-*If you are hurry to go into how to model setup, you can skip this section.
+*If you already know how perfect sync works with other applications (like Vear), you can skip this section.
 
 There are 2 ways to try Perfect Sync right now.
 
@@ -33,22 +33,24 @@ The first way is to load ready-to-use model.
 
 Download [千駄ヶ谷 渋（iPhone用BlendShapeあり）](https://hub.vroid.com/characters/7307666808713466197/models/1090122510476995853), and load on VMagicMirror. Then, open `Ex.Tracker` tab and connect to the iOS app. Then turn on `Use Perfect Sync` check.
 
-(TODO: screenshot)
-
 That's it! Try move your eyebrow, mouth, or tongue as you want.
 
-(TODO: screenshot)
+<div class="row">
+{% include docimg.html file="./images/tips/perfect_sync_setup_model_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+</div>
 
-Also, you can try with other model which supports [Vear](https://apps.apple.com/jp/app/id1490697369) Perfect Sync. The model supporting Vear Perfect Sync will also work on VMagicMirror. (Please see the bottom section on this page for the detail.)
+Also, you can try other models which work on [Vear](https://apps.apple.com/jp/app/id1490697369) Perfect Sync. The model working on Vear Perfect Sync will also work on VMagicMirror. (*Please see the bottom section about compatibility.)
 
 
-The second way is to use VRoid Studio model. This way is available if the model is VRoid Studio based, and you do not add any Blendshape to model mesh.
+The second way is to use VRoid Studio model. This way is available if the model is created by VRoid Studio, and you do not add any Blendshape to model mesh.
 
 Load the model, and open `Ex.Tracker` tab and connect to the iOS app. Then turn on `Use Perfect Sync`, `Use VRoid Default Setting` check. now it is ready!
 
-(TODO: screenshot)
+<div class="row">
+{% include docimg.html file="./images/tips/perfect_sync_vroid_default_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+</div>
 
-This way is handy but the expression is not so rich. For example, this way does not support tongue out, cheek puff etc.
+The second way is handy but the expression is not so rich. For example, this way does not support tongue out, cheek puff etc.
 
 
 #### Setup Step1. Prepare model BlendShapes
@@ -60,9 +62,9 @@ The first step is to create 52 blendshapes corresponding to iOS ARKit FaceTracki
 
 Please see the variation of the blendshape and how the mesh should move on each blendshape in the following blog post. (In Japanese, but you will be able to read with some translation tools.)
 
-https://hinzka.hatenablog.com/entry/2020/06/15/072929
+[iPhoneトラッキング向けBlendShapeリスト (The BlendShape list for iPhone Face Tracking)](https://hinzka.hatenablog.com/entry/2020/06/15/072929)
 
-If you want to see the example, [千駄ヶ谷 渋（iPhone用BlendShapeあり）](https://hub.vroid.com/characters/7307666808713466197/models/1090122510476995853) model will be the help.
+If you need an example, [千駄ヶ谷 渋（iPhone用BlendShapeあり）](https://hub.vroid.com/characters/7307666808713466197/models/1090122510476995853) model will be the help.
 
 Note that, the blog above shows all of 52 blendshapes, but you can skip some of them if you feel they are too subtle.
 
@@ -72,7 +74,7 @@ Note that, the blog above shows all of 52 blendshapes, but you can skip some of 
 #### Setup Step2. Create BlendShapeClip on Unity
 {: .doc-sec2 }
 
-Import the model with blendshapes created in previous step. Then, add BlendShapeClips for each blendshape. Please set the names of the BlendShapeClip as following.
+Import the model, and add following 52 BlendShapeClips. Please set the names of the BlendShapeClip as following.
 
 `BrowInnerUp`
 `BrowDownLeft`
@@ -137,10 +139,32 @@ Import the model with blendshapes created in previous step. Then, add BlendShape
 
 Basically each BlendShapeClip should use only one Blendshape created in previous step, and its `weight` will be `100`.
 
+<div class="row">
+{% include docimg.html file="./images/tips/perfect_sync_clip_setting_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+</div>
+
 If you do not create blendshape in Step 1 for some BlendShapeClip, then leave those BlendShapeClip content empty, which means the clip actually does nothing.
 
-(TODO: screenshot)
+<div class="row">
+{% include docimg.html file="./images/tips/perfect_sync_empty_clip_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+</div>
 
+After the setup, export the VRM.
+
+#### References
+{: .doc-sec2 }
+
+See the following blog posts (in Japanese), to check the techniques for perfect sync model setup.
+
+[iPhoneトラッキング向けBlendShapeリスト (The BlendShape list for iPhone Face Tracking)](https://hinzka.hatenablog.com/entry/2020/06/15/072929)
+
+[VRoidでかんたん！パーフェクトシンク（1/3）VRoidモデルのFBXエクスポート (VRoid Perfect Sync (1/3) Export FBX)](https://hinzka.hatenablog.com/entry/2020/08/15/145040)
+
+[パーフェクトシンクであそぼう！ (Enjoy Perfect Sync!)](https://hinzka.hatenablog.com/entry/2020/08/15/145040)
+
+[パーフェクトシンクの顔をお着換えモデルに移植しよう (Copy perfect sync data to cloth changed model)](https://hinzka.hatenablog.com/entry/2020/08/17/001851)
+
+　
 
 #### Note. The background of Vear compatibility
 {: .doc-sec2 }

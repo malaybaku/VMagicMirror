@@ -88,20 +88,14 @@ namespace Baku.VMagicMirror.ExternalTracker
                 ParseClipCompletenessToSendMessage();
             };
 
-            vrmLoadable.PostVrmLoaded += info =>
-            {
-                //ロード直後にクリップ差し替えが必要ならやっておく
-                if (UseVRoidDefaultSetting && IsActive)
-                {
-                    RefreshClips();
-                }
-            };
+            vrmLoadable.PostVrmLoaded += info => RefreshClips();
 
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
                 _blendShape = null;
                 _modelBaseClips = null;
+                _modelClipsWithVRoidSetting = null;
             };
             
             receiver.AssignCommandHandler(
@@ -264,9 +258,9 @@ namespace Baku.VMagicMirror.ExternalTracker
             _blendShapeInitializer.InitializeBlendShapes(false);
             _blendShape.Apply();
 
-            _blendShape.BlendShapeAvatar.Clips = !IsActive || !UseVRoidDefaultSetting
-                ? _modelBaseClips.ToList()
-                : _modelClipsWithVRoidSetting.ToList();
+            _blendShape.BlendShapeAvatar.Clips = IsActive && UseVRoidDefaultSetting
+                ? _modelClipsWithVRoidSetting.ToList()
+                : _modelBaseClips.ToList();
 
             //BlendShapeInitializerは切り替わったあとのClip一覧を理解しているべき。
             //そうじゃないとFaceSwitchとかWord to Motionとの組み合わせで破綻するため。

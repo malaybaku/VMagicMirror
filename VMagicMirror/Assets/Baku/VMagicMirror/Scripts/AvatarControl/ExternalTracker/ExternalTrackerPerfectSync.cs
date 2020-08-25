@@ -88,7 +88,13 @@ namespace Baku.VMagicMirror.ExternalTracker
                 ParseClipCompletenessToSendMessage();
             };
 
-            vrmLoadable.PostVrmLoaded += info => RefreshClips();
+            vrmLoadable.PostVrmLoaded += info =>
+            {
+                if (IsActive && UseVRoidDefaultSetting)
+                {
+                    RefreshClips();
+                }
+            };
 
             vrmLoadable.VrmDisposing += () =>
             {

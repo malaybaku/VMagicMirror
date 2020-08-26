@@ -76,10 +76,10 @@ VMagicMirrorのコントロールパネルで`Ex Tracker`タブを選択し、`�
 (※他のアプリケーションがサポートされた場合、ここに随時追記されます。)
 
 
-#### 外部トラッキングによるリップシンクを使う
+#### 外部トラッキングによるリップシンク
 {: .doc-sec2 }
 
-`リップシンクも外部トラッキングの値を使用`をオンにすると、口の動きも外部トラッキングで取得した値が適用されます。
+`リップシンクも外部トラッキングの値を使用`をオンにすることで、口の動きも外部トラッキングで取得した値が適用されます。
 
 <div class="row">
 {% include docimg.html file="./images/docs/ex_tracker_40_replace_lipsync.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}

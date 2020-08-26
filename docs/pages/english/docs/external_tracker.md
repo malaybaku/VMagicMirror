@@ -77,7 +77,7 @@ Please see per-app specific setup process.
 #### Use LipSync with External Tracking App
 {: .doc-sec2 }
 
-Check `Apply LipSync using External Tracker Data`, to utilize mouth motion capture from the external app.
+Check `Apply LipSync using External Tracker Data`, to use mouth motion capture data from the external app.
 
 <div class="row">
 {% include docimg.html file="./images/docs/ex_tracker_40_replace_lipsync.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}

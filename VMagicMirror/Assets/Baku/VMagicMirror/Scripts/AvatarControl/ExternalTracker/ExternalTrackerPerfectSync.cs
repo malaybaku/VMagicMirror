@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         private IMessageSender _sender = null;
         //VRoid向けのデフォルト設定に入ってるクリップのうち、パーフェクトシンクの分だけ抜き出したもの
         private List<BlendShapeClip> _vroidDefaultClips = null;
-        private bool _canOverwriteMouthBlendShape = false;
+        private bool _canOverwriteMouthBlendShape = true;
 
         private VRMBlendShapeProxy _blendShape = null;
         //モデル本来のクリップ一覧

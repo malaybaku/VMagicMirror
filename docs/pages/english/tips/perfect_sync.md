@@ -77,62 +77,105 @@ Note that, the blog above shows all of 52 blendshapes, but you can skip some of 
 Import the model, and add following 52 BlendShapeClips. Please set the names of the BlendShapeClip as following.
 
 `BrowInnerUp`
+
 `BrowDownLeft`
+
 `BrowDownRight`
+
 `BrowOuterUpLeft`
+
 `BrowOuterUpRight`
 
 `EyeLookUpLeft`
+
 `EyeLookUpRight`
+
 `EyeLookDownLeft`
+
 `EyeLookDownRight`
+
 `EyeLookInLeft`
+
 `EyeLookInRight`
+
 `EyeLookOutLeft`
+
 `EyeLookOutRight`
 
 `EyeBlinkLeft`
+
 `EyeBlinkRight`
+
 `EyeSquintRight`
+
 `EyeSquintLeft`
+
 `EyeWideLeft`
+
 `EyeWideRight`
 
 `CheekPuff`
+
 `CheekSquintLeft`
+
 `CheekSquintRight`
 
 `NoseSneerLeft`
+
 `NoseSneerRight`
 
 `JawOpen`
+
 `JawForward`
+
 `JawLeft`
+
 `JawRight`
 
 `MouthFunnel`
+
 `MouthPucker`
+
 `MouthLeft`
+
 `MouthRight`
+
 `MouthRollUpper`
+
 `MouthRollLower`
+
 `MouthShrugUpper`
+
 `MouthShrugLower`
+
 `MouthClose`
 
 `MouthSmileLeft`
+
 `MouthSmileRight`
+
 `MouthFrownLeft`
+
 `MouthFrownRight`
+
 `MouthDimpleLeft`
+
 `MouthDimpleRight`
+
 `MouthUpperUpLeft`
+
 `MouthUpperUpRight`
+
 `MouthLowerDownLeft`
+
 `MouthLowerDownRight`
+
 `MouthPressLeft`
+
 `MouthPressRight`
+
 `MouthStretchLeft`
+
 `MouthStretchRight`
 
 `TongueOut`

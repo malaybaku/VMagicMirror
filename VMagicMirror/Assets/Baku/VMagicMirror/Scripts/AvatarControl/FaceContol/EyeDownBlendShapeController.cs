@@ -1,4 +1,5 @@
 ﻿using System;
+using Baku.VMagicMirror.ExternalTracker;
 using UnityEngine;
 using UniRx;
 using VRM;
@@ -25,16 +26,22 @@ namespace Baku.VMagicMirror
         [SerializeField] [Range(0.05f, 1.0f)] private float timeScaleFactor = 0.3f;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, FaceTracker faceTracker, FaceControlConfiguration config)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            FaceTracker faceTracker, 
+            ExternalTrackerDataSource exTracker,
+            FaceControlConfiguration config)
         {
             _config = config;
             _faceTracker = faceTracker;
+            _exTracker = exTracker;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
 
         private FaceControlConfiguration _config;
         private FaceTracker _faceTracker = null;
+        private ExternalTrackerDataSource _exTracker = null;
 
         private EyebrowBlendShapeSet EyebrowBlendShape => faceControlManager.EyebrowBlendShape;
 
@@ -72,13 +79,29 @@ namespace Baku.VMagicMirror
         
         private void LateUpdate()
         {
+            //モデルロードの前
             if (!IsInitialized)
             {
                 return;
             }
 
             AdjustEyeRotation();
-            AdjustEyebrow();
+
+            //パーフェクトシンクが動いてるとき、眉は眉単体で動かせるため、このスクリプトの仕事はない
+            if (_exTracker.Connected && _config.ShouldStopEyeDownOnBlink)
+            {
+                //自前で動かしたぶんは直しておく:
+                //  パーフェクトシンクの最初のLateUpdateが走る前にここを通すと破綻を防げるはず
+                if (_hasAppliedEyebrowBlendShape)
+                {
+                    EyebrowBlendShape.UpdateEyebrowBlendShape(0, 0);
+                    _hasAppliedEyebrowBlendShape = false;
+                }
+            }
+            else
+            {
+                AdjustEyebrow();                
+            }
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -129,8 +152,14 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            float leftBlink = _blendShapeProxy.GetValue(BlinkLKey);
-            float rightBlink = _blendShapeProxy.GetValue(BlinkRKey);
+            bool shouldUseAlternativeBlink = _exTracker.Connected && _config.ShouldStopEyeDownOnBlink;
+            
+            float leftBlink = shouldUseAlternativeBlink
+                ? _config.AlternativeBlinkL
+                : _blendShapeProxy.GetValue(BlinkLKey);
+            float rightBlink = shouldUseAlternativeBlink
+                ? _config.AlternativeBlinkR
+                : _blendShapeProxy.GetValue(BlinkRKey);
 
             //NOTE: 毎回LookAtで値がうまく設定されてる前提でこういう記法になっている事に注意
             _leftEyeBone.localRotation *= Quaternion.AngleAxis(

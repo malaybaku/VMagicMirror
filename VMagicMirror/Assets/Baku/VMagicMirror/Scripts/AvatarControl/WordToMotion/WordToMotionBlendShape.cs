@@ -30,10 +30,10 @@ namespace Baku.VMagicMirror
 
         private bool _reserveBlendShapeReset = false;
 
-        private EyeBoneResetter _eyeBoneResetter;
+        private EyeBonePostProcess _eyeBoneResetter;
         
         [Inject]
-        public void Initialize(EyeBoneResetter eyeBoneResetter)
+        public void Initialize(EyeBonePostProcess eyeBoneResetter)
         {
             _eyeBoneResetter = eyeBoneResetter;
         }

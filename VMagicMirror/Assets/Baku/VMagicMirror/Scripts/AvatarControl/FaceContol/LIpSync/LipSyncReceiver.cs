@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
         private string _receivedDeviceName = "";
         private bool _isLipSyncActive = true;
         private bool _isExTrackerActive = false;
-        private bool _isExTrackerLipSyncActive = false;
+        private bool _isExTrackerLipSyncActive = true;
 
         [Inject]
         public void Initialize(IMessageReceiver receiver)
@@ -69,13 +69,13 @@ namespace Baku.VMagicMirror
             RefreshMicrophoneLipSyncStatus();
         }
 
-        private void SetExTrackerLipSyncEnable(bool enable)
+        private void SetExTrackerEnable(bool enable)
         {
             _isExTrackerActive = enable;
             RefreshMicrophoneLipSyncStatus();
         }
 
-        private void SetExTrackerEnable(bool enable)
+        private void SetExTrackerLipSyncEnable(bool enable)
         {
             _isExTrackerLipSyncActive = enable;
             RefreshMicrophoneLipSyncStatus();

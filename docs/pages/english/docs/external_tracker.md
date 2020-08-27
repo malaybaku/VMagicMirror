@@ -77,7 +77,7 @@ Please see per-app specific setup process.
 #### Use LipSync with External Tracking App
 {: .doc-sec2 }
 
-Check `Apply LipSync using External Tracker Data`, to utilize mouth motion capture from the external app.
+Check `Apply LipSync using External Tracker Data`, to use mouth motion capture data from the external app.
 
 <div class="row">
 {% include docimg.html file="./images/docs/ex_tracker_40_replace_lipsync.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
@@ -91,6 +91,12 @@ There is also another feature that, the external app gets mouth shape by camera,
 On the other hand, the tracking precision decreases when the device cannot see your mouth (mainly because of mic or hop guard).
 
 In this case turn off `Apply LipSync using External Tracker Data` to use conventional microphone based lipsync.
+
+#### Perfect Sync
+
+Perfect Sync is an advanced feature supported from v1.3.0, to move the avatar very rich with external tracking.
+
+See the detail at [Use Perfect Sync for External Tracking](../tips/perfect_sync).
 
 
 #### Face Switch

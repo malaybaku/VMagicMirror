@@ -57,8 +57,16 @@ namespace Baku.VMagicMirror
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string className, string windowName);
         public static IntPtr CurrentWindowHandle = IntPtr.Zero;
-        public static IntPtr GetUnityWindowHandle() => CurrentWindowHandle == IntPtr.Zero ? CurrentWindowHandle = FindWindow(null, Application.productName) : CurrentWindowHandle;
 
+        public static IntPtr GetUnityWindowHandle()
+        {
+            if (CurrentWindowHandle == IntPtr.Zero)
+            {
+                int id = System.Diagnostics.Process.GetCurrentProcess().Id;
+                CurrentWindowHandle = GetSelfWindowHandle(id);
+            }
+            return CurrentWindowHandle;
+        }
         [DllImport("user32.dll")]
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong); /*x uint o int unchecked*/
         [DllImport("user32.dll")]
@@ -125,16 +133,23 @@ namespace Baku.VMagicMirror
         public static extern uint DwmExtendFrameIntoClientArea(IntPtr hWnd, ref DwmMargin margins);
         public static void SetDwmTransparent(bool enable)
         {
-            var margins = new DwmMargin() { cxLeftWidth = enable ? -1 : 0 };
+            int margin = enable ? -1 : 0;
+            var margins = new DwmMargin()
+            {
+                cxLeftWidth = margin,
+                cxRightWidth = margin,
+                cyTopHeight = margin,
+                cyBottomHeight = margin,
+            };
             DwmExtendFrameIntoClientArea(GetUnityWindowHandle(), ref margins);
         }
 
         public const int GWL_STYLE = -16;
-        public const uint WS_POPUP = 0x80000000;
-        public const uint WS_VISIBLE = 0x10000000;
+        public const uint WS_POPUP = 0x8000_0000;
+        public const uint WS_VISIBLE = 0x1000_0000;
         public const int GWL_EXSTYLE = -20;
-        public const uint WS_EX_LAYERED = 0x00080000;
-        public const uint WS_EX_TRANSPARENT = 0x00000020;
+        public const uint WS_EX_LAYERED = 0x0008_0000;
+        public const uint WS_EX_TRANSPARENT = 0x0000_0020;
 
         [DllImport("user32.dll")]
         public static extern bool SetLayeredWindowAttributes(IntPtr hWnd, uint crKey, byte bAlpha, uint dwFlags);
@@ -147,6 +162,24 @@ namespace Baku.VMagicMirror
             SetLayeredWindowAttributes(GetUnityWindowHandle(), 0, alpha, LWA_ALPHA);
         }
 
+        /// <summary>
+        /// ウィンドウサイズを設定します。
+        /// </summary>
+        /// <param name="cx"></param>
+        /// <param name="cy"></param>
+        public static void RefreshWindowSize(int cx, int cy)
+        {
+            SetWindowPos(GetUnityWindowHandle(),
+                IntPtr.Zero,
+                0, 0, cx, cy,
+                SetWindowPosFlags.IgnoreMove | 
+                    SetWindowPosFlags.IgnoreZOrder | 
+                    SetWindowPosFlags.FrameChanged | 
+                    SetWindowPosFlags.DoNotChangeOwnerZOrder |
+                    SetWindowPosFlags.DoNotActivate | 
+                    SetWindowPosFlags.AsynchronousWindowPosition
+            );
+        }
 
         public delegate bool EnumWindowsDelegate(IntPtr hWnd, IntPtr lparam);
 
@@ -154,31 +187,27 @@ namespace Baku.VMagicMirror
         [return: MarshalAs(UnmanagedType.Bool)]
         private extern static bool EnumWindows(EnumWindowsDelegate lpEnumFunc, IntPtr lparam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetWindowTextLength(IntPtr hWnd);
-
-        public static Dictionary<IntPtr, string> GetAllWindowHandle()
+        [DllImport("user32.dll")]
+        private static extern int GetWindowThreadProcessId(IntPtr hWnd, ref int processId);
+        
+        private static IntPtr GetSelfWindowHandle(int processId)
         {
-            var ret = new Dictionary<IntPtr, string>();
-            Func<IntPtr, IntPtr, bool> func = new Func<IntPtr, IntPtr, bool>((hWnd, lparam) =>
-            {
-                int textLen = GetWindowTextLength(hWnd);
-                if (0 < textLen)
-                {
-                    //ウィンドウのタイトルを取得する
-                    StringBuilder tsb = new StringBuilder(textLen + 1);
-                    GetWindowText(hWnd, tsb, tsb.Capacity);
+            var ret = IntPtr.Zero;
 
-                    ret.Add(hWnd, tsb.ToString());
+            bool Func(IntPtr hWnd, IntPtr lParam)
+            {
+                int id = -1;
+                GetWindowThreadProcessId(hWnd, ref id);
+                if (id == processId)
+                {
+                    ret = hWnd;
+                    return false;
                 }
                 return true;
-            });
-            EnumWindows(new EnumWindowsDelegate(func), IntPtr.Zero);
-
-            return ret;
+            }
+            
+            EnumWindows(Func, IntPtr.Zero);
+            return ret;            
         }
 
         #endregion

@@ -6,7 +6,7 @@
         public CalibrationCompletedDataSender(IMessageSender sender, FaceTracker faceTracker)
         {
             faceTracker.CalibrationCompleted += 
-                data => sender.SendCommand(MessageFactory.Instance.SetCalibrateFaceData(data));
+                data => sender.SendCommand(MessageFactory.Instance.SetCalibrationFaceData(data));
         }
     }
 }

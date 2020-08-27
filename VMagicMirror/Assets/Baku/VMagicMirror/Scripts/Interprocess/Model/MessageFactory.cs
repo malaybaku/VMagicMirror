@@ -18,9 +18,13 @@ namespace Baku.VMagicMirror
         private static Message WithArg(string content, [CallerMemberName]string command = "")
             => new Message(command, content);
 
+        public Message SetUnityProcessId(int id) => WithArg(id.ToString());
+
+        public Message RequestShowError(string data) => WithArg(data);
+        
         public Message CloseConfigWindow() => NoArg();
 
-        public Message SetCalibrateFaceData(string data) => WithArg(data);
+        public Message SetCalibrationFaceData(string data) => WithArg(data);
 
         public Message SetBlendShapeNames(string v) => WithArg(v);
 
@@ -38,6 +42,8 @@ namespace Baku.VMagicMirror
         public Message MidiNoteOn(int noteNumber) => WithArg($"{noteNumber}");
 
         public Message ExTrackerCalibrateComplete(string data) => WithArg(data);
+        
+        public Message ExTrackerSetPerfectSyncMissedClipNames(string data) => WithArg(data);
         
         #region VRoid
 

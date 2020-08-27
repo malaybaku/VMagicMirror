@@ -49,6 +49,31 @@ namespace Baku.VMagicMirror
         /// このフラグがtrueのとき、リップシンク系の処理はVRMBlendShapeにアクセスしないことが望ましいです。
         /// </remarks>
         public bool FaceSwitchRequestStopLipSync { get; set; }
+        
+        /// <summary>
+        /// 外部トラッカーによるパーフェクトシンクによって、通常と異なる瞬き処理をしているとtrueになります。
+        /// trueの場合、瞬き時の目下げ処理はスキップする必要があります。
+        /// </summary>
+        /// <remarks>
+        /// setterを使っていいのは<see cref="ExternalTrackerPerfectSync"/>だけです。
+        /// </remarks>
+        public bool ShouldStopEyeDownOnBlink { get; set; }
+        
+        /// <summary>
+        /// <see cref="ShouldStopEyeDownOnBlink"/>がtrueのとき、代わりに使うべきLBlinkの値が入ります。
+        /// </summary>
+        /// <remarks>
+        /// setterを使っていいのは<see cref="ExternalTrackerPerfectSync"/>だけです。
+        /// </remarks>
+        public float AlternativeBlinkL { get; set; }
+
+        /// <summary>
+        /// <see cref="ShouldStopEyeDownOnBlink"/>がtrueのとき、代わりに使うべきRBlinkの値が入ります。
+        /// </summary>
+        /// <remarks>
+        /// setterを使っていいのは<see cref="ExternalTrackerPerfectSync"/>だけです。
+        /// </remarks>
+        public float AlternativeBlinkR { get; set; }
 
         #endregion
         

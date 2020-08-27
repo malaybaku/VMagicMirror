@@ -52,12 +52,9 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 _proxy = info.blendShape;
-                _keys = CreateKeys(
-                    _proxy.BlendShapeAvatar
-                        .Clips
-                        .Select(c => c.BlendShapeName)
-                    );
                 _hasModel = true;
+                //NOTE: ReloadClipsのなかで_hasModelによるガードがかかってるのを踏まえてこういう順番です
+                ReloadClips();
             };
 
             vrmLoadable.VrmDisposing += () =>
@@ -70,6 +67,20 @@ namespace Baku.VMagicMirror
         private bool _hasModel;
         private VRMBlendShapeProxy _proxy;
         private BlendShapeKey[] _keys = new BlendShapeKey[0];
+
+        public void ReloadClips()
+        {
+            if (!_hasModel)
+            {
+                return;
+            }
+            
+            _keys = CreateKeys(
+                _proxy.BlendShapeAvatar
+                    .Clips
+                    .Select(c => c.BlendShapeName)
+            );
+        }
 
         public void InitializeBlendShapes(bool keepLipSync)
         {

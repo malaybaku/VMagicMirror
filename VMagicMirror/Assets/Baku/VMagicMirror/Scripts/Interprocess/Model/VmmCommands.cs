@@ -83,6 +83,7 @@ namespace Baku.VMagicMirror
         public const string AutoBlinkDuringFaceTracking = nameof(AutoBlinkDuringFaceTracking);
         public const string EnableHeadRotationBasedBlinkAdjust = nameof(EnableHeadRotationBasedBlinkAdjust);
         public const string EnableLipSyncBasedBlinkAdjust = nameof(EnableLipSyncBasedBlinkAdjust);
+        public const string EnableVoiceBasedMotion = nameof(EnableVoiceBasedMotion);
         public const string DisableFaceTrackingHorizontalFlip = nameof(DisableFaceTrackingHorizontalFlip);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
@@ -104,6 +105,7 @@ namespace Baku.VMagicMirror
 
         // Motion, Eye
         public const string LookAtStyle = nameof(LookAtStyle);
+        public const string SetEyeBoneRotationScale = nameof(SetEyeBoneRotationScale);
 
         // Motion, Image-based Hand
         public const string EnableImageBasedHandTracking = nameof(EnableImageBasedHandTracking);
@@ -187,6 +189,8 @@ namespace Baku.VMagicMirror
         // External Tracker
         public const string ExTrackerEnable = nameof(ExTrackerEnable);
         public const string ExTrackerEnableLipSync = nameof(ExTrackerEnableLipSync);
+        public const string ExTrackerEnablePerfectSync = nameof(ExTrackerEnablePerfectSync);
+        public const string ExTrackerUseVRoidDefaultForPerfectSync = nameof(ExTrackerUseVRoidDefaultForPerfectSync);    
         public const string ExTrackerCalibrate = nameof(ExTrackerCalibrate);
         public const string ExTrackerSetCalibrateData = nameof(ExTrackerSetCalibrateData);
         public const string ExTrackerSetSource = nameof(ExTrackerSetSource);

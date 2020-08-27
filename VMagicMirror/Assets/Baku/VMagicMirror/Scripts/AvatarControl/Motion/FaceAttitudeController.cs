@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UniRx;
 using Zenject;
 
@@ -8,13 +7,13 @@ namespace Baku.VMagicMirror
     public class FaceAttitudeController : MonoBehaviour
     {
         //NOTE: バネマス系のパラメータ(いわゆるcとk)
-        [SerializeField] private float speedDumpForceFactor = 10.0f;
-        [SerializeField] private float posDumpForceFactor = 20.0f;
+        [SerializeField] private Vector3 speedDumpForceFactor = new Vector3(15f, 10f, 10f);
+        [SerializeField] private Vector3 posDumpForceFactor = new Vector3(50f, 50f, 50f);
 
         [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")]
         [Range(0f, 1f)]
         [SerializeField] private float headRate = 0.5f;
-        
+
         private FaceTracker _faceTracker = null;
         
         [Inject]
@@ -32,9 +31,13 @@ namespace Baku.VMagicMirror
                 v => SetHeadYawDeg(v * HeadYawRateToDegFactor)
             );
 
-            faceTracker.FaceParts.Nose.NoseBaseHeightValue.Subscribe(
-                v => SetHeadPitchDeg(NoseBaseHeightToNeckPitchDeg(v))
-            );
+            //こっちは顔サイズで正規化された無次元量が飛んでくるので更に注意: だいたい-0.12 * 0.12くらい
+            faceTracker.FaceParts.Outline.HeadPitchRate.Subscribe(
+                v =>
+                {
+                    float rate = Mathf.Clamp(v - _faceTracker.CalibrationData.eyeFaceYDiff, -1f, 1f);
+                    SetHeadPitchDeg(rate * HeadPitchRateToDegFactor);
+                });
             
             vrmLoadable.VrmLoaded += info =>
             {
@@ -56,11 +59,14 @@ namespace Baku.VMagicMirror
         
         //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
         private const float HeadRollRateApplyFactor = 0.8f;
-        //NOTE: もとは50だったんだけど、腰曲げに反映する値があることを想定して小さくしてます
-        private const float HeadYawRateToDegFactor = 28.00f; 
-
+        //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整
+        private const float HeadYawRateToDegFactor = 16.00f;
+        private const float HeadPitchRateToDegFactor = 28.0f;
+        
         private const float HeadTotalRotationLimitDeg = 40.0f;
-        private const float NoseBaseHeightDifToAngleDegFactor = 300f;
+
+        private const float YawSpeedToPitchDecreaseFactor = 0.01f;
+        private const float YawSpeedToPitchDecreaseLimit = 10f;
 
         private bool _hasModel = false;
         private bool _hasNeck = false;
@@ -87,17 +93,23 @@ namespace Baku.VMagicMirror
                 _prevRotationSpeedEuler = Vector3.zero;
                 return;
             }
-
-            //やりたい事: ロール、ヨー、ピッチそれぞれを独立にsmoothingしてから最終的に適用する
-            // いわゆるバネマス系扱いで陽的オイラー法を回す。やや過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
-            var accel = 
-                -_prevRotationSpeedEuler * speedDumpForceFactor -
-                (_prevRotationEuler - _latestRotationEuler) * posDumpForceFactor;
-            var speed = _prevRotationSpeedEuler + Time.deltaTime * accel;
+            
+            //やりたい事: バネマス系扱いで陽的オイラー法を回してスムージングする。
+            //過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
+            var acceleration =
+                - Mul(speedDumpForceFactor, _prevRotationSpeedEuler) -
+                Mul(posDumpForceFactor, _prevRotationEuler - _latestRotationEuler);
+            var speed = _prevRotationSpeedEuler + Time.deltaTime * acceleration;
             var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
+
+            var rotationAdjusted = new Vector3(
+                rotationEuler.x* PitchFactorByYaw(rotationEuler.y) + PitchDiffByYawSpeed(speed.x),
+                rotationEuler.y, 
+                rotationEuler.z
+                );
             
             //このスクリプトより先にLookAtIKが走るハズなので、その回転と合成していく
-            var rot = Quaternion.Euler(rotationEuler);
+            var rot = Quaternion.Euler(rotationAdjusted);
 
             //特に首と頭を一括で回すにあたって、コーナーケースを安全にするため以下のアプローチを取る
             // - 一旦今の回転値を混ぜて、
@@ -132,19 +144,28 @@ namespace Baku.VMagicMirror
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;
         }
- 
-        private float NoseBaseHeightToNeckPitchDeg(float noseBaseHeight)
+
+        //ヨーの動きがあるとき、首を下に向けさせる(首振り運動は通常ピッチが下がるのを決め打ちでやる)ための処置
+        private static float PitchDiffByYawSpeed(float degPerSecond)
         {
-            if (_faceTracker != null)
-            {
-                return -(noseBaseHeight - _faceTracker.CalibrationData.noseHeight) * NoseBaseHeightDifToAngleDegFactor;
-            }
-            else
-            {
-                //とりあえず顔が取れないなら水平にしとけばOK
-                return 0;
-            }
+            return Mathf.Clamp(
+                degPerSecond * YawSpeedToPitchDecreaseFactor, 0, YawSpeedToPitchDecreaseLimit
+                );
         }
+
+        //ヨーが0から離れているとき、ピッチを0に近づけるための処置。
+        //現行処理だとヨーが0から離れたときピッチが上に寄ってしまうので、それをキャンセルするのが狙い
+        private static float PitchFactorByYaw(float yawDeg)
+        {
+            float rate = Mathf.Clamp01(Mathf.Abs(yawDeg / HeadYawRateToDegFactor));
+            return 1.0f - rate * 0.7f;
+        }
+        
+        private static Vector3 Mul(Vector3 left, Vector3 right) => new Vector3(
+            left.x * right.x,
+            left.y * right.y,
+            left.z * right.z
+        );
     }
 }
 

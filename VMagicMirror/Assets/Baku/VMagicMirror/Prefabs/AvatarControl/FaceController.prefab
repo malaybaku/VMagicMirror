@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8701057551241780110}
   - component: {fileID: 7797473119978373343}
   - component: {fileID: 2344319939732251227}
+  - component: {fileID: 5187863769921554747}
   m_Layer: 0
   m_Name: FaceController
   m_TagString: Untagged
@@ -50,6 +51,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 528308ecc8af46647b68473c1f06c11b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blendShapeInitializer: {fileID: 7797473119978373343}
+  lipSyncContext: {fileID: 3748904030990320927}
 --- !u!114 &3748028266611161169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,6 +106,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6354724b2cd22fb44b7055dff31a907e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5187863769921554747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028266611161173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1655d29d03fb30b4fb5fc956ffc2db19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vroidDefaultBlendShapeAvatar: {fileID: 11400000, guid: cc041bf064933304d942a9e7bc39a2b5,
+    type: 2}
 --- !u!1 &3748028267383499195
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,6 +244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eyeMapMin: 0.25
   eyeMapMax: 0.7
+  blinkValueOnSquint: 0.5
   blinkOpenSpeedMax: 0.1
 --- !u!114 &1428360342779558990
 MonoBehaviour:
@@ -465,7 +483,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
   provider: 0
-  enableAcceleration: 1
 --- !u!1 &6423115407833010372
 GameObject:
   m_ObjectHideFlags: 0

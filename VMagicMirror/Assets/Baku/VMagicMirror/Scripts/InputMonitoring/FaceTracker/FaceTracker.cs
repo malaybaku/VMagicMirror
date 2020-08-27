@@ -236,7 +236,7 @@ namespace Baku.VMagicMirror
                 var calibrationData = JsonUtility.FromJson<CalibrationData>(data);
                 CalibrationData.eyeOpenHeight = calibrationData.eyeOpenHeight;
                 CalibrationData.eyeBrowPosition = calibrationData.eyeBrowPosition;
-                CalibrationData.noseHeight = calibrationData.noseHeight;
+                CalibrationData.eyeFaceYDiff = calibrationData.eyeFaceYDiff;
                 CalibrationData.faceCenter = calibrationData.faceCenter;
                 CalibrationData.faceSize = calibrationData.faceSize;
             }
@@ -427,6 +427,12 @@ namespace Baku.VMagicMirror
                 x = -x;
             }
             
+            //カメラ停止後に遅れて結果を受け取った場合、結果のアップデートは不要
+            if (!HasInitDone)
+            {
+                return;
+            }
+            
             DetectedRect = new Rect(
                 x,
                 -(mainPersonRect.yMax - TextureHeight / 2) / TextureWidth,
@@ -470,9 +476,8 @@ namespace Baku.VMagicMirror
                 FaceParts.RightEyebrow.CurrentHeight
                 );
 
-            CalibrationData.noseHeight =
-                FaceParts.Nose.CurrentNoseBaseHeightValue;
-
+            CalibrationData.eyeFaceYDiff =
+                FaceParts.Outline.EyeFaceYDiff;
 
             CalibrationCompleted?.Invoke(JsonUtility.ToJson(CalibrationData));
         }

@@ -9,6 +9,12 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v1.3.0a
+
+2020/08/27
+
+* Fix: Issue in v1.3.0 that, Perfect Sync could not move avatar's right brow down.
+
 #### v1.3.0
 
 2020/08/27

@@ -1,13 +1,13 @@
 ---
 layout: page
-title: Use Perfect Sync for External Tracking
+title: Perfect Sync
 permalink: /en/tips/perfect_sync
 lang_prefix: /en/
 ---
 
 [Japanese](../../tips/perfect_sync)
 
-# Tips: Use Perfect Sync for External Tracking
+# Tips: Perfect Sync
 
 Perfect Sync is supported from v1.3.0.
 

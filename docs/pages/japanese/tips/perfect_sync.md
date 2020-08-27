@@ -1,12 +1,12 @@
 ---
 layout: page
-title: 外部トラッキングでパーフェクトシンクを使う
+title: パーフェクトシンク
 permalink: /tips/perfect_sync
 ---
 
 [English](../en/tips/perfect_sync)
 
-# Tips: 外部トラッキングでパーフェクトシンクを使う
+# Tips: パーフェクトシンク
 
 パーフェクトシンクはVMagicMirror v1.3.0で追加された機能です。
 

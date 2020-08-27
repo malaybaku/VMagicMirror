@@ -33,4 +33,4 @@ Basic usage is in [Get Started](./get_started), and setting window detail is in 
 
 [Use Virtual Camera](./tips/virtual_camera)
 
-[Use Perfect Sync for External Tracking](./tips/perfect_sync)
+[Perfect Sync](./tips/perfect_sync)

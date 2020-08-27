@@ -96,7 +96,7 @@ In this case turn off `Apply LipSync using External Tracker Data` to use convent
 
 Perfect Sync is an advanced feature supported from v1.3.0, to move the avatar very rich with external tracking.
 
-See the detail at [Use Perfect Sync for External Tracking](../tips/perfect_sync).
+See the detail at [Perfect Sync Tips](../tips/perfect_sync).
 
 
 #### Face Switch

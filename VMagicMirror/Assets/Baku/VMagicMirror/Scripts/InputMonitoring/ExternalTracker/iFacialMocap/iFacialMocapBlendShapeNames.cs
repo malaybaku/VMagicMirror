@@ -72,7 +72,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         //まゆげ
         public const string browDownLeft = "browDown_L";
         public const string browOuterUpLeft = "browOuterUp_L";
-        public const string browDownRight = "browDown_Right";
+        public const string browDownRight = "browDown_R";
         public const string browOuterUpRight = "browOuterUp_R";
         public const string browInnerUp = nameof(browInnerUp);
 

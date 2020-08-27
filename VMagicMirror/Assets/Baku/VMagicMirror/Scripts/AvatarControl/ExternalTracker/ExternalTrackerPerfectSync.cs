@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         private IMessageSender _sender = null;
         //VRoid向けのデフォルト設定に入ってるクリップのうち、パーフェクトシンクの分だけ抜き出したもの
         private List<BlendShapeClip> _vroidDefaultClips = null;
-        private bool _canOverwriteMouthBlendShape = false;
+        private bool _canOverwriteMouthBlendShape = true;
 
         private VRMBlendShapeProxy _blendShape = null;
         //モデル本来のクリップ一覧
@@ -90,8 +90,7 @@ namespace Baku.VMagicMirror.ExternalTracker
 
             vrmLoadable.PostVrmLoaded += info =>
             {
-                //ロード直後にクリップ差し替えが必要ならやっておく
-                if (UseVRoidDefaultSetting && IsActive)
+                if (IsActive && UseVRoidDefaultSetting)
                 {
                     RefreshClips();
                 }
@@ -102,6 +101,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 _hasModel = false;
                 _blendShape = null;
                 _modelBaseClips = null;
+                _modelClipsWithVRoidSetting = null;
             };
             
             receiver.AssignCommandHandler(
@@ -264,9 +264,9 @@ namespace Baku.VMagicMirror.ExternalTracker
             _blendShapeInitializer.InitializeBlendShapes(false);
             _blendShape.Apply();
 
-            _blendShape.BlendShapeAvatar.Clips = !IsActive || !UseVRoidDefaultSetting
-                ? _modelBaseClips.ToList()
-                : _modelClipsWithVRoidSetting.ToList();
+            _blendShape.BlendShapeAvatar.Clips = IsActive && UseVRoidDefaultSetting
+                ? _modelClipsWithVRoidSetting.ToList()
+                : _modelBaseClips.ToList();
 
             //BlendShapeInitializerは切り替わったあとのClip一覧を理解しているべき。
             //そうじゃないとFaceSwitchとかWord to Motionとの組み合わせで破綻するため。

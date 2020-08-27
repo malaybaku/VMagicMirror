@@ -9,6 +9,18 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v1.3.0
+
+2020/08/27
+
+* Add: Support for Perfect Sync by External Tracker. See [Tips Page](./tips/perfect_sync) for the detail.
+* Add: Voice based random motion, for no tracking system environment.
+* Change: Improved head tracking for web camera.
+* Add: Option to change eye motion scale, on setting window `Motion` > `Face` > `Eye Motion Scale`.
+* Fix: Avatar looked vertically stretched when transparent mode.
+* Fix: Avatar moves strangely when webcam and fixed eye motion selected.
+* Fix: Other small issues.
+
 #### v1.2.0
 
 2020/07/30

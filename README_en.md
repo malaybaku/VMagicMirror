@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.1.0
+v1.3.0
 
 * Author: Baxter
-* 2020/Jun/26
+* 2020/Aug/27
 
 The VRM avatar application without any special device.
 
@@ -104,7 +104,9 @@ RawInput.Sharp can be installed with almost same work flow.
 - Get `.nupkg` from NuGet gallery and expand as zip to get `lib/netstandard1.1/RawInput.Sharp.dll`
 - Create `RawInputSharp` folder in Unity project's Assets folder, and put dll into the folder.
 
-For the UniVRM, please add a line after install. In `Assets/VRM/UniHumanoid/Scripts/HumanPoseTransfer.cs` and see at L68,
+For the UniVRM, you need to modify 2 points.
+
+In `Assets/VRM/UniHumanoid/Scripts/HumanPoseTransfer.cs` and add a line,
 
 ```
 //...
@@ -115,6 +117,22 @@ For the UniVRM, please add a line after install. In `Assets/VRM/UniHumanoid/Scri
     
         public void OnEnable()
         {
+//...
+```
+
+Also, in `Assets/VRM/UniVRM/Scripts/BlendShape/VRMBlendShapeProxy.cs`,
+
+```
+//...
+        //Add this method
+        public void ReloadBlendShape()
+        {
+            m_merger?.RestoreMaterialInitialValues(BlendShapeAvatar.Clips);
+            if (BlendShapeAvatar != null)
+            {
+                m_merger = new BlendShapeMerger(BlendShapeAvatar.Clips, transform);                
+            }
+        }
 //...
 ```
 

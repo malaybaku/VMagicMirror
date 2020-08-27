@@ -1,6 +1,6 @@
 ---
 layout: page
-title: MacでVMagicMirrorを使う
+title: 外部トラッキングでパーフェクトシンクを使う
 permalink: /tips/perfect_sync
 ---
 
@@ -15,16 +15,16 @@ permalink: /tips/perfect_sync
 
 パーフェクトシンクは[外部トラッキング機能](../docs/external_tracker)の発展的な機能で、高度に表情を操作できます。利用にはFace ID対応のiPhoneまたはiPadが必要です。
 
-あらかじめ[外部トラッキング機能](../docs/external_tracker)の基本機能を試してから、本ページをお読み下さい。
+あらかじめ[外部トラッキング機能](../docs/external_tracker)の基本機能を試したのち、本ページを読むことを推奨しています。
 
-パーフェクトシンクでは、iOSのARKitで顔トラッキングを行って取得した52個のブレンドシェイプの全てをアバターに反映できる仕組みを提供します。これにより、VRMの規格で最低限サポートされるものより多様な表現が可能となります。
+パーフェクトシンクでは、iOSのARKitで取得できるユーザーの様々な表情を、アバターの個別のブレンドシェイプに反映する仕組みを提供します。これによって、VRMの規格で最低限サポートされるものより多様な表現が可能になります。
 
 　
 
 #### パーフェクトシンクをすぐ試すには
 {: .doc-sec2 }
 
-※とにかくセットアップに進みたい場合、このセクションをスキップして構いません。
+※すぐモデルのセットアップに進みたい場合、このセクションをスキップして構いません。
 
 　
 
@@ -34,25 +34,24 @@ permalink: /tips/perfect_sync
 
 [千駄ヶ谷 渋（iPhone用BlendShapeあり）](https://hub.vroid.com/characters/7307666808713466197/models/1090122510476995853)をダウンロードしたのち、VMagicMirrorでロードします。その後、`外部トラッキング(Ex.Tracker)`タブで外部トラッキングを有効にしてiOSアプリと接続します。さらに、`パーフェクトシンク`チェックをオンにします。
 
-(TODO: screenshot)
-
 これで完了です！眉や口を好きに動かしたり、舌を出したりしてみて下さい。
 
-(TODO: screenshot)
+<div class="row">
+{% include docimg.html file="./images/tips/perfect_sync_setup_model_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+</div>
 
 あるいは、上記のモデル以外で[Vear](https://apps.apple.com/jp/app/id1490697369)のパーフェクトシンクに対応したモデルをロードしても構いません。このページの下部で触れますが、Vearのパーフェクトシンクに対応したモデルは基本的にVMagicMirrorのパーフェクトシンクでも動作します。
-
 　
 
 2つ目の方法はVRoidモデルを使用することです。もしお使いのVRMがVRoid Studioモデルであり、かつブレンドシェイプのカスタマイズを特に行っていない状態であれば利用できます。
 
-お使いのVRMをロードしたのち、`外部トラッキング(Ex.Tracker)`タブで外部トラッキングを有効にしてiOSアプリと接続します。さらに、`パーフェクトシンク`チェック、および`VRoid用のデフォルト設定を使う`チェックをオンにします。
+お使いのVRMをロードしたのち、`外部トラッキング(Ex.Tracker)`タブで外部トラッキングを有効にしてiOSアプリと接続します。さらに、`パーフェクトシンク`、および`VRoid用のデフォルト設定を使う`チェックをオンにします。これで完了です！
 
-これで完了です！
+<div class="row">
+{% include docimg.html file="./images/tips/perfect_sync_vroid_default_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+</div>
 
-(TODO: ここにもスクショ)
-
-ただし、2つ目の方法はあくまで簡易的な手段です。例えば、この方法では舌を出したり、眉を片方ずつ動かすことはできません。
+ただし、2つ目の方法はあくまで簡易的な手段であり、パーフェクトシンクの利用は限定的です。例えば、この方法では舌を出したり、眉を片方ずつ動かすことはできません。
 
 　
 
@@ -61,22 +60,22 @@ permalink: /tips/perfect_sync
 
 ここから下では、VRMをパーフェクトシンクに対応させる手順を示します。
 
-お使いのVRMをパーフェクトシンクに対応させるには、iOSの顔トラッキングにあわせた最大52個のブレンドシェイプを用意します。つまり、このステップではBlender等でのモデル編集が必要です。
+お使いのVRMをパーフェクトシンクに対応させるには、iOS ARKitの仕様にあわせた最大52個のブレンドシェイプを用意します。このステップではBlender等でのモデル編集が必要です。
 
-ブレンドシェイプの種類や、各ブレンドシェイプが取るべき形状については、こちらの記事で確認してください。
+ブレンドシェイプの種類や、各ブレンドシェイプが取るべき形状は、こちらの記事で確認できます。
 
-https://hinzka.hatenablog.com/entry/2020/06/15/072929
+[iPhoneトラッキング向けBlendShapeリスト](https://hinzka.hatenablog.com/entry/2020/06/15/072929)
 
-実際の作例が知りたい場合、上でも触れた[千駄ヶ谷 渋（iPhone用BlendShapeあり）](https://hub.vroid.com/characters/7307666808713466197/models/1090122510476995853)などをご覧ください。
+実際の作例を見たい場合、前の章でも触れた触れた[千駄ヶ谷 渋（iPhone用BlendShapeあり）](https://hub.vroid.com/characters/7307666808713466197/models/1090122510476995853)などをご覧ください。
 
-また、上記の記事に沿って作成するブレンドシェイプのうち、「こんなに細かいものは必要ない！」と感じるブレンドシェイプは作成をスキップしても構いません。
+また、「こんなに細かいものは必要ない」と感じるブレンドシェイプについては作成をスキップしても構いません。ただし、まばたきを自然にするために、`EyeSquintRight`, `EyeSquintLeft`,`EyeBlinkLeft`, `EyeBlinkRight`の4つは必ず用意して下さい。
 
 　
 
 #### セットアップStep2. Unity上でのBlendShapeClip作成
 {: .doc-sec2 }
 
-「セットアップStep1. モデルのブレンドシェイプ整備」で準備したモデルをUnityで一度インポートします。そして、作成したブレンドシェイプに対応する52個の`BlendShapeClip`を作成します。クリップ名は、iOSの顔トラッキング仕様に沿い、以下の名前にして下さい。
+前の章で準備したモデルをUnityで一度インポートします。そして、作成したブレンドシェイプに対応する52個の`BlendShapeClip`を作成します。クリップ名は、iOSの顔トラッキング仕様に沿って、以下の名前にして下さい。
 
 `BrowInnerUp`
 `BrowDownLeft`
@@ -139,18 +138,43 @@ https://hinzka.hatenablog.com/entry/2020/06/15/072929
 
 `TongueOut`
 
-それぞれの`BlendShapeClip`では原則として、Step 1で用意したモデル側のブレンドシェイプを`weight`が`100`になるようにセットアップします。
+それぞれの`BlendShapeClip`では原則として、Step 1で用意したモデル側のブレンドシェイプ1つを、`weight`が`100`になるようセットアップします。
 
-Step 1でブレンドシェイプを作成しなかったものについては、BlendShapeClipを作成直後の状態のままにして、何の表情も動かさないようなクリップにします。
+<div class="row">
+{% include docimg.html file="./images/tips/perfect_sync_clip_setting_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+</div>
 
-(TODO: screenshot)
+Step 1でブレンドシェイプを作成しなかったものについては、BlendShapeClipを空の状態にします。つまり、何の表情も動かさないクリップにします。
+
+<div class="row">
+{% include docimg.html file="./images/tips/perfect_sync_empty_clip_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+</div>
+
+以上ののちVRMを再度エクスポートすることで、パーフェクトシンクに対応したVRMモデルが得られます。
+
+　
+
+#### リファレンス
+{: .doc-sec2 }
+
+パーフェクトシンク用モデルのセットアップ方法をより詳しく知るには、以下の記事などを参照ください。
+
+[iPhoneトラッキング向けBlendShapeリスト](https://hinzka.hatenablog.com/entry/2020/06/15/072929)
+
+[VRoidでかんたん！パーフェクトシンク（1/3）VRoidモデルのFBXエクスポート](https://hinzka.hatenablog.com/entry/2020/08/15/145040)
+
+[パーフェクトシンクであそぼう！](https://hinzka.hatenablog.com/entry/2020/08/15/145040)
+
+[パーフェクトシンクの顔をお着換えモデルに移植しよう](https://hinzka.hatenablog.com/entry/2020/08/17/001851)
+
+　
 
 #### 補足. Vearとの互換性が高い背景について
 {: .doc-sec2 }
 
 VMagicMirrorでパーフェクトシンクを使うためのVRMのセットアップ条件は、[Vear](https://apps.apple.com/jp/app/id1490697369)のパーフェクトシンクの要件とほぼ共通です。これは2つの背景に基づきます。
 
-第一の背景として、パーフェクトシンクの仕様根拠となる各リソースを公開している[Hinzkaさん](https://twitter.com/hinzka)のモデルやブログ記事のリファレンスに沿った結果、要件が似ています。
+第一の背景として、パーフェクトシンクの仕様ベースとなる各リソースを公開している[Hinzkaさん](https://twitter.com/hinzka)のモデルやブログ記事のリファレンスに沿った結果、要件が共通しています。
 
 第二の背景として、Vearの現行要件に沿ったモデルを再利用できるようにし、VRMのセットアップ作業をなるべく減らせるようにするため、モデルの要件を共通させています。
 

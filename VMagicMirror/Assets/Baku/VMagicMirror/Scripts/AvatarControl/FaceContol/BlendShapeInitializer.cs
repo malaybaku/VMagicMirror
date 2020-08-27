@@ -52,8 +52,9 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 _proxy = info.blendShape;
-                ReloadClips();
                 _hasModel = true;
+                //NOTE: ReloadClipsのなかで_hasModelによるガードがかかってるのを踏まえてこういう順番です
+                ReloadClips();
             };
 
             vrmLoadable.VrmDisposing += () =>

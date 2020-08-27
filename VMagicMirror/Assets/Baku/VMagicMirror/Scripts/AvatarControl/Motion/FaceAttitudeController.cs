@@ -7,8 +7,8 @@ namespace Baku.VMagicMirror
     public class FaceAttitudeController : MonoBehaviour
     {
         //NOTE: バネマス系のパラメータ(いわゆるcとk)
-        [SerializeField] private float speedDumpForceFactor = 10f;
-        [SerializeField] private float posDumpForceFactor = 50f;
+        [SerializeField] private Vector3 speedDumpForceFactor = new Vector3(15f, 10f, 10f);
+        [SerializeField] private Vector3 posDumpForceFactor = new Vector3(50f, 50f, 50f);
 
         [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")]
         [Range(0f, 1f)]
@@ -59,8 +59,8 @@ namespace Baku.VMagicMirror
         
         //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
         private const float HeadRollRateApplyFactor = 0.8f;
-        //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整してます
-        private const float HeadYawRateToDegFactor = 28.00f;
+        //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整
+        private const float HeadYawRateToDegFactor = 16.00f;
         private const float HeadPitchRateToDegFactor = 28.0f;
         
         private const float HeadTotalRotationLimitDeg = 40.0f;
@@ -97,13 +97,13 @@ namespace Baku.VMagicMirror
             //やりたい事: バネマス系扱いで陽的オイラー法を回してスムージングする。
             //過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
             var acceleration =
-                - speedDumpForceFactor * _prevRotationSpeedEuler -
-                posDumpForceFactor * (_prevRotationEuler - _latestRotationEuler);
+                - Mul(speedDumpForceFactor, _prevRotationSpeedEuler) -
+                Mul(posDumpForceFactor, _prevRotationEuler - _latestRotationEuler);
             var speed = _prevRotationSpeedEuler + Time.deltaTime * acceleration;
             var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
 
             var rotationAdjusted = new Vector3(
-                rotationEuler.x * PitchFactorByYaw(rotationEuler.y) + PitchDiffByYawSpeed(speed.x),
+                rotationEuler.x* PitchFactorByYaw(rotationEuler.y) + PitchDiffByYawSpeed(speed.x),
                 rotationEuler.y, 
                 rotationEuler.z
                 );
@@ -154,11 +154,18 @@ namespace Baku.VMagicMirror
         }
 
         //ヨーが0から離れているとき、ピッチを0に近づけるための処置。
+        //現行処理だとヨーが0から離れたときピッチが上に寄ってしまうので、それをキャンセルするのが狙い
         private static float PitchFactorByYaw(float yawDeg)
         {
             float rate = Mathf.Clamp01(Mathf.Abs(yawDeg / HeadYawRateToDegFactor));
             return 1.0f - rate * 0.7f;
         }
+        
+        private static Vector3 Mul(Vector3 left, Vector3 right) => new Vector3(
+            left.x * right.x,
+            left.y * right.y,
+            left.z * right.z
+        );
     }
 }
 

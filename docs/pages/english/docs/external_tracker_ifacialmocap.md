@@ -116,7 +116,7 @@ A. Quit `iFacialMocap` app, and try `Connect to VMagicMirror` process again.
 #### Q6. Eyes or mouth do not move
 {: .doc-sec2 }
 
-In iFacialMocap GUI, confirm `Upper` and `Lower` is turned on. If they are turned off, facial expression will be invalid.
+In iFacialMocap GUI, confirm `Upper` and `Lower` is turned on. If they are turned off, facial expression capture will be invalid.
 
 <div class="row">
 {% include docimg.html file="./images/docs/ex_tracker_ifm_enable_captures.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}

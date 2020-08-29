@@ -122,6 +122,6 @@ In iFacialMocap GUI, confirm `Upper` and `Lower` is turned on. If they are turne
 {% include docimg.html file="./images/docs/ex_tracker_ifm_enable_captures.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
 </div>
 
-If the mouth move still have issues, please also check [External Tracker App](../external_tracker) and see `Use LipSync with External Tracking App` secion.
+If the mouth motion still have issues, please also check [External Tracker App](../external_tracker) and see `Use LipSync with External Tracking App` section.
 
 If the above processes does not solve the problem, please try other VRM model, to see the model has any setup issues.

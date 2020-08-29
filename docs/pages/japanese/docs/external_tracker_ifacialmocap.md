@@ -110,3 +110,16 @@ A. 前回の使用時と異なる位置にiPhoneやiPadを置いた場合、顔�
 
 A. `iFacialMocap`のアプリを完全に終了したのち、このページの`VMagicMirrorと接続する`の手順に沿って再び接続してください。
 
+
+#### Q6. 頭は動くが目や口が反応しない
+{: .doc-sec2 }
+
+iFacialMocapの設定で`Upper`および`Lower`が`ON`になっていることを確認してください。これらが`OFF`の場合、目や口のデータが正しく取得されません。
+
+<div class="row">
+{% include docimg.html file="./images/docs/ex_tracker_ifm_enable_captures.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
+
+これらを確認した後も口が動かない場合、[外部トラッキングアプリとの連携](../external_tracker)で`外部トラッキングによるリップシンク`の項目が原因の可能性もあるため、あわせてご覧下さい。
+
+それでも問題が解決しない場合、ほかのモデルをロードして動作を見比べるなどの方法で、モデルセットアップが正しいかどうかご確認下さい。

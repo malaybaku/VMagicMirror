@@ -111,3 +111,17 @@ A. If you have put the iOS device other place than previous time, avatar maybe l
 {: .doc-sec2 }
 
 A. Quit `iFacialMocap` app, and try `Connect to VMagicMirror` process again.
+
+
+#### Q6. Eyes or mouth do not move
+{: .doc-sec2 }
+
+In iFacialMocap GUI, confirm `Upper` and `Lower` is turned on. If they are turned off, facial expression capture will be invalid.
+
+<div class="row">
+{% include docimg.html file="./images/docs/ex_tracker_ifm_enable_captures.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
+
+If the mouth move still have issues, please also check [External Tracker App](../external_tracker) and see `Use LipSync with External Tracking App` secion.
+
+If the above processes does not solve the problem, please try other VRM model, to see the model has any setup issues.

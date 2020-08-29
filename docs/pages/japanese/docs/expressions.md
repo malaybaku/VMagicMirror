@@ -4,7 +4,7 @@ title: Expressions
 permalink: /docs/expressions
 ---
 
-[English](../en/docs/expression)
+[English](../en/docs/expressions)
 
 # 表情のコントロール
 

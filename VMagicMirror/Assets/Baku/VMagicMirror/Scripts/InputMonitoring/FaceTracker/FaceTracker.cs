@@ -63,6 +63,15 @@ namespace Baku.VMagicMirror
         /// </summary>
         public event Action<FaceDetectionUpdateStatus> FaceDetectionUpdated;
 
+        /// <summary> UIスレッド上で、顔の特徴点一覧を獲得すると発火します。 </summary>
+        public event Action<FaceLandmarksUpdateStatus> FaceLandmarksUpdated;
+
+        /// <summary> キャリブレーションのデータを外部から受け取り、適用すべきときに発火します。 </summary>
+        public event Action<CalibrationData> CalibrationDataReceived;
+        
+        /// <summary> いまの姿勢を基準姿勢としてほしい、というときに呼ばれます。 </summary>
+        public event Action<CalibrationData> CalibrationRequired;
+
         /// <summary> カメラが初期化済みかどうか </summary>
         public bool HasInitDone { get; private set; } = false;
         private bool _isInitWaiting = false;
@@ -239,6 +248,7 @@ namespace Baku.VMagicMirror
                 CalibrationData.eyeFaceYDiff = calibrationData.eyeFaceYDiff;
                 CalibrationData.faceCenter = calibrationData.faceCenter;
                 CalibrationData.faceSize = calibrationData.faceSize;
+                CalibrationDataReceived?.Invoke(calibrationData);
             }
             catch (Exception ex)
             {
@@ -420,6 +430,12 @@ namespace Baku.VMagicMirror
 
             //出力を拾い終わった時点で次の処理に入ってもらって大丈夫
             FaceDetectCompleted = false;
+            
+            FaceLandmarksUpdated?.Invoke(new FaceLandmarksUpdateStatus()
+            {
+                Landmarks = landmarks,
+                DisableHorizontalFlip = DisableHorizontalFlip,
+            });
 
             float x = (mainPersonRect.xMin - TextureWidth / 2) / TextureWidth;
             if (DisableHorizontalFlip)
@@ -459,6 +475,8 @@ namespace Baku.VMagicMirror
             DetectedRect = new Rect(center - 0.5f * size, size);
             
             FaceParts.LerpToDefault(CalibrationData, lerpFactor);
+            
+            //TODO: ?もしかするとここもイベントでOpenCVFacePoseに認知させるべきかも。無くてもいい気もするけど
         }
         
         private void UpdateCalibrationData()
@@ -478,6 +496,9 @@ namespace Baku.VMagicMirror
 
             CalibrationData.eyeFaceYDiff =
                 FaceParts.Outline.EyeFaceYDiff;
+            
+            //他モジュールが更にキャリブを行い、データを書き込むことを許可する
+            CalibrationRequired?.Invoke(CalibrationData);
 
             CalibrationCompleted?.Invoke(JsonUtility.ToJson(CalibrationData));
         }
@@ -522,5 +543,11 @@ namespace Baku.VMagicMirror
         public int Height { get; set; }
         public bool HasValidFaceArea { get; set; }
         public Rect FaceArea { get; set; }
+    }
+    
+    public struct FaceLandmarksUpdateStatus
+    {
+        public List<Vector2> Landmarks { get; set; }
+        public bool DisableHorizontalFlip { get; set; }
     }
 }

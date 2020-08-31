@@ -15,11 +15,13 @@ namespace Baku.VMagicMirror
         [SerializeField] private float headRate = 0.5f;
 
         private FaceTracker _faceTracker = null;
+        private FaceRotToEuler _faceRotToEuler = null;
         
         [Inject]
-        public void Initialize(FaceTracker faceTracker, IVRMLoadable vrmLoadable)
+        public void Initialize(FaceTracker faceTracker, OpenCVFacePose openCvFacePose, IVRMLoadable vrmLoadable)
         {
             _faceTracker = faceTracker;
+            _faceRotToEuler = new FaceRotToEuler(openCvFacePose);
             
             //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
             faceTracker.FaceParts.Outline.HeadRollRad.Subscribe(
@@ -93,12 +95,18 @@ namespace Baku.VMagicMirror
                 _prevRotationSpeedEuler = Vector3.zero;
                 return;
             }
+
+            //従来手法
+            //var target = _latestRotationEuler;
             
+            //新しい手法
+            var target = _faceRotToEuler.GetTargetEulerAngle();
+
             //やりたい事: バネマス系扱いで陽的オイラー法を回してスムージングする。
             //過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
             var acceleration =
                 - Mul(speedDumpForceFactor, _prevRotationSpeedEuler) -
-                Mul(posDumpForceFactor, _prevRotationEuler - _latestRotationEuler);
+                Mul(posDumpForceFactor, _prevRotationEuler - target);
             var speed = _prevRotationSpeedEuler + Time.deltaTime * acceleration;
             var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
 
@@ -166,6 +174,42 @@ namespace Baku.VMagicMirror
             left.y * right.y,
             left.z * right.z
         );
+    }
+    
+    
+    /// <summary> 頭部の回転がQuaternionで飛んで来るのを安全にオイラー角に変換してくれるやつ </summary>
+    public class FaceRotToEuler
+    {
+        private readonly OpenCVFacePose _facePose;
+        public FaceRotToEuler(OpenCVFacePose facePose)
+        {
+            _facePose = facePose;
+        }
+
+        public Vector3 GetTargetEulerAngle()
+        {
+            var rot = _facePose.HeadRotation;
+            
+            //安全にやるために、実際に基準ベクトルを回す。処理的には回転行列に置き換えるのに近いかな。
+            var f = rot * Vector3.forward;
+            var g = rot * Vector3.right;
+            
+            var yaw = Mathf.Asin(f.x);
+            var pitch = -Mathf.Asin(f.y);
+            var roll = Mathf.Acos(g.x);
+
+            return new Vector3(
+                NormalRanged(roll),
+                NormalRanged(yaw),
+                NormalRanged(pitch)
+            );
+        }
+        
+        //角度を必ず[-180, 180]の範囲に収めるやつ。スケーリング時にこういう必要な処理。
+        private static float NormalRanged(float angle)
+        {
+            return Mathf.Repeat(angle + 180f, 360f) - 180f;
+        }
     }
 }
 

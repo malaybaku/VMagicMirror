@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UniRx;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -23,24 +22,6 @@ namespace Baku.VMagicMirror
             _faceTracker = faceTracker;
             _faceRotToEuler = new FaceRotToEuler(openCvFacePose);
             
-            //鏡像姿勢をベースにしたいので反転(この値を適用するとユーザーから鏡に見えるハズ)
-            faceTracker.FaceParts.Outline.HeadRollRad.Subscribe(
-                v => SetHeadRollDeg(-v * Mathf.Rad2Deg * HeadRollRateApplyFactor)
-            );
-            
-            //もとの値は角度ではなく[-1, 1]の無次元量であることに注意
-            faceTracker.FaceParts.Outline.HeadYawRate.Subscribe(
-                v => SetHeadYawDeg(v * HeadYawRateToDegFactor)
-            );
-
-            //こっちは顔サイズで正規化された無次元量が飛んでくるので更に注意: だいたい-0.12 * 0.12くらい
-            faceTracker.FaceParts.Outline.HeadPitchRate.Subscribe(
-                v =>
-                {
-                    float rate = Mathf.Clamp(v - _faceTracker.CalibrationData.eyeFaceYDiff, -1f, 1f);
-                    SetHeadPitchDeg(rate * HeadPitchRateToDegFactor);
-                });
-            
             vrmLoadable.VrmLoaded += info =>
             {
                 var animator = info.animator;
@@ -59,11 +40,8 @@ namespace Baku.VMagicMirror
             };
         }
         
-        //体の回転に反映するとかの都合で首ロールを実際に検出した値より控えめに適用しますよ、というファクター
-        private const float HeadRollRateApplyFactor = 0.8f;
         //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整
         private const float HeadYawRateToDegFactor = 16.00f;
-        private const float HeadPitchRateToDegFactor = 28.0f;
         
         private const float HeadTotalRotationLimitDeg = 40.0f;
 
@@ -75,12 +53,7 @@ namespace Baku.VMagicMirror
         private Transform _neck = null;
         private Transform _head = null;
 
-        private void SetHeadRollDeg(float value) => _latestRotationEuler.z = value;
-        private void SetHeadYawDeg(float value) => _latestRotationEuler.y = value;
-        private void SetHeadPitchDeg(float value) => _latestRotationEuler.x = value;
-
         //NOTE: Quaternionを使わないのは角度別にローパスっぽい処理するのに都合がよいため
-        private Vector3 _latestRotationEuler;
         private Vector3 _prevRotationEuler;
         private Vector3 _prevRotationSpeedEuler;
 
@@ -90,16 +63,11 @@ namespace Baku.VMagicMirror
         {
             if (!(_hasModel && _faceTracker.HasInitDone && IsActive))
             {
-                _latestRotationEuler = Vector3.zero;
                 _prevRotationEuler = Vector3.zero;
                 _prevRotationSpeedEuler = Vector3.zero;
                 return;
             }
 
-            //従来手法
-            //var target = _latestRotationEuler;
-            
-            //新しい手法
             var target = _faceRotToEuler.GetTargetEulerAngle();
 
             //やりたい事: バネマス系扱いで陽的オイラー法を回してスムージングする。

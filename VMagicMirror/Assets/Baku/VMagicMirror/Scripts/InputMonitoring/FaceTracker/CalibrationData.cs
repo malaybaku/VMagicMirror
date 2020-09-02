@@ -11,10 +11,6 @@ namespace Baku.VMagicMirror
         public Vector3 openCvFacePos;
         public Vector3 openCvFaceRotEuler;
         
-        public float eyeBrowPosition;
-        public float eyeOpenHeight;
-        public float eyeFaceYDiff;
-        //タテヨコを掛けたピクセル総数にあたる値
         public float faceSize;
         public Vector2 faceCenter;
 
@@ -24,9 +20,6 @@ namespace Baku.VMagicMirror
             openCvFacePos = Vector3.zero;
             openCvFaceRotEuler = Vector3.zero;
             
-            eyeBrowPosition = 1.43f;
-            eyeOpenHeight = 0.06f;
-            eyeFaceYDiff = 0.0f;
             faceSize = 0.1f;
             faceCenter = Vector2.zero;
         }

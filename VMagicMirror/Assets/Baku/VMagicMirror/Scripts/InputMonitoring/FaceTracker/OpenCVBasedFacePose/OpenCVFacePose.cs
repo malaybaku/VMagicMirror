@@ -15,14 +15,14 @@ namespace Baku.VMagicMirror
         [SerializeField] private float notTrackedLimit = 0.5f;
         [SerializeField] private float resetSpeedFactor = 6f;
 
-        private readonly OpenCVFacePoseEstimator _estimator = new OpenCVFacePoseEstimator();
+        private OpenCVFacePoseEstimator _estimator = null;
         
         private FaceTracker _faceTracker;
         private FaceControlConfiguration _config;
         private float _count = 0f;
 
         /// <summary> 現在の頭部姿勢データが有効かどうかを取得します。 </summary>
-        public bool HasValidData => _estimator.HasValidPoseData;
+        private bool HasValidData => _estimator.HasValidPoseData;
 
         /// <summary> 設定に沿って後処理された頭部の位置を取得します。 </summary>
         public Vector3 HeadPosition
@@ -143,6 +143,11 @@ namespace Baku.VMagicMirror
 
         private void OnFaceDetectionUpdated(FaceDetectionUpdateStatus status) 
             => _estimator.SetImageSize(status.Width, status.Height);
+
+        private void Awake()
+        {
+            _estimator = new OpenCVFacePoseEstimator();
+        }
 
         private void Update()
         {

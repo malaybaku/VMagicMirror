@@ -22,9 +22,6 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private float eyeAngleDegreeWhenEyeClosed = 10f;
 
-        [SerializeField] private float speedLerpFactor = 0.2f;
-        [SerializeField] [Range(0.05f, 1.0f)] private float timeScaleFactor = 0.3f;
-
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 

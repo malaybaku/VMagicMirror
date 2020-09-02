@@ -21,9 +21,6 @@ namespace Baku.VMagicMirror
         private FaceControlConfiguration _config;
         private float _count = 0f;
 
-        //既定値trueかも。あとdisableというフラグにするのも手ではある。ややこしいが。
-        private bool _horizontalFlip = false;
-        
         /// <summary> 現在の頭部姿勢データが有効かどうかを取得します。 </summary>
         public bool HasValidData => _estimator.HasValidPoseData;
 

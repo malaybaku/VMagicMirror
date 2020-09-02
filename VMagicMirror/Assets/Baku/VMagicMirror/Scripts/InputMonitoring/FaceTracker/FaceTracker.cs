@@ -39,6 +39,9 @@ namespace Baku.VMagicMirror
         
         [Tooltip("顔トラッキングが外れたとき、色々なパラメータを基準位置に戻すためのLerpファクター(これにTime.deltaTimeをかけた値を用いる")]
         [SerializeField] private float notTrackedResetSpeedFactor = 3.0f;
+
+        [Tooltip("検出処理が走る最短間隔をミリ秒単位で規定します。")]
+        [SerializeField] private int trackMinIntervalMillisec = 60;
         
         public FaceTrackerToEyeOpen EyeOpen { get; } = new FaceTrackerToEyeOpen();
 
@@ -124,6 +127,10 @@ namespace Baku.VMagicMirror
             set { lock (_faceDetectCompletedLock) _faceDetectCompleted = value; }
         }
         
+        //UIスレッドがタイミングを見計らうために使う
+        private float _countFromPreviousSetColors = 0f;
+        private bool _hasFrameUpdateSincePreviousSetColors = false;
+
         //UIスレッドが書き込み、Dlibの呼び出しスレッドが読み込む
         private Color32[] _inputColors = null;
         private int _inputWidth = 0;
@@ -158,17 +165,41 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            //Update処理はランドマークの検出スレッドとの通信をやります
+            //Update処理はランドマークの検出スレッドとの通信がメインタスク
             // 1. データを送る準備が出来たら送る
             // 2. 結果が戻ってきてたら使う。キャリブが必要ならついでに実施
+            // 3. あまりに長時間何も来ない場合、トラッキングロスト扱い
+            SetImageIfPrepared();
+            GetDetectionResult();
+            CheckTrackingLost();
 
-            if (HasInitDone &&
-                _webCamTexture.isPlaying &&
-                _webCamTexture.didUpdateThisFrame &&
-                _colors != null &&
-                !FaceDetectPrepared
-                )
+            void SetImageIfPrepared()
             {
+                _countFromPreviousSetColors += Time.deltaTime;
+                if (HasInitDone && _webCamTexture.didUpdateThisFrame)
+                {
+                    _hasFrameUpdateSincePreviousSetColors = true;
+                }
+
+                //かなり条件が厳しい。
+                //カメラ初期化して実際に画像の更新があり、前回から十分な時間経過があり、
+                //しかも画像処理側のスレッドがヒマである、というのが条件
+                bool canSetImage = HasInitDone &&
+                   _webCamTexture.isPlaying &&
+                   _hasFrameUpdateSincePreviousSetColors &&
+                   _countFromPreviousSetColors > trackMinIntervalMillisec * .001f &&
+                   _colors != null &&
+                   !FaceDetectPrepared;
+
+                //どれか一つの条件が揃ってないのでダメ
+                if (!canSetImage)
+                {
+                    return;
+                }
+
+                _countFromPreviousSetColors = 0f;
+                _hasFrameUpdateSincePreviousSetColors = false;
+                    
                 try
                 {
                     if (_webCamTexture.width >= halfResizeWidthThreshold)
@@ -176,13 +207,11 @@ namespace Baku.VMagicMirror
                         _webCamTexture.GetPixels32(_rawSizeColors);
                         SetHalfSizePixels(_rawSizeColors, _colors, _webCamTexture.width, _webCamTexture.height);
                         RequestUpdateFaceParts(_colors, TextureWidth, TextureHeight);
-                        //UpdateFaceParts(_colors);
                     }
                     else
                     {
                         _webCamTexture.GetPixels32(_colors);
                         RequestUpdateFaceParts(_colors, TextureWidth, TextureHeight);
-                        //UpdateFaceParts(_colors);
                     }
                 }
                 catch (Exception ex)
@@ -190,20 +219,30 @@ namespace Baku.VMagicMirror
                     LogOutput.Instance.Write(ex);
                 }
             }
-
-            if (FaceDetectCompleted)
+            
+            //別スレッドの画像処理が終わっていたらその結果を受け取る
+            void GetDetectionResult()
             {
-                GetFaceDetectResult();
-                if (_calibrationRequested)
+                if (FaceDetectCompleted)
                 {
-                    _calibrationRequested = false;
-                    UpdateCalibrationData();
+                    GetFaceDetectResult();
+                    if (_calibrationRequested)
+                    {
+                        _calibrationRequested = false;
+                        UpdateCalibrationData();
+                    }
                 }
             }
 
             //顔トラ起動中はつねに「実は顔トラッキング出来てないのでは？」というのをチェックする
-            if (HasInitDone)
+            void CheckTrackingLost()
             {
+                if (!HasInitDone)
+                {
+                    return;
+                }
+
+                
                 if (_faceNotDetectedCountDown >= 0)
                 {
                     _faceNotDetectedCountDown -= Time.deltaTime;
@@ -211,7 +250,7 @@ namespace Baku.VMagicMirror
                 
                 if (_faceNotDetectedCountDown < 0)
                 {
-                    //顔トラが全然更新されない -> ヘンなとこで固まってる可能性が高いので、正面姿勢に戻って頂く
+                    //顔トラが全然更新されない -> ヘンなとこで固まってる可能性が高いので、正面姿勢に戻す
                     LerpToDefaultFace();
                 }
             }

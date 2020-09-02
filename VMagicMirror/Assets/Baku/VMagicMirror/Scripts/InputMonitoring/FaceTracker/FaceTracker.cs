@@ -42,6 +42,8 @@ namespace Baku.VMagicMirror
         
         /// <summary> 検出した顔パーツそれぞれ </summary>
         public FaceParts FaceParts { get; } = new FaceParts();
+        
+        public FaceTrackerToEyeOpen EyeOpen { get; } = new FaceTrackerToEyeOpen();
 
         /// <summary> キャリブレーションの内容 </summary>
         public CalibrationData CalibrationData { get; } = new CalibrationData();
@@ -82,7 +84,11 @@ namespace Baku.VMagicMirror
         public bool DisableHorizontalFlip
         {
             get => FaceParts.DisableHorizontalFlip;
-            set => FaceParts.DisableHorizontalFlip = value;
+            set
+            {
+                FaceParts.DisableHorizontalFlip = value;
+                EyeOpen.DisableHorizontalFlip = value;
+            }
         }
 
         private int TextureWidth =>
@@ -457,6 +463,7 @@ namespace Baku.VMagicMirror
                 );
 
             FaceParts.Update(mainPersonRect, landmarks);
+            EyeOpen.UpdatePoints(landmarks);
 
             FaceDetectedAtLeastOnce = true;
             //顔が検出できてるので、未検出カウントダウンは最初からやり直し
@@ -475,6 +482,7 @@ namespace Baku.VMagicMirror
             DetectedRect = new Rect(center - 0.5f * size, size);
             
             FaceParts.LerpToDefault(CalibrationData, lerpFactor);
+            EyeOpen.LerpToDefault(lerpFactor);
             
             //TODO: ?もしかするとここもイベントでOpenCVFacePoseに認知させるべきかも。無くてもいい気もするけど
         }

@@ -49,21 +49,24 @@ namespace Baku.VMagicMirror
         private float _latestFilteredLeft = 0f;
         private float _latestFilteredRight = 0f;
 
-        private void Start()
-        {
-            _faceTracker.FaceParts
-                .LeftEye
-                .EyeOpenValue
-                .Subscribe(OnLeftEyeOpenValueChanged);
-
-            _faceTracker.FaceParts
-                .RightEye
-                .EyeOpenValue
-                .Subscribe(OnRightEyeOpenValueChanged);
-        }
+        // private void Start()
+        // {
+        //     _faceTracker.FaceParts
+        //         .LeftEye
+        //         .EyeOpenValue
+        //         .Subscribe(OnLeftEyeOpenValueChanged);
+        //
+        //     _faceTracker.FaceParts
+        //         .RightEye
+        //         .EyeOpenValue
+        //         .Subscribe(OnRightEyeOpenValueChanged);
+        // }
 
         private void Update()
         {
+            _latestLeftBlinkInput = _faceTracker.EyeOpen.LeftEyeBlink;
+            _latestRightBlinkInput = _faceTracker.EyeOpen.RightEyeBlink;
+            
             _count -= Time.deltaTime;
             if (_count < 0)
             {

@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror
         //NOTE: この辺は単に「毎回allocしたくないのでオブジェクトキャッシュしよ」系
         private readonly double[] _rVecArray = new double[3];
         private readonly double[] _tVecArray = new double[3];
-        private readonly Vector2[] _landmarks = new Vector2[68];
+        private readonly Vector2[] _landmarks = new Vector2[17];
         
         //NOTE: この辺は本質的に維持したいデータ
         private readonly Mat _camMatrix = new Mat(3, 3, CvType.CV_64FC1);
@@ -179,14 +179,14 @@ namespace Baku.VMagicMirror
                 i++;
             }
 
-            //NOTE: 68点モデルから目、鼻、耳を(_objPointsと同じ対応付けで)取り出す。
-            _imagePoints.fromArray(
-                new Point((_landmarks[38].x + _landmarks[41].x) / 2, (_landmarks[38].y + _landmarks[41].y) / 2),
-                new Point((_landmarks[43].x + _landmarks[46].x) / 2, (_landmarks[43].y + _landmarks[46].y) / 2),
-                new Point(_landmarks[30].x, _landmarks[30].y),
-                new Point(_landmarks[33].x, _landmarks[33].y),
-                new Point(_landmarks[0].x, _landmarks[0].y),
-                new Point(_landmarks[16].x, _landmarks[16].y)
+            //NOTE: 17点モデルから目、鼻、耳を(_objPointsと同じ対応付けで)取り出す。
+            _imagePoints.fromArray (
+                new Point ((_landmarks[2].x + _landmarks[3].x) / 2, (_landmarks[2].y + _landmarks[3].y) / 2),
+                new Point ((_landmarks[4].x + _landmarks[5].x) / 2, (_landmarks[4].y + _landmarks[5].y) / 2),
+                new Point (_landmarks[0].x, _landmarks[0].y),
+                new Point (_landmarks[1].x, _landmarks[1].y),
+                new Point (_landmarks[6].x, _landmarks[6].y),
+                new Point (_landmarks[8].x, _landmarks[8].y)
             );
         }
                 

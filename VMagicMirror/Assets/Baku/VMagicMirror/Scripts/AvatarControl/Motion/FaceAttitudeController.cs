@@ -185,7 +185,7 @@ namespace Baku.VMagicMirror
         {
             _facePose = facePose;
         }
-
+        
         public Vector3 GetTargetEulerAngle()
         {
             var rot = _facePose.HeadRotation;
@@ -194,18 +194,18 @@ namespace Baku.VMagicMirror
             var f = rot * Vector3.forward;
             var g = rot * Vector3.right;
             
-            var yaw = Mathf.Asin(f.x);
-            var pitch = -Mathf.Asin(f.y);
-            var roll = Mathf.Acos(g.x);
+            var yaw = Mathf.Asin(f.x) * Mathf.Rad2Deg;
+            var pitch = -Mathf.Asin(f.y) * Mathf.Rad2Deg;
+            var roll = Mathf.Asin(g.y) * Mathf.Rad2Deg;
 
             return new Vector3(
-                NormalRanged(roll),
+                NormalRanged(pitch),
                 NormalRanged(yaw),
-                NormalRanged(pitch)
+                NormalRanged(roll)
             );
         }
         
-        //角度を必ず[-180, 180]の範囲に収めるやつ。スケーリング時にこういう必要な処理。
+        //角度を必ず[-180, 180]の範囲に収めるやつ。この範囲に入ってないとスケーリングとかのときに都合が悪いため。
         private static float NormalRanged(float angle)
         {
             return Mathf.Repeat(angle + 180f, 360f) - 180f;

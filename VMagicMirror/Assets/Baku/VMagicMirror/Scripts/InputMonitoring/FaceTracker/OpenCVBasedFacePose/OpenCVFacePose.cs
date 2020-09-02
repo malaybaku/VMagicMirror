@@ -63,14 +63,18 @@ namespace Baku.VMagicMirror
                 }
 
                 var rot = _hasCalibrationData
-                    ? _calibrateRotInv * _headRotation
+                    ? _headRotation * _calibrateRotInv
                     : _headRotation;
 
                 //回転軸をクイッと。
-                if (!_faceTracker.DisableHorizontalFlip)
+                rot.x *= -1f;
+                if (_faceTracker.DisableHorizontalFlip)
+                {
+                    rot.z *= -1f;
+                }
+                else
                 {
                     rot.y *= -1f;
-                    rot.z *= -1f;
                 }
 
                 return rot;
@@ -103,8 +107,10 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            _hasCalibrationData = true;
             _calibratePos = data.openCvFacePos;
             _calibrateRot = Quaternion.Euler(data.openCvFaceRotEuler);
+            _calibrateRotInv = Quaternion.Inverse(_calibrateRot);
         }
 
         private void OnCalibrationRequired(CalibrationData data)
@@ -133,6 +139,8 @@ namespace Baku.VMagicMirror
             if (_estimator.HasValidPoseData)
             {
                 _count = notTrackedLimit;
+                _headRotation = _estimator.HeadRotation;
+                _headPosition = _estimator.HeadPosition;
             }
         }
 

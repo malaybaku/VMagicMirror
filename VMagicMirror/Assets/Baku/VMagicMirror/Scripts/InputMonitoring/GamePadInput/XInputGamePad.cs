@@ -15,6 +15,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private int deviceNumber = 0;
 
         private const int StickPositionDiffThreshold = 1000;
+
+        private readonly LegacyXInputCapture _xInputCapture = new LegacyXInputCapture();
         
         public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
@@ -154,8 +156,8 @@ namespace Baku.VMagicMirror
             else
             {
                 //普通にXInputの読み取り
-                DllConst.Capture();
-                int buttonFlags = DllConst.GetButtons(deviceNumber);
+                _xInputCapture.Update();
+                int buttonFlags = _xInputCapture.GetButtonStates();
                 foreach(var button in _buttons)
                 {
                     button.UpdatePressedState(buttonFlags);
@@ -220,8 +222,8 @@ namespace Baku.VMagicMirror
         private void UpdateRightStick()
         {
             var position = new Vector2Int(
-                DllConst.GetThumbRX(deviceNumber),
-                DllConst.GetThumbRY(deviceNumber)
+                _xInputCapture.GetThumbRX(),
+                _xInputCapture.GetThumbRY()
                 );
             
             if (Mathf.Abs(_rightStickPosition.x - position.x) +
@@ -235,8 +237,8 @@ namespace Baku.VMagicMirror
         private void UpdateLeftStick()
         {
             var position = new Vector2Int(
-                DllConst.GetThumbLX(deviceNumber),
-                DllConst.GetThumbLY(deviceNumber)
+                _xInputCapture.GetThumbLX(),
+                _xInputCapture.GetThumbLY()
                 );
 
             if (Mathf.Abs(_leftStickPosition.x - position.x) +
@@ -249,15 +251,15 @@ namespace Baku.VMagicMirror
 
         private void UpdateTriggerAsButtons()
         {
-            int right = DllConst.GetRightTrigger(deviceNumber);
+            int right = _xInputCapture.GetRightTrigger();
             bool isRightDown = (right > triggerDownThreshold);
             if (_isRightTriggerDown != isRightDown)
             {
                 _isRightTriggerDown = isRightDown;
                 _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.RTrigger, isRightDown));
             }
-            
-            int left = DllConst.GetLeftTrigger(deviceNumber);
+
+            int left = _xInputCapture.GetLeftTrigger();
             bool isLeftDown = (left > triggerDownThreshold);
             if (_isLeftTriggerDown != isLeftDown)
             {

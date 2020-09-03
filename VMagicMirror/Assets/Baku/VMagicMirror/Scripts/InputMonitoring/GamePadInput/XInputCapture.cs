@@ -4,18 +4,15 @@ namespace Baku.VMagicMirror
 {
     /// <summary> XInputの入力を必要最小限引っ張ってくるクラス。 </summary>
     /// <remarks>
-    /// APIが奇妙なのはXInputGamepad(OSS)を置き換える目的で書いてるからです。
+    /// APIがちょっとヘンテコですが、これはXInputGamepad(OSS)を置き換える目的で書いたためです。
     /// </remarks>
     public class XInputCapture
     {
-        public void Update()
-        {
-            XInputDll.XInputGetState(0, ref _state);
-        }
         private XINPUT_STATE _state;
 
-        public int GetButtonStates() => _state.GamePad.wButtons;
+        public void Update() => XInputGetState(0, ref _state);
 
+        public int GetButtonStates() => _state.GamePad.wButtons;
         public int GetLeftTrigger() => _state.GamePad.bLeftTrigger;
         public int GetRightTrigger() => _state.GamePad.bRightTrigger;
         public int GetThumbLX() => _state.GamePad.sThumbLX;
@@ -42,10 +39,25 @@ namespace Baku.VMagicMirror
             public short sThumbRY;
         }
 
-        static class XInputDll
+        [DllImport("Xinput1_4.dll")]
+        private static extern uint XInputGetState(uint index, ref XINPUT_STATE result);
+        
+        public static class Buttons
         {
-            [DllImport("Xinput1_4.dll")]
-            public static extern uint XInputGetState(uint index, ref XINPUT_STATE result);
+            public const int DPAD_UP          = 0x0001;
+            public const int DPAD_DOWN        = 0x0002;
+            public const int DPAD_LEFT        = 0x0004;
+            public const int DPAD_RIGHT       = 0x0008;
+            public const int START            = 0x0010;
+            public const int BACK             = 0x0020;
+            public const int LEFT_THUMB       = 0x0040;
+            public const int RIGHT_THUMB      = 0x0080;
+            public const int LEFT_SHOULDER    = 0x0100;
+            public const int RIGHT_SHOULDER   = 0x0200;
+            public const int A                = 0x1000;
+            public const int B                = 0x2000;
+            public const int X                = 0x4000;
+            public const int Y                = 0x8000;
         }
     }
 }

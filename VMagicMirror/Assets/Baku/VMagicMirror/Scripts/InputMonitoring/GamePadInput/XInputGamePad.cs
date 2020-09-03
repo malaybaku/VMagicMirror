@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using XinputGamePad;
 
 namespace Baku.VMagicMirror
 {
@@ -16,7 +15,7 @@ namespace Baku.VMagicMirror
 
         private const int StickPositionDiffThreshold = 1000;
 
-        private readonly LegacyXInputCapture _xInputCapture = new LegacyXInputCapture();
+        private readonly XInputCapture _xInputCapture = new XInputCapture();
         
         public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
@@ -116,20 +115,20 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _buttonsList.Add(new ObservableButton(GamepadKey.Start, InputConst.XINPUT_GAMEPAD_START, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.Start, XInputCapture.Buttons.START, _buttonSubject));
             
-            _buttonsList.Add(new ObservableButton(GamepadKey.B, InputConst.XINPUT_GAMEPAD_B, _buttonSubject));
-            _buttonsList.Add(new ObservableButton(GamepadKey.A, InputConst.XINPUT_GAMEPAD_A, _buttonSubject));
-            _buttonsList.Add(new ObservableButton(GamepadKey.X, InputConst.XINPUT_GAMEPAD_X, _buttonSubject));
-            _buttonsList.Add(new ObservableButton(GamepadKey.Y, InputConst.XINPUT_GAMEPAD_Y, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.B, XInputCapture.Buttons.B, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.A, XInputCapture.Buttons.A, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.X, XInputCapture.Buttons.X, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.Y, XInputCapture.Buttons.Y, _buttonSubject));
 
-            _buttonsList.Add(new ObservableButton(GamepadKey.RShoulder, InputConst.XINPUT_GAMEPAD_RIGHT_SHOULDER, _buttonSubject));
-            _buttonsList.Add(new ObservableButton(GamepadKey.LShoulder, InputConst.XINPUT_GAMEPAD_LEFT_SHOULDER, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.RShoulder, XInputCapture.Buttons.RIGHT_SHOULDER, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.LShoulder, XInputCapture.Buttons.LEFT_SHOULDER, _buttonSubject));
             
-            _arrowRight = new ObservableButton(GamepadKey.RIGHT, InputConst.XINPUT_GAMEPAD_DPAD_RIGHT, _buttonSubject);
-            _arrowDown = new ObservableButton(GamepadKey.DOWN, InputConst.XINPUT_GAMEPAD_DPAD_DOWN, _buttonSubject);
-            _arrowLeft = new ObservableButton(GamepadKey.LEFT, InputConst.XINPUT_GAMEPAD_DPAD_LEFT, _buttonSubject);
-            _arrowUp = new ObservableButton(GamepadKey.UP, InputConst.XINPUT_GAMEPAD_DPAD_UP, _buttonSubject);
+            _arrowRight = new ObservableButton(GamepadKey.RIGHT, XInputCapture.Buttons.DPAD_RIGHT, _buttonSubject);
+            _arrowDown = new ObservableButton(GamepadKey.DOWN, XInputCapture.Buttons.DPAD_DOWN, _buttonSubject);
+            _arrowLeft = new ObservableButton(GamepadKey.LEFT, XInputCapture.Buttons.DPAD_LEFT, _buttonSubject);
+            _arrowUp = new ObservableButton(GamepadKey.UP, XInputCapture.Buttons.DPAD_UP, _buttonSubject);
 
             _buttonsList.Add(_arrowRight);
             _buttonsList.Add(_arrowDown);

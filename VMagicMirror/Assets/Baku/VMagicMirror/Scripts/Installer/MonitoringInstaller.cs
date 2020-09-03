@@ -13,6 +13,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private ExternalTrackerDataSource externalTracker = null;
         [SerializeField] private XInputGamePad gamepadListener = null;
         [SerializeField] private MidiInputObserver midiInputObserver = null;
+        [SerializeField] private OpenCVFacePose openCvFacePose = null;
         
         public override void Install(DiContainer container)
         {
@@ -23,6 +24,7 @@ namespace Baku.VMagicMirror.Installer
             container.BindInstance(externalTracker);
             container.BindInstance(gamepadListener);
             container.BindInstance(midiInputObserver);
+            container.BindInstance(openCvFacePose);
 
             //終了前に監視処理を安全にストップさせたいものは呼んでおく
             container.Bind<IReleaseBeforeQuit>()

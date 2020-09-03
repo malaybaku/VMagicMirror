@@ -16,8 +16,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class FaceTracker : MonoBehaviour
     {
-        //const string FaceTrackingDataFileName = "sp_human_face_68.dat";
-        const string FaceTrackingDataFileName = "sp_human_face_68_for_mobile.dat";
+        const string FaceTrackingDataFileName = "sp_human_face_17.dat";
 
         [SerializeField]
         private string requestedDeviceName = null;
@@ -39,9 +38,11 @@ namespace Baku.VMagicMirror
         
         [Tooltip("顔トラッキングが外れたとき、色々なパラメータを基準位置に戻すためのLerpファクター(これにTime.deltaTimeをかけた値を用いる")]
         [SerializeField] private float notTrackedResetSpeedFactor = 3.0f;
+
+        [Tooltip("検出処理が走る最短間隔をミリ秒単位で規定します。")]
+        [SerializeField] private int trackMinIntervalMillisec = 60;
         
-        /// <summary> 検出した顔パーツそれぞれ </summary>
-        public FaceParts FaceParts { get; } = new FaceParts();
+        public FaceTrackerToEyeOpen EyeOpen { get; } = new FaceTrackerToEyeOpen();
 
         /// <summary> キャリブレーションの内容 </summary>
         public CalibrationData CalibrationData { get; } = new CalibrationData();
@@ -63,6 +64,15 @@ namespace Baku.VMagicMirror
         /// </summary>
         public event Action<FaceDetectionUpdateStatus> FaceDetectionUpdated;
 
+        /// <summary> UIスレッド上で、顔の特徴点一覧を獲得すると発火します。 </summary>
+        public event Action<FaceLandmarksUpdateStatus> FaceLandmarksUpdated;
+
+        /// <summary> キャリブレーションのデータを外部から受け取り、適用すべきときに発火します。 </summary>
+        public event Action<CalibrationData> CalibrationDataReceived;
+        
+        /// <summary> いまの姿勢を基準姿勢としてほしい、というときに呼ばれます。 </summary>
+        public event Action<CalibrationData> CalibrationRequired;
+
         /// <summary> カメラが初期化済みかどうか </summary>
         public bool HasInitDone { get; private set; } = false;
         private bool _isInitWaiting = false;
@@ -72,8 +82,8 @@ namespace Baku.VMagicMirror
 
         public bool DisableHorizontalFlip
         {
-            get => FaceParts.DisableHorizontalFlip;
-            set => FaceParts.DisableHorizontalFlip = value;
+            get => EyeOpen.DisableHorizontalFlip;
+            set => EyeOpen.DisableHorizontalFlip = value;
         }
 
         private int TextureWidth =>
@@ -116,6 +126,10 @@ namespace Baku.VMagicMirror
             set { lock (_faceDetectCompletedLock) _faceDetectCompleted = value; }
         }
         
+        //UIスレッドがタイミングを見計らうために使う
+        private float _countFromPreviousSetColors = 0f;
+        private bool _hasFrameUpdateSincePreviousSetColors = false;
+
         //UIスレッドが書き込み、Dlibの呼び出しスレッドが読み込む
         private Color32[] _inputColors = null;
         private int _inputWidth = 0;
@@ -150,17 +164,41 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            //Update処理はランドマークの検出スレッドとの通信をやります
+            //Update処理はランドマークの検出スレッドとの通信がメインタスク
             // 1. データを送る準備が出来たら送る
             // 2. 結果が戻ってきてたら使う。キャリブが必要ならついでに実施
+            // 3. あまりに長時間何も来ない場合、トラッキングロスト扱い
+            SetImageIfPrepared();
+            GetDetectionResult();
+            CheckTrackingLost();
 
-            if (HasInitDone &&
-                _webCamTexture.isPlaying &&
-                _webCamTexture.didUpdateThisFrame &&
-                _colors != null &&
-                !FaceDetectPrepared
-                )
+            void SetImageIfPrepared()
             {
+                _countFromPreviousSetColors += Time.deltaTime;
+                if (HasInitDone && _webCamTexture.didUpdateThisFrame)
+                {
+                    _hasFrameUpdateSincePreviousSetColors = true;
+                }
+
+                //かなり条件が厳しい。
+                //カメラ初期化して実際に画像の更新があり、前回から十分な時間経過があり、
+                //しかも画像処理側のスレッドがヒマである、というのが条件
+                bool canSetImage = HasInitDone &&
+                   _webCamTexture.isPlaying &&
+                   _hasFrameUpdateSincePreviousSetColors &&
+                   _countFromPreviousSetColors > trackMinIntervalMillisec * .001f &&
+                   _colors != null &&
+                   !FaceDetectPrepared;
+
+                //どれか一つの条件が揃ってないのでダメ
+                if (!canSetImage)
+                {
+                    return;
+                }
+
+                _countFromPreviousSetColors = 0f;
+                _hasFrameUpdateSincePreviousSetColors = false;
+                    
                 try
                 {
                     if (_webCamTexture.width >= halfResizeWidthThreshold)
@@ -168,13 +206,11 @@ namespace Baku.VMagicMirror
                         _webCamTexture.GetPixels32(_rawSizeColors);
                         SetHalfSizePixels(_rawSizeColors, _colors, _webCamTexture.width, _webCamTexture.height);
                         RequestUpdateFaceParts(_colors, TextureWidth, TextureHeight);
-                        //UpdateFaceParts(_colors);
                     }
                     else
                     {
                         _webCamTexture.GetPixels32(_colors);
                         RequestUpdateFaceParts(_colors, TextureWidth, TextureHeight);
-                        //UpdateFaceParts(_colors);
                     }
                 }
                 catch (Exception ex)
@@ -182,20 +218,30 @@ namespace Baku.VMagicMirror
                     LogOutput.Instance.Write(ex);
                 }
             }
-
-            if (FaceDetectCompleted)
+            
+            //別スレッドの画像処理が終わっていたらその結果を受け取る
+            void GetDetectionResult()
             {
-                GetFaceDetectResult();
-                if (_calibrationRequested)
+                if (FaceDetectCompleted)
                 {
-                    _calibrationRequested = false;
-                    UpdateCalibrationData();
+                    GetFaceDetectResult();
+                    if (_calibrationRequested)
+                    {
+                        _calibrationRequested = false;
+                        UpdateCalibrationData();
+                    }
                 }
             }
 
             //顔トラ起動中はつねに「実は顔トラッキング出来てないのでは？」というのをチェックする
-            if (HasInitDone)
+            void CheckTrackingLost()
             {
+                if (!HasInitDone)
+                {
+                    return;
+                }
+
+                
                 if (_faceNotDetectedCountDown >= 0)
                 {
                     _faceNotDetectedCountDown -= Time.deltaTime;
@@ -203,7 +249,7 @@ namespace Baku.VMagicMirror
                 
                 if (_faceNotDetectedCountDown < 0)
                 {
-                    //顔トラが全然更新されない -> ヘンなとこで固まってる可能性が高いので、正面姿勢に戻って頂く
+                    //顔トラが全然更新されない -> ヘンなとこで固まってる可能性が高いので、正面姿勢に戻す
                     LerpToDefaultFace();
                 }
             }
@@ -234,11 +280,9 @@ namespace Baku.VMagicMirror
             try
             {
                 var calibrationData = JsonUtility.FromJson<CalibrationData>(data);
-                CalibrationData.eyeOpenHeight = calibrationData.eyeOpenHeight;
-                CalibrationData.eyeBrowPosition = calibrationData.eyeBrowPosition;
-                CalibrationData.eyeFaceYDiff = calibrationData.eyeFaceYDiff;
                 CalibrationData.faceCenter = calibrationData.faceCenter;
                 CalibrationData.faceSize = calibrationData.faceSize;
+                CalibrationDataReceived?.Invoke(calibrationData);
             }
             catch (Exception ex)
             {
@@ -420,6 +464,12 @@ namespace Baku.VMagicMirror
 
             //出力を拾い終わった時点で次の処理に入ってもらって大丈夫
             FaceDetectCompleted = false;
+            
+            FaceLandmarksUpdated?.Invoke(new FaceLandmarksUpdateStatus()
+            {
+                Landmarks = landmarks,
+                DisableHorizontalFlip = DisableHorizontalFlip,
+            });
 
             float x = (mainPersonRect.xMin - TextureWidth / 2) / TextureWidth;
             if (DisableHorizontalFlip)
@@ -440,7 +490,7 @@ namespace Baku.VMagicMirror
                 mainPersonRect.height / TextureWidth
                 );
 
-            FaceParts.Update(mainPersonRect, landmarks);
+            EyeOpen.UpdatePoints(landmarks);
 
             FaceDetectedAtLeastOnce = true;
             //顔が検出できてるので、未検出カウントダウンは最初からやり直し
@@ -458,26 +508,18 @@ namespace Baku.VMagicMirror
             //NOTE: centerじゃなくてbottom leftを指定するんですね…はい。
             DetectedRect = new Rect(center - 0.5f * size, size);
             
-            FaceParts.LerpToDefault(CalibrationData, lerpFactor);
+            EyeOpen.LerpToDefault(lerpFactor);
+            
+            //TODO: ?もしかするとここもイベントでOpenCVFacePoseに認知させるべきかも。無くてもいい気もするけど
         }
         
         private void UpdateCalibrationData()
         {
             CalibrationData.faceSize = DetectedRect.width * DetectedRect.height;
             CalibrationData.faceCenter = DetectedRect.center;
-
-            CalibrationData.eyeOpenHeight = 0.5f * (
-                FaceParts.LeftEye.CurrentEyeOpenValue +
-                FaceParts.RightEye.CurrentEyeOpenValue
-                );
-
-            CalibrationData.eyeBrowPosition = 0.5f * (
-                FaceParts.LeftEyebrow.CurrentHeight + 
-                FaceParts.RightEyebrow.CurrentHeight
-                );
-
-            CalibrationData.eyeFaceYDiff =
-                FaceParts.Outline.EyeFaceYDiff;
+            
+            //他モジュールが更にキャリブを行い、データを書き込むことを許可する
+            CalibrationRequired?.Invoke(CalibrationData);
 
             CalibrationCompleted?.Invoke(JsonUtility.ToJson(CalibrationData));
         }
@@ -522,5 +564,11 @@ namespace Baku.VMagicMirror
         public int Height { get; set; }
         public bool HasValidFaceArea { get; set; }
         public Rect FaceArea { get; set; }
+    }
+    
+    public struct FaceLandmarksUpdateStatus
+    {
+        public List<Vector2> Landmarks { get; set; }
+        public bool DisableHorizontalFlip { get; set; }
     }
 }

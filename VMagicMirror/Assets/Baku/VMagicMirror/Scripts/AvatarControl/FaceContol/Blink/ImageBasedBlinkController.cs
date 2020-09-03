@@ -9,8 +9,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ImageBasedBlinkController : MonoBehaviour
     {
-        private const float EyeCloseHeight = 0.02f;
-        
         private readonly RecordBlinkSource _blinkSource = new RecordBlinkSource();
         public IBlinkSource BlinkSource => _blinkSource;
         
@@ -34,10 +32,8 @@ namespace Baku.VMagicMirror
         public float blinkUpdateInterval = 0.3f;
         private float _count = 0;
 
-        //顔トラッキングで得たとにかく最新の値
-        private float _latestLeftBlinkInput = 0f;
-        private float _latestRightBlinkInput = 0f;
-
+        //TODO: ここ以前にT5_4Vやったときと同じで、閉じ方向と開き方向の速度を変えると良いかも。
+        
         //一定間隔で_latestな値をコピーしてきた、当面ターゲットとすべきまばたきブレンドシェイプの値
         private float _leftBlinkTarget = 0f;
         private float _rightBlinkTarget = 0f;
@@ -49,26 +45,13 @@ namespace Baku.VMagicMirror
         private float _latestFilteredLeft = 0f;
         private float _latestFilteredRight = 0f;
 
-        private void Start()
-        {
-            _faceTracker.FaceParts
-                .LeftEye
-                .EyeOpenValue
-                .Subscribe(OnLeftEyeOpenValueChanged);
-
-            _faceTracker.FaceParts
-                .RightEye
-                .EyeOpenValue
-                .Subscribe(OnRightEyeOpenValueChanged);
-        }
-
         private void Update()
         {
             _count -= Time.deltaTime;
             if (_count < 0)
             {
-                _leftBlinkTarget = _latestLeftBlinkInput;
-                _rightBlinkTarget = _latestRightBlinkInput;
+                _leftBlinkTarget = _faceTracker.EyeOpen.LeftEyeBlink;
+                _rightBlinkTarget =  _faceTracker.EyeOpen.RightEyeBlink;
                 _count = blinkUpdateInterval;                
             }
 
@@ -86,35 +69,6 @@ namespace Baku.VMagicMirror
 
             _blinkSource.Left = (_latestFilteredLeft > closeThreshold) ? 1.0f : _latestFilteredLeft;
             _blinkSource.Right = (_latestFilteredRight > closeThreshold) ? 1.0f : _latestFilteredRight;
-        }
-
-        //FaceDetector側では目の開き具合を出力しているのでブレンドシェイプ的には反転が必要なことに注意
-        private void OnLeftEyeOpenValueChanged(float value) 
-            => _latestLeftBlinkInput = GetEyeOpenValue(value);
-
-        private void OnRightEyeOpenValueChanged(float value) 
-            => _latestRightBlinkInput = GetEyeOpenValue(value);
-
-        private float GetEyeOpenValue(float value)
-        {
-            float clamped = Mathf.Clamp(value, EyeCloseHeight, _faceTracker.CalibrationData.eyeOpenHeight);
-            if (value > _faceTracker.CalibrationData.eyeOpenHeight)
-            {
-                return 0;
-            }
-            else
-            {
-                float range = _faceTracker.CalibrationData.eyeOpenHeight - EyeCloseHeight;
-                //細目すぎてrangeが負になるケースも想定してる: このときはまばたき自体無効にしておく
-                if (range < Mathf.Epsilon)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1 - (clamped - EyeCloseHeight) / range;
-                }
-            }
         }
     }
 }

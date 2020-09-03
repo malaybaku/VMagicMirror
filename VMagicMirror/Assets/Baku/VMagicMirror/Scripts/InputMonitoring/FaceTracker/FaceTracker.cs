@@ -16,8 +16,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class FaceTracker : MonoBehaviour
     {
-        //const string FaceTrackingDataFileName = "sp_human_face_68.dat";
-        const string FaceTrackingDataFileName = "sp_human_face_17_for_mobile.dat";
+        const string FaceTrackingDataFileName = "sp_human_face_17.dat";
 
         [SerializeField]
         private string requestedDeviceName = null;

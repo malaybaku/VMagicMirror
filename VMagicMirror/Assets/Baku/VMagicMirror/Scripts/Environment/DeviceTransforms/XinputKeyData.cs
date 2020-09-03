@@ -1,6 +1,4 @@
-﻿using XinputGamePad;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
     public struct GamepadKeyData
     {

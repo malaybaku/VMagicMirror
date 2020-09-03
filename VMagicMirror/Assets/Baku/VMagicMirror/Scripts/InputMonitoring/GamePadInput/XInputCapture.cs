@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -15,10 +16,14 @@ namespace Baku.VMagicMirror
         public int GetButtonStates() => _state.GamePad.wButtons;
         public int GetLeftTrigger() => _state.GamePad.bLeftTrigger;
         public int GetRightTrigger() => _state.GamePad.bRightTrigger;
-        public int GetThumbLX() => _state.GamePad.sThumbLX;
-        public int GetThumbLY() => _state.GamePad.sThumbLY;
-        public int GetThumbRX() => _state.GamePad.sThumbRX;
-        public int GetThumbRY() => _state.GamePad.sThumbRY;
+        public Vector2Int GetLeftThumb() => new Vector2Int(
+            _state.GamePad.sThumbLX,
+            _state.GamePad.sThumbLY
+            );
+        public Vector2Int GetRightThumb() => new Vector2Int(
+            _state.GamePad.sThumbRX,
+            _state.GamePad.sThumbRY
+            );
 
         [StructLayout(LayoutKind.Sequential)]
         struct XINPUT_STATE

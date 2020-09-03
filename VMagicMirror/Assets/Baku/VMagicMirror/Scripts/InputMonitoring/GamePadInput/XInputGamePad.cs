@@ -11,7 +11,6 @@ namespace Baku.VMagicMirror
     public class XInputGamePad : MonoBehaviour
     {
         [SerializeField] private int triggerDownThreshold = 30;
-        [SerializeField] private int deviceNumber = 0;
 
         private const int StickPositionDiffThreshold = 1000;
 
@@ -220,11 +219,7 @@ namespace Baku.VMagicMirror
 
         private void UpdateRightStick()
         {
-            var position = new Vector2Int(
-                _xInputCapture.GetThumbRX(),
-                _xInputCapture.GetThumbRY()
-                );
-            
+            var position = _xInputCapture.GetRightThumb();
             if (Mathf.Abs(_rightStickPosition.x - position.x) +
                 Mathf.Abs(_rightStickPosition.y - position.y) > StickPositionDiffThreshold)
             {
@@ -235,11 +230,7 @@ namespace Baku.VMagicMirror
 
         private void UpdateLeftStick()
         {
-            var position = new Vector2Int(
-                _xInputCapture.GetThumbLX(),
-                _xInputCapture.GetThumbLY()
-                );
-
+            var position = _xInputCapture.GetLeftThumb();
             if (Mathf.Abs(_leftStickPosition.x - position.x) +
                 Mathf.Abs(_leftStickPosition.y - position.y) > StickPositionDiffThreshold)
             {

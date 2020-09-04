@@ -378,7 +378,6 @@ GameObject:
   - component: {fileID: 5813678810404708595}
   - component: {fileID: 5813678810404708597}
   - component: {fileID: 5813678810404708598}
-  - component: {fileID: 5813678810404708594}
   - component: {fileID: 5813678810404708492}
   - component: {fileID: 3817731646809221862}
   m_Layer: 0
@@ -430,7 +429,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePadBasedBodyLean: {fileID: 5813678808713813108}
-  smallGamepadHandIk: {fileID: 5813678810404708594}
   handIkIntegrator: {fileID: 5813678810404708495}
   headIkIntegrator: {fileID: 5813678810404708592}
 --- !u!114 &5813678810404708495
@@ -446,12 +444,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typing: {fileID: 5813678810404708595}
-  smallGamepadHand: {fileID: 5813678810404708594}
   gamepadFinger: {fileID: 5813678810404708492}
   mouseMove: {fileID: 5813678810404708598}
   presentation: {fileID: 5813678810404708597}
   imageBaseHand: {fileID: 3817731646809221862}
   fingerController: {fileID: 2951044793089892564}
+  gamepadSetting:
+    imageBasedBodyMotion: {fileID: 5813678808713813112}
 --- !u!114 &5813678810404708592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -594,22 +593,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speedFactor: 12
---- !u!114 &5813678810404708594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678810404708600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b305eeb1911da1f4cae5b779b5c81287, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  imageBasedBodyMotion: {fileID: 5813678808713813112}
-  speedFactor: 3
-  buttonDownSpeedFactor: 8
-  bodyMotionToGamepadPosApplyFactor: 0.5
 --- !u!114 &5813678810404708492
 MonoBehaviour:
   m_ObjectHideFlags: 0

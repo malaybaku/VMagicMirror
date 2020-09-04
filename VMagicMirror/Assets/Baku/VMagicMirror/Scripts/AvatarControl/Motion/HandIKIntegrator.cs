@@ -27,8 +27,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private MouseMoveHandIKGenerator mouseMove = null;
         public MouseMoveHandIKGenerator MouseMove => mouseMove;
 
-        [SerializeField] private MidiHandIkGenerator midi = null;
-        public MidiHandIkGenerator MidiHand => midi;
+        public MidiHandIkGenerator MidiHand { get; private set; }
 
         [SerializeField] private PresentationHandIKGenerator presentation = null;
         public PresentationHandIKGenerator Presentation => presentation;
@@ -76,13 +75,20 @@ namespace Baku.VMagicMirror
 
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IKTargetTransforms ikTargets, ParticleStore particleStore)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            IKTargetTransforms ikTargets, 
+            ParticleStore particleStore,
+            MidiControllerProvider midiControllerProvider
+            )
         {
             _rightHandTarget = ikTargets.RightHand;
             _leftHandTarget = ikTargets.LeftHand;
             _particleStore = particleStore;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;        
+            
+            MidiHand = new MidiHandIkGenerator(this, midiControllerProvider);
         }
 
         //NOTE: 初めて手がキーボードから離れるまではnull
@@ -259,7 +265,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            var hand = midi.KnobValueChange(knobNumber, value);
+            var hand = MidiHand.KnobValueChange(knobNumber, value);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.MidiController);
@@ -277,7 +283,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            var (hand, pos) = midi.NoteOn(noteNumber);
+            var (hand, pos) = MidiHand.NoteOn(noteNumber);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.MidiController);
@@ -295,9 +301,10 @@ namespace Baku.VMagicMirror
         #region Image Base Hand
 
         //画像処理の手検出があったらそっちのIKに乗り換える
-        private void CheckHandUpdates()
+        private void ExecuteOrCheckHandUpdates()
         {
-
+            MidiHand.Update();
+            
             if (imageBaseHand.HasRightHandUpdate)
             {
                 imageBaseHand.HasRightHandUpdate = false;
@@ -331,6 +338,8 @@ namespace Baku.VMagicMirror
             _currentLeftHand = Typing.LeftHand;
             _leftHandStateBlendCount = HandIkToggleDuration;
             _rightHandStateBlendCount = HandIkToggleDuration;
+            
+            MidiHand.Start();
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -355,7 +364,7 @@ namespace Baku.VMagicMirror
         
         private void Update()
         {
-            CheckHandUpdates();
+            ExecuteOrCheckHandUpdates();
             
             //ねらい: 前のステートと今のステートをブレンドしながら実際にIKターゲットの位置、姿勢を更新する
             UpdateLeftHand();
@@ -446,7 +455,7 @@ namespace Baku.VMagicMirror
             var ik =
                 (targetType == HandTargetType.Keyboard) ? Typing.LeftHand :
                 (targetType == HandTargetType.Gamepad) ? SmallGamepadHand.LeftHand :
-                (targetType == HandTargetType.MidiController) ? midi.LeftHand : 
+                (targetType == HandTargetType.MidiController) ? MidiHand.LeftHand : 
                 (targetType == HandTargetType.ImageBaseHand) ? imageBaseHand.LeftHand :
                 Typing.LeftHand;
 
@@ -486,7 +495,7 @@ namespace Baku.VMagicMirror
                 (targetType == HandTargetType.Keyboard) ? Typing.RightHand :
                 (targetType == HandTargetType.Gamepad) ? SmallGamepadHand.RightHand :
                 (targetType == HandTargetType.Presentation) ? Presentation.RightHand :
-                (targetType == HandTargetType.MidiController) ? midi.RightHand :
+                (targetType == HandTargetType.MidiController) ? MidiHand.RightHand :
                 (targetType == HandTargetType.ImageBaseHand) ? imageBaseHand.RightHand :
                 Typing.RightHand;
 

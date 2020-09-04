@@ -1,20 +1,16 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UniRx;
-using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// MIDI入力から手のIK動作を作るすごいやつだよ
-    /// </summary>
-    public class MidiHandIkGenerator : MonoBehaviour
+    /// <summary> MIDI入力から手のIK動作を作るすごいやつだよ </summary>
+    public sealed class MidiHandIkGenerator : HandIkGeneratorBase
     {
         //NOTE: キーの押し+離しで2モーションぶんの長さです
-        [SerializeField] private float noteMotionDuration = 0.3f;
-        [SerializeField] private float knobMotionLerpFactor = 12.0f;
+        private const float NoteMotionDuration = 0.3f;
+        private const float KnobMotionLerpFactor = 12.0f;
         
-        private MidiControllerProvider _provider = null;
+        private readonly MidiControllerProvider _provider;
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         private Coroutine _leftHandCoroutine = null;
@@ -31,21 +27,21 @@ namespace Baku.VMagicMirror
         private bool _isRightHandOnKnob = false;
         private MidiKnobTargetData _leftHandKnobTarget;
         private MidiKnobTargetData _rightHandKnobTarget;
-
-        [Inject]
-        public void Initialize(MidiControllerProvider provider)
+        
+        public MidiHandIkGenerator(MonoBehaviour coroutineResponder, MidiControllerProvider provider)
+            :base(coroutineResponder)
         {
             _provider = provider;
         }
 
-        private void Start()
+        public override void Start()
         {
             //NOTE: ここは初期位置をふっとばさないための処置なので、あんまり高精度ではないです
             KnobValueChange(_provider.LeftKnobCenterIndex, 0);
             KnobValueChange(_provider.RightKnobCenterIndex, 0);
         }
         
-        private void Update()
+        public override void Update()
         {
             if (_isLeftHandOnKnob)
             {
@@ -59,12 +55,12 @@ namespace Baku.VMagicMirror
                 _leftHand.Position = Vector3.Lerp(
                     _leftHand.Position,
                     leftHandPos,
-                    knobMotionLerpFactor * Time.deltaTime
+                    KnobMotionLerpFactor * Time.deltaTime
                 );
                 _leftHand.Rotation = Quaternion.Slerp(
                     _leftHand.Rotation,
                     leftHandRot,
-                    knobMotionLerpFactor * Time.deltaTime
+                    KnobMotionLerpFactor * Time.deltaTime
                 );
             }
 
@@ -80,12 +76,12 @@ namespace Baku.VMagicMirror
                 _rightHand.Position = Vector3.Lerp(
                     _rightHand.Position,
                     rightHandPos,
-                    knobMotionLerpFactor * Time.deltaTime
+                    KnobMotionLerpFactor * Time.deltaTime
                 );
                 _rightHand.Rotation = Quaternion.Slerp(
                     _rightHand.Rotation,
                     rightHandRot,
-                    knobMotionLerpFactor * Time.deltaTime
+                    KnobMotionLerpFactor * Time.deltaTime
                 );
             }
         }
@@ -153,9 +149,9 @@ namespace Baku.VMagicMirror
         private IEnumerator MoveToNote(IKDataRecord ik, Vector3 notePosition, Quaternion noteRot, Vector3 upDiff)
         {
             float start = Time.time;
-            while (Time.time - start < noteMotionDuration)
+            while (Time.time - start < NoteMotionDuration)
             {
-                float rate = (Time.time - start) / noteMotionDuration;
+                float rate = (Time.time - start) / NoteMotionDuration;
 
                 if (rate < 0.5f)
                 {

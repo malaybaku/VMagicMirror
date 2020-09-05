@@ -40,10 +40,13 @@ namespace Baku.VMagicMirror
         private readonly double[] _rVecArray = new double[3];
         private readonly double[] _tVecArray = new double[3];
         private readonly Vector2[] _landmarks = new Vector2[17];
+
+        private readonly double[] _tVecArrayTemp = new double[3];
         
         //NOTE: この辺は本質的に維持したいデータ
         private readonly Mat _camMatrix = new Mat(3, 3, CvType.CV_64FC1);
         private readonly MatOfPoint2f _imagePoints = new MatOfPoint2f();
+        private readonly double[] _imagePointsSetter = new double[12];
 
         private int _width = 0;
         private int _height = 0;
@@ -118,10 +121,11 @@ namespace Baku.VMagicMirror
                 Calib3d.solvePnP(_objPoints, _imagePoints, _camMatrix, _distCoeffs, _rVec, _tVec);
             }
 
-            float tx = (float) _tVec.get(0, 0)[0];
-            float ty = (float) _tVec.get(1, 0)[0];
-            float tz = (float) _tVec.get(2, 0)[0];
-
+            _tVec.get(0, 0, _tVecArrayTemp);
+            float tx = (float)_tVecArrayTemp[0];
+            float ty = (float)_tVecArrayTemp[1];
+            float tz = (float)_tVecArrayTemp[2];
+            
             bool notInViewport = false;
             var pos = _vp * new Vector4(tx, ty, tz, 1.0f);
             if (Mathf.Abs(pos.w) > 0.0001)
@@ -180,14 +184,35 @@ namespace Baku.VMagicMirror
             }
 
             //NOTE: 17点モデルから目、鼻、耳を(_objPointsと同じ対応付けで)取り出す。
-            _imagePoints.fromArray (
-                new Point ((_landmarks[2].x + _landmarks[3].x) / 2, (_landmarks[2].y + _landmarks[3].y) / 2),
-                new Point ((_landmarks[4].x + _landmarks[5].x) / 2, (_landmarks[4].y + _landmarks[5].y) / 2),
-                new Point (_landmarks[0].x, _landmarks[0].y),
-                new Point (_landmarks[1].x, _landmarks[1].y),
-                new Point (_landmarks[6].x, _landmarks[6].y),
-                new Point (_landmarks[8].x, _landmarks[8].y)
-            );
+            if (_imagePoints.rows() == 0)
+            {
+                //初回: 領域確保も兼ねてちゃんと作る
+                _imagePoints.fromArray(
+                    new Point ((_landmarks[2].x + _landmarks[3].x) / 2, (_landmarks[2].y + _landmarks[3].y) / 2),
+                    new Point ((_landmarks[4].x + _landmarks[5].x) / 2, (_landmarks[4].y + _landmarks[5].y) / 2),
+                    new Point (_landmarks[0].x, _landmarks[0].y),
+                    new Point (_landmarks[1].x, _landmarks[1].y),
+                    new Point (_landmarks[6].x, _landmarks[6].y),
+                    new Point (_landmarks[8].x, _landmarks[8].y)
+                );
+            }
+            else
+            {
+                //初回以外: fromArrayとかnew PointはGCAllocなのでダメです。
+                _imagePointsSetter[0] = (_landmarks[2].x + _landmarks[3].x) / 2;
+                _imagePointsSetter[1] = (_landmarks[2].y + _landmarks[3].y) / 2;
+                _imagePointsSetter[2] = (_landmarks[4].x + _landmarks[5].x) / 2;
+                _imagePointsSetter[3] = (_landmarks[4].y + _landmarks[5].y) / 2;
+                _imagePointsSetter[4] = _landmarks[0].x; 
+                _imagePointsSetter[5] = _landmarks[0].y;
+                _imagePointsSetter[6] = _landmarks[1].x; 
+                _imagePointsSetter[7] = _landmarks[1].y;
+                _imagePointsSetter[8] = _landmarks[6].x; 
+                _imagePointsSetter[9] = _landmarks[6].y;
+                _imagePointsSetter[10] = _landmarks[8].x;
+                _imagePointsSetter[11] = _landmarks[8].y;
+                _imagePoints.put(0, 0, _imagePointsSetter);
+            }
         }
                 
         private void SetCameraMatrix(Mat camMatrix, float width, float height)

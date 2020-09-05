@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror
         [Inject]
         private FaceTracker _faceTracker = null;
 
-        private bool _isVrmLoaded = false;
+        private bool _hasModel = false;
         private Transform _vrmRoot = null;
         private Transform _leftShoulderEffector = null;
         private Transform _rightShoulderEffector = null;
@@ -39,8 +39,6 @@ namespace Baku.VMagicMirror
         private Vector3 _prevPosition;
         private Vector3 _prevSpeed;
 
-        private FullBodyBipedIK _ik = null;
-        
         /// <summary>体をZ方向に動かしてもよいかどうかを取得、設定します。</summary>
         public bool EnableBodyLeanZ
         {
@@ -61,7 +59,7 @@ namespace Baku.VMagicMirror
         {
             var ik = info.vrmRoot.GetComponent<FullBodyBipedIK>();
             var animator = info.animator;
-            _isVrmLoaded = true;
+            _hasModel = true;
             
             _vrmRoot = animator.transform;
 
@@ -91,23 +89,20 @@ namespace Baku.VMagicMirror
                 _rightShoulderEffector.localPosition = _rightShoulderDefaultOffset;
                 _rightShoulderEffector.rotation = Quaternion.identity;
             }
-
-            _ik = ik;
         }
 
         public void OnVrmDisposing()
         {
-            _isVrmLoaded = false;
+            _hasModel = false;
 
             //NOTE: Destroyはしないでもいい(VRM自体のDestroyで勝手に消えるので)
-            _ik = null;
             _leftShoulderEffector = null;
             _rightShoulderEffector = null;
         }
 
         private void Update()
         {
-            if (!_isVrmLoaded || !_faceTracker.FaceDetectedAtLeastOnce)
+            if (!_hasModel || !_faceTracker.FaceDetectedAtLeastOnce)
             {
                 return;
             }

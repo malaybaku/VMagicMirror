@@ -51,20 +51,18 @@ namespace Baku.VMagicMirror
 
             //それ以外の場合、回転量のスケーリングをしておく。
             //ただし、デフォルト設定時は何もしない。これはパフォーマンスと後方互換のカタさを両立するため
-            if (_hasEye && Mathf.Abs(Scale - 1.0f) > Mathf.Epsilon)
+            if (_hasEye && (Scale < 0.995 || Scale > 1.005))
             {
                 _leftEye.localRotation.ToAngleAxis(out var leftAngle, out var leftAxis);
-                //範囲を[-180, 180]に保証する
+                //範囲を[-180, 180]に保証する: 保証しないと角度の掛け算が成り立たないので
                 leftAngle = Mathf.Repeat(leftAngle + 180f, 360f) - 180f;
-                //絞った範囲でスケーリングしてから、ふたたび範囲を[-180, 180]に絞る
-                leftAngle = Mathf.Repeat(leftAngle * Scale + 180f, 360f) - 180f;
-                _leftEye.localRotation = Quaternion.AngleAxis(leftAngle, leftAxis);
+                //絞った範囲でスケーリングしてから入れ直す
+                _leftEye.localRotation = Quaternion.AngleAxis(leftAngle * Scale, leftAxis);
                 
                 //leftEyeと同じ
                 _rightEye.localRotation.ToAngleAxis(out var rightAngle, out var rightAxis);
                 rightAngle = Mathf.Repeat(rightAngle + 180f, 360f) - 180f;
-                rightAngle = Mathf.Repeat(rightAngle * Scale + 180f, 360f) - 180f;
-                _rightEye.localRotation = Quaternion.AngleAxis(rightAngle, rightAxis);
+                _rightEye.localRotation = Quaternion.AngleAxis(rightAngle * Scale, rightAxis);
             }
         }
     }

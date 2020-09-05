@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Zenject;
+﻿using System;
+using UnityEngine;
 
 //NOTE: 角度について
 //今回は「手のひらがほぼカメラ側を向いてて顔付近にある」というケースのみケアするので、ヒトの自然な姿勢がとーっても限定される。
@@ -7,7 +7,6 @@ using Zenject;
 // * 適当な基準位置: 手のひらがほんとに真正面を向く
 // * 基準からの+X, -X : IKのヨー
 // * 基準からの+Y, -Y : IKのピッチ
-
 
 namespace Baku.VMagicMirror
 {
@@ -17,7 +16,7 @@ namespace Baku.VMagicMirror
     /// <remarks>
     /// 手が検出できなくなったときは適当に手を下げた状態に持っていきます。
     /// </remarks>
-    public class ImageBaseHandIkGenerator : MonoBehaviour
+    public class ImageBaseHandIkGenerator : HandIkGeneratorBase
     {
         //NOTE: この角度は手が真正面に向く回転を指定してればOKで、最終的に定数にしてもいいです
         private static readonly Vector3 RightHandForwardRotEuler = new Vector3(0, -90, 90);
@@ -30,64 +29,72 @@ namespace Baku.VMagicMirror
         //手の検出領域の横幅が顔の横幅と比べてこれ以上ならばパーとみなします、というしきい値
         private const float PaperHandWidthRateMin = 0.8f;
 
-        [SerializeField] private HandShapeSetter handShapeSetter = null;
+        [Serializable]
+        public struct ImageBaseHandIkGeneratorSetting
+        {
+            public HandShapeSetter handShapeSetter;
+        }
         
-        [Tooltip("ウェブカメラ上での顔と手が画面の両端にあるとしたら頭と手をどのくらいの距離にしますか、という値(m)")]
-        [SerializeField] private float handPositionScale = 1.0f;
+        #region Constants
         
-        [Tooltip("この時間だけ手のトラッキングが切断したばあい、検出されなくなったと判断して手を下げ始める")]
-        [SerializeField] private float handNonTrackedCountDown = 0.6f;
+        // ウェブカメラ上での顔と手が画面の両端にあるとしたら頭と手をどのくらいの距離にしますか、という値(m)
+        private const float handPositionScale = 0.5f;
+        
+        // この時間だけ手のトラッキングが切断したばあい、検出されなくなったと判断して手を下げ始める
+        private const float handNonTrackedCountDown = 0.6f;
 
-        [Tooltip("トラッキング切断後、この時間だけ経過したら手を少しずつ下にずり下げる、という制限時間。")]
-        [SerializeField] private float handNonTrackedSlideDownCount = 0.2f;
+        // トラッキング切断後、この時間だけ経過したら手を少しずつ下にずり下げる、という制限時間。
+        private const float handNonTrackedSlideDownCount = 0.4f;
         
-        [Tooltip("右の手のひらが真正面に向くときの手と顔の相対位置")]
-        [SerializeField] private Vector2 rightBaseRotAppliedDistance = new Vector2(0.3f, 0.0f);
+        // 右の手のひらが真正面に向くときの手と顔の相対位置
+        private readonly Vector2 rightBaseRotAppliedDistance = new Vector2(0.3f, 0.0f);
 
         //左の手のひらが真正面に向くときの手と顔の相対位置
         private Vector2 leftBaseRotAppliedDistance =>
             new Vector2(-rightBaseRotAppliedDistance.x, rightBaseRotAppliedDistance.y);
         
-        [Tooltip("手がロストしたときちょっとだけ動かすための速度")]
-        [SerializeField] private Vector3 trackLostSpeed = new Vector3(0, -0.05f, 0);
+        // 手がロストしたときちょっとだけ動かすための速度
+        private readonly Vector3 trackLostSpeed = new Vector3(0, -0.1f, 0);
 
-        [Tooltip("基準の距離と比べて今の距離がどうなってるかを元に手のロール、ピッチを変える度合い。[deg/distance]")]
-        [SerializeField] private Vector2 rotRateByDistanceFromBase = new Vector2(-200, -100);
+        // 基準の距離と比べて今の距離がどうなってるかを元に手のロール、ピッチを変える度合い。[deg/distance]
+        private readonly Vector2 rotRateByDistanceFromBase = new Vector2(-150, -100);
         
-        [Tooltip("ハンドトラッキングがロスしたときにAポーズへ落とし込むときの、腕の下げ角度(手首の曲げもコレに準拠します")]
-        [SerializeField] private float aPoseArmDownAngleDeg = 70f;
-        [Tooltip("Aポーズから少しだけ手首の位置を斜め前方上にズラすオフセット")]
-        [SerializeField] private Vector3 aPoseArmPositionOffset = new Vector3(0f, 0.05f, 0.05f);
+        // ハンドトラッキングがロスしたときにAポーズへ落とし込むときの、腕の下げ角度(手首の曲げもコレに準拠します
+        private const float aPoseArmDownAngleDeg = 70f;
+        // Aポーズから少しだけ手首の位置を斜め前方上にズラすオフセット
+        private readonly Vector3 aPoseArmPositionOffset = new Vector3(0f, 0.02f, 0.02f);
 
-        [Tooltip("通常のIK変化時に使うLerpファクタ")]
-        [SerializeField] private float ikLerpFactor = 12f;
-        [Tooltip("手の検出/未検出のあいだでジャンプさせる時に使うLerpファクタ")]
-        [SerializeField] private float nonTrackRotLerpFactor = 3f;
+        // 通常のIK変化時に使うLerpファクタ
+        private const float ikLerpFactor = 15f;
+        // 手の検出/未検出のあいだでジャンプさせる時に使うLerpファクタ
+        private const float nonTrackRotLerpFactor = 3f;
 
-        [Tooltip("トラッキング中かどうかによらず、速度をローパスで適用する値")]
-        [SerializeField] private float speedLowPassFactor = 8f;
+        // トラッキング中かどうかによらず、速度をローパスで適用する値
+        private const float speedLowPassFactor = 8f;
 
-        [Tooltip("ローパス前に速度の基準を決めるのに使う時定数")]
-        [SerializeField] private float speedTimeRate = 0.3f;
+        // ローパス前に速度の基準を決めるのに使う時定数
+        private const float speedTimeRate = 0.2f;
 
-        [Tooltip("手の横方向の速度(m/s)を手首のロール(deg)に変えるファクター")] 
-        [SerializeField] private float speedRotRate = 40f;
+        // 手の横方向の速度(m/s)を手首のロール(deg)に変えるファクター 
+        private const float speedRotRate = 20f;
 
-        [Tooltip("手の移動速度の目標値の限度(m/s)")]
-        [SerializeField] private float ikSpeedLimit = 1.0f;
+        // 手の移動速度の目標値の限度(m/s)
+        private const float ikSpeedLimit = 1.5f;
 
-        [Tooltip("この秒数だけトラッキングロストしたあとは手の位置をがっちり決めてしまう")]
-        [SerializeField] private float nonTrackCountMax = 1.0f;
+        // この秒数だけトラッキングロストしたあとは手の位置をがっちり決めてしまう
+        private const float nonTrackCountMax = 1.0f;
         
-        private HandTracker _handTracker = null;
-        private IVRMLoadable _vrmLoadable = null;
+        #endregion
+
+        private readonly ImageBaseHandIkGeneratorSetting _setting;
+        private readonly HandTracker _handTracker = null;
 
         private Vector3 _rightHandHipOffsetWhenNotTrack;
         private Vector3 _leftHandHipOffsetWhenNotTrack;
         private Quaternion _rightHandRotWhenNotTrack;
         private Quaternion _leftHandRotWhenNotTrack;
         
-        private bool _hasVrmInfo = false;
+        private bool _hasModel = false;
         private Transform _head = null;
         private Transform _hips = null;
 
@@ -175,8 +182,8 @@ namespace Baku.VMagicMirror
             {
                 _leftHandShape = HandShapeSetter.HandShapeTypes.Default;
                 _nextLeftHandShape = HandShapeSetter.HandShapeTypes.Default;
-                _nextLeftHandShapeCount = 0;
-                handShapeSetter.SetHandShape(HandShapeSetter.HandTypes.Left, HandShapeSetter.HandShapeTypes.Default);
+                _nextLeftHandShapeCount = 0; 
+                _setting.handShapeSetter.SetHandShape(HandShapeSetter.HandTypes.Left, HandShapeSetter.HandShapeTypes.Default);
                 return;
             }
             
@@ -186,7 +193,7 @@ namespace Baku.VMagicMirror
             {
                 _leftHandShape = type;
                 _nextLeftHandShapeCount = 0;
-                handShapeSetter.SetHandShape(HandShapeSetter.HandTypes.Left, _leftHandShape);
+                _setting.handShapeSetter.SetHandShape(HandShapeSetter.HandTypes.Left, _leftHandShape);
             }
         }
         
@@ -212,7 +219,7 @@ namespace Baku.VMagicMirror
                 _rightHandShape = HandShapeSetter.HandShapeTypes.Default;
                 _nextRightHandShape = HandShapeSetter.HandShapeTypes.Default;
                 _nextRightHandShapeCount = 0;
-                handShapeSetter.SetHandShape(HandShapeSetter.HandTypes.Right, HandShapeSetter.HandShapeTypes.Default);
+                _setting.handShapeSetter.SetHandShape(HandShapeSetter.HandTypes.Right, HandShapeSetter.HandShapeTypes.Default);
                 return;
             }
             
@@ -222,22 +229,61 @@ namespace Baku.VMagicMirror
             {
                 _rightHandShape = type;
                 _nextRightHandShapeCount = 0;
-                handShapeSetter.SetHandShape(HandShapeSetter.HandTypes.Right, _rightHandShape);
+                _setting.handShapeSetter.SetHandShape(HandShapeSetter.HandTypes.Right, _rightHandShape);
             }
         }
 
-        [Inject]
-        public void Initialize(HandTracker handTracker, IVRMLoadable vrmLoadable)
+        public ImageBaseHandIkGenerator(
+            MonoBehaviour coroutineResponder, HandTracker handTracker, ImageBaseHandIkGeneratorSetting setting,
+            IVRMLoadable vrmLoadable)
+            :base(coroutineResponder)
         {
+            _setting = setting;
             _handTracker = handTracker;
-            _vrmLoadable = vrmLoadable;
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+
+            vrmLoadable.VrmLoaded += info =>
+            {
+                var animator = info.animator;
+            
+                _head = animator.GetBoneTransform(HumanBodyBones.Head);
+                _hips = animator.GetBoneTransform(HumanBodyBones.Hips);
+                var hipsPos = _hips.position;
+
+                var rightUpperArmPos = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
+                var rightWristPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
+
+                _rightHandHipOffsetWhenNotTrack =
+                    rightUpperArmPos
+                    + Quaternion.AngleAxis(-aPoseArmDownAngleDeg, Vector3.forward) * (rightWristPos - rightUpperArmPos)
+                    - hipsPos
+                    + aPoseArmPositionOffset;
+
+                var leftUpperArmPos = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
+                var leftWristPos = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+
+                _leftHandHipOffsetWhenNotTrack =
+                    leftUpperArmPos
+                    + Quaternion.AngleAxis(aPoseArmDownAngleDeg, Vector3.forward) * (leftWristPos - leftUpperArmPos)
+                    - hipsPos
+                    + aPoseArmPositionOffset;
+
+                _rightHandRotWhenNotTrack = Quaternion.Euler(0, 0, -aPoseArmDownAngleDeg);
+                _leftHandRotWhenNotTrack = Quaternion.Euler(0, 0, aPoseArmDownAngleDeg);
+
+                _hasModel = true;
+            };
+            
+            vrmLoadable.VrmDisposing += () =>
+            {
+                _hasModel = false;
+                _head = null;
+                _hips = null;
+            };
         }
 
-        private void LateUpdate()
+        public override void LateUpdate()
         {
-            if (!_hasVrmInfo)
+            if (!_hasModel)
             {
                 return;
             }
@@ -509,42 +555,6 @@ namespace Baku.VMagicMirror
                     );
             }
         }
-
-        private void OnVrmDisposing()
-        {
-            _hasVrmInfo = false;
-        }
-
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            var animator = info.animator;
-            
-            _head = animator.GetBoneTransform(HumanBodyBones.Head);
-            _hips = animator.GetBoneTransform(HumanBodyBones.Hips);
-            var hipsPos = _hips.position;
-
-            var rightUpperArmPos = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
-            var rightWristPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
-
-            _rightHandHipOffsetWhenNotTrack =
-                rightUpperArmPos
-                + Quaternion.AngleAxis(-aPoseArmDownAngleDeg, Vector3.forward) * (rightWristPos - rightUpperArmPos)
-                - hipsPos
-                + aPoseArmPositionOffset;
-
-            var leftUpperArmPos = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
-            var leftWristPos = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
-
-            _leftHandHipOffsetWhenNotTrack =
-                leftUpperArmPos
-                + Quaternion.AngleAxis(aPoseArmDownAngleDeg, Vector3.forward) * (leftWristPos - leftUpperArmPos)
-                - hipsPos
-                + aPoseArmPositionOffset;
-
-            _rightHandRotWhenNotTrack = Quaternion.Euler(0, 0, -aPoseArmDownAngleDeg);
-            _leftHandRotWhenNotTrack = Quaternion.Euler(0, 0, aPoseArmDownAngleDeg);
-
-            _hasVrmInfo = true;
-        }
+        
     }
 }

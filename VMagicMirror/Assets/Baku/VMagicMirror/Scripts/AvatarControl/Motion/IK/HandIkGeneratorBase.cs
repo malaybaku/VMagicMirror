@@ -21,6 +21,11 @@ namespace Baku.VMagicMirror
         {
         }
 
+        /// <summary> HandIKIntegratorのLateUpdate内部で呼ばれます。 </summary>
+        public virtual void LateUpdate()
+        {
+        }
+
 
         private readonly MonoBehaviour _coroutineResponder;
 

@@ -157,7 +157,7 @@ namespace Baku.VMagicMirror
         
         public override void Update()
         {
-            if (_head == null || _rightShoulder == null)
+            if (!_hasModel)
             {
                 return;
             }

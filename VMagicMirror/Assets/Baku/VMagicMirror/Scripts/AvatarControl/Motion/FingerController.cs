@@ -44,6 +44,8 @@ namespace Baku.VMagicMirror
         #endregion
 
         private KeyboardProvider _keyboard = null;
+
+        private bool _hasModel = false;
         private Animator _animator = null;
 
         //左手親指 = 0,
@@ -162,14 +164,12 @@ namespace Baku.VMagicMirror
             };
 
             ResetAllAngles();
+            _hasModel = true;
         }
 
         public void Dispose()
         {
-            if (_animator == null)
-            {
-                return;
-            }
+            _hasModel = false;
             _animator = null;
             _fingers = null;
             _rightWrist = null;
@@ -275,7 +275,7 @@ namespace Baku.VMagicMirror
 
         private void LateUpdate()
         {
-            if (_animator == null || _fingers == null)
+            if (!_hasModel)
             {
                 return;
             }

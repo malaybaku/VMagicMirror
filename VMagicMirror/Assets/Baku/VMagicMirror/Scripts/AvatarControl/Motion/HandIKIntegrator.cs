@@ -20,8 +20,7 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private GamepadFingerController gamepadFinger = null;
 
-        [SerializeField] private MouseMoveHandIKGenerator mouseMove = null;
-        public MouseMoveHandIKGenerator MouseMove => mouseMove;
+        public MouseMoveHandIKGenerator MouseMove { get; private set; }
 
         public GamepadHandIKGenerator GamepadHand { get; private set; }
         
@@ -29,11 +28,14 @@ namespace Baku.VMagicMirror
 
         public PresentationHandIKGenerator Presentation { get; private set; }
 
-        [SerializeField] private ImageBaseHandIkGenerator imageBaseHand = null;
+        private ImageBaseHandIkGenerator _imageBaseHand;
 
         [SerializeField] private FingerController fingerController = null;
 
         [SerializeField] private GamepadHandIKGenerator.GamepadHandIkGeneratorSetting gamepadSetting = default;
+        
+        [SerializeField]
+        private ImageBaseHandIkGenerator.ImageBaseHandIkGeneratorSetting imageBaseHandSetting = default;
 
         private Transform _rightHandTarget = null;
         private Transform _leftHandTarget = null;
@@ -53,7 +55,7 @@ namespace Baku.VMagicMirror
             set
             {
                 _enableHidArmMotion = value;
-                mouseMove.EnableUpdate = value;
+                MouseMove.EnableUpdate = value;
             }
         }
 
@@ -80,7 +82,9 @@ namespace Baku.VMagicMirror
             Camera cam,
             ParticleStore particleStore,
             GamepadProvider gamepadProvider,
-            MidiControllerProvider midiControllerProvider
+            MidiControllerProvider midiControllerProvider,
+            TouchPadProvider touchPadProvider,
+            HandTracker handTracker
             )
         {
             _rightHandTarget = ikTargets.RightHand;
@@ -88,10 +92,12 @@ namespace Baku.VMagicMirror
             _particleStore = particleStore;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;        
-            
+
+            MouseMove = new MouseMoveHandIKGenerator(this, touchPadProvider);
             MidiHand = new MidiHandIkGenerator(this, midiControllerProvider);
             GamepadHand = new GamepadHandIKGenerator(this, gamepadProvider, gamepadSetting);
             Presentation = new PresentationHandIKGenerator(this, vrmLoadable, cam);
+            _imageBaseHand = new ImageBaseHandIkGenerator(this, handTracker, imageBaseHandSetting, vrmLoadable);
         }
 
         //NOTE: 初めて手がキーボードから離れるまではnull
@@ -159,7 +165,7 @@ namespace Baku.VMagicMirror
             SetRightHandIk(EnablePresentationMode ? HandTargetType.Presentation : HandTargetType.Mouse);
             if (_rightTargetType == HandTargetType.Mouse)
             {
-                _particleStore.RequestMouseMoveParticle(mouseMove.ReferenceTouchpadPosition);
+                _particleStore.RequestMouseMoveParticle(MouseMove.ReferenceTouchpadPosition);
             }
         }
 
@@ -306,35 +312,27 @@ namespace Baku.VMagicMirror
         //画像処理の手検出があったらそっちのIKに乗り換える
         private void ExecuteOrCheckHandUpdates()
         {
+            MouseMove.Update();
             Presentation.Update();
             GamepadHand.Update();
             MidiHand.Update();
+            _imageBaseHand.Update();
             
-            if (imageBaseHand.HasRightHandUpdate)
+            if (_imageBaseHand.HasRightHandUpdate)
             {
-                imageBaseHand.HasRightHandUpdate = false;
+                _imageBaseHand.HasRightHandUpdate = false;
                 SetRightHandIk(HandTargetType.ImageBaseHand);
             }
 
-            if (imageBaseHand.HasLeftHandUpdate)
+            if (_imageBaseHand.HasLeftHandUpdate)
             {
-                imageBaseHand.HasLeftHandUpdate = false;
+                _imageBaseHand.HasLeftHandUpdate = false;
                 SetLeftHandIk(HandTargetType.ImageBaseHand);
             }
         }
         
         #endregion
         
-        /// <summary> 既定の秒数をかけて手のIKを無効化します。 </summary>
-        public void DisableHandIk()
-        {
-        }
-
-        /// <summary> 既定の秒数をかけて手のIKを有効化します。 </summary>
-        public void EnableHandIk()
-        {
-        }
-
         #endregion
 
         private void Start()
@@ -344,9 +342,11 @@ namespace Baku.VMagicMirror
             _leftHandStateBlendCount = HandIkToggleDuration;
             _rightHandStateBlendCount = HandIkToggleDuration;
 
+            MouseMove.Start();
             Presentation.Start();
             GamepadHand.Start();
             MidiHand.Start();
+            _imageBaseHand.Start();
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -355,10 +355,10 @@ namespace Baku.VMagicMirror
             
             //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にします。
             //棒立ちサポートをめちゃ適当にやっちゃえ！というのがモチベです
-            imageBaseHand.HasRightHandUpdate = false;
+            _imageBaseHand.HasRightHandUpdate = false;
             SetRightHandIk(HandTargetType.ImageBaseHand);
 
-            imageBaseHand.HasLeftHandUpdate = false;
+            _imageBaseHand.HasLeftHandUpdate = false;
             SetLeftHandIk(HandTargetType.ImageBaseHand);
         }
 
@@ -374,6 +374,16 @@ namespace Baku.VMagicMirror
             //ねらい: 前のステートと今のステートをブレンドしながら実際にIKターゲットの位置、姿勢を更新する
             UpdateLeftHand();
             UpdateRightHand();
+            
+        }
+
+        private void LateUpdate()
+        {
+            MouseMove.LateUpdate();
+            GamepadHand.LateUpdate();
+            MidiHand.LateUpdate();
+            Presentation.LateUpdate();
+            _imageBaseHand.LateUpdate();
         }
 
         //TODO: IKオン/オフとの兼ね合いがアレなのでどうにかしてね。
@@ -461,7 +471,7 @@ namespace Baku.VMagicMirror
                 (targetType == HandTargetType.Keyboard) ? Typing.LeftHand :
                 (targetType == HandTargetType.Gamepad) ? GamepadHand.LeftHand :
                 (targetType == HandTargetType.MidiController) ? MidiHand.LeftHand : 
-                (targetType == HandTargetType.ImageBaseHand) ? imageBaseHand.LeftHand :
+                (targetType == HandTargetType.ImageBaseHand) ? _imageBaseHand.LeftHand :
                 Typing.LeftHand;
 
             _prevLeftHand = _currentLeftHand;
@@ -479,7 +489,7 @@ namespace Baku.VMagicMirror
 
             if (targetType == HandTargetType.ImageBaseHand)
             {
-                imageBaseHand.InitializeHandPosture(ReactedHand.Left, _prevLeftHand);
+                _imageBaseHand.InitializeHandPosture(ReactedHand.Left, _prevLeftHand);
             }
         }
 
@@ -501,7 +511,7 @@ namespace Baku.VMagicMirror
                 (targetType == HandTargetType.Gamepad) ? GamepadHand.RightHand :
                 (targetType == HandTargetType.Presentation) ? Presentation.RightHand :
                 (targetType == HandTargetType.MidiController) ? MidiHand.RightHand :
-                (targetType == HandTargetType.ImageBaseHand) ? imageBaseHand.RightHand :
+                (targetType == HandTargetType.ImageBaseHand) ? _imageBaseHand.RightHand :
                 Typing.RightHand;
 
             _prevRightHand = _currentRightHand;
@@ -522,7 +532,7 @@ namespace Baku.VMagicMirror
             //ブレンディングをきれいにするために直前で手があった位置を拾って渡してあげる
             if (targetType == HandTargetType.ImageBaseHand)
             {
-                imageBaseHand.InitializeHandPosture(ReactedHand.Right, _prevRightHand);
+                _imageBaseHand.InitializeHandPosture(ReactedHand.Right, _prevRightHand);
             }
         }
 

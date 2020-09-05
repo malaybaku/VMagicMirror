@@ -376,7 +376,6 @@ GameObject:
   - component: {fileID: 5813678810404708495}
   - component: {fileID: 5813678810404708592}
   - component: {fileID: 5813678810404708595}
-  - component: {fileID: 5813678810404708597}
   - component: {fileID: 5813678810404708598}
   - component: {fileID: 5813678810404708492}
   - component: {fileID: 3817731646809221862}
@@ -446,7 +445,6 @@ MonoBehaviour:
   typing: {fileID: 5813678810404708595}
   gamepadFinger: {fileID: 5813678810404708492}
   mouseMove: {fileID: 5813678810404708598}
-  presentation: {fileID: 5813678810404708597}
   imageBaseHand: {fileID: 3817731646809221862}
   fingerController: {fileID: 2951044793089892564}
   gamepadSetting:
@@ -567,19 +565,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   keyboardMotionDuration: 0.25
---- !u!114 &5813678810404708597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678810404708600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b42e5b5ec29fcd4c93ff504bcd611a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speedFactor: 12
 --- !u!114 &5813678810404708598
 MonoBehaviour:
   m_ObjectHideFlags: 0

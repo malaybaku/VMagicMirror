@@ -27,8 +27,7 @@ namespace Baku.VMagicMirror
         
         public MidiHandIkGenerator MidiHand { get; private set; }
 
-        [SerializeField] private PresentationHandIKGenerator presentation = null;
-        public PresentationHandIKGenerator Presentation => presentation;
+        public PresentationHandIKGenerator Presentation { get; private set; }
 
         [SerializeField] private ImageBaseHandIkGenerator imageBaseHand = null;
 
@@ -78,6 +77,7 @@ namespace Baku.VMagicMirror
         public void Initialize(
             IVRMLoadable vrmLoadable, 
             IKTargetTransforms ikTargets, 
+            Camera cam,
             ParticleStore particleStore,
             GamepadProvider gamepadProvider,
             MidiControllerProvider midiControllerProvider
@@ -91,6 +91,7 @@ namespace Baku.VMagicMirror
             
             MidiHand = new MidiHandIkGenerator(this, midiControllerProvider);
             GamepadHand = new GamepadHandIKGenerator(this, gamepadProvider, gamepadSetting);
+            Presentation = new PresentationHandIKGenerator(this, vrmLoadable, cam);
         }
 
         //NOTE: 初めて手がキーボードから離れるまではnull
@@ -154,8 +155,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            //mouseMove.MoveMouse(mousePosition);
-            presentation.MoveMouse(mousePosition);
+            Presentation.MoveMouse(mousePosition);
             SetRightHandIk(EnablePresentationMode ? HandTargetType.Presentation : HandTargetType.Mouse);
             if (_rightTargetType == HandTargetType.Mouse)
             {
@@ -306,6 +306,7 @@ namespace Baku.VMagicMirror
         //画像処理の手検出があったらそっちのIKに乗り換える
         private void ExecuteOrCheckHandUpdates()
         {
+            Presentation.Update();
             GamepadHand.Update();
             MidiHand.Update();
             
@@ -343,6 +344,7 @@ namespace Baku.VMagicMirror
             _leftHandStateBlendCount = HandIkToggleDuration;
             _rightHandStateBlendCount = HandIkToggleDuration;
 
+            Presentation.Start();
             GamepadHand.Start();
             MidiHand.Start();
         }
@@ -350,7 +352,6 @@ namespace Baku.VMagicMirror
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             fingerController.Initialize(info.animator);
-            presentation.Initialize(info.animator);
             
             //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にします。
             //棒立ちサポートをめちゃ適当にやっちゃえ！というのがモチベです
@@ -364,7 +365,6 @@ namespace Baku.VMagicMirror
         private void OnVrmDisposing()
         {
             fingerController.Dispose();
-            presentation.Dispose();
         }
         
         private void Update()

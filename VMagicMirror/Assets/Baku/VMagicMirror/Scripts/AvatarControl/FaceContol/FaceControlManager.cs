@@ -51,27 +51,18 @@ namespace Baku.VMagicMirror
 
         /// <summary> WebCamベースのトラッキング中でも自動まばたきを優先するかどうかを取得、設定します。 </summary>
         public bool PreferAutoBlinkOnWebCamTracking { get; set; } = true;
-
-        private void Update()
+        
+        public void Accumulate(VRMBlendShapeProxy proxy)
         {
-            //眼球運動もモード別で切り替えていく
-            bool canUseExternalEyeJitter =
-                _config.ControlMode == FaceControlModes.ExternalTracker && externalTrackEyeJitter.IsTracked;
-            randomEyeJitter.IsActive = !canUseExternalEyeJitter;
-            externalTrackEyeJitter.IsActive = canUseExternalEyeJitter;
-
             if (!_hasModel)
             {
                 return;
             }
             
-            if (_config.ShouldSkipNonMouthBlendShape)
-            {
-                //TODO: これ系の「非ゼロにしたいBlendShapeを明示的に切る」処理をどこに入れるか、というのは悩みどころ
-                //ResetBlink();
-                return;
-            }
-
+            //NOTE: ここのデフォルトfunだが
+            //「パーフェクトシンク使用中」「FaceSwitch適用中」「Word to Motion適用中」
+            //の3ケースでは適用されると困る。
+            //で、ここに書いておくと上記3ケースではそもそもAccumulateが呼ばれないため、うまく動く。
             DefaultBlendShape.Apply(_proxy);
             
             var blinkSource =
@@ -79,8 +70,17 @@ namespace Baku.VMagicMirror
                 (_config.ControlMode == FaceControlModes.WebCam && !PreferAutoBlinkOnWebCamTracking) ? imageBasedBlinkController.BlinkSource :
                 autoBlink.BlinkSource;
             
-            _proxy.AccumulateValue(BlinkLKey, blinkSource.Left);
-            _proxy.AccumulateValue(BlinkRKey, blinkSource.Right);
+            proxy.AccumulateValue(BlinkLKey, blinkSource.Left);
+            proxy.AccumulateValue(BlinkRKey, blinkSource.Right);        
+        }
+
+        private void Update()
+        {
+            //眼球運動はモード別で切り替える。外部トラッキング中はホンモノのJitterが使えるから使えばいいじゃん、という話
+            bool canUseExternalEyeJitter =
+                _config.ControlMode == FaceControlModes.ExternalTracker && externalTrackEyeJitter.IsTracked;
+            randomEyeJitter.IsActive = !canUseExternalEyeJitter;
+            externalTrackEyeJitter.IsActive = canUseExternalEyeJitter;
         }
                 
         private void OnVrmLoaded(VrmLoadedInfo info)

@@ -51,30 +51,56 @@ namespace Baku.VMagicMirror
             _initializer = FindObjectOfType<BlendShapeInitializer>();
         }
         
-        private void LateUpdate()
+        // private void LateUpdate()
+        // {
+        //     if (!_hasModel ||
+        //         string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName) || 
+        //         _config.WordToMotionExpressionActive
+        //         )
+        //     {
+        //         return;
+        //     }
+        //     
+        //     _proxy.Apply();
+        //     _initializer.InitializeBlendShapes(_externalTracker.KeepLipSyncForFaceSwitch);
+        //
+        //     if (_latestClipName != _externalTracker.FaceSwitchClipName)
+        //     {
+        //         _latestKey = CreateKey(_externalTracker.FaceSwitchClipName);
+        //         _latestClipName = _externalTracker.FaceSwitchClipName;
+        //     }
+        //
+        //     //NOTE: 最終的な適用はWordToMotionBlendShapeがやる。ので、ここではその前処理だけやってればよい
+        //     _proxy.AccumulateValue(_latestKey, 1.0f);
+        //     //表情を適用した = 目ボーンは正面向きになってほしい
+        //     _eyeBoneResetter.ReserveReset = true;
+        // }
+
+        public bool HasClipToApply => !string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName);
+        public bool KeepLipSync => _externalTracker.KeepLipSyncForFaceSwitch;
+
+        public void Accumulate(VRMBlendShapeProxy proxy)
         {
             if (!_hasModel ||
                 string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName) || 
                 _config.WordToMotionExpressionActive
-                )
+            )
             {
                 return;
             }
             
-            _proxy.Apply();
-            _initializer.InitializeBlendShapes(_externalTracker.KeepLipSyncForFaceSwitch);
-
             if (_latestClipName != _externalTracker.FaceSwitchClipName)
             {
                 _latestKey = CreateKey(_externalTracker.FaceSwitchClipName);
                 _latestClipName = _externalTracker.FaceSwitchClipName;
             }
 
-            //NOTE: 最終的な適用はWordToMotionBlendShapeがやる。ので、ここではその前処理だけやってればよい
-            _proxy.AccumulateValue(_latestKey, 1.0f);
+            //ターゲットのキーだけいじり、他のクリップ状態については呼び出し元に責任を持ってもらう
+            proxy.AccumulateValue(_latestKey, 1.0f);
             //表情を適用した = 目ボーンは正面向きになってほしい
             _eyeBoneResetter.ReserveReset = true;
         }
+        
 
         private static BlendShapeKey CreateKey(string name) => 
             _presets.ContainsKey(name)

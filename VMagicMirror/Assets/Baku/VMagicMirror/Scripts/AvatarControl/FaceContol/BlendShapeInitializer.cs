@@ -98,6 +98,19 @@ namespace Baku.VMagicMirror
                 _proxy.AccumulateValue(_keys[i], 0);
             }
         }
+
+        public void InitializeBlendShapes(BlendShapeKey[] keys)
+        {
+            if (!_hasModel)
+            {
+                return;
+            }
+
+            for (int i = 0; i < keys.Length; i++)
+            {
+                _proxy.AccumulateValue(keys[i], 0);
+            }
+        }
         
         private void Update()
         {

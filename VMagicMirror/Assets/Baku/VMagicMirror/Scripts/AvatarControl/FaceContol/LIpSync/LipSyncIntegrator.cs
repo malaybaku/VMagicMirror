@@ -19,30 +19,16 @@ namespace Baku.VMagicMirror
         public bool PreferExternalTrackerLipSync { get; set; } = false;
         
         private FaceControlConfiguration _config;
-        private bool _hasModel = false;
-        private VRMBlendShapeProxy _blendShape = null;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, FaceControlConfiguration config)
+        public void Initialize(FaceControlConfiguration config)
         {
             _config = config;
-            
-            vrmLoadable.VrmLoaded += info =>
-            {
-                _blendShape = info.blendShape;
-                _hasModel = true;
-            };
-            
-            vrmLoadable.VrmDisposing += () =>
-            {
-                _hasModel = false;
-                _blendShape = null;
-            };
         }
         
-        private void Update()
+        public void Accumulate(VRMBlendShapeProxy proxy)
         {
-            if (!_hasModel || _config.ShouldSkipMouthBlendShape)
+            if (_config.ShouldSkipMouthBlendShape)
             {
                 return;
             }
@@ -52,11 +38,11 @@ namespace Baku.VMagicMirror
                 ? externalTrackerLipSync.LipSyncSource
                 : animMorphEasedTarget.LipSyncSource;
 
-            _blendShape.AccumulateValue(_a, src.A);
-            _blendShape.AccumulateValue(_i, src.I);
-            _blendShape.AccumulateValue(_u, src.U);
-            _blendShape.AccumulateValue(_e, src.E);
-            _blendShape.AccumulateValue(_o, src.O);
+            proxy.AccumulateValue(_a, src.A);
+            proxy.AccumulateValue(_i, src.I);
+            proxy.AccumulateValue(_u, src.U);
+            proxy.AccumulateValue(_e, src.E);
+            proxy.AccumulateValue(_o, src.O);
         }
     }
 }

@@ -86,53 +86,82 @@ namespace Baku.VMagicMirror
             }
         }
         
-        private void Update()
-        {
-            if (_reserveBlendShapeReset)
-            {
-                for (int i = 0; i < _allBlendShapeKeys.Length; i++)
-                {
-                    var key = _allBlendShapeKeys[i];
-                    _proxy.AccumulateValue(key, 0f);                        
-                }
-                _proxy?.Apply();
-                _reserveBlendShapeReset = false;
-            }
-        }
+        // private void Update()
+        // {
+        //     if (_reserveBlendShapeReset)
+        //     {
+        //         for (int i = 0; i < _allBlendShapeKeys.Length; i++)
+        //         {
+        //             var key = _allBlendShapeKeys[i];
+        //             _proxy.AccumulateValue(key, 0f);                        
+        //         }
+        //         _proxy?.Apply();
+        //         _reserveBlendShapeReset = false;
+        //     }
+        // }
 
-        private void LateUpdate()
+        // private void LateUpdate()
+        // {
+        //     if (_proxy == null || _blendShape.Count == 0)
+        //     {
+        //         //オーバーライド不要なケース
+        //         _proxy?.Apply();
+        //         return;
+        //     }
+        //
+        //     //一回ApplyすることでAccumulateした値を捨てさせる
+        //     _proxy.Apply();
+        //     
+        //     //実際に適用したい値を入れなおして再度Applyすると完全上書きになる
+        //     for(int i = 0; i < _allBlendShapeKeys.Length; i++)
+        //     {
+        //         var key = _allBlendShapeKeys[i];
+        //         //リップシンクをそのままにするかどうかは場合による
+        //         if (SkipLipSyncKeys && _lipSyncKeys.Contains(key))
+        //         {
+        //             continue;
+        //         }
+        //             
+        //         if (_blendShape.TryGetValue(key, out float value))
+        //         {
+        //             _proxy.AccumulateValue(key, value);
+        //         }
+        //         else
+        //         {
+        //             //完全な排他制御をしたいので、指定がない値は明示的にゼロ書き込みする
+        //             _proxy.AccumulateValue(key, 0);
+        //         }
+        //     }
+        //     _proxy.Apply();
+        //     _eyeBoneResetter.ReserveReset = true;
+        // }
+
+        /// <summary> 現在このコンポーネントが適用すべきブレンドシェイプを持ってるかどうか </summary>
+        public bool HasBlendShapeToApply => _blendShape.Count > 0;
+        
+        public void Accumulate(VRMBlendShapeProxy proxy)
         {
-            if (_proxy == null || _blendShape.Count == 0)
+            if (!HasBlendShapeToApply)
             {
-                //オーバーライド不要なケース
-                _proxy?.Apply();
+                //オーバーライド不要なので何もしない
                 return;
             }
 
-            //一回ApplyすることでAccumulateした値を捨てさせる
-            _proxy.Apply();
-            
-            //実際に適用したい値を入れなおして再度Applyすると完全上書きになる
-            for(int i = 0; i < _allBlendShapeKeys.Length; i++)
+            //NOTE: LateUpdateの実装(初期実装)と違い、必要なとこだけ狙ってAccumulateする
+            for (int i = 0; i < _allBlendShapeKeys.Length; i++)
             {
                 var key = _allBlendShapeKeys[i];
-                //リップシンクをそのままにするかどうかは場合による
+                //リップシンク保持オプションがオン = AIUEOはAccumulateしない(元の値をリスペクトする)
                 if (SkipLipSyncKeys && _lipSyncKeys.Contains(key))
                 {
                     continue;
                 }
                     
-                if (_blendShape.TryGetValue(key, out float value))
+                if (_blendShape.TryGetValue(key, out float value) && value > 0f)
                 {
-                    _proxy.AccumulateValue(key, value);
-                }
-                else
-                {
-                    //完全な排他制御をしたいので、指定がない値は明示的にゼロ書き込みする
-                    _proxy.AccumulateValue(key, 0);
+                    proxy.AccumulateValue(key, value);
                 }
             }
-            _proxy.Apply();
             _eyeBoneResetter.ReserveReset = true;
         }
     }

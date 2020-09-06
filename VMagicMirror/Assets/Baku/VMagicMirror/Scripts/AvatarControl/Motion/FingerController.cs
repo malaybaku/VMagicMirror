@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using Zenject;
 
@@ -34,12 +35,6 @@ namespace Baku.VMagicMirror
             [FingerConsts.RightLittle] = new float[] { -80, -80, -80 },
         };
 
-        private static AnimationCurve _angleCurve = new AnimationCurve(new Keyframe[]
-        {
-            new Keyframe(0, 10f, 1, 1),
-            new Keyframe(0.125f, 25f, 1, -1),
-            new Keyframe(0.25f, 10f, -1, -1),
-        });
 
         #endregion
 
@@ -55,6 +50,8 @@ namespace Baku.VMagicMirror
         //...
         //右手小指 = 9
         private Transform[][] _fingers = null;
+        //NOTE: _fingersに対して毎フレームnullチェックしないためにフラグを分ける
+        private bool[][] _hasFinger = null;
 
         //右手首の位置。フォールバック系の処理で使うのでとっておく
         private Transform _rightWrist = null;
@@ -99,69 +96,78 @@ namespace Baku.VMagicMirror
             }
 
             _rightWrist = animator.GetBoneTransform(HumanBodyBones.RightHand);
-            _fingers = new Transform[][]
+            _fingers = new[]
             {
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.LeftThumbDistal),
                     _animator.GetBoneTransform(HumanBodyBones.LeftThumbIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.LeftThumbProximal),
                 },
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.LeftIndexDistal),
                     _animator.GetBoneTransform(HumanBodyBones.LeftIndexIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.LeftIndexProximal),
                 },
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.LeftMiddleDistal),
                     _animator.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal),
                 },
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.LeftRingDistal),
                     _animator.GetBoneTransform(HumanBodyBones.LeftRingIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.LeftRingProximal),
                 },
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.LeftLittleDistal),
                     _animator.GetBoneTransform(HumanBodyBones.LeftLittleIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.LeftLittleProximal),
                 },
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.RightThumbDistal),
                     _animator.GetBoneTransform(HumanBodyBones.RightThumbIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.RightThumbProximal),
                 },
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
                     _animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
                 },
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal),
                     _animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal),
                 },
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.RightRingDistal),
                     _animator.GetBoneTransform(HumanBodyBones.RightRingIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.RightRingProximal),
                 },
-                new Transform[]
+                new[]
                 {
                     _animator.GetBoneTransform(HumanBodyBones.RightLittleDistal),
                     _animator.GetBoneTransform(HumanBodyBones.RightLittleIntermediate),
                     _animator.GetBoneTransform(HumanBodyBones.RightLittleProximal),
                 },
             };
+            _hasFinger = new bool[10][];
+            for (int i = 0; i < _hasFinger.Length; i++)
+            {
+                _hasFinger[i] = new bool[3];
+                for (int j = 0; j < 3; j++)
+                {
+                    _hasFinger[i][j] = _fingers[i][j] != null;
+                }
+            }
 
             ResetAllAngles();
             _hasModel = true;
@@ -172,6 +178,7 @@ namespace Baku.VMagicMirror
             _hasModel = false;
             _animator = null;
             _fingers = null;
+            _hasFinger = null;
             _rightWrist = null;
         }
 
@@ -234,43 +241,6 @@ namespace Baku.VMagicMirror
             }
         }
 
-        /// <summary>
-        /// 右手指先の位置を取得しようとします。
-        /// モデルが未初期化だったり、VRM自体に指ボーンが入っていなかったりすると無効な値を返します。
-        /// </summary>
-        public void TryGetRightIndexTipPosition(out Vector3 result, out bool isValid)
-        {
-            Transform t = _fingers?[6]?[0];
-            if (t != null)
-            {
-                result = t.position;
-                isValid = true;
-            }
-            else
-            {
-                result = Vector3.zero;
-                isValid = false;
-            }
-        }
-
-        /// <summary>
-        /// 右手首の位置を取得しようとします。
-        /// モデルが未初期化の場合は無効な値を返します。
-        /// </summary>
-        public void TryGetRightWristPosition(out Vector3 result, out bool isValid)
-        {
-            if (_rightWrist != null)
-            {
-                result = _rightWrist.position;
-                isValid = true;
-            }
-            else
-            {
-                result = Vector3.zero;
-                isValid = false;
-            }
-        }
-        
         #endregion
 
         private void LateUpdate()
@@ -291,7 +261,7 @@ namespace Baku.VMagicMirror
 
                 float angle = DefaultBendingAngle;
 
-                _holdOperationBendingAngle[i] = Mathf.Lerp(
+                _holdOperationBendingAngle[i] = math.lerp(
                     _holdOperationBendingAngle[i],
                     _shouldHoldPressedMode[i] ? _holdAngles[i] : DefaultBendingAngle,
                     HoldOperationSpeedFactor * Time.deltaTime
@@ -305,13 +275,16 @@ namespace Baku.VMagicMirror
                         _isAnimating[i] = false;
                         time = Duration;
                     }
-                    angle = _angleCurve.Evaluate(time);
+                    angle = EvalAngleCurve(time);
                 }
                 else
                 {
                     angle = _holdOperationBendingAngle[i];
                 }
 
+                //Holdのほうの値は正負考えずに入れるようになってるため、常にプラスで保存
+                _holdOperationBendingAngle[i] = angle;
+                
                 //左右の手で回転方向が逆
                 if (i > 4)
                 {
@@ -322,16 +295,14 @@ namespace Baku.VMagicMirror
                 for (int j = 0; j < _fingers[i].Length; j++)
                 {
                     var t = _fingers[i][j];
-                    //Holdのほうの値は正負考えずに入れるようになってるため、常にプラスで保存
-                    _holdOperationBendingAngle[i] = Mathf.Abs(angle);
                     angle = LimitThumbBendAngle(angle, i, j);
-                    if (t != null && ApplyRate > 0)
+                    if (_hasFinger[i][j] && ApplyRate > 0)
                     {
                         if (ApplyRate >= 1.0f)
                         {
-                            t.localRotation = Quaternion.AngleAxis(angle, GetRotationAxis(i, j));
+                            t.localRotation = GetFingerBendRotation(angle, i, j);
                         }
-                        else
+                        else if (ApplyRate > 0f)
                         {
                             t.localRotation = Quaternion.Slerp(
                                 t.localRotation, 
@@ -364,7 +335,7 @@ namespace Baku.VMagicMirror
 
             for (int i = 0; i < angles.Length; i++)
             {
-                if (targets[i] == null)
+                if (!_hasFinger[index][i])
                 {
                     continue;
                 }
@@ -377,6 +348,36 @@ namespace Baku.VMagicMirror
                 targets[i].localRotation = Quaternion.AngleAxis(angles[i], axis);
             }
         }
+
+        private static readonly Quaternion MajorFingerBendRotation =
+            Quaternion.AngleAxis(DefaultBendingAngle, Vector3.forward);
+        private static readonly Quaternion ThumbSpecialBendRotation =
+            Quaternion.AngleAxis(DefaultBendingAngle, Vector3.down);
+
+        //この関数で何をやるかというと、大多数の呼び出しでは同じ回転で用が足りるのを活用して
+        //AngleAxisの呼び出し回数を削ります
+        private static Quaternion GetFingerBendRotation(float angleDeg, int fingerNumber, int jointIndex)
+        {
+            var diff = (angleDeg - DefaultBendingAngle) * (angleDeg - DefaultBendingAngle);
+            if (diff > 0.01)
+            {
+                //キャッシュ値が使えない: 普通に求める
+                return Quaternion.AngleAxis(angleDeg, GetRotationAxis(fingerNumber, jointIndex));
+            }
+            
+            //キャッシュ値が使える: あらかじめ用意してた値で返す
+            if ((fingerNumber == FingerConsts.LeftThumb || fingerNumber == FingerConsts.RightThumb) && 
+                jointIndex < 2
+                )
+            {
+                return ThumbSpecialBendRotation;
+            }
+            else
+            {
+                return MajorFingerBendRotation;
+            }
+        }
+
 
         private static Vector3 GetRotationAxis(int fingerNumber, int jointIndex)
         {
@@ -405,7 +406,22 @@ namespace Baku.VMagicMirror
                 return angle;
             }
 
-            return Mathf.Clamp(angle, -ThumbProximalMaxBendAngle, ThumbProximalMaxBendAngle);
+            return math.clamp(angle, -ThumbProximalMaxBendAngle, ThumbProximalMaxBendAngle);
+        }
+        
+        private static float EvalAngleCurve(float t)
+        {
+            //10 > 25 > 10と直線的に動かしたい
+            if (t < 0.125f)
+            {
+                // return 10f + 15f * t / 0.125f;
+                return 10f + 120f * t;
+            }
+            else
+            {
+                return 25f - (t - .125f) * 120f;
+                // return 25f - 15f * (t - 0.125f) / 0.125f;
+            }
         }
 
         private void SetCoroutine(IEnumerator coroutine)
@@ -430,7 +446,7 @@ namespace Baku.VMagicMirror
             while (Time.time - start < duration)
             {
                 float timeRate = (Time.time - start) / duration;
-                ApplyRate = Mathf.Lerp(startRate, goal, timeRate);
+                ApplyRate = math.lerp(startRate, goal, timeRate);
                 yield return null;
             }
             ApplyRate = goal;

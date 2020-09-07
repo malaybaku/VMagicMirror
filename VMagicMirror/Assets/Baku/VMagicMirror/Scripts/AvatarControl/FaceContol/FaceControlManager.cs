@@ -23,7 +23,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private ExternalTrackerEyeJitter externalTrackEyeJitter = null;
         
         private bool _hasModel = false;
-        private VRMBlendShapeProxy _proxy;
         private FaceControlConfiguration _config;
         private FaceControlManagerMessageIo _messageIo;
 
@@ -63,7 +62,7 @@ namespace Baku.VMagicMirror
             //「パーフェクトシンク使用中」「FaceSwitch適用中」「Word to Motion適用中」
             //の3ケースでは適用されると困る。
             //で、ここに書いておくと上記3ケースではそもそもAccumulateが呼ばれないため、うまく動く。
-            DefaultBlendShape.Apply(_proxy);
+            DefaultBlendShape.Apply(proxy);
             
             var blinkSource =
                 _config.ControlMode == FaceControlModes.ExternalTracker ? externalTrackerBlink.BlinkSource :
@@ -85,7 +84,6 @@ namespace Baku.VMagicMirror
                 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _proxy = info.blendShape;
             BlendShapeStore.OnVrmLoaded(info);
             EyebrowBlendShape.RefreshTarget(BlendShapeStore);
             VrmInitialized?.Invoke();
@@ -95,7 +93,6 @@ namespace Baku.VMagicMirror
         private void OnVrmDisposing()
         {
             _hasModel = false;
-            _proxy = null;
             BlendShapeStore.OnVrmDisposing();
             EyebrowBlendShape.Reset();
         }

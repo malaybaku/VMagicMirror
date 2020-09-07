@@ -23,7 +23,6 @@ namespace Baku.VMagicMirror
             new BlendShapeKey(BlendShapePreset.O),
         };
         
-        private VRMBlendShapeProxy _proxy = null;
         private BlendShapeKey[] _allBlendShapeKeys = new BlendShapeKey[0];
 
         private readonly Dictionary<BlendShapeKey, float> _blendShape = new Dictionary<BlendShapeKey, float>();
@@ -40,8 +39,7 @@ namespace Baku.VMagicMirror
         
         public void Initialize(VRMBlendShapeProxy proxy)
         {
-            _proxy = proxy;
-            _allBlendShapeKeys = _proxy
+            _allBlendShapeKeys = proxy
                 .BlendShapeAvatar
                 .Clips
                 .Select(c => BlendShapeKeyFactory.CreateFrom(c.BlendShapeName))
@@ -50,7 +48,6 @@ namespace Baku.VMagicMirror
 
         public void DisposeProxy()
         {
-            _proxy = null;
             _allBlendShapeKeys = new BlendShapeKey[0];
         }
 
@@ -85,56 +82,6 @@ namespace Baku.VMagicMirror
                 Clear();
             }
         }
-        
-        // private void Update()
-        // {
-        //     if (_reserveBlendShapeReset)
-        //     {
-        //         for (int i = 0; i < _allBlendShapeKeys.Length; i++)
-        //         {
-        //             var key = _allBlendShapeKeys[i];
-        //             _proxy.AccumulateValue(key, 0f);                        
-        //         }
-        //         _proxy?.Apply();
-        //         _reserveBlendShapeReset = false;
-        //     }
-        // }
-
-        // private void LateUpdate()
-        // {
-        //     if (_proxy == null || _blendShape.Count == 0)
-        //     {
-        //         //オーバーライド不要なケース
-        //         _proxy?.Apply();
-        //         return;
-        //     }
-        //
-        //     //一回ApplyすることでAccumulateした値を捨てさせる
-        //     _proxy.Apply();
-        //     
-        //     //実際に適用したい値を入れなおして再度Applyすると完全上書きになる
-        //     for(int i = 0; i < _allBlendShapeKeys.Length; i++)
-        //     {
-        //         var key = _allBlendShapeKeys[i];
-        //         //リップシンクをそのままにするかどうかは場合による
-        //         if (SkipLipSyncKeys && _lipSyncKeys.Contains(key))
-        //         {
-        //             continue;
-        //         }
-        //             
-        //         if (_blendShape.TryGetValue(key, out float value))
-        //         {
-        //             _proxy.AccumulateValue(key, value);
-        //         }
-        //         else
-        //         {
-        //             //完全な排他制御をしたいので、指定がない値は明示的にゼロ書き込みする
-        //             _proxy.AccumulateValue(key, 0);
-        //         }
-        //     }
-        //     _proxy.Apply();
-        //     _eyeBoneResetter.ReserveReset = true;
-        // }
 
         /// <summary> 現在このコンポーネントが適用すべきブレンドシェイプを持ってるかどうか </summary>
         public bool HasBlendShapeToApply => _blendShape.Count > 0;

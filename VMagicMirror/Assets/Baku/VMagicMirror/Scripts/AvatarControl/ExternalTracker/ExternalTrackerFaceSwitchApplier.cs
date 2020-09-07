@@ -9,7 +9,6 @@ namespace Baku.VMagicMirror
     public class ExternalTrackerFaceSwitchApplier : MonoBehaviour
     {
         private bool _hasModel = false;
-        private VRMBlendShapeProxy _proxy;
         private FaceControlConfiguration _config;
         private ExternalTrackerDataSource _externalTracker;
         private EyeBonePostProcess _eyeBoneResetter;
@@ -32,49 +31,14 @@ namespace Baku.VMagicMirror
 
             vrmLoadable.VrmLoaded += info =>
             {
-                _proxy = info.blendShape;
                 _hasModel = true;
             };
             
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
-                _proxy = null;
             };
         }
-
-        //zenjectのDI対象にする？か、このスクリプトにもリセット系の処理を書くか。
-        private BlendShapeInitializer _initializer = null;
-
-        private void Start()
-        {
-            _initializer = FindObjectOfType<BlendShapeInitializer>();
-        }
-        
-        // private void LateUpdate()
-        // {
-        //     if (!_hasModel ||
-        //         string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName) || 
-        //         _config.WordToMotionExpressionActive
-        //         )
-        //     {
-        //         return;
-        //     }
-        //     
-        //     _proxy.Apply();
-        //     _initializer.InitializeBlendShapes(_externalTracker.KeepLipSyncForFaceSwitch);
-        //
-        //     if (_latestClipName != _externalTracker.FaceSwitchClipName)
-        //     {
-        //         _latestKey = CreateKey(_externalTracker.FaceSwitchClipName);
-        //         _latestClipName = _externalTracker.FaceSwitchClipName;
-        //     }
-        //
-        //     //NOTE: 最終的な適用はWordToMotionBlendShapeがやる。ので、ここではその前処理だけやってればよい
-        //     _proxy.AccumulateValue(_latestKey, 1.0f);
-        //     //表情を適用した = 目ボーンは正面向きになってほしい
-        //     _eyeBoneResetter.ReserveReset = true;
-        // }
 
         public bool HasClipToApply => !string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName);
         public bool KeepLipSync => _externalTracker.KeepLipSyncForFaceSwitch;

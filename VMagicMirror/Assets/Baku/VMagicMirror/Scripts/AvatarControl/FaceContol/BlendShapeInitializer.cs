@@ -114,23 +114,7 @@ namespace Baku.VMagicMirror
                 _proxy.AccumulateValue(keys[i], 0);
             }
         }
-        
-        // private void Update()
-        // {
-        //     if (!_hasModel)
-        //     {
-        //         return;
-        //     }
-        //     
-        //     for (int i = 0; i < _keys.Length; i++)
-        //     {
-        //         //NOTE: ゼロのやつを上書きすると負荷がムダに増えそうなので避けてます
-        //         if (_proxy.GetValue(_keys[i]) > 0)
-        //         {
-        //             _proxy.AccumulateValue(_keys[i], 0);
-        //         }
-        //     }
-        // }
+
         
         private static BlendShapeKey[] CreateKeys(IEnumerable<string> names)
         {

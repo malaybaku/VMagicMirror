@@ -459,7 +459,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             
             //差し替え前後で表情が崩れないよう完全にリセット
             _blendShape.Apply();
-            _blendShapeInitializer.InitializeBlendShapes(false);
+            _blendShapeInitializer.InitializeBlendShapes();
             _blendShape.Apply();
 
             _blendShape.BlendShapeAvatar.Clips = IsActive && UseVRoidDefaultSetting

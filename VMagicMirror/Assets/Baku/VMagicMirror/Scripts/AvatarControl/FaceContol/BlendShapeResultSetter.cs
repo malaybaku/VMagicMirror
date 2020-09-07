@@ -54,6 +54,12 @@ namespace Baku.VMagicMirror
                 return;
             }
             
+            WriteClips();
+            _blendShape.Apply();                        
+        }
+
+        private void WriteClips()
+        {
             //Word to Motionが適用 > FaceSwitch、PerfectSync、Blinkは確定で無視。
             //リップシンクは設定しだいで適用。
             if (_wtmBlendShape.HasBlendShapeToApply)
@@ -79,7 +85,7 @@ namespace Baku.VMagicMirror
             {
                 //NOTE: この場合、InitializerでぜんぶInitializeしたあと高々6個だけが重複で適用される。
                 //これはパフォーマンス影響が十分小さそうなのでOKとする
-                _initializer.InitializeBlendShapes(false);
+                _initializer.InitializeBlendShapes();
                 faceSwitch.Accumulate(_blendShape);
                 if (faceSwitch.KeepLipSync)
                 {
@@ -90,7 +96,7 @@ namespace Baku.VMagicMirror
             }
             
             //Perfect Syncが適用 > Blinkは確定で無視。
-            //リップシンクは…ここも設定しだい。
+            //リップシンクは…ここも設定しだいで適用。
             if (perfectSync.IsReadyToAccumulate)
             {
                 //パーフェクトシンクじゃないクリップを0埋め
@@ -104,7 +110,8 @@ namespace Baku.VMagicMirror
                     true
                 );
 
-                //外部トラッキングの口形状を使わない: このときはlipSyncのほうでマイクベースのリップシンクを取ってるはずなので、それを当てる
+                //外部トラッキングの口形状を使わない: このときはlipSyncのほうでも
+                //マイクベースのリップシンクが優先になっているので、それを適用
                 if (!perfectSync.PreferWriteMouthBlendShape)
                 {
                     lipSync.Accumulate(_blendShape);
@@ -113,16 +120,16 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            //上記いずれでもない: ここも分岐はあるんだけど
+            //上記いずれでもない: ここも分岐はあって
             // - 口: パーフェクトシンクの画像 or マイク
             // - 目: パーフェクトシンクの目 or webカメラ or AutoBlink
-            // となっていて、ここの切り分けは別コンポーネントがお世話してくれる
+            // という使い分けがあるが、この分岐は各コンポーネントのレベルで面倒を見てもらえる
 
-            //BlinkL/Rだけ2回書き込む: 他は1回ずつになる。
-            _initializer.InitializeBlendShapes(true);
+            //NOTE: リップシンクの値も0埋めする。
+            //半端に飛ばそうとするとBlendShapeKeyのEquality計算が走ってめちゃくちゃ遅くなるため。
+            _initializer.InitializeBlendShapes();
             eyes.Accumulate(_blendShape);
             lipSync.Accumulate(_blendShape);
-            
         }
     }
 }

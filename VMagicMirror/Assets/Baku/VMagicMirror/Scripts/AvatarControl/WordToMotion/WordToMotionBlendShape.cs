@@ -99,7 +99,7 @@ namespace Baku.VMagicMirror
             {
                 var key = _allBlendShapeKeys[i];
                 //リップシンク保持オプションがオン = AIUEOはAccumulateしない(元の値をリスペクトする)
-                if (SkipLipSyncKeys && _lipSyncKeys.Contains(key))
+                if (SkipLipSyncKeys && _lipSyncKeys.Any(k => k.Preset == key.Preset && k.Name == key.Name))
                 {
                     continue;
                 }

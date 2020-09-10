@@ -15,6 +15,9 @@ namespace Baku.VMagicMirror
         [Tooltip("差分値を徐々にゼロ方向に近づけていく係数")]
         [SerializeField] private float diffValueDiminishRate = 2f;
 
+        [Tooltip("端末のスクリーンサイズをこの秒数ごとにチェックする")]
+        [SerializeField] private float monitorLayoutRefreshInterval = 2f;
+
         /// <summary>
         /// _x, _yを対スクリーン比率で[-0.5, 0.5]の区間に収まる値になおしたもの
         /// </summary>
@@ -22,6 +25,13 @@ namespace Baku.VMagicMirror
         
         private RawMouseMoveChecker _rawMouseMoveChecker = null;
         private Vector2Int _prevCursosPos;
+
+        private float _monitorLeft;
+        private float _monitorTop;
+        //幅、高さはあらかじめ割っておくと除算より乗算で使う頻度が増えてハッピー
+        private float _monitorWidthInv = 1;
+        private float _monitorHeightInv = 1;
+        private float _monitorLayoutRefreshCount = -1f;
         
         //絶対位置に対して「いやユーザーはこのくらいマウス動かしてるが？」という積分値ベースの差分。徐々に減衰させて用いる。
         private float _dx = 0;
@@ -73,6 +83,8 @@ namespace Baku.VMagicMirror
             int x = (int)(p.x + _dx);
             int y = (int)(p.y + _dy);
 
+            RefreshMonitorArea();
+
             //カーソルが動いてないときは放置
             if (_x == x && _y == y)
             {
@@ -81,27 +93,32 @@ namespace Baku.VMagicMirror
 
             _x = x;
             _y = y;
-            
-            int left = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_XVIRTUALSCREEN);
-            int top = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_YVIRTUALSCREEN);
-            int width = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_CXVIRTUALSCREEN);
-            int height = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_CYVIRTUALSCREEN);
-            
+
             //NOTE: 右方向を+X, 上方向を+Y, 値域を(-0.5, 0.5)にするための変形をやって完成
             NormalizedCursorPosition = new Vector2(
-                Mathf.Clamp((_x - left) * 1.0f / width - 0.5f, -0.5f, 0.5f),
-                Mathf.Clamp(0.5f - (_y - top) * 1.0f / height, -0.5f, 0.5f)
+                Mathf.Clamp((_x - _monitorLeft) * _monitorWidthInv - 0.5f, -0.5f, 0.5f),
+                Mathf.Clamp(0.5f - (_y - _monitorTop) * _monitorHeightInv, -0.5f, 0.5f)
                 );           
         }
 
-        public void ReleaseBeforeCloseConfig()
-        {
-            _rawMouseMoveChecker.ReleaseBeforeCloseConfig();
-        }
+        public void ReleaseBeforeCloseConfig() => _rawMouseMoveChecker.ReleaseBeforeCloseConfig();
 
-        public Task ReleaseResources()
+        public Task ReleaseResources() => _rawMouseMoveChecker.ReleaseResources();
+
+        private void RefreshMonitorArea()
         {
-            return _rawMouseMoveChecker.ReleaseResources();
+            _monitorLayoutRefreshCount -= Time.deltaTime;
+            if (_monitorLayoutRefreshCount > 0)
+            {
+                return;
+            }
+
+            _monitorLayoutRefreshCount = monitorLayoutRefreshInterval;
+            _monitorLeft = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_XVIRTUALSCREEN);
+            _monitorTop = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_YVIRTUALSCREEN);
+            //NOTE: WinAPIから0が戻ってくると超ヤバいけど、事実そういうのは見たことがないので普通にこう書いてます
+            _monitorWidthInv = 1.0f / NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_CXVIRTUALSCREEN);
+            _monitorHeightInv = 1.0f / NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_CYVIRTUALSCREEN);
         }
     }
 }

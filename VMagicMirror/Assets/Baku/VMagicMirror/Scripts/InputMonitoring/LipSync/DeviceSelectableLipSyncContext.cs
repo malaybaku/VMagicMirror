@@ -25,17 +25,19 @@ namespace Baku.VMagicMirror
         
         public void StartRecording(string deviceName)
         {
-            if (!IsRecording && Microphone.devices.Contains(deviceName))
+            if (IsRecording || !Microphone.devices.Contains(deviceName))
             {
-                _head = 0;
-                for (int i = 0; i < _microphoneBuffer.Length; i++)
-                {
-                    _microphoneBuffer[i] = 0;
-                }
-                _clip = Microphone.Start(deviceName, true, LengthSeconds, SamplingFrequency);
-                IsRecording = true;
-                DeviceName = deviceName;
+                return;
             }
+            
+            _head = 0;
+            for (int i = 0; i < _microphoneBuffer.Length; i++)
+            {
+                _microphoneBuffer[i] = 0;
+            }
+            _clip = Microphone.Start(deviceName, true, LengthSeconds, SamplingFrequency);
+            IsRecording = true;
+            DeviceName = deviceName;
         }
 
         public void StopRecording()
@@ -48,7 +50,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        void Update()
+        private void Update()
         {
             if (!IsRecording)
             {

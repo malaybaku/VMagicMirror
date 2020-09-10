@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -8,27 +7,34 @@ namespace Baku.VMagicMirror
     /// ゲームパッドの入力状況に対して望ましい腕IKを指定するやつ。
     /// 従来版と違い、小さなゲームパッドを握っている状態を再現する狙いで実装している
     /// </summary>
-    public class GamepadHandIKGenerator : MonoBehaviour
+    public class GamepadHandIKGenerator : HandIkGeneratorBase
     {
-        [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
-        
-        [Tooltip("ゲームパッド全体を動かす速度ファクタ")]
-        [SerializeField] private float speedFactor = 3.0f;
-        
-        [Tooltip("ボタンを押す/押してないに依存して手を上下させる動きの速度ファクタ")]
-        [SerializeField] private float buttonDownSpeedFactor = 8f;
-        
-        [Tooltip("体が動いた量をゲームパッドの移動量に反映するファクター")]
-        [Range(0f, 1f)]
-        [SerializeField] private float bodyMotionToGamepadPosApplyFactor = 0.5f;
-
-        [Inject]
-        public void Initialize(GamepadProvider provider)
+        [Serializable]
+        public struct GamepadHandIkGeneratorSetting
         {
-            _gamePad = provider;
+            public ImageBasedBodyMotion imageBasedBodyMotion;            
         }
+
+        // ゲームパッド全体を動かす速度ファクタ
+        private const float SpeedFactor = 3.0f;
         
-        private GamepadProvider _gamePad = null;
+        // ボタンを押す/押してないに依存して手を上下させる動きの速度ファクタ
+        private const float ButtonDownSpeedFactor = 8f;
+        
+        //体が動いた量をゲームパッドの移動量に反映するファクター
+        private const float BodyMotionToGamepadPosApplyFactor = 0.5f;
+        
+        public GamepadHandIKGenerator(
+            MonoBehaviour coroutineResponder, 
+            GamepadProvider gamepadProvider,
+            GamepadHandIkGeneratorSetting setting) : base(coroutineResponder)
+        {
+            _gamePad = gamepadProvider;
+            _setting = setting;
+        }
+
+        private readonly GamepadProvider _gamePad;
+        private readonly GamepadHandIkGeneratorSetting _setting;
         
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKGenerator LeftHand => _leftHand;
@@ -147,7 +153,7 @@ namespace Baku.VMagicMirror
             return new Vector2(v.x * factor, v.y * factor);
         }
 
-        private void Start()
+        public override void Start()
         {
             //とりあえず初期位置までゲームコントローラIKの場所を持ち上げておく:
             //やらないとIK位置が0,0,0のままになって良くない
@@ -157,18 +163,18 @@ namespace Baku.VMagicMirror
                 (_rawLeftPos, _rawLeftRot, _rawRightPos, _rawRightRot);
         }
         
-        private void Update()
+        public override void Update()
         {
             UpdateButtonDownYOffset();
             
             //とりあえず全部Lerp
-            _filterStickPos = Vector2.Lerp(_filterStickPos, _rawStickPos, speedFactor * Time.deltaTime);
-            _filterLeftPos = Vector3.Lerp(_filterLeftPos, _rawLeftPos, speedFactor * Time.deltaTime);
-            _filterLeftRot = Quaternion.Slerp(_filterLeftRot, _rawLeftRot, speedFactor * Time.deltaTime);
-            _filterRightPos = Vector3.Lerp(_filterRightPos, _rawRightPos, speedFactor * Time.deltaTime);
-            _filterRightRot = Quaternion.Slerp(_filterRightRot, _rawRightRot, speedFactor * Time.deltaTime);
+            _filterStickPos = Vector2.Lerp(_filterStickPos, _rawStickPos, SpeedFactor * Time.deltaTime);
+            _filterLeftPos = Vector3.Lerp(_filterLeftPos, _rawLeftPos, SpeedFactor * Time.deltaTime);
+            _filterLeftRot = Quaternion.Slerp(_filterLeftRot, _rawLeftRot, SpeedFactor * Time.deltaTime);
+            _filterRightPos = Vector3.Lerp(_filterRightPos, _rawRightPos, SpeedFactor * Time.deltaTime);
+            _filterRightRot = Quaternion.Slerp(_filterRightRot, _rawRightRot, SpeedFactor * Time.deltaTime);
 
-            var offset = Vector3.up * _offsetY + imageBasedBodyMotion.BodyIkOffset * bodyMotionToGamepadPosApplyFactor;
+            var offset = Vector3.up * _offsetY + _setting.imageBasedBodyMotion.BodyIkOffset * BodyMotionToGamepadPosApplyFactor;
 
             //ボタン押し状態、および体の動きを考慮して最終的なIKを適用
             _leftHand.Position = _filterLeftPos + offset;
@@ -188,7 +194,7 @@ namespace Baku.VMagicMirror
             _offsetY = Mathf.Lerp(
                 _offsetY,
                 offsetGoal,
-                buttonDownSpeedFactor * Time.deltaTime
+                ButtonDownSpeedFactor * Time.deltaTime
                 );
         }
 

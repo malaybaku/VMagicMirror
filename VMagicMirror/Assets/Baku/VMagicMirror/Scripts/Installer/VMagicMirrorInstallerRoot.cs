@@ -13,6 +13,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private ModelLoadInstaller modelLoad = null;
         [SerializeField] private ScreenshotCountDownUiInstaller screenshotCountDown = null;
         [SerializeField] private FaceControlInstaller faceControl = null;
+        [SerializeField] private WordToMotionInstaller wordToMotion = null;
         [SerializeField] private DeformableCounter deformableCounterPrefab = null;
         [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
         
@@ -28,6 +29,7 @@ namespace Baku.VMagicMirror.Installer
                     interProcess,
                     screenshotCountDown,
                     faceControl,
+                    wordToMotion,
                 })
             {
                 installer.Install(Container);

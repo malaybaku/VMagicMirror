@@ -19,10 +19,13 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private float lerpFactor = 18f;
         
+        private FaceControlConfiguration _config;
         private ExternalTrackerDataSource _externalTracker;
+        
         [Inject]
-        public void Initialize(ExternalTrackerDataSource externalTracker)
+        public void Initialize(FaceControlConfiguration config, ExternalTrackerDataSource externalTracker)
         {
+            _config = config;
             _externalTracker = externalTracker;
         }
         
@@ -30,7 +33,8 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (!_externalTracker.SupportFacePositionOffset)
+            if (_config.ControlMode != FaceControlModes.ExternalTracker ||
+                !_externalTracker.SupportFacePositionOffset)
             {
                 BodyOffset = Vector3.zero;
                 return;

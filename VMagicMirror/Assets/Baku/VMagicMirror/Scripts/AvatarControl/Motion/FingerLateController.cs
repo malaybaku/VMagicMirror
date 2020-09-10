@@ -27,6 +27,8 @@ namespace Baku.VMagicMirror
         //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
         private readonly float[] _holdOperationBendingAngle = new float[10];
 
+        private bool _hasHoldCalledAtLeastOnce = false;
+
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable)
         {
@@ -55,6 +57,8 @@ namespace Baku.VMagicMirror
                 _hold[fingerNumber] = true;
                 _targetAngles[fingerNumber] = angle;
             }
+
+            _hasHoldCalledAtLeastOnce = true;
         }
 
         /// <summary>
@@ -151,11 +155,27 @@ namespace Baku.VMagicMirror
 
         private void LateUpdate()
         {
-            if (_animator == null)
+            if (!_hasHoldCalledAtLeastOnce || _animator == null)
             {
                 return;
             }
-            
+
+            //今から曲げるべき指があるとか、指の曲げ/戻し中であるような場合だけ処理する。
+            //このガードにより、普段はMuscleのI/Oが走らないため、CPUにとてもやさしい
+            bool needUpdate = false;
+            for (int i = 0; i < _hold.Length; i++)
+            {
+                if (_hold[i])
+                {
+                    needUpdate = true;
+                    break;
+                }
+            }
+
+            if (!needUpdate)
+            {
+                return;
+            }
             
             _humanPoseHandler.GetHumanPose(ref _humanPose);
 
@@ -178,8 +198,8 @@ namespace Baku.VMagicMirror
                 //常にマイナスの値を入れればOK: デフォルトから曲げ方向に動かすため
                 float rate = -angle * BendDegToMuscle;
                 FingerMuscleSetter.BendFinger(in _defaultHumanPose, ref _humanPose, i, rate);
-                //BendFinger(i, angle);
             }
+
             _humanPoseHandler.SetHumanPose(ref _humanPose);
         }
 

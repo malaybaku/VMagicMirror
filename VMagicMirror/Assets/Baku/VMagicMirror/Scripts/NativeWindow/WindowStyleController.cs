@@ -21,11 +21,13 @@ namespace Baku.VMagicMirror
         }
 
         //Player Settingで決められるデフォルトウィンドウサイズと合わせてるが、常識的な値であれば多少ズレても害はないです
-        const int DefaultWindowWidth = 800;
-        const int DefaultWindowHeight = 600;
+        private const int DefaultWindowWidth = 800;
+        private const int DefaultWindowHeight = 600;
 
-        const string InitialPositionXKey = "InitialPositionX";
-        const string InitialPositionYKey = "InitialPositionY";
+        private const string InitialPositionXKey = "InitialPositionX";
+        private const string InitialPositionYKey = "InitialPositionY";
+        private const string InitialWidthKey = "InitialWidth";
+        private const string InitialHeightKey = "InitialHeight";        
 
         [SerializeField] private float opaqueThreshold = 0.1f;
         [SerializeField] private float windowPositionCheckInterval = 5.0f;
@@ -167,11 +169,15 @@ namespace Baku.VMagicMirror
         
         private void OnDestroy()
         {
+            if (GetWindowRect(GetUnityWindowHandle(), out var rect))
+            {
 #if !UNITY_EDITOR
-            var windowPosition = GetUnityWindowPosition();
-            PlayerPrefs.SetInt(InitialPositionXKey, windowPosition.x);
-            PlayerPrefs.SetInt(InitialPositionYKey, windowPosition.y);
+                PlayerPrefs.SetInt(InitialPositionXKey, rect.left);
+                PlayerPrefs.SetInt(InitialPositionYKey, rect.top);
+                PlayerPrefs.SetInt(InitialWidthKey, rect.right - rect.left);
+                PlayerPrefs.SetInt(InitialHeightKey, rect.bottom - rect.top);
 #endif
+            }
         }
 
         private void CheckSettingFileDirect()
@@ -275,6 +281,15 @@ namespace Baku.VMagicMirror
                 PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
 #endif
             }
+
+            int width = PlayerPrefs.GetInt(InitialWidthKey, 0);
+            int height = PlayerPrefs.GetInt(InitialHeightKey, 0);
+            if (width > 100 && height > 100)
+            {
+#if !UNITY_EDITOR
+                    SetUnityWindowSize(width, height);
+#endif
+            }
         }
 
         private void UpdateWindowPositionCheck()
@@ -375,7 +390,7 @@ namespace Baku.VMagicMirror
             ForceWindowResizeEvent();
 #endif
         }
-
+        
         private void ForceWindowResizeEvent()
         {
             //NOTE: リサイズ処理は「ズラしてから元に戻す」方式で呼ぶと透過→不透過の切り替え時に画像が歪むのを防げるため、

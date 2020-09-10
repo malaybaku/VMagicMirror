@@ -71,10 +71,19 @@ namespace Baku.VMagicMirror
                     _initializer.InitializeBlendShapes(perfectSync.ProgramaticallyAddedVRoidClipKeys);
                 }
                 
+                //TODO: このAccumulateでリップシンク続行オプションがついてるとき、
+                //AIUEOだけじゃなくてパーフェクトシンクのクリップも書くのをスキップしたいよね
                 _wtmBlendShape.Accumulate(_blendShape);
                 if (_wtmBlendShape.SkipLipSyncKeys)
                 {
-                    lipSync.Accumulate(_blendShape);
+                    if (perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                    {
+                        perfectSync.Accumulate(_blendShape, false, true, false);
+                    }
+                    else
+                    {
+                        lipSync.Accumulate(_blendShape);
+                    }
                 }
                 return;
             }
@@ -84,14 +93,20 @@ namespace Baku.VMagicMirror
             if (faceSwitch.HasClipToApply)
             {
                 //NOTE: この場合、InitializerでぜんぶInitializeしたあと高々6個だけが重複で適用される。
-                //これはパフォーマンス影響が十分小さそうなのでOKとする
+                //これはパフォーマンス影響が十分小さそうなのでOKとする…と思ったが、パーフェクトシンクの口が適用される場合はちょっと重いよ。
                 _initializer.InitializeBlendShapes();
                 faceSwitch.Accumulate(_blendShape);
                 if (faceSwitch.KeepLipSync)
                 {
-                    lipSync.Accumulate(_blendShape);
+                    if (perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                    {
+                        perfectSync.Accumulate(_blendShape, false, true, false);
+                    }
+                    else
+                    {
+                        lipSync.Accumulate(_blendShape);
+                    }
                 }
-
                 return;
             }
             

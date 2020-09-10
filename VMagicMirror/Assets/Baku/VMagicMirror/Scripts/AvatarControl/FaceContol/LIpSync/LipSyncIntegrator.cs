@@ -28,11 +28,6 @@ namespace Baku.VMagicMirror
         
         public void Accumulate(VRMBlendShapeProxy proxy)
         {
-            if (_config.ShouldSkipMouthBlendShape)
-            {
-                return;
-            }
-        
             //NOTE: マイクが無効な場合はanimMorphEasedTargetの出力がゼロになる、というのを想定した書き方でもあります
             var src = PreferExternalTrackerLipSync
                 ? externalTrackerLipSync.LipSyncSource

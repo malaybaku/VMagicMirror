@@ -64,26 +64,28 @@ namespace Baku.VMagicMirror
             //リップシンクは設定しだいで適用。
             if (_wtmBlendShape.HasBlendShapeToApply)
             {
-                //NOTE: VRoidのデフォルト設定クリップが上乗せされた場合、
-                //それはwtmBlendShapeでは考慮してもらえないので、ここで0上書きする
-                if (perfectSync.IsActive && perfectSync.UseVRoidDefaultSetting)
+                //NOTE: リップシンク + パーフェクトシンクのときに同じキーを何回もセットすると計算が勿体ない。
+                //その余分なコストを減らすため、ちょっと凝った書き方をしてます
+                if (!_wtmBlendShape.KeepLipSync)
                 {
-                    _initializer.InitializeBlendShapes(perfectSync.ProgramaticallyAddedVRoidClipKeys);
+                    //そもそもリップシンクは切ってよいケース: シンプルにゼロ埋め + WtMを適用
+                    _initializer.InitializeBlendShapes();
+                    _wtmBlendShape.Accumulate(_blendShape);
                 }
-                
-                //TODO: このAccumulateでリップシンク続行オプションがついてるとき、
-                //AIUEOだけじゃなくてパーフェクトシンクのクリップも書くのをスキップしたいよね
-                _wtmBlendShape.Accumulate(_blendShape);
-                if (_wtmBlendShape.SkipLipSyncKeys)
+                else if (perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
-                    if (perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
-                    {
-                        perfectSync.Accumulate(_blendShape, false, true, false);
-                    }
-                    else
-                    {
-                        lipSync.Accumulate(_blendShape);
-                    }
+                    //WtM + パーフェクトシンクの口周りを適用するケース: 口周りのゼロ埋めをサボれるのでサボる
+                    _initializer.InitializeBlendShapes(perfectSync.NonPerfectSyncKeys);
+                    _initializer.InitializeBlendShapes(ExternalTrackerPerfectSync.Keys.PerfectSyncNonMouthKeys);
+                    _wtmBlendShape.Accumulate(_blendShape);
+                    perfectSync.Accumulate(_blendShape, false, true, false);
+                }
+                else
+                {
+                    //WtM + AIUEOの口を適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
+                    _initializer.InitializeBlendShapes();
+                    _wtmBlendShape.Accumulate(_blendShape);
+                    lipSync.Accumulate(_blendShape);
                 }
                 return;
             }
@@ -92,20 +94,26 @@ namespace Baku.VMagicMirror
             //リップシンクは設定しだいで適用。
             if (faceSwitch.HasClipToApply)
             {
-                //NOTE: この場合、InitializerでぜんぶInitializeしたあと高々6個だけが重複で適用される。
-                //これはパフォーマンス影響が十分小さそうなのでOKとする…と思ったが、パーフェクトシンクの口が適用される場合はちょっと重いよ。
-                _initializer.InitializeBlendShapes();
-                faceSwitch.Accumulate(_blendShape);
-                if (faceSwitch.KeepLipSync)
+                //NOTE: WtMと同じく、パーフェクトシンクの口と組み合わす場合のコストに多少配慮した書き方。
+                if (!faceSwitch.KeepLipSync)
                 {
-                    if (perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
-                    {
-                        perfectSync.Accumulate(_blendShape, false, true, false);
-                    }
-                    else
-                    {
-                        lipSync.Accumulate(_blendShape);
-                    }
+                    _initializer.InitializeBlendShapes();
+                    faceSwitch.Accumulate(_blendShape);
+                }
+                else if (perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                {
+                    //Face Switch + パーフェクトシンクの口周りを適用: 口周りのパーフェクトシンクのゼロ埋めをサボれるのでサボる
+                    _initializer.InitializeBlendShapes(perfectSync.NonPerfectSyncKeys);
+                    _initializer.InitializeBlendShapes(ExternalTrackerPerfectSync.Keys.PerfectSyncNonMouthKeys);
+                    faceSwitch.Accumulate(_blendShape);
+                    perfectSync.Accumulate(_blendShape, false, true, false);
+                }
+                else
+                {
+                    //FaceSwitch + AIUEOを適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
+                    _initializer.InitializeBlendShapes();
+                    faceSwitch.Accumulate(_blendShape);
+                    lipSync.Accumulate(_blendShape);
                 }
                 return;
             }
@@ -139,9 +147,6 @@ namespace Baku.VMagicMirror
             // - 口: パーフェクトシンクの画像 or マイク
             // - 目: パーフェクトシンクの目 or webカメラ or AutoBlink
             // という使い分けがあるが、この分岐は各コンポーネントのレベルで面倒を見てもらえる
-
-            //NOTE: リップシンクの値も0埋めする。
-            //半端に飛ばそうとするとBlendShapeKeyのEquality計算が走ってめちゃくちゃ遅くなるため。
             _initializer.InitializeBlendShapes();
             eyes.Accumulate(_blendShape);
             lipSync.Accumulate(_blendShape);

@@ -44,6 +44,8 @@ namespace Baku.VMagicMirror
         public Message ExTrackerCalibrateComplete(string data) => WithArg(data);
         
         public Message ExTrackerSetPerfectSyncMissedClipNames(string data) => WithArg(data);
+
+        public Message ExTrackerSetIFacialMocapTroubleMessage(string message) => WithArg(message);
         
         #region VRoid
 

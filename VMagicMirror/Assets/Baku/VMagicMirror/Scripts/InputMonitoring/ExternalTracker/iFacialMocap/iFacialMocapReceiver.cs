@@ -58,6 +58,12 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 lock (_rawMessageLock) _rawMessage = value;
             }
         }
+
+        /// <summary>
+        /// データの受信スレッドが動いているかどうかを取得します。
+        /// 実データが飛んで来ないような受信待ちの状態でもtrueになることに注意してください。
+        /// </summary>
+        public bool IsRunning { get; private set; } = false;
         
         private readonly Dictionary<string, float> _blendShapes = new Dictionary<string, float>()
         {
@@ -254,10 +260,12 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             StopReceive();
             _cts = new CancellationTokenSource();
             new Thread(() => ThreadMethod(_cts.Token)).Start();
+            IsRunning = true;
         }
         
         public override void StopReceive()
         {
+            IsRunning = false;
             _cts?.Cancel();
             _cts = null;
             RawMessage = "";

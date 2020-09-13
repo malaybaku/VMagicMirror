@@ -52,7 +52,7 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary> trueの場合、このスクリプトではリップシンクのブレンドシェイプに書き込みを行いません。 </summary>
-        public bool SkipLipSyncKeys { get; set; }
+        public bool KeepLipSync { get; set; }
         
         /// <summary>
         /// Word To Motionによるブレンドシェイプを指定します。
@@ -99,11 +99,12 @@ namespace Baku.VMagicMirror
             {
                 var key = _allBlendShapeKeys[i];
                 //リップシンク保持オプションがオン = AIUEOはAccumulateしない(元の値をリスペクトする)
-                if (SkipLipSyncKeys && _lipSyncKeys.Any(k => k.Preset == key.Preset && k.Name == key.Name))
+                if (KeepLipSync && _lipSyncKeys.Any(k => k.Preset == key.Preset && k.Name == key.Name))
                 {
                     continue;
                 }
-                    
+                //NOTE: パーフェクトシンクのクリップはリップシンク保持であっても通す。
+                //これはフィルタすると重すぎるので「パーフェクトシンク使う人はそのくらい理解してくれ」という意味です
                 if (_blendShape.TryGetValue(key, out float value) && value > 0f)
                 {
                     proxy.AccumulateValue(key, value);

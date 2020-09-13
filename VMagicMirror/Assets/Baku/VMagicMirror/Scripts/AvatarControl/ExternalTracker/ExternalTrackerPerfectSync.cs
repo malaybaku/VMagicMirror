@@ -414,7 +414,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         }
         
         /// <summary> 決め打ちされた、パーフェクトシンクで使うブレンドシェイプの一覧 </summary>
-        static class Keys
+        public static class Keys
         {
             static Keys()
             {
@@ -561,6 +561,81 @@ namespace Baku.VMagicMirror.ExternalTracker
                     BrowOuterUpRight,
                     BrowInnerUp,
                 };                
+                
+                PerfectSyncMouthKeys =  new[]
+                {
+                    //口(多い)
+                    MouthLeft,
+                    MouthSmileLeft,
+                    MouthFrownLeft,
+                    MouthPressLeft,
+                    MouthUpperUpLeft,
+                    MouthLowerDownLeft,
+                    MouthStretchLeft,
+                    MouthDimpleLeft,
+
+                    MouthRight,
+                    MouthSmileRight,
+                    MouthFrownRight,
+                    MouthPressRight,
+                    MouthUpperUpRight,
+                    MouthLowerDownRight,
+                    MouthStretchRight,
+                    MouthDimpleRight,
+
+                    MouthClose,
+                    MouthFunnel,
+                    MouthPucker,
+                    MouthShrugUpper,
+                    MouthShrugLower,
+                    MouthRollUpper,
+                    MouthRollLower,
+
+                    //あご
+                    JawOpen,
+                    JawForward,
+                    JawLeft,
+                    JawRight,
+                    
+                    //ほお
+                    CheekPuff,
+                    CheekSquintLeft,
+                    CheekSquintRight,
+
+                    //舌
+                    TongueOut,
+                };                
+                
+                PerfectSyncNonMouthKeys = new[]
+                {
+                    //目
+                    EyeBlinkLeft,
+                    EyeLookUpLeft,
+                    EyeLookDownLeft,
+                    EyeLookInLeft,
+                    EyeLookOutLeft,
+                    EyeWideLeft,
+                    EyeSquintLeft,
+
+                    EyeBlinkRight,
+                    EyeLookUpRight,
+                    EyeLookDownRight,
+                    EyeLookInRight,
+                    EyeLookOutRight,
+                    EyeWideRight,
+                    EyeSquintRight,
+
+                    //鼻
+                    NoseSneerLeft,
+                    NoseSneerRight,
+
+                    //まゆげ
+                    BrowDownLeft,
+                    BrowOuterUpLeft,
+                    BrowDownRight,
+                    BrowOuterUpRight,
+                    BrowInnerUp,
+                };
             }
 
             /// <summary>
@@ -573,6 +648,10 @@ namespace Baku.VMagicMirror.ExternalTracker
             
             /// <summary> Perfect Syncでいじる対象のブレンドシェイプキー一覧を取得します。 </summary>
             public static BlendShapeKey[] PerfectSyncKeys { get; }
+            /// <summary> Perfect Syncの口、ほお、顎、舌のキーを取得します。</summary>
+            public static BlendShapeKey[] PerfectSyncMouthKeys { get; }
+            /// <summary> Perfect Syncの目、鼻、眉のキーを取得します。</summary>
+            public static BlendShapeKey[] PerfectSyncNonMouthKeys { get; }
             
             //TODO: 名前はあとで調べて直すこと！絶対に間違った名前が入ってるぞ！
             

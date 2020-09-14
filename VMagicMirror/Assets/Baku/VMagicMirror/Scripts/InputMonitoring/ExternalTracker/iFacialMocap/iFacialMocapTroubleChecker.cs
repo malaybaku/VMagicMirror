@@ -70,7 +70,69 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 
         private void CheckIFacialMocapDataValidity()
         {
-            //TODO: 実データの特定位置がゼロだらけであるか、あるいはそもそも中身の文字列で判断できると嬉しい
+            const float Limit = 0.01f;
+            
+            //NOTE: iFacialMocapはオプションで切った部分のブレンドシェイプは0にして投げてくる。
+            //つまりデータ自体には有効性情報は乗っかってない。
+            //そこで、「ここらへんの値がぜんぶ0になってるのは流石におかしくない？」みたいなアプローチでやる
+
+            var src = receiver.FaceTrackSource;
+
+            //NOTE: 順番は「0になりにくいものを手前に持ってくる」みたいな発想で並べる。
+            //これにより、通常の(問題ないケースでの)ジャッジを素早く終わらせる
+            
+            //口はもっとブレンドシェイプあるけど、値の有効判定ならコレで足りそうなのでコレで。
+            var jaw = src.Jaw;
+            var mouth = src.Mouth;
+            bool isLowerOff =
+                jaw.Open < Limit &&
+                jaw.Left < Limit &&
+                jaw.Right < Limit &&
+                jaw.Forward < Limit &&
+                mouth.Close < Limit &&
+                mouth.LeftLowerDown < Limit &&
+                mouth.LeftUpperUp < Limit &&
+                mouth.LeftSmile < Limit &&
+                mouth.LeftFrown < Limit &&
+                mouth.RightLowerDown < Limit &&
+                mouth.RightUpperUp < Limit &&
+                mouth.RightSmile < Limit &&
+                mouth.RightFrown < Limit;
+
+            if (isLowerOff)
+            {
+                SetTroubleMessage(LoadLowerOrUpperNotCapturedMessage());
+                return;                
+            }
+
+            //目も一部ブレンドシェイプは無視する(こんだけあれば足りそうなので)
+            var eye = src.Eye;
+            var brow = src.Brow;
+            bool isUpperOff =
+                eye.LeftBlink < Limit &&
+                eye.RightBlink < Limit &&
+                brow.LeftDown < Limit &&
+                brow.LeftOuterUp < Limit &&
+                brow.RightDown < Limit &&
+                brow.RightOuterUp < Limit &&
+                brow.InnerUp < Limit &&
+                eye.LeftLookDown < Limit &&
+                eye.LeftLookUp < Limit &&
+                eye.LeftLookIn < Limit &&
+                eye.LeftLookOut < Limit &&
+                eye.RightLookDown < Limit &&
+                eye.RightLookUp < Limit &&
+                eye.RightLookIn < Limit &&
+                eye.RightLookOut < Limit;
+
+            if (isUpperOff)
+            {
+                SetTroubleMessage(LoadLowerOrUpperNotCapturedMessage());
+                return;
+            }
+            
+ 
+            SetTroubleMessage("");
         }
     }
 }

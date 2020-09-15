@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8787302697188517924}
   - component: {fileID: 1741065671539273212}
   - component: {fileID: 3105770716100891395}
+  - component: {fileID: 6170842682569160516}
   m_Layer: 0
   m_Name: ExternalTrackerDataReceiver
   m_TagString: Untagged
@@ -60,3 +61,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee6bb180360c53b4baa13a2bcb3e6114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6170842682569160516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7517924886113761768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3415070461b31b840afe2dfdfc349cf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  receiver: {fileID: 3105770716100891395}
+  dataSource: {fileID: 1741065671539273212}
+  checkInterval: 8

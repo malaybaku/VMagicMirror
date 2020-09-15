@@ -55,6 +55,7 @@ If your avatar looks wrong orientatoin or face motion does not start, execute `C
 </div>
 
 
+<a id="troubleshoot"></a>
 ### Troubleshooting
 
 #### Q1. Failed to connect for the first setup
@@ -92,8 +93,19 @@ Check `Allow connection` and `OK` to close. After setup, confirm the left side m
 
 **NOTE:** If you find multiple `vmagicmirror.exe` items in the setting, please setup for all.
 
+#### Q3. Head moves, but face expression does not change
+{: .doc-sec2 }
 
-#### Q3. Do I also have to download iFacialMocap Window software?
+A. iFacialMocap setting might ignore face blendshape data.
+
+Please see iFacialMocap and check `Lower` and `Upper` options are turned on.
+
+<div class="row">
+{% include docimg.html file="./images/docs/ex_tracker_ifm_part_setting.png customclass="col l4 m4 s6" imgclass="fit-doc-img" %}
+</div>
+
+
+#### Q4. Do I also have to download iFacialMocap Window software?
 {: .doc-sec2 }
 
 A. No, because VMagicMirror directly connects to iOS device.
@@ -101,13 +113,13 @@ A. No, because VMagicMirror directly connects to iOS device.
 Please avoid to start iFacialMocap windows software during using VMagicMirror, as it will lead to data receive communication issue.
 
 
-#### Q4. Is there something to be careful in 2nd or later use?
+#### Q5. Is there something to be careful in 2nd or later use?
 {: .doc-sec2 }
 
 A. If you have put the iOS device other place than previous time, avatar maybe looks left or right. In this case please go through calibration process again.
 
 
-#### Q5. iOS device works incorrectly, how to recover?
+#### Q6. iOS device works incorrectly, how to recover?
 {: .doc-sec2 }
 
 A. Quit `iFacialMocap` app, and try `Connect to VMagicMirror` process again.

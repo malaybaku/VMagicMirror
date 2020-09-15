@@ -53,6 +53,7 @@ iOS端末のアプリ上に表示されたIPアドレスを入力し、`Connect`
 {% include docimg.html file="./images/docs/ex_tracker_30_calibration_after.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
+<a id="troubleshoot"></a>
 ### トラブルシューティング
 
 #### Q1. はじめて接続操作を行ったが、キャラクターが反応しない
@@ -90,8 +91,19 @@ Windowsのコントロールパネルで`ファイアウォール`を検索し�
 
 **NOTE:** `受信の規則`に複数の`vmagicmirror.exe`があった場合、すべてに対して同じ操作を行ってください。
 
+#### Q3. 首は動くものの表情が動かない
+{: .doc-sec2 }
 
-#### Q3. Window用に配布されているiFacialMocapのソフトは必要？
+A. iFacialMocapの設定で表情の取得がオフになっている可能性があります。
+
+iFacialMocapの設定で`Lower`および`Upper`オプションがオンになっているか確認してください。
+
+<div class="row">
+{% include docimg.html file="./images/docs/ex_tracker_ifm_part_setting.png customclass="col l4 m4 s6" imgclass="fit-doc-img" %}
+</div>
+
+
+#### Q4. Window用に配布されているiFacialMocapのソフトは必要？
 {: .doc-sec2 }
 
 A. 不要です。VMagicMirror自体がiOS端末と直接通信するためです。
@@ -99,13 +111,13 @@ A. 不要です。VMagicMirror自体がiOS端末と直接通信するためで�
 もしWindows用のiFacialMocapソフトをPCへインストール済みの場合、VMagicMirrorの使用中には立ち上げないよう注意してください。
 
 
-#### Q4. 2回目以降の使用時に注意することは？
+#### Q5. 2回目以降の使用時に注意することは？
 {: .doc-sec2 }
 
 A. 前回の使用時と異なる位置にiPhoneやiPadを置いた場合、顔の方向が間違って表示されます。この場合はキャリブレーションをやり直してください。
 
 
-#### Q5. iOS端末の調子が悪い
+#### Q6. iOS端末の調子が悪い
 {: .doc-sec2 }
 
 A. `iFacialMocap`のアプリを完全に終了したのち、このページの`VMagicMirrorと接続する`の手順に沿って再び接続してください。

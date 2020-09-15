@@ -29,12 +29,11 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         {
             if (_language.Language == "Japanese")
             {
-                return "表情キャプチャのうち下半分(Lower)または上半分(Upper)が無効になっています。iFacialMocapアプリを開き、これらの表情キャプチャを有効にして下さい。";
+                return "表情キャプチャのうち下半分(Lower)または上半分(Upper)が無効になっています。iFacialMocapアプリの設定で、これらの表情キャプチャを有効にして下さい。";
             }
             else
             {
                 return "Face blendShape capture of lower or upper part seems disabled. Please turn on them on iFacialMocap app.";
-                
             }            
         }
 

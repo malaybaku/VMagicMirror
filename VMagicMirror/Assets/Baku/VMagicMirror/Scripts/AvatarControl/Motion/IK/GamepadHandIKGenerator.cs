@@ -139,12 +139,7 @@ namespace Baku.VMagicMirror
                 stickPos.x * (ReverseGamepadStickLeanHorizontal ? -1f : 1f),
                 stickPos.y * (ReverseGamepadStickLeanVertical ? -1f : 1f)
                 );
-
             _rawStickPos = pos;
-            _gamePad.SetHorizontalPosition(pos);
-            
-            (_rawLeftPos, _rawLeftRot) = _gamePad.GetLeftHand();
-            (_rawRightPos, _rawRightRot) = _gamePad.GetRightHand();   
         }
 
         private static Vector2 NormalizedStickPos(Vector2Int v)
@@ -165,6 +160,7 @@ namespace Baku.VMagicMirror
         
         public override void Update()
         {
+            UpdateRawPositions();
             UpdateButtonDownYOffset();
             
             //とりあえず全部Lerp
@@ -206,5 +202,12 @@ namespace Baku.VMagicMirror
             GamepadLeanLeftStick,
             GamepadLeanRightStick,
         }        
+        
+        private void UpdateRawPositions()
+        {
+            _gamePad.SetHorizontalPosition(_rawStickPos);            
+            (_rawLeftPos, _rawLeftRot) = _gamePad.GetLeftHand();
+            (_rawRightPos, _rawRightRot) = _gamePad.GetRightHand();
+        }
     }
 }

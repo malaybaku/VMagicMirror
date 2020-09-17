@@ -66,45 +66,29 @@ namespace Baku.VMagicMirror
                 );
             t.localScale = (baseScale * parameters.ArmLengthFactor) * Vector3.one;
         }
-        
-        /// <summary>
-        /// [-1, 1]の範囲で表現されたスティック情報をもとにゲームパッドの位置を変更します。
-        /// </summary>
-        /// <param name="pos"></param>
-        public void SetHorizontalPosition(Vector2 pos)
-        {
-            gamepadCenter.localPosition = new Vector3(
-                moveRange.x * pos.x,
-                0.0f,
-                moveRange.y * pos.y
-                );
-            
-            //並進に合わせて回転もする
-            gamepadCenter.localRotation = Quaternion.Euler(
-                pos.y * posToEulerAngle.y,
-                0,
-                -pos.x * posToEulerAngle.x
-                );
-        }
 
         /// <summary>
         /// このゲームパッドを持っているはずの両手の位置の中点、およびスティックの傾きを表す値を指定することで、
         /// コントローラの望ましい位置、姿勢を生成します。
         /// </summary>
         /// <param name="pos"></param>
-        /// <param name="offset"></param>
-        public void SetFilteredPosition(Vector2 pos, Vector3 offset)
+        /// <param name="posOffset"></param>
+        /// <param name="rotOffset"></param>
+        public void SetFilteredPositionAndRotation(Vector2 pos, Vector3 posOffset, Quaternion rotOffset)
         {
-            modelRoot.localPosition = new Vector3(moveRange.x * pos.x, 0.0f, moveRange.y * pos.y);
-            modelRoot.position += offset;
-            
-            //並進に合わせて回転もする
-            modelRoot.localRotation = Quaternion.Euler(
-                pos.y * posToEulerAngle.y,
-                0,
-                -pos.x * posToEulerAngle.x
-            );
-            
+            //NOTE: 2種類のTransformを使ってるのはローカルスケールの適用をやる関係で両者を分けておきたいから。
+            //…なんだけど
+            var localPos =new Vector3(moveRange.x * pos.x, 0.0f, moveRange.y * pos.y);
+            var localRot = rotOffset * 
+                Quaternion.Euler(pos.y * posToEulerAngle.y, 0, -pos.x * posToEulerAngle.x);
+
+            gamepadCenter.localPosition = localPos;
+            gamepadCenter.position += posOffset;
+            gamepadCenter.localRotation = localRot;
+
+            modelRoot.localPosition = localPos;
+            modelRoot.position += posOffset;
+            modelRoot.localRotation = localRot;
         }
         
         //ワールドのを渡す点に注意

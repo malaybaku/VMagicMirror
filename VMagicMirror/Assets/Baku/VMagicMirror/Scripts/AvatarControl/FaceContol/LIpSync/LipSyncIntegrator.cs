@@ -25,6 +25,18 @@ namespace Baku.VMagicMirror
         {
             _config = config;
         }
+
+        public float VoiceRate
+        {
+            get
+            {
+                var src = PreferExternalTrackerLipSync
+                    ? externalTrackerLipSync.LipSyncSource
+                    : animMorphEasedTarget.LipSyncSource;
+                //NOTE: params引数を使うと配列化されそうでヤダなあという書き方です
+                return Mathf.Max(src.A, Mathf.Max(src.I, Mathf.Max(src.U, Mathf.Max(src.E, src.O))));
+            }
+        }
         
         public void Accumulate(VRMBlendShapeProxy proxy)
         {

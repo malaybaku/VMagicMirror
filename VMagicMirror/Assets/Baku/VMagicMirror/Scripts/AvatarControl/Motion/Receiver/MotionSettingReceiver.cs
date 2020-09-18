@@ -16,9 +16,10 @@ namespace Baku.VMagicMirror
         private const int DeviceTypeMidiController = 3;
         
         [SerializeField] private GamepadBasedBodyLean gamePadBasedBodyLean = null;
-        [SerializeField] private GamepadHandIKGenerator smallGamepadHandIk = null;
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
         [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
+
+        private GamepadHandIKGenerator smallGamepadHandIk => handIkIntegrator.GamepadHand;
         
         private XInputGamePad _gamePad = null;
 

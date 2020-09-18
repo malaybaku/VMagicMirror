@@ -31,11 +31,9 @@ namespace Baku.VMagicMirror
             MonoBehaviour coroutineResponder, 
             IVRMLoadable vrmLoadable,
             WaitingBodyMotion waitingBodyMotion,
-            LipSyncIntegrator lipSyncIntegrator,
             GamepadProvider gamepadProvider,
             GamepadHandIkGeneratorSetting setting) : base(coroutineResponder)
         {
-            _lipSync = lipSyncIntegrator;
             _gamePad = gamepadProvider;
             _setting = setting;
             _waitingBody = waitingBodyMotion;
@@ -52,9 +50,7 @@ namespace Baku.VMagicMirror
 
         private readonly InputBasedJitter _inputJitter = new InputBasedJitter();
         private readonly TimeBasedJitter _timeJitter = new TimeBasedJitter();
-        private readonly VoiceBasedJitter _voiceJitter = new VoiceBasedJitter();
 
-        private readonly LipSyncIntegrator _lipSync;
         private readonly GamepadProvider _gamePad;
         private readonly GamepadHandIkGeneratorSetting _setting;
         private readonly WaitingBodyMotion _waitingBody;
@@ -182,7 +178,6 @@ namespace Baku.VMagicMirror
         public override void Update()
         {
             UpdateButtonDownYOffset();            
-            _voiceJitter.Update(_lipSync.VoiceRate, Time.deltaTime);
             _timeJitter.Update(Time.deltaTime, _waitingBody.Phase);
             _inputJitter.Update(Time.deltaTime);
             
@@ -197,11 +192,10 @@ namespace Baku.VMagicMirror
                     _posOffsetScale * (
                         Vector3.up * _offsetY +
                         _timeJitter.PosOffset +
-                        _voiceJitter.PosOffset +
                         _inputJitter.PosOffset
                     );
 
-                _rotOffset = _timeJitter.Rotation * _voiceJitter.Rotation * _inputJitter.Rotation;
+                _rotOffset = _timeJitter.Rotation * _inputJitter.Rotation;
             }
             else
             {
@@ -378,29 +372,8 @@ namespace Baku.VMagicMirror
                     RotScaleEuler.z * Mathf.Sin(_count / RollInterval * Mathf.PI * 2f)
                 );
             }
-        } 
-        
-        /// <summary> 声が出てるときにかかる補正。Y方向に上がる+ピッチのみ動かす、ろくろ回し？的な補正 </summary>
-        sealed class VoiceBasedJitter
-        {
-            public Vector3 PosOffset { get; private set; }
-            public Quaternion Rotation { get; private set; }
-
-            private const float TimeLerpFactor = 2f;
-            private const float PitchMaxDeg = 30f;
-            private readonly Vector3 PosOffsetMax = new Vector3(0f, 0.03f, -0.01f);
-
-            private float _rate = 0f;
-
-            public void Update(float voiceRate, float deltaTime)
-            {
-                _rate = Mathf.Lerp(_rate, voiceRate, TimeLerpFactor * deltaTime);
-                PosOffset = _rate * PosOffsetMax;
-                Rotation = Quaternion.AngleAxis(-_rate * PitchMaxDeg, Vector3.right);
-            }
         }
-        
-        
+
         private static Vector3 RandomVec(Vector3 scale)
         {
             return new Vector3(

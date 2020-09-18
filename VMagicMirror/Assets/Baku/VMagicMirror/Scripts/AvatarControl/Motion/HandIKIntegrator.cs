@@ -20,6 +20,8 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private GamepadFingerController gamepadFinger = null;
 
+        [SerializeField] private WaitingBodyMotion waitingBody = null;
+
         public MouseMoveHandIKGenerator MouseMove { get; private set; }
 
         public GamepadHandIKGenerator GamepadHand { get; private set; }
@@ -81,7 +83,6 @@ namespace Baku.VMagicMirror
             IKTargetTransforms ikTargets, 
             Camera cam,
             ParticleStore particleStore,
-            LipSyncIntegrator lipSyncIntegrator,
             GamepadProvider gamepadProvider,
             MidiControllerProvider midiControllerProvider,
             TouchPadProvider touchPadProvider,
@@ -97,7 +98,7 @@ namespace Baku.VMagicMirror
             MouseMove = new MouseMoveHandIKGenerator(this, touchPadProvider);
             MidiHand = new MidiHandIkGenerator(this, midiControllerProvider);
             GamepadHand = new GamepadHandIKGenerator(
-                this, vrmLoadable, lipSyncIntegrator, gamepadProvider, gamepadSetting
+                this, vrmLoadable, waitingBody, gamepadProvider, gamepadSetting
                 );
             Presentation = new PresentationHandIKGenerator(this, vrmLoadable, cam);
             _imageBaseHand = new ImageBaseHandIkGenerator(this, handTracker, imageBaseHandSetting, vrmLoadable);

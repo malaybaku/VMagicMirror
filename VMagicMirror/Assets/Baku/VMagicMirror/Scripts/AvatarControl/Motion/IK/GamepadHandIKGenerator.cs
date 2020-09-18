@@ -24,9 +24,12 @@ namespace Baku.VMagicMirror
         
         //体が動いた量をゲームパッドの移動量に反映するファクター
         private const float BodyMotionToGamepadPosApplyFactor = 0.5f;
+
+        private const float OffsetResetLerpFactor = 6f;
         
         public GamepadHandIKGenerator(
             MonoBehaviour coroutineResponder, 
+            IVRMLoadable vrmLoadable,
             LipSyncIntegrator lipSyncIntegrator,
             GamepadProvider gamepadProvider,
             GamepadHandIkGeneratorSetting setting) : base(coroutineResponder)
@@ -34,6 +37,15 @@ namespace Baku.VMagicMirror
             _lipSync = lipSyncIntegrator;
             _gamePad = gamepadProvider;
             _setting = setting;
+
+            //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
+            vrmLoadable.VrmLoaded += info =>
+            {
+                var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                float height = h.position.y - f.position.y;
+                _posOffsetScale = Mathf.Clamp(height / ReferenceHeight, 0.1f, 5f);
+            };
         }
 
         private readonly InputBasedJitter _inputJitter = new InputBasedJitter();
@@ -52,8 +64,16 @@ namespace Baku.VMagicMirror
 
         private const float ButtonDownAnimationY = 0.01f;
 
+        private float _posOffsetScale = 1.0f;
+
         private Vector2 _rawStickPos = Vector2.zero;
         private Vector2 _filterStickPos = Vector2.zero;
+
+        private Vector3 _posOffset = Vector3.zero;
+        private Quaternion _rotOffset = Quaternion.identity;
+
+        //posOffsetのサイズを身長ベースで補正するのに使う、足から頭ボーンまでの高さ
+        private const float ReferenceHeight = 1.3f;
 
         private float _offsetY = 0;
         private int _buttonDownCount = 0;
@@ -143,6 +163,12 @@ namespace Baku.VMagicMirror
             return new Vector2(v.x * factor, v.y * factor);
         }
 
+        /// <summary> 右手か左手のうち少なくとも片方はコントローラを掴んでいるか、というフラグ。 </summary>
+        /// <remarks>
+        /// この値がtrueかfalseかによってコントローラに後処理の色々なオフセットを乗せるかどうかが変わる
+        /// </remarks>
+        public bool HandIsOnController { get; set; } = false;
+
         public override void Start()
         {
             //とりあえず初期位置までゲームコントローラIKの場所を持ち上げておく:
@@ -160,18 +186,29 @@ namespace Baku.VMagicMirror
             //とりあえずLerp
             _filterStickPos = Vector2.Lerp(_filterStickPos, _rawStickPos, SpeedFactor * Time.deltaTime);
 
-            //いろいろな理由で後処理が載るのを計算
-            var posOffset =
-                Vector3.up * _offsetY +
-                _setting.imageBasedBodyMotion.BodyIkOffset * BodyMotionToGamepadPosApplyFactor +
-                _timeJitter.PosOffset +
-                _voiceJitter.PosOffset +
-                _inputJitter.PosOffset;
+            //いろいろな理由で後処理が載るのを計算: ただし手が乗っかってないとリセットされていく
+            if (HandIsOnController)
+            {
+                _posOffset =
+                    _setting.imageBasedBodyMotion.BodyIkOffset * BodyMotionToGamepadPosApplyFactor +
+                    _posOffsetScale * (
+                        Vector3.up * _offsetY +
+                        _timeJitter.PosOffset +
+                        _voiceJitter.PosOffset +
+                        _inputJitter.PosOffset
+                    );
 
-            var rotOffset = _timeJitter.Rotation * _voiceJitter.Rotation * _inputJitter.Rotation;
+                _rotOffset = _timeJitter.Rotation * _voiceJitter.Rotation * _inputJitter.Rotation;
+            }
+            else
+            {
+                _posOffset = Vector3.Lerp(_posOffset, Vector3.zero, OffsetResetLerpFactor * Time.deltaTime);
+                _rotOffset = Quaternion.Slerp(_rotOffset, Quaternion.identity, OffsetResetLerpFactor * Time.deltaTime);
+            }
+            
 
-            //フィルタリングとオフセットを考慮してゲームパッドの位置自体をちょっと調整
-            _gamePad.SetFilteredPositionAndRotation(_filterStickPos, posOffset, rotOffset);
+            //フィルタリングとオフセットを考慮してゲームパッドの位置自体を調整
+            _gamePad.SetFilteredPositionAndRotation(_filterStickPos, _posOffset, _rotOffset);
             
             //調整後のコントローラ位置に合わせて手を持っていく
             var (leftPos, leftRot) = _gamePad.GetLeftHand();
@@ -211,15 +248,26 @@ namespace Baku.VMagicMirror
             public Vector3 PosOffset { get; private set; }
             public Quaternion Rotation { get; private set; }
 
-            private const float TargetChangeProbability = 0.25f;
+            private const float TargetChangeProbability = 0.4f;
             private static readonly Vector3 MotionScale = new Vector3(0.01f, 0.02f, 0.01f);
             private static readonly Vector3 RotScaleEuler = new Vector3(8f, 1f, 8f);
             private const float TimeLerpFactor = 6.0f;
+            
+            //ボタンを素早く押すとコントローラが動きやすい、という処理で使うしきい値
+            private const float ButtonDiffToChangeTargetThreshold = 1.5f;
+            private const float ButtonDiffDecreaseRate = 0.4f;
 
-            //ガチャガチャしてるとコントローラが動きやすい、という処理で使うしきい値
+            //スティックをガチャガチャしてるとコントローラが動きやすい、という処理で使うしきい値
             private const float StickDiffToChangeTargetThreshold = 0.8f;
             private const float StickDiffDecreaseRate = 0.1f;
 
+            //入力がない時間がこれだけ続いたら位置を元に戻す。ズレっぱなしも見栄えがしないので
+            private const float NoInputCountMax = 6f;
+            //入力なしで戻すときはゆっくりと。
+            private const float ResetTimeLerpFactor = 2f;
+
+            private float _noInputCount = 0f;
+            private float _buttonCount = 0f;
             private float _stickDiffCount = 0f;
             
             private Vector3 _offsetTarget = Vector3.zero;
@@ -230,7 +278,13 @@ namespace Baku.VMagicMirror
             
             public void AddButtonInput()
             {
-                TryChangeTarget();
+                _noInputCount = 0f;
+                _buttonCount += 1f;
+                if (_buttonCount > ButtonDiffToChangeTargetThreshold)
+                {
+                    _buttonCount -= ButtonDiffToChangeTargetThreshold;
+                    TryChangeTarget();
+                }
             }
 
             public void SetLeftStickPos(Vector2 pos)
@@ -247,6 +301,7 @@ namespace Baku.VMagicMirror
 
             private void AddStickInput(float diff)
             {
+                _noInputCount = 0f;
                 _stickDiffCount += diff;
                 if (_stickDiffCount > StickDiffToChangeTargetThreshold)
                 {
@@ -259,9 +314,22 @@ namespace Baku.VMagicMirror
             {
                 _stickDiffCount -= StickDiffDecreaseRate * deltaTime;
                 if (_stickDiffCount < 0) _stickDiffCount = 0f;
+
+                _buttonCount -= ButtonDiffDecreaseRate * deltaTime;
+                if (_buttonCount < 0) _buttonCount = 0f;
+
+                if (_noInputCount <= NoInputCountMax)
+                {
+                    _noInputCount += deltaTime;
+                    PosOffset = Vector3.Lerp(PosOffset, _offsetTarget, TimeLerpFactor * deltaTime);
+                    Rotation = Quaternion.Slerp(Rotation, _rotationTarget, TimeLerpFactor * deltaTime);
+                }
+                else
+                {
+                    PosOffset *= 1.0f - ResetTimeLerpFactor * deltaTime;
+                    Rotation = Quaternion.Slerp(Rotation, Quaternion.identity, ResetTimeLerpFactor * deltaTime);
+                }
                 
-                PosOffset = Vector3.Lerp(PosOffset, _offsetTarget, TimeLerpFactor * deltaTime);
-                Rotation = Quaternion.Slerp(Rotation, _rotationTarget, TimeLerpFactor * deltaTime);
             }
 
             private void TryChangeTarget()
@@ -280,38 +348,34 @@ namespace Baku.VMagicMirror
         {
             public Vector3 PosOffset { get; private set; }
             public Quaternion Rotation { get; private set; }
-
-            private const float TargetUpdateIntervalMin = 2f;
-            private const float TargetUpdateIntervalMax = 6f;
             
-            private static readonly Vector3 MotionScale = new Vector3(0.01f, 0.03f, 0.01f);
-            private static readonly Vector3 RotScaleEuler = new Vector3(5f, 0, 5f);
-
-            private const float TimeLerpFactor = 3f;
-
-            private float _timeCount = 0f;
-            private float _interval = TargetUpdateIntervalMax;
-            private Vector3 _offsetTarget = Vector3.zero;
-            private Quaternion _rotationTarget = Quaternion.identity;
+            private const float XInterval = 13f;
+            private const float YInterval = 11f;
+            private const float ZInterval = 17f;
             
+            private const float PitchInterval = 19f;
+            private const float RollInterval = 23f;
+            
+            private static readonly Vector3 MotionScale = new Vector3(0.015f, 0.02f, 0.01f);
+            private static readonly Vector3 RotScaleEuler = new Vector3(2f, 0, 2f);
+
+            private float _count = 0f;
+
             public void Update(float deltaTime)
             {
-                PosOffset = Vector3.Lerp(PosOffset, _offsetTarget, TimeLerpFactor * deltaTime);
-                Rotation = Quaternion.Slerp(Rotation, _rotationTarget, TimeLerpFactor * deltaTime);
-
-                _timeCount += deltaTime;
-                if (_timeCount < _interval)
-                {
-                    return;
-                }
-
-                _timeCount = 0;
-                _interval = Random.Range(TargetUpdateIntervalMin, TargetUpdateIntervalMax);
-                _offsetTarget = RandomVec(MotionScale);
-                _rotationTarget = Quaternion.Euler(RandomVec(RotScaleEuler));
+                _count += deltaTime;
+                PosOffset = new Vector3(
+                    MotionScale.x * Mathf.Sin(_count / XInterval * Mathf.PI * 2f),
+                    MotionScale.y * Mathf.Sin(_count / YInterval * Mathf.PI * 2f),
+                    MotionScale.z * Mathf.Sin(_count / ZInterval * Mathf.PI * 2f)
+                    );
+                Rotation = Quaternion.Euler(
+                    RotScaleEuler.x * Mathf.Sin(_count / PitchInterval * Mathf.PI * 2f),
+                    0f,
+                    RotScaleEuler.z * Mathf.Sin(_count / RollInterval * Mathf.PI * 2f)
+                );
             }
         } 
-        
         
         /// <summary> 声が出てるときにかかる補正。Y方向に上がる+ピッチのみ動かす、ろくろ回し？的な補正 </summary>
         sealed class VoiceBasedJitter
@@ -319,8 +383,8 @@ namespace Baku.VMagicMirror
             public Vector3 PosOffset { get; private set; }
             public Quaternion Rotation { get; private set; }
 
-            private const float TimeLerpFactor = 3f;
-            private const float PosOffsetMax = 0.02f;
+            private const float TimeLerpFactor = 2f;
+            private const float PosOffsetMax = 0.03f;
             private const float PitchMaxDeg = 10f;
 
             private float _rate = 0f;

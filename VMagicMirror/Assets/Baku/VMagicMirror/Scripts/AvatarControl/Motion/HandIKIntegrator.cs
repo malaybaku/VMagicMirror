@@ -96,7 +96,9 @@ namespace Baku.VMagicMirror
 
             MouseMove = new MouseMoveHandIKGenerator(this, touchPadProvider);
             MidiHand = new MidiHandIkGenerator(this, midiControllerProvider);
-            GamepadHand = new GamepadHandIKGenerator(this, lipSyncIntegrator, gamepadProvider, gamepadSetting);
+            GamepadHand = new GamepadHandIKGenerator(
+                this, vrmLoadable, lipSyncIntegrator, gamepadProvider, gamepadSetting
+                );
             Presentation = new PresentationHandIKGenerator(this, vrmLoadable, cam);
             _imageBaseHand = new ImageBaseHandIkGenerator(this, handTracker, imageBaseHandSetting, vrmLoadable);
         }
@@ -492,6 +494,10 @@ namespace Baku.VMagicMirror
             {
                 _imageBaseHand.InitializeHandPosture(ReactedHand.Left, _prevLeftHand);
             }
+            
+            GamepadHand.HandIsOnController = 
+                _leftTargetType == HandTargetType.Gamepad ||
+                _rightTargetType == HandTargetType.Gamepad;
         }
 
         private void SetRightHandIk(HandTargetType targetType)
@@ -535,6 +541,10 @@ namespace Baku.VMagicMirror
             {
                 _imageBaseHand.InitializeHandPosture(ReactedHand.Right, _prevRightHand);
             }
+
+            GamepadHand.HandIsOnController = 
+                _leftTargetType == HandTargetType.Gamepad ||
+                _rightTargetType == HandTargetType.Gamepad;
         }
 
         //クールダウンタイムを考慮したうえで、モーションを適用してよいかどうかを確認します。

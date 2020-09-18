@@ -30,6 +30,7 @@ namespace Baku.VMagicMirror
         public GamepadHandIKGenerator(
             MonoBehaviour coroutineResponder, 
             IVRMLoadable vrmLoadable,
+            WaitingBodyMotion waitingBodyMotion,
             LipSyncIntegrator lipSyncIntegrator,
             GamepadProvider gamepadProvider,
             GamepadHandIkGeneratorSetting setting) : base(coroutineResponder)
@@ -37,6 +38,7 @@ namespace Baku.VMagicMirror
             _lipSync = lipSyncIntegrator;
             _gamePad = gamepadProvider;
             _setting = setting;
+            _waitingBody = waitingBodyMotion;
 
             //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
             vrmLoadable.VrmLoaded += info =>
@@ -55,6 +57,7 @@ namespace Baku.VMagicMirror
         private readonly LipSyncIntegrator _lipSync;
         private readonly GamepadProvider _gamePad;
         private readonly GamepadHandIkGeneratorSetting _setting;
+        private readonly WaitingBodyMotion _waitingBody;
         
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKGenerator LeftHand => _leftHand;
@@ -180,7 +183,7 @@ namespace Baku.VMagicMirror
         {
             UpdateButtonDownYOffset();            
             _voiceJitter.Update(_lipSync.VoiceRate, Time.deltaTime);
-            _timeJitter.Update(Time.deltaTime);
+            _timeJitter.Update(Time.deltaTime, _waitingBody.Phase);
             _inputJitter.Update(Time.deltaTime);
             
             //とりあえずLerp
@@ -349,24 +352,24 @@ namespace Baku.VMagicMirror
             public Vector3 PosOffset { get; private set; }
             public Quaternion Rotation { get; private set; }
             
-            private const float XInterval = 13f;
-            private const float YInterval = 11f;
+            private const float XInterval = 15f;
             private const float ZInterval = 17f;
-            
             private const float PitchInterval = 19f;
-            private const float RollInterval = 23f;
+            private const float RollInterval = 22f;
             
-            private static readonly Vector3 MotionScale = new Vector3(0.015f, 0.02f, 0.01f);
+            private static readonly Vector3 MotionScale = new Vector3(0.005f, 0.01f, 0.005f);
             private static readonly Vector3 RotScaleEuler = new Vector3(2f, 0, 2f);
 
             private float _count = 0f;
 
-            public void Update(float deltaTime)
+            public void Update(float deltaTime, float waitingBodyPhase)
             {
+                //Yだけ待機モーションの位相をリファレンスにする。これによって呼吸と手揺れがズレながら揃って見栄えがよい
+                float yPhase = waitingBodyPhase - 0.23f;
                 _count += deltaTime;
                 PosOffset = new Vector3(
                     MotionScale.x * Mathf.Sin(_count / XInterval * Mathf.PI * 2f),
-                    MotionScale.y * Mathf.Sin(_count / YInterval * Mathf.PI * 2f),
+                    MotionScale.y * 0.5f * (1f - Mathf.Cos(yPhase * Mathf.PI * 2f)),
                     MotionScale.z * Mathf.Sin(_count / ZInterval * Mathf.PI * 2f)
                     );
                 Rotation = Quaternion.Euler(
@@ -384,15 +387,15 @@ namespace Baku.VMagicMirror
             public Quaternion Rotation { get; private set; }
 
             private const float TimeLerpFactor = 2f;
-            private const float PosOffsetMax = 0.03f;
-            private const float PitchMaxDeg = 10f;
+            private const float PitchMaxDeg = 30f;
+            private readonly Vector3 PosOffsetMax = new Vector3(0f, 0.03f, -0.01f);
 
             private float _rate = 0f;
 
             public void Update(float voiceRate, float deltaTime)
             {
                 _rate = Mathf.Lerp(_rate, voiceRate, TimeLerpFactor * deltaTime);
-                PosOffset = new Vector3(0, _rate * PosOffsetMax);
+                PosOffset = _rate * PosOffsetMax;
                 Rotation = Quaternion.AngleAxis(-_rate * PitchMaxDeg, Vector3.right);
             }
         }

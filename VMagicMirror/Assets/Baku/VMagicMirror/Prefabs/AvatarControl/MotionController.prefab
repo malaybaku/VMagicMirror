@@ -442,6 +442,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typing: {fileID: 5813678810404708595}
   gamepadFinger: {fileID: 5813678810404708492}
+  waitingBody: {fileID: 5813678808713813113}
   fingerController: {fileID: 2951044793089892564}
   gamepadSetting:
     imageBasedBodyMotion: {fileID: 5813678808713813112}

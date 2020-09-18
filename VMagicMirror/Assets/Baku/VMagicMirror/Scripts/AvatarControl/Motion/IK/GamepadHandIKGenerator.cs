@@ -247,8 +247,8 @@ namespace Baku.VMagicMirror
 
             private const float TargetChangeProbability = 0.4f;
             private static readonly Vector3 MotionScale = new Vector3(0.01f, 0.02f, 0.01f);
-            private static readonly Vector3 RotScaleEuler = new Vector3(8f, 1f, 8f);
-            private const float TimeLerpFactor = 6.0f;
+            private static readonly Vector3 RotScaleEuler = new Vector3(6f, 1f, 6f);
+            private const float TimeLerpFactor = 4.0f;
             
             //ボタンを素早く押すとコントローラが動きやすい、という処理で使うしきい値
             private const float ButtonDiffToChangeTargetThreshold = 1.5f;
@@ -351,7 +351,7 @@ namespace Baku.VMagicMirror
             private const float PitchInterval = 19f;
             private const float RollInterval = 22f;
             
-            private static readonly Vector3 MotionScale = new Vector3(0.005f, 0.01f, 0.005f);
+            private static readonly Vector3 MotionScale = new Vector3(0.01f, 0.02f, 0.01f);
             private static readonly Vector3 RotScaleEuler = new Vector3(2f, 0, 2f);
 
             private float _count = 0f;

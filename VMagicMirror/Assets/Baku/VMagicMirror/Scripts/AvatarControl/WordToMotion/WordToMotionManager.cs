@@ -23,6 +23,8 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class WordToMotionManager : MonoBehaviour
     {
+        private const string DefaultStateName = "Default";
+        
         [Tooltip("Word To Motionの発動イベントを管理しているトリガークラス")]
         [SerializeField] private WordToMotionTriggers triggers = null;
 
@@ -181,6 +183,17 @@ namespace Baku.VMagicMirror
             _blendShape = GetComponent<WordToMotionBlendShape>();
             _motionTransfer = GetComponent<LateMotionTransfer>();
             _ikWeightCrossFade = GetComponent<IkWeightCrossFade>();
+            _ikWeightCrossFade.FadeInCompleted += () =>
+            {
+                if (_simpleAnimation == null)
+                {
+                    return;
+                }
+
+                _simpleAnimation.Stop();
+                _simpleAnimation.Rewind();
+                _simpleAnimation.Play(DefaultStateName);
+            };
             
             triggers.RequestExecuteWord += word =>
             {
@@ -215,7 +228,7 @@ namespace Baku.VMagicMirror
                     if (ShouldSetDefaultClipAfterMotion)
                     {
                         Debug.Log("End animation, return to default");
-                       _simpleAnimation.CrossFade("Default", ikFadeDuration);
+                       _simpleAnimation.CrossFade(DefaultStateName, ikFadeDuration);
                     }
                 }
             }
@@ -278,8 +291,8 @@ namespace Baku.VMagicMirror
         {
             _simpleAnimation = info.vrmRoot.gameObject.AddComponent<SimpleAnimation>();
             _simpleAnimation.playAutomatically = false;
-            _simpleAnimation.AddState(defaultAnimation, "Default");
-            _simpleAnimation.Play("Default");
+            _simpleAnimation.AddState(defaultAnimation, DefaultStateName);
+            _simpleAnimation.Play(DefaultStateName);
 
             _blendShape.Initialize(info.blendShape);
             _motionTransfer.Target = info.vrmRoot.GetComponent<HumanPoseTransfer>();

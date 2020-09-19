@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using RootMotion.FinalIK;
 
 namespace Baku.VMagicMirror
@@ -7,8 +6,7 @@ namespace Baku.VMagicMirror
     public class IkWeightCrossFade : MonoBehaviour
     {
         [SerializeField] private ElbowMotionModifier elbowMotionModifier = null;
-
-        private bool _hasModel = false;
+        
         private FullBodyBipedIK _ik = null;
 
         private float _originLeftShoulderPositionWeight = 1.0f;
@@ -24,12 +22,6 @@ namespace Baku.VMagicMirror
         private float _fadeDuration = 0f;
 
         private bool _forceStopHandIk = false;
-
-        /// <summary>
-        /// IKによる制御の比率が完全に100%になると発火します。
-        /// イベントハンドラ側で`Standing`とかの標準姿勢アニメーションを適用してくれると嬉しい、というイベントです
-        /// </summary>
-        public event Action FadeInCompleted;
 
         /// <summary>
         /// フェード等と無関係に手のIKを無効化するかどうかを取得、設定します。
@@ -68,16 +60,10 @@ namespace Baku.VMagicMirror
             _originRightShoulderPositionWeight = ik.solver.rightShoulderEffector.positionWeight;
             _originRightHandPositionWeight = ik.solver.rightHandEffector.positionWeight;
             _originRightHandRotationWeight = ik.solver.rightHandEffector.rotationWeight;
-            
-            _hasModel = true;
         }
 
-        public void OnVrmDisposing()
-        {
-            _hasModel = false;
-            _ik = null;
-        }
-
+        public void OnVrmDisposing() => _ik = null;
+        
         /// <summary>
         /// 指定した秒数をかけて腕IKの回転、並進のIKウェイトを0にします。
         /// </summary>
@@ -112,9 +98,6 @@ namespace Baku.VMagicMirror
             _ik.solver.rightHandEffector.rotationWeight = 0;
 
             elbowMotionModifier.ElbowIkRate = 0;
-            
-            //こっちでは手首のひねりは放置: アニメーションとかのインプットで正しい値が入るハズなので触りさえしなければOK
-            
             _fadeCount = _fadeDuration;
             _isFadeOut = true;
         }
@@ -129,29 +112,27 @@ namespace Baku.VMagicMirror
             _ik.solver.rightShoulderEffector.positionWeight = _originRightShoulderPositionWeight;
             _ik.solver.rightHandEffector.positionWeight = _originRightHandPositionWeight;
             _ik.solver.rightHandEffector.rotationWeight = _originRightHandRotationWeight;
-
-            elbowMotionModifier.ElbowIkRate = 1.0f;
             
+            elbowMotionModifier.ElbowIkRate = 1.0f;
             _fadeCount = _fadeDuration;
             _isFadeOut = false;
-            
-            FadeInCompleted?.Invoke();
         }
 
         private void Update()
         {
-            if (!_hasModel || _fadeCount > _fadeDuration)
+            if (_ik == null || _fadeCount > _fadeDuration)
             {
                 return;
             }
 
             _fadeCount += Time.deltaTime;
 
-            float rawRate =
+            float rate =
                 _isFadeOut ?
                 1.0f - (_fadeCount / _fadeDuration) :
                 _fadeCount / _fadeDuration;
-            float rate = Mathf.SmoothStep(0, 1, Mathf.Clamp01(rawRate));
+            rate = Mathf.Clamp(rate, 0f, 1f);
+            rate = Mathf.SmoothStep(0, 1, rate);
 
             //強制で止めている場合、ここで一時的に0に上書きしてしまう(この方法だとリセットが簡単なため)
             if (ForceStopHandIk)
@@ -168,12 +149,7 @@ namespace Baku.VMagicMirror
             _ik.solver.rightHandEffector.rotationWeight = _originRightHandRotationWeight * rate;
 
             elbowMotionModifier.ElbowIkRate = rate;
-
-            //ここに来る = 前フレームではrateが1未満だったけどこのフレームで1になった、というケース。のはず。
-            if (rate > 0.999f)
-            {
-                FadeInCompleted?.Invoke();
-            }
         }
+
     }
 }

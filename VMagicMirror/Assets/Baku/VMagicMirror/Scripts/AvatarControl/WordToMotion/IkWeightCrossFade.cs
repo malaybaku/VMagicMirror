@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using RootMotion.FinalIK;
 
 namespace Baku.VMagicMirror
@@ -23,6 +24,12 @@ namespace Baku.VMagicMirror
         private float _fadeDuration = 0f;
 
         private bool _forceStopHandIk = false;
+
+        /// <summary>
+        /// IKによる制御の比率が完全に100%になると発火します。
+        /// イベントハンドラ側で`Standing`とかの標準姿勢アニメーションを適用してくれると嬉しい、というイベントです
+        /// </summary>
+        public event Action FadeInCompleted;
 
         /// <summary>
         /// フェード等と無関係に手のIKを無効化するかどうかを取得、設定します。
@@ -127,6 +134,8 @@ namespace Baku.VMagicMirror
             
             _fadeCount = _fadeDuration;
             _isFadeOut = false;
+            
+            FadeInCompleted?.Invoke();
         }
 
         private void Update()
@@ -159,6 +168,12 @@ namespace Baku.VMagicMirror
             _ik.solver.rightHandEffector.rotationWeight = _originRightHandRotationWeight * rate;
 
             elbowMotionModifier.ElbowIkRate = rate;
+
+            //ここに来る = 前フレームではrateが1未満だったけどこのフレームで1になった、というケース。のはず。
+            if (rate > 0.999f)
+            {
+                FadeInCompleted?.Invoke();
+            }
         }
     }
 }

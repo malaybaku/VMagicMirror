@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Linq;
 using UnityEngine;
+using UniRx;
+using VRM;
 using UniHumanoid;
 using Zenject;
 
@@ -179,6 +183,15 @@ namespace Baku.VMagicMirror
             _blendShape = GetComponent<WordToMotionBlendShape>();
             _motionTransfer = GetComponent<LateMotionTransfer>();
             _ikWeightCrossFade = GetComponent<IkWeightCrossFade>();
+            _ikWeightCrossFade.FadeInCompleted += () =>
+            {
+                if (_simpleAnimation == null)
+                {
+                    return;
+                }
+                
+                _simpleAnimation.CrossFade(DefaultStateName, ikFadeDuration);
+            };
             
             triggers.RequestExecuteWord += word =>
             {
@@ -214,10 +227,6 @@ namespace Baku.VMagicMirror
                     {
                         Debug.Log("End animation, return to default");
                        _simpleAnimation.CrossFade(DefaultStateName, ikFadeDuration);
-                    }
-                    else
-                    {
-                        _simpleAnimation.CrossFade(DefaultStateName, ikFadeDuration * 2);
                     }
                 }
             }

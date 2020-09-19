@@ -189,8 +189,10 @@ namespace Baku.VMagicMirror
                 {
                     return;
                 }
-                
-                _simpleAnimation.CrossFade(DefaultStateName, ikFadeDuration);
+
+                _simpleAnimation.Stop();
+                _simpleAnimation.Rewind();
+                _simpleAnimation.Play(DefaultStateName);
             };
             
             triggers.RequestExecuteWord += word =>

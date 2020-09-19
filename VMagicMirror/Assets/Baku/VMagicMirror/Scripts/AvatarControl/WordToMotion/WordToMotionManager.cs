@@ -217,7 +217,7 @@ namespace Baku.VMagicMirror
                     }
                     else
                     {
-                        _simpleAnimation.CrossFade(DefaultStateName, ikFadeDuration * 2);
+                        _simpleAnimation.CrossFade(DefaultStateName, ikFadeDuration);
                     }
                 }
             }

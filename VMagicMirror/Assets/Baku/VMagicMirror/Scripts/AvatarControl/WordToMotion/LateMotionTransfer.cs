@@ -28,8 +28,6 @@ namespace Baku.VMagicMirror
                 _source = value;
                 var animator = _source?.GetComponent<Animator>();
 
-                _sourceHip = animator?.GetBoneTransform(HumanBodyBones.Hips);
-
                 _sourceBones.Clear();
                 if (animator != null)
                 {
@@ -56,8 +54,6 @@ namespace Baku.VMagicMirror
                 _target = value;
                 var animator = _target?.GetComponent<Animator>();
 
-                _targetHip = animator?.GetBoneTransform(HumanBodyBones.Hips);
-
                 _targetBones.Clear();
                 if (animator != null)
                 {
@@ -70,11 +66,7 @@ namespace Baku.VMagicMirror
                 }
             }
         }
-
-        private Transform _sourceHip = null;
-        private Transform _targetHip = null;
-        private HumanPose _pose;
-
+        
         private Dictionary<HumanBodyBones, Transform> _sourceBones = new Dictionary<HumanBodyBones, Transform>();
         private Dictionary<HumanBodyBones, Transform> _targetBones = new Dictionary<HumanBodyBones, Transform>();
 
@@ -104,20 +96,6 @@ namespace Baku.VMagicMirror
             }
 
             CopyBones();
-
-            //bool useHipTransform = (_targetHip != null);
-            //Vector3 pos = useHipTransform ? _targetHip.localPosition : Vector3.zero;
-            //Quaternion rot = useHipTransform ? _targetHip.localRotation : Quaternion.identity;
-
-            //Source.PoseHandler.GetHumanPose(ref _pose);
-            //Target.PoseHandler.SetHumanPose(ref _pose);
-
-            //SetHumanPoseするとHipsから動いちゃうので戻す(※source側を合わせた方が楽しい説もあるが)
-            //if (useHipTransform)
-            //{
-            //    _targetHip.localPosition = pos;
-            //    _targetHip.localRotation = rot;
-            //}
         }
 
         private void CopyBones()

@@ -18,10 +18,12 @@ namespace Baku.VMagicMirror
 
         private bool _hasModel = false;
 
+        private Transform _hips;
         private Transform _leftUpperArm;
         private Transform _rightUpperArm;
-        private Vector3 _rightPosUpperArmOffset;
-        private Vector3 _leftPosUpperArmOffset;
+        //NOTE: 
+        private Vector3 _rightPosHipsOffset;
+        private Vector3 _leftPosHipsOffset;
         private readonly Quaternion RightRot = Quaternion.Euler(0, 0, -APoseArmDownAngleDeg);
         private readonly Quaternion LeftRot = Quaternion.Euler(0, 0, APoseArmDownAngleDeg);
         
@@ -35,36 +37,37 @@ namespace Baku.VMagicMirror
             {
                 var animator = info.animator;
 
+                _hips = animator.GetBoneTransform(HumanBodyBones.Hips);
                 _rightUpperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+                _leftUpperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+                
                 var rightUpperArmPos = _rightUpperArm.position;
                 var rightWristPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
-
-                _rightPosUpperArmOffset =
-                    _rightUpperArm.InverseTransformPoint(
-                        _rightUpperArm.position +
-                        Quaternion.AngleAxis(-APoseArmDownAngleDeg, Vector3.forward) * (rightWristPos - rightUpperArmPos) + 
-                        APoseHandPosOffset
-                    );
-
-                _leftUpperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
                 var leftUpperArmPos = _leftUpperArm.position;
                 var leftWristPos = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+                var hipsPos = _hips.position;
+                
+                _rightPosHipsOffset =
+                    _rightUpperArm.position + 
+                    Quaternion.AngleAxis(-APoseArmDownAngleDeg, Vector3.forward) * (rightWristPos - rightUpperArmPos) -
+                    hipsPos + 
+                    APoseHandPosOffset;
+                
+                _leftPosHipsOffset =
+                    _leftUpperArm.position + 
+                    Quaternion.AngleAxis(APoseArmDownAngleDeg, Vector3.forward) * (leftWristPos - leftUpperArmPos) -
+                    hipsPos + 
+                    APoseHandPosOffset;
 
-                _leftPosUpperArmOffset =
-                    _leftUpperArm.InverseTransformPoint(
-                        _leftUpperArm.position +
-                        Quaternion.AngleAxis(APoseArmDownAngleDeg, Vector3.forward) * (leftWristPos - leftUpperArmPos) +
-                        APoseHandPosOffset
-                    );
-
-                _leftHand.Position = leftUpperArmPos + _leftPosUpperArmOffset;
-                _rightHand.Position = rightUpperArmPos + _rightPosUpperArmOffset;
+                _leftHand.Position = hipsPos + _leftPosHipsOffset;
+                _rightHand.Position = hipsPos + _rightPosHipsOffset;
                 _hasModel = true;
             };
             
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
+                _hips = null;
                 _leftUpperArm = null;
                 _rightUpperArm = null;
             };
@@ -85,8 +88,16 @@ namespace Baku.VMagicMirror
 
                 //やること: LateUpdateの時点で手の位置を合わせる。
                 //フレーム終わりじゃないと調整されたあとのボーン位置が拾えないので、このタイミングでわざわざやってます
-                _leftHand.Position = _leftUpperArm.TransformPoint(_leftPosUpperArmOffset);
-                _rightHand.Position = _rightUpperArm.TransformPoint(_rightPosUpperArmOffset);
+
+                
+                //肩の上げ下げに沿って手を上下に動かす。
+                var armDiffAdjust =
+                    Vector3.up * 
+                    ((_leftUpperArm.position - _rightUpperArm.position).y);
+                
+                var hipsPos = _hips.position;
+                _leftHand.Position = hipsPos + _leftPosHipsOffset + armDiffAdjust;
+                _rightHand.Position = hipsPos + _rightPosHipsOffset - armDiffAdjust;
             }
         }
     }

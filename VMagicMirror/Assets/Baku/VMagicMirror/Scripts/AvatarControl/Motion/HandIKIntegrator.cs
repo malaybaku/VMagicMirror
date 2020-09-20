@@ -1,4 +1,5 @@
-﻿using Baku.VMagicMirror.IK;
+﻿using System;
+using Baku.VMagicMirror.IK;
 using UnityEngine;
 using Zenject;
 
@@ -29,8 +30,11 @@ namespace Baku.VMagicMirror
         public MidiHandIkGenerator MidiHand { get; private set; }
 
         public PresentationHandIKGenerator Presentation { get; private set; }
-
+        
         private ImageBaseHandIkGenerator _imageBaseHand;
+
+        private AlwaysDownHandIkGenerator _downHand;
+
 
         [SerializeField] private FingerController fingerController = null;
 
@@ -70,6 +74,25 @@ namespace Baku.VMagicMirror
         
         public bool EnablePresentationMode { get; set; }
 
+        //NOTE: これはすごく特別なフラグで、これが立ってると手のIKに何か入った場合でも手が下がりっぱなしになります
+        private bool _alwaysHandDownMode = false;
+
+        public bool AlwaysHandDownMode
+        {
+            get => _alwaysHandDownMode;
+            set
+            {
+                _alwaysHandDownMode = value;                
+                //NOTE: フラグが折れた場合、そのあとの入力に基づいてIKが変わるのに任せる
+                if (!value)
+                {
+                    return;
+                }
+                SetLeftHandIk(HandTargetType.AlwaysDown);
+                SetRightHandIk(HandTargetType.AlwaysDown);
+            }
+        }
+
         public bool IsLeftHandGripGamepad => _leftTargetType == HandTargetType.Gamepad;
         public bool IsRightHandGripGamepad => _rightTargetType == HandTargetType.Gamepad;
 
@@ -102,6 +125,7 @@ namespace Baku.VMagicMirror
                 );
             Presentation = new PresentationHandIKGenerator(this, vrmLoadable, cam);
             _imageBaseHand = new ImageBaseHandIkGenerator(this, handTracker, imageBaseHandSetting, vrmLoadable);
+            _downHand = new AlwaysDownHandIkGenerator(this, vrmLoadable);
         }
 
         //NOTE: 初めて手がキーボードから離れるまではnull
@@ -115,7 +139,7 @@ namespace Baku.VMagicMirror
 
         private HandTargetType _leftTargetType = HandTargetType.Keyboard;
         private HandTargetType _rightTargetType = HandTargetType.Keyboard;
-        
+
         #region API
 
         #region Keyboard and Mouse
@@ -141,8 +165,11 @@ namespace Baku.VMagicMirror
             {
                 SetRightHandIk(HandTargetType.Keyboard);
             }
-            
-            fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);	
+
+            if (!AlwaysHandDownMode)
+            {
+                fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);
+            }
             
             if (hand != ReactedHand.None && EnableHidArmMotion)
             {
@@ -175,7 +202,7 @@ namespace Baku.VMagicMirror
 
         public void ClickMouse(string button)
         {
-            if (!EnablePresentationMode && EnableHidArmMotion)
+            if (!EnablePresentationMode && EnableHidArmMotion && !AlwaysHandDownMode)
             {
                 fingerController.StartClickMotion(button);
                 SetRightHandIk(HandTargetType.Mouse);   
@@ -233,7 +260,11 @@ namespace Baku.VMagicMirror
             {
                 SetRightHandIk(HandTargetType.Gamepad);
             }
-            gamepadFinger.ButtonDown(key);
+
+            if (!AlwaysHandDownMode)
+            {
+                gamepadFinger.ButtonDown(key);
+            }
         }
 
         public void GamepadButtonUp(GamepadKey key)
@@ -254,6 +285,9 @@ namespace Baku.VMagicMirror
             {
                 SetRightHandIk(HandTargetType.Gamepad);
             }
+            
+            //NOTE: めっちゃ起きにくいが、「コントローラのボタンを押したまま手さげモードに入る」というケースを
+            //破たんしにくくするため、指を離す方向の動作については手下げモードであってもガードしない
             gamepadFinger.ButtonUp(key);
         }
 
@@ -465,6 +499,11 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+            else if (_alwaysHandDownMode && targetType != HandTargetType.AlwaysDown)
+            {
+                //手下げっぱなしモードに入った場合、他のIKには遷移できない
+                return;
+            }
 
             _leftHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
 
@@ -476,6 +515,7 @@ namespace Baku.VMagicMirror
                 (targetType == HandTargetType.Gamepad) ? GamepadHand.LeftHand :
                 (targetType == HandTargetType.MidiController) ? MidiHand.LeftHand : 
                 (targetType == HandTargetType.ImageBaseHand) ? _imageBaseHand.LeftHand :
+                (targetType == HandTargetType.AlwaysDown) ? _downHand.LeftHand :
                 Typing.LeftHand;
 
             _prevLeftHand = _currentLeftHand;
@@ -507,6 +547,11 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+            else if (_alwaysHandDownMode && targetType != HandTargetType.AlwaysDown)
+            {
+                //手下げっぱなしモードに入った場合、他のIKには遷移できない
+                return;
+            }
 
             _rightHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
 
@@ -520,6 +565,7 @@ namespace Baku.VMagicMirror
                 (targetType == HandTargetType.Presentation) ? Presentation.RightHand :
                 (targetType == HandTargetType.MidiController) ? MidiHand.RightHand :
                 (targetType == HandTargetType.ImageBaseHand) ? _imageBaseHand.RightHand :
+                (targetType == HandTargetType.AlwaysDown) ? _downHand.RightHand :
                 Typing.RightHand;
 
             _prevRightHand = _currentRightHand;
@@ -580,6 +626,7 @@ namespace Baku.VMagicMirror
             Gamepad,
             MidiController,
             ImageBaseHand,
+            AlwaysDown,
         }
 
     }

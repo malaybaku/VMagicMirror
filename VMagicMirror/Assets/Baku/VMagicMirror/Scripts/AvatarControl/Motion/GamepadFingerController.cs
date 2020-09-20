@@ -21,6 +21,11 @@ namespace Baku.VMagicMirror
         {
             int fingerNumber = KeyToFingerNumber(key);
             _fingerPressButtonCounts[fingerNumber]--;
+            if (_fingerPressButtonCounts[fingerNumber] < 0)
+            {
+                _fingerPressButtonCounts[fingerNumber] = 0;
+            }
+            
             fingerController.Hold(
                 fingerNumber,
                 GetBendingAngle(fingerNumber, _fingerPressButtonCounts[fingerNumber] > 0)

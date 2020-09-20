@@ -13,19 +13,20 @@ namespace Baku.VMagicMirror
     {
         private const float PositionWeightWhenValid = 0.5f;
         
-        //カメラ領域のうち標準では(320x240のうち)30% x 30%の領域くらいが顔の標準の映り込みかなー、という意味。要調整。
         [SerializeField] private Vector3 offsetAmplifier = new Vector3(0.2f, 0.1f, 0.5f);
+        [SerializeField] private Vector3 offsetAmplifierWhenNoHandTrack = new Vector3(0.4f, 0.5f, 0.5f);
         [SerializeField] private Vector3 offsetLowerLimit = new Vector3(-1.0f, -1.0f, -0.05f);
         [SerializeField] private Vector3 offsetUpperLimit = new Vector3(1.0f, 1.0f, 0.1f);
         [Tooltip("体オフセットの値(m)に対して体傾き(deg)を適用する比率。xはロール、yはピッチ、zは使う予定なし、みたいな割り当てで、普通はxにだけ非ゼロ値を入れます")]
         [SerializeField] private Vector3 offsetToBodyRotEulerFactor = new Vector3(10f, 0f, 0f);
+        [SerializeField] private Vector3 offsetToBodyRotEulerFactorWhenNoHandTrack = new Vector3(0f, 0f, 0f);
         [SerializeField] private float speedFactor = 12f;
 
         [Range(0.05f, 1.0f)]
         [SerializeField] private float timeScaleFactor = 0.3f;
 
         [SerializeField] private bool enableBodyLeanZ = false;
-
+        
         [Inject]
         private FaceTracker _faceTracker = null;
 
@@ -54,6 +55,11 @@ namespace Baku.VMagicMirror
         
         /// <summary>体のIKに適用したいオフセット値を取得します。</summary>
         public Vector3 BodyIkOffset { get; private set; }
+        
+        /// <summary>
+        /// 手が常時下げるモードかどうかのフラグ、HandIkGeneratorのAlwaysHandDownModeと同じ値が入ってればOK
+        /// </summary>
+        public bool NoHandTrackMode { get; set; }
         
         public void OnVrmLoaded(VrmLoadedInfo info)
         {
@@ -111,19 +117,21 @@ namespace Baku.VMagicMirror
             float faceSize = _faceTracker.DetectedRect.width * _faceTracker.DetectedRect.height;
             float faceSizeFactor = Mathf.Sqrt(faceSize / _faceTracker.CalibrationData.faceSize);
 
+            var amplifier = NoHandTrackMode ? offsetAmplifierWhenNoHandTrack : offsetAmplifier;
             //とりあえず簡単に。値域はもっと決めようあるよねここは。
             forwardLength = enableBodyLeanZ
                 ? Mathf.Clamp(
-                    (faceSizeFactor - 1.0f) * offsetAmplifier.z,
+                    (faceSizeFactor - 1.0f) * amplifier.z,
                     offsetLowerLimit.z, 
                     offsetUpperLimit.z
                     )
                 : 0f;
 
             var center = _faceTracker.DetectedRect.center - _faceTracker.CalibrationData.faceCenter;
+            
             var idealPosition = new Vector3(
-                center.x * offsetAmplifier.x,
-                center.y * offsetAmplifier.y,
+                center.x * amplifier.x,
+                center.y * amplifier.y,
                 forwardLength
                 );
 
@@ -142,7 +150,9 @@ namespace Baku.VMagicMirror
             _prevPosition = pos;
             _prevSpeed = speed;
 
-            BodyLeanSuggest = Quaternion.Euler(0, 0, BodyIkOffset.x * offsetToBodyRotEulerFactor.x);
+            var offsetToBodyEuler =
+                NoHandTrackMode ? offsetToBodyRotEulerFactorWhenNoHandTrack : offsetToBodyRotEulerFactor;
+            BodyLeanSuggest = Quaternion.Euler(0, 0, BodyIkOffset.x * offsetToBodyEuler.x);
         }
     }
 }

@@ -72,5 +72,11 @@ namespace Baku.VMagicMirror
 
         public void EnableImageBaseBodyLeanZ(bool enable)
             => imageBasedBodyMotion.EnableBodyLeanZ = enable;
+
+        public void SetNoHandTrackMode(bool enable)
+        {
+            imageBasedBodyMotion.NoHandTrackMode = enable;
+            exTrackerBodyMotion.NoHandTrackMode = enable;
+        }
     }
 }

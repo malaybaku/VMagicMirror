@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private HandIKIntegrator handIkIntegrator = null;
         [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
 
-        private GamepadHandIKGenerator smallGamepadHandIk => handIkIntegrator.GamepadHand;
+        private GamepadHandIKGenerator GamepadHandIk => handIkIntegrator.GamepadHand;
         
         private XInputGamePad _gamePad = null;
 
@@ -30,6 +30,10 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(
                 VmmCommands.EnableHidArmMotion,
                 message => handIkIntegrator.EnableHidArmMotion = message.ToBoolean()
+                );
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableNoHandTrackMode,
+                message => handIkIntegrator.AlwaysHandDownMode = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.LengthFromWristToPalm,
@@ -73,21 +77,21 @@ namespace Baku.VMagicMirror
                 message =>
                 {
                     gamePadBasedBodyLean.SetGamepadLeanMode(message.Content);
-                    smallGamepadHandIk.SetGamepadLeanMode(message.Content);
+                    GamepadHandIk.SetGamepadLeanMode(message.Content);
                 });
             receiver.AssignCommandHandler(
                 VmmCommands.GamepadLeanReverseHorizontal,
                 message =>
                 {
                     gamePadBasedBodyLean.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
-                    smallGamepadHandIk.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
+                    GamepadHandIk.ReverseGamepadStickLeanHorizontal = message.ToBoolean();
                 });
             receiver.AssignCommandHandler(
                 VmmCommands.GamepadLeanReverseVertical,
                 message =>
                 {
                     gamePadBasedBodyLean.ReverseGamepadStickLeanVertical = message.ToBoolean();
-                    smallGamepadHandIk.ReverseGamepadStickLeanVertical = message.ToBoolean();
+                    GamepadHandIk.ReverseGamepadStickLeanVertical = message.ToBoolean();
                 });
             receiver.AssignCommandHandler(
                 VmmCommands.SetDeviceTypeToStartWordToMotion,

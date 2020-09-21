@@ -75,6 +75,7 @@ namespace Baku.VMagicMirror
         public const string WaitMotionPeriod = nameof(WaitMotionPeriod);
         
         // Motion, Body
+        public const string EnableNoHandTrackMode = nameof(EnableNoHandTrackMode);
         public const string EnableBodyLeanZ = nameof(EnableBodyLeanZ);
 
         // Motion, Face

@@ -1,4 +1,5 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
+using DG.Tweening;
 using UnityEngine;
 using Zenject;
 
@@ -10,6 +11,8 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ExternalTrackerBodyOffset : MonoBehaviour
     {
+        private const float TweenDuration = 0.5f;
+        
         [Tooltip("受け取った値の適用スケール。割と小さい方がいいかも")]
         [SerializeField] private Vector3 applyScale = new Vector3(0.3f, 0.3f, 0.3f);
         //NOTE: 移動量もフレーバー程度ということで小さめに。
@@ -26,6 +29,11 @@ namespace Baku.VMagicMirror
         private FaceControlConfiguration _config;
         private ExternalTrackerDataSource _externalTracker;
         
+        private Vector3 _scale = Vector3.zero;
+        private Vector3 _min = Vector3.zero;
+        private Vector3 _max = Vector3.zero;
+        private Sequence _sequence = null;
+        
         [Inject]
         public void Initialize(FaceControlConfiguration config, ExternalTrackerDataSource externalTracker)
         {
@@ -34,8 +42,53 @@ namespace Baku.VMagicMirror
         }
         
         public Vector3 BodyOffset { get; private set; }
-        public bool NoHandTrackMode { get; set; }
 
+        private bool _noHandTrackMode = false;
+
+        public bool NoHandTrackMode
+        {
+            get => _noHandTrackMode;
+            set
+            {
+                if (_noHandTrackMode == value)
+                {
+                    return;
+                }
+
+                _noHandTrackMode = value;
+                _sequence?.Kill();
+                _sequence = DOTween.Sequence()
+                    .Append(DOTween.To(
+                        () => _scale,
+                        v => _scale = v,
+                        value ? applyScaleWhenNoHandTrack : applyScale,
+                        TweenDuration
+                    ))
+                    .Join(DOTween.To(
+                        () => _min,
+                        v => _min = v,
+                        value ? applyMinWhenNoHandTrack : applyMin,
+                        TweenDuration
+                    ))
+                    .Join(DOTween.To(
+                        () => _max,
+                        v => _max = v,
+                        value ? applyMaxWhenNoHandTrack : applyMax,
+                        TweenDuration
+                    ));
+                _sequence.Play();
+            }
+            
+        }
+
+        private void Start()
+        {
+            //初期状態は手下げモードじゃないため、それ用のパラメータを入れておく
+            _scale = applyScale;
+            _min = applyMin;
+            _max = applyMax;
+        }
+        
         private void Update()
         {
             if (_config.ControlMode != FaceControlModes.ExternalTracker ||
@@ -47,15 +100,11 @@ namespace Baku.VMagicMirror
             
             var offset = _externalTracker.HeadPositionOffset;
             
-            var (scale, min, max) = NoHandTrackMode
-                ? (applyScaleWhenNoHandTrack, applyMinWhenNoHandTrack, applyMaxWhenNoHandTrack)
-                : (applyScale, applyMin, applyMax);
-            
             var goal = _externalTracker.Connected
                 ? new Vector3(
-                    Mathf.Clamp(offset.x * scale.x, min.x, max.x),
-                    Mathf.Clamp(offset.y * scale.y, min.z, max.z),
-                    Mathf.Clamp(offset.z * scale.z, min.z, max.z)
+                    Mathf.Clamp(offset.x * _scale.x, _min.x, _max.x),
+                    Mathf.Clamp(offset.y * _scale.y, _min.y, _max.y),
+                    Mathf.Clamp(offset.z * _scale.z, _min.z, _max.z)
                 )
                 : Vector3.zero;
 

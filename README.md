@@ -86,7 +86,7 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
 * DOTween (アセットストアから)
 
-FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。OpenCV for Unityは無くてもビルド可能ですが、画像ベースのハンドトラッキングは使えなくなります。
+FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。
 
 MidiJackはForkしたものを使っている点に注意して下さい。
 
@@ -136,7 +136,6 @@ UniVRMについては、導入後に2箇所を変更します。
 
 ### 4.3. ビルド
 
-* もしOpenCV for Unityを導入しない場合、`Player Settings`で、スクリプトシンボルから`VMAGICMIRROR_USE_OPENCV`シンボルを削除します。
 * Unityでのビルド時には`Bin`フォルダを指定します。
 * WPFでのビルドでは、`VMagicMirrorConfig`プロジェクトを右クリックし、`発行`を指定してフォルダ上にアプリケーションを配置します。
     - プロファイル設定は次のようにします。

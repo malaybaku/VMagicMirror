@@ -24,7 +24,7 @@ Start `VMagicMirror.exe` to show GUI window ("Control Panel"), and Green window 
 **NOTE:** If `VMagicMirror.exe` does not start correctly please check unzip settings. Right-click zip file to select `Property`, and check whether `Security` area exists at the bottom part. Check `Allow` and click `OK` to apply setting, then retry to unzip file.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_005_before_unzip.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_005_before_unzip.jpg" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
 When you close one of the window, the other window also closes and VMagicMirror quits. If you do not want to show control panel, then minimize it.
@@ -36,8 +36,8 @@ There are 2 ways to load character, from VRM file on the PC or from VRoid Hub.
 To use VRM file, click `Load from File` to select file. Confirm the license and click `OK` to load the character.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_015_started.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_020_load_vrm.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_015_started.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_020_load_vrm.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 To use the model in VRoid Hub click `Load from VRoid Hub`, then character window will shows VRoid Hub loader UI, with authentication instruction in the first time.
@@ -45,9 +45,9 @@ To use the model in VRoid Hub click `Load from VRoid Hub`, then character window
 After login, choose the avatar and check condition of use, then load.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_032_connect_vroid_hub.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_034_vroid_hub_characters.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_037_vroid_hub_confirmation.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_032_connect_vroid_hub.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_034_vroid_hub_characters.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_037_vroid_hub_confirmation.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
 </div>
 
 **NOTE:** Some avatars by others does not appear on the available avatar list. Please see the detail at [Tips: Use VRoid Hub Avatar](./tips/use_vroid_hub).
@@ -56,15 +56,15 @@ After login, choose the avatar and check condition of use, then load.
 If you want to load the character automatically on next boot, then check `Load current VRM on next startup`.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_030_load_vrm_confirmation.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_040_after_loaded.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_030_load_vrm_confirmation.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_040_after_loaded.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 **Hint:** If your character is not shown correctly, try `Adjust size by VRM` button. You can more chances to fix the layout later.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_160_not_good_layout_example.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_170_after_adjust.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_160_not_good_layout_example.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_170_after_adjust.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 
@@ -73,7 +73,7 @@ If you want to load the character automatically on next boot, then check `Load c
 
 `Streaming` tab in control panel is to access all of main features of `VMagicMirror`.
 
-{% include docimg.html file="./images/get_started/img00_050_streaming_tab.png" %}
+{% include docimg.html file="./images/get_started/img00_050_streaming_tab.jpg" %}
 
 #### 2.1. Window
 {: .doc-sec2 }
@@ -85,9 +85,9 @@ After setup transparent background, then confirm to check `(When Transparent) Dr
 If you want to dragging feature, then turn off `Drag the character` after placing your avatar.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_060_transparent_bg.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_070_transparent_bg_drag.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_090_transparent_bg_can_click.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_060_transparent_bg.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_070_transparent_bg_drag.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_090_transparent_bg_can_click.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
 </div>
 
 
@@ -97,7 +97,7 @@ If you want to dragging feature, then turn off `Drag the character` after placin
 `Virtual Camera Output` is a feature mainly for online meeting systems.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_095_virtual_cam_out.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_095_virtual_cam_out.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 This feature is a bit advanced. If you are interested, see the detail at [Tips: Use Virtual Camera](./tips/virtual_camera).
@@ -109,7 +109,7 @@ This feature is a bit advanced. If you are interested, see the detail at [Tips: 
 `Face` can setup your VRM's face expressions.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_100_streaming_face.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_100_streaming_face.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 `LipSync`: Select microphone to use LipSync (viseme) feature.
@@ -137,7 +137,7 @@ If your face is not at the center for the web camera, or you are too near/far to
 `Word To Motion` is feature to control face expression.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_105_word_to_motion.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_105_word_to_motion.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 In default, please try typing "joy" and see what results on your avatar. Also you can select `Gamepad` on `Device Assignment` and press A,B,X,Y buttons, or select `Keyboard (num 0-8)` and press keys to switch expresssions.
@@ -155,7 +155,7 @@ Toggle the checks to set which device is visible and which is invisible.
 Especially you can see the effect when keyboard is shown and selecting `Typing Effect` to something not None.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_125_view_typing_effect_example.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_125_view_typing_effect_example.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 **Hint:** If shadow looks bad, please check [FAQ](./questions) and "Shadow looks not good". If this does not help, then disable shadow.
@@ -178,8 +178,8 @@ After the setup it will be good to turn on `Transparent Background` and disable 
 When you are confused where avatar is, press `Reset position` to recover the situation.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_130_free_camera_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_140_after_free_camera_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_130_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_140_after_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 During this setup you can use `Quick Save` and `Quick Load` buttons to save or load the point of view.
@@ -198,7 +198,7 @@ In this process you might get trouble the character is cut off or going out of c
 
 Turn on `Free Layout` to enter device free layout mode.
 
-{% include docimg.html file="./images/get_started/img00_200_free_layout.png" %}
+{% include docimg.html file="./images/get_started/img00_200_free_layout.jpg" %}
 
 When enter this mode `Transparent Window` is turned off.
 
@@ -219,7 +219,7 @@ During this mode the control UI appears at the top-left corner of character wind
 Check on `Presentation-like hand` to move VRM's right hand as if he / she is on a presentation.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_150_presentation_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_150_presentation_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 This style matches when you have presentation or you want to create instruction video. See [Tips: Use VMagicMirror for Presentation](./tips/presentation) for the detail.
@@ -227,7 +227,7 @@ This style matches when you have presentation or you want to create instruction 
 v1.4.0 and later supports `Hands-Down Mode` in this menu, to force character's arm always down. This mode also increases the body movement. Be careful that, this mode disables all other motions except Word to Motion based one, so for example presentation mode requires this check to be turned off.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_160_hand_down_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_155_hand_down_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 ### 3. For further customize

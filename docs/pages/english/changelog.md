@@ -20,9 +20,10 @@ lang_prefix: /en/
 * Change: `MIDI` option is removed from `Streaming` tab > `View`. This setting is available at setting window > `Layout` tab > `Keyboard / MIDI`
 * Change: Performance improvement for some part.
 * Change: Webcam face tracking algorithm slightly changed.
-* Fix: The issue that, hand position does not match to gamepad when stick based body lean feature is turned off.
-* Fix: The issue that, when VMagicMirror repeats restart with background transparent option, the character window size increases.
-* Fix: Added automatic recover process when character window seeme to be outside of the monitor.
+* Fix: Hand position does not match to gamepad when stick based body lean feature is turned off.
+* Fix: When VMagicMirror repeats restart with background transparent option, the character window size increases.
+* Fix: Character window sometimes goes outside of the monitor area.
+* Fix: Twisted wrist after some built-in motions.
 
 #### v1.3.0
 

@@ -222,10 +222,13 @@ Check on `Presentation-like hand` to move VRM's right hand as if he / she is on 
 {% include docimg.html file="./images/get_started/img00_150_presentation_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-This style matches when you have presentation or you want to create instruction video.
+This style matches when you have presentation or you want to create instruction video. See [Tips: Use VMagicMirror for Presentation](./tips/presentation) for the detail.
 
-See [Tips: Use VMagicMirror for Presentation](./tips/presentation) for the detail.
+v1.4.0 and later supports `Hands-Down Mode` in this menu, to force character's arm always down. This mode also increases the body movement. Be careful that, this mode disables all other motions except Word to Motion based one, so for example presentation mode requires this check to be turned off.
 
+<div class="row">
+{% include docimg.html file="./images/get_started/img00_160_hand_down_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+</div>
 
 ### 3. For further customize
 {: .doc-sec1 }

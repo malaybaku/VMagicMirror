@@ -222,10 +222,13 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 {% include docimg.html file="./images/get_started/img00_150_presentation_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-このスタイルは解説動画やプレゼンテーションで`VMagicMirror`を使う際に便利です。
+このスタイルは解説動画やプレゼンテーションで`VMagicMirror`を使う際に便利です。詳しくは[Tips: プレゼンテーションでVMagicMirrorを使う](./tips/presentation)もあわせてご覧下さい。
 
-詳しくは[Tips: プレゼンテーションでVMagicMirrorを使う](./tips/presentation)もあわせてご覧下さい。
+v1.4.0以降では、このメニュー内の`つねに手下げモード`をオンにすると、手が常に下がった姿勢で使用できます。この状態ではビルトインモーション(手を振る動作など)を除き、プレゼンテーションの手の動作なども無効になります。また、このモードではキャラクターの体の移動幅が大きくなります。
 
+<div class="row">
+{% include docimg.html file="./images/get_started/img00_160_hand_down_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+</div>
 
 ### 3. もっと細かく調整したい場合は
 {: .doc-sec1 }

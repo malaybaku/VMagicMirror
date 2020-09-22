@@ -24,6 +24,7 @@ lang_prefix: /en/
 * Fix: When VMagicMirror repeats restart with background transparent option, the character window size increases.
 * Fix: Character window sometimes goes outside of the monitor area.
 * Fix: Twisted wrist after some built-in motions.
+* Change: Reduced binary size, for distribution.
 
 #### v1.3.0
 

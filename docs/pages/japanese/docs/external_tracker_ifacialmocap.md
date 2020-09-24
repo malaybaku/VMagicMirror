@@ -98,10 +98,10 @@ A. iFacialMocapの設定で表情の取得がオフになっている可能性�
 iFacialMocapの設定で`Lower`および`Upper`オプションがオンになっているか確認してください。
 
 <div class="row">
-{% include docimg.html file="./images/docs/ex_tracker_ifm_part_setting.png customclass="col l4 m4 s6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_ifm_part_setting.png" customclass="col l4 m4 s6" imgclass="fit-doc-img" %}
 </div>
 
-これらを確認した後も口が動かない場合、[外部トラッキングアプリとの連携](../external_tracker)で`外部トラッキングによるリップシンク`の項目が原因の可能性もあるため、あわせてご覧下さい。
+これらを確認した後も口が動かない場合、[外部トラッキングアプリとの連携](./external_tracker)で`外部トラッキングによるリップシンク`の項目が原因の可能性もあるため、あわせてご覧下さい。
 
 それでも問題が解決しない場合、ほかのモデルをロードして動作を見比べるなどの方法で、モデルセットアップが正しいかどうかご確認下さい。
 

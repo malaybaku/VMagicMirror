@@ -13,8 +13,16 @@ Virtual Camera is the feature added in v0.9.9, to use VMagicMirror for web camer
 
 This feature easily connect VMagicMirror to online meeting systems, etc.
 
-**NOTE:** There are other ways to use VMagicMirror iamge as web camera output, like [OBS-VirtualCam](https://obsproject.com/forum/resources/obs-virtualcam.539/). If you need rather advanced customization than VMagicMirror's simple output, please consider to use those external tools.
+#### When I should use virtual camera?
+{: .doc-sec2 }
 
+Please use this feature when you want to join the online meeting with only VMagicMirror (without any other software like OBS).
+
+If your PC already has OBS Studio, then you can ignore this feature because of 2 reasons.
+
+1: You can use either game capture or window capture to import the character window to OBS (NOT a video capture device!). Please see detail at [Tips: Use VMagicMirror for Streaming](./streaming).
+
+2: OBS-VirtualCam will give you much better experience for the virtual camera, including custom backgrounds and visual effects.
 
 #### Setup for First Time Use
 {: .doc-sec2 }

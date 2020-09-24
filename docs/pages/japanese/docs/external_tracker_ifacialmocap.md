@@ -91,7 +91,7 @@ Windowsのコントロールパネルで`ファイアウォール`を検索し�
 
 **NOTE:** `受信の規則`に複数の`vmagicmirror.exe`があった場合、すべてに対して同じ操作を行ってください。
 
-#### Q3. 首は動くものの表情が動かない
+#### Q3. 頭は動くものの表情が動かない
 {: .doc-sec2 }
 
 A. iFacialMocapの設定で表情の取得がオフになっている可能性があります。
@@ -101,6 +101,10 @@ iFacialMocapの設定で`Lower`および`Upper`オプションがオンになっ
 <div class="row">
 {% include docimg.html file="./images/docs/ex_tracker_ifm_part_setting.png customclass="col l4 m4 s6" imgclass="fit-doc-img" %}
 </div>
+
+これらを確認した後も口が動かない場合、[外部トラッキングアプリとの連携](../external_tracker)で`外部トラッキングによるリップシンク`の項目が原因の可能性もあるため、あわせてご覧下さい。
+
+それでも問題が解決しない場合、ほかのモデルをロードして動作を見比べるなどの方法で、モデルセットアップが正しいかどうかご確認下さい。
 
 
 #### Q4. Window用に配布されているiFacialMocapのソフトは必要？
@@ -121,4 +125,3 @@ A. 前回の使用時と異なる位置にiPhoneやiPadを置いた場合、顔�
 {: .doc-sec2 }
 
 A. `iFacialMocap`のアプリを完全に終了したのち、このページの`VMagicMirrorと接続する`の手順に沿って再び接続してください。
-

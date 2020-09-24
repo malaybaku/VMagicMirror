@@ -12,6 +12,11 @@ permalink: /docs/motion
 
 {% include docimg.html file="/images/docs/motion_top.png" %}
 
+#### 上半身
+{: .doc-sec2 }
+
+`つねに手下げモード`: オンになっていると、腕がつねに下がり、体の動きが大きくなります。`配信`タブにあるのものと同じ機能です。
+
 #### 顔・表情
 {: .doc-sec2 }
 

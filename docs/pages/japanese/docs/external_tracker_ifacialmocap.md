@@ -53,9 +53,7 @@ iOS端末のアプリ上に表示されたIPアドレスを入力し、`Connect`
 {% include docimg.html file="./images/docs/ex_tracker_30_calibration_after.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-<div>
-<a id="troubleshoot"></a>
-</div>
+[]{: #troubleshoot}
 
 ### トラブルシューティング
 

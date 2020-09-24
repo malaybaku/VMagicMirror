@@ -8,8 +8,13 @@ namespace Baku.VMagicMirror
     {
         // ハンドトラッキングがロスしたときにAポーズへ落とし込むときの、腕の下げ角度(手首の曲げもコレに準拠します
         private const float APoseArmDownAngleDeg = 70f;
-        // Aポーズから少しだけ手首の位置を斜め前方上にズラすオフセット
-        private readonly Vector3 APoseHandPosOffset = new Vector3(0f, 0.02f, 0.02f);
+        // Aポーズから少しだけ手首の位置を斜め前方上にズラすオフセット。肘をピンと伸ばすのを避けるために使う。身長に比例してスケールした値を用いる。
+        private readonly Vector3 APoseHandPosOffsetBase = new Vector3(0f, 0.01f, 0.03f);
+        // リファレンスモデル(Megumi Baxterさん)のUpperArmボーンからWristボーンまでの距離
+        private const float ReferenceArmLength = 0.37f;
+
+        // 腕のピンと張る度合いがこの値になるように手IKのy座標を調整する
+        private const float ArmRelaxFactor = 0.98f;
 
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKGenerator LeftHand => _leftHand;
@@ -21,7 +26,9 @@ namespace Baku.VMagicMirror
         private Transform _hips;
         private Transform _leftUpperArm;
         private Transform _rightUpperArm;
-        //NOTE: 
+
+        private float _rightArmLength = 0.4f;
+        private float _leftArmLength = 0.4f;
         private Vector3 _rightPosHipsOffset;
         private Vector3 _leftPosHipsOffset;
         private readonly Quaternion RightRot = Quaternion.Euler(0, 0, -APoseArmDownAngleDeg);
@@ -47,17 +54,23 @@ namespace Baku.VMagicMirror
                 var leftWristPos = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
                 var hipsPos = _hips.position;
                 
+                _rightArmLength = Vector3.Distance(rightWristPos, rightUpperArmPos);
+                float rArmLengthFactor = Mathf.Clamp(_rightArmLength / ReferenceArmLength, 0.1f, 5f);
+                
                 _rightPosHipsOffset =
-                    _rightUpperArm.position + 
+                    rightUpperArmPos +
                     Quaternion.AngleAxis(-APoseArmDownAngleDeg, Vector3.forward) * (rightWristPos - rightUpperArmPos) -
                     hipsPos + 
-                    APoseHandPosOffset;
+                    rArmLengthFactor * APoseHandPosOffsetBase;
+
+                _leftArmLength = Vector3.Distance(leftWristPos, leftUpperArmPos);
+                float lArmLengthFactor = Mathf.Clamp(_leftArmLength / ReferenceArmLength, 0.1f, 5f);
                 
                 _leftPosHipsOffset =
-                    _leftUpperArm.position + 
+                    leftUpperArmPos + 
                     Quaternion.AngleAxis(APoseArmDownAngleDeg, Vector3.forward) * (leftWristPos - leftUpperArmPos) -
                     hipsPos + 
-                    APoseHandPosOffset;
+                    lArmLengthFactor * APoseHandPosOffsetBase;
 
                 _leftHand.Position = hipsPos + _leftPosHipsOffset;
                 _rightHand.Position = hipsPos + _rightPosHipsOffset;
@@ -90,14 +103,32 @@ namespace Baku.VMagicMirror
                 //フレーム終わりじゃないと調整されたあとのボーン位置が拾えないので、このタイミングでわざわざやってます
 
                 
-                //肩の上げ下げに沿って手を上下に動かす。
-                var armDiffAdjust =
-                    Vector3.up * 
-                    ((_leftUpperArm.position - _rightUpperArm.position).y);
-                
                 var hipsPos = _hips.position;
-                _leftHand.Position = hipsPos + _leftPosHipsOffset + armDiffAdjust;
-                _rightHand.Position = hipsPos + _rightPosHipsOffset - armDiffAdjust;
+
+                var leftUpperArmPos = _leftUpperArm.position;
+                var leftPos = hipsPos + _leftPosHipsOffset;
+
+                var leftTargetLength = _leftArmLength * ArmRelaxFactor;
+                //UpperArmとWristの距離が一定になるようY軸の調整をするとこういう式になる
+                leftPos.y = leftUpperArmPos.y - Mathf.Sqrt(
+                    leftTargetLength * leftTargetLength -
+                    (leftPos.x - leftUpperArmPos.x) * (leftPos.x - leftUpperArmPos.x) -
+                    (leftPos.z - leftUpperArmPos.z) * (leftPos.z - leftUpperArmPos.z)
+                );
+
+                var rightUpperArmPos = _rightUpperArm.position;
+                var rightPos = hipsPos + _rightPosHipsOffset;
+
+                var rightTargetLength = _rightArmLength * ArmRelaxFactor;
+                //UpperArmとWristの距離が一定になるようY軸の調整をするとこういう式になる
+                rightPos.y = rightUpperArmPos.y - Mathf.Sqrt(
+                    rightTargetLength * rightTargetLength -
+                    (rightPos.x - rightUpperArmPos.x) * (rightPos.x - rightUpperArmPos.x) -
+                    (rightPos.z - rightUpperArmPos.z) * (rightPos.z - rightUpperArmPos.z)
+                );
+
+                _leftHand.Position = leftPos;
+                _rightHand.Position = rightPos;
             }
         }
     }

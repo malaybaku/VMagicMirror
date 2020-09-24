@@ -14,7 +14,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private FaceControlManager eyes = null;
         [SerializeField] private ExternalTrackerPerfectSync perfectSync = null;
         [SerializeField] private ExternalTrackerFaceSwitchApplier faceSwitch = null;
-
+        
+        private ExternalTrackerDataSource _exTracker = null;
         private BlendShapeInitializer _initializer = null;
         private WordToMotionBlendShape _wtmBlendShape = null;
 
@@ -26,10 +27,12 @@ namespace Baku.VMagicMirror
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
+            ExternalTrackerDataSource exTracker,
             BlendShapeInitializer initializer,
             WordToMotionBlendShape wtmBlendShape
             )
         {
+            _exTracker = exTracker;
             _initializer = initializer;
             _wtmBlendShape = wtmBlendShape;
             
@@ -72,7 +75,7 @@ namespace Baku.VMagicMirror
                     _initializer.InitializeBlendShapes();
                     _wtmBlendShape.Accumulate(_blendShape);
                 }
-                else if (perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
                     //WtM + パーフェクトシンクの口周りを適用するケース: 口周りのゼロ埋めをサボれるのでサボる
                     _initializer.InitializeBlendShapes(perfectSync.NonPerfectSyncKeys);
@@ -100,7 +103,7 @@ namespace Baku.VMagicMirror
                     _initializer.InitializeBlendShapes();
                     faceSwitch.Accumulate(_blendShape);
                 }
-                else if (perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
                     //Face Switch + パーフェクトシンクの口周りを適用: 口周りのパーフェクトシンクのゼロ埋めをサボれるのでサボる
                     _initializer.InitializeBlendShapes(perfectSync.NonPerfectSyncKeys);

@@ -9,29 +9,6 @@ lang_prefix: /en/
 
 # Change Log
 
-#### v1.4.0
-
-2020/09/24
-
-* Add: `Always-Hand-Down` mode. During this mode is selected, the hands are always down, and body motion increases.
-* Change: Improve gamepad based motion, especially when you are doing quick input.
-* Change: When Perfect Sync and other face expression with `Keep LipSync` option is running at same time, then mouth, jaw, cheek and tongue blendshapes of Perfect Sync continue to be applied.
-* Change: Warning message will appear near to the webcam selection UI, when External Tracker is on.
-* Change: `MIDI` option is removed from `Streaming` tab > `View`. This setting is available at setting window > `Layout` tab > `Keyboard / MIDI`
-* Change: Performance improvement for some part.
-* Change: Webcam face tracking algorithm slightly changed.
-* Fix: Hand position does not match to gamepad when stick based body lean feature is turned off.
-* Fix: When VMagicMirror repeats restart with background transparent option, the character window size increases.
-* Fix: Character window sometimes goes outside of the monitor area.
-* Fix: Twisted wrist after some built-in motions.
-* Change: Reduced binary size, for distribution.
-
-#### v1.3.0a
-
-2020/08/27
-
-* Fix: Issue in v1.3.0 that, Perfect Sync could not move avatar's right brow down.
-
 #### v1.3.0
 
 2020/08/27

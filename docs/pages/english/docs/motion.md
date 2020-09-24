@@ -13,11 +13,6 @@ lang_prefix: /en/
 
 {% include docimg.html file="/images/docs/motion_top.png" %}
 
-#### Upper Body
-{: .doc-sec2 }
-
-`Always-Hands-Down Mode`: Turn on to force both arms always on. This mode increases body translate motion. This check is same as the one in `Streaming` tab.
-
 #### Face
 {: .doc-sec2 }
 

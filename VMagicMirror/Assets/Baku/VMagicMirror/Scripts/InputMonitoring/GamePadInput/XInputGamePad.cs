@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using XinputGamePad;
 
 namespace Baku.VMagicMirror
 {
@@ -12,9 +11,10 @@ namespace Baku.VMagicMirror
     public class XInputGamePad : MonoBehaviour
     {
         [SerializeField] private int triggerDownThreshold = 30;
-        [SerializeField] private int deviceNumber = 0;
 
         private const int StickPositionDiffThreshold = 1000;
+
+        private readonly XInputCapture _xInputCapture = new XInputCapture();
         
         public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
@@ -114,20 +114,20 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _buttonsList.Add(new ObservableButton(GamepadKey.Start, InputConst.XINPUT_GAMEPAD_START, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.Start, XInputCapture.Buttons.START, _buttonSubject));
             
-            _buttonsList.Add(new ObservableButton(GamepadKey.B, InputConst.XINPUT_GAMEPAD_B, _buttonSubject));
-            _buttonsList.Add(new ObservableButton(GamepadKey.A, InputConst.XINPUT_GAMEPAD_A, _buttonSubject));
-            _buttonsList.Add(new ObservableButton(GamepadKey.X, InputConst.XINPUT_GAMEPAD_X, _buttonSubject));
-            _buttonsList.Add(new ObservableButton(GamepadKey.Y, InputConst.XINPUT_GAMEPAD_Y, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.B, XInputCapture.Buttons.B, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.A, XInputCapture.Buttons.A, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.X, XInputCapture.Buttons.X, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.Y, XInputCapture.Buttons.Y, _buttonSubject));
 
-            _buttonsList.Add(new ObservableButton(GamepadKey.RShoulder, InputConst.XINPUT_GAMEPAD_RIGHT_SHOULDER, _buttonSubject));
-            _buttonsList.Add(new ObservableButton(GamepadKey.LShoulder, InputConst.XINPUT_GAMEPAD_LEFT_SHOULDER, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.RShoulder, XInputCapture.Buttons.RIGHT_SHOULDER, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.LShoulder, XInputCapture.Buttons.LEFT_SHOULDER, _buttonSubject));
             
-            _arrowRight = new ObservableButton(GamepadKey.RIGHT, InputConst.XINPUT_GAMEPAD_DPAD_RIGHT, _buttonSubject);
-            _arrowDown = new ObservableButton(GamepadKey.DOWN, InputConst.XINPUT_GAMEPAD_DPAD_DOWN, _buttonSubject);
-            _arrowLeft = new ObservableButton(GamepadKey.LEFT, InputConst.XINPUT_GAMEPAD_DPAD_LEFT, _buttonSubject);
-            _arrowUp = new ObservableButton(GamepadKey.UP, InputConst.XINPUT_GAMEPAD_DPAD_UP, _buttonSubject);
+            _arrowRight = new ObservableButton(GamepadKey.RIGHT, XInputCapture.Buttons.DPAD_RIGHT, _buttonSubject);
+            _arrowDown = new ObservableButton(GamepadKey.DOWN, XInputCapture.Buttons.DPAD_DOWN, _buttonSubject);
+            _arrowLeft = new ObservableButton(GamepadKey.LEFT, XInputCapture.Buttons.DPAD_LEFT, _buttonSubject);
+            _arrowUp = new ObservableButton(GamepadKey.UP, XInputCapture.Buttons.DPAD_UP, _buttonSubject);
 
             _buttonsList.Add(_arrowRight);
             _buttonsList.Add(_arrowDown);
@@ -154,8 +154,8 @@ namespace Baku.VMagicMirror
             else
             {
                 //普通にXInputの読み取り
-                DllConst.Capture();
-                int buttonFlags = DllConst.GetButtons(deviceNumber);
+                _xInputCapture.Update();
+                int buttonFlags = _xInputCapture.GetButtonStates();
                 foreach(var button in _buttons)
                 {
                     button.UpdatePressedState(buttonFlags);
@@ -219,11 +219,7 @@ namespace Baku.VMagicMirror
 
         private void UpdateRightStick()
         {
-            var position = new Vector2Int(
-                DllConst.GetThumbRX(deviceNumber),
-                DllConst.GetThumbRY(deviceNumber)
-                );
-            
+            var position = _xInputCapture.GetRightThumb();
             if (Mathf.Abs(_rightStickPosition.x - position.x) +
                 Mathf.Abs(_rightStickPosition.y - position.y) > StickPositionDiffThreshold)
             {
@@ -234,11 +230,7 @@ namespace Baku.VMagicMirror
 
         private void UpdateLeftStick()
         {
-            var position = new Vector2Int(
-                DllConst.GetThumbLX(deviceNumber),
-                DllConst.GetThumbLY(deviceNumber)
-                );
-
+            var position = _xInputCapture.GetLeftThumb();
             if (Mathf.Abs(_leftStickPosition.x - position.x) +
                 Mathf.Abs(_leftStickPosition.y - position.y) > StickPositionDiffThreshold)
             {
@@ -249,15 +241,15 @@ namespace Baku.VMagicMirror
 
         private void UpdateTriggerAsButtons()
         {
-            int right = DllConst.GetRightTrigger(deviceNumber);
+            int right = _xInputCapture.GetRightTrigger();
             bool isRightDown = (right > triggerDownThreshold);
             if (_isRightTriggerDown != isRightDown)
             {
                 _isRightTriggerDown = isRightDown;
                 _buttonSubject.OnNext(new GamepadKeyData(GamepadKey.RTrigger, isRightDown));
             }
-            
-            int left = DllConst.GetLeftTrigger(deviceNumber);
+
+            int left = _xInputCapture.GetLeftTrigger();
             bool isLeftDown = (left > triggerDownThreshold);
             if (_isLeftTriggerDown != isLeftDown)
             {

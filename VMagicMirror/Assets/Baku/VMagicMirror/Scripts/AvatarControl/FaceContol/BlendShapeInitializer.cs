@@ -82,7 +82,10 @@ namespace Baku.VMagicMirror
             );
         }
 
-        public void InitializeBlendShapes(bool keepLipSync)
+        /// <summary>
+        /// すべてのクリップにゼロを当て込みます。
+        /// </summary>
+        public void InitializeBlendShapes()
         {
             if (!_hasModel)
             {
@@ -91,32 +94,28 @@ namespace Baku.VMagicMirror
 
             for (int i = 0; i < _keys.Length; i++)
             {
-                if (keepLipSync && _lipSyncKeys.Contains(_keys[i]))
-                {
-                    continue;
-                }
                 _proxy.AccumulateValue(_keys[i], 0);
             }
         }
-        
-        private void Update()
+
+        /// <summary>
+        /// 指定したキーのクリップ値をゼロにします。
+        /// </summary>
+        /// <param name="keys"></param>
+        public void InitializeBlendShapes(BlendShapeKey[] keys)
         {
             if (!_hasModel)
             {
                 return;
             }
-            
-            for (int i = 0; i < _keys.Length; i++)
+
+            for (int i = 0; i < keys.Length; i++)
             {
-                //NOTE: ゼロのやつを上書きすると負荷がムダに増えそうなので避けてます
-                if (_proxy.GetValue(_keys[i]) > 0)
-                {
-                    _proxy.AccumulateValue(_keys[i], 0);
-                }
+                _proxy.AccumulateValue(keys[i], 0);
             }
         }
 
-
+        
         private static BlendShapeKey[] CreateKeys(IEnumerable<string> names)
         {
             return names

@@ -44,15 +44,13 @@ namespace Baku.VMagicMirror
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable)
         {
-            vrmLoadable.VrmLoaded += OnVrmLoaded;
-        }
-
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            BodyHorizontalOffsetSuggest = 0;
-            float hipsHeight = info.animator.GetBoneTransform(HumanBodyBones.Hips).position.y;
-            //あまり非常識な値が来たらもう適当に蹴ってしまう。別に蹴ってもそこまで危険でもないし。
-            _hipsHeightRate = Mathf.Clamp(hipsHeight / ReferenceHipsHeight, 0.1f, 3f);
+            vrmLoadable.VrmLoaded += info =>
+            {
+                BodyHorizontalOffsetSuggest = 0;
+                float hipsHeight = info.animator.GetBoneTransform(HumanBodyBones.Hips).position.y;
+                //あまり非常識な値が来たらもう適当に蹴ってしまう。別に蹴ってもそこまで危険でもないし。
+                _hipsHeightRate = Mathf.Clamp(hipsHeight / ReferenceHipsHeight, 0.1f, 3f);
+            };
         }
         
         private void Update()

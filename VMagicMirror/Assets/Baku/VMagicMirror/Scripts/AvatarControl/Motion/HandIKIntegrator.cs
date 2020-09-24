@@ -1,4 +1,5 @@
-﻿using Baku.VMagicMirror.IK;
+﻿using System;
+using Baku.VMagicMirror.IK;
 using UnityEngine;
 using Zenject;
 
@@ -18,24 +19,29 @@ namespace Baku.VMagicMirror
         [SerializeField] private TypingHandIKGenerator typing = null;
         public TypingHandIKGenerator Typing => typing;
 
-        [SerializeField] private GamepadHandIKGenerator smallGamepadHand = null;
-        public GamepadHandIKGenerator SmallGamepadHand => smallGamepadHand;
-        
-
         [SerializeField] private GamepadFingerController gamepadFinger = null;
 
-        [SerializeField] private MouseMoveHandIKGenerator mouseMove = null;
-        public MouseMoveHandIKGenerator MouseMove => mouseMove;
+        [SerializeField] private WaitingBodyMotion waitingBody = null;
 
-        [SerializeField] private MidiHandIkGenerator midi = null;
-        public MidiHandIkGenerator MidiHand => midi;
+        public MouseMoveHandIKGenerator MouseMove { get; private set; }
 
-        [SerializeField] private PresentationHandIKGenerator presentation = null;
-        public PresentationHandIKGenerator Presentation => presentation;
+        public GamepadHandIKGenerator GamepadHand { get; private set; }
+        
+        public MidiHandIkGenerator MidiHand { get; private set; }
 
-        [SerializeField] private ImageBaseHandIkGenerator imageBaseHand = null;
+        public PresentationHandIKGenerator Presentation { get; private set; }
+        
+        private ImageBaseHandIkGenerator _imageBaseHand;
+
+        private AlwaysDownHandIkGenerator _downHand;
+
 
         [SerializeField] private FingerController fingerController = null;
+
+        [SerializeField] private GamepadHandIKGenerator.GamepadHandIkGeneratorSetting gamepadSetting = default;
+        
+        [SerializeField]
+        private ImageBaseHandIkGenerator.ImageBaseHandIkGeneratorSetting imageBaseHandSetting = default;
 
         private Transform _rightHandTarget = null;
         private Transform _leftHandTarget = null;
@@ -55,7 +61,7 @@ namespace Baku.VMagicMirror
             set
             {
                 _enableHidArmMotion = value;
-                mouseMove.EnableUpdate = value;
+                MouseMove.EnableUpdate = value;
             }
         }
 
@@ -68,6 +74,25 @@ namespace Baku.VMagicMirror
         
         public bool EnablePresentationMode { get; set; }
 
+        //NOTE: これはすごく特別なフラグで、これが立ってると手のIKに何か入った場合でも手が下がりっぱなしになります
+        private bool _alwaysHandDownMode = false;
+
+        public bool AlwaysHandDownMode
+        {
+            get => _alwaysHandDownMode;
+            set
+            {
+                _alwaysHandDownMode = value;                
+                //NOTE: フラグが折れた場合、そのあとの入力に基づいてIKが変わるのに任せる
+                if (!value)
+                {
+                    return;
+                }
+                SetLeftHandIk(HandTargetType.AlwaysDown);
+                SetRightHandIk(HandTargetType.AlwaysDown);
+            }
+        }
+
         public bool IsLeftHandGripGamepad => _leftTargetType == HandTargetType.Gamepad;
         public bool IsRightHandGripGamepad => _rightTargetType == HandTargetType.Gamepad;
 
@@ -76,13 +101,31 @@ namespace Baku.VMagicMirror
 
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IKTargetTransforms ikTargets, ParticleStore particleStore)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            IKTargetTransforms ikTargets, 
+            Camera cam,
+            ParticleStore particleStore,
+            GamepadProvider gamepadProvider,
+            MidiControllerProvider midiControllerProvider,
+            TouchPadProvider touchPadProvider,
+            HandTracker handTracker
+            )
         {
             _rightHandTarget = ikTargets.RightHand;
             _leftHandTarget = ikTargets.LeftHand;
             _particleStore = particleStore;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;        
+
+            MouseMove = new MouseMoveHandIKGenerator(this, touchPadProvider);
+            MidiHand = new MidiHandIkGenerator(this, midiControllerProvider);
+            GamepadHand = new GamepadHandIKGenerator(
+                this, vrmLoadable, waitingBody, gamepadProvider, gamepadSetting
+                );
+            Presentation = new PresentationHandIKGenerator(this, vrmLoadable, cam);
+            _imageBaseHand = new ImageBaseHandIkGenerator(this, handTracker, imageBaseHandSetting, vrmLoadable);
+            _downHand = new AlwaysDownHandIkGenerator(this, vrmLoadable);
         }
 
         //NOTE: 初めて手がキーボードから離れるまではnull
@@ -96,7 +139,7 @@ namespace Baku.VMagicMirror
 
         private HandTargetType _leftTargetType = HandTargetType.Keyboard;
         private HandTargetType _rightTargetType = HandTargetType.Keyboard;
-        
+
         #region API
 
         #region Keyboard and Mouse
@@ -122,8 +165,11 @@ namespace Baku.VMagicMirror
             {
                 SetRightHandIk(HandTargetType.Keyboard);
             }
-            
-            fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);	
+
+            if (!AlwaysHandDownMode)
+            {
+                fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);
+            }
             
             if (hand != ReactedHand.None && EnableHidArmMotion)
             {
@@ -146,18 +192,17 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            //mouseMove.MoveMouse(mousePosition);
-            presentation.MoveMouse(mousePosition);
+            Presentation.MoveMouse(mousePosition);
             SetRightHandIk(EnablePresentationMode ? HandTargetType.Presentation : HandTargetType.Mouse);
             if (_rightTargetType == HandTargetType.Mouse)
             {
-                _particleStore.RequestMouseMoveParticle(mouseMove.ReferenceTouchpadPosition);
+                _particleStore.RequestMouseMoveParticle(MouseMove.ReferenceTouchpadPosition);
             }
         }
 
         public void ClickMouse(string button)
         {
-            if (!EnablePresentationMode && EnableHidArmMotion)
+            if (!EnablePresentationMode && EnableHidArmMotion && !AlwaysHandDownMode)
             {
                 fingerController.StartClickMotion(button);
                 SetRightHandIk(HandTargetType.Mouse);   
@@ -180,7 +225,8 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            smallGamepadHand.LeftStick(v);
+            
+            GamepadHand.LeftStick(v);
             gamepadFinger.LeftStick(v);
             SetLeftHandIk(HandTargetType.Gamepad);
         }
@@ -191,14 +237,14 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            smallGamepadHand.RightStick(v);
+            GamepadHand.RightStick(v);
             gamepadFinger.RightStick(v);
             SetRightHandIk(HandTargetType.Gamepad);
         }
 
         public void GamepadButtonDown(GamepadKey key)
         {
-            smallGamepadHand.ButtonDown(key);
+            GamepadHand.ButtonDown(key);
 
             if (UseGamepadForWordToMotion)
             {
@@ -214,12 +260,16 @@ namespace Baku.VMagicMirror
             {
                 SetRightHandIk(HandTargetType.Gamepad);
             }
-            gamepadFinger.ButtonDown(key);
+
+            if (!AlwaysHandDownMode)
+            {
+                gamepadFinger.ButtonDown(key);
+            }
         }
 
         public void GamepadButtonUp(GamepadKey key)
         {
-            smallGamepadHand.ButtonUp(key);
+            GamepadHand.ButtonUp(key);
 
             if (UseGamepadForWordToMotion)
             {
@@ -235,6 +285,9 @@ namespace Baku.VMagicMirror
             {
                 SetRightHandIk(HandTargetType.Gamepad);
             }
+            
+            //NOTE: めっちゃ起きにくいが、「コントローラのボタンを押したまま手さげモードに入る」というケースを
+            //破たんしにくくするため、指を離す方向の動作については手下げモードであってもガードしない
             gamepadFinger.ButtonUp(key);
         }
 
@@ -244,7 +297,7 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            smallGamepadHand.ButtonStick(pos);
+            GamepadHand.ButtonStick(pos);
             SetLeftHandIk(HandTargetType.Gamepad);
         }
         
@@ -259,7 +312,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            var hand = midi.KnobValueChange(knobNumber, value);
+            var hand = MidiHand.KnobValueChange(knobNumber, value);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.MidiController);
@@ -277,7 +330,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            var (hand, pos) = midi.NoteOn(noteNumber);
+            var (hand, pos) = MidiHand.NoteOn(noteNumber);
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.MidiController);
@@ -295,34 +348,29 @@ namespace Baku.VMagicMirror
         #region Image Base Hand
 
         //画像処理の手検出があったらそっちのIKに乗り換える
-        private void CheckHandUpdates()
+        private void ExecuteOrCheckHandUpdates()
         {
-
-            if (imageBaseHand.HasRightHandUpdate)
+            MouseMove.Update();
+            Presentation.Update();
+            GamepadHand.Update();
+            MidiHand.Update();
+            _imageBaseHand.Update();
+            
+            if (_imageBaseHand.HasRightHandUpdate)
             {
-                imageBaseHand.HasRightHandUpdate = false;
+                _imageBaseHand.HasRightHandUpdate = false;
                 SetRightHandIk(HandTargetType.ImageBaseHand);
             }
 
-            if (imageBaseHand.HasLeftHandUpdate)
+            if (_imageBaseHand.HasLeftHandUpdate)
             {
-                imageBaseHand.HasLeftHandUpdate = false;
+                _imageBaseHand.HasLeftHandUpdate = false;
                 SetLeftHandIk(HandTargetType.ImageBaseHand);
             }
         }
         
         #endregion
         
-        /// <summary> 既定の秒数をかけて手のIKを無効化します。 </summary>
-        public void DisableHandIk()
-        {
-        }
-
-        /// <summary> 既定の秒数をかけて手のIKを有効化します。 </summary>
-        public void EnableHandIk()
-        {
-        }
-
         #endregion
 
         private void Start()
@@ -331,35 +379,49 @@ namespace Baku.VMagicMirror
             _currentLeftHand = Typing.LeftHand;
             _leftHandStateBlendCount = HandIkToggleDuration;
             _rightHandStateBlendCount = HandIkToggleDuration;
+
+            MouseMove.Start();
+            Presentation.Start();
+            GamepadHand.Start();
+            MidiHand.Start();
+            _imageBaseHand.Start();
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             fingerController.Initialize(info.animator);
-            presentation.Initialize(info.animator);
             
             //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にします。
             //棒立ちサポートをめちゃ適当にやっちゃえ！というのがモチベです
-            imageBaseHand.HasRightHandUpdate = false;
+            _imageBaseHand.HasRightHandUpdate = false;
             SetRightHandIk(HandTargetType.ImageBaseHand);
 
-            imageBaseHand.HasLeftHandUpdate = false;
+            _imageBaseHand.HasLeftHandUpdate = false;
             SetLeftHandIk(HandTargetType.ImageBaseHand);
         }
 
         private void OnVrmDisposing()
         {
             fingerController.Dispose();
-            presentation.Dispose();
         }
         
         private void Update()
         {
-            CheckHandUpdates();
+            ExecuteOrCheckHandUpdates();
             
             //ねらい: 前のステートと今のステートをブレンドしながら実際にIKターゲットの位置、姿勢を更新する
             UpdateLeftHand();
             UpdateRightHand();
+            
+        }
+
+        private void LateUpdate()
+        {
+            MouseMove.LateUpdate();
+            GamepadHand.LateUpdate();
+            MidiHand.LateUpdate();
+            Presentation.LateUpdate();
+            _imageBaseHand.LateUpdate();
         }
 
         //TODO: IKオン/オフとの兼ね合いがアレなのでどうにかしてね。
@@ -437,6 +499,11 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+            else if (_alwaysHandDownMode && targetType != HandTargetType.AlwaysDown)
+            {
+                //手下げっぱなしモードに入った場合、他のIKには遷移できない
+                return;
+            }
 
             _leftHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
 
@@ -445,9 +512,10 @@ namespace Baku.VMagicMirror
 
             var ik =
                 (targetType == HandTargetType.Keyboard) ? Typing.LeftHand :
-                (targetType == HandTargetType.Gamepad) ? SmallGamepadHand.LeftHand :
-                (targetType == HandTargetType.MidiController) ? midi.LeftHand : 
-                (targetType == HandTargetType.ImageBaseHand) ? imageBaseHand.LeftHand :
+                (targetType == HandTargetType.Gamepad) ? GamepadHand.LeftHand :
+                (targetType == HandTargetType.MidiController) ? MidiHand.LeftHand : 
+                (targetType == HandTargetType.ImageBaseHand) ? _imageBaseHand.LeftHand :
+                (targetType == HandTargetType.AlwaysDown) ? _downHand.LeftHand :
                 Typing.LeftHand;
 
             _prevLeftHand = _currentLeftHand;
@@ -465,14 +533,23 @@ namespace Baku.VMagicMirror
 
             if (targetType == HandTargetType.ImageBaseHand)
             {
-                imageBaseHand.InitializeHandPosture(ReactedHand.Left, _prevLeftHand);
+                _imageBaseHand.InitializeHandPosture(ReactedHand.Left, _prevLeftHand);
             }
+            
+            GamepadHand.HandIsOnController = 
+                _leftTargetType == HandTargetType.Gamepad ||
+                _rightTargetType == HandTargetType.Gamepad;
         }
 
         private void SetRightHandIk(HandTargetType targetType)
         {
             if (_rightTargetType == targetType)
             {
+                return;
+            }
+            else if (_alwaysHandDownMode && targetType != HandTargetType.AlwaysDown)
+            {
+                //手下げっぱなしモードに入った場合、他のIKには遷移できない
                 return;
             }
 
@@ -484,10 +561,11 @@ namespace Baku.VMagicMirror
             var ik =
                 (targetType == HandTargetType.Mouse) ? MouseMove.RightHand :
                 (targetType == HandTargetType.Keyboard) ? Typing.RightHand :
-                (targetType == HandTargetType.Gamepad) ? SmallGamepadHand.RightHand :
+                (targetType == HandTargetType.Gamepad) ? GamepadHand.RightHand :
                 (targetType == HandTargetType.Presentation) ? Presentation.RightHand :
-                (targetType == HandTargetType.MidiController) ? midi.RightHand :
-                (targetType == HandTargetType.ImageBaseHand) ? imageBaseHand.RightHand :
+                (targetType == HandTargetType.MidiController) ? MidiHand.RightHand :
+                (targetType == HandTargetType.ImageBaseHand) ? _imageBaseHand.RightHand :
+                (targetType == HandTargetType.AlwaysDown) ? _downHand.RightHand :
                 Typing.RightHand;
 
             _prevRightHand = _currentRightHand;
@@ -508,8 +586,12 @@ namespace Baku.VMagicMirror
             //ブレンディングをきれいにするために直前で手があった位置を拾って渡してあげる
             if (targetType == HandTargetType.ImageBaseHand)
             {
-                imageBaseHand.InitializeHandPosture(ReactedHand.Right, _prevRightHand);
+                _imageBaseHand.InitializeHandPosture(ReactedHand.Right, _prevRightHand);
             }
+
+            GamepadHand.HandIsOnController = 
+                _leftTargetType == HandTargetType.Gamepad ||
+                _rightTargetType == HandTargetType.Gamepad;
         }
 
         //クールダウンタイムを考慮したうえで、モーションを適用してよいかどうかを確認します。
@@ -544,6 +626,7 @@ namespace Baku.VMagicMirror
             Gamepad,
             MidiController,
             ImageBaseHand,
+            AlwaysDown,
         }
 
     }

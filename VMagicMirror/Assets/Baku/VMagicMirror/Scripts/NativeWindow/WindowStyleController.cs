@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
@@ -21,11 +22,8 @@ namespace Baku.VMagicMirror
         }
 
         //Player Settingで決められるデフォルトウィンドウサイズと合わせてるが、常識的な値であれば多少ズレても害はないです
-        const int DefaultWindowWidth = 800;
-        const int DefaultWindowHeight = 600;
-
-        const string InitialPositionXKey = "InitialPositionX";
-        const string InitialPositionYKey = "InitialPositionY";
+        private const int DefaultWindowWidth = 800;
+        private const int DefaultWindowHeight = 600;
 
         [SerializeField] private float opaqueThreshold = 0.1f;
         [SerializeField] private float windowPositionCheckInterval = 5.0f;
@@ -66,6 +64,8 @@ namespace Baku.VMagicMirror
         const float AlphaLerpFactor = 0.2f;
 
         private IDisposable _mouseObserve;
+
+        private readonly WindowAreaIo _windowAreaIo = new WindowAreaIo();
 
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, RawInputChecker rawInputChecker)
@@ -146,7 +146,8 @@ namespace Baku.VMagicMirror
             SetWindowLong(hWnd, GWL_EXSTYLE, defaultExWindowStyle);
 #endif
             CheckSettingFileDirect();
-            InitializeWindowPositionCheckStatus();
+            _windowAreaIo.Load();
+            _windowPositionCheckCount = windowPositionCheckInterval;            
         }
 
         private void Start()
@@ -167,11 +168,7 @@ namespace Baku.VMagicMirror
         
         private void OnDestroy()
         {
-#if !UNITY_EDITOR
-            var windowPosition = GetUnityWindowPosition();
-            PlayerPrefs.SetInt(InitialPositionXKey, windowPosition.x);
-            PlayerPrefs.SetInt(InitialPositionYKey, windowPosition.y);
-#endif
+            _windowAreaIo.Save();
         }
 
         private void CheckSettingFileDirect()
@@ -253,30 +250,6 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private void InitializeWindowPositionCheckStatus()
-        {
-            _windowPositionCheckCount = windowPositionCheckInterval;
-            if (PlayerPrefs.HasKey(InitialPositionXKey) &&
-                PlayerPrefs.HasKey(InitialPositionYKey)
-                )
-            {
-#if !UNITY_EDITOR
-                int x = PlayerPrefs.GetInt(InitialPositionXKey);
-                int y = PlayerPrefs.GetInt(InitialPositionYKey);
-                _prevWindowPosition = new Vector2Int(x, y);
-                SetUnityWindowPosition(x, y);
-#endif
-            }
-            else
-            {
-#if !UNITY_EDITOR
-                _prevWindowPosition = GetUnityWindowPosition();
-                PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
-                PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
-#endif
-            }
-        }
-
         private void UpdateWindowPositionCheck()
         {
             _windowPositionCheckCount -= Time.deltaTime;
@@ -285,17 +258,8 @@ namespace Baku.VMagicMirror
                 return;
             }
             _windowPositionCheckCount = windowPositionCheckInterval;
-
-#if !UNITY_EDITOR
-            var pos = GetUnityWindowPosition();
-            if (pos.x != _prevWindowPosition.x ||
-                pos.y != _prevWindowPosition.y)
-            {
-                _prevWindowPosition = pos;
-                PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
-                PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
-            }
-#endif
+            
+            _windowAreaIo.Check();
         }
 
         private void UpdateWindowTransparency()
@@ -375,7 +339,7 @@ namespace Baku.VMagicMirror
             ForceWindowResizeEvent();
 #endif
         }
-
+        
         private void ForceWindowResizeEvent()
         {
             //NOTE: リサイズ処理は「ズラしてから元に戻す」方式で呼ぶと透過→不透過の切り替え時に画像が歪むのを防げるため、
@@ -555,6 +519,167 @@ namespace Baku.VMagicMirror
 
             _currentWindowAlpha = newAlpha;
             SetWindowAlpha(newAlpha);
+        }
+    }
+
+    /// <summary>
+    /// ウィンドウエリアの処理のうち、PlayerPrefsへのセーブ/ロードを含むような所だけ切り出したやつ
+    /// </summary>
+   class WindowAreaIo
+    {
+        //前回ソフトが終了したときのウィンドウの位置、およびサイズ
+        private const string InitialPositionXKey = "InitialPositionX";
+        private const string InitialPositionYKey = "InitialPositionY";
+        private const string InitialWidthKey = "InitialWidth";
+        private const string InitialHeightKey = "InitialHeight";
+
+        private Vector2Int _prevWindowPosition = Vector2Int.zero;
+        
+        /// <summary>
+        /// アプリ起動時に呼び出すことで、前回に保存した設定があればそれを読みこんで適用します。
+        /// また、適用結果によってウィンドウがユーザーから見えない位置に移動した場合は復帰処理を行います。
+        /// </summary>
+        public void Load()
+        {
+            if (PlayerPrefs.HasKey(InitialPositionXKey) && PlayerPrefs.HasKey(InitialPositionYKey))
+            {
+#if !UNITY_EDITOR
+                int x = PlayerPrefs.GetInt(InitialPositionXKey);
+                int y = PlayerPrefs.GetInt(InitialPositionYKey);
+                _prevWindowPosition = new Vector2Int(x, y);
+                SetUnityWindowPosition(x, y);
+#endif
+            }
+            else
+            {
+#if !UNITY_EDITOR
+                _prevWindowPosition = GetUnityWindowPosition();
+                PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
+                PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
+#endif
+            }
+
+            int width = PlayerPrefs.GetInt(InitialWidthKey, 0);
+            int height = PlayerPrefs.GetInt(InitialHeightKey, 0);
+            if (width > 100 && height > 100)
+            {
+#if !UNITY_EDITOR
+                SetUnityWindowSize(width, height);
+#endif
+            }
+            
+            AdjustIfWindowPositionInvalid();
+        }
+        
+        /// <summary> アプリ起動中に呼び出すことで、ウィンドウが移動していればその位置を記録します。 </summary>
+        public void Check() 
+        {
+#if !UNITY_EDITOR
+            var pos = GetUnityWindowPosition();
+            if (pos.x != _prevWindowPosition.x ||
+                pos.y != _prevWindowPosition.y)
+            {
+                _prevWindowPosition = pos;
+                PlayerPrefs.SetInt(InitialPositionXKey, _prevWindowPosition.x);
+                PlayerPrefs.SetInt(InitialPositionYKey, _prevWindowPosition.y);
+            }
+#endif
+        }
+        
+        /// <summary> アプリ終了時に呼び出すことで、終了時のウィンドウ位置、およびサイズを記録します。 </summary>
+        public void Save()
+        {
+            if (GetWindowRect(GetUnityWindowHandle(), out var rect))
+            {
+#if !UNITY_EDITOR
+                PlayerPrefs.SetInt(InitialPositionXKey, rect.left);
+                PlayerPrefs.SetInt(InitialPositionYKey, rect.top);
+                PlayerPrefs.SetInt(InitialWidthKey, rect.right - rect.left);
+                PlayerPrefs.SetInt(InitialHeightKey, rect.bottom - rect.top);
+#endif
+            }
+        }
+
+        private void AdjustIfWindowPositionInvalid()
+        {
+            if (!GetWindowRect(GetUnityWindowHandle(), out var rect))
+            {
+                LogOutput.Instance.Write("Failed to get self window rect, could not start window position adjust");
+                return;
+            }
+                
+            var monitorRects = LoadAllMonitorRects();
+            if (!CheckWindowPositionValidity(rect, monitorRects))
+            {
+                MoveToPrimaryMonitorBottomRight(rect);
+            }         
+        }
+
+        private bool CheckWindowPositionValidity(RECT selfRect, List<RECT> monitorRects)
+        {
+            //条件: どれか一つのモニター領域について以下を満たしていれば、想定どおりその位置にウィンドウを置いている、と推定する
+            // - 自身のウィンドウの左上隅がそのモニターの内側である
+            // - ウィンドウのタテヨコともに2/3以上がそのモニターに収まっている
+            foreach (var r in monitorRects)
+            {
+                if (!(selfRect.left >= r.left && selfRect.left < r.right && 
+                      selfRect.top >= r.top && selfRect.top < r.bottom))
+                {
+                    //左上隅がこのモニターに収まってない→関係ないウィンドウなので無視
+                    continue;
+                }
+                
+                //左上隅が収まってるモニターだった: ウィンドウの右下2/3のポイントがモニター内にあるかチェックし、
+                //極端にウィンドウが見切れてないか確認
+                int testX = selfRect.left + (selfRect.right - selfRect.left) * 2 / 3; 
+                int testY = selfRect.top + (selfRect.bottom - selfRect.top) * 2 / 3;
+
+                //NOTE: ほぼ起きないハズだけど、同じ座標が2つのモニターに含まれていると判定されるケースに備え、
+                //ここの判定がfalseだった場合も他のモニターをチェックしていいような書き方にしておく
+                if (testX >= r.left && testX < r.right && testY >= r.top && testY < r.bottom)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        //プライマリモニターの右下にウィンドウを移動したのち、ウィンドウサイズが大きすぎない事を保証し、
+        //その状態でウィンドウの位置/サイズを保存します。
+        //この処理は異常復帰なので、ちょっと余裕をもってウィンドウを動かすことに注意して下さい。
+        private void MoveToPrimaryMonitorBottomRight(RECT selfRect)
+        {
+            var primaryWindowRect = GetPrimaryWindowRect();
+
+            //ウィンドウを画面の4隅から確実に離せるようにサイズの上限 + 位置の調整を行う。
+            //画面の4隅どこにタスクバーがあってもなるべく避けるとか、
+            //透過ウィンドウを非透過にしたらタイトルバーが画面外に行っちゃった、というケースを避けるのが狙い
+            int width = Mathf.Min(
+                selfRect.right - selfRect.left,
+                primaryWindowRect.right - primaryWindowRect.left - 200
+                );
+            int height = Mathf.Min(
+                selfRect.bottom - selfRect.top,
+                primaryWindowRect.bottom - primaryWindowRect.top - 200
+                );
+            
+            int x = Mathf.Clamp(
+                selfRect.left, primaryWindowRect.left + 100, primaryWindowRect.right - 100 - width
+                );
+            int y = Mathf.Clamp(
+                selfRect.top, primaryWindowRect.top + 100, primaryWindowRect.bottom - 100 - height
+                );
+
+#if !UNITY_EDITOR
+            _prevWindowPosition = new Vector2Int(x, y);
+            PlayerPrefs.SetInt(InitialPositionXKey, x);
+            PlayerPrefs.SetInt(InitialPositionYKey, y);
+            PlayerPrefs.SetInt(InitialWidthKey, width);
+            PlayerPrefs.SetInt(InitialHeightKey, height);
+
+            SetUnityWindowPosition(x, y);
+            SetUnityWindowSize(width, height);
+#endif
         }
     }
 }

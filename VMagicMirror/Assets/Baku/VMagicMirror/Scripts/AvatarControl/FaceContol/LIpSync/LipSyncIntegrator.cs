@@ -19,44 +19,37 @@ namespace Baku.VMagicMirror
         public bool PreferExternalTrackerLipSync { get; set; } = false;
         
         private FaceControlConfiguration _config;
-        private bool _hasModel = false;
-        private VRMBlendShapeProxy _blendShape = null;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, FaceControlConfiguration config)
+        public void Initialize(FaceControlConfiguration config)
         {
             _config = config;
-            
-            vrmLoadable.VrmLoaded += info =>
+        }
+
+        public float VoiceRate
+        {
+            get
             {
-                _blendShape = info.blendShape;
-                _hasModel = true;
-            };
-            
-            vrmLoadable.VrmDisposing += () =>
-            {
-                _hasModel = false;
-                _blendShape = null;
-            };
+                var src = PreferExternalTrackerLipSync
+                    ? externalTrackerLipSync.LipSyncSource
+                    : animMorphEasedTarget.LipSyncSource;
+                //NOTE: params引数を使うと配列化されそうでヤダなあという書き方です
+                return Mathf.Max(src.A, Mathf.Max(src.I, Mathf.Max(src.U, Mathf.Max(src.E, src.O))));
+            }
         }
         
-        private void Update()
+        public void Accumulate(VRMBlendShapeProxy proxy)
         {
-            if (!_hasModel || _config.ShouldSkipMouthBlendShape)
-            {
-                return;
-            }
-        
             //NOTE: マイクが無効な場合はanimMorphEasedTargetの出力がゼロになる、というのを想定した書き方でもあります
             var src = PreferExternalTrackerLipSync
                 ? externalTrackerLipSync.LipSyncSource
                 : animMorphEasedTarget.LipSyncSource;
 
-            _blendShape.AccumulateValue(_a, src.A);
-            _blendShape.AccumulateValue(_i, src.I);
-            _blendShape.AccumulateValue(_u, src.U);
-            _blendShape.AccumulateValue(_e, src.E);
-            _blendShape.AccumulateValue(_o, src.O);
+            proxy.AccumulateValue(_a, src.A);
+            proxy.AccumulateValue(_i, src.I);
+            proxy.AccumulateValue(_u, src.U);
+            proxy.AccumulateValue(_e, src.E);
+            proxy.AccumulateValue(_o, src.O);
         }
     }
 }

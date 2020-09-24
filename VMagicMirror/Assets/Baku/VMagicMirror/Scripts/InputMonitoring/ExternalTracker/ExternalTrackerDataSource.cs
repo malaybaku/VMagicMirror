@@ -121,9 +121,13 @@ namespace Baku.VMagicMirror.ExternalTracker
                 CurrentProvider.BreakToBasePosition(1 - lossBreakRate * Time.deltaTime);
             }
 
-            _faceSwitchExtractor.Update(CurrentSource);
-            _config.FaceSwitchActive = !string.IsNullOrEmpty(FaceSwitchClipName);
-            _config.FaceSwitchRequestStopLipSync = _config.FaceSwitchActive && !_faceSwitchExtractor.KeepLipSync;
+            //FaceSwitchExtractorの処理がなにげに重いので、外部トラッキング非使用時に通らないようガードしてます
+            if (CurrentProvider != _emptyProvider)
+            {
+                _faceSwitchExtractor.Update(CurrentSource);
+                _config.FaceSwitchActive = !string.IsNullOrEmpty(FaceSwitchClipName);
+                _config.FaceSwitchRequestStopLipSync = _config.FaceSwitchActive && !_faceSwitchExtractor.KeepLipSync;
+            }
         }
 
         #region IPCで受け取る処理

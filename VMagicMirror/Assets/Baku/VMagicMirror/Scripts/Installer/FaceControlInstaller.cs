@@ -8,12 +8,14 @@ namespace Baku.VMagicMirror.Installer
     {
         [SerializeField] private BlendShapeInitializer blendShapeInitializer = null;
         [SerializeField] private DeviceSelectableLipSyncContext lipSyncContext = null;
+        [SerializeField] private LipSyncIntegrator lipSyncIntegrator = null;
 
         public override void Install(DiContainer container)
         {
             container.Bind<VRMBlendShapeStore>().AsCached();
             container.BindInstance(blendShapeInitializer).AsCached();
             container.BindInstance(lipSyncContext).AsCached();
+            container.BindInstance(lipSyncIntegrator).AsCached();
         }
     }
 }

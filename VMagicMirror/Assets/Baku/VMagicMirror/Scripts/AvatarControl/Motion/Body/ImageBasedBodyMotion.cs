@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
+using UnityEngine;
 using RootMotion.FinalIK;
 using Zenject;
 
@@ -11,25 +14,27 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ImageBasedBodyMotion : MonoBehaviour
     {
+        private const float TweenDuration = 0.5f;
         private const float PositionWeightWhenValid = 0.5f;
         
-        //カメラ領域のうち標準では(320x240のうち)30% x 30%の領域くらいが顔の標準の映り込みかなー、という意味。要調整。
         [SerializeField] private Vector3 offsetAmplifier = new Vector3(0.2f, 0.1f, 0.5f);
+        [SerializeField] private Vector3 offsetAmplifierWhenNoHandTrack = new Vector3(0.4f, 0.5f, 0.5f);
         [SerializeField] private Vector3 offsetLowerLimit = new Vector3(-1.0f, -1.0f, -0.05f);
         [SerializeField] private Vector3 offsetUpperLimit = new Vector3(1.0f, 1.0f, 0.1f);
         [Tooltip("体オフセットの値(m)に対して体傾き(deg)を適用する比率。xはロール、yはピッチ、zは使う予定なし、みたいな割り当てで、普通はxにだけ非ゼロ値を入れます")]
         [SerializeField] private Vector3 offsetToBodyRotEulerFactor = new Vector3(10f, 0f, 0f);
+        [SerializeField] private Vector3 offsetToBodyRotEulerFactorWhenNoHandTrack = new Vector3(0f, 0f, 0f);
         [SerializeField] private float speedFactor = 12f;
 
         [Range(0.05f, 1.0f)]
         [SerializeField] private float timeScaleFactor = 0.3f;
 
         [SerializeField] private bool enableBodyLeanZ = false;
-
+        
         [Inject]
         private FaceTracker _faceTracker = null;
 
-        private bool _isVrmLoaded = false;
+        private bool _hasModel = false;
         private Transform _vrmRoot = null;
         private Transform _leftShoulderEffector = null;
         private Transform _rightShoulderEffector = null;
@@ -39,8 +44,11 @@ namespace Baku.VMagicMirror
         private Vector3 _prevPosition;
         private Vector3 _prevSpeed;
 
-        private FullBodyBipedIK _ik = null;
-        
+        //NOTE: NoHandTrackかどうかによってこの値をTweenで変える。
+        private Vector3 _currentOffsetAmplifier = Vector3.zero;
+        private Vector3 _currentOffsetToRotEuler = Vector3.zero;
+        private Sequence _sequence = null;
+
         /// <summary>体をZ方向に動かしてもよいかどうかを取得、設定します。</summary>
         public bool EnableBodyLeanZ
         {
@@ -56,12 +64,51 @@ namespace Baku.VMagicMirror
         
         /// <summary>体のIKに適用したいオフセット値を取得します。</summary>
         public Vector3 BodyIkOffset { get; private set; }
+
+        private bool _noHandTrackMode = false;
+        /// <summary>
+        /// 手が常時下げるモードかどうかのフラグ、HandIkGeneratorのAlwaysHandDownModeと同じ値が入ってればOK
+        /// </summary>
+        public bool NoHandTrackMode
+        {
+            get => _noHandTrackMode;
+            set
+            {
+                if (_noHandTrackMode == value)
+                {
+                    return;
+                }
+
+                _noHandTrackMode = value;
+
+                //Sequenceにまとめることで、オンオフ連打したときに変なことが起きにくいようにしてます
+                _sequence?.Kill();
+                _sequence = DOTween.Sequence()
+                    .Append(DOTween
+                        .To(
+                            () => _currentOffsetAmplifier,
+                            v => _currentOffsetAmplifier = v,
+                            value ? offsetAmplifierWhenNoHandTrack : offsetAmplifier,
+                            TweenDuration
+                        )
+                    )
+                    .Join(DOTween
+                        .To(
+                            () => _currentOffsetToRotEuler,
+                            v => _currentOffsetToRotEuler = v,
+                            value ? offsetToBodyRotEulerFactorWhenNoHandTrack : offsetToBodyRotEulerFactor,
+                            TweenDuration
+                        )
+                    );
+                _sequence.Play();
+            }
+        }
         
         public void OnVrmLoaded(VrmLoadedInfo info)
         {
             var ik = info.vrmRoot.GetComponent<FullBodyBipedIK>();
             var animator = info.animator;
-            _isVrmLoaded = true;
+            _hasModel = true;
             
             _vrmRoot = animator.transform;
 
@@ -91,23 +138,28 @@ namespace Baku.VMagicMirror
                 _rightShoulderEffector.localPosition = _rightShoulderDefaultOffset;
                 _rightShoulderEffector.rotation = Quaternion.identity;
             }
-
-            _ik = ik;
         }
 
         public void OnVrmDisposing()
         {
-            _isVrmLoaded = false;
+            _hasModel = false;
 
             //NOTE: Destroyはしないでもいい(VRM自体のDestroyで勝手に消えるので)
-            _ik = null;
             _leftShoulderEffector = null;
             _rightShoulderEffector = null;
         }
 
+        private void Start()
+        {
+            //初期値は手下げモードじゃないので、通常時用の値が入ってればOK
+            _currentOffsetAmplifier = offsetAmplifier;
+            _currentOffsetToRotEuler = offsetToBodyRotEulerFactor;
+        }
+        
+
         private void Update()
         {
-            if (!_isVrmLoaded || !_faceTracker.FaceDetectedAtLeastOnce)
+            if (!_hasModel || !_faceTracker.FaceDetectedAtLeastOnce)
             {
                 return;
             }
@@ -116,19 +168,21 @@ namespace Baku.VMagicMirror
             float faceSize = _faceTracker.DetectedRect.width * _faceTracker.DetectedRect.height;
             float faceSizeFactor = Mathf.Sqrt(faceSize / _faceTracker.CalibrationData.faceSize);
 
+            var amplifier = _currentOffsetAmplifier;
             //とりあえず簡単に。値域はもっと決めようあるよねここは。
             forwardLength = enableBodyLeanZ
                 ? Mathf.Clamp(
-                    (faceSizeFactor - 1.0f) * offsetAmplifier.z,
+                    (faceSizeFactor - 1.0f) * amplifier.z,
                     offsetLowerLimit.z, 
                     offsetUpperLimit.z
                     )
                 : 0f;
 
             var center = _faceTracker.DetectedRect.center - _faceTracker.CalibrationData.faceCenter;
+            
             var idealPosition = new Vector3(
-                center.x * offsetAmplifier.x,
-                center.y * offsetAmplifier.y,
+                center.x * amplifier.x,
+                center.y * amplifier.y,
                 forwardLength
                 );
 
@@ -147,7 +201,8 @@ namespace Baku.VMagicMirror
             _prevPosition = pos;
             _prevSpeed = speed;
 
-            BodyLeanSuggest = Quaternion.Euler(0, 0, BodyIkOffset.x * offsetToBodyRotEulerFactor.x);
+            var offsetToBodyEuler = _currentOffsetToRotEuler;
+            BodyLeanSuggest = Quaternion.Euler(0, 0, BodyIkOffset.x * offsetToBodyEuler.x);
         }
     }
 }

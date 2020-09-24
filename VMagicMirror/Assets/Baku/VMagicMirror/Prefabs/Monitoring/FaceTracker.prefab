@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8657378269927355718}
   - component: {fileID: 8657378269927355719}
+  - component: {fileID: 634827896268218299}
   m_Layer: 0
   m_Name: FaceTracker
   m_TagString: Untagged
@@ -50,3 +51,17 @@ MonoBehaviour:
   halfResizeWidthThreshold: 640
   activeButNotTrackedCount: 1
   notTrackedResetSpeedFactor: 3
+--- !u!114 &634827896268218299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8657378269927355717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8773ec8fce9f9d4db5919ab4d8a18ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  notTrackedLimit: 0.5
+  resetSpeedFactor: 6

@@ -83,6 +83,30 @@ namespace Baku.VMagicMirror
         public static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
         public static readonly IntPtr HWND_TOP = new IntPtr(0);
         public static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+        
+        [DllImport("user32.dll")]
+        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, EnumMonitorsDelegate lpfnEnum, IntPtr dwData);
+        
+        delegate bool EnumMonitorsDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
+        
+        //GCAllocが起きにくいように + delegateとの相性を踏まえて、モニターの列挙情報をフィールドで持ってしまう
+        private static readonly List<RECT> _monitorRects = new List<RECT>(8);
+
+        private static bool ProcEnumMonitors(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
+        {
+            //refのをそのままaddすると気持ち悪いので一応値コピーを挟む
+            var copied = lprcMonitor;
+            _monitorRects.Add(copied);
+            return true;
+        }
+        
+        public static List<RECT> LoadAllMonitorRects()
+        {
+            _monitorRects.Clear();
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, ProcEnumMonitors, IntPtr.Zero);
+            return _monitorRects;
+        }
+
 
         [Flags()]
         public enum SetWindowPosFlags : uint
@@ -111,11 +135,28 @@ namespace Baku.VMagicMirror
         
         public static class SystemMetricsConsts
         {
+            //NOTE: プライマリモニターの左上座標を取るキーがないのは、プライマリモニター左上 = (0, 0)で固定だから
+            public const int SM_CXSCREEN = 0;
+            public const int SM_CYSCREEN = 1;
+
             public const int SM_XVIRTUALSCREEN = 76;
             public const int SM_YVIRTUALSCREEN = 77;
             public const int SM_CXVIRTUALSCREEN = 78;
             public const int SM_CYVIRTUALSCREEN = 79;
         }
+
+        /// <summary>
+        /// プライマリモニターの位置とサイズを取得します。
+        /// </summary>
+        /// <returns></returns>
+        public static RECT GetPrimaryWindowRect() =>
+            new RECT()
+            {
+                left = 0,
+                top = 0,
+                right = GetSystemMetrics(SystemMetricsConsts.SM_CXSCREEN),
+                bottom = GetSystemMetrics(SystemMetricsConsts.SM_CYSCREEN),
+            };
 
         public static Vector2Int GetUnityWindowPosition()
         {

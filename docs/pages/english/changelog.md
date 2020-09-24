@@ -11,7 +11,7 @@ lang_prefix: /en/
 
 #### v1.4.0
 
-2020/09/26
+2020/09/24
 
 * Add: `Always-Hand-Down` mode. During this mode is selected, the hands are always down, and body motion increases.
 * Change: Improve gamepad based motion, especially when you are doing quick input.

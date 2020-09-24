@@ -22,7 +22,7 @@ permalink: /get_started
 **注意:** `VMagicMirror.exe`が正常に起動しない場合、Windows OSのセキュリティ処理でzipの解凍に失敗した可能性があります。zipファイルを右クリックして`プロパティ`を選び、`セキュリティ`の項目があるかどうか確認します。もし項目があれば`許可する`をチェックを入れて`OK`で変更を適用し、その後あらためてzipを解凍してください。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_005_before_unzip.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_005_before_unzip.jpg" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
 コントロールパネルかキャラクター表示ウィンドウの一方を閉じると、もう片方の画面も閉じて`VMagicMirror`が終了します。コントロールパネルが邪魔な場合は最小化しておきます。
@@ -34,8 +34,8 @@ permalink: /get_started
 PC上のVRMファイルをロードする場合、`ホーム`タブの`PC上のファイルをロード`ボタンをクリックし、PC上の`.vrm`ファイルを選択します。キャラクター表示ウィンドウに表示される規約を確認して`OK`をクリックすると、キャラクターをロードします。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_015_started.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_020_load_vrm.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_015_started.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_020_load_vrm.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロード`ボタンをクリックするとブラウザ上でアプリ連携を行ったのち、認可コードが表示されます。認可コードをコピーし、VMagicMirrorの入力欄にペーストしてログインします。
@@ -43,9 +43,9 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 ログイン後、キャラクター表示ウィンドウ側にキャラクター選択画面が表示されます。自分でアップロードしたキャラクター、「いいね」したキャラクター、ピックアップされたキャラクターのいずれかを選択し、規約を確認してロードします。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_032_connect_vroid_hub.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_034_vroid_hub_characters.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_037_vroid_hub_confirmation.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_032_connect_vroid_hub.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_034_vroid_hub_characters.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_037_vroid_hub_confirmation.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
 </div>
 
 ※他者によるキャラクターの一部は「いいね」をしていても非表示になることがあります。詳細は[VRoid Hubのアバター利用について](./tips/use_vroid_hub)を参照して下さい。
@@ -53,15 +53,15 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 ロード後、同じキャラクターを次回以降も使いたい場合、`次回の起動時にも同じVRMを読み込む`のチェックをオンにします。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_030_load_vrm_confirmation.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_040_after_loaded.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_030_load_vrm_confirmation.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_040_after_loaded.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 **Hint:** この時点でキーボードやタッチパッドの位置、視点がキャラクターに合わない場合、ひとまず`キャラ体格で補正`ボタンをクリックしておきます。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_160_not_good_layout_example.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_170_after_adjust.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_160_not_good_layout_example.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_170_after_adjust.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 
@@ -72,7 +72,7 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 
 キャラクターをロードしたら色々な基本機能を試してみましょう。
 
-{% include docimg.html file="./images/get_started/img00_050_streaming_tab.png" %}
+{% include docimg.html file="./images/get_started/img00_050_streaming_tab.jpg" %}
 
 #### 2.1. ウィンドウ
 {: .doc-sec2 }
@@ -84,9 +84,9 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 移動後は`(透過中)キャラ付近を掴んでドラッグ`をオフにすることでキャラクターがクリックに反応しなくなり、背面のアプリケーションをクリックできるようになります。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_060_transparent_bg.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_070_transparent_bg_drag.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_090_transparent_bg_can_click.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_060_transparent_bg.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_070_transparent_bg_drag.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_090_transparent_bg_can_click.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
 </div>
 
 
@@ -96,7 +96,7 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 `仮想カメラ出力`はウェブ会議などで手軽にVMagicMirrorを使うための機能です。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_095_virtual_cam_out.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_095_virtual_cam_out.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 この機能はとくに興味がなければスキップして構いません。詳細は[Tips: 仮想カメラを使う](./tips/virtual_camera)をご覧下さい。
@@ -108,7 +108,7 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 `顔・表情`メニューは、顔の動きに関連する主要な機能です。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_100_streaming_face.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_100_streaming_face.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 `リップシンク`: PCに接続されたマイクを選択して、音声にあった口の動きを反映します。
@@ -136,7 +136,7 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 `Word To Motion`はいくつかの方法でキャラクターの表情をコントロールできる機能です。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_105_word_to_motion.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_105_word_to_motion.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 デフォルト設定の場合、キーボードで"joy"とタイピングするとキャラクターの表情が変化します。それ以外でも、`デバイスの割り当て`で`ゲームパッド`を選んでA,B,X,Yボタンを押したり、`キーボード (数字の0-8)`を選んで数字キーの1,2,3,4を押したりしても表情が変化します。
@@ -154,7 +154,7 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 とくにキーボードを表示して`タイピング時のエフェクト`で`None`以外を選択した場合、タイピング時にエフェクトが表示されます。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_125_view_typing_effect_example.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_125_view_typing_effect_example.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 **Hint:** 影の見栄えが悪い場合、[FAQ](./questions)の"影が綺麗に映らない"の項目を確認してください。それでも見栄えが改善しない場合、影の表示をオフにします。
@@ -178,8 +178,8 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 キャラクターを見失った場合や始めからやり直したい場合、`位置をリセット`ボタンで初期状態に戻せます。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_130_free_camera_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_140_after_free_camera_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_130_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_140_after_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 また、動かした視点は`クイックセーブ`の`[1], [2], [3]`いずれかのボタンを押して保存したり、`クイックロード`の対応するボタンを押してロードしたりできます。
@@ -199,7 +199,7 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 
 `フリーレイアウトモード`のチェックをオンにするとキーボード、タッチパッド、ゲームコントローラなどの位置を調整できます。
 
-{% include docimg.html file="./images/get_started/img00_200_free_layout.png" %}
+{% include docimg.html file="./images/get_started/img00_200_free_layout.jpg" %}
 
 チェックをオンにした時点で自動的に`背景を透過`チェックがオフになります。`フリーレイアウト`は背景が透明なままだと使用できないことに注意して下さい。
 
@@ -219,13 +219,16 @@ VRoid Hubのキャラクターをロードする場合、`VRoid Hubからロー�
 `プレゼン風に右手を動かす`のチェックをオンにしてマウスを動かすと、キャラクターが右手でマウスポインタの方向を指し示します。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_150_presentation_mode.png" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_150_presentation_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-このスタイルは解説動画やプレゼンテーションで`VMagicMirror`を使う際に便利です。
+このスタイルは解説動画やプレゼンテーションで`VMagicMirror`を使う際に便利です。詳しくは[Tips: プレゼンテーションでVMagicMirrorを使う](./tips/presentation)もあわせてご覧下さい。
 
-詳しくは[Tips: プレゼンテーションでVMagicMirrorを使う](./tips/presentation)もあわせてご覧下さい。
+v1.4.0以降では、このメニュー内の`つねに手下げモード`をオンにすると、手が常に下がった姿勢で使用できます。この状態ではビルトインモーション(手を振る動作など)を除き、プレゼンテーションの手の動作なども無効になります。また、このモードではキャラクターの体の移動幅が大きくなります。
 
+<div class="row">
+{% include docimg.html file="./images/get_started/img00_155_hand_down_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+</div>
 
 ### 3. もっと細かく調整したい場合は
 {: .doc-sec1 }

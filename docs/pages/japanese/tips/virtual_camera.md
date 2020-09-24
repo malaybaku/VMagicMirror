@@ -12,16 +12,7 @@ permalink: /tips/virtual_camera
 
 機能は限定的ですが、ウェブ会議で手軽にVMagicMirrorを使えます。
 
-#### 仮想カメラをいつ使うべきか
-{: .doc-sec2 }
-
-仮想カメラはVMagicMirrorのみでウェブ会議に参加したい時に使ってください。
-
-もしお使いのPCにOBSがインストールされている場合、VMagicMirrorの仮想カメラを使う必要はありません。
-
-OBSにVMagicMirrorの映像を取り込むにはゲームキャプチャやウィンドウキャプチャが適しています。仮想カメラ映像を「映像キャプチャデバイス」から取り込むことも可能ですが非推奨です。詳細は[配信にVMagicMirrorを使う](./streaming)をご覧下さい。
-
-また、OBSがインストール済みの場合、OBS-VirtualCamによる仮想カメラがより快適に使えます。詳しくは[VMagicMirror製作者のブログ記事](https://www.baku-dreameater.net/entry/2020/02/22/165157)などで紹介しています。
+※カメラ解像度の調整や背景の差し替えなど、高度な用途が必要な場合は他ソフトとの組み合わせを検討してください。一例として、[VMagicMirror製作者のブログ記事](https://www.baku-dreameater.net/entry/2020/02/22/165157)ではOBSおよびOBS-VirtualCamを用いた方法を紹介しています。
 
 
 #### セットアップ: 初使用時にやること

@@ -54,8 +54,8 @@ If your avatar looks wrong orientatoin or face motion does not start, execute `C
 {% include docimg.html file="./images/docs/ex_tracker_30_calibration_after.png" customclass="col l4 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-
 <a id="troubleshoot"></a>
+
 ### Troubleshooting
 
 #### Q1. Failed to connect for the first setup
@@ -101,10 +101,10 @@ A. iFacialMocap setting might ignore face blendshape data.
 Please see iFacialMocap and check `Lower` and `Upper` options are turned on.
 
 <div class="row">
-{% include docimg.html file="./images/docs/ex_tracker_ifm_part_setting.png customclass="col l4 m4 s6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/ex_tracker_ifm_part_setting.png" customclass="col l4 m4 s6" imgclass="fit-doc-img" %}
 </div>
 
-If the mouth motion still have issues, please also check [External Tracker App](../external_tracker) and see `Use LipSync with External Tracking App` section.
+If the mouth motion still have issues, please also check [External Tracker App](./external_tracker) and see `Use LipSync with External Tracking App` section.
 
 If the above processes does not solve the problem, please try other VRM model, to see the model has any setup issues.
 

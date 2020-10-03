@@ -73,6 +73,7 @@ Maintainer's environment is as following.
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
+* [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [UniVRM](https://dwango.github.io/vrm/) v0.55.0
 * [UniRx](https://github.com/neuecc/UniRx) (from Asset Store)
 * [XinputGamepad](https://github.com/kaikikazu/XinputGamePad/releases) v0.3b

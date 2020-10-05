@@ -36,10 +36,6 @@ namespace Baku.VMagicMirror
                 message => handIkIntegrator.AlwaysHandDownMode = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
-                VmmCommands.LengthFromWristToPalm,
-                message => SetLengthFromWristToPalm(message.ParseAsCentimeter())
-                );
-            receiver.AssignCommandHandler(
                 VmmCommands.LengthFromWristToTip,
                 message => SetLengthFromWristToTip(message.ParseAsCentimeter())
                 );
@@ -115,11 +111,6 @@ namespace Baku.VMagicMirror
             handIkIntegrator.Typing.HandToTipLength = v;
             handIkIntegrator.MouseMove.HandToTipLength = v;
             handIkIntegrator.MidiHand.WristToTipLength = v;
-        }
-        
-        private void SetLengthFromWristToPalm(float v)
-        {
-            //handIkIntegrator.MouseMove.HandToPalmLength = v;
         }
         
         private void SetHandYOffsetBasic(float offset)

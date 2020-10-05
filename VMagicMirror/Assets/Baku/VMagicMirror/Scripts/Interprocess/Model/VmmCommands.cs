@@ -54,7 +54,6 @@ namespace Baku.VMagicMirror
 
         // Motion, Hand
         public const string LengthFromWristToTip = nameof(LengthFromWristToTip);
-        public const string LengthFromWristToPalm = nameof(LengthFromWristToPalm);
         public const string HandYOffsetBasic = nameof(HandYOffsetBasic);
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
 

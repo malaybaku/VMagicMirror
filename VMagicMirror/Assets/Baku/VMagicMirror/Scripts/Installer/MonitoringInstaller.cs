@@ -6,7 +6,6 @@ namespace Baku.VMagicMirror.Installer
 {
     public class MonitoringInstaller : InstallerBase
     {
-        [SerializeField] private GlobalHookInputChecker rawInputChecker = null;
         [SerializeField] private RawInputChecker robustRawInputChecker = null;
         [SerializeField] private MousePositionProvider mousePositionProvider = null;
         [SerializeField] private FaceTracker faceTracker = null;
@@ -31,10 +30,7 @@ namespace Baku.VMagicMirror.Installer
 
             //終了前に監視処理を安全にストップさせたいものは呼んでおく
             container.Bind<IReleaseBeforeQuit>()
-                .FromInstance(mousePositionProvider)
-                .AsCached();
-            container.Bind<IReleaseBeforeQuit>()
-                .FromInstance(rawInputChecker)
+                .FromInstance(robustRawInputChecker)
                 .AsCached();
         }
     }

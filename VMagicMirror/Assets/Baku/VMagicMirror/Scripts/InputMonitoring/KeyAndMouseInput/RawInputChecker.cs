@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 namespace Baku.VMagicMirror
 {
     /// <summary> RawInput的なマウス情報を返してくるやつ </summary>
-    public class RawInputChecker : MonoBehaviour, IReleaseBeforeQuit, IKeyMouseEventSource
+    public class RawInputChecker : MonoBehaviour, IKeyMouseEventSource, IReleaseBeforeQuit
     {
         private const string MouseLDownEventName = "LDown";
         private const string MouseRDownEventName = "RDown";
@@ -21,14 +21,13 @@ namespace Baku.VMagicMirror
         private WindowProcedureHook _windowProcedureHook = null;
 
         public IObservable<string> PressedRawKeys => _rawKeys;
-        public IObservable<string> PressedKeys => _keys;
-        public IObservable<string> MouseButton => _mouseButton;
-        
         private readonly Subject<string> _rawKeys = new Subject<string>();
+        
+        public IObservable<string> PressedKeys => _keys;
         private readonly Subject<string> _keys = new Subject<string>();
-        private readonly Subject<string> _mouseButton = new Subject<string>();
 
-        private bool _randomizeKey = false;
+        public IObservable<string> MouseButton => _mouseButton;
+        private readonly Subject<string> _mouseButton = new Subject<string>();
 
         #region マウス
         
@@ -59,6 +58,8 @@ namespace Baku.VMagicMirror
         
         #region キーボード
         
+        private bool _randomizeKey = false;
+
         //叩いたキーのコード。(多分大丈夫なんだけど)イベントハンドラを短時間で抜けときたいのでこういう持ち方にする
         private readonly ConcurrentQueue<int> _downKeys = new ConcurrentQueue<int>();
         
@@ -139,7 +140,7 @@ namespace Baku.VMagicMirror
             else if (data is RawInputKeyboardData keyData &&
                      keyData.Keyboard.Flags.HasFlag(RawKeyboardFlags.Down))
             {
-                AddKeyDown(keyData.Keyboard.VirutalKey, keyData.Keyboard.Flags.HasFlag(RawKeyboardFlags.RightKey));
+                AddKeyDown(keyData.Keyboard.VirutalKey);
             }
         }
 
@@ -152,20 +153,10 @@ namespace Baku.VMagicMirror
             }
         }
         
-        private void AddKeyDown(int keyCode, bool isRightKey)
-        {            
-            _downKeys.Enqueue(keyCode);
-        }
+        private void AddKeyDown(int keyCode) => _downKeys.Enqueue(keyCode);
+        
+        public void ReleaseBeforeCloseConfig() => _windowProcedureHook.StopObserve();
 
-        public void ReleaseBeforeCloseConfig()
-        {
-            _windowProcedureHook.StopObserve();
-        }
-
-        public Task ReleaseResources()
-        {
-            return Task.CompletedTask;
-        }
-
+        public Task ReleaseResources() => Task.CompletedTask;
     }
 }

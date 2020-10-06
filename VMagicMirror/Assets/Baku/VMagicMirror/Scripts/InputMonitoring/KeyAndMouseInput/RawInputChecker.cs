@@ -3,19 +3,31 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Linearstar.Windows.RawInput;
 using Linearstar.Windows.RawInput.Native;
+using UniRx;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
     /// <summary> RawInput的なマウス情報を返してくるやつ </summary>
-    public class RawMouseMoveChecker : MonoBehaviour, IReleaseBeforeQuit
+    public class RawInputChecker : MonoBehaviour, IReleaseBeforeQuit, IKeyMouseEventSource
     {
         private WindowProcedureHook _windowProcedureHook = null;
 
+        public IObservable<string> PressedRawKeys => _rawKeys;
+        public IObservable<string> PressedKeys => _keys;
+        public IObservable<string> MouseButton => _mouseButton;s
+        
+        private readonly Subject<string> _rawKeys = new Subject<string>();
+        private readonly Subject<string> _keys = new Subject<string>();
+        //NOTE: コレだけはとりあえず発火させない: RawInputとの相性が悪そうなため
+        private readonly Subject<string> _mouseButton = new Subject<string>();
+
+        #region マウス
+        
         private int _dx;
         private int _dy;
         private readonly object _diffLock = new object();
-
+        
         public bool EnableFpsAssumedRightHand { get; private set; } = false;
 
         /// <summary>
@@ -35,6 +47,13 @@ namespace Baku.VMagicMirror
             }
         }
 
+        #endregion
+        
+        #region キーボード
+        
+        
+        #endregion
+        
         [Inject]
         public void Initialize(IMessageReceiver receiver)
         {
@@ -59,10 +78,17 @@ namespace Baku.VMagicMirror
 
         private void OnReceiveRawInput(IntPtr lParam)
         {
-            if (RawInputData.FromHandle(lParam) is RawInputMouseData data &&
-                data.Mouse.Flags.HasFlag(RawMouseFlags.MoveRelative))
+            var data = RawInputData.FromHandle(lParam);
+            
+            if (data is RawInputMouseData mouseData &&
+                mouseData.Mouse.Flags.HasFlag(RawMouseFlags.MoveRelative))
             {
-                AddDif(data.Mouse.LastX, data.Mouse.LastY);
+                AddDif(mouseData.Mouse.LastX, mouseData.Mouse.LastY);
+            }
+            else if (data is RawInputKeyboardData keyData &&
+                     keyData.Keyboard.Flags.HasFlag(RawKeyboardFlags.Down))
+            {
+                AddKeyDown(keyData.Keyboard.VirutalKey, keyData.Keyboard.Flags.HasFlag(RawKeyboardFlags.RightKey));
             }
         }
 
@@ -74,6 +100,12 @@ namespace Baku.VMagicMirror
                 _dy += dy;                
             }
         }
+        
+        private void AddKeyDown(int keyCode, bool isRightKey)
+        {
+            
+            
+        }
 
         public void ReleaseBeforeCloseConfig()
         {
@@ -84,5 +116,6 @@ namespace Baku.VMagicMirror
         {
             return Task.CompletedTask;
         }
+
     }
 }

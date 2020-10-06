@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
 
         public IObservable<string> PressedRawKeys => _rawKeys;
         public IObservable<string> PressedKeys => _keys;
-        public IObservable<string> MouseButton => _mouseButton;s
+        public IObservable<string> MouseButton => _mouseButton;
         
         private readonly Subject<string> _rawKeys = new Subject<string>();
         private readonly Subject<string> _keys = new Subject<string>();

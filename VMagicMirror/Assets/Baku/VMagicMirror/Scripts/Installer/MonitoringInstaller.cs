@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror.Installer
 {
     public class MonitoringInstaller : InstallerBase
     {
-        [SerializeField] private RawInputChecker rawInputChecker = null;
+        [SerializeField] private GlobalHookInputChecker rawInputChecker = null;
         [SerializeField] private MousePositionProvider mousePositionProvider = null;
         [SerializeField] private FaceTracker faceTracker = null;
         [SerializeField] private HandTracker handTracker = null;
@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror.Installer
         
         public override void Install(DiContainer container)
         {
-            container.BindInstance(rawInputChecker);
+            container.Bind<IKeyMouseEventSource>().FromInstance(rawInputChecker).AsCached();
             container.BindInstance(mousePositionProvider);
             container.BindInstance(faceTracker);
             container.BindInstance(handTracker);

@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
     //NOTE: とくに管理してないが、このクラスは複数あるとマズイです(グローバルフックが二重にかかってしまうので)
     
     /// <summary> キーボード/マウスボタンイベントを監視してUIスレッドで発火してくれる凄いやつだよ </summary>
-    public class RawInputChecker : MonoBehaviour, IReleaseBeforeQuit
+    public class GlobalHookInputChecker : MonoBehaviour, IReleaseBeforeQuit, IKeyMouseEventSource
     {
         //NOTE: ランダム打鍵で全部のキーを叩かせる理由がない(それだと腕が動きすぎる懸念がある)ので絞っておく
         private static readonly string[] RandomKeyNames　= new []

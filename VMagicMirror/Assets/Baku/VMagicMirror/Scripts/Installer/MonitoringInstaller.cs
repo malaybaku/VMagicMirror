@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror.Installer
         public override void Install(DiContainer container)
         {
             container.Bind<IKeyMouseEventSource>()
-                .FromInstance(rawInputChecker)
+                .FromInstance(robustRawInputChecker)
                 .AsCached();
             container.BindInstance(mousePositionProvider);
             container.BindInstance(faceTracker);

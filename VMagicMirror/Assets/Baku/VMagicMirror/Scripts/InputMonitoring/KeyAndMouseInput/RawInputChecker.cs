@@ -1,16 +1,23 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using UnityEngine;
 using Linearstar.Windows.RawInput;
 using Linearstar.Windows.RawInput.Native;
 using UniRx;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Baku.VMagicMirror
 {
     /// <summary> RawInput的なマウス情報を返してくるやつ </summary>
     public class RawInputChecker : MonoBehaviour, IReleaseBeforeQuit, IKeyMouseEventSource
     {
+        private const string MouseLDownEventName = "LDown";
+        private const string MouseRDownEventName = "RDown";
+        private const string MouseMDownEventName = "MDown";
+        
         private WindowProcedureHook _windowProcedureHook = null;
 
         public IObservable<string> PressedRawKeys => _rawKeys;
@@ -19,8 +26,9 @@ namespace Baku.VMagicMirror
         
         private readonly Subject<string> _rawKeys = new Subject<string>();
         private readonly Subject<string> _keys = new Subject<string>();
-        //NOTE: コレだけはとりあえず発火させない: RawInputとの相性が悪そうなため
         private readonly Subject<string> _mouseButton = new Subject<string>();
+
+        private bool _randomizeKey = false;
 
         #region マウス
         
@@ -51,6 +59,8 @@ namespace Baku.VMagicMirror
         
         #region キーボード
         
+        //叩いたキーのコード。(多分大丈夫なんだけど)イベントハンドラを短時間で抜けときたいのでこういう持ち方にする
+        private readonly ConcurrentQueue<int> _downKeys = new ConcurrentQueue<int>();
         
         #endregion
         
@@ -61,6 +71,11 @@ namespace Baku.VMagicMirror
                 VmmCommands.EnableFpsAssumedRightHand,
                 c => EnableFpsAssumedRightHand = c.ToBoolean()
                 );
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableHidRandomTyping,
+                c => _randomizeKey = c.ToBoolean()
+                );
+            
         }
         
         private void Start()
@@ -69,6 +84,42 @@ namespace Baku.VMagicMirror
             _windowProcedureHook = new WindowProcedureHook();
             _windowProcedureHook.StartObserve();
             _windowProcedureHook.ReceiveRawInput += OnReceiveRawInput;
+        }
+
+        private void Update()
+        {
+            while (_downKeys.TryDequeue(out int keyCode))
+            {
+                //キーイベントとしてマウスボタンの情報も載ってくることに注意。
+                //この辺のコードはWinFormKeysにも載ってるし"Virtual Key Code"とかでググると出ます
+                if (keyCode == 1)
+                {
+                    _mouseButton.OnNext(MouseLDownEventName);
+                }
+                else if (keyCode == 2)
+                {
+                    _mouseButton.OnNext(MouseRDownEventName);
+                }
+                else if (keyCode == 4)
+                {
+                    _mouseButton.OnNext(MouseMDownEventName);
+                }
+                else
+                {
+                    var rawKey = ((Keys)keyCode).ToString();
+                    _rawKeys.OnNext(rawKey);
+                    
+                    if (_randomizeKey)
+                    {
+                        var keys = RandomKeyboardKeys.RandomKeyNames;
+                        _keys.OnNext(keys[Random.Range(0, keys.Length)]);
+                    }
+                    else
+                    {
+                        _keys.OnNext(rawKey);
+                    }
+                }
+            }
         }
 
         private void OnDisable()
@@ -102,9 +153,8 @@ namespace Baku.VMagicMirror
         }
         
         private void AddKeyDown(int keyCode, bool isRightKey)
-        {
-            
-            
+        {            
+            _downKeys.Enqueue(keyCode);
         }
 
         public void ReleaseBeforeCloseConfig()

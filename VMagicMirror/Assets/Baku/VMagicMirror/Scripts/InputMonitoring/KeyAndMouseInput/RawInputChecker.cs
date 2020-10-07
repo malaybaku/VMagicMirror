@@ -81,6 +81,22 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
+            //キーボードだけ登録する。マウスはUnityが自動でRegisterするらしく、下手に触ると危ないので触らない。
+#if !UNITY_EDITOR
+            try
+            {
+                RawInputDevice.RegisterDevice(
+                    HidUsageAndPage.Keyboard,
+                    RawInputDeviceFlags.InputSink | RawInputDeviceFlags.NoLegacy, 
+                    NativeMethods.GetUnityWindowHandle()
+                    );
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
+#endif
+            
             //NOTE: このイベントはエディタ実行では飛んできません(Window Procedureに関わるので)
             _windowProcedureHook = new WindowProcedureHook();
             _windowProcedureHook.StartObserve();
@@ -91,7 +107,8 @@ namespace Baku.VMagicMirror
         {
             while (_downKeys.TryDequeue(out int keyCode))
             {
-                //キーイベントとしてマウスボタンの情報も載ってくることに注意。
+                //キーイベントとしてマウスボタンの情報も載っているので理屈上正しくなるように割り当てる。
+                //ただし実際にはこれらのコードには到達しないっぽいのを確認してます…
                 //この辺のコードはWinFormKeysにも載ってるし"Virtual Key Code"とかでググると出ます
                 if (keyCode == 1)
                 {
@@ -132,13 +149,11 @@ namespace Baku.VMagicMirror
         {
             var data = RawInputData.FromHandle(lParam);
             
-            if (data is RawInputMouseData mouseData &&
-                mouseData.Mouse.Flags.HasFlag(RawMouseFlags.MoveRelative))
+            if (data is RawInputMouseData mouseData && mouseData.Mouse.Flags.HasFlag(RawMouseFlags.MoveRelative))
             {
                 AddDif(mouseData.Mouse.LastX, mouseData.Mouse.LastY);
             }
-            else if (data is RawInputKeyboardData keyData &&
-                     keyData.Keyboard.Flags.HasFlag(RawKeyboardFlags.Down))
+            else if (data is RawInputKeyboardData keyData && keyData.Keyboard.Flags == RawKeyboardFlags.Down)
             {
                 AddKeyDown(keyData.Keyboard.VirutalKey);
             }

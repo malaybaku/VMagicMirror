@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc468fe23300d614bb995f234222176e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  globalHookInputChecker: {fileID: 3968200917505937623}
   robustRawInputChecker: {fileID: 1881006542137438839}
   mousePositionProvider: {fileID: 5115481182964325839}
   faceTracker: {fileID: 464634160456065510}
@@ -252,6 +253,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5875495639101518092}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3968200917505937623 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7392682508180169179, guid: ee92b6c9100e05d4d88246a79d8af1d9,
+    type: 3}
+  m_PrefabInstance: {fileID: 5875495639101518092}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b157506b0989896458c4443037aeea30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &5115481182964325839 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1690014445440871619, guid: ee92b6c9100e05d4d88246a79d8af1d9,

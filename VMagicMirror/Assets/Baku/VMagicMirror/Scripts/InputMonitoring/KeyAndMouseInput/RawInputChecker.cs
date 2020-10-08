@@ -29,6 +29,7 @@ namespace Baku.VMagicMirror
         public IObservable<string> MouseButton => _mouseButton;
         private readonly Subject<string> _mouseButton = new Subject<string>();
 
+
         #region マウス
         
         private int _dx;
@@ -57,6 +58,10 @@ namespace Baku.VMagicMirror
         #endregion
         
         #region キーボード
+        
+        //NOTE: これはウィンドウプロシージャ側のみが参照する値で、
+        //WM_INPUTベースで上がった/下がったをここにポンポン入れていく
+        private readonly bool[] _keyDownFlags = new bool[256];
         
         private bool _randomizeKey = false;
 
@@ -87,7 +92,7 @@ namespace Baku.VMagicMirror
             {
                 RawInputDevice.RegisterDevice(
                     HidUsageAndPage.Keyboard,
-                    RawInputDeviceFlags.InputSink | RawInputDeviceFlags.NoLegacy, 
+                    RawInputDeviceFlags.InputSink | RawInputDeviceFlags.NoLegacy | RawInputDeviceFlags.AppKeys, 
                     NativeMethods.GetUnityWindowHandle()
                     );
             }
@@ -153,9 +158,34 @@ namespace Baku.VMagicMirror
             {
                 AddDif(mouseData.Mouse.LastX, mouseData.Mouse.LastY);
             }
-            else if (data is RawInputKeyboardData keyData && keyData.Keyboard.Flags == RawKeyboardFlags.Down)
+            else if (data is RawInputKeyboardData keyData)
             {
-                AddKeyDown(keyData.Keyboard.VirutalKey);
+                var key = keyData.Keyboard;
+                int code = GetKeyCode(key);
+                //255は「良く分からん」的なキー情報なので弾く。
+                //とくにNumLockがオフのときArrow / INS / DEL / HOME / END / PgUp / PgDnを叩くと、
+                //(なぜか)255の入力と該当キー入力の2重のイベントが吹っ飛んでくるので、それを無視するのが狙い
+                if (code < 0 || code > 254)
+                {
+                    return;
+                }
+                
+                //NOTE: ↓はkey.Flags % 2 == 0と書くのと同じような意味
+                bool isDown = !key.Flags.HasFlag(RawKeyboardFlags.Up);
+                
+                if (_keyDownFlags[code] == isDown)
+                {
+                    //キーが押しっぱなしの場合にイベントがバシバシ来るのをここで止める
+                    return;
+                }
+
+                _keyDownFlags[code] = isDown;
+                if (!isDown)
+                {
+                    return;
+                }
+                
+                AddKeyDown(code);
             }
         }
 
@@ -173,5 +203,51 @@ namespace Baku.VMagicMirror
         public void ReleaseBeforeCloseConfig() => _windowProcedureHook.StopObserve();
 
         public Task ReleaseResources() => Task.CompletedTask;
+
+        private static int GetKeyCode(RawKeyboard key)
+        {
+            int code = key.VirutalKey;
+            
+            switch (code)
+            {
+                //Ctrl, Shift, Altが右か左か確定させる
+                case (int) Keys.ControlKey:
+                    return key.Flags.HasFlag(RawKeyboardFlags.RightKey)
+                        ? (int) Keys.RControlKey
+                        : (int) Keys.LControlKey;
+                case (int) Keys.ShiftKey:
+                    return key.Flags.HasFlag(RawKeyboardFlags.RightKey)
+                        ? (int) Keys.RShiftKey
+                        : (int) Keys.LShiftKey;
+                case (int) Keys.Menu:
+                    return key.Flags.HasFlag(RawKeyboardFlags.RightKey)
+                        ? (int) Keys.RMenu
+                        : (int) Keys.LMenu;      
+                
+                //NumPadキーと矢印キーとかの解釈を確定させる
+                case (int) Keys.Insert:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad0;
+                case (int) Keys.Delete:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.Decimal;
+                case (int) Keys.Home:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad7;
+                case (int) Keys.End:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad1;
+                case (int) Keys.PageUp:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad9;
+                case (int) Keys.PageDown:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad3;
+                case (int) Keys.Left:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad4;
+                case (int) Keys.Up:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad8;
+                case (int) Keys.Down:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad2;
+                case (int) Keys.Right:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad6;
+                default:
+                    return code; 
+            }
+        }
     }
 }

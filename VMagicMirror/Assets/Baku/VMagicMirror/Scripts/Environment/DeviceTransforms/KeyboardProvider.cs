@@ -16,7 +16,7 @@ namespace Baku.VMagicMirror
         //見た目で確認できるようにあえて横長に書いておく。
         private static readonly string[][] keyCodeNames = new string[][]
         {
-            new string[] { "LControlKey", "LWin", "Alt", "_",  "_", "_", "Space", "_",  "_", "_", "_", "_",         "_",                             "_",       "RControlKey",  "Left",   "Down", "Right",        "NumPad0", "_",       "Decimal",  "_", },
+            new string[] { "LControlKey", "LWin", "LMenu", "_",  "_", "_", "Space", "_",  "_", "_", "_", "_",         "_",                             "RMenu",       "RControlKey",  "Left",   "Down", "Right",        "NumPad0", "_",       "Decimal",  "_", },
             new string[] { "LShiftKey", "_", "Z", "X",   "C",  "V",  "B",  "N",     "M",  "Oemcomma", "OemPeriod", "OemQuestion", "OemBackslash",    "_",         "RShiftKey",  "_",      "Up",   "_",            "NumPad1", "NumPad2", "NumPad3",  "_" },
             new string[] { "CapsLock", "_",  "A",    "S",   "D",  "F",  "G",  "H",     "J",  "K",        "L",      "Oemplus",     "OemSemicolon", "OemCloseBrackets", "Enter",  "_",      "_",    "_",            "NumPad4", "NumPad5", "NumPad6",  "_"},
             new string[] { "Tab",         "Q",    "W",   "E",  "R",  "T",  "Y",     "U",  "I",        "O",         "P",           "Oemtilde", "OemOpenBrackets",     "_", "_",  "Delete", "End",  "PageDown",     "NumPad7", "NumPad8", "NumPad9",  "Add", },

@@ -103,6 +103,7 @@ namespace Baku.VMagicMirror
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);
         public const string SetMicrophoneDeviceName = nameof(SetMicrophoneDeviceName);
+        public const string SetMicrophoneSensitivity = nameof(SetMicrophoneSensitivity);
 
         // Motion, Eye
         public const string LookAtStyle = nameof(LookAtStyle);

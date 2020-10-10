@@ -12,6 +12,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private MonitoringInstaller monitoring = null;
         [SerializeField] private ModelLoadInstaller modelLoad = null;
         [SerializeField] private ScreenshotCountDownUiInstaller screenshotCountDown = null;
+        [SerializeField] private MotionCalculationInstaller motionCalculationInstaller = null;
         [SerializeField] private FaceControlInstaller faceControl = null;
         [SerializeField] private WordToMotionInstaller wordToMotion = null;
         [SerializeField] private DeformableCounter deformableCounterPrefab = null;
@@ -28,6 +29,7 @@ namespace Baku.VMagicMirror.Installer
                     modelLoad,
                     interProcess,
                     screenshotCountDown,
+                    motionCalculationInstaller,
                     faceControl,
                     wordToMotion,
                 })

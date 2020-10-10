@@ -21,8 +21,8 @@ namespace Baku.VMagicMirror
         [Tooltip("微細運動をスムージングする速度ファクタ")]
         [SerializeField] private float speedFactor = 11.0f;
 
-        [Inject] private IVRMLoadable _vrmLoadable = null;
-
+        [SerializeField] private FaceAngleToEyeRot faceAngleToEyeRot = null;
+        
         private Transform _rightEye = null;
         private Transform _leftEye = null;
         private bool _hasValidEyeBone = false;
@@ -33,10 +33,21 @@ namespace Baku.VMagicMirror
         
         public bool IsActive { get; set; }
         
-        private void Start()
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable)
         {
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+            vrmLoadable.VrmLoaded += info =>
+            {
+                _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
+                _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
+                _hasValidEyeBone = (_rightEye != null && _leftEye != null);
+            };
+            vrmLoadable.VrmDisposing += () =>
+            {
+                _rightEye = null;
+                _leftEye = null;
+                _hasValidEyeBone = false;
+            };
         }
 
         private void LateUpdate()
@@ -59,24 +70,11 @@ namespace Baku.VMagicMirror
             
             if (_hasValidEyeBone && IsActive)
             {
+                var rot = faceAngleToEyeRot.SuggestedRotation * CurrentRotation;
                 //この呼び出しより前の時点でVRMLookAtが毎フレームEyeの位置をいい感じにするため、毎フレームごとに補正してればOK
-                _rightEye.localRotation *= CurrentRotation;
-                _leftEye.localRotation *= CurrentRotation;
+                _rightEye.localRotation *= rot;
+                _leftEye.localRotation *= rot;
             }
-        }
-        
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
-            _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
-            _hasValidEyeBone = (_rightEye != null && _leftEye != null);
-        }
-
-        private void OnVrmDisposing()
-        {
-            _rightEye = null;
-            _leftEye = null;
-            _hasValidEyeBone = false;
         }
     }
 }

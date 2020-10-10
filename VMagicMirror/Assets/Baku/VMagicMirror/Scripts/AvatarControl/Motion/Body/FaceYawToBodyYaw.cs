@@ -20,11 +20,11 @@ namespace Baku.VMagicMirror
         public float YawAngleDegree { get; private set; }
 
         //NOTE: この値はフィルタされてない生のやつ
-        private float _targetAngleDegree = 0;
+        public float RawTargetAngle { get; private set; }
         
         public void UpdateSuggestAngle()
         {            
-            float idealSpeed = (_targetAngleDegree * GoalRate - YawAngleDegree) / TimeFactor;
+            float idealSpeed = (RawTargetAngle * GoalRate - YawAngleDegree) / TimeFactor;
             _speedDegreePerSec = Mathf.Lerp(
                 _speedDegreePerSec,
                 idealSpeed,
@@ -37,14 +37,14 @@ namespace Baku.VMagicMirror
 
         public void SetZeroTarget()
         {
-            _targetAngleDegree = 0;
+            RawTargetAngle = 0;
         }
 
         public void CheckAngle(Quaternion headRotation)
         {
             //首の回転ベースで正面向きがどうなったか見る: コレでうまく動きます
             var headForward = headRotation * Vector3.forward;
-            _targetAngleDegree = -(Mathf.Atan2(headForward.z, headForward.x) * Mathf.Rad2Deg - 90);
+            RawTargetAngle = -(Mathf.Atan2(headForward.z, headForward.x) * Mathf.Rad2Deg - 90);
         }
     }
 }

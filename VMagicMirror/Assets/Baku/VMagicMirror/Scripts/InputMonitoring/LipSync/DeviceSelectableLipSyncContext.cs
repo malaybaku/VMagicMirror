@@ -195,13 +195,12 @@ namespace Baku.VMagicMirror
             //ここ遅かったらヤダな～というポイント
             for (int i = 0; i < _processBuffer.Length; i++)
             {
-                //NOTE: clampはもしやるとしてもココでやっていいかが場合による。
-                //ゲイン計算の邪魔になる、という事に留意！
-                _processBuffer[i] *= _sensitivityFactor; //math.clamp(_processBuffer[i] * _sensitivityFactor, -1f, 1f);
+                //NOTE: clampしないでもOVRLipSyncは動くのでclampしないでいい
+                _processBuffer[i] *= _sensitivityFactor;
             }
         }
 
-        //バッファに載ってる音に対してゲイン(-44dB ~ +6dB)を0 ~ 50の数値に変換したものを計算してデータを更新する。
+        //バッファに載ってる音に対してゲインを0 ~ 50の数値に変換したものを計算してデータを更新する。
         private void UpdateVolumeLevelOnBuffer()
         {
             //NOTE: この方法はちょっと桁落ちとかのリスクあるんだけど、そんなにシビアな計算じゃないのでザツにやる
@@ -210,10 +209,9 @@ namespace Baku.VMagicMirror
             {
                 sum += _processBuffer[i] * _processBuffer[i];
             }
-
-            float mean = Mathf.Sqrt(sum / _processBuffer.Length);
-            float meanDb = Mathf.Log10(mean) * 10f;
             
+            float mean = sum / _processBuffer.Length;
+            float meanDb = Mathf.Log10(mean) * 10f;
             int rawResult = Mathf.Clamp((int)(meanDb - BottomVolumeDb), 0, 50);
             _currentVolumeLevel = Mathf.Max(rawResult, _currentVolumeLevel - LevelDecreasePerRefresh);
         }

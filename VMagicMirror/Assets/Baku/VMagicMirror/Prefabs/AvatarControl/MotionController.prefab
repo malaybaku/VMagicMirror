@@ -591,6 +591,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5813678810510073683}
+  - component: {fileID: 733898353923353159}
   m_Layer: 0
   m_Name: MotionController
   m_TagString: Untagged
@@ -618,6 +619,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &733898353923353159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678810510073684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84a49c8a58a41634c80cdf52838acd8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  faceAttitude: {fileID: 5813678809054739210}
+  faceAngleToBodyAngle: {fileID: 3376032428813691452}
 --- !u!1 &7492520328184788948
 GameObject:
   m_ObjectHideFlags: 0

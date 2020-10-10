@@ -20,6 +20,8 @@ namespace Baku.VMagicMirror
 
         [Tooltip("微細運動をスムージングする速度ファクタ")]
         [SerializeField] private float speedFactor = 11.0f;
+
+        [SerializeField] private FaceAngleToEyeRot faceAngleToEyeRot = null;
         
         private Transform _rightEye = null;
         private Transform _leftEye = null;
@@ -68,9 +70,10 @@ namespace Baku.VMagicMirror
             
             if (_hasValidEyeBone && IsActive)
             {
+                var rot = faceAngleToEyeRot.SuggestedRotation * CurrentRotation;
                 //この呼び出しより前の時点でVRMLookAtが毎フレームEyeの位置をいい感じにするため、毎フレームごとに補正してればOK
-                _rightEye.localRotation *= CurrentRotation;
-                _leftEye.localRotation *= CurrentRotation;
+                _rightEye.localRotation *= rot;
+                _leftEye.localRotation *= rot;
             }
         }
     }

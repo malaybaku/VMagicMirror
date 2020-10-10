@@ -18,12 +18,12 @@ namespace Baku.VMagicMirror
         [Inject]
         public void Initialize(
             IMessageReceiver receiver, IMessageSender sender, 
-            RawInputChecker rawInputChecker,
+            IKeyMouseEventSource keyMouseEventSource,
             XInputGamePad gamepadListener,
             MidiInputObserver midiObserver
             )
         {
-            _keyboard =new KeyboardToWordToMotion(rawInputChecker);
+            _keyboard =new KeyboardToWordToMotion(keyMouseEventSource);
             _midi = new MidiToWordToMotion(receiver, sender, midiObserver);
             _gamepad = new GamepadToWordToMotion(gamepadListener);
             _wordAnalyzer = new WordAnalyzer();
@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror
                 }
             };
 
-            rawInputChecker.PressedRawKeys.Subscribe(keyName =>
+            keyMouseEventSource.PressedRawKeys.Subscribe(keyName =>
             {
                 if (UseKeyboardWordTypingForWordToMotion)
                 {

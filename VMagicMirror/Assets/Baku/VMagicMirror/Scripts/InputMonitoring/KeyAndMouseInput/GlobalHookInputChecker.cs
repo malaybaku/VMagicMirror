@@ -12,7 +12,11 @@ namespace Baku.VMagicMirror
 {
     //NOTE: とくに管理してないが、このクラスは複数あるとマズイです(グローバルフックが二重にかかってしまうので)
     
-    /// <summary> キーボード/マウスボタンイベントを監視してUIスレッドで発火してくれる凄いやつだよ </summary>
+    /// <summary> マウスボタンイベントを監視してUIスレッドで発火してくれる凄いやつだよ </summary>
+    /// <remarks>
+    /// 以前はここでキーボードのグローバルフックも使っていたが、RawInput実装に切り替わったため廃止。
+    /// 1バージョンぶん様子見のフェーズをはさみたいので、あえて完全削除ではなくコメントアウトにとどめてます
+    /// </remarks>
     public class GlobalHookInputChecker : MonoBehaviour, IReleaseBeforeQuit, IKeyMouseEventSource
     {
         private static readonly Dictionary<int, string> MouseEventNumberToEventName = new Dictionary<int, string>()
@@ -93,17 +97,15 @@ namespace Baku.VMagicMirror
             
             _hasStopped = true;
             _shouldStop.Value = true;
-            // var threadId = _threadId.Value;
-            // WinApi.PostThreadMessage(threadId, WinApi.WM_APP_THREAD_QUIT, IntPtr.Zero, IntPtr.Zero);
         }
 
-        private void OnKeyboardHookEvent(object sender, KeyboardHookedEventArgs e)
-        {
-            if (e.UpDown == KeyboardUpDown.Down)
-            {
-                _pressedKeysConcurrent.Enqueue(e.KeyCode.ToString());
-            }
-        }
+        // private void OnKeyboardHookEvent(object sender, KeyboardHookedEventArgs e)
+        // {
+        //     if (e.UpDown == KeyboardUpDown.Down)
+        //     {
+        //         _pressedKeysConcurrent.Enqueue(e.KeyCode.ToString());
+        //     }
+        // }
 
         private void OnMouseButtonEvent(int wParamVal)
         {
@@ -113,9 +115,9 @@ namespace Baku.VMagicMirror
         private void InputObserveThread()
         {
             _threadId.Value = WinApi.GetCurrentThreadId();
-            var keyboardHook = new KeyboardHook();
+            //var keyboardHook = new KeyboardHook();
             var mouseHook = new MouseHook();
-            keyboardHook.KeyboardHooked += OnKeyboardHookEvent; 
+            //keyboardHook.KeyboardHooked += OnKeyboardHookEvent; 
             mouseHook.MouseButton += OnMouseButtonEvent;
 
             try
@@ -141,9 +143,9 @@ namespace Baku.VMagicMirror
                 LogOutput.Instance.Write(ex);
             }
 
-            keyboardHook.KeyboardHooked -= OnKeyboardHookEvent; 
+            //keyboardHook.KeyboardHooked -= OnKeyboardHookEvent; 
             mouseHook.MouseButton -= OnMouseButtonEvent;
-            keyboardHook.Dispose();
+            //keyboardHook.Dispose();
             mouseHook.RemoveHook();
         }
 
@@ -161,9 +163,6 @@ namespace Baku.VMagicMirror
             [DllImport("user32.dll")]
             public static extern int DispatchMessage(IntPtr lpMsg);
 
-            [DllImport("user32.dll")]
-            public static extern bool PostThreadMessage(uint idThread, uint msg, IntPtr wParam, IntPtr lParam);
-            
             [DllImport("kernel32.dll")]
             public static extern uint GetCurrentThreadId();
             

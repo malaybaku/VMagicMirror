@@ -186,9 +186,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72528a9085dcaa84a90b83fc84061e82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  changeTime: 0.4
+  changeTime: 0.3
   changeTimeRange: 3
-  range: {x: 2, y: 1}
+  range: {x: 2, y: 4}
   speedFactor: 4
 --- !u!114 &4936425215266607946
 MonoBehaviour:
@@ -239,7 +239,7 @@ MonoBehaviour:
   headRotThreshold: 25
   headRotResetSpeed: 15
   headRotBlinkProbability: 0.6
-  eyeRotBlinkSpeedThreshold: 15
+  eyeRotBlinkSpeedThreshold: 18
   eyeRotBlinkProbability: 0.8
   lipSyncContext: {fileID: 3748904030990320927}
   lipSyncVisemeThreshold: 0.2

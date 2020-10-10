@@ -20,9 +20,7 @@ namespace Baku.VMagicMirror
 
         [Tooltip("微細運動をスムージングする速度ファクタ")]
         [SerializeField] private float speedFactor = 11.0f;
-
-        [Inject] private IVRMLoadable _vrmLoadable = null;
-
+        
         private Transform _rightEye = null;
         private Transform _leftEye = null;
         private bool _hasValidEyeBone = false;
@@ -33,10 +31,21 @@ namespace Baku.VMagicMirror
         
         public bool IsActive { get; set; }
         
-        private void Start()
+        [Inject]
+        public void Initialize(IVRMLoadable vrmLoadable)
         {
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmDisposing;
+            vrmLoadable.VrmLoaded += info =>
+            {
+                _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
+                _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
+                _hasValidEyeBone = (_rightEye != null && _leftEye != null);
+            };
+            vrmLoadable.VrmDisposing += () =>
+            {
+                _rightEye = null;
+                _leftEye = null;
+                _hasValidEyeBone = false;
+            };
         }
 
         private void LateUpdate()
@@ -63,20 +72,6 @@ namespace Baku.VMagicMirror
                 _rightEye.localRotation *= CurrentRotation;
                 _leftEye.localRotation *= CurrentRotation;
             }
-        }
-        
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
-            _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
-            _hasValidEyeBone = (_rightEye != null && _leftEye != null);
-        }
-
-        private void OnVrmDisposing()
-        {
-            _rightEye = null;
-            _leftEye = null;
-            _hasValidEyeBone = false;
         }
     }
 }

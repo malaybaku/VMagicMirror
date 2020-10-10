@@ -35,9 +35,9 @@ namespace Baku.VMagicMirror
         
         private IDisposable _inputObserver;
 
-        public KeyboardToWordToMotion(IKeyMouseEventSource keyMouseEventSource)
+        public KeyboardToWordToMotion(RawInputChecker rawInputChecker)
         {
-            _inputObserver = keyMouseEventSource.PressedRawKeys.Subscribe(keyName =>
+            _inputObserver = rawInputChecker.PressedRawKeys.Subscribe(keyName =>
             {
                 //NOTE: D0-D8とNumPad系のキーはサニタイズ対象じゃないので、そのまま受け取っても大丈夫
                 if (_keyToItemIndex.ContainsKey(keyName))

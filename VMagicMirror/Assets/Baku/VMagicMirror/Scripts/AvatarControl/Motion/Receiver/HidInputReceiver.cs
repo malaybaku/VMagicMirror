@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private HeadIkIntegrator headIkIntegrator = null;
         [SerializeField] private GamepadBasedBodyLean gamepadBasedBodyLean = null;
         
-        [Inject] private IKeyMouseEventSource _rawInput = null;
+        [Inject] private RawInputChecker _rawInput = null;
         [Inject] private XInputGamePad _gamePad = null;
         [Inject] private MidiInputObserver _midiInput = null;
         

@@ -68,7 +68,7 @@ namespace Baku.VMagicMirror
         private readonly WindowAreaIo _windowAreaIo = new WindowAreaIo();
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, IKeyMouseEventSource keyboardEventSource)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, RawInputChecker rawInputChecker)
         {
             receiver.AssignCommandHandler(
                 VmmCommands.Chromakey,
@@ -123,7 +123,7 @@ namespace Baku.VMagicMirror
                     }
                 });
 
-            _mouseObserve = keyboardEventSource.MouseButton.Subscribe(info =>
+            _mouseObserve = rawInputChecker.MouseButton.Subscribe(info =>
             {
                 if (info == "LDown")
                 {

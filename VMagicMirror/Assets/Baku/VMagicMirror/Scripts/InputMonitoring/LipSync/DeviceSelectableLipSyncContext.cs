@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -19,6 +20,25 @@ namespace Baku.VMagicMirror
 
         private int _prevPosition = -1;
         private int _positionNotMovedCount = 0;
+
+        private int _sensitivity = 0;
+
+        /// <summary> マイク感度を[dB]単位で取得、設定します。 </summary>
+        public int Sensitivity
+        {
+            get => _sensitivity;
+            set
+            {
+                if (_sensitivity == value)
+                {
+                    return;
+                }
+                _sensitivity = value;
+                _sensitivityFactor = Mathf.Pow(10f, Sensitivity * 0.1f);
+            }
+        }
+
+        private float _sensitivityFactor = 1f;
 
         public bool IsRecording { get; private set; } = false;
         public string DeviceName { get; private set; } = "";
@@ -96,6 +116,7 @@ namespace Baku.VMagicMirror
                     Array.Copy(_microphoneBuffer, _head, _processBuffer, 0, _processBuffer.Length);
                 }
 
+                ApplySensitivityToProcessBuffer();
                 OVRLipSync.ProcessFrame(Context, _processBuffer, Frame);
 
                 _head += _processBuffer.Length;
@@ -122,7 +143,21 @@ namespace Baku.VMagicMirror
             }
         }
         
-        
+        //マイク感度が0dB以外の場合、値を調整します。
+        private void ApplySensitivityToProcessBuffer()
+        {
+            if (Sensitivity == 0)
+            {
+                return;
+            }
+            
+            //ここ遅かったらヤダな～というポイント
+            for (int i = 0; i < _processBuffer.Length; i++)
+            {
+                _processBuffer[i] = math.clamp(_processBuffer[i] * _sensitivityFactor, -1f, 1f);
+            }
+        }
+
 
         static int GetDataLength(int bufferLength, int head, int tail) 
             => (head < tail) 

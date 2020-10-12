@@ -14,6 +14,17 @@ namespace Baku.VMagicMirror
         [SerializeField] private ExternalTrackerBodyOffset exTrackerBodyMotion = null;
         [SerializeField] private WaitingBodyMotion waitingBodyMotion = null;
 
+        [Tooltip("カメラに写った状態で体が横に並進する量の最大値")]
+        [SerializeField] private float yMaxLength = 0.2f;
+        [Tooltip("カメラに写った状態で体がタテに並進する量の最大値")]
+        [SerializeField] private float xMaxLength = 0.2f;
+        [Tooltip("体が最大まで横に並進したときのyawへの寄与(deg)")]
+        [SerializeField] private float xToYawFactor = 20f;
+        [Tooltip("体が最大まで横に並進したときのrollへの寄与(deg)")]
+        [SerializeField] private float xToRollFactor = 2f;
+        [Tooltip("体が最大までタテに並進したときのpitchへの寄与(deg)、下げるときに効いて上がるときは効かない")]
+        [SerializeField] private float yToPitchFactor = 10f;
+
         public WaitingBodyMotion WaitingBodyMotion => waitingBodyMotion;
 
         private Transform _bodyIk = null;
@@ -46,10 +57,12 @@ namespace Baku.VMagicMirror
                 waitingBodyMotion.Offset;
 
             //画像ベースの移動量はIKと体に利かす -> 体に移動量を足さないと腰だけ動いて見た目が怖くなります
-            _vrmRoot.position = imageBasedBodyMotion.BodyIkXyOffset + exTrackerBodyMotion.BodyOffset;
+            var offset = imageBasedBodyMotion.BodyIkXyOffset + exTrackerBodyMotion.BodyOffset;
+            _vrmRoot.position = offset;
 
             //スムージングはサブクラスの方でやっているのでコッチでは処理不要。
-            _vrmRoot.localRotation = bodyLeanIntegrator.BodyLeanSuggest;
+            //第1項は並進要素を腰にきかせて違和感をへらすためのやつです
+            _vrmRoot.localRotation = BodyOffsetToBodyAngle(offset) * bodyLeanIntegrator.BodyLeanSuggest;
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -68,6 +81,21 @@ namespace Baku.VMagicMirror
 
             _vrmRoot = null;
             imageBasedBodyMotion.OnVrmDisposing();
+        }
+        
+        private Quaternion BodyOffsetToBodyAngle(Vector3 offset)
+        {
+            float yaw = xToYawFactor * Mathf.Clamp(offset.x / xMaxLength, -1f, 1f);
+            float roll = xToRollFactor * Mathf.Clamp(-offset.x / xMaxLength, -1f, 1f);
+            float pitch = 0f;
+            //下がるときだけ角度がつくことに注意
+            if (offset.y < 0)
+            {
+                float yFactor = Mathf.Clamp01(-offset.y / yMaxLength);
+                pitch = yToPitchFactor * yFactor * yFactor;
+            }
+            
+            return Quaternion.Euler(pitch, yaw, roll);
         }
 
         public void EnableImageBaseBodyLeanZ(bool enable)

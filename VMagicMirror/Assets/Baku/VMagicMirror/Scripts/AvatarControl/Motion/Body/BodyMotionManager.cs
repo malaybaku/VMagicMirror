@@ -27,6 +27,8 @@ namespace Baku.VMagicMirror
 
         public WaitingBodyMotion WaitingBodyMotion => waitingBodyMotion;
 
+        private FaceControlConfiguration _faceControlConfig;
+
         private Transform _bodyIk = null;
 
         private Transform _vrmRoot = null;
@@ -34,9 +36,11 @@ namespace Baku.VMagicMirror
         private bool _isVrmLoaded = false;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, IKTargetTransforms ikTargets)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, 
+            IKTargetTransforms ikTargets, FaceControlConfiguration faceControlConfig)
         {
             _bodyIk = ikTargets.Body;
+            _faceControlConfig = faceControlConfig;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             var _ = new BodyMotionManagerReceiver(receiver, this);
@@ -49,20 +53,22 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            var imageRelatedOffset = _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker
+                ? exTrackerBodyMotion.BodyOffset
+                : imageBasedBodyMotion.BodyIkXyOffset;
+            
             _bodyIk.localPosition =
                 _defaultBodyIkPosition + 
-                imageBasedBodyMotion.BodyIkXyOffset + 
+                imageRelatedOffset +
                 bodyLeanIntegrator.BodyOffsetSuggest + 　
-                exTrackerBodyMotion.BodyOffset +
                 waitingBodyMotion.Offset;
 
             //画像ベースの移動量はIKと体に利かす -> 体に移動量を足さないと腰だけ動いて見た目が怖くなります
-            var offset = imageBasedBodyMotion.BodyIkXyOffset + exTrackerBodyMotion.BodyOffset;
-            _vrmRoot.position = offset;
+            _vrmRoot.position = imageRelatedOffset;
 
             //スムージングはサブクラスの方でやっているのでコッチでは処理不要。
-            //第1項は並進要素を腰にきかせて違和感をへらすためのやつです
-            _vrmRoot.localRotation = BodyOffsetToBodyAngle(offset) * bodyLeanIntegrator.BodyLeanSuggest;
+            //第1項は並進要素を腰回転にきかせて違和感をへらすためのやつです
+            _vrmRoot.localRotation = BodyOffsetToBodyAngle(imageRelatedOffset) * bodyLeanIntegrator.BodyLeanSuggest;
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)

@@ -17,12 +17,12 @@ namespace Baku.VMagicMirror
         private float _speedDegreePerSec = 0;
         public float PitchAngleDegree { get; private set; }
 
-        //NOTE: この値はフィルタされてない生のやつ
-        private float _targetAngleDegree = 0;
+        //NOTE: この値はフィルタされてない生のやつ        
+        public float RawTargetAngle { get; private set; }
 
         public void UpdateSuggestAngle()
         {
-            float idealSpeed = (_targetAngleDegree * GoalRate - PitchAngleDegree) / TimeFactor;
+            float idealSpeed = (RawTargetAngle * GoalRate - PitchAngleDegree) / TimeFactor;
             _speedDegreePerSec = Mathf.Lerp(
                 _speedDegreePerSec,
                 idealSpeed,
@@ -35,14 +35,14 @@ namespace Baku.VMagicMirror
 
         public void SetZeroTarget()
         {
-            _targetAngleDegree = 0;
+            RawTargetAngle = 0;
         }
 
         public void CheckAngle(Quaternion headRotation)
         {
             //ピッチはforwardが上がった/下がったの話に帰着すればOK。下向きが正なことに注意
             var rotatedForward = headRotation * Vector3.forward;
-            _targetAngleDegree = Mathf.Asin(rotatedForward.y) * Mathf.Rad2Deg;            
+            RawTargetAngle = Mathf.Asin(rotatedForward.y) * Mathf.Rad2Deg;            
         }
     }
 }

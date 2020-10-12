@@ -950,6 +950,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3552a65e20d8b4f48a32c43a4b922e3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5813678808953247570 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 733898353923353159, guid: f6c219998e9cac44181a454adad331bf,
+    type: 3}
+  m_PrefabInstance: {fileID: 5813678808953247567}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84a49c8a58a41634c80cdf52838acd8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5933559195601192195
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1200,6 +1212,11 @@ PrefabInstance:
       propertyPath: wordToMotion
       value: 
       objectReference: {fileID: 7427902272773229851}
+    - target: {fileID: 42090108536346765, guid: 790d84fdbc606c944ad6592cf84f1ea9,
+        type: 3}
+      propertyPath: motionCalculationInstaller
+      value: 
+      objectReference: {fileID: 5813678808953247570}
     - target: {fileID: 8218640737285604641, guid: 790d84fdbc606c944ad6592cf84f1ea9,
         type: 3}
       propertyPath: m_RootOrder

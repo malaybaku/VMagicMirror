@@ -31,6 +31,10 @@ namespace Baku.VMagicMirror
                 message => SetMicrophoneDeviceName(message.Content)
             );
             receiver.AssignCommandHandler(
+                VmmCommands.SetMicrophoneSensitivity,
+                message => SetMicrophoneSensitivity(message.ToInt())
+                );
+            receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerEnable,
                 message => SetExTrackerEnable(message.ToBoolean())
             );
@@ -67,6 +71,12 @@ namespace Baku.VMagicMirror
         {
             _receivedDeviceName = deviceName;
             RefreshMicrophoneLipSyncStatus();
+        }
+
+        //[dB]単位であることに注意
+        private void SetMicrophoneSensitivity(int sensitivity)
+        {
+            _lipSyncContext.Sensitivity = sensitivity;
         }
 
         private void SetExTrackerEnable(bool enable)

@@ -153,6 +153,7 @@ GameObject:
   - component: {fileID: 5356487033938143835}
   - component: {fileID: 7456683640387377309}
   - component: {fileID: 1428360342779558990}
+  - component: {fileID: 3499730392626530847}
   m_Layer: 0
   m_Name: EyeController
   m_TagString: Untagged
@@ -186,10 +187,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72528a9085dcaa84a90b83fc84061e82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  changeTime: 0.4
+  changeTime: 0.3
   changeTimeRange: 3
-  range: {x: 2, y: 1}
+  range: {x: 2, y: 4}
   speedFactor: 4
+  faceAngleToEyeRot: {fileID: 3499730392626530847}
 --- !u!114 &4936425215266607946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,7 +241,7 @@ MonoBehaviour:
   headRotThreshold: 25
   headRotResetSpeed: 15
   headRotBlinkProbability: 0.6
-  eyeRotBlinkSpeedThreshold: 15
+  eyeRotBlinkSpeedThreshold: 18
   eyeRotBlinkProbability: 0.8
   lipSyncContext: {fileID: 3748904030990320927}
   lipSyncVisemeThreshold: 0.2
@@ -276,6 +278,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f973d8153abf846afa3506168d14c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3499730392626530847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028267383499195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4bde96e479b9048a4d5bfce4aa5f5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pitchRotFactor: 0.02
+  yawRotFactor: 0.04
 --- !u!1 &3748904030990320353
 GameObject:
   m_ObjectHideFlags: 0

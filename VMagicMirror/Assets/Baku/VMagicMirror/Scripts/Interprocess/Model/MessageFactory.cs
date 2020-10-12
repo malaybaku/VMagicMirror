@@ -28,6 +28,8 @@ namespace Baku.VMagicMirror
 
         public Message SetBlendShapeNames(string v) => WithArg(v);
 
+        public Message MicrophoneVolumeLevel(int level) => WithArg($"{level}");
+        
         public Message AutoAdjustResults(AutoAdjustParameters parameters)
             => WithArg(JsonUtility.ToJson(parameters));
 

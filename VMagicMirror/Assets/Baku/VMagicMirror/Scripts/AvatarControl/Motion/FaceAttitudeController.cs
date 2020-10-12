@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -18,6 +19,8 @@ namespace Baku.VMagicMirror
 
         private FaceTracker _faceTracker = null;
         private FaceRotToEuler _faceRotToEuler = null;
+
+        public event Action<Vector3> ImageBaseFaceRotationUpdated;
         
         [Inject]
         public void Initialize(FaceTracker faceTracker, OpenCVFacePose openCvFacePose, IVRMLoadable vrmLoadable)
@@ -68,6 +71,7 @@ namespace Baku.VMagicMirror
             {
                 _prevRotationEuler = Vector3.zero;
                 _prevRotationSpeedEuler = Vector3.zero;
+                ImageBaseFaceRotationUpdated?.Invoke(Vector3.zero);
                 return;
             }
 
@@ -89,7 +93,7 @@ namespace Baku.VMagicMirror
                 rotationEuler.y, 
                 rotationEuler.z
                 );
-            
+
             //このスクリプトより先にLookAtIKが走るハズなので、その回転と合成していく
             var rot = Quaternion.Euler(rotationAdjusted);
 
@@ -125,6 +129,8 @@ namespace Baku.VMagicMirror
             
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;
+            
+            ImageBaseFaceRotationUpdated?.Invoke(rotationAdjusted);
         }
 
         //ヨーの動きがあるとき、首を下に向けさせる(首振り運動は通常ピッチが下がるのを決め打ちでやる)ための処置

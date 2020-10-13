@@ -16,7 +16,6 @@ namespace Baku.VMagicMirror
         public int EyebrowDownScale = 100;
 
         public int LengthFromWristToTip = 12;
-        public int LengthFromWristToPalm = 6;
 
         //カメラ位置は不要: ポーリングで取得してるから勝手に反映される
     }

@@ -122,6 +122,11 @@ MonoBehaviour:
   imageBasedBodyMotion: {fileID: 5813678808713813112}
   exTrackerBodyMotion: {fileID: 6238302672375872197}
   waitingBodyMotion: {fileID: 5813678808713813113}
+  yMaxLength: 0.2
+  xMaxLength: 0.2
+  xToYawFactor: 20
+  xToRollFactor: 1
+  yToPitchFactor: 10
 --- !u!114 &8506340368463674577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,7 +637,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faceAttitude: {fileID: 5813678809054739210}
-  faceAngleToBodyAngle: {fileID: 3376032428813691452}
 --- !u!1 &7492520328184788948
 GameObject:
   m_ObjectHideFlags: 0

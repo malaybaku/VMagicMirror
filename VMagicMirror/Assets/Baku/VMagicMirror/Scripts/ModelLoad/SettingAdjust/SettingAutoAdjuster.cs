@@ -168,10 +168,6 @@ namespace Baku.VMagicMirror
                     $"{parameters.EyebrowDownScale}"
                     ),
                 new ReceivedCommand(
-                    VmmCommands.LengthFromWristToPalm,
-                    $"{parameters.LengthFromWristToPalm}"
-                    ),
-                new ReceivedCommand(
                     VmmCommands.LengthFromWristToTip,
                     $"{parameters.LengthFromWristToTip}"
                     ),
@@ -226,12 +222,8 @@ namespace Baku.VMagicMirror
             float distance = Vector3.Distance(tip.position, wrist.position);
 
             float factor = distance / ReferenceHandLength;
-
-            parameters.LengthFromWristToPalm = (int)(parameters.LengthFromWristToPalm * factor);
             parameters.LengthFromWristToTip = (int)(parameters.LengthFromWristToTip * factor);
-
         }
-
     }
 }
 

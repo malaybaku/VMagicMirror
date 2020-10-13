@@ -54,7 +54,6 @@ namespace Baku.VMagicMirror
 
         // Motion, Hand
         public const string LengthFromWristToTip = nameof(LengthFromWristToTip);
-        public const string LengthFromWristToPalm = nameof(LengthFromWristToPalm);
         public const string HandYOffsetBasic = nameof(HandYOffsetBasic);
         public const string HandYOffsetAfterKeyDown = nameof(HandYOffsetAfterKeyDown);
 
@@ -65,8 +64,6 @@ namespace Baku.VMagicMirror
         public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);
         public const string EnableFpsAssumedRightHand = nameof(EnableFpsAssumedRightHand);
         public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
-        [Obsolete]
-        public const string PresentationArmMotionScale = nameof(PresentationArmMotionScale);
         public const string PresentationArmRadiusMin = nameof(PresentationArmRadiusMin);
 
         // Motion, Wait

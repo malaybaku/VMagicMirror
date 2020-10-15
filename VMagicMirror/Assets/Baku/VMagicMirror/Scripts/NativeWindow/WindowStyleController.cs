@@ -328,6 +328,7 @@ namespace Baku.VMagicMirror
             uint windowStyle = isVisible ? defaultWindowStyle : WS_POPUP | WS_VISIBLE;
 #if !UNITY_EDITOR
             SetWindowLong(hwnd, GWL_STYLE, windowStyle);
+            SetUnityWindowTopMost(_isTopMost && _isWindowFrameHidden);
 #endif
         }
 
@@ -364,8 +365,9 @@ namespace Baku.VMagicMirror
         private void SetTopMost(bool isTopMost)
         {
             _isTopMost = isTopMost;
+            //NOTE: 背景透過をしてない = 普通のウィンドウが出てる間は別にTopMostじゃなくていいのがポイント
 #if !UNITY_EDITOR
-            SetUnityWindowTopMost(isTopMost);
+            SetUnityWindowTopMost(_isTopMost && _isWindowFrameHidden);
 #endif
         }
 

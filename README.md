@@ -74,7 +74,6 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [UniVRM](https://github.com/vrm-c/UniVRM) v0.55.0
 * [UniRx](https://github.com/neuecc/UniRx) (アセットストアから)
-* [XinputGamepad](https://github.com/kaikikazu/XinputGamePad/releases) v0.3b
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM/releases) v1.0.1
     + AniLipSyncが依存している[OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)のインストールも必要です。
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
@@ -85,8 +84,12 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
 * DOTween (アセットストアから)
+* [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
+* [LaserLightShader](https://noriben.booth.pm/items/2141514)
 
 FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。
+
+"Fly,Baby." および "LaserLightShader"はBOOTHで販売されているアセットで、ビルドに必須ではありませんが、もし導入しない場合、タイピング演出が一部動かなくなります。
 
 MidiJackはForkしたものを使っている点に注意して下さい。
 

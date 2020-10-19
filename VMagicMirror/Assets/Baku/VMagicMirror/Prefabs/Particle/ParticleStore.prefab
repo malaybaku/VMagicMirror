@@ -53,6 +53,14 @@ MonoBehaviour:
       type: 3}
     scale: {x: 1, y: 1, z: 1}
     useCollisionPlane: 0
+  - prefab: {fileID: 3945061218558243874, guid: 1af6776a722c25a43883e88f523aa4c4,
+      type: 3}
+    scale: {x: 0.02, y: 0.05, z: 0.02}
+    useCollisionPlane: 0
+  - prefab: {fileID: 3866527611974104064, guid: 1a943b4fffd93c44ab10d9c3871e1962,
+      type: 3}
+    scale: {x: 0.3, y: 0.3, z: 0.3}
+    useCollisionPlane: 0
   midiParticlePrefabs:
   - prefab: {fileID: 4353481273975885782, guid: 2a2c22bd0015525489aa6305c15b3469,
       type: 3}
@@ -62,7 +70,23 @@ MonoBehaviour:
       type: 3}
     scale: {x: 1, y: 1, z: 1}
     useCollisionPlane: 0
+  - prefab: {fileID: 3945061218558243874, guid: 1af6776a722c25a43883e88f523aa4c4,
+      type: 3}
+    scale: {x: 0.02, y: 0.05, z: 0.02}
+    useCollisionPlane: 0
+  - prefab: {fileID: 3866527611974104064, guid: 1a943b4fffd93c44ab10d9c3871e1962,
+      type: 3}
+    scale: {x: 0.3, y: 0.3, z: 0.3}
+    useCollisionPlane: 0
   mouseParticlePrefabs:
+  - continueParticlePrefab: {fileID: 8164677620388347355, guid: 2ae63ce2a0ead3f488e0eb9fd4c1ce8d,
+      type: 3}
+    clickParticlePrefab: {fileID: 4215742952227913172, guid: f66c05d0da730d749a440184c526648f,
+      type: 3}
+  - continueParticlePrefab: {fileID: 8164677620388347355, guid: 2ae63ce2a0ead3f488e0eb9fd4c1ce8d,
+      type: 3}
+    clickParticlePrefab: {fileID: 4215742952227913172, guid: f66c05d0da730d749a440184c526648f,
+      type: 3}
   - continueParticlePrefab: {fileID: 8164677620388347355, guid: 2ae63ce2a0ead3f488e0eb9fd4c1ce8d,
       type: 3}
     clickParticlePrefab: {fileID: 4215742952227913172, guid: f66c05d0da730d749a440184c526648f,

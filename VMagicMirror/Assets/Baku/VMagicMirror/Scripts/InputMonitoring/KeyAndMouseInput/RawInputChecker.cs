@@ -86,6 +86,10 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
+#if UNITY_EDITOR
+            EditorSetupTargetKeyCodes();
+#endif
+
             //キーボードだけ登録する。マウスはUnityが自動でRegisterするらしく、下手に触ると危ないので触らない。
 #if !UNITY_EDITOR
             try
@@ -101,7 +105,7 @@ namespace Baku.VMagicMirror
                 LogOutput.Instance.Write(ex);
             }
 #endif
-            
+
             //NOTE: このイベントはエディタ実行では飛んできません(Window Procedureに関わるので)
             _windowProcedureHook = new WindowProcedureHook();
             _windowProcedureHook.StartObserve();
@@ -110,6 +114,10 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
+#if UNITY_EDITOR
+            EditorCheckKeyDown();
+#endif
+
             while (_downKeys.TryDequeue(out int keyCode))
             {
                 //キーイベントとしてマウスボタンの情報も載っているので理屈上正しくなるように割り当てる。
@@ -249,5 +257,44 @@ namespace Baku.VMagicMirror
                     return code; 
             }
         }
+        
+        
+        //NOTE: DIのほうがキレイだけど、分けるほどコードサイズが無いので直書きで。
+        #if UNITY_EDITOR
+
+        private KeyCode[] _editorCheckTargetKeyCodes = null;
+
+        private void EditorSetupTargetKeyCodes()
+        {
+            //97から"A"が始まってるのを前提に、そこから"Z"まで拾おうという狙いのコード
+            var codes = new KeyCode[26];
+            for (int i = 0; i < codes.Length; i++)
+            {
+                codes[i] = (KeyCode) (97 + i);
+            }
+            _editorCheckTargetKeyCodes = codes;
+        }
+        
+        private void EditorCheckKeyDown()
+        {
+            for (int i = 0; i < _editorCheckTargetKeyCodes.Length; i++)
+            {
+                if (Input.GetKeyDown(_editorCheckTargetKeyCodes[i]))
+                {
+                    string keyName = _editorCheckTargetKeyCodes[i].ToString();
+                    _rawKeys.OnNext(keyName);
+
+                    if (_randomizeKey)
+                    {
+                        int index = Random.Range(0, _editorCheckTargetKeyCodes.Length);
+                        keyName = _editorCheckTargetKeyCodes[index].ToString();
+                    }
+                    _keys.OnNext(keyName);
+                }                
+            }
+        }
+        
+        #endif
+
     }
 }

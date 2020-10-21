@@ -79,3 +79,11 @@ sysinfo.txt
 /VMagicMirror/Assets/MidiJack.meta
 /VMagicMirror/Assets/SharpDX.meta
 /VMagicMirror/Assets/RawInputSharp.meta
+
+# Assets to ignore (from BOOTH)
+
+/VMagicMirror/Assets/noribenLaserlight/
+/VMagicMirror/Assets/Butterfly/
+
+/VMagicMirror/Assets/noribenLaserlight.meta
+/VMagicMirror/Assets/Butterfly.meta

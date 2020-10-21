@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: TypingParticleLaserLight
+  m_Shader: {fileID: 4800000, guid: 40c17863bb91ee34cad90fa946a603b1, type: 3}
+  m_ShaderKeywords: _CHASETOGGLE_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 72c70a6b89243444e9757b8472827b78, type: 3}
+        m_Scale: {x: 0.5, y: 0.5}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Volume:
+        m_Texture: {fileID: 11700000, guid: 3d6ccb3d7edded2419e65ef34fc00a78, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Beams: 6
+    - _BrightnessClamp: 1
+    - _BumpScale: 1
+    - _Chase: -0.54
+    - _ChaseL: 1.1
+    - _ChaseR: 1.1
+    - _ChaseSpeed: 0.9
+    - _ChaseToggle: 1
+    - _ChaseWidth: 0.636
+    - _ColorSpeed: 2.04
+    - _ColorSpped: 1
+    - _ConeLength: 1
+    - _ConeWidth: 0
+    - _ConeWidthAnim: 0.578
+    - _ConeWidthSpeed: 0.5
+    - _Contrast: 1.85
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _Flash: 0.169
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _HueRotation: 0
+    - _Intensity: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _Noise: 0.719
+    - _NoisePower: 1
+    - _NoisePower2: 0.73
+    - _NoiseSize: 0.17
+    - _NoiseSize2: 1.64
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _RandomFlash: 0.157
+    - _Scroll: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _Soft: 78.9
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _SwingSpeed: 0
+    - _SwingWidth: 0.383
+    - _Thickness: 0.72
+    - _Transparency: 0
+    - _Triangle: 1
+    - _UVSec: 0
+    - _Width: 1
+    - _ZWrite: 1
+    - _rootIntensity: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1: {r: 0.37254903, g: 0.4347342, b: 0.8509804, a: 1}
+    - _Color2: {r: 0.6519203, g: 0.32156867, b: 0.7647059, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _NoiseScroll: {r: 0.01, g: -0.03, b: 0, a: 0}

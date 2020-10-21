@@ -78,6 +78,7 @@ namespace Baku.VMagicMirror
         // Motion, Face
         public const string EnableFaceTracking = nameof(EnableFaceTracking);
         public const string SetCameraDeviceName = nameof(SetCameraDeviceName);
+        public const string EnableWebCamHighPowerMode = nameof(EnableWebCamHighPowerMode);
         public const string AutoBlinkDuringFaceTracking = nameof(AutoBlinkDuringFaceTracking);
         public const string EnableHeadRotationBasedBlinkAdjust = nameof(EnableHeadRotationBasedBlinkAdjust);
         public const string EnableLipSyncBasedBlinkAdjust = nameof(EnableLipSyncBasedBlinkAdjust);
@@ -95,7 +96,6 @@ namespace Baku.VMagicMirror
         public const string EyebrowRightDownKey = nameof(EyebrowRightDownKey);
         public const string EyebrowUpScale = nameof(EyebrowUpScale);
         public const string EyebrowDownScale = nameof(EyebrowDownScale);
-
 
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);

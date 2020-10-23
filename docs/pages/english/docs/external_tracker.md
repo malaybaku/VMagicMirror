@@ -29,7 +29,14 @@ Advantages:
 
 Limitations:
 
-**Device Required**: You need Face ID supported iPhone or iPad. (cf: [Supported Models](https://support.apple.com/en-us/HT209183))
+**Device Required**: You need enough new iPhone or iPad, which supports Face ID or has A12 Bionic chip (or newer chip).
+
+(cf.1: [Supported Models](https://support.apple.com/en-us/HT209183))
+
+(cf.2: [iPad Models("See All Models" will show all models' chip)](https://www.apple.com/ipad/compare/))
+
+(cf.3: [iPhone Models("See All Models" will show all models' chip)](https://www.apple.com/iphone/compare/))
+
 
 **Less Stable**: Less stable than conventional webcam based tracking. This is because of the inter-device LAN communication.
 

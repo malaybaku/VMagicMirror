@@ -28,7 +28,14 @@ v1.1.0の時点ではiOSアプリにのみ対応しています。
 
 制限:
 
-**別途デバイスが必要**: Face ID対応のiPhoneまたはiPadが必要です。(参考: [対応機種の一覧](https://support.apple.com/ja-jp/HT209183))
+**別途デバイスが必要**: 比較的新しいiPhoneまたはiPadが必要です。Face ID対応か、またはA12 Bionic以降のチップが搭載されていれば利用できます。
+
+参考1: [Face ID対応機種の一覧](https://support.apple.com/ja-jp/HT209183)
+
+参考2: [iPadモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/ipad/compare/)
+
+参考3: [iPhoneモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/iphone/compare/)
+
 
 **安定性の制約**: 従来のWebカメラによる方法よりは安定性が下がります。これは、デバイス間をネットワーク経由で通信するためです。
 

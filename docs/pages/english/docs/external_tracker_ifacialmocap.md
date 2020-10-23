@@ -17,9 +17,14 @@ Show how to setup iFacialMocap for [External Tracker App](./external_tracker).
 
 iFacialMocap is a paid application for face tracking in iOS.
 
-This required Face ID supported devices. See the following page to get what devices are supported.
+This app requires enough new iPhone or iPad, which supports Face ID or has A12 Bionic chip (or newer chip).
 
-[iPhone and iPad models that support Face ID](https://support.apple.com/en-us/HT209183)
+cf.1: [Supported Models](https://support.apple.com/en-us/HT209183)
+
+cf.2: [iPad Models("See All Models" will show all models' chip)](https://www.apple.com/ipad/compare/)
+
+cf.3: [iPhone Models("See All Models" will show all models' chip)](https://www.apple.com/iphone/compare/)
+
 
 iFacialMocap is available on App Store.
 

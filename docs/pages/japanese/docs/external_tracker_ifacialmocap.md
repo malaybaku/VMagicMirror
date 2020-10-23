@@ -18,11 +18,11 @@ iFacialMocapはiOS向けに有償で配布されている表情キャプチャ�
 
 iFacialMocapは比較的新しいiPhone、またはiPad上で動作します。Face ID対応端末、またはA12 Bionic以降のチップが搭載されていれば利用できます。
 
-参考1: [Face ID対応機種の一覧](https://support.apple.com/ja-jp/HT209183)
+・参考1: [Face ID対応機種の一覧](https://support.apple.com/ja-jp/HT209183)
 
-参考2: [iPadモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/ipad/compare/)
+・参考2: [iPadモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/ipad/compare/)
 
-参考3: [iPhoneモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/iphone/compare/)
+・参考3: [iPhoneモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/iphone/compare/)
 
 
 iFacialMocapはApp Storeで購入、インストールできます。

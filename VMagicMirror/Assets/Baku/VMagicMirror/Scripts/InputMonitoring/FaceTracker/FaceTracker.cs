@@ -39,6 +39,9 @@ namespace Baku.VMagicMirror
         [Tooltip("検出処理が走る最短間隔をミリ秒単位で規定します。")]
         [SerializeField] private int trackMinIntervalMillisec = 60;
         
+        /// <summary> 検出した顔パーツの情報 </summary>
+        public FaceParts FaceParts { get; } = new FaceParts();
+
         public FaceTrackerToEyeOpen EyeOpen { get; } = new FaceTrackerToEyeOpen();
 
         /// <summary> キャリブレーションの内容 </summary>
@@ -56,9 +59,7 @@ namespace Baku.VMagicMirror
         /// </remarks>
         public Rect DetectedRect { get; private set; }
 
-        /// <summary>
-        /// 顔検出スレッド上で、顔情報がアップデートされると発火します。
-        /// </summary>
+        /// <summary> 顔検出スレッド上で、顔情報がアップデートされると発火します。 </summary>
         public event Action<FaceDetectionUpdateStatus> FaceDetectionUpdated;
 
         /// <summary> UIスレッド上で、顔の特徴点一覧を獲得すると発火します。 </summary>
@@ -80,7 +81,11 @@ namespace Baku.VMagicMirror
         public bool DisableHorizontalFlip
         {
             get => EyeOpen.DisableHorizontalFlip;
-            set => EyeOpen.DisableHorizontalFlip = value;
+            set 
+            {
+                EyeOpen.DisableHorizontalFlip = value;
+                FaceParts.DisableHorizontalFlip = value;                
+            } 
         }
 
         private int TextureWidth =>
@@ -278,6 +283,9 @@ namespace Baku.VMagicMirror
             try
             {
                 var calibrationData = JsonUtility.FromJson<CalibrationData>(data);
+                CalibrationData.eyeOpenHeight = calibrationData.eyeOpenHeight;
+                CalibrationData.eyeBrowPosition = calibrationData.eyeBrowPosition;
+                CalibrationData.eyeFaceYDiff = calibrationData.eyeFaceYDiff;
                 CalibrationData.faceCenter = calibrationData.faceCenter;
                 CalibrationData.faceSize = calibrationData.faceSize;
                 CalibrationDataReceived?.Invoke(calibrationData);
@@ -494,6 +502,7 @@ namespace Baku.VMagicMirror
                 mainPersonRect.height / TextureWidth
                 );
 
+            FaceParts.Update(mainPersonRect, landmarks);
             EyeOpen.UpdatePoints(landmarks);
 
             FaceDetectedAtLeastOnce = true;
@@ -512,6 +521,7 @@ namespace Baku.VMagicMirror
             //NOTE: centerじゃなくてbottom leftを指定するんですね…はい。
             DetectedRect = new Rect(center - 0.5f * size, size);
             
+            FaceParts.LerpToDefault(CalibrationData, lerpFactor);
             EyeOpen.LerpToDefault(lerpFactor);
             
             //TODO: ?もしかするとここもイベントでOpenCVFacePoseに認知させるべきかも。無くてもいい気もするけど
@@ -524,6 +534,20 @@ namespace Baku.VMagicMirror
             
             //他モジュールが更にキャリブを行い、データを書き込むことを許可する
             CalibrationRequired?.Invoke(CalibrationData);
+
+            //TODO: この処理はイベントハンドラ越しでやるべきでは。
+            CalibrationData.eyeOpenHeight = 0.5f * (
+                FaceParts.LeftEye.CurrentEyeOpenValue +
+                FaceParts.RightEye.CurrentEyeOpenValue
+                );
+
+            CalibrationData.eyeBrowPosition = 0.5f * (
+                FaceParts.LeftEyebrow.CurrentHeight + 
+                FaceParts.RightEyebrow.CurrentHeight
+                );
+
+            CalibrationData.eyeFaceYDiff =
+                FaceParts.Outline.EyeFaceYDiff;            
 
             CalibrationCompleted?.Invoke(JsonUtility.ToJson(CalibrationData));
         }

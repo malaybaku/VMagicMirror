@@ -16,9 +16,13 @@ namespace Baku.VMagicMirror
         [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")]
         [Range(0f, 1f)]
         [SerializeField] private float headRate = 0.5f;
+        
+        [Tooltip("FacePartsが[-1, 1]の範囲で返してくるピッチ、ヨーについて、それらを角度に変換する係数")]
+        [SerializeField] private Vector2 facePartsPitchYawFactor = new Vector2(30, 30);
 
         private FaceTracker _faceTracker = null;
-        private FaceRotToEuler _faceRotToEuler = null;
+        //private FaceRotToEulerByOpenCVPose _faceRotToEuler = null;
+        private FaceRotToEulerByFaceParts _faceRotToEuler = null;
 
         public event Action<Vector3> ImageBaseFaceRotationUpdated;
         
@@ -26,7 +30,8 @@ namespace Baku.VMagicMirror
         public void Initialize(FaceTracker faceTracker, OpenCVFacePose openCvFacePose, IVRMLoadable vrmLoadable)
         {
             _faceTracker = faceTracker;
-            _faceRotToEuler = new FaceRotToEuler(openCvFacePose);
+            //_faceRotToEuler = new FaceRotToEulerByOpenCVPose(openCvFacePose);
+            _faceRotToEuler = new FaceRotToEulerByFaceParts(_faceTracker.FaceParts);
             
             vrmLoadable.VrmLoaded += info =>
             {
@@ -76,7 +81,7 @@ namespace Baku.VMagicMirror
             }
 
             var target = Mul(
-                _faceRotToEuler.GetTargetEulerAngle(),
+                _faceRotToEuler.GetTargetEulerAngle(facePartsPitchYawFactor, _faceTracker.CalibrationData.eyeFaceYDiff),
                 headEulerAnglesFactor
                 );
 
@@ -161,10 +166,10 @@ namespace Baku.VMagicMirror
     
     
     /// <summary> 頭部の回転がQuaternionで飛んで来るのを安全にオイラー角に変換してくれるやつ </summary>
-    public class FaceRotToEuler
+    public class FaceRotToEulerByOpenCVPose
     {
         private readonly OpenCVFacePose _facePose;
-        public FaceRotToEuler(OpenCVFacePose facePose)
+        public FaceRotToEulerByOpenCVPose(OpenCVFacePose facePose)
         {
             _facePose = facePose;
         }
@@ -194,5 +199,33 @@ namespace Baku.VMagicMirror
             return Mathf.Repeat(angle + 180f, 360f) - 180f;
         }
     }
+
+    /// <summary>
+    /// 頭部の回転がFacePartsに飛んでくるのをオイラー角情報に変換するやつ。
+    /// OpenCVPoseを使うケースとコードを揃えるためにこういう書き方
+    /// </summary>
+    public class FaceRotToEulerByFaceParts
+    {
+        private readonly FaceParts _faceParts;
+        public FaceRotToEulerByFaceParts(FaceParts faceParts)
+        {
+            _faceParts = faceParts;
+        }
+        
+        public Vector3 GetTargetEulerAngle(Vector2 pitchYawFactor, float pitchRateBaseline)
+        {
+            float pitchRate = Mathf.Clamp(
+                _faceParts.Outline.CurrentFacePitchRate - pitchRateBaseline, -1, 1
+                );
+
+            return new Vector3(
+                pitchRate * pitchYawFactor.x,
+                _faceParts.Outline.CurrentFaceYawRate * pitchYawFactor.y,
+                _faceParts.Outline.CurrentFaceRollRad * Mathf.Rad2Deg
+                );
+        }
+    }
+
+    
 }
 

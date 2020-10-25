@@ -6,9 +6,7 @@ namespace Baku.VMagicMirror
     [Serializable]
     public class CalibrationData
     {
-        public float eyeBrowPosition;
-        public float eyeOpenHeight;
-        public float eyeFaceYDiff;
+        public float pitchRateOffset;
             
         //NOTE: イメージ的には「ユーザー正面向き時のカメラから見たユーザーの位置」っぽいものが入る…はず
         public bool hasOpenCvPose;
@@ -20,9 +18,7 @@ namespace Baku.VMagicMirror
 
         public void SetDefaultValues()
         {
-            eyeBrowPosition = 1.43f;
-            eyeOpenHeight = 0.06f;
-            eyeFaceYDiff = 0.0f;
+            pitchRateOffset = 0f;
             
             hasOpenCvPose = false;
             openCvFacePos = Vector3.zero;

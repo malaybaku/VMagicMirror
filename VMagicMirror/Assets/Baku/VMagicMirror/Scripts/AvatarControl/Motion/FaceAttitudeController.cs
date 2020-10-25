@@ -81,7 +81,9 @@ namespace Baku.VMagicMirror
             }
 
             var target = Mul(
-                _faceRotToEuler.GetTargetEulerAngle(facePartsPitchYawFactor, _faceTracker.CalibrationData.eyeFaceYDiff),
+                _faceRotToEuler.GetTargetEulerAngle(
+                    facePartsPitchYawFactor, _faceTracker.CalibrationData.pitchRateOffset
+                    ),
                 headEulerAnglesFactor
                 );
 
@@ -215,13 +217,13 @@ namespace Baku.VMagicMirror
         public Vector3 GetTargetEulerAngle(Vector2 pitchYawFactor, float pitchRateBaseline)
         {
             float pitchRate = Mathf.Clamp(
-                _faceParts.Outline.CurrentFacePitchRate - pitchRateBaseline, -1, 1
+                _faceParts.FacePitchRate - pitchRateBaseline, -1, 1
                 );
 
             return new Vector3(
                 pitchRate * pitchYawFactor.x,
-                _faceParts.Outline.CurrentFaceYawRate * pitchYawFactor.y,
-                _faceParts.Outline.CurrentFaceRollRad * Mathf.Rad2Deg
+                _faceParts.FaceYawRate * pitchYawFactor.y,
+                _faceParts.FaceRollRad * Mathf.Rad2Deg
                 );
         }
     }

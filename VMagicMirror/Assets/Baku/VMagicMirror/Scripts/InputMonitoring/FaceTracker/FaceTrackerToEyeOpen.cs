@@ -6,6 +6,7 @@ namespace Baku.VMagicMirror
     public class FaceTrackerToEyeOpen 
     {
         //NOTE: 点を貰った瞬間に目の開閉を計算し終えてしまう
+        //TODO: 68点向けの処理を消してもよさそう
         public void UpdatePoints(List<Vector2> points)
         {
             float leftEyeHeight = 0f;

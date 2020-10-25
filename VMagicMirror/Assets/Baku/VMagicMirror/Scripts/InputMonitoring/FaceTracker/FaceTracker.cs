@@ -283,9 +283,7 @@ namespace Baku.VMagicMirror
             try
             {
                 var calibrationData = JsonUtility.FromJson<CalibrationData>(data);
-                CalibrationData.eyeOpenHeight = calibrationData.eyeOpenHeight;
-                CalibrationData.eyeBrowPosition = calibrationData.eyeBrowPosition;
-                CalibrationData.eyeFaceYDiff = calibrationData.eyeFaceYDiff;
+                CalibrationData.pitchRateOffset = calibrationData.pitchRateOffset;
                 CalibrationData.faceCenter = calibrationData.faceCenter;
                 CalibrationData.faceSize = calibrationData.faceSize;
                 CalibrationDataReceived?.Invoke(calibrationData);
@@ -536,18 +534,7 @@ namespace Baku.VMagicMirror
             CalibrationRequired?.Invoke(CalibrationData);
 
             //TODO: この処理はイベントハンドラ越しでやるべきでは。
-            CalibrationData.eyeOpenHeight = 0.5f * (
-                FaceParts.LeftEye.CurrentEyeOpenValue +
-                FaceParts.RightEye.CurrentEyeOpenValue
-                );
-
-            CalibrationData.eyeBrowPosition = 0.5f * (
-                FaceParts.LeftEyebrow.CurrentHeight + 
-                FaceParts.RightEyebrow.CurrentHeight
-                );
-
-            CalibrationData.eyeFaceYDiff =
-                FaceParts.Outline.EyeFaceYDiff;            
+            CalibrationData.pitchRateOffset = FaceParts.FacePitchRate;
 
             CalibrationCompleted?.Invoke(JsonUtility.ToJson(CalibrationData));
         }

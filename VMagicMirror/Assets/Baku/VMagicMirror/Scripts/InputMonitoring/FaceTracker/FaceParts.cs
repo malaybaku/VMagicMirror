@@ -28,14 +28,8 @@ namespace Baku.VMagicMirror
         public float FaceYawRate => DisableHorizontalFlip ? -_faceYawRate : _faceYawRate;
         public float FaceRollRad => DisableHorizontalFlip ? -_faceRollRad : _faceRollRad;
 
-        public float LeftEyeBlink => DisableHorizontalFlip ? _leftEyeBlink : _rightEyeBlink;
-        public float RightEyeBlink => DisableHorizontalFlip ? _rightEyeBlink : _leftEyeBlink;
-
         private float _faceRollRad;
         private float _faceYawRate;
-        private float _leftEyeBlink;
-        private float _rightEyeBlink;
-        
         //NOTE: 1回のアップデートあたり4回くらい使いたくなるのでキャッシュ
         private float _faceRollCos;
         private float _faceRollSin;
@@ -49,51 +43,22 @@ namespace Baku.VMagicMirror
                 _landmarks[i] = landmarks[i];
             }
             
-            UpdateEyeOpen();
-            UpdateFaceRotation();
-        }
-    
-        public void LerpToDefault(CalibrationData calibration, float lerpFactor)
-        {
-            var factor = 1.0f - lerpFactor;
-            _leftEyeBlink *= factor;
-            _rightEyeBlink *= factor;
-            
-            //TODO: キャリブレーション次第で変えないとダメ。とくにピッチ
-            
-            FacePitchRate *= factor;
-            _faceYawRate *= factor;
-            _faceRollRad *= factor;
-            
-            // Outline.LerpToDefault(calibration, lerpFactor);
-            // for (int i = 0; i < PartsWithoutOutline.Length; i++)
-            // {
-            //     PartsWithoutOutline[i].LerpToDefault(calibration, lerpFactor);
-            // }
-        }
-        
-
-        private void UpdateEyeOpen()
-        {
-            float leftEyeHeight = new Vector2 (_landmarks [12].x - _landmarks [11].x, _landmarks [12].y - _landmarks [11].y).sqrMagnitude;
-            float rightEyeHeight = new Vector2 (_landmarks [10].x - _landmarks [9].x, _landmarks [10].y - _landmarks [9].y).sqrMagnitude;
-            float noseHeight = new Vector2 (_landmarks [1].x - (_landmarks [3].x + _landmarks [4].x) / 2, _landmarks [1].y - (_landmarks [3].y + _landmarks [4].y) / 2).sqrMagnitude;
-
-            float leftEyeOpenRatio = leftEyeHeight / noseHeight;
-            _leftEyeBlink = 1.0f - Mathf.InverseLerp (0.003f, 0.009f, leftEyeOpenRatio);
-
-            float rightEyeOpenRatio = rightEyeHeight / noseHeight;
-            _rightEyeBlink = 1.0f - Mathf.InverseLerp (0.003f, 0.009f, rightEyeOpenRatio);
-        }
-
-        private void UpdateFaceRotation()
-        {
             UpdateRoll();
             UpdateYaw();
             //NOTE: Rollより後にやる必要があるので注意
             UpdatePitch();
         }
+    
+        public void LerpToDefault(CalibrationData calibration, float lerpFactor)
+        {
+            var factor = 1.0f - lerpFactor;
 
+            //NOTE: Yaw, Rollは(ホントは良くないんだけど)そもそもキャリブが入ってないので、これで正しい
+            FacePitchRate = Mathf.Lerp(FacePitchRate, calibration.pitchRateOffset, lerpFactor);
+            _faceYawRate *= factor;
+            _faceRollRad *= factor;
+        }
+    
         private void UpdateRoll()
         {
             //輪郭の端、つまり両こめかみ付近に線を引いてみたときの傾きをとっている。

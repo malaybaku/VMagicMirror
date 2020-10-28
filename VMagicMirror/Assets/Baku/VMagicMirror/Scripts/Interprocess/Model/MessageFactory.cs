@@ -26,15 +26,9 @@ namespace Baku.VMagicMirror
 
         public Message SetCalibrationFaceData(string data) => WithArg(data);
 
-        public Message SetBlendShapeNames(string v) => WithArg(v);
-
         public Message MicrophoneVolumeLevel(int level) => WithArg($"{level}");
         
         public Message AutoAdjustResults(AutoAdjustParameters parameters)
-            => WithArg(JsonUtility.ToJson(parameters));
-
-        //NOTE: 冗長なパラメータが入ってるが、冗長な部分はWPF側に捨てさせる(どうせ既定値しか入ってない)
-        public Message AutoAdjustEyebrowResults(AutoAdjustParameters parameters)
             => WithArg(JsonUtility.ToJson(parameters));
         
         public Message UpdateDeviceLayout(DeviceLayoutsData data) => WithArg(JsonUtility.ToJson(data));

@@ -1,6 +1,4 @@
-﻿using System;
-using Baku.VMagicMirror.InterProcess;
-using UnityEngine;
+﻿using UnityEngine;
 using VRM;
 using Zenject;
 
@@ -24,6 +22,7 @@ namespace Baku.VMagicMirror
         
         private bool _hasModel = false;
         private FaceControlConfiguration _config;
+        //直接使うわけじゃないけどGCされてほしくないので、念の為参照を保持してる
         private FaceControlManagerMessageIo _messageIo;
 
         [Inject]
@@ -39,12 +38,6 @@ namespace Baku.VMagicMirror
             _messageIo = new FaceControlManagerMessageIo(receiver, sender, eyeBonePostProcess, this);
         }
         
-        /// <summary> VRMロード時の初期化が済んだら発火 </summary>
-        public event Action VrmInitialized;
-
-        public VRMBlendShapeStore BlendShapeStore { get; } = new VRMBlendShapeStore();
-        public EyebrowBlendShapeSet EyebrowBlendShape { get; } = new EyebrowBlendShapeSet();
-
         public DefaultFunBlendShapeModifier DefaultBlendShape { get; } 
             = new DefaultFunBlendShapeModifier();
 
@@ -84,17 +77,12 @@ namespace Baku.VMagicMirror
                 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            BlendShapeStore.OnVrmLoaded(info);
-            EyebrowBlendShape.RefreshTarget(BlendShapeStore);
-            VrmInitialized?.Invoke();
             _hasModel = true;
         }
 
         private void OnVrmDisposing()
         {
             _hasModel = false;
-            BlendShapeStore.OnVrmDisposing();
-            EyebrowBlendShape.Reset();
         }
     }
     

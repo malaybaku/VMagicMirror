@@ -12,7 +12,6 @@ namespace Baku.VMagicMirror.Installer
 
         public override void Install(DiContainer container)
         {
-            container.Bind<VRMBlendShapeStore>().AsCached();
             container.BindInstance(blendShapeInitializer).AsCached();
             container.BindInstance(lipSyncContext).AsCached();
             container.BindInstance(lipSyncIntegrator).AsCached();

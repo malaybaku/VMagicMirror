@@ -24,21 +24,6 @@
                 VmmCommands.SetEyeBoneRotationScale,
                 message => eyeBonePostProcess.Scale = message.ParseAsPercentage()
             );
-                       
-            receiver.AssignQueryHandler(
-                VmmQueries.GetBlendShapeNames,
-                query => query.Result = string.Join("\t", faceControlManager.BlendShapeStore.GetBlendShapeNames())
-            );
-
-            faceControlManager.VrmInitialized += () =>
-            {
-                sender.SendCommand(MessageFactory.Instance.SetBlendShapeNames(
-                    string.Join("\t", faceControlManager.BlendShapeStore.GetBlendShapeNames())
-                ));
-            };
-
-            //特に眉まわりのブレンドシェイプ割り当てだけは別途やる
-            var _ = new BlendShapeAssignReceiver(receiver, faceControlManager);
         }
     }
 

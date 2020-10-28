@@ -26,8 +26,6 @@ namespace Baku.VMagicMirror
 
         public Message SetCalibrationFaceData(string data) => WithArg(data);
 
-        public Message SetBlendShapeNames(string v) => WithArg(v);
-
         public Message MicrophoneVolumeLevel(int level) => WithArg($"{level}");
         
         public Message AutoAdjustResults(AutoAdjustParameters parameters)

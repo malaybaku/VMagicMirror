@@ -18,12 +18,10 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             IMessageSender sender, 
             IMessageDispatcher dispatcher, 
-            VRMBlendShapeStore blendShapeStore,
             Camera mainCam
             )
         {
             _mainCam = mainCam.transform;
-            _blendShapeStore = blendShapeStore;
             
             _sender = sender;
             _dispatcher = dispatcher;
@@ -45,7 +43,6 @@ namespace Baku.VMagicMirror
         private readonly IMessageSender _sender;
         private readonly IMessageDispatcher _dispatcher;
         private readonly Transform _mainCam;
-        private readonly VRMBlendShapeStore _blendShapeStore;
         
         private Transform _vrmRoot = null;
 
@@ -100,8 +97,7 @@ namespace Baku.VMagicMirror
 
                 //3つのサブルーチンではanimatorのHumanoidBoneを使うが、部位である程度分けられるので分けておく
                 SetHandSizeRelatedParameters(animator, parameters);
-                //眉毛はブレンドシェイプ
-                SetEyebrowParameters(parameters);
+
                 AdjustCameraPosition(animator);
 
                 SendParameterRelatedCommands(parameters);
@@ -125,7 +121,6 @@ namespace Baku.VMagicMirror
             var parameters = new AutoAdjustParameters();
             try
             {
-                SetEyebrowParameters(parameters);
                 SendParameterRelatedCommands(parameters, true);
                 _sender.SendCommand(MessageFactory.Instance.AutoAdjustEyebrowResults(parameters));
             }
@@ -137,46 +132,6 @@ namespace Baku.VMagicMirror
 
         private void SendParameterRelatedCommands(AutoAdjustParameters parameters, bool onlyEyebrow)
         {
-            var eyebrowCommands = new ReceivedCommand[]
-            {
-                new ReceivedCommand(
-                    VmmCommands.EyebrowLeftUpKey,
-                    parameters.EyebrowLeftUpKey
-                    ),
-                new ReceivedCommand(
-                    VmmCommands.EyebrowLeftDownKey,
-                    parameters.EyebrowLeftDownKey
-                    ),
-                new ReceivedCommand(
-                    VmmCommands.UseSeparatedKeyForEyebrow,
-                    $"{parameters.UseSeparatedKeyForEyebrow}"
-                    ),
-                new ReceivedCommand(
-                    VmmCommands.EyebrowRightUpKey,
-                    parameters.EyebrowRightUpKey
-                    ),
-                new ReceivedCommand(
-                    VmmCommands.EyebrowRightDownKey,
-                    parameters.EyebrowRightDownKey
-                    ),
-                new ReceivedCommand(
-                    VmmCommands.EyebrowUpScale,
-                    $"{parameters.EyebrowUpScale}"
-                    ),
-                new ReceivedCommand(
-                    VmmCommands.EyebrowDownScale,
-                    $"{parameters.EyebrowDownScale}"
-                    ),
-                new ReceivedCommand(
-                    VmmCommands.LengthFromWristToTip,
-                    $"{parameters.LengthFromWristToTip}"
-                    ),
-            };
-            foreach (var cmd in eyebrowCommands)
-            {
-                _dispatcher.ReceiveCommand(cmd);
-            }
-
             if (onlyEyebrow)
             {
                 return;
@@ -197,22 +152,7 @@ namespace Baku.VMagicMirror
             _mainCam.position = new Vector3(0, head.position.y, 1.3f);
             _mainCam.rotation = Quaternion.Euler(0, 180, 0);
         }
-
-        private void SetEyebrowParameters(AutoAdjustParameters parameters)
-        {
-            var blendShapeNames = _blendShapeStore.GetBlendShapeNames();
-            var adjuster = new EyebrowBlendShapeAdjuster(blendShapeNames);
-            var settings = adjuster.CreatePreferredSettings();
-            parameters.EyebrowIsValidPreset = settings.IsValidPreset;
-            parameters.EyebrowLeftUpKey = settings.EyebrowLeftUpKey;
-            parameters.EyebrowLeftDownKey = settings.EyebrowLeftDownKey;
-            parameters.UseSeparatedKeyForEyebrow = settings.UseSeparatedKeyForEyebrow;
-            parameters.EyebrowRightUpKey = settings.EyebrowRightUpKey;
-            parameters.EyebrowRightDownKey = settings.EyebrowRightDownKey;
-            parameters.EyebrowUpScale = settings.EyebrowUpScale;
-            parameters.EyebrowDownScale = settings.EyebrowDownScale;
-        }
-
+        
         private void SetHandSizeRelatedParameters(Animator animator, AutoAdjustParameters parameters)
         {
             var tip = animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal);

@@ -204,9 +204,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 361f1b0adb1a379449acbb4d0a28bcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeOpenKeepDiffPer16ms: 0.02
+  eyeOpenKeepDiffPer16ms: 0.04
   eyeOpenFromCloseDiffPer16ms: 0.1
-  blinkJumpThreshold: 0.65
+  blinkJumpThreshold: 0.75
 --- !u!114 &2335327280039312852
 MonoBehaviour:
   m_ObjectHideFlags: 0

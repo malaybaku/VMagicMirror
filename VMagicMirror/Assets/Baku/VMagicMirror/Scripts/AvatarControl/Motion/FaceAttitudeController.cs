@@ -7,11 +7,16 @@ namespace Baku.VMagicMirror
     public class FaceAttitudeController : MonoBehaviour
     {
         //NOTE: バネマス系のパラメータ(いわゆるcとk)
-        [SerializeField] private Vector3 speedDumpForceFactor = new Vector3(15f, 10f, 10f);
-        [SerializeField] private Vector3 posDumpForceFactor = new Vector3(50f, 50f, 50f);
+        [SerializeField] private Vector3 speedDump = new Vector3(16f, 16f, 16f);
+        [SerializeField] private Vector3 posDump = new Vector3(50f, 60f, 60f);
 
         [Tooltip("Webカメラで得た回転量を角度ごとに強調したり抑えたりするファクター")]
         [SerializeField] private Vector3 headEulerAnglesFactor = Vector3.one;
+
+        //高解像度モードのときに使うc/k/ファクター
+        [SerializeField] private Vector3 speedDumpHighPower = new Vector3(15f, 10f, 10f);
+        [SerializeField] private Vector3 posDumHighPower = new Vector3(50f, 50f, 50f);
+        [SerializeField] private Vector3 headEulerAnglesFactorHighPower = Vector3.one;
 
         [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")]
         [Range(0f, 1f)]
@@ -27,7 +32,7 @@ namespace Baku.VMagicMirror
         public event Action<Vector3> ImageBaseFaceRotationUpdated;
         
         [Inject]
-        public void Initialize(FaceTracker faceTracker, OpenCVFacePose openCvFacePose, IVRMLoadable vrmLoadable)
+        public void Initialize(FaceTracker faceTracker, IVRMLoadable vrmLoadable, IMessageReceiver receiver)
         {
             _faceTracker = faceTracker;
             //_faceRotToEuler = new FaceRotToEulerByOpenCVPose(openCvFacePose);
@@ -49,6 +54,11 @@ namespace Baku.VMagicMirror
                 _neck = null;
                 _head = null;
             };
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableWebCamHighPowerMode, 
+                message => _isHighPowerMode = message.ToBoolean()
+                );
         }
         
         //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整
@@ -58,6 +68,8 @@ namespace Baku.VMagicMirror
 
         private const float YawSpeedToPitchDecreaseFactor = 0.05f;
         private const float YawSpeedToPitchDecreaseLimit = 5f;
+
+        private bool _isHighPowerMode = false;
 
         private bool _hasModel = false;
         private bool _hasNeck = false;
@@ -80,18 +92,22 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            var anglesFactor = _isHighPowerMode ? headEulerAnglesFactorHighPower : headEulerAnglesFactor;
+            var speedDumpFactor = _isHighPowerMode ? speedDumpHighPower : speedDump;
+            var posDumpFactor = _isHighPowerMode ? posDumHighPower : posDump;
+
             var target = Mul(
                 _faceRotToEuler.GetTargetEulerAngle(
                     facePartsPitchYawFactor, _faceTracker.CalibrationData.pitchRateOffset
                     ),
-                headEulerAnglesFactor
+                anglesFactor
                 );
 
             //やりたい事: バネマス系扱いで陽的オイラー法を回してスムージングする。
             //過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
             var acceleration =
-                - Mul(speedDumpForceFactor, _prevRotationSpeedEuler) -
-                Mul(posDumpForceFactor, _prevRotationEuler - target);
+                - Mul(speedDumpFactor, _prevRotationSpeedEuler) -
+                Mul(posDumpFactor, _prevRotationEuler - target);
             var speed = _prevRotationSpeedEuler + Time.deltaTime * acceleration;
             var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
 
@@ -216,15 +232,22 @@ namespace Baku.VMagicMirror
         
         public Vector3 GetTargetEulerAngle(Vector2 pitchYawFactor, float pitchRateBaseline)
         {
+            float yawAngle = _faceParts.FaceYawRate * pitchYawFactor.y;
+
+            //yawがゼロから離れると幾何的な都合でピッチが大きく出ちゃうので、それの補正
+            float dampedPitchRate = _faceParts.FacePitchRate * (1.0f - Mathf.Abs(_faceParts.FaceYawRate) * 0.4f);
+            
             float pitchRate = Mathf.Clamp(
-                _faceParts.FacePitchRate - pitchRateBaseline, -1, 1
+                 dampedPitchRate - pitchRateBaseline, -1, 1
                 );
 
-            return new Vector3(
+            var result = new Vector3(
                 pitchRate * pitchYawFactor.x,
-                _faceParts.FaceYawRate * pitchYawFactor.y,
+                yawAngle,
                 _faceParts.FaceRollRad * Mathf.Rad2Deg
                 );
+            
+            return result;
         }
     }
 

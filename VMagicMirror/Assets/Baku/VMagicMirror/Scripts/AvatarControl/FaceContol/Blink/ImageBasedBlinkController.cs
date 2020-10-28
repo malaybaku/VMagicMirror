@@ -63,8 +63,8 @@ namespace Baku.VMagicMirror
                     left, _blinkSource.Left - openFromCloseDiff, _blinkSource.Right + openKeepDiff
                 );
 
-                //最高速度で目を開く必要がなくなった = 目開き動作が終わったとみなし、より低速の動きに切り替える
-                if (nextLeft > _blinkSource.Left - openFromCloseDiff)
+                //目が十分開いた or 目を閉じる方向に動いた = 目開き動作が終わったとみなし、より低速の動きに切り替える
+                if (nextLeft < 0.1f || nextLeft > _blinkSource.Left)
                 {
                     _isLeftEyeOpening = false;
                 }
@@ -99,7 +99,7 @@ namespace Baku.VMagicMirror
                     right, _blinkSource.Right - openFromCloseDiff, _blinkSource.Right + openKeepDiff
                 );
 
-                if (nextRight > _blinkSource.Right - openFromCloseDiff)
+                if (nextRight < 0.1f || nextRight > _blinkSource.Right)
                 {
                     _isRightEyeOpening = false;
                 }

@@ -30,11 +30,6 @@ namespace Baku.VMagicMirror
                 VmmCommands.RequestAutoAdjust,
                 _ => AutoAdjust()
                 );
-            receiver.AssignCommandHandler(
-                VmmCommands.RequestAutoAdjustEyebrow,
-                _ => AutoAdjustOnlyEyebrow()
-            );
-
 
             vrmLoadable.PreVrmLoaded += info => _vrmRoot = info.vrmRoot;
             vrmLoadable.VrmDisposing += () => _vrmRoot = null;
@@ -97,11 +92,10 @@ namespace Baku.VMagicMirror
 
                 //3つのサブルーチンではanimatorのHumanoidBoneを使うが、部位である程度分けられるので分けておく
                 SetHandSizeRelatedParameters(animator, parameters);
-
                 AdjustCameraPosition(animator);
-
-                SendParameterRelatedCommands(parameters);
-
+                //デバイスレイアウト調整: これは別途調整が終わるとメッセージが飛ぶ
+                _dispatcher.ReceiveCommand(new ReceivedCommand(VmmCommands.ResetDeviceLayout));
+                
                 //3. 決定したパラメータをコンフィグ側に送る
                 _sender.SendCommand(MessageFactory.Instance.AutoAdjustResults(parameters));
             }
@@ -110,42 +104,7 @@ namespace Baku.VMagicMirror
                 LogOutput.Instance.Write(ex);
             }
         }
-
-        private void AutoAdjustOnlyEyebrow()
-        {
-            if (_vrmRoot == null)
-            {
-                return;
-            }
-
-            var parameters = new AutoAdjustParameters();
-            try
-            {
-                SendParameterRelatedCommands(parameters, true);
-                _sender.SendCommand(MessageFactory.Instance.AutoAdjustEyebrowResults(parameters));
-            }
-            catch (Exception ex)
-            {
-                LogOutput.Instance.Write(ex);
-            }
-        }
-
-        private void SendParameterRelatedCommands(AutoAdjustParameters parameters, bool onlyEyebrow)
-        {
-            if (onlyEyebrow)
-            {
-                return;
-            }
-
-            //レイアウト調整はコレ一発でおしまいです
-            _dispatcher.ReceiveCommand(new ReceivedCommand(VmmCommands.ResetDeviceLayout));
-        }
-
-        private void SendParameterRelatedCommands(AutoAdjustParameters parameters)
-        {
-            SendParameterRelatedCommands(parameters, false);
-        }
-
+        
         private void AdjustCameraPosition(Animator animator)
         {
             var head = animator.GetBoneTransform(HumanBodyBones.Neck);

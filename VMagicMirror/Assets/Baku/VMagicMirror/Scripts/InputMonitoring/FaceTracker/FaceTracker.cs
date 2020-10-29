@@ -38,6 +38,8 @@ namespace Baku.VMagicMirror
 
         [Tooltip("検出処理が走る最短間隔をミリ秒単位で規定します。")]
         [SerializeField] private int trackMinIntervalMillisec = 60;
+
+        [SerializeField] private int trackMinIntervalMillisecOnHighPower = 40;
         
         /// <summary> 検出した顔パーツの情報 </summary>
         public FaceParts FaceParts { get; } = new FaceParts();
@@ -87,6 +89,9 @@ namespace Baku.VMagicMirror
                 FaceParts.DisableHorizontalFlip = value;                
             } 
         }
+
+        private int TrackMinIntervalMs =>
+            isHighPowerMode ? trackMinIntervalMillisecOnHighPower : trackMinIntervalMillisec;
 
         private int TextureWidth =>
             (_webCamTexture == null) ? requestedWidth :
@@ -188,7 +193,7 @@ namespace Baku.VMagicMirror
                 bool canSetImage = HasInitDone &&
                    _webCamTexture.isPlaying &&
                    _hasFrameUpdateSincePreviousSetColors &&
-                   _countFromPreviousSetColors > trackMinIntervalMillisec * .001f &&
+                   _countFromPreviousSetColors > TrackMinIntervalMs * .001f &&
                    _colors != null &&
                    !FaceDetectPrepared;
 

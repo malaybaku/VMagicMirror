@@ -199,7 +199,7 @@ namespace Baku.VMagicMirror
             float yawAngle = _faceParts.FaceYawRate * pitchYawFactor.y;
 
             //yawがゼロから離れると幾何的な都合でピッチが大きく出ちゃうので、それの補正
-            float dampedPitchRate = _faceParts.FacePitchRate * (1.0f - Mathf.Abs(_faceParts.FaceYawRate) * 0.4f);
+            float dampedPitchRate = _faceParts.FacePitchRate * (1.0f - Mathf.Cos(_faceParts.FaceYawRate) * 0.4f);
             
             float pitchRate = Mathf.Clamp(
                  dampedPitchRate - pitchRateBaseline, -1, 1

@@ -13,6 +13,9 @@ lang_prefix: /en/
 
 {% include docimg.html file="/images/docs/window_top.png" %}
 
+#### Features
+{: .doc-sec2 }
+
 `Background`: Set background color by RGB.
 
 `Transparent Window`: Check to make character window transparent. Available in Streaming tab. 
@@ -28,3 +31,11 @@ lang_prefix: /en/
 `Transparent Level`: Select the character transparency condition from level 0 to 4. Default value is level 2. Level 0 means always NOT transparent, and level 4 makes character always transparent.
 
 `Alpha when Transpanrent`: Set the transparency when the character is transparent. Higher value means opaque.
+
+#### NOTE: Schedule of virtual camera feature removal (v1.6.0)
+
+`Window` tab also supports [Virtual Camera](../tips/virtual_camera) feature, but this function will be removed in v1.6.0.
+
+This is because OBS Studio](https://obsproject.com/download) has introduced virtual camera by standard, from version 26.0.
+
+If you want to use VMagicMirror with virtual camera, please consider installing `OBS Studio`.

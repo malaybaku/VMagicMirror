@@ -181,43 +181,7 @@ namespace Baku.VMagicMirror
             left.z * right.z
         );
     }
-    
-    
-    /// <summary> 頭部の回転がQuaternionで飛んで来るのを安全にオイラー角に変換してくれるやつ </summary>
-    public class FaceRotToEulerByOpenCVPose
-    {
-        private readonly OpenCVFacePose _facePose;
-        public FaceRotToEulerByOpenCVPose(OpenCVFacePose facePose)
-        {
-            _facePose = facePose;
-        }
-        
-        public Vector3 GetTargetEulerAngle()
-        {
-            var rot = _facePose.HeadRotation;
-            
-            //安全にやるために、実際に基準ベクトルを回す。処理的には回転行列に置き換えるのに近いかな。
-            var f = rot * Vector3.forward;
-            var g = rot * Vector3.right;
-            
-            var yaw = Mathf.Asin(f.x) * Mathf.Rad2Deg;
-            var pitch = -Mathf.Asin(f.y) * Mathf.Rad2Deg;
-            var roll = Mathf.Asin(g.y) * Mathf.Rad2Deg;
-
-            return new Vector3(
-                NormalRanged(pitch),
-                NormalRanged(yaw),
-                NormalRanged(roll)
-            );
-        }
-        
-        //角度を必ず[-180, 180]の範囲に収めるやつ。この範囲に入ってないとスケーリングとかのときに都合が悪いため。
-        private static float NormalRanged(float angle)
-        {
-            return Mathf.Repeat(angle + 180f, 360f) - 180f;
-        }
-    }
-
+   
     /// <summary>
     /// 頭部の回転がFacePartsに飛んでくるのをオイラー角情報に変換するやつ。
     /// OpenCVPoseを使うケースとコードを揃えるためにこういう書き方
@@ -235,7 +199,7 @@ namespace Baku.VMagicMirror
             float yawAngle = _faceParts.FaceYawRate * pitchYawFactor.y;
 
             //yawがゼロから離れると幾何的な都合でピッチが大きく出ちゃうので、それの補正
-            float dampedPitchRate = _faceParts.FacePitchRate * (1.0f - Mathf.Abs(_faceParts.FaceYawRate) * 0.4f);
+            float dampedPitchRate = _faceParts.FacePitchRate * (1.0f - Mathf.Cos(_faceParts.FaceYawRate) * 0.4f);
             
             float pitchRate = Mathf.Clamp(
                  dampedPitchRate - pitchRateBaseline, -1, 1
@@ -251,6 +215,42 @@ namespace Baku.VMagicMirror
         }
     }
 
+    // NOTE: FacePartsベースの実装に巻き戻したため不要化
+    //
+    // /// <summary> 頭部の回転がQuaternionで飛んで来るのを安全にオイラー角に変換してくれるやつ </summary>
+    // public class FaceRotToEulerByOpenCVPose
+    // {
+    //     private readonly OpenCVFacePose _facePose;
+    //     public FaceRotToEulerByOpenCVPose(OpenCVFacePose facePose)
+    //     {
+    //         _facePose = facePose;
+    //     }
+    //     
+    //     public Vector3 GetTargetEulerAngle()
+    //     {
+    //         var rot = _facePose.HeadRotation;
+    //         
+    //         //安全にやるために、実際に基準ベクトルを回す。処理的には回転行列に置き換えるのに近いかな。
+    //         var f = rot * Vector3.forward;
+    //         var g = rot * Vector3.right;
+    //         
+    //         var yaw = Mathf.Asin(f.x) * Mathf.Rad2Deg;
+    //         var pitch = -Mathf.Asin(f.y) * Mathf.Rad2Deg;
+    //         var roll = Mathf.Asin(g.y) * Mathf.Rad2Deg;
+    //
+    //         return new Vector3(
+    //             NormalRanged(pitch),
+    //             NormalRanged(yaw),
+    //             NormalRanged(roll)
+    //         );
+    //     }
+    //     
+    //     //角度を必ず[-180, 180]の範囲に収めるやつ。この範囲に入ってないとスケーリングとかのときに都合が悪いため。
+    //     private static float NormalRanged(float angle)
+    //     {
+    //         return Mathf.Repeat(angle + 180f, 360f) - 180f;
+    //     }
+    // }
     
 }
 

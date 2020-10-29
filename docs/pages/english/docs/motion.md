@@ -23,6 +23,10 @@ lang_prefix: /en/
 
 `LypSync`: Choose Microphone to use lip sync (viseme) feature. Available in Streaming tab.
 
+`Sensitivity [dB]`: Specify plus value when the microphone input is too small, to obtain good result for lipsync.
+
+`Show Volume`: Turn on to see the input volume. Adjust `Sensitivity` such that, the volume bar is green and sometimes red during talking.
+
 `Track Face`: Choose WebCam to use face tracking feature. Available in Streaming tab.
 
 `High Power Mode`: Get more quick face tracking result, while getting higher CPU load. In v1.5.0 it is an experimental feature.

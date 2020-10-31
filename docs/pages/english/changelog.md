@@ -9,7 +9,16 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v1.5.0a
+{: .doc-sec2 }
+
+2020/11/01
+
+* Fix: the issue in v1.5.0 that, VRoid Hub login UI does not receive any keyboard input, and thus cannot login.
+
+
 #### v1.5.0 
+{: .doc-sec2 }
 
 2020/10/31
 
@@ -26,6 +35,7 @@ lang_prefix: /en/
 
 
 #### v1.4.0
+{: .doc-sec2 }
 
 2020/09/24
 
@@ -43,12 +53,14 @@ lang_prefix: /en/
 * Change: Reduced binary size, for distribution.
 
 #### v1.3.0a
+{: .doc-sec2 }
 
 2020/08/27
 
 * Fix: Issue in v1.3.0 that, Perfect Sync could not move avatar's right brow down.
 
 #### v1.3.0
+{: .doc-sec2 }
 
 2020/08/27
 
@@ -61,6 +73,7 @@ lang_prefix: /en/
 * Fix: Other small issues.
 
 #### v1.2.0
+{: .doc-sec2 }
 
 2020/07/30
 
@@ -70,6 +83,7 @@ lang_prefix: /en/
 * Change: Change colorspace from Gamma to Linear. This improves the appearance especially for the models which expect linear colorspace. For this change the light default color also changes to white (`#FFFFFF`). You can edit the color and intensity of the light from setting window `Effect` tab > `Light`.
 
 #### v1.1.0
+{: .doc-sec2 }
 
 2020/06/26
 
@@ -81,6 +95,7 @@ lang_prefix: /en/
 
 
 #### v1.0.0
+{: .doc-sec2 }
 
 2020/05/22
 
@@ -94,12 +109,14 @@ lang_prefix: /en/
 * Fix: Fix issue Standard shader might fail to load correctly
 
 #### v0.9.9a
+{: .doc-sec2 }
 
 2020/04/19
 
 * Fix: Fix the issue that when virtual camera output is enabled, character window seems to be stopped in about 5 seconds, after losing window focus.
 
 #### v0.9.9
+{: .doc-sec2 }
 
 2020/04/19
 
@@ -111,6 +128,7 @@ lang_prefix: /en/
 Shoulder motion improvement is applied by default, but you can turn off it for the case that it does not suit for your avatar. Please check at Setting Window > `Motion` > `Arm` > `Modify shoulder motion`.
 
 #### v0.9.8
+{: .doc-sec2 }
 
 2020/03/24
 
@@ -122,6 +140,7 @@ Shoulder motion improvement is applied by default, but you can turn off it for t
 * Fix: Fix the issue the character's wrists are unnaturally banded on application start, if typing / mouse motion is disabled.
 
 #### v0.9.7a
+{: .doc-sec2 }
 
 2020/02/22
 
@@ -130,6 +149,7 @@ Shoulder motion improvement is applied by default, but you can turn off it for t
     - This feature is off by default, because it maybe disturb the pen tablet based motion.
 
 #### v0.9.7
+{: .doc-sec2 }
 
 2020/02/22
 

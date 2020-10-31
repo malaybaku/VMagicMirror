@@ -9,6 +9,22 @@ lang_prefix: /en/
 
 # Change Log
 
+#### v1.5.0 
+
+2020/10/31
+
+* Add: (beta feature) `High Power Mode ` for webcam tracking. This mode leads higher CPU load, but the motion will be quick.
+* Add: Mic sensitivity adjust.
+* Add: Typing effect `Butterfly`.
+* Fix: Issue that, specifig games disturb keyboard input motion.
+* Change: When `Transparent Background` is turned off, the window TopMost (always foreground) is always disabled.
+* Change: Improve the appearance during hand down mode.
+* Change: Apply bigger eyes waiting motion.
+* Change: The process to control EyeBrow blendshapes especially for VRoid model when blink. If you feel it not good, please setup the model's  `BLINK_L` and `BLINK_R` BlendShapeClip to include the eyebrow motion.
+* Change: Change face tracking algorithm to v1.3.0 based one.
+* Change: Removed virtual cam feature from `Streaming` tab. You can still use this feature in setting window `Window` tab, but is will also be removed in v1.6.0. Please consider to use `OBS Studio` as it supports virtual cam by standard from version 26.0.
+
+
 #### v1.4.0
 
 2020/09/24

@@ -91,19 +91,7 @@ If you want to dragging feature, then turn off `Drag the character` after placin
 </div>
 
 
-#### 2.2. Virtual Camera Output
-{: .doc-sec2 }
-
-`Virtual Camera Output` is a feature mainly for online meeting systems.
-
-<div class="row">
-{% include docimg.html file="./images/get_started/img00_095_virtual_cam_out.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
-</div>
-
-This feature is a bit advanced. If you are interested, see the detail at [Tips: Use Virtual Camera](./tips/virtual_camera).
-
-
-#### 2.3. Face
+#### 2.2. Face
 {: .doc-sec2 }
 
 `Face` can setup your VRM's face expressions.
@@ -114,7 +102,13 @@ This feature is a bit advanced. If you are interested, see the detail at [Tips: 
 
 `LipSync`: Select microphone to use LipSync (viseme) feature.
 
+`Sensitivity [dB]`: Specify plus value when the microphone input is too small, to obtain good result for lipsync.
+
+`Show Volume`: Turn on to see the input volume. Adjust `Sensitivity` such that, the volume bar is green and sometimes red during talking.
+
 `Track Face`: Select webcam to track your head motion
+
+`High Power Mode`: Get more quick face tracking result, while getting higher CPU load. In v1.5.0 it is an experimental feature.
 
 `Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking.
 
@@ -131,7 +125,7 @@ If your face is not at the center for the web camera, or you are too near/far to
 **NOTE:** VMagicMirror v1.1.0 and later also supports iOS app based face tracking, see detail at [External Tracker App ](./docs/external_tracker).
 
 
-#### 2.4. Word To Motion
+#### 2.3. Word To Motion
 {: .doc-sec2 }
 
 `Word To Motion` is feature to control face expression.
@@ -147,7 +141,7 @@ Please see the detail in [Expressions](./docs/expressions).
 When choosing `Device Assignment` to `Gamepad` or `MIDI Controller`, selected device arm motion is disabled. This helps you to hide what you do to change face expression from audience.
 
 
-#### 2.5. View
+#### 2.4. View
 {: .doc-sec2 }
 
 Toggle the checks to set which device is visible and which is invisible.
@@ -160,7 +154,7 @@ Especially you can see the effect when keyboard is shown and selecting `Typing E
 
 **Hint:** If shadow looks bad, please check [FAQ](./questions) and "Shadow looks not good". If this does not help, then disable shadow.
 
-#### 2.6. Camera
+#### 2.5. Camera
 {: .doc-sec2 }
 
 This "Camera" means eyesight on the character window.
@@ -193,7 +187,7 @@ During this setup you can use `Quick Save` and `Quick Load` buttons to save or l
 
 In this process you might get trouble the character is cut off or going out of character window. In this case press `Reset Position`, or turn off `Transparent Window` to see the actual layout.
 
-#### 2.7. Device Layout
+#### 2.6. Device Layout
 {: .doc-sec2 }
 
 Turn on `Free Layout` to enter device free layout mode.
@@ -213,7 +207,7 @@ During this mode the control UI appears at the top-left corner of character wind
 `Reset`: Use this command to recover the standard layout.
 
 
-#### 2.8. Motion
+#### 2.7. Motion
 {: .doc-sec2 }
 
 Check on `Presentation-like hand` to move VRM's right hand as if he / she is on a presentation.

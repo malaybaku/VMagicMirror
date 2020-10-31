@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.4.0
+v1.5.0
 
 * 作成: 獏星(ばくすたー)
-* 2020/09/24
+* 2020/10/31
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 

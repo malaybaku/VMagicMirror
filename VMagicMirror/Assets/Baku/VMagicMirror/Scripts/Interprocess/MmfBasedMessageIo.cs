@@ -24,9 +24,21 @@ namespace Baku.VMagicMirror.InterProcess
 
         private readonly IpcMessageDispatcher _dispatcher = new IpcMessageDispatcher();
         private readonly MemoryMappedFileConnectServer _server;
-        
-        public void SendCommand(Message message) 
-            => _server.SendCommand(message.Command + ":" + message.Content);
+
+        public event Action<Message> SendingMessage;
+
+        public void SendCommand(Message message)
+        {
+            try
+            {
+                SendingMessage?.Invoke(message);
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);                
+            }
+            _server.SendCommand(message.Command + ":" + message.Content);
+        }
 
         public async Task<string> SendQueryAsync(Message message) 
             => await _server.SendQueryAsync(message.Command + ":" + message.Content);

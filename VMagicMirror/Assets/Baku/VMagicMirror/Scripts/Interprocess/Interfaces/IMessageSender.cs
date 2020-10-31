@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Baku.VMagicMirror
 {
@@ -6,5 +7,7 @@ namespace Baku.VMagicMirror
     {
         void SendCommand(Message message);
         Task<string> SendQueryAsync(Message message);
+
+        event Action<Message> SendingMessage;
     }
 }

@@ -1,183 +1,300 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
-using UniRx;
+using System.Windows.Forms;
 using UnityEngine;
+using Linearstar.Windows.RawInput;
+using Linearstar.Windows.RawInput.Native;
+using UniRx;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Baku.VMagicMirror
 {
-    //NOTE: とくに管理してないが、このクラスは複数あるとマズイです(グローバルフックが二重にかかってしまうので)
-    
-    /// <summary> キーボード/マウスボタンイベントを監視してUIスレッドで発火してくれる凄いやつだよ </summary>
-    public class RawInputChecker : MonoBehaviour, IReleaseBeforeQuit
+    /// <summary> RawInput的なマウス情報を返してくるやつ </summary>
+    public class RawInputChecker : MonoBehaviour, IKeyMouseEventSource, IReleaseBeforeQuit
     {
-        //NOTE: ランダム打鍵で全部のキーを叩かせる理由がない(それだと腕が動きすぎる懸念がある)ので絞っておく
-        private static readonly string[] RandomKeyNames　= new []
-        {
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
-            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-            "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D0", 
-        };
+        private const string MouseLDownEventName = "LDown";
+        private const string MouseRDownEventName = "RDown";
+        private const string MouseMDownEventName = "MDown";
+        
+        private WindowProcedureHook _windowProcedureHook = null;
 
-        private static readonly Dictionary<int, string> MouseEventNumberToEventName = new Dictionary<int, string>()
-        {
-            [WindowsAPI.MouseMessages.WM_LBUTTONDOWN] = "LDown",
-            [WindowsAPI.MouseMessages.WM_LBUTTONUP] = "LUp",
-            [WindowsAPI.MouseMessages.WM_RBUTTONDOWN] = "RDown",
-            [WindowsAPI.MouseMessages.WM_RBUTTONUP] = "RUp",
-            [WindowsAPI.MouseMessages.WM_MBUTTONDOWN] = "MDown",
-            [WindowsAPI.MouseMessages.WM_MBUTTONUP] = "MUp",
-        };
+        public IObservable<string> PressedRawKeys => _rawKeys;
+        private readonly Subject<string> _rawKeys = new Subject<string>();
+        
+        public IObservable<string> PressedKeys => _keys;
+        private readonly Subject<string> _keys = new Subject<string>();
 
-        public IObservable<string> PressedRawKeys => _pressedRawKeys;
-        public IObservable<string> PressedKeys => _pressedKeys;
         public IObservable<string> MouseButton => _mouseButton;
-        
-        private readonly Subject<string> _pressedRawKeys = new Subject<string>();
-        private readonly Subject<string> _pressedKeys = new Subject<string>();
         private readonly Subject<string> _mouseButton = new Subject<string>();
+
+
+        #region マウス
         
-        private readonly ConcurrentQueue<string> _pressedKeysConcurrent = new ConcurrentQueue<string>();
-        private readonly ConcurrentQueue<string> _mouseButtonConcurrent = new ConcurrentQueue<string>();
+        private int _dx;
+        private int _dy;
+        private readonly object _diffLock = new object();
+        
+        public bool EnableFpsAssumedRightHand { get; private set; } = false;
 
-        private Thread _thread;
-        private bool _hasStopped = false;
+        /// <summary>
+        /// 前回呼び出してからの間にマウス移動が積分された合計値を取得します。
+        /// 読み出すことで累計値は0にリセットされます。
+        /// </summary>
+        /// <returns></returns>
+        public (int dx, int dy) GetAndReset()
+        {
+            lock (_diffLock)
+            {
+                int x = _dx;
+                int y = _dy;
+                _dx = 0;
+                _dy = 0;
+                return (x, y);
+            }
+        }
 
-        private bool _randomizeKey;
+        #endregion
+        
+        #region キーボード
+        
+        //NOTE: これはウィンドウプロシージャ側のみが参照する値で、
+        //WM_INPUTベースで上がった/下がったをここにポンポン入れていく
+        private readonly bool[] _keyDownFlags = new bool[256];
+        
+        private bool _randomizeKey = false;
 
-        private readonly Atomic<uint> _threadId = new Atomic<uint>();
-        private readonly Atomic<bool> _shouldStop = new Atomic<bool>();
-
+        //叩いたキーのコード。(多分大丈夫なんだけど)イベントハンドラを短時間で抜けときたいのでこういう持ち方にする
+        private readonly ConcurrentQueue<int> _downKeys = new ConcurrentQueue<int>();
+        
+        #endregion
+        
         [Inject]
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
+                VmmCommands.EnableFpsAssumedRightHand,
+                c => EnableFpsAssumedRightHand = c.ToBoolean()
+                );
+            receiver.AssignCommandHandler(
                 VmmCommands.EnableHidRandomTyping,
                 c => _randomizeKey = c.ToBoolean()
-            );
+                );
+            
         }
-
-        public void ReleaseBeforeCloseConfig()
-        {
-        }
-
-        public Task ReleaseResources() => Task.CompletedTask;
         
         private void Start()
         {
-            _thread = new Thread(InputObserveThread);
-            _thread.Start();
-        }
+#if UNITY_EDITOR
+            EditorSetupTargetKeyCodes();
+#endif
 
-        private void Update()
-        {
-            while (_pressedKeysConcurrent.TryDequeue(out string key))
-            {
-                _pressedRawKeys.OnNext(key);
-                if (_randomizeKey)
-                {
-                    key = RandomKeyNames[UnityEngine.Random.Range(0, RandomKeyNames.Length)];
-                }
-                _pressedKeys.OnNext(key);
-            }
-
-            while (_mouseButtonConcurrent.TryDequeue(out string info))
-            {
-                _mouseButton.OnNext(info);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            if (_thread == null || _hasStopped)
-            {
-                return;
-            }
-            
-            _hasStopped = true;
-            _shouldStop.Value = true;
-            // var threadId = _threadId.Value;
-            // WinApi.PostThreadMessage(threadId, WinApi.WM_APP_THREAD_QUIT, IntPtr.Zero, IntPtr.Zero);
-        }
-
-        private void OnKeyboardHookEvent(object sender, KeyboardHookedEventArgs e)
-        {
-            if (e.UpDown == KeyboardUpDown.Down)
-            {
-                _pressedKeysConcurrent.Enqueue(e.KeyCode.ToString());
-            }
-        }
-
-        private void OnMouseButtonEvent(int wParamVal)
-        {
-            _mouseButtonConcurrent.Enqueue(MouseEventNumberToEventName[wParamVal]);
-        }
-
-        private void InputObserveThread()
-        {
-            _threadId.Value = WinApi.GetCurrentThreadId();
-            var keyboardHook = new KeyboardHook();
-            var mouseHook = new MouseHook();
-            keyboardHook.KeyboardHooked += OnKeyboardHookEvent; 
-            mouseHook.MouseButton += OnMouseButtonEvent;
-
+            //キーボードだけ登録する。マウスはUnityが自動でRegisterするらしく、下手に触ると危ないので触らない。
+#if !UNITY_EDITOR
             try
             {
-                IntPtr msgPtr = IntPtr.Zero;
-                WinApi.PeekMessage(msgPtr, IntPtr.Zero, 0, 0, WinApi.PM_NOREMOVE);
-                while (!_shouldStop.Value)
-                {
-                    int res = WinApi.GetMessage(msgPtr, IntPtr.Zero, 0, 0);
-                    //NOTE: res == 0, -1は普通起きない
-                    if (_shouldStop.Value || res == 0 || res == -1)
-                    {
-                        break;
-                    }
-                    
-                    LogOutput.Instance.Write("recv input message");
-                    WinApi.TranslateMessage(msgPtr);
-                    WinApi.DispatchMessage(msgPtr);
-                }
+                RawInputDevice.RegisterDevice(
+                    HidUsageAndPage.Keyboard,
+                    RawInputDeviceFlags.InputSink | RawInputDeviceFlags.NoLegacy | RawInputDeviceFlags.AppKeys, 
+                    NativeMethods.GetUnityWindowHandle()
+                    );
             }
             catch (Exception ex)
             {
                 LogOutput.Instance.Write(ex);
             }
+#endif
 
-            keyboardHook.KeyboardHooked -= OnKeyboardHookEvent; 
-            mouseHook.MouseButton -= OnMouseButtonEvent;
-            keyboardHook.Dispose();
-            mouseHook.RemoveHook();
+            //NOTE: このイベントはエディタ実行では飛んできません(Window Procedureに関わるので)
+            _windowProcedureHook = new WindowProcedureHook();
+            _windowProcedureHook.StartObserve();
+            _windowProcedureHook.ReceiveRawInput += OnReceiveRawInput;
         }
 
-        static class WinApi
+        private void Update()
         {
-            [DllImport("user32.dll")]
-            public static extern bool PeekMessage(IntPtr lpMsg, IntPtr hWnd, uint filterMin, uint filterMax, uint wRemoveMsg);
-            
-            [DllImport("user32.dll")]
-            public static extern int GetMessage(IntPtr lpMsg, IntPtr hWnd, uint filterMin, uint filterMax);
-            
-            [DllImport("user32.dll")]
-            public static extern bool TranslateMessage(IntPtr lpMsg);
+#if UNITY_EDITOR
+            EditorCheckKeyDown();
+#endif
 
-            [DllImport("user32.dll")]
-            public static extern int DispatchMessage(IntPtr lpMsg);
-
-            [DllImport("user32.dll")]
-            public static extern bool PostThreadMessage(uint idThread, uint msg, IntPtr wParam, IntPtr lParam);
-            
-            [DllImport("kernel32.dll")]
-            public static extern uint GetCurrentThreadId();
-            
-            public const int WM_APP = 0x8000;
-            public const int WM_APP_THREAD_QUIT = WM_APP + 0x0001;
-            public const int PM_NOREMOVE = 0x0000;
-
+            while (_downKeys.TryDequeue(out int keyCode))
+            {
+                //キーイベントとしてマウスボタンの情報も載っているので理屈上正しくなるように割り当てる。
+                //ただし実際にはこれらのコードには到達しないっぽいのを確認してます…
+                //この辺のコードはWinFormKeysにも載ってるし"Virtual Key Code"とかでググると出ます
+                if (keyCode == 1)
+                {
+                    _mouseButton.OnNext(MouseLDownEventName);
+                }
+                else if (keyCode == 2)
+                {
+                    _mouseButton.OnNext(MouseRDownEventName);
+                }
+                else if (keyCode == 4)
+                {
+                    _mouseButton.OnNext(MouseMDownEventName);
+                }
+                else
+                {
+                    var rawKey = ((Keys)keyCode).ToString();
+                    _rawKeys.OnNext(rawKey);
+                    
+                    if (_randomizeKey)
+                    {
+                        var keys = RandomKeyboardKeys.RandomKeyNames;
+                        _keys.OnNext(keys[Random.Range(0, keys.Length)]);
+                    }
+                    else
+                    {
+                        _keys.OnNext(rawKey);
+                    }
+                }
+            }
         }
+
+        private void OnDisable()
+        {
+            _windowProcedureHook.StopObserve();
+        }
+
+        private void OnReceiveRawInput(IntPtr lParam)
+        {
+            var data = RawInputData.FromHandle(lParam);
+            
+            if (data is RawInputMouseData mouseData && mouseData.Mouse.Flags.HasFlag(RawMouseFlags.MoveRelative))
+            {
+                AddDif(mouseData.Mouse.LastX, mouseData.Mouse.LastY);
+            }
+            else if (data is RawInputKeyboardData keyData)
+            {
+                var key = keyData.Keyboard;
+                int code = GetKeyCode(key);
+                //255は「良く分からん」的なキー情報なので弾く。
+                //とくにNumLockがオフのときArrow / INS / DEL / HOME / END / PgUp / PgDnを叩くと、
+                //(なぜか)255の入力と該当キー入力の2重のイベントが吹っ飛んでくるので、それを無視するのが狙い
+                if (code < 0 || code > 254)
+                {
+                    return;
+                }
+                
+                //NOTE: ↓はkey.Flags % 2 == 0と書くのと同じような意味
+                bool isDown = !key.Flags.HasFlag(RawKeyboardFlags.Up);
+                
+                if (_keyDownFlags[code] == isDown)
+                {
+                    //キーが押しっぱなしの場合にイベントがバシバシ来るのをここで止める
+                    return;
+                }
+
+                _keyDownFlags[code] = isDown;
+                if (!isDown)
+                {
+                    return;
+                }
+                
+                AddKeyDown(code);
+            }
+        }
+
+        private void AddDif(int dx, int dy)
+        {
+            lock (_diffLock)
+            {
+                _dx += dx;
+                _dy += dy;                
+            }
+        }
+        
+        private void AddKeyDown(int keyCode) => _downKeys.Enqueue(keyCode);
+        
+        public void ReleaseBeforeCloseConfig() => _windowProcedureHook.StopObserve();
+
+        public Task ReleaseResources() => Task.CompletedTask;
+
+        private static int GetKeyCode(RawKeyboard key)
+        {
+            int code = key.VirutalKey;
+            
+            switch (code)
+            {
+                //Ctrl, Shift, Altが右か左か確定させる
+                case (int) Keys.ControlKey:
+                    return key.Flags.HasFlag(RawKeyboardFlags.RightKey)
+                        ? (int) Keys.RControlKey
+                        : (int) Keys.LControlKey;
+                case (int) Keys.ShiftKey:
+                    return key.Flags.HasFlag(RawKeyboardFlags.RightKey)
+                        ? (int) Keys.RShiftKey
+                        : (int) Keys.LShiftKey;
+                case (int) Keys.Menu:
+                    return key.Flags.HasFlag(RawKeyboardFlags.RightKey)
+                        ? (int) Keys.RMenu
+                        : (int) Keys.LMenu;      
+                
+                //NumPadキーと矢印キーとかの解釈を確定させる
+                case (int) Keys.Insert:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad0;
+                case (int) Keys.Delete:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.Decimal;
+                case (int) Keys.Home:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad7;
+                case (int) Keys.End:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad1;
+                case (int) Keys.PageUp:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad9;
+                case (int) Keys.PageDown:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad3;
+                case (int) Keys.Left:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad4;
+                case (int) Keys.Up:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad8;
+                case (int) Keys.Down:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad2;
+                case (int) Keys.Right:
+                    return key.Flags.HasFlag(RawKeyboardFlags.LeftKey) ? code : (int) Keys.NumPad6;
+                default:
+                    return code; 
+            }
+        }
+        
+        
+        //NOTE: DIのほうがキレイだけど、分けるほどコードサイズが無いので直書きで。
+        #if UNITY_EDITOR
+
+        private KeyCode[] _editorCheckTargetKeyCodes = null;
+
+        private void EditorSetupTargetKeyCodes()
+        {
+            //97から"A"が始まってるのを前提に、そこから"Z"まで拾おうという狙いのコード
+            var codes = new KeyCode[26];
+            for (int i = 0; i < codes.Length; i++)
+            {
+                codes[i] = (KeyCode) (97 + i);
+            }
+            _editorCheckTargetKeyCodes = codes;
+        }
+        
+        private void EditorCheckKeyDown()
+        {
+            for (int i = 0; i < _editorCheckTargetKeyCodes.Length; i++)
+            {
+                if (Input.GetKeyDown(_editorCheckTargetKeyCodes[i]))
+                {
+                    string keyName = _editorCheckTargetKeyCodes[i].ToString();
+                    _rawKeys.OnNext(keyName);
+
+                    if (_randomizeKey)
+                    {
+                        int index = Random.Range(0, _editorCheckTargetKeyCodes.Length);
+                        keyName = _editorCheckTargetKeyCodes[index].ToString();
+                    }
+                    _keys.OnNext(keyName);
+                }                
+            }
+        }
+        
+        #endif
+
     }
 }

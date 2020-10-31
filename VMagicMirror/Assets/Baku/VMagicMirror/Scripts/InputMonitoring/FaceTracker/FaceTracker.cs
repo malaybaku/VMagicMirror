@@ -18,20 +18,17 @@ namespace Baku.VMagicMirror
     {
         const string FaceTrackingDataFileName = "sp_human_face_17.dat";
 
-        [SerializeField]
-        private string requestedDeviceName = null;
+        [SerializeField] private string requestedDeviceName = null;
         
-        [SerializeField]
-        private int requestedWidth = 320;
+        [SerializeField] private bool isHighPowerMode = false;
         
-        [SerializeField]
-        private int requestedHeight = 240;
+        [SerializeField] private int requestedWidth = 320;
         
-        [SerializeField]
-        private int requestedFps = 30;
+        [SerializeField] private int requestedHeight = 240;
         
-        [SerializeField]
-        private int halfResizeWidthThreshold = 640;
+        [SerializeField] private int requestedFps = 30;
+        
+        [SerializeField] private int halfResizeWidthThreshold = 640;
 
         [Tooltip("顔トラッキングがオンであるにも関わらず表情データが降ってこない状態が続き、異常値と判定するまでの秒数")]
         [SerializeField] private float activeButNotTrackedCount = 1.0f;
@@ -41,7 +38,12 @@ namespace Baku.VMagicMirror
 
         [Tooltip("検出処理が走る最短間隔をミリ秒単位で規定します。")]
         [SerializeField] private int trackMinIntervalMillisec = 60;
+
+        [SerializeField] private int trackMinIntervalMillisecOnHighPower = 40;
         
+        /// <summary> 検出した顔パーツの情報 </summary>
+        public FaceParts FaceParts { get; } = new FaceParts();
+
         public FaceTrackerToEyeOpen EyeOpen { get; } = new FaceTrackerToEyeOpen();
 
         /// <summary> キャリブレーションの内容 </summary>
@@ -59,9 +61,7 @@ namespace Baku.VMagicMirror
         /// </remarks>
         public Rect DetectedRect { get; private set; }
 
-        /// <summary>
-        /// 顔検出スレッド上で、顔情報がアップデートされると発火します。
-        /// </summary>
+        /// <summary> 顔検出スレッド上で、顔情報がアップデートされると発火します。 </summary>
         public event Action<FaceDetectionUpdateStatus> FaceDetectionUpdated;
 
         /// <summary> UIスレッド上で、顔の特徴点一覧を獲得すると発火します。 </summary>
@@ -83,17 +83,24 @@ namespace Baku.VMagicMirror
         public bool DisableHorizontalFlip
         {
             get => EyeOpen.DisableHorizontalFlip;
-            set => EyeOpen.DisableHorizontalFlip = value;
+            set 
+            {
+                EyeOpen.DisableHorizontalFlip = value;
+                FaceParts.DisableHorizontalFlip = value;                
+            } 
         }
+
+        private int TrackMinIntervalMs =>
+            isHighPowerMode ? trackMinIntervalMillisecOnHighPower : trackMinIntervalMillisec;
 
         private int TextureWidth =>
             (_webCamTexture == null) ? requestedWidth :
-            (_webCamTexture.width >= halfResizeWidthThreshold) ? _webCamTexture.width / 2 :
+            (!isHighPowerMode && _webCamTexture.width >= halfResizeWidthThreshold) ? _webCamTexture.width / 2 :
             _webCamTexture.width;
 
         private int TextureHeight =>
             (_webCamTexture == null) ? requestedHeight :
-            (_webCamTexture.width >= halfResizeWidthThreshold) ? _webCamTexture.height / 2 :
+            (!isHighPowerMode && _webCamTexture.width >= halfResizeWidthThreshold) ? _webCamTexture.height / 2 :
             _webCamTexture.height;
 
         private bool _calibrationRequested = false;
@@ -186,7 +193,7 @@ namespace Baku.VMagicMirror
                 bool canSetImage = HasInitDone &&
                    _webCamTexture.isPlaying &&
                    _hasFrameUpdateSincePreviousSetColors &&
-                   _countFromPreviousSetColors > trackMinIntervalMillisec * .001f &&
+                   _countFromPreviousSetColors > TrackMinIntervalMs * .001f &&
                    _colors != null &&
                    !FaceDetectPrepared;
 
@@ -201,7 +208,7 @@ namespace Baku.VMagicMirror
                     
                 try
                 {
-                    if (_webCamTexture.width >= halfResizeWidthThreshold)
+                    if (!isHighPowerMode && _webCamTexture.width >= halfResizeWidthThreshold)
                     {
                         _webCamTexture.GetPixels32(_rawSizeColors);
                         SetHalfSizePixels(_rawSizeColors, _colors, _webCamTexture.width, _webCamTexture.height);
@@ -262,9 +269,10 @@ namespace Baku.VMagicMirror
             _cts?.Cancel();
         }
 
-        public void ActivateCamera(string cameraDeviceName)
+        public void ActivateCamera(string cameraDeviceName, bool highPowerMode)
         {
             requestedDeviceName = cameraDeviceName;
+            isHighPowerMode = highPowerMode;
             Initialize();
         }
 
@@ -280,6 +288,7 @@ namespace Baku.VMagicMirror
             try
             {
                 var calibrationData = JsonUtility.FromJson<CalibrationData>(data);
+                CalibrationData.pitchRateOffset = calibrationData.pitchRateOffset;
                 CalibrationData.faceCenter = calibrationData.faceCenter;
                 CalibrationData.faceSize = calibrationData.faceSize;
                 CalibrationDataReceived?.Invoke(calibrationData);
@@ -317,7 +326,13 @@ namespace Baku.VMagicMirror
                     if (WebCamTexture.devices[i].name == requestedDeviceName)
                     {
                         _webCamDevice = WebCamTexture.devices[i];
-                        _webCamTexture = new WebCamTexture(_webCamDevice.name, requestedWidth, requestedHeight, requestedFps);
+                        int sizeFactor = isHighPowerMode ? 2 : 1;
+                        _webCamTexture = new WebCamTexture(
+                            _webCamDevice.name, 
+                            requestedWidth * sizeFactor, 
+                            requestedHeight * sizeFactor, 
+                            requestedFps
+                            );
                         break;
                     }
                 }
@@ -350,7 +365,7 @@ namespace Baku.VMagicMirror
 
             if (_colors == null || _colors.Length != _webCamTexture.width * _webCamTexture.height)
             {
-                if (_webCamTexture.width >= halfResizeWidthThreshold)
+                if (!isHighPowerMode && _webCamTexture.width >= halfResizeWidthThreshold)
                 {
                     //画像が大きすぎるので、画像処理では0.5 x 0.5サイズを使う
                     _rawSizeColors = new Color32[_webCamTexture.width * _webCamTexture.height];
@@ -490,6 +505,7 @@ namespace Baku.VMagicMirror
                 mainPersonRect.height / TextureWidth
                 );
 
+            FaceParts.Update(mainPersonRect, landmarks);
             EyeOpen.UpdatePoints(landmarks);
 
             FaceDetectedAtLeastOnce = true;
@@ -508,6 +524,7 @@ namespace Baku.VMagicMirror
             //NOTE: centerじゃなくてbottom leftを指定するんですね…はい。
             DetectedRect = new Rect(center - 0.5f * size, size);
             
+            FaceParts.LerpToDefault(CalibrationData, lerpFactor);
             EyeOpen.LerpToDefault(lerpFactor);
             
             //TODO: ?もしかするとここもイベントでOpenCVFacePoseに認知させるべきかも。無くてもいい気もするけど
@@ -520,6 +537,9 @@ namespace Baku.VMagicMirror
             
             //他モジュールが更にキャリブを行い、データを書き込むことを許可する
             CalibrationRequired?.Invoke(CalibrationData);
+
+            //TODO: この処理はイベントハンドラ越しでやるべきでは。
+            CalibrationData.pitchRateOffset = FaceParts.FacePitchRate;
 
             CalibrationCompleted?.Invoke(JsonUtility.ToJson(CalibrationData));
         }

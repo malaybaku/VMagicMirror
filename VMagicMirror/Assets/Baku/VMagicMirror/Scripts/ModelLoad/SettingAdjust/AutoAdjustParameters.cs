@@ -6,18 +6,7 @@ namespace Baku.VMagicMirror
     [Serializable]
     public class AutoAdjustParameters
     {
-        public bool EyebrowIsValidPreset = false;
-        public string EyebrowLeftUpKey = "";
-        public string EyebrowLeftDownKey = "";
-        public bool UseSeparatedKeyForEyebrow = false;
-        public string EyebrowRightUpKey = "";
-        public string EyebrowRightDownKey = "";
-        public int EyebrowUpScale = 100;
-        public int EyebrowDownScale = 100;
-
         public int LengthFromWristToTip = 12;
-        public int LengthFromWristToPalm = 6;
-
         //カメラ位置は不要: ポーリングで取得してるから勝手に反映される
     }
 

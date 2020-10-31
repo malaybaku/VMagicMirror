@@ -21,7 +21,7 @@ namespace Baku.VMagicMirror
 
         /// <summary> オイラー角ごとの計算で得た体の推奨傾き角度を取得します。 </summary>
         public Quaternion BodyLeanSuggest { get; private set; } = Quaternion.identity;
-        
+
         private void Start()
         {
             StartCoroutine(CheckAnglesOnEndOfFrame());

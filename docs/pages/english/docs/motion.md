@@ -23,7 +23,13 @@ lang_prefix: /en/
 
 `LypSync`: Choose Microphone to use lip sync (viseme) feature. Available in Streaming tab.
 
+`Sensitivity [dB]`: Specify plus value when the microphone input is too small, to obtain good result for lipsync.
+
+`Show Volume`: Turn on to see the input volume. Adjust `Sensitivity` such that, the volume bar is green and sometimes red during talking.
+
 `Track Face`: Choose WebCam to use face tracking feature. Available in Streaming tab.
+
+`High Power Mode`: Get more quick face tracking result, while getting higher CPU load. In v1.5.0 it is an experimental feature.
 
 `Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking. Available in Streaming tab.
 
@@ -45,7 +51,7 @@ lang_prefix: /en/
 
 `Default Fun Blend Shape [%]`: Specifies the default fun expression rate. As the value increases the character will become always smile, but some character's facial expression will be unnatural when combined to blink or other face motions. In those cases, decrease the value.
 
-`Eyebrow (Open to Customize)`: Advanced section and normally you do not need modify them. However this option will be helpful if you have original VRM and want to move the eyebrow, or in case the eyebrow motion is too big or too small. 
+`Eyebrow (Open to Customize)`: This feature is removed in v1.5.0. This feature provides advanced setting and normally you do not need modify them. However this option will be helpful if you have original VRM and want to move the eyebrow, or in case the eyebrow motion is too big or too small. 
 
 * This section requires the knowledge about `BlendShape` to control VRM facial expression. If you do not know well, please refer to [Virtual Cast Wiki](https://virtualcast.jp/wiki/doku.php?id=%E3%83%A2%E3%83%87%E3%83%AB%E4%BD%9C%E6%88%90:%E3%83%96%E3%83%AC%E3%83%B3%E3%83%89%E3%82%B7%E3%82%A7%E3%82%A4%E3%83%97%E8%A8%AD%E5%AE%9A) and see latter section's image. You will see the name like `mouth_a` or `mouth_b`. This is BlendShape. And you can specify the name of BlendShape to move eyebrow, by sliding each shape in Unity Editor.
 

@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.4.0
+v1.5.0
 
 * Author: Baxter
-* 2020/Sep/24
+* 2020/Oct/31
 
 The VRM avatar application without any special device.
 
@@ -76,7 +76,6 @@ Maintainer's environment is as following.
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [UniVRM](https://dwango.github.io/vrm/) v0.55.0
 * [UniRx](https://github.com/neuecc/UniRx) (from Asset Store)
-* [XinputGamepad](https://github.com/kaikikazu/XinputGamePad/releases) v0.3b
 * [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM/releases) v1.0.1
     + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
@@ -87,8 +86,12 @@ Maintainer's environment is as following.
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
 * DOTween (from Asset Store)
+* [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
+* [LaserLightShader](https://noriben.booth.pm/items/2141514)
 
 Should be noted that `FinalIK`, `Dlib FaceLandmark Detector`, and `OpenCV for Unity` are paid assets.
+
+"Fly,Baby." and "LaserLightShader" are available on BOOTH, and they are optional. If you do not introduce them, some of typing effects will not work correctly.
 
 Also should be careful that `MidiJack` used in VMagicMirror is forked one.
 

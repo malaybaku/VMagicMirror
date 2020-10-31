@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -6,24 +7,36 @@ namespace Baku.VMagicMirror
     public class FaceAttitudeController : MonoBehaviour
     {
         //NOTE: バネマス系のパラメータ(いわゆるcとk)
-        [SerializeField] private Vector3 speedDumpForceFactor = new Vector3(15f, 10f, 10f);
-        [SerializeField] private Vector3 posDumpForceFactor = new Vector3(50f, 50f, 50f);
+        [SerializeField] private Vector3 speedDump = new Vector3(16f, 16f, 16f);
+        [SerializeField] private Vector3 posDump = new Vector3(50f, 60f, 60f);
 
         [Tooltip("Webカメラで得た回転量を角度ごとに強調したり抑えたりするファクター")]
         [SerializeField] private Vector3 headEulerAnglesFactor = Vector3.one;
 
+        //高解像度モードのときに使うc/k/ファクター
+        [SerializeField] private Vector3 speedDumpHighPower = new Vector3(15f, 10f, 10f);
+        [SerializeField] private Vector3 posDumHighPower = new Vector3(50f, 50f, 50f);
+        [SerializeField] private Vector3 headEulerAnglesFactorHighPower = Vector3.one;
+
         [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")]
         [Range(0f, 1f)]
         [SerializeField] private float headRate = 0.5f;
+        
+        [Tooltip("FacePartsが[-1, 1]の範囲で返してくるピッチ、ヨーについて、それらを角度に変換する係数")]
+        [SerializeField] private Vector2 facePartsPitchYawFactor = new Vector2(30, 30);
 
         private FaceTracker _faceTracker = null;
-        private FaceRotToEuler _faceRotToEuler = null;
+        //private FaceRotToEulerByOpenCVPose _faceRotToEuler = null;
+        private FaceRotToEulerByFaceParts _faceRotToEuler = null;
+
+        public event Action<Vector3> ImageBaseFaceRotationUpdated;
         
         [Inject]
-        public void Initialize(FaceTracker faceTracker, OpenCVFacePose openCvFacePose, IVRMLoadable vrmLoadable)
+        public void Initialize(FaceTracker faceTracker, IVRMLoadable vrmLoadable, IMessageReceiver receiver)
         {
             _faceTracker = faceTracker;
-            _faceRotToEuler = new FaceRotToEuler(openCvFacePose);
+            //_faceRotToEuler = new FaceRotToEulerByOpenCVPose(openCvFacePose);
+            _faceRotToEuler = new FaceRotToEulerByFaceParts(_faceTracker.FaceParts);
             
             vrmLoadable.VrmLoaded += info =>
             {
@@ -41,6 +54,11 @@ namespace Baku.VMagicMirror
                 _neck = null;
                 _head = null;
             };
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableWebCamHighPowerMode, 
+                message => _isHighPowerMode = message.ToBoolean()
+                );
         }
         
         //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整
@@ -50,6 +68,8 @@ namespace Baku.VMagicMirror
 
         private const float YawSpeedToPitchDecreaseFactor = 0.05f;
         private const float YawSpeedToPitchDecreaseLimit = 5f;
+
+        private bool _isHighPowerMode = false;
 
         private bool _hasModel = false;
         private bool _hasNeck = false;
@@ -68,19 +88,26 @@ namespace Baku.VMagicMirror
             {
                 _prevRotationEuler = Vector3.zero;
                 _prevRotationSpeedEuler = Vector3.zero;
+                ImageBaseFaceRotationUpdated?.Invoke(Vector3.zero);
                 return;
             }
 
+            var anglesFactor = _isHighPowerMode ? headEulerAnglesFactorHighPower : headEulerAnglesFactor;
+            var speedDumpFactor = _isHighPowerMode ? speedDumpHighPower : speedDump;
+            var posDumpFactor = _isHighPowerMode ? posDumHighPower : posDump;
+
             var target = Mul(
-                _faceRotToEuler.GetTargetEulerAngle(),
-                headEulerAnglesFactor
+                _faceRotToEuler.GetTargetEulerAngle(
+                    facePartsPitchYawFactor, _faceTracker.CalibrationData.pitchRateOffset
+                    ),
+                anglesFactor
                 );
 
             //やりたい事: バネマス系扱いで陽的オイラー法を回してスムージングする。
             //過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
             var acceleration =
-                - Mul(speedDumpForceFactor, _prevRotationSpeedEuler) -
-                Mul(posDumpForceFactor, _prevRotationEuler - target);
+                - Mul(speedDumpFactor, _prevRotationSpeedEuler) -
+                Mul(posDumpFactor, _prevRotationEuler - target);
             var speed = _prevRotationSpeedEuler + Time.deltaTime * acceleration;
             var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
 
@@ -89,7 +116,7 @@ namespace Baku.VMagicMirror
                 rotationEuler.y, 
                 rotationEuler.z
                 );
-            
+
             //このスクリプトより先にLookAtIKが走るハズなので、その回転と合成していく
             var rot = Quaternion.Euler(rotationAdjusted);
 
@@ -125,6 +152,8 @@ namespace Baku.VMagicMirror
             
             _prevRotationEuler = rotationEuler;
             _prevRotationSpeedEuler = speed;
+            
+            ImageBaseFaceRotationUpdated?.Invoke(rotationAdjusted);
         }
 
         //ヨーの動きがあるとき、首を下に向けさせる(首振り運動は通常ピッチが下がるのを決め打ちでやる)ための処置
@@ -152,41 +181,76 @@ namespace Baku.VMagicMirror
             left.z * right.z
         );
     }
-    
-    
-    /// <summary> 頭部の回転がQuaternionで飛んで来るのを安全にオイラー角に変換してくれるやつ </summary>
-    public class FaceRotToEuler
+   
+    /// <summary>
+    /// 頭部の回転がFacePartsに飛んでくるのをオイラー角情報に変換するやつ。
+    /// OpenCVPoseを使うケースとコードを揃えるためにこういう書き方
+    /// </summary>
+    public class FaceRotToEulerByFaceParts
     {
-        private readonly OpenCVFacePose _facePose;
-        public FaceRotToEuler(OpenCVFacePose facePose)
+        private readonly FaceParts _faceParts;
+        public FaceRotToEulerByFaceParts(FaceParts faceParts)
         {
-            _facePose = facePose;
+            _faceParts = faceParts;
         }
         
-        public Vector3 GetTargetEulerAngle()
+        public Vector3 GetTargetEulerAngle(Vector2 pitchYawFactor, float pitchRateBaseline)
         {
-            var rot = _facePose.HeadRotation;
-            
-            //安全にやるために、実際に基準ベクトルを回す。処理的には回転行列に置き換えるのに近いかな。
-            var f = rot * Vector3.forward;
-            var g = rot * Vector3.right;
-            
-            var yaw = Mathf.Asin(f.x) * Mathf.Rad2Deg;
-            var pitch = -Mathf.Asin(f.y) * Mathf.Rad2Deg;
-            var roll = Mathf.Asin(g.y) * Mathf.Rad2Deg;
+            float yawAngle = _faceParts.FaceYawRate * pitchYawFactor.y;
 
-            return new Vector3(
-                NormalRanged(pitch),
-                NormalRanged(yaw),
-                NormalRanged(roll)
-            );
-        }
-        
-        //角度を必ず[-180, 180]の範囲に収めるやつ。この範囲に入ってないとスケーリングとかのときに都合が悪いため。
-        private static float NormalRanged(float angle)
-        {
-            return Mathf.Repeat(angle + 180f, 360f) - 180f;
+            //yawがゼロから離れると幾何的な都合でピッチが大きく出ちゃうので、それの補正
+            float dampedPitchRate = _faceParts.FacePitchRate * (1.0f - Mathf.Cos(_faceParts.FaceYawRate) * 0.4f);
+            
+            float pitchRate = Mathf.Clamp(
+                 dampedPitchRate - pitchRateBaseline, -1, 1
+                );
+
+            var result = new Vector3(
+                pitchRate * pitchYawFactor.x,
+                yawAngle,
+                _faceParts.FaceRollRad * Mathf.Rad2Deg
+                );
+            
+            return result;
         }
     }
+
+    // NOTE: FacePartsベースの実装に巻き戻したため不要化
+    //
+    // /// <summary> 頭部の回転がQuaternionで飛んで来るのを安全にオイラー角に変換してくれるやつ </summary>
+    // public class FaceRotToEulerByOpenCVPose
+    // {
+    //     private readonly OpenCVFacePose _facePose;
+    //     public FaceRotToEulerByOpenCVPose(OpenCVFacePose facePose)
+    //     {
+    //         _facePose = facePose;
+    //     }
+    //     
+    //     public Vector3 GetTargetEulerAngle()
+    //     {
+    //         var rot = _facePose.HeadRotation;
+    //         
+    //         //安全にやるために、実際に基準ベクトルを回す。処理的には回転行列に置き換えるのに近いかな。
+    //         var f = rot * Vector3.forward;
+    //         var g = rot * Vector3.right;
+    //         
+    //         var yaw = Mathf.Asin(f.x) * Mathf.Rad2Deg;
+    //         var pitch = -Mathf.Asin(f.y) * Mathf.Rad2Deg;
+    //         var roll = Mathf.Asin(g.y) * Mathf.Rad2Deg;
+    //
+    //         return new Vector3(
+    //             NormalRanged(pitch),
+    //             NormalRanged(yaw),
+    //             NormalRanged(roll)
+    //         );
+    //     }
+    //     
+    //     //角度を必ず[-180, 180]の範囲に収めるやつ。この範囲に入ってないとスケーリングとかのときに都合が悪いため。
+    //     private static float NormalRanged(float angle)
+    //     {
+    //         return Mathf.Repeat(angle + 180f, 360f) - 180f;
+    //     }
+    // }
+    
 }
 

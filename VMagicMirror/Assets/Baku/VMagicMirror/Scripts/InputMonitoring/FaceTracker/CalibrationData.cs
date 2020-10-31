@@ -6,6 +6,8 @@ namespace Baku.VMagicMirror
     [Serializable]
     public class CalibrationData
     {
+        public float pitchRateOffset;
+            
         //NOTE: イメージ的には「ユーザー正面向き時のカメラから見たユーザーの位置」っぽいものが入る…はず
         public bool hasOpenCvPose;
         public Vector3 openCvFacePos;
@@ -16,6 +18,8 @@ namespace Baku.VMagicMirror
 
         public void SetDefaultValues()
         {
+            pitchRateOffset = 0f;
+            
             hasOpenCvPose = false;
             openCvFacePos = Vector3.zero;
             openCvFaceRotEuler = Vector3.zero;

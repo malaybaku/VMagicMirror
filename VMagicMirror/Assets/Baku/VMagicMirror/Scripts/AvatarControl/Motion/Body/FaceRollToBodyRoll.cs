@@ -23,11 +23,11 @@ namespace Baku.VMagicMirror
         public float RollAngleDegree { get; private set; }
 
         //NOTE: この値はフィルタされてない生のやつ
-        private float _targetAngleDegree = 0;
+        public float RawTargetAngle { get; private set; }
 
         public void UpdateSuggestAngle()
         {
-            float idealSpeed = (_targetAngleDegree * GoalRate - RollAngleDegree) / TimeFactor;
+            float idealSpeed = (RawTargetAngle * GoalRate - RollAngleDegree) / TimeFactor;
             _speedDegreePerSec = Mathf.Lerp(
                 _speedDegreePerSec,
                 idealSpeed,
@@ -40,7 +40,7 @@ namespace Baku.VMagicMirror
 
         public void SetZeroTarget()
         {
-            _targetAngleDegree = 0;
+            RawTargetAngle = 0;
         }
         
         public void CheckAngle(Quaternion headRotation)
@@ -48,7 +48,7 @@ namespace Baku.VMagicMirror
             //ロールって言ってるけど人間の首は決してUnityのYZXの順で回転するわけじゃないので、実際の計算はファジーにやります。
             //→耳が下とか上を向くのを以て首かしげ運動と見る。
             var rotatedRight = headRotation * Vector3.right;
-            _targetAngleDegree = Mathf.Asin(rotatedRight.y) * Mathf.Rad2Deg;
+            RawTargetAngle = Mathf.Asin(rotatedRight.y) * Mathf.Rad2Deg;
         }
     }
 }

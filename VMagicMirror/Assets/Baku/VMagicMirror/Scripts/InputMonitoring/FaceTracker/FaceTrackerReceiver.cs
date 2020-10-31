@@ -9,6 +9,7 @@ namespace Baku.VMagicMirror
         private readonly FaceTracker _faceTracker;
         
         private bool _enableFaceTracking = true;
+        private bool _enableHighPowerMode = false;
         private string _cameraDeviceName = "";
         private bool _enableExTracker = false;
 
@@ -23,6 +24,10 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(
                 VmmCommands.EnableFaceTracking,
                 message => SetEnableFaceTracking(message.ToBoolean())
+                );
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableWebCamHighPowerMode,
+                message => SetWebCamHighPowerMode(message.ToBoolean())
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerEnable,
@@ -57,6 +62,17 @@ namespace Baku.VMagicMirror
             _enableFaceTracking = enable;
             UpdateFaceDetectorState();
         }
+        
+        private void SetWebCamHighPowerMode(bool enable)
+        {
+            if (_enableHighPowerMode == enable)
+            {
+                return;
+            }
+
+            _enableHighPowerMode = enable;
+            UpdateFaceDetectorState();
+        }
 
         private void SetEnableExTracker(bool enable)
         {
@@ -79,7 +95,7 @@ namespace Baku.VMagicMirror
         {
             if (_enableFaceTracking && !_enableExTracker && !string.IsNullOrWhiteSpace(_cameraDeviceName))
             {
-                _faceTracker.ActivateCamera(_cameraDeviceName);
+                _faceTracker.ActivateCamera(_cameraDeviceName, _enableHighPowerMode);
             }
             else
             {

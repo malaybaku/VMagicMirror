@@ -68,7 +68,7 @@ namespace Baku.VMagicMirror
         private readonly WindowAreaIo _windowAreaIo = new WindowAreaIo();
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, RawInputChecker rawInputChecker)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, IKeyMouseEventSource keyboardEventSource)
         {
             receiver.AssignCommandHandler(
                 VmmCommands.Chromakey,
@@ -123,7 +123,7 @@ namespace Baku.VMagicMirror
                     }
                 });
 
-            _mouseObserve = rawInputChecker.MouseButton.Subscribe(info =>
+            _mouseObserve = keyboardEventSource.MouseButton.Subscribe(info =>
             {
                 if (info == "LDown")
                 {
@@ -328,6 +328,7 @@ namespace Baku.VMagicMirror
             uint windowStyle = isVisible ? defaultWindowStyle : WS_POPUP | WS_VISIBLE;
 #if !UNITY_EDITOR
             SetWindowLong(hwnd, GWL_STYLE, windowStyle);
+            SetUnityWindowTopMost(_isTopMost && _isWindowFrameHidden);
 #endif
         }
 
@@ -364,8 +365,9 @@ namespace Baku.VMagicMirror
         private void SetTopMost(bool isTopMost)
         {
             _isTopMost = isTopMost;
+            //NOTE: 背景透過をしてない = 普通のウィンドウが出てる間は別にTopMostじゃなくていいのがポイント
 #if !UNITY_EDITOR
-            SetUnityWindowTopMost(isTopMost);
+            SetUnityWindowTopMost(_isTopMost && _isWindowFrameHidden);
 #endif
         }
 

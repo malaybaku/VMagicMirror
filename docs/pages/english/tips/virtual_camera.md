@@ -16,13 +16,16 @@ This feature easily connect VMagicMirror to online meeting systems, etc.
 #### When I should use virtual camera?
 {: .doc-sec2 }
 
-Please use this feature when you want to join the online meeting with only VMagicMirror (without any other software like OBS).
+This feature is no more recommended.
 
-If your PC already has OBS Studio, then you can ignore this feature because of 2 reasons.
+[OBS Studio](https://obsproject.com/download) has introduced virtual camera by standard, from version 26.0.
 
-1: You can use either game capture or window capture to import the character window to OBS (NOT a video capture device!). Please see detail at [Tips: Use VMagicMirror for Streaming](./streaming).
+If you want to use VMagicMirror with virtual camera, please consider installing `OBS Studio`.
 
-2: OBS-VirtualCam will give you much better experience for the virtual camera, including custom backgrounds and visual effects.
+You can see [Tips: Use VMagicMirror for Streaming](./streaming) to check the basic setup.
+
+Also this feature will be removed in v1.6.0.
+
 
 #### Setup for First Time Use
 {: .doc-sec2 }
@@ -30,6 +33,8 @@ If your PC already has OBS Studio, then you can ignore this feature because of 2
 If it is first time to use VMagicMirror virtual camera output, please install virtual camera by following steps.
 
 In `Streaming` tab `Virtual Camera Output` menu, click `*How to setup`.
+
+**NOTE:** When you are using v1.5.0, open Setting Window `Window` tab instead of `Streaming` tab.
 
 {% include docimg.html file="/images/tips/virtual_camera_first_setup.png" %}
 

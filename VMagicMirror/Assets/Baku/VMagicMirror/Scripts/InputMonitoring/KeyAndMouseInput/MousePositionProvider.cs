@@ -9,8 +9,8 @@ namespace Baku.VMagicMirror
     /// <remarks>
     /// マウスの絶対位置に対してRawInputの差分情報を載せることで、FPSゲーで遊んでいるときの動作を補償するのが狙いです
     /// </remarks>
-    [RequireComponent(typeof(RawInputChecker))]
-    public class MousePositionProvider : MonoBehaviour
+    [RequireComponent(typeof(RawMouseMoveChecker))]
+    public class MousePositionProvider : MonoBehaviour, IReleaseBeforeQuit
     {
         [Tooltip("差分値を徐々にゼロ方向に近づけていく係数")]
         [SerializeField] private float diffValueDiminishRate = 2f;
@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         public Vector2 NormalizedCursorPosition { get; private set; }
         
-        private RawInputChecker _rawMouseMoveChecker = null;
+        private RawMouseMoveChecker _rawMouseMoveChecker = null;
         private Vector2Int _prevCursosPos;
 
         private float _monitorLeft;
@@ -43,7 +43,7 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            _rawMouseMoveChecker = GetComponent<RawInputChecker>();
+            _rawMouseMoveChecker = GetComponent<RawMouseMoveChecker>();
             _prevCursosPos = NativeMethods.GetWindowsMousePosition();
         }
 
@@ -100,6 +100,10 @@ namespace Baku.VMagicMirror
                 Mathf.Clamp(0.5f - (_y - _monitorTop) * _monitorHeightInv, -0.5f, 0.5f)
                 );           
         }
+
+        public void ReleaseBeforeCloseConfig() => _rawMouseMoveChecker.ReleaseBeforeCloseConfig();
+
+        public Task ReleaseResources() => _rawMouseMoveChecker.ReleaseResources();
 
         private void RefreshMonitorArea()
         {

@@ -71,7 +71,7 @@ namespace Baku.VMagicMirror
         #endregion
         
         [Inject]
-        public void Initialize(IMessageReceiver receiver)
+        public void Initialize(IMessageReceiver receiver, IMessageSender sender)
         {
             receiver.AssignCommandHandler(
                 VmmCommands.EnableFpsAssumedRightHand,
@@ -82,6 +82,20 @@ namespace Baku.VMagicMirror
                 c => _randomizeKey = c.ToBoolean()
                 );
             
+            //NOTE: ここ2つは「VRoid SDKを使ってる間はキーボード監視について余計な操作をやめろ」的な意味
+            receiver.AssignCommandHandler(
+                VmmCommands.OpenVRoidSdkUi,
+                _ => UnregisterKeyboard()
+                );
+
+            sender.SendingMessage += message =>
+            {
+                if (message.Command == nameof(MessageFactory.VRoidModelLoadCanceled) ||
+                    message.Command == nameof(MessageFactory.VRoidModelLoadCompleted))
+                {
+                    RegisterKeyboard();
+                }
+            };
         }
         
         private void Start()
@@ -91,21 +105,8 @@ namespace Baku.VMagicMirror
 #endif
 
             //キーボードだけ登録する。マウスはUnityが自動でRegisterするらしく、下手に触ると危ないので触らない。
-#if !UNITY_EDITOR
-            try
-            {
-                RawInputDevice.RegisterDevice(
-                    HidUsageAndPage.Keyboard,
-                    RawInputDeviceFlags.InputSink | RawInputDeviceFlags.NoLegacy | RawInputDeviceFlags.AppKeys, 
-                    NativeMethods.GetUnityWindowHandle()
-                    );
-            }
-            catch (Exception ex)
-            {
-                LogOutput.Instance.Write(ex);
-            }
-#endif
-
+            RegisterKeyboard();
+            
             //NOTE: このイベントはエディタ実行では飛んできません(Window Procedureに関わるので)
             _windowProcedureHook = new WindowProcedureHook();
             _windowProcedureHook.StartObserve();
@@ -212,6 +213,31 @@ namespace Baku.VMagicMirror
 
         public Task ReleaseResources() => Task.CompletedTask;
 
+        private void RegisterKeyboard()
+        {
+#if !UNITY_EDITOR
+            try
+            {
+                RawInputDevice.RegisterDevice(
+                    HidUsageAndPage.Keyboard,
+                    RawInputDeviceFlags.InputSink | RawInputDeviceFlags.NoLegacy | RawInputDeviceFlags.AppKeys, 
+                    NativeMethods.GetUnityWindowHandle()
+                    );
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
+#endif          
+        }
+
+        private void UnregisterKeyboard()
+        {
+#if !UNITY_EDITOR
+            RawInputDevice.UnregisterDevice(HidUsageAndPage.Keyboard);            
+#endif
+        }
+        
         private static int GetKeyCode(RawKeyboard key)
         {
             int code = key.VirutalKey;

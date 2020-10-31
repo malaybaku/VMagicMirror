@@ -20,6 +20,7 @@ namespace Baku.VMagicMirror
         private WndProcDelegate _newWndProc;
         
         //起動時に1回だけスタートし、その後Disableまたは明示的な呼び出しによって止まる、という1回きりのオンオフを想定
+        private bool _hasStarted = false;
         private bool _hasStopped = false;
         
         /// <summary> マウスの監視を開始します。 </summary>
@@ -28,6 +29,7 @@ namespace Baku.VMagicMirror
             // ウインドウプロシージャをフックする
             _newWndProc = WndProc;
             _newWndProcPtr = Marshal.GetFunctionPointerForDelegate(_newWndProc);
+            _hasStarted = true;
 #if !UNITY_EDITOR
             _oldWndProcPtr = SetWindowLongPtr(
                 NativeMethods.GetUnityWindowHandle(), GWLP_WNDPROC, _newWndProcPtr
@@ -38,7 +40,7 @@ namespace Baku.VMagicMirror
         /// <summary> マウスの監視を停止します。 </summary>
         public void StopObserve()
         {
-            if (_hasStopped)
+            if (!_hasStarted || _hasStopped)
             {
                 return;
             }

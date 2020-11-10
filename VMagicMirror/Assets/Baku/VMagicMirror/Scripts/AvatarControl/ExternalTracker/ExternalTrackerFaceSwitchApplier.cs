@@ -68,8 +68,8 @@ namespace Baku.VMagicMirror
 
         private static BlendShapeKey CreateKey(string name) => 
             _presets.ContainsKey(name)
-                ? new BlendShapeKey(_presets[name])
-                : new BlendShapeKey(name);
+                ? BlendShapeKey.CreateFromPreset(_presets[name])
+                : BlendShapeKey.CreateUnknown(name);
 
         private static readonly Dictionary<string, BlendShapePreset> _presets = new Dictionary<string, BlendShapePreset>()
         {

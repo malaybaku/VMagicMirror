@@ -16,11 +16,11 @@ namespace Baku.VMagicMirror
     {
         private static readonly BlendShapeKey[] _lipSyncKeys = new []
         {
-            new BlendShapeKey(BlendShapePreset.A),
-            new BlendShapeKey(BlendShapePreset.I),
-            new BlendShapeKey(BlendShapePreset.U),
-            new BlendShapeKey(BlendShapePreset.E),
-            new BlendShapeKey(BlendShapePreset.O),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.A),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.I),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.U),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.E),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.O),
         };
         
         private BlendShapeKey[] _allBlendShapeKeys = new BlendShapeKey[0];

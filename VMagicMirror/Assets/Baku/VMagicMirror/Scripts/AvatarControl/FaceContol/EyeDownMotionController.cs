@@ -8,8 +8,8 @@ namespace Baku.VMagicMirror
     /// <summary> 瞬きに対して目と眉を下げる処理をするやつ </summary>
     public class EyeDownMotionController : MonoBehaviour
     {
-        private static readonly BlendShapeKey BlinkLKey = new BlendShapeKey(BlendShapePreset.Blink_L);
-        private static readonly BlendShapeKey BlinkRKey = new BlendShapeKey(BlendShapePreset.Blink_R);
+        private static readonly BlendShapeKey BlinkLKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_L);
+        private static readonly BlendShapeKey BlinkRKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_R);
 
         [SerializeField] private float eyeAngleDegreeWhenEyeClosed = 10f;
 

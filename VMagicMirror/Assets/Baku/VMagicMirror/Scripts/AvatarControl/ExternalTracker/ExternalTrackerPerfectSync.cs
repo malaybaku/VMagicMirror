@@ -138,7 +138,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             _vroidDefaultClips = vroidDefaultBlendShapeAvatar.Clips
                 .Where(c =>
                 {
-                    var key = BlendShapeKey.CreateFrom(c);
+                    var key = BlendShapeKey.CreateFromClip(c);
                     return
                         c.Preset == BlendShapePreset.Unknown &&
                         perfectSyncKeys.Any(k => k.Name == key.Name && k.Preset == key.Preset);
@@ -386,7 +386,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             return _modelBaseClips
                 .Where(c =>
                 {
-                    var key = new BlendShapeKey(c.BlendShapeName, c.Preset);
+                    var key = BlendShapeKey.CreateFromClip(c);
                     return !overwriteClipKeys.Contains(key);
                 })
                 .Concat(_vroidDefaultClips)
@@ -396,10 +396,10 @@ namespace Baku.VMagicMirror.ExternalTracker
         private BlendShapeKey[] LoadAddedClipKeys()
         {
             var baseKeys = _modelBaseClips
-                .Select(BlendShapeKey.CreateFrom)
+                .Select(BlendShapeKey.CreateFromClip)
                 .ToArray();
             return _modelClipsWithVRoidSetting
-                .Select(BlendShapeKey.CreateFrom)
+                .Select(BlendShapeKey.CreateFromClip)
                 .Where(key => !baseKeys.Any(k => k.Preset == key.Preset && k.Name == key.Name))
                 .ToArray();
         }
@@ -408,7 +408,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
             var perfectSyncKeys = Keys.PerfectSyncKeys;
             return _modelBaseClips
-                .Select(BlendShapeKey.CreateFrom)
+                .Select(BlendShapeKey.CreateFromClip)
                 .Where(key => !perfectSyncKeys.Any(k => k.Preset == key.Preset && k.Name == key.Name))
                 .ToArray();
         }
@@ -656,73 +656,73 @@ namespace Baku.VMagicMirror.ExternalTracker
             //TODO: 名前はあとで調べて直すこと！絶対に間違った名前が入ってるぞ！
             
             //目
-            public static readonly BlendShapeKey EyeBlinkLeft = new BlendShapeKey(nameof(EyeBlinkLeft));
-            public static readonly BlendShapeKey EyeLookUpLeft = new BlendShapeKey(nameof(EyeLookUpLeft));
-            public static readonly BlendShapeKey EyeLookDownLeft = new BlendShapeKey(nameof(EyeLookDownLeft));
-            public static readonly BlendShapeKey EyeLookInLeft = new BlendShapeKey(nameof(EyeLookInLeft));
-            public static readonly BlendShapeKey EyeLookOutLeft = new BlendShapeKey(nameof(EyeLookOutLeft));
-            public static readonly BlendShapeKey EyeWideLeft = new BlendShapeKey(nameof(EyeWideLeft));
-            public static readonly BlendShapeKey EyeSquintLeft = new BlendShapeKey(nameof(EyeSquintLeft));
+            public static readonly BlendShapeKey EyeBlinkLeft = BlendShapeKey.CreateUnknown(nameof(EyeBlinkLeft));
+            public static readonly BlendShapeKey EyeLookUpLeft = BlendShapeKey.CreateUnknown(nameof(EyeLookUpLeft));
+            public static readonly BlendShapeKey EyeLookDownLeft = BlendShapeKey.CreateUnknown(nameof(EyeLookDownLeft));
+            public static readonly BlendShapeKey EyeLookInLeft = BlendShapeKey.CreateUnknown(nameof(EyeLookInLeft));
+            public static readonly BlendShapeKey EyeLookOutLeft = BlendShapeKey.CreateUnknown(nameof(EyeLookOutLeft));
+            public static readonly BlendShapeKey EyeWideLeft = BlendShapeKey.CreateUnknown(nameof(EyeWideLeft));
+            public static readonly BlendShapeKey EyeSquintLeft = BlendShapeKey.CreateUnknown(nameof(EyeSquintLeft));
 
-            public static readonly BlendShapeKey EyeBlinkRight = new BlendShapeKey(nameof(EyeBlinkRight));
-            public static readonly BlendShapeKey EyeLookUpRight = new BlendShapeKey(nameof(EyeLookUpRight));
-            public static readonly BlendShapeKey EyeLookDownRight = new BlendShapeKey(nameof(EyeLookDownRight));
-            public static readonly BlendShapeKey EyeLookInRight = new BlendShapeKey(nameof(EyeLookInRight));
-            public static readonly BlendShapeKey EyeLookOutRight = new BlendShapeKey(nameof(EyeLookOutRight));
-            public static readonly BlendShapeKey EyeWideRight = new BlendShapeKey(nameof(EyeWideRight));
-            public static readonly BlendShapeKey EyeSquintRight = new BlendShapeKey(nameof(EyeSquintRight));
+            public static readonly BlendShapeKey EyeBlinkRight = BlendShapeKey.CreateUnknown(nameof(EyeBlinkRight));
+            public static readonly BlendShapeKey EyeLookUpRight = BlendShapeKey.CreateUnknown(nameof(EyeLookUpRight));
+            public static readonly BlendShapeKey EyeLookDownRight = BlendShapeKey.CreateUnknown(nameof(EyeLookDownRight));
+            public static readonly BlendShapeKey EyeLookInRight = BlendShapeKey.CreateUnknown(nameof(EyeLookInRight));
+            public static readonly BlendShapeKey EyeLookOutRight = BlendShapeKey.CreateUnknown(nameof(EyeLookOutRight));
+            public static readonly BlendShapeKey EyeWideRight = BlendShapeKey.CreateUnknown(nameof(EyeWideRight));
+            public static readonly BlendShapeKey EyeSquintRight = BlendShapeKey.CreateUnknown(nameof(EyeSquintRight));
 
             //口(多い)
-            public static readonly BlendShapeKey MouthLeft = new BlendShapeKey(nameof(MouthLeft));
-            public static readonly BlendShapeKey MouthSmileLeft = new BlendShapeKey(nameof(MouthSmileLeft));
-            public static readonly BlendShapeKey MouthFrownLeft = new BlendShapeKey(nameof(MouthFrownLeft));
-            public static readonly BlendShapeKey MouthPressLeft = new BlendShapeKey(nameof(MouthPressLeft));
-            public static readonly BlendShapeKey MouthUpperUpLeft = new BlendShapeKey(nameof(MouthUpperUpLeft));
-            public static readonly BlendShapeKey MouthLowerDownLeft = new BlendShapeKey(nameof(MouthLowerDownLeft));
-            public static readonly BlendShapeKey MouthStretchLeft = new BlendShapeKey(nameof(MouthStretchLeft));
-            public static readonly BlendShapeKey MouthDimpleLeft = new BlendShapeKey(nameof(MouthDimpleLeft));
+            public static readonly BlendShapeKey MouthLeft = BlendShapeKey.CreateUnknown(nameof(MouthLeft));
+            public static readonly BlendShapeKey MouthSmileLeft = BlendShapeKey.CreateUnknown(nameof(MouthSmileLeft));
+            public static readonly BlendShapeKey MouthFrownLeft = BlendShapeKey.CreateUnknown(nameof(MouthFrownLeft));
+            public static readonly BlendShapeKey MouthPressLeft = BlendShapeKey.CreateUnknown(nameof(MouthPressLeft));
+            public static readonly BlendShapeKey MouthUpperUpLeft = BlendShapeKey.CreateUnknown(nameof(MouthUpperUpLeft));
+            public static readonly BlendShapeKey MouthLowerDownLeft = BlendShapeKey.CreateUnknown(nameof(MouthLowerDownLeft));
+            public static readonly BlendShapeKey MouthStretchLeft = BlendShapeKey.CreateUnknown(nameof(MouthStretchLeft));
+            public static readonly BlendShapeKey MouthDimpleLeft = BlendShapeKey.CreateUnknown(nameof(MouthDimpleLeft));
 
-            public static readonly BlendShapeKey MouthRight = new BlendShapeKey(nameof(MouthRight));
-            public static readonly BlendShapeKey MouthSmileRight = new BlendShapeKey(nameof(MouthSmileRight));
-            public static readonly BlendShapeKey MouthFrownRight = new BlendShapeKey(nameof(MouthFrownRight));
-            public static readonly BlendShapeKey MouthPressRight = new BlendShapeKey(nameof(MouthPressRight));
-            public static readonly BlendShapeKey MouthUpperUpRight = new BlendShapeKey(nameof(MouthUpperUpRight));
-            public static readonly BlendShapeKey MouthLowerDownRight = new BlendShapeKey(nameof(MouthLowerDownRight));
-            public static readonly BlendShapeKey MouthStretchRight = new BlendShapeKey(nameof(MouthStretchRight));
-            public static readonly BlendShapeKey MouthDimpleRight = new BlendShapeKey(nameof(MouthDimpleRight));
+            public static readonly BlendShapeKey MouthRight = BlendShapeKey.CreateUnknown(nameof(MouthRight));
+            public static readonly BlendShapeKey MouthSmileRight = BlendShapeKey.CreateUnknown(nameof(MouthSmileRight));
+            public static readonly BlendShapeKey MouthFrownRight = BlendShapeKey.CreateUnknown(nameof(MouthFrownRight));
+            public static readonly BlendShapeKey MouthPressRight = BlendShapeKey.CreateUnknown(nameof(MouthPressRight));
+            public static readonly BlendShapeKey MouthUpperUpRight = BlendShapeKey.CreateUnknown(nameof(MouthUpperUpRight));
+            public static readonly BlendShapeKey MouthLowerDownRight = BlendShapeKey.CreateUnknown(nameof(MouthLowerDownRight));
+            public static readonly BlendShapeKey MouthStretchRight = BlendShapeKey.CreateUnknown(nameof(MouthStretchRight));
+            public static readonly BlendShapeKey MouthDimpleRight = BlendShapeKey.CreateUnknown(nameof(MouthDimpleRight));
             
-            public static readonly BlendShapeKey MouthClose = new BlendShapeKey(nameof(MouthClose));
-            public static readonly BlendShapeKey MouthFunnel = new BlendShapeKey(nameof(MouthFunnel));
-            public static readonly BlendShapeKey MouthPucker = new BlendShapeKey(nameof(MouthPucker));
-            public static readonly BlendShapeKey MouthShrugUpper = new BlendShapeKey(nameof(MouthShrugUpper));
-            public static readonly BlendShapeKey MouthShrugLower = new BlendShapeKey(nameof(MouthShrugLower));
-            public static readonly BlendShapeKey MouthRollUpper = new BlendShapeKey(nameof(MouthRollUpper));
-            public static readonly BlendShapeKey MouthRollLower = new BlendShapeKey(nameof(MouthRollLower));
+            public static readonly BlendShapeKey MouthClose = BlendShapeKey.CreateUnknown(nameof(MouthClose));
+            public static readonly BlendShapeKey MouthFunnel = BlendShapeKey.CreateUnknown(nameof(MouthFunnel));
+            public static readonly BlendShapeKey MouthPucker = BlendShapeKey.CreateUnknown(nameof(MouthPucker));
+            public static readonly BlendShapeKey MouthShrugUpper = BlendShapeKey.CreateUnknown(nameof(MouthShrugUpper));
+            public static readonly BlendShapeKey MouthShrugLower = BlendShapeKey.CreateUnknown(nameof(MouthShrugLower));
+            public static readonly BlendShapeKey MouthRollUpper = BlendShapeKey.CreateUnknown(nameof(MouthRollUpper));
+            public static readonly BlendShapeKey MouthRollLower = BlendShapeKey.CreateUnknown(nameof(MouthRollLower));
             
             //あご
-            public static readonly BlendShapeKey JawOpen = new BlendShapeKey(nameof(JawOpen));
-            public static readonly BlendShapeKey JawForward = new BlendShapeKey(nameof(JawForward));
-            public static readonly BlendShapeKey JawLeft = new BlendShapeKey(nameof(JawLeft));
-            public static readonly BlendShapeKey JawRight = new BlendShapeKey(nameof(JawRight));
+            public static readonly BlendShapeKey JawOpen = BlendShapeKey.CreateUnknown(nameof(JawOpen));
+            public static readonly BlendShapeKey JawForward = BlendShapeKey.CreateUnknown(nameof(JawForward));
+            public static readonly BlendShapeKey JawLeft = BlendShapeKey.CreateUnknown(nameof(JawLeft));
+            public static readonly BlendShapeKey JawRight = BlendShapeKey.CreateUnknown(nameof(JawRight));
             
             //鼻
-            public static readonly BlendShapeKey NoseSneerLeft = new BlendShapeKey(nameof(NoseSneerLeft));
-            public static readonly BlendShapeKey NoseSneerRight = new BlendShapeKey(nameof(NoseSneerRight));
+            public static readonly BlendShapeKey NoseSneerLeft = BlendShapeKey.CreateUnknown(nameof(NoseSneerLeft));
+            public static readonly BlendShapeKey NoseSneerRight = BlendShapeKey.CreateUnknown(nameof(NoseSneerRight));
 
             //ほお
-            public static readonly BlendShapeKey CheekPuff = new BlendShapeKey(nameof(CheekPuff));
-            public static readonly BlendShapeKey CheekSquintLeft = new BlendShapeKey(nameof(CheekSquintLeft));
-            public static readonly BlendShapeKey CheekSquintRight = new BlendShapeKey(nameof(CheekSquintRight));
+            public static readonly BlendShapeKey CheekPuff = BlendShapeKey.CreateUnknown(nameof(CheekPuff));
+            public static readonly BlendShapeKey CheekSquintLeft = BlendShapeKey.CreateUnknown(nameof(CheekSquintLeft));
+            public static readonly BlendShapeKey CheekSquintRight = BlendShapeKey.CreateUnknown(nameof(CheekSquintRight));
             
             //舌
-            public static readonly BlendShapeKey TongueOut = new BlendShapeKey(nameof(TongueOut));
+            public static readonly BlendShapeKey TongueOut = BlendShapeKey.CreateUnknown(nameof(TongueOut));
             
             //まゆげ
-            public static readonly BlendShapeKey BrowDownLeft = new BlendShapeKey(nameof(BrowDownLeft));
-            public static readonly BlendShapeKey BrowOuterUpLeft = new BlendShapeKey(nameof(BrowOuterUpLeft));
-            public static readonly BlendShapeKey BrowDownRight = new BlendShapeKey(nameof(BrowDownRight));
-            public static readonly BlendShapeKey BrowOuterUpRight = new BlendShapeKey(nameof(BrowOuterUpRight));
-            public static readonly BlendShapeKey BrowInnerUp = new BlendShapeKey(nameof(BrowInnerUp));
+            public static readonly BlendShapeKey BrowDownLeft = BlendShapeKey.CreateUnknown(nameof(BrowDownLeft));
+            public static readonly BlendShapeKey BrowOuterUpLeft = BlendShapeKey.CreateUnknown(nameof(BrowOuterUpLeft));
+            public static readonly BlendShapeKey BrowDownRight = BlendShapeKey.CreateUnknown(nameof(BrowDownRight));
+            public static readonly BlendShapeKey BrowOuterUpRight = BlendShapeKey.CreateUnknown(nameof(BrowOuterUpRight));
+            public static readonly BlendShapeKey BrowInnerUp = BlendShapeKey.CreateUnknown(nameof(BrowInnerUp));
         }
         
         /// <summary> ブレンドシェイプの上書き処理で使うための、リップシンクのブレンドシェイプキー </summary>
@@ -742,11 +742,11 @@ namespace Baku.VMagicMirror.ExternalTracker
             public float E { get; set; }
             public float O { get; set; }
             
-            public static readonly BlendShapeKey AKey = new BlendShapeKey(BlendShapePreset.A);
-            public static readonly BlendShapeKey IKey = new BlendShapeKey(BlendShapePreset.I);
-            public static readonly BlendShapeKey UKey = new BlendShapeKey(BlendShapePreset.U);
-            public static readonly BlendShapeKey EKey = new BlendShapeKey(BlendShapePreset.E);
-            public static readonly BlendShapeKey OKey = new BlendShapeKey(BlendShapePreset.O);
+            public static readonly BlendShapeKey AKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.A); 
+            public static readonly BlendShapeKey IKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.I);
+            public static readonly BlendShapeKey UKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.U);
+            public static readonly BlendShapeKey EKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.E);
+            public static readonly BlendShapeKey OKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.O);
         }
     }
 }

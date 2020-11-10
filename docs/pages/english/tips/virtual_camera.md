@@ -1,81 +1,86 @@
 ---
 layout: page
-title: Use Virtual Camera
+title: Use VMagicMirror for Web Meeting
 permalink: /en/tips/virtual_camera
 lang_prefix: /en/
 ---
 
 [Japanese](../../tips/virtual_camera)
 
-# Tips: Use Virtual Camera
+# Tips: Use VMagicMirror for Web Meeting
 
-Virtual Camera is the feature added in v0.9.9, to use VMagicMirror for web camera supported applications like online meeting.
+This page introduces how to use VMagicMirror for web meeting like Zoom, using `OBS Studio`.
 
-This feature easily connect VMagicMirror to online meeting systems, etc.
 
-#### When I should use virtual camera?
+#### Preparation
 {: .doc-sec2 }
 
-This feature is no more recommended.
+Install [OBS Studio](https://obsproject.com/download), with version 26.0 or newer.
 
-[OBS Studio](https://obsproject.com/download) has introduced virtual camera by standard, from version 26.0.
+Latest version is recommended.
 
-If you want to use VMagicMirror with virtual camera, please consider installing `OBS Studio`.
+Before starting OBS Studio, start VMagicMirror.
 
-You can see [Tips: Use VMagicMirror for Streaming](./streaming) to check the basic setup.
+Start OBS Studio. 
 
-Also this feature will be removed in v1.6.0.
+First boot leads setup wizard. In this step any selection is okey.
+
+Create a new scene by plus mark button on the left bottom, and set scene name like `vmm_meeting`.
+
+Next, create a new source from plus button at the bottom of source list, select `Game Capture`, and set source name again like `vmm`.
+
+<div class="row">
+{% include docimg.html file="./images/tips/virtual_cam_obs_new_src.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
+
+Then dialog will appear for the setup of game capture.
+
+Select `Mode` to `Capture Specific Window`.
+
+Click at the right of `Window`, and choose `[VMagicMirror.exe]: VMagicMirror`.
+
+Check `Allow Transparancy`.
+
+Click `OK` to save the setting.
+
+<div class="row">
+{% include docimg.html file="./images/tips/virtual_cam_obs_property_setup.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/tips/virtual_cam_obs_property_setup_finish.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
+
+That's all for the setting, and you will see VMagicMirror window in OBS Studio preview area.
+
+If some area remains blank (black) in preview, then drag window area in `OBS Studio` to expand, or expand VMagicMirror window itself to adjust the appearance.
 
 
-#### Setup for First Time Use
+#### Attend Meeting
 {: .doc-sec2 }
 
-If it is first time to use VMagicMirror virtual camera output, please install virtual camera by following steps.
+Before starting web meeting app, start VMagicMirror and `OBS Studio`.
 
-In `Streaming` tab `Virtual Camera Output` menu, click `*How to setup`.
+Confirm that VMagicMirror appears in the preview are of OBS Studio.
 
-**NOTE:** When you are using v1.5.0, open Setting Window `Window` tab instead of `Streaming` tab.
+If some area remains blank (black) in preview, then drag window area in `OBS Studio` to expand, or expand VMagicMirror window itself to adjust the appearance.
 
-{% include docimg.html file="/images/tips/virtual_camera_first_setup.png" %}
+In `OBS Studio`, click `Start Virtual Cam` button on the right side.
 
-Then you will see the instruction dialog, so click `Open Folder` and double-click `Install.bat` in the opened folder.
+<div class="row">
+{% include docimg.html file="./images/tips/virtual_cam_obs_new_src.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
 
-{% include docimg.html file="/images/tips/virtual_camera_run_bat.png" %}
+Then start web meeting app to attend.
 
-After the installation, you will see the dialog to notify `DllRegisterServer` operation was successful.
+The meeting app should have webcam selection UI somewhere, so find it, and choose `OBS Virtual Camera` from the selection.
 
-{% include docimg.html file="/images/tips/virtual_camera_success_dialog.png" %}
+That's it! VMagicMirror window should be visible on web meeting system.
 
-Close this dialog, and also close the instruction dialog to complete setup.
+After the meeting, stop virtual camera on `OBS Studio` to shut down output.
 
 
-#### Use Virtual Camera in Application
+#### Note: Settings for Virtual Background 
 {: .doc-sec2 }
 
+If you want to use web meeting specific virtual background system, then you will need to clear green background.
 
-In `Streaming` tab `Virtual Camera Output`, turn on `Enable Camera Output`.
+In this case, see VMagicMirror's `Streaming` tab and see `View`, then turn off `Keyboard` and `Avatar's Shadow`.
 
-Then open the target application, and select `Unity Video Capture` as web camera.
-
-Following image is an example in Zoom.
-
-{% include docimg.html file="/images/tips/virtual_camera_camera_select_example.png" %}
-
-If `Unity Video Capture` does not appear in the list, quit and restart the target app.
-
-If the camera still does not appear, try to restart VMagicMirror, Windows. If these does not solve your situation, check if the virtual camera output works in other software.
-
-**NOTE:** Virtual Camera is unavailable in some of the web-camera-supported applications.
-
-If you could select the camera but there is no image, then confirm the image size is set to `640` x `480` in `Virtual Camera Output` menu. 
-
-Also, if the target app has option to set camera resolution, specify the size to `640` x `480`.
-
-When the image is stretched, click `Resize` button in `Virtual Camera Output` menu to adjust VMagicMirror window size to correct output.
-
-
-#### Limitation about Resolution
-
-The virtual camera in VMagicMirror has fixed resolution of `640` x `480`.
-
-When you set other resolution, the target application might fails to receive the image. In this case, please reset the resolution to `640` x ` 480`.

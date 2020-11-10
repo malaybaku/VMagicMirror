@@ -98,7 +98,17 @@ Check `Allow connection` and `OK` to close. After setup, confirm the left side m
 
 **NOTE:** If you find multiple `vmagicmirror.exe` items in the setting, please setup for all.
 
-#### Q3. Head moves, but face expression does not change
+
+#### Q3. Connection established, but neither head nor face move
+{: .doc-sec2 }
+
+A. It might be because of iOS permission setting.
+
+Open iOS setting and find iFacialMocap from app list.
+
+Check `Local Network` is permitted. If not permitted, please turn on. Then, quit the app and start again.
+
+#### Q4. Head moves, but face expression does not change
 {: .doc-sec2 }
 
 A. iFacialMocap setting might ignore face blendshape data.
@@ -114,7 +124,7 @@ If the mouth motion still have issues, please also check [External Tracker App](
 If the above processes does not solve the problem, please try other VRM model, to see the model has any setup issues.
 
 
-#### Q4. Do I also have to download iFacialMocap Window software?
+#### Q5. Do I also have to download iFacialMocap Window software?
 {: .doc-sec2 }
 
 A. No, because VMagicMirror directly connects to iOS device.
@@ -122,13 +132,13 @@ A. No, because VMagicMirror directly connects to iOS device.
 Please avoid to start iFacialMocap windows software during using VMagicMirror, as it will lead to data receive communication issue.
 
 
-#### Q5. Is there something to be careful in 2nd or later use?
+#### Q6. Is there something to be careful in 2nd or later use?
 {: .doc-sec2 }
 
 A. If you have put the iOS device other place than previous time, avatar maybe looks left or right. In this case please go through calibration process again.
 
 
-#### Q6. iOS device works incorrectly, how to recover?
+#### Q7. iOS device works incorrectly, how to recover?
 {: .doc-sec2 }
 
 A. Quit `iFacialMocap` app, and try `Connect to VMagicMirror` process again.

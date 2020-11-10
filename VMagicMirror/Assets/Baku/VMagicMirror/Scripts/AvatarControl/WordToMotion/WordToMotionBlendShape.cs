@@ -26,9 +26,7 @@ namespace Baku.VMagicMirror
         private BlendShapeKey[] _allBlendShapeKeys = new BlendShapeKey[0];
 
         private readonly Dictionary<BlendShapeKey, float> _blendShape = new Dictionary<BlendShapeKey, float>();
-
-        private bool _reserveBlendShapeReset = false;
-
+        
         private EyeBonePostProcess _eyeBoneResetter;
         
         [Inject]
@@ -78,7 +76,6 @@ namespace Baku.VMagicMirror
         {
             if (_blendShape.Count > 0)
             {
-                _reserveBlendShapeReset = true;
                 Clear();
             }
         }

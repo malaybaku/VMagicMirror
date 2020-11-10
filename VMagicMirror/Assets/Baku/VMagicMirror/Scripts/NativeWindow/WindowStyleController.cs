@@ -112,16 +112,6 @@ namespace Baku.VMagicMirror
                 VmmCommands.SetAlphaValueOnTransparent,
                 message => SetAlphaOnTransparent(message.ToInt())
                 );
-            receiver.AssignCommandHandler(
-                VmmCommands.SetVirtualCamBasedWindowSize,
-                message =>
-                {
-                    int[] wh = message.ToIntArray();
-                    if (wh != null && wh.Length > 1)
-                    {
-                        SetUnityWindowSize(wh[0], wh[1]);
-                    }
-                });
 
             _mouseObserve = keyboardEventSource.MouseButton.Subscribe(info =>
             {

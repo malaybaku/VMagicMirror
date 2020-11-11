@@ -16,34 +16,34 @@ namespace Baku.VMagicMirror
     {
         private static readonly Dictionary<string, BlendShapeKey> _presetKeys = new Dictionary<string, BlendShapeKey>()
         {
-            ["Blink"] = new BlendShapeKey(BlendShapePreset.Blink), 
-            ["Blink_L"] = new BlendShapeKey(BlendShapePreset.Blink_L), 
-            ["Blink_R"] = new BlendShapeKey(BlendShapePreset.Blink_R), 
+            ["Blink"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink), 
+            ["Blink_L"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_L), 
+            ["Blink_R"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_R), 
 
-            ["LookLeft"] = new BlendShapeKey(BlendShapePreset.LookLeft), 
-            ["LookRight"] = new BlendShapeKey(BlendShapePreset.LookRight), 
-            ["LookUp"] = new BlendShapeKey(BlendShapePreset.LookUp), 
-            ["LookDown"] = new BlendShapeKey(BlendShapePreset.LookDown), 
+            ["LookLeft"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookLeft), 
+            ["LookRight"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookRight), 
+            ["LookUp"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookUp), 
+            ["LookDown"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookDown), 
 
-            ["A"] = new BlendShapeKey(BlendShapePreset.A), 
-            ["I"] = new BlendShapeKey(BlendShapePreset.I), 
-            ["U"] = new BlendShapeKey(BlendShapePreset.U), 
-            ["E"] = new BlendShapeKey(BlendShapePreset.E), 
-            ["O"] = new BlendShapeKey(BlendShapePreset.O), 
+            ["A"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.A), 
+            ["I"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.I), 
+            ["U"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.U), 
+            ["E"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.E), 
+            ["O"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.O), 
 
-            ["Joy"] = new BlendShapeKey(BlendShapePreset.Joy), 
-            ["Angry"] = new BlendShapeKey(BlendShapePreset.Angry), 
-            ["Sorrow"] = new BlendShapeKey(BlendShapePreset.Sorrow), 
-            ["Fun"] = new BlendShapeKey(BlendShapePreset.Fun),
+            ["Joy"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.Joy), 
+            ["Angry"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.Angry), 
+            ["Sorrow"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.Sorrow), 
+            ["Fun"] = BlendShapeKey.CreateFromPreset(BlendShapePreset.Fun),
         };
 
         private static readonly BlendShapeKey[] _lipSyncKeys = new[]
         {
-            new BlendShapeKey(BlendShapePreset.A),
-            new BlendShapeKey(BlendShapePreset.I),
-            new BlendShapeKey(BlendShapePreset.U),
-            new BlendShapeKey(BlendShapePreset.E),
-            new BlendShapeKey(BlendShapePreset.O),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.A),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.I),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.U),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.E),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.O),
         };
         
         [Inject]
@@ -122,7 +122,7 @@ namespace Baku.VMagicMirror
                 .Select(n =>
                     _presetKeys.ContainsKey(n)
                         ? _presetKeys[n]
-                        : new BlendShapeKey(n)
+                        : BlendShapeKey.CreateUnknown(n)
                 )
                 .ToArray();
         }

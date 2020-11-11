@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class DefaultFunBlendShapeModifier
     {
-        private BlendShapeKey FunKey { get; } = new BlendShapeKey(BlendShapePreset.Fun);
+        private BlendShapeKey FunKey { get; } = BlendShapeKey.CreateFromPreset(BlendShapePreset.Fun);
 
         public float FaceDefaultFunValue { get; set; } = 0.0f;
 

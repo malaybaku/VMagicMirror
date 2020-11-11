@@ -61,6 +61,8 @@ sysinfo.txt
 /VMagicMirror/Assets/MidiJack/
 /VMagicMirror/Assets/SharpDX/
 /VMagicMirror/Assets/RawInputSharp/
+/VMagicMirror/Assets/VRMShaders/
+/VMagicMirror/Assets/MeshUtility/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
 /VMagicMirror/Assets/OpenCVforUnity.meta
@@ -79,6 +81,8 @@ sysinfo.txt
 /VMagicMirror/Assets/MidiJack.meta
 /VMagicMirror/Assets/SharpDX.meta
 /VMagicMirror/Assets/RawInputSharp.meta
+/VMagicMirror/Assets/VRMShaders.meta
+/VMagicMirror/Assets/MeshUtility.meta
 
 # Assets to ignore (from BOOTH)
 

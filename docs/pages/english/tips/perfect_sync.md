@@ -8,8 +8,19 @@ lang_prefix: /en/
 [Japanese](../../tips/perfect_sync)
 
 # Tips: Perfect Sync
+{: .no_toc}
 
 Perfect Sync is supported from v1.3.0.
+
+<div class="toc-area" markdown="1">
+
+#### Content
+{: .toc-header .no_toc }
+
+* ToC
+{:toc .table-of-contents }
+
+</div>
 
 #### What is Perfect Sync?
 {: .doc-sec2 }
@@ -19,8 +30,6 @@ Perfect Sync is supported from v1.3.0.
 Please see [External Tracking](../docs/external_tracker) beforehand, to understand how to use the system.
 
 From the technical view, Perfect Sync maps the all blendshapes obtained by iOS ARKit FaceTracking to VRM's BlendShapeClips.
-
-　
 
 #### Try Perfect Sync
 {: .doc-sec2 }
@@ -68,117 +77,67 @@ If you need an example, [千駄ヶ谷 渋（iPhone用BlendShapeあり）](https:
 
 Note that, the blog above shows all of 52 blendshapes, but you can skip some of them if you feel they are too subtle.
 
-
-
-
 #### Setup Step2. Create BlendShapeClip on Unity
 {: .doc-sec2 }
 
 Import the model, and add following 52 BlendShapeClips. Please set the names of the BlendShapeClip as following.
 
-`BrowInnerUp`
+<div class="doc-ul" markdown="1">
 
-`BrowDownLeft`
+- `BrowInnerUp`
+- `BrowDownLeft`
+- `BrowDownRight`
+- `BrowOuterUpLeft`
+- `BrowOuterUpRight`
+- `EyeLookUpLeft`
+- `EyeLookUpRight`
+- `EyeLookDownLeft`
+- `EyeLookDownRight`
+- `EyeLookInLeft`
+- `EyeLookInRight`
+- `EyeLookOutLeft`
+- `EyeLookOutRight`
+- `EyeBlinkLeft`
+- `EyeBlinkRight`
+- `EyeSquintRight`
+- `EyeSquintLeft`
+- `EyeWideLeft`
+- `EyeWideRight`
+- `CheekPuff`
+- `CheekSquintLeft`
+- `CheekSquintRight`
+- `NoseSneerLeft`
+- `NoseSneerRight`
+- `JawOpen`
+- `JawForward`
+- `JawLeft`
+- `JawRight`
+- `MouthFunnel`
+- `MouthPucker`
+- `MouthLeft`
+- `MouthRight`
+- `MouthRollUpper`
+- `MouthRollLower`
+- `MouthShrugUpper`
+- `MouthShrugLower`
+- `MouthClose`
+- `MouthSmileLeft`
+- `MouthSmileRight`
+- `MouthFrownLeft`
+- `MouthFrownRight`
+- `MouthDimpleLeft`
+- `MouthDimpleRight`
+- `MouthUpperUpLeft`
+- `MouthUpperUpRight`
+- `MouthLowerDownLeft`
+- `MouthLowerDownRight`
+- `MouthPressLeft`
+- `MouthPressRight`
+- `MouthStretchLeft`
+- `MouthStretchRight`
+- `TongueOut`
 
-`BrowDownRight`
-
-`BrowOuterUpLeft`
-
-`BrowOuterUpRight`
-
-`EyeLookUpLeft`
-
-`EyeLookUpRight`
-
-`EyeLookDownLeft`
-
-`EyeLookDownRight`
-
-`EyeLookInLeft`
-
-`EyeLookInRight`
-
-`EyeLookOutLeft`
-
-`EyeLookOutRight`
-
-`EyeBlinkLeft`
-
-`EyeBlinkRight`
-
-`EyeSquintRight`
-
-`EyeSquintLeft`
-
-`EyeWideLeft`
-
-`EyeWideRight`
-
-`CheekPuff`
-
-`CheekSquintLeft`
-
-`CheekSquintRight`
-
-`NoseSneerLeft`
-
-`NoseSneerRight`
-
-`JawOpen`
-
-`JawForward`
-
-`JawLeft`
-
-`JawRight`
-
-`MouthFunnel`
-
-`MouthPucker`
-
-`MouthLeft`
-
-`MouthRight`
-
-`MouthRollUpper`
-
-`MouthRollLower`
-
-`MouthShrugUpper`
-
-`MouthShrugLower`
-
-`MouthClose`
-
-`MouthSmileLeft`
-
-`MouthSmileRight`
-
-`MouthFrownLeft`
-
-`MouthFrownRight`
-
-`MouthDimpleLeft`
-
-`MouthDimpleRight`
-
-`MouthUpperUpLeft`
-
-`MouthUpperUpRight`
-
-`MouthLowerDownLeft`
-
-`MouthLowerDownRight`
-
-`MouthPressLeft`
-
-`MouthPressRight`
-
-`MouthStretchLeft`
-
-`MouthStretchRight`
-
-`TongueOut`
+</div>
 
 Basically each BlendShapeClip should use only one Blendshape created in previous step, and its `weight` will be `100`.
 

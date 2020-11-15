@@ -75,7 +75,6 @@ permalink: /tips/perfect_sync
 
 また、「こんなに細かいものは必要ない」と感じるブレンドシェイプについては作成をスキップしても構いません。ただし、まばたきを自然にするために、`EyeSquintRight`, `EyeSquintLeft`,`EyeBlinkLeft`, `EyeBlinkRight`の4つは必ず用意して下さい。
 
-　
 
 #### セットアップStep2. Unity上でのBlendShapeClip作成
 {: .doc-sec2 }

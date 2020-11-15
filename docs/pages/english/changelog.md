@@ -9,6 +9,8 @@ lang_prefix: /en/
 
 # Change Log
 
+<div class="doc-ul" markdown="1">
+
 #### v1.5.0a
 {: .doc-sec2 }
 
@@ -408,3 +410,4 @@ Shoulder motion improvement is applied by default, but you can turn off it for t
 
 * Publish on BOOTH
 
+</div>

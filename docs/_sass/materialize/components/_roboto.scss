@@ -5,6 +5,7 @@
         url("#{$roboto-font-path}Roboto-Thin.woff") format("woff");
 
     font-weight: 100;
+    font-display: swap;
 }
 @font-face {
     font-family: "Roboto";
@@ -12,6 +13,7 @@
         url("#{$roboto-font-path}Roboto-Light.woff2") format("woff2"),
         url("#{$roboto-font-path}Roboto-Light.woff") format("woff");
     font-weight: 300;
+    font-display: swap;
 }
 
 @font-face {
@@ -20,6 +22,7 @@
         url("#{$roboto-font-path}Roboto-Regular.woff2") format("woff2"),
         url("#{$roboto-font-path}Roboto-Regular.woff") format("woff");
     font-weight: 400;
+    font-display: swap;
 }
 
 @font-face {
@@ -28,6 +31,7 @@
         url("#{$roboto-font-path}Roboto-Medium.woff2") format("woff2"),
         url("#{$roboto-font-path}Roboto-Medium.woff") format("woff");
     font-weight: 500;
+    font-display: swap;
 }
 
 @font-face {
@@ -36,4 +40,5 @@
         url("#{$roboto-font-path}Roboto-Bold.woff2") format("woff2"),
         url("#{$roboto-font-path}Roboto-Bold.woff") format("woff");
     font-weight: 700;
+    font-display: swap;
 }

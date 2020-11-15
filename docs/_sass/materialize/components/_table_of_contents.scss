@@ -2,32 +2,34 @@
     Nav List
 ***************/
 .table-of-contents {
+
   &.fixed {
       position: fixed;
     }
 
   li {
-    padding: 2px 0;
+    list-style-type: none;
+    padding: 2px 1em;
   }
   a {
     display: inline-block;
-    font-weight: 300;
-    color: #757575;
-    padding-left: 20px;
+    font-weight: 400;
+    color: #039be5;
+    padding-left: 10px;
     height: 1.5rem;
     line-height: 1.5rem;
     letter-spacing: .4;
     display: inline-block;
 
     &:hover {
-      color: lighten(#757575, 20%);
-      padding-left: 19px;
-      border-left: 1px solid $primary-color;
+      color: lighten(#039be5, 20%);
+      padding-left: 10px;
+      //border-left: 1px solid $primary-color;
     }
     &.active {
       font-weight: 500;
       padding-left: 18px;
-      border-left: 2px solid $primary-color;
+      //border-left: 2px solid $primary-color;
     }
   }
 }

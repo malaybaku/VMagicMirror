@@ -7,31 +7,42 @@ permalink: /docs/external_tracker_ifacialmocap
 [English](../en/docs/external_tracker_ifacialmocap)
 
 # iFacialMocapとの連携
+{: .no_toc }
 
 [外部トラッキングアプリとの連携](./external_tracker)のうち、特にiFacialMocapとVMagicMirrorを連携する方法にかんするページです。
 
+<div class="toc-area" markdown="1">
 
-#### iFacialMocapとは
-{: .doc-sec2 }
+#### 目次
+{: .toc-header .no_toc }
+
+* ToC
+{:toc .table-of-contents }
+
+</div>
+
+### iFacialMocapとは
+{: .doc-sec1 }
 
 iFacialMocapはiOS向けに有償で配布されている表情キャプチャアプリです。
 
 iFacialMocapは比較的新しいiPhone、またはiPad上で動作します。Face ID対応端末、またはA12 Bionic以降のチップが搭載されていれば利用できます。
 
-・参考1: [Face ID対応機種の一覧](https://support.apple.com/ja-jp/HT209183)
+<div class="doc-ul" markdown="1">
 
-・参考2: [iPadモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/ipad/compare/)
+- [Face ID対応機種の一覧](https://support.apple.com/ja-jp/HT209183)
+- [iPadモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/ipad/compare/)
+- [iPhoneモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/iphone/compare/)
 
-・参考3: [iPhoneモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/iphone/compare/)
-
+</div>
 
 iFacialMocapはApp Storeで購入、インストールできます。
 
 [iFacialMocap](https://apps.apple.com/jp/app/ifacialmocap/id1489470545)
 
 
-#### VMagicMirrorと接続する
-{: .doc-sec2 }
+### VMagicMirrorと接続する
+{: .doc-sec1 }
 
 iFacialMocapを起動し、画面上部にiOS端末自身のIPアドレスが表示されることを確認します。
 
@@ -49,7 +60,15 @@ iOS端末のアプリ上に表示されたIPアドレスを入力し、`Connect`
 {% include docimg.html file="./images/docs/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-※ここでキャラクターが反応しない場合、本ページ下部のトラブルシューティングでQ1およびQ2を確認してください。
+<div class="note-area" markdown="1">
+
+**注意**
+
+ここでキャラクターが反応しない場合、本ページ下部のトラブルシューティングの中でもとくにQ1、Q2、Q3を確認してください。
+
+また、セキュリティソフトがiOS端末との通信をブロックしている可能性もあるため、設定を確認して下さい。
+
+</div>
 
 接続後にアバターが横を向いてしまう場合や首が動かない場合は、ユーザーが真正面を向いた状態で`現在位置で顔をキャリブレーション`をクリックし、アバターの顔の向きをリセットします。
 

@@ -8,6 +8,18 @@ lang_prefix: /en/
 [Japanese](../questions)
 
 # FAQ
+{: .no_toc }
+
+<div class="toc-area" markdown="1">
+
+#### Content
+{: .toc-header .no_toc }
+
+* ToC
+{:toc .table-of-contents }
+
+</div>
+
 
 #### VMagicMirror stops soon after started
 {: .doc-sec2 }
@@ -43,8 +55,7 @@ It is by specification, for some game software (please see detail in *note*).
 
 Using fixed eye motion might improve appearance. 
 
-* Control panel > `Streaming` tab > `Face` > `Eye Look Target` > select `None`
-
+In Control panel > `Streaming` tab > `Face` > `Eye Look Target`, select `None`.
 
 *note*: Cause of the trouble is as following.
 
@@ -101,8 +112,12 @@ As far as the creator knows, COMODO Internet Security leads this issue, but it i
 #### Shadow looks not good
 {: .doc-sec2 }
 
+<div class="doc-ul" markdown="1">
+
 * It is possible the character uses `Unlit` style shader and this case shadow might not appear.
 * When your model is based on VRoidStudio and texture is partially transparent, some transparent part happens to be drawn with half transparent style.
+
+</div>
 
 If your trouble does not match above cases, then quality setting may be a help (however CPU usage increases). See the quality setting in `Effects` tab in setting window and select higher option.
 
@@ -133,6 +148,6 @@ This issue happens by NVIDIA control panel setting.
 
 Quit VMagicMirror, and open NVIDIA control panel (right-click on desktop) to turn off:
 
-> `3D Setting` > `3D Setting Management` > `Anti-Aliasing FXAA`
+`3D Setting` > `3D Setting Management` > `Anti-Aliasing FXAA`
 
 Then, restart VMagicMirror.

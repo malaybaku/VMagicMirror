@@ -8,31 +8,42 @@ lang_prefix: /en/
 [Japanese](../../docs/external_tracker_ifacialmocap)
 
 # Connect to iFacialMocap
+{: .no_toc }
 
 Show how to setup iFacialMocap for [External Tracker App](./external_tracker).
 
+<div class="toc-area" markdown="1">
 
-#### What is iFacialMocap?
-{: .doc-sec2 }
+#### Content
+{: .toc-header .no_toc }
+
+* ToC
+{:toc .table-of-contents }
+
+</div>
+
+### What is iFacialMocap?
+{: .doc-sec1 }
 
 iFacialMocap is a paid application for face tracking in iOS.
 
 This app requires enough new iPhone or iPad, which supports Face ID or has A12 Bionic chip (or newer chip).
 
-cf.1: [Supported Models](https://support.apple.com/en-us/HT209183)
+<div class="doc-ul" markdown="1">
 
-cf.2: [iPad Models("See All Models" will show all models' chip)](https://www.apple.com/ipad/compare/)
+- [Supported Models](https://support.apple.com/en-us/HT209183)
+- [iPad Models("See All Models" will show all models' chip)](https://www.apple.com/ipad/compare/)
+- [iPhone Models("See All Models" will show all models' chip)](https://www.apple.com/iphone/compare/)
 
-cf.3: [iPhone Models("See All Models" will show all models' chip)](https://www.apple.com/iphone/compare/)
-
+</div>
 
 iFacialMocap is available on App Store.
 
 [iFacialMocap](https://apps.apple.com/jp/app/ifacialmocap/id1489470545)
 
 
-#### Connect to VMagicMirror
-{: .doc-sec2 }
+### Connect to VMagicMirror
+{: .doc-sec1 }
 
 Start iFacialMocap and see the IP address at the top.
 
@@ -50,7 +61,15 @@ Then input the IP address shown in iOS device, and click `Connect` to complete c
 {% include docimg.html file="./images/docs/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-**IMPORTANT:** If you cannot check avatar motion, please check below `TroubleShooting`, especially Q1 and Q2.
+<div class="note-area" markdown="1">
+
+**IMPORTANT** 
+
+If you cannot check avatar motion, please see below `TroubleShooting`, especially Q1, Q2 and Q3.
+
+Also please check if an anti-virus software disturbs connection between PC and iOS device.
+
+</div>
 
 If your avatar looks wrong orientatoin or face motion does not start, execute `Cralibrate Face Pose` to calibrate.
 

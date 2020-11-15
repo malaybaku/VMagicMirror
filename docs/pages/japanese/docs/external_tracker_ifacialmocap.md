@@ -7,12 +7,22 @@ permalink: /docs/external_tracker_ifacialmocap
 [English](../en/docs/external_tracker_ifacialmocap)
 
 # iFacialMocapとの連携
+{: .no_toc }
 
 [外部トラッキングアプリとの連携](./external_tracker)のうち、特にiFacialMocapとVMagicMirrorを連携する方法にかんするページです。
 
+<div class="toc-area" markdown="1">
 
-#### iFacialMocapとは
-{: .doc-sec2 }
+#### 目次
+{: .toc-header .no_toc }
+
+* ToC
+{:toc .table-of-contents }
+
+</div>
+
+### iFacialMocapとは
+{: .doc-sec1 }
 
 iFacialMocapはiOS向けに有償で配布されている表情キャプチャアプリです。
 
@@ -30,8 +40,8 @@ iFacialMocapはApp Storeで購入、インストールできます。
 [iFacialMocap](https://apps.apple.com/jp/app/ifacialmocap/id1489470545)
 
 
-#### VMagicMirrorと接続する
-{: .doc-sec2 }
+### VMagicMirrorと接続する
+{: .doc-sec1 }
 
 iFacialMocapを起動し、画面上部にiOS端末自身のIPアドレスが表示されることを確認します。
 

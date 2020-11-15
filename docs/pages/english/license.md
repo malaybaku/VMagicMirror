@@ -13,7 +13,8 @@ VMagicMirror ("The Software") has the license note in `License Note` section.
 
 `Preamble` and `Caution about reverse engineering to the binary distribution` are help document, and not a part of the license note.
 
-## Preamble
+### Preamble
+{: .doc-sec1 }
 
 1. You can use The Software for both personal and commercial use.
 2. You do not have to credit The Software if you upload the video or streaming your screen with The Software.
@@ -22,19 +23,25 @@ VMagicMirror ("The Software") has the license note in `License Note` section.
 5. The Software usage as streaming or video output will be an avatar usage.
 6. User must also comply to the VRM model license.
 
-## Caution about reverse engineering to the binary distribution
+### Caution about reverse engineering to the binary distribution
+{: .doc-sec1 }
 
 This section is help information that about the risk of the reverse engineering to the binary distribution.
 
 The software distributed in binary style includes non-open source resources, like following.
 
+<div class="doc-ul" markdown="1">
+
 - Paid Assets on Unity Asset Store
 - VRoid SDK
+
+</div>
 
 This means that the reverse engineering may violate the license or guidelines for those resources.
 
 
-## License Note
+### License Note
+{: .doc-sec1 }
 
 MIT License
 

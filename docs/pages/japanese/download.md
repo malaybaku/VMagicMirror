@@ -8,7 +8,7 @@ permalink: /download
 
 # ダウンロード
 
-[BOOTH](https://booth.pm/ja/items/1272298)からダウンロード可能です。
+VMagicMirrorは[BOOTH](https://booth.pm/ja/items/1272298)からダウンロード可能です。
 
 <a target="_blank" href="https://baku-dreameater.booth.pm/items/1272298/">
   <img src="https://asset.booth.pm/static-images/banner/468x60_02.png">
@@ -20,43 +20,65 @@ permalink: /download
 
 また、ソースコードは[GitHub](https://github.com/malaybaku/VMagicMirror)で公開しています。
 
-### 動作環境
+### 必要なPC環境
 {: .doc-sec1 }
 
-Windows 10 64bitで動作します。Windows 8.1以前や、32bit版OSでは動作しない可能性があります。
+#### 必須の環境
+{: .doc-sec2 }
 
-リップシンクでは通常のマイクのほか、仮想マイク入力も選択できます。このため、ボイスチェンジャー出力をもとにリップシンクすることも可能です。
+<div class="doc-ul" markdown="1">
 
-ウェブカメラは視野角が狭めで、顔全体が映るものを使用してください。VMagicMirrorではおよそ320x240の解像度に圧縮してウェブカメラの映像を用いるため、解像度が低いカメラを使っても問題ありません。
+- Windows 10 64bit
 
-CPUやグラフィックボードは最低要件としてはほぼ何でも動作しますが、リップシンク、影の表示、顔トラッキングではCPU負荷が高くなります。
+</div>
 
-v0.9.8時点で以下2件の不具合報告を受けています。
+#### オプションで対応しているデバイスなど
+{: .doc-sec2 }
 
-(不具合1) AMDの古いCPUが使われている環境では、アプリケーションが起動しない場合があります。
+<div class="doc-ul" markdown="1">
 
-(不具合2) 古いGPUが使われている環境では、モデルの顔部分のテクスチャが表示されないことがあります。
+- マイク: 通常のマイクのほか、仮想マイク入力(ボイスチェンジャー出力など)も使用できます。
+- Webカメラ: 視野角が狭めで、顔全体が映るものを使って下さい。VMagicMirrorでは原則としてカメラ画像を320x240ピクセルに圧縮して用いるため、解像度が低いWebカメラでも問題ありません。
+- ゲームパッド: XInputに対応したゲームパッドか、またはDUAL SHOCK 4に対応しています。Xbox One Controllerで動作を確認しています。
+- iPhone / iPad: Face ID対応、またはA14以降のチップ搭載であれば使用できます。詳しくは[外部トラッキング](./docs/external_tracker)のページをご覧下さい。
+- MIDIコントローラ: ほぼなんでも対応していますが、キー入力のみ対応しているため、キー中心のコントローラを推奨しています。
 
+</div>
 
-開発者は以下の環境で動作チェックしていますが、もしお手元のPCでVMagicMirrorの動作が不自然に重すぎる場合、PC環境を記載のうえ開発者までご連絡下さい。
+#### 動作しないことがある環境
+{: .doc-sec2 }
+
+<div class="doc-ul" markdown="1">
+
+- CPU: AMDの古いCPUをお使いの環境ではアプリが起動しないこともあります。
+- GPU: グラフィック環境が古い場合、モデルの顔部分のテクスチャが表示されないことがあります。
+
+</div>
+
+#### 動作チェック環境
+{: .doc-sec2 }
+
+開発者は以下の環境で動作チェックをしています。もし手元のPCでVMagicMirrorの動作が不自然に重い場合、PC環境を記載のうえ開発者までご連絡下さい。
 
 **環境1: デスクトップPC**
 
-CPU: Intel Core i7-6700K
+<div class="doc-ul" markdown="1">
 
-GPU: GeForce GTX 1080
+- CPU: Intel Core i7-6700K
+- GPU: GeForce GTX 1080
+- ウェブカメラ: C922 Pro Stream Webcam
+- マイク入力:
+    - VoiceMeeter Bananaの出力
+    - VT-4 WET (変声済みのVT-4の出力)
+    - C922 Pro Stream Webcam
 
-ウェブカメラ: C922 Pro Stream Webcam
-
-マイク入力:
-
-1. VoiceMeeter Bananaの出力
-2. VT-4 WET (変声済みのVT-4の出力)
-3. C922 Pro Stream Webcam
-
+</div>
 
 **環境2: ノートPC(Surface Book 2)**
 
-ウェブカメラ: PC本体フロントエンドカメラ
+<div class="doc-ul" markdown="1">
 
-マイク入力: PC本体マイク
+- ウェブカメラ: PC本体フロントエンドカメラ
+- マイク入力: PC本体マイク
+
+</div>

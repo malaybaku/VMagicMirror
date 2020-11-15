@@ -3,7 +3,10 @@
 
 h1, h2, h3, h4, h5, h6 {
     -webkit-font-smoothing: antialiased;
-    font-weight: 500;
+}
+
+h1, h2, h3, h4 {
+    font-weight: bold;
 }
 
 h1 { 
@@ -16,6 +19,10 @@ h3 {
 
 h4 {
     font-size: 24px;
+}
+
+#page_container {
+    margin: 0 auto 60px auto;
 }
 
 .doc-sec1 {
@@ -44,7 +51,7 @@ h4 {
 .toc-area { 
     background-color: #F4F4F4;
     border: 1px solid #B0B0B0;
-    padding: 10px 20px;
+    padding: 10px;
     margin: 20px 0px;
     display: table;
 }
@@ -53,6 +60,8 @@ h4 {
     background-color: #F4F4F4;
     padding: 10px 20px;
     display: table;
+    border: 1px solid #B0B0B0;
+    border-radius: 10px;
 
     strong { 
         font-weight: 600;
@@ -63,7 +72,7 @@ h4 {
     
     p {
         margin-block-start: 0em;
-        margin-block-end: 1em;
+        margin-block-end: 0.5em;
     }
 }
 
@@ -112,18 +121,31 @@ img.home-gallery {
     margin-right: auto;
 }
 
+p.top-desc { 
+    font-size: 1.5rem;
+}
+
 .icon-block {
   padding: 0 15px;
 }
-.icon-block .material-icons {
+.icon-block .home-main-icon {
 	font-size: inherit;
 }
+.icon-block .home-assist-icon {
+	font-size: smaller;
+}
+
 h1.page-title {
     font-weight: 500;
     font-size: 2.3em;
     text-align: center;
     color: #29b6f6;
 }
+
+h2.home-sub-header { 
+    font-weight: normal;
+}
+
 .col.grid-example {
     border: 1px solid #eee;
     margin: 7px 0;

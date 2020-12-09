@@ -45,6 +45,9 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         }
 
         private CancellationTokenSource _cts = null;
+        //NOTE: 前回とまったく同じ文字列が来たときに「こいつさてはトラッキングロスしたな？」と推測するために使う
+        private string _prevMessage = "";
+        
         private readonly object _rawMessageLock = new object();
         private string _rawMessage = "";
         private string RawMessage
@@ -161,10 +164,19 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             }
             
             RawMessage = "";
+
+            if (_prevMessage == message)
+            {
+                //新規データかと思ったら前と同じだったケース。
+                //この場合は恐らくトラッキングロスしてるため、本来の意味で接続したとは見なさない。
+                return;
+            }
+            
             DeserializeMessageWithLessGcAlloc(message);
             //Lerpファクタが1ぴったりならLerp要らん(しかもその状況は発生頻度が高い)、みたいな話です。
             ApplyDeserializeResult(UpdateApplyRate < 0.999f);
             RaiseFaceTrackUpdated();
+            _prevMessage = message;
         }
 
         private void OnDestroy()
@@ -269,6 +281,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             _cts?.Cancel();
             _cts = null;
             RawMessage = "";
+            _prevMessage = "";
         }
 
         private void ThreadMethod(CancellationToken token)

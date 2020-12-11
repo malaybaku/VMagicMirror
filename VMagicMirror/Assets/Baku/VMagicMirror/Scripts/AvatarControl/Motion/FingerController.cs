@@ -24,6 +24,10 @@ namespace Baku.VMagicMirror
         private const float Duration = 0.25f;
         private const float ThumbProximalMaxBendAngle = 30f;
         private const float HoldOperationSpeedFactor = 18.0f;
+        private const float TypingBendingAngle = 25f;
+
+        //タイピング用に指を折ったり戻したりする速度[deg/s]
+        private const float TypingBeidSpeedPerSeconds = 15f / 0.125f;
 
         //NOTE: 曲げ角度の符号に注意。左右で意味変わるのと、親指とそれ以外の差にも注意
         private static Dictionary<int, float[]> _fingerIdToPointingAngle = new Dictionary<int, float[]>()
@@ -62,6 +66,9 @@ namespace Baku.VMagicMirror
         private readonly float[] _holdAngles = new float[10];
         //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
         private readonly float[] _holdOperationBendingAngle = new float[10];
+
+        private readonly bool[] _isTypingBending = new bool[10];
+        private readonly bool[] _isTypingReleasing = new bool[10];
 
         private Coroutine _coroutine = null;
 
@@ -187,6 +194,42 @@ namespace Baku.VMagicMirror
             StartMoveFinger(_keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber);
         }
 
+        /// <summary>
+        /// タイピング用に指を動かします。これは実際には、対応する指を探してHold()を呼び出す処理です。
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="isLeftHandOnly"></param>
+        public void HoldTypingKey(string key, bool isLeftHandOnly)
+        {
+            var fingerNumber = _keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber;
+            _isTypingBending[fingerNumber] = true;
+            //普通こっちのフラグは立ってないハズだけど、念のため。
+            _isTypingReleasing[fingerNumber] = false;
+
+            //今から曲げようとしてる指以外が打鍵状態だったら離す
+            int startIndex = (fingerNumber < 5) ? 0 : 5;
+            for (int i = startIndex; i < startIndex + 5; i++)
+            {
+                if (i != fingerNumber && _isTypingBending[i])
+                {
+                    _isTypingBending[i] = false;
+                    _isTypingReleasing[i] = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// タイピング用に指定していた指をもとに戻します。これは実際には、対応する指を探してRelease()を呼び出す処理です。
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="isLeftHandOnly"></param>
+        public void ReleaseTypingKey(string key, bool isLeftHandOnly)
+        {
+            var fingerNumber = _keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber;            
+            _isTypingBending[fingerNumber] = false;
+            _isTypingReleasing[fingerNumber] = true;
+        }
+
         public void StartClickMotion(string info)
         {
             if (info == RDown)
@@ -241,6 +284,26 @@ namespace Baku.VMagicMirror
             }
         }
 
+        /// <summary> 左手のすべての指に対し、タイピング動作のフラグを解除します。　</summary>
+        public void ReleaseLeftHandTyping()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                _isTypingBending[i] = false;
+                _isTypingReleasing[i] = false;
+            }
+        }
+
+        /// <summary> 右手のすべての指に対し、タイピング動作のフラグを解除します。 </summary>
+        public void ReleaseRightHandTyping()
+        {
+            for (int i = 5; i < 10; i++)
+            {
+                _isTypingBending[i] = false;
+                _isTypingReleasing[i] = false;
+            }
+        }
+
         #endregion
 
         private void LateUpdate()
@@ -260,6 +323,7 @@ namespace Baku.VMagicMirror
                 }
 
                 float angle = DefaultBendingAngle;
+                var currentAngle = _holdOperationBendingAngle[i];
 
                 _holdOperationBendingAngle[i] = math.lerp(
                     _holdOperationBendingAngle[i],
@@ -276,6 +340,21 @@ namespace Baku.VMagicMirror
                         time = Duration;
                     }
                     angle = EvalAngleCurve(time);
+                }
+                else if (_isTypingBending[i])
+                {
+                    //Lerpではなく時間に対する線形変化によって指を折り曲げる
+                    angle = math.min(currentAngle + TypingBeidSpeedPerSeconds * Time.deltaTime, TypingBendingAngle);
+                }
+                else if (_isTypingReleasing[i])
+                {
+                    //Bendingと同じ考え方でデフォルト角度に戻す
+                    angle = math.max(currentAngle - TypingBeidSpeedPerSeconds * Time.deltaTime, DefaultBendingAngle);
+                    if (!(angle > DefaultBendingAngle))
+                    {
+                        //リリース動作が終わったはずなのでフラグを折っておく: 余計な動作が起きにくいように。
+                        _isTypingReleasing[i] = false;
+                    }
                 }
                 else
                 {

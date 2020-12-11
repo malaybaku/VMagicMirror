@@ -177,6 +177,73 @@ namespace Baku.VMagicMirror
             }
         }
 
+        public void KeyDown(string keyName)
+        {
+            if (!EnableHidArmMotion)
+            {
+                return;
+            }
+            
+            var (hand, pos) = typing.KeyDown(keyName, EnablePresentationMode);
+            if (!CheckCoolDown(hand, HandTargetType.Keyboard))
+            {
+                return;
+            }
+            
+            if (hand == ReactedHand.Left)
+            {
+                SetLeftHandIk(HandTargetType.Keyboard);
+            }
+            else if (hand == ReactedHand.Right)
+            {
+                SetRightHandIk(HandTargetType.Keyboard);
+            }
+
+            if (!AlwaysHandDownMode)
+            {
+                fingerController.HoldTypingKey(keyName, EnablePresentationMode);
+            }
+            
+            if (hand != ReactedHand.None && EnableHidArmMotion)
+            {
+                _particleStore.RequestKeyboardParticleStart(pos);
+            }
+        }
+
+        public void KeyUp(string keyName)
+        {
+            if (!EnableHidArmMotion)
+            {
+                return;
+            }
+            
+            var (hand, pos) = typing.KeyUp(keyName, EnablePresentationMode);
+            if (!CheckCoolDown(hand, HandTargetType.Keyboard))
+            {
+                return;
+            }
+            
+            if (hand == ReactedHand.Left)
+            {
+                SetLeftHandIk(HandTargetType.Keyboard);
+            }
+            else if (hand == ReactedHand.Right)
+            {
+                SetRightHandIk(HandTargetType.Keyboard);
+            }
+
+            if (!AlwaysHandDownMode)
+            {
+                fingerController.ReleaseTypingKey(keyName, EnablePresentationMode);
+            }
+            
+            if (hand != ReactedHand.None && EnableHidArmMotion)
+            {
+                _particleStore.RequestKeyboardParticleStart(pos);
+            }
+        }
+        
+
         public void MoveMouse(Vector3 mousePosition)
         {
             if (!EnableHidArmMotion)
@@ -522,6 +589,12 @@ namespace Baku.VMagicMirror
             _currentLeftHand = ik;
             _leftHandStateBlendCount = 0f;
 
+            if (prevType == HandTargetType.Keyboard)
+            {
+                //NOTE: とくにキーボード⇢ゲームパッドの遷移が破綻しないようにこのタイミングでやる
+                fingerController.ReleaseLeftHandTyping();
+            }
+            
             if (prevType == HandTargetType.Gamepad)
             {
                 gamepadFinger.ReleaseLeftHand();
@@ -573,6 +646,11 @@ namespace Baku.VMagicMirror
             _rightHandStateBlendCount = 0f;
 
             fingerController.RightHandPresentationMode = (targetType == HandTargetType.Presentation);
+
+            if (prevType == HandTargetType.Keyboard)
+            {
+                fingerController.ReleaseRightHandTyping();
+            }
 
             if (prevType == HandTargetType.Gamepad)
             {

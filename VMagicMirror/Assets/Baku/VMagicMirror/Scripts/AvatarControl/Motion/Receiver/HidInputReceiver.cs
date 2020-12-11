@@ -25,7 +25,8 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _rawInput.PressedKeys.Subscribe(ReceiveKeyPressed);
+            _rawInput.KeyDown.Subscribe(ReceiveKeyDown);
+            _rawInput.KeyUp.Subscribe(ReceiveKeyUp);
             _rawInput.MouseButton.Subscribe(ReceiveMouseButton);
             
             _gamePad.ButtonUpDown.Subscribe(data =>
@@ -101,10 +102,8 @@ namespace Baku.VMagicMirror
             return new Vector2(v.x * factor, v.y * factor);
         }
         
-        private void ReceiveKeyPressed(string keyCodeName)
-        {
-            handIkIntegrator.PressKey(keyCodeName);
-        }
+        private void ReceiveKeyDown(string keyCodeName) => handIkIntegrator.KeyDown(keyCodeName);
+        private void ReceiveKeyUp(string keyCodeName) => handIkIntegrator.KeyUp(keyCodeName);
 
         private void ReceiveMouseButton(string info)
         {

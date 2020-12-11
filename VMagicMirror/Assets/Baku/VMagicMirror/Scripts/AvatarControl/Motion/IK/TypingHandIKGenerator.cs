@@ -66,6 +66,10 @@ namespace Baku.VMagicMirror
         private Coroutine _leftHandMoveCoroutine = null;
         private Coroutine _rightHandMoveCoroutine = null;
 
+        //左右それぞれの手について、現在押し下げている直近のキー
+        private string _leftCurrentKey = "";
+        private string _rightCurrentKey = "";
+
         [Inject]
         public void Initialize(KeyboardProvider provider)
         {
@@ -101,6 +105,173 @@ namespace Baku.VMagicMirror
                 UpdateRightHandCoroutine(KeyPressRoutine(IKTargets.RHand, targetPos));
                 return (ReactedHand.Right, keyData.position);
             }
+        }
+        
+        //TODO: 上げ下げをちゃんと配慮する。ただし、素早すぎる打鍵に対して見栄えを担保しなきゃいけないことに注意
+        //コルーチンが以下3種類あるように考え、2キー以上を片手で同時押しするのは再現しない。
+        // - リリース状態からキー押しに移行 <- 従来のKeyPressの前半の動き、でもよい。ちょっとオーバースペックだけど
+        // - すでにキーを押してる状態から他へ移行 <- 従来のKeyPressの前半の動き
+        // - いま押してるキーを離す <- 従来のKeyPress後半の動き
+
+        public (ReactedHand, Vector3) KeyDown(string key, bool isLeftHandOnlyMode)
+        {
+            var keyData = _keyboard.GetKeyTargetData(key, isLeftHandOnlyMode);
+            
+            Vector3 targetPos =
+                keyData.positionWithOffset + 
+                YOffsetAlways * _keyboard.KeyboardUp -
+                HandToTipLength * _keyboard.KeyboardForward;            
+            
+            if (keyData.IsLeftHandPreffered)
+            {
+                _leftCurrentKey = key;
+                UpdateLeftHandCoroutine(KeyDownRoutine(IKTargets.LHand, targetPos));
+                return (ReactedHand.Left, keyData.position);
+            }
+            else
+            {
+                _rightCurrentKey = key;
+                UpdateRightHandCoroutine(KeyDownRoutine(IKTargets.RHand, targetPos));
+                return (ReactedHand.Right, keyData.position);
+            }
+        }
+        
+
+        public (ReactedHand, Vector3) KeyUp(string key, bool isLeftHandOnlyMode)
+        {
+            if (key != _leftCurrentKey && key != _rightCurrentKey)
+            {
+                //今押してるのと違うキーを上げた場合、上げ動作をすると変になっちゃうので無視。
+                //「AをKeyDown > BをKeyDown > AをKeyUp」などとするとココに到達する
+                return (ReactedHand.None, Vector3.zero);
+            }
+         
+            var keyData = _keyboard.GetKeyTargetData(key, isLeftHandOnlyMode);
+            Vector3 targetPos =
+                keyData.positionWithOffset + 
+                YOffsetAlways * _keyboard.KeyboardUp -
+                HandToTipLength * _keyboard.KeyboardForward;
+
+            if (keyData.IsLeftHandPreffered)
+            {
+                _leftCurrentKey = "";
+                UpdateLeftHandCoroutine(KeyUpRoutine(IKTargets.LHand, targetPos));
+                return (ReactedHand.Left, keyData.position);
+            }
+            else
+            {
+                _rightCurrentKey = "";
+                UpdateRightHandCoroutine(KeyUpRoutine(IKTargets.RHand, targetPos));
+                return (ReactedHand.Right, keyData.position);
+            }
+        }
+        
+        private IEnumerator KeyDownRoutine(IKTargets target, Vector3 targetPos)
+        {
+            bool isLeftHand = (target == IKTargets.LHand);
+            IKDataRecord ikTarget = isLeftHand ? _leftHand : _rightHand;
+            //NOTE: 第2項は手首を正面に向けるための前処理みたいなファクターです
+            var keyboardRot = 
+                _keyboard.GetKeyboardRotation() * 
+                Quaternion.AngleAxis(isLeftHand ? 90 : -90, Vector3.up);
+            var keyboardRootPos = _keyboard.transform.position;
+            var keyboardUp = _keyboard.KeyboardUp;
+
+            float startTime = Time.time;
+            Vector3 startPos = ikTarget.Position;
+            float startVertical = Vector3.Dot(startPos - keyboardRootPos, keyboardUp);
+            float targetVertical = Vector3.Dot(targetPos - keyboardRootPos, keyboardUp);
+            
+            while (Time.time - startTime < keyboardMotionDuration)
+            {
+                float rate = (Time.time - startTime) / keyboardMotionDuration;
+
+                Vector3 lerpApproach = Vector3.Lerp(startPos, targetPos, horizontalApproachCurve.Evaluate(rate));
+                //Y成分に相当するところをキャンセルしておく
+                lerpApproach -= keyboardUp * Vector3.Dot(lerpApproach - keyboardRootPos, keyboardUp);
+
+                if (rate >= 0.5f)
+                {
+                    break;
+                }
+
+                //アプローチ中: 垂直方向のカーブのつけかたをいい感じにする。
+                float verticalTarget = Mathf.Lerp(
+                    startVertical, targetVertical, verticalApproachCurve.Evaluate(rate)
+                    );
+                float vertical = Mathf.Lerp(
+                    Vector3.Dot(ikTarget.Position - keyboardRootPos, keyboardUp),
+                    verticalTarget,
+                    keyboardVerticalWeightCurve.Evaluate(rate)
+                    );
+                ikTarget.Position = lerpApproach + keyboardUp * vertical;
+                
+                //一応Lerpしてるけどあんまり必要ないかもね
+                ikTarget.Rotation = Quaternion.Slerp(
+                    ikTarget.Rotation,
+                    keyboardRot,
+                    0.2f
+                );
+
+                yield return null;
+            }
+
+            //最後: キーを押し下げてるときの位置にぴったりあわせて終わり
+            ikTarget.Position = targetPos; 
+            ikTarget.Rotation = keyboardRot;
+            
+        }
+
+        private IEnumerator KeyUpRoutine(IKTargets target, Vector3 targetPos)
+        {
+            bool isLeftHand = (target == IKTargets.LHand);
+            IKDataRecord ikTarget = isLeftHand ? _leftHand : _rightHand;
+            //NOTE: 第2項は手首を正面に向けるための前処理みたいなファクターです
+            var keyboardRot = 
+                _keyboard.GetKeyboardRotation() * 
+                Quaternion.AngleAxis(isLeftHand ? 90 : -90, Vector3.up);
+            var keyboardRootPos = _keyboard.transform.position;
+            var keyboardUp = _keyboard.KeyboardUp;
+
+            float startTime = Time.time;
+            float targetVertical = Vector3.Dot(targetPos - keyboardRootPos, keyboardUp);
+            
+            while (Time.time - startTime < keyboardMotionDuration)
+            {
+                //NOTE: 歴史的経緯により、+0.5することで後半の動作をするように仕向ける
+                float rate = (Time.time - startTime) / keyboardMotionDuration + 0.5f;
+
+                //NOTE: キー上げの時点で水平方向が合ってなかった場合、ぴったり合わせてしまう(あえてlerpしない)
+                Vector3 lerpApproach = targetPos;
+                //Y成分に相当するところをキャンセルしておく
+                lerpApproach -= keyboardUp * Vector3.Dot(lerpApproach - keyboardRootPos, keyboardUp);
+
+                //離れるとき: キーボードから垂直方向に手を引き上げる。Lerpの係数は1から0に戻っていくことに注意
+                float vertical = Mathf.Lerp(
+                    targetVertical + YOffsetAfterKeyDown, 
+                    targetVertical,
+                    verticalApproachCurve.Evaluate(rate));
+                ikTarget.Position = lerpApproach + keyboardUp * vertical;
+                
+                //一応Lerpしてるけどあんまり必要ないかもね
+                ikTarget.Rotation = Quaternion.Slerp(
+                    ikTarget.Rotation,
+                    keyboardRot,
+                    0.2f
+                );
+
+                if (rate >= 1.0f)
+                {
+                    break;
+                }
+
+                yield return null;
+            }
+
+            //最後: ピッタリ合わせておしまい
+            ikTarget.Position = targetPos + keyboardUp * YOffsetAfterKeyDown; 
+            ikTarget.Rotation = keyboardRot;
+            
         }
 
         private IEnumerator KeyPressRoutine(IKTargets target, Vector3 targetPos)

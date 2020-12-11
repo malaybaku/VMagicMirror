@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UnityEngine;
@@ -23,8 +24,10 @@ namespace Baku.VMagicMirror
         public IObservable<string> PressedRawKeys => _rawKeys;
         private readonly Subject<string> _rawKeys = new Subject<string>();
         
-        public IObservable<string> PressedKeys => _keys;
-        private readonly Subject<string> _keys = new Subject<string>();
+        public IObservable<string> KeyDown => _keyDown;
+        private readonly Subject<string> _keyDown = new Subject<string>();
+        public IObservable<string> KeyUp => _keyUp;
+        private readonly Subject<string> _keyUp = new Subject<string>();
 
         public IObservable<string> MouseButton => _mouseButton;
         private readonly Subject<string> _mouseButton = new Subject<string>();
@@ -65,8 +68,12 @@ namespace Baku.VMagicMirror
         
         private bool _randomizeKey = false;
 
-        //叩いたキーのコード。(多分大丈夫なんだけど)イベントハンドラを短時間で抜けときたいのでこういう持ち方にする
+        //直前フレームで下がった/上がったキーのコード。(多分大丈夫なんだけど)イベントハンドラを短時間で抜けときたいのでこういう持ち方にする
         private readonly ConcurrentQueue<int> _downKeys = new ConcurrentQueue<int>();
+        private readonly ConcurrentQueue<int> _upKeys = new ConcurrentQueue<int>();
+        
+        //打鍵ランダム化の際、押したキーがランダムになっちゃってもKeyUpで破綻が起きなくなるようにするため、どこを押したか覚えるキュー
+        private readonly Queue<string> _randomizedDownKeyQueue = new Queue<string>();
         
         #endregion
         
@@ -79,8 +86,12 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.EnableHidRandomTyping,
-                c => _randomizeKey = c.ToBoolean()
-                );
+                c =>
+                {
+                    _randomizeKey = c.ToBoolean();
+                    //値が変わる時点で残ってるキュー(普通ないけど)を消しておく
+                    _randomizedDownKeyQueue.Clear();
+                });
             
             //NOTE: ここ2つは「VRoid SDKを使ってる間はキーボード監視について余計な操作をやめろ」的な意味
             receiver.AssignCommandHandler(
@@ -144,12 +155,32 @@ namespace Baku.VMagicMirror
                     if (_randomizeKey)
                     {
                         var keys = RandomKeyboardKeys.RandomKeyNames;
-                        _keys.OnNext(keys[Random.Range(0, keys.Length)]);
+                        var randomizedKey = keys[Random.Range(0, keys.Length)];
+                        _randomizedDownKeyQueue.Enqueue(randomizedKey);
+                        _keyUp.OnNext(randomizedKey);
                     }
                     else
                     {
-                        _keys.OnNext(rawKey);
+                        _keyUp.OnNext(rawKey);
                     }
+                }
+            }
+            
+            while (_upKeys.TryDequeue(out int keyCode))
+            {
+                if (_randomizeKey)
+                {
+                    //ランダム化されている場合、ともかく押したキーを順に離す、という挙動にして破綻しづらくする
+                    if (_randomizedDownKeyQueue.Count > 0)
+                    {
+                        var key = _randomizedDownKeyQueue.Dequeue();
+                        _keyUp.OnNext(key);
+                    }
+                }
+                else
+                {
+                    var rawKey = ((Keys)keyCode).ToString();
+                    _keyUp.OnNext(rawKey);
                 }
             }
         }
@@ -189,12 +220,15 @@ namespace Baku.VMagicMirror
                 }
 
                 _keyDownFlags[code] = isDown;
-                if (!isDown)
+                if (isDown)
                 {
-                    return;
+                    AddKeyDown(code);
+                }
+                else
+                {
+                    AddKeyUp(code);
                 }
                 
-                AddKeyDown(code);
             }
         }
 
@@ -208,7 +242,8 @@ namespace Baku.VMagicMirror
         }
         
         private void AddKeyDown(int keyCode) => _downKeys.Enqueue(keyCode);
-        
+        private void AddKeyUp(int keyCode) => _upKeys.Enqueue(keyCode);
+
         public void ReleaseBeforeCloseConfig() => _windowProcedureHook.StopObserve();
 
         public Task ReleaseResources() => Task.CompletedTask;
@@ -315,8 +350,14 @@ namespace Baku.VMagicMirror
                         int index = Random.Range(0, _editorCheckTargetKeyCodes.Length);
                         keyName = _editorCheckTargetKeyCodes[index].ToString();
                     }
-                    _keys.OnNext(keyName);
-                }                
+                    _keyDown.OnNext(keyName);
+                }      
+                
+                if (Input.GetKeyUp(_editorCheckTargetKeyCodes[i]))
+                {
+                    string keyName = _editorCheckTargetKeyCodes[i].ToString();
+                    _keyUp.OnNext(keyName);
+                }      
             }
         }
         

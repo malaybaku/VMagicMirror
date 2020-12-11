@@ -107,10 +107,7 @@ namespace Baku.VMagicMirror
 
         private void ReceiveMouseButton(string info)
         {
-            if (info.Contains("Down"))
-            {
-                handIkIntegrator.ClickMouse(info);
-            }
+            handIkIntegrator.ClickMouse(info);
         }
     }
 }

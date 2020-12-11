@@ -19,6 +19,9 @@ namespace Baku.VMagicMirror
         private const string RDown = nameof(RDown);
         private const string MDown = nameof(MDown);
         private const string LDown = nameof(LDown);
+        private const string RUp = nameof(RUp);
+        private const string MUp = nameof(MUp);
+        private const string LUp = nameof(LUp);
 
         private const float DefaultBendingAngle = 10.0f;
         private const float Duration = 0.25f;
@@ -239,6 +242,35 @@ namespace Baku.VMagicMirror
             else if (info == MDown || info == LDown)
             {
                 StartMoveFinger(FingerConsts.RightIndex);
+            }
+        }
+
+        public void OnMouseButton(string info)
+        {
+            if (info == RDown || info == MDown || info == LDown)
+            {
+                int downFinger = (info == RDown) ? FingerConsts.RightMiddle : FingerConsts.RightIndex;
+                _isTypingBending[downFinger] = true;
+                _isTypingReleasing[downFinger] = false;
+                for (int i = 5; i < 10; i++)
+                {
+                    //NOTE: 親指とかの関係ない指にまでこの処理をかけるのはキーボードとの行き来のときに破綻を防ぐため
+                    if (i != downFinger && _isTypingBending[i])
+                    {
+                        _isTypingBending[i] = false;
+                        _isTypingReleasing[i] = true;
+                    }
+                }
+            }
+            else if (info == RUp)
+            {
+                _isTypingBending[FingerConsts.RightMiddle] = false;
+                _isTypingReleasing[FingerConsts.RightMiddle] = true;
+            }
+            else if (info == MUp || info == LUp) 
+            {
+                _isTypingBending[FingerConsts.RightIndex] = false;
+                _isTypingReleasing[FingerConsts.RightIndex] = true;
             }
         }
 

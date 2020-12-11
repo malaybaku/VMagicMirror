@@ -271,9 +271,9 @@ namespace Baku.VMagicMirror
         {
             if (!EnablePresentationMode && EnableHidArmMotion && !AlwaysHandDownMode)
             {
-                fingerController.StartClickMotion(button);
+                fingerController.OnMouseButton(button);
                 SetRightHandIk(HandTargetType.Mouse);   
-                if (_rightTargetType == HandTargetType.Mouse)
+                if (_rightTargetType == HandTargetType.Mouse && button.Contains("Down"))
                 {
                     _particleStore.RequestMouseClickParticle();
                 }
@@ -647,7 +647,10 @@ namespace Baku.VMagicMirror
 
             fingerController.RightHandPresentationMode = (targetType == HandTargetType.Presentation);
 
-            if (prevType == HandTargetType.Keyboard)
+            //NOTE: マウスの指はタイピング動作と共通の方式なため、これらは同じ仕組みで指を離す。
+            //ただしマウスからキーボードに行く場合だけはReleaseを呼ばないでもちゃんと動くので、あえて呼ばない
+            if (prevType == HandTargetType.Keyboard || 
+                (prevType == HandTargetType.Mouse && targetType != HandTargetType.Keyboard))
             {
                 fingerController.ReleaseRightHandTyping();
             }

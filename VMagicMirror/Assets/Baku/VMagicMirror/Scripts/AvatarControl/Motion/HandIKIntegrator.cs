@@ -150,7 +150,7 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            
+
             var (hand, pos) = typing.KeyDown(keyName, EnablePresentationMode);
             if (!CheckCoolDown(hand, HandTargetType.Keyboard))
             {
@@ -202,11 +202,6 @@ namespace Baku.VMagicMirror
             if (!AlwaysHandDownMode)
             {
                 fingerController.ReleaseTypingKey(keyName, EnablePresentationMode);
-            }
-            
-            if (hand != ReactedHand.None && EnableHidArmMotion)
-            {
-                _particleStore.RequestKeyboardParticleStart(pos);
             }
         }
         

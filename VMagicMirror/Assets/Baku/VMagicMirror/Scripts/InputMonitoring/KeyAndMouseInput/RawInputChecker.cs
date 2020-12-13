@@ -157,11 +157,11 @@ namespace Baku.VMagicMirror
                         var keys = RandomKeyboardKeys.RandomKeyNames;
                         var randomizedKey = keys[Random.Range(0, keys.Length)];
                         _randomizedDownKeyQueue.Enqueue(randomizedKey);
-                        _keyUp.OnNext(randomizedKey);
+                        _keyDown.OnNext(randomizedKey);
                     }
                     else
                     {
-                        _keyUp.OnNext(rawKey);
+                        _keyDown.OnNext(rawKey);
                     }
                 }
             }
@@ -222,13 +222,12 @@ namespace Baku.VMagicMirror
                 _keyDownFlags[code] = isDown;
                 if (isDown)
                 {
-                    AddKeyDown(code);
+                    _downKeys.Enqueue(code);
                 }
                 else
                 {
-                    AddKeyUp(code);
+                    _upKeys.Enqueue(code);
                 }
-                
             }
         }
 
@@ -240,9 +239,6 @@ namespace Baku.VMagicMirror
                 _dy += dy;                
             }
         }
-        
-        private void AddKeyDown(int keyCode) => _downKeys.Enqueue(keyCode);
-        private void AddKeyUp(int keyCode) => _upKeys.Enqueue(keyCode);
 
         public void ReleaseBeforeCloseConfig() => _windowProcedureHook.StopObserve();
 

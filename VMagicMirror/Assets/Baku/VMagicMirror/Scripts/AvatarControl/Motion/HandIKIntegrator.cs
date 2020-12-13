@@ -144,39 +144,6 @@ namespace Baku.VMagicMirror
 
         #region Keyboard and Mouse
         
-        public void PressKey(string keyName)
-        {
-            if (!EnableHidArmMotion)
-            {
-                return;
-            }
-            
-            var (hand, pos) = typing.PressKey(keyName, EnablePresentationMode);
-            if (!CheckCoolDown(hand, HandTargetType.Keyboard))
-            {
-                return;
-            }
-            
-            if (hand == ReactedHand.Left)
-            {
-                SetLeftHandIk(HandTargetType.Keyboard);
-            }
-            else if (hand == ReactedHand.Right)
-            {
-                SetRightHandIk(HandTargetType.Keyboard);
-            }
-
-            if (!AlwaysHandDownMode)
-            {
-                fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);
-            }
-            
-            if (hand != ReactedHand.None && EnableHidArmMotion)
-            {
-                _particleStore.RequestKeyboardParticleStart(pos);
-            }
-        }
-
         public void KeyDown(string keyName)
         {
             if (!EnableHidArmMotion)

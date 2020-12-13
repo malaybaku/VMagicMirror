@@ -104,10 +104,6 @@ namespace Baku.VMagicMirror
         
         private void ReceiveKeyDown(string keyCodeName) => handIkIntegrator.KeyDown(keyCodeName);
         private void ReceiveKeyUp(string keyCodeName) => handIkIntegrator.KeyUp(keyCodeName);
-
-        private void ReceiveMouseButton(string info)
-        {
-            handIkIntegrator.OnMouseButton(info);
-        }
+        private void ReceiveMouseButton(string info) => handIkIntegrator.OnMouseButton(info);
     }
 }

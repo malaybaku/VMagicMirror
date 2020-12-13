@@ -30,7 +30,7 @@ namespace Baku.VMagicMirror
         private const float TypingBendingAngle = 25f;
 
         //タイピング用に指を折ったり戻したりする速度[deg/s]
-        private const float TypingBeidSpeedPerSeconds = 15f / 0.125f;
+        private const float TypingBendSpeedPerSeconds = 15f / 0.125f;
 
         //NOTE: 曲げ角度の符号に注意。左右で意味変わるのと、親指とそれ以外の差にも注意
         private static Dictionary<int, float[]> _fingerIdToPointingAngle = new Dictionary<int, float[]>()
@@ -59,12 +59,7 @@ namespace Baku.VMagicMirror
         private Transform[][] _fingers = null;
         //NOTE: _fingersに対して毎フレームnullチェックしないためにフラグを分ける
         private bool[][] _hasFinger = null;
-
-        //右手首の位置。フォールバック系の処理で使うのでとっておく
-        private Transform _rightWrist = null;
-
-        private readonly bool[] _isAnimating = new bool[10];
-        private readonly float[] _animationStartedTime = new float[10];
+        
         private readonly bool[] _shouldHoldPressedMode = new bool[10];
         private readonly float[] _holdAngles = new float[10];
         //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
@@ -98,14 +93,6 @@ namespace Baku.VMagicMirror
             if(animator == null) { return; }
 
             _animator = animator;
-
-            for (int i = 0; i < _isAnimating.Length; i++)
-            {
-                _isAnimating[i] = false;
-                _animationStartedTime[i] = 0;
-            }
-
-            _rightWrist = animator.GetBoneTransform(HumanBodyBones.RightHand);
             _fingers = new[]
             {
                 new[]
@@ -189,12 +176,6 @@ namespace Baku.VMagicMirror
             _animator = null;
             _fingers = null;
             _hasFinger = null;
-            _rightWrist = null;
-        }
-
-        public void StartPressKeyMotion(string key, bool isLeftHandOnly)
-        {
-            StartMoveFinger(_keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber);
         }
 
         /// <summary>
@@ -231,18 +212,6 @@ namespace Baku.VMagicMirror
             var fingerNumber = _keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber;            
             _isTypingBending[fingerNumber] = false;
             _isTypingReleasing[fingerNumber] = true;
-        }
-
-        public void StartClickMotion(string info)
-        {
-            if (info == RDown)
-            {
-                StartMoveFinger(FingerConsts.RightMiddle);
-            }
-            else if (info == MDown || info == LDown)
-            {
-                StartMoveFinger(FingerConsts.RightIndex);
-            }
         }
 
         public void OnMouseButton(string info)
@@ -345,7 +314,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            for (int i = 0; i < _isAnimating.Length; i++)
+            for (int i = 0; i < 10; i++)
             {
                 //プレゼンモード中、右手の形はギュッと握った状態
                 if (i > 4 && RightHandPresentationMode)
@@ -363,25 +332,15 @@ namespace Baku.VMagicMirror
                     HoldOperationSpeedFactor * Time.deltaTime
                     );
                 
-                if (_isAnimating[i])
-                {
-                    float time = Time.time - _animationStartedTime[i];
-                    if (time > Duration)
-                    {
-                        _isAnimating[i] = false;
-                        time = Duration;
-                    }
-                    angle = EvalAngleCurve(time);
-                }
-                else if (_isTypingBending[i])
+                if (_isTypingBending[i])
                 {
                     //Lerpではなく時間に対する線形変化によって指を折り曲げる
-                    angle = math.min(currentAngle + TypingBeidSpeedPerSeconds * Time.deltaTime, TypingBendingAngle);
+                    angle = math.min(currentAngle + TypingBendSpeedPerSeconds * Time.deltaTime, TypingBendingAngle);
                 }
                 else if (_isTypingReleasing[i])
                 {
                     //Bendingと同じ考え方でデフォルト角度に戻す
-                    angle = math.max(currentAngle - TypingBeidSpeedPerSeconds * Time.deltaTime, DefaultBendingAngle);
+                    angle = math.max(currentAngle - TypingBendSpeedPerSeconds * Time.deltaTime, DefaultBendingAngle);
                     if (!(angle > DefaultBendingAngle))
                     {
                         //リリース動作が終わったはずなのでフラグを折っておく: 余計な動作が起きにくいように。
@@ -423,19 +382,6 @@ namespace Baku.VMagicMirror
                         }
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// インデックスで指定した指を動かす(0: Left Thumb, ..., 9: Right Little).
-        /// </summary>
-        /// <param name="fingerIndex"></param>
-        private void StartMoveFinger(int fingerIndex)
-        {
-            if (fingerIndex >= 0 && fingerIndex < _isAnimating.Length)
-            {
-                _isAnimating[fingerIndex] = true;
-                _animationStartedTime[fingerIndex] = Time.time;
             }
         }
 

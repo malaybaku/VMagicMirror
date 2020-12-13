@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
@@ -159,9 +160,9 @@ namespace Baku.VMagicMirror
                     StopCurrentMotion();
                     StartBuiltInMotion(request.BuiltInAnimationClipName);
                     break;
-                case MotionRequest.MotionTypeBvhFile:
+                case MotionRequest.MotionTypeCustom:
                     StopCurrentMotion();
-                    StartBvhFileMotion(request.ExternalBvhFilePath);
+                    StartCustomMotion(request.CustomMotionClipName);
                     break;
                 case MotionRequest.MotionTypeNone:
                 default:
@@ -410,8 +411,11 @@ namespace Baku.VMagicMirror
             fingerController.FadeInWeight(0);
         }
         
-        private void StartBvhFileMotion(string bvhFilePath)
+        private void StartCustomMotion(string clipName)
         {
+            Debug.LogError("カスタムモーションがリクエストされましたが未実装です");
+            throw new NotImplementedException();
+            
             if (_motionTransfer.Target == null)
             {
                 return;
@@ -421,7 +425,7 @@ namespace Baku.VMagicMirror
             {
                 //contextのdisposeしないとダメなやつじゃないかなコレ
                 var context = new BvhImporterContext();
-                context.Parse(bvhFilePath);
+                context.Parse(clipName);
                 context.Load();
                 if (_motionTransfer.Source  != null)
                 {
@@ -468,7 +472,7 @@ namespace Baku.VMagicMirror
                     }
                     _currentBuiltInMotionName = "";
                     break;
-                case MotionRequest.MotionTypeBvhFile:
+                case MotionRequest.MotionTypeCustom:
                     if (_motionTransfer.Target != null)
                     {
                         _motionTransfer.Target.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
@@ -525,7 +529,7 @@ namespace Baku.VMagicMirror
                     {
                         return 5.0f;
                     }
-                case MotionRequest.MotionTypeBvhFile:
+                case MotionRequest.MotionTypeCustom:
                     //TODO: Bvhファイルベースで計算する
                     return 5.0f;
                 case MotionRequest.MotionTypeNone:
@@ -534,6 +538,18 @@ namespace Baku.VMagicMirror
                     //来ないハズ
                     return 5.0f;
             }
+        }
+
+        public void RunCustomMotionDoctor()
+        {
+            Debug.LogError("読み込んだカスタムモーションのデータが大丈夫そうか確認するやつ。未実装です");
+            throw new NotImplementedException();
+        }
+
+        public string[] LoadAvailableCustomMotionClipNames()
+        {
+            Debug.LogWarning("カスタムモーションの一覧取得が未実装です");
+            return new string[0];
         }
     }
 }

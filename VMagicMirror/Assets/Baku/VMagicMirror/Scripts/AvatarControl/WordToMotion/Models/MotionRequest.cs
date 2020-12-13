@@ -6,18 +6,18 @@ namespace Baku.VMagicMirror
 {
     //NOTE: WPF側のMotionRequestとプロパティ名を統一してます。片方だけいじらないように！
 
-    /// <summary>単一のBVHまたはビルトインモーション、および表情制御のリクエスト情報を表す。</summary>
+    /// <summary>ビルトインモーションまたはカスタムモーション、および表情制御のリクエスト情報を表す。</summary>
     [Serializable]
     public class MotionRequest
     {
         public const int MotionTypeNone = 0;
         public const int MotionTypeBuiltInClip = 1;
-        public const int MotionTypeBvhFile = 2;
+        public const int MotionTypeCustom = 2;
 
         public int MotionType;
         public string Word;
         public string BuiltInAnimationClipName;
-        public string ExternalBvhFilePath;
+        public string CustomMotionClipName;
         public float DurationWhenOnlyBlendShape;
         
         //TODO: ここにHoldBlendShapeとかHoldPoseとかを追加するかも

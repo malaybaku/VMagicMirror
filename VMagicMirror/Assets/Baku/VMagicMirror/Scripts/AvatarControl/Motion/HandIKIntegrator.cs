@@ -235,7 +235,10 @@ namespace Baku.VMagicMirror
             {
                 fingerController.OnMouseButton(button);
                 SetRightHandIk(HandTargetType.Mouse);   
-                if (_rightTargetType == HandTargetType.Mouse && button.Contains("Down"))
+                
+                //マウスはButtonUpでもエフェクトを出す。
+                //ちょっとうるさくなるが、意味的にはMouseのButtonUpはけっこうデカいアクションなので
+                if (_rightTargetType == HandTargetType.Mouse)
                 {
                     _particleStore.RequestMouseClickParticle();
                 }

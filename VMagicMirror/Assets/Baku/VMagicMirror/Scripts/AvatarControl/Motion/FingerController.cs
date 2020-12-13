@@ -24,13 +24,13 @@ namespace Baku.VMagicMirror
         private const string LUp = nameof(LUp);
 
         private const float DefaultBendingAngle = 10.0f;
-        private const float Duration = 0.25f;
         private const float ThumbProximalMaxBendAngle = 30f;
         private const float HoldOperationSpeedFactor = 18.0f;
-        private const float TypingBendingAngle = 25f;
+        private const float TypingBendingAngle = 18f;
 
         //タイピング用に指を折ったり戻したりする速度[deg/s]
-        private const float TypingBendSpeedPerSeconds = 15f / 0.125f;
+        //0.25s以内にDown/Upの動作が終わることを目安に指定してます
+        private const float TypingBendSpeedPerSeconds = 120f;
 
         //NOTE: 曲げ角度の符号に注意。左右で意味変わるのと、親指とそれ以外の差にも注意
         private static Dictionary<int, float[]> _fingerIdToPointingAngle = new Dictionary<int, float[]>()

@@ -144,14 +144,14 @@ namespace Baku.VMagicMirror
 
         #region Keyboard and Mouse
         
-        public void PressKey(string keyName)
+        public void KeyDown(string keyName)
         {
             if (!EnableHidArmMotion)
             {
                 return;
             }
-            
-            var (hand, pos) = typing.PressKey(keyName, EnablePresentationMode);
+
+            var (hand, pos) = typing.KeyDown(keyName, EnablePresentationMode);
             if (!CheckCoolDown(hand, HandTargetType.Keyboard))
             {
                 return;
@@ -168,7 +168,7 @@ namespace Baku.VMagicMirror
 
             if (!AlwaysHandDownMode)
             {
-                fingerController.StartPressKeyMotion(keyName, EnablePresentationMode);
+                fingerController.HoldTypingKey(keyName, EnablePresentationMode);
             }
             
             if (hand != ReactedHand.None && EnableHidArmMotion)
@@ -176,6 +176,35 @@ namespace Baku.VMagicMirror
                 _particleStore.RequestKeyboardParticleStart(pos);
             }
         }
+
+        public void KeyUp(string keyName)
+        {
+            if (!EnableHidArmMotion)
+            {
+                return;
+            }
+            
+            var (hand, pos) = typing.KeyUp(keyName, EnablePresentationMode);
+            if (!CheckCoolDown(hand, HandTargetType.Keyboard))
+            {
+                return;
+            }
+            
+            if (hand == ReactedHand.Left)
+            {
+                SetLeftHandIk(HandTargetType.Keyboard);
+            }
+            else if (hand == ReactedHand.Right)
+            {
+                SetRightHandIk(HandTargetType.Keyboard);
+            }
+
+            if (!AlwaysHandDownMode)
+            {
+                fingerController.ReleaseTypingKey(keyName, EnablePresentationMode);
+            }
+        }
+        
 
         public void MoveMouse(Vector3 mousePosition)
         {
@@ -200,12 +229,15 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void ClickMouse(string button)
+        public void OnMouseButton(string button)
         {
             if (!EnablePresentationMode && EnableHidArmMotion && !AlwaysHandDownMode)
             {
-                fingerController.StartClickMotion(button);
+                fingerController.OnMouseButton(button);
                 SetRightHandIk(HandTargetType.Mouse);   
+                
+                //マウスはButtonUpでもエフェクトを出す。
+                //ちょっとうるさくなるが、意味的にはMouseのButtonUpはけっこうデカいアクションなので
                 if (_rightTargetType == HandTargetType.Mouse)
                 {
                     _particleStore.RequestMouseClickParticle();
@@ -522,6 +554,12 @@ namespace Baku.VMagicMirror
             _currentLeftHand = ik;
             _leftHandStateBlendCount = 0f;
 
+            if (prevType == HandTargetType.Keyboard)
+            {
+                //NOTE: とくにキーボード⇢ゲームパッドの遷移が破綻しないようにこのタイミングでやる
+                fingerController.ReleaseLeftHandTyping();
+            }
+            
             if (prevType == HandTargetType.Gamepad)
             {
                 gamepadFinger.ReleaseLeftHand();
@@ -573,6 +611,14 @@ namespace Baku.VMagicMirror
             _rightHandStateBlendCount = 0f;
 
             fingerController.RightHandPresentationMode = (targetType == HandTargetType.Presentation);
+
+            //NOTE: マウスの指はタイピング動作と共通の方式なため、これらは同じ仕組みで指を離す。
+            //ただしマウスからキーボードに行く場合だけはReleaseを呼ばないでもちゃんと動くので、あえて呼ばない
+            if (prevType == HandTargetType.Keyboard || 
+                (prevType == HandTargetType.Mouse && targetType != HandTargetType.Keyboard))
+            {
+                fingerController.ReleaseRightHandTyping();
+            }
 
             if (prevType == HandTargetType.Gamepad)
             {

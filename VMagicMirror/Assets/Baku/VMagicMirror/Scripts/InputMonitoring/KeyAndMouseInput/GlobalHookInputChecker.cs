@@ -30,7 +30,9 @@ namespace Baku.VMagicMirror
         };
 
         public IObservable<string> PressedRawKeys => _pressedRawKeys;
-        public IObservable<string> PressedKeys => _pressedKeys;
+        //NOTE: このクラスはKeyDown/KeyUpを発火させない(すでにダミー実装が差し込まれてしまってるため)
+        public IObservable<string> KeyDown { get; } = new Subject<String>();
+        public IObservable<string> KeyUp { get; } = new Subject<String>();        
         public IObservable<string> MouseButton => _mouseButton;
         
         private readonly Subject<string> _pressedRawKeys = new Subject<string>();

@@ -267,7 +267,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void ClickMouse(string button)
+        public void OnMouseButton(string button)
         {
             if (!EnablePresentationMode && EnableHidArmMotion && !AlwaysHandDownMode)
             {

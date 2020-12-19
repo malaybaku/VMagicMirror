@@ -44,6 +44,9 @@ sysinfo.txt
 
 # Assets to ignore
 
+/VMagicMirror/Assets/Baku/VMagicMirror_MotionExporter/
+/VMagicMirror/Assets/Baku/VMagicMirror_MotionExporter.meta
+
 /VMagicMirror/Assets/AniLipSync-VRM/
 /VMagicMirror/Assets/OpenCVforUnity/
 /VMagicMirror/Assets/DlibFaceLandmarkDetector/

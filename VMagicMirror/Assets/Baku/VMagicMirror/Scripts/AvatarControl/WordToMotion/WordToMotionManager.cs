@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UniRx;
-using VRM;
-using UniHumanoid;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -35,6 +29,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private AnimationClip defaultAnimation = null;
 
         [SerializeField] private FingerController fingerController = null;
+
+        [SerializeField] private CustomMotionPlayer customMotionPlayer = null;
         
         /// <summary>
         /// モーション実行後、単にIKを切るのではなくデフォルト(=立ち)状態に戻すべきかどうか判断するフラグを指定します。
@@ -96,6 +92,7 @@ namespace Baku.VMagicMirror
                     _blendShape.ResetBlendShape();
                     _blendShape.KeepLipSync = false;
                     StopPreviewBuiltInMotion();
+                    StopPreviewCustomMotion();
                 }
             }
         }
@@ -108,8 +105,6 @@ namespace Baku.VMagicMirror
 
         /// <summary>プレビュー動作の内容。</summary>
         public MotionRequest PreviewRequest { get; set; }
-
-        private LateMotionTransfer _motionTransfer = null;
 
         private WordToMotionMapper _mapper = null;
         private IkWeightCrossFade _ikWeightCrossFade = null;
@@ -126,7 +121,7 @@ namespace Baku.VMagicMirror
 
         private float _ikFadeInCountDown = 0f;
         private float _blendShapeResetCountDown = 0f;
-        private float _bvhStopCountDown = 0f;
+        private float _customMotionStopCountDown = 0f;
 
         [Inject]
         public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable, BuiltInMotionClipData builtInClips)
@@ -180,7 +175,6 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _blendShape = GetComponent<WordToMotionBlendShape>();
-            _motionTransfer = GetComponent<LateMotionTransfer>();
             _ikWeightCrossFade = GetComponent<IkWeightCrossFade>();
             
             triggers.RequestExecuteWord += word =>
@@ -232,26 +226,24 @@ namespace Baku.VMagicMirror
                 {
                     StopPreviewBuiltInMotion();
                 }
+
+                if (PreviewRequest.MotionType == MotionRequest.MotionTypeCustom &&
+                    !string.IsNullOrEmpty(PreviewRequest.CustomMotionClipName))
+                {
+                    StartPreviewCustomMotion(PreviewRequest.CustomMotionClipName);
+                }
+                else
+                {
+                    StopPreviewCustomMotion();
+                }
             }
 
-            //note: BVHは一旦ないことにしてるのでここは来ません
-            if (_bvhStopCountDown > 0)
+            if (_customMotionStopCountDown > 0)
             {
-                _bvhStopCountDown -= Time.deltaTime;
-                if (_bvhStopCountDown <= 0)
+                _customMotionStopCountDown -= Time.deltaTime;
+                if (_customMotionStopCountDown <= 0)
                 {
-                    if (_motionTransfer.Target != null)
-                    {
-                        _motionTransfer.Target.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
-                        _motionTransfer.Fade(false);
-                    }
-
-                    if (_motionTransfer.Source != null)
-                    {
-
-                        Destroy(_motionTransfer.Source.gameObject);
-                        _motionTransfer.Source = null;
-                    }
+                    customMotionPlayer.StopCurrentMotion();
                 }
             }
 
@@ -283,8 +275,6 @@ namespace Baku.VMagicMirror
             _simpleAnimation.Play("Default");
 
             _blendShape.Initialize(info.blendShape);
-            _motionTransfer.Target = info.vrmRoot.GetComponent<HumanPoseTransfer>();
-            
             _ikWeightCrossFade.OnVrmLoaded(info);
         }
 
@@ -293,7 +283,6 @@ namespace Baku.VMagicMirror
             _ikWeightCrossFade.OnVrmDisposing();
 
             _blendShape.DisposeProxy();
-            _motionTransfer.Target = null;
             _simpleAnimation = null;
         }
 
@@ -413,49 +402,55 @@ namespace Baku.VMagicMirror
         
         private void StartCustomMotion(string clipName)
         {
-            Debug.LogError("カスタムモーションがリクエストされましたが未実装です");
-            throw new NotImplementedException();
-            
-            if (_motionTransfer.Target == null)
+            Debug.LogError("カスタムモーションがリクエストされましたが実装がまだ途中です");
+
+            var started = customMotionPlayer.PlayClip(clipName);
+            if (!started)
             {
-                return;
+                LogOutput.Instance.Write("モーションが正常にスタートしませんでした: " + clipName);
             }
 
             try
             {
-                //contextのdisposeしないとダメなやつじゃないかなコレ
-                var context = new BvhImporterContext();
-                context.Parse(clipName);
-                context.Load();
-                if (_motionTransfer.Source  != null)
-                {
-                    Destroy(_motionTransfer.Source.gameObject);
-                }
-                _motionTransfer.Source = context.Root.GetComponent<HumanPoseTransfer>();
-                //box-manというのが出てくるけど出したくないので隠します。
-                _motionTransfer.Source.GetComponent<SkinnedMeshRenderer>().enabled = false;
-                _motionTransfer.Target.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.HumanPoseTransfer;
-                _motionTransfer.Fade(true);
 
                 //いったんIKからアニメーションにブレンディングし、後で元に戻す
                 _ikWeightCrossFade.FadeOutArmIkWeights(ikFadeDuration);
                 fingerController.FadeOutWeight(0);
 
-                float duration = context.Bvh.FrameCount * Time.deltaTime;
+                float duration = customMotionPlayer.GetMotionDuration(clipName);
                 Debug.Log("duration = " + duration.ToString("00.000"));
                 _ikFadeInCountDown = duration - ikFadeDuration;
-                _bvhStopCountDown = duration;
+                _customMotionStopCountDown = duration;
                 //ここは短すぎるモーションを指定されたときの対策
                 if (_ikFadeInCountDown <= 0)
                 {
                     _ikFadeInCountDown = 0.01f;
-                    _bvhStopCountDown = 0.01f;
+                    _customMotionStopCountDown = 0.01f;
                 }
             }
             catch (Exception ex)
             {
                 LogOutput.Instance.Write(ex);
             }
+        }
+
+        private void StartPreviewCustomMotion(string clipName)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void StopPreviewCustomMotion()
+        {
+            if (!IsPlayingMotion)
+            {
+                return;
+            }
+
+            IsPlayingMotion = false;
+            customMotionPlayer.StopPreviewMotion();
+            //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
+            _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
+            fingerController.FadeInWeight(0);            
         }
 
         private void StopCurrentMotion()
@@ -473,19 +468,8 @@ namespace Baku.VMagicMirror
                     _currentBuiltInMotionName = "";
                     break;
                 case MotionRequest.MotionTypeCustom:
-                    if (_motionTransfer.Target != null)
-                    {
-                        _motionTransfer.Target.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
-                        _motionTransfer.Fade(false);
-                    }
-
-                    if (_motionTransfer.Source != null)
-                    {
-
-                        Destroy(_motionTransfer.Source.gameObject);
-                        _motionTransfer.Source = null;
-                    }
-                    _bvhStopCountDown = 0f;
+                    customMotionPlayer.StopCurrentMotion();
+                    _customMotionStopCountDown = 0f;
                     break;
                 case MotionRequest.MotionTypeNone:
                 default:
@@ -530,8 +514,7 @@ namespace Baku.VMagicMirror
                         return 5.0f;
                     }
                 case MotionRequest.MotionTypeCustom:
-                    //TODO: Bvhファイルベースで計算する
-                    return 5.0f;
+                    return customMotionPlayer.GetMotionDuration(request.CustomMotionClipName);
                 case MotionRequest.MotionTypeNone:
                     return request.DurationWhenOnlyBlendShape;
                 default:
@@ -542,14 +525,11 @@ namespace Baku.VMagicMirror
 
         public void RunCustomMotionDoctor()
         {
-            Debug.LogError("読み込んだカスタムモーションのデータが大丈夫そうか確認するやつ。未実装です");
-            throw new NotImplementedException();
+            //とりあえず今は診断事項がないのでOK扱いで返します。
+            return;
         }
 
-        public string[] LoadAvailableCustomMotionClipNames()
-        {
-            Debug.LogWarning("カスタムモーションの一覧取得が未実装です");
-            return new string[0];
-        }
+        public string[] LoadAvailableCustomMotionClipNames() 
+        => customMotionPlayer.LoadAvailableCustomMotionNames();
     }
 }

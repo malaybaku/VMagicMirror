@@ -47,6 +47,7 @@ namespace Baku.VMagicMirror
                 q =>
                 {
                     q.Result = string.Join("\t", _manager.LoadAvailableCustomMotionClipNames());
+                    Debug.Log("Get Available CustomMotion Clip Names, result = " + q.Result);
                 });
             
             //NOTE: 残骸コードを残しときます。ビルトインモーション後の手の動きがちょっと心配ではあるよね、という話

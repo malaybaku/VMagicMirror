@@ -207,7 +207,14 @@ namespace Baku.VMagicMirror
                     IsPlayingMotion = false;
                     _ikWeightCrossFade.FadeInArmIkWeights(ikFadeDuration);
                     fingerController.FadeInWeight(ikFadeDuration);
-                    if (ShouldSetDefaultClipAfterMotion)
+                    if (_currentMotionType == MotionRequest.MotionTypeCustom)
+                    {
+                        //NOTE: モデルとCustomMotionPlayerの両方がデフォルトのポーズに向かうことで、
+                        //アニメーション終了時の破綻を防ぐのが狙い
+                        _simpleAnimation.CrossFade("Default", ikFadeDuration);
+                        customMotionPlayer.FadeToDefaultPose(ikFadeDuration);
+                    }
+                    else if (ShouldSetDefaultClipAfterMotion)
                     {
                         Debug.Log("End animation, return to default");
                        _simpleAnimation.CrossFade("Default", ikFadeDuration);
@@ -238,8 +245,9 @@ namespace Baku.VMagicMirror
                 }
             }
 
-            if (_customMotionStopCountDown > 0)
+            if (!EnablePreview && _customMotionStopCountDown > 0)
             {
+                //NOTE: _ikFadeDurationによる終了よりもちょっと遅れて止まる。はず。
                 _customMotionStopCountDown -= Time.deltaTime;
                 if (_customMotionStopCountDown <= 0)
                 {
@@ -335,6 +343,7 @@ namespace Baku.VMagicMirror
                 _simpleAnimation.Play(clipName);
             }
             _currentBuiltInMotionName = clipName;
+            _currentMotionType = MotionRequest.MotionTypeBuiltInClip;
 
             //いったんIKからアニメーションにブレンディングし、後で元に戻す
             _ikWeightCrossFade.FadeOutArmIkWeights(ikFadeDuration);
@@ -402,23 +411,22 @@ namespace Baku.VMagicMirror
         
         private void StartCustomMotion(string clipName)
         {
-            Debug.LogError("カスタムモーションがリクエストされましたが実装がまだ途中です");
+            Debug.LogWarning("カスタムモーションがリクエストされましたが実装がまだ途中です");
 
             var started = customMotionPlayer.PlayClip(clipName);
             if (!started)
             {
                 LogOutput.Instance.Write("モーションが正常にスタートしませんでした: " + clipName);
             }
+            _currentMotionType = MotionRequest.MotionTypeCustom;
 
             try
             {
-
                 //いったんIKからアニメーションにブレンディングし、後で元に戻す
                 _ikWeightCrossFade.FadeOutArmIkWeights(ikFadeDuration);
                 fingerController.FadeOutWeight(0);
 
                 float duration = customMotionPlayer.GetMotionDuration(clipName);
-                Debug.Log("duration = " + duration.ToString("00.000"));
                 _ikFadeInCountDown = duration - ikFadeDuration;
                 _customMotionStopCountDown = duration;
                 //ここは短すぎるモーションを指定されたときの対策
@@ -436,7 +444,17 @@ namespace Baku.VMagicMirror
 
         private void StartPreviewCustomMotion(string clipName)
         {
-            throw new NotImplementedException();
+            var started = customMotionPlayer.PlayClipForPreview(clipName);
+            //もうやってた場合: そのまま放置
+            if (!started)
+            {
+                return;
+            }
+
+            IsPlayingMotion = true;
+            //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
+            _ikWeightCrossFade.FadeOutArmIkWeightsImmediately();
+            fingerController.FadeOutWeight(0);
         }
 
         private void StopPreviewCustomMotion()
@@ -530,6 +548,6 @@ namespace Baku.VMagicMirror
         }
 
         public string[] LoadAvailableCustomMotionClipNames() 
-        => customMotionPlayer.LoadAvailableCustomMotionNames();
+            => customMotionPlayer.LoadAvailableCustomMotionNames();
     }
 }

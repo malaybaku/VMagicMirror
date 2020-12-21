@@ -20,14 +20,21 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private SimpleAnimation simpleAnimaton = null;
         [SerializeField] private HumanoidAnimationSetter source = null;
+        [SerializeField] private AnimationClip standingAnimation = null;
 
         private bool _hasModel = false;
         private HumanPoseHandler _humanPoseHandler = null;
         private HumanPose _humanPose;
+        
+        //アニメーション中の位置をどうにかせんといけないので…
+        private Transform _vrmRoot;
+        private Transform _hips;
+
+        private Vector3 _originHipsPos;
+        private Quaternion _originHipsRot;
 
         //いま実行中のモーション名。不要かもしれないけど一応
         private string _currentMotionName = "";
-        private float _currentMotionPlayCountDown = 0f;
         
         private bool _shouldUpdate = false;
         
@@ -37,6 +44,10 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 _humanPoseHandler = new HumanPoseHandler(info.animator.avatar, info.vrmRoot);
+                _vrmRoot = info.vrmRoot;
+                _hips = info.animator.GetBoneTransform(HumanBodyBones.Hips);
+                _originHipsPos = _hips.localPosition;
+                _originHipsRot = _hips.localRotation;
                 _hasModel = true;
             };
             
@@ -46,45 +57,7 @@ namespace Baku.VMagicMirror
                 _humanPoseHandler = null;
             };
         }
-        
-        public void LoadMotionsFromFile()
-        {
-            _clips.Clear();
-            
-            //エディタの場合はStreamingAssets以下で代用(無ければ無いでOK)
-            string path = Application.isEditor 
-                ? Path.Combine(
-                    Application.streamingAssetsPath, "Motions")
-                : Path.Combine(
-                    Path.GetDirectoryName(Application.dataPath),
-                    "Motions"
-                );
-                
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }            
 
-            var importer = new MotionImporter();
-            foreach(var filePath in Directory.GetFiles(path).Where(p => Path.GetExtension(p) == ".vmm_motion"))
-            {
-                try
-                {
-                    var motion = importer.LoadSerializedMotion(File.ReadAllText(filePath));
-                    var motionName = Path.GetFileNameWithoutExtension(path);
-                    _clips[motionName.ToLower()] = new CustomMotionItem(
-                        motionName,
-                        motion.LoadMuscleFlags(),
-                        importer.Deserialize(motion)
-                    );
-                }
-                catch (Exception ex)
-                {
-                    LogOutput.Instance.Write(ex);
-                }
-            }
-        }
-        
         /// <summary>
         /// NOTE: プレビューが有効な限り、毎回呼び出してもOK
         /// </summary>
@@ -106,12 +79,31 @@ namespace Baku.VMagicMirror
         /// <param name="motionName"></param>
         public bool PlayClip(string motionName)
         {
-            StopCurrentMotion();    
+            StopCurrentMotion();
             return StartMotion(motionName);
         }
 
         public void StopPreviewMotion() => StopCurrentMotion();
 
+        /// <summary>
+        /// 現在アニメーションをしているかどうかによらず、デフォルト状態になるようにします。
+        /// 特に終了時のモーションブレンドをうまくするために呼び出す事を想定しています。
+        /// </summary>
+        /// <param name="duration"></param>
+        public void FadeToDefaultPose(float duration)
+        {
+            _clipEraseDuration = duration;
+            _clipEraseCount = 0f;
+            _isErasingCurrentClip = true;
+        }
+
+        //現在割当たってるクリップの値を何割くらいMuscleに適用するか、というのを1から0に下げてくときに使う値。
+        //フェードアウトをコードベースでやるのに使う
+        private float _clipEraseCount;
+        private float _clipEraseDuration;
+        private bool _isErasingCurrentClip;
+
+        /// <summary> 今やっているモーションを直ちに完全に停止します。 </summary>
         public void StopCurrentMotion()
         {
             if (!string.IsNullOrEmpty(_currentMotionName))
@@ -120,6 +112,8 @@ namespace Baku.VMagicMirror
             }
             _currentMotionName = "";
             _shouldUpdate = false;
+
+            _isErasingCurrentClip = false;            
         }
 
         //NOTE: 1.0fを返すのは0だとなんかヤバそうだからだけど、そもそも普通は呼ばれないはず。
@@ -133,20 +127,87 @@ namespace Baku.VMagicMirror
             .OrderBy(x => x)
             .ToArray();
 
-        private void Update()
+        
+        private void Start()
+        {
+            simpleAnimaton.AddState(standingAnimation, "Default");
+            
+            //エディタの場合はStreamingAssets以下で代用(無ければ無いでOK)
+            string dirPath = Application.isEditor 
+                ? Path.Combine(
+                    Application.streamingAssetsPath, "Motions")
+                : Path.Combine(
+                    Path.GetDirectoryName(Application.dataPath),
+                    "Motions"
+                );
+                
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }            
+
+            var importer = new MotionImporter();
+            foreach(var filePath in Directory.GetFiles(dirPath).Where(p => Path.GetExtension(p) == ".vmm_motion"))
+            {
+                try
+                {
+                    var motion = importer.LoadSerializedMotion(File.ReadAllText(filePath));
+                    if (motion == null)
+                    {
+                        continue;
+                    }
+                    var motionName = Path.GetFileNameWithoutExtension(filePath);
+                    var flags = motion.LoadMuscleFlags();
+                    SerializeMuscleNameMapper.MaskUsedMuscleFlags(flags, MuscleFlagMaskStyle.OnlyUpperBody);
+                    _clips[motionName.ToLower()] = new CustomMotionItem(
+                        motionName,
+                        flags,
+                        importer.Deserialize(motion)
+                    );
+                }
+                catch (Exception ex)
+                {
+                    LogOutput.Instance.Write(ex);
+                }
+            }
+        }
+        
+        private void LateUpdate()
         {
             if (!_shouldUpdate)
             {
                 return;
             }
+
+            if (_isErasingCurrentClip && _clipEraseCount < _clipEraseDuration)
+            {
+                _clipEraseCount += Time.deltaTime;
+            }
             
-            //初期姿勢の案として、クリップで再生されてセットされたはずの姿勢を当て込んでいく
+            //クリップで再生されてセットされたはずの姿勢を当て込んでいく
             _humanPoseHandler.GetHumanPose(ref _humanPose);
             source.WriteToArray();
-            source.WriteToPose(ref _humanPose);
-            _humanPoseHandler.SetHumanPose(ref _humanPose);
             
-            //TODO: 観察してた感じだとHipsの位置がずれる問題とかが要対策のような
+            //ブレンド処理のフラグが経ってる場合、適用率が0になったり100%未満になったりする
+            if (_isErasingCurrentClip)
+            {
+                //NOTE: ブレンド中だけちゃんとブレンドする。時間が十分経ったらそもそも一切のブレンドが不要
+                if (_clipEraseCount < _clipEraseDuration)
+                {
+                    var rate = 1f - _clipEraseCount / _clipEraseDuration;
+                    source.WriteToPose(ref _humanPose, rate);
+                }
+            }
+            else
+            {
+                source.WriteToPose(ref _humanPose); 
+            }
+ 
+            _humanPoseHandler.SetHumanPose(ref _humanPose);
+
+            //NOTE: hipsは固定しないとどんどんズレる事があるのを確認したため、安全のために固定してます
+            _hips.localPosition = _originHipsPos;
+            _hips.localRotation = _originHipsRot;
         }
 
         private bool StartMotion(string motionName)
@@ -171,7 +232,6 @@ namespace Baku.VMagicMirror
             source.SetUsedFlags(item.UsedFlags);
             simpleAnimaton.Play(item.MotionLowerName);
             _currentMotionName = item.MotionLowerName;
-            _currentMotionPlayCountDown = item.Clip.length;
             _shouldUpdate = true;
 
             return true;

@@ -18,9 +18,7 @@ namespace Baku.VMagicMirror
         //ただし、WPF側には小文字化してない文字を渡すので、その食い違いにはちょっと注意。
         private readonly Dictionary<string, CustomMotionItem> _clips = new Dictionary<string, CustomMotionItem>();
 
-        [SerializeField] private SimpleAnimation simpleAnimaton = null;
         [SerializeField] private HumanoidAnimationSetter source = null;
-        [SerializeField] private AnimationClip standingAnimation = null;
 
         private bool _hasModel = false;
         private HumanPoseHandler _humanPoseHandler = null;
@@ -35,6 +33,8 @@ namespace Baku.VMagicMirror
 
         //いま実行中のモーション名。不要かもしれないけど一応
         private string _currentMotionName = "";
+        private CustomMotionItem _currentMotionItem = null;
+        private float _currentMotionElapsedTime = 0f;
         
         private bool _shouldUpdate = false;
         
@@ -106,11 +106,9 @@ namespace Baku.VMagicMirror
         /// <summary> 今やっているモーションを直ちに完全に停止します。 </summary>
         public void StopCurrentMotion()
         {
-            if (!string.IsNullOrEmpty(_currentMotionName))
-            {
-                simpleAnimaton.Stop(_currentMotionName);
-            }
+            _currentMotionItem = null;
             _currentMotionName = "";
+            _currentMotionElapsedTime = 0f;
             _shouldUpdate = false;
 
             _isErasingCurrentClip = false;            
@@ -118,7 +116,7 @@ namespace Baku.VMagicMirror
 
         //NOTE: 1.0fを返すのは0だとなんかヤバそうだからだけど、そもそも普通は呼ばれないはず。
         public float GetMotionDuration(string motionName)
-            => _clips.TryGetValue(motionName.ToLower(), out var item) ? item.Clip.length : 1.0f;
+            => _clips.TryGetValue(motionName.ToLower(), out var item) ? item.Motion.Duration : 1.0f;
 
         //名前は固定しておく、ランダムになってると困るので
         public string[] LoadAvailableCustomMotionNames() => _clips
@@ -130,8 +128,6 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            simpleAnimaton.AddState(standingAnimation, "Default");
-            
             //エディタの場合はStreamingAssets以下で代用(無ければ無いでOK)
             string dirPath = Application.isEditor 
                 ? Path.Combine(
@@ -178,6 +174,12 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+            
+            if (_currentMotionElapsedTime < _currentMotionItem.Motion.Duration)
+            {
+                _currentMotionItem.Motion.Evaluate(_currentMotionElapsedTime);
+                _currentMotionElapsedTime += Time.deltaTime;
+            }
 
             if (_isErasingCurrentClip && _clipEraseCount < _clipEraseDuration)
             {
@@ -186,8 +188,6 @@ namespace Baku.VMagicMirror
             
             //クリップで再生されてセットされたはずの姿勢を当て込んでいく
             _humanPoseHandler.GetHumanPose(ref _humanPose);
-            source.WriteToArray();
-            
             //ブレンド処理のフラグが経ってる場合、適用率が0になったり100%未満になったりする
             if (_isErasingCurrentClip)
             {
@@ -224,14 +224,11 @@ namespace Baku.VMagicMirror
                 return false;
             }
 
-            if (simpleAnimaton.GetState(item.MotionLowerName) == null)
-            {
-                simpleAnimaton.AddState(item.Clip, item.MotionLowerName);
-            }
-
             source.SetUsedFlags(item.UsedFlags);
-            simpleAnimaton.Play(item.MotionLowerName);
+            _currentMotionItem = item;
+            _currentMotionElapsedTime = 0f;
             _currentMotionName = item.MotionLowerName;
+            _currentMotionItem.Motion.Target = source;
             _shouldUpdate = true;
 
             return true;
@@ -239,12 +236,12 @@ namespace Baku.VMagicMirror
 
         class CustomMotionItem
         {
-            public CustomMotionItem(string motionName, bool[] usedFlags, AnimationClip clip)
+            public CustomMotionItem(string motionName, bool[] usedFlags, DeserializedMotionClip motion)
             {
                 MotionName = motionName;
                 MotionLowerName = motionName.ToLower();
                 UsedFlags = usedFlags;
-                Clip = clip;
+                Motion = motion;
             }
             
             /// <summary> カスタムモーションを一意に指定するのに使う文字列 </summary>
@@ -256,8 +253,8 @@ namespace Baku.VMagicMirror
             /// <summary> マッスルごとに、そのマッスルがアニメーション対象かどうかを示したフラグ </summary>
             public bool[] UsedFlags { get; }
             
-            /// <summary> 実際に再生するアニメーションクリップ </summary>
-            public AnimationClip Clip { get; }
+            /// <summary> 実際に再生するモーション </summary>
+            public DeserializedMotionClip Motion { get; }
         }
 
     }

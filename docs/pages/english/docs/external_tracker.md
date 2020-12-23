@@ -8,60 +8,76 @@ lang_prefix: /en/
 [Japanese](../../docs/external_tracker)
 
 # Exteral Tracker App
+{: .no_toc }
 
 `VMagicMirror` v1.1.0 and later supports external tracking apps to move the avatar.
 
 Currently only iOS application is supported.
 
+<div class="toc-area" markdown="1">
 
-#### Advantage and Limitation
-{: .doc-sec2 }
+#### Content
+{: .toc-header .no_toc }
+
+* ToC
+{:toc .table-of-contents }
+
+</div>
+
+### Advantage and Limitation
+{: .doc-sec1 }
 
 Please check following points about external tracker app.
 
-Advantages:
+#### Advantages
+{: .doc-sec2 .no_toc }
 
-**Precise Tracking**: Much more precise than VMagicMirror's webcam based tracking.
+<div class="doc-ul" markdown="1">
 
-**Less CPU usage**: Heavy task of face tracking does not run anymore on PC (, instead iOS device take it).
+- **Precise Tracking**: Much more precise than VMagicMirror's webcam based tracking.
+- **Less CPU usage**: Heavy task of face tracking does not run anymore on PC (, instead iOS device take it).
+- **Can Detach Webcam**: You can detach webcam if you only use this feature. This will prevent unexpected face exposure to others, when your screen is shared.
 
-**Can Detach Webcam**: You can detach webcam if you only use this feature. This will prevent unexpected face exposure to others, when your screen is shared.
+</div>
 
-Limitations:
+#### Limitations
+{: .doc-sec2 .no_toc }
 
-**Device Required**: You need enough new iPhone or iPad, which supports Face ID or has A12 Bionic chip (or newer chip).
+You need enough new iPhone or iPad, which supports Face ID or has A12 Bionic chip (or newer chip).
 
-(cf.1: [Supported Models](https://support.apple.com/en-us/HT209183))
+<div class="doc-ul" markdown="1">
 
-(cf.2: [iPad Models("See All Models" will show all models' chip)](https://www.apple.com/ipad/compare/))
+- [Supported Models](https://support.apple.com/en-us/HT209183)
+- [iPad Models("See All Models" will show all models' chip)](https://www.apple.com/ipad/compare/)
+- [iPhone Models("See All Models" will show all models' chip)](https://www.apple.com/iphone/compare/)
 
-(cf.3: [iPhone Models("See All Models" will show all models' chip)](https://www.apple.com/iphone/compare/))
+</div>
 
+Also please be aware of following points.
 
-**Less Stable**: Less stable than conventional webcam based tracking. This is because of the inter-device LAN communication.
+<div class="doc-ul" markdown="1">
 
-**Risk of Bug by App Update**: If iOS application have some update, it maybe lead issue.
+- **Less Stable**: Less stable than conventional webcam based tracking. This is because of the inter-device LAN communication.
+- **Risk of Bug by App Update**: If iOS application have some update, it maybe lead issue.
+- **A Bit Complicated Setup**: This feature involve a bit difficult setup, because of inter-device communication.
 
-**A Bit Complicated Setup**: This feature involve a bit difficult setup, because of inter-device communication.
+</div>
 
-#### Preparation
-{: .doc-sec2 }
+### Preparation
+{: .doc-sec1 }
 
 For the preparetion check following:
 
 1. PC and the tracking device (iPhone/iPad) are in the same network (LAN).
-
 2. LAN environment is stable.
-
 3. There is a iPhone / iPad stand, so that the device can capture your face via front camera.
-
 4. If you wear glasses put off, or use one with thin frame.
 
 Glasses maybe leads less eye move tracking preciseness, including blink tracking.
 
 
-#### How to Setup
-{: .doc-sec2 }
+### How to Setup
+{: .doc-sec1 }
 
 Select `Ex Tracker` tab on the control panel, then turn on `Enable External Tracker`.
 
@@ -71,8 +87,8 @@ Select `Ex Tracker` tab on the control panel, then turn on `Enable External Trac
 
 By checking this, VMagicMirror become ready to connect with external apps.
 
-#### How to Setup each App
-{: .doc-sec2 }
+### How to Setup each App
+{: .doc-sec1 }
 
 Please see per-app specific setup process.
 
@@ -81,8 +97,8 @@ Please see per-app specific setup process.
 (*This area will be updated when other app supported.)
 
 
-#### Use LipSync with External Tracking App
-{: .doc-sec2 }
+### Use LipSync with External Tracking App
+{: .doc-sec1 }
 
 Check `Apply LipSync using External Tracker Data`, to use mouth motion capture data from the external app.
 
@@ -99,15 +115,16 @@ On the other hand, the tracking precision decreases when the device cannot see y
 
 In this case turn off `Apply LipSync using External Tracker Data` to use conventional microphone based lipsync.
 
-#### Perfect Sync
+### Perfect Sync
+{: .doc-sec1}
 
 Perfect Sync is an advanced feature supported from v1.3.0, to move the avatar very rich with external tracking.
 
 See the detail at [Perfect Sync Tips](../tips/perfect_sync).
 
 
-#### Face Switch
-{: .doc-sec2 }
+### Face Switch
+{: .doc-sec1 }
 
 Face Switch is a feature to switch avatar's face by user expression.
 
@@ -117,11 +134,11 @@ Face Switch is a feature to switch avatar's face by user expression.
 
 Face switch has parameters to setup.
 
-`Threshold`: Select from 10% to 90%, to specify when the face switch is triggered. Higher value means you have to more clear expression.
+<div class="doc-ul" markdown="1">
 
-`BlendShape`: Choose the BlendShape to apply, or select `(Do Nothing)`(*) as empty selection.
-
-`Keep LipSync`: You can check it for the BlendShape with only eye motion, so the LipSync still work.
+- `Threshold`: Select from 10% to 90%, to specify when the face switch is triggered. Higher value means you have to more clear expression.
+- `BlendShape`: Choose the BlendShape to apply, or select `(Do Nothing)`(*) as empty selection.
+- `Keep LipSync`: You can check it for the BlendShape with only eye motion, so the LipSync still work.
 
 *`(Do Nothing)` indication might incorrect appearance as Japanese expression "`(何もしない)`". In this case you can choose `(何もしない)`.
 
@@ -133,6 +150,10 @@ This means irrelevant assignment will be still useful.
 
 For example, you can assign a special face expression for tongue out condition, even if the expression does not include tongue out motion at all.
 
+<div class="note-area" markdown="1">
 
-**NOTE:** `Word to Motion` feature has higher priority. When face switch and `Word to Motion` input runs simultaneously, then `Word to Motion` output is applied.
+**NOTE**
 
+`Word to Motion` feature has higher priority. When face switch and `Word to Motion` input runs simultaneously, then `Word to Motion` output is applied.
+
+</div>

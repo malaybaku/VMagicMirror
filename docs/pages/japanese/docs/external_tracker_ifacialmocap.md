@@ -7,31 +7,42 @@ permalink: /docs/external_tracker_ifacialmocap
 [English](../en/docs/external_tracker_ifacialmocap)
 
 # iFacialMocapとの連携
+{: .no_toc }
 
 [外部トラッキングアプリとの連携](./external_tracker)のうち、特にiFacialMocapとVMagicMirrorを連携する方法にかんするページです。
 
+<div class="toc-area" markdown="1">
 
-#### iFacialMocapとは
-{: .doc-sec2 }
+#### 目次
+{: .toc-header .no_toc }
+
+* ToC
+{:toc .table-of-contents }
+
+</div>
+
+### iFacialMocapとは
+{: .doc-sec1 }
 
 iFacialMocapはiOS向けに有償で配布されている表情キャプチャアプリです。
 
 iFacialMocapは比較的新しいiPhone、またはiPad上で動作します。Face ID対応端末、またはA12 Bionic以降のチップが搭載されていれば利用できます。
 
-・参考1: [Face ID対応機種の一覧](https://support.apple.com/ja-jp/HT209183)
+<div class="doc-ul" markdown="1">
 
-・参考2: [iPadモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/ipad/compare/)
+- [Face ID対応機種の一覧](https://support.apple.com/ja-jp/HT209183)
+- [iPadモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/ipad/compare/)
+- [iPhoneモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/iphone/compare/)
 
-・参考3: [iPhoneモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/iphone/compare/)
-
+</div>
 
 iFacialMocapはApp Storeで購入、インストールできます。
 
 [iFacialMocap](https://apps.apple.com/jp/app/ifacialmocap/id1489470545)
 
 
-#### VMagicMirrorと接続する
-{: .doc-sec2 }
+### VMagicMirrorと接続する
+{: .doc-sec1 }
 
 iFacialMocapを起動し、画面上部にiOS端末自身のIPアドレスが表示されることを確認します。
 
@@ -49,7 +60,15 @@ iOS端末のアプリ上に表示されたIPアドレスを入力し、`Connect`
 {% include docimg.html file="./images/docs/ex_tracker_ifm_control_panel_setup.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
-※ここでキャラクターが反応しない場合、本ページ下部のトラブルシューティングでQ1およびQ2を確認してください。
+<div class="note-area" markdown="1">
+
+**注意**
+
+ここでキャラクターが反応しない場合、本ページ下部のトラブルシューティングの中でもとくにQ1、Q2、Q3を確認してください。
+
+また、セキュリティソフトがiOS端末との通信をブロックしている可能性もあるため、設定を確認して下さい。
+
+</div>
 
 接続後にアバターが横を向いてしまう場合や首が動かない場合は、ユーザーが真正面を向いた状態で`現在位置で顔をキャリブレーション`をクリックし、アバターの顔の向きをリセットします。
 
@@ -98,7 +117,16 @@ Windowsのコントロールパネルで`ファイアウォール`を検索し�
 
 **NOTE:** `受信の規則`に複数の`vmagicmirror.exe`があった場合、すべてに対して同じ操作を行ってください。
 
-#### Q3. 頭は動くものの表情が動かない
+#### Q3. 通信できているように見えるのに頭も表情も動かない
+{: .doc-sec2 }
+
+A. iOSの設定で、iFacialMocapのローカルネットワーク通信が禁止されている可能性があります。
+
+iOS本体の設定を開き、アプリ一覧からiFacialMocapを探します。
+
+アプリのアクセス許可のうち、`ローカルエリアネットワーク`がオンになっているか確認します。オフになっていた場合、オンにします。その後、iFacialMocapを完全に終了し、再度実行して下さい。
+
+#### Q4. 頭は動くものの表情が動かない
 {: .doc-sec2 }
 
 A. iFacialMocapの設定で表情の取得がオフになっている可能性があります。
@@ -114,7 +142,7 @@ iFacialMocapの設定で`Lower`および`Upper`オプションがオンになっ
 それでも問題が解決しない場合、ほかのモデルをロードして動作を見比べるなどの方法で、モデルセットアップが正しいかどうかご確認下さい。
 
 
-#### Q4. Window用に配布されているiFacialMocapのソフトは必要？
+#### Q5. Window用に配布されているiFacialMocapのソフトは必要？
 {: .doc-sec2 }
 
 A. 不要です。VMagicMirror自体がiOS端末と直接通信するためです。
@@ -122,13 +150,14 @@ A. 不要です。VMagicMirror自体がiOS端末と直接通信するためで�
 もしWindows用のiFacialMocapソフトをPCへインストール済みの場合、VMagicMirrorの使用中には立ち上げないよう注意してください。
 
 
-#### Q5. 2回目以降の使用時に注意することは？
+#### Q6. 2回目以降の使用時に注意することは？
 {: .doc-sec2 }
 
 A. 前回の使用時と異なる位置にiPhoneやiPadを置いた場合、顔の方向が間違って表示されます。この場合はキャリブレーションをやり直してください。
 
 
-#### Q6. iOS端末の調子が悪い
+#### Q7. iOS端末の調子が悪い
 {: .doc-sec2 }
 
 A. `iFacialMocap`のアプリを完全に終了したのち、このページの`VMagicMirrorと接続する`の手順に沿って再び接続してください。
+

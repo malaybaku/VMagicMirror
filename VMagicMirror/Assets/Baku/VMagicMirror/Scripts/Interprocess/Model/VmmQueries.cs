@@ -12,7 +12,11 @@
         // Web Camera
         public const string CameraDeviceNames = nameof(CameraDeviceNames);
         
+        // Image Quality
         public const string GetQualitySettingsInfo = nameof(GetQualitySettingsInfo);
+        
+        // Word to Motion
+        public const string GetAvailableCustomMotionClipNames = nameof(GetAvailableCustomMotionClipNames);
     }
 }
 

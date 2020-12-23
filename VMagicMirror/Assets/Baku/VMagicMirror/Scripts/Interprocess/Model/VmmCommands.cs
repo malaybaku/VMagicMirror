@@ -159,6 +159,8 @@ namespace Baku.VMagicMirror
 
         public const string SetDeviceTypeToStartWordToMotion = nameof(SetDeviceTypeToStartWordToMotion);
 
+        public const string RequestCustomMotionDoctor = nameof(RequestCustomMotionDoctor);
+
         public const string LoadMidiNoteToMotionMap = nameof(LoadMidiNoteToMotionMap);
         public const string RequireMidiNoteOnMessage = nameof(RequireMidiNoteOnMessage);
 

@@ -33,3 +33,5 @@ permalink: /tips
 [ハンドトラッキングの使用について](./tips/using_hand_tracking)
 
 [パーフェクトシンク](./tips/perfect_sync)
+
+[カスタムモーションをVMagicMirrorで使う](./tips/use_custom_motion)

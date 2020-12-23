@@ -50,7 +50,8 @@ In custom window you can take 4 actions.
 
 1. Set the word to start this item. If you do not use `Keyboard (word)` mode, then this work just for the name label.
 2. Select motion type for this item. 
-    * **NOTE:** In v0.9.6 only 2 built-in motions are supported, so in almost case you will select `None`.
+    * In v1.5.0 and older version only supports 3 built-in motions. If you do not need any motions and only need facial expression, then select `None` motion.
+    * v1.6.0 and later version supports custom motion import feature. See detail at [Use Custom Motion](./tips/use_custom_motion) tips.
 3. Face expression setting.
     * Turn on `Enable Face Expression` check to play some face expression in this item.
     * `Duration when Body Motion is None [sec]` defines how long the character keep the face.

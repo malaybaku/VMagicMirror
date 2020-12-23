@@ -59,9 +59,11 @@ Then press `Export` button to save the file in `StreamingAssets` folder. The fil
 
 The file name is like `(AnimationClip name).vmm_motion`. As long as you maintain the file extension you can change the file name.
 
-Tips:
+<div class="note-area" markdown="1">
 
-In this phase you can check the file export is actually successful, by following step.
+**Tips**
+
+At this step you can check the file export is actually successful, by following step.
 
 1. Import [UniVRM](https://github.com/vrm-c/UniVRM).
 2. Import a VRM model and put on `MotionExporter` scene.
@@ -75,6 +77,7 @@ In this phase you can check the file export is actually successful, by following
 {% include docimg.html file="/images/tips/custom_motion_verify_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
 
+</div>
 
 #### 2. Put the Exported Motion File
 {: .doc-sec2 }
@@ -99,8 +102,12 @@ Choose `Custom Motion` in motion option, then select motion.
 
 After the setup, the motion will be available almost same as built-in motion.
 
+<div class="note-area" markdown="1">
+
 NOTE:
 
 If you do not see the motion selecion, then exported data format might incorrect.
 
 In this case see `1. Export Motion` and try the check process written in tips.
+
+</div>

@@ -45,7 +45,7 @@ lang_prefix: /en/
 
 `Voice based motion when webcam not used`: When image based head tracking is not used, avatar moves automatically by voice input.
 
-`Eye Look Target`: Select where the character look to. Available in Streaming tab.
+`Eye Look Target`: Select where the character look to. Available in Streaming tab. Select `Mouse` to makes the character look at the orientation mouse pointer exists. Select `Fixed` to fix head motion except face tracking. `User` is similar to `Fixed`, but different when the character body does not face straight to the monitor, by `Free Camera Mode`. In this case `User` makes the character looks head to straight to monitor (in other word, keeps to look you).
 
 `Eye Motion Scale[%]`: Set how eye (eye bone) moves by mouse gaze, or by ExTracker. Recommend default (100%) for VRoid model. If avatar eyes motion is too small, try larger value.
 

@@ -8,6 +8,8 @@ permalink: /changelog
 
 # Change Log
 
+<div class="doc-ul" markdown="1">
+
 #### v1.5.0a
 {: .doc-sec2 }
 
@@ -404,3 +406,5 @@ permalink: /changelog
 2019/03/13
 
 * BOOTHへ公開
+
+</div>

@@ -19,6 +19,7 @@ lang_prefix: /en/
 * Add: Support for custom motion. Please see detail at [Use Custom Motion](./tips/use_custom_motion)
 * Change: GUI design changed.
 * Change: During you keep down the keyboard key or mouse button, then the avatar also keep key down pose.
+* Change: MIDI input is not captured by default. This is to prevent performance problem in the PC with many connected MIDI controllers. If you need to capture the input, check setting window > `Device` tab > `MIDI` menu.
 * Fix: The problem in specific PC enviroment that, avatar's face mesh disappears when face expression applied.
 * Fix: The problem when using iFacialMocap that avatar did not go back to base position when tracking is lost.
 * Removed: Removed virtual camera feature. Now `OBS Studio` 26.0 and later has virtual camera by default, so please consider to use it.

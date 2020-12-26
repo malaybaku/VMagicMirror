@@ -11,6 +11,19 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v1.6.0
+{: .doc-sec2 }
+
+2020/12/30
+
+* Add: Support for custom motion. Please see detail at [Use Custom Motion](./tips/use_custom_motion)
+* Change: GUI design changed.
+* Change: During you keep down the keyboard key or mouse button, then the avatar also keep key down pose.
+* Fix: The problem in specific PC enviroment that, avatar's face mesh disappears when face expression applied.
+* Fix: The problem when using iFacialMocap that avatar did not go back to base position when tracking is lost.
+* Removed: Removed virtual camera feature. Now `OBS Studio` 26.0 and later has virtual camera by default, so please consider to use it.
+
+
 #### v1.5.0a
 {: .doc-sec2 }
 

@@ -12,7 +12,6 @@ permalink: /docs/layout
 
 <div class="row">
 {% include docimg.html file="/images/docs/layout_top_1.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
-{% include docimg.html file="/images/docs/layout_top_2.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
 
 

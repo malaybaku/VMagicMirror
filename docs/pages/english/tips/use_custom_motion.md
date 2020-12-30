@@ -4,7 +4,7 @@ title: Use Custom Motion
 permalink: /en/tips/use_custom_motion
 ---
 
-[English](../tips/use_custom_motion)
+[Japanese](../../tips/use_custom_motion)
 
 # Tips: Use Custom Motion in VMagicMirror
 

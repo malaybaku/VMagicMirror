@@ -31,7 +31,7 @@ Please see the detail at [External Tracker App](./docs/external_tracker).
 
 {% include docimg.html file="/images/docs/setting_window.png" %}
 
-Setting Window consists of 5 tabs.
+Setting Window consists of 6 tabs.
 
 |----------------------------------+---------------------------------------------------------------|
 | Tab Name                         | Description                                                   |
@@ -40,8 +40,17 @@ Setting Window consists of 5 tabs.
 | [Motion](./docs/motion)          | Adjust character size related parameters and motion scale     |
 | [Layout](./docs/layout)          | Layout of camera and devices, and device based motion setting |
 | [Effects](./docs/effects)        | Light, shadow, bloom, and wind                                |
+| [Devices](./docs/devices)        | Connection settings for gamepad and MIDI controller.          |
 | [Expressions](./docs/expressions)| Feature to move the character face and motion                 |
 |==================================|===============================================================|
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+v1.5.0 and older versions do not have `Devices` tab, and instead have same feature in `Layout` tab.
+
+</div>
 
 #### Setting Window: Reset Settings to default
 {: .doc-sec2 }

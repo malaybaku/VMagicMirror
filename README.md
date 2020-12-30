@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.5.0a
+v1.6.0
 
 * 作成: 獏星(ばくすたー)
-* 2020/11/01
+* 2020/12/30
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -85,6 +85,7 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * DOTween (アセットストアから)
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
+* [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 
 FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。
 

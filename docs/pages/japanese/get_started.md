@@ -32,6 +32,10 @@ permalink: /get_started
 
 コントロールパネルかキャラクター表示ウィンドウの一方を閉じると、もう片方の画面も閉じて`VMagicMirror`が終了します。コントロールパネルが邪魔な場合、最小化しておきます。
 
+<div class="row">
+{% include docimg.html file="./images/get_started/img00_015_started.jpg" customclass="col s6 m4 l4" imgclass="fit-doc-img" %}
+</div>
+
 <div class="note-area" markdown="1">
 
 **NOTE**
@@ -55,8 +59,8 @@ PC上のVRMファイルをロードする場合、`ホーム`タブの`PC上の�
 `.vrm`ファイルを選択してキャラクター表示ウィンドウに現れる規約を確認します。`OK`をクリックするとキャラクターがロードされます。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_015_started.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_020_load_vrm.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_020_load_vrm.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_030_load_vrm_confirmation.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
 </div>
 
 VRoid Hubのモデルをロードする場合、`VRoid Hubからロード`ボタンをクリックします。
@@ -84,7 +88,6 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 ロードしたキャラクターを次回以降も使いたい場合、`ホーム`タブの`次回の起動時にも同じVRMを読み込む`のチェックをオンにします。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_030_load_vrm_confirmation.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 {% include docimg.html file="./images/get_started/img00_040_after_loaded.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 

@@ -35,7 +35,7 @@ Format:
 Limitations:
 
 - Root pose and lower body motion is not played.
-    - This is because VMagicMirror assumes all motion happens only in upper body.
+    - This is because VMagicMirror originally assumes upper body only motion.
 - IK based hand motion is not played, though exported in the data.
     - Hand IK will be supported in future updates.
 - Cannot play loop animation.

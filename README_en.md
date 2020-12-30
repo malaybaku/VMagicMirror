@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.5.0a
+v1.6.0
 
 * Author: Baxter
-* 2020/Nov/01
+* 2020/Dec/30
 
 The VRM avatar application without any special device.
 
@@ -87,6 +87,7 @@ Maintainer's environment is as following.
 * DOTween (from Asset Store)
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
+* [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 
 Should be noted that `FinalIK`, `Dlib FaceLandmark Detector`, and `OpenCV for Unity` are paid assets.
 

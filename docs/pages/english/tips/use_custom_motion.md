@@ -20,26 +20,38 @@ Following steps enable to use non-built-in motions in VMagicMirror.
 #### Prerequisite
 {: .doc-sec2 }
 
+<div class="doc-ul" markdown="1">
+
 - You need to export motion in Unity Editor.
 - You do NOT need the knowledge about Unity C# script.
 - It is good to know about Animation Clip, but 
+
+</div>
 
 #### Available Formats and Limitations
 {: .doc-sec2 }
 
 Format:
 
+<div class="doc-ul" markdown="1">
+
 - You can export motion which is recognized as Humanoid Animation, in Unity 2019.4.x.
     - Pure AnimationClip created in Unity 2019.4 is available.
     - Motions in fbx file for Humanoid model will also be available, though there are exceptions.
-    
+
+</div>
+
 Limitations:
+
+<div class="doc-ul" markdown="1">
 
 - Root pose and lower body motion is not played.
     - This is because VMagicMirror originally assumes upper body only motion.
 - IK based hand motion is not played, though exported in the data.
     - Hand IK will be supported in future updates.
 - Cannot play loop animation.
+
+</div>
 
 #### 1. Export Motion
 {: .doc-sec2 }

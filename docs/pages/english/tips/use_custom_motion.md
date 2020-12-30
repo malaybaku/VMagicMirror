@@ -2,6 +2,7 @@
 layout: page
 title: Use Custom Motion
 permalink: /en/tips/use_custom_motion
+lang_prefix: /en/
 ---
 
 [Japanese](../../tips/use_custom_motion)

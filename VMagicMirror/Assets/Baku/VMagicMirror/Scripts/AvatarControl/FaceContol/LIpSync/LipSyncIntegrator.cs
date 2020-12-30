@@ -7,11 +7,11 @@ namespace Baku.VMagicMirror
     /// <summary> PCマイクまたは外部トラッキングのリップシンク情報をVRMに適用する、ちょっと偉いクラス。</summary>
     public class LipSyncIntegrator : MonoBehaviour
     {     
-        private static readonly BlendShapeKey _a = new BlendShapeKey(BlendShapePreset.A);
-        private static readonly BlendShapeKey _i = new BlendShapeKey(BlendShapePreset.I);
-        private static readonly BlendShapeKey _u = new BlendShapeKey(BlendShapePreset.U);
-        private static readonly BlendShapeKey _e = new BlendShapeKey(BlendShapePreset.E);
-        private static readonly BlendShapeKey _o = new BlendShapeKey(BlendShapePreset.O);
+        private static readonly BlendShapeKey _a = BlendShapeKey.CreateFromPreset(BlendShapePreset.A);
+        private static readonly BlendShapeKey _i = BlendShapeKey.CreateFromPreset(BlendShapePreset.I);
+        private static readonly BlendShapeKey _u = BlendShapeKey.CreateFromPreset(BlendShapePreset.U);
+        private static readonly BlendShapeKey _e = BlendShapeKey.CreateFromPreset(BlendShapePreset.E);
+        private static readonly BlendShapeKey _o = BlendShapeKey.CreateFromPreset(BlendShapePreset.O);
         
         [SerializeField] private AnimMorphEasedTarget animMorphEasedTarget = null;
         [SerializeField] private ExternalTrackerLipSync externalTrackerLipSync = null;

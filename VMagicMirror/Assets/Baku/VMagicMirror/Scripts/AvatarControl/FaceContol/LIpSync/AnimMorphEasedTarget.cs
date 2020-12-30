@@ -46,20 +46,20 @@ namespace Baku.VMagicMirror
 
         private readonly Dictionary<BlendShapeKey, float> _blendShapeWeights = new Dictionary<BlendShapeKey, float>
         {
-            [new BlendShapeKey(BlendShapePreset.A)] = 0.0f,
-            [new BlendShapeKey(BlendShapePreset.E)] = 0.0f,
-            [new BlendShapeKey(BlendShapePreset.I)] = 0.0f,
-            [new BlendShapeKey(BlendShapePreset.O)] = 0.0f,
-            [new BlendShapeKey(BlendShapePreset.U)] = 0.0f,
+            [BlendShapeKey.CreateFromPreset(BlendShapePreset.A)] = 0.0f,
+            [BlendShapeKey.CreateFromPreset(BlendShapePreset.E)] = 0.0f,
+            [BlendShapeKey.CreateFromPreset(BlendShapePreset.I)] = 0.0f,
+            [BlendShapeKey.CreateFromPreset(BlendShapePreset.O)] = 0.0f,
+            [BlendShapeKey.CreateFromPreset(BlendShapePreset.U)] = 0.0f,
         };
 
         private readonly BlendShapeKey[] _keys = new[]
         {
-            new BlendShapeKey(BlendShapePreset.A),
-            new BlendShapeKey(BlendShapePreset.E),
-            new BlendShapeKey(BlendShapePreset.I),
-            new BlendShapeKey(BlendShapePreset.O),
-            new BlendShapeKey(BlendShapePreset.U),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.A),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.E),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.I),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.O),
+            BlendShapeKey.CreateFromPreset(BlendShapePreset.U),
         };
 
         private OVRLipSyncContextBase _context;

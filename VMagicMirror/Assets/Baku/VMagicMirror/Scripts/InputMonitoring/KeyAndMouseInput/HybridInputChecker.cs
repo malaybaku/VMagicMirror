@@ -18,7 +18,8 @@ namespace Baku.VMagicMirror
         private readonly GlobalHookInputChecker _globalHookInput;
 
         public IObservable<string> PressedRawKeys => _rawInput.PressedRawKeys;
-        public IObservable<string> PressedKeys => _rawInput.PressedKeys;
+        public IObservable<string> KeyDown => _rawInput.KeyDown;
+        public IObservable<string> KeyUp => _rawInput.KeyUp;
         public IObservable<string> MouseButton => _globalHookInput.MouseButton;
     }
 }

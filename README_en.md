@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.5.0a
+v1.6.0
 
 * Author: Baxter
-* 2020/Nov/01
+* 2020/Dec/30
 
 The VRM avatar application without any special device.
 
@@ -74,10 +74,9 @@ Maintainer's environment is as following.
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
-* [UniVRM](https://dwango.github.io/vrm/) v0.55.0
+* [UniVRM](https://dwango.github.io/vrm/) v0.61.1
 * [UniRx](https://github.com/neuecc/UniRx) (from Asset Store)
-* [AniLipSync VRM](https://github.com/sh-akira/AniLipSync-VRM/releases) v1.0.1
-    + AniLipSync requires installation of [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/).
+* [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
 * [Zenject](https://github.com/svermeulen/Extenject) (from Asset Store)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
@@ -88,6 +87,7 @@ Maintainer's environment is as following.
 * DOTween (from Asset Store)
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
+* [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 
 Should be noted that `FinalIK`, `Dlib FaceLandmark Detector`, and `OpenCV for Unity` are paid assets.
 

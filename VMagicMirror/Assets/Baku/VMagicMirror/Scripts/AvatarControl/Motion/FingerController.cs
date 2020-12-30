@@ -19,11 +19,18 @@ namespace Baku.VMagicMirror
         private const string RDown = nameof(RDown);
         private const string MDown = nameof(MDown);
         private const string LDown = nameof(LDown);
+        private const string RUp = nameof(RUp);
+        private const string MUp = nameof(MUp);
+        private const string LUp = nameof(LUp);
 
         private const float DefaultBendingAngle = 10.0f;
-        private const float Duration = 0.25f;
         private const float ThumbProximalMaxBendAngle = 30f;
         private const float HoldOperationSpeedFactor = 18.0f;
+        private const float TypingBendingAngle = 18f;
+
+        //タイピング用に指を折ったり戻したりする速度[deg/s]
+        //0.25s以内にDown/Upの動作が終わることを目安に指定してます
+        private const float TypingBendSpeedPerSeconds = 120f;
 
         //NOTE: 曲げ角度の符号に注意。左右で意味変わるのと、親指とそれ以外の差にも注意
         private static Dictionary<int, float[]> _fingerIdToPointingAngle = new Dictionary<int, float[]>()
@@ -52,16 +59,14 @@ namespace Baku.VMagicMirror
         private Transform[][] _fingers = null;
         //NOTE: _fingersに対して毎フレームnullチェックしないためにフラグを分ける
         private bool[][] _hasFinger = null;
-
-        //右手首の位置。フォールバック系の処理で使うのでとっておく
-        private Transform _rightWrist = null;
-
-        private readonly bool[] _isAnimating = new bool[10];
-        private readonly float[] _animationStartedTime = new float[10];
+        
         private readonly bool[] _shouldHoldPressedMode = new bool[10];
         private readonly float[] _holdAngles = new float[10];
         //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
         private readonly float[] _holdOperationBendingAngle = new float[10];
+
+        private readonly bool[] _isTypingBending = new bool[10];
+        private readonly bool[] _isTypingReleasing = new bool[10];
 
         private Coroutine _coroutine = null;
 
@@ -88,14 +93,6 @@ namespace Baku.VMagicMirror
             if(animator == null) { return; }
 
             _animator = animator;
-
-            for (int i = 0; i < _isAnimating.Length; i++)
-            {
-                _isAnimating[i] = false;
-                _animationStartedTime[i] = 0;
-            }
-
-            _rightWrist = animator.GetBoneTransform(HumanBodyBones.RightHand);
             _fingers = new[]
             {
                 new[]
@@ -179,23 +176,70 @@ namespace Baku.VMagicMirror
             _animator = null;
             _fingers = null;
             _hasFinger = null;
-            _rightWrist = null;
         }
 
-        public void StartPressKeyMotion(string key, bool isLeftHandOnly)
+        /// <summary>
+        /// タイピング用に指を動かします。これは実際には、対応する指を探してHold()を呼び出す処理です。
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="isLeftHandOnly"></param>
+        public void HoldTypingKey(string key, bool isLeftHandOnly)
         {
-            StartMoveFinger(_keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber);
-        }
+            var fingerNumber = _keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber;
+            _isTypingBending[fingerNumber] = true;
+            //普通こっちのフラグは立ってないハズだけど、念のため。
+            _isTypingReleasing[fingerNumber] = false;
 
-        public void StartClickMotion(string info)
-        {
-            if (info == RDown)
+            //今から曲げようとしてる指以外が打鍵状態だったら離す
+            int startIndex = (fingerNumber < 5) ? 0 : 5;
+            for (int i = startIndex; i < startIndex + 5; i++)
             {
-                StartMoveFinger(FingerConsts.RightMiddle);
+                if (i != fingerNumber && _isTypingBending[i])
+                {
+                    _isTypingBending[i] = false;
+                    _isTypingReleasing[i] = true;
+                }
             }
-            else if (info == MDown || info == LDown)
+        }
+
+        /// <summary>
+        /// タイピング用に指定していた指をもとに戻します。これは実際には、対応する指を探してRelease()を呼び出す処理です。
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="isLeftHandOnly"></param>
+        public void ReleaseTypingKey(string key, bool isLeftHandOnly)
+        {
+            var fingerNumber = _keyboard.GetKeyTargetData(key, isLeftHandOnly).fingerNumber;            
+            _isTypingBending[fingerNumber] = false;
+            _isTypingReleasing[fingerNumber] = true;
+        }
+
+        public void OnMouseButton(string info)
+        {
+            if (info == RDown || info == MDown || info == LDown)
             {
-                StartMoveFinger(FingerConsts.RightIndex);
+                int downFinger = (info == RDown) ? FingerConsts.RightMiddle : FingerConsts.RightIndex;
+                _isTypingBending[downFinger] = true;
+                _isTypingReleasing[downFinger] = false;
+                for (int i = 5; i < 10; i++)
+                {
+                    //NOTE: 親指とかの関係ない指にまでこの処理をかけるのはキーボードとの行き来のときに破綻を防ぐため
+                    if (i != downFinger && _isTypingBending[i])
+                    {
+                        _isTypingBending[i] = false;
+                        _isTypingReleasing[i] = true;
+                    }
+                }
+            }
+            else if (info == RUp)
+            {
+                _isTypingBending[FingerConsts.RightMiddle] = false;
+                _isTypingReleasing[FingerConsts.RightMiddle] = true;
+            }
+            else if (info == MUp || info == LUp) 
+            {
+                _isTypingBending[FingerConsts.RightIndex] = false;
+                _isTypingReleasing[FingerConsts.RightIndex] = true;
             }
         }
 
@@ -241,6 +285,26 @@ namespace Baku.VMagicMirror
             }
         }
 
+        /// <summary> 左手のすべての指に対し、タイピング動作のフラグを解除します。　</summary>
+        public void ReleaseLeftHandTyping()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                _isTypingBending[i] = false;
+                _isTypingReleasing[i] = false;
+            }
+        }
+
+        /// <summary> 右手のすべての指に対し、タイピング動作のフラグを解除します。 </summary>
+        public void ReleaseRightHandTyping()
+        {
+            for (int i = 5; i < 10; i++)
+            {
+                _isTypingBending[i] = false;
+                _isTypingReleasing[i] = false;
+            }
+        }
+
         #endregion
 
         private void LateUpdate()
@@ -250,7 +314,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            for (int i = 0; i < _isAnimating.Length; i++)
+            for (int i = 0; i < 10; i++)
             {
                 //プレゼンモード中、右手の形はギュッと握った状態
                 if (i > 4 && RightHandPresentationMode)
@@ -260,6 +324,7 @@ namespace Baku.VMagicMirror
                 }
 
                 float angle = DefaultBendingAngle;
+                var currentAngle = _holdOperationBendingAngle[i];
 
                 _holdOperationBendingAngle[i] = math.lerp(
                     _holdOperationBendingAngle[i],
@@ -267,15 +332,20 @@ namespace Baku.VMagicMirror
                     HoldOperationSpeedFactor * Time.deltaTime
                     );
                 
-                if (_isAnimating[i])
+                if (_isTypingBending[i])
                 {
-                    float time = Time.time - _animationStartedTime[i];
-                    if (time > Duration)
+                    //Lerpではなく時間に対する線形変化によって指を折り曲げる
+                    angle = math.min(currentAngle + TypingBendSpeedPerSeconds * Time.deltaTime, TypingBendingAngle);
+                }
+                else if (_isTypingReleasing[i])
+                {
+                    //Bendingと同じ考え方でデフォルト角度に戻す
+                    angle = math.max(currentAngle - TypingBendSpeedPerSeconds * Time.deltaTime, DefaultBendingAngle);
+                    if (!(angle > DefaultBendingAngle))
                     {
-                        _isAnimating[i] = false;
-                        time = Duration;
+                        //リリース動作が終わったはずなのでフラグを折っておく: 余計な動作が起きにくいように。
+                        _isTypingReleasing[i] = false;
                     }
-                    angle = EvalAngleCurve(time);
                 }
                 else
                 {
@@ -312,19 +382,6 @@ namespace Baku.VMagicMirror
                         }
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// インデックスで指定した指を動かす(0: Left Thumb, ..., 9: Right Little).
-        /// </summary>
-        /// <param name="fingerIndex"></param>
-        private void StartMoveFinger(int fingerIndex)
-        {
-            if (fingerIndex >= 0 && fingerIndex < _isAnimating.Length)
-            {
-                _isAnimating[fingerIndex] = true;
-                _animationStartedTime[fingerIndex] = Time.time;
             }
         }
 

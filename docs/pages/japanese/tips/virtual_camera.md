@@ -1,74 +1,84 @@
 ---
 layout: page
-title: 仮想カメラを使う
+title: Web会議にVMagicMirrorで出席する
 permalink: /tips/virtual_camera
 ---
 
 [English](../en/tips/virtual_camera)
 
-# Tips: 仮想カメラを使う
+# Tips: Web会議にVMagicMirrorで出席する
 
-仮想カメラはv0.9.9で追加された機能で、VMagicMirrorの画面をウェブカメラ映像として扱えます。
+このページでは、ZoomなどのWeb会議ソフトでVMagicMirrorを使う方法を紹介します。
 
-機能は限定的ですが、ウェブ会議で手軽にVMagicMirrorを使えます。
+`OBS Studio`が標準機能として仮想カメラをサポートしているため、これを使いた手順を説明します。
 
-#### 仮想カメラをいつ使うべきか
+
+#### 準備: OBS Studioのインストールとセットアップ
 {: .doc-sec2 }
 
-この機能を直接使うことは現在、推奨していません。
+[OBS Studio](https://obsproject.com/ja/download)のバージョン26.0以降をインストールします。
+特に理由がない限り、最新バージョンを用いて下さい。
 
-理由は、[OBS Studio](https://obsproject.com/ja/download)がバージョン26.0で仮想カメラを標準搭載するようになり、プラグインの導入が不要になったためです。
+あらかじめVMagicMirrorを立ち上げておきます。
 
-`OBS Studio`を導入して[配信にVMagicMirrorを使う](./streaming)を参照し、OBS Studioの機能から仮想カメラを使用することを検討して下さい。
+その後、OBS Studioを起動します。初めて起動するときは初期設定を行います。この設定はあとから変更可能なため、適当に選択して構いません。
 
-また、VMagicMirrorに組み込まれた仮想カメラ機能はv1.6.0で廃止予定です。
+初期設定ののち、`シーン`下部にあるプラスボタンから、新規シーンを適当な名称(`vmm_meeting`など)で作成します。
+
+次に、`ソース`の下部にあるプラスボタンを押して、種類から`ゲームキャプチャ`を選びます。新規ソースを適当な名称(`vmm`など)で作成します。
+
+<div class="row">
+{% include docimg.html file="./images/tips/virtual_cam_obs_new_src.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
+
+すると`ゲームキャプチャ`の初期設定を行うダイアログが表示されます。
+
+ここで、`モード`から`特定のウィンドウをキャプチャ`を選択します。
+
+`ウィンドウ`の右側をタップし、`[VMagicMirror.exe]: VMagicMirror`を選択します。
+
+`透過を許可`のチェックをオンにします。
+
+`OK`をクリックし、設定を保存します。
+
+<div class="row">
+{% include docimg.html file="./images/tips/virtual_cam_obs_property_setup.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/tips/virtual_cam_obs_property_setup_finish.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
+
+以上で準備は完了です。正しく設定できていれば、VMagicMirrorのウィンドウがOBSのプレビュー画面に表示されます。
+
+VMagicMirrorが画面全体に写っていない場合、`OBS Studio`のプレビュー画面上でウィンドウをドラッグして引き伸ばすか、あるいはVMagicMirror自体のウィンドウを拡大してサイズを調整します。
 
 
-#### セットアップ: 初使用時にやること
+#### 会議に出る手順
 {: .doc-sec2 }
 
-初めて仮想カメラ機能を使うときは、準備として仮想カメラのインストールを行います。
+Web会議に出席する前に、VMagicMirrorと`OBS Studio`を起動します。
 
-`配信`タブの`仮想カメラ`から、`※初めて使う場合`を選択します。
+プレビュー画面にVMagicMirrorが表示されていることを確認します。
 
-※v1.5.0では`配信`タブではなく、設定ウィンドウの`ウィンドウ`タブを参照して下さい。
+VMagicMirrorが画面全体に写っていない場合、`OBS Studio`のプレビュー画面上でウィンドウをドラッグして引き伸ばすか、あるいはVMagicMirror自体のウィンドウを拡大してサイズを調整します。
 
-{% include docimg.html file="/images/tips/virtual_camera_first_setup.png" %}
+`OBS Studio`の画面右にある`仮想カメラ開始`ボタンを押し、OBSの出力がwebカメラとして認識されるようにします。
 
-インストール操作の説明ダイアログが表示されます。`フォルダを開く`でフォルダを開き、`Install.bat`をダブルクリックで実行します。
+<div class="row">
+{% include docimg.html file="./images/tips/virtual_cam_obs_new_src.png" customclass="col l4 m4 s12" imgclass="fit-doc-img" %}
+</div>
 
-{% include docimg.html file="/images/tips/virtual_camera_run_bat.png" %}
+その後、Web会議を開始します。
 
-以下のようなダイアログが表示されれば成功です。
+Web会議の種類によらず、Webカメラの選択機能があるはずなので、それを探してカメラ一覧から`OBS Virtual Camera`を選択します。
 
-{% include docimg.html file="/images/tips/virtual_camera_success_dialog.png" %}
+正しく選択できていれば、Web会議上にVMagicMirrorの画面が表示されます。
 
-`OK`でダイアログを閉じたのち、インストール操作のダイアログも閉じればセットアップは完了です。
+会議の終了後は、`OBS Studio`の画面右で`仮想カメラ停止`ボタンを押し、カメラ出力を停止します。
 
 
-#### 仮想カメラを会議ソフト等で使う
+#### バーチャル背景などを使いたい場合
 {: .doc-sec2 }
 
-`配信`タブで`仮想カメラ出力を有効化`をオンにしたのち、対象のソフトで`Unity Video Capture`を選択します。
+Zoomのバーチャル背景などを使いたい場合は、グリーンバックを明瞭にすることが推奨されます。
 
-以下はZoomでカメラを選択している例です。
-
-{% include docimg.html file="/images/tips/virtual_camera_camera_select_example.png" %}
-
-カメラ一覧に`Unity Video Capture`が表示されない場合、一度対象ソフト(上記の場合ならZoom)を閉じて再び起動して下さい。
-
-何度繰り返してもうまく行かない場合、VMagicMirrorやWindows自体の再起動をしたり、他のアプリケーションで動くかどうかをご確認下さい。
-
-※ウェブカメラを扱うソフトの一部は仮想カメラをサポートしていません。
-
-また、もし画像が映らない場合、VMagicMirror上の設定で解像度が幅`640`、高さ`480`になっているか確認し、異なる値であれば`640x480`に設定します。カメラ映像を使っているアプリケーション側でもカメラ解像度を明示的に選べる場合は、`640x480`を選択して下さい。
-
-画像は映るものの引き伸ばされてしまう場合は、`リサイズ`ボタンを押してVMagicMirrorのウィンドウサイズを修正します。
-
-
-#### 仮想カメラの解像度制限について
-
-VMagicMirrorの仮想カメラは基本となる解像度が幅`640`、高さ`480`で固定となっています。
-
-これ以外の解像度を設定した場合、ソフトによってはカメラ入力を取得できなくなります。その場合、解像度を`640`x`480`に戻して下さい。
+この場合、VMagicMirrorの`配信`タブで`表示`から、`キーボード`と`影`をオフにして下さい。
 

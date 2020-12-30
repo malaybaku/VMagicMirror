@@ -17,6 +17,8 @@ Basic usage is in [Get Started](./get_started), and setting window detail is in 
 
 [Use VMagicMirror for Streaming](./tips/streaming)
 
+[Use VMagicMirror for Web Meeting](./tips/virtual_camera)
+
 [Use for Presentation](./tips/presentation)
 
 [Use as Desktop Mascot](./tips/desktop_mascot)
@@ -31,6 +33,6 @@ Basic usage is in [Get Started](./get_started), and setting window detail is in 
 
 [Using Hand Tracking](./tips/using_hand_tracking)
 
-[Use Virtual Camera](./tips/virtual_camera)
-
 [Perfect Sync](./tips/perfect_sync)
+
+[Use Custom Motion](./tips/use_custom_motion)

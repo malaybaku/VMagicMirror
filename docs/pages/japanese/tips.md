@@ -16,6 +16,8 @@ permalink: /tips
 
 [配信にVMagicMirrorを使う](./tips/streaming)
 
+[Web会議にVMagicMirrorで出席する](./tips/virtual_camera)
+
 [プレゼンテーションに使う](./tips/presentation)
 
 [デスクトップマスコット化する](./tips/desktop_mascot)
@@ -30,6 +32,6 @@ permalink: /tips
 
 [ハンドトラッキングの使用について](./tips/using_hand_tracking)
 
-[仮想カメラを使う](./tips/virtual_camera)
-
 [パーフェクトシンク](./tips/perfect_sync)
+
+[カスタムモーションをVMagicMirrorで使う](./tips/use_custom_motion)

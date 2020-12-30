@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
         /// </remarks>
         public static BlendShapeKey CreateFrom(string name) 
             => _presets.ContainsKey(name)
-                ? new BlendShapeKey(_presets[name]) 
-                : new BlendShapeKey(name);
+                ? BlendShapeKey.CreateFromPreset(_presets[name]) 
+                : BlendShapeKey.CreateUnknown(name);
     }
 }

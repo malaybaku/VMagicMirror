@@ -37,6 +37,19 @@ namespace Baku.VMagicMirror
                 message => SetWordToMotionInputType(message.ToInt())
                 );
             
+            receiver.AssignCommandHandler(
+                VmmCommands.RequestCustomMotionDoctor,
+                _ => _manager.RunCustomMotionDoctor()
+                );
+            
+            receiver.AssignQueryHandler(
+                VmmQueries.GetAvailableCustomMotionClipNames,
+                q =>
+                {
+                    q.Result = string.Join("\t", _manager.LoadAvailableCustomMotionClipNames());
+                    Debug.Log("Get Available CustomMotion Clip Names, result = " + q.Result);
+                });
+            
             //NOTE: 残骸コードを残しときます。ビルトインモーション後の手の動きがちょっと心配ではあるよね、という話
             
             //NOTE: キーボード/マウスだけ消し、ゲームパッドや画像ハンドトラッキングがある、というケースでは多分無理にいじらないでも大丈夫です。 

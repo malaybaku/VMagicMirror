@@ -31,6 +31,17 @@ Please see [External Tracking](../docs/external_tracker) beforehand, to understa
 
 From the technical view, Perfect Sync maps the all blendshapes obtained by iOS ARKit FaceTracking to VRM's BlendShapeClips.
 
+
+#### Other tools supporting Perfect Sync
+{: .doc-sec2 }
+
+Perfect Sync is not a unique feature of VMagicMirror.
+
+For example, [Vear](https://apps.apple.com/jp/app/id1490697369) and [Luppet](https://luppet.appspot.com/) also support it. These tools have basically same requirement for the model. 
+
+So when you set up the model once, the model will be available on all of those tools.
+
+
 #### Try Perfect Sync
 {: .doc-sec2 }
 
@@ -152,6 +163,17 @@ If you do not create blendshape in Step 1 for some BlendShapeClip, then leave th
 </div>
 
 After the setup, export the VRM.
+
+
+#### Setup without modeling workflow
+{: .doc-sec2 }
+
+Some of the models can be applied to perfect sync without modeling process.
+
+For example, [HANA_Tool](https://booth.pm/ja/items/2437978) is available for VRoid Studio based model.
+
+ref: [クリックで実装！パーフェクトシンク　BY HANA Tool](https://hinzka.hatenablog.com/entry/2020/10/12/014540)
+
 
 #### References
 {: .doc-sec2 }

@@ -14,6 +14,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private FaceControlManager eyes = null;
         [SerializeField] private ExternalTrackerPerfectSync perfectSync = null;
         [SerializeField] private ExternalTrackerFaceSwitchApplier faceSwitch = null;
+        [SerializeField] private NeutralClipSettings neutralClipSettings = null;
         
         private ExternalTrackerDataSource _exTracker = null;
         private BlendShapeInitializer _initializer = null;
@@ -90,6 +91,8 @@ namespace Baku.VMagicMirror
                     _wtmBlendShape.Accumulate(_blendShape);
                     lipSync.Accumulate(_blendShape);
                 }
+                
+                neutralClipSettings.ApplyOffsetClip(_blendShape);
                 return;
             }
             
@@ -118,6 +121,8 @@ namespace Baku.VMagicMirror
                     faceSwitch.Accumulate(_blendShape);
                     lipSync.Accumulate(_blendShape);
                 }
+
+                neutralClipSettings.ApplyOffsetClip(_blendShape);
                 return;
             }
             
@@ -143,6 +148,8 @@ namespace Baku.VMagicMirror
                     lipSync.Accumulate(_blendShape);
                 }
 
+                neutralClipSettings.ApplyNeutralClip(_blendShape);
+                neutralClipSettings.ApplyOffsetClip(_blendShape);
                 return;
             }
             
@@ -153,6 +160,9 @@ namespace Baku.VMagicMirror
             _initializer.InitializeBlendShapes();
             eyes.Accumulate(_blendShape);
             lipSync.Accumulate(_blendShape);
+            
+            neutralClipSettings.ApplyNeutralClip(_blendShape);
+            neutralClipSettings.ApplyOffsetClip(_blendShape);
         }
     }
 }

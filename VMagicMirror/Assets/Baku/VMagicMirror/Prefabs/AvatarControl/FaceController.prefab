@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2344319939732251227}
   - component: {fileID: 5187863769921554747}
   - component: {fileID: 6241239198292537160}
+  - component: {fileID: 6186883453983643772}
   m_Layer: 0
   m_Name: FaceController
   m_TagString: Untagged
@@ -137,6 +138,19 @@ MonoBehaviour:
   eyes: {fileID: 3748028266611161169}
   perfectSync: {fileID: 5187863769921554747}
   faceSwitch: {fileID: 8701057551241780110}
+  neutralClipSettings: {fileID: 6186883453983643772}
+--- !u!114 &6186883453983643772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748028266611161173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd1898a983ab3f4bbfbdf6b73895499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3748028267383499195
 GameObject:
   m_ObjectHideFlags: 0

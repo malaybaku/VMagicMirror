@@ -76,6 +76,8 @@ namespace Baku.VMagicMirror
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
+        public const string FaceNeutralClip = nameof(FaceNeutralClip);
+        public const string FaceOffsetClip = nameof(FaceOffsetClip);
 
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);

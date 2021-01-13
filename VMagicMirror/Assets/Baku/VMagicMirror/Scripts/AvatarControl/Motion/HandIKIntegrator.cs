@@ -463,6 +463,11 @@ namespace Baku.VMagicMirror
         {
             fingerController.Initialize(info.animator);
             
+            //キャラロード前の時点ではHandDownとブレンドされることでIK位置が原点に飛ぶため、それらの値を捨てる
+            MouseMove.ResetHandDownTimeout(true);
+            Typing.ResetLeftHandDownTimeout(true);
+            Typing.ResetRightHandDownTimeout(true);
+            
             //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にします。
             //棒立ちサポートをめちゃ適当にやっちゃえ！というのがモチベです
             _imageBaseHand.HasRightHandUpdate = false;

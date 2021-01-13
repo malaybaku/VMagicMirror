@@ -21,10 +21,16 @@ namespace Baku.VMagicMirror
         
         /// <summary> 直近で参照したタッチパッドのワールド座標。 </summary>
         public Vector3 ReferenceTouchpadPosition { get; private set; }
+
+        /// <summary> 一定時間入力がないとき手降ろし姿勢に遷移すべきかどうか </summary>
+        public bool EnableHandDownTimeout { get; set; } = true;
         
         private readonly TouchPadProvider _touchPad;
 
         private Vector3 YOffsetAlwaysVec => YOffset * Vector3.up;
+
+        //NOTE: HandIkIntegratorから初期化で入れてもらう
+        public AlwaysDownHandIkGenerator DownHand { get; set; }
 
         private Vector3 _targetPosition = Vector3.zero;
 

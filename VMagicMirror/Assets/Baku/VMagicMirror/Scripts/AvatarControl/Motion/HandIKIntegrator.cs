@@ -54,7 +54,6 @@ namespace Baku.VMagicMirror
         private float _rightHandIkChangeCoolDown = 0f;
 
         private bool _enableHidArmMotion = true;
-
         public bool EnableHidArmMotion
         {
             get => _enableHidArmMotion;
@@ -64,6 +63,19 @@ namespace Baku.VMagicMirror
                 MouseMove.EnableUpdate = value;
             }
         }
+
+        private bool _enableHandDownTimeout = true;
+        public bool EnableHandDownTimeout
+        {
+            get => _enableHandDownTimeout;
+            set
+            {
+                _enableHandDownTimeout = value;
+                typing.EnableHandDownTimeout = value;
+                MouseMove.EnableHandDownTimeout = value;
+            }
+        }
+        
 
         public bool UseGamepadForWordToMotion { get; set; } = false;
         
@@ -126,6 +138,9 @@ namespace Baku.VMagicMirror
             Presentation = new PresentationHandIKGenerator(this, vrmLoadable, cam);
             _imageBaseHand = new ImageBaseHandIkGenerator(this, handTracker, imageBaseHandSetting, vrmLoadable);
             _downHand = new AlwaysDownHandIkGenerator(this, vrmLoadable);
+
+            MouseMove.DownHand = _downHand;
+            typing.DownHand = _downHand;
         }
 
         //NOTE: 初めて手がキーボードから離れるまではnull

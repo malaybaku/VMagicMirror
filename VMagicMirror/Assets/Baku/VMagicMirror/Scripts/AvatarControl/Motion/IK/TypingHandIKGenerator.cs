@@ -16,6 +16,9 @@ namespace Baku.VMagicMirror
         //手を正面方向に向くよう補正するファクター。1に近いほど手が正面向きになる
         private const float WristForwardFactor = 0.5f;
 
+        //NOTE: HandIkIntegratorから初期化で入れてもらう
+        public AlwaysDownHandIkGenerator DownHand { get; set; } 
+
         #region settings (WPFから飛んでくる想定のもの)
 
         /// <summary>手首から指先までの距離[m]。キーボードを打ってる位置をそれらしく補正するために使う。</summary>
@@ -26,6 +29,9 @@ namespace Baku.VMagicMirror
 
         /// <summary>打鍵直後のキーボードに対する手のY方向オフセット[m]。</summary>
         public float YOffsetAfterKeyDown { get; set; } = 0.02f;
+
+        /// <summary> 一定時間タイピングしなかった場合に手降ろし姿勢に遷移すべきかどうか </summary>
+        public bool EnableHandDownTimeout { get; set; } = true;
 
         #endregion
 

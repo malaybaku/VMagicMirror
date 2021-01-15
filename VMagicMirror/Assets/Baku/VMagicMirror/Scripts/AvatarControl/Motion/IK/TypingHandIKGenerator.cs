@@ -192,6 +192,7 @@ namespace Baku.VMagicMirror
             _leftHandNoInputCount = 0f;
             if (refreshIkImmediate)
             {
+                _leftHandBlendRate = 1f;
                 _blendedLeftHand.Position = _leftHand.Position;
                 _blendedLeftHand.Rotation = _leftHand.Rotation;
             }
@@ -202,6 +203,7 @@ namespace Baku.VMagicMirror
             _rightHandNoInputCount = 0f;
             if (refreshIkImmediate)
             {
+                _rightHandBlendRate = 1f;
                 _blendedRightHand.Position = _rightHand.Position;
                 _blendedRightHand.Rotation = _rightHand.Rotation;
             }

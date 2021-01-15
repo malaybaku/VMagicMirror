@@ -20,8 +20,8 @@ namespace Baku.VMagicMirror
         public const float AutoHandDownDuration = 5.5f;
         
         //NOTE: 1.2秒かけて下ろし、0.25秒で戻す、という目安の速度感。戻すほうがスピーディなことに注意
-        public const float HandDownBlendSpeed = 1f / 1.2f;
-        public const float HandUpBlendSpeed = 1f / 0.25f;
+        public const float HandDownBlendSpeed = 1f / 2f;
+        public const float HandUpBlendSpeed = 1f / 0.4f;
 
         [SerializeField] private TypingHandIKGenerator typing = null;
         public TypingHandIKGenerator Typing => typing;

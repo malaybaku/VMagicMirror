@@ -36,6 +36,10 @@ namespace Baku.VMagicMirror
                 message => handIkIntegrator.AlwaysHandDownMode = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
+                VmmCommands.EnableTypingHandDownTimeout,
+                message => handIkIntegrator.EnableHandDownTimeout = message.ToBoolean()
+                );
+            receiver.AssignCommandHandler(
                 VmmCommands.LengthFromWristToTip,
                 message => SetLengthFromWristToTip(message.ParseAsCentimeter())
                 );

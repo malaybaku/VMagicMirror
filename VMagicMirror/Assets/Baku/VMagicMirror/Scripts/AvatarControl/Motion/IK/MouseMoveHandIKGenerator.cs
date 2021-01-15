@@ -11,7 +11,8 @@ namespace Baku.VMagicMirror
         private const float SpeedFactor = 12f;
         
         private readonly IKDataRecord _rightHand = new IKDataRecord();
-        public IIKGenerator RightHand => _rightHand;
+        private readonly IKDataRecord _blendedRightHand = new IKDataRecord();
+        public IIKGenerator RightHand => _blendedRightHand;
         
         public float HandToTipLength { get; set; } = 0.12f;
 
@@ -21,14 +22,25 @@ namespace Baku.VMagicMirror
         
         /// <summary> 直近で参照したタッチパッドのワールド座標。 </summary>
         public Vector3 ReferenceTouchpadPosition { get; private set; }
+
+        /// <summary> 一定時間入力がないとき手降ろし姿勢に遷移すべきかどうか </summary>
+        public bool EnableHandDownTimeout { get; set; } = true;
         
         private readonly TouchPadProvider _touchPad;
 
         private Vector3 YOffsetAlwaysVec => YOffset * Vector3.up;
 
+        //NOTE: HandIkIntegratorから初期化で入れてもらう
+        public AlwaysDownHandIkGenerator DownHand { get; set; }
+
         private Vector3 _targetPosition = Vector3.zero;
 
-        
+        //入力(マウス移動 or ボタン操作)がない時間のカウント。
+        private float _noInputCount = 0f;
+
+        //この値で手下げ姿勢と手上げ姿勢をブレンドする。
+        private float _handBlendRate = 1f;
+
         public MouseMoveHandIKGenerator(MonoBehaviour coroutineResponder, TouchPadProvider touchPadProvider)
             : base(coroutineResponder)
         {
@@ -68,6 +80,59 @@ namespace Baku.VMagicMirror
             _rightHand.Rotation = Quaternion.Slerp(
                 _rightHand.Rotation, rot, WristYawSpeedFactor * Time.deltaTime
                 );
+            
+
+            UpdateTimeout();
+        }
+
+        private void UpdateTimeout()
+        {
+            _noInputCount += Time.deltaTime;
+            if (_noInputCount > HandIKIntegrator.AutoHandDownDuration)
+            {
+                _handBlendRate = Mathf.Max(0f, _handBlendRate - HandIKIntegrator.HandDownBlendSpeed * Time.deltaTime);
+            }
+            else
+            {
+                _handBlendRate = Mathf.Min(1f, _handBlendRate + HandIKIntegrator.HandUpBlendSpeed * Time.deltaTime);
+            }
+
+            //NOTE: 多くの場合ブレンド計算は不要。
+            if (_handBlendRate > 0.999f)
+            {
+                _blendedRightHand.Position = _rightHand.Position;
+                _blendedRightHand.Rotation = _rightHand.Rotation;
+            }
+            else if (_handBlendRate < 0.001f)
+            {
+                _blendedRightHand.Position = DownHand.RightHand.Position;
+                _blendedRightHand.Rotation = DownHand.RightHand.Rotation;
+            }
+            else
+            {
+                var rate = Mathf.SmoothStep(0, 1, _handBlendRate);
+                _blendedRightHand.Position = Vector3.Lerp(
+                    DownHand.RightHand.Position, _rightHand.Position, rate
+                );
+                _blendedRightHand.Rotation = Quaternion.Slerp(
+                    DownHand.RightHand.Rotation, _rightHand.Rotation, rate
+                );
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="refreshIkImmediate"></param>
+        public void ResetHandDownTimeout(bool refreshIkImmediate)
+        {
+            _noInputCount = 0;
+            if (refreshIkImmediate)
+            {
+                _handBlendRate = 1f;
+                _blendedRightHand.Position = _rightHand.Position;
+                _blendedRightHand.Rotation = _rightHand.Rotation;
+            }
         }
     }
 }

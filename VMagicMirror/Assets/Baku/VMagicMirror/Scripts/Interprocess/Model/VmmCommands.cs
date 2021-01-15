@@ -49,6 +49,7 @@ namespace Baku.VMagicMirror
         // Motion, Arm
         public const string EnableHidRandomTyping = nameof(EnableHidRandomTyping);
         public const string EnableShoulderMotionModify = nameof(EnableShoulderMotionModify);
+        public const string EnableTypingHandDownTimeout = nameof(EnableTypingHandDownTimeout);
         public const string SetWaistWidth = nameof(SetWaistWidth);
         public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);
         public const string EnableFpsAssumedRightHand = nameof(EnableFpsAssumedRightHand);

@@ -17,7 +17,8 @@ namespace Baku.VMagicMirror
         private const float HandIkTypeChangeCoolDown = 0.3f;
 
         //この時間だけ入力がなかったらマウスやキーボードの操作をしている手を下ろしてもいいよ、という秒数
-        public const float AutoHandDownDuration = 5.5f;
+        //たぶん無いと思うけど、何かの周期とピッタリ合うと嫌なのでてきとーに小数値を載せてます
+        public const float AutoHandDownDuration = 15.5f;
         
         //NOTE: 1.2秒かけて下ろし、0.25秒で戻す、という目安の速度感。戻すほうがスピーディなことに注意
         public const float HandDownBlendSpeed = 1f / 2f;

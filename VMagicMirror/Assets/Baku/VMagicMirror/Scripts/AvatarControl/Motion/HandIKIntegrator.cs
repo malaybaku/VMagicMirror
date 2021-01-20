@@ -18,9 +18,9 @@ namespace Baku.VMagicMirror
 
         //この時間だけ入力がなかったらマウスやキーボードの操作をしている手を下ろしてもいいよ、という秒数
         //たぶん無いと思うけど、何かの周期とピッタリ合うと嫌なのでてきとーに小数値を載せてます
-        public const float AutoHandDownDuration = 15.5f;
+        public const float AutoHandDownDuration = 10.5f;
         
-        //NOTE: 1.2秒かけて下ろし、0.25秒で戻す、という目安の速度感。戻すほうがスピーディなことに注意
+        //NOTE: 2秒かけて下ろし、0.4秒で戻す、という速度。戻すほうがスピーディなことに注意
         public const float HandDownBlendSpeed = 1f / 2f;
         public const float HandUpBlendSpeed = 1f / 0.4f;
 
@@ -148,7 +148,10 @@ namespace Baku.VMagicMirror
             _downHand = new AlwaysDownHandIkGenerator(this, vrmLoadable);
 
             MouseMove.DownHand = _downHand;
+            MouseMove.Integrator = this;
             typing.DownHand = _downHand;
+            typing.Integrator = this;
+
         }
 
         //NOTE: 初めて手がキーボードから離れるまではnull
@@ -440,6 +443,36 @@ namespace Baku.VMagicMirror
                 _imageBaseHand.HasLeftHandUpdate = false;
                 SetLeftHandIk(HandTargetType.ImageBaseHand);
             }
+        }
+        
+        #endregion
+        
+        #region Util
+
+        /// <summary>
+        /// マウス/タイピングIKに関して、タイムアウトによって腕を下げていいかどうかを取得します。
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckTypingOrMouseHandsCanMoveDown()
+        {
+            if (_leftTargetType != HandTargetType.Keyboard &&
+                _rightTargetType != HandTargetType.Keyboard &&
+                _rightTargetType != HandTargetType.Mouse)
+            {
+                //この場合は特に意味がない
+                return false;
+            }
+
+            bool leftHandIsReady =
+                _leftTargetType != HandTargetType.Keyboard ||
+                typing.LeftHandTimeOutReached;
+
+            bool rightHandIsReady =
+                (_rightTargetType == HandTargetType.Keyboard && typing.RightHandTimeOutReached) ||
+                (_rightTargetType == HandTargetType.Mouse && MouseMove.IsNoInputTimeOutReached) ||
+                (_rightTargetType != HandTargetType.Keyboard && _rightTargetType != HandTargetType.Mouse);
+
+            return leftHandIsReady && rightHandIsReady;
         }
         
         #endregion

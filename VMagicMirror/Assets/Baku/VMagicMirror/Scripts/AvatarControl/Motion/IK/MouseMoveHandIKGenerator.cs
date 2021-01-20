@@ -32,6 +32,10 @@ namespace Baku.VMagicMirror
 
         //NOTE: HandIkIntegratorから初期化で入れてもらう
         public AlwaysDownHandIkGenerator DownHand { get; set; }
+        public HandIKIntegrator Integrator { get; set; }
+
+        /// <summary> マウス入力が一定時間以上ないと立つフラグ </summary>
+        public bool IsNoInputTimeOutReached => _noInputCount > HandIKIntegrator.AutoHandDownDuration;
 
         private Vector3 _targetPosition = Vector3.zero;
 
@@ -87,8 +91,17 @@ namespace Baku.VMagicMirror
 
         private void UpdateTimeout()
         {
-            _noInputCount += Time.deltaTime;
-            if (_noInputCount > HandIKIntegrator.AutoHandDownDuration)
+            if (EnableHandDownTimeout)
+            {
+                _noInputCount += Time.deltaTime;
+            }
+            else
+            {
+                //NOTE: タイムアウトの値をリセットし続ける: この方がブレンディングが飛ばないため性質がよい
+                _noInputCount = 0f;
+            }
+            
+            if (Integrator.CheckTypingOrMouseHandsCanMoveDown())
             {
                 _handBlendRate = Mathf.Max(0f, _handBlendRate - HandIKIntegrator.HandDownBlendSpeed * Time.deltaTime);
             }

@@ -21,6 +21,7 @@ namespace Baku.VMagicMirror
 
         //NOTE: HandIkIntegratorから初期化で入れてもらう
         public AlwaysDownHandIkGenerator DownHand { get; set; } 
+        public HandIKIntegrator Integrator { get; set; }
 
         #region settings (WPFから飛んでくる想定のもの)
 
@@ -36,6 +37,12 @@ namespace Baku.VMagicMirror
         /// <summary> 一定時間タイピングしなかった場合に手降ろし姿勢に遷移すべきかどうか </summary>
         public bool EnableHandDownTimeout { get; set; } = true;
 
+        /// <summary> 左手のタイピング入力が一定時間ないと立つフラグ </summary>
+        public bool LeftHandTimeOutReached => _leftHandNoInputCount > HandIKIntegrator.AutoHandDownDuration;
+        
+        /// <summary> 右手のタイピング入力が一定時間ないと立つフラグ </summary>
+        public bool RightHandTimeOutReached => _rightHandNoInputCount > HandIKIntegrator.AutoHandDownDuration;
+            
         #endregion
 
         #region 静的に決め打ちするもの
@@ -216,8 +223,16 @@ namespace Baku.VMagicMirror
             
             void UpdateLeft()
             {
-                _leftHandNoInputCount += Time.deltaTime;
-                if (_leftHandNoInputCount > HandIKIntegrator.AutoHandDownDuration)
+                if (EnableHandDownTimeout)
+                {
+                    _leftHandNoInputCount += Time.deltaTime;
+                }
+                else
+                {
+                    _leftHandNoInputCount = 0f;
+                }
+                
+                if (Integrator.CheckTypingOrMouseHandsCanMoveDown())
                 {
                     _leftHandBlendRate = Mathf.Max(0f, _leftHandBlendRate - HandDownBlendSpeed * Time.deltaTime);
                 }
@@ -251,8 +266,16 @@ namespace Baku.VMagicMirror
             
             void UpdateRight()
             {                
-                _rightHandNoInputCount += Time.deltaTime;
-                if (_rightHandNoInputCount > HandIKIntegrator.AutoHandDownDuration)
+                if (EnableHandDownTimeout)
+                {
+                    _rightHandNoInputCount += Time.deltaTime;
+                }
+                else
+                {
+                    _rightHandNoInputCount = 0f;
+                }
+
+                if (Integrator.CheckTypingOrMouseHandsCanMoveDown())
                 {
                     _rightHandBlendRate = Mathf.Max(0f, _rightHandBlendRate - HandDownBlendSpeed * Time.deltaTime);
                 }

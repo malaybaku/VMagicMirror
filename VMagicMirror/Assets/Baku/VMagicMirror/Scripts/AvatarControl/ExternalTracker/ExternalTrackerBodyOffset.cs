@@ -25,7 +25,11 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 applyMaxWhenNoHandTrack = new Vector3(0.2f, 0.2f, 0.1f);
         
         [SerializeField] private float lerpFactor = 18f;
-
+        [Tooltip("トラッキングロス時にゆっくり原点に戻すために使うLerpFactor")]
+        [SerializeField] private float lerpFactorOnLost = 3f;
+        [Tooltip("接続が持続しているあいだ、徐々にLerpFactorを引き上げるのに使う値")]
+        [SerializeField] private float lerpFactorBlendDuration = 1f;
+        
         private FaceControlConfiguration _config;
         private ExternalTrackerDataSource _externalTracker;
         
@@ -33,6 +37,7 @@ namespace Baku.VMagicMirror
         private Vector3 _min = Vector3.zero;
         private Vector3 _max = Vector3.zero;
         private Sequence _sequence = null;
+        private float _currentLerpFactor;
         
         [Inject]
         public void Initialize(FaceControlConfiguration config, ExternalTrackerDataSource externalTracker)
@@ -87,6 +92,9 @@ namespace Baku.VMagicMirror
             _scale = applyScale;
             _min = applyMin;
             _max = applyMax;
+            
+            //lerpFactorは接続の信頼性に応じて上がっていく
+            _currentLerpFactor = lerpFactorOnLost;
         }
         
         private void Update()
@@ -108,7 +116,20 @@ namespace Baku.VMagicMirror
                 )
                 : Vector3.zero;
 
-            BodyOffset = Vector3.Lerp(BodyOffset, goal, lerpFactor * Time.deltaTime);
+            if (_externalTracker.Connected)
+            {
+                var addedLerp = 
+                    _currentLerpFactor +
+                    (lerpFactor - lerpFactorOnLost) * Time.deltaTime / lerpFactorBlendDuration;
+                _currentLerpFactor = Mathf.Min(addedLerp, lerpFactor);
+            }
+            else
+            {
+                //ロスったら一番遅いとこまでリセットし、やり直してもらう
+                _currentLerpFactor = lerpFactorOnLost;
+            }
+            
+            BodyOffset = Vector3.Lerp(BodyOffset, goal, _currentLerpFactor * Time.deltaTime);
         }
     }
 }

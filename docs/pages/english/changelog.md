@@ -11,6 +11,15 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v1.6.1
+{: .doc-sec2 }
+
+2021/01/30
+
+* Add: Hands go down when there is no keyboard or mouse input for certain time. This feature is enabled by default, and if you want to disable see setting window > `Motion` > `Arms` menu.
+* Add: Support for default face expression clip like `Neutral`.
+* Change: Motion became slower when iFacialMocap based tracking is lost.
+
 #### v1.6.0
 {: .doc-sec2 }
 

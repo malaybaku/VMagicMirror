@@ -58,7 +58,6 @@ MonoBehaviour:
   externalTracker: {fileID: 3222385201041346576}
   gamepadListener: {fileID: 464634161239495476}
   midiInputObserver: {fileID: 464634160986390039}
-  openCvFacePose: {fileID: 8545797446076795674}
 --- !u!1001 &464634161374065650
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -478,17 +477,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4c46089e00f194442983c97c9bdedd65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8545797446076795674 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 634827896268218299, guid: 0e82b614f7b2fe84da55e82db28a1900,
-    type: 3}
-  m_PrefabInstance: {fileID: 9103914377715274913}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8773ec8fce9f9d4db5919ab4d8a18ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

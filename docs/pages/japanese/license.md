@@ -45,7 +45,7 @@ permalink: /license
 
 MIT License
 
-Copyright (c) 2019-2020 獏星(ばくすたー)@baku_dreameater
+Copyright (c) 2019-2021 獏星(ばくすたー)@baku_dreameater
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

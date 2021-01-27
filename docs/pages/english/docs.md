@@ -37,6 +37,7 @@ Setting Window consists of 6 tabs.
 | Tab Name                         | Description                                                   |
 |:--------------------------------:|:--------------------------------------------------------------|
 | [Window](./docs/window)          | Control character window                                      |
+| [Face](./docs/face)              | Adjust facial motion setting except [External Tracker App](./docs/external_tracker).      |
 | [Motion](./docs/motion)          | Adjust character size related parameters and motion scale     |
 | [Layout](./docs/layout)          | Layout of camera and devices, and device based motion setting |
 | [Effects](./docs/effects)        | Light, shadow, bloom, and wind                                |

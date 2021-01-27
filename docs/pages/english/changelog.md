@@ -17,7 +17,8 @@ lang_prefix: /en/
 2021/01/30
 
 * Add: Hands go down when there is no keyboard or mouse input for certain time. This feature is enabled by default, and if you want to disable see setting window > `Motion` > `Arms` menu.
-* Add: Support for default face expression clip like `Neutral`.
+* Add: `Face` tab in setting window, which supports face related motion setting except about iOS collaboration. Most of the options are moved from `Motion` tab `Face` menu, in previous version.
+* Add: Support for default face expression clip like `Neutral`, in setting window `Face` tab > `BlendShape` menu.
 * Change: Motion became slower when iFacialMocap based tracking is lost.
 
 #### v1.6.0

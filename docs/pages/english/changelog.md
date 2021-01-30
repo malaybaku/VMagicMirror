@@ -14,7 +14,7 @@ lang_prefix: /en/
 #### v1.6.1
 {: .doc-sec2 }
 
-2021/01/30
+2021/01/31
 
 * Add: Hands go down when there is no keyboard or mouse input for certain time. This feature is enabled by default, and if you want to disable see setting window > `Motion` > `Arms` menu.
 * Add: `Face` tab in setting window, which supports face related motion setting except about iOS collaboration. Most of the options are moved from `Motion` tab `Face` menu, in previous version.

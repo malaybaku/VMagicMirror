@@ -13,6 +13,8 @@ lang_prefix: /en/
 
 {% include docimg.html file="/images/docs/motion_top.png" %}
 
+<div class="note-area" markdown="1">
+
 **NOTE**
 
 If you use v1.6.0 or older version, then you see `Face` menu in this tab. See [Face](./face) page for the detail.

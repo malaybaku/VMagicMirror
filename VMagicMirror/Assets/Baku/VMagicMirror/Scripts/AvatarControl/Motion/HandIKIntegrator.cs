@@ -16,6 +16,14 @@ namespace Baku.VMagicMirror
         private const float HandIkToggleDuration = 0.25f;
         private const float HandIkTypeChangeCoolDown = 0.3f;
 
+        //この時間だけ入力がなかったらマウスやキーボードの操作をしている手を下ろしてもいいよ、という秒数
+        //たぶん無いと思うけど、何かの周期とピッタリ合うと嫌なのでてきとーに小数値を載せてます
+        public const float AutoHandDownDuration = 10.5f;
+        
+        //NOTE: 2秒かけて下ろし、0.4秒で戻す、という速度。戻すほうがスピーディなことに注意
+        public const float HandDownBlendSpeed = 1f / 2f;
+        public const float HandUpBlendSpeed = 1f / 0.4f;
+
         [SerializeField] private TypingHandIKGenerator typing = null;
         public TypingHandIKGenerator Typing => typing;
 
@@ -54,7 +62,6 @@ namespace Baku.VMagicMirror
         private float _rightHandIkChangeCoolDown = 0f;
 
         private bool _enableHidArmMotion = true;
-
         public bool EnableHidArmMotion
         {
             get => _enableHidArmMotion;
@@ -64,6 +71,19 @@ namespace Baku.VMagicMirror
                 MouseMove.EnableUpdate = value;
             }
         }
+
+        private bool _enableHandDownTimeout = true;
+        public bool EnableHandDownTimeout
+        {
+            get => _enableHandDownTimeout;
+            set
+            {
+                _enableHandDownTimeout = value;
+                typing.EnableHandDownTimeout = value;
+                MouseMove.EnableHandDownTimeout = value;
+            }
+        }
+        
 
         public bool UseGamepadForWordToMotion { get; set; } = false;
         
@@ -126,6 +146,12 @@ namespace Baku.VMagicMirror
             Presentation = new PresentationHandIKGenerator(this, vrmLoadable, cam);
             _imageBaseHand = new ImageBaseHandIkGenerator(this, handTracker, imageBaseHandSetting, vrmLoadable);
             _downHand = new AlwaysDownHandIkGenerator(this, vrmLoadable);
+
+            MouseMove.DownHand = _downHand;
+            MouseMove.Integrator = this;
+            typing.DownHand = _downHand;
+            typing.Integrator = this;
+
         }
 
         //NOTE: 初めて手がキーボードから離れるまではnull
@@ -160,10 +186,18 @@ namespace Baku.VMagicMirror
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.Keyboard);
+                if (_leftTargetType == HandTargetType.Keyboard)
+                {
+                    typing.ResetLeftHandDownTimeout(false);
+                }
             }
             else if (hand == ReactedHand.Right)
             {
                 SetRightHandIk(HandTargetType.Keyboard);
+                if (_rightTargetType == HandTargetType.Keyboard)
+                {
+                    typing.ResetRightHandDownTimeout(false);
+                }
             }
 
             if (!AlwaysHandDownMode)
@@ -193,10 +227,18 @@ namespace Baku.VMagicMirror
             if (hand == ReactedHand.Left)
             {
                 SetLeftHandIk(HandTargetType.Keyboard);
+                if (_leftTargetType == HandTargetType.Keyboard)
+                {
+                    typing.ResetLeftHandDownTimeout(false);
+                }
             }
             else if (hand == ReactedHand.Right)
             {
                 SetRightHandIk(HandTargetType.Keyboard);
+                if (_rightTargetType == HandTargetType.Keyboard)
+                {
+                    typing.ResetRightHandDownTimeout(false);
+                }
             }
 
             if (!AlwaysHandDownMode)
@@ -226,6 +268,7 @@ namespace Baku.VMagicMirror
             if (_rightTargetType == HandTargetType.Mouse)
             {
                 _particleStore.RequestMouseMoveParticle(MouseMove.ReferenceTouchpadPosition);
+                MouseMove.ResetHandDownTimeout(false);
             }
         }
 
@@ -241,6 +284,7 @@ namespace Baku.VMagicMirror
                 if (_rightTargetType == HandTargetType.Mouse)
                 {
                     _particleStore.RequestMouseClickParticle();
+                    MouseMove.ResetHandDownTimeout(false);
                 }
             }
         }
@@ -403,6 +447,36 @@ namespace Baku.VMagicMirror
         
         #endregion
         
+        #region Util
+
+        /// <summary>
+        /// マウス/タイピングIKに関して、タイムアウトによって腕を下げていいかどうかを取得します。
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckTypingOrMouseHandsCanMoveDown()
+        {
+            if (_leftTargetType != HandTargetType.Keyboard &&
+                _rightTargetType != HandTargetType.Keyboard &&
+                _rightTargetType != HandTargetType.Mouse)
+            {
+                //この場合は特に意味がない
+                return false;
+            }
+
+            bool leftHandIsReady =
+                _leftTargetType != HandTargetType.Keyboard ||
+                typing.LeftHandTimeOutReached;
+
+            bool rightHandIsReady =
+                (_rightTargetType == HandTargetType.Keyboard && typing.RightHandTimeOutReached) ||
+                (_rightTargetType == HandTargetType.Mouse && MouseMove.IsNoInputTimeOutReached) ||
+                (_rightTargetType != HandTargetType.Keyboard && _rightTargetType != HandTargetType.Mouse);
+
+            return leftHandIsReady && rightHandIsReady;
+        }
+        
+        #endregion
+        
         #endregion
 
         private void Start()
@@ -422,6 +496,11 @@ namespace Baku.VMagicMirror
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             fingerController.Initialize(info.animator);
+            
+            //キャラロード前の時点ではHandDownとブレンドされることでIK位置が原点に飛ぶため、それらの値を捨てる
+            MouseMove.ResetHandDownTimeout(true);
+            Typing.ResetLeftHandDownTimeout(true);
+            Typing.ResetRightHandDownTimeout(true);
             
             //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にします。
             //棒立ちサポートをめちゃ適当にやっちゃえ！というのがモチベです
@@ -569,6 +648,11 @@ namespace Baku.VMagicMirror
                 gamepadFinger.GripLeftHand();
             }
 
+            if (targetType == HandTargetType.Keyboard)
+            {
+                typing.ResetLeftHandDownTimeout(true);
+            }
+            
             if (targetType == HandTargetType.ImageBaseHand)
             {
                 _imageBaseHand.InitializeHandPosture(ReactedHand.Left, _prevLeftHand);
@@ -620,6 +704,16 @@ namespace Baku.VMagicMirror
                 fingerController.ReleaseRightHandTyping();
             }
 
+            if (targetType == HandTargetType.Keyboard)
+            {
+                typing.ResetRightHandDownTimeout(true);
+            }
+            
+            if (targetType == HandTargetType.Mouse)
+            {
+                MouseMove.ResetHandDownTimeout(true);
+            }
+
             if (prevType == HandTargetType.Gamepad)
             {
                 gamepadFinger.ReleaseRightHand();
@@ -628,7 +722,7 @@ namespace Baku.VMagicMirror
             {
                 gamepadFinger.GripRightHand();
             }
-
+            
             //ブレンディングをきれいにするために直前で手があった位置を拾って渡してあげる
             if (targetType == HandTargetType.ImageBaseHand)
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using Zenject;
 
@@ -8,13 +9,19 @@ namespace Baku.VMagicMirror
     public class TypingHandIKGenerator : MonoBehaviour
     {
         private readonly IKDataRecord _leftHand = new IKDataRecord();
-        public IIKGenerator LeftHand => _leftHand;
+        private readonly IKDataRecord _blendedLeftHand = new IKDataRecord();
+        public IIKGenerator LeftHand => _blendedLeftHand;
 
         private readonly IKDataRecord _rightHand = new IKDataRecord();
-        public IIKGenerator RightHand => _rightHand;
+        private readonly IKDataRecord _blendedRightHand = new IKDataRecord();
+        public IIKGenerator RightHand => _blendedRightHand;
 
         //手を正面方向に向くよう補正するファクター。1に近いほど手が正面向きになる
         private const float WristForwardFactor = 0.5f;
+
+        //NOTE: HandIkIntegratorから初期化で入れてもらう
+        public AlwaysDownHandIkGenerator DownHand { get; set; } 
+        public HandIKIntegrator Integrator { get; set; }
 
         #region settings (WPFから飛んでくる想定のもの)
 
@@ -27,6 +34,15 @@ namespace Baku.VMagicMirror
         /// <summary>打鍵直後のキーボードに対する手のY方向オフセット[m]。</summary>
         public float YOffsetAfterKeyDown { get; set; } = 0.02f;
 
+        /// <summary> 一定時間タイピングしなかった場合に手降ろし姿勢に遷移すべきかどうか </summary>
+        public bool EnableHandDownTimeout { get; set; } = true;
+
+        /// <summary> 左手のタイピング入力が一定時間ないと立つフラグ </summary>
+        public bool LeftHandTimeOutReached => _leftHandNoInputCount > HandIKIntegrator.AutoHandDownDuration;
+        
+        /// <summary> 右手のタイピング入力が一定時間ないと立つフラグ </summary>
+        public bool RightHandTimeOutReached => _rightHandNoInputCount > HandIKIntegrator.AutoHandDownDuration;
+            
         #endregion
 
         #region 静的に決め打ちするもの
@@ -69,6 +85,18 @@ namespace Baku.VMagicMirror
         //左右それぞれの手について、現在押し下げている直近のキー
         private string _leftCurrentKey = "";
         private string _rightCurrentKey = "";
+
+        //入力(キーの上げ下げ)がない時間のカウント。
+        private float _leftHandNoInputCount = 0f;
+        private float _rightHandNoInputCount = 0f;
+
+        //この値で手下げ姿勢と手上げ姿勢をブレンドする。
+        private float _leftHandBlendRate = 1f;
+        private float _rightHandBlendRate = 1f;
+
+        //NOTE: こう書いた方がDRY原則っぽくなるので一応。
+        private const float HandDownBlendSpeed = HandIKIntegrator.HandDownBlendSpeed;
+        private const float HandUpBlendSpeed = HandIKIntegrator.HandUpBlendSpeed;
 
         [Inject]
         public void Initialize(KeyboardProvider provider)
@@ -136,7 +164,6 @@ namespace Baku.VMagicMirror
             }
         }
         
-
         public (ReactedHand, Vector3) KeyUp(string key, bool isLeftHandOnlyMode)
         {
             if (key != _leftCurrentKey && key != _rightCurrentKey)
@@ -165,7 +192,122 @@ namespace Baku.VMagicMirror
                 return (ReactedHand.Right, keyData.position);
             }
         }
-        
+
+
+        public void ResetLeftHandDownTimeout(bool refreshIkImmediate)
+        {
+            _leftHandNoInputCount = 0f;
+            if (refreshIkImmediate)
+            {
+                _leftHandBlendRate = 1f;
+                _blendedLeftHand.Position = _leftHand.Position;
+                _blendedLeftHand.Rotation = _leftHand.Rotation;
+            }
+        }
+
+        public void ResetRightHandDownTimeout(bool refreshIkImmediate)
+        {
+            _rightHandNoInputCount = 0f;
+            if (refreshIkImmediate)
+            {
+                _rightHandBlendRate = 1f;
+                _blendedRightHand.Position = _rightHand.Position;
+                _blendedRightHand.Rotation = _rightHand.Rotation;
+            }
+        }
+
+        private void Update()
+        {
+            UpdateLeft();
+            UpdateRight();
+            
+            void UpdateLeft()
+            {
+                if (EnableHandDownTimeout)
+                {
+                    _leftHandNoInputCount += Time.deltaTime;
+                }
+                else
+                {
+                    _leftHandNoInputCount = 0f;
+                }
+                
+                if (Integrator.CheckTypingOrMouseHandsCanMoveDown())
+                {
+                    _leftHandBlendRate = Mathf.Max(0f, _leftHandBlendRate - HandDownBlendSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    _leftHandBlendRate = Mathf.Min(1f, _leftHandBlendRate + HandUpBlendSpeed * Time.deltaTime);
+                }
+
+                //NOTE: 多くの場合ブレンド計算しないほうが計算が軽い
+                if (_leftHandBlendRate > 0.999f)
+                {
+                    _blendedLeftHand.Position = _leftHand.Position;
+                    _blendedLeftHand.Rotation = _leftHand.Rotation;
+                }
+                else if (_leftHandBlendRate < 0.001f)
+                {
+                    _blendedLeftHand.Position = DownHand.LeftHand.Position;
+                    _blendedLeftHand.Rotation = DownHand.LeftHand.Rotation;
+                }
+                else
+                {
+                    var rate = Mathf.SmoothStep(0, 1, _leftHandBlendRate);
+                    _blendedLeftHand.Position = Vector3.Lerp(
+                        DownHand.LeftHand.Position, _leftHand.Position, rate
+                        );
+                    _blendedLeftHand.Rotation = Quaternion.Slerp(
+                        DownHand.LeftHand.Rotation, _leftHand.Rotation, rate
+                        );
+                }
+            }
+            
+            void UpdateRight()
+            {                
+                if (EnableHandDownTimeout)
+                {
+                    _rightHandNoInputCount += Time.deltaTime;
+                }
+                else
+                {
+                    _rightHandNoInputCount = 0f;
+                }
+
+                if (Integrator.CheckTypingOrMouseHandsCanMoveDown())
+                {
+                    _rightHandBlendRate = Mathf.Max(0f, _rightHandBlendRate - HandDownBlendSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    _rightHandBlendRate = Mathf.Min(1f, _rightHandBlendRate + HandUpBlendSpeed * Time.deltaTime);
+                }
+
+                //NOTE: 多くの場合ブレンド計算しないほうが計算が軽い
+                if (_rightHandBlendRate > 0.999f)
+                {
+                    _blendedRightHand.Position = _rightHand.Position;
+                    _blendedRightHand.Rotation = _rightHand.Rotation;
+                }
+                else if (_rightHandBlendRate < 0.001f)
+                {
+                    _blendedRightHand.Position = DownHand.RightHand.Position;
+                    _blendedRightHand.Rotation = DownHand.RightHand.Rotation;
+                }
+                else
+                {
+                    var rate = Mathf.SmoothStep(0, 1, _rightHandBlendRate);
+                    _blendedRightHand.Position = Vector3.Lerp(
+                        DownHand.RightHand.Position, _rightHand.Position, rate
+                        );
+                    _blendedRightHand.Rotation = Quaternion.Slerp(
+                        DownHand.RightHand.Rotation, _rightHand.Rotation, rate
+                        );
+                }
+            }
+        }
+
         private IEnumerator KeyDownRoutine(IKTargets target, Vector3 targetPos)
         {
             bool isLeftHand = (target == IKTargets.LHand);

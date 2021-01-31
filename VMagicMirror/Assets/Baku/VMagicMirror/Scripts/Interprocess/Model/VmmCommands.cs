@@ -49,6 +49,7 @@ namespace Baku.VMagicMirror
         // Motion, Arm
         public const string EnableHidRandomTyping = nameof(EnableHidRandomTyping);
         public const string EnableShoulderMotionModify = nameof(EnableShoulderMotionModify);
+        public const string EnableTypingHandDownTimeout = nameof(EnableTypingHandDownTimeout);
         public const string SetWaistWidth = nameof(SetWaistWidth);
         public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);
         public const string EnableFpsAssumedRightHand = nameof(EnableFpsAssumedRightHand);
@@ -76,6 +77,8 @@ namespace Baku.VMagicMirror
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
+        public const string FaceNeutralClip = nameof(FaceNeutralClip);
+        public const string FaceOffsetClip = nameof(FaceOffsetClip);
 
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);

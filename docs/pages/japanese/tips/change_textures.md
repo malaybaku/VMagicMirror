@@ -20,6 +20,16 @@ permalink: /tips/change_textures
 * タッチパッドの画像を差し替える場合: `pad.png`
 * ゲームパッドの本体部分を差し替える場合: `gamepad_body.png`
 * ゲームパッドのスティックやボタン部分を差し替える場合: `gamepad_button.png`
+* MIDIコントローラのノート部分を差し替える場合: `midi_note.png`
+* MIDIコントローラのノブ部分を差し替える場合: `midi_knob.png`
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+MIDIコントローラ系のテクスチャ切り替えはv1.6.2以降で動作します。
+
+</div>
 
 デフォルトのままでよいものは、単にファイルが無いままであれば問題ありません。
 

@@ -21,6 +21,16 @@ Put the images to replace in this folder. File name must be following.
 * For the touch pad: `pad.png`
 * For the gamepad body : `gamepad_body.png`
 * For the gamepad buttons: `gamepad_button.png`
+* For the MIDI controller note area: `midi_note.png`
+* For the MIDI controller knob area: `midi_knob.png`
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+MIDI controller related texture support is from v1.6.2.
+
+</div>
 
 Default image is applied if above images does not exist.
 

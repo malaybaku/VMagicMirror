@@ -82,6 +82,8 @@ namespace Baku.VMagicMirror
                 knob.transform.localPosition =
                     knobOffset +
                     Vector3.right * (i * knobInterval - knobHalfWidth);
+                
+                knob.GetComponentInChildren<MeshRenderer>().material = HIDMaterialUtil.Instance.GetMidiKnobMaterial();
             }
         }
 

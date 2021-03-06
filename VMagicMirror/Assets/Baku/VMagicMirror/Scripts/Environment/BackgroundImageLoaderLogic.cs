@@ -1,6 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -8,74 +8,74 @@ namespace Baku.VMagicMirror
     public class BackgroundImageLoaderLogic : MonoBehaviour
     {
         [SerializeField] private BackgroundImageCanvas canvasPrefab = null;
-        
-        private void Start()
+
+        //NOTE: 1回も使ってない場合はインスタンスを作らないでおく。邪魔だからね。
+        private bool _hasCanvas = false;
+        private BackgroundImageCanvas _canvas = null;
+
+        //これinjectが正道なんだけどめんどくさいんでFindObjectします…。￥
+        private ShadowBoardMotion _shadowBoardMotion = null;
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
         {
-            var filePath = GetBackgroundImageFilePath();
-            Texture2D texture = null;
-            for (int i = 0; i < filePath.Length; i++)
-            {
-                texture = LoadTexture(filePath[i]);
-                if (texture != null)
+            receiver.AssignCommandHandler(
+                VmmCommands.SetBackgroundImagePath,
+                command =>
                 {
-                    break;
-                }
-            }
-            
-            if (texture == null)
+                    if (File.Exists(command.Content))
+                    {
+                        LoadBackgroundImage(command.Content);     
+                    }
+                    else
+                    {
+                        ClearBackgroundImage();
+                    }
+                });
+        }
+
+        private void LoadBackgroundImage(string imageFilePath)
+        {
+            if (!_hasCanvas)
             {
-                Destroy(gameObject);
+                _canvas = Instantiate(canvasPrefab, transform);
+                _hasCanvas = true;
+            }
+            _canvas.SetImage(LoadTexture(imageFilePath));
+            
+            //HACK: 背景を読み込むと影機能はもはや使えない(使うと背景が映らなくなってしまう)ので、
+            //UIからなんと言われても影を切る
+            _shadowBoardMotion.ForceKillShadowRenderer = true;
+        }
+
+        private void ClearBackgroundImage()
+        {
+            //そもそも1回も背景画像を入れてないよね、というケースをガードしてます
+            if (!_hasCanvas || !_canvas.gameObject.activeInHierarchy)
+            {
                 return;
             }
             
-            var canvas = Instantiate(canvasPrefab, transform);
-            canvas.SetImage(texture);
-            
-            //HACK: 背景を読み込むと影機能はもはや使えない(使うと背景が映らなくなってしまう)ので、
-            //UIからなんと言われても影を切るモードに落とす
-            var shadowMotion = FindObjectOfType<ShadowBoardMotion>();
-            if (shadowMotion != null)
-            {
-                shadowMotion.ForceKillShadowRenderer = true;
-            }
+            _canvas.gameObject.SetActive(false);
+            _shadowBoardMotion.ForceKillShadowRenderer = false;
+        }
+
+        private void Start()
+        {
+            //TODO: ここマナー悪い
+            _shadowBoardMotion = FindObjectOfType<ShadowBoardMotion>();
         }
 
         private static Texture2D LoadTexture(string filePath)
         {
-            if (!File.Exists(filePath))
-            {
-                return null;
-            }
-
             byte[] bin = File.ReadAllBytes(filePath);
-            var result = new Texture2D(16, 16); // Create new "empty" texture
+            var result = new Texture2D(16, 16);
             if (!result.LoadImage(bin))
             {
                 Destroy(result);
                 return null;
             }
-            
             return result;
-        }
-
-        //NOTE: 2つ返すけど拡張子違いです
-        private static string[] GetBackgroundImageFilePath()
-        {
-            string pngPath = Application.isEditor
-                ? Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    "Background.png"
-                ) 
-                : Path.Combine(
-                    Path.GetDirectoryName(Application.dataPath),
-                    "Background.png"
-                );
-            string jpgPath = Path.ChangeExtension(pngPath, "jpg");
-            return new []
-            {
-                pngPath, 
-                jpgPath,
-            };
         }
     }
 }

@@ -14,7 +14,8 @@
         
         // Image Quality
         public const string GetQualitySettingsInfo = nameof(GetQualitySettingsInfo);
-        
+        public const string ApplyDefaultImageQuality = nameof(ApplyDefaultImageQuality);
+
         // Word to Motion
         public const string GetAvailableCustomMotionClipNames = nameof(GetAvailableCustomMotionClipNames);
     }

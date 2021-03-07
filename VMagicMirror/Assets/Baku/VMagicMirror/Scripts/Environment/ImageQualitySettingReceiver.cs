@@ -6,9 +6,7 @@ namespace Baku.VMagicMirror
 {
     public class ImageQualitySettingReceiver
     {
-        
-        
-        public ImageQualitySettingReceiver(IMessageReceiver receiver)
+        public ImageQualitySettingReceiver(IMessageReceiver receiver, string defaultQualityName)
         {
             receiver.AssignCommandHandler(VmmCommands.SetImageQuality,
                 c => SetImageQuality(c.Content)
@@ -24,6 +22,14 @@ namespace Baku.VMagicMirror
                         CurrentQualityIndex = QualitySettings.GetQualityLevel(),
                     });
                 });
+            
+            receiver.AssignQueryHandler(
+                VmmQueries.ApplyDefaultImageQuality,
+                q => { 
+                    SetImageQuality(defaultQualityName);
+                    q.Result = defaultQualityName;
+                });
+
             SetFrameRateWithQuality(QualitySettings.GetQualityLevel());
         }
         

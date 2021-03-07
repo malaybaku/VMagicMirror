@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror
         [Inject]
         public void Initialize(IMessageReceiver receiver)
         {
-            var _ = new ImageQualitySettingReceiver(receiver);
+            var _ = new ImageQualitySettingReceiver(receiver, "High");
         }
     }
 }

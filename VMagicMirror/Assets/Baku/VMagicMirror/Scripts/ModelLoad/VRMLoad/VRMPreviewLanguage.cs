@@ -11,7 +11,9 @@
         {
             receiver.AssignCommandHandler(
                 VmmCommands.Language,
-                message => Language = message.Content
+                message => 
+                    //NOTE: WPF側が第3言語に対応する可能性があるが、Unity側は日英のみで通す
+                    Language = message.Content == "Japanese" ? "Japanese" : "English"
             );
         }
 

@@ -19,6 +19,7 @@ namespace Baku.VMagicMirror
         public event Action<VrmLoadedInfo> PostVrmLoaded; 
         public event Action VrmDisposing;
 
+        private IMessageSender _sender;
         private IKTargetTransforms _ikTargets = null;
         private VRMPreviewCanvas _previewCanvas = null;
         private HumanPoseTransfer _humanPoseTransferTarget = null;
@@ -27,6 +28,7 @@ namespace Baku.VMagicMirror
 
         [Inject]
         public void Initialize(
+            IMessageSender sender,
             IMessageReceiver receiver,
             VRMPreviewCanvas previewCanvas,
             IKTargetTransforms ikTargets,
@@ -103,10 +105,12 @@ namespace Baku.VMagicMirror
                 var context = new VRMImporterContext();
                 var file = File.ReadAllBytes(path);
                 context.ParseGlb(file);
+                var meta = context.ReadMeta(false);
 
                 context.Load();
                 context.EnableUpdateWhenOffscreen();
                 context.ShowMeshes();
+                _sender.SendCommand(MessageFactory.Instance.ModelNameConfirmedOnLoad(meta.Title));
                 SetModel(context.Root);
             }
             catch (Exception ex)

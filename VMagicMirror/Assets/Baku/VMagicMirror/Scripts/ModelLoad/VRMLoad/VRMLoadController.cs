@@ -36,6 +36,7 @@ namespace Baku.VMagicMirror
             ErrorInfoFactory errorInfoFactory
             )
         {
+            _sender = sender;
             _previewCanvas = previewCanvas;
             _ikTargets = ikTargets;
 
@@ -110,7 +111,7 @@ namespace Baku.VMagicMirror
                 context.Load();
                 context.EnableUpdateWhenOffscreen();
                 context.ShowMeshes();
-                _sender.SendCommand(MessageFactory.Instance.ModelNameConfirmedOnLoad(meta.Title));
+                _sender.SendCommand(MessageFactory.Instance.ModelNameConfirmedOnLoad("VRM File: " + meta.Title));
                 SetModel(context.Root);
             }
             catch (Exception ex)

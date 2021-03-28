@@ -23,6 +23,13 @@ Currently v1.1.0 supports iOS app `iFacialMocap`.
 
 Please see the detail at [External Tracker App](./docs/external_tracker).
 
+#### Setting File Management
+
+VMagicMirror v1.6.2 and later version supports setting file save and load internally.
+
+Detail is in [Setting Files](./docs/setting_files) page.
+
+This page refers both control panel `Home` tab functions and setting window `File` tab.
 
 #### Setting Window
 {: .doc-sec2 }
@@ -31,7 +38,7 @@ Please see the detail at [External Tracker App](./docs/external_tracker).
 
 {% include docimg.html file="/images/docs/setting_window.png" %}
 
-Setting Window consists of 6 tabs.
+Setting Window consists of 8 tabs.
 
 |----------------------------------+---------------------------------------------------------------|
 | Tab Name                         | Description                                                   |
@@ -41,8 +48,9 @@ Setting Window consists of 6 tabs.
 | [Motion](./docs/motion)          | Adjust character size related parameters and motion scale     |
 | [Layout](./docs/layout)          | Layout of camera and devices, and device based motion setting |
 | [Effects](./docs/effects)        | Light, shadow, bloom, and wind                                |
-| [Devices](./docs/devices)        | Connection settings for gamepad and MIDI controller.          |
+| [Devices](./docs/devices)        | Connection settings for gamepad and MIDI controller          |
 | [Expressions](./docs/expressions)| Feature to move the character face and motion                 |
+| [Setting Files](./docs/setting_files) | Advanced features to manage setting files |
 |==================================|===============================================================|
 
 <div class="note-area" markdown="1">

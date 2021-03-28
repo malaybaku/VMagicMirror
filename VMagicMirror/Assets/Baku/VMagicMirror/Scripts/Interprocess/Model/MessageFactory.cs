@@ -20,6 +20,8 @@ namespace Baku.VMagicMirror
 
         public Message SetUnityProcessId(int id) => WithArg(id.ToString());
 
+        public Message ModelNameConfirmedOnLoad(string modelName) => WithArg(modelName);
+        
         public Message RequestShowError(string data) => WithArg(data);
         
         public Message CloseConfigWindow() => NoArg();

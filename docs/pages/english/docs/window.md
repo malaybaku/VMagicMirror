@@ -11,7 +11,9 @@ lang_prefix: /en/
 
 `Window` tab supports BG color when the character window is not transparent, and also can toggle whether the window is always foreground or not.
 
-{% include docimg.html file="/images/docs/window_top.png" %}
+<div class="row">
+{% include docimg.html file="/images/docs/window_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
 #### Features
 {: .doc-sec2 }

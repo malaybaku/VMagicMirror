@@ -41,7 +41,7 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(
                 VmmCommands.SetCustomCameraPosition, 
                 message => 
-                    SetCustomCameraPosition(message.Content, false)
+                    SetCustomCameraPosition(message.Content, true)
                     );
 
             receiver.AssignCommandHandler(

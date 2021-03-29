@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary> アプリ起動時に背景画像が所定位置にあったら表示し、なければ自滅するクラス </summary>
+    /// <summary> 背景画像を適宜ロードするクラス </summary>
     public class BackgroundImageLoader : MonoBehaviour
     {
         [SerializeField] private BackgroundImageBoard board = null;

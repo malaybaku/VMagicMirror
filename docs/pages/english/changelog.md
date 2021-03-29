@@ -19,7 +19,7 @@ lang_prefix: /en/
 * Add: Background image loading feature.
 * Add: Setting save and load functions has become more useful, and support UDP message based setting load.
 * Add: MIDI controller texture replacement support, with similar way as keyboard and touch pad.
-* Fix: Fix issue that background transparency disabled when loading VRoid model on app start.
+* Fix: Fix issue that background transparency disabled when loading VRoid Hub model on app start.
 * Fix: Eye mesh bad appearance when using Perfect Sync in specific models. This issue is not fixed completely, but many of cases are now okay.
 * Changed: Internal large amount of code fix, in control panel (WPF).
 

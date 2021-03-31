@@ -30,18 +30,18 @@ With VMagicMirror v1.6.2 or later, you can try localization by following steps.
 
 The app will recognized newly added language option and you can choose it to apply.
 
-Note that, when you change some localization texts, VMagicMirror needs restart to reload those changes.
+When you change some localization texts, please restart VMagicMirror to reload the file changes.
 
 
 ## How to edit localization file
 
-There are some points to be careful when editing localization file.
+There are some points to be careful when editing localization file, coming from XML file format.
 
-Here the example from English to Japanese in this section.
+The following sections show example case, from English to Japanese translation.
 
 ### Basic Rule
 
-Basic concept is that, you only need to edit inside XML tag.
+Basic concept is, you only need to edit value inside XML tag.
 
 ```
 (in English.xaml)
@@ -59,7 +59,7 @@ Also, there are some additional rules.
 
 There are some XML tags with `xml:space="preserve"` description. It means the line break in content string is reflected as is.
 
-This option is used for some long instruction text, and in this case you should provide similar length and line numbers of text in your localization.
+This option is used for some long instruction text, and in this case you should provide similar volume of text in the localization.
 
 ```
 (In English.xaml)
@@ -74,11 +74,11 @@ Check "Keep LipSync" to make the lipsync continue.</sys:String>
 
 ### Formatted text
 
-Some messages includes placeholder `{0}` or `{1}` etc. in the text.
+Some messages include placeholder `{0}` or `{1}` etc. in the text.
 
-This placeholder is used by program to input content at runtime.
+These placeholders are used by program to set content at runtime.
 
-When replacing these messages, include same placeholder in somewhere of the localized text.
+When replacing these messages, include same placeholder in somewhere of the localized text. 
 
 ```
 (In English.xaml)
@@ -102,3 +102,4 @@ Second way is to create a new issue on this repository, with localization file a
 
 If you have choosed second way, author of this repository will make it for a pull request.
 
+First way is strongly recommended, because this way makes pull request author to a contributer, which is very reasonable for the runtime exe localization contribution.

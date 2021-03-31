@@ -4,36 +4,65 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary> アプリ起動時に背景画像が所定位置にあったら表示し、なければ自滅するクラス </summary>
+    /// <summary> 背景画像を適宜ロードするクラス </summary>
     public class BackgroundImageLoader : MonoBehaviour
     {
         [SerializeField] private BackgroundImageBoard board = null;
-        
+
+        private bool _windowFrameVisible = true;
         private string _backgroundImagePath = "";
+
+        private bool WindowFrameVisible
+        {
+            get => _windowFrameVisible;
+            set
+            {
+                if (_windowFrameVisible != value)
+                {
+                    _windowFrameVisible = value;
+                    Refresh();
+                }
+            }
+        }
+        
+        private string BackgroundImagePath
+        {
+            get => _backgroundImagePath;
+            set
+            {
+                if (_backgroundImagePath == value)
+                {
+                    return;
+                }
+
+                //ちょっと普通のsetterなら許されない事だが、privateプロパティなので許す。
+                _backgroundImagePath = File.Exists(value) ? value : "";
+                Refresh();
+            }
+        }
 
         [Inject]
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
                 VmmCommands.SetBackgroundImagePath,
-                command =>
-                {
-                    if (File.Exists(command.Content))
-                    {
-                        _backgroundImagePath = command.Content;
-                        LoadBackgroundImage(command.Content);     
-                    }
-                    else
-                    {
-                        _backgroundImagePath = "";
-                        ClearBackgroundImage();
-                    }
-                });
+                command => BackgroundImagePath = command.Content);
 
             receiver.AssignCommandHandler(
                 VmmCommands.WindowFrameVisibility,
-                command => CheckWindowFrameVisibility(command.ToBoolean())
-            );
+                command => WindowFrameVisible = command.ToBoolean());
+        }
+
+        private void Refresh()
+        {
+            if (_windowFrameVisible && File.Exists(_backgroundImagePath))
+            {
+                LoadBackgroundImage(_backgroundImagePath);
+            }
+            else
+            {
+                ClearBackgroundImage();
+            }
         }
 
         private void LoadBackgroundImage(string imageFilePath)
@@ -51,18 +80,6 @@ namespace Baku.VMagicMirror
         
         private void ClearBackgroundImage() => board.DisposeImage();
 
-        private void CheckWindowFrameVisibility(bool isVisible) 
-        {
-            if (isVisible && File.Exists(_backgroundImagePath)) 
-            { 
-                LoadBackgroundImage(_backgroundImagePath);
-            }
-            else
-            {
-                ClearBackgroundImage();
-            }        
-        }
-        
         private static Texture2D LoadTexture(string filePath)
         {
             byte[] bin = File.ReadAllBytes(filePath);

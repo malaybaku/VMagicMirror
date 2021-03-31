@@ -20,6 +20,8 @@ lang_prefix: /en/
 
 `Background`: Set background color by RGB.
 
+`BG Image`: Set or clear background image. 
+
 `Transparent Window`: Check to make character window transparent. Available in Streaming tab. 
 
 `(When Transparent) Drag Character`: Check to enable drag-based move the character window when transparent. Available in Streaming tab. 

@@ -119,6 +119,8 @@ If you do not want the dragging feature, then turn off `Drag the character` afte
 {% include docimg.html file="./images/get_started/img00_090_transparent_bg_can_click.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
 </div>
 
+Also you can set background image when `Transparent Window` is turn off, from `Load` button on `BG Image`.
+
 
 #### 2.2. Face
 {: .doc-sec2 }

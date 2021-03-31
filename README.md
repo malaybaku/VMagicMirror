@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.6.1
+v1.6.2
 
 * 作成: 獏星(ばくすたー)
-* 2021/01/31
+* 2021/03/31
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -16,6 +16,8 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 3. 質問など
 4. (開発者向け)ビルド手順
 5. OSS等のライセンス
+6. ローカリゼーションについて
+
 
 ## 1. できること
 
@@ -172,3 +174,8 @@ https://github.com/malaybaku/VMagicMirrorConfig/blob/master/VMagicMirrorConfig/V
 モデル取得元URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
 
 VMagicMirrorでは元モデルに対し、マテリアルを差し替えたものを用いています。これは他のキーボード、タッチパッド等と見た目の一貫性をはかるためです。
+
+## 6. ローカリゼーションについて
+
+日本語、英語以外のローカリゼーションでのContributionに興味がある場合、[about_localization.md](./about_localization.md)を参照して下さい。
+

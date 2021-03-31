@@ -25,6 +25,7 @@ namespace Baku.VMagicMirror
         public const string IgnoreMouse = nameof(IgnoreMouse);
         public const string TopMost = nameof(TopMost);
         public const string WindowDraggable = nameof(WindowDraggable);
+        public const string SetBackgroundImagePath = nameof(SetBackgroundImagePath);
         public const string MoveWindow = nameof(MoveWindow);
         public const string ResetWindowSize = nameof(ResetWindowSize);
         public const string SetWholeWindowTransparencyLevel = nameof(SetWholeWindowTransparencyLevel);

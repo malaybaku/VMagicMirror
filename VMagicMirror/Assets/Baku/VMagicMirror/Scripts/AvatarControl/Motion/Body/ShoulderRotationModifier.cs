@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using RootMotion.FinalIK;
 using UnityEngine;
 using Zenject;
 
@@ -9,7 +10,7 @@ namespace Baku.VMagicMirror
     /// この処理自体はIKではない事に注意！
     /// </summary>
     /// <remarks>
-    /// この処理は実はビルトインモーションと競合するんだけど、効きがそこまで強くないので有効になりっぱなしでもOKとします
+    /// この処理はビルトインモーションと競合しているので、IKのウェイトに応じて効きを弱めます。
     /// </remarks>
     public class ShoulderRotationModifier : MonoBehaviour
     {
@@ -70,6 +71,9 @@ namespace Baku.VMagicMirror
         private Transform _rightUpperArm = null;
         private Transform _rightLowerArm = null;
 
+        //NOTE: なぜ右手だけかというと、右手だけ見とけばモーション実行時のウェイト制御の様子が十分追えるため。
+        private IKEffector _rightHandEffector = null;
+
         //handDiffMaxBaseに身長分の補正がかかった値です
         private float _handDiffMax = 0.01f;
         
@@ -113,7 +117,32 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(
                 VmmCommands.EnableShoulderMotionModify,
                 command => EnableRotationModification = command.ToBoolean()
-            );        }
+            );        
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableWaitMotion,
+                command => EnableWaitMotion = command.ToBoolean()
+                );
+        }
+
+        private bool _enableWaitMotion = true;
+
+        private bool EnableWaitMotion
+        {
+            get => _enableWaitMotion;
+            set
+            {
+                if (_enableWaitMotion != value)
+                {
+                    _enableWaitMotion = value;
+                    if (!value)
+                    {
+                        _waitMotionBasedLeftRollDeg = 0;
+                        _waitMotionBasedRightRollDeg = 0;
+                    }
+                }
+            }
+        }
 
         private bool _enableRotationModification = true;
         public bool EnableRotationModification
@@ -144,6 +173,8 @@ namespace Baku.VMagicMirror
             _rightShoulder = info.animator.GetBoneTransform(HumanBodyBones.RightShoulder);
             _rightUpperArm = info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
             _rightLowerArm = info.animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+
+            _rightHandEffector = info.vrmRoot.GetComponent<FullBodyBipedIK>().solver.rightHandEffector;
             
             _handDiffMax = handDiffMaxBase * 
                 info.animator.GetBoneTransform(HumanBodyBones.Head).position.y / ReferenceHeadHeight;
@@ -171,6 +202,8 @@ namespace Baku.VMagicMirror
             _rightShoulder = null;
             _rightUpperArm = null;
             _rightLowerArm = null;
+
+            _rightHandEffector = null;
         }
 
         private void InitializeBoneParameters(Animator animator)
@@ -198,18 +231,24 @@ namespace Baku.VMagicMirror
 
             UpdateStaticRotation();
             UpdateDynamicRotation();
-            UpdateWaitMotionBasedRotation();
+            if (EnableWaitMotion)
+            {
+                UpdateWaitMotionBasedRotation();
+            }
+
+            //IKが効かない = ビルトインモーションが動いてるはずなので、この場合は肩も止める
+            float rotRate = _rightHandEffector.positionWeight;
 
             _leftShoulder.localRotation = Quaternion.Euler(
                 0,
-                _staticLeftShoulderEuler.y ,
-                _staticLeftShoulderEuler.z + _diffBasedLeftRollDeg + _waitMotionBasedLeftRollDeg
+                rotRate * _staticLeftShoulderEuler.y,
+                rotRate * (_staticLeftShoulderEuler.z + _diffBasedLeftRollDeg + _waitMotionBasedLeftRollDeg)
             );
 
             _rightShoulder.localRotation = Quaternion.Euler(
                 0,
-                _staticRightShoulderEuler.y,
-                _staticRightShoulderEuler.z + _diffBasedRightRollDeg + _waitMotionBasedRightRollDeg
+                rotRate * _staticRightShoulderEuler.y,
+                rotRate * (_staticRightShoulderEuler.z + _diffBasedRightRollDeg + _waitMotionBasedRightRollDeg)
             );
             
             void UpdateStaticRotation()

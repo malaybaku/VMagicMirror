@@ -10,7 +10,12 @@ permalink: /docs/window
 
 `ウィンドウ`タブではキャラクター表示ウィンドウの背景が不透明なときの背景色や、最前面表示のオン・オフが切り替えられます。
 
-{% include docimg.html file="/images/docs/window_top.png" %}
+{% include docimg.html file="/images/docs/word_to_motion_custom_flow.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+
+<div class="row">
+{% include docimg.html file="/images/docs/window_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
+
 
 #### 基本機能
 {: .doc-sec2 }
@@ -18,6 +23,8 @@ permalink: /docs/window
 `背景色`: 背景色をRGB指定で設定できます。
 
 `背景を透過`: チェックがオンになっているとキャラクター表示ウィンドウの背景が透明になります。`配信`タブにもある機能です。
+
+`背景画像`: 背景画像を指定する機能です。`配信`タブにもある機能です。
 
 `(透過中)キャラ付近を掴んでドラッグ`: チェックがオンで背景を透過にしているとき、キャラを掴んで移動させられます。`配信`タブにもある機能です。
 

@@ -113,7 +113,7 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 #### 2.1. ウィンドウ
 {: .doc-sec2 }
 
-`ウィンドウ`で`背景を透過`をチェックすると、背景を透明にできます。`VMagicMirror`は通常、この状態で使用します。
+`ウィンドウ`で`背景を透過`をチェックすると、背景を透明にできます。
 
 背景が透明であり、かつ`(透過中)キャラ付近を掴んでドラッグ`のチェックがオンであれば、キャラクターを`左クリック+ドラッグ`で移動できます。
 
@@ -124,6 +124,8 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 {% include docimg.html file="./images/get_started/img00_070_transparent_bg_drag.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
 {% include docimg.html file="./images/get_started/img00_090_transparent_bg_can_click.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
 </div>
+
+また`背景を透過`がオフであれば、`背景画像`の`ロード`から背景画像を設定したり、`クリア`で元の単色背景に戻したりできます。
 
 
 #### 2.2. 顔・表情

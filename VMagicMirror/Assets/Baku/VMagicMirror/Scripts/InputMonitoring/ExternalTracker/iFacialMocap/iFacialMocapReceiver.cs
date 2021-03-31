@@ -523,6 +523,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 _faceTrackSource.Eye.RightLookOut =  _blendShapes[iFacialMocapBlendShapeNames.eyeLookOutRight];
                 _faceTrackSource.Eye.RightLookUp =  _blendShapes[iFacialMocapBlendShapeNames.eyeLookUpRight];
                 _faceTrackSource.Eye.RightLookDown =  _blendShapes[iFacialMocapBlendShapeNames.eyeLookDownRight];
+                LimitSquint();
             }
 
             //口: 単純に数が多い！
@@ -620,6 +621,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 _faceTrackSource.Eye.RightLookOut = Mathf.Lerp(_faceTrackSource.Eye.RightLookOut, _blendShapes[iFacialMocapBlendShapeNames.eyeLookOutRight], UpdateApplyRate);
                 _faceTrackSource.Eye.RightLookUp = Mathf.Lerp(_faceTrackSource.Eye.RightLookUp, _blendShapes[iFacialMocapBlendShapeNames.eyeLookUpRight], UpdateApplyRate);
                 _faceTrackSource.Eye.RightLookDown = Mathf.Lerp(_faceTrackSource.Eye.RightLookDown, _blendShapes[iFacialMocapBlendShapeNames.eyeLookDownRight], UpdateApplyRate);
+                LimitSquint();
             }
 
             //口: 単純に数が多い！
@@ -673,6 +675,15 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 
                 _faceTrackSource.Tongue.TongueOut = Mathf.Lerp(_faceTrackSource.Tongue.TongueOut,_blendShapes[iFacialMocapBlendShapeNames.tongueOut], UpdateApplyRate);
             }
+        }
+
+        //左右の目について、BlinkとSquintの合計値が1を超えるのを禁止します。
+        private void LimitSquint()
+        {
+            _faceTrackSource.Eye.LeftSquint =
+                Mathf.Min(_faceTrackSource.Eye.LeftSquint, 1f - _faceTrackSource.Eye.LeftBlink);
+            _faceTrackSource.Eye.RightSquint =
+                Mathf.Min(_faceTrackSource.Eye.RightSquint, 1f - _faceTrackSource.Eye.RightBlink);
         }
         
         #endregion

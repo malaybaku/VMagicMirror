@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.6.1
+v1.6.2
 
 * Author: Baxter
-* 2021/Jan/31
+* 2021/Mar/31
 
 The VRM avatar application without any special device.
 
@@ -17,6 +17,7 @@ The VRM avatar application without any special device.
 3. Contact
 4. (For Developers) Build
 5. Third-Party License
+6. About Localization Contribution
 
 ## 1. Features
 
@@ -175,3 +176,8 @@ Creator: Criegrrunov
 URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
 
 In VMagicMirror, the materials are replaced for the visual consistency.
+
+
+## 6. About Localization Contribution
+
+Please check [about_localization.md](./about_localization.md), when you plan to contribute by localization activity.

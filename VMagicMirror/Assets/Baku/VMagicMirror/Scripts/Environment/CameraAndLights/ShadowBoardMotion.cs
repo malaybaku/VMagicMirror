@@ -25,6 +25,9 @@ namespace Baku.VMagicMirror
         }
 
         private bool _forceKillShadowRenderer;
+        /// <summary>
+        /// どうしてもシャドウを無効化してほしいときに使う。背景画像をロードした場合はオンになっててほしい。
+        /// </summary>
         public bool ForceKillShadowRenderer
         {
             get => _forceKillShadowRenderer;
@@ -62,6 +65,6 @@ namespace Baku.VMagicMirror
 
 
         private void RefreshRendererEnable() 
-        => _renderer.enabled = EnableShadowRenderer && !ForceKillShadowRenderer;
+            => _renderer.enabled = EnableShadowRenderer && !ForceKillShadowRenderer;
     }
 }

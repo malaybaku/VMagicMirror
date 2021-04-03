@@ -62,8 +62,8 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 
 メンテナの開発環境は以下の通りです。
 
-* Unity 2019.4.1f1 Personal
-* Visual Studio Community 2019 16.6.3
+* Unity 2019.4.23f1 Personal
+* Visual Studio Community 2019 16.9.2
     * .NET Core 3.1 SDKがインストール済みであること
     * Visual Studioのコンポーネントで「C++によるデスクトップ開発」をインストール済みであること
         - UnityのBurstコンパイラ向けに必要なセットアップです。
@@ -74,12 +74,9 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.61.1
-* [UniRx](https://github.com/neuecc/UniRx) (アセットストアから)
 * [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
 * [Zenject](https://github.com/svermeulen/Extenject) (アセットストアから)
-* [MidiJack](https://github.com/malaybaku/MidiJack)
 * SharpDX.DirectInput 4.2.0
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
@@ -93,8 +90,6 @@ FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセッ�
 
 "Fly,Baby." および "LaserLightShader"はBOOTHで販売されているアセットで、ビルドに必須ではありませんが、もし導入しない場合、タイピング演出が一部動かなくなります。
 
-MidiJackはForkしたものを使っている点に注意して下さい。
-
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
 
 SharpDXは次の手順で導入します。
@@ -107,37 +102,25 @@ RawInput.Sharpもほぼ同様の導入手順です。
 - NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
 - 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
 
-UniVRMについては、導入後に2箇所を変更します。
-
-`Assets/VRM/UniHumanoid/Scripts/HumanPoseTransfer.cs`の68行目付近に次のようなコードを追記します。
+OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のように書き換えます。
 
 ```
-//...
-        HumanPoseHandler m_handler;
-    
-        //下記の1行を追加
-        public HumanPoseHandler PoseHandler => m_handler;
-    
-        public void OnEnable()
-        {
-//...
-```
+    abstract public class DisposableOpenCVObject : DisposableObject
+    {
 
-また、`Assets/VRM/UniVRM/Scripts/BlendShape/VRMBlendShapeProxy.cs`の20行目付近に次のようなコードを追記します。
+//        internal IntPtr nativeObj;
+        //Change to public member
+        public IntPtr nativeObj;
 
 ```
-//...
-        //この関数を追記
-        public void ReloadBlendShape()
-        {
-            m_merger?.RestoreMaterialInitialValues(BlendShapeAvatar.Clips);
-            if (BlendShapeAvatar != null)
-            {
-                m_merger = new BlendShapeMerger(BlendShapeAvatar.Clips, transform);                
-            }
-        }
-//...
-```
+
+以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
+
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
+* [UniRx](https://github.com/neuecc/UniRx)
+* [MidiJack](https://github.com/malaybaku/MidiJack)
+    * オリジナルのMidiJackではなく、Forkレポジトリです。
+
 
 ### 4.3. ビルド
 

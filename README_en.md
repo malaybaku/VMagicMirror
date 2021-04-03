@@ -65,8 +65,8 @@ Open Unity project with Unity 2019.4.x, and open WPF project with Visual Studio 
 
 Maintainer's environment is as following.
 
-* Unity 2019.4.1f1 Personal
-* Visual Studio Community 2019.16.6.3
+* Unity 2019.4.23f1 Personal
+* Visual Studio Community 2019.16.9.2
     * .NET Core 3.1 SDK
     * Visual Studio Component "C++ Desktop Development" is required.
 
@@ -75,12 +75,9 @@ Maintainer's environment is as following.
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
-* [UniVRM](https://dwango.github.io/vrm/) v0.61.1
-* [UniRx](https://github.com/neuecc/UniRx) (from Asset Store)
 * [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
 * [Zenject](https://github.com/svermeulen/Extenject) (from Asset Store)
-* [MidiJack](https://github.com/malaybaku/MidiJack)
 * SharpDX.DirectInput 4.2.0
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
@@ -94,8 +91,6 @@ Should be noted that `FinalIK`, `Dlib FaceLandmark Detector`, and `OpenCV for Un
 
 "Fly,Baby." and "LaserLightShader" are available on BOOTH, and they are optional. If you do not introduce them, some of typing effects will not work correctly.
 
-Also should be careful that `MidiJack` used in VMagicMirror is forked one.
-
 Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
 
 Install SharpDX by following steps.
@@ -108,38 +103,25 @@ RawInput.Sharp can be installed with almost same work flow.
 - Get `.nupkg` from NuGet gallery and expand as zip to get `lib/netstandard1.1/RawInput.Sharp.dll`
 - Create `RawInputSharp` folder in Unity project's Assets folder, and put dll into the folder.
 
-For the UniVRM, you need to modify 2 points.
-
-In `Assets/VRM/UniHumanoid/Scripts/HumanPoseTransfer.cs` and add a line,
+For OpenCVforUnity, edit `DisposableOpenCVObject.cs`: 
 
 ```
-//...
-        HumanPoseHandler m_handler;
+    abstract public class DisposableOpenCVObject : DisposableObject
+    {
+
+//        internal IntPtr nativeObj;
+        //Change to public member
+        public IntPtr nativeObj;
+
+```
+
+Also there are some UPM based dependencies.
+
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
+* [UniRx](https://github.com/neuecc/UniRx)
+* [MidiJack](https://github.com/malaybaku/MidiJack)
+    * This is fork repository and not the original.
     
-        //Add following line
-        public HumanPoseHandler PoseHandler => m_handler;
-    
-        public void OnEnable()
-        {
-//...
-```
-
-Also, in `Assets/VRM/UniVRM/Scripts/BlendShape/VRMBlendShapeProxy.cs`,
-
-```
-//...
-        //Add this method
-        public void ReloadBlendShape()
-        {
-            m_merger?.RestoreMaterialInitialValues(BlendShapeAvatar.Clips);
-            if (BlendShapeAvatar != null)
-            {
-                m_merger = new BlendShapeMerger(BlendShapeAvatar.Clips, transform);                
-            }
-        }
-//...
-```
-
 ### 4.3. Build
 
 * In Unity,

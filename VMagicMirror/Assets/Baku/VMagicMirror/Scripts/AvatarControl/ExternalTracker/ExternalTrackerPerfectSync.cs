@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Baku.VMagicMirror.VRMExtension;
 using UnityEngine;
 using Zenject;
 using VRM;
@@ -353,8 +354,9 @@ namespace Baku.VMagicMirror.ExternalTracker
             //そうじゃないとFaceSwitchとかWord to Motionとの組み合わせで破綻するため。
             _blendShapeInitializer.ReloadClips();
             
-            //TODO: このリロードの実装のためにUniVRMを書き換えているが、本当は書き換えたくない…
+            //TODO: このリロードの実装のためにリフレクションを使っているがちょっと危ない
             _blendShape.ReloadBlendShape();
+            
         }
         
         private void ParseClipCompletenessToSendMessage()

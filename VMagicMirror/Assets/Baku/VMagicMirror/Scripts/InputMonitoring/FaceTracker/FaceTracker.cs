@@ -132,6 +132,8 @@ namespace Baku.VMagicMirror
             get { lock (_faceDetectCompletedLock) return _faceDetectCompleted; }
             set { lock (_faceDetectCompletedLock) _faceDetectCompleted = value; }
         }
+
+        public bool IsHighPowerMode => isHighPowerMode;
         
         //UIスレッドがタイミングを見計らうために使う
         private float _countFromPreviousSetColors = 0f;
@@ -149,6 +151,12 @@ namespace Baku.VMagicMirror
         private Rect _mainPersonRect;
         private List<Vector2> _mainPersonLandmarks = null;
 
+        
+        //TODO: なるべくキレイに管理したい…
+        private DnnBasedDetectionToFaceParts _dnnBasedDetectionToFaceParts;
+        private MyDnnBasedDetectionWebCamTexture _dnnBasedDetection;
+        public DnnBasedFaceParts DnnBasedFaceParts { get; } = new DnnBasedFaceParts();
+
         #endregion
 
         [Inject]
@@ -157,9 +165,11 @@ namespace Baku.VMagicMirror
             var _ = new FaceTrackerReceiver(receiver, this);
             var __ = new CalibrationCompletedDataSender(sender, this);
         }
-        
+
         private void Start()
         {
+            _dnnBasedDetection = GetComponent<MyDnnBasedDetectionWebCamTexture>();
+            _dnnBasedDetectionToFaceParts = new DnnBasedDetectionToFaceParts(_dnnBasedDetection, DnnBasedFaceParts);
             CalibrationData.SetDefaultValues();
             string predictorFilePath = Path.Combine(Application.streamingAssetsPath, FaceTrackingDataFileName);
             _faceLandmarkDetector = new FaceLandmarkDetector(predictorFilePath);
@@ -208,6 +218,15 @@ namespace Baku.VMagicMirror
                     
                 try
                 {
+                    if (isHighPowerMode)
+                    {
+                        _webCamTexture.GetPixels32(_colors);
+                        _dnnBasedDetection.UpdateByColors(_colors, _webCamTexture.width, _webCamTexture.height);
+                        _dnnBasedDetectionToFaceParts.Update(_webCamTexture.width, _webCamTexture.height, DisableHorizontalFlip);
+                        FaceDetectedAtLeastOnce = true;
+                        return;
+                    }
+                    
                     if (!isHighPowerMode && _webCamTexture.width >= halfResizeWidthThreshold)
                     {
                         _webCamTexture.GetPixels32(_rawSizeColors);
@@ -377,6 +396,11 @@ namespace Baku.VMagicMirror
                     _colors = new Color32[_webCamTexture.width * _webCamTexture.height];
                 }
             }
+            
+            if (isHighPowerMode)
+            {
+                _dnnBasedDetection.SetUp(_webCamTexture.width, _webCamTexture.height);
+            }
         }
 
         private void FaceDetectionRoutine()
@@ -386,7 +410,8 @@ namespace Baku.VMagicMirror
                 Thread.Sleep(16);
                 //書いてある通りだが、UIスレッド側からテクスチャが来ない場合や、
                 //テクスチャはあるが出力読み出し待ちになってる場合は無視
-                if (!FaceDetectPrepared || FaceDetectCompleted)
+                //高パワーモードの場合はDNNで別途頑張るので、この場合も無視
+                if (!FaceDetectPrepared || FaceDetectCompleted || isHighPowerMode)
                 {
                     continue;
                 }
@@ -446,6 +471,11 @@ namespace Baku.VMagicMirror
 
         private void Dispose()
         {
+            if (isHighPowerMode)
+            {
+                _dnnBasedDetection.Stop();
+            }
+            
             _isInitWaiting = false;
             HasInitDone = false;
             FaceDetectedAtLeastOnce = false;
@@ -512,7 +542,7 @@ namespace Baku.VMagicMirror
             //顔が検出できてるので、未検出カウントダウンは最初からやり直し
             _faceNotDetectedCountDown = activeButNotTrackedCount;
         }
-
+        
         private void LerpToDefaultFace()
         {
             float lerpFactor = notTrackedResetSpeedFactor * Time.deltaTime;
@@ -548,7 +578,7 @@ namespace Baku.VMagicMirror
         private void SetHalfSizePixels(Color32[] src, Color32[] dest, int srcWidth, int srcHeight)
         {
             //この圧縮はk-NN: 4ピクセル中左上のピクセルの値をそのまま採用
-            //周辺ピクセルを平均するのは事も考えられるが、重いわりに効果ないのでやらない
+            //周辺ピクセルを平均するのは重いわりに効果ないのでやらない
             int destWidth = srcWidth / 2;
             int destHeight = srcHeight / 2;
             for (int y = 0; y < destHeight; y++)

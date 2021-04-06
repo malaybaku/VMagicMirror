@@ -170,7 +170,8 @@ namespace Baku.VMagicMirror
 
             var amplifier = _currentOffsetAmplifier;
             //とりあえず簡単に。値域はもっと決めようあるよねここは。
-            forwardLength = enableBodyLeanZ
+            //HACK: 高負荷モードは仕組み的にzを推定してないため、とりあえず切る
+            forwardLength = (!_faceTracker.IsHighPowerMode && enableBodyLeanZ)
                 ? Mathf.Clamp(
                     (faceSizeFactor - 1.0f) * amplifier.z,
                     offsetLowerLimit.z, 
@@ -178,7 +179,9 @@ namespace Baku.VMagicMirror
                     )
                 : 0f;
 
-            var center = _faceTracker.DetectedRect.center - _faceTracker.CalibrationData.faceCenter;
+            var center = _faceTracker.IsHighPowerMode 
+                ? _faceTracker.DnnBasedFaceParts.FaceXyPosition - _faceTracker.CalibrationData.faceCenter
+                : _faceTracker.DetectedRect.center - _faceTracker.CalibrationData.faceCenter;
             
             var idealPosition = new Vector3(
                 center.x * amplifier.x,
@@ -186,6 +189,7 @@ namespace Baku.VMagicMirror
                 forwardLength
                 );
 
+            //NOTE: 高負荷モードでスピード上げてもいいかも
             Vector3 idealSpeed = (idealPosition - _prevPosition) / timeScaleFactor;
             Vector3 speed = Vector3.Lerp(_prevSpeed, idealSpeed, speedFactor * Time.deltaTime);
             Vector3 pos = _prevPosition + Time.deltaTime * speed;

@@ -92,6 +92,12 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            if (_faceTracker.IsHighPowerMode)
+            {
+                HighPowerModeUpdate();
+                return;
+            }
+
             var anglesFactor = _isHighPowerMode ? headEulerAnglesFactorHighPower : headEulerAnglesFactor;
             var speedDumpFactor = _isHighPowerMode ? speedDumpHighPower : speedDump;
             var posDumpFactor = _isHighPowerMode ? posDumHighPower : posDump;
@@ -156,6 +162,33 @@ namespace Baku.VMagicMirror
             ImageBaseFaceRotationUpdated?.Invoke(rotationAdjusted);
         }
 
+        //DEBUGも兼ねて: 高出力モードのとき、一切のスムージングを行わずに頭部姿勢に反映してみる
+        private void HighPowerModeUpdate()
+        {
+            //TODO: 既存姿勢とのブレンディングとか一切考えてないが、本来は必要
+            var src = _faceTracker.DnnBasedFaceParts;
+            
+            var rawRot = Quaternion.Euler(
+                src.PitchFactor * 40f,
+                src.YawFactor * 30f,
+                src.RollAngleDeg
+                );
+
+            var rot = Quaternion.Slerp(
+                _prevRotation, rawRot, _highPowerSlerpFactor * Time.deltaTime
+                );
+            _prevRotation = rot;
+
+            rot.ToAngleAxis(out float angle, out var axis);
+            rot = Quaternion.AngleAxis(angle * 0.5f, axis);
+
+            _neck.localRotation *= rot;
+            _head.localRotation *= rot;
+        }
+
+        private float _highPowerSlerpFactor = 12f;
+        private Quaternion _prevRotation = Quaternion.identity;
+        
         //ヨーの動きがあるとき、首を下に向けさせる(首振り運動は通常ピッチが下がるのを決め打ちでやる)ための処置
         private static float PitchDiffByYawSpeed(float degPerSecond)
         {

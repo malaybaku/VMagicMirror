@@ -37,9 +37,9 @@ namespace Baku.VMagicMirror
             //openDiffとかcloseDiffのせいで値が01を超えてもよい
             float openKeepDiff = eyeOpenKeepDiffPer16ms * Time.deltaTime * 60f;
             float openFromCloseDiff = eyeOpenFromCloseDiffPer16ms * Time.deltaTime * 60f;
-            
-            float left = _faceTracker.EyeOpen.LeftEyeBlink;
 
+            float left = _faceTracker.CurrentAnalyzer.Result.LeftBlink;
+            
             // 目の動きは3パターン考えると分かりやすい(書いてある通りだけど)
             if (left > blinkJumpThreshold)
             {
@@ -79,7 +79,7 @@ namespace Baku.VMagicMirror
                 );
             }
 
-            float right = _faceTracker.EyeOpen.RightEyeBlink;
+            float right = _faceTracker.CurrentAnalyzer.Result.RightBlink;
             if (right > blinkJumpThreshold)
             {
                 //とりあえず値が一定以上 -> ただちに閉じる。

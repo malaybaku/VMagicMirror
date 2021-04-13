@@ -163,26 +163,18 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-
-            float forwardLength = 0.0f;
-            float faceSize = _faceTracker.DetectedRect.width * _faceTracker.DetectedRect.height;
-            float faceSizeFactor = Mathf.Sqrt(faceSize / _faceTracker.CalibrationData.faceSize);
-
+            
             var amplifier = _currentOffsetAmplifier;
-            //とりあえず簡単に。値域はもっと決めようあるよねここは。
-            //HACK: 高負荷モードは仕組み的にzを推定してないため、とりあえず切る
-            forwardLength = (!_faceTracker.IsHighPowerMode && enableBodyLeanZ)
+            float forwardLength = enableBodyLeanZ
                 ? Mathf.Clamp(
-                    (faceSizeFactor - 1.0f) * amplifier.z,
+                    _faceTracker.CurrentAnalyzer.Result.ZOffset * amplifier.z,
                     offsetLowerLimit.z, 
                     offsetUpperLimit.z
                     )
                 : 0f;
 
-            var center = _faceTracker.IsHighPowerMode 
-                ? _faceTracker.DnnBasedFaceParts.FaceXyPosition - _faceTracker.CalibrationData.faceCenter
-                : _faceTracker.DetectedRect.center - _faceTracker.CalibrationData.faceCenter;
-            
+            var center = _faceTracker.CurrentAnalyzer.Result.FacePosition;
+
             var idealPosition = new Vector3(
                 center.x * amplifier.x,
                 center.y * amplifier.y,

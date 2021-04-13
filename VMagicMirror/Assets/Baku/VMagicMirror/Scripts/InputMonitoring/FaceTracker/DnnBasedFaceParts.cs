@@ -7,16 +7,15 @@ namespace Baku.VMagicMirror
     /// 画像座標は左下隅を(0, 0)とすること。
     /// デフォルトでは左右反転がオンで、DisableHorizontalFlipがtrueになるとCalculateの呼び出し結果で左右非反転の値が入ります。
     /// </summary>
-    public class DnnBasedFaceParts 
+    public class DnnBasedFaceParts  : IFaceAnalyzeResult
     {
         //NOTE: 呼び出し元のほうで、dnnの結果をこのプロパティ群に突っ込んでいく
         //TODO: 座標の取り決め必要。入力時点で左下(0,0)を強制するのが無難かな？実装はこの座標を前提に組みます。
         
+        #region interfaceじゃないけど必要なデータ入力
+
         /// <summary> 画像全体のサイズ </summary>
         public Vector2 ImageSize { get; set; }
-        
-        /// <summary> 顔が映っていたエリア。矩形で取るので回転は考慮しない </summary>
-        public Rect FaceArea { get; set; }
         
         /// <summary> 左目の位置。開閉とは関係なく、眼窩の中心を推定 </summary>
         public Vector2 LeftEye { get; set; }
@@ -33,37 +32,55 @@ namespace Baku.VMagicMirror
         /// <summary> 鼻先の位置。ほかの目、口のランドマーク(4点)と鼻先の位置を比べるとヨー、ピッチが推定できます </summary>
         public Vector2 NoseTop { get; set; }
         
+        #endregion
+   
         /// <summary> trueを指定した場合、左右反転を無効にします。 </summary>
         public bool DisableHorizontalFlip { get; set; }
         
-        //NOTE: ヨー、ピッチは純粋な幾何的角度が出ない(鼻の高さにやや依存する+ヒューリスティック計算が胡散臭い)。
-        //そのため、だいたい[-1, 1]程度の幅に収まるようなファクターとして扱う
-        
-        /// <summary> 中央がゼロ、右向きが正のヨー回転のファクタを-1, 1の範囲の値として取得します。 </summary>
-        public float YawFactor { get; private set; }
-        
-        /// <summary> 中央がゼロ、うつむく方向が正のピッチ回転ファクタを-1, 1の範囲の値として取得します。 </summary>
-        public float PitchFactor { get; private set; }
-        
-        /// <summary> 顔を左にかしげる方向を正とする回転角度を単位degで取得します。 </summary>
-        public float RollAngleDeg { get; private set; }
-        
-        //NOTE: x,yは画面内の位置に対する顔中心の位置を[-0.5, 0.5]x[-0.5, 0.5]の範囲で表したもの。
-        //zは距離ファクターのつもりだけど、とりあえず常時0を出します。なぜならDNNの顔トラだとzがいまいち信用できなさそうなので…
-        public Vector3 FacePosition { get; private set; }
-        public Vector2 FaceXyPosition => new Vector2(FacePosition.x, FacePosition.y);
+        private Rect _faceRect;
 
-        //TODO: 検証段階ではキャリブレーションを無視します。
-        //っていうか低出力のケースとどうキャリブ使い分けるんだコレ。共通にする？別々にキャリブ？
+        /// <summary> 顔が映っていたエリア。矩形で取るので回転は考慮しない </summary>
+        public Rect FaceRect
+        {
+            get => _faceRect;
+            set
+            {
+                _faceRect = value;
+                //1回でも明示的に入ってればとりあえずOK、とする。わりとラフだけど。
+                HasFaceRect = true;
+            }
+        }
 
+        public bool HasFaceRect { get; private set; }
+
+        private Vector2 _facePosition;
+        public Vector2 FacePosition =>
+            DisableHorizontalFlip ? new Vector2(-_facePosition.x, _facePosition.y) : _facePosition;
+
+
+        public float PitchRate { get; private set; }
+        
+        private float _yawRate;
+        public float YawRate => DisableHorizontalFlip ? -_yawRate : _yawRate;
+
+        private float _rollRad;
+        public float RollRad => DisableHorizontalFlip ? -_rollRad : _rollRad;
+
+        //NOTE: 低出力と同じでFaceRectのサイズを基準にしてもいいかもしれない
+        public float ZOffset { get; private set; }
+        
+        //とりあえずまばたきは無視。局所的な画像分析も出来そうではあるけど…。
+        public bool CanAnalyzeBlink => false;
+        public float LeftBlink => 0f;
+        public float RightBlink => 0f;
+        
         /// <summary>
         /// 現在設定されている顔全体、および顔パーツの位置に基づいてトラッキング情報を再計算します。
         /// </summary>
-        public void Calculate()
+        public void Calculate(CalibrationData calibration, bool shouldCalibrate)
         {
-            //x座標、ヨー、ロールに効く。yとかピッチは関係ないので無効。
-            float flipFactor = DisableHorizontalFlip ? 1 : -1;
-
+            HasFaceRect = true;
+            
             //おおまかなアプローチ
             //顔の位置: 深く考えずに返しとく。
             //ロール: 目の中心-口の中心に線を引いて角度を取るとだいたい正しい値となる。
@@ -74,18 +91,38 @@ namespace Baku.VMagicMirror
             //pnpを解くのをサボってしまおう、というアプローチです。
             
             //NOTE: 二重に面倒で申し訳ないのだけど、ImageBasedBodyMotionとFaceTrackerの挙動がアレなのでxは左右を逆にします…うーん…
-            FacePosition = new Vector3(
-                -flipFactor * (FaceArea.center.x / ImageSize.x - 0.5f),
-                FaceArea.center.y / ImageSize.y - 0.5f, 
-                0
-                );
+            _facePosition = new Vector2(
+                -(FaceRect.center.x / ImageSize.x - 0.5f),
+                FaceRect.center.y / ImageSize.y - 0.5f
+            ) - calibration.faceCenter;
             
             //ロール: 方向だけでいいのでスケールを省いている。0.5倍すると実際の画像上のベクトル
             var rollLine = ((LeftEye + RightEye) - (MouthLeft + MouthRight)).normalized;
-            RollAngleDeg = flipFactor * Mathf.Atan2(rollLine.x, rollLine.y) * Mathf.Rad2Deg;
+            _rollRad = Mathf.Atan2(rollLine.x, rollLine.y);
 
-            YawFactor = flipFactor * CalculateYaw();
-            PitchFactor =  CalculatePitch();
+            _yawRate = CalculateYaw();
+            PitchRate = CalculatePitch() - calibration.dnnPitchRateOffset;
+            
+            //NOTE: 値をすぐ0に戻すことで、キャリブレーションした値ベースで計算したように扱う
+            if (shouldCalibrate)
+            {
+                calibration.faceSize = FaceRect.width * FaceRect.height;
+                calibration.faceCenter = FaceRect.center;
+                calibration.dnnPitchRateOffset = PitchRate;
+                _facePosition = Vector2.zero;
+                PitchRate = 0f;
+            }
+        }
+
+        public void LerpToDefault(float lerpFactor)
+        {
+            var factor = 1.0f - lerpFactor;
+
+            PitchRate *= factor;
+            _yawRate *= factor;
+            _rollRad *= factor;
+            ZOffset *= factor;
+            _facePosition *= factor;
         }
 
         private float CalculateYaw()
@@ -144,5 +181,7 @@ namespace Baku.VMagicMirror
             var rate = negativeLen / (negativeLen + positiveLen);
             return rate * 2f - 1f;
         }
+
+  
     }
 }

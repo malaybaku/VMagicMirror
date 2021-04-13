@@ -5,7 +5,6 @@ using Baku.OpenCvExt;
 using OpenCVForUnity.CoreModule;
 using OpenCVForUnity.DnnModule;
 using OpenCVForUnity.ImgprocModule;
-using OpenCVForUnity.UnityUtils;
 using OpenCVForUnity.UtilsModule;
 using UnityEngine;
 using Rect = UnityEngine.Rect;
@@ -13,9 +12,9 @@ using Rect = UnityEngine.Rect;
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// OpenCVforUnityのLibFaceDetectionV3WebCamTextureExampleをVMagicMirror用に色々最適化したもの。
+    /// OpenCVforUnityのLibFaceDetectionV3WebCamTextureExampleをVMagicMirror用に色々いじったもの
     /// </summary>
-    public class MyDnnBasedDetectionWebCamTexture : MonoBehaviour
+    public class DnnBasedFaceAnalyzeRoutine : FaceAnalyzeRoutineBase
     {
         private static readonly bool _useLog = false;
         private static readonly Scalar[] _pointsColors = new [] 
@@ -28,27 +27,26 @@ namespace Baku.VMagicMirror
             new Scalar(255, 255, 255, 255) 
         };
         
-        private readonly float _scale = 1.0f;
         private readonly Scalar _mean = new Scalar(0, 0, 0, 0);
-        private readonly bool _swapRB = false;
+        private const float _scale = 1.0f;
+        private const bool _swapRB = false;
 
 
-        [SerializeField] private string model;
-        [SerializeField] private float confThreshold = 0.5f;
+        private string model = "YuFaceDetectNet.onnx";
+        private const float confThreshold = 0.5f;
 
         //NOTE: NMS(Non-maximum suppression)は物体検出のよくある後処理でググると詳細が出ます
-        [SerializeField] private float nmsThreshold = 0.4f;
+        private const float nmsThreshold = 0.4f;
         
-        //TODO: Question: ここってonnxがそのままでも値を変更できるのかな？？
-        [SerializeField] private int inputWidth = 320;
-        [SerializeField] private int inputHeight = 240;
+        //NOTE: onnxを変更せずにここの値を変更できるが、変更してもあまり負荷が変わらなさそう
+        private const int InputWidth = 320;
+        private const int InputHeight = 240;
 
         private Net _net;
         private Mat _bgrMat;
         private Mat _rgbaMat;
 
         private List<string> _outBlobNames;
-        
 
         private PriorBox _priorBox;
         private Mat boxes_m_c1;
@@ -66,25 +64,17 @@ namespace Baku.VMagicMirror
         private readonly float[] _bboxArr = new float[4];
         private readonly float[] _landmarksArr = new float[10];
 
-
-        /// <summary>
-        /// 顔の検出領域をOpenCVの座標ベースで収納したやつ
-        /// NOTE: 顔のxy座標を知りたいなら、この値よりもLandmarkのうち目、口の4点の重心を使う方がいいかも…
-        /// </summary>
-        public Rect FaceRect { get; private set; }
+        // NOTE: このクラス自身が保持する顔の検出領域とか特徴点はOpenCVの座標ベースなことに注意。
+        // つまり、そのままではトラッキング情報ではない
         
-        /// <summary>
-        /// 鼻先、右目、左目、口の右、口の左、をOpenCV座標で収納したやつ
-        /// </summary>
-        public Vector2[] LandMarks { get; } = new Vector2[5];
-
-        private void Start()
+        private Rect _faceRect;
+        // 鼻先、右目、左目、口の右、口の左、が順に入る
+        private readonly Vector2[] _landMarks = new Vector2[5];
+        
+        public override void SetUp()
         {
-            if (_useLog)
-            {
-                Utils.setDebugMode(true);
-            }
-
+            base.SetUp();
+            
             string modelFilePath = Path.Combine(Application.streamingAssetsPath, "dnn/" + model);
             if (!File.Exists(modelFilePath))
             {
@@ -95,29 +85,77 @@ namespace Baku.VMagicMirror
                 //第2引数はもとのExampleでも使ってなかったので空にしておく
                 _net = Dnn.readNet(modelFilePath, "");
                 _outBlobNames = GetOutputsNames(_net);
-                //outBlobTypes = getOutputsTypes(net);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            _net?.Dispose();
-            if (_useLog)
-            {
-                Utils.setDebugMode(false);
             }
         }
         
-
-        /// <summary>
-        /// ウェブカメラの画像を指定して計算を1回行います。
-        /// ウェブカメラ画像が更新されたときだけ呼ぶ想定です。
-        /// </summary>
-        /// <param name="colors"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        public void UpdateByColors(Color32[] colors, int width, int height)
+        public override void Dispose()
         {
+            base.Dispose();
+            _net?.Dispose();
+        }
+        
+        private readonly DnnBasedFaceParts _result = new DnnBasedFaceParts();
+        public override IFaceAnalyzeResult Result => _result;
+
+        protected override void RunFaceDetection()
+        {
+            UpdateByColors(_inputColors, _inputWidth, _inputHeight);
+        }
+
+        public override void ApplyFaceDetectionResult(CalibrationData calibration, bool shouldCalibrate)
+        {
+            var imageWidth = (float) _inputSize.width;
+            var imageHeight = (float) _inputSize.height;
+            _result.ImageSize = new Vector2(imageWidth, imageHeight);
+            //上下だけ逆にしとくと良いはず
+            _result.FaceRect = new Rect(
+                _faceRect.xMin, imageHeight - _faceRect.yMax, _faceRect.width, _faceRect.height
+            );
+
+            //NOTE: ここの順番はExampleコードと揃えてます
+            var landMarks = _landMarks;
+            _result.RightEye = new Vector2(landMarks[0].x, imageHeight - landMarks[0].y);
+            _result.LeftEye = new Vector2(landMarks[1].x, imageHeight - landMarks[1].y);
+            _result.NoseTop = new Vector2(landMarks[2].x, imageHeight - landMarks[2].y);
+            _result.MouthRight = new Vector2(landMarks[3].x, imageHeight - landMarks[3].y);
+            _result.MouthLeft = new Vector2(landMarks[4].x, imageHeight - landMarks[4].y);
+
+            _result.DisableHorizontalFlip = DisableHorizontalFlip;
+            _result.Calculate(calibration, shouldCalibrate);
+        }
+
+        public override void LerpToDefault(float lerpFactor)
+        {
+            _result.LerpToDefault(lerpFactor);
+        }
+
+        public override void Stop()
+        {
+            _bgrMat?.Dispose();
+            _rgbaMat?.Dispose();
+
+            _priorBox?.Dispose();
+            _priorBox = null;
+
+            boxes_m_c1?.Dispose();
+            boxes_m_c4?.Dispose();
+            confidences_m?.Dispose();
+            boxes?.Dispose();
+            confidences?.Dispose();
+            indices?.Dispose();
+
+            boxes_m_c1 = null;
+            boxes_m_c4 = null;
+            confidences_m = null;
+            boxes = null;
+            confidences = null;
+            indices = null;
+        }
+
+        private void UpdateByColors(Color32[] colors, int width, int height)
+        {
+            CheckImageSize(width, height);
+            
             OpenCvExtUtils.ColorsToMat(colors, _rgbaMat, width, height);
             
             if (_net == null)
@@ -143,6 +181,8 @@ namespace Baku.VMagicMirror
             }
 
             _outMats.Clear();
+
+            //NOTE: この1行がとても重たい。手元環境だと7msくらい持っていく事があるのを確認している。
             _net.forward(_outMats, _outBlobNames);
 
             PostProcess(_outMats);
@@ -153,6 +193,28 @@ namespace Baku.VMagicMirror
             }
             _outMats.Clear();
             blob.Dispose();
+            
+            
+            
+            //今持っている画像処理用のバッファがまだない or サイズが間違ってたら合わせる
+            void CheckImageSize(int w, int h)
+            {
+                if (_bgrMat == null || _bgrMat.width() != w || _bgrMat.height() != h ||
+                    _rgbaMat == null || _rgbaMat.width() != w || _rgbaMat.height() != h
+                )
+                {
+                    _bgrMat = new Mat(h, w, CvType.CV_8UC3);
+                    _rgbaMat = new Mat(h, w, CvType.CV_8UC4);
+                
+                    Size inputShape = new Size(InputWidth, InputHeight);
+                    Size outputShape = _bgrMat.size();
+                    _priorBox = new PriorBox(inputShape, outputShape);
+
+                    _inputSize.width = InputWidth;
+                    _inputSize.height = InputHeight;
+                }
+            }
+
         }
 
         private List<string> GetOutputsNames(Net net)
@@ -168,52 +230,9 @@ namespace Baku.VMagicMirror
 
             return result;
         }
+     
 
-        /// <summary>
-        /// 画像の入力サイズを指定して初期化します。
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        public void SetUp(int width, int height)
-        {   
-            _bgrMat = new Mat(height, width, CvType.CV_8UC3);
-            _rgbaMat = new Mat(height, width, CvType.CV_8UC4);
-            
-            Size inputShape = new Size(inputWidth, inputHeight);
-            Size outputShape = _bgrMat.size();
-            _priorBox = new PriorBox(inputShape, outputShape);
-
-            _inputSize.width = inputWidth;
-            _inputSize.height = inputHeight;
-        }
-
-        /// <summary>
-        /// 画像処理を停止するとき呼び出します。(でいいんだよね…? 2回呼んだらダメ、とかだったら要注意)
-        /// </summary>
-        public void Stop()
-        {
-            Debug.Log("Dnn Based Detection Stop");
-            _bgrMat?.Dispose();
-            _rgbaMat?.Dispose();
-
-            _priorBox?.Dispose();
-            _priorBox = null;
-
-            boxes_m_c1?.Dispose();
-            boxes_m_c4?.Dispose();
-            confidences_m?.Dispose();
-            boxes?.Dispose();
-            confidences?.Dispose();
-            indices?.Dispose();
-
-            boxes_m_c1 = null;
-            boxes_m_c4 = null;
-            confidences_m = null;
-            boxes = null;
-            confidences = null;
-            indices = null;
-        }
-
+        //メインの画像処理後に呼ぶことで特徴点を抜き出して保存する
         private void PostProcess(List<Mat> outs)
         {
             // # Decode bboxes and landmarks
@@ -261,7 +280,7 @@ namespace Baku.VMagicMirror
             int idx = maxConfIdx;
             
             bboxes.get(idx, 0, _bboxArr);
-            FaceRect = new Rect(
+            _faceRect = new Rect(
                 _bboxArr[0], 
                 _bboxArr[1], 
                 _bboxArr[2] - _bboxArr[0],
@@ -272,7 +291,7 @@ namespace Baku.VMagicMirror
             landmarks.get(idx, 0, _landmarksArr);
             for (int i = 0; i < 5; i++)
             {
-                LandMarks[i] = new Vector2(_landmarksArr[i * 2], _landmarksArr[i * 2 + 1]);
+                _landMarks[i] = new Vector2(_landmarksArr[i * 2], _landmarksArr[i * 2 + 1]);
             }
         }
 

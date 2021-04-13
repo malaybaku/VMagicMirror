@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8657378269927355718}
   - component: {fileID: 8657378269927355719}
-  - component: {fileID: 3401006683850857725}
   m_Layer: 0
   m_Name: FaceTracker
   m_TagString: Untagged
@@ -54,28 +53,3 @@ MonoBehaviour:
   notTrackedResetSpeedFactor: 3
   trackMinIntervalMillisec: 60
   trackMinIntervalMillisecOnHighPower: 60
---- !u!114 &3401006683850857725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8657378269927355717}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 947eaa2aa40d8e047975ad47ff346314, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  model: YuFaceDetectNet.onnx
-  confThreshold: 0.5
-  nmsThreshold: 0.4
-  scale: 1
-  mean:
-    val:
-    - 0
-    - 0
-    - 0
-    - 0
-  swapRB: 0
-  inpWidth: 320
-  inpHeight: 320

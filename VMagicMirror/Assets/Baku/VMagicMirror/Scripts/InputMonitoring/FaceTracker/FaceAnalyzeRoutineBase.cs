@@ -30,41 +30,46 @@ namespace Baku.VMagicMirror
             set { lock(_isActiveLock) _isActive = value; }
         }
 
-        private readonly object _detectPreparedLock = new object();
-        private bool _detectPrepared = false;
+        private readonly object _canRequestNextProcessLock = new object();
+        private bool _canRequestNextProcess = false;
         /// <summary>
         /// UIスレッドが<see cref="RequestNextProcess"/>を呼び出しても問題ないかどうかを取得します。
         /// </summary>
-        public bool DetectPrepared
+        /// <remarks>
+        /// - 既定値はfalse
+        /// - 画像処理ループが開始した直後はだいたいtrue
+        /// - RequestNextProcessが呼ばれた直後はfalse
+        /// - その後、バッファからピクセルがコピーされると再びtrue
+        /// </remarks>
+        public bool CanRequestNextProcess
         {
-            get { lock (_detectPreparedLock) return _detectPrepared; }
-            protected set { lock (_detectPreparedLock) _detectPrepared = value; }
+            get { lock (_canRequestNextProcessLock) return _canRequestNextProcess; }
+            protected set { lock (_canRequestNextProcessLock) _canRequestNextProcess = value; }
         }
 
-        private readonly object _faceDetectCompletedLock = new object();
-        private bool _faceDetectCompleted = false;
+        private readonly object _hasResultToApplyLock = new object();
+        private bool _hasResultToApply = false;
         /// <summary>
-        /// 顔の検出に成功しており、<see cref="GetFaceDetectResult"/>をUIスレッド上で呼び出してほしい状態になっているかどうかを取得します。
+        /// 顔の検出に成功しており、<see cref="ApplyResult"/>をUIスレッド上で呼び出してほしい状態になっているかどうかを取得します。
         /// 顔が検出出来ない場合、このフラグはfalseになり続けることがあります。
         /// </summary>
-        public bool FaceDetectCompleted
+        public bool HasResultToApply
         {
-            get { lock (_faceDetectCompletedLock) return _faceDetectCompleted; }
-            protected set { lock (_faceDetectCompletedLock) _faceDetectCompleted = value; }
+            get { lock (_hasResultToApplyLock) return _hasResultToApply; }
+            protected set { lock (_hasResultToApplyLock) _hasResultToApply = value; }
         }
 
         /// <summary> デフォルト挙動であるミラー(左右反転)をやめたい場合にtrueにします。 </summary>
         public bool DisableHorizontalFlip { get; set; }
         
         /// <summary>
-        /// 顔検出の結果を取得します。
-        /// FaceAnalyzeResultはUIスレッドからのみ読み書きされます。
+        /// 顔検出の結果を取得します。プロパティはUIスレッドからのみ読み書きされます。
         /// </summary>
         public abstract IFaceAnalyzeResult Result { get; }
 
         
         /// <summary>
-        /// ソフト起動後に呼び出すことで、必要ならdlibによる顔処理を回すスレッドを起動します。
+        /// ソフト起動後に呼び出すことで、マルチスレッドを開始します。
         /// </summary>
         public virtual void SetUp()
         {
@@ -82,15 +87,14 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary>
-        /// データが準備できたときに呼び出すことで、画像処理をリクエストします。
-        /// 実際の処理が終了すると<see cref="FaceDetectCompleted"/>がtrueになります。
+        /// データを差し込んでも問題なくなったときに呼び出すことで、画像処理をリクエストします。
         /// </summary>
         /// <param name="colors"></param>
         /// <param name="width"></param>
         /// <param name="height"></param>
         public void RequestNextProcess(Color32[] colors, int width, int height)
         {
-            if (!DetectPrepared)
+            if (!CanRequestNextProcess)
             {
                 return;
             }
@@ -103,16 +107,19 @@ namespace Baku.VMagicMirror
             Array.Copy(colors, _inputColors, colors.Length);
             _inputWidth = width;
             _inputHeight = height;
-            DetectPrepared = true;
+            CanRequestNextProcess = false;
         }
 
         /// <summary>
         /// 顔認識ができていない場合に呼び出すことで、<see cref="Result"/>の内容を正面向きの顔にリセットしていきます。
-        /// lerpFactorは0-1の範囲の値で、定数にTime.deltaTimeが掛かった値を渡されます。
+        /// lerpFactorは0-1の範囲の値で、定数にTime.deltaTimeが掛かった値を渡します。
         /// </summary>
         /// <param name="lerpFactor"></param>
         public abstract void LerpToDefault(float lerpFactor);
         
+        /// <summary>
+        /// 顔検出スレッド上で、<see cref="RequestNextProcess"/>で渡された画像を用いてメインの解析計算を行います。
+        /// </summary>
         protected abstract void RunFaceDetection();
 
         /// <summary>
@@ -122,14 +129,25 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="calibration"></param>
         /// <param name="shouldCalibrate"></param>
-        public abstract void ApplyFaceDetectionResult(CalibrationData calibration, bool shouldCalibrate);
+        public abstract void ApplyResult(CalibrationData calibration, bool shouldCalibrate);
 
         /// <summary>
+        /// 顔認識の反復処理が開始したくなったタイミングで呼ばれます。
+        /// 特別な理由が無い限り、ここで<see cref="CanRequestNextProcess"/>をtrueにします。
+        /// マルチスレッド自体はコレの前から実行されていることに注意して下さい。
+        /// </summary>
+        public virtual void Start()
+        {
+            IsActive = true;
+        }
+        
+        /// <summary>
         /// 顔認識の反復処理が停止したくなったタイミングで呼ばれます。
-        /// マルチスレッド側で行っている途中の処理を中断するために用い、マルチスレッド自体は停止しないで下さい。
+        /// マルチスレッド自体は停止しないことに注意して下さい。
         /// </summary>
         public virtual void Stop()
         {
+            IsActive = false;
         }
 
         private void FaceDetectionRoutine()
@@ -139,9 +157,9 @@ namespace Baku.VMagicMirror
                 Thread.Sleep(16);
                 //書いてある通りだが、以下のケースをガードすることでマルチスレッド特有の問題を防いてます
                 // - そもそもルーチンを止めろと言われてる
-                // - UIスレッド側からテクスチャが来ない
-                // - 出力がすでにあり、UIスレッド上での読み出しを待機中
-                if (!IsActive || !DetectPrepared || FaceDetectCompleted)
+                // - 次の画像を待っている = 入力画像がまだない
+                // - 出力の読み出し待ちフラグが立っている = いま画像処理すると結果が渋滞してしまう
+                if (!IsActive || CanRequestNextProcess || HasResultToApply)
                 {
                     continue;
                 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DlibFaceLandmarkDetector;
 using UnityEngine;
@@ -17,7 +18,9 @@ namespace Baku.VMagicMirror
         /// <param name="predictorFilePath"></param>
         public DlibFaceAnalyzeRoutine(string predictorFilePath)
         {
-            _detector = new FaceLandmarkDetector(predictorFilePath);
+            _detector = new FaceLandmarkDetector(
+                Path.Combine(Application.streamingAssetsPath, predictorFilePath)
+                );
         }
 
         private readonly FaceLandmarkDetector _detector;
@@ -30,33 +33,17 @@ namespace Baku.VMagicMirror
         private Rect _mainPersonRect;
         private List<Vector2> _mainPersonLandmarks = null;
 
-        public override void ApplyFaceDetectionResult(CalibrationData calibration, bool shouldCalibrate)
+        public override void Start()
         {
-            var mainPersonRect = _mainPersonRect;
-            //特徴点リストは参照ごと受け取ってOK(Completedフラグが降りるまでは競合しない)
-            var landmarks = _mainPersonLandmarks;
-            _mainPersonLandmarks = null;
-
-            //出力を拾い終わった時点で次の処理に入ってもらって大丈夫
-            FaceDetectCompleted = false;
-
-            //処理を停止したくなった後から結果を受け取った場合、いろいろと無視
-            if (!IsActive)
-            {
-                return;
-            }
-
-            var faceRect = new Rect(
-                mainPersonRect.xMin / _inputWidth - 0.5f,
-                -(mainPersonRect.yMax - _inputHeight * 0.5f) / _inputWidth,
-                mainPersonRect.width / _inputWidth,
-                mainPersonRect.height / _inputWidth
-            );
-            
-            _faceParts.Update(faceRect, landmarks, calibration, shouldCalibrate);
+            base.Start();
+            CanRequestNextProcess = true;
         }
 
-        public override void LerpToDefault(float lerpFactor) => _faceParts.LerpToDefault(lerpFactor);
+        public override void Stop()
+        {
+            base.Stop();
+            HasResultToApply = false;
+        }
 
         protected override void RunFaceDetection()
         {
@@ -70,13 +57,17 @@ namespace Baku.VMagicMirror
             Array.Copy(_inputColors, _dlibInputColors, _inputColors.Length);
 
             //この時点で入力データを抜き終わっているので、次のデータがあればセットしても大丈夫
-            DetectPrepared = false;
+            CanRequestNextProcess = true;
 
             _detector.SetImage(_dlibInputColors, width, height, 4, true);
-
-            //TODO: 検出途中で「やっぱりストップ」って言われたときの処理の安全性を高めておきたい
-
             List<Rect> faceRects = _detector.Detect();
+            //NOTE: 顔の抽出、顔のなかの特徴点抽出の2ステップが特に時間かかるため、これらの直後では
+            //「次の処理ってやってもいいの？」というのを確認しておく
+            if (!IsActive)
+            {
+                return;
+            }
+            
             //顔が取れないのでCompletedフラグは立てないままでOK
             if (faceRects == null || faceRects.Count == 0)
             {
@@ -101,7 +92,11 @@ namespace Baku.VMagicMirror
 
             _mainPersonRect = mainPersonRect;
             _mainPersonLandmarks = _detector.DetectLandmark(mainPersonRect);
-
+            if (!IsActive)
+            {
+                return;
+            }
+            
             RaiseFaceDetectionUpdate(new FaceDetectionUpdateStatus()
             {
                 Image = _dlibInputColors,
@@ -111,7 +106,36 @@ namespace Baku.VMagicMirror
                 FaceArea = mainPersonRect,
             });
 
-            FaceDetectCompleted = true;
+            HasResultToApply = true;
         }
+
+        public override void ApplyResult(CalibrationData calibration, bool shouldCalibrate)
+        {
+            var mainPersonRect = _mainPersonRect;
+            //特徴点リストは参照ごと受け取ってOK(Completedフラグが降りるまでは競合しない)
+            var landmarks = _mainPersonLandmarks;
+            _mainPersonLandmarks = null;
+
+            //出力を拾い終わった時点で次の処理に入ってもらって大丈夫
+            HasResultToApply = false;
+
+            //処理を停止したくなった後から結果を受け取った場合、いろいろと無視
+            if (!IsActive)
+            {
+                return;
+            }
+
+            var faceRect = new Rect(
+                mainPersonRect.xMin / _inputWidth - 0.5f,
+                -(mainPersonRect.yMax - _inputHeight * 0.5f) / _inputWidth,
+                mainPersonRect.width / _inputWidth,
+                mainPersonRect.height / _inputWidth
+            );
+            
+            _faceParts.Update(faceRect, landmarks, calibration, shouldCalibrate);
+        }
+
+        public override void LerpToDefault(float lerpFactor) => _faceParts.LerpToDefault(lerpFactor);
+
     }
 }

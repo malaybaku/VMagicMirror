@@ -128,7 +128,7 @@ namespace Baku.VMagicMirror
             SetImageIfPrepared();
             GetDetectionResult();
             CheckTrackingLost();
-
+            
             void SetImageIfPrepared()
             {
                 _countFromPreviousSetColors += Time.deltaTime;
@@ -145,7 +145,7 @@ namespace Baku.VMagicMirror
                    _hasFrameUpdateSincePreviousSetColors &&
                    _countFromPreviousSetColors > TrackMinIntervalMs * .001f &&
                    _colors != null &&
-                   !CurrentAnalyzer.DetectPrepared;
+                   CurrentAnalyzer.CanRequestNextProcess;
 
                 //どれか一つの条件が揃ってないのでダメ
                 if (!canSetImage)
@@ -179,14 +179,14 @@ namespace Baku.VMagicMirror
             //別スレッドの画像処理が終わっていたらその結果を受け取る
             void GetDetectionResult()
             {
-                if (!CurrentAnalyzer.FaceDetectCompleted || !HasInitDone)
+                if (!CurrentAnalyzer.HasResultToApply || !HasInitDone)
                 {
                     return;
                 }
 
                 //NOTE: キャリブレーションをリクエストした場合、
                 //このApplyによってCalibrationDataが書き換わるはずなので、それを通知する
-                CurrentAnalyzer.ApplyFaceDetectionResult(CalibrationData, _calibrationRequested);
+                CurrentAnalyzer.ApplyResult(CalibrationData, _calibrationRequested);
                 if (_calibrationRequested)
                 {
                     _calibrationRequested = false;
@@ -233,13 +233,18 @@ namespace Baku.VMagicMirror
 
         public void ActivateCamera(string cameraDeviceName, bool highPowerMode)
         {
+            Debug.Log($"Activate camera, {cameraDeviceName}, high power={highPowerMode}");
             requestedDeviceName = cameraDeviceName;
             isHighPowerMode = highPowerMode;
+            CurrentAnalyzer.Start();
             Initialize();
         }
 
-        public void StopCamera() => Dispose();
-        
+        public void StopCamera()
+        {
+            Dispose();
+        }
+
         public void StartCalibration() => _calibrationRequested = true;
 
         public void SetCalibrateData(string data)

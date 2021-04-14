@@ -16,16 +16,9 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class DnnBasedFaceAnalyzeRoutine : FaceAnalyzeRoutineBase
     {
+        #region 画像処理に必要な色々なパラメータ / 値のキャッシュ
+        
         private static readonly bool _useLog = false;
-        private static readonly Scalar[] _pointsColors = new [] 
-        { 
-            new Scalar(0, 0, 255, 255),
-            new Scalar(255, 0, 0, 255), 
-            new Scalar(255, 255, 0, 255),
-            new Scalar(0, 255, 255, 255),
-            new Scalar(0, 255, 0, 255), 
-            new Scalar(255, 255, 255, 255) 
-        };
         
         private readonly Scalar _mean = new Scalar(0, 0, 0, 0);
         private const float _scale = 1.0f;
@@ -70,6 +63,11 @@ namespace Baku.VMagicMirror
         private Rect _faceRect;
         // 鼻先、右目、左目、口の右、口の左、が順に入る
         private readonly Vector2[] _landMarks = new Vector2[5];
+
+        #endregion
+                
+        private readonly DnnBasedFaceParts _result = new DnnBasedFaceParts();
+        public override IFaceAnalyzeResult Result => _result;
         
         public override void SetUp()
         {
@@ -93,44 +91,18 @@ namespace Baku.VMagicMirror
             base.Dispose();
             _net?.Dispose();
         }
-        
-        private readonly DnnBasedFaceParts _result = new DnnBasedFaceParts();
-        public override IFaceAnalyzeResult Result => _result;
 
-        protected override void RunFaceDetection()
+        public override void Start()
         {
-            UpdateByColors(_inputColors, _inputWidth, _inputHeight);
-        }
-
-        public override void ApplyFaceDetectionResult(CalibrationData calibration, bool shouldCalibrate)
-        {
-            var imageWidth = (float) _inputSize.width;
-            var imageHeight = (float) _inputSize.height;
-            _result.ImageSize = new Vector2(imageWidth, imageHeight);
-            //上下だけ逆にしとくと良いはず
-            _result.FaceRect = new Rect(
-                _faceRect.xMin, imageHeight - _faceRect.yMax, _faceRect.width, _faceRect.height
-            );
-
-            //NOTE: ここの順番はExampleコードと揃えてます
-            var landMarks = _landMarks;
-            _result.RightEye = new Vector2(landMarks[0].x, imageHeight - landMarks[0].y);
-            _result.LeftEye = new Vector2(landMarks[1].x, imageHeight - landMarks[1].y);
-            _result.NoseTop = new Vector2(landMarks[2].x, imageHeight - landMarks[2].y);
-            _result.MouthRight = new Vector2(landMarks[3].x, imageHeight - landMarks[3].y);
-            _result.MouthLeft = new Vector2(landMarks[4].x, imageHeight - landMarks[4].y);
-
-            _result.DisableHorizontalFlip = DisableHorizontalFlip;
-            _result.Calculate(calibration, shouldCalibrate);
-        }
-
-        public override void LerpToDefault(float lerpFactor)
-        {
-            _result.LerpToDefault(lerpFactor);
+            base.Start();
+            CanRequestNextProcess = true;
         }
 
         public override void Stop()
         {
+            base.Stop();
+            HasResultToApply = false;
+
             _bgrMat?.Dispose();
             _rgbaMat?.Dispose();
 
@@ -152,11 +124,12 @@ namespace Baku.VMagicMirror
             indices = null;
         }
 
-        private void UpdateByColors(Color32[] colors, int width, int height)
+        protected override void RunFaceDetection() 
         {
-            CheckImageSize(width, height);
-            
-            OpenCvExtUtils.ColorsToMat(colors, _rgbaMat, width, height);
+            CheckImageSize( _inputWidth, _inputHeight);
+            OpenCvExtUtils.ColorsToMat(_inputColors, _rgbaMat, _inputWidth, _inputHeight);
+            //画像情報をコピー完了 = 次の画像を入れてもOK
+            CanRequestNextProcess = true;
             
             if (_net == null)
             {
@@ -164,11 +137,9 @@ namespace Baku.VMagicMirror
             }
 
             Imgproc.cvtColor(_rgbaMat, _bgrMat, Imgproc.COLOR_RGBA2BGR);
-
             Mat blob = Dnn.blobFromImage(_bgrMat, _scale, _inputSize, _mean, _swapRB, false);
-
             _net.setInput(blob);
-
+            
             if (_net.getLayer(new DictValue(0)).outputNameToIndex("im_info") != -1)
             { 
                 Imgproc.resize(_bgrMat, _bgrMat, _inputSize);
@@ -184,18 +155,15 @@ namespace Baku.VMagicMirror
 
             //NOTE: この1行がとても重たい。手元環境だと7msくらい持っていく事があるのを確認している。
             _net.forward(_outMats, _outBlobNames);
-
             PostProcess(_outMats);
-
             foreach (var mat in _outMats)
             {
                 mat.Dispose();
             }
             _outMats.Clear();
             blob.Dispose();
-            
-            
-            
+            HasResultToApply = true;
+
             //今持っている画像処理用のバッファがまだない or サイズが間違ってたら合わせる
             void CheckImageSize(int w, int h)
             {
@@ -205,9 +173,9 @@ namespace Baku.VMagicMirror
                 {
                     _bgrMat = new Mat(h, w, CvType.CV_8UC3);
                     _rgbaMat = new Mat(h, w, CvType.CV_8UC4);
-                
-                    Size inputShape = new Size(InputWidth, InputHeight);
-                    Size outputShape = _bgrMat.size();
+                    
+                    var inputShape = new Size(InputWidth, InputHeight);
+                    var outputShape = _bgrMat.size();
                     _priorBox = new PriorBox(inputShape, outputShape);
 
                     _inputSize.width = InputWidth;
@@ -216,6 +184,31 @@ namespace Baku.VMagicMirror
             }
 
         }
+   
+        public override void ApplyResult(CalibrationData calibration, bool shouldCalibrate)
+        {
+            var imageWidth = (float) _inputSize.width;
+            var imageHeight = (float) _inputSize.height;
+            _result.ImageSize = new Vector2(imageWidth, imageHeight);
+            //上下だけ逆にしとくと良いはず
+            _result.FaceRect = new Rect(
+                _faceRect.xMin, imageHeight - _faceRect.yMax, _faceRect.width, _faceRect.height
+            );
+
+            //NOTE: ここの順番はExampleコードと揃えてます
+            var landMarks = _landMarks;
+            _result.RightEye = new Vector2(landMarks[0].x, imageHeight - landMarks[0].y);
+            _result.LeftEye = new Vector2(landMarks[1].x, imageHeight - landMarks[1].y);
+            _result.NoseTop = new Vector2(landMarks[2].x, imageHeight - landMarks[2].y);
+            _result.MouthRight = new Vector2(landMarks[3].x, imageHeight - landMarks[3].y);
+            _result.MouthLeft = new Vector2(landMarks[4].x, imageHeight - landMarks[4].y);
+
+            _result.DisableHorizontalFlip = DisableHorizontalFlip;
+            _result.Calculate(calibration, shouldCalibrate);
+            HasResultToApply = false;
+        }
+
+        public override void LerpToDefault(float lerpFactor) => _result.LerpToDefault(lerpFactor);
 
         private List<string> GetOutputsNames(Net net)
         {
@@ -230,8 +223,7 @@ namespace Baku.VMagicMirror
 
             return result;
         }
-     
-
+        
         //メインの画像処理後に呼ぶことで特徴点を抜き出して保存する
         private void PostProcess(List<Mat> outs)
         {

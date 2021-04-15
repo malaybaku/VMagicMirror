@@ -101,7 +101,6 @@ namespace Baku.VMagicMirror
         public void Initialize(IMessageReceiver receiver, IMessageSender sender)
         {
             var _ = new FaceTrackerReceiver(receiver, this);
-            //自分が自分のeventを購読するのもちょっと変ではあるが、sender変数を持たないでいいので若干スッキリする
             _sender = sender;
         }
 
@@ -233,7 +232,7 @@ namespace Baku.VMagicMirror
 
         public void ActivateCamera(string cameraDeviceName, bool highPowerMode)
         {
-            Debug.Log($"Activate camera, {cameraDeviceName}, high power={highPowerMode}");
+            CurrentAnalyzer.Stop();
             requestedDeviceName = cameraDeviceName;
             isHighPowerMode = highPowerMode;
             CurrentAnalyzer.Start();

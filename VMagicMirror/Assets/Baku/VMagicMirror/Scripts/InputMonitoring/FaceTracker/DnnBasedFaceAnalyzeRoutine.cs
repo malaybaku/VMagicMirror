@@ -18,8 +18,6 @@ namespace Baku.VMagicMirror
     {
         #region 画像処理に必要な色々なパラメータ / 値のキャッシュ
         
-        private static readonly bool _useLog = false;
-        
         private readonly Scalar _mean = new Scalar(0, 0, 0, 0);
         private const float _scale = 1.0f;
         private const bool _swapRB = false;
@@ -57,9 +55,7 @@ namespace Baku.VMagicMirror
         private readonly float[] _bboxArr = new float[4];
         private readonly float[] _landmarksArr = new float[10];
 
-        // NOTE: このクラス自身が保持する顔の検出領域とか特徴点はOpenCVの座標ベースなことに注意。
-        // つまり、そのままではトラッキング情報ではない
-        
+        // NOTE: 下記のfaceRectとかlandmarksは、OpenCV座標の値をそのまま入れる。_resultに入れる時点でお作法のよい値に直す
         private Rect _faceRect;
         // 鼻先、右目、左目、口の右、口の左、が順に入る
         private readonly Vector2[] _landMarks = new Vector2[5];
@@ -162,7 +158,6 @@ namespace Baku.VMagicMirror
             }
             _outMats.Clear();
             blob.Dispose();
-            HasResultToApply = true;
 
             //今持っている画像処理用のバッファがまだない or サイズが間違ってたら合わせる
             void CheckImageSize(int w, int h)
@@ -189,10 +184,14 @@ namespace Baku.VMagicMirror
         {
             var imageWidth = (float) _inputSize.width;
             var imageHeight = (float) _inputSize.height;
+            var scale = 1.0f / imageWidth;
             _result.ImageSize = new Vector2(imageWidth, imageHeight);
-            //上下だけ逆にしとくと良いはず
+            //上下が逆なのと、正規化が前提なのでxを[-0.5, 0.5]の範囲におさめる
             _result.FaceRect = new Rect(
-                _faceRect.xMin, imageHeight - _faceRect.yMax, _faceRect.width, _faceRect.height
+                _faceRect.xMin * scale - 0.5f, 
+                (imageHeight * 0.5f - _faceRect.yMax) * scale,
+                _faceRect.width * scale,
+                _faceRect.height * scale
             );
 
             //NOTE: ここの順番はExampleコードと揃えてます
@@ -285,6 +284,7 @@ namespace Baku.VMagicMirror
             {
                 _landMarks[i] = new Vector2(_landmarksArr[i * 2], _landmarksArr[i * 2 + 1]);
             }
+            HasResultToApply = true;
         }
 
         private void CheckMatsValidity(int rows)

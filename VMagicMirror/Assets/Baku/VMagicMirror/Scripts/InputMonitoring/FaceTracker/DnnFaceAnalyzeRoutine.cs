@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if VMAGICMIRROR_USE_OPENCV
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Baku.OpenCvExt;
@@ -8,14 +9,17 @@ using OpenCVForUnity.ImgprocModule;
 using OpenCVForUnity.UtilsModule;
 using UnityEngine;
 using Rect = UnityEngine.Rect;
+#endif
 
 namespace Baku.VMagicMirror
 {
     /// <summary>
     /// OpenCVforUnityのLibFaceDetectionV3WebCamTextureExampleをVMagicMirror用に色々いじったもの
     /// </summary>
-    public class DnnBasedFaceAnalyzeRoutine : FaceAnalyzeRoutineBase
+    public class DnnFaceAnalyzeRoutine : FaceAnalyzeRoutineBase
     {
+#if VMAGICMIRROR_USE_OPENCV
+        
         #region 画像処理に必要な色々なパラメータ / 値のキャッシュ
         
         private readonly Scalar _mean = new Scalar(0, 0, 0, 0);
@@ -65,7 +69,7 @@ namespace Baku.VMagicMirror
 
         #endregion
                 
-        private readonly DnnBasedFaceParts _result = new DnnBasedFaceParts();
+        private readonly DnnFaceParts _result = new DnnFaceParts();
         public override IFaceAnalyzeResult Result => _result;
         
         public override void SetUp()
@@ -115,7 +119,6 @@ namespace Baku.VMagicMirror
         {
             base.Start();
             CanRequestNextProcess = true;
-            
         }
 
         public override void Stop()
@@ -230,19 +233,17 @@ namespace Baku.VMagicMirror
         }
         
         //メインの画像処理後に呼ぶことで特徴点を抜き出して保存する
+        //OpenCVForUnityのコードの改造です
         private void PostProcess(List<Mat> outs)
         {
-            // # Decode bboxes and landmarks
             Mat dets = _priorBox.Decode(outs[0], outs[1], outs[2]);
             
-            // # Ignore low scores + NMS
             int num = dets.rows();
             CheckMatsValidity(num);
             
             Mat bboxes = dets.colRange(0, 4);
             bboxes.convertTo(boxes_m_c1, CvType.CV_64FC1);
 
-            // x1,y1,x2,y2 => x,y,w,h
             Mat boxes_m_0_2 = boxes_m_c1.colRange(0, 2);
             Mat boxes_m_2_4 = boxes_m_c1.colRange(2, 4);
             Core.subtract(boxes_m_2_4, boxes_m_0_2, boxes_m_2_4);
@@ -267,10 +268,16 @@ namespace Baku.VMagicMirror
                 }
             }
 
-            // トラッキングロスするとここに来る
+            // トラッキングロスするとここに到達: 
             if (maxConfIdx == -1)
             {
-                // Debug.LogError("There are no valid face rect");
+                RaiseFaceDetectionUpdate(new FaceDetectionUpdateStatus()
+                {
+                    RgbaMat = _rgbaMat,
+                    HasValidFaceArea = false,
+                    Width = _rgbaMat.width(),
+                    Height = _rgbaMat.height(),
+                });
                 return;
             }
 
@@ -290,6 +297,17 @@ namespace Baku.VMagicMirror
             {
                 _landMarks[i] = new Vector2(_landmarksArr[i * 2], _landmarksArr[i * 2 + 1]);
             }
+            
+            RaiseFaceDetectionUpdate(new FaceDetectionUpdateStatus()
+            {
+                RgbaMat = _rgbaMat,
+                HasValidFaceArea = true,
+                Width = _rgbaMat.width(),
+                Height = _rgbaMat.height(),
+                //TODO: 合ってる？合ってればハンドトラッキングが動くし、合ってなければ動かない。
+                FaceArea = _faceRect,
+            });
+
             HasResultToApply = true;
         }
 
@@ -534,6 +552,21 @@ namespace Baku.VMagicMirror
                 scale?.Dispose();
             }
         }        
-        
+#else
+        //NOTE: OpenCVを使ってない場合はカラ実装を当て、データの受信準備もしないし、顔検出の成功判定も出さない。
+        //(動作保証として若干怪しいが、まあコンパイル通らないよりマシ)
+        public override IFaceAnalyzeResult Result { get; } = new DnnBasedFaceParts();
+        public override void LerpToDefault(float lerpFactor)
+        {
+        }
+
+        protected override void RunFaceDetection()
+        {
+        }
+
+        public override void ApplyResult(CalibrationData calibration, bool shouldCalibrate)
+        {
+        }
+#endif
     }
 }

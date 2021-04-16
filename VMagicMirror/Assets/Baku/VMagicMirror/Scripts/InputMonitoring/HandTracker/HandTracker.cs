@@ -81,7 +81,7 @@ namespace Baku.VMagicMirror
 
                 if (status.HasValidFaceArea)
                 {
-                    _handAreaDetector.UpdateHandDetection(status.Image, status.Width, status.Height, status.FaceArea);
+                    _handAreaDetector.UpdateHandDetection(status);
                 }
                 else
                 {

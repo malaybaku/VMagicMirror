@@ -2,15 +2,10 @@
 
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// OpenCVforUnityのdnnベースの顔検出を前提にした、顔パーツの配置からの計算処理
-    /// 画像座標は左下隅を(0, 0)とすること。
-    /// デフォルトでは左右反転がオンで、DisableHorizontalFlipがtrueになるとCalculateの呼び出し結果で左右非反転の値が入ります。
-    /// </summary>
-    public class DnnBasedFaceParts  : IFaceAnalyzeResult
+    /// <summary> OpenCVforUnityのdnnベースの顔検出を前提にした、顔パーツの位置計算 </summary>
+    public class DnnFaceParts  : IFaceAnalyzeResult
     {
         //NOTE: 呼び出し元のほうで、dnnの結果をこのプロパティ群に突っ込んでいく
-        //TODO: 座標の取り決め必要。入力時点で左下(0,0)を強制するのが無難かな？実装はこの座標を前提に組みます。
         
         #region interfaceじゃないけど必要なデータ入力
 

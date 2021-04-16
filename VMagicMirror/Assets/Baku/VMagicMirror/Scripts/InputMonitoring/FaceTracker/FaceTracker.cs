@@ -40,7 +40,7 @@ namespace Baku.VMagicMirror
         public bool FaceDetectedAtLeastOnce { get; private set; } = false;
 
         private DlibFaceAnalyzeRoutine _dlibFaceAnalyzer;
-        private DnnBasedFaceAnalyzeRoutine _dnnFaceAnalyzer;
+        private DnnFaceAnalyzeRoutine _dnnFaceAnalyzer;
         public FaceAnalyzeRoutineBase CurrentAnalyzer
         {
             get
@@ -109,7 +109,7 @@ namespace Baku.VMagicMirror
             CalibrationData.SetDefaultValues();
 
             _dlibFaceAnalyzer = new DlibFaceAnalyzeRoutine(DlibFaceTrackingDataFileName);
-            _dnnFaceAnalyzer = new DnnBasedFaceAnalyzeRoutine();
+            _dnnFaceAnalyzer = new DnnFaceAnalyzeRoutine();
             //イベントを素通し
             _dlibFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;
             _dnnFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;

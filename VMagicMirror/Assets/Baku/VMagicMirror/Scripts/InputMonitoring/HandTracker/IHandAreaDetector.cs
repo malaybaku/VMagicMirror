@@ -16,13 +16,9 @@ namespace Baku.VMagicMirror
         IHandDetectResult RightSideResult { get; }
         
         /// <summary>
-        /// 取得済みの画像、サイズ、および検出された顔エリアの情報を用いて手を検出します。
+        /// 取得済みの画像、サイズ、および検出された顔エリアなどの情報を用いて手を検出します。
         /// </summary>
-        /// <param name="colors"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="faceRect"></param>
-        void UpdateHandDetection(Color32[] colors, int width, int height, Rect faceRect);
+        void UpdateHandDetection(FaceDetectionUpdateStatus status);
 
         /// <summary>
         /// 画像は取得したが顔は検出出来なかった場合に呼び出すことで、手の検出が失敗した状態へと更新します。

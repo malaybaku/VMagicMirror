@@ -74,14 +74,26 @@ namespace Baku.VMagicMirror
         private readonly RecordHandDetectResult _rightResult = new RecordHandDetectResult();
         public IHandDetectResult RightSideResult => _rightResult;
 
-        public void UpdateHandDetection(Color32[] colors, int width, int height, Rect faceRect)
+        public void UpdateHandDetection(FaceDetectionUpdateStatus status)
         {
+            var width = status.Width;
+            var height = status.Height;
+            var faceRect = status.FaceArea;
+            
             if (_mat == null || _mat.width() != width || _mat.height() != height)
             {
                 _mat = new Mat(height, width, CvType.CV_8UC4, _colorBlack);
             }
 
-            OpenCvExtUtils.ColorsToMat(colors, _mat, width, height);
+            if (status.Image != null)
+            {
+                var colors = status.Image;
+                OpenCvExtUtils.ColorsToMat(colors, _mat, width, height);
+            }
+            else
+            {
+                status.RgbaMat.copyTo(_mat);
+            }
 
             EstimateSkinColor(_mat, faceRect);
             PaintBlackOnFace(_mat, faceRect);

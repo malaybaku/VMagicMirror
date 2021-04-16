@@ -29,13 +29,16 @@ namespace Baku.VMagicMirror
         //NOTE: NMS(Non-maximum suppression)は物体検出のよくある後処理でググると詳細が出ます
         private const float nmsThreshold = 0.4f;
         
-        //NOTE: onnxを変更せずにここの値を変更できるが、変更してもあまり負荷が変わらなさそう
-        private const int InputWidth = 320;
-        private const int InputHeight = 240;
+        //NOTE: これは入力画像のサイズではなく、dnn上で取り扱うサイズ。
+        //onnxを変更せずにここの値を変更できるが、変更してもあまり負荷が変わらなさそう
+        private const int NetInputWidth = 320;
+        private const int NetInputHeight = 240;
 
         private Net _net;
         private Mat _bgrMat;
         private Mat _rgbaMat;
+        private int _rawInputWidth;
+        private int _rawInputHeight;
 
         private List<string> _outBlobNames;
 
@@ -49,7 +52,7 @@ namespace Baku.VMagicMirror
 
         //NOTE: この辺は毎回GCAllocしてしまう量をちょっとでも減らすためのキャッシュ
         private readonly Mat _imInfo = new Mat(1, 3, CvType.CV_32FC1);
-        private readonly Size _inputSize = new Size(1f, 1f);
+        private readonly Size _netInputSize = new Size(1f, 1f);
         private readonly List<Mat> _outMats = new List<Mat>();
         private readonly float[] _confidenceArr = new float[1];
         private readonly float[] _bboxArr = new float[4];
@@ -81,23 +84,11 @@ namespace Baku.VMagicMirror
                 _outBlobNames = GetOutputsNames(_net);
             }
         }
-        
+
         public override void Dispose()
         {
             base.Dispose();
             _net?.Dispose();
-        }
-
-        public override void Start()
-        {
-            base.Start();
-            CanRequestNextProcess = true;
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
-            HasResultToApply = false;
 
             _bgrMat?.Dispose();
             _rgbaMat?.Dispose();
@@ -120,10 +111,25 @@ namespace Baku.VMagicMirror
             indices = null;
         }
 
+        public override void Start()
+        {
+            base.Start();
+            CanRequestNextProcess = true;
+            
+        }
+
+        public override void Stop()
+        {
+            base.Stop();
+            HasResultToApply = false;
+        }
+
         protected override void RunFaceDetection() 
         {
             CheckImageSize( _inputWidth, _inputHeight);
             OpenCvExtUtils.ColorsToMat(_inputColors, _rgbaMat, _inputWidth, _inputHeight);
+            _rawInputWidth = _inputWidth;
+            _rawInputHeight = _inputHeight;
             //画像情報をコピー完了 = 次の画像を入れてもOK
             CanRequestNextProcess = true;
             
@@ -133,15 +139,15 @@ namespace Baku.VMagicMirror
             }
 
             Imgproc.cvtColor(_rgbaMat, _bgrMat, Imgproc.COLOR_RGBA2BGR);
-            Mat blob = Dnn.blobFromImage(_bgrMat, _scale, _inputSize, _mean, _swapRB, false);
+            Mat blob = Dnn.blobFromImage(_bgrMat, _scale, _netInputSize, _mean, _swapRB, false);
             _net.setInput(blob);
             
             if (_net.getLayer(new DictValue(0)).outputNameToIndex("im_info") != -1)
             { 
-                Imgproc.resize(_bgrMat, _bgrMat, _inputSize);
+                Imgproc.resize(_bgrMat, _bgrMat, _netInputSize);
                 _imInfo.put(0, 0, new float[] {
-                    (float)_inputSize.height,
-                    (float)_inputSize.width,
+                    (float)_netInputSize.height,
+                    (float)_netInputSize.width,
                     1.6f
                 });
                 _net.setInput(_imInfo, "im_info");
@@ -169,12 +175,12 @@ namespace Baku.VMagicMirror
                     _bgrMat = new Mat(h, w, CvType.CV_8UC3);
                     _rgbaMat = new Mat(h, w, CvType.CV_8UC4);
                     
-                    var inputShape = new Size(InputWidth, InputHeight);
+                    var inputShape = new Size(NetInputWidth, NetInputHeight);
                     var outputShape = _bgrMat.size();
                     _priorBox = new PriorBox(inputShape, outputShape);
 
-                    _inputSize.width = InputWidth;
-                    _inputSize.height = InputHeight;
+                    _netInputSize.width = NetInputWidth;
+                    _netInputSize.height = NetInputHeight;
                 }
             }
 
@@ -182,8 +188,8 @@ namespace Baku.VMagicMirror
    
         public override void ApplyResult(CalibrationData calibration, bool shouldCalibrate)
         {
-            var imageWidth = (float) _inputSize.width;
-            var imageHeight = (float) _inputSize.height;
+            var imageWidth = (float) _rawInputWidth;
+            var imageHeight = (float) _rawInputHeight;
             var scale = 1.0f / imageWidth;
             _result.ImageSize = new Vector2(imageWidth, imageHeight);
             //上下が逆なのと、正規化が前提なのでxを[-0.5, 0.5]の範囲におさめる

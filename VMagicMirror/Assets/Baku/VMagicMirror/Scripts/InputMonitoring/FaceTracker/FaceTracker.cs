@@ -232,7 +232,7 @@ namespace Baku.VMagicMirror
 
         public void ActivateCamera(string cameraDeviceName, bool highPowerMode)
         {
-            CurrentAnalyzer.Stop();
+            Dispose();
             requestedDeviceName = cameraDeviceName;
             isHighPowerMode = highPowerMode;
             CurrentAnalyzer.Start();

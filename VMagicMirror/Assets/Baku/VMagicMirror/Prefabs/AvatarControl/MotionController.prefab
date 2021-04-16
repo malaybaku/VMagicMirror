@@ -295,6 +295,9 @@ MonoBehaviour:
   headEulerAnglesFactorHighPower: {x: 1.1, y: 1.2, z: 1}
   headRate: 0.5
   facePartsPitchYawFactor: {x: 30, y: 30}
+  deadZoneLeaveRange: {x: 50, y: 10, z: 10}
+  deadZoneEnterRange: {x: 50, y: 6, z: 6}
+  deadZoneJudgeCount: 4
 --- !u!114 &1338865419136667663
 MonoBehaviour:
   m_ObjectHideFlags: 0

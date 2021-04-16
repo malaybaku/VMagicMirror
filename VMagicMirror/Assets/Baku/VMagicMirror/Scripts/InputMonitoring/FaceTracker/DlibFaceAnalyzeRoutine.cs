@@ -127,7 +127,7 @@ namespace Baku.VMagicMirror
 
             var faceRect = new Rect(
                 mainPersonRect.xMin / _inputWidth - 0.5f,
-                -(mainPersonRect.yMax - _inputHeight * 0.5f) / _inputWidth,
+                (_inputHeight * 0.5f - mainPersonRect.yMax) / _inputWidth,
                 mainPersonRect.width / _inputWidth,
                 mainPersonRect.height / _inputWidth
             );

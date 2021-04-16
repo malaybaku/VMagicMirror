@@ -90,17 +90,13 @@ namespace Baku.VMagicMirror
             //ヨー、ピッチは上記のヒューリスティックが大体pnp問題を解くのと等価になるため、
             //pnpを解くのをサボってしまおう、というアプローチです。
             
-            //NOTE: 二重に面倒で申し訳ないのだけど、ImageBasedBodyMotionとFaceTrackerの挙動がアレなのでxは左右を逆にします…うーん…
-            _facePosition = new Vector2(
-                -(FaceRect.center.x / ImageSize.x - 0.5f),
-                FaceRect.center.y / ImageSize.y - 0.5f
-            ) - calibration.faceCenter;
+            _facePosition = FaceRect.center - calibration.faceCenter;
             
             //ロール: 方向だけでいいのでスケールを省いている。0.5倍すると実際の画像上のベクトル
             var rollLine = ((LeftEye + RightEye) - (MouthLeft + MouthRight)).normalized;
-            _rollRad = Mathf.Atan2(rollLine.x, rollLine.y);
+            _rollRad = -Mathf.Atan2(rollLine.x, rollLine.y);
 
-            _yawRate = CalculateYaw();
+            _yawRate = -CalculateYaw();
             PitchRate = CalculatePitch() - calibration.dnnPitchRateOffset;
             
             //NOTE: 値をすぐ0に戻すことで、キャリブレーションした値ベースで計算したように扱う

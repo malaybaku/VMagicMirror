@@ -6,30 +6,43 @@ namespace Baku.VMagicMirror
 {
     public class FaceAttitudeController : MonoBehaviour
     {
-        //NOTE: バネマス系のパラメータ(いわゆるcとk)
-        [SerializeField] private Vector3 speedDump = new Vector3(16f, 16f, 16f);
-        [SerializeField] private Vector3 posDump = new Vector3(50f, 60f, 60f);
+        //NOTE: 頭部運動はどう早く見てもせいぜい2hzくらい、と考えつつ、カットオフを妥協して
+        //ゆっくりの動作は0.5hzくらいと考えられるが、1fにしておくとslow/quickの差が減るのがメリット
+        private const float CutOffFrequencySlow = 1f;
+        private const float CutOffFrequencyQuick = 1.5f;
+        //カットオフ周波数を一気に切り替えるとスナップ運動が発生して不自然なので、何fか使って遷移させる￥
+        private const float CutOffFrequencyChangeSpeedPerSec = 6f;
 
-        [Tooltip("Webカメラで得た回転量を角度ごとに強調したり抑えたりするファクター")] [SerializeField]
-        private Vector3 headEulerAnglesFactor = Vector3.one;
+        //頭の回転限界: bodyも動くことまで踏まえて調整してることに注意。つまり頭のワールド回転の上限はもっと大きい
+        private const float HeadTotalRotationLimitDeg = 35.0f;
+        
 
-        //高解像度モードのときに使うc/k/ファクター
-        [SerializeField] private Vector3 speedDumpHighPower = new Vector3(15f, 10f, 10f);
-        [SerializeField] private Vector3 posDumHighPower = new Vector3(50f, 50f, 50f);
-        [SerializeField] private Vector3 headEulerAnglesFactorHighPower = Vector3.one;
+        [Tooltip("Webカメラで得た回転量を角度ごとに強調したり抑えたりするファクター")]
+        [SerializeField] private Vector3 headEulerAnglesFactor = new Vector3(1.2f, 1.3f, 1f);
+        
+        [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")] 
+        [Range(0f, 1f)] 
+        [SerializeField] private float headRate = 0.5f;
 
-        [Tooltip("NeckとHeadが有効なモデルについて、回転を最終的に振り分ける比率を指定します")] [Range(0f, 1f)] [SerializeField]
-        private float headRate = 0.5f;
+        [Tooltip("FacePartsが[-1, 1]の範囲で返してくるピッチ、ヨーについて、それらを角度に変換する係数")] 
+        [SerializeField] private Vector2 facePartsPitchYawFactor = new Vector2(30, 30);
 
-        [Tooltip("FacePartsが[-1, 1]の範囲で返してくるピッチ、ヨーについて、それらを角度に変換する係数")] [SerializeField]
-        private Vector2 facePartsPitchYawFactor = new Vector2(30, 30);
+        //この角度を超えてtargetとフィルタ後の角度がズレ続けた場合、すばやく動くモードに切り替える
+        //pitchにデカい値が入ってるのはpitchを信用しない、というくらいの意味
+        [SerializeField] private Vector3 deadZoneLeaveRange = new Vector3(50f, 10f, 10f);
+        [SerializeField] private int deadZoneLeaveCount = 3;
+
+        //この角度以内にtargetとフィルタ後の角度が入り続けた場合、ゆっくり動くモードに切り替える
+        //pitchにデカい値が入ってるのはpitchを信用しない、というくらいの意味
+        [SerializeField] private Vector3 deadZoneEnterRange = new Vector3(50f, 6f, 6f);
+        [SerializeField] private int deadZoneEnterCount = 6;
 
         private FaceTracker _faceTracker = null;
-        
+
         public event Action<Vector3> ImageBaseFaceRotationUpdated;
 
         [Inject]
-        public void Initialize(FaceTracker faceTracker, IVRMLoadable vrmLoadable, IMessageReceiver receiver)
+        public void Initialize(FaceTracker faceTracker, IVRMLoadable vrmLoadable)
         {
             _faceTracker = faceTracker;
 
@@ -49,79 +62,133 @@ namespace Baku.VMagicMirror
                 _neck = null;
                 _head = null;
             };
-
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableWebCamHighPowerMode,
-                message => _isHighPowerMode = message.ToBoolean()
-            );
         }
-
-        //こっちの2つは角度の指定。これらの値もbodyが動くことまで加味して調整
-        private const float HeadYawRateToDegFactor = 16.00f;
-
-        private const float HeadTotalRotationLimitDeg = 40.0f;
-
-        private const float YawSpeedToPitchDecreaseFactor = 0.05f;
-        private const float YawSpeedToPitchDecreaseLimit = 5f;
-
-        private bool _isHighPowerMode = false;
-
+        
         private bool _hasModel = false;
         private bool _hasNeck = false;
         private Transform _neck = null;
         private Transform _head = null;
-
-        //NOTE: Quaternionを使わないのは角度別にローパスっぽい処理するのに都合がよいため
-        private Vector3 _prevRotationEuler;
-        private Vector3 _prevRotationSpeedEuler;
-
+        
         public bool IsActive { get; set; } = true;
+
+        private readonly BiQuadFilterVector3 _anglesFilter = new BiQuadFilterVector3();
+
+        // すばやく動くモードのときはtrue
+        private bool _isQuickMode;
+        private int _deadZoneSwitchCount = 0;
+        private float _cutOffFrequency = 0.5f;
+
+        private void Start() => ApplyCutOffFrequencyImmediate();
 
         private void LateUpdate()
         {
             if (!(_hasModel && _faceTracker.HasInitDone && IsActive))
             {
-                _prevRotationEuler = Vector3.zero;
-                _prevRotationSpeedEuler = Vector3.zero;
+                if (_isQuickMode)
+                {
+                    _isQuickMode = false;
+                    ApplyCutOffFrequencyImmediate();
+                }
+                _anglesFilter.ResetValue(Vector3.zero);
                 ImageBaseFaceRotationUpdated?.Invoke(Vector3.zero);
                 return;
             }
 
-            var rawRotationEuler = _faceTracker.IsHighPowerMode
+            var rawTarget = _faceTracker.IsHighPowerMode
                 ? GetHighPowerModeEulerAngle(_faceTracker.CurrentAnalyzer.Result, facePartsPitchYawFactor)
                 : GetLowPowerModeEulerAngle(_faceTracker.CurrentAnalyzer.Result, facePartsPitchYawFactor);
          
-            //NOTE: 2次陽的オイラーじゃない処理に変えないと一生スムーズにならないのでは疑惑があります…
-            var anglesFactor = _isHighPowerMode ? headEulerAnglesFactorHighPower : headEulerAnglesFactor;
-            var speedDumpFactor = _isHighPowerMode ? speedDumpHighPower : speedDump;
-            var posDumpFactor = _isHighPowerMode ? posDumHighPower : posDump;
+            var target = Mul(rawTarget, headEulerAnglesFactor);
+
+            float yawBefore = _anglesFilter.Output.y;
+            var rotationAdjusted = _anglesFilter.Update(target);
+            CheckDeadZone(rotationAdjusted - target);
+            UpdateCutOffFrequency();
+            //NOTE: 30FPSの場合、60FPS用のフィルタリングを2回まわすと整合するので、雑にコレで済ませる
+            if (Time.deltaTime > 0.025f)
+            {
+                rotationAdjusted = _anglesFilter.Update(target);
+                CheckDeadZone(rotationAdjusted - target);
+                UpdateCutOffFrequency();
+            }
             
-            var target = Mul(
-                GetLowPowerModeEulerAngle(_faceTracker.CurrentAnalyzer.Result, facePartsPitchYawFactor),
-                anglesFactor
-            );
-
-            //やりたい事: バネマス系扱いで陽的オイラー法を回してスムージングする。
-            //過減衰方向に寄せてるので雑にやっても大丈夫(のはず)
-            var acceleration =
-                -Mul(speedDumpFactor, _prevRotationSpeedEuler) -
-                Mul(posDumpFactor, _prevRotationEuler - target);
-            var speed = _prevRotationSpeedEuler + Time.deltaTime * acceleration;
-            var rotationEuler = _prevRotationEuler + speed * Time.deltaTime;
-
-            var rotationAdjusted = new Vector3(
-                rotationEuler.x * PitchFactorByYaw(rotationEuler.y) + PitchDiffByYawSpeed(speed.y),
-                rotationEuler.y,
-                rotationEuler.z
-            );
-
-            _prevRotationEuler = rotationEuler;
-            _prevRotationSpeedEuler = speed;
-
             //このスクリプトより先にLookAtIKが走るハズなので、その回転と合成していく
             ApplyRotationToHeadBone(rotationAdjusted);
         }
 
+        //デッドゾーンから入ったり抜けたりの状態を管理します。
+        private void CheckDeadZone(Vector3 diff)
+        {
+            if (_isQuickMode)
+            {
+                if (Mathf.Abs(diff.x) < deadZoneEnterRange.x &&
+                    Mathf.Abs(diff.y) < deadZoneEnterRange.y &&
+                    Mathf.Abs(diff.z) < deadZoneEnterRange.z)
+                {
+                    _deadZoneSwitchCount++;
+                    if (_deadZoneSwitchCount >= deadZoneEnterCount)
+                    {
+                        _deadZoneSwitchCount = 0;
+                        _isQuickMode = false;
+                    }
+                }
+                else
+                {
+                    _deadZoneSwitchCount = 0;
+                }
+            }
+            else
+            {
+                if (Mathf.Abs(diff.x) > deadZoneLeaveRange.x ||
+                    Mathf.Abs(diff.y) > deadZoneLeaveRange.y ||
+                    Mathf.Abs(diff.z) > deadZoneLeaveRange.z)
+                {
+                    _deadZoneSwitchCount++;
+                    if (_deadZoneSwitchCount >= deadZoneLeaveCount)
+                    {
+                        _deadZoneSwitchCount = 0;
+                        _isQuickMode = true;
+                    }
+                }
+                else
+                {
+                    _deadZoneSwitchCount = 0;
+                }
+            }
+        }
+
+        private void ApplyCutOffFrequencyImmediate()
+        {
+            _cutOffFrequency = _isQuickMode ? CutOffFrequencyQuick : CutOffFrequencySlow;
+            _anglesFilter.SetUpAsLowPassFilter(60f, _cutOffFrequency * Vector3.one);
+        }
+
+        //カットオフ周波数が目標値より大きい/少ないに応じて周波数自体をいじる
+        private void UpdateCutOffFrequency()
+        {
+            float targetFreq = _isQuickMode ? CutOffFrequencyQuick : CutOffFrequencySlow;
+            if (Mathf.Abs(_cutOffFrequency - targetFreq) < 0.001f)
+            {
+                return;
+            }
+
+            if (_cutOffFrequency < targetFreq)
+            {
+                _cutOffFrequency = Mathf.Min(
+                    _cutOffFrequency + CutOffFrequencyChangeSpeedPerSec * Time.deltaTime,
+                    CutOffFrequencyQuick
+                );
+            }
+            else
+            {
+                _cutOffFrequency = Mathf.Max(
+                    _cutOffFrequency - CutOffFrequencyChangeSpeedPerSec * Time.deltaTime,
+                    CutOffFrequencySlow
+                );
+            }
+            _anglesFilter.SetUpAsLowPassFilter(60f, _cutOffFrequency * Vector3.one);
+        }
+        
         private void ApplyRotationToHeadBone(Vector3 rotationEuler)
         {
             var rot = Quaternion.Euler(rotationEuler);
@@ -184,7 +251,7 @@ namespace Baku.VMagicMirror
             IFaceAnalyzeResult faceAnalyzeResult, Vector2 pitchYawFactor
             )
         {
-            //低負荷版と違い、ヨー/ピッチ連成を考慮しない。必要そうだったら考慮するように直すが。
+            //低負荷版と違い、ヨー/ピッチ連成を考慮しない。必要そうだったら考慮するように直す
             var pitchRate = Mathf.Clamp(faceAnalyzeResult.PitchRate, -1f, 1f);
             var yawRate = Mathf.Clamp(faceAnalyzeResult.YawRate, -1f, 1f);
             return new Vector3(
@@ -194,24 +261,7 @@ namespace Baku.VMagicMirror
             );
         }
         
-        //ヨーの動きがあるとき、首を下に向けさせる(首振り運動は通常ピッチが下がるのを決め打ちでやる)ための処置
-        private static float PitchDiffByYawSpeed(float degPerSecond)
-        {
-            float rate = Mathf.Clamp01(
-                Mathf.Abs(degPerSecond) * YawSpeedToPitchDecreaseFactor / YawSpeedToPitchDecreaseLimit
-            );
-
-            //特にrateが高いほうを丸めるのが狙いです
-            return Mathf.SmoothStep(0f, 1f, rate) * YawSpeedToPitchDecreaseLimit;
-        }
-
-        //ヨーが0から離れているとき、ピッチを0に近づけるための処置。
-        //現行処理だとヨーが0から離れたときピッチが上に寄ってしまうので、それをキャンセルするのが狙い
-        private static float PitchFactorByYaw(float yawDeg)
-        {
-            float rate = Mathf.Clamp01(Mathf.Abs(yawDeg / HeadYawRateToDegFactor));
-            return 1.0f - rate * 0.3f;
-        }
+        //NOTE: 筋肉的には「首が横に振るときはピッチを下げるべき」みたいな解釈もあるけど一旦やらない
 
         private static Vector3 Mul(Vector3 left, Vector3 right) => new Vector3(
             left.x * right.x,

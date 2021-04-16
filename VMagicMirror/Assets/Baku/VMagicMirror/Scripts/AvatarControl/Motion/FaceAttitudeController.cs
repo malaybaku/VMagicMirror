@@ -253,7 +253,9 @@ namespace Baku.VMagicMirror
         {
             //低負荷版と違い、ヨー/ピッチ連成を考慮しない。必要そうだったら考慮するように直す
             var pitchRate = Mathf.Clamp(faceAnalyzeResult.PitchRate, -1f, 1f);
-            var yawRate = Mathf.Clamp(faceAnalyzeResult.YawRate, -1f, 1f);
+            //ちょっとだけ縮める。DNNベースの計算だとヨーがけっこうビシッと出るのだけど、
+            //ビシッとしすぎてて横顔になってしまいやすいので
+            var yawRate = Mathf.Clamp(faceAnalyzeResult.YawRate, -.9f, .9f);
             return new Vector3(
                 pitchRate * pitchYawFactor.x,
                 yawRate * pitchYawFactor.y,

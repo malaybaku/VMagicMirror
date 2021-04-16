@@ -74,7 +74,9 @@ namespace Baku.VMagicMirror
             UpdateRoll();
             UpdateYaw();
             //NOTE: Rollより後にやる必要があるので注意
-            UpdatePitch(calibration);
+            float rawPitchRate = CalculatePitch();
+            PitchRate = rawPitchRate - calibration.pitchRateOffset;
+            
             UpdateBlinkValues(landmarks);
             
             //NOTE: 値をすぐ0に戻すことで、キャリブレーションした値ベースで計算したように扱う
@@ -82,7 +84,7 @@ namespace Baku.VMagicMirror
             {
                 calibration.faceSize = faceRect.width * faceRect.height;
                 calibration.faceCenter = faceRect.center;
-                calibration.pitchRateOffset = PitchRate;
+                calibration.pitchRateOffset = rawPitchRate;
                 _facePosition = Vector2.zero;
                 PitchRate = 0f;
             }
@@ -132,7 +134,7 @@ namespace Baku.VMagicMirror
                     Mathf.Clamp(diffLeft / diffRight - 1, 0, YawMouthDistanceRatio) / YawMouthDistanceRatio;
         }
 
-        private void UpdatePitch(CalibrationData calibration)
+        private float CalculatePitch()
         {
             //顔のY平均と、目のY平均の上下関係から推定する。
             //目のほうが上にある場合は上をむいており、逆もしかり。
@@ -144,8 +146,7 @@ namespace Baku.VMagicMirror
             var eyesY = 0.5f * GetRollCanceled(leftEyeCenter + rightEyeCenter).y;
                 
             //POINT: 顔の横方向サイズで正規化する。こうすると口の開閉とか鎖骨付近の領域の誤検出にちょっと強いので
-            float rawPitchRate = (eyesY - faceY) / (_landmarks[6] - _landmarks[8]).magnitude / EyeFaceYDiffMax;
-            PitchRate = rawPitchRate - calibration.pitchRateOffset;
+            return (eyesY - faceY) / (_landmarks[6] - _landmarks[8]).magnitude / EyeFaceYDiffMax;
         }
             
         private Vector2 GetRollCanceled(Vector2 p)

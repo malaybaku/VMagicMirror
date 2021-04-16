@@ -92,14 +92,15 @@ namespace Baku.VMagicMirror
             _rollRad = -Mathf.Atan2(rollLine.x, rollLine.y);
 
             _yawRate = -CalculateYaw();
-            PitchRate = CalculatePitch() - calibration.dnnPitchRateOffset;
+            float rawPitch = CalculatePitch();
+            PitchRate = rawPitch - calibration.dnnPitchRateOffset;
             
             //NOTE: 値をすぐ0に戻すことで、キャリブレーションした値ベースで計算したように扱う
             if (shouldCalibrate)
             {
                 calibration.faceSize = FaceRect.width * FaceRect.height;
                 calibration.faceCenter = FaceRect.center;
-                calibration.dnnPitchRateOffset = PitchRate;
+                calibration.dnnPitchRateOffset = rawPitch;
                 _facePosition = Vector2.zero;
                 PitchRate = 0f;
             }

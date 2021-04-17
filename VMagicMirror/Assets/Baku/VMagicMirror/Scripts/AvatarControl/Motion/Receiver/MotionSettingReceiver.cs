@@ -97,6 +97,17 @@ namespace Baku.VMagicMirror
                 VmmCommands.SetDeviceTypeToStartWordToMotion,
                 message => SetDeviceTypeForWordToMotion(message.ToInt())
                 );
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.SetGamepadMotionMode,
+                v => handIkIntegrator.SetGamepadMotionMode(v.ToInt())
+            );
+
+            receiver.AssignCommandHandler(
+                VmmCommands.SetKeyboardAndMouseMotionMode,
+                v => handIkIntegrator.SetKeyboardAndMouseMotionMode(v.ToInt())
+                ); 
+            
         }
 
         private void SetDeviceTypeForWordToMotion(int deviceType)

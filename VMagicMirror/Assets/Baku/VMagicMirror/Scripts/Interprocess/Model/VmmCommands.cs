@@ -57,6 +57,9 @@ namespace Baku.VMagicMirror
         public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
         public const string PresentationArmRadiusMin = nameof(PresentationArmRadiusMin);
 
+        public const string SetKeyboardAndMouseMotionMode = nameof(SetKeyboardAndMouseMotionMode);
+        public const string SetGamepadMotionMode = nameof(SetGamepadMotionMode);
+
         // Motion, Wait
         public const string EnableWaitMotion = nameof(EnableWaitMotion);
         public const string WaitMotionScale = nameof(WaitMotionScale);

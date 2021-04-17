@@ -7,6 +7,7 @@ namespace Baku.VMagicMirror.Installer
     public class DevicesInstaller : InstallerBase, IDevicesRoot
     {
         [SerializeField] private GamepadProvider gamepadProvider = null;
+        [SerializeField] private ArcadeStickProvider arcadeStickProvider = null;
         [SerializeField] private KeyboardProvider keyboardProvider = null;
         [SerializeField] private TouchPadProvider touchPadProvider = null;
         [SerializeField] private MidiControllerProvider midiControllerProvider = null;
@@ -35,6 +36,10 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<ParticleStore>()
                 .FromComponentInNewPrefab(particleStore)
                 .AsCached();
+
+            //DEBUG: とりあえずデバッグ段階なのでInstanceを直で扱う
+            container.Bind<ArcadeStickProvider>()
+                .FromInstance(arcadeStickProvider);
         }
     }
 

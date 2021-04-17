@@ -20,10 +20,14 @@ namespace Baku.VMagicMirror
         [SerializeField] private Transform left1Button = default;
         [SerializeField] private Transform left2Button = default;
 
+        //ボタンのちょっと上に腕があったほうがいいよね、という補正値
+        //スティックと少しだけズラしておくと見栄えがよい
+        [SerializeField] private float buttonYOffset = 0.04f;
+        
         //スティックの付け根からボール部分の中心までの高さ、のつもり
-        [SerializeField] private float stickHeight = 0.08f;
+        [SerializeField] private float stickHeight = 0.05f;
         //スティックが特定方向に最大まで倒れたときの倒れ込み角度。これとstickHeightを使うと手の位置、姿勢が定まる
-        [SerializeField] private float stickBendAngleDeg = 30f;
+        [SerializeField] private float stickBendAngleDeg = 20f;
         //スティックを横に最大限まで倒したときに手首をひねる角度
         [SerializeField] private float handTiltDeg = 5f;
 
@@ -65,7 +69,11 @@ namespace Baku.VMagicMirror
                 Quaternion.Euler(stickBendAngleDeg * inputValue.y, 0f, stickBendAngleDeg * inputValue.x) *
                 (stickBase.up * stickHeight);
 
-            var rot = baseRot * Quaternion.AngleAxis(inputValue.x * handTiltDeg, Vector3.forward);
+            var rot = baseRot * 
+                  Quaternion.AngleAxis(inputValue.x * handTiltDeg, Vector3.forward) * 
+                  //NOTE: ちょっとだけ手首が上向きになるように仕向ける。IKの計算上あんまり見栄えは改善しないが、無いよりはgood
+                  Quaternion.AngleAxis(-10f, Vector3.right) * 
+                  Quaternion.AngleAxis(90f, Vector3.up);
 
             return (basePosition + positionDiff, rot);
         }
@@ -78,6 +86,7 @@ namespace Baku.VMagicMirror
         {
             if (!IsArcadeStickKey(key))
             {
+                Debug.Log($"unsupported key! {key}");
                 //NOTE: ホントはここに来られると困る
                 return (aButton.position, aButton.rotation);
             }
@@ -85,7 +94,7 @@ namespace Baku.VMagicMirror
             //NOTE: 外側のボタンに対して手首のひねりを効かせることが考えられる…が、
             //とりあえずコード上ではそういう事はしないものとする
             var t = _keyToTransform[key];
-            return (t.position, t.rotation);
+            return (t.position + t.up * buttonYOffset, t.rotation * Quaternion.AngleAxis(-90f, Vector3.up));
         }
      
         public static bool IsArcadeStickKey(GamepadKey key)

@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using Random = UnityEngine.Random;
+﻿using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -9,23 +7,14 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class ArcadeStickHandIKGenerator : HandIkGeneratorBase
     {
-        [Serializable]
-        public class GamepadHandIkGeneratorSetting
-        {
-            public ImageBasedBodyMotion imageBasedBodyMotion;            
-        }
+        // 左手の追従速度。かなりスピーディ
+        private const float RightHandSpeedFactor = 12.0f;
+        // 左手の追従速度。そこそこスピーディ
+        private const float LeftHandSpeedFactor = 12.0f;
+        
+        //ボタンを押すとき手ごと下に下げる移動量。
+        private const float ButtonDownY = 0.01f;
 
-        // ゲームパッド全体を動かす速度ファクタ
-        private const float SpeedFactor = 3.0f;
-        
-        // ボタンを押す/押してないに依存して手を上下させる動きの速度ファクタ
-        private const float ButtonDownSpeedFactor = 8f;
-        
-        //体が動いた量をゲームパッドの移動量に反映するファクター
-        private const float BodyMotionToGamepadPosApplyFactor = 0.5f;
-
-        private const float OffsetResetLerpFactor = 6f;
-        
         public ArcadeStickHandIKGenerator(
             MonoBehaviour coroutineResponder, 
             IVRMLoadable vrmLoadable,
@@ -38,24 +27,16 @@ namespace Baku.VMagicMirror
             {
                 var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
                 var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
-                float height = h.position.y - f.position.y;
-                _bodySizeScale = Mathf.Clamp(height / ReferenceHeight, 0.1f, 5f);
             };
         }
         
         private readonly ArcadeStickProvider _stickProvider;
-        private readonly GamepadHandIkGeneratorSetting _setting;
         
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKGenerator LeftHand => _leftHand;
 
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         public IIKGenerator RightHand => _rightHand;
-
-        private float _bodySizeScale;
-
-        private const float ButtonDownAnimationY = 0.01f;
-        private const float ReferenceHeight = 1.3f;
         
         private Vector2 _rawStickPos = Vector2.zero;
         private Vector2 _filterStickPos = Vector2.zero;
@@ -68,7 +49,7 @@ namespace Baku.VMagicMirror
         
         public void ButtonDown(GamepadKey key)
         {
-            if (ArcadeStickProvider.IsArcadeStickKey(key))
+            if (!ArcadeStickProvider.IsArcadeStickKey(key))
             {
                 return;
             }
@@ -80,7 +61,7 @@ namespace Baku.VMagicMirror
 
         public void ButtonUp(GamepadKey key)
         {
-            if (ArcadeStickProvider.IsArcadeStickKey(key))
+            if (!ArcadeStickProvider.IsArcadeStickKey(key))
             {
                 return;
             }
@@ -117,33 +98,18 @@ namespace Baku.VMagicMirror
         
         public override void Update()
         {
-            UpdateButtonDownYOffset();            
-            
             //スティックについてはスティック値自体をLerpすることで平滑化
-            _filterStickPos = Vector2.Lerp(_filterStickPos, _rawStickPos, SpeedFactor * Time.deltaTime);
+            _filterStickPos = Vector2.Lerp(_filterStickPos, _rawStickPos, LeftHandSpeedFactor * Time.deltaTime);
             var (leftPos, leftRot) = _stickProvider.GetLeftHand(_filterStickPos);
             _leftHand.Position = leftPos;
             _leftHand.Rotation = leftRot;
             
-            //ボタン側は押してる/押してないでy方向にちょっと動くことに注意しつつ、素朴にLerp/Slerp
-
-            var posWithOffset = _latestButtonPos + _offsetY * _stickProvider.GetYAxis();
-            
-            _rightHand.Position = Vector3.Lerp(_rightHand.Position, _latestButtonPos, SpeedFactor * Time.deltaTime);
-            _rightHand.Rotation = Quaternion.Slerp(_rightHand.Rotation, _latestButtonRot, SpeedFactor * Time.deltaTime);
+            //ボタンを押してる/押してないでy方向に移動が入ることに注意しつつ、素朴にLerp/Slerp
+            //y軸方向の移動だけ更にシャープにするのもアリだが、書くのがめんどくさい…
+            var offsetY = (_buttonDownCount > 0) ? -ButtonDownY : 0;
+            var posWithOffset = _latestButtonPos + offsetY * _stickProvider.GetYAxis();
+            _rightHand.Position = Vector3.Lerp(_rightHand.Position, posWithOffset, RightHandSpeedFactor * Time.deltaTime);
+            _rightHand.Rotation = Quaternion.Slerp(_rightHand.Rotation, _latestButtonRot, RightHandSpeedFactor * Time.deltaTime);
         }
-
-        private void UpdateButtonDownYOffset()
-        {
-            float offsetGoal =
-                (_buttonDownCount > 0) ? -ButtonDownAnimationY : 0;
-
-            _offsetY = Mathf.Lerp(
-                _offsetY,
-                offsetGoal,
-                ButtonDownSpeedFactor * Time.deltaTime
-                );
-        }
-        
     }
 }

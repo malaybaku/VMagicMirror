@@ -10,6 +10,8 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class HandIKIntegrator : MonoBehaviour
     {
+        #region settings
+        
         //NOTE: ステートパターンがめんどくさいときのステートマシンの実装です。まあステート数少ないので…
 
         /// <summary> IK種類が変わるときのブレンディングに使う時間。IK自体の無効化/有効化もこの時間で行う </summary>
@@ -29,6 +31,7 @@ namespace Baku.VMagicMirror
         public TypingHandIKGenerator Typing => typing;
 
         [SerializeField] private GamepadFingerController gamepadFinger = null;
+        [SerializeField] private ArcadeStickFingerController arcadeStickFinger = null;
 
         [SerializeField] private WaitingBodyMotion waitingBody = null;
 
@@ -146,6 +149,7 @@ namespace Baku.VMagicMirror
         public Vector3 RightHandPosition => _rightHandTarget.position;
         public Vector3 LeftHandPosition => _leftHandTarget.position;
 
+        #endregion
 
         [Inject]
         public void Initialize(
@@ -396,6 +400,10 @@ namespace Baku.VMagicMirror
                     break;
                 case GamepadMotionModes.ArcadeStick:
                     SetRightHandIk(HandTargetType.ArcadeStick);
+                    if (!AlwaysHandDownMode)
+                    {
+                        arcadeStickFinger.ButtonDown(key);
+                    }
                     break;
                 default:
                     break;
@@ -427,11 +435,12 @@ namespace Baku.VMagicMirror
                     }
                     
                     //NOTE: めっちゃ起きにくいが、「コントローラのボタンを押したまま手さげモードに入る」というケースを
-                    //破たんしにくくするため、指を離す方向の動作については手下げモードであってもガードしない
+                    //破たんしにくくするため、指を離す方向の動作については手下げモードであってもガードしない。
+                    //この次のアケコンについても同じ考え方
                     gamepadFinger.ButtonUp(key);
                     break;
                 case GamepadMotionModes.ArcadeStick:
-                    //追加処理なし: ボタン上げはIKとして反映されるはず + 上げ動作ではIK切り替えしないでもいい気がする
+                    arcadeStickFinger.ButtonUp(key);
                     break;
                 default:
                     break;
@@ -691,6 +700,8 @@ namespace Baku.VMagicMirror
             );
         }
 
+        //TODO: Stateパターンをそろそろ検討しないとヤバそう
+
         private void SetLeftHandIk(HandTargetType targetType)
         {
             if (_leftTargetType == targetType)
@@ -721,29 +732,34 @@ namespace Baku.VMagicMirror
             _currentLeftHand = ik;
             _leftHandStateBlendCount = 0f;
 
-            if (prevType == HandTargetType.Keyboard)
+            switch (prevType)
             {
-                //NOTE: とくにキーボード⇢ゲームパッドの遷移が破綻しないようにこのタイミングでやる
-                fingerController.ReleaseLeftHandTyping();
-            }
-            
-            if (prevType == HandTargetType.Gamepad)
-            {
-                gamepadFinger.ReleaseLeftHand();
-            }
-            if (targetType == HandTargetType.Gamepad)
-            {
-                gamepadFinger.GripLeftHand();
+                case HandTargetType.Keyboard:
+                    //NOTE: とくにキーボード⇢ゲームパッドの遷移が破綻しないようにこのタイミングでやる
+                    fingerController.ReleaseLeftHandTyping();
+                    break;
+                case HandTargetType.Gamepad:
+                    gamepadFinger.ReleaseLeftHand();
+                    break;
+                case HandTargetType.ArcadeStick:
+                    arcadeStickFinger.ReleaseLeftHand();
+                    break;
             }
 
-            if (targetType == HandTargetType.Keyboard)
+            switch (targetType)
             {
-                typing.ResetLeftHandDownTimeout(true);
-            }
-            
-            if (targetType == HandTargetType.ImageBaseHand)
-            {
-                _imageBaseHand.InitializeHandPosture(ReactedHand.Left, _prevLeftHand);
+                case HandTargetType.Keyboard:
+                    typing.ResetLeftHandDownTimeout(true);
+                    break;
+                case HandTargetType.Gamepad:
+                    gamepadFinger.GripLeftHand();
+                    break;
+                case HandTargetType.ArcadeStick:
+                    arcadeStickFinger.GripLeftHand();
+                    break;
+                case HandTargetType.ImageBaseHand:
+                    _imageBaseHand.InitializeHandPosture(ReactedHand.Left, _prevLeftHand);
+                    break;
             }
             
             GamepadHand.HandIsOnController = 
@@ -793,29 +809,34 @@ namespace Baku.VMagicMirror
                 fingerController.ReleaseRightHandTyping();
             }
 
-            if (targetType == HandTargetType.Keyboard)
+            switch (prevType)
             {
-                typing.ResetRightHandDownTimeout(true);
-            }
-            
-            if (targetType == HandTargetType.Mouse)
-            {
-                MouseMove.ResetHandDownTimeout(true);
+                case HandTargetType.Gamepad:
+                    gamepadFinger.ReleaseRightHand();
+                    break;
+                case HandTargetType.ArcadeStick:
+                    arcadeStickFinger.ReleaseRightHand();
+                    break;
             }
 
-            if (prevType == HandTargetType.Gamepad)
+            switch (targetType)
             {
-                gamepadFinger.ReleaseRightHand();
-            }
-            if (targetType == HandTargetType.Gamepad)
-            {
-                gamepadFinger.GripRightHand();
-            }
-            
-            //ブレンディングをきれいにするために直前で手があった位置を拾って渡してあげる
-            if (targetType == HandTargetType.ImageBaseHand)
-            {
-                _imageBaseHand.InitializeHandPosture(ReactedHand.Right, _prevRightHand);
+                case HandTargetType.Keyboard:
+                    typing.ResetRightHandDownTimeout(true);
+                    break;
+                case HandTargetType.Mouse:
+                    MouseMove.ResetHandDownTimeout(true);
+                    break;
+                case HandTargetType.Gamepad:
+                    gamepadFinger.GripRightHand();
+                    break;
+                case HandTargetType.ArcadeStick:
+                    arcadeStickFinger.GripRightHand();
+                    break;
+                case HandTargetType.ImageBaseHand:
+                    //ブレンディングをきれいにするために直前で手があった位置を拾って渡してあげる
+                    _imageBaseHand.InitializeHandPosture(ReactedHand.Right, _prevRightHand);
+                    break;
             }
 
             GamepadHand.HandIsOnController = 

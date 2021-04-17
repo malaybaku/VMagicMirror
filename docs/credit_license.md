@@ -58,6 +58,8 @@ In VMagicMirror, the materials are replaced for the visual consistency.
 
 [RawInput.Sharp](https://github.com/mfakane/rawinput-sharp), by zlib license
 
+[libfacedetection.train](https://github.com/ShiqiYu/libfacedetection.train)
+
 [OpenCV](https://opencv.org/)
 
 [UnityCam(UnityCaptureFilter)](https://github.com/mrayy/UnityCam)
@@ -440,6 +442,32 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
+
+#### libfacedetection.train
+
+MIT License
+
+Copyright (c) 2017 Max deGroot, Ellis Brown
+Copyright (c) 2019 Zisian Wong, Shifeng Zhang
+Copyright (c) 2020 Shiqi Yu <shiqi.yu@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 #### OpenCV
 

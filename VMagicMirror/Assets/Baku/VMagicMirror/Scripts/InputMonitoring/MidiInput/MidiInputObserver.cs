@@ -20,8 +20,15 @@ namespace Baku.VMagicMirror
             MidiMaster.knobDelegate += OnKnobValue;
         }
 
-        private void OnNoteOn(MidiChannel channel, int note, float velocity) 
-            => _noteOn.OnNext(note);
+        private void OnNoteOn(MidiChannel channel, int note, float velocity)
+        {
+            //note on, velocity = 0 の組み合わせは実際にはノートオフを表しているため、通過させない。
+            //しきい値の0.001fにはあまり深い意味はなく、1/127より小さいかどうかチェックできてれば十分
+            if (velocity > 0.001f)
+            {
+                _noteOn.OnNext(note);
+            }
+        }
 
         private void OnKnobValue(MidiChannel channel, int knobNumber, float knobValue) 
             => _knobValue.OnNext((knobNumber, knobValue));

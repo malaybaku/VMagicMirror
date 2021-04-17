@@ -137,7 +137,7 @@ Also you can set background image when `Transparent Window` is turn off, from `L
 - `Sensitivity [dB]`: Specify plus value when the microphone input is too small, to obtain good result for lipsync.
 - `Show Volume`: Turn on to see the input volume. Adjust `Sensitivity` such that, the volume bar is green and sometimes red during talking.
 - `Track Face`: Select webcam to track your head motion
-- `High Power Mode`: Get more quick face tracking result, while getting higher CPU load. In v1.5.0 it is an experimental feature.
+- `High Power Mode`: Get more robust face tracking result, while getting higher CPU load. Available from v1.7.0 (beta ver is in v1.5.0-v1.6.2).
 - `Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking.
 
 </div>

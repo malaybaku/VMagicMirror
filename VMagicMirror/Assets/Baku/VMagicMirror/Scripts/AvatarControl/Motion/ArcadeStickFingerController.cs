@@ -83,15 +83,15 @@ namespace Baku.VMagicMirror
             fingerController.Release(FingerConsts.LeftLittle);
         }
         
-        private static int KeyToFingerNumber(GamepadKey key)
+        public static int KeyToFingerNumber(GamepadKey key)
         {
+            //NOTE: VRMの親指が扱いづらいので2-5に振り分ける。あまり現実的ではないが、見栄えはよいはず
             switch (key)
             {
                 case GamepadKey.A:
-                case GamepadKey.B:
-                    return FingerConsts.RightThumb;
                 case GamepadKey.X:
                     return FingerConsts.RightIndex;
+                case GamepadKey.B:
                 case GamepadKey.Y:
                     return FingerConsts.RightMiddle;
                 case GamepadKey.RShoulder:
@@ -130,7 +130,7 @@ namespace Baku.VMagicMirror
                 case FingerConsts.RightIndex:
                 case FingerConsts.RightMiddle:
                 case FingerConsts.RightThumb:
-                    return isPressed ? 20f: 10f;
+                    return isPressed ? 30f: 25f;
                 default:
                     //こない
                     return 25f;

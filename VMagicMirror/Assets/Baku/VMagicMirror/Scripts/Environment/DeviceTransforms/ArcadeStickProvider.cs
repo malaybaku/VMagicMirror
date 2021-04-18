@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using mattatz.TransformControl;
 using UnityEngine;
 
@@ -32,7 +31,8 @@ namespace Baku.VMagicMirror
         //スティックを横に最大限まで倒したときに手首をひねる角度
         [SerializeField] private float handTiltDeg = 5f;
 
-        [SerializeField] private Vector3 basePosition = new Vector3(0f, 1f, 0.3f);
+        [SerializeField] private Vector3 basePosition = new Vector3(0f, .93f, 0.3f);
+        [SerializeField] private Vector3 baseRotation = new Vector3(-20f, 0f, 0f);
 
         [SerializeField] private TransformControl transformControl = default;
         public TransformControl TransformControl => transformControl;
@@ -102,6 +102,22 @@ namespace Baku.VMagicMirror
             var t = _keyToTransform[key];
             return (t.position + t.up * buttonYOffset, t.rotation * Quaternion.AngleAxis(-90f, Vector3.up));
         }
+        
+        /// <summary>
+        /// 手のための位置や回転オフセットを考慮しない、ボタン自体の姿勢情報を取得します。
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public (Vector3, Quaternion) GetRightHandRaw(GamepadKey key)
+        {
+            if (!IsArcadeStickKey(key))
+            {
+                return (aButton.position, aButton.rotation);
+            }
+
+            var t = _keyToTransform[key];
+            return (t.position, t.rotation);
+        }
      
         public static bool IsArcadeStickKey(GamepadKey key)
         {
@@ -120,6 +136,16 @@ namespace Baku.VMagicMirror
                     return false;
             }
         }
+        
+        /// <summary>
+        /// スティック部分にまっすぐ手を添えに行く場合の左手首のrotationを取得します。
+        /// 手のサイズベースで位置オフセットをつけたい場合などに使用します。
+        /// </summary>
+        /// <returns></returns>
+        public Quaternion GetStickBaseRotation()
+        {
+            return stickBase.rotation * Quaternion.AngleAxis(90f, Vector3.up);;
+        }
 
         /// <summary>
         /// アーケードスティック全体の上方向に相当するベクトルを取得します。
@@ -128,10 +154,14 @@ namespace Baku.VMagicMirror
         /// <returns></returns>
         public Vector3 GetYAxis() => aButton.up;
 
+        /// <summary>
+        /// レイアウトパラメータを指定して呼ぶことで、レイアウトのリセットを行います。
+        /// </summary>
+        /// <param name="parameters"></param>
         public void SetLayoutByParameter(DeviceLayoutAutoAdjustParameters parameters)
         {
             var t = transform;
-            t.localRotation = Quaternion.identity;
+            t.localRotation = Quaternion.Euler(baseRotation);
             t.localPosition = new Vector3(
                 basePosition.x * parameters.ArmLengthFactor,
                 basePosition.y * parameters.HeightFactor,

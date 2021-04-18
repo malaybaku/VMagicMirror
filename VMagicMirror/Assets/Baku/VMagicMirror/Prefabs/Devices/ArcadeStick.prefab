@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 1929893640617658645}
   - component: {fileID: 1929893640617658647}
   - component: {fileID: 1929893640617658646}
+  - component: {fileID: 6637181315389140622}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -70,7 +71,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929893640617658644}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &1929893640617658646
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -110,6 +111,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &6637181315389140622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929893640617658644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    Target:
+      meshFilter: {fileID: 1929893640617658647}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 4470397378458318839}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &1929893640726576903
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,6 +152,7 @@ GameObject:
   - component: {fileID: 1929893640726576952}
   - component: {fileID: 1929893640726576954}
   - component: {fileID: 1929893640726576953}
+  - component: {fileID: 1298392476832728951}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -149,7 +181,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929893640726576903}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &1929893640726576953
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -189,6 +221,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &1298392476832728951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929893640726576903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    Target:
+      meshFilter: {fileID: 1929893640726576954}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 4470397378458318839}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &1929893640733728395
 GameObject:
   m_ObjectHideFlags: 0
@@ -417,6 +479,7 @@ GameObject:
   - component: {fileID: 1929893641374688252}
   - component: {fileID: 1929893641374688254}
   - component: {fileID: 1929893641374688253}
+  - component: {fileID: 5686501444301236346}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -445,7 +508,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929893641374688251}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &1929893641374688253
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -485,6 +548,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &5686501444301236346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929893641374688251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    Target:
+      meshFilter: {fileID: 1929893641374688254}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 4470397378458318839}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &1929893641757598266
 GameObject:
   m_ObjectHideFlags: 0
@@ -549,12 +642,13 @@ MonoBehaviour:
   right2Button: {fileID: 1929893640770731943}
   left1Button: {fileID: 1929893640733728396}
   left2Button: {fileID: 1929893640788255419}
-  buttonYOffset: 0.04
+  buttonYOffset: 0.02
   stickHeight: 0.05
   stickBendAngleDeg: 20
   handTiltDeg: 15
-  basePosition: {x: 0, y: 1, z: 0.3}
-  transformControl: {fileID: 0}
+  basePosition: {x: 0, y: 0.93, z: 0.3}
+  baseRotation: {x: -20, y: 0, z: 0}
+  transformControl: {fileID: 7297205259961872122}
 --- !u!114 &5697564078635650873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -610,6 +704,7 @@ GameObject:
   - component: {fileID: 1929893642170050633}
   - component: {fileID: 1929893642170050635}
   - component: {fileID: 1929893642170050634}
+  - component: {fileID: 5390053601945650630}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -638,7 +733,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929893642170050632}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &1929893642170050634
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -678,6 +773,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &5390053601945650630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929893642170050632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    Target:
+      meshFilter: {fileID: 1929893642170050635}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 4470397378458318839}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &1929893642264681091
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,6 +814,7 @@ GameObject:
   - component: {fileID: 1929893642264681092}
   - component: {fileID: 1929893642264681094}
   - component: {fileID: 1929893642264681093}
+  - component: {fileID: 7531484246715446212}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -717,7 +843,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929893642264681091}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &1929893642264681093
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -757,6 +883,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &7531484246715446212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929893642264681091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    Target:
+      meshFilter: {fileID: 1929893642264681094}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 4470397378458318839}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &1929893642349139458
 GameObject:
   m_ObjectHideFlags: 0
@@ -768,6 +924,7 @@ GameObject:
   - component: {fileID: 1929893642349139459}
   - component: {fileID: 1929893642349139461}
   - component: {fileID: 1929893642349139460}
+  - component: {fileID: 2918992650328940474}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -796,7 +953,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929893642349139458}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &1929893642349139460
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -836,6 +993,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &2918992650328940474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929893642349139458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    Target:
+      meshFilter: {fileID: 1929893642349139461}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 4470397378458318839}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &1929893642490036347
 GameObject:
   m_ObjectHideFlags: 0
@@ -847,6 +1034,7 @@ GameObject:
   - component: {fileID: 1929893642490036348}
   - component: {fileID: 1929893642490036350}
   - component: {fileID: 1929893642490036349}
+  - component: {fileID: 3406479640668980037}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -875,7 +1063,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929893642490036347}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &1929893642490036349
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -915,6 +1103,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &3406479640668980037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929893642490036347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    Target:
+      meshFilter: {fileID: 1929893642490036350}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 4470397378458318839}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &1929893642514845262
 GameObject:
   m_ObjectHideFlags: 0
@@ -926,6 +1144,7 @@ GameObject:
   - component: {fileID: 1929893642514845263}
   - component: {fileID: 1929893642514845249}
   - component: {fileID: 1929893642514845248}
+  - component: {fileID: 4117753365661144237}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -954,7 +1173,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1929893642514845262}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &1929893642514845248
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -994,6 +1213,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &4117753365661144237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1929893642514845262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    Target:
+      meshFilter: {fileID: 1929893642514845249}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 4470397378458318839}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &3503597779094345016
 GameObject:
   m_ObjectHideFlags: 0
@@ -1005,6 +1254,7 @@ GameObject:
   - component: {fileID: 3503597779094344996}
   - component: {fileID: 3503597779094345019}
   - component: {fileID: 3503597779094345018}
+  - component: {fileID: 4926468303222890704}
   m_Layer: 0
   m_Name: Key
   m_TagString: Untagged
@@ -1033,7 +1283,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3503597779094345016}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &3503597779094345018
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1073,6 +1323,36 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &4926468303222890704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3503597779094345016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    Target:
+      meshFilter: {fileID: 3503597779094345019}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 4470397378458318839}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &8489288607769634764
 GameObject:
   m_ObjectHideFlags: 0

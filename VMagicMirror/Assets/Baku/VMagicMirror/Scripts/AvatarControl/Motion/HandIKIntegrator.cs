@@ -403,6 +403,8 @@ namespace Baku.VMagicMirror
                     if (!AlwaysHandDownMode)
                     {
                         arcadeStickFinger.ButtonDown(key);
+                        var (pos, rot) = ArcadeStickHand.GetButtonPose(key);
+                        _particleStore.RequestArcadeStickParticleStart(pos, rot);
                     }
                     break;
                 default:

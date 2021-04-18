@@ -49,13 +49,16 @@ namespace Baku.VMagicMirror
         private Transform _mouseParticlePrefabParent = null;
 
         private int _nextKeyboardParticleIndex = 0;
+        private int _nextArcadeStickParticleIndex = 0;
         private int _nextMidiParticleIndex = 0;
         //-1はパーティクル無効、0~(particlePrefabs.Length - 1)は有効な状態を表す
         private int _currentKeyAndPadParticleIndex = InvalidTypingEffectIndex;
         private int _currentMidiParticleIndex = InvalidTypingEffectIndex;
+        private int _currentArcadeStickParticleIndex = InvalidTypingEffectIndex;
         
         //キャッシュして多数同時に実行できるようにしたパーティクル群
         private ParticleSystem[] _particles = new ParticleSystem[0];
+        private ParticleSystem[] _arcadeStickParticles = new ParticleSystem[0];
         private ParticleSystem[] _midiParticles = new ParticleSystem[0];
         //マウスのパーティクル
         private ParticleSystem _mouseContinueParticle = null;
@@ -101,7 +104,7 @@ namespace Baku.VMagicMirror
         }
         
         //-1を指定したらパーティクル無し、0以上で配列内を指定したら有効なパーティクルで初期化
-        public void SetParticleIndex(int keyAndPadIndex, int midiIndex)
+        public void SetParticleIndex(int keyAndPadIndex, int midiIndex, int arcadeStickIndex)
         {
             if (_currentKeyAndPadParticleIndex != keyAndPadIndex)
             {
@@ -121,6 +124,16 @@ namespace Baku.VMagicMirror
                 if (midiIndex >= 0 && midiIndex < midiParticlePrefabs.Length)
                 {
                     SetupMidiParticle(midiIndex);
+                }
+            }
+
+            if (_currentArcadeStickParticleIndex != arcadeStickIndex)
+            {
+                _currentArcadeStickParticleIndex = arcadeStickIndex;
+                ClearArcadeStickParticles();
+                if (arcadeStickIndex >= 0 && arcadeStickIndex < particlePrefabs.Length)
+                {
+                    SetupArcadeStickParticle(arcadeStickIndex);
                 }
             }
         }
@@ -158,6 +171,44 @@ namespace Baku.VMagicMirror
             if (_nextKeyboardParticleIndex >= _particles.Length)
             {
                 _nextKeyboardParticleIndex = 0;
+            }
+        }
+
+        /// <summary>
+        /// 指定した位置でアケコン用のパーティクルを起動します。
+        /// </summary>
+        /// <param name="worldPosition"></param>
+        /// <param name="worldRotation"></param>
+        public void RequestArcadeStickParticleStart(Vector3 worldPosition, Quaternion worldRotation)
+        {
+            if (_arcadeStickParticles.Length == 0)
+            {
+                return;
+            }
+
+            //パーティクルの切り替えタイミングによっては配列外参照するリスクがあるのでその対策
+            if (_nextArcadeStickParticleIndex >= _arcadeStickParticles.Length)
+            {
+                _nextArcadeStickParticleIndex = 0;
+            }
+
+            var particle = _arcadeStickParticles[_nextArcadeStickParticleIndex];
+            if (particle.isPlaying)
+            {
+                particle.Stop();
+            }
+
+            var t = particle.transform;
+            t.position = worldPosition;
+            t.localRotation = worldRotation;
+            //NOTE: アケコンはスケール不変だからoneで問題ないはず
+            t.localScale = Vector3.one;
+            particle.Play();
+
+            _nextArcadeStickParticleIndex++;
+            if (_nextArcadeStickParticleIndex >= _arcadeStickParticles.Length)
+            {
+                _nextArcadeStickParticleIndex = 0;
             }
         }
 
@@ -249,6 +300,15 @@ namespace Baku.VMagicMirror
                 _mouseEndParticle = null;
             }
         }
+
+        private void ClearArcadeStickParticles()
+        {
+            for (int i = 0; i < _particles.Length; i++)
+            {
+                Destroy(_arcadeStickParticles[i].gameObject);
+            }
+            _arcadeStickParticles = new ParticleSystem[0];
+        }
         
         private void ClearMidiParticles()
         {
@@ -278,6 +338,19 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void SetupArcadeStickParticle(int index)
+        {
+            var prefabSource = particlePrefabs[index];
+
+            //パーティクルを有効化する場合
+            _arcadeStickParticles = new ParticleSystem[particleStoreCount];
+            for (int i = 0; i < _arcadeStickParticles.Length; i++)
+            {
+                _arcadeStickParticles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
+                //NOTE: アケコンからテキストがでてくると変な落ち方をするが、まあ普通やらない組み合わせなので気にしない
+            }
+        }
+
         private void SetupMidiParticle(int index)
         {
             var prefabSource = midiParticlePrefabs[index];
@@ -295,8 +368,7 @@ namespace Baku.VMagicMirror
                 //this.transform.localScale = prefabSource.scale;
             }
         }
-        
-        
+
         private void SetupMouseParticle(int index)
         {
             _mouseContinueParticle = Instantiate(
@@ -314,6 +386,5 @@ namespace Baku.VMagicMirror
             _mouseEndParticle.transform.localRotation = Quaternion.identity;
         }
         
-
     }
 }

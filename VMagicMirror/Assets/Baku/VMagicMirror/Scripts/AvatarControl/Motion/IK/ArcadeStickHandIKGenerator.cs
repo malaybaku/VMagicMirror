@@ -27,8 +27,16 @@ namespace Baku.VMagicMirror
             {
                 var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
                 var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                CacheHandOffsets(info.animator);
             };
         }
+
+        //右手の5本の指について、手首から指先までのオフセットを大まかにチェックしたもの。
+        //指に対してはIKをあまり使いたくないため、FKを大まかに合わせるのに使う
+        //NOTE: Tポーズのときのワールド座標で見た差分が入る
+        private readonly Vector3[] _wristToFingerOffsets = new Vector3[5];
+        //こっちはスティックの握り込みっぽくなるよう位置を調整するやつ
+        private Vector3 _leftHandPalmOffset;
         
         private readonly ArcadeStickProvider _stickProvider;
         
@@ -57,6 +65,23 @@ namespace Baku.VMagicMirror
             _buttonDownCount++;
 
             (_latestButtonPos, _latestButtonRot) = _stickProvider.GetRightHand(key);
+
+            //NOTE: 指をだいたい揃えるためにズラす動きがコレ
+            int fingerNumber = ArcadeStickFingerController.KeyToFingerNumber(key);
+            int offsetIndex = fingerNumber - 5;
+            //1倍ぴったりを適用すると指の曲げのぶんのズレで絵面がイマイチになる可能性もあるが、
+            //余程手が大きくなければ大丈夫なはず
+            _latestButtonPos -= _latestButtonRot * _wristToFingerOffsets[offsetIndex];
+        }
+
+        /// <summary>
+        /// 手首IKにするためのオフセットを考慮しないような、ボタンそのものの位置、角度を取得します。
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public (Vector3, Quaternion) GetButtonPose(GamepadKey key)
+        {
+            return _stickProvider.GetRightHandRaw(key);
         }
 
         public void ButtonUp(GamepadKey key)
@@ -101,7 +126,7 @@ namespace Baku.VMagicMirror
             //スティックについてはスティック値自体をLerpすることで平滑化
             _filterStickPos = Vector2.Lerp(_filterStickPos, _rawStickPos, LeftHandSpeedFactor * Time.deltaTime);
             var (leftPos, leftRot) = _stickProvider.GetLeftHand(_filterStickPos);
-            _leftHand.Position = leftPos;
+            _leftHand.Position = leftPos - _stickProvider.GetStickBaseRotation() * _leftHandPalmOffset;
             _leftHand.Rotation = leftRot;
             
             //ボタンを押してる/押してないでy方向に移動が入ることに注意しつつ、素朴にLerp/Slerp
@@ -111,5 +136,57 @@ namespace Baku.VMagicMirror
             _rightHand.Position = Vector3.Lerp(_rightHand.Position, posWithOffset, RightHandSpeedFactor * Time.deltaTime);
             _rightHand.Rotation = Quaternion.Slerp(_rightHand.Rotation, _latestButtonRot, RightHandSpeedFactor * Time.deltaTime);
         }
+        
+        private void CacheHandOffsets(Animator animator)
+        {
+            //左手 : 手のひら中央の位置を推定するため、中指の付け根を見に行く
+            var leftWrist = animator.GetBoneTransform(HumanBodyBones.LeftHand);
+            var leftMiddle = animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
+            _leftHandPalmOffset = leftMiddle != null ? 0.5f * (leftMiddle.position - leftWrist.position) : Vector3.zero;
+
+            //右手 : 指の位置を一通りチェックする
+            var rightWristPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
+            var intermediateBones = new Transform[]
+            {
+                //NOTE: 指が約30度曲がったとき関節1個ぶんのズレが発生するので、あえてDistalではなくIntermediateを見る
+                animator.GetBoneTransform(HumanBodyBones.RightThumbIntermediate),
+                animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
+                animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate),
+                animator.GetBoneTransform(HumanBodyBones.RightRingIntermediate),
+                animator.GetBoneTransform(HumanBodyBones.RightLittleIntermediate),
+            };
+            
+            //NOTE: さらに、指が30度曲がるとだいたい関節2つぶんy方向にオフセットがつくので、その分を計算する
+            var proximalBones = new Transform[]
+            {
+                animator.GetBoneTransform(HumanBodyBones.RightThumbProximal),
+                animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
+                animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal),
+                animator.GetBoneTransform(HumanBodyBones.RightRingProximal),
+                animator.GetBoneTransform(HumanBodyBones.RightLittleProximal),
+            };
+            
+            var distalBones = new Transform[]
+            {
+                animator.GetBoneTransform(HumanBodyBones.RightThumbDistal),
+                animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
+                animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal),
+                animator.GetBoneTransform(HumanBodyBones.RightRingDistal),
+                animator.GetBoneTransform(HumanBodyBones.RightLittleDistal),
+            };
+            
+            for (int i = 0; i < intermediateBones.Length; i++)
+            {
+                //NOTE: 指が一部なくてもエラーにはならないが、指の一部だけが欠けていると計算としてはかなり崩れる。
+                //指が全部 or 全部あるモデルが大多数派であると考えてこのくらいで妥協してます
+                _wristToFingerOffsets[i] =
+                    (proximalBones[i] != null && intermediateBones[i] != null && distalBones[i] != null)
+                        ? intermediateBones[i].position - 
+                          rightWristPos - 
+                          Vector3.up * (intermediateBones[i].localPosition.magnitude + distalBones[i].localPosition.magnitude) 
+                        : Vector3.zero;
+            }
+        }
+
     }
 }

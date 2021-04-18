@@ -42,6 +42,7 @@ namespace Baku.VMagicMirror
             _touchPadControl,
             _midiControl,
             _gamepadControl,
+            _arcadeStickControl,
         };
 
         private bool _isDeviceFreeLayoutEnabled = false;

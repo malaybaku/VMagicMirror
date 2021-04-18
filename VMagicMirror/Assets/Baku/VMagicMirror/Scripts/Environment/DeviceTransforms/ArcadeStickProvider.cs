@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using mattatz.TransformControl;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -30,6 +31,11 @@ namespace Baku.VMagicMirror
         [SerializeField] private float stickBendAngleDeg = 20f;
         //スティックを横に最大限まで倒したときに手首をひねる角度
         [SerializeField] private float handTiltDeg = 5f;
+
+        [SerializeField] private Vector3 basePosition = new Vector3(0f, 1f, 0.3f);
+
+        [SerializeField] private TransformControl transformControl = default;
+        public TransformControl TransformControl => transformControl;
 
         private void Awake()
         {
@@ -121,5 +127,17 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <returns></returns>
         public Vector3 GetYAxis() => aButton.up;
+
+        public void SetLayoutByParameter(DeviceLayoutAutoAdjustParameters parameters)
+        {
+            var t = transform;
+            t.localRotation = Quaternion.identity;
+            t.localPosition = new Vector3(
+                basePosition.x * parameters.ArmLengthFactor,
+                basePosition.y * parameters.HeightFactor,
+                basePosition.z * parameters.ArmLengthFactor
+            );
+            t.localScale = Vector3.one;
+        }
     }
 }

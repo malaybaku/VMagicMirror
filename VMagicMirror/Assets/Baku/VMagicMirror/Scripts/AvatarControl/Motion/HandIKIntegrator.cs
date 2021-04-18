@@ -879,25 +879,5 @@ namespace Baku.VMagicMirror
             ImageBaseHand,
             AlwaysDown,
         }
-
-        /// <summary>
-        /// ゲームパッド由来のモーションをどういう見た目で反映するか、というオプション。
-        /// </summary>
-        /// <remarks>
-        /// どれを選んでいるにせよ、Word to Motionをゲームパッドでやっている間は処理が止まるなどの基本的な特徴は共通
-        /// </remarks>
-        enum GamepadMotionModes
-        {
-            /// <summary> 普通のゲームパッド </summary>
-            Gamepad = 0,
-            /// <summary> アケコン </summary>
-            ArcadeStick = 1,
-            /// <summary> ガンコン </summary>
-            GunController = 2,
-            /// <summary> 車のハンドルっぽいやつ </summary>
-            CarController = 3,
-            Unknown = 4,
-        }
-        
     }
 }

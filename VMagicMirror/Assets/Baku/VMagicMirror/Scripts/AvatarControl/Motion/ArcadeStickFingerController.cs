@@ -115,15 +115,16 @@ namespace Baku.VMagicMirror
         {
             //左手: スティック握りっぱなし
             //右手: ボタン押す/押さないで変化
-            //TODO: 右手の親指が変になるかも。要注意
             switch (fingerNumber)
             {
                 case FingerConsts.LeftRing:
+                    return 60f;
                 case FingerConsts.LeftLittle:
+                    return 80f;
                 case FingerConsts.LeftIndex:
                 case FingerConsts.LeftMiddle:
                 case FingerConsts.LeftThumb:
-                    return 45f;
+                    return 50f;
                 case FingerConsts.RightLittle:
                 case FingerConsts.RightRing:
                 case FingerConsts.RightIndex:

@@ -6,7 +6,7 @@ using Zenject;
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(MagnetDeformer))]
-    public class GamepadVisibilityReceiver : MonoBehaviour
+    public class ArcadeStickVisibilityReceiver : MonoBehaviour
     {
         //TODO: 非MonoBehaviour化できそう
         [Inject]
@@ -32,7 +32,6 @@ namespace Baku.VMagicMirror
         private bool _gamepadDeviceVisible;
         private GamepadMotionModes _gamepadMotionMode = GamepadMotionModes.Gamepad;
 
-
         private DeformableCounter _deformableCounter;
         private MagnetDeformer _deformer = null;
         private Renderer[] _renderers = new Renderer[0];
@@ -48,12 +47,12 @@ namespace Baku.VMagicMirror
 
         private void SetGamepadVisibility()
         {
-            bool visible = _gamepadDeviceVisible && _gamepadMotionMode == GamepadMotionModes.Gamepad;
+            bool visible = _gamepadDeviceVisible && _gamepadMotionMode == GamepadMotionModes.ArcadeStick;
             if (visible == _latestVisibility)
             {
                 return;
             }
-            
+
             _latestVisibility = visible;
             DOTween
                 .To(

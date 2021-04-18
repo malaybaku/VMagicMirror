@@ -37,9 +37,9 @@ namespace Baku.VMagicMirror.Installer
                 .FromComponentInNewPrefab(particleStore)
                 .AsCached();
 
-            //DEBUG: とりあえずデバッグ段階なのでInstanceを直で扱う
             container.Bind<ArcadeStickProvider>()
-                .FromInstance(arcadeStickProvider);
+                .FromComponentInNewPrefab(arcadeStickProvider)
+                .AsCached();
         }
     }
 

@@ -101,11 +101,20 @@ namespace Baku.VMagicMirror
 
         public bool UseMidiControllerForWordToMotion { get; set; } = false;
 
-        public bool EnablePresentationMode { get; set; }
+        public bool EnablePresentationMode => _keyboardAndMouseMotionMode == KeyboardAndMouseMotionModes.Presentation;
         
         public void SetKeyboardAndMouseMotionMode(int modeIndex)
         {
-            //TODO: 実装
+            if (modeIndex >= 0 &&
+                modeIndex <= (int) KeyboardAndMouseMotionModes.Unknown &&
+                modeIndex != (int) _keyboardAndMouseMotionMode
+                //DEBUG: とりあえず通常モードとプレゼンだけ考慮
+                && (modeIndex == 0 || modeIndex == 1)
+            )
+            {
+                //NOTE: オプションを変えた直後は手は動かさず、変更後の入力によって手が動く
+                _keyboardAndMouseMotionMode = (KeyboardAndMouseMotionModes) modeIndex;
+            }
         }
 
         public void SetGamepadMotionMode(int modeIndex)
@@ -124,6 +133,8 @@ namespace Baku.VMagicMirror
         }
 
         private GamepadMotionModes _gamepadMotionMode = GamepadMotionModes.Gamepad;
+        private KeyboardAndMouseMotionModes _keyboardAndMouseMotionMode =
+            KeyboardAndMouseMotionModes.KeyboardAndTouchPad;
         
         //NOTE: これはすごく特別なフラグで、これが立ってると手のIKに何か入った場合でも手が下がりっぱなしになります
         private bool _alwaysHandDownMode = false;

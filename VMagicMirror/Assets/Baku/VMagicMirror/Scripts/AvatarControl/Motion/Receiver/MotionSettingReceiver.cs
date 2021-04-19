@@ -52,10 +52,6 @@ namespace Baku.VMagicMirror
                 message => SetHandYOffsetAfterKeyDown(message.ParseAsCentimeter())
                 );
             receiver.AssignCommandHandler(
-                VmmCommands.EnablePresenterMotion,
-                message => handIkIntegrator.EnablePresentationMode = message.ToBoolean()
-                );
-            receiver.AssignCommandHandler(
                 VmmCommands.PresentationArmRadiusMin,
                 message =>
                     handIkIntegrator.Presentation.PresentationArmRadiusMin = message.ParseAsCentimeter()
@@ -162,5 +158,16 @@ namespace Baku.VMagicMirror
         /// <summary> 車のハンドルっぽいやつ </summary>
         CarController = 3,
         Unknown = 4,
+    }
+
+    public enum KeyboardAndMouseMotionModes
+    {
+        /// <summary> デフォルトのキーボード+タッチパッド </summary>
+        KeyboardAndTouchPad,
+        /// <summary> 右手はプレゼン指差し + 左手でキーボード </summary>
+        Presentation,
+        /// <summary> ペンタブ + 左手は左手デバイスっぽい何か </summary>
+        PenTablet,
+        Unknown,
     }
 }

@@ -1,27 +1,32 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using Zenject;
 
-namespace Baku.VMagicMirror
+namespace Baku.VMagicMirror.IK
 {
+    //TODO: できればコレもMonoBehaviourじゃなくしておきたい…
+    
     /// <summary>タイピング入力に基づいて、腕IKの出力値を計算します。</summary>
     public class TypingHandIKGenerator : MonoBehaviour
     {
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         private readonly IKDataRecord _blendedLeftHand = new IKDataRecord();
-        public IIKGenerator LeftHand => _blendedLeftHand;
+        // public IIKData LeftHand => _blendedLeftHand;
+        private TypingHandIkState _leftHandState;
+        public IHandIkState LeftHand => _leftHandState;
 
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         private readonly IKDataRecord _blendedRightHand = new IKDataRecord();
-        public IIKGenerator RightHand => _blendedRightHand;
+        // public IIKData RightHand => _blendedRightHand;
+        private TypingHandIkState _rightHandState;
+        public IHandIkState RightHand => _rightHandState;
 
         //手を正面方向に向くよう補正するファクター。1に近いほど手が正面向きになる
         private const float WristForwardFactor = 0.5f;
 
         //NOTE: HandIkIntegratorから初期化で入れてもらう
         public AlwaysDownHandIkGenerator DownHand { get; set; } 
-        public HandIKIntegrator Integrator { get; set; }
+        public HandIkGeneratorDependency Dependency { get; private set; }
 
         #region settings (WPFから飛んでくる想定のもの)
 
@@ -98,15 +103,24 @@ namespace Baku.VMagicMirror
         private const float HandDownBlendSpeed = HandIKIntegrator.HandDownBlendSpeed;
         private const float HandUpBlendSpeed = HandIKIntegrator.HandUpBlendSpeed;
 
-        [Inject]
-        public void Initialize(KeyboardProvider provider)
+        /// <summary>
+        /// HandIkIntegratorの初期化で呼ばれることで、ステートを生成します。
+        /// Awake ~ Startの間のどこかで呼ばれればOK、みたいな処理です
+        /// </summary>
+        public void SetUp(KeyboardProvider provider, HandIkGeneratorDependency dependency)
         {
             _keyboard = provider;
+            Dependency = dependency;
+            _leftHandState = new TypingHandIkState(this, ReactedHand.Left);
+            _rightHandState = new TypingHandIkState(this, ReactedHand.Right);
+
+            dependency.Events.KeyDown += OnKeyDown;
+            dependency.Events.KeyUp += OnKeyUp;
         }
         
         private void Start()
         {
-            //これらのIKは初期値から動かない事があるので、その場合にあまりに変になるのを防ぐのが狙い。
+            //IKの初期値があまりに変になるのを防ぐ
             _leftHand.Position = _keyboard.GetKeyTargetData("F").positionWithOffset;
             _leftHand.Rotation = Quaternion.Euler(0, 90, 0);
             
@@ -114,24 +128,77 @@ namespace Baku.VMagicMirror
             _rightHand.Rotation = Quaternion.Euler(0, -90, 0);
         }
 
-        public (ReactedHand, Vector3) PressKey(string key, bool isLeftHandOnlyMode)
+        private void OnKeyDown(string keyName)
         {
-            var keyData = _keyboard.GetKeyTargetData(key, isLeftHandOnlyMode);
+            bool isPresentationMode = 
+                Dependency.Config.KeyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.Presentation;
             
-            Vector3 targetPos =
-                keyData.positionWithOffset + 
-                YOffsetAlways * _keyboard.KeyboardUp -
-                HandToTipLength * _keyboard.KeyboardForward;
 
-            if (keyData.IsLeftHandPreffered)
+            var (hand, pos) = KeyDown(keyName, isPresentationMode);
+            if (!Dependency.Config.CheckCoolDown(hand, HandTargetType.Keyboard))
             {
-                UpdateLeftHandCoroutine(KeyPressRoutine(IKTargets.LHand, targetPos));
-                return (ReactedHand.Left, keyData.position);
+                return;
             }
-            else
+            
+            if (hand == ReactedHand.Left)
             {
-                UpdateRightHandCoroutine(KeyPressRoutine(IKTargets.RHand, targetPos));
-                return (ReactedHand.Right, keyData.position);
+                _leftHandState.RaiseRequest();
+                if (Dependency.Config.LeftTarget.Value == HandTargetType.Keyboard)
+                {
+                    ResetLeftHandDownTimeout(false);
+                }
+            }
+            else if (hand == ReactedHand.Right)
+            {
+                _rightHandState.RaiseRequest();
+                if (Dependency.Config.RightTarget.Value == HandTargetType.Keyboard)
+                {
+                    ResetRightHandDownTimeout(false);
+                }
+            }
+
+            if (!Dependency.Config.IsAlwaysHandDown.Value)
+            {
+                Dependency.Reactions.FingerController.HoldTypingKey(keyName, isPresentationMode);
+            }
+            
+            if (hand != ReactedHand.None)
+            {
+                Dependency.Reactions.ParticleStore.RequestKeyboardParticleStart(pos);
+            }            
+        }
+
+        private void OnKeyUp(string keyName)
+        {
+            bool isPresentationMode = 
+                Dependency.Config.KeyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.Presentation;
+                        
+            var (hand, pos) = KeyUp(keyName, isPresentationMode);
+            if (!Dependency.Config.CheckCoolDown(hand, HandTargetType.Keyboard))
+            {
+                return;
+            }
+            
+            if (hand == ReactedHand.Left)
+            {
+                _leftHandState.RaiseRequest();
+                if (Dependency.Config.LeftTarget.Value == HandTargetType.Keyboard)
+                {
+                    ResetLeftHandDownTimeout(false);
+                }
+            }
+            else if (hand == ReactedHand.Right)
+            {
+                _rightHandState.RaiseRequest();
+                if (Dependency.Config.RightTarget.Value == HandTargetType.Keyboard)
+                {
+                    ResetRightHandDownTimeout(false);
+                }
+            }
+
+            if (!Dependency.Config.IsAlwaysHandDown.Value)
+            {
+                Dependency.Reactions.FingerController.ReleaseTypingKey(keyName, isPresentationMode);
             }
         }
         
@@ -232,7 +299,7 @@ namespace Baku.VMagicMirror
                     _leftHandNoInputCount = 0f;
                 }
                 
-                if (Integrator.CheckTypingOrMouseHandsCanMoveDown())
+                if (Dependency.Config.CheckKeyboardAndMouseHandsCanMoveDown())
                 {
                     _leftHandBlendRate = Mathf.Max(0f, _leftHandBlendRate - HandDownBlendSpeed * Time.deltaTime);
                 }
@@ -275,7 +342,7 @@ namespace Baku.VMagicMirror
                     _rightHandNoInputCount = 0f;
                 }
 
-                if (Integrator.CheckTypingOrMouseHandsCanMoveDown())
+                if (Dependency.Config.CheckKeyboardAndMouseHandsCanMoveDown())
                 {
                     _rightHandBlendRate = Mathf.Max(0f, _rightHandBlendRate - HandDownBlendSpeed * Time.deltaTime);
                 }
@@ -415,69 +482,7 @@ namespace Baku.VMagicMirror
             ikTarget.Rotation = keyboardRot;
             
         }
-
-        private IEnumerator KeyPressRoutine(IKTargets target, Vector3 targetPos)
-        {
-            bool isLeftHand = (target == IKTargets.LHand);
-            IKDataRecord ikTarget = isLeftHand ? _leftHand : _rightHand;
-            //NOTE: 第2項は手首を正面に向けるための前処理みたいなファクターです
-            var keyboardRot = 
-                _keyboard.GetKeyboardRotation() * 
-                Quaternion.AngleAxis(isLeftHand ? 90 : -90, Vector3.up);
-            var keyboardRootPos = _keyboard.transform.position;
-            var keyboardUp = _keyboard.KeyboardUp;
-
-            float startTime = Time.time;
-            Vector3 startPos = ikTarget.Position;
-            float startVertical = Vector3.Dot(startPos - keyboardRootPos, keyboardUp);
-            float targetVertical = Vector3.Dot(targetPos - keyboardRootPos, keyboardUp);
-            
-            while (Time.time - startTime < keyboardMotionDuration)
-            {
-                float rate = (Time.time - startTime) / keyboardMotionDuration;
-
-                Vector3 lerpApproach = Vector3.Lerp(startPos, targetPos, horizontalApproachCurve.Evaluate(rate));
-                //Y成分に相当するところをキャンセルしておく
-                lerpApproach -= keyboardUp * Vector3.Dot(lerpApproach - keyboardRootPos, keyboardUp);
-
-                if (rate < 0.5f)
-                {
-                    //アプローチ中: 垂直方向のカーブのつけかたをいい感じにする。
-                    float verticalTarget = Mathf.Lerp(
-                        startVertical, targetVertical, verticalApproachCurve.Evaluate(rate)
-                        );
-                    float vertical = Mathf.Lerp(
-                        Vector3.Dot(ikTarget.Position - keyboardRootPos, keyboardUp),
-                        verticalTarget,
-                        keyboardVerticalWeightCurve.Evaluate(rate)
-                        );
-                    ikTarget.Position = lerpApproach + keyboardUp * vertical;
-                }
-                else
-                {
-                    //離れるとき: キーボードから垂直方向に手を引き上げる。Lerpの係数は1から0に戻っていくことに注意
-                    float vertical = Mathf.Lerp(
-                        targetVertical + YOffsetAfterKeyDown, 
-                        targetVertical,
-                        verticalApproachCurve.Evaluate(rate));
-                    ikTarget.Position = lerpApproach + keyboardUp * vertical;
-                }
-                
-                //一応Lerpしてるけどあんまり必要ないかもね
-                ikTarget.Rotation = Quaternion.Slerp(
-                    ikTarget.Rotation,
-                    keyboardRot,
-                    0.2f
-                );
-
-                yield return null;
-            }
-
-            //最後: ピッタリ合わせておしまい
-            ikTarget.Position = targetPos + keyboardUp * YOffsetAfterKeyDown; 
-            ikTarget.Rotation = keyboardRot;
-        }
-
+        
         private void UpdateLeftHandCoroutine(IEnumerator routine)
         {
             if (_leftHandMoveCoroutine != null)
@@ -494,6 +499,52 @@ namespace Baku.VMagicMirror
                 StopCoroutine(_rightHandMoveCoroutine);
             }
             _rightHandMoveCoroutine = StartCoroutine(routine);
+        }
+
+        private sealed class TypingHandIkState : IHandIkState
+        {
+            public TypingHandIkState(TypingHandIKGenerator parent, ReactedHand hand)
+            {
+                _parent = parent;
+                Hand = hand;
+                _data = hand == ReactedHand.Right ? _parent._rightHand : _parent._leftHand;
+            }
+
+            private readonly TypingHandIKGenerator _parent;
+            private readonly IIKData _data;
+
+            public void RaiseRequest() => RequestToUse?.Invoke(this);
+
+            public Vector3 Position => _data.Position;
+            public Quaternion Rotation => _data.Rotation;
+            public ReactedHand Hand { get; }
+            public HandTargetType TargetType => HandTargetType.Keyboard;
+
+            public event Action<IHandIkState> RequestToUse;
+            
+            public void Enter(IHandIkState prevState)
+            {
+                if (Hand == ReactedHand.Right)
+                {
+                    _parent.ResetRightHandDownTimeout(true);
+                }
+                else
+                {
+                    _parent.ResetLeftHandDownTimeout(true);
+                }
+            }
+
+            public void Quit(IHandIkState nextState)
+            {
+                if (Hand == ReactedHand.Right)
+                {
+                    _parent.Dependency.Reactions.FingerController.ReleaseRightHandTyping();
+                }
+                else
+                {
+                    _parent.Dependency.Reactions.FingerController.ReleaseLeftHandTyping();
+                }
+            }
         }
     }
 }

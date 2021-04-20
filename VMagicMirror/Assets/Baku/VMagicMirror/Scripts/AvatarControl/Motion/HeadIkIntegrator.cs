@@ -20,10 +20,10 @@ namespace Baku.VMagicMirror
         [SerializeField] private float lookAtSpeedFactor = 6.0f;
         
         private readonly IKDataRecord _mouseBasedLookAt = new IKDataRecord();
-        public IIKGenerator MouseBasedLookAt => _mouseBasedLookAt;
+        public IIKData MouseBasedLookAt => _mouseBasedLookAt;
 
         private readonly CameraBasedLookAtIk _camBasedLookAt = new CameraBasedLookAtIk();
-        public IIKGenerator CameraBasedLookAt => _camBasedLookAt;
+        public IIKData CameraBasedLookAt => _camBasedLookAt;
         
         private LookAtStyles _lookAtStyle = LookAtStyles.MousePointer;
         private Transform _head = null;
@@ -155,7 +155,7 @@ namespace Baku.VMagicMirror
             );
         }
 
-        class CameraBasedLookAtIk : IIKGenerator
+        class CameraBasedLookAtIk : IIKData
         {
             public Transform Camera { get; set; }
 

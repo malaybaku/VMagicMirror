@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.IK;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -33,7 +34,7 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.EnableNoHandTrackMode,
-                message => handIkIntegrator.AlwaysHandDownMode = message.ToBoolean()
+                message => handIkIntegrator.AlwaysHandDown.Value = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.EnableTypingHandDownTimeout,
@@ -112,9 +113,13 @@ namespace Baku.VMagicMirror
         private void SetDeviceTypeForWordToMotion(int deviceType)
         {
             gamePadBasedBodyLean.UseGamepadForWordToMotion = (deviceType == DeviceTypeGamepad);
-            handIkIntegrator.UseGamepadForWordToMotion = (deviceType == DeviceTypeGamepad);
-            handIkIntegrator.UseKeyboardForWordToMotion = (deviceType == DeviceTypeKeyboardTenKey);
-            handIkIntegrator.UseMidiControllerForWordToMotion = (deviceType == DeviceTypeMidiController);
+
+            handIkIntegrator.WordToMotionDevice.Value = 
+                (deviceType == DeviceTypeKeyboardWord) ? WordToMotionDeviceAssign.KeyboardWord :
+                (deviceType == DeviceTypeGamepad) ? WordToMotionDeviceAssign.Gamepad :
+                (deviceType == DeviceTypeKeyboardTenKey) ? WordToMotionDeviceAssign.KeyboardNumber :
+                (deviceType == DeviceTypeMidiController) ? WordToMotionDeviceAssign.MidiController :
+                WordToMotionDeviceAssign.None;
         }
 
         //以下については適用先が1つじゃないことに注意

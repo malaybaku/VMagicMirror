@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Data;
+using UniRx;
 using UnityEngine;
 
-namespace Baku.VMagicMirror
+namespace Baku.VMagicMirror.IK
 {
     /// <summary>常に手を下げた姿勢になるような手IKの生成処理。</summary>
     public sealed class AlwaysDownHandIkGenerator : HandIkGeneratorBase
@@ -17,9 +20,9 @@ namespace Baku.VMagicMirror
         private const float ArmRelaxFactor = 0.98f;
 
         private readonly IKDataRecord _leftHand = new IKDataRecord();
-        public IIKGenerator LeftHand => _leftHand;
+        public IIKData LeftHand => _leftHand;
         private readonly IKDataRecord _rightHand = new IKDataRecord();
-        public IIKGenerator RightHand => _rightHand;
+        public IIKData RightHand => _rightHand;
 
         private bool _hasModel = false;
 
@@ -33,12 +36,20 @@ namespace Baku.VMagicMirror
         private Vector3 _leftPosHipsOffset;
         private readonly Quaternion RightRot = Quaternion.Euler(0, 0, -APoseArmDownAngleDeg);
         private readonly Quaternion LeftRot = Quaternion.Euler(0, 0, APoseArmDownAngleDeg);
+
+        private readonly AlwaysHandDownState _leftHandState;
+        private readonly AlwaysHandDownState _rightHandState;
+        public override IHandIkState LeftHandState => _leftHandState;
+        public override IHandIkState RightHandState => _rightHandState; 
         
-        public AlwaysDownHandIkGenerator(MonoBehaviour coroutineResponder, IVRMLoadable vrmLoadable)
-            : base(coroutineResponder)
+        public AlwaysDownHandIkGenerator(HandIkGeneratorDependency dependency, IVRMLoadable vrmLoadable)
+            : base(dependency)
         {
             _leftHand.Rotation = LeftRot;
             _rightHand.Rotation = RightRot;
+
+            _leftHandState = new AlwaysHandDownState(this, ReactedHand.Left);
+            _rightHandState = new AlwaysHandDownState(this, ReactedHand.Right);
 
             vrmLoadable.VrmLoaded += info =>
             {
@@ -85,6 +96,17 @@ namespace Baku.VMagicMirror
                 _rightUpperArm = null;
             };
 
+            dependency.Config.IsAlwaysHandDown
+                .Subscribe(v =>
+                {
+                    if (v)
+                    {
+                        _leftHandState.RaiseRequest();
+                        _rightHandState.RaiseRequest();
+                    }
+                })
+                .AddTo(dependency.Component);
+
             StartCoroutine(SetHandPositionsIfHasModel());
         }
 
@@ -101,7 +123,6 @@ namespace Baku.VMagicMirror
 
                 //やること: LateUpdateの時点で手の位置を合わせる。
                 //フレーム終わりじゃないと調整されたあとのボーン位置が拾えないので、このタイミングでわざわざやってます
-
                 
                 var hipsPos = _hips.position;
 
@@ -129,6 +150,36 @@ namespace Baku.VMagicMirror
 
                 _leftHand.Position = leftPos;
                 _rightHand.Position = rightPos;
+            }
+        }
+
+        private class AlwaysHandDownState : IHandIkState
+        {
+            public AlwaysHandDownState(AlwaysDownHandIkGenerator parent, ReactedHand hand)
+            {
+                _parent = parent;
+                Hand = hand;
+                _data = hand == ReactedHand.Right ? _parent._rightHand : _parent._leftHand;
+            }
+
+            private readonly AlwaysDownHandIkGenerator _parent;
+            private readonly IIKData _data;
+            
+            public void RaiseRequest() => RequestToUse?.Invoke(this);
+
+            public Vector3 Position => _data.Position;
+            public Quaternion Rotation => _data.Rotation;
+            public ReactedHand Hand { get; }
+            public HandTargetType TargetType => HandTargetType.AlwaysDown;
+            
+            public event Action<IHandIkState> RequestToUse;
+
+            public void Enter(IHandIkState prevState)
+            {
+            }
+
+            public void Quit(IHandIkState nextState)
+            {
             }
         }
     }

@@ -1,8 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using UniRx;
 
-namespace Baku.VMagicMirror
+namespace Baku.VMagicMirror.IK
 {
     /// <summary>
     /// ゲームパッドの入力状況に対して望ましい腕IKを指定するやつ。
@@ -26,28 +27,17 @@ namespace Baku.VMagicMirror
         private const float BodyMotionToGamepadPosApplyFactor = 0.5f;
 
         private const float OffsetResetLerpFactor = 6f;
+
+        //posOffsetのサイズを身長ベースで補正するのに使う、足から頭ボーンまでの高さ
+        private const float ReferenceHeight = 1.3f;
         
-        public GamepadHandIKGenerator(
-            MonoBehaviour coroutineResponder, 
-            IVRMLoadable vrmLoadable,
-            WaitingBodyMotion waitingBodyMotion,
-            GamepadProvider gamepadProvider,
-            GamepadHandIkGeneratorSetting setting) : base(coroutineResponder)
-        {
-            _gamePad = gamepadProvider;
-            _setting = setting;
-            _waitingBody = waitingBodyMotion;
-
-            //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
-            vrmLoadable.VrmLoaded += info =>
-            {
-                var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
-                var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
-                float height = h.position.y - f.position.y;
-                _posOffsetScale = Mathf.Clamp(height / ReferenceHeight, 0.1f, 5f);
-            };
-        }
-
+        private const float ButtonDownAnimationY = 0.01f;
+        
+        private readonly GamepadHandIkState _leftHandState;
+        public override IHandIkState LeftHandState => _leftHandState;
+        private readonly GamepadHandIkState _rightHandState;
+        public override IHandIkState RightHandState => _rightHandState;
+        
         private readonly InputBasedJitter _inputJitter = new InputBasedJitter();
         private readonly TimeBasedJitter _timeJitter = new TimeBasedJitter();
 
@@ -56,12 +46,7 @@ namespace Baku.VMagicMirror
         private readonly WaitingBodyMotion _waitingBody;
         
         private readonly IKDataRecord _leftHand = new IKDataRecord();
-        public IIKGenerator LeftHand => _leftHand;
-
         private readonly IKDataRecord _rightHand = new IKDataRecord();
-        public IIKGenerator RightHand => _rightHand;
-
-        private const float ButtonDownAnimationY = 0.01f;
 
         private float _posOffsetScale = 1.0f;
 
@@ -71,16 +56,132 @@ namespace Baku.VMagicMirror
         private Vector3 _posOffset = Vector3.zero;
         private Quaternion _rotOffset = Quaternion.identity;
 
-        //posOffsetのサイズを身長ベースで補正するのに使う、足から頭ボーンまでの高さ
-        private const float ReferenceHeight = 1.3f;
-
         private float _offsetY = 0;
         private int _buttonDownCount = 0;
         private GamepadLeanModes _leanMode = GamepadLeanModes.GamepadLeanLeftStick;
 
+        // 右手か左手のうち少なくとも片方はコントローラを掴んでいるか、というフラグ
+        private bool _handIsOnController;
+        
         public bool ReverseGamepadStickLeanHorizontal { get; set; } = false;
         public bool ReverseGamepadStickLeanVertical { get; set; } = false;
 
+        
+        public GamepadHandIKGenerator(
+            HandIkGeneratorDependency dependency, 
+            IVRMLoadable vrmLoadable,
+            WaitingBodyMotion waitingBodyMotion,
+            GamepadProvider gamepadProvider,
+            GamepadHandIkGeneratorSetting setting) : base(dependency)
+        {
+            _gamePad = gamepadProvider;
+            _setting = setting;
+            _waitingBody = waitingBodyMotion;
+
+            _leftHandState = new GamepadHandIkState(this, ReactedHand.Left);
+            _rightHandState = new GamepadHandIkState(this, ReactedHand.Right);
+
+            //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
+            vrmLoadable.VrmLoaded += info =>
+            {
+                var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                float height = h.position.y - f.position.y;
+                _posOffsetScale = Mathf.Clamp(height / ReferenceHeight, 0.1f, 5f);
+            };
+
+            dependency.Events.MoveLeftGamepadStick += v =>
+            {
+                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                {
+                    LeftStick(v);
+                    dependency.Reactions.GamepadFinger.LeftStick(v);
+                    _leftHandState.RaiseRequest();
+                }
+            };
+
+            dependency.Events.MoveRightGamepadStick += v =>
+            {
+                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                {
+                    RightStick(v);
+                    dependency.Reactions.GamepadFinger.RightStick(v);
+                    _rightHandState.RaiseRequest();
+                }
+            };
+
+            dependency.Events.GamepadButtonDown += key =>
+            {
+                ButtonDown(key);
+                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                {
+                    var hand = GamepadProvider.GetPreferredReactionHand(key);
+                    if (hand == ReactedHand.Left)
+                    {
+                        _leftHandState.RaiseRequest();
+                    }
+                    else if (hand == ReactedHand.Right)
+                    {
+                        _rightHandState.RaiseRequest();
+                    }
+
+                    if (!dependency.Config.IsAlwaysHandDown.Value)
+                    {
+                        dependency.Reactions.GamepadFinger.ButtonDown(key);
+                    }
+                }
+            };
+
+            dependency.Events.GamepadButtonUp += key =>
+            {
+                ButtonUp(key);
+                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                {
+                    var hand = GamepadProvider.GetPreferredReactionHand(key);
+                    if (hand == ReactedHand.Left)
+                    {
+                        _leftHandState.RaiseRequest();
+                    }
+                    else if (hand == ReactedHand.Right)
+                    {
+                        _rightHandState.RaiseRequest();
+                    }
+
+                    //NOTE: めっちゃ起きにくいが、「コントローラのボタンを押したまま手さげモードに入る」というケースを
+                    //破たんしにくくするため、指を離す方向の動作については手下げモードであってもガードしない
+                    dependency.Reactions.GamepadFinger.ButtonUp(key);
+                }
+            };
+
+            dependency.Events.GamepadButtonStick += pos =>
+            {
+                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                {
+                    ButtonStick(pos);
+                    _leftHandState.RaiseRequest();
+                }
+            };
+
+            dependency.Config.LeftTarget
+                .Subscribe(t =>
+                {
+                    _handIsOnController =
+                        t == HandTargetType.Gamepad ||
+                        dependency.Config.RightTarget.Value == HandTargetType.Gamepad;
+                })
+                .AddTo(dependency.Component);
+
+            dependency.Config.RightTarget
+                .Subscribe(t =>
+                {
+                    _handIsOnController =
+                        t == HandTargetType.Gamepad ||
+                        dependency.Config.LeftTarget.Value == HandTargetType.Gamepad;
+                })
+                .AddTo(dependency.Component);
+            
+        }
+        
         public void SetGamepadLeanMode(string leanModeName)
         {
             _leanMode =
@@ -94,80 +195,6 @@ namespace Baku.VMagicMirror
             }
         }
         
-        public void ButtonDown(GamepadKey key)
-        {
-            _inputJitter.AddButtonInput();
-            if (GamepadProvider.IsSideKey(key))
-            {
-                return;
-            }
-
-            _buttonDownCount++;
-        }
-
-        public void ButtonUp(GamepadKey key)
-        {
-            if (GamepadProvider.IsSideKey(key))
-            {
-                return;
-            }
-            _buttonDownCount--;
-
-            //通常起きないハズだが一応
-            if (_buttonDownCount < 0)
-            {
-                _buttonDownCount = 0;
-            }
-            
-        }
-        
-        public void LeftStick(Vector2 stickPos)
-        {
-            _inputJitter.SetLeftStickPos(stickPos);
-            if (_leanMode == GamepadLeanModes.GamepadLeanLeftStick)
-            {
-                ApplyStickPosition(stickPos);
-            }
-        }
-
-        public void RightStick(Vector2 stickPos)
-        {
-            _inputJitter.SetRightStickPos(stickPos);
-            if (_leanMode == GamepadLeanModes.GamepadLeanRightStick)
-            {
-                ApplyStickPosition(stickPos);
-            }
-        }
-
-        public void ButtonStick(Vector2Int buttonStickPos)
-        {
-            if (_leanMode == GamepadLeanModes.GamepadLeanLeftButtons)
-            {
-                ApplyStickPosition(NormalizedStickPos(buttonStickPos));
-            }
-        }
-        
-        private void ApplyStickPosition(Vector2 stickPos)
-        {
-            var pos = new Vector2(
-                stickPos.x * (ReverseGamepadStickLeanHorizontal ? -1f : 1f),
-                stickPos.y * (ReverseGamepadStickLeanVertical ? -1f : 1f)
-                );
-            _rawStickPos = pos;
-        }
-
-        private static Vector2 NormalizedStickPos(Vector2Int v)
-        {
-            const float factor = 1.0f / 32768.0f;
-            return new Vector2(v.x * factor, v.y * factor);
-        }
-
-        /// <summary> 右手か左手のうち少なくとも片方はコントローラを掴んでいるか、というフラグ。 </summary>
-        /// <remarks>
-        /// この値がtrueかfalseかによってコントローラに後処理の色々なオフセットを乗せるかどうかが変わる
-        /// </remarks>
-        public bool HandIsOnController { get; set; } = false;
-
         public override void Start()
         {
             //とりあえず初期位置までゲームコントローラIKの場所を持ち上げておく:
@@ -185,7 +212,7 @@ namespace Baku.VMagicMirror
             _filterStickPos = Vector2.Lerp(_filterStickPos, _rawStickPos, SpeedFactor * Time.deltaTime);
 
             //いろいろな理由で後処理が載るのを計算: ただし手が乗っかってないとリセットされていく
-            if (HandIsOnController)
+            if (_handIsOnController)
             {
                 _posOffset =
                     _setting.imageBasedBodyMotion.BodyIkOffset * BodyMotionToGamepadPosApplyFactor +
@@ -216,6 +243,75 @@ namespace Baku.VMagicMirror
             _rightHand.Rotation = rightRot;
         }
 
+
+        private void ButtonDown(GamepadKey key)
+        {
+            _inputJitter.AddButtonInput();
+            if (GamepadProvider.IsSideKey(key))
+            {
+                return;
+            }
+
+            _buttonDownCount++;
+        }
+
+        private void ButtonUp(GamepadKey key)
+        {
+            if (GamepadProvider.IsSideKey(key))
+            {
+                return;
+            }
+            _buttonDownCount--;
+
+            //通常起きないハズだが一応
+            if (_buttonDownCount < 0)
+            {
+                _buttonDownCount = 0;
+            }
+            
+        }
+
+        private void LeftStick(Vector2 stickPos)
+        {
+            _inputJitter.SetLeftStickPos(stickPos);
+            if (_leanMode == GamepadLeanModes.GamepadLeanLeftStick)
+            {
+                ApplyStickPosition(stickPos);
+            }
+        }
+
+        private void RightStick(Vector2 stickPos)
+        {
+            _inputJitter.SetRightStickPos(stickPos);
+            if (_leanMode == GamepadLeanModes.GamepadLeanRightStick)
+            {
+                ApplyStickPosition(stickPos);
+            }
+        }
+
+        private void ButtonStick(Vector2Int buttonStickPos)
+        {
+            if (_leanMode == GamepadLeanModes.GamepadLeanLeftButtons)
+            {
+                ApplyStickPosition(NormalizedStickPos(buttonStickPos));
+            }
+        }
+        
+        private void ApplyStickPosition(Vector2 stickPos)
+        {
+            var pos = new Vector2(
+                stickPos.x * (ReverseGamepadStickLeanHorizontal ? -1f : 1f),
+                stickPos.y * (ReverseGamepadStickLeanVertical ? -1f : 1f)
+                );
+            _rawStickPos = pos;
+        }
+
+        private static Vector2 NormalizedStickPos(Vector2Int v)
+        {
+            const float factor = 1.0f / 32768.0f;
+            return new Vector2(v.x * factor, v.y * factor);
+        }
+        
         private void UpdateButtonDownYOffset()
         {
             float offsetGoal =
@@ -227,6 +323,16 @@ namespace Baku.VMagicMirror
                 ButtonDownSpeedFactor * Time.deltaTime
                 );
         }
+
+        private static Vector3 RandomVec(Vector3 scale)
+        {
+            return new Vector3(
+                Random.Range(-scale.x, scale.x),
+                Random.Range(-scale.y, scale.y),
+                Random.Range(-scale.z, scale.z)
+            );
+        }
+
 
         /// <summary> どの入力をBodyLeanの値に反映するか考慮するやつ </summary>
         private enum GamepadLeanModes
@@ -240,7 +346,7 @@ namespace Baku.VMagicMirror
         //色々な理由による手の動き
         
         /// <summary> コントローラ入力があると動くぶんの補正。細かくXYZ全方向に動き、やや素早い </summary>
-        sealed class InputBasedJitter
+        private sealed class InputBasedJitter
         {
             public Vector3 PosOffset { get; private set; }
             public Quaternion Rotation { get; private set; }
@@ -341,7 +447,7 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary> 純粋に時間依存で動く補正。ほぼYZ平面上に限定で、ゆっくりで、ほどほど動く </summary>
-        sealed class TimeBasedJitter
+        private sealed class TimeBasedJitter
         {
             public Vector3 PosOffset { get; private set; }
             public Quaternion Rotation { get; private set; }
@@ -374,14 +480,48 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private static Vector3 RandomVec(Vector3 scale)
+        private class GamepadHandIkState : IHandIkState
         {
-            return new Vector3(
-                Random.Range(-scale.x, scale.x),
-                Random.Range(-scale.y, scale.y),
-                Random.Range(-scale.z, scale.z)
-            );
+            public GamepadHandIkState(GamepadHandIKGenerator parent, ReactedHand hand)
+            {
+                _parent = parent;
+                Hand = hand;
+                _data = hand == ReactedHand.Right ? _parent._rightHand : _parent._leftHand;
+            }
+            private readonly GamepadHandIKGenerator _parent;
+            private readonly IIKData _data;
+
+            public void RaiseRequest() => RequestToUse?.Invoke(this);
+
+            public Vector3 Position => _data.Position;
+            public Quaternion Rotation => _data.Rotation;
+            public ReactedHand Hand { get; }
+            public HandTargetType TargetType => HandTargetType.Gamepad;
+            public event Action<IHandIkState> RequestToUse;
+            
+            public void Enter(IHandIkState prevState)
+            {
+                if (Hand == ReactedHand.Left)
+                {
+                    _parent.Dependency.Reactions.GamepadFinger.GripLeftHand();
+                }
+                else
+                {
+                    _parent.Dependency.Reactions.GamepadFinger.GripRightHand();
+                }
+            }
+
+            public void Quit(IHandIkState nextState)
+            {
+                if (Hand == ReactedHand.Left)
+                {
+                    _parent.Dependency.Reactions.GamepadFinger.ReleaseLeftHand();
+                }
+                else
+                {
+                    _parent.Dependency.Reactions.GamepadFinger.ReleaseRightHand();
+                }
+            }
         }
     }
-    
 }

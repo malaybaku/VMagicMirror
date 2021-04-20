@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-namespace Baku.VMagicMirror
+namespace Baku.VMagicMirror.IK
 {
     /// <summary>
     /// ゲームパッドの入力状況に対してアーケードスティック型の腕IKを生成するやつ。
@@ -15,22 +16,7 @@ namespace Baku.VMagicMirror
         //ボタンを押すとき手ごと下に下げる移動量。
         private const float ButtonDownY = 0.01f;
 
-        public ArcadeStickHandIKGenerator(
-            MonoBehaviour coroutineResponder, 
-            IVRMLoadable vrmLoadable,
-            ArcadeStickProvider stickProvider) : base(coroutineResponder)
-        {
-            _stickProvider = stickProvider;
-
-            //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
-            vrmLoadable.VrmLoaded += info =>
-            {
-                var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
-                var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
-                CacheHandOffsets(info.animator);
-            };
-        }
-
+        
         //右手の5本の指について、手首から指先までのオフセットを大まかにチェックしたもの。
         //指に対してはIKをあまり使いたくないため、FKを大まかに合わせるのに使う
         //NOTE: Tポーズのときのワールド座標で見た差分が入る
@@ -41,78 +27,94 @@ namespace Baku.VMagicMirror
         private readonly ArcadeStickProvider _stickProvider;
         
         private readonly IKDataRecord _leftHand = new IKDataRecord();
-        public IIKGenerator LeftHand => _leftHand;
-
         private readonly IKDataRecord _rightHand = new IKDataRecord();
-        public IIKGenerator RightHand => _rightHand;
         
         private Vector2 _rawStickPos = Vector2.zero;
         private Vector2 _filterStickPos = Vector2.zero;
         
-        private float _offsetY = 0;
         private int _buttonDownCount = 0;
 
         private Vector3 _latestButtonPos;
         private Quaternion _latestButtonRot;
-        
-        public void ButtonDown(GamepadKey key)
+
+        private readonly ArcadeStickHandIkState _leftHandState;
+        public override IHandIkState LeftHandState => _leftHandState;
+        private readonly ArcadeStickHandIkState _rightHandState;
+        public override IHandIkState RightHandState => _rightHandState;
+
+        public ArcadeStickHandIKGenerator(
+            HandIkGeneratorDependency dependency, 
+            IVRMLoadable vrmLoadable,
+            ArcadeStickProvider stickProvider) : base(dependency)
         {
-            if (!ArcadeStickProvider.IsArcadeStickKey(key))
+            _stickProvider = stickProvider;
+            _leftHandState = new ArcadeStickHandIkState(this, ReactedHand.Left);
+            _rightHandState = new ArcadeStickHandIkState(this, ReactedHand.Right);
+
+            //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
+            vrmLoadable.VrmLoaded += info =>
             {
-                return;
-            }
+                var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                CacheHandOffsets(info.animator);
+            };
 
-            _buttonDownCount++;
-
-            (_latestButtonPos, _latestButtonRot) = _stickProvider.GetRightHand(key);
-
-            //NOTE: 指をだいたい揃えるためにズラす動きがコレ
-            int fingerNumber = ArcadeStickFingerController.KeyToFingerNumber(key);
-            int offsetIndex = fingerNumber - 5;
-            //1倍ぴったりを適用すると指の曲げのぶんのズレで絵面がイマイチになる可能性もあるが、
-            //余程手が大きくなければ大丈夫なはず
-            _latestButtonPos -= _latestButtonRot * _wristToFingerOffsets[offsetIndex];
-        }
-
-        /// <summary>
-        /// 手首IKにするためのオフセットを考慮しないような、ボタンそのものの位置、角度を取得します。
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public (Vector3, Quaternion) GetButtonPose(GamepadKey key)
-        {
-            return _stickProvider.GetRightHandRaw(key);
-        }
-
-        public void ButtonUp(GamepadKey key)
-        {
-            if (!ArcadeStickProvider.IsArcadeStickKey(key))
+            dependency.Events.MoveLeftGamepadStick += v =>
             {
-                return;
-            }
-            _buttonDownCount--;
-
-            //通常起きないハズだが一応
-            if (_buttonDownCount < 0)
+                LeftStick(v);
+                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.ArcadeStick)
+                {
+                    _leftHandState.RaiseRequest();
+                }
+            };
+            
+            
+            dependency.Events.GamepadButtonStick += pos =>
             {
-                _buttonDownCount = 0;
-            }
-        }
-        
-        public void LeftStick(Vector2 stickPos)
-        {
-            _rawStickPos = stickPos;
-        }
+                if (dependency.Config.WordToMotionDevice.Value != WordToMotionDeviceAssign.Gamepad && 
+                    dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.ArcadeStick)
+                {
+                    ButtonStick(pos);
+                    _leftHandState.RaiseRequest();
+                }
+            };
 
-        public void ButtonStick(Vector2Int buttonStickPos)
-        {
-            _rawStickPos = NormalizedStickPos(buttonStickPos);
-
-            Vector2 NormalizedStickPos(Vector2Int v)
+            
+            dependency.Events.GamepadButtonDown += key =>
             {
-                const float factor = 1.0f / 32768.0f;
-                return new Vector2(v.x * factor, v.y * factor);
-            }
+                ButtonDown(key);
+                //表情切り替えに使ってる場合、IKの切り替えとかには進まない
+                if (dependency.Config.WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad)
+                {
+                    return;
+                }
+                
+                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.ArcadeStick)
+                {
+                    _rightHandState.RaiseRequest();
+                    if (!dependency.Config.IsAlwaysHandDown.Value)
+                    {
+                        dependency.Reactions.ArcadeStickFinger.ButtonDown(key);
+                        var (pos, rot) = _stickProvider.GetRightHandRaw(key);
+                        dependency.Reactions.ParticleStore.RequestArcadeStickParticleStart(pos, rot);
+                    }
+                }
+            };
+
+            dependency.Events.GamepadButtonUp += key =>
+            {
+                ButtonUp(key); 
+                //表情切り替えに使ってる場合、IKの切り替えとかには進まない
+                if (dependency.Config.WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad)
+                {
+                    return;
+                }
+
+                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.ArcadeStick)
+                {
+                    dependency.Reactions.ArcadeStickFinger.ButtonUp(key);
+                }
+            };
         }
         
         public override void Start()
@@ -136,7 +138,57 @@ namespace Baku.VMagicMirror
             _rightHand.Position = Vector3.Lerp(_rightHand.Position, posWithOffset, RightHandSpeedFactor * Time.deltaTime);
             _rightHand.Rotation = Quaternion.Slerp(_rightHand.Rotation, _latestButtonRot, RightHandSpeedFactor * Time.deltaTime);
         }
+
+        private void ButtonDown(GamepadKey key)
+        {
+            if (!ArcadeStickProvider.IsArcadeStickKey(key))
+            {
+                return;
+            }
+
+            _buttonDownCount++;
+
+            (_latestButtonPos, _latestButtonRot) = _stickProvider.GetRightHand(key);
+
+            //NOTE: 指をだいたい揃えるためにズラす動きがコレ
+            int fingerNumber = ArcadeStickFingerController.KeyToFingerNumber(key);
+            int offsetIndex = fingerNumber - 5;
+            //1倍ぴったりを適用すると指の曲げのぶんのズレで絵面がイマイチになる可能性もあるが、
+            //余程手が大きくなければ大丈夫なはず
+            _latestButtonPos -= _latestButtonRot * _wristToFingerOffsets[offsetIndex];
+        }
         
+        private void ButtonUp(GamepadKey key)
+        {
+            if (!ArcadeStickProvider.IsArcadeStickKey(key))
+            {
+                return;
+            }
+            _buttonDownCount--;
+
+            //通常起きないハズだが一応
+            if (_buttonDownCount < 0)
+            {
+                _buttonDownCount = 0;
+            }
+        }
+
+        private void LeftStick(Vector2 stickPos)
+        {
+            _rawStickPos = stickPos;
+        }
+
+        private void ButtonStick(Vector2Int buttonStickPos)
+        {
+            _rawStickPos = NormalizedStickPos(buttonStickPos);
+
+            Vector2 NormalizedStickPos(Vector2Int v)
+            {
+                const float factor = 1.0f / 32768.0f;
+                return new Vector2(v.x * factor, v.y * factor);
+            }
+        }
+
         private void CacheHandOffsets(Animator animator)
         {
             //左手 : 手のひら中央の位置を推定するため、中指の付け根を見に行く
@@ -188,5 +240,58 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void EnterState(ReactedHand hand)
+        {
+            if (hand == ReactedHand.Left)
+            {
+                Dependency.Reactions.ArcadeStickFinger.GripLeftHand();
+            }
+            else if (hand == ReactedHand.Right)
+            {
+                Dependency.Reactions.ArcadeStickFinger.GripRightHand();
+            }
+        }
+
+        private void QuitState(ReactedHand hand)
+        {
+            if (hand == ReactedHand.Left)
+            {
+                Dependency.Reactions.ArcadeStickFinger.ReleaseLeftHand();
+            }
+            else if (hand == ReactedHand.Right)
+            {
+                Dependency.Reactions.ArcadeStickFinger.ReleaseRightHand();
+            } 
+        }
+
+
+        //NOTE: private classだし…ということでバリバリに相互参照します
+        private class ArcadeStickHandIkState : IHandIkState
+        {
+            public ArcadeStickHandIkState(ArcadeStickHandIKGenerator parent, ReactedHand hand)
+            {
+                _parent = parent;
+                Hand = hand;
+                _data = Hand == ReactedHand.Right ? _parent._rightHand : _parent._leftHand;
+            }
+            private readonly ArcadeStickHandIKGenerator _parent;
+            private readonly IIKData _data;
+
+            public void RaiseRequest() => RequestToUse?.Invoke(this);
+
+            public Vector3 Position => _data.Position;
+            public Quaternion Rotation => _data.Rotation;
+            public ReactedHand Hand { get; }
+            public HandTargetType TargetType => HandTargetType.ArcadeStick;
+            public event Action<IHandIkState> RequestToUse;
+            public void Enter(IHandIkState prevState)
+            {
+                _parent.EnterState(Hand);
+            }
+            public void Quit(IHandIkState nextState)
+            {
+                _parent.QuitState(Hand);
+            }
+        }
     }
 }

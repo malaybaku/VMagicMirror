@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
-namespace Baku.VMagicMirror
+namespace Baku.VMagicMirror.IK
 {
     /// <summary> MIDI入力から手のIK動作を作るすごいやつだよ </summary>
     public sealed class MidiHandIkGenerator : HandIkGeneratorBase
@@ -16,9 +17,6 @@ namespace Baku.VMagicMirror
         private Coroutine _leftHandCoroutine = null;
         private Coroutine _rightHandCoroutine = null;
 
-        public IIKGenerator RightHand => _rightHand;
-        public IIKGenerator LeftHand => _leftHand;
-        
         public float WristToTipLength { get; set; } = 0.12f;
         public float HandOffsetAlways { get; set; } = 0.03f;
         public float HandOffsetAfterKeyDown { get; set; } = 0.02f;
@@ -27,11 +25,45 @@ namespace Baku.VMagicMirror
         private bool _isRightHandOnKnob = false;
         private MidiKnobTargetData _leftHandKnobTarget;
         private MidiKnobTargetData _rightHandKnobTarget;
-        
-        public MidiHandIkGenerator(MonoBehaviour coroutineResponder, MidiControllerProvider provider)
-            :base(coroutineResponder)
+
+        private readonly MidiHandIkState _leftHandState;
+        public override IHandIkState LeftHandState => _leftHandState;
+        private readonly MidiHandIkState _rightHandState;
+        public override IHandIkState RightHandState => _rightHandState;
+
+        public MidiHandIkGenerator(HandIkGeneratorDependency dependency, MidiControllerProvider provider)
+            :base(dependency)
         {
             _provider = provider;
+            _leftHandState = new MidiHandIkState(this, ReactedHand.Left);
+            _rightHandState = new MidiHandIkState(this, ReactedHand.Right);
+
+            dependency.Events.NoteOn += noteNumber =>
+            {
+                var (hand, pos) = NoteOn(noteNumber);
+                if (hand == ReactedHand.Left)
+                {
+                    _leftHandState.RaiseRequest();
+                }
+                else
+                {
+                    _rightHandState.RaiseRequest();
+                }
+                dependency.Reactions.ParticleStore.RequestMidiParticleStart(pos);
+            };
+
+            dependency.Events.KnobValueChange += (knobNumber, value) =>
+            {
+                var hand = KnobValueChange(knobNumber, value);
+                if (hand == ReactedHand.Left)
+                {
+                    _leftHandState.RaiseRequest();
+                }
+                else
+                {
+                    _rightHandState.RaiseRequest();
+                }
+            };
         }
 
         public override void Start()
@@ -197,5 +229,36 @@ namespace Baku.VMagicMirror
 
             _rightHandCoroutine = StartCoroutine(enumerator);
         }
+
+        private sealed class MidiHandIkState : IHandIkState
+        {
+            public MidiHandIkState(MidiHandIkGenerator parent, ReactedHand hand)
+            {
+                _parent = parent;
+                Hand = hand;
+                _data = hand == ReactedHand.Right ? _parent._rightHand : _parent._leftHand;
+            }
+
+            private readonly MidiHandIkGenerator _parent;
+            private readonly IIKData _data;
+
+            public void RaiseRequest() => RequestToUse?.Invoke(this);
+            
+            public Vector3 Position => _data.Position;
+            public Quaternion Rotation => _data.Rotation;
+            public ReactedHand Hand { get; }
+            public HandTargetType TargetType => HandTargetType.MidiController;
+            public event Action<IHandIkState> RequestToUse;
+
+            //NOTE: Quitのとき指を開放
+            public void Enter(IHandIkState prevState)
+            {
+            }
+
+            public void Quit(IHandIkState nextState)
+            {
+            }
+        }
+        
     }
 }

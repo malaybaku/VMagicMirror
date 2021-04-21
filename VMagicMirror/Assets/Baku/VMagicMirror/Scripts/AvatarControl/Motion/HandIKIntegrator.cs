@@ -35,27 +35,26 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private WaitingBodyMotion waitingBody = null;
 
-        public MouseMoveHandIKGenerator MouseMove { get; private set; }
-
-        public GamepadHandIKGenerator GamepadHand { get; private set; }
-
-        public ArcadeStickHandIKGenerator ArcadeStickHand { get; private set; }
-
-        public MidiHandIkGenerator MidiHand { get; private set; }
-
-        public PresentationHandIKGenerator Presentation { get; private set; }
-
-        private ImageBaseHandIkGenerator _imageBaseHand;
-
-        private AlwaysDownHandIkGenerator _downHand;
-
-
         [SerializeField] private FingerController fingerController = null;
 
         [SerializeField] private GamepadHandIKGenerator.GamepadHandIkGeneratorSetting gamepadSetting = default;
 
         [SerializeField]
         private ImageBaseHandIkGenerator.ImageBaseHandIkGeneratorSetting imageBaseHandSetting = default;
+
+        
+        public MouseMoveHandIKGenerator MouseMove { get; private set; }
+
+        public GamepadHandIKGenerator GamepadHand { get; private set; }
+
+        public MidiHandIkGenerator MidiHand { get; private set; }
+
+        public PresentationHandIKGenerator Presentation { get; private set; }
+
+        private ArcadeStickHandIKGenerator _arcadeStickHand;
+        private ImageBaseHandIkGenerator _imageBaseHand;
+        private AlwaysDownHandIkGenerator _downHand;
+        
 
         private Transform _rightHandTarget = null;
         private Transform _leftHandTarget = null;
@@ -94,10 +93,6 @@ namespace Baku.VMagicMirror
         public ReactiveProperty<WordToMotionDeviceAssign> WordToMotionDevice { get; } =
             new ReactiveProperty<WordToMotionDeviceAssign>(WordToMotionDeviceAssign.KeyboardWord);
         
-        //TODO: ↓の2つを消して上のWordToMotionDeviceに帰着させる
-        // public bool UseGamepadForWordToMotion { get; set; } = false;
-        // public bool UseMidiControllerForWordToMotion { get; set; } = false;
-
         public bool EnablePresentationMode => _keyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.Presentation;
         
         public void SetKeyboardAndMouseMotionMode(int modeIndex)
@@ -195,8 +190,8 @@ namespace Baku.VMagicMirror
             GamepadHand = new GamepadHandIKGenerator(
                 dependency, vrmLoadable, waitingBody, gamepadProvider, gamepadSetting
                 );
-            ArcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
             Presentation = new PresentationHandIKGenerator(dependency, vrmLoadable, cam);
+            _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
             _imageBaseHand = new ImageBaseHandIkGenerator(dependency, handTracker, imageBaseHandSetting, vrmLoadable);
             _downHand = new AlwaysDownHandIkGenerator(dependency, vrmLoadable);
             typing.SetUp(keyboardProvider, dependency);
@@ -207,7 +202,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, ArcadeStickHand, Presentation, _imageBaseHand, _downHand
+                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _imageBaseHand, _downHand
                 })
             {
                 if (generator.LeftHandState != null)
@@ -288,9 +283,8 @@ namespace Baku.VMagicMirror
         
         #region Gamepad
         
-        //NOTE: 表情コントロール用にゲームパッドを使っている間は入力を無視する
-        //TODO: ButtonDown/ButtonUpについても可能ならCooldownチェックのガードに相当するものをしたい。
-        //HandIk側でやってもらうしかないかな…？
+        //NOTE: ButtonDown/ButtonUpで反応する手が非自明なものはHandIk側でCooldownチェックをしてほしい…が、
+        //やらないでも死ぬほどの問題ではない
         public void MoveLeftGamepadStick(Vector2 v)
         {
             if (WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad ||
@@ -335,7 +329,6 @@ namespace Baku.VMagicMirror
 
         public void ButtonStick(Vector2Int pos)
         {
-            //TODO: たぶんデグレしないが、ガードがやや厳しい方向に変化してるので動作の変化に要注意
             if (WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad || 
                 !CheckCoolDown(ReactedHand.Left, HandTargetType.Gamepad))
             {
@@ -410,8 +403,8 @@ namespace Baku.VMagicMirror
             MouseMove.Start();
             Presentation.Start();
             GamepadHand.Start();
-            ArcadeStickHand.Start();
             MidiHand.Start();
+            _arcadeStickHand.Start();
             _imageBaseHand.Start();
         }
         
@@ -424,8 +417,8 @@ namespace Baku.VMagicMirror
             Typing.ResetLeftHandDownTimeout(true);
             Typing.ResetRightHandDownTimeout(true);
             
-            //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にします。
-            //こうすると棒立ちになるので都合がよいです
+            //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にする。
+            //こうすると棒立ちになるので都合がよい
             _imageBaseHand.HasRightHandUpdate = false;
             SetRightHandState(_imageBaseHand.RightHandState);
             _imageBaseHand.HasLeftHandUpdate = false;
@@ -442,8 +435,8 @@ namespace Baku.VMagicMirror
             MouseMove.Update();
             Presentation.Update();
             GamepadHand.Update();
-            ArcadeStickHand.Update();
             MidiHand.Update();
+            _arcadeStickHand.Update();
             _imageBaseHand.Update();
 
             //画像処理の手検出があったらそっちのIKに乗り換える
@@ -468,9 +461,9 @@ namespace Baku.VMagicMirror
         {
             MouseMove.LateUpdate();
             GamepadHand.LateUpdate();
-            ArcadeStickHand.LateUpdate();
             MidiHand.LateUpdate();
             Presentation.LateUpdate();
+            _arcadeStickHand.LateUpdate();
             _imageBaseHand.LateUpdate();
         }
         

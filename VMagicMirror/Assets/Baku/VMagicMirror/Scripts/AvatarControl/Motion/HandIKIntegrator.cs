@@ -44,11 +44,8 @@ namespace Baku.VMagicMirror
 
         
         public MouseMoveHandIKGenerator MouseMove { get; private set; }
-
         public GamepadHandIKGenerator GamepadHand { get; private set; }
-
         public MidiHandIkGenerator MidiHand { get; private set; }
-
         public PresentationHandIKGenerator Presentation { get; private set; }
 
         private ArcadeStickHandIKGenerator _arcadeStickHand;
@@ -360,37 +357,6 @@ namespace Baku.VMagicMirror
 
         #endregion
         
-        #region Util
-
-        /// <summary>
-        /// マウス/タイピングIKに関して、タイムアウトによって腕を下げていいかどうかを取得します。
-        /// </summary>
-        /// <returns></returns>
-        public bool CheckTypingOrMouseHandsCanMoveDown()
-        {
-            var left = _leftTargetType.Value;
-            var right = _rightTargetType.Value;
-            
-            if (left != HandTargetType.Keyboard &&
-                right != HandTargetType.Keyboard &&
-                right != HandTargetType.Mouse)
-            {
-                //この場合は特に意味がない
-                return false;
-            }
-
-            bool leftHandIsReady = left != HandTargetType.Keyboard || typing.LeftHandTimeOutReached;
-
-            bool rightHandIsReady =
-                (right == HandTargetType.Keyboard && typing.RightHandTimeOutReached) ||
-                (right == HandTargetType.Mouse && MouseMove.IsNoInputTimeOutReached) ||
-                (right != HandTargetType.Keyboard && right != HandTargetType.Mouse);
-
-            return leftHandIsReady && rightHandIsReady;
-        }
-        
-        #endregion
-        
         #endregion
 
         private void Start()
@@ -581,9 +547,9 @@ namespace Baku.VMagicMirror
             _currentRightHand.Enter(_prevRightHand);
         }
         
-        //TODO: クールダウンの判定はSetLeft|RightHandIKのガード時に行うのではダメか？
+        // NOTE: クールダウン判定をSetLeft|RightHandState時に行う手もあるが、色々考えて筋悪そうなので却下
 
-        //クールダウンタイムを考慮したうえで、モーションを適用してよいかどうかを確認します。
+        // クールダウンタイムを考慮したうえで、モーションを適用してよいかどうかを確認する
         private bool CheckCoolDown(ReactedHand hand, HandTargetType targetType)
         {
             if ((hand == ReactedHand.Left && targetType == _leftTargetType.Value) ||
@@ -598,17 +564,35 @@ namespace Baku.VMagicMirror
                 (hand == ReactedHand.Right && _rightHandIkChangeCoolDown <= 0);
         }
         
-        /// <summary>
-        /// x in [0, 1] を y in [0, 1]へ3次補間するやつ
-        /// </summary>
-        /// <param name="rate"></param>
-        /// <returns></returns>
+        // マウス/タイピングIKに関して、タイムアウトによって腕を下げていいかどうかを取得します。
+        private bool CheckTypingOrMouseHandsCanMoveDown()
+        {
+            var left = _leftTargetType.Value;
+            var right = _rightTargetType.Value;
+            
+            if (left != HandTargetType.Keyboard &&
+                right != HandTargetType.Keyboard &&
+                right != HandTargetType.Mouse)
+            {
+                //この場合は特に意味がない
+                return false;
+            }
+
+            bool leftHandIsReady = left != HandTargetType.Keyboard || typing.LeftHandTimeOutReached;
+
+            bool rightHandIsReady =
+                (right == HandTargetType.Keyboard && typing.RightHandTimeOutReached) ||
+                (right == HandTargetType.Mouse && MouseMove.IsNoInputTimeOutReached) ||
+                (right != HandTargetType.Keyboard && right != HandTargetType.Mouse);
+
+            return leftHandIsReady && rightHandIsReady;
+        }
+
+        // x in [0, 1] を y in [0, 1]へ3次補間する
         private static float CubicEase(float rate) 
             => 2 * rate * rate * (1.5f - rate);
     }
 
-
-    
     /// <summary>
     /// 手のIKの一覧。常時手下げモードがあったり、片方の腕にしか適合しない値が入ってたりすることに注意
     /// </summary>

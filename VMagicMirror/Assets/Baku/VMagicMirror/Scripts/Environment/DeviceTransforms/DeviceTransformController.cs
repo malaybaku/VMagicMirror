@@ -232,7 +232,11 @@ namespace Baku.VMagicMirror
 
             void ApplyItem(DeviceLayoutItem item, Transform target)
             {
-                if (item == null)
+                //NOTE: 2つ目/3つ目の条件によって、
+                //「設定ファイルに何もなかったから原点姿勢/ゼロスケール扱いにしたよ」
+                //という(余計なお世話の)ケースを拒否する。
+                //これはファイルのセーブタイミングがまずかったり、異バージョンの設定をロードすると起こるケース
+                if (item == null || item.pos.magnitude < 0.01f || item.scale.magnitude < 0.01f) 
                 {
                     return;
                 }

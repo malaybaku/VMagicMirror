@@ -229,17 +229,45 @@ namespace Baku.VMagicMirror.IK
                 animator.GetBoneTransform(HumanBodyBones.RightLittleDistal),
             };
             
+            //NOTE: 指が一部なくてもエラーにはならないが、指の一部だけが欠けていると計算としてはかなり崩れる。
+            //指が全部 or 全部あるモデルが大多数派であると考えての実装になっています
             for (int i = 0; i < intermediateBones.Length; i++)
             {
-                //NOTE: 指が一部なくてもエラーにはならないが、指の一部だけが欠けていると計算としてはかなり崩れる。
-                //指が全部 or 全部あるモデルが大多数派であると考えてこのくらいで妥協してます
+                if (i == 0)
+                {
+                    continue;
+                }
+                
+                //親指以外はすべてが同一軸に曲がる(FingerControllerがそうなってる)ので割と簡単に計算可能
+                
+                //3つの関節をすべて30度曲げたときの指先位置について、およそ以下で見積もれる
+                // - 水平方向 : だいたい関節1つぶん手前になる(= intermediateBones[i].position - rightWristPos)
+                // - 垂直方向 : だいたい関節2つぶん下に下がる
                 _wristToFingerOffsets[i] =
                     (proximalBones[i] != null && intermediateBones[i] != null && distalBones[i] != null)
-                        ? intermediateBones[i].position - 
-                          rightWristPos - 
+                        ? intermediateBones[i].position - rightWristPos - 
                           Vector3.up * (intermediateBones[i].localPosition.magnitude + distalBones[i].localPosition.magnitude) 
                         : Vector3.zero;
             }
+            
+            //親指は付け根の関節の回転方向が違うので少し見積もり方法を変えます…めんどくさっ！
+            // - 水平方向 :「長さはそのままだが、人差し指の下に指が潜り込んでいる」みたいな値を作って使う
+            // - 垂直方向 : 人差し指に完全に合わす
+            //   つまり、AボタンとYボタンを順に押すとき手の動きがほぼ無くなるようにする
+            if (proximalBones[0] != null && intermediateBones[0] != null && distalBones[0] != null &&
+                proximalBones[1] != null && intermediateBones[1] != null && distalBones[1] != null)
+            {
+                _wristToFingerOffsets[0] =
+                    (proximalBones[1].position - rightWristPos).normalized * (distalBones[0].position - rightWristPos).magnitude -
+                    Vector3.up * (intermediateBones[1].localPosition.magnitude + distalBones[1].localPosition.magnitude);
+            }
+            else
+            {
+                _wristToFingerOffsets[0] = Vector3.zero;
+            }
+            
+
+
         }
 
         private void EnterState(ReactedHand hand)

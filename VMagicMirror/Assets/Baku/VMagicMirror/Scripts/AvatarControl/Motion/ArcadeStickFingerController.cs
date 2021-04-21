@@ -89,9 +89,10 @@ namespace Baku.VMagicMirror
             switch (key)
             {
                 case GamepadKey.A:
+                case GamepadKey.B:
+                    return FingerConsts.RightThumb;
                 case GamepadKey.X:
                     return FingerConsts.RightIndex;
-                case GamepadKey.B:
                 case GamepadKey.Y:
                     return FingerConsts.RightMiddle;
                 case GamepadKey.RShoulder:
@@ -129,8 +130,10 @@ namespace Baku.VMagicMirror
                 case FingerConsts.RightRing:
                 case FingerConsts.RightIndex:
                 case FingerConsts.RightMiddle:
+                    return isPressed ? 30f : 20f;
                 case FingerConsts.RightThumb:
-                    return isPressed ? 30f: 25f;
+                    //NOTE: 親指は最初から手のひら寄りに曲げておく。
+                    return isPressed ? 40f : 30f;
                 default:
                     //こない
                     return 25f;

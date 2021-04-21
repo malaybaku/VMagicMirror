@@ -92,74 +92,84 @@ namespace Baku.VMagicMirror.IK
 
             dependency.Events.MoveLeftGamepadStick += v =>
             {
-                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.Value || 
+                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
                 {
-                    LeftStick(v);
-                    dependency.Reactions.GamepadFinger.LeftStick(v);
-                    _leftHandState.RaiseRequest();
+                    return;
                 }
+
+                LeftStick(v);
+                dependency.Reactions.GamepadFinger.LeftStick(v);
+                _leftHandState.RaiseRequest();
             };
 
             dependency.Events.MoveRightGamepadStick += v =>
             {
-                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.Value || 
+                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
                 {
-                    RightStick(v);
-                    dependency.Reactions.GamepadFinger.RightStick(v);
-                    _rightHandState.RaiseRequest();
+                    return;
                 }
+
+                RightStick(v);
+                dependency.Reactions.GamepadFinger.RightStick(v);
+                _rightHandState.RaiseRequest();
             };
 
             dependency.Events.GamepadButtonDown += key =>
             {
                 ButtonDown(key);
-                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.Value || 
+                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
                 {
-                    var hand = GamepadProvider.GetPreferredReactionHand(key);
-                    if (hand == ReactedHand.Left)
-                    {
-                        _leftHandState.RaiseRequest();
-                    }
-                    else if (hand == ReactedHand.Right)
-                    {
-                        _rightHandState.RaiseRequest();
-                    }
-
-                    if (!dependency.Config.IsAlwaysHandDown.Value)
-                    {
-                        dependency.Reactions.GamepadFinger.ButtonDown(key);
-                    }
+                    return;
+                }
+                
+                var hand = GamepadProvider.GetPreferredReactionHand(key);
+                if (hand == ReactedHand.Left)
+                {
+                    _leftHandState.RaiseRequest();
+                    dependency.Reactions.GamepadFinger.ButtonDown(key);
+                }
+                else if (hand == ReactedHand.Right)
+                {
+                    _rightHandState.RaiseRequest();
+                    dependency.Reactions.GamepadFinger.ButtonDown(key);
                 }
             };
 
             dependency.Events.GamepadButtonUp += key =>
             {
                 ButtonUp(key);
-                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.Value || 
+                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
                 {
-                    var hand = GamepadProvider.GetPreferredReactionHand(key);
-                    if (hand == ReactedHand.Left)
-                    {
-                        _leftHandState.RaiseRequest();
-                    }
-                    else if (hand == ReactedHand.Right)
-                    {
-                        _rightHandState.RaiseRequest();
-                    }
-
-                    //NOTE: めっちゃ起きにくいが、「コントローラのボタンを押したまま手さげモードに入る」というケースを
-                    //破たんしにくくするため、指を離す方向の動作については手下げモードであってもガードしない
+                    return;
+                }
+                
+                var hand = GamepadProvider.GetPreferredReactionHand(key);
+                if (hand == ReactedHand.Left)
+                {
+                    _leftHandState.RaiseRequest();
+                    dependency.Reactions.GamepadFinger.ButtonUp(key);
+                }
+                else if (hand == ReactedHand.Right)
+                {
+                    _rightHandState.RaiseRequest();
                     dependency.Reactions.GamepadFinger.ButtonUp(key);
                 }
             };
 
             dependency.Events.GamepadButtonStick += pos =>
             {
-                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.Gamepad)
+                if (dependency.Config.IsAlwaysHandDown.Value || 
+                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.Gamepad)
                 {
-                    ButtonStick(pos);
-                    _leftHandState.RaiseRequest();
+                    return;
                 }
+
+                ButtonStick(pos);
+                _leftHandState.RaiseRequest();
             };
 
             dependency.Config.LeftTarget

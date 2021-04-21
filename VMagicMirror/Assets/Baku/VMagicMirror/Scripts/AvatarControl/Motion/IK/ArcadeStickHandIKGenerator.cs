@@ -83,34 +83,36 @@ namespace Baku.VMagicMirror.IK
             dependency.Events.GamepadButtonDown += key =>
             {
                 ButtonDown(key);
-                //表情切り替えに使ってる場合、IKの切り替えとかには進まない
-                if (dependency.Config.WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad)
+                
+                if (dependency.Config.WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad || 
+                    dependency.Config.IsAlwaysHandDown.Value || 
+                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.ArcadeStick
+                    )
                 {
                     return;
                 }
                 
-                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.ArcadeStick)
+                _rightHandState.RaiseRequest();
+                if (dependency.Config.RightTarget.Value == HandTargetType.ArcadeStick)
                 {
-                    _rightHandState.RaiseRequest();
-                    if (!dependency.Config.IsAlwaysHandDown.Value)
-                    {
-                        dependency.Reactions.ArcadeStickFinger.ButtonDown(key);
-                        var (pos, rot) = _stickProvider.GetRightHandRaw(key);
-                        dependency.Reactions.ParticleStore.RequestArcadeStickParticleStart(pos, rot);
-                    }
+                    dependency.Reactions.ArcadeStickFinger.ButtonDown(key);
+                    var (pos, rot) = _stickProvider.GetRightHandRaw(key);
+                    dependency.Reactions.ParticleStore.RequestArcadeStickParticleStart(pos, rot);
                 }
             };
 
             dependency.Events.GamepadButtonUp += key =>
             {
                 ButtonUp(key); 
-                //表情切り替えに使ってる場合、IKの切り替えとかには進まない
-                if (dependency.Config.WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad)
+
+                if (dependency.Config.WordToMotionDevice.Value == WordToMotionDeviceAssign.Gamepad || 
+                    dependency.Config.IsAlwaysHandDown.Value ||
+                    dependency.Config.GamepadMotionMode.Value != GamepadMotionModes.ArcadeStick)
                 {
                     return;
                 }
 
-                if (dependency.Config.GamepadMotionMode.Value == GamepadMotionModes.ArcadeStick)
+                if (dependency.Config.RightTarget.Value == HandTargetType.ArcadeStick)
                 {
                     dependency.Reactions.ArcadeStickFinger.ButtonUp(key);
                 }

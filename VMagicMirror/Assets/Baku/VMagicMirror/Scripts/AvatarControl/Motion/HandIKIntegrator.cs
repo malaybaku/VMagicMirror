@@ -212,17 +212,17 @@ namespace Baku.VMagicMirror
             {
                 if (generator.LeftHandState != null)
                 {
-                    generator.LeftHandState.RequestToUse += SetLeftHandIk;
+                    generator.LeftHandState.RequestToUse += SetLeftHandState;
                 }
 
                 if (generator.RightHandState != null)
                 {
-                    generator.RightHandState.RequestToUse += SetRightHandIk;
+                    generator.RightHandState.RequestToUse += SetRightHandState;
                 }
             }
             
-            Typing.LeftHand.RequestToUse += SetLeftHandIk;
-            Typing.RightHand.RequestToUse += SetRightHandIk;
+            Typing.LeftHand.RequestToUse += SetLeftHandState;
+            Typing.RightHand.RequestToUse += SetRightHandState;
         }
 
         //NOTE: prevのStateは初めて手がキーボードから離れるまではnull
@@ -419,7 +419,7 @@ namespace Baku.VMagicMirror
         {
             fingerController.Initialize(info.animator);
             
-            //キャラロード前の時点ではHandDownとブレンドされることでIK位置が原点に飛ぶため、それらの値を捨てる
+            //キャラロード前のHandDownとブレンドするとIK位置が原点に飛ぶので、その値を捨てる
             MouseMove.ResetHandDownTimeout(true);
             Typing.ResetLeftHandDownTimeout(true);
             Typing.ResetRightHandDownTimeout(true);
@@ -427,9 +427,9 @@ namespace Baku.VMagicMirror
             //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にします。
             //こうすると棒立ちになるので都合がよいです
             _imageBaseHand.HasRightHandUpdate = false;
-            SetRightHandIk(_imageBaseHand.RightHandState);
+            SetRightHandState(_imageBaseHand.RightHandState);
             _imageBaseHand.HasLeftHandUpdate = false;
-            SetLeftHandIk(_imageBaseHand.LeftHandState);
+            SetLeftHandState(_imageBaseHand.LeftHandState);
         }
 
         private void OnVrmDisposing()
@@ -450,13 +450,13 @@ namespace Baku.VMagicMirror
             if (_imageBaseHand.HasRightHandUpdate)
             {
                 _imageBaseHand.HasRightHandUpdate = false;
-                SetRightHandIk(_imageBaseHand.RightHandState);
+                SetRightHandState(_imageBaseHand.RightHandState);
             }
 
             if (_imageBaseHand.HasLeftHandUpdate)
             {
                 _imageBaseHand.HasLeftHandUpdate = false;
-                SetLeftHandIk(_imageBaseHand.LeftHandState);
+                SetLeftHandState(_imageBaseHand.LeftHandState);
             }
             
             //現在のステート + 必要なら直前ステートも参照してIKターゲットの位置、姿勢を更新する
@@ -541,7 +541,7 @@ namespace Baku.VMagicMirror
             );
         }
         
-        private void SetLeftHandIk(IHandIkState state)
+        private void SetLeftHandState(IHandIkState state)
         {
             var targetType = state.TargetType;
             
@@ -552,32 +552,20 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            _leftHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
 
-            var prevType = _leftTargetType.Value;
             _leftTargetType.Value = targetType;
-            
             _prevLeftHand = _currentLeftHand;
             _currentLeftHand = state;
+            
+            _leftHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
             _leftHandStateBlendCount = 0f;
 
-            switch (prevType)
-            {
-                case HandTargetType.Keyboard:
-                    //NOTE: とくにキーボード⇢ゲームパッドの遷移が破綻しないようにこのタイミングでやる
-                    fingerController.ReleaseLeftHandTyping();
-                    break;
-            }
-
-            switch (targetType)
-            {
-                case HandTargetType.Keyboard:
-                    typing.ResetLeftHandDownTimeout(true);
-                    break;
-            }
+            //Stateの遷移処理。ここで指とかを更新させる
+            _prevLeftHand.Quit(_currentLeftHand);
+            _currentLeftHand.Enter(_prevLeftHand);
         }
 
-        private void SetRightHandIk(IHandIkState state)
+        private void SetRightHandState(IHandIkState state)
         {
             var targetType = state.TargetType;
             
@@ -588,28 +576,16 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            _rightHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
-
-            var prevType = _rightTargetType.Value;
             _rightTargetType.Value = targetType;
-            
             _prevRightHand = _currentRightHand;
             _currentRightHand = state;
-            _rightHandStateBlendCount = 0f;
             
-            //NOTE: 除外しているパターンマウスの指はタイピング動作と共通の方式なため、これらは同じ仕組みで指を離す。
-            //ただしマウスからキーボードに行く場合だけはReleaseを呼ばないでもちゃんと動くので、あえて呼ばない
-            if (prevType == HandTargetType.Keyboard)
-            {
-                fingerController.ReleaseRightHandTyping();
-            }
+            _rightHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
+            _rightHandStateBlendCount = 0f;
 
-            switch (targetType)
-            {
-                case HandTargetType.Keyboard:
-                    typing.ResetRightHandDownTimeout(true);
-                    break;
-            }
+            //Stateの遷移処理。ここで指とかを更新させる
+            _prevRightHand.Quit(_currentRightHand);
+            _currentRightHand.Enter(_prevRightHand);
         }
         
         //TODO: クールダウンの判定はSetLeft|RightHandIKのガード時に行うのではダメか？
@@ -645,11 +621,10 @@ namespace Baku.VMagicMirror
     /// </summary>
     public enum HandTargetType
     {
+        // NOTE: 右手にのみ使う
         Mouse,
         Keyboard,
-        /// <summary>
-        /// TODO: 「プレゼン中の左手」はこの値で表現すべき…？実際に触るのはキーボードなんだけど
-        /// </summary>
+        // NOTE: 右手にのみ使う。「プレゼンモードの場合の左手」とそうでない左手はどちらもKeyboardで統一的に扱う
         Presentation,
         Gamepad,
         ArcadeStick,
@@ -658,7 +633,7 @@ namespace Baku.VMagicMirror
         AlwaysDown,
     }
     
-    //TODO: ここに書くのは変なので単独のスクリプト作った方がいいような…
+    //TODO: ここに書くのは変なので単独のスクリプト作った方が良いかもしれない。が、当面は放置でもいいかな…
     public enum WordToMotionDeviceAssign
     {
         None,

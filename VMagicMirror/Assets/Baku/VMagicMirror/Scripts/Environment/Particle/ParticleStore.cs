@@ -52,12 +52,12 @@ namespace Baku.VMagicMirror
         private int _nextArcadeStickParticleIndex = 0;
         private int _nextMidiParticleIndex = 0;
         //-1はパーティクル無効、0~(particlePrefabs.Length - 1)は有効な状態を表す
-        private int _currentKeyAndPadParticleIndex = InvalidTypingEffectIndex;
-        private int _currentMidiParticleIndex = InvalidTypingEffectIndex;
-        private int _currentArcadeStickParticleIndex = InvalidTypingEffectIndex;
+        private int _keyAndPadParticleTypeIndex = InvalidTypingEffectIndex;
+        private int _midiParticleTypeIndex = InvalidTypingEffectIndex;
+        private int _arcadeStickParticleTypeIndex = InvalidTypingEffectIndex;
         
         //キャッシュして多数同時に実行できるようにしたパーティクル群
-        private ParticleSystem[] _particles = new ParticleSystem[0];
+        private ParticleSystem[] _keyParticles = new ParticleSystem[0];
         private ParticleSystem[] _arcadeStickParticles = new ParticleSystem[0];
         private ParticleSystem[] _midiParticles = new ParticleSystem[0];
         //マウスのパーティクル
@@ -106,9 +106,9 @@ namespace Baku.VMagicMirror
         //-1を指定したらパーティクル無し、0以上で配列内を指定したら有効なパーティクルで初期化
         public void SetParticleIndex(int keyAndPadIndex, int midiIndex, int arcadeStickIndex)
         {
-            if (_currentKeyAndPadParticleIndex != keyAndPadIndex)
+            if (_keyAndPadParticleTypeIndex != keyAndPadIndex)
             {
-                _currentKeyAndPadParticleIndex = keyAndPadIndex;
+                _keyAndPadParticleTypeIndex = keyAndPadIndex;
                 ClearKeyAndPadParticles();
                 if (keyAndPadIndex >= 0 && keyAndPadIndex < particlePrefabs.Length)
                 {
@@ -117,9 +117,9 @@ namespace Baku.VMagicMirror
                 }
             }
 
-            if (_currentMidiParticleIndex != midiIndex)
+            if (_midiParticleTypeIndex != midiIndex)
             {
-                _currentMidiParticleIndex = midiIndex;
+                _midiParticleTypeIndex = midiIndex;
                 ClearMidiParticles();
                 if (midiIndex >= 0 && midiIndex < midiParticlePrefabs.Length)
                 {
@@ -127,9 +127,9 @@ namespace Baku.VMagicMirror
                 }
             }
 
-            if (_currentArcadeStickParticleIndex != arcadeStickIndex)
+            if (_arcadeStickParticleTypeIndex != arcadeStickIndex)
             {
-                _currentArcadeStickParticleIndex = arcadeStickIndex;
+                _arcadeStickParticleTypeIndex = arcadeStickIndex;
                 ClearArcadeStickParticles();
                 if (arcadeStickIndex >= 0 && arcadeStickIndex < particlePrefabs.Length)
                 {
@@ -144,18 +144,18 @@ namespace Baku.VMagicMirror
         /// <param name="worldPosition"></param>
         public void RequestKeyboardParticleStart(Vector3 worldPosition)
         {
-            if (_particles.Length == 0)
+            if (_keyParticles.Length == 0)
             {
                 return;
             }
 
             //パーティクルの切り替えタイミングによっては配列外参照するリスクがあるのでその対策
-            if (_nextKeyboardParticleIndex >= _particles.Length)
+            if (_nextKeyboardParticleIndex >= _keyParticles.Length)
             {
                 _nextKeyboardParticleIndex = 0;
             }
 
-            var particle = _particles[_nextKeyboardParticleIndex];
+            var particle = _keyParticles[_nextKeyboardParticleIndex];
             if (particle.isPlaying)
             {
                 particle.Stop();
@@ -168,7 +168,7 @@ namespace Baku.VMagicMirror
             particle.Play();
 
             _nextKeyboardParticleIndex++;
-            if (_nextKeyboardParticleIndex >= _particles.Length)
+            if (_nextKeyboardParticleIndex >= _keyParticles.Length)
             {
                 _nextKeyboardParticleIndex = 0;
             }
@@ -282,11 +282,11 @@ namespace Baku.VMagicMirror
         
         private void ClearKeyAndPadParticles()
         {
-            for (int i = 0; i < _particles.Length; i++)
+            for (int i = 0; i < _keyParticles.Length; i++)
             {
-                Destroy(_particles[i].gameObject);
+                Destroy(_keyParticles[i].gameObject);
             }
-            _particles = new ParticleSystem[0];
+            _keyParticles = new ParticleSystem[0];
 
             if (_mouseContinueParticle != null)
             {
@@ -303,7 +303,7 @@ namespace Baku.VMagicMirror
 
         private void ClearArcadeStickParticles()
         {
-            for (int i = 0; i < _particles.Length; i++)
+            for (int i = 0; i < _arcadeStickParticles.Length; i++)
             {
                 Destroy(_arcadeStickParticles[i].gameObject);
             }
@@ -324,13 +324,13 @@ namespace Baku.VMagicMirror
             var prefabSource = particlePrefabs[index];
 
             //パーティクルを有効化する場合
-            _particles = new ParticleSystem[particleStoreCount];
-            for (int i = 0; i < _particles.Length; i++)
+            _keyParticles = new ParticleSystem[particleStoreCount];
+            for (int i = 0; i < _keyParticles.Length; i++)
             {
-                _particles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
+                _keyParticles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
                 if (prefabSource.useCollisionPlane)
                 {
-                    _particles[i].collision.SetPlane(0, prefabSource.CollisionTransform);
+                    _keyParticles[i].collision.SetPlane(0, prefabSource.CollisionTransform);
                 }
 
                 //NOTE: ここではパーティクルの基準サイズのみを適用し、実行段階でキーボードのサイズに即したスケーリングを追加的に調整。
@@ -347,7 +347,8 @@ namespace Baku.VMagicMirror
             for (int i = 0; i < _arcadeStickParticles.Length; i++)
             {
                 _arcadeStickParticles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
-                //NOTE: アケコンからテキストがでてくると変な落ち方をするが、まあ普通やらない組み合わせなので気にしない
+                //NOTE: アケコンからテキストがでてくるとテキストが落下する感じになって見栄えに違和感が出るが、
+                //普通やらない組み合わせである + このためだけにcollision planeの追加設定したくないためスルー
             }
         }
 

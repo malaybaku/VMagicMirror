@@ -23,9 +23,20 @@ namespace Baku.VMagicMirror
             OnStart();
         }
 
+        /// <summary>
+        /// Start関数の時点で実行されます。
+        /// </summary>
         protected virtual void OnStart()
         {
             
+        }
+
+        /// <summary>
+        /// メインのRendererの有効/無効を書き換えたときに呼び出します。サブのメッシュのvisibilityを変えたりするのに使えます。
+        /// </summary>
+        /// <param name="enable"></param>
+        protected virtual void OnRendererEnableUpdated(bool enable)
+        {
         }
 
         public void SetVisibility(bool visible)
@@ -44,12 +55,14 @@ namespace Baku.VMagicMirror
                     if (visible)
                     {
                         _renderer.enabled = true;
+                        OnRendererEnableUpdated(true);
                     }
                 })
                 .OnComplete(() =>
                 {
                     _deformableCounter.Decrement();
                     _renderer.enabled = _latestVisibility;
+                    OnRendererEnableUpdated(_latestVisibility);
                 });
         }
     }

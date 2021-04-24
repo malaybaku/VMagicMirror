@@ -130,11 +130,12 @@ namespace Baku.VMagicMirror.IK
 
         private void OnKeyDown(string keyName)
         {
-            bool isPresentationMode = 
-                Dependency.Config.KeyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.Presentation;
+            var motionMode = Dependency.Config.KeyboardAndMouseMotionMode.Value;
+            bool isLeftHandOnly =
+                motionMode == KeyboardAndMouseMotionModes.Presentation ||
+                motionMode == KeyboardAndMouseMotionModes.PenTablet;
             
-
-            var (hand, pos) = KeyDown(keyName, isPresentationMode);
+            var (hand, pos) = KeyDown(keyName, isLeftHandOnly);
             if (!Dependency.Config.CheckCoolDown(hand, HandTargetType.Keyboard))
             {
                 return;
@@ -159,7 +160,7 @@ namespace Baku.VMagicMirror.IK
 
             if (!Dependency.Config.IsAlwaysHandDown.Value)
             {
-                Dependency.Reactions.FingerController.HoldTypingKey(keyName, isPresentationMode);
+                Dependency.Reactions.FingerController.HoldTypingKey(keyName, isLeftHandOnly);
             }
             
             if (hand != ReactedHand.None)

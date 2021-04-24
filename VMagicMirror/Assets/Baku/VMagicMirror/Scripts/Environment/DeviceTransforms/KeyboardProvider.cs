@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Baku.VMagicMirror.Installer;
 using mattatz.TransformControl;
 using UnityEngine;
@@ -6,6 +7,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
+    [RequireComponent(typeof(MeshFilter))]
     public sealed class KeyboardProvider : MonoBehaviour
     {
         #region static readonlyなキーマッピング
@@ -193,7 +195,20 @@ namespace Baku.VMagicMirror
             6,
             8,
         };
+        
+        //左手だけでキーボードを打つモートになったときに表示するキーのインデックスの上限(上限は含まない)
+        //_leftHandFingerIndexLimitsの各値より大きい値を、見た目が揃うように設定する
+        private static readonly int[] _leftHandMeshLimits = new[]
+        {
+            7,
+            7,
+            8,
+            8,
+            8,
+            8,
+        };
 
+        
         //左手のみで打鍵するとき、_lefHandFingerIndexLimitsのインデックスまでの各行のキーをどの指で叩くか決めた一覧。
         //スペーサーになってる(本来存在しない)キーを叩く可能性があるのでfingerMapperとは別に定義する必要がある
         private static readonly int[][] _leftHandOnlyFingerMapper = new[]
@@ -209,6 +224,7 @@ namespace Baku.VMagicMirror
         #endregion
         
         [SerializeField] private Transform keyPrefab = null;
+        [SerializeField] private MeshFilter rightHandMeshFilter = null;
         [SerializeField] private Vector3 initialPosition = Vector3.zero;
         [SerializeField] private Vector3 initialRotation = Vector3.zero;
         [SerializeField] private Vector3 initialScale = Vector3.one;
@@ -302,24 +318,57 @@ namespace Baku.VMagicMirror
 
         private void CombineMeshes()
         {
-            int len = transform.childCount;
-            var meshFilters = new MeshFilter[len];
-            for (int i = 0; i < len; i++)
-            {
-                meshFilters[i] = transform.GetChild(i).GetComponentInChildren<MeshFilter>();
-            }
-            CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+            //NOTE: 左手のキーと右手のキーを別のインスタンスに区切り、右だけ消せるようにする。
+            
+            //NOTE: サブメッシュ用の子要素が入っているため、childCountを使うのはNG
+            int totalCount = _keys.Sum(row => row.Length);
+            int leftHandCount = _leftHandMeshLimits.Sum();
+            int rightHandCount = totalCount - leftHandCount;
 
-            for (int i = 0; i < meshFilters.Length; i++)
+            var leftMeshFilters = new MeshFilter[leftHandCount];
+            var rightMeshFilters = new MeshFilter[rightHandCount];
+
+            int leftIndex = 0;
+            int rightIndex = 0;
+            for (int i = 0; i < _keys.Length; i++)
             {
-                combine[i].mesh = meshFilters[i].sharedMesh;
-                combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-                meshFilters[i].gameObject.SetActive(false);
+                for (int j = 0; j < _keys[i].Length; j++)
+                {
+                    var filter = _keys[i][j].GetComponentInChildren<MeshFilter>();
+                    if (j < _leftHandMeshLimits[i])
+                    {
+                        leftMeshFilters[leftIndex] = filter;
+                        leftIndex++;
+                    }
+                    else
+                    {
+                        rightMeshFilters[rightIndex] = filter;
+                        rightIndex++;
+                    }
+                }
             }
 
-            var meshFilter = GetComponent<MeshFilter>();
-            meshFilter.mesh = new Mesh();
-            meshFilter.mesh.CombineMeshes(combine);
+            var leftCombine = new CombineInstance[leftMeshFilters.Length];
+            for (int i = 0; i < leftCombine.Length; i++)
+            {
+                leftCombine[i].mesh = leftMeshFilters[i].sharedMesh;
+                leftCombine[i].transform = leftMeshFilters[i].transform.localToWorldMatrix;
+                leftMeshFilters[i].gameObject.SetActive(false);
+            }
+            var leftMeshFilter = GetComponent<MeshFilter>();
+            leftMeshFilter.mesh = new Mesh();
+            leftMeshFilter.mesh.CombineMeshes(leftCombine);
+
+            var rightCombine = new CombineInstance[rightMeshFilters.Length];
+            for (int i = 0; i < rightCombine.Length; i++)
+            {
+                rightCombine[i].mesh = rightMeshFilters[i].sharedMesh;
+                rightCombine[i].transform = rightMeshFilters[i].transform.localToWorldMatrix;
+                rightMeshFilters[i].gameObject.SetActive(false);
+            }
+
+            rightHandMeshFilter.mesh = new Mesh();
+            rightHandMeshFilter.mesh.CombineMeshes(rightCombine);
         }
 
         /// <summary>

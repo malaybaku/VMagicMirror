@@ -65,12 +65,18 @@ namespace Baku.VMagicMirror
         private ParticleSystem _mouseEndParticle = null;
         private float _mouseContinueParticleCountDown = 0f;
 
+        //ペンタブのパーティクル: マウスとほとんど同じことをやるが
+        private ParticleSystem _penTabletContinueParticle = null;
+        private ParticleSystem _penTabletEndParticle = null;
+        private float _penTabletContinueParticleCountDown = 0f;
+
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
             IDevicesRoot devicesRoot, 
             KeyboardProvider keyboard,
-            TouchPadProvider touchPad)
+            TouchPadProvider touchPad,
+            PenTabletProvider penTablet)
         {
             transform.parent = devicesRoot.Transform;
             _keyboardParticleParent = keyboard.transform;
@@ -89,17 +95,39 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (_mouseContinueParticleCountDown <= 0)
+            UpdateMouse();
+            UpdatePenTablet();
+
+            void UpdateMouse()
             {
-                return;
-            }
+                if (_mouseContinueParticleCountDown <= 0)
+                {
+                    return;
+                }
             
-            _mouseContinueParticleCountDown -= Time.deltaTime;
-            if (_mouseContinueParticleCountDown <= 0 && 
-                _mouseContinueParticle != null &&
-                _mouseContinueParticle.isPlaying)
+                _mouseContinueParticleCountDown -= Time.deltaTime;
+                if (_mouseContinueParticleCountDown <= 0 && 
+                    _mouseContinueParticle != null &&
+                    _mouseContinueParticle.isPlaying)
+                {
+                    _mouseContinueParticle.Stop();
+                }
+            }
+
+            void UpdatePenTablet()
             {
-                _mouseContinueParticle.Stop();
+                if (_penTabletContinueParticleCountDown <= 0)
+                {
+                    return;
+                }
+            
+                _penTabletContinueParticleCountDown -= Time.deltaTime;
+                if (_penTabletContinueParticleCountDown <= 0 && 
+                    _penTabletContinueParticle != null &&
+                    _penTabletContinueParticle.isPlaying)
+                {
+                    _penTabletContinueParticle.Stop();
+                }
             }
         }
         
@@ -110,10 +138,12 @@ namespace Baku.VMagicMirror
             {
                 _keyAndPadParticleTypeIndex = keyAndPadIndex;
                 ClearKeyAndPadParticles();
+                ClearPenTabletParticle();
                 if (keyAndPadIndex >= 0 && keyAndPadIndex < particlePrefabs.Length)
                 {
                     SetupKeyboardParticle(keyAndPadIndex);
                     SetupMouseParticle(keyAndPadIndex);
+                    SetupPenTabletParticle(keyAndPadIndex);
                 }
             }
 
@@ -136,6 +166,8 @@ namespace Baku.VMagicMirror
                     SetupArcadeStickParticle(arcadeStickIndex);
                 }
             }
+            
+            
         }
 
         /// <summary>
@@ -279,7 +311,41 @@ namespace Baku.VMagicMirror
                 _mouseEndParticle.Play();
             }
         }
-        
+
+        /// <summary>
+        /// ペンタブのペンが移動したときのパーティクル実行をリクエストします。
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        public void RequestPenTabletMoveParticle(Vector3 position, Quaternion rotation)
+        {
+            if (_penTabletContinueParticle == null ||
+                _penTabletEndParticle == null)
+            {
+                return;
+            }
+
+            _penTabletContinueParticle.transform.SetPositionAndRotation(position, rotation);
+            _penTabletEndParticle.transform.SetPositionAndRotation(position, rotation);
+            if (!_penTabletContinueParticle.isPlaying)
+            {
+                _penTabletContinueParticle.Play();
+            }
+
+            _penTabletContinueParticleCountDown = mouseContinueParticleCount;
+        }
+
+        /// <summary>
+        /// ペンタブモードでクリックしたときのパーティクル実行をリクエストします。
+        /// </summary>
+        public void RequestPenTabletClickParticle()
+        {
+            if (_penTabletEndParticle != null)
+            {
+                //NOTE: Moveの時点で姿勢が決定してるはずなので、単に実行する
+                _penTabletEndParticle.Play();
+            }
+        }
         private void ClearKeyAndPadParticles()
         {
             for (int i = 0; i < _keyParticles.Length; i++)
@@ -317,6 +383,21 @@ namespace Baku.VMagicMirror
                 Destroy(_midiParticles[i].gameObject);
             }
             _midiParticles = new ParticleSystem[0];
+        }
+
+        private void ClearPenTabletParticle()
+        {
+            if (_penTabletContinueParticle != null)
+            {
+                Destroy(_penTabletContinueParticle.gameObject);
+                _penTabletContinueParticle = null;
+            }
+
+            if (_penTabletEndParticle != null)
+            {
+                Destroy(_penTabletEndParticle.gameObject);
+                _penTabletEndParticle = null;
+            }
         }
         
         private void SetupKeyboardParticle(int index)
@@ -386,6 +467,16 @@ namespace Baku.VMagicMirror
             _mouseEndParticle.transform.localPosition = Vector3.zero;
             _mouseEndParticle.transform.localRotation = Quaternion.identity;
         }
-        
+
+        private void SetupPenTabletParticle(int index)
+        {
+            _penTabletContinueParticle = Instantiate(mouseParticlePrefabs[index].continueParticlePrefab);
+            _penTabletContinueParticle.transform.localPosition = Vector3.zero;
+            _penTabletContinueParticle.transform.localRotation = Quaternion.identity;
+
+            _penTabletEndParticle = Instantiate(mouseParticlePrefabs[index].clickParticlePrefab);
+            _penTabletEndParticle.transform.localPosition = Vector3.zero;
+            _penTabletEndParticle.transform.localRotation = Quaternion.identity;
+        }
     }
 }

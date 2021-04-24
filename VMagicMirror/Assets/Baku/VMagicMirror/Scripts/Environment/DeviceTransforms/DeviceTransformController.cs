@@ -31,6 +31,7 @@ namespace Baku.VMagicMirror
         private TransformControl _midiControl = null;
         private TransformControl _gamepadControl= null;
         private TransformControl _arcadeStickControl= null;
+        private TransformControl _penTabletControl = null;
         private Transform _gamepadModelScaleTarget = null;
         
         private bool _preferWorldCoordinate = false;
@@ -43,6 +44,7 @@ namespace Baku.VMagicMirror
             _midiControl,
             _gamepadControl,
             _arcadeStickControl,
+            _penTabletControl,
         };
 
         private bool _isDeviceFreeLayoutEnabled = false;
@@ -68,6 +70,7 @@ namespace Baku.VMagicMirror
         private TouchpadVisibility _touchPadVisibility;
         private GamepadVisibilityReceiver _gamepadVisibility;
         private ArcadeStickVisibilityReceiver _arcadeStickVisibility;
+        private PenTabletVisibility _penTabletVisibility;
         private MidiControllerVisibility _midiControllerVisibility;
                 
         [Inject]
@@ -79,7 +82,8 @@ namespace Baku.VMagicMirror
             TouchPadProvider touchPad,
             MidiControllerProvider midiController,
             GamepadProvider gamepad,
-            ArcadeStickProvider arcadeStick
+            ArcadeStickProvider arcadeStick,
+            PenTabletProvider penTablet
         )
         {
             _sender = sender;
@@ -90,13 +94,15 @@ namespace Baku.VMagicMirror
             _midiControl = midiController.TransformControl;
             _gamepadControl = gamepad.TransformControl;
             _arcadeStickControl = arcadeStick.TransformControl;
+            _penTabletControl = penTablet.TransformControl;
             _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
             
             _keyboardVisibility = _keyboardControl.GetComponent<KeyboardVisibility>();
             _touchPadVisibility =  _touchPadControl.GetComponent<TouchpadVisibility>();
             _gamepadVisibility = _gamepadControl.GetComponent<GamepadVisibilityReceiver>();
             _arcadeStickVisibility = _arcadeStickControl.GetComponent<ArcadeStickVisibilityReceiver>();
-            _midiControllerVisibility = _midiControl.GetComponent<MidiControllerVisibility>();            
+            _midiControllerVisibility = _midiControl.GetComponent<MidiControllerVisibility>();
+            _penTabletVisibility = _penTabletControl.GetComponent<PenTabletVisibility>();
             
             receiver.AssignCommandHandler(
                 VmmCommands.EnableDeviceFreeLayout,
@@ -127,6 +133,7 @@ namespace Baku.VMagicMirror
                 ? _mode
                 : TransformControl.TransformMode.None;
             _midiControl.mode = _midiControllerVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
+            _penTabletControl.mode = _penTabletVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
 
             for (int i = 0; i < _transformControls.Length; i++)
             {
@@ -182,6 +189,7 @@ namespace Baku.VMagicMirror
                 midi = ToItem(_midiControl.transform),
                 gamepad = ToItem(_gamepadControl.transform),
                 arcadeStick = ToItem(_arcadeStickControl.transform),
+                penTablet = ToItem(_penTabletControl.transform),
                 gamepadModelScale = _gamepadModelScaleTarget.localScale.x,
             };
             _sender?.SendCommand(MessageFactory.Instance.UpdateDeviceLayout(data));
@@ -208,6 +216,7 @@ namespace Baku.VMagicMirror
                 ApplyItem(data.midi, _midiControl.transform);
                 ApplyItem(data.gamepad, _gamepadControl.transform);
                 ApplyItem(data.arcadeStick, _arcadeStickControl.transform);
+                ApplyItem(data.penTablet, _penTabletControl.transform);
 
                 _gamepadModelScale = Mathf.Clamp(
                     data.gamepadModelScale,
@@ -253,6 +262,7 @@ namespace Baku.VMagicMirror
             FindObjectOfType<HidTransformController>().SetHidLayoutByParameter(parameters);
             FindObjectOfType<GamepadProvider>().SetLayoutByParameter(parameters);
             FindObjectOfType<ArcadeStickProvider>().SetLayoutByParameter(parameters);
+            FindObjectOfType<PenTabletProvider>().SetLayoutParameter(parameters);
             //デバイス移動が入るので必ず送信
             SendDeviceLayoutData();
         }
@@ -301,6 +311,7 @@ namespace Baku.VMagicMirror
         public DeviceLayoutItem midi;
         public DeviceLayoutItem gamepad;
         public DeviceLayoutItem arcadeStick;
+        public DeviceLayoutItem penTablet;
         public float gamepadModelScale;
     }
 

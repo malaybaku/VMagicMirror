@@ -51,6 +51,7 @@ namespace Baku.VMagicMirror
         private ArcadeStickHandIKGenerator _arcadeStickHand;
         private ImageBaseHandIkGenerator _imageBaseHand;
         private AlwaysDownHandIkGenerator _downHand;
+        private PenTabletHandIKGenerator _penTablet;
         
 
         private Transform _rightHandTarget = null;
@@ -71,6 +72,7 @@ namespace Baku.VMagicMirror
             {
                 _enableHidArmMotion = value;
                 MouseMove.EnableUpdate = value;
+                _penTablet.EnableUpdate = value;
             }
         }
 
@@ -95,11 +97,9 @@ namespace Baku.VMagicMirror
         public void SetKeyboardAndMouseMotionMode(int modeIndex)
         {
             if (modeIndex >= 0 &&
-                modeIndex <= (int) KeyboardAndMouseMotionModes.Unknown &&
+                modeIndex < (int) KeyboardAndMouseMotionModes.Unknown &&
                 modeIndex != (int) _keyboardAndMouseMotionMode.Value
-                //DEBUG: とりあえず通常モードとプレゼンだけ考慮
-                && (modeIndex == 0 || modeIndex == 1)
-            )
+                )
             {
                 //NOTE: オプションを変えた直後は手は動かさず、変更後の入力によって手が動く
                 _keyboardAndMouseMotionMode.Value = (KeyboardAndMouseMotionModes) modeIndex;
@@ -136,6 +136,18 @@ namespace Baku.VMagicMirror
         public Vector3 RightHandPosition => _rightHandTarget.position;
         public Vector3 LeftHandPosition => _leftHandTarget.position;
 
+        public float YOffsetAlways
+        {
+            get => Typing.YOffsetAlways;
+            set
+            {
+                Typing.YOffsetAlways = value;
+                MouseMove.YOffset = value;
+                _penTablet.YOffset = value;
+                MidiHand.HandOffsetAlways = value;
+            }
+        }
+
         #endregion
 
         
@@ -153,6 +165,7 @@ namespace Baku.VMagicMirror
             MidiControllerProvider midiControllerProvider,
             TouchPadProvider touchPadProvider,
             ArcadeStickProvider arcadeStickProvider,
+            PenTabletProvider penTabletProvider,
             HandTracker handTracker
             )
         {
@@ -191,6 +204,8 @@ namespace Baku.VMagicMirror
             _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
             _imageBaseHand = new ImageBaseHandIkGenerator(dependency, handTracker, imageBaseHandSetting, vrmLoadable);
             _downHand = new AlwaysDownHandIkGenerator(dependency, vrmLoadable);
+            _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
+            
             typing.SetUp(keyboardProvider, dependency);
 
             MouseMove.DownHand = _downHand;
@@ -199,7 +214,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _imageBaseHand, _downHand
+                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _imageBaseHand, _downHand, _penTablet,
                 })
             {
                 if (generator.LeftHandState != null)
@@ -256,11 +271,12 @@ namespace Baku.VMagicMirror
 
         public void MoveMouse(Vector3 mousePosition)
         {
-            if (!EnableHidArmMotion ||
-                !CheckCoolDown(
-                    ReactedHand.Right, 
-                    EnablePresentationMode ? HandTargetType.Presentation : HandTargetType.Mouse
-                    ))
+            var targetType =
+                (_keyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.KeyboardAndTouchPad) ? HandTargetType.Mouse :
+                (_keyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.Presentation) ? HandTargetType.Presentation :
+                    HandTargetType.PenTablet;
+
+            if (!EnableHidArmMotion || !CheckCoolDown(ReactedHand.Right, targetType))
             {
                 return;
             }
@@ -403,6 +419,7 @@ namespace Baku.VMagicMirror
             GamepadHand.Update();
             MidiHand.Update();
             _arcadeStickHand.Update();
+            _penTablet.Update();
             _imageBaseHand.Update();
 
             //画像処理の手検出があったらそっちのIKに乗り換える
@@ -430,6 +447,7 @@ namespace Baku.VMagicMirror
             MidiHand.LateUpdate();
             Presentation.LateUpdate();
             _arcadeStickHand.LateUpdate();
+            _penTablet.LateUpdate();
             _imageBaseHand.LateUpdate();
         }
         
@@ -603,11 +621,14 @@ namespace Baku.VMagicMirror
         Keyboard,
         // NOTE: 右手にのみ使う。「プレゼンモードの場合の左手」とそうでない左手はどちらもKeyboardで統一的に扱う
         Presentation,
+        // NOTE: 両手に
+        PenTablet,
         Gamepad,
         ArcadeStick,
         MidiController,
         ImageBaseHand,
         AlwaysDown,
+        Unknown,
     }
     
     //TODO: ここに書くのは変なので単独のスクリプト作った方が良いかもしれない。が、当面は放置でもいいかな…

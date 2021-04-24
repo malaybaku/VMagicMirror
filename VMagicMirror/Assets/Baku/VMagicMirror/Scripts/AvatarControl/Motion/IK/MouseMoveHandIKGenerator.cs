@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UniRx;
 
 namespace Baku.VMagicMirror.IK
 {
@@ -58,8 +57,8 @@ namespace Baku.VMagicMirror.IK
 
         //NOTE: HandIkIntegratorから初期化で入れてもらう
         public AlwaysDownHandIkGenerator DownHand { get; set; }
-        //public HandIKIntegrator Integrator { get; set; }
 
+        
         public override IHandIkState LeftHandState => null;
         public override IHandIkState RightHandState => this;
 
@@ -78,19 +77,7 @@ namespace Baku.VMagicMirror.IK
             : base(dependency)
         {
             _touchPad = touchPadProvider;
-
-            dependency.Config
-                .RightTarget
-                .Subscribe(v =>
-                {
-                    if (v == HandTargetType.Mouse)
-                    {
-                        dependency.Reactions.ParticleStore.RequestMouseMoveParticle(ReferenceTouchpadPosition);
-                        ResetHandDownTimeout(false);
-                    }
-                })
-                .AddTo(dependency.Component);
-
+            
             //読み方はそのままで、タッチパッドを使いたいときマウス移動イベントが届いたらマウスに切り替えたくなる
             dependency.Events.MoveMouse += _ =>
             {
@@ -98,12 +85,17 @@ namespace Baku.VMagicMirror.IK
                       KeyboardAndMouseMotionModes.KeyboardAndTouchPad)
                 {
                     RequestToUse?.Invoke(this);
+
+                    if (dependency.Config.RightTarget.Value == HandTargetType.Mouse)
+                    {
+                        dependency.Reactions.ParticleStore.RequestMouseMoveParticle(ReferenceTouchpadPosition);
+                        ResetHandDownTimeout(false);
+                    }
                 }
             };
 
             dependency.Events.OnMouseButton += eventName =>
             {
-                dependency.Reactions.FingerController.OnMouseButton(eventName);
                 if (dependency.Config.KeyboardAndMouseMotionMode.Value ==
                     KeyboardAndMouseMotionModes.KeyboardAndTouchPad)
                 {
@@ -114,6 +106,7 @@ namespace Baku.VMagicMirror.IK
                 //ちょっとうるさくなるが、意味的にはMouseのButtonUpはけっこうデカいアクションなので
                 if (dependency.Config.RightTarget.Value == HandTargetType.Mouse)
                 {
+                    dependency.Reactions.FingerController.OnMouseButton(eventName);
                     dependency.Reactions.ParticleStore.RequestMouseClickParticle();
                     ResetHandDownTimeout(false);
                 }

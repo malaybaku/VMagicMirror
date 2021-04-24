@@ -10,6 +10,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private ArcadeStickProvider arcadeStickProvider = null;
         [SerializeField] private KeyboardProvider keyboardProvider = null;
         [SerializeField] private TouchPadProvider touchPadProvider = null;
+        [SerializeField] private PenTabletProvider penTabletProvider = null;
         [SerializeField] private MidiControllerProvider midiControllerProvider = null;
         [SerializeField] private ParticleStore particleStore = null;
 
@@ -39,6 +40,9 @@ namespace Baku.VMagicMirror.Installer
 
             container.Bind<ArcadeStickProvider>()
                 .FromComponentInNewPrefab(arcadeStickProvider)
+                .AsCached();
+            container.Bind<PenTabletProvider>()
+                .FromComponentInNewPrefab(penTabletProvider)
                 .AsCached();
         }
     }

@@ -134,9 +134,7 @@ namespace Baku.VMagicMirror
         
         private void SetHandYOffsetBasic(float offset)
         {
-            handIkIntegrator.Typing.YOffsetAlways = offset;
-            handIkIntegrator.MouseMove.YOffset = offset;
-            handIkIntegrator.MidiHand.HandOffsetAlways = offset;
+            handIkIntegrator.YOffsetAlways = offset;
         }
 
         private void SetHandYOffsetAfterKeyDown(float offset)

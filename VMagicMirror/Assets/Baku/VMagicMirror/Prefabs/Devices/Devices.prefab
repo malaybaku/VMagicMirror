@@ -52,6 +52,8 @@ MonoBehaviour:
     type: 3}
   touchPadProvider: {fileID: 8074230364789003341, guid: 96adbbcc2b186b2489c6acabb7d62549,
     type: 3}
+  penTabletProvider: {fileID: 7229973214667890943, guid: 25158cad8bb5c864abb5b367adf4c427,
+    type: 3}
   midiControllerProvider: {fileID: 4156540200492103377, guid: f93f858f586a3de44a022dd33ce67a3c,
     type: 3}
   particleStore: {fileID: 7147831937674852361, guid: 8e3719f1996497d4894dcdf2334d55c5,

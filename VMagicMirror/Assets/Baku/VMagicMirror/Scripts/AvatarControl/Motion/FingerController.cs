@@ -14,14 +14,14 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class FingerController : MonoBehaviour
     {
-        #region consts / readonly 
+        #region consts / readonly
 
-        private const string RDown = nameof(RDown);
-        private const string MDown = nameof(MDown);
-        private const string LDown = nameof(LDown);
-        private const string RUp = nameof(RUp);
-        private const string MUp = nameof(MUp);
-        private const string LUp = nameof(LUp);
+        private const string RDown = MouseButtonEventNames.RDown;
+        private const string MDown = MouseButtonEventNames.MDown;
+        private const string LDown = MouseButtonEventNames.LDown;
+        private const string RUp =  MouseButtonEventNames.RUp;
+        private const string MUp = MouseButtonEventNames.MUp;
+        private const string LUp = MouseButtonEventNames.LUp;
 
         private const float DefaultBendingAngle = 10.0f;
         private const float ThumbProximalMaxBendAngle = 30f;

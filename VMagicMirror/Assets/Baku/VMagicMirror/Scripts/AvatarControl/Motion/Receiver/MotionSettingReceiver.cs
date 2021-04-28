@@ -29,10 +29,6 @@ namespace Baku.VMagicMirror
         {
             _gamePad = gamePad;
             receiver.AssignCommandHandler(
-                VmmCommands.EnableHidArmMotion,
-                message => handIkIntegrator.EnableHidArmMotion = message.ToBoolean()
-                );
-            receiver.AssignCommandHandler(
                 VmmCommands.EnableNoHandTrackMode,
                 message => handIkIntegrator.AlwaysHandDown.Value = message.ToBoolean()
                 );
@@ -156,21 +152,25 @@ namespace Baku.VMagicMirror
         Gamepad = 0,
         /// <summary> アケコン </summary>
         ArcadeStick = 1,
-        /// <summary> ガンコン </summary>
-        GunController = 2,
-        /// <summary> 車のハンドルっぽいやつ </summary>
-        CarController = 3,
-        Unknown = 4,
+        /// <summary> 不明なため未サポート </summary>
+        Unknown = 3,
+        // /// <summary> ガンコン </summary>
+        // GunController = 2,
+        // /// <summary> 車のハンドルっぽいやつ </summary>
+        // CarController = 3,
     }
 
     public enum KeyboardAndMouseMotionModes
     {
+        /// <summary> 無反応 </summary>
+        None = -1,
         /// <summary> デフォルトのキーボード+タッチパッド </summary>
-        KeyboardAndTouchPad,
+        KeyboardAndTouchPad = 0,
         /// <summary> 右手はプレゼン指差し + 左手でキーボード </summary>
-        Presentation,
+        Presentation = 1,
         /// <summary> ペンタブ + 左手は左手デバイスっぽい何か </summary>
-        PenTablet,
+        PenTablet = 2,
+        /// <summary> 不明なため未サポート </summary>
         Unknown,
     }
 }

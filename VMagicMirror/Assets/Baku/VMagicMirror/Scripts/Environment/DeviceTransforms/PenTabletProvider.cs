@@ -8,7 +8,8 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// ペンタブの座標計算をするやつ
     /// 基本はタッチパッドと一緒だが、こっちの方が設計がちょっとミニマルというか、
-    /// IKとの切り分けがいい感じになっている。はず。
+    /// IKとの切り分けがいい感じになっている。
+    /// その代わり「ペンタブを実際に使ってるときだけペンを表示したい」というヘンテコな機能がついてます
     /// </summary>
     public class PenTabletProvider : MonoBehaviour
     {
@@ -17,6 +18,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private TransformControl transformControl = null;
         public TransformControl TransformControl => transformControl;
 
+        [SerializeField] private PenController penController = null;
+        
         [SerializeField] private Vector3 basePosition = new Vector3(.15f, .98f, 0.12f);
         [SerializeField] private Vector3 baseRotation = new Vector3(60f, 0f, 0f);
         [SerializeField] private Vector3 baseScale = new Vector3(.3f, .2f, 1f);
@@ -84,19 +87,14 @@ namespace Baku.VMagicMirror
             t.localScale = baseScale;
         }
 
-        //TODO: 下の計算はRightとかUpを公開してるのでIKGenerator側でできるはず
-        
-        // /// <summary>
-        // /// 手首から指までの位置を考慮するオフセットベクトルを、オフセットの量を指定して取得します。
-        // /// </summary>
-        // /// <param name="yOffset"></param>
-        // /// <param name="palmToTipLength"></param>
-        // /// <returns></returns>
-        // public Vector3 GetOffsetVector(float yOffset, float palmToTipLength)
-        // {
-        //     var t = transform;
-        //     return (-yOffset) * t.forward + (-palmToTipLength) * t.up;
-        // }
-        
+        /// <summary>
+        /// いま右手がペンタブの上にあるかどうかを設定します。
+        /// ペンの表示判定に使います。
+        /// </summary>
+        /// <param name="isOn"></param>
+        public void SetHandOnPenTablet(bool isOn)
+        {
+            penController.SetHandIsOnPenTablet(isOn);
+        }
     }
 }

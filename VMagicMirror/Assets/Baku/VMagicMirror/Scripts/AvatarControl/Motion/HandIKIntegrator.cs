@@ -96,13 +96,16 @@ namespace Baku.VMagicMirror
         
         public void SetKeyboardAndMouseMotionMode(int modeIndex)
         {
-            if (modeIndex >= 0 &&
+            if (modeIndex >= -1 &&
                 modeIndex < (int) KeyboardAndMouseMotionModes.Unknown &&
                 modeIndex != (int) _keyboardAndMouseMotionMode.Value
                 )
             {
+                var mode = (KeyboardAndMouseMotionModes) modeIndex;
                 //NOTE: オプションを変えた直後は手は動かさず、変更後の入力によって手が動く
-                _keyboardAndMouseMotionMode.Value = (KeyboardAndMouseMotionModes) modeIndex;
+                _keyboardAndMouseMotionMode.Value = mode;
+                //Noneは歴史的経緯によって扱いが特殊なので注意
+                EnableHidArmMotion = mode != KeyboardAndMouseMotionModes.None;
             }
         }
 

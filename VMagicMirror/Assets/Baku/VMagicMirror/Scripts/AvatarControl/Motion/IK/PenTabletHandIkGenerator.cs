@@ -21,12 +21,14 @@ namespace Baku.VMagicMirror.IK
         public event Action<IHandIkState> RequestToUse;
         public void Enter(IHandIkState prevState)
         {
+            _penTablet.SetHandOnPenTablet(true);
             Dependency.Reactions.FingerController.RightHandPenTabletMode = true;
             // _fingerController.GripRightHand();
         }
 
         public void Quit(IHandIkState nextState)
         {
+            _penTablet.SetHandOnPenTablet(false);
             Dependency.Reactions.FingerController.RightHandPenTabletMode = false;
             // _fingerController.ReleaseRightHand();
         }

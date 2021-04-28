@@ -1,4 +1,5 @@
-﻿using Baku.VMagicMirror.Installer;
+﻿using Baku.VMagicMirror.IK;
+using Baku.VMagicMirror.Installer;
 using mattatz.TransformControl;
 using UnityEngine;
 using Zenject;
@@ -30,6 +31,7 @@ namespace Baku.VMagicMirror
             _mousePositionProvider = mousePositionProvider;
             _penController = penController;
             transform.parent = parent.Transform;
+            GetComponent<PenTabletVisibility>().PenController = penController;
         }
 
         private void Start()

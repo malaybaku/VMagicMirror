@@ -61,6 +61,7 @@ namespace Baku.VMagicMirror
         /// <param name="visible"></param>
         public void SetDeviceVisibility(bool visible)
         {
+            Debug.Log($"SetDeviceVisibility {visible}");
             _isPenTabletVisible = visible;
             UpdateVisibility();
         }
@@ -71,21 +72,27 @@ namespace Baku.VMagicMirror
         /// <param name="isOn"></param>
         public void SetHandIsOnPenTablet(bool isOn)
         {
+            Debug.Log($"SetHandIsOnPenTablet {isOn}");
             _isRightHandOnPenTablet = isOn;
             UpdateVisibility();
         }
         
         private void Update()
         {
-            //NOTE: 指がないとペンの位置が決まらんから勘弁してくれ～！という理論です。はい。
-            if (!_hasModel || !_hasValidFinger)
+            if (!_hasModel)
+            {
+                return;
+            }
+            
+            //NOTE: 指がないとペンの位置が決まらんから勘弁してくれ～！という強めのガード
+            if (!_hasValidFinger)
             {
                 penMesh.enabled = false;
                 return;
             }
-
-            penMesh.enabled = true;
-
+            
+            //上記以外の場合、UpdateVisibilityによってメッシュのvisibilityは制御される
+            
             //手に対して位置を合わせる。この結果としてパーティクルとペン先がちょっとズレる事があるが、それはOKという事にする
             penRoot.position = (_rightIndexProximal.position + _rightThumbIntermediate.position) * 0.5f;
             penRoot.localRotation = _rightWrist.rotation * Quaternion.AngleAxis(20f, Vector3.right);

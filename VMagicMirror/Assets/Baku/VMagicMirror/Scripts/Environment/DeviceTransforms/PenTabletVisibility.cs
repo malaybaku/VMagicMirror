@@ -4,7 +4,7 @@ namespace Baku.VMagicMirror
 {
     public class PenTabletVisibility : DeviceVisibilityBase
     {
-        [SerializeField] private PenController pen = null;
+        public PenController PenController { get; set; }
         
         protected override void OnStart()
         {
@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
 
         protected override void OnRendererEnableUpdated(bool enable)
         {
-            pen.SetDeviceVisibility(enable);
+            PenController.SetDeviceVisibility(enable);
         }
     }
 }

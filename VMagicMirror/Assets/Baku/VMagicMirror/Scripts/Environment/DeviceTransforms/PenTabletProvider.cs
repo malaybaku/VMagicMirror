@@ -17,17 +17,18 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private TransformControl transformControl = null;
         public TransformControl TransformControl => transformControl;
-
-        [SerializeField] private PenController penController = null;
         
         [SerializeField] private Vector3 basePosition = new Vector3(.15f, .98f, 0.12f);
         [SerializeField] private Vector3 baseRotation = new Vector3(60f, 0f, 0f);
         [SerializeField] private Vector3 baseScale = new Vector3(.3f, .2f, 1f);
-
+        
+        private PenController _penController = null;
+        
         [Inject]
-        public void Initialize(MousePositionProvider mousePositionProvider, IDevicesRoot parent)
+        public void Initialize(MousePositionProvider mousePositionProvider, PenController penController, IDevicesRoot parent)
         {
             _mousePositionProvider = mousePositionProvider;
+            _penController = penController;
             transform.parent = parent.Transform;
         }
 
@@ -35,8 +36,9 @@ namespace Baku.VMagicMirror
         {
             foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
             {
-                meshRenderer.material = HIDMaterialUtil.Instance.GetPadMaterial();
+                meshRenderer.material = HIDMaterialUtil.Instance.GetPenTabletMaterial();
             }
+            _penController.GetComponentInChildren<MeshRenderer>().material = HIDMaterialUtil.Instance.GetPenMaterial();
         }
 
         /// <summary>
@@ -94,7 +96,7 @@ namespace Baku.VMagicMirror
         /// <param name="isOn"></param>
         public void SetHandOnPenTablet(bool isOn)
         {
-            penController.SetHandIsOnPenTablet(isOn);
+            _penController.SetHandIsOnPenTablet(isOn);
         }
     }
 }

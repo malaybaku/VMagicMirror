@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using mattatz.TransformControl;
 using UnityEngine;
 
@@ -47,6 +48,19 @@ namespace Baku.VMagicMirror
             _keyToTransform[GamepadKey.RTrigger] = right2Button;
             _keyToTransform[GamepadKey.LShoulder] = left1Button;
             _keyToTransform[GamepadKey.LTrigger] = left2Button;
+
+            //例によってマテリアルは統一
+            var renderers = new[]
+            {
+                stickBase,
+                aButton, bButton, xButton, yButton,
+                right1Button, right2Button, left1Button, left2Button
+            }.Select(t => t.GetComponentInChildren<MeshRenderer>());
+            
+            foreach (var r in renderers)
+            {
+                r.material = HIDMaterialUtil.Instance.GetArcadeStickMaterial();
+            }
         }
 
         private readonly Dictionary<GamepadKey, Transform> _keyToTransform = new Dictionary<GamepadKey, Transform>();

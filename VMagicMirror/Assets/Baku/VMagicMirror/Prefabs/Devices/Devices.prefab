@@ -29,7 +29,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6432728701393205835}
-  - {fileID: 5569416105342705101}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -55,85 +54,12 @@ MonoBehaviour:
     type: 3}
   penTabletProvider: {fileID: 7229973214667890943, guid: 25158cad8bb5c864abb5b367adf4c427,
     type: 3}
+  penController: {fileID: 1061843102223541969, guid: a30f54154d2993949aecd3b5cddb1988,
+    type: 3}
   midiControllerProvider: {fileID: 4156540200492103377, guid: f93f858f586a3de44a022dd33ce67a3c,
     type: 3}
   particleStore: {fileID: 7147831937674852361, guid: 8e3719f1996497d4894dcdf2334d55c5,
     type: 3}
---- !u!1001 &4897355479097883421
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 5933559195360744184}
-    m_Modifications:
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061843102223541975, guid: a30f54154d2993949aecd3b5cddb1988,
-        type: 3}
-      propertyPath: m_Name
-      value: PenController
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a30f54154d2993949aecd3b5cddb1988, type: 3}
---- !u!4 &5569416105342705101 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1061843102223541968, guid: a30f54154d2993949aecd3b5cddb1988,
-    type: 3}
-  m_PrefabInstance: {fileID: 4897355479097883421}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8037310001979521660
 PrefabInstance:
   m_ObjectHideFlags: 0

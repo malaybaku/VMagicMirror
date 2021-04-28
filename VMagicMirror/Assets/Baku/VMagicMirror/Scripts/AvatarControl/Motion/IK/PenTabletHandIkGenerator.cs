@@ -21,12 +21,14 @@ namespace Baku.VMagicMirror.IK
         public event Action<IHandIkState> RequestToUse;
         public void Enter(IHandIkState prevState)
         {
-            _fingerController.GripRightHand();
+            Dependency.Reactions.FingerController.RightHandPenTabletMode = true;
+            // _fingerController.GripRightHand();
         }
 
         public void Quit(IHandIkState nextState)
         {
-            _fingerController.ReleaseRightHand();
+            Dependency.Reactions.FingerController.RightHandPenTabletMode = false;
+            // _fingerController.ReleaseRightHand();
         }
         
         #endregion
@@ -36,7 +38,7 @@ namespace Baku.VMagicMirror.IK
 
         public bool EnableUpdate { get; set; } = true;
 
-        private Vector3 _wristToPalm = Vector3.zero;
+        private Vector3 _wristToPenBasePosition = Vector3.zero;
         private float _wristDefaultFloat = 0f;
         
         private readonly PenTabletProvider _penTablet;
@@ -63,15 +65,22 @@ namespace Baku.VMagicMirror.IK
             vrmLoadable.VrmLoaded += info =>
             {
                 var wrist = info.animator.GetBoneTransform(HumanBodyBones.RightHand);
+                var wristPosition = wrist.position;
                 var midProximal = info.animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
+                var midInter = info.animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate);
                 var littleDistal = info.animator.GetBoneTransform(HumanBodyBones.RightLittleDistal);
-                _wristToPalm = (midProximal != null)
-                    ? (midProximal.position - wrist.position) * 0.5f
+                var thumbProximal = info.animator.GetBoneTransform(HumanBodyBones.RightThumbIntermediate);
+                
+                //NOTE: 人差し指の第2-第3関節の横でペンが縦に立つように調節するとこういう式になります
+                _wristToPenBasePosition = (midProximal != null && midInter != null && thumbProximal != null)
+                    ? (midProximal.position * 0.5f + midInter.position * 0.5f - wristPosition) +
+                      new Vector3(0, 0, (thumbProximal.position - wristPosition).z)
                     : Vector3.zero;
 
-                //小指がめり込まないように…みたいな措置です
+                //小指がめり込まないように…みたいな措置。
+                //やや余裕を取りすぎてる節はあるが、まあ良いでしょう
                 _wristDefaultFloat = littleDistal != null 
-                    ? (wrist.position.z - littleDistal.position.z) + PressOffset
+                    ? (wristPosition.z - littleDistal.position.z) + PressOffset
                     : 0.05f + PressOffset;
             };
             
@@ -144,10 +153,9 @@ namespace Baku.VMagicMirror.IK
             
             var baseRot = _penTablet.GetBaseRotation();
             
-            //TODO: とくに第2項が要検証。第3項は多分大丈夫だけどいちおう要チェック
             _targetPosition =
                 _penTablet.GetPosFromScreenPoint() -
-                (baseRot * Quaternion.AngleAxis(-90f, Vector3.up)) * _wristToPalm +
+                (baseRot * Quaternion.AngleAxis(-90f, Vector3.up)) * _wristToPenBasePosition +
                 _penTablet.Normal * (_wristDefaultFloat + YOffset);
 
             _rightHand.Position = Vector3.Lerp(
@@ -157,10 +165,10 @@ namespace Baku.VMagicMirror.IK
                 );
 
             //NOTE:手を完全に立てるのも変なので70度くらいにしておく。移動中に傾くような動作があっても良い…のかもしれない。
-            var wristRoll = (_isRightButtonDown || _isMidButtonDown) ? -60f : -70f;
+            var wristRoll = (_isRightButtonDown || _isMidButtonDown) ? -30f : -40f;
             var rot =
                 baseRot *
-                Quaternion.AngleAxis(_isLeftButtonDown ? 0f : -5f, Vector3.right) *
+                Quaternion.AngleAxis(_isLeftButtonDown ? 0f : -10f, Vector3.right) *
                 Quaternion.AngleAxis(wristRoll, Vector3.forward) *
                 Quaternion.AngleAxis(-90f, Vector3.up);
             

@@ -477,6 +477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42ec32203ee4941478b39e621dcbdc65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handIKIntegrator: {fileID: 5813678810404708495}
   lookAtSpeedFactor: 6
 --- !u!114 &5813678810404708595
 MonoBehaviour:

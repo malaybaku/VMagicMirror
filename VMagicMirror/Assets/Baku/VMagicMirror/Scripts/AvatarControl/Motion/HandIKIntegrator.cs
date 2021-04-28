@@ -245,6 +245,7 @@ namespace Baku.VMagicMirror
             = new ReactiveProperty<HandTargetType>(HandTargetType.Keyboard);
         private readonly ReactiveProperty<HandTargetType> _rightTargetType
             = new ReactiveProperty<HandTargetType>(HandTargetType.Keyboard);
+        public ReactiveProperty<HandTargetType> RightTargetType => _rightTargetType;
 
         #region API
 
@@ -554,6 +555,7 @@ namespace Baku.VMagicMirror
             }
 
             _rightTargetType.Value = targetType;
+            Debug.Log("Right Hand State changed to : " + targetType);
             _prevRightHand = _currentRightHand;
             _currentRightHand = state;
             

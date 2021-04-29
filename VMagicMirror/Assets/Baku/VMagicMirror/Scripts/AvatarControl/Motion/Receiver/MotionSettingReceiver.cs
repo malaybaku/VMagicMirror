@@ -30,8 +30,12 @@ namespace Baku.VMagicMirror
             _gamePad = gamePad;
             receiver.AssignCommandHandler(
                 VmmCommands.EnableNoHandTrackMode,
-                message => handIkIntegrator.AlwaysHandDown.Value = message.ToBoolean()
-                );
+                message =>
+                {
+                    var isHandDown = message.ToBoolean();
+                    handIkIntegrator.AlwaysHandDown.Value = isHandDown;
+                    gamePadBasedBodyLean.AlwaysHandDown = isHandDown;
+                });
             receiver.AssignCommandHandler(
                 VmmCommands.EnableTypingHandDownTimeout,
                 message => handIkIntegrator.EnableHandDownTimeout = message.ToBoolean()

@@ -55,6 +55,13 @@ namespace Baku.VMagicMirror
             return transform.TransformPoint(cursorPosInVirtualScreen * 0.7f);
         }
 
+        /// <summary>
+        /// ペン先の位置を取得します。
+        /// 何かのパーティクルを出すとき、タブレット上の位置よりペン先を使いたいならばコレで取得すると便利です。
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 GetPenTipPosition() => _penController.GetTipPosition();
+
         /// <summary> タブレットの表面に沿って右に行く方向のベクトルを取得します。 </summary>
         public Vector3 Right => transform.right;
         /// <summary> タブレットの表面に沿って上に行く方向のベクトルを取得します。 </summary>

@@ -97,7 +97,7 @@ namespace Baku.VMagicMirror.IK
                 if (dependency.Config.RightTarget.Value == HandTargetType.PenTablet)
                 {
                     dependency.Reactions.ParticleStore.RequestPenTabletMoveParticle(
-                        _penTablet.GetPosFromScreenPoint() + _penTablet.Normal * 0.001f,
+                        _penTablet.GetPenTipPosition(),
                         _penTablet.GetRawRotation()
                         );
                 }

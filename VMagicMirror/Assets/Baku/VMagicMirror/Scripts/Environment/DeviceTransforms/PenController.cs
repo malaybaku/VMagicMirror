@@ -11,8 +11,11 @@ namespace Baku.VMagicMirror
     {
         private const float AnimationDuration = 0.3f;
         private const Ease AnimationEase = Ease.OutCubic;
-        //NOTE: 本当は0.085fが正しい値。ちょっと大きな値にすることで、ペンがタブレットの手前に浮くようにする
-        private const float PenHalfLength = 0.095f;
+        
+        //厳格なペンの半分の長さ、に1mmだけオフセットをつけたもの。パーティクルを出すことを考慮して1mmだけずらします
+        private const float ExactPenHalfLength = 0.0851f;
+        //レイキャストでは少し大きな値にすることで、ペンがタブレットの手前に浮くようにする
+        private const float RaycastPenHalfLength = 0.095f;
         
         [SerializeField] private Transform penRoot = null;
         [SerializeField] private MeshRenderer penMesh = null;
@@ -90,6 +93,8 @@ namespace Baku.VMagicMirror
             UpdateVisibility();
         }
 
+        public Vector3 GetTipPosition() => penRoot.position + penRoot.up * ExactPenHalfLength;
+        
         private void Update()
         {
             if (!_hasModel)
@@ -125,7 +130,7 @@ namespace Baku.VMagicMirror
             //NOTE: ペン先が明らかに突き抜けていれば手前に戻す。レイキャストの方向にだけ注意
             var up = penRoot.up;
             if (_collider.Raycast(
-                new Ray(pos + up * PenHalfLength, -up), out var hit, 10f
+                new Ray(pos + up * RaycastPenHalfLength, -up), out var hit, 10f
                 ))
             {
                 penRoot.position = pos - up * hit.distance;

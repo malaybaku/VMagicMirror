@@ -35,9 +35,31 @@ namespace Baku.VMagicMirror
                 }
             }
         }
-        
+
+        private bool _alwaysHandDown = false;
+        public bool AlwaysHandDown
+        {
+            get => _alwaysHandDown;
+            set
+            {
+                if (_alwaysHandDown != value)
+                {
+                    _alwaysHandDown = value;
+                    if (value)
+                    {
+                        ApplyLeanMotion(Vector2Int.zero);
+                    }
+                }
+            }
+        }
+
         private Quaternion _target = Quaternion.identity;
         private GamepadLeanModes _leanMode = GamepadLeanModes.GamepadLeanLeftStick;
+
+        private bool CanReceiveStickData =>
+            !AlwaysHandDown &&
+            !UseGamepadForWordToMotion &&
+            _motionMode != GamepadMotionModes.ArcadeStick;
 
         private void Update()
         {
@@ -63,7 +85,7 @@ namespace Baku.VMagicMirror
         
         public void LeftStick(Vector2Int stickPos)
         {
-            if (UseGamepadForWordToMotion || _motionMode == GamepadMotionModes.ArcadeStick)
+            if (!CanReceiveStickData)
             {
                 return;
             }
@@ -76,7 +98,7 @@ namespace Baku.VMagicMirror
 
         public void RightStick(Vector2Int stickPos)
         {
-            if (UseGamepadForWordToMotion || _motionMode == GamepadMotionModes.ArcadeStick)
+            if (!CanReceiveStickData)
             {
                 return;
             }
@@ -93,7 +115,7 @@ namespace Baku.VMagicMirror
         /// <param name="buttonStickPos"></param>
         public void ButtonStick(Vector2Int buttonStickPos)
         {
-            if (UseGamepadForWordToMotion || _motionMode == GamepadMotionModes.ArcadeStick)
+            if (!CanReceiveStickData)
             {
                 return;
             }

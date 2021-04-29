@@ -558,7 +558,6 @@ namespace Baku.VMagicMirror
             }
 
             _rightTargetType.Value = targetType;
-            Debug.Log("Right Hand State changed to : " + targetType);
             _prevRightHand = _currentRightHand;
             _currentRightHand = state;
             

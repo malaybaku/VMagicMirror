@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8783273216763519342}
   - component: {fileID: 2191938032076595646}
   - component: {fileID: 6206299127056181281}
+  - component: {fileID: 4026868618588972530}
   m_Layer: 0
   m_Name: PenTablet
   m_TagString: Untagged
@@ -174,3 +175,16 @@ MonoBehaviour:
   customBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+--- !u!65 &4026868618588972530
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8074230364789003343}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.1, y: 1.1, z: 0.002}
+  m_Center: {x: 0, y: 0, z: 0}

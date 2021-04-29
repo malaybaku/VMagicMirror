@@ -11,6 +11,8 @@ namespace Baku.VMagicMirror
     {
         private const float AnimationDuration = 0.3f;
         private const Ease AnimationEase = Ease.OutCubic;
+        //NOTE: 本当は0.085fが正しい値。ちょっと大きな値にすることで、ペンがタブレットの手前に浮くようにする
+        private const float PenHalfLength = 0.095f;
         
         [SerializeField] private Transform penRoot = null;
         [SerializeField] private MeshRenderer penMesh = null;
@@ -23,10 +25,15 @@ namespace Baku.VMagicMirror
 
 
         private bool _isVisible = false;
+        //モデルに指がないから(他の条件はクリアしてるけど)ペンを非表示にしてる、というフラグ。
+        //指なしモデル→指ありモデルに切り替わったときにペンを再表示するために使います
+        private bool _penMeshDisabledBecauseOfInvalidFinger = false;
         
         private bool _isRightHandOnPenTablet = false;
         private bool _isPenTabletVisible = false;
         private bool ShouldVisible => _isRightHandOnPenTablet && _isPenTabletVisible;
+
+        private Collider _collider = null;
         
         private TweenerCore<Vector3, Vector3, VectorOptions> _tweener;
 
@@ -54,6 +61,14 @@ namespace Baku.VMagicMirror
             penMesh.enabled = false;
         }
         
+        /// <summary>
+        /// ペンがめり込んではいけないペンタブのコライダーを割り当てます。
+        /// </summary>
+        /// <param name="penTabletCollider"></param>
+        public void AssignPenTabletCollider(Collider penTabletCollider)
+        {
+            _collider = penTabletCollider;
+        }
         
         /// <summary>
         /// そもそもペンタブが表示されてるかどうか、という点から表示状態を更新します。
@@ -61,7 +76,6 @@ namespace Baku.VMagicMirror
         /// <param name="visible"></param>
         public void SetDeviceVisibility(bool visible)
         {
-            Debug.Log($"SetDeviceVisibility {visible}");
             _isPenTabletVisible = visible;
             UpdateVisibility();
         }
@@ -72,30 +86,54 @@ namespace Baku.VMagicMirror
         /// <param name="isOn"></param>
         public void SetHandIsOnPenTablet(bool isOn)
         {
-            Debug.Log($"SetHandIsOnPenTablet {isOn}");
             _isRightHandOnPenTablet = isOn;
             UpdateVisibility();
         }
-        
+
         private void Update()
         {
             if (!_hasModel)
             {
                 return;
             }
-            
-            //NOTE: 指がないとペンの位置が決まらんから勘弁してくれ～！という強めのガード
+
+            //NOTE: 指がないとペンの位置が決まらんから勘弁してくれ～！というガード
             if (!_hasValidFinger)
             {
+                _penMeshDisabledBecauseOfInvalidFinger = true;
                 penMesh.enabled = false;
                 return;
             }
-            
+
+            //NOTE: このif文を通るのは「指ボーンがないモデルの後に指ボーンがあるモデルを読み込んだ」みたいなケース。
+            //珍しいパターンのはずなためアニメーションせず、素朴に再表示だけやる
+            if (_isVisible && _penMeshDisabledBecauseOfInvalidFinger)
+            {
+                penMesh.enabled = true;
+                _penMeshDisabledBecauseOfInvalidFinger = false;
+            }
+
             //上記以外の場合、UpdateVisibilityによってメッシュのvisibilityは制御される
-            
-            //手に対して位置を合わせる。この結果としてパーティクルとペン先がちょっとズレる事があるが、それはOKという事にする
-            penRoot.position = (_rightIndexProximal.position + _rightThumbIntermediate.position) * 0.5f;
-            penRoot.localRotation = _rightWrist.rotation * Quaternion.AngleAxis(20f, Vector3.right);
+
+            //手に対して位置を合わせに行く。分かりやすいので
+            var pos = (_rightIndexProximal.position + _rightThumbIntermediate.position) * 0.5f;
+            //NOTE: 200は書き間違いじゃなくて、ペンの上下をほぼひっくり返すためにやってます
+            penRoot.localRotation =
+                _rightWrist.rotation *
+                Quaternion.AngleAxis(200f, Vector3.right);
+
+            //NOTE: ペン先が明らかに突き抜けていれば手前に戻す。レイキャストの方向にだけ注意
+            var up = penRoot.up;
+            if (_collider.Raycast(
+                new Ray(pos + up * PenHalfLength, -up), out var hit, 10f
+                ))
+            {
+                penRoot.position = pos - up * hit.distance;
+            }
+            else
+            {
+                penRoot.position = pos;
+            }
         }
 
         private void UpdateVisibility()

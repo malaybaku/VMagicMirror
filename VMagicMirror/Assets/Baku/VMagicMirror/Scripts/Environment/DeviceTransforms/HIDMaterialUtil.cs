@@ -52,7 +52,7 @@ namespace Baku.VMagicMirror
                 "pen_tablet.png", "PenTablet", "Pad"));
         public Material GetPenMaterial()
             => _buttonMaterial ?? (_buttonMaterial = LoadMaterial(
-                "pen.png", "Pen", null));
+                "pen.png", "Pen", "Pen"));
 
         public Material GetArcadeStickMaterial()
             => _arcadeStickMaterial ?? (_arcadeStickMaterial = LoadMaterial(

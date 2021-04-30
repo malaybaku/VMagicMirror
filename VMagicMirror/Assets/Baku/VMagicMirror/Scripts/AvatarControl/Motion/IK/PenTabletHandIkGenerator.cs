@@ -167,7 +167,7 @@ namespace Baku.VMagicMirror.IK
                 );
 
             //NOTE:手を完全に立てるのも変なので70度くらいにしておく。移動中に傾くような動作があっても良い…のかもしれない。
-            var wristRoll = (_isRightButtonDown || _isMidButtonDown) ? -30f : -40f;
+            var wristRoll = (_isRightButtonDown || _isMidButtonDown) ? -35f : -40f;
             var rot =
                 baseRot *
                 Quaternion.AngleAxis(_isLeftButtonDown ? 0f : -10f, Vector3.right) *

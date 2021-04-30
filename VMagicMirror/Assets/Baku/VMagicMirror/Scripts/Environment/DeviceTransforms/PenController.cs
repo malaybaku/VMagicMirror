@@ -33,8 +33,8 @@ namespace Baku.VMagicMirror
         private bool _penMeshDisabledBecauseOfInvalidFinger = false;
         
         private bool _isRightHandOnPenTablet = false;
-        private bool _isPenTabletVisible = false;
-        private bool ShouldVisible => _isRightHandOnPenTablet && _isPenTabletVisible;
+        private bool _isPenVisible = false;
+        private bool ShouldVisible => _isRightHandOnPenTablet && _isPenVisible;
 
         private Collider _collider = null;
         
@@ -82,7 +82,7 @@ namespace Baku.VMagicMirror
         // NOTE: これにtrueを渡しても実際にペンタブモードになってなければペンは出ない。
         private void SetDeviceVisibility(bool visible)
         {
-            _isPenTabletVisible = visible;
+            _isPenVisible = visible;
             UpdateVisibility();
         }
 

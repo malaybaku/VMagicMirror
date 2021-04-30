@@ -16,6 +16,9 @@ namespace Baku.VMagicMirror
         public bool ReverseGamepadStickLeanHorizontal { get; set; } = false;
         public bool ReverseGamepadStickLeanVertical { get; set; } = false;
 
+        //ゲームパッド由来のモーションの種類によってはスティック入力を無視したいので、そのために参照するやつ
+        private GamepadMotionModes _motionMode = GamepadMotionModes.Gamepad;
+
         private bool _useGamepadForWordToMotion = false;
         public bool UseGamepadForWordToMotion
         {
@@ -32,9 +35,31 @@ namespace Baku.VMagicMirror
                 }
             }
         }
-        
+
+        private bool _alwaysHandDown = false;
+        public bool AlwaysHandDown
+        {
+            get => _alwaysHandDown;
+            set
+            {
+                if (_alwaysHandDown != value)
+                {
+                    _alwaysHandDown = value;
+                    if (value)
+                    {
+                        ApplyLeanMotion(Vector2Int.zero);
+                    }
+                }
+            }
+        }
+
         private Quaternion _target = Quaternion.identity;
         private GamepadLeanModes _leanMode = GamepadLeanModes.GamepadLeanLeftStick;
+
+        private bool CanReceiveStickData =>
+            !AlwaysHandDown &&
+            !UseGamepadForWordToMotion &&
+            _motionMode != GamepadMotionModes.ArcadeStick;
 
         private void Update()
         {
@@ -60,7 +85,7 @@ namespace Baku.VMagicMirror
         
         public void LeftStick(Vector2Int stickPos)
         {
-            if (UseGamepadForWordToMotion)
+            if (!CanReceiveStickData)
             {
                 return;
             }
@@ -73,7 +98,7 @@ namespace Baku.VMagicMirror
 
         public void RightStick(Vector2Int stickPos)
         {
-            if (UseGamepadForWordToMotion)
+            if (!CanReceiveStickData)
             {
                 return;
             }
@@ -90,7 +115,7 @@ namespace Baku.VMagicMirror
         /// <param name="buttonStickPos"></param>
         public void ButtonStick(Vector2Int buttonStickPos)
         {
-            if (UseGamepadForWordToMotion)
+            if (!CanReceiveStickData)
             {
                 return;
             }
@@ -132,5 +157,13 @@ namespace Baku.VMagicMirror
             GamepadLeanRightStick,
         }
 
+        public void SetGamepadMotionMode(int modeIndex)
+        {
+            _motionMode = (GamepadMotionModes) modeIndex;
+            if (_motionMode == GamepadMotionModes.ArcadeStick)
+            {
+                ApplyLeanMotion(Vector2Int.zero);
+            }
+        }
     }
 }

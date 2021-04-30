@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.ComponentModel;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.Installer
@@ -7,8 +8,11 @@ namespace Baku.VMagicMirror.Installer
     public class DevicesInstaller : InstallerBase, IDevicesRoot
     {
         [SerializeField] private GamepadProvider gamepadProvider = null;
+        [SerializeField] private ArcadeStickProvider arcadeStickProvider = null;
         [SerializeField] private KeyboardProvider keyboardProvider = null;
         [SerializeField] private TouchPadProvider touchPadProvider = null;
+        [SerializeField] private PenTabletProvider penTabletProvider = null;
+        [SerializeField] private PenController penController = null;
         [SerializeField] private MidiControllerProvider midiControllerProvider = null;
         [SerializeField] private ParticleStore particleStore = null;
 
@@ -20,6 +24,12 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<IDevicesRoot>()
                 .FromInstance(this)
                 .AsCached();
+
+            //NOTE: ペンタブより先にバインドしといたほうが無難(PenTabletProvider側で必要)
+            container.Bind<PenController>()
+                .FromComponentInNewPrefab(penController)
+                .AsCached();
+
             container.Bind<GamepadProvider>()
                 .FromComponentInNewPrefab(gamepadProvider)
                 .AsCached();
@@ -34,6 +44,13 @@ namespace Baku.VMagicMirror.Installer
                 .AsCached();
             container.Bind<ParticleStore>()
                 .FromComponentInNewPrefab(particleStore)
+                .AsCached();
+
+            container.Bind<ArcadeStickProvider>()
+                .FromComponentInNewPrefab(arcadeStickProvider)
+                .AsCached();
+            container.Bind<PenTabletProvider>()
+                .FromComponentInNewPrefab(penTabletProvider)
                 .AsCached();
         }
     }

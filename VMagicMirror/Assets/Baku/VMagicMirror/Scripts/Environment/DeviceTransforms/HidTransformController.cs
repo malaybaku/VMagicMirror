@@ -26,14 +26,18 @@ namespace Baku.VMagicMirror
         
         private KeyboardVisibility _keyboardVisibility = null;
         private TouchpadVisibility _touchPadVisibility = null;
+        private PenTabletVisibility _penTabletVisibility = null;
         private MidiControllerVisibility _midiControllerVisibility = null;
 
+        private bool _isHidVisible = true;
+        private KeyboardAndMouseMotionModes _motionMode = KeyboardAndMouseMotionModes.KeyboardAndTouchPad;
 
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
             KeyboardProvider keyboard, 
             TouchPadProvider touchPad,
+            PenTabletProvider penTablet,
             MidiControllerProvider midiController, 
             ParticleStore particleStore
             )
@@ -44,12 +48,17 @@ namespace Baku.VMagicMirror
             _particleStore = particleStore;
             _keyboardVisibility = keyboard.GetComponent<KeyboardVisibility>();
             _touchPadVisibility = touchPad.GetComponent<TouchpadVisibility>();
+            _penTabletVisibility = penTablet.GetComponent<PenTabletVisibility>();
             _midiControllerVisibility = midiController.GetComponent<MidiControllerVisibility>();
             
             receiver.AssignCommandHandler(
                 VmmCommands.HidVisibility,
                 message => SetHidVisibility(message.ToBoolean())
                 );
+            receiver.AssignCommandHandler(
+                VmmCommands.SetKeyboardAndMouseMotionMode,
+                message => SetHidMotionMode(message.ToInt())
+            );
             receiver.AssignCommandHandler(
                 VmmCommands.MidiControllerVisibility,
                 message => SetMidiVisibility(message.ToBoolean())
@@ -124,8 +133,32 @@ namespace Baku.VMagicMirror
 
         private void SetHidVisibility(bool v)
         {
-            _keyboardVisibility.SetVisibility(v);
-            _touchPadVisibility.SetVisibility(v);
+            _isHidVisible = v;
+            UpdateHidVisibilities();
+        }
+
+        private void SetHidMotionMode(int mode)
+        {
+            if (mode < 0 || mode >= (int) KeyboardAndMouseMotionModes.Unknown)
+            {
+                return;
+            }
+
+            _motionMode = (KeyboardAndMouseMotionModes) mode;
+            UpdateHidVisibilities();
+        }
+
+        private void UpdateHidVisibilities()
+        {
+            _keyboardVisibility.SetVisibility(_isHidVisible);
+            _touchPadVisibility.SetVisibility(
+                _isHidVisible &&
+                (_motionMode == KeyboardAndMouseMotionModes.KeyboardAndTouchPad || 
+                 _motionMode == KeyboardAndMouseMotionModes.Presentation)
+            );
+            _penTabletVisibility.SetVisibility(
+                _isHidVisible && _motionMode == KeyboardAndMouseMotionModes.PenTablet
+            );
         }
 
         private void SetMidiVisibility(bool v)

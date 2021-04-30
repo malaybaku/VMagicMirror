@@ -49,25 +49,34 @@ namespace Baku.VMagicMirror
         private Transform _mouseParticlePrefabParent = null;
 
         private int _nextKeyboardParticleIndex = 0;
+        private int _nextArcadeStickParticleIndex = 0;
         private int _nextMidiParticleIndex = 0;
         //-1はパーティクル無効、0~(particlePrefabs.Length - 1)は有効な状態を表す
-        private int _currentKeyAndPadParticleIndex = InvalidTypingEffectIndex;
-        private int _currentMidiParticleIndex = InvalidTypingEffectIndex;
+        private int _keyAndPadParticleTypeIndex = InvalidTypingEffectIndex;
+        private int _midiParticleTypeIndex = InvalidTypingEffectIndex;
+        private int _arcadeStickParticleTypeIndex = InvalidTypingEffectIndex;
         
         //キャッシュして多数同時に実行できるようにしたパーティクル群
-        private ParticleSystem[] _particles = new ParticleSystem[0];
+        private ParticleSystem[] _keyParticles = new ParticleSystem[0];
+        private ParticleSystem[] _arcadeStickParticles = new ParticleSystem[0];
         private ParticleSystem[] _midiParticles = new ParticleSystem[0];
         //マウスのパーティクル
         private ParticleSystem _mouseContinueParticle = null;
         private ParticleSystem _mouseEndParticle = null;
         private float _mouseContinueParticleCountDown = 0f;
 
+        //ペンタブのパーティクル: マウスとほとんど同じことをやるが
+        private ParticleSystem _penTabletContinueParticle = null;
+        private ParticleSystem _penTabletEndParticle = null;
+        private float _penTabletContinueParticleCountDown = 0f;
+
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
             IDevicesRoot devicesRoot, 
             KeyboardProvider keyboard,
-            TouchPadProvider touchPad)
+            TouchPadProvider touchPad,
+            PenTabletProvider penTablet)
         {
             transform.parent = devicesRoot.Transform;
             _keyboardParticleParent = keyboard.transform;
@@ -86,43 +95,79 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (_mouseContinueParticleCountDown <= 0)
+            UpdateMouse();
+            UpdatePenTablet();
+
+            void UpdateMouse()
             {
-                return;
-            }
+                if (_mouseContinueParticleCountDown <= 0)
+                {
+                    return;
+                }
             
-            _mouseContinueParticleCountDown -= Time.deltaTime;
-            if (_mouseContinueParticleCountDown <= 0 && 
-                _mouseContinueParticle != null &&
-                _mouseContinueParticle.isPlaying)
+                _mouseContinueParticleCountDown -= Time.deltaTime;
+                if (_mouseContinueParticleCountDown <= 0 && 
+                    _mouseContinueParticle != null &&
+                    _mouseContinueParticle.isPlaying)
+                {
+                    _mouseContinueParticle.Stop();
+                }
+            }
+
+            void UpdatePenTablet()
             {
-                _mouseContinueParticle.Stop();
+                if (_penTabletContinueParticleCountDown <= 0)
+                {
+                    return;
+                }
+            
+                _penTabletContinueParticleCountDown -= Time.deltaTime;
+                if (_penTabletContinueParticleCountDown <= 0 && 
+                    _penTabletContinueParticle != null &&
+                    _penTabletContinueParticle.isPlaying)
+                {
+                    _penTabletContinueParticle.Stop();
+                }
             }
         }
         
         //-1を指定したらパーティクル無し、0以上で配列内を指定したら有効なパーティクルで初期化
-        public void SetParticleIndex(int keyAndPadIndex, int midiIndex)
+        public void SetParticleIndex(int keyAndPadIndex, int midiIndex, int arcadeStickIndex)
         {
-            if (_currentKeyAndPadParticleIndex != keyAndPadIndex)
+            if (_keyAndPadParticleTypeIndex != keyAndPadIndex)
             {
-                _currentKeyAndPadParticleIndex = keyAndPadIndex;
+                _keyAndPadParticleTypeIndex = keyAndPadIndex;
                 ClearKeyAndPadParticles();
+                ClearPenTabletParticle();
                 if (keyAndPadIndex >= 0 && keyAndPadIndex < particlePrefabs.Length)
                 {
                     SetupKeyboardParticle(keyAndPadIndex);
                     SetupMouseParticle(keyAndPadIndex);
+                    SetupPenTabletParticle(keyAndPadIndex);
                 }
             }
 
-            if (_currentMidiParticleIndex != midiIndex)
+            if (_midiParticleTypeIndex != midiIndex)
             {
-                _currentMidiParticleIndex = midiIndex;
+                _midiParticleTypeIndex = midiIndex;
                 ClearMidiParticles();
                 if (midiIndex >= 0 && midiIndex < midiParticlePrefabs.Length)
                 {
                     SetupMidiParticle(midiIndex);
                 }
             }
+
+            if (_arcadeStickParticleTypeIndex != arcadeStickIndex)
+            {
+                _arcadeStickParticleTypeIndex = arcadeStickIndex;
+                ClearArcadeStickParticles();
+                if (arcadeStickIndex >= 0 && arcadeStickIndex < particlePrefabs.Length)
+                {
+                    SetupArcadeStickParticle(arcadeStickIndex);
+                }
+            }
+            
+            
         }
 
         /// <summary>
@@ -131,18 +176,18 @@ namespace Baku.VMagicMirror
         /// <param name="worldPosition"></param>
         public void RequestKeyboardParticleStart(Vector3 worldPosition)
         {
-            if (_particles.Length == 0)
+            if (_keyParticles.Length == 0)
             {
                 return;
             }
 
             //パーティクルの切り替えタイミングによっては配列外参照するリスクがあるのでその対策
-            if (_nextKeyboardParticleIndex >= _particles.Length)
+            if (_nextKeyboardParticleIndex >= _keyParticles.Length)
             {
                 _nextKeyboardParticleIndex = 0;
             }
 
-            var particle = _particles[_nextKeyboardParticleIndex];
+            var particle = _keyParticles[_nextKeyboardParticleIndex];
             if (particle.isPlaying)
             {
                 particle.Stop();
@@ -155,9 +200,47 @@ namespace Baku.VMagicMirror
             particle.Play();
 
             _nextKeyboardParticleIndex++;
-            if (_nextKeyboardParticleIndex >= _particles.Length)
+            if (_nextKeyboardParticleIndex >= _keyParticles.Length)
             {
                 _nextKeyboardParticleIndex = 0;
+            }
+        }
+
+        /// <summary>
+        /// 指定した位置でアケコン用のパーティクルを起動します。
+        /// </summary>
+        /// <param name="worldPosition"></param>
+        /// <param name="worldRotation"></param>
+        public void RequestArcadeStickParticleStart(Vector3 worldPosition, Quaternion worldRotation)
+        {
+            if (_arcadeStickParticles.Length == 0)
+            {
+                return;
+            }
+
+            //パーティクルの切り替えタイミングによっては配列外参照するリスクがあるのでその対策
+            if (_nextArcadeStickParticleIndex >= _arcadeStickParticles.Length)
+            {
+                _nextArcadeStickParticleIndex = 0;
+            }
+
+            var particle = _arcadeStickParticles[_nextArcadeStickParticleIndex];
+            if (particle.isPlaying)
+            {
+                particle.Stop();
+            }
+
+            var t = particle.transform;
+            t.position = worldPosition;
+            t.localRotation = worldRotation;
+            //NOTE: アケコンはスケール不変だからoneで問題ないはず
+            t.localScale = Vector3.one;
+            particle.Play();
+
+            _nextArcadeStickParticleIndex++;
+            if (_nextArcadeStickParticleIndex >= _arcadeStickParticles.Length)
+            {
+                _nextArcadeStickParticleIndex = 0;
             }
         }
 
@@ -228,14 +311,48 @@ namespace Baku.VMagicMirror
                 _mouseEndParticle.Play();
             }
         }
-        
+
+        /// <summary>
+        /// ペンタブのペンが移動したときのパーティクル実行をリクエストします。
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        public void RequestPenTabletMoveParticle(Vector3 position, Quaternion rotation)
+        {
+            if (_penTabletContinueParticle == null ||
+                _penTabletEndParticle == null)
+            {
+                return;
+            }
+
+            _penTabletContinueParticle.transform.SetPositionAndRotation(position, rotation);
+            _penTabletEndParticle.transform.SetPositionAndRotation(position, rotation);
+            if (!_penTabletContinueParticle.isPlaying)
+            {
+                _penTabletContinueParticle.Play();
+            }
+
+            _penTabletContinueParticleCountDown = mouseContinueParticleCount;
+        }
+
+        /// <summary>
+        /// ペンタブモードでクリックしたときのパーティクル実行をリクエストします。
+        /// </summary>
+        public void RequestPenTabletClickParticle()
+        {
+            if (_penTabletEndParticle != null)
+            {
+                //NOTE: Moveの時点で姿勢が決定してるはずなので、単に実行する
+                _penTabletEndParticle.Play();
+            }
+        }
         private void ClearKeyAndPadParticles()
         {
-            for (int i = 0; i < _particles.Length; i++)
+            for (int i = 0; i < _keyParticles.Length; i++)
             {
-                Destroy(_particles[i].gameObject);
+                Destroy(_keyParticles[i].gameObject);
             }
-            _particles = new ParticleSystem[0];
+            _keyParticles = new ParticleSystem[0];
 
             if (_mouseContinueParticle != null)
             {
@@ -249,6 +366,15 @@ namespace Baku.VMagicMirror
                 _mouseEndParticle = null;
             }
         }
+
+        private void ClearArcadeStickParticles()
+        {
+            for (int i = 0; i < _arcadeStickParticles.Length; i++)
+            {
+                Destroy(_arcadeStickParticles[i].gameObject);
+            }
+            _arcadeStickParticles = new ParticleSystem[0];
+        }
         
         private void ClearMidiParticles()
         {
@@ -258,23 +384,52 @@ namespace Baku.VMagicMirror
             }
             _midiParticles = new ParticleSystem[0];
         }
+
+        private void ClearPenTabletParticle()
+        {
+            if (_penTabletContinueParticle != null)
+            {
+                Destroy(_penTabletContinueParticle.gameObject);
+                _penTabletContinueParticle = null;
+            }
+
+            if (_penTabletEndParticle != null)
+            {
+                Destroy(_penTabletEndParticle.gameObject);
+                _penTabletEndParticle = null;
+            }
+        }
         
         private void SetupKeyboardParticle(int index)
         {
             var prefabSource = particlePrefabs[index];
 
             //パーティクルを有効化する場合
-            _particles = new ParticleSystem[particleStoreCount];
-            for (int i = 0; i < _particles.Length; i++)
+            _keyParticles = new ParticleSystem[particleStoreCount];
+            for (int i = 0; i < _keyParticles.Length; i++)
             {
-                _particles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
+                _keyParticles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
                 if (prefabSource.useCollisionPlane)
                 {
-                    _particles[i].collision.SetPlane(0, prefabSource.CollisionTransform);
+                    _keyParticles[i].collision.SetPlane(0, prefabSource.CollisionTransform);
                 }
 
                 //NOTE: ここではパーティクルの基準サイズのみを適用し、実行段階でキーボードのサイズに即したスケーリングを追加的に調整。
                 //this.transform.localScale = prefabSource.scale;
+            }
+        }
+
+        private void SetupArcadeStickParticle(int index)
+        {
+            var prefabSource = particlePrefabs[index];
+
+            //パーティクルを有効化する場合
+            _arcadeStickParticles = new ParticleSystem[particleStoreCount];
+            for (int i = 0; i < _arcadeStickParticles.Length; i++)
+            {
+                _arcadeStickParticles[i] = Instantiate(prefabSource.prefab, this.transform).GetComponent<ParticleSystem>();
+                //NOTE: アケコンからテキストがでてくるとテキストが落下する感じになって見栄えに違和感が出るが、
+                //普通やらない組み合わせである + このためだけにcollision planeの追加設定したくないためスルー
             }
         }
 
@@ -295,8 +450,7 @@ namespace Baku.VMagicMirror
                 //this.transform.localScale = prefabSource.scale;
             }
         }
-        
-        
+
         private void SetupMouseParticle(int index)
         {
             _mouseContinueParticle = Instantiate(
@@ -313,7 +467,16 @@ namespace Baku.VMagicMirror
             _mouseEndParticle.transform.localPosition = Vector3.zero;
             _mouseEndParticle.transform.localRotation = Quaternion.identity;
         }
-        
 
+        private void SetupPenTabletParticle(int index)
+        {
+            _penTabletContinueParticle = Instantiate(mouseParticlePrefabs[index].continueParticlePrefab);
+            _penTabletContinueParticle.transform.localPosition = Vector3.zero;
+            _penTabletContinueParticle.transform.localRotation = Quaternion.identity;
+
+            _penTabletEndParticle = Instantiate(mouseParticlePrefabs[index].clickParticlePrefab);
+            _penTabletEndParticle.transform.localPosition = Vector3.zero;
+            _penTabletEndParticle.transform.localRotation = Quaternion.identity;
+        }
     }
 }

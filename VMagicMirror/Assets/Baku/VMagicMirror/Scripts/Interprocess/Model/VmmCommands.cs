@@ -35,13 +35,6 @@ namespace Baku.VMagicMirror
 
         // Motion, Enable
         
-        
-        /// <summary>
-        /// NOTE: 歴史的経緯により、このキーは名前に反してキーボード/マウスの動作反映のオンオフのみを指定します。
-        /// (ゲームパッドやMIDIコンの単体指定はなく、これらのオンオフは現在デバイスの読み取りオンオフで設定します)
-        /// </summary>
-        public const string EnableHidArmMotion = nameof(EnableHidArmMotion);
-
         // Motion, Hand
         public const string LengthFromWristToTip = nameof(LengthFromWristToTip);
         public const string HandYOffsetBasic = nameof(HandYOffsetBasic);
@@ -54,8 +47,10 @@ namespace Baku.VMagicMirror
         public const string SetWaistWidth = nameof(SetWaistWidth);
         public const string SetElbowCloseStrength = nameof(SetElbowCloseStrength);
         public const string EnableFpsAssumedRightHand = nameof(EnableFpsAssumedRightHand);
-        public const string EnablePresenterMotion = nameof(EnablePresenterMotion);
         public const string PresentationArmRadiusMin = nameof(PresentationArmRadiusMin);
+
+        public const string SetKeyboardAndMouseMotionMode = nameof(SetKeyboardAndMouseMotionMode);
+        public const string SetGamepadMotionMode = nameof(SetGamepadMotionMode);
 
         // Motion, Wait
         public const string EnableWaitMotion = nameof(EnableWaitMotion);
@@ -108,9 +103,8 @@ namespace Baku.VMagicMirror
         public const string ResetDeviceLayout = nameof(ResetDeviceLayout);
         
         // Layout, HID (keyboard and mousepad)
-        public const string HidHeight = nameof(HidHeight);
-        public const string HidHorizontalScale = nameof(HidHorizontalScale);
         public const string HidVisibility = nameof(HidVisibility);
+        public const string SetPenVisibility = nameof(SetPenVisibility);
         public const string SetKeyboardTypingEffectType = nameof(SetKeyboardTypingEffectType);
         public const string EnableDeviceFreeLayout = nameof(EnableDeviceFreeLayout);
         

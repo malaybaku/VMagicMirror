@@ -10,6 +10,16 @@ namespace Baku.VMagicMirror
         IObservable<string> MouseButton { get; }
     }
 
+    public static class MouseButtonEventNames
+    {
+        public const string RDown = nameof(RDown);
+        public const string MDown = nameof(MDown);
+        public const string LDown = nameof(LDown);
+        public const string RUp = nameof(RUp);
+        public const string MUp = nameof(MUp);
+        public const string LUp = nameof(LUp);
+    }
+
     public static class RandomKeyboardKeys
     {
         //NOTE: ランダム打鍵で全部のキーを叩かせる理由がない(それだと腕が動きすぎる懸念がある)ので絞っておく

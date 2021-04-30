@@ -31,7 +31,6 @@ namespace Baku.VMagicMirror
             _mousePositionProvider = mousePositionProvider;
             _penController = penController;
             transform.parent = parent.Transform;
-            GetComponent<PenTabletVisibility>().PenController = penController;
             penController.AssignPenTabletCollider(GetComponent<Collider>());
         }
 

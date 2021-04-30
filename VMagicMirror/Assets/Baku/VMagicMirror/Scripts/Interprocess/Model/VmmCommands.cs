@@ -103,9 +103,8 @@ namespace Baku.VMagicMirror
         public const string ResetDeviceLayout = nameof(ResetDeviceLayout);
         
         // Layout, HID (keyboard and mousepad)
-        public const string HidHeight = nameof(HidHeight);
-        public const string HidHorizontalScale = nameof(HidHorizontalScale);
         public const string HidVisibility = nameof(HidVisibility);
+        public const string SetPenVisibility = nameof(SetPenVisibility);
         public const string SetKeyboardTypingEffectType = nameof(SetKeyboardTypingEffectType);
         public const string EnableDeviceFreeLayout = nameof(EnableDeviceFreeLayout);
         

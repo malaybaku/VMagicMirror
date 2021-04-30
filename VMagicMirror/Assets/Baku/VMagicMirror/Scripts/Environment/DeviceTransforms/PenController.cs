@@ -41,8 +41,13 @@ namespace Baku.VMagicMirror
         private TweenerCore<Vector3, Vector3, VectorOptions> _tweener;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, PenTabletProvider penTabletProvider)
+        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable)
         {
+            receiver.AssignCommandHandler(
+                VmmCommands.SetPenVisibility,
+                message => SetDeviceVisibility(message.ToBoolean())
+                );
+            
             vrmLoadable.VrmLoaded += info =>
             {
                 _rightWrist = info.animator.GetBoneTransform(HumanBodyBones.RightHand);
@@ -73,11 +78,9 @@ namespace Baku.VMagicMirror
             _collider = penTabletCollider;
         }
         
-        /// <summary>
-        /// そもそもペンタブが表示されてるかどうか、という点から表示状態を更新します。
-        /// </summary>
-        /// <param name="visible"></param>
-        public void SetDeviceVisibility(bool visible)
+        // ペン単体について表示したいかどうか、というのを更新する。
+        // NOTE: これにtrueを渡しても実際にペンタブモードになってなければペンは出ない。
+        private void SetDeviceVisibility(bool visible)
         {
             _isPenTabletVisible = visible;
             UpdateVisibility();

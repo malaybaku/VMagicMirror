@@ -85,7 +85,7 @@ namespace Baku.VMagicMirror
         
         public static int KeyToFingerNumber(GamepadKey key)
         {
-            //NOTE: VRMの親指が扱いづらいので2-5に振り分ける。あまり現実的ではないが、見栄えはよいはず
+            //NOTE: モデルの制御上は親指が扱いづらいんだけど、それはさておき現実っぽい振り分けにしておく
             switch (key)
             {
                 case GamepadKey.A:
@@ -95,12 +95,12 @@ namespace Baku.VMagicMirror
                     return FingerConsts.RightIndex;
                 case GamepadKey.Y:
                     return FingerConsts.RightMiddle;
-                case GamepadKey.RShoulder:
-                case GamepadKey.RTrigger:
-                    return FingerConsts.RightLittle;
                 case GamepadKey.LShoulder:
                 case GamepadKey.LTrigger:
                     return FingerConsts.RightRing;
+                case GamepadKey.RShoulder:
+                case GamepadKey.RTrigger:
+                    return FingerConsts.RightLittle;
                 default:
                     return -1;
             }

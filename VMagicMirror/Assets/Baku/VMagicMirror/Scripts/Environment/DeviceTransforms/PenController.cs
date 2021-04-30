@@ -33,7 +33,7 @@ namespace Baku.VMagicMirror
         private bool _penMeshDisabledBecauseOfInvalidFinger = false;
         
         private bool _isRightHandOnPenTablet = false;
-        private bool _isPenVisible = false;
+        private bool _isPenVisible = true;
         private bool ShouldVisible => _isRightHandOnPenTablet && _isPenVisible;
 
         private Collider _collider = null;

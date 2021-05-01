@@ -6,11 +6,17 @@ namespace Baku.VMagicMirror
 {
     public class ImageQualitySettingReceiver
     {
+        private bool _halfFpsModeActive = false;
+        
         public ImageQualitySettingReceiver(IMessageReceiver receiver, string defaultQualityName)
         {
             receiver.AssignCommandHandler(VmmCommands.SetImageQuality,
                 c => SetImageQuality(c.Content)
             );
+            receiver.AssignCommandHandler(
+                VmmCommands.SetHalfFpsMode,
+                message => SetHalfFpsMode(message.ToBoolean())
+                );
 
             receiver.AssignQueryHandler(
                 VmmQueries.GetQualitySettingsInfo,
@@ -48,11 +54,24 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void SetHalfFpsMode(bool isHalfMode)
+        {
+            _halfFpsModeActive = isHalfMode;
+            SetFrameRateWithQuality(QualitySettings.GetQualityLevel());
+        }
+
         private void SetFrameRateWithQuality(int qualityLevel)
         {
             //Very LowまたはLowの場合は明示的にCPU負荷を抑えたいはずなので、FPSも30まで下げる。
-            //Medium以上の場合、60にする。VRじゃないから90とか要らんし、下手に高速になるとCPU食うからね。
+            //Medium以上の場合はVSyncに注意したうえでFPS60付近を狙いたいが、
+            //以下のような事情を踏まえ、ユーザーが明示的にハーフFPSにしたかどうかで判断していく。
+            // - VSyncを切っちゃうとティアリングが出る
+            // - モニター自体のリフレッシュレート変更は要求すべきでない
+            // - モニターのリフレッシュレート(というか平均FPS)を見て云々、とするのが比較的めんどう
             Application.targetFrameRate = (qualityLevel < 2) ? 30 : 60;
+            QualitySettings.vSyncCount =
+                (qualityLevel < 2) ? 0 :
+                _halfFpsModeActive ? 2 : 1;
         }
     }
     

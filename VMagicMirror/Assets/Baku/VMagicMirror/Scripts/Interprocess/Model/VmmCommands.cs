@@ -126,6 +126,7 @@ namespace Baku.VMagicMirror
 
         // Image Quality
         public const string SetImageQuality = nameof(SetImageQuality);
+        public const string SetHalfFpsMode = nameof(SetHalfFpsMode);
 
         // Lighting 
         public const string LightIntensity = nameof(LightIntensity);

@@ -510,7 +510,7 @@ namespace Baku.VMagicMirror.IK
             {
                 _parent = parent;
                 Hand = hand;
-                _data = hand == ReactedHand.Right ? _parent._rightHand : _parent._leftHand;
+                _data = hand == ReactedHand.Right ? _parent._blendedRightHand : _parent._blendedLeftHand;
             }
 
             private readonly TypingHandIKGenerator _parent;

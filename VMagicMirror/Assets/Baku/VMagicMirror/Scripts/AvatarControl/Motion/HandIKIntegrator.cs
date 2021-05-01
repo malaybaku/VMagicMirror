@@ -600,6 +600,12 @@ namespace Baku.VMagicMirror
                 return false;
             }
 
+            //NOTE: ペンタブモードの場合、ペンを持った右手+左手(キーボード上であることが多い)のいずれも降ろさせない。
+            if (right == HandTargetType.PenTablet)
+            {
+                return false;
+            }
+
             bool leftHandIsReady = left != HandTargetType.Keyboard || typing.LeftHandTimeOutReached;
 
             bool rightHandIsReady =

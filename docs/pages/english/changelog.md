@@ -19,6 +19,8 @@ lang_prefix: /en/
 * Add: Pen tablet like motion mode, for mouse and key input.
 * Add: Arcade stick like motion mode, for gamepad input.
 * Add: `Half FPS` option in setting window `Effect` tab.
+* Add: Improved webcam based tracking `High Power Mode` option and remove beta indication. High power mode does not detect forward/backward motion and blink detection, but has higher stability.
+* Fix: Improved webcam based trackign smoothing algorithm.
 * Fix: When using some MIDI controller note-off operation was misunderstood as note-on input.
 * Change: Internally update Unity Editor version to 2019.4.23f1, and UniVRM to v0.66.0.
 * Removed: Remove `Use VRoid Default Setting` in External Tracking, Perfect Sync menu. This removal is because of the feature unstability, and even for older version this feature is no more recommended.

@@ -62,15 +62,26 @@ That's it! Try move your eyebrow, mouth, or tongue as you want.
 Also, you can try other models which work on [Vear](https://apps.apple.com/jp/app/id1490697369) Perfect Sync. The model working on Vear Perfect Sync will also work on VMagicMirror. (*Please see the bottom section about compatibility.)
 
 
-The second way is to use VRoid Studio model. This way is available if the model is created by VRoid Studio, and you do not add any Blendshape to model mesh.
+The second way is to use VRoid Studio based model with [HANA_Tool](https://booth.pm/ja/items/2437978).
 
-Load the model, and open `Ex.Tracker` tab and connect to the iOS app. Then turn on `Use Perfect Sync`, `Use VRoid Default Setting` check. now it is ready!
+If your model is enough plane (enough few modification after exported from VRoid Studio), the tools works what needed for perfect sync.
 
-<div class="row">
-{% include docimg.html file="./images/tips/perfect_sync_vroid_default_example.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+For the usage of `HANA_Tool` please check it by yourself.
+
+ref: [クリックで実装！パーフェクトシンク　BY HANA Tool](https://hinzka.hatenablog.com/entry/2020/10/12/014540)
+
+
+<div class="note-area" markdown="1">
+
+**NOTE** 
+
+VMagicMirror v1.6.2 and older version had `Use VRoid Default Setting` option.
+
+However, this feature was unstable against the difference of VRoid Studio version, so the feature has been removed at v1.7.0.
+
+Now `Use VRoid Default Setting` is not recommended even if you are using VMagicMirror v1.6.2 or older version.
+
 </div>
-
-The second way is handy but the expression is not so rich. For example, this way does not support tongue out, cheek puff etc.
 
 
 #### Setup Step1. Prepare model BlendShapes
@@ -163,16 +174,6 @@ If you do not create blendshape in Step 1 for some BlendShapeClip, then leave th
 </div>
 
 After the setup, export the VRM.
-
-
-#### Setup without modeling workflow
-{: .doc-sec2 }
-
-Some of the models can be applied to perfect sync without modeling process.
-
-For example, [HANA_Tool](https://booth.pm/ja/items/2437978) is available for VRoid Studio based model.
-
-ref: [クリックで実装！パーフェクトシンク　BY HANA Tool](https://hinzka.hatenablog.com/entry/2020/10/12/014540)
 
 
 #### References

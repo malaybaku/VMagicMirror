@@ -28,6 +28,8 @@ permalink: /get_started
 ### 1. 起動してキャラクターを表示する
 {: .doc-sec1 }
 
+zipファイルを解凍し、適当なフォルダに配置します。
+
 `VMagicMirror.exe`を起動すると、GUIがある「コントロールパネル」と、キャラクターが映る「キャラクター表示ウィンドウ」が立ち上がります。
 
 コントロールパネルかキャラクター表示ウィンドウの一方を閉じると、もう片方の画面も閉じて`VMagicMirror`が終了します。コントロールパネルが邪魔な場合、最小化しておきます。
@@ -49,6 +51,10 @@ zipファイルを右クリックして`プロパティ`を選び、`セキュ�
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_005_before_unzip.jpg" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
+
+また、zipの解凍先はユーザーが使用する通常のフォルダ(`C:\`やマイドキュメントのフォルダなど)を使用します。
+
+`Program Files`などの特殊なフォルダは避けて下さい。
 
 </div>
 

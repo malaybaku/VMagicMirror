@@ -32,7 +32,7 @@ Note that, this video refers older version, so some GUI has changed.
 ### 1. Start and Load Character
 {: .doc-sec1 }
 
-Start `VMagicMirror.exe` to show GUI window ("Control Panel"), and Green window to show character ("Character Window").
+Unzip the distributed file and start `VMagicMirror.exe`, when GUI window ("Control Panel"), and Green window to show character ("Character Window") will appear.
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_015_started.jpg" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
@@ -49,6 +49,10 @@ If `VMagicMirror.exe` does not start correctly please check unzip settings. Righ
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_005_before_unzip.jpg" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
+
+Also please confirm the unzip folder is normal folder (like `C:\` or `My Document` folder).
+
+Please avoid special folder like `Program Files`, as those folder will lead tons of problem.
 
 </div>
 

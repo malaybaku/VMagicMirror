@@ -141,7 +141,7 @@ Also you can set background image when `Transparent Window` is turn off, from `L
 - `Sensitivity [dB]`: Specify plus value when the microphone input is too small, to obtain good result for lipsync.
 - `Show Volume`: Turn on to see the input volume. Adjust `Sensitivity` such that, the volume bar is green and sometimes red during talking.
 - `Track Face`: Select webcam to track your head motion
-- `High Power Mode`: Get more robust face tracking result, while getting higher CPU load. Available from v1.7.0 (beta ver is in v1.5.0-v1.6.2).
+- `High Power Mode`: Get more robust face tracking result, while getting higher CPU load. Available from v1.7.0.
 - `Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking.
 
 </div>
@@ -172,21 +172,21 @@ See detail at [External Tracker App ](./docs/external_tracker).
 
 </div>
 
-#### 2.3. Word To Motion
+
+
+#### 2.3. Motion
 {: .doc-sec2 }
 
-`Word To Motion` is feature to control face expression.
+Motion menu support to custom how the avatar moves by user inputs.
+
+You can select the reaction when using keyboard/mouse, and gamepad separately.
+
+Also this menu has `Hands-Down Mode` check, which forces character's arms always down. This mode also increases the body movement. In this mode the body movement increases slightly.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_105_word_to_motion.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_210_motion_modes.jpg" customclass="col s12 m4 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_220_motion_modes_hand_down.jpg" customclass="col s12 m4 l4" imgclass="fit-doc-img" %}
 </div>
-
-In default, please try typing "joy" and see what results on your avatar. Also you can select `Gamepad` on `Device Assignment` and press A,B,X,Y buttons, or select `Keyboard (num 0-8)` and press keys to switch expresssions.
-
-Please see the detail in [Expressions](./docs/expressions).
-
-When choosing `Device Assignment` to `Gamepad` or `MIDI Controller`, selected device arm motion is disabled. This helps you to hide what you do to change face expression from audience.
-
 
 #### 2.4. View
 {: .doc-sec2 }
@@ -223,8 +223,6 @@ When you use this feature turn off `Transparent Window` first. Then, check `Free
 - `Middle wheel`: Move camera forward or backword.
 
 </div>
-
-After the setup it will be good to turn on `Transparent Background` and disable `Free camera mode`.
 
 When you are confused where avatar is, press `Reset position` to recover the situation.
 
@@ -274,22 +272,21 @@ During this mode the control UI appears at the top-left corner of character wind
 Use `Reset` to recover the standard layout.
 
 
-#### 2.7. Motion
+#### 2.7. Word To Motion
 {: .doc-sec2 }
 
-Check on `Presentation-like hand` to move VRM's right hand as if he / she is on a presentation.
+`Word To Motion` is feature to control face expression.
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_150_presentation_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_105_word_to_motion.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-This style matches when you have presentation or you want to create instruction video. See [Tips: Use VMagicMirror for Presentation](./tips/presentation) for the detail.
+In default, please try typing "joy" and see what results on your avatar. Also you can select `Gamepad` on `Device Assignment` and press A,B,X,Y buttons, or select `Keyboard (num 0-8)` and press keys to switch expresssions.
 
-`Hands-Down Mode` forces character's arms always down. This mode also increases the body movement. Be careful that, this mode disables all other motions except Word to Motion based one, so for example presentation mode requires this check to be turned off.
+Please see the detail in [Expressions](./docs/expressions).
 
-<div class="row">
-{% include docimg.html file="./images/get_started/img00_155_hand_down_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
-</div>
+When choosing `Device Assignment` to `Gamepad` or `MIDI Controller`, selected device arm motion is disabled. This helps you to hide what you do to change face expression from audience.
+
 
 ### 3. For further customize
 {: .doc-sec1 }

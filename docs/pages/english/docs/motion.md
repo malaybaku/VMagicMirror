@@ -25,7 +25,16 @@ If you use v1.6.0 or older version, then you see `Face` menu in this tab. See [F
 #### Upper Body
 {: .doc-sec2 }
 
-`Always-Hands-Down Mode`: Turn on to force both arms always on. This mode increases body translate motion. This check is same as the one in `Streaming` tab.
+`Always-Hands-Down Mode`: Turn on to force both arms always on. This mode increases body translate motion.  `Streaming` tab supports same feature.
+
+`Key/Mouse Motion`: Select how avatar moves by keyboard and mouse input. `Streaming` tab supports same feature.
+
+`Gamepad Motion`: Select how avatar moves by gamepad input. `Streaming` tab supports same feature.
+
+When you choose `Pen Tablet` in `Key/Mouse Motion`, the avatar will look to the tablet area during the input.
+
+Also, when you choose `Arcade Stick` in `Gamepad Motion`, the avatar will react to ABXY/L1L2R1R2 buttons and left stick input, and will ignore other inputs like start button press.
+
 
 #### Arm
 {: .doc-sec2 }

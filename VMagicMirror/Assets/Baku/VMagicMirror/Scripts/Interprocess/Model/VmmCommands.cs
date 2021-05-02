@@ -171,7 +171,6 @@ namespace Baku.VMagicMirror
         public const string ExTrackerEnable = nameof(ExTrackerEnable);
         public const string ExTrackerEnableLipSync = nameof(ExTrackerEnableLipSync);
         public const string ExTrackerEnablePerfectSync = nameof(ExTrackerEnablePerfectSync);
-        public const string ExTrackerUseVRoidDefaultForPerfectSync = nameof(ExTrackerUseVRoidDefaultForPerfectSync);    
         public const string ExTrackerCalibrate = nameof(ExTrackerCalibrate);
         public const string ExTrackerSetCalibrateData = nameof(ExTrackerSetCalibrateData);
         public const string ExTrackerSetSource = nameof(ExTrackerSetSource);

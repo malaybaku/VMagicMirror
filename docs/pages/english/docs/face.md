@@ -33,7 +33,7 @@ This tab is added in v1.6.1. If you use older version, you can see most of these
 
 `Track Face`: Choose WebCam to use face tracking feature. Available in Streaming tab.
 
-`High Power Mode`: Get more quick face tracking result, while getting higher CPU load. In v1.5.0 it is an experimental feature.
+`High Power Mode`: Get more robust face tracking result, while getting higher CPU load. Available from v1.7.0.
 
 `Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking. Available in Streaming tab.
 

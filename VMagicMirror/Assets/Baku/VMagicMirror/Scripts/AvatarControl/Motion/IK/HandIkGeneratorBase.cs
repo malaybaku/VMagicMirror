@@ -1,16 +1,22 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Baku.VMagicMirror
+namespace Baku.VMagicMirror.IK
 {
     public abstract class HandIkGeneratorBase
     {
-        public HandIkGeneratorBase(MonoBehaviour coroutineResponder)
+        public HandIkGeneratorBase(HandIkGeneratorDependency dependency)
         {
-            _coroutineResponder = coroutineResponder;
+            Dependency = dependency;
         }
-        
+
+        protected HandIkGeneratorDependency Dependency { get; }
+
+        //NOTE: ほんとはvirtual => null返却のほうがキレイな実装だが、一時的にabstractとする
+        //TODO: 最後にvirtualでnull返却するように直す事！
+        public abstract IHandIkState LeftHandState { get; }
+        public abstract IHandIkState RightHandState { get; }
+
         /// <summary> HandIKIntegratorのStart内部で呼ばれます。 </summary>
         public virtual void Start()
         {
@@ -26,10 +32,7 @@ namespace Baku.VMagicMirror
         {
         }
 
-
-        private readonly MonoBehaviour _coroutineResponder;
-
-        protected Coroutine StartCoroutine(IEnumerator i) => _coroutineResponder.StartCoroutine(i);
-        protected void StopCoroutine(Coroutine coroutine) => _coroutineResponder.StopCoroutine(coroutine);
+        protected Coroutine StartCoroutine(IEnumerator i) => Dependency.Component.StartCoroutine(i);
+        protected void StopCoroutine(Coroutine coroutine) => Dependency.Component.StopCoroutine(coroutine);
     }
 }

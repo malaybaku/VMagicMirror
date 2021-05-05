@@ -14,14 +14,14 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class FingerController : MonoBehaviour
     {
-        #region consts / readonly 
+        #region consts / readonly
 
-        private const string RDown = nameof(RDown);
-        private const string MDown = nameof(MDown);
-        private const string LDown = nameof(LDown);
-        private const string RUp = nameof(RUp);
-        private const string MUp = nameof(MUp);
-        private const string LUp = nameof(LUp);
+        private const string RDown = MouseButtonEventNames.RDown;
+        private const string MDown = MouseButtonEventNames.MDown;
+        private const string LDown = MouseButtonEventNames.LDown;
+        private const string RUp =  MouseButtonEventNames.RUp;
+        private const string MUp = MouseButtonEventNames.MUp;
+        private const string LUp = MouseButtonEventNames.LUp;
 
         private const float DefaultBendingAngle = 10.0f;
         private const float ThumbProximalMaxBendAngle = 30f;
@@ -32,7 +32,8 @@ namespace Baku.VMagicMirror
         //0.25s以内にDown/Upの動作が終わることを目安に指定してます
         private const float TypingBendSpeedPerSeconds = 120f;
 
-        //NOTE: 曲げ角度の符号に注意。左右で意味変わるのと、親指とそれ以外の差にも注意
+        //NOTE: 曲げ角度の符号に注意。親指の第1、第2関節だけ符号が違うのはそもそも回転軸が異なるため
+        //またPointingとPenGripでは親指の第3関節の曲げ方向が異なるので、これも符号が異なる
         private static Dictionary<int, float[]> _fingerIdToPointingAngle = new Dictionary<int, float[]>()
         {
             [FingerConsts.RightThumb] = new float[] { 20, 20, 20 },
@@ -40,6 +41,15 @@ namespace Baku.VMagicMirror
             [FingerConsts.RightMiddle] = new float[] { -80, -80, -80 },
             [FingerConsts.RightRing] = new float[] { -80, -80, -80 },
             [FingerConsts.RightLittle] = new float[] { -80, -80, -80 },
+        };
+
+        private static Dictionary<int, float[]> _fingerIdToPenGripAngle = new Dictionary<int, float[]>()
+        {
+            [FingerConsts.RightThumb] = new float[] { 30, 40, -20 },
+            [FingerConsts.RightIndex] = new float[] { -30, -30, -40 },
+            [FingerConsts.RightMiddle] = new float[] { -40, -30, -50 },
+            [FingerConsts.RightRing] = new float[] { -80, -80, -70 },
+            [FingerConsts.RightLittle] = new float[] { -85, -85, -75 },
         };
 
 
@@ -87,6 +97,7 @@ namespace Baku.VMagicMirror
         public void FadeOutWeight(float duration) => SetCoroutine(FadeFingerRate(0.0f, duration));
 
         public bool RightHandPresentationMode { get; set; } = false;
+        public bool RightHandPenTabletMode { get; set; } = false;
 
         public void Initialize(Animator animator)
         {
@@ -322,6 +333,11 @@ namespace Baku.VMagicMirror
                     FixPointingHand(i);
                     continue;
                 }
+                else if (i > 4 && RightHandPenTabletMode)
+                {
+                    FixToPenGripHand(i);
+                    continue;
+                }
 
                 float angle = DefaultBendingAngle;
                 var currentAngle = _holdOperationBendingAngle[i];
@@ -385,9 +401,16 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private void FixPointingHand(int index)
+        //指差し姿勢の手をつくる
+        private void FixPointingHand(int index) => FixToDictionaryBasedHand(index, _fingerIdToPointingAngle, false);
+
+        //ペンを握った状態の手をつくる
+        private void FixToPenGripHand(int index) => FixToDictionaryBasedHand(index, _fingerIdToPenGripAngle, true);
+
+        //Dictoinaryで決め打ちした手の曲げ角度を適用する
+        private void FixToDictionaryBasedHand(int index, Dictionary<int, float[]> anglesDic, bool zRotForThumbProximal)
         {
-            float[] angles = _fingerIdToPointingAngle[index];
+            float[] angles = anglesDic[index];
             Transform[] targets = _fingers[index];
 
             for (int i = 0; i < angles.Length; i++)
@@ -397,10 +420,16 @@ namespace Baku.VMagicMirror
                     continue;
                 }
 
-                //親指だけはy軸で回さないと指がうまく閉じない(※そもそもあまり触らない方がいいという説もある)
+                //親指の先端側の関節はy軸中心で回す。根本はz軸のままにする
                 Vector3 axis = (index == FingerConsts.RightThumb) ?
                     Vector3.up :
                     Vector3.forward;
+
+                //親指の根本については作りたい姿勢によってz回転とy回転が分かれるよ、という話
+                if (index == FingerConsts.RightThumb && i == 2 && zRotForThumbProximal)
+                {
+                    axis = Vector3.forward;
+                }
 
                 targets[i].localRotation = Quaternion.AngleAxis(angles[i], axis);
             }

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -16,7 +15,7 @@ namespace Baku.VMagicMirror
         public IHandDetectResult LeftSideResult => _left;
         public IHandDetectResult RightSideResult => _right;
 
-        public void UpdateHandDetection(Color32[] colors, int width, int height, Rect faceRect)
+        public void UpdateHandDetection(FaceDetectionUpdateStatus status)
         {
             //Do nothing.
         }

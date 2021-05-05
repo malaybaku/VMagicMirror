@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-namespace Baku.VMagicMirror
+namespace Baku.VMagicMirror.IK
 {
     /// <summary>マウス位置を元に、右手のあるべき姿勢を求めるやつ</summary>
-    public class MouseMoveHandIKGenerator : HandIkGeneratorBase
+    /// <remarks>
+    /// マウス位置は右手のみを管理してるのを踏まえて、わかりやすさのためクラス自体でIHandIkStateを実装してます
+    /// </remarks>
+    public class MouseMoveHandIKGenerator : HandIkGeneratorBase, IHandIkState
     {
         //手をあまり厳格にキーボードに沿わせると曲がり過ぎるのでゼロ回転側に寄せるファクター
         private const float WristYawApplyFactor = 0f; //0.5f;
@@ -12,7 +16,28 @@ namespace Baku.VMagicMirror
         
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         private readonly IKDataRecord _blendedRightHand = new IKDataRecord();
-        public IIKGenerator RightHand => _blendedRightHand;
+
+        #region IHandIkState
+
+        public Vector3 Position => _blendedRightHand.Position;
+        public Quaternion Rotation => _blendedRightHand.Rotation;
+        public ReactedHand Hand => ReactedHand.Right;
+        public HandTargetType TargetType => HandTargetType.Mouse;
+        public event Action<IHandIkState> RequestToUse;
+        public void Enter(IHandIkState prevState)
+        {
+            ResetHandDownTimeout(true);
+        }
+
+        public void Quit(IHandIkState nextState)
+        {
+            if (nextState.TargetType != HandTargetType.Keyboard)
+            {
+                Dependency.Reactions.FingerController.ReleaseRightHandTyping();
+            }
+        }
+        
+        #endregion
         
         public float HandToTipLength { get; set; } = 0.12f;
 
@@ -32,7 +57,10 @@ namespace Baku.VMagicMirror
 
         //NOTE: HandIkIntegratorから初期化で入れてもらう
         public AlwaysDownHandIkGenerator DownHand { get; set; }
-        public HandIKIntegrator Integrator { get; set; }
+
+        
+        public override IHandIkState LeftHandState => null;
+        public override IHandIkState RightHandState => this;
 
         /// <summary> マウス入力が一定時間以上ないと立つフラグ </summary>
         public bool IsNoInputTimeOutReached => _noInputCount > HandIKIntegrator.AutoHandDownDuration;
@@ -45,10 +73,44 @@ namespace Baku.VMagicMirror
         //この値で手下げ姿勢と手上げ姿勢をブレンドする。
         private float _handBlendRate = 1f;
 
-        public MouseMoveHandIKGenerator(MonoBehaviour coroutineResponder, TouchPadProvider touchPadProvider)
-            : base(coroutineResponder)
+        public MouseMoveHandIKGenerator(HandIkGeneratorDependency dependency, TouchPadProvider touchPadProvider)
+            : base(dependency)
         {
             _touchPad = touchPadProvider;
+            
+            //読み方はそのままで、タッチパッドを使いたいときマウス移動イベントが届いたらマウスに切り替えたくなる
+            dependency.Events.MoveMouse += _ =>
+            {
+                if (dependency.Config.KeyboardAndMouseMotionMode.Value ==
+                      KeyboardAndMouseMotionModes.KeyboardAndTouchPad)
+                {
+                    RequestToUse?.Invoke(this);
+
+                    if (dependency.Config.RightTarget.Value == HandTargetType.Mouse)
+                    {
+                        dependency.Reactions.ParticleStore.RequestMouseMoveParticle(ReferenceTouchpadPosition);
+                        ResetHandDownTimeout(false);
+                    }
+                }
+            };
+
+            dependency.Events.OnMouseButton += eventName =>
+            {
+                if (dependency.Config.KeyboardAndMouseMotionMode.Value ==
+                    KeyboardAndMouseMotionModes.KeyboardAndTouchPad)
+                {
+                    RequestToUse?.Invoke(this);
+                }
+
+                //マウスはButtonUpでもエフェクトを出す。
+                //ちょっとうるさくなるが、意味的にはMouseのButtonUpはけっこうデカいアクションなので
+                if (dependency.Config.RightTarget.Value == HandTargetType.Mouse)
+                {
+                    dependency.Reactions.FingerController.OnMouseButton(eventName);
+                    dependency.Reactions.ParticleStore.RequestMouseClickParticle();
+                    ResetHandDownTimeout(false);
+                }
+            };
         }
 
         public override void Start()
@@ -101,7 +163,7 @@ namespace Baku.VMagicMirror
                 _noInputCount = 0f;
             }
             
-            if (Integrator.CheckTypingOrMouseHandsCanMoveDown())
+            if (Dependency.Config.CheckKeyboardAndMouseHandsCanMoveDown())
             {
                 _handBlendRate = Mathf.Max(0f, _handBlendRate - HandIKIntegrator.HandDownBlendSpeed * Time.deltaTime);
             }

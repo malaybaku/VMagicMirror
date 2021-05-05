@@ -3,6 +3,8 @@ using RootMotion.FinalIK;
 using UnityEngine;
 using VRM;
 using Zenject;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Baku.VMagicMirror
 {
@@ -17,13 +19,19 @@ namespace Baku.VMagicMirror
         //手のIKよりLookAtのIKをやや前方にずらして見栄えを調整する決め打ちのパラメータ
         private const float ZOffsetOnHeadIk = 0.6f;
 
-        [SerializeField] private float lookAtSpeedFactor = 6.0f;
-        
-        private readonly IKDataRecord _mouseBasedLookAt = new IKDataRecord();
-        public IIKGenerator MouseBasedLookAt => _mouseBasedLookAt;
+        private const float PenTabletLookAtProximalDistance = 0.3f;
 
+        [SerializeField] private HandIKIntegrator handIKIntegrator = null;
+        [SerializeField] private float lookAtSpeedFactor = 6.0f;
+        [SerializeField] private float mouseActionCountMax = 8.0f;
+        [SerializeField] private float penTabletFocusCount = 3.0f;
+        //MouseMoveが呼ばれたらTime.deltaTimeにこの倍率をかけてカウントを増やす
+        [SerializeField] private float mouseMoveIncrementFactor = 4.0f;
+        //MouseButtonがDownで呼ばれたら、この値そのままでカウントを増やす
+        [SerializeField] private float mouseClickIncrementValue = 2.0f;
+
+        private readonly IKDataRecord _mouseBasedLookAt = new IKDataRecord();
         private readonly CameraBasedLookAtIk _camBasedLookAt = new CameraBasedLookAtIk();
-        public IIKGenerator CameraBasedLookAt => _camBasedLookAt;
         
         private LookAtStyles _lookAtStyle = LookAtStyles.MousePointer;
         private Transform _head = null;
@@ -32,20 +40,27 @@ namespace Baku.VMagicMirror
         private Transform _camera = null;
         private Transform _lookAtTarget = null;
         private FaceControlConfiguration _faceControlConfig;
-
+        private PenTabletProvider _penTabletProvider;
+        
         private LookAtIK _lookAtIk = null;
         private VRMLookAtHead _vrmLookAtHead = null;
 
+        private float _mouseActionCount = 0f;
+
+        private HandTargetType RightHandTargetType => handIKIntegrator.RightTargetType.Value;
+        
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
             Camera mainCam,
             IKTargetTransforms ikTargets,
+            PenTabletProvider penTabletProvider,
             FaceControlConfiguration faceControlConfig)
         {
             _camera = mainCam.transform;
             _lookAtTarget = ikTargets.LookAt;
             _faceControlConfig = faceControlConfig;
+            _penTabletProvider = penTabletProvider;
 
             vrmLoadable.VrmLoaded += info =>
             {
@@ -62,10 +77,11 @@ namespace Baku.VMagicMirror
                 _head = null;
             };
         }
-        
-        
-        public void MoveMouse(int x, int y)
+
+        public void OnMouseMove(int x, int y)
         {
+            _mouseActionCount = Mathf.Min(mouseActionCountMax, _mouseActionCount + Time.deltaTime * mouseMoveIncrementFactor);
+            
             //画面中央 = カメラ位置なのでコレで空間的にだいたい正しいハズ
             float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
             float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -1000, 1000) / 1000.0f;
@@ -99,7 +115,17 @@ namespace Baku.VMagicMirror
                 ));
             _mouseBasedLookAt.Position = baseLookAtPosition + depth * camForward;
         }
-        
+
+        public void OnMouseButton(string eventName)
+        {
+            if (eventName == MouseButtonEventNames.LDown ||
+                eventName == MouseButtonEventNames.RDown ||
+                eventName == MouseButtonEventNames.MDown)
+            {
+                _mouseActionCount = Mathf.Min(mouseActionCountMax, _mouseActionCount + mouseClickIncrementValue);
+            }
+        }
+
         public void SetLookAtStyle(string content)
         {
             _lookAtStyle =
@@ -120,22 +146,21 @@ namespace Baku.VMagicMirror
         //NOTE: タイミングがIKの適用前になることに注意: つまりTボーンっぽい状態
         private void Update()
         {
+            _mouseActionCount = Mathf.Max(0f, _mouseActionCount - Time.deltaTime);
             _camBasedLookAt.CheckDepthAndWeight(_head);
 
-            //動かし方が「固定」かそれに準ずる(=外部トラッキングのため暗黙に固定にすべき)状態のとき、LookAtを完全に殺す
-            if (_hasModel && (
-                    _lookAtStyle == LookAtStyles.Fixed ||
-                    _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker
-                    )
-                )
+            //外部トラッキングが有効ならLookAtはなくす。外部トラッキングの精度がよいので。
+            if (_hasModel && _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker)
             {
+                //NOTE: 外部トラッキング + PenTabletのときにLookAtをやるべきかという問題があるが、無視する。
+                //当面はそっちのほうが分かりやすいので
                 _vrmLookAtHead.enabled = false;
                 _lookAtIk.enabled = false;
                 //NOTE: 正面向きに持っていけば安全、という考え方
-                _lookAtTarget.localPosition = _head.position + Vector3.forward * 10.0f;
+                _lookAtTarget.localPosition = _head.position + Vector3.forward * 5.0f;
                 return;
             }
-
+            
             if (_hasModel)
             {
                 _vrmLookAtHead.enabled = true;
@@ -145,8 +170,15 @@ namespace Baku.VMagicMirror
             Vector3 pos = 
                 (_lookAtStyle == LookAtStyles.MousePointer) ? _mouseBasedLookAt.Position :
                 (_lookAtStyle == LookAtStyles.MainCamera) ? _camBasedLookAt.Position :
-                _hasModel ? _head.position + Vector3.forward * 10.0f : 
+                (_hasModel && _lookAtStyle == LookAtStyles.Fixed) ? _head.position + Vector3.forward * 5.0f : 
                 new Vector3(1, 0, 1);
+
+            //TODO: この処理をオンオフできてもいいかも？
+            if (RightHandTargetType == HandTargetType.PenTablet)
+            {
+                float rate = Mathf.Clamp01(_mouseActionCount / penTabletFocusCount);
+                pos = CreatePenTabletLookAt(pos, _penTabletProvider.GetPosFromScreenPoint(), rate);
+            }
             
             _lookAtTarget.localPosition = Vector3.Lerp(
                 _lookAtTarget.localPosition,
@@ -155,7 +187,27 @@ namespace Baku.VMagicMirror
             );
         }
 
-        class CameraBasedLookAtIk : IIKGenerator
+        private Vector3 CreatePenTabletLookAt(Vector3 rawPos, Vector3 penTabletPos, float rate)
+        {
+            //NOTE: rawPosはすごく遠い位置を指定しがちなのでLerpだとうまく行かない。
+
+            rate = 1 - rate;
+
+            //rateが0 - 0.5の間では、ペンタブ付近の決まった距離のなかにLookAtを収める
+            var distanceLimitedResult = penTabletPos + 
+                    (rawPos - penTabletPos).normalized * (PenTabletLookAtProximalDistance * Mathf.Clamp01(rate * 2f));
+            
+            if (rate < 0.5f)
+            {
+                return distanceLimitedResult;
+            }
+            
+            //ペンタブからある程度離れたら二次カーブでLerpする。こうすると0.5f付近で繋がるし、問題も起きにくい…はず 
+            float distantAreaRate = (rate - .5f) * 2;
+            return Vector3.Lerp(distanceLimitedResult, rawPos, distantAreaRate * distantAreaRate);
+        }
+
+        class CameraBasedLookAtIk : IIKData
         {
             public Transform Camera { get; set; }
 

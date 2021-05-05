@@ -1,51 +1,38 @@
-﻿using Deform;
-using DG.Tweening;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(MagnetDeformer))]
-    [RequireComponent(typeof(Renderer))]
-    public class KeyboardVisibility : MonoBehaviour
+    /// <summary>
+    /// キーボードの見える/見えないの制御。
+    /// 普通のMagnetDeformerベースの処理に加えて、プレゼン/ペンタブモードでは右手のキーを非表示にする処理もやる
+    /// </summary>
+    public class KeyboardVisibility : DeviceVisibilityBase
     {
-        [Inject] private DeformableCounter _deformableCounter = null;
-        
-        private MagnetDeformer _deformer = null;
-        private Renderer _renderer = null;
-        private bool _latestVisibility = true;
+        //NOTE: MeshRendererは
+        [SerializeField] private MeshRenderer rightHandMeshRenderer = null;
+        private KeyboardAndMouseMotionModes _motionModes = KeyboardAndMouseMotionModes.KeyboardAndTouchPad;
 
-        public bool IsVisible => _latestVisibility;
-        
-        private void Start()
+        protected override void OnRendererEnableUpdated(bool enable)
         {
-            _deformer = GetComponent<MagnetDeformer>();
-            _renderer = GetComponent<Renderer>();   
+            rightHandMeshRenderer.enabled = enable;
         }
 
-        public void SetVisibility(bool visible)
+        [Inject]
+        public void SetupRightHandVisibility(IMessageReceiver receiver)
         {
-            _latestVisibility = visible;
-            DOTween
-                .To(
-                    () => _deformer.Factor,
-                    v => _deformer.Factor = v,
-                    visible ? 0.0f : 0.5f,
-                    0.5f)
-                .SetEase(Ease.OutCubic)
-                .OnStart(() =>
-                {
-                    _deformableCounter.Increment();
-                    if (visible)
-                    {
-                        _renderer.enabled = true;
-                    }
-                })
-                .OnComplete(() =>
-                {
-                    _renderer.enabled = _latestVisibility;
-                    _deformableCounter.Decrement();
-                });
+            receiver.AssignCommandHandler(
+                VmmCommands.SetKeyboardAndMouseMotionMode,
+                message => SetMotionMode(message.ToInt()));
+        }
+        
+        private void SetMotionMode(int modeIndex)
+        {
+            if (modeIndex >= 0 && modeIndex < (int) KeyboardAndMouseMotionModes.Unknown)
+            {
+                _motionModes = (KeyboardAndMouseMotionModes) modeIndex;
+                rightHandMeshRenderer.gameObject.SetActive(_motionModes == KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
+            }
         }
     }
 }

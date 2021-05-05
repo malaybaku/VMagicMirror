@@ -52,3 +52,4 @@ MonoBehaviour:
   activeButNotTrackedCount: 1
   notTrackedResetSpeedFactor: 3
   trackMinIntervalMillisec: 60
+  trackMinIntervalMillisecOnHighPower: 60

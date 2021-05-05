@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.XR;
 
 //NOTE: 角度について
 //今回は「手のひらがほぼカメラ側を向いてて顔付近にある」というケースのみケアするので、ヒトの自然な姿勢がとーっても限定される。
@@ -8,7 +9,7 @@ using UnityEngine;
 // * 基準からの+X, -X : IKのヨー
 // * 基準からの+Y, -Y : IKのピッチ
 
-namespace Baku.VMagicMirror
+namespace Baku.VMagicMirror.IK
 {
     /// <summary>
     /// 画像処理で得た手の姿勢をキャラのIK情報にしてくれるやつ。
@@ -99,11 +100,8 @@ namespace Baku.VMagicMirror
         private Transform _hips = null;
 
         private readonly IKDataRecord _leftHand = new IKDataRecord();
-        public IIKGenerator LeftHand => _leftHand;
-
         private readonly IKDataRecord _rightHand = new IKDataRecord();
-        public IIKGenerator RightHand => _rightHand;
-
+       
         //ほぼ生の検出位置および姿勢
         private Vector3 _rawLeftHandPos;
         private Quaternion _rawLeftHandRot;
@@ -126,6 +124,11 @@ namespace Baku.VMagicMirror
         private float _leftHandNonTrackCount = 0f;
         private float _rightHandNonTrackCount = 0f;
         
+        private readonly ImageBaseHandIkState _leftHandState;
+        public override IHandIkState LeftHandState => _leftHandState;
+        
+        private readonly ImageBaseHandIkState _rightHandState;
+        public override IHandIkState RightHandState => _rightHandState;
 
         /// <summary>
         /// 左手の手検出データが更新されるとtrueになります。値を読んだらフラグを下げることで、次に検出されるのを待つことができます。
@@ -137,10 +140,65 @@ namespace Baku.VMagicMirror
         /// </summary>
         public bool HasRightHandUpdate { get; set; } = false;
 
+        public ImageBaseHandIkGenerator(
+            HandIkGeneratorDependency dependency,
+            HandTracker handTracker, 
+            ImageBaseHandIkGeneratorSetting setting,
+            IVRMLoadable vrmLoadable)
+            :base(dependency)
+        {
+            _setting = setting;
+            _handTracker = handTracker;
+
+            _leftHandState = new ImageBaseHandIkState(this, ReactedHand.Left);
+            _rightHandState = new ImageBaseHandIkState(this, ReactedHand.Right);
+
+            vrmLoadable.VrmLoaded += info =>
+            {
+                var animator = info.animator;
+            
+                _head = animator.GetBoneTransform(HumanBodyBones.Head);
+                _hips = animator.GetBoneTransform(HumanBodyBones.Hips);
+                var hipsPos = _hips.position;
+
+                var rightUpperArmPos = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
+                var rightWristPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
+
+                _rightHandHipOffsetWhenNotTrack =
+                    rightUpperArmPos
+                    + Quaternion.AngleAxis(-aPoseArmDownAngleDeg, Vector3.forward) * (rightWristPos - rightUpperArmPos)
+                    - hipsPos
+                    + aPoseArmPositionOffset;
+
+                var leftUpperArmPos = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
+                var leftWristPos = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+
+                _leftHandHipOffsetWhenNotTrack =
+                    leftUpperArmPos
+                    + Quaternion.AngleAxis(aPoseArmDownAngleDeg, Vector3.forward) * (leftWristPos - leftUpperArmPos)
+                    - hipsPos
+                    + aPoseArmPositionOffset;
+
+                _rightHandRotWhenNotTrack = Quaternion.Euler(0, 0, -aPoseArmDownAngleDeg);
+                _leftHandRotWhenNotTrack = Quaternion.Euler(0, 0, aPoseArmDownAngleDeg);
+
+                _hasModel = true;
+            };
+            
+            vrmLoadable.VrmDisposing += () =>
+            {
+                _hasModel = false;
+                _head = null;
+                _hips = null;
+            };
+            
+        }
+        
+        
         /// <summary>
         /// 他のIKから画像ベースIKに移動するときの遷移を滑らかにするために、前のIKで使っていた位置情報を使って姿勢を初期化します。
         /// </summary>
-        public void InitializeHandPosture(ReactedHand hand, IIKGenerator src)
+        public void InitializeHandPosture(ReactedHand hand, IIKData src)
         {
             if (src == null)
             {
@@ -231,54 +289,6 @@ namespace Baku.VMagicMirror
                 _nextRightHandShapeCount = 0;
                 _setting.handShapeSetter.SetHandShape(HandShapeSetter.HandTypes.Right, _rightHandShape);
             }
-        }
-
-        public ImageBaseHandIkGenerator(
-            MonoBehaviour coroutineResponder, HandTracker handTracker, ImageBaseHandIkGeneratorSetting setting,
-            IVRMLoadable vrmLoadable)
-            :base(coroutineResponder)
-        {
-            _setting = setting;
-            _handTracker = handTracker;
-
-            vrmLoadable.VrmLoaded += info =>
-            {
-                var animator = info.animator;
-            
-                _head = animator.GetBoneTransform(HumanBodyBones.Head);
-                _hips = animator.GetBoneTransform(HumanBodyBones.Hips);
-                var hipsPos = _hips.position;
-
-                var rightUpperArmPos = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
-                var rightWristPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
-
-                _rightHandHipOffsetWhenNotTrack =
-                    rightUpperArmPos
-                    + Quaternion.AngleAxis(-aPoseArmDownAngleDeg, Vector3.forward) * (rightWristPos - rightUpperArmPos)
-                    - hipsPos
-                    + aPoseArmPositionOffset;
-
-                var leftUpperArmPos = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
-                var leftWristPos = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
-
-                _leftHandHipOffsetWhenNotTrack =
-                    leftUpperArmPos
-                    + Quaternion.AngleAxis(aPoseArmDownAngleDeg, Vector3.forward) * (leftWristPos - leftUpperArmPos)
-                    - hipsPos
-                    + aPoseArmPositionOffset;
-
-                _rightHandRotWhenNotTrack = Quaternion.Euler(0, 0, -aPoseArmDownAngleDeg);
-                _leftHandRotWhenNotTrack = Quaternion.Euler(0, 0, aPoseArmDownAngleDeg);
-
-                _hasModel = true;
-            };
-            
-            vrmLoadable.VrmDisposing += () =>
-            {
-                _hasModel = false;
-                _head = null;
-                _hips = null;
-            };
         }
 
         public override void LateUpdate()
@@ -555,6 +565,36 @@ namespace Baku.VMagicMirror
                     );
             }
         }
-        
+
+        private class ImageBaseHandIkState : IHandIkState
+        {
+            public ImageBaseHandIkState(ImageBaseHandIkGenerator parent, ReactedHand hand)
+            {
+                _parent = parent;
+                Hand = hand;
+                _data = hand == ReactedHand.Right ? _parent._rightHand : _parent._leftHand;
+                
+            }
+
+            private readonly ImageBaseHandIkGenerator _parent;
+            private readonly IIKData _data;
+            
+            public Vector3 Position => _data.Position;
+            public Quaternion Rotation => _data.Rotation;
+            public ReactedHand Hand { get; }
+            public HandTargetType TargetType => HandTargetType.ImageBaseHand;
+            
+            //NOTE: 画像処理の手だけは他と更新条件が違うため、このイベントは発火しない。
+            //代わりにHandIkIntegratorがステートを変えてくれる
+#pragma warning disable CS0067
+            public event Action<IHandIkState> RequestToUse;
+#pragma warning restore CS0067
+
+            public void Enter(IHandIkState prevState) => _parent.InitializeHandPosture(Hand, prevState);
+
+            public void Quit(IHandIkState prevState)
+            {
+            }
+        }
     }
 }

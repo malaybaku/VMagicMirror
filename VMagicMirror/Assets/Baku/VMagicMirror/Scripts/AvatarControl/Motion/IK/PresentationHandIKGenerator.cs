@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Baku.VMagicMirror
+namespace Baku.VMagicMirror.IK
 {
     /// <summary>プレゼンテーション動作時に右手があるべき場所を求めるやつ</summary>
-    public class PresentationHandIKGenerator : HandIkGeneratorBase
+    /// <remarks>
+    /// 右手のみを管理している事を踏まえて、わかりやすさのためクラス自体でIHandIkStateを実装してます
+    /// </remarks>
+    public class PresentationHandIKGenerator : HandIkGeneratorBase, IHandIkState
     {
         private const float PresentationArmRollFixedAngle = 25.0f;
         //シグモイドの最大値: 1.0fより小さくすることで腕がピンと伸びるのを防ぐ
@@ -19,39 +23,53 @@ namespace Baku.VMagicMirror
         private const float SpeedFactor = 12f;
         
         private readonly IKDataRecord _rightHand = new IKDataRecord();
-        public IIKGenerator RightHand => _rightHand;
+        //public IIKData RightHand => _rightHand;
 
-        private readonly IKDataRecord _rightIndex = new IKDataRecord();
-        public IIKGenerator RightIndex => _rightIndex;
+        #region IHandIkState
 
+        public Vector3 Position => _rightHand.Position;
+        public Quaternion Rotation => _rightHand.Rotation;
+        public ReactedHand Hand => ReactedHand.Right;
+        public HandTargetType TargetType => HandTargetType.Presentation;
+        public event Action<IHandIkState> RequestToUse;
+        public void Enter(IHandIkState prevState)
+        {
+            Dependency.Reactions.FingerController.RightHandPresentationMode = true;
+        }
+
+        public void Quit(IHandIkState nextState)
+        {
+            Dependency.Reactions.FingerController.RightHandPresentationMode = false;
+        }
+        
+        #endregion        
+        
         //VRMの肩から手首までの長さ
         private float _lengthFromShoulderToWrist = 0.4f;
-
 
         /// <summary>手首から指先までの距離[m]</summary>
         public float HandToTipLength { get; set; } = 0.12f;
         
         /// <summary>腕がめり込まないための、胴体を円柱とみなした時の半径に相当する値[m]</summary>
         public float PresentationArmRadiusMin { get; set; } = 0.2f;
-
         
         private readonly Camera _camera;
 
         //プレゼンの腕位置をいい感じに計算するために用いる。
-        //TODO: スケール値を廃止するときには肩～右指先までの長さをきっちり使うことになるかも
         private Transform _head = null;
         private Transform _rightShoulder = null;
-
         
         // ソフト起動後に一度でもIK位置が設定されたかどうか
         private bool _waitFirstUpdate = true;
 
         private bool _hasModel = false;
         private Vector3 _targetPosition = Vector3.zero;
-        private Vector3 _rightIndexTargetPosition = Vector3.zero;
         
-        public PresentationHandIKGenerator(MonoBehaviour coroutineResponder, IVRMLoadable vrmLoadable, Camera cam)
-            :base(coroutineResponder)
+        public override IHandIkState LeftHandState => null;
+        public override IHandIkState RightHandState => this;
+        
+        public PresentationHandIKGenerator(HandIkGeneratorDependency dependency, IVRMLoadable vrmLoadable, Camera cam)
+            :base(dependency)
         {
             _camera = cam;
             vrmLoadable.VrmLoaded += info =>
@@ -88,9 +106,19 @@ namespace Baku.VMagicMirror
                 _head = null;
                 _rightShoulder = null;
             };
+
+            dependency.Events.MoveMouse += pos =>
+            {
+                MoveMouse(pos);
+                if (dependency.Config.KeyboardAndMouseMotionMode.Value ==
+                    KeyboardAndMouseMotionModes.Presentation)
+                {
+                    RequestToUse?.Invoke(this);
+                }
+            };
         }
 
-        public void MoveMouse(Vector3 mousePosition)
+        private void MoveMouse(Vector3 mousePosition)
         {
             if (!_hasModel)
             {
@@ -151,8 +179,6 @@ namespace Baku.VMagicMirror
             }
 
             _targetPosition = targetPosition;
-            //手の長さぶんだけ、人差し指が伸びるように仕向ける(ちゃんと動くか分かんないが)
-            _rightIndexTargetPosition = fingerTargetPosition;
         }
         
         public override void Update()
@@ -169,14 +195,7 @@ namespace Baku.VMagicMirror
                 _targetPosition,
                 lerpFactor
                 );
-
-            //右人差し指はPositionだけで十分: RotationWeightを使わない想定のため
-            _rightIndex.Position = Vector3.Lerp(
-                _rightIndex.Position,
-                _rightIndexTargetPosition,
-                SpeedFactor * Time.deltaTime
-                );
-
+            
             //NOTE: 追加で回しているのは手の甲を内側にひねる成分(プレゼン的な動作として見栄えがよい…はず…)
             _rightHand.Rotation = Quaternion.FromToRotation(
                 Vector3.right,
@@ -188,10 +207,7 @@ namespace Baku.VMagicMirror
         }
         
         //普通のシグモイド関数
-        private static float Sigmoid(float x)
-        {
-            return SigmoidMax / (1.0f + Mathf.Exp(-(x - SigmoidSlide) * SigmoidGain));
-        }
-
+        private static float Sigmoid(float x) 
+            => SigmoidMax / (1.0f + Mathf.Exp(-(x - SigmoidSlide) * SigmoidGain));
     }
 }

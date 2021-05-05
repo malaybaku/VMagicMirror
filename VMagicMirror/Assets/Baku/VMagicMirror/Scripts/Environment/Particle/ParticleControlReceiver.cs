@@ -19,6 +19,19 @@
                 VmmCommands.MidiControllerVisibility,
                 message => SetMidiVisibility(message.ToBoolean())
                 );
+            receiver.AssignCommandHandler(
+                VmmCommands.GamepadVisibility,
+                v =>
+                {
+                    _gamepadDeviceVisible = v.ToBoolean();
+                    UpdateParticleIndex();
+                });
+            receiver.AssignCommandHandler(
+                VmmCommands.SetGamepadMotionMode, v =>
+                {
+                    _gamepadMotionMode = (GamepadMotionModes) v.ToInt();
+                    UpdateParticleIndex();
+                });
         }
 
         private readonly ParticleStore _particleStore = null;
@@ -26,6 +39,9 @@
         private int _selectedIndex = -1;
         private bool _keyboardIsVisible = true;
         private bool _midiVisible = false;
+
+        private bool _gamepadDeviceVisible = false;
+        private GamepadMotionModes _gamepadMotionMode = GamepadMotionModes.Gamepad;
         
         private void SetParticleType(int typeIndex)
         {
@@ -49,7 +65,10 @@
         {
             _particleStore.SetParticleIndex(
                 _keyboardIsVisible ? _selectedIndex : InvalidTypingEffectIndex,
-                _midiVisible ? _selectedIndex : InvalidTypingEffectIndex
+                _midiVisible ? _selectedIndex : InvalidTypingEffectIndex,
+                _gamepadDeviceVisible && _gamepadMotionMode == GamepadMotionModes.ArcadeStick 
+                    ? _selectedIndex
+                    : InvalidTypingEffectIndex
                 );
         }
 

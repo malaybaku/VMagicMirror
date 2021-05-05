@@ -17,60 +17,22 @@ namespace Baku.VMagicMirror.ExternalTracker
     /// </remarks>
     public class ExternalTrackerPerfectSync : MonoBehaviour
     {
-        [Tooltip("VRoidデフォルト設定が使いたいとき、元アバターのClipとこのAvatarのClipを融合させる")]
-        [SerializeField] private BlendShapeAvatar vroidDefaultBlendShapeAvatar = null;
-
         private ExternalTrackerDataSource _externalTracker = null;
-        private BlendShapeInitializer _blendShapeInitializer = null;
         private FaceControlConfiguration _faceControlConfig = null;
         private IMessageSender _sender = null;
-        //VRoid向けのデフォルト設定に入ってるクリップのうち、パーフェクトシンクの分だけ抜き出したもの
-        private List<BlendShapeClip> _vroidDefaultClips = null;
 
-        private VRMBlendShapeProxy _blendShape = null;
         //モデル本来のクリップ一覧
         private List<BlendShapeClip> _modelBaseClips = null;
-        //モデル本来のクリップにVRoidのデフォルト設定を書き込んだクリップ一覧
-        private List<BlendShapeClip> _modelClipsWithVRoidSetting = null;
         
         private bool _hasModel = false;
 
         /// <summary> 口周りのクリップもパーフェクトシンクのを適用するかどうか。デフォルトではtrue </summary>
         public bool PreferWriteMouthBlendShape { get; private set; }= true;
-        
-        /// <summary> VRoidデフォルトの設定を使った場合にモデルに上乗せされるクリップのキー一覧 </summary>
-        public BlendShapeKey[] ProgramaticallyAddedVRoidClipKeys { get; private set; } = null;
 
         /// <summary>  </summary>
         public BlendShapeKey[] NonPerfectSyncKeys { get; private set; } = null;
 
-        private bool _isActive = false;
-        public bool IsActive
-        {
-            get => _isActive;
-            set
-            {
-                if (_isActive != value)
-                {
-                    _isActive = value;
-                    RefreshClips();
-                }
-            }
-        }
-        
-        private bool _useVRoidSetting = false;
-        public bool UseVRoidDefaultSetting
-        {
-            get => _useVRoidSetting;
-            set
-            {  
-                if (_useVRoidSetting != value)
-                {
-                    _useVRoidSetting = value;
-                    RefreshClips();
-                }
-            } 
-        }
+        public bool IsActive { get; private set; }
 
         [Inject]
         public void Initialize(
@@ -78,41 +40,26 @@ namespace Baku.VMagicMirror.ExternalTracker
             IMessageSender sender,
             IVRMLoadable vrmLoadable,
             ExternalTrackerDataSource externalTracker,
-            BlendShapeInitializer blendShapeInitializer,
             FaceControlConfiguration faceControlConfig
             )
         {
             _sender = sender;
             _externalTracker = externalTracker;
-            _blendShapeInitializer = blendShapeInitializer;
             _faceControlConfig = faceControlConfig;
 
             vrmLoadable.VrmLoaded += info =>
             {
-                _blendShape = info.blendShape;
                 //参照じゃなくて値コピーしとくことに注意(なにかと安全なので)
                 _modelBaseClips = info.blendShape.BlendShapeAvatar.Clips.ToList();
-                _modelClipsWithVRoidSetting = CreateClipsWithVRoidDefault();
-                ProgramaticallyAddedVRoidClipKeys = LoadAddedClipKeys();
                 NonPerfectSyncKeys = LoadNonPerfectSyncKeys();
                 _hasModel = true;
                 ParseClipCompletenessToSendMessage();
             };
 
-            vrmLoadable.PostVrmLoaded += info =>
-            {
-                if (IsActive && UseVRoidDefaultSetting)
-                {
-                    RefreshClips();
-                }
-            };
-
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
-                _blendShape = null;
                 _modelBaseClips = null;
-                _modelClipsWithVRoidSetting = null;
             };
             
             receiver.AssignCommandHandler(
@@ -124,26 +71,9 @@ namespace Baku.VMagicMirror.ExternalTracker
                     _faceControlConfig.ShouldStopEyeDownOnBlink = IsActive;
                 });
             receiver.AssignCommandHandler(
-                VmmCommands.ExTrackerUseVRoidDefaultForPerfectSync,
-                command => UseVRoidDefaultSetting = command.ToBoolean()
-                );
-            receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerEnableLipSync,
                 message => PreferWriteMouthBlendShape = message.ToBoolean()
             );
-
-            //VRoidのデフォルト設定クリップにはAIUEOとかのクリップも入っちゃってるので、
-            //それを取り除き、パーフェクトシンク用のだけ残す
-            var perfectSyncKeys = Keys.PerfectSyncKeys;
-            _vroidDefaultClips = vroidDefaultBlendShapeAvatar.Clips
-                .Where(c =>
-                {
-                    var key = BlendShapeKey.CreateFromClip(c);
-                    return
-                        c.Preset == BlendShapePreset.Unknown &&
-                        perfectSyncKeys.Any(k => k.Name == key.Name && k.Preset == key.Preset);
-                })
-                .ToList();
         }
 
         public bool IsReadyToAccumulate => _hasModel && IsActive && _externalTracker.Connected;
@@ -332,31 +262,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
         }
 
-        
-        private void RefreshClips()
-        {
-            if (!_hasModel)
-            {
-                return;
-            }
-            
-            //差し替え前後で表情が崩れないよう完全にリセット
-            _blendShape.Apply();
-            _blendShapeInitializer.InitializeBlendShapes();
-            _blendShape.Apply();
-
-            _blendShape.BlendShapeAvatar.Clips = IsActive && UseVRoidDefaultSetting
-                ? _modelClipsWithVRoidSetting.ToList()
-                : _modelBaseClips.ToList();
-
-            //BlendShapeInitializerは切り替わったあとのClip一覧を理解しているべき。
-            //そうじゃないとFaceSwitchとかWord to Motionとの組み合わせで破綻するため。
-            _blendShapeInitializer.ReloadClips();
-            
-            //TODO: このリロードの実装のためにUniVRMを書き換えているが、本当は書き換えたくない…
-            _blendShape.ReloadBlendShape();
-        }
-        
         private void ParseClipCompletenessToSendMessage()
         {
             //やること: パーフェクトシンク用に定義されていてほしいにも関わらず、定義が漏れたクリップがないかチェックする。
@@ -379,31 +284,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
                 
         }
-        
-        private List<BlendShapeClip> CreateClipsWithVRoidDefault()
-        {
-            var overwriteClipKeys = Keys.PerfectSyncKeys;
-            return _modelBaseClips
-                .Where(c =>
-                {
-                    var key = BlendShapeKey.CreateFromClip(c);
-                    return !overwriteClipKeys.Contains(key);
-                })
-                .Concat(_vroidDefaultClips)
-                .ToList();
-        }
-
-        private BlendShapeKey[] LoadAddedClipKeys()
-        {
-            var baseKeys = _modelBaseClips
-                .Select(BlendShapeKey.CreateFromClip)
-                .ToArray();
-            return _modelClipsWithVRoidSetting
-                .Select(BlendShapeKey.CreateFromClip)
-                .Where(key => !baseKeys.Any(k => k.Preset == key.Preset && k.Name == key.Name))
-                .ToArray();
-        }
-
+    
         private BlendShapeKey[] LoadNonPerfectSyncKeys()
         {
             var perfectSyncKeys = Keys.PerfectSyncKeys;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.IK;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -28,13 +29,13 @@ namespace Baku.VMagicMirror
         {
             _gamePad = gamePad;
             receiver.AssignCommandHandler(
-                VmmCommands.EnableHidArmMotion,
-                message => handIkIntegrator.EnableHidArmMotion = message.ToBoolean()
-                );
-            receiver.AssignCommandHandler(
                 VmmCommands.EnableNoHandTrackMode,
-                message => handIkIntegrator.AlwaysHandDownMode = message.ToBoolean()
-                );
+                message =>
+                {
+                    var isHandDown = message.ToBoolean();
+                    handIkIntegrator.AlwaysHandDown.Value = isHandDown;
+                    gamePadBasedBodyLean.AlwaysHandDown = isHandDown;
+                });
             receiver.AssignCommandHandler(
                 VmmCommands.EnableTypingHandDownTimeout,
                 message => handIkIntegrator.EnableHandDownTimeout = message.ToBoolean()
@@ -50,10 +51,6 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(
                 VmmCommands.HandYOffsetAfterKeyDown,
                 message => SetHandYOffsetAfterKeyDown(message.ParseAsCentimeter())
-                );
-            receiver.AssignCommandHandler(
-                VmmCommands.EnablePresenterMotion,
-                message => handIkIntegrator.EnablePresentationMode = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.PresentationArmRadiusMin,
@@ -97,14 +94,32 @@ namespace Baku.VMagicMirror
                 VmmCommands.SetDeviceTypeToStartWordToMotion,
                 message => SetDeviceTypeForWordToMotion(message.ToInt())
                 );
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.SetGamepadMotionMode,
+                v =>
+                {
+                    gamePadBasedBodyLean.SetGamepadMotionMode(v.ToInt());
+                    handIkIntegrator.SetGamepadMotionMode(v.ToInt());
+                });
+
+            receiver.AssignCommandHandler(
+                VmmCommands.SetKeyboardAndMouseMotionMode,
+                v => handIkIntegrator.SetKeyboardAndMouseMotionMode(v.ToInt())
+                ); 
+            
         }
 
         private void SetDeviceTypeForWordToMotion(int deviceType)
         {
             gamePadBasedBodyLean.UseGamepadForWordToMotion = (deviceType == DeviceTypeGamepad);
-            handIkIntegrator.UseGamepadForWordToMotion = (deviceType == DeviceTypeGamepad);
-            handIkIntegrator.UseKeyboardForWordToMotion = (deviceType == DeviceTypeKeyboardTenKey);
-            handIkIntegrator.UseMidiControllerForWordToMotion = (deviceType == DeviceTypeMidiController);
+
+            handIkIntegrator.WordToMotionDevice.Value = 
+                (deviceType == DeviceTypeKeyboardWord) ? WordToMotionDeviceAssign.KeyboardWord :
+                (deviceType == DeviceTypeGamepad) ? WordToMotionDeviceAssign.Gamepad :
+                (deviceType == DeviceTypeKeyboardTenKey) ? WordToMotionDeviceAssign.KeyboardNumber :
+                (deviceType == DeviceTypeMidiController) ? WordToMotionDeviceAssign.MidiController :
+                WordToMotionDeviceAssign.None;
         }
 
         //以下については適用先が1つじゃないことに注意
@@ -119,9 +134,7 @@ namespace Baku.VMagicMirror
         
         private void SetHandYOffsetBasic(float offset)
         {
-            handIkIntegrator.Typing.YOffsetAlways = offset;
-            handIkIntegrator.MouseMove.YOffset = offset;
-            handIkIntegrator.MidiHand.HandOffsetAlways = offset;
+            handIkIntegrator.YOffsetAlways = offset;
         }
 
         private void SetHandYOffsetAfterKeyDown(float offset)
@@ -129,5 +142,39 @@ namespace Baku.VMagicMirror
             handIkIntegrator.Typing.YOffsetAfterKeyDown = offset;
             handIkIntegrator.MidiHand.HandOffsetAfterKeyDown = offset;
         }
+    }
+    
+    /// <summary>
+    /// ゲームパッド由来のモーションをどういう見た目で反映するか、というオプション。
+    /// </summary>
+    /// <remarks>
+    /// どれを選んでいるにせよ、Word to Motionをゲームパッドでやっている間は処理が止まるなどの基本的な特徴は共通
+    /// </remarks>
+    public enum GamepadMotionModes
+    {
+        /// <summary> 普通のゲームパッド </summary>
+        Gamepad = 0,
+        /// <summary> アケコン </summary>
+        ArcadeStick = 1,
+        /// <summary> 不明なため未サポート </summary>
+        Unknown = 3,
+        // /// <summary> ガンコン </summary>
+        // GunController = 2,
+        // /// <summary> 車のハンドルっぽいやつ </summary>
+        // CarController = 3,
+    }
+
+    public enum KeyboardAndMouseMotionModes
+    {
+        /// <summary> 無反応 </summary>
+        None = -1,
+        /// <summary> デフォルトのキーボード+タッチパッド </summary>
+        KeyboardAndTouchPad = 0,
+        /// <summary> 右手はプレゼン指差し + 左手でキーボード </summary>
+        Presentation = 1,
+        /// <summary> ペンタブ + 左手は左手デバイスっぽい何か </summary>
+        PenTablet = 2,
+        /// <summary> 不明なため未サポート </summary>
+        Unknown,
     }
 }

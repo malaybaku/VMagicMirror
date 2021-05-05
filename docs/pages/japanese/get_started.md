@@ -28,6 +28,8 @@ permalink: /get_started
 ### 1. 起動してキャラクターを表示する
 {: .doc-sec1 }
 
+zipファイルを解凍し、適当なフォルダに配置します。
+
 `VMagicMirror.exe`を起動すると、GUIがある「コントロールパネル」と、キャラクターが映る「キャラクター表示ウィンドウ」が立ち上がります。
 
 コントロールパネルかキャラクター表示ウィンドウの一方を閉じると、もう片方の画面も閉じて`VMagicMirror`が終了します。コントロールパネルが邪魔な場合、最小化しておきます。
@@ -49,6 +51,10 @@ zipファイルを右クリックして`プロパティ`を選び、`セキュ�
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_005_before_unzip.jpg" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
 </div>
+
+また、zipの解凍先はユーザーが使用する通常のフォルダ(`C:\`やマイドキュメントのフォルダなど)を使用します。
+
+`Program Files`などの特殊なフォルダは避けて下さい。
 
 </div>
 
@@ -143,7 +149,7 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 - `マイク感度[dB]`: マイク入力が小さい場合にプラスの値を指定することで、リップシンクが正しく動作するようになります。`音量をチェック`を使って適正な値を確認して下さい。
 - `音量をチェック`: オンにするとマイク音量バーが表示されます。喋っている間はほぼ緑色で、ときどき赤色になるのが適正な音量です。
 - `顔をトラッキング`: ウェブカメラを選択することで、首の動作を反映します。
-- `高解像度モード`: CPU負荷が情報する代わり、ややトラッキングの反応速度が向上します。v1.5.0時点ではベータ版の機能です。
+- `高解像度モード`: CPU負荷が上昇する代わり、ややトラッキングの性能が向上します。v1.7.0以降で正式版として使用できます。
 - `顔とセットで手もトラッキング`: ウェブカメラによる簡易的なハンドトラッキングを有効にします。
 
 </div>
@@ -177,22 +183,19 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 </div>
 
 
-#### 2.3. Word To Motion
+#### 2.3. モーション
 {: .doc-sec2 }
 
-`Word To Motion`はキャラクターの表情をコントロールできる機能です。
+アバターの動き方を設定します。
+
+キーボードやマウスの操作時、およびゲームパッド操作時の動き方を選択できます。
+
+また`つねに手下げモード`チェックをオンにすると、キーボード入力等への反応を停止させ、手がつねに下がった姿勢にできます。`つねに手下げモード`が有効なとき、体の動きがやや大きくなります。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_105_word_to_motion.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_210_motion_modes.jpg" customclass="col s12 m4 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_220_motion_modes_hand_down.jpg" customclass="col s12 m4 l4" imgclass="fit-doc-img" %}
 </div>
-
-デフォルト設定の場合、キーボードで"joy"とタイピングするとキャラクターの表情が変化します。
-
-それ以外でも、`デバイスの割り当て`で`ゲームパッド`を選んでA,B,X,Yボタンを押したり、`キーボード (数字の0-8)`を選んで数字キーの1,2,3,4を押したりしても表情が変化します。
-
-詳しくは[Docs](./docs)の[Word To Motion](./docs/expressions)を参照下さい。
-
-とくに`デバイスの割り当て`で`ゲームパッド`や`MIDIコントローラ`を選ぶことで、キャラクターの動作に反映させずに表情を切り替えられます。
 
 
 #### 2.4. 表示
@@ -200,7 +203,7 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 
 `表示`ではキャラクター以外のデバイス表示やエフェクトのオン・オフを切り替えます。
 
-とくにキーボードを表示しているとき、`タイピング時のエフェクト`で`None`以外を選ぶとタイピング時にエフェクトが表示されます。
+とくにキーボード等を表示しているとき、`タイピング時のエフェクト`で`None`以外を選ぶとタイピング時にエフェクトが表示されます。
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_125_view_typing_effect_example.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
@@ -231,8 +234,6 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 - `中ホイール`: カメラを前後に移動します。
 
 </div>
-
-調整が終わったら`背景を透過`をオンに、`フリーカメラモード`をオフに戻します。
 
 キャラクターを見失った場合や始めからやり直す場合、`位置をリセット`ボタンで初期状態に戻します。
 
@@ -287,22 +288,23 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 
 レイアウトが極端に崩れてしまった場合、`リセット`で標準的なレイアウトに戻します。
 
-#### 2.7. モーション
+#### 2.7. Word To Motion
 {: .doc-sec2 }
 
-`プレゼン風に右手を動かす`のチェックをオンにしてマウスを動かすと、キャラクターが右手でマウスポインタの方向を指し示します。
+`Word To Motion`はキャラクターの表情をコントロールできる機能です。
 
 <div class="row">
-{% include docimg.html file="./images/get_started/img00_150_presentation_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/get_started/img00_105_word_to_motion.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-このスタイルは解説動画やプレゼンテーションで`VMagicMirror`を使う際に便利です。詳しくは[Tips: プレゼンテーションでVMagicMirrorを使う](./tips/presentation)もあわせてご覧下さい。
+デフォルト設定の場合、キーボードで"joy"とタイピングするとキャラクターの表情が変化します。
 
-`つねに手下げモード`チェックをオンにすると、手が常に下がった姿勢で使用できます。この状態ではビルトインモーション(手を振る動作など)を除き、プレゼンテーションの手の動作なども無効になります。また、このモードではキャラクターの体の移動幅が大きくなります。
+それ以外でも、`デバイスの割り当て`で`ゲームパッド`を選んでA,B,X,Yボタンを押したり、`キーボード (数字の0-8)`を選んで数字キーの1,2,3,4を押したりしても表情が変化します。
 
-<div class="row">
-{% include docimg.html file="./images/get_started/img00_155_hand_down_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
-</div>
+詳しくは[Docs](./docs)の[Word To Motion](./docs/expressions)を参照下さい。
+
+とくに`デバイスの割り当て`で`ゲームパッド`や`MIDIコントローラ`を選ぶことで、キャラクターの動作に反映させずに表情を切り替えられます。
+
 
 ### 3. もっと細かく調整したい場合は
 {: .doc-sec1 }

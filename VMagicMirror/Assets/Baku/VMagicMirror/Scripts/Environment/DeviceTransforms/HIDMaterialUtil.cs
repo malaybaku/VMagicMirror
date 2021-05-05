@@ -18,6 +18,10 @@ namespace Baku.VMagicMirror
         private Material _midiNoteMaterial;
         private Material _midiKnobMaterial;
 
+        private Material _penTabletMaterial;
+        private Material _penMaterial;
+        private Material _arcadeStickMaterial;
+
         public Material GetKeyMaterial()
             => _keyMaterial ?? (_keyMaterial = LoadMaterial(
                    "key.png", "Key", "Key"));
@@ -41,7 +45,19 @@ namespace Baku.VMagicMirror
         public Material GetMidiKnobMaterial()
             => _midiKnobMaterial ?? (_midiKnobMaterial = LoadMaterial(
                    "midi_knob.png", "MidiKnob", "MidiKnob"));
-        
+
+        //NOTE: ペンタブ/アケコンはデフォルトのテクスチャを使いまわしてることに注意。
+        public Material GetPenTabletMaterial()
+            => _penTabletMaterial ?? (_penTabletMaterial = LoadMaterial(
+                "pen_tablet.png", "PenTablet", "Pad"));
+        public Material GetPenMaterial()
+            => _penMaterial ?? (_penMaterial = LoadMaterial(
+                "pen.png", "Pen", "Pen"));
+
+        public Material GetArcadeStickMaterial()
+            => _arcadeStickMaterial ?? (_arcadeStickMaterial = LoadMaterial(
+                "arcade_stick.png", "ArcadeStickItem", "Key"));
+
         
         private Material LoadMaterial(string textureFileName, string materialName, string defaultTextureName)
         {
@@ -57,7 +73,7 @@ namespace Baku.VMagicMirror
                     texture.Apply(false, true);
                     result.mainTexture = texture;
                 }
-                else
+                else if (!string.IsNullOrEmpty(defaultTextureName))
                 {
                     result.mainTexture = Resources.Load<Texture2D>("Textures/" + defaultTextureName);
                 }

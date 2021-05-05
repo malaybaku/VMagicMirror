@@ -239,7 +239,6 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_130_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_140_after_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 また、`クイックセーブ`ボタンで現在の視点を保存したり、`クイックロード`の対応するボタンでロードしたりできます。

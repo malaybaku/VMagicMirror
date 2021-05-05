@@ -127,6 +127,9 @@ Open iOS setting and find iFacialMocap from app list.
 
 Check `Local Network` is permitted. If not permitted, please turn on. Then, quit the app and start again.
 
+If the issue continues, please try rebooting iOS device, and check the latest version of iFacialMocap is installed.
+
+
 #### Q4. Head moves, but face expression does not change
 {: .doc-sec2 }
 

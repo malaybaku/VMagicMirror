@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Deform;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -11,11 +12,17 @@ namespace Baku.VMagicMirror
     {
         //NOTE: MeshRendererは
         [SerializeField] private MeshRenderer rightHandMeshRenderer = null;
+        [SerializeField] private MagnetDeformer rightHandMeshMagnetDeformer = null;
         private KeyboardAndMouseMotionModes _motionModes = KeyboardAndMouseMotionModes.KeyboardAndTouchPad;
 
         protected override void OnRendererEnableUpdated(bool enable)
         {
             rightHandMeshRenderer.enabled = enable;
+        }
+
+        protected override void OnSetMagnetDeformerValue(float v)
+        {
+            rightHandMeshMagnetDeformer.Factor = v;
         }
 
         [Inject]

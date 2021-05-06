@@ -35,6 +35,15 @@ namespace Baku.VMagicMirror
             {
                 deformable.AddDeformer(_deformer);
             }
+            
+            //NOTE: 1フレーム目のRenderの時点でMIDIコンを非表示にするため、直接Rendererを切る
+            _renderer.enabled = false;
+            foreach (var knob in _knobRenderers)
+            {
+                knob.enabled = false;
+            }
+            
+            //Deformerのアニメーションを効かせるため、こっちはこっちでやる
             SetVisibility(false);
         }
 

@@ -16,6 +16,11 @@ namespace Baku.VMagicMirror
         private bool _latestVisibility = true;
         public bool IsVisible => _latestVisibility;
 
+        /// <summary>
+        /// <see cref="OnStart"/>以降で参照可能な、メインのレンダラーを取得します。
+        /// </summary>
+        protected Renderer MainRenderer => _renderer;
+
         private void Start()
         {
             _deformer = GetComponent<MagnetDeformer>();

@@ -11,6 +11,15 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v1.7.0a
+{: .doc-sec2 }
+
+2021/05/07
+
+* Fix: In v1.7.0, Right side of the keyboard was not animated when visibility changed.
+* Fix: Pen tablet and MIDI controller was visible just after the app started, against their default visibility.
+* Add: [Change Device Textures](./tips/change_textures) tips link, in setting window `Layout` tab, 
+
 #### v1.7.0
 {: .doc-sec2 }
 

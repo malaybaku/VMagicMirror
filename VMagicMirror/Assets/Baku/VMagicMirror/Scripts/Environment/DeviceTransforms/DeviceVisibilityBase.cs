@@ -16,6 +16,11 @@ namespace Baku.VMagicMirror
         private bool _latestVisibility = true;
         public bool IsVisible => _latestVisibility;
 
+        /// <summary>
+        /// <see cref="OnStart"/>以降で参照可能な、メインのレンダラーを取得します。
+        /// </summary>
+        protected Renderer MainRenderer => _renderer;
+
         private void Start()
         {
             _deformer = GetComponent<MagnetDeformer>();
@@ -39,13 +44,25 @@ namespace Baku.VMagicMirror
         {
         }
 
+        /// <summary>
+        /// Deformerの値をDOTweenで更新しているとき呼ばれます。0-1の範囲の値で、0は表示、1は非表示です。
+        /// </summary>
+        /// <param name="v"></param>
+        protected virtual void OnSetMagnetDeformerValue(float v)
+        {
+        }
+
         public void SetVisibility(bool visible)
         {
             _latestVisibility = visible;
             DOTween
                 .To(
                     () => _deformer.Factor, 
-                    v => _deformer.Factor = v, 
+                    v =>
+                    {
+                        _deformer.Factor = v;
+                        OnSetMagnetDeformerValue(v);
+                    }, 
                     visible ? 0.0f : 1.0f, 
                     0.5f)
                 .SetEase(Ease.OutCubic)

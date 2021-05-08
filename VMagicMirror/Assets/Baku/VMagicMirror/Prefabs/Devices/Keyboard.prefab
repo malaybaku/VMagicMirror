@@ -184,8 +184,6 @@ MonoBehaviour:
   deformerElements:
   - component: {fileID: 3905114142533524313}
     active: 1
-  - component: {fileID: 7101327344086615180}
-    active: 1
   customBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
@@ -202,6 +200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rightHandMeshRenderer: {fileID: 8836747988117461312}
+  rightHandMeshMagnetDeformer: {fileID: 7101327344086615180}
 --- !u!1 &2203339930315778652
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,6 +213,7 @@ GameObject:
   - component: {fileID: 3247404649506311938}
   - component: {fileID: 8836747988117461312}
   - component: {fileID: 7101327344086615180}
+  - component: {fileID: 7167361394568199743}
   m_Layer: 0
   m_Name: Keyboard_RightSide
   m_TagString: Untagged
@@ -298,3 +298,33 @@ MonoBehaviour:
   factor: 0
   falloff: 0.5
   center: {fileID: 0}
+--- !u!114 &7167361394568199743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2203339930315778652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 0}
+    Target:
+      meshFilter: {fileID: 3247404649506311938}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 0
+  deformerElements:
+  - component: {fileID: 7101327344086615180}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}

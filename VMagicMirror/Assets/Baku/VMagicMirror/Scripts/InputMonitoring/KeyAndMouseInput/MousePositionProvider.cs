@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -12,16 +12,21 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(RawInputChecker))]
     public class MousePositionProvider : MonoBehaviour
     {
+        //1秒あたりにポインタが移動できる量の上限: 画面の対角線のだいたい5倍くらい
+        private const float MaxMouseSpeedPerSec = 7f;
+        
         [Tooltip("差分値を徐々にゼロ方向に近づけていく係数")]
         [SerializeField] private float diffValueDiminishRate = 2f;
 
         [Tooltip("端末のスクリーンサイズをこの秒数ごとにチェックする")]
-        [SerializeField] private float monitorLayoutRefreshInterval = 2f;
+        [SerializeField] private float monitorLayoutRefreshInterval = 10f;
 
         /// <summary>
         /// _x, _yを対スクリーン比率で[-0.5, 0.5]の区間に収まる値になおしたもの
         /// </summary>
         public Vector2 NormalizedCursorPosition { get; private set; }
+
+        private Vector2 _rawNormalizedPosition;
         
         private RawInputChecker _rawMouseMoveChecker = null;
         private Vector2Int _prevCursosPos;
@@ -32,6 +37,8 @@ namespace Baku.VMagicMirror
         private float _monitorWidthInv = 1;
         private float _monitorHeightInv = 1;
         private float _monitorLayoutRefreshCount = -1f;
+        //NOTE: NativeMethod側のリストからコピーした値を入れる
+        private readonly List<NativeMethods.RECT> _monitorRects = new List<NativeMethods.RECT>(8);
         
         //絶対位置に対して「いやユーザーはこのくらいマウス動かしてるが？」という積分値ベースの差分。徐々に減衰させて用いる。
         private float _dx = 0;
@@ -41,13 +48,30 @@ namespace Baku.VMagicMirror
         private int _x = 0;
         private int _y = 0;
 
+
         private void Start()
         {
             _rawMouseMoveChecker = GetComponent<RawInputChecker>();
             _prevCursosPos = NativeMethods.GetWindowsMousePosition();
+            RefreshMonitorRects();
         }
 
         private void Update()
+        {
+            UpdateRawPosition();
+            var distanceMax = MaxMouseSpeedPerSec * Time.deltaTime;
+            if (Vector2.Distance(_rawNormalizedPosition, NormalizedCursorPosition) < distanceMax)
+            {
+                NormalizedCursorPosition = _rawNormalizedPosition;
+            }
+            else
+            {
+                NormalizedCursorPosition +=
+                    (_rawNormalizedPosition - NormalizedCursorPosition).normalized * distanceMax;
+            }
+        }
+
+        private void UpdateRawPosition()
         {
             (int dx, int dy) = _rawMouseMoveChecker.GetAndReset();
             var p = NativeMethods.GetWindowsMousePosition();
@@ -83,7 +107,7 @@ namespace Baku.VMagicMirror
             int x = (int)(p.x + _dx);
             int y = (int)(p.y + _dy);
 
-            RefreshMonitorArea();
+            RefreshMonitorRects();
 
             //カーソルが動いてないときは放置
             if (_x == x && _y == y)
@@ -93,28 +117,47 @@ namespace Baku.VMagicMirror
 
             _x = x;
             _y = y;
+            //NOTE: モニターの判別には生のカーソル位置を使う。
+            //dx/dyの影響でモニター外の座標を見に行っちゃうのを防ぐのが狙い
+            FindCursorIncludedMonitor(p.x, p.y);
 
             //NOTE: 右方向を+X, 上方向を+Y, 値域を(-0.5, 0.5)にするための変形をやって完成
-            NormalizedCursorPosition = new Vector2(
+            _rawNormalizedPosition = new Vector2(
                 Mathf.Clamp((_x - _monitorLeft) * _monitorWidthInv - 0.5f, -0.5f, 0.5f),
                 Mathf.Clamp(0.5f - (_y - _monitorTop) * _monitorHeightInv, -0.5f, 0.5f)
                 );           
         }
 
-        private void RefreshMonitorArea()
+        private void RefreshMonitorRects()
         {
             _monitorLayoutRefreshCount -= Time.deltaTime;
             if (_monitorLayoutRefreshCount > 0)
             {
                 return;
             }
-
+            
             _monitorLayoutRefreshCount = monitorLayoutRefreshInterval;
-            _monitorLeft = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_XVIRTUALSCREEN);
-            _monitorTop = NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_YVIRTUALSCREEN);
-            //NOTE: WinAPIから0が戻ってくると超ヤバいけど、事実そういうのは見たことがないので普通にこう書いてます
-            _monitorWidthInv = 1.0f / NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_CXVIRTUALSCREEN);
-            _monitorHeightInv = 1.0f / NativeMethods.GetSystemMetrics(NativeMethods.SystemMetricsConsts.SM_CYVIRTUALSCREEN);
+            var monitorRects = NativeMethods.LoadAllMonitorRects();
+            foreach (var rect in monitorRects)
+            {
+                _monitorRects.Add(rect);
+            }
+        }
+
+        private void FindCursorIncludedMonitor(int x, int y)
+        {
+            foreach (var rect in _monitorRects)
+            {
+                if (x >= rect.left && x < rect.right &&
+                    y >= rect.top && y < rect.bottom)
+                {
+                    _monitorLeft = rect.left;
+                    _monitorTop = rect.top;
+                    _monitorWidthInv = 1.0f / (rect.right - rect.left);
+                    _monitorHeightInv = 1.0f / (rect.bottom - rect.top);
+                    return;
+                }
+            }
         }
     }
 }

@@ -11,6 +11,16 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+
+#### v1.7.0b
+{: .doc-sec2 }
+
+2021/05/09
+
+* Fix: v1.7.0 and v1.7.0a will cause startup crashed if VMagicMirror installation folder include multi-byte characters.
+* Change: When using multiple displays, mouse touch pad motion and pen tablet motion gets larger.
+
+
 #### v1.7.0a
 {: .doc-sec2 }
 

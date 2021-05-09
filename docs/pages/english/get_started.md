@@ -52,6 +52,9 @@ If `VMagicMirror.exe` does not start correctly please check unzip settings. Righ
 
 Also please confirm the unzip folder is normal folder (like `C:\` or `My Document` folder).
 
+Especially when you are using v1.7.0, avoid multi-byte character included folder path.
+If you are not clear what multi-byte char means, just avoid user folder and put unzipped folder under `C:\` folder.
+
 Please avoid special folder like `Program Files`, as those folder will lead tons of problem.
 
 </div>

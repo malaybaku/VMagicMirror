@@ -24,7 +24,9 @@ lang_prefix: /en/
 #### VMagicMirror stops soon after started
 {: .doc-sec2 }
 
-Setting file might be broken in this case, so please try to reset the settings.
+Especially for v1.7.0, confirm the installation folder path does NOT include multi-byte character (non english-alphabet character). If you are not clear for this point, please put the unzipped folder to `C:\`.
+
+When using other version, Setting file might be broken in this case, so please try to reset the settings.
 
 1. Press `Reset` on the control panel `Home` tab, and then press `OK` on the confirmation dialog to reset settings.
     + If it recovers the situation, please follow [2: Get Started](./en_get_started.html) to setup.

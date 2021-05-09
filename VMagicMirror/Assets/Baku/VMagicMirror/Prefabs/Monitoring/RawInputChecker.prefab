@@ -58,6 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   diffValueDiminishRate: 2
+  monitorLayoutRefreshInterval: 10
 --- !u!114 &5445794628714955643
 MonoBehaviour:
   m_ObjectHideFlags: 0

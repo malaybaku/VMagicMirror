@@ -24,7 +24,7 @@ lang_prefix: /en/
 #### VMagicMirror stops soon after started
 {: .doc-sec2 }
 
-Especially for v1.7.0, confirm the installation folder path does NOT include multi-byte character (non english-alphabet character). If you are not clear for this point, please put the unzipped folder to `C:\`.
+Especially for v1.7.0 or v1.7.0a, startup error might be because of folder path related bug. Please use v1.7.0b instead.
 
 When using other version, Setting file might be broken in this case, so please try to reset the settings.
 

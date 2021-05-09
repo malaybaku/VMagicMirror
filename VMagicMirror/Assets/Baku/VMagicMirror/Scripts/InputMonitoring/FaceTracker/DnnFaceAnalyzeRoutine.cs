@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Baku.OpenCvExt;
 using OpenCVForUnity.CoreModule;
 using OpenCVForUnity.DnnModule;
@@ -18,6 +19,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class DnnFaceAnalyzeRoutine : FaceAnalyzeRoutineBase
     {
+        private bool _setupCompleted = false;
 #if VMAGICMIRROR_USE_OPENCV
         
         #region 画像処理に必要な色々なパラメータ / 値のキャッシュ
@@ -77,15 +79,22 @@ namespace Baku.VMagicMirror
             base.SetUp();
             
             string modelFilePath = Path.Combine(Application.streamingAssetsPath, "dnn/" + model);
+            
             if (!File.Exists(modelFilePath))
             {
-                Debug.LogError("Model file not exist: " + modelFilePath);
+                LogOutput.Instance.Write("Model file not exist: " + modelFilePath);
+            } 
+            else if (Encoding.UTF8.GetBytes(modelFilePath).Length > modelFilePath.Length)
+            {
+                //全角文字が入ってると初期化でクラッシュするので、この場合は初期化させない
+                LogOutput.Instance.Write("Detect multi-byte character. skip dnn initialization");
             }
             else
             {
                 //第2引数はもとのExampleでも使ってなかったので空にしておく
                 _net = Dnn.readNet(modelFilePath, "");
                 _outBlobNames = GetOutputsNames(_net);
+                _setupCompleted = true;
             }
         }
 
@@ -136,6 +145,7 @@ namespace Baku.VMagicMirror
             //画像情報をコピー完了 = 次の画像を入れてもOK
             CanRequestNextProcess = true;
             
+            //NOTE: 何かの理由でDNNが初期化されてない(全角パス問題など)場合、この時点で弾かれて終わり。
             if (_net == null)
             {
                 return;
@@ -191,6 +201,8 @@ namespace Baku.VMagicMirror
    
         public override void ApplyResult(CalibrationData calibration, bool shouldCalibrate)
         {
+            if (!_setupCompleted) { return; }
+
             var imageWidth = (float) _rawInputWidth;
             var imageHeight = (float) _rawInputHeight;
             var scale = 1.0f / imageWidth;

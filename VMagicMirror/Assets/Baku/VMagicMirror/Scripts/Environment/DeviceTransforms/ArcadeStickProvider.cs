@@ -86,11 +86,11 @@ namespace Baku.VMagicMirror
             //NOTE: ちゃんとスティックが倒れるぶんを回転計算で考えると、y方向のズレが物理的に正しくなる。はず
             var positionDiff = 
                 baseRot * 
-                Quaternion.Euler(stickBendAngleDeg * inputValue.y, 0f, stickBendAngleDeg * inputValue.x) *
+                Quaternion.Euler(stickBendAngleDeg * inputValue.y, 0f, -stickBendAngleDeg * inputValue.x) *
                 (stickBase.up * stickHeight);
 
             var rot = baseRot * 
-                  Quaternion.AngleAxis(inputValue.x * handTiltDeg, Vector3.forward) * 
+                  Quaternion.AngleAxis(-inputValue.x * handTiltDeg, Vector3.forward) * 
                   //NOTE: ちょっとだけ手首が上向きになるように仕向ける。IKの計算上あんまり見栄えは改善しないが、無いよりはgood
                   Quaternion.AngleAxis(-10f, Vector3.right) * 
                   Quaternion.AngleAxis(90f, Vector3.up);

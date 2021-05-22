@@ -27,20 +27,29 @@ namespace Baku.VMagicMirror
         {
             float subLimit = blinkOpenSpeedMax * Time.deltaTime * 60f;
             var eye = _externalTracker.CurrentSource.Eye;
+
+            //NOTE: ちょっとややこしいが、VMMはミラー的な表示を前提にしているため、
+            //eye側のデータはデフォルトが左右反転している。そこまで踏まえつつ場合分けするとこうなる
+            var rawLeftBlink = _externalTracker.DisableHorizontalFlip ? eye.RightBlink : eye.LeftBlink;
+            var rawLeftSquint = _externalTracker.DisableHorizontalFlip ? eye.RightSquint : eye.LeftSquint;
             
-            float left = MapClamp(eye.LeftBlink);
+            var rawRightBlink = _externalTracker.DisableHorizontalFlip ? eye.LeftBlink : eye.RightBlink;
+            var rawRightSquint = _externalTracker.DisableHorizontalFlip ? eye.LeftSquint : eye.RightSquint;
+            
+
+            float left = MapClamp(rawLeftBlink);
             if (left < 0.9f)
             {
-                left = Mathf.Lerp(left, blinkValueOnSquint, eye.LeftSquint);
+                left = Mathf.Lerp(left, blinkValueOnSquint, rawLeftSquint);
             }
             //NOTE: 開くほうは速度制限があるけど閉じるほうは一瞬でいい、という方式。右目も同様。
             left = Mathf.Clamp(left, _blinkSource.Left - subLimit, 1.0f);
             _blinkSource.Left = Mathf.Clamp01(left);
 
-            float right = MapClamp(eye.RightBlink);
+            float right = MapClamp(rawRightBlink);
             if (right < 0.9f)
             {
-                Mathf.Lerp(right, blinkValueOnSquint, eye.RightSquint);
+                Mathf.Lerp(right, blinkValueOnSquint, rawRightSquint);
             }
             right = Mathf.Clamp(right, _blinkSource.Right - subLimit, 1.0f);
             _blinkSource.Right = Mathf.Clamp01(right);

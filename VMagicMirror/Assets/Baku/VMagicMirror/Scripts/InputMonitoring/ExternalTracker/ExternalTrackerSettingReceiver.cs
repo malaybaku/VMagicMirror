@@ -27,6 +27,11 @@ namespace Baku.VMagicMirror
                 VmmCommands.ExTrackerSetFaceSwitchSetting,
                 c => dataSource.SetFaceSwitchSetting(c.Content)
                 );
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.DisableFaceTrackingHorizontalFlip,
+                c => dataSource.SetFaceHorizontalFlipDisable(c.ToBoolean())
+                );
         }
     }
 }

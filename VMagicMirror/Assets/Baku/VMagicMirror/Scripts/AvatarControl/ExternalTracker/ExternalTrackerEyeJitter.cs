@@ -61,6 +61,12 @@ namespace Baku.VMagicMirror
                 _tracker.CurrentSource.Eye.RightLookOut - _tracker.CurrentSource.Eye.RightLookIn;
             var rightY = 
                 _tracker.CurrentSource.Eye.RightLookDown - _tracker.CurrentSource.Eye.RightLookUp;
+
+            if (_tracker.DisableHorizontalFlip)
+            {
+                leftX = -leftX;
+                rightX = -rightX;
+            }
         
             _leftRotation = Quaternion.Euler(leftY * VerticalShapeToAngle, leftX * HorizontalShapeToAngle, 0);
             _rightRotation = Quaternion.Euler(rightY * VerticalShapeToAngle, rightX * HorizontalShapeToAngle, 0);

@@ -393,6 +393,7 @@ GameObject:
   - component: {fileID: 5813678810404708595}
   - component: {fileID: 5813678810404708492}
   - component: {fileID: 1854631572515027688}
+  - component: {fileID: 6033017557083037692}
   m_Layer: 0
   m_Name: HandAndHeadIK
   m_TagString: Untagged
@@ -465,6 +466,7 @@ MonoBehaviour:
     imageBasedBodyMotion: {fileID: 5813678808713813112}
   imageBaseHandSetting:
     handShapeSetter: {fileID: 2171101519611571038}
+  mpHand: {fileID: 6033017557083037692}
 --- !u!114 &5813678810404708592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -479,6 +481,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handIKIntegrator: {fileID: 5813678810404708495}
   lookAtSpeedFactor: 6
+  mouseActionCountMax: 8
+  penTabletFocusCount: 3
+  mouseMoveIncrementFactor: 4
+  mouseClickIncrementValue: 2
 --- !u!114 &5813678810404708595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,6 +614,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fingerController: {fileID: 2951044793089892564}
+--- !u!114 &6033017557083037692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678810404708600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 501b3c1eb4500fc4999029c3ecdb2257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _resources: {fileID: 11400000, guid: 91bfddd4f6a664d13be4b4a5340a2099, type: 2}
+  _useAsyncReadback: 1
+  previewImage: {fileID: 0}
+  previewLImage: {fileID: 0}
+  previewRImage: {fileID: 0}
+  rightHandOffset: {x: 0.25, y: 0, z: 0}
+  commonAdditionalOffset: {x: 0, y: 0, z: 0.25}
+  motionScale: {x: 1, y: 1, z: 1}
+  scoreThreshold: 0.5
+  skipStyle: 3
+  positionSmoothFactor: 12
+  rotationSmoothFactor: 12
+  resolution: {x: 1280, y: 960}
+  textureWidthRateForOneHand: 0.6
 --- !u!1 &5813678810510073684
 GameObject:
   m_ObjectHideFlags: 0

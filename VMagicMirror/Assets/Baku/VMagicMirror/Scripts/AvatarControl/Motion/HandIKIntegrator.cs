@@ -39,8 +39,11 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private GamepadHandIKGenerator.GamepadHandIkGeneratorSetting gamepadSetting = default;
 
+        //TODO: 消したい
         [SerializeField]
         private ImageBaseHandIkGenerator.ImageBaseHandIkGeneratorSetting imageBaseHandSetting = default;
+
+        [SerializeField] private MPHand mpHand = null;
 
         
         public MouseMoveHandIKGenerator MouseMove { get; private set; }
@@ -49,7 +52,7 @@ namespace Baku.VMagicMirror
         public PresentationHandIKGenerator Presentation { get; private set; }
 
         private ArcadeStickHandIKGenerator _arcadeStickHand;
-        private ImageBaseHandIkGenerator _imageBaseHand;
+        //private ImageBaseHandIkGenerator _imageBaseHand;
         private AlwaysDownHandIkGenerator _downHand;
         private PenTabletHandIKGenerator _penTablet;
         
@@ -205,7 +208,7 @@ namespace Baku.VMagicMirror
                 );
             Presentation = new PresentationHandIKGenerator(dependency, vrmLoadable, cam);
             _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
-            _imageBaseHand = new ImageBaseHandIkGenerator(dependency, handTracker, imageBaseHandSetting, vrmLoadable);
+            //_imageBaseHand = new ImageBaseHandIkGenerator(dependency, handTracker, imageBaseHandSetting, vrmLoadable);
             _downHand = new AlwaysDownHandIkGenerator(dependency, vrmLoadable);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             
@@ -217,7 +220,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _imageBaseHand, _downHand, _penTablet,
+                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation/*, imageBaseHand*/, _downHand, _penTablet,
                 })
             {
                 if (generator.LeftHandState != null)
@@ -233,6 +236,8 @@ namespace Baku.VMagicMirror
             
             Typing.LeftHand.RequestToUse += SetLeftHandState;
             Typing.RightHand.RequestToUse += SetRightHandState;
+            mpHand.LeftHandState.RequestToUse += SetLeftHandState;
+            mpHand.RightHandState.RequestToUse += SetRightHandState;
         }
 
         //NOTE: prevのStateは初めて手がキーボードから離れるまではnull
@@ -391,7 +396,7 @@ namespace Baku.VMagicMirror
             GamepadHand.Start();
             MidiHand.Start();
             _arcadeStickHand.Start();
-            _imageBaseHand.Start();
+            //_imageBaseHand.Start();
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -405,10 +410,12 @@ namespace Baku.VMagicMirror
             
             //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にする。
             //こうすると棒立ちになるので都合がよい
-            _imageBaseHand.HasRightHandUpdate = false;
-            SetRightHandState(_imageBaseHand.RightHandState);
-            _imageBaseHand.HasLeftHandUpdate = false;
-            SetLeftHandState(_imageBaseHand.LeftHandState);
+            // _imageBaseHand.HasRightHandUpdate = false;
+            // SetRightHandState(_imageBaseHand.RightHandState);
+            // _imageBaseHand.HasLeftHandUpdate = false;
+            // SetLeftHandState(_imageBaseHand.LeftHandState);
+            SetRightHandState(_downHand.RightHandState);
+            SetLeftHandState(_downHand.LeftHandState);
         }
 
         private void OnVrmDisposing()
@@ -424,20 +431,20 @@ namespace Baku.VMagicMirror
             MidiHand.Update();
             _arcadeStickHand.Update();
             _penTablet.Update();
-            _imageBaseHand.Update();
-
-            //画像処理の手検出があったらそっちのIKに乗り換える
-            if (_imageBaseHand.HasRightHandUpdate)
-            {
-                _imageBaseHand.HasRightHandUpdate = false;
-                SetRightHandState(_imageBaseHand.RightHandState);
-            }
-
-            if (_imageBaseHand.HasLeftHandUpdate)
-            {
-                _imageBaseHand.HasLeftHandUpdate = false;
-                SetLeftHandState(_imageBaseHand.LeftHandState);
-            }
+            // _imageBaseHand.Update();
+            //
+            // //画像処理の手検出があったらそっちのIKに乗り換える
+            // if (_imageBaseHand.HasRightHandUpdate)
+            // {
+            //     _imageBaseHand.HasRightHandUpdate = false;
+            //     SetRightHandState(_imageBaseHand.RightHandState);
+            // }
+            //
+            // if (_imageBaseHand.HasLeftHandUpdate)
+            // {
+            //     _imageBaseHand.HasLeftHandUpdate = false;
+            //     SetLeftHandState(_imageBaseHand.LeftHandState);
+            // }
             
             //現在のステート + 必要なら直前ステートも参照してIKターゲットの位置、姿勢を更新する
             UpdateLeftHand();
@@ -452,7 +459,7 @@ namespace Baku.VMagicMirror
             Presentation.LateUpdate();
             _arcadeStickHand.LateUpdate();
             _penTablet.LateUpdate();
-            _imageBaseHand.LateUpdate();
+            //_imageBaseHand.LateUpdate();
         }
         
         private void UpdateLeftHand()

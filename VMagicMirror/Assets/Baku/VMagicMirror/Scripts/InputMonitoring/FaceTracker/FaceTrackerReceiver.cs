@@ -4,15 +4,20 @@ using UnityEngine;
 namespace Baku.VMagicMirror
 {
     /// <summary> ウェブカメラによる顔トラッキングの制御に関するプロセス間通信を受信します。 </summary>
+    /// <remarks>
+    /// 名前に反しますが、このクラスでハンドトラッキングのオンオフも監視します。
+    /// これにより、「顔トラッキングか手トラッキングのいずれかが有効ならカメラを起動」みたいな挙動を実現します。
+    /// </remarks>
     public sealed class FaceTrackerReceiver 
     {
         private readonly FaceTracker _faceTracker;
         
         private bool _enableFaceTracking = true;
         private bool _enableHighPowerMode = false;
+        private bool _enableHandTracking = false;
         private string _cameraDeviceName = "";
         private bool _enableExTracker = false;
-
+        
         public FaceTrackerReceiver(IMessageReceiver receiver, FaceTracker faceTracker)
         {
             _faceTracker = faceTracker;
@@ -46,6 +51,11 @@ namespace Baku.VMagicMirror
                 message => _faceTracker.DisableHorizontalFlip = message.ToBoolean()
                 );
          
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableImageBasedHandTracking,
+                message => SetHandTrackingEnable(message.ToBoolean())
+                );
+            
             receiver.AssignQueryHandler(
                 VmmQueries.CameraDeviceNames,
                 query => query.Result = string.Join("\t", GetCameraDeviceNames())
@@ -74,6 +84,12 @@ namespace Baku.VMagicMirror
             UpdateFaceDetectorState();
         }
 
+        private void SetHandTrackingEnable(bool enable)
+        {
+            _enableHandTracking = enable;
+            UpdateFaceDetectorState();
+        }
+
         private void SetEnableExTracker(bool enable)
         {
             if (_enableExTracker == enable)
@@ -93,9 +109,27 @@ namespace Baku.VMagicMirror
         
         private void UpdateFaceDetectorState()
         {
-            if (_enableFaceTracking && !_enableExTracker && !string.IsNullOrWhiteSpace(_cameraDeviceName))
+            //NOTE: ココ結構条件が複雑
+            //カメラが未指定 → とにかくダメなのでカメラは止める
+            //カメラが指定されてる→
+            //  - 手トラッキングあり → 顔まわりがどうなっててもカメラは起こす
+            //  - 手トラッキングなし → Ex.Trackerの状態と顔トラッキング自体のオンオフを見たうえで判断
+            bool canUseCamera = !string.IsNullOrEmpty(_cameraDeviceName);
+            if (canUseCamera)
             {
-                _faceTracker.ActivateCamera(_cameraDeviceName, _enableHighPowerMode);
+                canUseCamera =
+                    _enableHandTracking ||
+                    (_enableFaceTracking && !_enableExTracker);
+            }
+
+            if (canUseCamera)
+            {
+                var trackingMode = FaceTrackingMode.None;
+                if (_enableFaceTracking && !_enableExTracker)
+                {
+                    trackingMode = _enableHighPowerMode ? FaceTrackingMode.HighPower : FaceTrackingMode.LowPower;
+                }
+                _faceTracker.ActivateCameraForFaceTracking(_cameraDeviceName, trackingMode);
             }
             else
             {

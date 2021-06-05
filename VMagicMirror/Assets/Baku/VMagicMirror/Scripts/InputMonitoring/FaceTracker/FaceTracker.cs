@@ -25,12 +25,11 @@ namespace Baku.VMagicMirror
     {
         private const string DlibFaceTrackingDataFileName = "sp_human_face_17.dat";
 
-        [SerializeField] private string requestedDeviceName = null;
-        // [SerializeField] private bool isHighPowerMode = false;
-        [SerializeField] private int requestedWidth = 320;
-        [SerializeField] private int requestedHeight = 240;
+        [SerializeField] private string requestedDeviceName = "";
+        //NOTE: このクラス自身はテクスチャのリサイズに関知しない。
+        [SerializeField] private Vector2Int rawTextureSize = new Vector2Int(640, 480);
         [SerializeField] private int requestedFps = 30;
-        [SerializeField] private int halfResizeWidthThreshold = 640;
+
         [Tooltip("顔トラッキングがオンであるにも関わらず表情データが降ってこない状態が続き、異常値と判定するまでの秒数")]
         [SerializeField] private float activeButNotTrackedCount = 1.0f;
         [Tooltip("顔トラッキングが外れたとき、色々なパラメータを基準位置に戻すためのLerpファクター(これにTime.deltaTimeをかけた値を用いる")]
@@ -96,26 +95,12 @@ namespace Baku.VMagicMirror
         private int TrackMinIntervalMs =>
             IsHighPowerMode ? trackMinIntervalMillisecOnHighPower : trackMinIntervalMillisec;
 
-        private int TextureWidth =>
-            (_webCamTexture == null) ? requestedWidth :
-            (!IsHighPowerMode && _webCamTexture.width >= halfResizeWidthThreshold) ? _webCamTexture.width / 2 :
-            _webCamTexture.width;
-
-        private int TextureHeight =>
-            (_webCamTexture == null) ? requestedHeight :
-            (!IsHighPowerMode && _webCamTexture.width >= halfResizeWidthThreshold) ? _webCamTexture.height / 2 :
-            _webCamTexture.height;
-
         private bool _calibrationRequested = false;
         private float _faceNotDetectedCountDown = 0.0f;
 
         private WebCamTexture _webCamTexture;
         private WebCamDevice _webCamDevice;
-
         private Color32[] _colors;
-        private Color32[] _rawSizeColors;
-        
-        //public bool IsHighPowerMode => isHighPowerMode;
         
         //UIスレッドがタイミングを見計らうために使う
         private float _countFromPreviousSetColors = 0f;
@@ -132,7 +117,7 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             CalibrationData.SetDefaultValues();
-
+            
             _dlibFaceAnalyzer = new DlibFaceAnalyzeRoutine(DlibFaceTrackingDataFileName);
             _dnnFaceAnalyzer = new DnnFaceAnalyzeRoutine();
             //イベントを素通し
@@ -182,17 +167,8 @@ namespace Baku.VMagicMirror
                     
                 try
                 {
-                    if (!IsHighPowerMode && _webCamTexture.width >= halfResizeWidthThreshold)
-                    {
-                        _webCamTexture.GetPixels32(_rawSizeColors);
-                        SetHalfSizePixels(_rawSizeColors, _colors, _webCamTexture.width, _webCamTexture.height);
-                        CurrentAnalyzer.RequestNextProcess(_colors, TextureWidth, TextureHeight);
-                    }
-                    else
-                    {
-                        _webCamTexture.GetPixels32(_colors);
-                        CurrentAnalyzer.RequestNextProcess(_colors, TextureWidth, TextureHeight);
-                    }
+                    _webCamTexture.GetPixels32(_colors);
+                    CurrentAnalyzer.RequestNextProcess(_colors, _webCamTexture.width, _webCamTexture.height);
                 }
                 catch (Exception ex)
                 {
@@ -318,13 +294,12 @@ namespace Baku.VMagicMirror
                     if (WebCamTexture.devices[i].name == requestedDeviceName)
                     {
                         _webCamDevice = WebCamTexture.devices[i];
-                        int sizeFactor = IsHighPowerMode ? 2 : 1;
                         _webCamTexture = new WebCamTexture(
-                            _webCamDevice.name, 
-                            requestedWidth * sizeFactor, 
-                            requestedHeight * sizeFactor, 
+                            _webCamDevice.name,
+                            rawTextureSize.x,
+                            rawTextureSize.y,
                             requestedFps
-                            );
+                        );
                         break;
                     }
                 }
@@ -344,7 +319,7 @@ namespace Baku.VMagicMirror
             {
                 yield return null;
             }
-            
+
             if (_webCamTexture == null)
             {
                 //起動中にストップがかかってDisposeが呼ばれた場合はここに入る
@@ -358,17 +333,7 @@ namespace Baku.VMagicMirror
 
             if (_colors == null || _colors.Length != _webCamTexture.width * _webCamTexture.height)
             {
-                if (!IsHighPowerMode && _webCamTexture.width >= halfResizeWidthThreshold)
-                {
-                    //画像が大きすぎるので、画像処理では0.5 x 0.5サイズを使う
-                    _rawSizeColors = new Color32[_webCamTexture.width * _webCamTexture.height];
-                    _colors = new Color32[(_webCamTexture.width * _webCamTexture.height) / 4];
-                }
-                else
-                {
-                    //そのまま使えばOK
-                    _colors = new Color32[_webCamTexture.width * _webCamTexture.height];
-                }
+                _colors = new Color32[_webCamTexture.width * _webCamTexture.height];
             }
         }
         
@@ -386,27 +351,8 @@ namespace Baku.VMagicMirror
                 Destroy(_webCamTexture);
                 _webCamTexture = null;
             }
-
+            
             WebCamTextureDisposed?.Invoke();
-        }
-        
-        //画像をタテヨコ半分にする。(通常ありえないが)奇数サイズのピクセル数だった場合は切り捨て。
-        private void SetHalfSizePixels(Color32[] src, Color32[] dest, int srcWidth, int srcHeight)
-        {
-            //この圧縮はk-NN: 4ピクセル中左上のピクセルの値をそのまま採用
-            //周辺ピクセルを平均するのは重いわりに効果ないのでやらない
-            int destWidth = srcWidth / 2;
-            int destHeight = srcHeight / 2;
-            for (int y = 0; y < destHeight; y++)
-            {
-                int destRowOffset = y * destWidth;
-                int srcRowOffset = y * 2 * srcWidth;
-                for (int x = 0; x < destWidth; x++)
-                {
-                    //左上ピクセルをそのまま使う
-                    dest[destRowOffset + x] = src[srcRowOffset + x * 2];
-                }
-            }
         }
     }
 }

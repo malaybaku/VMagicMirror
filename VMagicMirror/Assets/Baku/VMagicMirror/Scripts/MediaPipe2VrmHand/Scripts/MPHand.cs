@@ -33,6 +33,7 @@ namespace Baku.VMagicMirror.IK
         
         [SerializeField] ResourceSet _resources = null;
         [SerializeField] bool _useAsyncReadback = true;
+        [SerializeField] private FingerController _fingerController = null;
         [SerializeField] private RawImage previewImage = null;
         [SerializeField] private RawImage previewLImage = null;
         [SerializeField] private RawImage previewRImage = null;
@@ -53,7 +54,7 @@ namespace Baku.VMagicMirror.IK
 
         [SerializeField] private float positionSmoothFactor = 12f;
         [SerializeField] private float rotationSmoothFactor = 12f;
-        [SerializeField] private Vector2Int resolution = new Vector2Int(1280, 720);
+        [SerializeField] private Vector2Int resolution = new Vector2Int(640, 360);
         [Range(0.5f, 1f)]
         [SerializeField] private float textureWidthRateForOneHand = 0.6f;
 
@@ -65,13 +66,13 @@ namespace Baku.VMagicMirror.IK
         private RenderTexture _leftTexture;
         private RenderTexture _rightTexture;
 
-        // private HandPipeline _pipeline = null;
         private HandPipeline _leftPipeline = null;
         private HandPipeline _rightPipeline = null;
         
         //NOTE: スムージングしたくなりそうなので分けておく
         private readonly Vector3[] _leftHandPoints = new Vector3[HandPipeline.KeyPointCount];
         private readonly Vector3[] _rightHandPoints = new Vector3[HandPipeline.KeyPointCount];
+        public Vector3[] LeftHandPoints => _leftHandPoints;
         
         private int _frameCount = 0;
 
@@ -117,7 +118,7 @@ namespace Baku.VMagicMirror.IK
             );
 
             _leftTexture = new RenderTexture((int)(resolution.x * textureWidthRateForOneHand), resolution.y, 0);
-            _rightTexture = new RenderTexture((int)(resolution.x * textureWidthRateForOneHand), resolution.y, 0);
+            _rightTexture = new RenderTexture((int)(resolution.x * textureWidthRateForOneHand), resolution.y, 0); 
             faceTracker.WebCamTextureInitialized += SetWebcamTexture;
             faceTracker.WebCamTextureDisposed += DisposeWebCamTexture;
         }
@@ -145,7 +146,9 @@ namespace Baku.VMagicMirror.IK
             _leftRotTarget = _leftHandState.IKData.Rotation;
             _rightPosTarget = _rightHandState.IKData.Position;
             _rightRotTarget = _rightHandState.IKData.Rotation;
-            _finger = new MPHandFinger(_leftHandPoints, _rightHandPoints);
+            _finger = new MPHandFinger(_fingerController, _leftHandPoints, _rightHandPoints);
+            _leftHandState.Finger = _finger;
+            _rightHandState.Finger = _finger;
 
             //TODO: デバッグ終わったらオフ
             previewLImage.texture = _leftTexture;
@@ -171,10 +174,9 @@ namespace Baku.VMagicMirror.IK
             //TODO: デバッグ終わったらオフ
             previewImage.texture = _webCamTexture;
             
-            //NOTE: ここにintervalの目標値を使ったガードを足してもいい
             BlitTextures();
             
-            //NOTE: webcamのdidUpdateThisFrameを見てガードしてもいい
+            //NOTE: webcamのdidUpdateThisFrameを見てガードしてもいい…が、LSRS型のアプデなら不要かなあ。
             CallHandUpdate();
 
             _leftHandState.IKData.Position = Vector3.Lerp(
@@ -198,6 +200,7 @@ namespace Baku.VMagicMirror.IK
                     return;
                 }
 
+                //TODO: アス比によって絵が崩れる問題の対策。超重要
                 var aspect1 = (float)_webCamTexture.width / _webCamTexture.height;
                 var aspect2 = (float)resolution.x / resolution.y;
                 var gap = aspect2 / aspect1;
@@ -270,9 +273,6 @@ namespace Baku.VMagicMirror.IK
             }
         }
 
-        //NOTE: 以下はとりあえずミラーしない処理が書かれています…が、
-        //VMagicMirrorに統合する + じゅうぶん高精度ならミラー前提のほうがいいかも
-        
         private void UpdateLeftHand()
         {
             var pipeline = _leftPipeline;
@@ -295,12 +295,12 @@ namespace Baku.VMagicMirror.IK
             _leftPosTarget = 
                 _defaultHeadPosition + commonAdditionalOffset + 
                 Mul(motionScale, leftHandOffset + _leftHandPoints[0]);
-
-            _leftRotTarget = CalculateLeftHandRotation();
             
-            _finger.UpdateLeft();
+            var rotInfo = CalculateLeftHandRotation();
+            _leftRotTarget = rotInfo.Item1;
+            
+            _finger.UpdateLeft(rotInfo.Item2, rotInfo.Item3);
             _leftHandState.RaiseRequestToUse();
-            Debug.Log("Image Based Hand, left pos update");
         }
 
         private void UpdateRightHand()
@@ -324,14 +324,15 @@ namespace Baku.VMagicMirror.IK
                 _defaultHeadPosition + commonAdditionalOffset + 
                 Mul(motionScale, rightHandOffset + _rightHandPoints[0]);
 
-            _rightRotTarget = CalculateRightHandRotation();
+            var rotInfo = CalculateRightHandRotation();
+            _rightRotTarget = rotInfo.Item1;
             
-            _finger.UpdateRight();
+            _finger.UpdateRight(rotInfo.Item2, rotInfo.Item3);
             _rightHandState.RaiseRequestToUse();
         }
         
-        //左手首の取るべきワールド回転を、局所座標系を計算することで算出します。
-        private Quaternion CalculateLeftHandRotation()
+        //左手の取るべきワールド回転に関連して、回転、手の正面方向ベクトル、手のひらと垂直なベクトルの3つを計算します。
+        private (Quaternion, Vector3, Vector3) CalculateLeftHandRotation()
         {
             var wristForward = (_leftHandPoints[9] - _leftHandPoints[0]).normalized;
             //NOTE: 右手と逆の順にすることに注意
@@ -341,14 +342,16 @@ namespace Baku.VMagicMirror.IK
             ).normalized;
 
             //NOTE: 第2項が右手と違うので注意
-            return
+            var rot = 
                 //Quaternion.LookRotation(wristForward) *
                 Quaternion.LookRotation(wristForward, wristUp) *
                 Quaternion.AngleAxis(90f, Vector3.up);
+
+            return (rot, wristForward, wristUp);
         }
         
-        //右手首の取るべきワールド回転を、局所座標系を計算することで算出します。
-        private Quaternion CalculateRightHandRotation()
+        //右手の取るべきワールド回転に関連して、回転、手の正面方向ベクトル、手のひらと垂直なベクトルの3つを計算します。
+        private (Quaternion, Vector3, Vector3) CalculateRightHandRotation()
         {
             //正面 = 中指方向
             var wristForward = (_rightHandPoints[9] - _rightHandPoints[0]).normalized;
@@ -363,10 +366,11 @@ namespace Baku.VMagicMirror.IK
 
             //上記のwristForwardとかwristUpの考え方の前提に「中指が正面向き、手のひらが真下」という基本姿勢があるので、
             //手をそこまで持っていってから適用
-            return 
-                //Quaternion.LookRotation(wristForward) *
+            var rot = //Quaternion.LookRotation(wristForward) *
                 Quaternion.LookRotation(wristForward, wristUp) *
                 Quaternion.AngleAxis(-90f, Vector3.up);
+
+            return (rot, wristForward, wristUp);
         }
         
 
@@ -382,7 +386,9 @@ namespace Baku.VMagicMirror.IK
             {
                 Hand = hand;
             }
-
+            
+            public MPHandFinger Finger { get; set; } 
+            
             public IKDataRecord IKData { get; } = new IKDataRecord();
 
             public Vector3 Position => IKData.Position;
@@ -400,7 +406,14 @@ namespace Baku.VMagicMirror.IK
 
             public void Quit(IHandIkState nextState)
             {
-                //多分何もしないでよい
+                if (Hand == ReactedHand.Left)
+                {
+                    Finger?.ReleaseLeftHand();
+                }
+                else
+                {
+                    Finger?.ReleaseRightHand();
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -37,6 +38,8 @@ namespace Baku.VMagicMirror
         [Tooltip("検出処理が走る最短間隔をミリ秒単位で規定します。")]
         [SerializeField] private int trackMinIntervalMillisec = 60;
         [SerializeField] private int trackMinIntervalMillisecOnHighPower = 40;
+
+        [SerializeField] private RawImage debugImage = null;
         
         /// <summary> キャリブレーションの内容 </summary>
         public CalibrationData CalibrationData { get; } = new CalibrationData();

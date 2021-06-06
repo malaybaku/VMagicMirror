@@ -74,6 +74,11 @@ namespace Baku.VMagicMirror
         private readonly float[] _holdAngles = new float[10];
         //「指を曲げっぱなしにする/離す」というオペレーションによって決まる値
         private readonly float[] _holdOperationBendingAngle = new float[10];
+        
+        //通常のHoldと違い、第3関節の開き/閉じを決める値。
+        private readonly bool[] _holdOpenMode = new bool[10];
+        private readonly float[] _holdOpenAngles = new float[10];
+        private readonly float[] _holdOpenLerpedAngles = new float[10];
 
         private readonly bool[] _isTypingBending = new bool[10];
         private readonly bool[] _isTypingReleasing = new bool[10];
@@ -190,7 +195,7 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary>
-        /// タイピング用に指を動かします。これは実際には、対応する指を探してHold()を呼び出す処理です。
+        /// タイピング用に指を動かします。
         /// </summary>
         /// <param name="key"></param>
         /// <param name="isLeftHandOnly"></param>
@@ -214,7 +219,7 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary>
-        /// タイピング用に指定していた指をもとに戻します。これは実際には、対応する指を探してRelease()を呼び出す処理です。
+        /// タイピング用に指定していた指をもとに戻します。
         /// </summary>
         /// <param name="key"></param>
         /// <param name="isLeftHandOnly"></param>
@@ -316,6 +321,36 @@ namespace Baku.VMagicMirror
             }
         }
 
+        /// <summary>
+        /// 指の第3関節の開き/閉じを指定します。
+        /// ハンドトラッキング中だけ使う想定です。
+        /// </summary>
+        /// <param name="fingerNumber"></param>
+        /// <param name="angle"></param>
+        public void HoldOpen(int fingerNumber, float angle)
+        {
+            if (fingerNumber >= 0 && fingerNumber < _holdOpenMode.Length)
+            {
+                _holdOpenMode[fingerNumber] = true;
+                _holdOpenAngles[fingerNumber] = angle;
+            }
+        }
+
+        /// <summary>
+        /// 指の第3関節の開き/閉じの指定を解除します。
+        /// ハンドトラッキングから他の状態に遷移するとき呼び出す想定です。
+        /// </summary>
+        /// <param name="fingerNumber"></param>
+        public void ReleaseOpen(int fingerNumber)
+        {
+            if (fingerNumber >= 0 && fingerNumber < _holdOpenMode.Length)
+            {
+                _holdOpenMode[fingerNumber] = false;
+                _holdOpenAngles[fingerNumber] = 0;
+                _holdOpenLerpedAngles[fingerNumber] = 0;
+            }
+        }
+
         #endregion
 
         private void LateUpdate()
@@ -324,7 +359,7 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-
+            
             for (int i = 0; i < 10; i++)
             {
                 //プレゼンモード中、右手の形はギュッと握った状態
@@ -338,7 +373,7 @@ namespace Baku.VMagicMirror
                     FixToPenGripHand(i);
                     continue;
                 }
-
+                
                 float angle = DefaultBendingAngle;
                 var currentAngle = _holdOperationBendingAngle[i];
 
@@ -370,32 +405,54 @@ namespace Baku.VMagicMirror
 
                 //Holdのほうの値は正負考えずに入れるようになってるため、常にプラスで保存
                 _holdOperationBendingAngle[i] = angle;
+
+                if (_holdOpenMode[i])
+                {
+                    _holdOpenLerpedAngles[i] = math.lerp(
+                        _holdOpenLerpedAngles[i], 
+                        _holdOpenAngles[i],
+                        HoldOperationSpeedFactor * Time.deltaTime
+                        );
+                }
                 
                 //左右の手で回転方向が逆
                 if (i > 4)
                 {
                     angle = -angle;
                 }
-
                 
                 for (int j = 0; j < _fingers[i].Length; j++)
                 {
+                    if (!_hasFinger[i][j] || !(ApplyRate > 0))
+                    {
+                        continue;
+                    }
+                    
                     var t = _fingers[i][j];
                     angle = LimitThumbBendAngle(angle, i, j);
-                    if (_hasFinger[i][j] && ApplyRate > 0)
+                    
+                    //NOTE: 割と珍しいが重要: 第3関節でOpen方向の回転を考慮するケース
+                    if (j == 2 && _holdOpenMode[i])
                     {
-                        if (ApplyRate >= 1.0f)
-                        {
-                            t.localRotation = GetFingerBendRotation(angle, i, j);
-                        }
-                        else if (ApplyRate > 0f)
-                        {
-                            t.localRotation = Quaternion.Slerp(
-                                t.localRotation, 
-                                Quaternion.AngleAxis(angle, GetRotationAxis(i, j)),
-                                ApplyRate
-                                );
-                        }
+                        var rot2Dof =
+                            Quaternion.AngleAxis(angle, GetRotationAxis(i, j)) *
+                            Quaternion.AngleAxis(_holdOpenLerpedAngles[i], Vector3.up);
+                        t.localRotation = Quaternion.Slerp(t.localRotation, rot2Dof, ApplyRate);
+                        continue;
+                    }
+
+                    //上記以外: 単一方向に曲げるだけ
+                    if (ApplyRate >= 1.0f)
+                    {
+                        t.localRotation = GetFingerBendRotation(angle, i, j);
+                    }
+                    else
+                    {
+                        t.localRotation = Quaternion.Slerp(
+                            t.localRotation, 
+                            Quaternion.AngleAxis(angle, GetRotationAxis(i, j)),
+                            ApplyRate
+                        );
                     }
                 }
             }

@@ -182,8 +182,8 @@ namespace Baku.VMagicMirror
             bool enableEffect =_handTrackingEnabled &&
                 (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking);
 
-            _vmmMonochrome.enabled.value = enableEffect;
-            _vmmVhs.enabled.value = enableEffect;
+            _vmmMonochrome.active = enableEffect;
+            _vmmVhs.active = enableEffect;
         }
     }
 }

@@ -189,6 +189,9 @@ namespace Baku.VMagicMirror.IK
             _leftHandState.Finger = _finger;
             _rightHandState.Finger = _finger;
 
+            _leftHandState.OnEnter += InitializeHandPosture;
+            _rightHandState.OnEnter += InitializeHandPosture;
+
             //TODO: デバッグ終わったらオフ
             previewLImage.texture = _leftTexture;
             previewRImage.texture = _rightTexture;
@@ -495,6 +498,30 @@ namespace Baku.VMagicMirror.IK
             return (rot, wristForward, wristUp);
         }
         
+            
+        /// <summary>
+        /// 他のIKからこのIKに遷移した瞬間に呼び出すことで、直前のIKの姿勢をコピーして遷移をなめらかにします
+        /// </summary>
+        private void InitializeHandPosture(ReactedHand hand, IIKData src)
+        {
+            if (src == null)
+            {
+                return;
+            }
+            
+            switch (hand)
+            {
+                case ReactedHand.Left:
+                    _leftHandState.Position = src.Position;
+                    _leftHandState.Rotation = src.Rotation;
+                    break;
+                case ReactedHand.Right:
+                    _rightHandState.Position = src.Position;
+                    _rightHandState.Rotation = src.Rotation;
+                    break;
+            }
+        }
+        
         //右手の取るべきワールド回転に関連して、回転、手の正面方向ベクトル、手のひらと垂直なベクトルの3つを計算します。
         private (Quaternion, Vector3, Vector3) CalculateRightHandRotation()
         {
@@ -537,42 +564,37 @@ namespace Baku.VMagicMirror.IK
             
             public IKDataRecord IKData { get; } = new IKDataRecord();
 
-            public Vector3 Position => IKData.Position;
-            public Quaternion Rotation => IKData.Rotation;
+            public Vector3 Position
+            {
+                get => IKData.Position;
+                set => IKData.Position = value;
+            } 
+            
+            public Quaternion Rotation
+            {
+                get => IKData.Rotation;
+                set => IKData.Rotation = value;
+            }
+
             public ReactedHand Hand { get; }
             public HandTargetType TargetType => HandTargetType.ImageBaseHand;
 
             public void RaiseRequestToUse() => RequestToUse?.Invoke(this);
             public event Action<IHandIkState> RequestToUse;
 
-            public void Enter(IHandIkState prevState)
-            {
-                //TODO: 位置の補間をしないとダメかも
-            }
+            public event Action<ReactedHand, IHandIkState> OnEnter;
+
+            public void Enter(IHandIkState prevState) => OnEnter?.Invoke(Hand, prevState);
 
             public void Quit(IHandIkState nextState)
             {
                 if (Hand == ReactedHand.Left)
                 {
-                    if (DisableHorizontalFlip)
-                    {
-                        Finger?.ReleaseLeftHand();
-                    }
-                    else
-                    {
-                        Finger?.ReleaseRightHand();
-                    }
+                    Finger?.ReleaseLeftHand();
                 }
                 else
                 {
-                    if (DisableHorizontalFlip)
-                    {
-                        Finger?.ReleaseRightHand();
-                    }
-                    else
-                    {
-                        Finger?.ReleaseLeftHand();
-                    }
+                    Finger?.ReleaseRightHand();
                 }
             }
         }

@@ -211,11 +211,13 @@ namespace Baku.VMagicMirror
             //_imageBaseHand = new ImageBaseHandIkGenerator(dependency, handTracker, imageBaseHandSetting, vrmLoadable);
             _downHand = new AlwaysDownHandIkGenerator(dependency, vrmLoadable);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
-            
+            mpHand.SetupDependency(dependency);
+
             typing.SetUp(keyboardProvider, dependency);
 
             MouseMove.DownHand = _downHand;
             typing.DownHand = _downHand;
+            mpHand.DownHand = _downHand;
 
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]

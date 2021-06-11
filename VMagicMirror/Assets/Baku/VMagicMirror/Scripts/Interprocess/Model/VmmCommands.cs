@@ -144,6 +144,8 @@ namespace Baku.VMagicMirror
         public const string BloomThreshold = nameof(BloomThreshold);
         public const string BloomColor = nameof(BloomColor);
 
+        public const string EnableRetroEffects = nameof(EnableRetroEffects);
+
         public const string WindEnable = nameof(WindEnable);
         public const string WindStrength = nameof(WindStrength);
         public const string WindInterval = nameof(WindInterval);

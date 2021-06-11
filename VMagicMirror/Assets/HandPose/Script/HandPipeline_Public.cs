@@ -65,6 +65,12 @@ partial class HandPipeline
     public void ProcessImage(Texture image)
       => RunPipeline(image);
 
+    public void DetectPalm(Texture image, float dt)
+      => RunDetectPalm(image, dt);
+
+    public void CalculateLandmarks(Texture image, float dt)
+      => RunCalculateLandmarks(image, dt);
+    
     #endregion
 }
 

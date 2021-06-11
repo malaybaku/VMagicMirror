@@ -636,7 +636,7 @@ MonoBehaviour:
   commonAdditionalOffset: {x: 0, y: 0, z: 0.25}
   motionScale: {x: 1, y: 1, z: 1}
   scoreThreshold: 0.5
-  skipStyle: 3
+  skipStyle: 2
   positionSmoothFactor: 12
   rotationSmoothFactor: 12
   resolution: {x: 1280, y: 960}

@@ -9,26 +9,26 @@ namespace Baku.VMagicMirror
     {
         public MPHandFinger(
             FingerController fingerController, Vector3[] leftHandPoints, Vector3[] rightHandPoints
-            )
+        )
         {
             _fingerController = fingerController;
             _leftHandPoints = leftHandPoints;
             _rightHandPoints = rightHandPoints;
         }
-        
+
         private readonly FingerController _fingerController;
 
         private readonly Vector3[] _leftHandPoints;
         private readonly Vector3[] _rightHandPoints;
-        
+
         //NOTE: 指ごとの曲げ角度で、指番号[0-4], 関節(0=根本, 2=指先)を指定して取得、設定する。
         //floatでダメな場合、Quaternionの矩形配列に差し替えるかも
-        private readonly float[][] _rightBendAngles = new []
+        private readonly float[][] _rightBendAngles = new[]
         {
             new float[3], new float[3], new float[3], new float[3], new float[3],
         };
-        
-        private readonly float[][] _leftBendAngles = new []
+
+        private readonly float[][] _leftBendAngles = new[]
         {
             new float[3], new float[3], new float[3], new float[3], new float[3],
         };
@@ -36,7 +36,7 @@ namespace Baku.VMagicMirror
         //第3関節の開き/閉じはBendとは別軸で保持する
         private readonly float[] _rightOpenAngles = new float[5];
         private readonly float[] _leftOpenAngles = new float[5];
-        
+
         //TODO: 親指の曲げ反映をちゃんと書いてね
 
         private Vector3 _leftWristForward = Vector3.forward;
@@ -44,25 +44,57 @@ namespace Baku.VMagicMirror
         private Vector3 _rightWristForward = Vector3.forward;
         private Vector3 _rightWristUp = Vector3.up;
 
+        /// <summary>
+        /// ユーザーの左手の指の曲げ情報を更新します。
+        /// </summary>
+        /// <param name="wristForward"></param>
+        /// <param name="wristUp"></param>
         public void UpdateLeft(Vector3 wristForward, Vector3 wristUp)
         {
             _leftWristForward = wristForward;
             _leftWristUp = wristUp;
-            
+
             UpdateLeftThumb();
             UpdateNonThumbLeftFinger(5, 1);
             UpdateNonThumbLeftFinger(9, 2);
             UpdateNonThumbLeftFinger(13, 3);
             UpdateNonThumbLeftFinger(17, 4);
-
-            _fingerController.Hold(FingerConsts.LeftThumb, GetFingerBendAngle(FingerConsts.LeftThumb));
-            for (int i = FingerConsts.LeftIndex; i < FingerConsts.LeftLittle + 1; i++)
-            {
-                _fingerController.Hold(i, GetFingerBendAngle(i));
-                _fingerController.HoldOpen(i, _leftOpenAngles[i]);
-            }
         }
 
+        /// <summary>
+        /// ユーザーの左手の指の曲げ情報をモデルの右手、または左手に適用します。
+        /// </summary>
+        /// <param name="disableFlip"></param>
+        public void ApplyLeftFingersDataToModel(bool disableFlip)
+        {
+            if (disableFlip)
+            {
+                _fingerController.Hold(FingerConsts.LeftThumb, GetFingerBendAngle(FingerConsts.LeftThumb));
+                for (int i = FingerConsts.LeftIndex; i < FingerConsts.LeftLittle + 1; i++)
+                {
+                    _fingerController.Hold(i, GetFingerBendAngle(i));
+                    _fingerController.HoldOpen(i, _leftOpenAngles[i]);
+                }
+            }
+            else
+            {
+                //NOTE: ソースは左手、書き込むのが右手になる。
+                //また指の回転方向もひっくり返さないと整合しないことに注意
+                _fingerController.Hold(FingerConsts.RightThumb, GetFingerBendAngle(FingerConsts.LeftThumb));
+                for (int i = FingerConsts.LeftIndex; i < FingerConsts.LeftLittle + 1; i++)
+                {
+                    _fingerController.Hold(i + 5, GetFingerBendAngle(i));
+                    _fingerController.HoldOpen(i + 5, -_leftOpenAngles[i]);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// ユーザーの右手の指の曲げ情報を更新します。
+        /// </summary>
+        /// <param name="wristForward"></param>
+        /// <param name="wristUp"></param>
         public void UpdateRight(Vector3 wristForward, Vector3 wristUp)
         {
             _rightWristForward = wristForward;
@@ -73,15 +105,35 @@ namespace Baku.VMagicMirror
             UpdateNonThumbRightFinger(9, 2);
             UpdateNonThumbRightFinger(13, 3);
             UpdateNonThumbRightFinger(17, 4);
-
-            _fingerController.Hold(FingerConsts.RightThumb, GetFingerBendAngle(FingerConsts.RightThumb));
-            for (int i = FingerConsts.RightIndex; i < FingerConsts.RightLittle + 1; i++)
-            {
-                _fingerController.Hold(i, GetFingerBendAngle(i));
-                _fingerController.HoldOpen(i, _rightOpenAngles[i - 5]);
-            }
         }
 
+        /// <summary>
+        /// ユーザーの右手の指の曲げ情報をモデルの左手、または右手に適用します。
+        /// </summary>
+        /// <param name="disableFlip"></param>
+        public void ApplyRightFingersDataToModel(bool disableFlip)
+        {
+            if (disableFlip)
+            {
+                _fingerController.Hold(FingerConsts.RightThumb, GetFingerBendAngle(FingerConsts.RightThumb));
+                for (int i = FingerConsts.RightIndex; i < FingerConsts.RightLittle + 1; i++)
+                {
+                    _fingerController.Hold(i, GetFingerBendAngle(i));
+                    _fingerController.HoldOpen(i, _rightOpenAngles[i - 5]);
+                }
+            }
+            else
+            {
+                //ソースは右手、書き込むのは左手。HoldOpenで符号がひっくり返るのは左手と同様。
+                _fingerController.Hold(FingerConsts.LeftThumb, GetFingerBendAngle(FingerConsts.RightThumb));
+                for (int i = FingerConsts.RightIndex; i < FingerConsts.RightLittle + 1; i++)
+                {
+                    _fingerController.Hold(i - 5, GetFingerBendAngle(i));
+                    _fingerController.HoldOpen(i - 5, -_rightOpenAngles[i - 5]);
+                }
+            }
+        }
+        
         /// <summary>
         /// 左手の指の曲げ情報をリセットします。手のステートが変化する時に使います。
         /// </summary>

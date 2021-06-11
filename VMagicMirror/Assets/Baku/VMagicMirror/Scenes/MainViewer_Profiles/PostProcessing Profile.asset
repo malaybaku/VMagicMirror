@@ -1,5 +1,101 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8447584578306509704
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: VmmVhs
+  m_EditorClassIdentifier: Assembly-CSharp:Baku.VMagicMirror:VmmVhs
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  bleeding:
+    overrideState: 1
+    value: 0.25
+  fringing:
+    overrideState: 1
+    value: 0.373
+  scanline:
+    overrideState: 1
+    value: 0.117
+--- !u!114 &-4431195256121071682
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 973ea24b13466964cac3346a5b444b0e, type: 3}
+  m_Name: VmmUnlit
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  bleeding:
+    overrideState: 1
+    value: 0.251
+  fringing:
+    overrideState: 1
+    value: 0.373
+  scanline:
+    overrideState: 1
+    value: 0.117
+--- !u!114 &-679367385162691271
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73ee321134e4c554c81ec51a88a26d2b, type: 3}
+  m_Name: VmmMonochrome
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  useBlock:
+    overrideState: 0
+    value: 1
+  blockSize:
+    overrideState: 0
+    value: 4
+  useMonochrome:
+    overrideState: 1
+    value: 1
+  black:
+    overrideState: 1
+    value: {r: 0.16470589, g: 0.14117648, b: 0.08627451, a: 1}
+  white:
+    overrideState: 1
+    value: {r: 0.9228164, g: 0.941, b: 0.7909855, a: 1}
+  useLevel:
+    overrideState: 1
+    value: 1
+  levelDivision:
+    overrideState: 0
+    value: 8
+  whitenThreshold:
+    overrideState: 0
+    value: 4
+  useColorReduction:
+    overrideState: 0
+    value: 0
+  colorDivision:
+    overrideState: 0
+    value: 16
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14,6 +110,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
   - {fileID: 114612591270388130}
+  - {fileID: -679367385162691271}
+  - {fileID: -8447584578306509704}
 --- !u!114 &114612591270388130
 MonoBehaviour:
   m_ObjectHideFlags: 3

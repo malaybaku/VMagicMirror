@@ -19,7 +19,9 @@ namespace Baku.VMagicMirror
         private VmmVhs _vmmVhs;
         private VmmMonochrome _vmmMonochrome;
         private bool _handTrackingEnabled = false;
-        private bool _retroEffectEnabled = false;
+        //NOTE: この値自体はビルドバージョンによらずfalseがデフォルトで良いことに注意。
+        //制限版でGUI側にtrue相当の値が表示されるが、これはGUI側が別途決め打ちしてくれてる
+        private bool _showEffectDuringTracking = false;
 
         [Inject]
         public void Initialize(IMessageReceiver receiver)
@@ -83,18 +85,18 @@ namespace Baku.VMagicMirror
                 });
             
             receiver.AssignCommandHandler(
-                VmmCommands.EnableRetroEffects,
-                message =>
-                {
-                    _retroEffectEnabled = message.ToBoolean();
-                    UpdateRetroEffectStatus();
-                });
-            
-            receiver.AssignCommandHandler(
                 VmmCommands.EnableImageBasedHandTracking,
                 message =>
                 {
                     _handTrackingEnabled = message.ToBoolean();
+                    UpdateRetroEffectStatus();
+                });
+
+            receiver.AssignCommandHandler(
+                VmmCommands.ShowEffectDuringHandTracking,
+                message =>
+                {
+                    _showEffectDuringTracking = message.ToBoolean();
                     UpdateRetroEffectStatus();
                 });
         }
@@ -177,9 +179,8 @@ namespace Baku.VMagicMirror
 
         private void UpdateRetroEffectStatus()
         {
-            bool enableEffect =
-                (FeatureLocker.IsFeatureLocked && _handTrackingEnabled) ||
-                _retroEffectEnabled;
+            bool enableEffect =_handTrackingEnabled &&
+                (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking);
 
             _vmmMonochrome.enabled.value = enableEffect;
             _vmmVhs.enabled.value = enableEffect;

@@ -147,7 +147,7 @@ namespace Baku.VMagicMirror.IK
             );
             
             receiver.AssignCommandHandler(
-                VmmCommands.DisableFaceTrackingHorizontalFlip,
+                VmmCommands.DisableHandTrackingHorizontalFlip,
                 c => DisableHorizontalFlip = c.ToBoolean()
             );
 

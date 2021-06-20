@@ -398,7 +398,6 @@ namespace Baku.VMagicMirror
             GamepadHand.Start();
             MidiHand.Start();
             _arcadeStickHand.Start();
-            //_imageBaseHand.Start();
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -410,12 +409,7 @@ namespace Baku.VMagicMirror
             Typing.ResetLeftHandDownTimeout(true);
             Typing.ResetRightHandDownTimeout(true);
             
-            //NOTE: 初期姿勢は「トラッキングできてない(はずの)画像ベースハンドトラッキングのやつ」にする。
-            //こうすると棒立ちになるので都合がよい
-            // _imageBaseHand.HasRightHandUpdate = false;
-            // SetRightHandState(_imageBaseHand.RightHandState);
-            // _imageBaseHand.HasLeftHandUpdate = false;
-            // SetLeftHandState(_imageBaseHand.LeftHandState);
+            //NOTE: 初期姿勢では手をおろしておく。棒立ちは何かと無難なので。
             SetRightHandState(_downHand.RightHandState);
             SetLeftHandState(_downHand.LeftHandState);
         }
@@ -433,21 +427,7 @@ namespace Baku.VMagicMirror
             MidiHand.Update();
             _arcadeStickHand.Update();
             _penTablet.Update();
-            // _imageBaseHand.Update();
-            //
-            // //画像処理の手検出があったらそっちのIKに乗り換える
-            // if (_imageBaseHand.HasRightHandUpdate)
-            // {
-            //     _imageBaseHand.HasRightHandUpdate = false;
-            //     SetRightHandState(_imageBaseHand.RightHandState);
-            // }
-            //
-            // if (_imageBaseHand.HasLeftHandUpdate)
-            // {
-            //     _imageBaseHand.HasLeftHandUpdate = false;
-            //     SetLeftHandState(_imageBaseHand.LeftHandState);
-            // }
-            
+
             //現在のステート + 必要なら直前ステートも参照してIKターゲットの位置、姿勢を更新する
             UpdateLeftHand();
             UpdateRightHand();
@@ -461,7 +441,6 @@ namespace Baku.VMagicMirror
             Presentation.LateUpdate();
             _arcadeStickHand.LateUpdate();
             _penTablet.LateUpdate();
-            //_imageBaseHand.LateUpdate();
         }
         
         private void UpdateLeftHand()

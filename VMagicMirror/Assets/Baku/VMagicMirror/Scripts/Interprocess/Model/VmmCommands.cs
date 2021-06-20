@@ -89,6 +89,7 @@ namespace Baku.VMagicMirror
         // Motion, Image-based Hand
         public const string EnableImageBasedHandTracking = nameof(EnableImageBasedHandTracking);
         public const string DisableHandTrackingHorizontalFlip = nameof(DisableHandTrackingHorizontalFlip);
+        public const string EnableSendHandTrackingResult = nameof(EnableSendHandTrackingResult);
 
         //public const string EnableTouchTyping = nameof(EnableTouchTyping);
 

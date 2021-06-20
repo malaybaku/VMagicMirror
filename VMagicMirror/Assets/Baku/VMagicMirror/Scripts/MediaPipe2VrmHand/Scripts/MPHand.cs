@@ -16,6 +16,10 @@ namespace Baku.VMagicMirror.IK
     /// </remarks>
     public class MPHand : MonoBehaviour
     {
+        //この回数だけ連続でハンドトラッキングのスコアが閾値を超えたとき、トラッキング開始と見なす。
+        //チャタリングのあるケースを厳し目に判定するために用いる
+        private const int TrackingStartCount = 3;
+        
         /// <summary>
         /// 手の検出の更新をサボる頻度
         /// </summary>
@@ -34,9 +38,6 @@ namespace Baku.VMagicMirror.IK
         [SerializeField] ResourceSet _resources = null;
         [SerializeField] bool _useAsyncReadback = true;
         [SerializeField] private FingerController _fingerController = null;
-        [SerializeField] private RawImage previewImage = null;
-        [SerializeField] private RawImage previewLImage = null;
-        [SerializeField] private RawImage previewRImage = null;
 
         //NOTE: 画像をタテに切っている関係で、画面中央に映った手 = だいたい肩の正面くらいに手があるのでは？とみなしたい
         [SerializeField] private Vector3 rightHandOffset = new Vector3(0.25f, 0f, 0f);
@@ -60,9 +61,14 @@ namespace Baku.VMagicMirror.IK
 
         //この秒数だけトラッキングが更新されなかったら手を下ろす
         [SerializeField] private float lostCount = 1f;
-        //トラッキングロスト時の手下ろし速度のファクター
         [SerializeField] private float lostLerpFactor = 3f;
-        
+        [SerializeField] private float dataSendInterval = 0.1f;
+
+        [SerializeField] private ImageBaseHandLimitSetting handLimitSetting = null;
+
+        [SerializeField] private RawImage webcamImage = null; 
+        [SerializeField] private RawImage leftImage = null; 
+        [SerializeField] private RawImage rightImage = null; 
 
         private Vector3 leftHandOffset => new Vector3(-rightHandOffset.x, rightHandOffset.y, rightHandOffset.z);
 
@@ -101,11 +107,13 @@ namespace Baku.VMagicMirror.IK
         
         public bool DisableHorizontalFlip { get; set; }
 
+        public bool SendResult { get; set; }
+
         public AlwaysDownHandIkGenerator DownHand { get; set; }
         
-        private MPHandState _rightHandState = new MPHandState(ReactedHand.Right);
+        private readonly MPHandState _rightHandState = new MPHandState(ReactedHand.Right);
         public IHandIkState RightHandState => _rightHandState;
-        private MPHandState _leftHandState = new MPHandState(ReactedHand.Left);
+        private readonly MPHandState _leftHandState = new MPHandState(ReactedHand.Left);
         public IHandIkState LeftHandState => _leftHandState;
 
         private Vector3 _leftPosTarget;
@@ -115,19 +123,35 @@ namespace Baku.VMagicMirror.IK
 
         private MPHandFinger _finger;
         private HandIkGeneratorDependency _dependency;
+        private ImageBaseHandRotLimiter _limiter;
+        
+        private HandTrackingResultBuilder _resultBuilder;
+        private float _resultSendCount = 0f;
 
+
+        private int _leftTrackedCount = 0;
+        private int _rightTrackedCount = 0;
         private float _leftLostCount = 0f;
         private float _rightLostCount = 0f;
+        private float _leftScore = 0f;
+        private float _rightScore = 0f;
 
         //NOTE: 複数フレームにわたって画像処理するシナリオについて、途中でGraphics.Blitするのを禁止するためのフラグ
         private bool _leftBlitBlock = false;
         private bool _rightBlitBlock = false;
         private float _leftTextureDt = -1f;
         private float _rightTextureDt = -1f;
-
+        
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, FaceTracker faceTracker)
+        public void Initialize(
+            IVRMLoadable vrmLoadable,
+            IMessageReceiver receiver,
+            IMessageSender sender,
+            FaceTracker faceTracker
+            )
         {
+            _resultBuilder = new HandTrackingResultBuilder(sender);
+            
             vrmLoadable.VrmLoaded += info =>
             {
                 _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
@@ -150,11 +174,17 @@ namespace Baku.VMagicMirror.IK
                 VmmCommands.DisableHandTrackingHorizontalFlip,
                 c => DisableHorizontalFlip = c.ToBoolean()
             );
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableSendHandTrackingResult,
+                c => SendResult = c.ToBoolean()
+                );
 
             _leftTexture = new RenderTexture((int) (resolution.x * textureWidthRateForOneHand), resolution.y, 0);
             _rightTexture = new RenderTexture((int) (resolution.x * textureWidthRateForOneHand), resolution.y, 0);
             faceTracker.WebCamTextureInitialized += SetWebcamTexture;
             faceTracker.WebCamTextureDisposed += DisposeWebCamTexture;
+
+            _limiter = new ImageBaseHandRotLimiter(handLimitSetting);
         }
 
         public void SetupDependency(HandIkGeneratorDependency dependency)
@@ -191,10 +221,6 @@ namespace Baku.VMagicMirror.IK
 
             _leftHandState.OnEnter += InitializeHandPosture;
             _rightHandState.OnEnter += InitializeHandPosture;
-
-            //TODO: デバッグ終わったらオフ
-            previewLImage.texture = _leftTexture;
-            previewRImage.texture = _rightTexture;
         }
 
         private void OnDestroy()
@@ -209,35 +235,23 @@ namespace Baku.VMagicMirror.IK
             {
                 _leftBlitBlock = false;
                 _rightBlitBlock = false;
+                _leftTrackedCount = 0;
+                _rightTrackedCount = 0;
                 return;
             }
 
             _leftPipeline.UseAsyncReadback = _useAsyncReadback;
             _rightPipeline.UseAsyncReadback = _useAsyncReadback;
 
-            //TODO: デバッグ終わったらオフ
-            previewImage.texture = _webCamTexture;
-
             BlitTextures();
             CallHandUpdate();
-
-            _leftLostCount += Time.deltaTime;
-            _rightLostCount += Time.deltaTime;
-            var lostFactor = lostLerpFactor * Time.deltaTime;
-
-            if ((_leftLostCount > lostCount && DisableHorizontalFlip) ||
-                (_rightLostCount > lostCount && !DisableHorizontalFlip))
-            {
-                _leftPosTarget = Vector3.Lerp(_leftPosTarget, DownHand.LeftHand.Position, lostFactor);
-                _leftRotTarget = Quaternion.Slerp(_leftRotTarget, DownHand.LeftHand.Rotation, lostFactor);
-            }
+            UpdateLostMotion();
+            SendHandTrackingResult();
             
-            if ((_rightLostCount > lostCount && DisableHorizontalFlip) ||
-                (_leftLostCount > lostCount && !DisableHorizontalFlip))
-            {
-                _rightPosTarget = Vector3.Lerp(_rightPosTarget, DownHand.RightHand.Position, lostFactor);
-                _rightRotTarget = Quaternion.Slerp(_rightRotTarget, DownHand.RightHand.Rotation, lostFactor);
-            }
+            //DEBUG
+            // webcamImage.texture = _webCamTexture;
+            // leftImage.texture = _leftTexture;
+            // rightImage.texture = _rightTexture;
 
             _leftHandState.IKData.Position = Vector3.Lerp(
                 _leftHandState.IKData.Position, _leftPosTarget, positionSmoothFactor * Time.deltaTime
@@ -346,15 +360,23 @@ namespace Baku.VMagicMirror.IK
 
             //解析が終わった = いろいろ見ていく。ただしスコアが低いのは無視
             var pipeline = _leftPipeline;
-            if (pipeline.Score < scoreThreshold)
+            _leftScore = pipeline.Score;
+            if (_leftScore < scoreThreshold)
             {
                 return;
             }
+
+            _leftTrackedCount++;
+            if (_leftTrackedCount < TrackingStartCount)
+            {
+                return;
+            }
+            
             _leftLostCount = 0f;
             
             for (var i = 0; i < HandPipeline.KeyPointCount; i++)
             {
-                //XとZをひっくり返すと鏡像的なアレが直るはず。Xは鏡写しがデフォならどうすべきか、というのがあるが…
+                //XとZをひっくり返すと鏡像的なアレが直る
                 var p = pipeline.GetKeyPoint(i);
                 _leftHandPoints[i] = new Vector3(-p.x, p.y, -p.z);
             }
@@ -366,8 +388,10 @@ namespace Baku.VMagicMirror.IK
             {
                 _leftPosTarget = 
                     _defaultHeadPosition + commonAdditionalOffset + 
-                    Mul(motionScale, leftHandOffset + _leftHandPoints[0]);
-                _leftRotTarget = rotInfo.Item1 * Quaternion.AngleAxis(90f, Vector3.up);
+                    MathUtil.Mul(motionScale, leftHandOffset + _leftHandPoints[0]);
+                _leftRotTarget = _limiter.CalculateLeftHandRotation(
+                    rotInfo.Item1 * Quaternion.AngleAxis(90f, Vector3.up)
+                );
             }
             else
             {
@@ -375,11 +399,14 @@ namespace Baku.VMagicMirror.IK
                 p.x = -p.x;
                 _rightPosTarget =
                     _defaultHeadPosition + commonAdditionalOffset + 
-                    Mul(motionScale, rightHandOffset + p);
+                    MathUtil.Mul(motionScale, rightHandOffset + p);
                 var rightRot = rotInfo.Item1;
                 rightRot.y *= -1f;
                 rightRot.z *= -1f;
-                _rightRotTarget = rightRot * Quaternion.AngleAxis(-90f, Vector3.up);
+
+                _rightRotTarget = _limiter.CalculateRightHandRotation(
+                    rightRot * Quaternion.AngleAxis(-90f, Vector3.up)
+                );
             }
             
             if (DisableHorizontalFlip)
@@ -420,7 +447,14 @@ namespace Baku.VMagicMirror.IK
             _rightPipeline.CalculateLandmarks(_leftTexture, _leftTextureDt);
            
             var pipeline = _rightPipeline;
-            if (pipeline.Score < scoreThreshold)
+            _rightScore = pipeline.Score;
+            if (_rightScore < scoreThreshold)
+            {
+                return;
+            }
+
+            _rightTrackedCount++;
+            if (_rightTrackedCount < TrackingStartCount)
             {
                 return;
             }
@@ -438,8 +472,10 @@ namespace Baku.VMagicMirror.IK
             {
                 _rightPosTarget =
                     _defaultHeadPosition + commonAdditionalOffset + 
-                    Mul(motionScale, rightHandOffset + _rightHandPoints[0]);
-                _rightRotTarget = rotInfo.Item1 * Quaternion.AngleAxis(-90f, Vector3.up);
+                    MathUtil.Mul(motionScale, rightHandOffset + _rightHandPoints[0]);
+                _rightRotTarget = _limiter.CalculateRightHandRotation(
+                    rotInfo.Item1 * Quaternion.AngleAxis(-90f, Vector3.up)
+                );
             }
             else
             {
@@ -447,11 +483,13 @@ namespace Baku.VMagicMirror.IK
                 p.x = -p.x;
                 _leftPosTarget = 
                     _defaultHeadPosition + commonAdditionalOffset + 
-                    Mul(motionScale, leftHandOffset + p);
+                    MathUtil.Mul(motionScale, leftHandOffset + p);
                 var leftRot = rotInfo.Item1;
                 leftRot.y *= -1f;
                 leftRot.z *= -1f;
-                _leftRotTarget = leftRot * Quaternion.AngleAxis(90f, Vector3.up);
+                _leftRotTarget = _limiter.CalculateLeftHandRotation(
+                    leftRot * Quaternion.AngleAxis(90f, Vector3.up)
+                );
             }
 
             if (DisableHorizontalFlip)
@@ -478,6 +516,63 @@ namespace Baku.VMagicMirror.IK
             UpdateRightHandBefore();
             UpdateRightHandAfter();
         }
+
+        private void UpdateLostMotion()
+        {
+            _leftLostCount += Time.deltaTime;
+            _rightLostCount += Time.deltaTime;
+
+            if (_leftLostCount > lostCount)
+            {
+                _leftTrackedCount = 0;
+            }
+
+            if (_rightLostCount > lostCount)
+            {
+                _rightTrackedCount = 0;
+            }
+            
+            var lostFactor = lostLerpFactor * Time.deltaTime;
+
+            if ((_leftLostCount > lostCount && DisableHorizontalFlip) ||
+                (_rightLostCount > lostCount && !DisableHorizontalFlip))
+            {
+                 _leftPosTarget = Vector3.Lerp(_leftPosTarget, DownHand.LeftHand.Position, lostFactor);
+                 _leftRotTarget = Quaternion.Slerp(_leftRotTarget, DownHand.LeftHand.Rotation, lostFactor);
+            }
+            
+            if ((_rightLostCount > lostCount && DisableHorizontalFlip) ||
+                (_leftLostCount > lostCount && !DisableHorizontalFlip))
+            {
+                _rightPosTarget = Vector3.Lerp(_rightPosTarget, DownHand.RightHand.Position, lostFactor);
+                _rightRotTarget = Quaternion.Slerp(_rightRotTarget, DownHand.RightHand.Rotation, lostFactor);
+            }
+        }
+
+        private void SendHandTrackingResult()
+        {
+            if (!SendResult)
+            {
+                _resultSendCount = 0f;
+                return;
+            }
+
+            _resultSendCount += Time.deltaTime;
+            if (_resultSendCount < dataSendInterval)
+            {
+                return;
+            }
+            _resultSendCount -= dataSendInterval;
+            
+            _resultBuilder.SendResult(
+                _leftScore >= scoreThreshold,
+                _leftScore,
+                _leftHandPoints,
+                _rightScore >= scoreThreshold,
+                _rightScore,
+                _rightHandPoints
+                );
+        }
         
         //左手の取るべきワールド回転に関連して、回転、手の正面方向ベクトル、手のひらと垂直なベクトルの3つを計算します。
         private (Quaternion, Vector3, Vector3) CalculateLeftHandRotation()
@@ -497,8 +592,7 @@ namespace Baku.VMagicMirror.IK
 
             return (rot, wristForward, wristUp);
         }
-        
-            
+
         /// <summary>
         /// 他のIKからこのIKに遷移した瞬間に呼び出すことで、直前のIKの姿勢をコピーして遷移をなめらかにします
         /// </summary>
@@ -544,13 +638,6 @@ namespace Baku.VMagicMirror.IK
 
             return (rot, wristForward, wristUp);
         }
-        
-
-        private static Vector3 Mul(Vector3 u, Vector3 v)
-            => new Vector3(u.x * v.x, u.y * v.y, u.z * v.z);
-        
-        private static void LogVec(string vName, Vector3 v)
-            => Debug.Log($"{vName} = {v.x:0.000}, {v.y:0.000}, {v.z:0.000}");
 
         private class MPHandState : IHandIkState
         {

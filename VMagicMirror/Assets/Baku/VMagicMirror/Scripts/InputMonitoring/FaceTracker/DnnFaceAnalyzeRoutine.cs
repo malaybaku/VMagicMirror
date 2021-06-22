@@ -25,15 +25,12 @@ namespace Baku.VMagicMirror
         #region 画像処理に必要な色々なパラメータ / 値のキャッシュ
         
         private readonly Scalar _mean = new Scalar(0, 0, 0, 0);
-        private const float _scale = 1.0f;
-        private const bool _swapRB = false;
-
-
-        private string model = "YuFaceDetectNet.onnx";
-        private const float confThreshold = 0.5f;
+        private const float Scale = 1.0f;
+        private const bool SwapRB = false;
+        private const float ConfThreshold = 0.5f;
 
         //NOTE: NMS(Non-maximum suppression)は物体検出のよくある後処理でググると詳細が出ます
-        private const float nmsThreshold = 0.4f;
+        private const float NmsThreshold = 0.4f;
         
         //NOTE: これは入力画像のサイズではなく、dnn上で取り扱うサイズ。
         //onnxを変更せずにここの値を変更できるが、変更してもあまり負荷が変わらなさそう
@@ -78,7 +75,7 @@ namespace Baku.VMagicMirror
         {
             base.SetUp();
             
-            string modelFilePath = Path.Combine(Application.streamingAssetsPath, "dnn/" + model);
+            string modelFilePath = Path.Combine(Application.streamingAssetsPath, StreamingAssetFileNames.DnnModelFileName);
             
             if (!File.Exists(modelFilePath))
             {
@@ -152,7 +149,7 @@ namespace Baku.VMagicMirror
             }
 
             Imgproc.cvtColor(_rgbaMat, _bgrMat, Imgproc.COLOR_RGBA2BGR);
-            Mat blob = Dnn.blobFromImage(_bgrMat, _scale, _netInputSize, _mean, _swapRB, false);
+            Mat blob = Dnn.blobFromImage(_bgrMat, Scale, _netInputSize, _mean, SwapRB, false);
             _net.setInput(blob);
             
             if (_net.getLayer(new DictValue(0)).outputNameToIndex("im_info") != -1)
@@ -265,7 +262,7 @@ namespace Baku.VMagicMirror
             Mat scores = dets.colRange(14, 15);
             scores.copyTo(confidences_m);
 
-            Dnn.NMSBoxes(boxes, confidences, confThreshold, nmsThreshold, indices);
+            Dnn.NMSBoxes(boxes, confidences, ConfThreshold, NmsThreshold, indices);
             //削ったうえでconfidenceが一番高い所を拾いに行く
             float maxConf = 0f;
             int maxConfIdx = -1;

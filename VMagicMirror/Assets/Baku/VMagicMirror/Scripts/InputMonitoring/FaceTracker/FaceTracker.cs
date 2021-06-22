@@ -24,7 +24,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class FaceTracker : MonoBehaviour
     {
-        private const string DlibFaceTrackingDataFileName = "sp_human_face_17.dat";
 
         [SerializeField] private string requestedDeviceName = "";
         //NOTE: このクラス自身はテクスチャのリサイズに関知しない。
@@ -121,7 +120,7 @@ namespace Baku.VMagicMirror
         {
             CalibrationData.SetDefaultValues();
             
-            _dlibFaceAnalyzer = new DlibFaceAnalyzeRoutine(DlibFaceTrackingDataFileName);
+            _dlibFaceAnalyzer = new DlibFaceAnalyzeRoutine(StreamingAssetFileNames.DlibFaceTrackingDataFileName);
             _dnnFaceAnalyzer = new DnnFaceAnalyzeRoutine();
             //イベントを素通し
             _dlibFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;

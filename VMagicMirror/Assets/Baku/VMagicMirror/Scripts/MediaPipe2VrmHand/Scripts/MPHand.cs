@@ -363,6 +363,7 @@ namespace Baku.VMagicMirror.IK
             _leftScore = pipeline.Score;
             if (_leftScore < scoreThreshold)
             {
+                _leftTrackedCount = 0;
                 return;
             }
 
@@ -450,6 +451,7 @@ namespace Baku.VMagicMirror.IK
             _rightScore = pipeline.Score;
             if (_rightScore < scoreThreshold)
             {
+                _rightTrackedCount = 0;
                 return;
             }
 
@@ -522,16 +524,6 @@ namespace Baku.VMagicMirror.IK
             _leftLostCount += Time.deltaTime;
             _rightLostCount += Time.deltaTime;
 
-            if (_leftLostCount > lostCount)
-            {
-                _leftTrackedCount = 0;
-            }
-
-            if (_rightLostCount > lostCount)
-            {
-                _rightTrackedCount = 0;
-            }
-            
             var lostFactor = lostLerpFactor * Time.deltaTime;
 
             if ((_leftLostCount > lostCount && DisableHorizontalFlip) ||

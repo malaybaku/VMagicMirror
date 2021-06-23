@@ -638,10 +638,15 @@ MonoBehaviour:
   rotationSmoothFactor: 12
   resolution: {x: 1280, y: 960}
   textureWidthRateForOneHand: 0.6
-  lostCount: 1
-  lostLerpFactor: 3
+  lostCount: 0.6
+  lostCircleMotionLerpFactor: 1
+  lostEndMotionLerpFactor: 12
+  lostMotionDuration: 1
   dataSendInterval: 0.1
   handLimitSetting: {fileID: 11400000, guid: ea221caa40a8ae54d9d5b8d584f54c81, type: 2}
+  webcamImage: {fileID: 0}
+  leftImage: {fileID: 0}
+  rightImage: {fileID: 0}
 --- !u!1 &5813678810510073684
 GameObject:
   m_ObjectHideFlags: 0

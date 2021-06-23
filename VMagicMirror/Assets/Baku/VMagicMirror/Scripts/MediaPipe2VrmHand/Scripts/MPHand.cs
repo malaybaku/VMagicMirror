@@ -6,32 +6,21 @@ using Zenject;
 
 namespace Baku.VMagicMirror.IK
 {
-    /// <summary>
-    /// HandPoseBarracudaのトラッキングをVRMの手で以下に割り当てるすごいやつだよ
-    /// - 手首IK
-    /// - 指曲げFK
-    /// </summary>
-    /// <remarks>
-    /// - 他の処理に比べるとMediaPipeへの依存度が妙に高いのでフォルダを分けてます
-    /// </remarks>
+    /// <summary> HandPoseBarracudaのトラッキングを手首IKと指曲げFKに割り当てるすごいやつだよ </summary>
     public class MPHand : MonoBehaviour
     {
         //この回数だけ連続でハンドトラッキングのスコアが閾値を超えたとき、トラッキング開始と見なす。
         //チャタリングのあるケースを厳し目に判定するために用いる
         private const int TrackingStartCount = 3;
         
-        /// <summary>
-        /// 手の検出の更新をサボる頻度
-        /// </summary>
+        /// <summary> 手の検出の更新をサボる頻度オプション </summary>
         public enum FrameSkipStyles
         {
             //サボらず、毎フレームでLRを両方とも処理する。一番重たい
             BothOnSingleFrame,
-
             //サボらず、LとRを交互に処理し続ける
             LR,
-
-            //LとRを、2フレームずつかけて交互に処理する、スキップ、R、スキップ、…
+            //Lを2フレームかけて処理後、Rを2フレームかけて処理、という形で交互に処理する
             LLRR,
         }
 
@@ -39,21 +28,15 @@ namespace Baku.VMagicMirror.IK
         [SerializeField] bool _useAsyncReadback = true;
         [SerializeField] private FingerController _fingerController = null;
 
-        //NOTE: 画像をタテに切っている関係で、画面中央に映った手 = だいたい肩の正面くらいに手があるのでは？とみなしたい
+        //画像をタテに切っている関係で、画面中央に映った手 = だいたい肩の正面くらいに手がある、とみなしたい
         [SerializeField] private Vector3 rightHandOffset = new Vector3(0.25f, 0f, 0f);
-
-        //NOTE: なぜズラすかというと、wrist自体にはz座標が入っていないため。
-        //そこで、UpperArm - LowerArmの距離に相当する程度の距離だけ+zに手をズラす
+        //wrist自体にはz座標が入っていないため、ちょっと手前に押し出しておく
         [SerializeField] private Vector3 commonAdditionalOffset = new Vector3(0f, 0f, 0.25f);
-
         //手と頭の距離にスケールをかけると、実際には頭の脇でちょこちょこ動かすだけのムーブを大きくできる
         [SerializeField] private Vector3 motionScale = Vector3.one;
 
         [Range(0f, 1f)] [SerializeField] private float scoreThreshold = 0.5f;
-
-        //NOTE: L/Rの検出を1フレームずつやった後に何もしないフレームを入れる、その何もしないフレーム数
         [SerializeField] private FrameSkipStyles skipStyle = FrameSkipStyles.LLRR;
-
         [SerializeField] private float positionSmoothFactor = 12f;
         [SerializeField] private float rotationSmoothFactor = 12f;
         [SerializeField] private Vector2Int resolution = new Vector2Int(640, 360);
@@ -61,7 +44,9 @@ namespace Baku.VMagicMirror.IK
 
         //この秒数だけトラッキングが更新されなかったら手を下ろす
         [SerializeField] private float lostCount = 1f;
-        [SerializeField] private float lostLerpFactor = 3f;
+        [SerializeField] private float lostCircleMotionLerpFactor = 3f;
+        [SerializeField] private float lostEndMotionLerpFactor = 12f;
+        [SerializeField] private float lostMotionDuration = 1.0f;
         [SerializeField] private float dataSendInterval = 0.1f;
 
         [SerializeField] private ImageBaseHandLimitSetting handLimitSetting = null;
@@ -99,8 +84,10 @@ namespace Baku.VMagicMirror.IK
 
         private bool _hasModel = false;
         private Transform _head = null;
+        private Transform _leftUpperArm = null;
+        private Transform _rightUpperArm = null;
         private Vector3 _defaultHeadPosition = Vector3.up;
-
+        
         #endregion
 
         public bool ImageProcessEnabled { get; private set; } = false;
@@ -155,6 +142,8 @@ namespace Baku.VMagicMirror.IK
             vrmLoadable.VrmLoaded += info =>
             {
                 _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                _leftUpperArm = info.animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+                _rightUpperArm = info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
                 _defaultHeadPosition = _head.position;
                 _hasModel = true;
             };
@@ -162,6 +151,8 @@ namespace Baku.VMagicMirror.IK
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
+                _leftUpperArm = null;
+                _rightUpperArm = null;
                 _head = null;
             };
 
@@ -524,20 +515,58 @@ namespace Baku.VMagicMirror.IK
             _leftLostCount += Time.deltaTime;
             _rightLostCount += Time.deltaTime;
 
-            var lostFactor = lostLerpFactor * Time.deltaTime;
+            var circleMotionFactor = lostCircleMotionLerpFactor * Time.deltaTime;
+            var endFactor = lostEndMotionLerpFactor * Time.deltaTime;
 
             if ((_leftLostCount > lostCount && DisableHorizontalFlip) ||
                 (_rightLostCount > lostCount && !DisableHorizontalFlip))
             {
-                 _leftPosTarget = Vector3.Lerp(_leftPosTarget, DownHand.LeftHand.Position, lostFactor);
-                 _leftRotTarget = Quaternion.Slerp(_leftRotTarget, DownHand.LeftHand.Rotation, lostFactor);
+                var lostOver = DisableHorizontalFlip
+                    ? _leftLostCount - lostCount
+                    : _rightLostCount - lostCount;
+
+                
+                //NOTE: トラッキングロスモーションは2フェーズに分かれる。
+                // 1. ロス直後: 「手を体の横に開いて下ろす」という円軌道寄りに手を持っていく
+                // 2. それ以降: 単に手降ろし状態に持っていく
+                if (lostOver < lostMotionDuration)
+                {
+                    var rate = lostOver / lostMotionDuration;
+                    var factor = Mathf.Lerp(circleMotionFactor, endFactor, rate);
+                    var (pos, rot) = GetLostLeftHandPose(rate);
+                    _leftPosTarget = Vector3.Lerp(_leftPosTarget, pos, factor);
+                    _leftRotTarget = Quaternion.Slerp(_leftRotTarget, rot, factor);
+                }
+                else
+                {
+                    _leftPosTarget = Vector3.Lerp(_leftPosTarget, DownHand.LeftHand.Position, endFactor);
+                    _leftRotTarget = Quaternion.Slerp(_leftRotTarget, DownHand.LeftHand.Rotation, endFactor);
+                }
             }
             
             if ((_rightLostCount > lostCount && DisableHorizontalFlip) ||
                 (_leftLostCount > lostCount && !DisableHorizontalFlip))
             {
-                _rightPosTarget = Vector3.Lerp(_rightPosTarget, DownHand.RightHand.Position, lostFactor);
-                _rightRotTarget = Quaternion.Slerp(_rightRotTarget, DownHand.RightHand.Rotation, lostFactor);
+                var lostOver = DisableHorizontalFlip
+                    ? _rightLostCount - lostCount
+                    : _leftLostCount - lostCount;
+
+                //NOTE: トラッキングロスモーションは2フェーズに分かれる。
+                // 1. ロス直後: 「手を体の横に開いて下ろす」という円軌道寄りに手を持っていく
+                // 2. それ以降: 単に手降ろし状態に持っていく
+                if (lostOver < lostMotionDuration)
+                {
+                    var rate = lostOver / lostMotionDuration;
+                    var factor = Mathf.Lerp(circleMotionFactor, endFactor, rate);
+                    var (pos, rot) = GetLostRightHandPose(rate);
+                    _rightPosTarget = Vector3.Lerp(_rightPosTarget, pos, factor);
+                    _rightRotTarget = Quaternion.Slerp(_rightRotTarget, rot, factor);
+                }
+                else
+                {
+                    _rightPosTarget = Vector3.Lerp(_rightPosTarget, DownHand.RightHand.Position, endFactor);
+                    _rightRotTarget = Quaternion.Slerp(_rightRotTarget, DownHand.RightHand.Rotation, endFactor);
+                }
             }
         }
 
@@ -576,18 +605,29 @@ namespace Baku.VMagicMirror.IK
                 wristForward
             ).normalized;
 
-            //NOTE: 第2項が右手と違うので注意
-            var rot =
-                //Quaternion.LookRotation(wristForward) *
-                Quaternion.LookRotation(wristForward, wristUp);// *
-                // Quaternion.AngleAxis(90f, Vector3.up);
-
+            var rot = Quaternion.LookRotation(wristForward, wristUp);
             return (rot, wristForward, wristUp);
         }
+    
+        //右手の取るべきワールド回転に関連して、回転、手の正面方向ベクトル、手のひらと垂直なベクトルの3つを計算します。
+        private (Quaternion, Vector3, Vector3) CalculateRightHandRotation()
+        {
+            //正面 = 中指方向
+            var wristForward = (_rightHandPoints[9] - _rightHandPoints[0]).normalized;
+            //手首と垂直 = 人差し指あるいは中指方向、および小指で外積を取ると手の甲方向のベクトルが得られる
+            var wristUp = Vector3.Cross(
+                wristForward, 
+                _rightHandPoints[17] - _rightHandPoints[0]
+            ).normalized;
 
-        /// <summary>
-        /// 他のIKからこのIKに遷移した瞬間に呼び出すことで、直前のIKの姿勢をコピーして遷移をなめらかにします
-        /// </summary>
+            //局所座標の余ってるベクトル = 右手の親指付け根から小指付け根方向のベクトル
+            // var right = Vector3.Cross(up, forward)
+
+            var rot = Quaternion.LookRotation(wristForward, wristUp);
+            return (rot, wristForward, wristUp);
+        }
+        
+        // 他のIKからこのIKに遷移した瞬間に呼び出すことで、直前のIKの姿勢をコピーして遷移をなめらかにする
         private void InitializeHandPosture(ReactedHand hand, IIKData src)
         {
             if (src == null)
@@ -607,30 +647,38 @@ namespace Baku.VMagicMirror.IK
                     break;
             }
         }
-        
-        //右手の取るべきワールド回転に関連して、回転、手の正面方向ベクトル、手のひらと垂直なベクトルの3つを計算します。
-        private (Quaternion, Vector3, Vector3) CalculateRightHandRotation()
+
+        private (Vector3, Quaternion) GetLostLeftHandPose(float rate)
         {
-            //正面 = 中指方向
-            var wristForward = (_rightHandPoints[9] - _rightHandPoints[0]).normalized;
-            //手首と垂直 = 人差し指あるいは中指方向、および小指で外積を取ると手の甲方向のベクトルが得られる
-            var wristUp = Vector3.Cross(
-                wristForward, 
-                _rightHandPoints[17] - _rightHandPoints[0]
-            ).normalized;
+            var upperArmPos = _leftUpperArm.position;
+            var diff = DownHand.LeftHand.Position - upperArmPos;
+            //z成分はそのままに、真横に手を置いたベクトルを作る
+            var diffHorizontal = Vector3.left * new Vector2(diff.x, diff.y).magnitude;
 
-            //局所座標の余ってるベクトル = 右手の親指付け根から小指付け根方向のベクトル
-            // var right = Vector3.Cross(up, forward)
+            //NOTE: -70degくらいになるよう符号を変換 + [-180, 180]で範囲保証
+            var angle = Mathf.Repeat(Mathf.Rad2Deg * Mathf.Atan2(diff.y, -diff.x) + 180f, 360f) - 180f;
+            //適用時は+方向に曲げたいのでこんな感じ
+            var resultPos = upperArmPos + Quaternion.AngleAxis(-angle * rate, Vector3.forward) * diffHorizontal;
+            //NOTE: Slerpでも書けるが、こっちのほうが計算的にラクなはず
+            var resultRot = Quaternion.AngleAxis(-angle * rate, Vector3.forward);
 
-            //上記のwristForwardとかwristUpの考え方の前提に「中指が正面向き、手のひらが真下」という基本姿勢があるので、
-            //手をそこまで持っていってから適用
-            var rot = //Quaternion.LookRotation(wristForward) *
-                Quaternion.LookRotation(wristForward, wristUp);// *
-                //Quaternion.AngleAxis(-90f, Vector3.up);
-
-            return (rot, wristForward, wristUp);
+            return (resultPos, resultRot);
         }
+        
+        private (Vector3, Quaternion) GetLostRightHandPose(float rate)
+        {
+            var upperArmPos = _rightUpperArm.position;
+            var diff = DownHand.RightHand.Position - upperArmPos;
+            var diffHorizontal = Vector3.right * new Vector2(diff.x, diff.y).magnitude;
 
+            //NOTE: -70degくらいのはず
+            var angle = Mathf.Repeat(Mathf.Rad2Deg * Mathf.Atan2(diff.y, diff.x) + 180f, 360f) - 180f;
+            var resultPos = upperArmPos + Quaternion.AngleAxis(angle * rate, Vector3.forward) * diffHorizontal;
+            var resultRot = Quaternion.AngleAxis(angle * rate, Vector3.forward);
+            
+            return (resultPos, resultRot);
+        }
+        
         private class MPHandState : IHandIkState
         {
             public MPHandState(ReactedHand hand)

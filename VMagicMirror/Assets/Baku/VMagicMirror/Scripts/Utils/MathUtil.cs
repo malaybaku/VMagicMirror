@@ -20,6 +20,19 @@ namespace Baku.VMagicMirror
         public static Vector3 Mul(Vector3 u, Vector3 v) => new Vector3(u.x * v.x, u.y * v.y, u.z * v.z);
 
         /// <summary>
+        /// ベクトルの各成分を指定した最小、最大値でClampします。
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static Vector3 ClampVector3(Vector3 v, Vector3 min, Vector3 max) => new Vector3(
+            Mathf.Clamp(v.x, min.x, max.x),
+            Mathf.Clamp(v.y, min.y, max.y),
+            Mathf.Clamp(v.z, min.z, max.z)
+        );
+        
+        /// <summary>
         /// 2次ベジエ曲線に沿った点を取得します。
         /// </summary>
         /// <param name="start"></param>

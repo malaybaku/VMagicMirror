@@ -12,10 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10e7f8c3cd899ae4194ac1730450b7f7, type: 3}
   m_Name: HandRotLimit
   m_EditorClassIdentifier: 
+  eulerMinAngles: {x: -10, y: -80, z: -40}
+  eulerMaxAngles: {x: 80, y: -5, z: 40}
   leftHandRotationOffset: {x: 0, y: 90, z: 0}
   rightHandRotationOffset: {x: 0, y: -90, z: 0}
-  items:
-  - rotationEuler: {x: -60, y: 0, z: 0}
-    angle: 35
-  - rotationEuler: {x: -90, y: 0, z: 0}
-    angle: 10

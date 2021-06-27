@@ -6,6 +6,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror.IK
 {
+    //TODO: リファクタ
     /// <summary> HandPoseBarracudaのトラッキングを手首IKと指曲げFKに割り当てるすごいやつだよ </summary>
     public class MPHand : MonoBehaviour
     {
@@ -39,16 +40,20 @@ namespace Baku.VMagicMirror.IK
         [SerializeField] private FrameSkipStyles skipStyle = FrameSkipStyles.LLRR;
         [SerializeField] private float positionSmoothFactor = 12f;
         [SerializeField] private float rotationSmoothFactor = 12f;
+        //NOTE: 手の立ち上がりが早すぎてキモくなることがあるので制限する。
+        //この制限が適用されるとき、角度のLerpも同様に低速化しなければならないことに要注意。
+        [SerializeField] private float positionMaxSpeed = 1f;
         [SerializeField] private Vector2Int resolution = new Vector2Int(640, 360);
         [Range(0.5f, 1f)] [SerializeField] private float textureWidthRateForOneHand = 0.6f;
 
-        //この秒数だけトラッキングが更新されなかったら手を下ろす
+        [Header("Tracking Loss Motion")]
         [SerializeField] private float lostCount = 1f;
         [SerializeField] private float lostCircleMotionLerpFactor = 3f;
         [SerializeField] private float lostEndMotionLerpFactor = 12f;
         [SerializeField] private float lostMotionDuration = 1.0f;
+        
+        [Header("Misc")]
         [SerializeField] private float dataSendInterval = 0.1f;
-
         [SerializeField] private ImageBaseHandLimitSetting handLimitSetting = null;
 
         [SerializeField] private RawImage webcamImage = null; 
@@ -244,19 +249,7 @@ namespace Baku.VMagicMirror.IK
             // leftImage.texture = _leftTexture;
             // rightImage.texture = _rightTexture;
 
-            _leftHandState.IKData.Position = Vector3.Lerp(
-                _leftHandState.IKData.Position, _leftPosTarget, positionSmoothFactor * Time.deltaTime
-            );
-            _leftHandState.IKData.Rotation = Quaternion.Slerp(
-                _leftHandState.IKData.Rotation, _leftRotTarget, rotationSmoothFactor * Time.deltaTime
-            );
-
-            _rightHandState.IKData.Position = Vector3.Lerp(
-                _rightHandState.IKData.Position, _rightPosTarget, positionSmoothFactor * Time.deltaTime
-            );
-            _rightHandState.IKData.Rotation = Quaternion.Slerp(
-                _rightHandState.IKData.Rotation, _rightRotTarget, rotationSmoothFactor * Time.deltaTime
-            );
+            LerpIKPose();
             
             void BlitTextures()
             {
@@ -332,6 +325,58 @@ namespace Baku.VMagicMirror.IK
 
                         break;
                 }
+            }
+
+            void LerpIKPose()
+            {
+                var leftPos = Vector3.Lerp(
+                    _leftHandState.IKData.Position, _leftPosTarget, positionSmoothFactor * Time.deltaTime
+                );
+                var leftDiff = leftPos - _leftHandState.IKData.Position;
+                var leftSpeed = leftDiff.magnitude / Time.deltaTime;
+                var leftSpeedRate = 1f;
+                
+                //速度が早すぎる場合は速度が律速になるよう低速化 + rotのLerpも弱める
+                if (leftSpeed < positionMaxSpeed)
+                {
+                    _leftHandState.IKData.Position = leftPos;
+                }
+                else
+                {
+                    leftSpeedRate = positionMaxSpeed / leftSpeed;
+                    _leftHandState.IKData.Position += leftDiff * leftSpeedRate;
+                }
+                
+                _leftHandState.IKData.Rotation = Quaternion.Slerp(
+                    _leftHandState.IKData.Rotation, 
+                    _leftRotTarget, 
+                    rotationSmoothFactor * Time.deltaTime * leftSpeedRate
+                );
+                
+                
+                var rightPos = Vector3.Lerp(
+                    _rightHandState.IKData.Position, _rightPosTarget, positionSmoothFactor * Time.deltaTime
+                );
+                var rightDiff = rightPos - _rightHandState.IKData.Position;
+                var rightSpeed = rightDiff.magnitude / Time.deltaTime;
+                var rightSpeedRate = 1f;
+                
+                if (rightSpeed < positionMaxSpeed)
+                {
+                    _rightHandState.IKData.Position = rightPos;
+                }
+                else
+                {
+                    rightSpeedRate = positionMaxSpeed / rightSpeed;
+                    _rightHandState.IKData.Position += rightDiff * rightSpeedRate;
+                }
+                
+                _rightHandState.IKData.Rotation = Quaternion.Slerp(
+                    _rightHandState.IKData.Rotation, 
+                    _rightRotTarget, 
+                    rotationSmoothFactor * Time.deltaTime * rightSpeedRate
+                );
+                
             }
         }
 

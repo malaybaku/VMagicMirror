@@ -355,9 +355,9 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 
                 var rotEuler = item[1].TrimStart().Split(',');
                 if (rotEuler.Length == 3 && 
-                    float.TryParse(rotEuler[0], out float x) && 
-                    float.TryParse(rotEuler[1], out float y) && 
-                    float.TryParse(rotEuler[2], out float z)
+                    ParseUtil.FloatParse(rotEuler[0], out float x) && 
+                    ParseUtil.FloatParse(rotEuler[1], out float y) && 
+                    ParseUtil.FloatParse(rotEuler[2], out float z)
                     )
                 {
                     _rotationData[item[0].TrimEnd()] = new Vector3(x, y, z);
@@ -469,12 +469,12 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 
                     var items = section.Substring(5).Split(',');
                     if (items.Length > 5 && 
-                        float.TryParse(items[0], out var rx) &&
-                        float.TryParse(items[1], out var ry) &&
-                        float.TryParse(items[2], out var rz) &&
-                        float.TryParse(items[3], out var px) &&
-                        float.TryParse(items[4], out var py) &&
-                        float.TryParse(items[5], out var pz))
+                        ParseUtil.FloatParse(items[0], out var rx) &&
+                        ParseUtil.FloatParse(items[1], out var ry) &&
+                        ParseUtil.FloatParse(items[2], out var rz) &&
+                        ParseUtil.FloatParse(items[3], out var px) &&
+                        ParseUtil.FloatParse(items[4], out var py) &&
+                        ParseUtil.FloatParse(items[5], out var pz))
                     {
                         _rotationData[iFacialMocapRotationNames.head] = new Vector3(rx, ry, rz);
                         _hasReceiveRawPosition = true;
@@ -482,9 +482,9 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                     }
                     else if (
                         items.Length > 2 &&
-                        float.TryParse(items[0], out var x) &&
-                        float.TryParse(items[1], out var y) &&
-                        float.TryParse(items[2], out var z))
+                        ParseUtil.FloatParse(items[0], out var x) &&
+                        ParseUtil.FloatParse(items[1], out var y) &&
+                        ParseUtil.FloatParse(items[2], out var z))
                     {
                         _rotationData[iFacialMocapRotationNames.head] = new Vector3(x, y, z);
                         _hasReceiveRawPosition = false;

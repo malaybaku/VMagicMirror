@@ -54,6 +54,9 @@ Also please confirm the unzip folder is normal folder (like `C:\` or `My Documen
 
 Please avoid special folder like `Program Files`, as those folder will lead tons of problem.
 
+Also, especially when you are using v1.7.0 or v1.7.0a, it might be because folder path related bug.
+Please use v1.7.0b instead.
+
 </div>
 
 There are 2 ways to load character, from VRM file on the PC or from VRoid Hub.
@@ -228,7 +231,6 @@ When you are confused where avatar is, press `Reset position` to recover the sit
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_130_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_140_after_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 During this setup you can use `Quick Save` and `Quick Load` buttons to save or load the point of view.

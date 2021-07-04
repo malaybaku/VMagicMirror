@@ -56,6 +56,8 @@ zipファイルを右クリックして`プロパティ`を選び、`セキュ�
 
 `Program Files`などの特殊なフォルダは避けて下さい。
 
+※v1.7.0およびv1.7.0aでのクラッシュは別途不具合で発生することがあります。これらのバージョンを使用している場合、v1.7.0bを代わりにご使用下さい。
+
 </div>
 
 キャラクターはPC上のVRMファイルからロードするか、またはVRoid Hubからロードできます。
@@ -239,7 +241,6 @@ Webブラウザが開くため、指示に従ってアプリ連携を完了し�
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_130_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/get_started/img00_140_after_free_camera_mode.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
 また、`クイックセーブ`ボタンで現在の視点を保存したり、`クイックロード`の対応するボタンでロードしたりできます。

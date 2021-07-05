@@ -7,7 +7,17 @@ lang_prefix: /en/
 
 [Japanese](../../tips/using_hand_tracking)
 
-# Tips: Using Hand Tracking
+# Tips: (v1.7.0b and older ver) Using Hand Tracking
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+This page is about hand tracking supported in v1.7.0b and older version.
+
+If you have v1.8.0 or later, please see the latest [Hand Tracking](../docs/hand_tracking) page instead.
+
+</div>
 
 The hand tracking system in VMagicMirror runs with low CPU cost, but there are some limitations.
 

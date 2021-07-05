@@ -33,10 +33,10 @@ How to get:
 
 <div class="doc-ul" markdown="1">
 
-- BOOTH free version: This is Standard Edition, and most basic way to get VMagicMirror.
-- BOOTH boost version: This is Stadard Edition. Please take it as pure donation.
-- BOOTH full version: This is Full Edition. Please see next section for detail.
-- Fanbox: Full Edition is available for each update. Please see next section for detail.
+- [BOOTH free version](https://baku-dreameater.booth.pm/items/1272298): This is Standard Edition, and most basic way to get VMagicMirror.
+- [BOOTH boost version](https://baku-dreameater.booth.pm/items/1272298): This is Stadard Edition. Please take it as pure donation.
+- [BOOTH full version](https://baku-dreameater.booth.pm/items/3064040): This is Full Edition. Please see next section for detail.
+- [Fanbox](https://baku-dreameater.fanbox.cc/): Full Edition is available for each update. Please see next section for detail.
 
 </div>
 
@@ -50,7 +50,11 @@ The only difference between the editions is the behavior during hand tracking.
 In Standard Edition, you will see the special post-process effect during image based hand tracking enabled.
 Full Edition does not have those restriction, so that you can use hand tracking feature completely.
 
-(TODO: エフェクトがかかった状態のスクリーンショット)
+(Left: Standard Edition / Right: Full Edition)
+
+<div class="row">
+{% include docimg.html file="./images/docs/hand_tracking_edition_difference.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
 All other features works same in both editions.
 
@@ -67,7 +71,7 @@ There are 2 options to get full edition.
 
 <div class="doc-ul" markdown="1">
 
-- [BOOTH](https://booth.pm/ja/items/1272298) full edition : Once you get, all future updates are also available.
+- [BOOTH full version](https://baku-dreameater.booth.pm/items/3064040) : Once you get, all future updates are also available.
 - [Fanbox](https://baku-dreameater.fanbox.cc/) paid plan : You can get updates for each version.
 
 </div>
@@ -76,7 +80,7 @@ Note:
 
 <div class="doc-ul" markdown="1">
 
-- If you select fanbox option and quit later, then further updates are no more available.
+- If you select fanbox option and quit, then further updates are no more available.
 - In both option the update is available at same time. In other words, fanbox is not a way to early access.
 
 </div>

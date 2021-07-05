@@ -10,6 +10,7 @@ namespace Baku.VMagicMirror.IK
     public class MPHandIK : MonoBehaviour
     {
         private const float ReferenceArmLength = SettingAutoAdjuster.ReferenceArmLength;
+        private const float StateEnterRequestCooldownAfterQuit = 0.6f;
 
         [SerializeField] private FingerController fingerController = null;
 
@@ -69,8 +70,6 @@ namespace Baku.VMagicMirror.IK
         //モデルに対して定数みたくなるパラメータ
         private bool _hasModel;
         private Transform _head;
-        // private const float _leftArmLengthFactor = 1f;
-        // private const float _rightArmLengthFactor = 1f;
         private float _leftArmLengthFactor = 1f;
         private float _rightArmLengthFactor = 1f;
         private Vector3 _defaultHeadPosition = Vector3.up;
@@ -78,6 +77,9 @@ namespace Baku.VMagicMirror.IK
         private float _leftLostCount = 0f;
         private float _rightLostCount = 0f;
 
+        private float _leftInitializeCooldown = 0f;
+        private float _rightInitializeCooldown = 0f;
+        
         public void Initialize(
             IVRMLoadable vrmLoadable,
             Vector3[] leftHandPoints,
@@ -157,11 +159,11 @@ namespace Baku.VMagicMirror.IK
                 );
             }
             
-            if (DisableHorizontalFlip)
+            if (DisableHorizontalFlip && _leftInitializeCooldown <= 0f)
             {
                 _leftHandState.RaiseRequestToUse();
             }
-            else
+            else if (_rightInitializeCooldown <= 0f)
             {
                 _rightHandState.RaiseRequestToUse();
             }
@@ -217,11 +219,11 @@ namespace Baku.VMagicMirror.IK
                 );
             }
 
-            if (DisableHorizontalFlip)
+            if (DisableHorizontalFlip && _rightInitializeCooldown <= 0f)
             {
                 _rightHandState.RaiseRequestToUse();
             }
-            else
+            else if (_leftInitializeCooldown <= 0f)
             {
                 _leftHandState.RaiseRequestToUse();
             }
@@ -249,7 +251,24 @@ namespace Baku.VMagicMirror.IK
 
             _leftHandState.OnEnter += InitializeHandPosture;
             _rightHandState.OnEnter += InitializeHandPosture;
+
+            _leftHandState.OnQuit += _ => _leftInitializeCooldown = StateEnterRequestCooldownAfterQuit;
+            _rightHandState.OnQuit += _ => _rightInitializeCooldown = StateEnterRequestCooldownAfterQuit;
         }
+
+        private void Update()
+        {
+            if (_leftInitializeCooldown > 0)
+            {
+                _leftInitializeCooldown -= Time.deltaTime;
+            }
+
+            if (_rightInitializeCooldown > 0)
+            {
+                _rightInitializeCooldown -= Time.deltaTime;
+            }
+        }
+        
 
         public void UpdateIk()
         {
@@ -380,7 +399,7 @@ namespace Baku.VMagicMirror.IK
             {
                 return;
             }
-            
+
             switch (hand)
             {
                 case ReactedHand.Left:
@@ -443,6 +462,7 @@ namespace Baku.VMagicMirror.IK
             public event Action<IHandIkState> RequestToUse;
 
             public event Action<ReactedHand, IHandIkState> OnEnter;
+            public event Action<ReactedHand> OnQuit;
 
             public void Enter(IHandIkState prevState) => OnEnter?.Invoke(Hand, prevState);
 
@@ -456,8 +476,8 @@ namespace Baku.VMagicMirror.IK
                 {
                     Finger?.ReleaseRightHand();
                 }
+                OnQuit?.Invoke(Hand);
             }
         }
-
     }
 }

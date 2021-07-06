@@ -6,9 +6,9 @@ namespace Baku.VMagicMirror.IK
     /// Barracudaが吐いてきた手のポイント情報を手のIKに変換するやつ。
     /// トラッキングロスト時の計算も行う。
     /// </summary>
-    public class MPHandIkCalculator
+    public class BarracudaHandIkCalculator
     {
-        public MPHandIkCalculator(Vector3[] leftHandPoints, Vector3[] rightHandPoints)
+        public BarracudaHandIkCalculator(Vector3[] leftHandPoints, Vector3[] rightHandPoints)
         {
             _leftHandPoints = leftHandPoints;
             _rightHandPoints = rightHandPoints;

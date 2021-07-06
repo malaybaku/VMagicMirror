@@ -4,10 +4,10 @@ using UnityEngine;
 namespace Baku.VMagicMirror.IK
 {
     /// <summary>
-    /// <see cref="MPHand"/>で計算した結果をモーションに変換するやつ。
-    /// 基本的にはMPHandの下請けになる
+    /// <see cref="BarracudaHand"/>で計算した結果をモーションに変換するやつ。
+    /// 基本的にはBarracudaHandの下請けになる
     /// </summary>
-    public class MPHandIK : MonoBehaviour
+    public class BarracudaHandIK : MonoBehaviour
     {
         private const float ReferenceArmLength = SettingAutoAdjuster.ReferenceArmLength;
         private const float StateEnterRequestCooldownAfterQuit = 0.6f;
@@ -46,9 +46,9 @@ namespace Baku.VMagicMirror.IK
         public bool DisableHorizontalFlip { get; set; }
         public AlwaysDownHandIkGenerator DownHand { get; set; }
 
-        private readonly MPHandState _rightHandState = new MPHandState(ReactedHand.Right);
+        private readonly BarracudaHandState _rightHandState = new BarracudaHandState(ReactedHand.Right);
         public IHandIkState RightHandState => _rightHandState;
-        private readonly MPHandState _leftHandState = new MPHandState(ReactedHand.Left);
+        private readonly BarracudaHandState _leftHandState = new BarracudaHandState(ReactedHand.Left);
         public IHandIkState LeftHandState => _leftHandState;
 
         public bool ImageProcessActive { get; set; }
@@ -59,10 +59,10 @@ namespace Baku.VMagicMirror.IK
         private Vector3 _rightPosTarget;
         private Quaternion _rightRotTarget;
 
-        private MPHandFinger _finger;
+        private BarracudaHandFinger _finger;
         private HandIkGeneratorDependency _dependency;
         private ImageBaseHandRotLimiter _limiter;
-        private MPHandIkCalculator _ikCalculator;
+        private BarracudaHandIkCalculator _ikCalculator;
 
         private Vector3[] _leftHandPoints;
         private Vector3[] _rightHandPoints;
@@ -89,7 +89,7 @@ namespace Baku.VMagicMirror.IK
             _leftHandPoints = leftHandPoints;
             _rightHandPoints = rightHandPoints;
             
-            _ikCalculator = new MPHandIkCalculator(leftHandPoints, rightHandPoints);
+            _ikCalculator = new BarracudaHandIkCalculator(leftHandPoints, rightHandPoints);
             
             //TODO: 書く場所はココじゃないかもしれないが、頭との相対位置でIKを決めた方がキャリブとの相性が良いかもしれないので考えること
             vrmLoadable.VrmLoaded += info =>
@@ -118,7 +118,7 @@ namespace Baku.VMagicMirror.IK
         }
         
         /// <summary>
-        /// <see cref="MPHand"/>クラスがユーザーの左手をトラッキングできたとき呼び出すことで、
+        /// <see cref="BarracudaHand"/>クラスがユーザーの左手をトラッキングできたとき呼び出すことで、
         /// 設定に応じて右手、または左手のIK情報を更新します。
         /// トラッキング結果は_leftHandPointsに載ってるため、このメソッドでは直接渡されません。
         /// </summary>
@@ -179,7 +179,7 @@ namespace Baku.VMagicMirror.IK
         }
 
         /// <summary>
-        /// <see cref="MPHand"/>クラスがユーザーの右手をトラッキングできたとき呼び出すことで、
+        /// <see cref="BarracudaHand"/>クラスがユーザーの右手をトラッキングできたとき呼び出すことで、
         /// 設定に応じて右手、または左手のIK情報を更新します。
         /// トラッキング結果は_leftHandPointsに載ってるため、このメソッドでは直接渡されません。
         /// </summary>
@@ -245,7 +245,7 @@ namespace Baku.VMagicMirror.IK
             _rightPosTarget = _rightHandState.IKData.Position;
             _rightRotTarget = _rightHandState.IKData.Rotation;
             
-            _finger = new MPHandFinger(fingerController, _leftHandPoints, _rightHandPoints);
+            _finger = new BarracudaHandFinger(fingerController, _leftHandPoints, _rightHandPoints);
             _leftHandState.Finger = _finger;
             _rightHandState.Finger = _finger;
 
@@ -432,14 +432,14 @@ namespace Baku.VMagicMirror.IK
             _rightArmLengthFactor = rightArmLength / ReferenceArmLength;
         }
         
-        private class MPHandState : IHandIkState
+        private class BarracudaHandState : IHandIkState
         {
-            public MPHandState(ReactedHand hand)
+            public BarracudaHandState(ReactedHand hand)
             {
                 Hand = hand;
             }
             
-            public MPHandFinger Finger { get; set; }
+            public BarracudaHandFinger Finger { get; set; }
             
             public IKDataRecord IKData { get; } = new IKDataRecord();
 

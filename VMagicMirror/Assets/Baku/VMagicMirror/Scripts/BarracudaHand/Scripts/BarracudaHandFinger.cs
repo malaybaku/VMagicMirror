@@ -5,9 +5,9 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// MediaPipeの指FK情報をストアするクラス。
     /// </summary>
-    public class MPHandFinger
+    public class BarracudaHandFinger
     {
-        public MPHandFinger(
+        public BarracudaHandFinger(
             FingerController fingerController, Vector3[] leftHandPoints, Vector3[] rightHandPoints
         )
         {

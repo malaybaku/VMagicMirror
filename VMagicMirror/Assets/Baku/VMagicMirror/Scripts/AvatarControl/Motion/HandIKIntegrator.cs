@@ -43,7 +43,7 @@ namespace Baku.VMagicMirror
         [SerializeField]
         private ImageBaseHandIkGenerator.ImageBaseHandIkGeneratorSetting imageBaseHandSetting = default;
 
-        [SerializeField] private MPHand mpHand = null;
+        [SerializeField] private BarracudaHand barracudaHand = null;
 
         
         public MouseMoveHandIKGenerator MouseMove { get; private set; }
@@ -211,13 +211,13 @@ namespace Baku.VMagicMirror
             //_imageBaseHand = new ImageBaseHandIkGenerator(dependency, handTracker, imageBaseHandSetting, vrmLoadable);
             _downHand = new AlwaysDownHandIkGenerator(dependency, vrmLoadable);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
-            mpHand.SetupDependency(dependency);
+            barracudaHand.SetupDependency(dependency);
 
             typing.SetUp(keyboardProvider, dependency);
 
             MouseMove.DownHand = _downHand;
             typing.DownHand = _downHand;
-            mpHand.DownHand = _downHand;
+            barracudaHand.DownHand = _downHand;
 
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
@@ -238,8 +238,8 @@ namespace Baku.VMagicMirror
             
             Typing.LeftHand.RequestToUse += SetLeftHandState;
             Typing.RightHand.RequestToUse += SetRightHandState;
-            mpHand.LeftHandState.RequestToUse += SetLeftHandState;
-            mpHand.RightHandState.RequestToUse += SetRightHandState;
+            barracudaHand.LeftHandState.RequestToUse += SetLeftHandState;
+            barracudaHand.RightHandState.RequestToUse += SetRightHandState;
         }
 
         //NOTE: prevのStateは初めて手がキーボードから離れるまではnull

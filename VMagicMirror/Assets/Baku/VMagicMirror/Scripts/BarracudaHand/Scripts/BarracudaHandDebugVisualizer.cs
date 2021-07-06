@@ -7,9 +7,9 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// デバッグでBarracudaが吐いてる手の座標情報が見たいときに使うやつ
     /// </summary>
-    public class MPHandDebugVisualizer : MonoBehaviour
+    public class BarracudaHandDebugVisualizer : MonoBehaviour
     {
-        [SerializeField] private MPHand source = null;
+        [SerializeField] private BarracudaHand source = null;
 
         [SerializeField] private Transform rootPrefab = null;
         [SerializeField] private Transform proximalPrefab = null;

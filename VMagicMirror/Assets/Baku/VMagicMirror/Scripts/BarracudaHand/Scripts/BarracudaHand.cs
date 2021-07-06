@@ -6,9 +6,9 @@ namespace Baku.VMagicMirror.IK
 {
     /// <summary>
     /// HandPoseBarracudaのトラッキングをやるやつ。
-    /// このクラスは画像処理までのラッパーで、処理結果を<see cref="MPHandIK"/>に渡すことでIKが計算される
+    /// このクラスは画像処理までのラッパーで、処理結果を<see cref="BarracudaHandIK"/>に渡すことでIKが計算される
     /// </summary>
-    public class MPHand : MonoBehaviour
+    public class BarracudaHand : MonoBehaviour
     {
         //この回数だけ連続でハンドトラッキングのスコアが閾値を超えたとき、トラッキング開始と見なす。
         //チャタリングのあるケースを厳し目に判定するために用いる
@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror.IK
 
         [SerializeField] ResourceSet _resources = null;
         [SerializeField] bool _useAsyncReadback = true;
-        [SerializeField] private MPHandIK ik = null;
+        [SerializeField] private BarracudaHandIK ik = null;
         
         [Range(0f, 1f)] [SerializeField] private float scoreThreshold = 0.5f;
         [SerializeField] private FrameSkipStyles skipStyle = FrameSkipStyles.LLRR;

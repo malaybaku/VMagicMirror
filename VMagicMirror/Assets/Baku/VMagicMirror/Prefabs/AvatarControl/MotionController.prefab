@@ -465,8 +465,6 @@ MonoBehaviour:
   fingerController: {fileID: 2951044793089892564}
   gamepadSetting:
     imageBasedBodyMotion: {fileID: 5813678808713813112}
-  imageBaseHandSetting:
-    handShapeSetter: {fileID: 2171101519611571038}
   barracudaHand: {fileID: 6033017557083037692}
 --- !u!114 &5813678810404708592
 MonoBehaviour:

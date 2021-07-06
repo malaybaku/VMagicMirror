@@ -32,17 +32,9 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private GamepadFingerController gamepadFinger = null;
         [SerializeField] private ArcadeStickFingerController arcadeStickFinger = null;
-
         [SerializeField] private WaitingBodyMotion waitingBody = null;
-
         [SerializeField] private FingerController fingerController = null;
-
         [SerializeField] private GamepadHandIKGenerator.GamepadHandIkGeneratorSetting gamepadSetting = default;
-
-        //TODO: 消したい
-        [SerializeField]
-        private ImageBaseHandIkGenerator.ImageBaseHandIkGeneratorSetting imageBaseHandSetting = default;
-
         [SerializeField] private BarracudaHand barracudaHand = null;
 
         

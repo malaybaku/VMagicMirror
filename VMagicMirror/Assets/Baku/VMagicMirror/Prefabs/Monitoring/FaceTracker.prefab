@@ -44,12 +44,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requestedDeviceName: 
-  isHighPowerMode: 0
-  requestedWidth: 320
-  requestedHeight: 240
+  rawTextureSize: {x: 640, y: 480}
   requestedFps: 30
-  halfResizeWidthThreshold: 640
   activeButNotTrackedCount: 1
   notTrackedResetSpeedFactor: 3
   trackMinIntervalMillisec: 60
   trackMinIntervalMillisecOnHighPower: 60
+  debugImage: {fileID: 0}

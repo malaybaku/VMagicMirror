@@ -16,6 +16,12 @@ namespace Baku.VMagicMirror
         [SerializeField] private PostProcessVolume postProcess = null;
 
         private Bloom _bloom;
+        private VmmVhs _vmmVhs;
+        private VmmMonochrome _vmmMonochrome;
+        private bool _handTrackingEnabled = false;
+        //NOTE: この値自体はビルドバージョンによらずfalseがデフォルトで良いことに注意。
+        //制限版でGUI側にtrue相当の値が表示されるが、これはGUI側が別途決め打ちしてくれてる
+        private bool _showEffectDuringTracking = false;
 
         [Inject]
         public void Initialize(IMessageReceiver receiver)
@@ -31,6 +37,7 @@ namespace Baku.VMagicMirror
                     var lightRgb = message.ToColorFloats();
                     SetLightColor(lightRgb[0], lightRgb[1], lightRgb[2]);
                 });
+
             receiver.AssignCommandHandler(
                 VmmCommands.LightYaw,
                 message => SetLightYaw(message.ToInt())
@@ -76,11 +83,29 @@ namespace Baku.VMagicMirror
                     float[] bloomRgb = message.ToColorFloats();
                     SetBloomColor(bloomRgb[0], bloomRgb[1], bloomRgb[2]);
                 });
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableImageBasedHandTracking,
+                message =>
+                {
+                    _handTrackingEnabled = message.ToBoolean();
+                    UpdateRetroEffectStatus();
+                });
+
+            receiver.AssignCommandHandler(
+                VmmCommands.ShowEffectDuringHandTracking,
+                message =>
+                {
+                    _showEffectDuringTracking = message.ToBoolean();
+                    UpdateRetroEffectStatus();
+                });
         }
         
         private void Start()
         {
             _bloom = postProcess.profile.GetSetting<Bloom>();
+            _vmmMonochrome = postProcess.profile.GetSetting<VmmMonochrome>();
+            _vmmVhs = postProcess.profile.GetSetting<VmmVhs>();
         }
 
         private void SetLightColor(float r, float g, float b)
@@ -142,8 +167,7 @@ namespace Baku.VMagicMirror
 
         private void SetShadowDepthOffset(float depthOffset) 
             => shadowBoardMotion.ShadowBoardWaistDepthOffset = depthOffset;
-
-
+        
         private void SetBloomColor(float r, float g, float b)
             => _bloom.color.value = new Color(r, g, b);
 
@@ -152,5 +176,14 @@ namespace Baku.VMagicMirror
 
         private void SetBloomThreshold(float threshold)
             => _bloom.threshold.value = threshold;
+
+        private void UpdateRetroEffectStatus()
+        {
+            bool enableEffect =_handTrackingEnabled &&
+                (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking);
+
+            _vmmMonochrome.active = enableEffect;
+            _vmmVhs.active = enableEffect;
+        }
     }
 }

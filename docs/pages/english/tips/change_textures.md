@@ -15,14 +15,17 @@ Before starting `VMagicMirror.exe`, open the following folder.
 
 `(Folder where VMagicMirror.exe exists)/VMagicMirror_Data/StreamingAssets`
 
-Put the images to replace in this folder. File name must be following.
+Put the images to replace in this folder. Please use specific file name for each purpose. Default appearance is applied when image file does not exist, and it is default behavior.
 
-* For the keyboard key image: `key.png`
-* For the touch pad: `pad.png`
-* For the gamepad body : `gamepad_body.png`
-* For the gamepad buttons: `gamepad_button.png`
-* For the MIDI controller note area: `midi_note.png`
-* For the MIDI controller knob area: `midi_knob.png`
+* Keyboard key image: `key.png`
+* Touch pad: `pad.png`
+* Gamepad body : `gamepad_body.png`
+* Gamepad buttons: `gamepad_button.png`
+* MIDI controller note area: `midi_note.png`
+* MIDI controller knob area: `midi_knob.png`
+* Pen, when pen tablet motion enabled: `pen.png`
+* Pen tablet, when pen tablet motion enabled: `pen_tablet.png`
+* Arcade stick parts: `arcade_stick.png`
 
 <div class="note-area" markdown="1">
 

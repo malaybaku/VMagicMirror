@@ -22,6 +22,9 @@ permalink: /tips/change_textures
 * ゲームパッドのスティックやボタン部分を差し替える場合: `gamepad_button.png`
 * MIDIコントローラのノート部分を差し替える場合: `midi_note.png`
 * MIDIコントローラのノブ部分を差し替える場合: `midi_knob.png`
+* ペンタブレット使用時のペン部分を差し替える場合: `pen.png`
+* ペンタブレット使用時のペンタブレット部分を差し替える場合: `pen_tablet.png`
+* アーケードスティック部分を差し替える場合: `arcade_stick.png`
 
 <div class="note-area" markdown="1">
 

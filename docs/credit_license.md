@@ -68,6 +68,13 @@ In VMagicMirror, the materials are replaced for the visual consistency.
 
 [Jekyll Materialize Starter Template](https://github.com/macrod68/jekyll-materialize-starter-template)
 
+
+[Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) is applied to:
+
+[HandPoseBarracuda](https://github.com/keijiro/HandPoseBarracuda)
+[BlazePalmBarracuda](https://github.com/keijiro/BlazePalmBarracuda)
+[HandLandmarkBarracuda](https://github.com/keijiro/HandLandmarkBarracuda)
+
 ### License Notes
 
 #### UniVRM

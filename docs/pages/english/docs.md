@@ -9,7 +9,7 @@ lang_prefix: /en/
 
 # Docs
 
-This page introduces two advanced settings in VMagicMirror.
+This page introduces advanced settings in VMagicMirror.
 
 For the basic usage, please see [Get Started](./get_started).
 
@@ -21,7 +21,15 @@ VMagicMirror v1.1.0 and later version supports external application to move avat
 
 Currently v1.1.0 supports iOS app `iFacialMocap`.
 
-Please see the detail at [External Tracker App](./docs/external_tracker).
+Please see the detail at [External Tracker App](./docs/external_tracker) page.
+
+#### Hand Tracking
+{: .doc-sec2 }
+
+v1.8.0 and later version supports `Hand Tracking` tab in control panel, to support webcam based hand tracking.
+
+Please see more in [Hand Tracking](./docs/hand_tracking) page.
+
 
 #### Setting File Management
 

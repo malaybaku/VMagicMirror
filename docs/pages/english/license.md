@@ -26,6 +26,9 @@ VMagicMirror ("The Software") has the license note in `License Note` section.
 ### Caution about reverse engineering to the binary distribution
 {: .doc-sec1 }
 
+#### 1. Notice about binary distribution on BOOTH
+{: .doc-sec2 }
+
 This section is help information that about the risk of the reverse engineering to the binary distribution.
 
 The software distributed in binary style includes non-open source resources, like following.
@@ -38,6 +41,23 @@ The software distributed in binary style includes non-open source resources, lik
 </div>
 
 This means that the reverse engineering may violate the license or guidelines for those resources.
+
+#### 1. Notice about Full Version
+{: .doc-sec2 }
+
+There are full edition (paid version) software at v1.8.0 and later, which has different binary from free conventional free distribution (standard edition).
+
+Please see [Download](./download) page for the detail about full edition.
+
+About full edition:
+
+<div class="doc-ul" markdown="1">
+
+- The source code of full edition is open in GitHub, so I do not recommend to reverse engineer the software to understand the internal process.
+- I do not intent to restrict building the software from source code on your environment. Such build goes under the MIT license in GitHub repository.
+- Full edition is not available in free because of some reasons, including the concept of sharewere. Please avoid to redistribute full edition. Also please do not reverse engineer the standard edition to crack feature restriction.
+
+</div>
 
 
 ### License Note

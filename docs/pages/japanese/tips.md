@@ -30,7 +30,7 @@ permalink: /tips
 
 [MacでVMagicMirrorを使う](./tips/use_on_mac)
 
-[ハンドトラッキングの使用について](./tips/using_hand_tracking)
+[(v1.7.0b以前)ハンドトラッキングの使用について](./tips/using_hand_tracking)
 
 [パーフェクトシンク](./tips/perfect_sync)
 

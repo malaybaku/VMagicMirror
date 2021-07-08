@@ -8,17 +8,75 @@ permalink: /download
 
 # ダウンロード
 
-VMagicMirrorは[BOOTH](https://booth.pm/ja/items/1272298)からダウンロード可能です。
+VMagicMirrorはBOOTHからダウンロード可能です。
 
 <a target="_blank" href="https://baku-dreameater.booth.pm/items/1272298/">
   <img src="https://asset.booth.pm/static-images/banner/468x60_02.png">
 </a>
 
 ダウンロードおよび利用にあたっては[License](./license)もご確認下さい。
+ソースコードは[GitHub](https://github.com/malaybaku/VMagicMirror)で公開しています。
 
-無償で公開していますが、ブーストつきで購入していただけると作者が喜びます。
+v1.8.0以降では2種類のエディションを、4種類の方式で配布しています。
 
-また、ソースコードは[GitHub](https://github.com/malaybaku/VMagicMirror)で公開しています。
+エディション: 
+
+<div class="doc-ul" markdown="1">
+
+- 基本エディション: 基本的なバージョンです。ほぼ全ての機能が使えます。
+- フルエディション: ハンドトラッキング中の機能制限がないバージョンです。詳細は次節をご覧下さい。
+
+</div>
+
+配布先:
+
+<div class="doc-ul" markdown="1">
+
+- [BOOTH無償版](https://baku-dreameater.booth.pm/items/1272298): 基本エディションです。もっとも基本的なVMagicMirrorの入手元です。
+- [BOOTHブースト版](https://baku-dreameater.booth.pm/items/1272298): こちらも基本エディションで、ページ自体は無償版と同様です。純粋な応援目的でご使用下さい。
+- [BOOTHフルエディション](https://baku-dreameater.booth.pm/items/3064040): フルエディションの買い切り版です。詳細は次節をご覧下さい。
+- [Fanbox](https://baku-dreameater.fanbox.cc/): アップデートのたび、フルエディションの最新版が入手できます。詳細は次節をご覧下さい。
+
+</div>
+
+
+### 基本エディションとフルエディションの差異について
+{: .doc-sec1 }
+
+v1.8.0以降のVMagicMirrorは基本エディションとフルエディションの2種類を配布しています。
+
+基本エディションの場合、`ハンドトラッキングを有効化`をオンにしたとき、必ずキャラクターウィンドウに専用のエフェクトがかかります。
+フルバージョンではこのエフェクトがオフにできます。
+
+(左: 基本エディション / 右: フルエディション)
+
+<div class="row">
+{% include docimg.html file="./images/docs/hand_tracking_edition_difference.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
+
+上記の違いを除き、無償エディションとフルエディションの機能は全く同じです。
+
+フルエディションの価格はハンドトラッキング単体ではなく、VMagicMirrorが有償頒布ソフトだった場合のソフト全体のバリューを想定した価格設定としてご理解下さい。
+
+このほか、ドネーションウェア/シェアウェアとしての意味合いや、従来のBOOST版以外での応援受付の一環としての目的も兼ねています。
+
+
+### フルエディションの入手方法
+{: .doc-sec1 }
+
+フルエディションの入手方法は2通りです。
+
+<div class="doc-ul" markdown="1">
+
+- [BOOTH](https://baku-dreameater.booth.pm/items/3064040)で買い切りバージョンを購入することで、今後の更新も含めてフルエディションを入手可能です。
+- [Fanbox](https://baku-dreameater.fanbox.cc/)で有償プラン(300円以上)に加入することで、BOOTHにリリースされる最新バージョンをその都度入手可能です。
+
+</div>
+
+Fanboxは退会した場合、それ以降のアップデートが入手できなくなります。
+またFanboxとBOOTHでは同時にアップデートが公開され、先行公開がないことにも注意して下さい。
+
+
 
 ### 必要なPC環境
 {: .doc-sec1 }

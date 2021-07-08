@@ -6,12 +6,14 @@ namespace Baku.VMagicMirror
     public class SettingAutoAdjuster
     {
         //基準長はMegumi Baxterさんの体型。(https://hub.vroid.com/characters/9003440353945198963/models/7418874241157618732)
-        private const float ReferenceChestHeight = 0.89008f;
-        private const float ReferenceSpineHeight = 0.78448f;
+        //他クラスから使いたくなったら随時publicにしてよい
+
         //UpperArm to Hand
-        private const float ReferenceArmLength = 0.378f;
+        public const float ReferenceArmLength = 0.378f;
         //Hand (Wrist) to Middle Distal
         private const float ReferenceHandLength = 0.114f;
+        private const float ReferenceChestHeight = 0.89008f;
+        private const float ReferenceSpineHeight = 0.78448f;
 
         public SettingAutoAdjuster(
             IVRMLoadable vrmLoadable,

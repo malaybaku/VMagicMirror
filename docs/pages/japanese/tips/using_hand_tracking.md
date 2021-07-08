@@ -6,7 +6,17 @@ permalink: /tips/using_hand_tracking
 
 [English](../en/tips/using_hand_tracking)
 
-# Tips: ハンドトラッキングの使用について
+# Tips: (v1.7.0b以前)ハンドトラッキングの使用について
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+このページはv1.7.0bおよびそれ以前のバージョンで利用可能なハンドトラッキングに関して説明しています。
+
+v1.8.0以降を使用している場合、最新の[ハンドトラッキング](../docs/hand_tracking)のページをご覧下さい。
+
+</div>
 
 `VMagicMirror`で実装されている画像ハンドトラッキングは軽量に動作するかわり、いくつかの制限や注意点があります。
 

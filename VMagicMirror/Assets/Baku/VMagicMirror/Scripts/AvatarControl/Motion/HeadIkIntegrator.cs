@@ -81,10 +81,14 @@ namespace Baku.VMagicMirror
         public void OnMouseMove(int x, int y)
         {
             _mouseActionCount = Mathf.Min(mouseActionCountMax, _mouseActionCount + Time.deltaTime * mouseMoveIncrementFactor);
-            
+
             //画面中央 = カメラ位置なのでコレで空間的にだいたい正しいハズ
-            float xClamped = Mathf.Clamp(x - Screen.width * 0.5f, -1000, 1000) / 1000.0f;
-            float yClamped = Mathf.Clamp(y - Screen.height * 0.5f, -1000, 1000) / 1000.0f;
+            float rawX = (x - Screen.width * 0.5f) / 1000;
+            //NOTE: Yをちょっと低くズラすのは目が上に向きすぎるのを防ぐため
+            float rawY = (y - Screen.height * 0.5f) / 1000 - 0.3f;
+            float xClamped = Mathf.Clamp(rawX, -1f, 1f);
+            float yClamped = Mathf.Clamp(rawY, -1f, 0.7f);
+            
             var baseLookAtPosition =
                 _camera.TransformPoint(xClamped, yClamped, 0) + 
                 ZOffsetOnHeadIk * Vector3.forward;

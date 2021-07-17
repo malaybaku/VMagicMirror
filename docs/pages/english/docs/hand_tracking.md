@@ -110,6 +110,7 @@ During `Show Detection Status` is on, the area below shows detection results. Es
 <div class="doc-ul" markdown="1">
 
 - Light up the room so your face and hands are captured clearly from the web camera.
+- Large PC monitor becomes a light by itself. Detection will be stable when displayed content is basically white.
 - Please put away the objects behind you whose colors are similar to your skin color.
 - For the clothing, please avoid to expose your shoulders and elbows. 
 - Be aware of the distance between your hands and camera. Too far is NG of course, and detection also fails when the hand is too close to camera.

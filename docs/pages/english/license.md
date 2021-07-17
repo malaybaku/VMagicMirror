@@ -42,6 +42,8 @@ The software distributed in binary style includes non-open source resources, lik
 
 This means that the reverse engineering may violate the license or guidelines for those resources.
 
+Also note that, you should not redistribute binaries available on BOOTH or Fanbox. I do not tell it is prohibited, but redistribution is very likely to violate the license or guidelines for those resources.
+
 #### 1. Notice about Full Version
 {: .doc-sec2 }
 

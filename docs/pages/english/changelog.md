@@ -11,6 +11,19 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v1.8.0
+{: .doc-sec2 }
+
+2021/07/17
+
+* Change: Distribution style has changed. From this version, conventional free edition is called `Standard Edition` and there is new paid edition `Full Edition`. Please see detail at [Download](./download) page.
+* Change(Add): Re-design camera based hand tracking, so that more precise motion is possible. Standard edition has limitation for this feature, that special visual effect is applied during hand tracking is enabled.
+* Add: `Disable Horizontal Flip` option is applied to External Tracker system tracking.
+* Add: Chinese Simplified localization for the GUI (*Thanks shirunesuru for the proposal in [this issue](https://github.com/malaybaku/VMagicMirror/issues/571)!)
+* Fix: When OS language is specific locale like German and when using iFacialMocap, avatar position might be incorrect.
+* Fix: Fix to work arcade stick motion to be more similar to the real device.
+* Fix: Device layout in character window become incorrect if the device layout was not changed at all in first run.
+
 
 #### v1.7.0b
 {: .doc-sec2 }

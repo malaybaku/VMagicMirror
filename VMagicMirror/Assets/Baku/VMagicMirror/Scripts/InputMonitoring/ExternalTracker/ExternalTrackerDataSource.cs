@@ -182,6 +182,8 @@ namespace Baku.VMagicMirror.ExternalTracker
                 LogOutput.Instance.Write(ex);
             }
         }
+        
+        public void SetFaceHorizontalFlipDisable(bool disableFlip) => DisableHorizontalFlip = disableFlip;
 
         public void SetSourceType(int sourceType)
         {
@@ -283,10 +285,55 @@ namespace Baku.VMagicMirror.ExternalTracker
         
         #region トラッキングデータの内訳
 
+        public bool DisableHorizontalFlip { get; private set; }
+        
+        /// <summary>
+        /// 現在の顔トラッキング情報を取得します。
+        /// このデータの内容は<see cref="DisableHorizontalFlip"/>を考慮していないことに注意して下さい。
+        /// </summary>
         public IFaceTrackSource CurrentSource => CurrentProvider.FaceTrackSource;
-        public Quaternion HeadRotation => CurrentProvider.HeadRotation;
-        public Vector3 HeadPositionOffset => CurrentProvider.HeadPositionOffset;
 
+        /// <summary>
+        /// 頭部の回転を取得します。この回転は<see cref="DisableHorizontalFlip"/>の値を考慮したデータになります。
+        /// </summary>
+        public Quaternion HeadRotation
+        {
+            get
+            {
+                if (!DisableHorizontalFlip)
+                {
+                    return CurrentProvider.HeadRotation;
+                }
+
+                var result = CurrentProvider.HeadRotation;
+                //TODO: これでいいんだっけココ
+                result.y = -result.y;
+                result.z = -result.z;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 頭部位置のオフセットを取得します。
+        /// この値は<see cref="DisableHorizontalFlip"/>を考慮した値になります。
+        /// </summary>
+        public Vector3 HeadPositionOffset
+        {
+            get
+            {
+                if (!DisableHorizontalFlip)
+                {
+                    return CurrentProvider.HeadPositionOffset;
+                }
+                else
+                {
+                    var result = CurrentProvider.HeadPositionOffset;
+                    result.x = -result.x;
+                    return result;
+                }
+            }
+        } 
+        
         private string _faceSwitchClipName = "";
         /// <summary> FaceSwitch機能で指定されたブレンドシェイプがあればその名称を取得し、なければ空文字を取得します。 </summary>
         public string FaceSwitchClipName => Connected ? _faceSwitchClipName : "";

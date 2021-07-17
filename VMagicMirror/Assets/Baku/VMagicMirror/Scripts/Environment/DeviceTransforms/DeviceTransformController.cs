@@ -208,6 +208,12 @@ namespace Baku.VMagicMirror
                 
         private void SetDeviceLayout(string content)
         {
+            if (string.IsNullOrEmpty(content))
+            {
+                SetInitialDeviceLayout();
+                return;
+            }
+        
             try
             {
                 var data = JsonUtility.FromJson<DeviceLayoutsData>(content);
@@ -258,12 +264,36 @@ namespace Baku.VMagicMirror
         
         private void ResetDeviceLayout()
         {
-            var parameters = _settingAutoAdjuster.GetDeviceLayoutParameters();
+            //NOTE: キャラロードしてないとnullになることがあるのでガード
+            var parameters = 
+                _settingAutoAdjuster.GetDeviceLayoutParameters() ??
+                new DeviceLayoutAutoAdjustParameters()
+                {
+                    ArmLengthFactor = 1.0f,
+                    HeightFactor = 1.0f,
+                };
+            
             FindObjectOfType<HidTransformController>().SetHidLayoutByParameter(parameters);
             FindObjectOfType<GamepadProvider>().SetLayoutByParameter(parameters);
             FindObjectOfType<ArcadeStickProvider>().SetLayoutByParameter(parameters);
             FindObjectOfType<PenTabletProvider>().SetLayoutParameter(parameters);
             //デバイス移動が入るので必ず送信
+            SendDeviceLayoutData();
+        }
+
+        //NOTE: これが呼ばれるケースはかなりレアで、
+        //「デバイスレイアウトの変更後、初期レイアウトのままでセーブしたデータをロードした」時だけ呼ばれる
+        private void SetInitialDeviceLayout()
+        {
+            var parameters = new DeviceLayoutAutoAdjustParameters()
+            {
+                ArmLengthFactor = 1.0f,
+                HeightFactor = 1.0f,
+            };
+            FindObjectOfType<HidTransformController>().SetHidLayoutByParameter(parameters);
+            FindObjectOfType<GamepadProvider>().SetLayoutByParameter(parameters);
+            FindObjectOfType<ArcadeStickProvider>().SetLayoutByParameter(parameters);
+            FindObjectOfType<PenTabletProvider>().SetLayoutParameter(parameters);
             SendDeviceLayoutData();
         }
 

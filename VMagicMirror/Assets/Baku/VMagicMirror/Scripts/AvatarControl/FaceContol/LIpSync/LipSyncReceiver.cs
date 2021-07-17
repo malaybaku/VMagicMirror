@@ -49,7 +49,7 @@ namespace Baku.VMagicMirror
             );
             receiver.AssignQueryHandler(
                 VmmQueries.MicrophoneDeviceNames,
-                query => query.Result = string.Join("\t", Microphone.devices)
+                query => query.Result = DeviceNames.CreateDeviceNamesJson(Microphone.devices)
             );
         }
         

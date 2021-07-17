@@ -97,11 +97,25 @@ namespace Baku.VMagicMirror.ExternalTracker
                 return;
             }
 
-            //NOTE: とくにVRoidデフォルト設定を使わない場合、本来ほしいブレンドシェイプの一部が定義されてないと
-            //「実際にはアバターが持ってないキーを指定してしまう」ということが起きるが、
-            //これはBlendShapeMergerのレベルで実質無視してくれるので、気にせず指定しちゃってOK
             var source = _externalTracker.CurrentSource;
             
+            //NOTE: 関数レベルで分ける。DistableHorizontalFlipフラグを使って逐次的に三項演算子で書いてもいいんだけど、
+            //それよりは関数ごと分けた方がパフォーマンスがいいのでは？という意図で書いてます。何となくです
+            if (_externalTracker.DisableHorizontalFlip)
+            {
+                AccumulateWithFlip(proxy, source, nonMouthPart, mouthPart, writeExcludedKeys);
+            }
+            else
+            {
+                AccumulateWithoutFlip(proxy, source, nonMouthPart, mouthPart, writeExcludedKeys);
+            }
+        }
+
+        private void AccumulateWithoutFlip(
+            VRMBlendShapeProxy proxy,  IFaceTrackSource source,
+            bool nonMouthPart, bool mouthPart, bool writeExcludedKeys
+            )
+        {
             if (nonMouthPart)
             {
                 //目
@@ -261,7 +275,171 @@ namespace Baku.VMagicMirror.ExternalTracker
                 proxy.AccumulateValue(Keys.CheekSquintRight, 0);
             }
         }
+        
+        private void AccumulateWithFlip(
+            VRMBlendShapeProxy proxy,  IFaceTrackSource source,
+            bool nonMouthPart, bool mouthPart, bool writeExcludedKeys
+        )
+        {
+            if (nonMouthPart)
+            {
+                //目
+                var eye = source.Eye;
+                proxy.AccumulateValue(Keys.EyeBlinkRight, eye.LeftBlink);
+                proxy.AccumulateValue(Keys.EyeLookUpRight, eye.LeftLookUp);
+                proxy.AccumulateValue(Keys.EyeLookDownRight, eye.LeftLookDown);
+                proxy.AccumulateValue(Keys.EyeLookInRight, eye.LeftLookIn);
+                proxy.AccumulateValue(Keys.EyeLookOutRight, eye.LeftLookOut);
+                proxy.AccumulateValue(Keys.EyeWideRight, eye.LeftWide);
+                proxy.AccumulateValue(Keys.EyeSquintRight, eye.LeftSquint);
 
+                proxy.AccumulateValue(Keys.EyeBlinkLeft, eye.RightBlink);
+                proxy.AccumulateValue(Keys.EyeLookUpLeft, eye.RightLookUp);
+                proxy.AccumulateValue(Keys.EyeLookDownLeft, eye.RightLookDown);
+                proxy.AccumulateValue(Keys.EyeLookInLeft, eye.RightLookIn);
+                proxy.AccumulateValue(Keys.EyeLookOutLeft, eye.RightLookOut);
+                proxy.AccumulateValue(Keys.EyeWideLeft, eye.RightWide);
+                proxy.AccumulateValue(Keys.EyeSquintLeft, eye.RightSquint);
+
+                //NOTE: 瞬き時の目下げ処理に使うためにセット
+                _faceControlConfig.AlternativeBlinkR = eye.LeftBlink;
+                _faceControlConfig.AlternativeBlinkL = eye.RightBlink;
+
+                //鼻
+                proxy.AccumulateValue(Keys.NoseSneerRight, source.Nose.LeftSneer);
+                proxy.AccumulateValue(Keys.NoseSneerLeft, source.Nose.RightSneer);
+
+                //まゆげ
+                proxy.AccumulateValue(Keys.BrowDownRight, source.Brow.LeftDown);
+                proxy.AccumulateValue(Keys.BrowOuterUpRight, source.Brow.LeftOuterUp);
+                proxy.AccumulateValue(Keys.BrowDownLeft, source.Brow.RightDown);
+                proxy.AccumulateValue(Keys.BrowOuterUpLeft, source.Brow.RightOuterUp);
+                proxy.AccumulateValue(Keys.BrowInnerUp, source.Brow.InnerUp);
+            }
+            else if (writeExcludedKeys)
+            {
+                //目
+                proxy.AccumulateValue(Keys.EyeBlinkRight, 0);
+                proxy.AccumulateValue(Keys.EyeLookUpRight, 0);
+                proxy.AccumulateValue(Keys.EyeLookDownRight, 0);
+                proxy.AccumulateValue(Keys.EyeLookInRight, 0);
+                proxy.AccumulateValue(Keys.EyeLookOutRight, 0);
+                proxy.AccumulateValue(Keys.EyeWideRight, 0);
+                proxy.AccumulateValue(Keys.EyeSquintRight, 0);
+
+                proxy.AccumulateValue(Keys.EyeBlinkLeft, 0);
+                proxy.AccumulateValue(Keys.EyeLookUpLeft, 0);
+                proxy.AccumulateValue(Keys.EyeLookDownLeft, 0);
+                proxy.AccumulateValue(Keys.EyeLookInLeft, 0);
+                proxy.AccumulateValue(Keys.EyeLookOutLeft, 0);
+                proxy.AccumulateValue(Keys.EyeWideLeft, 0);
+                proxy.AccumulateValue(Keys.EyeSquintLeft, 0);
+
+                //NOTE: 瞬き時の目下げ処理に使うためにセット...は非適用時は要らない。
+                // _faceControlConfig.AlternativeBlinkR = eye.LeftBlink;
+                // _faceControlConfig.AlternativeBlinkL = eye.RightBlink;
+
+                //鼻
+                proxy.AccumulateValue(Keys.NoseSneerRight, 0);
+                proxy.AccumulateValue(Keys.NoseSneerLeft, 0);
+
+                //まゆげ
+                proxy.AccumulateValue(Keys.BrowDownRight, 0);
+                proxy.AccumulateValue(Keys.BrowOuterUpRight, 0);
+                proxy.AccumulateValue(Keys.BrowDownLeft, 0);
+                proxy.AccumulateValue(Keys.BrowOuterUpLeft, 0);
+                proxy.AccumulateValue(Keys.BrowInnerUp, 0);
+            }
+
+            if (mouthPart)
+            {
+                //口(多い)
+                var mouth = source.Mouth;
+                proxy.AccumulateValue(Keys.MouthRight, mouth.Left);
+                proxy.AccumulateValue(Keys.MouthSmileRight, mouth.LeftSmile);
+                proxy.AccumulateValue(Keys.MouthFrownRight, mouth.LeftFrown);
+                proxy.AccumulateValue(Keys.MouthPressRight, mouth.LeftPress);
+                proxy.AccumulateValue(Keys.MouthUpperUpRight, mouth.LeftUpperUp);
+                proxy.AccumulateValue(Keys.MouthLowerDownRight, mouth.LeftLowerDown);
+                proxy.AccumulateValue(Keys.MouthStretchRight, mouth.LeftStretch);
+                proxy.AccumulateValue(Keys.MouthDimpleRight, mouth.LeftDimple);
+
+                proxy.AccumulateValue(Keys.MouthLeft, mouth.Right);
+                proxy.AccumulateValue(Keys.MouthSmileLeft, mouth.RightSmile);
+                proxy.AccumulateValue(Keys.MouthFrownLeft, mouth.RightFrown);
+                proxy.AccumulateValue(Keys.MouthPressLeft, mouth.RightPress);
+                proxy.AccumulateValue(Keys.MouthUpperUpLeft, mouth.RightUpperUp);
+                proxy.AccumulateValue(Keys.MouthLowerDownLeft, mouth.RightLowerDown);
+                proxy.AccumulateValue(Keys.MouthStretchLeft, mouth.RightStretch);
+                proxy.AccumulateValue(Keys.MouthDimpleLeft, mouth.RightDimple);
+
+                proxy.AccumulateValue(Keys.MouthClose, mouth.Close);
+                proxy.AccumulateValue(Keys.MouthFunnel, mouth.Funnel);
+                proxy.AccumulateValue(Keys.MouthPucker, mouth.Pucker);
+                proxy.AccumulateValue(Keys.MouthShrugUpper, mouth.ShrugUpper);
+                proxy.AccumulateValue(Keys.MouthShrugLower, mouth.ShrugLower);
+                proxy.AccumulateValue(Keys.MouthRollUpper, mouth.RollUpper);
+                proxy.AccumulateValue(Keys.MouthRollLower, mouth.RollLower);
+
+                //あご
+                proxy.AccumulateValue(Keys.JawOpen, source.Jaw.Open);
+                proxy.AccumulateValue(Keys.JawForward, source.Jaw.Forward);
+                proxy.AccumulateValue(Keys.JawRight, source.Jaw.Left);
+                proxy.AccumulateValue(Keys.JawLeft, source.Jaw.Right);
+
+                //舌
+                proxy.AccumulateValue(Keys.TongueOut, source.Tongue.TongueOut);
+
+                //ほお
+                proxy.AccumulateValue(Keys.CheekPuff, source.Cheek.Puff);
+                proxy.AccumulateValue(Keys.CheekSquintRight, source.Cheek.LeftSquint);
+                proxy.AccumulateValue(Keys.CheekSquintLeft, source.Cheek.RightSquint);                
+            }
+            else if (writeExcludedKeys)
+            {
+                //口(多い)
+                proxy.AccumulateValue(Keys.MouthRight, 0);
+                proxy.AccumulateValue(Keys.MouthSmileRight, 0);
+                proxy.AccumulateValue(Keys.MouthFrownRight, 0);
+                proxy.AccumulateValue(Keys.MouthPressRight, 0);
+                proxy.AccumulateValue(Keys.MouthUpperUpRight, 0);
+                proxy.AccumulateValue(Keys.MouthLowerDownRight, 0);
+                proxy.AccumulateValue(Keys.MouthStretchRight, 0);
+                proxy.AccumulateValue(Keys.MouthDimpleRight, 0);
+
+                proxy.AccumulateValue(Keys.MouthLeft, 0);
+                proxy.AccumulateValue(Keys.MouthSmileLeft, 0);
+                proxy.AccumulateValue(Keys.MouthFrownLeft, 0);
+                proxy.AccumulateValue(Keys.MouthPressLeft, 0);
+                proxy.AccumulateValue(Keys.MouthUpperUpLeft, 0);
+                proxy.AccumulateValue(Keys.MouthLowerDownLeft, 0);
+                proxy.AccumulateValue(Keys.MouthStretchLeft, 0);
+                proxy.AccumulateValue(Keys.MouthDimpleLeft, 0);
+
+                proxy.AccumulateValue(Keys.MouthClose, 0);
+                proxy.AccumulateValue(Keys.MouthFunnel, 0);
+                proxy.AccumulateValue(Keys.MouthPucker, 0);
+                proxy.AccumulateValue(Keys.MouthShrugUpper, 0);
+                proxy.AccumulateValue(Keys.MouthShrugLower, 0);
+                proxy.AccumulateValue(Keys.MouthRollUpper, 0);
+                proxy.AccumulateValue(Keys.MouthRollLower, 0);
+
+                //あご
+                proxy.AccumulateValue(Keys.JawOpen, 0);
+                proxy.AccumulateValue(Keys.JawForward, 0);
+                proxy.AccumulateValue(Keys.JawRight, 0);
+                proxy.AccumulateValue(Keys.JawLeft, 0);
+
+                //舌
+                proxy.AccumulateValue(Keys.TongueOut, 0);
+
+                //ほお
+                proxy.AccumulateValue(Keys.CheekPuff, 0);
+                proxy.AccumulateValue(Keys.CheekSquintRight, 0);
+                proxy.AccumulateValue(Keys.CheekSquintLeft, 0);
+            }            
+        }
+        
         private void ParseClipCompletenessToSendMessage()
         {
             //やること: パーフェクトシンク用に定義されていてほしいにも関わらず、定義が漏れたクリップがないかチェックする。
@@ -533,8 +711,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             public static BlendShapeKey[] PerfectSyncMouthKeys { get; }
             /// <summary> Perfect Syncの目、鼻、眉のキーを取得します。</summary>
             public static BlendShapeKey[] PerfectSyncNonMouthKeys { get; }
-            
-            //TODO: 名前はあとで調べて直すこと！絶対に間違った名前が入ってるぞ！
             
             //目
             public static readonly BlendShapeKey EyeBlinkLeft = BlendShapeKey.CreateUnknown(nameof(EyeBlinkLeft));

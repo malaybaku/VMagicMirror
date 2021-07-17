@@ -261,7 +261,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1929893640733728396}
   m_Layer: 0
-  m_Name: L1Root
+  m_Name: R1Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -292,7 +292,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1929893640770731943}
   m_Layer: 0
-  m_Name: R2Root
+  m_Name: L2Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -323,7 +323,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1929893640788255419}
   m_Layer: 0
-  m_Name: L2Root
+  m_Name: R2Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -354,7 +354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1929893640850354182}
   m_Layer: 0
-  m_Name: R1Root
+  m_Name: L1Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -638,10 +638,10 @@ MonoBehaviour:
   bButton: {fileID: 1929893640863506275}
   xButton: {fileID: 1929893640918224956}
   yButton: {fileID: 1929893640521602415}
-  right1Button: {fileID: 1929893640850354182}
-  right2Button: {fileID: 1929893640770731943}
-  left1Button: {fileID: 1929893640733728396}
-  left2Button: {fileID: 1929893640788255419}
+  right1Button: {fileID: 1929893640733728396}
+  right2Button: {fileID: 1929893640788255419}
+  left1Button: {fileID: 1929893640850354182}
+  left2Button: {fileID: 1929893640770731943}
   buttonYOffset: 0.02
   stickHeight: 0.05
   stickBendAngleDeg: 20

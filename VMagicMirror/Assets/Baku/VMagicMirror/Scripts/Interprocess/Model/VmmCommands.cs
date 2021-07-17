@@ -88,6 +88,8 @@ namespace Baku.VMagicMirror
 
         // Motion, Image-based Hand
         public const string EnableImageBasedHandTracking = nameof(EnableImageBasedHandTracking);
+        public const string DisableHandTrackingHorizontalFlip = nameof(DisableHandTrackingHorizontalFlip);
+        public const string EnableSendHandTrackingResult = nameof(EnableSendHandTrackingResult);
 
         //public const string EnableTouchTyping = nameof(EnableTouchTyping);
 
@@ -143,6 +145,8 @@ namespace Baku.VMagicMirror
         public const string BloomIntensity = nameof(BloomIntensity);
         public const string BloomThreshold = nameof(BloomThreshold);
         public const string BloomColor = nameof(BloomColor);
+
+        public const string ShowEffectDuringHandTracking = nameof(ShowEffectDuringHandTracking);
 
         public const string WindEnable = nameof(WindEnable);
         public const string WindStrength = nameof(WindStrength);

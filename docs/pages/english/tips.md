@@ -31,7 +31,7 @@ Basic usage is in [Get Started](./get_started), and setting window detail is in 
 
 [Use VMagicMirror on Mac](./tips/use_on_mac)
 
-[Using Hand Tracking](./tips/using_hand_tracking)
+[(v1.7.0b and older ver) Using Hand Tracking](./tips/using_hand_tracking)
 
 [Perfect Sync](./tips/perfect_sync)
 

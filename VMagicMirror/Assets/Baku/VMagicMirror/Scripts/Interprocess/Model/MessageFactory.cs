@@ -44,6 +44,8 @@ namespace Baku.VMagicMirror
         public Message ExTrackerSetPerfectSyncMissedClipNames(string data) => WithArg(data);
 
         public Message ExTrackerSetIFacialMocapTroubleMessage(string message) => WithArg(message);
+
+        public Message SetHandTrackingResult(string json) => WithArg(json);
         
         #region VRoid
 
@@ -51,5 +53,6 @@ namespace Baku.VMagicMirror
         public Message VRoidModelLoadCanceled() => NoArg();
 
         #endregion
+
     }
 }

@@ -69,8 +69,8 @@ namespace Baku.VMagicMirror
             lookAtIk.solver.SetChain(
                 new Transform[]
                 {
-                    animator.GetBoneTransform(HumanBodyBones.Hips),
                     animator.GetBoneTransform(HumanBodyBones.Spine),
+                    animator.GetBoneTransform(HumanBodyBones.Chest),
                     animator.GetBoneTransform(HumanBodyBones.UpperChest),
                     animator.GetBoneTransform(HumanBodyBones.Neck),
                 }

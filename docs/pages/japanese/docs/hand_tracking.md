@@ -84,7 +84,7 @@ permalink: /docs/hand_tracking
 
 `ハンドトラッキング`タブで`ハンドトラッキングを有効化`をオンにし、ウェブカメラを選択します。
 
-<div class="note-area">
+<div class="note-area" markdown="1">
 
 **NOTE**
 

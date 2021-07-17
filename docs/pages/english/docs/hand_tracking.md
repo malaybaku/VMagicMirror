@@ -85,7 +85,7 @@ Also please check following restrictions.
 
 In `Hand Tracking` tab, check `Enable Hand Tracking` and select webcam.
 
-<div class="note-area">
+<div class="note-area" markdown="1">
 
 **NOTE**
 

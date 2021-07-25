@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a7f3f5d6d0a1ef4090d813d74f69203, type: 3}
+  m_Name: PerfectSyncEmphasizeSetting
+  m_EditorClassIdentifier: 
+  items:
+  - keyName: EyeBlinkLeft
+    maxValue: 1
+  - keyName: EyeLookUpLeft
+    maxValue: 1
+  - keyName: EyeLookDownLeft
+    maxValue: 1
+  - keyName: EyeLookInLeft
+    maxValue: 1
+  - keyName: EyeLookOutLeft
+    maxValue: 1
+  - keyName: EyeWideLeft
+    maxValue: 0.25
+  - keyName: EyeSquintLeft
+    maxValue: 1
+  - keyName: EyeBlinkRight
+    maxValue: 1
+  - keyName: EyeLookUpRight
+    maxValue: 1
+  - keyName: EyeLookDownRight
+    maxValue: 1
+  - keyName: EyeLookInRight
+    maxValue: 1
+  - keyName: EyeLookOutRight
+    maxValue: 1
+  - keyName: EyeWideRight
+    maxValue: 0.25
+  - keyName: EyeSquintRight
+    maxValue: 1
+  - keyName: MouthLeft
+    maxValue: 0.9
+  - keyName: MouthSmileLeft
+    maxValue: 0.8
+  - keyName: MouthFrownLeft
+    maxValue: 0.5
+  - keyName: MouthPressLeft
+    maxValue: 0.8
+  - keyName: MouthUpperUpLeft
+    maxValue: 0.8
+  - keyName: MouthLowerDownLeft
+    maxValue: 0.8
+  - keyName: MouthStretchLeft
+    maxValue: 1
+  - keyName: MouthDimpleLeft
+    maxValue: 0.5
+  - keyName: MouthRight
+    maxValue: 0.9
+  - keyName: MouthSmileRight
+    maxValue: 0.8
+  - keyName: MouthFrownRight
+    maxValue: 0.5
+  - keyName: MouthPressRight
+    maxValue: 0.8
+  - keyName: MouthUpperUpRight
+    maxValue: 0.8
+  - keyName: MouthLowerDownRight
+    maxValue: 0.8
+  - keyName: MouthStretchRight
+    maxValue: 1
+  - keyName: MouthDimpleRight
+    maxValue: 0.5
+  - keyName: MouthClose
+    maxValue: 0.8
+  - keyName: MouthFunnel
+    maxValue: 0.8
+  - keyName: MouthPucker
+    maxValue: 0.9
+  - keyName: MouthShrugUpper
+    maxValue: 0.9
+  - keyName: MouthShrugLower
+    maxValue: 0.9
+  - keyName: MouthRollUpper
+    maxValue: 0.79999995
+  - keyName: MouthRollLower
+    maxValue: 0.8
+  - keyName: JawOpen
+    maxValue: 1
+  - keyName: JawForward
+    maxValue: 1
+  - keyName: JawLeft
+    maxValue: 1
+  - keyName: JawRight
+    maxValue: 1
+  - keyName: NoseSneerLeft
+    maxValue: 1
+  - keyName: NoseSneerRight
+    maxValue: 1
+  - keyName: CheekPuff
+    maxValue: 0.9
+  - keyName: CheekSquintLeft
+    maxValue: 0.7
+  - keyName: CheekSquintRight
+    maxValue: 0.7
+  - keyName: TongueOut
+    maxValue: 1
+  - keyName: BrowDownLeft
+    maxValue: 0.6
+  - keyName: BrowOuterUpLeft
+    maxValue: 0.6
+  - keyName: BrowDownRight
+    maxValue: 0.6
+  - keyName: BrowOuterUpRight
+    maxValue: 0.6
+  - keyName: BrowInnerUp
+    maxValue: 0.6

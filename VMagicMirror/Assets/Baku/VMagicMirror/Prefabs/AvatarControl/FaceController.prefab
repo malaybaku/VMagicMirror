@@ -120,8 +120,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1655d29d03fb30b4fb5fc956ffc2db19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vroidDefaultBlendShapeAvatar: {fileID: 11400000, guid: cc041bf064933304d942a9e7bc39a2b5,
-    type: 2}
+  emphasizeThreshold: 0.5
+  emphasizeExpression: 0
+  emphasizeSetting: {fileID: 11400000, guid: a85cb4965dfe78149b888b15c74bad88, type: 2}
 --- !u!114 &6241239198292537160
 MonoBehaviour:
   m_ObjectHideFlags: 0

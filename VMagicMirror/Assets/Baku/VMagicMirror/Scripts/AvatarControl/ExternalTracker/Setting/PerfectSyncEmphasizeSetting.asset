@@ -78,7 +78,7 @@ MonoBehaviour:
   - keyName: MouthFunnel
     maxValue: 0.8
   - keyName: MouthPucker
-    maxValue: 0.9
+    maxValue: 0.75
   - keyName: MouthShrugUpper
     maxValue: 0.9
   - keyName: MouthShrugLower

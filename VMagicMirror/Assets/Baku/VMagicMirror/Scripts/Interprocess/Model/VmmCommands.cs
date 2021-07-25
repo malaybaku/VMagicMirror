@@ -174,7 +174,6 @@ namespace Baku.VMagicMirror
         // External Tracker
         public const string ExTrackerEnable = nameof(ExTrackerEnable);
         public const string ExTrackerEnableLipSync = nameof(ExTrackerEnableLipSync);
-        public const string ExTrackerEnableEmphasizeExpression = nameof(ExTrackerEnableEmphasizeExpression);
         public const string ExTrackerEnablePerfectSync = nameof(ExTrackerEnablePerfectSync);
         public const string ExTrackerCalibrate = nameof(ExTrackerCalibrate);
         public const string ExTrackerSetCalibrateData = nameof(ExTrackerSetCalibrateData);

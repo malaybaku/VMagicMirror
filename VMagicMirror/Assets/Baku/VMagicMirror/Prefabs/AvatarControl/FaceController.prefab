@@ -123,6 +123,7 @@ MonoBehaviour:
   emphasizeThreshold: 0.5
   emphasizeExpression: 0
   emphasizeSetting: {fileID: 11400000, guid: a85cb4965dfe78149b888b15c74bad88, type: 2}
+  recordOnEditor: 0
 --- !u!114 &6241239198292537160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -529,6 +530,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bsMin: 0.15
   bsMax: 0.6
+  jawOpenEmphasizeFactor: 1.5
+  jawOpenCutoff: 0.2
+  smileEmphasizeFactor: 1.3
+  smileCutoff: 0.2
+  mouthPuckerEmphasizeFactor: 1.8
+  mouthPuckerCutoff: 0.2
+  mixedValueSumMax: 0.8
+  diffPerSecond: 18
 --- !u!114 &3748904030990320927
 MonoBehaviour:
   m_ObjectHideFlags: 0

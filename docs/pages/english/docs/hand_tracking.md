@@ -116,3 +116,6 @@ During `Show Detection Status` is on, the area below shows detection results. Es
 - Be aware of the distance between your hands and camera. Too far is NG of course, and detection also fails when the hand is too close to camera.
 
 </div>
+
+Another good way to check how thing and lights has effect is to quit VMagicMirror and run Windows built-in `Camera` app.
+When you try this way, please be careful that VMagicMirror can not use webcam during `Camera` app runs, and vice versa.

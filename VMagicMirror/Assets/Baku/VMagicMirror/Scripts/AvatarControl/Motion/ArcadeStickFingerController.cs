@@ -95,11 +95,12 @@ namespace Baku.VMagicMirror
                     return FingerConsts.RightIndex;
                 case GamepadKey.Y:
                     return FingerConsts.RightMiddle;
-                case GamepadKey.LShoulder:
-                case GamepadKey.LTrigger:
-                    return FingerConsts.RightRing;
+                //RとLに注意: アーケードスティックはRが左側、Lが右側にある
                 case GamepadKey.RShoulder:
                 case GamepadKey.RTrigger:
+                    return FingerConsts.RightRing;
+                case GamepadKey.LShoulder:
+                case GamepadKey.LTrigger:
                     return FingerConsts.RightLittle;
                 default:
                     return -1;

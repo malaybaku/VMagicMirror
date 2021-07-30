@@ -10,6 +10,17 @@ permalink: /changelog
 
 <div class="doc-ul" markdown="1">
 
+#### v1.8.1
+{: .doc-sec2 }
+
+2021/07/31
+
+* Add: Option to emphasize face expression for External Tracker feature.
+* Fixed: Error that VRoid Hub model download fails, when the model is first to use.
+* Fixed: Incorrect finger assignment for arcade stick mode gamepad input.
+* Changed: Improved guide flow about hand tracking feature.
+
+
 #### v1.8.0
 {: .doc-sec2 }
 

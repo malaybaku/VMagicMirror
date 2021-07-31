@@ -15,10 +15,10 @@ permalink: /changelog
 
 2021/07/31
 
-* Add: Option to emphasize face expression for External Tracker feature.
-* Fixed: Error that VRoid Hub model download fails, when the model is first to use.
-* Fixed: Incorrect finger assignment for arcade stick mode gamepad input.
-* Changed: Improved guide flow about hand tracking feature.
+* 追加: 外部トラッキングについて、表情を強調して適用できるオプションを追加しました。
+* 修正: VRoid Hubで、初利用のモデルがダウンロードに失敗する不具合を修正しました。
+* 修正: アーケードスティックモードでの指の動作が正しくなかった問題を修正しました。
+* 変更: ハンドトラッキングに関する説明表示をやや改善しました。
 
 
 #### v1.8.0

@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.8.0
+v1.8.1
 
 * Author: Baxter
-* 2021/Jul/17
+* 2021/Jul/31
 
 The VRM avatar application without any special device.
 
@@ -65,8 +65,8 @@ Open Unity project with Unity 2019.4.x, and open WPF project with Visual Studio 
 
 Maintainer's environment is as following.
 
-* Unity 2019.4.23f1 Personal
-* Visual Studio Community 2019.16.9.2
+* Unity 2020.3.8f1 Personal
+* Visual Studio Community 2019.16.10.3
     * .NET Core 3.1 SDK
     * Visual Studio Component "C++ Desktop Development" is required.
 

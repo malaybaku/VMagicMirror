@@ -97,30 +97,27 @@ Please see per-app specific setup process.
 (*This area will be updated when other app supported.)
 
 
-### Use LipSync with External Tracking App
+### Supported Options 
 {: .doc-sec1 }
 
-Check `Apply LipSync using External Tracker Data`, to use mouth motion capture data from the external app.
+<div class="doc-ul" markdown="1">
 
-<div class="row">
-{% include docimg.html file="./images/docs/ex_tracker_40_replace_lipsync.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
+- `Apply LipSync using External Tracker Data`
+- `Emphasize Face Expressions`: Enable to emphasize eyebrow and mouth expression.
+- `Disable horizontal flip`: Enable to turn off horizontal flip process.\
+- `Use Perfect Sync`: Enable Perfect Sync. See detail at [Perfect Sync Tips](../tips/perfect_sync).
+
 </div>
 
-This feature turns off microphone based lipsync automatically, which leads less CPU load on the PC.
+`Apply LipSync using External Tracker Data` feature turns off microphone based lipsync, which leads less CPU load on the PC.
 
 There is also another feature that, the external app gets mouth shape by camera, so your motion will be reflected even when your mouth moves silently.
-
 
 On the other hand, the tracking precision decreases when the device cannot see your mouth (mainly because of mic or hop guard).
 
 In this case turn off `Apply LipSync using External Tracker Data` to use conventional microphone based lipsync.
 
-### Perfect Sync
-{: .doc-sec1}
-
-Perfect Sync is an advanced feature supported from v1.3.0, to move the avatar very rich with external tracking.
-
-See the detail at [Perfect Sync Tips](../tips/perfect_sync).
+`Emphasize Face Expressions` option behaves differently whether Perfect Sync is enabled or disabled. This feature has risk of bad look in some VRM models, so check the appearance before using in live streaming etc.
 
 
 ### Face Switch

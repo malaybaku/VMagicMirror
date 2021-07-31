@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.8.0
+v1.8.1
 
 * 作成: 獏星(ばくすたー)
-* 2021/07/17
+* 2021/07/31
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -62,8 +62,8 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 
 メンテナの開発環境は以下の通りです。
 
-* Unity 2019.4.23f1 Personal
-* Visual Studio Community 2019 16.9.2
+* Unity 2020.3.8f1 Personal
+* Visual Studio Community 2019 16.10.3
     * .NET Core 3.1 SDKがインストール済みであること
     * Visual Studioのコンポーネントで「C++によるデスクトップ開発」をインストール済みであること
         - UnityのBurstコンパイラ向けに必要なセットアップです。

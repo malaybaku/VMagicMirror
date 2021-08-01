@@ -24,7 +24,7 @@ permalink: /tips/perfect_sync
 #### パーフェクトシンクとは
 {: .doc-sec2 }
 
-パーフェクトシンクは[外部トラッキング機能](../docs/external_tracker)の発展的な機能で、高度に表情を操作できます。利用にはFace ID対応のiPhoneまたはiPadが必要です。
+パーフェクトシンクは[外部トラッキング機能](../docs/external_tracker)の発展的な機能で、高度に表情を操作できます。利用にはFace ID対応のiPhoneまたはiPadが必要であり、またVRMモデルにもパーフェクトシンク用のセットアップが必要です。
 
 あらかじめ[外部トラッキング機能](../docs/external_tracker)の基本機能を試したのち、本ページを読むことを推奨しています。
 

@@ -239,6 +239,7 @@ GameObject:
   - component: {fileID: 5813678809054739210}
   - component: {fileID: 1338865419136667663}
   - component: {fileID: 3373783041301125446}
+  - component: {fileID: 3163774597481480951}
   m_Layer: 0
   m_Name: HeadFK
   m_TagString: Untagged
@@ -330,6 +331,19 @@ MonoBehaviour:
   inactiveFactors: {x: 10, y: 10}
   activeFactors: {x: 10, y: 10}
   activeSwitchCoolDownDuration: 1
+--- !u!114 &3163774597481480951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678809054739212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95e2ed611387bf49b7bc09424d15d2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  setting: {fileID: 11400000, guid: e95bcbbd1be58b64d9fb320b4b29b05a, type: 2}
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0
@@ -708,6 +722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   faceAttitude: {fileID: 5813678809054739210}
+  headMotionClipPlayer: {fileID: 3163774597481480951}
 --- !u!1 &7492520328184788948
 GameObject:
   m_ObjectHideFlags: 0

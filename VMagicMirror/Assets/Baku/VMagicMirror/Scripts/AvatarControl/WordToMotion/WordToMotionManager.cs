@@ -1,20 +1,20 @@
 ﻿using System;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
+    //TODO: noddingとshakingをどうにか特別扱いして起動させたい…
+    
     //NOTE: このクラスが(半分神になっちゃうのが気に入らんが)やること
     // - プレビューのon/off : プレビューがオンの場合、プレビューが全てに優先する
     // - プレビューではないワードベースモーションのon/off :
     //   - プレビューがオフでワードベースモーションが有効な間は
     //     コレを使ってモデルの体や表情を操る
-
-    //NOTE2: Bvhによる動作については「ほんとにBvhでいいのか」問題が浮上しているため、いったんGUI側で選択不可にしている。そのため実装が凄くいい加減。
-
+    
     /// <summary>
-    /// <see cref="WordToMotionController"/>と同じ目的でWord To Motionを動かすが、
-    /// そのとき手段として他の制御(Hand+Head IK, Body, BlendShape)のオンオフの権限を持つ。
+    /// Word to Motion機能によってモーションとか表情にアクセスするやつ
     /// </summary>
     public class WordToMotionManager : MonoBehaviour
     {
@@ -23,13 +23,10 @@ namespace Baku.VMagicMirror
 
         [Tooltip("ワード由来のモーションに入る時にIKを無効化するときの所要時間")]
         [SerializeField] private float ikFadeDuration = 0.5f;
-
         //棒立ちポーズが指定されたアニメーション。
         //コレが必要なのは、デフォルトアニメーションが無いと下半身を動かさないアニメーションで脚が骨折するため
         [SerializeField] private AnimationClip defaultAnimation = null;
-
         [SerializeField] private FingerController fingerController = null;
-
         [SerializeField] private CustomMotionPlayer customMotionPlayer = null;
         
         /// <summary>
@@ -106,6 +103,7 @@ namespace Baku.VMagicMirror
         /// <summary>プレビュー動作の内容。</summary>
         public MotionRequest PreviewRequest { get; set; }
 
+        private HeadMotionClipPlayer _headMotionClipPlayer = null;
         private WordToMotionMapper _mapper = null;
         private IkWeightCrossFade _ikWeightCrossFade = null;
         private WordToMotionBlendShape _blendShape = null;
@@ -119,17 +117,24 @@ namespace Baku.VMagicMirror
         //ビルトインモーションの実行中だと意味のある文字列になる
         private string _currentBuiltInMotionName = "";
 
+        private bool _currentMotionIsHeadMotion = false;
         private float _ikFadeInCountDown = 0f;
         private float _blendShapeResetCountDown = 0f;
         private float _customMotionStopCountDown = 0f;
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable, BuiltInMotionClipData builtInClips)
+        public void Initialize(
+            IMessageReceiver receiver,
+            IVRMLoadable vrmLoadable,
+            BuiltInMotionClipData builtInClips,
+            HeadMotionClipPlayer headMotionClipPlayer
+            )
         {
             var _ = new WordToMotionManagerReceiver(receiver, this);
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             _mapper = new WordToMotionMapper(builtInClips);
+            _headMotionClipPlayer = headMotionClipPlayer;
         }
 
         public void LoadItems(MotionRequestCollection motionRequests)
@@ -148,12 +153,24 @@ namespace Baku.VMagicMirror
 
             _currentMotionRequest = request;
 
+            float dynamicDuration = 0f;
+
             //モーションを適用
             switch (request.MotionType)
             {
                 case MotionRequest.MotionTypeBuiltInClip:
                     StopCurrentMotion();
-                    StartBuiltInMotion(request.BuiltInAnimationClipName);
+                    _currentMotionIsHeadMotion = _headMotionClipPlayer.CanPlay(request.BuiltInAnimationClipName);
+                    if (_currentMotionIsHeadMotion)
+                    {
+                        _headMotionClipPlayer.Play(request.BuiltInAnimationClipName, out float duration);
+                        dynamicDuration = duration;
+                        IsPlayingMotion = true;
+                    }
+                    else
+                    {
+                        StartBuiltInMotion(request.BuiltInAnimationClipName);
+                    }
                     break;
                 case MotionRequest.MotionTypeCustom:
                     StopCurrentMotion();
@@ -168,7 +185,14 @@ namespace Baku.VMagicMirror
             if (request.UseBlendShape)
             {
                 IsPlayingBlendShape = true;
-                StartApplyBlendShape(request);
+                if (dynamicDuration > 0f)
+                {
+                    StartApplyBlendShape(request, dynamicDuration);
+                }
+                else
+                {
+                    StartApplyBlendShape(request);
+                }
             }
         }
         
@@ -221,17 +245,32 @@ namespace Baku.VMagicMirror
                     }
                 }
             }
+            
+            if (!EnablePreview && _currentMotionIsHeadMotion && !_headMotionClipPlayer.IsPlaying)
+            {
+                //頭部のみのモーションはIKウェイトとかはいじらないため、フラグだけ折れば十分
+                _currentMotionIsHeadMotion = false;
+                IsPlayingMotion = false;
+            }
 
             if (EnablePreview && PreviewRequest != null)
             {
                 if (PreviewRequest.MotionType == MotionRequest.MotionTypeBuiltInClip && 
                     !string.IsNullOrEmpty(PreviewRequest.BuiltInAnimationClipName))
                 {
-                    StartPreviewBuiltInMotion(PreviewRequest.BuiltInAnimationClipName);
+                    if (_headMotionClipPlayer.CanPlay(PreviewRequest.BuiltInAnimationClipName))
+                    {
+                        _headMotionClipPlayer.PlayPreview(PreviewRequest.BuiltInAnimationClipName);
+                    }
+                    else
+                    {
+                        StartPreviewBuiltInMotion(PreviewRequest.BuiltInAnimationClipName);
+                    }
                 }
                 else
                 {
                     StopPreviewBuiltInMotion();
+                    _headMotionClipPlayer.StopPreview();
                 }
 
                 if (PreviewRequest.MotionType == MotionRequest.MotionTypeCustom &&
@@ -411,8 +450,6 @@ namespace Baku.VMagicMirror
         
         private void StartCustomMotion(string clipName)
         {
-            Debug.LogWarning("カスタムモーションがリクエストされましたが実装がまだ途中です");
-
             var started = customMotionPlayer.PlayClip(clipName);
             if (!started)
             {
@@ -476,6 +513,8 @@ namespace Baku.VMagicMirror
             //プレビュー中は通常動作は開始も停止もしないので、何もしないでOK
             if (EnablePreview) { return; }
 
+            _headMotionClipPlayer.Stop();
+            _currentMotionIsHeadMotion = false;
             switch (_currentMotionType)
             {
                 case MotionRequest.MotionTypeBuiltInClip:
@@ -497,7 +536,7 @@ namespace Baku.VMagicMirror
             _currentMotionType = MotionRequest.MotionTypeNone;
         }
 
-        private void StartApplyBlendShape(MotionRequest request)
+        private void StartApplyBlendShape(MotionRequest request, float dynamicDuration = -1f)
         {
             if (!request.UseBlendShape ||
                 request.BlendShapeValuesDic == null ||
@@ -513,7 +552,10 @@ namespace Baku.VMagicMirror
                 _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
             }
             _blendShape.KeepLipSync = request.PreferLipSync;
-            _blendShapeResetCountDown = CalculateDuration(request);
+            
+            _blendShapeResetCountDown = dynamicDuration > 0f
+                ? dynamicDuration
+                : CalculateDuration(request);
         }
 
         private float CalculateDuration(MotionRequest request)

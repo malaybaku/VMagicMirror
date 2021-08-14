@@ -55,6 +55,7 @@ MonoBehaviour:
   blendShapeInitializer: {fileID: 7797473119978373343}
   lipSyncContext: {fileID: 3748904030990320927}
   lipSyncIntegrator: {fileID: 6125060425342205146}
+  autoBlink: {fileID: 2335327280039312852}
 --- !u!114 &3748028266611161169
 MonoBehaviour:
   m_ObjectHideFlags: 0

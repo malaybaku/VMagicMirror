@@ -19,3 +19,5 @@ MonoBehaviour:
     clip: {fileID: 7400000, guid: e0b3e1faef6abbf43827847a27014cff, type: 2}
   - name: Good
     clip: {fileID: 7400000, guid: d1cde24e01c095c428e6d07bd418683b, type: 2}
+  - name: Nodding
+    clip: {fileID: 7400000, guid: f4895d856de34be4f80c6ab35bc07bad, type: 2}

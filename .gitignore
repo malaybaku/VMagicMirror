@@ -66,6 +66,7 @@ sysinfo.txt
 /VMagicMirror/Assets/RawInputSharp/
 /VMagicMirror/Assets/VRMShaders/
 /VMagicMirror/Assets/MeshUtility/
+/VMagicMirror/Assets/MiscAssets/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
 /VMagicMirror/Assets/OpenCVforUnity.meta
@@ -86,6 +87,7 @@ sysinfo.txt
 /VMagicMirror/Assets/RawInputSharp.meta
 /VMagicMirror/Assets/VRMShaders.meta
 /VMagicMirror/Assets/MeshUtility.meta
+/VMagicMirror/Assets/MiscAssets.meta
 
 # Assets to ignore (from BOOTH)
 

@@ -32,7 +32,7 @@ namespace Baku.VMagicMirror
 
         public Material GetGamepadBodyMaterial()
             => _buttonMaterial ?? (_buttonMaterial = LoadMaterial(
-                   "gamepad_body.png", "GamepadBody", "GamepadBody"));
+                   "gamepad_body.png", "GamepadBody", ""));
 
         public Material GetGamepadButtonMaterial()
             => _stickAreaMaterial ?? (_stickAreaMaterial = LoadMaterial(

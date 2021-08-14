@@ -150,15 +150,13 @@ You can also see the plain text version from below.
 https://github.com/malaybaku/VMagicMirrorConfig/blob/master/VMagicMirrorConfig/VMagicMirrorConfig/Resources/LicenseTextResource.xaml
 
 
-### 5.2. About Model Data from SketchFab
+### 5.2. About Gamepad Model Data 
 
-The model data `xbox_controller.fbx` included in this repository is from SketchFab, with Attribution 4.0 International (CC BY 4.0).
+`Gamepad.fbx` in this repository is introduced in #616 , and the model is under Attribution 4.0 International (CC BY 4.0).
 
-Creator: Criegrrunov
-URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
+Author: Negyek
 
-In VMagicMirror, the materials are replaced for the visual consistency.
-
+VMagicMirror applies material for visual consistency, and allow texture replacement to support visual customize.
 
 ## 6. About Localization Contribution
 

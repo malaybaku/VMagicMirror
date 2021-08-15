@@ -19,7 +19,7 @@ permalink: /tips/change_textures
 * キーボードのキー画像を差し替える場合: `key.png`
 * タッチパッドの画像を差し替える場合: `pad.png`
 * ゲームパッドの本体部分を差し替える場合: `gamepad_body.png`
-* ゲームパッドのスティックやボタン部分を差し替える場合: `gamepad_button.png`
+* ゲームパッドのスティックやボタン部分を差し替える場合: `gamepad_button.png` (*v1.8.1およびそれ以前のバージョンのみ)
 * MIDIコントローラのノート部分を差し替える場合: `midi_note.png`
 * MIDIコントローラのノブ部分を差し替える場合: `midi_knob.png`
 * ペンタブレット使用時のペン部分を差し替える場合: `pen.png`
@@ -34,12 +34,22 @@ MIDIコントローラ系のテクスチャ切り替えはv1.6.2以降で動作�
 
 </div>
 
-デフォルトのままでよいものは、単にファイルが無いままであれば問題ありません。
+デフォルトのままでよいものについては、ファイルが無い状態のままにします。
 
-また、ゲームパッドに関しては単色画像での差し替えのみを想定しているため、イラストは適用しないで下さい。
+ゲームパッドに関しては、VMagicMirrorのバージョンによって必要な画像が異なります。
 
-画像ファイルを配置したあとで`VMagicMirror.exe`を実行することで、配置した画像が読み込まれます。
+v1.8.2以降のバージョンでは、単一の`gamepad_body.png`ファイルでテクスチャを定義します。UVテンプレートは以下の画像の通りです。
 
-{% include docimg.html file="/images/tips/change_texture.png" %}
+v1.8.1およびそれ以前のバージョンでは単色の画像が必要であり、ゲームパッド本体とボタン部分の色をそれぞれ`gamepad_body.png`、`gamepad_button.png`で指定します。
 
-もとに戻したいときは、配置した画像ファイルを削除してからVMagicMirrorを再び起動します。
+画像ファイルの配置後に`VMagicMirror.exe`を実行すると、画像が適用されます。
+
+<div class="row">
+
+{% include docimg.html file="/images/tips/change_texture.png" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
+
+{% include docimg.html file="/images/tips_model/gamepad_template.png" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
+
+</div>
+
+もとに戻したいときは、配置した画像ファイルを削除し、VMagicMirrorを再び起動します。

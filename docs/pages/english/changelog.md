@@ -11,6 +11,18 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v1.8.2
+
+{: .doc-sec2 }
+
+2021/08/21
+
+* Add: New built-in head motion `Nod` and `Shake`. These motions are registered as 7th and 8th Word to Motion item by default.
+* Add: MIDI device supports up to 16 keys assignment for Word to Motion feature.
+* Add: Gamepad newly supports L/R/Select buttons for Word to Motion feature.
+* Change: If iFacialMocap connection setting exists, the app automatically tries once to connect at start. App will success to connect when iFacialMocap runs beforehand and other settings are correct.
+
+
 #### v1.8.1
 {: .doc-sec2 }
 

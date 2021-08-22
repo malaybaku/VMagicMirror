@@ -19,6 +19,7 @@ namespace Baku.VMagicMirror
             ["D6"] = 6,
             ["D7"] = 7,
             ["D8"] = 8,
+            ["D9"] = 9,
             ["NumPad0"] = 0,
             ["NumPad1"] = 1,
             ["NumPad2"] = 2,
@@ -28,6 +29,7 @@ namespace Baku.VMagicMirror
             ["NumPad6"] = 6,
             ["NumPad7"] = 7,
             ["NumPad8"] = 8,
+            ["NumPad9"] = 9,
         };
 
         /// <summary>Word to Motionの要素を実行してほしいとき、アイテムのインデックスを引数にして発火する。</summary>

@@ -15,7 +15,7 @@ lang_prefix: /en/
 
 {: .doc-sec2 }
 
-2021/08/21
+2021/08/28
 
 * Add: New built-in head motion `Nod` and `Shake`. These motions are registered as 7th and 8th Word to Motion item by default.
 * Add: MIDI device supports up to 16 keys assignment for Word to Motion feature.

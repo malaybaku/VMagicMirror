@@ -79,7 +79,7 @@ If you choose MIDI controller for input device, you nees 3 steps to setup. Follo
 <div class="doc-ul" markdown="1">
 
 1. Select `Device Assign` to `MIDI Controller` and click edit button at the right of `Keys`.
-2. You will see `MIDI note assign` window, so press MIDI keys to use, to input MIDI note number for each items. `Note to Change` column is updated by your MIDI input.
+2. You will see `MIDI note assign` window, so press up to 16 MIDI keys to use. Pressed keys appear on `Note to Change` column.
 3. After setting click `OK` to complete setting.
 
 </div>

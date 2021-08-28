@@ -20,10 +20,14 @@ This feature is called `Word to Motion`.
 
 Originally this feature supports receiving word input (e.g. "joy") to emotional expression, but now it also supports several input styles, as you would expect.
 
+<div class="doc-ul" markdown="1">
+
 1. Keyboard, word input base
 2. Gamepad, button input
 3. Keyboard, number key
 4. MIDI Controller
+
+</div>
 
 <div class="row">
 {% include docimg.html file="/images/docs/word_to_motion_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
@@ -36,10 +40,14 @@ You can sort items by up/down buttons at the left of each items, and can delete 
 
 To add and custom item, take the following steps.
 
+<div class="doc-ul" markdown="1">
+
 1. Press `+` button to add a new item. If you custom existing item, skip it.
 2. Press `Setting` button to open the setting.
 3. In the custom window you can setup motion and face blend shape.
 4. Press `OK` to confirm your custom.
+
+</div>
 
 <div class="row">
 {% include docimg.html file="/images/docs/word_to_motion_custom_flow.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
@@ -47,6 +55,8 @@ To add and custom item, take the following steps.
 </div>
 
 In custom window you can take 4 actions.
+
+<div class="doc-ul" markdown="1">
 
 1. Set the word to start this item. If you do not use `Keyboard (word)` mode, then this work just for the name label.
 2. Select motion type for this item. 
@@ -60,15 +70,19 @@ In custom window you can take 4 actions.
 4. Set BlendShapes. 
     * **NOTE:** Basically, set only one blend shape to non-zero, and set other values to zero.
 
-From v0.9.6 you can also use MIDI controller for input device. There are 3 steps to use MIDI controller to launch expressions.
+</div>
 
-Following tweet show how to setup.
+If you choose MIDI controller for input device, you nees 3 steps to setup. Following tweet show how to setup.
 
 <blockquote class="twitter-tweet"><p lang="ja" dir="ltr"><a href="https://twitter.com/hashtag/VMagicMirror?src=hash&amp;ref_src=twsrc%5Etfw">#VMagicMirror</a><br>MIDIコンを叩くと表情が変わるやつの進捗です。<br><br>・コントロールパネル側で、MIDIコンと実行するアイテムのマッピング設定を開く<br>・MIDIコンのキーを叩いてセットアップ<br>・セットアップ完了したら再びMIDIコンのキーを叩く<br><br>の3手順で動きます <a href="https://t.co/RDbsszWLpi">pic.twitter.com/RDbsszWLpi</a></p>&mdash; 獏星(ばくすたー) / Megumi Baxter (@baku_dreameater) <a href="https://twitter.com/baku_dreameater/status/1211990346525077504?ref_src=twsrc%5Etfw">December 31, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
+<div class="doc-ul" markdown="1">
+
 1. Select `Device Assign` to `MIDI Controller` and click edit button at the right of `Keys`.
-2. You will see `MIDI note assign` window, so press MIDI keys to use, to input MIDI note number for each items. `Note to Change` column is updated by your MIDI input.
+2. You will see `MIDI note assign` window, so press up to 16 MIDI keys to use. Pressed keys appear on `Note to Change` column.
 3. After setting click `OK` to complete setting.
+
+</div>
 
 After closing the window, try pressing the same keys to check the input works.
 

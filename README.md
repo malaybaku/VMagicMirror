@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.8.1
+v1.8.2
 
 * 作成: 獏星(ばくすたー)
-* 2021/07/31
+* 2021/08/28
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -149,14 +149,13 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 https://github.com/malaybaku/VMagicMirrorConfig/blob/master/VMagicMirrorConfig/VMagicMirrorConfig/Resources/LicenseTextResource.xaml
 
 
-### 5.2. SketchFabから取得しているモデルについて
+### 5.2. ゲームパッドモデルについて
 
-このレポジトリに含まれる`xbox_controller.fbx`はSketchFabにてAttribution 4.0 International (CC BY 4.0)で公開されているものを用いています。
+このレポジトリに含まれる`Gamepad.fbx`は #616 に於いて導入しており、Attribution 4.0 International (CC BY 4.0)に従います。
 
-作成者: Criegrrunov
-モデル取得元URL: https://sketchfab.com/3d-models/xbox-controller-fb71f28a6eab4a2785cf68ff87c4c1fc
+作成者: Negyek
 
-VMagicMirrorでは元モデルに対し、マテリアルを差し替えたものを用いています。これは他のキーボード、タッチパッド等と見た目の一貫性をはかるためです。
+VMagicMirrorでは元モデルに対し、他のデバイスとの一貫性を保つためにマテリアルを適用しているほか、カスタマイズのためにテクスチャを変更可能にしています。
 
 ## 6. ローカリゼーションについて
 

@@ -27,7 +27,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private float baseScale = 0.8f;
 
         [SerializeField] private MeshRenderer bodyRenderer = null;
-        [SerializeField] private MeshRenderer buttonRenderer = null;
         
         [SerializeField] private TransformControl transformControl = null;
         public TransformControl TransformControl => transformControl;
@@ -40,15 +39,8 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            //note: 事前知識としてボディ部はマテリアル3つ、ボタン部分はマテリアル1つを使っているのがわかっててこういう書き方
-            var mats = new Material[bodyRenderer.materials.Length];
-            for (int i = 0; i < mats.Length; i++)
-            {
-                mats[i] = HIDMaterialUtil.Instance.GetGamepadBodyMaterial();
-            }
-
-            bodyRenderer.materials = mats;
-            buttonRenderer.material = HIDMaterialUtil.Instance.GetGamepadButtonMaterial();
+            //NOTE: 現在のゲームパッドモデルはテクスチャをただ一枚だけ持つ
+            bodyRenderer.material = HIDMaterialUtil.Instance.GetGamepadBodyMaterial();
         }
         
         /// <summary>

@@ -20,6 +20,9 @@ namespace Baku.VMagicMirror
             [GamepadKey.RIGHT] = 6,
             [GamepadKey.DOWN] = 7,
             [GamepadKey.LEFT] = 8,
+            [GamepadKey.RShoulder] = 9,
+            [GamepadKey.LShoulder] = 10,
+            [GamepadKey.Select] = 11,
         };
 
         public GamepadToWordToMotion(XInputGamePad gamepadInput)

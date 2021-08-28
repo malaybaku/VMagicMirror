@@ -20,7 +20,7 @@ lang_prefix: /en/
 * Add: New built-in head motion `Nod` and `Shake`. These motions are registered as 7th and 8th Word to Motion item by default.
 * Add: MIDI device supports up to 16 keys assignment for Word to Motion feature.
 * Add: Gamepad newly supports L/R/Select buttons for Word to Motion feature.
-* Change: Gamepad 3D models is replaced. This also changes the specification of [Change Device Textures](./tips/change_textures), in which gamepad texture now supports UV and you will need single image file.
+* Change: Gamepad 3D models is replaced. This changes the way how to [Change Device Textures](./tips/change_textures), in which gamepad texture now supports UV and you will need single image file.
 * Change: If iFacialMocap connection setting exists, the app automatically tries once to connect at start. App will success to connect when iFacialMocap runs beforehand and other settings are correct.
 
 

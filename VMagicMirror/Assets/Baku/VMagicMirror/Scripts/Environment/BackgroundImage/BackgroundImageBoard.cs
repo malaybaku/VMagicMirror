@@ -70,20 +70,19 @@ namespace Baku.VMagicMirror
             }
  
             //FOVに即してスケールを整える
-            var t = cam.transform;
-            float z = t.localPosition.z;
+            float z = transform.localPosition.z;
             float yScale = Mathf.Tan(cam.fieldOfView * Mathf.Deg2Rad * 0.5f) * z * 2f;
             float xScale = cam.aspect * yScale;
             
             if (cam.aspect > _textureAspect)
             {
                 //画面が横長: 横方向に埋めて、タテは画像のアスペクトに合わせてはみ出させる
-                t.localScale = new Vector3(xScale, xScale / _textureAspect, 1f);
+                transform.localScale = new Vector3(xScale, xScale / _textureAspect, 1f);
             }
             else
             {
                 //画面が縦長: 縦方向に埋めて、ヨコは画像のアスペクトに合わせてはみ出させる
-                t.localScale = new Vector3(_textureAspect * yScale, yScale, 1f);
+                transform.localScale = new Vector3(_textureAspect * yScale, yScale, 1f);
             }
         }
     }

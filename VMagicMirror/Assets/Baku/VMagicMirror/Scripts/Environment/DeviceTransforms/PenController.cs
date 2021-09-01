@@ -40,9 +40,12 @@ namespace Baku.VMagicMirror
         
         private TweenerCore<Vector3, Vector3, VectorOptions> _tweener;
 
+        private IMessageSender _sender;
+
         [Inject]
-        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable)
+        public void Initialize(IMessageReceiver receiver, IMessageSender sender, IVRMLoadable vrmLoadable)
         {
+            _sender = sender;
             receiver.AssignCommandHandler(
                 VmmCommands.SetPenVisibility,
                 message => SetDeviceVisibility(message.ToBoolean())
@@ -55,6 +58,7 @@ namespace Baku.VMagicMirror
                 _rightThumbIntermediate = info.animator.GetBoneTransform(HumanBodyBones.RightThumbDistal);
                 _hasValidFinger = (_rightIndexProximal != null && _rightThumbIntermediate != null);
                 _hasModel = true;
+                _sender.SendCommand(MessageFactory.Instance.SetModelDoesNotSupportPen(!_hasValidFinger));
             };
 
             vrmLoadable.VrmDisposing += () =>
@@ -64,6 +68,8 @@ namespace Baku.VMagicMirror
                 _rightWrist = null;
                 _rightIndexProximal = null;
                 _rightThumbIntermediate = null;
+                //モデルがロードされてないならサポート外警告は不要、とする。分かりやすいので
+                _sender.SendCommand(MessageFactory.Instance.SetModelDoesNotSupportPen(false));
             };
 
             penMesh.enabled = false;

@@ -24,7 +24,6 @@
     "com.vrmc.vrmshaders": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.81.0",
     "com.vrmc.gltf": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.81.0",
     "com.vrmc.univrm": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.81.0",
-    "com.vrmc.vrm": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.81.0",     
     "jp.keijiro.mediapipe.blazepalm": "1.0.2",
     "jp.keijiro.mediapipe.handlandmark": "1.0.1",
     "jp.keijiro.test-assets": "1.0.1",

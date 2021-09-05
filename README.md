@@ -116,7 +116,7 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 
 以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
 
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.81.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * オリジナルのMidiJackではなく、Forkレポジトリです。

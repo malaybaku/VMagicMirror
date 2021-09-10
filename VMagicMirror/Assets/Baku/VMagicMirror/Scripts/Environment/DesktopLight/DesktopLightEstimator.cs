@@ -164,7 +164,6 @@ namespace Baku.VMagicMirror
             }
 
             RgbFactor = new Vector3(r * ColorMeanFactor, g * ColorMeanFactor, b * ColorMeanFactor);
-            resultColor = new Color(RgbFactor.x, RgbFactor.y, RgbFactor.z);
         }
 
         //uWindowCaptureで取得したいデスクトップの座標を、WinAPIから取得できるX,Y座標として取得する

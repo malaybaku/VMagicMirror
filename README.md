@@ -81,6 +81,7 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
+* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.0.2
 * DOTween (アセットストアから)
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)

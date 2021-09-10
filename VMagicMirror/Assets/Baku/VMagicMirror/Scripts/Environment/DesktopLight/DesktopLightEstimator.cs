@@ -14,15 +14,18 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private UwcWindowTexture windowTexture;
         [SerializeField] private float desktopIndexCheckInterval = 10f;
-        [SerializeField] private Color resultColor = Color.white;
-        
+        [SerializeField] private float textureReadInterval = 0.1f;
+        [SerializeField] private float factorLerpFactor = 12f;
+            
         public Vector3 RgbFactor { get; private set; } = Vector3.one;
+        private Vector3 _rawFactor = Vector3.one;
 
         private RenderTexture _rt;
         private Texture2D _rtReader;
 
+        private float _count;
+        
         private bool _isEnabled = false;
-
         public bool IsEnabled
         {
             get => _isEnabled;
@@ -43,6 +46,7 @@ namespace Baku.VMagicMirror
                 else
                 {
                     RgbFactor = Vector3.one;
+                    _rawFactor = Vector3.one;
                 }
             }
         } 
@@ -68,12 +72,32 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (!IsEnabled || windowTexture.window == null || !windowTexture.window.texture)
+            UpdateRawFactor();
+            RgbFactor = IsEnabled
+                ? Vector3.Lerp(RgbFactor, _rawFactor, factorLerpFactor * Time.deltaTime)
+                : Vector3.one;
+        }
+
+        private void UpdateRawFactor()
+        {
+            if (!IsEnabled)
+            {
+                _count = textureReadInterval;
+                return;
+            }
+
+            if (windowTexture.window == null || !windowTexture.window.texture)
             {
                 return;
             }
 
-            //TODO: WindowTextureが更新された次のフレームとかだけでいいんですよねココ
+            _count += Time.deltaTime;
+            if (_count < textureReadInterval)
+            {
+                return;
+            }
+            _count -= textureReadInterval;
+
             var source = windowTexture.window.texture;
             GetColorWithRenderTexture(source);
         }

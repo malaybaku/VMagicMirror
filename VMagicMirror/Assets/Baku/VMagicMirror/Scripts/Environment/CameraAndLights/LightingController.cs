@@ -112,17 +112,13 @@ namespace Baku.VMagicMirror
         
         private void Update()
         {
-            //GUIで色をいじってないけど補正値が変わってる可能性がある場合、逐次反映
-            if (desktopLightEstimator.IsEnabled)
-            {
-                SetMainLightColor();
-            }
+            //GUIで色をいじってなくても補正値が効きがちなので、随時反映する
+            SetMainLightColor();
         }
 
         private void SetLightColor(float r, float g, float b)
         {
             _color = new Color(r, g, b);
-            SetMainLightColor();
         }
 
         private void SetMainLightColor()

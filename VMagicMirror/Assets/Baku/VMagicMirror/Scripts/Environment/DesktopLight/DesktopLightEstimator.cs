@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private float textureReadInterval = 0.1f;
         [SerializeField] private float factorLerpFactor = 12f;
         [SerializeField] private ComputeShader colorMeanShader;
-            
+
         public Vector3 RgbFactor { get; private set; } = Vector3.one;
         private Vector3 _rawFactor = Vector3.one;
 
@@ -26,8 +26,9 @@ namespace Baku.VMagicMirror
         private int _colorMeanKernelIndex;
         private ComputeBuffer _colorMeanResultBuffer;
         private readonly float[] _colorMeanResult = new float[3];
-            
+
         private bool _isEnabled = false;
+
         public bool IsEnabled
         {
             get => _isEnabled;
@@ -37,10 +38,10 @@ namespace Baku.VMagicMirror
                 {
                     return;
                 }
-                
+
                 _isEnabled = value;
                 windowTexture.enabled = value;
-                
+
                 if (value)
                 {
                     _desktopIndexCheckCount = desktopIndexCheckInterval;
@@ -51,17 +52,17 @@ namespace Baku.VMagicMirror
                     _rawFactor = Vector3.one;
                 }
             }
-        } 
-        
+        }
+
         [Inject]
         public void Initialize(IMessageReceiver receiver)
         {
             receiver.AssignCommandHandler(
-                VmmCommands.UseDesktopLightAdjust, 
+                VmmCommands.UseDesktopLightAdjust,
                 c => IsEnabled = c.ToBoolean()
-                );
+            );
         }
-        
+
         private void Start()
         {
             _rt = new RenderTexture(Width, Height, 32, RenderTextureFormat.BGRA32, 0);
@@ -99,6 +100,7 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+
             _colorReadCount -= textureReadInterval;
 
             var source = windowTexture.window.texture;
@@ -112,7 +114,7 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            
+
             _desktopIndexCheckCount += Time.deltaTime;
             if (_desktopIndexCheckCount < desktopIndexCheckInterval)
             {
@@ -125,11 +127,11 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            
+
             _desktopIndexCheckCount = 0f;
             CheckDesktopIndexValidity();
         }
-        
+
         private void CheckDesktopIndexValidity()
         {
             int count = UwcManager.desktopCount;
@@ -141,7 +143,7 @@ namespace Baku.VMagicMirror
             }
 
             var targetPos = GetTargetMonitorPos();
-            
+
             for (int i = 0; i < count; i++)
             {
                 var desktop = UwcManager.FindDesktop(i);
@@ -171,7 +173,7 @@ namespace Baku.VMagicMirror
             colorMeanShader.Dispatch(_colorMeanKernelIndex, 1, 1, 1);
             //CPUに引っ張り出す: このGetDataがちょっと重いことに留意すべし。
             _colorMeanResultBuffer.GetData(_colorMeanResult);
-            
+
             var factor = new Vector3(_colorMeanResult[0], _colorMeanResult[1], _colorMeanResult[2]);
             _rawFactor = GetLightFactor(factor);
         }
@@ -190,7 +192,7 @@ namespace Baku.VMagicMirror
             var selfCenter = new Vector2Int(
                 (selfRect.left + selfRect.right) / 2, (selfRect.top + selfRect.bottom) / 2
             );
-            
+
             //Unity画面の中央が入っているモニターがあれば、それで確定
             foreach (var monitor in monitorRects)
             {
@@ -200,7 +202,7 @@ namespace Baku.VMagicMirror
                     return new Vector2Int(monitor.left, monitor.top);
                 }
             }
-            
+
             //Unityウィンドウが縦長になって画面の下に潜った場合などで判定がうまく行かない場合、X座標のみで再判定
             foreach (var monitor in monitorRects)
             {
@@ -221,7 +223,7 @@ namespace Baku.VMagicMirror
                     return new Vector2Int(monitor.left, monitor.top);
                 }
             }
-            
+
             //全ての検出に失敗: 0,0を返すことで「プライマリモニタでお願いします」というニュアンスにする
             return Vector2Int.zero;
         }
@@ -232,10 +234,10 @@ namespace Baku.VMagicMirror
             var r = LightFactorCurve(values.x);
             var g = LightFactorCurve(values.y);
             var b = LightFactorCurve(values.z);
-            
+
             //輝度に応じて更に白を載せる。例えば黄色い背景の場合にbを足す
             var brightness = CalcBrightness(r, g, b) * 0.4f;
-            
+
             return new Vector3(
                 Mathf.Clamp01(r + brightness),
                 Mathf.Clamp01(g + brightness),

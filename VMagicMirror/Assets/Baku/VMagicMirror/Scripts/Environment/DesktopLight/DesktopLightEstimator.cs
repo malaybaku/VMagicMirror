@@ -9,22 +9,24 @@ namespace Baku.VMagicMirror
         //やや画面アス比をリスペクトしつつ、ピクセル数を大幅に絞っていく
         private const int Width = 16;
         private const int Height = 9;
-        //byteとして総和したRGB値を平均値にするためのファクタ
-        private const float ColorMeanFactor = 1f / Width / Height / 255f;
 
         [SerializeField] private UwcWindowTexture windowTexture;
         [SerializeField] private float desktopIndexCheckInterval = 10f;
         [SerializeField] private float textureReadInterval = 0.1f;
         [SerializeField] private float factorLerpFactor = 12f;
+        [SerializeField] private ComputeShader colorMeanShader;
             
         public Vector3 RgbFactor { get; private set; } = Vector3.one;
         private Vector3 _rawFactor = Vector3.one;
 
         private RenderTexture _rt;
-        private Texture2D _rtReader;
+        private float _colorReadCount;
+        private float _desktopIndexCheckCount;
 
-        private float _count;
-        
+        private int _colorMeanKernelIndex;
+        private ComputeBuffer _colorMeanResultBuffer;
+        private readonly float[] _colorMeanResult = new float[3];
+            
         private bool _isEnabled = false;
         public bool IsEnabled
         {
@@ -41,7 +43,7 @@ namespace Baku.VMagicMirror
                 
                 if (value)
                 {
-                    CheckDesktopIndexValidity();
+                    _desktopIndexCheckCount = desktopIndexCheckInterval;
                 }
                 else
                 {
@@ -63,16 +65,17 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _rt = new RenderTexture(Width, Height, 32, RenderTextureFormat.BGRA32, 0);
-            _rtReader = new Texture2D(Width, Height, TextureFormat.BGRA32, false);
-            
-            InvokeRepeating(
-                nameof(CheckDesktopIndexValidity), desktopIndexCheckInterval, desktopIndexCheckInterval
-                );
+            //_rtReader = new Texture2D(Width, Height, TextureFormat.BGRA32, false);
+            _colorMeanKernelIndex = colorMeanShader.FindKernel("CalcMeanColor");
+            _colorMeanResultBuffer = new ComputeBuffer(3, sizeof(float));
+            colorMeanShader.SetTexture(_colorMeanKernelIndex, "inputTexture", _rt);
+            colorMeanShader.SetBuffer(_colorMeanKernelIndex, "resultColor", _colorMeanResultBuffer);
         }
 
         private void Update()
         {
             UpdateRawFactor();
+            UpdateDesktopIndexValidity();
             RgbFactor = IsEnabled
                 ? Vector3.Lerp(RgbFactor, _rawFactor, factorLerpFactor * Time.deltaTime)
                 : Vector3.one;
@@ -82,7 +85,7 @@ namespace Baku.VMagicMirror
         {
             if (!IsEnabled)
             {
-                _count = textureReadInterval;
+                _colorReadCount = textureReadInterval;
                 return;
             }
 
@@ -91,28 +94,48 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            _count += Time.deltaTime;
-            if (_count < textureReadInterval)
+            _colorReadCount += Time.deltaTime;
+            if (_colorReadCount < textureReadInterval)
             {
                 return;
             }
-            _count -= textureReadInterval;
+            _colorReadCount -= textureReadInterval;
 
             var source = windowTexture.window.texture;
-            GetColorWithRenderTexture(source);
+            //GetColorWithRenderTexture(source);
+            GetColorByComputeShader(source);
         }
 
-        private void CheckDesktopIndexValidity()
+        private void UpdateDesktopIndexValidity()
         {
             if (!IsEnabled)
             {
                 return;
             }
-
-            int count = UwcManager.desktopCount;
-            if (count == 0)
+            
+            _desktopIndexCheckCount += Time.deltaTime;
+            if (_desktopIndexCheckCount < desktopIndexCheckInterval)
             {
-                //そこそこ起きるケース: モニターでない環境の場合、わざわざ走査しない
+                return;
+            }
+
+            //デスクトップの情報が出揃ってないうちは待つ(数フレーム程度)
+            //ここで待たされる間は結果的にデスクトップ0が参照される
+            if (!CheckUwcDesktopsArePrepared())
+            {
+                return;
+            }
+            
+            _desktopIndexCheckCount = 0f;
+            CheckDesktopIndexValidity();
+        }
+        
+        private void CheckDesktopIndexValidity()
+        {
+            int count = UwcManager.desktopCount;
+            if (count == 0 || count == 1)
+            {
+                //そこそこ起きるケース: シングルモニターの場合は深く考えない
                 windowTexture.desktopIndex = 0;
                 return;
             }
@@ -125,7 +148,6 @@ namespace Baku.VMagicMirror
                 if (desktop.rawX == targetPos.x && desktop.rawY == targetPos.y)
                 {
                     windowTexture.desktopIndex = i;
-                    LogOutput.Instance.Write($"desktop {i}, {desktop.width}x{desktop.height}");
                     return;
                 }
             }
@@ -134,36 +156,24 @@ namespace Baku.VMagicMirror
             LogOutput.Instance.Write("failed to detect correct monitor about light...");
             windowTexture.desktopIndex = 0;
         }
-        
-        //RenderTextureに書き写したのち、リサイズしたピクセルの色平均を取る
-        private void GetColorWithRenderTexture(Texture2D source)
+
+        private bool CheckUwcDesktopsArePrepared()
         {
+            return UwcManager.desktopCount == NativeMethods.LoadAllMonitorRects().Count;
+        }
+
+        private void GetColorByComputeShader(Texture2D source)
+        {
+            //リサイズ
             Graphics.Blit(source, _rt);
 
-            var activeRt = RenderTexture.active;
-            try
-            {
-                RenderTexture.active = _rt;
-                _rtReader.ReadPixels(new Rect(0, 0, _rt.width, _rt.height), 0, 0, false);
-                _rtReader.Apply();
-            }
-            finally
-            {
-                RenderTexture.active = activeRt;
-            }
-
-            var colors = _rtReader.GetRawTextureData<byte>();
-            int r = 0;
-            int g = 0;
-            int b = 0;
-            for (int i = 0; i < colors.Length; i += 4)
-            {
-                b += colors[i];
-                g += colors[i + 1];
-                r += colors[i + 2];
-            }
-
-            RgbFactor = new Vector3(r * ColorMeanFactor, g * ColorMeanFactor, b * ColorMeanFactor);
+            //リサイズしたテクスチャに対してGPUベースで色計算を行い、
+            colorMeanShader.Dispatch(_colorMeanKernelIndex, 1, 1, 1);
+            //CPUに引っ張り出す: このGetDataがちょっと重いことに留意すべし。
+            _colorMeanResultBuffer.GetData(_colorMeanResult);
+            
+            var factor = new Vector3(_colorMeanResult[0], _colorMeanResult[1], _colorMeanResult[2]);
+            _rawFactor = GetLightFactor(factor);
         }
 
         //uWindowCaptureで取得したいデスクトップの座標を、WinAPIから取得できるX,Y座標として取得する
@@ -215,5 +225,41 @@ namespace Baku.VMagicMirror
             //全ての検出に失敗: 0,0を返すことで「プライマリモニタでお願いします」というニュアンスにする
             return Vector2Int.zero;
         }
+
+        private static Vector3 GetLightFactor(Vector3 values)
+        {
+            //まず全ての色の値を引き上げ
+            var r = LightFactorCurve(values.x);
+            var g = LightFactorCurve(values.y);
+            var b = LightFactorCurve(values.z);
+            var brightness = CalcBrightness(r, g, b);
+            
+            //brightnessが高い場合、色をぜんぶ引き上げる。コレにより、特に緑とか水色の環境で白寄りにする
+            return new Vector3(
+                Mathf.Clamp01(r + brightness * 0.5f),
+                Mathf.Clamp01(g + brightness * 0.5f),
+                Mathf.Clamp01(b + brightness * 0.5f)
+            );
+        }
+
+        private static float LightFactorCurve(float value)
+        {
+            //真っ暗にするのはあまり価値がないこと、および
+            //そこそこ明るい場合は白に倒したいこと、および
+            //アバター自身の映り込みによって黒方向に倒れやすいバイアスを消したいことなどを考慮したカーブです
+            //x: 0.0 - 0.5 - 1.0
+            //y: 0.1 - 1.0 - 1.0
+            if (value > 0.5f)
+            {
+                return 1f;
+            }
+            else
+            {
+                return Mathf.Lerp(0.1f, 1f, value * 2f);
+            }
+        }
+
+        private static float CalcBrightness(float r, float g, float b)
+            => r * 0.3f + g * 0.59f + b * 0.11f;
     }
 }

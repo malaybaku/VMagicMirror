@@ -14,7 +14,9 @@ namespace Baku.VMagicMirror
         [SerializeField] private ShadowBoardMotion shadowBoardMotion = null;
 
         [SerializeField] private PostProcessVolume postProcess = null;
+        [SerializeField] private DesktopLightEstimator desktopLightEstimator = null;
 
+        private Color _color = Color.white;
         private Bloom _bloom;
         private VmmVhs _vmmVhs;
         private VmmMonochrome _vmmMonochrome;
@@ -107,9 +109,27 @@ namespace Baku.VMagicMirror
             _vmmMonochrome = postProcess.profile.GetSetting<VmmMonochrome>();
             _vmmVhs = postProcess.profile.GetSetting<VmmVhs>();
         }
+        
+        private void Update()
+        {
+            //GUIで色をいじってなくても補正値が効きがちなので、随時反映する
+            SetMainLightColor();
+        }
 
         private void SetLightColor(float r, float g, float b)
-            => mainLight.color = new Color(r, g, b);
+        {
+            _color = new Color(r, g, b);
+        }
+
+        private void SetMainLightColor()
+        {
+            var factor = desktopLightEstimator.RgbFactor;
+            mainLight.color = new Color(
+                _color.r * factor.x,
+                _color.g * factor.y,
+                _color.b * factor.z
+            );   
+        }
 
         private void SetLightIntensity(float intensity)
             => mainLight.intensity = intensity;

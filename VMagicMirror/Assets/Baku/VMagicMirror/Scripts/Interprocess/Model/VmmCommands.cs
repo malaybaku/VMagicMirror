@@ -135,6 +135,7 @@ namespace Baku.VMagicMirror
         public const string LightColor = nameof(LightColor);
         public const string LightYaw = nameof(LightYaw);
         public const string LightPitch = nameof(LightPitch);
+        public const string UseDesktopLightAdjust = nameof(UseDesktopLightAdjust);
 
         public const string ShadowEnable = nameof(ShadowEnable);
         public const string ShadowIntensity = nameof(ShadowIntensity);

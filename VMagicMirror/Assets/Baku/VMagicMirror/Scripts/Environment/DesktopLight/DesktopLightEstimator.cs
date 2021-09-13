@@ -7,8 +7,8 @@ namespace Baku.VMagicMirror
     public class DesktopLightEstimator : MonoBehaviour
     {
         //やや画面アス比をリスペクトしつつ、ピクセル数を大幅に絞っていく
-        private const int Width = 16;
-        private const int Height = 9;
+        private const int Width = 32;
+        private const int Height = 18;
 
         [SerializeField] private UwcWindowTexture windowTexture;
         [SerializeField] private float desktopIndexCheckInterval = 10f;
@@ -232,13 +232,14 @@ namespace Baku.VMagicMirror
             var r = LightFactorCurve(values.x);
             var g = LightFactorCurve(values.y);
             var b = LightFactorCurve(values.z);
-            var brightness = CalcBrightness(r, g, b);
             
-            //brightnessが高い場合、色をぜんぶ引き上げる。コレにより、特に緑とか水色の環境で白寄りにする
+            //輝度に応じて更に白を載せる。例えば黄色い背景の場合にbを足す
+            var brightness = CalcBrightness(r, g, b) * 0.4f;
+            
             return new Vector3(
-                Mathf.Clamp01(r + brightness * 0.5f),
-                Mathf.Clamp01(g + brightness * 0.5f),
-                Mathf.Clamp01(b + brightness * 0.5f)
+                Mathf.Clamp01(r + brightness),
+                Mathf.Clamp01(g + brightness),
+                Mathf.Clamp01(b + brightness)
             );
         }
 

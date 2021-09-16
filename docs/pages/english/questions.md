@@ -123,11 +123,6 @@ As far as the creator knows, COMODO Internet Security leads this issue, but it i
 
 If your trouble does not match above cases, then quality setting may be a help (however CPU usage increases). See the quality setting in `Effects` tab in setting window and select higher option.
 
-#### Want to hide the circle mark around the mouse pointer during `Presentation-like hand` is on
-{: .doc-sec2 }
-
-In the setting window `Motion` tab, see `Arm` and turn off `Show Pointer Support` to hide the mark.
-
 #### VMagicMirror crashed after removing game controller
 {: .doc-sec2 }
 
@@ -153,3 +148,20 @@ Quit VMagicMirror, and open NVIDIA control panel (right-click on desktop) to tur
 `3D Setting` > `3D Setting Management` > `Anti-Aliasing FXAA`
 
 Then, restart VMagicMirror.
+
+
+#### Pen Tablet input is not tracked 
+{: .doc-sec2 }
+
+There are some possible causes, and some cases are by design.
+
+VMagicMirror observes user's pen input as mouse pointer movement, so it fails to track the movement during another app prevents mouse pointer to move.
+
+Following situations are the case.
+
+<div class="doc-ul" markdown="1">
+
+* Some of illustration software which support Wacom pen tablet
+* Power Point with stylus pen input mode
+
+</div>

@@ -138,6 +138,16 @@ This issue happens when VMagicMirror folder is put in the path which include mul
 Please quit VMagicMirror, move the folder to another (multi-byte character free) folder, and retry.
 
 
+#### Transparent background does not work in Windows 11
+{: .doc-sec2 }
+
+When you have updated OS version and character window cannot get transparent background, please check next section `Select Transparent background, but get black background color`.
+
+This issue might happen when you update NVIDIA graphics driver with `clean install` option, or install OS itself with clean install style.
+
+For Windows 11 it also might be device dependent problem. Please contact to the developer if next section does not help.
+
+
 #### Select Transparent background, but get black background color
 {: .doc-sec2 }
 

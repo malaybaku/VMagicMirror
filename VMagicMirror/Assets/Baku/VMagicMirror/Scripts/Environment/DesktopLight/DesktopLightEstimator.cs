@@ -65,7 +65,7 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            //Program Filesとかに乗るとなるとログファイル出力は邪魔になるため、切る
+            //Program Filesとかに載せたときにログファイル出力が邪魔なので制限する
             if (!Application.isEditor)
             {
                 UwcManager.debugMode = DebugMode.None;

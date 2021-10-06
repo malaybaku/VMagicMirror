@@ -65,8 +65,12 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
+            //Program Filesとかに乗るとなるとログファイル出力は邪魔になるため、切る
+            if (!Application.isEditor)
+            {
+                UwcManager.debugMode = DebugMode.None;
+            }
             _rt = new RenderTexture(Width, Height, 32, RenderTextureFormat.BGRA32, 0);
-            //_rtReader = new Texture2D(Width, Height, TextureFormat.BGRA32, false);
             _colorMeanKernelIndex = colorMeanShader.FindKernel("CalcMeanColor");
             _colorMeanResultBuffer = new ComputeBuffer(3, sizeof(float));
             colorMeanShader.SetTexture(_colorMeanKernelIndex, "inputTexture", _rt);

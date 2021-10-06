@@ -40,7 +40,7 @@ namespace Baku.VMagicMirror
             Environment.SpecialFolder rootParent = Application.isEditor
                 ? Environment.SpecialFolder.Desktop 
                 : Environment.SpecialFolder.MyDocuments;
-            RootDirectory = Path.Combine(Environment.GetFolderPath(rootParent), "VMagicMirror");
+            RootDirectory = Path.Combine(Environment.GetFolderPath(rootParent), "VMagicMirror_Files");
 
             SaveFileDir = Path.Combine(RootDirectory, "Saves");
             LogFileDir = Path.Combine(RootDirectory, "Logs");

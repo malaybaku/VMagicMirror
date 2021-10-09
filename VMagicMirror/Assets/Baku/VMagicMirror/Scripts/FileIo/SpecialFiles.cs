@@ -12,6 +12,18 @@ namespace Baku.VMagicMirror
         private const string AutoSaveSettingFileName = "_autosave";
         private const string LogTextName = "log.txt";
         
+        private static bool IsDebugRun
+        {
+            get
+            {
+#if DEV_ENV
+                //dev専用ビルドのフラグを立ててるときだけココを通過する
+                return true;
+#endif
+                return Application.isEditor;
+            }
+        }
+        
         private static string RootDirectory { get; }
         private static string SaveFileDir { get; }
         public static string LogFileDir { get; }
@@ -21,12 +33,12 @@ namespace Baku.VMagicMirror
 
         public static bool AutoSaveSettingFileExists() => File.Exists(AutoSaveSettingFilePath);
         
-        //NOTE: エディタではdataPathがAssets/以下になって都合が悪いのでデスクトップに逃がす
-        public static string ScreenShotDirectory => Application.isEditor
-            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Screenshots") 
-            : Path.Combine(RootDirectory, "Screenshots");
-        
-        //モーションだけはエディタの場合StreamingAssets以下で代用する。Desktopに置くと揮発しすぎるため
+        public static string ScreenShotDirectory { get; }
+
+        //モーションやテクスチャ差し替えは以下の優先度になることに注意
+        //- エディタの場合: StreamingAssets
+        //- dev実行: VMM_Dev_Files
+        //- prod実行: VMM_Files
         public static string MotionsDirectory => Application.isEditor 
             ? Path.Combine(Application.streamingAssetsPath, "Motions") 
             : Path.Combine(RootDirectory, "Motions");
@@ -39,14 +51,15 @@ namespace Baku.VMagicMirror
         {
             RootDirectory = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), 
-                Application.isEditor ? "VMagicMirror_Dev_Files" : "VMagicMirror_Files"
+                IsDebugRun ? "VMagicMirror_Dev_Files" : "VMagicMirror_Files"
                 );
 
+            ScreenShotDirectory = Path.Combine(RootDirectory, "Screenshots");
             SaveFileDir = Path.Combine(RootDirectory, "Saves");
             LogFileDir = Path.Combine(RootDirectory, "Logs");
             AutoSaveSettingFilePath = Path.Combine(SaveFileDir, AutoSaveSettingFileName);
             LogFilePath = Path.Combine(LogFileDir, LogTextName);
-
+            
             Directory.CreateDirectory(RootDirectory);
             Directory.CreateDirectory(SaveFileDir);
             Directory.CreateDirectory(LogFileDir);

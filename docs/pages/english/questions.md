@@ -172,3 +172,18 @@ Quit VMagicMirror, and open NVIDIA control panel (right-click on desktop) to tur
 `3D Setting` > `3D Setting Management` > `Anti-Aliasing FXAA`
 
 Then, restart VMagicMirror.
+
+
+#### How to uninstall VMagicMirror?
+{: .doc-sec2 }
+
+Uninstall process depends on version.
+
+<div class="doc-ul" markdown="1">
+
+- v1.9.0 or later: Open Windows setting's `Apps and Features`, and search VMagicMirror to remove it.
+- v1.8.2 or older: Delete unzipped VMagicMirror folder.
+
+</div>
+
+If you are using v1.9.0 or later and you also want to remove settings files, then remove `(My Documents)\VMagicMirror_Files` folder.

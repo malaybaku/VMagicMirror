@@ -28,14 +28,23 @@ Especially for v1.7.0 or v1.7.0a, startup error might be because of folder path 
 
 When using other version, Setting file might be broken in this case, so please try to reset the settings.
 
+<div class="doc-ul" markdown="1">
+
 1. Press `Reset` on the control panel `Home` tab, and then press `OK` on the confirmation dialog to reset settings.
     + If it recovers the situation, please follow [2: Get Started](./en_get_started.html) to setup.
 2. If the problem still remains, exit VMagicMirror.
-3. Open the folder in which `VMagicMirror.exe` exists, and then delete `_autosave` file in `ConfigApp` folder. Then try to restatt.
+3. Delete auto save file. There are two ways according to the version of VMagicMirror.
+    + (v1.9.2 or later) Open `(My Documents)\VMagicMirror_Files\Saves` folder and then delete `_autosave` file.
+    + (v1.8.2 or older) Open the folder in which `VMagicMirror.exe` exists, and then delete `_autosave` file in `ConfigApp` folder.
+4.  Restart VMagicMirror.
+
+</div>
 
 #### Too high CPU usage
 
 In `Streaming` tab on control panel,
+
+<div class="doc-ul" markdown="1">
 
 1. (Large effect): Disable face tracking.
 2. (Middle effect): Disable lipsync by microphone.
@@ -47,6 +56,8 @@ In setting window,
 1. (Middle effect): `Effects` tab, set `Quality` to lower option.
 2. (Small effect): `Layout` tab, disable gamepad input capture and MIDI input reading. 
 3. (Small effect): `Effects` tab, set `Bloom`'s `Intensity` to 0.
+
+</div>
 
 If you still have high CPU usage it might be because of .vrm data structure. Please check it by using NOT heavy and officially opened model like Alicia Solid.
 
@@ -79,10 +90,14 @@ Some frame with thick frame prevents face tracking system.
 
 If not, please check following points to help face tracking system.
 
+<div class="doc-ul" markdown="1">
+
 1. Proper distance from camera
 2. The room is bright
 3. Neck and face outline is clear
 4. Show mouth to the camera (*it is okay the microphone partly hide your mouth)
+
+</div>
 
 Showing entire face helps eye blink tracking, because face tracking system finds your face by detecting your whole face landmark points (including mouth, eyebrows, and of course eyes).
 
@@ -93,12 +108,16 @@ This issue might happen when you have changed display resolution or placement.
 
 In this case, you can reset the window position.
 
+<div class="doc-ul" markdown="1">
+
 1. Move Control panel to near to the left top side of screen.
 2. Open setting window and show `Window` tab to select `Reset Character Position`.
     + If you could find character then [2: Get Started](./get_started) will support your setup.
 3. If the character still does not appear, then turn off `Transparent Background` on setting window `Window` tab and check if you can see green window at the right side of control panel.
 4. Setting window `Layout` tab, see `Camera` menu, and press `Reset Position` to reset the camera position.
     + If you could find character then [2: Get Started](./get_started) will support your setup.
+
+</div>
 
 If you still have trouble, then please try the way in `VMagicMirror stops soon after started`.
 

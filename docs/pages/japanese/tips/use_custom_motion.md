@@ -97,8 +97,18 @@ Note:
 #### 2. エクスポートしたモーションの配置
 {: .doc-sec2 }
 
-上記の手順でエクスポートしたモーション(`.vmm_motion`ファイル)を、`(VMagicMirror.exeのフォルダ)/Motions`フォルダに配置します。
-フォルダがない場合、新規に作成して下さい。
+上記の手順でエクスポートしたモーション(`.vmm_motion`ファイル)をVMagicMirror用のフォルダに配置します。
+
+配置場所はVMagicMirrorのバージョンによって異なります。
+
+<div class="doc-ul" markdown="1">
+
+- v1.9.0以降: `(マイドキュメント)\VMagicMirror_Files\Motions`
+- v1.8.2またはそれ以前: `(VMagicMirror.exeのフォルダ)/Motions`
+
+</div>
+
+もしフォルダがない場合、フォルダを新規作成して下さい。
 
 <div class="row">
 {% include docimg.html file="/images/tips/custom_motion_placement.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}

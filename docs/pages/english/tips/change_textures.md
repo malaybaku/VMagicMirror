@@ -11,9 +11,14 @@ lang_prefix: /en/
 
 VMagicMirror can load custom texture for the keyboard's key, or touch pad. So far, only `png` image is available.
 
-Before starting `VMagicMirror.exe`, open the following folder.
+Before starting `VMagicMirror.exe`, open the following folder. 
 
-`(Folder where VMagicMirror.exe exists)/VMagicMirror_Data/StreamingAssets`
+<div class="doc-ul" markdown="1">
+
+- v1.9.0 or later: `(My Documents)\VMagicMirror_Files\Textures`
+- v1.8.2 or older: `(VMagicMirror.exe folder)\VMagicMirror_Data\StreamingAssets`
+
+</div>
 
 Put the images to replace in this folder. Please use specific file name for each purpose. Default appearance is applied when image file does not exist, and it is default behavior.
 

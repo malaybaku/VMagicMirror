@@ -222,7 +222,7 @@ namespace Baku.VMagicMirror
                 return true;
             }
 
-            var arg = pathArg.Substring(EnvArgPrefix.Length);
+            var arg = pathArg.Substring(EditionArgPrefix.Length);
             return string.Compare(arg, "Full", StringComparison.OrdinalIgnoreCase) == 0;
         }
     }

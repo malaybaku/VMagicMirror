@@ -14,7 +14,7 @@ lang_prefix: /en/
 #### v1.9.0
 {: .doc-sec2 }
 
-2021/10/22
+2021/10/23
 
 * Add: Experimental feature of adjust light intensity and color, according to desktop displayed content.
 * Change: Now the app is distributed with installer (.exe). This also changes where settings are saved / custom files should be placed. the folder is  `VMagicMirror_Files` under `My Documents`. (Folder is created if it does not exist).

@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.8.2
+v1.9.0
 
 * 作成: 獏星(ばくすたー)
-* 2021/08/28
+* 2021/10/23
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -81,6 +81,7 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
+* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.0.2
 * DOTween (アセットストアから)
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
@@ -116,7 +117,7 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 
 以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
 
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.81.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * オリジナルのMidiJackではなく、Forkレポジトリです。

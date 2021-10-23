@@ -66,7 +66,7 @@ namespace Baku.VMagicMirror
             int superSize = Mathf.CeilToInt(1080 / windowSize);
             superSize = Mathf.Clamp(superSize, 2, 4);
 
-            GetAndCreateScreenshotFolderPath();
+            CreateAndGetScreenshotFolderPath();
 
             //この1フレームだけレンダリングする。重たいので普段は切っておくのがポイント
             SetupScreenshotCamera(superSize);
@@ -74,7 +74,7 @@ namespace Baku.VMagicMirror
             
             StartCoroutine(CaptureWithAlpha(
                 Path.Combine(
-                    GetAndCreateScreenshotFolderPath(),
+                    CreateAndGetScreenshotFolderPath(),
                     DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png"
                 )
             ));
@@ -120,27 +120,15 @@ namespace Baku.VMagicMirror
         }
 
         private static void OpenScreenshotFolder() 
-            => System.Diagnostics.Process.Start(GetAndCreateScreenshotFolderPath());
+            => System.Diagnostics.Process.Start(CreateAndGetScreenshotFolderPath());
 
-        //スクショ保存先フォルダのパスを生成する。このとき、フォルダが無ければ新規作成する
-        private static string GetAndCreateScreenshotFolderPath()
+        private static string CreateAndGetScreenshotFolderPath()
         {
-            //NOTE: エディタではdataPathがAssets/以下になって都合が悪いのでデスクトップに逃がす
-            string path = Application.isEditor
-                ? Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    "Screenshots"
-                    ) 
-                : Path.Combine(
-                    Path.GetDirectoryName(Application.dataPath),
-                    "Screenshots"
-                    );
-                    
+            var path = SpecialFiles.ScreenShotDirectory;
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-
             return path;
         }
 

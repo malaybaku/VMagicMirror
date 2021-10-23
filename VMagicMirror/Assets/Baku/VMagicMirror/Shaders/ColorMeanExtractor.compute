@@ -1,0 +1,25 @@
+#pragma kernel CalcMeanColor
+
+Texture2D<float4> inputTexture;
+RWStructuredBuffer<float3> resultColor;
+
+[numthreads(1, 1, 1)]
+void CalcMeanColor(uint3 groupThreadID : SV_GroupThreadID)
+{
+    uint width, height;
+    inputTexture.GetDimensions(width, height);
+
+    //画像の端を避ける。画面端はウィンドウ枠とかアプリケーションの周辺情報が表示され、色を参照するのに適さないため
+    float3 sumColor;
+    uint pixelCount = 0;
+    for (uint x = 1; x < width - 1; x++)
+    {
+        for (uint y = 1; y < height - 1; y++)
+        {
+            sumColor += inputTexture[int2(x, y)].xyz;
+            pixelCount++;
+        }
+    }
+
+    resultColor[0].xyz = sumColor / pixelCount;
+}

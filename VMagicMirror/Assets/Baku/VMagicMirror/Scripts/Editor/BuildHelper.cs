@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -10,10 +11,11 @@ namespace Baku.VMagicMirror
     public static class BuildHelper
     {
         private const string SavePathArgPrefix = "-SavePath=";
+        private const string EnvArgPrefix = "-Env=";
+        private const string EditionArgPrefix = "-Edition=";
 
-
-        [MenuItem("VMagicMirror/Standard_Build")]
-        public static void DoStandardBuild()
+        [MenuItem("VMagicMirror/Prod_Standard_Build", false, 1)]
+        public static void DoStandardProdBuild()
         {
             var folder = EditorUtility.SaveFolderPanel("Build Standard Edition", "", "Bin_Standard");
             if (string.IsNullOrEmpty(folder))
@@ -21,11 +23,11 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            BuildVMagicMirror(folder, false);
+            BuildVMagicMirror(folder, false, true);
         }
         
-        [MenuItem("VMagicMirror/Full_Build")]
-        public static void DoFullBuild()
+        [MenuItem("VMagicMirror/Prod_Full_Build", false, 2)]
+        public static void DoFullProdBuild()
         {
             var folder = EditorUtility.SaveFolderPanel("Build Standard Edition", "", "Bin");
             if (string.IsNullOrEmpty(folder))
@@ -33,44 +35,75 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            BuildVMagicMirror(folder, true);       
+            BuildVMagicMirror(folder, true, true);       
+        }
+
+        [MenuItem("VMagicMirror/Dev_Standard_Build", false, 21)]
+        public static void DoStandardDevBuild()
+        {
+            var folder = EditorUtility.SaveFolderPanel(
+                "(Dev) Build Standard Edition", "", "Bin_Standard_Dev"
+                );
+            if (string.IsNullOrEmpty(folder))
+            {
+                return;
+            }
+            
+            BuildVMagicMirror(folder, false, false);
         }
         
-        
-        //NOTE: コマンドラインから使う用。"SavePath=C:\Hoge\Fuga"のようなコマンドライン引数によって保存先を指定する
-        public static void DoStandardBuildWithPath()
+        [MenuItem("VMagicMirror/Dev_Full_Build", false, 22)]
+        public static void DoFullDevBuild()
+        {
+            var folder = EditorUtility.SaveFolderPanel(
+                "(Dev) Build Full Edition", "", "Bin_Dev"
+                );
+            if (string.IsNullOrEmpty(folder))
+            {
+                return;
+            }
+            
+            BuildVMagicMirror(folder, true, false);       
+        }
+
+        //NOTE: コマンドラインから使う用。以下のようなオプションをつけて用いる
+        //"-SavePath=C:\Hoge\Fuga"
+        //"-Env=Prod"
+        //"-Edition=Full" 
+        public static void DoBuild()
         {
             var savePath = GetSavePathFromArgs();
+            var isFullEdition = CheckIsFullEditionFromArgs();
+            var isProd = CheckIsProdFromArgs();
             if (!string.IsNullOrEmpty(savePath))
             {
-                BuildVMagicMirror(savePath, false);
+                BuildVMagicMirror(savePath, isFullEdition, isProd);
             }
         }
 
-        public static void DoFullBuildWithPath()
-        {
-            var savePath = GetSavePathFromArgs();
-            if (!string.IsNullOrEmpty(savePath))
-            {
-                BuildVMagicMirror(savePath, true);
-            }
-        }
-
-        private static void BuildVMagicMirror(string folder, bool isFullEdition)
+        private static void BuildVMagicMirror(string folder, bool isFullEdition, bool isProd)
         {
             //NOTE: ビルド直前にスクリプトシンボルを追加し、ビルドしてから元に戻す
             var defineSymbols = PlayerSettings
                 .GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
                 .Split( ';');
-            
-            if (!isFullEdition)
+
+            if (!isFullEdition || !isProd)
             {
-                var featureLockSymbols = new string[defineSymbols.Length + 1];
-                Array.Copy(defineSymbols, featureLockSymbols, defineSymbols.Length);
-                featureLockSymbols[featureLockSymbols.Length - 1] = "VMM_FEATURE_LOCKED";
+                var addedSymbols = new List<string>(defineSymbols);
+                if (!isFullEdition)
+                {
+                    addedSymbols.Add("VMM_FEATURE_LOCKED");
+                }
+
+                if (!isProd)
+                {
+                    addedSymbols.Add("DEV_ENV");
+                }
+                
                 PlayerSettings.SetScriptingDefineSymbolsForGroup(
                     EditorUserBuildSettings.selectedBuildTargetGroup,
-                    featureLockSymbols
+                    addedSymbols.ToArray()
                 );
             }
 
@@ -161,6 +194,36 @@ namespace Baku.VMagicMirror
             }
             
             return pathArg.Substring(SavePathArgPrefix.Length);
+        }
+
+        //prodビルドかどうかをコマンドライン引数から取得します。デフォルトではprod扱いします。
+        private static bool CheckIsProdFromArgs()
+        {
+            var args = Environment.GetCommandLineArgs();
+            var pathArg = args.FirstOrDefault(a => a.StartsWith(EnvArgPrefix));
+            if (string.IsNullOrEmpty(pathArg))
+            {
+                Debug.LogWarning("Env is not specified, treat as prod build");
+                return true;
+            }
+
+            var arg = pathArg.Substring(EnvArgPrefix.Length);
+            return string.Compare(arg, "Prod", StringComparison.OrdinalIgnoreCase) == 0;
+        }
+        
+        //Full Editionビルドかどうかをコマンドライン引数から取得します。デフォルトではFull扱いします。
+        private static bool CheckIsFullEditionFromArgs()
+        {
+            var args = Environment.GetCommandLineArgs();
+            var pathArg = args.FirstOrDefault(a => a.StartsWith(EditionArgPrefix));
+            if (string.IsNullOrEmpty(pathArg))
+            {
+                Debug.LogWarning("Env is not specified, treat as prod build");
+                return true;
+            }
+
+            var arg = pathArg.Substring(EditionArgPrefix.Length);
+            return string.Compare(arg, "Full", StringComparison.OrdinalIgnoreCase) == 0;
         }
     }
 }

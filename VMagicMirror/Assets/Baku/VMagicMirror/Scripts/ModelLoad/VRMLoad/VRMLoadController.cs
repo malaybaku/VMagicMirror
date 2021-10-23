@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Baku.VMagicMirror.IK;
+using UniGLTF;
 using UnityEngine;
 using UniHumanoid;
 using VRM;
@@ -71,9 +72,9 @@ namespace Baku.VMagicMirror
             {
                 if (Path.GetExtension(path).ToLower() == ".vrm")
                 {
-                    using (var context = new VRMImporterContext())
+                    var data = new GlbFileParser(path).Parse();
+                    using (var context = new VRMImporterContext(data))
                     {
-                        context.ParseGlb(File.ReadAllBytes(path));
                         _previewCanvas.Show(context);
                     }
                 }
@@ -101,18 +102,17 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            try 
+            try
             {
-                var context = new VRMImporterContext();
-                var file = File.ReadAllBytes(path);
-                context.ParseGlb(file);
+                var data = new GlbFileParser(path).Parse();
+                var context = new VRMImporterContext(data);
                 var meta = context.ReadMeta(false);
 
-                context.Load();
-                context.EnableUpdateWhenOffscreen();
-                context.ShowMeshes();
+                var loaded = context.Load();
+                loaded.EnableUpdateWhenOffscreen();
+                loaded.ShowMeshes();
                 _sender.SendCommand(MessageFactory.Instance.ModelNameConfirmedOnLoad("VRM File: " + meta.Title));
-                SetModel(context.Root);
+                SetModel(loaded.Root);
             }
             catch (Exception ex)
             {

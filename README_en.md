@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.8.2
+v1.9.0
 
 * Author: Baxter
-* 2021/Aug/28
+* 2021/Oct/23
 
 The VRM avatar application without any special device.
 
@@ -82,6 +82,7 @@ Maintainer's environment is as following.
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
+* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.0.2
 * DOTween (from Asset Store)
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
@@ -117,7 +118,7 @@ For OpenCVforUnity, edit `DisposableOpenCVObject.cs`:
 
 Also there are some UPM based dependencies.
 
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.81.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * This is fork repository and not the original.

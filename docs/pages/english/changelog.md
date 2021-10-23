@@ -11,8 +11,19 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
-#### v1.8.2
+#### v1.9.0
+{: .doc-sec2 }
 
+2021/10/23
+
+* Add: Experimental feature of adjust light intensity and color, according to desktop displayed content.
+* Change: Now the app is distributed with installer (.exe). This also changes where settings are saved / custom files should be placed. the folder is  `VMagicMirror_Files` under `My Documents`. (Folder is created if it does not exist).
+* Fix: Minor issues.
+
+Note that `VMagicMirror_Files` folder specification affects to the way to [Change Keyboard and Touchpad Appearance](./tips/change_textures), and [Use Custom Motion](./tips/use_custom_motion).
+
+
+#### v1.8.2
 {: .doc-sec2 }
 
 2021/08/28

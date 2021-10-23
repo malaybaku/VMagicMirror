@@ -95,7 +95,14 @@ At this step you can check the file export is actually successful, by following 
 #### 2. Put the Exported Motion File
 {: .doc-sec2 }
 
-Exported motion file (`.vmm_motion`) to `(VMagicMirror.exe folder)/Motions` folder.
+Move exported motion file (`.vmm_motion`) into VMagicMirror's folder. 
+
+Check VMagicMirror's version to place files correctly.
+
+- v1.9.0 or later: `(My Documents)\VMagicMirror_Files\Motions`
+- v1.8.2 or older: `(VMagicMirror.exe folder)\Motions`
+
+If the folder does not exist, please create new one.
 
 <div class="row">
 {% include docimg.html file="/images/tips/custom_motion_placement.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}

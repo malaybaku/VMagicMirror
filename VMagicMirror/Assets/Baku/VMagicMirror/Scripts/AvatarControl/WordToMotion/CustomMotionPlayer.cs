@@ -9,8 +9,7 @@ using Zenject;
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// カスタムモーションをいい感じに管理するクラス。
-    /// 初期化から何から結構トリッキーなので要注意
+    /// カスタムモーションをいい感じに管理するクラス。初期化から何から結構トリッキーなので要注意
     /// </summary>
     public class CustomMotionPlayer : MonoBehaviour
     {
@@ -129,14 +128,7 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             //エディタの場合はStreamingAssets以下で代用(無ければ無いでOK)
-            string dirPath = Application.isEditor 
-                ? Path.Combine(
-                    Application.streamingAssetsPath, "Motions")
-                : Path.Combine(
-                    Path.GetDirectoryName(Application.dataPath),
-                    "Motions"
-                );
-                
+            var dirPath = SpecialFiles.MotionsDirectory;
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);

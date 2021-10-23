@@ -10,9 +10,15 @@ permalink: /tips/change_textures
 
 ユーザーインターフェースはありませんが、`VMagicMirror`ではキーボードのキーや、タッチパッドの画像を好きなものに変更できます。現在は`png`形式の画像のみをサポートしています。
 
-画像を変更するには、`VMagicMirror.exe`を起動する前に以下のフォルダを開きます。
+画像を変更するには、`VMagicMirror.exe`を起動する前に以下のフォルダを開きます。対象フォルダはVMagicMirrorのバージョンによって異なることに注意してください。
 
-`(VMagicMirror.exeのあるフォルダ)/VMagicMirror_Data/StreamingAssets`
+<div class="doc-ul" markdown="1">
+
+- v1.9.0以降: `(マイドキュメント)\VMagicMirror_Files\Textures`
+- v1.8.2またはそれ以前: `(VMagicMirror.exeのあるフォルダ)/VMagicMirror_Data/StreamingAssets`
+
+</div>
+
 
 このフォルダへ差し替えたい画像を追加します。ファイル名は次のようにしてください。
 

@@ -56,6 +56,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,6 +81,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1574337989898446739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,6 +144,7 @@ MonoBehaviour:
   shadowLightLocalEulerAngle: {x: 8, y: -20, z: 0}
   shadowBoardMotion: {fileID: 1574337989898446739}
   postProcess: {fileID: 2991729247724691209}
+  desktopLightEstimator: {fileID: 5931940707188081968}
 --- !u!1 &1574337990982752998
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,6 +235,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!1 &1574337991148058290
@@ -324,6 +328,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!1 &1574337991341618302
@@ -368,6 +373,7 @@ Transform:
   - {fileID: 5996945105732500858}
   - {fileID: 1574337991882445226}
   - {fileID: 3589418729740590996}
+  - {fileID: 5931940707188081971}
   - {fileID: 2991729247724691210}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -482,7 +488,11 @@ MonoBehaviour:
   breakBeforeColorGrading: 0
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
-  m_AfterStackBundles: []
+  m_AfterStackBundles:
+  - assemblyQualifiedName: Baku.VMagicMirror.VmmMonochrome, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Baku.VMagicMirror.VmmVhs, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1574337991341618303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -690,7 +700,11 @@ MonoBehaviour:
   breakBeforeColorGrading: 0
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
-  m_AfterStackBundles: []
+  m_AfterStackBundles:
+  - assemblyQualifiedName: Baku.VMagicMirror.VmmMonochrome, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Baku.VMagicMirror.VmmVhs, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &3175863303144501006
 GameObject:
   m_ObjectHideFlags: 0
@@ -748,6 +762,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -772,6 +787,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &2035412299753775914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -864,6 +880,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2119741372327527105, guid: ce555e85a144fcd4794fb412e125bc01,
         type: 3}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2119741372327527105, guid: ce555e85a144fcd4794fb412e125bc01,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -879,6 +900,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2119741372327527105, guid: ce555e85a144fcd4794fb412e125bc01,
         type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2119741372327527105, guid: ce555e85a144fcd4794fb412e125bc01,
+        type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
@@ -891,16 +917,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2119741372327527105, guid: ce555e85a144fcd4794fb412e125bc01,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2119741372327527105, guid: ce555e85a144fcd4794fb412e125bc01,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2119741372327527105, guid: ce555e85a144fcd4794fb412e125bc01,
         type: 3}
@@ -937,3 +953,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &4696073357692309838
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1574337991341618296}
+    m_Modifications:
+    - target: {fileID: 1403347864180823161, guid: 6e369f52517cf134bb8bdd7e163ccad9,
+        type: 3}
+      propertyPath: m_Name
+      value: DesktopLightChecker
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403347864180823165, guid: 6e369f52517cf134bb8bdd7e163ccad9,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6e369f52517cf134bb8bdd7e163ccad9, type: 3}
+--- !u!114 &5931940707188081968 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1403347864180823166, guid: 6e369f52517cf134bb8bdd7e163ccad9,
+    type: 3}
+  m_PrefabInstance: {fileID: 4696073357692309838}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 928c26ee9c609c74594f977442966270, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &5931940707188081971 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1403347864180823165, guid: 6e369f52517cf134bb8bdd7e163ccad9,
+    type: 3}
+  m_PrefabInstance: {fileID: 4696073357692309838}
+  m_PrefabAsset: {fileID: 0}

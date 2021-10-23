@@ -2,13 +2,11 @@
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// 直接UnityでWPF用の設定ファイルを読み込むクラス。
-    /// どうしても初期化で取得したい変数があるときだけ使う
+    /// 直接UnityでWPF用の設定ファイルを読み込むクラス。どうしても初期化で取得したい変数があるときだけ使う
     /// </summary>
     public class DirectSettingFileReader
     {
@@ -26,38 +24,25 @@ namespace Baku.VMagicMirror
         }
         
         public bool TransparentBackground { get; private set; }
-        
+
         private void LoadPropertiesFromSettingFile()
         {
-            if (!SettingFileExists())
+            if (!SpecialFiles.AutoSaveSettingFileExists())
             {
                 return;
             }
 
-            using (var sr = new StreamReader(GetSettingFilePath()))
+            try
             {
+                using var sr = new StreamReader(SpecialFiles.AutoSaveSettingFilePath);
                 var doc = XDocument.Load(sr);
                 var node = doc.XPathSelectElement("/SaveData/WindowSetting/IsTransparent");
-                TransparentBackground = 
-                    bool.TryParse(node.Value, out bool result) && result;
+                TransparentBackground = node != null && bool.TryParse(node.Value, out var result) && result;
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
             }
         }
-        
-        //NOTE: ファイルパスはWPFのSpecialFilePathクラスでも使っているので合わせる必要あり
-        private const string AutoSaveSettingFileName = "_autosave";
-
-        //実行中のVMagicMirrorの設定が保存された設定ファイルのパスを取得します。
-        public static string GetSettingFilePath()
-            => Path.Combine(
-                Path.GetDirectoryName(Application.dataPath),
-                "ConfigApp",
-                AutoSaveSettingFileName
-            );
-
-        /// <summary>
-        /// <see cref="GetSettingFilePath"/>のパスに設定ファイルがあるかどうかを確認します。
-        /// </summary>
-        /// <returns></returns>
-        public static bool SettingFileExists() => File.Exists(GetSettingFilePath());
     }
 }

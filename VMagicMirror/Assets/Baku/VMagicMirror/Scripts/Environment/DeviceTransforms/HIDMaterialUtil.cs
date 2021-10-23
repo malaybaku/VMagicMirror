@@ -23,40 +23,32 @@ namespace Baku.VMagicMirror
         private Material _arcadeStickMaterial;
 
         public Material GetKeyMaterial()
-            => _keyMaterial ?? (_keyMaterial = LoadMaterial(
-                   "key.png", "Key", "Key"));
+            => _keyMaterial ??= LoadMaterial("key.png", "Key", "Key");
 
         public Material GetPadMaterial()
-            => _padMaterial ?? (_padMaterial = LoadMaterial(
-                   "pad.png", "Pad", "Pad"));
+            => _padMaterial ??= LoadMaterial("pad.png", "Pad", "Pad");
 
         public Material GetGamepadBodyMaterial()
-            => _buttonMaterial ?? (_buttonMaterial = LoadMaterial(
-                   "gamepad_body.png", "GamepadBody", ""));
+            => _buttonMaterial ??= LoadMaterial("gamepad_body.png", "GamepadBody", "");
 
         public Material GetGamepadButtonMaterial()
-            => _stickAreaMaterial ?? (_stickAreaMaterial = LoadMaterial(
-                   "gamepad_button.png", "GamepadButton", "GamepadButton"));
+            => _stickAreaMaterial= LoadMaterial("gamepad_button.png", "GamepadButton", "GamepadButton");
 
         public Material GetMidiNoteMaterial()
-            => _midiNoteMaterial ?? (_midiNoteMaterial = LoadMaterial(
-                   "midi_note.png", "MidiNote", "MidiNote"));
+            => _midiNoteMaterial ??= LoadMaterial("midi_note.png", "MidiNote", "MidiNote");
 
         public Material GetMidiKnobMaterial()
-            => _midiKnobMaterial ?? (_midiKnobMaterial = LoadMaterial(
-                   "midi_knob.png", "MidiKnob", "MidiKnob"));
+            => _midiKnobMaterial ??= LoadMaterial("midi_knob.png", "MidiKnob", "MidiKnob");
 
         //NOTE: ペンタブ/アケコンはデフォルトのテクスチャを使いまわしてることに注意。
         public Material GetPenTabletMaterial()
-            => _penTabletMaterial ?? (_penTabletMaterial = LoadMaterial(
-                "pen_tablet.png", "PenTablet", "Pad"));
+            => _penTabletMaterial ??= LoadMaterial("pen_tablet.png", "PenTablet", "Pad");
+        
         public Material GetPenMaterial()
-            => _penMaterial ?? (_penMaterial = LoadMaterial(
-                "pen.png", "Pen", "Pen"));
+            => _penMaterial ??= LoadMaterial("pen.png", "Pen", "Pen");
 
         public Material GetArcadeStickMaterial()
-            => _arcadeStickMaterial ?? (_arcadeStickMaterial = LoadMaterial(
-                "arcade_stick.png", "ArcadeStickItem", "Key"));
+            => _arcadeStickMaterial ??= LoadMaterial("arcade_stick.png", "ArcadeStickItem", "Key");
 
         
         private Material LoadMaterial(string textureFileName, string materialName, string defaultTextureName)
@@ -64,7 +56,7 @@ namespace Baku.VMagicMirror
             var result = Resources.Load<Material>("Materials/" + materialName);
             try
             {
-                string imagePath = Path.Combine(Application.streamingAssetsPath, textureFileName);
+                string imagePath = SpecialFiles.GetTextureReplacementPath(textureFileName);
                 if (File.Exists(imagePath))
                 {
                     var bytes = File.ReadAllBytes(imagePath);

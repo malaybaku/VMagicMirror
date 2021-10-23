@@ -46,6 +46,9 @@ namespace Baku.VMagicMirror
         public Message ExTrackerSetIFacialMocapTroubleMessage(string message) => WithArg(message);
 
         public Message SetHandTrackingResult(string json) => WithArg(json);
+
+        //普通falseになるようにするため、ちょっと変な言い回しにしてます
+        public Message SetModelDoesNotSupportPen(bool doesNotSupport) => WithArg($"{doesNotSupport}");
         
         #region VRoid
 

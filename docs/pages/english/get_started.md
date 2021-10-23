@@ -57,13 +57,7 @@ Installer run might be blocked by Windows system. In this case, right click inst
 #### 1-2. Start v1.8.2 or older version
 {: .doc-sec2 }
 
-Unzip the distributed file and start `VMagicMirror.exe`, when GUI window ("Control Panel"), and Green window to show character ("Character Window") will appear.
-
-<div class="row">
-{% include docimg.html file="./images/get_started/img00_015_started.jpg" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
-</div>
-
-When you close one of the window, the other window also closes and VMagicMirror quits. If you do not want to show control panel, then minimize it.
+Unzip the distributed file and start `VMagicMirror.exe`.
 
 <div class="note-area" markdown="1">
 
@@ -84,6 +78,15 @@ Please avoid special folder like `Program Files`, as those folder will lead tons
 
 #### 1-3. Load Model after Start
 {: .doc-sec2 }
+
+After the app started there appears 2 windows. One window shows GUI ("Control Panel"), and the other window shows character ("Character Window").
+
+<div class="row">
+{% include docimg.html file="./images/get_started/img00_015_started.jpg" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
+</div>
+
+When you close one of the window, the other window also closes and VMagicMirror quits. If you do not want to show control panel, then minimize it.
+
 
 There are 2 ways to load character, from VRM file on the PC or from VRoid Hub.
 

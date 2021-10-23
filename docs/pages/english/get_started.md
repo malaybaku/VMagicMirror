@@ -32,14 +32,14 @@ Note that, this video refers older version, so some GUI has changed.
 ### 1. Start and Load Character
 {: .doc-sec1 }
 
-First step depends on the version of VMagicMirror you have.
+First step depends on the version of `VMagicMirror` you have.
 
 Please see one of following sections `1-1. Start v1.9.0 or later version` or `1-2. Start v1.8.2 or older version`.
 
 #### 1-1. Start v1.9.0 or later version
 {: .doc-sec2 }
 
-Newer version of VMagicMirror is distributed with the form of installer (.exe) file, so just run the file to install it.
+Newer version of `VMagicMirror` is distributed with the form of installer (.exe) file, so just run the file to install it. After the installation, launch `VMagicMirror` from shortcut, or search in start menu to launch.
 
 <div class="note-area" markdown="1">
 
@@ -57,7 +57,7 @@ Installer run might be blocked by Windows system. In this case, right click inst
 #### 1-2. Start v1.8.2 or older version
 {: .doc-sec2 }
 
-Unzip the distributed file and start `VMagicMirror.exe`.
+Unzip the distributed file and start `VMagicMirror.exe` in the folder.
 
 <div class="note-area" markdown="1">
 

@@ -36,8 +36,10 @@ permalink: /get_started
 #### 1-1. v1.9.0以降のバージョンの場合
 {: .doc-sec2 }
 
-v1.9.0以降ではインストーラー形式でVMagicMirrorを配布しています。
+v1.9.0以降ではインストーラー形式で`VMagicMirror`を配布しています。
 ダウンロードしたインストーラファイルをダブルクリックで実行し、指示に従ってインストールします。
+
+インストール後、スタートメニューやデスクトップショートカット等から`VMagicMirror`を実行します。
 
 <div class="note-area" markdown="1">
 
@@ -57,7 +59,7 @@ v1.9.0以降ではインストーラー形式でVMagicMirrorを配布してい�
 #### 1-2. v1.8.2以前のバージョンの場合
 {: .doc-sec2 }
 
-zipファイルを解凍し、適当なフォルダに配置します。
+zipファイルを解凍し、適当なフォルダに配置したのちフォルダ内の`VMagicMirror.exe`を実行します。
 
 <div class="note-area" markdown="1">
 

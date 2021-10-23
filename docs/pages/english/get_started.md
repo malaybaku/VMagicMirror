@@ -39,13 +39,15 @@ Please see one of following sections `1-1. Start v1.9.0 or later version` or `1-
 #### 1-1. Start v1.9.0 or later version
 {: .doc-sec2 }
 
-Newer version of `VMagicMirror` is distributed with the form of installer (.exe) file, so just run the file to install it. After the installation, launch `VMagicMirror` from shortcut, or search in start menu to launch.
+Newer version of `VMagicMirror` is distributed with the form of installer (.exe) file.
+
+Unzip the distributed file and run installer. After the installation, launch `VMagicMirror` from shortcut, or search in start menu to launch.
 
 <div class="note-area" markdown="1">
 
 **NOTE**
 
-Installer run might be blocked by Windows system. In this case, right click installer file and open `Property` to check whether `Security` area exists at the bottom. Check `Allow` and click `OK` to apply setting, then retry to run installer.
+Installer run might be blocked by Windows system. In this case, right click installer file (or zip file) and open `Property` to check whether `Security` area exists at the bottom. Check `Allow` and click `OK` to apply setting, then retry to run installer.
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_004_remove_block_of_installer.jpg" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}

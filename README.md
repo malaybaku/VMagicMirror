@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.9.0
+v1.9.1
 
 * 作成: 獏星(ばくすたー)
-* 2021/10/23
+* 2021/10/24
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -117,7 +117,7 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 
 以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
 
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.81.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * オリジナルのMidiJackではなく、Forkレポジトリです。

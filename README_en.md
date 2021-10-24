@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.9.0
+v1.9.1
 
 * Author: Baxter
-* 2021/Oct/23
+* 2021/Oct/24
 
 The VRM avatar application without any special device.
 
@@ -118,7 +118,7 @@ For OpenCVforUnity, edit `DisposableOpenCVObject.cs`:
 
 Also there are some UPM based dependencies.
 
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.81.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * This is fork repository and not the original.

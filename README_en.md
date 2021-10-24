@@ -118,7 +118,7 @@ For OpenCVforUnity, edit `DisposableOpenCVObject.cs`:
 
 Also there are some UPM based dependencies.
 
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.81.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * This is fork repository and not the original.

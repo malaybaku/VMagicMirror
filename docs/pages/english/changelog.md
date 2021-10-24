@@ -11,6 +11,14 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+
+#### v1.9.1
+{: .doc-sec2 }
+
+2021/10/24
+
+* Fix: Fixed issue that v1.9.0 fails to load specific models. To fix the issue, UniVRM version was reset to 0.66.0.
+
 #### v1.9.0
 {: .doc-sec2 }
 
@@ -19,6 +27,7 @@ lang_prefix: /en/
 * Add: Experimental feature of adjust light intensity and color, according to desktop displayed content.
 * Change: Now the app is distributed with installer (.exe). This also changes where settings are saved / custom files should be placed. the folder is  `VMagicMirror_Files` under `My Documents`. (Folder is created if it does not exist).
 * Fix: Minor issues.
+* Changed: Update UniVRM version from 0.66.0 to 0.81.0.
 
 Note that `VMagicMirror_Files` folder specification affects to the way to [Change Keyboard and Touchpad Appearance](./tips/change_textures), and [Use Custom Motion](./tips/use_custom_motion).
 

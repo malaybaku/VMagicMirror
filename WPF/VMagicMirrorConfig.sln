@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VMagicMirrorConfig", "VMagicMirrorConfig\VMagicMirrorConfig.csproj", "{EFF78192-AECC-4EA1-9E51-2AA1F24061C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMagicMirrorTest", "VMagicMirrorTest\VMagicMirrorTest.csproj", "{0BFD573C-29FB-419E-91DA-EEB709393EBE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EFF78192-AECC-4EA1-9E51-2AA1F24061C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFF78192-AECC-4EA1-9E51-2AA1F24061C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFF78192-AECC-4EA1-9E51-2AA1F24061C3}.Debug|x86.ActiveCfg = Debug|x86
+		{EFF78192-AECC-4EA1-9E51-2AA1F24061C3}.Debug|x86.Build.0 = Debug|x86
+		{EFF78192-AECC-4EA1-9E51-2AA1F24061C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFF78192-AECC-4EA1-9E51-2AA1F24061C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFF78192-AECC-4EA1-9E51-2AA1F24061C3}.Release|x86.ActiveCfg = Release|x86
+		{EFF78192-AECC-4EA1-9E51-2AA1F24061C3}.Release|x86.Build.0 = Release|x86
+		{0BFD573C-29FB-419E-91DA-EEB709393EBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BFD573C-29FB-419E-91DA-EEB709393EBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BFD573C-29FB-419E-91DA-EEB709393EBE}.Debug|x86.ActiveCfg = Debug|x86
+		{0BFD573C-29FB-419E-91DA-EEB709393EBE}.Debug|x86.Build.0 = Debug|x86
+		{0BFD573C-29FB-419E-91DA-EEB709393EBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BFD573C-29FB-419E-91DA-EEB709393EBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BFD573C-29FB-419E-91DA-EEB709393EBE}.Release|x86.ActiveCfg = Release|Any CPU
+		{0BFD573C-29FB-419E-91DA-EEB709393EBE}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {407E2941-CA63-465F-9F73-11B815469B05}
+	EndGlobalSection
+EndGlobal

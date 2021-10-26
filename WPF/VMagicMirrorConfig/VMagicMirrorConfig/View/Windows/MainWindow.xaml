@@ -1,0 +1,143 @@
+﻿<metro:MetroWindow
+    x:Class="Baku.VMagicMirrorConfig.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+    mc:Ignorable="d"
+    d:DataContext="{x:Type vmm:MainWindowViewModel}"
+    Title="{x:Static vmm:AppConsts.AppFullNameWithEnvSuffix}" 
+    ResizeMode="CanMinimize"
+    TitleCharacterCasing="Normal"
+    WindowTransitionsEnabled="False"
+    WindowTitleBrush="{StaticResource PrimaryHueMidBrush}"
+    NonActiveWindowTitleBrush="{StaticResource PrimaryHueMidBrush}"
+    Height="730" Width="550"
+    MinHeight="600" MinWidth="550"
+    ShowDialogsOverTitleBar="False"
+    Background="{StaticResource TabAreaBackground}"
+    >
+    <Window.DataContext>
+        <vmm:MainWindowViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <vmm:TabSelectionToForegroundConverter x:Key="SelectionToForeground"/>
+    </Window.Resources>
+    <metro:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Image Source="../../Images/vmmc_logo.png" Width="22" Height="22" Margin="0"/>
+        </DataTemplate>
+    </metro:MetroWindow.IconTemplate>
+    <metro:MetroWindow.RightWindowCommands>
+        <metro:WindowCommands ShowLastSeparator="False">
+            <metro:WindowCommands.DataContext>
+                <vmm:HelpViewModel />
+            </metro:WindowCommands.DataContext>
+            <metro:DropDownButton Content="{DynamicResource TitleBar_Help}" 
+                                  Style="{StaticResource MahApps.Styles.DropDownButton.WindowCommands}"                                  
+                                  ArrowVisibility="Collapsed">
+                <metro:DropDownButton.ItemsSource>
+                    <CompositeCollection>
+                        <MenuItem Header="{DynamicResource TitleBar_Visit_OfficialPage}" 
+                                  Command="{Binding OpenManualUrlCommand}"
+                                  />
+                        <MenuItem Header="{DynamicResource TitleBar_Visit_DownloadPage_Standard}" 
+                                  Command="{Binding OpenStandardDownloadUrlCommand}"
+                                  />
+                        <MenuItem Header="{DynamicResource TitleBar_Visit_DownloadPage_Full}" 
+                                  Command="{Binding OpenFullDownloadUrlCommand}"
+                                  />
+                        <MenuItem Header="{DynamicResource TitleBar_Visit_Fanbox}" 
+                                  Command="{Binding OpenFanboxUrlCommand}"
+                                  />
+                        <MenuItem Header="{DynamicResource TitleBar_About}" 
+                                  Command="{Binding ShowLicenseCommand}"
+                                  />
+                        <MenuItem Header="{DynamicResource TitleBar_Check_Update}" 
+                                  Command="{Binding CheckUpdateCommand}"
+                                  />
+                    </CompositeCollection>
+                </metro:DropDownButton.ItemsSource>
+            </metro:DropDownButton>
+        </metro:WindowCommands>
+    </metro:MetroWindow.RightWindowCommands>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <dragablz:TabablzControl 
+            x:Name="MainTabControl"             
+            FixedHeaderCount="5" Grid.ColumnSpan="2"
+            >
+            <dragablz:TabablzControl.HeaderItemTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding}"/>
+                </DataTemplate>
+            </dragablz:TabablzControl.HeaderItemTemplate>
+            <TabItem>
+                <TabItem.Header>
+                    <vmm:TabHeaderIconText
+                        Text="{DynamicResource TopBar_Home}"                        
+                        IconKind="Home"
+                        Foreground="{Binding SelectedIndex,
+                                                ElementName=MainTabControl,
+                                                Converter={StaticResource SelectionToForeground},
+                                                ConverterParameter=0}"   
+                        />
+                </TabItem.Header>
+                <vmm:HomePanel Background="White" />
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <vmm:TabHeaderIconText 
+                        Text="{DynamicResource TopBar_Streaming}"                        
+                        IconKind="Videocam"
+                        Foreground="{Binding SelectedIndex,
+                                                ElementName=MainTabControl,
+                                                Converter={StaticResource SelectionToForeground},
+                                                ConverterParameter=1}"                           
+                        />
+                </TabItem.Header>
+                <vmm:StreamingPanel Background="White"/>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <vmm:TabHeaderIconText 
+                        Text="{DynamicResource TopBar_ExternalFaceTrack}"                        
+                        IconKind="FaceRecognition"                        
+                        IconHeight="16"                        
+                        IconWidth="16"
+                        Foreground="{Binding SelectedIndex,
+                                                ElementName=MainTabControl,
+                                                Converter={StaticResource SelectionToForeground},
+                                                ConverterParameter=2}"                           
+                        />
+                </TabItem.Header>
+                <vmm:ExternalTrackerPanel Background="White" DataContext="{Binding ExternalTrackerSetting}" />
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <vmm:TabHeaderIconText 
+                        Text="{DynamicResource TopBar_HandTrack}"                        
+                        IconKind="Hand"                        
+                        IconHeight="16"                        
+                        IconWidth="16"
+                        Foreground="{Binding SelectedIndex,
+                                                ElementName=MainTabControl,
+                                                Converter={StaticResource SelectionToForeground},
+                                                ConverterParameter=3}"                           
+                        />
+                </TabItem.Header>
+                <vmm:HandTrackingPanel Background="White" DataContext="{Binding MotionSetting}" />
+            </TabItem>
+
+
+        </dragablz:TabablzControl>
+        <md:Snackbar MessageQueue="{x:Static vmm:SnackbarWrapper.SnackbarMessageQueue}" Grid.Column="1" HorizontalAlignment="Left" Margin="21,0,0,0"/>
+    </Grid>
+</metro:MetroWindow>

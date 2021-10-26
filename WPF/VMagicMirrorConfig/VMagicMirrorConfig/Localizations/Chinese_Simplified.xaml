@@ -1,0 +1,375 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xml:space="preserve"
+                    >
+    
+    <!-- Window Title Bar -->
+    <sys:String x:Key="TitleBar_Help">帮助</sys:String>
+    <sys:String x:Key="TitleBar_Visit_OfficialPage">网页</sys:String>
+    <sys:String x:Key="TitleBar_Visit_DownloadPage">下载页面(BOOTH)</sys:String>
+    <sys:String x:Key="TitleBar_About">关于VMagicMirror</sys:String>
+    
+    <!-- Top Tab -->
+    <sys:String x:Key="TopBar_Home">主页</sys:String>
+    <sys:String x:Key="TopBar_Streaming">直播设置</sys:String>
+    <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    
+    <!-- Top Tab in Setting Window -->
+    <sys:String x:Key="TopBar_Setting_Window">窗口设置</sys:String>
+    <sys:String x:Key="TopBar_Setting_FaceMotion">表情设置</sys:String>
+    <sys:String x:Key="TopBar_Setting_Motion">动作设置</sys:String>
+    <sys:String x:Key="TopBar_Setting_Layout">布局设置</sys:String>
+    <sys:String x:Key="TopBar_Setting_Devices">设备</sys:String>
+    <sys:String x:Key="TopBar_Setting_Effects">特效</sys:String>
+    
+    <!-- Home -->
+    <sys:String x:Key="Home_LoadVrm">读取VRM</sys:String>
+    <sys:String x:Key="Home_LoadVrmFromFile">读取PC上的文件</sys:String>    
+    <sys:String x:Key="Home_LoadVrm_Or">或者</sys:String>
+    <sys:String x:Key="Home_ConnectToVRoidHub">从VRoid Hub读取</sys:String>    
+    <sys:String x:Key="Home_OpenVRoidHub">在浏览器中打开VRoid Hub</sys:String>
+    <sys:String x:Key="Home_VrmDragDropInstruction">拖拽 &amp; 拖拽VRM模型读取</sys:String>
+
+    <sys:String x:Key="Home_LoadVrmOnNextStartup">下次启动时加载相同VRM模型</sys:String>
+    <sys:String x:Key="Home_AutoAdjust">角色体型自动补正</sys:String>
+
+    <sys:String x:Key="Home_Manual_Header">使用手册</sys:String>
+    <sys:String x:Key="Home_Manual_Open">访问手册的URL</sys:String>
+
+    <sys:String x:Key="Home_SettingFileIo">详细设定</sys:String>    
+    <sys:String x:Key="Home_OpenSetting">打开详细设定窗口</sys:String>
+    <sys:String x:Key="Home_SaveSettingFile">保存</sys:String>
+    <sys:String x:Key="Home_LoadSettingFile">读取</sys:String>
+
+    <sys:String x:Key="Home_SettingManagement">设定的管理</sys:String>
+    <sys:String x:Key="Home_Reset">重置</sys:String>
+    <sys:String x:Key="Home_LoadPrevSetting">读取旧版本设定</sys:String>
+        
+    <sys:String x:Key="Home_OssLicense">OSS License</sys:String>
+
+    <sys:String x:Key="Home_OtherSettings_Header">其他设定</sys:String>
+    <sys:String x:Key="Home_ActivateOnStartupHeader">开机启动</sys:String>
+    <sys:String x:Key="Home_ActivateOnStartup_OtherVerRegistered">※其他版本的VMagicMirror已注册为自动启动。如果选择的话，将会覆盖设置以启动此版本。</sys:String>
+    
+    <!-- Streaming -->
+    <sys:String x:Key="Streaming_Window">窗口设置</sys:String>
+    <sys:String x:Key="Streaming_Face">表情表情</sys:String>
+    <sys:String x:Key="Streaming_Motion">动作设置</sys:String>
+    <sys:String x:Key="Streaming_View">显示相关</sys:String>
+    <sys:String x:Key="Streaming_WordToMotion">打字动作</sys:String>
+
+    <sys:String x:Key="Streaming_DeviceLayout">布局设置</sys:String>
+    <sys:String x:Key="Streaming_DeviceLayout_Reset">重置</sys:String>
+
+    <sys:String x:Key="Streaming_Screenshot">截图</sys:String>
+    <sys:String x:Key="Streaming_Screenshot_Take">截图</sys:String>
+    <sys:String x:Key="Streaming_Screenshot_OpenSaveFolder">保存的文件</sys:String>
+    
+    <!-- Ex.Tracker -->
+    <sys:String x:Key="ExTracker_Title">外部追踪辅助</sys:String>
+    <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">利用外部应用的跟踪功能。
+打开外部跟踪后，以下功能将暂时禁用。
+- 使用摄像机采集进行面部跟踪
+- 用眼睛追踪鼠标指针的功能</sys:String>
+    <sys:String x:Key="ExTracker_Enable">外部追踪辅助启动</sys:String>
+    <sys:String x:Key="ExTracker_Enable_ImageLipSync">嘴部也使用外部追踪的数据</sys:String>    
+
+    <sys:String x:Key="ExTracker_Enable_PerfectSync">使用完美同步</sys:String>
+    <sys:String x:Key="ExTracker_PerfectSync_UseVRoidDefault">使用VRoid用的默认设定（※仅在VRoid模型中有用）</sys:String>
+    <sys:String x:Key="ExTracker_HowTo_PerfectSync">完美同步是什么? (打开网页-日语)</sys:String>
+    <sys:String x:Key="ExTracker_PerfectSync_MissingBlendShape_Header">模型似乎不支持完美同步 (点击查看详情)</sys:String>
+
+    <sys:String x:Key="ExTracker_Calibrate">在当前位置校准脸部</sys:String>
+
+    <sys:String x:Key="ExTracker_SourceSelect">连接APP</sys:String>
+    <sys:String x:Key="ExTracker_SourceSelect_Instruction">选择连接APP。现在只支持IOS的应用。</sys:String>
+
+    <sys:String x:Key="ExTracker_Source_None">空</sys:String>
+    <sys:String x:Key="ExTracker_Source_iFacialMocap">iFacialMocap</sys:String>
+    <sys:String x:Key="ExTracker_iFM_IpHint">iPhone的IP地址</sys:String>
+    <sys:String x:Key="ExTracker_Source_HowToCollaborate">※查看APP连接的方法 (打开网页)</sys:String>
+    <sys:String x:Key="ExTracker_Source_RefreshReceiverSetting">重新检查网络环境</sys:String>
+
+    <sys:String x:Key="ExTracker_iFM_HasTrouble_Header">请确认连接的应用程序设置</sys:String>
+    <sys:String x:Key="ExTracker_iFM_HasTrouble_OpenUrl">查看故障相关(打开网页)</sys:String>
+
+    <sys:String x:Key="ExTracker_FaceSwitch">表情开关</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">通过清晰地将脸变成特定的表情来切换虚拟形象的表情
+开启“继续控制嘴部”后，可以在表情切换的状态下变换嘴型。</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_KeepLipSync">继续控制嘴部</sys:String>
+
+    <!-- Settings General -->
+    <sys:String x:Key="Setting_Color_Expander_Header">颜色的设置 (点击展开)</sys:String>
+    
+    <!-- Window -->
+    <sys:String x:Key="Window_Header">窗口设置</sys:String>
+    <sys:String x:Key="Window_Basics">基础设定</sys:String>
+    <sys:String x:Key="Window_BackgroundColor">背景色</sys:String>
+    <sys:String x:Key="Window_Transparent">透明背景</sys:String>
+    <sys:String x:Key="Window_Draggable">(透明中)抓住角色附近拖动</sys:String>
+    <sys:String x:Key="Window_TopMost">(透明中)总是在最前面显示角色</sys:String>
+    <sys:String x:Key="Window_ResetPosition">角色位置复位</sys:String>
+    
+    <sys:String x:Key="Window_EnableInitialPlacement">启动时将窗口移动到特定位置</sys:String>
+    <sys:String x:Key="Window_InitialPositionX">X(画面左 = 0)</sys:String>
+    <sys:String x:Key="Window_InitialPositionY">Y(画面上 = 0)</sys:String>
+    <sys:String x:Key="Window_FetchUnityWindowPos">记住当前窗口位置</sys:String>
+    <sys:String x:Key="Window_MoveWindow">移动到指定位置</sys:String>
+    
+    <sys:String x:Key="Window_TransparencySupport">角色透明度的详细说明</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level">角色透明化的等级</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Alpha">角色透明化的数值(32-255)</sys:String>
+    
+    <sys:String x:Key="Window_TransparencySupport_Level_0">レベル0: 不透明。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_1">レベル1: 关闭“抓住角色附近并拖动”，而且角色附近有鼠标指针的话，会变成半透明。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_2">レベル2: 角色附近有鼠标指针的话，会变成半透明。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_3">レベル3: 如果关闭“抓住角色附近并拖动”的话，会变成半透明。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_4">レベル4: 变为半透明</sys:String>
+        
+    <!-- Motion -->
+    <sys:String x:Key="Motion_Header">动作设置</sys:String>   
+    
+    <!-- Motion : Full Body -->
+    <sys:String x:Key="Motion_FullBody">上半身</sys:String>
+    <sys:String x:Key="Motion_FullBody_NoHandTrackMode">保持垂手模式（※身体的动作增加）</sys:String>    
+    <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">进入垂手模式</sys:String>    
+    
+    <!-- Motion : Arm -->
+    <sys:String x:Key="Motion_Arm">胳膊肘子</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableHidMotion">反映打字/鼠标动作</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableRandomTyping">用随机隐藏键盘输入</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableShoulderModify">启用肩部运动补偿</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableTypingAndMouseTimeout">（打字、鼠标）没有输入时放下手</sys:String>
+    <sys:String x:Key="Motion_Arm_FpsAssumedRightHand">将右手的鼠标动作设为FPS模式</sys:String>
+    <sys:String x:Key="Motion_Arm_FpsAssumedRightHand_Tooltip">如果打开的话，玩FPS游戏时的鼠标动作会变得自然，但对鼠标操作和数绘板的反应会变差。</sys:String>
+    
+    <sys:String x:Key="Motion_Arm_WaistWidth">收紧腋下的宽度 [cm]</sys:String>
+    <sys:String x:Key="Motion_Arm_ElbowCloseStrength">收紧腋下的强度 [%]</sys:String>
+    <sys:String x:Key="Motion_Arm_EnablePresenterMotion">右手像演讲一样的动作</sys:String>
+    <sys:String x:Key="Motion_Arm_ShowPresentationPointer">显示辅助指针</sys:String>    
+    <sys:String x:Key="Motion_Arm_PresenterArmMotionScale">演讲动作尺寸[%]</sys:String>
+    <sys:String x:Key="Motion_Arm_PresenterArmRadiusMin">演讲动作的最小半径 [cm]</sys:String>    
+
+    <!-- Motion : Hand -->
+    <sys:String x:Key="Motion_Hand">手.手指</sys:String>
+    <sys:String x:Key="Motion_Hand_CharacterHandMotion">手的动作</sys:String>
+    <sys:String x:Key="Motion_Hand_WristToHandTip">从手腕到指尖的长度[cm]</sys:String>
+    <sys:String x:Key="Motion_Hand_WristToPalm">从手腕到手掌的长度[cm]</sys:String>
+    <sys:String x:Key="Motion_Hand_HandYOffsetBasic">手的高度调整[cm]</sys:String>
+    <sys:String x:Key="Motion_Hand_HandYOffsetAfterKeyDown">(打字后)手的高度调整[cm]</sys:String>
+    
+    <!-- Motion : Wait -->
+    <sys:String x:Key="Motion_Wait">待机动作</sys:String>
+    <sys:String x:Key="Motion_Wait_EnableWaitMotion">启动待机动作</sys:String>
+    <sys:String x:Key="Motion_Wait_WaitMotionScale">动作幅度 [%]</sys:String>
+    <sys:String x:Key="Motion_Wait_WaitMotionPeriod">周期 [sec]</sys:String>    
+    
+    <!-- NOTE: もともとMotionタブだったのを分断してる関係で命名ルールがちょっとアレです -->
+    <!-- Face Motion -->
+    <sys:String x:Key="Motion_Face">表情设置</sys:String>
+    <sys:String x:Key="Motion_Face_Basics">基础設定</sys:String>
+    <sys:String x:Key="Motion_Face_EnableFaceTracking">跟踪面部</sys:String>
+    <sys:String x:Key="Motion_Face_CameraName">相机</sys:String>    
+    <sys:String x:Key="Motion_Face_Calibration">修正姿势和表情</sys:String>    
+    <sys:String x:Key="Motion_Face_EnableBodyLeanZ">启用面部跟踪中的前后移动</sys:String>    
+    <sys:String x:Key="Motion_Face_AutoBlinkDuringFaceTracking">在面部跟踪过程中也自动眨眼</sys:String>
+    <sys:String x:Key="Motion_Face_DisableFaceTrackingHorizontalFlip">关闭左右翻转</sys:String>
+    <sys:String x:Key="Motion_Face_EnableImageBasedHandTracking">手和脸一起跟踪</sys:String>
+    <sys:String x:Key="Motion_Face_EnableWebCamHighPowerMode">高分辨率模式（测试)</sys:String>
+    <sys:String x:Key="Motion_Face_FolderMaybeIncorrect_Header">请考虑移动应用程序文件夹！</sys:String>
+    <sys:String x:Key="Motion_Face_FolderMaybeIncorrect_Tooltip" xml:space="preserve">应用程序的配置文件夹路径中包含全角字符。
+这种状态下面部跟踪可能无法正常动作。
+
+当面部跟踪行为不正常时，请退出应用程序
+请将整个文件夹移动到只有半角字符的文件夹路径以下。
+
+面部跟踪正常运行时，可以无视此警告。
+</sys:String>
+    <sys:String x:Key="Motion_Face_ExTrackerWorking_Header">※现在对web相机没有反应。外部跟踪有效。</sys:String>
+    <sys:String x:Key="Motion_Face_ExTrackerWorking_TurnOffExTracker">使用web相机时点击此处</sys:String>
+    
+    <sys:String x:Key="Motion_Face_BlinkAdjust">用脸的动作和声音来修正眨眼</sys:String>
+    <sys:String x:Key="Motion_Face_NoCamMotion">不使用相机时，以声音为基础移动虚拟形象</sys:String>
+            
+    <!-- Face : Eye -->
+    <sys:String x:Key="Motion_Eye">眼·视线</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint">视线的伊东</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_None">固定</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">鼠标</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">用户</sys:String>
+    <sys:String x:Key="Motion_Eye_RotScale">眼睛的运动幅度[%]</sys:String>
+    <sys:String x:Key="Motion_Eye_ApproxRotRangePrefix">(参考）眼球的大致可动范围: </sys:String>
+    <sys:String x:Key="Motion_Eye_ApproxRotRangeSuffix"> [deg]</sys:String>
+    
+    <!-- Face : Mouth -->
+    <sys:String x:Key="Motion_Mouth">嘴・嘴唇</sys:String>
+    <sys:String x:Key="Motion_Mouth_EnableLipSync">嘴唇</sys:String>
+    <sys:String x:Key="Motion_Mouth_MicrophoneName">麦克风</sys:String>    
+    <sys:String x:Key="Motion_Mouth_Microphone_Sensitivity">灵敏度 [dB]</sys:String>
+    <sys:String x:Key="Motion_Mouth_Microphone_Visualize">检查音量</sys:String>
+    
+    <!-- Face : BlendShape -->
+    <sys:String x:Key="Motion_Face_BlendShape">形态建</sys:String>
+    <sys:String x:Key="Motion_Face_DefaultFun">Fun表情的数值[%]</sys:String>
+    <sys:String x:Key="Motion_Face_NeutralClip">Neutral形态建</sys:String>    
+    <sys:String x:Key="Motion_Face_NeutralClip_Help" xml:space="preserve">※Neutral形态建作为平时的表情使用。
+在使用非Neutral形态建等自定义默认表情时使用</sys:String>    
+    <sys:String x:Key="Motion_Face_OffsetClip">体型调整形态建</sys:String>
+    <sys:String x:Key="Motion_Face_OffsetClip_Help" xml:space="preserve">※体型调整形态建已经完成适配。
+用形态建调整体格和轮廓时使用。</sys:String>
+    
+    <!-- Layout Setting -->
+    <sys:String x:Key="Layout_Header">布局</sys:String>   
+
+    <!-- Layout : Camera -->
+    <sys:String x:Key="Layout_Camera">相机</sys:String>
+    <sys:String x:Key="Layout_Camera_HowTo">使用方法</sys:String>
+    <sys:String x:Key="Layout_Camera_HowTo_Content" xml:space="preserve">开启自由相机模式后
+可以进行以下相机操作
+       
+- 右键按住 + 移动: 旋转
+- 中键按住 + 移动: 平行移动
+- 鼠标滚轮: 前后移动</sys:String>    
+    <sys:String x:Key="Layout_EnableFreeCameraMode">自由相机模式</sys:String>
+    <sys:String x:Key="Layout_CurrentCameraPosition">相机位置(x, y, z, rx, ry, rz)</sys:String>
+    <sys:String x:Key="Layout_Camera_ResetPosition">重置位置</sys:String>
+    <sys:String x:Key="Layout_Camera_Fov">视野角 [deg]</sys:String>
+    <sys:String x:Key="Layout_Camera_QuickSave">快速保存</sys:String>
+    <sys:String x:Key="Layout_Camera_QuickLoad">快速读取</sys:String>
+
+    <!-- Layout : Devices -->
+    <sys:String x:Key="Layout_DeviceLayout">设备的布局</sys:String>
+    <sys:String x:Key="Layout_DeviceFreeLayout">自由布局模式</sys:String>
+
+    <!-- Layout : Keyboard / Mouse Pad -->
+    <sys:String x:Key="Layout_Hid">显示设备</sys:String>
+    <sys:String x:Key="Layout_HidVisible">键盘触屏</sys:String>
+    <sys:String x:Key="Layout_MidiVisible">MIDI控制器</sys:String>
+    <sys:String x:Key="Layout_GamepadVisible">显示游戏手柄</sys:String>
+
+    <sys:String x:Key="Layout_Hid_Streaming">键盘</sys:String>
+    <sys:String x:Key="Layout_Midi_Streaming">MIDI冬至起</sys:String>
+
+    <sys:String x:Key="Layout_Hid_TypingEffect_Header">打字时的特效</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Header_Streaming">打字特效</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_None">无</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Text">TEXT</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Light">光</sys:String>
+    
+    <sys:String x:Key="Layout_Gamepad">游戏手柄</sys:String>    
+
+    <!-- Devices -->
+    <sys:String x:Key="Devices_Header">设备连接</sys:String>
+    
+    <!-- Devices: Keyboard and mouse -->
+    <sys:String x:Key="Devices_Keyboard_Mouse_Header">键盘鼠标</sys:String>
+    
+    <!-- Devices: MIDI -->
+    <sys:String x:Key="Devices_Midi_Header">MIDI</sys:String>
+    <sys:String x:Key="Devices_Midi_ReadEnable">通过VMagicMirror获取MIDI控制器输入</sys:String>
+    
+    <!-- Devices: Gamepad -->
+    <sys:String x:Key="Devices_Gamepad_Header">游戏手柄</sys:String>
+    
+    <sys:String x:Key="Devices_GamepadEnable">用VMagicMirror取得游戏手柄的输入</sys:String>
+    <sys:String x:Key="Devices_Gamepad_PreferDirectInput">使用DirectInput (使用DUAL SHOCK 4时)</sys:String>
+    <sys:String x:Key="Devices_GamepadDeviceNumber">设备编号</sys:String>
+    
+    <sys:String x:Key="Devices_GamepadLean">角色倾斜输入</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_None">无</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_LeftButtons">左十字键</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_LeftStick">左摇杆</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_RightStick">右摇杆</sys:String>
+
+    <sys:String x:Key="Devices_GamepadLean_Reverse">倾斜方向翻转</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_ReverseHorizontal">左右</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_ReverseVertical">前后</sys:String>
+    
+    
+    <!-- Light Setting -->
+    <sys:String x:Key="Effect_Header">效果</sys:String>       
+
+    <sys:String x:Key="ImageQuality">画质</sys:String>
+    <sys:String x:Key="ImageQuality_CurrentQuality">现在的设定</sys:String>
+    
+    <sys:String x:Key="Light">光照</sys:String>
+    <sys:String x:Key="Light_Intensity">亮度[%]</sys:String>
+    <sys:String x:Key="Light_Yaw">方向(横)[deg]</sys:String>
+    <sys:String x:Key="Light_Pitch">方向(上下)[deg]</sys:String>
+
+    <sys:String x:Key="Shadow">阴影</sys:String>
+    <sys:String x:Key="Shadow_Enable">启动影子</sys:String>
+    <sys:String x:Key="Shadow_Enable_Streaming">角色阴影</sys:String>
+    <sys:String x:Key="Shadow_Intensity">浓度[%]</sys:String>
+    <sys:String x:Key="Shadow_Yaw">方向(横)[deg]</sys:String>
+    <sys:String x:Key="Shadow_Pitch">方向(上下)[deg]</sys:String>
+    <sys:String x:Key="Shadow_DepthOffset">深度调整 [cm]</sys:String>
+        
+    <sys:String x:Key="Bloom">曝光</sys:String>
+    <sys:String x:Key="Bloom_Intensity">强度[%]</sys:String>
+    <sys:String x:Key="Bloom_Threshold">阈值[%]</sys:String>
+    
+    <sys:String x:Key="Wind">风</sys:String>
+    <sys:String x:Key="Wind_Enable">启动风</sys:String>
+    <sys:String x:Key="Wind_Enable_Streaming">风</sys:String>
+    <sys:String x:Key="Wind_Strength">风的强度[%]</sys:String>
+    <sys:String x:Key="Wind_Interval">风的细致度[%]</sys:String>
+    <sys:String x:Key="Wind_Yaw">风的方向[deg]</sys:String>
+
+    
+    <!-- Word To Motion -->
+    <sys:String x:Key="WordToMotion_Header">打字动作</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Enable">启动打字动作</sys:String>
+    <sys:String x:Key="WordToMotion_UseGamepadForInput">用游戏手柄的按钮控制表情/动作</sys:String>
+    <sys:String x:Key="WordToMotion_Instruction" xml:space="preserve">这个标签是“打字动作”标签。
+`打字动作`是输入键盘后可以使角色有动作的功能。
+打个'joy'试一下吧。</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice">指定这个功能专用的设备</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_None">无</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_Gamepad">游戏手柄</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_Keyboard">键盘(数字的0-9)</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_Keyboard_Short">键盘</sys:String>
+
+    <sys:String x:Key="WordToMotion_AssignDevice_Select_Header">设备分配</sys:String>
+    
+    <sys:String x:Key="WordToMotion_KeyAssign">按键分配</sys:String>
+    <sys:String x:Key="WordToMotion_LoadDefaultSet">重置为默认设置</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Word_Header">按键</sys:String>
+    <sys:String x:Key="WordToMotion_Word_Limit">*只允许半角字母、数字和空格</sys:String>
+
+    <sys:String x:Key="WordToMotion_BodyMotion_Header">全身动作</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_None">无</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_BuiltIn">默认动作</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_Custom">自定义动作</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Motion_BuiltIn_Label">动作</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_BuiltIn_Hint">动作选择</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Motion_Custom_Label">动作</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_Hint">动作选择</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">使用方法（打开网页）</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_Doctor">判断动作数据</sys:String>
+
+    <sys:String x:Key="WordToMotion_Face_Header">表情</sys:String>
+    <sys:String x:Key="WordToMotion_Face_Enable">启动表情</sys:String>
+    <sys:String x:Key="WordToMotion_Face_Duration">(全身动作为“无”时）表情的变化时间 [sec]</sys:String>
+    <sys:String x:Key="WordToMotion_Face_Hold">结束后也保持表情</sys:String>
+    <sys:String x:Key="WordToMotion_Face_PreferLipSync">继续进行嘴部控制</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Face_CommonClip_Header">基础的表情</sys:String>
+    <sys:String x:Key="WordToMotion_Face_ExtraClip_Header">角色自带的表情</sys:String>
+    
+    <sys:String x:Key="WordToMotion_EnablePreview">当前角色预览</sys:String>    
+        
+    <sys:String x:Key="WordToMotion_MidiAssign">MIDI的按键指定</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_Instruction" xml:space="preserve">最多对应16个MIDI键盘的按键给动作。
+- 单击右侧的文本输入
+- 按MIDI控制器的键输入编号</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_Current">现在的按键</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_After">变更后的按键</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_Clear">完成</sys:String>
+   
+</ResourceDictionary>

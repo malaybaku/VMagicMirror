@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.AboutPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="450">
+    <UserControl.Resources>
+        <Style x:Key="NoteText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel HorizontalAlignment="Left"
+                Margin="10">
+        <TextBlock Style="{StaticResource NoteText}"
+                        Text="{x:Static vmm:AppConsts.AppName}"/>
+        <TextBlock Style="{StaticResource NoteText}"
+                        Text="Copyright (c) 2019-2021 獏星(ばくすたー)"/>
+        <TextBlock Style="{StaticResource NoteText}"
+                        ToolTip="https://github.com/malaybaku/VMagicMirror">
+                <Hyperlink Click="OnClickHyperLinkToGitHub">Source (GitHub)</Hyperlink>
+        </TextBlock>
+
+        <Rectangle Height="20" />
+
+
+        <TextBlock Style="{StaticResource NoteText}"
+                   Text="VMagicMirror uses model data by Attribution 4.0 International (CC BY 4.0)"/>
+        <TextBlock Style="{StaticResource NoteText}"
+                   Text="Model data is by : Negyek"/>
+        <TextBlock>
+                <Hyperlink Click="OnClickHyperLinkToModelData">Source (Pull Request URL of the model)</Hyperlink>
+        </TextBlock>
+        <TextBlock Style="{StaticResource NoteText}"
+                   Text="In VMagicMirror, the material is adjusted for the visual consistency, and texture replacement is allowed."/>
+    </StackPanel>
+</UserControl>

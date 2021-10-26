@@ -1,0 +1,347 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.HomePanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vmm:MainWindowViewModel}"
+             d:DesignWidth="550"
+             d:DesignHeight="600"
+             AllowDrop="True"
+             >
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+        <Style TargetType="md:Card">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </UserControl.Resources>
+    <!-- このUI全域に対してVRMをドロップできるようにする -->
+    <i:Interaction.Behaviors>
+        <vmm:DragDropToCommandBehavior x:Name="DragDropCommandBehavior"
+                                       DropCommand="{Binding LoadVrmByFilePathCommand}"
+                                       />
+        <!--InstructionVisibility="{Binding Visibility, ElementName=DragDropIndicator, Mode=OneWayToSource}"-->
+    </i:Interaction.Behaviors>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      >
+            <Grid Margin="5,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,5">
+                    <Border Style="{StaticResource SectionBorder}"
+                            Padding="5" Margin="5">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Style="{StaticResource HeaderPackIcon}"
+                                             Kind="Human"/>
+                                <TextBlock Style="{StaticResource HeaderText}"
+                                           Text="{DynamicResource Home_LoadVrm}"
+                                           Margin="5"
+                                           />
+                            </StackPanel>
+
+                            <Button HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Width="180"
+                                    Height="30"
+                                    Margin="10,10,10,5"
+                                    Padding="5"
+                                    Command="{Binding LoadVrmCommand}"
+                                    >
+                                <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                                    <md:PackIcon Style="{StaticResource IconTextSetIcon}"
+                                                    Kind="Folder"
+                                                    />
+                                    <TextBlock Style="{StaticResource IconSetSetText}"
+                                                Text="{DynamicResource Home_LoadVrmFromFile}"
+                                                />
+                                </StackPanel>
+                            </Button>
+
+                            <Grid Width="180" Height="20"
+                                    HorizontalAlignment="Left"
+                                    Margin="10,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Grid.Column="0" Height="1" Fill="#767676"/>
+                                <TextBlock Grid.Column="1"
+                                           HorizontalAlignment="Center"
+                                           Text="{DynamicResource Home_LoadVrm_Or}"
+                                           Margin="5,0"
+                                           />
+                                <Rectangle Grid.Column="2" Height="1" Fill="#767676"/>
+                            </Grid>
+                            
+                            <Button HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Width="180"
+                                    Height="30"
+                                    Margin="10,5"
+                                    Padding="5"
+                                    Command="{Binding ConnectToVRoidHubCommand}"
+                                    >
+                                <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                                    <md:PackIcon Style="{StaticResource IconTextSetIcon}"
+                                                 Kind="TransitConnection"
+                                                 />
+                                    <!--Kind="TransitConnection"-->
+                                    <TextBlock Style="{StaticResource IconSetSetText}"
+                                                Text="{DynamicResource Home_ConnectToVRoidHub}"
+                                                />
+                                </StackPanel>
+                            </Button>
+
+                            <TextBlock Margin="30,5,20,5">
+                                <Hyperlink Command="{Binding OpenVRoidHubCommand}"
+                                            ToolTip="https://hub.vroid.com/">
+                                    <Run Text="{DynamicResource Home_OpenVRoidHub}"/>
+                                </Hyperlink>
+                            </TextBlock>
+
+
+
+                            <CheckBox Content="{DynamicResource Home_LoadVrmOnNextStartup}"
+                                      Margin="10,10,5,0"
+                                      IsChecked="{Binding AutoLoadLastLoadedVrm.Value, Mode=TwoWay}"
+                                      />
+
+                            <Button HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Width="180"
+                                    Margin="10,5,5,10"
+                                    Command="{Binding AutoAdjustCommand}"
+                                    >
+                                <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                                    <md:PackIcon Style="{StaticResource IconTextSetIcon}"
+                                                    Kind="AutoFix"
+                                                    />
+                                    <TextBlock Style="{StaticResource IconSetSetText}"
+                                                Text="{DynamicResource Home_AutoAdjust}"
+                                                />
+                                </StackPanel>
+                            </Button>
+
+                        </StackPanel>
+                    </Border>
+
+
+                    <Border Style="{StaticResource SectionBorder}" Padding="5" Margin="5">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource HeaderText}"
+                                        Margin="5"
+                                        Text="{DynamicResource Home_OtherSettings_Header}"/>
+
+
+                            <DockPanel Margin="10,0" LastChildFill="True">
+
+                                <TextBlock Text="Language"/>
+
+                                <ComboBox ItemsSource="{Binding AvailableLanguageNames}"
+                                          SelectedItem="{Binding LanguageName.Value, Mode=TwoWay}"
+                                          Margin="10,0"
+                                          HorizontalAlignment="Stretch"
+                                          MinWidth="100"
+                                          />
+                            </DockPanel>
+
+                            <CheckBox Margin="10,10,10,6"
+                                      Content="{DynamicResource Home_ActivateOnStartupHeader}"
+                                      IsChecked="{Binding ActivateOnStartup}"
+                                      />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Margin="0,5">
+
+                    <Border Style="{StaticResource SectionBorder}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource HeaderText}"
+                                       Text="{DynamicResource Home_SettingFileIo}"
+                                       Margin="5"
+                                       />
+
+                            <Button HorizontalAlignment="Stretch"
+                                    Width="NaN"
+                                    Margin="10,10,10,5"
+                                    Command="{Binding OpenSettingWindowCommand}"
+                                    >
+                                <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                                    <md:PackIcon Style="{StaticResource IconTextSetIcon}"
+                                                 Kind="Settings"
+                                                 />
+                                    <TextBlock Style="{StaticResource IconSetSetText}"
+                                               Text="{DynamicResource Home_OpenSetting}"
+                                               />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionBorder}">
+                        <Border.DataContext>
+                            <vmm:HelpViewModel />
+                        </Border.DataContext>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Style="{StaticResource HeaderPackIcon}"
+                                            Kind="HelpCircleOutline"
+                                            />
+                                <TextBlock Style="{StaticResource HeaderText}"
+                                            Text="{DynamicResource Home_Manual_Header}"
+                                            Margin="5"
+                                            />
+                            </StackPanel>                            
+
+                            <TextBlock Margin="10,5">
+                                <Hyperlink Command="{Binding OpenManualUrlCommand}"
+                                            ToolTip="https://malaybaku.github.io/VMagicMirror/">
+                                    <Run Text="{DynamicResource Home_Manual_Open}"/>
+                                </Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionBorder}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Style="{StaticResource HeaderPackIcon}"
+                                                Kind="Camera"
+                                                />
+                                <TextBlock Text="{DynamicResource Streaming_Screenshot}"
+                                        Margin="5"
+                                        Style="{StaticResource HeaderText}"
+                                        />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <Button Command="{Binding TakeScreenshotCommand}"
+                                    Padding="0"
+                                    Width="40"
+                                    HorizontalAlignment="Left"
+                                    >
+                                    <md:PackIcon Style="{StaticResource IconTextSetIcon}"
+                                                Kind="Camera"
+                                                />
+                                </Button>
+
+                                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        Command="{Binding OpenScreenshotFolderCommand}"
+                                        Padding="0"
+                                        HorizontalAlignment="Left"
+                                        Margin="0"
+                                        >
+                                    <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                                        <md:PackIcon Style="{StaticResource IconTextSetIcon}"
+                                                Kind="Folder"
+                                                />
+                                        <TextBlock Style="{StaticResource IconSetSetText}"
+                                            Text="{DynamicResource Streaming_Screenshot_OpenSaveFolder}"
+                                            />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource SectionBorder}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Style="{StaticResource HeaderPackIcon}"
+                                        Kind="File"
+                                        />
+
+                                <TextBlock Style="{StaticResource HeaderText}"
+                                           Text="{DynamicResource Home_SettingManagement}"
+                                           Margin="5"
+                                           />
+                            </StackPanel>
+                            
+                        
+                            <Grid Margin="0,5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Row="0" Grid.Column="0"
+                                        Width="NaN"
+                                        Margin="5"
+                                        Content="{DynamicResource SettingFile_Save}"
+                                        Command="{Binding SettingIo.ShowSaveModalCommand}"
+                                        />
+                                <Button Grid.Row="0" Grid.Column="1"
+                                        Width="NaN"
+                                        Margin="5"
+                                        Content="{DynamicResource SettingFile_Load}"
+                                        Command="{Binding SettingIo.ShowLoadModalCommand}"
+                                        />
+
+
+                                <Button Grid.Row="2" Grid.Column="0"
+                                        Width="NaN"
+                                        Margin="5"
+                                        Content="{DynamicResource SettingFile_Export}" 
+                                        Command="{Binding SettingIo.ExportSettingToFileCommand}"
+                                        />
+                                <Button Grid.Row="2" Grid.Column="1"
+                                        Width="NaN"
+                                        Margin="5"
+                                        Content="{DynamicResource SettingFile_Import}" 
+                                        Command="{Binding SettingIo.ImportSettingFromFileCommand}"
+                                        />
+
+                                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                                        Width="NaN"
+                                        Margin="5"
+                                        Content="{DynamicResource Home_LoadPrevSetting}" 
+                                        Command="{Binding LoadPrevSettingCommand}"
+                                        />
+
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    <Button Width="NaN"
+                        Margin="20,5"
+                        Content="{DynamicResource Home_Reset}" 
+                        Command="{Binding ResetToDefaultCommand}"
+                        />
+                </StackPanel>
+
+
+            </Grid>
+        </ScrollViewer>
+        <Border x:Name="DragDropIndicator" 
+                Visibility="{Binding InstructionVisibility, ElementName=DragDropCommandBehavior, FallbackValue=Collapsed}"
+                Background="#80000000">
+            <TextBlock Foreground="White"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Text="{DynamicResource Home_VrmDragDropInstruction}"
+                       TextAlignment="Center"
+                       />
+        </Border>
+    </Grid>
+</UserControl>

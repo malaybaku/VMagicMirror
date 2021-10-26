@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.HandTrackingResultPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             mc:Ignorable="d" 
+             d:DesignWidth="320"
+             d:DesignHeight="180"
+             d:DataContext="{d:DesignInstance Type=vmm:HandTrackingResultViewModel}"
+             Background="LightGray">
+    <UserControl.Resources>
+        <vmm:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
+        <Style TargetType="Ellipse">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Width" Value="4"/>
+            <Setter Property="Height" Value="4"/>
+            <Setter Property="Fill" Value="{StaticResource PrimaryHueMidBrush}"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <TextBlock VerticalAlignment="Center" 
+                   HorizontalAlignment="Center"
+                   Foreground="{StaticResource MaterialDesignBodyLight}"
+                   Text="{DynamicResource HandTracking_NotDetected}" 
+                   Visibility="{Binding LeftOrRightDetected.Value, 
+                                        Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                   />
+        <!-- NOTE: めちゃザツに見えると思いますが、案外これ書き味いいんですよ… -->
+        <Canvas Visibility="{Binding LeftDetected.Value,
+                                     Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Ellipse x:Name="LeftPoint00"/>
+            <Ellipse x:Name="LeftPoint01"/>
+            <Ellipse x:Name="LeftPoint02"/>
+            <Ellipse x:Name="LeftPoint03"/>
+            <Ellipse x:Name="LeftPoint04"/>
+            <Ellipse x:Name="LeftPoint05"/>
+            <Ellipse x:Name="LeftPoint06"/>
+            <Ellipse x:Name="LeftPoint07"/>
+            <Ellipse x:Name="LeftPoint08"/>
+            <Ellipse x:Name="LeftPoint09"/>
+            <Ellipse x:Name="LeftPoint10"/>
+            <Ellipse x:Name="LeftPoint11"/>
+            <Ellipse x:Name="LeftPoint12"/>
+            <Ellipse x:Name="LeftPoint13"/>
+            <Ellipse x:Name="LeftPoint14"/>
+            <Ellipse x:Name="LeftPoint15"/>
+            <Ellipse x:Name="LeftPoint16"/>
+            <Ellipse x:Name="LeftPoint17"/>
+            <Ellipse x:Name="LeftPoint18"/>
+            <Ellipse x:Name="LeftPoint19"/>
+            <Ellipse x:Name="LeftPoint20"/>
+        </Canvas>
+
+        <Canvas Visibility="{Binding RightDetected.Value,
+                                     Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Ellipse x:Name="RightPoint00"/>
+            <Ellipse x:Name="RightPoint01"/>
+            <Ellipse x:Name="RightPoint02"/>
+            <Ellipse x:Name="RightPoint03"/>
+            <Ellipse x:Name="RightPoint04"/>
+            <Ellipse x:Name="RightPoint05"/>
+            <Ellipse x:Name="RightPoint06"/>
+            <Ellipse x:Name="RightPoint07"/>
+            <Ellipse x:Name="RightPoint08"/>
+            <Ellipse x:Name="RightPoint09"/>
+            <Ellipse x:Name="RightPoint10"/>
+            <Ellipse x:Name="RightPoint11"/>
+            <Ellipse x:Name="RightPoint12"/>
+            <Ellipse x:Name="RightPoint13"/>
+            <Ellipse x:Name="RightPoint14"/>
+            <Ellipse x:Name="RightPoint15"/>
+            <Ellipse x:Name="RightPoint16"/>
+            <Ellipse x:Name="RightPoint17"/>
+            <Ellipse x:Name="RightPoint18"/>
+            <Ellipse x:Name="RightPoint19"/>
+            <Ellipse x:Name="RightPoint20"/>
+        </Canvas>
+    </Grid>
+</UserControl>

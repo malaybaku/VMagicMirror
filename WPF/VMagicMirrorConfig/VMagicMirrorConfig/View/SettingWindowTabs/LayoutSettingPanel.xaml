@@ -1,0 +1,288 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.LayoutSettingPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type={x:Type vmm:LayoutSettingViewModel}}"
+             d:DesignWidth="400"
+             d:DesignHeight="1050"
+             >
+    <UserControl.Resources>
+        <vmm:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
+        <vmm:StringNotEmptyConverter x:Key="StringNotEmptyConverter"/>
+        <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  >
+        <StackPanel Margin="0,5">
+
+            <TextBlock 
+                Text="{DynamicResource Layout_Header}"                 
+                Style="{StaticResource SectionHeaderText}"
+                />
+            
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="5">
+
+                        <md:PackIcon Kind="Videocam"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+                        <TextBlock Text="{DynamicResource Layout_Camera}"
+                                   Style="{StaticResource HeaderText}"
+                                   VerticalAlignment="Center"
+                                   Margin="5"
+                                   />
+
+                        <!-- このリセットボタンは他と違って「位置をリセット」と同じ処理で、確認ダイアログは出ない -->
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetCameraSettingCommand}"
+                                />
+                    </StackPanel>
+                    
+
+                    <CheckBox Content="{DynamicResource Layout_EnableFreeCameraMode}" 
+                              IsChecked="{Binding EnableFreeCameraMode.Value}"
+                              Margin="10,5"
+                              />
+
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="{DynamicResource Layout_Camera_Fov}"
+                                   />
+                        <Slider Grid.Column="1"
+                                x:Name="sliderCameraFov"
+                                Minimum="1"
+                                Maximum="179"
+                                Value="{Binding CameraFov.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderCameraFov}"
+                                 />
+                    </Grid>
+
+                    <Grid Margin="10,0">
+                        <Grid.Resources>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Width" Value="25"/>
+                                <Setter Property="Height" Value="25"/>
+                                <Setter Property="Margin" Value="2"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" 
+                                   Margin="0"
+                                   Text="{DynamicResource Layout_Camera_QuickSave}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Margin="0"
+                                   Text="{DynamicResource Layout_Camera_QuickLoad}"/>
+
+                        <Button Grid.Row="0" Grid.Column="1"
+                                Command="{Binding QuickSaveViewPointCommand}"
+                                CommandParameter="1"
+                                Content="1"
+                                />
+                        <Button Grid.Row="0" Grid.Column="2"
+                                Command="{Binding QuickSaveViewPointCommand}"
+                                CommandParameter="2"
+                                Content="2"
+                                />
+                        <Button Grid.Row="0" Grid.Column="3"
+                                Command="{Binding QuickSaveViewPointCommand}"
+                                CommandParameter="3"
+                                Content="3"
+                                />
+
+                        <Button Grid.Row="1" Grid.Column="1"
+                                Command="{Binding QuickLoadViewPointCommand}"
+                                IsEnabled="{Binding QuickSave1.Value, Converter={StaticResource StringNotEmptyConverter}}"
+                                CommandParameter="1"
+                                Content="1"
+                                />
+                        <Button Grid.Row="1" Grid.Column="2"
+                                Command="{Binding QuickLoadViewPointCommand}"
+                                IsEnabled="{Binding QuickSave2.Value, Converter={StaticResource StringNotEmptyConverter}}"
+                                CommandParameter="2"
+                                Content="2"
+                                />
+                        <Button Grid.Row="1" Grid.Column="3"
+                                Command="{Binding QuickLoadViewPointCommand}"
+                                IsEnabled="{Binding QuickSave3.Value, Converter={StaticResource StringNotEmptyConverter}}"
+                                CommandParameter="3"
+                                Content="3"
+                                />
+
+                    </Grid>
+
+                    <Button HorizontalAlignment="Left"
+                            Width="150"
+                            Command="{Binding ResetCameraPositionCommand}"
+                            >
+                        <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                            <md:PackIcon Style="{StaticResource IconTextSetIcon}"
+                                         Kind="Reload"
+                                         />
+                            <TextBlock Style="{StaticResource IconSetSetText}"
+                                       Text="{DynamicResource Layout_Camera_ResetPosition}"
+                                       />
+                        </StackPanel>
+                    </Button>
+
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5"
+                                >
+                        <md:PackIcon Kind="TabletDashboard"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+
+                        <TextBlock Text="{DynamicResource Layout_DeviceLayout}"
+                                   Style="{StaticResource HeaderText}"
+                                   Margin="5"
+                                   />
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetDeviceLayoutCommand}"
+                                />
+                    </StackPanel>
+
+                    <CheckBox Margin="20,2"
+                              VerticalContentAlignment="Center"
+                              IsChecked="{Binding EnableDeviceFreeLayout.Value}">
+                        <CheckBox.Content>
+                            <TextBlock Text="{DynamicResource Layout_DeviceFreeLayout}"/>
+                        </CheckBox.Content>
+                    </CheckBox>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5"
+                                >
+                        <md:PackIcon Kind="Eye"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+
+                        <TextBlock Text="{DynamicResource Layout_Hid}"
+                                   Style="{StaticResource HeaderText}"
+                                   Margin="5"
+                                   />
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetHidSettingCommand}"
+                                />
+                    </StackPanel>
+
+                    <CheckBox Margin="20,0"
+                              VerticalContentAlignment="Center"
+                              IsChecked="{Binding HidVisibility.Value}">
+                        <TextBlock Text="{DynamicResource Layout_HidVisible}"/>
+                    </CheckBox>
+
+                    <CheckBox Margin="20,0"
+                              VerticalContentAlignment="Center"
+                              IsChecked="{Binding PenVisibility.Value}">
+                        <TextBlock Text="{DynamicResource Layout_Pen_Visibility}"/>
+                    </CheckBox>
+
+                    <CheckBox Margin="20,0"
+                              VerticalContentAlignment="Center"
+                              IsChecked="{Binding GamepadVisibility.Value}">
+                        <TextBlock Text="{DynamicResource Layout_GamepadVisible}"/>
+                    </CheckBox>
+                    
+                    <CheckBox Margin="20,0"
+                              VerticalContentAlignment="Center"
+                              IsChecked="{Binding MidiControllerVisibility.Value}">
+                        <TextBlock Text="{DynamicResource Layout_MidiVisible}"/>
+                    </CheckBox>
+
+                    <Grid Margin="17,5,5,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Margin="5,3"
+                                        Text="{DynamicResource Layout_Hid_TypingEffect_Header_Streaming}"
+                                        />
+                        <ComboBox Grid.Column="1"
+                                  HorizontalAlignment="Stretch"
+                                  Margin="5,0"
+                                  ItemsSource="{Binding TypingEffectSelections}"
+                                  SelectedItem="{Binding TypingEffectItem}"
+                                  md:HintAssist.Hint="Effect"
+                                  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Height="20" VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <md:PackIcon Grid.Column="0"
+                                                     Width="20" Height="20"
+                                                     Margin="0"
+                                                     Kind="{Binding IconKind, Mode=OneTime}"
+                                                     />
+                                        <TextBlock Grid.Column="1"
+                                                   Margin="5,0,0,0"
+                                                   Text="{Binding EffectName}"
+                                                   />
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </Grid>
+
+                    <TextBlock Margin="10,20,10,5" Text="{DynamicResource Layout_Texture_Tips_Notice}"/>
+
+                    <Button Grid.Row="0" Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Padding="0"
+                            Margin="10,0,10,10"
+                            HorizontalAlignment="Left"
+                            Command="{Binding OpenTextureReplaceTipsUrlCommand}"
+                            Content="{DynamicResource Layout_Texture_Tips_ButtonText}"
+                            />
+
+
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

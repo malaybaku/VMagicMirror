@@ -1,0 +1,101 @@
+﻿<metro:MetroWindow 
+    x:Class="Baku.VMagicMirrorConfig.UpdateNotificationWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+    mc:Ignorable="d"        
+    Title="{DynamicResource UpdateDialog_Title}" 
+    ResizeMode="NoResize"
+    TitleCharacterCasing="Normal"
+    WindowTransitionsEnabled="False"
+    WindowTitleBrush="{StaticResource MahApps.Brushes.Gray1}"
+    NonActiveWindowTitleBrush="{StaticResource MahApps.Brushes.Gray1}"
+    ShowDialogsOverTitleBar="False"
+    WindowStartupLocation="CenterOwner"
+    GlowBrush="{DynamicResource MahApps.Brushes.Gray2}"
+    d:DataContext="{d:DesignInstance vmm:UpdateNotificationViewModel}"
+    Height="280" Width="500"
+    >
+    <i:Interaction.Behaviors>
+        <vmm:DialogBehavior Result="{Binding DialogResult, Mode=OneWay}" />
+    </i:Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                   Margin="15,5"
+                   >
+            <Run Text="{Binding LatestVersion, Mode=OneWay, FallbackValue=v0.0.0}" />
+            <Run Text="{Binding ReleaseDate, Mode=OneWay, FallbackValue=(xxxx/xx/xx)}" />
+        </TextBlock>
+
+        <TextBlock Grid.Row="1"
+                   Style="{StaticResource MaterialDesignBody2TextBlock}"
+                   FontWeight="Bold"
+                   Text="{DynamicResource UpdateDialog_ReleaseNoteHeader}"
+                   Margin="15,5,15,0"
+                   />
+
+        <ScrollViewer Grid.Row="2"
+                      Margin="0,5"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <TextBlock Text="{Binding ReleaseNote}"
+                           TextWrapping="Wrap"
+                           Margin="10"
+                           />
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="3" Margin="10,5">
+            <Grid.RowDefinitions>
+
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Width="NaN"
+                    Height="30"
+                    Margin="5,5"
+                    Command="{Binding GetLatestVersionCommand}"
+                    Content="{DynamicResource UpdateDialog_GetLatest}"
+                    />
+
+            <Button Grid.Column="1"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Width="NaN"
+                    Height="30"
+                    Margin="5,5"
+                    Padding="0"
+                    Command="{Binding AskMeLaterCommand}"
+                    Content="{DynamicResource UpdateDialog_AskMeLater}"
+                    />
+
+            <Button Grid.Column="2"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Width="NaN"
+                    Height="30"
+                    Margin="5,5"
+                    Padding="0"
+                    Command="{Binding SkipThisVersionCommand}"
+                    Content="{DynamicResource UpdateDialog_SkipThisVersion}"
+                    />
+
+        </Grid>
+    </Grid>
+</metro:MetroWindow>

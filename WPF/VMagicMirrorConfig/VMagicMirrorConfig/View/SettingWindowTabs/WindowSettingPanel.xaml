@@ -1,0 +1,272 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.WindowSettingPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             mc:Ignorable="d"
+             d:DesignWidth="400"
+             d:DesignHeight="1050"
+             d:DataContext="{d:DesignInstance Type={x:Type vmm:WindowSettingViewModel}}"
+             >
+    <UserControl.Resources>
+        <vmm:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
+        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  >
+        <StackPanel>
+
+            <TextBlock 
+                Text="{DynamicResource Window_Header}"                 
+                Style="{StaticResource SectionHeaderText}"
+                />
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource Window_Basics}"
+                                   Margin="5"
+                                   Style="{StaticResource HeaderText}"
+                                   />
+
+                    <CheckBox Content="{DynamicResource Window_Transparent}"
+                              IsChecked="{Binding IsTransparent.Value, Mode=TwoWay}"
+                              Margin="15,0"
+                              />
+                    <StackPanel Orientation="Horizontal"
+                                    Margin="25,0,5,5"
+                                    IsEnabled="{Binding IsTransparent.Value,
+                                                        Converter={StaticResource BooleanReverseConverter}}">
+                        <TextBlock Text="{DynamicResource Window_BackgroundImage}"/>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Content="{DynamicResource Window_BackgroundImage_Load}"
+                                    Command="{Binding BackgroundImageSetCommand}"
+                                    />
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Content="{DynamicResource Window_BackgroundImage_Clear}"
+                                    Command="{Binding BackgroundImageClearCommand}"
+                                    />
+                    </StackPanel>
+
+                    <CheckBox Content="{DynamicResource Window_Draggable}"
+                              IsChecked="{Binding WindowDraggable.Value, Mode=TwoWay}"
+                              Margin="15,0"
+                              />
+
+                    <CheckBox Content="{DynamicResource Window_TopMost}"
+                              IsChecked="{Binding TopMost.Value, Mode=TwoWay}"
+                              Margin="15,0"
+                              />
+
+                    <Button Width="220"
+                            Command="{Binding ResetWindowPositionCommand}"
+                            >
+                        <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                            <md:PackIcon Style="{StaticResource IconTextSetIcon}"
+                                         Kind="Reload"
+                                         />
+                            <TextBlock Style="{StaticResource IconSetSetText}"
+                                       Text="{DynamicResource Window_ResetPosition}"
+                                       />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+
+                        <md:PackIcon Kind="ColorLens"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+
+                        <TextBlock Text="{DynamicResource Window_BackgroundColor}"
+                                   Margin="5"
+                                   Style="{StaticResource HeaderText}"
+                                   />
+
+                        <md:Card Style="{StaticResource ColorIndicatorCard}"
+                                 Margin="10,5,5,0">
+                            <Rectangle>
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="{Binding PickerColor}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </md:Card>
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetBackgroundColorSettingCommand}"
+                                />
+                    </StackPanel>
+
+                    <md:Card md:ShadowAssist.ShadowDepth="Depth1" 
+                             Margin="5,10" 
+                             Padding="0">
+                        <Expander Margin="0">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Edit" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Setting_Color_Expander_Header}"/>
+                                </StackPanel>
+                            </Expander.Header>
+                            <Grid>
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                           Text="R"/>
+                                <Slider Grid.Row="0" Grid.Column="1"
+                                        x:Name="sliderR"
+                                        Value="{Binding R.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="0" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=sliderR}"
+                                         />
+
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                           Text="G"/>
+                                <Slider Grid.Row="1" Grid.Column="1"
+                                        x:Name="sliderG"
+                                        Value="{Binding G.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="1" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=sliderG}"
+                                         />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0"
+                                           Text="B"/>
+                                <Slider Grid.Row="2" Grid.Column="1"
+                                        x:Name="sliderB"
+                                        Value="{Binding B.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="2" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=sliderB}"
+                                         />
+
+                                <md:ColorPicker Height="200" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" 
+                                                Margin="20"
+                                                Color="{Binding PickerColor, Mode=TwoWay}"
+                                                />
+                            </Grid>
+                        </Expander>
+
+                    </md:Card>
+
+
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+
+                        <md:PackIcon Kind="LayersClear"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+
+                        <TextBlock Text="{DynamicResource Window_TransparencySupport}"
+                                   Margin="5"
+                                   Style="{StaticResource HeaderText}"
+                                   />
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetOpacitySettingCommand}"
+                                />
+                    </StackPanel>
+                    
+                    <TextBlock Margin="10" Text="{DynamicResource Window_TransparencySupport_Level}"/>
+
+                    <Slider Minimum="0" Maximum="4"
+                            Margin="15,0"
+                            Style="{StaticResource MaterialDesignDiscreteSlider}"
+                            Value="{Binding WholeWindowTransparencyLevel.Value, Mode=TwoWay}"
+                            />
+
+                    <Grid Margin="20,10">
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="MinHeight" Value="40"/>
+                                <Setter Property="TextWrapping" Value="Wrap"/>
+                            </Style>
+                            <vmm:IntegerEqualityToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+                        </Grid.Resources>
+                        <TextBlock Text="{DynamicResource Window_TransparencySupport_Level_0}"
+                                   Visibility="{Binding WholeWindowTransparencyLevel.Value, 
+                                                        Converter={StaticResource IntToVisibilityConverter},
+                                                        ConverterParameter=0
+                                                        }"
+                                   />
+                        <TextBlock Text="{DynamicResource Window_TransparencySupport_Level_1}" 
+                                   Visibility="{Binding WholeWindowTransparencyLevel.Value, 
+                                                        Converter={StaticResource IntToVisibilityConverter},
+                                                        ConverterParameter=1
+                                                        }"
+                                   />
+                        <TextBlock Text="{DynamicResource Window_TransparencySupport_Level_2}" 
+                                   Visibility="{Binding WholeWindowTransparencyLevel.Value, 
+                                                        Converter={StaticResource IntToVisibilityConverter},
+                                                        ConverterParameter=2
+                                                        }"
+                                   />
+                        <TextBlock Text="{DynamicResource Window_TransparencySupport_Level_3}" 
+                                   Visibility="{Binding WholeWindowTransparencyLevel.Value, 
+                                                        Converter={StaticResource IntToVisibilityConverter},
+                                                        ConverterParameter=3
+                                                        }"
+                                   />
+                        <TextBlock Text="{DynamicResource Window_TransparencySupport_Level_4}" 
+                                   Visibility="{Binding WholeWindowTransparencyLevel.Value, 
+                                                        Converter={StaticResource IntToVisibilityConverter},
+                                                        ConverterParameter=4
+                                                        }"
+                                   />
+
+                    </Grid>
+
+                    <TextBlock Margin="10" 
+                               Text="{DynamicResource Window_TransparencySupport_Alpha}"
+                               />
+
+                    <Grid Margin="20,0,20,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Slider Grid.Column="0"                                
+                                x:Name="sliderAlphaWhenTransparent"
+                                Minimum="32" Maximum="255"
+                                Value="{Binding AlphaValueOnTransparent.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderAlphaWhenTransparent}"
+                                 />
+                    </Grid>
+
+                </StackPanel>
+            </Border>
+
+            <!-- マージン用の虚無空間です -->
+            <Grid Width="50" Height="50"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

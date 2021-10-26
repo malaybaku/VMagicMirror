@@ -52,21 +52,14 @@ note: Contact in English or Japanese is very helpful for the author.
 
 ### 4.1. Folder structure
 
-Set the folder as following.
+Put the repository on your local folder. folder path should not include space character.
 
-+ `Bin`
-    + (Empty directory)
-+ `Unity`
-    + This repository
-+ `WPF`
-    + [WPF repository](https://github.com/malaybaku/VMAgicMirrorConfig)
-
-Open Unity project with Unity 2019.4.x, and open WPF project with Visual Studio 2019.
+Open Unity project with Unity 2020.3.z, and open WPF project with Visual Studio 2019.
 
 Maintainer's environment is as following.
 
 * Unity 2020.3.8f1 Personal
-* Visual Studio Community 2019.16.10.3
+* Visual Studio Community 2019.16.11.2
     * .NET Core 3.1 SDK
     * Visual Studio Component "C++ Desktop Development" is required.
 
@@ -125,6 +118,8 @@ Also there are some UPM based dependencies.
     
 ### 4.3. Build
 
+Prepare output folder like `Bin`. Following instruction expects the folder name is `Bin`, but of course you can specify other name.
+
 * In Unity,
     - Specify `Bin` folder for the output.
 * To build WPF project, right click `VMagicMirrorConfig` project on the solution explorer and select `publish`.
@@ -136,19 +131,19 @@ Also there are some UPM based dependencies.
         - Target Location: choose somewhere on your PC folder
     - By the publish you will get the files at target location folder. Then, copy the files to `Bin/ConfigApp/` folder.
 
-Distributed VMagicMirror (v0.9.3 or later) also would be a reference of the folder structure.
+When you want to check right folder structure, please see the distributed app.
 
 ## 5. Third-Party License
 
 ### 5.1. OSS License
 
-OSS license is listed in control panel GUI.
+OSS license is listed in control panel GUI, and the resource text is this file.
 
-[https://github.com/malaybaku/VMagicMirrorConfig](https://github.com/malaybaku/VMagicMirrorConfig)
+https://github.com/malaybaku/VMagicMirror/blob/master/WPF/VMagicMirrorConfig/VMagicMirrorConfig/Resources/LicenseTextResource.xaml
 
-You can also see the plain text version from below.
+This page is similar, but it also refers to the libraries which are used in past versions.
 
-https://github.com/malaybaku/VMagicMirrorConfig/blob/master/VMagicMirrorConfig/VMagicMirrorConfig/Resources/LicenseTextResource.xaml
+https://malaybaku.github.io/VMagicMirror/credit_license
 
 
 ### 5.2. About Gamepad Model Data 

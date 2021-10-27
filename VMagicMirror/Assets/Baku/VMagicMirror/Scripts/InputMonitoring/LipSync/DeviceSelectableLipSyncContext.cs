@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public class DeviceSelectableLipSyncContext : OVRLipSyncContextBase
+    public class DeviceSelectableLipSyncContext : VmmLipSyncContextBase // OVRLipSyncContextBase
     {
         private const int SamplingFrequency = 48000;
         private const int LengthSeconds = 1;
@@ -40,7 +40,7 @@ namespace Baku.VMagicMirror
         
         private float _sensitivityFactor = 1f;
         /// <summary> マイク感度を[dB]単位で取得、設定します。 </summary>
-        public int Sensitivity
+        public override int Sensitivity
         {
             get => _sensitivity;
             set
@@ -55,8 +55,12 @@ namespace Baku.VMagicMirror
         }
 
         public bool IsRecording { get; private set; } = false;
-        public string DeviceName { get; private set; } = "";
 
+        private string _deviceName = "";
+        public override string DeviceName => _deviceName;
+
+        public override string[] GetAvailableDeviceNames() => Microphone.devices;
+        
         [Inject]
         public void Initialize(IMessageReceiver receiver, IMessageSender sender)
         {
@@ -74,7 +78,7 @@ namespace Baku.VMagicMirror
             _sender = sender;
         }
         
-        public void StartRecording(string deviceName)
+        public override void StartRecording(string deviceName)
         {
             if (IsRecording || !Microphone.devices.Contains(deviceName))
             {
@@ -88,16 +92,16 @@ namespace Baku.VMagicMirror
             }
             _clip = Microphone.Start(deviceName, true, LengthSeconds, SamplingFrequency);
             IsRecording = true;
-            DeviceName = deviceName;
+            _deviceName = deviceName;
         }
 
-        public void StopRecording()
+        public override void StopRecording()
         {
             if (IsRecording)
             {
                 Microphone.End(DeviceName);
                 IsRecording = false;
-                DeviceName = "";
+                _deviceName = "";
             }
         }
 

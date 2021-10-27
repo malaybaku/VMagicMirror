@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class LipSyncReceiver : MonoBehaviour
     {
-        private DeviceSelectableLipSyncContext _lipSyncContext;
+        private VmmLipSyncContextBase _lipSyncContext;
         private AnimMorphEasedTarget _animMorphEasedTarget;
         private LipSyncIntegrator _lipSyncIntegrator;
         
@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _lipSyncContext = GetComponent<DeviceSelectableLipSyncContext>();
+            _lipSyncContext = GetComponent<VmmLipSyncContextBase>();
             _animMorphEasedTarget = GetComponent<AnimMorphEasedTarget>();
             _lipSyncIntegrator = GetComponent<LipSyncIntegrator>();
         }

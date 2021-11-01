@@ -6,9 +6,11 @@ namespace Baku.VMagicMirror
 {
     public class NAudioLipSyncContext : VmmLipSyncContextBase
     {
+        private const float ShortToSingle = 1.0f / 32768f;
+
         //ほぼ全ての環境でアップサンプリングになる
         private const int SampleRate = 48000;
-        //byte[]がこの長さになると0.5sec分のバッファになる
+        //4byteで(2ch平均で)1サンプルなので、コレで24000サンプル = 0.5secぶん
         private const int BufferLength = 96000;
         private WaveInEvent _waveIn = null;
         private string _deviceName = "";
@@ -19,7 +21,10 @@ namespace Baku.VMagicMirror
 
         //NOTE: 1秒分のリングバッファにしたうえで音に対するズレは許容する
         private readonly object _bufferLock = new object();
+
+        //次にバイナリを_bufferへ書き込むべきインデックスを保持し、0以上、(BufferLength - 1)以下
         private int _writeIndex = 0;
+        //次にバイナリを_bufferOnReadから読み込むべきインデックスを保持し、0以上、(BufferLength - 1)以下
         private int _readIndex = 0;
         private readonly byte[] _buffer = new byte[BufferLength];
         private readonly byte[] _bufferOnRead = new byte[BufferLength];
@@ -39,7 +44,7 @@ namespace Baku.VMagicMirror
             lock (_bufferLock)
             {
                 //読み込んでもProcessFrameする分量じゃない = 放置
-                if (GetDataLength(BufferLength, _readIndex, _writeIndex) < _processBuffer.Length * 2)
+                if (GetDataLength(BufferLength, _readIndex, _writeIndex) < _processBuffer.Length * 4)
                 {
                     return;
                 }
@@ -130,6 +135,10 @@ namespace Baku.VMagicMirror
                 //普通に書ききれる
                 Array.Copy(data, 0, _buffer, _writeIndex, length);
                 _writeIndex += length;
+                if (_writeIndex >= BufferLength)
+                {
+                    _writeIndex = 0;
+                }
             }
             else
             {
@@ -143,18 +152,19 @@ namespace Baku.VMagicMirror
 
         private void ReadBuffer(int writeIndex)
         {
-            //NOTE: どうせbytes -> float変換が挟まるのでもっさりやる。
-            //呼び出し時点で_readIndexもwriteIndexも4の倍数なことが前提になっている点にも注意
-            while (_readIndex != writeIndex)
+            //4byte -> 1sampleに変化させつつ読んでいく
+            //開始時点で_readIndexとwriteIndexが双方とも4の倍数である前提を置いていることに注意
+            var dataLength = GetDataLength(BufferLength, _readIndex, writeIndex);
+            for (int readCount = 0; readCount < dataLength; readCount += 4)
             {
-                float c1 = BitConverter.ToSingle(_bufferOnRead, _readIndex);
+                float c1 = ShortToSingle * BitConverter.ToInt16(_bufferOnRead, _readIndex);
                 _readIndex += 2;
                 if (_readIndex >= _bufferOnRead.Length)
                 {
                     _readIndex = 0;
                 }
                 
-                float c2 = BitConverter.ToSingle(_bufferOnRead, _readIndex);
+                float c2 = ShortToSingle * BitConverter.ToInt16(_bufferOnRead, _readIndex);
                 _readIndex += 2;
                 if (_readIndex >= _bufferOnRead.Length)
                 {

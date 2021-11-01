@@ -27,10 +27,6 @@ namespace Baku.VMagicMirror
         [Tooltip("視線の向き変化によるまばたきイベントの発生条件を満たしたとき、実際にまばたきする確率")]
         [Range(0f, 1f)] 
         [SerializeField] private float eyeRotBlinkProbability = 0.7f;
-        
-        //NOTE: めちゃ雑な方法として、リップシンクが無かどうか、という指標でもって発話を判定します。ホントはもっと丁寧にやってね
-        [Tooltip("発話の状態取得をする根拠となるリップシンク")]
-        [SerializeField] private OVRLipSyncContextBase lipSyncContext = null;
 
         [Tooltip("Visemeのなかでこのしきい値を超える値が一つでもあれば、発声中だと判定する")]
         [SerializeField] private float lipSyncVisemeThreshold = 0.1f;
@@ -74,6 +70,7 @@ namespace Baku.VMagicMirror
         private bool _willBlinkByEyeMotion = false;
         
         //リップシンク
+        private VmmLipSyncContextBase _lipSyncContext = null;
         private float _lipSyncBlinkCoolDownCount = 0f;
         private int _lipSyncOffCount = 0;
         private int _lipSyncOnCount = 0;
@@ -83,8 +80,9 @@ namespace Baku.VMagicMirror
         public bool EnableLipSyncBasedBlinkAdjust { get; set; } = true;
  
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, VmmLipSyncContextBase lipSyncContext)
         {
+            _lipSyncContext = lipSyncContext;
             vrmLoadable.VrmLoaded += vrm =>
             {
                 _head = vrm.animator.GetBoneTransform(HumanBodyBones.Head);
@@ -214,8 +212,8 @@ namespace Baku.VMagicMirror
             //ざっくりやりたいこと: 音節の区切りをvisemeベースで推定し、visemeが有→無に転じたところで音節が区切れたものと扱う。
             //ただし、毎フレームでやるとノイズ耐性が低いので、数フレーム連続で続いた場合の立ち上がり/立ち下がりだけを扱う。
             if (!EnableLipSyncBasedBlinkAdjust ||
-                !lipSyncContext.enabled || 
-                !(lipSyncContext.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame)
+                !_lipSyncContext.enabled || 
+                !(_lipSyncContext.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame)
             )
             {
                 return;

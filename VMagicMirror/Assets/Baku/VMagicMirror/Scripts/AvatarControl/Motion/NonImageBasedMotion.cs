@@ -42,7 +42,7 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
             FaceTracker faceTracker,
-            DeviceSelectableLipSyncContext lipSync
+            VmmLipSyncContextBase lipSyncContext
             )
         {
             _faceTracker = faceTracker;
@@ -51,7 +51,7 @@ namespace Baku.VMagicMirror
                 VmmCommands.EnableVoiceBasedMotion,
                 command => _operationEnabled = command.ToBoolean());
 
-            _voiceOnOffParser = new VoiceOnOffParser(lipSync)
+            _voiceOnOffParser = new VoiceOnOffParser(lipSyncContext)
             {
                 //そこそこちゃんと喋ってないと検出しない、という設定のつもり
                 VisemeThreshold = 0.2f,

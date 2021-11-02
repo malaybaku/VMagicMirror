@@ -79,8 +79,11 @@ Unity 2020.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フ
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 
 FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。
+
+[NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)は[NAudio](https://github.com/naudio/NAudio)を導入するために使用しています。
 
 "Fly,Baby." および "LaserLightShader"はBOOTHで販売されているアセットで、ビルドに必須ではありませんが、もし導入しない場合、タイピング演出が一部動かなくなります。
 

@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public class DeviceSelectableLipSyncContext : VmmLipSyncContextBase // OVRLipSyncContextBase
+    public class DeviceSelectableLipSyncContext : VmmLipSyncContextBase
     {
         private const int SamplingFrequency = 48000;
         private const int LengthSeconds = 1;

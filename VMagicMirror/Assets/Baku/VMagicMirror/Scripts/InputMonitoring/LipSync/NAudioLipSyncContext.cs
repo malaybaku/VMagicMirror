@@ -24,9 +24,10 @@ namespace Baku.VMagicMirror
 
         //次にバイナリを_bufferへ書き込むべきインデックスを保持し、0以上、(BufferLength - 1)以下
         private int _writeIndex = 0;
-        //次にバイナリを_bufferOnReadから読み込むべきインデックスを保持し、0以上、(BufferLength - 1)以下
+        //_bufferで読み込み済みの位置の次のインデックスを保持し、0以上、(BufferLength - 1)以下
         private int _readIndex = 0;
         private readonly byte[] _buffer = new byte[BufferLength];
+        //NOTE: 最悪ケースのために_bufferと同じ長さだが、ふつう先頭付近のみを使う
         private readonly byte[] _bufferOnRead = new byte[BufferLength];
 
         [Inject]
@@ -40,20 +41,42 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            int writeIndex = 0;
+            int byteLen = 0;
             lock (_bufferLock)
             {
-                //読み込んでもProcessFrameする分量じゃない = 放置
-                if (GetDataLength(BufferLength, _readIndex, _writeIndex) < _processBuffer.Length * 4)
+                byteLen = GetDataLength(BufferLength, _readIndex, _writeIndex);
+                if (byteLen < (_processBuffer.Length - _processBufferIndex) * 4)
                 {
+                    //読み込んでもFrameとして処理する分量にならない = 無視
                     return;
                 }
 
-                //ちょっと贅沢だが、lockしてる行を狭くしたいのでガッとコピーしてしまう
-                Array.Copy(_buffer, _bufferOnRead, _buffer.Length);
-                writeIndex = _writeIndex;
+                //_readIndexと_writeIndexの間、つまり読み込めてない分を書き写す
+                if (_readIndex + byteLen <= BufferLength)
+                {
+                    Array.Copy(_buffer, _readIndex, _bufferOnRead, 0, byteLen);
+                }
+                else
+                {
+                    var tailLength = BufferLength - _readIndex;
+                    Array.Copy(
+                        _buffer, _readIndex, 
+                        _bufferOnRead, 0, tailLength
+                        );
+                    Array.Copy(
+                        _buffer, 0, 
+                        _bufferOnRead, tailLength, byteLen - tailLength
+                        );
+                }
+
+                _readIndex += byteLen;
+                if (_readIndex >= BufferLength)
+                {
+                    _readIndex -= BufferLength;
+                }
             }
-            ReadBuffer(writeIndex);
+            
+            ReadBuffer(byteLen);
         }
         
         public override string[] GetAvailableDeviceNames()
@@ -150,28 +173,15 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private void ReadBuffer(int writeIndex)
+        private void ReadBuffer(int length)
         {
-            //4byte -> 1sampleに変化させつつ読んでいく
-            //開始時点で_readIndexとwriteIndexが双方とも4の倍数である前提を置いていることに注意
-            var dataLength = GetDataLength(BufferLength, _readIndex, writeIndex);
-            for (int readCount = 0; readCount < dataLength; readCount += 4)
+            //4byte -> 1sampleに変化させつつ読んでいく。lengthは4の倍数な前提であることに注意
+            for (int i = 0; i < length; i += 4)
             {
-                float c1 = ShortToSingle * BitConverter.ToInt16(_bufferOnRead, _readIndex);
-                _readIndex += 2;
-                if (_readIndex >= _bufferOnRead.Length)
-                {
-                    _readIndex = 0;
-                }
-                
-                float c2 = ShortToSingle * BitConverter.ToInt16(_bufferOnRead, _readIndex);
-                _readIndex += 2;
-                if (_readIndex >= _bufferOnRead.Length)
-                {
-                    _readIndex = 0;
-                }
+                float c1 = BitConverter.ToInt16(_bufferOnRead, i);
+                float c2 = BitConverter.ToInt16(_bufferOnRead, i + 2);
 
-                _processBuffer[_processBufferIndex] = 0.5f * (c1 + c2);
+                _processBuffer[_processBufferIndex] = ShortToSingle * 0.5f * (c1 + c2);
                 _processBufferIndex++;
                 if (_processBufferIndex >= _processBuffer.Length)
                 {

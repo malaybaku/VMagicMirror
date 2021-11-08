@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class LipSyncReceiver : MonoBehaviour
     {
-        private DeviceSelectableLipSyncContext _lipSyncContext;
+        private VmmLipSyncContextBase _lipSyncContext;
         private AnimMorphEasedTarget _animMorphEasedTarget;
         private LipSyncIntegrator _lipSyncIntegrator;
         
@@ -49,13 +49,15 @@ namespace Baku.VMagicMirror
             );
             receiver.AssignQueryHandler(
                 VmmQueries.MicrophoneDeviceNames,
-                query => query.Result = DeviceNames.CreateDeviceNamesJson(Microphone.devices)
+                query => query.Result = DeviceNames.CreateDeviceNamesJson(
+                    _lipSyncContext.GetAvailableDeviceNames()
+                    )
             );
         }
         
         private void Start()
         {
-            _lipSyncContext = GetComponent<DeviceSelectableLipSyncContext>();
+            _lipSyncContext = GetComponent<VmmLipSyncContextBase>();
             _animMorphEasedTarget = GetComponent<AnimMorphEasedTarget>();
             _lipSyncIntegrator = GetComponent<LipSyncIntegrator>();
         }

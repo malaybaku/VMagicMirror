@@ -80,8 +80,11 @@ Maintainer's environment is as following.
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 
 Should be noted that `FinalIK`, `Dlib FaceLandmark Detector`, and `OpenCV for Unity` are paid assets.
+
+[NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity) is necessary to import [NAudio](https://github.com/naudio/NAudio).
 
 "Fly,Baby." and "LaserLightShader" are available on BOOTH, and they are optional. If you do not introduce them, some of typing effects will not work correctly.
 

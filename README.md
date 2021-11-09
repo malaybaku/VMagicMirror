@@ -51,14 +51,14 @@ Windows 10環境でお使いいただけます。
 
 適当なフォルダに本レポジトリを配置します。配置先について、空白文字を含むようなフォルダパスは避けて下さい。
 
-Unity 2020.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォルダ)を開き、Visual Studio 2019でWPFプロジェクトを開きます。
+Unity 2020.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォルダ)を開き、Visual Studio 2022でWPFプロジェクトを開きます。
 
 メンテナの開発環境は以下の通りです。
 
 * Unity 2020.3.8f1 Personal
-* Visual Studio Community 2019 16.11.2
-    * .NET Core 3.1 SDKがインストール済みであること
-    * Visual Studioのコンポーネントで「C++によるデスクトップ開発」をインストール済みであること
+* Visual Studio Community 2022 (17.0.0)
+    * 「.NET Desktop」コンポーネントがインストール済みであること
+    * 「C++によるデスクトップ開発」コンポーネントがインストール済みであること
         - UnityのBurstコンパイラ向けに必要なセットアップです。
 
 

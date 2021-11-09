@@ -1,14 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWpf>true</UseWpf>
     <RootNamespace>Baku.VMagicMirrorConfig</RootNamespace>
     <RuntimeIdentifier>win10-x86</RuntimeIdentifier>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Platform>x86</Platform>
     <Nullable>enable</Nullable>
-    <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>link</TrimMode>
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <ApplicationIcon>.\Images\vmmc_logo.ico</ApplicationIcon>

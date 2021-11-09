@@ -15,12 +15,12 @@ namespace Baku.VMagicMirrorConfig
         {
             _model = model;
 
-            _lightColor = Color.FromRgb((byte)model.LightR.Value, (byte)model.LightG.Value, (byte)model.LightB.Value);
+            void UpdateLightColor() => RaisePropertyChanged(nameof(LightColor));
             model.LightR.PropertyChanged += (_, __) => UpdateLightColor();
             model.LightG.PropertyChanged += (_, __) => UpdateLightColor();
             model.LightB.PropertyChanged += (_, __) => UpdateLightColor();
 
-            _bloomColor = Color.FromRgb((byte)model.BloomR.Value, (byte)model.BloomG.Value, (byte)model.BloomB.Value);
+            void UpdateBloomColor() => RaisePropertyChanged(nameof(BloomColor));
             model.BloomR.PropertyChanged += (_, __) => UpdateBloomColor();
             model.BloomG.PropertyChanged += (_, __) => UpdateBloomColor();
             model.BloomB.PropertyChanged += (_, __) => UpdateBloomColor();
@@ -38,10 +38,6 @@ namespace Baku.VMagicMirrorConfig
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetWindSetting)
                 );
             ResetImageQualitySettingCommand = new ActionCommand(ResetImageQuality);
-
-            //最初の時点で不整合しなければ後は何でもOK
-            UpdateLightColor();
-            UpdateBloomColor();
         }
 
         private readonly LightSettingSync _model;
@@ -63,18 +59,14 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> LightG => _model.LightG;
         public RProperty<int> LightB => _model.LightB;
 
-        private Color _lightColor;
         public Color LightColor
         {
-            get => _lightColor;
+            get => Color.FromRgb((byte)LightR.Value, (byte)LightG.Value, (byte)LightB.Value);
             set
             {
-                if (SetValue(ref _lightColor, value))
-                {
-                    LightR.Value = value.R;
-                    LightG.Value = value.G;
-                    LightB.Value = value.B;
-                }
+                LightR.Value = value.R;
+                LightG.Value = value.G;
+                LightB.Value = value.B;
             }
         }
 
@@ -105,23 +97,16 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> BloomG => _model.BloomG;
         public RProperty<int> BloomB => _model.BloomB;
 
-        private Color _bloomColor;
         public Color BloomColor
         {
-            get => _bloomColor;
+            get => Color.FromRgb((byte)BloomR.Value, (byte)BloomG.Value, (byte)BloomB.Value);
             set
             {
-                if (SetValue(ref _bloomColor, value))
-                {
-                    BloomR.Value = value.R;
-                    BloomG.Value = value.G;
-                    BloomB.Value = value.B;
-                }
+                BloomR.Value = value.R;
+                BloomG.Value = value.G;
+                BloomB.Value = value.B;
             }
         }
-
-        private void UpdateBloomColor()
-            => BloomColor = Color.FromRgb((byte)BloomR.Value, (byte)BloomG.Value, (byte)BloomB.Value);
 
         #endregion
 

@@ -10,8 +10,7 @@ namespace Baku.VMagicMirrorConfig
         {
             _model = model;
 
-            void UpdatePickerColor() =>
-                PickerColor = Color.FromRgb((byte)_model.R.Value, (byte)_model.G.Value, (byte)_model.B.Value);
+            void UpdatePickerColor() => RaisePropertyChanged(nameof(PickerColor));
             _model.R.PropertyChanged += (_, __) => UpdatePickerColor();
             _model.G.PropertyChanged += (_, __) => UpdatePickerColor();
             _model.B.PropertyChanged += (_, __) => UpdatePickerColor();
@@ -39,19 +38,15 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> G => _model.G;
         public RProperty<int> B => _model.B;
 
-        private Color _pickerColor;
         /// <summary> ColorPickerに表示する、Alphaを考慮しない背景色を取得、設定します。 </summary>
         public Color PickerColor
         {
-            get => _pickerColor;
+            get => Color.FromRgb((byte)R.Value, (byte)G.Value, (byte)B.Value);
             set
             {
-                if (SetValue(ref _pickerColor, value))
-                {
-                    R.Value = PickerColor.R;
-                    G.Value = PickerColor.G;
-                    B.Value = PickerColor.B;
-                }
+                R.Value = value.R;
+                G.Value = value.G;
+                B.Value = value.B;
             }
         }
 

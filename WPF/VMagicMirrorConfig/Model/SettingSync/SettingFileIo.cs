@@ -73,6 +73,14 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
+        //NOTE: Settingとは言ってるが実態はファイル削除なことに注意
+        public void DeleteSetting(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
 
         /// <summary>
         /// いま指定したファイルにセーブを行ったらそのファイルの中身が書き換わるかどうかをチェックします。
@@ -151,7 +159,6 @@ namespace Baku.VMagicMirrorConfig
             act(saveData);
         }
 
-
         private void LoadSettingSub(string path, SettingFileReadWriteModes mode, SettingFileReadContent content, bool fromAutomation)
         {
             using (var sr = new StreamReader(path))
@@ -228,7 +235,6 @@ namespace Baku.VMagicMirrorConfig
                 }
             }
         }
-
     }
 
     /// <summary>

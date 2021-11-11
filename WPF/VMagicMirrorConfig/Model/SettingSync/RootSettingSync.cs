@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Windows;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -110,6 +111,14 @@ namespace Baku.VMagicMirrorConfig
             LastLoadedVRoidModelId = "";
         }
 
+        /// <summary>
+        /// アプリケーションが起動されたまま、全ての設定を初期状態にします。
+        /// </summary>
+        /// <remarks>
+        /// 理論上はコレを使えば再起動無しでリセットできるんだけど、実際うまくいってないケースがありそう…。
+        /// より安全な方法として、現在は_autosaveファイル自体を削除してアプリを落とす手段を提供している。
+        /// 消すのは勿体ないため、呼び出し元はないけどこのメソッドは残します。
+        /// </remarks>
         public void ResetToDefault()
         {
             _sender.StartCommandComposite();

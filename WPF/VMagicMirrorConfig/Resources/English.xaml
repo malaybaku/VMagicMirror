@@ -469,6 +469,8 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="DialogTitle_ResetAllSetting">Reset Setting</sys:String>
     <sys:String x:Key="DialogMessage_ResetAllSetting" xml:space="preserve">Are you sure you want to reset current settings?
 
+The current setting will be deleted, and VMagicMirror will quit so you need to start it again.
+
 If you want to save current setting, cancel this dialog and save before reset.</sys:String>
     <sys:String x:Key="DialogTitle_ResetCategorySetting">Reset Setting</sys:String>
     <sys:String x:Key="DialogMessage_ResetCategorySetting">Are you sure you want to reset selected category setting?</sys:String>

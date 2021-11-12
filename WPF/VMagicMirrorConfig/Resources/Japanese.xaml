@@ -469,8 +469,9 @@
     <sys:String x:Key="DialogTitle_LoadLocalVrm">VRMの読み込み</sys:String>
     <sys:String x:Key="DialogMessage_LoadLocalVrm">ビューアー画面のライセンスを確認してください。読み込みますか？</sys:String>
     <sys:String x:Key="DialogTitle_ResetAllSetting">設定のリセット</sys:String>
-    <sys:String x:Key="DialogMessage_ResetAllSetting" xml:space="preserve">リセットを行うと現在の設定が初期状態に戻ります。
-オートセーブの内容をバックアップする場合、事前にセーブを行ってください。
+    <sys:String x:Key="DialogMessage_ResetAllSetting" xml:space="preserve">リセット操作を行うと現在の設定を削除し、アプリケーションが再起動します。
+
+現在の設定をバックアップする場合、事前にセーブを行ってください。
 
 リセットしますか？</sys:String>
     <sys:String x:Key="DialogTitle_ResetCategorySetting">設定のリセット</sys:String>

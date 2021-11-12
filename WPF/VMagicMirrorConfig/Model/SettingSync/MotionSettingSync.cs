@@ -316,7 +316,10 @@ namespace Baku.VMagicMirrorConfig
             try
             {
                 var parameters = JsonConvert.DeserializeObject<AutoAdjustParameters>(data);
-                LengthFromWristToTip.SilentSet(parameters.LengthFromWristToTip);
+                if (parameters != null)
+                {
+                    LengthFromWristToTip.SilentSet(parameters.LengthFromWristToTip);
+                }
             }
             catch (Exception)
             {

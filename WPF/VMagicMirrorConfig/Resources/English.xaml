@@ -467,7 +467,9 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="DialogTitle_LoadLocalVrm">Load VRM</sys:String>
     <sys:String x:Key="DialogMessage_LoadLocalVrm">Please confirm the license in viewer window. Do you load the character?</sys:String>
     <sys:String x:Key="DialogTitle_ResetAllSetting">Reset Setting</sys:String>
-    <sys:String x:Key="DialogMessage_ResetAllSetting" xml:space="preserve">Are you sure you want to reset current settings?
+    <sys:String x:Key="DialogMessage_ResetAllSetting" xml:space="preserve">Reset process will delete current setting, and VMagicMirror will restart.
+
+Are you sure you want to reset?
 
 If you want to save current setting, cancel this dialog and save before reset.</sys:String>
     <sys:String x:Key="DialogTitle_ResetCategorySetting">Reset Setting</sys:String>

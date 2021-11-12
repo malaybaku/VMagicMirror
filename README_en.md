@@ -118,7 +118,14 @@ Also there are some UPM based dependencies.
 * [UniRx](https://github.com/neuecc/UniRx)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * This is fork repository and not the original.
-    
+
+You will get compile errors for the first time. To solve this, confirm `NuGetForUnity` is installed, and open `NAudioLipSyncContext.cs` to uncomment `#define` line at the start of the script. This will solve compile errors and NuGet download will start. After download completed, comment out the line to enable actual lipsync implementation.
+
+```
+//uncomment this line once, and comment out after NAudio is downloaded
+#define TEMP_SUPPRESS_ERROR
+```
+
 ### 4.3. Build
 
 Prepare output folder like `Bin`. Following instruction expects the folder name is `Bin`, but of course you can specify other name.

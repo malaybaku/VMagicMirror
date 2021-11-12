@@ -118,6 +118,13 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * オリジナルのMidiJackではなく、Forkレポジトリです。
 
+特に初回にプロジェクトを開くとコンパイルエラーになります。これを解決するには`NuGetForUnity`の導入後に`NAudioLipSyncContext.cs`冒頭の`#define`のコメントアウトを解除し、一時的にコンパイルエラーを抑制します。
+するとNAudioがNuGetから取得できます。取得後、`#define`の行をコメントアウトすることで、リップシンクが有効な状態になります。
+
+```
+//下記を一旦コメントアウト解除したのち、ふたたびコメントアウトする
+#define TEMP_SUPPRESS_ERROR
+```
 
 ### 4.3. ビルド
 

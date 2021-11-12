@@ -34,6 +34,8 @@ namespace Baku.VMagicMirrorConfig
         //NOTE: モデルのロード確認UI(ファイル/VRoidHubいずれか)を出す直前時点での値を保持するフラグで、UIが出てないときはnullになる
         private bool? _windowTransparentBeforeLoadProcess = null;
 
+        private bool _settingResetCalled = false;
+
         public MainWindowViewModel()
         {
             Model = new RootSettingSync(MessageSender, MessageIo.Receiver);
@@ -249,11 +251,15 @@ namespace Baku.VMagicMirrorConfig
                 MessageBoxWrapper.MessageBoxStyle.OKCancel
                 );
 
-            if (res)
+            if (!res)
             {
-                //NOTE: 元は個別のViewModelでResetToDefaultを呼んでたが、モデルのリセットで全部うまく行くのが正しいはず
-                Model.ResetToDefault();
+                return;
             }
+
+            //設定を消したあとで再起動
+            _settingResetCalled = true;
+            SaveFileManager.SettingFileIo.DeleteSetting(SpecialFilePath.AutoSaveSettingFilePath);
+            Application.Current.MainWindow?.Close();
         }
 
         private void LoadPrevSetting()
@@ -347,14 +353,26 @@ namespace Baku.VMagicMirrorConfig
 
         public void Dispose()
         {
-            if (!_isDisposed)
+            if (_isDisposed)
             {
-                _isDisposed = true;
+                return;
+            }
+
+            _isDisposed = true;
+
+            if (!_settingResetCalled)
+            {
                 SettingFileIo.SaveSetting(SpecialFilePath.AutoSaveSettingFilePath, SettingFileReadWriteModes.AutoSave);
-                Model.Automation.Dispose();
-                MessageIo.Dispose();
-                _runtimeHelper.Dispose();
-                LargePointerController.Instance.Close();
+            }
+            Model.Automation.Dispose();
+            MessageIo.Dispose();
+            _runtimeHelper.Dispose();
+            LargePointerController.Instance.Close();
+
+            //呼ぶのは起動処理だがUX的には再起動
+            if (_settingResetCalled)
+            {
+                UnityAppStarter.StartUnityApp();
             }
         }
 

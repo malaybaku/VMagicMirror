@@ -18,7 +18,7 @@ namespace Baku.VMagicMirrorConfig
         //デリゲートがGCされるのを避けるために、明示的に参照を持つ
         private readonly MouseHookWinAPI.HOOKPROC _hookProc;
 
-        public event Action<int> MouseButton;
+        public event Action<int>? MouseButton;
 
         public void Start()
         {

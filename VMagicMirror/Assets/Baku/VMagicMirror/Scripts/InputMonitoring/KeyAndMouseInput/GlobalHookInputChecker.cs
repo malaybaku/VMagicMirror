@@ -57,6 +57,11 @@ namespace Baku.VMagicMirror
                 VmmCommands.EnableHidRandomTyping,
                 c => _randomizeKey = c.ToBoolean()
             );
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.MouseButton,
+                c => _mouseButton.OnNext(c.Content)
+                );
         }
 
         public void ReleaseBeforeCloseConfig()
@@ -67,8 +72,8 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            _thread = new Thread(InputObserveThread);
-            _thread.Start();
+            // _thread = new Thread(InputObserveThread);
+            // _thread.Start();
         }
 
         private void Update()

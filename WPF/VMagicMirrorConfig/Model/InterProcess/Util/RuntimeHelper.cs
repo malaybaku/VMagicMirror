@@ -11,6 +11,7 @@
         {
             _sender = sender;
             _receiver = receiver;
+            MouseButtonMessageSender = new MouseButtonMessageSender(sender);
             CameraPositionChecker = new CameraPositionChecker(sender, mainModel.Layout);
             UnityAppCloser = new UnityAppCloser(receiver);
             ErrorIndicator = new ErrorMessageIndicator(receiver);
@@ -20,6 +21,7 @@
         private readonly IMessageSender _sender;
         private readonly IMessageReceiver _receiver;
 
+        public MouseButtonMessageSender MouseButtonMessageSender { get; }
         public CameraPositionChecker CameraPositionChecker { get; }
         public UnityAppCloser UnityAppCloser { get; }
         public ErrorMessageIndicator ErrorIndicator { get; }
@@ -27,6 +29,7 @@
 
         public void Start()
         {
+            MouseButtonMessageSender.Start();
             FreeLayoutHelper.StartObserve();
             CameraPositionChecker.Start(2000);
             new AppExitFromUnityMessage().Initialize(_receiver);
@@ -34,6 +37,7 @@
 
         public void Dispose()
         {
+            MouseButtonMessageSender.Dispose();
             FreeLayoutHelper.EndObserve();
             CameraPositionChecker.Stop();
             //NOTE: コイツによるプロセス閉じ処理はsender/receiverに依存しないことに注意。

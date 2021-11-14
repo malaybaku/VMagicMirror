@@ -1,3 +1,5 @@
+using namespace System
+using namespace System.IO
 
 # Create zip backup for build output.
 # This script assumes output folder (e.g. Bin) is clean.
@@ -22,4 +24,10 @@ $FolderName = "VMM_" + $AppVer + "_" + $AppEdition
 
 $ZipSrc = "..\" + $BinFolder + "\*"
 $ZipDest = "..\Releases\zip\" + $FolderName + ".zip"
+
+if (![Directory]::Exists("..\Releases\zip"))
+{
+    [Directory]::CreateDirectory("..\Releases\zip")
+}
+
 Compress-Archive -Path $ZipSrc -DestinationPath $ZipDest -Force

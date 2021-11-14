@@ -3,9 +3,9 @@ REM %1 full/standard (default: full)
 REM %2 prod/dev (default: prod)
 REM example: `build_unity.cmd full dev`
 
-REM use following instead, if editor is from Hub (I think this case would be common...)
-REM set UNITY_EXE="%ProgramFiles%\Unity\Hub\Editor\2020.3.8f1\Editor\Unity.exe"
-set UNITY_EXE="%ProgramFiles%\Unity\Editor\Unity.exe"
+REM use following instead, if editor is NOT from Hub
+REM set UNITY_EXE="%ProgramFiles%\Unity\Editor\Unity.exe"
+set UNITY_EXE="%ProgramFiles%\Unity\Hub\Editor\2020.3.8f1\Editor\Unity.exe"
 
 cd %~dp0
 

@@ -128,6 +128,29 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 
 ### 4.3. ビルド
 
+### 4.3.1. コマンドラインからビルドする
+
+`Batches`フォルダ内のコマンドからビルドが可能です。
+バッチファイル等の引数の指定方法については、ファイル内のコメントを参照して下さい。
+
+特に`create_installer.cmd`では[Inno Setup](https://jrsoftware.org/isinfo.php)のインストールが必要です。
+
+```
+# WPFプロジェクトをビルド
+build_wpf.cmd standard dev
+
+# Unityプロジェクトをビルド
+build_unity.cmd standard dev
+
+# WPF/Unityプロジェクトをビルド後に呼ぶことでインストーラを作成
+create_installer.cmd standard dev v1.2.3
+
+# version.txtに書いてあるバージョン値を用いて、ビルドおよびインストーラの作成までを実行
+job_release_instraller.cmd
+```
+
+### 4.3.2. プロジェクトを開いてビルドする
+
 `Bin`など、出力先フォルダを準備します。以下はフォルダ名が`Bin`である想定での説明ですが、他のフォルダ名でも構いません。
 
 * Unityでのビルド時には`Bin`フォルダを指定します。

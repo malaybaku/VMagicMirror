@@ -128,6 +128,30 @@ You will get compile errors for the first time. To solve this, confirm `NuGetFor
 
 ### 4.3. Build
 
+### 4.3.1. Build by Cmd Files
+
+Build operation is available by `.cmd` files in `Batches` folder.
+
+Please see what args are supported in each files.
+
+Note that, `create_installer.cmd` requires [Inno Setup](https://jrsoftware.org/isinfo.php) to be installed.
+
+```
+# Build WPF project
+build_wpf.cmd standard dev
+
+# Build Unity project
+build_unity.cmd standard dev
+
+# Call after building WPF and Unity project to make installer
+create_installer.cmd standard dev v1.2.3
+
+# Build and create installer, with version name written in "version.txt"
+job_release_instraller.cmd
+```
+
+### 4.3.2. Build on Opened Project
+
 Prepare output folder like `Bin`. Following instruction expects the folder name is `Bin`, but of course you can specify other name.
 
 * In Unity,

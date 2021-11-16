@@ -108,3 +108,11 @@ sysinfo.txt
 # NOT ignore solution / project files of WPF
 !/WPF/**/*.sln
 !/WPF/**/*.csproj
+
+# Ignore build outputs 
+/Bin_Standard_Dev/*
+/Bin_Dev/*
+/Bin_Standard/*
+/Bin/*
+/Installers/*
+/Releases/*

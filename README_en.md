@@ -134,6 +134,9 @@ Build operation is available by `.cmd` files in `Batches` folder.
 
 Please see what args are supported in each files.
 
+For Unity build, you have to prepare required assets beforehand, and note that Unity Editor version is strictly specified in `build_unity.cmd`.
+If you have some reason to use different version of editor, you need to modify `build_unity.cmd`.
+
 Note that, `create_installer.cmd` requires [Inno Setup](https://jrsoftware.org/isinfo.php) to be installed.
 
 ```

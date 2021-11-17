@@ -55,7 +55,7 @@ Unity 2020.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フ
 
 メンテナの開発環境は以下の通りです。
 
-* Unity 2020.3.8f1 Personal
+* Unity 2020.3.22f1 Personal
 * Visual Studio Community 2022 (17.0.0)
     * 「.NET Desktop」コンポーネントがインストール済みであること
     * 「C++によるデスクトップ開発」コンポーネントがインストール済みであること
@@ -133,7 +133,11 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 `Batches`フォルダ内のコマンドからビルドが可能です。
 バッチファイル等の引数の指定方法については、ファイル内のコメントを参照して下さい。
 
-特に`create_installer.cmd`では[Inno Setup](https://jrsoftware.org/isinfo.php)のインストールが必要です。
+Unityについては諸々のアセットを導入済みであることが必要なこと、および`build_unity.cmd`で厳格にUnityバージョンが指定されていることに注意して下さい。
+2021/11/18時点では2020.3.22f1をビルドに使用しています。
+事情があって異なるバージョンのUnityエディタを用いる場合は、`build_unity.cmd`内のUnityのパスを修正します。
+
+また、`create_installer.cmd`を使用するには[Inno Setup](https://jrsoftware.org/isinfo.php)のインストールが必要です。
 
 ```
 # WPFプロジェクトをビルド

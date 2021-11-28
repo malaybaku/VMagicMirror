@@ -105,10 +105,8 @@
                                                     Converter={StaticResource BooleanToVisibilityConverter}}"
                                Margin="20,5,20,10"
                                TextWrapping="Wrap"
-                               Foreground="{StaticResource ValidationErrorBrush}"
+                               Foreground="{StaticResource MaterialDesignValidationErrorBrush}"
                                />
-
-
                 </StackPanel>
             </Border>
         </StackPanel>

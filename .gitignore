@@ -68,6 +68,8 @@ sysinfo.txt
 /VMagicMirror/Assets/MeshUtility/
 /VMagicMirror/Assets/MiscAssets/
 /VMagicMirror/Assets/uWindowCapture/
+/VMagicMirror/Assets/NuGet/
+/VMagicMirror/Assets/NuGetPackages/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
 /VMagicMirror/Assets/OpenCVforUnity.meta
@@ -91,6 +93,8 @@ sysinfo.txt
 /VMagicMirror/Assets/MiscAssets.meta
 /VMagicMirror/Assets/uWindowCapture.meta
 /VMagicMirror/uWindowCapture.log
+/VMagicMirror/Assets/NuGet.meta
+/VMagicMirror/Assets/NuGetPackages.meta
 
 # Assets to ignore (from BOOTH)
 
@@ -99,3 +103,16 @@ sysinfo.txt
 
 /VMagicMirror/Assets/noribenLaserlight.meta
 /VMagicMirror/Assets/Butterfly.meta
+
+
+# NOT ignore solution / project files of WPF
+!/WPF/**/*.sln
+!/WPF/**/*.csproj
+
+# Ignore build outputs 
+/Bin_Standard_Dev/*
+/Bin_Dev/*
+/Bin_Standard/*
+/Bin/*
+/Installers/*
+/Releases/*

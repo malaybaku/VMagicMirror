@@ -11,6 +11,19 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v1.9.2
+{: .doc-sec2 }
+
+2021/11/29
+
+* Add: Show notification dialog when app update is available.
+* Change: Lipsync now supports stereo channel microphone with only one side input.
+* Change: `Reset Settings` feature improved to reset current settings more appropriately.
+* Fix: Bug fix that character window does not close on app quitting until mouse pointer moves.
+* Fix: Background color change had lead character window shrink.
+* Fix: The case color picker UI does not set correct color.
+* Change (Internal): Update Unity version to 2020.3.22f1, and control panel is now based on .NET 6.
+
 
 #### v1.9.1
 {: .doc-sec2 }

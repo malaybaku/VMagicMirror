@@ -1,0 +1,324 @@
+﻿<metro:MetroWindow x:Class="Baku.VMagicMirrorConfig.WordToMotionItemEditWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance vmm:WordToMotionItemViewModel}"
+    Title="VMagicMirror - Word To Motion" 
+    Height="600" Width="750"
+    MinHeight="600" MinWidth="750"
+    WindowStartupLocation="CenterOwner"
+    TitleCharacterCasing="Normal"
+    ShowDialogsOverTitleBar="False"
+    WindowTransitionsEnabled="False"
+    WindowTitleBrush="{StaticResource PrimaryHueMidBrush}"
+    NonActiveWindowTitleBrush="{StaticResource PrimaryHueMidBrush}"
+    Background="{StaticResource MaterialDesignBackground}"
+    >
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="Slider" BasedOn="{StaticResource {x:Type Slider}}">
+                <Setter Property="Grid.Column" Value="1"/>
+                <Setter Property="Minimum" Value="0"/>
+                <Setter Property="Maximum" Value="100"/>
+                <Setter Property="TickFrequency" Value="1"/>
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="Grid.Column" Value="0"/>
+                <Setter Property="TextAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                <Setter Property="Grid.Column" Value="2"/>
+            </Style>
+            <Style x:Key="BlendShapeItemGrid" TargetType="Grid">
+                <Setter Property="Height" Value="35"/>
+            </Style>
+            <vmm:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Style="{StaticResource SectionBorder}"
+                Grid.Row="0" Grid.Column="0"
+                Margin="8" Padding="10"
+                >
+            <StackPanel>
+                <TextBlock Style="{StaticResource HeaderText}"
+                           Text="{DynamicResource WordToMotion_Word_Header}" 
+                           TextAlignment="Left"
+                           Margin="5"
+                           />
+                <TextBox md:HintAssist.Hint="joy">
+                    <TextBox.Text>
+                        <Binding Path="Word">
+                            <Binding.ValidationRules>
+                                <vmm:SimplePhraseValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <TextBlock Text="{DynamicResource WordToMotion_Word_Limit}"
+                           TextAlignment="Left"
+                           />
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource SectionBorder}"
+                Grid.Row="1" Grid.Column="0"
+                VerticalAlignment="Stretch" 
+                Margin="8"
+                Padding="10"
+                >
+            <StackPanel>
+                <TextBlock Style="{StaticResource HeaderText}"
+                           Text="{DynamicResource WordToMotion_BodyMotion_Header}" 
+                           TextAlignment="Left"
+                           Margin="5"
+                           />
+
+                <RadioButton Content="{DynamicResource WordToMotion_MotionType_None}"
+                             Margin="0,10"
+                             VerticalContentAlignment="Center"
+                             IsChecked="{Binding IsMotionTypeNone}"
+                             />
+
+                <RadioButton Content="{DynamicResource WordToMotion_MotionType_BuiltIn}"
+                             Margin="0,10,0,5"
+                             VerticalContentAlignment="Center"
+                             IsChecked="{Binding IsMotionTypeBuiltInClip}"
+                             />
+
+                <DockPanel LastChildFill="True"
+                           Margin="5">
+                    <TextBlock Text="{DynamicResource WordToMotion_Motion_BuiltIn_Label}" />
+                    <ComboBox ItemsSource="{Binding AvailableBuiltInClipNames}"
+                              SelectedItem="{Binding BuiltInClipName}"
+                              IsEnabled="{Binding IsMotionTypeBuiltInClip}"
+                              Margin="10,0"
+                              md:HintAssist.Hint="{DynamicResource WordToMotion_Motion_BuiltIn_Hint}"
+                              />
+                </DockPanel>
+
+
+                <RadioButton Content="{DynamicResource WordToMotion_MotionType_Custom}"
+                             Margin="0,20,0,5"
+                             VerticalContentAlignment="Center"
+                             IsChecked="{Binding IsMotionTypeCustom}"
+                             />
+                                
+                <DockPanel LastChildFill="True"
+                           Margin="5">
+                    <TextBlock Text="{DynamicResource WordToMotion_Motion_Custom_Label}" />
+                    <ComboBox ItemsSource="{Binding AvailableCustomMotionClipNames}"
+                              SelectedItem="{Binding CustomMotionClipName}"
+                              IsEnabled="{Binding IsMotionTypeCustom}"
+                              Margin="10,0"
+                              md:HintAssist.Hint="{DynamicResource WordToMotion_Motion_Custom_Hint}"
+                              />
+                </DockPanel>
+
+                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Content="{DynamicResource WordToMotion_Motion_Custom_HowTo}"
+                        Command="{Binding OpenWordToMotionCustomHowToCommand}"
+                        Margin="10,0"
+                        Width="NaN"
+                        HorizontalAlignment="Left"
+                        />
+                <!-- 診断機能を検討してIPCまではも用意したものの、まだ仕組みがきちんとしてないので一旦隠します -->
+                <!--<Button Style="{StaticResource MaterialDesignRaisedButton}"
+                        Content="{DynamicResource WordToMotion_Motion_Custom_Doctor}"
+                        Command="{Binding CheckCustomMotionDataValidityCommand}"
+                        Margin="10,5"
+                        />-->
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource SectionBorder}"
+                Grid.Row="0" Grid.Column="1"
+                Grid.RowSpan="2"
+                VerticalAlignment="Stretch" 
+                Margin="8"
+                Padding="10"
+                >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Style="{StaticResource HeaderText}"
+                           Text="{DynamicResource WordToMotion_Face_Header}" 
+                           TextAlignment="Left"
+                           Margin="5"
+                           />
+
+                <CheckBox Grid.Row="1"
+                          Margin="5"
+                          Content="{DynamicResource WordToMotion_Face_Enable}"
+                          IsChecked="{Binding UseBlendShape}"
+                          />
+
+                <Grid Grid.Row="2" 
+                      IsEnabled="{Binding IsMotionTypeNone}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Grid.ColumnSpan="2"
+                               Text="{DynamicResource WordToMotion_Face_Duration}"
+                               TextAlignment="Left"                               
+                               />
+                    <Slider Grid.Row="1" Grid.Column="0"
+                            Minimum="0.1"
+                            Maximum="10"
+                            Value="{Binding DurationWhenOnlyBlendShape}"
+                            />
+
+                    <TextBox Grid.Row="1" Grid.Column="1"
+                             Text="{Binding DurationWhenOnlyBlendShape}"
+                             />
+               
+                </Grid>
+
+                <CheckBox Grid.Row="3"
+                          Margin="5"
+                          Content="{DynamicResource WordToMotion_Face_Hold}"
+                          IsChecked="{Binding HoldBlendShape}"
+                          IsEnabled="{Binding UseBlendShape}"
+                          />
+                <CheckBox Grid.Row="4"
+                          Margin="5"
+                          Content="{DynamicResource WordToMotion_Face_PreferLipSync}"
+                          IsChecked="{Binding PreferLipSync}"
+                          IsEnabled="{Binding UseBlendShape}"
+                          />
+
+
+                <Grid Grid.Row="5" Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{DynamicResource WordToMotion_Face_CommonClip_Header}"
+                               />
+                    <TextBlock Grid.Column="1"
+                               Text="{DynamicResource WordToMotion_Face_ExtraClip_Header}"
+                               />
+                </Grid>
+                <ScrollViewer Grid.Row="6" 
+                              Margin="0"
+                              HorizontalScrollBarVisibility="Disabled"
+                              VerticalScrollBarVisibility="Auto"
+                              >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <ItemsControl Grid.Column="0" 
+                                      ItemsSource="{Binding BlendShapeItems}"
+                                      IsEnabled="{Binding UseBlendShape}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vmm:BlendShapeItemViewModel}">
+                                    <Grid Height="35" Margin="0,0,10,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" 
+                                                       VerticalAlignment="Center"
+                                                       TextAlignment="Left"
+                                                       Text="{Binding BlendShapeName}"/>
+                                        <Slider Grid.Column="1"
+                                                    Value="{Binding ValuePercentage}" />
+                                        <TextBox Grid.Column="2"
+                                                     Text="{Binding ValuePercentage}"
+                                                 Margin="0"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl Grid.Column="1" 
+                                      ItemsSource="{Binding ExtraBlendShapeItems}"
+                                      IsEnabled="{Binding UseBlendShape}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vmm:BlendShapeItemViewModel}">
+                                    <Grid Height="35" Margin="0,0,10,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" 
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Left"
+                                                   Text="{Binding BlendShapeName}"/>
+                                        <Slider Grid.Column="1"
+                                                Value="{Binding ValuePercentage}"
+                                                IsEnabled="{Binding IsUsedWithThisAvatar}"
+                                                />
+                                        <TextBox Grid.Column="2"
+                                                 Text="{Binding ValuePercentage}" 
+                                                 IsEnabled="{Binding IsUsedWithThisAvatar}"
+                                                 Margin="0"
+                                                 />
+                                        <Button Grid.Column="3"
+                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                IsEnabled="{Binding IsUsedWithThisAvatar,
+                                                                    Converter={StaticResource BooleanReverseConverter}}"
+                                                Command="{Binding ForgetThisClipCommand}"
+                                                Width="35" Height="35" 
+                                                Margin="0" Padding="0">
+                                            <md:PackIcon Kind="Close"/>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+        
+        <CheckBox Grid.Row="2" Grid.Column="0"
+                  Content="{DynamicResource WordToMotion_EnablePreview}"
+                  IsChecked="{Binding EnablePreview.Value}"
+                  />
+
+        <StackPanel Grid.Row="2" Grid.Column="1"
+                    Margin="0,0,5,5"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    >
+            <Button Content="OK" Click="ButtonOK_Click"/>
+            <Button Content="Cancel" Click="ButtonCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</metro:MetroWindow>

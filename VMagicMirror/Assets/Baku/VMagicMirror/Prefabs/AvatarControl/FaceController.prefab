@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blendShapeInitializer: {fileID: 7797473119978373343}
-  lipSyncContext: {fileID: 3748904030990320927}
+  lipSyncContext: {fileID: 8501418776315766171}
   lipSyncIntegrator: {fileID: 6125060425342205146}
   autoBlink: {fileID: 2335327280039312852}
 --- !u!114 &3748028266611161169
@@ -121,8 +121,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1655d29d03fb30b4fb5fc956ffc2db19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vroidDefaultBlendShapeAvatar: {fileID: 11400000, guid: cc041bf064933304d942a9e7bc39a2b5,
-    type: 2}
 --- !u!114 &6241239198292537160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,7 +254,6 @@ MonoBehaviour:
   headRotBlinkProbability: 0.6
   eyeRotBlinkSpeedThreshold: 18
   eyeRotBlinkProbability: 0.8
-  lipSyncContext: {fileID: 3748904030990320927}
   lipSyncVisemeThreshold: 0.2
   lipSyncOnCountThreshold: 10
   lipSyncOffCountThreshold: 2
@@ -332,7 +329,7 @@ GameObject:
   - component: {fileID: 6125060425342205146}
   - component: {fileID: 3748028265945039283}
   - component: {fileID: 5008622417410694531}
-  - component: {fileID: 3748904030990320927}
+  - component: {fileID: 8501418776315766171}
   m_Layer: 0
   m_Name: MouthController
   m_TagString: Untagged
@@ -529,7 +526,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bsMin: 0.15
   bsMax: 0.6
---- !u!114 &3748904030990320927
+--- !u!114 &8501418776315766171
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -538,7 +535,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3748904030990320353}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e11b3103e37dbd4ab4a720515e75d1a, type: 3}
+  m_Script: {fileID: 11500000, guid: a59b24c8725f3124b96c84d8ff8f0ff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}

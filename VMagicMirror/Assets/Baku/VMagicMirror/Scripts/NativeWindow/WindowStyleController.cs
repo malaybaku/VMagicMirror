@@ -332,17 +332,14 @@ namespace Baku.VMagicMirror
         
         private void ForceWindowResizeEvent()
         {
-            //NOTE: リサイズ処理は「ズラしてから元に戻す」方式で呼ぶと透過→不透過の切り替え時に画像が歪むのを防げるため、
-            //わざと2回呼ぶようにしてます
             if (!GetWindowRect(GetUnityWindowHandle(), out var rect))
             {
                 return;
             }
 
+            //明示的に同じウィンドウサイズで再初期化することで、画像が歪むのを防ぐ
             int cx = rect.right - rect.left;
             int cy = rect.bottom - rect.top;
-            
-            RefreshWindowSize(cx - 1, cy - 1);
             RefreshWindowSize(cx, cy);
         }
         

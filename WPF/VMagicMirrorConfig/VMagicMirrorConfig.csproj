@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWpf>true</UseWpf>
+    <RootNamespace>Baku.VMagicMirrorConfig</RootNamespace>
+    <RuntimeIdentifier>win10-x86</RuntimeIdentifier>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platform>x86</Platform>
+    <Nullable>enable</Nullable>
+    <TrimMode>link</TrimMode>
+    <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
+    <ApplicationIcon>.\Images\vmmc_logo.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Images\vmmc_logo.ico" />
+    <None Remove="Images\vmmc_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Localizations\Chinese_Simplified.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dragablz" Version="0.0.3.223" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+    <PackageReference Include="MaterialDesignColors" Version="2.0.3" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.2.1" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.37" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\vmmc_logo.ico" />
+    <Resource Include="Images\vmmc_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Localizations\Chinese_Simplified.xaml" />
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="mkdir $(ProjectDir)$(OutDir)Localization &gt; NUL 2&gt;&amp;1&#xD;&#xA;copy $(ProjectDir)Localizations\Chinese_Simplified.xaml $(ProjectDir)$(OutDir)Localization" />
+  </Target>
+</Project>

@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v1.9.1
+v1.9.2
 
 * 作成: 獏星(ばくすたー)
-* 2021/10/24
+* 2021/11/29
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -47,25 +47,18 @@ Windows 10環境でお使いいただけます。
 
 ## 4. (開発者向け)ビルド手順
 
-### 4.1. フォルダ配置
+### 4.1. レポジトリの配置
 
-適当なフォルダ以下に、次の構成で配置します。
+適当なフォルダに本レポジトリを配置します。配置先について、空白文字を含むようなフォルダパスは避けて下さい。
 
-+ `Bin`
-    + (空のディレクトリ)
-+ `Unity`
-    + このレポジトリ
-+ `WPF`
-    + [WPFのレポジトリ](https://github.com/malaybaku/VMAgicMirrorConfig)
-
-Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプロジェクトを開きます。
+Unity 2020.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォルダ)を開き、Visual Studio 2022でWPFプロジェクトを開きます。
 
 メンテナの開発環境は以下の通りです。
 
-* Unity 2020.3.8f1 Personal
-* Visual Studio Community 2019 16.10.3
-    * .NET Core 3.1 SDKがインストール済みであること
-    * Visual Studioのコンポーネントで「C++によるデスクトップ開発」をインストール済みであること
+* Unity 2020.3.22f1 Personal
+* Visual Studio Community 2022 (17.0.0)
+    * 「.NET Desktop」コンポーネントがインストール済みであること
+    * 「C++によるデスクトップ開発」コンポーネントがインストール済みであること
         - UnityのBurstコンパイラ向けに必要なセットアップです。
 
 
@@ -86,8 +79,11 @@ Unity 2019.4系でUnityプロジェクトを開き、Visual Studio 2019でWPFプ
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 
 FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。
+
+[NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)は[NAudio](https://github.com/naudio/NAudio)を導入するために使用しています。
 
 "Fly,Baby." および "LaserLightShader"はBOOTHで販売されているアセットで、ビルドに必須ではありませんが、もし導入しない場合、タイピング演出が一部動かなくなります。
 
@@ -122,8 +118,44 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * オリジナルのMidiJackではなく、Forkレポジトリです。
 
+特に初回にプロジェクトを開くとコンパイルエラーになります。これを解決するには`NuGetForUnity`の導入後に`NAudioLipSyncContext.cs`冒頭の`#define`のコメントアウトを解除し、一時的にコンパイルエラーを抑制します。
+するとNAudioがNuGetから取得できます。取得後、`#define`の行をコメントアウトすることで、リップシンクが有効な状態になります。
+
+```
+//下記を一旦コメントアウト解除したのち、ふたたびコメントアウトする
+#define TEMP_SUPPRESS_ERROR
+```
 
 ### 4.3. ビルド
+
+### 4.3.1. コマンドラインからビルドする
+
+`Batches`フォルダ内のコマンドからビルドが可能です。
+バッチファイル等の引数の指定方法については、ファイル内のコメントを参照して下さい。
+
+Unityについては諸々のアセットを導入済みであることが必要なこと、および`build_unity.cmd`で厳格にUnityバージョンが指定されていることに注意して下さい。
+2021/11/18時点では2020.3.22f1をビルドに使用しています。
+事情があって異なるバージョンのUnityエディタを用いる場合は、`build_unity.cmd`内のUnityのパスを修正します。
+
+また、`create_installer.cmd`を使用するには[Inno Setup](https://jrsoftware.org/isinfo.php)のインストールが必要です。
+
+```
+# WPFプロジェクトをビルド
+build_wpf.cmd standard dev
+
+# Unityプロジェクトをビルド
+build_unity.cmd standard dev
+
+# WPF/Unityプロジェクトをビルド後に呼ぶことでインストーラを作成
+create_installer.cmd standard dev v1.2.3
+
+# version.txtに書いてあるバージョン値を用いて、ビルドおよびインストーラの作成までを実行
+job_release_instraller.cmd
+```
+
+### 4.3.2. プロジェクトを開いてビルドする
+
+`Bin`など、出力先フォルダを準備します。以下はフォルダ名が`Bin`である想定での説明ですが、他のフォルダ名でも構いません。
 
 * Unityでのビルド時には`Bin`フォルダを指定します。
 * WPFでのビルドでは、`VMagicMirrorConfig`プロジェクトを右クリックし、`発行`を指定してフォルダ上にアプリケーションを配置します。
@@ -135,19 +167,19 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
         - ターゲットの場所: PC上の適当なフォルダ
     - 上記の設定で発行すると、ターゲットのフォルダ上に`VMagicMirror.exe`を含むファイル群が出力されます。これらのファイルを`Bin/ConfigApp/`以下にコピーします。
 
-フォルダ構成については配布されているVMagicMirrorも参考にしてください。
+フォルダ構成を確認したい場合、実際に配布されているVMagicMirrorも参考にしてください。
 
 ## 5. OSS等のライセンス
 
 ### 5.1. OSSライセンス
 
-設定UIであるWPFプロジェクト内でOSSライセンスを掲載しています。
+GUI中でOSSライセンスを掲載しており、その文面は下記ファイルで管理しています。
 
-[https://github.com/malaybaku/VMagicMirrorConfig](https://github.com/malaybaku/VMagicMirrorConfig)
+https://github.com/malaybaku/VMagicMirror/blob/master/WPF/VMagicMirrorConfig/VMagicMirrorConfig/Resources/LicenseTextResource.xaml
 
-プレーンテキストとしては下記を参照下さい。
+過去に使用したものも含むライセンス情報は以下に記載しています。
 
-https://github.com/malaybaku/VMagicMirrorConfig/blob/master/VMagicMirrorConfig/VMagicMirrorConfig/Resources/LicenseTextResource.xaml
+https://malaybaku.github.io/VMagicMirror/credit_license
 
 
 ### 5.2. ゲームパッドモデルについて

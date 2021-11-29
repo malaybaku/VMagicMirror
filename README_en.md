@@ -8,7 +8,7 @@ Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 v1.9.1
 
 * Author: Baxter
-* 2021/Oct/24
+* 2021/Nov/29
 
 The VRM avatar application without any special device.
 
@@ -52,23 +52,16 @@ note: Contact in English or Japanese is very helpful for the author.
 
 ### 4.1. Folder structure
 
-Set the folder as following.
+Put the repository on your local folder. folder path should not include space character.
 
-+ `Bin`
-    + (Empty directory)
-+ `Unity`
-    + This repository
-+ `WPF`
-    + [WPF repository](https://github.com/malaybaku/VMAgicMirrorConfig)
-
-Open Unity project with Unity 2019.4.x, and open WPF project with Visual Studio 2019.
+Open Unity project with Unity 2020.3.x, and open WPF project with Visual Studio 2022.
 
 Maintainer's environment is as following.
 
 * Unity 2020.3.8f1 Personal
-* Visual Studio Community 2019.16.10.3
-    * .NET Core 3.1 SDK
-    * Visual Studio Component "C++ Desktop Development" is required.
+* Visual Studio Community 2022 17.0.0
+    * Component ".NET Desktop Development" is required.
+    * Also Component "C++ Desktop Development" is required, for Unity Burst compiler.
 
 ### 4.2. Asset install
 
@@ -87,8 +80,11 @@ Maintainer's environment is as following.
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 
 Should be noted that `FinalIK`, `Dlib FaceLandmark Detector`, and `OpenCV for Unity` are paid assets.
+
+[NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity) is necessary to import [NAudio](https://github.com/naudio/NAudio).
 
 "Fly,Baby." and "LaserLightShader" are available on BOOTH, and they are optional. If you do not introduce them, some of typing effects will not work correctly.
 
@@ -122,8 +118,44 @@ Also there are some UPM based dependencies.
 * [UniRx](https://github.com/neuecc/UniRx)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * This is fork repository and not the original.
-    
+
+You will get compile errors for the first time. To solve this, confirm `NuGetForUnity` is installed, and open `NAudioLipSyncContext.cs` to uncomment `#define` line at the start of the script. This will solve compile errors and NuGet download will start. After download completed, comment out the line to enable actual lipsync implementation.
+
+```
+//uncomment this line once, and comment out after NAudio is downloaded
+#define TEMP_SUPPRESS_ERROR
+```
+
 ### 4.3. Build
+
+### 4.3.1. Build by Cmd Files
+
+Build operation is available by `.cmd` files in `Batches` folder.
+
+Please see what args are supported in each files.
+
+For Unity build, you have to prepare required assets beforehand, and note that Unity Editor version is strictly specified in `build_unity.cmd`.
+If you have some reason to use different version of editor, you need to modify `build_unity.cmd`.
+
+Note that, `create_installer.cmd` requires [Inno Setup](https://jrsoftware.org/isinfo.php) to be installed.
+
+```
+# Build WPF project
+build_wpf.cmd standard dev
+
+# Build Unity project
+build_unity.cmd standard dev
+
+# Call after building WPF and Unity project to make installer
+create_installer.cmd standard dev v1.2.3
+
+# Build and create installer, with version name written in "version.txt"
+job_release_instraller.cmd
+```
+
+### 4.3.2. Build on Opened Project
+
+Prepare output folder like `Bin`. Following instruction expects the folder name is `Bin`, but of course you can specify other name.
 
 * In Unity,
     - Specify `Bin` folder for the output.
@@ -136,19 +168,19 @@ Also there are some UPM based dependencies.
         - Target Location: choose somewhere on your PC folder
     - By the publish you will get the files at target location folder. Then, copy the files to `Bin/ConfigApp/` folder.
 
-Distributed VMagicMirror (v0.9.3 or later) also would be a reference of the folder structure.
+When you want to check right folder structure, please see the distributed app.
 
 ## 5. Third-Party License
 
 ### 5.1. OSS License
 
-OSS license is listed in control panel GUI.
+OSS license is listed in control panel GUI, and the resource text is this file.
 
-[https://github.com/malaybaku/VMagicMirrorConfig](https://github.com/malaybaku/VMagicMirrorConfig)
+https://github.com/malaybaku/VMagicMirror/blob/master/WPF/VMagicMirrorConfig/VMagicMirrorConfig/Resources/LicenseTextResource.xaml
 
-You can also see the plain text version from below.
+This page is similar, but it also refers to the libraries which are used in past versions.
 
-https://github.com/malaybaku/VMagicMirrorConfig/blob/master/VMagicMirrorConfig/VMagicMirrorConfig/Resources/LicenseTextResource.xaml
+https://malaybaku.github.io/VMagicMirror/credit_license
 
 
 ### 5.2. About Gamepad Model Data 

@@ -217,3 +217,11 @@ VMagicMirrorはマウス動作を監視することでペン入力を捕捉し�
 </div>
 
 v1.9.0以降のバージョンを使用しており、VMagicMirrorの設定ファイルも削除したい場合は、マイドキュメントフォルダの`VMagicMirror_Files`フォルダも削除します。
+
+
+#### iFacialMocapとの連携がうまく行かない
+{: .doc-sec2 }
+
+バージョンアップによってこの問題が起きた場合、PC再起動で直る場合があります。
+
+そのほかのトラブルシューティングについてはiFacialMocap連携に関するページの[トラブルシューティング](./docs/external_tracker_ifacialmocap#troubleshoot)を参照下さい。

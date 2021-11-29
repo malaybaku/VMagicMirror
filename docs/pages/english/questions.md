@@ -209,3 +209,11 @@ Uninstall process depends on version.
 </div>
 
 If you are using v1.9.0 or later and you also want to remove settings files, then remove `(My Documents)\VMagicMirror_Files` folder.
+
+
+#### Cannot connect to iFacialMocap
+{: .doc-sec2 }
+
+If your problem is by update process, then rebooting PC might fix it.
+
+For other troubles, please see [Troubleshoot section of the page about iFacialMocap](./docs/external_tracker_ifacialmocap#troubleshoot).

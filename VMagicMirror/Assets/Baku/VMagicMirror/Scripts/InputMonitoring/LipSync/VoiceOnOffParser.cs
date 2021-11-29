@@ -5,11 +5,11 @@ namespace Baku.VMagicMirror
     /// <summary> リップシンクの音量レベルベースで喋ってる/喋ってないを判断する処理 </summary>
     public class VoiceOnOffParser
     {
-        public VoiceOnOffParser(OVRLipSyncContextBase lipSync)
+        public VoiceOnOffParser(VmmLipSyncContextBase lipSync)
         {
             _lipSync = lipSync;
         }
-        private readonly OVRLipSyncContextBase _lipSync = null;
+        private readonly VmmLipSyncContextBase _lipSync = null;
 
         // Visemeのなかでこのしきい値を超える値が一つでもあれば、発声中だと判定する
         public float VisemeThreshold { get; set; }

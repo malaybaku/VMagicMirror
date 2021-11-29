@@ -1,0 +1,137 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.DeviceSettingPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type={x:Type vmm:MainWindowViewModel}}"
+             d:DesignWidth="400"
+             d:DesignHeight="1050"
+             >
+    <UserControl.Resources>
+        <vmm:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
+        <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  >
+        <StackPanel Margin="0,5">
+
+            <TextBlock 
+                Text="{DynamicResource Devices_Header}"                 
+                Style="{StaticResource SectionHeaderText}"
+                />
+
+            <Border Style="{StaticResource SideMarginSectionBorder}"
+                    DataContext="{Binding GamepadSetting}">
+                <StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5"
+                                >
+
+                        <md:PackIcon Kind="GamepadVariant"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+                        <TextBlock Text="{DynamicResource Devices_Gamepad_Header}"
+                                   Style="{StaticResource HeaderText}"
+                                   Margin="5"
+                                   />
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetSettingCommand}"
+                                />
+                    </StackPanel>
+
+
+                    <StackPanel>
+
+                        <CheckBox Margin="20,0"
+                                  VerticalAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  IsChecked="{Binding GamepadEnabled.Value}"
+                                  >
+                            <TextBlock Text="{DynamicResource Devices_GamepadEnable}"/>
+                        </CheckBox>
+                        <CheckBox Margin="40,0,0,0"
+                                  VerticalAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  IsEnabled="{Binding GamepadEnabled.Value}"
+                                  IsChecked="{Binding PreferDirectInput.Value}"
+                                  >
+                            <TextBlock Text="{DynamicResource Devices_Gamepad_PreferDirectInput}"/>
+                        </CheckBox>
+
+                        <TextBlock Text="{DynamicResource Devices_GamepadLean}"/>
+
+                        <CheckBox Margin="20,0"
+                                  IsEnabled="{Binding GamepadEnabled.Value}"
+                                  IsChecked="{Binding GamepadLeanNone.Value}"
+                                  Content="{DynamicResource Devices_GamepadLean_None}"/>
+                        <CheckBox Margin="20,0"
+                                  IsEnabled="{Binding GamepadEnabled.Value}"
+                                  IsChecked="{Binding GamepadLeanLeftButtons.Value}"
+                                  Content="{DynamicResource Devices_GamepadLean_LeftButtons}"/>
+                        <CheckBox Margin="20,0"
+                                  IsEnabled="{Binding GamepadEnabled.Value}"
+                                  IsChecked="{Binding GamepadLeanLeftStick.Value}"
+                                  Content="{DynamicResource Devices_GamepadLean_LeftStick}"/>
+                        <CheckBox Margin="20,0"
+                                  IsEnabled="{Binding GamepadEnabled.Value}"
+                                  IsChecked="{Binding GamepadLeanRightStick.Value}"
+                                  Content="{DynamicResource Devices_GamepadLean_RightStick}"/>
+
+                        <TextBlock Text="{DynamicResource Devices_GamepadLean_Reverse}"/>
+
+                        <CheckBox Margin="20,0"
+                                  IsEnabled="{Binding GamepadEnabled.Value}"
+                                  IsChecked="{Binding GamepadLeanReverseHorizontal.Value}"
+                                  Content="{DynamicResource Devices_GamepadLean_ReverseHorizontal}"/>
+                        <CheckBox Margin="20,0"
+                                  IsEnabled="{Binding GamepadEnabled.Value}"
+                                  IsChecked="{Binding GamepadLeanReverseVertical.Value}"
+                                  Content="{DynamicResource Devices_GamepadLean_ReverseVertical}"/>
+
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SideMarginSectionBorder}"
+                    DataContext="{Binding LayoutSetting}">
+                <StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5"
+                                >
+                        <md:PackIcon Kind="MidiPort"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+
+                        <TextBlock Text="{DynamicResource Devices_Midi_Header}"
+                                   Style="{StaticResource HeaderText}"
+                                   Margin="5"
+                                   />
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetMidiSettingCommand}"
+                                />
+                    </StackPanel>
+
+                    <CheckBox Margin="20,2"
+                              VerticalContentAlignment="Center"
+                              IsChecked="{Binding EnableMidiRead.Value}">
+                        <TextBlock Text="{DynamicResource Devices_Midi_ReadEnable}"/>
+                    </CheckBox>
+
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

@@ -1,0 +1,546 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xml:space="preserve"
+                    >
+    <!-- Common -->
+    <sys:String x:Key="Common_Cancel">Cancel</sys:String>
+    <sys:String x:Key="Common_Close">Close</sys:String>
+
+    <!-- Window Title Bar -->
+    <sys:String x:Key="TitleBar_Help">Help</sys:String>
+    <sys:String x:Key="TitleBar_Visit_OfficialPage">Web Page</sys:String>
+    <sys:String x:Key="TitleBar_Visit_DownloadPage_Standard">Download (Standard Edition)</sys:String>
+    <sys:String x:Key="TitleBar_Visit_DownloadPage_Full">Download (Full Edition)</sys:String>
+    <sys:String x:Key="TitleBar_Visit_Fanbox">Fanbox</sys:String>
+    <sys:String x:Key="TitleBar_Check_Update">Check Update</sys:String>
+    <sys:String x:Key="TitleBar_About">About VMagicMirror</sys:String>
+
+    <!-- Top Tab -->
+    <sys:String x:Key="TopBar_Home">Home</sys:String>
+    <sys:String x:Key="TopBar_Streaming">Streaming</sys:String>
+    <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_HandTrack">Hand Tracking</sys:String>
+    
+    <!-- Top Tab In Setting -->
+    <sys:String x:Key="TopBar_Setting_Window">Window</sys:String>
+    <sys:String x:Key="TopBar_Setting_FaceMotion">Face</sys:String>
+    <sys:String x:Key="TopBar_Setting_Motion">Motion</sys:String>
+    <sys:String x:Key="TopBar_Setting_Layout">Layout</sys:String>
+    <sys:String x:Key="TopBar_Setting_Devices">Devices</sys:String>
+    <sys:String x:Key="TopBar_Setting_Effects">Effects</sys:String>
+    <sys:String x:Key="TopBar_Setting_FileIo">Files</sys:String>
+        
+    <!-- Home -->
+    <sys:String x:Key="Home_LoadVrm">Load VRM</sys:String>
+    <sys:String x:Key="Home_LoadVrmFromFile">Load File on PC</sys:String>    
+    <sys:String x:Key="Home_LoadVrm_Or">or</sys:String>
+    <sys:String x:Key="Home_ConnectToVRoidHub">Load from VRoid Hub</sys:String>    
+    <sys:String x:Key="Home_OpenVRoidHub">Open VRoid Hub URL</sys:String>    
+    <sys:String x:Key="Home_VrmDragDropInstruction">Load VRM by Drag &amp; Drop</sys:String>
+
+    <sys:String x:Key="Home_LoadVrmOnNextStartup">Load current VRM on next startup</sys:String>
+    <sys:String x:Key="Home_AutoAdjust">Adjust Size by VRM</sys:String>
+
+    <sys:String x:Key="Home_Manual_Header">Manual</sys:String>
+    <sys:String x:Key="Home_Manual_Open">Open Manual URL</sys:String>
+
+    <sys:String x:Key="Home_SettingFileIo">Setting</sys:String>    
+    <sys:String x:Key="Home_OpenSetting">Open Setting Window</sys:String>
+
+    <sys:String x:Key="Home_SettingManagement">Setting Files</sys:String>
+    <sys:String x:Key="Home_Reset">Reset Settings</sys:String>
+    <sys:String x:Key="Home_LoadPrevSetting">Load from Prev ver.</sys:String>
+    
+    <sys:String x:Key="Home_OtherSettings_Header">Other Preferences</sys:String>
+    <sys:String x:Key="Home_ActivateOnStartupHeader">Start on Windows startup</sys:String>
+    
+    <!-- Streaming -->
+    <sys:String x:Key="Streaming_Window">Window</sys:String>
+    <sys:String x:Key="Streaming_Face">Face</sys:String>
+    <sys:String x:Key="Streaming_Motion">Motion</sys:String>       
+    <sys:String x:Key="Streaming_WordToMotion">Word to Motion</sys:String>
+    <sys:String x:Key="Streaming_View">View</sys:String>
+    
+    <sys:String x:Key="Streaming_DeviceLayout">Device Layout</sys:String>
+    <sys:String x:Key="Streaming_DeviceLayout_Reset">Reset</sys:String>
+
+    <sys:String x:Key="Streaming_Screenshot">Screenshot</sys:String>
+    <sys:String x:Key="Streaming_Screenshot_OpenSaveFolder">Saved Folder...</sys:String>
+    
+     <!-- Ex.Tracker -->
+    <sys:String x:Key="ExTracker_Title">External Tracker</sys:String>
+    <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">Feature to use external tracking application.
+During this mode, following features are disabled.
+- Web camera based tracking
+- Eye motion to see the mouse pointer</sys:String>
+    <sys:String x:Key="ExTracker_Enable">Enable External Tracker</sys:String>
+    <sys:String x:Key="ExTracker_Enable_ImageLipSync">Apply LipSync using External Tracker Data</sys:String>    
+    <sys:String x:Key="ExTracker_Enable_EmphasizeExpression">Emphasize Face Expressions</sys:String>
+
+    <sys:String x:Key="ExTracker_Enable_PerfectSync">Use Perfect Sync</sys:String>
+    <sys:String x:Key="ExTracker_PerfectSync_UseVRoidDefault">Perfect sync with VRoid's default setting</sys:String>
+    <sys:String x:Key="ExTracker_HowTo_PerfectSync">About Perfect Sync (open web page)</sys:String>
+    <sys:String x:Key="ExTracker_PerfectSync_MissingBlendShape_Header">The model does not support perfect sync (click for detail)</sys:String>
+    
+    <sys:String x:Key="ExTracker_Calibrate">Calibrate Face Pose</sys:String>
+    
+    <sys:String x:Key="ExTracker_SourceSelect">Connect to App</sys:String>
+    <sys:String x:Key="ExTracker_SourceSelect_Instruction">Select Application. Current version only supports iOS app.</sys:String>
+
+    <sys:String x:Key="ExTracker_Source_None">None</sys:String>
+    <sys:String x:Key="ExTracker_Source_iFacialMocap">iFacialMocap</sys:String>
+    <sys:String x:Key="ExTracker_iFM_IpHint">iPhone IP Address...</sys:String>
+    <sys:String x:Key="ExTracker_Source_HowToCollaborate">*See how to connect (open web page)</sys:String>
+
+    <sys:String x:Key="ExTracker_iFM_HasTrouble_Header">Please check connected app setting</sys:String>
+    <sys:String x:Key="ExTracker_iFM_HasTrouble_OpenUrl">Open Troubleshoot web page</sys:String>    
+    
+    <sys:String x:Key="ExTracker_FaceSwitch">Face Switch</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">Activates seleceted BlendShape by making specific face expression.
+Check "Keep LipSync" to make the lipsync continue.</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_KeepLipSync">Keep LipSync</sys:String>
+
+    <!-- ExTracker FaceSwitch Trigger -->
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_mouthSmile">Mouth smile</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_eyeSquint">Eye squint</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_eyeWide">Eye wide</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_browUp">Brow up</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_browDown">Brow down</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">Tongue out</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">Cheek puff</sys:String>
+    
+    
+    <!-- HandTracking -->
+    <sys:String x:Key="HandTracking_Header">Hand Tracking</sys:String>
+    <sys:String x:Key="HandTracking_Instruction" xml:space="preserve">The feature supports webcam based hand tracking.
+When using webcam face tracking, same camera is used.</sys:String>
+    <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">*Standard Edition puts Visual effect during hand tracking.
+Get Full Edition to remove the effect.</sys:String>
+    <sys:String x:Key="HandTracking_GetFullEdition">Get Full Edition</sys:String>    
+    <sys:String x:Key="HandTracking_Enable">Enable Hand Tracking</sys:String>
+    <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
+    <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
+    <sys:String x:Key="HandTracking_ShowAreaChecker">Show Detection Status (*raw image is not displayed)</sys:String>    
+    <sys:String x:Key="HandTracking_DetectionResult">Detection Status:</sys:String>
+    <sys:String x:Key="HandTracking_NotDetected">(Not Detected: Try raising hands next to the face)</sys:String>
+    <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">Tips:
+- Put whole hand inside the camera view to stabilize.
+- Put hands slight left or right, than the center.</sys:String>
+    <sys:String x:Key="HandTracking_LearnMore">More...</sys:String>    
+    
+    <!-- Settings General -->
+    <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>
+    
+    <!-- Window -->
+    <sys:String x:Key="Window_Header">Window</sys:String>
+    <sys:String x:Key="Window_Basics">Basic Settings</sys:String>
+    <sys:String x:Key="Window_BackgroundColor">Background</sys:String>
+    <sys:String x:Key="Window_Transparent">Transparent Window</sys:String>
+    <sys:String x:Key="Window_Draggable">(When Transparent) Drag character</sys:String>
+    <sys:String x:Key="Window_TopMost">(When Transparent) Always Foreground</sys:String>
+    <sys:String x:Key="Window_ResetPosition">Reset Character Position</sys:String>
+    
+    <sys:String x:Key="Window_BackgroundImage">BG Image:</sys:String>
+    <sys:String x:Key="Window_BackgroundImage_Load">Load...</sys:String>
+    <sys:String x:Key="Window_BackgroundImage_Clear">Clear</sys:String>
+
+    <sys:String x:Key="Window_TransparencySupport">Character Transparency Support</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level">Transparency Level</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Alpha">Alpha when Transparent(32-255)</sys:String>
+
+    <sys:String x:Key="Window_TransparencySupport_Level_0">Level 0: Always NOT transparent.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_1">Level 1: Transparent if "Drag character" is off, and mouse pointer is close to the character.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_2">Level 2: Transparent if mouse pointer is close to the character.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_3">Level 3: Transparent if "Drag character" is off.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_4">Level 4: Always transparent.</sys:String>
+   
+    <!-- Motion -->
+    <sys:String x:Key="Motion_Header">Motion</sys:String>   
+
+    <!-- Motion : Full Body -->
+    <sys:String x:Key="Motion_FullBody">Upper Body</sys:String>
+    <sys:String x:Key="Motion_FullBody_NoHandTrackMode">Always-Hands-Down Mode (*Increase body move)</sys:String>    
+    <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">Hands-Down Mode</sys:String>    
+    
+    <!-- Motion : Arm -->
+    <sys:String x:Key="Motion_Arm">Arm</sys:String>    
+    <sys:String x:Key="Motion_Arm_EnableHidMotion">Enable Typing / Mouse Motion</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableRandomTyping">Random typing to hide key input</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableShoulderModify">Modify shoulder motion</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableTypingAndMouseTimeout">Down hand when no input</sys:String>
+    <sys:String x:Key="Motion_Arm_FpsAssumedRightHand">Enable mouse motion to FPS assumed mode</sys:String>
+    <sys:String x:Key="Motion_Arm_FpsAssumedRightHand_Tooltip">When checked right hand motion during playing FPS become more natural, but screen touch or pen tablet operation become become slow</sys:String>
+    
+    <sys:String x:Key="Motion_Arm_WaistWidth">Waist width [cm]</sys:String>
+    <sys:String x:Key="Motion_Arm_ElbowCloseStrength">Strength to keep upper arm to body [%]</sys:String>
+    <sys:String x:Key="Motion_Arm_ShowPresentationPointer">Show Pointer Support</sys:String>
+    <sys:String x:Key="Motion_Arm_PresenterArmRadiusMin">Hand pos radius min [cm]</sys:String>
+
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode">Key/Mouse Motion</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode">Gamepad Motion</sys:String>
+    <sys:String x:Key="Motion_Arm_ModeSpecitic">Option for specific motion</sys:String>
+    <sys:String x:Key="Motion_Arm_Typing_Section">Keyboard + Touch Pad Motion</sys:String>
+    <sys:String x:Key="Motion_Arm_Presentation_Section">Presentation</sys:String>
+
+    <!-- NOTE: will be used in both View and ViewModel code -->
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode_Default">Default</sys:String>
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode_Presentation">Presentation</sys:String>
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode_PenTablet">Pen Tablet</sys:String>
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode_None">None</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode_Default">Default</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode_ArcadeStick">Arcade Stick</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode_GunController">Gun Controller</sys:String>
+
+    <!-- Motion : Hand -->
+    <sys:String x:Key="Motion_Hand">Hand</sys:String>
+    <sys:String x:Key="Motion_Hand_WristToHandTip">Wrist-Hand tip length [cm]</sys:String>
+    <sys:String x:Key="Motion_Hand_HandYOffsetBasic">Hand height adjust [cm]</sys:String>
+    <sys:String x:Key="Motion_Hand_HandYOffsetAfterKeyDown">(Press key)Hand height adjust [cm]</sys:String>
+
+    <!-- Motion : Wait -->
+    <sys:String x:Key="Motion_Wait">Wait motion</sys:String>
+    <sys:String x:Key="Motion_Wait_EnableWaitMotion">Enable</sys:String>
+    <sys:String x:Key="Motion_Wait_WaitMotionScale">Scale [%]</sys:String>
+    <sys:String x:Key="Motion_Wait_WaitMotionPeriod">Period [sec]</sys:String>    
+    
+    <!-- Face -->
+    <sys:String x:Key="Motion_Face">Face</sys:String>
+
+    <!-- Face : Basic -->
+    <sys:String x:Key="Motion_Face_Basics">Basic Settings</sys:String>
+    
+    <sys:String x:Key="Motion_Mouth">Mouth</sys:String>
+    <sys:String x:Key="Motion_Mouth_EnableLipSync">LipSync</sys:String>
+    <sys:String x:Key="Motion_Mouth_MicrophoneName">Microphone</sys:String>    
+    <sys:String x:Key="Motion_Mouth_Microphone_Sensitivity">Sensitivity [dB]</sys:String>
+    <sys:String x:Key="Motion_Mouth_Microphone_Visualize">Show Volume</sys:String>
+    
+    <sys:String x:Key="Motion_Face_EnableFaceTracking">Track Face</sys:String>
+    <sys:String x:Key="Motion_Face_CameraName">Camera</sys:String>    
+    <sys:String x:Key="Motion_Face_Calibration">Calibrate position</sys:String>    
+    <sys:String x:Key="Motion_Face_DefaultFun">Default Fun Blend Value [%]</sys:String>    
+    <sys:String x:Key="Motion_Face_EnableBodyLeanZ">Enable forward / backward motion</sys:String>    
+    <sys:String x:Key="Motion_Face_AutoBlinkDuringFaceTracking">Auto blink during face tracking</sys:String>
+    <sys:String x:Key="Motion_Face_DisableFaceTrackingHorizontalFlip">Disable horizontal flip</sys:String>
+    <sys:String x:Key="Motion_Face_EnableImageBasedHandTracking">Enable image based hand tracking</sys:String>
+    <sys:String x:Key="Motion_Face_EnableWebCamHighPowerMode">High Power Mode</sys:String>
+    <sys:String x:Key="Motion_Face_FolderMaybeIncorrect_Header">*Please check folder path!</sys:String>
+    <sys:String x:Key="Motion_Face_FolderMaybeIncorrect_Tooltip" xml:space="preserve">App installed folder path includes multi byte character.
+This might lead incorrect results for the face tracking.
+
+If you notice the avatar does not rotate theia neck, 
+please quit the app and move app folder to single byte character only path.
+
+If the face tracking works correctly, please ignore this warning.
+</sys:String>    
+    <sys:String x:Key="Motion_Face_ExTrackerWorking_Header">*Webcam tracking is disabled because External Tracker is enabled.</sys:String>
+    <sys:String x:Key="Motion_Face_ExTrackerWorking_TurnOffExTracker">Enable Webcam Tracking</sys:String>
+    
+    <sys:String x:Key="Motion_Face_BlinkAdjust">Blink adjust by head motion and lip sync</sys:String>
+    <sys:String x:Key="Motion_Face_NoCamMotion">Voice based motion when webcam not used</sys:String>
+
+    <!-- Face : Eye -->
+    <sys:String x:Key="Motion_Eye">Eye</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint">Eye Look Target</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_Streaming">Look At:</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_None">None</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">Mouse</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">User</sys:String>
+    <sys:String x:Key="Motion_Eye_RotScale">Eye Motion Scale[%]</sys:String>
+    <sys:String x:Key="Motion_Eye_ApproxRotRangePrefix">(Eye bones will move about: </sys:String>
+    <sys:String x:Key="Motion_Eye_ApproxRotRangeSuffix"> [deg])</sys:String>
+    
+    <!-- Face : BlendShape -->
+    <sys:String x:Key="Motion_Face_BlendShape">BlendShape</sys:String>
+    <sys:String x:Key="Motion_Face_NeutralClip">Default Face BlendShape</sys:String>    
+    <sys:String x:Key="Motion_Face_NeutralClip_Help" xml:space="preserve">* Neutral BlendShape is applied with blink, as default face.
+  Use it when the model has custom default face in Neutral BlendShape etc.</sys:String>
+    <sys:String x:Key="Motion_Face_OffsetClip">Offset BlendShape</sys:String>
+    <sys:String x:Key="Motion_Face_OffsetClip_Help" xml:space="preserve">* Offset BlendShape is always applied.
+  Use it when the model has BlendShape which is to adjust body shape.</sys:String>
+    
+    
+    <!-- Layout Setting -->
+    <sys:String x:Key="Layout_Header">Layout</sys:String>   
+   
+    <!-- Layout : Camera -->
+    <sys:String x:Key="Layout_Camera">Camera</sys:String>
+    <sys:String x:Key="Layout_Camera_HowTo">Usage...</sys:String>
+    <sys:String x:Key="Layout_Camera_HowTo_Content" xml:space="preserve">'Free Camera Mode' enables
+camera movements following:
+        
+- Right click + drag: rotate
+- Mid click + drag: translate
+- Mouse wheel: forward/backward</sys:String>
+    <sys:String x:Key="Layout_EnableFreeCameraMode">Free Camera Mode</sys:String>
+    <sys:String x:Key="Layout_Camera_ResetPosition">Reset Position</sys:String>
+    <sys:String x:Key="Layout_Camera_Fov">FOV [deg]</sys:String>
+    <sys:String x:Key="Layout_Camera_QuickSave">Quick Save</sys:String>
+    <sys:String x:Key="Layout_Camera_QuickLoad">Quick Load</sys:String>
+
+    <!-- Layout : Devices -->
+    <sys:String x:Key="Layout_DeviceLayout">Devices</sys:String>
+    <sys:String x:Key="Layout_DeviceFreeLayout">Free Layout</sys:String>
+
+    <!-- Layout : Keyboard / Mouse Pad -->
+    <sys:String x:Key="Layout_Hid">Device Visibility</sys:String>
+    <sys:String x:Key="Layout_HidVisible">Keyboard and Pad</sys:String>
+    <sys:String x:Key="Layout_MidiVisible">MIDI Controller</sys:String>
+    <sys:String x:Key="Layout_GamepadVisible">Gamepad</sys:String>    
+    <sys:String x:Key="Layout_Pen_Visibility">Pen (in pen tablet motion)</sys:String>
+    <sys:String x:Key="Layout_Pen_UnavaiableModel">Pen is Unavailable</sys:String>
+    
+    <sys:String x:Key="Layout_Hid_Streaming">Keyboard and Pad</sys:String>
+    <sys:String x:Key="Layout_Midi_Streaming">MIDI Controller</sys:String>
+   
+    <sys:String x:Key="Layout_Hid_TypingEffect_Header">Typing Effect</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Header_Streaming">Typing Effect</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_None">None</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Text">Text</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Light">Light</sys:String>
+
+    <sys:String x:Key="Layout_Gamepad">Gamepad</sys:String>    
+    
+    <sys:String x:Key="Layout_Texture_Tips_Notice">NOTE: To change device's appearance, please see the tips below.</sys:String>
+    <sys:String x:Key="Layout_Texture_Tips_ButtonText">See Detail (Open Web)</sys:String>
+    
+    <!-- Devices -->
+    <sys:String x:Key="Devices_Header">Devices</sys:String>
+        
+    <!-- Devices: MIDI -->
+    <sys:String x:Key="Devices_Midi_Header">MIDI</sys:String>
+    <sys:String x:Key="Devices_Midi_ReadEnable">Use MIDI Controller for VMagicMirror</sys:String>
+    
+    <!-- Devices: Gamepad -->
+    <sys:String x:Key="Devices_Gamepad_Header">Gamepad</sys:String>
+    
+    <sys:String x:Key="Devices_GamepadEnable">Enable Input Capture</sys:String>
+    <sys:String x:Key="Devices_Gamepad_PreferDirectInput">Use DirectInput (check for DUAL SHOCK 4)</sys:String>
+    <sys:String x:Key="Devices_GamepadDeviceNumber">Device Number</sys:String>
+    
+    <sys:String x:Key="Devices_GamepadLean">Lean by Stick</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_None">None</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_LeftButtons">Left Buttons</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_LeftStick">Left Stick</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_RightStick">Right Stick</sys:String>
+
+    <sys:String x:Key="Devices_GamepadLean_Reverse">Reverse direction to lean</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_ReverseHorizontal">Left / Right</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_ReverseVertical">Forward / Backword</sys:String>
+    
+    
+    <!-- Light Setting -->
+    <sys:String x:Key="Effect_Header">Effect</sys:String>       
+    
+    <sys:String x:Key="ImageQuality">Image Quality</sys:String>
+    <sys:String x:Key="ImageQuality_CurrentQuality">Quality</sys:String>
+    <sys:String x:Key="ImageQuality_HalfFpsMode">Half FPS (Medium or higher quality)</sys:String>
+    
+    <sys:String x:Key="Light">Light</sys:String>
+    <sys:String x:Key="Light_Intensity">Intensity [%]</sys:String>
+    <sys:String x:Key="Light_Yaw">Yaw Angle [deg]</sys:String>
+    <sys:String x:Key="Light_Pitch">Pitch Angle [deg]</sys:String>
+    <sys:String x:Key="Light_BgAdjust">Desktop Color Based Lighting</sys:String>
+
+    <sys:String x:Key="Shadow">Shadow</sys:String>
+    <sys:String x:Key="Shadow_Enable">Enable Shadow</sys:String>
+    <sys:String x:Key="Shadow_Enable_Streaming">Avatar's Shadow</sys:String>
+    <sys:String x:Key="Shadow_Intensity">Intensity [%]</sys:String>
+    <sys:String x:Key="Shadow_Yaw">Yaw Angle [deg]</sys:String>
+    <sys:String x:Key="Shadow_Pitch">Pitch Angle [deg]</sys:String>
+    <sys:String x:Key="Shadow_DepthOffset">Depth Offset [cm]</sys:String>
+    
+    <sys:String x:Key="Bloom">Bloom</sys:String>
+    <sys:String x:Key="Bloom_Intensity">Intensity [%]</sys:String>
+    <sys:String x:Key="Bloom_Threshold">Threshold [%]</sys:String>
+    
+    <sys:String x:Key="Wind">Wind</sys:String>
+    <sys:String x:Key="Wind_Enable">Enable Wind</sys:String>
+    <sys:String x:Key="Wind_Enable_Streaming">Wind</sys:String>
+    <sys:String x:Key="Wind_Strength">Strength [%]</sys:String>
+    <sys:String x:Key="Wind_Interval">Fineness [%]</sys:String>
+    <sys:String x:Key="Wind_Yaw">Direction [deg]</sys:String>
+        
+    
+    <!-- Word To Motion -->
+    <sys:String x:Key="WordToMotion_Header">Word to Motion</sys:String>   
+    
+    <sys:String x:Key="WordToMotion_Enable">Enable Word to Motion</sys:String>
+    <sys:String x:Key="WordToMotion_UseGamepadForInput">Use gamepad as launcher</sys:String>
+    <sys:String x:Key="WordToMotion_Instruction" xml:space="preserve">This tab is `Word to Motion` tab.
+`Word to Motion` feature supports character motion by your word input.
+Please test by typing "joy".</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice">Assign device for this function</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_None">None</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_Gamepad">Gamepad</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_Keyboard">Keyboard (Num0 - Num9)</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_Keyboard_Short">Keyboard</sys:String>
+
+    <sys:String x:Key="WordToMotion_AssignDevice_Select_Header">Device Assign</sys:String>
+   
+    
+    <sys:String x:Key="WordToMotion_KeyAssign">Keys</sys:String>    
+    <sys:String x:Key="WordToMotion_LoadDefaultSet">Reset to default items</sys:String>
+
+    <sys:String x:Key="WordToMotion_Word_Header">Word</sys:String>
+    <sys:String x:Key="WordToMotion_Word_Limit">*Lower alphabet, number, and space</sys:String>
+
+    <sys:String x:Key="WordToMotion_BodyMotion_Header">Body Motion</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_None">None</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_BuiltIn">Built-In Motion</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_Custom">Custom Motion</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_BuiltIn_Label">Motion</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_BuiltIn_Hint">Choose Motion</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_Label">Motion</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_Hint">Choose Motion</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">How to Use (open web)</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_Doctor">Check Motion Data Validity</sys:String>
+
+    <sys:String x:Key="WordToMotion_Face_Header">Face Expression</sys:String>
+    <sys:String x:Key="WordToMotion_Face_Enable">Enable Face Expression</sys:String>
+    <sys:String x:Key="WordToMotion_Face_Duration">Duration when Body Motion is None [sec]</sys:String>
+    <sys:String x:Key="WordToMotion_Face_Hold">Keep face after motion</sys:String>
+    <sys:String x:Key="WordToMotion_Face_PreferLipSync">Keep LipSync active</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Face_CommonClip_Header">Basic BlendShape</sys:String>
+    <sys:String x:Key="WordToMotion_Face_ExtraClip_Header">Avatar Specific BlendShape</sys:String>    
+        
+    <sys:String x:Key="WordToMotion_EnablePreview">Enable Preview</sys:String>
+    
+    <sys:String x:Key="WordToMotion_MidiAssign">MIDI note assign</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_MidiNotActive_Title">MIDI Input Required</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_MidiNotActive" xml:space="preserve">This setting requires MIDI input to be enabled. Continue?
+(You can enable/disable MIDI input in "Device" tab later.)</sys:String>    
+    <sys:String x:Key="WordToMotion_MidiAssign_Instruction" xml:space="preserve">Assign up to 16 notes for motion trigger.
+- Click text input on right side
+- Press MIDI key to input note number</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_Current">Current Note</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_After">Note to Change</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_Clear">Clear</sys:String>
+    
+    <sys:String x:Key="WordToMotion_DeviceItem_None">None</sys:String>
+    <sys:String x:Key="WordToMotion_DeviceItem_KeyboardWord">Keyboard (word)</sys:String>
+    <sys:String x:Key="WordToMotion_DeviceItem_Gamepad">Gamepad</sys:String>
+    <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">Keyboard (num 0-9)</sys:String>
+    <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDI Controller</sys:String>
+    
+    <!-- Save/Load -->
+    <sys:String x:Key="SettingFile_Header">Setting File Control</sys:String>
+    <sys:String x:Key="SettingFile_SaveAndLoad">Save / Load</sys:String>
+    <sys:String x:Key="SettingFile_Save">Save</sys:String>
+    <sys:String x:Key="SettingFile_Load">Load</sys:String>
+    <sys:String x:Key="SettingFile_Save_Instruction">Select target to save.</sys:String>
+    <sys:String x:Key="SettingFile_Load_Instruction">Select data to load.</sys:String>
+    <sys:String x:Key="SettingFile_LoadCharacter">Load Character</sys:String>
+    <sys:String x:Key="SettingFile_LoadNonCharacter">Load Non-Character Settings</sys:String>
+    <sys:String x:Key="SettingFile_Export">Export</sys:String>
+    <sys:String x:Key="SettingFile_Import">Import</sys:String>
+
+    <sys:String x:Key="SettingFile_Automation">Automation</sys:String>
+    <sys:String x:Key="SettingFile_Instruction" xml:space="preserve">WARNING:
+This feature enables to skip license check when loading local file VRM.
+You must confirm the models' license beforehand.
+
+VRoid Hub model is not supported in this feature.</sys:String>
+    <sys:String x:Key="SettingFile_Enable">Enable Automation Support</sys:String>
+    <sys:String x:Key="SettingFile_Disable">Disable Automation Support</sys:String>
+    <sys:String x:Key="SettingFile_PortNumber">Port Number:</sys:String>
+    <sys:String x:Key="SettingFile_PortNumber_Warning">Port Number is invalid. Input number between 0 - 65535.</sys:String>
+    <sys:String x:Key="SettingFile_ApplyPortNumber">Apply</sys:String>
+    <sys:String x:Key="SettingFile_SeeMore">See How to Use (Open Web Page)</sys:String>
+
+    <!-- NOTE: used from ViewModel code. -->
+    <sys:String x:Key="SettingFile_SaveCompleted">Saved Current Setting to No.{0}.</sys:String>
+    <sys:String x:Key="SettingFile_LoadCompleted">Loaded Setting No.{0}.</sys:String>
+    <sys:String x:Key="SettingFile_SaveCompleted_ExportedFile">Saved Current Setting to File.</sys:String>
+    <sys:String x:Key="SettingFile_LoadCompleted_ExportedFile">Loaded Setting from File.</sys:String>
+
+    <!-- Update Window -->
+    <sys:String x:Key="UpdateDialog_Title">VMagicMirror - Update is Available</sys:String>
+    <sys:String x:Key="UpdateDialog_ReleaseNoteHeader">Release Note</sys:String>
+    <sys:String x:Key="UpdateDialog_GetLatest">Get Latest Version</sys:String>
+    <sys:String x:Key="UpdateDialog_AskMeLater">Ask me Later</sys:String>
+    <sys:String x:Key="UpdateDialog_SkipThisVersion">Skip this Version</sys:String>    
+    
+    <!-- Dialog Messages -->
+    <sys:String x:Key="DialogTitle_LoadLocalVrm">Load VRM</sys:String>
+    <sys:String x:Key="DialogMessage_LoadLocalVrm">Please confirm the license in viewer window. Do you load the character?</sys:String>
+    <sys:String x:Key="DialogTitle_ResetAllSetting">Reset Setting</sys:String>
+    <sys:String x:Key="DialogMessage_ResetAllSetting" xml:space="preserve">Reset process will delete current setting, and VMagicMirror will restart.
+
+Are you sure you want to reset?
+
+If you want to save current setting, cancel this dialog and save before reset.</sys:String>
+    <sys:String x:Key="DialogTitle_ResetCategorySetting">Reset Setting</sys:String>
+    <sys:String x:Key="DialogMessage_ResetCategorySetting">Are you sure you want to reset selected category setting?</sys:String>
+    <sys:String x:Key="DialogTitle_LoadSettingFileError">Load failed</sys:String>
+    <sys:String x:Key="DialogMessage_LoadSettingFileError">Failed to load setting file. Error: </sys:String>
+    <sys:String x:Key="DialogTitle_DeleteWtMItem">Delete Item</sys:String>
+    <sys:String x:Key="DialogMessage_DeleteWtmItem">Are you sure to delete this item '{0}'?</sys:String>
+    <sys:String x:Key="DialogTitle_ForgetBlendShapeInfo">Clear Blend Shape Setting</sys:String>
+    <sys:String x:Key="DialogMessage_ForgetBlendShapeInfo">Are you sure to clear the blend shape setting of '{0}'?</sys:String>
+    <sys:String x:Key="DialogTitle_InvalidIpAddress">Invalid IP Address</sys:String>
+    <sys:String x:Key="DialogMessage_InvalidIpAddress">Invalid IP Address is set, please check the input.</sys:String>
+    <sys:String x:Key="DialogTitle_ShowVRoidSdkUi">Connecting to VRoid Hub</sys:String>
+    <sys:String x:Key="DialogMessage_ShowVRoidSdkUi">Select model to load, or cancel operation.</sys:String>
+    <sys:String x:Key="DialogTitle_LoadPreviousVRoidModel">Connecting to VRoid Hub</sys:String>
+    <sys:String x:Key="DialogMessage_LoadPreviousVRoidModel">Trying to load avatar used in previous time. Select model or cancel operation.</sys:String>
+    <sys:String x:Key="DialogTitle_LoadSavedVRoidModel">Connecting to VRoid Hub</sys:String>
+    <sys:String x:Key="DialogMessage_LoadSavedVRoidModel">Trying to load avatar saved in setting file. Select model or cancel operation.</sys:String>
+    <sys:String x:Key="DialogTitle_ExTrackerMissingBlendShape">Missing BlendShapeClip</sys:String>
+    <sys:String x:Key="DialogMessage_ExTrackerMissingBlendShape" xml:space="preserve">Detect missing BlendShapeClips for perfect sync.
+
+If your avatar looks normal, ignore this message. 
+Otherwise, close this dialog and see 'About Perfect Sync'
+to check how to setup the model.
+
+---
+Undefined BlendShaepClip names:
+</sys:String>
+    <sys:String x:Key="DialogTitle_ExTrackerCheckTurnOff">Turn Off External Tracker</sys:String>
+    <sys:String x:Key="DialogMessage_ExTrackerCheckTurnOff" xml:space="preserve">Do you want to turn off external tracker?.
+
+Choose 'OK' to enable webcam based tracking.
+</sys:String>
+    
+    <sys:String x:Key="DialogTitle_ConfirmSettingFileSave">Setting File Save</sys:String>
+    <sys:String x:Key="DialogMessage_ConfirmSettingFileSave">Are you sure to save current setting to No.{0}? If the setting already exists, it will be overwritten.</sys:String>
+
+    <sys:String x:Key="DialogTitle_ConfirmSettingFileLoad">Setting File Load</sys:String>
+    <sys:String x:Key="DialogMessage_ConfirmSettingFileLoad" xml:space="preserve">Are you sure to load setting No.{0}?
+
+If you load with non-character option, most of the settings will be overwritten.</sys:String>    
+
+    <sys:String x:Key="DialogTitle_GuardSettingWindowDuringSaveLoad">Save / Load Process Running</sys:String>
+    <sys:String x:Key="DialogMessage_GuardSettingWindowDuringSaveLoad">Setting window is locked during save and load process.</sys:String>
+    
+    <sys:String x:Key="DialogTitle_EnableAutomation">Enable Automation</sys:String>
+    <sys:String x:Key="DialogMessage_EnableAutomation" xml:space="preserve">Are you sure to enable automation feature?
+
+This feature enable switch setting and change character without GUI operation.
+Use this only after checking the licenses of VRM you will use.
+</sys:String>    
+    <sys:String x:Key="DialogTitle_DisableAutomation">Disable Automation</sys:String>
+    <sys:String x:Key="DialogMessage_DisableAutomation">Are you sure to disable automation feature?</sys:String>
+
+    <sys:String x:Key="DialogTitle_PenUnavailable">VRM is not ready for Pen</sys:String>
+    <sys:String x:Key="DialogMessage_PenUnavailable">Pen feature needs right index finger bones to show. Please check model's setup.</sys:String>
+
+    <sys:String x:Key="DialogTitle_AlreadyLatestVersion">Latest Version</sys:String>
+    <sys:String x:Key="DialogMessage_AlreadyLatestVersion">Current app version ({0}) is the latest.</sys:String>        
+    
+    <!-- Other: Not on Dialog, but used from code -->
+    <sys:String x:Key="CommonUi_DoNothing">(Do Nothing)</sys:String>
+    <sys:String x:Key="CommonUi_None">(None)</sys:String>
+    
+    <!-- Localize dependent URLs -->
+    <sys:String x:Key="URL_help_top">https://malaybaku.github.io/VMagicMirror/en</sys:String>
+    <sys:String x:Key="URL_docs_ex_tracker">https://malaybaku.github.io/VMagicMirror/en/docs/external_tracker</sys:String>
+    <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/en/docs/hand_tracking</sys:String>
+    <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/en/docs/setting_files</sys:String>
+    <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/en/tips/perfect_sync</sys:String>
+    <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/en/tips/change_textures</sys:String>
+    <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/en/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
+    
+</ResourceDictionary>

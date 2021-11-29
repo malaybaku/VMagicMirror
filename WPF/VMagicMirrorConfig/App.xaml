@@ -1,0 +1,202 @@
+﻿<Application x:Class="Baku.VMagicMirrorConfig.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+             StartupUri="View/Windows/MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Japanese.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Yellow.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/materialdesign.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+           
+            <SolidColorBrush x:Key="SecondaryAccentBrush" Color="{StaticResource Accent400}"/>
+            <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="{StaticResource Accent400Foreground}"/>
+
+            <Color x:Key="BorderDarkColor">#5B5B5B</Color>
+                           
+            <SolidColorBrush x:Key="SelectedTabItemForeground" Color="{StaticResource Primary500}"/>
+            <SolidColorBrush x:Key="UnselectedTabItemForeground" Color="{StaticResource MahApps.Colors.Gray2}"/>
+
+            <SolidColorBrush x:Key="SelectedTabItemBackground" Color="{StaticResource MahApps.Colors.Gray9}"/>
+            <SolidColorBrush x:Key="UnselectedTabItemBackground" Color="Transparent"/>
+
+            <!-- VSCode のVS Light Themeでファイル一覧とかのエリアをこのくらいの色にしてるのをリスペクトしてます -->
+            <SolidColorBrush x:Key="TabAreaBackground" Color="#F3F3F3"/>
+
+            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+                <Setter Property="Width" Value="80"/>
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="Margin" Value="10,5"/>
+            </Style>
+
+
+            <Style TargetType="Slider" BasedOn="{StaticResource MahApps.Styles.Slider}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Minimum" Value="0"/>
+                <Setter Property="Maximum" Value="255"/>
+                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                <Setter Property="TickFrequency" Value="1"/>
+            </Style>
+            <!--
+            <Style TargetType="Slider" BasedOn="{StaticResource MaterialDesignSlider}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Minimum" Value="0"/>
+                <Setter Property="Maximum" Value="255"/>
+                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                <Setter Property="TickFrequency" Value="1"/>
+            </Style>
+            -->
+
+            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="FontSize"  Value="12"/>
+            </Style>
+
+            <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                <Setter Property="Margin" Value="20,0"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="5,0"/>
+            </Style>
+
+            <Style x:Key="SectionHeaderText" TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignHeadline4TextBlock}">
+                <Setter Property="Margin" Value="25,15,15,15"/>
+            </Style>
+
+            <Style x:Key="HeaderText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Margin" Value="10,15,10,0"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+            </Style>
+
+            <Style x:Key="SectionBorder" TargetType="Border">
+                <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignToolForeground}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="5"/>
+                <Setter Property="Margin" Value="10,5"/>
+                <Setter Property="Padding" Value="5"/>
+            </Style>
+            
+            <Style x:Key="SideMarginSectionBorder" TargetType="Border" BasedOn="{StaticResource SectionBorder}">
+                <Setter Property="Margin" Value="25,10"/>
+            </Style>
+            
+            <Style TargetType="{x:Type md:Card}" BasedOn="{StaticResource {x:Type md:Card}}">
+                <Setter Property="md:ShadowAssist.ShadowDepth" Value="Depth1"/>
+                <Setter Property="Margin" Value="10,5"/>
+                <Setter Property="Padding" Value="10"/>
+            </Style>
+
+            <Style x:Key="ColorIndicatorCard" TargetType="{x:Type md:Card}" BasedOn="{StaticResource {x:Type md:Card}}">
+                <!--<Setter Property="Background" Value="White"/>-->
+                <Setter Property="Width" Value="25"/>
+                <Setter Property="Height" Value="25"/>
+                <Setter Property="Margin" Value="20,0,5,0"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+
+            <Style x:Key="ColorIndicatorBorder" TargetType="Border">
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Width" Value="25"/>
+                <Setter Property="Height" Value="25"/>
+                <Setter Property="CornerRadius" Value="5"/>
+                <Setter Property="Margin" Value="20,0,5,0"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+
+            <Style x:Key="CategorySettingResetButton"
+                   x:Shared="False"
+                   TargetType="Button" 
+                   BasedOn="{StaticResource MaterialDesignFlatButton}">
+                <Setter Property="Width" Value="25"/>
+                <Setter Property="Height" Value="25"/>
+                <Setter Property="Margin" Value="5,0"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <md:PackIcon Kind="Refresh" 
+                                     Foreground="{StaticResource PrimaryHueMidBrush}"
+                                     />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+                       
+            <Style TargetType="{x:Type Expander}" BasedOn="{StaticResource MaterialDesignExpander}"/>
+
+            <Style x:Key="VmmComboBoxItemStyle" TargetType="ComboBoxItem" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}">
+                <Setter Property="Padding" Value="3"/>
+                <Setter Property="Margin" Value="3"/>
+            </Style>
+            <Style TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
+                <Setter Property="Height" Value="33"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="ItemContainerStyle" Value="{StaticResource VmmComboBoxItemStyle}"/>
+            </Style>
+
+            <!-- Dragablz Material Design -->
+            <Style TargetType="{x:Type dragablz:TabablzControl}" BasedOn="{StaticResource MaterialDesignAlternateTabablzControlStyle}">
+                <Setter Property="BorderBrush" Value="Transparent"/>
+            </Style>
+
+            <Style x:Key="SettingHeaderPackIcon" TargetType="md:PackIcon">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Width" Value="25"/>
+                <Setter Property="Height" Value="25"/>
+            </Style>
+
+            <Style x:Key="IconTextSetStackPanel" TargetType="StackPanel">
+                <Setter Property="Orientation" Value="Horizontal"/>
+                <Setter Property="Margin" Value="0"/>
+            </Style>
+            <Style x:Key="IconTextSetIcon" TargetType="md:PackIcon">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="5,0"/>
+                <Setter Property="Width" Value="20"/>
+                <Setter Property="Height" Value="20"/>
+            </Style>
+            <Style x:Key="IconSetSetText" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="0,0,5,0"/>
+            </Style>
+
+            <Style x:Key="MainWindowSeparatorLine" TargetType="Rectangle">
+                <Setter Property="VerticalAlignment" Value="Top"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="Height" Value="2"/>
+                <Setter Property="Fill" Value="{StaticResource TabAreaBackground}"/>
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <TranslateTransform Y="-2"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,552 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xml:space="preserve"
+                    >
+    <!-- Common -->
+    <sys:String x:Key="Common_Cancel">キャンセル</sys:String>
+    <sys:String x:Key="Common_Close">閉じる</sys:String>
+
+    <!-- Window Title Bar -->
+    <sys:String x:Key="TitleBar_Help">ヘルプ</sys:String>
+    <sys:String x:Key="TitleBar_Visit_OfficialPage">ウェブページ</sys:String>
+    <sys:String x:Key="TitleBar_Visit_DownloadPage_Standard">ダウンロード (基本エディション)</sys:String>
+    <sys:String x:Key="TitleBar_Visit_DownloadPage_Full">ダウンロード (フルエディション)</sys:String>
+    <sys:String x:Key="TitleBar_Visit_Fanbox">Fanbox</sys:String>
+    <sys:String x:Key="TitleBar_Check_Update">更新を確認</sys:String>
+    <sys:String x:Key="TitleBar_About">VMagicMirrorについて</sys:String>
+    
+    <!-- Top Tab -->
+    <sys:String x:Key="TopBar_Home">ホーム</sys:String>
+    <sys:String x:Key="TopBar_Streaming">配信</sys:String>
+    <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_HandTrack">ハンドトラッキング</sys:String>
+    
+    <!-- Top Tab in Setting Window -->
+    <sys:String x:Key="TopBar_Setting_Window">ウィンドウ</sys:String>
+    <sys:String x:Key="TopBar_Setting_FaceMotion">顔・表情</sys:String>
+    <sys:String x:Key="TopBar_Setting_Motion">モーション</sys:String>
+    <sys:String x:Key="TopBar_Setting_Layout">レイアウト</sys:String>
+    <sys:String x:Key="TopBar_Setting_Devices">デバイス</sys:String>
+    <sys:String x:Key="TopBar_Setting_Effects">エフェクト</sys:String>
+    <sys:String x:Key="TopBar_Setting_FileIo">ファイル</sys:String>
+    
+    <!-- Home -->
+    <sys:String x:Key="Home_LoadVrm">VRMロード</sys:String>
+    <sys:String x:Key="Home_LoadVrmFromFile">PC上のファイルをロード</sys:String>    
+    <sys:String x:Key="Home_LoadVrm_Or">または</sys:String>
+    <sys:String x:Key="Home_ConnectToVRoidHub">VRoid Hubからロード</sys:String>    
+    <sys:String x:Key="Home_OpenVRoidHub">ブラウザでVRoid Hubを開く</sys:String>
+    <sys:String x:Key="Home_VrmDragDropInstruction">ドラッグ &amp; ドロップでVRMをロード</sys:String>
+
+    <sys:String x:Key="Home_LoadVrmOnNextStartup">次回の起動時にも同じVRMを読み込む</sys:String>
+    <sys:String x:Key="Home_AutoAdjust">キャラ体格で補正</sys:String>
+
+    <sys:String x:Key="Home_Manual_Header">使い方</sys:String>
+    <sys:String x:Key="Home_Manual_Open">マニュアルのURLにアクセス</sys:String>
+
+    <sys:String x:Key="Home_SettingFileIo">詳細設定</sys:String>    
+    <sys:String x:Key="Home_OpenSetting">設定ウィンドウを開く</sys:String>
+
+    <sys:String x:Key="Home_SettingManagement">設定ファイル</sys:String>
+    <sys:String x:Key="Home_Reset">現在の設定をリセット</sys:String>
+    <sys:String x:Key="Home_LoadPrevSetting">旧バージョンの設定をロード</sys:String>
+        
+    <sys:String x:Key="Home_OtherSettings_Header">その他の設定</sys:String>
+    <sys:String x:Key="Home_ActivateOnStartupHeader">Windowsの起動後にスタート</sys:String>
+    
+    <!-- Streaming -->
+    <sys:String x:Key="Streaming_Window">ウィンドウ</sys:String>
+    <sys:String x:Key="Streaming_Face">顔・表情</sys:String>
+    <sys:String x:Key="Streaming_Motion">モーション</sys:String>
+    <sys:String x:Key="Streaming_View">表示</sys:String>
+    <sys:String x:Key="Streaming_WordToMotion">Word To Motion</sys:String>
+
+    <sys:String x:Key="Streaming_DeviceLayout">デバイスのレイアウト</sys:String>
+    <sys:String x:Key="Streaming_DeviceLayout_Reset">リセット</sys:String>
+
+    <sys:String x:Key="Streaming_Screenshot">スクリーンショット</sys:String>
+    <sys:String x:Key="Streaming_Screenshot_OpenSaveFolder">保存フォルダ...</sys:String>
+    
+    <!-- Ex.Tracker -->
+    <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>
+    <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによるトラッキングを活用する機能です。
+外部トラッキングをオンにすると、以下の機能は一時的に無効化されます。
+- Webカメラでの顔トラッキング
+- マウスポインタを目で追従する機能</sys:String>
+    <sys:String x:Key="ExTracker_Enable">外部トラッキングを有効化</sys:String>
+    <sys:String x:Key="ExTracker_Enable_ImageLipSync">リップシンクも外部トラッキングの値を適用</sys:String>    
+    <sys:String x:Key="ExTracker_Enable_EmphasizeExpression">一部の表情を強調して適用</sys:String>    
+
+    <sys:String x:Key="ExTracker_Enable_PerfectSync">パーフェクトシンクを使用</sys:String>
+    <sys:String x:Key="ExTracker_PerfectSync_UseVRoidDefault">VRoid用のデフォルト設定を使う(※VRoidモデルでのみ動作)</sys:String>
+    <sys:String x:Key="ExTracker_HowTo_PerfectSync">パーフェクトシンクとは? (Webページを開きます)</sys:String>
+    <sys:String x:Key="ExTracker_PerfectSync_MissingBlendShape_Header">モデルがパーフェクトシンク未対応のようです (クリックで詳細)</sys:String>
+
+    <sys:String x:Key="ExTracker_Calibrate">現在位置で顔をキャリブレーション</sys:String>
+
+    <sys:String x:Key="ExTracker_SourceSelect">アプリとの連携</sys:String>
+    <sys:String x:Key="ExTracker_SourceSelect_Instruction">連携先アプリを選択します。現時点ではiOSアプリのみ対応しています。</sys:String>
+
+    <sys:String x:Key="ExTracker_Source_None">なし</sys:String>
+    <sys:String x:Key="ExTracker_Source_iFacialMocap">iFacialMocap</sys:String>
+    <sys:String x:Key="ExTracker_iFM_IpHint">iPhoneのIP Address...</sys:String>
+    <sys:String x:Key="ExTracker_Source_HowToCollaborate">※アプリとの連携方法をチェック (Webページを開きます)</sys:String>
+
+    <sys:String x:Key="ExTracker_iFM_HasTrouble_Header">連携先アプリの設定を確認して下さい</sys:String>
+    <sys:String x:Key="ExTracker_iFM_HasTrouble_OpenUrl">トラブルシューティングを開く(webページへ)</sys:String>
+
+    <sys:String x:Key="ExTracker_FaceSwitch">表情スイッチ</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
+「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_KeepLipSync">リップシンクを続行</sys:String>
+
+    
+    <!-- ExTracker FaceSwitch Trigger -->
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_mouthSmile">口を笑顔にすると</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_eyeSquint">目を細めると</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_eyeWide">目を大きく見開くと</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_browUp">眉を上げると</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_browDown">眉を下げると</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">舌を出すと</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">頬をふくらませると</sys:String>
+
+    <!-- HandTracking -->
+    <sys:String x:Key="HandTracking_Header">ハンドトラッキング</sys:String>
+    <sys:String x:Key="HandTracking_Instruction" xml:space="preserve">webカメラでのハンドトラッキングです。
+顔トラッキングにもwebカメラを使う場合、顔と手で共通のカメラを使用します。</sys:String>
+    <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">※基本エディションではハンドトラッキング中にエフェクトが適用されます。
+フルエディションではエフェクトを無効化できます。</sys:String>
+    <sys:String x:Key="HandTracking_GetFullEdition">フルエディションを入手</sys:String>
+    <sys:String x:Key="HandTracking_Enable">ハンドトラッキングを有効化</sys:String>
+    <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
+    <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
+    <sys:String x:Key="HandTracking_ShowAreaChecker">手の検出状況を表示(※カメラ映像は表示されません)</sys:String> 
+    <sys:String x:Key="HandTracking_DetectionResult">手の検出状況:</sys:String>
+    <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">ヒント:
+- 手の全体をカメラ視野に収めるとトラッキングが安定します。
+- カメラの中央を避け、やや左右の位置を使用して下さい。</sys:String>
+    <sys:String x:Key="HandTracking_NotDetected">未検出: 顔の横に手を挙げてみて下さい</sys:String>
+    <sys:String x:Key="HandTracking_LearnMore">詳細 (Web)</sys:String>    
+    
+    <!-- Settings General -->
+    <sys:String x:Key="Setting_Color_Expander_Header">色を編集 (クリックで展開)</sys:String>
+    
+    <!-- Window -->
+    <sys:String x:Key="Window_Header">ウィンドウ</sys:String>
+    <sys:String x:Key="Window_Basics">基本の設定</sys:String>
+    <sys:String x:Key="Window_BackgroundColor">背景色</sys:String>
+    <sys:String x:Key="Window_Transparent">背景を透過</sys:String>
+    <sys:String x:Key="Window_Draggable">(透過中)キャラ付近を掴んでドラッグ</sys:String>
+    <sys:String x:Key="Window_TopMost">(透過中)キャラクターをつねに最前面で表示</sys:String>
+    <sys:String x:Key="Window_ResetPosition">キャラクター位置のリセット</sys:String>
+    
+    <sys:String x:Key="Window_BackgroundImage">背景画像:</sys:String>
+    <sys:String x:Key="Window_BackgroundImage_Load">ロード...</sys:String>
+    <sys:String x:Key="Window_BackgroundImage_Clear">クリア</sys:String>
+    
+    <sys:String x:Key="Window_TransparencySupport">キャラ透明化の詳細</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level">キャラの透明化レベル</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Alpha">透明になるときの透明度(32-255)</sys:String>
+    
+    <sys:String x:Key="Window_TransparencySupport_Level_0">レベル0: つねに不透明です。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_1">レベル1: 「キャラ付近を掴んでドラッグ」がオフで、かつキャラの近くにマウスポインタがあれば、半透明になります。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_2">レベル2: キャラの近くにマウスポインタがあれば、半透明になります。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_3">レベル3: 「キャラ付近を掴んでドラッグ」がオフならば、半透明になります。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_4">レベル4: つねに半透明になります。</sys:String>
+        
+    <!-- Motion -->
+    <sys:String x:Key="Motion_Header">モーション</sys:String>   
+    
+    <!-- Motion : Full Body -->
+    <sys:String x:Key="Motion_FullBody">上半身</sys:String>
+    <sys:String x:Key="Motion_FullBody_NoHandTrackMode">つねに手下げモード (※体の動きが増えます)</sys:String>    
+    <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">つねに手下げモード</sys:String>    
+    
+    <!-- Motion : Arm -->
+    <sys:String x:Key="Motion_Arm">腕・ひじ</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableHidMotion">タイピング / マウス動作を反映</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableRandomTyping">打鍵をランダム化して入力を隠す</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableShoulderModify">肩モーションの補正を有効化</sys:String>
+    <sys:String x:Key="Motion_Arm_EnableTypingAndMouseTimeout">入力がないとき手をおろす</sys:String>
+    <sys:String x:Key="Motion_Arm_FpsAssumedRightHand">右手のマウス動作をFPS対策モードにする</sys:String>
+    <sys:String x:Key="Motion_Arm_FpsAssumedRightHand_Tooltip">オンにするとPC用のFPSを遊ぶときのマウス動作が自然になりますが、ペンタブ作業や画面タッチへの反応が悪くなります。</sys:String>
+    
+    <sys:String x:Key="Motion_Arm_WaistWidth">脇をしめる幅 [cm]</sys:String>
+    <sys:String x:Key="Motion_Arm_ElbowCloseStrength">脇をしめる強さ [%]</sys:String>
+    <sys:String x:Key="Motion_Arm_ShowPresentationPointer">補助ポインターを表示</sys:String>    
+    <sys:String x:Key="Motion_Arm_PresenterArmRadiusMin">手の食い込み防止半径 [cm]</sys:String>    
+    
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode">キー/マウスでの動作</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode">ゲームパッドでの動作</sys:String>
+    <sys:String x:Key="Motion_Arm_ModeSpecitic">特定の動作モード向けオプション</sys:String>
+    <sys:String x:Key="Motion_Arm_Typing_Section">キーボード + タッチパッド</sys:String>
+    <sys:String x:Key="Motion_Arm_Presentation_Section">プレゼンテーション</sys:String>
+
+    <!-- NOTE: used in ViewModel code -->
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode_Default">デフォルト</sys:String>
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode_Presentation">プレゼンテーション</sys:String>
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode_PenTablet">ペンタブレット</sys:String>
+    <sys:String x:Key="Motion_Arm_MouseAndKeyMode_None">動作なし</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode_Default">デフォルト</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode_ArcadeStick">アーケードスティック</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode_GunController">ガンコントローラ</sys:String>
+
+    <!-- Motion : Hand -->
+    <sys:String x:Key="Motion_Hand">手・指</sys:String>
+    <sys:String x:Key="Motion_Hand_WristToHandTip">手首から指先までの長さ[cm]</sys:String>
+    <sys:String x:Key="Motion_Hand_HandYOffsetBasic">手の高さ調整[cm]</sys:String>
+    <sys:String x:Key="Motion_Hand_HandYOffsetAfterKeyDown">(打鍵後)手の高さ調整[cm]</sys:String>
+    
+    <!-- Motion : Wait -->
+    <sys:String x:Key="Motion_Wait">待機モーション</sys:String>
+    <sys:String x:Key="Motion_Wait_EnableWaitMotion">待機モーションを有効化</sys:String>
+    <sys:String x:Key="Motion_Wait_WaitMotionScale">動きの大きさ [%]</sys:String>
+    <sys:String x:Key="Motion_Wait_WaitMotionPeriod">周期 [sec]</sys:String>    
+    
+    <!-- NOTE: もともとMotionタブだったのを分断してる関係で命名ルールがちょっとアレです -->
+    <!-- Face Motion -->
+    <sys:String x:Key="Motion_Face">顔・表情</sys:String>
+
+    <!-- Face : Basic -->
+    <sys:String x:Key="Motion_Face_Basics">基本の設定</sys:String>
+    
+    <sys:String x:Key="Motion_Mouth">口・リップシンク</sys:String>
+    <sys:String x:Key="Motion_Mouth_EnableLipSync">リップシンク</sys:String>
+    <sys:String x:Key="Motion_Mouth_MicrophoneName">マイク</sys:String>    
+    <sys:String x:Key="Motion_Mouth_Microphone_Sensitivity">マイク感度 [dB]</sys:String>
+    <sys:String x:Key="Motion_Mouth_Microphone_Visualize">音量をチェック</sys:String>
+
+    <sys:String x:Key="Motion_Face_EnableFaceTracking">顔をトラッキング</sys:String>
+    <sys:String x:Key="Motion_Face_CameraName">カメラ</sys:String>    
+    <sys:String x:Key="Motion_Face_Calibration">姿勢・表情を補正</sys:String>    
+    <sys:String x:Key="Motion_Face_EnableBodyLeanZ">顔トラッキング中の前後移動を有効化</sys:String>    
+    <sys:String x:Key="Motion_Face_AutoBlinkDuringFaceTracking">顔トラッキング中も自動でまばたき</sys:String>
+    <sys:String x:Key="Motion_Face_DisableFaceTrackingHorizontalFlip">左右反転をオフにする</sys:String>
+    <sys:String x:Key="Motion_Face_EnableImageBasedHandTracking">顔とセットで手もトラッキング</sys:String>
+    <sys:String x:Key="Motion_Face_EnableWebCamHighPowerMode">高解像度モード</sys:String>
+    <sys:String x:Key="Motion_Face_FolderMaybeIncorrect_Header">※アプリフォルダの移動を検討してください！</sys:String>
+    <sys:String x:Key="Motion_Face_FolderMaybeIncorrect_Tooltip" xml:space="preserve">アプリの配置フォルダパスに全角文字が含まれています。
+この状態では顔トラッキングが正常動作しないかもしれません。
+
+顔トラッキングの挙動がおかしい場合、一度アプリケーションを終了し、
+フォルダ全体を半角文字のみのフォルダパス以下へ移動してください。
+
+顔トラッキングが正常に動作している場合、この警告を無視してかまいません。
+</sys:String>
+    <sys:String x:Key="Motion_Face_ExTrackerWorking_Header">※現在webカメラには反応しません。外部トラッキングが有効です。</sys:String>
+    <sys:String x:Key="Motion_Face_ExTrackerWorking_TurnOffExTracker">webカメラを使う場合はここをクリック</sys:String>
+    
+    <sys:String x:Key="Motion_Face_BlinkAdjust">顔の動きや声でまばたきを補正</sys:String>
+    <sys:String x:Key="Motion_Face_NoCamMotion">カメラ非使用時、音声ベースでアバターを動かす</sys:String>
+            
+    <!-- Face : Eye -->
+    <sys:String x:Key="Motion_Eye">目・視線</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint">視線の動き</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_Streaming">視線:</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_None">固定</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">マウス</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">ユーザー</sys:String>
+    <sys:String x:Key="Motion_Eye_RotScale">目の動きの大きさ[%]</sys:String>
+    <sys:String x:Key="Motion_Eye_ApproxRotRangePrefix">(参考)目ボーンのおおよその可動範囲: </sys:String>
+    <sys:String x:Key="Motion_Eye_ApproxRotRangeSuffix"> [deg]</sys:String>
+    
+    
+    <!-- Face : BlendShape -->
+    <sys:String x:Key="Motion_Face_BlendShape">ブレンドシェイプ</sys:String>
+    <sys:String x:Key="Motion_Face_DefaultFun">Funブレンドのデフォルト値[%]</sys:String>
+    <sys:String x:Key="Motion_Face_NeutralClip">Neutralブレンドシェイプ</sys:String>    
+    <sys:String x:Key="Motion_Face_NeutralClip_Help" xml:space="preserve">※Neutralブレンドシェイプは普段の表情として使用されます。
+　デフォルト表情をNeutralなどでカスタムしている場合に使用します。</sys:String>    
+    <sys:String x:Key="Motion_Face_OffsetClip">体型調整ブレンドシェイプ</sys:String>
+    <sys:String x:Key="Motion_Face_OffsetClip_Help" xml:space="preserve">※体型調整ブレンドシェイプはつねに適用されます。
+　体格や輪郭の調整をブレンドシェイプで行っている場合に使用します。</sys:String>
+    
+    <!-- Layout Setting -->
+    <sys:String x:Key="Layout_Header">レイアウト</sys:String>   
+
+    <!-- Layout : Camera -->
+    <sys:String x:Key="Layout_Camera">カメラ</sys:String>
+    <sys:String x:Key="Layout_Camera_HowTo">使い方…</sys:String>
+    <sys:String x:Key="Layout_Camera_HowTo_Content" xml:space="preserve">フリーカメラモードをオンにすると、
+以下のカメラ操作ができます。
+       
+- 右クリック + ドラッグ: 回転
+- 中クリック + ドラッグ: 並行移動
+- マウスホイール: 前後に移動</sys:String>    
+    <sys:String x:Key="Layout_EnableFreeCameraMode">フリーカメラモード</sys:String>
+    <sys:String x:Key="Layout_Camera_ResetPosition">位置をリセット</sys:String>
+    <sys:String x:Key="Layout_Camera_Fov">視野角 [deg]</sys:String>
+    <sys:String x:Key="Layout_Camera_QuickSave">クイックセーブ</sys:String>
+    <sys:String x:Key="Layout_Camera_QuickLoad">クイックロード</sys:String>
+
+    <!-- Layout : Devices -->
+    <sys:String x:Key="Layout_DeviceLayout">デバイスのレイアウト</sys:String>
+    <sys:String x:Key="Layout_DeviceFreeLayout">フリーレイアウトモード</sys:String>
+
+    <!-- Layout : Keyboard / Mouse Pad -->
+    <sys:String x:Key="Layout_Hid">デバイスの表示</sys:String>
+    <sys:String x:Key="Layout_HidVisible">キーボード・タッチパッド</sys:String>
+    <sys:String x:Key="Layout_MidiVisible">MIDIコントローラ</sys:String>
+    <sys:String x:Key="Layout_GamepadVisible">ゲームパッドを表示</sys:String>
+    <sys:String x:Key="Layout_Pen_Visibility">ペン (ペンタブ動作時のみ)</sys:String>
+    <sys:String x:Key="Layout_Pen_UnavaiableModel">ペン非対応のVRMです</sys:String>
+   
+    <sys:String x:Key="Layout_Hid_Streaming">キーボード・パッド</sys:String>
+    <sys:String x:Key="Layout_Midi_Streaming">MIDIコントローラ</sys:String>
+
+    <sys:String x:Key="Layout_Hid_TypingEffect_Header">タイピング時の演出</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Header_Streaming">タイピング演出</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_None">なし</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Text">テキスト</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Light">ライト</sys:String>
+    
+    <sys:String x:Key="Layout_Gamepad">ゲームパッド</sys:String>    
+
+    <sys:String x:Key="Layout_Texture_Tips_Notice">※デバイスの色などを変更するには画像の差し替え必要です。</sys:String>
+    <sys:String x:Key="Layout_Texture_Tips_ButtonText">詳細を確認 (Webページを開きます)</sys:String>
+    
+    <!-- Devices -->
+    <sys:String x:Key="Devices_Header">デバイス接続</sys:String>
+        
+    <!-- Devices: MIDI -->
+    <sys:String x:Key="Devices_Midi_Header">MIDI</sys:String>
+    <sys:String x:Key="Devices_Midi_ReadEnable">MIDIコントローラ入力をVMagicMirrorで取得する</sys:String>
+    
+    <!-- Devices: Gamepad -->
+    <sys:String x:Key="Devices_Gamepad_Header">ゲームパッド</sys:String>
+    
+    <sys:String x:Key="Devices_GamepadEnable">ゲームパッドの入力をVMagicMirrorで取得する</sys:String>
+    <sys:String x:Key="Devices_Gamepad_PreferDirectInput">DirectInputを使用 (DUAL SHOCK 4を使う場合オン)</sys:String>
+    <sys:String x:Key="Devices_GamepadDeviceNumber">デバイス番号</sys:String>
+    
+    <sys:String x:Key="Devices_GamepadLean">キャラ傾き入力</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_None">なし</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_LeftButtons">左十字キー</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_LeftStick">左スティック</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_RightStick">右スティック</sys:String>
+
+    <sys:String x:Key="Devices_GamepadLean_Reverse">傾く方向を反転</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_ReverseHorizontal">左右</sys:String>
+    <sys:String x:Key="Devices_GamepadLean_ReverseVertical">前後</sys:String>
+    
+    
+    <!-- Light Setting -->
+    <sys:String x:Key="Effect_Header">エフェクト</sys:String>       
+
+    <sys:String x:Key="ImageQuality">画質</sys:String>
+    <sys:String x:Key="ImageQuality_CurrentQuality">現在の設定</sys:String>
+    <sys:String x:Key="ImageQuality_HalfFpsMode">FPSを半減 (Medium以上で有効)</sys:String>
+    
+    <sys:String x:Key="Light">ライト</sys:String>
+    <sys:String x:Key="Light_Intensity">明るさ[%]</sys:String>
+    <sys:String x:Key="Light_Yaw">向き(横)[deg]</sys:String>
+    <sys:String x:Key="Light_Pitch">向き(上下)[deg]</sys:String>
+    <sys:String x:Key="Light_BgAdjust">デスクトップの色調でライトを補正</sys:String>
+
+    <sys:String x:Key="Shadow">影</sys:String>
+    <sys:String x:Key="Shadow_Enable">影を有効化</sys:String>
+    <sys:String x:Key="Shadow_Enable_Streaming">キャラの影</sys:String>
+    <sys:String x:Key="Shadow_Intensity">濃さ[%]</sys:String>
+    <sys:String x:Key="Shadow_Yaw">向き(横)[deg]</sys:String>
+    <sys:String x:Key="Shadow_Pitch">向き(上下)[deg]</sys:String>
+    <sys:String x:Key="Shadow_DepthOffset">奥行きの調整 [cm]</sys:String>
+        
+    <sys:String x:Key="Bloom">Bloom</sys:String>
+    <sys:String x:Key="Bloom_Intensity">強さ[%]</sys:String>
+    <sys:String x:Key="Bloom_Threshold">しきい値[%]</sys:String>
+    
+    <sys:String x:Key="Wind">風</sys:String>
+    <sys:String x:Key="Wind_Enable">風を有効化</sys:String>
+    <sys:String x:Key="Wind_Enable_Streaming">風</sys:String>
+    <sys:String x:Key="Wind_Strength">風の強さ[%]</sys:String>
+    <sys:String x:Key="Wind_Interval">風の細かさ[%]</sys:String>
+    <sys:String x:Key="Wind_Yaw">風の向き[deg]</sys:String>
+
+    
+    <!-- Word To Motion -->
+    <sys:String x:Key="WordToMotion_Header">Word to Motion</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Enable">Word to Motionを有効化</sys:String>
+    <sys:String x:Key="WordToMotion_UseGamepadForInput">ゲームパッドのボタンで表情/モーションを実行</sys:String>
+    <sys:String x:Key="WordToMotion_Instruction" xml:space="preserve">このタブは `Word to Motion` タブです。
+`Word to Motion`は、単語をタイピングするとキャラクターを動かせる機能です。
+ためしに "joy" とタイピングしてみてください。</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice">この機能専用にデバイスを割り当て</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_None">なし</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_Gamepad">ゲームパッド</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_Keyboard">キーボード(数字の0-9)</sys:String>
+    <sys:String x:Key="WordToMotion_AssignDevice_Keyboard_Short">キーボード</sys:String>
+
+    <sys:String x:Key="WordToMotion_AssignDevice_Select_Header">デバイスの割り当て</sys:String>
+    
+    <sys:String x:Key="WordToMotion_KeyAssign">キー割り当て</sys:String>
+    <sys:String x:Key="WordToMotion_LoadDefaultSet">デフォルト設定にリセット</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Word_Header">Word</sys:String>
+    <sys:String x:Key="WordToMotion_Word_Limit">*半角アルファベット、数字、スペースのみ</sys:String>
+
+    <sys:String x:Key="WordToMotion_BodyMotion_Header">全身モーション</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_None">なし</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_BuiltIn">ビルトインモーション</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_Custom">カスタムモーション</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Motion_BuiltIn_Label">モーション</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_BuiltIn_Hint">モーションを選択</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Motion_Custom_Label">モーション</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_Hint">モーションを選択</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">使い方 (Webページを開きます)</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_Doctor">モーションデータを診断</sys:String>
+
+    <sys:String x:Key="WordToMotion_Face_Header">表情</sys:String>
+    <sys:String x:Key="WordToMotion_Face_Enable">表情の動作を有効化</sys:String>
+    <sys:String x:Key="WordToMotion_Face_Duration">(全身モーションが「なし」の場合) 表情の変化時間 [sec]</sys:String>
+    <sys:String x:Key="WordToMotion_Face_Hold">完了後も表情をキープ</sys:String>
+    <sys:String x:Key="WordToMotion_Face_PreferLipSync">リップシンクを続行</sys:String>
+    
+    <sys:String x:Key="WordToMotion_Face_CommonClip_Header">基本の表情</sys:String>
+    <sys:String x:Key="WordToMotion_Face_ExtraClip_Header">キャラ固有の表情</sys:String>
+    
+    <sys:String x:Key="WordToMotion_EnablePreview">現在のキャラクターでプレビュー</sys:String>    
+        
+    <sys:String x:Key="WordToMotion_MidiAssign">MIDIのノート割り当て</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_MidiNotActive_Title">MIDI入力を有効化します</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_MidiNotActive_Message" xml:space="preserve">この機能ではMIDI入力の有効化が必要です。続行しますか？
+(「デバイス」タブからMIDI入力の有効・無効を切り替えられます。)</sys:String>    
+    <sys:String x:Key="WordToMotion_MidiAssign_Instruction" xml:space="preserve">16個までのMIDIノートをモーション起動に割り当てます。
+- 右側のテキスト入力をクリック
+- MIDIコントローラのキーを押して番号を入力</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_Current">現在のノート</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_After">変更後のノート</sys:String>
+    <sys:String x:Key="WordToMotion_MidiAssign_Clear">クリア</sys:String>
+   
+    <sys:String x:Key="WordToMotion_DeviceItem_None">なし</sys:String>
+    <sys:String x:Key="WordToMotion_DeviceItem_KeyboardWord">キーボード (単語入力)</sys:String>
+    <sys:String x:Key="WordToMotion_DeviceItem_Gamepad">ゲームパッド</sys:String>
+    <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">キーボード (数字の0-9)</sys:String>
+    <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDIコントローラ</sys:String>
+
+    <!-- Save/Load -->
+    <sys:String x:Key="SettingFile_Header">設定ファイルの操作</sys:String>
+    <sys:String x:Key="SettingFile_SaveAndLoad">セーブ・ロード</sys:String>
+    <sys:String x:Key="SettingFile_Save">セーブ</sys:String>
+    <sys:String x:Key="SettingFile_Load">ロード</sys:String>
+    <sys:String x:Key="SettingFile_Save_Instruction">保存先を選択して下さい。</sys:String>
+    <sys:String x:Key="SettingFile_Load_Instruction">ロードするデータを選択して下さい。</sys:String>
+    <sys:String x:Key="SettingFile_LoadCharacter">キャラをロード</sys:String>
+    <sys:String x:Key="SettingFile_LoadNonCharacter">キャラ以外の情報をロード</sys:String>
+    <sys:String x:Key="SettingFile_Export">エクスポート</sys:String>
+    <sys:String x:Key="SettingFile_Import">インポート</sys:String>
+    
+    <sys:String x:Key="SettingFile_Automation">オートメーション</sys:String>
+    <sys:String x:Key="SettingFile_Instruction" xml:space="preserve">注意:
+この機能を使うとGUIを操作せずにキャラクターを切り替えられます。
+ライセンスを十分確認したモデルでのみ、この機能を使用して下さい。
+
+また、本機能ではVRoid Hubモデルへの自動切り替えはできません。</sys:String>
+    <sys:String x:Key="SettingFile_Enable">オートメーションを有効化</sys:String>
+    <sys:String x:Key="SettingFile_Disable">オートメーションを無効化</sys:String>
+    <sys:String x:Key="SettingFile_PortNumber">ポート番号:</sys:String>
+    <sys:String x:Key="SettingFile_PortNumber_Warning">ポート番号が不適切です。0以上、65535以下の数値を指定して下さい。</sys:String>
+    <sys:String x:Key="SettingFile_ApplyPortNumber">適用</sys:String>
+    <sys:String x:Key="SettingFile_SeeMore">使い方をチェック (Webページへ移動)</sys:String>
+
+    <!-- NOTE: used from ViewModel code. -->
+    <sys:String x:Key="SettingFile_SaveCompleted">設定を No.{0} に保存しました。</sys:String>
+    <sys:String x:Key="SettingFile_LoadCompleted">設定 No.{0} をロードしました。</sys:String>
+    <sys:String x:Key="SettingFile_SaveCompleted_ExportedFile">設定をファイルに保存しました。</sys:String>
+    <sys:String x:Key="SettingFile_LoadCompleted_ExportedFile">設定をファイルからロードしました。</sys:String>
+   
+    <!-- Update Window -->
+    <sys:String x:Key="UpdateDialog_Title">VMagicMirror - 更新が利用可能です</sys:String>
+    <sys:String x:Key="UpdateDialog_ReleaseNoteHeader">リリースノート</sys:String>
+    <sys:String x:Key="UpdateDialog_GetLatest">最新版を入手</sys:String>
+    <sys:String x:Key="UpdateDialog_AskMeLater">後で通知</sys:String>
+    <sys:String x:Key="UpdateDialog_SkipThisVersion">このバージョンはスキップ</sys:String>
+    
+    <!-- Dialog Messages -->
+    <sys:String x:Key="DialogTitle_LoadLocalVrm">VRMの読み込み</sys:String>
+    <sys:String x:Key="DialogMessage_LoadLocalVrm">ビューアー画面のライセンスを確認してください。読み込みますか？</sys:String>
+    <sys:String x:Key="DialogTitle_ResetAllSetting">設定のリセット</sys:String>
+    <sys:String x:Key="DialogMessage_ResetAllSetting" xml:space="preserve">リセット操作を行うと現在の設定を削除し、アプリケーションが再起動します。
+
+現在の設定をバックアップする場合、事前にセーブを行ってください。
+
+リセットしますか？</sys:String>
+    <sys:String x:Key="DialogTitle_ResetCategorySetting">設定のリセット</sys:String>
+    <sys:String x:Key="DialogMessage_ResetCategorySetting">選択したカテゴリの設定をリセットしますか？</sys:String>
+    <sys:String x:Key="DialogTitle_LoadSettingFileError">ロード失敗</sys:String>
+    <sys:String x:Key="DialogMessage_LoadSettingFileError">設定ファイルのロードに失敗しました。エラー: </sys:String>
+    <sys:String x:Key="DialogTitle_DeleteWtMItem">モーションの削除</sys:String>
+    <sys:String x:Key="DialogMessage_DeleteWtmItem">このモーション'{0}'を削除しますか？</sys:String>
+    <sys:String x:Key="DialogTitle_ForgetBlendShapeInfo">ブレンドシェイプ情報のクリア</sys:String>
+    <sys:String x:Key="DialogMessage_ForgetBlendShapeInfo">このブレンドシェイプ'{0}'の設定を削除しますか？</sys:String>
+    <sys:String x:Key="DialogTitle_InvalidIpAddress">無効なIPアドレス</sys:String>
+    <sys:String x:Key="DialogMessage_InvalidIpAddress">無効なIPアドレスが指定されています。入力を確認して下さい。</sys:String>
+    <sys:String x:Key="DialogTitle_ShowVRoidSdkUi">VRoid Hubに接続中</sys:String>
+    <sys:String x:Key="DialogMessage_ShowVRoidSdkUi">キャラクターウィンドウ上でモデルを選択するか、またはキャンセルしてください。</sys:String>
+    <sys:String x:Key="DialogTitle_LoadPreviousVRoidModel">VRoid Hubに接続中</sys:String>
+    <sys:String x:Key="DialogMessage_LoadPreviousVRoidModel">前回使用したモデルのロードを試みています。モデルをロードするか、またはキャンセルしてください。</sys:String>
+    <sys:String x:Key="DialogTitle_LoadSavedVRoidModel">VRoid Hubに接続中</sys:String>
+    <sys:String x:Key="DialogMessage_LoadSavedVRoidModel">設定ファイルで指定されたモデルのロードを試みています。モデルをロードするか、またはキャンセルしてください。</sys:String>
+    <sys:String x:Key="DialogTitle_ExTrackerMissingBlendShape">未定義のBlendShapeClipがあります</sys:String>
+    <sys:String x:Key="DialogMessage_ExTrackerMissingBlendShape" xml:space="preserve">パーフェクトシンクに必要なBlendShapeClipの一部が未定義です。
+
+モデルの見た目が正常であれば、この警告を無視して構いません。
+モデルの見た目がおかしい場合はこのダイアログを閉じてから
+「パーフェクトシンクとは？」をクリックし、
+モデルのセットアップ手順を確認して下さい。
+
+---
+定義されていないBlendShapeClipの名称:
+</sys:String>
+    <sys:String x:Key="DialogTitle_ExTrackerCheckTurnOff">外部トラッキング機能をオフ</sys:String>
+    <sys:String x:Key="DialogMessage_ExTrackerCheckTurnOff" xml:space="preserve">外部トラッキング機能をオフにしますか？
+webカメラでの顔トラッキングを有効にする場合は
+'OK'を選択し、iPhone/iPadとの連携を終了してください。
+</sys:String>
+
+    <sys:String x:Key="DialogTitle_ConfirmSettingFileSave">設定を保存</sys:String>
+    <sys:String x:Key="DialogMessage_ConfirmSettingFileSave" xml:space="preserve">現在の設定を No.{0} に保存しますか？
+        
+現在保存済みの設定がある場合、上書きされます。</sys:String>
+    
+    <sys:String x:Key="DialogTitle_ConfirmSettingFileLoad">設定をロード</sys:String>
+    <sys:String x:Key="DialogMessage_ConfirmSettingFileLoad" xml:space="preserve">設定 No.{0} をロードしますか？
+        
+キャラ以外の設定をロードすると、現在の設定が上書きされます。</sys:String>
+
+    <sys:String x:Key="DialogTitle_GuardSettingWindowDuringSaveLoad">セーブ/ロード操作中</sys:String>
+    <sys:String x:Key="DialogMessage_GuardSettingWindowDuringSaveLoad">設定ファイルのセーブ/ロード中は設定ウィンドウは操作できません。</sys:String>
+    
+    <sys:String x:Key="DialogTitle_EnableAutomation">オートメーションの有効化</sys:String>
+    <sys:String x:Key="DialogMessage_EnableAutomation" xml:space="preserve">オートメーションを有効化しますか？
+
+オートメーション機能ではGUIを操作せずにキャラクター、設定を切り替えられます。
+ライセンスを十分よく確認したモデルに対してのみ、この機能を使用して下さい。
+</sys:String>
+
+    <sys:String x:Key="DialogTitle_DisableAutomation">オートメーションの無効化</sys:String>
+    <sys:String x:Key="DialogMessage_DisableAutomation">オートメーションを無効化しますか？</sys:String>
+    
+    <sys:String x:Key="DialogTitle_PenUnavailable">VRMがペン表示に未対応です</sys:String>
+    <sys:String x:Key="DialogMessage_PenUnavailable">ペンを表示するにはモデルに人差し指ボーンが必要です。モデルの設定を確認して下さい。</sys:String>    
+
+    <sys:String x:Key="DialogTitle_AlreadyLatestVersion">最新バージョンです</sys:String>
+    <sys:String x:Key="DialogMessage_AlreadyLatestVersion">現在のバージョン({0})は最新です。</sys:String>    
+    
+    <!-- Other: Not on Dialog, but used from code -->
+    <sys:String x:Key="CommonUi_DoNothing">(何もしない)</sys:String>
+    <sys:String x:Key="CommonUi_None">(なし)</sys:String>
+
+    <!-- Localize dependent URLs -->
+    <sys:String x:Key="URL_help_top">https://malaybaku.github.io/VMagicMirror</sys:String>
+    <sys:String x:Key="URL_docs_ex_tracker">https://malaybaku.github.io/VMagicMirror/docs/external_tracker</sys:String>
+    <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/docs/hand_tracking</sys:String>
+    <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/docs/setting_files</sys:String>
+    <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/tips/perfect_sync</sys:String>
+    <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
+    <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
+    
+</ResourceDictionary>

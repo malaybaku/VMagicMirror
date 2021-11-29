@@ -22,7 +22,7 @@ Limitations
 With VMagicMirror v1.6.2 or later, you can try localization by following steps.
 
 - Create a new folder named `Localization`, at `(Folder of VMagicMirror.exe)/ConfigApp` folder.
-- Copy latest version's English localization file from [here](https://raw.githubusercontent.com/malaybaku/VMagicMirrorConfig/master/VMagicMirrorConfig/VMagicMirrorConfig/Resources/English.xaml) (right-click and select 'Save Link as...').
+- Copy latest version's English localization file from [here](https://raw.githubusercontent.com/malaybaku/VMagicMirror/master/WPF/VMagicMirrorConfig/Resources/English.xaml) (right-click and select 'Save Link as...').
 - Change file name to the language, e.g. "German.xaml". This file name will be displayed on the app.
 - Put the file to `ConfigApp/Localization` folder.
 - Edit the file. See detail in next section.
@@ -96,10 +96,8 @@ To apply your localization to distributed app, you have some options.
 1. Pull Request based
 2. Issue based
 
-First way is to create a new pull request on [VMagicMirrorConfig](https://github.com/malaybaku/VMagicMirrorConfig), to add a new file (./Localization/xxx.xaml).
+First way is to create a new pull request on this repository's `develop` branch, to add a new file at "./WPF/VMagicMirrorConfig/Localization/xxx.xaml". You will find `Chinese_Simplified.xaml` on same directory.
 
 Second way is to create a new issue on this repository, with localization file attached and title like `localization proposal to (language name)`.
 
-If you have choosed second way, author of this repository will make it for a pull request.
-
-First way is strongly recommended, because this way makes pull request author to a contributer, which is very reasonable for the runtime exe localization contribution.
+I recommend first way because it is git based way, and will be reflected on GitHub contributor indication.

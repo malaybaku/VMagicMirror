@@ -11,6 +11,14 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v1.9.3
+{: .doc-sec2 }
+
+2021/12/06
+
+* Fix: Bug fix of v1.9.2, in whicn texture replacement and custom motion does not work correctly.
+
+
 #### v1.9.2
 {: .doc-sec2 }
 

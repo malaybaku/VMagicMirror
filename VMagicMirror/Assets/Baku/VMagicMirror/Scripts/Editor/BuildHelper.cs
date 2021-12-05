@@ -10,6 +10,9 @@ namespace Baku.VMagicMirror
 {
     public static class BuildHelper
     {
+        private const string VmmFeatureLockedSymbol = "VMM_FEATURE_LOCKED";
+        private const string DevEnvSymbol = "DEV_ENV";
+        
         private const string SavePathArgPrefix = "-SavePath=";
         private const string EnvArgPrefix = "-Env=";
         private const string EditionArgPrefix = "-Edition=";
@@ -83,6 +86,7 @@ namespace Baku.VMagicMirror
 
         private static void BuildVMagicMirror(string folder, bool isFullEdition, bool isProd)
         {
+            
             //NOTE: ビルド直前にスクリプトシンボルを追加し、ビルドしてから元に戻す
             var defineSymbols = PlayerSettings
                 .GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
@@ -91,14 +95,24 @@ namespace Baku.VMagicMirror
             if (!isFullEdition || !isProd)
             {
                 var addedSymbols = new List<string>(defineSymbols);
-                if (!isFullEdition)
+                if (isFullEdition && addedSymbols.Contains(VmmFeatureLockedSymbol))
                 {
-                    addedSymbols.Add("VMM_FEATURE_LOCKED");
+                    addedSymbols.Remove(VmmFeatureLockedSymbol);
+                }
+                    
+                if (!isFullEdition && !addedSymbols.Contains(VmmFeatureLockedSymbol))
+                {
+                    addedSymbols.Add(VmmFeatureLockedSymbol);
                 }
 
-                if (!isProd)
+                if (isProd && addedSymbols.Contains(DevEnvSymbol))
                 {
-                    addedSymbols.Add("DEV_ENV");
+                    addedSymbols.Remove(DevEnvSymbol);
+                }
+                
+                if (!isProd && !addedSymbols.Contains(DevEnvSymbol))
+                {
+                    addedSymbols.Add(DevEnvSymbol);
                 }
                 
                 PlayerSettings.SetScriptingDefineSymbolsForGroup(
@@ -119,13 +133,10 @@ namespace Baku.VMagicMirror
             }
             finally
             {
-                if (!isFullEdition)
-                {
-                    PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                        EditorUserBuildSettings.selectedBuildTargetGroup,
-                        defineSymbols
-                    );
-                }
+                PlayerSettings.SetScriptingDefineSymbolsForGroup(
+                    EditorUserBuildSettings.selectedBuildTargetGroup,
+                    defineSymbols
+                );
             }
         }
 

@@ -144,6 +144,7 @@ namespace Baku.VMagicMirrorConfig
                 LightSetting = _model.Light.Save(),
                 WordToMotionSetting = _model.WordToMotion.Save(),
                 ExternalTrackerSetting = _model.ExternalTracker.Save(),
+                AccessorySetting = _model.Accessory.Save(),
                 AutomationSetting = _model.Automation.Save(),
             };
 
@@ -224,6 +225,7 @@ namespace Baku.VMagicMirrorConfig
                     _model.Light.Load(saveData.LightSetting);
                     _model.WordToMotion.Load(saveData.WordToMotionSetting);
                     _model.ExternalTracker.Load(saveData.ExternalTrackerSetting);
+                    _model.Accessory.Load(saveData.AccessorySetting);
 
                     //固定スロットからロード/セーブする場合にオートメーション設定をいじってしまうと
                     //「オートメーションで設定変えたらオートメーションがオフになって反応しなくなった」という珍事が起きる。ポート番号が変わる場合も同様。

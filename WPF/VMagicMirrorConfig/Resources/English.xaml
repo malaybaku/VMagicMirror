@@ -20,6 +20,7 @@
     <sys:String x:Key="TopBar_Home">Home</sys:String>
     <sys:String x:Key="TopBar_Streaming">Streaming</sys:String>
     <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_Accessory">Accessory</sys:String>
     <sys:String x:Key="TopBar_HandTrack">Hand Tracking</sys:String>
     
     <!-- Top Tab In Setting -->
@@ -128,6 +129,13 @@ Get Full Edition to remove the effect.</sys:String>
 - Put whole hand inside the camera view to stabilize.
 - Put hands slight left or right, than the center.</sys:String>
     <sys:String x:Key="HandTracking_LearnMore">More...</sys:String>    
+      
+    <!-- Accessory Panel -->
+    <sys:String x:Key="Accessory_Header">Accessory</sys:String>
+    <sys:String x:Key="Accessory_Instruction" xml:space="preserve">This feature loads accessory data from "Accessory" folder.
+png image and 3D model by glb or gltf is available.</sys:String>
+    <sys:String x:Key="Accessory_OpenFolder">Open Accessory Folder</sys:String>
+    <sys:String x:Key="Accessory_SeeMore">See More...</sys:String>
     
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>
@@ -539,6 +547,7 @@ Use this only after checking the licenses of VRM you will use.
     <sys:String x:Key="URL_docs_ex_tracker">https://malaybaku.github.io/VMagicMirror/en/docs/external_tracker</sys:String>
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/en/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/en/docs/setting_files</sys:String>
+    <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/en/docs/accessory</sys:String>
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/en/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/en/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/en/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>

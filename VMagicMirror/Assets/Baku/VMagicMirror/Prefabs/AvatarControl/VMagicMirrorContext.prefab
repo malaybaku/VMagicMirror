@@ -84,7 +84,11 @@ MonoBehaviour:
   monitoring: {fileID: 0}
   modelLoad: {fileID: 0}
   screenshotCountDown: {fileID: 0}
+  motionCalculationInstaller: {fileID: 0}
   faceControl: {fileID: 0}
+  wordToMotion: {fileID: 0}
+  accessoryControllerPrefab: {fileID: 6504500073380870320, guid: 48aafffd92547204e837783c67f928f1,
+    type: 3}
   deformableCounterPrefab: {fileID: 7689942653974604740, guid: 70558d4eae9159e459981bcfa4091921,
     type: 3}
   interProcess: {fileID: 2683631619848515584}

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.Installer
@@ -7,6 +6,7 @@ namespace Baku.VMagicMirror.Installer
     /// <summary> デバイスの座標周りの処理をインジェクトしてくれるすごいやつだよ </summary>
     public class DevicesInstaller : InstallerBase, IDevicesRoot
     {
+        [SerializeField] private DeviceTransformController controller = null;
         [SerializeField] private GamepadProvider gamepadProvider = null;
         [SerializeField] private ArcadeStickProvider arcadeStickProvider = null;
         [SerializeField] private KeyboardProvider keyboardProvider = null;
@@ -15,6 +15,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private PenController penController = null;
         [SerializeField] private MidiControllerProvider midiControllerProvider = null;
         [SerializeField] private ParticleStore particleStore = null;
+        
 
         public Transform Transform => transform;
         
@@ -24,6 +25,8 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<IDevicesRoot>()
                 .FromInstance(this)
                 .AsCached();
+
+            container.BindInstance(controller);
 
             //NOTE: ペンタブより先にバインドしといたほうが無難(PenTabletProvider側で必要)
             container.Bind<PenController>()

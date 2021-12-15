@@ -50,6 +50,8 @@ namespace Baku.VMagicMirror
         //普通falseになるようにするため、ちょっと変な言い回しにしてます
         public Message SetModelDoesNotSupportPen(bool doesNotSupport) => WithArg($"{doesNotSupport}");
         
+        public Message UpdateAccessoryLayouts(string json) => WithArg(json);
+        
         #region VRoid
 
         public Message VRoidModelLoadCompleted(string modelInfo) => WithArg(modelInfo);

@@ -60,6 +60,7 @@ namespace mattatz.TransformControl {
 	    public TransformMode mode = TransformMode.Translate;
 	    public bool global, useDistance;
         public float distance = 10f;
+        public bool rotateOnlyZ;
 
 	    Color[] colors = new Color[]
 	    {
@@ -92,6 +93,13 @@ namespace mattatz.TransformControl {
 
 	    TransformDirection selected = TransformDirection.None;
 
+	    public bool IsDragging => selected != TransformDirection.None && dragging;
+	    
+	    /// <summary>
+	    /// Fire when drag operation has ended
+	    /// </summary>
+	    public Action<TransformMode> DragEnded;
+
 	    #region Circumference
 
 	    const int SPHERE_RESOLUTION = 32;
@@ -123,6 +131,10 @@ namespace mattatz.TransformControl {
                 Pick();
 	        } else if (Input.GetMouseButtonUp(0)) {
 	            dragging = false;
+	            if (mode != TransformMode.None && selected != TransformDirection.None)
+	            {
+		            DragEnded?.Invoke(mode);
+	            }
 				selected = TransformDirection.None;
 	        }
 
@@ -307,6 +319,7 @@ namespace mattatz.TransformControl {
 
 	    void Rotate() {
 			if (selected == TransformDirection.None) return;
+			if (rotateOnlyZ && selected != TransformDirection.Z) return;
 
 			var matrix = Matrix4x4.TRS(prev.position, global ? Quaternion.identity : prev.rotation,  Vector3.one);
 
@@ -373,7 +386,7 @@ namespace mattatz.TransformControl {
 	                break;
 
 	            case TransformMode.Rotate:
-	                DrawRotate();
+	                DrawRotate(rotateOnlyZ);
 	                break;
 
 	            case TransformMode.Scale:
@@ -432,45 +445,55 @@ namespace mattatz.TransformControl {
 	        DrawMesh(cone, matrices[2], color);
 	    }
 
-	    void DrawRotate () {
+	    void DrawRotate (bool onlyZ) {
 			material.SetInt("_ZTest", (int)CompareFunction.LessEqual);
 	        material.SetPass(0);
 
 	        // x axis
-	        GL.Begin(GL.LINES);
-	        var color = selected == TransformDirection.X ? colors[3] : colors[0];
-	        GL.Color(color);
-	        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-	            var cur = circumX[i];
-	            var next = circumX[(i + 1) % SPHERE_RESOLUTION];
-	            GL.Vertex(cur);
-	            GL.Vertex(next);
+	        if (!onlyZ)
+	        {
+		        GL.Begin(GL.LINES);
+		        var color = selected == TransformDirection.X ? colors[3] : colors[0];
+		        GL.Color(color);
+		        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
+			        var cur = circumX[i];
+			        var next = circumX[(i + 1) % SPHERE_RESOLUTION];
+			        GL.Vertex(cur);
+			        GL.Vertex(next);
+		        }
+		        GL.End();
 	        }
-	        GL.End();
 
-	        GL.Begin(GL.LINES);
-	        color = selected == TransformDirection.Y ? colors[3] : colors[1];
-	        GL.Color(color);
-	        material.SetPass(0);
-	        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-	            var cur = circumY[i];
-	            var next = circumY[(i + 1) % SPHERE_RESOLUTION];
-	            GL.Vertex(cur);
-	            GL.Vertex(next);
+	        // y
+	        if (!onlyZ)
+	        {
+		        GL.Begin(GL.LINES);
+		        var color = selected == TransformDirection.Y ? colors[3] : colors[1];
+		        GL.Color(color);
+		        material.SetPass(0);
+		        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
+			        var cur = circumY[i];
+			        var next = circumY[(i + 1) % SPHERE_RESOLUTION];
+			        GL.Vertex(cur);
+			        GL.Vertex(next);
+		        }
+		        GL.End();
 	        }
-	        GL.End();
 
-	        GL.Begin(GL.LINES);
-	        color = selected == TransformDirection.Z ? colors[3] : colors[2];
-	        GL.Color(color);
-	        material.SetPass(0);
-	        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-	            var cur = circumZ[i];
-	            var next = circumZ[(i + 1) % SPHERE_RESOLUTION];
-	            GL.Vertex(cur);
-	            GL.Vertex(next);
+	        // z: z is always drawn
+	        {
+		        GL.Begin(GL.LINES);
+		        var color = selected == TransformDirection.Z ? colors[3] : colors[2];
+		        GL.Color(color);
+		        material.SetPass(0);
+		        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
+			        var cur = circumZ[i];
+			        var next = circumZ[(i + 1) % SPHERE_RESOLUTION];
+			        GL.Vertex(cur);
+			        GL.Vertex(next);
+		        }
+		        GL.End();
 	        }
-	        GL.End();
 	    }
 
 	    void DrawScale () {

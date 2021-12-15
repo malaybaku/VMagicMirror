@@ -183,7 +183,12 @@ namespace Baku.VMagicMirror
         public const string ExTrackerSetApplicationValue = nameof(ExTrackerSetApplicationValue);
         public const string ExTrackerSetFaceSwitchSetting = nameof(ExTrackerSetFaceSwitchSetting);
         
-        
+        // Accessory
+        public const string SetSingleAccessoryLayout = nameof(SetSingleAccessoryLayout);
+        public const string SetAccessoryLayout = nameof(SetAccessoryLayout);
+        public const string RequestResetAllAccessoryLayout = nameof(RequestResetAllAccessoryLayout);
+        public const string RequestResetAccessoryLayout = nameof(RequestResetAccessoryLayout);
+
         // VRoidHub
         public const string OpenVRoidSdkUi = nameof(OpenVRoidSdkUi);
         public const string RequestLoadVRoidWithId = nameof(RequestLoadVRoidWithId);

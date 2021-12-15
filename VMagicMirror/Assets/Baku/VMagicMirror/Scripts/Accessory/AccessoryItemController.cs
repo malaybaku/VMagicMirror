@@ -137,12 +137,23 @@ namespace Baku.VMagicMirror
             }
         }
         
-        private void ResetAccessoryLayout(string fileName)
+        private void ResetAccessoryLayout(string fileNamesJson)
         {
-            if (_items.FirstOrDefault(i => i.FileName == fileName) is { } item)
+            try
             {
-                item.ResetLayout();
-                SendLayout(new [] { item });
+                var files = JsonUtility.FromJson<AccessoryResetTargetItems>(fileNamesJson);
+                foreach (var file in files.FileNames)
+                {
+                    if (_items.FirstOrDefault(i => i.FileName == file) is { } item)
+                    {
+                        item.ResetLayout();
+                    }
+                    SendLayout();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
             }
         }
 
@@ -152,7 +163,7 @@ namespace Baku.VMagicMirror
             {
                 item.ResetLayout();
             }
-            SendLayout(_items);
+            SendLayout();
         }
         
         private void ControlItemsTransform(TransformControlRequest request)
@@ -183,12 +194,10 @@ namespace Baku.VMagicMirror
         }
         
         //Unity側で操作のあったアクセサリのレイアウト情報を送信する
-        private void SendLayout() => SendLayout(_items);
-
-        private void SendLayout(IEnumerable<AccessoryItem> accessoryItems)
+        private void SendLayout()
         {
             var items = new List<AccessoryItemLayout>();
-            foreach (var target in accessoryItems.Where(i => i.HasLayoutChange))
+            foreach (var target in _items.Where(i => i.HasLayoutChange))
             {
                 items.Add(target.ItemLayout);
                 target.ConfirmLayoutChange();

@@ -15,7 +15,13 @@ namespace Baku.VMagicMirror
         Chest = 4,
         Waist = 5,
     }
-    
+
+    [Serializable]
+    public class AccessoryResetTargetItems
+    {
+        public string[] FileNames;
+    }
+
     
     [Serializable]
     public class AccessoryLayouts

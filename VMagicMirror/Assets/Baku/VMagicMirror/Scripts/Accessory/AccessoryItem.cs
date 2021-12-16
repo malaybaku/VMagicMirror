@@ -65,6 +65,7 @@ namespace Baku.VMagicMirror
                     LogOutput.Instance.Write($"WARN: Tried to load unknown data, name={_file.FileName}");
                     break;
             }
+            SetVisibility(false);
         }
 
         private void Start()
@@ -116,9 +117,11 @@ namespace Baku.VMagicMirror
             {
                 case AccessoryType.Png:
                     imageRenderer.gameObject.SetActive(true);
+                    modelParent.gameObject.SetActive(false);
                     break;
                 case AccessoryType.Glb:
                 case AccessoryType.Gltf:
+                    imageRenderer.gameObject.SetActive(false);
                     modelParent.gameObject.SetActive(true);
                     break;
                 default:
@@ -142,9 +145,9 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            SetVisibility(ItemLayout.IsVisible);
             if (!ItemLayout.IsVisible)
             {
-                SetVisibility(false);
                 return;
             }
 
@@ -290,62 +293,62 @@ namespace Baku.VMagicMirror
             switch (mode)
             {
                 case TransformControl.TransformMode.Translate:
-                    if (ItemLayout.UseBillboardMode)
+                    if (!ItemLayout.UseBillboardMode)
                     {
-                        //やること: カメラとアイテムの中心でレイを作り、zオフセットを尊重しつつボーン基準のXY平面にぶつける
-                        var ct = _cam.transform;
-                        var cPos = ct.position;
-                        var ray = new Ray(cPos, transform.position - cPos);
-
-                        var boneForward = bone.forward;
-                        var plane = new Plane(boneForward, bone.position + boneForward * ItemLayout.Position.z);
-
-                        //手にアタッチするケースではボーンのXY平面が動きすぎて難しいので、
-                        //諦めてワールドのXY平面方向でやる
-                        if (ItemLayout.AttachTarget == AccessoryAttachTarget.LeftHand ||
-                            ItemLayout.AttachTarget == AccessoryAttachTarget.RightHand)
-                        {
-                            plane = new Plane(Vector3.forward, bone.position);
-                        }
-
-                        if (!plane.Raycast(ray, out var enter))
-                        {
-                            return;
-                        }
-
-                        var dst = ray.origin + ray.direction * enter;
-                        ItemLayout.Position = bone.InverseTransformPoint(dst);
+                        ItemLayout.Position = transform.localPosition;
+                        break;
                     }
-                    else
+                    
+                    //やること: カメラとアイテムの中心でレイを作り、zオフセットを尊重しつつボーン基準のXY平面にぶつける
+                    var ct = _cam.transform;
+                    var cPos = ct.position;
+                    var ray = new Ray(cPos, transform.position - cPos);
+
+                    var boneForward = bone.forward;
+                    var plane = new Plane(boneForward, bone.position + boneForward * ItemLayout.Position.z);
+
+                    //手にアタッチするケースではボーンのXY平面が動きすぎて難しいので、
+                    //諦めてワールドのXY平面方向でやる
+                    if (ItemLayout.AttachTarget == AccessoryAttachTarget.LeftHand ||
+                        ItemLayout.AttachTarget == AccessoryAttachTarget.RightHand)
                     {
-                        ItemLayout.Rotation = transform.localPosition;
+                        plane = new Plane(Vector3.forward, bone.position);
                     }
+
+                    if (!plane.Raycast(ray, out var enter))
+                    {
+                        return;
+                    }
+
+                    var dst = ray.origin + ray.direction * enter;
+                    ItemLayout.Position = bone.InverseTransformPoint(dst);
                     break;
+                
                 case TransformControl.TransformMode.Rotate:
-                    if (ItemLayout.UseBillboardMode)
-                    {
-                        //NOTE: ビルボードモードではXY軸には回せないようになるので、Z軸回転のみ考慮する
-                        //カメラに対する、このオブジェクトのローカル回転
-                        var diff = Quaternion.Inverse(_cam.transform.rotation) * transform.rotation;
-                        //XY軸方向の編集が禁止されていると仮定するとZ軸成分だけ残ってるはず
-                        diff.ToAngleAxis(out var angle, out _);
-                        angle = MathUtil.ClampAngle(angle);
 
-                        var roll = Mathf.Asin(bone.right.y) * Mathf.Rad2Deg;
-                        if (ItemLayout.AttachTarget == AccessoryAttachTarget.LeftHand ||
-                            ItemLayout.AttachTarget == AccessoryAttachTarget.RightHand)
-                        {
-                            roll = 0f;
-                        }
-
-                        var rot = ItemLayout.Rotation;
-                        rot.z = angle - roll;
-                        ItemLayout.Rotation = rot;
-                    }
-                    else
+                    if (!ItemLayout.UseBillboardMode)
                     {
                         ItemLayout.Rotation = transform.localRotation.eulerAngles;
+                        break;
                     }
+
+                    //NOTE: ビルボードモードではXY軸には回せないようになるので、Z軸回転のみ考慮する
+                    //カメラに対する、このオブジェクトのローカル回転
+                    var diff = Quaternion.Inverse(_cam.transform.rotation) * transform.rotation;
+                    //XY軸方向の編集が禁止されていると仮定するとZ軸成分だけ残ってるはず
+                    diff.ToAngleAxis(out var angle, out _);
+                    angle = MathUtil.ClampAngle(angle);
+
+                    var roll = Mathf.Asin(bone.right.y) * Mathf.Rad2Deg;
+                    if (ItemLayout.AttachTarget == AccessoryAttachTarget.LeftHand ||
+                        ItemLayout.AttachTarget == AccessoryAttachTarget.RightHand)
+                    {
+                        roll = 0f;
+                    }
+
+                    var rot = ItemLayout.Rotation;
+                    rot.z = angle - roll;
+                    ItemLayout.Rotation = rot;
                     break;
                 case TransformControl.TransformMode.Scale:
                     var rawScale = transform.localScale.x;

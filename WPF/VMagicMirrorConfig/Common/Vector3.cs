@@ -1,6 +1,7 @@
-﻿namespace Baku.VMagicMirrorConfig
-{
+﻿using Newtonsoft.Json;
 
+namespace Baku.VMagicMirrorConfig
+{
     public struct Vector3
     {
         public Vector3(float x, float y, float z) : this()
@@ -8,8 +9,11 @@
             (X, Y, Z) = (x, y, z);
         }
 
+        [JsonProperty("x")]
         public float X { get; set; }
+        [JsonProperty("y")]
         public float Y { get; set; }
+        [JsonProperty("z")]
         public float Z { get; set; }
 
         public Vector3 WithX(float v) => new Vector3(v, Y, Z);

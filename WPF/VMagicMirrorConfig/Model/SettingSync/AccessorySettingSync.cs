@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -26,7 +25,7 @@ namespace Baku.VMagicMirrorConfig
         public void UpdateItemFromUi(AccessoryItemSetting item)
         {
             //必要なアイテムのデータだけ投げつける
-            var json = Serialize(item);
+            var json = JsonConvert.SerializeObject(item);
             SendMessage(MessageFactory.Instance.SetSingleAccessoryLayout(json));  
         }
 
@@ -35,13 +34,14 @@ namespace Baku.VMagicMirrorConfig
             foreach(var item in Items.Items)
             {
                 item.IsVisible = true;
+                item.UseBillboardMode = false;
                 item.Position = Vector3.Zero();
                 item.Rotation = Vector3.Zero();
                 item.Scale = Vector3.One();
                 item.Name = Path.GetFileNameWithoutExtension(item.FileName);
                 ItemUpdated?.Invoke(item);
             }
-            SerializedSetting = Serialize(Items);
+            SerializedSetting = JsonConvert.SerializeObject(Items);
             SendMessage(MessageFactory.Instance.SetAccessoryLayout(SerializedSetting));
             //アイテムの位置はUnity側で調整してもらう
             SendMessage(MessageFactory.Instance.RequestResetAllAccessoryLayout());
@@ -50,22 +50,25 @@ namespace Baku.VMagicMirrorConfig
         protected override void AfterLoad(AccessorySetting setting)
         {
             (Items, var missingFiles) = Deserialize(setting);
-            SendMessage(MessageFactory.Instance.SetAccessoryLayout(Serialize(Items)));
+            var json = JsonConvert.SerializeObject(Items);
+            SendMessage(MessageFactory.Instance.SetAccessoryLayout(json));
 
             //設定ファイルになかったアイテムの情報はUnityが決めていいよ、というのをUnity側に通知する
             if (missingFiles.Length > 0)
             {
-                var msg = Serialize(new AccessoryResetTargetItems()
+                var files = new AccessoryResetTargetItems()
                 {
                     FileNames = missingFiles,
-                });
+                };
+
+                var msg = JsonConvert.SerializeObject(files);
                 SendMessage(MessageFactory.Instance.RequestResetAccessoryLayout(msg));
             }
         }
 
         protected override void PreSave()
         {
-            SerializedSetting = Serialize(Items);
+            SerializedSetting = JsonConvert.SerializeObject(Items);
         }
 
         private void OnReceivedCommand(object? sender, CommandReceivedEventArgs e)
@@ -96,6 +99,7 @@ namespace Baku.VMagicMirrorConfig
 
             target.AttachTarget = item.AttachTarget;
             target.IsVisible = item.IsVisible;
+            target.UseBillboardMode = item.UseBillboardMode;
             target.Position = item.Position;
             target.Rotation = item.Rotation;
             target.Scale = item.Scale;
@@ -158,41 +162,12 @@ namespace Baku.VMagicMirrorConfig
 
         public void RequestReset(string fileName)
         {
-            var data = new AccessoryResetTargetItems()
+            var files = new AccessoryResetTargetItems()
             {
                 FileNames = new[] { fileName },
             };
-            SendMessage(MessageFactory.Instance.RequestResetAccessoryLayout(Serialize(data)));
-        }
-
-        private AccessoryItemSetting DeserializeSingle(string json)
-        {
-            try
-            {
-                var serializer = new JsonSerializer();
-                using (var reader = new StringReader(json))
-                using (var jsonReader = new JsonTextReader(reader))
-                {
-                    return serializer.Deserialize<AccessoryItemSetting>(jsonReader) ?? new AccessoryItemSetting();
-                }
-            }
-            catch (Exception ex)
-            {
-                LogOutput.Instance.Write(ex);
-                return new AccessoryItemSetting();
-            }
-        }
-
-        private string Serialize<T>(T target)
-        {
-            var serializer = new JsonSerializer();
-            var sb = new StringBuilder();
-            using (var writer = new StringWriter(sb))
-            using (var jsonWriter = new JsonTextWriter(writer))
-            {
-                serializer.Serialize(jsonWriter, target);
-            }
-            return sb.ToString();
+            var json = JsonConvert.SerializeObject(files);
+            SendMessage(MessageFactory.Instance.RequestResetAccessoryLayout(json));
         }
 
         private static string[] GetAccessoryFileNames(string dir)

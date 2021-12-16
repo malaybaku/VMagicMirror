@@ -55,6 +55,7 @@ namespace Baku.VMagicMirror.Installer
             
             Container.Bind<AccessoryItemController>()
                 .FromComponentInNewPrefab(accessoryControllerPrefab)
+                .AsCached()
                 .NonLazy();
         }
     }

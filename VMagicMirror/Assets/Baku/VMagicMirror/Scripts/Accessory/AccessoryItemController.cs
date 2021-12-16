@@ -148,8 +148,8 @@ namespace Baku.VMagicMirror
                     {
                         item.ResetLayout();
                     }
-                    SendLayout();
                 }
+                SendLayout();
             }
             catch (Exception ex)
             {
@@ -207,10 +207,9 @@ namespace Baku.VMagicMirror
             {
                 Items = items.ToArray(),
             };
-            
-            _sender.SendCommand(MessageFactory.Instance.UpdateAccessoryLayouts(
-                JsonUtility.ToJson(layouts)
-            ));
+
+            var msg = JsonUtility.ToJson(layouts);
+            _sender.SendCommand(MessageFactory.Instance.UpdateAccessoryLayouts(msg));
         }
     }
 }

@@ -18,6 +18,7 @@
         public string SerializedSetting { get; set; } = "";
     }
 
+    //NOTE: コレはAccessoryItemsと違い、通信でのみ使う
     public class AccessoryResetTargetItems
     {
         public string[] FileNames { get; set; } = new string[0];

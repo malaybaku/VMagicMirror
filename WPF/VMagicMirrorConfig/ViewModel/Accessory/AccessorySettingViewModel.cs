@@ -79,6 +79,11 @@ namespace Baku.VMagicMirrorConfig
                 _item.IsVisible = v;
                 UpdateItemFromUi();
             });
+            UseBillboardMode = new RProperty<bool>(_item.UseBillboardMode, v =>
+            {
+                _item.UseBillboardMode = v;
+                UpdateItemFromUi();
+            });
             AttachTarget = new RProperty<int>((int)_item.AttachTarget, v =>
             {
                 _item.AttachTarget = (AccessoryAttachTarget)v;
@@ -132,6 +137,7 @@ namespace Baku.VMagicMirrorConfig
         public string FileName { get; }
         public RProperty<string> Name { get; }
         public RProperty<bool> IsVisible { get; }
+        public RProperty<bool> UseBillboardMode { get; }
         public RProperty<int> AttachTarget { get; }
 
         public RProperty<float> PosX { get; }
@@ -163,6 +169,7 @@ namespace Baku.VMagicMirrorConfig
 
             Name.Value = _item.Name;
             IsVisible.Value = _item.IsVisible;
+            UseBillboardMode.Value = _item.UseBillboardMode;
             AttachTarget.Value = (int)_item.AttachTarget;
             PosX.Value = _item.Position.X;
             PosY.Value = _item.Position.Y;

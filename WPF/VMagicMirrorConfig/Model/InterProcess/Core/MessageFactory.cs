@@ -298,7 +298,7 @@ namespace Baku.VMagicMirrorConfig
         public Message SetSingleAccessoryLayout(string json) => WithArg(json);
         public Message SetAccessoryLayout(string json) => WithArg(json);
         public Message RequestResetAllAccessoryLayout() => NoArg();
-        public Message RequestResetAccessoryLayout(string fileNamesJson) => NoArg();
+        public Message RequestResetAccessoryLayout(string fileNamesJson) => WithArg(fileNamesJson);
 
         #endregion
 

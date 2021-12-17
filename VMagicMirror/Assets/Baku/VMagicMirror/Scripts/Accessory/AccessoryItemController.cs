@@ -94,6 +94,7 @@ namespace Baku.VMagicMirror
             {
                 StopLayoutSending();
                 SendLayout();
+                _items.ForEach(i => i.EndControlItemTransform());
             }
         }
         

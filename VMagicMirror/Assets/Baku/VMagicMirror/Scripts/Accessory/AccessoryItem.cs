@@ -110,6 +110,7 @@ namespace Baku.VMagicMirror
             {
                 imageRenderer.gameObject.SetActive(false);
                 modelParent.gameObject.SetActive(false);
+                transformControl.mode = TransformControl.TransformMode.None;
                 return;
             }
 
@@ -160,6 +161,7 @@ namespace Baku.VMagicMirror
             
             if (ItemLayout.UseBillboardMode)
             {
+                transform.SetParent(null);
                 UpdateIfBillboard();
             }
             else
@@ -279,6 +281,14 @@ namespace Baku.VMagicMirror
             }
         }
 
+        /// <summary>
+        /// フリーレイアウトモードを終了するとき呼び出すことで、TransformControlを非表示にします。
+        /// </summary>
+        public void EndControlItemTransform()
+        {
+            transformControl.mode = TransformControl.TransformMode.None;
+        }
+        
         //Unity上でTransformControlによって改変したPosition/Rotation/Scaleがある場合に呼び出すことで、layoutを更新します。
         private void UpdateLayout(TransformControl.TransformMode mode)
         {
@@ -383,7 +393,8 @@ namespace Baku.VMagicMirror
 
             transform.localScale = ItemLayout.Scale * BillboardScaleFactor;
             
-            //ビルボードの位置決め: ビルボードじゃなかった場合と中心が揃うように合わせる
+            //ビルボードの位置決め: ビルボードじゃなかった場合と画像の中心位置が揃うように合わせつつ、
+            //画面のほぼ最前面に持ってくる
             var camTransform = _cam.transform;
             var camPos = camTransform.position;
             var direction = (bone.TransformPoint(ItemLayout.Position) - camPos).normalized;
@@ -399,11 +410,10 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            transform.position = camTransform.TransformPoint(direction) * (BillboardZ / dot);
+            transform.position = camPos + direction * (BillboardZ / dot);
             
             //回転は手とそれ以外で反映する軸を変える。
             //というか、手は参照すべき軸が非自明で難しいため、深追いしない
-
             if (ItemLayout.AttachTarget == AccessoryAttachTarget.LeftHand ||
                 ItemLayout.AttachTarget == AccessoryAttachTarget.RightHand)
             {
@@ -411,12 +421,12 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //大まかに正面付近を向いているのを正面付近から撮ってると仮定して適当に合わせる
-            var boneRoll = Mathf.Asin(bone.right.y) * Mathf.Rad2Deg;
+            //大まかに正面付近を向いているのを正面付近から撮っている、と仮定して合わせるとこんなもん
+            var boneRoll = -Mathf.Asin(bone.right.y) * Mathf.Rad2Deg;
             transform.rotation = 
                 Quaternion.AngleAxis(boneRoll, camTransform.forward) *
                 camTransform.rotation *
-                Quaternion.Euler(0, 0, ItemLayout.Rotation.z) ;
+                Quaternion.Euler(0, 0, ItemLayout.Rotation.z);
         }
     }
 }

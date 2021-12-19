@@ -7,11 +7,12 @@ namespace Baku.VMagicMirrorConfig
 {
     public class AccessorySettingViewModel : ViewModelBase
     {
-        internal AccessorySettingViewModel(AccessorySettingSync model)
+        internal AccessorySettingViewModel(AccessorySettingSync model, LayoutSettingSync layoutModel)
         {
             Items = new ReadOnlyObservableCollection<AccessoryItemViewModel>(_items);
             _model = model;
             _model.Loaded += (_, __) => OnLoaded();
+            _layoutModel = layoutModel;
 
             ResetCommand = new ActionCommand(ResetToDefault);
             OpenAccessoryFolderCommand = new ActionCommand(OpenAccessoryFolder);
@@ -19,9 +20,13 @@ namespace Baku.VMagicMirrorConfig
         }
 
         private readonly AccessorySettingSync _model;
+        private readonly LayoutSettingSync _layoutModel;
+
         private readonly ObservableCollection<AccessoryItemViewModel> _items 
             = new ObservableCollection<AccessoryItemViewModel>();
         public ReadOnlyObservableCollection<AccessoryItemViewModel> Items { get; }
+
+        public RProperty<bool> EnableDeviceFreeLayout => _layoutModel.EnableDeviceFreeLayout;
 
         public ActionCommand OpenAccessoryFolderCommand { get; }
         public ActionCommand OpenAccessoryTipsUrlCommand { get; }

@@ -22,15 +22,16 @@ namespace Baku.VMagicMirror
         [SerializeField] private Transform modelParent;
         [SerializeField] private TransformControl transformControl;
         
+        public AccessoryItemLayout ItemLayout { get; private set; }
+        public string FileName => _file?.FileName ?? "";
+
         private AccessoryFile _file = null;
         private Camera _cam = null;
-        private Animator _animator = null;
-        public AccessoryItemLayout ItemLayout { get; private set; }
 
+        private Animator _animator = null;
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones =
             new Dictionary<AccessoryAttachTarget, Transform>();
 
-        public string FileName => _file?.FileName ?? "";
 
         /// <summary>
         /// Unity上でTransformControlによってレイアウトが編集されており、その変更WPFに送信されていない場合にtrueになるフラグ
@@ -177,11 +178,15 @@ namespace Baku.VMagicMirror
 
         public void ResetLayout()
         {
-            if (ItemLayout == null || _animator == null)
+            if (ItemLayout == null)
             {
                 return;
             }
-
+            
+            //※Animatorが無い場合も数字を更新することに注意。
+            //特に、初めて読み込まれるアイテムは必ずモデルがロードされる前に読まれるので、
+            //「モデルが未ロードだからリセットしません」というのはNG。
+            
             //リセット時だけはvisibilityとかtargetも更新する
             ItemLayout.IsVisible = true;
             ItemLayout.UseBillboardMode = false;
@@ -189,7 +194,7 @@ namespace Baku.VMagicMirror
             ItemLayout.Position = DefaultPosition;
             ItemLayout.Rotation = DefaultRotationEuler;
             ItemLayout.Scale = DefaultScale;
-            //この時点で明示的にレイアウトを更新: WPFがリセット後のレイアウトを再送信しないでも良くする
+            //この時点で明示的にレイアウトは更新し、WPFがリセット後のレイアウトを再送信しないでも良くする。
             SetLayout(ItemLayout);
             HasLayoutChange = true;
         }

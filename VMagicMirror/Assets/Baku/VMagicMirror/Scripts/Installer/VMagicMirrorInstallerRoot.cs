@@ -46,8 +46,7 @@ namespace Baku.VMagicMirror.Installer
                 .FromComponentInNewPrefab(deformableCounterPrefab)
                 .AsSingle();
             
-            Container
-                .BindInstance(new FaceControlConfiguration())
+            Container.Bind<FaceControlConfiguration>()
                 .AsSingle();
             
             //TODO: FindObjectOfTypeを卒業しろ…というか目ボーンの処理自体を統合したい…

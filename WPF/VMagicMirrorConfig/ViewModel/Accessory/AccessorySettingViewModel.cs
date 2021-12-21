@@ -12,10 +12,12 @@ namespace Baku.VMagicMirrorConfig
             Items = new ReadOnlyObservableCollection<AccessoryItemViewModel>(_items);
             _model = model;
             _model.Loaded += (_, __) => OnLoaded();
+            _model.ItemRefreshed += () => OnLoaded();
             _layoutModel = layoutModel;
 
             ResetCommand = new ActionCommand(ResetToDefault);
             OpenAccessoryFolderCommand = new ActionCommand(OpenAccessoryFolder);
+            ReloadFilesCommand = new ActionCommand(ReloadFiles);
             OpenAccessoryTipsUrlCommand = new ActionCommand(OpenAccessoryTipsUrl);
         }
 
@@ -29,6 +31,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> EnableDeviceFreeLayout => _layoutModel.EnableDeviceFreeLayout;
 
         public ActionCommand OpenAccessoryFolderCommand { get; }
+        public ActionCommand ReloadFilesCommand { get; }
         public ActionCommand OpenAccessoryTipsUrlCommand { get; }
         public ActionCommand ResetCommand { get; }
 
@@ -53,6 +56,9 @@ namespace Baku.VMagicMirrorConfig
                 UseShellExecute = true,
             });
         }
+
+        private void ReloadFiles() => _model.RefreshFiles();
+
         //TODO: ドキュメントの用意
         private void OpenAccessoryTipsUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_accessory"));
         private void ResetToDefault() => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetToDefault);
@@ -76,6 +82,7 @@ namespace Baku.VMagicMirrorConfig
         {
             _model = model;
             _item = model.Items.Items[index];
+            _file = model.Files.FirstOrDefault(f => f.FileId == _item.FileId);
             _model.ItemUpdated += OnItemUpdated;
             ResetCommand = new ActionCommand(Reset);
 
@@ -140,12 +147,15 @@ namespace Baku.VMagicMirrorConfig
             });
         }
 
-        readonly AccessorySettingSync _model;
-        readonly AccessoryItemSetting _item;
+        private readonly AccessorySettingSync _model;
+        private readonly AccessoryItemSetting _item;
+        private readonly AccessoryFile? _file;
 
         private bool _isUpdatingByReceivedData;
 
         public string FileName { get; }
+        //3Dモデルはビルボードモード使う必要ない(万が一フラグが立っててもUnity側で無視させる)
+        public bool CanSelectBillboardMode => _file?.Type == AccessoryType.Png;
         public RProperty<string> Name { get; }
         public RProperty<bool> IsVisible { get; }
         public RProperty<bool> UseBillboardMode { get; }
@@ -162,12 +172,9 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<float> Scale { get; }
         public ActionCommand ResetCommand { get; }
 
-        private void Reset()
-        {
-            //NOTE: Unityのコンポーネントリセットと同じノリで良いはずのため、確認ダイアログは無し。
-            //手触りがまずかったらダイアログを挟むか、またはUI側をContextMenu化で「確認してるよ」感を出す
-            _model.RequestReset(FileName);
-        }
+        //NOTE: Unityのコンポーネントリセットと同じノリで良いはずのため、確認ダイアログは無し。
+        //手触りがまずかったらダイアログを挟むか、またはUI側をContextMenu化で「確認してるよ」感を出す
+        private void Reset() => _model.RequestReset(_item.FileId);
 
         private void OnItemUpdated(AccessoryItemSetting item)
         {

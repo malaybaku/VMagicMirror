@@ -52,7 +52,6 @@ namespace Baku.VMagicMirrorConfig
                 FileId = Path.GetFileName(folderPath) + FolderIdSuffix;
             }
             Type = type;
-            Bytes = bytes;
         }
 
         public string FilePath { get; }

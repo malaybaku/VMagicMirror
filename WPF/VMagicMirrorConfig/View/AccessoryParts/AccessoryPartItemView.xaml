@@ -11,6 +11,7 @@
              d:DataContext="{d:DesignInstance vmm:AccessoryItemViewModel}"
              d:DesignHeight="250" d:DesignWidth="400">
     <UserControl.Resources>
+        <vmm:FileIdIndicationConverter x:Key="FileIdIndicationConverter"/>
         <vmm:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
     </UserControl.Resources>
     <StackPanel>
@@ -57,7 +58,8 @@
             <Grid Margin="0,0,0,5">
                 <TextBlock>
                 <Run Text="ファイル名: "/>
-                <Run Text="{Binding FileName, Mode=OneWay, FallbackValue=filename.glb}"/>
+                <Run Text="{Binding FileName, Mode=OneWay, FallbackValue=filename.glb, 
+                                    Converter={StaticResource FileIdIndicationConverter}}"/>
                 </TextBlock>
                 <Button HorizontalAlignment="Right"
                     Margin="10,0"

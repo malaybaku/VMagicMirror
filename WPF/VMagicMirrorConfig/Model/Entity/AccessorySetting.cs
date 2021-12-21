@@ -21,7 +21,7 @@
     //NOTE: コレはAccessoryItemsと違い、通信でのみ使う
     public class AccessoryResetTargetItems
     {
-        public string[] FileNames { get; set; } = new string[0];
+        public string[] FileIds { get; set; } = new string[0];
     }
 
     public class AccessoryItems
@@ -32,8 +32,10 @@
     //TODO: 配列でデータ保持したい + シリアライズの瞬間だけjsonにしたい
     public class AccessoryItemSetting
     {
+        public const char FolderIdSuffixChar = '>';
+
         //NOTE: 他のプロパティとは異なりキーのように用いられる。ユーザーは編集できない
-        public string FileName { get; set; } = "";
+        public string FileId { get; set; } = "";
 
         public string Name { get; set; } = "";
         public bool IsVisible { get; set; }

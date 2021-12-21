@@ -46,7 +46,13 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        private void OpenAccessoryFolder() => Process.Start(SpecialFilePath.AccessoryFileDir);
+        private void OpenAccessoryFolder()
+        {
+            Process.Start(new ProcessStartInfo(SpecialFilePath.AccessoryFileDir)
+            {
+                UseShellExecute = true,
+            });
+        }
         //TODO: ドキュメントの用意
         private void OpenAccessoryTipsUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_accessory"));
         private void ResetToDefault() => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetToDefault);
@@ -73,7 +79,7 @@ namespace Baku.VMagicMirrorConfig
             _model.ItemUpdated += OnItemUpdated;
             ResetCommand = new ActionCommand(Reset);
 
-            FileName = _item.FileName;
+            FileName = _item.FileId;
             Name = new RProperty<string>(_item.Name, v =>
             {
                 _item.Name = v;

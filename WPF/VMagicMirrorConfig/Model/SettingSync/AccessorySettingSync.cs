@@ -10,6 +10,7 @@ namespace Baku.VMagicMirrorConfig
         public AccessorySettingSync(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             receiver.ReceivedCommand += OnReceivedCommand;
+            Files = AccessoryFile.LoadAccessoryFiles(SpecialFilePath.AccessoryFileDir);
         }
 
         /// <summary>
@@ -19,6 +20,9 @@ namespace Baku.VMagicMirrorConfig
 
         public AccessoryItems Items { get; set; } = new AccessoryItems();
         public string SerializedSetting { get; set; } = "";
+
+        //NOTE: 動的ロードしないのはUnity側と挙動を揃えるため。リロード可能にする場合、Unity側も対応が要る
+        public AccessoryFile[] Files { get; }
 
         //NOTE: ViewModel層でItems.Itemsの中にあるアイテムをいじった場合、そのアイテムを指定して呼び出す
         //この呼び出しを行ってもSerializedSettingは更新されない
@@ -38,7 +42,7 @@ namespace Baku.VMagicMirrorConfig
                 item.Position = Vector3.Zero();
                 item.Rotation = Vector3.Zero();
                 item.Scale = Vector3.One();
-                item.Name = Path.GetFileNameWithoutExtension(item.FileName);
+                item.Name = Path.GetFileNameWithoutExtension(item.FileId);
                 ItemUpdated?.Invoke(item);
             }
             SerializedSetting = JsonConvert.SerializeObject(Items);
@@ -58,7 +62,7 @@ namespace Baku.VMagicMirrorConfig
             {
                 var files = new AccessoryResetTargetItems()
                 {
-                    FileNames = missingFiles,
+                    FileIds = missingFiles,
                 };
 
                 var msg = JsonConvert.SerializeObject(files);
@@ -92,7 +96,7 @@ namespace Baku.VMagicMirrorConfig
 
         private void UpdateExistingLayout(AccessoryItemSetting item)
         {
-            if (Items.Items.FirstOrDefault(i => i.FileName == item.FileName) is not AccessoryItemSetting target)
+            if (Items.Items.FirstOrDefault(i => i.FileId == item.FileId) is not AccessoryItemSetting target)
             {
                 return;
             }
@@ -107,39 +111,39 @@ namespace Baku.VMagicMirrorConfig
         }
 
         /// <summary>
-        /// シリアライズされたデータのパース結果、および実行中のアプリが参照すべきフォルダに実際に入っているアイテム一覧を照合することで、
-        /// 利用可能なアイテム一覧を生成します。
-        /// また、シリアライズされたデータに値が入っていなかったファイルのファイル名一覧を同時に返却します。
+        /// 保存されたデータとアクセサリフォルダの内容を突き合わせることで、アイテムの一覧を生成します。
+        /// また、保存されたデータに含まれなかったアクセサリのファイルID一覧を返却します。
         /// </summary>
         /// <param name="setting"></param>
         /// <returns></returns>
         private (AccessoryItems, string[]) Deserialize(AccessorySetting setting)
         {
             var result = DeserializeRaw(setting.SerializedSetting);
-            var fileNames = GetAccessoryFileNames(SpecialFilePath.AccessoryFileDir);
+            //var actualFiles = AccessoryFile.LoadAccessoryFiles(SpecialFilePath.AccessoryFileDir)
 
-            var missingFiles = fileNames
-                .Where(n => !result.Items.Any(i => string.Compare(i.FileName, n, true) == 0))
+            var missingFileIds = Files
+                .Select(f => f.FileId)
+                .Where(id => !result.Items.Any(i => string.Compare(i.FileId, id, true) == 0))
                 .ToArray();
 
             var items = result.Items
-                .Where(i => fileNames.Contains(i.FileName))
+                .Where(i => Files.Any(f => string.Compare(i.FileId, f.FileId, true) == 0))
                 .ToList();
 
-            foreach(var file in missingFiles)
+            foreach(var fileId in missingFileIds)
             {
                 items.Add(new AccessoryItemSetting() 
                 {
-                    FileName = file,
-                    Name = Path.GetFileNameWithoutExtension(file),
-                    //NOTE: ここで設定した値を、Unity側の初期値設定にあたって直ちに変更しても問題ない
+                    FileId = fileId,
+                    Name = Path.GetFileNameWithoutExtension(fileId),
+                    //NOTE: ここで設定した値は、Unity側の初期値設定にあたって変更しても問題ない
                     AttachTarget = AccessoryAttachTarget.Head,
                     IsVisible = true,
                 });
             }
-            result.Items = items.OrderBy(i => i.FileName).ToArray();
+            result.Items = items.OrderBy(i => i.FileId).ToArray();
 
-            return (result, missingFiles);
+            return (result, missingFileIds);
         }
 
         private AccessoryItems DeserializeRaw(string json)
@@ -164,7 +168,7 @@ namespace Baku.VMagicMirrorConfig
         {
             var files = new AccessoryResetTargetItems()
             {
-                FileNames = new[] { fileName },
+                FileIds = new[] { fileName },
             };
             var json = JsonConvert.SerializeObject(files);
             SendMessage(MessageFactory.Instance.RequestResetAccessoryLayout(json));

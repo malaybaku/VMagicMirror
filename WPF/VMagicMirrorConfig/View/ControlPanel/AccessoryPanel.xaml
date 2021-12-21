@@ -41,16 +41,38 @@
                                 Text="{DynamicResource Accessory_Instruction}"/>
 
                     <Grid Margin="5">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Command="{Binding OpenAccessoryFolderCommand}"
+                                    Padding="8"
+                                    >
+                                <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                                    <md:PackIcon Kind="FolderOutline"
+                                                 Margin="0,0,5,0"
+                                                 />
+                                    <TextBlock Style="{StaticResource IconSetSetText}"
+                                            Text="{DynamicResource Accessory_OpenFolder}"
+                                            />
+                                </StackPanel>
+                            </Button>
 
-                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                                HorizontalAlignment="Left"                                
-                                Content="{DynamicResource Accessory_OpenFolder}"
-                                Command="{Binding OpenAccessoryFolderCommand}"
-                                />
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Margin="15,0"
+                                    Padding="8"
+                                    Command="{Binding ReloadFilesCommand}"
+                                    >
+                                <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                                    <md:PackIcon Margin="0,0,5,0"
+                                                 Kind="Reload"
+                                                 />
+                                    <TextBlock Style="{StaticResource IconSetSetText}"
+                                            Text="{DynamicResource Accessory_ReloadFiles}"
+                                            />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
 
-                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                                Padding="0"
-                                VerticalAlignment="Top"
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
                                 HorizontalAlignment="Right"
                                 Margin="0,0,10,0"
                                 Command="{Binding OpenAccessoryTipsUrlCommand}"
@@ -58,12 +80,16 @@
                                 />
                     </Grid>
 
-                    <CheckBox Grid.Row="2" Grid.Column="0"
-                              Grid.ColumnSpan="3"
-                              Margin="10,0" 
-                              Content="{DynamicResource Layout_DeviceFreeLayout}"
-                              IsChecked="{Binding EnableDeviceFreeLayout.Value}"
-                              />
+                    <Grid>
+                        <CheckBox HorizontalAlignment="Left"
+                                  Margin="10,0" 
+                                  Content="{DynamicResource Layout_DeviceFreeLayout}"
+                                  IsChecked="{Binding EnableDeviceFreeLayout.Value}"
+                                  />
+
+
+
+                    </Grid>
 
                     <Border Margin="5"
                             BorderBrush="{StaticResource MaterialDesignToolForeground}"

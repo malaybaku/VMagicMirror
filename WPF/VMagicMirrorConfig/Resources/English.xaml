@@ -134,8 +134,17 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="Accessory_Header">Accessory</sys:String>
     <sys:String x:Key="Accessory_Instruction" xml:space="preserve">This feature loads accessory data from "Accessory" folder.
 png image and 3D model by glb or gltf is available.</sys:String>
-    <sys:String x:Key="Accessory_OpenFolder">Open Accessory Folder</sys:String>
+    <sys:String x:Key="Accessory_OpenFolder">Open Folder</sys:String>
+    <sys:String x:Key="Accessory_ReloadFiles">Reload</sys:String>
     <sys:String x:Key="Accessory_SeeMore">See More...</sys:String>
+    
+    <sys:String x:Key="Accessory_Item_FileName">File:</sys:String>
+    <sys:String x:Key="Accessory_Item_DisplayName">Display Name</sys:String>
+    <sys:String x:Key="Accessory_Item_AttachTarget">Attach to</sys:String>
+    <sys:String x:Key="Accessory_Item_BillboardMode">2D Foreground Mode (image file only)</sys:String>
+    <sys:String x:Key="Accessory_Item_Position">Position</sys:String>
+    <sys:String x:Key="Accessory_Item_Rotation">Rotation</sys:String>
+    <sys:String x:Key="Accessory_Item_Scale">Scale</sys:String>
     
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>

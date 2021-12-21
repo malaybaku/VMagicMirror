@@ -57,7 +57,7 @@
                 >
             <Grid Margin="0,0,0,5">
                 <TextBlock>
-                <Run Text="ファイル名: "/>
+                <Run Text="{DynamicResource Accessory_Item_FileName}"/>
                 <Run Text="{Binding FileName, Mode=OneWay, FallbackValue=filename.glb, 
                                     Converter={StaticResource FileIdIndicationConverter}}"/>
                 </TextBlock>
@@ -105,7 +105,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                        Text="表示名"
+                        Text="{DynamicResource Accessory_Item_DisplayName}"
                         HorizontalAlignment="Left"
                         Margin="0,0,20,0"
                         />
@@ -115,7 +115,7 @@
                         />
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                        Text="配置"
+                        Text="{DynamicResource Accessory_Item_AttachTarget}"
                         HorizontalAlignment="Left"
                         Margin="0,2,20,20"
                         />
@@ -132,14 +132,15 @@
 
                 <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="6"
                           HorizontalAlignment="Left"
+                          VerticalContentAlignment="Center"
                           Margin="5,0"
-                          Content="画面の最前面に表示"
+                          Content="{DynamicResource Accessory_Item_BillboardMode}"
                           IsChecked="{Binding UseBillboardMode.Value}"
                           />
 
                 <TextBlock Grid.Row="3" Grid.Column="0" 
                         HorizontalAlignment="Left"
-                        Text="Position" 
+                        Text="{DynamicResource Accessory_Item_Position}" 
                         Margin="0,0,20,0"
                         />
                 <TextBlock Grid.Row="3" Grid.Column="1" 
@@ -161,7 +162,7 @@
                 <TextBlock Grid.Row="4" Grid.Column="0"
                         Margin="0,0,20,0"
                         HorizontalAlignment="Left"
-                        Text="Rotation" 
+                        Text="{DynamicResource Accessory_Item_Rotation}" 
                         />
                 <TextBlock Grid.Row="4" Grid.Column="1"
                         Style="{StaticResource AxisText}"
@@ -179,7 +180,7 @@
                 <TextBlock Grid.Row="5" Grid.Column="0"
                         Margin="0,0,20,0"
                         HorizontalAlignment="Left"
-                        Text="Scale" 
+                        Text="{DynamicResource Accessory_Item_Scale}" 
                         />
                 <TextBox Grid.Row="5" Grid.Column="2" 
                         Text="{Binding Scale.Value, FallbackValue=1.0}"

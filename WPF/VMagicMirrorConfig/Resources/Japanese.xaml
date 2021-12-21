@@ -134,8 +134,17 @@
     <sys:String x:Key="Accessory_Header">アクセサリ</sys:String>
     <sys:String x:Key="Accessory_Instruction" xml:space="preserve">"Accessory"フォルダ内のファイルをアクセサリとしてロードします。
 png画像やglb/gltfモデルが利用可能です。</sys:String>
-    <sys:String x:Key="Accessory_OpenFolder">アクセサリフォルダを開く</sys:String>
+    <sys:String x:Key="Accessory_OpenFolder">フォルダを開く</sys:String>
+    <sys:String x:Key="Accessory_ReloadFiles">再読み込み</sys:String>
     <sys:String x:Key="Accessory_SeeMore">さらに詳しく...</sys:String>
+
+    <sys:String x:Key="Accessory_Item_FileName">ファイル:</sys:String>
+    <sys:String x:Key="Accessory_Item_DisplayName">表示名</sys:String>
+    <sys:String x:Key="Accessory_Item_AttachTarget">配置先</sys:String>
+    <sys:String x:Key="Accessory_Item_BillboardMode">2Dのまま最前面に表示 (画像のみ)</sys:String>
+    <sys:String x:Key="Accessory_Item_Position">Position</sys:String>
+    <sys:String x:Key="Accessory_Item_Rotation">Rotation</sys:String>
+    <sys:String x:Key="Accessory_Item_Scale">Scale</sys:String>
 
     
     <!-- Settings General -->

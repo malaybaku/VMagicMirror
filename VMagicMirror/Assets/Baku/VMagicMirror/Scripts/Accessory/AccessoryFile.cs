@@ -119,7 +119,7 @@ namespace Baku.VMagicMirror
                 }
 
                 var path = gltfFiles[0];
-                result.Add(new AccessoryFile(path, AccessoryType.Gltf, File.ReadAllBytes(path)));
+                result.Add(new AccessoryFile(path, AccessoryType.Gltf, File.ReadAllBytes(path), childDir));
             }
 
             return result.ToArray();

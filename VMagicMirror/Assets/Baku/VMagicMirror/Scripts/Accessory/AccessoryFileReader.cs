@@ -54,6 +54,8 @@ namespace Baku.VMagicMirror
         {
             var context = new UniGLTF.ImporterContext();
             context.Load(path, bytes);
+            context.ShowMeshes();
+            context.EnableUpdateWhenOffscreen();            
             return new AccessoryFileContext<GameObject>(
                 context.Root,
                 () => context.Dispose()

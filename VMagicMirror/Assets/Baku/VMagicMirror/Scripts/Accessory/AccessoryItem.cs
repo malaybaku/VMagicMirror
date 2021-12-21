@@ -261,7 +261,7 @@ namespace Baku.VMagicMirror
         /// <param name="request"></param>
         public void ControlItemTransform(TransformControlRequest request)
         {
-            if (_animator == null)
+            if (_animator == null && ItemLayout == null)
             {
                 return;
             }

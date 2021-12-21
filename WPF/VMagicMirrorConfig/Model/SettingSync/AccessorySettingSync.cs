@@ -152,7 +152,7 @@ namespace Baku.VMagicMirrorConfig
                 items.Add(new AccessoryItemSetting()
                 {
                     FileId = fileId,
-                    Name = Path.GetFileNameWithoutExtension(fileId),
+                    Name = Path.GetFileNameWithoutExtension(fileId.TrimEnd(AccessoryFile.FolderIdSuffixChar)),
                     //NOTE: ここで設定した値は、Unity側の初期値設定にあたって変更しても問題ない
                     AttachTarget = AccessoryAttachTarget.Head,
                     IsVisible = true,

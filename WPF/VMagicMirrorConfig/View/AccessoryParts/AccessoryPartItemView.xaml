@@ -136,6 +136,7 @@
                           Margin="5,0"
                           Content="{DynamicResource Accessory_Item_BillboardMode}"
                           IsChecked="{Binding UseBillboardMode.Value}"
+                          IsEnabled="{Binding CanSelectBillboardMode}"
                           />
 
                 <TextBlock Grid.Row="3" Grid.Column="0" 
@@ -148,16 +149,16 @@
                         Text="X" 
                         />
                 <TextBox Grid.Row="3" Grid.Column="2" 
-                        Text="{Binding PosX.Value, FallbackValue=1.2345678}"
+                        Text="{Binding PosX.Value, StringFormat=0.######, FallbackValue=1.234567}"
                         />
                 <TextBlock Grid.Row="3" Grid.Column="3" 
                         Style="{StaticResource AxisText}"
                         Text="Y" />
-                <TextBox Grid.Row="3" Grid.Column="4" Text="{Binding PosY.Value}"/>
+                <TextBox Grid.Row="3" Grid.Column="4" Text="{Binding PosY.Value, StringFormat=0.######}"/>
                 <TextBlock Grid.Row="3" Grid.Column="5" 
                         Style="{StaticResource AxisText}"
                         Text="Z" />
-                <TextBox Grid.Row="3" Grid.Column="6" Text="{Binding PosZ.Value}"/>
+                <TextBox Grid.Row="3" Grid.Column="6" Text="{Binding PosZ.Value, StringFormat=0.######}"/>
 
                 <TextBlock Grid.Row="4" Grid.Column="0"
                         Margin="0,0,20,0"
@@ -167,15 +168,15 @@
                 <TextBlock Grid.Row="4" Grid.Column="1"
                         Style="{StaticResource AxisText}"
                         Text="X" />
-                <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding RotX.Value}"/>
+                <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding RotX.Value, StringFormat=0.###}"/>
                 <TextBlock Grid.Row="4" Grid.Column="3"
                         Style="{StaticResource AxisText}"
                         Text="Y" />
-                <TextBox Grid.Row="4" Grid.Column="4" Text="{Binding RotY.Value}"/>
+                <TextBox Grid.Row="4" Grid.Column="4" Text="{Binding RotY.Value, StringFormat=0.###}"/>
                 <TextBlock Grid.Row="4" Grid.Column="5" 
                         Style="{StaticResource AxisText}"
                         Text="Z" />
-                <TextBox Grid.Row="4" Grid.Column="6" Text="{Binding RotZ.Value}"/>
+                <TextBox Grid.Row="4" Grid.Column="6" Text="{Binding RotZ.Value, StringFormat=0.###}"/>
 
                 <TextBlock Grid.Row="5" Grid.Column="0"
                         Margin="0,0,20,0"
@@ -183,7 +184,7 @@
                         Text="{DynamicResource Accessory_Item_Scale}" 
                         />
                 <TextBox Grid.Row="5" Grid.Column="2" 
-                        Text="{Binding Scale.Value, FallbackValue=1.0}"
+                        Text="{Binding Scale.Value, StringFormat=0.######, FallbackValue=1.0}"
                         />
             </Grid>
         </StackPanel>

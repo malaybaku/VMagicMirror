@@ -36,6 +36,7 @@ namespace Baku.VMagicMirrorConfig
     public class AccessoryFile
     {
         public const string FolderIdSuffix = ">";
+        public const char FolderIdSuffixChar = '>';
 
         //NOTE: ちょっと冗長だが、フォルダパスもファイルパスもフルパスで指定する。
         public AccessoryFile(string filePath, AccessoryType type, string folderPath = "")

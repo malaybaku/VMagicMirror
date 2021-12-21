@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror
     [Serializable]
     public class AccessoryResetTargetItems
     {
-        public string[] FileNames;
+        public string[] FileIds;
     }
 
     
@@ -33,8 +33,8 @@ namespace Baku.VMagicMirror
     public class AccessoryItemLayout
     {
         //NOTE: 他のプロパティとは異なりキーのように用いられる。ユーザーは編集できない
-        public string FileName = "";
-        //NOTE: Name, IsVisibleは投げつけてもWPF側で見ない
+        public string FileId = "";
+        //NOTE: Nameは投げつけてもWPF側で見ないが、WPFから飛んでくるので一応書いてある
         public string Name = "";
         public bool IsVisible;
         public AccessoryAttachTarget AttachTarget;

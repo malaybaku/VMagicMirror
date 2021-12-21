@@ -7,6 +7,9 @@ namespace Baku.VMagicMirror
     /// </summary>
     public static class AccessoryFileReader
     {
+        // NOTE: ぜんぶ同じフォルダに入ってる事は保証されてない事に注意。
+        // gltfや、(今は無いけど想定される例として)連番画像とかはフォルダを区切った中に入る。
+        
         public static Texture2D LoadPngImage(byte[] bytes)
         {
             var tex = new Texture2D(8, 8, TextureFormat.RGBA32, false);
@@ -15,16 +18,16 @@ namespace Baku.VMagicMirror
             return tex;
         }
 
-        //NOTE: いちおう分けといた方が健全な気がするので冗長に書いてある
-        public static GameObject LoadGltf(byte[] bytes)
+        //NOTE: なんとなく関数を分けた方が治安が良いので分けておく
+        public static GameObject LoadGltf(string path, byte[] bytes)
         {
-            return LoadGlb(bytes);
+            return LoadGlb(path, bytes);
         }
 
-        public static GameObject LoadGlb(byte[] bytes)
+        public static GameObject LoadGlb(string path, byte[] bytes)
         {
             var context = new UniGLTF.ImporterContext();
-            context.Load("", bytes);
+            context.Load(path, bytes);
             return context.Root;
         }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Baku.VMagicMirror
 {
@@ -12,6 +13,19 @@ namespace Baku.VMagicMirror
         Gltf,
         //NOTE: 理想を言うと、これ以外でもanimated gifとか連番pngとかパーティクル的なのも読み込みたい可能性がある
     }
+
+    
+    // Expected Folder Structure Example:
+    // gltfは1フォルダ=1アイテム
+    //
+    // Accessory 
+    // - item1.png
+    // - item2.glb
+    // - item3
+    //   - item3.gltf
+    //   - data.bin
+    //   - textures
+    //     - albedo.png
     
     /// <summary>
     /// VMagicMirrorの起動時などに一括でロードされた、対象フォルダに含まれるアクセサリ1つぶんの情報のうち、
@@ -20,15 +34,42 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class AccessoryFile
     {
-        public AccessoryFile(string filePath, AccessoryType type, byte[] bytes)
+        public const string FolderIdSuffix = ">";
+        
+        //NOTE: ちょっと冗長だが、フォルダパスもファイルパスもフルパスで指定する。
+        public AccessoryFile(string filePath, AccessoryType type, byte[] bytes, string folderPath = "")
         {
             FilePath = filePath;
-            FileName = Path.GetFileName(filePath);
+            if (string.IsNullOrEmpty(folderPath))
+            {
+                IsFolder = false;
+                FileId = Path.GetFileName(FilePath);
+            }
+            else
+            {
+                IsFolder = true;
+                FileId = Path.GetFileName(folderPath) + FolderIdSuffix;
+            }
             Type = type;
             Bytes = bytes;
         }
+        
         public string FilePath { get; }
-        public string FileName { get; }
+        
+        //NOTE: いまはフォルダパスが不要だから省いているが、プロパティとして保持してもよい
+        
+        /// <summary>
+        /// Accessoryフォルダ以下のファイル名またはフォルダ名によって指す識別子で、
+        /// ファイルの場合はファイル名そのもの、
+        /// フォルダを指す場合はフォルダ名+">"、というフォーマットの文字列。
+        /// </summary>
+        /// <remarks>
+        /// フォルダの場合の末尾を"/"で区切っても良いのだけど、非Win環境に移植する場合かえって面倒な気がするので、
+        /// フォルダ区切り文字ではないものを明示的に選んでます
+        /// </remarks>
+        public string FileId { get; }
+        public bool IsFolder { get; }
+        
         //NOTE: 連番画像のような複数ファイルデータを扱う様になった場合、
         //byte[][]みたいなデータ構造に変えてもよい
         public byte[] Bytes { get; }
@@ -55,7 +96,7 @@ namespace Baku.VMagicMirror
                 {
                     ".png" => AccessoryType.Png,
                     ".glb" => AccessoryType.Glb,
-                    ".gltf" => AccessoryType.Gltf,
+                    // ".gltf" => AccessoryType.Gltf,
                     _ => AccessoryType.Unknown,
                 };
 
@@ -66,6 +107,19 @@ namespace Baku.VMagicMirror
                 
                 var bytes = File.ReadAllBytes(file);
                 result.Add(new AccessoryFile(file, fileType, bytes));
+            }
+
+            foreach (var childDir in Directory.GetDirectories(dir))
+            {
+                var files = Directory.GetFiles(childDir);
+                var gltfFiles = files.Where(f => Path.GetExtension(f) == ".gltf").ToArray();
+                if (gltfFiles.Length != 1)
+                {
+                    continue;
+                }
+
+                var path = gltfFiles[0];
+                result.Add(new AccessoryFile(path, AccessoryType.Gltf, File.ReadAllBytes(path)));
             }
 
             return result.ToArray();

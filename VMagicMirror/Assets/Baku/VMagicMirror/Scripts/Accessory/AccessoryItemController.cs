@@ -103,12 +103,12 @@ namespace Baku.VMagicMirror
             try
             {
                 var decoded = JsonUtility.FromJson<AccessoryItemLayout>(json);
-                if (string.IsNullOrEmpty(decoded.FileName))
+                if (string.IsNullOrEmpty(decoded.FileId))
                 {
                     return;
                 }
                 
-                if (_items.FirstOrDefault(i => i.FileName == decoded.FileName) is { } item)
+                if (_items.FirstOrDefault(i => i.FileId == decoded.FileId) is { } item)
                 {
                     item.SetLayout(decoded);
                 }
@@ -124,9 +124,9 @@ namespace Baku.VMagicMirror
             try
             {
                 var layouts = JsonUtility.FromJson<AccessoryLayouts>(json);
-                foreach (var layout in layouts.Items.Where(l => !string.IsNullOrEmpty(l.FileName)))
+                foreach (var layout in layouts.Items.Where(l => !string.IsNullOrEmpty(l.FileId)))
                 {
-                    if (_items.FirstOrDefault(i => i.FileName == layout.FileName) is { } item)
+                    if (_items.FirstOrDefault(i => i.FileId == layout.FileId) is { } item)
                     {
                         item.SetLayout(layout);
                     }
@@ -143,9 +143,9 @@ namespace Baku.VMagicMirror
             try
             {
                 var files = JsonUtility.FromJson<AccessoryResetTargetItems>(fileNamesJson);
-                foreach (var file in files.FileNames)
+                foreach (var file in files.FileIds)
                 {
-                    if (_items.FirstOrDefault(i => i.FileName == file) is { } item)
+                    if (_items.FirstOrDefault(i => i.FileId == file) is { } item)
                     {
                         item.ResetLayout();
                     }

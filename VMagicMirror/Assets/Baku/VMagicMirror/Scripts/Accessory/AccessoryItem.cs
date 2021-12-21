@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private TransformControl transformControl;
         
         public AccessoryItemLayout ItemLayout { get; private set; }
-        public string FileName => _file?.FileName ?? "";
+        public string FileId => _file?.FileId ?? "";
 
         private AccessoryFile _file = null;
         private Camera _cam = null;
@@ -55,15 +55,15 @@ namespace Baku.VMagicMirror
                     InitializeImage(file);
                     break;
                 case AccessoryType.Glb:
-                    var glbObj = AccessoryFileReader.LoadGlb(file.Bytes);
+                    var glbObj = AccessoryFileReader.LoadGlb(file.FilePath, file.Bytes);
                     glbObj.transform.SetParent(modelParent);
                     break;
                 case AccessoryType.Gltf:
-                    var gltfObj = AccessoryFileReader.LoadGltf(file.Bytes);
+                    var gltfObj = AccessoryFileReader.LoadGltf(file.FilePath, file.Bytes);
                     gltfObj.transform.SetParent(modelParent);
                     break;
                 default:
-                    LogOutput.Instance.Write($"WARN: Tried to load unknown data, name={_file.FileName}");
+                    LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
                     break;
             }
             SetVisibility(false);

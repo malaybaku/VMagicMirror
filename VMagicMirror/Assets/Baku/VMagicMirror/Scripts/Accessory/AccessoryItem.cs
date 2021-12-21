@@ -174,6 +174,13 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+
+            //glb/gltfは本質的に3Dなんだから2Dモードは不要、と考えて弾く。
+            //カメラのnear clipを突き抜けてヘンなことになるのを防ぐ狙いもある
+            if (ItemLayout.UseBillboardMode && _file.Type != AccessoryType.Png)
+            {
+                ItemLayout.UseBillboardMode = false;
+            }
             
             if (ItemLayout.UseBillboardMode)
             {

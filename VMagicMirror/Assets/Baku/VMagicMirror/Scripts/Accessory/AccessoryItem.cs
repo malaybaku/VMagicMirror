@@ -26,6 +26,7 @@ namespace Baku.VMagicMirror
         public string FileId => _file?.FileId ?? "";
 
         private AccessoryFile _file = null;
+        private AccessoryFileDisposer _disposer = null;
         private Camera _cam = null;
 
         private Animator _animator = null;
@@ -55,18 +56,29 @@ namespace Baku.VMagicMirror
                     InitializeImage(file);
                     break;
                 case AccessoryType.Glb:
-                    var glbObj = AccessoryFileReader.LoadGlb(file.FilePath, file.Bytes);
+                    var glbContext = AccessoryFileReader.LoadGlb(file.FilePath, file.Bytes);
+                    var glbObj = glbContext.Object;
                     glbObj.transform.SetParent(modelParent);
+                    _disposer = glbContext.Disposer;
                     break;
                 case AccessoryType.Gltf:
-                    var gltfObj = AccessoryFileReader.LoadGltf(file.FilePath, file.Bytes);
+                    var gltfContext = AccessoryFileReader.LoadGltf(file.FilePath, file.Bytes);
+                    var gltfObj = gltfContext.Object; 
                     gltfObj.transform.SetParent(modelParent);
+                    _disposer = gltfContext.Disposer;
                     break;
                 default:
                     LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
                     break;
             }
             SetVisibility(false);
+        }
+
+        //ファイル等から動的ロードしたものも含めて、アクセサリのリソースを解放し、ゲームオブジェクトを破棄します。
+        public void Dispose()
+        {
+            _disposer?.Dispose();
+            Destroy(gameObject);
         }
 
         private void Start()
@@ -89,7 +101,10 @@ namespace Baku.VMagicMirror
 
         private void InitializeImage(AccessoryFile file)
         {
-            var tex = AccessoryFileReader.LoadPngImage(file.Bytes);
+            var context = AccessoryFileReader.LoadPngImage(file.Bytes);
+            var tex = context.Object;
+            _disposer = context.Disposer;
+            
             imageRenderer.material.mainTexture = tex;
             if (tex.width < tex.height)
             {

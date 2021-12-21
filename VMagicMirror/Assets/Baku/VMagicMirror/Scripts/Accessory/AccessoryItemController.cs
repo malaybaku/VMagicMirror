@@ -48,6 +48,10 @@ namespace Baku.VMagicMirror
                 c => SetFreeLayout(c.ToBoolean())
                 );
             receiver.AssignCommandHandler(
+                VmmCommands.ReloadAccessoryFiles,
+                _ => ReloadAccessoryFiles()
+                );
+            receiver.AssignCommandHandler(
                 VmmCommands.SetAccessoryLayout,
                 c => SetAllAccessoryLayout(c.Content)
                 );
@@ -61,7 +65,8 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.RequestResetAccessoryLayout,
-                c => ResetAccessoryLayout(c.Content));
+                c => ResetAccessoryLayout(c.Content)
+                );
 
             deviceTransformController.ControlRequested
                 .Subscribe(ControlItemsTransform)
@@ -70,13 +75,7 @@ namespace Baku.VMagicMirror
 
         private void Start()
         {
-            var files = AccessoryFile.LoadAccessoryFiles();
-            foreach (var file in files)
-            {
-                var item = Instantiate(itemPrefab);
-                item.Initialize(_cam, file);
-                _items.Add(item);
-            }
+            ReloadAccessoryFiles();
         }
 
         private void OnDestroy()
@@ -95,6 +94,28 @@ namespace Baku.VMagicMirror
                 StopLayoutSending();
                 SendLayout();
                 _items.ForEach(i => i.EndControlItemTransform());
+            }
+        }
+
+        private void ReloadAccessoryFiles()
+        {
+            ClearItems();
+            var files = AccessoryFile.LoadAccessoryFiles();
+            foreach (var file in files)
+            {
+                var item = Instantiate(itemPrefab);
+                item.Initialize(_cam, file);
+                _items.Add(item);
+            }
+        }
+
+        private void ClearItems()
+        {
+            var items = _items.ToArray();
+            _items.Clear();
+            foreach (var item in items)
+            {
+                item.Dispose();
             }
         }
         

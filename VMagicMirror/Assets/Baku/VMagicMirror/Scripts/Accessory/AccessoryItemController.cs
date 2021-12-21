@@ -19,6 +19,7 @@ namespace Baku.VMagicMirror
         private readonly List<AccessoryItem> _items = new List<AccessoryItem>();
         private IDisposable _layoutSender = null;
         private bool _hasModel;
+        private Animator _animator;
 
         [Inject]
         public void Initialize(
@@ -34,12 +35,14 @@ namespace Baku.VMagicMirror
 
             vrmLoader.VrmLoaded += info =>
             {
-                _items.ForEach(i => i.SetModel(info));
+                _items.ForEach(i => i.SetAnimator(info.animator));
+                _animator = info.animator;
                 _hasModel = true;
             };
             vrmLoader.VrmDisposing += () =>
             {
                 _hasModel = false;
+                _animator = null;
                 _items.ForEach(i => i.UnsetModel());
             };
             
@@ -105,6 +108,10 @@ namespace Baku.VMagicMirror
             {
                 var item = Instantiate(itemPrefab);
                 item.Initialize(_cam, file);
+                if (_hasModel)
+                {
+                    item.SetAnimator(_animator);
+                }
                 _items.Add(item);
             }
         }

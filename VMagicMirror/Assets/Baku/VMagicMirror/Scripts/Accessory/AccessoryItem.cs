@@ -33,7 +33,6 @@ namespace Baku.VMagicMirror
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones =
             new Dictionary<AccessoryAttachTarget, Transform>();
 
-
         /// <summary>
         /// Unity上でTransformControlによってレイアウトが編集されており、その変更WPFに送信されていない場合にtrueになるフラグ
         /// </summary>
@@ -162,24 +161,25 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            SetVisibility(ItemLayout.IsVisible);
-            if (!ItemLayout.IsVisible)
-            {
-                return;
-            }
-
-            transformControl.rotateOnlyZ = ItemLayout.UseBillboardMode;
-
-            if (!_attachBones.TryGetValue(ItemLayout.AttachTarget, out var bone))
-            {
-                return;
-            }
-
             //glb/gltfは本質的に3Dなんだから2Dモードは不要、と考えて弾く。
             //カメラのnear clipを突き抜けてヘンなことになるのを防ぐ狙いもある
             if (ItemLayout.UseBillboardMode && _file.Type != AccessoryType.Png)
             {
                 ItemLayout.UseBillboardMode = false;
+            }
+            transformControl.rotateOnlyZ = ItemLayout.UseBillboardMode;
+            
+            SetVisibility(ItemLayout.IsVisible);
+
+            if (!ItemLayout.IsVisible)
+            {
+                return;
+            }
+
+            if (!_attachBones.TryGetValue(ItemLayout.AttachTarget, out var bone))
+            {
+                //普通ここは通らない
+                return;
             }
             
             if (ItemLayout.UseBillboardMode)
@@ -222,17 +222,12 @@ namespace Baku.VMagicMirror
         }
 
         /// <summary>
-        /// ロードされたVRMを指定してアイテムをアタッチできるようにします。
+        /// ロードされたVRMのAnimatorを指定し、アイテムをモデルの特定部位にアタッチできるようにします。
         /// </summary>
-        /// <param name="info"></param>
-        public void SetModel(VrmLoadedInfo info)
+        /// <param name="animator"></param>
+        public void SetAnimator(Animator animator)
         {
-            _animator = info.animator;
-
-            if (_file == null)
-            {
-                return;
-            }
+            _animator = animator;
 
             _attachBones[AccessoryAttachTarget.Head] = _animator.GetBoneTransform(HumanBodyBones.Head);
             _attachBones[AccessoryAttachTarget.Neck] = 
@@ -242,6 +237,11 @@ namespace Baku.VMagicMirror
             _attachBones[AccessoryAttachTarget.LeftHand] = _animator.GetBoneTransform(HumanBodyBones.LeftHand);
             _attachBones[AccessoryAttachTarget.RightHand] = _animator.GetBoneTransform(HumanBodyBones.RightHand);
 
+            if (_file == null)
+            {
+                return;
+            }
+            
             //アイテムレイアウトのロード→モデルロード、という順序で操作したときのための措置
             if (ItemLayout != null)
             {

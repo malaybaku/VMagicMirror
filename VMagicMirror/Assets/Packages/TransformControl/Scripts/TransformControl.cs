@@ -8,9 +8,24 @@ using UnityEngine.Rendering;
 
 namespace mattatz.TransformControl {
 
-	public class TransformControl : MonoBehaviour {
+	public class TransformControl : MonoBehaviour
+	{
+		static class ConflictResolver
+		{
+			private static readonly HashSet<TransformControl> _controls = new HashSet<TransformControl>();
+			
+			public static void Register(TransformControl tc) => _controls.Add(tc);
+			public static void Unregister(TransformControl tc) => _controls.Remove(tc);
 
-	    [System.Serializable]
+			//return true, when other control is already being dragged
+			public static bool DraggingOtherControl(TransformControl tc) => _controls.Any(
+				c => 
+					c != null && c != tc && 
+					c.enabled && c.selected != TransformDirection.None
+				);
+		}
+
+		[System.Serializable]
 	    class TransformData {
 	        public Vector3 position;
 	        public Quaternion rotation;
@@ -115,6 +130,10 @@ namespace mattatz.TransformControl {
 
 	        GetCircumference(SPHERE_RESOLUTION, out circumX, out circumY, out circumZ);
 	    }
+	    
+        private void OnEnable() =>  ConflictResolver.Register(this);
+        private void OnDisable() => ConflictResolver.Unregister(this);
+        private void OnDestroy() => ConflictResolver.Unregister(this);
 
         /*
         // Usage: Call Control() method in Update() loop 
@@ -149,6 +168,11 @@ namespace mattatz.TransformControl {
 
 	    public bool Pick (Vector3 mouse) {
 	        selected = TransformDirection.None;
+	        if (ConflictResolver.DraggingOtherControl(this))
+	        {
+		        //avoid pick, when other control is being controlled
+		        return false;
+	        }
 
 	        switch(mode) {
 	            case TransformMode.Translate:

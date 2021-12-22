@@ -75,7 +75,7 @@ namespace mattatz.TransformControl {
 	    public TransformMode mode = TransformMode.Translate;
 	    public bool global, useDistance;
         public float distance = 10f;
-        public bool rotateOnlyZ;
+        public bool xyPlaneMode { get; set; }
 
 	    Color[] colors = new Color[]
 	    {
@@ -316,6 +316,7 @@ namespace mattatz.TransformControl {
 
 	    void Translate() {
 	        if (selected == TransformDirection.None) return;
+			if (xyPlaneMode && selected == TransformDirection.Z) return;
 
 			var plane = new Plane((Camera.main.transform.position - prev.position).normalized, prev.position);
 			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -343,7 +344,7 @@ namespace mattatz.TransformControl {
 
 	    void Rotate() {
 			if (selected == TransformDirection.None) return;
-			if (rotateOnlyZ && selected != TransformDirection.Z) return;
+			if (xyPlaneMode && selected != TransformDirection.Z) return;
 
 			var matrix = Matrix4x4.TRS(prev.position, global ? Quaternion.identity : prev.rotation,  Vector3.one);
 
@@ -362,6 +363,7 @@ namespace mattatz.TransformControl {
 
 	    void Scale() {
 	        if (selected == TransformDirection.None) return;
+	        if (xyPlaneMode && selected == TransformDirection.Z) return;
 
 			var plane = new Plane((Camera.main.transform.position - transform.position).normalized, prev.position);
 			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -406,15 +408,15 @@ namespace mattatz.TransformControl {
 
 	        switch (mode) {
 	            case TransformMode.Translate:
-	                DrawTranslate();
+	                DrawTranslate(xyPlaneMode);
 	                break;
 
 	            case TransformMode.Rotate:
-	                DrawRotate(rotateOnlyZ);
+	                DrawRotate(xyPlaneMode);
 	                break;
 
 	            case TransformMode.Scale:
-	                DrawScale();
+	                DrawScale(xyPlaneMode);
 	                break;
 	        }
 
@@ -449,7 +451,7 @@ namespace mattatz.TransformControl {
 	        GL.End();
 	    }
 
-	    void DrawTranslate () {
+	    void DrawTranslate (bool onlyXy) {
 			material.SetInt("_ZTest", (int)CompareFunction.Always);
 	        material.SetPass(0);
 
@@ -464,9 +466,12 @@ namespace mattatz.TransformControl {
 	        DrawMesh(cone, matrices[1], color);
 
 	        // z axis
-	        color = selected == TransformDirection.Z ? colors[3] : colors[2];
-	        DrawLine(Vector3.zero, Vector3.forward, color);
-	        DrawMesh(cone, matrices[2], color);
+	        if (!onlyXy)
+	        {
+		        color = selected == TransformDirection.Z ? colors[3] : colors[2];
+		        DrawLine(Vector3.zero, Vector3.forward, color);
+		        DrawMesh(cone, matrices[2], color);
+	        }
 	    }
 
 	    void DrawRotate (bool onlyZ) {
@@ -520,7 +525,7 @@ namespace mattatz.TransformControl {
 	        }
 	    }
 
-	    void DrawScale () {
+	    void DrawScale (bool onlyXy) {
 			material.SetInt("_ZTest", (int)CompareFunction.Always);
 	        material.SetPass(0);
 
@@ -535,9 +540,12 @@ namespace mattatz.TransformControl {
 	        DrawMesh(cube, matrices[1], color);
 
 	        // z axis
-	        color = selected == TransformDirection.Z ? colors[3] : colors[2];
-	        DrawLine(Vector3.zero, Vector3.forward, color);
-	        DrawMesh(cube, matrices[2], color);
+	        if (!onlyXy)
+	        {
+		        color = selected == TransformDirection.Z ? colors[3] : colors[2];
+		        DrawLine(Vector3.zero, Vector3.forward, color);
+		        DrawMesh(cube, matrices[2], color);
+	        }
 	    }
 
 	    #region Mesh

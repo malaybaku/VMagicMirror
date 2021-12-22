@@ -167,7 +167,7 @@ namespace Baku.VMagicMirror
             {
                 ItemLayout.UseBillboardMode = false;
             }
-            transformControl.rotateOnlyZ = ItemLayout.UseBillboardMode;
+            transformControl.xyPlaneMode = ItemLayout.UseBillboardMode;
             
             SetVisibility(ItemLayout.IsVisible);
 

@@ -11,11 +11,9 @@ lang_prefix: /en/
 
 This page is about accessory feature, in VMagicMirror v2.0.0 or later version.
 
-<!-- TODO: 画像を追加
 <div class="row">
 {% include docimg.html file="./images/docs/accessory_header.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
--->
 
 *See bottom section about license of the 3D model used in this page's screenshots.
 
@@ -53,13 +51,10 @@ If you edit the file/folder name after the accessory was loaded by VMagicMirror,
 
 Use `Reload` button to reload files, if you have placed them after VMagicMirror started.
 
-<!-- TODO: 画像を追加
 <div class="row">
 {% include docimg.html file="./images/docs/accessory_folder_structure.png" customclass="col s6 m4 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/docs/accessory_item_edit_control_panel.png" customclass="col s6 m4 l4" imgclass="fit-doc-img" %}
-{% include docimg.html file="./images/docs/accessory_item_edit_character_window.png" customclass="col s6 m4 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/accessory_item_edit.png" customclass="col s6 m4 l4" imgclass="fit-doc-img" %}
 </div>
--->
 
 After the accessory loading process, you can see the list of accessories, and checkbox at the top of them can swtich the visibility.
 

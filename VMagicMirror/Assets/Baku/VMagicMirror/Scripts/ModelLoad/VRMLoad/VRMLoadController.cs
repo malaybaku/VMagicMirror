@@ -124,6 +124,12 @@ namespace Baku.VMagicMirror
         {
             try 
             {
+                //オクルージョン関連は切っておく:
+                //context.EnableUpdateWhenOffscreen()に相当する処理
+                foreach(var sr in vrmObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    sr.updateWhenOffscreen = true;
+                }
                 SetModel(vrmObject);
             }
             catch (Exception ex)

@@ -1,0 +1,123 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.AccessoryPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="850" d:DesignWidth="550"
+             d:DataContext="{d:DesignInstance vmm:AccessorySettingViewModel}"
+             >
+    <UserControl.Resources>
+        <vmm:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
+        <vmm:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter"/>
+        <vmm:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
+        <vmm:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
+        <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="5,15">
+            <Border Style="{StaticResource SectionBorder}">
+                <StackPanel>
+                    <Grid>
+                        <TextBlock Style="{StaticResource HeaderText}" 
+                               Text="{DynamicResource Accessory_Header}" 
+                               Margin="10,5"/>
+
+                        <Button HorizontalAlignment="Right"
+                                Margin="10,0"
+                                Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetCommand}"
+                                />
+                    </Grid>
+                    
+                    <TextBlock Margin="15,5" 
+                                Text="{DynamicResource Accessory_Instruction}"/>
+
+                    <Grid Margin="5">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Command="{Binding OpenAccessoryFolderCommand}"
+                                    Padding="8"
+                                    >
+                                <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                                    <md:PackIcon Kind="FolderOutline"
+                                                 Margin="0,0,5,0"
+                                                 />
+                                    <TextBlock Style="{StaticResource IconSetSetText}"
+                                            Text="{DynamicResource Accessory_OpenFolder}"
+                                            />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Margin="15,0"
+                                    Padding="8"
+                                    Command="{Binding ReloadFilesCommand}"
+                                    >
+                                <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                                    <md:PackIcon Margin="0,0,5,0"
+                                                 Kind="Reload"
+                                                 />
+                                    <TextBlock Style="{StaticResource IconSetSetText}"
+                                            Text="{DynamicResource Accessory_ReloadFiles}"
+                                            />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,10,0"
+                                Command="{Binding OpenAccessoryTipsUrlCommand}"
+                                Content="{DynamicResource Accessory_SeeMore}"
+                                />
+                    </Grid>
+
+                    <Grid>
+                        <CheckBox HorizontalAlignment="Left"
+                                  Margin="10,0" 
+                                  Content="{DynamicResource Layout_DeviceFreeLayout}"
+                                  IsChecked="{Binding EnableDeviceFreeLayout.Value}"
+                                  />
+
+
+
+                    </Grid>
+
+                    <Border Margin="5"
+                            BorderBrush="{StaticResource MaterialDesignToolForeground}"
+                            BorderThickness="1">
+                        <ItemsControl ItemsSource="{Binding Items}"
+                                      Margin="1,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel IsItemsHost="true"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vmm:AccessoryItemViewModel}">
+                                    <vmm:AccessoryPartItemView />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <!--<ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                        <Setter Property="Margin" Value="3"/>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>-->
+                        </ItemsControl>
+
+                    </Border>
+
+                    <!--<vmm:AccessoryPartItemView />-->
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -293,6 +293,16 @@ namespace Baku.VMagicMirrorConfig
 
         #endregion
 
+        #region Accessory
+
+        public Message SetSingleAccessoryLayout(string json) => WithArg(json);
+        public Message SetAccessoryLayout(string json) => WithArg(json);
+        public Message RequestResetAllAccessoryLayout() => NoArg();
+        public Message RequestResetAccessoryLayout(string fileNamesJson) => WithArg(fileNamesJson);
+        public Message ReloadAccessoryFiles() => NoArg();
+
+        #endregion
+
         #region その他
 
         public Message TakeScreenshot() => NoArg();

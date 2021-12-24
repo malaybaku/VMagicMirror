@@ -39,6 +39,7 @@
         public WordToMotionSetting? WordToMotionSetting { get; set; }
 
         public ExternalTrackerSetting? ExternalTrackerSetting { get; set; }
+        public AccessorySetting? AccessorySetting { get; set; }
 
         public AutomationSetting? AutomationSetting { get; set; }
     }

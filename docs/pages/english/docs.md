@@ -13,32 +13,6 @@ This page introduces advanced settings in VMagicMirror.
 
 For the basic usage, please see [Get Started](./get_started).
 
-
-#### External Tracker
-{: .doc-sec2 }
-
-VMagicMirror v1.1.0 and later version supports external application to move avatar.
-
-Currently v1.1.0 supports iOS app `iFacialMocap`.
-
-Please see the detail at [External Tracker App](./docs/external_tracker) page.
-
-#### Hand Tracking
-{: .doc-sec2 }
-
-v1.8.0 and later version supports `Hand Tracking` tab in control panel, to support webcam based hand tracking.
-
-Please see more in [Hand Tracking](./docs/hand_tracking) page.
-
-
-#### Setting File Management
-
-VMagicMirror v1.6.2 and later version supports setting file save and load internally.
-
-Detail is in [Setting Files](./docs/setting_files) page.
-
-This page refers both control panel `Home` tab functions and setting window `File` tab.
-
 #### Setting Window
 {: .doc-sec2 }
 
@@ -61,13 +35,40 @@ Setting Window consists of 8 tabs.
 | [Setting Files](./docs/setting_files) | Advanced features to manage setting files |
 |==================================|===============================================================|
 
-<div class="note-area" markdown="1">
 
-**NOTE**
+#### External Tracker
+{: .doc-sec2 }
 
-v1.5.0 and older versions do not have `Devices` tab, and instead have same feature in `Layout` tab.
+This feature supports external application to move avatar with high precision.
 
-</div>
+Current version (v2.0.0) supports iOS app `iFacialMocap`.
+
+Please see the detail at [External Tracker App](./docs/external_tracker) page.
+
+#### Accessory
+{: .doc-sec2 }
+
+v2.0.0 or later version supports accessory feature, which can load png image and some 3D models into the application.
+
+Please see detail in [Accessory](./docs/accessory) page.
+
+
+#### Hand Tracking
+{: .doc-sec2 }
+
+v1.8.0 and later version supports `Hand Tracking` tab in control panel, to support webcam based hand tracking.
+
+Please see more in [Hand Tracking](./docs/hand_tracking) page.
+
+
+#### Setting File Management
+
+VMagicMirror v1.6.2 and later version supports setting file save and load internally.
+
+Detail is in [Setting Files](./docs/setting_files) page.
+
+This page refers both control panel `Home` tab functions and setting window `File` tab.
+
 
 #### Setting Window: Reset Settings to default
 {: .doc-sec2 }

@@ -20,6 +20,7 @@
     <sys:String x:Key="TopBar_Home">ホーム</sys:String>
     <sys:String x:Key="TopBar_Streaming">配信</sys:String>
     <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_Accessory">アクセサリー</sys:String>
     <sys:String x:Key="TopBar_HandTrack">ハンドトラッキング</sys:String>
     
     <!-- Top Tab in Setting Window -->
@@ -128,6 +129,23 @@
 - カメラの中央を避け、やや左右の位置を使用して下さい。</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">未検出: 顔の横に手を挙げてみて下さい</sys:String>
     <sys:String x:Key="HandTracking_LearnMore">詳細 (Web)</sys:String>    
+    
+    <!-- Accessory Panel -->
+    <sys:String x:Key="Accessory_Header">アクセサリ</sys:String>
+    <sys:String x:Key="Accessory_Instruction" xml:space="preserve">"Accessory"フォルダ内のファイルをアクセサリとしてロードします。
+png画像やglb/gltfモデルが利用可能です。</sys:String>
+    <sys:String x:Key="Accessory_OpenFolder">フォルダを開く</sys:String>
+    <sys:String x:Key="Accessory_ReloadFiles">再読み込み</sys:String>
+    <sys:String x:Key="Accessory_SeeMore">さらに詳しく...</sys:String>
+
+    <sys:String x:Key="Accessory_Item_FileName">ファイル:</sys:String>
+    <sys:String x:Key="Accessory_Item_DisplayName">表示名</sys:String>
+    <sys:String x:Key="Accessory_Item_AttachTarget">配置先</sys:String>
+    <sys:String x:Key="Accessory_Item_BillboardMode">2Dのまま最前面に表示 (画像のみ)</sys:String>
+    <sys:String x:Key="Accessory_Item_Position">Position</sys:String>
+    <sys:String x:Key="Accessory_Item_Rotation">Rotation</sys:String>
+    <sys:String x:Key="Accessory_Item_Scale">Scale</sys:String>
+
     
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">色を編集 (クリックで展開)</sys:String>
@@ -545,6 +563,7 @@ webカメラでの顔トラッキングを有効にする場合は
     <sys:String x:Key="URL_docs_ex_tracker">https://malaybaku.github.io/VMagicMirror/docs/external_tracker</sys:String>
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/docs/setting_files</sys:String>
+    <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/docs/accessory</sys:String>
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>

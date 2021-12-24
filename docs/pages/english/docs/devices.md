@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Layout
+title: Devices
 permalink: /en/docs/devices
 lang_prefix: /en/
 ---

@@ -24,6 +24,7 @@ namespace Baku.VMagicMirrorConfig
         public LightSettingViewModel LightSetting { get; private set; }
         public WordToMotionSettingViewModel WordToMotionSetting { get; private set; }
         public ExternalTrackerViewModel ExternalTrackerSetting { get; private set; }
+        public AccessorySettingViewModel AccessorySetting { get; private set; }
         public SettingIoViewModel SettingIo { get; private set; }
 
         private readonly RuntimeHelper _runtimeHelper;
@@ -49,6 +50,7 @@ namespace Baku.VMagicMirrorConfig
             LightSetting = new LightSettingViewModel(Model.Light, MessageSender);
             WordToMotionSetting = new WordToMotionSettingViewModel(Model.WordToMotion, Model.Layout, MessageSender, MessageIo.Receiver);
             ExternalTrackerSetting = new ExternalTrackerViewModel(Model.ExternalTracker, Model.Motion, MessageSender, MessageIo.Receiver);
+            AccessorySetting = new AccessorySettingViewModel(Model.Accessory, Model.Layout);
             SettingIo = new SettingIoViewModel(Model, Model.Automation, SaveFileManager, MessageSender);
             //オートメーションの配線: 1つしかないのでザツにやる。OC<T>をいじる関係でUIスレッド必須なことに注意
             Model.Automation.LoadSettingFileRequested += v => 

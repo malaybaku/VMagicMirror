@@ -47,6 +47,9 @@ namespace Baku.VMagicMirror
             ? Path.Combine(Application.streamingAssetsPath, textureFileName)
             : Path.Combine(RootDirectory, "Textures", textureFileName);
         
+        //アクセサリはWPF/Unity双方からディレクトリ走査する都合上、エディタ実行であってもstreamingAssetsは使わない
+        public static string AccessoryDirectory => Path.Combine(RootDirectory, "Accessory");
+
         static SpecialFiles()
         {
             RootDirectory = Path.Combine(

@@ -15,6 +15,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private MotionCalculationInstaller motionCalculationInstaller = null;
         [SerializeField] private FaceControlInstaller faceControl = null;
         [SerializeField] private WordToMotionInstaller wordToMotion = null;
+        [SerializeField] private AccessoryItemController accessoryControllerPrefab = null;
         [SerializeField] private DeformableCounter deformableCounterPrefab = null;
         [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
         
@@ -36,9 +37,8 @@ namespace Baku.VMagicMirror.Installer
             {
                 installer.Install(Container);
             }
-
             
-            //TEMP: ここから下もサブクラスにしたほうが良いのでは
+            //ここから下もサブクラスにしたほうが良いかもしれない
             Container.BindInstance(builtInClip);
 
             //Deformを使うオブジェクトがここを参照することで、DeformableManagerを必要な時だけ動かせるようにする
@@ -46,12 +46,16 @@ namespace Baku.VMagicMirror.Installer
                 .FromComponentInNewPrefab(deformableCounterPrefab)
                 .AsSingle();
             
-            Container
-                .BindInstance(new FaceControlConfiguration())
+            Container.Bind<FaceControlConfiguration>()
                 .AsSingle();
             
             //TODO: FindObjectOfTypeを卒業しろ…というか目ボーンの処理自体を統合したい…
             Container.BindInstance(FindObjectOfType<EyeBonePostProcess>());
+            
+            Container.Bind<AccessoryItemController>()
+                .FromComponentInNewPrefab(accessoryControllerPrefab)
+                .AsCached()
+                .NonLazy();
         }
     }
 }

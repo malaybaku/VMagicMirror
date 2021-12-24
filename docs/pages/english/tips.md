@@ -36,3 +36,5 @@ Basic usage is in [Get Started](./get_started), and setting window detail is in 
 [Perfect Sync](./tips/perfect_sync)
 
 [Use Custom Motion](./tips/use_custom_motion)
+
+[How to get GLB Data for Accessory Feature](./tips/get_glb_data)

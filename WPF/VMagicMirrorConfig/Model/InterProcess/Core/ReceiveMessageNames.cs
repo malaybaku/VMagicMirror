@@ -24,6 +24,8 @@
 
         public const string SetModelDoesNotSupportPen = nameof(SetModelDoesNotSupportPen);
 
+        public const string UpdateAccessoryLayouts = nameof(UpdateAccessoryLayouts);
+
         public const string VRoidModelLoadCompleted = nameof(VRoidModelLoadCompleted);
         public const string VRoidModelLoadCanceled = nameof(VRoidModelLoadCanceled);
     }

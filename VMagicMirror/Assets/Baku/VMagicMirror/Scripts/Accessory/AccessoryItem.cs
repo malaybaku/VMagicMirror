@@ -370,10 +370,17 @@ namespace Baku.VMagicMirror
                     }
 
                     //NOTE: ビルボードモードではXY軸には回せないようになるので、Z軸回転のみ考慮する
-                    //カメラに対する、このオブジェクトのローカル回転
-                    var diff = Quaternion.Inverse(_cam.transform.rotation) * transform.rotation;
-                    //XY軸方向の編集が禁止されていると仮定するとZ軸成分だけ残ってるはず
-                    diff.ToAngleAxis(out var angle, out _);
+
+                    //カメラと正対する方向に対しての、このオブジェクトのローカル回転
+                    var diff = Quaternion.Inverse(_cam.transform.rotation * Quaternion.Euler(0, 180, 0)) * transform.rotation;
+                    diff.ToAngleAxis(out var angle, out var axis);
+                    var camForward = _cam.transform.forward;
+                    //XY軸方向の編集は禁止してるから、必ずcamera.forwardかその逆を軸にした回転となる。
+                    //Vector3.Dotの結果はほぼ1.0かほぼ-1.0のどちらか
+                    if (Vector3.Dot(camForward, axis) > 0f)
+                    {
+                        angle = -angle;
+                    }
                     angle = MathUtil.ClampAngle(angle);
 
                     var roll = Mathf.Asin(bone.right.y) * Mathf.Rad2Deg;
@@ -453,7 +460,8 @@ namespace Baku.VMagicMirror
             transform.rotation = 
                 Quaternion.AngleAxis(boneRoll, camTransform.forward) *
                 camTransform.rotation *
-                Quaternion.Euler(0, 0, ItemLayout.Rotation.z);
+                //NOTE: 180度ひっくり返すのは、カメラに対して正面向きにする必要があるため
+                Quaternion.Euler(0, 180, ItemLayout.Rotation.z);
         }
     }
 }

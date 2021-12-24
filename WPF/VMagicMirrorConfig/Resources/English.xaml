@@ -21,7 +21,7 @@
     <sys:String x:Key="TopBar_Streaming">Streaming</sys:String>
     <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
     <sys:String x:Key="TopBar_Accessory">Accessory</sys:String>
-    <sys:String x:Key="TopBar_HandTrack">Hand Tracking</sys:String>
+    <sys:String x:Key="TopBar_HandTrack">Hands</sys:String>
     
     <!-- Top Tab In Setting -->
     <sys:String x:Key="TopBar_Setting_Window">Window</sys:String>

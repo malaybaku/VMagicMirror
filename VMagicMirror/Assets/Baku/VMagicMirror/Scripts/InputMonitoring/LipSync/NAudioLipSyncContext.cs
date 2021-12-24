@@ -40,6 +40,8 @@ namespace Baku.VMagicMirror
         //NOTE: 最悪ケースのために_bufferと同じ長さだが、ふつう先頭付近のみを使う
         private readonly byte[] _bufferOnRead = new byte[BufferLength];
 
+        private readonly Atomic<bool> _firstDataReceive = new Atomic<bool>();
+
         [Inject]
         public void Initialize(IMessageReceiver receiver, IMessageSender sender)
             => InitializeMessageIo(receiver, sender);
@@ -117,6 +119,7 @@ namespace Baku.VMagicMirror
                 _readIndex = 0;
             }
             _deviceName = "";
+            _firstDataReceive.Value = false;
         }
 
         public override void StartRecording(string microphoneName)
@@ -133,6 +136,8 @@ namespace Baku.VMagicMirror
                 LogOutput.Instance.Write("Microphone with specified name was not detected: " + microphoneName);
                 return;
             }
+            LogOutput.Instance.Write("Start Recording:" + microphoneName);
+            _deviceName = microphoneName;
 
             _waveIn = new WaveInEvent()
             {
@@ -148,6 +153,12 @@ namespace Baku.VMagicMirror
 
         private void OnDataAvailable(object sender, WaveInEventArgs e)
         {
+            if (!_firstDataReceive.Value)
+            {
+                _firstDataReceive.Value = true;
+                LogOutput.Instance.Write("Receive First Audio Buffer: " + _deviceName);
+            }
+            
             lock (_bufferLock)
             {
                 WriteBuffer(e.Buffer, e.BytesRecorded);

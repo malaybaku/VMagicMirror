@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
              xmlns:ma="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
-             
              d:DataContext="{d:DesignInstance vmm:AccessoryItemViewModel}"
              d:DesignHeight="250" d:DesignWidth="400">
     <UserControl.Resources>
@@ -149,16 +149,29 @@
                         Text="X" 
                         />
                 <TextBox Grid.Row="3" Grid.Column="2" 
-                        Text="{Binding PosX.Value, StringFormat=0.######, FallbackValue=1.234567}"
-                        />
+                        Text="{Binding PosX.Value, StringFormat=#.######, FallbackValue=1.234567}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
                 <TextBlock Grid.Row="3" Grid.Column="3" 
                         Style="{StaticResource AxisText}"
                         Text="Y" />
-                <TextBox Grid.Row="3" Grid.Column="4" Text="{Binding PosY.Value, StringFormat=0.######}"/>
+                <TextBox Grid.Row="3" Grid.Column="4" 
+                         Text="{Binding PosY.Value, StringFormat=#.######}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
                 <TextBlock Grid.Row="3" Grid.Column="5" 
                         Style="{StaticResource AxisText}"
                         Text="Z" />
-                <TextBox Grid.Row="3" Grid.Column="6" Text="{Binding PosZ.Value, StringFormat=0.######}"/>
+                <TextBox Grid.Row="3" Grid.Column="6"
+                         Text="{Binding PosZ.Value, StringFormat=#.######}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
 
                 <TextBlock Grid.Row="4" Grid.Column="0"
                         Margin="0,0,20,0"
@@ -168,24 +181,43 @@
                 <TextBlock Grid.Row="4" Grid.Column="1"
                         Style="{StaticResource AxisText}"
                         Text="X" />
-                <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding RotX.Value, StringFormat=0.###}"/>
+                <TextBox Grid.Row="4" Grid.Column="2"
+                         Text="{Binding RotX.Value, StringFormat=#.###}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
                 <TextBlock Grid.Row="4" Grid.Column="3"
                         Style="{StaticResource AxisText}"
                         Text="Y" />
-                <TextBox Grid.Row="4" Grid.Column="4" Text="{Binding RotY.Value, StringFormat=0.###}"/>
+                <TextBox Grid.Row="4" Grid.Column="4"
+                         Text="{Binding RotY.Value, StringFormat=#.###}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
                 <TextBlock Grid.Row="4" Grid.Column="5" 
                         Style="{StaticResource AxisText}"
                         Text="Z" />
-                <TextBox Grid.Row="4" Grid.Column="6" Text="{Binding RotZ.Value, StringFormat=0.###}"/>
-
+                <TextBox Grid.Row="4" Grid.Column="6"
+                         Text="{Binding RotZ.Value, StringFormat=#.###}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+                
                 <TextBlock Grid.Row="5" Grid.Column="0"
                         Margin="0,0,20,0"
                         HorizontalAlignment="Left"
                         Text="{DynamicResource Accessory_Item_Scale}" 
                         />
                 <TextBox Grid.Row="5" Grid.Column="2" 
-                        Text="{Binding Scale.Value, StringFormat=0.######, FallbackValue=1.0}"
-                        />
+                        Text="{Binding Scale.Value, StringFormat=#.######, FallbackValue=1.0}"
+                         >
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
             </Grid>
         </StackPanel>
 

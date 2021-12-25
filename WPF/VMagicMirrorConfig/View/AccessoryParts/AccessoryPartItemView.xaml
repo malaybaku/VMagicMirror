@@ -149,7 +149,7 @@
                         Text="X" 
                         />
                 <TextBox Grid.Row="3" Grid.Column="2" 
-                        Text="{Binding PosX.Value, StringFormat=#.######, FallbackValue=1.234567}">
+                        Text="{Binding PosX.Value, StringFormat=0.######, FallbackValue=1.234567}">
                     <i:Interaction.Behaviors>
                         <vmm:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
@@ -158,7 +158,7 @@
                         Style="{StaticResource AxisText}"
                         Text="Y" />
                 <TextBox Grid.Row="3" Grid.Column="4" 
-                         Text="{Binding PosY.Value, StringFormat=#.######}">
+                         Text="{Binding PosY.Value, StringFormat=0.######}">
                     <i:Interaction.Behaviors>
                         <vmm:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
@@ -167,7 +167,7 @@
                         Style="{StaticResource AxisText}"
                         Text="Z" />
                 <TextBox Grid.Row="3" Grid.Column="6"
-                         Text="{Binding PosZ.Value, StringFormat=#.######}">
+                         Text="{Binding PosZ.Value, StringFormat=0.######}">
                     <i:Interaction.Behaviors>
                         <vmm:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
@@ -182,7 +182,7 @@
                         Style="{StaticResource AxisText}"
                         Text="X" />
                 <TextBox Grid.Row="4" Grid.Column="2"
-                         Text="{Binding RotX.Value, StringFormat=#.###}">
+                         Text="{Binding RotX.Value, StringFormat=0.###}">
                     <i:Interaction.Behaviors>
                         <vmm:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
@@ -191,7 +191,7 @@
                         Style="{StaticResource AxisText}"
                         Text="Y" />
                 <TextBox Grid.Row="4" Grid.Column="4"
-                         Text="{Binding RotY.Value, StringFormat=#.###}">
+                         Text="{Binding RotY.Value, StringFormat=0.###}">
                     <i:Interaction.Behaviors>
                         <vmm:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
@@ -200,7 +200,7 @@
                         Style="{StaticResource AxisText}"
                         Text="Z" />
                 <TextBox Grid.Row="4" Grid.Column="6"
-                         Text="{Binding RotZ.Value, StringFormat=#.###}">
+                         Text="{Binding RotZ.Value, StringFormat=0.###}">
                     <i:Interaction.Behaviors>
                         <vmm:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
@@ -212,7 +212,7 @@
                         Text="{DynamicResource Accessory_Item_Scale}" 
                         />
                 <TextBox Grid.Row="5" Grid.Column="2" 
-                        Text="{Binding Scale.Value, StringFormat=#.######, FallbackValue=1.0}"
+                        Text="{Binding Scale.Value, StringFormat=0.######, FallbackValue=1.0}"
                          >
                     <i:Interaction.Behaviors>
                         <vmm:SelectOnFocusBehavior/>

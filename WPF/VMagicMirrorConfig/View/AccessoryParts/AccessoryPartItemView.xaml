@@ -1,0 +1,225 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.AccessoryPartItemView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:ma="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance vmm:AccessoryItemViewModel}"
+             d:DesignHeight="250" d:DesignWidth="400">
+    <UserControl.Resources>
+        <vmm:FileIdIndicationConverter x:Key="FileIdIndicationConverter"/>
+        <vmm:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
+    </UserControl.Resources>
+    <StackPanel>
+
+        <ToggleButton 
+            Style="{StaticResource MahApps.Styles.Button}"
+            d:IsChecked="True"
+            x:Name="ExpanderToggle"
+            ma:ControlsHelper.CornerRadius="0"
+            ma:ControlsHelper.FocusBorderBrush="Transparent"
+            ma:ControlsHelper.FocusBorderThickness="0"
+            HorizontalAlignment="Stretch" Width="NaN" 
+            Margin="0"
+            BorderBrush="Transparent" 
+            BorderThickness="0"
+            Height="25"
+            HorizontalContentAlignment="Left"
+            Padding="0"                       
+            md:ButtonAssist.CornerRadius="0"
+            >
+            <StackPanel Orientation="Horizontal">
+                <Grid Width="15" Margin="3,0">
+                    <md:PackIcon Kind="ChevronRight"
+                                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                                    />
+                    <md:PackIcon Kind="ChevronDown"
+                                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    />
+                </Grid>
+                <CheckBox Style="{StaticResource MahApps.Styles.CheckBox}"
+                            Width="20" Margin="5,0"
+                            IsChecked="{Binding IsVisible.Value}"
+                            />
+                <TextBlock Foreground="{StaticResource MaterialDesignBody}" 
+                        Style="{StaticResource {x:Type TextBlock}}"
+                        Text="{Binding Name.Value, FallbackValue=AccessoryName}"/>
+            </StackPanel>
+        </ToggleButton>
+        <StackPanel Margin="15,5"
+                Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanToVisibilityConverter}}"
+                >
+            <Grid Margin="0,0,0,5">
+                <TextBlock>
+                <Run Text="{DynamicResource Accessory_Item_FileName}"/>
+                <Run Text="{Binding FileName, Mode=OneWay, FallbackValue=filename.glb, 
+                                    Converter={StaticResource FileIdIndicationConverter}}"/>
+                </TextBlock>
+                <Button HorizontalAlignment="Right"
+                    Margin="10,0"
+                    Style="{StaticResource CategorySettingResetButton}"
+                    Command="{Binding ResetCommand}"
+                    />
+            </Grid>
+
+            <Grid Margin="5,0">
+                <Grid.Resources>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
+                        <Setter Property="FontSize" Value="11"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                    <Style TargetType="TextBlock" x:Key="AxisText" BasedOn="{StaticResource MaterialDesignCaptionTextBlock}">
+                        <Setter Property="FontSize" Value="11"/>
+                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="0,0,4,0"/>
+                    </Style>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource MahApps.Styles.TextBox}">
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                        Text="{DynamicResource Accessory_Item_DisplayName}"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,20,0"
+                        />
+                <TextBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3"
+                        VerticalAlignment="Center"
+                        Text="{Binding Name.Value, FallbackValue=AccessoryName}"
+                        />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                        Text="{DynamicResource Accessory_Item_AttachTarget}"
+                        HorizontalAlignment="Left"
+                        Margin="0,2,20,20"
+                        />
+                <!-- TODO: Two Wayにならないかもなので要注意 -->
+                <ComboBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"
+                        Style="{StaticResource MahApps.Styles.ComboBox}"
+                        VerticalAlignment="Top"
+                        Height="25"
+                        Margin="0,2"
+                        Padding="0"
+                        SelectedIndex="{Binding AttachTarget.Value, FallbackValue=0}"
+                        ItemsSource="{x:Static vmm:AccessoryItemViewModel.AvailableAttachTargets}"
+                        />
+
+                <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="6"
+                          HorizontalAlignment="Left"
+                          VerticalContentAlignment="Center"
+                          Margin="5,0"
+                          Content="{DynamicResource Accessory_Item_BillboardMode}"
+                          IsChecked="{Binding UseBillboardMode.Value}"
+                          IsEnabled="{Binding CanSelectBillboardMode}"
+                          />
+
+                <TextBlock Grid.Row="3" Grid.Column="0" 
+                        HorizontalAlignment="Left"
+                        Text="{DynamicResource Accessory_Item_Position}" 
+                        Margin="0,0,20,0"
+                        />
+                <TextBlock Grid.Row="3" Grid.Column="1" 
+                        Style="{StaticResource AxisText}"
+                        Text="X" 
+                        />
+                <TextBox Grid.Row="3" Grid.Column="2" 
+                        Text="{Binding PosX.Value, StringFormat=0.######, FallbackValue=1.234567}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+                <TextBlock Grid.Row="3" Grid.Column="3" 
+                        Style="{StaticResource AxisText}"
+                        Text="Y" />
+                <TextBox Grid.Row="3" Grid.Column="4" 
+                         Text="{Binding PosY.Value, StringFormat=0.######}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+                <TextBlock Grid.Row="3" Grid.Column="5" 
+                        Style="{StaticResource AxisText}"
+                        Text="Z" />
+                <TextBox Grid.Row="3" Grid.Column="6"
+                         Text="{Binding PosZ.Value, StringFormat=0.######}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+
+                <TextBlock Grid.Row="4" Grid.Column="0"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        Text="{DynamicResource Accessory_Item_Rotation}" 
+                        />
+                <TextBlock Grid.Row="4" Grid.Column="1"
+                        Style="{StaticResource AxisText}"
+                        Text="X" />
+                <TextBox Grid.Row="4" Grid.Column="2"
+                         Text="{Binding RotX.Value, StringFormat=0.###}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+                <TextBlock Grid.Row="4" Grid.Column="3"
+                        Style="{StaticResource AxisText}"
+                        Text="Y" />
+                <TextBox Grid.Row="4" Grid.Column="4"
+                         Text="{Binding RotY.Value, StringFormat=0.###}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+                <TextBlock Grid.Row="4" Grid.Column="5" 
+                        Style="{StaticResource AxisText}"
+                        Text="Z" />
+                <TextBox Grid.Row="4" Grid.Column="6"
+                         Text="{Binding RotZ.Value, StringFormat=0.###}">
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+                
+                <TextBlock Grid.Row="5" Grid.Column="0"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        Text="{DynamicResource Accessory_Item_Scale}" 
+                        />
+                <TextBox Grid.Row="5" Grid.Column="2" 
+                        Text="{Binding Scale.Value, StringFormat=0.######, FallbackValue=1.0}"
+                         >
+                    <i:Interaction.Behaviors>
+                        <vmm:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+            </Grid>
+        </StackPanel>
+
+    </StackPanel>
+</UserControl>

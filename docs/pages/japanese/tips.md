@@ -35,3 +35,5 @@ permalink: /tips
 [パーフェクトシンク](./tips/perfect_sync)
 
 [カスタムモーションをVMagicMirrorで使う](./tips/use_custom_motion)
+
+[アクセサリ機能で使えるGLBファイルの入手方法](./tips/get_glb_data)

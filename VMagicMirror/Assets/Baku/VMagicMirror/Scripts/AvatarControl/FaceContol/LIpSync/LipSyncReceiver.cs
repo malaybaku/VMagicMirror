@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -107,7 +108,14 @@ namespace Baku.VMagicMirror
             
             if (shouldStartReceive)
             {
-                _lipSyncContext.StartRecording(_receivedDeviceName);
+                try
+                {
+                    _lipSyncContext.StartRecording(_receivedDeviceName);
+                }
+                catch (Exception ex)
+                {
+                    LogOutput.Instance.Write(ex);
+                }
             }
         }
     }

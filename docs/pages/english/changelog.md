@@ -11,6 +11,15 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.0
+{: .doc-sec2 }
+
+2021/12/25
+
+* Add: [Accessory](./docs/accessory) feature which support image files and 3D models.
+* Fix: When avatar is loaded from VRoid Hub and camera get close to the avatar, some meshes becomes invisible
+
+
 #### v1.9.3
 {: .doc-sec2 }
 

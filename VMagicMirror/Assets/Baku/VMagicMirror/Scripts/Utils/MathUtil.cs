@@ -2,8 +2,16 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    public static class MathUtil 
+    public static class MathUtil
     {
+        /// <summary>
+        /// 角度[deg]を[-180, 180]の範囲に収まるようにします。
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        public static float ClampAngle(float angle)
+            => Mathf.Repeat(angle + 180f, 360f) - 180f;
+        
         /// <summary>
         /// [0, 1]の範囲の値を3次補間の曲線に乗るようなカーブに変換します。
         /// </summary>

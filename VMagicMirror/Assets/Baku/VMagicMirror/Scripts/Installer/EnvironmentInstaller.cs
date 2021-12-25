@@ -4,16 +4,14 @@ using Zenject;
 
 namespace Baku.VMagicMirror.Installer
 {
+    [RequireComponent(typeof(Camera))]
+    [RequireComponent(typeof(PostProcessLayer))]
     public class EnvironmentInstaller : InstallerBase
     {
-        //NOTE: Camera.mainより多少行儀が良くなることを期待してる + ここをクラス的にするとメインじゃないカメラも渡せる
-        [SerializeField] private Camera mainCam = null;
-        [SerializeField] private PostProcessLayer postProcessLayer = null;
-        
         public override void Install(DiContainer container)
         {
-            container.BindInstance(mainCam).AsCached();
-            container.BindInstance(postProcessLayer).AsCached();
+            container.Bind<Camera>().FromMethod(_ => GetComponent<Camera>()).AsCached();
+            container.Bind<PostProcessLayer>().FromMethod(_ => GetComponent<PostProcessLayer>()).AsCached();
         }
     }
 }

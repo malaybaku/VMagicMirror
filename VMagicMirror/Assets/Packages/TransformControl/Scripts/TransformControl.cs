@@ -8,9 +8,24 @@ using UnityEngine.Rendering;
 
 namespace mattatz.TransformControl {
 
-	public class TransformControl : MonoBehaviour {
+	public class TransformControl : MonoBehaviour
+	{
+		static class ConflictResolver
+		{
+			private static readonly HashSet<TransformControl> _controls = new HashSet<TransformControl>();
+			
+			public static void Register(TransformControl tc) => _controls.Add(tc);
+			public static void Unregister(TransformControl tc) => _controls.Remove(tc);
 
-	    [System.Serializable]
+			//return true, when other control is already being dragged
+			public static bool DraggingOtherControl(TransformControl tc) => _controls.Any(
+				c => 
+					c != null && c != tc && 
+					c.enabled && c.selected != TransformDirection.None
+				);
+		}
+
+		[System.Serializable]
 	    class TransformData {
 	        public Vector3 position;
 	        public Quaternion rotation;
@@ -60,6 +75,7 @@ namespace mattatz.TransformControl {
 	    public TransformMode mode = TransformMode.Translate;
 	    public bool global, useDistance;
         public float distance = 10f;
+        public bool xyPlaneMode { get; set; }
 
 	    Color[] colors = new Color[]
 	    {
@@ -92,6 +108,13 @@ namespace mattatz.TransformControl {
 
 	    TransformDirection selected = TransformDirection.None;
 
+	    public bool IsDragging => selected != TransformDirection.None && dragging;
+	    
+	    /// <summary>
+	    /// Fire when drag operation has ended
+	    /// </summary>
+	    public Action<TransformMode> DragEnded;
+
 	    #region Circumference
 
 	    const int SPHERE_RESOLUTION = 32;
@@ -107,6 +130,10 @@ namespace mattatz.TransformControl {
 
 	        GetCircumference(SPHERE_RESOLUTION, out circumX, out circumY, out circumZ);
 	    }
+	    
+        private void OnEnable() =>  ConflictResolver.Register(this);
+        private void OnDisable() => ConflictResolver.Unregister(this);
+        private void OnDestroy() => ConflictResolver.Unregister(this);
 
         /*
         // Usage: Call Control() method in Update() loop 
@@ -123,6 +150,10 @@ namespace mattatz.TransformControl {
                 Pick();
 	        } else if (Input.GetMouseButtonUp(0)) {
 	            dragging = false;
+	            if (mode != TransformMode.None && selected != TransformDirection.None)
+	            {
+		            DragEnded?.Invoke(mode);
+	            }
 				selected = TransformDirection.None;
 	        }
 
@@ -137,6 +168,11 @@ namespace mattatz.TransformControl {
 
 	    public bool Pick (Vector3 mouse) {
 	        selected = TransformDirection.None;
+	        if (ConflictResolver.DraggingOtherControl(this))
+	        {
+		        //avoid pick, when other control is being controlled
+		        return false;
+	        }
 
 	        switch(mode) {
 	            case TransformMode.Translate:
@@ -280,6 +316,7 @@ namespace mattatz.TransformControl {
 
 	    void Translate() {
 	        if (selected == TransformDirection.None) return;
+			if (xyPlaneMode && selected == TransformDirection.Z) return;
 
 			var plane = new Plane((Camera.main.transform.position - prev.position).normalized, prev.position);
 			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -307,6 +344,7 @@ namespace mattatz.TransformControl {
 
 	    void Rotate() {
 			if (selected == TransformDirection.None) return;
+			if (xyPlaneMode && selected != TransformDirection.Z) return;
 
 			var matrix = Matrix4x4.TRS(prev.position, global ? Quaternion.identity : prev.rotation,  Vector3.one);
 
@@ -325,6 +363,7 @@ namespace mattatz.TransformControl {
 
 	    void Scale() {
 	        if (selected == TransformDirection.None) return;
+	        if (xyPlaneMode && selected == TransformDirection.Z) return;
 
 			var plane = new Plane((Camera.main.transform.position - transform.position).normalized, prev.position);
 			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -369,15 +408,15 @@ namespace mattatz.TransformControl {
 
 	        switch (mode) {
 	            case TransformMode.Translate:
-	                DrawTranslate();
+	                DrawTranslate(xyPlaneMode);
 	                break;
 
 	            case TransformMode.Rotate:
-	                DrawRotate();
+	                DrawRotate(xyPlaneMode);
 	                break;
 
 	            case TransformMode.Scale:
-	                DrawScale();
+	                DrawScale(xyPlaneMode);
 	                break;
 	        }
 
@@ -412,7 +451,7 @@ namespace mattatz.TransformControl {
 	        GL.End();
 	    }
 
-	    void DrawTranslate () {
+	    void DrawTranslate (bool onlyXy) {
 			material.SetInt("_ZTest", (int)CompareFunction.Always);
 	        material.SetPass(0);
 
@@ -427,53 +466,66 @@ namespace mattatz.TransformControl {
 	        DrawMesh(cone, matrices[1], color);
 
 	        // z axis
-	        color = selected == TransformDirection.Z ? colors[3] : colors[2];
-	        DrawLine(Vector3.zero, Vector3.forward, color);
-	        DrawMesh(cone, matrices[2], color);
+	        if (!onlyXy)
+	        {
+		        color = selected == TransformDirection.Z ? colors[3] : colors[2];
+		        DrawLine(Vector3.zero, Vector3.forward, color);
+		        DrawMesh(cone, matrices[2], color);
+	        }
 	    }
 
-	    void DrawRotate () {
+	    void DrawRotate (bool onlyZ) {
 			material.SetInt("_ZTest", (int)CompareFunction.LessEqual);
 	        material.SetPass(0);
 
 	        // x axis
-	        GL.Begin(GL.LINES);
-	        var color = selected == TransformDirection.X ? colors[3] : colors[0];
-	        GL.Color(color);
-	        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-	            var cur = circumX[i];
-	            var next = circumX[(i + 1) % SPHERE_RESOLUTION];
-	            GL.Vertex(cur);
-	            GL.Vertex(next);
+	        if (!onlyZ)
+	        {
+		        GL.Begin(GL.LINES);
+		        var color = selected == TransformDirection.X ? colors[3] : colors[0];
+		        GL.Color(color);
+		        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
+			        var cur = circumX[i];
+			        var next = circumX[(i + 1) % SPHERE_RESOLUTION];
+			        GL.Vertex(cur);
+			        GL.Vertex(next);
+		        }
+		        GL.End();
 	        }
-	        GL.End();
 
-	        GL.Begin(GL.LINES);
-	        color = selected == TransformDirection.Y ? colors[3] : colors[1];
-	        GL.Color(color);
-	        material.SetPass(0);
-	        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-	            var cur = circumY[i];
-	            var next = circumY[(i + 1) % SPHERE_RESOLUTION];
-	            GL.Vertex(cur);
-	            GL.Vertex(next);
+	        // y
+	        if (!onlyZ)
+	        {
+		        GL.Begin(GL.LINES);
+		        var color = selected == TransformDirection.Y ? colors[3] : colors[1];
+		        GL.Color(color);
+		        material.SetPass(0);
+		        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
+			        var cur = circumY[i];
+			        var next = circumY[(i + 1) % SPHERE_RESOLUTION];
+			        GL.Vertex(cur);
+			        GL.Vertex(next);
+		        }
+		        GL.End();
 	        }
-	        GL.End();
 
-	        GL.Begin(GL.LINES);
-	        color = selected == TransformDirection.Z ? colors[3] : colors[2];
-	        GL.Color(color);
-	        material.SetPass(0);
-	        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-	            var cur = circumZ[i];
-	            var next = circumZ[(i + 1) % SPHERE_RESOLUTION];
-	            GL.Vertex(cur);
-	            GL.Vertex(next);
+	        // z: z is always drawn
+	        {
+		        GL.Begin(GL.LINES);
+		        var color = selected == TransformDirection.Z ? colors[3] : colors[2];
+		        GL.Color(color);
+		        material.SetPass(0);
+		        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
+			        var cur = circumZ[i];
+			        var next = circumZ[(i + 1) % SPHERE_RESOLUTION];
+			        GL.Vertex(cur);
+			        GL.Vertex(next);
+		        }
+		        GL.End();
 	        }
-	        GL.End();
 	    }
 
-	    void DrawScale () {
+	    void DrawScale (bool onlyXy) {
 			material.SetInt("_ZTest", (int)CompareFunction.Always);
 	        material.SetPass(0);
 
@@ -488,9 +540,12 @@ namespace mattatz.TransformControl {
 	        DrawMesh(cube, matrices[1], color);
 
 	        // z axis
-	        color = selected == TransformDirection.Z ? colors[3] : colors[2];
-	        DrawLine(Vector3.zero, Vector3.forward, color);
-	        DrawMesh(cube, matrices[2], color);
+	        if (!onlyXy)
+	        {
+		        color = selected == TransformDirection.Z ? colors[3] : colors[2];
+		        DrawLine(Vector3.zero, Vector3.forward, color);
+		        DrawMesh(cube, matrices[2], color);
+	        }
 	    }
 
 	    #region Mesh

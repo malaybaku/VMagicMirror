@@ -3,9 +3,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using mattatz.TransformControl;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
+    /// <summary>
+    /// <see cref="DeviceTransformController"/>の外部でTransformControlを表示したい人に対して送るデータ
+    /// </summary>
+    public readonly struct TransformControlRequest
+    {
+        public TransformControlRequest(bool worldCoordinate, TransformControl.TransformMode mode)
+        {
+            WorldCoordinate = worldCoordinate;
+            Mode = mode;
+        }
+        public readonly bool WorldCoordinate;
+        public readonly TransformControl.TransformMode Mode;
+    }
+
     /// <summary>
     /// キーボードやマウスパッドの位置をユーザーが自由に編集できるかどうかを設定するレシーバークラス
     /// UIが必要になるので、そのUIの操作もついでにここでやります
@@ -65,7 +80,14 @@ namespace Baku.VMagicMirror
                 }
             }
         }
-        
+
+        private readonly Subject<TransformControlRequest> _controlRequested = new Subject<TransformControlRequest>();
+        /// <summary>
+        /// フリーレイアウトが有効なあいだ、レイアウトの操作対象の情報を載せて毎フレーム送信される値。
+        /// フリーレイアウトが無効になると送信されなくなることに注意
+        /// </summary>
+        public IObservable<TransformControlRequest> ControlRequested => _controlRequested;
+
         private KeyboardVisibility _keyboardVisibility;
         private TouchpadVisibility _touchPadVisibility;
         private GamepadVisibilityReceiver _gamepadVisibility;
@@ -139,6 +161,8 @@ namespace Baku.VMagicMirror
             {
                 _transformControls[i].Control();
             }
+            
+            _controlRequested.OnNext(new TransformControlRequest(_preferWorldCoordinate, _mode));
         }
 
         private void CreateCanvasIfNotExist()

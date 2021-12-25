@@ -20,6 +20,7 @@ namespace Baku.VMagicMirrorConfig
         public static string SaveFileDir { get; }
         public static string LogFileDir { get; }
         public static string LogFilePath { get; }
+        public static string AccessoryFileDir { get; }
         public static string UnityAppPath { get; }
         public static string AutoSaveSettingFilePath { get; }
         public static string UpdateCheckFilePath { get; }
@@ -48,6 +49,7 @@ namespace Baku.VMagicMirrorConfig
                 );
             SaveFileDir = Path.Combine(RootDirectory, "Saves");
             LogFileDir = Path.Combine(RootDirectory, "Logs");
+            AccessoryFileDir = Path.Combine(RootDirectory, "Accessory");
             AutoSaveSettingFilePath = Path.Combine(SaveFileDir, AutoSaveSettingFileName);
             UpdateCheckFilePath = Path.Combine(SaveFileDir, UpdateCheckFileName);
             LogFilePath = Path.Combine(LogFileDir, LogTextName);
@@ -55,6 +57,7 @@ namespace Baku.VMagicMirrorConfig
             Directory.CreateDirectory(RootDirectory);
             Directory.CreateDirectory(SaveFileDir);
             Directory.CreateDirectory(LogFileDir);
+            Directory.CreateDirectory(AccessoryFileDir);
         }
 
         /// <summary>

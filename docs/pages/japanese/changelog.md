@@ -8,6 +8,15 @@ permalink: /changelog
 
 # Change Log
 
+#### v2.0.0
+{: .doc-sec2 }
+
+2021/12/25
+
+* 追加: [アクセサリー機能](./docs/accessory)を追加し、画像や3Dモデルをアクセサリーとして読み込めるようになりました。
+* 修正: VRoid Hubから読み込んだモデルにカメラが近づいたとき、メッシュが表示されない事がある問題を対策しました。
+
+
 <div class="doc-ul" markdown="1">
 
 #### v1.9.3

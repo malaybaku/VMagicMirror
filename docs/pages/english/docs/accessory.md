@@ -75,13 +75,19 @@ You can expand and edit each accessories' properties.
 
 During this mode is enabled, the position of the accessory is calculated by the position if the mode is disabled.
 
-It is a bit difficult to adjust position. Following is one of the recommended way.
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+It is a bit difficult to adjust accessory's position for 2D Foreground Mode. Following is one of the recommended way.
 
 <div class="doc-ul" markdown="1">
 
 - Turn off `2D Foreground Mode`, and adjust accessory's pose by `Free Layout`, to attach them at specific position (e.g. eyes or mouth).
 - Then, turn on `2D Foreground Mode` to check the appearance is what you want.
 - If further adjust needed, then edit in control panel's text, or again turn off `2D Foreground Mode` to adjust it by `Free Layout`.
+
+</div>
 
 </div>
 

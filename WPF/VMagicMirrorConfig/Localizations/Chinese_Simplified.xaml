@@ -13,7 +13,9 @@
     <!-- Top Tab -->
     <sys:String x:Key="TopBar_Home">主页</sys:String>
     <sys:String x:Key="TopBar_Streaming">直播设置</sys:String>
-    <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_ExternalFaceTrack">外部跟踪</sys:String>
+    <sys:String x:Key="TopBar_Accessory">配件</sys:String>
+    <sys:String x:Key="TopBar_HandTrack">手部捕捉</sys:String>
     
     <!-- Top Tab in Setting Window -->
     <sys:String x:Key="TopBar_Setting_Window">窗口设置</sys:String>
@@ -98,9 +100,53 @@
 
     <sys:String x:Key="ExTracker_FaceSwitch">表情开关</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">通过清晰地将脸变成特定的表情来切换虚拟形象的表情
-开启“继续控制嘴部”后，可以在表情切换的状态下变换嘴型。</sys:String>
+开启“继续控制嘴部”后, 可以在表情切换的状态下变换嘴型.</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_KeepLipSync">继续控制嘴部</sys:String>
 
+    <!-- ExTracker FaceSwitch Trigger -->
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_mouthSmile">笑</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_eyeSquint">斜视</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_eyeWide">睁大双眼</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_browUp">抬起眉毛</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_browDown">皱眉</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">伸舌</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">鼓嘴</sys:String>
+    
+    
+    <!-- HandTracking -->
+    <sys:String x:Key="HandTracking_Header">手部跟踪</sys:String>
+    <sys:String x:Key="HandTracking_Instruction" xml:space="preserve">此功能支持使用摄像头进行手部跟踪.
+当你使用摄像头面捕的时候, 会自动使用同一个摄像头.</sys:String>
+    <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">*普通版会在启用手部跟踪时开启特效.
+获取完整版以去除特效.</sys:String>
+    <sys:String x:Key="HandTracking_GetFullEdition">获取完整版</sys:String>    
+    <sys:String x:Key="HandTracking_Enable">启动手部跟踪</sys:String>
+    <sys:String x:Key="HandTracking_ShowEffectDuringTracking">在启用手部跟踪时开启特效</sys:String>
+    <sys:String x:Key="HandTracking_DisableHorizontalFlip">禁用水平翻转</sys:String>    
+    <sys:String x:Key="HandTracking_ShowAreaChecker">显示捕捉状态 (*不会展示原始图片)</sys:String>    
+    <sys:String x:Key="HandTracking_DetectionResult">捕捉状态:</sys:String>
+    <sys:String x:Key="HandTracking_NotDetected">(未检测到手: 尝试把手完整放进摄像头视野中)</sys:String>
+    <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">小贴士:
+- 将整只手放在相机视图内以稳定.
+- 双手稍微向左或向右放置，而不是中间.</sys:String>
+    <sys:String x:Key="HandTracking_LearnMore">更多...</sys:String>    
+      
+    <!-- Accessory Panel -->
+    <sys:String x:Key="Accessory_Header">配件</sys:String>
+    <sys:String x:Key="Accessory_Instruction" xml:space="preserve">此功能将从 "Accessory" 文件夹中加载配件数据.
+可以导入 png图片 或 使用glb/gltf的3D模型。</sys:String>
+    <sys:String x:Key="Accessory_OpenFolder">打开文件夹</sys:String>
+    <sys:String x:Key="Accessory_ReloadFiles">重新加载</sys:String>
+    <sys:String x:Key="Accessory_SeeMore">查看更多...</sys:String>
+    
+    <sys:String x:Key="Accessory_Item_FileName">文件:</sys:String>
+    <sys:String x:Key="Accessory_Item_DisplayName">展示名</sys:String>
+    <sys:String x:Key="Accessory_Item_AttachTarget">附加到</sys:String>
+    <sys:String x:Key="Accessory_Item_BillboardMode">2D 前景模式 (只能使用图片文件)</sys:String>
+    <sys:String x:Key="Accessory_Item_Position">位置</sys:String>
+    <sys:String x:Key="Accessory_Item_Rotation">旋转</sys:String>
+    <sys:String x:Key="Accessory_Item_Scale">缩放</sys:String>
+    
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">颜色的设置 (点击展开)</sys:String>
     
@@ -251,7 +297,7 @@
     <sys:String x:Key="Layout_GamepadVisible">显示游戏手柄</sys:String>
 
     <sys:String x:Key="Layout_Hid_Streaming">键盘</sys:String>
-    <sys:String x:Key="Layout_Midi_Streaming">MIDI冬至起</sys:String>
+    <sys:String x:Key="Layout_Midi_Streaming">MIDI控制器</sys:String>
 
     <sys:String x:Key="Layout_Hid_TypingEffect_Header">打字时的特效</sys:String>
     <sys:String x:Key="Layout_Hid_TypingEffect_Header_Streaming">打字特效</sys:String>

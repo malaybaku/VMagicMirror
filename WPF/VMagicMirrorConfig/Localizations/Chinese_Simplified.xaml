@@ -76,6 +76,7 @@
 - 用眼睛追踪鼠标指针的功能</sys:String>
     <sys:String x:Key="ExTracker_Enable">外部追踪辅助启动</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">嘴部也使用外部追踪的数据</sys:String>    
+    <sys:String x:Key="ExTracker_Enable_EmphasizeExpression">加强部分面部表情</sys:String>
 
     <sys:String x:Key="ExTracker_Enable_PerfectSync">使用完美同步</sys:String>
     <sys:String x:Key="ExTracker_PerfectSync_UseVRoidDefault">使用VRoid用的默认设定（※仅在VRoid模型中有用）</sys:String>

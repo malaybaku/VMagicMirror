@@ -291,7 +291,6 @@ namespace Baku.VMagicMirror.ExternalTracker.Shiori
 
         #region デシリアライズまわり
 
-        //string.Split禁止バージョン
         private void DeserializeMessageWithLessGcAlloc(string msg)
         {
             var data = JsonUtility.FromJson<ShioriInfo>(msg);

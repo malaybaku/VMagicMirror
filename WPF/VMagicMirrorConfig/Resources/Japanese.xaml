@@ -91,6 +91,8 @@
 
     <sys:String x:Key="ExTracker_Source_None">なし</sys:String>
     <sys:String x:Key="ExTracker_Source_iFacialMocap">iFacialMocap</sys:String>
+    <sys:String x:Key="ExTracker_Source_Shiori">Shiori</sys:String>
+    <sys:String x:Key="ExTracker_Source_Shiori_DefaultPort">Port 23456</sys:String>
     <sys:String x:Key="ExTracker_iFM_IpHint">iPhoneのIP Address...</sys:String>
     <sys:String x:Key="ExTracker_Source_HowToCollaborate">※アプリとの連携方法をチェック (Webページを開きます)</sys:String>
 

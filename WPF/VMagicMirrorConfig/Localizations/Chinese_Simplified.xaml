@@ -87,6 +87,8 @@
 
     <sys:String x:Key="ExTracker_Source_None">空</sys:String>
     <sys:String x:Key="ExTracker_Source_iFacialMocap">iFacialMocap</sys:String>
+    <sys:String x:Key="ExTracker_Source_Shiori">Shiori</sys:String>
+    <sys:String x:Key="ExTracker_Source_Shiori_DefaultPort">端口 23456</sys:String>
     <sys:String x:Key="ExTracker_iFM_IpHint">iPhone的IP地址</sys:String>
     <sys:String x:Key="ExTracker_Source_HowToCollaborate">※查看APP连接的方法 (打开网页)</sys:String>
     <sys:String x:Key="ExTracker_Source_RefreshReceiverSetting">重新检查网络环境</sys:String>

@@ -201,10 +201,24 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
+        private bool _isTrackSourceShiori;
+        public bool IsTrackSourceShiori
+        {
+            get => _isTrackSourceShiori;
+            set
+            {
+                if (SetValue(ref _isTrackSourceShiori, value) && value)
+                {
+                    _model.TrackSourceType.Value = ExternalTrackerSetting.TrackSourceShiori;
+                }
+            }
+        }
+
         private void UpdateTrackSourceType()
         {
             IsTrackSourceNone = _model.TrackSourceType.Value == ExternalTrackerSetting.TrackSourceNone;
             IsTrackSourceIFacialMocap = _model.TrackSourceType.Value == ExternalTrackerSetting.TrackSourceIFacialMocap;
+            IsTrackSourceShiori = _model.TrackSourceType.Value == ExternalTrackerSetting.TrackSourceShiori;
         }
 
         //NOTE: 上記のbool2つ+UpdateTrackSourceTypeを廃止し、この整数値を読み込んだViewがConverterで頑張るのでもよい。はず
@@ -213,6 +227,8 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<string> IFacialMocapTargetIpAddress => _model.IFacialMocapTargetIpAddress;
 
         public ActionCommand RefreshIFacialMocapTargetCommand { get; }
+
+        public ActionCommand RefreshShioriTargetCommand { get; }
 
         public ActionCommand OpenInstructionUrlCommand { get; }
 
@@ -282,7 +298,7 @@ namespace Baku.VMagicMirrorConfig
         public void RefreshConnectionIfPossible()
         {
             //NOTE: 今は選択肢がiFacialMocapのみのため、そこをピンポイントで見に行く
-            if (!EnableExternalTracking.Value || !IsTrackSourceIFacialMocap)
+            if (!EnableExternalTracking.Value || !IsTrackSourceIFacialMocap || !IsTrackSourceShiori)
             {
                 return;
             }

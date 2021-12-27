@@ -4,6 +4,7 @@
     {
         public const int TrackSourceNone = 0;
         public const int TrackSourceIFacialMocap = 1;
+        public const int TrackSourceShiori = 2;
 
         /// <summary>
         /// NOTE: 規約としてこの値は書き換えません。

@@ -91,6 +91,8 @@ During this mode, following features are disabled.
 
     <sys:String x:Key="ExTracker_Source_None">None</sys:String>
     <sys:String x:Key="ExTracker_Source_iFacialMocap">iFacialMocap</sys:String>
+    <sys:String x:Key="ExTracker_Source_Shiori">Shiori</sys:String>
+    <sys:String x:Key="ExTracker_Source_Shiori_DefaultPort">Port 23456</sys:String>
     <sys:String x:Key="ExTracker_iFM_IpHint">iPhone IP Address...</sys:String>
     <sys:String x:Key="ExTracker_Source_HowToCollaborate">*See how to connect (open web page)</sys:String>
 

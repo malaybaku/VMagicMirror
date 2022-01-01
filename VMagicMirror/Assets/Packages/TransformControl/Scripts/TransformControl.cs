@@ -1,633 +1,507 @@
 ﻿using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
-using UnityEngine.Rendering;
 
-namespace mattatz.TransformControl {
+namespace mattatz.TransformControl
+{
+    public class TransformControl : MonoBehaviour
+    {
+        static class ConflictResolver
+        {
+            private static readonly HashSet<TransformControl> _controls = new HashSet<TransformControl>();
 
-	public class TransformControl : MonoBehaviour
-	{
-		static class ConflictResolver
-		{
-			private static readonly HashSet<TransformControl> _controls = new HashSet<TransformControl>();
-			
-			public static void Register(TransformControl tc) => _controls.Add(tc);
-			public static void Unregister(TransformControl tc) => _controls.Remove(tc);
+            public static void Register(TransformControl tc) => _controls.Add(tc);
+            public static void Unregister(TransformControl tc) => _controls.Remove(tc);
 
-			//return true, when other control is already being dragged
-			public static bool DraggingOtherControl(TransformControl tc) => _controls.Any(
-				c => 
-					c != null && c != tc && 
-					c.enabled && c.selected != TransformDirection.None
-				);
-		}
+            //return true, when other control is already being dragged
+            public static bool DraggingOtherControl(TransformControl tc) => _controls.Any(
+                c =>
+                    c != null && c != tc &&
+                    c.enabled && c._selected != TransformDirection.None
+            );
+        }
 
-		[System.Serializable]
-	    class TransformData {
-	        public Vector3 position;
-	        public Quaternion rotation;
-	        public Vector3 scale;
-			Matrix4x4 matrix;
+        public enum TransformMode
+        {
+            None,
+            Translate,
+            Rotate,
+            Scale,
+        }
 
-	        public TransformData(Vector3 p, Quaternion r, Vector3 s) {
-	            position = p;
-	            rotation = r;
-	            scale = s;
+        public enum TransformDirection
+        {
+            None,
+            X,
+            Y,
+            Z,
+        }
 
-				matrix = Matrix4x4.TRS(p, r, s);
-	        }
+        [Serializable]
+        private class TransformData
+        {
+            public Vector3 position;
+            public Quaternion rotation;
+            public Vector3 scale;
 
-	        public TransformData(Transform tr) : this(tr.position, tr.rotation, tr.localScale) {}
+            public TransformData(Vector3 p, Quaternion r, Vector3 s)
+            {
+                position = p;
+                rotation = r;
+                scale = s;
+            }
 
-			public Vector3 TransformPoint (Vector3 p) {
-				return matrix.MultiplyPoint(p);
-				// return matrix * p;
-			}
-	    }
+            public TransformData(Transform tr) : this(tr.position, tr.rotation, tr.localScale)
+            {
+            }
+        }
 
-	    public enum TransformMode {
-	        None, Translate, Rotate, Scale
-	    };
+        private const float PickThreshold = 15f;
+        private const float HandlerSize = 0.15f;
+        private const int SphereResolution = 32;
 
-	    public enum TransformDirection {
-	        None, X, Y, Z
-	    };
+        private static readonly List<Vector3> CircleX = new List<Vector3>(SphereResolution);
+        private static readonly List<Vector3> CircleY = new List<Vector3>(SphereResolution);
+        private static readonly List<Vector3> CircleZ = new List<Vector3>(SphereResolution);
+        private static bool _circleInitialized = false;        
 
-	    protected const string SHADER = "Hidden/Internal-Colored";
-	    protected const float THRESHOLD = 10f;
-	    protected const float HANDLER_SIZE = 0.15f;
+        private static readonly IReadOnlyDictionary<TransformDirection, Vector3> Axes = new Dictionary<TransformDirection, Vector3>
+        {
+            [TransformDirection.X] = Vector3.right,
+            [TransformDirection.Y] = Vector3.up,
+            [TransformDirection.Z] = Vector3.forward,
+        };
 
-	    protected Material material {
-	        get {
-	            if (_material == null)
-	            {
-	                var shader = Shader.Find(SHADER);
-	                if (shader == null) Debug.LogErrorFormat("Shader not found : {0}", SHADER);
-	                _material = new Material(shader);
-	            }
-	            return _material;
-	        }
-	    }
-
-	    public TransformMode mode = TransformMode.Translate;
-	    public bool global, useDistance;
+        public TransformMode mode = TransformMode.Translate;
+        public bool global;
+        public bool useDistance;
         public float distance = 10f;
-        public bool xyPlaneMode { get; set; }
+        [SerializeField] private bool xyPlaneMode;
+        [SerializeField] private GizmoRenderer gizmoRenderer;
+        public bool XyPlaneMode 
+        {
+            get => xyPlaneMode;
+            set => xyPlaneMode = value;
+        }
 
-	    Color[] colors = new Color[]
-	    {
-		    new Color(0.8f, 0.4f, 0.2f),
-		    new Color(0.2f, 0.7f, 0.2f),
-		    new Color(0.5f, 0.5f, 0.8f), 
-		    new Color(0.8f, 0.8f, 0.2f), 
-	    };
+        private readonly Vector2[] _xBuffer = new Vector2[SphereResolution];
+        private readonly Vector2[] _yBuffer = new Vector2[SphereResolution];
+        private readonly Vector2[] _zBuffer = new Vector2[SphereResolution];
 
-		Dictionary<TransformDirection, Vector3> axes = new Dictionary<TransformDirection, Vector3>() {
-			{ TransformDirection.X, Vector3.right },
-			{ TransformDirection.Y, Vector3.up },
-			{ TransformDirection.Z, Vector3.forward }
-		};
+        private Camera _cam;
+        private Vector3 _start;
+        private bool _dragging;
+        private TransformData _prev;
+        private TransformDirection _selected = TransformDirection.None;
 
-		Matrix4x4[] matrices = new Matrix4x4[] {
-	        Matrix4x4.TRS(Vector3.right, Quaternion.AngleAxis(90f, Vector3.back), Vector3.one),
-	        Matrix4x4.TRS(Vector3.up, Quaternion.identity, Vector3.one),
-	        Matrix4x4.TRS(Vector3.forward, Quaternion.AngleAxis(90f, Vector3.right), Vector3.one)
-	    };
+        public bool IsDragging => _selected != TransformDirection.None && _dragging;
 
-	    Material _material;
+        /// <summary>
+        /// Fire when drag operation has ended
+        /// </summary>
+        public Action<TransformMode> DragEnded;
 
-	    Vector3 start;
-	    bool dragging;
-	    TransformData prev;
+        private void InitializeCircumferences()
+        {
+            if (_circleInitialized)
+            {
+                return;
+            }
 
-	    Mesh cone;
-	    Mesh cube;
+            var pi2 = Mathf.PI * 2f;
+            for (int i = 0; i < SphereResolution; i++)
+            {
+                var r = (float) i / SphereResolution * pi2;
+                CircleX.Add(new Vector3(0f, Mathf.Cos(r), Mathf.Sin(r)));
+                CircleY.Add(new Vector3(Mathf.Cos(r), 0f, Mathf.Sin(r)));
+                CircleZ.Add(new Vector3(Mathf.Cos(r), Mathf.Sin(r), 0f));
+            }
+            _circleInitialized = true;
+        }
 
-	    TransformDirection selected = TransformDirection.None;
+        private void Awake() => InitializeCircumferences();
 
-	    public bool IsDragging => selected != TransformDirection.None && dragging;
-	    
-	    /// <summary>
-	    /// Fire when drag operation has ended
-	    /// </summary>
-	    public Action<TransformMode> DragEnded;
+        private void Start()
+        {
+            _cam = Camera.main;
+            EnsureGizmoRenderer();
+            gizmoRenderer.Target = transform;
+            gizmoRenderer.TargetCamera = _cam;
+        }
 
-	    #region Circumference
+        private void Update() => UpdateGizmo();
 
-	    const int SPHERE_RESOLUTION = 32;
-	    List<Vector3> circumX;
-	    List<Vector3> circumY;
-	    List<Vector3> circumZ;
+        private void OnEnable()
+        {
+            ConflictResolver.Register(this);
+            EnsureGizmoRenderer();
+            gizmoRenderer.enabled = true;
+            UpdateGizmo();
+        }
 
-	    #endregion
+        private void OnDisable()
+        {
+            ConflictResolver.Unregister(this);
+            if (gizmoRenderer != null)
+            {
+                gizmoRenderer.enabled = false;
+                gizmoRenderer.SetMode(TransformMode.None);
+            }
+        }
 
-	    void Awake() {
-	        cone = CreateCone(5, 0.1f, HANDLER_SIZE);
-	        cube = CreateCube(HANDLER_SIZE);
-
-	        GetCircumference(SPHERE_RESOLUTION, out circumX, out circumY, out circumZ);
-	    }
-	    
-        private void OnEnable() =>  ConflictResolver.Register(this);
-        private void OnDisable() => ConflictResolver.Unregister(this);
         private void OnDestroy() => ConflictResolver.Unregister(this);
 
-        /*
-        // Usage: Call Control() method in Update() loop 
-	    void Update() {
-            Control();
-	    }
-        */
+        public void Control()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                _dragging = true;
+                _start = Input.mousePosition;
+                _prev = new TransformData(transform);
+                Pick(Input.mousePosition);
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                _dragging = false;
+                if (mode != TransformMode.None && _selected != TransformDirection.None)
+                {
+                    DragEnded?.Invoke(mode);
+                }
 
-        public void Control () {
-	        if (Input.GetMouseButtonDown(0)) {
-	            dragging = true;
-	            start = Input.mousePosition;
-	            prev = new TransformData(transform);
-                Pick();
-	        } else if (Input.GetMouseButtonUp(0)) {
-	            dragging = false;
-	            if (mode != TransformMode.None && selected != TransformDirection.None)
-	            {
-		            DragEnded?.Invoke(mode);
-	            }
-				selected = TransformDirection.None;
-	        }
+                _selected = TransformDirection.None;
+            }
 
-            if(dragging) {
+            if (_dragging)
+            {
                 Drag();
             }
         }
 
-	    public bool Pick () {
-	        return Pick(Input.mousePosition);
-	    }
+        private void UpdateGizmo()
+        {
+            gizmoRenderer.SetMode(mode);
+            if (mode == TransformMode.None)
+            {
+                return;
+            }
+            
+            gizmoRenderer.SetDirection(_selected);
+            gizmoRenderer.SetUseWorldCoord(global);
+            gizmoRenderer.SetXyPlaneMode(XyPlaneMode);
 
-	    public bool Pick (Vector3 mouse) {
-	        selected = TransformDirection.None;
-	        if (ConflictResolver.DraggingOtherControl(this))
-	        {
-		        //avoid pick, when other control is being controlled
-		        return false;
-	        }
+            if (useDistance)
+            {
+                gizmoRenderer.SetDistance(distance);
+            }
+            else
+            {
+                gizmoRenderer.UnsetDistance();
+            }
+        }
 
-	        switch(mode) {
-	            case TransformMode.Translate:
-	            case TransformMode.Scale:
-	                return PickOrthogonal(mouse);
-	            case TransformMode.Rotate:
-	                return PickSphere(mouse);
-	        }
+        private void EnsureGizmoRenderer()
+        {
+            if (gizmoRenderer == null)
+            {
+                var prefab = Resources.Load<GizmoRenderer>("TransformControlGizmoRenderer");
+                gizmoRenderer = Instantiate(prefab);
+                gizmoRenderer.Target = transform;
 
-	        return false;
-	    }
+                //ここは一応やってるが深い意味はない: 表示するときは逐次正しい位置に移動させるため
+                var gt = gizmoRenderer.transform;
+                gt.localPosition = Vector3.zero;
+                gt.localRotation = Quaternion.identity;
+                gt.localScale = Vector3.one;
+            }
+        }
+        
+        private void Pick(Vector3 mouse)
+        {
+            _selected = TransformDirection.None;
+            if (ConflictResolver.DraggingOtherControl(this))
+            {
+                //avoid pick, when other control is being controlled
+                return;
+            }
 
-        Matrix4x4 GetTranform()
+            switch (mode)
+            {
+                case TransformMode.Translate:
+                case TransformMode.Scale:
+                    PickOrthogonal(mouse);
+                    return;
+                case TransformMode.Rotate:
+                    PickSphere(mouse);
+                    return;
+                case TransformMode.None:
+                default:
+                    return;
+            }
+        }
+
+        private Matrix4x4 GetTransform()
         {
             float scale = 1f;
-            if(useDistance)
+            if (useDistance)
             {
-                var d = (Camera.main.transform.position - transform.position).magnitude;
+                var d = (_cam.transform.position - transform.position).magnitude;
                 scale = d / distance;
             }
-			return Matrix4x4.TRS(transform.position, global ? Quaternion.identity : transform.rotation, Vector3.one * scale);
+
+            return Matrix4x4.TRS(
+                transform.position, 
+                global ? Quaternion.identity : transform.rotation,
+                Vector3.one * scale);
         }
 
-	    bool PickOrthogonal (Vector3 mouse) {
-	        var cam = Camera.main;
+        private void PickOrthogonal(Vector3 mouse)
+        {
+            var cam = _cam;
 
-			var matrix = GetTranform();
+            var matrix = GetTransform();
 
-			var origin = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.zero)).xy();
-	        var right = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.right)).xy() - origin;
-	        var rightHead = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.right * (1f + HANDLER_SIZE))).xy() - origin;
-	        var up = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.up)).xy() - origin;
-	        var upHead = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.up * (1f + HANDLER_SIZE))).xy() - origin;
-	        var forward = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.forward)).xy() - origin;
-	        var forwardHead = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.forward * (1f + HANDLER_SIZE))).xy() - origin;
-	        var v = mouse.xy() - origin;
-	        var vl = v.magnitude;
+            var origin = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.zero)).Xy();
+            var right = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.right)).Xy() - origin;
+            var rightHead = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.right * (1f + HandlerSize))).Xy() -
+                            origin;
+            var up = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.up)).Xy() - origin;
+            var upHead = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.up * (1f + HandlerSize))).Xy() - origin;
+            var forward = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.forward)).Xy() - origin;
+            var forwardHead = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.forward * (1f + HandlerSize))).Xy() -
+                              origin;
+            var v = mouse.Xy() - origin;
+            var vl = v.magnitude;
 
-	        // Add THRESHOLD to each magnitude to ignore a direction.
+            // Add THRESHOLD to each magnitude to ignore a direction.
 
-	        var xl = v.Orth(right).magnitude;
-			if(Vector2.Dot(v, right) <= -float.Epsilon || vl > rightHead.magnitude) xl += THRESHOLD;
+            var xl = v.Orthogonal(right).magnitude;
+            if (Vector2.Dot(v, right) <= -float.Epsilon || vl > rightHead.magnitude) xl += PickThreshold;
 
-	        var yl = v.Orth(up).magnitude;
-	        if(Vector2.Dot(v, up) <= -float.Epsilon || vl > upHead.magnitude) yl += THRESHOLD;
+            var yl = v.Orthogonal(up).magnitude;
+            if (Vector2.Dot(v, up) <= -float.Epsilon || vl > upHead.magnitude) yl += PickThreshold;
 
-	        var zl = v.Orth(forward).magnitude;
-			if(Vector2.Dot(v, forward) <= -float.Epsilon || vl > forwardHead.magnitude) zl += THRESHOLD;
+            var zl = v.Orthogonal(forward).magnitude;
+            if (Vector2.Dot(v, forward) <= -float.Epsilon || vl > forwardHead.magnitude) zl += PickThreshold;
 
-	        if (xl < yl && xl < zl && xl < THRESHOLD) {
-	            selected = TransformDirection.X;
-	        } else if (yl < xl && yl < zl && yl < THRESHOLD) {
-	            selected = TransformDirection.Y;
-	        } else if (zl < xl && zl < yl && zl < THRESHOLD) {
-	            selected = TransformDirection.Z;
-	        }
+            if (xl < yl && xl < zl && xl < PickThreshold)
+            {
+                _selected = TransformDirection.X;
+            }
+            else if (yl < xl && yl < zl && yl < PickThreshold)
+            {
+                _selected = TransformDirection.Y;
+            }
+            else if (zl < xl && zl < yl && zl < PickThreshold)
+            {
+                _selected = TransformDirection.Z;
+            }
 
-	        return selected != TransformDirection.None;
-	    }
-
-	    bool PickSphere(Vector3 mouse) {
-	        var cam = Camera.main;
-
-			var matrix = GetTranform();
-
-	        var v = mouse.xy();
-			var x = circumX.Select(p => cam.WorldToScreenPoint(matrix.MultiplyPoint(p)).xy()).ToList();
-	        var y = circumY.Select(p => cam.WorldToScreenPoint(matrix.MultiplyPoint(p)).xy()).ToList();
-	        var z = circumZ.Select(p => cam.WorldToScreenPoint(matrix.MultiplyPoint(p)).xy()).ToList();
-
-	        float xl, yl, zl;
-	        xl = yl = zl = float.MaxValue;
-	        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-	            xl = Mathf.Min(xl, (v - x[i]).magnitude);
-	            yl = Mathf.Min(yl, (v - y[i]).magnitude);
-	            zl = Mathf.Min(zl, (v - z[i]).magnitude);
-	        }
-
-	        if (xl < yl && xl < zl && xl < THRESHOLD) {
-	            selected = TransformDirection.X;
-	        } else if (yl < xl && yl < zl && yl < THRESHOLD) {
-	            selected = TransformDirection.Y;
-	        } else if (zl < xl && zl < yl && zl < THRESHOLD) {
-	            selected = TransformDirection.Z;
-	        }
-
-	        return selected != TransformDirection.None;
-	    }
-
-	    void GetCircumference (int resolution, out List<Vector3> x, out List<Vector3> y, out List<Vector3> z) {
-	        x = new List<Vector3>();
-	        y = new List<Vector3>();
-	        z = new List<Vector3>();
-
-	        var pi2 = Mathf.PI * 2f;
-	        for(int i = 0; i < resolution; i++) {
-	            var r = (float)i / resolution * pi2;
-	            x.Add(new Vector3(0f, Mathf.Cos(r), Mathf.Sin(r)));
-	            y.Add(new Vector3(Mathf.Cos(r), 0f, Mathf.Sin(r)));
-	            z.Add(new Vector3(Mathf.Cos(r), Mathf.Sin(r), 0f));
-	        }
-	    }
-
-		bool GetStartProj (out Vector3 proj) {
-			proj = default(Vector3);
-
-			var plane = new Plane((Camera.main.transform.position - prev.position).normalized, prev.position);
-			var ray = Camera.main.ScreenPointToRay(start);
-			float distance;
-			if(plane.Raycast(ray, out distance)) {
-				var point = ray.GetPoint(distance);
-				var axis = global ? axes[selected] : prev.rotation * axes[selected];
-				var dir = point - prev.position;
-				proj = Vector3.Project(dir, axis.normalized);
-				return true;
-			}
-			return false;
-		}
-
-		float GetStartDistance () {
-			Vector3 proj;
-			if(GetStartProj(out proj)) {
-				return proj.magnitude;
-			}
-			return 0f;
-		}
-
-        void Drag() {
-	        switch (mode) {
-	            case TransformMode.Translate:
-	                Translate();
-	                break;
-	            case TransformMode.Rotate:
-	                Rotate();
-	                break;
-	            case TransformMode.Scale:
-	                Scale();
-	                break;
-	        }
+            //return _selected != TransformDirection.None;
         }
 
-	    void Translate() {
-	        if (selected == TransformDirection.None) return;
-			if (xyPlaneMode && selected == TransformDirection.Z) return;
+        private void PickSphere(Vector3 mouse)
+        {
+            var cam = _cam;
 
-			var plane = new Plane((Camera.main.transform.position - prev.position).normalized, prev.position);
-			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			float distance;
-			if(plane.Raycast(ray, out distance)) {
-				var point = ray.GetPoint(distance);
-				var axis = global ? axes[selected] : prev.rotation * axes[selected];
-				var dir = point - prev.position;
-				var proj = Vector3.Project(dir, axis.normalized);
+            var matrix = GetTransform();
 
-				Vector3 start;
-				if(GetStartProj(out start)) {
-					var offset = start.magnitude;
-					var cur = proj.magnitude;
-					if(Vector3.Dot(start, proj) >= 0f) {
-						proj = (cur - offset) * proj.normalized;
-					} else {
-						proj = (cur + offset) * proj.normalized;
-					}
-				}
+            var v = mouse.Xy();
+            for (int i = 0; i < SphereResolution; i++)
+            {
+                _xBuffer[i] = cam.WorldToScreenPoint(matrix.MultiplyPoint(CircleX[i])).Xy();
+                _yBuffer[i] = cam.WorldToScreenPoint(matrix.MultiplyPoint(CircleY[i])).Xy();
+                _zBuffer[i] = cam.WorldToScreenPoint(matrix.MultiplyPoint(CircleZ[i])).Xy();
+            }
 
-				transform.position = prev.position + proj;
-			}
-		}
+            float xl, yl, zl;
+            xl = yl = zl = float.MaxValue;
+            for (int i = 0; i < SphereResolution; i++)
+            {
+                xl = Mathf.Min(xl, (v - _xBuffer[i]).magnitude);
+                yl = Mathf.Min(yl, (v - _yBuffer[i]).magnitude);
+                zl = Mathf.Min(zl, (v - _zBuffer[i]).magnitude);
+            }
 
-	    void Rotate() {
-			if (selected == TransformDirection.None) return;
-			if (xyPlaneMode && selected != TransformDirection.Z) return;
+            if (xl < yl && xl < zl && xl < PickThreshold)
+            {
+                _selected = TransformDirection.X;
+            }
+            else if (yl < xl && yl < zl && yl < PickThreshold)
+            {
+                _selected = TransformDirection.Y;
+            }
+            else if (zl < xl && zl < yl && zl < PickThreshold)
+            {
+                _selected = TransformDirection.Z;
+            }
 
-			var matrix = Matrix4x4.TRS(prev.position, global ? Quaternion.identity : prev.rotation,  Vector3.one);
+            //return _selected != TransformDirection.None;
+        }
 
-			var cur = Input.mousePosition.xy();
-			var cam = Camera.main;
-			var origin = cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.zero)).xy();
-			var axis = cam.WorldToScreenPoint(matrix.MultiplyPoint(axes[selected])).xy();
-			var perp = (origin - axis).Perp().normalized;
-			var dir = (cur - start.xy());
-			var proj = dir.Project(perp);
+        private bool GetStartProj(out Vector3 proj)
+        {
+            proj = default;
 
-			var rotateAxis = axes[selected];
-			if(global) rotateAxis = Quaternion.Inverse(prev.rotation) * rotateAxis;
-			transform.rotation = prev.rotation * Quaternion.AngleAxis(proj.magnitude * (Vector2.Dot(dir, perp) > 0f ? 1f : -1f), rotateAxis);
-		}
+            var plane = new Plane((_cam.transform.position - _prev.position).normalized, _prev.position);
+            var ray = _cam.ScreenPointToRay(_start);
+            if (plane.Raycast(ray, out var planeDistance))
+            {
+                var point = ray.GetPoint(planeDistance);
+                var axis = global ? Axes[_selected] : _prev.rotation * Axes[_selected];
+                var dir = point - _prev.position;
+                proj = Vector3.Project(dir, axis.normalized);
+                return true;
+            }
 
-	    void Scale() {
-	        if (selected == TransformDirection.None) return;
-	        if (xyPlaneMode && selected == TransformDirection.Z) return;
+            return false;
+        }
 
-			var plane = new Plane((Camera.main.transform.position - transform.position).normalized, prev.position);
-			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			float distance;
-			if(plane.Raycast(ray, out distance)) {
-				var point = ray.GetPoint(distance);
-				var axis = global ? axes[selected] : prev.rotation * axes[selected];
-				var dir = point - prev.position;
-				var proj = Vector3.Project(dir, axis.normalized);
-				var offset = GetStartDistance();
+        private float GetStartDistance() => GetStartProj(out var proj) ? proj.magnitude : 0f;
 
-				var mag = 0f;
-				if(proj.magnitude < offset) {
-					mag = 1f - (offset - proj.magnitude) / offset;
-				} else {
-					mag = proj.magnitude / offset;
-				}
+        private void Drag()
+        {
+            switch (mode)
+            {
+                case TransformMode.Translate:
+                    Translate();
+                    break;
+                case TransformMode.Rotate:
+                    Rotate();
+                    break;
+                case TransformMode.Scale:
+                    Scale();
+                    break;
+                case TransformMode.None:
+                default:
+                    //何もしない
+                    break;
+            }
+        }
 
-				var scale = transform.localScale;
-				switch(selected) {
-				case TransformDirection.X:
-					scale.x = prev.scale.x * mag;
-					break;
-				case TransformDirection.Y:
-					scale.y = prev.scale.y * mag;
-					break;
-				case TransformDirection.Z:
-					scale.z = prev.scale.z * mag;
-					break;
-				}
-				transform.localScale = scale;
-			}
+        private void Translate()
+        {
+            if (_selected == TransformDirection.None)
+            {
+                return;
+            }
 
-	    }
+            if (XyPlaneMode && _selected == TransformDirection.Z)
+            {
+                return;
+            }
 
-	    void OnRenderObject() {
-	        if (mode == TransformMode.None) return;
+            var plane = new Plane((_cam.transform.position - _prev.position).normalized, _prev.position);
+            var ray = _cam.ScreenPointToRay(Input.mousePosition);
+            if (!plane.Raycast(ray, out var planeDistance))
+            {
+                return;
+            }
 
-	        GL.PushMatrix();
+            var point = ray.GetPoint(planeDistance);
+            var axis = global ? Axes[_selected] : _prev.rotation * Axes[_selected];
+            var dir = point - _prev.position;
+            var proj = Vector3.Project(dir, axis.normalized);
 
-            GL.MultMatrix(GetTranform());
+            if (GetStartProj(out var startProj))
+            {
+                var offset = startProj.magnitude;
+                var cur = proj.magnitude;
+                if (Vector3.Dot(startProj, proj) >= 0f)
+                {
+                    proj = (cur - offset) * proj.normalized;
+                }
+                else
+                {
+                    proj = (cur + offset) * proj.normalized;
+                }
+            }
 
-	        switch (mode) {
-	            case TransformMode.Translate:
-	                DrawTranslate(xyPlaneMode);
-	                break;
+            transform.position = _prev.position + proj;
+        }
 
-	            case TransformMode.Rotate:
-	                DrawRotate(xyPlaneMode);
-	                break;
+        private void Rotate()
+        {
+            if (_selected == TransformDirection.None)
+            {
+                return;
+            }
 
-	            case TransformMode.Scale:
-	                DrawScale(xyPlaneMode);
-	                break;
-	        }
+            if (XyPlaneMode && _selected != TransformDirection.Z)
+            {
+                return;
+            }
 
-	        GL.PopMatrix();
-	    }
+            var matrix = Matrix4x4.TRS(_prev.position, global ? Quaternion.identity : _prev.rotation, Vector3.one);
 
-	    void DrawLine (Vector3 start, Vector3 end, Color color) {
-	        GL.Begin(GL.LINES);
-	        GL.Color(color);
-	        GL.Vertex(start);
-	        GL.Vertex(end);
-	        GL.End();
-	    }
+            var cur = Input.mousePosition.Xy();
+            var origin = _cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.zero)).Xy();
+            var axis = _cam.WorldToScreenPoint(matrix.MultiplyPoint(Axes[_selected])).Xy();
+            var perp = (origin - axis).Perp().normalized;
+            var dir = (cur - _start.Xy());
+            var proj = dir.Project(perp);
 
-	    void DrawMesh (Mesh mesh, Matrix4x4 m, Color color) {
-	        GL.Begin(GL.TRIANGLES);
-	        GL.Color(color);
+            var rotateAxis = Axes[_selected];
+            if (global) rotateAxis = Quaternion.Inverse(_prev.rotation) * rotateAxis;
+            transform.rotation = _prev.rotation *
+                                 Quaternion.AngleAxis(proj.magnitude * (Vector2.Dot(dir, perp) > 0f ? 1f : -1f),
+                                     rotateAxis);
+        }
 
-	        var vertices = mesh.vertices;
-	        for (int i = 0, n = vertices.Length; i < n; i++) {
-	            vertices[i] = m.MultiplyPoint(vertices[i]);
-	        }
+        private void Scale()
+        {
+            if (_selected == TransformDirection.None)
+            {
+                return;
+            }
 
-	        var triangles = mesh.triangles;
-	        for (int i = 0, n = triangles.Length; i < n; i += 3) {
-	            int a = triangles[i], b = triangles[i + 1], c = triangles[i + 2];
-	            GL.Vertex(vertices[a]);
-	            GL.Vertex(vertices[b]);
-	            GL.Vertex(vertices[c]);
-	        }
+            if (XyPlaneMode && _selected == TransformDirection.Z)
+            {
+                return;
+            }
 
-	        GL.End();
-	    }
+            var plane = new Plane((_cam.transform.position - transform.position).normalized, _prev.position);
+            var ray = _cam.ScreenPointToRay(Input.mousePosition);
+            if (!plane.Raycast(ray, out var planeDistance))
+            {
+                return;
+            }
+            
+            var point = ray.GetPoint(planeDistance);
+            var axis = global ? Axes[_selected] : _prev.rotation * Axes[_selected];
+            var dir = point - _prev.position;
+            var proj = Vector3.Project(dir, axis.normalized);
+            var offset = GetStartDistance();
 
-	    void DrawTranslate (bool onlyXy) {
-			material.SetInt("_ZTest", (int)CompareFunction.Always);
-	        material.SetPass(0);
+            var mag = 0f;
+            if (proj.magnitude < offset)
+            {
+                mag = 1f - (offset - proj.magnitude) / offset;
+            }
+            else
+            {
+                mag = proj.magnitude / offset;
+            }
 
-	        // x axis
-	        var color = selected == TransformDirection.X ? colors[3] : colors[0];
-	        DrawLine(Vector3.zero, Vector3.right, color);
-	        DrawMesh(cone, matrices[0], color);
+            var scale = transform.localScale;
+            switch (_selected)
+            {
+                case TransformDirection.X:
+                    scale.x = _prev.scale.x * mag;
+                    break;
+                case TransformDirection.Y:
+                    scale.y = _prev.scale.y * mag;
+                    break;
+                case TransformDirection.Z:
+                    scale.z = _prev.scale.z * mag;
+                    break;
+                case TransformDirection.None:
+                default:
+                    //do nothing
+                    break;
+            }
 
-	        // y axis
-	        color = selected == TransformDirection.Y ? colors[3] : colors[1];
-	        DrawLine(Vector3.zero, Vector3.up, color);
-	        DrawMesh(cone, matrices[1], color);
-
-	        // z axis
-	        if (!onlyXy)
-	        {
-		        color = selected == TransformDirection.Z ? colors[3] : colors[2];
-		        DrawLine(Vector3.zero, Vector3.forward, color);
-		        DrawMesh(cone, matrices[2], color);
-	        }
-	    }
-
-	    void DrawRotate (bool onlyZ) {
-			material.SetInt("_ZTest", (int)CompareFunction.LessEqual);
-	        material.SetPass(0);
-
-	        // x axis
-	        if (!onlyZ)
-	        {
-		        GL.Begin(GL.LINES);
-		        var color = selected == TransformDirection.X ? colors[3] : colors[0];
-		        GL.Color(color);
-		        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-			        var cur = circumX[i];
-			        var next = circumX[(i + 1) % SPHERE_RESOLUTION];
-			        GL.Vertex(cur);
-			        GL.Vertex(next);
-		        }
-		        GL.End();
-	        }
-
-	        // y
-	        if (!onlyZ)
-	        {
-		        GL.Begin(GL.LINES);
-		        var color = selected == TransformDirection.Y ? colors[3] : colors[1];
-		        GL.Color(color);
-		        material.SetPass(0);
-		        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-			        var cur = circumY[i];
-			        var next = circumY[(i + 1) % SPHERE_RESOLUTION];
-			        GL.Vertex(cur);
-			        GL.Vertex(next);
-		        }
-		        GL.End();
-	        }
-
-	        // z: z is always drawn
-	        {
-		        GL.Begin(GL.LINES);
-		        var color = selected == TransformDirection.Z ? colors[3] : colors[2];
-		        GL.Color(color);
-		        material.SetPass(0);
-		        for(int i = 0; i < SPHERE_RESOLUTION; i++) {
-			        var cur = circumZ[i];
-			        var next = circumZ[(i + 1) % SPHERE_RESOLUTION];
-			        GL.Vertex(cur);
-			        GL.Vertex(next);
-		        }
-		        GL.End();
-	        }
-	    }
-
-	    void DrawScale (bool onlyXy) {
-			material.SetInt("_ZTest", (int)CompareFunction.Always);
-	        material.SetPass(0);
-
-	        // x axis
-	        var color = selected == TransformDirection.X ? colors[3] : colors[0];
-	        DrawLine(Vector3.zero, Vector3.right, color);
-	        DrawMesh(cube, matrices[0], color);
-
-	        // y axis
-	        color = selected == TransformDirection.Y ? colors[3] : colors[1];
-	        DrawLine(Vector3.zero, Vector3.up, color);
-	        DrawMesh(cube, matrices[1], color);
-
-	        // z axis
-	        if (!onlyXy)
-	        {
-		        color = selected == TransformDirection.Z ? colors[3] : colors[2];
-		        DrawLine(Vector3.zero, Vector3.forward, color);
-		        DrawMesh(cube, matrices[2], color);
-	        }
-	    }
-
-	    #region Mesh
-
-	    Mesh CreateCone(int subdivisions, float radius, float height)
-	    {
-	        Mesh mesh = new Mesh();
-
-	        Vector3[] vertices = new Vector3[subdivisions + 2];
-	        int[] triangles = new int[(subdivisions * 2) * 3];
-
-	        vertices[0] = Vector3.zero;
-	        for (int i = 0, n = subdivisions - 1; i < subdivisions; i++)
-	        {
-	            float ratio = (float)i / n;
-	            float r = ratio * (Mathf.PI * 2f);
-	            float x = Mathf.Cos(r) * radius;
-	            float z = Mathf.Sin(r) * radius;
-	            vertices[i + 1] = new Vector3(x, 0f, z);
-	        }
-	        vertices[subdivisions + 1] = new Vector3(0f, height, 0f);
-
-	        // construct bottom
-	        for (int i = 0, n = subdivisions - 1; i < n; i++)
-	        {
-	            int offset = i * 3;
-	            triangles[offset] = 0;
-	            triangles[offset + 1] = i + 1;
-	            triangles[offset + 2] = i + 2;
-	        }
-
-	        // construct sides
-	        int bottomOffset = subdivisions * 3;
-	        for (int i = 0, n = subdivisions - 1; i < n; i++)
-	        {
-	            int offset = i * 3 + bottomOffset;
-	            triangles[offset] = i + 1;
-	            triangles[offset + 1] = subdivisions + 1;
-	            triangles[offset + 2] = i + 2;
-	        }
-
-	        mesh.vertices = vertices;
-	        mesh.triangles = triangles;
-	        return mesh;
-	    }
-
-	    Mesh CreateCube(float size) {
-	        var mesh = new Mesh();
-
-	        var hsize = size * 0.5f;
-	        mesh.vertices = new Vector3[] {
-	            new Vector3 (-hsize, -hsize, -hsize),
-	            new Vector3 ( hsize, -hsize, -hsize),
-	            new Vector3 ( hsize,  hsize, -hsize),
-	            new Vector3 (-hsize,  hsize, -hsize),
-	            new Vector3 (-hsize,  hsize,  hsize),
-	            new Vector3 ( hsize,  hsize,  hsize),
-	            new Vector3 ( hsize, -hsize,  hsize),
-	            new Vector3 (-hsize, -hsize,  hsize),
-	        };
-
-	        mesh.triangles = new int[] {
-	            0, 2, 1, //face front
-				0, 3, 2,
-	            2, 3, 4, //face top
-				2, 4, 5,
-	            1, 2, 5, //face right
-				1, 5, 6,
-	            0, 7, 4, //face left
-				0, 4, 3,
-	            5, 4, 7, //face back
-				5, 7, 6,
-	            0, 6, 7, //face bottom
-				0, 1, 6
-	        };
-
-	        return mesh;
-	    }
-
-	    #endregion
-
-	}
-
+            transform.localScale = scale;
+        }
+    }
 }
-

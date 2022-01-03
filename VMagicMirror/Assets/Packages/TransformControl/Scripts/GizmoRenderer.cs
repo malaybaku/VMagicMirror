@@ -10,11 +10,13 @@ namespace mattatz.TransformControl
         [SerializeField] private GizmoItem translateGizmo;
         [SerializeField] private GizmoItem rotateGizmo;
         [SerializeField] private GizmoItem scaleGizmo;
+        [SerializeField] private BoxCollider bounds;
 
         [SerializeField] private Material xMat;
         [SerializeField] private Material yMat;
         [SerializeField] private Material zMat;
         [SerializeField] private Material selectedMat;
+        [SerializeField] private Material mouseOverMat;
 
         [SerializeField] private Camera targetCamera;
 
@@ -48,17 +50,18 @@ namespace mattatz.TransformControl
             scaleGizmo.gameObject.SetActive(mode == TransformControl.TransformMode.Scale);
         }
 
-        public void SetDirection(TransformControl.TransformDirection dir)
+        public void SetDirection(TransformControl.TransformDirection dir, bool isHover)
         {
-            SetItemDirection(translateGizmo, dir);
-            SetItemDirection(rotateGizmo, dir);
-            SetItemDirection(scaleGizmo, dir);
+            SetItemDirection(translateGizmo, dir, isHover);
+            SetItemDirection(rotateGizmo, dir, isHover);
+            SetItemDirection(scaleGizmo, dir, isHover);
             
-            void SetItemDirection(GizmoItem item, TransformControl.TransformDirection direction)
+            void SetItemDirection(GizmoItem item, TransformControl.TransformDirection direction, bool hover)
             {
-                item.SetMaterial(AxisTarget.X, direction == TransformControl.TransformDirection.X ? selectedMat : xMat);
-                item.SetMaterial(AxisTarget.Y, direction == TransformControl.TransformDirection.Y ? selectedMat : yMat);
-                item.SetMaterial(AxisTarget.Z, direction == TransformControl.TransformDirection.Z ? selectedMat : zMat);
+                var validMat = hover ? mouseOverMat : selectedMat;
+                item.SetMaterial(AxisTarget.X, direction == TransformControl.TransformDirection.X ? validMat : xMat);
+                item.SetMaterial(AxisTarget.Y, direction == TransformControl.TransformDirection.Y ? validMat : yMat);
+                item.SetMaterial(AxisTarget.Z, direction == TransformControl.TransformDirection.Z ? validMat : zMat);
             }
         }
 
@@ -97,6 +100,18 @@ namespace mattatz.TransformControl
         public void UnsetDistance()
         {
             transform.position = Target.position;
+        }
+
+        //Check if mouse cursor might on some gizmos. Useful to reduce redundant hit test calculation
+        public bool CheckBoundingBox(Vector3 mouse)
+        {
+            if (targetCamera == null)
+            {
+                return false;
+            }
+
+            var ray = targetCamera.ScreenPointToRay(mouse);
+            return bounds.Raycast(ray, out _, targetCamera.farClipPlane);
         }
     }
 }

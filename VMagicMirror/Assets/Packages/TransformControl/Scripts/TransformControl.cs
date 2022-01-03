@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace mattatz.TransformControl
 {
@@ -57,7 +58,7 @@ namespace mattatz.TransformControl
             }
         }
 
-        private const float PickThreshold = 15f;
+        private const float PickThreshold = 20f;
         private const float HandlerSize = 0.15f;
         private const int SphereResolution = 32;
 
@@ -85,17 +86,19 @@ namespace mattatz.TransformControl
             set => xyPlaneMode = value;
         }
 
-        private readonly Vector2[] _xBuffer = new Vector2[SphereResolution];
-        private readonly Vector2[] _yBuffer = new Vector2[SphereResolution];
-        private readonly Vector2[] _zBuffer = new Vector2[SphereResolution];
+        private readonly Vector3[] _xBuffer = new Vector3[SphereResolution];
+        private readonly Vector3[] _yBuffer = new Vector3[SphereResolution];
+        private readonly Vector3[] _zBuffer = new Vector3[SphereResolution];
 
         private Camera _cam;
         private Vector3 _start;
         private bool _dragging;
         private TransformData _prev;
         private TransformDirection _selected = TransformDirection.None;
+        private TransformDirection _hover = TransformDirection.None;
 
         public bool IsDragging => _selected != TransformDirection.None && _dragging;
+        public bool HasMouseOverContent => _hover != TransformDirection.None && !_dragging;
 
         /// <summary>
         /// Fire when drag operation has ended
@@ -130,7 +133,10 @@ namespace mattatz.TransformControl
             gizmoRenderer.TargetCamera = _cam;
         }
 
-        private void Update() => UpdateGizmo();
+        private void Update()
+        {
+            UpdateGizmo();
+        }
 
         private void OnEnable()
         {
@@ -142,6 +148,7 @@ namespace mattatz.TransformControl
 
         private void OnDisable()
         {
+            _hover = TransformDirection.None;
             ConflictResolver.Unregister(this);
             if (gizmoRenderer != null)
             {
@@ -154,6 +161,7 @@ namespace mattatz.TransformControl
 
         public void Control()
         {
+            CheckMouseOver(Input.mousePosition);
             if (Input.GetMouseButtonDown(0))
             {
                 _dragging = true;
@@ -185,8 +193,16 @@ namespace mattatz.TransformControl
             {
                 return;
             }
+
+            if (HasMouseOverContent)
+            {
+                gizmoRenderer.SetDirection(_hover, true);
+            }
+            else
+            {
+                gizmoRenderer.SetDirection(_selected, false);
+            }
             
-            gizmoRenderer.SetDirection(_selected);
             gizmoRenderer.SetUseWorldCoord(global);
             gizmoRenderer.SetXyPlaneMode(XyPlaneMode);
 
@@ -215,6 +231,35 @@ namespace mattatz.TransformControl
                 gt.localScale = Vector3.one;
             }
         }
+
+        private void CheckMouseOver(Vector3 mouse)
+        {
+            _hover = TransformDirection.None;
+            if (IsDragging || ConflictResolver.DraggingOtherControl(this))
+            {
+                return;
+            }
+
+            if (!gizmoRenderer.CheckBoundingBox(mouse))
+            {
+                return;
+            }
+
+            switch (mode)
+            {
+                case TransformMode.Translate:
+                case TransformMode.Scale:
+                    _hover = PickOrthogonal(mouse);
+                    return;
+                case TransformMode.Rotate:
+                    _hover = PickSphere(mouse);
+                    return;
+                case TransformMode.None:
+                default:
+                    return;
+            }
+
+        }
         
         private void Pick(Vector3 mouse)
         {
@@ -229,10 +274,10 @@ namespace mattatz.TransformControl
             {
                 case TransformMode.Translate:
                 case TransformMode.Scale:
-                    PickOrthogonal(mouse);
+                    _selected = PickOrthogonal(mouse);
                     return;
                 case TransformMode.Rotate:
-                    PickSphere(mouse);
+                    _selected = PickSphere(mouse);
                     return;
                 case TransformMode.None:
                 default:
@@ -255,7 +300,7 @@ namespace mattatz.TransformControl
                 Vector3.one * scale);
         }
 
-        private void PickOrthogonal(Vector3 mouse)
+        private TransformDirection PickOrthogonal(Vector3 mouse)
         {
             var cam = _cam;
 
@@ -286,21 +331,23 @@ namespace mattatz.TransformControl
 
             if (xl < yl && xl < zl && xl < PickThreshold)
             {
-                _selected = TransformDirection.X;
+                return TransformDirection.X;
             }
-            else if (yl < xl && yl < zl && yl < PickThreshold)
+            
+            if (yl < xl && yl < zl && yl < PickThreshold)
             {
-                _selected = TransformDirection.Y;
+                return TransformDirection.Y;
             }
-            else if (zl < xl && zl < yl && zl < PickThreshold)
+            
+            if (zl < xl && zl < yl && zl < PickThreshold)
             {
-                _selected = TransformDirection.Z;
+                return TransformDirection.Z;
             }
 
-            //return _selected != TransformDirection.None;
+            return TransformDirection.None;
         }
 
-        private void PickSphere(Vector3 mouse)
+        private TransformDirection PickSphere(Vector3 mouse)
         {
             var cam = _cam;
 
@@ -309,34 +356,55 @@ namespace mattatz.TransformControl
             var v = mouse.Xy();
             for (int i = 0; i < SphereResolution; i++)
             {
-                _xBuffer[i] = cam.WorldToScreenPoint(matrix.MultiplyPoint(CircleX[i])).Xy();
-                _yBuffer[i] = cam.WorldToScreenPoint(matrix.MultiplyPoint(CircleY[i])).Xy();
-                _zBuffer[i] = cam.WorldToScreenPoint(matrix.MultiplyPoint(CircleZ[i])).Xy();
+                _xBuffer[i] = cam.WorldToScreenPoint(matrix.MultiplyPoint(CircleX[i]));
+                _yBuffer[i] = cam.WorldToScreenPoint(matrix.MultiplyPoint(CircleY[i]));
+                _zBuffer[i] = cam.WorldToScreenPoint(matrix.MultiplyPoint(CircleZ[i]));
             }
 
-            float xl, yl, zl;
-            xl = yl = zl = float.MaxValue;
-            for (int i = 0; i < SphereResolution; i++)
+            var xDepthMean = _xBuffer.Sum(a => a.z) / _xBuffer.Length;
+            var yDepthMean = _yBuffer.Sum(a => a.z) / _yBuffer.Length;
+            var zDepthMean = _zBuffer.Sum(a => a.z) / _zBuffer.Length;
+            //NOTE: Add margin for the case where gizmo circle normal matches to camera ray
+            const float DepthMargin = 0.2f;
+
+            var xl = float.MaxValue;
+            var yl = float.MaxValue;
+            var zl = float.MaxValue;
+            for (var i = 0; i < SphereResolution; i++)
             {
-                xl = Mathf.Min(xl, (v - _xBuffer[i]).magnitude);
-                yl = Mathf.Min(yl, (v - _yBuffer[i]).magnitude);
-                zl = Mathf.Min(zl, (v - _zBuffer[i]).magnitude);
+                if (_xBuffer[i].z < xDepthMean + DepthMargin)
+                {
+                    xl = Mathf.Min(xl, (v - _xBuffer[i].Xy()).magnitude);
+                }
+                
+                if (_yBuffer[i].z < yDepthMean + DepthMargin)
+                {
+                    yl = Mathf.Min(yl, (v - _yBuffer[i].Xy()).magnitude);
+                }
+
+                if (_zBuffer[i].z < zDepthMean + DepthMargin)
+                {
+                    zl = Mathf.Min(zl, (v - _zBuffer[i].Xy()).magnitude);
+                }
             }
 
             if (xl < yl && xl < zl && xl < PickThreshold)
             {
-                _selected = TransformDirection.X;
+                return TransformDirection.X;
             }
-            else if (yl < xl && yl < zl && yl < PickThreshold)
+            
+            if (yl < xl && yl < zl && yl < PickThreshold)
             {
-                _selected = TransformDirection.Y;
+                return TransformDirection.Y;
             }
-            else if (zl < xl && zl < yl && zl < PickThreshold)
+            
+            if (zl < xl && zl < yl && zl < PickThreshold)
             {
-                _selected = TransformDirection.Z;
+                // _selected = TransformDirection.Z;
+                return TransformDirection.Z;
             }
 
-            //return _selected != TransformDirection.None;
+            return TransformDirection.None;
         }
 
         private bool GetStartProj(out Vector3 proj)

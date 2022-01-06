@@ -101,6 +101,11 @@ namespace mattatz.TransformControl
         public bool HasMouseOverContent => _hover != TransformDirection.None && !_dragging;
 
         /// <summary>
+        /// Set true to manually update gizmo, in the case control target moves on non-standard timing
+        /// </summary>
+        public bool AutoUpdateGizmo { get; set; } = true;
+
+        /// <summary>
         /// Fire when drag operation has ended
         /// </summary>
         public Action<TransformMode> DragEnded;
@@ -135,7 +140,10 @@ namespace mattatz.TransformControl
 
         private void Update()
         {
-            UpdateGizmo();
+            if (AutoUpdateGizmo)
+            {
+                UpdateGizmo();
+            }
         }
 
         private void OnEnable()
@@ -185,6 +193,8 @@ namespace mattatz.TransformControl
                 Drag();
             }
         }
+
+        public void RequestUpdateGizmo() => UpdateGizmo();
 
         private void UpdateGizmo()
         {

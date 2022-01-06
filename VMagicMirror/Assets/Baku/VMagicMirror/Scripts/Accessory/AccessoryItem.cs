@@ -38,6 +38,10 @@ namespace Baku.VMagicMirror
         /// </summary>
         public bool HasLayoutChange { get; private set; }
 
+        private bool ShouldAdjustBillboard =>
+            _animator != null && ItemLayout != null && 
+            ItemLayout.IsVisible && ItemLayout.UseBillboardMode;
+
         public void ConfirmLayoutChange() => HasLayoutChange = false;
 
         /// <summary>
@@ -88,6 +92,10 @@ namespace Baku.VMagicMirror
         private void LateUpdate()
         {
             UpdateIfBillboard();
+            if (ShouldAdjustBillboard)
+            {
+                transformControl.RequestUpdateGizmo();
+            }
         }
 
         private void OnDestroy()
@@ -167,6 +175,8 @@ namespace Baku.VMagicMirror
             {
                 ItemLayout.UseBillboardMode = false;
             }
+            //ビルボードモードではLateUpdateでアイテムを動かすときがGizmoの更新タイミングになるので、手動更新にする
+            transformControl.AutoUpdateGizmo = !ItemLayout.UseBillboardMode;
             transformControl.XyPlaneMode = ItemLayout.UseBillboardMode;
             
             SetVisibility(ItemLayout.IsVisible);
@@ -408,7 +418,7 @@ namespace Baku.VMagicMirror
         
         private void UpdateIfBillboard()
         {
-            if (_animator == null || ItemLayout == null || !ItemLayout.UseBillboardMode)
+            if (!ShouldAdjustBillboard)
             {
                 return;
             }

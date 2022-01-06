@@ -77,7 +77,7 @@ namespace mattatz.TransformControl
         public TransformMode mode = TransformMode.Translate;
         public bool global;
         public bool useDistance;
-        public float distance = 10f;
+        public float distance = 12f;
         [SerializeField] private bool xyPlaneMode;
         [SerializeField] private GizmoRenderer gizmoRenderer;
         public bool XyPlaneMode 

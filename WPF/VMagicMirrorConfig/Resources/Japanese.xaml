@@ -289,8 +289,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Layout_Camera_HowTo_Content" xml:space="preserve">フリーカメラモードをオンにすると、
 以下のカメラ操作ができます。
        
-回転: 右クリック + ドラッグ
 前後移動: マウスホイール
+回転 (以下いずれか):
+- 右クリック + ドラッグ
+- Altキー + 左クリック + ドラッグ
 並行移動 (以下いずれか):
 - 中クリック + ドラッグ
 - Shiftキー + 左クリック + ドラッグ</sys:String>    

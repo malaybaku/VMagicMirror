@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror
                 preMousePos = Input.mousePosition;
             }
 
-            if (Input.GetMouseButtonDown(RightMouseButton))
+            if (CheckRotateStart())
             {
                 rotateCenterInThisAngleMove = CheckRotateCenter(Input.mousePosition);
             }
@@ -65,14 +65,11 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //NOTE: Shift + 左クリックはマウスのないノートPC環境のための代替的なオプション
-            if (Input.GetMouseButton(MiddleMouseButton) || 
-                (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetMouseButton(LeftMouseButton)
-               )
+            if (IsTranslating())
             {
                 transform.Translate(-diff * Time.deltaTime * moveSpeed);
             }
-            else if (Input.GetMouseButton(RightMouseButton))
+            else if (IsRotating())
             {
                 CameraRotateAround(
                     new Vector2(-diff.y, diff.x) * rotateSpeed,
@@ -120,6 +117,45 @@ namespace Baku.VMagicMirror
                 return p1 + t1 * v1;
             }
         }
-    }
 
+        private bool CheckRotateStart()
+        {
+            if (Input.GetMouseButtonDown(RightMouseButton))
+            {
+                return true;
+            }
+
+            //Altと左クリックの順序に依存したくない、ということに注意
+            if (Input.GetMouseButtonDown(LeftMouseButton) && 
+                (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                )
+            {
+                return true;
+            }
+
+            if (Input.GetMouseButton(LeftMouseButton) &&
+                (Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt))
+               )
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsTranslating()
+        {
+            //NOTE: Shift + 左クリックはマウスのないノートPC環境のための代替的なオプション
+            return Input.GetMouseButton(MiddleMouseButton) ||
+                   Input.GetMouseButton(LeftMouseButton) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+        }
+        
+        private bool IsRotating()
+        {
+            //NOTE: Alt + 右クリックはマウスのないノートPC環境のための代替的なオプション
+            return Input.GetMouseButton(RightMouseButton) ||
+                   Input.GetMouseButton(LeftMouseButton) &&
+                   (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
+        }
+    }
 }

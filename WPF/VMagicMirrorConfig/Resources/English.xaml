@@ -287,8 +287,10 @@ If the face tracking works correctly, please ignore this warning.
     <sys:String x:Key="Layout_Camera_HowTo_Content" xml:space="preserve">'Free Camera Mode' enables
 camera movements following:
         
-Rotate: R-click + drag
 Forward/backward: Mouse wheel
+Rotate (2 way):
+- R-click + drag
+- Alt + L-click + drag
 Translate (2 way):
 - Mid click + drag
 - Shift + L-click + drag</sys:String>

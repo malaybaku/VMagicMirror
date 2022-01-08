@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
@@ -51,10 +52,13 @@ namespace Baku.VMagicMirrorConfig
 
         private void OpenAccessoryFolder()
         {
-            Process.Start(new ProcessStartInfo(SpecialFilePath.AccessoryFileDir)
+            if (Directory.Exists(SpecialFilePath.AccessoryFileDir))
             {
-                UseShellExecute = true,
-            });
+                Process.Start(new ProcessStartInfo(SpecialFilePath.AccessoryFileDir)
+                {
+                    UseShellExecute = true,
+                });
+            }
         }
 
         private void ReloadFiles() => _model.RefreshFiles();

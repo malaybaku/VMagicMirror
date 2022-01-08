@@ -60,6 +60,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -84,6 +85,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8074230364789003341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,7 +114,9 @@ MonoBehaviour:
   mode: 0
   global: 0
   useDistance: 1
-  distance: 10
+  distance: 12
+  xyPlaneMode: 0
+  gizmoRenderer: {fileID: 0}
 --- !u!114 &2191938032076595646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,36 +157,6 @@ MonoBehaviour:
       meshFilter: {fileID: 8074230364789003339}
       skinnedMeshRenderer: {fileID: 0}
     initialized: 1
-    originalManaged:
-      Vertices:
-      - {x: -0.5, y: -0.5, z: -3.0616168e-17}
-      - {x: 0.5, y: 0.5, z: 3.0616168e-17}
-      - {x: 0.5, y: -0.5, z: -3.0616168e-17}
-      - {x: -0.5, y: 0.5, z: 3.0616168e-17}
-      Normals:
-      - {x: 0, y: 0, z: -1}
-      - {x: 0, y: 0, z: -1}
-      - {x: 0, y: 0, z: -1}
-      - {x: 0, y: 0, z: -1}
-      Tangents:
-      - {x: 1, y: 0, z: 0, w: -1}
-      - {x: 1, y: 0, z: 0, w: -1}
-      - {x: 1, y: 0, z: 0, w: -1}
-      - {x: 1, y: 0, z: 0, w: -1}
-      UVs:
-      - {x: 0, y: 0}
-      - {x: 1, y: 1}
-      - {x: 1, y: 0}
-      - {x: 0, y: 1}
-      Colors:
-      - {r: 0, g: 0, b: 0, a: 0}
-      - {r: 0, g: 0, b: 0, a: 0}
-      - {r: 0, g: 0, b: 0, a: 0}
-      - {r: 0, g: 0, b: 0, a: 0}
-      Triangles: 000000000100000002000000010000000000000003000000
-      Bounds:
-        m_Center: {x: 0, y: 0, z: 0}
-        m_Extent: {x: 0.5, y: 0.5, z: 3.0616168e-17}
   deformerElements:
   - component: {fileID: 2191938032076595646}
     active: 1

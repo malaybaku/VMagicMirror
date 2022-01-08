@@ -247,9 +247,11 @@ When you use this feature turn off `Transparent Window` first. Then, check `Free
 
 <div class="doc-ul" markdown="1">
 
-- `Right Click + Drag`: Rotate eyesight.
-- `Middle Click + Drag`: Translate camera position.
 - `Middle wheel`: Move camera forward or backword.
+- `Right Click + Drag`: Rotate eyesight.
+    - In v2.0.1 or later `Alt Key + Left Click + Drag` also rotates eyesight.
+- `Middle Click + Drag`: Translate camera position.
+    - In v2.0.1 or later `Shift Key + Left Click + Drag` also translates camera.
 
 </div>
 

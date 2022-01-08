@@ -65,7 +65,10 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            if (Input.GetMouseButton(MiddleMouseButton))
+            //NOTE: Shift + 左クリックはマウスのないノートPC環境のための代替的なオプション
+            if (Input.GetMouseButton(MiddleMouseButton) || 
+                (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetMouseButton(LeftMouseButton)
+               )
             {
                 transform.Translate(-diff * Time.deltaTime * moveSpeed);
             }

@@ -217,3 +217,32 @@ If you are using v1.9.0 or later and you also want to remove settings files, the
 If your problem is by update process, then rebooting PC might fix it.
 
 For other troubles, please see [Troubleshoot section of the page about iFacialMocap](./docs/external_tracker_ifacialmocap#troubleshoot).
+
+
+
+#### Lipsync does not work
+{: .doc-sec2 }
+
+以下を順に確認します。
+
+<div class="doc-ul" markdown="1">
+
+- Reboot Windows.
+- Disable [External Tracker](./docs/external_tracker), or enable it with `Apply LipSync using External Tracker Data` turned off.
+- If anti-virus is installed other than Windows Defender, try to disable it for VMagicMirror. There are some user report that Kaspersky products might disturb getting microphone input.
+- Check if other VRM model works, by using some stable models like VRoid Studio sample model.
+- If you have multiple microphones, check other microphone works.
+- If you have multiple microphones, remove them and try to connect for each single microphone.
+- If above does not help, try reset settings according to `VMagicMirror stops soon after started` section, at the top of this page.
+
+</div>
+
+
+#### Cannot start app because zip file seems corrupted
+{: .doc-sec2 }
+
+This happens in specific time or in specific network environment, because VMagicMirror zip is a bit large for BOOTH system.
+
+If download continues to fail after retry, please contact via BOOTH message or Twitter DM.
+
+Especially when you need Full Edition, you must use BOOTH message to trace the purchase status.

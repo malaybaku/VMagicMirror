@@ -11,10 +11,11 @@ namespace Baku.VMagicMirror
         Png,
         Glb,
         Gltf,
-        //NOTE: 理想を言うと、これ以外でもanimated gifとか連番pngとかパーティクル的なのも読み込みたい可能性がある
+        //連番png: FPSは固定なことに注意
+        NumberedPng,
+        //NOTE: 理想を言うと、これ以外でもanimated gifとかパーティクル的なのも読み込みたい可能性がある
     }
 
-    
     // Expected Folder Structure Example:
     // gltfは1フォルダ=1アイテム
     //
@@ -26,7 +27,12 @@ namespace Baku.VMagicMirror
     //   - data.bin
     //   - textures
     //     - albedo.png
-    
+    // - item4
+    //  - 000.png
+    //  - 001.png
+    //  - ...
+    //  - 070.png
+
     /// <summary>
     /// VMagicMirrorの起動時などに一括でロードされた、対象フォルダに含まれるアクセサリ1つぶんの情報のうち、
     /// ファイル自体から取得できる情報。
@@ -37,9 +43,19 @@ namespace Baku.VMagicMirror
         public const string FolderIdSuffix = ">";
         
         //NOTE: ちょっと冗長だが、フォルダパスもファイルパスもフルパスで指定する。
-        public AccessoryFile(string filePath, AccessoryType type, byte[] bytes, string folderPath = "")
+        public AccessoryFile(string folderPath, AccessoryType type, byte[][] binaries)
+            : this("", folderPath, type, Array.Empty<byte>(), binaries)
         {
-            FilePath = filePath;
+        }
+
+        public AccessoryFile(string filePath, AccessoryType type, byte[] bytes, string folderPath = "")
+            : this(filePath, folderPath, type, bytes, Array.Empty<byte[]>())
+        {
+        }
+        
+        private AccessoryFile(string path, string folderPath, AccessoryType type, byte[] bytes, byte[][] binaries)
+        {
+            FilePath = path;
             if (string.IsNullOrEmpty(folderPath))
             {
                 IsFolder = false;
@@ -52,9 +68,13 @@ namespace Baku.VMagicMirror
             }
             Type = type;
             Bytes = bytes;
-        }
-        
+            Binaries = binaries;
+        }        
+
         public string FilePath { get; }
+        
+        //NOTE: 今のところ連番pngでのみ使う。
+        public byte[][] Binaries { get; }
         
         //NOTE: いまはフォルダパスが不要だから省いているが、プロパティとして保持してもよい
         
@@ -112,18 +132,21 @@ namespace Baku.VMagicMirror
             foreach (var childDir in Directory.GetDirectories(dir))
             {
                 var files = Directory.GetFiles(childDir);
+
                 var gltfFiles = files.Where(f => Path.GetExtension(f) == ".gltf").ToArray();
-                if (gltfFiles.Length != 1)
+                if (gltfFiles.Length == 1)
                 {
-                    continue;
+                    var path = gltfFiles[0];
+                    result.Add(new AccessoryFile(path, AccessoryType.Gltf, File.ReadAllBytes(path), childDir));
                 }
-
-                var path = gltfFiles[0];
-                result.Add(new AccessoryFile(path, AccessoryType.Gltf, File.ReadAllBytes(path), childDir));
+                else if (files.Length > 0 && files.All(f => Path.GetExtension(f) == ".png"))
+                {
+                    var binaries = files.OrderBy(f => f).Select(File.ReadAllBytes).ToArray();
+                    result.Add(new AccessoryFile(childDir, AccessoryType.NumberedPng, binaries));
+                }
             }
-
+            
             return result.ToArray();
         }
-        
     }
 }

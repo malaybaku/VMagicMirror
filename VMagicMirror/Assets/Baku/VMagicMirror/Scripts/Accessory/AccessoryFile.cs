@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
     }
 
     // Expected Folder Structure Example:
-    // gltfは1フォルダ=1アイテム
+    // gltf / numbered pngは1フォルダ=1アイテム
     //
     // Accessory 
     // - item1.png

@@ -165,7 +165,15 @@ namespace mattatz.TransformControl
             }
         }
 
-        private void OnDestroy() => ConflictResolver.Unregister(this);
+        private void OnDestroy()
+        {
+            ConflictResolver.Unregister(this);
+            if (gizmoRenderer != null)
+            {
+                Destroy(gizmoRenderer.gameObject);
+                gizmoRenderer = null;
+            }
+        }
 
         public void Control()
         {

@@ -164,6 +164,7 @@ namespace Baku.VMagicMirror
             switch (_file.Type)
             {
                 case AccessoryType.Png:
+                case AccessoryType.NumberedPng:
                     imageRenderer.gameObject.SetActive(true);
                     modelParent.gameObject.SetActive(false);
                     break;
@@ -195,7 +196,8 @@ namespace Baku.VMagicMirror
 
             //glb/gltfは本質的に3Dなんだから2Dモードは不要、と考えて弾く。
             //カメラのnear clipを突き抜けてヘンなことになるのを防ぐ狙いもある
-            if (ItemLayout.UseBillboardMode && _file.Type != AccessoryType.Png)
+            if (ItemLayout.UseBillboardMode && 
+                (_file.Type != AccessoryType.Png && _file.Type != AccessoryType.NumberedPng))
             {
                 ItemLayout.UseBillboardMode = false;
             }

@@ -518,20 +518,42 @@ namespace mattatz.TransformControl
                 return;
             }
 
-            var matrix = Matrix4x4.TRS(_prev.position, global ? Quaternion.identity : _prev.rotation, Vector3.one);
+            var centerPos = _prev.position;
+            var centerRot = global ? Quaternion.identity : _prev.rotation;
+            var axisDir = centerRot * Axes[_selected];
+            
+            //var matrix = Matrix4x4.TRS(_prev.position, global ? Quaternion.identity : _prev.rotation, Vector3.one);
 
             var cur = Input.mousePosition.Xy();
-            var origin = _cam.WorldToScreenPoint(matrix.MultiplyPoint(Vector3.zero)).Xy();
-            var axis = _cam.WorldToScreenPoint(matrix.MultiplyPoint(Axes[_selected])).Xy();
-            var perp = (origin - axis).Perp().normalized;
+            var origin = _cam.WorldToScreenPoint(centerPos).Xy();
+            var dot = Vector3.Dot(axisDir, _cam.transform.forward);
+            
+            Vector3 perp;
+            if (Mathf.Abs(dot) > 0.99f)
+            {
+                //The case (origin - axis) is almost zero, which happens in 2D mode
+                var sign = Mathf.Sign(dot);
+                perp = sign * (origin - cur).Perp().normalized;
+            }
+            else
+            {
+                var axis = _cam.WorldToScreenPoint(centerPos + axisDir).Xy();
+                perp = (origin - axis).Perp().normalized;
+            }
+            
             var dir = (cur - _start.Xy());
             var proj = dir.Project(perp);
 
             var rotateAxis = Axes[_selected];
-            if (global) rotateAxis = Quaternion.Inverse(_prev.rotation) * rotateAxis;
-            transform.rotation = _prev.rotation *
-                                 Quaternion.AngleAxis(proj.magnitude * (Vector2.Dot(dir, perp) > 0f ? 1f : -1f),
-                                     rotateAxis);
+            if (global)
+            {
+                rotateAxis = Quaternion.Inverse(_prev.rotation) * rotateAxis;
+            }
+            
+            transform.rotation = _prev.rotation * Quaternion.AngleAxis(
+                proj.magnitude * (Vector2.Dot(dir, perp) > 0f ? 1f : -1f),
+                rotateAxis
+                );
         }
 
         private void Scale()

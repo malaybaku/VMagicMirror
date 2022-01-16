@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror
         public string FileId => _file?.FileId ?? "";
 
         private AccessoryFile _file = null;
-        private AccessoryFileDisposer _disposer = null;
+        private AccessoryFileActions _fileActions = null;
         private Camera _cam = null;
 
         private Animator _animator = null;
@@ -62,13 +62,16 @@ namespace Baku.VMagicMirror
                     var glbContext = AccessoryFileReader.LoadGlb(file.FilePath, file.Bytes);
                     var glbObj = glbContext.Object;
                     glbObj.transform.SetParent(modelParent);
-                    _disposer = glbContext.Disposer;
+                    _fileActions = glbContext.Actions;
                     break;
                 case AccessoryType.Gltf:
                     var gltfContext = AccessoryFileReader.LoadGltf(file.FilePath, file.Bytes);
                     var gltfObj = gltfContext.Object; 
                     gltfObj.transform.SetParent(modelParent);
-                    _disposer = gltfContext.Disposer;
+                    _fileActions = gltfContext.Actions;
+                    break;
+                case AccessoryType.NumberedPng:
+                    InitializeAnimatableImage(file);
                     break;
                 default:
                     LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
@@ -80,13 +83,18 @@ namespace Baku.VMagicMirror
         //ファイル等から動的ロードしたものも含めて、アクセサリのリソースを解放し、ゲームオブジェクトを破棄します。
         public void Dispose()
         {
-            _disposer?.Dispose();
+            _fileActions?.Dispose();
             Destroy(gameObject);
         }
 
         private void Start()
         {
             transformControl.DragEnded += UpdateLayout;
+        }
+
+        private void Update()
+        {
+            _fileActions.Update(Time.deltaTime);
         }
         
         private void LateUpdate()
@@ -110,9 +118,25 @@ namespace Baku.VMagicMirror
         {
             var context = AccessoryFileReader.LoadPngImage(file.Bytes);
             var tex = context.Object;
-            _disposer = context.Disposer;
+            _fileActions = context.Actions;
             
             imageRenderer.material.mainTexture = tex;
+            SetImageRendererAspect(tex);
+        }
+
+        private void InitializeAnimatableImage(AccessoryFile file)
+        {
+            var context = AccessoryFileReader.LoadNumberedPngImage(file.Binaries);
+            context.Object.Renderer = imageRenderer;
+            _fileActions = context.Actions;
+            
+            var tex = context.Object.FirstTexture;
+            imageRenderer.material.mainTexture = tex;
+            SetImageRendererAspect(tex);
+        }
+
+        private void SetImageRendererAspect(Texture2D tex)
+        {
             if (tex.width < tex.height)
             {
                 var aspect = tex.width * 1.0f / tex.height;
@@ -140,6 +164,7 @@ namespace Baku.VMagicMirror
             switch (_file.Type)
             {
                 case AccessoryType.Png:
+                case AccessoryType.NumberedPng:
                     imageRenderer.gameObject.SetActive(true);
                     modelParent.gameObject.SetActive(false);
                     break;
@@ -171,7 +196,8 @@ namespace Baku.VMagicMirror
 
             //glb/gltfは本質的に3Dなんだから2Dモードは不要、と考えて弾く。
             //カメラのnear clipを突き抜けてヘンなことになるのを防ぐ狙いもある
-            if (ItemLayout.UseBillboardMode && _file.Type != AccessoryType.Png)
+            if (ItemLayout.UseBillboardMode && 
+                (_file.Type != AccessoryType.Png && _file.Type != AccessoryType.NumberedPng))
             {
                 ItemLayout.UseBillboardMode = false;
             }

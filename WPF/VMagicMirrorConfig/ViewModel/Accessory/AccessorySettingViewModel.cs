@@ -62,8 +62,6 @@ namespace Baku.VMagicMirrorConfig
         }
 
         private void ReloadFiles() => _model.RefreshFiles();
-
-        //TODO: ドキュメントの用意
         private void OpenAccessoryTipsUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_accessory"));
         private void ResetToDefault() => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetToDefault);
     }
@@ -159,7 +157,8 @@ namespace Baku.VMagicMirrorConfig
 
         public string FileName { get; }
         //3Dモデルはビルボードモード使う必要ない(万が一フラグが立っててもUnity側で無視させる)
-        public bool CanSelectBillboardMode => _file?.Type == AccessoryType.Png;
+        public bool CanSelectBillboardMode =>
+            _file?.Type == AccessoryType.Png || _file?.Type == AccessoryType.NumberedPng;
         public RProperty<string> Name { get; }
         public RProperty<bool> IsVisible { get; }
         public RProperty<bool> UseBillboardMode { get; }

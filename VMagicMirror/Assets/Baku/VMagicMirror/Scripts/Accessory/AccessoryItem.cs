@@ -214,8 +214,11 @@ namespace Baku.VMagicMirror
 
             if (!_attachBones.TryGetValue(ItemLayout.AttachTarget, out var bone))
             {
-                //普通ここは通らない
-                return;
+                // ワールド固定の場合、ここを通過してSetParent(null)が呼ばれることでワールドに固定される
+                if (ItemLayout.AttachTarget != AccessoryAttachTarget.World)
+                {
+                    return;
+                }
             }
             
             if (ItemLayout.UseBillboardMode)

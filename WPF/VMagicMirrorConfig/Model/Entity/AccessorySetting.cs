@@ -8,6 +8,7 @@
         LeftHand = 3,
         Chest = 4,
         Waist = 5,
+        World = 6,
     }
 
     public class AccessorySetting : SettingEntityBase

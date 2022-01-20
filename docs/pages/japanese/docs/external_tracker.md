@@ -43,7 +43,7 @@ v1.1.0の時点ではiOSアプリにのみ対応しています。
 #### 外部トラッキングアプリの制限
 {: .doc-sec2 .no_toc }
 
-比較的新しいiPhoneまたはiPadが必要です。Face ID対応か、またはA12 Bionic以降のチップが搭載されていれば利用できます。
+iOS端末の場合、比較的新しいiPhoneまたはiPadが必要です。Face ID対応か、またはA12 Bionic以降のチップが搭載されていれば利用できます。
 
 <div class="doc-ul" markdown="1">
 
@@ -52,6 +52,8 @@ v1.1.0の時点ではiOSアプリにのみ対応しています。
 - [iPhoneモデル一覧(「すべてのモデルを見る」から各端末の搭載チップを確認できます)](https://www.apple.com/jp/iphone/compare/)
 
 </div>
+
+または、比較的新しいAndroid端末も利用可能です。
 
 そのほか、以下の制限にもご留意ください。
 
@@ -91,10 +93,13 @@ VMagicMirrorのコントロールパネルで`Ex Tracker`タブを選択し、`�
 ### 各アプリの連携方法
 {: .doc-sec1 }
 
-アプリごとの連携方法は、以下のリンクを参照ください。
+アプリごとの連携方法は以下のリンクを参照ください。
 
-**[iFacialMocapとの連携](./external_tracker_ifacialmocap)**
+iOS: **[iFacialMocapとの連携](./external_tracker_ifacialmocap)**
 
+Android: **[MeowFaceとの連携](./external_tracker_meowface)**
+
+推奨しているのはiFacialMocapであり、こちらのほうがトラッキング性能が優れています。
 
 (※他のアプリケーションがサポートされた場合、ここに随時追記されます。)
 

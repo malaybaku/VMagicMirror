@@ -17,14 +17,13 @@ permalink: /docs/external_tracker_ifacialmocap
 
 MeowFaceはAndroid向けに無料で公開されているアプリで、iOSの顔トラッキング仕様を部分的に再現することを目的としています。
 
-特に[iFacialMocap](./external_tracker_ifacialmocap)とは通信方法やデータ内容について互換性があります。
+特に[iFacialMocap](./external_tracker_ifacialmocap)とは通信データの内容について互換性があります。
 
 このため、VMagicMirrorではiFacialMocapに接続するのと同様の手順でMeowFaceに接続できます。
 
+MeowFaceの端末スペック要件は本ドキュメントの整備時点で確認できていませんが、実際にインストールすることで試せます。
 
-VMagicMirrorのメンテナ自身はMeowFaceの端末スペック要件を確認できていません。お手持ちの端末でMeowFaceが正常動作するかどうかは実際にダウンロードしてお試し下さい。
-
-MeowFaceはGoogle Playから取得可能です。
+アプリはGoogle Playから取得可能です。
 
 [MeowFace](https://play.google.com/store/apps/details?id=com.suvidriel.meowface)
 
@@ -32,7 +31,7 @@ MeowFaceはGoogle Playから取得可能です。
 ### MeowFaceで出来ること/出来ないこと
 {: .doc-sec1 }
 
-MeowFaceはiOS端末で可能なトラッキングを部分的に再現するアプリであるため、出来ること、出来ないことがあります。
+MeowFaceはiOS端末の挙動を模擬するアプリであるため、出来ること、出来ないことがあります。
 
 <div class="doc-ul" markdown="1">
 
@@ -59,7 +58,7 @@ MeowFaceを起動し、画面上部にAndroid端末自身のIPアドレスが表
 
 この状態で、MeowFaceのカメラ部分に自分の顔が映るようにAndroid端末を設置します。
 
-PC画面に戻り、`Ex Tracker`タブ > `アプリとの連携`で、`iFacialMocap`を選択します。この選択は直感に反するため強調しますが、選択するのは`iFacialMocap`が正しいです。
+PC画面に戻り、`Ex Tracker`タブ > `アプリとの連携`で、`iFacialMocap`を選択します。
 
 MeowFaceに表示されたIPアドレスを入力し、`Connect`ボタンをクリックすると接続します。
 

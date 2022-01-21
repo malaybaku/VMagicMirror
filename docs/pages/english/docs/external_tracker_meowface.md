@@ -32,17 +32,15 @@ The app is available in Google Play.
 ### What is Supported
 {: .doc-sec1 }
 
-MeowFace aims to mime iOS's face tracking, but some of the feature is difficult to support in Android. 
-
-There are things supported and not supported.
+MeowFace aims to mime iOS's face tracking, but some of the feature is not supported.
 
 <div class="doc-ul" markdown="1">
 
 Supported:
 
-- Tracking for head rotation
-- Tracking for facial basic parameters (blink, mouth motion)
-- [Perfect Synt](../tips/perfect_sync)
+- Head rotation tracking
+- Facial basic parameters tracking (blink, mouth motion)
+- [Perfect Sync](../tips/perfect_sync)
 
 Not Supported:
 
@@ -51,7 +49,7 @@ Not Supported:
 
 </div>
 
-Also note that, you will need to adjust facial input parameters in MeowFace and the process might not so intuitional.
+Also note that, you will need to adjust facial input parameters in MeowFace and the process might be a bit difficult.
 
 
 ### Connect to VMagicMirror

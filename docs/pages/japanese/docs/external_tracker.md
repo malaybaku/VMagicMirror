@@ -99,7 +99,9 @@ iOS: **[iFacialMocapとの連携](./external_tracker_ifacialmocap)**
 
 Android: **[MeowFaceとの連携](./external_tracker_meowface)**
 
-推奨しているのはiFacialMocapであり、こちらのほうがトラッキング性能が優れています。
+どちらのアプリも利用できる場合、iFacialMocapの使用を推奨しています。
+
+これはOS自体のトラッキング性能が異なるなどの理由で、iFacialMocapのほうがトラッキング性能が高いためです。
 
 (※他のアプリケーションがサポートされた場合、ここに随時追記されます。)
 

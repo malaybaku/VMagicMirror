@@ -65,7 +65,7 @@ Then input the IP address shown in iOS device, and click `Connect` to complete c
 
 **IMPORTANT** 
 
-If you cannot check avatar motion, please see below `TroubleShooting`, especially Q1, Q2 and Q3.
+If you seem to fail to connect, please see below `TroubleShooting`, especially Q1, Q2 and Q3.
 
 Also please check if an anti-virus software disturbs connection between PC and iOS device.
 

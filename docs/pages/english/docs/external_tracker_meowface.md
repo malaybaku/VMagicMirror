@@ -7,7 +7,7 @@ lang_prefix: /en/
 
 [Japanese](../../docs/external_tracker_meowface)
 
-# Connect to iFacialMocap
+# Connect to MeowFace
 {: .no_toc }
 
 Show how to setup MeowFace for [External Tracker App](./external_tracker).

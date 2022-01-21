@@ -5,10 +5,11 @@ namespace Baku.VMagicMirror
 {
     public class AccessoryFileContext<T>
     {
-        public AccessoryFileContext(T obj, Action disposeAction, Action<float> updateAction = null)
+        public AccessoryFileContext(T obj,
+            Action disposeAction, Action<float> updateAction = null, Action<AccessoryItemLayout> updateLayout = null)
         {
             Object = obj;
-            Actions = new AccessoryFileActions(disposeAction, updateAction);
+            Actions = new AccessoryFileActions(disposeAction, updateAction, updateLayout);
         }
         
         public AccessoryFileActions Actions { get; }
@@ -17,17 +18,20 @@ namespace Baku.VMagicMirror
 
     public class AccessoryFileActions
     {
-        public AccessoryFileActions(Action disposeAction, Action<float> updateAction)
+        public AccessoryFileActions(Action disposeAction, Action<float> updateAction, Action<AccessoryItemLayout> updateLayout)
         {
             _disposeAction = disposeAction;
             _updateAction = updateAction;
+            _updateLayout = updateLayout;
         }
 
         private readonly Action<float> _updateAction;
         private readonly Action _disposeAction;
+        private readonly Action<AccessoryItemLayout> _updateLayout;
         
         public void Update(float deltaTime) => _updateAction?.Invoke(deltaTime);
         public void Dispose() => _disposeAction();
+        public void UpdateLayout(AccessoryItemLayout layout) => _updateLayout?.Invoke(layout);
     }
 
     /// <summary>
@@ -70,7 +74,8 @@ namespace Baku.VMagicMirror
             return new AccessoryFileContext<AnimatableImage>(
                 res,
                 () => res.Dispose(),
-                dt => res.Update(dt)
+                dt => res.Update(dt),
+                layout => res.UpdateLayout(layout)
             );
         }
     }

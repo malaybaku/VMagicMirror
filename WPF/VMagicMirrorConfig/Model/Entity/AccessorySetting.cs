@@ -55,5 +55,8 @@
         //NOTE: 画像系のオブジェクトでのみ使える、カメラ前面にビルボードライクに表示されるモード。
         //TODO: この状態ではscaleの意味がちょっと変わるかもしれんので要注意…
         public bool UseBillboardMode { get; set; }
+
+        // NOTE: 連番画像でのみ意味がある。Unity側は5 ~ 30の値の範囲が飛んでくることを期待している
+        public int FramePerSecond { get; set; } = 15;
     }
 }

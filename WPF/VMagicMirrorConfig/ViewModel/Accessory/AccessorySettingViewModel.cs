@@ -147,6 +147,12 @@ namespace Baku.VMagicMirrorConfig
                 _item.Scale = new Vector3(v, v, v);
                 UpdateItemFromUi();
             });
+
+            FramePerSecond = new RProperty<int>(_item.FramePerSecond, v =>
+            {
+                _item.FramePerSecond = v;
+                UpdateItemFromUi();
+            });
         }
 
         private readonly AccessorySettingSync _model;
@@ -159,6 +165,9 @@ namespace Baku.VMagicMirrorConfig
         //3Dモデルはビルボードモード使う必要ない(万が一フラグが立っててもUnity側で無視させる)
         public bool CanSelectBillboardMode =>
             _file?.Type == AccessoryType.Png || _file?.Type == AccessoryType.NumberedPng;
+
+        public bool CanEditFramePerSecond => _file?.Type == AccessoryType.NumberedPng;
+
         public RProperty<string> Name { get; }
         public RProperty<bool> IsVisible { get; }
         public RProperty<bool> UseBillboardMode { get; }
@@ -173,6 +182,9 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<float> RotZ { get; }
 
         public RProperty<float> Scale { get; }
+
+        public RProperty<int> FramePerSecond { get; }
+
         public ActionCommand ResetCommand { get; }
 
         //NOTE: Unityのコンポーネントリセットと同じノリで良いはずのため、確認ダイアログは無し。
@@ -199,6 +211,7 @@ namespace Baku.VMagicMirrorConfig
             RotY.Value = _item.Rotation.Y;
             RotZ.Value = _item.Rotation.Z;
             Scale.Value = _item.Scale.X;
+            FramePerSecond.Value = _item.FramePerSecond;
 
             _isUpdatingByReceivedData = false;
         }

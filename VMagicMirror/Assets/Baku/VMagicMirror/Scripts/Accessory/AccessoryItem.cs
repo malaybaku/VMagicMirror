@@ -189,6 +189,7 @@ namespace Baku.VMagicMirror
         {
             HasLayoutChange = false;
             ItemLayout = layout;
+            _fileActions?.UpdateLayout(layout);
             if (_animator == null)
             {
                 return;

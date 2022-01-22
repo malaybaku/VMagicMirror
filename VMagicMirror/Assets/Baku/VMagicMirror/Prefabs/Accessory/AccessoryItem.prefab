@@ -175,6 +175,6 @@ MonoBehaviour:
   mode: 0
   global: 0
   useDistance: 1
-  distance: 12
+  distance: 20
   xyPlaneMode: 0
   gizmoRenderer: {fileID: 0}

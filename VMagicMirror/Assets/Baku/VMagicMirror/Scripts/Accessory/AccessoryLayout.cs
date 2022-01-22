@@ -43,5 +43,7 @@ namespace Baku.VMagicMirror
         public Vector3 Rotation;
         public Vector3 Scale = Vector3.one;
         public bool UseBillboardMode;
+        //連番画像でのみ意味のある値
+        public int FramePerSecond;
     }
 }

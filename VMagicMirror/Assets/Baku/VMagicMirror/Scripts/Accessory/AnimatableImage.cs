@@ -80,6 +80,19 @@ namespace Baku.VMagicMirror
             }
         }
 
+        public void UpdateLayout(AccessoryItemLayout layout)
+        {
+            if (layout.FramePerSecond < 5 || layout.FramePerSecond > 30)
+            {
+                //0とかの不正値が来たら初期値(15)を適用する、ということ
+                FramePerSecond = 15;
+            }
+            else
+            {
+                FramePerSecond = layout.FramePerSecond;
+            }
+        }
+        
         public void Dispose()
         {
             foreach (var texture in _allTextures)

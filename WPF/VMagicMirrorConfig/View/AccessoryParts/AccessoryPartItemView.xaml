@@ -9,7 +9,7 @@
              xmlns:ma="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vmm:AccessoryItemViewModel}"
-             d:DesignHeight="250" d:DesignWidth="400">
+             d:DesignHeight="270" d:DesignWidth="400">
     <UserControl.Resources>
         <vmm:FileIdIndicationConverter x:Key="FileIdIndicationConverter"/>
         <vmm:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
@@ -96,6 +96,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -218,6 +219,26 @@
                         <vmm:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
+
+                <TextBlock Grid.Row="6" Grid.Column="0"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        Text="{DynamicResource Accessory_Item_Fps}" 
+                        Visibility="{Binding CanEditFramePerSecond, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        />
+                <Slider x:Name="sliderItemFps"
+                        Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="3"
+                        Minimum="5"
+                        Maximum="30"
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        Value="{Binding FramePerSecond.Value, Mode=TwoWay, FallbackValue=15}"
+                        Visibility="{Binding CanEditFramePerSecond, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        />
+                <TextBox Grid.Row="6" Grid.Column="6"
+                         Text="{Binding Value, ElementName=sliderItemFps}"
+                         Visibility="{Binding CanEditFramePerSecond, Converter={StaticResource BooleanToVisibilityConverter}}"
+                         />
             </Grid>
         </StackPanel>
 

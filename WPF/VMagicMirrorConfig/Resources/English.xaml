@@ -145,7 +145,8 @@ png image and 3D model by glb or gltf is available.</sys:String>
     <sys:String x:Key="Accessory_Item_Position">Position</sys:String>
     <sys:String x:Key="Accessory_Item_Rotation">Rotation</sys:String>
     <sys:String x:Key="Accessory_Item_Scale">Scale</sys:String>
-    
+    <sys:String x:Key="Accessory_Item_Fps">FPS (for numbered png)</sys:String>
+
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>
     

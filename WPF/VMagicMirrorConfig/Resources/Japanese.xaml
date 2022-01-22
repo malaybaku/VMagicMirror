@@ -145,6 +145,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Accessory_Item_Position">Position</sys:String>
     <sys:String x:Key="Accessory_Item_Rotation">Rotation</sys:String>
     <sys:String x:Key="Accessory_Item_Scale">Scale</sys:String>
+    <sys:String x:Key="Accessory_Item_Fps">FPS (連番画像のみ)</sys:String>
 
     
     <!-- Settings General -->

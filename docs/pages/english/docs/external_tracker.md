@@ -43,7 +43,7 @@ Please check following points about external tracker app.
 #### Limitations
 {: .doc-sec2 .no_toc }
 
-You need enough new iPhone or iPad, which supports Face ID or has A12 Bionic chip (or newer chip).
+If you want to use iOS device, it must be enough new iPhone or iPad, which supports Face ID or has A12 Bionic chip (or newer chip).
 
 <div class="doc-ul" markdown="1">
 
@@ -52,6 +52,9 @@ You need enough new iPhone or iPad, which supports Face ID or has A12 Bionic chi
 - [iPhone Models("See All Models" will show all models' chip)](https://www.apple.com/iphone/compare/)
 
 </div>
+
+Also you have option to use Android device.
+
 
 Also please be aware of following points.
 
@@ -92,7 +95,11 @@ By checking this, VMagicMirror become ready to connect with external apps.
 
 Please see per-app specific setup process.
 
-**[iFacialMocap](./external_tracker_ifacialmocap)**
+iOS: **[iFacialMocap](./external_tracker_ifacialmocap)**
+
+Android: **[MeowFace](./external_tracker_meowface)**
+
+iFacialMocap is the recommended way because of its higher performance.
 
 (*This area will be updated when other app supported.)
 

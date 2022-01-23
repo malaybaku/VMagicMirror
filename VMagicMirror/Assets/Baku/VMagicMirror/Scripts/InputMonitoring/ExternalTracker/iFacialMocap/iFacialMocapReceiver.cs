@@ -286,8 +286,51 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 
         private void ThreadMethod(CancellationToken token)
         {
-            var client = new UdpClient(PortNumber);
-            client.Client.ReceiveTimeout = 500;
+            var clientV4 = new UdpClient(PortNumber, AddressFamily.InterNetwork);
+            clientV4.Client.ReceiveTimeout = 500;
+            var clientV6 = new UdpClient(PortNumber, AddressFamily.InterNetworkV6);
+            clientV6.Client.ReceiveTimeout = 500;
+
+            UdpClient client = null;
+            
+            //最初のメッセージがIPv4またはIPv6から飛んでくるのを待機
+            //並列実行に出来る部分だが、そんなに速度要求される部分でもないので直列でやってしまう
+            while (!token.IsCancellationRequested)
+            {
+                try
+                {
+                    IPEndPoint remoteEndPoint = null;
+                    byte[] data = clientV4.Receive(ref remoteEndPoint);
+                    //NOTE: GetStringをメインスレッドでやるようにしたほうが負荷が下がるかもしれない(UDPの受信が超高速で回ってたら検討すべき)
+                    string message = Encoding.ASCII.GetString(data);
+                    RawMessage = message;
+                    client = clientV4;
+                    break;
+                }
+                catch (Exception)
+                {
+                    //ここは通信待ち状態とかで頻繁に来る(SocketExceptionが出る)ので、ログを出さない。以降も同様
+                    //LogOutput.Instance.Write(ex);
+                }
+
+                try
+                {
+                    IPEndPoint remoteEndPoint = null;
+                    byte[] data = clientV6.Receive(ref remoteEndPoint);
+                    string message = Encoding.ASCII.GetString(data);
+                    RawMessage = message;
+                    client = clientV6;
+                    break;
+                }
+                catch (Exception)
+                {
+                    //Do nothing
+                }
+            }
+
+            var log = $"Connected with family {(client == clientV4 ? "IPv4" : "IPv6")}";
+            Debug.Log(log);
+            LogOutput.Instance.Write(log);
 
             while (!token.IsCancellationRequested)
             {
@@ -295,20 +338,27 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 {
                     IPEndPoint remoteEndPoint = null;
                     byte[] data = client.Receive(ref remoteEndPoint);
-                    //NOTE: GetStringをメインスレッドでやるようにしたほうが負荷が下がるかもしれない(UDPの受信が超高速で回ってたら検討すべき)
                     string message = Encoding.ASCII.GetString(data);
                     RawMessage = message;
                 }
                 catch (Exception)
                 {
-                    //ここは通信待ち状態とかで頻繁に来る(SocketExceptionが出る)ので、ログを出してはいけない
-                    //LogOutput.Instance.Write(ex);
+                    //Do nothing
                 }
             }
 
             try
             {
-                client?.Close();
+                clientV4?.Close();
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
+
+            try
+            {
+                clientV6?.Close();
             }
             catch (Exception ex)
             {

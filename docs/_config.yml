@@ -9,3 +9,6 @@ latest_update: 2021/12/25
 
 sass:
     style: compressed
+
+plugins:
+  - jekyll-sitemap

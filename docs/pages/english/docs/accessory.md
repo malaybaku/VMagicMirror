@@ -26,6 +26,7 @@ Accessory feature supports loading images and 3D models to attach to avatar's bo
 
 - Supported image format is png.
 - Supported 3D model format is glb and glTF.
+- v2.0.1 and later versions support numbered png for animated accessory.
 
 </div>
 
@@ -68,6 +69,7 @@ You can expand and edit each accessories' properties.
 - `Position`: Specify the local position. Also editable by `Free Layout`.
 - `Rotation`: Specify the local rotation. Also editable by `Free Layout`.
 - `Scale`: Specify the scale. Also editable by `Free Layout`.
+- `FPS`: Available on numbered png, to decide how fast to play animation.
 
 </div>
 

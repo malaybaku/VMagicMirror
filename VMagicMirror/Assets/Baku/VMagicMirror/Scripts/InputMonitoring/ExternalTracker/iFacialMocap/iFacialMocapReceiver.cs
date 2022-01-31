@@ -328,9 +328,12 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 }
             }
 
-            var log = $"Connected with family {(client == clientV4 ? "IPv4" : "IPv6")}";
-            Debug.Log(log);
-            LogOutput.Instance.Write(log);
+            if (client != null)
+            {
+                var log = $"Connected with family {(client == clientV4 ? "IPv4" : "IPv6")}";
+                Debug.Log(log);
+                LogOutput.Instance.Write(log);
+            }
 
             while (!token.IsCancellationRequested)
             {

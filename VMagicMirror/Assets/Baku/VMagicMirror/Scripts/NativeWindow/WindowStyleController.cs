@@ -144,6 +144,7 @@ namespace Baku.VMagicMirror
             _colorPickerTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
 
             SetTopMost(_isTopMost);
+            Screen.fullScreen = false;
             StartCoroutine(PickColorCoroutine());
         }
 

@@ -33,7 +33,7 @@ namespace Baku.VMagicMirrorConfig
                     string data = await _sender.QueryMessageAsync(MessageFactory.Instance.CurrentCameraPosition());
                     _layoutSetting.CameraPosition.SilentSet(data);
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not OperationCanceledException)
                 {
                     LogOutput.Instance.Write(ex);
                 }

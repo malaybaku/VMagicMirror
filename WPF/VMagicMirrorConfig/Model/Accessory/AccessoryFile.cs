@@ -12,12 +12,13 @@ namespace Baku.VMagicMirrorConfig
         Png,
         Glb,
         Gltf,
-        //NOTE: 理想を言うと、これ以外でもanimated gifとか連番pngとかパーティクル的なのも読み込みたい可能性がある
+        NumberedPng,
+        //NOTE: 理想を言うと、これ以外でもanimated gifとかパーティクル的なのも読み込みたい可能性がある
     }
 
 
     // Expected Folder Structure Example:
-    // gltfは1フォルダ=1アイテム
+    // gltf / numbered pngは1フォルダ=1アイテム
     //
     // Accessory 
     // - item1.png
@@ -27,6 +28,12 @@ namespace Baku.VMagicMirrorConfig
     //   - data.bin
     //   - textures
     //     - albedo.png
+    // - item4
+    //  - 000.png
+    //  - 001.png
+    //  - ...
+    //  - 070.png
+
 
     /// <summary>
     /// VMagicMirrorの起動時などに一括でロードされた、対象フォルダに含まれるアクセサリ1つぶんの情報のうち、
@@ -103,6 +110,7 @@ namespace Baku.VMagicMirrorConfig
                 result.Add(new AccessoryFile(file, fileType));
             }
 
+            //TODO: ここ、gltfや連番pngの並び順が必ず後ろになるのが直感に反する。クリティカルではないが。
             foreach (var childDir in Directory.GetDirectories(dir))
             {
                 if (!Directory.Exists(childDir))
@@ -112,14 +120,15 @@ namespace Baku.VMagicMirrorConfig
 
                 var files = Directory.GetFiles(childDir);
                 var gltfFiles = files.Where(f => Path.GetExtension(f) == ".gltf").ToArray();
-                if (gltfFiles.Length != 1)
+                if (gltfFiles.Length == 1)
                 {
-                    continue;
+                    var path = gltfFiles[0];
+                    result.Add(new AccessoryFile(path, AccessoryType.Gltf, childDir));
                 }
-
-                var path = gltfFiles[0];
-                //TODO: ここ、gltfの並び順が必ず後ろになるのが直感に反する。クリティカルではないけど…
-                result.Add(new AccessoryFile(path, AccessoryType.Gltf, childDir));
+                else if (files.Length > 0 && files.All(f => Path.GetExtension(f) == ".png"))
+                {
+                    result.Add(new AccessoryFile("", AccessoryType.NumberedPng, childDir));
+                }
             }
 
             return result.ToArray();

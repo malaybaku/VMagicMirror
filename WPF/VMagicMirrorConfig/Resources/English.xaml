@@ -145,7 +145,8 @@ png image and 3D model by glb or gltf is available.</sys:String>
     <sys:String x:Key="Accessory_Item_Position">Position</sys:String>
     <sys:String x:Key="Accessory_Item_Rotation">Rotation</sys:String>
     <sys:String x:Key="Accessory_Item_Scale">Scale</sys:String>
-    
+    <sys:String x:Key="Accessory_Item_Fps">FPS (for numbered png)</sys:String>
+
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>
     
@@ -287,9 +288,13 @@ If the face tracking works correctly, please ignore this warning.
     <sys:String x:Key="Layout_Camera_HowTo_Content" xml:space="preserve">'Free Camera Mode' enables
 camera movements following:
         
-- Right click + drag: rotate
-- Mid click + drag: translate
-- Mouse wheel: forward/backward</sys:String>
+Forward/backward: Mouse wheel
+Rotate (2 way):
+- R-click + drag
+- Alt + L-click + drag
+Translate (2 way):
+- Mid click + drag
+- Shift + L-click + drag</sys:String>
     <sys:String x:Key="Layout_EnableFreeCameraMode">Free Camera Mode</sys:String>
     <sys:String x:Key="Layout_Camera_ResetPosition">Reset Position</sys:String>
     <sys:String x:Key="Layout_Camera_Fov">FOV [deg]</sys:String>

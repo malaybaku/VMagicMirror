@@ -48,7 +48,8 @@ namespace Baku.VMagicMirrorConfig
             GamepadSetting = new GamepadSettingViewModel(Model.Gamepad, MessageSender);
             LayoutSetting = new LayoutSettingViewModel(Model.Layout, Model.Gamepad, MessageSender, MessageIo.Receiver);
             LightSetting = new LightSettingViewModel(Model.Light, MessageSender);
-            WordToMotionSetting = new WordToMotionSettingViewModel(Model.WordToMotion, Model.Layout, MessageSender, MessageIo.Receiver);
+            WordToMotionSetting = new WordToMotionSettingViewModel(
+                Model.WordToMotion, Model.Layout, Model.Accessory, MessageSender, MessageIo.Receiver);
             ExternalTrackerSetting = new ExternalTrackerViewModel(Model.ExternalTracker, Model.Motion, MessageSender, MessageIo.Receiver);
             AccessorySetting = new AccessorySettingViewModel(Model.Accessory, Model.Layout);
             SettingIo = new SettingIoViewModel(Model, Model.Automation, SaveFileManager, MessageSender);

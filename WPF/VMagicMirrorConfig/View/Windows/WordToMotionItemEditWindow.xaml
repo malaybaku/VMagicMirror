@@ -163,7 +163,12 @@
                            />
 
                 <ComboBox Margin="10,0"
-                          md:HintAssist.Hint="{DynamicResource WordToMotion_Accessory_Placeholder}" />
+                          md:HintAssist.Hint="{DynamicResource WordToMotion_Accessory_Placeholder}"
+                          ItemsSource="{Binding AvailableAccessoryNames}"
+                          DisplayMemberPath="DisplayName"
+                          SelectedValuePath="FileId"
+                          SelectedValue="{Binding AccessoryName}"
+                          />
 
                 <TextBlock Text="{DynamicResource WordToMotion_Accessory_Notice}"
                            TextAlignment="Left"

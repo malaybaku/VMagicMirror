@@ -10,10 +10,12 @@ namespace Baku.VMagicMirrorConfig
         internal WordToMotionSettingViewModel(
             WordToMotionSettingSync model,
             LayoutSettingSync layoutModel,
+            AccessorySettingSync accessoryModel,
             IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             _model = model;
             _layoutModel = layoutModel;
+            _accessoryModel = accessoryModel;
             Items = new ReadOnlyObservableCollection<WordToMotionItemViewModel>(_items);
             CustomMotionClipNames = new ReadOnlyObservableCollection<string>(_customMotionClipNames);
             Devices = WordToMotionDeviceItem.LoadAvailableItems();
@@ -65,6 +67,7 @@ namespace Baku.VMagicMirrorConfig
 
         private readonly WordToMotionSettingSync _model;
         private readonly LayoutSettingSync _layoutModel;
+        private readonly AccessorySettingSync _accessoryModel;
         private WordToMotionItemViewModel? _dialogItem;
 
         /// <summary>直近で読み込んだモデルに指定されている、VRM標準以外のブレンドシェイプ名の一覧を取得します。</summary>
@@ -196,7 +199,7 @@ namespace Baku.VMagicMirrorConfig
                     }
                 }
 
-                _items.Add(new WordToMotionItemViewModel(this, item));
+                _items.Add(new WordToMotionItemViewModel(this, item, _accessoryModel));
             }
         }
 

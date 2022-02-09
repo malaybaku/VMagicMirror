@@ -410,14 +410,18 @@ Please test by typing "joy".</sys:String>
 
     <sys:String x:Key="WordToMotion_BodyMotion_Header">Body Motion</sys:String>
     <sys:String x:Key="WordToMotion_MotionType_None">None</sys:String>
-    <sys:String x:Key="WordToMotion_MotionType_BuiltIn">Built-In Motion</sys:String>
-    <sys:String x:Key="WordToMotion_MotionType_Custom">Custom Motion</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_BuiltIn">Built-In</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_Custom">Custom</sys:String>
     <sys:String x:Key="WordToMotion_Motion_BuiltIn_Label">Motion</sys:String>
     <sys:String x:Key="WordToMotion_Motion_BuiltIn_Hint">Choose Motion</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Label">Motion</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Hint">Choose Motion</sys:String>
-    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">How to Use (open web)</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">Usage...</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Doctor">Check Motion Data Validity</sys:String>
+
+    <sys:String x:Key="WordToMotion_Accessory_Header">Accessory</sys:String>
+    <sys:String x:Key="WordToMotion_Accessory_Placeholder">Choose Accessory</sys:String>
+    <sys:String x:Key="WordToMotion_Accessory_Notice">Item is visible during motion.</sys:String>
 
     <sys:String x:Key="WordToMotion_Face_Header">Face Expression</sys:String>
     <sys:String x:Key="WordToMotion_Face_Enable">Enable Face Expression</sys:String>

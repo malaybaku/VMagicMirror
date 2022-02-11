@@ -165,7 +165,7 @@
                 <ComboBox Margin="10,0"
                           md:HintAssist.Hint="{DynamicResource WordToMotion_Accessory_Placeholder}"
                           ItemsSource="{Binding AvailableAccessoryNames}"
-                          DisplayMemberPath="DisplayName"
+                          DisplayMemberPath="DisplayName.Value"
                           SelectedValuePath="FileId"
                           SelectedValue="{Binding AccessoryName}"
                           />

@@ -10,7 +10,7 @@ namespace Baku.VMagicMirrorConfig
         internal WordToMotionSettingViewModel(
             WordToMotionSettingSync model,
             LayoutSettingSync layoutModel,
-            AccessorySettingSync accessoryModel,
+            AccessorySettingModel accessoryModel,
             IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             _model = model;
@@ -19,6 +19,7 @@ namespace Baku.VMagicMirrorConfig
             Items = new ReadOnlyObservableCollection<WordToMotionItemViewModel>(_items);
             CustomMotionClipNames = new ReadOnlyObservableCollection<string>(_customMotionClipNames);
             Devices = WordToMotionDeviceItem.LoadAvailableItems();
+            AvailableAccessoryNames = new AccessoryItemNamesViewModel(accessoryModel);
 
             AddNewItemCommand = new ActionCommand(() => model.AddNewItem());
             OpenKeyAssignmentEditorCommand = new ActionCommand(() => OpenKeyAssignmentEditor());
@@ -67,11 +68,13 @@ namespace Baku.VMagicMirrorConfig
 
         private readonly WordToMotionSettingSync _model;
         private readonly LayoutSettingSync _layoutModel;
-        private readonly AccessorySettingSync _accessoryModel;
+        private readonly AccessorySettingModel _accessoryModel;
         private WordToMotionItemViewModel? _dialogItem;
 
         /// <summary>直近で読み込んだモデルに指定されている、VRM標準以外のブレンドシェイプ名の一覧を取得します。</summary>
         public IReadOnlyList<string> LatestAvaterExtraClipNames => _latestAvaterExtraClipNames;
+
+        public AccessoryItemNamesViewModel AvailableAccessoryNames { get; }
 
         private string[] _latestAvaterExtraClipNames = new string[0];
 
@@ -199,7 +202,7 @@ namespace Baku.VMagicMirrorConfig
                     }
                 }
 
-                _items.Add(new WordToMotionItemViewModel(this, item, _accessoryModel));
+                _items.Add(new WordToMotionItemViewModel(this, item));
             }
         }
 

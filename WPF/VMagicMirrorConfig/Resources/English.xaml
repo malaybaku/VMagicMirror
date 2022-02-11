@@ -100,6 +100,8 @@ During this mode, following features are disabled.
     <sys:String x:Key="ExTracker_FaceSwitch">Face Switch</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">Activates seleceted BlendShape by making specific face expression.
 Check "Keep LipSync" to make the lipsync continue.</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">Show Accessory Option</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_AccessoryLabel">Accessory:</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_KeepLipSync">Keep LipSync</sys:String>
 
     <!-- ExTracker FaceSwitch Trigger -->

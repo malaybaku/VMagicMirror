@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
 {
-    class AccessorySettingSync : SettingSyncBase<AccessorySetting>
+    class AccessorySettingModel : SettingSyncBase<AccessorySetting>
     {
-        public AccessorySettingSync(IMessageSender sender, IMessageReceiver receiver) : base(sender)
+        public AccessorySettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             receiver.ReceivedCommand += OnReceivedCommand;
             Files = AccessoryFile.LoadAccessoryFiles(SpecialFilePath.AccessoryFileDir);
@@ -22,6 +22,11 @@ namespace Baku.VMagicMirrorConfig
         /// <see cref="RefreshFiles"/>が呼び出されてアイテムがリロードされると発火します。
         /// </summary>
         public event Action? ItemRefreshed;
+
+        /// <summary>
+        /// <see cref="ItemRefreshed"/>以外でアイテムがリロードされた可能性がある場合に発火します。
+        /// </summary>
+        public event Action? ItemReloaded;
 
         public AccessoryItems Items { get; set; } = new AccessoryItems();
         public string SerializedSetting { get; set; } = "";
@@ -39,7 +44,7 @@ namespace Baku.VMagicMirrorConfig
         }
 
         /// <summary>
-        /// アクセサリのフォルダを読み込み直すことで、アクセサリ一覧を更新します。
+        /// アクセサリのフォルダを読み込み直すことで、明示的にアクセサリ一覧を更新します。
         /// </summary>
         public void RefreshFiles()
         {
@@ -86,6 +91,7 @@ namespace Baku.VMagicMirrorConfig
         {
             var rawItems = DeserializeRaw(setting.SerializedSetting);
             (Items, var missingFileIds) = FilterExistingItems(rawItems);
+            ItemReloaded?.Invoke();
             SendLayoutSetup(Items, missingFileIds);
         }
 
@@ -130,7 +136,7 @@ namespace Baku.VMagicMirrorConfig
         }
 
         /// <summary>
-        /// アイテム一覧をアクセサリフォルダの内訳を突き合わせて、
+        /// アイテム一覧とアクセサリフォルダの内訳を突き合わせて、
         /// 実際にファイルが存在するアイテムのみからなる一覧を生成します。
         /// また、保存されたデータに含まれないアクセサリのファイルID一覧を返却します。
         /// </summary>

@@ -6,11 +6,7 @@ namespace Baku.VMagicMirrorConfig
 {
     public class WordToMotionItemViewModel : ViewModelBase
     {
-        internal WordToMotionItemViewModel(
-            WordToMotionSettingViewModel parent, 
-            MotionRequest model,
-            AccessorySettingSync accessoryModel
-            )
+        internal WordToMotionItemViewModel(WordToMotionSettingViewModel parent, MotionRequest model)
         {
             _parent = parent;
             MotionRequest = model;
@@ -22,11 +18,6 @@ namespace Baku.VMagicMirrorConfig
                 new ReadOnlyObservableCollection<BlendShapeItemViewModel>(_blendShapeItems);
             ExtraBlendShapeItems =
                 new ReadOnlyObservableCollection<BlendShapeItemViewModel>(_extraBlendShapeItems);
-
-            AvailableAccessoryNames = new[] { AccessoryItemNameViewModel.None }
-                .Concat(accessoryModel.Items.Items
-                    .Select(item => new AccessoryItemNameViewModel(item.FileId, item.Name)))
-                .ToArray();
 
             LoadFromModel(model);
         }
@@ -239,8 +230,8 @@ namespace Baku.VMagicMirrorConfig
             = new ObservableCollection<BlendShapeItemViewModel>();
 
 
-        //NOTE: 編集UIが出ている間は内容は不変
-        public AccessoryItemNameViewModel[] AvailableAccessoryNames { get; }
+        public ReadOnlyObservableCollection<AccessoryItemNameViewModel> AvailableAccessoryNames
+            => _parent.AvailableAccessoryNames.Items;
 
         #region Commands
 

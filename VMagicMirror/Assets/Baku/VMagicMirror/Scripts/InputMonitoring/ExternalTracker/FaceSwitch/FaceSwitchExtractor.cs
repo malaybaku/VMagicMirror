@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using UniRx;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -7,13 +8,16 @@ namespace Baku.VMagicMirror.ExternalTracker
     /// </summary>
     public class FaceSwitchExtractor
     {
-
-
         /// <summary> FaceSwitch的にはこの値だと嬉しいな～というブレンドシェイプ名 </summary>
         public string ClipName { get; private set; } = "";
 
         /// <summary> FaceSwitch的にリップシンクを続行する/しないの判定値 </summary>
         public bool KeepLipSync { get; private set; } = false;
+
+        private readonly ReactiveProperty<string> _accessoryVisibilityRequest 
+            = new ReactiveProperty<string>("");
+        /// <summary> 表示してほしいアクセサリーのFileIdか、または空文字 </summary>
+        public IReadOnlyReactiveProperty<string> AccessoryVisibilityRequest => _accessoryVisibilityRequest;
 
         private string[] _avatarBlendShapeNames = new string[0];
         /// <summary> 現在ロードされているアバターの全ブレンドシェイプ名 </summary>
@@ -39,7 +43,6 @@ namespace Baku.VMagicMirror.ExternalTracker
                 RefreshItemsToCheck();
             }
         }
-
 
         //ロードされたアバターと設定を突き合わせた結果得られる、確認すべき条件セットの一覧
         private FaceSwitchItem[] _itemsToCheck = new FaceSwitchItem[0];
@@ -72,6 +75,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 {
                     ClipName = _itemsToCheck[i].clipName;
                     KeepLipSync = _itemsToCheck[i].keepLipSync;
+                    _accessoryVisibilityRequest.Value = _itemsToCheck[i].accessoryName;
                     return;
                 }
             }
@@ -79,6 +83,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             //一つも該当しない場合
             ClipName = "";
             KeepLipSync = false;
+            _accessoryVisibilityRequest.Value = "";
         }
 
         //NOTE: このキーはWPF側が決め打ちしてるやつです

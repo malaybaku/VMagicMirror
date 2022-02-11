@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Baku.VMagicMirror.ExternalTracker;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -27,7 +28,9 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoader,
             IMessageReceiver receiver,
             IMessageSender sender, 
-            DeviceTransformController deviceTransformController
+            DeviceTransformController deviceTransformController,
+            FaceSwitchExtractor faceSwitchExtractor,
+            WordToMotionManager wordToMotionManager
             )
         {
             _cam = cam;
@@ -74,6 +77,32 @@ namespace Baku.VMagicMirror
             deviceTransformController.ControlRequested
                 .Subscribe(ControlItemsTransform)
                 .AddTo(this);
+
+            faceSwitchExtractor.AccessoryVisibilityRequest
+                .Subscribe(UpdateFaceSwitchStatus)
+                .AddTo(this);
+
+            wordToMotionManager.AccessoryVisibilityRequest
+                .Subscribe(UpdateWordToMotionStatus)
+                .AddTo(this);
+        }
+
+        private void UpdateFaceSwitchStatus(string fileId)
+        {
+            Debug.Log($"UpdateFaceSwitchStatus, {fileId}");
+            foreach (var item in _items)
+            {
+                item.VisibleByFaceSwitch = item.FileId == fileId;
+            }
+        }
+
+        //NOTE: previewでも実際のモーションでも同じ所を叩かせる
+        private void UpdateWordToMotionStatus(string fileId)
+        {
+            foreach (var item in _items)
+            {
+                item.VisibleByWordToMotion = item.FileId == fileId;
+            }
         }
 
         private void Start()

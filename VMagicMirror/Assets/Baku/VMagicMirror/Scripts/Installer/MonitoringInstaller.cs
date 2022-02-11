@@ -26,6 +26,7 @@ namespace Baku.VMagicMirror.Installer
             container.BindInstance(faceTracker);
             container.BindInstance(handTracker);
             container.BindInstance(externalTracker);
+            container.BindInstance(externalTracker.FaceSwitchExtractor);
             container.BindInstance(gamepadListener);
             container.BindInstance(midiInputObserver);
             //container.BindInstance(openCvFacePose);

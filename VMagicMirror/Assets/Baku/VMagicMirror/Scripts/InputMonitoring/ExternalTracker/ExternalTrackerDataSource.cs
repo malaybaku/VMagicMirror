@@ -43,6 +43,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         //ソースが「なし」のときに便宜的に割り当てるための、常に顔が中央にあり、無表情であるとみなせるような顔トラッキングデータ
         private readonly EmptyExternalTrackSourceProvider _emptyProvider = new EmptyExternalTrackSourceProvider();
         private readonly FaceSwitchExtractor _faceSwitchExtractor = new FaceSwitchExtractor();
+        public FaceSwitchExtractor FaceSwitchExtractor => _faceSwitchExtractor;
 
         private IExternalTrackSourceProvider _currentProvider = null;
         private IExternalTrackSourceProvider CurrentProvider => _currentProvider ?? _emptyProvider;

@@ -1,23 +1,41 @@
 ﻿using System.Linq;
-using UniRx;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
+    /// <summary>
+    /// FaceSwitchで現在指定しているアイテムを表す要素で、キー的に扱えるようなもの
+    /// </summary>
+    public readonly struct ActiveFaceSwitchItem
+    {
+        public ActiveFaceSwitchItem(string clipName, bool keepLipSync, string accessoryName)
+        {
+            ClipName = clipName;
+            KeepLipSync = keepLipSync;
+            AccessoryName = accessoryName;
+        }
+        
+        public string ClipName { get; }
+        public bool KeepLipSync { get; }
+        public string AccessoryName { get; }
+
+        public bool IsEmpty =>
+            string.IsNullOrEmpty(ClipName) && string.IsNullOrEmpty(AccessoryName);
+        
+        public static readonly ActiveFaceSwitchItem Empty 
+            = new ActiveFaceSwitchItem("", false, "");
+
+        public bool Equals(ActiveFaceSwitchItem other) =>
+            ClipName == other.ClipName &&
+            KeepLipSync == other.KeepLipSync && 
+            AccessoryName == other.AccessoryName;
+    }
+    
     /// <summary>
     /// FaceSwitchの設定と現在の顔トラッキング情報から、FaceSwitchの出力値を決めてくれる地味に役立つクラス
     /// </summary>
     public class FaceSwitchExtractor
     {
-        /// <summary> FaceSwitch的にはこの値だと嬉しいな～というブレンドシェイプ名 </summary>
-        public string ClipName { get; private set; } = "";
-
-        /// <summary> FaceSwitch的にリップシンクを続行する/しないの判定値 </summary>
-        public bool KeepLipSync { get; private set; } = false;
-
-        private readonly ReactiveProperty<string> _accessoryVisibilityRequest 
-            = new ReactiveProperty<string>("");
-        /// <summary> 表示してほしいアクセサリーのFileIdか、または空文字 </summary>
-        public IReadOnlyReactiveProperty<string> AccessoryVisibilityRequest => _accessoryVisibilityRequest;
+        public ActiveFaceSwitchItem ActiveItem { get; private set; } = ActiveFaceSwitchItem.Empty;
 
         private string[] _avatarBlendShapeNames = new string[0];
         /// <summary> 現在ロードされているアバターの全ブレンドシェイプ名 </summary>
@@ -55,9 +73,10 @@ namespace Baku.VMagicMirror.ExternalTracker
                 return;
             }
 
-            //拾うモノ: 設定に乗っており、かつブレンドシェイプが実際に今のアバターに存在するもの。
+            //ブレンドシェイプかアクセサリーの適用内容が記載されているものだけ拾う。無効なものを残すとパフォーマンスが落ちるので無視。
             _itemsToCheck = Setting.items
-                .Where(i => AvatarBlendShapeNames.Contains(i.clipName))
+                .Where(i => 
+                    AvatarBlendShapeNames.Contains(i.clipName) || !string.IsNullOrEmpty(i.accessoryName))
                 .ToArray(); 
         }
         
@@ -73,17 +92,17 @@ namespace Baku.VMagicMirror.ExternalTracker
             {
                 if (ExtractSpecifiedBlendShape(source, _itemsToCheck[i].source) > _itemsToCheck[i].threshold * 0.01f)
                 {
-                    ClipName = _itemsToCheck[i].clipName;
-                    KeepLipSync = _itemsToCheck[i].keepLipSync;
-                    _accessoryVisibilityRequest.Value = _itemsToCheck[i].accessoryName;
+                    ActiveItem = new ActiveFaceSwitchItem(
+                        _itemsToCheck[i].clipName,
+                        _itemsToCheck[i].keepLipSync,
+                        _itemsToCheck[i].accessoryName
+                    );
                     return;
                 }
             }
             
             //一つも該当しない場合
-            ClipName = "";
-            KeepLipSync = false;
-            _accessoryVisibilityRequest.Value = "";
+            ActiveItem = ActiveFaceSwitchItem.Empty;
         }
 
         //NOTE: このキーはWPF側が決め打ちしてるやつです

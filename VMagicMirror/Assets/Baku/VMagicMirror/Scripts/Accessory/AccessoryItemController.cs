@@ -28,8 +28,8 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoader,
             IMessageReceiver receiver,
             IMessageSender sender, 
+            ExternalTrackerDataSource externalTrackerDataSource,
             DeviceTransformController deviceTransformController,
-            FaceSwitchExtractor faceSwitchExtractor,
             WordToMotionManager wordToMotionManager
             )
         {
@@ -74,12 +74,13 @@ namespace Baku.VMagicMirror
                 c => ResetAccessoryLayout(c.Content)
                 );
 
-            deviceTransformController.ControlRequested
-                .Subscribe(ControlItemsTransform)
+            externalTrackerDataSource.ActiveFaceSwitchItem
+                .Select(a => a.AccessoryName)
+                .Subscribe(UpdateFaceSwitchStatus)
                 .AddTo(this);
 
-            faceSwitchExtractor.AccessoryVisibilityRequest
-                .Subscribe(UpdateFaceSwitchStatus)
+            deviceTransformController.ControlRequested
+                .Subscribe(ControlItemsTransform)
                 .AddTo(this);
 
             wordToMotionManager.AccessoryVisibilityRequest

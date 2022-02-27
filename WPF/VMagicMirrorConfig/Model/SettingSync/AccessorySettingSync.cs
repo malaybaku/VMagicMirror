@@ -19,6 +19,14 @@ namespace Baku.VMagicMirrorConfig
         public event Action<AccessoryItemSetting>? ItemUpdated;
 
         /// <summary>
+        /// アイテムの名前が変化したかもしれない場合に発火します。
+        /// </summary>
+        /// <remarks>
+        /// このイベントのハンドラは表示への適用以外の処理を行ってはいけません(=ハンドラからmodel側の処理を叩くのはNG)
+        /// </remarks>
+        public event Action<AccessoryItemSetting>? ItemNameMaybeChanged;
+
+        /// <summary>
         /// <see cref="RefreshFiles"/>が呼び出されてアイテムがリロードされると発火します。
         /// </summary>
         public event Action? ItemRefreshed;
@@ -42,6 +50,9 @@ namespace Baku.VMagicMirrorConfig
             var json = JsonConvert.SerializeObject(item);
             SendMessage(MessageFactory.Instance.SetSingleAccessoryLayout(json));  
         }
+
+        public void NotifyItemNameMaybeChanged(AccessoryItemSetting item)
+            => ItemNameMaybeChanged?.Invoke(item);
 
         /// <summary>
         /// アクセサリのフォルダを読み込み直すことで、明示的にアクセサリ一覧を更新します。

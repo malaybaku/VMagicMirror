@@ -20,6 +20,7 @@ namespace Baku.VMagicMirrorConfig
             OnItemRefreshed();
 
             _model.ItemUpdated += OnItemUpdated;
+            _model.ItemNameMaybeChanged += OnItemUpdated;
             _model.ItemRefreshed += OnItemRefreshed;
             _model.ItemReloaded += OnItemRefreshed;            
         }

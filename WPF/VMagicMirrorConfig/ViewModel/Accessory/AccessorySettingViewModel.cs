@@ -93,6 +93,8 @@ namespace Baku.VMagicMirrorConfig
             {
                 _item.Name = v;
                 UpdateItemFromUi();
+                //NOTE: ここだけは高頻度に発火するのを許す
+                _model.NotifyItemNameMaybeChanged(_item);
             });
             IsVisible = new RProperty<bool>(_item.IsVisible, v =>
             {

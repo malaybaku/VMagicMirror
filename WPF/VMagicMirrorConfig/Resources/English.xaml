@@ -100,6 +100,8 @@ During this mode, following features are disabled.
     <sys:String x:Key="ExTracker_FaceSwitch">Face Switch</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">Activates seleceted BlendShape by making specific face expression.
 Check "Keep LipSync" to make the lipsync continue.</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">Show Accessory Option</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_AccessoryLabel">Accessory:</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_KeepLipSync">Keep LipSync</sys:String>
 
     <!-- ExTracker FaceSwitch Trigger -->
@@ -410,14 +412,18 @@ Please test by typing "joy".</sys:String>
 
     <sys:String x:Key="WordToMotion_BodyMotion_Header">Body Motion</sys:String>
     <sys:String x:Key="WordToMotion_MotionType_None">None</sys:String>
-    <sys:String x:Key="WordToMotion_MotionType_BuiltIn">Built-In Motion</sys:String>
-    <sys:String x:Key="WordToMotion_MotionType_Custom">Custom Motion</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_BuiltIn">Built-In</sys:String>
+    <sys:String x:Key="WordToMotion_MotionType_Custom">Custom</sys:String>
     <sys:String x:Key="WordToMotion_Motion_BuiltIn_Label">Motion</sys:String>
     <sys:String x:Key="WordToMotion_Motion_BuiltIn_Hint">Choose Motion</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Label">Motion</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Hint">Choose Motion</sys:String>
-    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">How to Use (open web)</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">Usage...</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Doctor">Check Motion Data Validity</sys:String>
+
+    <sys:String x:Key="WordToMotion_Accessory_Header">Accessory</sys:String>
+    <sys:String x:Key="WordToMotion_Accessory_Placeholder">Choose Accessory</sys:String>
+    <sys:String x:Key="WordToMotion_Accessory_Notice">Item is visible during motion.</sys:String>
 
     <sys:String x:Key="WordToMotion_Face_Header">Face Expression</sys:String>
     <sys:String x:Key="WordToMotion_Face_Enable">Enable Face Expression</sys:String>

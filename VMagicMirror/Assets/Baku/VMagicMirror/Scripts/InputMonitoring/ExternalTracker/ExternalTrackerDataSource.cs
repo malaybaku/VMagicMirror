@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker.iFacialMocap;
+using UniRx;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -43,6 +44,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         //ソースが「なし」のときに便宜的に割り当てるための、常に顔が中央にあり、無表情であるとみなせるような顔トラッキングデータ
         private readonly EmptyExternalTrackSourceProvider _emptyProvider = new EmptyExternalTrackSourceProvider();
         private readonly FaceSwitchExtractor _faceSwitchExtractor = new FaceSwitchExtractor();
+        public FaceSwitchExtractor FaceSwitchExtractor => _faceSwitchExtractor;
 
         private IExternalTrackSourceProvider _currentProvider = null;
         private IExternalTrackSourceProvider CurrentProvider => _currentProvider ?? _emptyProvider;
@@ -97,9 +99,9 @@ namespace Baku.VMagicMirror.ExternalTracker
                 _faceSwitchKeepCount -= Time.deltaTime;
             }
             
-            if (_faceSwitchKeepCount <= 0 && FaceSwitchClipName != _faceSwitchExtractor.ClipName)
+            if (_faceSwitchKeepCount <= 0 && !ActiveFaceSwitchItem.Equals(_faceSwitchExtractor.ActiveItem))
             {
-                _faceSwitchClipName = _faceSwitchExtractor.ClipName;
+                _activeFaceSwitchItem.Value = _faceSwitchExtractor.ActiveItem;
                 _faceSwitchKeepCount = FaceSwitchMinimumKeepDuration;
             }
 
@@ -126,7 +128,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             {
                 _faceSwitchExtractor.Update(CurrentSource);
                 _config.FaceSwitchActive = !string.IsNullOrEmpty(FaceSwitchClipName);
-                _config.FaceSwitchRequestStopLipSync = _config.FaceSwitchActive && !_faceSwitchExtractor.KeepLipSync;
+                _config.FaceSwitchRequestStopLipSync = _config.FaceSwitchActive && !_activeFaceSwitchItem.Value.KeepLipSync;
             }
         }
 
@@ -332,14 +334,17 @@ namespace Baku.VMagicMirror.ExternalTracker
                     return result;
                 }
             }
-        } 
-        
-        private string _faceSwitchClipName = "";
+        }
+
+        private readonly ReactiveProperty<ActiveFaceSwitchItem> _activeFaceSwitchItem =
+            new ReactiveProperty<ActiveFaceSwitchItem>();
+        public IReadOnlyReactiveProperty<ActiveFaceSwitchItem> ActiveFaceSwitchItem => _activeFaceSwitchItem;
+
         /// <summary> FaceSwitch機能で指定されたブレンドシェイプがあればその名称を取得し、なければ空文字を取得します。 </summary>
-        public string FaceSwitchClipName => Connected ? _faceSwitchClipName : "";
+        public string FaceSwitchClipName => Connected ? _activeFaceSwitchItem.Value.ClipName : "";
         
-        public bool KeepLipSyncForFaceSwitch =>
-            !string.IsNullOrEmpty(FaceSwitchClipName) && _faceSwitchExtractor.KeepLipSync;
+        public bool KeepLipSyncForFaceSwitch => 
+            !string.IsNullOrEmpty(_activeFaceSwitchItem.Value.ClipName) && _activeFaceSwitchItem.Value.KeepLipSync;
 
         #endregion
     }

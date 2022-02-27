@@ -1,37 +1,17 @@
-using System;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
-{
+{ 
     public class AccessoryFileContext<T>
     {
-        public AccessoryFileContext(T obj,
-            Action disposeAction, Action<float> updateAction = null, Action<AccessoryItemLayout> updateLayout = null)
+        public AccessoryFileContext(T obj, IAccessoryFileActions actions)
         {
             Object = obj;
-            Actions = new AccessoryFileActions(disposeAction, updateAction, updateLayout);
+            Actions = actions;
         }
         
-        public AccessoryFileActions Actions { get; }
+        public IAccessoryFileActions Actions { get; }
         public T Object { get; }
-    }
-
-    public class AccessoryFileActions
-    {
-        public AccessoryFileActions(Action disposeAction, Action<float> updateAction, Action<AccessoryItemLayout> updateLayout)
-        {
-            _disposeAction = disposeAction;
-            _updateAction = updateAction;
-            _updateLayout = updateLayout;
-        }
-
-        private readonly Action<float> _updateAction;
-        private readonly Action _disposeAction;
-        private readonly Action<AccessoryItemLayout> _updateLayout;
-        
-        public void Update(float deltaTime) => _updateAction?.Invoke(deltaTime);
-        public void Dispose() => _disposeAction();
-        public void UpdateLayout(AccessoryItemLayout layout) => _updateLayout?.Invoke(layout);
     }
 
     /// <summary>
@@ -47,7 +27,7 @@ namespace Baku.VMagicMirror
             var tex = new Texture2D(8, 8, TextureFormat.RGBA32, false);
             tex.LoadImage(bytes);
             tex.Apply();
-            return new AccessoryFileContext<Texture2D>(tex, () => UnityEngine.Object.Destroy(tex));
+            return new AccessoryFileContext<Texture2D>(tex, new ImageAccessoryActions(tex));
         }
 
         //NOTE: なんとなく関数を分けた方が治安が良いので分けておく
@@ -64,19 +44,15 @@ namespace Baku.VMagicMirror
             context.EnableUpdateWhenOffscreen();
             return new AccessoryFileContext<GameObject>(
                 context.Root,
-                () => context.Dispose()
+                new GlbFileAccessoryActions(context)
             );
         }
 
         public static AccessoryFileContext<AnimatableImage> LoadNumberedPngImage(byte[][] binaries)
         {
             var res = new AnimatableImage(binaries);
-            return new AccessoryFileContext<AnimatableImage>(
-                res,
-                () => res.Dispose(),
-                dt => res.Update(dt),
-                layout => res.UpdateLayout(layout)
-            );
+            //他と違い、AnimatableImage自体がFileActionを実装済み
+            return new AccessoryFileContext<AnimatableImage>(res, res);
         }
     }
 }

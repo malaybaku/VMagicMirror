@@ -44,6 +44,11 @@ namespace Baku.VMagicMirrorConfig
         /// VRMのミニマム仕様的には全部falseにすべきで、特別にセットアップしたモデルでのみtrueにすることができる。
         /// </remarks>
         public bool KeepLipSync { get; set; } = false;
+
+        /// <summary>
+        /// 条件を満たしているときのみ表示するアクセサリーがある場合、その名前。何もしない場合は空文字。
+        /// </summary>
+        public string AccessoryName { get; set; } = "";
     }
 
     /// <summary> 表情スイッチアイテムの一覧です。 </summary>
@@ -141,6 +146,11 @@ namespace Baku.VMagicMirrorConfig
                         result.Items[i].ClipName = (string?)clipName ?? "";
                         result.Items[i].KeepLipSync = (bool)keepLipSync;
                     }
+
+                    if (items[i]["accessoryName"] is JValue accessoryName)
+                    {
+                        result.Items[i].AccessoryName = (string?)accessoryName ?? "";
+                    }
                 }
             }
             return result;
@@ -158,6 +168,7 @@ namespace Baku.VMagicMirrorConfig
                     ["threshold"] = Items[i].ThresholdPercent,
                     ["clipName"] = Items[i].ClipName,
                     ["keepLipSync"] = Items[i].KeepLipSync,
+                    ["accessoryName"] = Items[i].AccessoryName,
                 });
             }
 

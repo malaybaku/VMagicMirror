@@ -37,6 +37,11 @@ namespace Baku.VMagicMirror
         /// </summary>
         public bool PreferLipSync;
 
+        /// <summary>
+        /// モーション実行中のみアクセサリを表示したい場合、そのアクセサリーのFileId
+        /// </summary>
+        public string AccessoryName;
+
         //NOTE: 辞書にしないでこのまま使う手も無くはないです
         
         public BlendShapeValues BlendShapeValues = null;

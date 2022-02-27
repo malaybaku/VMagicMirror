@@ -6,7 +6,7 @@ namespace Baku.VMagicMirrorConfig
 {
     public class WordToMotionItemViewModel : ViewModelBase
     {
-        public WordToMotionItemViewModel(WordToMotionSettingViewModel parent, MotionRequest model)
+        internal WordToMotionItemViewModel(WordToMotionSettingViewModel parent, MotionRequest model)
         {
             _parent = parent;
             MotionRequest = model;
@@ -184,6 +184,13 @@ namespace Baku.VMagicMirrorConfig
             set => SetValue(ref _customMotionClipName, value);
         }
 
+        private string _accessoryName = "";
+        public string AccessoryName
+        {
+            get => _accessoryName;
+            set => SetValue(ref _accessoryName, value);
+        }
+
         private bool _useBlendShape = false;
         /// <summary>このアイテムがブレンドシェイプの変更要求を含んでいるかどうかを取得、設定します。</summary>
         public bool UseBlendShape
@@ -221,6 +228,10 @@ namespace Baku.VMagicMirrorConfig
         public ReadOnlyObservableCollection<BlendShapeItemViewModel> ExtraBlendShapeItems { get; }
         private ObservableCollection<BlendShapeItemViewModel> _extraBlendShapeItems
             = new ObservableCollection<BlendShapeItemViewModel>();
+
+
+        public ReadOnlyObservableCollection<AccessoryItemNameViewModel> AvailableAccessoryNames
+            => _parent.AvailableAccessoryNames.Items;
 
         #region Commands
 
@@ -276,6 +287,7 @@ namespace Baku.VMagicMirrorConfig
 
             model.BuiltInAnimationClipName = BuiltInClipName;
             model.CustomMotionClipName = CustomMotionClipName;
+            model.AccessoryName = AccessoryName;
             model.UseBlendShape = UseBlendShape;
             model.HoldBlendShape = HoldBlendShape;
             model.PreferLipSync = PreferLipSync;
@@ -323,6 +335,7 @@ namespace Baku.VMagicMirrorConfig
 
             BuiltInClipName = model.BuiltInAnimationClipName;
             CustomMotionClipName = model.CustomMotionClipName;
+            AccessoryName = model.AccessoryName;
 
             UseBlendShape = model.UseBlendShape;
             HoldBlendShape = model.HoldBlendShape;

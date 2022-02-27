@@ -26,6 +26,8 @@ namespace Baku.VMagicMirrorConfig
 
         #region 保存しないでよい値
 
+        public RProperty<bool> ShowAccessoryOption => _parent.ShowAccessoryOption;
+
         /// <summary> 
         /// "この表情のパラメタがN%以上になったら"みたいなしきい値の取りうる値。
         /// 細かく設定できる意味がないので10%刻みです。
@@ -35,7 +37,11 @@ namespace Baku.VMagicMirrorConfig
             .Select(i => new ThresholdItem(i * 10, $"{i * 10}%"))
             .ToArray();
 
-        public ReadOnlyObservableCollection<string> BlendShapeNames => _parent.BlendShapeNames;
+        public ReadOnlyObservableCollection<string> BlendShapeNames 
+            => _parent.BlendShapeNames;
+
+        public ReadOnlyObservableCollection<AccessoryItemNameViewModel> AvailableAccessoryNames 
+            => _parent.AvailableAccessoryNames.Items;
 
         private string _instruction = "";
         public string Instruction
@@ -85,6 +91,21 @@ namespace Baku.VMagicMirrorConfig
                 if (_model.KeepLipSync != value)
                 {
                     _model.KeepLipSync = value;
+                    RaisePropertyChanged();
+                    _parent.SaveFaceSwitchSetting();
+                }
+            }
+        }
+
+        public string AccessoryName
+        {
+            get => _model.AccessoryName;
+            set
+            {
+                if (_model.AccessoryName != value)
+                {
+                    LogOutput.Instance.Write($"Accessory Name Updated, from={_model.AccessoryName}, to={value}");
+                    _model.AccessoryName = value;
                     RaisePropertyChanged();
                     _parent.SaveFaceSwitchSetting();
                 }

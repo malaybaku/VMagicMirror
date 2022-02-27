@@ -72,6 +72,16 @@ permalink: /docs/expressions
 
 </div>
 
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+v2.0.2以降では上記に加え、モーション/表情の実行中のみ特定のアクセサリーを表示するよう設定できます。
+
+アクセサリー機能の詳細は[アクセサリー](./accessory)のページで確認できます。
+
+</div>
+
 MIDIコントローラを表情・モーションの起動デバイスに使う場合、セットアップとして3つのステップが必要です。こちらの例を参照下さい。
 
 <blockquote class="twitter-tweet"><p lang="ja" dir="ltr"><a href="https://twitter.com/hashtag/VMagicMirror?src=hash&amp;ref_src=twsrc%5Etfw">#VMagicMirror</a><br>MIDIコンを叩くと表情が変わるやつの進捗です。<br><br>・コントロールパネル側で、MIDIコンと実行するアイテムのマッピング設定を開く<br>・MIDIコンのキーを叩いてセットアップ<br>・セットアップ完了したら再びMIDIコンのキーを叩く<br><br>の3手順で動きます <a href="https://t.co/RDbsszWLpi">pic.twitter.com/RDbsszWLpi</a></p>&mdash; 獏星(ばくすたー) / Megumi Baxter (@baku_dreameater) <a href="https://twitter.com/baku_dreameater/status/1211990346525077504?ref_src=twsrc%5Etfw">December 31, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

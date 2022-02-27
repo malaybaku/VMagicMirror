@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror
         public string FileId => _file?.FileId ?? "";
 
         private AccessoryFile _file = null;
-        private AccessoryFileActions _fileActions = null;
+        private IAccessoryFileActions _fileActions = null;
         private Camera _cam = null;
 
         private Animator _animator = null;
@@ -136,7 +136,10 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            _fileActions.Update(Time.deltaTime);
+            if (ShouldBeVisible)
+            {
+                _fileActions.Update(Time.deltaTime);
+            }
         }
         
         private void LateUpdate()
@@ -195,6 +198,7 @@ namespace Baku.VMagicMirror
 
         private void SetVisibility(bool visible)
         {
+            _fileActions?.OnVisibilityChanged(visible);
             if (_file == null || !visible)
             {
                 imageRenderer.gameObject.SetActive(false);

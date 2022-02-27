@@ -319,9 +319,11 @@ namespace Baku.VMagicMirror
                 ApplyPreviewBlendShape();
             }
 
-            if (!EnablePreview && IsPlayingMotion && _currentMotionRequest != null)
+            if (!EnablePreview)
             {
-                _accessoryVisibilityRequest.Value = _currentMotionRequest.AccessoryName;
+                _accessoryVisibilityRequest.Value = (IsPlayingMotion || IsPlayingBlendShape) && _currentMotionRequest != null 
+                    ? _currentMotionRequest.AccessoryName
+                    : "";
             }
         }
 

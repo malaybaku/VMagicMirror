@@ -90,7 +90,6 @@ namespace Baku.VMagicMirror
 
         private void UpdateFaceSwitchStatus(string fileId)
         {
-            Debug.Log($"UpdateFaceSwitchStatus, {fileId}");
             foreach (var item in _items)
             {
                 item.VisibleByFaceSwitch = item.FileId == fileId;

@@ -357,7 +357,8 @@ namespace Baku.VMagicMirror
             }
 
             transformControl.global = request.WorldCoordinate;
-            var visible = ShouldBeVisible;
+            //NOTE: 表情やモーションに付随して一瞬表示されるような状態に対しては位置編集UIは出さない
+            var visible = ItemLayout.IsVisible;
             transformControl.mode = visible ? request.Mode : TransformControl.TransformMode.None;
 
             if (!visible)

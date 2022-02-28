@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    public class AnimatableImage : IDisposable
+    public class AnimatableImage : IDisposable, IAccessoryFileActions
     {
         //NOTE: Texture2D[] を渡すほうがきれいかもしれん
         public AnimatableImage(byte[][] binaries)
@@ -90,6 +90,21 @@ namespace Baku.VMagicMirror
             else
             {
                 FramePerSecond = layout.FramePerSecond;
+            }
+        }
+
+        public void OnVisibilityChanged(bool isVisible)
+        {
+            if (isVisible)
+            {
+                return;
+            }
+
+            _timeCount = 0f;
+            _imageIndex = 0;
+            if (Renderer != null)
+            {
+                Renderer.material.mainTexture = CurrentTexture;
             }
         }
         

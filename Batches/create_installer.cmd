@@ -2,7 +2,7 @@
 REM %1 full/standard (default: full)
 REM %2 prod/dev (default: prod)
 REM %3 app version (e.g. "v1.2.3")
-REM example: `create_installer prod full v2.0.0`
+REM example: `create_installer full prod v2.0.0`
 
 set ISCC_EXE="%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe"
 cd %~dp0

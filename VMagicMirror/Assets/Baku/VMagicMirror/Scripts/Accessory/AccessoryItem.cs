@@ -26,21 +26,63 @@ namespace Baku.VMagicMirror
         public string FileId => _file?.FileId ?? "";
 
         private AccessoryFile _file = null;
-        private AccessoryFileActions _fileActions = null;
+        private IAccessoryFileActions _fileActions = null;
         private Camera _cam = null;
 
         private Animator _animator = null;
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones =
             new Dictionary<AccessoryAttachTarget, Transform>();
 
+        private bool _visibleByWordToMotion;
+        public bool VisibleByWordToMotion
+        {
+            get => _visibleByWordToMotion;
+            set
+            {
+                if (_visibleByWordToMotion != value)
+                {
+                    _visibleByWordToMotion = value;
+                    SetVisibility(ShouldBeVisible);
+                }
+            }
+        }
+
+        private bool _visibleByFaceSwitch;
+        public bool VisibleByFaceSwitch
+        {
+            get => _visibleByFaceSwitch;
+            set
+            {
+                if (_visibleByFaceSwitch != value)
+                {
+                    _visibleByFaceSwitch = value;
+                    SetVisibility(ShouldBeVisible);
+                }
+            }
+        }
+
+        public bool ShouldBeVisible
+        {
+            get
+            {
+                if (_file == null || _animator == null || ItemLayout == null)
+                {
+                    return false;
+                }
+
+                return 
+                    ItemLayout.IsVisible ||
+                    VisibleByWordToMotion ||
+                    VisibleByFaceSwitch;
+            }
+        }
+        
         /// <summary>
         /// Unity上でTransformControlによってレイアウトが編集されており、その変更WPFに送信されていない場合にtrueになるフラグ
         /// </summary>
         public bool HasLayoutChange { get; private set; }
 
-        private bool ShouldAdjustBillboard =>
-            _animator != null && ItemLayout != null && 
-            ItemLayout.IsVisible && ItemLayout.UseBillboardMode;
+        private bool ShouldAdjustBillboard => ShouldBeVisible && ItemLayout.UseBillboardMode;
 
         public void ConfirmLayoutChange() => HasLayoutChange = false;
 
@@ -94,7 +136,10 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            _fileActions.Update(Time.deltaTime);
+            if (ShouldBeVisible)
+            {
+                _fileActions.Update(Time.deltaTime);
+            }
         }
         
         private void LateUpdate()
@@ -153,6 +198,7 @@ namespace Baku.VMagicMirror
 
         private void SetVisibility(bool visible)
         {
+            _fileActions?.OnVisibilityChanged(visible);
             if (_file == null || !visible)
             {
                 imageRenderer.gameObject.SetActive(false);
@@ -206,13 +252,9 @@ namespace Baku.VMagicMirror
             transformControl.AutoUpdateGizmo = !ItemLayout.UseBillboardMode;
             transformControl.XyPlaneMode = ItemLayout.UseBillboardMode;
             
-            SetVisibility(ItemLayout.IsVisible);
-
-            if (!ItemLayout.IsVisible)
-            {
-                return;
-            }
-
+            SetVisibility(ShouldBeVisible);
+            
+            //アイテムとして不可視であっても位置をあわせる: 後から表情経由で表示されるかもしれないため。
             if (!_attachBones.TryGetValue(ItemLayout.AttachTarget, out var bone))
             {
                 // ワールド固定の場合、ここを通過してSetParent(null)が呼ばれることでワールドに固定される
@@ -287,7 +329,8 @@ namespace Baku.VMagicMirror
             {
                 SetLayout(ItemLayout);
             }
-            SetVisibility(ItemLayout?.IsVisible == true);
+
+            SetVisibility(ShouldBeVisible);
         }
 
         /// <summary>
@@ -314,9 +357,11 @@ namespace Baku.VMagicMirror
             }
 
             transformControl.global = request.WorldCoordinate;
-            transformControl.mode = ItemLayout.IsVisible ? request.Mode : TransformControl.TransformMode.None;
+            //NOTE: 表情やモーションに付随して一瞬表示されるような状態に対しては位置編集UIは出さない
+            var visible = ItemLayout.IsVisible;
+            transformControl.mode = visible ? request.Mode : TransformControl.TransformMode.None;
 
-            if (!ItemLayout.IsVisible)
+            if (!visible)
             {
                 return;
             }

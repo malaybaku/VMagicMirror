@@ -11,6 +11,16 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.2
+{: .doc-sec2 }
+
+2022/02/28
+
+* Add: Word to Motion and Face Switch features support option to show accessory during motion or facial expression is active.
+* Change: Numbered png accessory plays from start when it is hidden and re-shown.
+* Fix: Reduce the cases that avatar's transparent parts are rendered in front of image accessory.
+
+
 #### v2.0.1
 {: .doc-sec2 }
 

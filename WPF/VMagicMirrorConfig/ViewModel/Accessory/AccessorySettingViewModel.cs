@@ -8,7 +8,7 @@ namespace Baku.VMagicMirrorConfig
 {
     public class AccessorySettingViewModel : ViewModelBase
     {
-        internal AccessorySettingViewModel(AccessorySettingSync model, LayoutSettingSync layoutModel)
+        internal AccessorySettingViewModel(AccessorySettingModel model, LayoutSettingSync layoutModel)
         {
             Items = new ReadOnlyObservableCollection<AccessoryItemViewModel>(_items);
             _model = model;
@@ -22,7 +22,7 @@ namespace Baku.VMagicMirrorConfig
             OpenAccessoryTipsUrlCommand = new ActionCommand(OpenAccessoryTipsUrl);
         }
 
-        private readonly AccessorySettingSync _model;
+        private readonly AccessorySettingModel _model;
         private readonly LayoutSettingSync _layoutModel;
 
         private readonly ObservableCollection<AccessoryItemViewModel> _items 
@@ -80,7 +80,7 @@ namespace Baku.VMagicMirrorConfig
         }
 
 
-        internal AccessoryItemViewModel(AccessorySettingSync model, int index)
+        internal AccessoryItemViewModel(AccessorySettingModel model, int index)
         {
             _model = model;
             _item = model.Items.Items[index];
@@ -93,6 +93,8 @@ namespace Baku.VMagicMirrorConfig
             {
                 _item.Name = v;
                 UpdateItemFromUi();
+                //NOTE: ここだけは高頻度に発火するのを許す
+                _model.NotifyItemNameMaybeChanged(_item);
             });
             IsVisible = new RProperty<bool>(_item.IsVisible, v =>
             {
@@ -155,7 +157,7 @@ namespace Baku.VMagicMirrorConfig
             });
         }
 
-        private readonly AccessorySettingSync _model;
+        private readonly AccessorySettingModel _model;
         private readonly AccessoryItemSetting _item;
         private readonly AccessoryFile? _file;
 

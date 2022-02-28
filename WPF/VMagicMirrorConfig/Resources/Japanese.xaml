@@ -100,6 +100,8 @@
     <sys:String x:Key="ExTracker_FaceSwitch">表情スイッチ</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
 「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">アクセサリーオプションを表示</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_AccessoryLabel">アクセサリー:</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_KeepLipSync">リップシンクを続行</sys:String>
 
     
@@ -419,9 +421,13 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     
     <sys:String x:Key="WordToMotion_Motion_Custom_Label">モーション</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Hint">モーションを選択</sys:String>
-    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">使い方 (Webページを開きます)</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">使い方...</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Doctor">モーションデータを診断</sys:String>
 
+    <sys:String x:Key="WordToMotion_Accessory_Header">アクセサリー</sys:String>
+    <sys:String x:Key="WordToMotion_Accessory_Placeholder">アクセサリーを選択</sys:String>
+    <sys:String x:Key="WordToMotion_Accessory_Notice">*モーション実行中のみ表示されます</sys:String>
+    
     <sys:String x:Key="WordToMotion_Face_Header">表情</sys:String>
     <sys:String x:Key="WordToMotion_Face_Enable">表情の動作を有効化</sys:String>
     <sys:String x:Key="WordToMotion_Face_Duration">(全身モーションが「なし」の場合) 表情の変化時間 [sec]</sys:String>

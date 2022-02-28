@@ -43,6 +43,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
@@ -89,19 +90,20 @@
                            />
 
                 <RadioButton Content="{DynamicResource WordToMotion_MotionType_None}"
-                             Margin="0,10"
+                             Margin="0,5"
                              VerticalContentAlignment="Center"
                              IsChecked="{Binding IsMotionTypeNone}"
                              />
 
                 <RadioButton Content="{DynamicResource WordToMotion_MotionType_BuiltIn}"
-                             Margin="0,10,0,5"
+                             Margin="0,5"
                              VerticalContentAlignment="Center"
                              IsChecked="{Binding IsMotionTypeBuiltInClip}"
                              />
 
                 <DockPanel LastChildFill="True"
-                           Margin="5">
+                           Margin="5"
+                           >
                     <TextBlock Text="{DynamicResource WordToMotion_Motion_BuiltIn_Label}" />
                     <ComboBox ItemsSource="{Binding AvailableBuiltInClipNames}"
                               SelectedItem="{Binding BuiltInClipName}"
@@ -111,15 +113,26 @@
                               />
                 </DockPanel>
 
+                <Grid Margin="0,5">
+                    <RadioButton Content="{DynamicResource WordToMotion_MotionType_Custom}"
+                                 VerticalContentAlignment="Center"
+                                 IsChecked="{Binding IsMotionTypeCustom}"
+                                 />
+                    <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Content="{DynamicResource WordToMotion_Motion_Custom_HowTo}"
+                        Command="{Binding OpenWordToMotionCustomHowToCommand}"
+                        Margin="0"
+                        Width="NaN"
+                        HorizontalAlignment="Right"
+                        />
 
-                <RadioButton Content="{DynamicResource WordToMotion_MotionType_Custom}"
-                             Margin="0,20,0,5"
-                             VerticalContentAlignment="Center"
-                             IsChecked="{Binding IsMotionTypeCustom}"
-                             />
+                </Grid>
+
+
                                 
                 <DockPanel LastChildFill="True"
-                           Margin="5">
+                           Margin="5"
+                           >
                     <TextBlock Text="{DynamicResource WordToMotion_Motion_Custom_Label}" />
                     <ComboBox ItemsSource="{Binding AvailableCustomMotionClipNames}"
                               SelectedItem="{Binding CustomMotionClipName}"
@@ -129,13 +142,6 @@
                               />
                 </DockPanel>
 
-                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                        Content="{DynamicResource WordToMotion_Motion_Custom_HowTo}"
-                        Command="{Binding OpenWordToMotionCustomHowToCommand}"
-                        Margin="10,0"
-                        Width="NaN"
-                        HorizontalAlignment="Left"
-                        />
                 <!-- 診断機能を検討してIPCまではも用意したものの、まだ仕組みがきちんとしてないので一旦隠します -->
                 <!--<Button Style="{StaticResource MaterialDesignRaisedButton}"
                         Content="{DynamicResource WordToMotion_Motion_Custom_Doctor}"
@@ -146,8 +152,35 @@
         </Border>
 
         <Border Style="{StaticResource SectionBorder}"
+                Grid.Row="2" Grid.Column="0"
+                Margin="8" Padding="10"
+                >
+            <StackPanel>
+                <TextBlock Style="{StaticResource HeaderText}"
+                           Text="アクセサリ" 
+                           TextAlignment="Left"
+                           Margin="5"
+                           />
+
+                <ComboBox Margin="10,0"
+                          md:HintAssist.Hint="{DynamicResource WordToMotion_Accessory_Placeholder}"
+                          ItemsSource="{Binding AvailableAccessoryNames}"
+                          DisplayMemberPath="DisplayName.Value"
+                          SelectedValuePath="FileId"
+                          SelectedValue="{Binding AccessoryName}"
+                          />
+
+                <TextBlock Text="{DynamicResource WordToMotion_Accessory_Notice}"
+                           TextAlignment="Left"
+                           Margin="10,5,0,0"
+                           />
+            </StackPanel>
+        </Border>
+
+
+        <Border Style="{StaticResource SectionBorder}"
                 Grid.Row="0" Grid.Column="1"
-                Grid.RowSpan="2"
+                Grid.RowSpan="3"
                 VerticalAlignment="Stretch" 
                 Margin="8"
                 Padding="10"
@@ -307,12 +340,12 @@
             </Grid>
         </Border>
         
-        <CheckBox Grid.Row="2" Grid.Column="0"
+        <CheckBox Grid.Row="3" Grid.Column="0"
                   Content="{DynamicResource WordToMotion_EnablePreview}"
                   IsChecked="{Binding EnablePreview.Value}"
                   />
 
-        <StackPanel Grid.Row="2" Grid.Column="1"
+        <StackPanel Grid.Row="3" Grid.Column="1"
                     Margin="0,0,5,5"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"

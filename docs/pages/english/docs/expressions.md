@@ -72,6 +72,17 @@ In custom window you can take 4 actions.
 
 </div>
 
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+v2.0.2 and later version supports accessory visibility control during the item is played in item edit window.
+
+See [Accessory](./accessory) page to check the detail of accessory feature.
+
+</div>
+
+
 If you choose MIDI controller for input device, you nees 3 steps to setup. Following tweet show how to setup.
 
 <blockquote class="twitter-tweet"><p lang="ja" dir="ltr"><a href="https://twitter.com/hashtag/VMagicMirror?src=hash&amp;ref_src=twsrc%5Etfw">#VMagicMirror</a><br>MIDIコンを叩くと表情が変わるやつの進捗です。<br><br>・コントロールパネル側で、MIDIコンと実行するアイテムのマッピング設定を開く<br>・MIDIコンのキーを叩いてセットアップ<br>・セットアップ完了したら再びMIDIコンのキーを叩く<br><br>の3手順で動きます <a href="https://t.co/RDbsszWLpi">pic.twitter.com/RDbsszWLpi</a></p>&mdash; 獏星(ばくすたー) / Megumi Baxter (@baku_dreameater) <a href="https://twitter.com/baku_dreameater/status/1211990346525077504?ref_src=twsrc%5Etfw">December 31, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

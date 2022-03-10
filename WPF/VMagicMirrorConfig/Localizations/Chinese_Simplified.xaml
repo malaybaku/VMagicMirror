@@ -27,6 +27,7 @@
     <sys:String x:Key="TopBar_Setting_Layout">布局设置</sys:String>
     <sys:String x:Key="TopBar_Setting_Devices">设备</sys:String>
     <sys:String x:Key="TopBar_Setting_Effects">特效</sys:String>
+    <sys:String x:Key="TopBar_Setting_FileIo">文件</sys:String>
     
     <!-- Home -->
     <sys:String x:Key="Home_LoadVrm">读取VRM</sys:String>
@@ -94,7 +95,7 @@
     <sys:String x:Key="ExTracker_Source_None">空</sys:String>
     <sys:String x:Key="ExTracker_Source_iFacialMocap">iFacialMocap</sys:String>
     <sys:String x:Key="ExTracker_Source_Shiori">Shiori</sys:String>
-    <sys:String x:Key="ExTracker_Source_Shiori_DefaultPort">端口 23456</sys:String>
+    <sys:String x:Key="ExTracker_Source_Shiori_DefaultPort">端口 12345</sys:String>
     <sys:String x:Key="ExTracker_iFM_IpHint">iPhone的IP地址</sys:String>
     <sys:String x:Key="ExTracker_Source_HowToCollaborate">※查看APP连接的方法 (打开网页)</sys:String>
     <sys:String x:Key="ExTracker_Source_RefreshReceiverSetting">重新检查网络环境</sys:String>
@@ -105,6 +106,8 @@
     <sys:String x:Key="ExTracker_FaceSwitch">表情开关</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">通过清晰地将脸变成特定的表情来切换虚拟形象的表情
 开启“继续控制嘴部”后, 可以在表情切换的状态下变换嘴型.</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">显示配件选项</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_AccessoryLabel">配件:</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_KeepLipSync">继续控制嘴部</sys:String>
 
     <!-- ExTracker FaceSwitch Trigger -->

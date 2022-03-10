@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror.ExternalTracker.Shiori
     public class ShioriReceiver : ExternalTrackSourceProvider
     {
         private const float CalibrateReflectDuration = 0.6f;
-        private const int PortNumber = 23456;
+        private const int PortNumber = 12345;
 
         private readonly RecordFaceTrackSource _faceTrackSource = new RecordFaceTrackSource();
         public override IFaceTrackSource FaceTrackSource => _faceTrackSource;

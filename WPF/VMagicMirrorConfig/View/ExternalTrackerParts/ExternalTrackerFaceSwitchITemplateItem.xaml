@@ -18,6 +18,10 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <!--Style="{StaticResource MaterialDesignFilledComboBox}"-->
         <ComboBox Grid.Column="0"
                   Style="{StaticResource MaterialDesignComboBox}"
@@ -61,5 +65,23 @@
                     Margin="0" 
                     IsChecked="{Binding KeepLipSync}"
                     />
+
+        <TextBlock Grid.Row="1"
+                   Grid.Column="1"
+                   Text="{DynamicResource ExTracker_FaceSwitch_AccessoryLabel}"
+                   Visibility="{Binding ShowAccessoryOption.Value, 
+                                        Converter={StaticResource BooleanToVisibilityConverter}}"
+                   />
+        <ComboBox Grid.Row="1"
+                  Grid.Column="2" 
+                  Margin="5,0"
+                  ItemsSource="{Binding AvailableAccessoryNames}"
+                  DisplayMemberPath="DisplayName.Value"
+                  SelectedValuePath="FileId"
+                  SelectedValue="{Binding AccessoryName}"
+                  Visibility="{Binding ShowAccessoryOption.Value, 
+                                       Converter={StaticResource BooleanToVisibilityConverter}}"
+                  >
+        </ComboBox>
     </Grid>
 </UserControl>

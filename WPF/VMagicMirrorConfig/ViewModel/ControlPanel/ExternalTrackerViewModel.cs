@@ -16,12 +16,15 @@ namespace Baku.VMagicMirrorConfig
         internal ExternalTrackerViewModel(
             ExternalTrackerSettingSync model,
             MotionSettingSync motionModel,
+            AccessorySettingModel accessoryModel,
             IMessageSender sender, 
             IMessageReceiver receiver
             ) : base(sender)
         {
             _model = model;
             _motionModel = motionModel;
+
+            AvailableAccessoryNames = new AccessoryItemNamesViewModel(accessoryModel);
 
             //この辺はModel/VMの接続とかコマンド周りの設定
             UpdateTrackSourceType();
@@ -244,6 +247,9 @@ namespace Baku.VMagicMirrorConfig
 
         #region 表情スイッチのやつ
 
+        //UI表示の同期のためだけに使う値で、Modelとは関係ない
+        public RProperty<bool> ShowAccessoryOption { get; } = new RProperty<bool>(false);
+
         /// <summary>
         /// 子要素になってる<see cref="ExternalTrackerFaceSwitchItemViewModel"/>から呼び出すことで、
         /// 現在の設定を保存した状態にします。
@@ -256,6 +262,9 @@ namespace Baku.VMagicMirrorConfig
 
         /// <summary> Face Switch機能で表示可能なブレンドシェイプ名の一覧です。 </summary>
         public ReadOnlyObservableCollection<string> BlendShapeNames => _blendShapeNameStore.BlendShapeNames;
+
+        /// <summary> Face Switchで連動させるアクセサリ名の選択肢の一覧です。 </summary>
+        public AccessoryItemNamesViewModel AvailableAccessoryNames { get; }
 
         /// <summary>
         /// 個別のFace Switchで使っているブレンドシェイプ名が変わったとき呼び出すことで、

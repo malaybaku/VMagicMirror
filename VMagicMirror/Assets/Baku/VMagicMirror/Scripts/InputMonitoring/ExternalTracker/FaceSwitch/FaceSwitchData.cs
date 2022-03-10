@@ -45,6 +45,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         public int threshold;
         public string clipName;
         public bool keepLipSync;
+        public string accessoryName;
     }
     
     public static class FaceSwitchKeys

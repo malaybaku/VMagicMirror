@@ -428,7 +428,7 @@
     
     <sys:String x:Key="WordToMotion_Motion_Custom_Label">动作</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Hint">动作选择</sys:String>
-    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">使用方法（打开网页）</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">使用方法</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Doctor">判断动作数据</sys:String>
 
     <sys:String x:Key="WordToMotion_Face_Header">表情</sys:String>

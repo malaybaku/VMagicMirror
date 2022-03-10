@@ -242,6 +242,12 @@
                     <TextBlock Margin="15,5"
                                Text="{DynamicResource ExTracker_FaceSwitch_Instruction}"/>
 
+                    <CheckBox Margin="15,5" 
+                              VerticalContentAlignment="Center"
+                              Content="{DynamicResource ExTracker_FaceSwitch_ShowAccessoryOption}" 
+                              IsChecked="{Binding ShowAccessoryOption.Value}"
+                              />
+
                     <TextBlock Width="100"
                                Margin="15,15,15,5"
                                HorizontalAlignment="Right"

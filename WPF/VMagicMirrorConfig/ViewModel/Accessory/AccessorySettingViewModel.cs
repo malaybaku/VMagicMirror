@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
 {
     public class AccessorySettingViewModel : ViewModelBase
     {
-        internal AccessorySettingViewModel(AccessorySettingSync model, LayoutSettingSync layoutModel)
+        internal AccessorySettingViewModel(AccessorySettingModel model, LayoutSettingSync layoutModel)
         {
             Items = new ReadOnlyObservableCollection<AccessoryItemViewModel>(_items);
             _model = model;
@@ -21,7 +22,7 @@ namespace Baku.VMagicMirrorConfig
             OpenAccessoryTipsUrlCommand = new ActionCommand(OpenAccessoryTipsUrl);
         }
 
-        private readonly AccessorySettingSync _model;
+        private readonly AccessorySettingModel _model;
         private readonly LayoutSettingSync _layoutModel;
 
         private readonly ObservableCollection<AccessoryItemViewModel> _items 
@@ -51,15 +52,16 @@ namespace Baku.VMagicMirrorConfig
 
         private void OpenAccessoryFolder()
         {
-            Process.Start(new ProcessStartInfo(SpecialFilePath.AccessoryFileDir)
+            if (Directory.Exists(SpecialFilePath.AccessoryFileDir))
             {
-                UseShellExecute = true,
-            });
+                Process.Start(new ProcessStartInfo(SpecialFilePath.AccessoryFileDir)
+                {
+                    UseShellExecute = true,
+                });
+            }
         }
 
         private void ReloadFiles() => _model.RefreshFiles();
-
-        //TODO: ドキュメントの用意
         private void OpenAccessoryTipsUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_accessory"));
         private void ResetToDefault() => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetToDefault);
     }
@@ -78,7 +80,7 @@ namespace Baku.VMagicMirrorConfig
         }
 
 
-        internal AccessoryItemViewModel(AccessorySettingSync model, int index)
+        internal AccessoryItemViewModel(AccessorySettingModel model, int index)
         {
             _model = model;
             _item = model.Items.Items[index];
@@ -91,6 +93,8 @@ namespace Baku.VMagicMirrorConfig
             {
                 _item.Name = v;
                 UpdateItemFromUi();
+                //NOTE: ここだけは高頻度に発火するのを許す
+                _model.NotifyItemNameMaybeChanged(_item);
             });
             IsVisible = new RProperty<bool>(_item.IsVisible, v =>
             {
@@ -145,9 +149,15 @@ namespace Baku.VMagicMirrorConfig
                 _item.Scale = new Vector3(v, v, v);
                 UpdateItemFromUi();
             });
+
+            FramePerSecond = new RProperty<int>(_item.FramePerSecond, v =>
+            {
+                _item.FramePerSecond = v;
+                UpdateItemFromUi();
+            });
         }
 
-        private readonly AccessorySettingSync _model;
+        private readonly AccessorySettingModel _model;
         private readonly AccessoryItemSetting _item;
         private readonly AccessoryFile? _file;
 
@@ -155,7 +165,11 @@ namespace Baku.VMagicMirrorConfig
 
         public string FileName { get; }
         //3Dモデルはビルボードモード使う必要ない(万が一フラグが立っててもUnity側で無視させる)
-        public bool CanSelectBillboardMode => _file?.Type == AccessoryType.Png;
+        public bool CanSelectBillboardMode =>
+            _file?.Type == AccessoryType.Png || _file?.Type == AccessoryType.NumberedPng;
+
+        public bool CanEditFramePerSecond => _file?.Type == AccessoryType.NumberedPng;
+
         public RProperty<string> Name { get; }
         public RProperty<bool> IsVisible { get; }
         public RProperty<bool> UseBillboardMode { get; }
@@ -170,6 +184,9 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<float> RotZ { get; }
 
         public RProperty<float> Scale { get; }
+
+        public RProperty<int> FramePerSecond { get; }
+
         public ActionCommand ResetCommand { get; }
 
         //NOTE: Unityのコンポーネントリセットと同じノリで良いはずのため、確認ダイアログは無し。
@@ -196,6 +213,7 @@ namespace Baku.VMagicMirrorConfig
             RotY.Value = _item.Rotation.Y;
             RotZ.Value = _item.Rotation.Z;
             Scale.Value = _item.Scale.X;
+            FramePerSecond.Value = _item.FramePerSecond;
 
             _isUpdatingByReceivedData = false;
         }

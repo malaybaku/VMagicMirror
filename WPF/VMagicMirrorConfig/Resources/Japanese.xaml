@@ -102,6 +102,8 @@
     <sys:String x:Key="ExTracker_FaceSwitch">表情スイッチ</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
 「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">アクセサリーオプションを表示</sys:String>
+    <sys:String x:Key="ExTracker_FaceSwitch_AccessoryLabel">アクセサリー:</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_KeepLipSync">リップシンクを続行</sys:String>
 
     
@@ -147,6 +149,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Accessory_Item_Position">Position</sys:String>
     <sys:String x:Key="Accessory_Item_Rotation">Rotation</sys:String>
     <sys:String x:Key="Accessory_Item_Scale">Scale</sys:String>
+    <sys:String x:Key="Accessory_Item_Fps">FPS (連番画像のみ)</sys:String>
 
     
     <!-- Settings General -->
@@ -291,9 +294,13 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Layout_Camera_HowTo_Content" xml:space="preserve">フリーカメラモードをオンにすると、
 以下のカメラ操作ができます。
        
-- 右クリック + ドラッグ: 回転
-- 中クリック + ドラッグ: 並行移動
-- マウスホイール: 前後に移動</sys:String>    
+前後移動: マウスホイール
+回転 (以下いずれか):
+- 右クリック + ドラッグ
+- Altキー + 左クリック + ドラッグ
+並行移動 (以下いずれか):
+- 中クリック + ドラッグ
+- Shiftキー + 左クリック + ドラッグ</sys:String>    
     <sys:String x:Key="Layout_EnableFreeCameraMode">フリーカメラモード</sys:String>
     <sys:String x:Key="Layout_Camera_ResetPosition">位置をリセット</sys:String>
     <sys:String x:Key="Layout_Camera_Fov">視野角 [deg]</sys:String>
@@ -416,9 +423,13 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     
     <sys:String x:Key="WordToMotion_Motion_Custom_Label">モーション</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Hint">モーションを選択</sys:String>
-    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">使い方 (Webページを開きます)</sys:String>
+    <sys:String x:Key="WordToMotion_Motion_Custom_HowTo">使い方...</sys:String>
     <sys:String x:Key="WordToMotion_Motion_Custom_Doctor">モーションデータを診断</sys:String>
 
+    <sys:String x:Key="WordToMotion_Accessory_Header">アクセサリー</sys:String>
+    <sys:String x:Key="WordToMotion_Accessory_Placeholder">アクセサリーを選択</sys:String>
+    <sys:String x:Key="WordToMotion_Accessory_Notice">*モーション実行中のみ表示されます</sys:String>
+    
     <sys:String x:Key="WordToMotion_Face_Header">表情</sys:String>
     <sys:String x:Key="WordToMotion_Face_Enable">表情の動作を有効化</sys:String>
     <sys:String x:Key="WordToMotion_Face_Duration">(全身モーションが「なし」の場合) 表情の変化時間 [sec]</sys:String>

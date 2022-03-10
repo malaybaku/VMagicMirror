@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {

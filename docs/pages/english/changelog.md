@@ -11,6 +11,29 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.2
+{: .doc-sec2 }
+
+2022/02/28
+
+* Add: Word to Motion and Face Switch features support option to show accessory during motion or facial expression is active.
+* Change: Numbered png accessory plays from start when it is hidden and re-shown.
+* Fix: Reduce the cases that avatar's transparent parts are rendered in front of image accessory.
+
+
+#### v2.0.1
+{: .doc-sec2 }
+
+2022/01/28
+
+* Add: Support numberd png animation for accessory feature.
+* Add: `World` option in accessory to fix item in 3D space.
+* Change: Improve look and usability for free layout mode gizmos.
+* Change: Add IPv6 support for iFacialMocap connection.
+* Change: In free camera mode, add left click based input patterns to support laptop users' usability without mouse.
+* Fix: Issue that specific environments might lead crash.
+* Fix: Limit full screen mode. Here `Screen Mode` means non-title bar screen mode (which was allowed in very-old version), and normal full screen is available.
+
 #### v2.0.0
 {: .doc-sec2 }
 

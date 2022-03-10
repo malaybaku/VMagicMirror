@@ -61,6 +61,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -85,6 +86,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &7229973214667890943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,7 +130,9 @@ MonoBehaviour:
   mode: 0
   global: 0
   useDistance: 1
-  distance: 10
+  distance: 12
+  xyPlaneMode: 0
+  gizmoRenderer: {fileID: 0}
 --- !u!114 &2191938032076595646
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -32,15 +33,13 @@ namespace Baku.VMagicMirrorConfig
 
         private readonly MouseHook _mouseHook = new MouseHook();
         private readonly IMessageSender _sender;
+        private readonly MessageLoopThread _messageLoopThread = new MessageLoopThread();
 
-        public void Start()
-        {
-            _mouseHook.Start();
-        }
+        public void Start() => _messageLoopThread.Run(
+            () => _mouseHook.Start(),
+            () => _mouseHook.Dispose()
+        );
 
-        public void Dispose()
-        {
-            _mouseHook.Dispose();
-        }
+        public void Dispose() => _messageLoopThread.Stop();
     }
 }

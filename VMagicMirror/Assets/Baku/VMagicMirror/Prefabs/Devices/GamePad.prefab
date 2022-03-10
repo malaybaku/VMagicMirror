@@ -31,37 +31,6 @@ Transform:
   m_Father: {fileID: 3335174451244510248}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &269207497267317396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4082638298871541156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  assignOriginalMeshOnDisable: 1
-  updateMode: 0
-  normalsRecalculation: 0
-  boundsRecalculation: 0
-  colliderRecalculation: 0
-  meshCollider: {fileID: 0}
-  data:
-    OriginalMesh: {fileID: -2674794254407590982, guid: 0c17954af6b183e40a098f208aaa4fbe,
-      type: 3}
-    Target:
-      meshFilter: {fileID: 309757573418711227}
-      skinnedMeshRenderer: {fileID: 0}
-    initialized: 1
-  deformerElements:
-  - component: {fileID: 3938523069641137890}
-    active: 1
-  customBounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &5073490903193602684
 GameObject:
   m_ObjectHideFlags: 0
@@ -169,7 +138,9 @@ MonoBehaviour:
   mode: 0
   global: 0
   useDistance: 1
-  distance: 10
+  distance: 12
+  xyPlaneMode: 0
+  gizmoRenderer: {fileID: 0}
 --- !u!114 &5626418132133974600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,3 +409,34 @@ MeshRenderer:
     type: 3}
   m_PrefabInstance: {fileID: 3776576387208024309}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &269207497267317396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4082638298871541156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: -2674794254407590982, guid: 0c17954af6b183e40a098f208aaa4fbe,
+      type: 3}
+    Target:
+      meshFilter: {fileID: 309757573418711227}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 3938523069641137890}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}

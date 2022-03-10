@@ -43,7 +43,7 @@ Please check following points about external tracker app.
 #### Limitations
 {: .doc-sec2 .no_toc }
 
-You need enough new iPhone or iPad, which supports Face ID or has A12 Bionic chip (or newer chip).
+If you want to use iOS device, it must be enough new iPhone or iPad, which supports Face ID or has A12 Bionic chip (or newer chip).
 
 <div class="doc-ul" markdown="1">
 
@@ -52,6 +52,9 @@ You need enough new iPhone or iPad, which supports Face ID or has A12 Bionic chi
 - [iPhone Models("See All Models" will show all models' chip)](https://www.apple.com/iphone/compare/)
 
 </div>
+
+Also you have option to use Android device.
+
 
 Also please be aware of following points.
 
@@ -92,7 +95,11 @@ By checking this, VMagicMirror become ready to connect with external apps.
 
 Please see per-app specific setup process.
 
-**[iFacialMocap](./external_tracker_ifacialmocap)**
+iOS: **[iFacialMocap](./external_tracker_ifacialmocap)**
+
+Android: **[MeowFace](./external_tracker_meowface)**
+
+iFacialMocap is the recommended way because of its higher performance.
 
 (*This area will be updated when other app supported.)
 
@@ -154,3 +161,9 @@ For example, you can assign a special face expression for tongue out condition, 
 `Word to Motion` feature has higher priority. When face switch and `Word to Motion` input runs simultaneously, then `Word to Motion` output is applied.
 
 </div>
+
+Also v2.0.2 and later version support accessory visibility control during Face Switch is applied.
+
+Check `Show Accessory Option` to show accessory visibility selection.
+
+See [Accessory](./accessory) page for the detail of accessory feature.

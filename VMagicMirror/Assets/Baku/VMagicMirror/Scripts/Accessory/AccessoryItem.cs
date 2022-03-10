@@ -26,17 +26,63 @@ namespace Baku.VMagicMirror
         public string FileId => _file?.FileId ?? "";
 
         private AccessoryFile _file = null;
-        private AccessoryFileDisposer _disposer = null;
+        private IAccessoryFileActions _fileActions = null;
         private Camera _cam = null;
 
         private Animator _animator = null;
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones =
             new Dictionary<AccessoryAttachTarget, Transform>();
 
+        private bool _visibleByWordToMotion;
+        public bool VisibleByWordToMotion
+        {
+            get => _visibleByWordToMotion;
+            set
+            {
+                if (_visibleByWordToMotion != value)
+                {
+                    _visibleByWordToMotion = value;
+                    SetVisibility(ShouldBeVisible);
+                }
+            }
+        }
+
+        private bool _visibleByFaceSwitch;
+        public bool VisibleByFaceSwitch
+        {
+            get => _visibleByFaceSwitch;
+            set
+            {
+                if (_visibleByFaceSwitch != value)
+                {
+                    _visibleByFaceSwitch = value;
+                    SetVisibility(ShouldBeVisible);
+                }
+            }
+        }
+
+        public bool ShouldBeVisible
+        {
+            get
+            {
+                if (_file == null || _animator == null || ItemLayout == null)
+                {
+                    return false;
+                }
+
+                return 
+                    ItemLayout.IsVisible ||
+                    VisibleByWordToMotion ||
+                    VisibleByFaceSwitch;
+            }
+        }
+        
         /// <summary>
         /// Unity上でTransformControlによってレイアウトが編集されており、その変更WPFに送信されていない場合にtrueになるフラグ
         /// </summary>
         public bool HasLayoutChange { get; private set; }
+
+        private bool ShouldAdjustBillboard => ShouldBeVisible && ItemLayout.UseBillboardMode;
 
         public void ConfirmLayoutChange() => HasLayoutChange = false;
 
@@ -58,13 +104,16 @@ namespace Baku.VMagicMirror
                     var glbContext = AccessoryFileReader.LoadGlb(file.FilePath, file.Bytes);
                     var glbObj = glbContext.Object;
                     glbObj.transform.SetParent(modelParent);
-                    _disposer = glbContext.Disposer;
+                    _fileActions = glbContext.Actions;
                     break;
                 case AccessoryType.Gltf:
                     var gltfContext = AccessoryFileReader.LoadGltf(file.FilePath, file.Bytes);
                     var gltfObj = gltfContext.Object; 
                     gltfObj.transform.SetParent(modelParent);
-                    _disposer = gltfContext.Disposer;
+                    _fileActions = gltfContext.Actions;
+                    break;
+                case AccessoryType.NumberedPng:
+                    InitializeAnimatableImage(file);
                     break;
                 default:
                     LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
@@ -76,7 +125,7 @@ namespace Baku.VMagicMirror
         //ファイル等から動的ロードしたものも含めて、アクセサリのリソースを解放し、ゲームオブジェクトを破棄します。
         public void Dispose()
         {
-            _disposer?.Dispose();
+            _fileActions?.Dispose();
             Destroy(gameObject);
         }
 
@@ -84,10 +133,22 @@ namespace Baku.VMagicMirror
         {
             transformControl.DragEnded += UpdateLayout;
         }
+
+        private void Update()
+        {
+            if (ShouldBeVisible)
+            {
+                _fileActions.Update(Time.deltaTime);
+            }
+        }
         
         private void LateUpdate()
         {
             UpdateIfBillboard();
+            if (ShouldAdjustBillboard)
+            {
+                transformControl.RequestUpdateGizmo();
+            }
         }
 
         private void OnDestroy()
@@ -102,9 +163,25 @@ namespace Baku.VMagicMirror
         {
             var context = AccessoryFileReader.LoadPngImage(file.Bytes);
             var tex = context.Object;
-            _disposer = context.Disposer;
+            _fileActions = context.Actions;
             
             imageRenderer.material.mainTexture = tex;
+            SetImageRendererAspect(tex);
+        }
+
+        private void InitializeAnimatableImage(AccessoryFile file)
+        {
+            var context = AccessoryFileReader.LoadNumberedPngImage(file.Binaries);
+            context.Object.Renderer = imageRenderer;
+            _fileActions = context.Actions;
+            
+            var tex = context.Object.FirstTexture;
+            imageRenderer.material.mainTexture = tex;
+            SetImageRendererAspect(tex);
+        }
+
+        private void SetImageRendererAspect(Texture2D tex)
+        {
             if (tex.width < tex.height)
             {
                 var aspect = tex.width * 1.0f / tex.height;
@@ -121,6 +198,7 @@ namespace Baku.VMagicMirror
 
         private void SetVisibility(bool visible)
         {
+            _fileActions?.OnVisibilityChanged(visible);
             if (_file == null || !visible)
             {
                 imageRenderer.gameObject.SetActive(false);
@@ -132,6 +210,7 @@ namespace Baku.VMagicMirror
             switch (_file.Type)
             {
                 case AccessoryType.Png:
+                case AccessoryType.NumberedPng:
                     imageRenderer.gameObject.SetActive(true);
                     modelParent.gameObject.SetActive(false);
                     break;
@@ -156,6 +235,7 @@ namespace Baku.VMagicMirror
         {
             HasLayoutChange = false;
             ItemLayout = layout;
+            _fileActions?.UpdateLayout(layout);
             if (_animator == null)
             {
                 return;
@@ -163,23 +243,25 @@ namespace Baku.VMagicMirror
 
             //glb/gltfは本質的に3Dなんだから2Dモードは不要、と考えて弾く。
             //カメラのnear clipを突き抜けてヘンなことになるのを防ぐ狙いもある
-            if (ItemLayout.UseBillboardMode && _file.Type != AccessoryType.Png)
+            if (ItemLayout.UseBillboardMode && 
+                (_file.Type != AccessoryType.Png && _file.Type != AccessoryType.NumberedPng))
             {
                 ItemLayout.UseBillboardMode = false;
             }
-            transformControl.xyPlaneMode = ItemLayout.UseBillboardMode;
+            //ビルボードモードではLateUpdateでアイテムを動かすときがGizmoの更新タイミングになるので、手動更新にする
+            transformControl.AutoUpdateGizmo = !ItemLayout.UseBillboardMode;
+            transformControl.XyPlaneMode = ItemLayout.UseBillboardMode;
             
-            SetVisibility(ItemLayout.IsVisible);
-
-            if (!ItemLayout.IsVisible)
-            {
-                return;
-            }
-
+            SetVisibility(ShouldBeVisible);
+            
+            //アイテムとして不可視であっても位置をあわせる: 後から表情経由で表示されるかもしれないため。
             if (!_attachBones.TryGetValue(ItemLayout.AttachTarget, out var bone))
             {
-                //普通ここは通らない
-                return;
+                // ワールド固定の場合、ここを通過してSetParent(null)が呼ばれることでワールドに固定される
+                if (ItemLayout.AttachTarget != AccessoryAttachTarget.World)
+                {
+                    return;
+                }
             }
             
             if (ItemLayout.UseBillboardMode)
@@ -247,7 +329,8 @@ namespace Baku.VMagicMirror
             {
                 SetLayout(ItemLayout);
             }
-            SetVisibility(ItemLayout?.IsVisible == true);
+
+            SetVisibility(ShouldBeVisible);
         }
 
         /// <summary>
@@ -274,9 +357,11 @@ namespace Baku.VMagicMirror
             }
 
             transformControl.global = request.WorldCoordinate;
-            transformControl.mode = ItemLayout.IsVisible ? request.Mode : TransformControl.TransformMode.None;
+            //NOTE: 表情やモーションに付随して一瞬表示されるような状態に対しては位置編集UIは出さない
+            var visible = ItemLayout.IsVisible;
+            transformControl.mode = visible ? request.Mode : TransformControl.TransformMode.None;
 
-            if (!ItemLayout.IsVisible)
+            if (!visible)
             {
                 return;
             }
@@ -408,7 +493,7 @@ namespace Baku.VMagicMirror
         
         private void UpdateIfBillboard()
         {
-            if (_animator == null || ItemLayout == null || !ItemLayout.UseBillboardMode)
+            if (!ShouldAdjustBillboard)
             {
                 return;
             }

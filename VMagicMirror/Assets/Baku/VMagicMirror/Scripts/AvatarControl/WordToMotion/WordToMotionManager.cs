@@ -5,8 +5,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    //TODO: noddingとshakingをどうにか特別扱いして起動させたい…
-    
+    //TODO: GODじゃなくなってほしすぎる
     //NOTE: このクラスが(半分神になっちゃうのが気に入らんが)やること
     // - プレビューのon/off : プレビューがオンの場合、プレビューが全てに優先する
     // - プレビューではないワードベースモーションのon/off :
@@ -90,6 +89,7 @@ namespace Baku.VMagicMirror
                     _blendShape.KeepLipSync = false;
                     StopPreviewBuiltInMotion();
                     StopPreviewCustomMotion();
+                    _accessoryVisibilityRequest.Value = "";
                 }
             }
         }
@@ -102,6 +102,11 @@ namespace Baku.VMagicMirror
 
         /// <summary>プレビュー動作の内容。</summary>
         public MotionRequest PreviewRequest { get; set; }
+        
+        private readonly ReactiveProperty<string> _accessoryVisibilityRequest 
+            = new ReactiveProperty<string>("");
+        /// <summary> 表示してほしいアクセサリーのFileIdか、または空文字 </summary>
+        public IReadOnlyReactiveProperty<string> AccessoryVisibilityRequest => _accessoryVisibilityRequest;
 
         private HeadMotionClipPlayer _headMotionClipPlayer = null;
         private WordToMotionMapper _mapper = null;
@@ -310,7 +315,15 @@ namespace Baku.VMagicMirror
 
             if (EnablePreview && PreviewRequest != null)
             {
+                _accessoryVisibilityRequest.Value = PreviewRequest.AccessoryName;
                 ApplyPreviewBlendShape();
+            }
+
+            if (!EnablePreview)
+            {
+                _accessoryVisibilityRequest.Value = (IsPlayingMotion || IsPlayingBlendShape) && _currentMotionRequest != null 
+                    ? _currentMotionRequest.AccessoryName
+                    : "";
             }
         }
 

@@ -23,6 +23,8 @@ namespace Baku.VMagicMirrorConfig
 
         public string CustomMotionClipName { get; set; } = "";
 
+        public string AccessoryName { get; set; } = "";
+
         public float DurationWhenOnlyBlendShape { get; set; } = 3.0f;
 
         /// <summary>

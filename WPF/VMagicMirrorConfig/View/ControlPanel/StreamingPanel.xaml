@@ -389,6 +389,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -398,15 +399,16 @@
                             <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                                       Margin="10,0"
                                       IsChecked="{Binding MotionSetting.EnableNoHandTrackMode.Value}"
-                                      >
-                                <CheckBox.Content>
-                                    <TextBlock Text="{DynamicResource Motion_FullBody_NoHandTrackMode_Streaming}"/>
-                                </CheckBox.Content>
-                            </CheckBox>
+                                      Content="{DynamicResource Motion_FullBody_NoHandTrackMode_Streaming}"/>
+
+                            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                      Margin="10,0"
+                                      IsChecked="{Binding MotionSetting.EnableTwistBodyMotion.Value}"
+                                      Content="{DynamicResource Motion_FullBody_TwistBodyMotion}"/>
                             
-                            <TextBlock Grid.Row="1" Grid.Column="0"
+                            <TextBlock Grid.Row="2" Grid.Column="0"
                                        Text="{DynamicResource Motion_Arm_MouseAndKeyMode}"/>
-                            <ComboBox Grid.Row="1" Grid.Column="1"
+                            <ComboBox Grid.Row="2" Grid.Column="1"
                                       Margin="10,3" 
                                       Height="30"
                                       IsEnabled="{Binding MotionSetting.EnableNoHandTrackMode.Value, 
@@ -428,8 +430,8 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                             
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Motion_Arm_GamepadMode}"/>
-                            <ComboBox Grid.Row="2" Grid.Column="1"
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Motion_Arm_GamepadMode}"/>
+                            <ComboBox Grid.Row="3" Grid.Column="1"
                                       Margin="10,3" 
                                       IsEnabled="{Binding MotionSetting.EnableNoHandTrackMode.Value, 
                                                           Converter={StaticResource BooleanReverseConverter}}"

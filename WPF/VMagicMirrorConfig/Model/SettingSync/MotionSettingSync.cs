@@ -20,6 +20,7 @@ namespace Baku.VMagicMirrorConfig
             //NOTE: 長大になってるのはプロパティの初期化仕様によるもの。半手動でテキスト変換して作ってます
 
             EnableNoHandTrackMode = new RProperty<bool>(setting.EnableNoHandTrackMode, v => SendMessage(factory.EnableNoHandTrackMode(v)));
+            EnableTwistBodyMotion = new RProperty<bool>(setting.EnableTwistBodyMotion, v => SendMessage(factory.EnableTwistBodyMotion(v)));
 
             EnableFaceTracking = new RProperty<bool>(setting.EnableFaceTracking, v => SendMessage(factory.EnableFaceTracking(v)));
             AutoBlinkDuringFaceTracking = new RProperty<bool>(setting.AutoBlinkDuringFaceTracking, v => SendMessage(factory.AutoBlinkDuringFaceTracking(v)));
@@ -124,6 +125,8 @@ namespace Baku.VMagicMirrorConfig
         #region Full Body 
 
         public RProperty<bool> EnableNoHandTrackMode { get; }
+
+        public RProperty<bool> EnableTwistBodyMotion { get; }
 
         #endregion
 

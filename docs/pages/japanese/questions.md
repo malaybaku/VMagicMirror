@@ -263,7 +263,7 @@ VMagicMirrorのzipファイルはサイズが大きいため、お使いのネ�
 <div class="doc-ul" markdown="1">
 
 - [製作者Twitter](https://twitter.com/baku_dreameater)へのDM
-- [BOOTHショップ問い合わせ](https://accounts.booth.pm/conversations/10624381/messages)
+- [BOOTHショップ](https://baku-dreameater.booth.pm/)の問い合わせ
 - [GitHubの新規issue](https://github.com/malaybaku/VMagicMirror/issues/new)
 
 </div>

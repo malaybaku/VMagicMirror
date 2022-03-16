@@ -260,17 +260,15 @@ VMagicMirrorのzipファイルはサイズが大きいため、お使いのネ�
 
 その他の質問や要望は以下いずれかの方法でご連絡ください。
 
-連絡方法:
-
 <div class="doc-ul" markdown="1">
 
 - [製作者Twitter](https://twitter.com/baku_dreameater)へのDM
-- [BOOTHショップ](https://baku-dreameater.booth.pm/)の問い合わせ
+- [BOOTHショップ問い合わせ](https://accounts.booth.pm/conversations/10624381/messages)
 - [GitHubの新規issue](https://github.com/malaybaku/VMagicMirror/issues/new)
 
 </div>
 
-ご連絡の際は次のことに留意してください。
+ご連絡にあたっては以下に留意してください。
 
 <div class="doc-ul" markdown="1">
 

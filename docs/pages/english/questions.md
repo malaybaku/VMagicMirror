@@ -256,7 +256,7 @@ Please use one of following way for other feedbacks.
 <div class="doc-ul" markdown="1">
 
 - [Twitter](https://twitter.com/baku_dreameater) DM
-- [BOOTH Shop](https://baku-dreameater.booth.pm/) contact link
+- [BOOTH Shop Message](https://accounts.booth.pm/conversations/10624381/messages)
 - [Make issue on GitHub](https://github.com/malaybaku/VMagicMirror/issues/new)
 
 </div>

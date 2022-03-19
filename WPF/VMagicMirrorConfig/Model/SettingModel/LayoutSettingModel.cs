@@ -7,6 +7,10 @@ namespace Baku.VMagicMirrorConfig
 {
     class LayoutSettingModel : SettingModelBase<LayoutSetting>
     {
+        public LayoutSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        {
+        }
+
         public LayoutSettingModel(IMessageSender sender) : base(sender)
         {
             var s = LayoutSetting.Default;

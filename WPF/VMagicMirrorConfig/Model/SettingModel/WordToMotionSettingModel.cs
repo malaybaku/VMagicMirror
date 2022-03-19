@@ -8,6 +8,12 @@ namespace Baku.VMagicMirrorConfig
 {
     class WordToMotionSettingModel : SettingModelBase<WordToMotionSetting>
     {
+        public WordToMotionSettingModel()
+            : this(ModelResolver.Instance.Resolve<IMessageSender>(), ModelResolver.Instance.Resolve<IMessageReceiver>())
+        {
+        }
+
+
         public WordToMotionSettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             var settings = WordToMotionSetting.Default;

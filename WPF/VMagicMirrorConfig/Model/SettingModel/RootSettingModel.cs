@@ -9,22 +9,21 @@ namespace Baku.VMagicMirrorConfig
     /// </summary>
     class RootSettingModel
     {
-        public RootSettingModel(IMessageSender sender, IMessageReceiver receiver)
+        public RootSettingModel()
         {
+            var resolver = ModelResolver.Instance;
+            _sender = resolver.Resolve<IMessageSender>();
+            Window = resolver.Resolve<WindowSettingModel>();
+            Motion = resolver.Resolve<MotionSettingModel>();
+            Layout = resolver.Resolve<LayoutSettingModel>();
+            Gamepad = resolver.Resolve<GamepadSettingModel>();
+            Light = resolver.Resolve<LightSettingModel>();
+            WordToMotion = resolver.Resolve<WordToMotionSettingModel>();
+            ExternalTracker = resolver.Resolve<ExternalTrackerSettingModel>();
+            Automation = resolver.Resolve<AutomationSettingModel>();
+            Accessory = resolver.Resolve<AccessorySettingModel>();
+
             AvailableLanguageNames = new ReadOnlyObservableCollection<string>(_availableLanguageNames);
-
-            _sender = sender;
-
-            Window = new WindowSettingModel(sender);
-            Motion = new MotionSettingModel(sender);
-            Layout = new LayoutSettingModel(sender);
-            Gamepad = new GamepadSettingModel(sender);
-            Light = new LightSettingModel(sender);
-            WordToMotion = new WordToMotionSettingModel(sender, receiver);
-            ExternalTracker = new ExternalTrackerSettingModel(sender);
-            Automation = new AutomationSettingModel(sender);
-            Accessory = new AccessorySettingModel(sender, receiver);
-
             //NOTE; LanguageSelectorとの二重管理っぽくて若干アレだがこのままで行く
             //初期値Defaultを入れることで、起動直後にPCのカルチャベースで言語を指定しなきゃダメかどうか判別する
             LanguageName = new RProperty<string>("Default", s =>

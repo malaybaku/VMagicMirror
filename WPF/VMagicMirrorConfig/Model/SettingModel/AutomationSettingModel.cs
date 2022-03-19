@@ -4,6 +4,10 @@ namespace Baku.VMagicMirrorConfig
 {
     class AutomationSettingModel : SettingModelBase<AutomationSetting>, IDisposable
     {
+        public AutomationSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        {
+        }
+
         public AutomationSettingModel(IMessageSender sender) : base(sender)
         {
             var setting = AutomationSetting.Default;

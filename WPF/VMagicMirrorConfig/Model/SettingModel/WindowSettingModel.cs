@@ -2,6 +2,10 @@
 {
     class WindowSettingModel : SettingModelBase<WindowSetting>
     {
+        public WindowSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        {
+        }
+
         public WindowSettingModel(IMessageSender sender) : base(sender)
         {
             var setting = WindowSetting.Default;

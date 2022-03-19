@@ -14,7 +14,7 @@ namespace Baku.VMagicMirrorConfig
         internal SettingFileIo SettingFileIo { get; }
         internal SaveFileManager SaveFileManager { get; }
 
-        internal MessageIo MessageIo { get; } = new MessageIo();
+        internal MessageIo MessageIo { get; }
         internal IMessageSender MessageSender => MessageIo.Sender;
 
         public WindowSettingViewModel WindowSetting { get; private set; }
@@ -39,10 +39,12 @@ namespace Baku.VMagicMirrorConfig
 
         public MainWindowViewModel()
         {
-            Model = new RootSettingModel(MessageSender, MessageIo.Receiver);
-            SettingFileIo = new SettingFileIo(Model, MessageSender);
-            SaveFileManager = new SaveFileManager(SettingFileIo, Model, MessageSender);
+            Model = ModelResolver.Instance.Resolve<RootSettingModel>();
+            SettingFileIo = ModelResolver.Instance.Resolve<SettingFileIo>();
+            SaveFileManager = ModelResolver.Instance.Resolve<SaveFileManager>();
+            MessageIo = ModelResolver.Instance.Resolve<MessageIo>();
 
+            //TODO: この下のViewModel達は必要に応じて生成されるようにしたい
             WindowSetting = new WindowSettingViewModel(Model.Window, MessageSender);
             MotionSetting = new MotionSettingViewModel(Model.Motion, MessageSender, MessageIo.Receiver);
             GamepadSetting = new GamepadSettingViewModel(Model.Gamepad, MessageSender);

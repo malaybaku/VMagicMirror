@@ -9,6 +9,14 @@ namespace Baku.VMagicMirrorConfig
         /// <summary>保存できるファイルの数。1始まりで管理し、状況次第で0はオートセーブ扱いする。</summary>
         public const int FileCount = 15;
 
+        public SaveFileManager() : this(
+            ModelResolver.Instance.Resolve<SettingFileIo>(),
+            ModelResolver.Instance.Resolve<RootSettingModel>(),
+            ModelResolver.Instance.Resolve<IMessageSender>()
+            )
+        {
+        }
+
         public SaveFileManager(SettingFileIo fileIo, RootSettingModel setting, IMessageSender sender)
         {
             SettingFileIo = fileIo;

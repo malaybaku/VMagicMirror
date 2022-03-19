@@ -7,6 +7,11 @@ namespace Baku.VMagicMirrorConfig
 {
     class AccessorySettingModel : SettingModelBase<AccessorySetting>
     {
+        public AccessorySettingModel() 
+            : this(ModelResolver.Instance.Resolve<IMessageSender>(), ModelResolver.Instance.Resolve<IMessageReceiver>())
+        {
+        }
+
         public AccessorySettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             receiver.ReceivedCommand += OnReceivedCommand;

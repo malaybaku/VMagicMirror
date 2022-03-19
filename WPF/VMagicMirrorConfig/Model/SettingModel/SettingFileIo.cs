@@ -9,6 +9,11 @@ namespace Baku.VMagicMirrorConfig
     /// <summary> 設定ファイルの読み書きを行う、わりと権力のあるクラス。 </summary>
     class SettingFileIo
     {
+        public SettingFileIo()
+            : this(ModelResolver.Instance.Resolve<RootSettingModel>(), ModelResolver.Instance.Resolve<IMessageSender>())
+        {
+        }
+
         /// <summary>
         /// ファイルI/Oを行うときに操作対象とするモデルを指定してインスタンスを初期化します。
         /// </summary>

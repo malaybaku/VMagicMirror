@@ -5,10 +5,14 @@ using System.Threading.Tasks;
 namespace Baku.VMagicMirrorConfig
 {
     /// <summary>
-    /// 値を書き換えたときに良い感じに通信でき、かつロード/セーブに対応したエフェクト関連のモデル
+    /// エフェクト関連のモデル。ライト以外も扱っているが、歴史的経緯でライトということになっている
     /// </summary>
     class LightSettingModel : SettingModelBase<LightSetting>
     {
+        public LightSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        {
+        }
+
         public LightSettingModel(IMessageSender sender) : base(sender)
         {
             var s = LightSetting.Default;

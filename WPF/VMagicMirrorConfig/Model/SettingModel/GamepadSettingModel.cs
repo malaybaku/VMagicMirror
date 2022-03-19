@@ -10,6 +10,10 @@
             public const string GamepadLeanLeftButtons = nameof(GamepadLeanLeftButtons);
         }
 
+        public GamepadSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        {
+        }
+
         public GamepadSettingModel(IMessageSender sender) : base(sender)
         {
             var s = GamepadSetting.Default;

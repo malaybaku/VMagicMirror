@@ -4,6 +4,10 @@ namespace Baku.VMagicMirrorConfig
 {
     class ExternalTrackerSettingModel : SettingModelBase<ExternalTrackerSetting>
     {
+        public ExternalTrackerSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        {
+        }
+
         public ExternalTrackerSettingModel(IMessageSender sender) : base(sender)
         {
             var setting = ExternalTrackerSetting.Default;

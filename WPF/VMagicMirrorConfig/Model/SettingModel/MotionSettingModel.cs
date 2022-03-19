@@ -12,6 +12,11 @@ namespace Baku.VMagicMirrorConfig
             public const string UseLookAtPointMainCamera = nameof(UseLookAtPointMainCamera);
         }
 
+        public MotionSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        {
+        }
+
+
         public MotionSettingModel(IMessageSender sender) : base(sender)
         {
             var factory = MessageFactory.Instance;

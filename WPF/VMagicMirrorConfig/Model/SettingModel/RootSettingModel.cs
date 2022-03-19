@@ -15,12 +15,12 @@ namespace Baku.VMagicMirrorConfig
 
             _sender = sender;
 
-            Window = new WindowSettingSync(sender);
+            Window = new WindowSettingModel(sender);
             Motion = new MotionSettingModel(sender);
             Layout = new LayoutSettingModel(sender);
             Gamepad = new GamepadSettingModel(sender);
             Light = new LightSettingModel(sender);
-            WordToMotion = new WordToMotionSettingSync(sender, receiver);
+            WordToMotion = new WordToMotionSettingModel(sender, receiver);
             ExternalTracker = new ExternalTrackerSettingModel(sender);
             Automation = new AutomationSettingModel(sender);
             Accessory = new AccessorySettingModel(sender, receiver);
@@ -60,7 +60,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> LoadCharacterWhenLoadInternalFile { get; } = new RProperty<bool>(true);
         public RProperty<bool> LoadNonCharacterWhenLoadInternalFile { get; } = new RProperty<bool>(false);
 
-        public WindowSettingSync Window { get; }
+        public WindowSettingModel Window { get; }
 
         public MotionSettingModel Motion { get; }
 
@@ -70,7 +70,7 @@ namespace Baku.VMagicMirrorConfig
 
         public LightSettingModel Light { get; }
 
-        public WordToMotionSettingSync WordToMotion { get; }
+        public WordToMotionSettingModel WordToMotion { get; }
 
         public ExternalTrackerSettingModel ExternalTracker { get; }
 

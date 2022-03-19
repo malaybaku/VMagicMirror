@@ -59,6 +59,7 @@ namespace Baku.VMagicMirror
         
         // Motion, Body
         public const string EnableNoHandTrackMode = nameof(EnableNoHandTrackMode);
+        public const string EnableTwistBodyMotion = nameof(EnableTwistBodyMotion);
         public const string EnableBodyLeanZ = nameof(EnableBodyLeanZ);
 
         // Motion, Face

@@ -7,7 +7,7 @@
     /// </summary>
     class RuntimeHelper
     {
-        public RuntimeHelper(IMessageSender sender, IMessageReceiver receiver, RootSettingSync mainModel)
+        public RuntimeHelper(IMessageSender sender, IMessageReceiver receiver, RootSettingModel mainModel)
         {
             _sender = sender;
             _receiver = receiver;

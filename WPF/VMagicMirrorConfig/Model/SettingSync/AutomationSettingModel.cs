@@ -2,9 +2,9 @@
 
 namespace Baku.VMagicMirrorConfig
 {
-    class AutomationSettingSync : SettingSyncBase<AutomationSetting>, IDisposable
+    class AutomationSettingModel : SettingModelBase<AutomationSetting>, IDisposable
     {
-        public AutomationSettingSync(IMessageSender sender) : base(sender)
+        public AutomationSettingModel(IMessageSender sender) : base(sender)
         {
             var setting = AutomationSetting.Default;
 

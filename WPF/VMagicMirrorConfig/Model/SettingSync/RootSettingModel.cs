@@ -7,22 +7,22 @@ namespace Baku.VMagicMirrorConfig
     /// ファイルに保存すべき設定のモデル層を直接的に全部保持したクラス。
     /// MainWindowの裏にあり、アプリの生存期間中つねに単一のインスタンスがあるような使い方をします。
     /// </summary>
-    class RootSettingSync
+    class RootSettingModel
     {
-        public RootSettingSync(IMessageSender sender, IMessageReceiver receiver)
+        public RootSettingModel(IMessageSender sender, IMessageReceiver receiver)
         {
             AvailableLanguageNames = new ReadOnlyObservableCollection<string>(_availableLanguageNames);
 
             _sender = sender;
 
             Window = new WindowSettingSync(sender);
-            Motion = new MotionSettingSync(sender);
-            Layout = new LayoutSettingSync(sender);
-            Gamepad = new GamepadSettingSync(sender);
-            Light = new LightSettingSync(sender);
+            Motion = new MotionSettingModel(sender);
+            Layout = new LayoutSettingModel(sender);
+            Gamepad = new GamepadSettingModel(sender);
+            Light = new LightSettingModel(sender);
             WordToMotion = new WordToMotionSettingSync(sender, receiver);
-            ExternalTracker = new ExternalTrackerSettingSync(sender);
-            Automation = new AutomationSettingSync(sender);
+            ExternalTracker = new ExternalTrackerSettingModel(sender);
+            Automation = new AutomationSettingModel(sender);
             Accessory = new AccessorySettingModel(sender, receiver);
 
             //NOTE; LanguageSelectorとの二重管理っぽくて若干アレだがこのままで行く
@@ -62,19 +62,19 @@ namespace Baku.VMagicMirrorConfig
 
         public WindowSettingSync Window { get; }
 
-        public MotionSettingSync Motion { get; }
+        public MotionSettingModel Motion { get; }
 
-        public LayoutSettingSync Layout { get; }
+        public LayoutSettingModel Layout { get; }
 
-        public GamepadSettingSync Gamepad { get; }
+        public GamepadSettingModel Gamepad { get; }
 
-        public LightSettingSync Light { get; }
+        public LightSettingModel Light { get; }
 
         public WordToMotionSettingSync WordToMotion { get; }
 
-        public ExternalTrackerSettingSync ExternalTracker { get; }
+        public ExternalTrackerSettingModel ExternalTracker { get; }
 
-        public AutomationSettingSync Automation { get; }
+        public AutomationSettingModel Automation { get; }
         public AccessorySettingModel Accessory { get; }
 
         public void InitializeAvailableLanguage(string[] languageNames)

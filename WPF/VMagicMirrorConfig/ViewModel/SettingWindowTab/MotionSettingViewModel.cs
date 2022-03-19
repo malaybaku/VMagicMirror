@@ -9,7 +9,7 @@ namespace Baku.VMagicMirrorConfig
     //TODO: モデルに引っ張られてFaceとMotionが同一ViewModelになっちゃってるが、分けるべき
     public class MotionSettingViewModel : SettingViewModelBase
     {
-        internal MotionSettingViewModel(MotionSettingSync model, IMessageSender sender, IMessageReceiver receiver) : base(sender)
+        internal MotionSettingViewModel(MotionSettingModel model, IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             _model = model;
 
@@ -76,7 +76,7 @@ namespace Baku.VMagicMirrorConfig
             ShowInstallPathWarning.Value = InstallPathChecker.HasMultiByteCharInInstallPath();
         }
 
-        private readonly MotionSettingSync _model;
+        private readonly MotionSettingModel _model;
 
         private void OnReceivedCommand(object? sender, CommandReceivedEventArgs e)
         {

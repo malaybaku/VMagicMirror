@@ -9,10 +9,10 @@ namespace Baku.VMagicMirrorConfig
     /// Entityのデータだけでなく、設定ファイルに保存しないような一時的なフラグも扱える。
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    abstract class SettingSyncBase<TEntity> : NotifiableBase
+    abstract class SettingModelBase<TEntity> : NotifiableBase
         where TEntity : SettingEntityBase, new()
     {
-        public SettingSyncBase(IMessageSender sender)
+        public SettingModelBase(IMessageSender sender)
         {
             _sender = sender;
         }

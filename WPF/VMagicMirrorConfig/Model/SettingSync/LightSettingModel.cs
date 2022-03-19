@@ -7,9 +7,9 @@ namespace Baku.VMagicMirrorConfig
     /// <summary>
     /// 値を書き換えたときに良い感じに通信でき、かつロード/セーブに対応したエフェクト関連のモデル
     /// </summary>
-    class LightSettingSync : SettingSyncBase<LightSetting>
+    class LightSettingModel : SettingModelBase<LightSetting>
     {
-        public LightSettingSync(IMessageSender sender) : base(sender)
+        public LightSettingModel(IMessageSender sender) : base(sender)
         {
             var s = LightSetting.Default;
             var factory = MessageFactory.Instance;

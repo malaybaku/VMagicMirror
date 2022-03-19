@@ -8,8 +8,8 @@ namespace Baku.VMagicMirrorConfig
     public class WordToMotionSettingViewModel : SettingViewModelBase
     {
         internal WordToMotionSettingViewModel(
-            WordToMotionSettingSync model,
-            LayoutSettingSync layoutModel,
+            WordToMotionSettingModel model,
+            LayoutSettingModel layoutModel,
             AccessorySettingModel accessoryModel,
             IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
@@ -66,8 +66,8 @@ namespace Baku.VMagicMirrorConfig
             LoadMidiSettingItems();
         }
 
-        private readonly WordToMotionSettingSync _model;
-        private readonly LayoutSettingSync _layoutModel;
+        private readonly WordToMotionSettingModel _model;
+        private readonly LayoutSettingModel _layoutModel;
         private readonly AccessorySettingModel _accessoryModel;
         private WordToMotionItemViewModel? _dialogItem;
 

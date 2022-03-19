@@ -7,19 +7,19 @@ using System.Xml.Serialization;
 namespace Baku.VMagicMirrorConfig
 {
     /// <summary> 設定ファイルの読み書きを行う、わりと権力のあるクラス。 </summary>
-    internal class SettingFileIo
+    class SettingFileIo
     {
         /// <summary>
         /// ファイルI/Oを行うときに操作対象とするモデルを指定してインスタンスを初期化します。
         /// </summary>
         /// <param name="model"></param>
-        public SettingFileIo(RootSettingSync model, IMessageSender sender)
+        public SettingFileIo(RootSettingModel model, IMessageSender sender)
         {
             _model = model;
             _sender = sender;
         }
 
-        private readonly RootSettingSync _model;
+        private readonly RootSettingModel _model;
         private readonly IMessageSender _sender;
 
         public void SaveSetting(string path, SettingFileReadWriteModes mode)

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
 {
-    class AccessorySettingModel : SettingSyncBase<AccessorySetting>
+    class AccessorySettingModel : SettingModelBase<AccessorySetting>
     {
         public AccessorySettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {

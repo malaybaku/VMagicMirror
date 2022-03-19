@@ -1,6 +1,6 @@
 ﻿namespace Baku.VMagicMirrorConfig
 {
-    class GamepadSettingSync : SettingSyncBase<GamepadSetting>
+    class GamepadSettingModel : SettingModelBase<GamepadSetting>
     {
         static class LeanModeNames
         {
@@ -10,7 +10,7 @@
             public const string GamepadLeanLeftButtons = nameof(GamepadLeanLeftButtons);
         }
 
-        public GamepadSettingSync(IMessageSender sender) : base(sender)
+        public GamepadSettingModel(IMessageSender sender) : base(sender)
         {
             var s = GamepadSetting.Default;
             var factory = MessageFactory.Instance;

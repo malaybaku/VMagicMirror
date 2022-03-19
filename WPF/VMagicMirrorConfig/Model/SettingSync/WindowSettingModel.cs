@@ -1,6 +1,6 @@
 ﻿namespace Baku.VMagicMirrorConfig
 {
-    class WindowSettingSync : SettingSyncBase<WindowSetting>
+    class WindowSettingSync : SettingModelBase<WindowSetting>
     {
         public WindowSettingSync(IMessageSender sender) : base(sender)
         {

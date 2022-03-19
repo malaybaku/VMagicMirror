@@ -3,7 +3,7 @@
     /// <summary>ゲームパッド関係の設定のViewModel。素通し設定ばかりなのでとても単純。</summary>
     public class GamepadSettingViewModel : SettingViewModelBase
     {
-        internal GamepadSettingViewModel(GamepadSettingSync model, IMessageSender sender) : base(sender)
+        internal GamepadSettingViewModel(GamepadSettingModel model, IMessageSender sender) : base(sender)
         {
             _model = model;
             ResetSettingCommand = new ActionCommand(
@@ -11,7 +11,7 @@
                 );
         }
 
-        private readonly GamepadSettingSync _model;
+        private readonly GamepadSettingModel _model;
 
         public RProperty<bool> GamepadEnabled => _model.GamepadEnabled;
         public RProperty<bool> PreferDirectInput => _model.PreferDirectInputGamepad;

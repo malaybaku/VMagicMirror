@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
 {
-    class WordToMotionSettingSync : SettingSyncBase<WordToMotionSetting>
+    class WordToMotionSettingModel : SettingModelBase<WordToMotionSetting>
     {
-        public WordToMotionSettingSync(IMessageSender sender, IMessageReceiver receiver) : base(sender)
+        public WordToMotionSettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             var settings = WordToMotionSetting.Default;
             var factory = MessageFactory.Instance;

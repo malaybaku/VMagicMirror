@@ -3,7 +3,7 @@ using System;
 
 namespace Baku.VMagicMirrorConfig
 {
-    class MotionSettingSync : SettingSyncBase<MotionSetting>
+    class MotionSettingModel : SettingModelBase<MotionSetting>
     {
         static class LookAtStyles
         {
@@ -12,7 +12,7 @@ namespace Baku.VMagicMirrorConfig
             public const string UseLookAtPointMainCamera = nameof(UseLookAtPointMainCamera);
         }
 
-        public MotionSettingSync(IMessageSender sender) : base(sender)
+        public MotionSettingModel(IMessageSender sender) : base(sender)
         {
             var factory = MessageFactory.Instance;
             var setting = MotionSetting.Default;

@@ -10,12 +10,12 @@ namespace Baku.VMagicMirrorConfig
         private readonly ExternalTrackerBlendShapeNameStore _blendShapeNameStore
             = new ExternalTrackerBlendShapeNameStore();
 
-        private readonly ExternalTrackerSettingSync _model;
-        private readonly MotionSettingSync _motionModel;
+        private readonly ExternalTrackerSettingModel _model;
+        private readonly MotionSettingModel _motionModel;
 
         internal ExternalTrackerViewModel(
-            ExternalTrackerSettingSync model,
-            MotionSettingSync motionModel,
+            ExternalTrackerSettingModel model,
+            MotionSettingModel motionModel,
             AccessorySettingModel accessoryModel,
             IMessageSender sender, 
             IMessageReceiver receiver

@@ -2,9 +2,9 @@
 
 namespace Baku.VMagicMirrorConfig
 {
-    class ExternalTrackerSettingSync : SettingSyncBase<ExternalTrackerSetting>
+    class ExternalTrackerSettingModel : SettingModelBase<ExternalTrackerSetting>
     {
-        public ExternalTrackerSettingSync(IMessageSender sender) : base(sender)
+        public ExternalTrackerSettingModel(IMessageSender sender) : base(sender)
         {
             var setting = ExternalTrackerSetting.Default;
             var factory = MessageFactory.Instance;

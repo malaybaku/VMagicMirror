@@ -9,7 +9,7 @@ namespace Baku.VMagicMirrorConfig
     public class SettingIoViewModel : SettingViewModelBase
     {
         internal SettingIoViewModel(
-            RootSettingSync rootModel, AutomationSettingSync model, SaveFileManager saveFileManager, IMessageSender sender
+            RootSettingModel rootModel, AutomationSettingModel model, SaveFileManager saveFileManager, IMessageSender sender
             ) : base(sender)
         {
             _rootModel = rootModel;
@@ -42,8 +42,8 @@ namespace Baku.VMagicMirrorConfig
 
         //NOTE: rootが必要なのは「ロード時にキャラ情報/非キャラ情報をどう扱うか」という値がRootに入っているため。
         //コレ以外の目的で使うのは濫用に当たるので注意
-        private readonly RootSettingSync _rootModel;
-        private readonly AutomationSettingSync _model;
+        private readonly RootSettingModel _rootModel;
+        private readonly AutomationSettingModel _model;
         private readonly SaveFileManager _saveFileManager;
 
         #region セーブ/ロード

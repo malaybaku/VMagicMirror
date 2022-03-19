@@ -6,7 +6,7 @@ namespace Baku.VMagicMirrorConfig
     public class LayoutSettingViewModel : SettingViewModelBase
     {
         internal LayoutSettingViewModel(
-            LayoutSettingSync model, GamepadSettingSync gamepadModel, IMessageSender sender, IMessageReceiver receiver
+            LayoutSettingModel model, GamepadSettingModel gamepadModel, IMessageSender sender, IMessageReceiver receiver
             ) : base(sender)
         {
             _model = model;
@@ -51,9 +51,9 @@ namespace Baku.VMagicMirrorConfig
 
         }
 
-        private readonly LayoutSettingSync _model;
+        private readonly LayoutSettingModel _model;
         //NOTE: ゲームパッド設定(表示/非表示)も使うため、ここに記載。ちょっと例外的な措置ではある
-        private readonly GamepadSettingSync _gamepadModel;
+        private readonly GamepadSettingModel _gamepadModel;
 
         private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
         {

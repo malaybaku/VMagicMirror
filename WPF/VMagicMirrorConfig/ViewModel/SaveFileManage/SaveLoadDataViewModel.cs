@@ -15,11 +15,11 @@ namespace Baku.VMagicMirrorConfig
         internal static SaveLoadDataViewModel CreateForSave(SaveFileManager model, Action actToClose)
             => new SaveLoadDataViewModel(null, model, false, actToClose);
 
-        internal static SaveLoadDataViewModel CreateForLoad(RootSettingSync rootModel, SaveFileManager model, Action actToClose) 
+        internal static SaveLoadDataViewModel CreateForLoad(RootSettingModel rootModel, SaveFileManager model, Action actToClose) 
             => new SaveLoadDataViewModel(rootModel, model, true, actToClose);
 
 
-        private SaveLoadDataViewModel(RootSettingSync? rootModel, SaveFileManager model, bool isLoadMode, Action actToClose)
+        private SaveLoadDataViewModel(RootSettingModel? rootModel, SaveFileManager model, bool isLoadMode, Action actToClose)
         {
             _rootModel = rootModel;
             _model = model;
@@ -37,7 +37,7 @@ namespace Baku.VMagicMirrorConfig
             Refresh();
         }
 
-        private readonly RootSettingSync? _rootModel;
+        private readonly RootSettingModel? _rootModel;
         private readonly SaveFileManager _model;
         private readonly Action _actToClose;
 

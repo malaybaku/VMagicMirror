@@ -11,7 +11,7 @@ namespace Baku.VMagicMirrorConfig
     /// </summary>
     public class LightSettingViewModel : SettingViewModelBase
     {
-        internal LightSettingViewModel(LightSettingSync model, IMessageSender sender) : base(sender)
+        internal LightSettingViewModel(LightSettingModel model, IMessageSender sender) : base(sender)
         {
             _model = model;
 
@@ -40,7 +40,7 @@ namespace Baku.VMagicMirrorConfig
             ResetImageQualitySettingCommand = new ActionCommand(ResetImageQuality);
         }
 
-        private readonly LightSettingSync _model;
+        private readonly LightSettingModel _model;
 
         public async Task InitializeQualitySelectionsAsync()
             => await _model.InitializeQualitySelectionsAsync();

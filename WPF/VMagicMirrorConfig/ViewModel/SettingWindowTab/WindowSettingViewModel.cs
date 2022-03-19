@@ -6,7 +6,7 @@ namespace Baku.VMagicMirrorConfig
 {
     public class WindowSettingViewModel : SettingViewModelBase
     {
-        internal WindowSettingViewModel(WindowSettingSync model, IMessageSender sender) : base(sender)
+        internal WindowSettingViewModel(WindowSettingModel model, IMessageSender sender) : base(sender)
         {
             _model = model;
 
@@ -32,7 +32,7 @@ namespace Baku.VMagicMirrorConfig
             UpdatePickerColor();
         }
 
-        private readonly WindowSettingSync _model;
+        private readonly WindowSettingModel _model;
 
         public RProperty<int> R => _model.R;
         public RProperty<int> G => _model.G;

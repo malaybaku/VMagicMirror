@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
 {
-    class LayoutSettingSync : SettingSyncBase<LayoutSetting>
+    class LayoutSettingModel : SettingModelBase<LayoutSetting>
     {
-        public LayoutSettingSync(IMessageSender sender) : base(sender)
+        public LayoutSettingModel(IMessageSender sender) : base(sender)
         {
             var s = LayoutSetting.Default;
             var factory = MessageFactory.Instance;

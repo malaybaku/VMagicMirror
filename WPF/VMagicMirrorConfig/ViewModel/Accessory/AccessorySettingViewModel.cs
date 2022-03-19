@@ -8,7 +8,7 @@ namespace Baku.VMagicMirrorConfig
 {
     public class AccessorySettingViewModel : ViewModelBase
     {
-        internal AccessorySettingViewModel(AccessorySettingModel model, LayoutSettingSync layoutModel)
+        internal AccessorySettingViewModel(AccessorySettingModel model, LayoutSettingModel layoutModel)
         {
             Items = new ReadOnlyObservableCollection<AccessoryItemViewModel>(_items);
             _model = model;
@@ -23,7 +23,7 @@ namespace Baku.VMagicMirrorConfig
         }
 
         private readonly AccessorySettingModel _model;
-        private readonly LayoutSettingSync _layoutModel;
+        private readonly LayoutSettingModel _layoutModel;
 
         private readonly ObservableCollection<AccessoryItemViewModel> _items 
             = new ObservableCollection<AccessoryItemViewModel>();

@@ -136,7 +136,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="50"/>
                             <RowDefinition Height="50"/>
-                            <!--<RowDefinition Height="50"/>-->
+                            <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -152,6 +152,11 @@
                                      Content="{DynamicResource ExTracker_Source_iFacialMocap}"
                                      IsChecked="{Binding IsTrackSourceIFacialMocap}"
                                      />
+                        <RadioButton Grid.Row="2" Grid.Column="0"
+                                     VerticalContentAlignment="Center"
+                                     Content="{DynamicResource ExTracker_Source_Shiori}"
+                                     IsChecked="{Binding IsTrackSourceShiori}"
+                                     />
                         <StackPanel Grid.Row="1" Grid.Column="1" 
                                     IsEnabled="{Binding IsTrackSourceIFacialMocap}"
                                     Margin="10,0"
@@ -159,13 +164,20 @@
                                     >
                             <TextBox Text="{Binding IFacialMocapTargetIpAddress.Value}"
                                      md:HintAssist.Hint="{DynamicResource ExTracker_iFM_IpHint}"
-                                     Width="150"
+                                     Width="150" Cursor="IBeam"
                                      />
                             <Button Padding="0" Margin="8"
                                     Width="100"
                                     HorizontalAlignment="Stretch"
                                     Content="Connect" 
-                                    Command="{Binding RefreshIFacialMocapTargetCommand}" />
+                                    Command="{Binding RefreshIFacialMocapTargetCommand}" Cursor="Hand" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" Grid.Column="1" 
+                                    IsEnabled="{Binding IsTrackSourceShiori}"
+                                    Margin="10,0"
+                                    Orientation="Horizontal"
+                                    >
+                            <TextBlock Text="{DynamicResource ExTracker_Source_Shiori_DefaultPort}"/>
                         </StackPanel>
                     </Grid>
 

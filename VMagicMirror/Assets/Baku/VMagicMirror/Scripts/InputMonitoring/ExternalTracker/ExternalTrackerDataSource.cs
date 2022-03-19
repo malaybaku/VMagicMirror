@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker.iFacialMocap;
+using Baku.VMagicMirror.ExternalTracker.Shiori;
 using UniRx;
 
 namespace Baku.VMagicMirror.ExternalTracker
@@ -18,6 +19,7 @@ namespace Baku.VMagicMirror.ExternalTracker
     {
         private const int SourceTypeNone = 0;
         private const int SourceTypeIFacialMocap = 1;
+        private const int SourceTypeShiori = 2;
 
         //いちど適用したFaceSwitchは最小でもこの秒数だけ維持するよ、という下限値。チャタリングを防ぐのが狙い。
         private const float FaceSwitchMinimumKeepDuration = 0.5f;
@@ -26,6 +28,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         [SerializeField] private float lossBreakRate = 3.0f;
         
         [SerializeField] private iFacialMocapReceiver iFacialMocapReceiver = null;
+        [SerializeField] private ShioriReceiver ShioriReceiver = null;
 
         [Tooltip("この秒数だけトラッキングの更新イベントが来なかった場合は受動的にロスト扱いする")]
         [SerializeField] private float notTrackCountLimit = 0.5f;
@@ -191,7 +194,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
             if (sourceType == _currentSourceType || 
                 sourceType < 0 ||
-                sourceType > SourceTypeIFacialMocap)
+                sourceType > SourceTypeShiori)
             {
                 return;
             }
@@ -251,6 +254,10 @@ namespace Baku.VMagicMirror.ExternalTracker
                 {
                     case SourceTypeIFacialMocap:
                         _currentProvider = iFacialMocapReceiver;
+                        _notTrackCount = notTrackCountLimit;
+                        break;
+                    case SourceTypeShiori:
+                        _currentProvider = ShioriReceiver;
                         _notTrackCount = notTrackCountLimit;
                         break;
                     case SourceTypeNone:

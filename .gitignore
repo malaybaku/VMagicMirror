@@ -116,3 +116,10 @@ sysinfo.txt
 /Bin/*
 /Installers/*
 /Releases/*
+
+
+VMagicMirror/Logs/*
+VMagicMirror/Assets/ExternalPlugins
+VMagicMirror/Assets/ExternalPlugins.meta
+VMagicMirror/Assets/_TerrainAutoUpgrade
+VMagicMirror/Assets/_TerrainAutoUpgrade.meta

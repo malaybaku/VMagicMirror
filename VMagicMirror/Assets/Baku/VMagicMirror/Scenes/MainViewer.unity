@@ -135,6 +135,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b157506b0989896458c4443037aeea30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &138032478 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6684675136598246404, guid: 310af0090b9f7c24bb51c8b8523fc826,
+    type: 3}
+  m_PrefabInstance: {fileID: 464634161653977221}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &138032480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138032478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82eb7ef0e6b05aa48bff1b8142d4a788, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!850595691 &159560358
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -417,6 +435,11 @@ PrefabInstance:
       propertyPath: handIk
       value: 
       objectReference: {fileID: 5813678808953247569}
+    - target: {fileID: 3222385201041346576, guid: 310af0090b9f7c24bb51c8b8523fc826,
+        type: 3}
+      propertyPath: ShioriReceiver
+      value: 
+      objectReference: {fileID: 138032480}
     - target: {fileID: 7714441295874403606, guid: 310af0090b9f7c24bb51c8b8523fc826,
         type: 3}
       propertyPath: m_RootOrder

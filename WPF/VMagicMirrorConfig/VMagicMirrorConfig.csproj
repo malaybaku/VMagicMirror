@@ -11,6 +11,7 @@
     <TrimMode>link</TrimMode>
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <ApplicationIcon>.\Images\vmmc_logo.ico</ApplicationIcon>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Images\vmmc_logo.ico" />

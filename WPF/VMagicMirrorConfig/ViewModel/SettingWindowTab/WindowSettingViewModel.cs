@@ -6,7 +6,11 @@ namespace Baku.VMagicMirrorConfig
 {
     public class WindowSettingViewModel : SettingViewModelBase
     {
-        internal WindowSettingViewModel(WindowSettingModel model, IMessageSender sender) : base(sender)
+        public WindowSettingViewModel() : this(ModelResolver.Instance.Resolve<WindowSettingModel>())
+        {
+        }
+
+        internal WindowSettingViewModel(WindowSettingModel model)
         {
             _model = model;
 

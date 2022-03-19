@@ -67,6 +67,9 @@ namespace Baku.VMagicMirrorConfig
 
         #region API
 
+        public void RequestResetCameraPosition()
+            => SendMessage(MessageFactory.Instance.ResetCameraPosition());
+
         public async Task QuickSaveViewPoint(string? index)
         {
             if (!(int.TryParse(index, out int i) && i > 0 && i <= 3))

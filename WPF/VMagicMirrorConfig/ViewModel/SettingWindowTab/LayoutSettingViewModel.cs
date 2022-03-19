@@ -5,9 +5,17 @@ namespace Baku.VMagicMirrorConfig
 {
     public class LayoutSettingViewModel : SettingViewModelBase
     {
+        public LayoutSettingViewModel() : this(
+            ModelResolver.Instance.Resolve<LayoutSettingModel>(),
+            ModelResolver.Instance.Resolve<GamepadSettingModel>(),
+            ModelResolver.Instance.Resolve<IMessageReceiver>()
+            )
+        {
+        }
+
         internal LayoutSettingViewModel(
-            LayoutSettingModel model, GamepadSettingModel gamepadModel, IMessageSender sender, IMessageReceiver receiver
-            ) : base(sender)
+            LayoutSettingModel model, GamepadSettingModel gamepadModel, IMessageReceiver receiver
+            )
         {
             _model = model;
             _gamepadModel = gamepadModel;
@@ -19,8 +27,8 @@ namespace Baku.VMagicMirrorConfig
                 () => UrlNavigate.Open(LocalizedString.GetString("URL_tips_texture_replace"))
                 );
 
-            ResetCameraPositionCommand = new ActionCommand(() => SendMessage(MessageFactory.Instance.ResetCameraPosition()));
-
+            ResetCameraPositionCommand = new ActionCommand(() => model.RequestResetCameraPosition());
+            
             ResetCameraSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetCameraSetting)
                 );
@@ -47,8 +55,9 @@ namespace Baku.VMagicMirrorConfig
             };
 
             _typingEffectItem = TypingEffectSelections[0];
-            receiver.ReceivedCommand += OnReceiveCommand;
 
+            //TODO: 受信時のハンドリングはViewModelではない所でやってほしい(生存期間の都合で)
+            receiver.ReceivedCommand += OnReceiveCommand;
         }
 
         private readonly LayoutSettingModel _model;

@@ -11,7 +11,11 @@ namespace Baku.VMagicMirrorConfig
     /// </summary>
     public class LightSettingViewModel : SettingViewModelBase
     {
-        internal LightSettingViewModel(LightSettingModel model, IMessageSender sender) : base(sender)
+        public LightSettingViewModel() : this(ModelResolver.Instance.Resolve<LightSettingModel>())
+        {
+        }
+
+        internal LightSettingViewModel(LightSettingModel model)
         {
             _model = model;
 

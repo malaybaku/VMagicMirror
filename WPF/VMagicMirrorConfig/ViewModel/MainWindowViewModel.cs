@@ -45,17 +45,16 @@ namespace Baku.VMagicMirrorConfig
             MessageIo = ModelResolver.Instance.Resolve<MessageIo>();
 
             //TODO: この下のViewModel達は必要に応じて生成されるようにしたい
-            WindowSetting = new WindowSettingViewModel(Model.Window, MessageSender);
-            MotionSetting = new MotionSettingViewModel(Model.Motion, MessageSender, MessageIo.Receiver);
-            GamepadSetting = new GamepadSettingViewModel(Model.Gamepad, MessageSender);
-            LayoutSetting = new LayoutSettingViewModel(Model.Layout, Model.Gamepad, MessageSender, MessageIo.Receiver);
-            LightSetting = new LightSettingViewModel(Model.Light, MessageSender);
-            WordToMotionSetting = new WordToMotionSettingViewModel(
-                Model.WordToMotion, Model.Layout, Model.Accessory, MessageSender, MessageIo.Receiver);
-            ExternalTrackerSetting = new ExternalTrackerViewModel(
-                Model.ExternalTracker, Model.Motion, Model.Accessory, MessageSender, MessageIo.Receiver);
-            AccessorySetting = new AccessorySettingViewModel(Model.Accessory, Model.Layout);
-            SettingIo = new SettingIoViewModel(Model, Model.Automation, SaveFileManager, MessageSender);
+            WindowSetting = new WindowSettingViewModel();
+            MotionSetting = new MotionSettingViewModel();
+            GamepadSetting = new GamepadSettingViewModel();
+            LayoutSetting = new LayoutSettingViewModel();
+            LightSetting = new LightSettingViewModel();
+            WordToMotionSetting = new WordToMotionSettingViewModel();
+            ExternalTrackerSetting = new ExternalTrackerViewModel();
+            AccessorySetting = new AccessorySettingViewModel();
+            SettingIo = new SettingIoViewModel();
+
             //オートメーションの配線: 1つしかないのでザツにやる。OC<T>をいじる関係でUIスレッド必須なことに注意
             Model.Automation.LoadSettingFileRequested += v => 
                 Application.Current.Dispatcher.BeginInvoke(new Action(
@@ -419,8 +418,8 @@ namespace Baku.VMagicMirrorConfig
         //Unity側でウィンドウを表示するとき、最前面と透過を無効にする必要があるため、その準備にあたる処理を行います。
         private void PrepareShowUiOnUnity()
         {
-            _windowTransparentBeforeLoadProcess = WindowSetting.IsTransparent.Value;
-            WindowSetting.IsTransparent.Value = false;
+            _windowTransparentBeforeLoadProcess = Model.Window.IsTransparent.Value;
+            Model.Window.IsTransparent.Value = false;
         }
 
         //Unity側でのUI表示が終わったとき、最前面と透過の設定をもとの状態に戻します。
@@ -428,7 +427,7 @@ namespace Baku.VMagicMirrorConfig
         {
             if (_windowTransparentBeforeLoadProcess != null)
             {
-                WindowSetting.IsTransparent.Value = _windowTransparentBeforeLoadProcess.GetValueOrDefault();
+                Model.Window.IsTransparent.Value = _windowTransparentBeforeLoadProcess.GetValueOrDefault();
                 _windowTransparentBeforeLoadProcess = null;
             }
         }

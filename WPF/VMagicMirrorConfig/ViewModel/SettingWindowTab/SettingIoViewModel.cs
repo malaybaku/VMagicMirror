@@ -8,9 +8,17 @@ namespace Baku.VMagicMirrorConfig
 {
     public class SettingIoViewModel : SettingViewModelBase
     {
+        public SettingIoViewModel() : this(
+            ModelResolver.Instance.Resolve<RootSettingModel>(),
+            ModelResolver.Instance.Resolve<AutomationSettingModel>(),
+            ModelResolver.Instance.Resolve<SaveFileManager>()
+            )
+        {
+        }
+
         internal SettingIoViewModel(
-            RootSettingModel rootModel, AutomationSettingModel model, SaveFileManager saveFileManager, IMessageSender sender
-            ) : base(sender)
+            RootSettingModel rootModel, AutomationSettingModel model, SaveFileManager saveFileManager
+            )
         {
             _rootModel = rootModel;
             _model = model;

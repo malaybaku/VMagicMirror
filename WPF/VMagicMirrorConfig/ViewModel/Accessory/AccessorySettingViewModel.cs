@@ -8,6 +8,13 @@ namespace Baku.VMagicMirrorConfig
 {
     public class AccessorySettingViewModel : ViewModelBase
     {
+        public AccessorySettingViewModel() : this(
+            ModelResolver.Instance.Resolve<AccessorySettingModel>(),
+            ModelResolver.Instance.Resolve<LayoutSettingModel>()
+            )
+        {
+        }
+
         internal AccessorySettingViewModel(AccessorySettingModel model, LayoutSettingModel layoutModel)
         {
             Items = new ReadOnlyObservableCollection<AccessoryItemViewModel>(_items);

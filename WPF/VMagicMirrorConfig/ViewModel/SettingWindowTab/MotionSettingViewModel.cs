@@ -9,7 +9,15 @@ namespace Baku.VMagicMirrorConfig
     //TODO: モデルに引っ張られてFaceとMotionが同一ViewModelになっちゃってるが、分けるべき
     public class MotionSettingViewModel : SettingViewModelBase
     {
-        internal MotionSettingViewModel(MotionSettingModel model, IMessageSender sender, IMessageReceiver receiver) : base(sender)
+        public MotionSettingViewModel() : this(
+            ModelResolver.Instance.Resolve<MotionSettingModel>(),
+            ModelResolver.Instance.Resolve<IMessageReceiver>()
+            )
+        {
+        }
+
+
+        internal MotionSettingViewModel(MotionSettingModel model, IMessageReceiver receiver)
         {
             _model = model;
 
@@ -32,13 +40,13 @@ namespace Baku.VMagicMirrorConfig
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetWaitMotionSetting)
                 );
 
-            CalibrateFaceCommand = new ActionCommand(() => SendMessage(MessageFactory.Instance.CalibrateFace()));
+            CalibrateFaceCommand = new ActionCommand(() => model.RequestCalibrateFace());
             OpenFullEditionDownloadUrlCommand = new ActionCommand(() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040"));
             OpenHandTrackingPageUrlCommand = new ActionCommand(() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_hand_tracking")));
 
             ShowMicrophoneVolume = new RProperty<bool>(false, b =>
             {
-                SendMessage(MessageFactory.Instance.SetMicrophoneVolumeVisibility(b));
+                model.SetMicrophoneVolumeVisibility(b);
                 if (!b)
                 {
                     MicrophoneVolumeValue.Value = 0;
@@ -72,6 +80,7 @@ namespace Baku.VMagicMirrorConfig
 
             UpdateEyeRotRangeText();
 
+            //TODO: 受信はここじゃないとこでやってほしい?購読停止できる+モデルに何も通達しないでいい内容ならここでもアリかも
             receiver.ReceivedCommand += OnReceivedCommand;
             ShowInstallPathWarning.Value = InstallPathChecker.HasMultiByteCharInInstallPath();
         }
@@ -120,23 +129,20 @@ namespace Baku.VMagicMirrorConfig
 
         public async Task InitializeDeviceNamesAsync()
         {
-            string microphones = await SendQueryAsync(MessageFactory.Instance.MicrophoneDeviceNames());
+            var microphoneNames = await _model.GetMicrophoneDeviceNames();
             Application.Current.MainWindow.Dispatcher.Invoke(() =>
             {
-                var names = DeviceNames.FromJson(microphones, "Microphone").Names;
                 _writableMicrophoneDeviceNames.Clear();
-                foreach (var deviceName in names)
+                foreach (var deviceName in microphoneNames)
                 {
                     _writableMicrophoneDeviceNames.Add(deviceName);
                 }
             });
 
-            string cameras = await SendQueryAsync(MessageFactory.Instance.CameraDeviceNames());
+            var cameraNames = await _model.GetCameraDeviceNames();
             Application.Current.MainWindow.Dispatcher.Invoke(() =>
             {
-                var names = DeviceNames.FromJson(cameras, "Camera").Names;
-                _writableCameraDeviceNames.Clear();
-                foreach (var deviceName in names)
+                foreach (var deviceName in cameraNames)
                 {
                     _writableCameraDeviceNames.Add(deviceName);
                 }

@@ -117,5 +117,7 @@ namespace Baku.VMagicMirrorConfig
             FaceSwitchSetting = ExternalTrackerFaceSwitchSetting.LoadDefault();
             SaveFaceSwitchSetting();
         }
+
+        public void SendCalibrateRequest() => SendMessage(MessageFactory.Instance.ExTrackerCalibrate());
     }
 }

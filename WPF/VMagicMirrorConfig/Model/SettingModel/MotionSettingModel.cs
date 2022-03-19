@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -167,6 +168,8 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<string> FaceNeutralClip { get; }
         public RProperty<string> FaceOffsetClip { get; }
 
+        public void RequestCalibrateFace() => SendMessage(MessageFactory.Instance.CalibrateFace());
+
         #endregion
 
         #region Eye
@@ -187,6 +190,9 @@ namespace Baku.VMagicMirrorConfig
 
         //NOTE: dB単位なので0がデフォルト。対数ベースのほうがレンジ取りやすい
         public RProperty<int> MicrophoneSensitivity { get; }
+
+        public void SetMicrophoneVolumeVisibility(bool visible)
+            => SendMessage(MessageFactory.Instance.SetMicrophoneVolumeVisibility(visible));
 
         #endregion
 
@@ -309,6 +315,18 @@ namespace Baku.VMagicMirrorConfig
         }
 
         #endregion
+
+        public async Task<string[]> GetCameraDeviceNames()
+        {
+            string cameras = await SendQueryAsync(MessageFactory.Instance.CameraDeviceNames());
+            return DeviceNames.FromJson(cameras, "Camera").Names;
+        }
+
+        public async Task<string[]> GetMicrophoneDeviceNames()
+        {
+            var microphones = await SendQueryAsync(MessageFactory.Instance.MicrophoneDeviceNames());
+            return DeviceNames.FromJson(microphones, "Microphone").Names;
+        }
 
         /// <summary>
         /// AutoAdjustParametersがシリアライズされた文字列を渡すことで、自動調整パラメータのうち

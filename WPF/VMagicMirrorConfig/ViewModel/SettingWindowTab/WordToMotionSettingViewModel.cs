@@ -7,11 +7,20 @@ namespace Baku.VMagicMirrorConfig
 {
     public class WordToMotionSettingViewModel : SettingViewModelBase
     {
+        public WordToMotionSettingViewModel() : this(
+            ModelResolver.Instance.Resolve<WordToMotionSettingModel>(),
+            ModelResolver.Instance.Resolve<LayoutSettingModel>(),
+            ModelResolver.Instance.Resolve<AccessorySettingModel>(),
+            ModelResolver.Instance.Resolve<IMessageReceiver>()
+            )
+        {
+        }
+
         internal WordToMotionSettingViewModel(
             WordToMotionSettingModel model,
             LayoutSettingModel layoutModel,
             AccessorySettingModel accessoryModel,
-            IMessageSender sender, IMessageReceiver receiver) : base(sender)
+            IMessageReceiver receiver)
         {
             _model = model;
             _layoutModel = layoutModel;
@@ -58,6 +67,7 @@ namespace Baku.VMagicMirrorConfig
 
             _model.PreviewDataSender.PrepareDataSend +=
                 (_, __) => _dialogItem?.WriteToModel(_model.PreviewDataSender.MotionRequest);
+            //TODO: receiveはここじゃないとこでやってほしいはず
             receiver.ReceivedCommand += OnReceiveCommand;
 
             LoadDefaultItemsIfInitialStart();
@@ -119,8 +129,7 @@ namespace Baku.VMagicMirrorConfig
 
         public async Task InitializeCustomMotionClipNamesAsync()
         {
-            var rawClipNames = await SendQueryAsync(MessageFactory.Instance.GetAvailableCustomMotionClipNames());
-            var clipNames = rawClipNames.Split('\t');
+            var clipNames = await _model.GetAvailableCustomMotionClipNamesAsync();
             foreach (var name in clipNames)
             {
                 _customMotionClipNames.Add(name);
@@ -288,13 +297,13 @@ namespace Baku.VMagicMirrorConfig
 
             var vm = new MidiNoteToMotionEditorViewModel(MidiNoteMap, _model.MidiNoteReceiver);
 
-            SendMessage(MessageFactory.Instance.RequireMidiNoteOnMessage(true));
+            _model.RequireMidiNoteOnMessage(true);
             var window = new MidiNoteAssignEditorWindow()
             {
                 DataContext = vm,
             };
             bool? res = window.ShowDialog();
-            SendMessage(MessageFactory.Instance.RequireMidiNoteOnMessage(false));
+            _model.RequireMidiNoteOnMessage(false);
 
             if (res == true)
             {
@@ -352,7 +361,7 @@ namespace Baku.VMagicMirrorConfig
             _dialogItem = null;
         }
 
-        public void RequestCustomMotionDoctor() => SendMessage(MessageFactory.Instance.RequestCustomMotionDoctor());
+        public void RequestCustomMotionDoctor() => _model.RequestCustomMotionDoctor();
     }
 
     /// <summary> Word to Motion機能のコントロールに利用できるデバイスの選択肢1つに相当するViewModelです。 </summary>

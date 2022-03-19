@@ -13,13 +13,22 @@ namespace Baku.VMagicMirrorConfig
         private readonly ExternalTrackerSettingModel _model;
         private readonly MotionSettingModel _motionModel;
 
+        public ExternalTrackerViewModel() : this(
+            ModelResolver.Instance.Resolve<ExternalTrackerSettingModel>(),
+            ModelResolver.Instance.Resolve<MotionSettingModel>(),
+            ModelResolver.Instance.Resolve<AccessorySettingModel>(),
+            ModelResolver.Instance.Resolve<IMessageReceiver>()
+            )
+        {
+        }
+
+
         internal ExternalTrackerViewModel(
             ExternalTrackerSettingModel model,
             MotionSettingModel motionModel,
             AccessorySettingModel accessoryModel,
-            IMessageSender sender, 
             IMessageReceiver receiver
-            ) : base(sender)
+            )
         {
             _model = model;
             _motionModel = motionModel;
@@ -169,9 +178,7 @@ namespace Baku.VMagicMirrorConfig
         public ActionCommand CalibrateCommand
             => _calibrateCommand ??= new ActionCommand(Calibrate);
 
-        private void Calibrate()
-            => SendMessage(MessageFactory.Instance.ExTrackerCalibrate());
-
+        private void Calibrate() => _model.SendCalibrateRequest();
         public ActionCommand ResetSettingsCommand { get; }
 
         #endregion

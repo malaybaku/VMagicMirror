@@ -7,14 +7,17 @@ namespace Baku.VMagicMirror
     /// </summary>
     public sealed class FaceYawToBodyYaw
     {
-        //最終的に胴体ヨーは頭ヨーの何倍であるべきか、という値
-        private const float GoalRate = 0.3f;
         //ゴールに持ってくときの速度基準にする時定数っぽいやつ
         private const float TimeFactor = 0.15f;
         //ゴール回転値に持ってくとき、スピードに掛けるダンピング項
         private const float SpeedDumpFactor = 0.98f;
+
+        //最終的に胴体ヨーは頭ヨーの何倍であるべきか、という値
+        private float GoalRate => EnableTwistMotion ? -0.2f : 0.3f;
         //ゴール回転値に持っていくとき、スピードをどのくらい素早く適用するか
-        private const float SpeedLerpFactor = 12.0f;
+        private float SpeedLerpFactor => EnableTwistMotion ? 18f : 12f;
+        
+        public bool EnableTwistMotion { get; set; }
         
         private float _speedDegreePerSec = 0;
         public float YawAngleDegree { get; private set; }

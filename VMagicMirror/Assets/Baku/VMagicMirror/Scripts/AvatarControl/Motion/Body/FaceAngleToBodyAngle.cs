@@ -28,7 +28,7 @@ namespace Baku.VMagicMirror
         }
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable)
+        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver)
         {
             vrmLoadable.VrmLoaded += info =>
             {
@@ -47,6 +47,15 @@ namespace Baku.VMagicMirror
                 _neck = null;
                 SetZeroTarget();
             };
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableTwistBodyMotion,
+                c =>
+                {
+                    var enableTwistBodyMotion = c.ToBoolean();
+                    _roll.EnableTwistMotion = enableTwistBodyMotion;
+                    _yaw.EnableTwistMotion = enableTwistBodyMotion;
+                });
         }
 
         private void Update()
@@ -57,7 +66,7 @@ namespace Baku.VMagicMirror
 
             BodyLeanSuggest = Quaternion.Euler(
                 _pitch.PitchAngleDegree,
-                _yaw.YawAngleDegree, 
+                _yaw.YawAngleDegree,
                 _roll.RollAngleDegree
                 );
         }

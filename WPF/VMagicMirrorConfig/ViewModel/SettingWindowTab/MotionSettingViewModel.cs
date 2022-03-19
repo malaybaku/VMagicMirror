@@ -212,6 +212,7 @@ namespace Baku.VMagicMirrorConfig
         #region Full Body 
 
         public RProperty<bool> EnableNoHandTrackMode => _model.EnableNoHandTrackMode;
+        public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
 
         #endregion
 

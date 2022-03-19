@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Baku.VMagicMirrorConfig
@@ -17,6 +16,12 @@ namespace Baku.VMagicMirrorConfig
 
         private static Message WithArg(string content, [CallerMemberName] string command = "")
             => new Message(command, content);
+
+        private static Message WithArg(bool content, [CallerMemberName] string command = "")
+            => WithArg(content.ToString(), command);
+
+        private static Message WithArg(int content, [CallerMemberName] string command = "")
+            => WithArg(content.ToString(), command);
 
         public Message Language(string langName) => WithArg(langName);
 
@@ -44,10 +49,10 @@ namespace Baku.VMagicMirrorConfig
 
         public Message Chromakey(int a, int r, int g, int b) => WithArg($"{a},{r},{g},{b}");
 
-        public Message WindowFrameVisibility(bool v) => WithArg($"{v}");
-        public Message IgnoreMouse(bool v) => WithArg($"{v}");
-        public Message TopMost(bool v) => WithArg($"{v}");
-        public Message WindowDraggable(bool v) => WithArg($"{v}");
+        public Message WindowFrameVisibility(bool v) => WithArg(v);
+        public Message IgnoreMouse(bool v) => WithArg(v);
+        public Message TopMost(bool v) => WithArg(v);
+        public Message WindowDraggable(bool v) => WithArg(v);
 
         /// <summary>
         /// NOTE: 空文字列なら背景画像を外す処理をやる。
@@ -59,60 +64,61 @@ namespace Baku.VMagicMirrorConfig
         public Message MoveWindow(int x, int y) => WithArg($"{x},{y}");
         public Message ResetWindowSize() => NoArg();
 
-        public Message SetWholeWindowTransparencyLevel(int level) => WithArg($"{level}");
+        public Message SetWholeWindowTransparencyLevel(int level) => WithArg(level);
 
-        public Message SetAlphaValueOnTransparent(int alpha) => WithArg($"{alpha}");
+        public Message SetAlphaValueOnTransparent(int alpha) => WithArg(alpha);
 
         #endregion
 
         #region モーション
 
-        public Message EnableNoHandTrackMode(bool enable) => WithArg($"{enable}");
+        public Message EnableNoHandTrackMode(bool enable) => WithArg(enable);
+        public Message EnableTwistBodyMotion(bool enable) => WithArg(enable);
 
-        public Message LengthFromWristToTip(int lengthCentimeter) => WithArg($"{lengthCentimeter}");
+        public Message LengthFromWristToTip(int lengthCentimeter) => WithArg(lengthCentimeter);
 
-        public Message HandYOffsetBasic(int offsetCentimeter) => WithArg($"{offsetCentimeter}");
-        public Message HandYOffsetAfterKeyDown(int offsetCentimeter) => WithArg($"{offsetCentimeter}");
+        public Message HandYOffsetBasic(int offsetCentimeter) => WithArg(offsetCentimeter);
+        public Message HandYOffsetAfterKeyDown(int offsetCentimeter) => WithArg(offsetCentimeter);
 
-        public Message EnableHidRandomTyping(bool enable) => WithArg($"{enable}");
-        public Message EnableShoulderMotionModify(bool enable) => WithArg($"{enable}");
-        public Message EnableTypingHandDownTimeout(bool enable) => WithArg($"{enable}");
-        public Message SetWaistWidth(int waistWidthCentimeter) => WithArg($"{waistWidthCentimeter}");
-        public Message SetElbowCloseStrength(int strengthPercent) => WithArg($"{strengthPercent}");
+        public Message EnableHidRandomTyping(bool enable) => WithArg(enable);
+        public Message EnableShoulderMotionModify(bool enable) => WithArg(enable);
+        public Message EnableTypingHandDownTimeout(bool enable) => WithArg(enable);
+        public Message SetWaistWidth(int waistWidthCentimeter) => WithArg(waistWidthCentimeter);
+        public Message SetElbowCloseStrength(int strengthPercent) => WithArg(strengthPercent);
 
-        public Message EnableFpsAssumedRightHand(bool enable) => WithArg($"{enable}");
-        public Message PresentationArmRadiusMin(int radiusMinCentimeter) => WithArg($"{radiusMinCentimeter}");
+        public Message EnableFpsAssumedRightHand(bool enable) => WithArg(enable);
+        public Message PresentationArmRadiusMin(int radiusMinCentimeter) => WithArg(radiusMinCentimeter);
 
-        public Message SetKeyboardAndMouseMotionMode(int modeIndex) => WithArg($"{modeIndex}");
-        public Message SetGamepadMotionMode(int modeIndex) => WithArg($"{modeIndex}");
+        public Message SetKeyboardAndMouseMotionMode(int modeIndex) => WithArg(modeIndex);
+        public Message SetGamepadMotionMode(int modeIndex) => WithArg(modeIndex);
 
-        public Message EnableWaitMotion(bool enable) => WithArg($"{enable}");
-        public Message WaitMotionScale(int scalePercent) => WithArg($"{scalePercent}");
-        public Message WaitMotionPeriod(int periodSec) => WithArg($"{periodSec}");
+        public Message EnableWaitMotion(bool enable) => WithArg(enable);
+        public Message WaitMotionScale(int scalePercent) => WithArg(scalePercent);
+        public Message WaitMotionPeriod(int periodSec) => WithArg(periodSec);
 
         public Message CalibrateFace() => NoArg();
         public Message SetCalibrateFaceData(string data) => WithArg(data);
 
-        public Message EnableFaceTracking(bool enable) => WithArg($"{enable}");
+        public Message EnableFaceTracking(bool enable) => WithArg(enable);
         public Message SetCameraDeviceName(string deviceName) => WithArg(deviceName);
-        public Message AutoBlinkDuringFaceTracking(bool enable) => WithArg($"{enable}");
-        public Message EnableBodyLeanZ(bool enable) => WithArg($"{enable}");
-        public Message EnableLipSyncBasedBlinkAdjust(bool enable) => WithArg($"{enable}");
-        public Message EnableHeadRotationBasedBlinkAdjust(bool enable) => WithArg($"{enable}");
-        public Message EnableVoiceBasedMotion(bool enable) => WithArg($"{enable}");
+        public Message AutoBlinkDuringFaceTracking(bool enable) => WithArg(enable);
+        public Message EnableBodyLeanZ(bool enable) => WithArg(enable);
+        public Message EnableLipSyncBasedBlinkAdjust(bool enable) => WithArg(enable);
+        public Message EnableHeadRotationBasedBlinkAdjust(bool enable) => WithArg(enable);
+        public Message EnableVoiceBasedMotion(bool enable) => WithArg(enable);
         //NOTE: falseのほうが普通だよ、という状態にするため、disable云々というやや面倒な言い方になってる事に注意
-        public Message DisableFaceTrackingHorizontalFlip(bool disable) => WithArg($"{disable}");
+        public Message DisableFaceTrackingHorizontalFlip(bool disable) => WithArg(disable);
 
-        public Message EnableImageBasedHandTracking(bool enable) => WithArg($"{enable}");
-        public Message ShowEffectDuringHandTracking(bool enable) => WithArg($"{enable}");
+        public Message EnableImageBasedHandTracking(bool enable) => WithArg(enable);
+        public Message ShowEffectDuringHandTracking(bool enable) => WithArg(enable);
         //Faceと同じく、disableという言い回しに注意
-        public Message DisableHandTrackingHorizontalFlip(bool disable) => WithArg($"{disable}");
-        public Message EnableSendHandTrackingResult(bool enable) => WithArg($"{enable}");
+        public Message DisableHandTrackingHorizontalFlip(bool disable) => WithArg(disable);
+        public Message EnableSendHandTrackingResult(bool enable) => WithArg(enable);
 
 
-        public Message EnableWebCamHighPowerMode(bool enable) => WithArg($"{enable}");
+        public Message EnableWebCamHighPowerMode(bool enable) => WithArg(enable);
 
-        public Message FaceDefaultFun(int percentage) => WithArg($"{percentage}");
+        public Message FaceDefaultFun(int percentage) => WithArg(percentage);
         public Message FaceNeutralClip(string clipName) => WithArg(clipName);
         public Message FaceOffsetClip(string clipName) => WithArg(clipName);
 
@@ -123,13 +129,13 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public Message CameraDeviceNames() => NoArg();
 
-        public Message EnableTouchTyping(bool enable) => WithArg($"{enable}");
+        public Message EnableTouchTyping(bool enable) => WithArg(enable);
 
-        public Message EnableLipSync(bool enable) => WithArg($"{enable}");
+        public Message EnableLipSync(bool enable) => WithArg(enable);
 
         public Message SetMicrophoneDeviceName(string deviceName) => WithArg(deviceName);
-        public Message SetMicrophoneSensitivity(int sensitivity) => WithArg($"{sensitivity}");
-        public Message SetMicrophoneVolumeVisibility(bool isVisible) => WithArg($"{isVisible}");
+        public Message SetMicrophoneSensitivity(int sensitivity) => WithArg(sensitivity);
+        public Message SetMicrophoneVolumeVisibility(bool isVisible) => WithArg(isVisible);
 
         /// <summary>
         /// Query.
@@ -138,17 +144,17 @@ namespace Baku.VMagicMirrorConfig
         public Message MicrophoneDeviceNames() => NoArg();
 
         public Message LookAtStyle(string v) => WithArg(v);
-        public Message SetEyeBoneRotationScale(int percent) => WithArg($"{percent}");
+        public Message SetEyeBoneRotationScale(int percent) => WithArg(percent);
 
         #endregion
 
         #region カメラの配置
 
-        public Message CameraFov(int cameraFov) => WithArg($"{cameraFov}");
+        public Message CameraFov(int cameraFov) => WithArg(cameraFov);
         public Message SetCustomCameraPosition(string posData) => WithArg(posData);
         public Message QuickLoadViewPoint(string posData) => WithArg(posData);
 
-        public Message EnableFreeCameraMode(bool enable) => WithArg($"{enable}");
+        public Message EnableFreeCameraMode(bool enable) => WithArg(enable);
 
         public Message ResetCameraPosition() => NoArg();
 
@@ -162,15 +168,15 @@ namespace Baku.VMagicMirrorConfig
 
         #region キーボード・マウスパッド
 
-        public Message HidVisibility(bool visible) => WithArg($"{visible}");
+        public Message HidVisibility(bool visible) => WithArg(visible);
 
-        public Message SetPenVisibility(bool visible) => WithArg($"{visible}");
+        public Message SetPenVisibility(bool visible) => WithArg(visible);
 
-        public Message MidiControllerVisibility(bool visible) => WithArg($"{visible}");
+        public Message MidiControllerVisibility(bool visible) => WithArg(visible);
 
-        public Message SetKeyboardTypingEffectType(int typeIndex) => WithArg($"{typeIndex}");
+        public Message SetKeyboardTypingEffectType(int typeIndex) => WithArg(typeIndex);
 
-        public Message EnableDeviceFreeLayout(bool enable) => WithArg($"{enable}");
+        public Message EnableDeviceFreeLayout(bool enable) => WithArg(enable);
 
         public Message SetDeviceLayout(string data) => WithArg(data);
 
@@ -186,23 +192,23 @@ namespace Baku.VMagicMirrorConfig
 
         #region MIDI
 
-        public Message EnableMidiRead(bool enable) => WithArg($"{enable}");
+        public Message EnableMidiRead(bool enable) => WithArg(enable);
 
         #endregion
 
         #region ゲームパッド
 
-        public Message EnableGamepad(bool enable) => WithArg($"{enable}");
-        public Message PreferDirectInputGamepad(bool preferDirectInput) => WithArg($"{preferDirectInput}");
-        public Message GamepadHeight(int height) => WithArg($"{height}");
-        public Message GamepadHorizontalScale(int scale) => WithArg($"{scale}");
+        public Message EnableGamepad(bool enable) => WithArg(enable);
+        public Message PreferDirectInputGamepad(bool preferDirectInput) => WithArg(preferDirectInput);
+        public Message GamepadHeight(int height) => WithArg(height);
+        public Message GamepadHorizontalScale(int scale) => WithArg(scale);
 
-        public Message GamepadVisibility(bool visibility) => WithArg($"{visibility}");
+        public Message GamepadVisibility(bool visibility) => WithArg(visibility);
 
         public Message GamepadLeanMode(string v) => WithArg(v);
 
-        public Message GamepadLeanReverseHorizontal(bool reverse) => WithArg($"{reverse}");
-        public Message GamepadLeanReverseVertical(bool reverse) => WithArg($"{reverse}");
+        public Message GamepadLeanReverseHorizontal(bool reverse) => WithArg(reverse);
+        public Message GamepadLeanReverseVertical(bool reverse) => WithArg(reverse);
 
         #endregion
 
@@ -214,7 +220,7 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public Message GetQualitySettingsInfo() => NoArg();
         public Message SetImageQuality(string name) => WithArg(name);
-        public Message SetHalfFpsMode(bool enable) => WithArg($"{enable}");
+        public Message SetHalfFpsMode(bool enable) => WithArg(enable);
 
         /// <summary>
         /// Query
@@ -223,25 +229,25 @@ namespace Baku.VMagicMirrorConfig
         public Message ApplyDefaultImageQuality() => NoArg();
 
         public Message LightColor(int r, int g, int b) => WithArg($"{r},{g},{b}");
-        public Message LightIntensity(int intensityPercent) => WithArg($"{intensityPercent}");
-        public Message LightYaw(int angleDeg) => WithArg($"{angleDeg}");
-        public Message LightPitch(int angleDeg) => WithArg($"{angleDeg}");
-        public Message UseDesktopLightAdjust(bool use) => WithArg($"{use}");
+        public Message LightIntensity(int intensityPercent) => WithArg(intensityPercent);
+        public Message LightYaw(int angleDeg) => WithArg(angleDeg);
+        public Message LightPitch(int angleDeg) => WithArg(angleDeg);
+        public Message UseDesktopLightAdjust(bool use) => WithArg(use);
 
-        public Message ShadowEnable(bool enable) => WithArg($"{enable}");
-        public Message ShadowIntensity(int intensityPercent) => WithArg($"{intensityPercent}");
-        public Message ShadowYaw(int angleDeg) => WithArg($"{angleDeg}");
-        public Message ShadowPitch(int angleDeg) => WithArg($"{angleDeg}");
-        public Message ShadowDepthOffset(int depthCentimeter) => WithArg($"{depthCentimeter}");
+        public Message ShadowEnable(bool enable) => WithArg(enable);
+        public Message ShadowIntensity(int intensityPercent) => WithArg(intensityPercent);
+        public Message ShadowYaw(int angleDeg) => WithArg(angleDeg);
+        public Message ShadowPitch(int angleDeg) => WithArg(angleDeg);
+        public Message ShadowDepthOffset(int depthCentimeter) => WithArg(depthCentimeter);
 
         public Message BloomColor(int r, int g, int b) => WithArg($"{r},{g},{b}");
-        public Message BloomIntensity(int intensityPercent) => WithArg($"{intensityPercent}");
-        public Message BloomThreshold(int thresholdPercent) => WithArg($"{thresholdPercent}");
+        public Message BloomIntensity(int intensityPercent) => WithArg(intensityPercent);
+        public Message BloomThreshold(int thresholdPercent) => WithArg(thresholdPercent);
 
-        public Message WindEnable(bool enableWind) => WithArg($"{enableWind}");
-        public Message WindStrength(int strength) => WithArg($"{strength}");
-        public Message WindInterval(int percentage) => WithArg($"{percentage}");
-        public Message WindYaw(int windYaw) => WithArg($"{windYaw}");
+        public Message WindEnable(bool enableWind) => WithArg(enableWind);
+        public Message WindStrength(int strength) => WithArg(strength);
+        public Message WindInterval(int percentage) => WithArg(percentage);
+        public Message WindYaw(int windYaw) => WithArg(windYaw);
 
         #endregion
 
@@ -251,12 +257,12 @@ namespace Baku.VMagicMirrorConfig
 
         //NOTE: 以下の3つはユーザーが動作チェックに使う
         public Message PlayWordToMotionItem(string word) => WithArg(word);
-        public Message EnableWordToMotionPreview(bool enable) => WithArg($"{enable}");
+        public Message EnableWordToMotionPreview(bool enable) => WithArg(enable);
         public Message SendWordToMotionPreviewInfo(string json) => WithArg(json);
-        public Message SetDeviceTypeToStartWordToMotion(int deviceType) => WithArg($"{deviceType}");
+        public Message SetDeviceTypeToStartWordToMotion(int deviceType) => WithArg(deviceType);
 
         public Message LoadMidiNoteToMotionMap(string content) => WithArg(content);
-        public Message RequireMidiNoteOnMessage(bool require) => WithArg($"{require}");
+        public Message RequireMidiNoteOnMessage(bool require) => WithArg(require);
 
         public Message RequestCustomMotionDoctor() => NoArg();
 
@@ -271,11 +277,11 @@ namespace Baku.VMagicMirrorConfig
         #region External Tracker
 
         //共通: 基本操作のオン/オフ + キャリブレーション
-        public Message ExTrackerEnable(bool enable) => WithArg($"{enable}");
-        public Message ExTrackerEnableLipSync(bool enable) => WithArg($"{enable}");
-        public Message ExTrackerEnableEmphasizeExpression(bool enable) => WithArg($"{enable}");
-        public Message ExTrackerEnablePerfectSync(bool enable) => WithArg($"{enable}");
-        public Message ExTrackerUseVRoidDefaultForPerfectSync(bool enable) => WithArg($"{enable}");
+        public Message ExTrackerEnable(bool enable) => WithArg(enable);
+        public Message ExTrackerEnableLipSync(bool enable) => WithArg(enable);
+        public Message ExTrackerEnableEmphasizeExpression(bool enable) => WithArg(enable);
+        public Message ExTrackerEnablePerfectSync(bool enable) => WithArg(enable);
+        public Message ExTrackerUseVRoidDefaultForPerfectSync(bool enable) => WithArg(enable);
         public Message ExTrackerCalibrate() => NoArg();
         //NOTE: このdataについて詳細
         // - Unityが送ってくるのをまるごと保持してたデータを返すだけで、WPF側では中身に関知しない
@@ -284,7 +290,7 @@ namespace Baku.VMagicMirrorConfig
         public Message ExTrackerSetCalibrateData(string data) => WithArg(data);
 
         //連携先の切り替え + アプリ固有設定の送信
-        public Message ExTrackerSetSource(int sourceType) => WithArg($"{sourceType}");
+        public Message ExTrackerSetSource(int sourceType) => WithArg(sourceType);
         public Message ExTrackerSetApplicationValue(ExternalTrackerSettingData data) => WithArg(data.ToJsonString());
 
         //共通: 表情スイッチ機能

@@ -1,4 +1,8 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿using Microsoft.Win32;
+using System;
+using System.IO;
+
+namespace Baku.VMagicMirrorConfig
 {
     class WindowSettingModel : SettingModelBase<WindowSetting>
     {
@@ -145,6 +149,20 @@
             }
         }
 
+        public void SetBackgroundImage()
+        {
+            //NOTE: 画像形式を絞らないと辛いのでAll Filesとかは無しです。
+            var dialog = new OpenFileDialog()
+            {
+                Title = "Select Background Image",
+                Filter = "Image files (*.png;*.jpg)|*.png;*.jpg",
+                Multiselect = false,
+            };
 
+            if (dialog.ShowDialog() == true && File.Exists(dialog.FileName))
+            {
+                BackgroundImagePath.Value = Path.GetFullPath(dialog.FileName);
+            }
+        }
     }
 }

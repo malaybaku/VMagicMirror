@@ -19,7 +19,7 @@ namespace Baku.VMagicMirrorConfig
             _model.G.PropertyChanged += (_, __) => UpdatePickerColor();
             _model.B.PropertyChanged += (_, __) => UpdatePickerColor();
 
-            BackgroundImageSetCommand = new ActionCommand(SetBackgroundImage);
+            BackgroundImageSetCommand = new ActionCommand(_model.SetBackgroundImage);
             BackgroundImageClearCommand = new ActionCommand(
                 () => _model.BackgroundImagePath.Value = ""
                 );
@@ -66,22 +66,6 @@ namespace Baku.VMagicMirrorConfig
 
         public ActionCommand ResetWindowPositionCommand { get; }
         public ActionCommand ResetBackgroundColorSettingCommand { get; }
-        public ActionCommand ResetOpacitySettingCommand { get; }
-
-        private void SetBackgroundImage()
-        {
-            //NOTE: 画像形式を絞らないと辛いのでAll Filesとかは無しです。
-            var dialog = new OpenFileDialog()
-            {
-                Title = "Select Background Image",
-                Filter = "Image files (*.png;*.jpg)|*.png;*.jpg",
-                Multiselect = false,
-            };
-
-            if (dialog.ShowDialog() == true && File.Exists(dialog.FileName))
-            {
-                _model.BackgroundImagePath.Value = Path.GetFullPath(dialog.FileName);
-            }
-        }
+        public ActionCommand ResetOpacitySettingCommand { get; }       
     }
 }

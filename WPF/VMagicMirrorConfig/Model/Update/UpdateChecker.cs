@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Baku.VMagicMirrorConfig.View;
+using Baku.VMagicMirrorConfig.ViewModel;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 

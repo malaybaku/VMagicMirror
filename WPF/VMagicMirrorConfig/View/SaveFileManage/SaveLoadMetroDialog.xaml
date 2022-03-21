@@ -1,5 +1,5 @@
 ﻿<metro:BaseMetroDialog 
-    x:Class="Baku.VMagicMirrorConfig.SaveLoadMetroDialog"
+    x:Class="Baku.VMagicMirrorConfig.View.SaveLoadMetroDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"

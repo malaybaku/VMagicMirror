@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Baku.VMagicMirror.ViewModelsConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary> 
     /// ViewModelから直接メッセージI/Oがしたい場合に使える基底クラス

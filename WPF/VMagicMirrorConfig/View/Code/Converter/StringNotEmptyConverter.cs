@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     /// <summary> 空でない文字列のみをtrue、それ以外はfalseにするコンバータ </summary>
     public class StringNotEmptyConverter : IValueConverter

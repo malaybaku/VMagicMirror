@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     public class SelectOnFocusBehavior : Behavior<TextBox>
     {

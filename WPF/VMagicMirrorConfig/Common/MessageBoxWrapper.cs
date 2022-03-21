@@ -32,7 +32,7 @@ namespace Baku.VMagicMirrorConfig
                 return true;
             }
 
-            var settingWindow = SettingWindow.CurrentWindow;
+            var settingWindow = View.SettingWindow.CurrentWindow;
 
             if (style == MessageBoxStyle.OK)
             {
@@ -156,7 +156,7 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public async Task<bool> ShowAsyncOnWordToMotionItemEdit(string title, string content)
         {
-            if (WordToMotionItemEditWindow.CurrentWindow is not MetroWindow metroWindow)
+            if (View.WordToMotionItemEditWindow.CurrentWindow is not MetroWindow metroWindow)
             {
                 return false;
             }

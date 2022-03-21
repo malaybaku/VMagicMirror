@@ -5,9 +5,10 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=vmm:MainWindowViewModel}"
+             d:DataContext="{d:DesignInstance Type=vm:HomeViewModel}"
              d:DesignWidth="550"
              d:DesignHeight="600"
              AllowDrop="True"
@@ -26,7 +27,7 @@
     </UserControl.Resources>
     <!-- このUI全域に対してVRMをドロップできるようにする -->
     <i:Interaction.Behaviors>
-        <vmm:DragDropToCommandBehavior x:Name="DragDropCommandBehavior"
+        <view:DragDropToCommandBehavior x:Name="DragDropCommandBehavior"
                                        DropCommand="{Binding LoadVrmByFilePathCommand}"
                                        />
         <!--InstructionVisibility="{Binding Visibility, ElementName=DragDropIndicator, Mode=OneWayToSource}"-->
@@ -197,7 +198,7 @@
 
                     <Border Style="{StaticResource SectionBorder}">
                         <Border.DataContext>
-                            <vmm:HelpViewModel />
+                            <vm:HelpViewModel />
                         </Border.DataContext>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">

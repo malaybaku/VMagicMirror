@@ -1,7 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using MaterialDesignThemes.Wpf;
+using System.Collections.ObjectModel;
 using System.Linq;
+using static Baku.VMagicMirrorConfig.ViewModel.LayoutSettingViewModel;
 
-namespace Baku.VMagicMirror.ViewModelsConfig.StreamingTabViewModels
+namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 {
     //NOTE: 配信タブは機能が雑多なため1タブ = 1ViewModelではなく、中のサブグループ1つに対して1つのViewModelを当てていく
     public class WindowViewModel : ViewModelBase
@@ -32,6 +34,7 @@ namespace Baku.VMagicMirror.ViewModelsConfig.StreamingTabViewModels
     {
         public FaceViewModel() : this(
             ModelResolver.Instance.Resolve<MotionSettingModel>(),
+            ModelResolver.Instance.Resolve<ExternalTrackerSettingModel>(),
             ModelResolver.Instance.Resolve<InstallPathChecker>(),
             ModelResolver.Instance.Resolve<DeviceListSource>(),
             ModelResolver.Instance.Resolve<MicrophoneStatus>()
@@ -41,20 +44,26 @@ namespace Baku.VMagicMirror.ViewModelsConfig.StreamingTabViewModels
 
         internal FaceViewModel(
             MotionSettingModel setting, 
+            ExternalTrackerSettingModel externalTrackerSettingModel,
             InstallPathChecker installPathChecker,
             DeviceListSource deviceList, 
             MicrophoneStatus microphoneStatus
             )
         {
             _setting = setting;
+            _externalTrackerSetting = externalTrackerSettingModel;
             _deviceList = deviceList;
             _microphoneStatus = microphoneStatus;
             ShowInstallPathWarning = installPathChecker.HasMultiByteCharInInstallPath;
 
             CalibrateFaceCommand = new ActionCommand(_setting.RequestCalibrateFace);
+            EndExTrackerIfNeededCommand = new ActionCommand(
+                async () => await _externalTrackerSetting.DisableExternalTrackerWithConfirmAsync()
+                );
         }
 
         private readonly MotionSettingModel _setting;
+        private readonly ExternalTrackerSettingModel _externalTrackerSetting;
         private readonly DeviceListSource _deviceList;
         private readonly MicrophoneStatus _microphoneStatus;
 
@@ -63,7 +72,6 @@ namespace Baku.VMagicMirror.ViewModelsConfig.StreamingTabViewModels
 
         public RProperty<bool> EnableLipSync => _setting.EnableLipSync;
         public RProperty<string> LipSyncMicrophoneDeviceName => _setting.LipSyncMicrophoneDeviceName;
-
 
         public RProperty<bool> EnableFaceTracking => _setting.EnableFaceTracking;
         public RProperty<string> CameraDeviceName => _setting.CameraDeviceName;
@@ -74,12 +82,17 @@ namespace Baku.VMagicMirror.ViewModelsConfig.StreamingTabViewModels
         public bool ShowInstallPathWarning { get; } 
         public RProperty<bool> ShowMicrophoneVolume => _microphoneStatus.ShowMicrophoneVolume;
         public RProperty<int> MicrophoneVolumeValue => _microphoneStatus.MicrophoneVolumeValue;
+        public RProperty<int> MicrophoneSensitivity => _setting.MicrophoneSensitivity;
 
         public RProperty<bool> UseLookAtPointMousePointer => _setting.UseLookAtPointMousePointer;
         public RProperty<bool> UseLookAtPointMainCamera => _setting.UseLookAtPointMainCamera;
         public RProperty<bool> UseLookAtPointNone => _setting.UseLookAtPointNone;
 
+
+        public RProperty<bool> EnableExternalTracking => _externalTrackerSetting.EnableExternalTracking;
+
         public ActionCommand CalibrateFaceCommand { get; }
+        public ActionCommand EndExTrackerIfNeededCommand { get; }
     }
 
     public class MotionViewModel : ViewModelBase
@@ -202,6 +215,40 @@ namespace Baku.VMagicMirror.ViewModelsConfig.StreamingTabViewModels
         public RProperty<bool> UseDesktopLightAdjust => _effects.UseDesktopLightAdjust;
 
         public ActionCommand ShowPenUnavaiableWarningCommand { get; }
+
+
+        #region タイピングエフェクト
+
+        public RProperty<int> SelectedTypingEffectId => _layout.SelectedTypingEffectId;
+
+        private TypingEffectSelectionItem? _typingEffectItem = null;
+        public TypingEffectSelectionItem? TypingEffectItem
+        {
+            get => _typingEffectItem;
+            set
+            {
+                //ここのガード文はComboBoxを意識した書き方なことに注意
+                if (value == null || _typingEffectItem == value || (_typingEffectItem != null && _typingEffectItem.Id == value.Id))
+                {
+                    return;
+                }
+
+                _typingEffectItem = value;
+                SelectedTypingEffectId.Value = _typingEffectItem.Id;
+                RaisePropertyChanged();
+            }
+        }
+
+        public TypingEffectSelectionItem[] TypingEffectSelections { get; } = new TypingEffectSelectionItem[]
+        {
+            new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexNone, "None", PackIconKind.EyeOff),
+            new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexText, "Text", PackIconKind.Abc),
+            new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexLight, "Light", PackIconKind.FlashOn),
+            //new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexLaser, "Laser", PackIconKind.Wand),
+            new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexButtefly, "Butterfly", PackIconKind.DotsHorizontal),
+        };
+
+        #endregion
     }
 
     public class CameraViewModel : ViewModelBase
@@ -221,6 +268,10 @@ namespace Baku.VMagicMirror.ViewModelsConfig.StreamingTabViewModels
         private readonly LayoutSettingModel _model;
 
         public RProperty<bool> EnableFreeCameraMode => _model.EnableFreeCameraMode;
+
+        public RProperty<string> QuickSave1 => _model.QuickSave1;
+        public RProperty<string> QuickSave2 => _model.QuickSave2;
+        public RProperty<string> QuickSave3 => _model.QuickSave3;
 
         public ActionCommand<string> QuickSaveViewPointCommand { get; }
         public ActionCommand<string> QuickLoadViewPointCommand { get; }

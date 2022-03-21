@@ -2,7 +2,7 @@
 using System;
 using System.Windows;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     public partial class SettingWindow : MetroWindow
     {

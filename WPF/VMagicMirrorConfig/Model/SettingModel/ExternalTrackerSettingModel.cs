@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -49,6 +50,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> EnableExternalTracking { get; }
         public RProperty<bool> EnableExternalTrackerLipSync { get; }
         public RProperty<bool> EnableExternalTrackerEmphasizeExpression { get; }
+
         public RProperty<bool> EnableExternalTrackerPerfectSync { get; }
 
         // アプリ別設定
@@ -119,5 +121,21 @@ namespace Baku.VMagicMirrorConfig
         }
 
         public void SendCalibrateRequest() => SendMessage(MessageFactory.Instance.ExTrackerCalibrate());
+
+        public async Task DisableExternalTrackerWithConfirmAsync()
+        {
+            //NOTE: これもモデル層…いやメッセージボックス相当だからVMでいいのかな…？
+            var indication = MessageIndication.ExTrackerCheckTurnOff();
+            bool result = await MessageBoxWrapper.Instance.ShowAsync(
+                indication.Title,
+                indication.Content,
+                MessageBoxWrapper.MessageBoxStyle.OKCancel
+                );
+
+            if (result)
+            {
+                EnableExternalTracking.Value = false;
+            }
+        }
     }
 }

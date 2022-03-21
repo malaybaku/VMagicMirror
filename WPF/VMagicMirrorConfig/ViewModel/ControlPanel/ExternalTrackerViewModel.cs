@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 
-namespace Baku.VMagicMirror.ViewModelsConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class ExternalTrackerViewModel : SettingViewModelBase
     {
@@ -59,7 +59,9 @@ namespace Baku.VMagicMirror.ViewModelsConfig
             OpenInstructionUrlCommand = new ActionCommand(OpenInstructionUrl);
             OpenPerfectSyncTipsUrlCommand = new ActionCommand(OpenPerfectSyncTipsUrl);
             OpenIFMTroubleShootCommand = new ActionCommand(OpenIFMTroubleShoot);
-            EndExTrackerIfNeededCommand = new ActionCommand(EndExTrackerIfNeeded);
+            EndExTrackerIfNeededCommand = new ActionCommand(
+                async () => await model.DisableExternalTrackerWithConfirmAsync()
+                );
             ShowMissingBlendShapeNotificationCommand = new ActionCommand(ShowMissingBlendShapeNotification);
             ResetSettingsCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetToDefault)
@@ -278,22 +280,6 @@ namespace Baku.VMagicMirror.ViewModelsConfig
         }
 
         public ActionCommand EndExTrackerIfNeededCommand { get; }
-
-        private async void EndExTrackerIfNeeded()
-        {
-            //NOTE: これもモデル層…いやメッセージボックス相当だからVMでいいのかな…？
-            var indication = MessageIndication.ExTrackerCheckTurnOff();
-            bool result = await MessageBoxWrapper.Instance.ShowAsync(
-                indication.Title,
-                indication.Content,
-                MessageBoxWrapper.MessageBoxStyle.OKCancel
-                );
-
-            if (result)
-            {
-                EnableExternalTracking.Value = false;
-            }
-        }
 
         public void RefreshConnectionIfPossible()
         {

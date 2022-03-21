@@ -1,4 +1,4 @@
-﻿namespace Baku.VMagicMirror.ViewModelsConfig
+﻿namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary>ゲームパッド関係の設定のViewModel。素通し設定ばかりなのでとても単純。</summary>
     public class GamepadSettingViewModel : SettingViewModelBase

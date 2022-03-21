@@ -1,4 +1,6 @@
-﻿namespace Baku.VMagicMirror.ViewModelsConfig
+﻿using Baku.VMagicMirrorConfig.View;
+
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary> ヘルプ用のリンク類を処理するビューモデル </summary>
     public class HelpViewModel : ViewModelBase

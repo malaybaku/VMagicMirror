@@ -1,9 +1,10 @@
-﻿using Microsoft.Win32;
+﻿using Baku.VMagicMirrorConfig.View;
+using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 
-namespace Baku.VMagicMirror.ViewModelsConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary>
     /// ホームタブ部分のビューモデル

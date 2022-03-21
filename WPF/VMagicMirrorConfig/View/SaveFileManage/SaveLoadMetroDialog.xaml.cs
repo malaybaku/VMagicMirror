@@ -1,6 +1,6 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     public partial class SaveLoadMetroDialog : BaseMetroDialog
     {

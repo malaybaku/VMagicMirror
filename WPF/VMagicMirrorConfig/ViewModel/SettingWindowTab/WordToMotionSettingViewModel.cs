@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Baku.VMagicMirrorConfig.View;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Baku.VMagicMirror.ViewModelsConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class WordToMotionSettingViewModel : SettingViewModelBase
     {

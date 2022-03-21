@@ -1,10 +1,11 @@
-﻿using MahApps.Metro.Controls;
+﻿using Baku.VMagicMirrorConfig.View;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Baku.VMagicMirror.ViewModelsConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class SettingIoViewModel : SettingViewModelBase
     {

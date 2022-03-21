@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     public class IntegerEqualityToVisibilityConverter : IValueConverter
     {

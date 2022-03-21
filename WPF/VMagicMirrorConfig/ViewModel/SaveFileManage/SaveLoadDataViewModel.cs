@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Baku.VMagicMirrorConfig.View;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Baku.VMagicMirror.ViewModelsConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary>
     /// セーブかロードを行う時のビューモデル

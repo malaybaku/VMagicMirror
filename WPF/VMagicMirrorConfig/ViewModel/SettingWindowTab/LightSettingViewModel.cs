@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace Baku.VMagicMirror.ViewModelsConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary>
     /// ライトと言ってるが、実際にはタイピングエフェクトを除いたエフェクトっぽい色々の設定を持ってるクラス。

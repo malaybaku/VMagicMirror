@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Baku.VMagicMirrorConfig.View;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Baku.VMagicMirror.ViewModelsConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     //TODO: モデルに引っ張られてFaceとMotionが同一ViewModelになっちゃってるが、分けるべき
     public class MotionSettingViewModel : SettingViewModelBase

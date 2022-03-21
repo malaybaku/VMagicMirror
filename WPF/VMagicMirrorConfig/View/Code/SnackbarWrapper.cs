@@ -1,7 +1,7 @@
 ﻿using System;
 using MaterialDesignThemes.Wpf;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     /// <summary>
     /// スナックバーのラッパークラスです。

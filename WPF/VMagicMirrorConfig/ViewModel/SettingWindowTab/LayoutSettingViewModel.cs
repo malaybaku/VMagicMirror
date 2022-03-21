@@ -1,7 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System.Linq;
 
-namespace Baku.VMagicMirror.ViewModelsConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class LayoutSettingViewModel : SettingViewModelBase
     {

@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirror.ViewModelsConfig
 {
     public class ExternalTrackerViewModel : SettingViewModelBase
     {

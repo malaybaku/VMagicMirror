@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Baku.VMagicMirrorConfig.StreamingTabViewModels
+namespace Baku.VMagicMirror.ViewModelsConfig.StreamingTabViewModels
 {
     //NOTE: 配信タブは機能が雑多なため1タブ = 1ViewModelではなく、中のサブグループ1つに対して1つのViewModelを当てていく
     public class WindowViewModel : ViewModelBase

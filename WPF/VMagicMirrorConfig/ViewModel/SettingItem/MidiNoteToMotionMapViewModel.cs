@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirror.ViewModelsConfig
 {
     public class MidiNoteToMotionMapViewModel : ViewModelBase
     {

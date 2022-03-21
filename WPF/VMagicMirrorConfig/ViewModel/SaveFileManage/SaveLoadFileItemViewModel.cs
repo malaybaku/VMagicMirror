@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirror.ViewModelsConfig
 {
     public class SaveLoadFileItemViewModel
     {

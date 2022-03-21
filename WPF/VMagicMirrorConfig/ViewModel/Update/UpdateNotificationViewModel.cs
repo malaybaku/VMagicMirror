@@ -1,4 +1,4 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿namespace Baku.VMagicMirror.ViewModelsConfig
 {
     public class UpdateNotificationViewModel : ViewModelBase
     {

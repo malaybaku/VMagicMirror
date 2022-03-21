@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirror.ViewModelsConfig
 {
     public class HandTrackingResultViewModel : ViewModelBase
     {

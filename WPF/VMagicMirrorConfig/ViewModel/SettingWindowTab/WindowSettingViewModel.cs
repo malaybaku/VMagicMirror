@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Media;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirror.ViewModelsConfig
 {
     public class WindowSettingViewModel : SettingViewModelBase
     {

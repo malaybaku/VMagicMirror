@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirror.ViewModelsConfig
 {
     /// <summary> 表情スイッチの個別アイテムのビューモデル </summary>
     public class ExternalTrackerFaceSwitchItemViewModel : ViewModelBase

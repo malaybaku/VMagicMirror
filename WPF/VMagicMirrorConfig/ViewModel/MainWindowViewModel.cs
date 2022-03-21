@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirror.ViewModelsConfig
 {
     //TODO: このクラスに書く処理を「Windowが最初に出たときの処理」と「アプリ終了処理」だけにしたい
     //  →その後に2つの処理をAppクラスに移動してもよい

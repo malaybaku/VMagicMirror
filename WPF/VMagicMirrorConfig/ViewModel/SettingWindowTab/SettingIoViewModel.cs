@@ -4,7 +4,7 @@ using Microsoft.Win32;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirror.ViewModelsConfig
 {
     public class SettingIoViewModel : SettingViewModelBase
     {

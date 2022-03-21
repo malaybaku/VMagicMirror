@@ -52,7 +52,7 @@ namespace Baku.VMagicMirrorConfig
         public void Set(T value) => Value = value;
 
         /// <summary>
-        /// 値は変更しますが、イベントやコールバックは呼ばない。
+        /// 値は変更するが、イベントやコールバックは呼ばない。
         /// Unity側から値を受信し、その値がUI上で表示不要であるような、ごく一部のケースでのみ使う
         /// </summary>
         /// <param name="value"></param>

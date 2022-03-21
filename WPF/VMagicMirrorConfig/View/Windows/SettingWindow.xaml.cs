@@ -11,7 +11,7 @@ namespace Baku.VMagicMirrorConfig
         /// <summary>現在設定ウィンドウがあればそれを取得し、なければnullを取得します。</summary>
         public static SettingWindow? CurrentWindow { get; private set; } = null;
 
-        public static void OpenOrActivateExistingWindow(object dataContext)
+        public static void OpenOrActivateExistingWindow()
         {
             if (CurrentWindow == null)
             {
@@ -19,7 +19,6 @@ namespace Baku.VMagicMirrorConfig
                 {
                     Owner = Application.Current.MainWindow,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    DataContext = dataContext,
                 };
 
                 CurrentWindow.Closed += OnSettingWindowClosed;

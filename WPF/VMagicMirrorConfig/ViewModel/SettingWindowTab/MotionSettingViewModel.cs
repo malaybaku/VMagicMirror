@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -11,15 +9,25 @@ namespace Baku.VMagicMirrorConfig
     {
         public MotionSettingViewModel() : this(
             ModelResolver.Instance.Resolve<MotionSettingModel>(),
+            ModelResolver.Instance.Resolve<InstallPathChecker>(),
+            ModelResolver.Instance.Resolve<DeviceListSource>(),
+            ModelResolver.Instance.Resolve<MicrophoneStatus>(),
             ModelResolver.Instance.Resolve<IMessageReceiver>()
             )
         {
         }
 
-
-        internal MotionSettingViewModel(MotionSettingModel model, IMessageReceiver receiver)
+        internal MotionSettingViewModel(
+            MotionSettingModel model,
+            InstallPathChecker installPathChecker,
+            DeviceListSource deviceListSource,
+            MicrophoneStatus microphoneStatus,
+            IMessageReceiver receiver)
         {
             _model = model;
+            _deviceListSource = deviceListSource;
+            _microphoneStatus = microphoneStatus;
+            ShowInstallPathWarning = installPathChecker.HasMultiByteCharInInstallPath;
 
             ResetFaceBasicSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(ResetFaceBasicSetting)
@@ -44,29 +52,13 @@ namespace Baku.VMagicMirrorConfig
             OpenFullEditionDownloadUrlCommand = new ActionCommand(() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040"));
             OpenHandTrackingPageUrlCommand = new ActionCommand(() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_hand_tracking")));
 
-            ShowMicrophoneVolume = new RProperty<bool>(false, b =>
-            {
-                model.SetMicrophoneVolumeVisibility(b);
-                if (!b)
-                {
-                    MicrophoneVolumeValue.Value = 0;
-                }
-            });
-
             _model.KeyboardAndMouseMotionMode.PropertyChanged += (_, __) => UpdateKeyboardAndMouseMotionMode();
             UpdateKeyboardAndMouseMotionMode();
             _model.GamepadMotionMode.PropertyChanged += (_, __) => UpdateGamepadMotionMode();
             UpdateGamepadMotionMode();
 
             _model.EyeBoneRotationScale.PropertyChanged += (_, __) => UpdateEyeRotRangeText();
-            _model.EnableLipSync.PropertyChanged += (_, __) =>
-            {
-                if (!_model.EnableLipSync.Value)
-                {
-                    ShowMicrophoneVolume.Value = false;
-                }
-            };
-
+            
             _model.FaceNeutralClip.PropertyChanged += (_, __) =>
                 _blendShapeNameStore.Refresh(_model.FaceNeutralClip.Value, _model.FaceOffsetClip.Value);
             _model.FaceOffsetClip.PropertyChanged += (_, __) =>
@@ -82,10 +74,11 @@ namespace Baku.VMagicMirrorConfig
 
             //TODO: 受信はここじゃないとこでやってほしい?購読停止できる+モデルに何も通達しないでいい内容ならここでもアリかも
             receiver.ReceivedCommand += OnReceivedCommand;
-            ShowInstallPathWarning.Value = InstallPathChecker.HasMultiByteCharInInstallPath();
         }
 
         private readonly MotionSettingModel _model;
+        private readonly DeviceListSource _deviceListSource;
+        private readonly MicrophoneStatus _microphoneStatus;
 
         private void OnReceivedCommand(object? sender, CommandReceivedEventArgs e)
         {
@@ -97,12 +90,6 @@ namespace Baku.VMagicMirrorConfig
                     break;
                 case ReceiveMessageNames.AutoAdjustResults:
                     _model.SetAutoAdjustResults(e.Args);
-                    break;
-                case ReceiveMessageNames.MicrophoneVolumeLevel:
-                    if (ShowMicrophoneVolume.Value && int.TryParse(e.Args, out int i))
-                    {
-                        MicrophoneVolumeValue.Value = i;
-                    }
                     break;
                 case ReceiveMessageNames.ExtraBlendShapeClipNames:
                     try
@@ -127,47 +114,14 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        public async Task InitializeDeviceNamesAsync()
-        {
-            var microphoneNames = await _model.GetMicrophoneDeviceNames();
-            Application.Current.MainWindow.Dispatcher.Invoke(() =>
-            {
-                _writableMicrophoneDeviceNames.Clear();
-                foreach (var deviceName in microphoneNames)
-                {
-                    _writableMicrophoneDeviceNames.Add(deviceName);
-                }
-            });
-
-            var cameraNames = await _model.GetCameraDeviceNames();
-            Application.Current.MainWindow.Dispatcher.Invoke(() =>
-            {
-                foreach (var deviceName in cameraNames)
-                {
-                    _writableCameraDeviceNames.Add(deviceName);
-                }
-            });
-        }
-
         #region モーションの種類の制御
-        
-        //TODO: 多言語化したい
-        //モデル層から引っ張った方がよいかもしれないが、それは無理に頑張らないでもよいかも
-        public MotionModeSelectionViewModel[] KeyboardAndMouseMotions { get; } = new[]
-        {
-            new MotionModeSelectionViewModel(MotionSetting.KeyboardMouseMotionDefault, "Motion_Arm_MouseAndKeyMode_Default"),
-            new MotionModeSelectionViewModel(MotionSetting.KeyboardMouseMotionPresentation, "Motion_Arm_MouseAndKeyMode_Presentation"),
-            new MotionModeSelectionViewModel(MotionSetting.KeyboardMouseMotionPenTablet, "Motion_Arm_MouseAndKeyMode_PenTablet"),
-            //NOTE: 順番と値が違うのはわざと。
-            new MotionModeSelectionViewModel(MotionSetting.KeyboardMouseMotionNone, "Motion_Arm_MouseAndKeyMode_None"),
-        };
 
-        public MotionModeSelectionViewModel[] GamepadMotions { get; } = new[]
-        {
-            new MotionModeSelectionViewModel(0, "Motion_Arm_GamepadMode_Default"),
-            new MotionModeSelectionViewModel(1, "Motion_Arm_GamepadMode_ArcadeStick"),
-            //NOTE: Gun ControllerとかCar Handleとかも想定していたが、Unity側の実装が間に合ってないので無し。
-        };
+        //モデル層から引っ張った方がよいかもしれないが、それは無理に頑張らないでもよいかも
+        public MotionModeSelectionViewModel[] KeyboardAndMouseMotions 
+            => MotionModeSelectionViewModel.KeyboardAndMouseMotions;
+
+        public MotionModeSelectionViewModel[] GamepadMotions =>
+            MotionModeSelectionViewModel.GamepadMotions;
 
         private MotionModeSelectionViewModel? _keyboardAndMouseMotionMode = null;
         public MotionModeSelectionViewModel? KeyboardAndMouseMotionMode
@@ -226,7 +180,7 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnableFaceTracking => _model.EnableFaceTracking;
 
-        public RProperty<bool> ShowInstallPathWarning { get; } = new RProperty<bool>(false);
+        public bool ShowInstallPathWarning { get; }
 
         public RProperty<bool> AutoBlinkDuringFaceTracking => _model.AutoBlinkDuringFaceTracking;
         public RProperty<bool> EnableBodyLeanZ => _model.EnableBodyLeanZ;
@@ -249,12 +203,7 @@ namespace Baku.VMagicMirrorConfig
         public ActionCommand OpenHandTrackingPageUrlCommand { get; }
 
         public RProperty<string> CameraDeviceName => _model.CameraDeviceName;
-
-        private readonly ObservableCollection<string> _writableCameraDeviceNames
-            = new ObservableCollection<string>();
-        private ReadOnlyObservableCollection<string>? _cameraDeviceNames = null;
-        public ReadOnlyObservableCollection<string> CameraDeviceNames
-            => _cameraDeviceNames ??= new ReadOnlyObservableCollection<string>(_writableCameraDeviceNames);
+        public ReadOnlyObservableCollection<string> CameraNames => _deviceListSource.CameraNames;
 
         public ActionCommand CalibrateFaceCommand { get; }
 
@@ -298,16 +247,10 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<string> LipSyncMicrophoneDeviceName => _model.LipSyncMicrophoneDeviceName;
         public RProperty<int> MicrophoneSensitivity => _model.MicrophoneSensitivity;
 
-        public RProperty<bool> ShowMicrophoneVolume { get; }
+        public RProperty<bool> ShowMicrophoneVolume => _microphoneStatus.ShowMicrophoneVolume;
+        public RProperty<int> MicrophoneVolumeValue => _microphoneStatus.MicrophoneVolumeValue;
 
-        //NOTE: 0 ~ 20が無音、21~40が適正、41~50がデカすぎになる。これはUnity側がそういう整形をしてくれる
-        public RProperty<int> MicrophoneVolumeValue { get; } = new RProperty<int>(0);
-
-        private readonly ObservableCollection<string> _writableMicrophoneDeviceNames
-            = new ObservableCollection<string>();
-        private ReadOnlyObservableCollection<string>? _microphoneDeviceNames = null;
-        public ReadOnlyObservableCollection<string> MicrophoneDeviceNames
-            => _microphoneDeviceNames ??= new ReadOnlyObservableCollection<string>(_writableMicrophoneDeviceNames);
+        public ReadOnlyObservableCollection<string> MicrophoneNames => _deviceListSource.MicrophoneNames;
 
         #endregion
 
@@ -512,6 +455,23 @@ namespace Baku.VMagicMirrorConfig
         public int Index { get; }
 
         public RProperty<string> Label { get; } = new RProperty<string>("");
+
+        //NOTE: immutable arrayのほうが性質は良いのでそうしてもよい
+        public static MotionModeSelectionViewModel[] KeyboardAndMouseMotions { get; } = new[]
+        {
+            new MotionModeSelectionViewModel(MotionSetting.KeyboardMouseMotionDefault, "Motion_Arm_MouseAndKeyMode_Default"),
+            new MotionModeSelectionViewModel(MotionSetting.KeyboardMouseMotionPresentation, "Motion_Arm_MouseAndKeyMode_Presentation"),
+            new MotionModeSelectionViewModel(MotionSetting.KeyboardMouseMotionPenTablet, "Motion_Arm_MouseAndKeyMode_PenTablet"),
+            //NOTE: 順番と値が違うのはわざと。
+            new MotionModeSelectionViewModel(MotionSetting.KeyboardMouseMotionNone, "Motion_Arm_MouseAndKeyMode_None"),
+        };
+
+        public static MotionModeSelectionViewModel[] GamepadMotions { get; } = new[]
+        {
+            new MotionModeSelectionViewModel(0, "Motion_Arm_GamepadMode_Default"),
+            new MotionModeSelectionViewModel(1, "Motion_Arm_GamepadMode_ArcadeStick"),
+            //NOTE: Gun ControllerとかCar Handleとかも想定していたが、Unity側の実装が間に合ってないので無し。
+        };
     }
 
 }

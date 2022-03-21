@@ -312,14 +312,6 @@
                                         Content="{DynamicResource SettingFile_Import}" 
                                         Command="{Binding SettingIo.ImportSettingFromFileCommand}"
                                         />
-
-                                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                                        Width="NaN"
-                                        Margin="5"
-                                        Content="{DynamicResource Home_LoadPrevSetting}" 
-                                        Command="{Binding LoadPrevSettingCommand}"
-                                        />
-
                             </Grid>
                         </StackPanel>
                     </Border>

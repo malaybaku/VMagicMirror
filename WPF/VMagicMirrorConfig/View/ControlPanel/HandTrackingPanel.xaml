@@ -69,7 +69,7 @@
                         <ComboBox Grid.Column="1"
                                   Margin="10,5"
                                   IsEnabled="{Binding EnableImageBasedHandTracking.Value}"
-                                  ItemsSource="{Binding CameraDeviceNames}"
+                                  ItemsSource="{Binding CameraNames}"
                                   SelectedItem="{Binding CameraDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
                                   md:HintAssist.Hint="Camera"
                                   />

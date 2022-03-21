@@ -80,7 +80,7 @@
                                   Margin="5,0"
                                   Width="200"
                                   IsEnabled="{Binding EnableLipSync.Value}"
-                                  ItemsSource="{Binding MicrophoneDeviceNames}"
+                                  ItemsSource="{Binding MicrophoneNames}"
                                   SelectedItem="{Binding LipSyncMicrophoneDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
                                   md:HintAssist.Hint="Microphone"
                                   />
@@ -175,7 +175,7 @@
                                   Margin="5,0"
                                   Width="200"
                                   IsEnabled="{Binding EnableFaceTracking.Value}"
-                                  ItemsSource="{Binding CameraDeviceNames}"
+                                  ItemsSource="{Binding CameraNames}"
                                   SelectedItem="{Binding CameraDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
                                   md:HintAssist.Hint="Camera"
                                   />

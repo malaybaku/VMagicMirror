@@ -7,11 +7,14 @@ namespace Baku.VMagicMirrorConfig
 {
     class LayoutSettingModel : SettingModelBase<LayoutSetting>
     {
-        public LayoutSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        public LayoutSettingModel() : this(
+            ModelResolver.Instance.Resolve<IMessageSender>(),
+            ModelResolver.Instance.Resolve<IMessageReceiver>()
+            )
         {
         }
 
-        public LayoutSettingModel(IMessageSender sender) : base(sender)
+        public LayoutSettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             var s = LayoutSetting.Default;
             var factory = MessageFactory.Instance;
@@ -39,6 +42,7 @@ namespace Baku.VMagicMirrorConfig
             EnableFreeCameraMode = new RProperty<bool>(false, b => OnEnableFreeCameraModeChanged(b));
             EnableDeviceFreeLayout = new RProperty<bool>(false, v => SendMessage(factory.EnableDeviceFreeLayout(v)));
 
+            receiver.ReceivedCommand += OnReceiveCommand;
         }
 
         //NOTE: Gamepadはモデルクラス的には関連づけしないでおく: 代わりにSave/Loadの関数内で調整してもらう感じにする
@@ -62,8 +66,6 @@ namespace Baku.VMagicMirrorConfig
         //NOTE: この3つの値はファイルには保存しない
         public RProperty<bool> EnableFreeCameraMode { get; }
         public RProperty<bool> EnableDeviceFreeLayout { get; }
-        //受信するだけ
-        public RProperty<bool> ModelDoesNotSupportPen { get; } = new RProperty<bool>(false);
 
         #region API
 
@@ -200,6 +202,15 @@ namespace Baku.VMagicMirrorConfig
             ResetCameraSetting();
         }
 
-        #endregion    
+        #endregion
+
+        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        {
+            if (e.Command == ReceiveMessageNames.UpdateDeviceLayout)
+            {
+                //NOTE: Unity側から来た値なため、送り返さないでよいことに注意
+                DeviceLayout.SilentSet(e.Args);
+            }
+        }
     }
 }

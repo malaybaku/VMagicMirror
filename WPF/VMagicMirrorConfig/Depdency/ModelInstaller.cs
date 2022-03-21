@@ -8,9 +8,14 @@
             var resolver = ModelResolver.Instance;
             var messageIo = new MessageIo();
 
+            resolver.Add(new AppQuitSetting());
+
             resolver.Add(messageIo);
             resolver.Add(messageIo.Receiver);
             resolver.Add(messageIo.Sender);
+
+            resolver.Add(new DeviceListSource());
+            resolver.Add(new LoadedAvatarInfo());
 
             resolver.Add(new WindowSettingModel());
             resolver.Add(new MotionSettingModel());
@@ -27,7 +32,7 @@
             resolver.Add(new SettingFileIo());
             resolver.Add(new SaveFileManager());
 
-
+            resolver.Add(new AvatarLoader());
         }
     }
 }

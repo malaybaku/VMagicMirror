@@ -158,7 +158,7 @@
                                         HorizontalAlignment="Stretch"
                                         Margin="5,0"
                                         IsEnabled="{Binding MotionSetting.EnableLipSync.Value}"
-                                        ItemsSource="{Binding MotionSetting.MicrophoneDeviceNames}"
+                                        ItemsSource="{Binding MotionSetting.MicrophoneNames}"
                                         SelectedItem="{Binding MotionSetting.LipSyncMicrophoneDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
                                         md:HintAssist.Hint="Microphone"
                                         />
@@ -256,14 +256,14 @@
                                         HorizontalAlignment="Stretch"
                                         Margin="5,0"
                                         IsEnabled="{Binding MotionSetting.EnableFaceTracking.Value}"
-                                        ItemsSource="{Binding MotionSetting.CameraDeviceNames}"
+                                        ItemsSource="{Binding MotionSetting.CameraNames}"
                                         SelectedItem="{Binding MotionSetting.CameraDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
                                         md:HintAssist.Hint="Camera"
                                         />
                         </Grid>
 
                         <md:Card Margin="15,5,5,0" 
-                                 Visibility="{Binding MotionSetting.ShowInstallPathWarning.Value,
+                                 Visibility="{Binding MotionSetting.ShowInstallPathWarning,
                                                       Converter={StaticResource BooleanToVisibilityConverter}, 
                                                       FallbackValue=Collapsed}"
                                  ToolTip="{DynamicResource Motion_Face_FolderMaybeIncorrect_Tooltip}"

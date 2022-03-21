@@ -191,9 +191,6 @@ namespace Baku.VMagicMirrorConfig
         //NOTE: dB単位なので0がデフォルト。対数ベースのほうがレンジ取りやすい
         public RProperty<int> MicrophoneSensitivity { get; }
 
-        public void SetMicrophoneVolumeVisibility(bool visible)
-            => SendMessage(MessageFactory.Instance.SetMicrophoneVolumeVisibility(visible));
-
         #endregion
 
         #region Arm
@@ -315,18 +312,6 @@ namespace Baku.VMagicMirrorConfig
         }
 
         #endregion
-
-        public async Task<string[]> GetCameraDeviceNames()
-        {
-            string cameras = await SendQueryAsync(MessageFactory.Instance.CameraDeviceNames());
-            return DeviceNames.FromJson(cameras, "Camera").Names;
-        }
-
-        public async Task<string[]> GetMicrophoneDeviceNames()
-        {
-            var microphones = await SendQueryAsync(MessageFactory.Instance.MicrophoneDeviceNames());
-            return DeviceNames.FromJson(microphones, "Microphone").Names;
-        }
 
         /// <summary>
         /// AutoAdjustParametersがシリアライズされた文字列を渡すことで、自動調整パラメータのうち

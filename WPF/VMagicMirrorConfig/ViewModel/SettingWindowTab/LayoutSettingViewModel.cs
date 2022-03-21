@@ -6,17 +6,20 @@ namespace Baku.VMagicMirrorConfig
     public class LayoutSettingViewModel : SettingViewModelBase
     {
         public LayoutSettingViewModel() : this(
+            ModelResolver.Instance.Resolve<LoadedAvatarInfo>(),
             ModelResolver.Instance.Resolve<LayoutSettingModel>(),
-            ModelResolver.Instance.Resolve<GamepadSettingModel>(),
-            ModelResolver.Instance.Resolve<IMessageReceiver>()
+            ModelResolver.Instance.Resolve<GamepadSettingModel>()
             )
         {
         }
 
         internal LayoutSettingViewModel(
-            LayoutSettingModel model, GamepadSettingModel gamepadModel, IMessageReceiver receiver
+            LoadedAvatarInfo loadedAvatar,
+            LayoutSettingModel model, 
+            GamepadSettingModel gamepadModel
             )
         {
+            _loadedAvatar = loadedAvatar;
             _model = model;
             _gamepadModel = gamepadModel;
 
@@ -55,27 +58,12 @@ namespace Baku.VMagicMirrorConfig
             };
 
             _typingEffectItem = TypingEffectSelections[0];
-
-            //TODO: 受信時のハンドリングはViewModelではない所でやってほしい(生存期間の都合で)
-            receiver.ReceivedCommand += OnReceiveCommand;
         }
 
+        private readonly LoadedAvatarInfo _loadedAvatar;
         private readonly LayoutSettingModel _model;
         //NOTE: ゲームパッド設定(表示/非表示)も使うため、ここに記載。ちょっと例外的な措置ではある
         private readonly GamepadSettingModel _gamepadModel;
-
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
-        {
-            if (e.Command == ReceiveMessageNames.UpdateDeviceLayout)
-            {
-                //NOTE: Unity側から来た値なため、送り返さないでよいことに注意
-                _model.DeviceLayout.SilentSet(e.Args);
-            }
-            else if (e.Command == ReceiveMessageNames.SetModelDoesNotSupportPen)
-            {
-                _model.ModelDoesNotSupportPen.Value = bool.TryParse(e.Args, out var result) ? result : false;
-            }
-        }
 
         public RProperty<int> CameraFov => _model.CameraFov;
         public RProperty<bool> EnableFreeCameraMode => _model.EnableFreeCameraMode;
@@ -104,7 +92,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> PenVisibility => _model.PenVisibility;
         public RProperty<bool> MidiControllerVisibility => _model.MidiControllerVisibility;
         public RProperty<bool> GamepadVisibility => _gamepadModel.GamepadVisibility;
-        public RProperty<bool> PenUnavailable => _model.ModelDoesNotSupportPen;
+        public RProperty<bool> PenUnavailable => _loadedAvatar.ModelDoesNotSupportPen;
 
         public RProperty<bool> EnableDeviceFreeLayout => _model.EnableDeviceFreeLayout;
 

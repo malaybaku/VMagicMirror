@@ -3,17 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="850" d:DesignWidth="550"
-             d:DataContext="{d:DesignInstance Type={x:Type vmm:MotionSettingViewModel}}"
+             d:DataContext="{d:DesignInstance Type={x:Type vm:MotionSettingViewModel}}"
              >
     <UserControl.Resources>
-        <vmm:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
-        <vmm:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter"/>
-        <vmm:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
-        <vmm:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
+        <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
+        <view:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter"/>
+        <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
+        <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Width" Value="20"/>
@@ -126,7 +127,7 @@
                                               Converter={StaticResource BooleanToOpacityConverter}}"
                             >
                         <Grid>
-                            <vmm:HandTrackingResultPanel 
+                            <view:HandTrackingResultPanel 
                                 Width="320" Height="180" 
                                 DataContext="{Binding HandTrackingResult}"
                                 LeftPoints="{Binding LeftPoints}"

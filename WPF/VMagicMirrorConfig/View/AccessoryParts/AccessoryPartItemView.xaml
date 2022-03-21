@@ -5,14 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:ma="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance vmm:AccessoryItemViewModel}"
+             d:DataContext="{d:DesignInstance vm:AccessoryItemViewModel}"
              d:DesignHeight="270" d:DesignWidth="400">
     <UserControl.Resources>
-        <vmm:FileIdIndicationConverter x:Key="FileIdIndicationConverter"/>
-        <vmm:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
+        <view:FileIdIndicationConverter x:Key="FileIdIndicationConverter"/>
+        <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
     </UserControl.Resources>
     <StackPanel>
 
@@ -128,7 +129,7 @@
                         Margin="0,2"
                         Padding="0"
                         SelectedIndex="{Binding AttachTarget.Value, FallbackValue=0}"
-                        ItemsSource="{x:Static vmm:AccessoryItemViewModel.AvailableAttachTargets}"
+                        ItemsSource="{x:Static vm:AccessoryItemViewModel.AvailableAttachTargets}"
                         />
 
                 <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="6"
@@ -152,7 +153,7 @@
                 <TextBox Grid.Row="3" Grid.Column="2" 
                         Text="{Binding PosX.Value, StringFormat=0.######, FallbackValue=1.234567}">
                     <i:Interaction.Behaviors>
-                        <vmm:SelectOnFocusBehavior/>
+                        <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
                 <TextBlock Grid.Row="3" Grid.Column="3" 
@@ -161,7 +162,7 @@
                 <TextBox Grid.Row="3" Grid.Column="4" 
                          Text="{Binding PosY.Value, StringFormat=0.######}">
                     <i:Interaction.Behaviors>
-                        <vmm:SelectOnFocusBehavior/>
+                        <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
                 <TextBlock Grid.Row="3" Grid.Column="5" 
@@ -170,7 +171,7 @@
                 <TextBox Grid.Row="3" Grid.Column="6"
                          Text="{Binding PosZ.Value, StringFormat=0.######}">
                     <i:Interaction.Behaviors>
-                        <vmm:SelectOnFocusBehavior/>
+                        <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
 
@@ -185,7 +186,7 @@
                 <TextBox Grid.Row="4" Grid.Column="2"
                          Text="{Binding RotX.Value, StringFormat=0.###}">
                     <i:Interaction.Behaviors>
-                        <vmm:SelectOnFocusBehavior/>
+                        <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
                 <TextBlock Grid.Row="4" Grid.Column="3"
@@ -194,7 +195,7 @@
                 <TextBox Grid.Row="4" Grid.Column="4"
                          Text="{Binding RotY.Value, StringFormat=0.###}">
                     <i:Interaction.Behaviors>
-                        <vmm:SelectOnFocusBehavior/>
+                        <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
                 <TextBlock Grid.Row="4" Grid.Column="5" 
@@ -203,7 +204,7 @@
                 <TextBox Grid.Row="4" Grid.Column="6"
                          Text="{Binding RotZ.Value, StringFormat=0.###}">
                     <i:Interaction.Behaviors>
-                        <vmm:SelectOnFocusBehavior/>
+                        <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
                 
@@ -216,7 +217,7 @@
                         Text="{Binding Scale.Value, StringFormat=0.######, FallbackValue=1.0}"
                          >
                     <i:Interaction.Behaviors>
-                        <vmm:SelectOnFocusBehavior/>
+                        <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
 

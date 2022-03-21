@@ -5,7 +5,8 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+    xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
+    xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     mc:Ignorable="d"        
     Title="{DynamicResource UpdateDialog_Title}" 
@@ -17,11 +18,11 @@
     ShowDialogsOverTitleBar="False"
     WindowStartupLocation="CenterOwner"
     GlowBrush="{DynamicResource MahApps.Brushes.Gray2}"
-    d:DataContext="{d:DesignInstance vmm:UpdateNotificationViewModel}"
+    d:DataContext="{d:DesignInstance vm:UpdateNotificationViewModel}"
     Height="280" Width="500"
     >
     <i:Interaction.Behaviors>
-        <vmm:DialogBehavior Result="{Binding DialogResult, Mode=OneWay}" />
+        <view:DialogBehavior Result="{Binding DialogResult, Mode=OneWay}" />
     </i:Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>

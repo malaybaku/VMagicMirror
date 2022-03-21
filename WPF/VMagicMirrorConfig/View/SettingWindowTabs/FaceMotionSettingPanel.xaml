@@ -4,16 +4,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type vmm:MotionSettingViewModel}}"
+             d:DataContext="{d:DesignInstance Type={x:Type vm:MotionSettingViewModel}}"
              d:DesignWidth="400"
              d:DesignHeight="1200"
              >
     <UserControl.Resources>
-        <vmm:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
-        <vmm:Lv50Converter x:Key="Lv50Converter"/>
-        <vmm:EmptyToNoneTextConverter x:Key="EmptyToNoneTextConverter"/>
+        <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
+        <view:Lv50Converter x:Key="Lv50Converter"/>
+        <view:EmptyToNoneTextConverter x:Key="EmptyToNoneTextConverter"/>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled"
@@ -233,7 +235,7 @@
                     </Grid>
 
                     <md:Card Margin="15,5,5,5" 
-                             Visibility="{Binding ShowInstallPathWarning.Value, 
+                             Visibility="{Binding ShowInstallPathWarning, 
                                                   Converter={StaticResource BooleanToVisibilityConverter}}"
                              ToolTip="{DynamicResource Motion_Face_FolderMaybeIncorrect_Tooltip}"
                              HorizontalAlignment="Center"

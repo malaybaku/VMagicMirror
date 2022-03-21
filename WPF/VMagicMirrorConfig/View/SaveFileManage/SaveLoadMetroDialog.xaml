@@ -5,13 +5,14 @@
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+    xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+    xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
     mc:Ignorable="d" 
-    d:DataContext="{d:DesignData Type=vmm:SaveLoadDataViewModel}"
+    d:DataContext="{d:DesignData Type=vm:SaveLoadDataViewModel}"
     d:DesignHeight="450" d:DesignWidth="800"
     HorizontalContentAlignment="Stretch"
     DialogContentMargin="0"
     Margin="0"
     Padding="0">
-    <vmm:SaveLoadModal/>
+    <view:SaveLoadModal/>
 </metro:BaseMetroDialog>

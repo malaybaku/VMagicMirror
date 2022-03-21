@@ -4,14 +4,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type vmm:MainWindowViewModel}}"
+             d:DataContext="{d:DesignInstance Type={x:Type vm:MainWindowViewModel}}"
              d:DesignWidth="400"
              d:DesignHeight="1050"
              >
     <UserControl.Resources>
-        <vmm:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
+        <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Width" Value="20"/>

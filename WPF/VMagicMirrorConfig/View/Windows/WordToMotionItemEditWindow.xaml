@@ -5,9 +5,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-    xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+    xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+    xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance vmm:WordToMotionItemViewModel}"
+    d:DataContext="{d:DesignInstance vm:WordToMotionItemViewModel}"
     Title="VMagicMirror - Word To Motion" 
     Height="600" Width="750"
     MinHeight="600" MinWidth="750"
@@ -21,6 +22,7 @@
     >
     <Grid>
         <Grid.Resources>
+            <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
             <Style TargetType="Slider" BasedOn="{StaticResource {x:Type Slider}}">
                 <Setter Property="Grid.Column" Value="1"/>
                 <Setter Property="Minimum" Value="0"/>
@@ -37,7 +39,6 @@
             <Style x:Key="BlendShapeItemGrid" TargetType="Grid">
                 <Setter Property="Height" Value="35"/>
             </Style>
-            <vmm:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -64,7 +65,7 @@
                     <TextBox.Text>
                         <Binding Path="Word">
                             <Binding.ValidationRules>
-                                <vmm:SimplePhraseValidationRule />
+                                <view:SimplePhraseValidationRule />
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
@@ -277,7 +278,7 @@
                                       ItemsSource="{Binding BlendShapeItems}"
                                       IsEnabled="{Binding UseBlendShape}">
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type vmm:BlendShapeItemViewModel}">
+                                <DataTemplate DataType="{x:Type vm:BlendShapeItemViewModel}">
                                     <Grid Height="35" Margin="0,0,10,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="70"/>
@@ -301,7 +302,7 @@
                                       ItemsSource="{Binding ExtraBlendShapeItems}"
                                       IsEnabled="{Binding UseBlendShape}">
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type vmm:BlendShapeItemViewModel}">
+                                <DataTemplate DataType="{x:Type vm:BlendShapeItemViewModel}">
                                     <Grid Height="35" Margin="0,0,10,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="70"/>

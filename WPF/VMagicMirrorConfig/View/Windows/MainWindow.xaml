@@ -7,6 +7,8 @@
     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+    xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
     xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
     mc:Ignorable="d"
     Title="{x:Static vmm:AppConsts.AppFullNameWithEnvSuffix}" 
@@ -19,13 +21,13 @@
     MinHeight="600" MinWidth="550"
     ShowDialogsOverTitleBar="False"
     Background="{StaticResource TabAreaBackground}"
-    d:DataContext="{d:DesignInstance vmm:MainWindowViewModel}"
+    d:DataContext="{d:DesignInstance vm:MainWindowViewModel}"
     >
     <Window.DataContext>
-        <vmm:MainWindowViewModel/>
+        <vm:MainWindowViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <vmm:TabSelectionToForegroundConverter x:Key="SelectionToForeground"/>
+        <view:TabSelectionToForegroundConverter x:Key="SelectionToForeground"/>
     </Window.Resources>
     <metro:MetroWindow.IconTemplate>
         <DataTemplate>
@@ -35,7 +37,7 @@
     <metro:MetroWindow.RightWindowCommands>
         <metro:WindowCommands ShowLastSeparator="False">
             <metro:WindowCommands.DataContext>
-                <vmm:HelpViewModel />
+                <vm:HelpViewModel />
             </metro:WindowCommands.DataContext>
             <metro:DropDownButton Content="{DynamicResource TitleBar_Help}" 
                                   Style="{StaticResource MahApps.Styles.DropDownButton.WindowCommands}"                                  
@@ -81,7 +83,7 @@
             </dragablz:TabablzControl.HeaderItemTemplate>
             <TabItem>
                 <TabItem.Header>
-                    <vmm:TabHeaderIconText
+                    <view:TabHeaderIconText
                         Text="{DynamicResource TopBar_Home}"                        
                         IconKind="Home"
                         Foreground="{Binding SelectedIndex,
@@ -90,11 +92,11 @@
                                                 ConverterParameter=0}"   
                         />
                 </TabItem.Header>
-                <vmm:HomePanel Background="White" />
+                <view:HomePanel Background="White" />
             </TabItem>
             <TabItem>
                 <TabItem.Header>
-                    <vmm:TabHeaderIconText 
+                    <view:TabHeaderIconText 
                         Text="{DynamicResource TopBar_Streaming}"                        
                         IconKind="Videocam"
                         Foreground="{Binding SelectedIndex,
@@ -103,11 +105,11 @@
                                                 ConverterParameter=1}"                           
                         />
                 </TabItem.Header>
-                <vmm:StreamingPanel Background="White"/>
+                <view:StreamingPanel Background="White"/>
             </TabItem>
             <TabItem>
                 <TabItem.Header>
-                    <vmm:TabHeaderIconText 
+                    <view:TabHeaderIconText 
                         Text="{DynamicResource TopBar_ExternalFaceTrack}"                        
                         IconKind="FaceRecognition"                        
                         IconHeight="16"                        
@@ -118,11 +120,11 @@
                                                 ConverterParameter=2}"                           
                         />
                 </TabItem.Header>
-                <vmm:ExternalTrackerPanel Background="White" DataContext="{Binding ExternalTrackerSetting}" />
+                <view:ExternalTrackerPanel Background="White" DataContext="{Binding ExternalTrackerSetting}" />
             </TabItem>
             <TabItem>
                 <TabItem.Header>
-                    <vmm:TabHeaderIconText 
+                    <view:TabHeaderIconText 
                         Text="{DynamicResource TopBar_Accessory}"                        
                         IconKind="Glasses"                        
                         IconHeight="16"                        
@@ -133,11 +135,11 @@
                                              ConverterParameter=3}"                           
                         />
                 </TabItem.Header>
-                <vmm:AccessoryPanel Background="White" DataContext="{Binding AccessorySetting}" />
+                <view:AccessoryPanel Background="White" DataContext="{Binding AccessorySetting}" />
             </TabItem>
             <TabItem>
                 <TabItem.Header>
-                    <vmm:TabHeaderIconText 
+                    <view:TabHeaderIconText 
                         Text="{DynamicResource TopBar_HandTrack}"                        
                         IconKind="Hand"                        
                         IconHeight="16"                        
@@ -148,10 +150,10 @@
                                                 ConverterParameter=4}"                           
                         />
                 </TabItem.Header>
-                <vmm:HandTrackingPanel Background="White" DataContext="{Binding MotionSetting}" />
+                <view:HandTrackingPanel Background="White" DataContext="{Binding MotionSetting}" />
             </TabItem>
 
         </dragablz:TabablzControl>
-        <md:Snackbar MessageQueue="{x:Static vmm:SnackbarWrapper.SnackbarMessageQueue}" Grid.Column="1" HorizontalAlignment="Left" Margin="21,0,0,0"/>
+        <md:Snackbar MessageQueue="{x:Static view:SnackbarWrapper.SnackbarMessageQueue}" Grid.Column="1" HorizontalAlignment="Left" Margin="21,0,0,0"/>
     </Grid>
 </metro:MetroWindow>

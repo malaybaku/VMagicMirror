@@ -4,12 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance Type={x:Type vmm:ExternalTrackerFaceSwitchItemViewModel}}"             
+             d:DataContext="{d:DesignInstance Type={x:Type vm:ExternalTrackerFaceSwitchItemViewModel}}"             
              d:DesignWidth="450">
     <UserControl.Resources>
-        <vmm:EmptyToDoNothingTextConverter x:Key="EmptyToDoNothingTextConverter"/>
+        <view:EmptyToDoNothingTextConverter x:Key="EmptyToDoNothingTextConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>

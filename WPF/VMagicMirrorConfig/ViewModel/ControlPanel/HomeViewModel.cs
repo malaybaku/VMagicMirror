@@ -52,6 +52,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             TakeScreenshotCommand = new ActionCommand(screenshotTaker.TakeScreenshot);
             OpenScreenshotFolderCommand = new ActionCommand(screenshotTaker.OpenScreenshotSavedFolder);
 
+            if (!IsInDegignMode)
+            {
+                return;
+            }
+
             //NOTE: RegSettingのモデル的な層をもっとキレイにしてもOK
             var regSetting = new StartupRegistrySetting();
             _activateOnStartup = regSetting.CheckThisVersionRegistered();
@@ -65,7 +70,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> AutoLoadLastLoadedVrm => _setting.AutoLoadLastLoadedVrm;
 
-        public ReadOnlyObservableCollection<string> AvailableLanguageNames => _setting.AvailableLanguageNames;
+        public ReadOnlyObservableCollection<string> AvailableLanguageNames => LanguageSelector.Instance.AvailableLanguageNames;
         public RProperty<string> LanguageName => _setting.LanguageName;
 
         //NOTE: ここは若干横着だが、モデル側に寄せるほどでも無い気がするのでコレで。

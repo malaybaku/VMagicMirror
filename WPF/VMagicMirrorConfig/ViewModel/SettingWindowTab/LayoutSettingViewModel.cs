@@ -51,6 +51,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 );
             ShowPenUnavaiableWarningCommand = new ActionCommand(ShowPenUnavailableWarning);
 
+            if (!IsInDegignMode)
+            {
+                return;
+            }
+
             _model.SelectedTypingEffectId.PropertyChanged += (_, __) =>
             {
                 TypingEffectItem = TypingEffectSelections

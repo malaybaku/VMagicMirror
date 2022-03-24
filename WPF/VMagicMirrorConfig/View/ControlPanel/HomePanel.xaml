@@ -8,11 +8,13 @@
              xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=vm:HomeViewModel}"
              d:DesignWidth="550"
              d:DesignHeight="600"
              AllowDrop="True"
              >
+    <UserControl.DataContext>
+        <vm:HomeViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">

@@ -125,12 +125,6 @@ namespace Baku.VMagicMirrorConfig
         public void Play(MotionRequest item)
             => SendMessage(MessageFactory.Instance.PlayWordToMotionItem(item.ToJson()));
 
-        public async Task<string[]> GetAvailableCustomMotionClipNamesAsync()
-        {
-            var rawClipNames = await SendQueryAsync(MessageFactory.Instance.GetAvailableCustomMotionClipNames());
-            return rawClipNames.Split('\t');
-        }
-
         #region アイテムの並べ替えと削除
 
         public void MoveUpItem(MotionRequest item)

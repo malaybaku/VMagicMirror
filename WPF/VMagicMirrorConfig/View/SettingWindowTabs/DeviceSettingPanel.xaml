@@ -7,10 +7,12 @@
              xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type vm:MainWindowViewModel}}"
              d:DesignWidth="400"
              d:DesignHeight="1050"
              >
+    <UserControl.DataContext>
+        <vm:DeviceConnectionViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
@@ -29,8 +31,7 @@
                 Style="{StaticResource SectionHeaderText}"
                 />
 
-            <Border Style="{StaticResource SideMarginSectionBorder}"
-                    DataContext="{Binding GamepadSetting}">
+            <Border Style="{StaticResource SideMarginSectionBorder}">
                 <StackPanel>
 
                     <StackPanel Orientation="Horizontal"
@@ -45,7 +46,7 @@
                                    Margin="5"
                                    />
                         <Button Style="{StaticResource CategorySettingResetButton}"
-                                Command="{Binding ResetSettingCommand}"
+                                Command="{Binding ResetGamepadSettingCommand}"
                                 />
                     </StackPanel>
 
@@ -102,8 +103,7 @@
                 </StackPanel>
             </Border>
 
-            <Border Style="{StaticResource SideMarginSectionBorder}"
-                    DataContext="{Binding LayoutSetting}">
+            <Border Style="{StaticResource SideMarginSectionBorder}">
                 <StackPanel>
 
                     <StackPanel Orientation="Horizontal"
@@ -134,5 +134,4 @@
 
         </StackPanel>
     </ScrollViewer>
-
 </UserControl>

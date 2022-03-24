@@ -54,12 +54,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             _externalTrackerSetting = externalTrackerSettingModel;
             _deviceList = deviceList;
             _microphoneStatus = microphoneStatus;
-            ShowInstallPathWarning = installPathChecker.HasMultiByteCharInInstallPath;
 
             CalibrateFaceCommand = new ActionCommand(_setting.RequestCalibrateFace);
             EndExTrackerIfNeededCommand = new ActionCommand(
                 async () => await _externalTrackerSetting.DisableExternalTrackerWithConfirmAsync()
                 );
+
+            if (!IsInDegignMode)
+            {
+                ShowInstallPathWarning = installPathChecker.HasMultiByteCharInInstallPath;
+            }
         }
 
         private readonly MotionSettingModel _setting;
@@ -308,6 +312,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         {
             _model = model;
             Devices = WordToMotionDeviceItem.LoadAvailableItems();
+
+            if (!IsInDegignMode)
+            {
+                return;
+            }
 
             SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
             EnableWordToMotion.Value = _model.SelectedDeviceType.Value != WordToMotionSetting.DeviceTypes.None;

@@ -4,15 +4,13 @@ using System.Globalization;
 namespace Baku.VMagicMirrorConfig
 {
     /// <summary>
-    /// ファイルに保存すべき設定のモデル層を直接的に全部保持したクラス。
-    /// MainWindowの裏にあり、アプリの生存期間中つねに単一のインスタンスがあるような使い方をします。
+    /// 設定ファイルに保存すべき情報を全部保持しているクラス。
     /// </summary>
     class RootSettingModel
     {
         public RootSettingModel()
         {
             var resolver = ModelResolver.Instance;
-            _sender = resolver.Resolve<IMessageSender>();
             Window = resolver.Resolve<WindowSettingModel>();
             Motion = resolver.Resolve<MotionSettingModel>();
             Layout = resolver.Resolve<LayoutSettingModel>();
@@ -23,7 +21,6 @@ namespace Baku.VMagicMirrorConfig
             Automation = resolver.Resolve<AutomationSettingModel>();
             Accessory = resolver.Resolve<AccessorySettingModel>();
 
-            AvailableLanguageNames = new ReadOnlyObservableCollection<string>(_availableLanguageNames);
             //NOTE; LanguageSelectorとの二重管理っぽくて若干アレだがこのままで行く
             //初期値Defaultを入れることで、起動直後にPCのカルチャベースで言語を指定しなきゃダメかどうか判別する
             LanguageName = new RProperty<string>("Default", s =>
@@ -31,16 +28,6 @@ namespace Baku.VMagicMirrorConfig
                 LanguageSelector.Instance.LanguageName = s;
             });
         }
-
-        private readonly IMessageSender _sender;
-
-        private readonly ObservableCollection<string> _availableLanguageNames
-            = new ObservableCollection<string>()
-        {
-            LanguageSelector.LangNameJapanese,
-            LanguageSelector.LangNameEnglish,
-        };
-        public ReadOnlyObservableCollection<string> AvailableLanguageNames { get; }
 
         //NOTE: 自動ロードがオフなのにロードしたVRMのファイルパスが残ったりするのはメモリ上ではOK。
         //SettingFileIoがセーブする時点において、自動ロードが無効だとファイルパスが転写されないようにガードがかかる。
@@ -55,34 +42,22 @@ namespace Baku.VMagicMirrorConfig
         //NOTE: VRMのロード処理はUI依存の処理が多すぎるためViewModel実装のままにしている
 
         //NOTE: この辺3つはオートセーブ以外からは絶対に読み込まないやつ
+
+        // LanguageSelectorのLanguageNameと異なり、ファイルにセーブする値を持つ。
+        // 実際にResourceDictionaryが適用される値ではないのがポイント
         public RProperty<string> LanguageName { get; }
         public RProperty<bool> LoadCharacterWhenLoadInternalFile { get; } = new RProperty<bool>(true);
         public RProperty<bool> LoadNonCharacterWhenLoadInternalFile { get; } = new RProperty<bool>(false);
 
         public WindowSettingModel Window { get; }
-
         public MotionSettingModel Motion { get; }
-
         public LayoutSettingModel Layout { get; }
-
         public GamepadSettingModel Gamepad { get; }
-
         public LightSettingModel Light { get; }
-
         public WordToMotionSettingModel WordToMotion { get; }
-
         public ExternalTrackerSettingModel ExternalTracker { get; }
-
         public AutomationSettingModel Automation { get; }
         public AccessorySettingModel Accessory { get; }
-
-        public void InitializeAvailableLanguage(string[] languageNames)
-        {
-            foreach (var name in languageNames)
-            {
-                _availableLanguageNames.Add(name);
-            }
-        }
 
         /// <summary>
         /// 自動保存される設定ファイルに言語設定が保存されていなかった場合、
@@ -109,34 +84,6 @@ namespace Baku.VMagicMirrorConfig
         {
             LastVrmLoadFilePath = filePath;
             LastLoadedVRoidModelId = "";
-        }
-
-        /// <summary>
-        /// アプリケーションが起動されたまま、全ての設定を初期状態にします。
-        /// </summary>
-        /// <remarks>
-        /// 理論上はコレを使えば再起動無しでリセットできるんだけど、実際うまくいってないケースがありそう…。
-        /// より安全な方法として、現在は_autosaveファイル自体を削除してアプリを落とす手段を提供している。
-        /// 消すのは勿体ないため、呼び出し元はないけどこのメソッドは残します。
-        /// </remarks>
-        public void ResetToDefault()
-        {
-            _sender.StartCommandComposite();
-
-            AutoLoadLastLoadedVrm.Value = false;
-            LastVrmLoadFilePath = "";
-            LastLoadedVRoidModelId = "";
-
-            Window.ResetToDefault();
-            Motion.ResetToDefault();
-            Layout.ResetToDefault();
-            Gamepad.ResetToDefault();
-            Light.ResetToDefault();
-            WordToMotion.ResetToDefault();
-            ExternalTracker.ResetToDefault();
-            Accessory.ResetToDefault();
-
-            _sender.EndCommandComposite();
         }
     }
 }

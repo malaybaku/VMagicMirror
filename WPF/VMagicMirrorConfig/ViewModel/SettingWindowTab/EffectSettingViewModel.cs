@@ -1,37 +1,32 @@
 ﻿using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary>
-    /// ライトと言ってるが、実際にはタイピングエフェクトを除いたエフェクトっぽい色々の設定を持ってるクラス。
-    /// クラス名やメンバー名はヘタに変えると旧バージョンの設定が読めなくなるので、変更時は要注意。
-    /// (たしかクラス名は改変可だが、勢いでSaveDataクラスまでリファクタリングすると後方互換でなくなってしまう)
+    /// NOTE: Model側は"Effect"ではなく"Light"という言い方をしているが、
+    /// これは設定ファイル側の命名の歴史的経緯に配慮しているためなので、Model側をノリで変更してはならない
     /// </summary>
-    public class LightSettingViewModel : SettingViewModelBase
+    public class EffectSettingViewModel : SettingViewModelBase
     {
-        public LightSettingViewModel() : this(ModelResolver.Instance.Resolve<LightSettingModel>())
+        public EffectSettingViewModel() : this(
+            ModelResolver.Instance.Resolve<LightSettingModel>(),
+            ModelResolver.Instance.Resolve<ImageQualitySetting>()
+            )
         {
         }
 
-        internal LightSettingViewModel(LightSettingModel model)
+        internal EffectSettingViewModel(LightSettingModel model, ImageQualitySetting imageQualitySetting)
         {
             _model = model;
-
-            void UpdateLightColor() => RaisePropertyChanged(nameof(LightColor));
-            model.LightR.PropertyChanged += (_, __) => UpdateLightColor();
-            model.LightG.PropertyChanged += (_, __) => UpdateLightColor();
-            model.LightB.PropertyChanged += (_, __) => UpdateLightColor();
-
-            void UpdateBloomColor() => RaisePropertyChanged(nameof(BloomColor));
-            model.BloomR.PropertyChanged += (_, __) => UpdateBloomColor();
-            model.BloomG.PropertyChanged += (_, __) => UpdateBloomColor();
-            model.BloomB.PropertyChanged += (_, __) => UpdateBloomColor();
+            _imageQuality = imageQualitySetting;
 
             ResetLightSettingCommand = new ActionCommand(
-                () => SettingResetUtils.ResetSingleCategoryAsync(model.ResetLightSetting)
-                );
+                () => SettingResetUtils.ResetSingleCategoryAsync(async () =>
+                {
+                    model.ResetLightSetting();
+                    await imageQualitySetting.ResetAsync();
+                }));
             ResetShadowSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetShadowSetting)
                 );
@@ -42,15 +37,25 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetWindSetting)
                 );
             ResetImageQualitySettingCommand = new ActionCommand(ResetImageQuality);
+
+            void UpdateLightColor() => RaisePropertyChanged(nameof(LightColor));
+            void UpdateBloomColor() => RaisePropertyChanged(nameof(BloomColor));
+            if (!IsInDegignMode)
+            {
+                model.LightR.PropertyChanged += (_, __) => UpdateLightColor();
+                model.LightG.PropertyChanged += (_, __) => UpdateLightColor();
+                model.LightB.PropertyChanged += (_, __) => UpdateLightColor();
+                model.BloomR.PropertyChanged += (_, __) => UpdateBloomColor();
+                model.BloomG.PropertyChanged += (_, __) => UpdateBloomColor();
+                model.BloomB.PropertyChanged += (_, __) => UpdateBloomColor();
+            }
         }
 
         private readonly LightSettingModel _model;
+        private readonly ImageQualitySetting _imageQuality;
 
-        public async Task InitializeQualitySelectionsAsync()
-            => await _model.InitializeQualitySelectionsAsync();
-
-        public RProperty<string> ImageQuality => _model.ImageQuality;
-        public ReadOnlyObservableCollection<string> ImageQualityNames => _model.ImageQualityNames;
+        public RProperty<string> ImageQuality => _imageQuality.ImageQuality;
+        public ReadOnlyObservableCollection<string> ImageQualityNames => _imageQuality.ImageQualityNames;
         public RProperty<bool> HalfFpsMode => _model.HalfFpsMode;
 
         #region Light

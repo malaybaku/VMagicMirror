@@ -115,6 +115,9 @@ namespace Baku.VMagicMirrorConfig
                 FocusedFileIndex = index;
             }
         }
+        
+        public void LoadAutoSave() => SettingFileIo.LoadSetting(SpecialFilePath.AutoSaveSettingFilePath, SettingFileReadWriteModes.AutoSave);
+        public void SaveAsAutoSave() => SettingFileIo.SaveSetting(SpecialFilePath.AutoSaveSettingFilePath, SettingFileReadWriteModes.AutoSave);
 
         /// <summary>
         /// 指定した番号のファイルがすでにセーブされているか確認します。

@@ -36,6 +36,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ExportSettingToFileCommand = new ActionCommand(SaveSettingToFile);
             ImportSettingFromFileCommand = new ActionCommand(LoadSettingFromFile);
 
+            if (!IsInDegignMode)
+            {
+                AutomationPortNumberText = new RProperty<string>("");
+                return;
+            }
+
             AutomationPortNumberText = new RProperty<string>(
                 _model.AutomationPortNumber.Value.ToString(), v =>
                 {

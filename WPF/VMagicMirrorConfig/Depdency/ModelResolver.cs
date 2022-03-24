@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -16,7 +18,8 @@ namespace Baku.VMagicMirrorConfig
         public static ModelResolver Instance => _instance ??= new ModelResolver();
         private ModelResolver() { }
 
-        readonly HashSet<BoundInstance> _registeredInstances = new HashSet<BoundInstance>();
+        private readonly DependencyObject _designModeChecker = new DependencyObject();
+        private readonly HashSet<BoundInstance> _registeredInstances = new HashSet<BoundInstance>();
 
         public void Add<T>(T model)
         {
@@ -29,6 +32,12 @@ namespace Baku.VMagicMirrorConfig
 
         public T Resolve<T>()
         {
+            if (DesignerProperties.GetIsInDesignMode(_designModeChecker))
+            {
+                //NOTE: 実行時には起きないため、nullでも良いものとする
+                return default!;
+            }
+
             var result = _registeredInstances.FirstOrDefault(i => i.Type == typeof(T));
             if (result == null)
             {

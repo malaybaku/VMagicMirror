@@ -1,12 +1,19 @@
 ﻿namespace Baku.VMagicMirrorConfig
 {
     /// <summary>
-    /// モデルっぽいけど置き場所が難しい処理(スクショ撮影とか)を寄せ集めたクラス。
-    /// ViewModelがファットになるのを防ぐために処理を集めるのが主目的なため、
-    /// このクラスを細分化したクラスに分け直してもよい
+    /// モデルのうち初期化と終了処理をまとめておくと都合が良さそうなものを集めているクラス。
+    /// 細分化したクラスに分け直してもよい
     /// </summary>
     class RuntimeHelper
     {
+        public RuntimeHelper() : this(
+            ModelResolver.Instance.Resolve<IMessageSender>(),
+            ModelResolver.Instance.Resolve<IMessageReceiver>(),
+            ModelResolver.Instance.Resolve<RootSettingModel>()
+            )
+        {
+        }
+
         public RuntimeHelper(IMessageSender sender, IMessageReceiver receiver, RootSettingModel mainModel)
         {
             _receiver = receiver;

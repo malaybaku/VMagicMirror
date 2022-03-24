@@ -12,6 +12,9 @@
              d:DataContext="{d:DesignInstance Type={x:Type vm:WordToMotionSettingViewModel}}"
              d:DesignWidth="400"
              d:DesignHeight="750">
+    <UserControl.DataContext>
+        <vm:WordToMotionSettingViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>

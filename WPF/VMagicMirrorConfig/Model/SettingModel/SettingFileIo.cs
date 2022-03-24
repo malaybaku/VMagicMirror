@@ -184,7 +184,7 @@ namespace Baku.VMagicMirrorConfig
                     _model.LastLoadedVRoidModelId = saveData.LastLoadedVRoidModelId ?? "";
                     _model.AutoLoadLastLoadedVrm.Value = saveData.AutoLoadLastLoadedVrm;
                     _model.LanguageName.Value =
-                        _model.AvailableLanguageNames.Contains(saveData.PreferredLanguageName ?? "") ?
+                        LanguageSelector.Instance.AvailableLanguageNames.Contains(saveData.PreferredLanguageName ?? "") ?
                         (saveData.PreferredLanguageName ?? "") :
                         "";
                     _model.LoadCharacterWhenLoadInternalFile.Value = saveData.LoadCharacterWhenLoad;

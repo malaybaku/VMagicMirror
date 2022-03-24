@@ -5,23 +5,12 @@ using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
-    //TODO: このクラスに書く処理を「Windowが最初に出たときの処理」と「アプリ終了処理」だけにしたい
-    //  →その後に2つの処理をAppクラスに移動してもよい
-
     public class MainWindowViewModel : ViewModelBase, IWindowViewModel
     {
-        internal RootSettingModel Model { get; }
-        internal SettingFileIo SettingFileIo { get; }
-        internal SaveFileManager SaveFileManager { get; }
+        private readonly RootSettingModel _settingModel;
 
-        internal MessageIo MessageIo { get; }
-        internal IMessageSender MessageSender => MessageIo.Sender;
-
-        public LightSettingViewModel LightSetting { get; private set; }
-        public WordToMotionSettingViewModel WordToMotionSetting { get; private set; }
-        public ExternalTrackerViewModel ExternalTrackerSetting { get; private set; }
-        public SettingIoViewModel SettingIo { get; private set; }
-
+        private readonly SaveFileManager _saveFileManager;
+        private readonly MessageIo _messageIo;        
         private readonly AvatarLoader _avatarLoader;
         private readonly AppQuitSetting _appQuitSetting;
         private readonly RuntimeHelper _runtimeHelper;
@@ -29,65 +18,51 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public MainWindowViewModel()
         {
-            Model = ModelResolver.Instance.Resolve<RootSettingModel>();
-            SettingFileIo = ModelResolver.Instance.Resolve<SettingFileIo>();
-            SaveFileManager = ModelResolver.Instance.Resolve<SaveFileManager>();
-            MessageIo = ModelResolver.Instance.Resolve<MessageIo>();
+            _settingModel = ModelResolver.Instance.Resolve<RootSettingModel>();
+            _saveFileManager = ModelResolver.Instance.Resolve<SaveFileManager>();
+            _messageIo = ModelResolver.Instance.Resolve<MessageIo>();
             _appQuitSetting = ModelResolver.Instance.Resolve<AppQuitSetting>();
             _avatarLoader = ModelResolver.Instance.Resolve<AvatarLoader>();
-
-            //TODO: この下のViewModel達は必要に応じて生成されるようにしたい
-            LightSetting = new LightSettingViewModel();
-            WordToMotionSetting = new WordToMotionSettingViewModel();
-            ExternalTrackerSetting = new ExternalTrackerViewModel();
-            SettingIo = new SettingIoViewModel();
-
-            //オートメーションの配線: 1つしかないのでザツにやる。OC<T>をいじる関係でUIスレッド必須なことに注意
-            Model.Automation.LoadSettingFileRequested += v => 
-                Application.Current.Dispatcher.BeginInvoke(new Action(
-                    () => SaveFileManager.LoadSetting(v.Index, v.LoadCharacter, v.LoadNonCharacter, true))
-                    );
-
-            _runtimeHelper = new RuntimeHelper(MessageSender, MessageIo.Receiver, Model);
+            _runtimeHelper = ModelResolver.Instance.Resolve<RuntimeHelper>();
         }
 
         public async void Initialize()
         {
-            if (Application.Current.MainWindow == null ||
-                DesignerProperties.GetIsInDesignMode(Application.Current.MainWindow))
+            if (IsInDegignMode)
             {
                 return;
             }
 
-            MessageIo.Start();
-            LanguageSelector.Instance.Initialize(MessageSender);
-            Model.InitializeAvailableLanguage(
-                LanguageSelector.Instance.GetAdditionalSupportedLanguageNames()
-                );
+            _messageIo.Start();
+            LanguageSelector.Instance.Initialize(_messageIo.Sender);
 
-            SettingFileIo.LoadSetting(SpecialFilePath.AutoSaveSettingFilePath, SettingFileReadWriteModes.AutoSave);
+            _saveFileManager.LoadAutoSave();
+            //NOTE: 初回起動時だけカルチャベースで言語を設定する処理
+            _settingModel.InitializeLanguageIfNeeded();
 
-            //NOTE: 初回起動時だけカルチャベースで言語を設定するための処理がコレ
-            Model.InitializeLanguageIfNeeded();
+            //NOTE: 以下は他のモデルクラスでやるほうが良いのでは…？
+            _settingModel.Automation.LoadSettingFileRequested += v =>
+                Application.Current.Dispatcher.BeginInvoke(new Action(
+                    () => _saveFileManager.LoadSetting(v.Index, v.LoadCharacter, v.LoadNonCharacter, true))
+                    );
 
-            //NOTE: よそでやっても良い気がする…
             await ModelResolver.Instance.Resolve<DeviceListSource>().InitializeDeviceNamesAsync();
-            await LightSetting.InitializeQualitySelectionsAsync();
-            await WordToMotionSetting.InitializeCustomMotionClipNamesAsync();
-
+            await ModelResolver.Instance.Resolve<ImageQualitySetting>().InitializeQualitySelectionsAsync();
+            await ModelResolver.Instance.Resolve<CustomMotionList>().InitializeCustomMotionClipNamesAsync();
+            
             _runtimeHelper.Start();
 
-            if (Model.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(Model.LastVrmLoadFilePath))
+            if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastVrmLoadFilePath))
             {
                 _avatarLoader.LoadLastLoadedLocalVrm();
             }
-            else if (Model.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(Model.LastLoadedVRoidModelId))
+            else if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastLoadedVRoidModelId))
             {
-                _avatarLoader.LoadSavedVRoidModelAsync(Model.LastLoadedVRoidModelId, true);
+                _avatarLoader.LoadSavedVRoidModelAsync(_settingModel.LastLoadedVRoidModelId, true);
             }
 
-            //NOTE: このへんの処理は起動直後限定の処理にしたくて意図的にやってます
-            ExternalTrackerSetting.RefreshConnectionIfPossible();
+            //NOTE: このへんはとりわけ起動直後に1回だけ呼びたい処理であることに注意
+            ModelResolver.Instance.Resolve<ExternalTrackerSettingModel>().RefreshConnectionIfPossible();
             await new UpdateChecker().RunAsync(true);
         }
 
@@ -102,10 +77,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (!_appQuitSetting.SkipAutoSaveAndRestart)
             {
-                SettingFileIo.SaveSetting(SpecialFilePath.AutoSaveSettingFilePath, SettingFileReadWriteModes.AutoSave);
+                _saveFileManager.SaveAsAutoSave();
             }
-            Model.Automation.Dispose();
-            MessageIo.Dispose();
+            _settingModel.Automation.Dispose();
+            _messageIo.Dispose();
             _runtimeHelper.Dispose();
             LargePointerController.Instance.Close();
 

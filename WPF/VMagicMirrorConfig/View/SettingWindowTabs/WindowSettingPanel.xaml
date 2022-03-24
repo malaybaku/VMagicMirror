@@ -9,8 +9,10 @@
              mc:Ignorable="d"
              d:DesignWidth="400"
              d:DesignHeight="1050"
-             d:DataContext="{d:DesignInstance Type={x:Type vm:WindowSettingViewModel}}"
              >
+    <UserControl.DataContext>
+        <vm:WindowSettingViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         <view:IntegerEqualityToVisibilityConverter x:Key="IntToVisibilityConverter"/>

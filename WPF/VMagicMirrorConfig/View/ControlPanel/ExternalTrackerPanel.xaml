@@ -8,8 +8,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="850" d:DesignWidth="550"
-             d:DataContext="{d:DesignInstance Type={x:Type vm:ExternalTrackerViewModel}}"
              >
+    <UserControl.DataContext>
+        <vm:ExternalTrackerViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">

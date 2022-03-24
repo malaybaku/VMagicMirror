@@ -8,7 +8,6 @@
     xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
-    xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
     mc:Ignorable="d"
     Title="VMagicMirror Settings" 
     Height="500"
@@ -21,7 +20,6 @@
     WindowTitleBrush="{StaticResource PrimaryHueMidBrush}"
     NonActiveWindowTitleBrush="{StaticResource PrimaryHueMidBrush}"
     Background="{StaticResource TabAreaBackground}"
-    d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
     >
     <Window.Resources>
         <view:TabSelectionToForegroundConverter x:Key="SelectionToForeground"/>
@@ -89,7 +87,7 @@
                                         ConverterParameter=1}"
                     />
             </TabItem.Header>
-            <view:FaceMotionSettingPanel
+            <view:FaceSettingPanel
                 Background="White"
                 DataContext="{Binding MotionSetting}"
                 />
@@ -160,7 +158,7 @@
                                         ConverterParameter=4}"                                
                     />
             </TabItem.Header>
-            <view:LightSettingPanel
+            <view:EffectSettingPanel
                 Background="White"
                 DataContext="{Binding LightSetting}" />
         </TabItem>

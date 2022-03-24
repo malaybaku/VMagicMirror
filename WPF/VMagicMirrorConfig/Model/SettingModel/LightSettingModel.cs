@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
@@ -18,11 +17,7 @@ namespace Baku.VMagicMirrorConfig
             var s = LightSetting.Default;
             var factory = MessageFactory.Instance;
 
-            //モデルのプロパティ変更=Unityへの変更通知としてバインド。
             //エフェクト関係は設定項目がシンプルなため、例外はほぼ無い(色関係のメッセージ送信がちょっと特殊なくらい)
-
-            ImageQualityNames = new ReadOnlyObservableCollection<string>(_imageQualityNames);
-            ImageQuality = new RProperty<string>("", s => SendMessage(factory.SetImageQuality(s)));
             HalfFpsMode = new RProperty<bool>(s.HalfFpsMode, v => SendMessage(factory.SetHalfFpsMode(v)));
 
             LightIntensity = new RProperty<int>(s.LightIntensity, i => SendMessage(factory.LightIntensity(i)));
@@ -58,30 +53,7 @@ namespace Baku.VMagicMirrorConfig
 
         #region Image Quality
 
-        //NOTE: 画質設定はもともとUnityが持っており、かつShift+ダブルクリックの起動によって書き換えられる可能性があるので、
-        //WPF側からは揮発性データのように扱う 
-        public RProperty<string> ImageQuality { get; }
-
-        private readonly ObservableCollection<string> _imageQualityNames = new ObservableCollection<string>();
-        public ReadOnlyObservableCollection<string> ImageQualityNames { get; }
         public RProperty<bool> HalfFpsMode { get; }
-
-        public async Task InitializeQualitySelectionsAsync()
-        {
-            string res = await SendQueryAsync(MessageFactory.Instance.GetQualitySettingsInfo());
-            var info = ImageQualityInfo.ParseFromJson(res);
-            if (info.ImageQualityNames != null &&
-                info.CurrentQualityIndex >= 0 &&
-                info.CurrentQualityIndex < info.ImageQualityNames.Length
-                )
-            {
-                foreach (var name in info.ImageQualityNames)
-                {
-                    _imageQualityNames.Add(name);
-                }
-                ImageQuality.Value = info.ImageQualityNames[info.CurrentQualityIndex];
-            }
-        }
 
         #endregion
 
@@ -138,15 +110,6 @@ namespace Baku.VMagicMirrorConfig
         public async Task ResetImageQualityAsync()
         {
             HalfFpsMode.Value = false;
-            var qualityName = await SendQueryAsync(MessageFactory.Instance.ApplyDefaultImageQuality());
-            if (ImageQualityNames.Contains(qualityName))
-            {
-                ImageQuality.Value = qualityName;
-            }
-            else
-            {
-                LogOutput.Instance.Write($"Invalid image quality `{qualityName}` applied");
-            }
         }
 
         public void ResetLightSetting()

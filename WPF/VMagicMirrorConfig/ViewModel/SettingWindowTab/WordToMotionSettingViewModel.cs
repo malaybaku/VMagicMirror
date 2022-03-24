@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -12,6 +11,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ModelResolver.Instance.Resolve<WordToMotionSettingModel>(),
             ModelResolver.Instance.Resolve<LayoutSettingModel>(),
             ModelResolver.Instance.Resolve<AccessorySettingModel>(),
+            ModelResolver.Instance.Resolve<CustomMotionList>(),
             ModelResolver.Instance.Resolve<IMessageReceiver>()
             )
         {
@@ -21,13 +21,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             WordToMotionSettingModel model,
             LayoutSettingModel layoutModel,
             AccessorySettingModel accessoryModel,
+            CustomMotionList customMotionList,
             IMessageReceiver receiver)
         {
             _model = model;
             _layoutModel = layoutModel;
             _accessoryModel = accessoryModel;
+            _customMotionList = customMotionList;
             Items = new ReadOnlyObservableCollection<WordToMotionItemViewModel>(_items);
-            CustomMotionClipNames = new ReadOnlyObservableCollection<string>(_customMotionClipNames);
             Devices = WordToMotionDeviceItem.LoadAvailableItems();
             AvailableAccessoryNames = new AccessoryItemNamesViewModel(accessoryModel);
 
@@ -80,6 +81,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly WordToMotionSettingModel _model;
         private readonly LayoutSettingModel _layoutModel;
         private readonly AccessorySettingModel _accessoryModel;
+        private readonly CustomMotionList _customMotionList;
         private WordToMotionItemViewModel? _dialogItem;
 
         /// <summary>直近で読み込んだモデルに指定されている、VRM標準以外のブレンドシェイプ名の一覧を取得します。</summary>
@@ -128,17 +130,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
-        public async Task InitializeCustomMotionClipNamesAsync()
-        {
-            var clipNames = await _model.GetAvailableCustomMotionClipNamesAsync();
-            foreach (var name in clipNames)
-            {
-                _customMotionClipNames.Add(name);
-            }
-        }
-
-        private readonly ObservableCollection<string> _customMotionClipNames = new ObservableCollection<string>();
-        public ReadOnlyObservableCollection<string> CustomMotionClipNames { get; }
+        public ReadOnlyObservableCollection<string> CustomMotionClipNames => _customMotionList.CustomMotionClipNames;
 
         public RProperty<bool> EnableWordToMotion { get; } = new RProperty<bool>(true);
 
@@ -260,12 +252,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
+        //NOTE: この結果シリアライズ文字列が変わると、モデル側でメッセージ送信もやってくれる
         /// <summary>モーション一覧の情報が変わったとき、Unity側に再読み込みをリクエストします。</summary>
-        public void RequestReload()
-        {
-            //NOTE: この結果シリアライズ文字列が変わると、モデル側でメッセージ送信もやってくれる
-            SaveItems();
-        }
+        public void RequestReload() => SaveItems();
 
         public ActionCommand OpenKeyAssignmentEditorCommand { get; }
 

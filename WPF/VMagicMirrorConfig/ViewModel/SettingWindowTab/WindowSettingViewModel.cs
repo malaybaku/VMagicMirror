@@ -1,6 +1,4 @@
-﻿using Microsoft.Win32;
-using System.IO;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -14,11 +12,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             _model = model;
 
-            void UpdatePickerColor() => RaisePropertyChanged(nameof(PickerColor));
-            _model.R.PropertyChanged += (_, __) => UpdatePickerColor();
-            _model.G.PropertyChanged += (_, __) => UpdatePickerColor();
-            _model.B.PropertyChanged += (_, __) => UpdatePickerColor();
-
             BackgroundImageSetCommand = new ActionCommand(_model.SetBackgroundImage);
             BackgroundImageClearCommand = new ActionCommand(
                 () => _model.BackgroundImagePath.Value = ""
@@ -31,6 +24,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ResetOpacitySettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetOpacity)
                 );
+
+            if (!IsInDegignMode)
+            {
+                return;
+            }
+
+            void UpdatePickerColor() => RaisePropertyChanged(nameof(PickerColor));
+            _model.R.PropertyChanged += (_, __) => UpdatePickerColor();
+            _model.G.PropertyChanged += (_, __) => UpdatePickerColor();
+            _model.B.PropertyChanged += (_, __) => UpdatePickerColor();
 
             //初期値を反映しないと変な事になるので注意
             UpdatePickerColor();

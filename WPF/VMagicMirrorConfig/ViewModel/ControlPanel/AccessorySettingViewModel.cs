@@ -19,14 +19,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             Items = new ReadOnlyObservableCollection<AccessoryItemViewModel>(_items);
             _model = model;
-            _model.Loaded += (_, __) => OnLoaded();
-            _model.ItemRefreshed += () => OnLoaded();
             _layoutModel = layoutModel;
 
             ResetCommand = new ActionCommand(ResetToDefault);
             OpenAccessoryFolderCommand = new ActionCommand(OpenAccessoryFolder);
             ReloadFilesCommand = new ActionCommand(ReloadFiles);
             OpenAccessoryTipsUrlCommand = new ActionCommand(OpenAccessoryTipsUrl);
+
+            if (!IsInDegignMode)
+            {
+                _model.Loaded += (_, __) => OnLoaded();
+                _model.ItemRefreshed += () => OnLoaded();
+            }
         }
 
         private readonly AccessorySettingModel _model;

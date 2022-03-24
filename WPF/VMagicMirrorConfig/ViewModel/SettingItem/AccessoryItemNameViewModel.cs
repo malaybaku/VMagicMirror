@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -10,19 +9,22 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     /// 選択肢の冒頭に「なし」の選択肢が追加されているようなViewModel.
     /// ComboBoxで使えるように作られている
     /// </summary>
-    public class AccessoryItemNamesViewModel
+    public class AccessoryItemNamesViewModel : ViewModelBase
     {
         internal AccessoryItemNamesViewModel(AccessorySettingModel model)
         {
             _model = model;
             Items = new ReadOnlyObservableCollection<AccessoryItemNameViewModel>(_items);
             _items.Add(AccessoryItemNameViewModel.None);
-            OnItemRefreshed();
 
-            _model.ItemUpdated += OnItemUpdated;
-            _model.ItemNameMaybeChanged += OnItemUpdated;
-            _model.ItemRefreshed += OnItemRefreshed;
-            _model.ItemReloaded += OnItemRefreshed;            
+            if (!IsInDegignMode)
+            {
+                OnItemRefreshed();
+                _model.ItemUpdated += OnItemUpdated;
+                _model.ItemNameMaybeChanged += OnItemUpdated;
+                _model.ItemRefreshed += OnItemRefreshed;
+                _model.ItemReloaded += OnItemRefreshed;
+            }
         }
 
         private readonly AccessorySettingModel _model;

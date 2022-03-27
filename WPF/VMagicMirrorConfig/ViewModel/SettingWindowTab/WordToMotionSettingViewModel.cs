@@ -32,8 +32,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _layoutModel = layoutModel;
             _customMotionList = customMotionList;
             _runtimeConfigModel = extraBlendShapeNames;
+
             Items = new ReadOnlyObservableCollection<WordToMotionItemViewModel>(_items);
-            Devices = WordToMotionDeviceItem.LoadAvailableItems();
+            Devices = WordToMotionDeviceItemViewModel.LoadAvailableItems();
             AvailableAccessoryNames = new AccessoryItemNamesViewModel(accessoryModel);
 
             AddNewItemCommand = new ActionCommand(() => _model.AddNewItem());
@@ -42,13 +43,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => SettingResetUtils.ResetSingleCategoryAsync(_runtimeConfigModel.LoadDefaultItems)
                 );
 
-            SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
-
             if (IsInDegignMode)
             {
                 return;
             }
 
+            SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
             _model.SelectedDeviceType.AddWeakEventHandler(OnSelectedDeviceTypeChanged);
 
             //NOTE: シリアライズ文字列はどのみち頻繁に更新せねばならない
@@ -151,10 +151,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #region デバイスをWord to Motionに割り当てる設定
 
-        public WordToMotionDeviceItem[] Devices { get; }
+        public WordToMotionDeviceItemViewModel[] Devices { get; }
 
-        private WordToMotionDeviceItem? _selectedDevice = null;
-        public WordToMotionDeviceItem? SelectedDevice
+        private WordToMotionDeviceItemViewModel? _selectedDevice = null;
+        public WordToMotionDeviceItemViewModel? SelectedDevice
         {
             get => _selectedDevice;
             set
@@ -349,48 +349,4 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public void RequestCustomMotionDoctor() => _model.RequestCustomMotionDoctor();
     }
-
-    /// <summary> Word to Motion機能のコントロールに利用できるデバイスの選択肢1つに相当するViewModelです。 </summary>
-    public class WordToMotionDeviceItem : ViewModelBase
-    {
-        private WordToMotionDeviceItem(int index, string displayNameKeySuffix)
-        {
-            Index = index;
-            _displayNameKeySuffix = displayNameKeySuffix;
-            LanguageSelector.Instance.LanguageChanged += RefreshDisplayName;
-            RefreshDisplayName();
-        }
-
-        public int Index { get; }
-
-        private const string DisplayNameKeyPrefix = "WordToMotion_DeviceItem_";
-        private readonly string _displayNameKeySuffix;
-
-        private string _displayName = "";
-        public string DisplayName
-        {
-            get => _displayName;
-            private set => SetValue(ref _displayName, value);
-        }
-
-        internal void RefreshDisplayName()
-            => DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + _displayNameKeySuffix);
-
-        private static WordToMotionDeviceItem None() => new(WordToMotionSetting.DeviceTypes.None, "None");
-        private static WordToMotionDeviceItem KeyboardTyping() => new(WordToMotionSetting.DeviceTypes.KeyboardWord, "KeyboardWord");
-        private static WordToMotionDeviceItem Gamepad() => new(WordToMotionSetting.DeviceTypes.Gamepad, "Gamepad");
-        private static WordToMotionDeviceItem KeyboardNumKey() => new(WordToMotionSetting.DeviceTypes.KeyboardTenKey, "KeyboardTenKey");
-        private static WordToMotionDeviceItem MidiController() => new(WordToMotionSetting.DeviceTypes.MidiController, "MidiController");
-
-        public static WordToMotionDeviceItem[] LoadAvailableItems()
-            => new[]
-            {
-                None(),
-                KeyboardTyping(),
-                Gamepad(),
-                KeyboardNumKey(),
-                MidiController(),
-            };
-    }
-
 }

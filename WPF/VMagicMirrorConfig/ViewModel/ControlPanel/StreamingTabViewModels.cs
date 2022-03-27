@@ -318,7 +318,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         internal WordToMotionViewModel(WordToMotionSettingModel model)
         {
             _model = model;
-            Devices = WordToMotionDeviceItem.LoadAvailableItems();
+            Devices = WordToMotionDeviceItemViewModel.LoadAvailableItems();
 
             if (IsInDegignMode)
             {
@@ -340,10 +340,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
         public RProperty<bool> EnableWordToMotion { get; } = new RProperty<bool>(true);
 
-        public WordToMotionDeviceItem[] Devices { get; }
+        public WordToMotionDeviceItemViewModel[] Devices { get; }
 
-        private WordToMotionDeviceItem? _selectedDevice = null;
-        public WordToMotionDeviceItem? SelectedDevice
+        private WordToMotionDeviceItemViewModel? _selectedDevice = null;
+        public WordToMotionDeviceItemViewModel? SelectedDevice
         {
             get => _selectedDevice;
             set

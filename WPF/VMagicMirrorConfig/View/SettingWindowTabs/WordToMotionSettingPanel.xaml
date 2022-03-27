@@ -9,7 +9,6 @@
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type vm:WordToMotionSettingViewModel}}"
              d:DesignWidth="400"
              d:DesignHeight="750">
     <UserControl.DataContext>
@@ -70,7 +69,7 @@
                                   md:HintAssist.Hint="Device"
                                   >
                         <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:WordToMotionDeviceItem}">
+                            <DataTemplate DataType="{x:Type vm:WordToMotionDeviceItemViewModel}">
                                 <TextBlock Text="{Binding DisplayName}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>

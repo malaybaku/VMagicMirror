@@ -32,37 +32,46 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            _messageIo.Start();
-            LanguageSelector.Instance.Initialize(_messageIo.Sender);
-
-            _saveFileManager.LoadAutoSave();
-            //NOTE: 初回起動時だけカルチャベースで言語を設定する処理
-            _settingModel.InitializeLanguageIfNeeded();
-
-            //NOTE: 以下は他のモデルクラスでやるほうが良いのでは…？
-            _settingModel.Automation.LoadSettingFileRequested += v =>
-                Application.Current.Dispatcher.BeginInvoke(new Action(
-                    () => _saveFileManager.LoadSetting(v.Index, v.LoadCharacter, v.LoadNonCharacter, true))
-                    );
-
-            await ModelResolver.Instance.Resolve<DeviceListSource>().InitializeDeviceNamesAsync();
-            await ModelResolver.Instance.Resolve<ImageQualitySetting>().InitializeQualitySelectionsAsync();
-            await ModelResolver.Instance.Resolve<CustomMotionList>().InitializeCustomMotionClipNamesAsync();
-            
-            _runtimeHelper.Start();
-
-            if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastVrmLoadFilePath))
+            try
             {
-                _avatarLoader.LoadLastLoadedLocalVrm();
-            }
-            else if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastLoadedVRoidModelId))
-            {
-                _avatarLoader.LoadSavedVRoidModelAsync(_settingModel.LastLoadedVRoidModelId, true);
-            }
+                _messageIo.Start();
+                LanguageSelector.Instance.Initialize(_messageIo.Sender);
 
-            //NOTE: このへんはとりわけ起動直後に1回だけ呼びたい処理であることに注意
-            ModelResolver.Instance.Resolve<ExternalTrackerSettingModel>().RefreshConnectionIfPossible();
-            await new UpdateChecker().RunAsync(true);
+                _saveFileManager.LoadAutoSave();
+                //NOTE: 初回起動時だけカルチャベースで言語を設定する処理
+                _settingModel.InitializeLanguageIfNeeded();
+
+                //NOTE: 以下は他のモデルクラスでやるほうが良いのでは…？
+                _settingModel.Automation.LoadSettingFileRequested += v =>
+                    Application.Current.Dispatcher.BeginInvoke(new Action(
+                        () => _saveFileManager.LoadSetting(v.Index, v.LoadCharacter, v.LoadNonCharacter, true))
+                        );
+
+                await ModelResolver.Instance.Resolve<DeviceListSource>().InitializeDeviceNamesAsync();
+                await ModelResolver.Instance.Resolve<ImageQualitySetting>().InitializeQualitySelectionsAsync();
+                await ModelResolver.Instance.Resolve<CustomMotionList>().InitializeCustomMotionClipNamesAsync();
+                _runtimeHelper.Start();
+
+                if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastVrmLoadFilePath))
+                {
+                    _avatarLoader.LoadLastLoadedLocalVrm();
+                }
+                else if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastLoadedVRoidModelId))
+                {
+                    _avatarLoader.LoadSavedVRoidModelAsync(_settingModel.LastLoadedVRoidModelId, true);
+                }
+
+                //NOTE: この処理もメッセージの授受があるが終了まで待たない(そんなにクリティカルではないので)
+                _settingModel.Accessory.RefreshIfFirstStart();
+
+                //NOTE: このへんはとりわけ起動直後に1回だけ呼びたい処理であることに注意
+                ModelResolver.Instance.Resolve<ExternalTrackerSettingModel>().RefreshConnectionIfPossible();
+                await new UpdateChecker().RunAsync(true);
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
         }
 
         public void Dispose()

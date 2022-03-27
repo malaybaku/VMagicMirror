@@ -60,7 +60,7 @@ namespace Baku.VMagicMirrorConfig
         {
             if (!File.Exists(path))
             {
-                LogOutput.Instance.Write($"Setting file load requested (mode={mode}, but file does not exist at: {path}");
+                LogOutput.Instance.Write($"Setting file load requested (mode={mode}), but file does not exist at: {path}");
                 return;
             }
 

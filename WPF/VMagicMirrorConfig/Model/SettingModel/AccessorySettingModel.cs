@@ -84,6 +84,15 @@ namespace Baku.VMagicMirrorConfig
             SendMessage(MessageFactory.Instance.RequestResetAccessoryLayout(json));
         }
 
+        //VMagicMirrorが初起動の場合、「再読み込み」ボタンを押したのに相当する処理を行います。
+        public void RefreshIfFirstStart()
+        {
+            if (!File.Exists(SpecialFilePath.AutoSaveSettingFilePath))
+            {
+                RefreshFiles();
+            }
+        }
+
         public override void ResetToDefault()
         {
             foreach(var item in Items.Items)

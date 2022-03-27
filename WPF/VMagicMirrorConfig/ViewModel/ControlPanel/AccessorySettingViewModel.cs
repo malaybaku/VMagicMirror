@@ -28,6 +28,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (!IsInDesignMode)
             {
+                //NOTE: ここはアプリとViewModelの生存期間が同じ前提で書いてる(あまり良くはない)
                 _model.Loaded += (_, __) => OnLoaded();
                 _model.ItemRefreshed += () => OnLoaded();
             }

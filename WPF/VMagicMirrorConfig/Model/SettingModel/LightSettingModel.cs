@@ -107,7 +107,7 @@ namespace Baku.VMagicMirrorConfig
         /// Unity側で画質をデフォルトにリセットさせたのち、そのリセット後の画質の名称を適用します。
         /// </summary>
         /// <returns></returns>
-        public async Task ResetImageQualityAsync()
+        public void ResetImageQuality()
         {
             HalfFpsMode.Value = false;
         }
@@ -158,9 +158,7 @@ namespace Baku.VMagicMirrorConfig
             ResetShadowSetting();
             ResetBloomSetting();
             ResetWindSetting();
-
-            //NOTE: ここだけ非同期なのが何だかな～という感じなんだけど、実害が無いはずなのでOKとします
-            Task.Run(async () => await ResetImageQualityAsync());
+            ResetImageQuality();
         }
 
         #endregion

@@ -1,6 +1,5 @@
 ﻿using Baku.VMagicMirrorConfig.View;
 using System;
-using System.ComponentModel;
 using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel

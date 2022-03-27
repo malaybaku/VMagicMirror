@@ -63,10 +63,7 @@
                                         ConverterParameter=0}"
                     />
             </TabItem.Header>
-            <view:WindowSettingPanel 
-                Background="White" 
-                DataContext="{Binding WindowSetting}"
-                />
+            <view:WindowSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
@@ -87,10 +84,7 @@
                                         ConverterParameter=1}"
                     />
             </TabItem.Header>
-            <view:FaceSettingPanel
-                Background="White"
-                DataContext="{Binding MotionSetting}"
-                />
+            <view:FaceSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
@@ -111,10 +105,7 @@
                                         ConverterParameter=2}"
                     />
             </TabItem.Header>
-            <view:MotionSettingPanel
-                Background="White"
-                DataContext="{Binding MotionSetting}"
-                />
+            <view:MotionSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
@@ -135,9 +126,7 @@
                                         ConverterParameter=3}"                        
                     />
             </TabItem.Header>
-            <view:LayoutSettingPanel 
-                Background="White"
-                DataContext="{Binding LayoutSetting}" />
+            <view:LayoutSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
@@ -158,9 +147,7 @@
                                         ConverterParameter=4}"                                
                     />
             </TabItem.Header>
-            <view:EffectSettingPanel
-                Background="White"
-                DataContext="{Binding LightSetting}" />
+            <view:EffectSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
@@ -226,10 +213,7 @@
                     </Grid>
                 </UserControl>
             </TabItem.Header>
-            <view:WordToMotionSettingPanel 
-                Background="White"                     
-                DataContext="{Binding WordToMotionSetting}"
-                />
+            <view:WordToMotionSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
@@ -250,10 +234,7 @@
                                         ConverterParameter=7}"                        
                     />
             </TabItem.Header>
-            <view:SettingIoPanel
-                Background="White"                     
-                DataContext="{Binding SettingIo}"
-                />
+            <view:SettingIoPanel Background="White" />
         </TabItem>
     </dragablz:TabablzControl>
 </metro:MetroWindow>

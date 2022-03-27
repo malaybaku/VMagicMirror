@@ -311,8 +311,8 @@
                         </md:Card>
 
                         <CheckBox Margin="50,0,5,0"
-                                  IsEnabled="{Binding MotionSetting.EnableFaceTracking.Value}"
-                                  IsChecked="{Binding MotionSetting.EnableWebCamHighPowerMode.Value}"
+                                  IsEnabled="{Binding EnableFaceTracking.Value}"
+                                  IsChecked="{Binding EnableWebCamHighPowerMode.Value}"
                                   >
                             <CheckBox.Content>
                                 <TextBlock Text="{DynamicResource Motion_Face_EnableWebCamHighPowerMode}"/>
@@ -320,8 +320,8 @@
                         </CheckBox>
 
                         <CheckBox Margin="50,0,5,0"
-                                  IsEnabled="{Binding MotionSetting.EnableFaceTracking.Value}"
-                                  IsChecked="{Binding MotionSetting.EnableImageBasedHandTracking.Value}"
+                                  IsEnabled="{Binding EnableFaceTracking.Value}"
+                                  IsChecked="{Binding EnableImageBasedHandTracking.Value}"
                                   >
                             <CheckBox.Content>
                                 <TextBlock Text="{DynamicResource Motion_Face_EnableImageBasedHandTracking}"/>
@@ -331,7 +331,7 @@
                         <Button HorizontalAlignment="Left"
                                 Margin="10,8,0,0"
                                 Width="160"
-                                Command="{Binding MotionSetting.CalibrateFaceCommand}"
+                                Command="{Binding CalibrateFaceCommand}"
                                 >
                             <StackPanel Style="{StaticResource IconTextSetStackPanel}">
                                 <md:PackIcon Style="{StaticResource IconTextSetIcon}"
@@ -360,19 +360,19 @@
                                       HorizontalAlignment="Left"
                                       Margin="3,0"
                                       Padding="0"
-                                      IsChecked="{Binding MotionSetting.UseLookAtPointMousePointer.Value}"
+                                      IsChecked="{Binding UseLookAtPointMousePointer.Value}"
                                       Content="{DynamicResource Motion_Eye_LookAtPoint_MousePointer}"/>
                             <CheckBox Grid.Column="2"
                                       HorizontalAlignment="Left"
                                       Margin="3,0"
                                       Padding="0"
-                                      IsChecked="{Binding MotionSetting.UseLookAtPointMainCamera.Value}"
+                                      IsChecked="{Binding UseLookAtPointMainCamera.Value}"
                                       Content="{DynamicResource Motion_Eye_LookAtPoint_MainCamera}"/>
                             <CheckBox Grid.Column="3"
                                       HorizontalAlignment="Left"
                                       Margin="3,0"
                                       Padding="0"
-                                      IsChecked="{Binding MotionSetting.UseLookAtPointNone.Value}"
+                                      IsChecked="{Binding UseLookAtPointNone.Value}"
                                       Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
                         </Grid>
                     </StackPanel>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -24,8 +25,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             OpenFullEditionDownloadUrlCommand = new ActionCommand(() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040"));
             OpenHandTrackingPageUrlCommand = new ActionCommand(() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_hand_tracking")));
 
-            //TODO: 受信はここじゃないとこでやってほしい?購読停止できる+モデルに何も通達しないでいい内容ならここでもアリかも
-            receiver.ReceivedCommand += OnReceivedCommand;
+            if (!IsInDegignMode)
+            {
+                //NOTE: ここでは表示にのみ影響するメッセージを受け取るため、ViewModelではあるが直接Receiverのイベントを見に行く
+                WeakEventManager<IMessageReceiver, CommandReceivedEventArgs>.AddHandler(
+                    receiver,
+                    nameof(receiver.ReceivedCommand),
+                    OnReceivedCommand
+                    );
+            }
         }
 
         private readonly MotionSettingModel _model;

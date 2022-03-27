@@ -17,16 +17,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
         }
 
-        internal EffectSettingViewModel(LightSettingModel model, ImageQualitySetting imageQualitySetting)
+        internal EffectSettingViewModel(LightSettingModel model, ImageQualitySetting imageQuality)
         {
             _model = model;
-            _imageQuality = imageQualitySetting;
+            _imageQuality = imageQuality;
 
             ResetLightSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(async () =>
                 {
                     model.ResetLightSetting();
-                    await imageQualitySetting.ResetAsync();
+                    await imageQuality.ResetAsync();
                 }));
             ResetShadowSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetShadowSetting)
@@ -138,11 +138,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ResetBloomSettingCommand { get; }
         public ActionCommand ResetWindSettingCommand { get; }
 
-        private void ResetImageQuality()
+        private async void ResetImageQuality()
         {
-            SettingResetUtils.ResetSingleCategoryAsync(
-                async () => await _model.ResetImageQualityAsync()
-                );
+            _model.ResetImageQuality();
+            await _imageQuality.ResetAsync();
         }
     }
 }

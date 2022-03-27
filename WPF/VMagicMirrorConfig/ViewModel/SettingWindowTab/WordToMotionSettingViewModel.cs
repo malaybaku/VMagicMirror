@@ -36,7 +36,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             Devices = WordToMotionDeviceItem.LoadAvailableItems();
             AvailableAccessoryNames = new AccessoryItemNamesViewModel(accessoryModel);
 
-            AddNewItemCommand = new ActionCommand(() => model.AddNewItem());
+            AddNewItemCommand = new ActionCommand(() => _model.AddNewItem());
             OpenKeyAssignmentEditorCommand = new ActionCommand(() => OpenKeyAssignmentEditor());
             ResetByDefaultItemsCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_runtimeConfigModel.LoadDefaultItems)
@@ -44,7 +44,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
 
-            if (!IsInDegignMode)
+            if (IsInDegignMode)
             {
                 return;
             }
@@ -176,9 +176,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public string[] LatestAvaterExtraClipNames => _runtimeConfigModel.LatestAvaterExtraClipNames;
 
         public ReadOnlyObservableCollection<WordToMotionItemViewModel> Items { get; }
-        private readonly ObservableCollection<WordToMotionItemViewModel> _items
-            = new ObservableCollection<WordToMotionItemViewModel>();
-
+        private readonly ObservableCollection<WordToMotionItemViewModel> _items = new();
         public MidiNoteToMotionMapViewModel MidiNoteMap { get; }
             = new MidiNoteToMotionMapViewModel(MidiNoteToMotionMap.LoadDefault());
 
@@ -378,30 +376,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         internal void RefreshDisplayName()
             => DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + _displayNameKeySuffix);
 
-        public static WordToMotionDeviceItem None()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.None, "None"
-                );
-
-        public static WordToMotionDeviceItem KeyboardTyping()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.KeyboardWord, "KeyboardWord"
-                );
-
-        public static WordToMotionDeviceItem Gamepad()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.Gamepad, "Gamepad"
-                );
-
-        public static WordToMotionDeviceItem KeyboardNumKey()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.KeyboardTenKey, "KeyboardTenKey"
-                );
-
-        public static WordToMotionDeviceItem MidiController()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.MidiController, "MidiController"
-                );
+        private static WordToMotionDeviceItem None() => new(WordToMotionSetting.DeviceTypes.None, "None");
+        private static WordToMotionDeviceItem KeyboardTyping() => new(WordToMotionSetting.DeviceTypes.KeyboardWord, "KeyboardWord");
+        private static WordToMotionDeviceItem Gamepad() => new(WordToMotionSetting.DeviceTypes.Gamepad, "Gamepad");
+        private static WordToMotionDeviceItem KeyboardNumKey() => new(WordToMotionSetting.DeviceTypes.KeyboardTenKey, "KeyboardTenKey");
+        private static WordToMotionDeviceItem MidiController() => new(WordToMotionSetting.DeviceTypes.MidiController, "MidiController");
 
         public static WordToMotionDeviceItem[] LoadAvailableItems()
             => new[]

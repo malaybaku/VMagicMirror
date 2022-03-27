@@ -28,8 +28,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private readonly AccessorySettingModel _model;
 
-        private readonly ObservableCollection<AccessoryItemNameViewModel> _items
-            = new ObservableCollection<AccessoryItemNameViewModel>();
+        private readonly ObservableCollection<AccessoryItemNameViewModel> _items = new ();
 
         public ReadOnlyObservableCollection<AccessoryItemNameViewModel> Items { get; }
 

@@ -6,12 +6,12 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
         xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
-        mc:Ignorable="d"
-        d:DataContext="{x:Type vm:MidiNoteToMotionEditorViewModel}"
         Title="VMagicMirror - MIDI Note Assign" 
         Height="560" Width="300"
         MinHeight="400" MinWidth="300"
         WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:MidiNoteToMotionEditorViewModel}"
         >
     <Grid>
         <Grid.Resources>

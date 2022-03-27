@@ -13,7 +13,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             _model = model;
 
-            BackgroundImageSetCommand = new ActionCommand(_model.SetBackgroundImage);
+            BackgroundImageSetCommand = new ActionCommand(() => _model.SetBackgroundImage());
             BackgroundImageClearCommand = new ActionCommand(
                 () => _model.BackgroundImagePath.Value = ""
                 );
@@ -21,17 +21,17 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ResetBackgroundColorSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetBackgroundColor)
                 );
-            ResetWindowPositionCommand = new ActionCommand(_model.ResetWindowPosition);
+            ResetWindowPositionCommand = new ActionCommand(() => _model.ResetWindowPosition());
             ResetOpacitySettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetOpacity)
                 );
 
-            if (!IsInDegignMode)
+            if (IsInDegignMode)
             {
                 return;
             }
 
-           _model.R.AddWeakEventHandler(OnPickerColorChanged);
+            _model.R.AddWeakEventHandler(OnPickerColorChanged);
             _model.G.AddWeakEventHandler(OnPickerColorChanged);
             _model.B.AddWeakEventHandler(OnPickerColorChanged);
             //初期値を反映しないと変な事になるので注意

@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using static Baku.VMagicMirrorConfig.ViewModel.LayoutSettingViewModel;
 
@@ -15,7 +16,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         internal WindowViewModel(WindowSettingModel model)
         {
             _model = model;
-            BackgroundImageSetCommand = new ActionCommand(_model.SetBackgroundImage);
+            BackgroundImageSetCommand = new ActionCommand(() => _model.SetBackgroundImage());
             BackgroundImageClearCommand = new ActionCommand(
                 () => _model.BackgroundImagePath.Value = ""
                 );
@@ -55,7 +56,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             _deviceList = deviceList;
             _microphoneStatus = microphoneStatus;
 
-            CalibrateFaceCommand = new ActionCommand(_setting.RequestCalibrateFace);
+            CalibrateFaceCommand = new ActionCommand(() => _setting.RequestCalibrateFace());
             EndExTrackerIfNeededCommand = new ActionCommand(
                 async () => await _externalTrackerSetting.DisableExternalTrackerWithConfirmAsync()
                 );
@@ -108,14 +109,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         internal MotionViewModel(MotionSettingModel model)
         {
             _model = model;
-            //TODO: 必要ならweak event patternに書き換える。
-            //ただし、配信タブは今のところアプリと同期間だけ生存するので、あまり気にしないでもOK
-            _model.KeyboardAndMouseMotionMode.PropertyChanged +=
-                (_, __) => UpdateKeyboardAndMouseMotionMode();
-            UpdateKeyboardAndMouseMotionMode();
-            _model.GamepadMotionMode.PropertyChanged +=
-                (_, __) => UpdateGamepadMotionMode();
-            UpdateGamepadMotionMode();
+            
+            if (!IsInDegignMode)
+            {
+                _model.KeyboardAndMouseMotionMode.AddWeakEventHandler(UpdateKeyboardAndMouseMotionModeAsHandler);
+                _model.GamepadMotionMode.AddWeakEventHandler(UpdateGamepadMotionModeAsHandler);
+                UpdateKeyboardAndMouseMotionMode();
+                UpdateGamepadMotionMode();
+            }
         }
 
         private readonly MotionSettingModel _model;
@@ -165,6 +166,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
                 }
             }
         }
+
+        private void UpdateKeyboardAndMouseMotionModeAsHandler(object? sender, PropertyChangedEventArgs e)
+            => UpdateKeyboardAndMouseMotionMode();
+
+        private void UpdateGamepadMotionModeAsHandler(object? sender, PropertyChangedEventArgs e)
+            => UpdateGamepadMotionMode();
 
         private void UpdateKeyboardAndMouseMotionMode() =>
             KeyboardAndMouseMotionMode = KeyboardAndMouseMotions
@@ -265,8 +272,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         {
             _model = model;
             QuickSaveViewPointCommand = new ActionCommand<string>(async s => await _model.QuickSaveViewPoint(s));
-            QuickLoadViewPointCommand = new ActionCommand<string>(_model.QuickLoadViewPoint);
-            ResetCameraPositionCommand = new ActionCommand(_model.RequestResetCameraPosition);
+            QuickLoadViewPointCommand = new ActionCommand<string>(s => _model.QuickLoadViewPoint(s));
+            ResetCameraPositionCommand = new ActionCommand(() => _model.RequestResetCameraPosition());
         }
 
         private readonly LayoutSettingModel _model;
@@ -292,7 +299,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         internal DeviceLayoutViewModel(LayoutSettingModel model)
         {
             _model = model;
-            ResetDeviceLayoutCommand = new ActionCommand(_model.ResetDeviceLayout);
+            ResetDeviceLayoutCommand = new ActionCommand(() => _model.ResetDeviceLayout());
         }
 
         private readonly LayoutSettingModel _model;
@@ -313,7 +320,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             _model = model;
             Devices = WordToMotionDeviceItem.LoadAvailableItems();
 
-            if (!IsInDegignMode)
+            if (IsInDegignMode)
             {
                 return;
             }

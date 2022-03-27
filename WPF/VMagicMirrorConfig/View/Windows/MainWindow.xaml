@@ -120,7 +120,7 @@
                                                 ConverterParameter=2}"                           
                         />
                 </TabItem.Header>
-                <view:ExternalTrackerPanel Background="White" DataContext="{Binding ExternalTrackerSetting}" />
+                <view:ExternalTrackerPanel Background="White" />
             </TabItem>
             <TabItem>
                 <TabItem.Header>
@@ -135,7 +135,7 @@
                                              ConverterParameter=3}"                           
                         />
                 </TabItem.Header>
-                <view:AccessoryPanel Background="White" DataContext="{Binding AccessorySetting}" />
+                <view:AccessoryPanel Background="White" />
             </TabItem>
             <TabItem>
                 <TabItem.Header>
@@ -150,7 +150,7 @@
                                                 ConverterParameter=4}"                           
                         />
                 </TabItem.Header>
-                <view:HandTrackingPanel Background="White" DataContext="{Binding MotionSetting}" />
+                <view:HandTrackingPanel Background="White" />
             </TabItem>
 
         </dragablz:TabablzControl>

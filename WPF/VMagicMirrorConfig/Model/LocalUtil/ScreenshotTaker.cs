@@ -2,6 +2,10 @@
 {
     class ScreenshotTaker
     {
+        public ScreenshotTaker() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        {
+        }
+
         public ScreenshotTaker(IMessageSender sender)
         {
             _sender = sender;

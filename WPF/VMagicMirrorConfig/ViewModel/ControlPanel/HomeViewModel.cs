@@ -44,13 +44,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ConnectToVRoidHubCommand = new ActionCommand(async () => await _avatarLoader.ConnectToVRoidHubAsync());
             OpenVRoidHubCommand = new ActionCommand(() => UrlNavigate.Open("https://hub.vroid.com/"));
 
-            AutoAdjustCommand = new ActionCommand(avatarLoader.RequestAutoAdjust);
+            AutoAdjustCommand = new ActionCommand(() => avatarLoader.RequestAutoAdjust());
             OpenSettingWindowCommand = new ActionCommand(() => SettingWindow.OpenOrActivateExistingWindow());
 
             ResetToDefaultCommand = new ActionCommand(ResetToDefault);
 
-            TakeScreenshotCommand = new ActionCommand(screenshotTaker.TakeScreenshot);
-            OpenScreenshotFolderCommand = new ActionCommand(screenshotTaker.OpenScreenshotSavedFolder);
+            TakeScreenshotCommand = new ActionCommand(() => screenshotTaker.TakeScreenshot());
+            OpenScreenshotFolderCommand = new ActionCommand(() => screenshotTaker.OpenScreenshotSavedFolder());
 
             if (!IsInDegignMode)
             {

@@ -2,6 +2,7 @@
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -49,10 +50,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     PortNumberIsInvalid.Value = !(int.TryParse(v, out int i) && i >= 0 && i < 65536);
                 });
 
-            _model.AutomationPortNumber.PropertyChanged += (_, __) =>
-            {
-                AutomationPortNumberText.Value = _model.AutomationPortNumber.Value.ToString();
-            };
+            _model.AutomationPortNumber.AddWeakEventHandler(OnAutomationPortNumberChanged);
         }
 
         //NOTE: rootが必要なのは「ロード時にキャラ情報/非キャラ情報をどう扱うか」という値がRootに入っているため。
@@ -60,6 +58,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly RootSettingModel _rootModel;
         private readonly AutomationSettingModel _model;
         private readonly SaveFileManager _saveFileManager;
+
+
+        private void OnAutomationPortNumberChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            AutomationPortNumberText.Value = _model.AutomationPortNumber.Value.ToString();
+        }
 
         #region セーブ/ロード
 

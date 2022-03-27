@@ -37,7 +37,9 @@
             resolver.Add(new RuntimeHelper());
             resolver.Add(new CustomMotionList());
             resolver.Add(new ImageQualitySetting());
+            resolver.Add(new WordToMotionRuntimeConfig());
             resolver.Add(new ExternalTrackerRuntimeConfig());
+            resolver.Add(new LargePointerVisibility());
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -52,20 +54,27 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (!IsInDegignMode)
             {
-                UpdateTrackSourceType();
-                model.TrackSourceType.PropertyChanged += (_, __) => UpdateTrackSourceType();
+                return;
+            }
 
-                model.FaceSwitchSettingReloaded += (_, __) =>
-                {
-                    if (!model.IsLoading)
-                    {
-                        LoadFaceSwitchSetting();
-                    }
-                };
-                model.Loaded += (_, __) => LoadFaceSwitchSetting();
+            UpdateTrackSourceType();
+            model.TrackSourceType.AddWeakEventHandler(UpdateTrackSourceTypeAsHandler);
+
+            WeakEventManager<ExternalTrackerSettingModel, EventArgs>.AddHandler(
+                model, nameof(model.FaceSwitchSettingReloaded), OnFaceSwitchSettingReloaded);
+            WeakEventManager<ExternalTrackerSettingModel, EventArgs>.AddHandler(model, nameof(model.Loaded), OnModelLoaded);
+            LoadFaceSwitchSetting();
+        }
+
+        private void OnFaceSwitchSettingReloaded(object? sender, EventArgs e)
+        {
+            if (!_model.IsLoading)
+            {
                 LoadFaceSwitchSetting();
             }
         }
+
+        private void OnModelLoaded(object? sender, EventArgs e) => LoadFaceSwitchSetting();
 
         /// <summary>
         /// Face Switchの設定が更新されたときにViewModelに情報を反映します。
@@ -168,6 +177,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
+        private void UpdateTrackSourceTypeAsHandler(object? sender, PropertyChangedEventArgs e) => UpdateTrackSourceType();
         private void UpdateTrackSourceType()
         {
             IsTrackSourceNone = _model.TrackSourceType.Value == ExternalTrackerSetting.TrackSourceNone;

@@ -44,7 +44,6 @@ namespace Baku.VMagicMirrorConfig
             //NOTE: このStartは通信とかではないので、すぐ始めちゃってOK
             MidiNoteReceiver.Start();
 
-
             //NOTE: この2つの呼び出しにより、必ずデフォルト設定をUnity側に通知する+シリアライズ文字列が空ではなくなる
             SaveMidiNoteMap();
             SaveMotionRequests();
@@ -188,8 +187,6 @@ namespace Baku.VMagicMirrorConfig
             MotionRequests = new MotionRequestCollection(request.ToArray());
             SaveMotionRequests();
         }
-
-        public void LoadDefaultMotionRequests() => LoadDefaultMotionRequests(new List<string>());
 
         public void LoadDefaultMotionRequests(List<string> extraBlendShapeClipNames)
         {

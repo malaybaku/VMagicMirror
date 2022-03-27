@@ -44,7 +44,7 @@ namespace Baku.VMagicMirrorConfig
         public AccessoryItems Items { get; set; } = new AccessoryItems();
         public string SerializedSetting { get; set; } = "";
 
-        //NOTE: 動的ロードしないのはUnity側と挙動を揃えるため。リロード可能にする場合、Unity側も対応が要る
+        //NOTE: Filesの内容は設定ファイルに保存されないので、別クラスに分割してもOK
         public AccessoryFile[] Files { get; private set; }
 
         //NOTE: ViewModel層でItems.Itemsの中にあるアイテムをいじった場合、そのアイテムを指定して呼び出す

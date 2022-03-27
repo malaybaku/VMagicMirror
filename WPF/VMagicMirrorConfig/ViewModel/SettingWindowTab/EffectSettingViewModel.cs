@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Media;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -38,16 +39,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 );
             ResetImageQualitySettingCommand = new ActionCommand(ResetImageQuality);
 
-            void UpdateLightColor() => RaisePropertyChanged(nameof(LightColor));
-            void UpdateBloomColor() => RaisePropertyChanged(nameof(BloomColor));
             if (!IsInDegignMode)
             {
-                model.LightR.PropertyChanged += (_, __) => UpdateLightColor();
-                model.LightG.PropertyChanged += (_, __) => UpdateLightColor();
-                model.LightB.PropertyChanged += (_, __) => UpdateLightColor();
-                model.BloomR.PropertyChanged += (_, __) => UpdateBloomColor();
-                model.BloomG.PropertyChanged += (_, __) => UpdateBloomColor();
-                model.BloomB.PropertyChanged += (_, __) => UpdateBloomColor();
+                model.LightR.AddWeakEventHandler(UpdateLightColor);
+                model.LightG.AddWeakEventHandler(UpdateLightColor);
+                model.LightB.AddWeakEventHandler(UpdateLightColor);
+
+                model.BloomR.AddWeakEventHandler(UpdateBloomColor);
+                model.BloomG.AddWeakEventHandler(UpdateBloomColor);
+                model.BloomB.AddWeakEventHandler(UpdateBloomColor);
             }
         }
 
@@ -57,6 +57,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<string> ImageQuality => _imageQuality.ImageQuality;
         public ReadOnlyObservableCollection<string> ImageQualityNames => _imageQuality.ImageQualityNames;
         public RProperty<bool> HalfFpsMode => _model.HalfFpsMode;
+
+        void UpdateLightColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(LightColor));
+        void UpdateBloomColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(BloomColor));
 
         #region Light
 

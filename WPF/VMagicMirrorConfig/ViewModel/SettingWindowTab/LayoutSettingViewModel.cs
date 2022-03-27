@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -56,12 +57,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            _model.SelectedTypingEffectId.PropertyChanged += (_, __) =>
-            {
-                TypingEffectItem = TypingEffectSelections
-                    .FirstOrDefault(v => v.Id == _model.SelectedTypingEffectId.Value);
-            };
-
+            _model.SelectedTypingEffectId.AddWeakEventHandler(OnSelectedTypingEffectIdChanged);
             _typingEffectItem = TypingEffectSelections[0];
         }
 
@@ -74,6 +70,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> EnableFreeCameraMode => _model.EnableFreeCameraMode;
 
         public RProperty<bool> EnableMidiRead => _model.EnableMidiRead;
+
+
+        private void OnSelectedTypingEffectIdChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            TypingEffectItem = TypingEffectSelections
+                .FirstOrDefault(v => v.Id == _model.SelectedTypingEffectId.Value);
+        }
+
 
         //NOTE: カメラ位置、デバイスレイアウト、クイックセーブした視点については、ユーザーが直接いじる想定ではない
 

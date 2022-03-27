@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -43,14 +44,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
 
             ShowInstallPathWarning = installPathChecker.HasMultiByteCharInInstallPath;
-
-            _model.EyeBoneRotationScale.PropertyChanged += (_, __) => UpdateEyeRotRangeText();
-            
-            _model.FaceNeutralClip.PropertyChanged += (_, __) =>
-                _blendShapeNameStore.Refresh(_model.FaceNeutralClip.Value, _model.FaceOffsetClip.Value);
-            _model.FaceOffsetClip.PropertyChanged += (_, __) =>
-                _blendShapeNameStore.Refresh(_model.FaceNeutralClip.Value, _model.FaceOffsetClip.Value);
-
+            _model.EyeBoneRotationScale.AddWeakEventHandler(OnEyeBoneRotationScaleChanged);
+            _model.FaceNeutralClip.AddWeakEventHandler(OnFaceClipChanged);
+            _model.FaceOffsetClip.AddWeakEventHandler(OnFaceClipChanged);
             UpdateEyeRotRangeText();
         }
 
@@ -58,6 +54,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly DeviceListSource _deviceListSource;
         private readonly MicrophoneStatus _microphoneStatus;
         private readonly FaceMotionBlendShapeNameStore _blendShapeNameStore = new FaceMotionBlendShapeNameStore();
+
+        private void OnEyeBoneRotationScaleChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            UpdateEyeRotRangeText();
+        }
+
+        private void OnFaceClipChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            _blendShapeNameStore.Refresh(_model.FaceNeutralClip.Value, _model.FaceOffsetClip.Value);
+        }
 
         #region Face
 

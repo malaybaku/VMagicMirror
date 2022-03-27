@@ -1,7 +1,10 @@
 ﻿using Baku.VMagicMirrorConfig.View;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -12,7 +15,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ModelResolver.Instance.Resolve<LayoutSettingModel>(),
             ModelResolver.Instance.Resolve<AccessorySettingModel>(),
             ModelResolver.Instance.Resolve<CustomMotionList>(),
-            ModelResolver.Instance.Resolve<IMessageReceiver>()
+            ModelResolver.Instance.Resolve<WordToMotionRuntimeConfig>()
             )
         {
         }
@@ -22,12 +25,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             LayoutSettingModel layoutModel,
             AccessorySettingModel accessoryModel,
             CustomMotionList customMotionList,
-            IMessageReceiver receiver)
+            WordToMotionRuntimeConfig extraBlendShapeNames
+            )
         {
             _model = model;
             _layoutModel = layoutModel;
-            _accessoryModel = accessoryModel;
             _customMotionList = customMotionList;
+            _runtimeConfigModel = extraBlendShapeNames;
             Items = new ReadOnlyObservableCollection<WordToMotionItemViewModel>(_items);
             Devices = WordToMotionDeviceItem.LoadAvailableItems();
             AvailableAccessoryNames = new AccessoryItemNamesViewModel(accessoryModel);
@@ -35,87 +39,93 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             AddNewItemCommand = new ActionCommand(() => model.AddNewItem());
             OpenKeyAssignmentEditorCommand = new ActionCommand(() => OpenKeyAssignmentEditor());
             ResetByDefaultItemsCommand = new ActionCommand(
-                () => SettingResetUtils.ResetSingleCategoryAsync(LoadDefaultItems)
+                () => SettingResetUtils.ResetSingleCategoryAsync(_runtimeConfigModel.LoadDefaultItems)
                 );
 
-            _model.SelectedDeviceType.PropertyChanged += (_, __) =>
-            {
-                SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
-                EnableWordToMotion.Value = _model.SelectedDeviceType.Value != WordToMotionSetting.DeviceTypes.None;
-            };
             SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
+
+            if (!IsInDegignMode)
+            {
+                return;
+            }
+
+            _model.SelectedDeviceType.AddWeakEventHandler(OnSelectedDeviceTypeChanged);
+
             //NOTE: シリアライズ文字列はどのみち頻繁に更新せねばならない
             //(並び替えた時とかもUnityにデータ送るために更新がかかる)ので、そのタイミングを使う
-            _model.MidiNoteToMotionMapReloaded += (_, __) =>
-            {
-                if (!_model.IsLoading)
-                {
-                    LoadMidiSettingItems();
-                }
-            };
-            _model.MotionRequestsReloaded += (_, __) =>
-            {
-                if (!_model.IsLoading)
-                {
-                    LoadMotionItems();
-                }
-            };
+            WeakEventManager<WordToMotionSettingModel, EventArgs>.AddHandler(
+                _model,
+                nameof(_model.MidiNoteToMotionMapReloaded),
+                OnMidiNoteToMotionMapReloaded
+                );
+            WeakEventManager<WordToMotionSettingModel, EventArgs>.AddHandler(
+                _model,
+                nameof(_model.MotionRequestsReloaded),
+                OnMotionRequestsReloaded
+                );
 
-            _model.Loaded += (_, __) =>
-            {
-                LoadMidiSettingItems();
-                LoadMotionItems();
-            };
+            WeakEventManager<WordToMotionSettingModel, EventArgs>.AddHandler(
+                _model,
+                nameof(_model.Loaded),
+                OnSettingLoaded);
 
-            _model.PreviewDataSender.PrepareDataSend +=
-                (_, __) => _dialogItem?.WriteToModel(_model.PreviewDataSender.MotionRequest);
-            //TODO: receiveはここじゃないとこでやってほしいはず
-            receiver.ReceivedCommand += OnReceiveCommand;
+            WeakEventManager<WordToMotionItemPreviewDataSender, EventArgs>.AddHandler(
+                _model.PreviewDataSender,
+                nameof(_model.PreviewDataSender.PrepareDataSend),
+                OnPrepareDataSend
+                );
 
-            LoadDefaultItemsIfInitialStart();
+            WeakEventManager<WordToMotionRuntimeConfig, BlendShapeCheckedEventArgs>.AddHandler(
+                _runtimeConfigModel,
+                nameof(_runtimeConfigModel.DetectNewExtraBlendShapeName),
+                OnBlendShapeChecked
+                );
 
             LoadMotionItems();
             LoadMidiSettingItems();
         }
 
+        
+
         private readonly WordToMotionSettingModel _model;
         private readonly LayoutSettingModel _layoutModel;
-        private readonly AccessorySettingModel _accessoryModel;
+        private readonly WordToMotionRuntimeConfig _runtimeConfigModel;
         private readonly CustomMotionList _customMotionList;
         private WordToMotionItemViewModel? _dialogItem;
 
-        /// <summary>直近で読み込んだモデルに指定されている、VRM標準以外のブレンドシェイプ名の一覧を取得します。</summary>
-        public IReadOnlyList<string> LatestAvaterExtraClipNames => _latestAvaterExtraClipNames;
-
         public AccessoryItemNamesViewModel AvailableAccessoryNames { get; }
 
-        private string[] _latestAvaterExtraClipNames = new string[0];
-
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnSelectedDeviceTypeChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.Command != ReceiveMessageNames.ExtraBlendShapeClipNames)
+            SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
+            EnableWordToMotion.Value = _model.SelectedDeviceType.Value != WordToMotionSetting.DeviceTypes.None;
+        }
+
+        private void OnSettingLoaded(object? sender, EventArgs e)
+        {
+            LoadMidiSettingItems();
+            LoadMotionItems();
+        }
+
+        private void OnMidiNoteToMotionMapReloaded(object? sender, EventArgs e)
+        {
+            if (!_model.IsLoading)
             {
-                return;
+                LoadMidiSettingItems();
             }
+        }
 
-            //やることは2つ: 
-            // - 知らない名前のブレンドシェイプが飛んできたら記憶する
-            // - アバターが持ってるExtraなクリップ名はコレですよ、というのを明示的に与える
-            _latestAvaterExtraClipNames = e.Args
-                .Split(',')
-                .Where(n => !string.IsNullOrEmpty(n))
-                .ToArray();
-
-            bool hasNewBlendShape = false;
-            foreach (var name in _latestAvaterExtraClipNames
-                .Where(n => !ExtraBlendShapeClipNames.Contains(n))
-                )
+        private void OnMotionRequestsReloaded(object? sender, EventArgs e)
+        {
+            if (!_model.IsLoading)
             {
-                hasNewBlendShape = true;
-                ExtraBlendShapeClipNames.Add(name);
+                LoadMotionItems();
             }
+        }
 
-            if (hasNewBlendShape)
+        private void OnBlendShapeChecked(object? sender, BlendShapeCheckedEventArgs e)
+        {
+            if (e.HasNewBlendShape)
             {
                 //新しい名称のクリップを子要素側に反映
                 foreach (var item in _items)
@@ -128,6 +138,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 item.CheckAvatarExtraClips();
             }
+        }
+
+        private void OnPrepareDataSend(object? sender, EventArgs e)
+        {
+            _dialogItem?.WriteToModel(_model.PreviewDataSender.MotionRequest);
         }
 
         public ReadOnlyObservableCollection<string> CustomMotionClipNames => _customMotionList.CustomMotionClipNames;
@@ -157,7 +172,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #endregion
 
-        public List<string> ExtraBlendShapeClipNames => _model.ExtraBlendShapeClipNames;
+        public List<string> ExtraBlendShapeClipNames => _runtimeConfigModel.ExtraBlendShapeClipNames;
+        public string[] LatestAvaterExtraClipNames => _runtimeConfigModel.LatestAvaterExtraClipNames;
 
         public ReadOnlyObservableCollection<WordToMotionItemViewModel> Items { get; }
         private readonly ObservableCollection<WordToMotionItemViewModel> _items
@@ -304,25 +320,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand AddNewItemCommand { get; }
 
         public ActionCommand ResetByDefaultItemsCommand { get; }
-
-        //このマシン上でこのバージョンのVMagicMirrorが初めて実行されたと推定できるとき、
-        //デフォルトのWord To Motion一覧を生成して初期化します。
-        public void LoadDefaultItemsIfInitialStart()
-        {
-            if (!SpecialFilePath.IsAutoSaveFileExist())
-            {
-                LoadDefaultItems();
-            }
-        }
-
-        private void LoadDefaultItems()
-        {
-            ExtraBlendShapeClipNames.Clear();
-            //NOTE: 現在ロードされてるキャラがいたら、そのキャラのブレンドシェイプをただちに当て直す
-            ExtraBlendShapeClipNames.AddRange(_latestAvaterExtraClipNames);
-
-            _model.LoadDefaultMotionRequests(ExtraBlendShapeClipNames);
-        }
+      
 
         public void EditItemByDialog(WordToMotionItemViewModel item)
         {

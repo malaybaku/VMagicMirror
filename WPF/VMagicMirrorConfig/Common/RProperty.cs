@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Windows;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -57,5 +59,14 @@ namespace Baku.VMagicMirrorConfig
         /// </summary>
         /// <param name="value"></param>
         public void SilentSet(T value) { _value = value; }
+
+        /// <summary>
+        /// 弱いイベントパターンでプロパティ変更イベントを購読します。
+        /// ViewModelからModelのイベントを購読する場合に使用します。
+        /// </summary>
+        /// <param name="handler"></param>
+        public void AddWeakEventHandler(EventHandler<PropertyChangedEventArgs> handler)
+            => WeakEventManager<RProperty<T>, PropertyChangedEventArgs>.AddHandler(this, nameof(PropertyChanged), handler);
+
     }
 }

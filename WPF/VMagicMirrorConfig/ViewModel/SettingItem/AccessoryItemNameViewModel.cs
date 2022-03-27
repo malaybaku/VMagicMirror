@@ -5,8 +5,7 @@ using System.Linq;
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary>
-    /// アプリの起動時から終了時までアイテム名の一覧に追従したうえで、
-    /// 選択肢の冒頭に「なし」の選択肢が追加されているようなViewModel.
+    /// 利用可能なアクセサリ名の一覧に追従しつつ、選択肢の冒頭に「なし」の選択肢が追加されているようなViewModel.
     /// ComboBoxで使えるように作られている
     /// </summary>
     public class AccessoryItemNamesViewModel : ViewModelBase

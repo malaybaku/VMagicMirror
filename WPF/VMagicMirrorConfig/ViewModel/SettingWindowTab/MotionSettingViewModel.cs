@@ -1,4 +1,5 @@
 ﻿using Baku.VMagicMirrorConfig.View;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -28,19 +29,22 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            _model.KeyboardAndMouseMotionMode.PropertyChanged += (_, __) => UpdateKeyboardAndMouseMotionMode();
+            _model.KeyboardAndMouseMotionMode.AddWeakEventHandler(OnKeyboardAndMouseMotionModeChanged);
+            _model.GamepadMotionMode.AddWeakEventHandler(OnGamepadMotionModeChanged);
             UpdateKeyboardAndMouseMotionMode();
-            _model.GamepadMotionMode.PropertyChanged += (_, __) => UpdateGamepadMotionMode();
-            UpdateGamepadMotionMode();
-            
-            //両方trueのときだけポインターを表示したいので、それのチェック
-            _model.KeyboardAndMouseMotionMode.PropertyChanged += (_, __) => UpdatePointerVisibility();
-            _model.ShowPresentationPointer.PropertyChanged += (_, __) => UpdatePointerVisibility();
-            //通常発生しないが、VMの初期化時点でポインター表示が必要ならそうする
-            UpdatePointerVisibility();
+            UpdateGamepadMotionMode();            
         }
 
         private readonly MotionSettingModel _model;
+
+        private void OnKeyboardAndMouseMotionModeChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            UpdateKeyboardAndMouseMotionMode();
+        }
+        private void OnGamepadMotionModeChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            UpdateGamepadMotionMode();
+        }
 
         #region モーションの種類の制御
 
@@ -112,10 +116,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> ShowPresentationPointer => _model.ShowPresentationPointer;
         public RProperty<int> PresentationArmRadiusMin => _model.PresentationArmRadiusMin;
-
-        private void UpdatePointerVisibility()
-            => LargePointerController.Instance.UpdateVisibility(_model.PointerVisible);
-
 
         public RProperty<int> LengthFromWristToTip => _model.LengthFromWristToTip;
         public RProperty<int> HandYOffsetBasic => _model.HandYOffsetBasic;

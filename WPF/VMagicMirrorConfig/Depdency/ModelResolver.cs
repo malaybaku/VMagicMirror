@@ -9,9 +9,13 @@ namespace Baku.VMagicMirrorConfig
     //NOTE: DIライブラリでもいいけどコレくらいなら…ということで自前クラスで賄ってるやつ
     //指定した型をインスタンスベースで登録するだけの簡素な仕組みを用いる。
     //コレで用が足りなくなったら普通のDIライブラリに差し替える        
+
+    /// <summary>
+    /// インスタンスベースで型1つにつき最大1つの要素を依存対象として登録できるやつだよ
+    /// </summary>
     class ModelResolver
     {
-        //あまり高頻度で呼ばない想定なのでいい加減でもOK
+        //あまり高頻度で呼ばない想定なのでいい加減でOK
         record BoundInstance(Type Type, object Instance);
 
         static ModelResolver? _instance;

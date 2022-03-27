@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.ComponentModel;
+using System.Windows.Media;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -30,13 +31,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            void UpdatePickerColor() => RaisePropertyChanged(nameof(PickerColor));
-            _model.R.PropertyChanged += (_, __) => UpdatePickerColor();
-            _model.G.PropertyChanged += (_, __) => UpdatePickerColor();
-            _model.B.PropertyChanged += (_, __) => UpdatePickerColor();
-
+           _model.R.AddWeakEventHandler(OnPickerColorChanged);
+            _model.G.AddWeakEventHandler(OnPickerColorChanged);
+            _model.B.AddWeakEventHandler(OnPickerColorChanged);
             //初期値を反映しないと変な事になるので注意
-            UpdatePickerColor();
+            RaisePropertyChanged(nameof(PickerColor));
         }
 
         private readonly WindowSettingModel _model;
@@ -44,6 +43,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<int> R => _model.R;
         public RProperty<int> G => _model.G;
         public RProperty<int> B => _model.B;
+
+        private void OnPickerColorChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(PickerColor));
+        }
 
         /// <summary> ColorPickerに表示する、Alphaを考慮しない背景色を取得、設定します。 </summary>
         public Color PickerColor

@@ -4,10 +4,8 @@ using System.Windows;
 
 namespace Baku.VMagicMirrorConfig
 {
-    /// <summary>
-    /// 接続しているマイクやカメラなどのデバイス情報を保持するクラス。
-    /// 設定ファイルには残らない情報を扱っているのがポイント
-    /// </summary>
+    //NOTE: もし必要ならゲームパッドとかも追加してOK
+    /// <summary> 接続しているマイクやカメラなどのデバイス情報を保持する  </summary>
     class DeviceListSource
     {
         public DeviceListSource() : this(ModelResolver.Instance.Resolve<IMessageSender>())

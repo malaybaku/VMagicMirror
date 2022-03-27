@@ -207,7 +207,7 @@
                                    />
 
                         <Button Style="{StaticResource CategorySettingResetButton}"
-                                Command="{Binding ResetHidSettingCommand}"
+                                Command="{Binding ResetDeviceVisibilityAndEffectCommand}"
                                 />
                     </StackPanel>
 

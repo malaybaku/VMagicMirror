@@ -41,9 +41,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetDeviceLayout)
                 );
 
-            ResetHidSettingCommand = new ActionCommand(
-                () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetHidSetting)
-                );
+            ResetDeviceVisibilityAndEffectCommand = new ActionCommand(
+                () => SettingResetUtils.ResetSingleCategoryAsync(() => 
+                {
+                    _model.ResetHidSetting();
+                    _gamepadModel.ResetVisibility();
+                }));
             ResetCameraSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetCameraSetting)
                 );
@@ -141,7 +144,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand OpenTextureReplaceTipsUrlCommand { get; }
 
         public ActionCommand ResetDeviceLayoutCommand { get; }
-        public ActionCommand ResetHidSettingCommand { get; }
+        public ActionCommand ResetDeviceVisibilityAndEffectCommand { get; }
         public ActionCommand ResetCameraSettingCommand { get; }
         public ActionCommand ResetMidiSettingCommand { get; }
 

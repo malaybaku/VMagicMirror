@@ -99,5 +99,10 @@
         public RProperty<bool> GamepadLeanReverseVertical { get; }
 
         public override void ResetToDefault() => Load(GamepadSetting.Default);
+
+        public void ResetVisibility()
+        {
+            GamepadVisibility.Value = false;
+        }
     }
 }

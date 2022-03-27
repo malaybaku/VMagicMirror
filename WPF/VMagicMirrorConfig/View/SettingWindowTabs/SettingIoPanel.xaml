@@ -11,6 +11,9 @@
              d:DesignWidth="400"
              d:DesignHeight="850"
              >
+    <UserControl.DataContext>
+        <vm:SettingIoViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">

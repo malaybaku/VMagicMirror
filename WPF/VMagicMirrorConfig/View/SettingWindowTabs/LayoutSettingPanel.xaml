@@ -11,6 +11,9 @@
              d:DesignWidth="400"
              d:DesignHeight="1050"
              >
+    <UserControl.DataContext>
+        <vm:LayoutSettingViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         <view:StringNotEmptyConverter x:Key="StringNotEmptyConverter"/>

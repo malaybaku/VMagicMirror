@@ -52,7 +52,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 );
             ShowPenUnavaiableWarningCommand = new ActionCommand(ShowPenUnavailableWarning);
 
-            if (!IsInDegignMode)
+            if (!IsInDesignMode)
             {
                 return;
             }

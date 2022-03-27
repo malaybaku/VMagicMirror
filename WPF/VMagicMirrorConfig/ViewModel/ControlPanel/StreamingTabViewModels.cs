@@ -61,7 +61,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
                 async () => await _externalTrackerSetting.DisableExternalTrackerWithConfirmAsync()
                 );
 
-            if (!IsInDegignMode)
+            if (!IsInDesignMode)
             {
                 ShowInstallPathWarning = installPathChecker.HasMultiByteCharInInstallPath;
             }
@@ -110,7 +110,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         {
             _model = model;
             
-            if (!IsInDegignMode)
+            if (!IsInDesignMode)
             {
                 _model.KeyboardAndMouseMotionMode.AddWeakEventHandler(UpdateKeyboardAndMouseMotionModeAsHandler);
                 _model.GamepadMotionMode.AddWeakEventHandler(UpdateGamepadMotionModeAsHandler);
@@ -320,7 +320,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             _model = model;
             Devices = WordToMotionDeviceItemViewModel.LoadAvailableItems();
 
-            if (IsInDegignMode)
+            if (IsInDesignMode)
             {
                 return;
             }

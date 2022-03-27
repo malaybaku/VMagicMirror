@@ -38,7 +38,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             CalibrateFaceCommand = new ActionCommand(() => model.RequestCalibrateFace());
 
-            if (IsInDegignMode)
+            if (IsInDesignMode)
             {
                 return;
             }

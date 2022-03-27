@@ -11,6 +11,9 @@
              d:DesignWidth="400"
              d:DesignHeight="1100"
              >
+    <UserControl.DataContext>
+        <vm:MotionSettingViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>

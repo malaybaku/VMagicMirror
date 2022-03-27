@@ -27,7 +27,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public async void Initialize()
         {
-            if (IsInDegignMode)
+            if (IsInDesignMode)
             {
                 return;
             }

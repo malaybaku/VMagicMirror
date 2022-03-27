@@ -16,7 +16,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             Items = new ReadOnlyObservableCollection<AccessoryItemNameViewModel>(_items);
             _items.Add(AccessoryItemNameViewModel.None);
 
-            if (!IsInDegignMode)
+            if (!IsInDesignMode)
             {
                 OnItemRefreshed();
                 _model.ItemUpdated += OnItemUpdated;

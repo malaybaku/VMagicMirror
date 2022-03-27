@@ -1,5 +1,4 @@
-﻿using Baku.VMagicMirrorConfig.View;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -24,7 +23,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetWaitMotionSetting)
                 );
 
-            if (!IsInDegignMode)
+            if (IsInDesignMode)
             {
                 return;
             }
@@ -32,7 +31,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model.KeyboardAndMouseMotionMode.AddWeakEventHandler(OnKeyboardAndMouseMotionModeChanged);
             _model.GamepadMotionMode.AddWeakEventHandler(OnGamepadMotionModeChanged);
             UpdateKeyboardAndMouseMotionMode();
-            UpdateGamepadMotionMode();            
+            UpdateGamepadMotionMode();
         }
 
         private readonly MotionSettingModel _model;

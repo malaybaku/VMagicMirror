@@ -5,9 +5,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public abstract class ViewModelBase : NotifiableBase
     {
-        private static readonly DependencyObject designerModeCheckObject 
+        private static readonly DependencyObject _designModeCheckObject 
             = new DependencyObject();
 
-        protected static bool IsInDegignMode => DesignerProperties.GetIsInDesignMode(designerModeCheckObject);
+        protected static bool IsInDesignMode => DesignerProperties.GetIsInDesignMode(_designModeCheckObject);
     }
 }

@@ -43,7 +43,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => SettingResetUtils.ResetSingleCategoryAsync(_runtimeConfigModel.LoadDefaultItems)
                 );
 
-            if (IsInDegignMode)
+            if (IsInDesignMode)
             {
                 return;
             }

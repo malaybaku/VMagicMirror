@@ -26,7 +26,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetOpacity)
                 );
 
-            if (IsInDegignMode)
+            if (IsInDesignMode)
             {
                 return;
             }

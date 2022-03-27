@@ -25,7 +25,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             OpenFullEditionDownloadUrlCommand = new ActionCommand(() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040"));
             OpenHandTrackingPageUrlCommand = new ActionCommand(() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_hand_tracking")));
 
-            if (!IsInDegignMode)
+            if (!IsInDesignMode)
             {
                 //NOTE: ここでは表示にのみ影響するメッセージを受け取るため、ViewModelではあるが直接Receiverのイベントを見に行く
                 WeakEventManager<IMessageReceiver, CommandReceivedEventArgs>.AddHandler(

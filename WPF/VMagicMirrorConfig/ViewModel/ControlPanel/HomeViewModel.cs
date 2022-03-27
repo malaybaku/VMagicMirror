@@ -52,7 +52,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             TakeScreenshotCommand = new ActionCommand(() => screenshotTaker.TakeScreenshot());
             OpenScreenshotFolderCommand = new ActionCommand(() => screenshotTaker.OpenScreenshotSavedFolder());
 
-            if (!IsInDegignMode)
+            if (!IsInDesignMode)
             {
                 return;
             }

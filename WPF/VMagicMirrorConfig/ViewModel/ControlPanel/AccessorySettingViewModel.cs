@@ -26,7 +26,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ReloadFilesCommand = new ActionCommand(ReloadFiles);
             OpenAccessoryTipsUrlCommand = new ActionCommand(OpenAccessoryTipsUrl);
 
-            if (!IsInDegignMode)
+            if (!IsInDesignMode)
             {
                 _model.Loaded += (_, __) => OnLoaded();
                 _model.ItemRefreshed += () => OnLoaded();

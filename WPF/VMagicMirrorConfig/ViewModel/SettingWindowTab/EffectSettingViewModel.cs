@@ -39,7 +39,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 );
             ResetImageQualitySettingCommand = new ActionCommand(ResetImageQuality);
 
-            if (!IsInDegignMode)
+            if (!IsInDesignMode)
             {
                 model.LightR.AddWeakEventHandler(UpdateLightColor);
                 model.LightG.AddWeakEventHandler(UpdateLightColor);

@@ -23,12 +23,10 @@ namespace Baku.VMagicMirrorConfig
 
         private readonly IMessageSender _sender;
 
-        private readonly ObservableCollection<string> _microphoneNames
-            = new ObservableCollection<string>();
+        private readonly ObservableCollection<string> _microphoneNames = new();
         public ReadOnlyObservableCollection<string> MicrophoneNames { get; }
 
-        private readonly ObservableCollection<string> _cameraNames
-            = new ObservableCollection<string>();
+        private readonly ObservableCollection<string> _cameraNames = new();
         public ReadOnlyObservableCollection<string> CameraNames { get; }
 
         //NOTE: 何回呼び出してもOKなことに注意アプリケーション起動後に呼び直してもOK
@@ -44,10 +42,10 @@ namespace Baku.VMagicMirrorConfig
             var names = DeviceNames.FromJson(rawNames, "Camera").Names;
             Application.Current.MainWindow.Dispatcher.Invoke(() =>
             {
-                _microphoneNames.Clear();
+                _cameraNames.Clear();
                 foreach (var name in names)
                 {
-                    _microphoneNames.Add(name);
+                    _cameraNames.Add(name);
                 }
             });
         }
@@ -58,10 +56,10 @@ namespace Baku.VMagicMirrorConfig
             var names = DeviceNames.FromJson(rawNames, "Microphone").Names;
             Application.Current.MainWindow.Dispatcher.Invoke(() =>
             {
-                _cameraNames.Clear();
+                _microphoneNames.Clear();
                 foreach (var name in names)
                 {
-                    _cameraNames.Add(name);
+                    _microphoneNames.Add(name);
                 }
             });
         }

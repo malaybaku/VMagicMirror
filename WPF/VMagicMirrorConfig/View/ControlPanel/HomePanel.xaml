@@ -293,13 +293,13 @@
                                         Width="NaN"
                                         Margin="5"
                                         Content="{DynamicResource SettingFile_Save}"
-                                        Command="{Binding SettingIo.ShowSaveModalCommand}"
+                                        Command="{Binding ShowSaveModalCommand}"
                                         />
                                 <Button Grid.Row="0" Grid.Column="1"
                                         Width="NaN"
                                         Margin="5"
                                         Content="{DynamicResource SettingFile_Load}"
-                                        Command="{Binding SettingIo.ShowLoadModalCommand}"
+                                        Command="{Binding ShowLoadModalCommand}"
                                         />
 
 
@@ -307,13 +307,13 @@
                                         Width="NaN"
                                         Margin="5"
                                         Content="{DynamicResource SettingFile_Export}" 
-                                        Command="{Binding SettingIo.ExportSettingToFileCommand}"
+                                        Command="{Binding ExportSettingToFileCommand}"
                                         />
                                 <Button Grid.Row="2" Grid.Column="1"
                                         Width="NaN"
                                         Margin="5"
                                         Content="{DynamicResource SettingFile_Import}" 
-                                        Command="{Binding SettingIo.ImportSettingFromFileCommand}"
+                                        Command="{Binding ImportSettingFromFileCommand}"
                                         />
                             </Grid>
                         </StackPanel>

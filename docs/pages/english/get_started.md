@@ -176,13 +176,10 @@ Also you can set background image when `Transparent Window` is turn off, from `L
 - `Show Volume`: Turn on to see the input volume. Adjust `Sensitivity` such that, the volume bar is green and sometimes red during talking.
 - `Track Face`: Select webcam to track your head motion
 - `High Power Mode`: Get more robust face tracking result, while getting higher CPU load. Available from v1.7.0.
-- `Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking.
 
 </div>
 
 If the model's face does not rotate in face tracking, please open [FAQ](./questions) and see "Face not rotate when using face tracking" section.
-
-Hand tracking has some limitations, please see [Using Hand Tracking](./tips/using_hand_tracking).
 
 If your face is not at the center for the web camera, or you are too near/far to the camera, the character indication might be unnatural. In this case, click `Calibrate position` to adjust.
 

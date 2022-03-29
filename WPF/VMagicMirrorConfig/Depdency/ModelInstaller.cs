@@ -21,7 +21,6 @@
             resolver.Add(messageIo.Receiver);
             resolver.Add(messageIo.Sender);
 
-            resolver.Add(new DeviceListSource());
             resolver.Add(new LoadedAvatarInfo());
             resolver.Add(new ScreenshotTaker());
 
@@ -43,6 +42,7 @@
             resolver.Add(new AvatarLoader());
 
             resolver.Add(new RuntimeHelper());
+            resolver.Add(new DeviceListSource());
             resolver.Add(new CustomMotionList());
             resolver.Add(new ImageQualitySetting());
             resolver.Add(new WordToMotionRuntimeConfig());

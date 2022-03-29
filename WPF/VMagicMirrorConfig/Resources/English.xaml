@@ -558,6 +558,11 @@ Use this only after checking the licenses of VRM you will use.
 
     <sys:String x:Key="DialogTitle_AlreadyLatestVersion">Latest Version</sys:String>
     <sys:String x:Key="DialogMessage_AlreadyLatestVersion">Current app version ({0}) is the latest.</sys:String>        
+
+    <!-- Snackbar Messages -->
+    <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
+    <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>
+    <sys:String x:Key="Snackbar_CameraReconnected_Format">Selected Camera Detected: {0}</sys:String>    
     
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(Do Nothing)</sys:String>

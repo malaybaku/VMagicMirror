@@ -61,12 +61,17 @@ namespace Baku.VMagicMirrorConfig
         public void SilentSet(T value) { _value = value; }
 
         /// <summary>
+        /// 便宜的にプロパティが変更された扱いにしたい場合に呼ぶ。
+        /// ViewModelとの同期ずれが起きてそうなModelで明示的に呼ぶなど、特殊な状況でのみ用いる
+        /// </summary>
+        public void ForceRaisePropertyChanged() => RaisePropertyChanged();
+
+        /// <summary>
         /// 弱いイベントパターンでプロパティ変更イベントを購読します。
         /// ViewModelからModelのイベントを購読する場合に使用します。
         /// </summary>
         /// <param name="handler"></param>
         public void AddWeakEventHandler(EventHandler<PropertyChangedEventArgs> handler)
             => WeakEventManager<RProperty<T>, PropertyChangedEventArgs>.AddHandler(this, nameof(PropertyChanged), handler);
-
     }
 }

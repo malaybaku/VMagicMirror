@@ -91,6 +91,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _messageIo.Dispose();
             _runtimeHelper.Dispose();
             LargePointerController.Instance.Close();
+            ModelResolver.Instance.Resolve<DeviceListSource>().Dispose();
+
 
             //UX的には再起動を意味する
             if (_appQuitSetting.SkipAutoSaveAndRestart)

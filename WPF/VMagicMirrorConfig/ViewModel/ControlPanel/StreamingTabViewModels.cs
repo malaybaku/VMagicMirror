@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -43,10 +44,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         }
 
         internal FaceViewModel(
-            MotionSettingModel setting, 
+            MotionSettingModel setting,
             ExternalTrackerSettingModel externalTrackerSettingModel,
             InstallPathChecker installPathChecker,
-            DeviceListSource deviceList, 
+            DeviceListSource deviceList,
             MicrophoneStatus microphoneStatus
             )
         {
@@ -54,6 +55,22 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             _externalTrackerSetting = externalTrackerSettingModel;
             _deviceList = deviceList;
             _microphoneStatus = microphoneStatus;
+
+            LipSyncMicrophoneDeviceName = new RProperty<string>(_setting.LipSyncMicrophoneDeviceName.Value, v =>
+            {
+                if (!string.IsNullOrEmpty(v))
+                {
+                    _setting.LipSyncMicrophoneDeviceName.Value = v;
+                }
+            });
+
+            CameraDeviceName = new RProperty<string>(_setting.CameraDeviceName.Value, v =>
+            {
+                if (!string.IsNullOrEmpty(v))
+                {
+                    _setting.CameraDeviceName.Value = v;
+                }
+            });
 
             CalibrateFaceCommand = new ActionCommand(() => _setting.RequestCalibrateFace());
             EndExTrackerIfNeededCommand = new ActionCommand(
@@ -63,6 +80,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             if (!IsInDesignMode)
             {
                 ShowInstallPathWarning = installPathChecker.HasMultiByteCharInInstallPath;
+                _setting.LipSyncMicrophoneDeviceName.AddWeakEventHandler(OnMicrophoneDeviceNameChanged);
+                _setting.CameraDeviceName.AddWeakEventHandler(OnCameraDeviceNameChanged);
             }
         }
 
@@ -75,11 +94,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         public ReadOnlyObservableCollection<string> MicrophoneNames => _deviceList.MicrophoneNames;
 
         public RProperty<bool> EnableLipSync => _setting.EnableLipSync;
-        public RProperty<string> LipSyncMicrophoneDeviceName => _setting.LipSyncMicrophoneDeviceName;
+        //NOTE: 値が空のときはModelと同期したくないため、分けている。カメラも同様
+        //(本当はプロパティの流用してるほうが変なので、こっちが正しい。はず)
+        public RProperty<string> LipSyncMicrophoneDeviceName { get; }
 
         public RProperty<bool> EnableFaceTracking => _setting.EnableFaceTracking;
-        public RProperty<string> CameraDeviceName => _setting.CameraDeviceName;
-
+        public RProperty<string> CameraDeviceName { get; }
         public RProperty<bool> EnableWebCamHighPowerMode => _setting.EnableWebCamHighPowerMode;
 
         public bool ShowInstallPathWarning { get; } 
@@ -96,6 +116,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
         public ActionCommand CalibrateFaceCommand { get; }
         public ActionCommand EndExTrackerIfNeededCommand { get; }
+
+        private void OnMicrophoneDeviceNameChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            LipSyncMicrophoneDeviceName.Value = _setting.LipSyncMicrophoneDeviceName.Value;
+        }
+
+        private void OnCameraDeviceNameChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            CameraDeviceName.Value = _setting.CameraDeviceName.Value;
+        }
     }
 
     public class MotionViewModel : ViewModelBase

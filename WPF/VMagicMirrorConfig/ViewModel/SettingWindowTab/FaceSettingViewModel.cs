@@ -26,6 +26,21 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _deviceListSource = deviceListSource;
             _microphoneStatus = microphoneStatus;
 
+            LipSyncMicrophoneDeviceName = new RProperty<string>(_model.LipSyncMicrophoneDeviceName.Value, v =>
+            {
+                if (!string.IsNullOrEmpty(v))
+                {
+                    _model.LipSyncMicrophoneDeviceName.Value = v;
+                }
+            });
+            CameraDeviceName = new RProperty<string>(_model.CameraDeviceName.Value, v =>
+            {
+                if (!string.IsNullOrEmpty(v))
+                {
+                    _model.CameraDeviceName.Value = v;
+                }
+            });
+
             ResetFaceBasicSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(ResetFaceBasicSetting)
                 );
@@ -47,6 +62,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model.EyeBoneRotationScale.AddWeakEventHandler(OnEyeBoneRotationScaleChanged);
             _model.FaceNeutralClip.AddWeakEventHandler(OnFaceClipChanged);
             _model.FaceOffsetClip.AddWeakEventHandler(OnFaceClipChanged);
+            _model.LipSyncMicrophoneDeviceName.AddWeakEventHandler(OnMicrophoneDeviceNameChanged);
+            _model.CameraDeviceName.AddWeakEventHandler(OnCameraDeviceNameChanged);
             UpdateEyeRotRangeText();
         }
 
@@ -65,6 +82,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _blendShapeNameStore.Refresh(_model.FaceNeutralClip.Value, _model.FaceOffsetClip.Value);
         }
 
+        private void OnMicrophoneDeviceNameChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            LipSyncMicrophoneDeviceName.Value = _model.LipSyncMicrophoneDeviceName.Value;
+        }
+        private void OnCameraDeviceNameChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            CameraDeviceName.Value = _model.CameraDeviceName.Value;
+        }
+
         #region Face
 
         public RProperty<bool> EnableFaceTracking => _model.EnableFaceTracking;
@@ -78,7 +104,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> DisableFaceTrackingHorizontalFlip => _model.DisableFaceTrackingHorizontalFlip;
         public RProperty<bool> EnableWebCamHighPowerMode => _model.EnableWebCamHighPowerMode;
 
-        public RProperty<string> CameraDeviceName => _model.CameraDeviceName;
+        public RProperty<string> CameraDeviceName { get; }
         public ReadOnlyObservableCollection<string> CameraNames => _deviceListSource.CameraNames;
 
         public ActionCommand CalibrateFaceCommand { get; }
@@ -119,7 +145,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         #region Mouth
 
         public RProperty<bool> EnableLipSync => _model.EnableLipSync;
-        public RProperty<string> LipSyncMicrophoneDeviceName => _model.LipSyncMicrophoneDeviceName;
+        public RProperty<string> LipSyncMicrophoneDeviceName { get; }
         public RProperty<int> MicrophoneSensitivity => _model.MicrophoneSensitivity;
 
         public RProperty<bool> ShowMicrophoneVolume => _microphoneStatus.ShowMicrophoneVolume;

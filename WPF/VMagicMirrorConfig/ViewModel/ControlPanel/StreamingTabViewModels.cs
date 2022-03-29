@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using static Baku.VMagicMirrorConfig.ViewModel.LayoutSettingViewModel;
 
 namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 {
@@ -210,6 +209,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
                     indication.Title, indication.Content, MessageBoxWrapper.MessageBoxStyle.OK
                     );
             });
+
+            if (!IsInDesignMode)
+            {
+                _layout.SelectedTypingEffectId.AddWeakEventHandler(OnTypingEffectIdChanged);
+                _typingEffectItem = TypingEffectSelections
+                    .FirstOrDefault(v => v.Id == _layout.SelectedTypingEffectId.Value);
+            }
         }
 
         private readonly LoadedAvatarInfo _loadedAvatar;
@@ -230,8 +236,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
         #region タイピングエフェクト
 
-        public RProperty<int> SelectedTypingEffectId => _layout.SelectedTypingEffectId;
-
         private TypingEffectSelectionItem? _typingEffectItem = null;
         public TypingEffectSelectionItem? TypingEffectItem
         {
@@ -245,7 +249,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
                 }
 
                 _typingEffectItem = value;
-                SelectedTypingEffectId.Value = _typingEffectItem.Id;
+                _layout.SelectedTypingEffectId.Value = _typingEffectItem.Id;
                 RaisePropertyChanged();
             }
         }
@@ -258,6 +262,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             //new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexLaser, "Laser", PackIconKind.Wand),
             new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexButtefly, "Butterfly", PackIconKind.DotsHorizontal),
         };
+
+        private void OnTypingEffectIdChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            TypingEffectItem = TypingEffectSelections
+                .FirstOrDefault(s => s.Id == _layout.SelectedTypingEffectId.Value);
+        }
 
         #endregion
     }

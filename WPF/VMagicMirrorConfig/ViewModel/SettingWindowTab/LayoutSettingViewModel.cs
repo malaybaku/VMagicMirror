@@ -57,11 +57,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (!IsInDesignMode)
             {
-                return;
+                _model.SelectedTypingEffectId.AddWeakEventHandler(OnTypingEffectIdChanged);
+                _typingEffectItem = TypingEffectSelections
+                    .FirstOrDefault(v => v.Id == _model.SelectedTypingEffectId.Value);
             }
-
-            _model.SelectedTypingEffectId.AddWeakEventHandler(OnSelectedTypingEffectIdChanged);
-            _typingEffectItem = TypingEffectSelections[0];
         }
 
         private readonly LoadedAvatarInfo _loadedAvatar;
@@ -75,7 +74,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> EnableMidiRead => _model.EnableMidiRead;
 
 
-        private void OnSelectedTypingEffectIdChanged(object? sender, PropertyChangedEventArgs e)
+        private void OnTypingEffectIdChanged(object? sender, PropertyChangedEventArgs e)
         {
             TypingEffectItem = TypingEffectSelections
                 .FirstOrDefault(v => v.Id == _model.SelectedTypingEffectId.Value);
@@ -110,8 +109,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #region タイピングエフェクト
 
-        public RProperty<int> SelectedTypingEffectId => _model.SelectedTypingEffectId;
-
         private TypingEffectSelectionItem? _typingEffectItem = null;
         public TypingEffectSelectionItem? TypingEffectItem
         {
@@ -125,7 +122,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 }
 
                 _typingEffectItem = value;
-                SelectedTypingEffectId.Value = _typingEffectItem.Id;
+                _model.SelectedTypingEffectId.Value = _typingEffectItem.Id;
                 RaisePropertyChanged();
             }
         }
@@ -155,20 +152,19 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             var indication = MessageIndication.WarnInfoAboutPenUnavaiable();
             await MessageBoxWrapper.Instance.ShowAsync(indication.Title, indication.Content, MessageBoxWrapper.MessageBoxStyle.OK);
         }
-
-        //TODO: Recordで書きたい…
-        public class TypingEffectSelectionItem
-        {
-            public TypingEffectSelectionItem(int id, string name, PackIconKind iconKind)
-            {
-                Id = id;
-                EffectName = name;
-                IconKind = iconKind;
-            }
-            public int Id { get; }
-            public string EffectName { get; }
-            public PackIconKind IconKind { get; }
-        }
     }
 
+    //Recordで書けそうと思ってたが、なんか挙動が
+    public class TypingEffectSelectionItem
+    {
+        public TypingEffectSelectionItem(int id, string name, PackIconKind iconKind)
+        {
+            Id = id;
+            EffectName = name;
+            IconKind = iconKind;
+        }
+        public int Id { get; }
+        public string EffectName { get; }
+        public PackIconKind IconKind { get; }
+    }
 }

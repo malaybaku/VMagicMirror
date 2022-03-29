@@ -54,7 +54,6 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="35"/>
@@ -198,23 +197,13 @@
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"
                                   IsEnabled="{Binding EnableFaceTracking.Value}"
-                                  IsChecked="{Binding EnableImageBasedHandTracking.Value}"
-                                  >
-                            <CheckBox.Content>
-                                <TextBlock Text="{DynamicResource Motion_Face_EnableImageBasedHandTracking}"/>
-                            </CheckBox.Content>
-                        </CheckBox>
-                        <CheckBox Grid.Row="6" Grid.Column="1"
-                                  Grid.ColumnSpan="2"
-                                  Margin="15,0,0,0"
-                                  IsEnabled="{Binding EnableFaceTracking.Value}"
                                   IsChecked="{Binding AutoBlinkDuringFaceTracking.Value}"
                                   >
                             <CheckBox.Content>
                                 <TextBlock Text="{DynamicResource Motion_Face_AutoBlinkDuringFaceTracking}"/>
                             </CheckBox.Content>
                         </CheckBox>
-                        <CheckBox Grid.Row="7" Grid.Column="1"
+                        <CheckBox Grid.Row="6" Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"
                                   IsEnabled="{Binding EnableFaceTracking.Value}"
@@ -224,7 +213,7 @@
                                 <TextBlock Text="{DynamicResource Motion_Face_EnableBodyLeanZ}"/>
                             </CheckBox.Content>
                         </CheckBox>                        
-                        <CheckBox Grid.Row="8" Grid.Column="1"
+                        <CheckBox Grid.Row="7" Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"
                                   IsEnabled="{Binding EnableFaceTracking.Value}"

@@ -81,7 +81,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         public RProperty<string> CameraDeviceName => _setting.CameraDeviceName;
 
         public RProperty<bool> EnableWebCamHighPowerMode => _setting.EnableWebCamHighPowerMode;
-        public RProperty<bool> EnableImageBasedHandTracking => _setting.EnableImageBasedHandTracking;
 
         public bool ShowInstallPathWarning { get; } 
         public RProperty<bool> ShowMicrophoneVolume => _microphoneStatus.ShowMicrophoneVolume;

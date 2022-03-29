@@ -1,22 +1,25 @@
-﻿<UserControl x:Class="Baku.VMagicMirrorConfig.WordToMotionSettingPanel"
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.WordToMotionSettingPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"             
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type vmm:WordToMotionSettingViewModel}}"
              d:DesignWidth="400"
              d:DesignHeight="750">
+    <UserControl.DataContext>
+        <vm:WordToMotionSettingViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <vmm:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
-        <vmm:BooleanToForegroundConverter x:Key="BooleanToForegroundConverter"/>
-        <vmm:IntEqualityToVisibilityConverter x:Key="IntEqualityToVisibilityConverter"/>
-        <vmm:NoteNumberToTextConverter x:Key="NoteNumberToTextConverter"/>
+        <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
+        <view:BooleanToForegroundConverter x:Key="BooleanToForegroundConverter"/>
+        <view:IntEqualityToVisibilityConverter x:Key="IntEqualityToVisibilityConverter"/>
+        <view:NoteNumberToTextConverter x:Key="NoteNumberToTextConverter"/>
         <sys:Int32 x:Key="DeviceTypeNone">-1</sys:Int32>
         <sys:Int32 x:Key="DeviceTypeKeyboardWords">0</sys:Int32>
         <sys:Int32 x:Key="DeviceTypeGamepad">1</sys:Int32>
@@ -66,7 +69,7 @@
                                   md:HintAssist.Hint="Device"
                                   >
                         <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vmm:WordToMotionDeviceItem}">
+                            <DataTemplate DataType="{x:Type vm:WordToMotionDeviceItemViewModel}">
                                 <TextBlock Text="{Binding DisplayName}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -274,7 +277,7 @@
                             </ControlTemplate>
                         </ItemsControl.Template>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vmm:WordToMotionItemViewModel}">
+                            <DataTemplate DataType="{x:Type vm:WordToMotionItemViewModel}">
                                 <Grid Width="400" Margin="0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>

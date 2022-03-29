@@ -1,17 +1,21 @@
-﻿<UserControl x:Class="Baku.VMagicMirrorConfig.SettingIoPanel"
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.SettingIoPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=vmm:SettingIoViewModel}"
+             d:DataContext="{d:DesignInstance Type=vm:SettingIoViewModel}"
              d:DesignWidth="400"
              d:DesignHeight="850"
              >
+    <UserControl.DataContext>
+        <vm:SettingIoViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
-        <vmm:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
+        <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Width" Value="20"/>

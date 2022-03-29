@@ -1,14 +1,26 @@
 ﻿using MaterialDesignThemes.Wpf;
+using System.ComponentModel;
 using System.Linq;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class LayoutSettingViewModel : SettingViewModelBase
     {
-        internal LayoutSettingViewModel(
-            LayoutSettingSync model, GamepadSettingSync gamepadModel, IMessageSender sender, IMessageReceiver receiver
-            ) : base(sender)
+        public LayoutSettingViewModel() : this(
+            ModelResolver.Instance.Resolve<LoadedAvatarInfo>(),
+            ModelResolver.Instance.Resolve<LayoutSettingModel>(),
+            ModelResolver.Instance.Resolve<GamepadSettingModel>()
+            )
         {
+        }
+
+        internal LayoutSettingViewModel(
+            LoadedAvatarInfo loadedAvatar,
+            LayoutSettingModel model, 
+            GamepadSettingModel gamepadModel
+            )
+        {
+            _loadedAvatar = loadedAvatar;
             _model = model;
             _gamepadModel = gamepadModel;
 
@@ -19,8 +31,8 @@ namespace Baku.VMagicMirrorConfig
                 () => UrlNavigate.Open(LocalizedString.GetString("URL_tips_texture_replace"))
                 );
 
-            ResetCameraPositionCommand = new ActionCommand(() => SendMessage(MessageFactory.Instance.ResetCameraPosition()));
-
+            ResetCameraPositionCommand = new ActionCommand(() => model.RequestResetCameraPosition());
+            
             ResetCameraSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetCameraSetting)
                 );
@@ -29,9 +41,12 @@ namespace Baku.VMagicMirrorConfig
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetDeviceLayout)
                 );
 
-            ResetHidSettingCommand = new ActionCommand(
-                () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetHidSetting)
-                );
+            ResetDeviceVisibilityAndEffectCommand = new ActionCommand(
+                () => SettingResetUtils.ResetSingleCategoryAsync(() => 
+                {
+                    _model.ResetHidSetting();
+                    _gamepadModel.ResetVisibility();
+                }));
             ResetCameraSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetCameraSetting)
                 );
@@ -40,38 +55,31 @@ namespace Baku.VMagicMirrorConfig
                 );
             ShowPenUnavaiableWarningCommand = new ActionCommand(ShowPenUnavailableWarning);
 
-            _model.SelectedTypingEffectId.PropertyChanged += (_, __) =>
+            if (!IsInDesignMode)
             {
-                TypingEffectItem = TypingEffectSelections
+                _model.SelectedTypingEffectId.AddWeakEventHandler(OnTypingEffectIdChanged);
+                _typingEffectItem = TypingEffectSelections
                     .FirstOrDefault(v => v.Id == _model.SelectedTypingEffectId.Value);
-            };
-
-            _typingEffectItem = TypingEffectSelections[0];
-            receiver.ReceivedCommand += OnReceiveCommand;
-
+            }
         }
 
-        private readonly LayoutSettingSync _model;
+        private readonly LoadedAvatarInfo _loadedAvatar;
+        private readonly LayoutSettingModel _model;
         //NOTE: ゲームパッド設定(表示/非表示)も使うため、ここに記載。ちょっと例外的な措置ではある
-        private readonly GamepadSettingSync _gamepadModel;
-
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
-        {
-            if (e.Command == ReceiveMessageNames.UpdateDeviceLayout)
-            {
-                //NOTE: Unity側から来た値なため、送り返さないでよいことに注意
-                _model.DeviceLayout.SilentSet(e.Args);
-            }
-            else if (e.Command == ReceiveMessageNames.SetModelDoesNotSupportPen)
-            {
-                _model.ModelDoesNotSupportPen.Value = bool.TryParse(e.Args, out var result) ? result : false;
-            }
-        }
+        private readonly GamepadSettingModel _gamepadModel;
 
         public RProperty<int> CameraFov => _model.CameraFov;
         public RProperty<bool> EnableFreeCameraMode => _model.EnableFreeCameraMode;
 
         public RProperty<bool> EnableMidiRead => _model.EnableMidiRead;
+
+
+        private void OnTypingEffectIdChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            TypingEffectItem = TypingEffectSelections
+                .FirstOrDefault(v => v.Id == _model.SelectedTypingEffectId.Value);
+        }
+
 
         //NOTE: カメラ位置、デバイスレイアウト、クイックセーブした視点については、ユーザーが直接いじる想定ではない
 
@@ -95,13 +103,11 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> PenVisibility => _model.PenVisibility;
         public RProperty<bool> MidiControllerVisibility => _model.MidiControllerVisibility;
         public RProperty<bool> GamepadVisibility => _gamepadModel.GamepadVisibility;
-        public RProperty<bool> PenUnavailable => _model.ModelDoesNotSupportPen;
+        public RProperty<bool> PenUnavailable => _loadedAvatar.ModelDoesNotSupportPen;
 
         public RProperty<bool> EnableDeviceFreeLayout => _model.EnableDeviceFreeLayout;
 
         #region タイピングエフェクト
-
-        public RProperty<int> SelectedTypingEffectId => _model.SelectedTypingEffectId;
 
         private TypingEffectSelectionItem? _typingEffectItem = null;
         public TypingEffectSelectionItem? TypingEffectItem
@@ -116,7 +122,7 @@ namespace Baku.VMagicMirrorConfig
                 }
 
                 _typingEffectItem = value;
-                SelectedTypingEffectId.Value = _typingEffectItem.Id;
+                _model.SelectedTypingEffectId.Value = _typingEffectItem.Id;
                 RaisePropertyChanged();
             }
         }
@@ -135,7 +141,7 @@ namespace Baku.VMagicMirrorConfig
         public ActionCommand OpenTextureReplaceTipsUrlCommand { get; }
 
         public ActionCommand ResetDeviceLayoutCommand { get; }
-        public ActionCommand ResetHidSettingCommand { get; }
+        public ActionCommand ResetDeviceVisibilityAndEffectCommand { get; }
         public ActionCommand ResetCameraSettingCommand { get; }
         public ActionCommand ResetMidiSettingCommand { get; }
 
@@ -146,20 +152,19 @@ namespace Baku.VMagicMirrorConfig
             var indication = MessageIndication.WarnInfoAboutPenUnavaiable();
             await MessageBoxWrapper.Instance.ShowAsync(indication.Title, indication.Content, MessageBoxWrapper.MessageBoxStyle.OK);
         }
-
-        //TODO: Recordで書きたい…
-        public class TypingEffectSelectionItem
-        {
-            public TypingEffectSelectionItem(int id, string name, PackIconKind iconKind)
-            {
-                Id = id;
-                EffectName = name;
-                IconKind = iconKind;
-            }
-            public int Id { get; }
-            public string EffectName { get; }
-            public PackIconKind IconKind { get; }
-        }
     }
 
+    //Recordで書けそうと思ってたが、なんか挙動が
+    public class TypingEffectSelectionItem
+    {
+        public TypingEffectSelectionItem(int id, string name, PackIconKind iconKind)
+        {
+            Id = id;
+            EffectName = name;
+            IconKind = iconKind;
+        }
+        public int Id { get; }
+        public string EffectName { get; }
+        public PackIconKind IconKind { get; }
+    }
 }

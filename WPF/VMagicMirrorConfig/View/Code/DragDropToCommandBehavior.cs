@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     /// <summary>
     /// VRMファイルのドラッグ&ドロップをコマンドとしてVMに送信するためのビヘイビア

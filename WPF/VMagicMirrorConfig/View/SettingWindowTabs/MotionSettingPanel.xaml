@@ -1,19 +1,23 @@
-﻿<UserControl x:Class="Baku.VMagicMirrorConfig.MotionSettingPanel"
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.MotionSettingPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type vmm:MotionSettingViewModel}}"
+             d:DataContext="{d:DesignInstance Type={x:Type vm:MotionSettingViewModel}}"
              d:DesignWidth="400"
              d:DesignHeight="1100"
              >
+    <UserControl.DataContext>
+        <vm:MotionSettingViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
-        <vmm:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
-        <vmm:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
-        <vmm:Lv50Converter x:Key="Lv50Converter"/>
+        <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
+        <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
+        <view:Lv50Converter x:Key="Lv50Converter"/>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled"
@@ -80,7 +84,7 @@
                                 </Style>
                             </ComboBox.ItemContainerStyle>
                             <ComboBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type vmm:MotionModeSelectionViewModel}">
+                                <DataTemplate DataType="{x:Type vm:MotionModeSelectionViewModel}">
                                     <TextBlock Text="{Binding Label.Value}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
@@ -95,7 +99,7 @@
                                   SelectedItem="{Binding GamepadMotionMode, Mode=TwoWay}"
                                   >
                             <ComboBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type vmm:MotionModeSelectionViewModel}">
+                                <DataTemplate DataType="{x:Type vm:MotionModeSelectionViewModel}">
                                     <TextBlock Text="{Binding Label.Value}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>

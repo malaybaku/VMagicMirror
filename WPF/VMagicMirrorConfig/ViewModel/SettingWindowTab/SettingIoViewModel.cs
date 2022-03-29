@@ -1,31 +1,29 @@
-﻿using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Win32;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.ComponentModel;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class SettingIoViewModel : SettingViewModelBase
     {
-        internal SettingIoViewModel(
-            RootSettingSync rootModel, AutomationSettingSync model, SaveFileManager saveFileManager, IMessageSender sender
-            ) : base(sender)
+        public SettingIoViewModel() : this(
+            ModelResolver.Instance.Resolve<AutomationSettingModel>()
+            )
         {
-            _rootModel = rootModel;
+        }
+
+        internal SettingIoViewModel(AutomationSettingModel model)
+        {
             _model = model;
-            _saveFileManager = saveFileManager;
 
             OpenInstructionUrlCommand = new ActionCommand(OpenInstructionUrl);
             RequestEnableAutomationCommand = new ActionCommand(OnEnableAutomationRequested);
             RequestDisableAutomationCommand = new ActionCommand(OnDisableAutomationRequested);
             ApplyPortNumberCommand = new ActionCommand(ApplyPortNumber);
 
-            ShowSaveModalCommand = new ActionCommand(ShowSaveModal);
-            ShowLoadModalCommand = new ActionCommand(ShowLoadModal);
-
-            ExportSettingToFileCommand = new ActionCommand(SaveSettingToFile);
-            ImportSettingFromFileCommand = new ActionCommand(LoadSettingFromFile);
+            if (IsInDesignMode)
+            {
+                AutomationPortNumberText = new RProperty<string>("");
+                return;
+            }
 
             AutomationPortNumberText = new RProperty<string>(
                 _model.AutomationPortNumber.Value.ToString(), v =>
@@ -34,140 +32,10 @@ namespace Baku.VMagicMirrorConfig
                     PortNumberIsInvalid.Value = !(int.TryParse(v, out int i) && i >= 0 && i < 65536);
                 });
 
-            _model.AutomationPortNumber.PropertyChanged += (_, __) =>
-            {
-                AutomationPortNumberText.Value = _model.AutomationPortNumber.Value.ToString();
-            };
+            _model.AutomationPortNumber.AddWeakEventHandler(OnAutomationPortNumberChanged);
         }
 
-        //NOTE: rootが必要なのは「ロード時にキャラ情報/非キャラ情報をどう扱うか」という値がRootに入っているため。
-        //コレ以外の目的で使うのは濫用に当たるので注意
-        private readonly RootSettingSync _rootModel;
-        private readonly AutomationSettingSync _model;
-        private readonly SaveFileManager _saveFileManager;
-
-        #region セーブ/ロード
-
-        public ActionCommand ShowSaveModalCommand { get; }
-        public ActionCommand ShowLoadModalCommand { get; }
-
-        private async void ShowSaveModal()
-        {
-            if (Application.Current.MainWindow is not MetroWindow window)
-            {
-                return;
-            }
-
-            var progress = await GuardSettingWindowIfNeeded();
-
-            var dialog = new SaveLoadMetroDialog();
-            var vm = SaveLoadDataViewModel.CreateForSave(_saveFileManager, async () =>
-            {
-                await window.HideMetroDialogAsync(dialog);
-                if (progress != null)
-                {
-                    await progress.CloseAsync();
-                }
-            });
-
-            dialog.DataContext = vm;
-            await window.ShowMetroDialogAsync(dialog, new MetroDialogSettings()
-            {
-                AnimateShow = true,
-                AnimateHide = false,
-                OwnerCanCloseWithDialog = true,
-            });
-            await dialog.WaitUntilUnloadedAsync();
-        }
-
-        private async void ShowLoadModal()
-        {
-            if (Application.Current.MainWindow is not MetroWindow window)
-            {
-                return;
-            }
-
-            var progress = await GuardSettingWindowIfNeeded();
-
-            var dialog = new SaveLoadMetroDialog();
-            var vm = SaveLoadDataViewModel.CreateForLoad(_rootModel, _saveFileManager, async () =>
-            {
-                await window.HideMetroDialogAsync(dialog);
-                if (progress != null)
-                {
-                    await progress.CloseAsync();
-                }
-            });
-
-            dialog.DataContext = vm;
-            await window.ShowMetroDialogAsync(dialog, new MetroDialogSettings()
-            {
-                AnimateShow = true,
-                AnimateHide = false,
-                OwnerCanCloseWithDialog = true,
-            });
-            await dialog.WaitUntilUnloadedAsync();
-        }
-
-        private async Task<ProgressDialogController?> GuardSettingWindowIfNeeded()
-        {
-            if (SettingWindow.CurrentWindow is not SettingWindow settingWindow)
-            {
-                return null;
-            }
-
-            var indication = MessageIndication.GuardSettingWindowDuringSaveLoad();
-            return await settingWindow.ShowProgressAsync(indication.Title, indication.Content, settings: new MetroDialogSettings()
-            {
-                DialogResultOnCancel = MessageDialogResult.Negative,
-                AnimateShow = true,
-                AnimateHide = false,
-                OwnerCanCloseWithDialog = true,
-            });            
-        }
-
-        #endregion
-
-
-        #region エクスポート/インポート
-
-        public ActionCommand ExportSettingToFileCommand { get; }
-        public ActionCommand ImportSettingFromFileCommand { get; }
-
-        private void SaveSettingToFile()
-        {
-            var dialog = new SaveFileDialog()
-            {
-                Title = "Save VMagicMirror Setting",
-                Filter = "VMagicMirror Setting File(*.vmm)|*.vmm",
-                DefaultExt = ".vmm",
-                AddExtension = true,
-            };
-            if (dialog.ShowDialog() == true)
-            {
-                _saveFileManager.SettingFileIo.SaveSetting(dialog.FileName, SettingFileReadWriteModes.Exported);
-                SnackbarWrapper.Enqueue(LocalizedString.GetString("SettingFile_SaveCompleted_ExportedFile"));
-            }
-        }
-
-        private void LoadSettingFromFile()
-        {
-            var dialog = new OpenFileDialog()
-            {
-                Title = "Load VMagicMirror Setting",
-                Filter = "VMagicMirror Setting File (*.vmm)|*.vmm",
-                Multiselect = false,
-            };
-            if (dialog.ShowDialog() == true)
-            {
-                _saveFileManager.SettingFileIo.LoadSetting(dialog.FileName, SettingFileReadWriteModes.Exported);
-                SnackbarWrapper.Enqueue(LocalizedString.GetString("SettingFile_LoadCompleted_ExportedFile"));
-            }
-        }
-
-        #endregion
-
-        #region オートメーションっぽい所
+        private readonly AutomationSettingModel _model;
 
         public RProperty<bool> IsAutomationEnabled => _model.IsAutomationEnabled;
 
@@ -219,7 +87,9 @@ namespace Baku.VMagicMirrorConfig
         private void OpenInstructionUrl()
             => UrlNavigate.Open(LocalizedString.GetString("URL_docs_setting_files"));
 
-        #endregion
-
+        private void OnAutomationPortNumberChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            AutomationPortNumberText.Value = _model.AutomationPortNumber.Value.ToString();
+        }
     }
 }

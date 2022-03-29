@@ -1,6 +1,4 @@
-﻿using Baku.VMagicMirrorConfig.LargePointer;
-
-namespace Baku.VMagicMirrorConfig
+﻿namespace Baku.VMagicMirrorConfig.View
 {
     /// <summary> ポインターを表示したり隠したりする、Windowのラッパーみたいなクラス。 </summary>
     class LargePointerController

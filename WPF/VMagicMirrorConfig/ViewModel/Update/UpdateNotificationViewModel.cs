@@ -1,11 +1,10 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class UpdateNotificationViewModel : ViewModelBase
     {
         public UpdateNotificationViewModel(UpdateCheckResult modelData)
         {
             _modelData = modelData;
-
             CurrentVersion = AppConsts.AppVersion.ToString();
             LatestVersion = modelData.Version.ToString();
             ReleaseDate = string.IsNullOrEmpty(modelData.ReleaseNote.DateString) 

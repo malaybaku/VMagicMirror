@@ -1,9 +1,9 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class BlendShapeItemViewModel : ViewModelBase
     {
         /// <summary>
-        /// クリップ名、親要素、値、およびこれが規格で定まった
+        /// クリップ名、親要素、値などを指定してインスタンスを初期化します。
         /// 最低限のブレンドシェイプか否かを指定してインスタンスを初期化します。
         /// </summary>
         /// <param name="parent"></param>

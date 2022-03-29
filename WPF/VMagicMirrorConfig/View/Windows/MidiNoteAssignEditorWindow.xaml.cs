@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Baku.VMagicMirrorConfig.ViewModel;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     public partial class MidiNoteAssignEditorWindow : Window
     {

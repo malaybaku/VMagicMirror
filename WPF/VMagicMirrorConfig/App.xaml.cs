@@ -9,6 +9,7 @@ namespace Baku.VMagicMirrorConfig
         {
             base.OnStartup(e);
             DispatcherUnhandledException += OnUnhandledExceptionHappened;
+            ModelInstaller.Initialize();
         }
 
         protected override void OnExit(ExitEventArgs e)

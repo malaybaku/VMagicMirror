@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     public partial class WindowSettingPanel : UserControl
     {

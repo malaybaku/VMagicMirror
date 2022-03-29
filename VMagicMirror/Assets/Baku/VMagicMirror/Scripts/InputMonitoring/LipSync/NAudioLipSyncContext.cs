@@ -106,6 +106,7 @@ namespace Baku.VMagicMirror
         {
             if (_waveIn != null)
             {
+                _waveIn.RecordingStopped -= OnRecordingStopped;
                 _waveIn.DataAvailable -= OnDataAvailable;
             }
             _waveIn?.StopRecording();
@@ -147,8 +148,18 @@ namespace Baku.VMagicMirror
                 NumberOfBuffers = 25,
                 WaveFormat = new WaveFormat(SampleRate, 2),
             };
+            _waveIn.RecordingStopped += OnRecordingStopped;
             _waveIn.DataAvailable += OnDataAvailable;
             _waveIn.StartRecording();
+        }
+
+        private void OnRecordingStopped(object sender, StoppedEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                LogOutput.Instance.Write($"Microphone Recording Stopped by exception, {e.Exception.Message}");
+            }
+            StopRecording();
         }
 
         private void OnDataAvailable(object sender, WaveInEventArgs e)

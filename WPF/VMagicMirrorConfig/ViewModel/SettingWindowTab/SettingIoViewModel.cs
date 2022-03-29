@@ -19,7 +19,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             RequestDisableAutomationCommand = new ActionCommand(OnDisableAutomationRequested);
             ApplyPortNumberCommand = new ActionCommand(ApplyPortNumber);
 
-            if (!IsInDesignMode)
+            if (IsInDesignMode)
             {
                 AutomationPortNumberText = new RProperty<string>("");
                 return;

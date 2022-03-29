@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -22,11 +23,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model = model;
             _deviceListSource = deviceListSource;
 
+            CameraDeviceName = new RProperty<string>(_model.CameraDeviceName.Value, v =>
+            {
+                if (!string.IsNullOrEmpty(v))
+                {
+                    _model.CameraDeviceName.Value = v;
+                }
+            });
+
             OpenFullEditionDownloadUrlCommand = new ActionCommand(() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040"));
             OpenHandTrackingPageUrlCommand = new ActionCommand(() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_hand_tracking")));
 
             if (!IsInDesignMode)
             {
+                _model.CameraDeviceName.AddWeakEventHandler(OnCameraDeviceNameChanged);
                 //NOTE: ここでは表示にのみ影響するメッセージを受け取るため、ViewModelではあるが直接Receiverのイベントを見に行く
                 WeakEventManager<IMessageReceiver, CommandReceivedEventArgs>.AddHandler(
                     receiver,
@@ -51,6 +61,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
+        private void OnCameraDeviceNameChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            CameraDeviceName.Value = _model.CameraDeviceName.Value;
+        }
+
         public RProperty<bool> EnableImageBasedHandTracking => _model.EnableImageBasedHandTracking;
         private readonly RProperty<bool> _alwaysOn = new RProperty<bool>(true);
         public RProperty<bool> ShowEffectDuringHandTracking => FeatureLocker.FeatureLocked
@@ -63,7 +78,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand OpenFullEditionDownloadUrlCommand { get; }
         public ActionCommand OpenHandTrackingPageUrlCommand { get; }
 
-        public RProperty<string> CameraDeviceName => _model.CameraDeviceName;
+        public RProperty<string> CameraDeviceName { get; }
         public ReadOnlyObservableCollection<string> CameraNames => _deviceListSource.CameraNames;
     }
 }

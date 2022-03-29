@@ -1,7 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -50,57 +52,11 @@ namespace Baku.VMagicMirrorConfig
 
         public void Dispose() => _cts.Cancel();
 
-        public async Task ReloadDevicesAsync()
-        {
-            var micIsInDeviceNames = _microphoneNames.Contains(_setting.LipSyncMicrophoneDeviceName.Value);
-            var webcamIsInDeviceNames = _cameraNames.Contains(_setting.CameraDeviceName.Value);
-
-            await InitializeMicrophoneNamesAsync(false);
-            await InitializeCameraNamesAsync(false);
-
-            //NOTE:
-            // - 選択中のデバイスが未接続→接続に切り替わったと考えられる場合、明示的なメッセージによって(必要なら)リップシンクなどが始まる
-            // - マイクに関しては接続→未接続の切り替えも検出するが、特に突っ込んでできることは無いので、トーストだけ表示しておく
-
-            var microphoneName = _setting.LipSyncMicrophoneDeviceName.Value;
-            var micIsInDeviceNamesNew = _microphoneNames.Contains(_setting.LipSyncMicrophoneDeviceName.Value);
-            if (!string.IsNullOrEmpty(microphoneName))
-            {
-                if (!micIsInDeviceNames && micIsInDeviceNamesNew)
-                {
-                    _sender.SendMessage(MessageFactory.Instance.SetMicrophoneDeviceName(microphoneName));
-                    SnackbarWrapper.Enqueue(string.Format(
-                        LocalizedString.GetString(MicrophoneReconnectedFormatKey),
-                        microphoneName
-                    ));
-                }
-                else if (micIsInDeviceNames && !micIsInDeviceNamesNew)
-                {
-                    SnackbarWrapper.Enqueue(string.Format(
-                        LocalizedString.GetString(MicrophoneDisconnectedFormatKey),
-                        microphoneName
-                    ));
-                }
-            }
-
-            var cameraName = _setting.CameraDeviceName.Value;
-            if (!string.IsNullOrEmpty(cameraName) && 
-                !webcamIsInDeviceNames &&
-                _cameraNames.Contains(_setting.CameraDeviceName.Value))
-            {
-                _sender.SendMessage(MessageFactory.Instance.SetCameraDeviceName(cameraName));
-                SnackbarWrapper.Enqueue(string.Format(
-                    LocalizedString.GetString(CameraReconnectedFormatKey),
-                    cameraName
-                ));
-            }
-        }
-
         private async Task InitializeMicrophoneNamesAsync(bool refresh)
         {
             string rawNames = await _sender.QueryMessageAsync(MessageFactory.Instance.CameraDeviceNames());
             var names = DeviceNames.FromJson(rawNames, "Camera").Names;
-            Application.Current.MainWindow.Dispatcher.Invoke(() =>
+            GetDispatcher().Invoke(() =>
             {
                 if (refresh)
                 {
@@ -121,7 +77,7 @@ namespace Baku.VMagicMirrorConfig
         {
             var rawNames = await _sender.QueryMessageAsync(MessageFactory.Instance.MicrophoneDeviceNames());
             var names = DeviceNames.FromJson(rawNames, "Microphone").Names;
-            Application.Current.MainWindow.Dispatcher.Invoke(() =>
+            GetDispatcher().Invoke(() =>
             {
                 if (refresh)
                 {
@@ -142,10 +98,85 @@ namespace Baku.VMagicMirrorConfig
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Delay(DeviceNamesPollingIntervalMillisec, cancellationToken);
-                await ReloadDevicesAsync();
+                await Task.Delay(DeviceNamesPollingIntervalMillisec, cancellationToken);                
+                try
+                {
+                    await ReloadDevicesAsync();
+                }
+                catch(Exception ex)
+                {
+                    LogOutput.Instance.Write("Exception on PollingDeviceNames");
+                    LogOutput.Instance.Write(ex);
+                    throw;                    
+                }
             }
         }
+
+        private async Task ReloadDevicesAsync()
+        {
+            LogOutput.Instance.Write("Reload Devices...");
+            var dispatcher = GetDispatcher();
+
+            //NOTE: OC<T>へのアクセスがスレッドセーフでなくなるのを避けている
+            var micIsInDeviceNames = dispatcher.Invoke(() => _microphoneNames.Contains(_setting.LipSyncMicrophoneDeviceName.Value));
+            var webcamIsInDeviceNames = dispatcher.Invoke(() => _cameraNames.Contains(_setting.CameraDeviceName.Value));
+
+            await InitializeMicrophoneNamesAsync(false);
+            await InitializeCameraNamesAsync(false);
+
+            //NOTE:
+            // - 選択中のデバイスが未接続→接続に切り替わったと考えられる場合、明示的なメッセージによって(必要なら)リップシンクなどが始まる
+            // - マイクに関しては接続→未接続の切り替えも検出するが、特に突っ込んでできることは無いので、トーストだけ表示しておく
+
+            dispatcher.Invoke(() =>
+            {
+                var microphoneName = _setting.LipSyncMicrophoneDeviceName.Value;
+                LogOutput.Instance.Write($"Reload Devices (invoke), mic name={microphoneName}");
+                var micIsInDeviceNamesNew = _microphoneNames.Contains(_setting.LipSyncMicrophoneDeviceName.Value);
+                if (!string.IsNullOrEmpty(microphoneName))
+                {
+                    LogOutput.Instance.Write($"Mic name is in device? {micIsInDeviceNames} -> {micIsInDeviceNamesNew}");
+                    if (!micIsInDeviceNames && micIsInDeviceNamesNew)
+                    {
+                        _sender.SendMessage(MessageFactory.Instance.SetMicrophoneDeviceName(microphoneName));
+                        EnqueueMessageToSnackbar(string.Format(
+                            LocalizedString.GetString(MicrophoneReconnectedFormatKey),
+                            microphoneName
+                        ));
+                        _setting.LipSyncMicrophoneDeviceName.ForceRaisePropertyChanged();
+                    }
+                    else if (micIsInDeviceNames && !micIsInDeviceNamesNew)
+                    {
+                        EnqueueMessageToSnackbar(string.Format(
+                            LocalizedString.GetString(MicrophoneDisconnectedFormatKey),
+                            microphoneName
+                        ));
+                    }
+                }
+
+                var cameraName = _setting.CameraDeviceName.Value;
+                if (!string.IsNullOrEmpty(cameraName) &&
+                    !webcamIsInDeviceNames &&
+                    _cameraNames.Contains(_setting.CameraDeviceName.Value))
+                {
+                    _sender.SendMessage(MessageFactory.Instance.SetCameraDeviceName(cameraName));
+                    EnqueueMessageToSnackbar(string.Format(
+                        LocalizedString.GetString(CameraReconnectedFormatKey),
+                        cameraName
+                    ));
+                    _setting.LipSyncMicrophoneDeviceName.ForceRaisePropertyChanged();
+                }
+                LogOutput.Instance.Write("Reload Devices (invoke) ended.");
+            });
+
+            LogOutput.Instance.Write("Reload Devices ended.");
+        }
+
+        private Dispatcher GetDispatcher()
+            => Application.Current.Dispatcher;
+
+        private void EnqueueMessageToSnackbar(string message)
+            => SnackbarWrapper.Enqueue(message);
 
         //OC<T>の要素の削除処理を最小限にしつつ(※ComboBoxにバインドしたときの挙動を安全にするため)、
         //destの中身がsrcと同じになるように更新する

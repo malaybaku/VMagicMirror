@@ -154,6 +154,6 @@
             </TabItem>
 
         </dragablz:TabablzControl>
-        <md:Snackbar MessageQueue="{x:Static view:SnackbarWrapper.SnackbarMessageQueue}" Grid.Column="1" HorizontalAlignment="Left" Margin="21,0,0,0"/>
+        <md:Snackbar MessageQueue="{x:Static vmm:SnackbarWrapper.SnackbarMessageQueue}" Grid.Column="1" HorizontalAlignment="Left" Margin="21,0,0,0"/>
     </Grid>
 </metro:MetroWindow>

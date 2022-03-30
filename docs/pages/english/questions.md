@@ -245,3 +245,25 @@ For other troubles, please see [Troubleshoot section of the page about iFacialMo
 - If above does not help, try reset settings according to `VMagicMirror stops soon after started` section, at the top of this page.
 
 </div>
+
+#### I have request / question not referred in this page
+{: .doc-sec2 }
+
+Please use one of following way for other feedbacks.
+
+<div class="doc-ul" markdown="1">
+
+- [Twitter](https://twitter.com/baku_dreameater) DM
+- [BOOTH Shop](https://baku-dreameater.booth.pm/) contact link
+- [Make issue on GitHub](https://github.com/malaybaku/VMagicMirror/issues/new)
+
+</div>
+
+Note: 
+
+<div class="doc-ul" markdown="1">
+
+- GitHub issue can be seen by anyone.
+- When you need to show some images or videos to share request or trouble detail, please avoid BOOTH shop message since it is not suited for sharing media files.
+
+</div>

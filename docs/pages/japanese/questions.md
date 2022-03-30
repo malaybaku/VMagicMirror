@@ -254,3 +254,25 @@ v1.9.0以降のバージョンを使用しており、VMagicMirrorの設定フ�
 - 以上でも改善しない場合、本ページ上部の「起動直後にVMagicMirrorが停止する」のセクションにある設定リセットをお試し下さい。
 
 </div>
+
+#### その他の質問・要望がある
+{: .doc-sec2 }
+
+その他の質問や要望は以下いずれかの方法でご連絡ください。
+
+<div class="doc-ul" markdown="1">
+
+- [製作者Twitter](https://twitter.com/baku_dreameater)へのDM
+- [BOOTHショップ](https://baku-dreameater.booth.pm/)の問い合わせ
+- [GitHubの新規issue](https://github.com/malaybaku/VMagicMirror/issues/new)
+
+</div>
+
+ご連絡にあたっては以下に留意してください。
+
+<div class="doc-ul" markdown="1">
+
+- GitHubの新規issueは公開情報となります。
+- トラブルの説明で画像情報の共有が必要な場合、BOOTHショップメッセージでは画像共有が難しいため、ほかの方法を使用してください。
+
+</div>

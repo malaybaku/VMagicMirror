@@ -44,7 +44,7 @@ This means that the reverse engineering may violate the license or guidelines fo
 
 Also note that, you should not redistribute binaries available on BOOTH or Fanbox. I do not tell it is prohibited, but redistribution is very likely to violate the license or guidelines for those resources.
 
-#### 1. Notice about Full Version
+#### 2. Notice about Full Version
 {: .doc-sec2 }
 
 There are full edition (paid version) software at v1.8.0 and later, which has different binary from free conventional free distribution (standard edition).
@@ -58,6 +58,15 @@ About full edition:
 - The source code of full edition is open in GitHub, so I do not recommend to reverse engineer the software to understand the internal process.
 - I do not intent to restrict building the software from source code on your environment. Such build goes under the MIT license in GitHub repository.
 - Full edition is not available in free because of some reasons, including the concept of sharewere. Please avoid to redistribute full edition. Also please do not reverse engineer the standard edition to crack feature restriction.
+
+</div>
+
+#### 3. Refund is Unavailable
+
+<div class="doc-ul" markdown="1">
+
+- Refund is unavailable in any cases, based on disclaimer in the license.
+- There might be serious issue because of zip file download failure. In this case Full Edition might not work though Standard Edition works correctly in specific environment. In such case please do NOT request refund, and instead please see [FAQ](./questions) and make contact if necessary. 
 
 </div>
 

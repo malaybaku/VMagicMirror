@@ -95,6 +95,15 @@ zipファイルを右クリックして`プロパティ`を選び、`セキュ�
 {% include docimg.html file="./images/get_started/img00_015_started.jpg" customclass="col s6 m4 l4" imgclass="fit-doc-img" %}
 </div>
 
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+この時点でコントロールパネルが表示されない場合、インストールに失敗している可能性があります。
+
+[ダウンロードページのトラブルシューティング](./download#troubleshoot_first_startup)をご覧下さい。
+
+</div>
 
 モデルはPC上のVRMファイルからロードするか、またはVRoid Hubからロードできます。
 

@@ -83,12 +83,21 @@ Please avoid special folder like `Program Files`, as those folder will lead tons
 
 After the app started there appears 2 windows. One window shows GUI ("Control Panel"), and the other window shows character ("Character Window").
 
+When you close one of the window, the other window also closes and VMagicMirror quits. If you do not want to show control panel, then minimize it.
+
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_015_started.jpg" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
 </div>
 
-When you close one of the window, the other window also closes and VMagicMirror quits. If you do not want to show control panel, then minimize it.
+<div class="note-area" markdown="1">
 
+**NOTE**
+
+If control panel window does not appear, it indicates install might not be successful.
+
+See [Download Troubleshoot](./download#troubleshoot_first_startup) in this case.
+
+</div>
 
 There are 2 ways to load character, from VRM file on the PC or from VRoid Hub.
 

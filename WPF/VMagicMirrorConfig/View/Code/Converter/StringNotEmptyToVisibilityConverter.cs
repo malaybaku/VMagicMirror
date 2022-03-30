@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     /// <summary> 空でない文字列をVisible、それ以外をCollapsedにするコンバータ </summary>
     public class StringNotEmptyToVisibilityConverter : IValueConverter

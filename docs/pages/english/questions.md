@@ -20,6 +20,15 @@ lang_prefix: /en/
 
 </div>
 
+#### Control panel does not appear for the first app launch
+{: .doc-sec2 }
+
+Installation might be failed in this case. See [Download Troubleshoot](./download#troubleshoot_first_startup).
+
+If the troubleshoot does not help, please contact via BOOTH message or Twitter DM.
+
+Especially when you need Full Edition, you must use BOOTH message to trace the purchase status.
+
 
 #### VMagicMirror stops soon after started
 {: .doc-sec2 }
@@ -236,17 +245,6 @@ For other troubles, please see [Troubleshoot section of the page about iFacialMo
 - If above does not help, try reset settings according to `VMagicMirror stops soon after started` section, at the top of this page.
 
 </div>
-
-
-#### Cannot start app because zip file seems corrupted
-{: .doc-sec2 }
-
-This happens in specific time or in specific network environment, because VMagicMirror zip is a bit large for BOOTH system.
-
-If download continues to fail after retry, please contact via BOOTH message or Twitter DM.
-
-Especially when you need Full Edition, you must use BOOTH message to trace the purchase status.
-
 
 #### I have request / question not referred in this page
 {: .doc-sec2 }

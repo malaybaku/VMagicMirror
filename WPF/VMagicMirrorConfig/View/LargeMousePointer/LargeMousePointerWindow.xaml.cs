@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace Baku.VMagicMirrorConfig.LargePointer
+namespace Baku.VMagicMirrorConfig.View
 {
     using static NativeMethods;
 

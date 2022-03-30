@@ -1,19 +1,23 @@
-﻿<UserControl x:Class="Baku.VMagicMirrorConfig.MotionSettingPanel"
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.MotionSettingPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type={x:Type vmm:MotionSettingViewModel}}"
+             d:DataContext="{d:DesignInstance Type={x:Type vm:MotionSettingViewModel}}"
              d:DesignWidth="400"
              d:DesignHeight="1100"
              >
+    <UserControl.DataContext>
+        <vm:MotionSettingViewModel />
+    </UserControl.DataContext>
     <UserControl.Resources>
-        <vmm:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
-        <vmm:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
-        <vmm:Lv50Converter x:Key="Lv50Converter"/>
+        <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
+        <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
+        <view:Lv50Converter x:Key="Lv50Converter"/>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled"
@@ -45,6 +49,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -54,16 +59,16 @@
                         <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                                   Margin="5,0"
                                   IsChecked="{Binding EnableNoHandTrackMode.Value}"
-                                  >
-                            <CheckBox.Content>
-                                <TextBlock Text="{DynamicResource Motion_FullBody_NoHandTrackMode}"/>
-                            </CheckBox.Content>
-                        </CheckBox>
+                                  Content="{DynamicResource Motion_FullBody_NoHandTrackMode}"/>
 
-
-                        <TextBlock Grid.Row="1" Grid.Column="0"
+                        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                  Margin="5,0"
+                                  IsChecked="{Binding EnableTwistBodyMotion.Value}"
+                                  Content="{DynamicResource Motion_FullBody_TwistBodyMotion}"/>
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="0"
                                        Text="{DynamicResource Motion_Arm_MouseAndKeyMode}"/>
-                        <ComboBox Grid.Row="1" Grid.Column="1"
+                        <ComboBox Grid.Row="2" Grid.Column="1"
                                   Margin="10,3" 
                                   Height="30"
                                   IsEnabled="{Binding EnableNoHandTrackMode.Value,
@@ -79,14 +84,14 @@
                                 </Style>
                             </ComboBox.ItemContainerStyle>
                             <ComboBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type vmm:MotionModeSelectionViewModel}">
+                                <DataTemplate DataType="{x:Type vm:MotionModeSelectionViewModel}">
                                     <TextBlock Text="{Binding Label.Value}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Motion_Arm_GamepadMode}"/>
-                        <ComboBox Grid.Row="2" Grid.Column="1"
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Motion_Arm_GamepadMode}"/>
+                        <ComboBox Grid.Row="3" Grid.Column="1"
                                   Margin="10,3" 
                                   IsEnabled="{Binding EnableNoHandTrackMode.Value,
                                                       Converter={StaticResource BooleanReverseConverter}}"
@@ -94,7 +99,7 @@
                                   SelectedItem="{Binding GamepadMotionMode, Mode=TwoWay}"
                                   >
                             <ComboBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type vmm:MotionModeSelectionViewModel}">
+                                <DataTemplate DataType="{x:Type vm:MotionModeSelectionViewModel}">
                                     <TextBlock Text="{Binding Label.Value}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>

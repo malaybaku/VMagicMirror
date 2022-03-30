@@ -18,6 +18,8 @@
 
         public bool EnableNoHandTrackMode { get; set; } = false;
 
+        public bool EnableTwistBodyMotion { get; set; } = false;
+
         #endregion
 
         #region Face

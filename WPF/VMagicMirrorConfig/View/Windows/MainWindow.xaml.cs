@@ -1,7 +1,8 @@
-﻿using MahApps.Metro.Controls;
+﻿using Baku.VMagicMirrorConfig.ViewModel;
+using MahApps.Metro.Controls;
 using System;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     public partial class MainWindow : MetroWindow
     {

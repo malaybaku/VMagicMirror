@@ -9,14 +9,22 @@ namespace Baku.VMagicMirrorConfig
         /// <summary>保存できるファイルの数。1始まりで管理し、状況次第で0はオートセーブ扱いする。</summary>
         public const int FileCount = 15;
 
-        public SaveFileManager(SettingFileIo fileIo, RootSettingSync setting, IMessageSender sender)
+        public SaveFileManager() : this(
+            ModelResolver.Instance.Resolve<SettingFileIo>(),
+            ModelResolver.Instance.Resolve<RootSettingModel>(),
+            ModelResolver.Instance.Resolve<IMessageSender>()
+            )
+        {
+        }
+
+        public SaveFileManager(SettingFileIo fileIo, RootSettingModel setting, IMessageSender sender)
         {
             SettingFileIo = fileIo;
             _setting = setting;
             _sender = sender;
         }
         public SettingFileIo SettingFileIo { get; }
-        private readonly RootSettingSync _setting;
+        private readonly RootSettingModel _setting;
         private readonly IMessageSender _sender;
 
         public event Action<string>? VRoidModelLoadRequested;
@@ -107,6 +115,9 @@ namespace Baku.VMagicMirrorConfig
                 FocusedFileIndex = index;
             }
         }
+        
+        public void LoadAutoSave() => SettingFileIo.LoadSetting(SpecialFilePath.AutoSaveSettingFilePath, SettingFileReadWriteModes.AutoSave);
+        public void SaveAsAutoSave() => SettingFileIo.SaveSetting(SpecialFilePath.AutoSaveSettingFilePath, SettingFileReadWriteModes.AutoSave);
 
         /// <summary>
         /// 指定した番号のファイルがすでにセーブされているか確認します。

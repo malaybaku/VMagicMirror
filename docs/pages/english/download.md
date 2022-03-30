@@ -151,3 +151,40 @@ The developer checks VMagicMirror performance on the following environments. Ple
 - Microphone: Embedded microphone
 
 </div>
+
+<a id="troubleshoot_first_startup"></a>
+
+#### Troubleshoot for First Startup
+{: .doc-sec2 }
+
+When you have failed at first startup of the app, please check third party anti-virus is disable and retry to download / install.
+
+Also there can be a case that zip file is corrupted during download. Check readme file attached in zip file if download seems to unsuccessful.
+
+For v2.0.0 and later, author backups file size and MD5 hash for each zip.
+
+<div class="doc-ul" markdown="1">
+
+- You can see the file size by opening zip file property on Windows Explorer's.
+- MD5 hash can be confirmed by opening Command Prompt on zip file's folder.
+
+</div>
+
+Command Example: (change file name according to actual version you have)
+
+```
+certutil -hashfile VMM_v2.0.2_Standard_Installer.zip MD5
+```
+
+|--------------------------+-------------------------+----------------------|
+| Version                  | Zip File Size (byte)    | MD5 Hash             |
+|:------------------------:|:-----------:|:---------------------------------|
+| v2.0.0 Standard Edition  | 126,983,144 | 6610c9b81aa493f02917f68daa275b7d |
+| v2.0.0 Full Edition      | 127,062,779 | b00a734f2548ad0c66025300a0986b6b |
+| v2.0.1 Standard Edition  | 127,187,092 | dc468640e4eb11302a8ca6bcfc83db3e |
+| v2.0.1 Full Edition      | 127,195,414 | 8d6ecb6e4d5bb90585f96bd5144b4a5e |
+| v2.0.2 Standard Edition  | 127,206,743 | 13976a1d60b585bec32bf3c02f90d4ac |
+| v2.0.2 Full Edition      | 127,065,845 | e5d210852116840bc567c16a22d6b014 |
+| v2.0.3 Standard Edition  | 127,206,042 | df9052ef8dd0debccb61d12833943360 |
+| v2.0.3 Full Edition      | 127,038,447 | aff91773799f03a97a0ecf538afbf43e |
+|==========================|=============|==================================|

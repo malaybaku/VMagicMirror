@@ -3,18 +3,34 @@
 namespace Baku.VMagicMirrorConfig
 {
     /// <summary> VMagicMirrorのインストールフォルダに全角文字が入ってないか調べるすごいやつだよ </summary>
-    static class InstallPathChecker
+    class InstallPathChecker
     {
-        public static bool HasMultiByteCharInInstallPath()
+        private bool _initialized;
+
+        private bool _hasMultiByteCharInInstallPath;
+        public bool HasMultiByteCharInInstallPath
         {
+            get
+            {
+                if (!_initialized)
+                {
+                    Initialize();
+                }
+                return _hasMultiByteCharInInstallPath;
+            }
+        }
+
+        private void Initialize()
+        {
+            _initialized = true;
             string source = SpecialFilePath.UnityAppPath;
             if (string.IsNullOrEmpty(source))
             {
-                return false;
+                return;
             }
 
             //シンプルに、バイト数が文字数より上回る→どれかの文字がマルチバイトだからダメ、という判断
-            return Encoding.UTF8.GetBytes(source).Length > source.Length;
+            _hasMultiByteCharInInstallPath = Encoding.UTF8.GetBytes(source).Length > source.Length;
         }
     }
 }

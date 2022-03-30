@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 
@@ -12,7 +13,10 @@ namespace Baku.VMagicMirrorConfig
 
         private static LanguageSelector? _instance;
         public static LanguageSelector Instance => _instance ??= new LanguageSelector();
-        private LanguageSelector() { }
+        private LanguageSelector() 
+        {
+            AvailableLanguageNames = new ReadOnlyObservableCollection<string>(_availableLanguageNames);
+        }
 
         private IMessageSender? _sender = null;
         private readonly LocalizationDictionaryLoader _dictionaryLoader = new LocalizationDictionaryLoader();
@@ -24,6 +28,13 @@ namespace Baku.VMagicMirrorConfig
         /// 切り替わったあとの言語名は現状では不要。LocalizedStringで文字列取得する分には関知不要なため。
         /// </remarks>
         public event Action? LanguageChanged;
+
+        private readonly ObservableCollection<string> _availableLanguageNames = new ObservableCollection<string>()
+        {
+            LangNameJapanese, 
+            LangNameEnglish,
+        };
+        public ReadOnlyObservableCollection<string> AvailableLanguageNames { get; }
 
         private string _languageName = nameof(LangNameJapanese);
         public string LanguageName
@@ -42,18 +53,22 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        public string[] GetAdditionalSupportedLanguageNames() => _dictionaryLoader
-            .GetLoadedDictionaries()
-            .Keys
-            //NOTE: 順番が不変じゃなくなってると嫌なので、名前順で不変にしておく
-            .OrderBy(v => v)
-            .ToArray();
-
         public void Initialize(IMessageSender sender)
         {
             _sender = sender;
             _dictionaryLoader.LoadFromDefaultLocation();
             ApplyFallbackLocalize();
+
+            foreach (var langName in _dictionaryLoader
+                .GetLoadedDictionaries()
+                .Keys
+                //NOTE: 順番が不変じゃなくなってると嫌なので、名前順で不変にしておく
+                .OrderBy(v => v)
+                .ToArray()
+                )
+            {
+                _availableLanguageNames.Add(langName);
+            }
         }
 
         private bool IsValidLanguageName(string languageName)
@@ -72,9 +87,9 @@ namespace Baku.VMagicMirrorConfig
                 ? new ResourceDictionary()
                 {
                     Source = new Uri(
-                  $"/VMagicMirrorConfig;component/Resources/{languageName}.xaml",
-                  UriKind.Relative
-                  ),
+                        $"/VMagicMirrorConfig;component/Resources/{languageName}.xaml",
+                        UriKind.Relative
+                        ),
                 }
                 : _dictionaryLoader.GetLoadedDictionaries()[languageName];
 

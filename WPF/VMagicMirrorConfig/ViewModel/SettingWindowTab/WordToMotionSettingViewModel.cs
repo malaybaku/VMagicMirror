@@ -1,108 +1,131 @@
-﻿using System.Collections.Generic;
+﻿using Baku.VMagicMirrorConfig.View;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Windows;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class WordToMotionSettingViewModel : SettingViewModelBase
     {
+        public WordToMotionSettingViewModel() : this(
+            ModelResolver.Instance.Resolve<WordToMotionSettingModel>(),
+            ModelResolver.Instance.Resolve<LayoutSettingModel>(),
+            ModelResolver.Instance.Resolve<AccessorySettingModel>(),
+            ModelResolver.Instance.Resolve<CustomMotionList>(),
+            ModelResolver.Instance.Resolve<WordToMotionRuntimeConfig>()
+            )
+        {
+        }
+
         internal WordToMotionSettingViewModel(
-            WordToMotionSettingSync model,
-            LayoutSettingSync layoutModel,
+            WordToMotionSettingModel model,
+            LayoutSettingModel layoutModel,
             AccessorySettingModel accessoryModel,
-            IMessageSender sender, IMessageReceiver receiver) : base(sender)
+            CustomMotionList customMotionList,
+            WordToMotionRuntimeConfig extraBlendShapeNames
+            )
         {
             _model = model;
             _layoutModel = layoutModel;
-            _accessoryModel = accessoryModel;
+            _customMotionList = customMotionList;
+            _runtimeConfigModel = extraBlendShapeNames;
+
             Items = new ReadOnlyObservableCollection<WordToMotionItemViewModel>(_items);
-            CustomMotionClipNames = new ReadOnlyObservableCollection<string>(_customMotionClipNames);
-            Devices = WordToMotionDeviceItem.LoadAvailableItems();
+            Devices = WordToMotionDeviceItemViewModel.LoadAvailableItems();
             AvailableAccessoryNames = new AccessoryItemNamesViewModel(accessoryModel);
 
-            AddNewItemCommand = new ActionCommand(() => model.AddNewItem());
+            AddNewItemCommand = new ActionCommand(() => _model.AddNewItem());
             OpenKeyAssignmentEditorCommand = new ActionCommand(() => OpenKeyAssignmentEditor());
             ResetByDefaultItemsCommand = new ActionCommand(
-                () => SettingResetUtils.ResetSingleCategoryAsync(LoadDefaultItems)
+                () => SettingResetUtils.ResetSingleCategoryAsync(_runtimeConfigModel.LoadDefaultItems)
                 );
 
-            _model.SelectedDeviceType.PropertyChanged += (_, __) =>
+            if (IsInDesignMode)
             {
-                SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
-                EnableWordToMotion.Value = _model.SelectedDeviceType.Value != WordToMotionSetting.DeviceTypes.None;
-            };
+                return;
+            }
+
             SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
+            _model.SelectedDeviceType.AddWeakEventHandler(OnSelectedDeviceTypeChanged);
+
             //NOTE: シリアライズ文字列はどのみち頻繁に更新せねばならない
             //(並び替えた時とかもUnityにデータ送るために更新がかかる)ので、そのタイミングを使う
-            _model.MidiNoteToMotionMapReloaded += (_, __) =>
-            {
-                if (!_model.IsLoading)
-                {
-                    LoadMidiSettingItems();
-                }
-            };
-            _model.MotionRequestsReloaded += (_, __) =>
-            {
-                if (!_model.IsLoading)
-                {
-                    LoadMotionItems();
-                }
-            };
+            WeakEventManager<WordToMotionSettingModel, EventArgs>.AddHandler(
+                _model,
+                nameof(_model.MidiNoteToMotionMapReloaded),
+                OnMidiNoteToMotionMapReloaded
+                );
+            WeakEventManager<WordToMotionSettingModel, EventArgs>.AddHandler(
+                _model,
+                nameof(_model.MotionRequestsReloaded),
+                OnMotionRequestsReloaded
+                );
 
-            _model.Loaded += (_, __) =>
-            {
-                LoadMidiSettingItems();
-                LoadMotionItems();
-            };
+            WeakEventManager<WordToMotionSettingModel, EventArgs>.AddHandler(
+                _model,
+                nameof(_model.Loaded),
+                OnSettingLoaded);
 
-            _model.PreviewDataSender.PrepareDataSend +=
-                (_, __) => _dialogItem?.WriteToModel(_model.PreviewDataSender.MotionRequest);
-            receiver.ReceivedCommand += OnReceiveCommand;
+            WeakEventManager<WordToMotionItemPreviewDataSender, EventArgs>.AddHandler(
+                _model.PreviewDataSender,
+                nameof(_model.PreviewDataSender.PrepareDataSend),
+                OnPrepareDataSend
+                );
 
-            LoadDefaultItemsIfInitialStart();
+            WeakEventManager<WordToMotionRuntimeConfig, BlendShapeCheckedEventArgs>.AddHandler(
+                _runtimeConfigModel,
+                nameof(_runtimeConfigModel.DetectNewExtraBlendShapeName),
+                OnBlendShapeChecked
+                );
 
             LoadMotionItems();
             LoadMidiSettingItems();
         }
 
-        private readonly WordToMotionSettingSync _model;
-        private readonly LayoutSettingSync _layoutModel;
-        private readonly AccessorySettingModel _accessoryModel;
-        private WordToMotionItemViewModel? _dialogItem;
+        
 
-        /// <summary>直近で読み込んだモデルに指定されている、VRM標準以外のブレンドシェイプ名の一覧を取得します。</summary>
-        public IReadOnlyList<string> LatestAvaterExtraClipNames => _latestAvaterExtraClipNames;
+        private readonly WordToMotionSettingModel _model;
+        private readonly LayoutSettingModel _layoutModel;
+        private readonly WordToMotionRuntimeConfig _runtimeConfigModel;
+        private readonly CustomMotionList _customMotionList;
+        private WordToMotionItemViewModel? _dialogItem;
 
         public AccessoryItemNamesViewModel AvailableAccessoryNames { get; }
 
-        private string[] _latestAvaterExtraClipNames = new string[0];
-
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnSelectedDeviceTypeChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.Command != ReceiveMessageNames.ExtraBlendShapeClipNames)
+            SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
+            EnableWordToMotion.Value = _model.SelectedDeviceType.Value != WordToMotionSetting.DeviceTypes.None;
+        }
+
+        private void OnSettingLoaded(object? sender, EventArgs e)
+        {
+            LoadMidiSettingItems();
+            LoadMotionItems();
+        }
+
+        private void OnMidiNoteToMotionMapReloaded(object? sender, EventArgs e)
+        {
+            if (!_model.IsLoading)
             {
-                return;
+                LoadMidiSettingItems();
             }
+        }
 
-            //やることは2つ: 
-            // - 知らない名前のブレンドシェイプが飛んできたら記憶する
-            // - アバターが持ってるExtraなクリップ名はコレですよ、というのを明示的に与える
-            _latestAvaterExtraClipNames = e.Args
-                .Split(',')
-                .Where(n => !string.IsNullOrEmpty(n))
-                .ToArray();
-
-            bool hasNewBlendShape = false;
-            foreach (var name in _latestAvaterExtraClipNames
-                .Where(n => !ExtraBlendShapeClipNames.Contains(n))
-                )
+        private void OnMotionRequestsReloaded(object? sender, EventArgs e)
+        {
+            if (!_model.IsLoading)
             {
-                hasNewBlendShape = true;
-                ExtraBlendShapeClipNames.Add(name);
+                LoadMotionItems();
             }
+        }
 
-            if (hasNewBlendShape)
+        private void OnBlendShapeChecked(object? sender, BlendShapeCheckedEventArgs e)
+        {
+            if (e.HasNewBlendShape)
             {
                 //新しい名称のクリップを子要素側に反映
                 foreach (var item in _items)
@@ -117,27 +140,21 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        public async Task InitializeCustomMotionClipNamesAsync()
+        private void OnPrepareDataSend(object? sender, EventArgs e)
         {
-            var rawClipNames = await SendQueryAsync(MessageFactory.Instance.GetAvailableCustomMotionClipNames());
-            var clipNames = rawClipNames.Split('\t');
-            foreach (var name in clipNames)
-            {
-                _customMotionClipNames.Add(name);
-            }
+            _dialogItem?.WriteToModel(_model.PreviewDataSender.MotionRequest);
         }
 
-        private readonly ObservableCollection<string> _customMotionClipNames = new ObservableCollection<string>();
-        public ReadOnlyObservableCollection<string> CustomMotionClipNames { get; }
+        public ReadOnlyObservableCollection<string> CustomMotionClipNames => _customMotionList.CustomMotionClipNames;
 
         public RProperty<bool> EnableWordToMotion { get; } = new RProperty<bool>(true);
 
         #region デバイスをWord to Motionに割り当てる設定
 
-        public WordToMotionDeviceItem[] Devices { get; }
+        public WordToMotionDeviceItemViewModel[] Devices { get; }
 
-        private WordToMotionDeviceItem? _selectedDevice = null;
-        public WordToMotionDeviceItem? SelectedDevice
+        private WordToMotionDeviceItemViewModel? _selectedDevice = null;
+        public WordToMotionDeviceItemViewModel? SelectedDevice
         {
             get => _selectedDevice;
             set
@@ -155,12 +172,11 @@ namespace Baku.VMagicMirrorConfig
 
         #endregion
 
-        public List<string> ExtraBlendShapeClipNames => _model.ExtraBlendShapeClipNames;
+        public List<string> ExtraBlendShapeClipNames => _runtimeConfigModel.ExtraBlendShapeClipNames;
+        public string[] LatestAvaterExtraClipNames => _runtimeConfigModel.LatestAvaterExtraClipNames;
 
         public ReadOnlyObservableCollection<WordToMotionItemViewModel> Items { get; }
-        private readonly ObservableCollection<WordToMotionItemViewModel> _items
-            = new ObservableCollection<WordToMotionItemViewModel>();
-
+        private readonly ObservableCollection<WordToMotionItemViewModel> _items = new();
         public MidiNoteToMotionMapViewModel MidiNoteMap { get; }
             = new MidiNoteToMotionMapViewModel(MidiNoteToMotionMap.LoadDefault());
 
@@ -250,12 +266,9 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
+        //NOTE: この結果シリアライズ文字列が変わると、モデル側でメッセージ送信もやってくれる
         /// <summary>モーション一覧の情報が変わったとき、Unity側に再読み込みをリクエストします。</summary>
-        public void RequestReload()
-        {
-            //NOTE: この結果シリアライズ文字列が変わると、モデル側でメッセージ送信もやってくれる
-            SaveItems();
-        }
+        public void RequestReload() => SaveItems();
 
         public ActionCommand OpenKeyAssignmentEditorCommand { get; }
 
@@ -288,13 +301,13 @@ namespace Baku.VMagicMirrorConfig
 
             var vm = new MidiNoteToMotionEditorViewModel(MidiNoteMap, _model.MidiNoteReceiver);
 
-            SendMessage(MessageFactory.Instance.RequireMidiNoteOnMessage(true));
+            _model.RequireMidiNoteOnMessage(true);
             var window = new MidiNoteAssignEditorWindow()
             {
                 DataContext = vm,
             };
             bool? res = window.ShowDialog();
-            SendMessage(MessageFactory.Instance.RequireMidiNoteOnMessage(false));
+            _model.RequireMidiNoteOnMessage(false);
 
             if (res == true)
             {
@@ -305,25 +318,7 @@ namespace Baku.VMagicMirrorConfig
         public ActionCommand AddNewItemCommand { get; }
 
         public ActionCommand ResetByDefaultItemsCommand { get; }
-
-        //このマシン上でこのバージョンのVMagicMirrorが初めて実行されたと推定できるとき、
-        //デフォルトのWord To Motion一覧を生成して初期化します。
-        public void LoadDefaultItemsIfInitialStart()
-        {
-            if (!SpecialFilePath.IsAutoSaveFileExist())
-            {
-                LoadDefaultItems();
-            }
-        }
-
-        private void LoadDefaultItems()
-        {
-            ExtraBlendShapeClipNames.Clear();
-            //NOTE: 現在ロードされてるキャラがいたら、そのキャラのブレンドシェイプをただちに当て直す
-            ExtraBlendShapeClipNames.AddRange(_latestAvaterExtraClipNames);
-
-            _model.LoadDefaultMotionRequests(ExtraBlendShapeClipNames);
-        }
+      
 
         public void EditItemByDialog(WordToMotionItemViewModel item)
         {
@@ -352,69 +347,6 @@ namespace Baku.VMagicMirrorConfig
             _dialogItem = null;
         }
 
-        public void RequestCustomMotionDoctor() => SendMessage(MessageFactory.Instance.RequestCustomMotionDoctor());
+        public void RequestCustomMotionDoctor() => _model.RequestCustomMotionDoctor();
     }
-
-    /// <summary> Word to Motion機能のコントロールに利用できるデバイスの選択肢1つに相当するViewModelです。 </summary>
-    public class WordToMotionDeviceItem : ViewModelBase
-    {
-        private WordToMotionDeviceItem(int index, string displayNameKeySuffix)
-        {
-            Index = index;
-            _displayNameKeySuffix = displayNameKeySuffix;
-            LanguageSelector.Instance.LanguageChanged += RefreshDisplayName;
-            RefreshDisplayName();
-        }
-
-        public int Index { get; }
-
-        private const string DisplayNameKeyPrefix = "WordToMotion_DeviceItem_";
-        private readonly string _displayNameKeySuffix;
-
-        private string _displayName = "";
-        public string DisplayName
-        {
-            get => _displayName;
-            private set => SetValue(ref _displayName, value);
-        }
-
-        internal void RefreshDisplayName()
-            => DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + _displayNameKeySuffix);
-
-        public static WordToMotionDeviceItem None()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.None, "None"
-                );
-
-        public static WordToMotionDeviceItem KeyboardTyping()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.KeyboardWord, "KeyboardWord"
-                );
-
-        public static WordToMotionDeviceItem Gamepad()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.Gamepad, "Gamepad"
-                );
-
-        public static WordToMotionDeviceItem KeyboardNumKey()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.KeyboardTenKey, "KeyboardTenKey"
-                );
-
-        public static WordToMotionDeviceItem MidiController()
-            => new WordToMotionDeviceItem(
-                WordToMotionSetting.DeviceTypes.MidiController, "MidiController"
-                );
-
-        public static WordToMotionDeviceItem[] LoadAvailableItems()
-            => new[]
-            {
-                None(),
-                KeyboardTyping(),
-                Gamepad(),
-                KeyboardNumKey(),
-                MidiController(),
-            };
-    }
-
 }

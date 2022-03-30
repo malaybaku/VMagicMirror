@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     /// <summary>
     /// 大文字/小文字/数字/半角スペースのみで構成された文字列のみを有効入力扱いするバリデーションルール

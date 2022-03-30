@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Windows;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -52,10 +54,24 @@ namespace Baku.VMagicMirrorConfig
         public void Set(T value) => Value = value;
 
         /// <summary>
-        /// 値は変更しますが、イベントやコールバックは呼ばない。
+        /// 値は変更するが、イベントやコールバックは呼ばない。
         /// Unity側から値を受信し、その値がUI上で表示不要であるような、ごく一部のケースでのみ使う
         /// </summary>
         /// <param name="value"></param>
         public void SilentSet(T value) { _value = value; }
+
+        /// <summary>
+        /// 便宜的にプロパティが変更された扱いにしたい場合に呼ぶ。
+        /// ViewModelとの同期ずれが起きてそうなModelで明示的に呼ぶなど、特殊な状況でのみ用いる
+        /// </summary>
+        public void ForceRaisePropertyChanged() => RaisePropertyChanged();
+
+        /// <summary>
+        /// 弱いイベントパターンでプロパティ変更イベントを購読します。
+        /// ViewModelからModelのイベントを購読する場合に使用します。
+        /// </summary>
+        /// <param name="handler"></param>
+        public void AddWeakEventHandler(EventHandler<PropertyChangedEventArgs> handler)
+            => WeakEventManager<RProperty<T>, PropertyChangedEventArgs>.AddHandler(this, nameof(PropertyChanged), handler);
     }
 }

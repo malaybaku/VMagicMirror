@@ -1,8 +1,9 @@
-﻿<Window x:Class="Baku.VMagicMirrorConfig.LicenseWindow"
+﻿<Window x:Class="Baku.VMagicMirrorConfig.View.LicenseWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
         xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
         mc:Ignorable="d"        
         Title="About VMagicMirror" 
@@ -29,7 +30,7 @@
                 Text="{x:Static vmm:AppConsts.AppName}"
                 Margin="0,10,0,0"                    
                 />
-            <vmm:AboutPanel />
+            <view:AboutPanel />
 
 
             <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}"

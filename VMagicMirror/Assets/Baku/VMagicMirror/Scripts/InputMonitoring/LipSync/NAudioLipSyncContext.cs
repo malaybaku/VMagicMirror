@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NAudio.Wave;
 using Zenject;
 
@@ -93,19 +94,29 @@ namespace Baku.VMagicMirror
         
         public override string[] GetAvailableDeviceNames()
         {
-            var count = WaveInEvent.DeviceCount;
-            var result = new string[count];
-            for (int i = 0; i < count; i++)
+            //NOTE: タイミングによっては切断したデバイスのCapを取りに行ってエラーになることがある。
+            //こうなるとQueryが戻らなくなって都合が悪いため、エラーが起きたら拾える範囲の値だけ使って返却する
+            var result = new List<string>();
+            try
             {
-                result[i] = WaveInEvent.GetCapabilities(i).ProductName;
+                var count = WaveInEvent.DeviceCount;
+                for (int i = 0; i < count; i++)
+                {
+                    result.Add(WaveInEvent.GetCapabilities(i).ProductName);
+                }
             }
-            return result;
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
+            return result.ToArray();
         }
 
         public override void StopRecording()
         {
             if (_waveIn != null)
             {
+                _waveIn.RecordingStopped -= OnRecordingStopped;
                 _waveIn.DataAvailable -= OnDataAvailable;
             }
             _waveIn?.StopRecording();
@@ -147,8 +158,18 @@ namespace Baku.VMagicMirror
                 NumberOfBuffers = 25,
                 WaveFormat = new WaveFormat(SampleRate, 2),
             };
+            _waveIn.RecordingStopped += OnRecordingStopped;
             _waveIn.DataAvailable += OnDataAvailable;
             _waveIn.StartRecording();
+        }
+
+        private void OnRecordingStopped(object sender, StoppedEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                LogOutput.Instance.Write($"Microphone Recording Stopped by exception, {e.Exception.Message}");
+            }
+            StopRecording();
         }
 
         private void OnDataAvailable(object sender, WaveInEventArgs e)

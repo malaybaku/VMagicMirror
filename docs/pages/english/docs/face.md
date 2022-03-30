@@ -35,8 +35,6 @@ This tab is added in v1.6.1. If you use older version, you can see most of these
 
 `High Power Mode`: Get more robust face tracking result, while getting higher CPU load. Available from v1.7.0.
 
-`Enable image based hand tracking`: Turn on to use camera image based minimal hand tracking. Available in Streaming tab.
-
 `Auto blink during face tracking`: Checked by default, and by turn off it, character blinks based on image processing.
 
 `Enable forward / backward motion`: Check to see horizontal forward / backward motion.

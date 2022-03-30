@@ -1,5 +1,5 @@
 ﻿<metro:MetroWindow 
-    x:Class="Baku.VMagicMirrorConfig.SettingWindow"    
+    x:Class="Baku.VMagicMirrorConfig.View.SettingWindow"    
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,7 +7,7 @@
     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-    xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
+    xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
     mc:Ignorable="d"
     Title="VMagicMirror Settings" 
     Height="500"
@@ -20,18 +20,17 @@
     WindowTitleBrush="{StaticResource PrimaryHueMidBrush}"
     NonActiveWindowTitleBrush="{StaticResource PrimaryHueMidBrush}"
     Background="{StaticResource TabAreaBackground}"
-    d:DataContext="{d:DesignInstance Type=vmm:MainWindowViewModel}"
     >
     <Window.Resources>
-        <vmm:TabSelectionToForegroundConverter x:Key="SelectionToForeground"/>
-        <vmm:TabSelectionToBackgroundConverter x:Key="SelectionToBackground"/>
+        <view:TabSelectionToForegroundConverter x:Key="SelectionToForeground"/>
+        <view:TabSelectionToBackgroundConverter x:Key="SelectionToBackground"/>
         <Style TargetType="{x:Type dragablz:TabablzControl}" BasedOn="{StaticResource MaterialDesignAlternateTabablzControlStyle}" >
             <Style.Resources>
                 <SolidColorBrush x:Key="SecondaryAccentBrush" Color="{StaticResource Primary400}"/>
             </Style.Resources>
             <Setter Property="BorderBrush" Value="Transparent"/>
         </Style>
-        <Style TargetType="vmm:TabHeaderIconText">
+        <Style TargetType="view:TabHeaderIconText">
             <Setter Property="Width" Value="82"/>
             <Setter Property="Height" Value="40"/>
         </Style>
@@ -47,7 +46,7 @@
         </dragablz:TabablzControl.HeaderItemTemplate>
         <TabItem>
             <TabItem.Header>
-                <vmm:TabHeaderIconText 
+                <view:TabHeaderIconText 
                     Text="{DynamicResource TopBar_Setting_Window}"                        
                     IconKind="WindowRestore"    
                     IconWidth="15"
@@ -64,14 +63,11 @@
                                         ConverterParameter=0}"
                     />
             </TabItem.Header>
-            <vmm:WindowSettingPanel 
-                Background="White" 
-                DataContext="{Binding WindowSetting}"
-                />
+            <view:WindowSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <vmm:TabHeaderIconText 
+                <view:TabHeaderIconText 
                     Text="{DynamicResource TopBar_Setting_FaceMotion}"
                     IconKind="Face"
                     IconWidth="18"
@@ -88,14 +84,11 @@
                                         ConverterParameter=1}"
                     />
             </TabItem.Header>
-            <vmm:FaceMotionSettingPanel
-                Background="White"
-                DataContext="{Binding MotionSetting}"
-                />
+            <view:FaceSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <vmm:TabHeaderIconText 
+                <view:TabHeaderIconText 
                     Text="{DynamicResource TopBar_Setting_Motion}"
                     IconKind="HumanHandsup"
                     IconWidth="18"
@@ -112,14 +105,11 @@
                                         ConverterParameter=2}"
                     />
             </TabItem.Header>
-            <vmm:MotionSettingPanel
-                Background="White"
-                DataContext="{Binding MotionSetting}"
-                />
+            <view:MotionSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <vmm:TabHeaderIconText 
+                <view:TabHeaderIconText 
                     Text="{DynamicResource TopBar_Setting_Layout}"                        
                     IconKind="ViewDashboard"
                     IconWidth="17"
@@ -136,13 +126,11 @@
                                         ConverterParameter=3}"                        
                     />
             </TabItem.Header>
-            <vmm:LayoutSettingPanel 
-                Background="White"
-                DataContext="{Binding LayoutSetting}" />
+            <view:LayoutSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <vmm:TabHeaderIconText 
+                <view:TabHeaderIconText 
                     Text="{DynamicResource TopBar_Setting_Effects}"                        
                     IconKind="LightbulbOn"
                     IconWidth="16"
@@ -159,13 +147,11 @@
                                         ConverterParameter=4}"                                
                     />
             </TabItem.Header>
-            <vmm:LightSettingPanel
-                Background="White"
-                DataContext="{Binding LightSetting}" />
+            <view:EffectSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <vmm:TabHeaderIconText 
+                <view:TabHeaderIconText 
                     Text="{DynamicResource TopBar_Setting_Devices}"                        
                     IconKind="Devices"
                     IconWidth="17"
@@ -183,7 +169,7 @@
                     />
             </TabItem.Header>
             <!-- DeviceSettingは2つのVMをつまみ食いするため、MainWindowViewModel自体を割り当てる -->
-            <vmm:DeviceSettingPanel 
+            <view:DeviceSettingPanel 
                 Background="White"
                 />
         </TabItem>
@@ -227,14 +213,11 @@
                     </Grid>
                 </UserControl>
             </TabItem.Header>
-            <vmm:WordToMotionSettingPanel 
-                Background="White"                     
-                DataContext="{Binding WordToMotionSetting}"
-                />
+            <view:WordToMotionSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>
-                <vmm:TabHeaderIconText 
+                <view:TabHeaderIconText 
                     Text="{DynamicResource TopBar_Setting_FileIo}"                        
                     IconKind="ContentSave"
                     IconWidth="17"
@@ -251,10 +234,7 @@
                                         ConverterParameter=7}"                        
                     />
             </TabItem.Header>
-            <vmm:SettingIoPanel
-                Background="White"                     
-                DataContext="{Binding SettingIo}"
-                />
+            <view:SettingIoPanel Background="White" />
         </TabItem>
     </dragablz:TabablzControl>
 </metro:MetroWindow>

@@ -1,6 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     public partial class UpdateNotificationWindow : MetroWindow
     {

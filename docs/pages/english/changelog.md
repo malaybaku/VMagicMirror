@@ -11,6 +11,16 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.3
+{: .doc-sec2 }
+
+2022/03/30
+
+* Add: "Twist Body Motion" option for a kind of cute motion.
+* Change: Support to detect newly connected webcam and microphones after the app started.
+* Fix: Some other minor issues.
+* Fix: Internal source code refactors.
+
 #### v2.0.2
 {: .doc-sec2 }
 

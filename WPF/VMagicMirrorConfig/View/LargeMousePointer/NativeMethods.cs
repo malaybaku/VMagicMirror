@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Baku.VMagicMirrorConfig.LargePointer
+namespace Baku.VMagicMirrorConfig.View
 {
     internal static class NativeMethods
     {

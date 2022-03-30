@@ -1,9 +1,11 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿using Baku.VMagicMirrorConfig.View;
+
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary> ヘルプ用のリンク類を処理するビューモデル </summary>
     public class HelpViewModel : ViewModelBase
     {
-        private readonly UpdateChecker _updateChecker = new UpdateChecker();
+        private readonly UpdateChecker _updateChecker = new();
 
         private ActionCommand? _openManualUrlCommand;
         public ActionCommand OpenManualUrlCommand
@@ -29,19 +31,10 @@
         public ActionCommand CheckUpdateCommand
             => _checkUpdateCommand ??= new ActionCommand(CheckUpdate);
 
-        private void OpenManualUrl()
-        {
-            string url = LocalizedString.GetString("URL_help_top");
-            UrlNavigate.Open(url);
-        }
-
+        private void OpenManualUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_help_top"));
         private void OpenStandardDownloadUrl() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/1272298");
         private void OpenFullDownloadUrl() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040");
         private void OpenFanboxUrl() => UrlNavigate.Open("https://baku-dreameater.fanbox.cc/");
-
-        private async void CheckUpdate()
-        {
-            await _updateChecker.RunAsync(false);
-        }
+        private async void CheckUpdate() => await _updateChecker.RunAsync(false);
     }
 }

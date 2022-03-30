@@ -1,4 +1,4 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿namespace Baku.VMagicMirrorConfig.ViewModel
 {
 
     public class MidiNoteToMotionEditorViewModel : ViewModelBase

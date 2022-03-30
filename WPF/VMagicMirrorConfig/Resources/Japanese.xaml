@@ -183,6 +183,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_FullBody">上半身</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">つねに手下げモード (※体の動きが増えます)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">つねに手下げモード</sys:String>    
+    <sys:String x:Key="Motion_FullBody_TwistBodyMotion">ひねりモーション</sys:String>    
     
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">腕・ひじ</sys:String>
@@ -564,6 +565,11 @@ webカメラでの顔トラッキングを有効にする場合は
 
     <sys:String x:Key="DialogTitle_AlreadyLatestVersion">最新バージョンです</sys:String>
     <sys:String x:Key="DialogMessage_AlreadyLatestVersion">現在のバージョン({0})は最新です。</sys:String>    
+    
+    <!-- Snackbar Messages -->
+    <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>
+    <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">選択されたマイクの接続を検出しました: {0}</sys:String>
+    <sys:String x:Key="Snackbar_CameraReconnected_Format">選択されたカメラの接続を検出しました: {0}</sys:String>
     
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(何もしない)</sys:String>

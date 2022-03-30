@@ -1,21 +1,19 @@
-﻿using Microsoft.Win32;
-using System.IO;
+﻿using System.ComponentModel;
 using System.Windows.Media;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class WindowSettingViewModel : SettingViewModelBase
     {
-        internal WindowSettingViewModel(WindowSettingSync model, IMessageSender sender) : base(sender)
+        public WindowSettingViewModel() : this(ModelResolver.Instance.Resolve<WindowSettingModel>())
+        {
+        }
+
+        internal WindowSettingViewModel(WindowSettingModel model)
         {
             _model = model;
 
-            void UpdatePickerColor() => RaisePropertyChanged(nameof(PickerColor));
-            _model.R.PropertyChanged += (_, __) => UpdatePickerColor();
-            _model.G.PropertyChanged += (_, __) => UpdatePickerColor();
-            _model.B.PropertyChanged += (_, __) => UpdatePickerColor();
-
-            BackgroundImageSetCommand = new ActionCommand(SetBackgroundImage);
+            BackgroundImageSetCommand = new ActionCommand(() => _model.SetBackgroundImage());
             BackgroundImageClearCommand = new ActionCommand(
                 () => _model.BackgroundImagePath.Value = ""
                 );
@@ -23,20 +21,33 @@ namespace Baku.VMagicMirrorConfig
             ResetBackgroundColorSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetBackgroundColor)
                 );
-            ResetWindowPositionCommand = new ActionCommand(_model.ResetWindowPosition);
+            ResetWindowPositionCommand = new ActionCommand(() => _model.ResetWindowPosition());
             ResetOpacitySettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetOpacity)
                 );
 
+            if (IsInDesignMode)
+            {
+                return;
+            }
+
+            _model.R.AddWeakEventHandler(OnPickerColorChanged);
+            _model.G.AddWeakEventHandler(OnPickerColorChanged);
+            _model.B.AddWeakEventHandler(OnPickerColorChanged);
             //初期値を反映しないと変な事になるので注意
-            UpdatePickerColor();
+            RaisePropertyChanged(nameof(PickerColor));
         }
 
-        private readonly WindowSettingSync _model;
+        private readonly WindowSettingModel _model;
 
         public RProperty<int> R => _model.R;
         public RProperty<int> G => _model.G;
         public RProperty<int> B => _model.B;
+
+        private void OnPickerColorChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(PickerColor));
+        }
 
         /// <summary> ColorPickerに表示する、Alphaを考慮しない背景色を取得、設定します。 </summary>
         public Color PickerColor
@@ -62,22 +73,6 @@ namespace Baku.VMagicMirrorConfig
 
         public ActionCommand ResetWindowPositionCommand { get; }
         public ActionCommand ResetBackgroundColorSettingCommand { get; }
-        public ActionCommand ResetOpacitySettingCommand { get; }
-
-        private void SetBackgroundImage()
-        {
-            //NOTE: 画像形式を絞らないと辛いのでAll Filesとかは無しです。
-            var dialog = new OpenFileDialog()
-            {
-                Title = "Select Background Image",
-                Filter = "Image files (*.png;*.jpg)|*.png;*.jpg",
-                Multiselect = false,
-            };
-
-            if (dialog.ShowDialog() == true && File.Exists(dialog.FileName))
-            {
-                _model.BackgroundImagePath.Value = Path.GetFullPath(dialog.FileName);
-            }
-        }
+        public ActionCommand ResetOpacitySettingCommand { get; }       
     }
 }

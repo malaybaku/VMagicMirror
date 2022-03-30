@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Baku.VMagicMirrorConfig
+namespace Baku.VMagicMirrorConfig.View
 {
     /// <summary> 0 ~ 50の整数値を0.0 ~ 1.0のdoubleに変換するコンバータ </summary>
     public class Lv50Converter : IValueConverter

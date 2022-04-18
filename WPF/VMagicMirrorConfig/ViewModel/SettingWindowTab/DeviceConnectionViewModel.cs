@@ -1,6 +1,6 @@
 ﻿namespace Baku.VMagicMirrorConfig.ViewModel
 {
-    public class DeviceConnectionViewModel : ViewModelBase
+    public class DeviceConnectionViewModel : SettingViewModelBase
     {
         public DeviceConnectionViewModel() : this(
             ModelResolver.Instance.Resolve<GamepadSettingModel>(),

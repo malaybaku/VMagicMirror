@@ -105,16 +105,15 @@ namespace Baku.VMagicMirrorConfig
                 }
                 catch(Exception ex)
                 {
-                    LogOutput.Instance.Write("Exception on PollingDeviceNames");
+                    LogOutput.Instance.Write("Exception on PollingDeviceNames, quitting...");
                     LogOutput.Instance.Write(ex);
-                    throw;                    
+                    break;
                 }
             }
         }
 
         private async Task ReloadDevicesAsync()
         {
-            LogOutput.Instance.Write("Reload Devices...");
             var dispatcher = GetDispatcher();
 
             //NOTE: OC<T>へのアクセスがスレッドセーフでなくなるのを避けている
@@ -131,11 +130,9 @@ namespace Baku.VMagicMirrorConfig
             dispatcher.Invoke(() =>
             {
                 var microphoneName = _setting.LipSyncMicrophoneDeviceName.Value;
-                LogOutput.Instance.Write($"Reload Devices (invoke), mic name={microphoneName}");
                 var micIsInDeviceNamesNew = _microphoneNames.Contains(_setting.LipSyncMicrophoneDeviceName.Value);
                 if (!string.IsNullOrEmpty(microphoneName))
                 {
-                    LogOutput.Instance.Write($"Mic name is in device? {micIsInDeviceNames} -> {micIsInDeviceNamesNew}");
                     if (!micIsInDeviceNames && micIsInDeviceNamesNew)
                     {
                         _sender.SendMessage(MessageFactory.Instance.SetMicrophoneDeviceName(microphoneName));
@@ -166,10 +163,7 @@ namespace Baku.VMagicMirrorConfig
                     ));
                     _setting.LipSyncMicrophoneDeviceName.ForceRaisePropertyChanged();
                 }
-                LogOutput.Instance.Write("Reload Devices (invoke) ended.");
             });
-
-            LogOutput.Instance.Write("Reload Devices ended.");
         }
 
         private Dispatcher GetDispatcher()

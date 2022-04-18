@@ -38,6 +38,8 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
+/VMagicMirror/Logs/
+
 # Streaming Assets (now only include DlibFaceLandmarkDetector, so it must be ignored)
 /VMagicMirror/Assets/StreamingAssets/
 /VMagicMirror/Assets/StreamingAssets.meta

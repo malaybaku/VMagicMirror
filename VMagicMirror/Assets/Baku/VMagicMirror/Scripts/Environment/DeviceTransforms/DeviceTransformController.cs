@@ -178,7 +178,6 @@ namespace Baku.VMagicMirror
         
         private void EnableDeviceFreeLayout(bool enable)
         {
-            Debug.Log("Enable Device Free Layout: " + enable);
             if (IsDeviceFreeLayoutEnabled == enable)
             {
                 return;

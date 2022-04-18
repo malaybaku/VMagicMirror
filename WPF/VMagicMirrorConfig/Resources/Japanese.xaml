@@ -283,6 +283,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_Face_OffsetClip">体型調整ブレンドシェイプ</sys:String>
     <sys:String x:Key="Motion_Face_OffsetClip_Help" xml:space="preserve">※体型調整ブレンドシェイプはつねに適用されます。
 　体格や輪郭の調整をブレンドシェイプで行っている場合に使用します。</sys:String>
+    <sys:String x:Key="Motion_Face_DisableBlendShapeInterpolate">表情切り替えを補間しない</sys:String>
     
     <!-- Layout Setting -->
     <sys:String x:Key="Layout_Header">レイアウト</sys:String>   

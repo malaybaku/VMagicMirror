@@ -74,6 +74,7 @@
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
         public const string FaceNeutralClip = nameof(FaceNeutralClip);
         public const string FaceOffsetClip = nameof(FaceOffsetClip);
+        public const string DisableBlendShapeInterpolate = nameof(DisableBlendShapeInterpolate);
 
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
     public static class VmmCommands
     {

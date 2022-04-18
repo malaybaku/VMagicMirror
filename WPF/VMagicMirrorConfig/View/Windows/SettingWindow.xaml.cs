@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.View
@@ -30,12 +31,16 @@ namespace Baku.VMagicMirrorConfig.View
             }
         }
 
-        private static void OnSettingWindowClosed(object? sender, EventArgs e)
+        private static async void OnSettingWindowClosed(object? sender, EventArgs e)
         {
             if (CurrentWindow != null)
             {
                 CurrentWindow.Closed -= OnSettingWindowClosed;
                 CurrentWindow = null;
+
+                //NOTE: 設定ウィンドウを閉じたあとはGC可能なリソースがそこそこある(WindowとかViewModelとか)ので、明示的にやってしまう
+                await Task.Delay(1000);
+                GC.Collect();
             }
         }
     }

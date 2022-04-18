@@ -1,23 +1,9 @@
-﻿using System.Threading.Tasks;
-
-namespace Baku.VMagicMirrorConfig.ViewModel
+﻿namespace Baku.VMagicMirrorConfig.ViewModel
 {
-    /// <summary> 
-    /// ViewModelから直接メッセージI/Oがしたい場合に使える基底クラス
+    /// <summary>
+    /// 設定関連のタブっぽいUIのViewModelに当てている基底クラスだが、特に意味はない。
     /// </summary>
     public abstract class SettingViewModelBase : ViewModelBase
     {
-        //private protected SettingViewModelBase(IMessageSender sender)
-        //{
-        //    Sender = sender;
-        //}
-
-        //private protected readonly IMessageSender Sender;
-
-        //private protected virtual void SendMessage(Message message)
-        //    => Sender.SendMessage(message);
-
-        //private protected async Task<string> SendQueryAsync(Message message)
-        //    => await Sender.QueryMessageAsync(message);
     }
 }

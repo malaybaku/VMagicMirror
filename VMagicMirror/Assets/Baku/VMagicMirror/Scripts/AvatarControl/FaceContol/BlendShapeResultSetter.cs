@@ -15,6 +15,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private ExternalTrackerPerfectSync perfectSync = null;
         [SerializeField] private ExternalTrackerFaceSwitchApplier faceSwitch = null;
         [SerializeField] private NeutralClipSettings neutralClipSettings = null;
+        [SerializeField] private BlendShapeInterpolator blendShapeInterpolator = null;
         
         private ExternalTrackerDataSource _exTracker = null;
         private BlendShapeInitializer _initializer = null;
@@ -22,11 +23,11 @@ namespace Baku.VMagicMirror
 
         private bool _hasModel = false;
         private VRMBlendShapeProxy _blendShape = null;
-
-
+        
         //NOTE: ここのコンポーネントの書き順は実は優先度を表している: 後ろのやつほど上書きの権利が強い
         [Inject]
         public void Initialize(
+            IMessageReceiver receiver,
             IVRMLoadable vrmLoadable, 
             ExternalTrackerDataSource exTracker,
             BlendShapeInitializer initializer,
@@ -48,18 +49,32 @@ namespace Baku.VMagicMirror
                 _hasModel = false;
                 _blendShape = null;
             };
+            
+            blendShapeInterpolator.Setup(faceSwitch, wtmBlendShape);
         }
 
         
         private void LateUpdate()
         {
+            faceSwitch.UpdateCurrentValue();
+            _wtmBlendShape.UpdateCurrentValue();
+            blendShapeInterpolator.UpdateWeight();
+            
             if (!_hasModel)
             {
                 return;
             }
-            
-            WriteClips();
-            _blendShape.Apply();                        
+
+            //NOTE: 関数をわざわざ分けるのは後方互換性のため + ウェイトに配慮しないほうが処理が一回り軽い見込みのため
+            if (blendShapeInterpolator.NeedToInterpolate)
+            {
+                WriteClipsWithInterpolation();
+            }
+            else
+            {
+                WriteClips();
+            }
+            _blendShape.Apply();
         }
 
         private void WriteClips()
@@ -135,11 +150,8 @@ namespace Baku.VMagicMirror
 
                 //パーフェクトシンクのクリップを埋め: このとき口まわりは設定次第で0埋めか有効値で埋めるかが変化
                 perfectSync.Accumulate(
-                    _blendShape, 
-                    true, 
-                    perfectSync.PreferWriteMouthBlendShape, 
-                    true
-                );
+                    _blendShape, true, perfectSync.PreferWriteMouthBlendShape, true
+                    );
 
                 //外部トラッキングの口形状を使わない: このときはlipSyncのほうでも
                 //マイクベースのリップシンクが優先になっているので、それを適用
@@ -163,6 +175,53 @@ namespace Baku.VMagicMirror
             
             neutralClipSettings.ApplyNeutralClip(_blendShape);
             neutralClipSettings.ApplyOffsetClip(_blendShape);
+        }
+        
+        private void WriteClipsWithInterpolation()
+        {
+            // 補間があるバージョンのポイント:
+            // - FaceSwitch / WtMの現在値は(KeepLipSyncも含めて)使わず、Interpolatorが代行してくれる
+            // - ゼロ埋めの冗長化回避は無理なので諦めて、全部ゼロ埋めしておく
+            // - ふだんの動きを適用するが、そこでは必ずweightが入る
+
+            _initializer.InitializeBlendShapes();
+            blendShapeInterpolator.Accumulate(_blendShape);
+            
+            //Perfect Syncが適用 > Blinkは確定で無視。
+            //リップシンクは…ここも設定しだいで適用。
+            if (perfectSync.IsReadyToAccumulate)
+            {
+                //パーフェクトシンクのクリップを埋め: このとき口まわりは設定次第で0埋めか有効値で埋めるかが変化
+                perfectSync.Accumulate(
+                    _blendShape, 
+                    true, 
+                    perfectSync.PreferWriteMouthBlendShape, 
+                    true,
+                    blendShapeInterpolator.MouthWeight,
+                    blendShapeInterpolator.NonMouthWeight
+                );
+
+                //外部トラッキングの口形状を使わない: このときはlipSyncのほうでも
+                //マイクベースのリップシンクが優先になっているので、それを適用
+                if (!perfectSync.PreferWriteMouthBlendShape)
+                {
+                    lipSync.Accumulate(_blendShape, blendShapeInterpolator.MouthWeight);
+                }
+
+                neutralClipSettings.ApplyNeutralClip(_blendShape, blendShapeInterpolator.NonMouthWeight);
+                neutralClipSettings.ApplyOffsetClip(_blendShape, blendShapeInterpolator.NonMouthWeight);
+                return;
+            }
+            
+            //上記いずれでもない: ここも分岐はあって
+            // - 口: パーフェクトシンクの画像 or マイク
+            // - 目: パーフェクトシンクの目 or webカメラ or AutoBlink
+            // という使い分けがあるが、この分岐は各コンポーネントのレベルで面倒を見てもらえる
+            eyes.Accumulate(_blendShape, blendShapeInterpolator.NonMouthWeight);
+            lipSync.Accumulate(_blendShape, blendShapeInterpolator.MouthWeight);
+            
+            neutralClipSettings.ApplyNeutralClip(_blendShape, blendShapeInterpolator.NonMouthWeight);
+            neutralClipSettings.ApplyOffsetClip(_blendShape, blendShapeInterpolator.MouthWeight);
         }
     }
 }

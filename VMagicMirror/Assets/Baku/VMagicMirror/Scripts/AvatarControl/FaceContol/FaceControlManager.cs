@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror
         /// <summary> WebCamベースのトラッキング中でも自動まばたきを優先するかどうかを取得、設定します。 </summary>
         public bool PreferAutoBlinkOnWebCamTracking { get; set; } = true;
         
-        public void Accumulate(VRMBlendShapeProxy proxy)
+        public void Accumulate(VRMBlendShapeProxy proxy, float weight = 1f)
         {
             if (!_hasModel)
             {
@@ -62,8 +62,8 @@ namespace Baku.VMagicMirror
                 (_config.ControlMode == FaceControlModes.WebCam && !PreferAutoBlinkOnWebCamTracking) ? imageBasedBlinkController.BlinkSource :
                 autoBlink.BlinkSource;
             
-            proxy.AccumulateValue(BlinkLKey, blinkSource.Left);
-            proxy.AccumulateValue(BlinkRKey, blinkSource.Right);        
+            proxy.AccumulateValue(BlinkLKey, blinkSource.Left * weight);
+            proxy.AccumulateValue(BlinkRKey, blinkSource.Right * weight);
         }
 
         private void Update()

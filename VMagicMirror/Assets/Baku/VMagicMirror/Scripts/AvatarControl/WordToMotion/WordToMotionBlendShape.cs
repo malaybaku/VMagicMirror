@@ -1,11 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 using VRM;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
+    public readonly struct WordToMotionBlendShapeApplyContent
+    {
+        private WordToMotionBlendShapeApplyContent(bool hasValue, List<(BlendShapeKey, float)> keys, bool keepLipSync)
+        {
+            HasValue = hasValue;
+            Keys = keys;
+            KeepLipSync = keepLipSync;
+        }
+        
+        public static WordToMotionBlendShapeApplyContent Empty { get; } 
+            = new WordToMotionBlendShapeApplyContent(false, new List<(BlendShapeKey, float)>(), false);
+
+        public static WordToMotionBlendShapeApplyContent Create(List<(BlendShapeKey, float)> keys, bool keepLipSync)
+            => new WordToMotionBlendShapeApplyContent(true, keys, keepLipSync);
+
+        public bool HasValue { get; }
+        public List<(BlendShapeKey, float)> Keys { get; }
+        public bool KeepLipSync { get; }
+        
+    }
     /// <summary>
     /// Word To Motionのブレンドシェイプを適用する。
     /// </summary>
@@ -28,6 +49,13 @@ namespace Baku.VMagicMirror
         private readonly Dictionary<BlendShapeKey, float> _blendShape = new Dictionary<BlendShapeKey, float>();
         
         private EyeBonePostProcess _eyeBoneResetter;
+
+        private bool _hasDiff;
+
+        private readonly List<(BlendShapeKey, float)> _currentValueSource = new List<(BlendShapeKey, float)>(8);
+        private readonly ReactiveProperty<WordToMotionBlendShapeApplyContent> _currentValue
+            = new ReactiveProperty<WordToMotionBlendShapeApplyContent>(WordToMotionBlendShapeApplyContent.Empty);
+        public IReadOnlyReactiveProperty<WordToMotionBlendShapeApplyContent> CurrentValue => _currentValue;
         
         [Inject]
         public void Initialize(EyeBonePostProcess eyeBoneResetter)
@@ -51,7 +79,30 @@ namespace Baku.VMagicMirror
 
         /// <summary> trueの場合、このスクリプトではリップシンクのブレンドシェイプに書き込みを行いません。 </summary>
         public bool KeepLipSync { get; set; }
-        
+
+        public void UpdateCurrentValue()
+        {
+            if (!_hasDiff)
+            {
+                return;
+            }
+
+            _currentValueSource.Clear();
+            foreach (var pair in _blendShape)
+            {
+                _currentValueSource.Add((pair.Key, pair.Value));
+            }
+
+            if (_currentValueSource.Count > 0)
+            {
+                _currentValue.Value = WordToMotionBlendShapeApplyContent.Create(_currentValueSource, KeepLipSync);
+            }
+            else
+            {
+                _currentValue.Value = WordToMotionBlendShapeApplyContent.Empty;
+            }
+        }
+
         /// <summary>
         /// Word To Motionによるブレンドシェイプを指定します。
         /// </summary>
@@ -60,15 +111,20 @@ namespace Baku.VMagicMirror
         /// <remarks>1つ以上のブレンドシェイプを指定すると通常の表情制御をオーバーライドする。</remarks>
         public void Add(BlendShapeKey key, float value)
         {
-            if (_allBlendShapeKeys.Any(k => k.Name == key.Name))
+            if (_allBlendShapeKeys.Any(k => k.Name == key.Name) && !_blendShape.ContainsKey(key))
             {
                 _blendShape[key] = value;
+                _hasDiff = true;
             }
         }
 
         /// <summary>Word To Motionによる表情制御を無効化(終了)します。</summary>
         public void Clear()
         {
+            if (_blendShape.Count > 0)
+            {
+                _hasDiff = true;
+            }
             _blendShape.Clear();
         }
 

@@ -86,7 +86,7 @@ namespace Baku.VMagicMirror
                 }
                 else
                 {
-                    IsPlayingBlendShape = false;
+                    _isPlayingBlendShape = false;
                     _blendShape.ResetBlendShape();
                     StopPreviewBuiltInMotion();
                     StopPreviewCustomMotion();
@@ -95,11 +95,8 @@ namespace Baku.VMagicMirror
             }
         }
 
-        /// <summary>モーションを実行中かどうかを取得します。</summary>
-        public bool IsPlayingMotion { get; private set; }
-
-        /// <summary>表情を切り替え中かどうかを取得します。</summary>
-        public bool IsPlayingBlendShape { get; private set; }
+        private bool _isPlayingMotion;
+        private bool _isPlayingBlendShape;
 
         /// <summary>プレビュー動作の内容。</summary>
         public MotionRequest PreviewRequest { get; set; }
@@ -171,7 +168,7 @@ namespace Baku.VMagicMirror
                     {
                         _headMotionClipPlayer.Play(request.BuiltInAnimationClipName, out float duration);
                         dynamicDuration = duration;
-                        IsPlayingMotion = true;
+                        _isPlayingMotion = true;
                     }
                     else
                     {
@@ -190,7 +187,7 @@ namespace Baku.VMagicMirror
             //表情を適用
             if (request.UseBlendShape)
             {
-                IsPlayingBlendShape = true;
+                _isPlayingBlendShape = true;
                 if (dynamicDuration > 0f)
                 {
                     StartApplyBlendShape(request, dynamicDuration);
@@ -234,7 +231,7 @@ namespace Baku.VMagicMirror
                 if (_ikFadeInCountDown <= 0)
                 {
                     //フェードさせ終わる前に完了扱いにする: やや荒っぽいが、高精度に使うフラグではないのでOK
-                    IsPlayingMotion = false;
+                    _isPlayingMotion = false;
                     _ikWeightCrossFade.FadeInArmIkWeights(ikFadeDuration);
                     fingerController.FadeInWeight(ikFadeDuration);
                     if (_currentMotionType == MotionRequest.MotionTypeCustom)
@@ -256,7 +253,7 @@ namespace Baku.VMagicMirror
             {
                 //頭部のみのモーションはIKウェイトとかはいじらないため、フラグだけ折れば十分
                 _currentMotionIsHeadMotion = false;
-                IsPlayingMotion = false;
+                _isPlayingMotion = false;
             }
 
             if (EnablePreview && PreviewRequest != null)
@@ -308,7 +305,7 @@ namespace Baku.VMagicMirror
                     _currentMotionRequest != null && 
                     !_currentMotionRequest.HoldBlendShape)
                 {
-                    IsPlayingBlendShape = false;
+                    _isPlayingBlendShape = false;
                     _blendShape.ResetBlendShape();
                 }
             }
@@ -321,7 +318,7 @@ namespace Baku.VMagicMirror
 
             if (!EnablePreview)
             {
-                _accessoryVisibilityRequest.Value = (IsPlayingMotion || IsPlayingBlendShape) && _currentMotionRequest != null 
+                _accessoryVisibilityRequest.Value = (_isPlayingMotion || _isPlayingBlendShape) && _currentMotionRequest != null 
                     ? _currentMotionRequest.AccessoryName
                     : "";
             }
@@ -385,7 +382,7 @@ namespace Baku.VMagicMirror
                 _simpleAnimation.Rewind(clipName);
             }
 
-            IsPlayingMotion = true;
+            _isPlayingMotion = true;
 
             if (ShouldSetDefaultClipAfterMotion)
             {
@@ -413,7 +410,7 @@ namespace Baku.VMagicMirror
         private void StartPreviewBuiltInMotion(string clipName)
         {
             //もうやってる場合: そのまま放置
-            if (IsPlayingMotion && _currentBuiltInMotionName == clipName)
+            if (_isPlayingMotion && _currentBuiltInMotionName == clipName)
             {
                 return;
             }
@@ -439,7 +436,7 @@ namespace Baku.VMagicMirror
                 _simpleAnimation.Rewind(clipName);
             }
 
-            IsPlayingMotion = true;
+            _isPlayingMotion = true;
             _simpleAnimation.Play(clipName);
             _currentBuiltInMotionName = clipName;
             //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
@@ -449,12 +446,12 @@ namespace Baku.VMagicMirror
 
         private void StopPreviewBuiltInMotion()
         {
-            if (!IsPlayingMotion || string.IsNullOrEmpty(_currentBuiltInMotionName))
+            if (!_isPlayingMotion || string.IsNullOrEmpty(_currentBuiltInMotionName))
             {
                 return;
             }
 
-            IsPlayingMotion = false;
+            _isPlayingMotion = false;
             _simpleAnimation.Stop(_currentBuiltInMotionName);
             _currentBuiltInMotionName = "";
             //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
@@ -480,12 +477,15 @@ namespace Baku.VMagicMirror
                 float duration = customMotionPlayer.GetMotionDuration(clipName);
                 _ikFadeInCountDown = duration - ikFadeDuration;
                 _customMotionStopCountDown = duration;
+                
                 //ここは短すぎるモーションを指定されたときの対策
                 if (_ikFadeInCountDown <= 0)
                 {
                     _ikFadeInCountDown = 0.01f;
                     _customMotionStopCountDown = 0.01f;
                 }
+
+                _isPlayingMotion = true;
             }
             catch (Exception ex)
             {
@@ -502,7 +502,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            IsPlayingMotion = true;
+            _isPlayingMotion = true;
             //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
             _ikWeightCrossFade.FadeOutArmIkWeightsImmediately();
             fingerController.FadeOutWeight(0);
@@ -510,12 +510,12 @@ namespace Baku.VMagicMirror
 
         private void StopPreviewCustomMotion()
         {
-            if (!IsPlayingMotion)
+            if (!_isPlayingMotion)
             {
                 return;
             }
 
-            IsPlayingMotion = false;
+            _isPlayingMotion = false;
             customMotionPlayer.StopPreviewMotion();
             //プレビュー用なので一気にやる: コレでいいかはちょっと検討すべき
             _ikWeightCrossFade.FadeInArmIkWeightsImmediately();

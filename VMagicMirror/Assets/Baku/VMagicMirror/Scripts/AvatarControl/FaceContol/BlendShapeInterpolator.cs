@@ -73,9 +73,9 @@ namespace Baku.VMagicMirror
         //NOTE: 何も適用してない状態はIsEmpty == trueになることで表現される
         private readonly State _fromState = new State();
         private readonly State _toState = new State();
-        //WtMが適用中にFaceSwitchの有効な情報が来た場合、ここに一時的に入れておき、適用待ちの状態として扱う
-        //FaceSwitchが無効になると、適用待ちの状態であってもリセットされる
-        private readonly State _lowPriorFaceSwitchState = new State();
+        //FaceSwitchはWtMより優先度が低く、「from/toどちらでも無いけど適用するかも」という状態になることがあるので、
+        //必要になったら使えるようにするために値をキャッシュするやつ
+        private readonly State _faceSwitchState = new State();
         
         //WtMかFace Switchが適用されると0からプラスの値に推移していく。
         //30fpsの場合、1フレームごとに2加算され、最大値は6。
@@ -96,8 +96,7 @@ namespace Baku.VMagicMirror
                     }
                     else
                     {
-                        //順番待ちのFaceSwitchがあるときだけ意味のある呼び出しなので、普段は冗長
-                        _lowPriorFaceSwitchState.OverwriteToEmpty();
+                        _faceSwitchState.OverwriteToEmpty();
                     }
                 })
                 .AddTo(this);
@@ -110,9 +109,9 @@ namespace Baku.VMagicMirror
                     {
                         SetWordToMotion(v.Keys, v.KeepLipSync, v.IsPreview);
                     }
-                    else if (!_lowPriorFaceSwitchState.IsEmpty)
+                    else if (!_faceSwitchState.IsEmpty)
                     {
-                        //WtMが終わった瞬間に有効なFaceSwitchがある→カラに戻す代わり、そっちを適用
+                        //WtMが終わった瞬間に有効なFaceSwitchがあったらそれに遷移
                         SetLowPriorFaceSwitchToActive();
                     }
                 })
@@ -203,10 +202,11 @@ namespace Baku.VMagicMirror
 
         private void SetFaceSwitch(BlendShapeKey key, bool keepLipSync)
         {
-            //NOTE: WtMが適用されている場合、優先度が低いので適用しない
+            Write(_faceSwitchState, key, keepLipSync);
+
+            //NOTE: WtMが適用中の場合、優先度が低いので実際には何もしない
             if (_toState.Priority > StatePriorityFaceSwitch)
             {
-                Write(_lowPriorFaceSwitchState, key, keepLipSync);
                 return;
             }
             
@@ -256,9 +256,8 @@ namespace Baku.VMagicMirror
         {
             _toState.CopyTo(_fromState);
             //適用待ちの値が書き込み済みなのでそのまま使う
-            _lowPriorFaceSwitchState.CopyTo(_toState);
-            _lowPriorFaceSwitchState.OverwriteToEmpty();
-            _toState.Weight = 0f;
+            _faceSwitchState.CopyTo(_toState);
+            _faceSwitchState.OverwriteToEmpty();
             _faceAppliedCount = 0;
         }
 

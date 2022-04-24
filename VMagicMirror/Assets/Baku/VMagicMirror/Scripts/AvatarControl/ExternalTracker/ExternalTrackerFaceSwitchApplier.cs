@@ -86,7 +86,7 @@ namespace Baku.VMagicMirror
             else
             {
                 var key = CreateKey(_externalTracker.FaceSwitchClipName);
-                _currentValue.Value = FaceSwitchKeyApplyContent.Create(key, KeepLipSync);
+                _currentValue.Value = FaceSwitchKeyApplyContent.Create(key, _externalTracker.KeepLipSyncForFaceSwitch);
                 _latestClipName = _externalTracker.FaceSwitchClipName;
             }
         }

@@ -117,6 +117,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<string> FaceNeutralClip => _model.FaceNeutralClip;
         public RProperty<string> FaceOffsetClip => _model.FaceOffsetClip;
 
+        public RProperty<bool> DisableBlendShapeInterpolate => _model.DisableBlendShapeInterpolate;
+
         #endregion
 
         #region Eye

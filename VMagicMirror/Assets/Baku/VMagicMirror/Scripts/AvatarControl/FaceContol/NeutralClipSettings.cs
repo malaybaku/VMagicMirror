@@ -36,19 +36,19 @@ namespace Baku.VMagicMirror
                 });
         }
         
-        public void ApplyNeutralClip(VRMBlendShapeProxy proxy) 
+        public void ApplyNeutralClip(VRMBlendShapeProxy proxy, float weight = 1f) 
         {
             if (HasValidNeutralClipKey)
             {
-                proxy.AccumulateValue(NeutralClipKey, 1f);
+                proxy.AccumulateValue(NeutralClipKey, weight);
             }
         }
 
-        public void ApplyOffsetClip(VRMBlendShapeProxy proxy)
+        public void ApplyOffsetClip(VRMBlendShapeProxy proxy, float weight = 1f)
         {
             if (HasValidOffsetClipKey)
             {
-                proxy.AccumulateValue(OffsetClipKey, 1f);
+                proxy.AccumulateValue(OffsetClipKey, weight);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -69,7 +70,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         public bool EnablePreview
         {
-            get => _enablePreview;
+            get => _enablePreview; 
             set
             {
                 if (_enablePreview == value)
@@ -78,6 +79,7 @@ namespace Baku.VMagicMirror
                 }
 
                 _enablePreview = value;
+                _blendShape.IsPreview = value;
                 if (value)
                 {
                     PreviewRequest = null;
@@ -86,7 +88,6 @@ namespace Baku.VMagicMirror
                 {
                     IsPlayingBlendShape = false;
                     _blendShape.ResetBlendShape();
-                    _blendShape.KeepLipSync = false;
                     StopPreviewBuiltInMotion();
                     StopPreviewCustomMotion();
                     _accessoryVisibilityRequest.Value = "";
@@ -308,7 +309,6 @@ namespace Baku.VMagicMirror
                     !_currentMotionRequest.HoldBlendShape)
                 {
                     IsPlayingBlendShape = false;
-                    _blendShape.KeepLipSync = false;
                     _blendShape.ResetBlendShape();
                 }
             }
@@ -350,11 +350,12 @@ namespace Baku.VMagicMirror
         {
             if (PreviewRequest.UseBlendShape)
             {
-                foreach (var pair in PreviewRequest.BlendShapeValuesDic)
-                {
-                    _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
-                }
-                _blendShape.KeepLipSync = PreviewRequest.PreferLipSync;
+                _blendShape.SetForPreview(
+                    PreviewRequest.BlendShapeValuesDic
+                        .Select(pair => (BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value)
+                        ),
+                    PreviewRequest.PreferLipSync
+                );
             }
             else
             {
@@ -558,13 +559,12 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //Clearが要るのは前回のブレンドシェイプと混ざるのを防ぐため
-            _blendShape.Clear();
-            foreach (var pair in request.BlendShapeValuesDic)
-            {
-                _blendShape.Add(BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value);
-            }
-            _blendShape.KeepLipSync = request.PreferLipSync;
+            _blendShape.SetBlendShapes(
+                request.BlendShapeValuesDic.Select(
+                    pair => (BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value)
+                ),
+                request.PreferLipSync
+            );
             
             _blendShapeResetCountDown = dynamicDuration > 0f
                 ? dynamicDuration

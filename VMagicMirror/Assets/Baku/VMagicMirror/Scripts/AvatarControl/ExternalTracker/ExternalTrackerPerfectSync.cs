@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -87,10 +88,13 @@ namespace Baku.VMagicMirror.ExternalTracker
         /// 口を適用するかどうか。原則<see cref="PreferWriteMouthBlendShape"/>
         /// </param>
         /// <param name="writeExcludedKeys">
+        /// <param name="mouthWeight"></param>
+        /// <param name="nonMouthWeight"></param>
         /// trueを指定すると非適用のクリップに0を書き込みます。
         /// これにより、常にパーフェクトシンク分のクリップ情報が過不足なく更新されるのを保証します。
         /// </param>
-        public void Accumulate(VRMBlendShapeProxy proxy, bool nonMouthPart, bool mouthPart, bool writeExcludedKeys)
+        public void Accumulate(VRMBlendShapeProxy proxy, bool nonMouthPart, bool mouthPart, 
+            bool writeExcludedKeys, float mouthWeight = 1f, float nonMouthWeight = 1f)
         {
             if (!IsReadyToAccumulate)
             {                
@@ -103,38 +107,39 @@ namespace Baku.VMagicMirror.ExternalTracker
             //それよりは関数ごと分けた方がパフォーマンスがいいのでは？という意図で書いてます。何となくです
             if (_externalTracker.DisableHorizontalFlip)
             {
-                AccumulateWithFlip(proxy, source, nonMouthPart, mouthPart, writeExcludedKeys);
+                AccumulateWithFlip(proxy, source, nonMouthPart, mouthPart, writeExcludedKeys, mouthWeight, nonMouthWeight);
             }
             else
             {
-                AccumulateWithoutFlip(proxy, source, nonMouthPart, mouthPart, writeExcludedKeys);
+                AccumulateWithoutFlip(proxy, source, nonMouthPart, mouthPart, writeExcludedKeys, mouthWeight, nonMouthWeight);
             }
         }
 
         private void AccumulateWithoutFlip(
             VRMBlendShapeProxy proxy,  IFaceTrackSource source,
-            bool nonMouthPart, bool mouthPart, bool writeExcludedKeys
+            bool nonMouthPart, bool mouthPart, bool writeExcludedKeys,
+            float mouthWeight, float nonMouthWeight
             )
         {
             if (nonMouthPart)
             {
                 //目
                 var eye = source.Eye;
-                proxy.AccumulateValue(Keys.EyeBlinkLeft, eye.LeftBlink);
-                proxy.AccumulateValue(Keys.EyeLookUpLeft, eye.LeftLookUp);
-                proxy.AccumulateValue(Keys.EyeLookDownLeft, eye.LeftLookDown);
-                proxy.AccumulateValue(Keys.EyeLookInLeft, eye.LeftLookIn);
-                proxy.AccumulateValue(Keys.EyeLookOutLeft, eye.LeftLookOut);
-                proxy.AccumulateValue(Keys.EyeWideLeft, eye.LeftWide);
-                proxy.AccumulateValue(Keys.EyeSquintLeft, eye.LeftSquint);
+                proxy.AccumulateValue(Keys.EyeBlinkLeft, eye.LeftBlink * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookUpLeft, eye.LeftLookUp * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookDownLeft, eye.LeftLookDown * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookInLeft, eye.LeftLookIn * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookOutLeft, eye.LeftLookOut * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeWideLeft, eye.LeftWide * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeSquintLeft, eye.LeftSquint * nonMouthWeight);
 
-                proxy.AccumulateValue(Keys.EyeBlinkRight, eye.RightBlink);
-                proxy.AccumulateValue(Keys.EyeLookUpRight, eye.RightLookUp);
-                proxy.AccumulateValue(Keys.EyeLookDownRight, eye.RightLookDown);
-                proxy.AccumulateValue(Keys.EyeLookInRight, eye.RightLookIn);
-                proxy.AccumulateValue(Keys.EyeLookOutRight, eye.RightLookOut);
-                proxy.AccumulateValue(Keys.EyeWideRight, eye.RightWide);
-                proxy.AccumulateValue(Keys.EyeSquintRight, eye.RightSquint);
+                proxy.AccumulateValue(Keys.EyeBlinkRight, eye.RightBlink * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookUpRight, eye.RightLookUp * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookDownRight, eye.RightLookDown * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookInRight, eye.RightLookIn * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookOutRight, eye.RightLookOut * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeWideRight, eye.RightWide * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeSquintRight, eye.RightSquint * nonMouthWeight);
 
                 //NOTE: 瞬き時の目下げ処理に使うためにセット
                 _faceControlConfig.AlternativeBlinkL = eye.LeftBlink;
@@ -142,15 +147,15 @@ namespace Baku.VMagicMirror.ExternalTracker
                 
                 
                 //鼻
-                proxy.AccumulateValue(Keys.NoseSneerLeft, source.Nose.LeftSneer);
-                proxy.AccumulateValue(Keys.NoseSneerRight, source.Nose.RightSneer);
+                proxy.AccumulateValue(Keys.NoseSneerLeft, source.Nose.LeftSneer * nonMouthWeight);
+                proxy.AccumulateValue(Keys.NoseSneerRight, source.Nose.RightSneer * nonMouthWeight);
 
                 //まゆげ
-                proxy.AccumulateValue(Keys.BrowDownLeft, source.Brow.LeftDown);
-                proxy.AccumulateValue(Keys.BrowOuterUpLeft, source.Brow.LeftOuterUp);
-                proxy.AccumulateValue(Keys.BrowDownRight, source.Brow.RightDown);
-                proxy.AccumulateValue(Keys.BrowOuterUpRight, source.Brow.RightOuterUp);
-                proxy.AccumulateValue(Keys.BrowInnerUp, source.Brow.InnerUp);
+                proxy.AccumulateValue(Keys.BrowDownLeft, source.Brow.LeftDown * nonMouthWeight);
+                proxy.AccumulateValue(Keys.BrowOuterUpLeft, source.Brow.LeftOuterUp * nonMouthWeight);
+                proxy.AccumulateValue(Keys.BrowDownRight, source.Brow.RightDown * nonMouthWeight);
+                proxy.AccumulateValue(Keys.BrowOuterUpRight, source.Brow.RightOuterUp * nonMouthWeight);
+                proxy.AccumulateValue(Keys.BrowInnerUp, source.Brow.InnerUp * nonMouthWeight);
             }
             else if (writeExcludedKeys)
             {
@@ -191,45 +196,45 @@ namespace Baku.VMagicMirror.ExternalTracker
             {
                 //口(多い)
                 var mouth = source.Mouth;
-                proxy.AccumulateValue(Keys.MouthLeft, mouth.Left);
-                proxy.AccumulateValue(Keys.MouthSmileLeft, mouth.LeftSmile);
-                proxy.AccumulateValue(Keys.MouthFrownLeft, mouth.LeftFrown);
-                proxy.AccumulateValue(Keys.MouthPressLeft, mouth.LeftPress);
-                proxy.AccumulateValue(Keys.MouthUpperUpLeft, mouth.LeftUpperUp);
-                proxy.AccumulateValue(Keys.MouthLowerDownLeft, mouth.LeftLowerDown);
-                proxy.AccumulateValue(Keys.MouthStretchLeft, mouth.LeftStretch);
-                proxy.AccumulateValue(Keys.MouthDimpleLeft, mouth.LeftDimple);
+                proxy.AccumulateValue(Keys.MouthLeft, mouth.Left * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthSmileLeft, mouth.LeftSmile * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthFrownLeft, mouth.LeftFrown * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthPressLeft, mouth.LeftPress * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthUpperUpLeft, mouth.LeftUpperUp * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthLowerDownLeft, mouth.LeftLowerDown * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthStretchLeft, mouth.LeftStretch * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthDimpleLeft, mouth.LeftDimple * mouthWeight);
 
-                proxy.AccumulateValue(Keys.MouthRight, mouth.Right);
-                proxy.AccumulateValue(Keys.MouthSmileRight, mouth.RightSmile);
-                proxy.AccumulateValue(Keys.MouthFrownRight, mouth.RightFrown);
-                proxy.AccumulateValue(Keys.MouthPressRight, mouth.RightPress);
-                proxy.AccumulateValue(Keys.MouthUpperUpRight, mouth.RightUpperUp);
-                proxy.AccumulateValue(Keys.MouthLowerDownRight, mouth.RightLowerDown);
-                proxy.AccumulateValue(Keys.MouthStretchRight, mouth.RightStretch);
-                proxy.AccumulateValue(Keys.MouthDimpleRight, mouth.RightDimple);
+                proxy.AccumulateValue(Keys.MouthRight, mouth.Right * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthSmileRight, mouth.RightSmile * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthFrownRight, mouth.RightFrown * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthPressRight, mouth.RightPress * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthUpperUpRight, mouth.RightUpperUp * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthLowerDownRight, mouth.RightLowerDown * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthStretchRight, mouth.RightStretch * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthDimpleRight, mouth.RightDimple * mouthWeight);
 
-                proxy.AccumulateValue(Keys.MouthClose, mouth.Close);
-                proxy.AccumulateValue(Keys.MouthFunnel, mouth.Funnel);
-                proxy.AccumulateValue(Keys.MouthPucker, mouth.Pucker);
-                proxy.AccumulateValue(Keys.MouthShrugUpper, mouth.ShrugUpper);
-                proxy.AccumulateValue(Keys.MouthShrugLower, mouth.ShrugLower);
-                proxy.AccumulateValue(Keys.MouthRollUpper, mouth.RollUpper);
-                proxy.AccumulateValue(Keys.MouthRollLower, mouth.RollLower);
+                proxy.AccumulateValue(Keys.MouthClose, mouth.Close * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthFunnel, mouth.Funnel * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthPucker, mouth.Pucker * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthShrugUpper, mouth.ShrugUpper * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthShrugLower, mouth.ShrugLower * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthRollUpper, mouth.RollUpper * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthRollLower, mouth.RollLower * mouthWeight);
 
                 //あご
-                proxy.AccumulateValue(Keys.JawOpen, source.Jaw.Open);
-                proxy.AccumulateValue(Keys.JawForward, source.Jaw.Forward);
-                proxy.AccumulateValue(Keys.JawLeft, source.Jaw.Left);
-                proxy.AccumulateValue(Keys.JawRight, source.Jaw.Right);
+                proxy.AccumulateValue(Keys.JawOpen, source.Jaw.Open * mouthWeight);
+                proxy.AccumulateValue(Keys.JawForward, source.Jaw.Forward * mouthWeight);
+                proxy.AccumulateValue(Keys.JawLeft, source.Jaw.Left * mouthWeight);
+                proxy.AccumulateValue(Keys.JawRight, source.Jaw.Right * mouthWeight);
 
                 //舌
-                proxy.AccumulateValue(Keys.TongueOut, source.Tongue.TongueOut);
+                proxy.AccumulateValue(Keys.TongueOut, source.Tongue.TongueOut * mouthWeight);
 
                 //ほお
-                proxy.AccumulateValue(Keys.CheekPuff, source.Cheek.Puff);
-                proxy.AccumulateValue(Keys.CheekSquintLeft, source.Cheek.LeftSquint);
-                proxy.AccumulateValue(Keys.CheekSquintRight, source.Cheek.RightSquint);                
+                proxy.AccumulateValue(Keys.CheekPuff, source.Cheek.Puff * mouthWeight);
+                proxy.AccumulateValue(Keys.CheekSquintLeft, source.Cheek.LeftSquint * mouthWeight);
+                proxy.AccumulateValue(Keys.CheekSquintRight, source.Cheek.RightSquint * mouthWeight);                
             }
             else if (writeExcludedKeys)
             {
@@ -278,43 +283,44 @@ namespace Baku.VMagicMirror.ExternalTracker
         
         private void AccumulateWithFlip(
             VRMBlendShapeProxy proxy,  IFaceTrackSource source,
-            bool nonMouthPart, bool mouthPart, bool writeExcludedKeys
+            bool nonMouthPart, bool mouthPart, bool writeExcludedKeys,
+            float mouthWeight, float nonMouthWeight
         )
         {
             if (nonMouthPart)
             {
                 //目
                 var eye = source.Eye;
-                proxy.AccumulateValue(Keys.EyeBlinkRight, eye.LeftBlink);
-                proxy.AccumulateValue(Keys.EyeLookUpRight, eye.LeftLookUp);
-                proxy.AccumulateValue(Keys.EyeLookDownRight, eye.LeftLookDown);
-                proxy.AccumulateValue(Keys.EyeLookInRight, eye.LeftLookIn);
-                proxy.AccumulateValue(Keys.EyeLookOutRight, eye.LeftLookOut);
-                proxy.AccumulateValue(Keys.EyeWideRight, eye.LeftWide);
-                proxy.AccumulateValue(Keys.EyeSquintRight, eye.LeftSquint);
+                proxy.AccumulateValue(Keys.EyeBlinkRight, eye.LeftBlink * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookUpRight, eye.LeftLookUp * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookDownRight, eye.LeftLookDown * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookInRight, eye.LeftLookIn * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookOutRight, eye.LeftLookOut * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeWideRight, eye.LeftWide * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeSquintRight, eye.LeftSquint * nonMouthWeight);
 
-                proxy.AccumulateValue(Keys.EyeBlinkLeft, eye.RightBlink);
-                proxy.AccumulateValue(Keys.EyeLookUpLeft, eye.RightLookUp);
-                proxy.AccumulateValue(Keys.EyeLookDownLeft, eye.RightLookDown);
-                proxy.AccumulateValue(Keys.EyeLookInLeft, eye.RightLookIn);
-                proxy.AccumulateValue(Keys.EyeLookOutLeft, eye.RightLookOut);
-                proxy.AccumulateValue(Keys.EyeWideLeft, eye.RightWide);
-                proxy.AccumulateValue(Keys.EyeSquintLeft, eye.RightSquint);
+                proxy.AccumulateValue(Keys.EyeBlinkLeft, eye.RightBlink * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookUpLeft, eye.RightLookUp * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookDownLeft, eye.RightLookDown * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookInLeft, eye.RightLookIn * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeLookOutLeft, eye.RightLookOut * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeWideLeft, eye.RightWide * nonMouthWeight);
+                proxy.AccumulateValue(Keys.EyeSquintLeft, eye.RightSquint * nonMouthWeight);
 
                 //NOTE: 瞬き時の目下げ処理に使うためにセット
                 _faceControlConfig.AlternativeBlinkR = eye.LeftBlink;
                 _faceControlConfig.AlternativeBlinkL = eye.RightBlink;
 
                 //鼻
-                proxy.AccumulateValue(Keys.NoseSneerRight, source.Nose.LeftSneer);
-                proxy.AccumulateValue(Keys.NoseSneerLeft, source.Nose.RightSneer);
+                proxy.AccumulateValue(Keys.NoseSneerRight, source.Nose.LeftSneer * nonMouthWeight);
+                proxy.AccumulateValue(Keys.NoseSneerLeft, source.Nose.RightSneer * nonMouthWeight);
 
                 //まゆげ
-                proxy.AccumulateValue(Keys.BrowDownRight, source.Brow.LeftDown);
-                proxy.AccumulateValue(Keys.BrowOuterUpRight, source.Brow.LeftOuterUp);
-                proxy.AccumulateValue(Keys.BrowDownLeft, source.Brow.RightDown);
-                proxy.AccumulateValue(Keys.BrowOuterUpLeft, source.Brow.RightOuterUp);
-                proxy.AccumulateValue(Keys.BrowInnerUp, source.Brow.InnerUp);
+                proxy.AccumulateValue(Keys.BrowDownRight, source.Brow.LeftDown * nonMouthWeight);
+                proxy.AccumulateValue(Keys.BrowOuterUpRight, source.Brow.LeftOuterUp * nonMouthWeight);
+                proxy.AccumulateValue(Keys.BrowDownLeft, source.Brow.RightDown * nonMouthWeight);
+                proxy.AccumulateValue(Keys.BrowOuterUpLeft, source.Brow.RightOuterUp * nonMouthWeight);
+                proxy.AccumulateValue(Keys.BrowInnerUp, source.Brow.InnerUp * nonMouthWeight);
             }
             else if (writeExcludedKeys)
             {
@@ -355,45 +361,45 @@ namespace Baku.VMagicMirror.ExternalTracker
             {
                 //口(多い)
                 var mouth = source.Mouth;
-                proxy.AccumulateValue(Keys.MouthRight, mouth.Left);
-                proxy.AccumulateValue(Keys.MouthSmileRight, mouth.LeftSmile);
-                proxy.AccumulateValue(Keys.MouthFrownRight, mouth.LeftFrown);
-                proxy.AccumulateValue(Keys.MouthPressRight, mouth.LeftPress);
-                proxy.AccumulateValue(Keys.MouthUpperUpRight, mouth.LeftUpperUp);
-                proxy.AccumulateValue(Keys.MouthLowerDownRight, mouth.LeftLowerDown);
-                proxy.AccumulateValue(Keys.MouthStretchRight, mouth.LeftStretch);
-                proxy.AccumulateValue(Keys.MouthDimpleRight, mouth.LeftDimple);
+                proxy.AccumulateValue(Keys.MouthRight, mouth.Left * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthSmileRight, mouth.LeftSmile * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthFrownRight, mouth.LeftFrown * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthPressRight, mouth.LeftPress * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthUpperUpRight, mouth.LeftUpperUp * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthLowerDownRight, mouth.LeftLowerDown * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthStretchRight, mouth.LeftStretch * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthDimpleRight, mouth.LeftDimple * mouthWeight);
 
-                proxy.AccumulateValue(Keys.MouthLeft, mouth.Right);
-                proxy.AccumulateValue(Keys.MouthSmileLeft, mouth.RightSmile);
-                proxy.AccumulateValue(Keys.MouthFrownLeft, mouth.RightFrown);
-                proxy.AccumulateValue(Keys.MouthPressLeft, mouth.RightPress);
-                proxy.AccumulateValue(Keys.MouthUpperUpLeft, mouth.RightUpperUp);
-                proxy.AccumulateValue(Keys.MouthLowerDownLeft, mouth.RightLowerDown);
-                proxy.AccumulateValue(Keys.MouthStretchLeft, mouth.RightStretch);
-                proxy.AccumulateValue(Keys.MouthDimpleLeft, mouth.RightDimple);
+                proxy.AccumulateValue(Keys.MouthLeft, mouth.Right * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthSmileLeft, mouth.RightSmile * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthFrownLeft, mouth.RightFrown * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthPressLeft, mouth.RightPress * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthUpperUpLeft, mouth.RightUpperUp * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthLowerDownLeft, mouth.RightLowerDown * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthStretchLeft, mouth.RightStretch * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthDimpleLeft, mouth.RightDimple * mouthWeight);
 
-                proxy.AccumulateValue(Keys.MouthClose, mouth.Close);
-                proxy.AccumulateValue(Keys.MouthFunnel, mouth.Funnel);
-                proxy.AccumulateValue(Keys.MouthPucker, mouth.Pucker);
-                proxy.AccumulateValue(Keys.MouthShrugUpper, mouth.ShrugUpper);
-                proxy.AccumulateValue(Keys.MouthShrugLower, mouth.ShrugLower);
-                proxy.AccumulateValue(Keys.MouthRollUpper, mouth.RollUpper);
-                proxy.AccumulateValue(Keys.MouthRollLower, mouth.RollLower);
+                proxy.AccumulateValue(Keys.MouthClose, mouth.Close * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthFunnel, mouth.Funnel * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthPucker, mouth.Pucker * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthShrugUpper, mouth.ShrugUpper * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthShrugLower, mouth.ShrugLower * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthRollUpper, mouth.RollUpper * mouthWeight);
+                proxy.AccumulateValue(Keys.MouthRollLower, mouth.RollLower * mouthWeight);
 
                 //あご
-                proxy.AccumulateValue(Keys.JawOpen, source.Jaw.Open);
-                proxy.AccumulateValue(Keys.JawForward, source.Jaw.Forward);
-                proxy.AccumulateValue(Keys.JawRight, source.Jaw.Left);
-                proxy.AccumulateValue(Keys.JawLeft, source.Jaw.Right);
+                proxy.AccumulateValue(Keys.JawOpen, source.Jaw.Open * mouthWeight);
+                proxy.AccumulateValue(Keys.JawForward, source.Jaw.Forward * mouthWeight);
+                proxy.AccumulateValue(Keys.JawRight, source.Jaw.Left * mouthWeight);
+                proxy.AccumulateValue(Keys.JawLeft, source.Jaw.Right * mouthWeight);
 
                 //舌
-                proxy.AccumulateValue(Keys.TongueOut, source.Tongue.TongueOut);
+                proxy.AccumulateValue(Keys.TongueOut, source.Tongue.TongueOut * mouthWeight);
 
                 //ほお
-                proxy.AccumulateValue(Keys.CheekPuff, source.Cheek.Puff);
-                proxy.AccumulateValue(Keys.CheekSquintRight, source.Cheek.LeftSquint);
-                proxy.AccumulateValue(Keys.CheekSquintLeft, source.Cheek.RightSquint);                
+                proxy.AccumulateValue(Keys.CheekPuff, source.Cheek.Puff * mouthWeight);
+                proxy.AccumulateValue(Keys.CheekSquintRight, source.Cheek.LeftSquint * mouthWeight);
+                proxy.AccumulateValue(Keys.CheekSquintLeft, source.Cheek.RightSquint * mouthWeight);                
             }
             else if (writeExcludedKeys)
             {

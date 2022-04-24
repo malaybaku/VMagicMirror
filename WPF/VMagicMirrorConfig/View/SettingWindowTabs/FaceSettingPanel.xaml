@@ -393,6 +393,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -400,28 +401,38 @@
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0"
+                        <CheckBox Grid.Row="0" Grid.Column="0" 
+                                  Grid.ColumnSpan="2"
+                                  Margin="0,5"
+                                  IsChecked="{Binding DisableBlendShapeInterpolate.Value}"
+                                  >
+                            <CheckBox.Content>
+                                <TextBlock Text="{DynamicResource Motion_Face_DisableBlendShapeInterpolate}"/>
+                            </CheckBox.Content>
+                        </CheckBox>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0"
                                     Text="{DynamicResource Motion_Face_DefaultFun}"/>
-                        <Slider Grid.Row="0" Grid.Column="1"
+                        <Slider Grid.Row="1" Grid.Column="1"
                                 x:Name="sliderFaceDefaultFun"
                                 Minimum="0"
                                 Maximum="100"
                                 Value="{Binding FaceDefaultFun.Value, Mode=TwoWay}"
                                 />
-                        <TextBox Grid.Row="0" Grid.Column="2"
+                        <TextBox Grid.Row="1" Grid.Column="2"
                                  Text="{Binding Value, ElementName=sliderFaceDefaultFun}"
                                  />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0"
+                        <TextBlock Grid.Row="2" Grid.Column="0"
                                    Text="{DynamicResource Motion_Face_NeutralClip}"
                                    />
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                                    Margin="15,5,15,10"
                                    Text="{DynamicResource Motion_Face_NeutralClip_Help}"
                                    TextWrapping="Wrap"
                                    />
-                        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                        <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                                   HorizontalAlignment="Stretch"
                                   Margin="5"
                                   ItemsSource="{Binding BlendShapeNames}"
@@ -442,16 +453,16 @@
                         </ComboBox>
 
 
-                        <TextBlock Grid.Row="3" Grid.Column="0"
+                        <TextBlock Grid.Row="4" Grid.Column="0"
                                    Text="{DynamicResource Motion_Face_OffsetClip}"
                                    />
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
+                        <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3"
                                    Margin="15,5"
                                    Text="{DynamicResource Motion_Face_OffsetClip_Help}"
                                    TextWrapping="Wrap"
                                      />
-                        <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                        <ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
                                   HorizontalAlignment="Stretch"
                                   Margin="5"
                                   ItemsSource="{Binding BlendShapeNames}"

@@ -3,9 +3,30 @@ using UnityEngine;
 using Zenject;
 using VRM;
 using Baku.VMagicMirror.ExternalTracker;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
+    public readonly struct FaceSwitchKeyApplyContent
+    {
+        private FaceSwitchKeyApplyContent(bool hasValue, bool keepLipSync, BlendShapeKey key)
+        {
+            HasValue = hasValue;
+            KeepLipSync = keepLipSync;
+            Key = key;
+        }
+
+        public static FaceSwitchKeyApplyContent Empty() 
+            => new FaceSwitchKeyApplyContent(false, false, default);
+
+        public static FaceSwitchKeyApplyContent Create(BlendShapeKey key, bool keepLipSync)
+            => new FaceSwitchKeyApplyContent(true, keepLipSync, key);
+        
+        public bool HasValue { get; }
+        public bool KeepLipSync { get; }
+        public BlendShapeKey Key { get; }
+    }
+        
     public class ExternalTrackerFaceSwitchApplier : MonoBehaviour
     {
         private bool _hasModel = false;
@@ -13,10 +34,13 @@ namespace Baku.VMagicMirror
         private ExternalTrackerDataSource _externalTracker;
         private EyeBonePostProcess _eyeBoneResetter;
 
-        //NOTE: 毎回Keyを生成するとGCAlloc警察に怒られるので、回数が減るように書いてます
         private string _latestClipName = "";
-        private BlendShapeKey _latestKey = default;
-        
+
+        private readonly ReactiveProperty<FaceSwitchKeyApplyContent> _currentValue 
+            = new ReactiveProperty<FaceSwitchKeyApplyContent>(FaceSwitchKeyApplyContent.Empty());
+        public IReadOnlyReactiveProperty<FaceSwitchKeyApplyContent> CurrentValue => _currentValue;
+
+
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
@@ -37,34 +61,51 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
+                _currentValue.Value = FaceSwitchKeyApplyContent.Empty();
+                _latestClipName = "";
             };
         }
+        
+        //public bool HasClipToApply => !string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName);
+        public bool KeepLipSync => _currentValue.Value.KeepLipSync;
+        public bool HasClipToApply => _currentValue.Value.HasValue;
 
-        public bool HasClipToApply => !string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName);
-        public bool KeepLipSync => _externalTracker.KeepLipSyncForFaceSwitch;
-
-        public void Accumulate(VRMBlendShapeProxy proxy)
+        public void UpdateCurrentValue()
         {
-            if (!_hasModel ||
-                string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName) || 
-                _config.WordToMotionExpressionActive
-            )
+            //NOTE: FaceSwitchClipNameはnullにはならないという前提で実装している
+            if (!_hasModel || _latestClipName == _externalTracker.FaceSwitchClipName)
             {
                 return;
             }
-            
-            if (_latestClipName != _externalTracker.FaceSwitchClipName)
+
+            if (string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName))
             {
-                _latestKey = CreateKey(_externalTracker.FaceSwitchClipName);
+                _currentValue.Value = FaceSwitchKeyApplyContent.Empty();
+                _latestClipName = "";
+            }
+            else
+            {
+                var key = CreateKey(_externalTracker.FaceSwitchClipName);
+                _currentValue.Value = FaceSwitchKeyApplyContent.Create(key, _externalTracker.KeepLipSyncForFaceSwitch);
                 _latestClipName = _externalTracker.FaceSwitchClipName;
+            }
+        }
+
+        public void Accumulate(VRMBlendShapeProxy proxy)
+        {
+            //NOTE:
+            //3つ目の条件について、表情間の補間処理中はこのクラスではないクラスがAccumulateを代行するので、
+            //このクラスはWtMが有効なら表情は適用しないでOK
+            if (!_hasModel || !_currentValue.HasValue || _config.WordToMotionExpressionActive)
+            {
+                return;
             }
 
             //ターゲットのキーだけいじり、他のクリップ状態については呼び出し元に責任を持ってもらう
-            proxy.AccumulateValue(_latestKey, 1.0f);
+            proxy.AccumulateValue(_currentValue.Value.Key, 1f);
             //表情を適用した = 目ボーンは正面向きになってほしい
             _eyeBoneResetter.ReserveReset = true;
         }
-        
 
         private static BlendShapeKey CreateKey(string name) => 
             _presets.ContainsKey(name)

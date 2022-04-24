@@ -96,7 +96,7 @@ namespace Baku.VMagicMirror
                     _hasWordToMotionOutput.Value = v.HasValue;
                     if (v.HasValue)
                     {
-                        SetWordToMotion(v.Keys, v.KeepLipSync);
+                        SetWordToMotion(v.Keys, v.KeepLipSync, v.IsPreview);
                     }
                 })
                 .AddTo(this);
@@ -198,7 +198,7 @@ namespace Baku.VMagicMirror
             _faceAppliedCount = 0;
         }
 
-        private void SetWordToMotion(List<(BlendShapeKey, float)> blendShapes, bool keepLipSync)
+        private void SetWordToMotion(List<(BlendShapeKey, float)> blendShapes, bool keepLipSync, bool isPreview)
         {
             _toState.CopyTo(_fromState);
             
@@ -207,7 +207,8 @@ namespace Baku.VMagicMirror
             _toState.Keys.Clear();
             _toState.Keys.AddRange(blendShapes);
             _toState.KeepLipSync = keepLipSync;
-            _toState.IsBinary = _hasModel && blendShapes
+            //NOTE: プレビュー表示の場合、補間は考えないでOK
+            _toState.IsBinary = _hasModel && (isPreview || blendShapes
                 .Any(pair =>
                 {
                     var (key, value) = pair;
@@ -217,7 +218,7 @@ namespace Baku.VMagicMirror
                     }
                     var clip = _blendShapeAvatar.GetClip(key);
                     return (clip != null) && clip.IsBinary;
-                });
+                }));
 
             _faceAppliedCount = 0;
         }

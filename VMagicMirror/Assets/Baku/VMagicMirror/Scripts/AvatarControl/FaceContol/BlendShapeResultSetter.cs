@@ -221,7 +221,7 @@ namespace Baku.VMagicMirror
             lipSync.Accumulate(_blendShape, blendShapeInterpolator.MouthWeight);
             
             neutralClipSettings.ApplyNeutralClip(_blendShape, blendShapeInterpolator.NonMouthWeight);
-            neutralClipSettings.ApplyOffsetClip(_blendShape, blendShapeInterpolator.MouthWeight);
+            neutralClipSettings.ApplyOffsetClip(_blendShape, blendShapeInterpolator.NonMouthWeight);
         }
     }
 }

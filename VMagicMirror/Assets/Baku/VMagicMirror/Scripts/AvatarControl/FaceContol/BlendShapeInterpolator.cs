@@ -14,7 +14,11 @@ namespace Baku.VMagicMirror
     public class BlendShapeInterpolator : MonoBehaviour
     {
         private const int FaceApplyCountMax = 8;
-        
+
+        private const int StatePriorityNone = 0;
+        private const int StatePriorityFaceSwitch = 1;
+        private const int StatePriorityWordToMotion = 2;
+
         //補間する場合のフレーム単位で考慮するウェイト。メンドいのでdeltaTimeには依存させない。
         //理想的には0.1secで表情が切り替わる
         private static readonly float[] WeightCurve = new float[]
@@ -69,6 +73,9 @@ namespace Baku.VMagicMirror
         //NOTE: 何も適用してない状態はIsEmpty == trueになることで表現される
         private readonly State _fromState = new State();
         private readonly State _toState = new State();
+        //WtMが適用中にFaceSwitchの有効な情報が来た場合、ここに一時的に入れておき、適用待ちの状態として扱う
+        //FaceSwitchが無効になると、適用待ちの状態であってもリセットされる
+        private readonly State _lowPriorFaceSwitchState = new State();
         
         //WtMかFace Switchが適用されると0からプラスの値に推移していく。
         //30fpsの場合、1フレームごとに2加算され、最大値は6。
@@ -87,6 +94,11 @@ namespace Baku.VMagicMirror
                     {
                         SetFaceSwitch(v.Key, v.KeepLipSync);
                     }
+                    else
+                    {
+                        //順番待ちのFaceSwitchがあるときだけ意味のある呼び出しなので、普段は冗長
+                        _lowPriorFaceSwitchState.OverwriteToEmpty();
+                    }
                 })
                 .AddTo(this);
             
@@ -97,6 +109,11 @@ namespace Baku.VMagicMirror
                     if (v.HasValue)
                     {
                         SetWordToMotion(v.Keys, v.KeepLipSync, v.IsPreview);
+                    }
+                    else if (!_lowPriorFaceSwitchState.IsEmpty)
+                    {
+                        //WtMが終わった瞬間に有効なFaceSwitchがある→カラに戻す代わり、そっちを適用
+                        SetLowPriorFaceSwitchToActive();
                     }
                 })
                 .AddTo(this);
@@ -186,16 +203,27 @@ namespace Baku.VMagicMirror
 
         private void SetFaceSwitch(BlendShapeKey key, bool keepLipSync)
         {
+            //NOTE: WtMが適用されている場合、優先度が低いので適用しない
+            if (_toState.Priority > StatePriorityFaceSwitch)
+            {
+                Write(_lowPriorFaceSwitchState, key, keepLipSync);
+                return;
+            }
+            
             _toState.CopyTo(_fromState);
-            
-            _toState.IsEmpty = false;
-            _toState.Weight = 0f;
-            _toState.Keys.Clear();
-            _toState.Keys.Add((key, 1f));
-            _toState.KeepLipSync = keepLipSync;
-            _toState.IsBinary = _hasModel && _blendShapeAvatar.GetClip(key)?.IsBinary == true;
-            
+            Write(_toState, key, keepLipSync);
             _faceAppliedCount = 0;
+
+            void Write(State target, BlendShapeKey bsKey, bool bsKeepLipSync)
+            {
+                target.IsEmpty = false;
+                target.Weight = 0f;
+                target.Priority = StatePriorityFaceSwitch;
+                target.Keys.Clear();
+                target.Keys.Add((bsKey, 1f));
+                target.KeepLipSync = bsKeepLipSync;
+                target.IsBinary = _hasModel && _blendShapeAvatar.GetClip(bsKey)?.IsBinary == true;
+            }
         }
 
         private void SetWordToMotion(List<(BlendShapeKey, float)> blendShapes, bool keepLipSync, bool isPreview)
@@ -204,6 +232,7 @@ namespace Baku.VMagicMirror
             
             _toState.IsEmpty = false;
             _toState.Weight = 0f;
+            _toState.Priority = StatePriorityWordToMotion;
             _toState.Keys.Clear();
             _toState.Keys.AddRange(blendShapes);
             _toState.KeepLipSync = keepLipSync;
@@ -220,6 +249,16 @@ namespace Baku.VMagicMirror
                     return (clip != null) && clip.IsBinary;
                 }));
 
+            _faceAppliedCount = 0;
+        }
+
+        private void SetLowPriorFaceSwitchToActive()
+        {
+            _toState.CopyTo(_fromState);
+            //適用待ちの値が書き込み済みなのでそのまま使う
+            _lowPriorFaceSwitchState.CopyTo(_toState);
+            _lowPriorFaceSwitchState.OverwriteToEmpty();
+            _toState.Weight = 0f;
             _faceAppliedCount = 0;
         }
 
@@ -249,6 +288,7 @@ namespace Baku.VMagicMirror
             public bool KeepLipSync { get; set; }
             public bool IsBinary { get; set; }
             public float Weight { get; set; }
+            public int Priority { get; set; }
 
             //このステートのときにMouth/それ以外が最終的にWeightいくらで動いてほしいか
             public float MouthWeight => IsEmpty || KeepLipSync ? 1f : 0f;
@@ -262,6 +302,7 @@ namespace Baku.VMagicMirror
                 other.KeepLipSync = KeepLipSync;
                 other.IsBinary = IsBinary;
                 other.Weight = Weight;
+                other.Priority = Priority;
             }
 
             public void OverwriteToEmpty()
@@ -270,6 +311,7 @@ namespace Baku.VMagicMirror
                 Keys.Clear();
                 KeepLipSync = false;
                 IsBinary = false;
+                Priority = StatePriorityNone;
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
@@ -53,9 +54,9 @@ namespace Baku.VMagicMirror
         private bool _hasDiff;
 
         private readonly List<(BlendShapeKey, float)> _currentValueSource = new List<(BlendShapeKey, float)>(8);
-        private readonly ReactiveProperty<WordToMotionBlendShapeApplyContent> _currentValue
-            = new ReactiveProperty<WordToMotionBlendShapeApplyContent>(WordToMotionBlendShapeApplyContent.Empty);
-        public IReadOnlyReactiveProperty<WordToMotionBlendShapeApplyContent> CurrentValue => _currentValue;
+        private readonly Subject<WordToMotionBlendShapeApplyContent> _currentValue
+            = new Subject<WordToMotionBlendShapeApplyContent>();
+        public IObservable<WordToMotionBlendShapeApplyContent> CurrentValue => _currentValue;
         
         [Inject]
         public void Initialize(EyeBonePostProcess eyeBoneResetter)
@@ -87,6 +88,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            _hasDiff = false;
             _currentValueSource.Clear();
             foreach (var pair in _blendShape)
             {
@@ -95,11 +97,11 @@ namespace Baku.VMagicMirror
 
             if (_currentValueSource.Count > 0)
             {
-                _currentValue.Value = WordToMotionBlendShapeApplyContent.Create(_currentValueSource, KeepLipSync);
+                _currentValue.OnNext(WordToMotionBlendShapeApplyContent.Create(_currentValueSource, KeepLipSync));
             }
             else
             {
-                _currentValue.Value = WordToMotionBlendShapeApplyContent.Empty;
+                _currentValue.OnNext(WordToMotionBlendShapeApplyContent.Empty);
             }
         }
 

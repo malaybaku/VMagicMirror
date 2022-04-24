@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class BlendShapeInterpolator : MonoBehaviour
     {
-        private const int FaceApplyCountMax = 6;
+        private const int FaceApplyCountMax = 8;
         
         //補間する場合のフレーム単位で考慮するウェイト。メンドいのでdeltaTimeには依存させない。
         //理想的には0.1secで表情が切り替わる
@@ -21,16 +21,21 @@ namespace Baku.VMagicMirror
         {
             0f,
             0.1f,
+            0.1f,
             0.2f,
             0.5f,
             0.8f,
+            0.9f,
             0.9f,
             1f,
         };
         
         [Inject]
-        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable)
+        public void Initialize(
+            IMessageReceiver receiver, IVRMLoadable vrmLoadable, EyeBonePostProcess eyeBonePostProcess)
         {
+            _eyeBonePostProcess = eyeBonePostProcess;
+            
             receiver.AssignCommandHandler(
                 VmmCommands.DisableBlendShapeInterpolate,
                 command => _interpolateBlendShapeWeight = !command.ToBoolean());
@@ -50,6 +55,7 @@ namespace Baku.VMagicMirror
 
         private bool _hasModel;
         private BlendShapeAvatar _blendShapeAvatar;
+        private EyeBonePostProcess _eyeBonePostProcess;
 
         private bool _interpolateBlendShapeWeight = true;
         
@@ -65,7 +71,7 @@ namespace Baku.VMagicMirror
         
         //WtMかFace Switchが適用されると0からプラスの値に推移していく。
         //30fpsの場合、1フレームごとに2加算され、最大値は6。
-        private int _faceAppliedCount = 0;
+        private int _faceAppliedCount;
 
         private readonly ReactiveProperty<bool> _hasWordToMotionOutput = new ReactiveProperty<bool>(false);
         private readonly ReactiveProperty<bool> _hasFaceSwitchOutput = new ReactiveProperty<bool>(false);
@@ -132,7 +138,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //表情が適用され、補間が終了したので従来処理でもよくなったケース: 実態に沿うようにする
+            //表情が適用され、補間が終了した: 実態に沿うようにして終わり
             if (!_toState.IsEmpty && _faceAppliedCount >= FaceApplyCountMax)
             {
                 NeedToInterpolate = false;
@@ -141,7 +147,17 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            //上記どちらでもない: 補間が要るはず
+            //遷移元か遷移先がIsBinary: ただちに遷移が終わったものとして扱う
+            if (_toState.IsBinary || _fromState.IsBinary)
+            {
+                _faceAppliedCount = FaceApplyCountMax;
+                NeedToInterpolate = false;
+                NonMouthWeight = 0f;
+                MouthWeight = _toState.KeepLipSync ? 1f : 0f;
+                return;
+            }
+            
+            //上記どれでもない: 補間が必要
             NeedToInterpolate = true;
             
             var weight = WeightCurve[_faceAppliedCount];
@@ -171,6 +187,9 @@ namespace Baku.VMagicMirror
             {
                 proxy.AccumulateValue(item.Item1, item.Item2 * _toState.Weight);
             }
+
+            //WtM / Face Switchが効いているときは目ボーンをデフォルト位置に引っ張り戻す
+            _eyeBonePostProcess.ReserveWeight = NonMouthWeight;
         }
 
         private void SetFaceSwitch(BlendShapeKey key, bool keepLipSync)

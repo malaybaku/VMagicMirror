@@ -12,7 +12,10 @@ namespace Baku.VMagicMirror
     public class EyeBonePostProcess : MonoBehaviour
     {
         public float Scale { get; set; } = 1.0f;
+        /// <summary> 目を中央に固定したい場合、毎フレームtrueに設定する </summary>
         public bool ReserveReset { get; set; }
+        /// <summary> 目の移動ウェイトを小さくしたい場合、毎フレーム指定する </summary>
+        public float ReserveWeight { get; set; }
 
         private bool _hasEye = false;
         private Transform _leftEye = null;
@@ -54,14 +57,13 @@ namespace Baku.VMagicMirror
             if (_hasEye && (Scale < 0.995 || Scale > 1.005))
             {
                 _leftEye.localRotation.ToAngleAxis(out var leftAngle, out var leftAxis);
-                //範囲を[-180, 180]に保証する: 保証しないと角度の掛け算が成り立たないので
-                leftAngle = Mathf.Repeat(leftAngle + 180f, 360f) - 180f;
+                leftAngle = MathUtil.ClampAngle(leftAngle);
                 //絞った範囲でスケーリングしてから入れ直す
                 _leftEye.localRotation = Quaternion.AngleAxis(leftAngle * Scale, leftAxis);
                 
                 //leftEyeと同じ
                 _rightEye.localRotation.ToAngleAxis(out var rightAngle, out var rightAxis);
-                rightAngle = Mathf.Repeat(rightAngle + 180f, 360f) - 180f;
+                rightAngle = MathUtil.ClampAngle(rightAngle);
                 _rightEye.localRotation = Quaternion.AngleAxis(rightAngle * Scale, rightAxis);
             }
         }

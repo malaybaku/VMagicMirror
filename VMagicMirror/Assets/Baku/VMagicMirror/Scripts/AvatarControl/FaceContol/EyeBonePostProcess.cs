@@ -40,7 +40,8 @@ namespace Baku.VMagicMirror
         
         private void LateUpdate()
         {
-            //Face SwitchとかWord to Motionが指定されていれば、それを適用して終わり
+            //Face SwitchとかWord to Motionが指定されている: scale == 0に相当するので計算を省いて終了
+            //単にscale = 0として後半の計算に帰着しても良いが、まあ無駄が多いので…
             if (ReserveReset)
             {
                 if (_hasEye)
@@ -49,22 +50,27 @@ namespace Baku.VMagicMirror
                     _rightEye.localRotation = Quaternion.identity;
                 }
                 ReserveReset = false;
+                ReserveWeight = 1f;
                 return;
             }
 
             //それ以外の場合、回転量のスケーリングをしておく。
             //ただし、デフォルト設定時は何もしない。これはパフォーマンスと後方互換のカタさを両立するため
-            if (_hasEye && (Scale < 0.995 || Scale > 1.005))
+
+            var scale = Scale * ReserveWeight;
+            ReserveWeight = 1f;
+
+            if (_hasEye && (scale < 0.995 || scale > 1.005))
             {
                 _leftEye.localRotation.ToAngleAxis(out var leftAngle, out var leftAxis);
                 leftAngle = MathUtil.ClampAngle(leftAngle);
                 //絞った範囲でスケーリングしてから入れ直す
-                _leftEye.localRotation = Quaternion.AngleAxis(leftAngle * Scale, leftAxis);
+                _leftEye.localRotation = Quaternion.AngleAxis(leftAngle * scale, leftAxis);
                 
                 //leftEyeと同じ
                 _rightEye.localRotation.ToAngleAxis(out var rightAngle, out var rightAxis);
                 rightAngle = MathUtil.ClampAngle(rightAngle);
-                _rightEye.localRotation = Quaternion.AngleAxis(rightAngle * Scale, rightAxis);
+                _rightEye.localRotation = Quaternion.AngleAxis(rightAngle * scale, rightAxis);
             }
         }
     }

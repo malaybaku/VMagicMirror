@@ -106,7 +106,6 @@ namespace Baku.VMagicMirror
             //表情を適用した = 目ボーンは正面向きになってほしい
             _eyeBoneResetter.ReserveReset = true;
         }
-        
 
         private static BlendShapeKey CreateKey(string name) => 
             _presets.ContainsKey(name)

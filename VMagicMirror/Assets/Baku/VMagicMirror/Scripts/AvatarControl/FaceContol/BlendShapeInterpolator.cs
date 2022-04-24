@@ -135,7 +135,6 @@ namespace Baku.VMagicMirror
             //遷移元か遷移先がIsBinary: 補間を完全にスキップ
             if (_toState.IsBinary || _fromState.IsBinary)
             {
-                Debug.Log("Skip count since binary BS exist");
                 _faceAppliedCount = FaceApplyCountMax;
             }
 

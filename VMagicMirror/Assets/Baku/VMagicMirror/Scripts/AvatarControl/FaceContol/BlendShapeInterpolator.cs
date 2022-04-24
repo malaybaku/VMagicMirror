@@ -43,13 +43,14 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 _blendShapeAvatar = info.blendShape.BlendShapeAvatar;
+                //CheckBinaryClips(_blendShapeAvatar);
                 _hasModel = true;
             };
 
             vrmLoadable.VrmDisposing += () =>
             {
-                _blendShapeAvatar = null;
                 _hasModel = false;
+                _blendShapeAvatar = null;
             };
         }
 
@@ -126,34 +127,26 @@ namespace Baku.VMagicMirror
                 _faceAppliedCount = 0;
                 NonMouthWeight = 1f;
                 MouthWeight = 1f;
+                _toState.Weight = 1f;
+                _fromState.Weight = 0f;
                 return;
             }
 
-            //普段どおりの表情になって一定時間経った
-            if (_toState.IsEmpty && _faceAppliedCount >= FaceApplyCountMax)
-            {
-                NeedToInterpolate = false;
-                NonMouthWeight = 1f;
-                MouthWeight = 1f;
-                return;
-            }
-
-            //表情が適用され、補間が終了した: 実態に沿うようにして終わり
-            if (!_toState.IsEmpty && _faceAppliedCount >= FaceApplyCountMax)
-            {
-                NeedToInterpolate = false;
-                NonMouthWeight = 0f;
-                MouthWeight = _toState.KeepLipSync ? 1f : 0f;
-                return;
-            }
-            
-            //遷移元か遷移先がIsBinary: ただちに遷移が終わったものとして扱う
+            //遷移元か遷移先がIsBinary: 補間を完全にスキップ
             if (_toState.IsBinary || _fromState.IsBinary)
             {
+                Debug.Log("Skip count since binary BS exist");
                 _faceAppliedCount = FaceApplyCountMax;
+            }
+
+            //補間が終了済み: 実態に沿うようにして終わり
+            if (_faceAppliedCount >= FaceApplyCountMax)
+            {
                 NeedToInterpolate = false;
-                NonMouthWeight = 0f;
-                MouthWeight = _toState.KeepLipSync ? 1f : 0f;
+                NonMouthWeight = _toState.NonMouthWeight;
+                MouthWeight = _toState.MouthWeight;
+                _toState.Weight = 1f;
+                _fromState.Weight = 0f;
                 return;
             }
             
@@ -206,17 +199,26 @@ namespace Baku.VMagicMirror
             _faceAppliedCount = 0;
         }
 
-        private void SetWordToMotion(List<(BlendShapeKey, float)> blendshapes, bool keepLipSync)
+        private void SetWordToMotion(List<(BlendShapeKey, float)> blendShapes, bool keepLipSync)
         {
             _toState.CopyTo(_fromState);
             
             _toState.IsEmpty = false;
             _toState.Weight = 0f;
             _toState.Keys.Clear();
-            _toState.Keys.AddRange(blendshapes);
+            _toState.Keys.AddRange(blendShapes);
             _toState.KeepLipSync = keepLipSync;
-            _toState.IsBinary =
-                _hasModel && blendshapes.Any(b => _blendShapeAvatar.GetClip(b.Item1)?.IsBinary == true);
+            _toState.IsBinary = _hasModel && blendShapes
+                .Any(pair =>
+                {
+                    var (key, value) = pair;
+                    if (!(value > 0f))
+                    {
+                        return false;
+                    }
+                    var clip = _blendShapeAvatar.GetClip(key);
+                    return (clip != null) && clip.IsBinary;
+                });
 
             _faceAppliedCount = 0;
         }
@@ -228,6 +230,15 @@ namespace Baku.VMagicMirror
             _toState.OverwriteToEmpty();
             _toState.Weight = 0f;
             _faceAppliedCount = 0;
+        }
+
+        //DEBUG用: 読み込んだモデルでIsBinaryなBlendShapeを確認する
+        private void CheckBinaryClips(BlendShapeAvatar blendShapeAvatar)
+        {
+            foreach (var clip in blendShapeAvatar.Clips)
+            {
+                Debug.Log($"BlendShapeClip.Key={clip.Key}, IsBinary={clip.IsBinary}");
+            }
         }
         
         //NOTE: 「FaceSwitchもWtMも必要ない」という状態はIsEmpty == trueにすることで表現する

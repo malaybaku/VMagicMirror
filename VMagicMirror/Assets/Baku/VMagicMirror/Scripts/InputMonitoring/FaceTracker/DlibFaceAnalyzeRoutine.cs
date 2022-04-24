@@ -138,6 +138,7 @@ namespace Baku.VMagicMirror
             );
             
             _faceParts.Update(faceRect, landmarks, calibration, shouldCalibrate);
+            _faceParts.DisableHorizontalFlip = DisableHorizontalFlip;
         }
 
         public override void LerpToDefault(float lerpFactor) => _faceParts.LerpToDefault(lerpFactor);

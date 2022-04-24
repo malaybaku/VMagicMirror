@@ -18,7 +18,8 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class GlobalHookInputChecker : MonoBehaviour, IReleaseBeforeQuit, IKeyMouseEventSource
     {
-        public IObservable<string> PressedRawKeys { get; } = new Subject<string>();
+        public IObservable<string> RawKeyDown { get; } = new Subject<string>();
+        public IObservable<string> RawKeyUp { get; } = new Subject<string>();
         //NOTE: このクラスはKeyDown/KeyUpを発火させない(すでにダミー実装が差し込まれてしまってるため)
         public IObservable<string> KeyDown { get; } = new Subject<string>();
         public IObservable<string> KeyUp { get; } = new Subject<string>();        

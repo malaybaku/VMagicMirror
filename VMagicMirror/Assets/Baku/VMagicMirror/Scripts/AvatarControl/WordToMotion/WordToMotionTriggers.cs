@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror
                 }
             };
 
-            keyMouseEventSource.PressedRawKeys.Subscribe(keyName =>
+            keyMouseEventSource.RawKeyDown.Subscribe(keyName =>
             {
                 if (UseKeyboardWordTypingForWordToMotion)
                 {

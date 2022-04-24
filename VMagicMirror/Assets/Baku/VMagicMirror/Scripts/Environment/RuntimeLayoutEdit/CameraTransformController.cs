@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Windows.Forms;
+using UniRx;
+using UnityEngine;
+using Zenject;
 
 //コード元: http://esprog.hatenablog.com/entry/2016/03/20/033322
 namespace Baku.VMagicMirror
@@ -23,9 +26,56 @@ namespace Baku.VMagicMirror
         private float rotateSpeed = 0.3f;
 
         private Camera _cam;
-        private Vector3 preMousePos;
-        private Vector3 rotateCenterInThisAngleMove;
+        private Vector3 _preMousePos;
+        private Vector3 _rotateCenterInThisAngleMove;
 
+        //NOTE: ビルドではRawInputによる妨害があるため、Input.GetKeyDownはまともに動作しない
+        private bool _alt;
+        private bool _shift;
+        
+        //Input.GetKeyDownの値に似ているが、Update()の冒頭でtrueになり、Update()が終わる時点でfalseになる。trueの期間が短い
+        private bool _altDown;
+        private bool _shiftDown;
+        private bool _altDownHandled;
+        private bool _shiftDownHandled;
+
+        [Inject]
+        public void Inject(IKeyMouseEventSource keySource)
+        {
+            //NOTE: ここでSubscribeした内容が使われるのはビルドのみ
+            keySource.RawKeyDown
+                .Subscribe(key =>
+                {
+                    if (key == nameof(Keys.RMenu) || key == nameof(Keys.LMenu))
+                    {
+                        _alt = true;
+                    }
+                    else if (key == nameof(Keys.LShiftKey) || key == nameof(Keys.RShiftKey))
+                    {
+                        _shift = true;
+                    }
+                })
+                .AddTo(this);
+            
+            keySource.RawKeyUp
+                .Subscribe(key =>
+                {
+                    //NOTE: LAlt押す > RAlt押す > LAlt離す、みたいな手順をとると整合しなくなるが、これは許容する。
+                    //狙って押さなければ問題にならないし、両方とも離せばデフォルト状態には戻るため。
+                    if (key == nameof(Keys.RMenu) || key == nameof(Keys.LMenu))
+                    {
+                        _alt = false;
+                        _altDownHandled = false;
+                    }
+                    else if (key == nameof(Keys.LShiftKey) || key == nameof(Keys.RShiftKey))
+                    {
+                        _shift = false;
+                        _shiftDownHandled = false;
+                    }
+                })
+                .AddTo(this);
+        }
+        
         private void Start()
         {
             _cam = GetComponent<Camera>();
@@ -33,6 +83,17 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
+            if (_shift && !_shiftDownHandled)
+            {
+                _shiftDown = true;
+                _shiftDownHandled = true;
+            }
+            if (_alt && !_altDownHandled)
+            {
+                _altDown = true;
+                _altDownHandled = true;
+            }
+            
             float scrollWheel = Input.mouseScrollDelta.y * 0.1f;
             if (scrollWheel != 0.0f)
             {
@@ -43,12 +104,12 @@ namespace Baku.VMagicMirror
                Input.GetMouseButtonDown(RightMouseButton) ||
                Input.GetMouseButtonDown(MiddleMouseButton))
             {
-                preMousePos = Input.mousePosition;
+                _preMousePos = Input.mousePosition;
             }
 
             if (CheckRotateStart())
             {
-                rotateCenterInThisAngleMove = CheckRotateCenter(Input.mousePosition);
+                _rotateCenterInThisAngleMove = CheckRotateCenter(Input.mousePosition);
             }
 
             MouseDrag(Input.mousePosition);
@@ -59,7 +120,7 @@ namespace Baku.VMagicMirror
 
         private void MouseDrag(Vector3 mousePos)
         {
-            Vector3 diff = mousePos - preMousePos;
+            Vector3 diff = mousePos - _preMousePos;
             if (diff.magnitude < Vector3.kEpsilon)
             {
                 return;
@@ -73,11 +134,11 @@ namespace Baku.VMagicMirror
             {
                 CameraRotateAround(
                     new Vector2(-diff.y, diff.x) * rotateSpeed,
-                    rotateCenterInThisAngleMove
+                    _rotateCenterInThisAngleMove
                     );
             }
 
-            preMousePos = mousePos;
+            _preMousePos = mousePos;
         }
 
         private void CameraRotateAround(Vector2 angle, Vector3 rotateCenter)
@@ -124,18 +185,9 @@ namespace Baku.VMagicMirror
             {
                 return true;
             }
-
-            //Altと左クリックの順序に依存したくない、ということに注意
-            if (Input.GetMouseButtonDown(LeftMouseButton) && 
-                (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
-                )
-            {
-                return true;
-            }
-
-            if (Input.GetMouseButton(LeftMouseButton) &&
-                (Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt))
-               )
+            
+            if (Input.GetMouseButtonDown(LeftMouseButton) && GetAltKey() || 
+                Input.GetMouseButton(LeftMouseButton) && GetAltKeyDown())
             {
                 return true;
             }
@@ -145,17 +197,43 @@ namespace Baku.VMagicMirror
 
         private bool IsTranslating()
         {
-            //NOTE: Shift + 左クリックはマウスのないノートPC環境のための代替的なオプション
-            return Input.GetMouseButton(MiddleMouseButton) ||
-                   Input.GetMouseButton(LeftMouseButton) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+            // 2つ目はマウスのないノートPC環境のための代替的なオプション
+            return Input.GetMouseButton(MiddleMouseButton) || 
+                Input.GetMouseButton(LeftMouseButton) && GetShiftKey();
         }
         
         private bool IsRotating()
         {
-            //NOTE: Alt + 右クリックはマウスのないノートPC環境のための代替的なオプション
+            // 2つ目はマウスのないノートPC環境のための代替的なオプション
             return Input.GetMouseButton(RightMouseButton) ||
-                   Input.GetMouseButton(LeftMouseButton) &&
-                   (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
+                Input.GetMouseButton(LeftMouseButton) && GetAltKey();
+        }
+
+        private bool GetShiftKey()
+        {
+#if UNITY_EDITOR
+            return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+#else
+            return _shift;
+#endif
+        }
+        
+        private bool GetAltKey()
+        {
+#if UNITY_EDITOR
+            return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
+#else
+            return _alt;
+#endif
+        }
+
+        private bool GetAltKeyDown()
+        {
+#if UNITY_EDITOR
+            return Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt);
+#else
+            return _altDown;
+#endif
         }
     }
 }

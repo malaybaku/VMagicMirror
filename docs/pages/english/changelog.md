@@ -11,6 +11,16 @@ lang_prefix: /en/
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.4
+{: .doc-sec2 }
+
+2022/04/29
+
+* Change: Applied interpolation to facial expression by Word to Motion and Face Switch. This feature can be rolled back at setting window "face" tab > "BlendShape" settings.
+* Fix: Word to Motion could not display accessory in specific condition.
+* Fix: In free camera mode, left click based camera movement did not work correctly.
+* Fix: Other minor issues.
+
 #### v2.0.3
 {: .doc-sec2 }
 

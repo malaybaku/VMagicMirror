@@ -280,7 +280,7 @@ If the face tracking works correctly, please ignore this warning.
     <sys:String x:Key="Motion_Face_OffsetClip">Offset BlendShape</sys:String>
     <sys:String x:Key="Motion_Face_OffsetClip_Help" xml:space="preserve">* Offset BlendShape is always applied.
   Use it when the model has BlendShape which is to adjust body shape.</sys:String>
-    <sys:String x:Key="Motion_Face_DisableBlendShapeInterpolate">Disable BlendShape interpolation</sys:String>
+    <sys:String x:Key="Motion_Face_DisableBlendShapeInterpolate">Disable BlendShape Interpolation</sys:String>
     
 
     <!-- Layout Setting -->

@@ -12,3 +12,4 @@ sass:
 
 plugins:
   - jekyll-sitemap
+  - jekyll-algorlia

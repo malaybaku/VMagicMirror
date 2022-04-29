@@ -53,6 +53,8 @@
         public string FaceNeutralClip { get; set; } = "";
         public string FaceOffsetClip { get; set; } = "";
 
+        public bool DisableBlendShapeInterpolate { get; set; } = false;
+
         #endregion
 
         #region Eye
@@ -143,6 +145,7 @@
             FaceDefaultFun = 0;
             FaceNeutralClip = "";
             FaceOffsetClip = "";
+            DisableBlendShapeInterpolate = false;
         }
 
         public void ResetArmSetting()

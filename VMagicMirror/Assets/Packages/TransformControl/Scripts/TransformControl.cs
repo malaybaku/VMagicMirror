@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace mattatz.TransformControl
 {
@@ -74,7 +73,21 @@ namespace mattatz.TransformControl
             [TransformDirection.Z] = Vector3.forward,
         };
 
-        public TransformMode mode = TransformMode.Translate;
+        private TransformMode _mode = TransformMode.None;
+        public TransformMode mode
+        {
+            get => _mode;
+            set
+            {
+                //Noneに立ち下がった場合、AutoUpdateがfalseであっても無視してRendererをただちに隠す
+                if (_mode != TransformMode.None && value == TransformMode.None)
+                {
+                    gizmoRenderer.SetMode(TransformMode.None);
+                }
+                _mode = value;
+            }
+        }
+        
         public bool global;
         public bool useDistance;
         public float distance = 12f;

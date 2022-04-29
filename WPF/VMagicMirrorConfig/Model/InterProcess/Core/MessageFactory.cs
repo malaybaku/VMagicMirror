@@ -122,6 +122,7 @@ namespace Baku.VMagicMirrorConfig
         public Message FaceNeutralClip(string clipName) => WithArg(clipName);
         public Message FaceOffsetClip(string clipName) => WithArg(clipName);
 
+        public Message DisableBlendShapeInterpolate(bool enable) => WithArg(enable);
 
         /// <summary>
         /// Query.

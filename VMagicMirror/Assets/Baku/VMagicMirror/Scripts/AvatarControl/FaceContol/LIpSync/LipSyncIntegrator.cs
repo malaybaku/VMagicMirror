@@ -38,18 +38,18 @@ namespace Baku.VMagicMirror
             }
         }
         
-        public void Accumulate(VRMBlendShapeProxy proxy)
+        public void Accumulate(VRMBlendShapeProxy proxy, float weight = 1f)
         {
             //NOTE: マイクが無効な場合はanimMorphEasedTargetの出力がゼロになる、というのを想定した書き方でもあります
             var src = PreferExternalTrackerLipSync
                 ? externalTrackerLipSync.LipSyncSource
                 : animMorphEasedTarget.LipSyncSource;
 
-            proxy.AccumulateValue(_a, src.A);
-            proxy.AccumulateValue(_i, src.I);
-            proxy.AccumulateValue(_u, src.U);
-            proxy.AccumulateValue(_e, src.E);
-            proxy.AccumulateValue(_o, src.O);
+            proxy.AccumulateValue(_a, src.A * weight);
+            proxy.AccumulateValue(_i, src.I * weight);
+            proxy.AccumulateValue(_u, src.U * weight);
+            proxy.AccumulateValue(_e, src.E * weight);
+            proxy.AccumulateValue(_o, src.O * weight);
         }
     }
 }

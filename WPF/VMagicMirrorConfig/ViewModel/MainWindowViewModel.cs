@@ -86,6 +86,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             if (!_appQuitSetting.SkipAutoSaveAndRestart)
             {
                 _saveFileManager.SaveAsAutoSave();
+                LogOutput.Instance.Write("AutoSave Completed.");
             }
             _settingModel.Automation.Dispose();
             _messageIo.Dispose();

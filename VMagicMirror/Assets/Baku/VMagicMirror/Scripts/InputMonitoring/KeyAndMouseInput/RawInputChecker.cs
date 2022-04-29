@@ -21,8 +21,11 @@ namespace Baku.VMagicMirror
         
         private WindowProcedureHook _windowProcedureHook = null;
 
-        public IObservable<string> PressedRawKeys => _rawKeys;
-        private readonly Subject<string> _rawKeys = new Subject<string>();
+        public IObservable<string> RawKeyDown => _rawKeyDown;
+        private readonly Subject<string> _rawKeyDown = new Subject<string>();
+        
+        public IObservable<string> RawKeyUp => _rawKeyUp;
+        private readonly Subject<string> _rawKeyUp = new Subject<string>();
         
         public IObservable<string> KeyDown => _keyDown;
         private readonly Subject<string> _keyDown = new Subject<string>();
@@ -150,7 +153,7 @@ namespace Baku.VMagicMirror
                 else
                 {
                     var rawKey = ((Keys)keyCode).ToString();
-                    _rawKeys.OnNext(rawKey);
+                    _rawKeyDown.OnNext(rawKey);
                     
                     if (_randomizeKey)
                     {
@@ -166,8 +169,10 @@ namespace Baku.VMagicMirror
                 }
             }
             
-            while (_upKeys.TryDequeue(out int keyCode))
+            while (_upKeys.TryDequeue(out var keyCode))
             {
+                var rawKey = ((Keys)keyCode).ToString();
+                _rawKeyUp.OnNext(rawKey);
                 if (_randomizeKey)
                 {
                     //ランダム化されている場合、ともかく押したキーを順に離す、という挙動にして破綻しづらくする
@@ -179,7 +184,6 @@ namespace Baku.VMagicMirror
                 }
                 else
                 {
-                    var rawKey = ((Keys)keyCode).ToString();
                     _keyUp.OnNext(rawKey);
                 }
             }
@@ -339,7 +343,7 @@ namespace Baku.VMagicMirror
                 if (Input.GetKeyDown(_editorCheckTargetKeyCodes[i]))
                 {
                     string keyName = _editorCheckTargetKeyCodes[i].ToString();
-                    _rawKeys.OnNext(keyName);
+                    _rawKeyDown.OnNext(keyName);
 
                     if (_randomizeKey)
                     {
@@ -352,8 +356,9 @@ namespace Baku.VMagicMirror
                 if (Input.GetKeyUp(_editorCheckTargetKeyCodes[i]))
                 {
                     string keyName = _editorCheckTargetKeyCodes[i].ToString();
+                    _rawKeyUp.OnNext(keyName);
                     _keyUp.OnNext(keyName);
-                }      
+                }
             }
         }
         

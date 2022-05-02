@@ -118,3 +118,7 @@ sysinfo.txt
 /Bin/*
 /Installers/*
 /Releases/*
+
+# Ignore jekyll local development files
+docs/_site/
+docs/.jekyll-cache/

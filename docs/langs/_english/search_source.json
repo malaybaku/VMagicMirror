@@ -1,6 +1,6 @@
 ---
 layout: null
-permalink: '/api/en/search-source.json'
+permalink: '/en/api/search-source.json'
 ---
 [
   {% for page in site.english %} {% if page.title == "Search_source" %}{% continue %} {% endif %}

@@ -1,6 +1,6 @@
 ---
 layout: null
-permalink: '/api/ja/search-source.json'
+permalink: '/ja/api/search-source.json'
 ---
 [
   {% for page in site.japanese %} {% if page.title == "Search_source" %}{% continue %} {% endif %}

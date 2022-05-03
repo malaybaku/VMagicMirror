@@ -10,5 +10,14 @@ latest_update: 2022/03/30
 sass:
     style: compressed
 
+collections_dir: langs
+collections:
+  japanese:
+    output: true
+    permalink: /:path/
+  english:
+    output: true
+    permalink: /en/:path/
+
 plugins:
   - jekyll-sitemap

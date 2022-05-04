@@ -5,7 +5,7 @@ $(function () {
   });
   $('#search').on('keyup', function () {
 
-    const keyword = this.value.toLowerCase().trim;
+    const keyword = this.value.toLowerCase().trim();
 
     if (keyword.length > 0) {
       $('#search-result').show();

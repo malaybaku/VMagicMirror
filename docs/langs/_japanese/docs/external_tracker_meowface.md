@@ -4,7 +4,7 @@ title: MeowFaceとの連携
 permalink: /docs/external_tracker_meowface
 ---
 
-[English](../en/docs/external_tracker_meowface)
+[English](../../en/docs/external_tracker_meowface)
 
 # MeowFaceとの連携
 {: .no_toc }

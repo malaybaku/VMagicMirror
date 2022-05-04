@@ -4,7 +4,7 @@ title: Effects
 permalink: /docs/effects
 ---
 
-[English](../en/docs/effects)
+[English](../../en/docs/effects)
 
 # エフェクト
 

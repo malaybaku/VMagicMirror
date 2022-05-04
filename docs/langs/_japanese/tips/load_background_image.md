@@ -4,7 +4,7 @@ title: 背景画像をロードする
 permalink: /tips/load_background_image
 ---
 
-[English](../en/tips/load_background_image)
+[English](../../en/tips/load_background_image)
 
 # 背景画像をロードする
 

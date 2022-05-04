@@ -12,28 +12,28 @@ permalink: /tips
 
 基本的な使い方は[Get Started](./get_started)を、設定ウィンドウで出来ることの一覧は[Docs](./docs)を参照ください。
 
-[VRoid Hubのアバター利用について](./tips/use_vroid_hub)
+[VRoid Hubのアバター利用について](./use_vroid_hub)
 
-[配信にVMagicMirrorを使う](./tips/streaming)
+[配信にVMagicMirrorを使う](./streaming)
 
-[Web会議にVMagicMirrorで出席する](./tips/virtual_camera)
+[Web会議にVMagicMirrorで出席する](./virtual_camera)
 
-[プレゼンテーションに使う](./tips/presentation)
+[プレゼンテーションに使う](./presentation)
 
-[デスクトップマスコット化する](./tips/desktop_mascot)
+[デスクトップマスコット化する](./desktop_mascot)
 
-[前バージョンの設定を引き継ぐ](./tips/load_prev_setting)
+[前バージョンの設定を引き継ぐ](./load_prev_setting)
 
-[キーボードやタッチパッドの見た目を変更する](./tips/change_textures)
+[キーボードやタッチパッドの見た目を変更する](./change_textures)
 
-[背景画像をロードする](./tips/load_background_image)
+[背景画像をロードする](./load_background_image)
 
-[MacでVMagicMirrorを使う](./tips/use_on_mac)
+[MacでVMagicMirrorを使う](./use_on_mac)
 
-[(v1.7.0b以前)ハンドトラッキングの使用について](./tips/using_hand_tracking)
+[(v1.7.0b以前)ハンドトラッキングの使用について](./using_hand_tracking)
 
-[パーフェクトシンク](./tips/perfect_sync)
+[パーフェクトシンク](./perfect_sync)
 
-[カスタムモーションをVMagicMirrorで使う](./tips/use_custom_motion)
+[カスタムモーションをVMagicMirrorで使う](./use_custom_motion)
 
-[アクセサリ機能で使えるGLBファイルの入手方法](./tips/get_glb_data)
+[アクセサリ機能で使えるGLBファイルの入手方法](./get_glb_data)

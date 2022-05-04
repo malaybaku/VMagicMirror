@@ -4,7 +4,7 @@ title: Setting Files
 permalink: /docs/setting_files
 ---
 
-[English](../en/docs/setting_files)
+[English](../../en/docs/setting_files)
 
 # 設定ファイルの管理
 

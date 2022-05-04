@@ -4,7 +4,7 @@ title: Layout
 permalink: /docs/devices
 ---
 
-[English](../en/docs/devices)
+[English](../../en/docs/devices)
 
 # デバイス
 

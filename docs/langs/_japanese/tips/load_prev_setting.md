@@ -4,7 +4,7 @@ title: 前バージョンの設定を引き継ぐ
 permalink: /tips/load_prev_setting
 ---
 
-[English](../en/tips/load_prev_setting)
+[English](../../en/tips/load_prev_setting)
 
 # 前バージョン(v0.8.0以降)の設定を引き継ぐ
 

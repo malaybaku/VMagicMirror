@@ -4,7 +4,7 @@ title: Face
 permalink: /docs/face
 ---
 
-[English](../en/docs/face)
+[English](../../en/docs/face)
 
 # 顔・表情
 

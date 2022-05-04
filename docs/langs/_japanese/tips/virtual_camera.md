@@ -4,7 +4,7 @@ title: Web会議にVMagicMirrorで出席する
 permalink: /tips/virtual_camera
 ---
 
-[English](../en/tips/virtual_camera)
+[English](../../en/tips/virtual_camera)
 
 # Tips: Web会議にVMagicMirrorで出席する
 

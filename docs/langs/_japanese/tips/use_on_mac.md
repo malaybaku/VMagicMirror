@@ -4,7 +4,7 @@ title: MacでVMagicMirrorを使う
 permalink: /tips/use_on_mac
 ---
 
-[English](../en/tips/use_on_mac)
+[English](../../en/tips/use_on_mac)
 
 # MacでVMagicMirrorを使う
 

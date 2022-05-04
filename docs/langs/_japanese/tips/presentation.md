@@ -4,7 +4,7 @@ title: プレゼンテーション
 permalink: /tips/presentation
 ---
 
-[English](../en/tips/presentation)
+[English](../../en/tips/presentation)
 
 # Tips: プレゼンテーションにVMagicMirrorを使う
 

@@ -13,28 +13,28 @@ Here shows several tips about `VMagicMirror`, including advanced features withou
 
 Basic usage is in [Get Started](./get_started), and setting window detail is in [Docs](./docs).
 
-[Use VRoid Hub Avatar](./tips/use_vroid_hub)
+[Use VRoid Hub Avatar](./use_vroid_hub)
 
-[Use VMagicMirror for Streaming](./tips/streaming)
+[Use VMagicMirror for Streaming](./streaming)
 
-[Use VMagicMirror for Web Meeting](./tips/virtual_camera)
+[Use VMagicMirror for Web Meeting](./virtual_camera)
 
-[Use for Presentation](./tips/presentation)
+[Use for Presentation](./presentation)
 
-[Use as Desktop Mascot](./tips/desktop_mascot)
+[Use as Desktop Mascot](./desktop_mascot)
 
-[Load Previous Version Setting](./tips/load_prev_setting)
+[Load Previous Version Setting](./load_prev_setting)
 
-[Change Keyboard and Touchpad Appearance](./tips/change_textures)
+[Change Keyboard and Touchpad Appearance](./change_textures)
 
-[Load Background Image](./tips/load_background_image)
+[Load Background Image](./load_background_image)
 
-[Use VMagicMirror on Mac](./tips/use_on_mac)
+[Use VMagicMirror on Mac](./use_on_mac)
 
-[(v1.7.0b and older ver) Using Hand Tracking](./tips/using_hand_tracking)
+[(v1.7.0b and older ver) Using Hand Tracking](./using_hand_tracking)
 
-[Perfect Sync](./tips/perfect_sync)
+[Perfect Sync](./perfect_sync)
 
-[Use Custom Motion](./tips/use_custom_motion)
+[Use Custom Motion](./use_custom_motion)
 
-[How to get GLB Data for Accessory Feature](./tips/get_glb_data)
+[How to get GLB Data for Accessory Feature](./get_glb_data)

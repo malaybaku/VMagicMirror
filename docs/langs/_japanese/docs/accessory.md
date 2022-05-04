@@ -4,7 +4,7 @@ title: アクセサリー
 permalink: /docs/accessory
 ---
 
-[English](../en/docs/accessory)
+[English](../../en/docs/accessory)
 
 # アクセサリー
 

@@ -4,7 +4,7 @@ title: Layout
 permalink: /docs/layout
 ---
 
-[English](../en/docs/layout)
+[English](../../en/docs/layout)
 
 # レイアウト
 

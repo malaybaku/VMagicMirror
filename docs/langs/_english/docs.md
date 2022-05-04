@@ -25,14 +25,14 @@ Setting Window consists of 8 tabs.
 |----------------------------------+---------------------------------------------------------------|
 | Tab Name                         | Description                                                   |
 |:--------------------------------:|:--------------------------------------------------------------|
-| [Window](./docs/window)          | Control character window                                      |
-| [Face](./docs/face)              | Adjust facial motion setting except [External Tracker App](./docs/external_tracker).      |
-| [Motion](./docs/motion)          | Adjust character size related parameters and motion scale     |
-| [Layout](./docs/layout)          | Layout of camera and devices, and device based motion setting |
-| [Effects](./docs/effects)        | Light, shadow, bloom, and wind                                |
-| [Devices](./docs/devices)        | Connection settings for gamepad and MIDI controller          |
-| [Expressions](./docs/expressions)| Feature to move the character face and motion                 |
-| [Setting Files](./docs/setting_files) | Advanced features to manage setting files |
+| [Window](./window)          | Control character window                                      |
+| [Face](./face)              | Adjust facial motion setting except [External Tracker App](./external_tracker).      |
+| [Motion](./motion)          | Adjust character size related parameters and motion scale     |
+| [Layout](./layout)          | Layout of camera and devices, and device based motion setting |
+| [Effects](./effects)        | Light, shadow, bloom, and wind                                |
+| [Devices](./devices)        | Connection settings for gamepad and MIDI controller          |
+| [Expressions](./expressions)| Feature to move the character face and motion                 |
+| [Setting Files](./setting_files) | Advanced features to manage setting files |
 |==================================|===============================================================|
 
 
@@ -43,14 +43,14 @@ This feature supports external application to move avatar with high precision.
 
 Current version (v2.0.0) supports iOS app `iFacialMocap`.
 
-Please see the detail at [External Tracker App](./docs/external_tracker) page.
+Please see the detail at [External Tracker App](./external_tracker) page.
 
 #### Accessory
 {: .doc-sec2 }
 
 v2.0.0 or later version supports accessory feature, which can load png image and some 3D models into the application.
 
-Please see detail in [Accessory](./docs/accessory) page.
+Please see detail in [Accessory](./accessory) page.
 
 
 #### Hand Tracking
@@ -58,14 +58,14 @@ Please see detail in [Accessory](./docs/accessory) page.
 
 v1.8.0 and later version supports `Hand Tracking` tab in control panel, to support webcam based hand tracking.
 
-Please see more in [Hand Tracking](./docs/hand_tracking) page.
+Please see more in [Hand Tracking](./hand_tracking) page.
 
 
 #### Setting File Management
 
 VMagicMirror v1.6.2 and later version supports setting file save and load internally.
 
-Detail is in [Setting Files](./docs/setting_files) page.
+Detail is in [Setting Files](./setting_files) page.
 
 This page refers both control panel `Home` tab functions and setting window `File` tab.
 

@@ -4,7 +4,7 @@ title: ハンドトラッキング
 permalink: /docs/hand_tracking
 ---
 
-[English](../en/docs/hand_tracking)
+[English](../../en/docs/hand_tracking)
 
 # ハンドトラッキング
 

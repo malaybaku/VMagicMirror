@@ -4,7 +4,7 @@ title: Window
 permalink: /docs/window
 ---
 
-[English](../en/docs/window)
+[English](../../en/docs/window)
 
 # ウィンドウ設定
 

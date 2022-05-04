@@ -4,7 +4,7 @@ title: デスクトップマスコット
 permalink: /tips/desktop_mascot
 ---
 
-[English](../en/tips/desktop_mascot)
+[English](../../en/tips/desktop_mascot)
 
 # デスクトップマスコット化のための設定
 

@@ -4,7 +4,7 @@ title: iFacialMocapとの連携
 permalink: /docs/external_tracker_ifacialmocap
 ---
 
-[English](../en/docs/external_tracker_ifacialmocap)
+[English](../../en/docs/external_tracker_ifacialmocap)
 
 # iFacialMocapとの連携
 {: .no_toc }

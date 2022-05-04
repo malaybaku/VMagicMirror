@@ -4,7 +4,7 @@ title: パーフェクトシンク
 permalink: /tips/perfect_sync
 ---
 
-[English](../en/tips/perfect_sync)
+[English](../../en/tips/perfect_sync)
 
 # Tips: パーフェクトシンク
 {: .no_toc }

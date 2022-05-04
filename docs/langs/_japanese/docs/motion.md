@@ -4,7 +4,7 @@ title: Motion
 permalink: /docs/motion
 ---
 
-[English](../en/docs/motion)
+[English](../../en/docs/motion)
 
 # モーション
 

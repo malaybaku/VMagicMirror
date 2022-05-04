@@ -1,8 +1,26 @@
 $(function () {
+
+  /**
+   * fetch source json
+   */
+  let host = location.host
+
+  // Production home is https://malaybaku.github.io/VMagicMirror/
+  if( host.includes( 'github.io' ) ){
+    home = `https://${host}/VMagicMirror`;
+  } else if( host.includes( 'localhost' ) ) {
+    home = `http://${host}`
+  }
+  const lang = $('html').attr('lang');
+
   let source = [];
-  $.get('ja/api/search-source.json', function (data) {
+  $.get( `${home}/${lang}/api/search-source.json`, function (data) {
     source = data;
   });
+
+  /**
+   * Show search result
+   */
   $('#search').on('keyup', function () {
 
     const keyword = this.value.toLowerCase().trim();

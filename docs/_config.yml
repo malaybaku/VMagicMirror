@@ -10,6 +10,11 @@ latest_update: 2022/03/30
 sass:
     style: compressed
 
+defaults:
+  -
+    values:
+      lang: 'ja'
+
 collections_dir: langs
 collections:
   japanese:

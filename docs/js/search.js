@@ -5,7 +5,7 @@ $(function () {
   });
   $('#search').on('keyup', function () {
 
-    const keyword = this.value.toLowerCase();
+    const keyword = this.value.toLowerCase().trim;
 
     if (keyword.length > 0) {
       $('#search-result').show();
@@ -17,12 +17,20 @@ $(function () {
     const searchResult = source.reduce( (results, current) => {
         const content = current.content;
 
-        if ( current.title.toLowerCase().indexOf(keyword) >= 0 ||
-        content.toLowerCase().indexOf(keyword) >= 0 ){
+        if ( current.title.toLowerCase().indexOf(keyword) >= 0 ){
+          current.content = current.content.substring( 0, 100 );
           results.push( current );
+          return results;
         }
 
-        return results
+        const found = content.toLowerCase().indexOf(keyword);
+        if ( found >= 0 ){
+          current.content = current.content.substring( found - 50, found + 50 );
+          results.push( current );
+          return results;
+        }
+
+        return results;
 
     }, []);
 
@@ -38,7 +46,7 @@ $(function () {
             '"><div class="title">' +
             item.title +
             '</div><div class="description">' +
-            item.description +
+            item.content +
            '</div></a>'
         )
       });

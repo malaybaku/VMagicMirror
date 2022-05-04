@@ -2,7 +2,7 @@
 layout: page
 title: Layout
 permalink: /en/docs/layout
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/layout)

@@ -2,7 +2,7 @@
 layout: page
 title: Use VMagicMirror on Mac
 permalink: /en/tips/use_on_mac
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/use_on_mac)

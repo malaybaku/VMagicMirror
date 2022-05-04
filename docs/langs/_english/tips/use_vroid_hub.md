@@ -2,7 +2,7 @@
 layout: page
 title: Use VRoid Hub Avatar
 permalink: /en/tips/use_vroid_hub
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/use_vroid_hub)

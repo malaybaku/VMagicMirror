@@ -2,7 +2,7 @@
 layout: page
 title: Connect to MeowFace
 permalink: /en/docs/external_tracker_meowface
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/external_tracker_meowface)

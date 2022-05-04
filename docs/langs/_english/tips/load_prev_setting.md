@@ -2,7 +2,7 @@
 layout: page
 title: Load Previous Settings
 permalink: /en/tips/load_prev_setting
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/load_prev_setting)

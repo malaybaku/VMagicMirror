@@ -2,7 +2,7 @@
 layout: page
 title: External Tracker App
 permalink: /en/docs/external_tracker
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/external_tracker)

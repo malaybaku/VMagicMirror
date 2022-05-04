@@ -2,7 +2,7 @@
 layout: page
 title: Use as Desktop Mascot
 permalink: /en/tips/desktop_mascot
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/desktop_mascot)

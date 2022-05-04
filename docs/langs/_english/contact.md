@@ -2,7 +2,7 @@
 layout: page
 title: Contact
 permalink: /en/contact
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../contact)

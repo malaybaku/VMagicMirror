@@ -2,7 +2,7 @@
 layout: page
 title: Use for Presentation
 permalink: /en/tips/presentation
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/presentation)

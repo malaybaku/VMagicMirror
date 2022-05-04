@@ -2,7 +2,7 @@
 layout: page
 title: Face
 permalink: /en/docs/face
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/face)

@@ -2,7 +2,7 @@
 layout: page
 title: Devices
 permalink: /en/docs/devices
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/devices)

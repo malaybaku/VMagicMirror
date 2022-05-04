@@ -2,7 +2,7 @@
 layout: page
 title: FAQ
 permalink: /en/questions
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../questions)

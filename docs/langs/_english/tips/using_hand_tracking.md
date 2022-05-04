@@ -2,7 +2,7 @@
 layout: page
 title: Using Hand Tracking
 permalink: /en/tips/using_hand_tracking
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/using_hand_tracking)

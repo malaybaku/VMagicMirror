@@ -2,7 +2,7 @@
 layout: page
 title: Load Background Image
 permalink: /en/tips/load_background_image
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/load_background_image)

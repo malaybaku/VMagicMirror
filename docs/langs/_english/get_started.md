@@ -2,7 +2,7 @@
 layout: page
 title: Get Started
 permalink: /en/get_started
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../get_started)

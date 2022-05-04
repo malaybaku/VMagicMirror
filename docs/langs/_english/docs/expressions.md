@@ -2,7 +2,7 @@
 layout: page
 title: Expressions
 permalink: /en/docs/expressions
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/expressions)

@@ -2,7 +2,7 @@
 layout: page
 title: Effects
 permalink: /en/docs/effects
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/window)

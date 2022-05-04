@@ -2,7 +2,7 @@
 layout: page
 title: Change Device Textures
 permalink: /en/tips/change_textures
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/change_textures)

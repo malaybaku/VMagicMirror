@@ -2,7 +2,7 @@
 layout: page
 title: Tips
 permalink: /en/tips
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../tips)

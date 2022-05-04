@@ -2,7 +2,7 @@
 layout: page
 title: Perfect Sync
 permalink: /en/tips/perfect_sync
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/perfect_sync)

@@ -2,7 +2,7 @@
 layout: page
 title: Window
 permalink: /en/docs/window
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/window)

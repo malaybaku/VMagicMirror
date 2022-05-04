@@ -2,7 +2,7 @@
 layout: page
 title: Connect to iFacialMocap
 permalink: /en/docs/external_tracker_ifacialmocap
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/external_tracker_ifacialmocap)

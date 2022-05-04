@@ -2,7 +2,7 @@
 layout: page
 title: Change Log
 permalink: /en/changelog
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../changelog)

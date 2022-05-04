@@ -2,7 +2,7 @@
 layout: page
 title: Motion
 permalink: /en/docs/motion
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/motion)

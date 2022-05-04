@@ -2,7 +2,7 @@
 layout: page
 title: Use VMagicMirror for Streaming
 permalink: /en/tips/streaming
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../tips/streaming)

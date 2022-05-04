@@ -2,7 +2,7 @@
 layout: page
 title: Accessory
 permalink: /en/docs/accessory
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/accessory)

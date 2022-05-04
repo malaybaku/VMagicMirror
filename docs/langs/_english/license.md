@@ -2,7 +2,7 @@
 layout: page
 title: License
 permalink: /en/license
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../license)

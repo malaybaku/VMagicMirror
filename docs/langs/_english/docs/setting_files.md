@@ -2,7 +2,7 @@
 layout: page
 title: Setting Files
 permalink: /en/docs/setting_files
-lang_prefix: /en/
+lang: en
 ---
 
 [Japanese](../../docs/setting_files)

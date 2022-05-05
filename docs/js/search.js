@@ -19,21 +19,35 @@ $(function () {
   });
 
   /**
-   * Show search result
-   * Does not cancel Materialize js effect, using content editable div
+   * Execute search.
+   * Does not cancel Materialize js effect, using content editable div.
    */
 
   $('#search').on('keyup', function(){
-    const keyword = this.innerText.toLowerCase().trim();
-    search( keyword, '#search-result')
+    search( this.innerText, '#search-result');
+    formCleaner( this.innerText, this.id );
   });
 
-  function search( keyword, showResultTag ){
+  /**
+   * editable content enable insert br tag but form is 1 line.
+   */
+  function formCleaner( keyword, id ){
+    const target = '#' + id;
+    $( target + ' br').remove();
+    if ( keyword.length = 0 || keyword === '' ){
+      $( target + ' *').remove();
+    }
+  }
 
-    if (keyword.length > 0) {
+  function search( searchWord, showResultTag ){
+    const keyword = searchWord.toLowerCase().trim();
+
+    if ( keyword.length > 0 && keyword !== '') {
       $(showResultTag).removeClass('hidden');
     } else {
+      $(showResultTag + ' .result-item').remove();
       $(showResultTag).addClass('hidden');
+      return;
     }
 
     $(showResultTag + ' .result-item').remove();

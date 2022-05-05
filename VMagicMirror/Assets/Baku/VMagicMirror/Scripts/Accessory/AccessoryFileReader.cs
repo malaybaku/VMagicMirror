@@ -35,14 +35,14 @@ namespace Baku.VMagicMirror
         public static AccessoryFileContext<GameObject> LoadGltf(string path, byte[] bytes)
         {
             var parser = new AutoGltfFileParser(path);
-            var data = parser.Parse();
+            using var data = parser.Parse();
             return LoadGlbOrGltf(data);
         }
 
         public static AccessoryFileContext<GameObject> LoadGlb(string path, byte[] bytes)
         {
             var parser = new GlbLowLevelParser("", bytes);
-            var data = parser.Parse();
+            using var data = parser.Parse();
             return LoadGlbOrGltf(data);
         }
 

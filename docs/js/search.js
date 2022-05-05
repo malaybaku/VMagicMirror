@@ -30,20 +30,21 @@ $(function () {
     } else {
       $('#search-result').hide();
     }
-    $('.result-item').remove();
+
+    $('#search-result .result-item').remove();
 
     const searchResult = source.reduce( (results, current) => {
         const content = current.content;
 
         if ( current.title.toLowerCase().indexOf(keyword) >= 0 ){
-          current.content = current.content.substring( 0, 100 );
+          current.content = current.content.substring( 0, 50 );
           results.push( current );
           return results;
         }
 
         const found = content.toLowerCase().indexOf(keyword);
         if ( found >= 0 ){
-          current.content = current.content.substring( found - 50, found + 50 );
+          current.content = current.content.substring( found - 10, found + 30 );
           results.push( current );
           return results;
         }
@@ -54,18 +55,18 @@ $(function () {
 
     if (searchResult.length === 0) {
       $('#search-result').append(
-        '<div class="result-item"><div class="description">There is no search result.</div></div>'
+        '<div class="collection-header result-item">There is no search result.</div>'
       );
     } else {
+      $('#search-result').append(
+        '<div class="collection-header result-item">Found pages</div>'
+      );
       searchResult.forEach( item => {
         $('#search-result').append(
-          '<a class="result-item" href="' +
-            item.url +
-            '"><div class="title">' +
-            item.title +
-            '</div><div class="description">' +
+          '<a class="collection-item result-item" href="' + item.url + '">' +
+            item.title + '<br><span>' +
             item.content +
-           '</div></a>'
+           '</span></a>'
         )
       });
     }

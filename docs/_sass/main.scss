@@ -1,6 +1,9 @@
 @charset "utf-8";
 @import "materialize/materialize";
 
+@import "_search_form";
+@import "_search_result_collection";
+
 h1, h2, h3, h4, h5, h6 {
     -webkit-font-smoothing: antialiased;
 }

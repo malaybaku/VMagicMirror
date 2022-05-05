@@ -1,0 +1,25 @@
+.container.search-result{
+  position: relative;
+  height: 0;
+}
+
+.collection.search-result {
+  margin-top: 0;
+  width: 33%;
+  position: absolute;
+  z-index: 99;
+  right: 0;
+
+  .result-item {
+    // Materialize color blue can not use variable here
+    color: #2196F3;
+
+    &.collection-header {
+      color: rgba(0,0,0,0.87);
+    }
+
+    span{
+      color: #9e9e9e;
+    }
+  }
+}

@@ -20,19 +20,23 @@ $(function () {
 
   /**
    * Show search result
+   * Does not cancel Materialize js effect, using content editable div
    */
-  $('#search').on('keyup', function () {
 
-    //Does not cancel Materialize js effect, using content editable div
+  $('#search').on('keyup', function(){
     const keyword = this.innerText.toLowerCase().trim();
+    search( keyword, '#search-result')
+  });
+
+  function search( keyword, showResultTag ){
 
     if (keyword.length > 0) {
-      $('#search-result-container').removeClass('hidden');
+      $(showResultTag).removeClass('hidden');
     } else {
-      $('#search-result-container').addClass('hidden');
+      $(showResultTag).addClass('hidden');
     }
 
-    $('#search-result .result-item').remove();
+    $(showResultTag + ' .result-item').remove();
 
     const searchResult = source.reduce( (results, current) => {
         const content = current.content;
@@ -55,15 +59,15 @@ $(function () {
     }, []);
 
     if (searchResult.length === 0) {
-      $('#search-result').append(
+      $(showResultTag).append(
         '<div class="collection-header result-item">There is no search result.</div>'
       );
     } else {
-      $('#search-result').append(
+      $(showResultTag).append(
         '<div class="collection-header result-item">Found pages</div>'
       );
       searchResult.forEach( item => {
-        $('#search-result').append(
+        $(showResultTag).append(
           '<a class="collection-item result-item" href="' + item.url + '">' +
             item.title + '<br><span>' +
             item.content +
@@ -71,6 +75,9 @@ $(function () {
         )
       });
     }
-
-  })
+  }
 });
+
+
+
+

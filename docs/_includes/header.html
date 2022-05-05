@@ -15,19 +15,21 @@
             <li><a href="{{ lang_prefix | default: "/" | relative_url }}tips">Tips</a></li>
             <li><a href="{{ lang_prefix | default: "/" | relative_url }}questions">FAQ</a></li>
           </ul>
-          <ul id="nav-mobile" class="side-nav">
-            <li><a href="{{ lang_prefix | default: "/" | relative_url }}">Home</a></li>
-            <li><a href="{{ lang_prefix | default: "/" | relative_url }}download">Download</a></li>
-            <li><a href="{{ lang_prefix | default: "/" | relative_url }}get_started">Get Started</a></li>
-            <li><a href="{{ lang_prefix | default: "/" | relative_url }}docs">Docs</a></li>
-            <li><a href="{{ lang_prefix | default: "/" | relative_url }}tips">Tips</a></li>
-            <li><a href="{{ lang_prefix | default: "/" | relative_url }}questions">FAQ</a></li>
-          </ul>
+          <div id="nav-mobile" class="side-nav">
+            <ul>
+              <li><a href="{{ lang_prefix | default: "/" | relative_url }}">Home</a></li>
+              <li><a href="{{ lang_prefix | default: "/" | relative_url }}download">Download</a></li>
+              <li><a href="{{ lang_prefix | default: "/" | relative_url }}get_started">Get Started</a></li>
+              <li><a href="{{ lang_prefix | default: "/" | relative_url }}docs">Docs</a></li>
+              <li><a href="{{ lang_prefix | default: "/" | relative_url }}tips">Tips</a></li>
+              <li><a href="{{ lang_prefix | default: "/" | relative_url }}questions">FAQ</a></li>
+            </ul>
+          </div>
       <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
     </div>
 </nav>
 
-<div class="container search-result hidden" id="search-result-container">
-  <div class="collection with-header search-result" id="search-result"></div>
+<div class="container search-result" id="search-result-container">
+  <div class="collection with-header search-result hidden" id="search-result"></div>
 </div>
 

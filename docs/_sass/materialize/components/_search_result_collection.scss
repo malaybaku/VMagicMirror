@@ -1,34 +1,33 @@
 .container.search-result{
   position: relative;
   height: 0;
-  margin-top: -8px;
-
-  &.hidden {
-    visibility: hidden;
-  }
 }
 
 .collection.search-result {
-  margin-top: 0;
+  margin-top: -8px;
   width: 90%;
   position: absolute;
   z-index: 99;
   right: 0;
 
+  &.hidden {
+    visibility: hidden;
+  }
+
   @media #{$medium-and-up}{
     width: 33%;
   }
+}
 
-  .result-item {
-    // Materialize color blue
-    color: #2196F3;
+.result-item {
+  @extend .blue-text;
 
-    &.collection-header {
-      color: rgba(0,0,0,0.87);
-    }
+  &.collection-header {
+    color: rgba(0,0,0,0.87);
+  }
 
-    span{
-      color: #9e9e9e;
-    }
+  span{
+    color: #9e9e9e;
   }
 }
+

@@ -27,9 +27,9 @@ $(function () {
     const keyword = this.innerText.toLowerCase().trim();
 
     if (keyword.length > 0) {
-      $('#search-result').show();
+      $('#search-result-container').removeClass('hidden');
     } else {
-      $('#search-result').hide();
+      $('#search-result-container').addClass('hidden');
     }
 
     $('#search-result .result-item').remove();

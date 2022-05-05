@@ -1,17 +1,26 @@
 .container.search-result{
   position: relative;
   height: 0;
+  margin-top: -8px;
+
+  &.hidden {
+    visibility: hidden;
+  }
 }
 
 .collection.search-result {
   margin-top: 0;
-  width: 33%;
+  width: 90%;
   position: absolute;
   z-index: 99;
   right: 0;
 
+  @media #{$medium-and-up}{
+    width: 33%;
+  }
+
   .result-item {
-    // Materialize color blue can not use variable here
+    // Materialize color blue
     color: #2196F3;
 
     &.collection-header {

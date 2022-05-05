@@ -7,26 +7,29 @@
 
   .search-form {
     color: rgba(0,0,0,0.87);
-    height: 1.75rem;
-    line-height: 180%;
+    height: calc( 2rem + 2px );
+    line-height: 200%;
     width: 10em;
-    padding-left: 2em;
+    padding-left: 28px;
     background: white;
-    border-radius: 7px;
-    &::focus {
-      outline: 0;
+    border-radius: 5px;
+    position: relative;
+    border: 1px solid #2196f3;
+
+    &:focus {
+      outline: none;
+      border: 1px solid #4a148c;
     }
 
     &::before {
     content: 'search';
-    // Materialize color blue can not use variable here
-    color: #2196F3;
+    @extend .blue-text;
     font-size:22px;
     font-family: 'Material Icons';
     font-feature-settings: 'liga';
     position: absolute;
     left:3px;
-    top: 20px;
+    top: 1px;
     }
   }
 }

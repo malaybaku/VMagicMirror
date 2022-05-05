@@ -1,4 +1,6 @@
+using UniGLTF;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Baku.VMagicMirror
 { 
@@ -30,22 +32,18 @@ namespace Baku.VMagicMirror
             return new AccessoryFileContext<Texture2D>(tex, new ImageAccessoryActions(tex));
         }
 
-        //NOTE: なんとなく関数を分けた方が治安が良いので分けておく
         public static AccessoryFileContext<GameObject> LoadGltf(string path, byte[] bytes)
         {
-            return LoadGlb(path, bytes);
+            var parser = new AutoGltfFileParser(path);
+            var data = parser.Parse();
+            return LoadGlbOrGltf(data);
         }
 
         public static AccessoryFileContext<GameObject> LoadGlb(string path, byte[] bytes)
         {
-            var context = new UniGLTF.ImporterContext();
-            context.Load(path, bytes);
-            context.ShowMeshes();
-            context.EnableUpdateWhenOffscreen();
-            return new AccessoryFileContext<GameObject>(
-                context.Root,
-                new GlbFileAccessoryActions(context)
-            );
+            var parser = new GlbLowLevelParser("", bytes);
+            var data = parser.Parse();
+            return LoadGlbOrGltf(data);
         }
 
         public static AccessoryFileContext<AnimatableImage> LoadNumberedPngImage(byte[][] binaries)
@@ -53,6 +51,21 @@ namespace Baku.VMagicMirror
             var res = new AnimatableImage(binaries);
             //他と違い、AnimatableImage自体がFileActionを実装済み
             return new AccessoryFileContext<AnimatableImage>(res, res);
+        }
+
+        private static AccessoryFileContext<GameObject> LoadGlbOrGltf(GltfData data)
+        {
+            var context = new ImporterContext(data);
+            var instance = context.Load();
+            instance.ShowMeshes();
+            instance.EnableUpdateWhenOffscreen();
+
+            foreach (var renderer in instance.Root.GetComponentsInChildren<Renderer>())
+            {
+                renderer.shadowCastingMode = ShadowCastingMode.Off;
+                renderer.receiveShadows = false;
+            }
+            return new AccessoryFileContext<GameObject>(instance.Root, new GlbFileAccessoryActions(context, instance));
         }
     }
 }

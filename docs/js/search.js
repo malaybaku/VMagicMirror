@@ -23,7 +23,7 @@ $(function () {
    */
   $('#search').on('keyup', function () {
 
-    
+    //Does not cancel Materialize js effect, using content editable div
     const keyword = this.innerText.toLowerCase().trim();
 
     if (keyword.length > 0) {

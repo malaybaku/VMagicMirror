@@ -1,5 +1,8 @@
 <nav class="blue" role="navigation">
     <div class="nav-wrapper container"><a id="logo-container" class="brand-logo" href="{{ "/" | relative_url }}">VMagicMirror</a>
+          <div class="right hide-on-med-and-down search-form-wrapper">
+            <input name="search" id="search" type="text" class="search-form">
+          </div>
           {% comment %} This site defalut language is Japanese {% endcomment %}
           {% if page.lang != "ja" %}
             {% assign lang_prefix = "/" | append: page.lang | append: "/" %}
@@ -12,7 +15,6 @@
             <li><a href="{{ lang_prefix | default: "/" | relative_url }}tips">Tips</a></li>
             <li><a href="{{ lang_prefix | default: "/" | relative_url }}questions">FAQ</a></li>
           </ul>
-
           <ul id="nav-mobile" class="side-nav">
             <li><a href="{{ lang_prefix | default: "/" | relative_url }}">Home</a></li>
             <li><a href="{{ lang_prefix | default: "/" | relative_url }}download">Download</a></li>
@@ -25,7 +27,6 @@
     </div>
 </nav>
 
-<div class="container input-field">
-  <input id="search" type="search">
+<div class="container right">
   <div id="search-result"></div>
 </div>

@@ -1,0 +1,30 @@
+nav .search-form-wrapper {
+  position: relative;
+  margin-left: 10px;
+
+  &::before {
+    content: 'search';
+    // Materialize color blue can not use variable here
+    color: #2196F3;
+    font-size:22px;
+    font-family: 'Material Icons';
+    font-feature-settings: 'liga';
+    position: absolute;
+    left:3px;
+    top: 2px;
+  }
+
+  .search-form {
+     color: rgba(0,0,0,0.87);
+     height: 1.75rem;
+     width: 8em;
+     margin: 0;
+     padding-left: 2em;
+     border-width: 1px;
+     background: white;
+     border-radius: 10px;
+     // Overwrite Materialize change border color at focus by jQuery
+     // Wontfix: Can not override
+     border-bottom-color: none!important;
+   }
+}

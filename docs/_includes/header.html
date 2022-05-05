@@ -1,7 +1,7 @@
 <nav class="blue" role="navigation">
     <div class="nav-wrapper container"><a id="logo-container" class="brand-logo" href="{{ "/" | relative_url }}">VMagicMirror</a>
           <div class="right hide-on-med-and-down search-form-wrapper">
-            <input name="search" id="search" type="text" class="search-form">
+            <div id="search" contenteditable="true" class="search-form right"></div>
           </div>
           {% comment %} This site defalut language is Japanese {% endcomment %}
           {% if page.lang != "ja" %}

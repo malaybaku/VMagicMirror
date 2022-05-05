@@ -1,8 +1,23 @@
-nav .search-form-wrapper {
+.search-form-wrapper {
+  display:flex;
+  align-items: center;
+  height: 100%;
   position: relative;
   margin-left: 10px;
 
-  &::before {
+  .search-form {
+    color: rgba(0,0,0,0.87);
+    height: 1.75rem;
+    line-height: 180%;
+    width: 10em;
+    padding-left: 2em;
+    background: white;
+    border-radius: 7px;
+    &::focus {
+      outline: 0;
+    }
+
+    &::before {
     content: 'search';
     // Materialize color blue can not use variable here
     color: #2196F3;
@@ -11,20 +26,7 @@ nav .search-form-wrapper {
     font-feature-settings: 'liga';
     position: absolute;
     left:3px;
-    top: 2px;
+    top: 20px;
+    }
   }
-
-  .search-form {
-     color: rgba(0,0,0,0.87);
-     height: 1.75rem;
-     width: 8em;
-     margin: 0;
-     padding-left: 2em;
-     border-width: 1px;
-     background: white;
-     border-radius: 10px;
-     // Overwrite Materialize change border color at focus by jQuery
-     // Wontfix: Can not override
-     border-bottom-color: none!important;
-   }
 }

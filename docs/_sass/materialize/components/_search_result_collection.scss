@@ -17,17 +17,26 @@
   @media #{$medium-and-up}{
     width: 33%;
   }
-}
 
-.result-item {
-  @extend .blue-text;
+  .collection-item {
+    @extend .blue-text;
 
-  &.collection-header {
+    span{
+      color: color( "grey", "base" );
+    }
+  }
+
+  .collection-header {
     color: rgba(0,0,0,0.87);
   }
 
-  span{
-    color: #9e9e9e;
+  &.mobile {
+    border-width: 0 0 1px 0;
+    width: 100%;
+
+    .collection-header {
+      padding: 0 32px;
+    }
   }
 }
 

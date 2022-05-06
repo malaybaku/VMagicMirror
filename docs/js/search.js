@@ -28,6 +28,11 @@ $(function () {
     formCleaner( this.innerText, this.id );
   });
 
+  $('#search-mobile').on('keyup', function(){
+    search( this.innerText, '#search-result-mobile');
+    formCleaner( this.innerText, this.id );
+  });
+
   /**
    * editable content enable insert br tag but form is 1 line.
    */

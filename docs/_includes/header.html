@@ -1,7 +1,7 @@
 <nav class="blue" role="navigation">
     <div class="nav-wrapper container"><a id="logo-container" class="brand-logo" href="{{ "/" | relative_url }}">VMagicMirror</a>
           <div class="right hide-on-med-and-down search-form-wrapper">
-            <div id="search" contenteditable="true" class="search-form right"></div>
+            <div id="search" contenteditable="true" class="search-form"></div>
           </div>
           {% comment %} This site defalut language is Japanese {% endcomment %}
           {% if page.lang != "ja" %}
@@ -24,12 +24,14 @@
               <li><a href="{{ lang_prefix | default: "/" | relative_url }}tips">Tips</a></li>
               <li><a href="{{ lang_prefix | default: "/" | relative_url }}questions">FAQ</a></li>
             </ul>
+            <div id="search-mobile" contenteditable="true" class="search-form mobile"></div>
+            <div id="search-result-mobile" class="collection with-header search-result-mobile hidden"></div>
           </div>
       <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
     </div>
 </nav>
 
-<div class="container search-result" id="search-result-container">
-  <div class="collection with-header search-result hidden" id="search-result"></div>
+<div class="container search-result">
+  <div id="search-result" class="collection with-header search-result hidden"></div>
 </div>
 

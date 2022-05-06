@@ -11,12 +11,12 @@
   height: calc( 2rem + 2px );
   display: inline-block;
   line-height: 200%;
-  width: 10em;
+  width: 15em;
   padding-left: 28px;
   background: white;
   border-radius: 5px;
   position: relative;
-  border: 1px solid #2196f3;
+  border: 1px solid color( "blue", "base" );
 
   * {
     display: inline;
@@ -39,4 +39,19 @@
   top: 1px;
   }
 
+  &.mobile {
+    margin-top: 1rem;
+    margin-left: 32px;
+    border-color: color( "grey", "base" );
+    &:focus {
+      outline: none;
+      border-color: color( "blue", "base" );
+      &::before {
+        @extend .blue-text;
+      }
+    }
+    &::before {
+      @extend .grey-text;
+    }
+  }
 }

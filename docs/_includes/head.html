@@ -13,9 +13,13 @@
     <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ "/assets/lightbox.min.css" | relative_url }}">
     <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ "/assets/main.css" | relative_url }}">
 
+	<link rel="icon" href="{{ "/favicon.ico" | relative_url }}" sizes="any">
+	<link rel="apple-touch-icon" href="{{ "/apple-touch-icon.png" | relative_url }}">
+	<link rel="manifest" href="{{ "/manifest.webmanifest" | relative_url }}">
+
     <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}" />
     <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ "/feed.xml" | relative_url }}" />
-    <link rel="icon" href="/favicon.ico" sizes="any">
 
     {% include twitter_card.html %}
+
 </head>

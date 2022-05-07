@@ -4,8 +4,6 @@ title: カスタムモーションをVMagicMirrorで使用する
 permalink: /tips/use_custom_motion
 ---
 
-[English](../../en/tips/use_custom_motion)
-
 # Tips: カスタムモーションをVMagicMirrorで使用する
 
 この機能はv1.6.0で追加されました。

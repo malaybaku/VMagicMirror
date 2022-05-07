@@ -5,8 +5,6 @@ permalink: /en/contact
 lang: en
 ---
 
-[Japanese](../contact)
-
 # Contact
 
 Welcome for the bug reports and update requests!

@@ -5,8 +5,6 @@ permalink: /en/changelog
 lang: en
 ---
 
-[Japanese](../changelog)
-
 # Change Log
 
 <div class="doc-ul" markdown="1">

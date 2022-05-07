@@ -4,8 +4,6 @@ title: Layout
 permalink: /docs/devices
 ---
 
-[English](../../en/docs/devices)
-
 # デバイス
 
 `デバイス`タブでは周辺機器のうち、特にゲームパッドとMIDIコントローラの接続設定を編集できます。

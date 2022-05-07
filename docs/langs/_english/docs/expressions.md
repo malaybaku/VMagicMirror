@@ -5,8 +5,6 @@ permalink: /en/docs/expressions
 lang: en
 ---
 
-[Japanese](../../docs/expressions)
-
 # Expressions
 
 This page is about how to control face expression (and a few motions) in VMagicMirror.

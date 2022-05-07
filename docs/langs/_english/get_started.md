@@ -5,8 +5,6 @@ permalink: /en/get_started
 lang: en
 ---
 
-[Japanese](../get_started)
-
 
 # Get Started
 {: .no_toc }

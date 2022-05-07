@@ -4,8 +4,6 @@ title: プレゼンテーション
 permalink: /tips/presentation
 ---
 
-[English](../../en/tips/presentation)
-
 # Tips: プレゼンテーションにVMagicMirrorを使う
 
 コントロールパネルの`配信`タブにて、右下部の`モーション`から`プレゼン風に右手を動かす`のチェックをオンにすると、プレゼンテーション風にキャラクターの右手を動かせます。

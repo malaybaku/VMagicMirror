@@ -5,8 +5,6 @@ permalink: /en/tips/load_prev_setting
 lang: en
 ---
 
-[Japanese](../../tips/load_prev_setting)
-
 # Tips: Load Previous Version (> v0.8.0) Setting 
 
 *This feature is available from v0.8.1 or later.

@@ -5,8 +5,6 @@ permalink: /en/tips/use_vroid_hub
 lang: en
 ---
 
-[Japanese](../../tips/use_vroid_hub)
-
 # Tips: Use VRoid Hub Avatar
 
 VMagicMirror supports VRoid Hub model load from v1.0.0.

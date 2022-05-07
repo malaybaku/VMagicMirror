@@ -5,8 +5,6 @@ permalink: /en/tips/use_on_mac
 lang: en
 ---
 
-[Japanese](../../tips/use_on_mac)
-
 # Tips: Use VMagicMirror on Mac
 
 Though this tips refers to Mac, `VMagicMirror` only supports `Windows`.

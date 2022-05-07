@@ -4,8 +4,6 @@ title: VRoid Hubのアバター利用について
 permalink: /tips/use_vroid_hub
 ---
 
-[English](../../en/tips/use_vroid_hub)
-
 # Tips: VRoid Hubのアバター利用について
 
 VMagicMirror v1.0.0以降ではVRoid Hubにアップロードされたキャラクターを使用できます。

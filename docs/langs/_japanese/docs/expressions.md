@@ -4,8 +4,6 @@ title: Expressions
 permalink: /docs/expressions
 ---
 
-[English](../../en/docs/expressions)
-
 # 表情のコントロール
 
 ここではVMagicMirrorがサポートする表情コントロール方法である`Word to Motion`機能を紹介します。

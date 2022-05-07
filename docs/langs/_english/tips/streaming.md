@@ -5,8 +5,6 @@ permalink: /en/tips/streaming
 lang: en
 ---
 
-[Japanese](../../tips/streaming)
-
 # Tips: Use VMagicMirror for Streaming
 
 VMagicMirror expects 2 main use cases of Streaming and Desktop Mascot.

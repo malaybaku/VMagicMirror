@@ -5,8 +5,6 @@ permalink: /en/docs/devices
 lang: en
 ---
 
-[Japanese](../../docs/devices)
-
 # Devices
 
 `Devices` tab support connection settings for gamepad and MIDI controller.

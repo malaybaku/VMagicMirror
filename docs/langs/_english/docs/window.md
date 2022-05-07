@@ -5,8 +5,6 @@ permalink: /en/docs/window
 lang: en
 ---
 
-[Japanese](../../docs/window)
-
 # Window
 
 `Window` tab supports BG color when the character window is not transparent, and also can toggle whether the window is always foreground or not.

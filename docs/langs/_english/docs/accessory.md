@@ -5,8 +5,6 @@ permalink: /en/docs/accessory
 lang: en
 ---
 
-[Japanese](../../docs/accessory)
-
 # Accessory
 
 This page is about accessory feature, in VMagicMirror v2.0.0 or later version.

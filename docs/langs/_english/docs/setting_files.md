@@ -5,8 +5,6 @@ permalink: /en/docs/setting_files
 lang: en
 ---
 
-[Japanese](../../docs/setting_files)
-
 # Setting Files
 
 This page is about setting file features.

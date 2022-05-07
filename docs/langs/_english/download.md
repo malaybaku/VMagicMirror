@@ -5,8 +5,6 @@ permalink: /en/download
 lang: en
 ---
 
-[Japanese](../download)
-
 # Download
 
 VMagicMirror is Available on [BOOTH](https://booth.pm/ja/items/1272298).

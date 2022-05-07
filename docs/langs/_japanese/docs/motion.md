@@ -4,8 +4,6 @@ title: Motion
 permalink: /docs/motion
 ---
 
-[English](../../en/docs/motion)
-
 # モーション
 
 `モーション`タブではキャラクターの動き方や体型にかんする調整ができます。

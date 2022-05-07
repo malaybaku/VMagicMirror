@@ -4,8 +4,6 @@ title: 配信にVMagicMirrorを使う
 permalink: /tips/streaming
 ---
 
-[English](../../en/tips/streaming)
-
 # Tips: 配信にVMagicMirrorを使う
 
 VMagicMirrorは主要な用途として2つのケースを想定しています。

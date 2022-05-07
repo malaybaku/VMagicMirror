@@ -4,8 +4,6 @@ title: Get Started
 permalink: /get_started
 ---
 
-[English](./en/get_started)
-
 # Get Started
 {: .no_toc }
 

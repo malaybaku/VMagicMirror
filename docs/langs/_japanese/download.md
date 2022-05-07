@@ -4,8 +4,6 @@ title: Download
 permalink: /download
 ---
 
-[English](./en/download)
-
 # ダウンロード
 
 VMagicMirrorはBOOTHからダウンロード可能です。

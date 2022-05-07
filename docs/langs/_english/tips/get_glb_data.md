@@ -5,8 +5,6 @@ permalink: /en/tips/get_glb_data
 lang: en
 ---
 
-[Japanese](../../tips/get_glb_data)
-
 
 # Tips: How to Get GLB Data
 

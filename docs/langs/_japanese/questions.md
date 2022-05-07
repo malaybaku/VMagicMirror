@@ -4,8 +4,6 @@ title: FAQ
 permalink: /questions
 ---
 
-[English](./en/questions)
-
 # FAQ
 {: .no_toc }
 

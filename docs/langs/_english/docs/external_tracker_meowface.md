@@ -5,8 +5,6 @@ permalink: /en/docs/external_tracker_meowface
 lang: en
 ---
 
-[Japanese](../../docs/external_tracker_meowface)
-
 # Connect to MeowFace
 {: .no_toc }
 

@@ -5,8 +5,6 @@ permalink: /en/tips/change_textures
 lang: en
 ---
 
-[Japanese](../../tips/change_textures)
-
 # Tips: Change Device Textures
 
 VMagicMirror can load custom texture for the keyboard's key, or touch pad. So far, only `png` image is available.

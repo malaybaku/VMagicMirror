@@ -5,8 +5,6 @@ permalink: /en/docs/external_tracker
 lang: en
 ---
 
-[Japanese](../../docs/external_tracker)
-
 # Exteral Tracker App
 {: .no_toc }
 

@@ -5,8 +5,6 @@ permalink: /en/docs/layout
 lang: en
 ---
 
-[Japanese](../../docs/layout)
-
 # Layout
 
 In `Layout` tab you can access to the parameters to adjust surrounding device layout like camera, keyboard, gamepad, etc.

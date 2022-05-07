@@ -4,8 +4,6 @@ title: Window
 permalink: /docs/window
 ---
 
-[English](../../en/docs/window)
-
 # ウィンドウ設定
 
 `ウィンドウ`タブではキャラクター表示ウィンドウの背景が不透明なときの背景色や、最前面表示のオン・オフが切り替えられます。

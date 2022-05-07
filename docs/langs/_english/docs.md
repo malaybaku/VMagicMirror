@@ -5,8 +5,6 @@ permalink: /en/docs
 lang: en
 ---
 
-[Japanese](../docs)
-
 # Docs
 
 This page introduces advanced settings in VMagicMirror.

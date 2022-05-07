@@ -4,8 +4,6 @@ title: Docs
 permalink: /docs
 ---
 
-[English](./en/docs)
-
 # 詳細設定
 
 ここでは[Get Started](./get_started)の内容よりも高度なVMagicMirrorの機能を紹介しています。

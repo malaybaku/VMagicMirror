@@ -4,8 +4,6 @@ title: Contact
 permalink: /contact
 ---
 
-[English](./en/contact)
-
 # Contact
 
 不具合報告や要望などは下記までお願いします。

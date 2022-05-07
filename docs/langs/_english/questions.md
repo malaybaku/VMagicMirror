@@ -5,8 +5,6 @@ permalink: /en/questions
 lang: en
 ---
 
-[Japanese](../questions)
-
 # FAQ
 {: .no_toc }
 

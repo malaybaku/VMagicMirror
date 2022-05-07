@@ -5,8 +5,6 @@ permalink: /en/license
 lang: en
 ---
 
-[Japanese](../license)
-
 # License
 
 VMagicMirror ("The Software") has the license note in `License Note` section.

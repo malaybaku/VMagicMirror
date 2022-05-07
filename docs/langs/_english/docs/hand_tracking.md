@@ -5,8 +5,6 @@ permalink: /en/docs/hand_tracking
 lang: en
 ---
 
-[Japanese](../../docs/hand_tracking)
-
 # Hand Tracking
 
 This page is about webcam based hand tracking feature, supported in VMagicMirror v1.8.0 and later.

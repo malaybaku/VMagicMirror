@@ -4,8 +4,6 @@ title: MacでVMagicMirrorを使う
 permalink: /tips/use_on_mac
 ---
 
-[English](../../en/tips/use_on_mac)
-
 # MacでVMagicMirrorを使う
 
 `VMagicMirror`は`Windows`のみをサポートしており、`Mac OS`での使用は想定されていません。

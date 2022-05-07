@@ -4,8 +4,6 @@ title: アクセサリー
 permalink: /docs/accessory
 ---
 
-[English](../../en/docs/accessory)
-
 # アクセサリー
 
 このページでは、`VMagicMirror` v2.0.0以降で実装されているアクセサリー機能を紹介します。

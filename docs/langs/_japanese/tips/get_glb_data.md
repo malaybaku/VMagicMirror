@@ -4,8 +4,6 @@ title: GLBデータの入手方法
 permalink: /tips/get_glb_data
 ---
 
-[English](../../en/tips/get_glb_data)
-
 # Tips: GLBデータの入手方法
 
 このページでは、[アクセサリー機能](../docs/accessory)で利用可能なGLB、またはGLTFデータの入手方法を紹介します。

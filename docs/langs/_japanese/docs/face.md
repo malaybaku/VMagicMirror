@@ -4,8 +4,6 @@ title: Face
 permalink: /docs/face
 ---
 
-[English](../../en/docs/face)
-
 # 顔・表情
 
 `顔・表情`タブではモーションのうち、とくに顔に関連する調整ができます。

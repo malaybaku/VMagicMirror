@@ -5,8 +5,6 @@ permalink: /en/tips/load_background_image
 lang: en
 ---
 
-[Japanese](../../tips/load_background_image)
-
 # Tips: Load Background Image
 
 <div class="note-area" markdown="1">

@@ -4,8 +4,6 @@ title: Change Log
 permalink: /changelog
 ---
 
-[English](./en/changelog)
-
 # Change Log
 
 <div class="doc-ul" markdown="1">

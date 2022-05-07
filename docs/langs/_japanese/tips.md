@@ -4,8 +4,6 @@ title: Tips
 permalink: /tips
 ---
 
-[English](./en/tips)
-
 # Tips
 
 ここではユースケース別のTipsや、ユーザーインターフェース上に説明のない詳細機能を紹介しています。

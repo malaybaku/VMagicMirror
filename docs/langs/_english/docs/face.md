@@ -5,8 +5,6 @@ permalink: /en/docs/face
 lang: en
 ---
 
-[Japanese](../../docs/face)
-
 # Face
 
 `Face` tab support motion setting especially about face.

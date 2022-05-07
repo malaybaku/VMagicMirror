@@ -5,8 +5,6 @@ permalink: /en/tips/perfect_sync
 lang: en
 ---
 
-[Japanese](../../tips/perfect_sync)
-
 # Tips: Perfect Sync
 {: .no_toc}
 

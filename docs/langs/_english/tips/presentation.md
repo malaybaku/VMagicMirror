@@ -5,8 +5,6 @@ permalink: /en/tips/presentation
 lang: en
 ---
 
-[Japanese](../../tips/presentation)
-
 # Tips: Use VMagicMirror for Presentation
 
 In control panel `Streaming` tab, at `Motion` item, check on `Presentation-like hand` to enable presentation like right hand motion.

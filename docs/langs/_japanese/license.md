@@ -4,8 +4,6 @@ title: License
 permalink: /license
 ---
 
-[English](./en/license)
-
 # License
 
 本ページ下部の`License Note`がVMagicMirror(以下、「本ソフト」)に関するライセンス文です。

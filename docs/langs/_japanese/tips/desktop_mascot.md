@@ -4,8 +4,6 @@ title: デスクトップマスコット
 permalink: /tips/desktop_mascot
 ---
 
-[English](../../en/tips/desktop_mascot)
-
 # デスクトップマスコット化のための設定
 
 VMagicMirrorはデスクトップマスコットとして使うために、Windowsのスタート時に起動させる機能を持っています。

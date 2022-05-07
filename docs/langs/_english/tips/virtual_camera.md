@@ -5,8 +5,6 @@ permalink: /en/tips/virtual_camera
 lang: en
 ---
 
-[Japanese](../../tips/virtual_camera)
-
 # Tips: Use VMagicMirror for Web Meeting
 
 This page introduces how to use VMagicMirror for web meeting like Zoom, using `OBS Studio`.

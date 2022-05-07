@@ -4,8 +4,6 @@ title: Effects
 permalink: /docs/effects
 ---
 
-[English](../../en/docs/effects)
-
 # エフェクト
 
 `エフェクト`タブでは画質や光、影、Bloom、風の設定を調節できます。

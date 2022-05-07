@@ -4,8 +4,6 @@ title: ハンドトラッキング
 permalink: /docs/hand_tracking
 ---
 
-[English](../../en/docs/hand_tracking)
-
 # ハンドトラッキング
 
 このページでは、`VMagicMirror` v1.8.0以降で実装されているハンドトラッキングを紹介しています。

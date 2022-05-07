@@ -5,8 +5,6 @@ permalink: /en/docs/motion
 lang: en
 ---
 
-[Japanese](../../docs/motion)
-
 # Motion
 
 `Motion` tab can adjust character's proportion and motion related parameters.

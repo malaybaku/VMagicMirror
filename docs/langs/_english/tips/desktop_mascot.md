@@ -5,8 +5,6 @@ permalink: /en/tips/desktop_mascot
 lang: en
 ---
 
-[Japanese](../../tips/desktop_mascot)
-
 # Tips: Use as Desktop Mascot
 
 VMagicMirror is also available as a desktop mascot software.

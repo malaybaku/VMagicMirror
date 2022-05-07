@@ -5,8 +5,6 @@ permalink: /en/tips/using_hand_tracking
 lang: en
 ---
 
-[Japanese](../../tips/using_hand_tracking)
-
 # Tips: (v1.7.0b and older ver) Using Hand Tracking
 
 <div class="note-area" markdown="1">

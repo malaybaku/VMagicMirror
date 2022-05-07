@@ -5,8 +5,6 @@ permalink: /en/docs/external_tracker_ifacialmocap
 lang: en
 ---
 
-[Japanese](../../docs/external_tracker_ifacialmocap)
-
 # Connect to iFacialMocap
 {: .no_toc }
 

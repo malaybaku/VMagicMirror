@@ -18,6 +18,4 @@ usage_header_presentation: Presentation with Avatar
 usage_header_desktop_mascot: Desktop Mascot
 ---
 
-[Japanese](../)
-
 {% include home_template.html %}

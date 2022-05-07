@@ -4,8 +4,6 @@ title: Setting Files
 permalink: /docs/setting_files
 ---
 
-[English](../../en/docs/setting_files)
-
 # 設定ファイルの管理
 
 このページではコントロールパネル上の`ホーム`タブにある設定ファイルの管理機能、および設定ウィンドウの`ファイル`タブから使用できる高度な機能を紹介します。

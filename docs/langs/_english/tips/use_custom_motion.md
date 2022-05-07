@@ -5,8 +5,6 @@ permalink: /en/tips/use_custom_motion
 lang: en
 ---
 
-[Japanese](../../tips/use_custom_motion)
-
 # Tips: Use Custom Motion in VMagicMirror
 
 This feature is available in v1.6.0 and later.

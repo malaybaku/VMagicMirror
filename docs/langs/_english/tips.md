@@ -5,8 +5,6 @@ permalink: /en/tips
 lang: en
 ---
 
-[Japanese](../tips)
-
 # Tips
 
 Here shows several tips about `VMagicMirror`, including advanced features without user interface support.

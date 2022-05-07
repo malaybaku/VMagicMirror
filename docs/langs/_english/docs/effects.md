@@ -5,8 +5,6 @@ permalink: /en/docs/effects
 lang: en
 ---
 
-[Japanese](../../docs/window)
-
 # Effects
 
 `Effects` tab supports whole image quality, light, shadow, bloom and wind settings.

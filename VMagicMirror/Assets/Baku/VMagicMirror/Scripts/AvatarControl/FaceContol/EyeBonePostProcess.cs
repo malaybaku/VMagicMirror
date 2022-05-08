@@ -11,6 +11,8 @@ namespace Baku.VMagicMirror
     [DefaultExecutionOrder(20000)]
     public class EyeBonePostProcess : MonoBehaviour
     {
+        [SerializeField] private EyeBoneAngleMapApplier angleMapApplier;
+
         public float Scale { get; set; } = 1.0f;
         /// <summary> 目を中央に固定したい場合、毎フレームtrueに設定する </summary>
         public bool ReserveReset { get; set; }
@@ -54,9 +56,13 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //それ以外の場合、回転量のスケーリングをしておく。
-            //ただし、デフォルト設定時は何もしない。これはパフォーマンスと後方互換のカタさを両立するため
-
+            //VRMの目ボーン角度マップを入れてから後処理でスケールさせる。逆でも良いかもしれない。
+            if (_hasEye && angleMapApplier.NeedOverwrite)
+            {
+                _leftEye.localRotation = angleMapApplier.GetLeftEyeRotation(_leftEye.localRotation);
+                _rightEye.localRotation = angleMapApplier.GetRightEyeRotation(_rightEye.localRotation);
+            }
+            
             var scale = Scale * ReserveWeight;
             ReserveWeight = 1f;
 

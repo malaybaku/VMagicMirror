@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Baku.VMagicMirror.IK;
+using UniGLTF;
 using UnityEngine;
 using UniHumanoid;
 using VRM;
@@ -71,11 +72,11 @@ namespace Baku.VMagicMirror
             {
                 if (Path.GetExtension(path).ToLower() == ".vrm")
                 {
-                    using (var context = new VRMImporterContext())
-                    {
-                        context.ParseGlb(File.ReadAllBytes(path));
-                        _previewCanvas.Show(context);
-                    }
+                    var bytes = File.ReadAllBytes(path);
+                    var parser = new GlbLowLevelParser("", bytes);
+                    using var data = parser.Parse();
+                    using var context = new VRMImporterContext(new VRMData(data));
+                    _previewCanvas.Show(context);
                 }
                 else
                 {
@@ -100,19 +101,20 @@ namespace Baku.VMagicMirror
                 LogOutput.Instance.Write($"unknown file type: {path}");
                 return;
             }
-
+            
             try
             {
-                var context = new VRMImporterContext();
                 var file = File.ReadAllBytes(path);
-                context.ParseGlb(file);
+                var parser = new GlbLowLevelParser("", file);
+                using var data = parser.Parse();
+                using var context = new VRMImporterContext(new VRMData(data));
                 var meta = context.ReadMeta(false);
-
-                context.Load();
-                context.EnableUpdateWhenOffscreen();
-                context.ShowMeshes();
+                
+                var instance = context.Load();
+                instance.EnableUpdateWhenOffscreen();
+                instance.ShowMeshes();
                 _sender.SendCommand(MessageFactory.Instance.ModelNameConfirmedOnLoad("VRM File: " + meta.Title));
-                SetModel(context.Root);
+                SetModel(instance.Root);
             }
             catch (Exception ex)
             {

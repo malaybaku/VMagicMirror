@@ -9,7 +9,7 @@ lang: en
 
 This page introduces advanced settings in VMagicMirror.
 
-For the basic usage, please see [Get Started](./get_started).
+For the basic usage, please see [Get Started](../get_started).
 
 #### Setting Window
 {: .doc-sec2 }

@@ -3,24 +3,19 @@ $(function () {
   /**
    * fetch source json
    */
-  let host = location.host
 
   // Production home is https://malaybaku.github.io/VMagicMirror/
-  if( host.includes( 'github.io' ) ){
-    home = `https://${host}/VMagicMirror`;
-  } else if( host.includes( 'localhost' ) ) {
-    home = `http://${host}`
-  }
+  const home = location.protocol + '//' + location.host + '/VMagicMirror';
   const lang = $('html').attr('lang');
 
   let source = [];
-  $.get( `${home}/${lang}/api/search-source.json`, function (data) {
+  $.get( `${home}/api/${lang}/search-source.json`, function (data) {
     source = data;
   });
 
   /**
    * Execute search.
-   * Does not cancel Materialize js effect, using content editable div.
+   * Can not cancel Materialize js effect, using content editable div.
    */
 
   $('#search').on('keyup', function(){

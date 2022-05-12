@@ -1,7 +1,6 @@
 ---
 layout: page
 title: iFacialMocapとの連携
-permalink: /docs/external_tracker_ifacialmocap
 ---
 
 # iFacialMocapとの連携

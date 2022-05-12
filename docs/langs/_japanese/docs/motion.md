@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Motion
-permalink: /docs/motion
 ---
 
 # モーション

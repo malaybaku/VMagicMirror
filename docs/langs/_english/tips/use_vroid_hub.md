@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Use VRoid Hub Avatar
-permalink: /en/tips/use_vroid_hub
 lang: en
 ---
 

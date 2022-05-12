@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Load Previous Settings
-permalink: /en/tips/load_prev_setting
 lang: en
 ---
 

@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Use VMagicMirror for Web Meeting
-permalink: /en/tips/virtual_camera
 lang: en
 ---
 

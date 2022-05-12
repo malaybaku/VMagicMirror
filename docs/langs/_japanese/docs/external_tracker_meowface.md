@@ -1,7 +1,6 @@
 ---
 layout: page
 title: MeowFaceとの連携
-permalink: /docs/external_tracker_meowface
 ---
 
 # MeowFaceとの連携

@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Devices
-permalink: /en/docs/devices
 lang: en
 ---
 

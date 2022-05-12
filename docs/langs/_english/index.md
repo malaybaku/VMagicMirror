@@ -1,7 +1,6 @@
 ---
 layout: page
 title: VMagicMirror
-permalink: /en
 lang: en
 summary: VMagicMirror is a mirror-like software to reflect yourself as VRM avatar, without any special devices.
 

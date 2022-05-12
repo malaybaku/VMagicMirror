@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Change Log
-permalink: /en/changelog
 lang: en
 ---
 

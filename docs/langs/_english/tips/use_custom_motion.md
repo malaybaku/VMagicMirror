@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Use Custom Motion
-permalink: /en/tips/use_custom_motion
 lang: en
 ---
 

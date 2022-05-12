@@ -1,7 +1,6 @@
 ---
 layout: page
 title: カスタムモーションをVMagicMirrorで使用する
-permalink: /tips/use_custom_motion
 ---
 
 # Tips: カスタムモーションをVMagicMirrorで使用する

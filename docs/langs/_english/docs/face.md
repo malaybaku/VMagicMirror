@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Face
-permalink: /en/docs/face
 lang: en
 ---
 

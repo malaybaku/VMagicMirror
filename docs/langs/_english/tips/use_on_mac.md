@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Use VMagicMirror on Mac
-permalink: /en/tips/use_on_mac
 lang: en
 ---
 

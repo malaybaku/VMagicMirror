@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Expressions
-permalink: /en/docs/expressions
 lang: en
 ---
 

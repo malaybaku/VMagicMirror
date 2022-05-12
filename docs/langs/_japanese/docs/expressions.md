@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Expressions
-permalink: /docs/expressions
 ---
 
 # 表情のコントロール

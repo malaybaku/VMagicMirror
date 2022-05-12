@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Connect to MeowFace
-permalink: /en/docs/external_tracker_meowface
 lang: en
 ---
 

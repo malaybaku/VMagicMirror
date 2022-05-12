@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Load Background Image
-permalink: /en/tips/load_background_image
 lang: en
 ---
 

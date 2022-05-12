@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Change Device Textures
-permalink: /en/tips/change_textures
 lang: en
 ---
 

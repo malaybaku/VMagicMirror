@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Download
-permalink: /en/download
 lang: en
 ---
 

@@ -1,7 +1,6 @@
 ---
 layout: page
 title: キーボードやタッチパッドの見た目を変更する
-permalink: /tips/change_textures
 ---
 
 # キーボードやタッチパッドの見た目を変更する

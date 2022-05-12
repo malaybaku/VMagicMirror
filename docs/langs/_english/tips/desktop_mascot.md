@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Use as Desktop Mascot
-permalink: /en/tips/desktop_mascot
 lang: en
 ---
 

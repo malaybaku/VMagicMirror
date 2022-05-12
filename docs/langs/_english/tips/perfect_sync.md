@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Perfect Sync
-permalink: /en/tips/perfect_sync
 lang: en
 ---
 

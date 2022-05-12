@@ -1,7 +1,6 @@
 ---
 layout: page
 title: How to Get GLB Data
-permalink: /en/tips/get_glb_data
 lang: en
 ---
 

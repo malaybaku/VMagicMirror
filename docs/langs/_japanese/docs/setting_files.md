@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Setting Files
-permalink: /docs/setting_files
 ---
 
 # 設定ファイルの管理

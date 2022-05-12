@@ -1,7 +1,6 @@
 ---
 layout: page
 title: デスクトップマスコット
-permalink: /tips/desktop_mascot
 ---
 
 # デスクトップマスコット化のための設定

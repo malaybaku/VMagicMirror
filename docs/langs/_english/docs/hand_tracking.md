@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Hand Tracking
-permalink: /en/docs/hand_tracking
 lang: en
 ---
 

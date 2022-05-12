@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Use for Presentation
-permalink: /en/tips/presentation
 lang: en
 ---
 

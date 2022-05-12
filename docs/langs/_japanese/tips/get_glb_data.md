@@ -1,7 +1,6 @@
 ---
 layout: page
 title: GLBデータの入手方法
-permalink: /tips/get_glb_data
 ---
 
 # Tips: GLBデータの入手方法

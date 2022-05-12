@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Use VMagicMirror for Streaming
-permalink: /en/tips/streaming
 lang: en
 ---
 

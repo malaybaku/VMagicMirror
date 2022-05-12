@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Face
-permalink: /docs/face
 ---
 
 # 顔・表情

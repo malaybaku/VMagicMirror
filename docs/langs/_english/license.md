@@ -1,7 +1,6 @@
 ---
 layout: page
 title: License
-permalink: /en/license
 lang: en
 ---
 

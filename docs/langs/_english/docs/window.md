@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Window
-permalink: /en/docs/window
 lang: en
 ---
 

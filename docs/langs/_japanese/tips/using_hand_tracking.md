@@ -1,7 +1,6 @@
 ---
 layout: page
 title: ハンドトラッキングの使用について
-permalink: /tips/using_hand_tracking
 ---
 
 # Tips: (v1.7.0b以前)ハンドトラッキングの使用について

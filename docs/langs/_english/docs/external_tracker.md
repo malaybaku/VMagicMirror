@@ -1,7 +1,6 @@
 ---
 layout: page
 title: External Tracker App
-permalink: /en/docs/external_tracker
 lang: en
 ---
 

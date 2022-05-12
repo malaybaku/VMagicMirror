@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Tips
-permalink: /en/tips
 lang: en
 ---
 

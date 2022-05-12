@@ -1,7 +1,6 @@
 ---
 layout: page
 title: 配信にVMagicMirrorを使う
-permalink: /tips/streaming
 ---
 
 # Tips: 配信にVMagicMirrorを使う

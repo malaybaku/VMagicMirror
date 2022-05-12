@@ -1,7 +1,6 @@
 ---
 layout: page
 title: FAQ
-permalink: /en/questions
 lang: en
 ---
 

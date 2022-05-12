@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Get Started
-permalink: /en/get_started
 lang: en
 ---
 

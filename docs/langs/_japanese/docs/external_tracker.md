@@ -1,7 +1,6 @@
 ---
 layout: page
 title: 外部トラッキングアプリとの連携
-permalink: /docs/external_tracker
 ---
 
 # 外部トラッキングアプリとの連携

@@ -1,7 +1,6 @@
 ---
 layout: page
 title: パーフェクトシンク
-permalink: /tips/perfect_sync
 ---
 
 # Tips: パーフェクトシンク

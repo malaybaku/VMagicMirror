@@ -1,7 +1,6 @@
 ---
 layout: page
 title: アクセサリー
-permalink: /docs/accessory
 ---
 
 # アクセサリー

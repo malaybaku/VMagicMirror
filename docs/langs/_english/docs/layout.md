@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Layout
-permalink: /en/docs/layout
 lang: en
 ---
 

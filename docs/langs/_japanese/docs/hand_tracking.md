@@ -1,7 +1,6 @@
 ---
 layout: page
 title: ハンドトラッキング
-permalink: /docs/hand_tracking
 ---
 
 # ハンドトラッキング

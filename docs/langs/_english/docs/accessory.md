@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Accessory
-permalink: /en/docs/accessory
 lang: en
 ---
 

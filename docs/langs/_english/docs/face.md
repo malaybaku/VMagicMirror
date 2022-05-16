@@ -55,6 +55,8 @@ This tab is added in v1.6.1. If you use older version, you can see most of these
 #### BlendShape
 {: .doc-sec2 }
 
+`Disable BlendShape Interpolation`: This option is available from v2.0.4. When turn on, then facial interpolation process for Word to Motion and Face Switch are disabled, and facial expression always switches immediately.
+
 `Default Fun Blend Shape [%]`: Specifies the default fun expression rate. As the value increases the character will become always smile, but some character's facial expression will be unnatural when combined to blink or other face motions. In those cases, decrease the value.
 
 `Default Face BlendShape`: In most case you should leave it empty. If your model needs some default expression to be applied, then select the BlendShape clip. Notice that the selected blendshape and `BLINK_L`, `BLINK_R`, lipsync, and perfect sync will run at the same time.

@@ -173,9 +173,11 @@ Command Example: (change file name according to actual version you have)
 certutil -hashfile VMM_v2.0.2_Standard_Installer.zip MD5
 ```
 
+File size and MD5 hash values for each versions:
+
 |--------------------------+-------------------------+----------------------|
 | Version                  | Zip File Size (byte)    | MD5 Hash             |
-|:------------------------:|:-----------:|:---------------------------------|
+|:-------------------------|:------------|:---------------------------------|
 | v2.0.0 Standard Edition  | 126,983,144 | 6610c9b81aa493f02917f68daa275b7d |
 | v2.0.0 Full Edition      | 127,062,779 | b00a734f2548ad0c66025300a0986b6b |
 | v2.0.1 Standard Edition  | 127,187,092 | dc468640e4eb11302a8ca6bcfc83db3e |

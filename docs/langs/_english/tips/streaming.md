@@ -28,7 +28,7 @@ If the bloom effect seem to prevent chromakey composition, then turn off. In set
 
 If your avatar has green part, you might need to change chromakey color. In setting window `Window` tab, change background color.
 
-Keyboard and touchpad objects are semi-transparent and thus maybe looks not good, when in composit image. In this case hide them, or replace the device textures (see [Change Device Textures](./change_textures)).
+Keyboard and touchpad objects are semi-transparent and thus maybe looks not good, when in composit image. In this case hide them, or replace the device textures (see [Change Device Textures](../change_textures)).
 
 **NOTE:** OBS has one more useful choice of "Game Capture". Game capture supports to capture transparent window as is, and this feature will work very well for VMagicMirror with transparent background. If your PC has enough capacity to do so, please consider using game capture instead of normal window capture.
 
@@ -78,4 +78,4 @@ You can use several way to switch the character's face expressions.
 3. Gamepad
 4. MIDI controller
 
-Please see the detail in [Expressions](../docs/expressions).
+Please see the detail in [Expressions](../../docs/expressions).

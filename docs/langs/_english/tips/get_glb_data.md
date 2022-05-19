@@ -7,7 +7,7 @@ lang: en
 
 # Tips: How to Get GLB Data
 
-This page is about how to get GLB or GLTF 3D model data available for [Accessory Feature](../docs/accessory).
+This page is about how to get GLB or GLTF 3D model data available for [Accessory Feature](../../docs/accessory).
 
 As GLB/GLTF is open source data specification, so there are many tools supporting them.
 

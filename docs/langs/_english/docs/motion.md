@@ -14,7 +14,7 @@ lang: en
 
 **NOTE**
 
-If you use v1.6.0 or older version, then you see `Face` menu in this tab. See [Face](./face) page for the detail.
+If you use v1.6.0 or older version, then you see `Face` menu in this tab. See [Face](../face) page for the detail.
 
 </div>
 

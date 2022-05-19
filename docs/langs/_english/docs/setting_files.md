@@ -102,7 +102,7 @@ Confirm the dialog content, and you will also need to allow firewall in first ti
 
 If you do not allow network process in firewall setting, you will have to custom it in Window control panel.
 
-Detail is similar to [iFacialMocap connection Troubleshoot](./external_tracker_ifacialmocap#troubleshoot) Q1 and Q2.
+Detail is similar to [iFacialMocap connection Troubleshoot](../external_tracker_ifacialmocap#troubleshoot) Q1 and Q2.
 
 
 After enable the automation, send JSON text message to load data.

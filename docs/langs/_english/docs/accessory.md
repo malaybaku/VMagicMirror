@@ -29,7 +29,7 @@ Accessory feature supports loading images and 3D models to attach to avatar's bo
 
 Glb and glTF are the file format which is the base of avatar's format (VRM).
 
-Please see [Get GLB Data](../tips/get_glb_data) tips about how to get those 3D model files.
+Please see [Get GLB Data](../../tips/get_glb_data) tips about how to get those 3D model files.
 
 
 #### Usage

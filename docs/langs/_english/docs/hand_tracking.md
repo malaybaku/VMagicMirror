@@ -18,7 +18,7 @@ This page is about webcam based hand tracking feature, supported in VMagicMirror
 
 This page is for v1.8.0 or later version.
 
-If you have older version, please see  [(v1.7.0b and older ver) Using Hand Tracking](../docs/hand_tracking) instead.
+If you have older version, please see  [(v1.7.0b and older ver) Using Hand Tracking](../hand_tracking) instead.
 
 </div>
 
@@ -49,7 +49,7 @@ Expected usage is like following.
 
 In Standard Edition distributed by free, some visual effects are applied during hand tracking is enabled.
 
-Please get Full Edition to use it without this effect. Please see detail in [Download](../download) page.
+Please get Full Edition to use it without this effect. Please see detail in [Download](../../download) page.
 
 <div class="doc-ul" markdown="1">
 
@@ -88,7 +88,7 @@ In `Hand Tracking` tab, check `Enable Hand Tracking` and select webcam.
 
 If you use webcam to face tracking, then single webcam is used for both face and hand tracking. This means that you cannot select different cameras.
 
-Also you can use [External Tracker](./external_tracker) with this hand tracking feature.
+Also you can use [External Tracker](../external_tracker) with this hand tracking feature.
 
 </div>
 

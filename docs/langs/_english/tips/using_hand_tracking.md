@@ -12,7 +12,7 @@ lang: en
 
 This page is about hand tracking supported in v1.7.0b and older version.
 
-If you have v1.8.0 or later, please see the latest [Hand Tracking](../docs/hand_tracking) page instead.
+If you have v1.8.0 or later, please see the latest [Hand Tracking](../../docs/hand_tracking) page instead.
 
 </div>
 

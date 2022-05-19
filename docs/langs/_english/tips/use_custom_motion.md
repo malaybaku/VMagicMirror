@@ -109,7 +109,7 @@ If the folder does not exist, please create new one.
 #### 3. Word to Motion Setup
 {: .doc-sec2 }
 
-Start VMagicMirror and open Word to Motion item edit window. If this step is unclear, see [Expression](../docs/expressions) page.
+Start VMagicMirror and open Word to Motion item edit window. If this step is unclear, see [Expression](../../docs/expressions) page.
 
 Choose `Custom Motion` in motion option, then select motion.
 

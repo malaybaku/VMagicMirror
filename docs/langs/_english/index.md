@@ -2,6 +2,7 @@
 layout: page
 title: VMagicMirror
 lang: en
+permalink: /en/
 summary: VMagicMirror is a mirror-like software to reflect yourself as VRM avatar, without any special devices.
 
 top_desc: VMagicMirror is application for VRM avatar on Windows desktop, to move your avatar without any special devices.

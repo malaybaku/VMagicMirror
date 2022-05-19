@@ -8,7 +8,7 @@ title: Download
 VMagicMirrorはBOOTHからダウンロード可能です。
 
 <a target="_blank" href="https://baku-dreameater.booth.pm/items/1272298/">
-  <img class="full-width-small-down" src="https://asset.booth.pm/static-images/banner/468x60_02.png">
+  <img class="full-width-mobile" src="https://asset.booth.pm/static-images/banner/468x60_02.png">
 </a>
 
 ダウンロードおよび利用にあたっては[License](./license)もご確認下さい。

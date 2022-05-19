@@ -9,7 +9,7 @@ lang: en
 VMagicMirror is Available on [BOOTH](https://booth.pm/ja/items/1272298).
 
 <a target="_blank" href="https://baku-dreameater.booth.pm/items/1272298/">
-  <img src="https://asset.booth.pm/static-images/banner/468x60_02.png">
+  <img class="full-width-mobile" src="https://asset.booth.pm/static-images/banner/468x60_02.png">
 </a>
 
 Please see  [License](./about_license.html) if you are not clear the permitted usage.

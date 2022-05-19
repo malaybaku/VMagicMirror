@@ -6,7 +6,7 @@ title: MeowFaceとの連携
 # MeowFaceとの連携
 {: .no_toc }
 
-[外部トラッキングアプリとの連携](./external_tracker)のうち、特にMeowFaceとVMagicMirrorを連携する方法にかんするページです。
+[外部トラッキングアプリとの連携](../external_tracker)のうち、特にMeowFaceとVMagicMirrorを連携する方法にかんするページです。
 
 
 ### MeowFaceとは
@@ -14,7 +14,7 @@ title: MeowFaceとの連携
 
 MeowFaceはAndroid向けに無料で公開されているアプリで、iOSの顔トラッキング仕様を部分的に再現することを目的としています。
 
-特に[iFacialMocap](./external_tracker_ifacialmocap)とは通信データの内容について互換性があります。
+特に[iFacialMocap](../external_tracker_ifacialmocap)とは通信データの内容について互換性があります。
 
 このため、VMagicMirrorではiFacialMocapに接続するのと同様の手順でMeowFaceに接続できます。
 
@@ -36,7 +36,7 @@ MeowFaceはiOS端末の挙動を模擬するアプリであるため、出来る
 
 - 首の回転に関するトラッキング
 - まばたき、眉の動きなどのトラッキング
-- [パーフェクトシンク](../tips/perfect_sync)の利用
+- [パーフェクトシンク](../../tips/perfect_sync)の利用
 
 できないこと:
 
@@ -63,7 +63,7 @@ MeowFaceに表示されたIPアドレスを入力し、`Connect`ボタンをク�
 
 **注意**
 
-ここでキャラクターが反応しない場合、[iFacialMocapのトラブルシューティング](./external_tracker_ifacialmocap#troubleshoot)を確認して下さい。
+ここでキャラクターが反応しない場合、[iFacialMocapのトラブルシューティング](../external_tracker_ifacialmocap#troubleshoot)を確認して下さい。
 
 MeowFaceとiFacialMocapはいずれもスマホ/PC間で通信を行うため、接続エラーの原因はほぼ共通です。
 

@@ -99,7 +99,7 @@ VRoid Hubのモデルは本機能では使用できません。
 
 もしファイアウォール設定で通信を許可しなかった場合、Windowsのコントロールパネルからファイアウォール設定を変更する必要があります。
 
-ファイアウォールを設定する方法については[iFacialMocapのトラブルシューティング](./external_tracker_ifacialmocap#troubleshoot)のQ1, Q2がほぼ同様の内容のため、参考にして下さい。
+ファイアウォールを設定する方法については[iFacialMocapのトラブルシューティング](../external_tracker_ifacialmocap#troubleshoot)のQ1, Q2がほぼ同様の内容のため、参考にして下さい。
 
 上記の設定後、指定したUDPポートにJSONテキストを送信することで、事前にセーブした設定をロードします。
 

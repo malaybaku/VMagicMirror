@@ -3,7 +3,8 @@
   {%- if page.lang == "en" %}
     <a href="{{ page.url | remove: "en/" | relative_url }}">Japanese</a>
   {% else %}
-    <a href="{{ "en" | append: page.url | relative_url }}">English</a>
+    {% assign: path = page.url | relative_url %}
+    <a href="{{ "en" | append: path | remove_first: "/VMagicMirror" | relative_url }}">English</a>
   {% endif -%}
   </p>
 </div>

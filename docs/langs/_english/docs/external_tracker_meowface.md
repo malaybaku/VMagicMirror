@@ -7,7 +7,7 @@ lang: en
 # Connect to MeowFace
 {: .no_toc }
 
-Show how to setup MeowFace for [External Tracker App](./external_tracker).
+Show how to setup MeowFace for [External Tracker App](../external_tracker).
 
 
 ### What is MeowFace?
@@ -15,7 +15,7 @@ Show how to setup MeowFace for [External Tracker App](./external_tracker).
 
 MeowFace is a free Android app, to mime iOS's face tracking function.
 
-Especially it supports same data protocol as [iFacialMocap](./external_tracker_ifacialmocap).
+Especially it supports same data protocol as [iFacialMocap](../external_tracker_ifacialmocap).
 
 In VMagicMirror, you can connect MeowFace as if it is iFacialMocap.
 
@@ -37,7 +37,7 @@ Supported:
 
 - Head rotation tracking
 - Facial basic parameters tracking (blink, mouth motion)
-- [Perfect Sync](../tips/perfect_sync)
+- [Perfect Sync](../../tips/perfect_sync)
 
 Not Supported:
 
@@ -64,7 +64,7 @@ Then input the IP address shown in iOS device, and click `Connect` to complete c
 
 **IMPORTANT** 
 
-If you seem to fail to connect, please see below [iFacialMocap troubleshoot](./external_tracker_ifacialmocap#troubleshoot), especially Q1, Q2 and Q3.
+If you seem to fail to connect, please see below [iFacialMocap troubleshoot](../external_tracker_ifacialmocap#troubleshoot), especially Q1, Q2 and Q3.
 
 Though the apps are different, the connection failure causes are almost common.
 

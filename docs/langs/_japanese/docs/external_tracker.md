@@ -92,9 +92,9 @@ VMagicMirrorのコントロールパネルで`Ex Tracker`タブを選択し、`�
 
 アプリごとの連携方法は以下のリンクを参照ください。
 
-iOS: **[iFacialMocapとの連携](./external_tracker_ifacialmocap)**
+iOS: **[iFacialMocapとの連携](../external_tracker_ifacialmocap)**
 
-Android: **[MeowFaceとの連携](./external_tracker_meowface)**
+Android: **[MeowFaceとの連携](../external_tracker_meowface)**
 
 どちらのアプリも利用できる場合、iFacialMocapの使用を推奨しています。
 
@@ -112,7 +112,7 @@ Android: **[MeowFaceとの連携](./external_tracker_meowface)**
 - `一部の表情を強調して適用`: オンにすると、口元や眉の動きが強調されます。
 - `左右反転をオフにする`: 左右を反転させたくない場合だけオンにします。
 - `パーフェクトシンクを使用`: パーフェクトシンクを有効にします。
-詳しくは[パーフェクトシンクのTips](../tips/perfect_sync)をご覧ください。
+詳しくは[パーフェクトシンクのTips](../../tips/perfect_sync)をご覧ください。
 
 </div>
 
@@ -165,4 +165,4 @@ VMagicMirror v2.0.2以降では上記のほか、表情スイッチによって�
 
 `アクセサリーオプションを表示`チェックをオンにすると、それぞれの条件で表示したいアクセサリーを選択できるようになります。
 
-アクセサリー機能の詳細は[アクセサリー](./accessory)のページでご確認下さい。
+アクセサリー機能の詳細は[アクセサリー](../accessory)のページでご確認下さい。

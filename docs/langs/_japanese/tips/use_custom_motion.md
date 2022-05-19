@@ -115,7 +115,7 @@ Note:
 #### 3. Word to Motion機能での選択
 {: .doc-sec2 }
 
-VMagicMirrorを起動し、[表情の設定](../docs/expressions)にある手順で編集ウィンドウを開きます。
+VMagicMirrorを起動し、[表情の設定](../../docs/expressions)にある手順で編集ウィンドウを開きます。
 
 左側のモーション選択部分で`カスタムモーション`をチェックし、選択一覧からモーションを選択します。
 

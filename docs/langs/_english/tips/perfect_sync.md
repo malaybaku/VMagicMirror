@@ -22,9 +22,9 @@ Perfect Sync is supported from v1.3.0.
 #### What is Perfect Sync?
 {: .doc-sec2 }
 
-"Perfect Sync" is an advanced feature of [External Tracking](../docs/external_tracker), to achieve rich facial expressions. The feature is based on External Tracking, so it requires Face ID supported iPhone or iPad. VRM model also needs specialized setup for Perfect Sync.
+"Perfect Sync" is an advanced feature of [External Tracking](../../docs/external_tracker), to achieve rich facial expressions. The feature is based on External Tracking, so it requires Face ID supported iPhone or iPad. VRM model also needs specialized setup for Perfect Sync.
 
-Please see [External Tracking](../docs/external_tracker) beforehand, to understand how to use the system.
+Please see [External Tracking](../../docs/external_tracker) beforehand, to understand how to use the system.
 
 From the technical view, Perfect Sync maps the all blendshapes obtained by iOS ARKit FaceTracking to VRM's BlendShapeClips.
 

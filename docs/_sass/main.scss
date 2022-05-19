@@ -196,3 +196,8 @@ h2.home-sub-header {
 p.rss-subscribe {
     margin: 0;
 }
+.full-width-mobile {
+  @media #{$small-and-down}{
+    width: 100%;
+  }
+}

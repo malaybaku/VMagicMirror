@@ -38,7 +38,7 @@ Though written in Japanese, the following video also will be hints for you.
 #### VMagicMirror Setup
 {: .doc-sec2 }
 
-* Setup according to [Get Started](../get_started)
+* Setup according to [Get Started](../../get_started)
 * Check on `Presentation-like hand`, then you are ready to adjust your character's motion.
 
 To adjust the right arm motion:
@@ -49,7 +49,7 @@ See `Arm` menu, and if the right arm goes in character's body, increase `Arm pos
     
 That's all! Now you are ready for the presetation.
 
-If you want further custom, please see [Motion](../docs/motion) and [Effects](../docs/effects).
+If you want further custom, please see [Motion](../../docs/motion) and [Effects](../../docs/effects).
 
 #### Presentation
 {: .doc-sec2 }

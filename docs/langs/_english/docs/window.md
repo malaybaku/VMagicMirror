@@ -27,7 +27,7 @@ lang: en
 
 `Reset Position`: Press this button to move character window just right to the control panel window. Use this function when you lost where the character window is.
 
-`Virtual Camera Output`: Support same menu as `Streaming` tab. Please see the detail at [Tips: Use Virtual Camera](../tips/virtual_camera).
+`Virtual Camera Output`: Support same menu as `Streaming` tab. Please see the detail at [Tips: Use Virtual Camera](../../tips/virtual_camera).
 
 `Transparent Level`: Select the character transparency condition from level 0 to 4. Default value is level 2. Level 0 means always NOT transparent, and level 4 makes character always transparent.
 
@@ -35,7 +35,7 @@ lang: en
 
 #### NOTE: Schedule of virtual camera feature removal (v1.6.0)
 
-`Window` tab also supports [Virtual Camera](../tips/virtual_camera) feature, but this function will be removed in v1.6.0.
+`Window` tab also supports [Virtual Camera](../../tips/virtual_camera) feature, but this function will be removed in v1.6.0.
 
 This is because OBS Studio](https://obsproject.com/download) has introduced virtual camera by standard, from version 26.0.
 

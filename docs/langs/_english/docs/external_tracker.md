@@ -92,9 +92,9 @@ By checking this, VMagicMirror become ready to connect with external apps.
 
 Please see per-app specific setup process.
 
-iOS: **[iFacialMocap](./external_tracker_ifacialmocap)**
+iOS: **[iFacialMocap](../external_tracker_ifacialmocap)**
 
-Android: **[MeowFace](./external_tracker_meowface)**
+Android: **[MeowFace](../external_tracker_meowface)**
 
 iFacialMocap is the recommended way because of its higher performance.
 
@@ -109,7 +109,7 @@ iFacialMocap is the recommended way because of its higher performance.
 - `Apply LipSync using External Tracker Data`
 - `Emphasize Face Expressions`: Enable to emphasize eyebrow and mouth expression.
 - `Disable horizontal flip`: Enable to turn off horizontal flip process.\
-- `Use Perfect Sync`: Enable Perfect Sync. See detail at [Perfect Sync Tips](../tips/perfect_sync).
+- `Use Perfect Sync`: Enable Perfect Sync. See detail at [Perfect Sync Tips](../../tips/perfect_sync).
 
 </div>
 
@@ -163,4 +163,4 @@ Also v2.0.2 and later version support accessory visibility control during Face S
 
 Check `Show Accessory Option` to show accessory visibility selection.
 
-See [Accessory](./accessory) page for the detail of accessory feature.
+See [Accessory](../accessory) page for the detail of accessory feature.

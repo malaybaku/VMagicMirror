@@ -14,6 +14,4 @@ usage_header_presentation: バーチャル登壇
 usage_header_desktop_mascot: デスクトップマスコット
 ---
 
-[English](./en/)
-
 {% include home_template.html %}

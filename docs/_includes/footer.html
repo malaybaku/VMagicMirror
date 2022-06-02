@@ -9,10 +9,14 @@
       <div class="col l3 s12">
         <h5 class="white-text">VMagicMirror</h5>
         <ul>
+          {% comment %} This site defalut language is Japanese {% endcomment %}
+          {% if page.lang != "ja" %}
+            {% assign lang_prefix = "/" | append: page.lang | append: "/" %}
+          {% endif %}
           <li><a class="white-text" target="_blank" href="https://github.com/malaybaku/VMagicMirror">Source Code(GitHub)</a></li>
-          <li><a class="white-text" href="{{ page.lang_prefix | default: "/" | relative_url }}changelog">Change Log</a></li>
-          <li><a class="white-text" href="{{ page.lang_prefix | default: "/" | relative_url }}license">License</a></li>
-          <li><a class="white-text" href="{{ page.lang_prefix | default: "/" | relative_url }}contact">Contact</a></li>
+          <li><a class="white-text" href="{{ lang_prefix | default: "/" | relative_url }}changelog">Change Log</a></li>
+          <li><a class="white-text" href="{{ lang_prefix | default: "/" | relative_url }}license">License</a></li>
+          <li><a class="white-text" href="{{ lang_prefix | default: "/" | relative_url }}contact">Contact</a></li>
           <li><a class="white-text" href="{{ "/credit_license" | relative_url }}">3rd Party License</a></li>
         </ul>
       </div>

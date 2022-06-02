@@ -1,0 +1,42 @@
+.container.search-result{
+  position: relative;
+  height: 0;
+}
+
+.collection.search-result {
+  margin-top: -8px;
+  width: 90%;
+  position: absolute;
+  z-index: 99;
+  right: 0;
+
+  &.hidden {
+    visibility: hidden;
+  }
+
+  @media #{$medium-and-up}{
+    width: 33%;
+  }
+
+  .collection-item {
+    @extend .blue-text;
+
+    span{
+      color: color( "grey", "base" );
+    }
+  }
+
+  .collection-header {
+    color: rgba(0,0,0,0.87);
+  }
+
+  &.mobile {
+    border-width: 0 0 1px 0;
+    width: 100%;
+
+    .collection-header {
+      padding: 0 32px;
+    }
+  }
+}
+

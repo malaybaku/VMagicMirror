@@ -28,7 +28,8 @@ namespace Baku.VMagicMirror.IK
         private Coroutine _clapCoroutine;
 
         public bool ClapMotionRunning { get; private set; }
-        
+        public float MotionDuration => _timeTableGenerator.TotalDuration;
+
         public ClapMotionHandIKGenerator(
             HandIkGeneratorDependency dependency, 
             IVRMLoadable vrmLoadable,
@@ -46,30 +47,7 @@ namespace Baku.VMagicMirror.IK
             vrmLoadable.VrmDisposing += OnVrmDisposed;
         }
 
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _keyPoseCalculator.SetupAvatarBodyParameter(info.animator);
-            _hasModel = true;
-        }
-
-        private void OnVrmDisposed()
-        {
-            _hasModel = false;
-        }
-
-        private void OnEnterState()
-        {
-            _fingerController.Enable();
-            _elbowController.ApplyElbowModify(_timeTableGenerator.FirstEntryDuration);
-        }
-
-        private void OnQuitState()
-        {
-            _fingerController.Release();
-            //この時間は割と適当でもよいが、HandIkIntegrator.HandIkToggleDurationAfterClapに近い値だと無難
-            _elbowController.ResetElbowModify(0.6f);
-        }
-
+        
         public void RunClapMotion()
         {
             if (!_hasModel)
@@ -113,6 +91,40 @@ namespace Baku.VMagicMirror.IK
                 StopCoroutine(_clapCoroutine);
             }
             _clapCoroutine = StartCoroutine(ClapCoroutine(startPoses));            
+        }
+
+        public void StopClapMotion()
+        {
+            if (!ClapMotionRunning)
+            {
+                return;
+            }
+            
+            //TODO: コルーチンを止めて直前ステートに抜ける
+        }
+
+        private void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            _keyPoseCalculator.SetupAvatarBodyParameter(info.animator);
+            _hasModel = true;
+        }
+
+        private void OnVrmDisposed()
+        {
+            _hasModel = false;
+        }
+
+        private void OnEnterState()
+        {
+            _fingerController.Enable();
+            _elbowController.ApplyElbowModify(_timeTableGenerator.FirstEntryDuration);
+        }
+
+        private void OnQuitState()
+        {
+            _fingerController.Release();
+            //この時間は割と適当でもよいが、HandIkIntegrator.HandIkToggleDurationAfterClapに近い値だと無難
+            _elbowController.ResetElbowModify(0.6f);
         }
 
         private IEnumerator ClapCoroutine(HandPoses startPoses)

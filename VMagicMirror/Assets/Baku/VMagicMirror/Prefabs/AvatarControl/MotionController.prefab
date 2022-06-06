@@ -730,6 +730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a49c8a58a41634c80cdf52838acd8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handIKIntegrator: {fileID: 5813678810404708495}
   faceAttitude: {fileID: 5813678809054739210}
   headMotionClipPlayer: {fileID: 3163774597481480951}
 --- !u!1 &7492520328184788948

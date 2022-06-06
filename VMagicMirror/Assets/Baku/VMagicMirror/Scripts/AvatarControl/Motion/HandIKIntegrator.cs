@@ -56,7 +56,7 @@ namespace Baku.VMagicMirror
         //private ImageBaseHandIkGenerator _imageBaseHand;
         private AlwaysDownHandIkGenerator _downHand;
         private PenTabletHandIKGenerator _penTablet;
-        private ClapMotionHandIKGenerator _clapMotion;
+        public ClapMotionHandIKGenerator ClapMotion { get; private set; }
 
         private Transform _rightHandTarget = null;
         private Transform _leftHandTarget = null;
@@ -209,7 +209,7 @@ namespace Baku.VMagicMirror
             _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
             _downHand = new AlwaysDownHandIkGenerator(dependency, vrmLoadable);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
-            _clapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier); //, clapMotionSetting, elbowMotionModifier);
+            ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier); //, clapMotionSetting, elbowMotionModifier);
             barracudaHand.SetupDependency(dependency);
 
             typing.SetUp(keyboardProvider, dependency);
@@ -221,7 +221,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _downHand, _penTablet, _clapMotion,
+                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _downHand, _penTablet, ClapMotion,
                 })
             {
                 if (generator.LeftHandState != null)
@@ -442,7 +442,7 @@ namespace Baku.VMagicMirror
             if (debugRunClapMotion)
             {
                 debugRunClapMotion = false;
-                _clapMotion.RunClapMotion();
+                ClapMotion.RunClapMotion();
             }
             
             MouseMove.Update();
@@ -547,7 +547,7 @@ namespace Baku.VMagicMirror
             //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは拍手以外は禁止 + 拍手は実行中の優先度がすごく高い
             if (_leftTargetType.Value == targetType || 
                 AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
-                _leftTargetType.Value == HandTargetType.ClapMotion && _clapMotion.ClapMotionRunning
+                _leftTargetType.Value == HandTargetType.ClapMotion && ClapMotion.ClapMotionRunning
                )
             {
                 return;
@@ -576,7 +576,7 @@ namespace Baku.VMagicMirror
             //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは拍手以外は禁止 + 拍手は実行中の優先度がすごく高い
             if (_rightTargetType.Value == targetType || 
                 AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
-                _rightTargetType.Value == HandTargetType.ClapMotion && _clapMotion.ClapMotionRunning
+                _rightTargetType.Value == HandTargetType.ClapMotion && ClapMotion.ClapMotionRunning
                )
             {
                 return;

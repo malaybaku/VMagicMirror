@@ -107,6 +107,7 @@ namespace Baku.VMagicMirror
         public IReadOnlyReactiveProperty<string> AccessoryVisibilityRequest => _accessoryVisibilityRequest;
 
         private HeadMotionClipPlayer _headMotionClipPlayer = null;
+        private ClapMotionPlayer _clapMotionPlayer = null;
         private WordToMotionMapper _mapper = null;
         private IkWeightCrossFade _ikWeightCrossFade = null;
         private WordToMotionBlendShape _blendShape = null;
@@ -130,7 +131,8 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
             BuiltInMotionClipData builtInClips,
-            HeadMotionClipPlayer headMotionClipPlayer
+            HeadMotionClipPlayer headMotionClipPlayer,
+            ClapMotionPlayer clapMotionPlayer
             )
         {
             var _ = new WordToMotionManagerReceiver(receiver, this);
@@ -138,6 +140,7 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             _mapper = new WordToMotionMapper(builtInClips);
             _headMotionClipPlayer = headMotionClipPlayer;
+            _clapMotionPlayer = clapMotionPlayer;
         }
 
         public void LoadItems(MotionRequestCollection motionRequests)
@@ -167,6 +170,12 @@ namespace Baku.VMagicMirror
                     if (_currentMotionIsHeadMotion)
                     {
                         _headMotionClipPlayer.Play(request.BuiltInAnimationClipName, out float duration);
+                        dynamicDuration = duration;
+                        _isPlayingMotion = true;
+                    }
+                    else if (_clapMotionPlayer.CanPlay(request.BuiltInAnimationClipName))
+                    {
+                        _clapMotionPlayer.Play(request.BuiltInAnimationClipName, out float duration);
                         dynamicDuration = duration;
                         _isPlayingMotion = true;
                     }
@@ -248,12 +257,19 @@ namespace Baku.VMagicMirror
                     }
                 }
             }
-            
-            if (!EnablePreview && _currentMotionIsHeadMotion && !_headMotionClipPlayer.IsPlaying)
+
+            if (!EnablePreview)
             {
-                //頭部のみのモーションはIKウェイトとかはいじらないため、フラグだけ折れば十分
-                _currentMotionIsHeadMotion = false;
-                _isPlayingMotion = false;
+                if (_currentMotionIsHeadMotion && !_headMotionClipPlayer.IsPlaying)
+                {
+                    //頭部のみのモーションはIKウェイトとかはいじらないため、フラグだけ折れば十分
+                    _currentMotionIsHeadMotion = false;
+                    _isPlayingMotion = false;
+                }
+                else if (_clapMotionPlayer.IsPlaying)
+                {
+                    _isPlayingMotion = false;
+                }
             }
 
             if (EnablePreview && PreviewRequest != null)
@@ -265,6 +281,10 @@ namespace Baku.VMagicMirror
                     {
                         _headMotionClipPlayer.PlayPreview(PreviewRequest.BuiltInAnimationClipName);
                     }
+                    else if (_clapMotionPlayer.CanPlay(PreviewRequest.BuiltInAnimationClipName))
+                    {
+                        _clapMotionPlayer.PlayPreview(PreviewRequest.BuiltInAnimationClipName);
+                    }
                     else
                     {
                         StartPreviewBuiltInMotion(PreviewRequest.BuiltInAnimationClipName);
@@ -274,6 +294,7 @@ namespace Baku.VMagicMirror
                 {
                     StopPreviewBuiltInMotion();
                     _headMotionClipPlayer.StopPreview();
+                    _clapMotionPlayer.StopPreview();
                 }
 
                 if (PreviewRequest.MotionType == MotionRequest.MotionTypeCustom &&
@@ -529,6 +550,7 @@ namespace Baku.VMagicMirror
 
             _headMotionClipPlayer.Stop();
             _currentMotionIsHeadMotion = false;
+            _clapMotionPlayer.Stop();
             switch (_currentMotionType)
             {
                 case MotionRequest.MotionTypeBuiltInClip:

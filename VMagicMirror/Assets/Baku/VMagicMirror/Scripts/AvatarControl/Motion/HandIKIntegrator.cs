@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// ユーザーの入力と設定に基づいて、実際にIKを適用していくやつ
     /// </summary>
-    public class HandIKIntegrator : MonoBehaviour
+    public class HandIKIntegrator : MonoBehaviour, IHandIkGetter
     {
         #region settings
         
@@ -16,6 +16,10 @@ namespace Baku.VMagicMirror
 
         /// <summary> IK種類が変わるときのブレンディングに使う時間。IK自体の無効化/有効化もこの時間で行う </summary>
         private const float HandIkToggleDuration = 0.25f;
+        //拍手からそれ以外のステートに移った場合にのみ用いるブレンディング時間。あまり急だと違和感あるので、ゆっくり腕を降ろさせるのが狙い
+        private const float HandIkToggleDurationAfterClap = 0.6f;
+        private static readonly float MaxHandIkToggleDuration =
+            Mathf.Max(HandIkToggleDuration, HandIkToggleDurationAfterClap);
 
         private const float HandIkTypeChangeCoolDown = 0.3f;
 
@@ -37,6 +41,11 @@ namespace Baku.VMagicMirror
         [SerializeField] private GamepadHandIKGenerator.GamepadHandIkGeneratorSetting gamepadSetting = default;
         [SerializeField] private BarracudaHand barracudaHand = null;
 
+        [SerializeField] private ClapMotionSetting clapMotionSetting;
+        //TODO: 相互参照になっててキモいのでできれば直してほしい…
+        [SerializeField] private ElbowMotionModifier elbowMotionModifier;
+        [SerializeField] private bool debugRunClapMotion;
+
         
         public MouseMoveHandIKGenerator MouseMove { get; private set; }
         public GamepadHandIKGenerator GamepadHand { get; private set; }
@@ -47,7 +56,7 @@ namespace Baku.VMagicMirror
         //private ImageBaseHandIkGenerator _imageBaseHand;
         private AlwaysDownHandIkGenerator _downHand;
         private PenTabletHandIKGenerator _penTablet;
-        
+        private ClapMotionHandIKGenerator _clapMotion;
 
         private Transform _rightHandTarget = null;
         private Transform _leftHandTarget = null;
@@ -85,7 +94,7 @@ namespace Baku.VMagicMirror
         }
 
         public ReactiveProperty<WordToMotionDeviceAssign> WordToMotionDevice { get; } =
-            new ReactiveProperty<WordToMotionDeviceAssign>(WordToMotionDeviceAssign.KeyboardWord);
+            new(WordToMotionDeviceAssign.KeyboardWord);
         
         public bool EnablePresentationMode => _keyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.Presentation;
         
@@ -119,14 +128,13 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode =
-            new ReactiveProperty<GamepadMotionModes>(GamepadMotionModes.Gamepad);
+        private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode = new(GamepadMotionModes.Gamepad);
 
         private readonly ReactiveProperty<KeyboardAndMouseMotionModes> _keyboardAndMouseMotionMode = 
-            new ReactiveProperty<KeyboardAndMouseMotionModes>(KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
+            new(KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
         
         //NOTE: これはすごく特別なフラグで、これが立ってると手のIKに何か入った場合でも手が下がりっぱなしになる
-        public ReactiveProperty<bool> AlwaysHandDown { get; } = new ReactiveProperty<bool>(false);
+        public ReactiveProperty<bool> AlwaysHandDown { get; } = new(false);
 
         public bool IsLeftHandGripGamepad => _leftTargetType.Value == HandTargetType.Gamepad;
         public bool IsRightHandGripGamepad => _rightTargetType.Value == HandTargetType.Gamepad;
@@ -148,9 +156,8 @@ namespace Baku.VMagicMirror
 
         #endregion
 
-        
         private HandIkReactionSources _reactionSources;
-        private readonly HandIkInputEvents _inputEvents = new HandIkInputEvents();
+        private readonly HandIkInputEvents _inputEvents = new();
         
         [Inject]
         public void Initialize(
@@ -184,7 +191,7 @@ namespace Baku.VMagicMirror
                 CheckTypingOrMouseHandsCanMoveDown
             );
             var dependency = new HandIkGeneratorDependency(
-                this, _reactionSources, runtimeConfig, _inputEvents
+                this, _reactionSources, runtimeConfig, _inputEvents, this
                 );
 
             _rightHandTarget = ikTargets.RightHand;
@@ -200,9 +207,9 @@ namespace Baku.VMagicMirror
                 );
             Presentation = new PresentationHandIKGenerator(dependency, vrmLoadable, cam);
             _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
-            //_imageBaseHand = new ImageBaseHandIkGenerator(dependency, handTracker, imageBaseHandSetting, vrmLoadable);
             _downHand = new AlwaysDownHandIkGenerator(dependency, vrmLoadable);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
+            _clapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier); //, clapMotionSetting, elbowMotionModifier);
             barracudaHand.SetupDependency(dependency);
 
             typing.SetUp(keyboardProvider, dependency);
@@ -214,7 +221,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation/*, imageBaseHand*/, _downHand, _penTablet,
+                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _downHand, _penTablet, _clapMotion,
                 })
             {
                 if (generator.LeftHandState != null)
@@ -376,14 +383,32 @@ namespace Baku.VMagicMirror
 
         #endregion
         
+        #region IHandIkGetter
+
+        IIKData IHandIkGetter.GetLeft()
+        {
+            return (_currentLeftHand != null)
+                ? new IKDataStruct(_currentLeftHand.Position, _currentLeftHand.Rotation)
+                : new IKDataStruct(Vector3.zero, Quaternion.identity);
+        }
+        
+        IIKData IHandIkGetter.GetRight()
+        {
+            return (_currentRightHand != null)
+                ? new IKDataStruct(_currentRightHand.Position, _currentRightHand.Rotation)
+                : new IKDataStruct(Vector3.zero, Quaternion.identity);
+        }
+        
+        #endregion
+        
         #endregion
 
         private void Start()
         {
             _currentRightHand = Typing.RightHand;
             _currentLeftHand = Typing.LeftHand;
-            _leftHandStateBlendCount = HandIkToggleDuration;
-            _rightHandStateBlendCount = HandIkToggleDuration;
+            _leftHandStateBlendCount = MaxHandIkToggleDuration;
+            _rightHandStateBlendCount = MaxHandIkToggleDuration;
 
             MouseMove.Start();
             Presentation.Start();
@@ -413,6 +438,13 @@ namespace Baku.VMagicMirror
         
         private void Update()
         {
+            //DEBUG: 本当はビルトインモーションとして呼び出したい
+            if (debugRunClapMotion)
+            {
+                debugRunClapMotion = false;
+                _clapMotion.RunClapMotion();
+            }
+            
             MouseMove.Update();
             Presentation.Update();
             GamepadHand.Update();
@@ -441,9 +473,12 @@ namespace Baku.VMagicMirror
             {
                 _leftHandIkChangeCoolDown -= Time.deltaTime;
             }
-            
+
+            var duration = _prevLeftHand?.TargetType == HandTargetType.ClapMotion
+                ? HandIkToggleDurationAfterClap
+                : HandIkToggleDuration;
             //普通の状態: 複数ステートのブレンドはせず、今のモードをそのまま通す
-            if (_leftHandStateBlendCount >= HandIkToggleDuration)
+            if (_leftHandStateBlendCount >= duration)
             {
                 _leftHandTarget.localPosition = _currentLeftHand.Position;
                 _leftHandTarget.localRotation = _currentLeftHand.Rotation;
@@ -454,7 +489,7 @@ namespace Baku.VMagicMirror
 
             _leftHandStateBlendCount += Time.deltaTime;
             //prevStateと混ぜるための比率
-            float t = CubicEase(_leftHandStateBlendCount / HandIkToggleDuration);
+            float t = CubicEase(_leftHandStateBlendCount / duration);
             _leftHandTarget.localPosition = Vector3.Lerp(
                 _prevLeftHand.Position,
                 _currentLeftHand.Position,
@@ -474,9 +509,12 @@ namespace Baku.VMagicMirror
             {
                 _rightHandIkChangeCoolDown -= Time.deltaTime;
             }
-            
+
+            var duration = _prevRightHand?.TargetType == HandTargetType.ClapMotion
+                ? HandIkToggleDurationAfterClap
+                : HandIkToggleDuration;
             //普通の状態: 複数ステートのブレンドはせず、今のモードをそのまま通す
-            if (_rightHandStateBlendCount >= HandIkToggleDuration)
+            if (_rightHandStateBlendCount >= duration)
             {
                 _rightHandTarget.localPosition = _currentRightHand.Position;
                 _rightHandTarget.localRotation = _currentRightHand.Rotation;
@@ -487,7 +525,7 @@ namespace Baku.VMagicMirror
             
             _rightHandStateBlendCount += Time.deltaTime;
             //prevStateと混ぜるための比率
-            float t = CubicEase(_rightHandStateBlendCount / HandIkToggleDuration);
+            float t = CubicEase(_rightHandStateBlendCount / duration);
             
             _rightHandTarget.localPosition = Vector3.Lerp(
                 _prevRightHand.Position,
@@ -506,13 +544,14 @@ namespace Baku.VMagicMirror
         {
             var targetType = state.TargetType;
             
+            //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは拍手以外は禁止 + 拍手は実行中の優先度がすごく高い
             if (_leftTargetType.Value == targetType || 
-                (AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown))
+                AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
+                _leftTargetType.Value == HandTargetType.ClapMotion && _clapMotion.ClapMotionRunning
+               )
             {
-                //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは他のモードにならない
                 return;
             }
-
 
             _leftTargetType.Value = targetType;
             _prevLeftHand = _currentLeftHand;
@@ -520,6 +559,10 @@ namespace Baku.VMagicMirror
             
             _leftHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
             _leftHandStateBlendCount = 0f;
+            if (state.SkipEnterIkBlend)
+            {
+                _leftHandStateBlendCount = MaxHandIkToggleDuration;
+            }
 
             //Stateの遷移処理。ここで指とかを更新させる
             _prevLeftHand.Quit(_currentLeftHand);
@@ -530,10 +573,12 @@ namespace Baku.VMagicMirror
         {
             var targetType = state.TargetType;
             
+            //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは拍手以外は禁止 + 拍手は実行中の優先度がすごく高い
             if (_rightTargetType.Value == targetType || 
-                (AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown))
+                AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
+                _rightTargetType.Value == HandTargetType.ClapMotion && _clapMotion.ClapMotionRunning
+               )
             {
-                //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは他のモードにならない
                 return;
             }
 
@@ -543,6 +588,10 @@ namespace Baku.VMagicMirror
             
             _rightHandIkChangeCoolDown = HandIkTypeChangeCoolDown;
             _rightHandStateBlendCount = 0f;
+            if (state.SkipEnterIkBlend)
+            {
+                _rightHandStateBlendCount = MaxHandIkToggleDuration;
+            }
 
             //Stateの遷移処理。ここで指とかを更新させる
             _prevRightHand.Quit(_currentRightHand);
@@ -611,13 +660,15 @@ namespace Baku.VMagicMirror
         Keyboard,
         // NOTE: 右手にのみ使う。「プレゼンモードの場合の左手」とそうでない左手はどちらもKeyboardで統一的に扱う
         Presentation,
-        // NOTE: 両手に
+        // NOTE: 右手にのみ使う。
         PenTablet,
         Gamepad,
         ArcadeStick,
         MidiController,
         ImageBaseHand,
         AlwaysDown,
+        // NOTE: ClapMotionは「IKステートとして作られたビルトインモーション」で、他のステートに比べると一時的な使われ方をする
+        ClapMotion,
         Unknown,
     }
     

@@ -8,6 +8,9 @@ namespace Baku.VMagicMirror.IK
     /// </summary>
     public class ClapMotionPoseInterpolator
     {
+        public const float ClapApproachRate = 0.3f;
+        public const float ClapStopEndRate = 0.4f;
+
         private readonly ClapMotionKeyPoseCalculator _keyPoseCalculator;
 
         //遷移順: 
@@ -74,12 +77,9 @@ namespace Baku.VMagicMirror.IK
             // 拍手は前半が素早い動きでピシャっと手が合い、後半では加減速のある動きで戻す。
             // 前後半はミラーリングできない動きになっており、easingも違う。
 
-            const float ClapApproachRate = 0.3f;
-            const float ClapStopEndRate = 0.4f;
-            
-            // 22% -> 手をあわせる加速
-            // 11% -> 合わせた手のまま静止
-            // 66% -> 加減速つきで手を戻していく
+            // 30% -> 手をあわせる加速
+            // 10% -> 合わせた手のまま静止
+            // 60% -> 加減速つきで手を戻していく
             if (t < ClapApproachRate)
             {
                 //tで値が1になるような2次補間

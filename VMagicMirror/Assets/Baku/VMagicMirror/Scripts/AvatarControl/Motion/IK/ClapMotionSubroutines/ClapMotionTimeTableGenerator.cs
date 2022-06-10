@@ -13,12 +13,17 @@ namespace Baku.VMagicMirror.IK
 
     public class ClapMotionTimeTableGenerator
     {
-        //拍手状態じゃない状態から手を上げるときの所要時間を考えるときに参照する、手が等速運動してよい最高速度[m/s]
-        private const float MaxHandRaiseSpeed = 0.7f;
-        //NOTE: 遅すぎず早すぎずの拍手が3回/sくらいであり、遅すぎるとザツに見えるので、気持ち早め
-        private const float ClapDuration = 0.33f;
+        //拍手状態じゃない状態から手を上げるときの所要時間を考えるうえで、
+        //首の高さをベースに「その値の何倍くらいの速度が[m/s]単位で出せるか」を指定するファクター
+        private const float HeadHeightToHandRaiseSpeedFactor = 0.7f;
+        //NOTE: 遅すぎず早すぎずの拍手が3回/sくらい。
+        private const float ClapDuration = 0.4f;
 
-        private const float EndWait = 0.1f;
+        private const float EndWait = 0.2f;
+        private const float LastClapOpenMotionSlowFactor = 1.7f;
+
+        //NOTE:
+        public float HeadHeight { get; set; } = 1f;
         
         /// <summary> 手を持ち上げはじめる部分から起算した、拍手のトータルのモーションでかかる時間 </summary>
         public float TotalDuration { get; private set; }
@@ -29,6 +34,9 @@ namespace Baku.VMagicMirror.IK
         public float FirstClapDuration { get; private set; }
         /// <summary> 最初以外の拍手1回あたりの所要時間 </summary>
         public float SingleClapDuration { get; private set; }
+
+        private float _lastClapStartTime;
+        private float _lastClapDuration;
         
         /// <summary>
         /// 初期アプローチの状態と拍手の回数を指定することで、拍手全体の所要時間や、
@@ -44,11 +52,22 @@ namespace Baku.VMagicMirror.IK
             var diff = Mathf.Max(leftDiff, rightDiff);
 
             //加減速を考えたほうが更に妥当な値になるが、まあOKということで
-            FirstEntryDuration = diff / MaxHandRaiseSpeed;
+            FirstEntryDuration = diff / (HeadHeight * HeadHeightToHandRaiseSpeedFactor);
             //NOTE: 結果的に同じ値だが、揃うという必然的な理由がないので分けている
             FirstClapDuration = ClapDuration * motionScale;
             SingleClapDuration = ClapDuration * motionScale;
-            TotalDuration = FirstEntryDuration + FirstClapDuration + SingleClapDuration * (clapCount - 1);
+
+            //NOTE: 最後の拍手は「等速で手を合わす + 停止 + ゆっくり戻す」という処理を入れるので計算が独特
+            _lastClapDuration =
+                SingleClapDuration * ClapMotionPoseInterpolator.ClapApproachRate +
+                EndWait +
+                SingleClapDuration * (1 - ClapMotionPoseInterpolator.ClapApproachRate) * LastClapOpenMotionSlowFactor;
+
+            TotalDuration = FirstEntryDuration + FirstClapDuration +
+                SingleClapDuration * (clapCount - 2) +
+                _lastClapDuration;
+
+            _lastClapStartTime = TotalDuration - _lastClapDuration;
         }
 
         /// <summary>
@@ -74,9 +93,24 @@ namespace Baku.VMagicMirror.IK
                 );
             }
 
-            if (t > TotalDuration - EndWait)
+            if (t > _lastClapStartTime)
             {
-                return (ClapMotionPhase.EndWait, 0f);
+                var localTime = t - _lastClapStartTime;
+                var approachTime = SingleClapDuration * ClapMotionPoseInterpolator.ClapApproachRate;
+                if (localTime < approachTime)
+                {
+                    return (ClapMotionPhase.MainClap, localTime / SingleClapDuration);
+                }
+                else if (localTime < approachTime + EndWait)
+                {
+                    return (ClapMotionPhase.MainClap, ClapMotionPoseInterpolator.ClapApproachRate);
+                }
+                else
+                {
+                    var localRate = 
+                        (localTime - approachTime - EndWait) / (LastClapOpenMotionSlowFactor * SingleClapDuration);
+                    return (ClapMotionPhase.MainClap, localRate + ClapMotionPoseInterpolator.ClapApproachRate);
+                }
             }
 
             var rate = Mathf.Repeat(

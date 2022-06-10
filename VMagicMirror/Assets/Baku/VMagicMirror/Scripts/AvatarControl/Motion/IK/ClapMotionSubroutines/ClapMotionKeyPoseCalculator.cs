@@ -7,14 +7,6 @@ namespace Baku.VMagicMirror.IK
     {
         //NOTE: 乱数の幅情報だけをSOで受けたい。カーブの情報とかはコードで書いちゃう。
 
-        //アバターの体格だけで一意に決まるような値のキャッシュ
-        class AvatarBodyParameters
-        {
-            //NOTE: モデルのロード前に事故らないよう、それっぽい値にしておく
-            public float ClapHeight { get; set; } = 1f;
-            public float ArmLength { get; set; } = 0.5f;
-        }
-
         //パチパチの動作は完全に真横に手が動くわけではないので、少しだけ「離れてるときのほうが手の位置が高い」というようにする。
         //指先が真上方向を向く拍手の場合、0~ちょっとプラスの値でそれっぽくなる。
         private const float HeightOffset = 0.01f;
@@ -31,7 +23,9 @@ namespace Baku.VMagicMirror.IK
         //再生側では「小さい動きの場合、素早く再生する」みたいなことを考慮する
         public float MotionScale { get; set; } = 1f;
 
-        private readonly AvatarBodyParameters _bodyParameters = new AvatarBodyParameters();
+        //NOTE: モデルのロード前に事故らないよう、それっぽい値にしておく
+        private float _clapHeight = 1f;
+        private float _armLength = 0.5f;
 
         public void SetupAvatarBodyParameter(Animator animator)
         {
@@ -54,14 +48,14 @@ namespace Baku.VMagicMirror.IK
             var head = animator.GetBoneTransform(HumanBodyBones.Head).position;
 
             //ClapHeightは手首を持ってく位置を指定することに注意。気持ち低めを狙う。
-            _bodyParameters.ClapHeight = Mathf.Lerp(chest.y, head.y, 0.4f);
-            _bodyParameters.ArmLength = 0.5f * (leftArmLength + rightArmLength);
+            _clapHeight = Mathf.Lerp(chest.y, head.y, 0.4f);
+            _armLength = 0.5f * (leftArmLength + rightArmLength);
         }
         
         public HandPose GetClapBasePose()
         {
             //胸の正面で、腕は「肘が伸び切った状態から120度曲げた状態」くらいになる、という位置を見込むとこんな感じ
-            var pos = new Vector3(0f, _bodyParameters.ClapHeight, _bodyParameters.ArmLength * 0.5f);
+            var pos = new Vector3(0f, _clapHeight, _armLength * 0.5f);
             
             //TODO: ここに位置に関する乱数を挟んでよい。回転は無しでOK
 

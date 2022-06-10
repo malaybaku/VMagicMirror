@@ -8,6 +8,9 @@ namespace Baku.VMagicMirror.IK
 {
     public class ClapMotionHandIKGenerator : HandIkGeneratorBase
     {
+        private const int ClapCountMin = 6;
+        private const int ClapCountMax = 12;
+        
         private readonly IKDataRecord _leftIk = new();
         private readonly IKDataRecord _rightIk = new();
         private readonly ClapMotionHandIkState _leftState;
@@ -59,7 +62,7 @@ namespace Baku.VMagicMirror.IK
                 return;
             }
 
-            var motionScale = Random.Range(0.7f, 1f);
+            var motionScale = Random.Range(0.75f, 1f);
             _keyPoseCalculator.MotionScale = motionScale;
             _keyPoseCalculator.HandOffset = _avatarParamLoader.MeanOffset;
 
@@ -76,7 +79,7 @@ namespace Baku.VMagicMirror.IK
             _timeTableGenerator.Calculate(
                 startPoses,
                 _poseInterpolator.FirstDistantPoses,
-                Random.Range(6, 14),
+                Random.Range(ClapCountMin, ClapCountMax),
                 motionScale
                 );
 
@@ -111,6 +114,9 @@ namespace Baku.VMagicMirror.IK
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _keyPoseCalculator.SetupAvatarBodyParameter(info.animator);
+            var headHeight = info.animator.GetBoneTransform(HumanBodyBones.Head).position.y;
+            //0を入れると0除算になるので一応避けておく
+            _timeTableGenerator.HeadHeight = Mathf.Max(headHeight, 0.1f);
             _hasModel = true;
         }
 

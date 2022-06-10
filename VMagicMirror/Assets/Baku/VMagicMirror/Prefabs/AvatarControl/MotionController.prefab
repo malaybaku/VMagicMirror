@@ -715,6 +715,7 @@ Transform:
   - {fileID: 5813678810248240002}
   - {fileID: 4919419003873974731}
   - {fileID: 1859467759501820996}
+  - {fileID: 4415396731593519070}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -733,6 +734,7 @@ MonoBehaviour:
   handIKIntegrator: {fileID: 5813678810404708495}
   faceAttitude: {fileID: 5813678809054739210}
   headMotionClipPlayer: {fileID: 3163774597481480951}
+  colliderBasedAvatarParamLoader: {fileID: 8229117264469737190}
 --- !u!1 &7492520328184788948
 GameObject:
   m_ObjectHideFlags: 0
@@ -790,3 +792,49 @@ MonoBehaviour:
   handDiffIntegrateFactor: 2
   waitMotionBasedAngleDeg: 2.5
   waitMotionPhaseDelay: 0.18
+--- !u!1 &7834383450795169200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4415396731593519070}
+  - component: {fileID: 8229117264469737190}
+  m_Layer: 0
+  m_Name: ColliderBasedBodyParam
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4415396731593519070
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7834383450795169200}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5813678810510073683}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8229117264469737190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7834383450795169200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9059fbbadcc89a8409e8b6f2eb27f0f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colliderPrefab: {fileID: 416038543626308019, guid: e9d5d2be6c03cf0429d9a34725959d50,
+    type: 3}

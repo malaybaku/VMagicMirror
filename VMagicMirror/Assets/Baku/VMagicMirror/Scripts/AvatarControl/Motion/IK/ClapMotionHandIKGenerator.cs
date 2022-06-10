@@ -22,6 +22,7 @@ namespace Baku.VMagicMirror.IK
         private readonly ClapFingerController _fingerController;
 
         private readonly ElbowMotionModifier _elbowMotionModifier;
+        private readonly ColliderBasedAvatarParamLoader _avatarParamLoader;
         
         private bool _hasModel;
         private Coroutine _resetElbowOffsetCoroutine;
@@ -33,10 +34,13 @@ namespace Baku.VMagicMirror.IK
         public ClapMotionHandIKGenerator(
             HandIkGeneratorDependency dependency, 
             IVRMLoadable vrmLoadable,
-            ElbowMotionModifier elbowMotionModifier
+            ElbowMotionModifier elbowMotionModifier,
+            ColliderBasedAvatarParamLoader avatarParamLoader
             ) : base(dependency)
         {
             _elbowMotionModifier = elbowMotionModifier;
+            _avatarParamLoader = avatarParamLoader;
+
             _poseInterpolator = new ClapMotionPoseInterpolator(_keyPoseCalculator);
             _fingerController = new ClapFingerController(Dependency.Reactions.FingerController);
             _elbowController = new ClapMotionElbowController(_elbowMotionModifier, Dependency.Component);
@@ -57,6 +61,7 @@ namespace Baku.VMagicMirror.IK
 
             var motionScale = Random.Range(0.7f, 1f);
             _keyPoseCalculator.MotionScale = motionScale;
+            _keyPoseCalculator.HandOffset = _avatarParamLoader.MeanOffset;
 
             //拍手前の手の位置からの軌道を求める
             var currentLeft = Dependency.HandIkGetter.GetLeft();

@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror.IK
         public const int FirstEntry = 0;
         public const int FirstClap = 1;
         public const int MainClap = 2;
-        public const int EndWait = 3;
+        public const int LastClap = 3;
     }
 
     public class ClapMotionTimeTableGenerator
@@ -21,12 +21,16 @@ namespace Baku.VMagicMirror.IK
 
         private const float EndWait = 0.2f;
         private const float LastClapOpenMotionSlowFactor = 1.7f;
+        private const float LastClapOpenStateQuitFactor = 0.5f;
 
         //NOTE:
         public float HeadHeight { get; set; } = 1f;
         
-        /// <summary> 手を持ち上げはじめる部分から起算した、拍手のトータルのモーションでかかる時間 </summary>
+        /// <summary> モーション全体の時間。ステートを抜けたあとにもフォロー動作がある。 </summary>
         public float TotalDuration { get; private set; }
+
+        /// <summary> 拍手以外のステートに遷移し始めてよい時間 </summary>
+        public float MotionStateDuration { get; private set; }
         
         /// <summary> 最初に手を上げて、やや離れた位置に構えるまでの所要時間 </summary>
         public float FirstEntryDuration { get; private set; }
@@ -34,6 +38,7 @@ namespace Baku.VMagicMirror.IK
         public float FirstClapDuration { get; private set; }
         /// <summary> 最初以外の拍手1回あたりの所要時間 </summary>
         public float SingleClapDuration { get; private set; }
+        
 
         private float _lastClapStartTime;
         private float _lastClapDuration;
@@ -62,8 +67,19 @@ namespace Baku.VMagicMirror.IK
                 SingleClapDuration * ClapMotionPoseInterpolator.ClapApproachRate +
                 EndWait +
                 SingleClapDuration * (1 - ClapMotionPoseInterpolator.ClapApproachRate) * LastClapOpenMotionSlowFactor;
+            
+            var lastClapStateQuitDuration = 
+                SingleClapDuration * ClapMotionPoseInterpolator.ClapApproachRate +
+                EndWait +
+                SingleClapDuration * (1 - ClapMotionPoseInterpolator.ClapApproachRate) * LastClapOpenStateQuitFactor;
 
-            TotalDuration = FirstEntryDuration + FirstClapDuration +
+            MotionStateDuration =
+                FirstEntryDuration + FirstClapDuration +
+                SingleClapDuration * (clapCount - 2) +
+                lastClapStateQuitDuration;
+
+            TotalDuration = 
+                FirstEntryDuration + FirstClapDuration +
                 SingleClapDuration * (clapCount - 2) +
                 _lastClapDuration;
 
@@ -99,17 +115,17 @@ namespace Baku.VMagicMirror.IK
                 var approachTime = SingleClapDuration * ClapMotionPoseInterpolator.ClapApproachRate;
                 if (localTime < approachTime)
                 {
-                    return (ClapMotionPhase.MainClap, localTime / SingleClapDuration);
+                    return (ClapMotionPhase.LastClap, localTime / SingleClapDuration);
                 }
                 else if (localTime < approachTime + EndWait)
                 {
-                    return (ClapMotionPhase.MainClap, ClapMotionPoseInterpolator.ClapApproachRate);
+                    return (ClapMotionPhase.LastClap, ClapMotionPoseInterpolator.ClapApproachRate);
                 }
                 else
                 {
                     var localRate = 
                         (localTime - approachTime - EndWait) / (LastClapOpenMotionSlowFactor * SingleClapDuration);
-                    return (ClapMotionPhase.MainClap, localRate + ClapMotionPoseInterpolator.ClapApproachRate);
+                    return (ClapMotionPhase.LastClap, localRate + ClapMotionPoseInterpolator.ClapApproachRate);
                 }
             }
 

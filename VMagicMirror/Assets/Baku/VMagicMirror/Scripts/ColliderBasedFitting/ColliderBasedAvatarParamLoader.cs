@@ -20,11 +20,7 @@ namespace Baku.VMagicMirror
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable)
         {
-            vrmLoadable.VrmLoaded += info =>
-            {
-                ReadParams(info);
-                Debug.Log($"Wrist to hand mean Offset = {MeanOffset:0.000}");
-            };
+            vrmLoadable.VrmLoaded += ReadParams;
         }
 
         private void ReadParams(VrmLoadedInfo info)

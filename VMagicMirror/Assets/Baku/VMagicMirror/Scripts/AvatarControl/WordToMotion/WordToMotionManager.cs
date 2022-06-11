@@ -266,7 +266,7 @@ namespace Baku.VMagicMirror
                     _currentMotionIsHeadMotion = false;
                     _isPlayingMotion = false;
                 }
-                else if (_clapMotionPlayer.IsPlaying)
+                else if (!_clapMotionPlayer.IsPlaying)
                 {
                     _isPlayingMotion = false;
                 }

@@ -29,17 +29,21 @@ namespace Baku.VMagicMirror.IK
         /// 開始位置を指定することで、それ以降のキー姿勢を生成して補間可能にする
         /// </summary>
         /// <param name="startPose"></param>
-        public void Refresh(HandPoses startPose)
+        /// <param name="isAlwaysClapping"></param>
+        public void Refresh(HandPoses startPose, bool isAlwaysClapping)
         {
             StartPoses = startPose;
             var basePose = _keyPoseCalculator.GetClapBasePose();
             
             var (centerPoses, yaw) = _keyPoseCalculator.GetClapCenterPoses(basePose);
             _centerPoses = centerPoses;
-            FirstDistantPoses =
-                _keyPoseCalculator.GetClapDistantPoses(centerPoses, yaw, _keyPoseCalculator.LongDistance);
             _distantPoses = 
                 _keyPoseCalculator.GetClapDistantPoses(centerPoses, yaw, _keyPoseCalculator.ShortDistance);
+
+            //すでに拍手中の場合に距離を離しすぎると不自然になるので、
+            FirstDistantPoses = isAlwaysClapping
+                ? _distantPoses
+                : _keyPoseCalculator.GetClapDistantPoses(centerPoses, yaw, _keyPoseCalculator.LongDistance);
         }
 
         //拍手の動作スタートから、1回目の拍手の予備動作の位置に手を持っていくまでの補間

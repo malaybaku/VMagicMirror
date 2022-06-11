@@ -32,7 +32,10 @@ namespace Baku.VMagicMirror.IK
         private Coroutine _clapCoroutine;
 
         public bool ClapMotionRunning { get; private set; }
+        
+        
         public float MotionDuration => _timeTableGenerator.TotalDuration;
+        private float _clapTime = 0f;
 
         public ClapMotionHandIKGenerator(
             HandIkGeneratorDependency dependency, 
@@ -62,6 +65,20 @@ namespace Baku.VMagicMirror.IK
                 return;
             }
 
+            //NOTE: 既に拍手中の場合はモーションのつなげ方に配慮する。
+            // - 最初の拍手中 -> 連続で呼びすぎなので無視
+            // - それ以降 -> 初動のモーションがやりすぎにならない点にだけ配慮して実行し、ほぼ繋がってるビジュアルにする
+            var isAlwaysRunning = ClapMotionRunning;
+            if (isAlwaysRunning)
+            {
+                var (phase, _) = _timeTableGenerator.GetPhaseAndRate(_clapTime);
+                //最初の拍手中なので無視
+                if (phase < ClapMotionPhase.MainClap)
+                {
+                    return;
+                }
+            }
+
             var motionScale = Random.Range(0.75f, 1f);
             _keyPoseCalculator.MotionScale = motionScale;
             _keyPoseCalculator.HandOffset = _avatarParamLoader.MeanOffset;
@@ -69,10 +86,12 @@ namespace Baku.VMagicMirror.IK
             //拍手前の手の位置からの軌道を求める
             var currentLeft = Dependency.HandIkGetter.GetLeft();
             var currentRight = Dependency.HandIkGetter.GetRight();
-            _poseInterpolator.Refresh(new HandPoses(
-                new HandPose(currentLeft.Position, currentLeft.Rotation),
-                new HandPose(currentRight.Position, currentRight.Rotation)
-                ));
+            _poseInterpolator.Refresh(
+                new HandPoses(
+                    new HandPose(currentLeft.Position, currentLeft.Rotation),
+                    new HandPose(currentRight.Position, currentRight.Rotation)),
+                isAlwaysRunning
+                );
 
             var startPoses = _poseInterpolator.StartPoses;
 
@@ -140,22 +159,23 @@ namespace Baku.VMagicMirror.IK
 
         private IEnumerator ClapCoroutine(HandPoses startPoses)
         {
-            //拍手動作は以下のステップに分かれるが、4以外はキーポーズと補間が他クラスに委託されてるので、それを呼ぶだけ
+            //拍手動作は以下のステップに分かれるが、キーポーズと補間処理は他クラスに委託されてるので、基本それを呼ぶだけになっている
             //1. 両手を拍手の初期位置に持ってきて、極めて短い時間だけ静止する
             //2. 最初の「パチ」
             //3. それ以降の規則的な「パチパチ」
-            //4. 最後の「パチ」の後に指を気持ちだけ制御しつつ、直前のステートに戻す
+            //  - 最後の「パチ」モーションの戻しをゆっくりにしつつ、途中でステートを抜ける
+            
+            _clapTime = 0f;
 
-
-            //1, 2, 3
-            var time = 0f;
+            var stateQuited = false;
             
             //NOTE: SmoothDampしていいんでは、という考え方があるので現在値をキープしながら更新していく
             var prevPoses = startPoses;
             var poses = startPoses;
-            while (time < _timeTableGenerator.TotalDuration)
+            
+            while (_clapTime < _timeTableGenerator.TotalDuration)
             {
-                var (phase, rate) = _timeTableGenerator.GetPhaseAndRate(time);
+                var (phase, rate) = _timeTableGenerator.GetPhaseAndRate(_clapTime);
 
                 switch (phase)
                 {
@@ -166,9 +186,9 @@ namespace Baku.VMagicMirror.IK
                         poses = _poseInterpolator.GetFirstClap(rate);
                         break;
                     case ClapMotionPhase.MainClap:
+                    case ClapMotionPhase.LastClap:
                         poses = _poseInterpolator.GetClap(rate);
                         break;
-                    case ClapMotionPhase.EndWait:
                     default:
                         //NOTE: 特にEndWaitでは直前状態を(ごく短い時間だけ)キープする
                         break;
@@ -178,23 +198,25 @@ namespace Baku.VMagicMirror.IK
                 ApplyPoses(poses);
                 prevPoses = poses;
 
-                time += Time.deltaTime;
+                if (_clapTime > _timeTableGenerator.MotionStateDuration && !stateQuited)
+                {
+                    stateQuited = true;
+                    //ステートを戻すが、動作はもう少し続く
+                    ClapMotionRunning = false;
+                    _leftState.RaisePrevStateRequest();
+                    _rightState.RaisePrevStateRequest();
+
+                    //NOTE: ヒジをいじるような実装が復活するならここでリセット処理もする
+                    // if (_resetElbowOffsetCoroutine != null)
+                    // {
+                    //     StopCoroutine(_resetElbowOffsetCoroutine);
+                    // }
+                    // _resetElbowOffsetCoroutine = StartCoroutine(ResetElbowOffsets(...));
+                }
+
+                _clapTime += Time.deltaTime;
                 yield return null;
             }
-
-            //4. ステート戻し
-            ClapMotionRunning = false;
-            _leftState.RaisePrevStateRequest();
-            _rightState.RaisePrevStateRequest();
-
-            //NOTE: ヒジを何かいじる実装に変えた場合、ここをちゃんと呼ぶ
-            // if (_resetElbowOffsetCoroutine != null)
-            // {
-            //     StopCoroutine(_resetElbowOffsetCoroutine);
-            // }
-            // _resetElbowOffsetCoroutine = StartCoroutine(ResetElbowOffsets(
-            //     0f, 0f, 0.5f
-            // ));
         }
         
         // 拍手が終わったあとにヒジの広げ方を元に戻すやつ

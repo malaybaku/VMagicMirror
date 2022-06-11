@@ -13,11 +13,14 @@ namespace Baku.VMagicMirror.IK
         //拍手のときの手首のスナップ。値が大きいと子供っぽい + 疲れそうな動きになるので、ほどほどに。
         private const float DistantAngleOffset = 12f;
 
-        //TODO: モーション設定の「手の高さオフセット」が入るのが望ましい、気がする
+        private const float ReferenceArmLength = SettingAutoAdjuster.ReferenceArmLength;
+
+        private float _armLengthScale = 1f;
+        
         public float HandOffset { get; set; } = 0.02f;
 
-        public float ShortDistance { get; set; } = 0.03f;
-        public float LongDistance { get; set; } = 0.06f;
+        public float ShortDistance => 0.03f * _armLengthScale;
+        public float LongDistance => 0.06f * _armLengthScale;
 
         //NOTE: このスケールは軌道生成の最初に1回だけ乱数で更新され、同じ軌道を考える間では更新されない。
         //再生側では「小さい動きの場合、素早く再生する」みたいなことを考慮する
@@ -50,6 +53,8 @@ namespace Baku.VMagicMirror.IK
             //ClapHeightは手首を持ってく位置を指定することに注意。気持ち低めを狙う。
             _clapHeight = Mathf.Lerp(chest.y, head.y, 0.4f);
             _armLength = 0.5f * (leftArmLength + rightArmLength);
+
+            _armLengthScale = _armLength / ReferenceArmLength;
         }
         
         public HandPose GetClapBasePose()

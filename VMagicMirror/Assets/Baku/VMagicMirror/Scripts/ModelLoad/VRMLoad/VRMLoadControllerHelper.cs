@@ -57,8 +57,11 @@ namespace Baku.VMagicMirror
             fbbik.solver.rightHandEffector.positionWeight = 1.0f;
             fbbik.solver.rightHandEffector.rotationWeight = 1.0f;
 
-            //small pull: プレゼンモード中にキャラが吹っ飛んでいかないための対策
+            //右手のpullを小さくするのはプレゼンモード中にキャラが吹っ飛んでいかないための対策。
+            //右だけやるとバランス的におかしいので、左も揃える。
+            //※「0でも良いのでは？」という説も近年出ている
             fbbik.solver.rightArmChain.pull = 0.1f;
+            fbbik.solver.leftArmChain.pull = 0.1f;
             
             return fbbik;
         }

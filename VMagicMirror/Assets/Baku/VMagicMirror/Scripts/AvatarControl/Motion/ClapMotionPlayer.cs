@@ -1,4 +1,5 @@
 using Baku.VMagicMirror.IK;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -39,8 +40,8 @@ namespace Baku.VMagicMirror
 
         public void Tick()
         {
-            //プレビューが止まってたら必ず再生する、というだけ
-            if (IsPlayingPreview && !_clapMotion.ClapMotionRunning)
+            //プレビューが止まってたら必ず再生することを保証する
+            if (PreviewIsActive && !_clapMotion.ClapMotionRunning)
             {
                 _clapMotion.RunClapMotion();
             }

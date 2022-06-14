@@ -258,18 +258,10 @@ namespace Baku.VMagicMirror
                 }
             }
 
-            if (!EnablePreview)
+            //頭部のみのモーションはIKウェイトとかはいじらないため、フラグだけ折れば十分
+            if (!EnablePreview && _currentMotionIsHeadMotion && !_headMotionClipPlayer.IsPlaying)
             {
-                if (_currentMotionIsHeadMotion && !_headMotionClipPlayer.IsPlaying)
-                {
-                    //頭部のみのモーションはIKウェイトとかはいじらないため、フラグだけ折れば十分
-                    _currentMotionIsHeadMotion = false;
-                    _isPlayingMotion = false;
-                }
-                else if (!_clapMotionPlayer.IsPlaying)
-                {
-                    _isPlayingMotion = false;
-                }
+                _currentMotionIsHeadMotion = false;
             }
 
             if (EnablePreview && PreviewRequest != null)
@@ -277,15 +269,27 @@ namespace Baku.VMagicMirror
                 if (PreviewRequest.MotionType == MotionRequest.MotionTypeBuiltInClip && 
                     !string.IsNullOrEmpty(PreviewRequest.BuiltInAnimationClipName))
                 {
-                    if (_headMotionClipPlayer.CanPlay(PreviewRequest.BuiltInAnimationClipName))
+                    var isHeadMotion = _headMotionClipPlayer.CanPlay(PreviewRequest.BuiltInAnimationClipName);
+                    if (isHeadMotion)
                     {
                         _headMotionClipPlayer.PlayPreview(PreviewRequest.BuiltInAnimationClipName);
                     }
-                    else if (_clapMotionPlayer.CanPlay(PreviewRequest.BuiltInAnimationClipName))
+                    else
+                    {
+                        _headMotionClipPlayer.StopPreview();
+                    }
+
+                    var isClapMotion = _clapMotionPlayer.CanPlay(PreviewRequest.BuiltInAnimationClipName);
+                    if (isClapMotion)
                     {
                         _clapMotionPlayer.PlayPreview(PreviewRequest.BuiltInAnimationClipName);
                     }
                     else
+                    {
+                        _clapMotionPlayer.StopPreview();
+                    }
+
+                    if (!isHeadMotion && !isClapMotion)
                     {
                         StartPreviewBuiltInMotion(PreviewRequest.BuiltInAnimationClipName);
                     }
@@ -293,8 +297,6 @@ namespace Baku.VMagicMirror
                 else
                 {
                     StopPreviewBuiltInMotion();
-                    _headMotionClipPlayer.StopPreview();
-                    _clapMotionPlayer.StopPreview();
                 }
 
                 if (PreviewRequest.MotionType == MotionRequest.MotionTypeCustom &&
@@ -467,8 +469,12 @@ namespace Baku.VMagicMirror
 
         private void StopPreviewBuiltInMotion()
         {
+            _headMotionClipPlayer.StopPreview();
+            _clapMotionPlayer.StopPreview();
+
             if (!_isPlayingMotion || string.IsNullOrEmpty(_currentBuiltInMotionName))
             {
+                _isPlayingMotion = false;
                 return;
             }
 

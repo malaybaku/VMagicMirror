@@ -88,7 +88,7 @@ namespace Baku.VMagicMirror
                 {
                     _isPlayingBlendShape = false;
                     _blendShape.ResetBlendShape();
-                    StopPreviewBuiltInMotion();
+                    StopPreviewBuiltInAllTypeMotion();
                     StopPreviewCustomMotion();
                     _accessoryVisibilityRequest.Value = "";
                 }
@@ -269,34 +269,11 @@ namespace Baku.VMagicMirror
                 if (PreviewRequest.MotionType == MotionRequest.MotionTypeBuiltInClip && 
                     !string.IsNullOrEmpty(PreviewRequest.BuiltInAnimationClipName))
                 {
-                    var isHeadMotion = _headMotionClipPlayer.CanPlay(PreviewRequest.BuiltInAnimationClipName);
-                    if (isHeadMotion)
-                    {
-                        _headMotionClipPlayer.PlayPreview(PreviewRequest.BuiltInAnimationClipName);
-                    }
-                    else
-                    {
-                        _headMotionClipPlayer.StopPreview();
-                    }
-
-                    var isClapMotion = _clapMotionPlayer.CanPlay(PreviewRequest.BuiltInAnimationClipName);
-                    if (isClapMotion)
-                    {
-                        _clapMotionPlayer.PlayPreview(PreviewRequest.BuiltInAnimationClipName);
-                    }
-                    else
-                    {
-                        _clapMotionPlayer.StopPreview();
-                    }
-
-                    if (!isHeadMotion && !isClapMotion)
-                    {
-                        StartPreviewBuiltInMotion(PreviewRequest.BuiltInAnimationClipName);
-                    }
+                    UpdatePreviewBuiltInMotionActiveClip(PreviewRequest.BuiltInAnimationClipName);
                 }
                 else
                 {
-                    StopPreviewBuiltInMotion();
+                    StopPreviewBuiltInNonSpecialMotion();
                 }
 
                 if (PreviewRequest.MotionType == MotionRequest.MotionTypeCustom &&
@@ -429,8 +406,36 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void UpdatePreviewBuiltInMotionActiveClip(string clipName)
+        {
+            var isHeadMotion = _headMotionClipPlayer.CanPlay(clipName);
+            if (isHeadMotion)
+            {
+                _headMotionClipPlayer.PlayPreview(clipName);
+            }
+            else
+            {
+                _headMotionClipPlayer.StopPreview();
+            }
+
+            var isClapMotion = _clapMotionPlayer.CanPlay(clipName);
+            if (isClapMotion)
+            {
+                _clapMotionPlayer.PlayPreview(clipName);
+            }
+            else
+            {
+                _clapMotionPlayer.StopPreview();
+            }
+
+            if (!isHeadMotion && !isClapMotion)
+            {
+                StartPreviewBuiltInNonSpecialMotion(PreviewRequest.BuiltInAnimationClipName);
+            }
+        }
+        
         //note: このメソッドは実行中に何度呼び出してもOKな設計です
-        private void StartPreviewBuiltInMotion(string clipName)
+        private void StartPreviewBuiltInNonSpecialMotion(string clipName)
         {
             //もうやってる場合: そのまま放置
             if (_isPlayingMotion && _currentBuiltInMotionName == clipName)
@@ -439,9 +444,7 @@ namespace Baku.VMagicMirror
             }
 
             //プレビュー動作Aからプレビュー動作Bに変える、みたいな処理をやってるときの対応
-            if (!string.IsNullOrEmpty(_currentBuiltInMotionName) &&
-                _currentBuiltInMotionName != clipName
-                )
+            if (!string.IsNullOrEmpty(_currentBuiltInMotionName) && _currentBuiltInMotionName != clipName)
             {
                 _simpleAnimation.Stop(_currentBuiltInMotionName);
             }
@@ -467,11 +470,15 @@ namespace Baku.VMagicMirror
             fingerController.FadeOutWeight(0);
         }
 
-        private void StopPreviewBuiltInMotion()
+        private void StopPreviewBuiltInAllTypeMotion()
         {
             _headMotionClipPlayer.StopPreview();
             _clapMotionPlayer.StopPreview();
+            StopPreviewBuiltInNonSpecialMotion();
+        }
 
+        private void StopPreviewBuiltInNonSpecialMotion()
+        {
             if (!_isPlayingMotion || string.IsNullOrEmpty(_currentBuiltInMotionName))
             {
                 _isPlayingMotion = false;

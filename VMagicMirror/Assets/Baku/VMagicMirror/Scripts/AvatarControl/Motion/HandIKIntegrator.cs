@@ -41,11 +41,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private GamepadHandIKGenerator.GamepadHandIkGeneratorSetting gamepadSetting = default;
         [SerializeField] private BarracudaHand barracudaHand = null;
 
-        [SerializeField] private ClapMotionSetting clapMotionSetting;
         //TODO: 相互参照になっててキモいのでできれば直してほしい…
         [SerializeField] private ElbowMotionModifier elbowMotionModifier;
-        [SerializeField] private bool debugRunClapMotion;
-
         
         public MouseMoveHandIKGenerator MouseMove { get; private set; }
         public GamepadHandIKGenerator GamepadHand { get; private set; }
@@ -439,13 +436,6 @@ namespace Baku.VMagicMirror
         
         private void Update()
         {
-            //DEBUG: 本当はビルトインモーションとして呼び出したい
-            if (debugRunClapMotion)
-            {
-                debugRunClapMotion = false;
-                ClapMotion.RunClapMotion();
-            }
-            
             MouseMove.Update();
             Presentation.Update();
             GamepadHand.Update();

@@ -485,7 +485,6 @@ MonoBehaviour:
   gamepadSetting:
     imageBasedBodyMotion: {fileID: 5813678808713813112}
   barracudaHand: {fileID: 6033017557083037692}
-  clapMotionSetting: {fileID: 11400000, guid: 845102a622693b8458653aeb01f64c53, type: 2}
   elbowMotionModifier: {fileID: 5813678810248240001}
   debugRunClapMotion: 0
 --- !u!114 &5813678810404708592

@@ -23,6 +23,9 @@ namespace Baku.VMagicMirror
         public float WaistWidthHalf { get; private set; } = 0.15f;
         public float ElbowCloseStrength { get; private set; } = 0.30f;
         
+        public Vector3 RightElbowPositionOffset { get; set; }
+        public Vector3 LeftElbowPositionOffset { get; set; }
+        
         /// <summary>
         /// IKの効きを補正するファクターで0から1の値を指定します。
         /// </summary>
@@ -87,8 +90,10 @@ namespace Baku.VMagicMirror
             _ik.solver.rightArmChain.bendConstraint.weight = ElbowCloseStrength * ElbowIkRate;
             _ik.solver.leftArmChain.bendConstraint.weight = ElbowCloseStrength * ElbowIkRate;
 
-            _rightArmBendGoal.localPosition = new Vector3(WaistWidthHalf * _rightWidthFactor, 0, 0);            
-            _leftArmBendGoal.localPosition = new Vector3(-WaistWidthHalf * _leftWidthFactor, 0, 0);
+            _rightArmBendGoal.localPosition =
+                new Vector3(WaistWidthHalf * _rightWidthFactor, 0, 0) + RightElbowPositionOffset;
+            _leftArmBendGoal.localPosition =
+                new Vector3(-WaistWidthHalf * _leftWidthFactor, 0, 0) + LeftElbowPositionOffset;
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)

@@ -11,13 +11,15 @@ namespace Baku.VMagicMirror.IK
             MonoBehaviour component, 
             HandIkReactionSources reactions,
             HandIkRuntimeConfigs runtimeConfig,
-            HandIkInputEvents inputEvents
+            HandIkInputEvents inputEvents,
+            IHandIkGetter handIkGetter
             )
         {
             Component = component;
             Reactions = reactions;
             Config = runtimeConfig;
             Events = inputEvents;
+            HandIkGetter = handIkGetter;
         }
 
         /// <summary>
@@ -27,6 +29,7 @@ namespace Baku.VMagicMirror.IK
         public HandIkReactionSources Reactions { get; }
         public HandIkRuntimeConfigs Config { get; }
         public HandIkInputEvents Events { get; }
+        public IHandIkGetter HandIkGetter { get; }
     }
     
     /// <summary> 手のIK計算をしたついでで操作することがある諸々をまとめたクラス </summary>
@@ -90,7 +93,6 @@ namespace Baku.VMagicMirror.IK
             => _checkCooldownFunc(hand, targetType);
         public bool CheckKeyboardAndMouseHandsCanMoveDown() => _checkKeyboardAndMouseHandsCanMoveDown();
     }
-    
 
     /// <summary> 手のIKを更新するきっかけになるような、キーやマウスの入力イベントをまとめたクラス </summary>
     /// <remarks>
@@ -133,5 +135,13 @@ namespace Baku.VMagicMirror.IK
 
         public void RaiseNoteOn(int noteNumber) => NoteOn?.Invoke(noteNumber);
         public void RaiseKnobValueChange(int knobNumber, float value) => KnobValueChange?.Invoke(knobNumber, value);
-    }    
+    }
+
+    //IK位置を明示的に取得したいときに見に行くクラス。
+    //State遷移時に直前ステートを見に行くと用が足りない場合だけ使うもので、使うケースは少ない
+    public interface IHandIkGetter
+    {
+        public IIKData GetLeft();
+        public IIKData GetRight();
+    }
 }

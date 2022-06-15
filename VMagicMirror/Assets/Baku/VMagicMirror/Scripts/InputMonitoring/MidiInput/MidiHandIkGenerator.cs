@@ -242,6 +242,7 @@ namespace Baku.VMagicMirror.IK
             private readonly MidiHandIkGenerator _parent;
             private readonly IIKData _data;
 
+            public bool SkipEnterIkBlend => false;
             public void RaiseRequest() => RequestToUse?.Invoke(this);
             
             public Vector3 Position => _data.Position;

@@ -578,6 +578,8 @@ namespace Baku.VMagicMirror.IK
 
             private readonly ImageBaseHandIkGenerator _parent;
             private readonly IIKData _data;
+
+            public bool SkipEnterIkBlend => false;
             
             public Vector3 Position => _data.Position;
             public Quaternion Rotation => _data.Rotation;

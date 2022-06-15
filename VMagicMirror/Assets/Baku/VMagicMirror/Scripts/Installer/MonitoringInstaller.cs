@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror.Installer
         {
             //NOTE: 2つの実装が合体したキメラ実装を適用します。コレが比較的安全でいちばん動きも良いので。
             container.Bind<IKeyMouseEventSource>()
-                .FromInstance(new HybridInputChecker(robustRawInputChecker, globalHookInputChecker))//globalHookInputChecker)
+                .FromInstance(new HybridInputChecker(robustRawInputChecker, globalHookInputChecker))
                 .AsCached();
             container.BindInstance(mousePositionProvider);
             container.BindInstance(faceTracker);

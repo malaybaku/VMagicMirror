@@ -12,7 +12,7 @@ VMagicMirror is Available on [BOOTH](https://booth.pm/ja/items/1272298).
   <img class="full-width-mobile" src="https://asset.booth.pm/static-images/banner/468x60_02.png">
 </a>
 
-Please see  [License](../about_license.html) if you are not clear the permitted usage.
+Please see  [License](../license) if you are not clear the permitted usage.
 You can download source code on [GitHub](https://github.com/malaybaku/VMagicMirror).
 
 For v1.8.0 and later, there are two edition, and 4 options to get them.

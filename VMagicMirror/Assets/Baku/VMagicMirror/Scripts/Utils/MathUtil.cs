@@ -25,7 +25,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="rate"></param>
         /// <returns></returns>
-        private static float CubicEase(float rate) => 2 * rate * rate * (1.5f - rate);
+        public static float CubicEase(float rate) => 2 * rate * rate * (1.5f - rate);
 
         /// <summary>
         /// ベクトルを要素どうしで掛けた値を取得します。

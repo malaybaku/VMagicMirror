@@ -439,6 +439,7 @@ namespace Baku.VMagicMirror.IK
                 Hand = hand;
             }
             
+            public bool SkipEnterIkBlend => false;
             public BarracudaHandFinger Finger { get; set; }
             
             public IKDataRecord IKData { get; } = new IKDataRecord();

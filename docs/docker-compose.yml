@@ -1,0 +1,10 @@
+version: "3"
+services:
+  service_jekyll:
+    image: jekyll/jekyll:4.2.0
+    container_name: local_github_pages
+    volumes:
+      - .:/srv/jekyll
+    command: jekyll serve --config _local_config.yml
+    ports:
+      - 4000:4000

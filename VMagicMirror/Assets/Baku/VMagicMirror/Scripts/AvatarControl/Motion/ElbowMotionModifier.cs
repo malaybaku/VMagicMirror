@@ -19,9 +19,15 @@ namespace Baku.VMagicMirror
 
         [Range(-5f, 5f)]
         [SerializeField] private float bodyRollRateToElbowWidthMinusFactor = 1.0f;
+
+        //腰の真横より後ろにbendGoalを持っていくことで肘が前方に行きにくくするための補正値。
+        [SerializeField] private float bendGoalZOffset = -0.02f;
         
         public float WaistWidthHalf { get; private set; } = 0.15f;
         public float ElbowCloseStrength { get; private set; } = 0.30f;
+        
+        public Vector3 RightElbowPositionOffset { get; set; }
+        public Vector3 LeftElbowPositionOffset { get; set; }
         
         /// <summary>
         /// IKの効きを補正するファクターで0から1の値を指定します。
@@ -87,8 +93,10 @@ namespace Baku.VMagicMirror
             _ik.solver.rightArmChain.bendConstraint.weight = ElbowCloseStrength * ElbowIkRate;
             _ik.solver.leftArmChain.bendConstraint.weight = ElbowCloseStrength * ElbowIkRate;
 
-            _rightArmBendGoal.localPosition = new Vector3(WaistWidthHalf * _rightWidthFactor, 0, 0);            
-            _leftArmBendGoal.localPosition = new Vector3(-WaistWidthHalf * _leftWidthFactor, 0, 0);
+            _rightArmBendGoal.localPosition =
+                new Vector3(WaistWidthHalf * _rightWidthFactor, 0, bendGoalZOffset) + RightElbowPositionOffset;
+            _leftArmBendGoal.localPosition =
+                new Vector3(-WaistWidthHalf * _leftWidthFactor, 0, bendGoalZOffset) + LeftElbowPositionOffset;
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)

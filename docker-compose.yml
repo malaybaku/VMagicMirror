@@ -1,0 +1,14 @@
+version: "3"
+services:
+  service_jekyll:
+    image: jekyll/jekyll:stable
+    container_name: local_jekyll
+    volumes:
+      - ./docs:/srv/jekyll
+    command: jekyll build --watch
+  web:
+    image: httpd
+    volumes:
+     - ./docs/_site:/usr/local/apache2/htdocs/
+    ports:
+      - "80:80"

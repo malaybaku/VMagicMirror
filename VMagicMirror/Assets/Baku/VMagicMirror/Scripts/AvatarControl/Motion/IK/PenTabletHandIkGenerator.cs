@@ -14,6 +14,7 @@ namespace Baku.VMagicMirror.IK
 
         #region IHandIkState
 
+        public bool SkipEnterIkBlend => false;
         public Vector3 Position => _rightHand.Position;
         public Quaternion Rotation => _rightHand.Rotation;
         public ReactedHand Hand => ReactedHand.Right;

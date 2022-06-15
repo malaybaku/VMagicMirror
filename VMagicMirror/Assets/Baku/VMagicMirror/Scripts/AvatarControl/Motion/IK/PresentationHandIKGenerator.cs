@@ -23,10 +23,10 @@ namespace Baku.VMagicMirror.IK
         private const float SpeedFactor = 12f;
         
         private readonly IKDataRecord _rightHand = new IKDataRecord();
-        //public IIKData RightHand => _rightHand;
 
         #region IHandIkState
 
+        public bool SkipEnterIkBlend => false;
         public Vector3 Position => _rightHand.Position;
         public Quaternion Rotation => _rightHand.Rotation;
         public ReactedHand Hand => ReactedHand.Right;

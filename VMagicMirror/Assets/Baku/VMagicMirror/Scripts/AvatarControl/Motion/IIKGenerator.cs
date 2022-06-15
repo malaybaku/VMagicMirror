@@ -27,6 +27,17 @@ namespace Baku.VMagicMirror
         //public IKTargets Target { get; set; } = IKTargets.Body;
     }
 
+    public readonly struct IKDataStruct : IIKData
+    {
+        public IKDataStruct(Vector3 position, Quaternion rotation)
+        {
+            Position = position;
+            Rotation = rotation;
+        }
+        public Vector3 Position { get; }
+        public Quaternion Rotation { get; }
+    }
+
     /// <summary><see cref="IIKData"/>のIKが体のどの部位を動かすためのものかの一覧</summary>
     public enum IKTargets
     {

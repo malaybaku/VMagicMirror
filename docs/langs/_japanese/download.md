@@ -11,7 +11,7 @@ VMagicMirrorはBOOTHからダウンロード可能です。
   <img class="full-width-mobile" src="https://asset.booth.pm/static-images/banner/468x60_02.png">
 </a>
 
-ダウンロードおよび利用にあたっては[License](./license)もご確認下さい。
+ダウンロードおよび利用にあたっては[License](../license)もご確認下さい。
 ソースコードは[GitHub](https://github.com/malaybaku/VMagicMirror)で公開しています。
 
 v1.8.0以降では2種類のエディションを、4種類の方式で配布しています。
@@ -95,7 +95,7 @@ Fanboxは退会した場合、それ以降のアップデートが入手でき�
 - マイク: 通常のマイクのほか、仮想マイク入力(ボイスチェンジャー出力など)も使用できます。
 - Webカメラ: 視野角が狭めで、顔全体が映るものを使って下さい。VMagicMirrorでは原則としてカメラ画像を320x240ピクセルに圧縮して用いるため、解像度が低いWebカメラでも問題ありません。
 - ゲームパッド: XInputに対応したゲームパッドか、またはDUAL SHOCK 4に対応しています。Xbox One Controllerで動作を確認しています。
-- iPhone / iPad: Face ID対応、またはA14以降のチップ搭載であれば使用できます。詳しくは[外部トラッキング](./docs/external_tracker)のページをご覧下さい。
+- iPhone / iPad: Face ID対応、またはA14以降のチップ搭載であれば使用できます。詳しくは[外部トラッキング](../docs/external_tracker)のページをご覧下さい。
 - MIDIコントローラ: ほぼなんでも対応していますが、キー入力のみ対応しているため、キー中心のコントローラを推奨しています。
 
 </div>

@@ -92,7 +92,7 @@ When you close one of the window, the other window also closes and VMagicMirror 
 
 If control panel window does not appear, it indicates install might not be successful.
 
-See [Download Troubleshoot](./download#troubleshoot_first_startup) in this case.
+See [Download Troubleshoot](../download#troubleshoot_first_startup) in this case.
 
 </div>
 
@@ -123,7 +123,7 @@ Some avatars by other authors are not available even if you liked it on VRoid Hu
 
 This is because of the usage limitation setting by the authors.
 
-See the detail at [Tips: Use VRoid Hub Avatar](./tips/use_vroid_hub).
+See the detail at [Tips: Use VRoid Hub Avatar](../tips/use_vroid_hub).
 
 </div>
 
@@ -185,7 +185,7 @@ Also you can set background image when `Transparent Window` is turn off, from `L
 
 </div>
 
-If the model's face does not rotate in face tracking, please open [FAQ](./questions) and see "Face not rotate when using face tracking" section.
+If the model's face does not rotate in face tracking, please open [FAQ](../questions) and see "Face not rotate when using face tracking" section.
 
 If your face is not at the center for the web camera, or you are too near/far to the camera, the character indication might be unnatural. In this case, click `Calibrate position` to adjust.
 
@@ -205,7 +205,7 @@ When your character always look downward then look down and `Calibrate position`
 
 VMagicMirror v1.1.0 and later also supports iOS app based face tracking.
 
-See detail at [External Tracker App ](./docs/external_tracker).
+See detail at [External Tracker App ](../docs/external_tracker).
 
 </div>
 
@@ -240,7 +240,7 @@ Especially you can see the effect when keyboard is shown and selecting `Typing E
 
 **Hint**
 
-If shadow looks bad, please check [FAQ](./questions) and "Shadow looks not good". 
+If shadow looks bad, please check [FAQ](../questions) and "Shadow looks not good". 
 
 If this does not help, then disable shadow.
 
@@ -321,7 +321,7 @@ Use `Reset` to recover the standard layout.
 
 In default, please try typing "joy" and see what results on your avatar. Also you can select `Gamepad` on `Device Assignment` and press A,B,X,Y buttons, or select `Keyboard (num 0-8)` and press keys to switch expresssions.
 
-Please see the detail in [Expressions](./docs/expressions).
+Please see the detail in [Expressions](../docs/expressions).
 
 When choosing `Device Assignment` to `Gamepad` or `MIDI Controller`, selected device arm motion is disabled. This helps you to hide what you do to change face expression from audience.
 
@@ -333,7 +333,7 @@ The pages below documents more about VMagicMirror's specification.
 
 <div class="doc-ul" markdown="1">
 
-- [Docs](./docs): Documents about Detail Setting Window and iOS collaboration (Ex.Tracker in main window).
-- [Tips](./tips): Show use-case based tips and some special settings which does not have GUI.
+- [Docs](../docs): Documents about Detail Setting Window and iOS collaboration (Ex.Tracker in main window).
+- [Tips](../tips): Show use-case based tips and some special settings which does not have GUI.
 
 </div>

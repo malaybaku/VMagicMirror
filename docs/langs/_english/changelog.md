@@ -56,7 +56,7 @@ lang: en
 
 2021/12/25
 
-* Add: [Accessory](./docs/accessory) feature which support image files and 3D models.
+* Add: [Accessory](../docs/accessory) feature which support image files and 3D models.
 * Fix: When avatar is loaded from VRoid Hub and camera get close to the avatar, some meshes becomes invisible
 
 
@@ -99,7 +99,7 @@ lang: en
 * Fix: Minor issues.
 * Changed: Update UniVRM version from 0.66.0 to 0.81.0.
 
-Note that `VMagicMirror_Files` folder specification affects to the way to [Change Keyboard and Touchpad Appearance](./tips/change_textures), and [Use Custom Motion](./tips/use_custom_motion).
+Note that `VMagicMirror_Files` folder specification affects to the way to [Change Keyboard and Touchpad Appearance](../tips/change_textures), and [Use Custom Motion](../tips/use_custom_motion).
 
 
 #### v1.8.2
@@ -110,7 +110,7 @@ Note that `VMagicMirror_Files` folder specification affects to the way to [Chang
 * Add: New built-in head motion `Nod` and `Shake`. These motions are registered as 7th and 8th Word to Motion item by default.
 * Add: MIDI device supports up to 16 keys assignment for Word to Motion feature.
 * Add: Gamepad newly supports L/R/Select buttons for Word to Motion feature.
-* Change: Gamepad 3D models is replaced. This changes the way how to [Change Device Textures](./tips/change_textures), in which gamepad texture now supports UV and you will need single image file.
+* Change: Gamepad 3D models is replaced. This changes the way how to [Change Device Textures](../tips/change_textures), in which gamepad texture now supports UV and you will need single image file.
 * Change: If iFacialMocap connection setting exists, the app automatically tries once to connect at start. App will success to connect when iFacialMocap runs beforehand and other settings are correct.
 
 
@@ -130,7 +130,7 @@ Note that `VMagicMirror_Files` folder specification affects to the way to [Chang
 
 2021/07/17
 
-* Change: Distribution style has changed. From this version, conventional free edition is called `Standard Edition` and there is new paid edition `Full Edition`. Please see detail at [Download](./download) page.
+* Change: Distribution style has changed. From this version, conventional free edition is called `Standard Edition` and there is new paid edition `Full Edition`. Please see detail at [Download](../download) page.
 * Change(Add): Re-design camera based hand tracking, so that more precise motion is possible. Standard edition has limitation for this feature, that special visual effect is applied during hand tracking is enabled.
 * Add: `Disable Horizontal Flip` option is applied to External Tracker system tracking.
 * Add: Chinese Simplified localization for the GUI (*Thanks shirunesuru for the proposal in [this issue](https://github.com/malaybaku/VMagicMirror/issues/571)!)
@@ -155,7 +155,7 @@ Note that `VMagicMirror_Files` folder specification affects to the way to [Chang
 
 * Fix: In v1.7.0, Right side of the keyboard was not animated when visibility changed.
 * Fix: Pen tablet and MIDI controller was visible just after the app started, against their default visibility.
-* Add: [Change Device Textures](./tips/change_textures) tips link, in setting window `Layout` tab, 
+* Add: [Change Device Textures](../tips/change_textures) tips link, in setting window `Layout` tab, 
 
 #### v1.7.0
 {: .doc-sec2 }
@@ -199,7 +199,7 @@ Note that `VMagicMirror_Files` folder specification affects to the way to [Chang
 
 2020/12/30
 
-* Add: Support for custom motion. Please see detail at [Use Custom Motion](./tips/use_custom_motion)
+* Add: Support for custom motion. Please see detail at [Use Custom Motion](../tips/use_custom_motion)
 * Change: GUI design changed.
 * Change: During you keep down the keyboard key or mouse button, then the avatar also keep key down pose.
 * Change: MIDI input is not captured by default. This is to prevent performance problem in the PC with many connected MIDI controllers. If you need to capture the input, check setting window > `Device` tab > `MIDI` menu.
@@ -263,7 +263,7 @@ Note that `VMagicMirror_Files` folder specification affects to the way to [Chang
 
 2020/08/27
 
-* Add: Support for Perfect Sync by External Tracker. See [Tips Page](./tips/perfect_sync) for the detail.
+* Add: Support for Perfect Sync by External Tracker. See [Tips Page](../tips/perfect_sync) for the detail.
 * Add: Voice based random motion, for no tracking system environment.
 * Change: Improved head tracking for web camera.
 * Add: Option to change eye motion scale, on setting window `Motion` > `Face` > `Eye Motion Scale`.

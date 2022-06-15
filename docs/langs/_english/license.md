@@ -46,7 +46,7 @@ Also note that, you should not redistribute binaries available on BOOTH or Fanbo
 
 There are full edition (paid version) software at v1.8.0 and later, which has different binary from free conventional free distribution (standard edition).
 
-Please see [Download](./download) page for the detail about full edition.
+Please see [Download](../download) page for the detail about full edition.
 
 About full edition:
 
@@ -63,7 +63,7 @@ About full edition:
 <div class="doc-ul" markdown="1">
 
 - Refund is unavailable in any cases, based on disclaimer in the license.
-- There might be serious issue because of zip file download failure. In this case Full Edition might not work though Standard Edition works correctly in specific environment. In such case please do NOT request refund, and instead please see [FAQ](./questions) and make contact if necessary. 
+- There might be serious issue because of zip file download failure. In this case Full Edition might not work though Standard Edition works correctly in specific environment. In such case please do NOT request refund, and instead please see [FAQ](../questions) and make contact if necessary. 
 
 </div>
 

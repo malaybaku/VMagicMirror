@@ -4,8 +4,8 @@ author: 獏星(ばくすたー)
 description: Mirror-like software to reflect yourself as VRM avatar, without any special devices.
 summary: VMagicMirrorはキーボードとマウスを使ってVRMアバターを鏡写しのように動かせるソフトウェアです。
 
-latest_version: v2.0.4
-latest_update: 2022/04/29
+latest_version: v2.0.3
+latest_update: 2022/03/30
 
 sass:
     style: compressed
@@ -26,3 +26,5 @@ collections:
 
 plugins:
   - jekyll-sitemap
+
+baseurl: "/VMagicMirror"

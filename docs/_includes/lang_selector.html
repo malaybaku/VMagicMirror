@@ -1,0 +1,10 @@
+<div class="container">
+  <p>
+  {%- if page.lang == "en" %}
+    <a href="{{ page.url | remove: "en/" | relative_url }}">Japanese</a>
+  {% else %}
+    {% assign: path = page.url | relative_url %}
+    <a href="{{ "en" | append: path | remove_first: "/VMagicMirror" | relative_url }}">English</a>
+  {% endif -%}
+  </p>
+</div>

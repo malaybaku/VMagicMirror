@@ -56,21 +56,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             _deviceList = deviceList;
             _microphoneStatus = microphoneStatus;
 
-            LipSyncMicrophoneDeviceName = new RProperty<string>(_setting.LipSyncMicrophoneDeviceName.Value, v =>
-            {
-                if (!string.IsNullOrEmpty(v))
-                {
-                    _setting.LipSyncMicrophoneDeviceName.Value = v;
-                }
-            });
-
-            CameraDeviceName = new RProperty<string>(_setting.CameraDeviceName.Value, v =>
-            {
-                if (!string.IsNullOrEmpty(v))
-                {
-                    _setting.CameraDeviceName.Value = v;
-                }
-            });
 
             CalibrateFaceCommand = new ActionCommand(() => _setting.RequestCalibrateFace());
             EndExTrackerIfNeededCommand = new ActionCommand(
@@ -79,9 +64,30 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
             if (!IsInDesignMode)
             {
+                LipSyncMicrophoneDeviceName = new RProperty<string>(_setting.LipSyncMicrophoneDeviceName.Value, v =>
+                {
+                    if (!string.IsNullOrEmpty(v))
+                    {
+                        _setting.LipSyncMicrophoneDeviceName.Value = v;
+                    }
+                });
+
+                CameraDeviceName = new RProperty<string>(_setting.CameraDeviceName.Value, v =>
+                {
+                    if (!string.IsNullOrEmpty(v))
+                    {
+                        _setting.CameraDeviceName.Value = v;
+                    }
+                });
+
                 ShowInstallPathWarning = installPathChecker.HasMultiByteCharInInstallPath;
                 _setting.LipSyncMicrophoneDeviceName.AddWeakEventHandler(OnMicrophoneDeviceNameChanged);
                 _setting.CameraDeviceName.AddWeakEventHandler(OnCameraDeviceNameChanged);
+            }
+            else
+            {
+                LipSyncMicrophoneDeviceName = new RProperty<string>("");
+                CameraDeviceName = new RProperty<string>("");
             }
         }
 

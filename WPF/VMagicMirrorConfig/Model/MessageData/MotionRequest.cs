@@ -162,6 +162,15 @@ namespace Baku.VMagicMirrorConfig
                     HoldBlendShape = false,
                     DurationWhenOnlyBlendShape = 3.0f,
                 },
+                new MotionRequest()
+                {
+                    MotionType = MotionTypeBuiltInClip,
+                    Word = "clap",
+                    BuiltInAnimationClipName = "Clap",
+                    UseBlendShape = false,
+                    HoldBlendShape = false,
+                    DurationWhenOnlyBlendShape = 3.0f,
+                },
             };
             result[1].BlendShapeValues["Joy"] = 100;
             result[2].BlendShapeValues["Angry"] = 100;

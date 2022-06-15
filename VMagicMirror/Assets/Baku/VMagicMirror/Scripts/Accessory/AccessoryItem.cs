@@ -13,7 +13,6 @@ namespace Baku.VMagicMirror
         //カメラのnear clipが0.05なので、それより大きく、かつ十分小さめの値にする
         private const float BillboardZ = 0.1f;
 
-        private static readonly AccessoryAttachTarget DefaultTarget = AccessoryAttachTarget.Head;
         private static readonly Vector3 DefaultPosition = new Vector3(0f, 0.05f, 0.17f);
         private static readonly Vector3 DefaultRotationEuler = Vector3.zero;
         private static readonly Vector3 DefaultScale = Vector3.one;

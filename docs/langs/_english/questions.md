@@ -20,7 +20,7 @@ lang: en
 #### Control panel does not appear for the first app launch
 {: .doc-sec2 }
 
-Installation might be failed in this case. See [Download Troubleshoot](./download#troubleshoot_first_startup).
+Installation might be failed in this case. See [Download Troubleshoot](../download#troubleshoot_first_startup).
 
 If the troubleshoot does not help, please contact via BOOTH message or Twitter DM.
 
@@ -37,7 +37,7 @@ When using other version, Setting file might be broken in this case, so please t
 <div class="doc-ul" markdown="1">
 
 1. Press `Reset` on the control panel `Home` tab, and then press `OK` on the confirmation dialog to reset settings.
-    + If it recovers the situation, please follow [2: Get Started](./en_get_started.html) to setup.
+    + If it recovers the situation, please follow [2: Get Started](../en_get_started.html) to setup.
 2. If the problem still remains, exit VMagicMirror.
 3. Delete auto save file. There are two ways according to the version of VMagicMirror.
     + (v1.9.2 or later) Open `(My Documents)\VMagicMirror_Files\Saves` folder and then delete `_autosave` file.
@@ -118,10 +118,10 @@ In this case, you can reset the window position.
 
 1. Move Control panel to near to the left top side of screen.
 2. Open setting window and show `Window` tab to select `Reset Character Position`.
-    + If you could find character then [2: Get Started](./get_started) will support your setup.
+    + If you could find character then [2: Get Started](../get_started) will support your setup.
 3. If the character still does not appear, then turn off `Transparent Background` on setting window `Window` tab and check if you can see green window at the right side of control panel.
 4. Setting window `Layout` tab, see `Camera` menu, and press `Reset Position` to reset the camera position.
-    + If you could find character then [2: Get Started](./get_started) will support your setup.
+    + If you could find character then [2: Get Started](../get_started) will support your setup.
 
 </div>
 
@@ -222,7 +222,7 @@ If you are using v1.9.0 or later and you also want to remove settings files, the
 
 If your problem is by update process, then rebooting PC might fix it.
 
-For other troubles, please see [Troubleshoot section of the page about iFacialMocap](./docs/external_tracker_ifacialmocap#troubleshoot).
+For other troubles, please see [Troubleshoot section of the page about iFacialMocap](../docs/external_tracker_ifacialmocap#troubleshoot).
 
 
 
@@ -234,7 +234,7 @@ For other troubles, please see [Troubleshoot section of the page about iFacialMo
 <div class="doc-ul" markdown="1">
 
 - Reboot Windows.
-- Disable [External Tracker](./docs/external_tracker), or enable it with `Apply LipSync using External Tracker Data` turned off.
+- Disable [External Tracker](../docs/external_tracker), or enable it with `Apply LipSync using External Tracker Data` turned off.
 - If anti-virus is installed other than Windows Defender, try to disable it for VMagicMirror. There are some user report that Kaspersky products might disturb getting microphone input.
 - Check if other VRM model works, by using some stable models like VRoid Studio sample model.
 - If you have multiple microphones, check other microphone works.

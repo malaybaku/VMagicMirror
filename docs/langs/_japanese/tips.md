@@ -7,7 +7,7 @@ title: Tips
 
 ここではユースケース別のTipsや、ユーザーインターフェース上に説明のない詳細機能を紹介しています。
 
-基本的な使い方は[Get Started](./get_started)を、設定ウィンドウで出来ることの一覧は[Docs](./docs)を参照ください。
+基本的な使い方は[Get Started](../get_started)を、設定ウィンドウで出来ることの一覧は[Docs](../docs)を参照ください。
 
 [VRoid Hubのアバター利用について](./use_vroid_hub)
 

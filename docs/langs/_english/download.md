@@ -12,7 +12,7 @@ VMagicMirror is Available on [BOOTH](https://booth.pm/ja/items/1272298).
   <img class="full-width-mobile" src="https://asset.booth.pm/static-images/banner/468x60_02.png">
 </a>
 
-Please see  [License](./about_license.html) if you are not clear the permitted usage.
+Please see  [License](../about_license.html) if you are not clear the permitted usage.
 You can download source code on [GitHub](https://github.com/malaybaku/VMagicMirror).
 
 For v1.8.0 and later, there are two edition, and 4 options to get them.
@@ -103,7 +103,7 @@ Note:
 - Microphone: Lipsync (viseme) supports physical micrphone and also virtual input. You can use voice changer output as lipsync input.
 - Web camera: Please layout to capture your whole face. No high resolution needed, as VMagicMirror use face image with low resolution (320 x 240).
 - Gamepad: Support XInput style gamepad. XBox controller is a popular one supported. Also you can use DUAL SHOCK 4.
-- iPhone / iPad: Please see [External Tracker App](./docs/external_tracker) for the detail.
+- iPhone / iPad: Please see [External Tracker App](../docs/external_tracker) for the detail.
 - MIDI Controller: Recommend a controller mainly with key input.
 
 </div>

@@ -8,7 +8,7 @@ lang: en
 
 Here shows several tips about `VMagicMirror`, including advanced features without user interface support.
 
-Basic usage is in [Get Started](./get_started), and setting window detail is in [Docs](./docs).
+Basic usage is in [Get Started](../get_started), and setting window detail is in [Docs](../docs).
 
 [Use VRoid Hub Avatar](./use_vroid_hub)
 

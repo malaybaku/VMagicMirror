@@ -22,36 +22,33 @@ Put the images to replace in this folder. Please use specific file name for each
 * Keyboard key image: `key.png`
 * Touch pad: `pad.png`
 * Gamepad body : `gamepad_body.png`
-* Gamepad buttons: `gamepad_button.png` (*v1.8.1 or older)
 * MIDI controller note area: `midi_note.png`
 * MIDI controller knob area: `midi_knob.png`
 * Pen, when pen tablet motion enabled: `pen.png`
 * Pen tablet, when pen tablet motion enabled: `pen_tablet.png`
 * Arcade stick parts: `arcade_stick.png`
 
+You do not have to put all of the images. Put files which you want to overwrite.
+
+For the gamepad and pen, see following uv template. Other parts do not have UV template because those images are used as-is. First image in below shows the example to replace key and touch pad.
+
+After the setup, start `VMagicMirror.exe` to load the specified image.
+
 <div class="note-area" markdown="1">
 
 **NOTE**
 
-MIDI controller related texture support is from v1.6.2.
+Pen's UV template is for v2.0.5 and later version. This UV is not compatible with v2.0.4 and older version.
 
 </div>
 
-You do not have to put all of the images, so just put files which you want to overwrite.
-
-Gamepad texture has different requirement depend on VMagicMirror version. 
-
-For v1.8.2 or later, single `gamepad_body.png` file supports body and button texture, and UV template is as following.
-
-v1.8.1 and older version requires single-color-only image for body and button separatedly, so you will need to put `gamepad_body.png` and `gamepad_button.png`.
-
-After the setup, start `VMagicMirror.exe` to load the specified image.
-
 <div class="row">
 
-{% include docimg.html file="/images/tips/change_texture.png" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/tips/change_texture.png" customclass="col s4 m4 l4" imgclass="fit-doc-img" %}
 
-{% include docimg.html file="/images/tips_model/gamepad_template.png" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/tips_model/gamepad_template.png" customclass="col s4 m4 l4" imgclass="fit-doc-img" %}
+
+{% include docimg.html file="/images/tips_model/pen_template.png" customclass="col s4 m4 l4" imgclass="fit-doc-img" %}
 
 </div>
 

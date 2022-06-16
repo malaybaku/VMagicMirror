@@ -84,6 +84,7 @@
 
         // Motion, Eye
         public const string LookAtStyle = nameof(LookAtStyle);
+        public const string SetUseAvatarEyeBoneMap = nameof(SetUseAvatarEyeBoneMap);
         public const string SetEyeBoneRotationScale = nameof(SetEyeBoneRotationScale);
 
         // Motion, Image-based Hand

@@ -15,26 +15,22 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class EyeBoneAngleMapApplier : MonoBehaviour
     {
-        //NOTE: この値はGUIの設定でオンオフしたい
-        [SerializeField] private bool applyMapping;
-        
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable)
+        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable)
         {
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposed;
+            receiver.AssignCommandHandler(
+                VmmCommands.SetUseAvatarEyeBoneMap,
+                command => _applyMapping = command.ToBoolean()
+            );
         }
 
         private bool _hasBoneApplier;
         private VRMLookAtBoneApplyer _applier;
+        private bool _applyMapping = true;
 
-        public bool NeedOverwrite => applyMapping;
-
-        private void OnVrmDisposed()
-        {
-            _applier = null;
-            _hasBoneApplier = false;
-        }
+        public bool NeedOverwrite => _applyMapping;
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
@@ -49,6 +45,12 @@ namespace Baku.VMagicMirror
             _applier = boneApplier;
         }
 
+        private void OnVrmDisposed()
+        {
+            _applier = null;
+            _hasBoneApplier = false;
+        }
+
         public Quaternion GetLeftEyeRotation(Quaternion localRot)
         {
             if (!_hasBoneApplier)
@@ -57,7 +59,6 @@ namespace Baku.VMagicMirror
             }
             
             var (yaw, pitch) = SeparateRotation(localRot);
-            Debug.Log($"Separated rot = {yaw:0.0}, {pitch:0.0}");
             return GetLeftEyeRotation(yaw, pitch);
         }
         

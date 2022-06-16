@@ -95,6 +95,7 @@ namespace Baku.VMagicMirrorConfig
                 }
             });
 
+            UseAvatarEyeBoneMap = new RProperty<bool>(setting.UseAvatarEyeBoneMap, v => SendMessage(factory.SetUseAvatarEyeBoneMap(v)));
             EyeBoneRotationScale = new RProperty<int>(setting.EyeBoneRotationScale, v => SendMessage(factory.SetEyeBoneRotationScale(v)));
 
             EnableLipSync = new RProperty<bool>(setting.EnableLipSync, v => SendMessage(factory.EnableLipSync(v)));
@@ -182,6 +183,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> UseLookAtPointMousePointer { get; }
         public RProperty<bool> UseLookAtPointMainCamera { get; }
 
+        public RProperty<bool> UseAvatarEyeBoneMap { get; }
         public RProperty<int> EyeBoneRotationScale { get; }
 
         #endregion
@@ -259,6 +261,7 @@ namespace Baku.VMagicMirrorConfig
             UseLookAtPointNone.Value = setting.UseLookAtPointNone;
             UseLookAtPointMousePointer.Value = setting.UseLookAtPointMousePointer;
             UseLookAtPointMainCamera.Value = setting.UseLookAtPointMainCamera;
+            UseAvatarEyeBoneMap.Value = setting.UseAvatarEyeBoneMap;
             EyeBoneRotationScale.Value = setting.EyeBoneRotationScale;
         }
 

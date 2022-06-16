@@ -63,6 +63,7 @@
         public bool UseLookAtPointMousePointer { get; set; } = true;
         public bool UseLookAtPointMainCamera { get; set; } = false;
 
+        public bool UseAvatarEyeBoneMap { get; set; } = true;
         public int EyeBoneRotationScale { get; set; } = 100;
 
         #endregion

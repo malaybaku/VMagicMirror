@@ -1,6 +1,5 @@
 using UnityEngine;
 using VRM;
-using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -13,10 +12,9 @@ namespace Baku.VMagicMirror
     /// - must: 呼び出しタイミングは極めて遅めにする
     /// - should: VRMのLookAtは動いていないべき
     /// </remarks>
-    public class EyeBoneAngleMapApplier : MonoBehaviour
+    public class EyeBoneAngleMapApplier
     {
-        [Inject]
-        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable)
+        public EyeBoneAngleMapApplier(IMessageReceiver receiver, IVRMLoadable vrmLoadable)
         {
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposed;
@@ -30,7 +28,7 @@ namespace Baku.VMagicMirror
         private VRMLookAtBoneApplyer _applier;
         private bool _applyMapping = true;
 
-        public bool NeedOverwrite => _applyMapping;
+        public bool NeedOverwrite => _applyMapping && _hasBoneApplier;
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
@@ -51,34 +49,16 @@ namespace Baku.VMagicMirror
             _hasBoneApplier = false;
         }
 
-        public Quaternion GetLeftEyeRotation(Quaternion localRot)
-        {
-            if (!_hasBoneApplier)
-            {
-                return localRot;
-            }
-            
-            var (yaw, pitch) = SeparateRotation(localRot);
-            return GetLeftEyeRotation(yaw, pitch);
-        }
-        
-        public Quaternion GetRightEyeRotation(Quaternion localRot)
-        {
-            if (!_hasBoneApplier)
-            {
-                return localRot;
-            }
-            
-            var (yaw, pitch) = SeparateRotation(localRot);
-            return GetRightEyeRotation(yaw, pitch);
-        }
-
-        //NOTE: 下記でyaw, pitchはdeg単位, かつ_applierが非nullなことが保証されている
         //VRMLookAtBoneApplyer.ApplyRotationsを参考にしているが、pitchの正負向きが逆扱いなことに注意
-        
         //TODO: 符号にめちゃくちゃ注意すること！左右でinner / outerが変わる事にも要注意
-        private Quaternion GetLeftEyeRotation(float yaw, float pitch)
+
+        public Vector2 GetLeftMappedValues(float yaw, float pitch)
         {
+            if (!NeedOverwrite)
+            {
+                return new Vector2(yaw, pitch);
+            }
+
             var mappedYaw = yaw < 0
                 ? -_applier.HorizontalOuter.Map(-yaw)
                 : _applier.HorizontalInner.Map(yaw);
@@ -87,12 +67,16 @@ namespace Baku.VMagicMirror
                 ? _applier.VerticalUp.Map(-pitch)
                 : _applier.VerticalDown.Map(pitch);
 
-            Debug.Log($"Mapped rot = {mappedYaw:0.0}, {mappedPitch:0.0}");
-            return Quaternion.Euler(mappedPitch, mappedYaw, 0f);
+            return new Vector2(mappedYaw, mappedPitch);
         }
 
-        private Quaternion GetRightEyeRotation(float yaw, float pitch)
+        public Vector2 GetRightMappedValues(float yaw, float pitch)
         {
+            if (!NeedOverwrite)
+            {
+                return new Vector2(yaw, pitch);
+            }
+
             var mappedYaw = yaw < 0
                 ? -_applier.HorizontalInner.Map(-yaw)
                 : _applier.HorizontalOuter.Map(yaw);
@@ -101,19 +85,7 @@ namespace Baku.VMagicMirror
                 ? _applier.VerticalUp.Map(-pitch)
                 : _applier.VerticalDown.Map(pitch);
 
-            return Quaternion.Euler(mappedPitch, mappedYaw, 0f);
-        }
-
-        //目ボーンの回転をヨーとピッチ(degree)に変換する。
-        private static (float yaw, float pitch) SeparateRotation(Quaternion rot)
-        {
-            //NOTE: 常識的に目ボーンの回転値にはロール運動が効いてないはずだが、それを前提にせず、素朴に計算する。
-            // eulerAnglesは計算ミスが怖いので避ける。
-            var direction = rot * Vector3.forward;
-            return (
-                MathUtil.ClampedAtan2Deg(direction.x, direction.z),
-                -Mathf.Rad2Deg * Mathf.Asin(direction.y)
-            );
+            return new Vector2(mappedYaw, mappedPitch);
         }
     }
 }

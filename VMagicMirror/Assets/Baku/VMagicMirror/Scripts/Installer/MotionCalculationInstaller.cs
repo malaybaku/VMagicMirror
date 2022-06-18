@@ -9,6 +9,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private FaceAttitudeController faceAttitude = null;
         [SerializeField] private HeadMotionClipPlayer headMotionClipPlayer = null;
         [SerializeField] private ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader = null;
+        [SerializeField] private NonImageBasedMotion nonImageBasedMotion = null;
 
         public override void Install(DiContainer container)
         {
@@ -16,7 +17,8 @@ namespace Baku.VMagicMirror.Installer
                 handIKIntegrator,
                 faceAttitude,
                 headMotionClipPlayer,
-                colliderBasedAvatarParamLoader
+                colliderBasedAvatarParamLoader,
+                nonImageBasedMotion
             );
 
             container.BindInterfacesAndSelfTo<ClapMotionPlayer>().AsSingle();

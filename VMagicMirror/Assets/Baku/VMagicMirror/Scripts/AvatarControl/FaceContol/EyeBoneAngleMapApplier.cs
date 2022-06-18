@@ -52,11 +52,11 @@ namespace Baku.VMagicMirror
         //VRMLookAtBoneApplyer.ApplyRotationsを参考にしているが、pitchの正負向きが逆扱いなことに注意
         //TODO: 符号にめちゃくちゃ注意すること！左右でinner / outerが変わる事にも要注意
 
-        public Vector2 GetLeftMappedValues(float yaw, float pitch)
+        public (float resultYaw, float resultPitch) GetLeftMappedValues(float yaw, float pitch)
         {
             if (!NeedOverwrite)
             {
-                return new Vector2(yaw, pitch);
+                return (yaw, pitch);
             }
 
             var mappedYaw = yaw < 0
@@ -67,14 +67,14 @@ namespace Baku.VMagicMirror
                 ? _applier.VerticalUp.Map(-pitch)
                 : _applier.VerticalDown.Map(pitch);
 
-            return new Vector2(mappedYaw, mappedPitch);
+            return (mappedYaw, mappedPitch);
         }
 
-        public Vector2 GetRightMappedValues(float yaw, float pitch)
+        public (float resultYaw, float resultPitch) GetRightMappedValues(float yaw, float pitch)
         {
             if (!NeedOverwrite)
             {
-                return new Vector2(yaw, pitch);
+                return (yaw, pitch);
             }
 
             var mappedYaw = yaw < 0
@@ -85,7 +85,7 @@ namespace Baku.VMagicMirror
                 ? _applier.VerticalUp.Map(-pitch)
                 : _applier.VerticalDown.Map(pitch);
 
-            return new Vector2(mappedYaw, mappedPitch);
+            return (mappedYaw, mappedPitch);
         }
     }
 }

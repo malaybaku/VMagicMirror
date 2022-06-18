@@ -4,7 +4,6 @@ namespace Baku.VMagicMirror
 {
     public class EyeLookAt
     {
-
         private float _weight = 1f;
         /// <summary>
         /// 0~1の範囲でLookAtの重みを指定する。1だと完全にターゲットを見ようとし、0だと動かない
@@ -24,24 +23,16 @@ namespace Baku.VMagicMirror
         private Transform _head;
         private bool _hasAvatar;
 
-        //NOTE: HeadIkIntegratorの処理を部分的に無視するために都合がよいため、いちおう見ている。見ないでも処理としては通る。
-        private LookAtStyles _lookAtStyle = LookAtStyles.MousePointer;
-
-        public EyeLookAt(IMessageReceiver receiver, IVRMLoadable vrmLoadable, Transform lookAtTarget)
+        public EyeLookAt(IVRMLoadable vrmLoadable, Transform lookAtTarget)
         {
             _lookAtTarget = lookAtTarget;
             vrmLoadable.VrmLoaded += info => SetAvatarHead(info.animator.GetBoneTransform(HumanBodyBones.Head));
             vrmLoadable.VrmDisposing += ReleaseAvatarHead;
-            
-            receiver.AssignCommandHandler(
-                VmmCommands.LookAtStyle,
-                command => _lookAtStyle = LookAtStyleUtil.GetLookAtStyle(command.Content) 
-                );
         }
 
         public void Calculate()
         {
-            if (!_hasAvatar || _lookAtStyle == LookAtStyles.Fixed)
+            if (!_hasAvatar)
             {
                 Yaw = 0f;
                 Pitch = 0f;
@@ -57,8 +48,8 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            var localDirection = _head.InverseTransformVector(diff.normalized);
-            Yaw = Weight * MathUtil.ClampedAtan2Deg(localDirection.z, localDirection.x);
+            var localDirection = _head.InverseTransformDirection(diff.normalized);
+            Yaw = Weight * MathUtil.ClampedAtan2Deg(localDirection.x, localDirection.z);
             Pitch = -Weight * Mathf.Asin(localDirection.y) * Mathf.Rad2Deg;
         }
         

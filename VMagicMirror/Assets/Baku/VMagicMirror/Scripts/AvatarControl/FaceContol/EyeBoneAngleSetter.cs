@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using Baku.VMagicMirror.IK;
 using UnityEngine;
 using Zenject;
@@ -20,6 +20,8 @@ namespace Baku.VMagicMirror
         [SerializeField] private EyeDownMotionController eyeDownMotionController;
         [SerializeField] private EyeJitter eyeJitter;
         [SerializeField] private ExternalTrackerEyeJitter externalTrackerEyeJitter;
+        [SerializeField] private Vector2[] rates = new Vector2[4];
+        [SerializeField] private Vector2 lookAtResult;
 
         private NonImageBasedMotion _nonImageBasedMotion;
         private EyeBoneAngleMapApplier _angleMapApplier;
@@ -36,8 +38,9 @@ namespace Baku.VMagicMirror
         [Inject]
         public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable, IKTargetTransforms ikTargets, NonImageBasedMotion nonImageBasedMotion)
         {
+            _nonImageBasedMotion = nonImageBasedMotion;
             _angleMapApplier = new EyeBoneAngleMapApplier(receiver, vrmLoadable);
-            _eyeLookAt = new EyeLookAt(receiver, vrmLoadable, ikTargets.LookAt);
+            _eyeLookAt = new EyeLookAt(vrmLoadable, ikTargets.LookAt);
 
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposed;
@@ -72,6 +75,7 @@ namespace Baku.VMagicMirror
                 _nonImageBasedMotion,
                 eyeJitter,
                 externalTrackerEyeJitter,
+                eyeDownMotionController,
             };
         }
         
@@ -86,7 +90,7 @@ namespace Baku.VMagicMirror
             var leftRate = Vector2.zero;
             var rightRate = Vector2.zero;
 
-            foreach (var s in _sources)
+            foreach (var (s, i) in _sources.Select((src, index) => (src, index)))
             {
                 if (!s.IsActive)
                 {
@@ -94,7 +98,10 @@ namespace Baku.VMagicMirror
                 }
                 leftRate += s.LeftEyeRotationRate;
                 rightRate += s.RightEyeRotationRate;
+                rates[i] = 0.5f * (s.LeftEyeRotationRate + s.RightEyeRotationRate);
             }
+
+            //TODO: この辺でrateを制限したほうが良さそう？それともlookAtの加算後か？
 
             // 符号に注意、Unityの普通の座標系ではピッチは下が正
             var leftYaw = leftRate.x * HorizontalRateToAngle;
@@ -108,11 +115,23 @@ namespace Baku.VMagicMirror
             rightYaw += _eyeLookAt.Yaw;
             leftPitch += _eyeLookAt.Pitch;
             rightPitch += _eyeLookAt.Pitch;
+            lookAtResult = new Vector2(_eyeLookAt.Yaw, _eyeLookAt.Pitch);
+
+            //TODO: この辺でrateの制限とスケーリングを何かやりたいんだけどどうですかね
             
             //NOTE: 場合によってはそのまんまの値が出てくる
-            var mappedLeftYawPitch = _angleMapApplier.GetLeftMappedValues(leftYaw, leftPitch);
-            var mappedRightYawPitch = _angleMapApplier.GetRightMappedValues(rightYaw, rightPitch);
+            (leftYaw, leftPitch) = _angleMapApplier.GetLeftMappedValues(leftYaw, leftPitch);
+            (rightYaw, rightPitch) = _angleMapApplier.GetRightMappedValues(rightYaw, rightPitch);
 
+            if (_hasLeftEye)
+            {
+                _leftEye.localRotation = Quaternion.Euler(leftPitch, leftYaw, 0f);
+            }
+
+            if (_hasRightEye)
+            {
+                _rightEye.localRotation = Quaternion.Euler(rightPitch, rightYaw, 0f);
+            }
         }
     }
 }

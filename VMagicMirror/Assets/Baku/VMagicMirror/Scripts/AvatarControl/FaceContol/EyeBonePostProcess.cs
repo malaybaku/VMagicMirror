@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror
             };
         }
         
-        private void LateUpdate()
+        private void Old_LateUpdate()
         {
             //Face SwitchとかWord to Motionが指定されている: scale == 0に相当するので計算を省いて終了
             //単にscale = 0として後半の計算に帰着しても良いが、まあ無駄が多いので…

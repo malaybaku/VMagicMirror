@@ -338,7 +338,8 @@
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
 
-                        <CheckBox IsChecked="{Binding UseAvatarEyeBoneMap.Value}">
+                        <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                  IsChecked="{Binding UseAvatarEyeBoneMap.Value}">
                             <CheckBox.Content>
                                 <TextBlock Text="{DynamicResource Motion_Eye_UseAvatarEyeBoneMap}"/>
                             </CheckBox.Content>
@@ -349,7 +350,7 @@
                                    />
                         <Slider x:Name="sliderEyeRotationScale"
                                 Grid.Row="1" Grid.Column="1"
-                                Minimum="10"
+                                Minimum="1"
                                 Maximum="500"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"

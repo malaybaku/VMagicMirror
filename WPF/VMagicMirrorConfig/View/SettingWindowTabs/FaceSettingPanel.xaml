@@ -375,7 +375,7 @@
                                 Maximum="500"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
-                                Value="{Binding EyeBoneRotationScale.Value, Mode=TwoWay}"
+                                Value="{Binding EyeBoneRotationScaleWithMap.Value, Mode=TwoWay}"
                                 />
                         <TextBox Grid.Row="1" Grid.Column="2"
                                  Visibility="{Binding UseAvatarEyeBoneMap.Value, 

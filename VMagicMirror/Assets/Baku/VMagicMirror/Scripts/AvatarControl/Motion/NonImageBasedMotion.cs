@@ -28,8 +28,7 @@ namespace Baku.VMagicMirror
         // [SerializeField] private float eyeRotationFactor = 0.5f;
 
         [Tooltip("目を首と順方向/逆方向に動かすとき、その方向ピッタリから角度を多少ランダムにしてもいいよね、という値")]
-        // [SerializeField] private float eyeOrientationVaryRange = 20f;
-        [SerializeField] private float eyeOrientationRateVaryRange = 0.1f;
+        [SerializeField] private float eyeOrientationVaryRange = 20f;
         
         [SerializeField] private Vector2 inactiveFactors = new(10, 10);
         [SerializeField] private Vector2 activeFactors = new(10, 10);
@@ -178,11 +177,17 @@ namespace Baku.VMagicMirror
                 }
                 else
                 {
-                    //視線を首と同じ方向に動かすとき、注視点がテキトーに離れるので向きがぴったり揃う必要はない。
-                    //そこで、ぴったり同じ方向にせず、適当に汚す。
-                    _rawEyeRotTarget = rawRotationRate + new Vector2(
-                        Random.Range(-eyeOrientationRateVaryRange, eyeOrientationRateVaryRange),
-                        Random.Range(-eyeOrientationRateVaryRange, eyeOrientationRateVaryRange)
+                    //視線を首とほぼ同じ方向に動かすとき、首と完全に一緒ではなく、ちょっとズレた方向を見るのを許可する。
+                    
+                    var angle = Random.Range(
+                        -eyeOrientationVaryRange * Mathf.Deg2Rad, eyeOrientationVaryRange * Mathf.Deg2Rad
+                    );
+
+                    var cos = Mathf.Cos(angle);
+                    var sin = Mathf.Sin(angle);
+                    _rawEyeRotTarget = new Vector2(
+                        cos * rawRotationRate.x - sin * rawRotationRate.y,
+                        sin * rawRotationRate.x + cos * rawRotationRate.y
                     );
                 }
             };

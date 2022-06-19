@@ -59,35 +59,6 @@ namespace Baku.VMagicMirror
                 new Vector2(rightX * HorizontalShapeToRate, rightY * VerticalShapeToRate),
                 TotalBoneRotationRateLimit
                 );
-
-            // //NOTE: 二重チェックは冗長なんだけど、「最初のガード文はのちのち外しそう」という予測も兼ねてガード
-            // if (!(_hasValidEyeBone && IsActive))
-            // {
-            //     return;
-            // }
-            //
-            // //ボーンの曲げすぎをガードしつつ後付回転で適用
-            //
-            // var resultLeftRotation = _leftRotation * _leftEye.localRotation;
-            // resultLeftRotation.ToAngleAxis(out var leftAngle, out var leftAxis);
-            // leftAngle = Mathf.Repeat(leftAngle + 180f, 360f) - 180f;
-            // if (Mathf.Abs(leftAngle) > TotalBoneRotationLimit)
-            // {
-            //     leftAngle = Mathf.Sign(leftAngle) * TotalBoneRotationLimit;
-            //     resultLeftRotation = Quaternion.AngleAxis(leftAngle, leftAxis);
-            // }
-            // _leftEye.localRotation = resultLeftRotation;
-            //
-            //
-            // var resultRightRotation = _rightRotation * _rightEye.localRotation;
-            // resultRightRotation.ToAngleAxis(out var rightAngle, out var rightAxis);
-            // rightAngle = Mathf.Repeat(rightAngle + 180f, 360f) - 180f;
-            // if (Mathf.Abs(rightAngle) > TotalBoneRotationLimit)
-            // {
-            //     rightAngle = Mathf.Sign(rightAngle) * TotalBoneRotationLimit;
-            //     resultRightRotation = Quaternion.AngleAxis(rightAngle, rightAxis);
-            // }
-            // _rightEye.localRotation = resultRightRotation;            
         }
     }
 }

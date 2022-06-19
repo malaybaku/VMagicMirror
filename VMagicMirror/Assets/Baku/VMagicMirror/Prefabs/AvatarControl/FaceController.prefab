@@ -264,7 +264,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   closeDuration: 0.05
-  openDuration: 0.2
+  closeKeepDuration: 0.08
+  openDuration: 0.16
   minInterval: 7
   maxInterval: 15
   doubleBlinkPossibility: 0.15
@@ -345,7 +346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 490c1efb2102ed046b6bf4aa41187f4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeAngleDegreeWhenEyeClosed: 10
+  eyeAngleRateWhenEyeClosed: 0.4
 --- !u!1 &3748904030990320353
 GameObject:
   m_ObjectHideFlags: 0

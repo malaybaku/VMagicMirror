@@ -170,12 +170,6 @@ MonoBehaviour:
   eyeDownMotionController: {fileID: 4339509367763658613}
   eyeJitter: {fileID: 3748028267383499190}
   externalTrackerEyeJitter: {fileID: 1428360342779558990}
-  rates:
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
-  rateSum: {x: 0, y: 0}
 --- !u!1 &3748028267383499195
 GameObject:
   m_ObjectHideFlags: 0

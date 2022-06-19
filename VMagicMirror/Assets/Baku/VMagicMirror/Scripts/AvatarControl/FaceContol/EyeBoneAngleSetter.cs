@@ -1,4 +1,3 @@
-using System.Linq;
 using Baku.VMagicMirror.IK;
 using UnityEngine;
 using Zenject;
@@ -30,10 +29,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private EyeDownMotionController eyeDownMotionController;
         [SerializeField] private EyeJitter eyeJitter;
         [SerializeField] private ExternalTrackerEyeJitter externalTrackerEyeJitter;
-        [SerializeField] private Vector2[] rates = new Vector2[4];
-        [SerializeField] private Vector2 rateSum;
         
-        private FaceControlConfiguration _config;
         private NonImageBasedMotion _nonImageBasedMotion;
         private EyeBoneAngleMapApplier _angleMapApplier;
         private EyeLookAt _eyeLookAt;
@@ -57,10 +53,9 @@ namespace Baku.VMagicMirror
         [Inject]
         public void Initialize(
             IMessageReceiver receiver, IVRMLoadable vrmLoadable,
-            IKTargetTransforms ikTargets, FaceControlConfiguration config, NonImageBasedMotion nonImageBasedMotion)
+            IKTargetTransforms ikTargets,　NonImageBasedMotion nonImageBasedMotion)
         {
             _nonImageBasedMotion = nonImageBasedMotion;
-            _config = config;
             _angleMapApplier = new EyeBoneAngleMapApplier(vrmLoadable);
             _eyeLookAt = new EyeLookAt(vrmLoadable, ikTargets.LookAt);
 
@@ -129,7 +124,7 @@ namespace Baku.VMagicMirror
             var leftRate = Vector2.zero;
             var rightRate = Vector2.zero;
 
-            foreach (var (s, i) in _sources.Select((src, index) => (src, index)))
+            foreach (var s in _sources)
             {
                 if (!s.IsActive)
                 {
@@ -137,10 +132,8 @@ namespace Baku.VMagicMirror
                 }
                 leftRate += s.LeftEyeRotationRate;
                 rightRate += s.RightEyeRotationRate;
-                rates[i] = 0.5f * (s.LeftEyeRotationRate + s.RightEyeRotationRate);
             }
 
-            rateSum = 0.5f * (leftRate + rightRate);
             leftRate = Vector2.ClampMagnitude(leftRate, RateMagnitudeLimit);
             rightRate = Vector2.ClampMagnitude(rightRate, RateMagnitudeLimit);
 

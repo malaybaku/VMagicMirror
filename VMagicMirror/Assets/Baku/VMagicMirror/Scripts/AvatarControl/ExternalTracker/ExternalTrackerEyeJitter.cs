@@ -12,8 +12,13 @@ namespace Baku.VMagicMirror
     {
         //NOTE: Jitterと言ってるが値としてはユーザーの眼球運動そのものなので、大きめの運動として取り扱う
         private const float HorizontalShapeToRate = 1f;
-        private const float VerticalShapeToRate = 1f;
-        private const float TotalBoneRotationRateLimit = 1f;
+
+        //上方向をあんまり適用すると白目が増えて怖いので…
+        private const float VerticalUpShapeToRate = 0.5f;
+        private const float VerticalDownShapeToRate = 1f;
+        
+        //基本的に制限を超えることはないが、一応やっておく
+        private const float TotalBoneRotationRateLimit = 1.2f;
         
         private ExternalTrackerDataSource _tracker;
 
@@ -54,14 +59,19 @@ namespace Baku.VMagicMirror
             }
 
             //NOTE: ClampMagnitudeがあるとかえって不自然かもしれない(iOS側で面倒見てくれてる説もある)。外してもよいかも
-            LeftEyeRotationRate = Vector2.ClampMagnitude(
-                new Vector2(leftX * HorizontalShapeToRate, leftY * VerticalShapeToRate),
-                TotalBoneRotationRateLimit
-                );
-            RightEyeRotationRate = Vector2.ClampMagnitude(
-                new Vector2(rightX * HorizontalShapeToRate, rightY * VerticalShapeToRate),
-                TotalBoneRotationRateLimit
-                );
+            LeftEyeRotationRate = GetRotationRate(
+                leftX * HorizontalShapeToRate, 
+                leftY > 0 ? leftY * VerticalUpShapeToRate : leftY * VerticalDownShapeToRate
+            );
+            RightEyeRotationRate = GetRotationRate(
+                rightX * HorizontalShapeToRate, 
+                rightY > 0 ? rightY * VerticalUpShapeToRate : rightY * VerticalDownShapeToRate
+            );
+        }
+
+        private static Vector2 GetRotationRate(float x, float y)
+        {
+            return Vector2.ClampMagnitude(new Vector2(x, y), TotalBoneRotationRateLimit);
         }
     }
 }

@@ -5,49 +5,39 @@ using Baku.VMagicMirror.ExternalTracker;
 namespace Baku.VMagicMirror
 {
     /// <summary> 外部トラッキングによる眼球運動をやるやつです </summary>
-    public class ExternalTrackerEyeJitter : MonoBehaviour
+    /// <remarks>
+    /// <see cref="EyeJitter"/>と排他的に動くのでJitterというクラス名になってるが、どちらかというとEyeMotionに近い
+    /// </remarks>
+    public class ExternalTrackerEyeJitter : MonoBehaviour, IEyeRotationRequestSource
     {
-        //NOTE: けっこう大きくしてもいいんですねえコレ…知らんかった
-        private const float HorizontalShapeToAngle = 10.0f;
-        private const float VerticalShapeToAngle = 10.0f;
+        //NOTE: Jitterと言ってるが値としてはユーザーの眼球運動そのものなので、大きめの運動として取り扱う
+        private const float HorizontalShapeToRate = 1f;
+
+        //上方向をあんまり適用すると白目が増えて怖いので…
+        private const float VerticalUpShapeToRate = 0.5f;
+        private const float VerticalDownShapeToRate = 1f;
+        
+        //基本的に制限を超えることはないが、一応やっておく
+        private const float TotalBoneRotationRateLimit = 1.2f;
+        
         private ExternalTrackerDataSource _tracker;
-        private const float TotalBoneRotationLimit = 10.0f;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, ExternalTrackerDataSource externalTracker)
+        public void Initialize(ExternalTrackerDataSource externalTracker)
         {
             _tracker = externalTracker;
-            
-            vrmLoadable.VrmLoaded += info =>
-            {
-                _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
-                _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
-                _hasValidEyeBone = (_rightEye != null && _leftEye != null);
-            };
-            
-            vrmLoadable.VrmDisposing += () =>
-            {
-                _hasValidEyeBone = false;
-                _rightEye = null;
-                _leftEye = null;
-            };
         }
-        
-        private Transform _rightEye = null;
-        private Transform _leftEye = null;
-        private bool _hasValidEyeBone = false;
-
-        private Quaternion _leftRotation = Quaternion.identity;
-        private Quaternion _rightRotation = Quaternion.identity;
 
         public bool IsTracked => (_tracker != null) && _tracker.Connected;
         
         public bool IsActive { get; set; }
+        public Vector2 LeftEyeRotationRate { get; private set; }
+        public Vector2 RightEyeRotationRate { get; private set; }
 
         private void LateUpdate()
         {
-            //NOTE: スムージングする場合はここでガードすると早すぎるので注意
-            if (!_hasValidEyeBone || !IsActive)
+            //NOTE: ここでガードしないようにして状態によらずスムージングする、みたいな実装もありうる
+            if (!IsActive)
             {
                 return;
             }
@@ -55,50 +45,33 @@ namespace Baku.VMagicMirror
             var leftX = 
                 _tracker.CurrentSource.Eye.LeftLookIn - _tracker.CurrentSource.Eye.LeftLookOut;
             var leftY =
-                _tracker.CurrentSource.Eye.LeftLookDown - _tracker.CurrentSource.Eye.LeftLookUp;
+                _tracker.CurrentSource.Eye.LeftLookUp - _tracker.CurrentSource.Eye.LeftLookDown;
         
             var rightX = 
                 _tracker.CurrentSource.Eye.RightLookOut - _tracker.CurrentSource.Eye.RightLookIn;
             var rightY = 
-                _tracker.CurrentSource.Eye.RightLookDown - _tracker.CurrentSource.Eye.RightLookUp;
+                _tracker.CurrentSource.Eye.RightLookUp - _tracker.CurrentSource.Eye.RightLookDown;
 
             if (_tracker.DisableHorizontalFlip)
             {
                 leftX = -leftX;
                 rightX = -rightX;
             }
-        
-            _leftRotation = Quaternion.Euler(leftY * VerticalShapeToAngle, leftX * HorizontalShapeToAngle, 0);
-            _rightRotation = Quaternion.Euler(rightY * VerticalShapeToAngle, rightX * HorizontalShapeToAngle, 0);
-            
-            //NOTE: 二重チェックは冗長なんだけど、「最初のガード文はのちのち外しそう」という予測も兼ねてガード
-            if (!(_hasValidEyeBone && IsActive))
-            {
-                return;
-            }
 
-            //ボーンの曲げすぎをガードしつつ後付回転で適用
-            
-            var resultLeftRotation = _leftRotation * _leftEye.localRotation;
-            resultLeftRotation.ToAngleAxis(out var leftAngle, out var leftAxis);
-            leftAngle = Mathf.Repeat(leftAngle + 180f, 360f) - 180f;
-            if (Mathf.Abs(leftAngle) > TotalBoneRotationLimit)
-            {
-                leftAngle = Mathf.Sign(leftAngle) * TotalBoneRotationLimit;
-                resultLeftRotation = Quaternion.AngleAxis(leftAngle, leftAxis);
-            }
-            _leftEye.localRotation = resultLeftRotation;
+            //NOTE: ClampMagnitudeがあるとかえって不自然かもしれない(iOS側で面倒見てくれてる説もある)。外してもよいかも
+            LeftEyeRotationRate = GetRotationRate(
+                leftX * HorizontalShapeToRate, 
+                leftY > 0 ? leftY * VerticalUpShapeToRate : leftY * VerticalDownShapeToRate
+            );
+            RightEyeRotationRate = GetRotationRate(
+                rightX * HorizontalShapeToRate, 
+                rightY > 0 ? rightY * VerticalUpShapeToRate : rightY * VerticalDownShapeToRate
+            );
+        }
 
-            
-            var resultRightRotation = _rightRotation * _rightEye.localRotation;
-            resultRightRotation.ToAngleAxis(out var rightAngle, out var rightAxis);
-            rightAngle = Mathf.Repeat(rightAngle + 180f, 360f) - 180f;
-            if (Mathf.Abs(rightAngle) > TotalBoneRotationLimit)
-            {
-                rightAngle = Mathf.Sign(rightAngle) * TotalBoneRotationLimit;
-                resultRightRotation = Quaternion.AngleAxis(rightAngle, rightAxis);
-            }
-            _rightEye.localRotation = resultRightRotation;
+        private static Vector2 GetRotationRate(float x, float y)
+        {
+            return Vector2.ClampMagnitude(new Vector2(x, y), TotalBoneRotationRateLimit);
         }
     }
 }

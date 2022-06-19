@@ -13,9 +13,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class HeadIkIntegrator : MonoBehaviour
     {
-        private const string UseLookAtPointNone = nameof(UseLookAtPointNone);
-        private const string UseLookAtPointMousePointer = nameof(UseLookAtPointMousePointer);
-        private const string UseLookAtPointMainCamera = nameof(UseLookAtPointMainCamera);
         //手のIKよりLookAtのIKをやや前方にずらして見栄えを調整する決め打ちのパラメータ
         private const float ZOffsetOnHeadIk = 0.6f;
 
@@ -138,11 +135,7 @@ namespace Baku.VMagicMirror
 
         public void SetLookAtStyle(string content)
         {
-            _lookAtStyle =
-                (content == UseLookAtPointNone) ? LookAtStyles.Fixed :
-                (content == UseLookAtPointMousePointer) ? LookAtStyles.MousePointer :
-                (content == UseLookAtPointMainCamera) ? LookAtStyles.MainCamera :
-                LookAtStyles.MousePointer;
+            _lookAtStyle = LookAtStyleUtil.GetLookAtStyle(content);
         }
 
         private void Start()
@@ -270,13 +263,6 @@ namespace Baku.VMagicMirror
             private float _fixedLookAtBlendWeight = 0;
 
             public IKTargets Target => IKTargets.HeadLookAt;
-        }
-
-        private enum LookAtStyles
-        {
-            Fixed,
-            MousePointer,
-            MainCamera,
         }
     }
 }

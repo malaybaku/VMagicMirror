@@ -1,6 +1,4 @@
-﻿using Baku.VMagicMirror.InterProcess;
-
-namespace Baku.VMagicMirror
+﻿namespace Baku.VMagicMirror
 {
     /// <summary>
     /// <see cref="FaceControlConfiguration"/>のうち、制御モードについてプロセス間通信をもとに書き込むクラスです。

@@ -10,13 +10,17 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private VmmLipSyncContextBase lipSyncContext = null;
         [SerializeField] private LipSyncIntegrator lipSyncIntegrator = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
+        [SerializeField] private EyeBoneAngleSetter eyeBoneAngleSetter = null;
 
         public override void Install(DiContainer container)
         {
-            container.BindInstance(blendShapeInitializer).AsCached();
             container.Bind<VmmLipSyncContextBase>().FromInstance(lipSyncContext).AsCached();
-            container.BindInstance(lipSyncIntegrator).AsCached();
-            container.BindInstance(autoBlink).AsCached();
+            container.BindInstances(
+                blendShapeInitializer,
+                lipSyncIntegrator,
+                autoBlink,
+                eyeBoneAngleSetter
+            );
         }
     }
 }

@@ -36,9 +36,9 @@ namespace Baku.VMagicMirror
         
         [Inject]
         public void Initialize(
-            IMessageReceiver receiver, IVRMLoadable vrmLoadable, EyeBonePostProcess eyeBonePostProcess)
+            IMessageReceiver receiver, IVRMLoadable vrmLoadable, EyeBoneAngleSetter eyeBoneAngleSetter)
         {
-            _eyeBonePostProcess = eyeBonePostProcess;
+            _eyeBoneAngleSetter = eyeBoneAngleSetter;
             
             receiver.AssignCommandHandler(
                 VmmCommands.DisableBlendShapeInterpolate,
@@ -60,7 +60,7 @@ namespace Baku.VMagicMirror
 
         private bool _hasModel;
         private BlendShapeAvatar _blendShapeAvatar;
-        private EyeBonePostProcess _eyeBonePostProcess;
+        private EyeBoneAngleSetter _eyeBoneAngleSetter;
 
         private bool _interpolateBlendShapeWeight = true;
         
@@ -197,7 +197,7 @@ namespace Baku.VMagicMirror
             }
 
             //WtM / Face Switchが効いているときは目ボーンをデフォルト位置に引っ張り戻す
-            _eyeBonePostProcess.ReserveWeight = NonMouthWeight;
+            _eyeBoneAngleSetter.ReserveWeight = NonMouthWeight;
         }
 
         private void SetFaceSwitch(BlendShapeKey key, bool keepLipSync)

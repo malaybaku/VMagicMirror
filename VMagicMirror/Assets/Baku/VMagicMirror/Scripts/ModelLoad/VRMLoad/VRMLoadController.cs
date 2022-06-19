@@ -162,11 +162,9 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var lookAt = go.GetComponent<VRMLookAtHead>();
             _humanPoseTransferTarget = go.AddComponent<HumanPoseTransfer>();
             _humanPoseTransferTarget.SourceType = HumanPoseTransfer.HumanPoseTransferSourceType.None;
-            lookAt.UpdateType = UpdateType.LateUpdate;
-            
+
             //セットアップのうちFinalIKに思い切り依存した所が別スクリプトになってます
             VRMLoadControllerHelper.SetupVrm(go, _ikTargets);
 

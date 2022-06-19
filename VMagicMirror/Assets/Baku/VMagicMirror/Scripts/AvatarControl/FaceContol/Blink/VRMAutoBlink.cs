@@ -8,6 +8,8 @@ namespace Baku.VMagicMirror
     {
         [SerializeField] private float closeDuration = 0.05f;
 
+        [SerializeField] private float closeKeepDuration = 0.04f;
+
         [SerializeField] private float openDuration = 0.1f;
 
         [SerializeField] private float minInterval = 3.0f;
@@ -44,8 +46,8 @@ namespace Baku.VMagicMirror
 
             float totalDuration =
                 doubleBlink ?
-                (openDuration + closeDuration) * 2 :
-                (openDuration + closeDuration);
+                (openDuration + closeKeepDuration + closeDuration) * 2 :
+                (openDuration + closeKeepDuration + closeDuration);
 
             _intervalCountDown = Random.Range(minInterval + totalDuration, maxInterval + totalDuration);
 
@@ -59,17 +61,29 @@ namespace Baku.VMagicMirror
 
         private IEnumerator BlinkCoroutine(int blinkCount)
         {
-            for (int _ = 0; _ < blinkCount; _++)
+            for (var _ = 0; _ < blinkCount; _++)
             {
-                for (float count = 0; count < closeDuration; count += Time.deltaTime)
+                var timeCount = 0f;
+                while (timeCount < closeDuration)
                 {
-                    _blinkSource.Value = ClosingRateCurve(count / closeDuration);
+                    _blinkSource.Value = ClosingRateCurve(timeCount / closeDuration);
+                    timeCount += Time.deltaTime;
                     yield return null;
                 }
-                
-                for (float count = 0; count < openDuration; count += Time.deltaTime)
+
+                while (timeCount < closeDuration + closeKeepDuration)
                 {
-                    _blinkSource.Value = OpeningRateCurve(count / openDuration);
+                    var keepCount = timeCount - closeDuration;
+                    _blinkSource.Value = 1f;
+                    timeCount += Time.deltaTime;
+                    yield return null;
+                }
+
+                while (timeCount < closeDuration + closeKeepDuration + openDuration)
+                {
+                    var openCount = timeCount - closeDuration - closeKeepDuration;
+                    _blinkSource.Value = OpeningRateCurve(openCount / openDuration);
+                    timeCount += Time.deltaTime;
                     yield return null;
                 }
             }

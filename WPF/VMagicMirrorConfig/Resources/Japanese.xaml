@@ -269,6 +269,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_None">固定</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">マウス</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">ユーザー</sys:String>
+    <sys:String x:Key="Motion_Eye_UseAvatarEyeBoneMap">アバターに定義した目ボーンのカーブ設定を使用</sys:String>
     <sys:String x:Key="Motion_Eye_RotScale">目の動きの大きさ[%]</sys:String>
     <sys:String x:Key="Motion_Eye_ApproxRotRangePrefix">(参考)目ボーンのおおよその可動範囲: </sys:String>
     <sys:String x:Key="Motion_Eye_ApproxRotRangeSuffix"> [deg]</sys:String>

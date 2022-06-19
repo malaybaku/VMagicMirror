@@ -139,6 +139,8 @@
             UseLookAtPointNone = false;
             UseLookAtPointMousePointer = true;
             UseLookAtPointMainCamera = false;
+
+            UseAvatarEyeBoneMap = true;
             EyeBoneRotationScale = 100;
             EyeBoneRotationScaleWithMap = 100;
         }

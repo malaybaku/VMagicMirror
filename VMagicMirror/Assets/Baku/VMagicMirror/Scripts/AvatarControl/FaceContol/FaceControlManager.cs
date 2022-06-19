@@ -22,24 +22,28 @@ namespace Baku.VMagicMirror
         
         private bool _hasModel = false;
         private FaceControlConfiguration _config;
-        //直接使うわけじゃないけどGCされてほしくないので、念の為参照を保持してる
-        private FaceControlManagerMessageIo _messageIo;
 
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, IMessageReceiver receiver, IMessageSender sender, 
-            FaceControlConfiguration config, EyeBonePostProcess eyeBonePostProcess)
+            FaceControlConfiguration config)
         {
             _config = config;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             
             var _ = new FaceControlConfigurationReceiver(receiver, config);
-            _messageIo = new FaceControlManagerMessageIo(receiver, sender, eyeBonePostProcess, this);
+            receiver.AssignCommandHandler(
+                VmmCommands.AutoBlinkDuringFaceTracking,
+                message => PreferAutoBlinkOnWebCamTracking = message.ToBoolean()
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.FaceDefaultFun,
+                message => DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage()
+            );
         }
         
-        public DefaultFunBlendShapeModifier DefaultBlendShape { get; } 
-            = new DefaultFunBlendShapeModifier();
+        public DefaultFunBlendShapeModifier DefaultBlendShape { get; } = new();
 
         /// <summary> WebCamベースのトラッキング中でも自動まばたきを優先するかどうかを取得、設定します。 </summary>
         public bool PreferAutoBlinkOnWebCamTracking { get; set; } = true;

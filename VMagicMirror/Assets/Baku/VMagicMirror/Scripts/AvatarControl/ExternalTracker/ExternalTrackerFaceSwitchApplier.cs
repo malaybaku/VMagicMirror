@@ -16,11 +16,10 @@ namespace Baku.VMagicMirror
             Key = key;
         }
 
-        public static FaceSwitchKeyApplyContent Empty() 
-            => new FaceSwitchKeyApplyContent(false, false, default);
+        public static FaceSwitchKeyApplyContent Empty() => new(false, false, default);
 
-        public static FaceSwitchKeyApplyContent Create(BlendShapeKey key, bool keepLipSync)
-            => new FaceSwitchKeyApplyContent(true, keepLipSync, key);
+        public static FaceSwitchKeyApplyContent Create(BlendShapeKey key, bool keepLipSync) =>
+            new(true, keepLipSync, key);
         
         public bool HasValue { get; }
         public bool KeepLipSync { get; }
@@ -32,12 +31,11 @@ namespace Baku.VMagicMirror
         private bool _hasModel = false;
         private FaceControlConfiguration _config;
         private ExternalTrackerDataSource _externalTracker;
-        private EyeBonePostProcess _eyeBoneResetter;
-
+        private EyeBoneAngleSetter _eyeBoneResetter;
         private string _latestClipName = "";
 
         private readonly ReactiveProperty<FaceSwitchKeyApplyContent> _currentValue 
-            = new ReactiveProperty<FaceSwitchKeyApplyContent>(FaceSwitchKeyApplyContent.Empty());
+            = new(FaceSwitchKeyApplyContent.Empty());
         public IReadOnlyReactiveProperty<FaceSwitchKeyApplyContent> CurrentValue => _currentValue;
 
 
@@ -46,7 +44,7 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable, 
             FaceControlConfiguration config,
             ExternalTrackerDataSource externalTracker,
-            EyeBonePostProcess eyeBoneResetter
+            EyeBoneAngleSetter eyeBoneResetter
             )
         {
             _config = config;
@@ -112,7 +110,7 @@ namespace Baku.VMagicMirror
                 ? BlendShapeKey.CreateFromPreset(_presets[name])
                 : BlendShapeKey.CreateUnknown(name);
 
-        private static readonly Dictionary<string, BlendShapePreset> _presets = new Dictionary<string, BlendShapePreset>()
+        private static readonly Dictionary<string, BlendShapePreset> _presets = new()
         {
             ["Blink"] = BlendShapePreset.Blink,
             ["Blink_L"] = BlendShapePreset.Blink_L,

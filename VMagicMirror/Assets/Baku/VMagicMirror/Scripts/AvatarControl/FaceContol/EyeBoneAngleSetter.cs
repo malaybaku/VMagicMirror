@@ -14,15 +14,26 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class EyeBoneAngleSetter : MonoBehaviour
     {
+        //NOTE: 実験した範囲ではこのリミットを超えることは滅多にない
+        private const float RateMagnitudeLimit = 1.2f;
+        
         private const float HorizontalRateToAngle = 35f;
         private const float VerticalRateToAngle = 35f;
-        
+
+        //いくら倍率がかかってもコレ以上は無いやろ…という値
+        private const float AngleAbsLimit = 80f;
+
+        //Mapが無効なとき、ユーザーが設定したスケールに加えて角度に対して掛ける値。
+        //この値をいい感じにすることで、「カーブ設定を使用」がオフのときの挙動に後方互換性っぽいものを持たせる。
+        [SerializeField] private float factorWhenMapDisable = 0.2f;
+
         [SerializeField] private EyeDownMotionController eyeDownMotionController;
         [SerializeField] private EyeJitter eyeJitter;
         [SerializeField] private ExternalTrackerEyeJitter externalTrackerEyeJitter;
         [SerializeField] private Vector2[] rates = new Vector2[4];
-        [SerializeField] private Vector2 lookAtResult;
-
+        [SerializeField] private Vector2 rateSum;
+        
+        private FaceControlConfiguration _config;
         private NonImageBasedMotion _nonImageBasedMotion;
         private EyeBoneAngleMapApplier _angleMapApplier;
         private EyeLookAt _eyeLookAt;
@@ -33,17 +44,44 @@ namespace Baku.VMagicMirror
         private bool _hasLeftEye;
         private bool _hasRightEye;
 
+        private float _motionScale = 1f;
+        private float _motionScaleWithMap = 1f;
+        private bool _useAvatarEyeCurveMap = true;
         private IEyeRotationRequestSource[] _sources;
 
+        /// <summary> 目を中央に固定したい場合、毎フレームtrueに設定する </summary>
+        public bool ReserveReset { get; set; }
+        /// <summary> 目の移動ウェイトを小さくしたい場合、毎フレーム指定する </summary>
+        public float ReserveWeight { get; set; } = 1f;
+
         [Inject]
-        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable, IKTargetTransforms ikTargets, NonImageBasedMotion nonImageBasedMotion)
+        public void Initialize(
+            IMessageReceiver receiver, IVRMLoadable vrmLoadable,
+            IKTargetTransforms ikTargets, FaceControlConfiguration config, NonImageBasedMotion nonImageBasedMotion)
         {
             _nonImageBasedMotion = nonImageBasedMotion;
-            _angleMapApplier = new EyeBoneAngleMapApplier(receiver, vrmLoadable);
+            _config = config;
+            _angleMapApplier = new EyeBoneAngleMapApplier(vrmLoadable);
             _eyeLookAt = new EyeLookAt(vrmLoadable, ikTargets.LookAt);
 
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposed;
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.SetEyeBoneRotationScale,
+                command => _motionScale = command.ParseAsPercentage()
+            );
+
+            receiver.AssignCommandHandler(
+                VmmCommands.SetEyeBoneRotationScaleWithMap,
+                command => _motionScaleWithMap = command.ParseAsPercentage()
+            );
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.SetUseAvatarEyeBoneMap,
+                command => _useAvatarEyeCurveMap = command.ToBoolean()
+            );
+            
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -85,7 +123,7 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            
+
             eyeDownMotionController.UpdateRotationRate();
 
             var leftRate = Vector2.zero;
@@ -102,7 +140,9 @@ namespace Baku.VMagicMirror
                 rates[i] = 0.5f * (s.LeftEyeRotationRate + s.RightEyeRotationRate);
             }
 
-            //TODO: この辺でrateを制限したほうが良さそう？それともlookAtの加算後か？
+            rateSum = 0.5f * (leftRate + rightRate);
+            leftRate = Vector2.ClampMagnitude(leftRate, RateMagnitudeLimit);
+            rightRate = Vector2.ClampMagnitude(rightRate, RateMagnitudeLimit);
 
             // 符号に注意、Unityの普通の座標系ではピッチは下が正
             var leftYaw = leftRate.x * HorizontalRateToAngle;
@@ -116,13 +156,32 @@ namespace Baku.VMagicMirror
             rightYaw += _eyeLookAt.Yaw;
             leftPitch += _eyeLookAt.Pitch;
             rightPitch += _eyeLookAt.Pitch;
-            lookAtResult = new Vector2(_eyeLookAt.Yaw, _eyeLookAt.Pitch);
 
-            //TODO: この辺でrateの制限とスケーリングを何かやりたいんだけどどうですかね
+            if (ReserveReset)
+            {
+                //NOTE: 0でもmap処理が入った結果、非ゼロの角度が入る可能性があるのでreturnはしない
+                leftPitch = 0f;
+                leftYaw = 0f;
+                rightPitch = 0f;
+                rightYaw = 0f;
+                ReserveReset = false;
+            }
+
+            var motionScale = _useAvatarEyeCurveMap
+                ? _motionScaleWithMap
+                : _motionScale * factorWhenMapDisable;
+            var weightFactor = motionScale * ReserveWeight;
+            leftPitch = ScaleAndClampAngle(leftPitch, weightFactor);
+            leftYaw = ScaleAndClampAngle(leftYaw, weightFactor);
+            rightPitch = ScaleAndClampAngle(rightPitch, weightFactor);
+            rightYaw = ScaleAndClampAngle(rightYaw, weightFactor);
+            ReserveWeight = 1f;
             
-            //NOTE: 場合によってはそのまんまの値が出てくる
-            (leftYaw, leftPitch) = _angleMapApplier.GetLeftMappedValues(leftYaw, leftPitch);
-            (rightYaw, rightPitch) = _angleMapApplier.GetRightMappedValues(rightYaw, rightPitch);
+            if (_useAvatarEyeCurveMap)
+            {
+                (leftYaw, leftPitch) = _angleMapApplier.GetLeftMappedValues(leftYaw, leftPitch);
+                (rightYaw, rightPitch) = _angleMapApplier.GetRightMappedValues(rightYaw, rightPitch);
+            }
 
             if (_hasLeftEye)
             {
@@ -133,6 +192,11 @@ namespace Baku.VMagicMirror
             {
                 _rightEye.localRotation = Quaternion.Euler(rightPitch, rightYaw, 0f);
             }
+        }
+
+        private static float ScaleAndClampAngle(float x, float scale)
+        {
+            return Mathf.Clamp(x * scale, -AngleAbsLimit, AngleAbsLimit);
         }
     }
 }

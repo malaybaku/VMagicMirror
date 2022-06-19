@@ -1,4 +1,3 @@
-using UnityEngine;
 using VRM;
 
 namespace Baku.VMagicMirror
@@ -14,21 +13,16 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class EyeBoneAngleMapApplier
     {
-        public EyeBoneAngleMapApplier(IMessageReceiver receiver, IVRMLoadable vrmLoadable)
+        public EyeBoneAngleMapApplier(IVRMLoadable vrmLoadable)
         {
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposed;
-            receiver.AssignCommandHandler(
-                VmmCommands.SetUseAvatarEyeBoneMap,
-                command => _applyMapping = command.ToBoolean()
-            );
         }
 
         private bool _hasBoneApplier;
         private VRMLookAtBoneApplyer _applier;
-        private bool _applyMapping = true;
 
-        public bool NeedOverwrite => _applyMapping && _hasBoneApplier;
+        public bool NeedOverwrite => _hasBoneApplier;
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {

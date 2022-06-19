@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3748028266611161169}
   - component: {fileID: 8701057551241780110}
   - component: {fileID: 7797473119978373343}
-  - component: {fileID: 2344319939732251227}
   - component: {fileID: 5187863769921554747}
   - component: {fileID: 6241239198292537160}
   - component: {fileID: 6186883453983643772}
@@ -59,6 +58,7 @@ MonoBehaviour:
   lipSyncContext: {fileID: 8501418776315766171}
   lipSyncIntegrator: {fileID: 6125060425342205146}
   autoBlink: {fileID: 2335327280039312852}
+  eyeBoneAngleSetter: {fileID: 2373856935009644786}
 --- !u!114 &3748028266611161169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,18 +98,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a125f000c2a422b4c88a36e60296385a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2344319939732251227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3748028266611161173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6354724b2cd22fb44b7055dff31a907e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &5187863769921554747
@@ -178,9 +166,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e5e46245886a4d42af7c41b99bf7005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  factorWhenMapDisable: 0.2
   eyeDownMotionController: {fileID: 4339509367763658613}
   eyeJitter: {fileID: 3748028267383499190}
   externalTrackerEyeJitter: {fileID: 1428360342779558990}
+  rates:
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
+  rateSum: {x: 0, y: 0}
 --- !u!1 &3748028267383499195
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,9 +227,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72528a9085dcaa84a90b83fc84061e82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  changeTime: 0.3
-  changeTimeRange: 3
-  rateRange: {x: 0.5, y: 0.3}
+  changeTimeMin: 0.3
+  changeTimeMax: 1
+  rateRange: {x: 0.4, y: 0.2}
   speedFactor: 4
 --- !u!114 &4936425215266607946
 MonoBehaviour:
@@ -346,7 +341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 490c1efb2102ed046b6bf4aa41187f4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeAngleRateWhenEyeClosed: 0.4
+  eyeDownRateWhenEyeClosed: 1
 --- !u!1 &3748904030990320353
 GameObject:
   m_ObjectHideFlags: 0

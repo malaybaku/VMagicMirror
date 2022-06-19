@@ -24,8 +24,7 @@ namespace Baku.VMagicMirror
         [Range(0f, 1f)] [SerializeField] private float keepEyeCenterProbability = 0.1f;
 
         [Tooltip("active状態のとき、首の回転角に対して目の回転角を何倍にする、みたいなファクター")]
-        [SerializeField] private float eyeRotationRateFactor = 0.1f;
-        // [SerializeField] private float eyeRotationFactor = 0.5f;
+        [SerializeField] private float eyeRotationRateFactor = 0.05f;
 
         [Tooltip("目を首と順方向/逆方向に動かすとき、その方向ピッタリから角度を多少ランダムにしてもいいよね、という値")]
         [SerializeField] private float eyeOrientationVaryRange = 20f;

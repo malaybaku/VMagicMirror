@@ -7,10 +7,10 @@ namespace Baku.VMagicMirror
     public class EyeJitter : MonoBehaviour, IEyeRotationRequestSource
     {
         [Tooltip("値が変化する最小の時間間隔")]
-        [SerializeField] private float changeTime = 0.4f;
+        [SerializeField] private float changeTimeMin = 0.4f;
         
         [Tooltip("値が変化する最大の時間間隔")]
-        [SerializeField] private float changeTimeRange = 2.0f;
+        [SerializeField] private float changeTimeMax = 2.0f;
         
         [Tooltip("可動範囲(比率ベース")]
         [SerializeField] private Vector2 rateRange = new(0.5f, 0.3f);
@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror
             _count -= Time.deltaTime;
             if (_count < 0)
             {
-                _count = Random.Range(changeTime, changeTimeRange);
+                _count = Random.Range(changeTimeMin, changeTimeMax);
                 _targetRate = new Vector2(
                     Random.Range(-rateRange.x, rateRange.x),
                     Random.Range(-rateRange.y, rateRange.y)

@@ -5,6 +5,9 @@ using Baku.VMagicMirror.ExternalTracker;
 namespace Baku.VMagicMirror
 {
     /// <summary> 外部トラッキングによる眼球運動をやるやつです </summary>
+    /// <remarks>
+    /// <see cref="EyeJitter"/>と排他的に動くのでJitterというクラス名になってるが、どちらかというとEyeMotionに近い
+    /// </remarks>
     public class ExternalTrackerEyeJitter : MonoBehaviour, IEyeRotationRequestSource
     {
         //NOTE: Jitterと言ってるが値としてはユーザーの眼球運動そのものなので、大きめの運動として取り扱う

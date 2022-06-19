@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror
         private static readonly BlendShapeKey BlinkLKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_L);
         private static readonly BlendShapeKey BlinkRKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_R);
 
-        [SerializeField] private float eyeAngleRateWhenEyeClosed = 0.4f;
+        [SerializeField] private float eyeDownRateWhenEyeClosed = 1.0f;
 
         [Inject]
         public void Initialize(
@@ -67,8 +67,8 @@ namespace Baku.VMagicMirror
                 ? _config.AlternativeBlinkR
                 : _blendShapeProxy.GetValue(BlinkRKey);
 
-            LeftEyeRotationRate = new Vector2(0f, -leftBlink * eyeAngleRateWhenEyeClosed);
-            RightEyeRotationRate = new Vector2(0f, -rightBlink * eyeAngleRateWhenEyeClosed);
+            LeftEyeRotationRate = new Vector2(0f, -leftBlink * eyeDownRateWhenEyeClosed);
+            RightEyeRotationRate = new Vector2(0f, -rightBlink * eyeDownRateWhenEyeClosed);
         }
 
         private static bool CheckBlinkBlendShapeClips(VRMBlendShapeProxy proxy)

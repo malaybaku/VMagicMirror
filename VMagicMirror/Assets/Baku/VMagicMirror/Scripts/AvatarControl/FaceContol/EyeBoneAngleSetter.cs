@@ -85,7 +85,8 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            //TODO: 各コンポーネントの主張と設定を総合して目ボーンの角度を適用する
+            
+            eyeDownMotionController.UpdateRotationRate();
 
             var leftRate = Vector2.zero;
             var rightRate = Vector2.zero;

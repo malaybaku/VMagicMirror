@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror
         private static readonly BlendShapeKey BlinkLKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_L);
         private static readonly BlendShapeKey BlinkRKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_R);
 
-        [SerializeField] private float eyeAngleRateWhenEyeClosed = 0.3f;
+        [SerializeField] private float eyeAngleRateWhenEyeClosed = 0.4f;
 
         [Inject]
         public void Initialize(
@@ -31,44 +31,29 @@ namespace Baku.VMagicMirror
         private VRMBlendShapeProxy _blendShapeProxy = null;
         private bool _hasValidEyeSettings = false;
 
-        public bool IsInitialized { get; private set; } = false;
-
-        bool IEyeRotationRequestSource.IsActive => _hasValidEyeSettings && IsInitialized;
+        bool IEyeRotationRequestSource.IsActive => _hasValidEyeSettings && !_config.ShouldSkipNonMouthBlendShape;
         public Vector2 LeftEyeRotationRate { get; private set; }
         public Vector2 RightEyeRotationRate { get; private set; }
-        
-        private void LateUpdate()
-        {
-            //モデルロードの前
-            if (!IsInitialized)
-            {
-                LeftEyeRotationRate = Vector2.zero;
-                RightEyeRotationRate = Vector2.zero;
-                return;
-            }
-
-            AdjustEyeRotation();
-        }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _blendShapeProxy = info.blendShape;
             _hasValidEyeSettings = CheckBlinkBlendShapeClips(_blendShapeProxy);
-            IsInitialized = true;
         }
 
         private void OnVrmDisposing()
         {
-            IsInitialized = false;
             _hasValidEyeSettings = false;
             _blendShapeProxy = null;
         }
 
-        private void AdjustEyeRotation()
+        public void UpdateRotationRate()
         {
             //NOTE: どっちかというとWordToMotion用に"Disable/Enable"系のAPI出す方がいいかも
             if (!_hasValidEyeSettings || _config.ShouldSkipNonMouthBlendShape)
             {
+                LeftEyeRotationRate = Vector2.zero;
+                RightEyeRotationRate = Vector2.zero;
                 return;
             }
 
@@ -88,12 +73,11 @@ namespace Baku.VMagicMirror
 
         private static bool CheckBlinkBlendShapeClips(VRMBlendShapeProxy proxy)
         {
+            //NOTE: 隻眼/単眼でも補正はかかってほしい、という事でこういう感じ
             var avatar = proxy.BlendShapeAvatar;
-            return (
-                (avatar.GetClip(BlinkLKey).Values.Length > 0) &&
-                (avatar.GetClip(BlinkRKey).Values.Length > 0) &&
-                (avatar.GetClip(BlendShapePreset.Blink).Values.Length > 0)
-            );
+            return 
+                (avatar.GetClip(BlinkLKey).Values.Length > 0 || avatar.GetClip(BlinkRKey).Values.Length > 0) &&
+                avatar.GetClip(BlendShapePreset.Blink).Values.Length > 0;
         }
     }
 }

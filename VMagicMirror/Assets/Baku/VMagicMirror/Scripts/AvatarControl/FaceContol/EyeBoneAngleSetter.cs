@@ -166,15 +166,17 @@ namespace Baku.VMagicMirror
                 rightYaw = 0f;
                 ReserveReset = false;
             }
-
-            var motionScale = _useAvatarEyeCurveMap
-                ? _motionScaleWithMap
-                : _motionScale * factorWhenMapDisable;
-            var weightFactor = motionScale * ReserveWeight;
-            leftPitch = ScaleAndClampAngle(leftPitch, weightFactor);
-            leftYaw = ScaleAndClampAngle(leftYaw, weightFactor);
-            rightPitch = ScaleAndClampAngle(rightPitch, weightFactor);
-            rightYaw = ScaleAndClampAngle(rightYaw, weightFactor);
+            else
+            {
+                var motionScale = _useAvatarEyeCurveMap
+                    ? _motionScaleWithMap
+                    : _motionScale * factorWhenMapDisable;
+                var weightFactor = motionScale * ReserveWeight;
+                leftPitch = ScaleAndClampAngle(leftPitch, weightFactor);
+                leftYaw = ScaleAndClampAngle(leftYaw, weightFactor);
+                rightPitch = ScaleAndClampAngle(rightPitch, weightFactor);
+                rightYaw = ScaleAndClampAngle(rightYaw, weightFactor);
+            }
             ReserveWeight = 1f;
             
             if (_useAvatarEyeCurveMap)

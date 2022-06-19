@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror
                 : _applier.HorizontalInner.Map(yaw);
 
             var mappedPitch = pitch < 0
-                ? _applier.VerticalUp.Map(-pitch)
+                ? -_applier.VerticalUp.Map(-pitch)
                 : _applier.VerticalDown.Map(pitch);
 
             return (mappedYaw, mappedPitch);
@@ -82,7 +82,7 @@ namespace Baku.VMagicMirror
                 : _applier.HorizontalOuter.Map(yaw);
 
             var mappedPitch = pitch < 0
-                ? _applier.VerticalUp.Map(-pitch)
+                ? -_applier.VerticalUp.Map(-pitch)
                 : _applier.VerticalDown.Map(pitch);
 
             return (mappedYaw, mappedPitch);

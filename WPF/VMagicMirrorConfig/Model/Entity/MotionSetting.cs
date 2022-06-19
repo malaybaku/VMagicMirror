@@ -65,6 +65,7 @@
 
         public bool UseAvatarEyeBoneMap { get; set; } = true;
         public int EyeBoneRotationScale { get; set; } = 100;
+        public int EyeBoneRotationScaleWithMap { get; set; } = 100;
 
         #endregion
 
@@ -139,6 +140,7 @@
             UseLookAtPointMousePointer = true;
             UseLookAtPointMainCamera = false;
             EyeBoneRotationScale = 100;
+            EyeBoneRotationScaleWithMap = 100;
         }
 
         public void ResetFaceBlendShapeSetting()

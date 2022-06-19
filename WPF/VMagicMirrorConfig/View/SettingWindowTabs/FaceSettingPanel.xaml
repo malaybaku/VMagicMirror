@@ -15,6 +15,7 @@
         <vm:FaceSettingViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
+        <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
         <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
         <view:Lv50Converter x:Key="Lv50Converter"/>
         <view:EmptyToNoneTextConverter x:Key="EmptyToNoneTextConverter"/>
@@ -348,8 +349,12 @@
                         <TextBlock Grid.Row="1" Grid.Column="0"
                                    Text="{DynamicResource Motion_Eye_RotScale}"
                                    />
+
+                        <!-- 後方互換性のため、カーブ設定を使用するときの値と使用しないときの値を独立に保持する -->
                         <Slider x:Name="sliderEyeRotationScale"
                                 Grid.Row="1" Grid.Column="1"
+                                Visibility="{Binding UseAvatarEyeBoneMap.Value, 
+                                                     Converter={StaticResource BooleanReverseToVisibilityConverter}}"
                                 Minimum="1"
                                 Maximum="500"
                                 TickFrequency="1"
@@ -357,10 +362,30 @@
                                 Value="{Binding EyeBoneRotationScale.Value, Mode=TwoWay}"
                                 />
                         <TextBox Grid.Row="1" Grid.Column="2"
+                                 Visibility="{Binding UseAvatarEyeBoneMap.Value, 
+                                                      Converter={StaticResource BooleanReverseToVisibilityConverter}}"
                                  Text="{Binding Value, ElementName=sliderEyeRotationScale}"
+                                 />
+                        
+                        <Slider x:Name="sliderEyeRotationScaleWithMap"
+                                Grid.Row="1" Grid.Column="1"
+                                Visibility="{Binding UseAvatarEyeBoneMap.Value, 
+                                                     Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Minimum="1"
+                                Maximum="500"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                Value="{Binding EyeBoneRotationScale.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="1" Grid.Column="2"
+                                 Visibility="{Binding UseAvatarEyeBoneMap.Value, 
+                                                      Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 Text="{Binding Value, ElementName=sliderEyeRotationScaleWithMap}"
                                  />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                                   Visibility="{Binding UseAvatarEyeBoneMap.Value, 
+                                                        Converter={StaticResource BooleanReverseToVisibilityConverter}}"
                                    TextAlignment="Right"
                                    Margin="20,5,20,0" 
                                    FontSize="11"

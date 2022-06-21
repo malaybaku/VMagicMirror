@@ -116,12 +116,16 @@ namespace Baku.VMagicMirrorConfig
             {
                 return;
             }
+            QuickLoadViewPoint(i);
+        }
 
+        public void QuickLoadViewPoint(int index)
+        {
             try
             {
                 string saveData =
-                    (i == 1) ? QuickSave1.Value :
-                    (i == 2) ? QuickSave2.Value :
+                    (index == 1) ? QuickSave1.Value :
+                    (index == 2) ? QuickSave2.Value :
                     QuickSave3.Value;
 
                 var obj = JObject.Parse(saveData);

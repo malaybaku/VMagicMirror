@@ -124,6 +124,15 @@ namespace Baku.VMagicMirrorConfig
         public void Play(MotionRequest item)
             => SendMessage(MessageFactory.Instance.PlayWordToMotionItem(item.ToJson()));
 
+
+        public void Play(int index)
+        {
+            if (index >= 0 && index < MotionRequests.Requests.Length)
+            {
+                Play(MotionRequests.Requests[index]);
+            }
+        }
+
         #region アイテムの並べ替えと削除
 
         public void MoveUpItem(MotionRequest item)

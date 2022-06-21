@@ -455,6 +455,18 @@ Please test by typing "joy".</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_Gamepad">Gamepad</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">Keyboard (num 0-9)</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDI Controller</sys:String>
+
+    <!-- HotKey -->
+    <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>
+    <sys:String x:Key="Hotkey_Instruction" xml:space="preserve">This tab support hotkey (shortcut) edit.
+Input favorite key combination in text area.
+Be careful, to avoid your foreground app's shortcut.</sys:String>
+    <sys:String x:Key="Hotkey_Reset">Reset to Default</sys:String>
+
+    <sys:String x:Key="Hotkey_Action_None">(Do Nothing)</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetCamera_Format">Apply Camera Pose No.{0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_CallWtm_Format">Run Word To Motion Item No.{0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">Toggle Visibility of Accessory "{0}"</sys:String>
     
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">Setting File Control</sys:String>

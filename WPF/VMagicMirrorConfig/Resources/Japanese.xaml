@@ -459,6 +459,18 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">キーボード (数字の0-9)</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDIコントローラ</sys:String>
 
+    <!-- HotKey -->
+    <sys:String x:Key="Hotkey_Header">Hot Keyの登録</sys:String>
+    <sys:String x:Key="Hotkey_Instruction" xml:space="preserve">Hot Key (ショートカットキー) が登録・編集できます。
+編集エリアで使用したいホットキーを入力して下さい。
+※ホットキーが他アプリ用のショートカットと重複しないようご注意下さい。</sys:String>
+    <sys:String x:Key="Hotkey_Reset">デフォルト設定にリセット</sys:String>
+    
+    <sys:String x:Key="Hotkey_Action_None">(何もしない)</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetCamera_Format">設定したカメラワーク {0} を適用</sys:String>
+    <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motionアイテムの {0} 番目を実行</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">アクセサリ「{0}」の表示/非表示を切り替え</sys:String>
+    
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">設定ファイルの操作</sys:String>
     <sys:String x:Key="SettingFile_SaveAndLoad">セーブ・ロード</sys:String>

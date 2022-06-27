@@ -8,6 +8,19 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.5
+{: .doc-sec2 }
+
+2022/06/29
+
+* Add: "Clap" built-in motion.
+* Add: "Clap", "Nod Head", "Shake Head" motion button in Streaming Tab's "Word to Motion" area.
+* Change: Eye bone control to respect avatar's "VRMLookAtBoneApplyer" curve setting. You can roll-back this behavior to older version's one, by turning off Setting Window > "Face" tab > "Eye" > "Apply eye bone curve defined in avatar" option.
+* Change: Pen 3D model's UV map has changed. Notice that this change is not backward-compatible. Please see detail at [Change Device Textures](../tips/change_textures).
+* Change: Internal update of Unity Editor to 2021.3.1f1, and UniVRM to 0.98.0.
+* Fix: Other some bugs.
+
+
 #### v2.0.4
 {: .doc-sec2 }
 

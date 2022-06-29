@@ -18,6 +18,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 #pragma warning disable CS0067
         public event EventHandler? CanExecuteChanged;
 #pragma warning restore CS0067
+
+        public static ActionCommand Empty { get; } = new ActionCommand(() => { });
     }
 
     public class ActionCommand<T> : ICommand
@@ -40,6 +42,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 #pragma warning disable CS0067
         public event EventHandler? CanExecuteChanged;
 #pragma warning restore CS0067
+
+        public static ActionCommand<T> Empty { get; } = new ActionCommand<T>(_ => { });
     }
 
 }

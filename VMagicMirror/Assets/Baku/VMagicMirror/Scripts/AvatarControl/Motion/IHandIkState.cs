@@ -9,6 +9,12 @@ namespace Baku.VMagicMirror
     public interface IHandIkState : IIKData
     {
         /// <summary>
+        /// 他のステートからこのステートに切り替わったときにIKのブレンド処理をスキップしてよいかどうか。
+        /// 普通はfalseで、直前ステートのIK位置からの軌道を自力で計算するステートでのみtrueにする
+        /// </summary>
+        bool SkipEnterIkBlend { get; }
+
+        /// <summary>
         /// このデータが左手のものか右手のものかを取得します。
         /// </summary>
         ReactedHand Hand { get; }

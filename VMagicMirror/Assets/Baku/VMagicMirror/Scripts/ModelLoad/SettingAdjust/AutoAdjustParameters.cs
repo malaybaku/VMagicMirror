@@ -17,6 +17,6 @@ namespace Baku.VMagicMirror
     public class DeviceLayoutAutoAdjustParameters
     {
         public float HeightFactor { get; set; } = 1.0f;
-        public float ArmLengthFactor { get; set; }= 1.0f;
+        public float ArmLengthFactor { get; set; } = 1.0f;
     }
 }

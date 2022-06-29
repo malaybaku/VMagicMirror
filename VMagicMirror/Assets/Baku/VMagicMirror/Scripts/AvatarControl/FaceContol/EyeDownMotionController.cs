@@ -6,12 +6,12 @@ using Zenject;
 namespace Baku.VMagicMirror
 {
     /// <summary> 瞬きに対して目と眉を下げる処理をするやつ </summary>
-    public class EyeDownMotionController : MonoBehaviour
+    public class EyeDownMotionController : MonoBehaviour, IEyeRotationRequestSource
     {
         private static readonly BlendShapeKey BlinkLKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_L);
         private static readonly BlendShapeKey BlinkRKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_R);
 
-        [SerializeField] private float eyeAngleDegreeWhenEyeClosed = 10f;
+        [SerializeField] private float eyeDownRateWhenEyeClosed = 1.0f;
 
         [Inject]
         public void Initialize(
@@ -27,88 +27,57 @@ namespace Baku.VMagicMirror
 
         private FaceControlConfiguration _config;
         private ExternalTrackerDataSource _exTracker = null;
-        
-        private VRMBlendShapeProxy _blendShapeProxy = null;
-        private Transform _rightEyeBone = null;
-        private Transform _leftEyeBone = null;
 
-        //「目ボーンがある + まばたきブレンドシェイプがある」の2つで判定
+        private VRMBlendShapeProxy _blendShapeProxy = null;
         private bool _hasValidEyeSettings = false;
 
-        public bool IsInitialized { get; private set; } = false;
-        
-        private void LateUpdate()
-        {
-            //モデルロードの前
-            if (!IsInitialized)
-            {
-                return;
-            }
-
-            AdjustEyeRotation();
-        }
+        bool IEyeRotationRequestSource.IsActive => _hasValidEyeSettings && !_config.ShouldSkipNonMouthBlendShape;
+        public Vector2 LeftEyeRotationRate { get; private set; }
+        public Vector2 RightEyeRotationRate { get; private set; }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _blendShapeProxy = info.blendShape;
-            _rightEyeBone = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
-            _leftEyeBone = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
-
-            _hasValidEyeSettings =
-                _rightEyeBone != null &&
-                _leftEyeBone != null &&
-                CheckBlinkBlendShapeClips(_blendShapeProxy);
-
-            IsInitialized = true;
+            _hasValidEyeSettings = CheckBlinkBlendShapeClips(_blendShapeProxy);
         }
 
         private void OnVrmDisposing()
         {
-            _blendShapeProxy = null;
-            _rightEyeBone = null;
-            _leftEyeBone = null;
             _hasValidEyeSettings = false;
-
-            IsInitialized = false;
+            _blendShapeProxy = null;
         }
 
-        private void AdjustEyeRotation()
+        public void UpdateRotationRate()
         {
             //NOTE: どっちかというとWordToMotion用に"Disable/Enable"系のAPI出す方がいいかも
             if (!_hasValidEyeSettings || _config.ShouldSkipNonMouthBlendShape)
             {
+                LeftEyeRotationRate = Vector2.zero;
+                RightEyeRotationRate = Vector2.zero;
                 return;
             }
 
-            bool shouldUseAlternativeBlink = _exTracker.Connected && _config.ShouldStopEyeDownOnBlink;
-            
-            float leftBlink = shouldUseAlternativeBlink
+            var shouldUseAlternativeBlink = _exTracker.Connected && _config.ShouldStopEyeDownOnBlink;            
+
+            // このへんの値が1フレーム前の値ではなく同一フレームの値を参照できるともっと良い
+            var leftBlink = shouldUseAlternativeBlink
                 ? _config.AlternativeBlinkL
                 : _blendShapeProxy.GetValue(BlinkLKey);
-            float rightBlink = shouldUseAlternativeBlink
+            var rightBlink = shouldUseAlternativeBlink
                 ? _config.AlternativeBlinkR
                 : _blendShapeProxy.GetValue(BlinkRKey);
 
-            //NOTE: 毎回LookAtで値がうまく設定されてる前提でこういう記法になっている事に注意
-            _leftEyeBone.localRotation *= Quaternion.AngleAxis(
-                eyeAngleDegreeWhenEyeClosed * leftBlink,
-                Vector3.right
-            );
-
-            _rightEyeBone.localRotation *= Quaternion.AngleAxis(
-                eyeAngleDegreeWhenEyeClosed * rightBlink,
-                Vector3.right
-            );
+            LeftEyeRotationRate = new Vector2(0f, -leftBlink * eyeDownRateWhenEyeClosed);
+            RightEyeRotationRate = new Vector2(0f, -rightBlink * eyeDownRateWhenEyeClosed);
         }
 
         private static bool CheckBlinkBlendShapeClips(VRMBlendShapeProxy proxy)
         {
+            //NOTE: 隻眼/単眼でも補正はかかってほしい、という事でこういう感じ
             var avatar = proxy.BlendShapeAvatar;
-            return (
-                (avatar.GetClip(BlinkLKey).Values.Length > 0) &&
-                (avatar.GetClip(BlinkRKey).Values.Length > 0) &&
-                (avatar.GetClip(BlendShapePreset.Blink).Values.Length > 0)
-            );
+            return 
+                (avatar.GetClip(BlinkLKey).Values.Length > 0 || avatar.GetClip(BlinkRKey).Values.Length > 0) &&
+                avatar.GetClip(BlendShapePreset.Blink).Values.Length > 0;
         }
     }
 }

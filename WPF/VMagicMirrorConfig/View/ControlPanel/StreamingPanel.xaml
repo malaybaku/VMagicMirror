@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
              xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels"
              xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
@@ -687,30 +688,17 @@
                                         Margin="5"
                                         Style="{StaticResource HeaderText}"
                                         />
+                            <Button Style="{StaticResource CategorySettingResetButton}"
+                                    Command="{Binding ResetDeviceLayoutCommand}"
+                                    />
                         </StackPanel>
 
                         <CheckBox Grid.Row="2" Grid.Column="0"
                                     Grid.ColumnSpan="3"
-                                    Margin="10,0" 
+                                    Margin="10,5" 
                                     Content="{DynamicResource Layout_DeviceFreeLayout}"
                                     IsChecked="{Binding EnableDeviceFreeLayout.Value}"
                                     />
-
-                        <Button HorizontalAlignment="Left"
-                                Width="150"
-                                Margin="10,5,10,5"
-                                Command="{Binding ResetDeviceLayoutCommand}"
-                                >
-                            <StackPanel Style="{StaticResource IconTextSetStackPanel}">
-                                <md:PackIcon Style="{StaticResource IconTextSetIcon}"
-                                             Kind="Reload"
-                                             />
-                                <TextBlock Style="{StaticResource IconSetSetText}"
-                                           Text="{DynamicResource Streaming_DeviceLayout_Reset}"
-                                           />
-                            </StackPanel>
-                        </Button>
-
                     </StackPanel>
                 </Border>
 
@@ -756,7 +744,7 @@
                                     />
                         <ComboBox Grid.Column="1"
                                     HorizontalAlignment="Stretch"                                 
-                                    Margin="5,0,5,22.5"
+                                    Margin="5,0,5,5"
                                     ItemsSource="{Binding Devices}"
                                     SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
                                     md:HintAssist.Hint="Device"
@@ -767,6 +755,30 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+                        <!-- TODO: ここに簡易呼び出しで拍手、nod、shake、waveを足してみたいんですよ -->
+                        <StackPanel Orientation="Horizontal" Margin="5,5,5,12">
+                            <StackPanel.DataContext>
+                                <vm:InstantWtmViewModel />
+                            </StackPanel.DataContext>
+                            <StackPanel.Resources>
+                                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                    <Setter Property="Width" Value="28"/>
+                                    <Setter Property="Height" Value="28"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Margin" Value="2,0"/>
+                                </Style>
+                            </StackPanel.Resources>
+
+                            <Button Command="{Binding ClapCommand}" Cursor="Hand">
+                                <emoji:TextBlock Text="👏"/>
+                            </Button>
+                            <Button Command="{Binding NodCommand}">
+                                <emoji:TextBlock Text="↕️"/>
+                            </Button>
+                            <Button Command="{Binding ShakeCommand}">
+                                <emoji:TextBlock Text="↔️"/>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </StackPanel>

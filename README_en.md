@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v2.0.4
+v2.0.5
 
 * Author: Baxter
-* 2022/Apr/29
+* 2022/Jun/29
 
 The VRM avatar application without any special device.
 
@@ -54,14 +54,15 @@ note: Contact in English or Japanese is very helpful for the author.
 
 Put the repository on your local folder. folder path should not include space character.
 
-Open Unity project with Unity 2020.3.x, and open WPF project with Visual Studio 2022.
+Open Unity project with Unity 2021.3.x, and open WPF project with Visual Studio 2022.
 
-Maintainer's environment is as following.
+Maintainer's environment is:
 
-* Unity 2020.3.8f1 Personal
+* Unity 2021.3.1f1
 * Visual Studio Community 2022 17.0.0
     * Component ".NET Desktop Development" is required.
     * Also Component "C++ Desktop Development" is required, for Unity Burst compiler.
+
 
 ### 4.2. Asset install
 

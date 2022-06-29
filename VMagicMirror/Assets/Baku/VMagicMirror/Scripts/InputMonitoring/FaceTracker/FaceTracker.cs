@@ -37,8 +37,6 @@ namespace Baku.VMagicMirror
         [Tooltip("検出処理が走る最短間隔をミリ秒単位で規定します。")]
         [SerializeField] private int trackMinIntervalMillisec = 60;
         [SerializeField] private int trackMinIntervalMillisecOnHighPower = 40;
-
-        [SerializeField] private RawImage debugImage = null;
         
         /// <summary> キャリブレーションの内容 </summary>
         public CalibrationData CalibrationData { get; } = new CalibrationData();
@@ -60,8 +58,6 @@ namespace Baku.VMagicMirror
         public bool FaceDetectedAtLeastOnce { get; private set; } = false;
 
         //実際に接続できてるかどうかはさておき「カメラを使ってるつもり」というあいだはtrueになるフラグ。
-        private bool _isCameraActive = false;
-
         private FaceTrackingMode _trackingMode;
         private NoneFaceAnalyzer _noneFaceAnalyzer = new NoneFaceAnalyzer();
         private DlibFaceAnalyzeRoutine _dlibFaceAnalyzer;

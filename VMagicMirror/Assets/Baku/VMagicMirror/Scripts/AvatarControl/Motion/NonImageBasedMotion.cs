@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror
     /// <remarks>
     /// 値を実際に使うのはカメラ系のトラッキングが一切効いてないときだけ。のつもり
     /// </remarks>
-    public class NonImageBasedMotion : MonoBehaviour
+    public class NonImageBasedMotion : MonoBehaviour, IEyeRotationRequestSource
     {
         private FaceControlConfiguration _faceConfig;
         private VoiceOnOffParser _voiceOnOffParser = null;
@@ -24,13 +24,13 @@ namespace Baku.VMagicMirror
         [Range(0f, 1f)] [SerializeField] private float keepEyeCenterProbability = 0.1f;
 
         [Tooltip("active状態のとき、首の回転角に対して目の回転角を何倍にする、みたいなファクター")]
-        [SerializeField] private float eyeRotationFactor = 0.5f;
+        [SerializeField] private float eyeRotationRateFactor = 0.05f;
 
         [Tooltip("目を首と順方向/逆方向に動かすとき、その方向ピッタリから角度を多少ランダムにしてもいいよね、という値")]
         [SerializeField] private float eyeOrientationVaryRange = 20f;
         
-        [SerializeField] private Vector2 inactiveFactors = new Vector2(10, 10);
-        [SerializeField] private Vector2 activeFactors = new Vector2(10, 10);
+        [SerializeField] private Vector2 inactiveFactors = new(10, 10);
+        [SerializeField] private Vector2 activeFactors = new(10, 10);
 
         //active/inactiveが1回切り替わったらしばらくフラグ状態を維持する長さ
         [SerializeField] private float activeSwitchCoolDownDuration = 1.0f;
@@ -61,18 +61,25 @@ namespace Baku.VMagicMirror
             
             _motionApplier = new NonImageBasedMotionApplier(vrmLoadable);
         }
-
-        /// <summary> 目に追加してほしい回転値。機能が無効なときは無回転。 </summary>
-        public Quaternion EyeRotation { get; private set; } = Quaternion.identity;
         
+        #region IEyeRotationRequestSource
+        
+        bool IEyeRotationRequestSource.IsActive => ShouldApply;
+        private Vector2 _eyeRotationRate = Vector2.zero;
+        public Vector2 LeftEyeRotationRate => _eyeRotationRate;
+        public Vector2 RightEyeRotationRate => _eyeRotationRate;
+
+        #endregion
+
         /// <summary> 首に追加してほしい回転値(※HeadとNeckの合計値) </summary>
         public Quaternion HeadRotation { get; private set; } = Quaternion.identity;
 
         private NonImageBasedMotionApplier _motionApplier = null;
-        private readonly Jitter _inactiveJitter = new Jitter();
-        private readonly Jitter _activeJitter = new Jitter();
-        private Quaternion _activeEyeRotationTarget = Quaternion.identity;
-        private Quaternion _activeEyeRotation = Quaternion.identity;
+        private readonly Jitter _inactiveJitter = new();
+        private readonly Jitter _activeJitter = new();
+
+        private Vector2 _rawEyeRot = Vector2.zero;
+        private Vector2 _rawEyeRotTarget = Vector2.zero;
         
         //0 ~ 1の値を取り、喋ってないモーションと喋ってるモーションをブレンドする重みに使います
         private float _actionBlendWeight = 0f;
@@ -105,7 +112,8 @@ namespace Baku.VMagicMirror
                     _rawActive = false;
                     _active = false;
                     _activeSwitchCountDown = 0f;
-                    EyeRotation = Quaternion.identity;
+                    _eyeRotationRate = Vector2.zero;
+                    _rawEyeRot = Vector2.zero;
                     HeadRotation = Quaternion.identity;
                     _activeJitter.Reset();
                     _inactiveJitter.Reset();   
@@ -153,34 +161,32 @@ namespace Baku.VMagicMirror
             _activeJitter.JitterTargetEulerUpdated += euler =>
             {
                 //注視点目標によってやることを変える
-                bool keepEyeCenter = Random.Range(0f, 1f) < keepEyeCenterProbability;
-                
+                var keepEyeCenter = Random.Range(0f, 1f) < keepEyeCenterProbability;
                 var sign = keepEyeCenter ? -1f : 1f;
-
-                var rawRotation = new Vector2(
-                    euler.x * eyeRotationFactor * sign,
-                    euler.y * eyeRotationFactor * sign
+                
+                var rawRotationRate = new Vector2(
+                    euler.y * eyeRotationRateFactor * sign,
+                    -euler.x * eyeRotationRateFactor * sign
                     );
 
                 if (keepEyeCenter)
                 {
-                    //注視点維持はキレイに動かすのを目標とする: 同じ位置を見ようとしての動き、のはずなので
-                    _activeEyeRotationTarget = Quaternion.Euler(rawRotation.x, rawRotation.y, 0);
+                    //注視点維持はキレイに動かすのを目標とする。同じ位置を見ようとしての動きのはずなため
+                    _rawEyeRotTarget = rawRotationRate;
                 }
                 else
                 {
-                    //視線を首と同じ方向に動かすとき、注視点がテキトーに離れるので向きがぴったり揃う必要はない。
-                    //そこで、ぴったり同じ方向にせず、適当に汚す。
+                    //視線を首とほぼ同じ方向に動かすとき、首と完全に一緒ではなく、ちょっとズレた方向を見るのを許可する。
+                    
                     var angle = Random.Range(
                         -eyeOrientationVaryRange * Mathf.Deg2Rad, eyeOrientationVaryRange * Mathf.Deg2Rad
                     );
 
                     var cos = Mathf.Cos(angle);
                     var sin = Mathf.Sin(angle);
-                    _activeEyeRotationTarget = Quaternion.Euler(
-                        cos * rawRotation.x - sin * rawRotation.y,
-                        sin * rawRotation.x + cos * rawRotation.y,
-                        0
+                    _rawEyeRotTarget = new Vector2(
+                        cos * rawRotationRate.x - sin * rawRotationRate.y,
+                        sin * rawRotationRate.x + cos * rawRotationRate.y
                     );
                 }
             };
@@ -219,7 +225,7 @@ namespace Baku.VMagicMirror
             _activeJitter.PositionFactor = activeFactors.y;
             
             CalculateAngles();
-            _motionApplier.Apply(HeadRotation, EyeRotation);
+            _motionApplier.Apply(HeadRotation);
         }
         
         private void CalculateAngles()
@@ -247,11 +253,8 @@ namespace Baku.VMagicMirror
             //個別の動きのアップデート
             _inactiveJitter.Update(Time.deltaTime);
             _activeJitter.Update(Time.deltaTime);
-            _activeEyeRotation = Quaternion.Slerp(
-                _activeEyeRotation,
-                _activeEyeRotationTarget,
-                eyeSpeedFactor * Time.deltaTime
-            );
+            
+            _rawEyeRot = Vector2.Lerp(_rawEyeRot, _rawEyeRotTarget, eyeSpeedFactor * Time.deltaTime);
 
             float blendWeight = Mathf.SmoothStep(0, 1, _actionBlendWeight);
             
@@ -263,11 +266,7 @@ namespace Baku.VMagicMirror
             );
             
             //非アクティブの目は便宜的に正面向き: ここは後で変わるかも。
-            EyeRotation = Quaternion.Slerp(
-                Quaternion.identity,
-                _activeEyeRotation,
-                blendWeight
-            );
+            _eyeRotationRate = Vector2.Lerp(Vector2.zero, _rawEyeRot, blendWeight);
         }
 
     }
@@ -281,22 +280,16 @@ namespace Baku.VMagicMirror
             {
                 _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
                 _neck = info.animator.GetBoneTransform(HumanBodyBones.Neck);
-                _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
-                _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
                 _hasNeck = _neck != null;
-                _hasEye = (_leftEye != null && _rightEye != null);
                 _hasModel = true;
             };
 
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
-                _hasEye = false;
                 _hasNeck = false;
                 _head = null;
                 _neck = null;
-                _leftEye = null;
-                _rightEye = null;
             };
         }
 
@@ -306,24 +299,14 @@ namespace Baku.VMagicMirror
         
         private Transform _head;
         private Transform _neck;
-        private Transform _leftEye;
-        private Transform _rightEye;
         private bool _hasModel;
         private bool _hasNeck;
-        private bool _hasEye;
 
-        public void Apply(Quaternion headRot, Quaternion eyeRot)
+        public void Apply(Quaternion headRot)
         {
             if (!_hasModel)
             {
                 return;
-            }
-            
-            if (_hasEye)
-            {
-                //NOTE: 前処理で目ボーンが毎フレーム中央付近にリセットされる、という前提でこう書いてます
-                _leftEye.localRotation *= eyeRot;
-                _rightEye.localRotation *= eyeRot;
             }
             
             //首と頭を一括で回すにあたって、コーナーケースを安全にするため以下のアプローチを取る

@@ -82,6 +82,11 @@ namespace Baku.VMagicMirror
             {
                 BuildVMagicMirror(savePath, isFullEdition, isProd);
             }
+
+            if (isProd)
+            {
+                RemoveBurstRelatedFolder(savePath);
+            }
         }
 
         private static void BuildVMagicMirror(string folder, bool isFullEdition, bool isProd)
@@ -191,6 +196,16 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private static void RemoveBurstRelatedFolder(string savePath)
+        {
+            var rootFolder = Path.GetDirectoryName(savePath);
+            var burstDir = Path.Combine(rootFolder, "VMagicMirror_BurstDebugInformation_DoNotShip");
+            if (Directory.Exists(burstDir))
+            {
+                Directory.Delete(burstDir, true);
+            }
+        }
+        
         private static string GetSavePathFromArgs()
         {
             var args = Environment.GetCommandLineArgs();

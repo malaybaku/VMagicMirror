@@ -97,6 +97,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 1574337991341618296}
+  shadowStabilizerRenderers:
+  - {fileID: 4846373983971922881}
+  - {fileID: 8424906507824916053}
 --- !u!1 &1574337990693445692
 GameObject:
   m_ObjectHideFlags: 0

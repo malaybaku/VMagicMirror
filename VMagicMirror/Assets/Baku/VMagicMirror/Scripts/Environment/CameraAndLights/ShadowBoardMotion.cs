@@ -6,6 +6,7 @@ namespace Baku.VMagicMirror
     public class ShadowBoardMotion : MonoBehaviour
     {
         [SerializeField] private Transform cam = null;
+        [SerializeField] private Renderer[] shadowStabilizerRenderers = null;
 
         public float ShadowBoardWaistDepthOffset { get; set; } = 0.4f;
         
@@ -47,6 +48,7 @@ namespace Baku.VMagicMirror
         private void Awake()
         {
             _renderer = GetComponent<Renderer>();
+            RefreshRendererEnable();
         }
 
         private void Update()
@@ -63,8 +65,14 @@ namespace Baku.VMagicMirror
             transform.localPosition = Mathf.Max(depthByWaist, depthByFoot) * Vector3.forward;
         }
 
-
-        private void RefreshRendererEnable() 
-            => _renderer.enabled = EnableShadowRenderer && !ForceKillShadowRenderer;
+        private void RefreshRendererEnable()
+        {
+            var rendererEnabled = EnableShadowRenderer && !ForceKillShadowRenderer;
+            _renderer.enabled = rendererEnabled;
+            foreach (var r in shadowStabilizerRenderers)
+            {
+                r.enabled = rendererEnabled;
+            }
+        }
     }
 }

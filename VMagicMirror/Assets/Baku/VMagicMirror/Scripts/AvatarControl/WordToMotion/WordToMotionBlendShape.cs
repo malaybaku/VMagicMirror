@@ -20,10 +20,10 @@ namespace Baku.VMagicMirror
         }
         
         public static WordToMotionBlendShapeApplyContent Empty { get; } 
-            = new(false, new List<(BlendShapeKey, float)>(), false, false);
+            = new WordToMotionBlendShapeApplyContent(false, new List<(BlendShapeKey, float)>(), false, false);
 
         public static WordToMotionBlendShapeApplyContent Create(List<(BlendShapeKey, float)> keys, bool keepLipSync,
-            bool isPreview) => new(true, keys, keepLipSync, isPreview);
+            bool isPreview) => new WordToMotionBlendShapeApplyContent(true, keys, keepLipSync, isPreview);
 
         public bool HasValue { get; }
         public List<(BlendShapeKey, float)> Keys { get; }
@@ -50,14 +50,14 @@ namespace Baku.VMagicMirror
         
         private BlendShapeKey[] _allBlendShapeKeys = new BlendShapeKey[0];
 
-        private readonly Dictionary<BlendShapeKey, float> _blendShape = new();
+        private readonly Dictionary<BlendShapeKey, float> _blendShape = new Dictionary<BlendShapeKey, float>();
         
         private EyeBoneAngleSetter _eyeBoneResetter;
 
         private bool _hasDiff;
 
-        private readonly List<(BlendShapeKey, float)> _currentValueSource = new(8);
-        private readonly Subject<WordToMotionBlendShapeApplyContent> _currentValue = new();
+        private readonly List<(BlendShapeKey, float)> _currentValueSource = new List<(BlendShapeKey, float)>(8);
+        private readonly Subject<WordToMotionBlendShapeApplyContent> _currentValue = new Subject<WordToMotionBlendShapeApplyContent>();
         public IObservable<WordToMotionBlendShapeApplyContent> CurrentValue => _currentValue;
         
         [Inject]

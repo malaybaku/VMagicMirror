@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
         //カメラのnear clipが0.05なので、それより大きく、かつ十分小さめの値にする
         private const float BillboardZ = 0.1f;
 
-        private static readonly Vector3 DefaultPosition = new(0f, 0.05f, 0.17f);
+        private static readonly Vector3 DefaultPosition = new Vector3(0f, 0.05f, 0.17f);
         private static readonly Vector3 DefaultRotationEuler = Vector3.zero;
         private static readonly Vector3 DefaultScale = Vector3.one;
         
@@ -29,7 +29,8 @@ namespace Baku.VMagicMirror
         private Camera _cam = null;
 
         private Animator _animator = null;
-        private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones = new();
+        private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones 
+            = new Dictionary<AccessoryAttachTarget, Transform>();
 
         private bool _visibleByWordToMotion;
         public bool VisibleByWordToMotion

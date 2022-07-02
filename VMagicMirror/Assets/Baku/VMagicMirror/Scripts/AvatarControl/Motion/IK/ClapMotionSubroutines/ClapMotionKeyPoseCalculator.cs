@@ -47,7 +47,13 @@ namespace Baku.VMagicMirror.IK
                 Vector3.Distance(rightUpperArm.position, rightLowerArm.position) +
                 Vector3.Distance(rightLowerArm.position, rightHand.position);
 
-            var chest = animator.GetBoneTransform(HumanBodyBones.Chest).position;
+            //chestは必須ボーンではないことに注意
+            var chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
+            if (chestBone == null)
+            {
+                chestBone = animator.GetBoneTransform(HumanBodyBones.Spine);
+            }
+            var chest = chestBone.position;
             var head = animator.GetBoneTransform(HumanBodyBones.Head).position;
 
             //ClapHeightは手首を持ってく位置を指定することに注意。気持ち低めを狙う。

@@ -12,18 +12,13 @@ namespace Baku.VMagicMirror
     [RequireComponent(typeof(Camera))]
     public class CameraTransformController : MonoBehaviour
     {
-        const int LeftMouseButton = 0;
-        const int RightMouseButton = 1;
-        const int MiddleMouseButton = 2;
+        private const int LeftMouseButton = 0;
+        private const int RightMouseButton = 1;
+        private const int MiddleMouseButton = 2;
 
-        [SerializeField, Range(0.1f, 10f)]
-        private float wheelSpeed = 1f;
-
-        [SerializeField, Range(0.1f, 10f)]
-        private float moveSpeed = 0.3f;
-
-        [SerializeField, Range(0.1f, 10f)]
-        private float rotateSpeed = 0.3f;
+        [SerializeField, Range(0.1f, 10f)] private float wheelSpeed = 1f;
+        [SerializeField, Range(0.1f, 10f)] private float moveSpeed = 0.3f;
+        [SerializeField, Range(0.1f, 10f)] private float rotateSpeed = 0.3f;
 
         private Camera _cam;
         private Vector3 _preMousePos;
@@ -95,7 +90,7 @@ namespace Baku.VMagicMirror
             }
             
             float scrollWheel = Input.mouseScrollDelta.y * 0.1f;
-            if (scrollWheel != 0.0f)
+            if (scrollWheel != 0.0f && CheckMousePositionIsInsideWindow())
             {
                 MouseWheel(scrollWheel);
             }
@@ -113,6 +108,14 @@ namespace Baku.VMagicMirror
             }
 
             MouseDrag(Input.mousePosition);
+        }
+
+        private bool CheckMousePositionIsInsideWindow()
+        {
+            var mousePos = Input.mousePosition;
+            return
+                mousePos.x > 0 && mousePos.x < Screen.width &&
+                mousePos.y > 0 && mousePos.y < Screen.height;
         }
 
         private void MouseWheel(float delta) 

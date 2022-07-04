@@ -29,8 +29,8 @@ namespace Baku.VMagicMirror
         private Camera _cam = null;
 
         private Animator _animator = null;
-        private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones =
-            new Dictionary<AccessoryAttachTarget, Transform>();
+        private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones 
+            = new Dictionary<AccessoryAttachTarget, Transform>();
 
         private bool _visibleByWordToMotion;
         public bool VisibleByWordToMotion
@@ -403,13 +403,21 @@ namespace Baku.VMagicMirror
         //Unity上でTransformControlによって改変したPosition/Rotation/Scaleがある場合に呼び出すことで、layoutを更新します。
         private void UpdateLayout(TransformControl.TransformMode mode)
         {
+            Transform bone = null;
             if (ItemLayout == null || 
                 _animator == null || 
-                !_attachBones.TryGetValue(ItemLayout.AttachTarget, out var bone))
+                (ItemLayout.AttachTarget != AccessoryAttachTarget.World &&
+                 !_attachBones.TryGetValue(ItemLayout.AttachTarget, out bone)
+                ))
             {
                 return;
             }
 
+            var hasBone = bone != null;
+            var boneForward = hasBone ? bone.forward : Vector3.forward;
+            var bonePosition = hasBone ? bone.position : Vector3.zero;
+            var boneRightY = hasBone ? bone.right.y : 0f;
+            
             HasLayoutChange = true;
             switch (mode)
             {
@@ -425,15 +433,14 @@ namespace Baku.VMagicMirror
                     var cPos = ct.position;
                     var ray = new Ray(cPos, transform.position - cPos);
 
-                    var boneForward = bone.forward;
-                    var plane = new Plane(boneForward, bone.position + boneForward * ItemLayout.Position.z);
+                    var plane = new Plane(boneForward, bonePosition + boneForward * ItemLayout.Position.z);
 
                     //手にアタッチするケースではボーンのXY平面が動きすぎて難しいので、
                     //諦めてワールドのXY平面方向でやる
                     if (ItemLayout.AttachTarget == AccessoryAttachTarget.LeftHand ||
                         ItemLayout.AttachTarget == AccessoryAttachTarget.RightHand)
                     {
-                        plane = new Plane(Vector3.forward, bone.position);
+                        plane = new Plane(Vector3.forward, bonePosition);
                     }
 
                     if (!plane.Raycast(ray, out var enter))
@@ -442,7 +449,7 @@ namespace Baku.VMagicMirror
                     }
 
                     var dst = ray.origin + ray.direction * enter;
-                    ItemLayout.Position = bone.InverseTransformPoint(dst);
+                    ItemLayout.Position = hasBone ? bone.InverseTransformPoint(dst) : dst;
                     break;
                 
                 case TransformControl.TransformMode.Rotate:
@@ -467,7 +474,7 @@ namespace Baku.VMagicMirror
                     }
                     angle = MathUtil.ClampAngle(angle);
 
-                    var roll = Mathf.Asin(bone.right.y) * Mathf.Rad2Deg;
+                    var roll = boneRightY * Mathf.Rad2Deg;
                     if (ItemLayout.AttachTarget == AccessoryAttachTarget.LeftHand ||
                         ItemLayout.AttachTarget == AccessoryAttachTarget.RightHand)
                     {

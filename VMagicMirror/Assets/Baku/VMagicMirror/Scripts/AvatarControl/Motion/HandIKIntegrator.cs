@@ -91,7 +91,7 @@ namespace Baku.VMagicMirror
         }
 
         public ReactiveProperty<WordToMotionDeviceAssign> WordToMotionDevice { get; } =
-            new(WordToMotionDeviceAssign.KeyboardWord);
+            new ReactiveProperty<WordToMotionDeviceAssign>(WordToMotionDeviceAssign.KeyboardWord);
         
         public bool EnablePresentationMode => _keyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.Presentation;
         
@@ -125,13 +125,14 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode = new(GamepadMotionModes.Gamepad);
+        private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode 
+            = new ReactiveProperty<GamepadMotionModes>(GamepadMotionModes.Gamepad);
 
         private readonly ReactiveProperty<KeyboardAndMouseMotionModes> _keyboardAndMouseMotionMode = 
-            new(KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
+            new ReactiveProperty<KeyboardAndMouseMotionModes>(KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
         
         //NOTE: これはすごく特別なフラグで、これが立ってると手のIKに何か入った場合でも手が下がりっぱなしになる
-        public ReactiveProperty<bool> AlwaysHandDown { get; } = new(false);
+        public ReactiveProperty<bool> AlwaysHandDown { get; } = new ReactiveProperty<bool>(false);
 
         public bool IsLeftHandGripGamepad => _leftTargetType.Value == HandTargetType.Gamepad;
         public bool IsRightHandGripGamepad => _rightTargetType.Value == HandTargetType.Gamepad;
@@ -154,7 +155,7 @@ namespace Baku.VMagicMirror
         #endregion
 
         private HandIkReactionSources _reactionSources;
-        private readonly HandIkInputEvents _inputEvents = new();
+        private readonly HandIkInputEvents _inputEvents = new HandIkInputEvents();
         
         [Inject]
         public void Initialize(

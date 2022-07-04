@@ -29,8 +29,8 @@ namespace Baku.VMagicMirror
         [Tooltip("目を首と順方向/逆方向に動かすとき、その方向ピッタリから角度を多少ランダムにしてもいいよね、という値")]
         [SerializeField] private float eyeOrientationVaryRange = 20f;
         
-        [SerializeField] private Vector2 inactiveFactors = new(10, 10);
-        [SerializeField] private Vector2 activeFactors = new(10, 10);
+        [SerializeField] private Vector2 inactiveFactors = new Vector2(10, 10);
+        [SerializeField] private Vector2 activeFactors = new Vector2(10, 10);
 
         //active/inactiveが1回切り替わったらしばらくフラグ状態を維持する長さ
         [SerializeField] private float activeSwitchCoolDownDuration = 1.0f;
@@ -75,8 +75,8 @@ namespace Baku.VMagicMirror
         public Quaternion HeadRotation { get; private set; } = Quaternion.identity;
 
         private NonImageBasedMotionApplier _motionApplier = null;
-        private readonly Jitter _inactiveJitter = new();
-        private readonly Jitter _activeJitter = new();
+        private readonly Jitter _inactiveJitter = new Jitter();
+        private readonly Jitter _activeJitter = new Jitter();
 
         private Vector2 _rawEyeRot = Vector2.zero;
         private Vector2 _rawEyeRotTarget = Vector2.zero;

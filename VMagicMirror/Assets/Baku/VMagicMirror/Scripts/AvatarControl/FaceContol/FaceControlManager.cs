@@ -43,7 +43,7 @@ namespace Baku.VMagicMirror
             );
         }
         
-        public DefaultFunBlendShapeModifier DefaultBlendShape { get; } = new();
+        public DefaultFunBlendShapeModifier DefaultBlendShape { get; } = new DefaultFunBlendShapeModifier();
 
         /// <summary> WebCamベースのトラッキング中でも自動まばたきを優先するかどうかを取得、設定します。 </summary>
         public bool PreferAutoBlinkOnWebCamTracking { get; set; } = true;

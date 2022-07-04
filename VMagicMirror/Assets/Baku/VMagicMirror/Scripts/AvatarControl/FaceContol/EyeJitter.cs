@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private float changeTimeMax = 2.0f;
         
         [Tooltip("可動範囲(比率ベース")]
-        [SerializeField] private Vector2 rateRange = new(0.5f, 0.3f);
+        [SerializeField] private Vector2 rateRange = new Vector2(0.5f, 0.3f);
 
         [Tooltip("微細運動をスムージングする速度ファクタ")]
         [SerializeField] private float speedFactor = 11.0f;

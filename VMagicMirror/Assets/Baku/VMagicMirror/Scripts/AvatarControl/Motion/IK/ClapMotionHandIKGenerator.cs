@@ -11,15 +11,15 @@ namespace Baku.VMagicMirror.IK
         private const int ClapCountMin = 6;
         private const int ClapCountMax = 12;
         
-        private readonly IKDataRecord _leftIk = new();
-        private readonly IKDataRecord _rightIk = new();
+        private readonly IKDataRecord _leftIk = new IKDataRecord();
+        private readonly IKDataRecord _rightIk = new IKDataRecord ();
         private readonly ClapMotionHandIkState _leftState;
         private readonly ClapMotionHandIkState _rightState;
         public override IHandIkState LeftHandState => _leftState;
         public override IHandIkState RightHandState => _rightState;
 
-        private readonly ClapMotionKeyPoseCalculator _keyPoseCalculator = new();
-        private readonly ClapMotionTimeTableGenerator _timeTableGenerator = new();
+        private readonly ClapMotionKeyPoseCalculator _keyPoseCalculator = new ClapMotionKeyPoseCalculator();
+        private readonly ClapMotionTimeTableGenerator _timeTableGenerator = new ClapMotionTimeTableGenerator();
         private readonly ClapMotionPoseInterpolator _poseInterpolator;
         private readonly ClapMotionElbowController _elbowController;
         private readonly ClapFingerController _fingerController;

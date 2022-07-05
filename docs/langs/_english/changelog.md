@@ -8,6 +8,18 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.6
+{: .doc-sec2 }
+
+2022/07/04
+
+* Fix: Accessory edit was not saved correctly when it is fixed to "World" and edited from Free Layout mode.
+* Fix: In v2.0.5, avatar load failed when the model does not have "Chest" bone.
+* Fix: In v2.0.5, specific avatar leads black background when shadow effect is enabled.
+* Change: To fix shadow related issue, Unity version is roll-backed to 2020.3.22f1.
+* Change: In free camera mode, wheel based zoom only works when mouse pointer is inside the character window.
+
+
 #### v2.0.5
 {: .doc-sec2 }
 

@@ -16,10 +16,10 @@ namespace Baku.VMagicMirror
             Key = key;
         }
 
-        public static FaceSwitchKeyApplyContent Empty() => new(false, false, default);
+        public static FaceSwitchKeyApplyContent Empty() => new FaceSwitchKeyApplyContent(false, false, default);
 
         public static FaceSwitchKeyApplyContent Create(BlendShapeKey key, bool keepLipSync) =>
-            new(true, keepLipSync, key);
+            new FaceSwitchKeyApplyContent(true, keepLipSync, key);
         
         public bool HasValue { get; }
         public bool KeepLipSync { get; }
@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
         private string _latestClipName = "";
 
         private readonly ReactiveProperty<FaceSwitchKeyApplyContent> _currentValue 
-            = new(FaceSwitchKeyApplyContent.Empty());
+            = new ReactiveProperty<FaceSwitchKeyApplyContent>(FaceSwitchKeyApplyContent.Empty());
         public IReadOnlyReactiveProperty<FaceSwitchKeyApplyContent> CurrentValue => _currentValue;
 
 
@@ -110,7 +110,7 @@ namespace Baku.VMagicMirror
                 ? BlendShapeKey.CreateFromPreset(_presets[name])
                 : BlendShapeKey.CreateUnknown(name);
 
-        private static readonly Dictionary<string, BlendShapePreset> _presets = new()
+        private static readonly Dictionary<string, BlendShapePreset> _presets = new Dictionary<string, BlendShapePreset>()
         {
             ["Blink"] = BlendShapePreset.Blink,
             ["Blink_L"] = BlendShapePreset.Blink_L,

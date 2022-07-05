@@ -10,7 +10,6 @@ using OpenCVForUnity.ImgprocModule;
 using OpenCVForUnity.UtilsModule;
 using UnityEngine;
 using Rect = UnityEngine.Rect;
-using Range = OpenCVForUnity.CoreModule.Range;
 #endif
 
 namespace Baku.VMagicMirror

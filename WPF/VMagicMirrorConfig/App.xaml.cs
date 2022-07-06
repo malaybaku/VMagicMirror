@@ -1,10 +1,13 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace Baku.VMagicMirrorConfig
 {
     public partial class App : Application
     {
+        public event Action? MainWindowInitialized;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -24,5 +27,7 @@ namespace Baku.VMagicMirrorConfig
             //TaskCanceledとかと混同する心配がないようにコード直すのが先か
             LogOutput.Instance.Write(e.Exception);
         }
+
+        public void RaiseWindowInitialized() => MainWindowInitialized?.Invoke();
     }
 }

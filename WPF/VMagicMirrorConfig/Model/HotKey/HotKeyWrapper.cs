@@ -37,24 +37,22 @@ namespace Baku.VMagicMirrorConfig
 
         public int Register(HotKeyRegisterItem item)
         {
-            var modKeyNum = (int)item.ModifierKeys;
-            var vKey = KeyInterop.VirtualKeyFromKey(item.Key);
+            var modKeyNum = (uint)item.ModifierKeys | NativeApi.MOD_NOREPAT;
+            var vKey = (uint)KeyInterop.VirtualKeyFromKey(item.Key);
 
-            // HotKey登録
-            while (_hotkeyId < NativeApi.MAX_HOTKEY_ID)
+            var ret = NativeApi.RegisterHotKey(_windowHandle, _hotkeyId, modKeyNum, vKey);
+            if (ret != 0)
             {
-                var ret = NativeApi.RegisterHotKey(_windowHandle, _hotkeyId, modKeyNum, vKey);
-                if (ret != 0)
-                {
-                    _hotkeyList[_hotkeyId] = item;
-                    var result = _hotkeyId;
-                    _hotkeyId++;
-                    return result;
-                }
+                _hotkeyList[_hotkeyId] = item;
+                var result = _hotkeyId;
                 _hotkeyId++;
+                return result;
             }
-
-            return -1;
+            else
+            {
+                //ここを通過する場合、キーの組み合わせが悪い(ファンクションキーと組み合わせてたりするとここに来る)
+                return -1;
+            }
         }
 
         public bool Unregister(int id)
@@ -101,9 +99,10 @@ namespace Baku.VMagicMirrorConfig
         {
             public const int WM_HOTKEY = 0x0312;
             public const int MAX_HOTKEY_ID = 0xC000;
+            public const uint MOD_NOREPAT = 0x4000;
 
             [DllImport("user32.dll")]
-            public static extern int RegisterHotKey(IntPtr hWnd, int id, int modKey, int vKey);
+            public static extern int RegisterHotKey(IntPtr hWnd, int id, uint modKey, uint vKey);
 
             [DllImport("user32.dll")]
             public static extern int UnregisterHotKey(IntPtr hWnd, int id);

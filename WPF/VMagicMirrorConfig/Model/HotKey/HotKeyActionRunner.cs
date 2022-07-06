@@ -1,10 +1,10 @@
-﻿namespace Baku.VMagicMirrorConfig.Model.HotKey
+﻿namespace Baku.VMagicMirrorConfig
 {
     internal class HotKeyActionRunner
     {
         public HotKeyActionRunner() : this(
-            ModelResolver.Instance.Resolve<HotKeyWrapper>(),
             ModelResolver.Instance.Resolve<HotKeySettingModel>(),
+            ModelResolver.Instance.Resolve<HotKeyModel>(),
             ModelResolver.Instance.Resolve<LayoutSettingModel>(),
             ModelResolver.Instance.Resolve<WordToMotionSettingModel>()
             )
@@ -12,32 +12,33 @@
         }
 
         public HotKeyActionRunner(
-            HotKeyWrapper eventSource, 
-            HotKeySettingModel setting, 
+            HotKeySettingModel setting,
+            HotKeyModel model,
             LayoutSettingModel layoutSetting,
             WordToMotionSettingModel wordToMotionSetting
             )
         {
-            _eventSource = eventSource;
             _setting = setting;
+            _model = model;
             _layoutSetting = layoutSetting;
             _wordToMotionSetting = wordToMotionSetting;
 
-            _eventSource.HotKeyActionRequested += OnActionRequested;
+            _model.ActionRequested += OnActionRequested;
         }
 
-        private HotKeyWrapper _eventSource;
+        private HotKeyModel _model;
         private HotKeySettingModel _setting;
         private LayoutSettingModel _layoutSetting;
         private WordToMotionSettingModel _wordToMotionSetting;
 
         private void OnActionRequested(HotKeyActionContent content)
         {
-            if (!_setting.EnableHotKey.Value)
-            {
-                return;
-            }
+            //if (!_setting.EnableHotKey.Value)
+            //{
+            //    return;
+            //}
 
+            LogOutput.Instance.Write($"run hotkey action, content={content.Action}, arg={content.ArgNumber}");
             switch (content.Action)
             {
                 case HotKeyActions.SetCamera:

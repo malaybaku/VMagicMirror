@@ -23,6 +23,8 @@
 
             resolver.Add(new LoadedAvatarInfo());
             resolver.Add(new ScreenshotTaker());
+            resolver.Add(new HotKeyModel());
+            resolver.Add(new MockHotKeySetter());
 
             resolver.Add(new WindowSettingModel());
             resolver.Add(new MotionSettingModel());
@@ -33,6 +35,7 @@
             resolver.Add(new ExternalTrackerSettingModel());
             resolver.Add(new AutomationSettingModel());
             resolver.Add(new AccessorySettingModel());
+            resolver.Add(new HotKeySettingModel());
             resolver.Add(new RootSettingModel());
 
             //NOTE: 設定ファイル系の処理のモデルも必要なら入れてよい
@@ -49,6 +52,8 @@
             resolver.Add(new ExternalTrackerRuntimeConfig());
             resolver.Add(new LargePointerVisibility());
             resolver.Add(new MicrophoneStatus());
+
+            resolver.Add(new HotKeyActionRunner());
         }
     }
 }

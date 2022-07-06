@@ -128,6 +128,11 @@ namespace Baku.VMagicMirrorConfig
                     (index == 2) ? QuickSave2.Value :
                     QuickSave3.Value;
 
+                if (string.IsNullOrEmpty(saveData))
+                {
+                    return;
+                }
+
                 var obj = JObject.Parse(saveData);
                 string cameraPos = (string?)obj["pos"] ?? "";
                 int fov = (int)(obj["fov"] ?? new JValue(40));

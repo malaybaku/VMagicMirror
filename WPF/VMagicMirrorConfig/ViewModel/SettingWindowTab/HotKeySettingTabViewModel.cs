@@ -17,6 +17,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             if (!IsInDesignMode)
             {
                 WeakEventManager<HotKeySettingModel, EventArgs>.AddHandler(model, nameof(model.Updated), OnModelItemUpdated);
+                //NOTE: SingleItemUpdatedはViewModelでは監視しない
                 RefreshItems();
             }
         }
@@ -27,6 +28,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public ObservableCollection<HotKeyEditItemViewModel> Items { get; }
             = new ObservableCollection<HotKeyEditItemViewModel>();
+
+        private ActionCommand? _addNewItemCommand;
+        public ActionCommand AddNewItemCommand
+            => _addNewItemCommand ??= new ActionCommand(AddNewItem);
 
         private ActionCommand? _resetCommand;
         public ActionCommand ResetCommand => _resetCommand ??= new ActionCommand(ResetToDefault);
@@ -43,11 +48,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 var vm = new HotKeyEditItemViewModel(item);
                 vm.UpdateItemRequested += OnUpdateItemRequested;
+                vm.MoveUpRequested += MoveUpItem;
+                vm.MoveDownRequested += MoveDownItem;
+                vm.DeleteRequested += DeleteItem;
                 Items.Add(vm);
             }
         }
 
-        public void MoveUp(HotKeyEditItemViewModel item)
+        private void MoveUpItem(HotKeyEditItemViewModel item)
         {
             var index = Items.IndexOf(item);
             if (index > 0)
@@ -57,7 +65,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
-        public void MoveDown(HotKeyEditItemViewModel item)
+        private void MoveDownItem(HotKeyEditItemViewModel item)
         {
             var index = Items.IndexOf(item);
             if (index >= 0 && index < Items.Count - 1)
@@ -67,22 +75,28 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
-        public void Delete(HotKeyEditItemViewModel item)
+        private void DeleteItem(HotKeyEditItemViewModel item)
         {
             var index = Items.IndexOf(item);
             if (index >= 0 && index < Items.Count)
             {
                 item.UpdateItemRequested -= OnUpdateItemRequested;
+                item.MoveUpRequested -= MoveUpItem;
+                item.MoveDownRequested -= MoveDownItem;
+                item.DeleteRequested -= DeleteItem;
                 Items.RemoveAt(index);
                 _model.Delete(index);
             }
         }
 
-        public void AddNewItem()
+        private void AddNewItem()
         {
             _model.AddNewItem();
             var vm = new HotKeyEditItemViewModel(_model.Items[^1]);
             vm.UpdateItemRequested += OnUpdateItemRequested;
+            vm.MoveUpRequested += MoveUpItem;
+            vm.MoveDownRequested += MoveDownItem;
+            vm.DeleteRequested += DeleteItem;
             Items.Add(vm);
         }
 
@@ -98,7 +112,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     }
 
     //このインスタンスはアプリケーションで1回作ったらずっと使い回す
-    public class HotKeySupportedActionViewModel
+    public class HotKeySupportedActionViewModel : ViewModelBase
     {
         private const string None = "Hotkey_Action_None";
         private const string SetCameraFormat = "Hotkey_Action_SetCamera_Format";
@@ -135,7 +149,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         public HotKeyActionContent Content { get; }
-        public RProperty<string> DisplayContent = new RProperty<string>("");
+
+        private string _displayName = "";
+        public string DisplayName 
+        {
+            get => _displayName;
+            private set => SetValue(ref _displayName, value);
+        }
 
         private void UpdateDisplayContent()
         {
@@ -143,17 +163,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 HotKeyActions.SetCamera => SetCameraFormat,
                 HotKeyActions.CallWtm => CallWtmFormat,
-                //ここは通過しないはず
                 _ => None,
             };
 
             if (Content.Action == HotKeyActions.None)
             {
-                DisplayContent.Value = LocalizedString.GetString(formatKey);
+                DisplayName = LocalizedString.GetString(formatKey);
             }
             else
             {
-                DisplayContent.Value = string.Format(
+                DisplayName = string.Format(
                     LocalizedString.GetString(formatKey),
                     Content.ArgNumber
                 );

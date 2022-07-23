@@ -20,7 +20,7 @@ namespace Baku.VMagicMirrorConfig.View
             = DependencyProperty.RegisterAttached(
                 nameof(KeyDownCommand),
                 typeof(ICommand),
-                typeof(DragDropToCommandBehavior)
+                typeof(TextKeyDownBehavior)
                 );
 
         protected override void OnAttached()

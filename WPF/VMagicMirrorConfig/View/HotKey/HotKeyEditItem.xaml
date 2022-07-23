@@ -9,31 +9,52 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:HotKeyEditItemViewModel}"
-             d:DesignHeight="50" d:DesignWidth="400">
+             d:DesignHeight="50" d:DesignWidth="450">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBox Grid.Column="0"
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,5,0">
+            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    Width="30" Height="30" Padding="0"
+                    Command="{Binding MoveUpCommand}">
+                <md:PackIcon Kind="ArrowUp" />
+            </Button>
+            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    Width="30" Height="30" Padding="0"
+                    Command="{Binding MoveDownCommand}">
+                <md:PackIcon Kind="ArrowDown"/>
+            </Button>
+        </StackPanel>
+
+        <TextBox Grid.Column="1"
                  Width="140"
                  Text="{Binding RegisteredKeyInput.Value, Mode=TwoWay}"
                  >
             <i:Interaction.Behaviors>
                 <view:TextKeyDownBehavior KeyDownCommand="{Binding KeyDownCommand}" />
-            </i:Interaction.Behaviors>            
+            </i:Interaction.Behaviors>
         </TextBox>
-        <TextBlock Grid.Column="0"
+        <TextBlock Grid.Column="1"
                    IsHitTestVisible="false"
                    Text="{Binding RegisteredKeyString.Value}"
                    />
 
-        <ComboBox Grid.Column="1"
-                  SelectedValue="{Binding ActionContent.Value}"
+        <ComboBox Grid.Column="2"
                   ItemsSource="{x:Static vm:HotKeySupportedActionViewModel.AvailableHotKeyActions}"
-                  DisplayMemberPath="DisplayContent.Value"
+                  SelectedValue="{Binding ActionContent.Value}"
                   SelectedValuePath="Content"
+                  DisplayMemberPath="DisplayName"
                   />
+
+        <Button Grid.Column="3" Style="{StaticResource MaterialDesignFlatButton}" 
+                Width="35" Height="30"  Margin="5,0" Padding="0"
+                Command="{Binding DeleteCommand}">
+            <md:PackIcon Kind="Close"/>
+        </Button>
     </Grid>
 </UserControl>

@@ -12,6 +12,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             RegisteredKeyString.Value = CreateRegisteredKeyString();
 
             KeyDownCommand = new ActionCommand<object>(OnKeyDown);
+            MoveUpCommand = new ActionCommand(() => MoveUpRequested?.Invoke(this));
+            MoveDownCommand = new ActionCommand(() => MoveDownRequested?.Invoke(this));
+            DeleteCommand = new ActionCommand(() => DeleteRequested?.Invoke(this));
 
             //KeyInputに何かの文字が入っても空にしちゃう。認識した文字については別UIとして同じ場所に表示する
             RegisteredKeyInput.PropertyChanged += (_, __) =>
@@ -27,11 +30,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 );
         }
 
-        //TODO: フォーカス制御の関係で、ActionContentが差し替わったときにUIが再生成されるのは避けたいのでは？
-        //NOTE: _itemが変わるとViewModelは破棄して再生成されるため、ここはreadonlyでok
-        private readonly HotKeyRegisterItem _item;
+        private HotKeyRegisterItem _item;
 
         public event Action<(HotKeyEditItemViewModel source, HotKeyRegisterItem item)>? UpdateItemRequested;
+        public event Action<HotKeyEditItemViewModel>? MoveUpRequested;
+        public event Action<HotKeyEditItemViewModel>? MoveDownRequested;
+        public event Action<HotKeyEditItemViewModel>? DeleteRequested;
 
         public RProperty<string> RegisteredKeyInput { get; } = new RProperty<string>("");
 
@@ -41,6 +45,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<HotKeyActionContent> ActionContent { get; }
 
         public ActionCommand<object> KeyDownCommand { get; }
+
+        public ActionCommand MoveUpCommand { get; }
+        public ActionCommand MoveDownCommand { get; }
+        public ActionCommand DeleteCommand { get; }
+
 
         private void OnKeyDown(object? obj)
         {
@@ -71,16 +80,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            var item = _item with
+            _item = _item with
             {
                 ActionContent = actionContent,
             };
-            UpdateItemRequested?.Invoke((this, item));
+            UpdateItemRequested?.Invoke((this, _item));
         }
 
         private string CreateRegisteredKeyString()
         {
-            //NOTE: ホットキー無しの単発キーも禁止ということにしておく。分かりやすいので
+            //NOTE: 制御キーを伴わないようなのは禁止しておく、word to motionと紛らわしいしホットキー的でないので
             if (_item.Key == Key.None || _item.ModifierKeys == ModifierKeys.None)
             {
                 return "";
@@ -108,8 +117,23 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 sb.Append("Alt+");
             }
 
-            sb.Append(_item.Key.ToString());
+            sb.Append(KeyToString(_item.Key));
             return sb.ToString();
+        }
+
+        private static string KeyToString(Key key)
+        {
+            if (key >= Key.D0 && key <= Key.D9)
+            {
+                return ((int)key - (int)Key.D0).ToString();
+            }
+
+            if (key >= Key.NumPad0 && key <= Key.NumPad9)
+            {
+                return "Num" + ((int)key - (int)Key.NumPad0).ToString();
+            }
+
+            return key.ToString();
         }
     }
 }

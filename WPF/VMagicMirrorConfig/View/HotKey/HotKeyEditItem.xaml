@@ -61,7 +61,8 @@
         <TextBlock Grid.Row="1" 
                    Grid.Column="1" Grid.ColumnSpan="2"
                    Margin="10,5,0,5"
-                   Visibility="{Binding HasInvalidValue.Value, Converter={StaticResource BooleanToVisibilityConverter}"
+                   Visibility="{Binding HasInvalidValue.Value, 
+                                        Converter={StaticResource BooleanToVisibilityConverter}}"
                    Foreground="{StaticResource MaterialDesignValidationErrorBrush}"
                    Text="{DynamicResource Hotkey_Invalid_Key_Notice}"/>
     </Grid>

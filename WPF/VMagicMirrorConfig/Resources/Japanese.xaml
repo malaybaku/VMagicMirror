@@ -30,6 +30,7 @@
     <sys:String x:Key="TopBar_Setting_Layout">レイアウト</sys:String>
     <sys:String x:Key="TopBar_Setting_Devices">デバイス</sys:String>
     <sys:String x:Key="TopBar_Setting_Effects">エフェクト</sys:String>
+    <sys:String x:Key="TopBar_Setting_HotKey">Hot Key</sys:String>
     <sys:String x:Key="TopBar_Setting_FileIo">ファイル</sys:String>
     
     <!-- Home -->

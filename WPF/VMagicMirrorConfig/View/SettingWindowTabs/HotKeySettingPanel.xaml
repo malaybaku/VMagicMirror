@@ -13,7 +13,7 @@
              d:DesignWidth="400"
              d:DesignHeight="750">
     <UserControl.DataContext>
-        <vm:WordToMotionSettingViewModel />
+        <vm:HotKeySettingTabViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -81,7 +81,16 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            
+            <Button Grid.Column="1" 
+                                IsEnabled="{Binding EnableWordToMotion.Value}"
+                                Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Margin="15"
+                                Command="{Binding AddNewItemCommand}"
+                                >
+                <md:PackIcon Kind="Plus" Width="26" Height="26"/>
+            </Button>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

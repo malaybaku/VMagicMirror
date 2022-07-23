@@ -16,6 +16,10 @@ namespace Baku.VMagicMirrorConfig
         public HotKeySettingModel(IMessageSender sender) : base(sender)
         {
             Items = new ReadOnlyObservableCollection<HotKeyRegisterItem>(_items);
+
+            var setting = HotKeySetting.Default;
+            EnableHotKey = new RProperty<bool>(setting.EnableHotKey);
+            LoadSerializedItems(setting);            
         }
 
         protected override void PreSave()
@@ -29,10 +33,14 @@ namespace Baku.VMagicMirrorConfig
             RaiseUpdated();
         }
 
+        //MoveUp/MoveDown/Delete/AddNewItemを呼び出した場合はUpdateではなくコッチが発火する
+        public event Action? SingleItemUpdated;
+        private void RaiseSingleItemUpdated() => SingleItemUpdated?.Invoke();
+
         public event EventHandler<EventArgs>? Updated;
         private void RaiseUpdated() => Updated?.Invoke(this, EventArgs.Empty);
 
-        public RProperty<bool> EnableHotKey { get; } = new RProperty<bool>(false);
+        public RProperty<bool> EnableHotKey { get; }
         public RProperty<string> SerializedItems { get; } = new RProperty<string>("");
 
         private readonly ObservableCollection<HotKeyRegisterItem> _items
@@ -58,6 +66,40 @@ namespace Baku.VMagicMirrorConfig
             }
             RaiseUpdated();
         }
+
+        internal void MoveUp(int index)
+        {
+            if (index > 0 && index < _items.Count)
+            {
+                _items.Move(index, index - 1);
+                RaiseSingleItemUpdated();
+            }
+        }
+
+        internal void MoveDown(int index)
+        {
+            if (index >= 0 && index < _items.Count - 1)
+            {
+                _items.Move(index, index + 1);
+                RaiseSingleItemUpdated();
+            }
+        }
+
+        internal void Delete(int index)
+        {
+            if (index >= 0 && index < _items.Count)
+            {
+                _items.RemoveAt(index);
+                RaiseSingleItemUpdated();
+            }
+        }
+
+        internal void AddNewItem()
+        {
+            //NOTE: 空じゃないアクションを指定した状態にする…手もあるが、一旦無しで
+            _items.Add(HotKeyRegisterItem.Empty());
+            RaiseSingleItemUpdated();
+        }        
 
         private void LoadSerializedItems(HotKeySetting setting)
         {

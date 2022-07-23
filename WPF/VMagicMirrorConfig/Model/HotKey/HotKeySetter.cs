@@ -22,15 +22,15 @@ namespace Baku.VMagicMirrorConfig
             _setting = setting;
 
             //NOTE: _modelの初期化待ちをこのクラスでやるように追記してもよさそう
-            _setting.Updated += OnSettingUpdated;
-
+            _setting.Updated += (_, __) => OnSettingUpdated();
+            _setting.SingleItemUpdated += OnSettingUpdated;
         }
 
         private readonly HotKeyModel _model;
         private readonly HotKeySettingModel _setting;
         private readonly List<HotKeyRegisterItem> _latestRegisterItems = new List<HotKeyRegisterItem>();
 
-        private void OnSettingUpdated(object? sender, EventArgs e)
+        private void OnSettingUpdated()
         {
             var items = _setting.Items.ToArray();
             if (!CheckItemsValidity(items))

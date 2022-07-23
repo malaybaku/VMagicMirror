@@ -25,6 +25,8 @@ namespace Baku.VMagicMirrorConfig
         public static string AutoSaveSettingFilePath { get; }
         public static string UpdateCheckFilePath { get; }
 
+        public static string PreferenceFilePath { get; }
+
         /// <summary>
         /// スロット番号を指定して保存ファイル名を指定します。0を指定した場合は特別にオートセーブファイルのパスを返します。
         /// </summary>
@@ -53,6 +55,7 @@ namespace Baku.VMagicMirrorConfig
             AutoSaveSettingFilePath = Path.Combine(SaveFileDir, AutoSaveSettingFileName);
             UpdateCheckFilePath = Path.Combine(SaveFileDir, UpdateCheckFileName);
             LogFilePath = Path.Combine(LogFileDir, LogTextName);
+            PreferenceFilePath = Path.Combine(SaveFileDir, "_preferences");
 
             Directory.CreateDirectory(RootDirectory);
             Directory.CreateDirectory(SaveFileDir);

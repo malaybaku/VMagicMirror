@@ -29,9 +29,11 @@
                    Text="{Binding RegisteredKeyString.Value}"
                    />
 
-        <TextBlock Grid.Column="1"
-                   Text="{Binding ActionDisplayName.Value}"
-                   VerticalAlignment="Center"
-                   />
+        <ComboBox Grid.Column="1"
+                  SelectedValue="{Binding ActionContent.Value}"
+                  ItemsSource="{x:Static vm:HotKeySupportedActionViewModel.AvailableHotKeyActions}"
+                  DisplayMemberPath="DisplayContent.Value"
+                  SelectedValuePath="Content"
+                  />
     </Grid>
 </UserControl>

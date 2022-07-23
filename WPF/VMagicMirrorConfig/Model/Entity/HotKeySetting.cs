@@ -35,7 +35,6 @@ namespace Baku.VMagicMirrorConfig
         //NOTE: シリアライズできるなら HotKeySettingItems[] とかで保持できてるほうがbetter
         public string SerializedItems { get; set; } = "";
 
-
         public void Reset()
         {
             EnableHotKey = false;

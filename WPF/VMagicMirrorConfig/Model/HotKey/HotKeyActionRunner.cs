@@ -39,13 +39,14 @@
             //}
 
             LogOutput.Instance.Write($"run hotkey action, content={content.Action}, arg={content.ArgNumber}");
+            //NOTE: 表示上はSetCameraもWordToMotionもindexが1から始まる想定
             switch (content.Action)
             {
                 case HotKeyActions.SetCamera:
                     _layoutSetting.QuickLoadViewPoint(content.ArgNumber);
                     break;
                 case HotKeyActions.CallWtm:
-                    _wordToMotionSetting.Play(content.ArgNumber);
+                    _wordToMotionSetting.Play(content.ArgNumber - 1);
                     break;
                 case HotKeyActions.None:
                 default:

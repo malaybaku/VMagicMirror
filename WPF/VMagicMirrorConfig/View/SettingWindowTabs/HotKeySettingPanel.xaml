@@ -44,6 +44,7 @@
                         TextWrapping="Wrap"
                         Margin="20,10"
                         />
+            
             <Button Style="{StaticResource MaterialDesignFlatButton}"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
@@ -51,6 +52,10 @@
                     Command="{Binding ResetCommand}"
                     Content="{DynamicResource Hotkey_Reset}"
                     />
+
+            <CheckBox Content="Hot Keyを有効化"
+                      IsChecked="{Binding EnableHotKey.Value}"
+                      />
 
             <ItemsControl Grid.Column="1"
                           IsEnabled="{Binding EnableHotKey.Value}"

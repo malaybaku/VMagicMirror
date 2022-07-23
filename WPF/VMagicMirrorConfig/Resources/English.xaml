@@ -460,8 +460,9 @@ Please test by typing "joy".</sys:String>
     <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>
     <sys:String x:Key="Hotkey_Instruction" xml:space="preserve">This tab support hotkey (shortcut) edit.
 Input favorite key combination in text area.
-Be careful, to avoid your foreground app's shortcut.</sys:String>
+*You can disable hotkey, in the case the key pattern conflicts with foreground app.</sys:String>
     <sys:String x:Key="Hotkey_Reset">Reset to Default</sys:String>
+    <sys:String x:Key="Hotkey_Enable_Notice">Enable Hot Key</sys:String>
 
     <sys:String x:Key="Hotkey_Action_None">(Do Nothing)</sys:String>
     <sys:String x:Key="Hotkey_Action_SetCamera_Format">Apply Camera Pose No.{0}</sys:String>

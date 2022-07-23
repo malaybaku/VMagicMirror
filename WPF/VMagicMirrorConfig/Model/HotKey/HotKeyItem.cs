@@ -18,7 +18,7 @@ namespace Baku.VMagicMirrorConfig
     /// <param name="ArgContent"></param>
     public record HotKeyActionContent(HotKeyActions Action, int ArgNumber)
     {
-        public static HotKeyActionContent Empty { get; } = new HotKeyActionContent(HotKeyActions.None, 0);
+        public static HotKeyActionContent Empty() => new(HotKeyActions.None, 0);
     }
 
     /// <summary>
@@ -29,6 +29,8 @@ namespace Baku.VMagicMirrorConfig
     /// <param name="ActionContent"></param>
     public record HotKeyRegisterItem(ModifierKeys ModifierKeys, Key Key, HotKeyActionContent ActionContent)
     {
+        public static HotKeyRegisterItem Empty() 
+            => new(ModifierKeys.None, Key.None, HotKeyActionContent.Empty());
     }
 
     public static class DefaultHotKeySetting

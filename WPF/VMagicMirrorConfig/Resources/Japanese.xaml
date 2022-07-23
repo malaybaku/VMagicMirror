@@ -463,8 +463,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Hotkey_Header">Hot Keyの登録</sys:String>
     <sys:String x:Key="Hotkey_Instruction" xml:space="preserve">Hot Key (ショートカットキー) が登録・編集できます。
 編集エリアで使用したいホットキーを入力して下さい。
-※ホットキーが他アプリ用のショートカットと重複しないようご注意下さい。</sys:String>
+※他アプリとキーの組み合わせが重複してしまう場合、一時的にHot Keyを無効化して下さい。</sys:String>
     <sys:String x:Key="Hotkey_Reset">デフォルト設定にリセット</sys:String>
+    <sys:String x:Key="Hotkey_Enable">Hot Keyを有効化</sys:String>
+    <sys:String x:Key="Hotkey_Enable_Notice">Hot Keyを有効化</sys:String>
     
     <sys:String x:Key="Hotkey_Action_None">(何もしない)</sys:String>
     <sys:String x:Key="Hotkey_Action_SetCamera_Format">設定したカメラワーク {0} を適用</sys:String>

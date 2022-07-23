@@ -1,19 +1,17 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Text;
-using System.Windows;
 using System.Windows.Input;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class HotKeyEditItemViewModel : ViewModelBase
     {
-        private const string ResourcePrefix = "Hotkey_Action_";
-
         public HotKeyEditItemViewModel(HotKeyRegisterItem item)
         {
             _item = item;
             RegisteredKeyString.Value = CreateRegisteredKeyString();
+
+            KeyDownCommand = new ActionCommand<object>(OnKeyDown);
 
             //KeyInputに何かの文字が入っても空にしちゃう。認識した文字については別UIとして同じ場所に表示する
             RegisteredKeyInput.PropertyChanged += (_, __) =>
@@ -24,17 +22,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 }
             };
 
-            UpdateActionDisplayName();
-            WeakEventManager<LanguageSelector, PropertyChangedEventArgs>.AddHandler(
-                LanguageSelector.Instance, nameof(PropertyChanged), OnLanguageChanged
+            ActionContent = new RProperty<HotKeyActionContent>(
+                _item.ActionContent, OnActionContentChanged
                 );
         }
 
-        private void OnLanguageChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            UpdateActionDisplayName();
-        }
-
+        //TODO: フォーカス制御の関係で、ActionContentが差し替わったときにUIが再生成されるのは避けたいのでは？
         //NOTE: _itemが変わるとViewModelは破棄して再生成されるため、ここはreadonlyでok
         private readonly HotKeyRegisterItem _item;
 
@@ -45,11 +38,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         //"Ctrl + Shift + R"のような、ホットキーを示す表示専用の文字列が入る
         public RProperty<string> RegisteredKeyString { get; } = new RProperty<string>("");
 
-        public RProperty<string> ActionDisplayName { get; } = new RProperty<string>("");
+        public RProperty<HotKeyActionContent> ActionContent { get; }
 
-        private ActionCommand<object>? _keyDownCommand;
-        public ActionCommand<object> KeyDownCommand
-            => _keyDownCommand ??= new ActionCommand<object>(OnKeyDown);
+        public ActionCommand<object> KeyDownCommand { get; }
 
         private void OnKeyDown(object? obj)
         {
@@ -58,11 +49,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            DetectHotKey(key);
-        }
-
-        private void DetectHotKey(Key key)
-        {
             var modifierKeys = Keyboard.Modifiers;
             if (_item.Key == key && _item.ModifierKeys == modifierKeys)
             {
@@ -76,6 +62,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             };
 
             UpdateItemRequested?.Invoke((this, updated));
+        }
+
+        private void OnActionContentChanged(HotKeyActionContent actionContent)
+        {
+            if (_item.ActionContent == actionContent)
+            {
+                return;
+            }
+
+            var item = _item with
+            {
+                ActionContent = actionContent,
+            };
+            UpdateItemRequested?.Invoke((this, item));
         }
 
         private string CreateRegisteredKeyString()
@@ -111,22 +111,5 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             sb.Append(_item.Key.ToString());
             return sb.ToString();
         }
-
-        private void UpdateActionDisplayName()
-        {
-            ActionDisplayName.Value = _item.ActionContent.Action switch
-            {
-                HotKeyActions.None => GetLocalizedString("None"),
-                HotKeyActions.SetCamera => string.Format(
-                    GetLocalizedString("SetCamera_Format"), _item.ActionContent.ArgNumber),
-                HotKeyActions.CallWtm => string.Format(
-                    GetLocalizedString("CallWtm_Format"), _item.ActionContent.ArgNumber),
-                //来ないハズ
-                _ => GetLocalizedString("None"),
-            };
-        }
-        
-        private static string GetLocalizedString(string suffix)
-            => LocalizedString.GetString(ResourcePrefix + suffix);
     }
 }

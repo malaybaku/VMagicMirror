@@ -28,7 +28,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public ObservableCollection<HotKeyEditItemViewModel> Items { get; }
             = new ObservableCollection<HotKeyEditItemViewModel>();
-
+        
         private ActionCommand? _addNewItemCommand;
         public ActionCommand AddNewItemCommand
             => _addNewItemCommand ??= new ActionCommand(AddNewItem);
@@ -41,6 +41,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             foreach (var item in Items)
             {
                 item.UpdateItemRequested -= OnUpdateItemRequested;
+                item.MoveUpRequested -= MoveUpItem;
+                item.MoveDownRequested -= MoveDownItem;
+                item.DeleteRequested -= DeleteItem;
             }
             Items.Clear();
 

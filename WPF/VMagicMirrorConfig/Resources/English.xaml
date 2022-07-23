@@ -463,7 +463,7 @@ Please test by typing "joy".</sys:String>
 Input favorite key combination in text area.
 *You can disable hotkey, in the case the key pattern conflicts with foreground app.</sys:String>
     <sys:String x:Key="Hotkey_Reset">Reset to Default</sys:String>
-    <sys:String x:Key="Hotkey_Enable_Notice">Enable Hot Key</sys:String>
+    <sys:String x:Key="Hotkey_Invalid_Key_Notice">*Failed to register key, try another keys.</sys:String>
 
     <sys:String x:Key="Hotkey_Action_None">(Do Nothing)</sys:String>
     <sys:String x:Key="Hotkey_Action_SetCamera_Format">Apply Camera Pose No.{0}</sys:String>

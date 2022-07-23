@@ -6,7 +6,6 @@ using System.Windows.Input;
 
 namespace Baku.VMagicMirrorConfig
 {
-    //TODO: この設定は他の設定と違うファイルに永続化したい。設定ファイルが変わったからって変わるようなものでもないので
     class HotKeySettingModel : SettingModelBase<HotKeySetting>
     {
         public HotKeySettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
@@ -16,6 +15,7 @@ namespace Baku.VMagicMirrorConfig
         public HotKeySettingModel(IMessageSender sender) : base(sender)
         {
             Items = new ReadOnlyObservableCollection<HotKeyRegisterItem>(_items);
+            InvalidItems = new ReadOnlyObservableCollection<HotKeyRegisterItem>(_invalidItems);
 
             var setting = HotKeySetting.Default;
             EnableHotKey = new RProperty<bool>(setting.EnableHotKey);
@@ -46,6 +46,9 @@ namespace Baku.VMagicMirrorConfig
         private readonly ObservableCollection<HotKeyRegisterItem> _items
             = new ObservableCollection<HotKeyRegisterItem>();
         public ReadOnlyObservableCollection<HotKeyRegisterItem> Items { get; }
+
+        private readonly ObservableCollection<HotKeyRegisterItem> _invalidItems = new();
+        public ReadOnlyCollection<HotKeyRegisterItem> InvalidItems { get; }
 
         public void SetItem(int index, HotKeyRegisterItem item)
         {
@@ -99,7 +102,31 @@ namespace Baku.VMagicMirrorConfig
             //NOTE: 空じゃないアクションを指定した状態にする…手もあるが、一旦無しで
             _items.Add(HotKeyRegisterItem.Empty());
             RaiseSingleItemUpdated();
-        }        
+        }
+
+        /// <summary>
+        /// HotKeySetterから呼び出すことで、登録できなかったアイテムを追加する
+        /// </summary>
+        /// <param name="item"></param>
+        internal void AddInvalidItem(HotKeyRegisterItem item)
+        {
+            if (!_invalidItems.Contains(item))
+            {
+                _invalidItems.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// HotKeySetterから呼び出すことで、無効なアイテムとして考慮しなくても良くなったものを削除する
+        /// </summary>
+        /// <param name="item"></param>
+        internal void RemoveInvalidItem(HotKeyRegisterItem item)
+        {
+            if (_invalidItems.Contains(item))
+            {
+                _invalidItems.Remove(item);
+            }
+        }
 
         private void LoadSerializedItems(HotKeySetting setting)
         {

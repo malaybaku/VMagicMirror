@@ -12,7 +12,6 @@ namespace Baku.VMagicMirrorConfig
     {
         private HotKeyWrapper? _hotKeyWrapper;
 
-        private readonly List<HotKeyRegisterItem> _queuedItems = new List<HotKeyRegisterItem>();
         private readonly Dictionary<int, HotKeyRegisterItem> _registeredActions = new Dictionary<int, HotKeyRegisterItem>();
 
         public IEnumerable<HotKeyRegisterItem> LoadRegisteredItems() => _registeredActions.Values;
@@ -36,27 +35,20 @@ namespace Baku.VMagicMirrorConfig
 
             _hotKeyWrapper = new HotKeyWrapper(Application.Current.MainWindow);
             _hotKeyWrapper.HotKeyActionRequested += OnActionRequested;
-            foreach(var item in _queuedItems)
-            {
-                Register(item);
-            }
-            _queuedItems.Clear();
         }
 
-        public void Register(HotKeyRegisterItem item)
+        public bool Register(HotKeyRegisterItem item)
         {
             if (_hotKeyWrapper == null)
             {
-                //NOTE: ここで重複回避してもいいし、しなくてもよい
-                _queuedItems.Add(item);
-                return;
+                throw new InvalidOperationException("HotKey Register preparation is not completed");
             }
 
             if (_registeredActions.Values.Contains(item))
-            {
+            {                
                 //登録済みのものなので何もしない
                 //TODO: UIの仕組みによっては単純なガードではなくRefCount的なのが欲しくなるかも
-                return;
+                return true;
             }
 
             var id = _hotKeyWrapper.Register(item);
@@ -64,10 +56,12 @@ namespace Baku.VMagicMirrorConfig
             {
                 _registeredActions[id] = item;
                 RegisteredItemsChanged?.Invoke();
+                return true;
             }
             else
             {
                 LogOutput.Instance.Write($"Tried to register hot key, but failed. key={item.Key}, mod={item.ModifierKeys}");
+                return false;
             }
         }
 

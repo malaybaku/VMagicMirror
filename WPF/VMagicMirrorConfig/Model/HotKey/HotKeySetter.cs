@@ -20,15 +20,21 @@ namespace Baku.VMagicMirrorConfig
         {
             _model = model;
             _setting = setting;
-
-            //NOTE: _modelの初期化待ちをこのクラスでやるように追記してもよさそう
-            _setting.Updated += (_, __) => OnSettingUpdated();
-            _setting.SingleItemUpdated += OnSettingUpdated;
         }
 
         private readonly HotKeyModel _model;
         private readonly HotKeySettingModel _setting;
         private readonly List<HotKeyRegisterItem> _latestRegisterItems = new List<HotKeyRegisterItem>();
+
+        public void Initialize()
+        {
+            //NOTE: _modelの初期化待ちをこのクラスでやるように追記してもよさそう
+            _setting.Updated += (_, __) => OnSettingUpdated();
+            _setting.SingleItemUpdated += OnSettingUpdated;
+
+            //初期状態は明示的に同期する: Initializeの時点でホットキーの設定が読み込み済みの可能性があるので
+            OnSettingUpdated();
+        }
 
         private void OnSettingUpdated()
         {
@@ -41,11 +47,16 @@ namespace Baku.VMagicMirrorConfig
             foreach(var itemToRemove in _latestRegisterItems.Where(i => !items.Contains(i)))
             {
                 _model.Unregister(itemToRemove);
+                _setting.RemoveInvalidItem(itemToRemove);
             }
 
             foreach(var itemToAdd in items.Where(i => !_latestRegisterItems.Contains(i)))
             {
-                _model.Register(itemToAdd);
+                var succeed = _model.Register(itemToAdd);
+                if (!succeed)
+                {
+                    _setting.AddInvalidItem(itemToAdd);
+                }
             }
 
             _latestRegisterItems.Clear();

@@ -17,6 +17,10 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
         <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,5,0">
             <Button Style="{StaticResource MaterialDesignFlatButton}"
@@ -30,7 +34,6 @@
                 <md:PackIcon Kind="ArrowDown"/>
             </Button>
         </StackPanel>
-
         <TextBox Grid.Column="1"
                  Width="140"
                  Text="{Binding RegisteredKeyInput.Value, Mode=TwoWay}"
@@ -43,18 +46,23 @@
                    IsHitTestVisible="false"
                    Text="{Binding RegisteredKeyString.Value}"
                    />
-
         <ComboBox Grid.Column="2"
                   ItemsSource="{x:Static vm:HotKeySupportedActionViewModel.AvailableHotKeyActions}"
                   SelectedValue="{Binding ActionContent.Value}"
                   SelectedValuePath="Content"
                   DisplayMemberPath="DisplayName"
                   />
-
         <Button Grid.Column="3" Style="{StaticResource MaterialDesignFlatButton}" 
                 Width="35" Height="30"  Margin="5,0" Padding="0"
                 Command="{Binding DeleteCommand}">
             <md:PackIcon Kind="Close"/>
         </Button>
+
+        <TextBlock Grid.Row="1" 
+                   Grid.Column="1" Grid.ColumnSpan="2"
+                   Margin="10,5,0,5"
+                   Visibility="{Binding HasInvalidValue.Value, Converter={StaticResource BooleanToVisibilityConverter}"
+                   Foreground="{StaticResource MaterialDesignValidationErrorBrush}"
+                   Text="{DynamicResource Hotkey_Invalid_Key_Notice}"/>
     </Grid>
 </UserControl>

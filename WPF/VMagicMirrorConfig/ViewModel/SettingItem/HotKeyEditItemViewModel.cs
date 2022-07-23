@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -42,6 +45,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         //"Ctrl + Shift + R"のような、ホットキーを示す表示専用の文字列が入る
         public RProperty<string> RegisteredKeyString { get; } = new RProperty<string>("");
 
+        public RProperty<bool> HasInvalidValue { get; } = new RProperty<bool>(false);
+
         public RProperty<HotKeyActionContent> ActionContent { get; }
 
         public ActionCommand<object> KeyDownCommand { get; }
@@ -50,6 +55,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand MoveDownCommand { get; }
         public ActionCommand DeleteCommand { get; }
 
+        public void SubscribeInvalidItemSource(ReadOnlyObservableCollection<HotKeyRegisterItem> source)
+        {
+            WeakEventManager<ReadOnlyObservableCollection<HotKeyRegisterItem>, NotifyCollectionChangedEventArgs>.AddHandler(
+                source, nameof(INotifyCollectionChanged.CollectionChanged), OnInvalidItemChanged
+                );
+        }
+
+        private void OnInvalidItemChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (sender is ReadOnlyObservableCollection<HotKeyRegisterItem> invalidItems)
+            {
+                HasInvalidValue.Value = invalidItems.Contains(_item);
+            }
+        }
 
         private void OnKeyDown(object? obj)
         {

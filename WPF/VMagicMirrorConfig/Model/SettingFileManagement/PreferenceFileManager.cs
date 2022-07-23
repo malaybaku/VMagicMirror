@@ -9,7 +9,6 @@ namespace Baku.VMagicMirrorConfig
     {
         public PreferenceFileManager() : this(ModelResolver.Instance.Resolve<HotKeySettingModel>())
         {
-
         }
 
         public PreferenceFileManager(HotKeySettingModel hotKeySetting)
@@ -32,6 +31,14 @@ namespace Baku.VMagicMirrorConfig
         {
             var data = LoadInternal();
             _hotKeySetting.Load(data.HotKeySetting);
+        }
+
+        public void DeleteSaveFile()
+        {
+            if (File.Exists(SpecialFilePath.PreferenceFilePath))
+            {
+                File.Delete(SpecialFilePath.PreferenceFilePath);
+            }
         }
 
         private void SaveInternal(PreferenceData data)

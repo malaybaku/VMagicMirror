@@ -9,7 +9,7 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:HotKeyEditItemViewModel}"
-             d:DesignHeight="50" d:DesignWidth="450">
+             d:DesignHeight="70" d:DesignWidth="450">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -44,7 +44,7 @@
         </TextBox>
         <TextBlock Grid.Column="1"
                    IsHitTestVisible="false"
-                   Text="{Binding RegisteredKeyString.Value}"
+                   Text="{Binding RegisteredKeyString.Value, UpdateSourceTrigger=PropertyChanged}"
                    />
         <ComboBox Grid.Column="2"
                   ItemsSource="{x:Static vm:HotKeySupportedActionViewModel.AvailableHotKeyActions}"

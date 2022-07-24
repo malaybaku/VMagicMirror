@@ -33,12 +33,11 @@
 
         private void OnActionRequested(HotKeyActionContent content)
         {
-            //if (!_setting.EnableHotKey.Value)
-            //{
-            //    return;
-            //}
+            if (!_setting.EnableHotKey.Value)
+            {
+                return;
+            }
 
-            LogOutput.Instance.Write($"run hotkey action, content={content.Action}, arg={content.ArgNumber}");
             //NOTE: 表示上はSetCameraもWordToMotionもindexが1から始まる想定
             switch (content.Action)
             {

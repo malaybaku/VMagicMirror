@@ -466,9 +466,9 @@ Input favorite key combination in text area.
     <sys:String x:Key="Hotkey_Invalid_Key_Notice">*Failed to register key, try another keys.</sys:String>
 
     <sys:String x:Key="Hotkey_Action_None">(Do Nothing)</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetCamera_Format">Apply Camera Pose No.{0}</sys:String>
-    <sys:String x:Key="Hotkey_Action_CallWtm_Format">Run Word To Motion Item No.{0}</sys:String>
-    <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">Toggle Visibility of Accessory "{0}"</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetCamera_Format">Camera Pose: {0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motion: {0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">Accessory switch: {0}</sys:String>
     
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">Setting File Control</sys:String>

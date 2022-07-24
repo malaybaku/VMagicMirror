@@ -470,9 +470,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Hotkey_Invalid_Key_Notice">*キーが登録できませんでした。別の組み合わせを試して下さい</sys:String>
     
     <sys:String x:Key="Hotkey_Action_None">(何もしない)</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetCamera_Format">設定したカメラワーク {0} を適用</sys:String>
-    <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motionアイテムの {0} 番目を実行</sys:String>
-    <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">アクセサリ「{0}」の表示/非表示を切り替え</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetCamera_Format">カメラワーク適用: {0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motion: {0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">アクセサリon/off: {0}</sys:String>
     
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">設定ファイルの操作</sys:String>

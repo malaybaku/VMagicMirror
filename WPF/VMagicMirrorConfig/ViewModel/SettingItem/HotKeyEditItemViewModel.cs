@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -57,9 +58,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public void SubscribeInvalidItemSource(ReadOnlyObservableCollection<HotKeyRegisterItem> source)
         {
-            WeakEventManager<ReadOnlyObservableCollection<HotKeyRegisterItem>, NotifyCollectionChangedEventArgs>.AddHandler(
+            WeakEventManager<INotifyCollectionChanged, NotifyCollectionChangedEventArgs>.AddHandler(
                 source, nameof(INotifyCollectionChanged.CollectionChanged), OnInvalidItemChanged
                 );
+
+            //初期値は明示的に入れる必要があることに注意
+            HasInvalidValue.Value = source.Contains(_item);
         }
 
         private void OnInvalidItemChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -67,6 +71,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             if (sender is ReadOnlyObservableCollection<HotKeyRegisterItem> invalidItems)
             {
                 HasInvalidValue.Value = invalidItems.Contains(_item);
+                if (HasInvalidValue.Value)
+                {
+                    LogOutput.Instance.Write($"detect invalid item in vm, {_item.Key}, {_item.ModifierKeys}");
+                }
             }
         }
 
@@ -83,13 +91,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            var updated = _item with
+            _item = _item with
             {
                 Key = key,
                 ModifierKeys = modifierKeys,
             };
+            RegisteredKeyString.Value = CreateRegisteredKeyString();
 
-            UpdateItemRequested?.Invoke((this, updated));
+            UpdateItemRequested?.Invoke((this, _item));
         }
 
         private void OnActionContentChanged(HotKeyActionContent actionContent)
@@ -108,12 +117,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private string CreateRegisteredKeyString()
         {
-            //NOTE: 制御キーを伴わないようなのは禁止しておく、word to motionと紛らわしいしホットキー的でないので
-            if (_item.Key == Key.None || _item.ModifierKeys == ModifierKeys.None)
-            {
-                return "";
-            }
-
             var sb = new StringBuilder();
 
             if (_item.ModifierKeys.HasFlag(ModifierKeys.Windows))
@@ -137,22 +140,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
 
             sb.Append(KeyToString(_item.Key));
+
             return sb.ToString();
         }
 
         private static string KeyToString(Key key)
         {
-            if (key >= Key.D0 && key <= Key.D9)
-            {
-                return ((int)key - (int)Key.D0).ToString();
-            }
-
+            //NOTE: ホントはこれに加えてテンキーの四則演算とかも特殊なのだが、
+            //ラクにケアできる範囲がここまでなので、数字キーのみ区別しておく
             if (key >= Key.NumPad0 && key <= Key.NumPad9)
             {
                 return "Num" + ((int)key - (int)Key.NumPad0).ToString();
             }
 
-            return key.ToString();
+            return new string(new char[] { KeyToStringUtil.GetCharFromKey(key) });
         }
     }
 }

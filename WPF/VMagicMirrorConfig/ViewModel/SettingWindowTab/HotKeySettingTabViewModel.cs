@@ -50,11 +50,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             foreach (var item in _model.Items)
             {
                 var vm = new HotKeyEditItemViewModel(item);
-                vm.UpdateItemRequested += OnUpdateItemRequested;
-                vm.MoveUpRequested += MoveUpItem;
-                vm.MoveDownRequested += MoveDownItem;
-                vm.DeleteRequested += DeleteItem;
-                Items.Add(vm);
+                AddItemViewModel(vm);
             }
         }
 
@@ -96,10 +92,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             _model.AddNewItem();
             var vm = new HotKeyEditItemViewModel(_model.Items[^1]);
+            AddItemViewModel(vm);
+        }
+
+        private void AddItemViewModel(HotKeyEditItemViewModel vm)
+        {
             vm.UpdateItemRequested += OnUpdateItemRequested;
             vm.MoveUpRequested += MoveUpItem;
             vm.MoveDownRequested += MoveDownItem;
             vm.DeleteRequested += DeleteItem;
+            vm.SubscribeInvalidItemSource(_model.InvalidItems);
             Items.Add(vm);
         }
 

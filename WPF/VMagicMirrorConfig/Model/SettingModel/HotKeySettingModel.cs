@@ -48,20 +48,22 @@ namespace Baku.VMagicMirrorConfig
         public ReadOnlyObservableCollection<HotKeyRegisterItem> Items { get; }
 
         private readonly ObservableCollection<HotKeyRegisterItem> _invalidItems = new();
-        public ReadOnlyCollection<HotKeyRegisterItem> InvalidItems { get; }
+        public ReadOnlyObservableCollection<HotKeyRegisterItem> InvalidItems { get; }
 
         public void SetItem(int index, HotKeyRegisterItem item)
         {
             if (index >= 0 && index < Items.Count && !_items[index].Equals(item))
             {
                 _items[index] = item;
-                RaiseUpdated();
+                RaiseSingleItemUpdated();
             }
         }
 
         public override void ResetToDefault()
         {
             _items.Clear();
+            RaiseUpdated();
+
             var defaultSetting = DefaultHotKeySetting.Load();
             foreach (var item in defaultSetting)
             {
@@ -132,7 +134,8 @@ namespace Baku.VMagicMirrorConfig
         {
             _items.Clear();
 
-            // 空であることと初期設定が入ってることを等価に取り扱う
+            // 文字列が空の場合、設定ファイルがなかったと推定する。
+            // ユーザーが明示的にカラにした場合は"{}"的な何かになるので
             if (string.IsNullOrEmpty(setting.SerializedItems))
             {
                 ResetToDefault();

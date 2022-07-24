@@ -51,6 +51,13 @@ namespace Baku.VMagicMirrorConfig
                 return true;
             }
 
+            //WinAPI上は許容されてるけどNGにしたいパターンがあるので弾く。
+            //ややザツだが、とりあえず「補助キーがないのはダメ」を落とし所にする
+            if (!CheckKeyCombinationValidity(item))
+            {
+                return false;
+            }
+
             var id = _hotKeyWrapper.Register(item);
             if (id >= 0)
             {
@@ -87,6 +94,16 @@ namespace Baku.VMagicMirrorConfig
             Application.Current.Dispatcher.BeginInvoke(
                 new Action(() => ActionRequested?.Invoke(content))
             );
+        }
+
+        private static bool CheckKeyCombinationValidity(HotKeyRegisterItem item)
+        {
+            if (item.ModifierKeys == System.Windows.Input.ModifierKeys.None)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

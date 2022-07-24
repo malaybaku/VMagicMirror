@@ -51,11 +51,11 @@ namespace Baku.VMagicMirrorConfig
 
             for (int i = 0; i < 10; i++)
             {
-                //Ctrl + Alt + num -> WtMの0,1,...,9個目のアイテムを実行
+                //Ctrl + Alt + 1,2,... -> WtMの1,2,...,10個目のアイテムを実行
                 result[i + 3] = new HotKeyRegisterItem(
                     ModifierKeys.Control | ModifierKeys.Alt,
-                    Key.D1 + i,
-                    new HotKeyActionContent(HotKeyActions.CallWtm, i)
+                    Key.D0 + ((i + 1) % 10),
+                    new HotKeyActionContent(HotKeyActions.CallWtm, i + 1)
                     );
             }
 

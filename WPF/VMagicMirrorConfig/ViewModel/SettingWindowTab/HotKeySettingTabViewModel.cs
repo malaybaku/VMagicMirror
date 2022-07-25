@@ -134,20 +134,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             AvailableHotKeyActions = new HotKeySupportedActionViewModel[]
             {
-                new (new (HotKeyActions.None, 0)),
-                new (new (HotKeyActions.SetCamera, 1)),
-                new (new (HotKeyActions.SetCamera, 2)),
-                new (new (HotKeyActions.SetCamera, 3)),
-                new (new (HotKeyActions.CallWtm, 1)),
-                new (new (HotKeyActions.CallWtm, 2)),
-                new (new (HotKeyActions.CallWtm, 3)),
-                new (new (HotKeyActions.CallWtm, 4)),
-                new (new (HotKeyActions.CallWtm, 5)),
-                new (new (HotKeyActions.CallWtm, 6)),
-                new (new (HotKeyActions.CallWtm, 7)),
-                new (new (HotKeyActions.CallWtm, 8)),
-                new (new (HotKeyActions.CallWtm, 9)),
-                new (new (HotKeyActions.CallWtm, 10)),
+                new (new (HotKeyActions.None, 0, "")),
+                new (new (HotKeyActions.SetCamera, 1, "")),
+                new (new (HotKeyActions.SetCamera, 2, "")),
+                new (new (HotKeyActions.SetCamera, 3, "")),
+                new (new (HotKeyActions.CallWtm, 1, "")),
+                new (new (HotKeyActions.CallWtm, 2, "")),
+                new (new (HotKeyActions.CallWtm, 3, "")),
+                new (new (HotKeyActions.CallWtm, 4, "")),
+                new (new (HotKeyActions.CallWtm, 5, "")),
+                new (new (HotKeyActions.CallWtm, 6, "")),
+                new (new (HotKeyActions.CallWtm, 7, "")),
+                new (new (HotKeyActions.CallWtm, 8, "")),
+                new (new (HotKeyActions.CallWtm, 9, "")),
+                new (new (HotKeyActions.CallWtm, 10, "")),
             };
         }
 

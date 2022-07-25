@@ -14,6 +14,7 @@ namespace Baku.VMagicMirrorConfig
     {
         public int Action { get; set; }
         public int ActionArgNumber { get; set; }
+        public string ActionArgString { get; set; } = "";
         public int Key { get; set; }
         public int ModifierKeys { get; set; }
 
@@ -21,6 +22,7 @@ namespace Baku.VMagicMirrorConfig
         {
             Action = 0,
             ActionArgNumber = 0,
+            ActionArgString = "",
             Key = 0,
             ModifierKeys = 0,
         };

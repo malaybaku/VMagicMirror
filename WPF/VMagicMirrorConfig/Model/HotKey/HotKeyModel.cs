@@ -52,7 +52,7 @@ namespace Baku.VMagicMirrorConfig
             }
 
             //WinAPI上は許容されてるけどNGにしたいパターンがあるので弾く。
-            //ややザツだが、とりあえず「補助キーがないのはダメ」を落とし所にする
+            //ややザツだが、「補助キーがないのはダメ」を落とし所にする
             if (!CheckKeyCombinationValidity(item))
             {
                 return false;

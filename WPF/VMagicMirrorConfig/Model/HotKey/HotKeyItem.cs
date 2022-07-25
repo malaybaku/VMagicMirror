@@ -7,7 +7,7 @@ namespace Baku.VMagicMirrorConfig
         None,
         SetCamera,
         CallWtm,
-        //TODO: ToggleAccessoryという項目もつけたいが、アクセサリの仕様上ちょっとムズいので一旦無し
+        ToggleAccessory,
     }
 
     /// <summary>
@@ -15,10 +15,10 @@ namespace Baku.VMagicMirrorConfig
     /// </summary>
     /// <param name="Action"></param>
     /// <param name="ArgNumber"></param>
-    /// <param name="ArgContent"></param>
-    public record HotKeyActionContent(HotKeyActions Action, int ArgNumber)
+    /// <param name="ArgString"></param>
+    public record HotKeyActionContent(HotKeyActions Action, int ArgNumber, string ArgString)
     {
-        public static HotKeyActionContent Empty() => new(HotKeyActions.None, 0);
+        public static HotKeyActionContent Empty() => new(HotKeyActions.None, 0, "");
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ namespace Baku.VMagicMirrorConfig
                 result[i] = new HotKeyRegisterItem(
                     ModifierKeys.Control | ModifierKeys.Shift, 
                     Key.D1 + i, 
-                    new HotKeyActionContent(HotKeyActions.SetCamera, i + 1)
+                    new HotKeyActionContent(HotKeyActions.SetCamera, i + 1, "")
                     );
             }
 
@@ -55,7 +55,7 @@ namespace Baku.VMagicMirrorConfig
                 result[i + 3] = new HotKeyRegisterItem(
                     ModifierKeys.Control | ModifierKeys.Alt,
                     Key.D0 + ((i + 1) % 10),
-                    new HotKeyActionContent(HotKeyActions.CallWtm, i + 1)
+                    new HotKeyActionContent(HotKeyActions.CallWtm, i + 1, "")
                     );
             }
 

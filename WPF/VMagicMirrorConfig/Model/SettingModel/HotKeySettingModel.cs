@@ -155,7 +155,7 @@ namespace Baku.VMagicMirrorConfig
                     _items.Add(new HotKeyRegisterItem(
                         (ModifierKeys)item.ModifierKeys,
                         (Key)item.Key,
-                        new HotKeyActionContent((HotKeyActions)item.Action, item.ActionArgNumber)
+                        new HotKeyActionContent((HotKeyActions)item.Action, item.ActionArgNumber, item.ActionArgString)
                         ));
                 }
             }

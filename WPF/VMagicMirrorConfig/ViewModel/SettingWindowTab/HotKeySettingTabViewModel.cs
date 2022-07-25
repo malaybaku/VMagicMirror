@@ -40,10 +40,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             foreach (var item in Items)
             {
-                item.UpdateItemRequested -= OnUpdateItemRequested;
-                item.MoveUpRequested -= MoveUpItem;
-                item.MoveDownRequested -= MoveDownItem;
-                item.DeleteRequested -= DeleteItem;
+                UnsubscribeItem(item);
             }
             Items.Clear();
 
@@ -95,14 +92,22 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             AddItemViewModel(vm);
         }
 
-        private void AddItemViewModel(HotKeyEditItemViewModel vm)
+        private void AddItemViewModel(HotKeyEditItemViewModel item)
         {
-            vm.UpdateItemRequested += OnUpdateItemRequested;
-            vm.MoveUpRequested += MoveUpItem;
-            vm.MoveDownRequested += MoveDownItem;
-            vm.DeleteRequested += DeleteItem;
-            vm.SubscribeInvalidItemSource(_model.InvalidItems);
-            Items.Add(vm);
+            item.UpdateItemRequested += OnUpdateItemRequested;
+            item.MoveUpRequested += MoveUpItem;
+            item.MoveDownRequested += MoveDownItem;
+            item.DeleteRequested += DeleteItem;
+            item.SubscribeInvalidItemSource(_model.InvalidItems);
+            Items.Add(item);
+        }
+
+        private void UnsubscribeItem(HotKeyEditItemViewModel item)
+        {
+            item.UpdateItemRequested -= OnUpdateItemRequested;
+            item.MoveUpRequested -= MoveUpItem;
+            item.MoveDownRequested -= MoveDownItem;
+            item.DeleteRequested -= DeleteItem;
         }
 
         private void OnModelItemUpdated(object? sender, EventArgs e) => RefreshItems();

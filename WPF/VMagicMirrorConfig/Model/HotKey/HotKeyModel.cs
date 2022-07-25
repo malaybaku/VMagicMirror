@@ -80,10 +80,17 @@ namespace Baku.VMagicMirrorConfig
                 return;
             }
 
-            var pair = _registeredActions.FirstOrDefault(p => p.Key.Equals(item));
+            var pair = _registeredActions.FirstOrDefault(p => p.Value.Equals(item));
             if (pair.Value != null)
             {
-                _hotKeyWrapper.Unregister(pair.Key);
+                var unregisterSuccess = _hotKeyWrapper.Unregister(pair.Key);
+                if (!unregisterSuccess)
+                {
+                    LogOutput.Instance.Write(
+                        $"Unregister hotkey failed, key={item.Key},{item.ModifierKeys}, " +
+                        $"action={item.ActionContent.Action}-{item.ActionContent.ArgNumber}"
+                        );
+                }
                 _registeredActions.Remove(pair.Key);
                 RegisteredItemsChanged?.Invoke();
             }

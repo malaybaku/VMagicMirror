@@ -27,9 +27,9 @@ namespace Baku.VMagicMirrorConfig
                 case 0:
                     return ' ';
                 case 1:
-                    return stringBuilder[0];
+                    return char.ToUpper(stringBuilder[0]);
                 default:
-                    return stringBuilder[0];
+                    return char.ToUpper(stringBuilder[0]);
             }
         }
 

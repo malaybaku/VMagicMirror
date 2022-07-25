@@ -58,7 +58,7 @@ namespace Baku.VMagicMirrorConfig
         public bool Unregister(int id)
         {
             var ret = NativeApi.UnregisterHotKey(_windowHandle, id);
-            return ret == 0;
+            return ret != 0;
         }
 
         public bool UnregisterAll()

@@ -47,7 +47,7 @@
                    Text="{Binding RegisteredKeyString.Value, UpdateSourceTrigger=PropertyChanged}"
                    />
         <ComboBox Grid.Column="2"
-                  ItemsSource="{x:Static vm:HotKeySupportedActionViewModel.AvailableHotKeyActions}"
+                  ItemsSource="{x:Static vm:HotKeySupportedActionsViewModel.InstanceItems}"
                   SelectedValue="{Binding ActionContent.Value}"
                   SelectedValuePath="Content"
                   DisplayMemberPath="DisplayName"

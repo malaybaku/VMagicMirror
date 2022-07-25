@@ -175,6 +175,7 @@ namespace Baku.VMagicMirrorConfig
                 {
                     Action = (int)i.ActionContent.Action,
                     ActionArgNumber = i.ActionContent.ArgNumber,
+                    ActionArgString = i.ActionContent.ArgString,
                     Key = (int)i.Key,
                     ModifierKeys = (int)i.ModifierKeys,
                 })

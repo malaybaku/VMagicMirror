@@ -1,4 +1,6 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿using System.Linq;
+
+namespace Baku.VMagicMirrorConfig
 {
     internal class HotKeyActionRunner
     {
@@ -6,7 +8,8 @@
             ModelResolver.Instance.Resolve<HotKeySettingModel>(),
             ModelResolver.Instance.Resolve<HotKeyModel>(),
             ModelResolver.Instance.Resolve<LayoutSettingModel>(),
-            ModelResolver.Instance.Resolve<WordToMotionSettingModel>()
+            ModelResolver.Instance.Resolve<WordToMotionSettingModel>(),
+            ModelResolver.Instance.Resolve<AccessorySettingModel>()
             )
         {
         }
@@ -15,21 +18,24 @@
             HotKeySettingModel setting,
             HotKeyModel model,
             LayoutSettingModel layoutSetting,
-            WordToMotionSettingModel wordToMotionSetting
+            WordToMotionSettingModel wordToMotionSetting,
+            AccessorySettingModel accessorySetting
             )
         {
             _setting = setting;
             _model = model;
             _layoutSetting = layoutSetting;
             _wordToMotionSetting = wordToMotionSetting;
+            _accessorySetting = accessorySetting;
 
             _model.ActionRequested += OnActionRequested;
         }
 
-        private HotKeyModel _model;
-        private HotKeySettingModel _setting;
-        private LayoutSettingModel _layoutSetting;
-        private WordToMotionSettingModel _wordToMotionSetting;
+        private readonly HotKeyModel _model;
+        private readonly HotKeySettingModel _setting;
+        private readonly LayoutSettingModel _layoutSetting;
+        private readonly WordToMotionSettingModel _wordToMotionSetting;
+        private readonly AccessorySettingModel _accessorySetting;
 
         private void OnActionRequested(HotKeyActionContent content)
         {
@@ -47,11 +53,26 @@
                 case HotKeyActions.CallWtm:
                     _wordToMotionSetting.Play(content.ArgNumber - 1);
                     break;
+                case HotKeyActions.ToggleAccessory:
+                    ToggleAccessoryVisibility(content.ArgString);
+                    break;
                 case HotKeyActions.None:
                 default:
                     //何もしない
                     break;
             }
+        }
+
+        private void ToggleAccessoryVisibility(string fileId)
+        {
+            var item = _accessorySetting.Items.Items.FirstOrDefault(i => i.FileId == fileId);
+            if (item == null)
+            {
+                return;
+            }
+
+            item.IsVisible = !item.IsVisible;
+            _accessorySetting.UpdateItemFromUi(item);
         }
     }
 }

@@ -92,7 +92,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 if (vm == null)
                 {
                     vm = new HotKeySupportedActionViewModel(
-                        new HotKeyActionContent(HotKeyActions.ToggleAccessory, 0, accessory.FileId)
+                        new HotKeyActionContent(HotKeyActions.ToggleAccessory, 0, accessory.FileId), 
+                        _accessorySetting
                         );
                     _items.Insert(i + ConstAvailableHotKeyActions.Length, vm);
                 }
@@ -117,7 +118,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private const string None = "Hotkey_Action_None";
         private const string SetCameraFormat = "Hotkey_Action_SetCamera_Format";
         private const string CallWtmFormat = "Hotkey_Action_CallWtm_Format";
-        private const string ToggleAccessoryFormat = "HotKey_Action_ToggleAccessory_Format";
+        private const string ToggleAccessoryFormat = "Hotkey_Action_ToggleAccessory_Format";
 
         //NOTE: カメラの指定 / Wtmの呼び出し用のインスタンスでは第二引数をnullにしてもよい
         internal HotKeySupportedActionViewModel(HotKeyActionContent content, AccessorySettingModel? accessorySetting = null)

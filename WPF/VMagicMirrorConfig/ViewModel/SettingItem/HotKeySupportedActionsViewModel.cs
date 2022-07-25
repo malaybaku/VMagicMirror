@@ -61,6 +61,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 accessorySetting.ItemNameMaybeChanged += UpdateDisplayName;
                 accessorySetting.ItemRefreshed += RefreshItems;
                 accessorySetting.ItemReloaded += RefreshItems;
+                RefreshItems();
             }
         }
 

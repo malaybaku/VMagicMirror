@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
@@ -31,18 +32,24 @@ namespace Baku.VMagicMirrorConfig
             //NOTE: _modelの初期化待ちをこのクラスでやるように追記してもよさそう
             _setting.Updated += (_, __) => OnSettingUpdated();
             _setting.SingleItemUpdated += OnSettingUpdated;
+            _setting.EnableHotKey.PropertyChanged += OnEnableHotKeyChanged;
 
             //初期状態は明示的に同期する: Initializeの時点でホットキーの設定が読み込み済みの可能性があるので
             OnSettingUpdated();
         }
 
+        private void OnEnableHotKeyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            OnSettingUpdated();
+        }
+
         private void OnSettingUpdated()
         {
-            var items = _setting.Items.ToArray();
-            if (!CheckItemsValidity(items))
-            {
-                return;
-            }
+            //HotKeyを無効扱いする場合は明示的に設定を取っ払う。
+            //そうしないと他アプリから使えないままになるので
+            var items = _setting.EnableHotKey.Value 
+                ? _setting.Items.ToArray()
+                : Array.Empty<HotKeyRegisterItem>();            
 
             foreach(var itemToRemove in _latestRegisterItems.Where(i => !items.Contains(i)))
             {
@@ -61,14 +68,6 @@ namespace Baku.VMagicMirrorConfig
 
             _latestRegisterItems.Clear();
             _latestRegisterItems.AddRange(items);
-        }
-
-        //TODO: validity checkここでやるのお？という感じはする。settingModel側にも何か合って良さそう
-        private bool CheckItemsValidity(HotKeyRegisterItem[] items)
-        {
-            //ざっくり、被ってるのがあるかどうかだけ見る
-            //HotKeyの重複禁止する、という考え方もある
-            return items.Length == items.Distinct().Count();
         }
     }
 }

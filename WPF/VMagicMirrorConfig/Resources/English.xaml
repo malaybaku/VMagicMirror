@@ -30,6 +30,7 @@
     <sys:String x:Key="TopBar_Setting_Layout">Layout</sys:String>
     <sys:String x:Key="TopBar_Setting_Devices">Devices</sys:String>
     <sys:String x:Key="TopBar_Setting_Effects">Effects</sys:String>
+    <sys:String x:Key="TopBar_Setting_HotKey">Hot Key</sys:String>
     <sys:String x:Key="TopBar_Setting_FileIo">Files</sys:String>
         
     <!-- Home -->
@@ -455,6 +456,19 @@ Please test by typing "joy".</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_Gamepad">Gamepad</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">Keyboard (num 0-9)</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDI Controller</sys:String>
+
+    <!-- HotKey -->
+    <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>
+    <sys:String x:Key="Hotkey_Instruction" xml:space="preserve">This tab support hotkey (shortcut) edit.
+Input favorite key combination in text area.
+*You can disable hot key temporary, to prevent key input conflict with other foreground app.</sys:String>
+    <sys:String x:Key="Hotkey_Reset">Reset to Default</sys:String>
+    <sys:String x:Key="Hotkey_Invalid_Key_Notice">*Failed to register key, try another keys.</sys:String>
+
+    <sys:String x:Key="Hotkey_Action_None">(Do Nothing)</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetCamera_Format">Camera Pose: {0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motion: {0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">Accessory switch: {0}</sys:String>
     
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">Setting File Control</sys:String>

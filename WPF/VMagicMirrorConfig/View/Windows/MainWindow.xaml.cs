@@ -1,6 +1,7 @@
 ﻿using Baku.VMagicMirrorConfig.ViewModel;
 using MahApps.Metro.Controls;
 using System;
+using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.View
 {
@@ -12,6 +13,7 @@ namespace Baku.VMagicMirrorConfig.View
         {
             base.OnContentRendered(e);
             (DataContext as IWindowViewModel)?.Initialize();
+            (Application.Current as App)?.RaiseWindowInitialized();
         }
 
         protected override void OnClosed(EventArgs e)

@@ -30,9 +30,7 @@ Especially when you need Full Edition, you must use BOOTH message to trace the p
 #### VMagicMirror stops soon after started
 {: .doc-sec2 }
 
-Especially for v1.7.0 or v1.7.0a, startup error might be because of folder path related bug. Please use v1.7.0b instead.
-
-When using other version, Setting file might be broken in this case, so please try to reset the settings.
+Setting file might be broken in this case. Try following steps to reset settings.
 
 <div class="doc-ul" markdown="1">
 
@@ -40,8 +38,8 @@ When using other version, Setting file might be broken in this case, so please t
     + If it recovers the situation, please follow [2: Get Started](../en_get_started.html) to setup.
 2. If the problem still remains, exit VMagicMirror.
 3. Delete auto save file. There are two ways according to the version of VMagicMirror.
+    + (v2.0.7 or later) Open `(My Documents)\VMagicMirror_Files\Saves` folder and then delete `_autosave`, and `_preferences` file.
     + (v1.9.2 or later) Open `(My Documents)\VMagicMirror_Files\Saves` folder and then delete `_autosave` file.
-    + (v1.8.2 or older) Open the folder in which `VMagicMirror.exe` exists, and then delete `_autosave` file in `ConfigApp` folder.
 4.  Restart VMagicMirror.
 
 </div>

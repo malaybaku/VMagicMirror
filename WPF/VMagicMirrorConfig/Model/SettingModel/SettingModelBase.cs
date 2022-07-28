@@ -72,6 +72,13 @@ namespace Baku.VMagicMirrorConfig
             IsLoading = true;
             SearchPropertyRoutine((source, target) =>
             {
+                if (source.PropertyType.IsArray)
+                {
+                    //entity側が配列要素でデータを持っている場合、配列の中身がプリミティブ的な定義になってるはずなので、
+                    //モデル側のAfterLoadで処理してもらう想定でスルー
+                    return;
+                }
+
                 if (!(target.PropertyType.IsGenericType && target.PropertyType.GetGenericTypeDefinition() == typeof(RProperty<>)))
                 {
                     //モデル側が組み込み型で値を持っているケース: 単に代入でOK
@@ -111,7 +118,14 @@ namespace Baku.VMagicMirrorConfig
 
             SearchPropertyRoutine((entityProp, modelProp) =>
             {
-                //TargetがRPropertyMin<T>ならValueに向かって値を入れる。
+                if (entityProp.PropertyType.IsArray)
+                {
+                    //entity側が配列要素でデータを持っている場合、配列の中身がプリミティブ的な定義になってるはずなので、
+                    //モデル側のAfterSaveで処理してもらう想定でスルー
+                    return;
+                }
+
+                //TargetがRProperty<T>ならValueに向かって値を入れる。
                 //そうでなければ直接Setterを呼ぶ
                 if (!(modelProp.PropertyType.IsGenericType && modelProp.PropertyType.GetGenericTypeDefinition() == typeof(RProperty<>)))
                 {
@@ -120,7 +134,7 @@ namespace Baku.VMagicMirrorConfig
                     return;
                 }
 
-                //TargetがRPropertyMin<T>であると考えられるケース: Valueから値をとってEntityに代入
+                //TargetがRProperty<T>であると考えられるケース: Valueから値をとってEntityに代入
                 var rProperty = modelProp.GetValue(this);
                 //NOTE: nameofの中のintに意味はない(型名を入れないとコンパイラが怒るから入れてるだけです)
                 var valueProperty = rProperty?.GetType()?.GetProperty(nameof(RProperty<int>.Value));

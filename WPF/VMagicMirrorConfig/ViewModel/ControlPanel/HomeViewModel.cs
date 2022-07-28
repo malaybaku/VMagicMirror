@@ -165,6 +165,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             //クリーンに再起動しようとしている
             _appQuitSetting.SkipAutoSaveAndRestart = true;
             _saveFileManager.SettingFileIo.DeleteSetting(SpecialFilePath.AutoSaveSettingFilePath);
+            //オートセーブじゃないほうの設定ファイルも消してしまう
+            ModelResolver.Instance.Resolve<PreferenceFileManager>().DeleteSaveFile();
             Application.Current.MainWindow?.Close();
         }
 

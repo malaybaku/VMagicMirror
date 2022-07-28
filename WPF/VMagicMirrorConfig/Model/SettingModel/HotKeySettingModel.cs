@@ -22,9 +22,18 @@ namespace Baku.VMagicMirrorConfig
             LoadSerializedItems(setting);            
         }
 
-        protected override void PreSave()
+        protected override void AfterSave(HotKeySetting entity)
         {
-            SaveToSerializedItems();
+            entity.Items = Items
+                .Select(i => new HotKeySettingItem()
+                {
+                    Action = (int)i.ActionContent.Action,
+                    ActionArgNumber = i.ActionContent.ArgNumber,
+                    ActionArgString = i.ActionContent.ArgString,
+                    Key = (int)i.Key,
+                    ModifierKeys = (int)i.ModifierKeys,
+                })
+                .ToArray();
         }
 
         protected override void AfterLoad(HotKeySetting entity)
@@ -136,7 +145,7 @@ namespace Baku.VMagicMirrorConfig
 
             // 文字列が空の場合、設定ファイルがなかったと推定する。
             // ユーザーが明示的にカラにした場合は"{}"的な何かになるので
-            if (string.IsNullOrEmpty(setting.SerializedItems))
+            if (setting.IsEmpty)
             {
                 ResetToDefault();
                 return;
@@ -144,13 +153,7 @@ namespace Baku.VMagicMirrorConfig
 
             try
             {
-                var collection = JsonSerializer.Deserialize<HotKeySettingItemCollection>(setting.SerializedItems);
-                if (collection == null)
-                {
-                    return;
-                }
-
-                foreach (var item in collection.Items)
+                foreach (var item in setting.Items)
                 {
                     _items.Add(new HotKeyRegisterItem(
                         (ModifierKeys)item.ModifierKeys,
@@ -161,32 +164,8 @@ namespace Baku.VMagicMirrorConfig
             }
             catch (Exception ex)
             {
-                if (!string.IsNullOrEmpty(SerializedItems.Value))
-                {
-                    LogOutput.Instance.Write(ex);
-                }
+                LogOutput.Instance.Write(ex);
             }
         }
-
-        private void SaveToSerializedItems()
-        {
-            var items = Items
-                .Select(i => new HotKeySettingItem()
-                {
-                    Action = (int)i.ActionContent.Action,
-                    ActionArgNumber = i.ActionContent.ArgNumber,
-                    ActionArgString = i.ActionContent.ArgString,
-                    Key = (int)i.Key,
-                    ModifierKeys = (int)i.ModifierKeys,
-                })
-                .ToArray();
-
-            SerializedItems.Value = JsonSerializer.Serialize(
-                new HotKeySettingItemCollection()
-                {
-                    Items = items,
-                });
-        }
-
     }
 }

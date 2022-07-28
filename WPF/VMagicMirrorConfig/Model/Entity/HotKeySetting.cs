@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -35,12 +36,19 @@ namespace Baku.VMagicMirrorConfig
 
         public bool EnableHotKey { get; set; } = false;
         //NOTE: シリアライズできるなら HotKeySettingItems[] とかで保持できてるほうがbetter
-        public string SerializedItems { get; set; } = "";
+        //public string SerializedItems { get; set; } = "";
+
+        public HotKeySettingItem[] Items { get; set; } = Array.Empty<HotKeySettingItem>();
+
+        //NOTE: 設定ファイルから読み込めなかったとき代替的に生成したデータでのみtrueになる。
+        //設定ファイルがないときは初期値のホットキー一式を指定したいので、それのためのフラグ
+        internal bool IsEmpty { get; set; } = false;
 
         public void Reset()
         {
             EnableHotKey = false;
-            SerializedItems = Default.SerializedItems;
+            //SerializedItems = Default.SerializedItems;
+            Items = Default.Items.ToArray();
         }
     }
 }

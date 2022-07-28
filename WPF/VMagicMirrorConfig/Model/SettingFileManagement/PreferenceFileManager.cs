@@ -54,7 +54,13 @@ namespace Baku.VMagicMirrorConfig
         {
             if (!File.Exists(SpecialFilePath.PreferenceFilePath))
             {
-                return PreferenceData.LoadDefault();
+                var result = PreferenceData.LoadDefault();
+                //常にnon-nullではあるが、"!."が嫌いなので…
+                if (result.HotKeySetting != null)
+                {
+                    result.HotKeySetting.IsEmpty = true;
+                }
+                return result;
             }
 
             try

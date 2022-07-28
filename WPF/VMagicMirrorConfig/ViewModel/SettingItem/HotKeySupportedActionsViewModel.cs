@@ -36,6 +36,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 new (new (HotKeyActions.CallWtm, 8, "")),
                 new (new (HotKeyActions.CallWtm, 9, "")),
                 new (new (HotKeyActions.CallWtm, 10, "")),
+                new (new (HotKeyActions.CallWtm, 11, "")),
+                new (new (HotKeyActions.CallWtm, 12, "")),
+                new (new (HotKeyActions.CallWtm, 13, "")),
+                new (new (HotKeyActions.CallWtm, 14, "")),
+                new (new (HotKeyActions.CallWtm, 15, "")),
+                new (new (HotKeyActions.CallWtm, 16, "")),
+                new (new (HotKeyActions.CallWtm, 17, "")),
+                new (new (HotKeyActions.CallWtm, 18, "")),
+                new (new (HotKeyActions.CallWtm, 19, "")),
+                new (new (HotKeyActions.CallWtm, 20, "")),
             };
         }
 

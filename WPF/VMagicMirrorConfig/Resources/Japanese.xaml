@@ -461,10 +461,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDIコントローラ</sys:String>
 
     <!-- HotKey -->
-    <sys:String x:Key="Hotkey_Header">Hot Keyの登録</sys:String>
+    <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>
     <sys:String x:Key="Hotkey_Instruction" xml:space="preserve">Hot Key (ショートカットキー) が登録・編集できます。
-編集エリアで使用したいホットキーを入力して下さい。
-※他アプリとキーの組み合わせが重複してしまう場合、一時的にHot Keyを無効化して下さい。</sys:String>
+編集エリアで使用したいキーを入力して下さい。
+※他アプリへの入力の妨げになってしまう場合、一時的にHot Keyを無効化して下さい。</sys:String>
     <sys:String x:Key="Hotkey_Reset">デフォルト設定にリセット</sys:String>
     <sys:String x:Key="Hotkey_Enable">Hot Keyを有効化</sys:String>
     <sys:String x:Key="Hotkey_Invalid_Key_Notice">*キーが登録できませんでした。別の組み合わせを試して下さい</sys:String>

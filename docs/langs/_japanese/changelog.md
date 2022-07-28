@@ -7,6 +7,14 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.7
+{: .doc-sec2 }
+
+2022/07/29
+
+* 追加: 詳細設定ウィンドウに[Hot Key](./docs/hotkey)タブが追加され、ショートカットキーで一部の操作が実行できるようになりました。
+
+
 #### v2.0.6
 {: .doc-sec2 }
 

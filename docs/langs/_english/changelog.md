@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.7
+{: .doc-sec2 }
+
+2022/07/29
+
+* Add: [Hot Key](./docs/hotkey) feature in settings window, to run actions by shortcut key inputs.
+
+
 #### v2.0.6
 {: .doc-sec2 }
 

@@ -19,18 +19,19 @@ For the basic usage, please see [Get Started](../get_started).
 
 Setting Window consists of 8 tabs.
 
-|----------------------------------+---------------------------------------------------------------|
-| Tab Name                         | Description                                                   |
-|:--------------------------------:|:--------------------------------------------------------------|
+|----------------------------------+----------------------------------------------------------|
+| Tab Name                         | Description                                              |
+|:--------------------------------:|:---------------------------------------------------------|
 | [Window](./window)          | Control character window                                      |
 | [Face](./face)              | Adjust facial motion setting except [External Tracker App](./external_tracker).      |
 | [Motion](./motion)          | Adjust character size related parameters and motion scale     |
 | [Layout](./layout)          | Layout of camera and devices, and device based motion setting |
 | [Effects](./effects)        | Light, shadow, bloom, and wind                                |
-| [Devices](./devices)        | Connection settings for gamepad and MIDI controller          |
+| [Devices](./devices)        | Connection settings for gamepad and MIDI controller           |
 | [Expressions](./expressions)| Feature to move the character face and motion                 |
-| [Setting Files](./setting_files) | Advanced features to manage setting files |
-|==================================|===============================================================|
+| [Hot Key](./hotkey)         | Customize shortcut key input to control settings              |
+| [Setting Files](./setting_files) | Advanced features to manage setting files                |
+|==================================|==========================================================|
 
 
 #### External Tracker

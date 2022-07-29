@@ -40,7 +40,7 @@ Hot Keyを押すことで実行可能なアクションは以下の3種類です
 <div class="doc-ul" markdown="1">
 
 - 「配信」タブであらかじめ保存しておいてカメラの位置を適用する
-- [Word to Motion](./expressions)のアイテムを呼び出して、表情やモーションを適用する
-- [アクセサリー](./accessory)のオン/オフを切り替える
+- [Word to Motion](../expressions)のアイテムを呼び出して、表情やモーションを適用する
+- [アクセサリー](../accessory)のオン/オフを切り替える
 
 </div>

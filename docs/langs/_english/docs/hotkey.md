@@ -41,7 +41,7 @@ In v2.0.7, there are three types of actions triggered by hot key.
 <div class="doc-ul" markdown="1">
 
 - Change camera pose saved with camera quick save feature, in streaming tab.
-- Call [Word to Motion](./expressions) item.
-- Switch [accessory](./accessory)'s visibility.
+- Call [Word to Motion](../expressions) item.
+- Switch [accessory](../accessory)'s visibility.
 
 </div>

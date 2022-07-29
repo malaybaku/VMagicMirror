@@ -13,7 +13,7 @@ lang: en
 
 2022/07/29
 
-* Add: [Hot Key](./docs/hotkey) feature in settings window, to run actions by shortcut key inputs.
+* Add: [Hot Key](../docs/hotkey) feature in settings window, to run actions by shortcut key inputs.
 
 
 #### v2.0.6

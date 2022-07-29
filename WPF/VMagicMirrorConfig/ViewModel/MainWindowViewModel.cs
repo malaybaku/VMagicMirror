@@ -61,6 +61,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     _avatarLoader.LoadSavedVRoidModelAsync(_settingModel.LastLoadedVRoidModelId, true);
                 }
 
+                ModelResolver.Instance.Resolve<PreferenceFileManager>().Load();
+                ModelResolver.Instance.Resolve<HotKeySetter>().Initialize();
+
                 //NOTE: この処理もメッセージの授受があるが終了まで待たない(そんなにクリティカルではないので)
                 _settingModel.Accessory.RefreshIfFirstStart();
 
@@ -86,6 +89,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             if (!_appQuitSetting.SkipAutoSaveAndRestart)
             {
                 _saveFileManager.SaveAsAutoSave();
+                ModelResolver.Instance.Resolve<PreferenceFileManager>().Save();
                 LogOutput.Instance.Write("AutoSave Completed.");
             }
             _settingModel.Automation.Dispose();

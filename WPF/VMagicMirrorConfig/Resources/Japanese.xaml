@@ -30,6 +30,7 @@
     <sys:String x:Key="TopBar_Setting_Layout">レイアウト</sys:String>
     <sys:String x:Key="TopBar_Setting_Devices">デバイス</sys:String>
     <sys:String x:Key="TopBar_Setting_Effects">エフェクト</sys:String>
+    <sys:String x:Key="TopBar_Setting_HotKey">Hot Key</sys:String>
     <sys:String x:Key="TopBar_Setting_FileIo">ファイル</sys:String>
     
     <!-- Home -->
@@ -459,6 +460,20 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">キーボード (数字の0-9)</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDIコントローラ</sys:String>
 
+    <!-- HotKey -->
+    <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>
+    <sys:String x:Key="Hotkey_Instruction" xml:space="preserve">Hot Key (ショートカットキー) が登録・編集できます。
+編集エリアで使用したいキーを入力して下さい。
+※他アプリへの入力の妨げになってしまう場合、一時的にHot Keyを無効化して下さい。</sys:String>
+    <sys:String x:Key="Hotkey_Reset">デフォルト設定にリセット</sys:String>
+    <sys:String x:Key="Hotkey_Enable">Hot Keyを有効化</sys:String>
+    <sys:String x:Key="Hotkey_Invalid_Key_Notice">*キーが登録できませんでした。別の組み合わせを試して下さい</sys:String>
+    
+    <sys:String x:Key="Hotkey_Action_None">(何もしない)</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetCamera_Format">カメラワーク適用: {0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motion: {0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">アクセサリon/off: {0}</sys:String>
+    
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">設定ファイルの操作</sys:String>
     <sys:String x:Key="SettingFile_SaveAndLoad">セーブ・ロード</sys:String>

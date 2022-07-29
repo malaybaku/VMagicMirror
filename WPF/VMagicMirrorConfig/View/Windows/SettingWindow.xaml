@@ -218,8 +218,8 @@
         <TabItem>
             <TabItem.Header>
                 <view:TabHeaderIconText 
-                    Text="{DynamicResource TopBar_Setting_FileIo}"                        
-                    IconKind="ContentSave"
+                    Text="{DynamicResource TopBar_Setting_HotKey}"                        
+                    IconKind="Keyboard"
                     IconWidth="17"
                     IconHeight="17"
                     TextMargin="0,0,0,0"
@@ -232,6 +232,27 @@
                                         ElementName=MainTabControl,
                                         Converter={StaticResource SelectionToForeground},
                                         ConverterParameter=7}"                        
+                    />
+            </TabItem.Header>
+            <view:HotKeySettingPanel Background="White" />
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <view:TabHeaderIconText 
+                    Text="{DynamicResource TopBar_Setting_FileIo}"                        
+                    IconKind="ContentSave"
+                    IconWidth="17"
+                    IconHeight="17"
+                    TextMargin="0,0,0,0"
+                    TranslateX="-4"
+                    Background="{Binding SelectedIndex,
+                                        ElementName=MainTabControl,
+                                        Converter={StaticResource SelectionToBackground},
+                                        ConverterParameter=8}"
+                    Foreground="{Binding SelectedIndex,
+                                        ElementName=MainTabControl,
+                                        Converter={StaticResource SelectionToForeground},
+                                        ConverterParameter=8}"                        
                     />
             </TabItem.Header>
             <view:SettingIoPanel Background="White" />

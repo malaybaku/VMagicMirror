@@ -1,5 +1,6 @@
 using Baku.VMagicMirror.IK;
 using UnityEngine;
+using VRM;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -13,6 +14,11 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class EyeBoneAngleSetter : MonoBehaviour
     {
+        private static readonly BlendShapeKey LookLeftKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookLeft);
+        private static readonly BlendShapeKey LookRightKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookRight);
+        private static readonly BlendShapeKey LookUpKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookUp);
+        private static readonly BlendShapeKey LookDownKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookDown);
+        
         //NOTE: 実験した範囲ではこのリミットを超えることは滅多にない
         private const float RateMagnitudeLimit = 1.2f;
         
@@ -31,8 +37,11 @@ namespace Baku.VMagicMirror
         [SerializeField] private ExternalTrackerEyeJitter externalTrackerEyeJitter;
         
         private NonImageBasedMotion _nonImageBasedMotion;
-        private EyeBoneAngleMapApplier _angleMapApplier;
+        private EyeBoneAngleMapApplier _boneApplier;
+        private EyeBlendShapeMapApplier _blendShapeApplier;
         private EyeLookAt _eyeLookAt;
+        //NOTE: BlendShapeResultSetterの更に後処理として呼び出す(ホントは前処理で値を入れたいが、Execution Order的に難しい)
+        private VRMBlendShapeProxy _blendShape = null;
 
         private Transform _leftEye;
         private Transform _rightEye;
@@ -56,7 +65,8 @@ namespace Baku.VMagicMirror
             IKTargetTransforms ikTargets,　NonImageBasedMotion nonImageBasedMotion)
         {
             _nonImageBasedMotion = nonImageBasedMotion;
-            _angleMapApplier = new EyeBoneAngleMapApplier(vrmLoadable);
+            _boneApplier = new EyeBoneAngleMapApplier(vrmLoadable);
+            _blendShapeApplier = new EyeBlendShapeMapApplier(vrmLoadable);
             _eyeLookAt = new EyeLookAt(vrmLoadable, ikTargets.LookAt);
 
             vrmLoadable.VrmLoaded += OnVrmLoaded;
@@ -83,6 +93,7 @@ namespace Baku.VMagicMirror
         {
             _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
             _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
+            _blendShape = info.blendShape;
 
             //NOTE: せっかく整頓しているので、片目だけボーンがあるモデルでちゃんと動くことを検討する
             _hasLeftEye = _leftEye != null;
@@ -96,6 +107,7 @@ namespace Baku.VMagicMirror
             _hasLeftEye = false;
             _hasRightEye = false;
 
+            _blendShape = null;
             _leftEye = null;
             _rightEye = null;
         }
@@ -171,21 +183,39 @@ namespace Baku.VMagicMirror
                 rightYaw = ScaleAndClampAngle(rightYaw, weightFactor);
             }
             ReserveWeight = 1f;
-            
-            if (_useAvatarEyeCurveMap)
-            {
-                (leftYaw, leftPitch) = _angleMapApplier.GetLeftMappedValues(leftYaw, leftPitch);
-                (rightYaw, rightPitch) = _angleMapApplier.GetRightMappedValues(rightYaw, rightPitch);
-            }
 
-            if (_hasLeftEye)
+            if (_boneApplier.NeedOverwrite)
             {
-                _leftEye.localRotation = Quaternion.Euler(leftPitch, leftYaw, 0f);
-            }
+                if (_useAvatarEyeCurveMap)
+                {
+                    (leftYaw, leftPitch) = _boneApplier.GetLeftMappedValues(leftYaw, leftPitch);
+                    (rightYaw, rightPitch) = _boneApplier.GetRightMappedValues(rightYaw, rightPitch);
+                }
 
-            if (_hasRightEye)
+                if (_hasLeftEye)
+                {
+                    _leftEye.localRotation = Quaternion.Euler(leftPitch, leftYaw, 0f);
+                }
+
+                if (_hasRightEye)
+                {
+                    _rightEye.localRotation = Quaternion.Euler(rightPitch, rightYaw, 0f);
+                }                
+            }
+            else
             {
-                _rightEye.localRotation = Quaternion.Euler(rightPitch, rightYaw, 0f);
+                //elseの場合はBlendShapeの処理に落ち、このケースは強制的にアバターの目カーブを参照する
+                //(参照しないと基準も何もないので)
+                var result = _blendShapeApplier.GetMappedValues(
+                    0.5f * (leftYaw + rightYaw),
+                    0.5f * (leftPitch + rightPitch)
+                );
+                
+                _blendShape.AccumulateValue(LookLeftKey, result.Left);
+                _blendShape.AccumulateValue(LookRightKey, result.Right);
+                _blendShape.AccumulateValue(LookUpKey, result.Up);
+                _blendShape.AccumulateValue(LookDownKey, result.Down);
+                _blendShape.Apply();
             }
         }
 

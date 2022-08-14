@@ -126,6 +126,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> UseLookAtPointNone => _model.UseLookAtPointNone;
         public RProperty<bool> UseLookAtPointMousePointer => _model.UseLookAtPointMousePointer;
         public RProperty<bool> UseLookAtPointMainCamera => _model.UseLookAtPointMainCamera;
+
+        public RProperty<bool> MoveEyesDuringFaceClipApplied => _model.MoveEyesDuringFaceClipApplied;
         public RProperty<bool> UseAvatarEyeBoneMap => _model.UseAvatarEyeBoneMap;
         public RProperty<int> EyeBoneRotationScale => _model.EyeBoneRotationScale;
         public RProperty<int> EyeBoneRotationScaleWithMap => _model.EyeBoneRotationScaleWithMap;

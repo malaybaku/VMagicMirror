@@ -71,9 +71,11 @@
         public const string DisableFaceTrackingHorizontalFlip = nameof(DisableFaceTrackingHorizontalFlip);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
+
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
         public const string FaceNeutralClip = nameof(FaceNeutralClip);
         public const string FaceOffsetClip = nameof(FaceOffsetClip);
+        public const string EnableEyeMotionDuringClipApplied = nameof(EnableEyeMotionDuringClipApplied);
         public const string DisableBlendShapeInterpolate = nameof(DisableBlendShapeInterpolate);
 
         // Motion, Mouth

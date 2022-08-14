@@ -63,6 +63,7 @@
         public bool UseLookAtPointMousePointer { get; set; } = true;
         public bool UseLookAtPointMainCamera { get; set; } = false;
 
+        public bool MoveEyesDuringFaceClipApplied { get; set; } = false;
         public bool UseAvatarEyeBoneMap { get; set; } = true;
         public int EyeBoneRotationScale { get; set; } = 100;
         public int EyeBoneRotationScaleWithMap { get; set; } = 100;
@@ -140,6 +141,7 @@
             UseLookAtPointMousePointer = true;
             UseLookAtPointMainCamera = false;
 
+            MoveEyesDuringFaceClipApplied = false;
             UseAvatarEyeBoneMap = true;
             EyeBoneRotationScale = 100;
             EyeBoneRotationScaleWithMap = 100;

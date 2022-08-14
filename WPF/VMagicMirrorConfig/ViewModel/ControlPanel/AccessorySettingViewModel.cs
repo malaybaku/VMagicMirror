@@ -117,11 +117,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 _item.UseBillboardMode = v;
                 UpdateItemFromUi();
+                UpdateShowInvalidBillboardWarning();
             });
             AttachTarget = new RProperty<int>((int)_item.AttachTarget, v =>
             {
                 _item.AttachTarget = (AccessoryAttachTarget)v;
                 UpdateItemFromUi();
+                UpdateShowInvalidBillboardWarning();
             });
 
             PosX = new RProperty<float>(_item.Position.X, v =>
@@ -167,6 +169,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 _item.FramePerSecond = v;
                 UpdateItemFromUi();
             });
+
+            UpdateShowInvalidBillboardWarning();
         }
 
         private readonly AccessorySettingModel _model;
@@ -200,6 +204,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<int> FramePerSecond { get; }
 
         public ActionCommand ResetCommand { get; }
+
+        public RProperty<bool> ShowInvalidBillboardWarning { get; } = new RProperty<bool>(false);
+
+        private void UpdateShowInvalidBillboardWarning()
+        {
+            ShowInvalidBillboardWarning.Value =
+                (AccessoryAttachTarget)AttachTarget.Value == AccessoryAttachTarget.World &&
+                UseBillboardMode.Value;
+        }
 
         //NOTE: Unityのコンポーネントリセットと同じノリで良いはずのため、確認ダイアログは無し。
         //手触りがまずかったらダイアログを挟むか、またはUI側をContextMenu化で「確認してるよ」感を出す

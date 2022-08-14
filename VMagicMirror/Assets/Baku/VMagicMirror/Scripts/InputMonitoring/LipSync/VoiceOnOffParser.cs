@@ -60,21 +60,21 @@ namespace Baku.VMagicMirror
             //ざっくりやりたいこと: 音節の区切りをvisemeベースで推定し、visemeが有→無に転じたところで音節が区切れたものと扱う。
             //ただし、毎フレームでやるとノイズ耐性が低いので、数フレーム連続で続いた場合の立ち上がり/立ち下がりだけを扱う。
             if (!_lipSync.enabled || 
-                !(_lipSync.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame))
+                false) //!(_lipSync.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame))
             {
                 return;
             }
 
             bool isTalking = false;
-            //NOTE: 0にはsil(無音)があるのでそれを避ける
-            for (int i = 1; i < frame.Visemes.Length; i++)
-            {
-                if (frame.Visemes[i] > VisemeThreshold)
-                {
-                    isTalking = true;
-                    break;
-                }
-            }
+            // //NOTE: 0にはsil(無音)があるのでそれを避ける
+            // for (int i = 1; i < frame.Visemes.Length; i++)
+            // {
+            //     if (frame.Visemes[i] > VisemeThreshold)
+            //     {
+            //         isTalking = true;
+            //         break;
+            //     }
+            // }
 
             if (isTalking)
             {

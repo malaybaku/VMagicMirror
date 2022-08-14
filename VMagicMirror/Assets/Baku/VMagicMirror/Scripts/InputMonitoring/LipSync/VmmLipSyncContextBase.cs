@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    public abstract class VmmLipSyncContextBase : OVRLipSyncContextBase
+    public abstract class VmmLipSyncContextBase : MonoBehaviour //: OVRLipSyncContextBase
     {
         //この値(dB)から+50dBまでの範囲を0 ~ 50のレベル情報として通知する。適正音量の目安になる値。
         private const int BottomVolumeDb = -38;

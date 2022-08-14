@@ -40,6 +40,7 @@ namespace Baku.VMagicMirror
         private bool _hasLeftEye;
         private bool _hasRightEye;
 
+        private bool _skipReset = false;
         private float _motionScale = 1f;
         private float _motionScaleWithMap = 1f;
         private bool _useAvatarEyeCurveMap = true;
@@ -61,6 +62,11 @@ namespace Baku.VMagicMirror
 
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposed;
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableEyeMotionDuringClipApplied, 
+                command => _skipReset = command.ToBoolean()
+                );
             
             receiver.AssignCommandHandler(
                 VmmCommands.SetEyeBoneRotationScale,
@@ -150,14 +156,13 @@ namespace Baku.VMagicMirror
             leftPitch += _eyeLookAt.Pitch;
             rightPitch += _eyeLookAt.Pitch;
 
-            if (ReserveReset)
+            if (ReserveReset && !_skipReset)
             {
                 //NOTE: 0でもmap処理が入った結果、非ゼロの角度が入る可能性があるのでreturnはしない
                 leftPitch = 0f;
                 leftYaw = 0f;
                 rightPitch = 0f;
                 rightYaw = 0f;
-                ReserveReset = false;
             }
             else
             {
@@ -170,6 +175,7 @@ namespace Baku.VMagicMirror
                 rightPitch = ScaleAndClampAngle(rightPitch, weightFactor);
                 rightYaw = ScaleAndClampAngle(rightYaw, weightFactor);
             }
+            ReserveReset = false;
             ReserveWeight = 1f;
             
             if (_useAvatarEyeCurveMap)

@@ -29,7 +29,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 4
@@ -103,7 +102,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 2
@@ -259,7 +257,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 1
@@ -329,7 +326,7 @@ MonoBehaviour:
   eyeSpeedFactor: 4
   motionBlendDuration: 0.5
   keepEyeCenterProbability: 0.5
-  eyeRotationFactor: 0.4
+  eyeRotationRateFactor: 0.05
   eyeOrientationVaryRange: 10
   inactiveFactors: {x: 10, y: 10}
   activeFactors: {x: 10, y: 10}
@@ -374,7 +371,6 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 3
@@ -431,7 +427,6 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 0
@@ -689,6 +684,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5813678810510073683}
   - component: {fileID: 733898353923353159}
+  - component: {fileID: 5470382612402142914}
   m_Layer: 0
   m_Name: MotionController
   m_TagString: Untagged
@@ -706,7 +702,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5813678810404708599}
   - {fileID: 5813678809054739211}
@@ -735,6 +730,19 @@ MonoBehaviour:
   headMotionClipPlayer: {fileID: 3163774597481480951}
   colliderBasedAvatarParamLoader: {fileID: 8229117264469737190}
   nonImageBasedMotion: {fileID: 3373783041301125446}
+--- !u!114 &5470382612402142914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678810510073684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 936b5a492f001084ebc1446b2abe1827, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateInterval: 0.12
 --- !u!1 &7492520328184788948
 GameObject:
   m_ObjectHideFlags: 0
@@ -762,7 +770,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 5
@@ -819,7 +826,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5813678810510073683}
   m_RootOrder: 6

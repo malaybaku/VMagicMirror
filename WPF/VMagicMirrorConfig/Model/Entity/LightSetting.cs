@@ -13,7 +13,8 @@
         #region Image Quality
 
         public bool HalfFpsMode { get; set; } = false;
-
+        public bool UseFrameReductionEffect { get; set; } = false;
+        
         #endregion
 
         #region Light

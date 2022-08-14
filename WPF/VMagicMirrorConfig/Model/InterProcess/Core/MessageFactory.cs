@@ -224,6 +224,7 @@ namespace Baku.VMagicMirrorConfig
         public Message GetQualitySettingsInfo() => NoArg();
         public Message SetImageQuality(string name) => WithArg(name);
         public Message SetHalfFpsMode(bool enable) => WithArg(enable);
+        public Message UseFrameReductionEffect(bool enable) => WithArg(enable);
 
         /// <summary>
         /// Query

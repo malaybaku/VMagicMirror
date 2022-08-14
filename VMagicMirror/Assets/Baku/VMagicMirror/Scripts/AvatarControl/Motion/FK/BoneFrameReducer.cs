@@ -40,7 +40,7 @@ namespace Baku.VMagicMirror.FK
             vrmLoadable.VrmLoaded += OnModelLoaded;
             vrmLoadable.VrmDisposing += OnModelUnloaded;
             receiver.AssignCommandHandler(
-                VmmCommands.UseFrameReduction,
+                VmmCommands.UseFrameReductionEffect,
                 c => _frameReduceEnabled = c.ToBoolean()
             );
         }

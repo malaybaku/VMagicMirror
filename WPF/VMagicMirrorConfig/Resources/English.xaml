@@ -269,6 +269,7 @@ If the face tracking works correctly, please ignore this warning.
     <sys:String x:Key="Motion_Eye_LookAtPoint_None">None</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">Mouse</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">User</sys:String>
+    <sys:String x:Key="Motion_Eye_MoveDuringClip">Move eyes during facial expression applied</sys:String>
     <sys:String x:Key="Motion_Eye_UseAvatarEyeBoneMap">Apply eye bone curve defined in avatar</sys:String>
     <sys:String x:Key="Motion_Eye_RotScale">Eye Motion Scale[%]</sys:String>
     <sys:String x:Key="Motion_Eye_ApproxRotRangePrefix">(Eye bones will move about: </sys:String>

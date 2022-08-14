@@ -145,6 +145,7 @@ namespace Baku.VMagicMirrorConfig
         public Message MicrophoneDeviceNames() => NoArg();
 
         public Message LookAtStyle(string v) => WithArg(v);
+        public Message EnableEyeMotionDuringClipApplied(bool enable) => WithArg(enable);
         public Message SetUseAvatarEyeBoneMap(bool use) => WithArg(use);
         public Message SetEyeBoneRotationScale(int percent) => WithArg(percent);
         public Message SetEyeBoneRotationScaleWithMap(int percent) => WithArg(percent);

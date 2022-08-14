@@ -327,6 +327,14 @@
                                   Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
                     </Grid>
 
+                    <CheckBox Margin="15,5,0,0"
+                              IsChecked="{Binding MoveEyesDuringFaceClipApplied.Value}"
+                              >
+                        <CheckBox.Content>
+                            <TextBlock Text="{DynamicResource Motion_Eye_MoveDuringClip}"/>
+                        </CheckBox.Content>
+                    </CheckBox>
+
                     <Grid Margin="5,0,0,10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -340,6 +348,7 @@
                         </Grid.ColumnDefinitions>
 
                         <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                  Margin="10,0"
                                   IsChecked="{Binding UseAvatarEyeBoneMap.Value}">
                             <CheckBox.Content>
                                 <TextBlock Text="{DynamicResource Motion_Eye_UseAvatarEyeBoneMap}"/>

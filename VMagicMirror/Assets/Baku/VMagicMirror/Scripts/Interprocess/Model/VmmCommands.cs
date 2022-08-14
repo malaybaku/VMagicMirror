@@ -133,6 +133,9 @@
         public const string SetHalfFpsMode = nameof(SetHalfFpsMode);
 
         // Lighting 
+        //NOTE: フレームリダクションはモーションよりはエフェクトかな～という事でこっち。
+        public const string UseFrameReduction = nameof(UseFrameReduction);
+
         public const string LightIntensity = nameof(LightIntensity);
         public const string LightColor = nameof(LightColor);
         public const string LightYaw = nameof(LightYaw);

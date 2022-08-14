@@ -213,22 +213,22 @@ namespace Baku.VMagicMirror
             //ただし、毎フレームでやるとノイズ耐性が低いので、数フレーム連続で続いた場合の立ち上がり/立ち下がりだけを扱う。
             if (!EnableLipSyncBasedBlinkAdjust ||
                 !_lipSyncContext.enabled || 
-                false //!(_lipSyncContext.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame)
+                !(_lipSyncContext.GetCurrentPhonemeFrame() is OVRLipSync.Frame frame)
             )
             {
                 return;
             }
 
             bool isTalking = false;
-            // //NOTE: 0にはsil(無音)があるのでそれを避ける
-            // for (int i = 1; i < frame.Visemes.Length; i++)
-            // {
-            //     if (frame.Visemes[i] > lipSyncVisemeThreshold)
-            //     {
-            //         isTalking = true;
-            //         break;
-            //     }
-            // }
+            //NOTE: 0にはsil(無音)があるのでそれを避ける
+            for (int i = 1; i < frame.Visemes.Length; i++)
+            {
+                if (frame.Visemes[i] > lipSyncVisemeThreshold)
+                {
+                    isTalking = true;
+                    break;
+                }
+            }
 
             if (isTalking)
             {

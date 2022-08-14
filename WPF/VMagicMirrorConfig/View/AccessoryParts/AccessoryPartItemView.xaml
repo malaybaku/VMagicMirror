@@ -104,6 +104,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
@@ -141,59 +142,34 @@
                           IsEnabled="{Binding CanSelectBillboardMode}"
                           />
 
-                <TextBlock Grid.Row="3" Grid.Column="0" 
+                <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="7"
+                           Margin="20,0"
+                           FontWeight="Bold"
+                           Visibility="{Binding ShowInvalidBillboardWarning.Value, 
+                                                Converter={StaticResource BooleanToVisibilityConverter}}"
+                           Text="{DynamicResource Accessory_Item_BillboardMode_Warning}"
+                           />
+                
+                <TextBlock Grid.Row="4" Grid.Column="0" 
                         HorizontalAlignment="Left"
                         Text="{DynamicResource Accessory_Item_Position}" 
                         Margin="0,0,20,0"
                         />
-                <TextBlock Grid.Row="3" Grid.Column="1" 
+                <TextBlock Grid.Row="4" Grid.Column="1" 
                         Style="{StaticResource AxisText}"
                         Text="X" 
                         />
-                <TextBox Grid.Row="3" Grid.Column="2" 
+                <TextBox Grid.Row="4" Grid.Column="2" 
                         Text="{Binding PosX.Value, StringFormat=0.######, FallbackValue=1.234567}">
                     <i:Interaction.Behaviors>
                         <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
-                <TextBlock Grid.Row="3" Grid.Column="3" 
+                <TextBlock Grid.Row="4" Grid.Column="3" 
                         Style="{StaticResource AxisText}"
                         Text="Y" />
-                <TextBox Grid.Row="3" Grid.Column="4" 
+                <TextBox Grid.Row="4" Grid.Column="4" 
                          Text="{Binding PosY.Value, StringFormat=0.######}">
-                    <i:Interaction.Behaviors>
-                        <view:SelectOnFocusBehavior/>
-                    </i:Interaction.Behaviors>
-                </TextBox>
-                <TextBlock Grid.Row="3" Grid.Column="5" 
-                        Style="{StaticResource AxisText}"
-                        Text="Z" />
-                <TextBox Grid.Row="3" Grid.Column="6"
-                         Text="{Binding PosZ.Value, StringFormat=0.######}">
-                    <i:Interaction.Behaviors>
-                        <view:SelectOnFocusBehavior/>
-                    </i:Interaction.Behaviors>
-                </TextBox>
-
-                <TextBlock Grid.Row="4" Grid.Column="0"
-                        Margin="0,0,20,0"
-                        HorizontalAlignment="Left"
-                        Text="{DynamicResource Accessory_Item_Rotation}" 
-                        />
-                <TextBlock Grid.Row="4" Grid.Column="1"
-                        Style="{StaticResource AxisText}"
-                        Text="X" />
-                <TextBox Grid.Row="4" Grid.Column="2"
-                         Text="{Binding RotX.Value, StringFormat=0.###}">
-                    <i:Interaction.Behaviors>
-                        <view:SelectOnFocusBehavior/>
-                    </i:Interaction.Behaviors>
-                </TextBox>
-                <TextBlock Grid.Row="4" Grid.Column="3"
-                        Style="{StaticResource AxisText}"
-                        Text="Y" />
-                <TextBox Grid.Row="4" Grid.Column="4"
-                         Text="{Binding RotY.Value, StringFormat=0.###}">
                     <i:Interaction.Behaviors>
                         <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
@@ -202,18 +178,51 @@
                         Style="{StaticResource AxisText}"
                         Text="Z" />
                 <TextBox Grid.Row="4" Grid.Column="6"
+                         Text="{Binding PosZ.Value, StringFormat=0.######}">
+                    <i:Interaction.Behaviors>
+                        <view:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+
+                <TextBlock Grid.Row="5" Grid.Column="0"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        Text="{DynamicResource Accessory_Item_Rotation}" 
+                        />
+                <TextBlock Grid.Row="5" Grid.Column="1"
+                        Style="{StaticResource AxisText}"
+                        Text="X" />
+                <TextBox Grid.Row="5" Grid.Column="2"
+                         Text="{Binding RotX.Value, StringFormat=0.###}">
+                    <i:Interaction.Behaviors>
+                        <view:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+                <TextBlock Grid.Row="5" Grid.Column="3"
+                        Style="{StaticResource AxisText}"
+                        Text="Y" />
+                <TextBox Grid.Row="5" Grid.Column="4"
+                         Text="{Binding RotY.Value, StringFormat=0.###}">
+                    <i:Interaction.Behaviors>
+                        <view:SelectOnFocusBehavior/>
+                    </i:Interaction.Behaviors>
+                </TextBox>
+                <TextBlock Grid.Row="5" Grid.Column="5" 
+                        Style="{StaticResource AxisText}"
+                        Text="Z" />
+                <TextBox Grid.Row="5" Grid.Column="6"
                          Text="{Binding RotZ.Value, StringFormat=0.###}">
                     <i:Interaction.Behaviors>
                         <view:SelectOnFocusBehavior/>
                     </i:Interaction.Behaviors>
                 </TextBox>
                 
-                <TextBlock Grid.Row="5" Grid.Column="0"
+                <TextBlock Grid.Row="6" Grid.Column="0"
                         Margin="0,0,20,0"
                         HorizontalAlignment="Left"
                         Text="{DynamicResource Accessory_Item_Scale}" 
                         />
-                <TextBox Grid.Row="5" Grid.Column="2" 
+                <TextBox Grid.Row="6" Grid.Column="2" 
                         Text="{Binding Scale.Value, StringFormat=0.######, FallbackValue=1.0}"
                          >
                     <i:Interaction.Behaviors>
@@ -221,14 +230,14 @@
                     </i:Interaction.Behaviors>
                 </TextBox>
 
-                <TextBlock Grid.Row="6" Grid.Column="0"
+                <TextBlock Grid.Row="7" Grid.Column="0"
                         Margin="0,0,20,0"
                         HorizontalAlignment="Left"
                         Text="{DynamicResource Accessory_Item_Fps}" 
                         Visibility="{Binding CanEditFramePerSecond, Converter={StaticResource BooleanToVisibilityConverter}}"
                         />
                 <Slider x:Name="sliderItemFps"
-                        Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="3"
+                        Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="3"
                         Minimum="5"
                         Maximum="30"
                         TickFrequency="1"
@@ -236,7 +245,7 @@
                         Value="{Binding FramePerSecond.Value, Mode=TwoWay, FallbackValue=15}"
                         Visibility="{Binding CanEditFramePerSecond, Converter={StaticResource BooleanToVisibilityConverter}}"
                         />
-                <TextBox Grid.Row="6" Grid.Column="6"
+                <TextBox Grid.Row="7" Grid.Column="6"
                          Text="{Binding Value, ElementName=sliderItemFps}"
                          Visibility="{Binding CanEditFramePerSecond, Converter={StaticResource BooleanToVisibilityConverter}}"
                          />

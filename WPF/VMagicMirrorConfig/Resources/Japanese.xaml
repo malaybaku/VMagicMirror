@@ -366,7 +366,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="ImageQuality">画質</sys:String>
     <sys:String x:Key="ImageQuality_CurrentQuality">現在の設定</sys:String>
     <sys:String x:Key="ImageQuality_HalfFpsMode">FPSを半減 (Medium以上で有効)</sys:String>
-    
+    <sys:String x:Key="ImageQuality_UseBoneFrameReduction">ボーンのみ低FPS化</sys:String>
+
     <sys:String x:Key="Light">ライト</sys:String>
     <sys:String x:Key="Light_Intensity">明るさ[%]</sys:String>
     <sys:String x:Key="Light_Yaw">向き(横)[deg]</sys:String>

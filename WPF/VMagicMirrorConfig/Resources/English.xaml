@@ -364,6 +364,7 @@ Translate (2 way):
     <sys:String x:Key="ImageQuality">Image Quality</sys:String>
     <sys:String x:Key="ImageQuality_CurrentQuality">Quality</sys:String>
     <sys:String x:Key="ImageQuality_HalfFpsMode">Half FPS (Medium or higher quality)</sys:String>
+    <sys:String x:Key="ImageQuality_UseBoneFrameReduction">Low FPS for Bone Motion</sys:String>
     
     <sys:String x:Key="Light">Light</sys:String>
     <sys:String x:Key="Light_Intensity">Intensity [%]</sys:String>

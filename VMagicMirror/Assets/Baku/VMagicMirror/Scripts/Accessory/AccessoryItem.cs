@@ -510,8 +510,10 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var bone = _attachBones[ItemLayout.AttachTarget];
-            if (bone == null)
+            //マイナーケースで「2DアクセサリをWorld固定で最前面表示しようとしている」というのがあり、それをガードしている
+            //これによって描画が崩れる可能性があるが、GUI側で警告を出すことでユーザーに直してもらう想定
+            if (!_attachBones.TryGetValue(ItemLayout.AttachTarget, out var bone) || 
+                bone == null)
             {
                 return;
             }

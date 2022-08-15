@@ -13,11 +13,13 @@ namespace Baku.VMagicMirror
         private const int LevelDecreasePerRefresh = 1;
         
         private bool _sendMicrophoneVolumeLevel = false;
+        private bool _needAlwaysUpdateVolume = false;
         private int _volumeLevelSendCount = 0;
-        //ボリューム値を記憶する。よくある「ガッと上がってスーッと下がる」をやるために必要。
-        private int _currentVolumeLevel = 0;
         private int _sensitivity = 0;
-        
+
+        //ボリューム値を記憶する値であって、よくある「ガッと上がってスーッと下がる」が実装されたもの
+        public int CurrentVolumeLevel { get; private set; } = 0;
+
         private float _sensitivityFactor = 1f;
         /// <summary> マイク感度を[dB]単位で取得、設定します。 </summary>
         public int Sensitivity
@@ -55,35 +57,35 @@ namespace Baku.VMagicMirror
         {
             receiver.AssignCommandHandler(
                 VmmCommands.SetMicrophoneVolumeVisibility,
-                message =>
-                {
-                    _sendMicrophoneVolumeLevel = bool.TryParse(message.Content, out var v) && v;
-                    if (!_sendMicrophoneVolumeLevel)
-                    {
-                        _volumeLevelSendCount = 0;
-                        _currentVolumeLevel = 0;
-                    }
-                });
+                command => _sendMicrophoneVolumeLevel = command.ToBoolean()
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.AdjustLipSyncByVolume,
+                command => _needAlwaysUpdateVolume = command.ToBoolean()
+                );
             _sender = sender;            
         }
 
-        protected void SendVolumeLevelIfNeeded(float[] buffer)
+        protected void UpdateVolumeLevelAndSendIfNeeded(float[] buffer)
         {
-            if (!_sendMicrophoneVolumeLevel)
+            _volumeLevelSendCount++;
+            if (_volumeLevelSendCount < SendVolumeLevelSkip)
             {
                 return;
             }
-            
-            _volumeLevelSendCount++;
-            if (_volumeLevelSendCount >= SendVolumeLevelSkip)
+
+            _volumeLevelSendCount = 0;
+            if (_sendMicrophoneVolumeLevel || _needAlwaysUpdateVolume)
             {
-                _volumeLevelSendCount = 0;
                 UpdateVolumeLevel(buffer);
-                _sender.SendCommand(MessageFactory.Instance.MicrophoneVolumeLevel(_currentVolumeLevel));
+            }
+
+            if (_sendMicrophoneVolumeLevel)
+            {
+                _sender.SendCommand(MessageFactory.Instance.MicrophoneVolumeLevel(CurrentVolumeLevel));
             }
         }
-        
-                
+
         //マイク感度が0dB以外の場合、値を調整します。
         protected void ApplySensitivityToProcessBuffer(float[] buffer)
         {
@@ -113,7 +115,7 @@ namespace Baku.VMagicMirror
             float mean = sum / buffer.Length;
             float meanDb = Mathf.Log10(mean) * 10f;
             int rawResult = Mathf.Clamp((int)(meanDb - BottomVolumeDb), 0, 50);
-            _currentVolumeLevel = Mathf.Max(rawResult, _currentVolumeLevel - LevelDecreasePerRefresh);
+            CurrentVolumeLevel = Mathf.Max(rawResult, CurrentVolumeLevel - LevelDecreasePerRefresh);
         }
 
         protected static int GetDataLength(int bufferLength, int head, int tail) 

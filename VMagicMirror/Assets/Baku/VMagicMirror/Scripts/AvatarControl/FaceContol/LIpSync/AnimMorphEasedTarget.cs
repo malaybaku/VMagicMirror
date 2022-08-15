@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using VRM;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -62,13 +63,22 @@ namespace Baku.VMagicMirror
             BlendShapeKey.CreateFromPreset(BlendShapePreset.U),
         };
 
-        private OVRLipSyncContextBase _context;
+        private VmmLipSyncContextBase _context;
+        private bool _adjustLipSyncByVolume = false;
         private OVRLipSync.Viseme _previousViseme = OVRLipSync.Viseme.sil;
         private float _transitionTimer = 0.0f;
+
+        [Inject]
+        public void Initialize(IMessageReceiver receiver)
+        {
+            receiver.AssignCommandHandler(
+                VmmCommands.AdjustLipSyncByVolume,
+                command => _adjustLipSyncByVolume = command.ToBoolean());
+        }
         
         private void Start()
         {
-            _context = GetComponent<OVRLipSyncContextBase>();
+            _context = GetComponent<VmmLipSyncContextBase>();
             if (_context == null)
             {
                 LogOutput.Instance.Write("同じGameObjectにOVRLipSyncContextBaseを継承したクラスが見つかりません。");
@@ -145,14 +155,24 @@ namespace Baku.VMagicMirror
                 }
             }
 
+            var factor = _adjustLipSyncByVolume ? GetLipSyncFactorByVolume() : 1f;
             //順番に注意: visemeのキーに合わせてます
-            _lipSyncSource.A = _blendShapeWeights[_keys[0]];
-            _lipSyncSource.E = _blendShapeWeights[_keys[1]];
-            _lipSyncSource.I = _blendShapeWeights[_keys[2]];
-            _lipSyncSource.O = _blendShapeWeights[_keys[3]];
-            _lipSyncSource.U = _blendShapeWeights[_keys[4]];
+            _lipSyncSource.A = _blendShapeWeights[_keys[0]] * factor;
+            _lipSyncSource.E = _blendShapeWeights[_keys[1]] * factor;
+            _lipSyncSource.I = _blendShapeWeights[_keys[2]] * factor;
+            _lipSyncSource.O = _blendShapeWeights[_keys[3]] * factor;
+            _lipSyncSource.U = _blendShapeWeights[_keys[4]] * factor;
         }
 
+        private float GetLipSyncFactorByVolume()
+        {
+            //-24dBで口が開きはじめ、0dBになると完全に開く
+            const int MinLevel = 14;
+            const int MaxLevel = 38;
+            return Mathf.Clamp(_context.CurrentVolumeLevel - MinLevel, 0, MaxLevel - MinLevel) * 1.0f /
+                (MaxLevel - MinLevel);
+        }
+        
         private void UpdateToClosedMouth()
         {
             foreach(var key in _keys)

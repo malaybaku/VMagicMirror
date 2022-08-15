@@ -83,6 +83,7 @@
         public const string SetMicrophoneDeviceName = nameof(SetMicrophoneDeviceName);
         public const string SetMicrophoneSensitivity = nameof(SetMicrophoneSensitivity);
         public const string SetMicrophoneVolumeVisibility = nameof(SetMicrophoneVolumeVisibility);
+        public const string AdjustLipSyncByVolume = nameof(AdjustLipSyncByVolume);
 
         // Motion, Eye
         public const string LookAtStyle = nameof(LookAtStyle);

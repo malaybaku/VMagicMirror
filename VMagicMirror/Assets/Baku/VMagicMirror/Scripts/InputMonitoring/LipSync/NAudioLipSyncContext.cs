@@ -228,7 +228,7 @@ namespace Baku.VMagicMirror
                 if (_processBufferIndex >= _processBuffer.Length)
                 {
                     ApplySensitivityToProcessBuffer(_processBuffer);
-                    SendVolumeLevelIfNeeded(_processBuffer);
+                    UpdateVolumeLevelAndSendIfNeeded(_processBuffer);
                     OVRLipSync.ProcessFrame(Context, _processBuffer, Frame);
                     _processBufferIndex = 0;
                 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Baku.VMagicMirrorConfig
@@ -137,7 +138,8 @@ namespace Baku.VMagicMirrorConfig
         public Message SetMicrophoneDeviceName(string deviceName) => WithArg(deviceName);
         public Message SetMicrophoneSensitivity(int sensitivity) => WithArg(sensitivity);
         public Message SetMicrophoneVolumeVisibility(bool isVisible) => WithArg(isVisible);
-
+        public Message AdjustLipSyncByVolume(bool adjust) => WithArg(adjust);
+        
         /// <summary>
         /// Query.
         /// </summary>

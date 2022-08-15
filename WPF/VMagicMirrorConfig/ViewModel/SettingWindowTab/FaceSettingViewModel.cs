@@ -153,6 +153,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> EnableLipSync => _model.EnableLipSync;
         public RProperty<string> LipSyncMicrophoneDeviceName { get; }
         public RProperty<int> MicrophoneSensitivity => _model.MicrophoneSensitivity;
+        public RProperty<bool> AdjustLipSyncByVolume => _model.AdjustLipSyncByVolume;
 
         public RProperty<bool> ShowMicrophoneVolume => _microphoneStatus.ShowMicrophoneVolume;
         public RProperty<int> MicrophoneVolumeValue => _microphoneStatus.MicrophoneVolumeValue;

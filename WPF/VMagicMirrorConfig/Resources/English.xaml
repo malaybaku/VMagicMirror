@@ -237,6 +237,7 @@ png image and 3D model by glb or gltf is available.</sys:String>
     <sys:String x:Key="Motion_Mouth_MicrophoneName">Microphone</sys:String>    
     <sys:String x:Key="Motion_Mouth_Microphone_Sensitivity">Sensitivity [dB]</sys:String>
     <sys:String x:Key="Motion_Mouth_Microphone_Visualize">Show Volume</sys:String>
+    <sys:String x:Key="Motion_Mouth_Microphone_AdjustLipSync">Adjust LipSync by Volume</sys:String>
     
     <sys:String x:Key="Motion_Face_EnableFaceTracking">Track Face</sys:String>
     <sys:String x:Key="Motion_Face_CameraName">Camera</sys:String>    

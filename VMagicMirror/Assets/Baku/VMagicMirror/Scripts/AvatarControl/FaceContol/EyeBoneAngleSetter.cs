@@ -46,8 +46,8 @@ namespace Baku.VMagicMirror
         private Transform _leftEye;
         private Transform _rightEye;
         private bool _hasModel;
-        private bool _hasLeftEye;
-        private bool _hasRightEye;
+        private bool _hasLeftEyeBone;
+        private bool _hasRightEyeBone;
 
         private bool _moveEyesDuringFaceClipApplied = false;
         private float _motionScale = 1f;
@@ -101,17 +101,16 @@ namespace Baku.VMagicMirror
             _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
             _blendShape = info.blendShape;
 
-            //NOTE: せっかく整頓しているので、片目だけボーンがあるモデルでちゃんと動くことを検討する
-            _hasLeftEye = _leftEye != null;
-            _hasRightEye = _rightEye != null;
+            _hasLeftEyeBone = _leftEye != null;
+            _hasRightEyeBone = _rightEye != null;
             _hasModel = true;
         }
 
         private void OnVrmDisposed()
         {
             _hasModel = false;
-            _hasLeftEye = false;
-            _hasRightEye = false;
+            _hasLeftEyeBone = false;
+            _hasRightEyeBone = false;
 
             _blendShape = null;
             _leftEye = null;
@@ -132,7 +131,8 @@ namespace Baku.VMagicMirror
         
         private void LateUpdate()
         {
-            if (!_hasModel || (!_hasLeftEye && !_hasRightEye))
+            if (!_hasModel || 
+                (_boneApplier.HasLookAtBoneApplier && !_hasLeftEyeBone && !_hasRightEyeBone))
             {
                 return;
             }
@@ -190,7 +190,7 @@ namespace Baku.VMagicMirror
             ReserveReset = false;
             ReserveWeight = 1f;
 
-            if (_boneApplier.NeedOverwrite)
+            if (_boneApplier.HasLookAtBoneApplier)
             {
                 if (_useAvatarEyeCurveMap)
                 {
@@ -198,12 +198,12 @@ namespace Baku.VMagicMirror
                     (rightYaw, rightPitch) = _boneApplier.GetRightMappedValues(rightYaw, rightPitch);
                 }
 
-                if (_hasLeftEye)
+                if (_hasLeftEyeBone)
                 {
                     _leftEye.localRotation = Quaternion.Euler(leftPitch, leftYaw, 0f);
                 }
 
-                if (_hasRightEye)
+                if (_hasRightEyeBone)
                 {
                     _rightEye.localRotation = Quaternion.Euler(rightPitch, rightYaw, 0f);
                 }                

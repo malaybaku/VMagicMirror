@@ -61,6 +61,8 @@ namespace Baku.VMagicMirrorConfig
             FaceNeutralClip = new RProperty<string>(setting.FaceNeutralClip, v => SendMessage(factory.FaceNeutralClip(v)));
             FaceOffsetClip = new RProperty<string>(setting.FaceOffsetClip, v => SendMessage(factory.FaceOffsetClip(v)));
 
+            MoveEyesDuringFaceClipApplied = new RProperty<bool>(
+                setting.MoveEyesDuringFaceClipApplied, v => SendMessage(factory.EnableEyeMotionDuringClipApplied(v)));
             DisableBlendShapeInterpolate = new RProperty<bool>(
                 setting.DisableBlendShapeInterpolate, v => SendMessage(factory.DisableBlendShapeInterpolate(v)));
 
@@ -172,6 +174,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<string> FaceNeutralClip { get; }
         public RProperty<string> FaceOffsetClip { get; }
 
+        public RProperty<bool> MoveEyesDuringFaceClipApplied { get; }
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
 
         public void RequestCalibrateFace() => SendMessage(MessageFactory.Instance.CalibrateFace());
@@ -263,6 +266,8 @@ namespace Baku.VMagicMirrorConfig
             UseLookAtPointNone.Value = setting.UseLookAtPointNone;
             UseLookAtPointMousePointer.Value = setting.UseLookAtPointMousePointer;
             UseLookAtPointMainCamera.Value = setting.UseLookAtPointMainCamera;
+
+            MoveEyesDuringFaceClipApplied.Value = setting.MoveEyesDuringFaceClipApplied;
             UseAvatarEyeBoneMap.Value = setting.UseAvatarEyeBoneMap;
             EyeBoneRotationScale.Value = setting.EyeBoneRotationScale;
             EyeBoneRotationScaleWithMap.Value = setting.EyeBoneRotationScaleWithMap;

@@ -57,6 +57,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<string> ImageQuality => _imageQuality.ImageQuality;
         public ReadOnlyObservableCollection<string> ImageQualityNames => _imageQuality.ImageQualityNames;
         public RProperty<bool> HalfFpsMode => _model.HalfFpsMode;
+        public RProperty<bool> UseFrameReductionEffect => _model.UseFrameReductionEffect;
 
         void UpdateLightColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(LightColor));
         void UpdateBloomColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(BloomColor));

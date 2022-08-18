@@ -71,9 +71,11 @@
         public const string DisableFaceTrackingHorizontalFlip = nameof(DisableFaceTrackingHorizontalFlip);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
+
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
         public const string FaceNeutralClip = nameof(FaceNeutralClip);
         public const string FaceOffsetClip = nameof(FaceOffsetClip);
+        public const string EnableEyeMotionDuringClipApplied = nameof(EnableEyeMotionDuringClipApplied);
         public const string DisableBlendShapeInterpolate = nameof(DisableBlendShapeInterpolate);
 
         // Motion, Mouth
@@ -133,6 +135,9 @@
         public const string SetHalfFpsMode = nameof(SetHalfFpsMode);
 
         // Lighting 
+        //NOTE: フレームリダクションはモーションよりはエフェクトかな～という事でこっち。
+        public const string UseFrameReductionEffect = nameof(UseFrameReductionEffect);
+
         public const string LightIntensity = nameof(LightIntensity);
         public const string LightColor = nameof(LightColor);
         public const string LightYaw = nameof(LightYaw);

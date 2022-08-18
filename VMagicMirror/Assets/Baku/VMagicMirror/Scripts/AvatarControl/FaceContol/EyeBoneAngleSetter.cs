@@ -49,6 +49,7 @@ namespace Baku.VMagicMirror
         private bool _hasLeftEye;
         private bool _hasRightEye;
 
+        private bool _moveEyesDuringFaceClipApplied = false;
         private float _motionScale = 1f;
         private float _motionScaleWithMap = 1f;
         private bool _useAvatarEyeCurveMap = true;
@@ -71,6 +72,11 @@ namespace Baku.VMagicMirror
 
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposed;
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableEyeMotionDuringClipApplied, 
+                command => _moveEyesDuringFaceClipApplied = command.ToBoolean()
+                );
             
             receiver.AssignCommandHandler(
                 VmmCommands.SetEyeBoneRotationScale,
@@ -162,26 +168,26 @@ namespace Baku.VMagicMirror
             leftPitch += _eyeLookAt.Pitch;
             rightPitch += _eyeLookAt.Pitch;
 
-            if (ReserveReset)
+            if (ReserveReset && !_moveEyesDuringFaceClipApplied)
             {
                 //NOTE: 0でもmap処理が入った結果、非ゼロの角度が入る可能性があるのでreturnはしない
                 leftPitch = 0f;
                 leftYaw = 0f;
                 rightPitch = 0f;
                 rightYaw = 0f;
-                ReserveReset = false;
             }
             else
             {
                 var motionScale = _useAvatarEyeCurveMap
                     ? _motionScaleWithMap
                     : _motionScale * factorWhenMapDisable;
-                var weightFactor = motionScale * ReserveWeight;
+                var weightFactor = motionScale * (_moveEyesDuringFaceClipApplied ? 1 : ReserveWeight);
                 leftPitch = ScaleAndClampAngle(leftPitch, weightFactor);
                 leftYaw = ScaleAndClampAngle(leftYaw, weightFactor);
                 rightPitch = ScaleAndClampAngle(rightPitch, weightFactor);
                 rightYaw = ScaleAndClampAngle(rightYaw, weightFactor);
             }
+            ReserveReset = false;
             ReserveWeight = 1f;
 
             if (_boneApplier.NeedOverwrite)

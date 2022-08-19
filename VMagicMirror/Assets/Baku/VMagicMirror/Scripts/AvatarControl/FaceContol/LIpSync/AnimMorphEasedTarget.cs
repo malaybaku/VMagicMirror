@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror
         };
 
         private VmmLipSyncContextBase _context;
-        private bool _adjustLipSyncByVolume = false;
+        private bool _adjustLipSyncByVolume = true;
         private OVRLipSync.Viseme _previousViseme = OVRLipSync.Viseme.sil;
         private float _transitionTimer = 0.0f;
 

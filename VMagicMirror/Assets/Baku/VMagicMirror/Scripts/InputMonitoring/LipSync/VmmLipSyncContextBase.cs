@@ -8,12 +8,12 @@ namespace Baku.VMagicMirror
         private const int BottomVolumeDb = -38;
         
         //ボリューム情報は数フレームに1回送ればいいよね、という値
-        private const int SendVolumeLevelSkip = 2;
+        private const int SendVolumeLevelSkip = 6;
         //ボリュームが急に下がった場合は実際の値ではなく、直前フレームからこのdB値だけ落とした値をWPFに通知する
         private const int LevelDecreasePerRefresh = 1;
         
         private bool _sendMicrophoneVolumeLevel = false;
-        private bool _needAlwaysUpdateVolume = false;
+        private bool _needAlwaysUpdateVolume = true;
         private int _volumeLevelSendCount = 0;
         private int _sensitivity = 0;
 

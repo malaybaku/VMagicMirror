@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror
         private bool _hasBoneApplier;
         private VRMLookAtBoneApplyer _applier;
 
-        public bool NeedOverwrite => _hasBoneApplier;
+        public bool HasLookAtBoneApplier => _hasBoneApplier;
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
@@ -48,7 +48,7 @@ namespace Baku.VMagicMirror
 
         public (float resultYaw, float resultPitch) GetLeftMappedValues(float yaw, float pitch)
         {
-            if (!NeedOverwrite)
+            if (!HasLookAtBoneApplier)
             {
                 return (yaw, pitch);
             }
@@ -66,7 +66,7 @@ namespace Baku.VMagicMirror
 
         public (float resultYaw, float resultPitch) GetRightMappedValues(float yaw, float pitch)
         {
-            if (!NeedOverwrite)
+            if (!HasLookAtBoneApplier)
             {
                 return (yaw, pitch);
             }

@@ -241,6 +241,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_Mouth_MicrophoneName">マイク</sys:String>    
     <sys:String x:Key="Motion_Mouth_Microphone_Sensitivity">マイク感度 [dB]</sys:String>
     <sys:String x:Key="Motion_Mouth_Microphone_Visualize">音量をチェック</sys:String>
+    <sys:String x:Key="Motion_Mouth_Microphone_AdjustLipSync">音量でリップシンクの開き方を調整</sys:String>
 
     <sys:String x:Key="Motion_Face_EnableFaceTracking">顔をトラッキング</sys:String>
     <sys:String x:Key="Motion_Face_CameraName">カメラ</sys:String>    

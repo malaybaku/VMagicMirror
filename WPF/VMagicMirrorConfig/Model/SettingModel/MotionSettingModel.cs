@@ -104,6 +104,7 @@ namespace Baku.VMagicMirrorConfig
             EnableLipSync = new RProperty<bool>(setting.EnableLipSync, v => SendMessage(factory.EnableLipSync(v)));
             LipSyncMicrophoneDeviceName = new RProperty<string>(setting.LipSyncMicrophoneDeviceName, v => SendMessage(factory.SetMicrophoneDeviceName(v)));
             MicrophoneSensitivity = new RProperty<int>(setting.MicrophoneSensitivity, v => SendMessage(factory.SetMicrophoneSensitivity(v)));
+            AdjustLipSyncByVolume = new RProperty<bool>(setting.AdjustLipSyncByVolume, v => SendMessage(factory.AdjustLipSyncByVolume(v)));
 
             EnableHidRandomTyping = new RProperty<bool>(setting.EnableHidRandomTyping, v => SendMessage(factory.EnableHidRandomTyping(v)));
             EnableShoulderMotionModify = new RProperty<bool>(setting.EnableShoulderMotionModify, v => SendMessage(factory.EnableShoulderMotionModify(v)));
@@ -201,7 +202,9 @@ namespace Baku.VMagicMirrorConfig
 
         //NOTE: dB単位なので0がデフォルト。対数ベースのほうがレンジ取りやすい
         public RProperty<int> MicrophoneSensitivity { get; }
-
+ 
+        public RProperty<bool> AdjustLipSyncByVolume { get; }
+        
         #endregion
 
         #region Arm
@@ -257,6 +260,7 @@ namespace Baku.VMagicMirrorConfig
             EnableLipSync.Value = setting.EnableLipSync;
             LipSyncMicrophoneDeviceName.Value = setting.LipSyncMicrophoneDeviceName;
             MicrophoneSensitivity.Value = setting.MicrophoneSensitivity;
+            AdjustLipSyncByVolume.Value = setting.AdjustLipSyncByVolume;
         }
 
         public void ResetFaceEyeSetting()

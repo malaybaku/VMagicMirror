@@ -79,6 +79,8 @@
         //NOTE: dB単位なので0がデフォルト。対数ベースのほうがレンジ取りやすい
         public int MicrophoneSensitivity { get; set; } = 0;
 
+        public bool AdjustLipSyncByVolume { get; set; } = true;
+
         #endregion
 
         #region Arm
@@ -132,6 +134,7 @@
             EnableLipSync = true;
             LipSyncMicrophoneDeviceName = "";
             MicrophoneSensitivity = 0;
+            AdjustLipSyncByVolume = true;
         }
 
         public void ResetFaceEyeSetting()

@@ -239,6 +239,7 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Motion_Mouth_MicrophoneName">Microphone</sys:String>    
     <sys:String x:Key="Motion_Mouth_Microphone_Sensitivity">Sensitivity [dB]</sys:String>
     <sys:String x:Key="Motion_Mouth_Microphone_Visualize">Show Volume</sys:String>
+    <sys:String x:Key="Motion_Mouth_Microphone_AdjustLipSync">Adjust LipSync by Volume</sys:String>
     
     <sys:String x:Key="Motion_Face_EnableFaceTracking">Track Face</sys:String>
     <sys:String x:Key="Motion_Face_CameraName">Camera</sys:String>    

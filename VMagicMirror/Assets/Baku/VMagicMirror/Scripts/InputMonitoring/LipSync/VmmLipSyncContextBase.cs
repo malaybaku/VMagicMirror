@@ -5,7 +5,7 @@ namespace Baku.VMagicMirror
     public abstract class VmmLipSyncContextBase : OVRLipSyncContextBase
     {
         //この値(dB)から+50dBまでの範囲を0 ~ 50のレベル情報として通知する。適正音量の目安になる値。
-        private const int BottomVolumeDb = -38;
+        private const int BottomVolumeDb = -50;
         
         //ボリューム情報は数フレームに1回送ればいいよね、という値
         private const int SendVolumeLevelSkip = 6;

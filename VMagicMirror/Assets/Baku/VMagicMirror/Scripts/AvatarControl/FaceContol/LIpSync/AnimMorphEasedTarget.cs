@@ -166,11 +166,22 @@ namespace Baku.VMagicMirror
 
         private float GetLipSyncFactorByVolume()
         {
-            //-24dBで口が開きはじめ、0dBになると完全に開く
-            const int MinLevel = 14;
-            const int MaxLevel = 38;
-            return Mathf.Clamp(_context.CurrentVolumeLevel - MinLevel, 0, MaxLevel - MinLevel) * 1.0f /
-                (MaxLevel - MinLevel);
+            //-40dBで口が開きはじめ、-20dBになると完全に開く
+            const int MinLevel = 10;
+            const int MaxLevel = 30;
+            
+            var rawResult = 
+                Mathf.Clamp(_context.CurrentVolumeLevel - MinLevel, 0, MaxLevel - MinLevel) * 1.0f / (MaxLevel - MinLevel);
+
+            if (_context.CurrentVolumeLevel > MinLevel)
+            {
+                return Mathf.Clamp(rawResult, 0.3f, 1f);
+            }
+            else
+            {
+                //ここでパキっと0になることはそんなに多くなくて、動くの渋いかなあ…うーん…
+                return 0f;
+            }
         }
         
         private void UpdateToClosedMouth()

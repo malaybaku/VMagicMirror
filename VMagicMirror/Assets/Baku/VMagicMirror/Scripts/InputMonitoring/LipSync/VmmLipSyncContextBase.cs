@@ -32,7 +32,7 @@ namespace Baku.VMagicMirror
                     return;
                 }
                 _sensitivity = value;
-                _sensitivityFactor = Mathf.Pow(10f, Sensitivity * 0.1f);
+                _sensitivityFactor = Mathf.Pow(10f, Sensitivity * 0.05f);
             }
         }
         

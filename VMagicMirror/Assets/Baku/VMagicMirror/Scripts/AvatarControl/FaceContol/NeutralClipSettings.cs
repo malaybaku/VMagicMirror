@@ -40,15 +40,17 @@ namespace Baku.VMagicMirror
         {
             if (HasValidNeutralClipKey)
             {
-                proxy.AccumulateValue(NeutralClipKey, weight);
+                //NOTE: 他の処理と被って値が1を超えるのを避けておく、一応
+                proxy.AccumulateValue(NeutralClipKey, Mathf.Min(weight, 1f - proxy.GetValue(NeutralClipKey)));
             }
         }
 
-        public void ApplyOffsetClip(VRMBlendShapeProxy proxy, float weight = 1f)
+        public void ApplyOffsetClip(VRMBlendShapeProxy proxy)
         {
             if (HasValidOffsetClipKey)
             {
-                proxy.AccumulateValue(OffsetClipKey, weight);
+                //NOTE: 他の処理と被って値が1を超えるのを避けておく、一応
+                proxy.AccumulateValue(OffsetClipKey, 1f - proxy.GetValue(OffsetClipKey));
             }
         }
 

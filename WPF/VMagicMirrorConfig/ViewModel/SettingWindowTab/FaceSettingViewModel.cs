@@ -10,7 +10,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ModelResolver.Instance.Resolve<MotionSettingModel>(),
             ModelResolver.Instance.Resolve<InstallPathChecker>(),
             ModelResolver.Instance.Resolve<DeviceListSource>(),
-            ModelResolver.Instance.Resolve<MicrophoneStatus>()
+            ModelResolver.Instance.Resolve<MicrophoneStatus>(),
+            ModelResolver.Instance.Resolve<FaceMotionBlendShapeNameStore>()
             )
         {
         }
@@ -19,10 +20,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             MotionSettingModel model,
             InstallPathChecker installPathChecker,
             DeviceListSource deviceListSource,
-            MicrophoneStatus microphoneStatus
+            MicrophoneStatus microphoneStatus,
+            FaceMotionBlendShapeNameStore blendShapeNameStore
             )
         {
             _model = model;
+            _blendShapeNameStore = blendShapeNameStore;
             _deviceListSource = deviceListSource;
             _microphoneStatus = microphoneStatus;
 
@@ -70,7 +73,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly MotionSettingModel _model;
         private readonly DeviceListSource _deviceListSource;
         private readonly MicrophoneStatus _microphoneStatus;
-        private readonly FaceMotionBlendShapeNameStore _blendShapeNameStore = new FaceMotionBlendShapeNameStore();
+        private readonly FaceMotionBlendShapeNameStore _blendShapeNameStore;
 
         private void OnEyeBoneRotationScaleChanged(object? sender, PropertyChangedEventArgs e)
         {

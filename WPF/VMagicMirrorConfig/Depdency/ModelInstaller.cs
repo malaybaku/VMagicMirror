@@ -24,7 +24,7 @@
             resolver.Add(new LoadedAvatarInfo());
             resolver.Add(new ScreenshotTaker());
             resolver.Add(new HotKeyModel());
-            //resolver.Add(new MockHotKeySetter());
+            resolver.Add(new FaceMotionBlendShapeNameStore());
 
             resolver.Add(new WindowSettingModel());
             resolver.Add(new MotionSettingModel());
@@ -52,6 +52,7 @@
             resolver.Add(new ExternalTrackerRuntimeConfig());
             resolver.Add(new LargePointerVisibility());
             resolver.Add(new MicrophoneStatus());
+            resolver.Add(new FaceSettingReceiver());
 
             resolver.Add(new PreferenceFileManager());
 

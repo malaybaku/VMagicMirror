@@ -35,6 +35,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private EyeDownMotionController eyeDownMotionController;
         [SerializeField] private EyeJitter eyeJitter;
         [SerializeField] private ExternalTrackerEyeJitter externalTrackerEyeJitter;
+        [SerializeField] private BehaviorBasedAutoBlinkAdjust blinkAdjust;
         
         private NonImageBasedMotion _nonImageBasedMotion;
         private EyeBoneAngleMapApplier _boneApplier;
@@ -154,6 +155,12 @@ namespace Baku.VMagicMirror
 
             leftRate = Vector2.ClampMagnitude(leftRate, RateMagnitudeLimit);
             rightRate = Vector2.ClampMagnitude(rightRate, RateMagnitudeLimit);
+
+            var meanRateWithoutJitter = 0.5f * (
+                (leftRate + rightRate) - 
+                (eyeJitter.LeftEyeRotationRate + eyeJitter.RightEyeRotationRate)
+            );
+            blinkAdjust.SetEyeMoveRate(meanRateWithoutJitter);
 
             // 符号に注意、Unityの普通の座標系ではピッチは下が正
             var leftYaw = leftRate.x * HorizontalRateToAngle;

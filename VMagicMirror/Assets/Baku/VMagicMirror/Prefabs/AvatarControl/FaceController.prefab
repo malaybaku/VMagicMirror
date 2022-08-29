@@ -223,7 +223,7 @@ MonoBehaviour:
   changeTimeMin: 0.3
   changeTimeMax: 1
   rateRange: {x: 0.4, y: 0.2}
-  speedFactor: 7
+  speedFactor: 8
 --- !u!114 &4936425215266607946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,7 +272,7 @@ MonoBehaviour:
   headRotThreshold: 25
   headRotResetSpeed: 15
   headRotBlinkProbability: 0.6
-  eyeRotRateSpeedThreshold: 3
+  eyeRotRateSpeedThreshold: 0.3
   eyeRotBlinkProbability: 0.8
   lipSyncVisemeThreshold: 0.2
   lipSyncOnCountThreshold: 10

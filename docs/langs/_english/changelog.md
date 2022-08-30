@@ -8,6 +8,20 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.8
+{: .doc-sec2 }
+
+2022/08/31
+
+* Add: BlendShape based eye motion supported.
+* Add: (Experimental) Bone FPS reduction. Try from settings window > "Effects" tab > "Quality". Note that this option does NOT reduce CPU usage.
+* Add: "Move eyes during facial expression applied" option in setting window > "Face" tab > "Eye".
+* Change: Mic based lipsync reflects input volume. You can switch to previous behavior by set mic volume large, or disable "Adjust LipSync by Volume" option in settings window > "Face" tab > "Basic Settings".
+* Change: Adjust eye motion, for the case when using webcam or there is no tracking devices.
+* Fix: Default Face BlendShape and Offset BlendShape's incorrect selection / interpolation behaviors.
+* Fix: 2D accessory's incorrect behavior when it is attached to World and Foreground Mode is enabled.
+
+
 #### v2.0.7
 {: .doc-sec2 }
 

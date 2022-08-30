@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Baku.VMagicMirror.InterProcess;
 using UnityEngine;
 using Zenject;
 
@@ -21,8 +20,8 @@ namespace Baku.VMagicMirror
         [Range(0f, 1f)]
         [SerializeField] private float headRotBlinkProbability = 1.0f;
 
-        [Tooltip("視線の移動速度(deg/sec)がこの値を下から上にまたいだとき、まばたき条件を満たす")]
-        [SerializeField] private float eyeRotBlinkSpeedThreshold = 10f;
+        [Tooltip("無次元化した視線の移動量(/sec)がこの値を下から上にまたいだとき、まばたき条件を満たす")]
+        [SerializeField] private float eyeRotRateSpeedThreshold = 2.5f;
         
         [Tooltip("視線の向き変化によるまばたきイベントの発生条件を満たしたとき、実際にまばたきする確率")]
         [Range(0f, 1f)] 
@@ -58,17 +57,14 @@ namespace Baku.VMagicMirror
 
         //目のボーン回転
         private float _eyeRotBlinkCoolDownCount = 0f;
-        private bool _hasValidEye = false;
-        private Transform _leftEye = null;
-        private Transform _rightEye = null;
         //NOTE: この速度の計算根拠としては「左目と右目が見てる方向ベクトルの変化量」を使う。
         //ただし、首が動いたケースの計算は別でやってる事から、ここでは「首を使わない眼球運動」を扱うようにする。
         //ちょっとだけならしたいので、2フレーム分の値で速度を計算します
-        private Vector3 _prevEyeLookOrientation = Vector3.forward;
-        private Vector3 _prev2EyeLookOrientation = Vector3.forward;
-        private float _prevEyeRotSpeed = 0f;
         private bool _willBlinkByEyeMotion = false;
-        
+        private Vector2 _prevEyeLookRate = Vector2.zero;
+        private Vector2 _prev2EyeLookRate = Vector2.zero;
+        private float _prevEyeRotRateSpeed = 0f;
+
         //リップシンク
         private VmmLipSyncContextBase _lipSyncContext = null;
         private float _lipSyncBlinkCoolDownCount = 0f;
@@ -88,21 +84,6 @@ namespace Baku.VMagicMirror
                 _head = vrm.animator.GetBoneTransform(HumanBodyBones.Head);
                 _prevHeadRotation = _head.rotation;
                 _headRotationDegree = 0;
-
-                _leftEye = vrm.animator.GetBoneTransform(HumanBodyBones.LeftEye);
-                _rightEye = vrm.animator.GetBoneTransform(HumanBodyBones.RightEye);
-                _hasValidEye = (_leftEye != null) && (_rightEye != null);
-                if (_hasValidEye)
-                {
-                    //NOTE: 首から下を考慮しない、眼球運動の平均によって得られる視線方向ベクトル
-                    _prevEyeLookOrientation = 0.5f * (
-                        _leftEye.localRotation * Vector3.forward + 
-                        _rightEye.localRotation * Vector3.forward
-                        );
-                    _prev2EyeLookOrientation = _prevEyeLookOrientation;
-                    _prevEyeRotSpeed = 0f;
-                }
-                
                 _isVrmLoaded = true;
             };
             
@@ -111,16 +92,29 @@ namespace Baku.VMagicMirror
                 _isVrmLoaded = false;
                 _headRotationDegree = 0;
                 _head = null;
-
-                _hasValidEye = false;
-                _prevEyeRotSpeed = 0;
-                _leftEye = null;
-                _rightEye = null;
             };
             
             var _ = new BehaviorBasedBlinkReceiver(receiver, this);
         }
 
+        //NOTE: 無次元化された目の状態であって、Jitterの成分が除去されたような値を入れる
+        public void SetEyeMoveRate(Vector2 rate)
+        {
+            //NOTE: 2で割るのは2フレーム前の状態とくらべているから
+            var speed = (rate - _prev2EyeLookRate).magnitude * 0.5f / Time.deltaTime;
+            
+            if (_eyeRotBlinkCoolDownCount <= 0 &&
+                _prevEyeRotRateSpeed < eyeRotRateSpeedThreshold &&
+                speed >= eyeRotRateSpeedThreshold)
+            {
+                _willBlinkByEyeMotion = true;
+            }
+
+            _prevEyeRotRateSpeed = speed;
+            _prev2EyeLookRate = _prevEyeLookRate;
+            _prevEyeLookRate = rate;
+        }
+        
         private void Start()
         {
             StartCoroutine(ReadRotationsAtEndOfFrame());
@@ -174,10 +168,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            if (!_isVrmLoaded ||
-                !_hasValidEye ||
-                !EnableHeadRotationBasedBlinkAdjust
-                )
+            if (!_isVrmLoaded || !EnableHeadRotationBasedBlinkAdjust)
             {
                 return;
             }
@@ -263,7 +254,6 @@ namespace Baku.VMagicMirror
                 }
                 
                 ReadHeadRotation();
-                ReadEyeOrientation();
             }
 
             void ReadHeadRotation()
@@ -282,38 +272,6 @@ namespace Baku.VMagicMirror
                     _willBlinkByHeadMotion = true;
                 }
                 _prevHeadRotation = rot;
-            }
-
-            void ReadEyeOrientation()
-            {
-                if (!_hasValidEye)
-                {
-                    return;
-                }
-
-                var orientation = 0.5f * (
-                    _leftEye.localRotation * Vector3.forward + 
-                    _rightEye.localRotation * Vector3.forward
-                    );
-
-                Quaternion
-                    .FromToRotation(_prev2EyeLookOrientation, orientation)
-                    .ToAngleAxis(out float diffAngle, out _);
-                diffAngle = Mathf.Repeat(diffAngle + 180f, 360f) - 180f;
-
-                //2フレームぶんの時間差で拾った値を使っているので0.5をかけてます
-                float rotSpeed = 0.5f * diffAngle / Time.deltaTime;
-                
-                if (_eyeRotBlinkCoolDownCount <= 0 &&
-                    _prevEyeRotSpeed < eyeRotBlinkSpeedThreshold &&
-                    rotSpeed >= eyeRotBlinkSpeedThreshold)
-                {
-                    _willBlinkByEyeMotion = true;
-                }
-
-                _prevEyeRotSpeed = rotSpeed;
-                _prev2EyeLookOrientation = _prevEyeLookOrientation;
-                _prevEyeLookOrientation = orientation;
             }
         }
         

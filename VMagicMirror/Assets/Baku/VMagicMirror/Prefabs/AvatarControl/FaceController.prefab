@@ -35,7 +35,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3748028267383499194}
   - {fileID: 3752062569261173665}
@@ -170,6 +169,7 @@ MonoBehaviour:
   eyeDownMotionController: {fileID: 4339509367763658613}
   eyeJitter: {fileID: 3748028267383499190}
   externalTrackerEyeJitter: {fileID: 1428360342779558990}
+  blinkAdjust: {fileID: 5356487033938143835}
 --- !u!1 &3748028267383499195
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,7 +204,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3748028266611161172}
   m_RootOrder: 0
@@ -224,7 +223,7 @@ MonoBehaviour:
   changeTimeMin: 0.3
   changeTimeMax: 1
   rateRange: {x: 0.4, y: 0.2}
-  speedFactor: 4
+  speedFactor: 8
 --- !u!114 &4936425215266607946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,7 +272,7 @@ MonoBehaviour:
   headRotThreshold: 25
   headRotResetSpeed: 15
   headRotBlinkProbability: 0.6
-  eyeRotBlinkSpeedThreshold: 18
+  eyeRotRateSpeedThreshold: 0.3
   eyeRotBlinkProbability: 0.8
   lipSyncVisemeThreshold: 0.2
   lipSyncOnCountThreshold: 10
@@ -368,7 +367,6 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3748028266611161172}
   m_RootOrder: 1

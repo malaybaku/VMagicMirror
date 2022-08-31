@@ -28,6 +28,8 @@ This tab is added in v1.6.1. If you use older version, you can see most of these
 
 `Show Volume`: Turn on to see the input volume. Adjust `Sensitivity` such that, the volume bar is green and sometimes red during talking.
 
+`Adjust LipSync by Volume`: Turn on to reflect mic volume to lipsync result.
+
 `Track Face`: Choose WebCam to use face tracking feature. Available in Streaming tab.
 
 `High Power Mode`: Get more robust face tracking result, while getting higher CPU load. Available from v1.7.0.
@@ -49,6 +51,8 @@ This tab is added in v1.6.1. If you use older version, you can see most of these
 `Blink adjust by head motion and lip sync`: Check to enable auto blink action, when the avatar moves head quickly or detect the end of speech by microphone.
 
 `Eye Look Target`: Select where the character look to. Available in Streaming tab. Select `Mouse` to makes the character look at the orientation mouse pointer exists. Select `Fixed` to fix head motion except face tracking. `User` is similar to `Fixed`, but different when the character body does not face straight to the monitor, by `Free Camera Mode`. In this case `User` makes the character looks head to straight to monitor (in other word, keeps to look you).
+
+`Move eyes during facial expression applied`: Turn on to move eyes during [Word to Motion](./docs/expression)
 
 `Eye Motion Scale[%]`: Set how eye (eye bone) moves by mouse gaze, or by ExTracker. Recommend default (100%) for VRoid model. If avatar eyes motion is too small, try larger value.
 

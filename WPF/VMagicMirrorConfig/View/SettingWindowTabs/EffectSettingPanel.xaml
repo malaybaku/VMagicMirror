@@ -66,10 +66,16 @@
                                   />
                     </Grid>
 
-                    <CheckBox Margin="10,5,10,15"
+                    <CheckBox Margin="10,5"
                               Content="{DynamicResource ImageQuality_HalfFpsMode}"
                               IsChecked="{Binding HalfFpsMode.Value}"
                               />
+
+                    <CheckBox Margin="10,5,10,15"
+                              Content="{DynamicResource ImageQuality_UseBoneFrameReduction}"
+                              IsChecked="{Binding UseFrameReductionEffect.Value}"
+                              />
+
                 </StackPanel>
             </Border>
 

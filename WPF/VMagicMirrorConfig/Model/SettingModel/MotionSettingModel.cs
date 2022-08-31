@@ -61,6 +61,8 @@ namespace Baku.VMagicMirrorConfig
             FaceNeutralClip = new RProperty<string>(setting.FaceNeutralClip, v => SendMessage(factory.FaceNeutralClip(v)));
             FaceOffsetClip = new RProperty<string>(setting.FaceOffsetClip, v => SendMessage(factory.FaceOffsetClip(v)));
 
+            MoveEyesDuringFaceClipApplied = new RProperty<bool>(
+                setting.MoveEyesDuringFaceClipApplied, v => SendMessage(factory.EnableEyeMotionDuringClipApplied(v)));
             DisableBlendShapeInterpolate = new RProperty<bool>(
                 setting.DisableBlendShapeInterpolate, v => SendMessage(factory.DisableBlendShapeInterpolate(v)));
 
@@ -102,6 +104,7 @@ namespace Baku.VMagicMirrorConfig
             EnableLipSync = new RProperty<bool>(setting.EnableLipSync, v => SendMessage(factory.EnableLipSync(v)));
             LipSyncMicrophoneDeviceName = new RProperty<string>(setting.LipSyncMicrophoneDeviceName, v => SendMessage(factory.SetMicrophoneDeviceName(v)));
             MicrophoneSensitivity = new RProperty<int>(setting.MicrophoneSensitivity, v => SendMessage(factory.SetMicrophoneSensitivity(v)));
+            AdjustLipSyncByVolume = new RProperty<bool>(setting.AdjustLipSyncByVolume, v => SendMessage(factory.AdjustLipSyncByVolume(v)));
 
             EnableHidRandomTyping = new RProperty<bool>(setting.EnableHidRandomTyping, v => SendMessage(factory.EnableHidRandomTyping(v)));
             EnableShoulderMotionModify = new RProperty<bool>(setting.EnableShoulderMotionModify, v => SendMessage(factory.EnableShoulderMotionModify(v)));
@@ -172,6 +175,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<string> FaceNeutralClip { get; }
         public RProperty<string> FaceOffsetClip { get; }
 
+        public RProperty<bool> MoveEyesDuringFaceClipApplied { get; }
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
 
         public void RequestCalibrateFace() => SendMessage(MessageFactory.Instance.CalibrateFace());
@@ -198,7 +202,9 @@ namespace Baku.VMagicMirrorConfig
 
         //NOTE: dB単位なので0がデフォルト。対数ベースのほうがレンジ取りやすい
         public RProperty<int> MicrophoneSensitivity { get; }
-
+ 
+        public RProperty<bool> AdjustLipSyncByVolume { get; }
+        
         #endregion
 
         #region Arm
@@ -254,6 +260,7 @@ namespace Baku.VMagicMirrorConfig
             EnableLipSync.Value = setting.EnableLipSync;
             LipSyncMicrophoneDeviceName.Value = setting.LipSyncMicrophoneDeviceName;
             MicrophoneSensitivity.Value = setting.MicrophoneSensitivity;
+            AdjustLipSyncByVolume.Value = setting.AdjustLipSyncByVolume;
         }
 
         public void ResetFaceEyeSetting()
@@ -263,6 +270,8 @@ namespace Baku.VMagicMirrorConfig
             UseLookAtPointNone.Value = setting.UseLookAtPointNone;
             UseLookAtPointMousePointer.Value = setting.UseLookAtPointMousePointer;
             UseLookAtPointMainCamera.Value = setting.UseLookAtPointMainCamera;
+
+            MoveEyesDuringFaceClipApplied.Value = setting.MoveEyesDuringFaceClipApplied;
             UseAvatarEyeBoneMap.Value = setting.UseAvatarEyeBoneMap;
             EyeBoneRotationScale.Value = setting.EyeBoneRotationScale;
             EyeBoneRotationScaleWithMap.Value = setting.EyeBoneRotationScaleWithMap;

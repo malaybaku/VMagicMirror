@@ -55,6 +55,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="35"/>
@@ -114,7 +115,7 @@
 
                         <Grid Grid.Row="2" Grid.Column="1"
                               Grid.ColumnSpan="2"
-                              Margin="0,5,0,15">
+                              Margin="0,5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="150" />
@@ -156,7 +157,18 @@
                             </Border>
                         </Grid>
 
-                        <md:PackIcon Grid.Row="3" Grid.Column="0"
+                        <CheckBox Grid.Row="3" Grid.Column="1"                            
+                                  Grid.ColumnSpan="2"
+                                  Margin="15,0,0,15"
+                                  IsEnabled="{Binding EnableLipSync.Value}"
+                                  IsChecked="{Binding AdjustLipSyncByVolume.Value}"
+                                  >
+                            <CheckBox.Content>
+                                <TextBlock Text="{DynamicResource Motion_Mouth_Microphone_AdjustLipSync}"/>
+                            </CheckBox.Content>
+                        </CheckBox>
+
+                        <md:PackIcon Grid.Row="4" Grid.Column="0"
                                      VerticalAlignment="Center"
                                      HorizontalAlignment="Center"
                                      Width="25"
@@ -165,7 +177,7 @@
                                      Kind="Webcam"
                                      />
 
-                        <CheckBox Grid.Row="3" Grid.Column="1"
+                        <CheckBox Grid.Row="4" Grid.Column="1"
                                   Margin="5"
                                   IsChecked="{Binding EnableFaceTracking.Value}"
                                   >
@@ -174,7 +186,7 @@
                             </CheckBox.Content>
                         </CheckBox>
 
-                        <ComboBox Grid.Row="3" Grid.Column="2"
+                        <ComboBox Grid.Row="4" Grid.Column="2"
                                   HorizontalAlignment="Left"
                                   Margin="5,0"
                                   Width="200"
@@ -184,7 +196,7 @@
                                   md:HintAssist.Hint="Camera"
                                   />
 
-                        <CheckBox Grid.Row="4" Grid.Column="1"                            
+                        <CheckBox Grid.Row="5" Grid.Column="1"                            
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"
                                   IsEnabled="{Binding EnableFaceTracking.Value}"
@@ -194,7 +206,7 @@
                                 <TextBlock Text="{DynamicResource Motion_Face_EnableWebCamHighPowerMode}"/>
                             </CheckBox.Content>
                         </CheckBox>
-                        <CheckBox Grid.Row="5" Grid.Column="1"
+                        <CheckBox Grid.Row="6" Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"
                                   IsEnabled="{Binding EnableFaceTracking.Value}"
@@ -204,7 +216,7 @@
                                 <TextBlock Text="{DynamicResource Motion_Face_AutoBlinkDuringFaceTracking}"/>
                             </CheckBox.Content>
                         </CheckBox>
-                        <CheckBox Grid.Row="6" Grid.Column="1"
+                        <CheckBox Grid.Row="7" Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"
                                   IsEnabled="{Binding EnableFaceTracking.Value}"
@@ -214,7 +226,7 @@
                                 <TextBlock Text="{DynamicResource Motion_Face_EnableBodyLeanZ}"/>
                             </CheckBox.Content>
                         </CheckBox>                        
-                        <CheckBox Grid.Row="7" Grid.Column="1"
+                        <CheckBox Grid.Row="8" Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"
                                   IsEnabled="{Binding EnableFaceTracking.Value}"
@@ -327,6 +339,14 @@
                                   Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
                     </Grid>
 
+                    <CheckBox Margin="15,5,0,0"
+                              IsChecked="{Binding MoveEyesDuringFaceClipApplied.Value}"
+                              >
+                        <CheckBox.Content>
+                            <TextBlock Text="{DynamicResource Motion_Eye_MoveDuringClip}"/>
+                        </CheckBox.Content>
+                    </CheckBox>
+
                     <Grid Margin="5,0,0,10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -340,6 +360,7 @@
                         </Grid.ColumnDefinitions>
 
                         <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                  Margin="10,0"
                                   IsChecked="{Binding UseAvatarEyeBoneMap.Value}">
                             <CheckBox.Content>
                                 <TextBlock Text="{DynamicResource Motion_Eye_UseAvatarEyeBoneMap}"/>

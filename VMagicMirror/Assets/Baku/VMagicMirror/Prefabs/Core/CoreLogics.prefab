@@ -221,7 +221,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
         type: 3}
+      propertyPath: previewCanvas
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
+        type: 3}
+      propertyPath: settingAdjuster
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
+        type: 3}
+      propertyPath: windowStyleController
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
+        type: 3}
       propertyPath: loadSetting.bodyTarget
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
+        type: 3}
+      propertyPath: loadSetting.headTarget
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
@@ -237,26 +257,6 @@ PrefabInstance:
     - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
         type: 3}
       propertyPath: loadSetting.rightIndexTarget
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
-        type: 3}
-      propertyPath: loadSetting.headTarget
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
-        type: 3}
-      propertyPath: previewCanvas
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
-        type: 3}
-      propertyPath: windowStyleController
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6312515010370811263, guid: 948e310483123da43ab4787ee2ac6688,
-        type: 3}
-      propertyPath: settingAdjuster
       value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []

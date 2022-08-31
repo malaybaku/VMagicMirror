@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Baku.VMagicMirrorConfig
@@ -137,7 +138,8 @@ namespace Baku.VMagicMirrorConfig
         public Message SetMicrophoneDeviceName(string deviceName) => WithArg(deviceName);
         public Message SetMicrophoneSensitivity(int sensitivity) => WithArg(sensitivity);
         public Message SetMicrophoneVolumeVisibility(bool isVisible) => WithArg(isVisible);
-
+        public Message AdjustLipSyncByVolume(bool adjust) => WithArg(adjust);
+        
         /// <summary>
         /// Query.
         /// </summary>
@@ -145,6 +147,7 @@ namespace Baku.VMagicMirrorConfig
         public Message MicrophoneDeviceNames() => NoArg();
 
         public Message LookAtStyle(string v) => WithArg(v);
+        public Message EnableEyeMotionDuringClipApplied(bool enable) => WithArg(enable);
         public Message SetUseAvatarEyeBoneMap(bool use) => WithArg(use);
         public Message SetEyeBoneRotationScale(int percent) => WithArg(percent);
         public Message SetEyeBoneRotationScaleWithMap(int percent) => WithArg(percent);
@@ -224,6 +227,7 @@ namespace Baku.VMagicMirrorConfig
         public Message GetQualitySettingsInfo() => NoArg();
         public Message SetImageQuality(string name) => WithArg(name);
         public Message SetHalfFpsMode(bool enable) => WithArg(enable);
+        public Message UseFrameReductionEffect(bool enable) => WithArg(enable);
 
         /// <summary>
         /// Query

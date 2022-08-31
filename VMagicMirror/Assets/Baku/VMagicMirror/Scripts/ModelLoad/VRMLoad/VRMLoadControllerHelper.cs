@@ -9,6 +9,8 @@ namespace Baku.VMagicMirror
 {
     public static class VRMLoadControllerHelper
     {
+        private const float CurveMapValueTolerance = 0.01f;
+
         public static void SetupVrm(GameObject go, IKTargetTransforms ikTargets)
         {
             var animator = go.GetComponent<Animator>();
@@ -24,7 +26,7 @@ namespace Baku.VMagicMirror
             //NOTE: BlendShape式のはパラメータ調整をしない:
             //VRoidがBone方式を採用しているので、そっちだけやっとけばよいかなあという判断です。
             var vrmLookAtBoneApplier = go.GetComponent<VRMLookAtBoneApplyer>();
-            if (vrmLookAtBoneApplier != null)
+            if (vrmLookAtBoneApplier != null && CheckBoneApplierHasDefaultCurveMap(vrmLookAtBoneApplier))
             {
                 vrmLookAtBoneApplier.HorizontalInner.CurveYRangeDegree = 15;
                 vrmLookAtBoneApplier.HorizontalOuter.CurveYRangeDegree = 15;
@@ -37,6 +39,18 @@ namespace Baku.VMagicMirror
             AddFingerRigToRightIndex(animator, ikTargets);
         }
 
+        private static bool CheckBoneApplierHasDefaultCurveMap(VRMLookAtBoneApplyer value)
+        {
+            //NOTE: 初期値っぽい場合だけいじる。初期値でない場合、いじると余計なお世話になるので放置する。
+            return 
+                IsAbout10F(value.HorizontalInner.CurveYRangeDegree) &&
+                IsAbout10F(value.HorizontalOuter.CurveYRangeDegree) &&
+                IsAbout10F(value.VerticalDown.CurveYRangeDegree) &&
+                IsAbout10F(value.VerticalUp.CurveYRangeDegree);
+
+            bool IsAbout10F(float v) => Mathf.Abs(v - 10) < CurveMapValueTolerance;
+        }
+        
         private static FullBodyBipedIK AddFBBIK(GameObject go, IKTargetTransforms ikTargets, BipedReferences reference)
         {
             var fbbik = go.AddComponent<FullBodyBipedIK>();

@@ -71,7 +71,7 @@ namespace Baku.VMagicMirror
             var right = 0f;
             if (yaw < 0)
             {
-                left = Mathf.Clamp01(-_applier.Horizontal.Map(-yaw));
+                left = Mathf.Clamp01(_applier.Horizontal.Map(-yaw));
             }
             else
             {

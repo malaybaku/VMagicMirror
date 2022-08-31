@@ -16,7 +16,11 @@ lang: en
 #### 1. Settings
 {: .doc-sec2 }
 
-`Quality`: Select whole image quality.
+`Image Quality`: Select whole image quality.
+
+`Half FPS`: Switch to lower FPS. Useful when you need to reduce CPU usage.
+
+`Low FPS for Bone Motion`: Turn on to reduce avatar motion's FPS.  Note that this option does not reduce CPU usage.
 
 `Light`: Color, intensity, and direction of light.
 

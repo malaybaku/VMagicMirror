@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Baku.VMagicMirror
 {
     //NOTE: WPF側のMotionRequestとプロパティ名を統一してます。片方だけいじらないように！
+    //TODO: これは通信特化なデータ定義なので、別途アプリケーション内で引き回しやすい(ほぼ等価な)データ型を作ってもよい
 
     /// <summary>ビルトインモーションまたはカスタムモーション、および表情制御のリクエスト情報を表す。</summary>
     [Serializable]

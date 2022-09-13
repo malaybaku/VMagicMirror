@@ -34,9 +34,6 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// Word To Motionのブレンドシェイプを適用する。
     /// </summary>
-    /// <remarks>
-    /// このクラスは実行タイミングが遅く、有効時には他の表情制御をほぼ完全にオーバーライドする。
-    /// </remarks>
     public class WordToMotionBlendShape : MonoBehaviour
     {
         private static readonly BlendShapeKey[] _lipSyncKeys = new []
@@ -77,7 +74,7 @@ namespace Baku.VMagicMirror
 
         public void DisposeProxy()
         {
-            _allBlendShapeKeys = new BlendShapeKey[0];
+            _allBlendShapeKeys = Array.Empty<BlendShapeKey>();
         }
 
         /// <summary> trueの場合、このスクリプトではリップシンクのブレンドシェイプに書き込みを行いません。 </summary>

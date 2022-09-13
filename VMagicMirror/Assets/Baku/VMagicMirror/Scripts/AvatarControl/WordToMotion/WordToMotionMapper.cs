@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
 
         public WordToMotionMapper(BuiltInMotionClipData builtInClips)
         {
-            _builtInClips = builtInClips.items.ToArray();
+            _builtInClips = builtInClips.Items.ToArray();
         }
 
         //note: アロケーション都合で配列として公開するが、他所からは書きかえない想定

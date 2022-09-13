@@ -21,7 +21,7 @@ namespace Baku.VMagicMirror
         public string CustomMotionClipName;
         public float DurationWhenOnlyBlendShape;
         
-        //TODO: ここにHoldBlendShapeとかHoldPoseとかを追加するかも
+        //TODO: ここにHoldPoseとかを追加するかも
 
         /// <summary>
         /// ブレンドシェイプを適用すべきか否か

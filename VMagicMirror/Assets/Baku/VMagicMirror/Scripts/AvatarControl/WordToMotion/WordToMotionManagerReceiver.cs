@@ -37,11 +37,6 @@ namespace Baku.VMagicMirror
                 message => SetWordToMotionInputType(message.ToInt())
                 );
             
-            receiver.AssignCommandHandler(
-                VmmCommands.RequestCustomMotionDoctor,
-                _ => _manager.RunCustomMotionDoctor()
-                );
-            
             receiver.AssignQueryHandler(
                 VmmQueries.GetAvailableCustomMotionClipNames,
                 q =>

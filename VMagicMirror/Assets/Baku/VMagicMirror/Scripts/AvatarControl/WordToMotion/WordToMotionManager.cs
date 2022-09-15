@@ -631,12 +631,6 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void RunCustomMotionDoctor()
-        {
-            //とりあえず今は診断事項がないのでOK扱いで返します。
-            return;
-        }
-
         public string[] LoadAvailableCustomMotionClipNames() 
             => customMotionPlayer.LoadAvailableCustomMotionNames();
     }

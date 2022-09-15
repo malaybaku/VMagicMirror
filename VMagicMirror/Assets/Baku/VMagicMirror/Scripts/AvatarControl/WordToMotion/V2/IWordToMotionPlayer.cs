@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror
         //NOTE: TryPlayにするという手もあるかも
         bool CanPlay(MotionRequest request);
         void Play(MotionRequest request, out float duration);
-        //NOTE: Play()の場合と異なり、1回呼んだらループ再生になる && 同じ値を指定し続けたら無視してよい
+        //NOTE: Play()と異なり、1回呼んだらループ再生になり、同じモーションを指定され続ける限りそれは無視してよい
         void PlayPreview(MotionRequest request);
         
         void Stop();

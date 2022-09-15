@@ -12,6 +12,7 @@
     "com.beans.deform": "https://github.com/keenanwoodall/Deform.git",
     "com.malaybaku.managed-midijack": "https://github.com/malaybaku/MidiJack.git?path=/Assets/MidiJack",
     "com.neuecc.unirx": "https://github.com/neuecc/UniRx.git?path=Assets/Plugins/UniRx/Scripts",
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.3.1",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.barracuda": "2.1.0-preview",
     "com.unity.collections": "0.9.0-preview.6",

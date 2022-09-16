@@ -28,12 +28,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private AnimationClip defaultAnimation = null;
         [SerializeField] private FingerController fingerController = null;
         [SerializeField] private CustomMotionPlayer customMotionPlayer = null;
-        
-        /// <summary>
-        /// モーション実行後、単にIKを切るのではなくデフォルト(=立ち)状態に戻すべきかどうか判断するフラグを指定します。
-        /// note: これは実際には、タイピング動作が無効化されているときに使いたい
-        /// </summary>
-        public bool ShouldSetDefaultClipAfterMotion { get; set; } = false;
 
         /// <summary> ゲームパッド入力をWord to Motionに用いるかどうかを取得、設定します。 </summary>
         public bool UseGamepadForWordToMotion
@@ -250,11 +244,6 @@ namespace Baku.VMagicMirror
                         _simpleAnimation.CrossFade("Default", ikFadeDuration);
                         customMotionPlayer.FadeToDefaultPose(ikFadeDuration);
                     }
-                    else if (ShouldSetDefaultClipAfterMotion)
-                    {
-                        Debug.Log("End animation, return to default");
-                       _simpleAnimation.CrossFade("Default", ikFadeDuration);
-                    }
                 }
             }
 
@@ -384,14 +373,7 @@ namespace Baku.VMagicMirror
 
             _isPlayingMotion = true;
 
-            if (ShouldSetDefaultClipAfterMotion)
-            {
-                _simpleAnimation.CrossFade(clipName, ikFadeDuration);
-            }
-            else
-            {
-                _simpleAnimation.Play(clipName);
-            }
+            _simpleAnimation.Play(clipName);
             _currentBuiltInMotionName = clipName;
             _currentMotionType = MotionRequest.MotionTypeBuiltInClip;
 
@@ -529,7 +511,7 @@ namespace Baku.VMagicMirror
 
         private void StartPreviewCustomMotion(string clipName)
         {
-            var started = customMotionPlayer.PlayClipForPreview(clipName);
+            var started = customMotionPlayer.PlayPreview(clipName);
             //もうやってた場合: そのまま放置
             if (!started)
             {

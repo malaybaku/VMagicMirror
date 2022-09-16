@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
     /// 首の動きだけからなるようなモーションの再生機構。
     /// 全身用のアニメーションクリップを使わず、頭の角度リクエストのみを送出する
     /// </summary>
-    public class HeadMotionClipPlayer : MonoBehaviour
+    public class HeadMotionClipPlayer : MonoBehaviour, IWordToMotionPlayer
     {
         public const string NodClipName = "Nod";
         public const string ShakeClipName = "Shake";
@@ -32,7 +32,31 @@ namespace Baku.VMagicMirror
         private bool PreviewIsActive => !string.IsNullOrEmpty(_previewClipName);
         
         public bool IsPlaying => _playState != ClipPlayState.None && _playCount < _currentMotionParams.Duration;
-        
+
+        bool IWordToMotionPlayer.UseIkAndFingerFade => false;
+
+        bool IWordToMotionPlayer.CanPlay(MotionRequest request)
+        {
+            return request.MotionType == MotionRequest.MotionTypeBuiltInClip && (
+                request.BuiltInAnimationClipName == NodClipName ||
+                request.BuiltInAnimationClipName == ShakeClipName
+                );
+        }
+        void IWordToMotionPlayer.Play(MotionRequest request, out float duration)
+        {
+            Play(request.BuiltInAnimationClipName, out duration);
+        }
+
+        void IWordToMotionPlayer.Abort()
+        {
+            //停止指示は無視する、そんな長いモーションでもないので急動作を嫌っておく
+        }
+
+        void IWordToMotionPlayer.PlayPreview(MotionRequest request)
+        {
+            PlayPreview(request.BuiltInAnimationClipName);
+        }
+
         /// <summary> 頭に対して適用してほしい回転値を取得します。 </summary>
         public Quaternion RotationRequest { get; private set; }
 
@@ -45,7 +69,7 @@ namespace Baku.VMagicMirror
         private bool _hasNeck;
         private Transform _neck;
         private Transform _head;
-       
+
         public bool CanPlay(string clipName)
         {
             return clipName == NodClipName || clipName == ShakeClipName;
@@ -53,11 +77,6 @@ namespace Baku.VMagicMirror
         
         //durationは通常は副作用の一貫として拾って欲しいのでoutで渡す
         public void Play(string clipName, out float duration)
-        {
-            duration = Play(clipName);
-        }
-
-        private float Play(string clipName)
         {
             if (clipName == NodClipName)
             {
@@ -67,11 +86,10 @@ namespace Baku.VMagicMirror
             {
                 PlayShakingMotion();
             }
-            return _currentMotionParams.Duration;
+            duration = _currentMotionParams.Duration;
         }
         
-        /// <summary> うなづきモーションを開始します。 </summary>
-        public void PlayNoddingMotion()
+        private void PlayNoddingMotion()
         {
             //既にモーション実行中だった場合は巻き戻して再生し直すが、連続実行するとこのせいでガクつくのが多少まずい
             _playCount = 0f;
@@ -79,8 +97,7 @@ namespace Baku.VMagicMirror
             _playState = ClipPlayState.Nod;
         }
 
-        /// <summary> 首を横に振るモーションを開始します。 </summary>
-        public void PlayShakingMotion()
+        private void PlayShakingMotion()
         {
             _playCount = 0f;
             _currentMotionParams = setting.GetShakingMotionParams();
@@ -136,7 +153,7 @@ namespace Baku.VMagicMirror
         {
             if (PreviewIsActive && _playCount >= _currentMotionParams.Duration)
             {
-                Play(_previewClipName);
+                Play(_previewClipName, out _);
                 //プレビュー関数はプレビューが有効なあいだは毎フレーム呼ばれること、および
                 //プレビューの停止タイミングが読めづらいのを踏まえて毎回初期化してしまう
                 _previewClipName = "";

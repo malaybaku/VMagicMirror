@@ -11,20 +11,19 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// カスタムモーションをいい感じに管理するクラス。初期化から何から結構トリッキーなので要注意
     /// </summary>
-    public class CustomMotionPlayer : MonoBehaviour
+    public class CustomMotionPlayer : MonoBehaviour, IWordToMotionPlayer
     {
+        [SerializeField] private HumanoidAnimationSetter source = null;
+
         //NOTE: キーはファイル名から拡張子を抜いて小文字にしたやつ。
         //ただし、WPF側には小文字化してない文字を渡すので、その食い違いにはちょっと注意。
         private readonly Dictionary<string, CustomMotionItem> _clips = new Dictionary<string, CustomMotionItem>();
-
-        [SerializeField] private HumanoidAnimationSetter source = null;
 
         private bool _hasModel = false;
         private HumanPoseHandler _humanPoseHandler = null;
         private HumanPose _humanPose;
         
         //アニメーション中の位置をどうにかせんといけないので…
-        private Transform _vrmRoot;
         private Transform _hips;
 
         private Vector3 _originHipsPos;
@@ -43,7 +42,6 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 _humanPoseHandler = new HumanPoseHandler(info.animator.avatar, info.vrmRoot);
-                _vrmRoot = info.vrmRoot;
                 _hips = info.animator.GetBoneTransform(HumanBodyBones.Hips);
                 _originHipsPos = _hips.localPosition;
                 _originHipsRot = _hips.localRotation;
@@ -56,12 +54,51 @@ namespace Baku.VMagicMirror
                 _humanPoseHandler = null;
             };
         }
+        
+        #region IWordToMotionPlayer
 
+        bool IWordToMotionPlayer.IsPlaying 
+            => !string.IsNullOrEmpty(_currentMotionName) && !_isErasingCurrentClip;
+        
+        bool IWordToMotionPlayer.CanPlay(MotionRequest request)
+        {
+            return 
+                request.MotionType == MotionRequest.MotionTypeCustom &&
+                _clips.ContainsKey(request.CustomMotionClipName.ToLower());
+        }
+        
+        void IWordToMotionPlayer.Play(MotionRequest request, out float duration)
+        {
+            var clipName = request.CustomMotionClipName;
+            PlayClip(clipName);
+            duration = GetMotionDuration(clipName);
+        }
+
+        void IWordToMotionPlayer.PlayPreview(MotionRequest request)
+        {
+            PlayPreview(request.CustomMotionClipName);
+        }
+
+        void IWordToMotionPlayer.Abort()
+        {
+            //eraseがしたいので呼び方がちょｔ
+            FadeToDefaultPose(0.5f);
+        }
+
+        void IWordToMotionPlayer.StopPreview()
+        {
+            StopCurrentMotion();
+        }
+
+        bool IWordToMotionPlayer.UseIkAndFingerFade => true;
+
+        #endregion
+        
         /// <summary>
         /// NOTE: プレビューが有効な限り、毎回呼び出してもOK
         /// </summary>
         /// <param name="motionName"></param>
-        public bool PlayClipForPreview(string motionName)
+        public bool PlayPreview(string motionName)
         {
             if (!_hasModel || _currentMotionName == motionName.ToLower())
             {

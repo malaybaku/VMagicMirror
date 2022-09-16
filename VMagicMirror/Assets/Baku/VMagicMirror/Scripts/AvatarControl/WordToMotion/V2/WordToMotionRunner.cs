@@ -10,14 +10,13 @@ namespace Baku.VMagicMirror.WordToMotion
 {
     public class WordToMotionRunner : PresenterBase
     {
+        public const float IkFadeDuration = 0.5f;
+        
         private readonly IVRMLoadable _vrmLoadable;
         private readonly IWordToMotionPlayer[] _players;
         private readonly WordToMotionBlendShape _blendShape;
         private readonly IkWeightCrossFade _ikWeightCrossFade;
         private readonly FingerController _fingerController;
-        private readonly AnimationClip _defaultAnimation;
-
-        private SimpleAnimation _simpleAnimation;
         
         //TODO: こうじゃなくて、リクエストを受ける別のクラスが欲しい
         private readonly ReactiveProperty<string> _accessoryVisibilityRequest 
@@ -26,14 +25,12 @@ namespace Baku.VMagicMirror.WordToMotion
         public IReadOnlyReactiveProperty<string> AccessoryVisibilityRequest => _accessoryVisibilityRequest;        
 
         public WordToMotionRunner(
-            BuiltInMotionClipData builtInMotionClipData,
             IVRMLoadable vrmLoadable,
             IEnumerable<IWordToMotionPlayer> players,
             WordToMotionBlendShape blendShape,
             IkWeightCrossFade ikWeightCrossFade,
             FingerController fingerController)
         {
-            _defaultAnimation = builtInMotionClipData.DefaultStandingAnimation;
             _vrmLoadable = vrmLoadable;
             _players = players.ToArray();
             _blendShape = blendShape;
@@ -60,11 +57,6 @@ namespace Baku.VMagicMirror.WordToMotion
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _simpleAnimation = info.vrmRoot.gameObject.AddComponent<SimpleAnimation>();
-            _simpleAnimation.playAutomatically = false;
-            _simpleAnimation.AddState(_defaultAnimation, "Default");
-            _simpleAnimation.Play("Default");
-
             _blendShape.Initialize(info.blendShape);
             _ikWeightCrossFade.OnVrmLoaded(info);            
         }
@@ -73,7 +65,6 @@ namespace Baku.VMagicMirror.WordToMotion
         {
             _ikWeightCrossFade.OnVrmDisposing();
             _blendShape.DisposeProxy();
-            _simpleAnimation = null;
         }
 
         //NOTE: Previewかどうかによらず、実行中クリップがただひとつ存在する事にする
@@ -117,14 +108,21 @@ namespace Baku.VMagicMirror.WordToMotion
                     //NOTE: 実行中のと同じモーションが指定された場合も最初から再生してよい、というのがポイント
                     foreach (var player in _players.Where(p => p != playablePlayer))
                     {
-                        player.Stop();
+                        player.Abort();
                     }
                     playablePlayer?.Play(request, out duration);
+
+                    if (playablePlayer.UseIkAndFingerFade)
+                    {
+                        _fingerController.FadeOutWeight(IkFadeDuration);
+                        _ikWeightCrossFade.FadeOutArmIkWeights(IkFadeDuration);
+                    }
                 }
                 
                 CancelMotionReset();
                 _motionResetCts = new CancellationTokenSource();
-                ResetMotionAsync(duration, _motionResetCts.Token).Forget();
+                ResetMotionAsync(duration, playablePlayer?.UseIkAndFingerFade ?? false, _motionResetCts.Token)
+                    .Forget();
             }
 
             if (request.UseBlendShape)
@@ -164,7 +162,7 @@ namespace Baku.VMagicMirror.WordToMotion
             var playablePlayer = _players.FirstOrDefault(p => p.CanPlay(request));
             foreach (var player in _players.Where(p => p != playablePlayer))
             {
-                player.Stop();
+                player.StopPreview();
             }
             //NOTE: ここで同じ値が指定され続けた場合に動作し続けるのはPlayer側で保証してる
             playablePlayer?.PlayPreview(request);
@@ -193,20 +191,22 @@ namespace Baku.VMagicMirror.WordToMotion
             _accessoryVisibilityRequest.Value = "";
             foreach (var player in _players)
             {
-                player.Stop();
+                player.Abort();
             }
         }
 
         
         
-        private async UniTaskVoid ResetMotionAsync(float delay, CancellationToken cancellationToken)
+        private async UniTaskVoid ResetMotionAsync(float delay, bool fadeIkAndFinger, CancellationToken cancellationToken)
         {
             try
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
-                foreach (var player in _players)
+                //NOTE: player.Abort()とかは特に呼ばないのがポイント
+                if (fadeIkAndFinger)
                 {
-                    player.Stop();
+                    _fingerController.FadeInWeight(IkFadeDuration);
+                    _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
                 }
             }
             catch (OperationCanceledException)

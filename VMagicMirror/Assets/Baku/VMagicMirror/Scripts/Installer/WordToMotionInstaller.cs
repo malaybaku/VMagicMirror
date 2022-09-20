@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.WordToMotion;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.Installer
@@ -10,6 +11,7 @@ namespace Baku.VMagicMirror.Installer
     
         public override void Install(DiContainer container)
         {
+            container.Bind<WordToMotionAccessoryRequest>().AsSingle();
             container.BindInstance(wordToMotionManager).AsCached();
             container.BindInstance(blendShape).AsCached();
         }

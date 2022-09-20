@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Baku.VMagicMirror.WordToMotion;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -84,7 +85,7 @@ namespace Baku.VMagicMirror
                     _blendShape.ResetBlendShape();
                     StopPreviewBuiltInAllTypeMotion();
                     StopPreviewCustomMotion();
-                    _accessoryVisibilityRequest.Value = "";
+                    _accessoryRequest.Reset();
                 }
             }
         }
@@ -94,12 +95,8 @@ namespace Baku.VMagicMirror
 
         /// <summary>プレビュー動作の内容。</summary>
         public MotionRequest PreviewRequest { get; set; }
-        
-        private readonly ReactiveProperty<string> _accessoryVisibilityRequest 
-            = new ReactiveProperty<string>("");
-        /// <summary> 表示してほしいアクセサリーのFileIdか、または空文字 </summary>
-        public IReadOnlyReactiveProperty<string> AccessoryVisibilityRequest => _accessoryVisibilityRequest;
 
+        private WordToMotionAccessoryRequest _accessoryRequest;
         private HeadMotionClipPlayer _headMotionClipPlayer = null;
         private ClapMotionPlayer _clapMotionPlayer = null;
         private WordToMotionMapper _mapper = null;
@@ -126,7 +123,8 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable,
             BuiltInMotionClipData builtInClips,
             HeadMotionClipPlayer headMotionClipPlayer,
-            ClapMotionPlayer clapMotionPlayer
+            ClapMotionPlayer clapMotionPlayer,
+            WordToMotionAccessoryRequest accessoryRequest
             )
         {
             var _ = new WordToMotionManagerReceiver(receiver, this);
@@ -135,6 +133,7 @@ namespace Baku.VMagicMirror
             _mapper = new WordToMotionMapper(builtInClips);
             _headMotionClipPlayer = headMotionClipPlayer;
             _clapMotionPlayer = clapMotionPlayer;
+            _accessoryRequest = accessoryRequest;
         }
 
         public void LoadItems(MotionRequestCollection motionRequests)
@@ -301,15 +300,17 @@ namespace Baku.VMagicMirror
 
             if (EnablePreview && PreviewRequest != null)
             {
-                _accessoryVisibilityRequest.Value = PreviewRequest.AccessoryName;
+                _accessoryRequest.SetAccessoryRequest(PreviewRequest.AccessoryName);
                 ApplyPreviewBlendShape();
             }
 
             if (!EnablePreview)
             {
-                _accessoryVisibilityRequest.Value = (_isPlayingMotion || _isPlayingBlendShape) && _currentMotionRequest != null 
+                _accessoryRequest.SetAccessoryRequest(
+                    (_isPlayingMotion || _isPlayingBlendShape) && _currentMotionRequest != null 
                     ? _currentMotionRequest.AccessoryName
-                    : "";
+                    : ""
+                    );
             }
         }
 

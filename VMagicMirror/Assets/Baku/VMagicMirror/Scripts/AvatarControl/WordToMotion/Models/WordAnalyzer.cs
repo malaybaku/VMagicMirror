@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using UniRx;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -27,7 +29,7 @@ namespace Baku.VMagicMirror
             _sb.Append(c);
 
             //単語一覧から探す
-            string s = _sb.ToString();
+            var s = _sb.ToString();
             for(int i = 0; i < _wordSet.Length; i++)
             {
                 if (s.IndexOf(_wordSet[i], StringComparison.Ordinal) >= 0)
@@ -62,15 +64,7 @@ namespace Baku.VMagicMirror
         {
             _wordSet = new string[words.Length];
             Array.Copy(words, _wordSet, words.Length);
-
-            _longestWordLength = 0;
-            for(int i = 0; i < _wordSet.Length; i++)
-            {
-                if (_wordSet[i].Length > _longestWordLength)
-                {
-                    _longestWordLength = _wordSet[i].Length;
-                }
-            }
+            _longestWordLength = _wordSet.Any() ? _wordSet.Max(w => w.Length) : 1;
         }
     }
 }

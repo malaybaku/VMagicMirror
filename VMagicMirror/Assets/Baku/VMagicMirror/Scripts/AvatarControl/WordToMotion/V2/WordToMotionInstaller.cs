@@ -7,8 +7,8 @@ namespace Baku.VMagicMirror.WordToMotion
         public override void InstallBindings()
         {
             //repository
-            Container.BindInterfacesTo<WordToMotionRequestRepository>().AsSingle();
-            Container.BindInterfacesTo<CustomMotionRepository>().AsSingle();
+            Container.Bind<WordToMotionRequestRepository>().AsSingle();
+            Container.Bind<CustomMotionRepository>().AsSingle();
 
             //request sources
             Container.BindInterfacesTo<GamePadRequestSource>().AsSingle();
@@ -18,7 +18,7 @@ namespace Baku.VMagicMirror.WordToMotion
             
             //presenter
             Container.Bind<WordToMotionRequester>().AsSingle();
-            Container.BindInterfacesTo<WordToMotionPresenter>().AsSingle();
+            Container.Bind<WordToMotionPresenter>().AsSingle();
             Container.Bind<WordToMotionRunner>().AsSingle();
         }
     }

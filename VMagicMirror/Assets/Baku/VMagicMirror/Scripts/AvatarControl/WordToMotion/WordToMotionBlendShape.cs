@@ -31,9 +31,8 @@ namespace Baku.VMagicMirror
         public bool IsPreview { get; }
         
     }
-    /// <summary>
-    /// Word To Motionのブレンドシェイプを適用する。
-    /// </summary>
+
+    /// <summary> Word To Motionのブレンドシェイプを適用する。 </summary>
     public class WordToMotionBlendShape : MonoBehaviour
     {
         private static readonly BlendShapeKey[] _lipSyncKeys = new []

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UniRx;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.WordToMotion
@@ -17,13 +16,8 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly WordToMotionBlendShape _blendShape;
         private readonly IkWeightCrossFade _ikWeightCrossFade;
         private readonly FingerController _fingerController;
+        private readonly WordToMotionAccessoryRequest _accessoryRequest;
         
-        //TODO: こうじゃなくて、リクエストを受ける別のクラスが欲しい
-        private readonly ReactiveProperty<string> _accessoryVisibilityRequest 
-            = new ReactiveProperty<string>("");
-        /// <summary> 表示してほしいアクセサリーのFileIdか、または空文字 </summary>
-        public IReadOnlyReactiveProperty<string> AccessoryVisibilityRequest => _accessoryVisibilityRequest;        
-
         public WordToMotionRunner(
             IVRMLoadable vrmLoadable,
             IEnumerable<IWordToMotionPlayer> players,
@@ -133,7 +127,7 @@ namespace Baku.VMagicMirror.WordToMotion
 
             //アクセサリの処理
             CancelAccessoryReset();
-            _accessoryVisibilityRequest.Value = request.AccessoryName;
+            _accessoryRequest.SetAccessoryRequest(request.AccessoryName);
             if (!string.IsNullOrEmpty(request.AccessoryName))
             {
                 _accessoryResetCts = new CancellationTokenSource();
@@ -166,8 +160,7 @@ namespace Baku.VMagicMirror.WordToMotion
             }
             //NOTE: ここで同じ値が指定され続けた場合に動作し続けるのはPlayer側で保証してる
             playablePlayer?.PlayPreview(request);
-
-            _accessoryVisibilityRequest.Value = request.AccessoryName;
+            _accessoryRequest.SetAccessoryRequest(request.AccessoryName);
         }
 
         public void EnablePreview()
@@ -188,7 +181,7 @@ namespace Baku.VMagicMirror.WordToMotion
             CancelMotionReset();
             CancelAccessoryReset();
             _blendShape.ResetBlendShape();
-            _accessoryVisibilityRequest.Value = "";
+            _accessoryRequest.Reset();
             foreach (var player in _players)
             {
                 player.Abort();
@@ -233,7 +226,7 @@ namespace Baku.VMagicMirror.WordToMotion
             try
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
-                _accessoryVisibilityRequest.Value = "";
+                _accessoryRequest.Reset();
             }
             catch (OperationCanceledException)
             {

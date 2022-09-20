@@ -18,8 +18,9 @@ namespace Baku.VMagicMirror.WordToMotion
             
             //presenter
             Container.Bind<WordToMotionRequester>().AsSingle();
-            Container.Bind<WordToMotionPresenter>().AsSingle();
-            Container.Bind<WordToMotionRunner>().AsSingle();
+            Container.BindInterfacesTo<WordToMotionPresenter>().AsSingle();
+            Container.BindInterfacesAndSelfTo<WordToMotionRunner>().AsSingle();
+            
         }
     }
 }

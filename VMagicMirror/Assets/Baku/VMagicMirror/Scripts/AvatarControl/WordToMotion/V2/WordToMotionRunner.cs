@@ -66,7 +66,6 @@ namespace Baku.VMagicMirror.WordToMotion
         private CancellationTokenSource _blendShapeResetCts;
         private CancellationTokenSource _motionResetCts;
         private CancellationTokenSource _accessoryResetCts;
-
         private bool _previewIsActive = false;
         
         public void Run(MotionRequest request)
@@ -188,8 +187,6 @@ namespace Baku.VMagicMirror.WordToMotion
             }
         }
 
-        
-        
         private async UniTaskVoid ResetMotionAsync(float delay, bool fadeIkAndFinger, CancellationToken cancellationToken)
         {
             try

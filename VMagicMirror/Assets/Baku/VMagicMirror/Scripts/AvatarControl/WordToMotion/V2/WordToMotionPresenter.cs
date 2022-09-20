@@ -12,6 +12,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly WordToMotionRequestRepository _repository;
         private readonly CustomMotionRepository _customMotionRepository;
         private readonly WordToMotionRequester _requester;
+        private WordToMotionRunner _runner;
         private readonly IRequestSource[] _sources;
 
         public WordToMotionPresenter(
@@ -19,6 +20,7 @@ namespace Baku.VMagicMirror.WordToMotion
             WordToMotionRequestRepository repository,
             CustomMotionRepository customMotionRepository,
             WordToMotionRequester requester,
+            WordToMotionRunner runner,
             IEnumerable<IRequestSource> sources
             )
         {
@@ -26,6 +28,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _repository = repository;
             _customMotionRepository = customMotionRepository;
             _requester = requester;
+            _runner = runner;
             _sources = sources.ToArray();
         }
 
@@ -76,12 +79,36 @@ namespace Baku.VMagicMirror.WordToMotion
                 .ThrottleFirst(TimeSpan.FromSeconds(0.3f))
                 .Subscribe(value => _requester.Play(value.index, value.SourceType))
                 .AddTo(this);
+
+            _requester.PreviewIsActive
+                .Subscribe(previewIsActive =>
+                {
+                    if (previewIsActive)
+                    {
+                        _runner.EnablePreview();
+                    }
+                    else
+                    {
+                        _runner.StopPreview();
+                    }
+                })
+                .AddTo(this);
+            
+            _requester.RunRequested
+                .Subscribe(_runner.Run)
+                .AddTo(this);
+            _requester.StopRequested
+                .Subscribe(_ => _runner.Stop())
+                .AddTo(this);
+
+            _requester.PreviewRequested
+                .Subscribe(_runner.RunAsPreview)
+                .AddTo(this);
         }
         
         private void SetWordToMotionInputType(int deviceType)
         {
             var type = (SourceType) deviceType;
-            _requester.SourceType = type;
             foreach (var source in _sources)
             {
                 source.SetActive(type == source.SourceType);

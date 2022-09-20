@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.WordToMotion
@@ -65,8 +66,8 @@ namespace Baku.VMagicMirror.WordToMotion
             _cts.Dispose();
             _cts = new CancellationTokenSource();
         }
-        
-        public void Play(string clipName, out float duration)
+
+        private void Play(string clipName, out float duration)
         {
             //キャラのロード前に数字キーとか叩いたケースをガードしています
             if (_simpleAnimation == null)
@@ -95,6 +96,7 @@ namespace Baku.VMagicMirror.WordToMotion
         
             _simpleAnimation.Play(clipName);
             duration = clip.length - WordToMotionRunner.IkFadeDuration;
+            Debug.Log($"Play Builtin motion {clipName}, duration={duration:0.0}");
 
             RefreshCts();
             ResetToDefaultClipAsync(clip.length, _cts.Token).Forget();
@@ -112,6 +114,7 @@ namespace Baku.VMagicMirror.WordToMotion
 
         bool IWordToMotionPlayer.CanPlay(MotionRequest request)
         {
+            Debug.Log($"check canPlay, {request.BuiltInAnimationClipName}:from:{string.Join(",", _clipData.Items.Select(i => i.name))}");
             return
                 request.MotionType == MotionRequest.MotionTypeBuiltInClip &&
                 _clipData.Items.Any(i => i.name == request.BuiltInAnimationClipName);   
@@ -136,15 +139,15 @@ namespace Baku.VMagicMirror.WordToMotion
                 _simpleAnimation.Stop(_previewClipName);
             }
 
-            var clip = _mapper.FindBuiltInAnimationClipOrDefault(clipName);
-            if (clip == null)
+            var clipData = _clipData.Items.FirstOrDefault(c => c.name == clipName);
+            if (clipData == null)
             {
                 return;
             }
 
             if (_simpleAnimation.GetState(clipName) == null)
             {
-                _simpleAnimation.AddState(clip, clipName);
+                _simpleAnimation.AddState(clipData.clip, clipName);
             }
             else
             {

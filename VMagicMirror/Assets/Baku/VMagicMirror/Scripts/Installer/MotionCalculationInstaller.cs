@@ -17,12 +17,15 @@ namespace Baku.VMagicMirror.Installer
             container.BindInstances(
                 handIKIntegrator,
                 faceAttitude,
-                headMotionClipPlayer,
                 colliderBasedAvatarParamLoader,
                 nonImageBasedMotion,
                 fingerController
             );
 
+            container.Bind(typeof(HeadMotionClipPlayer), typeof(IWordToMotionPlayer))
+                .FromInstance(headMotionClipPlayer)
+                .AsCached();
+            
             container.BindInterfacesAndSelfTo<ClapMotionPlayer>().AsSingle();
         }
     }

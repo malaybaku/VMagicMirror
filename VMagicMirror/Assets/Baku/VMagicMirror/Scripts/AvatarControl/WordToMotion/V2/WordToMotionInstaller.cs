@@ -16,6 +16,9 @@ namespace Baku.VMagicMirror.WordToMotion
             Container.BindInterfacesTo<WordKeyInputRequestSource>().AsSingle();
             Container.BindInterfacesTo<EmptyRequestSource>().AsSingle();
             
+            //player impl which is not bound in other installer
+            Container.BindInterfacesAndSelfTo<BuiltInMotionPlayer>().AsSingle();
+
             //presenter
             Container.Bind<WordToMotionRequester>().AsSingle();
             Container.BindInterfacesTo<WordToMotionPresenter>().AsSingle();

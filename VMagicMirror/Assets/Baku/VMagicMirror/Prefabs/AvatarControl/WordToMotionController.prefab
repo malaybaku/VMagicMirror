@@ -81,7 +81,6 @@ GameObject:
   - component: {fileID: 5439178198834556228}
   - component: {fileID: 7427902273662735816}
   - component: {fileID: 7427902273662735818}
-  - component: {fileID: 8644862359786213227}
   - component: {fileID: 3568705224926989393}
   m_Layer: 0
   m_Name: WordToMotionController
@@ -144,20 +143,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elbowMotionModifier: {fileID: 0}
---- !u!114 &8644862359786213227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7427902273662735829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8ce054022baff1439f4daf15a04b81a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cooldownTime: 0.3
-  forgetTime: 1
 --- !u!114 &3568705224926989393
 MonoBehaviour:
   m_ObjectHideFlags: 0

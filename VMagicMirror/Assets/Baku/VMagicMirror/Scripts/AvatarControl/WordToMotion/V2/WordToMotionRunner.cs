@@ -23,13 +23,15 @@ namespace Baku.VMagicMirror.WordToMotion
             IEnumerable<IWordToMotionPlayer> players,
             WordToMotionBlendShape blendShape,
             IkWeightCrossFade ikWeightCrossFade,
-            FingerController fingerController)
+            FingerController fingerController,
+            WordToMotionAccessoryRequest accessoryRequest)
         {
             _vrmLoadable = vrmLoadable;
             _players = players.ToArray();
             _blendShape = blendShape;
             _ikWeightCrossFade = ikWeightCrossFade;
             _fingerController = fingerController;
+            _accessoryRequest = accessoryRequest;
         }
 
         public override void Initialize()
@@ -235,18 +237,21 @@ namespace Baku.VMagicMirror.WordToMotion
         {
             _motionResetCts?.Cancel();
             _motionResetCts?.Dispose();
+            _motionResetCts = null;
         }  
 
         private void CancelBlendShapeReset()
         {
             _blendShapeResetCts?.Cancel();
             _blendShapeResetCts?.Dispose();
+            _blendShapeResetCts = null;
         }
         
         private void CancelAccessoryReset()
         {
             _accessoryResetCts?.Cancel();
             _accessoryResetCts?.Dispose();
+            _accessoryResetCts = null;
         }
     }
 }

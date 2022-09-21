@@ -19,6 +19,8 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly WordToMotionMapper _mapper;
         private readonly BuiltInMotionClipData _clipData;
         private readonly IVRMLoadable _vrmLoadable;
+
+        private bool _hasModel = false;
         private SimpleAnimation _simpleAnimation = null;
 
         private bool _isPlaying;
@@ -27,10 +29,10 @@ namespace Baku.VMagicMirror.WordToMotion
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
         [Inject]
-        public BuiltInMotionPlayer(WordToMotionMapper mapper, IVRMLoadable vrmLoadable, BuiltInMotionClipData clipData)
+        public BuiltInMotionPlayer(IVRMLoadable vrmLoadable, BuiltInMotionClipData clipData)
         {
-            _mapper = mapper;
             _clipData = clipData;
+            _mapper = new WordToMotionMapper(clipData);
             _vrmLoadable = vrmLoadable;
         }
 
@@ -53,10 +55,12 @@ namespace Baku.VMagicMirror.WordToMotion
             _simpleAnimation.playAutomatically = false;
             _simpleAnimation.AddState(_clipData.DefaultStandingAnimation, DefaultStateName);
             _simpleAnimation.Play(DefaultStateName);
+            _hasModel = true;
         }
 
         private void OnVrmUnloaded()
         {
+            _hasModel = false;
             _simpleAnimation = null;
         }
         
@@ -70,7 +74,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private void Play(string clipName, out float duration)
         {
             //キャラのロード前に数字キーとか叩いたケースをガードしています
-            if (_simpleAnimation == null)
+            if (!_hasModel)
             {
                 duration = 0f;
                 return;
@@ -105,7 +109,10 @@ namespace Baku.VMagicMirror.WordToMotion
         private async UniTaskVoid ResetToDefaultClipAsync(float delay, CancellationToken cancellationToken)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
-            _simpleAnimation.CrossFade(DefaultStateName, CrossFadeDuration);
+            if (_hasModel)
+            {
+                _simpleAnimation.CrossFade(DefaultStateName, CrossFadeDuration);
+            }
         }
         
         bool IWordToMotionPlayer.IsPlaying => _isPlaying;
@@ -114,7 +121,6 @@ namespace Baku.VMagicMirror.WordToMotion
 
         bool IWordToMotionPlayer.CanPlay(MotionRequest request)
         {
-            Debug.Log($"check canPlay, {request.BuiltInAnimationClipName}:from:{string.Join(",", _clipData.Items.Select(i => i.name))}");
             return
                 request.MotionType == MotionRequest.MotionTypeBuiltInClip &&
                 _clipData.Items.Any(i => i.name == request.BuiltInAnimationClipName);   
@@ -127,6 +133,11 @@ namespace Baku.VMagicMirror.WordToMotion
 
         void IWordToMotionPlayer.PlayPreview(MotionRequest request)
         {
+            if (!_hasModel)
+            {
+                return;
+            }
+
             var clipName = request.BuiltInAnimationClipName;
             if (_isPlaying && clipName == _previewClipName)
             {
@@ -163,7 +174,10 @@ namespace Baku.VMagicMirror.WordToMotion
         void IWordToMotionPlayer.Abort()
         {
             RefreshCts();
-            _simpleAnimation.CrossFade(DefaultStateName, CrossFadeDuration);
+            if (_hasModel)
+            {
+                _simpleAnimation.CrossFade(DefaultStateName, CrossFadeDuration);
+            }
         }
 
         void IWordToMotionPlayer.StopPreview()
@@ -174,11 +188,18 @@ namespace Baku.VMagicMirror.WordToMotion
                 return;
             }
 
-            _simpleAnimation.Stop(_previewClipName);
+            if (_hasModel)
+            {
+                _simpleAnimation.Stop(_previewClipName);
+            }
+
             _isPlaying = false;
             _previewClipName = "";
 
-            _simpleAnimation.CrossFade(DefaultStateName, 0f);
+            if (_hasModel)
+            {
+                _simpleAnimation.CrossFade(DefaultStateName, 0f);
+            }
         }
     }
 }

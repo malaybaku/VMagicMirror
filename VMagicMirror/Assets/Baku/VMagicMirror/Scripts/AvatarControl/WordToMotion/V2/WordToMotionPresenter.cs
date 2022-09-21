@@ -58,6 +58,8 @@ namespace Baku.VMagicMirror.WordToMotion
                 message => SetWordToMotionInputType(message.ToInt())
             );
 
+            SetWordToMotionInputType((int) SourceType.KeyboardTyping);
+            
             //未実装なので一旦なしで
             // _receiver.AssignCommandHandler(
             //     VmmCommands.RequestCustomMotionDoctor,

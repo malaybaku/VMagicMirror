@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _blendShape.Initialize(info.blendShape);
-            _ikWeightCrossFade.OnVrmLoaded(info);            
+            _ikWeightCrossFade.OnVrmLoaded(info); 
         }
 
         private void OnVrmUnloaded()
@@ -161,6 +161,19 @@ namespace Baku.VMagicMirror.WordToMotion
             }
             //NOTE: ここで同じ値が指定され続けた場合に動作し続けるのはPlayer側で保証してる
             playablePlayer?.PlayPreview(request);
+            
+            //プレビュー中はIKとかのフェードは面倒なので省くが、可能ならフェードしたほうがよい
+            if (playablePlayer?.UseIkAndFingerFade == true)
+            {
+                _fingerController.FadeOutWeight(0f);
+                _ikWeightCrossFade.FadeOutArmIkWeightsImmediately();
+            }
+            else
+            {
+                _fingerController.FadeInWeight(0f);
+                _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
+            }
+            
             _accessoryRequest.SetAccessoryRequest(request.AccessoryName);
         }
 
@@ -187,6 +200,8 @@ namespace Baku.VMagicMirror.WordToMotion
             {
                 player.Abort();
             }
+            _fingerController.FadeInWeight(0f);
+            _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
         }
 
         private async UniTaskVoid ResetMotionAsync(float delay, bool fadeIkAndFinger, CancellationToken cancellationToken)

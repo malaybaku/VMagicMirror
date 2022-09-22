@@ -100,7 +100,6 @@ namespace Baku.VMagicMirror.WordToMotion
         
             _simpleAnimation.Play(clipName);
             duration = clip.length - WordToMotionRunner.IkFadeDuration;
-            Debug.Log($"Play Builtin motion {clipName}, duration={duration:0.0}");
 
             RefreshCts();
             ResetToDefaultClipAsync(clip.length, _cts.Token).Forget();

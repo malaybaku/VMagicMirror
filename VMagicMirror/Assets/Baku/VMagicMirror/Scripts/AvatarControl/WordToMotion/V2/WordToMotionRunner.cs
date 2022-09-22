@@ -68,7 +68,10 @@ namespace Baku.VMagicMirror.WordToMotion
         private CancellationTokenSource _blendShapeResetCts;
         private CancellationTokenSource _motionResetCts;
         private CancellationTokenSource _accessoryResetCts;
+        //NOTE: モーションの終了処理をキャンセルした場合に要考慮になるので…
+        private bool _restoreIkOnMotionResetCancel = false;
         private bool _previewIsActive = false;
+        private bool _previewUseIkFade = false;
         
         public void Run(MotionRequest request)
         {
@@ -100,6 +103,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 }
                 else
                 {
+                    CancelMotionReset();
                     //NOTE: 実行中のと同じモーションが指定された場合も最初から再生してよい、というのがポイント
                     foreach (var player in _players.Where(p => p != playablePlayer))
                     {
@@ -114,16 +118,10 @@ namespace Baku.VMagicMirror.WordToMotion
                     }
                 }
                 
-                CancelMotionReset();
-                
-                //IKオフのモーション中にIKオンのモーションを開始した: この場合はResetMotion側の処理が呼ばれないため、フェードで戻す
-                if (playablePlayer?.UseIkAndFingerFade != true)
-                {
-                    _fingerController.FadeInWeight(IkFadeDuration);
-                    _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
-                }
                 _motionResetCts = new CancellationTokenSource();
-                ResetMotionAsync(duration, playablePlayer?.UseIkAndFingerFade ?? false, _motionResetCts.Token)
+                //IK戻す条件 =
+                _restoreIkOnMotionResetCancel = playablePlayer?.UseIkAndFingerFade ?? false;
+                ResetMotionAsync(duration, _restoreIkOnMotionResetCancel, _motionResetCts.Token)
                     .Forget();
             }
 
@@ -172,17 +170,24 @@ namespace Baku.VMagicMirror.WordToMotion
             }
             //NOTE: ここで同じ値が指定され続けた場合に動作し続けるのはPlayer側で保証してる
             playablePlayer?.PlayPreview(request);
+
+            var useIkFade = 
+                request.MotionType != MotionRequest.MotionTypeNone &&
+                playablePlayer?.UseIkAndFingerFade == true;
             
-            //プレビュー中はIKとかのフェードは面倒なので省くが、可能ならフェードしたほうがよい
-            if (playablePlayer?.UseIkAndFingerFade == true)
+            if (_previewUseIkFade != useIkFade)
             {
-                _fingerController.FadeOutWeight(0f);
-                _ikWeightCrossFade.FadeOutArmIkWeightsImmediately();
-            }
-            else
-            {
-                _fingerController.FadeInWeight(0f);
-                _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
+                _previewUseIkFade = useIkFade;
+                if (_previewUseIkFade)
+                {
+                    _fingerController.FadeOutWeight(IkFadeDuration);
+                    _ikWeightCrossFade.FadeOutArmIkWeights(IkFadeDuration);
+                }
+                else
+                {
+                    _fingerController.FadeInWeight(IkFadeDuration);
+                    _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
+                }
             }
             
             //空の場合も通すことにより、アクセサリが非表示になる
@@ -198,6 +203,7 @@ namespace Baku.VMagicMirror.WordToMotion
         public void StopPreview()
         {
             _previewIsActive = false;
+            _previewUseIkFade = false;
             Stop();
         }
         
@@ -227,6 +233,7 @@ namespace Baku.VMagicMirror.WordToMotion
                     _fingerController.FadeInWeight(IkFadeDuration);
                     _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
                 }
+                _restoreIkOnMotionResetCancel = false;
             }
             catch (OperationCanceledException)
             {
@@ -265,6 +272,13 @@ namespace Baku.VMagicMirror.WordToMotion
             _motionResetCts?.Cancel();
             _motionResetCts?.Dispose();
             _motionResetCts = null;
+
+            if (_restoreIkOnMotionResetCancel)
+            {
+                _restoreIkOnMotionResetCancel = false;
+                _fingerController.FadeInWeight(IkFadeDuration);
+                _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
+            }
         }  
 
         private void CancelBlendShapeReset()

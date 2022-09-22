@@ -143,15 +143,19 @@ namespace Baku.VMagicMirror.WordToMotion
                 return;
             }
 
+            CancelBlendShapeReset();
             if (request.UseBlendShape)
             {
-                CancelBlendShapeReset();
                 _blendShape.SetForPreview(
                     request.BlendShapeValuesDic.Select(
                         pair => (BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value)
                     ),
                     request.PreferLipSync
                 );
+            }
+            else
+            {
+                _blendShape.ResetBlendShape();
             }
 
             var playablePlayer = _players.FirstOrDefault(p => p.CanPlay(request));
@@ -174,6 +178,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
             }
             
+            //空の場合も通すことにより、アクセサリが非表示になる
             _accessoryRequest.SetAccessoryRequest(request.AccessoryName);
         }
 

@@ -115,6 +115,13 @@ namespace Baku.VMagicMirror.WordToMotion
                 }
                 
                 CancelMotionReset();
+                
+                //IKオフのモーション中にIKオンのモーションを開始した: この場合はResetMotion側の処理が呼ばれないため、フェードで戻す
+                if (playablePlayer?.UseIkAndFingerFade != true)
+                {
+                    _fingerController.FadeInWeight(IkFadeDuration);
+                    _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
+                }
                 _motionResetCts = new CancellationTokenSource();
                 ResetMotionAsync(duration, playablePlayer?.UseIkAndFingerFade ?? false, _motionResetCts.Token)
                     .Forget();

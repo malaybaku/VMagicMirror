@@ -22,9 +22,6 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly Subject<MotionRequest> _runRequested = new Subject<MotionRequest>();
         public IObservable<MotionRequest> RunRequested => _runRequested;
 
-        private readonly Subject<Unit> _stopRequested = new Subject<Unit>();
-        public IObservable<Unit> StopRequested => _stopRequested;
-
         private readonly Subject<MotionRequest> _previewRequested = new Subject<MotionRequest>();
         // プレビューモード中、表情は「いじらないでいい」 or 「全クリップ情報」のいずれかであることを、値を受け取るたびに通知したい
         public IObservable<MotionRequest> PreviewRequested => _previewRequested;
@@ -67,11 +64,7 @@ namespace Baku.VMagicMirror.WordToMotion
             }
 
             _previewIsActive.Value = active;
-            if (active)
-            {
-                _stopRequested.OnNext(Unit.Default);
-            }
-            else
+            if (!active)
             {
                 _hasPreviewRequest = false;
             }

@@ -99,9 +99,6 @@ namespace Baku.VMagicMirror.WordToMotion
             _requester.RunRequested
                 .Subscribe(_runner.Run)
                 .AddTo(this);
-            _requester.StopRequested
-                .Subscribe(_ => _runner.Stop())
-                .AddTo(this);
 
             _requester.PreviewRequested
                 .Subscribe(_runner.RunAsPreview)

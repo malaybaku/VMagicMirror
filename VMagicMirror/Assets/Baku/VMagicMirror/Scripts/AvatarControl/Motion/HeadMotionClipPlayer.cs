@@ -42,6 +42,7 @@ namespace Baku.VMagicMirror
                 request.BuiltInAnimationClipName == ShakeClipName
                 );
         }
+
         void IWordToMotionPlayer.Play(MotionRequest request, out float duration)
         {
             Play(request.BuiltInAnimationClipName, out duration);
@@ -49,7 +50,12 @@ namespace Baku.VMagicMirror
 
         void IWordToMotionPlayer.Abort()
         {
-            //停止指示は無視する、そんな長いモーションでもないので急動作を嫌っておく
+            //停止指示に対しては「Preview動作があったら消す」とし、プレビューじゃない動作の場合は止められない
+            if (PreviewIsActive)
+            {
+                _previewClipName = "";
+                Stop();
+            }
         }
 
         void IWordToMotionPlayer.PlayPreview(MotionRequest request)
@@ -133,13 +139,15 @@ namespace Baku.VMagicMirror
 
         public void PlayPreview(string clipName)
         {
-            if (CanPlay(clipName))
+            if (!CanPlay(clipName))
             {
-                _previewClipName = clipName;
+                return;
             }
-            else
+
+            _previewClipName = clipName;
+            if (_playState == ClipPlayState.None)
             {
-                _previewClipName = "";
+                Play(clipName, out _);    
             }
         }
 

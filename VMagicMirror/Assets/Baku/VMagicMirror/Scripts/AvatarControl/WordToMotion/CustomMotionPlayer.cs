@@ -100,7 +100,10 @@ namespace Baku.VMagicMirror
         /// <param name="motionName"></param>
         public bool PlayPreview(string motionName)
         {
-            if (!_hasModel || _currentMotionName == motionName.ToLower())
+            if (!_hasModel || 
+                (_currentMotionName == motionName.ToLower() && 
+                 _currentMotionElapsedTime < _currentMotionItem.Motion.Duration)
+                )
             {
                 return false;
             }

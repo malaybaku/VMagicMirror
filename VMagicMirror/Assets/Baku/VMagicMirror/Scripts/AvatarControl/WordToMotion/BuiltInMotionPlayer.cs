@@ -139,7 +139,11 @@ namespace Baku.VMagicMirror.WordToMotion
             }
 
             var clipName = request.BuiltInAnimationClipName;
-            if (_isPlaying && clipName == _previewClipName)
+            if (_isPlaying && 
+                clipName == _previewClipName && 
+                //NOTE: 最後まで行ってたら再生し直す
+                _simpleAnimation.GetState(clipName) != null && 
+                _simpleAnimation.GetState(clipName).normalizedTime < 1.0f)
             {
                 return;
             }

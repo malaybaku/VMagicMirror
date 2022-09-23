@@ -81,7 +81,6 @@ namespace Baku.VMagicMirror
 
         void IWordToMotionPlayer.Abort()
         {
-            //eraseがしたいので呼び方がちょｔ
             FadeToDefaultPose(0.5f);
         }
 

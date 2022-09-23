@@ -156,7 +156,7 @@ namespace Baku.VMagicMirror
         public float GetMotionDuration(string motionName)
             => _clips.TryGetValue(motionName.ToLower(), out var item) ? item.Motion.Duration : 1.0f;
 
-        //名前は固定しておく、ランダムになってると困るので
+        //順序は固定しておく、ランダムになってると困るので
         public string[] LoadAvailableCustomMotionNames() => _clips
             .Values
             .Select(v => v.MotionName)

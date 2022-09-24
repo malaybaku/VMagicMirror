@@ -12,27 +12,24 @@ namespace Baku.VMagicMirror.WordToMotion
     public class CustomMotionRepository
     {
         private readonly Dictionary<string, CustomMotionItem> _clips = new Dictionary<string, CustomMotionItem>();
-
         private bool _initialized;
 
-        public IReadOnlyDictionary<string, CustomMotionItem> LoadClips()
+        public CustomMotionItem GetItem(string motionName)
         {
             if (!_initialized)
             {
                 Initialize();
             }
-
-            return _clips;
+            return _clips[motionName.ToLower()];
         }
 
-        public bool TryGet(string motionName, out CustomMotionItem result)
+        public bool ContainsKey(string motionName)
         {
             if (!_initialized)
             {
                 Initialize();
             }
-
-            return _clips.TryGetValue(motionName, out result);
+            return _clips.ContainsKey(motionName.ToLower());
         }
 
         public string[] LoadAvailableCustomMotionNames()

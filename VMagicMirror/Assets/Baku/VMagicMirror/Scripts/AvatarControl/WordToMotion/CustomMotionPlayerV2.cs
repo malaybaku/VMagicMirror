@@ -1,17 +1,16 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using Baku.VMagicMirror.MotionExporter;
 using Baku.VMagicMirror.WordToMotion;
 using Cysharp.Threading.Tasks;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Profiling;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// カスタムモーションをいい感じに管理するクラスで、無印のCustomMotionPlayerと違ってタスク指向の実装になったもの。
+    /// カスタムモーションをいい感じに管理するクラス。
+    /// タスク指向で実装されている
     /// </summary>
     public class CustomMotionPlayerV2 : MonoBehaviour, IWordToMotionPlayer
     {

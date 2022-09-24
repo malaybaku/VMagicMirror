@@ -16,29 +16,19 @@ namespace Baku.VMagicMirror.WordToMotion
 
         public CustomMotionItem GetItem(string motionName)
         {
-            if (!_initialized)
-            {
-                Initialize();
-            }
+            InitializeIfNeeded();
             return _clips[motionName.ToLower()];
         }
 
         public bool ContainsKey(string motionName)
         {
-            if (!_initialized)
-            {
-                Initialize();
-            }
+            InitializeIfNeeded();
             return _clips.ContainsKey(motionName.ToLower());
         }
 
         public string[] LoadAvailableCustomMotionNames()
         {
-            if (!_initialized)
-            {
-                Initialize();
-            }
-            
+            InitializeIfNeeded();
             //順序を固定するのがポイント
             return _clips.Values
                 .Select(v => v.MotionName)
@@ -46,8 +36,14 @@ namespace Baku.VMagicMirror.WordToMotion
                 .ToArray();
         }
 
-        private void Initialize()
+        private void InitializeIfNeeded()
         {
+            if (_initialized)
+            {
+                return;
+            }
+            _initialized = true;
+
             //エディタの場合はStreamingAssets以下で代用(無ければ無いでOK)
             var dirPath = SpecialFiles.MotionsDirectory;
             if (!Directory.Exists(dirPath))

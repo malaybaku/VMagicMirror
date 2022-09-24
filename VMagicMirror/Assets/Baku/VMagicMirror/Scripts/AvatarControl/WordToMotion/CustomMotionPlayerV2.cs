@@ -107,6 +107,7 @@ namespace Baku.VMagicMirror
 
             var item = _repository.GetItem(motionName);
             Stop();
+            _playingPreview = true;
             RunMotionLoopAsync(item, _cts.Token).Forget();
         }
 

@@ -1,3 +1,4 @@
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -22,10 +23,13 @@ namespace Baku.VMagicMirror
                 _ => FadeOutLoadingCover()
             );
 
-            //エディタの場合は(Play Mode直後のエラーとか諸事情でカバーが邪魔になりうる + ビルドの動確で邪魔になるとは思えないので)外す
-#if UNITY_EDITOR
-            FadeOutLoadingCover();
-#endif
+            // 透過背景の場合は蓋絵が残るとかえって邪魔なため、早めに外す
+            var settingReader = new DirectSettingFileReader();
+            settingReader.Load();
+            if (settingReader.TransparentBackground)
+            {
+                FadeOutLoadingCoverImmediate();
+            }
         }
 
         private void FadeOutLoadingCover()
@@ -36,6 +40,16 @@ namespace Baku.VMagicMirror
             }
             _fadeOutCalled = true;
             _cover.FadeOutAndDestroySelf();
+        }
+
+        private void FadeOutLoadingCoverImmediate()
+        {
+            if (_fadeOutCalled)
+            {
+                return;
+            }
+            _fadeOutCalled = true;
+            _cover.FadeOutImmediate();
         }
     }
 }

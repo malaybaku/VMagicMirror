@@ -29,5 +29,10 @@ namespace Baku.VMagicMirror
                 Destroy(gameObject);
             }
         }
+
+        public void FadeOutImmediate()
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -4,8 +4,8 @@ namespace Baku.VMagicMirror
 {
     public class StartupLoadingCover : MonoBehaviour
     {
-        private const float DestroySelfDelay = 1.2f;
         private static readonly int FadeOut = Animator.StringToHash("FadeOut");
+        private static readonly int HiddenStateHash = Animator.StringToHash("Hidden");
 
         [SerializeField] private Animator animator;
 
@@ -20,12 +20,14 @@ namespace Baku.VMagicMirror
 
             _fadeOutCalled = true;
             animator.SetTrigger(FadeOut);
-            Invoke(nameof(DestroySelf), DestroySelfDelay);
         }
 
-        private void DestroySelf()
+        private void Update()
         {
-            Destroy(gameObject);
+            if (animator.GetCurrentAnimatorStateInfo(0).shortNameHash == HiddenStateHash)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

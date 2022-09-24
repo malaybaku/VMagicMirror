@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror
     {
         private readonly IMessageReceiver _receiver;
         private readonly StartupLoadingCover _cover;
-        private bool _unfadeCalled;
+        private bool _fadeOutCalled;
 
         [Inject]
         public StartupLoadingCoverController(IMessageReceiver receiver, StartupLoadingCover cover)
@@ -19,21 +19,22 @@ namespace Baku.VMagicMirror
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.StartupEnded,
-                _ => UnfadeLoadingCover()
+                _ => FadeOutLoadingCover()
             );
 
+            //エディタの場合は(Play Mode直後のエラーとか諸事情でカバーが邪魔になりうる + ビルドの動確で邪魔になるとは思えないので)外す
 #if UNITY_EDITOR
-            //UnfadeLoadingCover();
+            FadeOutLoadingCover();
 #endif
         }
 
-        private void UnfadeLoadingCover()
+        private void FadeOutLoadingCover()
         {
-            if (_unfadeCalled)
+            if (_fadeOutCalled)
             {
                 return;
             }
-            _unfadeCalled = true;
+            _fadeOutCalled = true;
             _cover.FadeOutAndDestroySelf();
         }
     }

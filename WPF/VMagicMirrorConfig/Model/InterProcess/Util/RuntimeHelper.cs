@@ -1,4 +1,6 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿using System;
+
+namespace Baku.VMagicMirrorConfig
 {
     /// <summary>
     /// モデルのうち初期化と終了処理をまとめておくと都合が良さそうなものを集めているクラス。
@@ -17,6 +19,7 @@
         public RuntimeHelper(IMessageSender sender, IMessageReceiver receiver, RootSettingModel mainModel)
         {
             _receiver = receiver;
+            _sender = sender;
             MouseButtonMessageSender = new MouseButtonMessageSender(sender);
             CameraPositionChecker = new CameraPositionChecker(sender, mainModel.Layout);
             UnityAppCloser = new UnityAppCloser(receiver);
@@ -25,6 +28,7 @@
         }
 
         private readonly IMessageReceiver _receiver;
+        private readonly IMessageSender _sender;
 
         public MouseButtonMessageSender MouseButtonMessageSender { get; }
         public CameraPositionChecker CameraPositionChecker { get; }
@@ -48,5 +52,8 @@
             //NOTE: コイツによるプロセス閉じ処理はsender/receiverに依存しないことに注意。
             UnityAppCloser.Close();
         }
+
+        //NOTE: 野暮用なのでここに直接実装してます
+        public void SendStartupEnded() => _sender.SendMessage(MessageFactory.Instance.StartupEnded());
     }
 }

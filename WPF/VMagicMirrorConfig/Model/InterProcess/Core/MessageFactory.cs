@@ -69,6 +69,8 @@ namespace Baku.VMagicMirrorConfig
 
         public Message SetAlphaValueOnTransparent(int alpha) => WithArg(alpha);
 
+        public Message StartupEnded() => NoArg();
+
         #endregion
 
         #region モーション

@@ -32,6 +32,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
+            var startupEndNotified = false;
             try
             {
                 _messageIo.Start();
@@ -51,21 +52,28 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 await ModelResolver.Instance.Resolve<ImageQualitySetting>().InitializeQualitySelectionsAsync();
                 await ModelResolver.Instance.Resolve<CustomMotionList>().InitializeCustomMotionClipNamesAsync();
                 _runtimeHelper.Start();
-
-                if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastVrmLoadFilePath))
-                {
-                    _avatarLoader.LoadLastLoadedLocalVrm();
-                }
-                else if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastLoadedVRoidModelId))
-                {
-                    _avatarLoader.LoadSavedVRoidModelAsync(_settingModel.LastLoadedVRoidModelId, true);
-                }
-
                 ModelResolver.Instance.Resolve<PreferenceFileManager>().Load();
                 ModelResolver.Instance.Resolve<HotKeySetter>().Initialize();
 
+                if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastVrmLoadFilePath))
+                {
+                    _avatarLoader.LoadLastLoadedLocalVrm();                    
+                }
+                else if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastLoadedVRoidModelId))
+                {
+                    _runtimeHelper.SendStartupEnded();
+                    startupEndNotified = true;
+                    _avatarLoader.LoadSavedVRoidModelAsync(_settingModel.LastLoadedVRoidModelId, true);
+                }
+
                 //NOTE: この処理もメッセージの授受があるが終了まで待たない(そんなにクリティカルではないので)
                 _settingModel.Accessory.RefreshIfFirstStart();
+
+                if (!startupEndNotified)
+                {
+                    _runtimeHelper.SendStartupEnded();
+                    startupEndNotified = true;
+                }
 
                 //NOTE: このへんはとりわけ起動直後に1回だけ呼びたい処理であることに注意
                 ModelResolver.Instance.Resolve<ExternalTrackerSettingModel>().RefreshConnectionIfPossible();
@@ -74,6 +82,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             catch (Exception ex)
             {
                 LogOutput.Instance.Write(ex);
+            }
+            finally
+            {
+                //例外時にUnityの暗転開けしてないと渋いので、なるべく外すのを試みる
+                if (!startupEndNotified)
+                {
+                    _runtimeHelper.SendStartupEnded();
+                }
             }
         }
 

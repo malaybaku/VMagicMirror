@@ -14,9 +14,11 @@ namespace Baku.VMagicMirror.WordToMotion
             Container.BindInterfacesTo<GamePadRequestSource>().AsSingle();
             Container.BindInterfacesTo<SingleKeyInputRequestSource>().AsSingle();
             Container.BindInterfacesTo<WordKeyInputRequestSource>().AsSingle();
-            Container.BindInterfacesTo<EmptyRequestSource>().AsSingle();
+            Container.BindInterfacesTo<MidiRequestSource>().AsSingle();
+            //Empty入れても入れなくても挙動に影響しない…はず…
+            //Container.BindInterfacesTo<EmptyRequestSource>().AsSingle();
             
-            //player impl which is not bound in other installer
+            //NOTE: たぶん廃止します、Simple Animationを消したほうがいい説が囁かれてるので…
             Container.BindInterfacesAndSelfTo<BuiltInMotionPlayer>().AsSingle();
 
             //presenter

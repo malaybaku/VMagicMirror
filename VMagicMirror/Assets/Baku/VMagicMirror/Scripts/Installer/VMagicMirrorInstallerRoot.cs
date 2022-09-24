@@ -18,9 +18,12 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private AccessoryItemController accessoryControllerPrefab = null;
         [SerializeField] private DeformableCounter deformableCounterPrefab = null;
         [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
+        [SerializeField] private StartupLoadingCover loadingCoverController = null;
         
         public override void InstallBindings()
-        { 
+        {
+            Container.BindInstance(loadingCoverController);
+
             foreach (var installer in new InstallerBase[]
                 {
                     devices,

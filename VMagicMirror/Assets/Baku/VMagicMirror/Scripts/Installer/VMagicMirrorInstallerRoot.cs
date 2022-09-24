@@ -23,6 +23,7 @@ namespace Baku.VMagicMirror.Installer
         public override void InstallBindings()
         {
             Container.BindInstance(loadingCoverController);
+            Container.BindInterfacesTo<StartupLoadingCoverController>().AsSingle();
 
             foreach (var installer in new InstallerBase[]
                 {

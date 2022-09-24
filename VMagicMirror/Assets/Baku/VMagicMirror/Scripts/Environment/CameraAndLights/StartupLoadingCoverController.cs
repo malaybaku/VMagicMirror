@@ -34,7 +34,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             _unfadeCalled = true;
-            _cover.UnfadeAndDestroySelf();
+            _cover.FadeOutAndDestroySelf();
         }
     }
 }

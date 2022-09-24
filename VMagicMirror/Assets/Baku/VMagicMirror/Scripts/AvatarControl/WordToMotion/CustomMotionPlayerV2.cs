@@ -1,9 +1,11 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Baku.VMagicMirror.MotionExporter;
 using Baku.VMagicMirror.WordToMotion;
 using Cysharp.Threading.Tasks;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Profiling;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -35,6 +37,16 @@ namespace Baku.VMagicMirror
         private string CurrentMotionName => _currentItem?.MotionLowerName ?? "";
 
         private bool _playingPreview = false;
+        
+        //NOTE: Execution Order Sensitiveな処理なのでUniTask.DelayFrameが使えないんですね～
+        private void LateUpdate() => _lateUpdateRun.OnNext(Unit.Default);
+
+        private void OnDestroy()
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+        }
 
         [Inject]
         public void Initialize(CustomMotionRepository repository, IVRMLoadable vrmLoadable)
@@ -68,9 +80,9 @@ namespace Baku.VMagicMirror
 
         void IWordToMotionPlayer.Play(MotionRequest request, out float duration)
         {
-            if (_playingPreview)
+            if (!_hasModel || _playingPreview)
             {
-                //このタイミングでは呼ばれないはずだが、いちおう非ゼロのdurationを返しておく
+                //いちおう非ゼロのdurationを返しておく
                 duration = 1.0f;
                 return;
             }
@@ -78,7 +90,7 @@ namespace Baku.VMagicMirror
             var item = _repository.GetItem(request.CustomMotionClipName);
             duration = item.Motion.Duration;
 
-            //NOTE: Stopせずにモーション間の補間を目指してもよい(実行中の何かがあるなら)
+            //NOTE: Stopせずにモーションどうしの補間するのを目指してもOK
             Stop();
             RunMotionAsync(item, _cts.Token).Forget();
         }
@@ -104,9 +116,6 @@ namespace Baku.VMagicMirror
 
         bool IWordToMotionPlayer.UseIkAndFingerFade => true;
 
-        //NOTE: Execution Order Sensitiveな処理なのでUniTask.DelayFrameが使えないんですね～
-        private void LateUpdate() => _lateUpdateRun.OnNext(Unit.Default);
-
         private void Stop()
         {
             _cts?.Cancel();
@@ -120,12 +129,11 @@ namespace Baku.VMagicMirror
         async UniTaskVoid RunMotionAsync(CustomMotionItem item, CancellationToken cancellationToken)
         {
             PrepareItemRun(item);
-            
             var count = 0f;
             while (count < _currentItem.Motion.Duration - FadeDuration)
             {
-                await _lateUpdateRun.First();
-                cancellationToken.ThrowIfCancellationRequested();
+                await _lateUpdateRun.ToUniTask(true, cancellationToken);
+
                 _currentItem.Motion.Evaluate(count);
                 count += Time.deltaTime;
                 WriteCurrentPose();
@@ -133,15 +141,12 @@ namespace Baku.VMagicMirror
 
             while (count < _currentItem.Motion.Duration)
             {
-                await _lateUpdateRun.First();
-                cancellationToken.ThrowIfCancellationRequested();
+                await _lateUpdateRun.ToUniTask(true, cancellationToken);
+
                 _currentItem.Motion.Evaluate(count);
                 count += Time.deltaTime;
-
                 //1 -> 0 にrateが下がっていく
-                var rate = Mathf.Clamp01(
-                    (_currentItem.Motion.Duration - count) / FadeDuration
-                );
+                var rate = Mathf.Clamp01((_currentItem.Motion.Duration - count) / FadeDuration);
                 WriteCurrentPose(true, rate);
             }
 
@@ -157,8 +162,7 @@ namespace Baku.VMagicMirror
                 var count = 0f;
                 while (count < _currentItem.Motion.Duration)
                 {
-                    await _lateUpdateRun.First();
-                    cancellationToken.ThrowIfCancellationRequested();
+                    await _lateUpdateRun.ToUniTask(true, cancellationToken);
                     _currentItem.Motion.Evaluate(count);
                     count += Time.deltaTime;
                     WriteCurrentPose();

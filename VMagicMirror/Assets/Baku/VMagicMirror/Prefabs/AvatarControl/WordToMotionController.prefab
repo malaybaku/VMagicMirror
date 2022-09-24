@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1081003669124402053}
   - component: {fileID: 7049112804678932249}
+  - component: {fileID: 6633198739088308264}
   - component: {fileID: 2211429578806925437}
   m_Layer: 0
   m_Name: CustomMotionPlayer
@@ -42,6 +43,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a273b20f19d3be4780865129752f6c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source: {fileID: 2211429578806925437}
+--- !u!114 &6633198739088308264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6075599396155043269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b49872a42842f64e8df952abc2bd073, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   source: {fileID: 2211429578806925437}
@@ -79,10 +93,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7427902273662735820}
   - component: {fileID: 5439178198834556228}
-  - component: {fileID: 7427902273662735822}
   - component: {fileID: 7427902273662735816}
   - component: {fileID: 7427902273662735818}
-  - component: {fileID: 8644862359786213227}
   - component: {fileID: 3568705224926989393}
   m_Layer: 0
   m_Name: WordToMotionController
@@ -118,25 +130,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b81e378298a4e444855e13feaf3b35e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wordToMotionManager: {fileID: 7427902273662735822}
-  blendShape: {fileID: 7427902273662735816}
---- !u!114 &7427902273662735822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7427902273662735829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf54680fc9289344eaf680af61075aeb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  triggers: {fileID: 8644862359786213227}
-  ikFadeDuration: 0.5
-  defaultAnimation: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc, type: 2}
-  fingerController: {fileID: 0}
   customMotionPlayer: {fileID: 7049112804678932249}
+  customMotionPlayerV2: {fileID: 6633198739088308264}
+  blendShape: {fileID: 7427902273662735816}
+  ikWeightCrossFade: {fileID: 7427902273662735818}
 --- !u!114 &7427902273662735816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,20 +159,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elbowMotionModifier: {fileID: 0}
---- !u!114 &8644862359786213227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7427902273662735829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8ce054022baff1439f4daf15a04b81a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cooldownTime: 0.3
-  forgetTime: 1
 --- !u!114 &3568705224926989393
 MonoBehaviour:
   m_ObjectHideFlags: 0

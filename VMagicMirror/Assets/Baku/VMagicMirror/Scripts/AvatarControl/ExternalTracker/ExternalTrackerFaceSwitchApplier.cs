@@ -94,7 +94,7 @@ namespace Baku.VMagicMirror
             //NOTE:
             //3つ目の条件について、表情間の補間処理中はこのクラスではないクラスがAccumulateを代行するので、
             //このクラスはWtMが有効なら表情は適用しないでOK
-            if (!_hasModel || !_currentValue.HasValue || _config.WordToMotionExpressionActive)
+            if (!_hasModel || !_currentValue.HasValue)
             {
                 return;
             }

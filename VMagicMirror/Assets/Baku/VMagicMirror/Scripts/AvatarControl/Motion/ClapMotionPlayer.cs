@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public class ClapMotionPlayer : IInitializable, ITickable
+    public class ClapMotionPlayer : IInitializable, ITickable, IWordToMotionPlayer
     {
         public const string ClapClipName = "Clap";
 
@@ -19,6 +19,32 @@ namespace Baku.VMagicMirror
         private string _previewClipName = "";
 
         public bool IsPlaying => _playState != ClipPlayState.None && _clapMotion.ClapMotionRunning;
+
+        //TODO: Fingerだけ何かしたい可能性あるかも
+        bool IWordToMotionPlayer.UseIkAndFingerFade => false;
+
+        bool IWordToMotionPlayer.CanPlay(MotionRequest request)
+        {
+            return 
+                request.MotionType == MotionRequest.MotionTypeBuiltInClip &&
+                request.BuiltInAnimationClipName == ClapClipName;
+        }
+
+        void IWordToMotionPlayer.Play(MotionRequest request, out float duration)
+        {
+            Play(request.BuiltInAnimationClipName, out duration);
+        }
+
+        void IWordToMotionPlayer.Abort()
+        {
+            //NOTE: IKStateが変わることとか(必要に応じて)IK Weight自体が下がることに任せるので、特に何もしない
+        }
+        
+        void IWordToMotionPlayer.PlayPreview(MotionRequest request)
+        {
+            PlayPreview(request.BuiltInAnimationClipName);
+        }
+
         private bool PreviewIsActive => !string.IsNullOrEmpty(_previewClipName);
 
         private bool IsPlayingPreview => !string.IsNullOrEmpty(_previewClipName) && _clapMotion.ClapMotionRunning;

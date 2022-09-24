@@ -53,6 +53,8 @@ namespace Baku.VMagicMirror.Installer
                 .FromComponentInNewPrefab(accessoryControllerPrefab)
                 .AsCached()
                 .NonLazy();
+            
+            WordToMotion.WordToMotionInstaller.Install(Container);
         }
     }
 }

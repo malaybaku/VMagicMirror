@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3b97cb74fb75545a07d19ee8d25ad5, type: 3}
   m_Name: BuiltInClips
   m_EditorClassIdentifier: 
+  defaultStandingAnimation: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc,
+    type: 2}
   items:
   - name: Wave
     clip: {fileID: 7400000, guid: 2d2936a1fb0e17749bf614ef1a4fd964, type: 2}

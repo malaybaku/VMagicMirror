@@ -1,17 +1,23 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
+using UniRx;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
     public class WordAnalyzer 
     {
         //検出対象となる単語一覧
-        private string[] _wordSet = new string[0];
+        private string[] _wordSet = Array.Empty<string>();
         //検出対象ワードの最長の文字数
         private int _longestWordLength = 0;
 
         /// <summary>単語を検出すると発火します。</summary>
         public event Action<string> WordDetected;
+
+        private readonly Subject<string> _wordDetected = new Subject<string>();
+        public IObservable<string> WordDetectedAsObservable => _wordDetected;
 
         //キューの方がいいかも
         private readonly StringBuilder _sb = new StringBuilder(64);
@@ -23,12 +29,13 @@ namespace Baku.VMagicMirror
             _sb.Append(c);
 
             //単語一覧から探す
-            string s = _sb.ToString();
+            var s = _sb.ToString();
             for(int i = 0; i < _wordSet.Length; i++)
             {
                 if (s.IndexOf(_wordSet[i], StringComparison.Ordinal) >= 0)
                 {
                     WordDetected?.Invoke(_wordSet[i]);
+                    _wordDetected.OnNext(_wordSet[i]);
                     //ふつう末尾で一致しているハズだから、全消しでも無害
                     Clear();
                 }
@@ -57,22 +64,7 @@ namespace Baku.VMagicMirror
         {
             _wordSet = new string[words.Length];
             Array.Copy(words, _wordSet, words.Length);
-
-            _longestWordLength = 0;
-            for(int i = 0; i < _wordSet.Length; i++)
-            {
-                if (_wordSet[i].Length > _longestWordLength)
-                {
-                    _longestWordLength = _wordSet[i].Length;
-                }
-            }
-        }
-
-        /// <summary>検出対象となるワード一覧を空に戻します。</summary>
-        public void ResetWordSet()
-        {
-            _wordSet = new string[0];
-            _longestWordLength = 0;
+            _longestWordLength = _wordSet.Any() ? _wordSet.Max(w => w.Length) : 1;
         }
     }
 }

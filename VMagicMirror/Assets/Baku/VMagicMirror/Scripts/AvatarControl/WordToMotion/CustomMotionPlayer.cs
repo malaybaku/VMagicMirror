@@ -109,7 +109,10 @@ namespace Baku.VMagicMirror
             RunMotionLoopAsync(item, _cts.Token).Forget();
         }
 
-        void IWordToMotionPlayer.Abort() => Stop();
+        void IWordToMotionPlayer.Stop()
+        {
+            Stop();
+        }
 
         void IWordToMotionPlayer.StopPreview() => Stop();
 

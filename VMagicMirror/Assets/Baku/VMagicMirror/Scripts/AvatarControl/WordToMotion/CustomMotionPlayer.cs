@@ -1,7 +1,6 @@
-﻿using System.Threading;
+﻿using System;
 using Baku.VMagicMirror.MotionExporter;
 using Baku.VMagicMirror.WordToMotion;
-using Cysharp.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -13,37 +12,36 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class CustomMotionPlayer : MonoBehaviour, IWordToMotionPlayer
     {
-        private const float FadeDuration = 0.5f;
+        [SerializeField] private HumanoidAnimationSetter sourceFront = null;
+        [SerializeField] private HumanoidAnimationSetter sourceBack = null;
 
-        [SerializeField] private HumanoidAnimationSetter source = null;
-
-        private CustomMotionRepository _repository;
         private readonly Subject<Unit> _lateUpdateRun = new Subject<Unit>();
+        private CustomMotionRepository _repository;
 
         private bool _hasModel = false;
         private HumanPoseHandler _humanPoseHandler = null;
-        private HumanPose _humanPose;
 
+        private CustomMotionPlayRoutine _playRoutine = null;
+        private IDisposable _playRoutineDisposer = null;
+        
         //アニメーション中の位置をどうにかせんといけないので…
         private Transform _hips;
         private Vector3 _originHipsPos;
         private Quaternion _originHipsRot;
 
-        private CancellationTokenSource _cts = new CancellationTokenSource();
-
-        private CustomMotionItem _currentItem = null;
-        private string CurrentMotionName => _currentItem?.MotionLowerName ?? "";
-
-        private bool _playingPreview = false;
+        private CustomMotionItem CurrentItem => _playRoutine?.CurrentItem;
+        private string CurrentMotionName => CurrentItem?.MotionLowerName ?? "";
+        private bool IsPlayingPreview => _playRoutine?.IsRunningLoopMotion == true;
         
         //NOTE: Execution Order Sensitiveな処理なのでUniTask.DelayFrameが使えないんですね～
         private void LateUpdate() => _lateUpdateRun.OnNext(Unit.Default);
 
         private void OnDestroy()
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = null;
+            _playRoutineDisposer?.Dispose();
+            _playRoutineDisposer = null;
+            _playRoutine?.Dispose();
+            _playRoutine = null;
         }
 
         [Inject]
@@ -57,13 +55,29 @@ namespace Baku.VMagicMirror
                 _hips = info.animator.GetBoneTransform(HumanBodyBones.Hips);
                 _originHipsPos = _hips.localPosition;
                 _originHipsRot = _hips.localRotation;
+                _playRoutine = new CustomMotionPlayRoutine(
+                    _humanPoseHandler, sourceFront, sourceBack, _lateUpdateRun
+                );
+
+                _playRoutineDisposer = _playRoutine.HipsAdjustRequested
+                    .Subscribe(_ => WriteHipOriginPose());
+                    
                 _hasModel = true;
             };
 
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
+
+                _playRoutineDisposer?.Dispose();
+                _playRoutineDisposer = null;
+                _playRoutine.Dispose();
+                _playRoutine = null;
+
+                _humanPoseHandler?.Dispose();
                 _humanPoseHandler = null;
+
+                _hips = null;
             };
         }
 
@@ -78,7 +92,7 @@ namespace Baku.VMagicMirror
 
         void IWordToMotionPlayer.Play(MotionRequest request, out float duration)
         {
-            if (!_hasModel || _playingPreview)
+            if (!_hasModel || IsPlayingPreview)
             {
                 //いちおう非ゼロのdurationを返しておく
                 duration = 1.0f;
@@ -86,111 +100,29 @@ namespace Baku.VMagicMirror
             }
 
             var item = _repository.GetItem(request.CustomMotionClipName);
-            duration = item.Motion.Duration;
-
-            //NOTE: Stopせずにモーションどうしの補間するのを目指してもOK
-            Stop();
-            RunMotionAsync(item, _cts.Token).Forget();
+            duration = item.Motion.Duration - CustomMotionPlayState.FadeDuration;
+            Debug.Log($"run custom motion, item is non-null? {item != null}, duration={duration:0.0}");
+            _playRoutine.Run(item);
         }
 
         void IWordToMotionPlayer.PlayPreview(MotionRequest request)
         {
             var motionName = request.CustomMotionClipName.ToLower();
-            if (!_hasModel ||
-                (_playingPreview && CurrentMotionName == motionName)
-               )
+            if (!_hasModel || (IsPlayingPreview && CurrentMotionName == motionName))
             {
                 return;
             }
 
             var item = _repository.GetItem(motionName);
-            Stop();
-            _playingPreview = true;
-            RunMotionLoopAsync(item, _cts.Token).Forget();
+            _playRoutine.RunLoop(item);
         }
 
-        void IWordToMotionPlayer.Stop()
-        {
-            Stop();
-        }
-
-        void IWordToMotionPlayer.StopPreview() => Stop();
-
+        void IWordToMotionPlayer.Stop() => _playRoutine?.Stop();
+        void IWordToMotionPlayer.StopPreview() => _playRoutine?.StopImmediate();
         bool IWordToMotionPlayer.UseIkAndFingerFade => true;
 
-        private void Stop()
+        void WriteHipOriginPose()
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = new CancellationTokenSource();
-            _playingPreview = false;
-            _currentItem = null;
-        }
-
-        //NOTE: フェードインをしないのはIKFadeOutによっていい感じになる見込みだから
-        async UniTaskVoid RunMotionAsync(CustomMotionItem item, CancellationToken cancellationToken)
-        {
-            PrepareItemRun(item);
-            var count = 0f;
-
-            var duration = _currentItem.Motion.Duration;
-            while (count < duration)
-            {
-                await _lateUpdateRun.ToUniTask(true, cancellationToken);
-                _currentItem.Motion.Evaluate(count);
-
-                var useRate = (count < FadeDuration || count > duration - FadeDuration);
-                //モーションの出入りは補間する: 急に動かないように
-                var rate =
-                    count < FadeDuration ? Mathf.Clamp01(count / FadeDuration) :
-                    count > duration - FadeDuration ? Mathf.Clamp01((duration - count) / FadeDuration) :
-                    1f;
-                WriteCurrentPose(useRate, rate);
-                count += Time.deltaTime;
-            }
-
-            cancellationToken.ThrowIfCancellationRequested();
-            _currentItem = null;
-        }
-
-        async UniTaskVoid RunMotionLoopAsync(CustomMotionItem item, CancellationToken cancellationToken)
-        {
-            PrepareItemRun(item);
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                var count = 0f;
-                while (count < _currentItem.Motion.Duration)
-                {
-                    await _lateUpdateRun.ToUniTask(true, cancellationToken);
-                    _currentItem.Motion.Evaluate(count);
-                    count += Time.deltaTime;
-                    WriteCurrentPose();
-                }
-            }
-        }
-
-        void PrepareItemRun(CustomMotionItem item)
-        {
-            source.SetUsedFlags(item.UsedFlags);
-            _currentItem = item;
-            _currentItem.Motion.Target = source;
-        }
-
-        //クリップで再生されてセットされたはずの姿勢を当て込む
-        void WriteCurrentPose(bool useRate = false, float rate = 1.0f)
-        {
-            _humanPoseHandler.GetHumanPose(ref _humanPose);
-            if (useRate)
-            {
-                source.WriteToPose(ref _humanPose, rate);
-            }
-            else
-            {
-                source.WriteToPose(ref _humanPose);    
-            }
- 
-            _humanPoseHandler.SetHumanPose(ref _humanPose);
-
             //NOTE: hipsは固定しないとどんどんズレる事があるのを確認したため、安全のために固定してます
             _hips.localPosition = _originHipsPos;
             _hips.localRotation = _originHipsRot;

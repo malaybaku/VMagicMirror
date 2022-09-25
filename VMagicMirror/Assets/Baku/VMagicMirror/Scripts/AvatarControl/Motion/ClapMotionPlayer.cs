@@ -8,14 +8,6 @@ namespace Baku.VMagicMirror
     {
         public const string ClapClipName = "Clap";
 
-        //NOTE: HeadMotionの仕組みにならっているため、いちおうenumにしてる
-        private enum ClipPlayState
-        {
-            None,
-            Clapping,
-        }
-
-        private ClipPlayState _playState = ClipPlayState.None;
         private string _previewClipName = "";
 
         //TODO: Fingerだけ何かしたい可能性あるかも
@@ -86,13 +78,11 @@ namespace Baku.VMagicMirror
             }
 
             _clapMotion.RunClapMotion();
-            _playState = ClipPlayState.Clapping;
             duration = _clapMotion.MotionDuration;
         }
 
         public void Stop()
         {
-            _playState = ClipPlayState.None;
             _clapMotion.StopClapMotion();
         }
         

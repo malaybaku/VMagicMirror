@@ -13,9 +13,7 @@ namespace Baku.VMagicMirror.WordToMotion
     public class WordToMotionRequester
     {
         private readonly WordToMotionRequestRepository _repository;
-
-        private bool _hasPreviewRequest = false;
-
+        
         private readonly ReactiveProperty<bool> _previewIsActive = new ReactiveProperty<bool>(false);
         public IReadOnlyReactiveProperty<bool> PreviewIsActive => _previewIsActive;
 
@@ -64,15 +62,10 @@ namespace Baku.VMagicMirror.WordToMotion
             }
 
             _previewIsActive.Value = active;
-            if (!active)
-            {
-                _hasPreviewRequest = false;
-            }
         }
         
         public void SetPreviewRequest(MotionRequest request)
         {
-            _hasPreviewRequest = true;
             _previewRequested.OnNext(request);
         }
     }

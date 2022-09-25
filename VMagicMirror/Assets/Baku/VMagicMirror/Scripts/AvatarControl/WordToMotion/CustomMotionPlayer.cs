@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Baku.VMagicMirror.MotionExporter;
 using Baku.VMagicMirror.WordToMotion;
 using Cysharp.Threading.Tasks;
@@ -9,10 +10,9 @@ using Zenject;
 namespace Baku.VMagicMirror
 {
     /// <summary>
-    /// カスタムモーションをいい感じに管理するクラス。
-    /// タスク指向で実装されている
+    /// カスタムモーションをいい感じに実行するクラス。タスク指向で実装されている
     /// </summary>
-    public class CustomMotionPlayerV2 : MonoBehaviour, IWordToMotionPlayer
+    public class CustomMotionPlayer : MonoBehaviour, IWordToMotionPlayer
     {
         private const float FadeDuration = 0.5f;
 
@@ -130,24 +130,21 @@ namespace Baku.VMagicMirror
         {
             PrepareItemRun(item);
             var count = 0f;
-            while (count < _currentItem.Motion.Duration - FadeDuration)
+
+            var duration = _currentItem.Motion.Duration;
+            while (count < duration)
             {
                 await _lateUpdateRun.ToUniTask(true, cancellationToken);
-
                 _currentItem.Motion.Evaluate(count);
-                count += Time.deltaTime;
-                WriteCurrentPose();
-            }
 
-            while (count < _currentItem.Motion.Duration)
-            {
-                await _lateUpdateRun.ToUniTask(true, cancellationToken);
-
-                _currentItem.Motion.Evaluate(count);
+                var useRate = (count < FadeDuration || count > duration - FadeDuration);
+                //モーションの出入りは補間する: 急に動かないように
+                var rate =
+                    count < FadeDuration ? Mathf.Clamp01(count / FadeDuration) :
+                    count > duration - FadeDuration ? Mathf.Clamp01((duration - count) / FadeDuration) :
+                    1f;
+                WriteCurrentPose(useRate, rate);
                 count += Time.deltaTime;
-                //1 -> 0 にrateが下がっていく
-                var rate = Mathf.Clamp01((_currentItem.Motion.Duration - count) / FadeDuration);
-                WriteCurrentPose(true, rate);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

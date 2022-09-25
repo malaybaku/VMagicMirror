@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror.Installer
 {
     public class WordToMotionInstaller : InstallerBase
     {
-        [SerializeField] private CustomMotionPlayerV2 customMotionPlayerV2 = null;
+        [SerializeField] private CustomMotionPlayer customMotionPlayerV2 = null;
         [SerializeField] private WordToMotionBlendShape blendShape = null;
         [SerializeField] private IkWeightCrossFade ikWeightCrossFade = null;
         

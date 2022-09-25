@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.IK;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.Installer
@@ -27,6 +28,7 @@ namespace Baku.VMagicMirror.Installer
                 .AsCached();
             
             container.BindInterfacesAndSelfTo<ClapMotionPlayer>().AsSingle();
+            container.BindInterfacesTo<FootIkSetter>().AsSingle();
         }
     }
 }

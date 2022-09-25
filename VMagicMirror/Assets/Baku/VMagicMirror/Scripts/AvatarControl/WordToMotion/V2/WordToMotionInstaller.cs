@@ -18,8 +18,9 @@ namespace Baku.VMagicMirror.WordToMotion
             //Empty入れても入れなくても挙動に影響しない…はず…
             //Container.BindInterfacesTo<EmptyRequestSource>().AsSingle();
             
-            //NOTE: たぶん廃止します、Simple Animationを消したほうがいい説が囁かれてるので…
+            //どっちが良いか微妙なライン…うーん…
             Container.BindInterfacesAndSelfTo<BuiltInMotionPlayer>().AsSingle();
+            //Container.BindInterfacesTo<BuiltInMotionPlayerV2>().AsSingle();
 
             //presenter
             Container.Bind<WordToMotionRequester>().AsSingle();

@@ -1,26 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.WordToMotion
 {
     /// <summary>
-    /// ビルトインモーションを実行するクラス
-    /// 元はWordToMotionManagerの一部だったが、リファクタにより分離した。
+    /// ビルトインモーションを実行するクラス。
+    /// SimpleAnimationを使うのをやめてる実装(下半身ボーンを制御しないため)
     /// </summary>
-    public class BuiltInMotionPlayer : PresenterBase, IWordToMotionPlayer
+    public class BuiltInMotionPlayerV2 : PresenterBase, IWordToMotionPlayer
     {
-        private const string DefaultStateName = "Default";
-        private const float CrossFadeDuration = WordToMotionRunner.IkFadeDuration;
+        private static readonly int StandingTrigger = Animator.StringToHash("Standing");
+        private static readonly Dictionary<string, int> _clipNameToAnimatorTrigger = new Dictionary<string, int>()
+        {
+            ["Wave"] = Animator.StringToHash("Wave"),
+            ["Rokuro"] = Animator.StringToHash("Rokuro"),
+            ["Good"] = Animator.StringToHash("Good"),
+        };
 
         private readonly WordToMotionMapper _mapper;
         private readonly BuiltInMotionClipData _clipData;
         private readonly IVRMLoadable _vrmLoadable;
 
         private bool _hasModel = false;
-        private SimpleAnimation _simpleAnimation = null;
+        private Animator _animator = null;
 
         private bool _isPlaying;
         private string _previewClipName;
@@ -28,7 +35,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
         [Inject]
-        public BuiltInMotionPlayer(IVRMLoadable vrmLoadable, BuiltInMotionClipData clipData)
+        public BuiltInMotionPlayerV2(IVRMLoadable vrmLoadable, BuiltInMotionClipData clipData)
         {
             _clipData = clipData;
             _mapper = new WordToMotionMapper(clipData);
@@ -50,17 +57,15 @@ namespace Baku.VMagicMirror.WordToMotion
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _simpleAnimation = info.vrmRoot.gameObject.AddComponent<SimpleAnimation>();
-            _simpleAnimation.playAutomatically = false;
-            _simpleAnimation.AddState(_clipData.DefaultStandingAnimation, DefaultStateName);
-            _simpleAnimation.Play(DefaultStateName);
+            _animator = info.animator;
+            _animator.runtimeAnimatorController = _clipData.AnimatorController;
             _hasModel = true;
         }
 
         private void OnVrmUnloaded()
         {
             _hasModel = false;
-            _simpleAnimation = null;
+            _animator = null;
         }
         
         private void RefreshCts()
@@ -78,7 +83,8 @@ namespace Baku.VMagicMirror.WordToMotion
                 duration = 0f;
                 return;
             }
-            
+
+            //NOTE: ここclipが二重管理されててちょっと気持ち悪いが、一旦許容で…
             var clip = _mapper.FindBuiltInAnimationClipOrDefault(clipName);
             if (clip == null)
             {
@@ -86,18 +92,8 @@ namespace Baku.VMagicMirror.WordToMotion
                 return;
             }
         
-            //NOTE: Removeがうまく動いてないように見えるのでRemoveしないようにしてる
-            if (_simpleAnimation.GetState(clipName) == null)
-            {
-                _simpleAnimation.AddState(clip, clipName);
-            }
-            else
-            {
-                //2回目がきちんと動くために。
-                _simpleAnimation.Rewind(clipName);
-            }
-        
-            _simpleAnimation.Play(clipName);
+            Debug.Log($"set trigger, {clipName}");
+            _animator.SetTrigger(_clipNameToAnimatorTrigger[clipName]);
             duration = clip.length - WordToMotionRunner.IkFadeDuration;
 
             RefreshCts();
@@ -109,7 +105,7 @@ namespace Baku.VMagicMirror.WordToMotion
             await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
             if (_hasModel)
             {
-                _simpleAnimation.CrossFade(DefaultStateName, CrossFadeDuration);
+                _animator.SetTrigger(StandingTrigger);
             }
         }
         
@@ -140,16 +136,9 @@ namespace Baku.VMagicMirror.WordToMotion
             if (_isPlaying && 
                 clipName == _previewClipName && 
                 //NOTE: 最後まで行ってたら再生し直す
-                _simpleAnimation.GetState(clipName) != null && 
-                _simpleAnimation.GetState(clipName).normalizedTime < 1.0f)
+                _animator.GetCurrentAnimatorStateInfo(0).shortNameHash != StandingTrigger)
             {
                 return;
-            }
-
-            //プレビュー中のクリップを別のクリップに変えるケース
-            if (!string.IsNullOrEmpty(_previewClipName) && _previewClipName != clipName)
-            {
-                _simpleAnimation.Stop(_previewClipName);
             }
 
             var clipData = _clipData.Items.FirstOrDefault(c => c.name == clipName);
@@ -158,18 +147,8 @@ namespace Baku.VMagicMirror.WordToMotion
                 return;
             }
 
-            if (_simpleAnimation.GetState(clipName) == null)
-            {
-                _simpleAnimation.AddState(clipData.clip, clipName);
-            }
-            else
-            {
-                //いちおう直す方が心臓に優しいので
-                _simpleAnimation.Rewind(clipName);
-            }
-
             _isPlaying = true;
-            _simpleAnimation.Play(clipName);
+            _animator.SetTrigger(_clipNameToAnimatorTrigger[clipName]);
             _previewClipName = clipName;
         }
 
@@ -178,7 +157,7 @@ namespace Baku.VMagicMirror.WordToMotion
             RefreshCts();
             if (_hasModel)
             {
-                _simpleAnimation.CrossFade(DefaultStateName, CrossFadeDuration);
+                _animator.SetTrigger(StandingTrigger);
             }
         }
 
@@ -192,16 +171,11 @@ namespace Baku.VMagicMirror.WordToMotion
 
             if (_hasModel)
             {
-                _simpleAnimation.Stop(_previewClipName);
+                _animator.SetTrigger(StandingTrigger);
             }
 
             _isPlaying = false;
             _previewClipName = "";
-
-            if (_hasModel)
-            {
-                _simpleAnimation.CrossFade(DefaultStateName, 0f);
-            }
         }
     }
 }

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3b97cb74fb75545a07d19ee8d25ad5, type: 3}
   m_Name: BuiltInClips
   m_EditorClassIdentifier: 
+  animatorController: {fileID: 9100000, guid: dce6e8089192b694e8a7df480d2dd98c, type: 2}
   defaultStandingAnimation: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc,
     type: 2}
   items:
@@ -21,5 +22,3 @@ MonoBehaviour:
     clip: {fileID: 7400000, guid: e0b3e1faef6abbf43827847a27014cff, type: 2}
   - name: Good
     clip: {fileID: 7400000, guid: d1cde24e01c095c428e6d07bd418683b, type: 2}
-  - name: Nodding
-    clip: {fileID: 7400000, guid: f4895d856de34be4f80c6ab35bc07bad, type: 2}

@@ -18,8 +18,6 @@ namespace Baku.VMagicMirror
         private ClipPlayState _playState = ClipPlayState.None;
         private string _previewClipName = "";
 
-        public bool IsPlaying => _playState != ClipPlayState.None && _clapMotion.ClapMotionRunning;
-
         //TODO: Fingerだけ何かしたい可能性あるかも
         bool IWordToMotionPlayer.UseIkAndFingerFade => false;
 
@@ -35,7 +33,7 @@ namespace Baku.VMagicMirror
             Play(request.BuiltInAnimationClipName, out duration);
         }
 
-        void IWordToMotionPlayer.Abort()
+        void IWordToMotionPlayer.Stop()
         {
             //NOTE: IKStateが変わることとか(必要に応じて)IK Weight自体が下がることに任せるので、特に何もしない
         }

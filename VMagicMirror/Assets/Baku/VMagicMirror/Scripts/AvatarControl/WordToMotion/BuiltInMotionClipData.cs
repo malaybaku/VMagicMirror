@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror
     {
         [SerializeField] private AnimationClip defaultStandingAnimation;
         [SerializeField] private List<BuiltInMotionClipItem> items;
-
+        
         public AnimationClip DefaultStandingAnimation => defaultStandingAnimation;
         public IEnumerable<BuiltInMotionClipItem> Items => items;
     }

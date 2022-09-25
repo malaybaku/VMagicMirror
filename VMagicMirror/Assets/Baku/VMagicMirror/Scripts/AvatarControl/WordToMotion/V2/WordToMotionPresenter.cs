@@ -96,6 +96,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 })
                 .AddTo(this);
             
+            //NOTE: このへんでモデルロード前を弾いてほしい気がする
             _requester.RunRequested
                 .Subscribe(_runner.Run)
                 .AddTo(this);

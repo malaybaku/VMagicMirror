@@ -65,11 +65,13 @@ namespace Baku.VMagicMirror.WordToMotion
 
         //NOTE: Previewかどうかによらず、実行中クリップがただひとつ存在する事にする
         private MotionRequest _currentRequest;
+        private bool _reserveIkFadeIn = false;
         private CancellationTokenSource _blendShapeResetCts;
         private CancellationTokenSource _motionResetCts;
         private CancellationTokenSource _accessoryResetCts;
+        
         //NOTE: モーションの終了処理をキャンセルした場合に要考慮になるので…
-        private bool _restoreIkOnMotionResetCancel = false;
+        private bool _restoreIkOnMotionEnd = false;
         private bool _previewIsActive = false;
         private bool _previewUseIkFade = false;
         
@@ -107,21 +109,27 @@ namespace Baku.VMagicMirror.WordToMotion
                     //NOTE: 実行中のと同じモーションが指定された場合も最初から再生してよい、というのがポイント
                     foreach (var player in _players.Where(p => p != playablePlayer))
                     {
-                        player.Abort();
+                        player.Stop();
                     }
-                    playablePlayer?.Play(request, out duration);
+                    playablePlayer.Play(request, out duration);
 
-                    if (playablePlayer.UseIkAndFingerFade)
+                    if (playablePlayer.UseIkAndFingerFade && !_restoreIkOnMotionEnd)
                     {
+                        // 直前モーションでIKオフにしてない場合、オフにしたいので実際そうする
                         _fingerController.FadeOutWeight(IkFadeDuration);
                         _ikWeightCrossFade.FadeOutArmIkWeights(IkFadeDuration);
+                    }
+                    else if (!playablePlayer.UseIkAndFingerFade && _restoreIkOnMotionEnd)
+                    {
+                        // IKオフのモーション中にIK有効が期待されたモーションを行う場合、IKがオンになる
+                        _fingerController.FadeInWeight(IkFadeDuration);
+                        _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
                     }
                 }
                 
                 _motionResetCts = new CancellationTokenSource();
-                //IK戻す条件 =
-                _restoreIkOnMotionResetCancel = playablePlayer?.UseIkAndFingerFade ?? false;
-                ResetMotionAsync(duration, _restoreIkOnMotionResetCancel, _motionResetCts.Token)
+                _restoreIkOnMotionEnd = playablePlayer?.UseIkAndFingerFade ?? false;
+                ResetMotionAsync(duration, _restoreIkOnMotionEnd, _motionResetCts.Token)
                     .Forget();
             }
 
@@ -216,10 +224,11 @@ namespace Baku.VMagicMirror.WordToMotion
             _accessoryRequest.Reset();
             foreach (var player in _players)
             {
-                player.Abort();
+                player.Stop();
             }
             _fingerController.FadeInWeight(0f);
             _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
+            _restoreIkOnMotionEnd = false;
         }
 
         private async UniTaskVoid ResetMotionAsync(float delay, bool fadeIkAndFinger, CancellationToken cancellationToken)
@@ -233,7 +242,7 @@ namespace Baku.VMagicMirror.WordToMotion
                     _fingerController.FadeInWeight(IkFadeDuration);
                     _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
                 }
-                _restoreIkOnMotionResetCancel = false;
+                _restoreIkOnMotionEnd = false;
             }
             catch (OperationCanceledException)
             {
@@ -272,13 +281,6 @@ namespace Baku.VMagicMirror.WordToMotion
             _motionResetCts?.Cancel();
             _motionResetCts?.Dispose();
             _motionResetCts = null;
-
-            if (_restoreIkOnMotionResetCancel)
-            {
-                _restoreIkOnMotionResetCancel = false;
-                _fingerController.FadeInWeight(IkFadeDuration);
-                _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
-            }
         }  
 
         private void CancelBlendShapeReset()

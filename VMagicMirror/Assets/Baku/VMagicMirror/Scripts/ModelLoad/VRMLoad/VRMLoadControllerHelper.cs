@@ -83,10 +83,12 @@ namespace Baku.VMagicMirror
             fbbik.solver.leftFootEffector.target = ikTargets.LeftFoot;
             fbbik.solver.leftFootEffector.positionWeight = 1f;
             fbbik.solver.leftFootEffector.rotationWeight = 0f;
+            fbbik.solver.leftLegChain.pull = 0f;
             
             fbbik.solver.rightFootEffector.target = ikTargets.RightFoot;
             fbbik.solver.rightFootEffector.positionWeight = 1f;
             fbbik.solver.rightFootEffector.rotationWeight = 0f;
+            fbbik.solver.rightLegChain.pull = 0f;
             
             return fbbik;
         }

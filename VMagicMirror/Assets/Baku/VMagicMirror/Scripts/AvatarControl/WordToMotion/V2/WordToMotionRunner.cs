@@ -107,7 +107,7 @@ namespace Baku.VMagicMirror.WordToMotion
                     //NOTE: 実行中のと同じモーションが指定された場合も最初から再生してよい、というのがポイント
                     foreach (var player in _players.Where(p => p != playablePlayer))
                     {
-                        player.Abort();
+                        player.Stop();
                     }
                     playablePlayer?.Play(request, out duration);
 
@@ -216,7 +216,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _accessoryRequest.Reset();
             foreach (var player in _players)
             {
-                player.Abort();
+                player.Stop();
             }
             _fingerController.FadeInWeight(0f);
             _ikWeightCrossFade.FadeInArmIkWeightsImmediately();

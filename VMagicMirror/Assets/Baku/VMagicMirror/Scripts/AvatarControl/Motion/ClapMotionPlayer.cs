@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
             Play(request.BuiltInAnimationClipName, out duration);
         }
 
-        void IWordToMotionPlayer.Abort()
+        void IWordToMotionPlayer.Stop()
         {
             //NOTE: IKStateが変わることとか(必要に応じて)IK Weight自体が下がることに任せるので、特に何もしない
         }

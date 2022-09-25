@@ -173,7 +173,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _previewClipName = clipName;
         }
 
-        void IWordToMotionPlayer.Abort()
+        void IWordToMotionPlayer.Stop()
         {
             RefreshCts();
             if (_hasModel)

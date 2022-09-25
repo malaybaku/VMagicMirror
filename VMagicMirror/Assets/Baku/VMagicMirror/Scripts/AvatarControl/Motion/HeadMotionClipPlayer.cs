@@ -48,7 +48,7 @@ namespace Baku.VMagicMirror
             Play(request.BuiltInAnimationClipName, out duration);
         }
 
-        void IWordToMotionPlayer.Abort()
+        void IWordToMotionPlayer.Stop()
         {
             //停止指示に対しては「Preview動作があったら消す」とし、プレビューじゃない動作の場合は止められない
             if (PreviewIsActive)

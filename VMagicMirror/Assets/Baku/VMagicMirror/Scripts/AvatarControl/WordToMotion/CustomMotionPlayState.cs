@@ -42,12 +42,10 @@ namespace Baku.VMagicMirror.WordToMotion
         private CancellationTokenSource _cts = new CancellationTokenSource();
         private float _count;
         private PlayPhase _phase = PlayPhase.Idle;
-
-        private readonly Subject<Unit> _hipsAdjustRequested = new Subject<Unit>();
-        public IObservable<Unit> HipsAdjustRequested => _hipsAdjustRequested;
         
         public bool IsRunningLoopMotion { get; private set; }
         public CustomMotionItem CurrentItem => _item;
+        public bool HasUpdate { get; private set; }
 
         public void RunMotion(CustomMotionItem item)
         {
@@ -237,9 +235,14 @@ namespace Baku.VMagicMirror.WordToMotion
                 _setter.WriteToPose(ref _humanPose);
             }
             _humanPoseHandler.SetHumanPose(ref _humanPose);
-            _hipsAdjustRequested.OnNext(Unit.Default);
+            HasUpdate = true;
         }
 
+        public void ResetUpdateFlag()
+        {
+            HasUpdate = false;
+        }
+        
         public void Dispose()
         {
             RefreshCts();

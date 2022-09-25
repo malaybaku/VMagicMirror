@@ -20,15 +20,16 @@ namespace Baku.VMagicMirror.WordToMotion
         private CustomMotionPlayState _currentState;
         private CustomMotionPlayState _prevState;
 
-        public IObservable<Unit> HipsAdjustRequested => Observable.Merge(
-                _currentState.HipsAdjustRequested,
-                _prevState.HipsAdjustRequested
-            )
-            .ThrottleFrame(1);
-
         public CustomMotionItem CurrentItem => _currentState.CurrentItem;
         public bool IsRunningLoopMotion => _currentState.IsRunningLoopMotion;
+        public bool HasUpdate => _currentState.HasUpdate || _prevState.HasUpdate;
 
+        public void ResetUpdateFlag()
+        {
+            _currentState.ResetUpdateFlag();
+            _prevState.ResetUpdateFlag();
+        }
+        
         public void Run(CustomMotionItem item)
         {
             Swap(); 

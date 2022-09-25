@@ -22,7 +22,6 @@ namespace Baku.VMagicMirror
         private HumanPoseHandler _humanPoseHandler = null;
 
         private CustomMotionPlayRoutine _playRoutine = null;
-        private IDisposable _playRoutineDisposer = null;
         
         //アニメーション中の位置をどうにかせんといけないので…
         private Transform _hips;
@@ -34,12 +33,19 @@ namespace Baku.VMagicMirror
         private bool IsPlayingPreview => _playRoutine?.IsRunningLoopMotion == true;
         
         //NOTE: Execution Order Sensitiveな処理なのでUniTask.DelayFrameが使えないんですね～
-        private void LateUpdate() => _lateUpdateRun.OnNext(Unit.Default);
+        private void LateUpdate()
+        {
+            _lateUpdateRun.OnNext(Unit.Default);
+            if (_playRoutine?.HasUpdate == true)
+            {
+                //NOTE: hipsは固定しないとどんどんズレる事があるのを確認したため、安全のために固定してます
+                _hips.localPosition = _originHipsPos;
+                _hips.localRotation = _originHipsRot;
+            }
+        }
 
         private void OnDestroy()
         {
-            _playRoutineDisposer?.Dispose();
-            _playRoutineDisposer = null;
             _playRoutine?.Dispose();
             _playRoutine = null;
         }
@@ -59,9 +65,6 @@ namespace Baku.VMagicMirror
                     _humanPoseHandler, sourceFront, sourceBack, _lateUpdateRun
                 );
 
-                _playRoutineDisposer = _playRoutine.HipsAdjustRequested
-                    .Subscribe(_ => WriteHipOriginPose());
-                    
                 _hasModel = true;
             };
 
@@ -69,11 +72,8 @@ namespace Baku.VMagicMirror
             {
                 _hasModel = false;
 
-                _playRoutineDisposer?.Dispose();
-                _playRoutineDisposer = null;
                 _playRoutine.Dispose();
                 _playRoutine = null;
-
                 _humanPoseHandler?.Dispose();
                 _humanPoseHandler = null;
 
@@ -101,7 +101,6 @@ namespace Baku.VMagicMirror
 
             var item = _repository.GetItem(request.CustomMotionClipName);
             duration = item.Motion.Duration - CustomMotionPlayState.FadeDuration;
-            Debug.Log($"run custom motion, item is non-null? {item != null}, duration={duration:0.0}");
             _playRoutine.Run(item);
         }
 
@@ -120,12 +119,5 @@ namespace Baku.VMagicMirror
         void IWordToMotionPlayer.Stop() => _playRoutine?.Stop();
         void IWordToMotionPlayer.StopPreview() => _playRoutine?.StopImmediate();
         bool IWordToMotionPlayer.UseIkAndFingerFade => true;
-
-        void WriteHipOriginPose()
-        {
-            //NOTE: hipsは固定しないとどんどんズレる事があるのを確認したため、安全のために固定してます
-            _hips.localPosition = _originHipsPos;
-            _hips.localRotation = _originHipsRot;
-        }
     }
 }

@@ -1,3 +1,4 @@
+using Baku.VMagicMirror.IK;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -23,9 +24,9 @@ namespace Baku.VMagicMirror
         private Transform _head;
         private bool _hasAvatar;
 
-        public EyeLookAt(IVRMLoadable vrmLoadable, Transform lookAtTarget)
+        public EyeLookAt(IVRMLoadable vrmLoadable, IKTargetTransforms ikTargets)
         {
-            _lookAtTarget = lookAtTarget;
+            _lookAtTarget = ikTargets.LookAt;
             vrmLoadable.VrmLoaded += info => SetAvatarHead(info.animator.GetBoneTransform(HumanBodyBones.Head));
             vrmLoadable.VrmDisposing += ReleaseAvatarHead;
         }

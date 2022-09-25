@@ -21,6 +21,9 @@ namespace Baku.VMagicMirror.Installer
                 autoBlink,
                 eyeBoneAngleSetter
             );
+
+            container.Bind<EyeLookAt>().AsSingle();
+            container.BindInterfacesTo<EyeLookAtUpdater>().AsSingle();
         }
     }
 }

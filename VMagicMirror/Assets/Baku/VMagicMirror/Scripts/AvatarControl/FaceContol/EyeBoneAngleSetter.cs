@@ -63,13 +63,15 @@ namespace Baku.VMagicMirror
 
         [Inject]
         public void Initialize(
-            IMessageReceiver receiver, IVRMLoadable vrmLoadable,
-            IKTargetTransforms ikTargets,　NonImageBasedMotion nonImageBasedMotion)
+            IMessageReceiver receiver, 
+            IVRMLoadable vrmLoadable,
+            EyeLookAt eyeLookAt,
+            NonImageBasedMotion nonImageBasedMotion)
         {
             _nonImageBasedMotion = nonImageBasedMotion;
             _boneApplier = new EyeBoneAngleMapApplier(vrmLoadable);
             _blendShapeApplier = new EyeBlendShapeMapApplier(vrmLoadable);
-            _eyeLookAt = new EyeLookAt(vrmLoadable, ikTargets.LookAt);
+            _eyeLookAt = eyeLookAt;
 
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposed;
@@ -129,7 +131,7 @@ namespace Baku.VMagicMirror
                 eyeDownMotionController,
             };
         }
-        
+
         private void LateUpdate()
         {
             if (!_hasModel || 
@@ -169,7 +171,7 @@ namespace Baku.VMagicMirror
             var rightYaw = rightRate.x * HorizontalRateToAngle;
             var rightPitch = -rightRate.y * VerticalRateToAngle;
 
-            _eyeLookAt.Calculate();
+            //_eyeLookAt.Calculate();
             leftYaw += _eyeLookAt.Yaw;
             rightYaw += _eyeLookAt.Yaw;
             leftPitch += _eyeLookAt.Pitch;

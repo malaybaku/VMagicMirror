@@ -214,29 +214,38 @@ namespace Baku.VMagicMirror
 
         private bool GetShiftKey()
         {
-#if UNITY_EDITOR
-            return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-#else
-            return _shift;
-#endif
+            if (Application.isEditor)
+            {
+                return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            }
+            else
+            {
+                return _shift;                
+            }
         }
         
         private bool GetAltKey()
         {
-#if UNITY_EDITOR
-            return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
-#else
-            return _alt;
-#endif
+            if (Application.isEditor)
+            {
+                return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
+            }
+            else
+            {
+                return _alt;
+            }
         }
 
         private bool GetAltKeyDown()
         {
-#if UNITY_EDITOR
-            return Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt);
-#else
-            return _altDown;
-#endif
+            if (Application.isEditor)
+            {
+                return Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt);
+            }
+            else
+            {
+                return _altDown;
+            }
         }
     }
 }

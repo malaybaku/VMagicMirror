@@ -65,7 +65,6 @@ namespace Baku.VMagicMirror.WordToMotion
 
         //NOTE: Previewかどうかによらず、実行中クリップがただひとつ存在する事にする
         private MotionRequest _currentRequest;
-        private bool _reserveIkFadeIn = false;
         private CancellationTokenSource _blendShapeResetCts;
         private CancellationTokenSource _motionResetCts;
         private CancellationTokenSource _accessoryResetCts;

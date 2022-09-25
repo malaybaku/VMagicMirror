@@ -18,8 +18,6 @@ namespace Baku.VMagicMirror
         private ClipPlayState _playState = ClipPlayState.None;
         private string _previewClipName = "";
 
-        public bool IsPlaying => _playState != ClipPlayState.None && _clapMotion.ClapMotionRunning;
-
         //TODO: Fingerだけ何かしたい可能性あるかも
         bool IWordToMotionPlayer.UseIkAndFingerFade => false;
 

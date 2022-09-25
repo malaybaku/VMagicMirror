@@ -82,8 +82,6 @@ namespace Baku.VMagicMirror
             };
         }
 
-        bool IWordToMotionPlayer.IsPlaying => !string.IsNullOrEmpty(CurrentMotionName);
-
         bool IWordToMotionPlayer.CanPlay(MotionRequest request)
         {
             return

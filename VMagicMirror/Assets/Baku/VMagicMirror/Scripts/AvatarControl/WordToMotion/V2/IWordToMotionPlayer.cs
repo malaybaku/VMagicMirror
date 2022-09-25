@@ -5,10 +5,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public interface IWordToMotionPlayer
     {
-        //NOTE: IsPlayingが有効なPlayerは1つまでしか存在しない。
-        //モーションがフェードインする瞬間からtrueになり、フェードアウトし始める時点でfalseになる
-        bool IsPlaying { get; }
-        
         /// <summary>
         /// モーション実行中にIKや指の操作があると邪魔な場合、このフラグをtrueにすることで、
         /// Runnerクラス側がIKや指の処理を無効にします。

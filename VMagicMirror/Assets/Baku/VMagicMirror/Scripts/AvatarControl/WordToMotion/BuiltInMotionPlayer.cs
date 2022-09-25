@@ -22,8 +22,8 @@ namespace Baku.VMagicMirror.WordToMotion
         private bool _hasModel = false;
         private SimpleAnimation _simpleAnimation = null;
 
-        private bool _isPlaying;
-        private string _previewClipName;
+        private bool _isPlayingPreview = false;
+        private string _previewClipName = "";
 
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
@@ -113,8 +113,6 @@ namespace Baku.VMagicMirror.WordToMotion
             }
         }
         
-        bool IWordToMotionPlayer.IsPlaying => _isPlaying;
-        
         bool IWordToMotionPlayer.UseIkAndFingerFade => true;
 
         bool IWordToMotionPlayer.CanPlay(MotionRequest request)
@@ -137,7 +135,7 @@ namespace Baku.VMagicMirror.WordToMotion
             }
 
             var clipName = request.BuiltInAnimationClipName;
-            if (_isPlaying && 
+            if (_isPlayingPreview && 
                 clipName == _previewClipName && 
                 //NOTE: 最後まで行ってたら再生し直す
                 _simpleAnimation.GetState(clipName) != null && 
@@ -168,7 +166,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 _simpleAnimation.Rewind(clipName);
             }
 
-            _isPlaying = true;
+            _isPlayingPreview = true;
             _simpleAnimation.Play(clipName);
             _previewClipName = clipName;
         }
@@ -180,11 +178,13 @@ namespace Baku.VMagicMirror.WordToMotion
             {
                 _simpleAnimation.CrossFade(DefaultStateName, CrossFadeDuration);
             }
+            _previewClipName = "";
+            _isPlayingPreview = false;
         }
 
         void IWordToMotionPlayer.StopPreview()
         {
-            if (!_isPlaying)
+            if (!_isPlayingPreview)
             {
                 _previewClipName = "";
                 return;
@@ -195,7 +195,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 _simpleAnimation.Stop(_previewClipName);
             }
 
-            _isPlaying = false;
+            _isPlayingPreview = false;
             _previewClipName = "";
 
             if (_hasModel)

@@ -30,8 +30,6 @@ namespace Baku.VMagicMirror
         private ClipPlayState _playState = ClipPlayState.None;
         private string _previewClipName = "";
         private bool PreviewIsActive => !string.IsNullOrEmpty(_previewClipName);
-        
-        public bool IsPlaying => _playState != ClipPlayState.None && _playCount < _currentMotionParams.Duration;
 
         bool IWordToMotionPlayer.UseIkAndFingerFade => false;
 

@@ -228,6 +228,7 @@ namespace Baku.VMagicMirror.WordToMotion
             }
             _fingerController.FadeInWeight(0f);
             _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
+            _restoreIkOnMotionEnd = false;
         }
 
         private async UniTaskVoid ResetMotionAsync(float delay, bool fadeIkAndFinger, CancellationToken cancellationToken)

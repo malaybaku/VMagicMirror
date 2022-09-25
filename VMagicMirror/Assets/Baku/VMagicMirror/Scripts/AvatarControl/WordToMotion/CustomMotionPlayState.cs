@@ -77,6 +77,8 @@ namespace Baku.VMagicMirror.WordToMotion
             {
                 return;
             }
+
+            IsRunningLoopMotion = false;
             
             RefreshCts();
             //countはリセットしないで引き継ぐことに注意
@@ -116,30 +118,29 @@ namespace Baku.VMagicMirror.WordToMotion
         private async UniTaskVoid RunMotionAsync(CustomMotionItem item, CancellationToken cancellationToken)
         {
             PrepareItem(item);
-            var count = 0f;
             var duration = item.Motion.Duration;
 
             _phase = PlayPhase.FadeIn;
-            while (count < duration)
+            while (_count < duration)
             {
                 //NOTE: 同じモーションを複数のStateで使ってる可能性があるため、毎回Targetをチェックする
                 item.Motion.Target = _setter;
-                item.Motion.Evaluate(count);
-                var useRate = (count < FadeDuration || count > duration - FadeDuration);
+                item.Motion.Evaluate(_count);
+                var useRate = (_count < FadeDuration || _count > duration - FadeDuration);
                 //モーションの出入りが補間される
                 var rate =
-                    count < FadeDuration ? Mathf.Clamp01(count / FadeDuration) :
-                    count > duration - FadeDuration ? Mathf.Clamp01((duration - count) / FadeDuration) :
+                    _count < FadeDuration ? Mathf.Clamp01(_count / FadeDuration) :
+                    _count > duration - FadeDuration ? Mathf.Clamp01((duration - _count) / FadeDuration) :
                     1f;
                 WriteCurrentPose(useRate, rate);
                 await _lateUpdateSource.ToUniTask(true, cancellationToken);
-                count += Time.deltaTime;
+                _count += Time.deltaTime;
 
-                if (_phase == PlayPhase.FadeIn && count > FadeDuration)
+                if (_phase == PlayPhase.FadeIn && _count > FadeDuration)
                 {
                     _phase = PlayPhase.Playing;
                 }
-                else if (_phase == PlayPhase.Playing && count > duration - FadeDuration)
+                else if (_phase == PlayPhase.Playing && _count > duration - FadeDuration)
                 {
                     _phase = PlayPhase.FadeOut;
                 }
@@ -154,23 +155,24 @@ namespace Baku.VMagicMirror.WordToMotion
             {
                 PrepareItem(item);
                 _phase = PlayPhase.FadeIn;
+                
                 var isFirstRun = true;
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var count = 0f;
-                    while (count < item.Motion.Duration)
+                    _count = 0f;
+                    while (_count < item.Motion.Duration)
                     {
                         //NOTE: 同じモーションを複数のStateで使ってる可能性があるため、毎回Targetをチェックする
                         item.Motion.Target = _setter;
-                        item.Motion.Evaluate(count);
-                        var useRate = isFirstRun && count < FadeDuration;
-                        var rate = useRate ? count / FadeDuration : 1f;
+                        item.Motion.Evaluate(_count);
+                        var useRate = isFirstRun && _count < FadeDuration;
+                        var rate = useRate ? _count / FadeDuration : 1f;
                         WriteCurrentPose(useRate, rate);
 
                         await _lateUpdateSource.ToUniTask(true, cancellationToken);
-                        count += Time.deltaTime;
+                        _count += Time.deltaTime;
 
-                        if (isFirstRun && count > FadeDuration)
+                        if (isFirstRun && _count > FadeDuration)
                         {
                             _phase = PlayPhase.Playing;
                         }
@@ -193,11 +195,15 @@ namespace Baku.VMagicMirror.WordToMotion
             //モーションの出だしでキャンセルした場合だけフェードアウトの所要時間が短い
             var startRate = 1f;
             var duration = FadeDuration;
-            if (_count < FadeDuration)
+            if (_count < FadeDuration && _phase == PlayPhase.FadeIn)
             {
                 duration = _count;
                 startRate = _count / FadeDuration;
             }
+
+            //NOTE: プレビューでループ再生していたときの終わり際については
+            // _count > (モーションのDuration)
+            // となるが、これは珍しいし、範囲外の値をEvaluateしてもClampされるので特に考慮しない
 
             if (duration < 0.01f)
             {
@@ -210,7 +216,7 @@ namespace Baku.VMagicMirror.WordToMotion
             var endTime = _count + duration;
             while (_count < endTime)
             {
-                var rate = Mathf.InverseLerp(startRate, 0, (_count - startCount) / duration);
+                var rate = Mathf.Lerp(startRate, 0, (_count - startCount) / duration);
                 //NOTE: 同じモーションを複数のStateで使ってる可能性があるため、毎回Targetをチェックする
                 item.Motion.Target = _setter;
                 item.Motion.Evaluate(_count);

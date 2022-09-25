@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror.WordToMotion
         public void Stop()
         {
             Swap();
-            _currentState.FadeOutCurrentMotion();
+            _prevState.FadeOutCurrentMotion();
         }
         
         public void StopImmediate()

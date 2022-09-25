@@ -42,6 +42,7 @@ namespace Baku.VMagicMirror
                 _hips.localPosition = _originHipsPos;
                 _hips.localRotation = _originHipsRot;
             }
+            _playRoutine?.ResetUpdateFlag();
         }
 
         private void OnDestroy()

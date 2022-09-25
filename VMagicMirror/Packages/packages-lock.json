@@ -162,40 +162,44 @@
       }
     },
     "com.vrmc.gltf": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.98.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.104.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.98.0"
+        "com.vrmc.vrmshaders": "0.104.0",
+        "com.unity.modules.animation": "1.0.0"
       },
-      "hash": "2f6b5224b641ea8b7919610e0955a0a810a16c3c"
+      "hash": "c466d689bccd003133b13fc5ddb8ff3f53763796"
     },
     "com.vrmc.univrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.98.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.104.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.98.0",
-        "com.vrmc.gltf": "0.98.0"
+        "com.vrmc.vrmshaders": "0.104.0",
+        "com.vrmc.gltf": "0.104.0",
+        "com.unity.ugui": "1.0.0"
       },
-      "hash": "2f6b5224b641ea8b7919610e0955a0a810a16c3c"
+      "hash": "c466d689bccd003133b13fc5ddb8ff3f53763796"
     },
     "com.vrmc.vrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.98.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.104.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.98.0",
-        "com.vrmc.gltf": "0.98.0"
+        "com.vrmc.vrmshaders": "0.104.0",
+        "com.vrmc.gltf": "0.104.0"
       },
-      "hash": "2f6b5224b641ea8b7919610e0955a0a810a16c3c"
+      "hash": "c466d689bccd003133b13fc5ddb8ff3f53763796"
     },
     "com.vrmc.vrmshaders": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.98.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.104.0",
       "depth": 0,
       "source": "git",
-      "dependencies": {},
-      "hash": "2f6b5224b641ea8b7919610e0955a0a810a16c3c"
+      "dependencies": {
+        "com.unity.modules.imageconversion": "1.0.0"
+      },
+      "hash": "c466d689bccd003133b13fc5ddb8ff3f53763796"
     },
     "jp.keijiro.mediapipe.blazepalm": {
       "version": "1.0.2",

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
@@ -33,6 +34,8 @@ namespace Baku.VMagicMirrorConfig
 
         private bool _isVRoidHubUiActive;
         private bool? _windowTransparentBeforeLoadProcess;
+
+        private CancellationTokenSource? _ctsForDetectVrm10;
 
         private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
         {
@@ -74,6 +77,9 @@ namespace Baku.VMagicMirrorConfig
         public async Task LoadVrm(Func<string> getFilePathProcess)
         {
             PrepareShowUiOnUnity();
+            RefreshCts();
+            _ctsForDetectVrm10 = new();
+            var token = _ctsForDetectVrm10.Token;
 
             string filePath = getFilePathProcess();
             if (!File.Exists(filePath))
@@ -85,25 +91,32 @@ namespace Baku.VMagicMirrorConfig
             _sender.SendMessage(MessageFactory.Instance.OpenVrmPreview(filePath));
 
             var indication = MessageIndication.LoadVrmConfirmation();
-            bool res = await MessageBoxWrapper.Instance.ShowAsync(
-                indication.Title,
-                indication.Content,
-                MessageBoxWrapper.MessageBoxStyle.OKCancel
-                );
 
-            if (res)
+            try
             {
-                _sender.SendMessage(MessageFactory.Instance.OpenVrm(filePath));
-                //NOTE: この時点だとモデルのロードの成否が不明なため、
-                //Unityからロード成功を通知されるまでは記録しないのも手
-                _setting.OnLocalModelLoaded(filePath);
-            }
-            else
-            {
-                _sender.SendMessage(MessageFactory.Instance.CancelLoadVrm());
-            }
+                var res = await MessageBoxWrapper.Instance.ShowAsync(
+                    indication.Title,
+                    indication.Content,
+                    MessageBoxWrapper.MessageBoxStyle.OKCancel,
+                    token
+                    );
 
-            EndShowUiOnUnity();
+                if (res)
+                {
+                    _sender.SendMessage(MessageFactory.Instance.OpenVrm(filePath));
+                    //NOTE: この時点だとモデルのロードの成否が不明なため、
+                    //Unityからロード成功を通知されるまでは記録しないのも手
+                    _setting.OnLocalModelLoaded(filePath);
+                }
+                else
+                {
+                    _sender.SendMessage(MessageFactory.Instance.CancelLoadVrm());
+                }
+            }
+            finally
+            {
+                EndShowUiOnUnity();
+            }
         }
 
         public async Task ConnectToVRoidHubAsync()
@@ -134,7 +147,7 @@ namespace Baku.VMagicMirrorConfig
 
         private async void ShowVrm10DetectedMessage(string pathOrModelName)
         {
-            MessageBoxWrapper.Instance.SetDialogResult(false);
+            _ctsForDetectVrm10?.Cancel();
             var indication = MessageIndication.Vrm10NotSupported();
             await MessageBoxWrapper.Instance.ShowAsync(
                 indication.Title,
@@ -187,6 +200,13 @@ namespace Baku.VMagicMirrorConfig
                 _setting.Window.IsTransparent.Value = _windowTransparentBeforeLoadProcess.Value;
                 _windowTransparentBeforeLoadProcess = null;
             }
+        }
+
+        private void RefreshCts()
+        {
+            _ctsForDetectVrm10?.Cancel();
+            _ctsForDetectVrm10?.Dispose();
+            _ctsForDetectVrm10 = null;
         }
     }
 }

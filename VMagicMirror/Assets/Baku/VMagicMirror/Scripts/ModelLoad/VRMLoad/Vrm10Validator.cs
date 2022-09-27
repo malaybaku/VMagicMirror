@@ -19,7 +19,8 @@ namespace Baku.VMagicMirror
             {
                 instance = await Vrm10.LoadBytesAsync(binary,
                     false,
-                    showMeshes: false,
+                    ControlRigGenerationOption.None,
+                    false,
                     vrmMetaInformationCallback: OnVrmMetaLoaded,
                     ct: cancellationToken
                 );

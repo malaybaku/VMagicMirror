@@ -118,5 +118,12 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public static MessageIndication WarnInfoAboutPenUnavaiable() => Load("PenUnavailable");
 
+        /// <summary>
+        /// ユーザーがVRM 1.0をロードさせようとした場合に表示する、
+        /// VRM1.0が未対応であることを伝えるダイアログ
+        /// </summary>
+        /// <returns></returns>
+        public static MessageIndication Vrm10NotSupported() => Load("Vrm10NotSupported");
+
     }
 }

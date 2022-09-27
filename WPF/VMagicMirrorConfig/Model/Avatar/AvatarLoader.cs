@@ -60,6 +60,9 @@ namespace Baku.VMagicMirrorConfig
                     //ともかくモデルがロードされているため、実態に合わせておく
                     _setting.LoadedModelName = e.Args;
                     break;
+                case ReceiveMessageNames.VRM10SpecifiedButNotSupported:
+                    ShowVrm10DetectedMessage(e.Args);
+                    break;
             }
         }
 
@@ -91,6 +94,8 @@ namespace Baku.VMagicMirrorConfig
             if (res)
             {
                 _sender.SendMessage(MessageFactory.Instance.OpenVrm(filePath));
+                //NOTE: この時点だとモデルのロードの成否が不明なため、
+                //Unityからロード成功を通知されるまでは記録しないのも手
                 _setting.OnLocalModelLoaded(filePath);
             }
             else
@@ -126,6 +131,18 @@ namespace Baku.VMagicMirrorConfig
                 _sender.SendMessage(MessageFactory.Instance.OpenVrm(_setting.LastVrmLoadFilePath));
             }
         }
+
+        private async void ShowVrm10DetectedMessage(string pathOrModelName)
+        {
+            MessageBoxWrapper.Instance.SetDialogResult(false);
+            var indication = MessageIndication.Vrm10NotSupported();
+            await MessageBoxWrapper.Instance.ShowAsync(
+                indication.Title,
+                indication.Content + "\n\nModel: " + pathOrModelName,
+                MessageBoxWrapper.MessageBoxStyle.OK
+                );
+        }
+
 
         public async void LoadSavedVRoidModelAsync(string modelId, bool fromAutoSave)
         {

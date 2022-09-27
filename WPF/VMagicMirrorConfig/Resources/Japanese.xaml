@@ -589,8 +589,7 @@ webカメラでの顔トラッキングを有効にする場合は
     <sys:String x:Key="DialogMessage_AlreadyLatestVersion">現在のバージョン({0})は最新です。</sys:String>    
     
     <sys:String x:Key="DialogTitle_Vrm10NotSupported">VRM 1.0は未対応です</sys:String>
-    <sys:String x:Key="DialogMessage_Vrm10NotSupported" xml:space="preserve">今後のアップデートでVRM 1.0は対応予定です。
-このバージョンではVRM 0.xのモデルを使用して下さい。</sys:String>
+    <sys:String x:Key="DialogMessage_Vrm10NotSupported">VRM 1.0は今後のアップデートで対応予定です。このバージョンではVRM 0.xのモデルを使用して下さい。</sys:String>
     
     <!-- Snackbar Messages -->
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>

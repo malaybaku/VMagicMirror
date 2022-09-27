@@ -206,6 +206,12 @@ namespace Baku.VMagicMirror
             CancellationToken cancellationToken
         )
         {
+            if (File.Exists(pathOrModelName))
+            {
+                //フルパスだとUI表示には長いので絞ってしまう
+                pathOrModelName = Path.GetFileName(pathOrModelName);
+            }
+            
             try
             {
                 var isVrm10 = await Vrm10Validator.CheckModelIsVrm10(binary, cancellationToken);

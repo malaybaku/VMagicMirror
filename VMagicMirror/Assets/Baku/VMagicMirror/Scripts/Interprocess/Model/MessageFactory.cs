@@ -51,6 +51,8 @@ namespace Baku.VMagicMirror
         public Message SetModelDoesNotSupportPen(bool doesNotSupport) => WithArg($"{doesNotSupport}");
         
         public Message UpdateAccessoryLayouts(string json) => WithArg(json);
+
+        public Message VRM10SpecifiedButNotSupported() => NoArg();
         
         #region VRoid
 

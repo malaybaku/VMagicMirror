@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using Baku.VMagicMirror.IK;
+using Cysharp.Threading.Tasks;
 using UniGLTF;
 using UnityEngine;
 using UniHumanoid;
@@ -68,11 +70,12 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            byte[] bytes = Array.Empty<byte>();
             try
             {
                 if (Path.GetExtension(path).ToLower() == ".vrm")
                 {
-                    var bytes = File.ReadAllBytes(path);
+                    bytes = File.ReadAllBytes(path);
                     var parser = new GlbLowLevelParser("", bytes);
                     using var data = parser.Parse();
                     using var context = new VRMImporterContext(new VRMData(data));
@@ -85,7 +88,7 @@ namespace Baku.VMagicMirror
             }
             catch (Exception ex)
             {
-                HandleLoadError(ex);
+                CheckVrm10AndHandleError(ex, bytes, this.GetCancellationTokenOnDestroy()).Forget();
             }
         }
 
@@ -101,11 +104,12 @@ namespace Baku.VMagicMirror
                 LogOutput.Instance.Write($"unknown file type: {path}");
                 return;
             }
-            
+
+            byte[] bytes = Array.Empty<byte>();
             try
             {
-                var file = File.ReadAllBytes(path);
-                var parser = new GlbLowLevelParser("", file);
+                bytes = File.ReadAllBytes(path);
+                var parser = new GlbLowLevelParser("", bytes);
                 using var data = parser.Parse();
                 using var context = new VRMImporterContext(new VRMData(data));
                 var meta = context.ReadMeta(false);
@@ -118,7 +122,7 @@ namespace Baku.VMagicMirror
             }
             catch (Exception ex)
             {
-                HandleLoadError(ex);
+                CheckVrm10AndHandleError(ex, bytes, this.GetCancellationTokenOnDestroy()).Forget();
             }
         }
 
@@ -136,6 +140,8 @@ namespace Baku.VMagicMirror
             }
             catch (Exception ex)
             {    
+                //NOTE: ここでVRM1.0が来たかどうか知れると良いが、GameObjectで投げ込まれると対処できないので諦める
+                //(そもそもVRoidのUIでメタデータ表示に失敗しそうな気もするが)
                 HandleLoadError(ex);
             }
         }
@@ -191,6 +197,31 @@ namespace Baku.VMagicMirror
             PreVrmLoaded?.Invoke(info);
             VrmLoaded?.Invoke(info);
             PostVrmLoaded?.Invoke(info);
+        }
+
+        private async UniTaskVoid CheckVrm10AndHandleError(
+            Exception exceptionOnLoadPreview, byte[] binary, CancellationToken cancellationToken
+        )
+        {
+            try
+            {
+                var isVrm10 = await Vrm10Validator.CheckModelIsVrm10(binary, cancellationToken);
+                if (isVrm10)
+                {
+                    _sender.SendCommand(MessageFactory.Instance.VRM10SpecifiedButNotSupported());
+                    return;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                //ignore
+            }
+            catch (Exception)
+            {
+                //2回目のロード時に起きたエラーは無視し、最初のロード失敗で出たエラー情報を送る
+            }
+
+            HandleLoadError(exceptionOnLoadPreview);
         }
 
         private void HandleLoadError(Exception ex)

@@ -88,7 +88,7 @@ namespace Baku.VMagicMirror
             }
             catch (Exception ex)
             {
-                CheckVrm10AndHandleError(ex, bytes, this.GetCancellationTokenOnDestroy()).Forget();
+                CheckVrm10AndHandleError(ex, bytes, path, this.GetCancellationTokenOnDestroy()).Forget();
             }
         }
 
@@ -122,7 +122,7 @@ namespace Baku.VMagicMirror
             }
             catch (Exception ex)
             {
-                CheckVrm10AndHandleError(ex, bytes, this.GetCancellationTokenOnDestroy()).Forget();
+                CheckVrm10AndHandleError(ex, bytes, path, this.GetCancellationTokenOnDestroy()).Forget();
             }
         }
 
@@ -200,7 +200,10 @@ namespace Baku.VMagicMirror
         }
 
         private async UniTaskVoid CheckVrm10AndHandleError(
-            Exception exceptionOnLoadPreview, byte[] binary, CancellationToken cancellationToken
+            Exception exceptionOnLoadPreview,
+            byte[] binary, 
+            string pathOrModelName,
+            CancellationToken cancellationToken
         )
         {
             try
@@ -208,7 +211,9 @@ namespace Baku.VMagicMirror
                 var isVrm10 = await Vrm10Validator.CheckModelIsVrm10(binary, cancellationToken);
                 if (isVrm10)
                 {
-                    _sender.SendCommand(MessageFactory.Instance.VRM10SpecifiedButNotSupported());
+                    _sender.SendCommand(
+                        MessageFactory.Instance.VRM10SpecifiedButNotSupported(pathOrModelName)
+                        );
                     return;
                 }
             }

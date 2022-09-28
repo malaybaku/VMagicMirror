@@ -580,6 +580,9 @@ Use this only after checking the licenses of VRM you will use.
     <sys:String x:Key="DialogTitle_AlreadyLatestVersion">Latest Version</sys:String>
     <sys:String x:Key="DialogMessage_AlreadyLatestVersion">Current app version ({0}) is the latest.</sys:String>        
 
+    <sys:String x:Key="DialogTitle_Vrm10NotSupported">VRM 1.0 is Not Supported</sys:String>
+    <sys:String x:Key="DialogMessage_Vrm10NotSupported" xml:space="preserve">VRM 1.0 support is under development. Please use VRM 0.x model in this version.</sys:String>
+    
     <!-- Snackbar Messages -->
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>

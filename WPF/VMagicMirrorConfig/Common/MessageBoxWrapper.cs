@@ -24,7 +24,7 @@ namespace Baku.VMagicMirrorConfig
         /// MessageBox.Showの代わりに呼び出して使います。
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> ShowAsync(string title, string content, MessageBoxStyle style)
+        public async Task<bool> ShowAsync(string title, string content, MessageBoxStyle style, CancellationToken cancellationToken = default)
         {
             if (Application.Current.MainWindow is not MetroWindow window)
             {
@@ -33,10 +33,11 @@ namespace Baku.VMagicMirrorConfig
             }
 
             var settingWindow = View.SettingWindow.CurrentWindow;
+            using var ctsForMultiWindow = new CancellationTokenSource();
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(ctsForMultiWindow.Token, cancellationToken);
 
             if (style == MessageBoxStyle.OK)
             {
-                var cts = new CancellationTokenSource();
                 var mainWindowTask = window.ShowMessageAsync(
                     title,
                     content,
@@ -59,12 +60,11 @@ namespace Baku.VMagicMirrorConfig
                     await mainWindowTask;
                 }
                 //どっちかのダイアログが閉じたらもう片方も閉じる
-                cts.Cancel();
+                ctsForMultiWindow.Cancel();
                 return true;
             }
             else if (style == MessageBoxStyle.OKCancel)
             {
-                var cts = new CancellationTokenSource();
                 var mainWindowTask = window.ShowMessageAsync(
                     title,
                     content,
@@ -84,7 +84,7 @@ namespace Baku.VMagicMirrorConfig
                         )
                     );
                     //どっちかのダイアログが閉じたらもう片方も閉じる
-                    cts.Cancel();
+                    ctsForMultiWindow.Cancel();
                     return firstTask.Result == MessageDialogResult.Affirmative;
                 }
                 else

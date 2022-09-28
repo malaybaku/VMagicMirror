@@ -28,5 +28,7 @@
 
         public const string VRoidModelLoadCompleted = nameof(VRoidModelLoadCompleted);
         public const string VRoidModelLoadCanceled = nameof(VRoidModelLoadCanceled);
+
+        public const string VRM10SpecifiedButNotSupported = nameof(VRM10SpecifiedButNotSupported);
     }
 }

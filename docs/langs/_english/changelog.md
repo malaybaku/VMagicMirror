@@ -8,6 +8,19 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.9
+{: .doc-sec2 }
+
+2022/09/30
+
+* Add: Loading UI, which is visible until app read config data.
+* Change: Eye look at motion. In this version eye motion is similar to v2.0.4 or older version.
+* Change: Foot IK control, to get legs downward.
+* Change: Environment light color become not constant color, and determined based on light color setting.
+* Fix: When running motion, it gets less avatar pose jump. For this fix Word to Motion system have been refactored in many part.
+* Add: Show error message when tried to load VRM 1.0. The updated to support VRM 1.0 will be released in 2022.
+
+
 #### v2.0.8
 {: .doc-sec2 }
 

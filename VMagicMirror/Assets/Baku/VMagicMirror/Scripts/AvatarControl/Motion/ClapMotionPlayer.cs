@@ -1,5 +1,4 @@
 using Baku.VMagicMirror.IK;
-using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -10,7 +9,30 @@ namespace Baku.VMagicMirror
 
         private string _previewClipName = "";
 
-        //TODO: Fingerだけ何かしたい可能性あるかも
+        private readonly HandIKIntegrator _handIKIntegrator;
+        private ClapMotionHandIKGenerator _clapMotion;
+
+        [Inject]
+        public ClapMotionPlayer(HandIKIntegrator handIKIntegrator)
+        {
+            _handIKIntegrator = handIKIntegrator;
+        }
+
+        void IInitializable.Initialize()
+        {
+            _clapMotion = _handIKIntegrator.ClapMotion;
+        }
+
+        void ITickable.Tick()
+        {
+            //プレビューが止まってたら再生
+            if (!string.IsNullOrEmpty(_previewClipName) && !_clapMotion.ClapMotionRunning)
+            {
+                _clapMotion.RunClapMotion();
+            }
+        }
+
+        //Fingerだけ何かしたい可能性あるが、ここでは実施しない
         bool IWordToMotionPlayer.UseIkAndFingerFade => false;
 
         bool IWordToMotionPlayer.CanPlay(MotionRequest request)
@@ -22,50 +44,7 @@ namespace Baku.VMagicMirror
 
         void IWordToMotionPlayer.Play(MotionRequest request, out float duration)
         {
-            Play(request.BuiltInAnimationClipName, out duration);
-        }
-
-        void IWordToMotionPlayer.Stop()
-        {
-            //NOTE: IKStateが変わることとか(必要に応じて)IK Weight自体が下がることに任せるので、特に何もしない
-        }
-        
-        void IWordToMotionPlayer.PlayPreview(MotionRequest request)
-        {
-            PlayPreview(request.BuiltInAnimationClipName);
-        }
-
-        [Inject]
-        public ClapMotionPlayer(HandIKIntegrator handIKIntegrator)
-        {
-            _handIKIntegrator = handIKIntegrator;
-        }
-
-        private readonly HandIKIntegrator _handIKIntegrator;
-        private ClapMotionHandIKGenerator _clapMotion;
-
-        public void Initialize()
-        {
-            _clapMotion = _handIKIntegrator.ClapMotion;
-        }
-
-        public void Tick()
-        {
-            //プレビューが止まってたら再生
-            if (!string.IsNullOrEmpty(_previewClipName) && !_clapMotion.ClapMotionRunning)
-            {
-                _clapMotion.RunClapMotion();
-            }
-        }
-
-        public bool CanPlay(string clipName)
-        {
-            return clipName == ClapClipName;
-        }
-        
-        //durationは通常は副作用の一貫として拾って欲しいのでoutで渡す
-        public void Play(string clipName, out float duration)
-        {
+            var clipName = request.BuiltInAnimationClipName;
             if (!CanPlay(clipName))
             {
                 duration = 0f;
@@ -76,14 +55,12 @@ namespace Baku.VMagicMirror
             duration = _clapMotion.MotionDuration;
         }
 
-        public void Stop()
+        //NOTE: IKStateが変わることとか(必要に応じて)IK Weight自体が下がることに任せるので、特に何もしない
+        void IWordToMotionPlayer.Stop() => _previewClipName = "";
+
+        void IWordToMotionPlayer.PlayPreview(MotionRequest request)
         {
-            _clapMotion.StopClapMotion();
-            _previewClipName = "";
-        }
-        
-        public void PlayPreview(string clipName)
-        {
+            var clipName = request.BuiltInAnimationClipName;
             if (CanPlay(clipName))
             {
                 _previewClipName = clipName;
@@ -94,10 +71,12 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void StopPreview()
+        //NOTE: ここはすぐ停止するのが理想だが、止め方がちょっと難しいので「プレビューが繰り返さない」というだけにする
+        void IWordToMotionPlayer.StopPreview() => _previewClipName = "";
+
+        private bool CanPlay(string clipName)
         {
-            _previewClipName = "";
-            Stop();
+            return clipName == ClapClipName;
         }
     }
 }

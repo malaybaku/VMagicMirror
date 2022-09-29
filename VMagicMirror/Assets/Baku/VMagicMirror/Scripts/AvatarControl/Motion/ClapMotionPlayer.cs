@@ -35,11 +35,6 @@ namespace Baku.VMagicMirror
             PlayPreview(request.BuiltInAnimationClipName);
         }
 
-        private bool PreviewIsActive => !string.IsNullOrEmpty(_previewClipName);
-
-        private bool IsPlayingPreview => !string.IsNullOrEmpty(_previewClipName) && _clapMotion.ClapMotionRunning;
-
-
         [Inject]
         public ClapMotionPlayer(HandIKIntegrator handIKIntegrator)
         {
@@ -56,8 +51,8 @@ namespace Baku.VMagicMirror
 
         public void Tick()
         {
-            //プレビューが止まってたら必ず再生することを保証する
-            if (PreviewIsActive && !_clapMotion.ClapMotionRunning)
+            //プレビューが止まってたら再生
+            if (!string.IsNullOrEmpty(_previewClipName) && !_clapMotion.ClapMotionRunning)
             {
                 _clapMotion.RunClapMotion();
             }
@@ -84,6 +79,7 @@ namespace Baku.VMagicMirror
         public void Stop()
         {
             _clapMotion.StopClapMotion();
+            _previewClipName = "";
         }
         
         public void PlayPreview(string clipName)

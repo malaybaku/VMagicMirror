@@ -15,10 +15,8 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly Subject<int> _runMotionRequested = new Subject<int>();
         public IObservable<int> RunMotionRequested => _runMotionRequested;
 
-        public void SetActive(bool active)
-        {
-            //何もしない (非activeになったからといってMIDI入力自体を止めたりはしないので)
-        }
+        private bool _isActive = false;
+        public void SetActive(bool active) => _isActive = active;
 
         private readonly IMessageReceiver _receiver;
         private readonly IMessageSender _sender;
@@ -50,6 +48,11 @@ namespace Baku.VMagicMirror.WordToMotion
             _midiObserver.NoteOn
                 .Subscribe(noteNumber =>
                 {
+                    if (!_isActive)
+                    {
+                        return;
+                    }
+
                     if (_redirectNoteOnMessageToIpc)
                     {
                         _sender.SendCommand(MessageFactory.Instance.MidiNoteOn(noteNumber));

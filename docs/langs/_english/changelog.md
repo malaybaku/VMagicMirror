@@ -8,6 +8,13 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.10
+{: .doc-sec2 }
+
+2022/09/30
+
+* Fix: Word to Motion was triggered even by the unselected device.
+
 #### v2.0.9
 {: .doc-sec2 }
 

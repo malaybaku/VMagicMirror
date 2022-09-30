@@ -38,10 +38,9 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly Subject<int> _runMotionRequested = new Subject<int>();
         public IObservable<int> RunMotionRequested => _runMotionRequested;
 
-        public void SetActive(bool active)
-        {
-            //何もしない: 非activeになったからといってキー読み込みを止めたりはしない
-        }
+        private bool _isActive = false;
+        
+        public void SetActive(bool active) => _isActive = active;
 
         public SingleKeyInputRequestSource(IKeyMouseEventSource keyMouseEventSource)
         {
@@ -54,7 +53,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 .Subscribe(keyName =>
                 {
                     //NOTE: D0-D8とNumPad系のキーはサニタイズ対象じゃないので、そのまま受け取っても大丈夫
-                    if (_keyToItemIndex.ContainsKey(keyName))
+                    if (_isActive && _keyToItemIndex.ContainsKey(keyName))
                     {
                         _runMotionRequested.OnNext(_keyToItemIndex[keyName]);
                     }

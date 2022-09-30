@@ -30,10 +30,9 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly Subject<int> _runMotionRequested = new Subject<int>();
         public IObservable<int> RunMotionRequested => _runMotionRequested;
 
-        public void SetActive(bool active)
-        {
-            //何もしない: 非activeになったからといってゲームパッド読み取りを止めたりはしない
-        }
+        private bool _isActive = false;
+
+        public void SetActive(bool active) => _isActive = active;
 
         public GamePadRequestSource(XInputGamePad gamePad)
         {
@@ -45,7 +44,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _gamePad.ButtonUpDown
                 .Subscribe(data =>
                 {
-                    if (data.IsPressed && _gamePadKeyToItemIndex.ContainsKey(data.Key))
+                    if (_isActive && data.IsPressed && _gamePadKeyToItemIndex.ContainsKey(data.Key))
                     {
                         _runMotionRequested.OnNext(_gamePadKeyToItemIndex[data.Key]);
                     }

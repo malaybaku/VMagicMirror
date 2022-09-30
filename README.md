@@ -4,7 +4,7 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v2.0.9
+v2.0.10
 
 * 作成: 獏星(ばくすたー)
 * 2022/09/30

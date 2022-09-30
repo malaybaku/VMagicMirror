@@ -324,25 +324,32 @@ namespace Baku.VMagicMirror
         #if UNITY_EDITOR
 
         private KeyCode[] _editorCheckTargetKeyCodes = null;
+        private KeyCode[] _numberKeyCodes = null;
 
         private void EditorSetupTargetKeyCodes()
         {
             //97から"A"が始まってるのを前提に、そこから"Z"まで拾おうという狙いのコード
             var codes = new KeyCode[26];
-            for (int i = 0; i < codes.Length; i++)
+            for (var i = 0; i < codes.Length; i++)
             {
                 codes[i] = (KeyCode) (97 + i);
             }
             _editorCheckTargetKeyCodes = codes;
+
+            _numberKeyCodes = new KeyCode[10];
+            for (var i = 0; i < 10; i++)
+            {
+                _numberKeyCodes[i] = KeyCode.Alpha0 + i;
+            }
         }
         
         private void EditorCheckKeyDown()
         {
-            for (int i = 0; i < _editorCheckTargetKeyCodes.Length; i++)
+            foreach (var keyCode in _editorCheckTargetKeyCodes)
             {
-                if (Input.GetKeyDown(_editorCheckTargetKeyCodes[i]))
+                if (Input.GetKeyDown(keyCode))
                 {
-                    string keyName = _editorCheckTargetKeyCodes[i].ToString();
+                    string keyName = keyCode.ToString();
                     _rawKeyDown.OnNext(keyName);
 
                     if (_randomizeKey)
@@ -351,11 +358,36 @@ namespace Baku.VMagicMirror
                         keyName = _editorCheckTargetKeyCodes[index].ToString();
                     }
                     _keyDown.OnNext(keyName);
-                }      
+                }
                 
-                if (Input.GetKeyUp(_editorCheckTargetKeyCodes[i]))
+                if (Input.GetKeyUp(keyCode))
                 {
-                    string keyName = _editorCheckTargetKeyCodes[i].ToString();
+                    string keyName = keyCode.ToString();
+                    _rawKeyUp.OnNext(keyName);
+                    _keyUp.OnNext(keyName);
+                }
+            }
+            
+            foreach (var keyCode in _numberKeyCodes)
+            {
+                if (Input.GetKeyDown(keyCode))
+                {
+                    //"D0" から "D9"までのいずれか
+                    var keyName = "D" + (keyCode - KeyCode.Alpha0);
+                    _rawKeyDown.OnNext(keyName);
+
+                    //randomizeの場合はA-Zに変換しちゃう(めんどいので)
+                    if (_randomizeKey)
+                    {
+                        int index = Random.Range(0, _editorCheckTargetKeyCodes.Length);
+                        keyName = _editorCheckTargetKeyCodes[index].ToString();
+                    }
+                    _keyDown.OnNext(keyName);
+                }
+                
+                if (Input.GetKeyUp(keyCode))
+                {
+                    var keyName = "D" + (keyCode - KeyCode.Alpha0);
                     _rawKeyUp.OnNext(keyName);
                     _keyUp.OnNext(keyName);
                 }
@@ -363,6 +395,5 @@ namespace Baku.VMagicMirror
         }
         
         #endif
-
     }
 }

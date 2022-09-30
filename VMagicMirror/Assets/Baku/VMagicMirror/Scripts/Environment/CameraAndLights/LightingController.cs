@@ -124,11 +124,19 @@ namespace Baku.VMagicMirror
         private void SetMainLightColor()
         {
             var factor = desktopLightEstimator.RgbFactor;
-            mainLight.color = new Color(
+            var color = new Color(
                 _color.r * factor.x,
                 _color.g * factor.y,
                 _color.b * factor.z
-            );   
+            );
+
+            mainLight.color = color;
+
+            //ライトの色がそのまま環境光にのる、ただしEquator以下では弱めに。
+            RenderSettings.ambientSkyColor = color;
+            Color.RGBToHSV(color, out var h, out var s, out var v);
+            RenderSettings.ambientEquatorColor = Color.HSVToRGB(h, s, v * 0.4f);
+            RenderSettings.ambientGroundColor = Color.HSVToRGB(h, s, v * 0.06f);
         }
 
         private void SetLightIntensity(float intensity)

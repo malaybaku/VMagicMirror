@@ -13,11 +13,15 @@ namespace Baku.VMagicMirror.IK
         [SerializeField] private Transform leftHand = default;
         [SerializeField] private Transform rightIndex = default;
         [SerializeField] private Transform body = default;
+        [SerializeField] private Transform leftFoot = default;
+        [SerializeField] private Transform rightFoot = default;
 
         public Transform LookAt => lookAt;
         public Transform RightHand => rightHand;
         public Transform LeftHand => leftHand;
         public Transform RightIndex => rightIndex;
         public Transform Body => body;
+        public Transform LeftFoot => leftFoot;
+        public Transform RightFoot => rightFoot;
     }
 }

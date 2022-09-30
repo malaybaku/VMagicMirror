@@ -7,7 +7,11 @@ namespace Baku.VMagicMirror
     [CreateAssetMenu(fileName = "BuiltInClips", menuName = "Baku/VMagicMirror/Built-in Motion Clip", order = 1)]
     public class BuiltInMotionClipData : ScriptableObject
     {
-        public List<BuiltInMotionClipItem> items;
+        [SerializeField] private AnimationClip defaultStandingAnimation;
+        [SerializeField] private List<BuiltInMotionClipItem> items;
+        
+        public AnimationClip DefaultStandingAnimation => defaultStandingAnimation;
+        public IEnumerable<BuiltInMotionClipItem> Items => items;
     }
 
     [Serializable]
@@ -17,5 +21,3 @@ namespace Baku.VMagicMirror
         public AnimationClip clip = null;
     }
 }
-
-

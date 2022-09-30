@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Baku.VMagicMirror.ExternalTracker;
+using Baku.VMagicMirror.WordToMotion;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -30,7 +31,7 @@ namespace Baku.VMagicMirror
             IMessageSender sender, 
             ExternalTrackerDataSource externalTrackerDataSource,
             DeviceTransformController deviceTransformController,
-            WordToMotionManager wordToMotionManager
+            WordToMotionAccessoryRequest accessoryRequest
             )
         {
             _cam = cam;
@@ -83,7 +84,7 @@ namespace Baku.VMagicMirror
                 .Subscribe(ControlItemsTransform)
                 .AddTo(this);
 
-            wordToMotionManager.AccessoryVisibilityRequest
+            accessoryRequest.AccessoryRequest
                 .Subscribe(UpdateWordToMotionStatus)
                 .AddTo(this);
         }

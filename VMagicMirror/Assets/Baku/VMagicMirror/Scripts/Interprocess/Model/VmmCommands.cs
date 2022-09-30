@@ -28,6 +28,8 @@
         public const string ResetWindowSize = nameof(ResetWindowSize);
         public const string SetWholeWindowTransparencyLevel = nameof(SetWholeWindowTransparencyLevel);
         public const string SetAlphaValueOnTransparent = nameof(SetAlphaValueOnTransparent);
+        //NOTE: 「GUIの初期読み込みが終了した」という、1回だけ呼ばれるタイプのやつ
+        public const string StartupEnded = nameof(StartupEnded);
 
         // Motion
 

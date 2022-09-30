@@ -8,6 +8,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private ElbowMotionModifier elbowMotionModifier = null;
         
         private FullBodyBipedIK _ik = null;
+        private bool _hasModel = false;
 
         private float _originLeftShoulderPositionWeight = 1.0f;
         private float _originLeftHandPositionWeight = 1.0f;
@@ -60,10 +61,16 @@ namespace Baku.VMagicMirror
             _originRightShoulderPositionWeight = ik.solver.rightShoulderEffector.positionWeight;
             _originRightHandPositionWeight = ik.solver.rightHandEffector.positionWeight;
             _originRightHandRotationWeight = ik.solver.rightHandEffector.rotationWeight;
+
+            _hasModel = true;
         }
 
-        public void OnVrmDisposing() => _ik = null;
-        
+        public void OnVrmDisposing()
+        {
+            _hasModel = false;
+            _ik = null;
+        }
+
         /// <summary>
         /// 指定した秒数をかけて腕IKの回転、並進のIKウェイトを0にします。
         /// </summary>
@@ -89,6 +96,10 @@ namespace Baku.VMagicMirror
         /// <summary>直ちにIKのウェイトを0にします。</summary>
         public void FadeOutArmIkWeightsImmediately()
         {
+            if (!_hasModel)
+            {
+                return;
+            }
             _ik.solver.leftShoulderEffector.positionWeight = 0;
             _ik.solver.leftHandEffector.positionWeight = 0;
             _ik.solver.leftHandEffector.rotationWeight = 0;
@@ -105,6 +116,10 @@ namespace Baku.VMagicMirror
         /// <summary>直ちにIKのウェイトをもとの値に戻します。</summary>
         public void FadeInArmIkWeightsImmediately()
         {
+            if (!_hasModel)
+            {
+                return;
+            }
             _ik.solver.leftShoulderEffector.positionWeight = _originLeftShoulderPositionWeight;
             _ik.solver.leftHandEffector.positionWeight = _originLeftHandPositionWeight;
             _ik.solver.leftHandEffector.rotationWeight = _originLeftHandRotationWeight;
@@ -120,7 +135,7 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
-            if (_ik == null || _fadeCount > _fadeDuration)
+            if (!_hasModel || _fadeCount > _fadeDuration)
             {
                 return;
             }

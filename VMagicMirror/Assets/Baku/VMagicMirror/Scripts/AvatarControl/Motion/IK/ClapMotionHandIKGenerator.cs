@@ -68,8 +68,8 @@ namespace Baku.VMagicMirror.IK
             //NOTE: 既に拍手中の場合はモーションのつなげ方に配慮する。
             // - 最初の拍手中 -> 連続で呼びすぎなので無視
             // - それ以降 -> 初動のモーションがやりすぎにならない点にだけ配慮して実行し、ほぼ繋がってるビジュアルにする
-            var isAlwaysRunning = ClapMotionRunning;
-            if (isAlwaysRunning)
+            var isAlreadyRunning = ClapMotionRunning;
+            if (isAlreadyRunning)
             {
                 var (phase, _) = _timeTableGenerator.GetPhaseAndRate(_clapTime);
                 //最初の拍手中なので無視
@@ -90,7 +90,7 @@ namespace Baku.VMagicMirror.IK
                 new HandPoses(
                     new HandPose(currentLeft.Position, currentLeft.Rotation),
                     new HandPose(currentRight.Position, currentRight.Rotation)),
-                isAlwaysRunning
+                isAlreadyRunning
                 );
 
             var startPoses = _poseInterpolator.StartPoses;
@@ -118,16 +118,6 @@ namespace Baku.VMagicMirror.IK
                 StopCoroutine(_clapCoroutine);
             }
             _clapCoroutine = StartCoroutine(ClapCoroutine(startPoses));            
-        }
-
-        public void StopClapMotion()
-        {
-            if (!ClapMotionRunning)
-            {
-                return;
-            }
-            
-            //TODO: コルーチンを止めて直前ステートに抜ける
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)

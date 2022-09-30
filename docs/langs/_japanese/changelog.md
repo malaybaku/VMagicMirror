@@ -7,6 +7,14 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.10
+{: .doc-sec2 }
+
+2022/09/30
+
+* 修正: Word to Motionの実行方法について、選択されていないデバイスでも実行されてしまっていた問題を修正しました。
+
+
 #### v2.0.9
 {: .doc-sec2 }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using Baku.VMagicMirror.MotionExporter;
+﻿using Baku.VMagicMirror.MotionExporter;
 using Baku.VMagicMirror.WordToMotion;
 using UniRx;
 using UnityEngine;

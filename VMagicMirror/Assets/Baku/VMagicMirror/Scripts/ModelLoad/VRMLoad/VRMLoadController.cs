@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using UniGLTF;
 using UnityEngine;
 using UniHumanoid;
+using UniRx;
 using VRM;
 using Zenject;
 
@@ -28,6 +29,10 @@ namespace Baku.VMagicMirror
         private HumanPoseTransfer _humanPoseTransferTarget = null;
         private ErrorIndicateSender _errorSender = null;
         private ErrorInfoFactory _errorInfoFactory = null;
+
+        //NOTE: 使わないはずだが一応こう書いておく
+        public IReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion { get; }
+            = new ReactiveProperty<CurrentModelVersion>(CurrentModelVersion.Vrm0x);
 
         [Inject]
         public void Initialize(
@@ -258,14 +263,5 @@ namespace Baku.VMagicMirror
             public Transform rightIndexTarget;
             public Transform headTarget;
         }
-    }
-    
-    [Serializable]
-    public struct VrmLoadedInfo
-    {
-        public Transform vrmRoot;
-        public Animator animator;
-        public VRMBlendShapeProxy blendShape;
-        public Renderer[] renderers;
     }
 }

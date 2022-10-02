@@ -11,10 +11,12 @@ namespace Baku.VMagicMirror.Installer
 
         public override void Install(DiContainer container)
         {
-            container.Bind<IVRMLoadable>()
-                .FromInstance(loadController)
-                .AsCached();
+            // container.Bind<IVRMLoadable>()
+            //     .FromInstance(loadController)
+            //     .AsCached();
 
+            container.BindInterfacesTo<VRM10LoadController>().AsSingle();
+            
             container.Bind<VRMPreviewCanvas>()
                 .FromComponentInNewPrefab(vrmPreviewCanvasPrefab)
                 .AsCached();

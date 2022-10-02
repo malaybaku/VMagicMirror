@@ -72,7 +72,7 @@ namespace Baku.VMagicMirror
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.OpenVrmPreview,
-                message => LoadModelForPreview(message.Content)
+                message => LoadModelForPreview(message.Content).Forget()
             );
             _receiver.AssignCommandHandler(
                 VmmCommands.OpenVrm,

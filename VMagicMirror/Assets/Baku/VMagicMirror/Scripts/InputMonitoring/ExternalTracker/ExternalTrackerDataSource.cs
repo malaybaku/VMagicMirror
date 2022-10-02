@@ -70,16 +70,14 @@ namespace Baku.VMagicMirror.ExternalTracker
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _faceSwitchExtractor.AvatarBlendShapeNames = info
-                .blendShape
-                .BlendShapeAvatar
-                .Clips
-                .Select(c => c.BlendShapeName)
+                .instance.Vrm.Expression.LoadExpressionMap()
+                .Keys.Select(k => k.Name)
                 .ToArray();
         }
 
         private void OnVrmUnloaded()
         {
-            _faceSwitchExtractor.AvatarBlendShapeNames = new string[0];
+            _faceSwitchExtractor.AvatarBlendShapeNames = Array.Empty<string>();
         }
         
         private void OnFaceTrackUpdated(IFaceTrackSource source)

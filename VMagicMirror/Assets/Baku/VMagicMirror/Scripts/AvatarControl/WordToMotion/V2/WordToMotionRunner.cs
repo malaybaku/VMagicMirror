@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UniVRM10;
 
 namespace Baku.VMagicMirror.WordToMotion
 {
@@ -53,7 +54,7 @@ namespace Baku.VMagicMirror.WordToMotion
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _blendShape.Initialize(info.blendShape);
+            _blendShape.Initialize(info.instance.Vrm.Expression);
             _ikWeightCrossFade.OnVrmLoaded(info); 
         }
 
@@ -86,7 +87,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 CancelBlendShapeReset();
                 _blendShape.SetBlendShapes(
                     request.BlendShapeValuesDic.Select(
-                        pair => (BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value)
+                        pair => (ExpressionKeyUtils.CreateKeyByName(pair.Key), pair.Value)
                     ),
                     request.PreferLipSync
                 );
@@ -160,7 +161,7 @@ namespace Baku.VMagicMirror.WordToMotion
             {
                 _blendShape.SetForPreview(
                     request.BlendShapeValuesDic.Select(
-                        pair => (BlendShapeKeyFactory.CreateFrom(pair.Key), pair.Value)
+                        pair => (ExpressionKeyUtils.CreateKeyByName(pair.Key), pair.Value)
                     ),
                     request.PreferLipSync
                 );

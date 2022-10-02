@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using VRM;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror
                     HasValidNeutralClipKey = !string.IsNullOrWhiteSpace(c.Content);
                     if (HasValidNeutralClipKey)
                     {
-                        NeutralClipKey = BlendShapeKeyFactory.CreateFrom(c.Content);
+                        NeutralClipKey = ExpressionKeyUtils.CreateKeyByName(c.Content);
                     }
                 });
 
@@ -31,34 +31,40 @@ namespace Baku.VMagicMirror
                     HasValidOffsetClipKey = !string.IsNullOrWhiteSpace(c.Content);
                     if (HasValidOffsetClipKey)
                     {
-                        OffsetClipKey = BlendShapeKeyFactory.CreateFrom(c.Content);
+                        OffsetClipKey = ExpressionKeyUtils.CreateKeyByName(c.Content);
                     }
                 });
         }
         
-        public void ApplyNeutralClip(VRMBlendShapeProxy proxy, float weight = 1f) 
+        public void AccumulateNeutralClip(ExpressionAccumulator accumulator, float weight = 1f) 
         {
             if (HasValidNeutralClipKey)
             {
                 //NOTE: 他の処理と被って値が1を超えるのを避けておく、一応
-                proxy.AccumulateValue(NeutralClipKey, Mathf.Min(weight, 1f - proxy.GetValue(NeutralClipKey)));
+                accumulator.Accumulate(
+                    NeutralClipKey, 
+                    Mathf.Min(weight, 1f - accumulator.GetValue(NeutralClipKey))
+                );
             }
         }
 
-        public void ApplyOffsetClip(VRMBlendShapeProxy proxy)
+        public void AccumulateOffsetClip(ExpressionAccumulator accumulator)
         {
             if (HasValidOffsetClipKey)
             {
                 //NOTE: 他の処理と被って値が1を超えるのを避けておく、一応
-                proxy.AccumulateValue(OffsetClipKey, 1f - proxy.GetValue(OffsetClipKey));
+                accumulator.Accumulate(
+                    OffsetClipKey, 
+                    1f - accumulator.GetValue(OffsetClipKey)
+                );
             }
         }
 
         private bool HasValidNeutralClipKey = false;
-        private BlendShapeKey NeutralClipKey;
+        private ExpressionKey NeutralClipKey;
 
         private bool HasValidOffsetClipKey = false;
-        private BlendShapeKey OffsetClipKey;
+        private ExpressionKey OffsetClipKey;
         
     }
 }

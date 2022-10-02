@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-using VRM;
 using Baku.VMagicMirror.ExternalTracker;
 using UniRx;
+using UniVRM10;
 
 namespace Baku.VMagicMirror
 {
     public readonly struct FaceSwitchKeyApplyContent
     {
-        private FaceSwitchKeyApplyContent(bool hasValue, bool keepLipSync, BlendShapeKey key)
+        private FaceSwitchKeyApplyContent(bool hasValue, bool keepLipSync, ExpressionKey key)
         {
             HasValue = hasValue;
             KeepLipSync = keepLipSync;
@@ -18,12 +18,12 @@ namespace Baku.VMagicMirror
 
         public static FaceSwitchKeyApplyContent Empty() => new FaceSwitchKeyApplyContent(false, false, default);
 
-        public static FaceSwitchKeyApplyContent Create(BlendShapeKey key, bool keepLipSync) =>
+        public static FaceSwitchKeyApplyContent Create(ExpressionKey key, bool keepLipSync) =>
             new FaceSwitchKeyApplyContent(true, keepLipSync, key);
         
         public bool HasValue { get; }
         public bool KeepLipSync { get; }
-        public BlendShapeKey Key { get; }
+        public ExpressionKey Key { get; }
     }
         
     public class ExternalTrackerFaceSwitchApplier : MonoBehaviour
@@ -83,13 +83,13 @@ namespace Baku.VMagicMirror
             }
             else
             {
-                var key = CreateKey(_externalTracker.FaceSwitchClipName);
+                var key = ExpressionKeyUtils.CreateKeyByName(_externalTracker.FaceSwitchClipName);
                 _currentValue.Value = FaceSwitchKeyApplyContent.Create(key, _externalTracker.KeepLipSyncForFaceSwitch);
                 _latestClipName = _externalTracker.FaceSwitchClipName;
             }
         }
 
-        public void Accumulate(VRMBlendShapeProxy proxy)
+        public void Accumulate(ExpressionAccumulator accumulator)
         {
             //NOTE:
             //3つ目の条件について、表情間の補間処理中はこのクラスではないクラスがAccumulateを代行するので、
@@ -100,37 +100,9 @@ namespace Baku.VMagicMirror
             }
 
             //ターゲットのキーだけいじり、他のクリップ状態については呼び出し元に責任を持ってもらう
-            proxy.AccumulateValue(_currentValue.Value.Key, 1f);
+            accumulator.Accumulate(_currentValue.Value.Key, 1f);
             //表情を適用した = 目ボーンは正面向きになってほしい
             _eyeBoneResetter.ReserveReset = true;
         }
-
-        private static BlendShapeKey CreateKey(string name) => 
-            _presets.ContainsKey(name)
-                ? BlendShapeKey.CreateFromPreset(_presets[name])
-                : BlendShapeKey.CreateUnknown(name);
-
-        private static readonly Dictionary<string, BlendShapePreset> _presets = new Dictionary<string, BlendShapePreset>()
-        {
-            ["Blink"] = BlendShapePreset.Blink,
-            ["Blink_L"] = BlendShapePreset.Blink_L,
-            ["Blink_R"] = BlendShapePreset.Blink_R,
-
-            ["LookLeft"] = BlendShapePreset.LookLeft,
-            ["LookRight"] = BlendShapePreset.LookRight,
-            ["LookUp"] = BlendShapePreset.LookUp,
-            ["LookDown"] = BlendShapePreset.LookDown,
-            
-            ["A"] = BlendShapePreset.A,
-            ["I"] = BlendShapePreset.I,
-            ["U"] = BlendShapePreset.U,
-            ["E"] = BlendShapePreset.E,
-            ["O"] = BlendShapePreset.O,
-
-            ["Joy"] = BlendShapePreset.Joy,
-            ["Angry"] = BlendShapePreset.Angry,
-            ["Sorrow"] = BlendShapePreset.Sorrow,
-            ["Fun"] = BlendShapePreset.Fun,
-        };
     }
 }

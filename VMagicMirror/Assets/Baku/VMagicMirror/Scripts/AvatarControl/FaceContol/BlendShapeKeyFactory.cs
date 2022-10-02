@@ -33,9 +33,12 @@ namespace Baku.VMagicMirror
         /// <remarks>
         /// VMagicMirrorではプリセットと重複する名称のブレンドシェイプ名があるモデルは変な動きするかも、という事になる。
         /// </remarks>
+#pragma warning disable CS0618
         public static BlendShapeKey CreateFrom(string name) 
             => _presets.ContainsKey(name)
                 ? BlendShapeKey.CreateFromPreset(_presets[name]) 
                 : BlendShapeKey.CreateUnknown(name);
+#pragma warning restore CS0618
+        
     }
 }

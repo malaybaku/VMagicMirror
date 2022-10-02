@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using UniVRM10;
 using VRM;
 using Zenject;
 
@@ -10,6 +11,7 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// <see cref="BlendShapeResultSetter"/>で適用する表情のうち、
     /// FaceSwitchとWord to Motionを適用するときのフェードを考慮できるようにするクラス
+    /// NOTE: VRM 1.0の排他がどうとかはあまり考えてない実装であることに注意
     /// </summary>
     public class BlendShapeInterpolator : MonoBehaviour
     {
@@ -46,20 +48,20 @@ namespace Baku.VMagicMirror
 
             vrmLoadable.VrmLoaded += info =>
             {
-                _blendShapeAvatar = info.blendShape.BlendShapeAvatar;
-                //CheckBinaryClips(_blendShapeAvatar);
+                _expressionMap = info.instance.Vrm.Expression.LoadExpressionMap();
+                //CheckBinaryClips(_expressionMap);
                 _hasModel = true;
             };
 
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
-                _blendShapeAvatar = null;
+                _expressionMap = null;
             };
         }
 
         private bool _hasModel;
-        private BlendShapeAvatar _blendShapeAvatar;
+        private VRM10ExpressionMap _expressionMap;
         private EyeBoneAngleSetter _eyeBoneAngleSetter;
 
         private bool _interpolateBlendShapeWeight = true;
@@ -184,23 +186,23 @@ namespace Baku.VMagicMirror
 
         //NOTE: fromかtoにFaceSwitch / WtMいずれかの表情が入っている時だけ呼ぶ想定の関数。
         //ただし、それ以外のケースで呼んでも破綻はしないはず
-        public void Accumulate(VRMBlendShapeProxy proxy)
+        public void Accumulate(ExpressionAccumulator accumulator)
         {
             foreach (var item in _fromState.Keys)
             {
-                proxy.AccumulateValue(item.Item1, item.Item2 * _fromState.Weight);
+                accumulator.Accumulate(item.Item1, item.Item2 * _fromState.Weight);
             }
 
             foreach (var item in _toState.Keys)
             {
-                proxy.AccumulateValue(item.Item1, item.Item2 * _toState.Weight);
+                accumulator.Accumulate(item.Item1, item.Item2 * _toState.Weight);
             }
 
             //WtM / Face Switchが効いているときは目ボーンをデフォルト位置に引っ張り戻す
             _eyeBoneAngleSetter.ReserveWeight = NonMouthWeight;
         }
 
-        private void SetFaceSwitch(BlendShapeKey key, bool keepLipSync)
+        private void SetFaceSwitch(ExpressionKey key, bool keepLipSync)
         {
             Write(_faceSwitchState, key, keepLipSync);
 
@@ -214,7 +216,7 @@ namespace Baku.VMagicMirror
             Write(_toState, key, keepLipSync);
             _faceAppliedCount = 0;
 
-            void Write(State target, BlendShapeKey bsKey, bool bsKeepLipSync)
+            void Write(State target, ExpressionKey bsKey, bool bsKeepLipSync)
             {
                 target.IsEmpty = false;
                 target.Weight = 0f;
@@ -222,11 +224,12 @@ namespace Baku.VMagicMirror
                 target.Keys.Clear();
                 target.Keys.Add((bsKey, 1f));
                 target.KeepLipSync = bsKeepLipSync;
-                target.IsBinary = _hasModel && _blendShapeAvatar.GetClip(bsKey)?.IsBinary == true;
+                target.IsBinary =
+                    _hasModel && _expressionMap.TryGet(bsKey, out var clip) && clip.IsBinary;
             }
         }
 
-        private void SetWordToMotion(List<(BlendShapeKey, float)> blendShapes, bool keepLipSync, bool isPreview)
+        private void SetWordToMotion(List<(ExpressionKey, float)> blendShapes, bool keepLipSync, bool isPreview)
         {
             _toState.CopyTo(_fromState);
             
@@ -245,8 +248,7 @@ namespace Baku.VMagicMirror
                     {
                         return false;
                     }
-                    var clip = _blendShapeAvatar.GetClip(key);
-                    return (clip != null) && clip.IsBinary;
+                    return _expressionMap.TryGet(key, out var clip) && clip.IsBinary;
                 }));
 
             _faceAppliedCount = 0;
@@ -283,7 +285,7 @@ namespace Baku.VMagicMirror
         class State
         {
             public bool IsEmpty { get; set; }
-            public List<(BlendShapeKey, float)> Keys { get; } = new List<(BlendShapeKey, float)>(8);
+            public List<(ExpressionKey, float)> Keys { get; } = new List<(ExpressionKey, float)>(8);
             public bool KeepLipSync { get; set; }
             public bool IsBinary { get; set; }
             public float Weight { get; set; }

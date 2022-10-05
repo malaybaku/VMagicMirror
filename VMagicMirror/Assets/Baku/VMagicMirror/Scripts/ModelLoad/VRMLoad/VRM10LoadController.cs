@@ -227,7 +227,12 @@ namespace Baku.VMagicMirror
 
         private void ReleaseCurrentVrm()
         {
-            VrmDisposing?.Invoke();
+            //モデルがロード前のときはイベント発火しないようにする。
+            //これは理想挙動のためではなく、従来実装に合わすことでバグを起きにくくするため
+            if (_instance != null)
+            {
+                VrmDisposing?.Invoke();
+            }
 
             //NOTE: 分けたほうが良さそうに見えてるので分けてるが、不要なら_instanceのDestroyだけで済ます
             _controlRig?.Dispose();
@@ -253,7 +258,7 @@ namespace Baku.VMagicMirror
             var go = instance.gameObject;
 
             //セットアップのうちFinalIKに思い切り依存した所が別スクリプトになってます
-            VRMLoadControllerHelper.SetupVrm(go, _ikTargets);
+            VRM10LoadControllerHelper.SetupVrm(instance, _ikTargets);
 
             var animator = go.GetComponent<Animator>();
             animator.runtimeAnimatorController = _builtInClip.DefaultAnimatorController;

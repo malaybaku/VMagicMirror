@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UniVRM10;
 
 namespace Baku.VMagicMirror.IK
 {
@@ -54,9 +55,9 @@ namespace Baku.VMagicMirror.IK
             //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
             vrmLoadable.VrmLoaded += info =>
             {
-                var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
-                var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
-                CacheHandOffsets(info.animator);
+                var h = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
+                var f = info.controlRig.GetBoneTransform(HumanBodyBones.LeftFoot);
+                CacheHandOffsets(info.controlRig);
             };
 
             dependency.Events.MoveLeftGamepadStick += v =>
@@ -191,42 +192,42 @@ namespace Baku.VMagicMirror.IK
             }
         }
 
-        private void CacheHandOffsets(Animator animator)
+        private void CacheHandOffsets(Vrm10RuntimeControlRig controlRig)
         {
             //左手 : 手のひら中央の位置を推定するため、中指の付け根を見に行く
-            var leftWrist = animator.GetBoneTransform(HumanBodyBones.LeftHand);
-            var leftMiddle = animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
+            var leftWrist = controlRig.GetBoneTransform(HumanBodyBones.LeftHand);
+            var leftMiddle = controlRig.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
             _leftHandPalmOffset = leftMiddle != null ? 0.5f * (leftMiddle.position - leftWrist.position) : Vector3.zero;
 
             //右手 : 指の位置を一通りチェックする
-            var rightWristPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
+            var rightWristPos = controlRig.GetBoneTransform(HumanBodyBones.RightHand).position;
             var intermediateBones = new Transform[]
             {
                 //NOTE: 指が約30度曲がったとき関節1個ぶんのズレが発生するので、あえてDistalではなくIntermediateを見る
-                animator.GetBoneTransform(HumanBodyBones.RightThumbIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightRingIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightLittleIntermediate),
+                controlRig.GetBoneTransform(HumanBodyBones.RightThumbIntermediate),
+                controlRig.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
+                controlRig.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate),
+                controlRig.GetBoneTransform(HumanBodyBones.RightRingIntermediate),
+                controlRig.GetBoneTransform(HumanBodyBones.RightLittleIntermediate),
             };
             
             //NOTE: さらに、指が30度曲がるとだいたい関節2つぶんy方向にオフセットがつくので、その分を計算する
             var proximalBones = new Transform[]
             {
-                animator.GetBoneTransform(HumanBodyBones.RightThumbProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightRingProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightLittleProximal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightThumbProximal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightIndexProximal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightMiddleProximal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightRingProximal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightLittleProximal),
             };
             
             var distalBones = new Transform[]
             {
-                animator.GetBoneTransform(HumanBodyBones.RightThumbDistal),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
-                animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal),
-                animator.GetBoneTransform(HumanBodyBones.RightRingDistal),
-                animator.GetBoneTransform(HumanBodyBones.RightLittleDistal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightThumbDistal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightIndexDistal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightMiddleDistal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightRingDistal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightLittleDistal),
             };
             
             //NOTE: 指が一部なくてもエラーにはならないが、指の一部だけが欠けていると計算としてはかなり崩れる。

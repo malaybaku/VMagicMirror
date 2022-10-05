@@ -195,7 +195,7 @@ namespace Baku.VMagicMirror
             var info = new VrmLoadedInfo()
             {
                 vrmRoot = go.transform,
-                animator = animator,
+                //animator = animator,
                 //クラスごと削除予定なので、この粒度のコンパイラ警告はむしろ邪魔
                 //blendShape = blendShapeProxy,
                 renderers = renderers,

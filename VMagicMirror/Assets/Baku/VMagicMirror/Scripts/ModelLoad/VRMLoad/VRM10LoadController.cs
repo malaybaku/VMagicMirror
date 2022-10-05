@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using Baku.VMagicMirror.IK;
 using Cysharp.Threading.Tasks;
+using RootMotion.FinalIK;
 using UniGLTF.Extensions.VRMC_vrm;
 using UniRx;
 using UnityEngine;
@@ -263,9 +264,6 @@ namespace Baku.VMagicMirror
             var animator = go.GetComponent<Animator>();
             animator.runtimeAnimatorController = _builtInClip.DefaultAnimatorController;
             
-            //----そんなものは、ない----
-            //var blendShapeProxy = go.GetComponent<VRMBlendShapeProxy>();
-            
             var renderers = go.GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)
             {
@@ -277,8 +275,10 @@ namespace Baku.VMagicMirror
             {
                 modelVersion = _modelVersion.Value,
                 vrmRoot = go.transform,
+                controlRig = instance.Runtime.ControlRig,
                 animator = animator,
                 instance = instance,
+                fbbIk = go.GetComponentInChildren<FullBodyBipedIK>(),
                 //NOTE: このbsがないことでエラーが起こるのはイベント購読側が悪い。
                 //blendShape = blendShapeProxy,
                 renderers = renderers,

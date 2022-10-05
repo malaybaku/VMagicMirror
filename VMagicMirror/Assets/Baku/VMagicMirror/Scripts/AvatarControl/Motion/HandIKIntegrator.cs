@@ -418,7 +418,7 @@ namespace Baku.VMagicMirror
         
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            fingerController.Initialize(info.animator);
+            fingerController.Initialize(info.controlRig);
             
             //キャラロード前のHandDownとブレンドするとIK位置が原点に飛ぶので、その値を捨てる
             MouseMove.ResetHandDownTimeout(true);

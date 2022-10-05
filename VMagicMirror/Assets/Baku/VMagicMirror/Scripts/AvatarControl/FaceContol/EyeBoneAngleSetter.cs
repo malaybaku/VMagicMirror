@@ -96,8 +96,8 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
-            _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
+            _leftEye = info.controlRig.GetBoneTransform(HumanBodyBones.LeftEye);
+            _rightEye = info.controlRig.GetBoneTransform(HumanBodyBones.RightEye);
             _hasLeftEyeBone = _leftEye != null;
             _hasRightEyeBone = _rightEye != null;
             _hasModel = true;

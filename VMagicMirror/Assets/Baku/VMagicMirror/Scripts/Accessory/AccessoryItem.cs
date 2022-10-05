@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using mattatz.TransformControl;
 using UnityEngine;
+using UniVRM10;
 
 namespace Baku.VMagicMirror
 {
@@ -28,7 +29,7 @@ namespace Baku.VMagicMirror
         private IAccessoryFileActions _fileActions = null;
         private Camera _cam = null;
 
-        private Animator _animator = null;
+        private Vrm10RuntimeControlRig _controlRig = null;
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones 
             = new Dictionary<AccessoryAttachTarget, Transform>();
 
@@ -64,7 +65,7 @@ namespace Baku.VMagicMirror
         {
             get
             {
-                if (_file == null || _animator == null || ItemLayout == null)
+                if (_file == null || _controlRig == null || ItemLayout == null)
                 {
                     return false;
                 }
@@ -235,7 +236,7 @@ namespace Baku.VMagicMirror
             HasLayoutChange = false;
             ItemLayout = layout;
             _fileActions?.UpdateLayout(layout);
-            if (_animator == null)
+            if (_controlRig == null)
             {
                 return;
             }
@@ -305,18 +306,18 @@ namespace Baku.VMagicMirror
         /// <summary>
         /// ロードされたVRMのAnimatorを指定し、アイテムをモデルの特定部位にアタッチできるようにします。
         /// </summary>
-        /// <param name="animator"></param>
-        public void SetAnimator(Animator animator)
+        /// <param name="controlRig"></param>
+        public void SetAnimator(Vrm10RuntimeControlRig controlRig)
         {
-            _animator = animator;
+            _controlRig = controlRig;
 
-            _attachBones[AccessoryAttachTarget.Head] = _animator.GetBoneTransform(HumanBodyBones.Head);
+            _attachBones[AccessoryAttachTarget.Head] = controlRig.GetBoneTransform(HumanBodyBones.Head);
             _attachBones[AccessoryAttachTarget.Neck] = 
-                _animator.GetBoneTransform(HumanBodyBones.Neck) ?? _animator.GetBoneTransform(HumanBodyBones.Head);
-            _attachBones[AccessoryAttachTarget.Chest] = _animator.GetBoneTransform(HumanBodyBones.Chest);
-            _attachBones[AccessoryAttachTarget.Waist] = _animator.GetBoneTransform(HumanBodyBones.Hips);
-            _attachBones[AccessoryAttachTarget.LeftHand] = _animator.GetBoneTransform(HumanBodyBones.LeftHand);
-            _attachBones[AccessoryAttachTarget.RightHand] = _animator.GetBoneTransform(HumanBodyBones.RightHand);
+                controlRig.GetBoneTransform(HumanBodyBones.Neck) ?? controlRig.GetBoneTransform(HumanBodyBones.Head);
+            _attachBones[AccessoryAttachTarget.Chest] = controlRig.GetBoneTransform(HumanBodyBones.Chest);
+            _attachBones[AccessoryAttachTarget.Waist] = controlRig.GetBoneTransform(HumanBodyBones.Hips);
+            _attachBones[AccessoryAttachTarget.LeftHand] = controlRig.GetBoneTransform(HumanBodyBones.LeftHand);
+            _attachBones[AccessoryAttachTarget.RightHand] = controlRig.GetBoneTransform(HumanBodyBones.RightHand);
 
             if (_file == null)
             {
@@ -338,7 +339,7 @@ namespace Baku.VMagicMirror
         public void UnsetModel()
         {
             transform.SetParent(null);
-            _animator = null;
+            _controlRig = null;
             _attachBones.Clear();
             transformControl.mode = TransformControl.TransformMode.None;
             SetVisibility(false);
@@ -350,7 +351,7 @@ namespace Baku.VMagicMirror
         /// <param name="request"></param>
         public void ControlItemTransform(TransformControlRequest request)
         {
-            if (_animator == null && ItemLayout == null)
+            if (_controlRig == null && ItemLayout == null)
             {
                 return;
             }
@@ -405,7 +406,7 @@ namespace Baku.VMagicMirror
         {
             Transform bone = null;
             if (ItemLayout == null || 
-                _animator == null || 
+                _controlRig == null || 
                 (ItemLayout.AttachTarget != AccessoryAttachTarget.World &&
                  !_attachBones.TryGetValue(ItemLayout.AttachTarget, out bone)
                 ))

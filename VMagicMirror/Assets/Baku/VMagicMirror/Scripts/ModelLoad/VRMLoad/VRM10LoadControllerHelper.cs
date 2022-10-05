@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Baku.VMagicMirror.IK;
 using UnityEngine;
 using RootMotion;
@@ -18,8 +19,9 @@ namespace Baku.VMagicMirror
             var animator = instance.GetComponent<Animator>();
             animator.applyRootMotion = false;
 
-            var bipedReferences = LoadReferencesFromVrm(instance.transform, animator);
-            var ik = AddFBBIK(instance.gameObject, ikTargets, bipedReferences);
+            var controlRig = instance.Runtime.ControlRig;
+            var bipedReferences = LoadReferencesFromVrm(controlRig, controlRig.GetBoneTransform(HumanBodyBones.Hips).parent);
+            _ = AddFBBIK(controlRig.GetBoneTransform(HumanBodyBones.Hips).parent.gameObject, ikTargets, bipedReferences);
 
             //NOTE: 要するに勝手にLookAt結果を代入しなければいい、という話.
             //VRM0ではCurveMapを勝手にいじってたが、これはモデルを尊重してない行為だと思うので廃止
@@ -94,38 +96,38 @@ namespace Baku.VMagicMirror
             lookAtIk.solver.bodyWeight = 0.2f;
             lookAtIk.solver.headWeight = 0.5f;
         }
-
-        private static BipedReferences LoadReferencesFromVrm(Transform root, Animator animator)
+        
+        private static BipedReferences LoadReferencesFromVrm(Vrm10RuntimeControlRig controlRig, Transform root)
         {
             return new BipedReferences()
             {
                 root = root,
-                pelvis = animator.GetBoneTransform(HumanBodyBones.Hips),
+                pelvis = controlRig.GetBoneTransform(HumanBodyBones.Hips),
 
-                leftThigh = animator.GetBoneTransform(HumanBodyBones.LeftUpperLeg),
-                leftCalf = animator.GetBoneTransform(HumanBodyBones.LeftLowerLeg),
-                leftFoot = animator.GetBoneTransform(HumanBodyBones.LeftFoot),
+                leftThigh = controlRig.GetBoneTransform(HumanBodyBones.LeftUpperLeg),
+                leftCalf = controlRig.GetBoneTransform(HumanBodyBones.LeftLowerLeg),
+                leftFoot = controlRig.GetBoneTransform(HumanBodyBones.LeftFoot),
 
-                rightThigh = animator.GetBoneTransform(HumanBodyBones.RightUpperLeg),
-                rightCalf = animator.GetBoneTransform(HumanBodyBones.RightLowerLeg),
-                rightFoot = animator.GetBoneTransform(HumanBodyBones.RightFoot),
+                rightThigh = controlRig.GetBoneTransform(HumanBodyBones.RightUpperLeg),
+                rightCalf = controlRig.GetBoneTransform(HumanBodyBones.RightLowerLeg),
+                rightFoot = controlRig.GetBoneTransform(HumanBodyBones.RightFoot),
 
-                leftUpperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm),
-                leftForearm = animator.GetBoneTransform(HumanBodyBones.LeftLowerArm),
-                leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand),
+                leftUpperArm = controlRig.GetBoneTransform(HumanBodyBones.LeftUpperArm),
+                leftForearm = controlRig.GetBoneTransform(HumanBodyBones.LeftLowerArm),
+                leftHand = controlRig.GetBoneTransform(HumanBodyBones.LeftHand),
 
-                rightUpperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm),
-                rightForearm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm),
-                rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand),
+                rightUpperArm = controlRig.GetBoneTransform(HumanBodyBones.RightUpperArm),
+                rightForearm = controlRig.GetBoneTransform(HumanBodyBones.RightLowerArm),
+                rightHand = controlRig.GetBoneTransform(HumanBodyBones.RightHand),
 
-                head = animator.GetBoneTransform(HumanBodyBones.Head),
+                head = controlRig.GetBoneTransform(HumanBodyBones.Head),
 
-                spine = new Transform[]
+                spine = new []
                 {
-                    animator.GetBoneTransform(HumanBodyBones.Spine),
+                    controlRig.GetBoneTransform(HumanBodyBones.Spine),
                 },
 
-                eyes = new Transform[0],
+                eyes = Array.Empty<Transform>(),
             };
         }
 

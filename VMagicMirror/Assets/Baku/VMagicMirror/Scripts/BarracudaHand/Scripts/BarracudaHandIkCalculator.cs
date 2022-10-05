@@ -1,4 +1,5 @@
 using UnityEngine;
+using UniVRM10;
 
 namespace Baku.VMagicMirror.IK
 {
@@ -23,10 +24,10 @@ namespace Baku.VMagicMirror.IK
         private Transform _rightUpperArm;
         private AlwaysDownHandIkGenerator _downHand;
 
-        public void SetModel(Animator animator, AlwaysDownHandIkGenerator downHand)
+        public void SetModel(Vrm10RuntimeControlRig controlRig, AlwaysDownHandIkGenerator downHand)
         {
-            _leftUpperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
-            _rightUpperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+            _leftUpperArm = controlRig.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+            _rightUpperArm = controlRig.GetBoneTransform(HumanBodyBones.RightUpperArm);
             _downHand = downHand;
             _hasModel = true;
         }

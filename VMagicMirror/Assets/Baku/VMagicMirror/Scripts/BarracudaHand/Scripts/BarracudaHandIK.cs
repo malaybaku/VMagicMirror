@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UniVRM10;
 
 namespace Baku.VMagicMirror.IK
 {
@@ -94,10 +95,10 @@ namespace Baku.VMagicMirror.IK
             //TODO: 書く場所はココじゃないかもしれないが、頭との相対位置でIKを決めた方がキャリブとの相性が良いかもしれないので考えること
             vrmLoadable.VrmLoaded += info =>
             {
-                _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                _head = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
                 _defaultHeadPosition = _head.position;
-                _ikCalculator.SetModel(info.animator, DownHand);
-                InitializeArmLengthFactor(info.animator);
+                _ikCalculator.SetModel(info.controlRig, DownHand);
+                InitializeArmLengthFactor(info.controlRig);
                 _hasModel = true;
             };
 
@@ -413,19 +414,19 @@ namespace Baku.VMagicMirror.IK
             }
         }
 
-        private void InitializeArmLengthFactor(Animator animator)
+        private void InitializeArmLengthFactor(Vrm10RuntimeControlRig controlRig)
         {
-            var leftUpperArmPos = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
-            var leftLowerArmPos = animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position;
-            var leftHandPos = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+            var leftUpperArmPos = controlRig.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
+            var leftLowerArmPos = controlRig.GetBoneTransform(HumanBodyBones.LeftLowerArm).position;
+            var leftHandPos = controlRig.GetBoneTransform(HumanBodyBones.LeftHand).position;
             var leftArmLength = 
                 Vector3.Distance(leftUpperArmPos, leftLowerArmPos) +
                 Vector3.Distance(leftLowerArmPos, leftHandPos);
             _leftArmLengthFactor = leftArmLength / ReferenceArmLength;
             
-            var rightUpperArmPos = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
-            var rightLowerArmPos = animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position;
-            var rightHandPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
+            var rightUpperArmPos = controlRig.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
+            var rightLowerArmPos = controlRig.GetBoneTransform(HumanBodyBones.RightLowerArm).position;
+            var rightHandPos = controlRig.GetBoneTransform(HumanBodyBones.RightHand).position;
             var rightArmLength = 
                 Vector3.Distance(rightUpperArmPos, rightLowerArmPos) +
                 Vector3.Distance(rightLowerArmPos, rightHandPos);

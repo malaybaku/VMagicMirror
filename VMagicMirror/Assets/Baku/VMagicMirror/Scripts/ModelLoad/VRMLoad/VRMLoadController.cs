@@ -197,9 +197,7 @@ namespace Baku.VMagicMirror
                 vrmRoot = go.transform,
                 animator = animator,
                 //クラスごと削除予定なので、この粒度のコンパイラ警告はむしろ邪魔
-#pragma warning disable CS0618
-                blendShape = blendShapeProxy,
-#pragma warning restore CS0618
+                //blendShape = blendShapeProxy,
                 renderers = renderers,
             };
             

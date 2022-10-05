@@ -3,13 +3,11 @@ using System.IO;
 using System.Threading;
 using Baku.VMagicMirror.IK;
 using Cysharp.Threading.Tasks;
-using UniGLTF;
 using UniGLTF.Extensions.VRMC_vrm;
 using UniRx;
 using UnityEngine;
 using UniVRM10;
 using UniVRM10.Migration;
-using VRM;
 using Zenject;
 using Object = UnityEngine.Object;
 
@@ -34,10 +32,11 @@ namespace Baku.VMagicMirror
         private readonly IMessageReceiver _receiver;
         private readonly BuiltInMotionClipData _builtInClip;
         private readonly IKTargetTransforms _ikTargets;
-        private readonly VRMPreviewCanvas _previewCanvas;
+        private readonly VrmLoadProcessBroker _previewBroker;
         private readonly ErrorIndicateSender _errorSender;
         private readonly ErrorInfoFactory _errorInfoFactory;
 
+        private readonly CompositeDisposable _disposable = new CompositeDisposable();
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
         private Vrm10Instance _instance = null;
@@ -53,7 +52,7 @@ namespace Baku.VMagicMirror
             IMessageSender sender,
             IMessageReceiver receiver,
             BuiltInMotionClipData builtInClip,
-            VRMPreviewCanvas previewCanvas,
+            VrmLoadProcessBroker previewBroker,
             IKTargetTransforms ikTargets,
             ErrorIndicateSender errorSender,
             ErrorInfoFactory errorInfoFactory
@@ -62,7 +61,7 @@ namespace Baku.VMagicMirror
             _sender = sender;
             _receiver = receiver;
             _builtInClip = builtInClip;
-            _previewCanvas = previewCanvas;
+            _previewBroker = previewBroker;
             _ikTargets = ikTargets;
             _errorSender = errorSender;
             _errorInfoFactory = errorInfoFactory;
@@ -78,17 +77,25 @@ namespace Baku.VMagicMirror
                 VmmCommands.OpenVrm,
                 message =>
                 {
-                    _previewCanvas.Hide();
+                    _previewBroker.RequestHide();
                     LoadModel(message.Content).Forget();
                 });
             _receiver.AssignCommandHandler(
                 VmmCommands.CancelLoadVrm,
-                _ => _previewCanvas.Hide()
+                _ => _previewBroker.RequestHide()
             );
+
+            _previewBroker.VRoidModelLoaded
+                .Subscribe(v =>
+                {
+                    OnVrmLoadedFromVRoidHub(v.modelId, v.instance, v.isVrm10);
+                })
+                .AddTo(_disposable);
         }
 
         public void Dispose()
         {
+            _disposable.Dispose();
             _cts?.Cancel();
             _cts?.Dispose();
         }
@@ -184,12 +191,11 @@ namespace Baku.VMagicMirror
             
             if (vrm10meta != null)
             {
-                //TODO: なんかプレビューUIを出す、旧UIとは別のやつで
-                Debug.LogError("VRM 1.0 meta preview is not implemented");
+                _previewBroker.RequestShowVrm1Meta(vrm10meta, thumbnail);
             }
             else
             {
-                _previewCanvas.Show(vrm0meta, thumbnail);
+                _previewBroker.RequestShowVrm0Meta(vrm0meta, thumbnail);
             }
         }
 

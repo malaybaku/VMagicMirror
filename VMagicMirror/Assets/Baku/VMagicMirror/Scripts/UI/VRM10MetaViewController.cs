@@ -4,10 +4,8 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// VRM1.0用のメタ情報を表示するUI
-    /// </summary>
-    public class VRM10MetaViewController : PresenterBase
+    /// <summary> VRM1.0用のメタ情報を表示するUIを適宜生成して表示/非表示するすごいやつだよ </summary>
+    public class VRM10MetaViewController
     {
         private readonly IFactory<VRM10MetaView> _viewFactory;
         private readonly VRMPreviewLanguage _previewLanguage;
@@ -18,11 +16,6 @@ namespace Baku.VMagicMirror
         {
             _viewFactory = viewFactory;
             _previewLanguage = previewLanguage;
-        }
-        
-        public override void Initialize()
-        {
-            //何も無いかも
         }
 
         public void Show(Meta metaData, Texture2D thumbnail)

@@ -3,7 +3,6 @@ using System.Linq;
 using UniRx;
 using UnityEngine;
 using UniVRM10;
-using VRM;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -273,11 +272,11 @@ namespace Baku.VMagicMirror
         }
 
         //DEBUG用: 読み込んだモデルでIsBinaryなBlendShapeを確認する
-        private void CheckBinaryClips(BlendShapeAvatar blendShapeAvatar)
+        private void CheckBinaryClips(VRM10ObjectExpression expressions)
         {
-            foreach (var clip in blendShapeAvatar.Clips)
+            foreach (var clip in expressions.Clips)
             {
-                Debug.Log($"BlendShapeClip.Key={clip.Key}, IsBinary={clip.IsBinary}");
+                Debug.Log($"BlendShapeClip.Key=({clip.Preset}){clip.Clip.name}, IsBinary={clip.Clip.IsBinary}");
             }
         }
         

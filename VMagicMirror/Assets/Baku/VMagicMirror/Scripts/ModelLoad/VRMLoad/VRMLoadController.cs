@@ -84,7 +84,8 @@ namespace Baku.VMagicMirror
                     var parser = new GlbLowLevelParser("", bytes);
                     using var data = parser.Parse();
                     using var context = new VRMImporterContext(new VRMData(data));
-                    _previewCanvas.Show(context);
+                    //すぐなくなるので削除します、using statementのトレーサビリティ都合で…
+                    //_previewCanvas.Show(context);
                 }
                 else
                 {

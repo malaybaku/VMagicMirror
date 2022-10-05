@@ -42,23 +42,23 @@ namespace Baku.VMagicMirror
                 .AddListener(() => Application.OpenURL(_otherLicenseUrl));
         }
 
-        public void Show(VRMImporterContext context)
-        {
-            CreateCanvasIfNotExist();
-            
-            var meta = context.ReadMeta(true);
-            _otherPermissionUrl = meta.OtherPermissionUrl ?? "";
-            _otherLicenseUrl = meta.OtherLicenseUrl ?? "";
-            _canvas.UISupport.ButtonOpenOtherPermissionUrl.interactable = !string.IsNullOrEmpty(_otherPermissionUrl);
-            _canvas.UISupport.ButtonOpenOtherLicenseUrl.interactable = !string.IsNullOrEmpty(_otherLicenseUrl);
-
-            //サムネが無いVRMをロードするとき、前回のサムネが残っちゃうのを防ぐ
-            _canvas.UISupport.ResetThumbnail();
-            
-            _canvas.Locale.SetLocale(LanguageNameToLocaleName(_previewLanguage.Language));
-            _canvas.PreviewUI.setMeta(meta);
-            _canvas.gameObject.SetActive(true);
-        }
+        // public void Show(VRMImporterContext context)
+        // {
+        //     CreateCanvasIfNotExist();
+        //     
+        //     var meta = context.ReadMeta(true);
+        //     _otherPermissionUrl = meta.OtherPermissionUrl ?? "";
+        //     _otherLicenseUrl = meta.OtherLicenseUrl ?? "";
+        //     _canvas.UISupport.ButtonOpenOtherPermissionUrl.interactable = !string.IsNullOrEmpty(_otherPermissionUrl);
+        //     _canvas.UISupport.ButtonOpenOtherLicenseUrl.interactable = !string.IsNullOrEmpty(_otherLicenseUrl);
+        //
+        //     //サムネが無いVRMをロードするとき、前回のサムネが残っちゃうのを防ぐ
+        //     _canvas.UISupport.ResetThumbnail();
+        //     
+        //     _canvas.Locale.SetLocale(LanguageNameToLocaleName(_previewLanguage.Language));
+        //     _canvas.PreviewUI.setMeta(meta);
+        //     _canvas.gameObject.SetActive(true);
+        // }
 
         public void Show(Vrm0Meta meta, Texture2D thumbnail)
         {

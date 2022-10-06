@@ -139,24 +139,36 @@ namespace Baku.VMagicMirror
                 title.text = meta.Name;
                 version.text = meta.Version;
                 authors.text = string.Join(", ", meta.Authors);
-                copyright.text = ValueOrNone(meta.CopyrightInformation);
-                contactInformation.text = ValueOrNone(meta.ContactInformation);
-                references.text = string.Join(", ", meta.References);
+                copyright.text = meta.CopyrightInformation ?? "";
+                contactInformation.text = meta.ContactInformation ?? "";
+                references.text = (meta.References != null && meta.References.Count > 0)
+                    ? string.Join(", ", meta.References)
+                    : "";
                 
                 avatarPermission.text = GetAvatarPermissionString(meta.AvatarPermission, locale);
                 allowExcessiveViolentUsage.text = 
                     GetUsageAllowString(meta.AllowExcessivelySexualUsage == true, locale);
+                allowExcessiveViolentUsage.color =
+                    GetUsageAllowColor(meta.AllowExcessivelySexualUsage == true);
                 allowExcessiveSexualUsage.text =
                     GetUsageAllowString(meta.AllowExcessivelySexualUsage == true, locale);
+                allowExcessiveSexualUsage.color =
+                    GetUsageAllowColor(meta.AllowExcessivelySexualUsage == true);
                 allowPoliticalOrReligiousUsage.text =
                     GetUsageAllowString(meta.AllowPoliticalOrReligiousUsage == true, locale);
+                allowPoliticalOrReligiousUsage.color =
+                    GetUsageAllowColor(meta.AllowPoliticalOrReligiousUsage == true);
                 allowAntisocialOrHateUsage.text =
                     GetUsageAllowString(meta.AllowAntisocialOrHateUsage == true, locale);
+                allowAntisocialOrHateUsage.color =
+                    GetUsageAllowColor(meta.AllowAntisocialOrHateUsage == true);
 
                 creditNotation.text = 
                     GetRequiredBoolString(meta.CreditNotation == CreditNotationType.required, locale);
                 allowRedistribution.text =
                     GetUsageAllowString(meta.AllowRedistribution == true, locale);
+                allowRedistribution.color =
+                    GetUsageAllowColor(meta.AllowRedistribution == true);
                 commercialUsage.text = GetCommercialUsageString(meta.CommercialUsage, locale);
                 modification.text = GetModificationPermissionString(meta.Modification, locale);
                 
@@ -164,6 +176,9 @@ namespace Baku.VMagicMirror
                 thirdPartyLicenseUrlItem.SetUrl(meta.ThirdPartyLicenses);
                 otherLicenseUrlItem.SetUrl(meta.OtherLicenseUrl);
             }
+
+            private static readonly Color _allowedColor = new Color(3 / 255f, 175 / 255f, 122 / 255f);
+            private static readonly Color _prohibitedColor = new Color(1f, 75 / 255f, 0f);
 
             private static string GetAvatarPermissionString(AvatarPermissionType type, PreviewUILocale locale)
             {
@@ -247,16 +262,16 @@ namespace Baku.VMagicMirror
             
             private static string GetUsageAllowString(bool isAllowed, PreviewUILocale locale)
             {
-                switch (locale)
-                {
-                    case PreviewUILocale.Japanese:
-                        return isAllowed ? "可" : "不許可";
-                    case PreviewUILocale.English:
-                    default:
-                        return isAllowed ? "Allowed" : "Prohibited";
-                }
+                //シンプルでいい気がしたので…
+                return isAllowed ? "OK" : "NG";
             }
 
+            private static Color GetUsageAllowColor(bool isAllowed)
+            {
+                //NOTE: 別に文化的正しさとかは考えなくてよく、色が違ってメリハリがついてればよい
+                return isAllowed ? _allowedColor : _prohibitedColor;
+            }
+            
             private static string GetRequiredBoolString(bool required, PreviewUILocale locale)
             {
                 switch (locale)
@@ -302,7 +317,10 @@ namespace Baku.VMagicMirror
         {
             _locale = locale;
             headers.SetLocale(locale);
-            inputs.Update(_meta, locale);
+            if (_meta != null)
+            {
+                inputs.Update(_meta, locale);
+            }
         }
 
         public void SetActive(bool active) => gameObject.SetActive(active);

@@ -443,6 +443,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2416386611918426222}
   - component: {fileID: 2559932432592378804}
+  - component: {fileID: 8244379963358148976}
   m_Layer: 5
   m_Name: LicenseItem
   m_TagString: Untagged
@@ -498,6 +499,21 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &8244379963358148976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3982901026353901167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64c91c4998f39364697c883d162d6a04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noneTextObject: {fileID: 7825776498585349729}
+  openUrlButton: {fileID: 4704914462194063723}
+  urlText: {fileID: 8405705863780331434}
 --- !u!1 &5613069921430849647
 GameObject:
   m_ObjectHideFlags: 0

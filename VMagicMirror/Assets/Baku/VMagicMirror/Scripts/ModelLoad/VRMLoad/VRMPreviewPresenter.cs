@@ -1,4 +1,5 @@
 using UniRx;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -7,7 +8,8 @@ namespace Baku.VMagicMirror
         private readonly VRMPreviewCanvas _vrm0view;
         private readonly VRM10MetaViewController _vrm1view;
         private readonly VrmLoadProcessBroker _broker;
-        
+        private Texture2D _copiedThumbnail = null;
+
         public VRMPreviewPresenter(
             VRMPreviewCanvas vrm0view,
             VRM10MetaViewController vrm1view,
@@ -22,10 +24,18 @@ namespace Baku.VMagicMirror
         public override void Initialize()
         {
             _broker.ShowVrm0MetaRequested
-                .Subscribe(v => _vrm0view.Show(v.meta, v.thumbnail))
+                .Subscribe(v =>
+                {
+                    GetCopiedThumbnail(v.thumbnail);
+                    _vrm0view.Show(v.meta, _copiedThumbnail);
+                })
                 .AddTo(this);
             _broker.ShowVrm1MetaRequested
-                .Subscribe(v => _vrm1view.Show(v.meta, v.thumbnail))
+                .Subscribe(v =>
+                {
+                    GetCopiedThumbnail(v.thumbnail);
+                    _vrm1view.Show(v.meta, _copiedThumbnail);
+                })
                 .AddTo(this);
 
             _broker.HideRequested
@@ -33,8 +43,24 @@ namespace Baku.VMagicMirror
                 {
                     _vrm0view.Hide();
                     _vrm1view.Hide();
+                    if (_copiedThumbnail != null)
+                    {
+                        Object.Destroy(_copiedThumbnail);
+                    }
+                    _copiedThumbnail = null;
                 })
                 .AddTo(this);
+        }
+
+        private void GetCopiedThumbnail(Texture2D thumbnail)
+        {
+            if (_copiedThumbnail != null)
+            {
+                Object.Destroy(_copiedThumbnail);
+            }
+
+            _copiedThumbnail = new Texture2D(thumbnail.width, thumbnail.height, thumbnail.format, false);
+            Graphics.CopyTexture(thumbnail, _copiedThumbnail);
         }
     }
 }

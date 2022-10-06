@@ -1,5 +1,6 @@
 using UniGLTF.Extensions.VRMC_vrm;
 using UnityEngine;
+using UniRx;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -23,6 +24,9 @@ namespace Baku.VMagicMirror
             if (_view == null)
             {
                 _view = _viewFactory.Create();
+                _view.OpenUrlRequested
+                    .Subscribe(Application.OpenURL)
+                    .AddTo(_view);
             }
 
             _view.SetLocale(LanguageNameToLocale(_previewLanguage.Language));
@@ -36,10 +40,8 @@ namespace Baku.VMagicMirror
             if (_view != null)
             {
                 _view.SetActive(false);
+                _view.SetThumbnail(null);
             }
-            
-            //TODO: ここで実施してもよければサムネを破棄したい
-            
         }
         
         private static PreviewUILocale LanguageNameToLocale(string languageName)

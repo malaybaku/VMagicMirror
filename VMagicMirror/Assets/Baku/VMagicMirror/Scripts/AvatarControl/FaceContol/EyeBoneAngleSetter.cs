@@ -109,7 +109,6 @@ namespace Baku.VMagicMirror
             _hasLeftEyeBone = false;
             _hasRightEyeBone = false;
 
-            _expressionAccumulator = null;
             _leftEye = null;
             _rightEye = null;
         }

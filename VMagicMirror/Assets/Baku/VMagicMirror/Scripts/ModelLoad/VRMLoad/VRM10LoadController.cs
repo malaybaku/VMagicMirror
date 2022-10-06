@@ -135,7 +135,7 @@ namespace Baku.VMagicMirror
             {
                 if (instance != null)
                 {
-                    Object.Destroy(instance);
+                    Object.Destroy(instance.gameObject);
                 }
             }
         }
@@ -236,12 +236,12 @@ namespace Baku.VMagicMirror
             }
 
             //NOTE: 分けたほうが良さそうに見えてるので分けてるが、不要なら_instanceのDestroyだけで済ます
-            _controlRig?.Dispose();
-            _controlRig = null;
+            // _controlRig?.Dispose();
+            // _controlRig = null;
 
             if (_instance != null)
             {
-                UnityEngine.Object.Destroy(_instance);
+                Object.Destroy(_instance.gameObject);
             }
             _instance = null;
             _modelVersion.Value = CurrentModelVersion.Unloaded;
@@ -256,6 +256,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            _instance = instance;
             var go = instance.gameObject;
 
             //セットアップのうちFinalIKに思い切り依存した所が別スクリプトになってます

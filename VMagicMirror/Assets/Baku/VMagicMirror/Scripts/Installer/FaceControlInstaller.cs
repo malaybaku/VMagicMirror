@@ -6,7 +6,6 @@ namespace Baku.VMagicMirror.Installer
     /// <summary> 顔周りでなんかインストールするやつ </summary>
     public class FaceControlInstaller : InstallerBase
     {
-        [SerializeField] private BlendShapeInitializer blendShapeInitializer = null;
         [SerializeField] private VmmLipSyncContextBase lipSyncContext = null;
         [SerializeField] private LipSyncIntegrator lipSyncIntegrator = null;
         [SerializeField] private VRMAutoBlink autoBlink = null;
@@ -16,7 +15,6 @@ namespace Baku.VMagicMirror.Installer
         {
             container.Bind<VmmLipSyncContextBase>().FromInstance(lipSyncContext).AsCached();
             container.BindInstances(
-                blendShapeInitializer,
                 lipSyncIntegrator,
                 autoBlink,
                 eyeBoneAngleSetter

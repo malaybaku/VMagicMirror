@@ -36,15 +36,8 @@ namespace Baku.VMagicMirror
             _wtmBlendShape = wtmBlendShape;
             _accumulator = accumulator;
             
-            vrmLoadable.VrmLoaded += info =>
-            {
-                _hasModel = true;
-            };
-
-            vrmLoadable.VrmDisposing += () =>
-            {
-                _hasModel = false;
-            };
+            vrmLoadable.VrmLoaded += info => _hasModel = true;
+            vrmLoadable.VrmDisposing += () => _hasModel = false;
             
             blendShapeInterpolator.Setup(faceSwitch, wtmBlendShape);
         }

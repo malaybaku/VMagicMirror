@@ -54,10 +54,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void Apply()
-        {
-            _expression?.SetWeights(_values);
-        }
+        public void Apply() => _expression?.SetWeights(_values);
 
         public void ResetValues()
         {

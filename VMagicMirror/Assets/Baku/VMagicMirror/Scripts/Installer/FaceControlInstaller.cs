@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror.Installer
                 eyeBoneAngleSetter
             );
 
-            container.Bind<ExpressionAccumulator>().AsSingle();
+            container.BindInterfacesAndSelfTo<ExpressionAccumulator>().AsSingle();
             container.Bind<EyeLookAt>().AsSingle();
             container.BindInterfacesTo<EyeLookAtUpdater>().AsSingle();
         }

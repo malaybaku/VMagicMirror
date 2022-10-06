@@ -60,7 +60,7 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 _head = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
-                _lookAtIk = info.vrmRoot.GetComponent<LookAtIK>();
+                _lookAtIk = info.vrmRoot.GetComponentInChildren<LookAtIK>();
                 _hasModel = true;
             };
             vrmLoadable.VrmDisposing += () =>

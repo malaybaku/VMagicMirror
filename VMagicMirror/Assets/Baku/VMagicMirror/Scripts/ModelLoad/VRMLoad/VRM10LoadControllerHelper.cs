@@ -11,8 +11,6 @@ namespace Baku.VMagicMirror
     /// <summary> <see cref="VRMLoadControllerHelper"/>の後継版で、VRM1.0形式に対応したもの </summary>
     public static class VRM10LoadControllerHelper
     {
-        private const float CurveMapValueTolerance = 0.01f;
-
         public static void SetupVrm(Vrm10Instance instance, IKTargetTransforms ikTargets)
         {
             
@@ -20,7 +18,8 @@ namespace Baku.VMagicMirror
             animator.applyRootMotion = false;
 
             var controlRig = instance.Runtime.ControlRig;
-            var bipedReferences = LoadReferencesFromVrm(controlRig, controlRig.GetBoneTransform(HumanBodyBones.Hips).parent);
+            var controlRigRoot = controlRig.GetBoneTransform(HumanBodyBones.Hips).parent;
+            var bipedReferences = LoadReferencesFromVrm(controlRig, controlRigRoot);
             _ = AddFBBIK(controlRig.GetBoneTransform(HumanBodyBones.Hips).parent.gameObject, ikTargets, bipedReferences);
 
             //NOTE: 要するに勝手にLookAt結果を代入しなければいい、という話.
@@ -28,8 +27,8 @@ namespace Baku.VMagicMirror
             instance.LookAtTargetType = VRM10ObjectLookAt.LookAtTargetTypes.CalcYawPitchToGaze;
             instance.Gaze = ikTargets.LookAt;
             
-            AddLookAtIK(instance.gameObject, ikTargets.LookAt, animator, bipedReferences.root);
-            AddFingerRigToRightIndex(animator, ikTargets);
+            AddLookAtIK(controlRigRoot.gameObject, ikTargets.LookAt, controlRig, bipedReferences.root);
+            AddFingerRigToRightIndex(controlRig, ikTargets);
         }
 
         private static FullBodyBipedIK AddFBBIK(GameObject go, IKTargetTransforms ikTargets, BipedReferences reference)
@@ -74,21 +73,21 @@ namespace Baku.VMagicMirror
             return fbbik;
         }
 
-        private static void AddLookAtIK(GameObject go, Transform headTarget, Animator animator, Transform referenceRoot)
+        private static void AddLookAtIK(GameObject go, Transform headTarget, Vrm10RuntimeControlRig controlRig, Transform referenceRoot)
         {
             var lookAtIk = go.AddComponent<LookAtIK>();
             lookAtIk.solver.SetChain(
-                new Transform[]
+                new[]
                 {
-                    animator.GetBoneTransform(HumanBodyBones.Spine),
-                    animator.GetBoneTransform(HumanBodyBones.Chest),
-                    animator.GetBoneTransform(HumanBodyBones.UpperChest),
-                    animator.GetBoneTransform(HumanBodyBones.Neck),
+                    controlRig.GetBoneTransform(HumanBodyBones.Spine),
+                    controlRig.GetBoneTransform(HumanBodyBones.Chest),
+                    controlRig.GetBoneTransform(HumanBodyBones.UpperChest),
+                    controlRig.GetBoneTransform(HumanBodyBones.Neck),
                 }
                     .Where(t => t != null)
                     .ToArray(),
-                animator.GetBoneTransform(HumanBodyBones.Head),
-                new Transform[0],
+                controlRig.GetBoneTransform(HumanBodyBones.Head),
+                Array.Empty<Transform>(),
                 referenceRoot
                 );
 
@@ -131,16 +130,16 @@ namespace Baku.VMagicMirror
             };
         }
 
-        private static void AddFingerRigToRightIndex(Animator animator, IKTargetTransforms ikTargets)
+        private static void AddFingerRigToRightIndex(Vrm10RuntimeControlRig controlRig, IKTargetTransforms ikTargets)
         {
             //NOTE: FinalIKのサンプルにあるFingerRigを持ち込んでみる。
-            var rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+            var rightHand = controlRig.GetBoneTransform(HumanBodyBones.RightHand);
 
             var fingerRig = rightHand.gameObject.AddComponent<FingerRig>();
             fingerRig.AddFinger(
-                animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
-                animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightIndexProximal),
+                controlRig.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
+                controlRig.GetBoneTransform(HumanBodyBones.RightIndexDistal),
                 ikTargets.RightIndex
                 );
             //とりあえず無効化し、有効にするのはInputDeviceToMotionの責務にする

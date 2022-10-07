@@ -257,6 +257,8 @@ namespace Baku.VMagicMirror
             }
 
             _instance = instance;
+            //NOTE: Script Execution OrderをVMM側で制御したいので。
+            instance.UpdateType = Vrm10Instance.UpdateTypes.None;
             var go = instance.gameObject;
 
             //セットアップのうちFinalIKに思い切り依存した所が別スクリプトになってます

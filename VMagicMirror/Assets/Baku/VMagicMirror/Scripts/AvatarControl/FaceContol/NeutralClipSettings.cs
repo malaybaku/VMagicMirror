@@ -40,8 +40,7 @@ namespace Baku.VMagicMirror
         {
             if (HasValidNeutralClipKey)
             {
-                //NOTE: 他の処理と被って値が1を超えるのを避けておく、一応
-                proxy.AccumulateValue(NeutralClipKey, Mathf.Min(weight, 1f - proxy.GetValue(NeutralClipKey)));
+                proxy.AccumulateValue(NeutralClipKey, weight);
             }
         }
 
@@ -49,8 +48,7 @@ namespace Baku.VMagicMirror
         {
             if (HasValidOffsetClipKey)
             {
-                //NOTE: 他の処理と被って値が1を超えるのを避けておく、一応
-                proxy.AccumulateValue(OffsetClipKey, 1f - proxy.GetValue(OffsetClipKey));
+                proxy.AccumulateValue(OffsetClipKey, 1f);
             }
         }
 

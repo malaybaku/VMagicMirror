@@ -40,11 +40,7 @@ namespace Baku.VMagicMirror
         {
             if (HasValidNeutralClipKey)
             {
-                //NOTE: 他の処理と被って値が1を超えるのを避けておく、一応
-                accumulator.Accumulate(
-                    NeutralClipKey, 
-                    Mathf.Min(weight, 1f - accumulator.GetValue(NeutralClipKey))
-                );
+                accumulator.Accumulate(NeutralClipKey, weight);
             }
         }
 
@@ -52,11 +48,7 @@ namespace Baku.VMagicMirror
         {
             if (HasValidOffsetClipKey)
             {
-                //NOTE: 他の処理と被って値が1を超えるのを避けておく、一応
-                accumulator.Accumulate(
-                    OffsetClipKey, 
-                    1f - accumulator.GetValue(OffsetClipKey)
-                );
+                accumulator.Accumulate(OffsetClipKey, 1f);
             }
         }
 

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UniVRM10;
 using Zenject;
-using VRM.Optimize.Jobs;
+using Random = UnityEngine.Random;
 
 namespace Baku.VMagicMirror
 {
@@ -63,7 +65,8 @@ namespace Baku.VMagicMirror
         }
         
         private float _windGenerateCount = 0;
-        private VRMSpringBoneJob[] _springBones = new VRMSpringBoneJob[] { };
+        //private VRMSpringBoneJob[] _springBones = new VRMSpringBoneJob[] { };
+        private VRM10SpringBoneJoint[] _springBones = Array.Empty<VRM10SpringBoneJoint>();
         private Vector3[] _originalGravityDirections = new Vector3[] { };
         private float[] _originalGravityFactors = new float[] { };
         private readonly List<WindItem> _windItems = new List<WindItem>();
@@ -181,14 +184,14 @@ namespace Baku.VMagicMirror
         
         private void OnVrmUnloading()
         {
-            _springBones = new VRMSpringBoneJob[] { };
-            _originalGravityDirections = new Vector3[]{ };
-            _originalGravityFactors = new float[] { };
+            _springBones = Array.Empty<VRM10SpringBoneJoint>();
+            _originalGravityDirections = Array.Empty<Vector3>();
+            _originalGravityFactors = Array.Empty<float>();
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _springBones = info.vrmRoot.GetComponentsInChildren<VRMSpringBoneJob>();
+            _springBones = info.instance.SpringBone.Springs.SelectMany(spring => spring.Joints).ToArray();
             _originalGravityDirections = _springBones.Select(b => b.m_gravityDir).ToArray();
             _originalGravityFactors = _springBones.Select(b => b.m_gravityPower).ToArray();
         }

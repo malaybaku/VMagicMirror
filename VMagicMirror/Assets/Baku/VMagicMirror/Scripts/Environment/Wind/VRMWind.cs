@@ -65,10 +65,12 @@ namespace Baku.VMagicMirror
         }
         
         private float _windGenerateCount = 0;
-        //private VRMSpringBoneJob[] _springBones = new VRMSpringBoneJob[] { };
+
+        private bool _hasModel = false;
+        private Vrm10Instance _instance = null;
         private VRM10SpringBoneJoint[] _springBones = Array.Empty<VRM10SpringBoneJoint>();
-        private Vector3[] _originalGravityDirections = new Vector3[] { };
-        private float[] _originalGravityFactors = new float[] { };
+        private Vector3[] _originalGravityDirections = Array.Empty<Vector3>();
+        private float[] _originalGravityFactors = Array.Empty<float>();
         private readonly List<WindItem> _windItems = new List<WindItem>();
 
         public bool WindEnabled { get; private set; }
@@ -121,21 +123,28 @@ namespace Baku.VMagicMirror
 
             UpdateWindGenerateCount();
             UpdateWindItems();
-            
-            Vector3 localWindForce = Vector3.zero;
-            for (int i = 0; i < _windItems.Count; i++)
+
+            var localWindForce = Vector3.zero;
+            foreach (var wind in _windItems)
             {
-                localWindForce += _windItems[i].CurrentFactor * _windItems[i].Orientation;
+                localWindForce += wind.CurrentFactor * wind.Orientation;
             }
 
-            Vector3 windForce = transform.rotation * localWindForce;
-            for (int i = 0; i < _springBones.Length; i++)
+            var windForce = transform.rotation * localWindForce;
+            for (var i = 0; i < _springBones.Length; i++)
             {
-                var bone = _springBones[i];
+                var joint = _springBones[i];
                 //NOTE: 力を合成して斜めに力をかけるのが狙い
                 var forceSum = _originalGravityFactors[i] * _originalGravityDirections[i] + windForce;
-                bone.m_gravityDir = forceSum.normalized;
-                bone.m_gravityPower = forceSum.magnitude;
+                joint.m_gravityDir = forceSum.normalized;
+                joint.m_gravityPower = forceSum.magnitude;
+            }
+
+            if (_hasModel)
+            {
+                //NOTE: Wind由来の変更ではJointのパラメタしか変化しないので、
+                //通常のReconstructではないAPIを叩く事によってAllocを避けている
+                _instance.Runtime.ApplySpringBoneJointParameterChange();
             }
         }
 
@@ -184,6 +193,8 @@ namespace Baku.VMagicMirror
         
         private void OnVrmUnloading()
         {
+            _hasModel = false;
+            _instance = null;
             _springBones = Array.Empty<VRM10SpringBoneJoint>();
             _originalGravityDirections = Array.Empty<Vector3>();
             _originalGravityFactors = Array.Empty<float>();
@@ -191,9 +202,11 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
+            _instance = info.instance;
             _springBones = info.instance.SpringBone.Springs.SelectMany(spring => spring.Joints).ToArray();
             _originalGravityDirections = _springBones.Select(b => b.m_gravityDir).ToArray();
             _originalGravityFactors = _springBones.Select(b => b.m_gravityPower).ToArray();
+            _hasModel = true;
         }
     }
 }

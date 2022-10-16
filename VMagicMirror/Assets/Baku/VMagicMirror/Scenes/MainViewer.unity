@@ -358,18 +358,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1574337990821293262}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1787938567 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4403582645890784489, guid: 8089eb7a4f09ec147961c4ed8f093c27,
-    type: 3}
-  m_PrefabInstance: {fileID: 4403582645463997422}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91cd6285b69da1e46a0a90d72eab7fc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1842530517 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7220499517585180708, guid: a0e0d039c3aebf041adced68e3830d55,
@@ -1406,7 +1394,7 @@ PrefabInstance:
         type: 3}
       propertyPath: loadController
       value: 
-      objectReference: {fileID: 1787938567}
+      objectReference: {fileID: 0}
     - target: {fileID: 8218640737285604642, guid: 790d84fdbc606c944ad6592cf84f1ea9,
         type: 3}
       propertyPath: messageHandler

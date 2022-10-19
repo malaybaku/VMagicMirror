@@ -198,8 +198,7 @@ namespace Baku.VMagicMirror
 
         private static void RemoveBurstRelatedFolder(string savePath)
         {
-            var rootFolder = Path.GetDirectoryName(savePath);
-            var burstDir = Path.Combine(rootFolder, "VMagicMirror_BurstDebugInformation_DoNotShip");
+            var burstDir = Path.Combine(savePath, "VMagicMirror_BurstDebugInformation_DoNotShip");
             if (Directory.Exists(burstDir))
             {
                 Directory.Delete(burstDir, true);

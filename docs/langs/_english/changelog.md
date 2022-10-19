@@ -8,6 +8,15 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v2.0.11
+{: .doc-sec2 }
+
+2022/10/18
+
+* Fix: In v2.0.8 - v2.0.10, facial expression get chattered after running Word to Motion item, if "Neutral" blendshape is set in facial setting.
+* Fix: In v2.0.10 "Keep facials after motion" in Word to Motion feature did not work correctly.
+
+
 #### v2.0.10
 {: .doc-sec2 }
 

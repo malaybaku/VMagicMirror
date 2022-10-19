@@ -135,7 +135,11 @@ namespace Baku.VMagicMirror.WordToMotion
             if (request.UseBlendShape)
             {
                 _blendShapeResetCts = new CancellationTokenSource();
-                ResetBlendShapeAsync(duration, _blendShapeResetCts.Token).Forget(); 
+                //NOTE: HoldBlendShape == falseの場合、必ず有効なdurationが入ってるはず
+                if (!request.HoldBlendShape)
+                {
+                    ResetBlendShapeAsync(duration, _blendShapeResetCts.Token).Forget();
+                }
             }
 
             //アクセサリの処理

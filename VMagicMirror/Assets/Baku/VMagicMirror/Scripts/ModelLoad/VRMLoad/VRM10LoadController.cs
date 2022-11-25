@@ -278,7 +278,6 @@ namespace Baku.VMagicMirror
             {
                 modelVersion = _modelVersion.Value,
                 vrmRoot = go.transform,
-                controlRig = instance.Runtime.ControlRig,
                 animator = animator,
                 instance = instance,
                 fbbIk = go.GetComponentInChildren<FullBodyBipedIK>(),

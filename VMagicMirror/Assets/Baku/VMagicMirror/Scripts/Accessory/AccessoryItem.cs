@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror
         private IAccessoryFileActions _fileActions = null;
         private Camera _cam = null;
 
-        private Vrm10RuntimeControlRig _controlRig = null;
+        private Animator _animator = null;
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones 
             = new Dictionary<AccessoryAttachTarget, Transform>();
 
@@ -65,7 +65,7 @@ namespace Baku.VMagicMirror
         {
             get
             {
-                if (_file == null || _controlRig == null || ItemLayout == null)
+                if (_file == null || _animator == null || ItemLayout == null)
                 {
                     return false;
                 }
@@ -236,7 +236,7 @@ namespace Baku.VMagicMirror
             HasLayoutChange = false;
             ItemLayout = layout;
             _fileActions?.UpdateLayout(layout);
-            if (_controlRig == null)
+            if (_animator == null)
             {
                 return;
             }
@@ -306,18 +306,18 @@ namespace Baku.VMagicMirror
         /// <summary>
         /// ロードされたVRMのAnimatorを指定し、アイテムをモデルの特定部位にアタッチできるようにします。
         /// </summary>
-        /// <param name="controlRig"></param>
-        public void SetAnimator(Vrm10RuntimeControlRig controlRig)
+        /// <param name="animator"></param>
+        public void SetAnimator(Animator animator)
         {
-            _controlRig = controlRig;
+            _animator = animator;
 
-            _attachBones[AccessoryAttachTarget.Head] = controlRig.GetBoneTransform(HumanBodyBones.Head);
+            _attachBones[AccessoryAttachTarget.Head] = animator.GetBoneTransform(HumanBodyBones.Head);
             _attachBones[AccessoryAttachTarget.Neck] = 
-                controlRig.GetBoneTransform(HumanBodyBones.Neck) ?? controlRig.GetBoneTransform(HumanBodyBones.Head);
-            _attachBones[AccessoryAttachTarget.Chest] = controlRig.GetBoneTransform(HumanBodyBones.Chest);
-            _attachBones[AccessoryAttachTarget.Waist] = controlRig.GetBoneTransform(HumanBodyBones.Hips);
-            _attachBones[AccessoryAttachTarget.LeftHand] = controlRig.GetBoneTransform(HumanBodyBones.LeftHand);
-            _attachBones[AccessoryAttachTarget.RightHand] = controlRig.GetBoneTransform(HumanBodyBones.RightHand);
+                animator.GetBoneTransform(HumanBodyBones.Neck) ?? animator.GetBoneTransform(HumanBodyBones.Head);
+            _attachBones[AccessoryAttachTarget.Chest] = animator.GetBoneTransform(HumanBodyBones.Chest);
+            _attachBones[AccessoryAttachTarget.Waist] = animator.GetBoneTransform(HumanBodyBones.Hips);
+            _attachBones[AccessoryAttachTarget.LeftHand] = animator.GetBoneTransform(HumanBodyBones.LeftHand);
+            _attachBones[AccessoryAttachTarget.RightHand] = animator.GetBoneTransform(HumanBodyBones.RightHand);
 
             if (_file == null)
             {
@@ -339,7 +339,7 @@ namespace Baku.VMagicMirror
         public void UnsetModel()
         {
             transform.SetParent(null);
-            _controlRig = null;
+            _animator = null;
             _attachBones.Clear();
             transformControl.mode = TransformControl.TransformMode.None;
             SetVisibility(false);
@@ -351,7 +351,7 @@ namespace Baku.VMagicMirror
         /// <param name="request"></param>
         public void ControlItemTransform(TransformControlRequest request)
         {
-            if (_controlRig == null && ItemLayout == null)
+            if (_animator == null && ItemLayout == null)
             {
                 return;
             }
@@ -406,7 +406,7 @@ namespace Baku.VMagicMirror
         {
             Transform bone = null;
             if (ItemLayout == null || 
-                _controlRig == null || 
+                _animator == null || 
                 (ItemLayout.AttachTarget != AccessoryAttachTarget.World &&
                  !_attachBones.TryGetValue(ItemLayout.AttachTarget, out bone)
                 ))

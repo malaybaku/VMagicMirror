@@ -59,7 +59,7 @@ namespace Baku.VMagicMirror
         private KeyboardProvider _keyboard = null;
 
         private bool _hasModel = false;
-        private Vrm10RuntimeControlRig _controlRig = null;
+        private Animator _animator = null;
 
         //左手親指 = 0,
         //左手人差し指 = 1,
@@ -105,72 +105,72 @@ namespace Baku.VMagicMirror
         public bool RightHandPresentationMode { get; set; } = false;
         public bool RightHandPenTabletMode { get; set; } = false;
 
-        public void Initialize(Vrm10RuntimeControlRig controlRig)
+        public void Initialize(Animator animator)
         {
-            if(controlRig == null) { return; }
+            if(animator == null) { return; }
 
-            _controlRig = controlRig;
+            _animator = animator;
             _fingers = new[]
             {
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftThumbDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftThumbIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftThumbProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftThumbDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftThumbIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftThumbProximal),
                 },
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftIndexDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftIndexIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftIndexProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftIndexDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftIndexIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftIndexProximal),
                 },
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftMiddleDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftMiddleProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftMiddleDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal),
                 },
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftRingDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftRingIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftRingProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftRingDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftRingIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftRingProximal),
                 },
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftLittleDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftLittleIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.LeftLittleProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftLittleDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftLittleIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.LeftLittleProximal),
                 },
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightThumbDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightThumbIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightThumbProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightThumbDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightThumbIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightThumbProximal),
                 },
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightIndexDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightIndexProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightIndexDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightIndexIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightIndexProximal),
                 },
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightMiddleDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightMiddleProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal),
                 },
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightRingDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightRingIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightRingProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightRingDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightRingIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightRingProximal),
                 },
                 new[]
                 {
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightLittleDistal),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightLittleIntermediate),
-                    _controlRig.GetBoneTransform(HumanBodyBones.RightLittleProximal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightLittleDistal),
+                    _animator.GetBoneTransform(HumanBodyBones.RightLittleIntermediate),
+                    _animator.GetBoneTransform(HumanBodyBones.RightLittleProximal),
                 },
             };
             _hasFinger = new bool[10][];
@@ -190,7 +190,7 @@ namespace Baku.VMagicMirror
         public void Dispose()
         {
             _hasModel = false;
-            _controlRig = null;
+            _animator = null;
             _fingers = null;
             _hasFinger = null;
         }

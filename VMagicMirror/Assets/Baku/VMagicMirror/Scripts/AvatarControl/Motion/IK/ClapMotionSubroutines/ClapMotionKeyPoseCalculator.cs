@@ -31,31 +31,31 @@ namespace Baku.VMagicMirror.IK
         private float _clapHeight = 1f;
         private float _armLength = 0.5f;
 
-        public void SetupAvatarBodyParameter(Vrm10RuntimeControlRig controlRig)
+        public void SetupAvatarBodyParameter(Animator animator)
         {
             //左右の腕長さがあまりに違うケースも無視、難しいので
-            var leftUpperArm = controlRig.GetBoneTransform(HumanBodyBones.LeftUpperArm);
-            var leftLowerArm = controlRig.GetBoneTransform(HumanBodyBones.LeftLowerArm);
-            var leftHand = controlRig.GetBoneTransform(HumanBodyBones.LeftHand);
+            var leftUpperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+            var leftLowerArm = animator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+            var leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
             var leftArmLength =
                 Vector3.Distance(leftUpperArm.position, leftLowerArm.position) +
                 Vector3.Distance(leftLowerArm.position, leftHand.position);
 
-            var rightUpperArm = controlRig.GetBoneTransform(HumanBodyBones.RightUpperArm);
-            var rightLowerArm = controlRig.GetBoneTransform(HumanBodyBones.RightLowerArm);
-            var rightHand = controlRig.GetBoneTransform(HumanBodyBones.RightHand);
+            var rightUpperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+            var rightLowerArm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+            var rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
             var rightArmLength =
                 Vector3.Distance(rightUpperArm.position, rightLowerArm.position) +
                 Vector3.Distance(rightLowerArm.position, rightHand.position);
 
             //chestは必須ボーンではないことに注意
-            var chestBone = controlRig.GetBoneTransform(HumanBodyBones.Chest);
+            var chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
             if (chestBone == null)
             {
-                chestBone = controlRig.GetBoneTransform(HumanBodyBones.Spine);
+                chestBone = animator.GetBoneTransform(HumanBodyBones.Spine);
             }
             var chest = chestBone.position;
-            var head = controlRig.GetBoneTransform(HumanBodyBones.Head).position;
+            var head = animator.GetBoneTransform(HumanBodyBones.Head).position;
 
             //ClapHeightは手首を持ってく位置を指定することに注意。気持ち低めを狙う。
             _clapHeight = Mathf.Lerp(chest.y, head.y, 0.4f);

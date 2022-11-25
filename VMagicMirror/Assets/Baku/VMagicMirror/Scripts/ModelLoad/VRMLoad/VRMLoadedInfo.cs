@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror
         public CurrentModelVersion modelVersion;
         public Transform vrmRoot;
         public Animator animator;
-        public Vrm10RuntimeControlRig controlRig;
+        public Animator controlRig => animator;
         //NOTE: property細分化してトレーサビリティとってもいいかも、ExpressionSettingsとか
         public Vrm10Instance instance;
         public Vrm10RuntimeExpression RuntimeFacialExpression => instance.Runtime.Expression;

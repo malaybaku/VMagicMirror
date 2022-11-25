@@ -21,7 +21,7 @@ namespace Baku.VMagicMirror
         private IMessageSender _sender;
         private readonly List<AccessoryItem> _items = new List<AccessoryItem>();
         private IDisposable _layoutSender = null;
-        private Vrm10RuntimeControlRig _animator;
+        private Animator _animator;
         private bool _hasModel;
 
         [Inject]

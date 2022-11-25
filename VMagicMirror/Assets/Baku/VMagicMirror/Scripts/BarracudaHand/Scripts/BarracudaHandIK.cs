@@ -414,19 +414,19 @@ namespace Baku.VMagicMirror.IK
             }
         }
 
-        private void InitializeArmLengthFactor(Vrm10RuntimeControlRig controlRig)
+        private void InitializeArmLengthFactor(Animator animator)
         {
-            var leftUpperArmPos = controlRig.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
-            var leftLowerArmPos = controlRig.GetBoneTransform(HumanBodyBones.LeftLowerArm).position;
-            var leftHandPos = controlRig.GetBoneTransform(HumanBodyBones.LeftHand).position;
+            var leftUpperArmPos = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
+            var leftLowerArmPos = animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position;
+            var leftHandPos = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
             var leftArmLength = 
                 Vector3.Distance(leftUpperArmPos, leftLowerArmPos) +
                 Vector3.Distance(leftLowerArmPos, leftHandPos);
             _leftArmLengthFactor = leftArmLength / ReferenceArmLength;
             
-            var rightUpperArmPos = controlRig.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
-            var rightLowerArmPos = controlRig.GetBoneTransform(HumanBodyBones.RightLowerArm).position;
-            var rightHandPos = controlRig.GetBoneTransform(HumanBodyBones.RightHand).position;
+            var rightUpperArmPos = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
+            var rightLowerArmPos = animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position;
+            var rightHandPos = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
             var rightArmLength = 
                 Vector3.Distance(rightUpperArmPos, rightLowerArmPos) +
                 Vector3.Distance(rightLowerArmPos, rightHandPos);

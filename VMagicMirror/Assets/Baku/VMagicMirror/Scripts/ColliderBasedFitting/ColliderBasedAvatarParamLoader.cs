@@ -67,21 +67,21 @@ namespace Baku.VMagicMirror
         }
 
         //手首ボーンと中指付け根ボーンの中点を取得します。この点はレイキャストの基準として使われます。
-        private Vector3 GetLeftHandRaycastReferencePosition(Vrm10RuntimeControlRig controlRig, Vector3 leftHandPosition)
+        private Vector3 GetLeftHandRaycastReferencePosition(Animator animator, Vector3 leftHandPosition)
         {
-            var finger = controlRig.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate);
+            var finger = animator.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate);
             if (finger != null)
             {
                 return finger.position;
             }
             
-            finger = controlRig.GetBoneTransform(HumanBodyBones.LeftMiddleDistal);
+            finger = animator.GetBoneTransform(HumanBodyBones.LeftMiddleDistal);
             if (finger != null)
             {
                 return finger.position;
             }
 
-            finger = controlRig.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
+            finger = animator.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
             if (finger != null)
             {
                 return finger.position;
@@ -91,21 +91,21 @@ namespace Baku.VMagicMirror
             return leftHandPosition;
         }
 
-        private Vector3 GetRightHandRaycastReferencePosition(Vrm10RuntimeControlRig controlRig, Vector3 rightHandPosition)
+        private Vector3 GetRightHandRaycastReferencePosition(Animator animator, Vector3 rightHandPosition)
         {
-            var finger = controlRig.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate);
+            var finger = animator.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate);
             if (finger != null)
             {
                 return finger.position;
             }
             
-            finger = controlRig.GetBoneTransform(HumanBodyBones.RightMiddleDistal);
+            finger = animator.GetBoneTransform(HumanBodyBones.RightMiddleDistal);
             if (finger != null)
             {
                 return finger.position;
             }
 
-            finger = controlRig.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
+            finger = animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
             if (finger != null)
             {
                 return finger.position;

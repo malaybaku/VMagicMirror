@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -19,6 +20,13 @@ namespace Baku.VMagicMirrorConfig
             ["Blink_L"] = "BlinkLeft",
             ["Blink_R"] = "BlinkRight",
         };
+
+        private static readonly Dictionary<string, string> _newKeyToOldKey;
+
+        static DefaultBlendShapeNameStore()
+        {
+            _newKeyToOldKey = _oldKeyToNewKey.ToDictionary(p => p.Value, p => p.Key);
+        }
 
 
         public static string[] LoadDefaultNames()
@@ -54,6 +62,11 @@ namespace Baku.VMagicMirrorConfig
         public static string GetVrm10KeyName(string key)
         {
             return _oldKeyToNewKey.TryGetValue(key, out var newName) ? newName : key;
+        }
+
+        public static string GetVrm0KeyName(string key)
+        {
+            return _newKeyToOldKey.TryGetValue(key, out var oldName) ? oldName : key;
         }
 
         public static bool ShouldRemoveFromExtraBlendShapeKeyName(string? key)

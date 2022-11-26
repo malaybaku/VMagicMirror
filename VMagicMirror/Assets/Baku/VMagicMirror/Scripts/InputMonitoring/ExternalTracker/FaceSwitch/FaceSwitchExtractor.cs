@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -63,20 +64,20 @@ namespace Baku.VMagicMirror.ExternalTracker
         }
 
         //ロードされたアバターと設定を突き合わせた結果得られる、確認すべき条件セットの一覧
-        private FaceSwitchItem[] _itemsToCheck = new FaceSwitchItem[0];
+        private FaceSwitchItem[] _itemsToCheck = Array.Empty<FaceSwitchItem>();
 
         private void RefreshItemsToCheck()
         {
             if (Setting == null || AvatarBlendShapeNames == null)
             {
-                _itemsToCheck = new FaceSwitchItem[0];
+                _itemsToCheck = Array.Empty<FaceSwitchItem>();
                 return;
             }
 
             //ブレンドシェイプかアクセサリーの適用内容が記載されているものだけ拾う。無効なものを残すとパフォーマンスが落ちるので無視。
             _itemsToCheck = Setting.items
                 .Where(i => 
-                    AvatarBlendShapeNames.Contains(i.clipName) || !string.IsNullOrEmpty(i.accessoryName))
+                    AvatarBlendShapeNames.Contains(i.ClipName) || !string.IsNullOrEmpty(i.accessoryName))
                 .ToArray(); 
         }
         
@@ -93,7 +94,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 if (ExtractSpecifiedBlendShape(source, _itemsToCheck[i].source) > _itemsToCheck[i].threshold * 0.01f)
                 {
                     ActiveItem = new ActiveFaceSwitchItem(
-                        _itemsToCheck[i].clipName,
+                        _itemsToCheck[i].ClipName,
                         _itemsToCheck[i].keepLipSync,
                         _itemsToCheck[i].accessoryName
                     );

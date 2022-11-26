@@ -44,6 +44,20 @@ namespace Baku.VMagicMirror.ExternalTracker
         public string source;
         public int threshold;
         public string clipName;
+
+        [NonSerialized] 
+        private string _filteredClipName = null;
+        public string ClipName
+        {
+            get
+            {
+                if (_filteredClipName == null)
+                {
+                    _filteredClipName = BlendShapeCompatUtil.GetVrm10ClipName(clipName);
+                }
+                return _filteredClipName;
+            }
+        }
         public bool keepLipSync;
         public string accessoryName;
     }

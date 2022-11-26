@@ -11,7 +11,7 @@ namespace Baku.VMagicMirrorConfig
         // Fun     -> Relaxed
         // Blink_L -> BlinkLeft
         // Blink_R -> BlinkRight
-        private static readonly Dictionary<string, string> oldKeyToNewKey = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> _oldKeyToNewKey = new Dictionary<string, string>()
         {
             ["Joy"] = "Happy",
             ["Sorrow"] = "Sad",
@@ -53,7 +53,7 @@ namespace Baku.VMagicMirrorConfig
 
         public static string GetVrm10KeyName(string key)
         {
-            return key;
+            return _oldKeyToNewKey.TryGetValue(key, out var newName) ? newName : key;
         }
 
         public static bool ShouldRemoveFromExtraBlendShapeKeyName(string? key)

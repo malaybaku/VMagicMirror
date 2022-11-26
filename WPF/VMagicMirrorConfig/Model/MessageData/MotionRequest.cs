@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Baku.VMagicMirrorConfig
@@ -52,15 +53,48 @@ namespace Baku.VMagicMirrorConfig
         /// </summary>
         public List<BlendShapePairItem> ExtraBlendShapeValues { get; set; } = new List<BlendShapePairItem>();
 
-        /// <summary>この要素をJSONにシリアライズしたものを取得します。</summary>
-        /// <returns></returns>
-        public string ToJson()
+        public MotionRequest ToVrm10Request()
         {
+            //基本は値コピーだが、ブレンドシェイプ名をVRM 1.0のものに読み替えているのがポイント
+            var result = new MotionRequest()
+            {
+                MotionType = this.MotionType,
+                Word = Word,
+                BuiltInAnimationClipName = BuiltInAnimationClipName,
+                CustomMotionClipName = CustomMotionClipName,
+                AccessoryName = AccessoryName,
+                DurationWhenOnlyBlendShape = DurationWhenOnlyBlendShape,
+                UseBlendShape = UseBlendShape,
+                HoldBlendShape = HoldBlendShape,
+                PreferLipSync = PreferLipSync,
+                BlendShapeValues = BlendShapeValues.ToDictionary(
+                    p => DefaultBlendShapeNameStore.GetVrm10KeyName(p.Key),
+                    p => p.Value
+                    ),
+                ExtraBlendShapeValues = ExtraBlendShapeValues
+                    .Where(v => !DefaultBlendShapeNameStore.ShouldRemoveFromExtraBlendShapeKeyName(v.Name))
+                    .ToList(),
+            };
+
+            //後方互換性のため、カスタムブレンドシェイプとしてのSurprisedに定義済みの値があったらそれを使う
+            if (ExtraBlendShapeValues.FirstOrDefault(p => p.Name == "Surprised") is { } pair &&
+                BlendShapeValues["Surprised"] == 0)
+            {
+                result.BlendShapeValues["Surprised"] = pair.Value;
+            }
+
+            return result;
+        }
+
+        public string ToVrm10Json()
+        {
+            var vrm10Data = ToVrm10Request();
+
             var serializer = new JsonSerializer();
             var sb = new StringBuilder();
             using (var writer = new StringWriter(sb))
             {
-                serializer.Serialize(writer, this);
+                serializer.Serialize(writer, vrm10Data);
             }
             return sb.ToString();
         }
@@ -199,6 +233,21 @@ namespace Baku.VMagicMirrorConfig
             using (var writer = new StringWriter(sb))
             {
                 serializer.Serialize(writer, this);
+            }
+            return sb.ToString();
+        }
+
+        public string ToJsonForVrm10()
+        {
+            var collection = new MotionRequestCollection(
+                Requests.Select(r => r.ToVrm10Request()).ToArray()
+                );
+
+            var serializer = new JsonSerializer();
+            var sb = new StringBuilder();
+            using (var writer = new StringWriter(sb))
+            {
+                serializer.Serialize(writer, collection);
             }
             return sb.ToString();
         }

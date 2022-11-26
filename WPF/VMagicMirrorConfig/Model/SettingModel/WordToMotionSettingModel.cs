@@ -122,7 +122,7 @@ namespace Baku.VMagicMirrorConfig
         /// </summary>
         /// <param name="item"></param>
         public void Play(MotionRequest item)
-            => SendMessage(MessageFactory.Instance.PlayWordToMotionItem(item.ToJson()));
+            => SendMessage(MessageFactory.Instance.PlayWordToMotionItem(item.ToVrm10Json()));
 
 
         public void Play(int index)

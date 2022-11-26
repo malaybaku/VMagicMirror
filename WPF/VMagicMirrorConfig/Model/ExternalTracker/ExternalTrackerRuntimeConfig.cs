@@ -89,7 +89,7 @@ namespace Baku.VMagicMirrorConfig
         public ExternalTrackerBlendShapeNameStore()
         {
             BlendShapeNames = new ReadOnlyObservableCollection<string>(_blendShapeNames);
-            var defaultNames = LoadDefaultNames();
+            var defaultNames = DefaultBlendShapeNameStore.LoadDefaultNames();
             for (int i = 0; i < defaultNames.Length; i++)
             {
                 _blendShapeNames.Add(defaultNames[i]);
@@ -134,7 +134,7 @@ namespace Baku.VMagicMirrorConfig
         private void RefreshInternal()
         {
             //理想の並び: デフォルトのやつ一覧、今ロードしたVRMにある名前一覧、(今ロードしたVRMにはないけど)設定で使ってる名前一覧
-            var newNames = LoadDefaultNames().ToList();
+            var newNames =  DefaultBlendShapeNameStore.LoadDefaultNames().ToList();
             int defaultSetLength = newNames.Count;
             foreach (var nameInModel in _avatarClipNames)
             {
@@ -179,35 +179,5 @@ namespace Baku.VMagicMirrorConfig
                 _blendShapeNames.RemoveAt(newNameArray.Length);
             }
         }
-
-        private string[] LoadDefaultNames()
-        {
-            return new string[]
-            {
-                //「なし」があるのが大事。これによって、条件に合致しても何のブレンドシェイプを起動しない！という事ができる。
-                "",
-                "Joy",
-                "Angry",
-                "Sorrow",
-                "Fun",
-
-                "A",
-                "I",
-                "U",
-                "E",
-                "O",
-
-                "Neutral",
-                "Blink",
-                "Blink_L",
-                "Blink_R",
-
-                "LookUp",
-                "LookDown",
-                "LookLeft",
-                "LookRight",
-            };
-        }
     }
-
 }

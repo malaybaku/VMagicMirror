@@ -20,6 +20,9 @@
     NonActiveWindowTitleBrush="{StaticResource PrimaryHueMidBrush}"
     Background="{StaticResource MaterialDesignBackground}"
     >
+    <Window.Resources>
+        <view:Vrm0ToVrm1ClipNameConverter x:Key="Vrm0ToVrm1ClipNameConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.Resources>
             <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
@@ -286,9 +289,11 @@
                                             <ColumnDefinition Width="40"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" 
-                                                       VerticalAlignment="Center"
-                                                       TextAlignment="Left"
-                                                       Text="{Binding BlendShapeName}"/>
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Left"
+                                                   Text="{Binding BlendShapeName,
+                                                                  Converter={StaticResource Vrm0ToVrm1ClipNameConverter}}"
+                                                   />
                                         <Slider Grid.Column="1"
                                                     Value="{Binding ValuePercentage}" />
                                         <TextBox Grid.Column="2"

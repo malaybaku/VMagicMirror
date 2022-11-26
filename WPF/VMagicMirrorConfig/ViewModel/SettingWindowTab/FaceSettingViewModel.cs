@@ -43,6 +43,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (IsInDesignMode)
             {
+                LipSyncMicrophoneDeviceName = new RProperty<string>("");
+                CameraDeviceName = new RProperty<string>("");
                 return;
             }
 

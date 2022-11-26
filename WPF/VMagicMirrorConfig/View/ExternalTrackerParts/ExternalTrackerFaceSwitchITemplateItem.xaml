@@ -12,6 +12,7 @@
              d:DesignWidth="450">
     <UserControl.Resources>
         <view:EmptyToDoNothingTextConverter x:Key="EmptyToDoNothingTextConverter"/>
+        <view:Vrm0ToVrm1ClipNameConverter x:Key="Vrm0ToVrm1ClipNameConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -45,7 +46,7 @@
         <ComboBox Grid.Column="2" 
                   Margin="5,0"
                   ItemsSource="{Binding BlendShapeNames}"
-                  SelectedItem="{Binding ClipName}">
+                  SelectedItem="{Binding ClipName, Converter={StaticResource Vrm0ToVrm1ClipNameConverter}}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Margin="0">

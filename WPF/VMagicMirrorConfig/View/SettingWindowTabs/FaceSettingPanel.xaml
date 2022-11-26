@@ -19,6 +19,7 @@
         <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
         <view:Lv50Converter x:Key="Lv50Converter"/>
         <view:EmptyToNoneTextConverter x:Key="EmptyToNoneTextConverter"/>
+        <view:Vrm0ToVrm1ClipNameConverter x:Key="Vrm0ToVrm1ClipNameConerter" />
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled"
@@ -489,7 +490,8 @@
                                   HorizontalAlignment="Stretch"
                                   Margin="5"
                                   ItemsSource="{Binding BlendShapeNames}"
-                                  SelectedItem="{Binding FaceNeutralClip.Value}">
+                                  SelectedItem="{Binding FaceNeutralClip.Value, 
+                                                         Converter={StaticResource Vrm0ToVrm1ClipNameConerter}}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <!-- NOTE: 言語と入力値の2つから表示が決まるため、MultiBindingしている -->
@@ -519,7 +521,8 @@
                                   HorizontalAlignment="Stretch"
                                   Margin="5"
                                   ItemsSource="{Binding BlendShapeNames}"
-                                  SelectedItem="{Binding FaceOffsetClip.Value}"
+                                  SelectedItem="{Binding FaceOffsetClip.Value,
+                                                         Converter={StaticResource Vrm0ToVrm1ClipNameConerter}}"
                                   >
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>

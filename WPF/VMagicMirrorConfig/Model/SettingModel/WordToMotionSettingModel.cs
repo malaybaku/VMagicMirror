@@ -108,7 +108,7 @@ namespace Baku.VMagicMirrorConfig
             SaveMidiNoteMap();
         }
 
-        public void SaveMotionRequests() => ItemsContentString.Value = MotionRequests.ToJson();
+        public void SaveMotionRequests() => ItemsContentString.Value = MotionRequests.ToJsonForSave();
         public void SaveMidiNoteMap() => MidiNoteMapString.Value = MidiNoteToMotionMap.ToJson();
 
         public void RefreshMidiNoteMap(MidiNoteToMotionMap result)

@@ -162,44 +162,44 @@
       }
     },
     "com.vrmc.gltf": {
-      "version": "https://github.com/malaybaku/UniVRM.git?path=/Assets/UniGLTF#malaybaku/feature10/param_only_spring_joint_update",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.107.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.105.0",
+        "com.vrmc.vrmshaders": "0.107.0",
         "com.unity.modules.animation": "1.0.0"
       },
-      "hash": "9c958078c72e8e4d7ecb5946027d8a4d25e89763"
+      "hash": "1e8a6b35bdb545baaad88b60cc9d374c31786b2c"
     },
     "com.vrmc.univrm": {
-      "version": "https://github.com/malaybaku/UniVRM.git?path=/Assets/VRM#malaybaku/feature10/param_only_spring_joint_update",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.107.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.105.0",
-        "com.vrmc.gltf": "0.105.0",
+        "com.vrmc.vrmshaders": "0.107.0",
+        "com.vrmc.gltf": "0.107.0",
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "e7389667fa2b76237f03b647c828c1187f417f78"
+      "hash": "1e8a6b35bdb545baaad88b60cc9d374c31786b2c"
     },
     "com.vrmc.vrm": {
-      "version": "https://github.com/malaybaku/UniVRM.git?path=/Assets/VRM10#malaybaku/feature10/param_only_spring_joint_update",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.107.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.105.0",
-        "com.vrmc.gltf": "0.105.0"
+        "com.vrmc.vrmshaders": "0.107.0",
+        "com.vrmc.gltf": "0.107.0"
       },
-      "hash": "f9d5896065d5a0f2efd1edfaf98d47a106b91085"
+      "hash": "1e8a6b35bdb545baaad88b60cc9d374c31786b2c"
     },
     "com.vrmc.vrmshaders": {
-      "version": "https://github.com/malaybaku/UniVRM.git?path=/Assets/VRMShaders#malaybaku/feature10/param_only_spring_joint_update",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.107.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.modules.imageconversion": "1.0.0"
       },
-      "hash": "9c958078c72e8e4d7ecb5946027d8a4d25e89763"
+      "hash": "1e8a6b35bdb545baaad88b60cc9d374c31786b2c"
     },
     "jp.keijiro.mediapipe.blazepalm": {
       "version": "1.0.2",

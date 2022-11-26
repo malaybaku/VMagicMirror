@@ -131,20 +131,9 @@ namespace Baku.VMagicMirror
             }
 
             var windForce = transform.rotation * localWindForce;
-            for (var i = 0; i < _springBones.Length; i++)
-            {
-                var joint = _springBones[i];
-                //NOTE: 力を合成して斜めに力をかけるのが狙い
-                var forceSum = _originalGravityFactors[i] * _originalGravityDirections[i] + windForce;
-                joint.m_gravityDir = forceSum.normalized;
-                joint.m_gravityPower = forceSum.magnitude;
-            }
-
             if (_hasModel)
             {
-                //NOTE: Wind由来の変更ではJointのパラメタしか変化しないので、
-                //通常のReconstructではないAPIを叩く事によってAllocを避けている
-                _instance.Runtime.ApplySpringBoneJointParameterChange();
+                _instance.Runtime.ExternalForce = windForce;
             }
         }
 

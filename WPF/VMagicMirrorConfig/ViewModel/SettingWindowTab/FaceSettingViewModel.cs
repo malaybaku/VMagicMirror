@@ -29,21 +29,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _deviceListSource = deviceListSource;
             _microphoneStatus = microphoneStatus;
 
-            LipSyncMicrophoneDeviceName = new RProperty<string>(_model.LipSyncMicrophoneDeviceName.Value, v =>
-            {
-                if (!string.IsNullOrEmpty(v))
-                {
-                    _model.LipSyncMicrophoneDeviceName.Value = v;
-                }
-            });
-            CameraDeviceName = new RProperty<string>(_model.CameraDeviceName.Value, v =>
-            {
-                if (!string.IsNullOrEmpty(v))
-                {
-                    _model.CameraDeviceName.Value = v;
-                }
-            });
-
             ResetFaceBasicSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(ResetFaceBasicSetting)
                 );
@@ -60,6 +45,21 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 return;
             }
+
+            LipSyncMicrophoneDeviceName = new RProperty<string>(_model.LipSyncMicrophoneDeviceName.Value, v =>
+            {
+                if (!string.IsNullOrEmpty(v))
+                {
+                    _model.LipSyncMicrophoneDeviceName.Value = v;
+                }
+            });
+            CameraDeviceName = new RProperty<string>(_model.CameraDeviceName.Value, v =>
+            {
+                if (!string.IsNullOrEmpty(v))
+                {
+                    _model.CameraDeviceName.Value = v;
+                }
+            });
 
             ShowInstallPathWarning = installPathChecker.HasMultiByteCharInInstallPath;
             _model.EyeBoneRotationScale.AddWeakEventHandler(OnEyeBoneRotationScaleChanged);

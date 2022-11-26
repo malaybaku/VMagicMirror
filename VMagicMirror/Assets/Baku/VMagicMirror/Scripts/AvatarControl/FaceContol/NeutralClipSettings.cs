@@ -20,7 +20,9 @@ namespace Baku.VMagicMirror
                     HasValidNeutralClipKey = !string.IsNullOrWhiteSpace(c.Content);
                     if (HasValidNeutralClipKey)
                     {
-                        NeutralClipKey = ExpressionKeyUtils.CreateKeyByName(c.Content);
+                        NeutralClipKey = ExpressionKeyUtils.CreateKeyByName(
+                            BlendShapeCompatUtil.GetVrm10ClipName(c.Content)
+                            );
                     }
                 });
 
@@ -31,7 +33,9 @@ namespace Baku.VMagicMirror
                     HasValidOffsetClipKey = !string.IsNullOrWhiteSpace(c.Content);
                     if (HasValidOffsetClipKey)
                     {
-                        OffsetClipKey = ExpressionKeyUtils.CreateKeyByName(c.Content);
+                        OffsetClipKey = ExpressionKeyUtils.CreateKeyByName(
+                            BlendShapeCompatUtil.GetVrm10ClipName(c.Content)
+                            );
                     }
                 });
         }

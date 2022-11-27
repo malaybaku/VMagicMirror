@@ -25,7 +25,8 @@ namespace Baku.VMagicMirrorConfig
             PreviewDataSender = new WordToMotionItemPreviewDataSender(sender);
 
             SelectedDeviceType = new RProperty<int>(settings.SelectedDeviceType, i => SendMessage(factory.SetDeviceTypeToStartWordToMotion(i)));
-            ItemsContentString = new RProperty<string>(settings.ItemsContentString, s => SendMessage(factory.ReloadMotionRequests(s)));
+            ItemsContentString = new RProperty<string>(settings.ItemsContentString);
+            ItemsContentStringToSync = new RProperty<string>("", s => SendMessage(factory.ReloadMotionRequests(s)));
             MidiNoteMapString = new RProperty<string>(settings.MidiNoteMapString, s => SendMessage(factory.LoadMidiNoteToMotionMap(s)));
             EnablePreview = new RProperty<bool>(false, b =>
             {
@@ -66,7 +67,11 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnablePreview { get; }
 
+        //設定ファイルに保存するデータ一式
         public RProperty<string> ItemsContentString { get; }
+
+        //Unityに対して送りつけるデータ一式
+        public RProperty<string> ItemsContentStringToSync { get; }
 
         public RProperty<string> MidiNoteMapString { get; }
 
@@ -108,7 +113,12 @@ namespace Baku.VMagicMirrorConfig
             SaveMidiNoteMap();
         }
 
-        public void SaveMotionRequests() => ItemsContentString.Value = MotionRequests.ToJsonForSave();
+        public void SaveMotionRequests()
+        {
+            ItemsContentString.Value = MotionRequests.ToJsonForSave();
+            ItemsContentStringToSync.Value = MotionRequests.ToJsonForVrm10();
+        }
+
         public void SaveMidiNoteMap() => MidiNoteMapString.Value = MidiNoteToMotionMap.ToJson();
 
         public void RefreshMidiNoteMap(MidiNoteToMotionMap result)
@@ -250,6 +260,8 @@ namespace Baku.VMagicMirrorConfig
                 MotionRequests = MotionRequestCollection.LoadDefault();
             }
 
+            //ファイルから設定をロードした直後などはSyncプロパティ側に値が入ってないので、それを詰め込む。
+            ItemsContentStringToSync.Value = MotionRequests.ToJsonForVrm10();
         }
 
         private void LoadMidiNoteToMotionMap()

@@ -18,8 +18,7 @@
         <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
         <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
         <view:Lv50Converter x:Key="Lv50Converter"/>
-        <view:EmptyToNoneTextConverter x:Key="EmptyToNoneTextConverter"/>
-        <view:Vrm0ToVrm1ClipNameConverter x:Key="Vrm0ToVrm1ClipNameConerter" />
+        <view:Vrm1BlendShapeNameOrNoneConverter x:Key="Vrm1BlendShapeNameOrNoneConverter" />
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled"
@@ -490,14 +489,13 @@
                                   HorizontalAlignment="Stretch"
                                   Margin="5"
                                   ItemsSource="{Binding BlendShapeNames}"
-                                  SelectedItem="{Binding FaceNeutralClip.Value, 
-                                                         Converter={StaticResource Vrm0ToVrm1ClipNameConerter}}">
+                                  SelectedItem="{Binding FaceNeutralClip.Value}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <!-- NOTE: 言語と入力値の2つから表示が決まるため、MultiBindingしている -->
                                     <TextBlock>
                                         <TextBlock.Text>
-                                            <MultiBinding Converter="{StaticResource EmptyToNoneTextConverter}">
+                                            <MultiBinding Converter="{StaticResource Vrm1BlendShapeNameOrNoneConverter}">
                                                 <Binding Path=""/>
                                                 <Binding Path="LanguageName" Source="{x:Static vmm:LanguageSelector.Instance}"/>
                                             </MultiBinding>
@@ -521,14 +519,13 @@
                                   HorizontalAlignment="Stretch"
                                   Margin="5"
                                   ItemsSource="{Binding BlendShapeNames}"
-                                  SelectedItem="{Binding FaceOffsetClip.Value,
-                                                         Converter={StaticResource Vrm0ToVrm1ClipNameConerter}}"
+                                  SelectedItem="{Binding FaceOffsetClip.Value}"
                                   >
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock>
                                         <TextBlock.Text>
-                                            <MultiBinding Converter="{StaticResource EmptyToNoneTextConverter}">
+                                            <MultiBinding Converter="{StaticResource Vrm1BlendShapeNameOrNoneConverter}">
                                                 <Binding Path=""/>
                                                 <Binding Path="LanguageName" Source="{x:Static vmm:LanguageSelector.Instance}"/>
                                             </MultiBinding>

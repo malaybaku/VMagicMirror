@@ -11,8 +11,7 @@
              d:DataContext="{d:DesignInstance Type={x:Type vm:ExternalTrackerFaceSwitchItemViewModel}}"             
              d:DesignWidth="450">
     <UserControl.Resources>
-        <view:EmptyToDoNothingTextConverter x:Key="EmptyToDoNothingTextConverter"/>
-        <view:Vrm0ToVrm1ClipNameConverter x:Key="Vrm0ToVrm1ClipNameConverter"/>
+        <view:Vrm1BlendShapeNameOrDoNothingConverter x:Key="Vrm1BlendShapeNameOrDoNothingConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -46,19 +45,17 @@
         <ComboBox Grid.Column="2" 
                   Margin="5,0"
                   ItemsSource="{Binding BlendShapeNames}"
-                  SelectedItem="{Binding ClipName, Converter={StaticResource Vrm0ToVrm1ClipNameConverter}}">
+                  SelectedItem="{Binding ClipName}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Margin="0">
                         <TextBlock.Text>
-                            <MultiBinding Converter="{StaticResource EmptyToDoNothingTextConverter}">
+                            <MultiBinding Converter="{StaticResource Vrm1BlendShapeNameOrDoNothingConverter}">
                                 <Binding Path=""/>
                                 <Binding Path="LanguageName" Source="{x:Static vmm:LanguageSelector.Instance}" />
                             </MultiBinding>
                         </TextBlock.Text>
-                        
                     </TextBlock>
-                               <!--Text="{Binding Converter={StaticResource EmptyToDoNothingTextConverter}}"/>-->
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>

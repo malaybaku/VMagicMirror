@@ -244,9 +244,9 @@ For other troubles, please see [Troubleshoot section of the page about iFacialMo
 #### Is VRM 1.0 supported?
 {: .doc-sec2 }
 
-VRM 1.0 is not supported in VMagicMirror v2.0.11, and VRM 1.0 support will be released in 2022.
+VRM 1.0 is supported since VMagicMirror v3.0.0.
 
-Please use VRM 0.x model in current v2.0.11 and older version.
+Note that newer version also supports conventional VRM 0.x models.
 
 
 #### I have request / question not referred in this page

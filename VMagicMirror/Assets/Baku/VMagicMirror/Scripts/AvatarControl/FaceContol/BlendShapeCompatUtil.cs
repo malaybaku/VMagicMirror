@@ -11,6 +11,12 @@ namespace Baku.VMagicMirror
             ["Fun"] = "Relaxed",
             ["Blink_L"] = "BlinkLeft",
             ["Blink_R"] = "BlinkRight",
+            
+            ["A"] = "Aa",
+            ["I"] = "Ih",
+            ["U"] = "Ou",
+            ["E"] = "Ee",
+            ["O"] = "Oh",
         };
 
         public static string GetVrm10ClipName(string vrm0ClipName)

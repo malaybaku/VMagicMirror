@@ -38,7 +38,7 @@ namespace Baku.VMagicMirror.ExternalTracker
     {
         public ActiveFaceSwitchItem ActiveItem { get; private set; } = ActiveFaceSwitchItem.Empty;
 
-        private string[] _avatarBlendShapeNames = new string[0];
+        private string[] _avatarBlendShapeNames = Array.Empty<string>();
         /// <summary> 現在ロードされているアバターの全ブレンドシェイプ名 </summary>
         public string[] AvatarBlendShapeNames
         {

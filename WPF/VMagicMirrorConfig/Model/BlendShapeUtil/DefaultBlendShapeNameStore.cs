@@ -19,6 +19,11 @@ namespace Baku.VMagicMirrorConfig
             ["Fun"] = "Relaxed",
             ["Blink_L"] = "BlinkLeft",
             ["Blink_R"] = "BlinkRight",
+            ["A"] = "Aa",
+            ["I"] = "Ih",
+            ["U"] = "Ou",
+            ["E"] = "Ee",
+            ["O"] = "Oh",
         };
 
         private static readonly Dictionary<string, string> _newKeyToOldKey;

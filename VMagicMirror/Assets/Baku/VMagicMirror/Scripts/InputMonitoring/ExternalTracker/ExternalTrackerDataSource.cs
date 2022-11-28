@@ -4,6 +4,7 @@ using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker.iFacialMocap;
 using UniRx;
+using UniVRM10;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -71,7 +72,15 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
             _faceSwitchExtractor.AvatarBlendShapeNames = info
                 .instance.Vrm.Expression.LoadExpressionMap()
-                .Keys.Select(k => k.Name)
+                .Keys.Select(k =>
+                {
+                    var result = k.Name;
+                    if (k.Preset != ExpressionPreset.custom)
+                    {
+                        result = char.ToUpper(result[0]) + result.Substring(1);
+                    }
+                    return result;
+                })
                 .ToArray();
         }
 

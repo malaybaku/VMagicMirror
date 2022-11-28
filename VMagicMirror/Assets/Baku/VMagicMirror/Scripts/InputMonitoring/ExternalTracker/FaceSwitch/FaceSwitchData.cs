@@ -20,14 +20,14 @@ namespace Baku.VMagicMirror.ExternalTracker
                     {
                         source = FaceSwitchKeys.MouthSmile,
                         threshold = 70,
-                        clipName = "Joy",
+                        clipName = "Happy",
                         keepLipSync = false,
                     },
                     new FaceSwitchItem()
                     {
                         source = FaceSwitchKeys.BrowDown,
                         threshold = 70,
-                        clipName = "Sorrow",
+                        clipName = "Sad",
                         keepLipSync = false,
                     }
                 },

@@ -282,7 +282,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     
     <!-- Face : BlendShape -->
     <sys:String x:Key="Motion_Face_BlendShape">ブレンドシェイプ</sys:String>
-    <sys:String x:Key="Motion_Face_DefaultFun">Funブレンドのデフォルト値[%]</sys:String>
+    <sys:String x:Key="Motion_Face_DefaultFun">Relaxedブレンドのデフォルト値[%]</sys:String>
     <sys:String x:Key="Motion_Face_NeutralClip">Neutralブレンドシェイプ</sys:String>    
     <sys:String x:Key="Motion_Face_NeutralClip_Help" xml:space="preserve">※Neutralブレンドシェイプは普段の表情として使用されます。
 　デフォルト表情をNeutralなどでカスタムしている場合に使用します。</sys:String>    

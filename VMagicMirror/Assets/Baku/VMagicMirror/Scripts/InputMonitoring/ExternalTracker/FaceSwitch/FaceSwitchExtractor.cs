@@ -87,8 +87,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         /// <param name="source"></param>
         public void Update(IFaceTrackSource source)
         {
-            // float smile = 0.5f * (source.Mouth.LeftSmile + source.Mouth.RightSmile);
-
             for (int i = 0; i < _itemsToCheck.Length; i++)
             {
                 if (ExtractSpecifiedBlendShape(source, _itemsToCheck[i].source) > _itemsToCheck[i].threshold * 0.01f)

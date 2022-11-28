@@ -11,7 +11,7 @@
              d:DataContext="{d:DesignInstance Type={x:Type vm:ExternalTrackerFaceSwitchItemViewModel}}"             
              d:DesignWidth="450">
     <UserControl.Resources>
-        <view:EmptyToDoNothingTextConverter x:Key="EmptyToDoNothingTextConverter"/>
+        <view:Vrm1BlendShapeNameOrDoNothingConverter x:Key="Vrm1BlendShapeNameOrDoNothingConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -50,14 +50,12 @@
                 <DataTemplate>
                     <TextBlock Margin="0">
                         <TextBlock.Text>
-                            <MultiBinding Converter="{StaticResource EmptyToDoNothingTextConverter}">
+                            <MultiBinding Converter="{StaticResource Vrm1BlendShapeNameOrDoNothingConverter}">
                                 <Binding Path=""/>
                                 <Binding Path="LanguageName" Source="{x:Static vmm:LanguageSelector.Instance}" />
                             </MultiBinding>
                         </TextBlock.Text>
-                        
                     </TextBlock>
-                               <!--Text="{Binding Converter={StaticResource EmptyToDoNothingTextConverter}}"/>-->
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>

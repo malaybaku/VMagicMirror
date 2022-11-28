@@ -162,44 +162,44 @@
       }
     },
     "com.vrmc.gltf": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.104.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.107.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.104.0",
+        "com.vrmc.vrmshaders": "0.107.0",
         "com.unity.modules.animation": "1.0.0"
       },
-      "hash": "c466d689bccd003133b13fc5ddb8ff3f53763796"
+      "hash": "1e8a6b35bdb545baaad88b60cc9d374c31786b2c"
     },
     "com.vrmc.univrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.104.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.107.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.104.0",
-        "com.vrmc.gltf": "0.104.0",
+        "com.vrmc.vrmshaders": "0.107.0",
+        "com.vrmc.gltf": "0.107.0",
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "c466d689bccd003133b13fc5ddb8ff3f53763796"
+      "hash": "1e8a6b35bdb545baaad88b60cc9d374c31786b2c"
     },
     "com.vrmc.vrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.104.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.107.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.104.0",
-        "com.vrmc.gltf": "0.104.0"
+        "com.vrmc.vrmshaders": "0.107.0",
+        "com.vrmc.gltf": "0.107.0"
       },
-      "hash": "c466d689bccd003133b13fc5ddb8ff3f53763796"
+      "hash": "1e8a6b35bdb545baaad88b60cc9d374c31786b2c"
     },
     "com.vrmc.vrmshaders": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.104.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.107.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.modules.imageconversion": "1.0.0"
       },
-      "hash": "c466d689bccd003133b13fc5ddb8ff3f53763796"
+      "hash": "1e8a6b35bdb545baaad88b60cc9d374c31786b2c"
     },
     "jp.keijiro.mediapipe.blazepalm": {
       "version": "1.0.2",

@@ -36,7 +36,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             foreach (var name in _parent
                 .ExtraBlendShapeClipNames
-                .Where(n => !_extraBlendShapeItems.Any(i => i.BlendShapeName == n))
+                .Where(
+                    n => !_extraBlendShapeItems.Any(i => i.BlendShapeName == n) &&
+                    n != "Surprised")
                 )
             {
                 _extraBlendShapeItems.Add(new BlendShapeItemViewModel(
@@ -372,12 +374,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _availableBuiltInClipNames.Add("Clap");
         }
 
+        //NOTE: ここの名前セットはDefaultBlendShapeNameStoreのものと共通で、
+        // 「VRM 0.x用のブレンドシェイプ名 + Surprised」で構成されている
         private void InitializeBlendShapeItems(WordToMotionSettingViewModel parent)
         {
             _blendShapeItems.Add(new BlendShapeItemViewModel(this, "Joy", 0));
             _blendShapeItems.Add(new BlendShapeItemViewModel(this, "Angry", 0));
             _blendShapeItems.Add(new BlendShapeItemViewModel(this, "Sorrow", 0));
             _blendShapeItems.Add(new BlendShapeItemViewModel(this, "Fun", 0));
+            _blendShapeItems.Add(new BlendShapeItemViewModel(this, "Surprised", 0));
 
             _blendShapeItems.Add(new BlendShapeItemViewModel(this, "A", 0));
             _blendShapeItems.Add(new BlendShapeItemViewModel(this, "I", 0));
@@ -395,7 +400,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _blendShapeItems.Add(new BlendShapeItemViewModel(this, "LookLeft", 0));
             _blendShapeItems.Add(new BlendShapeItemViewModel(this, "LookRight", 0));
 
-            foreach (var name in parent.ExtraBlendShapeClipNames)
+            foreach (var name in parent.ExtraBlendShapeClipNames
+                .Where(v => v != "Surprised")
+                )
             {
                 _extraBlendShapeItems.Add(new BlendShapeItemViewModel(
                     this,

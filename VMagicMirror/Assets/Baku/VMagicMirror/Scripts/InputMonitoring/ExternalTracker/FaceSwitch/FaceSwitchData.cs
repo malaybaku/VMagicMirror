@@ -20,14 +20,14 @@ namespace Baku.VMagicMirror.ExternalTracker
                     {
                         source = FaceSwitchKeys.MouthSmile,
                         threshold = 70,
-                        clipName = "Joy",
+                        clipName = "Happy",
                         keepLipSync = false,
                     },
                     new FaceSwitchItem()
                     {
                         source = FaceSwitchKeys.BrowDown,
                         threshold = 70,
-                        clipName = "Sorrow",
+                        clipName = "Sad",
                         keepLipSync = false,
                     }
                 },
@@ -44,6 +44,20 @@ namespace Baku.VMagicMirror.ExternalTracker
         public string source;
         public int threshold;
         public string clipName;
+
+        [NonSerialized] 
+        private string _filteredClipName = null;
+        public string ClipName
+        {
+            get
+            {
+                if (_filteredClipName == null)
+                {
+                    _filteredClipName = BlendShapeCompatUtil.GetVrm10ClipName(clipName);
+                }
+                return _filteredClipName;
+            }
+        }
         public bool keepLipSync;
         public string accessoryName;
     }

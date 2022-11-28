@@ -244,7 +244,7 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Motion_Face_EnableFaceTracking">Track Face</sys:String>
     <sys:String x:Key="Motion_Face_CameraName">Camera</sys:String>    
     <sys:String x:Key="Motion_Face_Calibration">Calibrate position</sys:String>    
-    <sys:String x:Key="Motion_Face_DefaultFun">Default Fun Blend Value [%]</sys:String>    
+    <sys:String x:Key="Motion_Face_DefaultFun">Default Relaxed Blend Value [%]</sys:String>    
     <sys:String x:Key="Motion_Face_EnableBodyLeanZ">Enable forward / backward motion</sys:String>    
     <sys:String x:Key="Motion_Face_AutoBlinkDuringFaceTracking">Auto blink during face tracking</sys:String>
     <sys:String x:Key="Motion_Face_DisableFaceTrackingHorizontalFlip">Disable horizontal flip</sys:String>

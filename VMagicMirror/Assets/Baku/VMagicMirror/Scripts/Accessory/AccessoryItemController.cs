@@ -5,6 +5,7 @@ using Baku.VMagicMirror.ExternalTracker;
 using Baku.VMagicMirror.WordToMotion;
 using UniRx;
 using UnityEngine;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -20,8 +21,8 @@ namespace Baku.VMagicMirror
         private IMessageSender _sender;
         private readonly List<AccessoryItem> _items = new List<AccessoryItem>();
         private IDisposable _layoutSender = null;
-        private bool _hasModel;
         private Animator _animator;
+        private bool _hasModel;
 
         [Inject]
         public void Initialize(
@@ -39,14 +40,13 @@ namespace Baku.VMagicMirror
 
             vrmLoader.VrmLoaded += info =>
             {
-                _items.ForEach(i => i.SetAnimator(info.animator));
-                _animator = info.animator;
+                _items.ForEach(i => i.SetAnimator(info.controlRig));
+                _animator = info.controlRig;
                 _hasModel = true;
             };
             vrmLoader.VrmDisposing += () =>
             {
                 _hasModel = false;
-                _animator = null;
                 _items.ForEach(i => i.UnsetModel());
             };
             

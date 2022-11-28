@@ -84,8 +84,8 @@ namespace Baku.VMagicMirror.IK
             //モデルロード時、身長を参照することで「コントローラの移動オフセットはこんくらいだよね」を初期化
             vrmLoadable.VrmLoaded += info =>
             {
-                var h = info.animator.GetBoneTransform(HumanBodyBones.Head);
-                var f = info.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                var h = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
+                var f = info.controlRig.GetBoneTransform(HumanBodyBones.LeftFoot);
                 float height = h.position.y - f.position.y;
                 _posOffsetScale = Mathf.Clamp(height / ReferenceHeight, 0.1f, 5f);
             };

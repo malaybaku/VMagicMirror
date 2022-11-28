@@ -51,16 +51,14 @@ namespace Baku.VMagicMirror
         
         public void OnVrmLoaded(VrmLoadedInfo info)
         {
-            var ik = info.vrmRoot.GetComponent<FullBodyBipedIK>();
-            _ik = ik;
+            _ik = info.fbbIk;
+            _originLeftShoulderPositionWeight = _ik.solver.leftShoulderEffector.positionWeight;
+            _originLeftHandPositionWeight = _ik.solver.leftHandEffector.positionWeight;
+            _originLeftHandRotationWeight = _ik.solver.leftHandEffector.rotationWeight;
 
-            _originLeftShoulderPositionWeight = ik.solver.leftShoulderEffector.positionWeight;
-            _originLeftHandPositionWeight = ik.solver.leftHandEffector.positionWeight;
-            _originLeftHandRotationWeight = ik.solver.leftHandEffector.rotationWeight;
-
-            _originRightShoulderPositionWeight = ik.solver.rightShoulderEffector.positionWeight;
-            _originRightHandPositionWeight = ik.solver.rightHandEffector.positionWeight;
-            _originRightHandRotationWeight = ik.solver.rightHandEffector.rotationWeight;
+            _originRightShoulderPositionWeight = _ik.solver.rightShoulderEffector.positionWeight;
+            _originRightHandPositionWeight = _ik.solver.rightHandEffector.positionWeight;
+            _originRightHandRotationWeight = _ik.solver.rightHandEffector.rotationWeight;
 
             _hasModel = true;
         }

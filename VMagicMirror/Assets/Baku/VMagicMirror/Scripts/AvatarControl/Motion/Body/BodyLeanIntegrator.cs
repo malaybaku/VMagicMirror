@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info =>
             {
                 BodyHorizontalOffsetSuggest = 0;
-                float hipsHeight = info.animator.GetBoneTransform(HumanBodyBones.Hips).position.y;
+                float hipsHeight = info.controlRig.GetBoneTransform(HumanBodyBones.Hips).position.y;
                 //あまり非常識な値が来たらもう適当に蹴ってしまう。別に蹴ってもそこまで危険でもないし。
                 _hipsHeightRate = Mathf.Clamp(hipsHeight / ReferenceHipsHeight, 0.1f, 3f);
             };

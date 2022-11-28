@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -11,7 +12,7 @@ namespace Baku.VMagicMirror
         //角度ベースの値をMuscleのレートにおおよそ換算してくれるすごいやつだよ
         //観察ベースで「マッスル値をいくつ変えたら90度ぶん動くかな～」と調べてます
         private const float BendDegToMuscle = 1.65f / 90f;
-        
+
         private Animator _animator = null;
         //角度入力時に使うマッスル系の情報
         private HumanPoseHandler _humanPoseHandler = null;
@@ -35,10 +36,6 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += () =>
             {
-                if (_animator == null)
-                {
-                    return;
-                }
                 _animator = null;
                 _humanPoseHandler = null;
                 _fingers = null;
@@ -76,8 +73,8 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _animator = info.animator;
-            _humanPoseHandler = new HumanPoseHandler(_animator.avatar, _animator.transform);
+            _animator = info.controlRig;
+            _humanPoseHandler = new HumanPoseHandler(info.animator.avatar, info.animator.transform);
             //とりあえず現在の値を拾っておく
             _humanPoseHandler.GetHumanPose(ref _humanPose);
             _defaultHumanPose = _humanPose;

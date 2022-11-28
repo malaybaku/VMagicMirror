@@ -1,6 +1,5 @@
-using Baku.VMagicMirror.IK;
 using UnityEngine;
-using VRM;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -14,11 +13,6 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class EyeBoneAngleSetter : MonoBehaviour
     {
-        private static readonly BlendShapeKey LookLeftKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookLeft);
-        private static readonly BlendShapeKey LookRightKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookRight);
-        private static readonly BlendShapeKey LookUpKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookUp);
-        private static readonly BlendShapeKey LookDownKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.LookDown);
-        
         //NOTE: 実験した範囲ではこのリミットを超えることは滅多にない
         private const float RateMagnitudeLimit = 1.2f;
         
@@ -42,7 +36,7 @@ namespace Baku.VMagicMirror
         private EyeBlendShapeMapApplier _blendShapeApplier;
         private EyeLookAt _eyeLookAt;
         //NOTE: BlendShapeResultSetterの更に後処理として呼び出す(ホントは前処理で値を入れたいが、Execution Order的に難しい)
-        private VRMBlendShapeProxy _blendShape = null;
+        private ExpressionAccumulator _expressionAccumulator;
 
         private Transform _leftEye;
         private Transform _rightEye;
@@ -66,11 +60,13 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver, 
             IVRMLoadable vrmLoadable,
             EyeLookAt eyeLookAt,
-            NonImageBasedMotion nonImageBasedMotion)
+            NonImageBasedMotion nonImageBasedMotion,
+            ExpressionAccumulator expressionAccumulator)
         {
             _nonImageBasedMotion = nonImageBasedMotion;
             _boneApplier = new EyeBoneAngleMapApplier(vrmLoadable);
             _blendShapeApplier = new EyeBlendShapeMapApplier(vrmLoadable);
+            _expressionAccumulator = expressionAccumulator;
             _eyeLookAt = eyeLookAt;
 
             vrmLoadable.VrmLoaded += OnVrmLoaded;
@@ -100,10 +96,8 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _leftEye = info.animator.GetBoneTransform(HumanBodyBones.LeftEye);
-            _rightEye = info.animator.GetBoneTransform(HumanBodyBones.RightEye);
-            _blendShape = info.blendShape;
-
+            _leftEye = info.controlRig.GetBoneTransform(HumanBodyBones.LeftEye);
+            _rightEye = info.controlRig.GetBoneTransform(HumanBodyBones.RightEye);
             _hasLeftEyeBone = _leftEye != null;
             _hasRightEyeBone = _rightEye != null;
             _hasModel = true;
@@ -115,7 +109,6 @@ namespace Baku.VMagicMirror
             _hasLeftEyeBone = false;
             _hasRightEyeBone = false;
 
-            _blendShape = null;
             _leftEye = null;
             _rightEye = null;
         }
@@ -226,11 +219,12 @@ namespace Baku.VMagicMirror
                     0.5f * (leftPitch + rightPitch)
                 );
                 
-                _blendShape.AccumulateValue(LookLeftKey, result.Left);
-                _blendShape.AccumulateValue(LookRightKey, result.Right);
-                _blendShape.AccumulateValue(LookUpKey, result.Up);
-                _blendShape.AccumulateValue(LookDownKey, result.Down);
-                _blendShape.Apply();
+                //NOTE: ここ1フレーム中に2回目のApplyになるのでちょっと嫌い
+                _expressionAccumulator.Accumulate(ExpressionKey.LookLeft, result.Left);
+                _expressionAccumulator.Accumulate(ExpressionKey.LookRight, result.Right);
+                _expressionAccumulator.Accumulate(ExpressionKey.LookUp, result.Up);
+                _expressionAccumulator.Accumulate(ExpressionKey.LookDown, result.Down);
+                _expressionAccumulator.Apply();
             }
         }
 

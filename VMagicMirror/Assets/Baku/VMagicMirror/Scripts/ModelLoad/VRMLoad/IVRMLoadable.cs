@@ -1,4 +1,5 @@
 ﻿using System;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -15,5 +16,8 @@ namespace Baku.VMagicMirror
         
         /// <summary>VRMをアンロードするときに呼び出されます。</summary>
         event Action VrmDisposing;
+        
+        /// <summary> 現在のモデルがVRM 0.xなのかVRM 1.0なのかが分かるプロパティ </summary>
+        IReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion { get; }
     }
 }

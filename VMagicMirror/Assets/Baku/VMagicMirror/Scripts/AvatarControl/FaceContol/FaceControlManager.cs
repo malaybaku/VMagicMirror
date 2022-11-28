@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using VRM;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -9,9 +9,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class FaceControlManager : MonoBehaviour
     {
-        private static readonly BlendShapeKey BlinkLKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_L);
-        private static readonly BlendShapeKey BlinkRKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_R);
-
         //NOTE: まばたき自体は3種類どれかが排他で適用される。複数走っている場合、external > image > autoの優先度で適用する。
         [SerializeField] private ExternalTrackerBlink externalTrackerBlink = null;
         [SerializeField] private ImageBasedBlinkController imageBasedBlinkController = null;
@@ -48,7 +45,7 @@ namespace Baku.VMagicMirror
         /// <summary> WebCamベースのトラッキング中でも自動まばたきを優先するかどうかを取得、設定します。 </summary>
         public bool PreferAutoBlinkOnWebCamTracking { get; set; } = true;
         
-        public void Accumulate(VRMBlendShapeProxy proxy, float weight = 1f)
+        public void Accumulate(ExpressionAccumulator accumulator, float weight = 1f)
         {
             if (!_hasModel)
             {
@@ -59,15 +56,15 @@ namespace Baku.VMagicMirror
             //「パーフェクトシンク使用中」「FaceSwitch適用中」「Word to Motion適用中」
             //の3ケースでは適用されると困る。
             //で、ここに書いておくと上記3ケースではそもそもAccumulateが呼ばれないため、うまく動く。
-            DefaultBlendShape.Apply(proxy);
+            DefaultBlendShape.Apply(accumulator);
             
             var blinkSource =
                 _config.ControlMode == FaceControlModes.ExternalTracker ? externalTrackerBlink.BlinkSource :
                 (_config.ControlMode == FaceControlModes.WebCam && !PreferAutoBlinkOnWebCamTracking) ? imageBasedBlinkController.BlinkSource :
                 autoBlink.BlinkSource;
             
-            proxy.AccumulateValue(BlinkLKey, blinkSource.Left * weight);
-            proxy.AccumulateValue(BlinkRKey, blinkSource.Right * weight);
+            accumulator.Accumulate(ExpressionKey.BlinkLeft, blinkSource.Left * weight);
+            accumulator.Accumulate(ExpressionKey.BlinkRight, blinkSource.Right * weight);
         }
 
         private void Update()

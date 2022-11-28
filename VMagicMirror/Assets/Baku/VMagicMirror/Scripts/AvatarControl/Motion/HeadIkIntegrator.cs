@@ -1,7 +1,6 @@
 ﻿using Baku.VMagicMirror.IK;
 using RootMotion.FinalIK;
 using UnityEngine;
-using VRM;
 using Zenject;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -40,7 +39,6 @@ namespace Baku.VMagicMirror
         private PenTabletProvider _penTabletProvider;
         
         private LookAtIK _lookAtIk = null;
-        private VRMLookAtHead _vrmLookAtHead = null;
 
         private float _mouseActionCount = 0f;
 
@@ -61,16 +59,14 @@ namespace Baku.VMagicMirror
 
             vrmLoadable.VrmLoaded += info =>
             {
-                _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
-                _lookAtIk = info.vrmRoot.GetComponent<LookAtIK>();
-                _vrmLookAtHead = info.vrmRoot.GetComponent<VRMLookAtHead>();
+                _head = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
+                _lookAtIk = info.vrmRoot.GetComponentInChildren<LookAtIK>();
                 _hasModel = true;
             };
             vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
                 _lookAtIk = null;
-                _vrmLookAtHead = null;
                 _head = null;
             };
         }
@@ -157,7 +153,6 @@ namespace Baku.VMagicMirror
             {
                 //NOTE: 外部トラッキング + PenTabletのときにLookAtをやるべきかという問題があるが、無視する。
                 //当面はそっちのほうが分かりやすいので
-                _vrmLookAtHead.enabled = false;
                 _lookAtIk.enabled = false;
                 //NOTE: 正面向きに持っていけば安全、という考え方
                 _lookAtTarget.localPosition = _head.position + Vector3.forward * 5.0f;
@@ -166,7 +161,6 @@ namespace Baku.VMagicMirror
             
             if (_hasModel)
             {
-                _vrmLookAtHead.enabled = true;
                 _lookAtIk.enabled = true;
             }
 

@@ -58,8 +58,8 @@ namespace Baku.VMagicMirrorConfig.Mmf
     /// </summary>
     public abstract class MemoryMappedNamedConnectBase
     {
-        private const long MemoryMappedFileCapacity = 131072;
-        private readonly byte[] _readBuffer = new byte[131072];
+        private const long MemoryMappedFileCapacity = 262144;
+        private readonly byte[] _readBuffer = new byte[MemoryMappedFileCapacity];
 
         //送りたいメッセージ(クエリとコマンド両方)の一覧
         private readonly ConcurrentQueue<Message> _writeMessageQueue = new ConcurrentQueue<Message>();

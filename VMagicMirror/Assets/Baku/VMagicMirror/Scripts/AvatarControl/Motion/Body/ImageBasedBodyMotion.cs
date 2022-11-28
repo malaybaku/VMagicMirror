@@ -1,6 +1,5 @@
 ﻿using DG.Tweening;
 using UnityEngine;
-using RootMotion.FinalIK;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -104,18 +103,20 @@ namespace Baku.VMagicMirror
         
         public void OnVrmLoaded(VrmLoadedInfo info)
         {
-            var ik = info.vrmRoot.GetComponent<FullBodyBipedIK>();
-            var animator = info.animator;
+            var ik = info.fbbIk;
+            var controlRig = info.controlRig;
             _hasModel = true;
             
-            _vrmRoot = animator.transform;
+            //TODO: ここ合ってるか自信ない
+            _vrmRoot = info.animator.transform;
+            var animatorTransform = info.animator.transform;
 
             {
                 _leftShoulderEffector = new GameObject("LeftUpperArmEffector").transform;
                 _leftShoulderEffector.parent = _vrmRoot;
                 
-                _leftShoulderDefaultOffset = animator.transform.InverseTransformPoint(
-                    animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position
+                _leftShoulderDefaultOffset = animatorTransform.InverseTransformPoint(
+                    controlRig.GetBoneTransform(HumanBodyBones.LeftUpperArm).position
                 );
                 
                 ik.solver.leftShoulderEffector.target = _leftShoulderEffector;
@@ -128,8 +129,8 @@ namespace Baku.VMagicMirror
                 _rightShoulderEffector = new GameObject("RightUpperArmEffector").transform;
                 _rightShoulderEffector.parent = _vrmRoot;
                 
-                _rightShoulderDefaultOffset = animator.transform.InverseTransformPoint(
-                    animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position
+                _rightShoulderDefaultOffset = animatorTransform.InverseTransformPoint(
+                    controlRig.GetBoneTransform(HumanBodyBones.RightUpperArm).position
                 );
                 ik.solver.rightShoulderEffector.target = _rightShoulderEffector;
                 ik.solver.rightShoulderEffector.positionWeight = PositionWeightWhenValid;

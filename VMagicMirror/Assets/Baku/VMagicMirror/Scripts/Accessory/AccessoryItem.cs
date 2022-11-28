@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using mattatz.TransformControl;
 using UnityEngine;
+using UniVRM10;
 
 namespace Baku.VMagicMirror
 {
@@ -310,13 +311,13 @@ namespace Baku.VMagicMirror
         {
             _animator = animator;
 
-            _attachBones[AccessoryAttachTarget.Head] = _animator.GetBoneTransform(HumanBodyBones.Head);
+            _attachBones[AccessoryAttachTarget.Head] = animator.GetBoneTransform(HumanBodyBones.Head);
             _attachBones[AccessoryAttachTarget.Neck] = 
-                _animator.GetBoneTransform(HumanBodyBones.Neck) ?? _animator.GetBoneTransform(HumanBodyBones.Head);
-            _attachBones[AccessoryAttachTarget.Chest] = _animator.GetBoneTransform(HumanBodyBones.Chest);
-            _attachBones[AccessoryAttachTarget.Waist] = _animator.GetBoneTransform(HumanBodyBones.Hips);
-            _attachBones[AccessoryAttachTarget.LeftHand] = _animator.GetBoneTransform(HumanBodyBones.LeftHand);
-            _attachBones[AccessoryAttachTarget.RightHand] = _animator.GetBoneTransform(HumanBodyBones.RightHand);
+                animator.GetBoneTransform(HumanBodyBones.Neck) ?? animator.GetBoneTransform(HumanBodyBones.Head);
+            _attachBones[AccessoryAttachTarget.Chest] = animator.GetBoneTransform(HumanBodyBones.Chest);
+            _attachBones[AccessoryAttachTarget.Waist] = animator.GetBoneTransform(HumanBodyBones.Hips);
+            _attachBones[AccessoryAttachTarget.LeftHand] = animator.GetBoneTransform(HumanBodyBones.LeftHand);
+            _attachBones[AccessoryAttachTarget.RightHand] = animator.GetBoneTransform(HumanBodyBones.RightHand);
 
             if (_file == null)
             {

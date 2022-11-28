@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using UniGLTF;
 using UnityEngine;
 using UniHumanoid;
+using UniRx;
 using VRM;
 using Zenject;
 
@@ -28,6 +29,10 @@ namespace Baku.VMagicMirror
         private HumanPoseTransfer _humanPoseTransferTarget = null;
         private ErrorIndicateSender _errorSender = null;
         private ErrorInfoFactory _errorInfoFactory = null;
+
+        //NOTE: 使わないはずだが一応こう書いておく
+        public IReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion { get; }
+            = new ReactiveProperty<CurrentModelVersion>(CurrentModelVersion.Vrm0x);
 
         [Inject]
         public void Initialize(
@@ -79,7 +84,8 @@ namespace Baku.VMagicMirror
                     var parser = new GlbLowLevelParser("", bytes);
                     using var data = parser.Parse();
                     using var context = new VRMImporterContext(new VRMData(data));
-                    _previewCanvas.Show(context);
+                    //すぐなくなるので削除します、using statementのトレーサビリティ都合で…
+                    //_previewCanvas.Show(context);
                 }
                 else
                 {
@@ -189,8 +195,9 @@ namespace Baku.VMagicMirror
             var info = new VrmLoadedInfo()
             {
                 vrmRoot = go.transform,
-                animator = animator,
-                blendShape = blendShapeProxy,
+                //animator = animator,
+                //クラスごと削除予定なので、この粒度のコンパイラ警告はむしろ邪魔
+                //blendShape = blendShapeProxy,
                 renderers = renderers,
             };
             
@@ -258,14 +265,5 @@ namespace Baku.VMagicMirror
             public Transform rightIndexTarget;
             public Transform headTarget;
         }
-    }
-    
-    [Serializable]
-    public struct VrmLoadedInfo
-    {
-        public Transform vrmRoot;
-        public Animator animator;
-        public VRMBlendShapeProxy blendShape;
-        public Renderer[] renderers;
     }
 }

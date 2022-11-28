@@ -101,8 +101,8 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _ik = info.vrmRoot.GetComponent<FullBodyBipedIK>();
-            var spineBone = info.animator.GetBoneTransform(HumanBodyBones.Spine);
+            _ik = info.fbbIk;
+            var spineBone = info.controlRig.GetBoneTransform(HumanBodyBones.Spine);
 
             _rightArmBendGoal = new GameObject().transform;
             _rightArmBendGoal.SetParent(spineBone);

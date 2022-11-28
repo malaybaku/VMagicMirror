@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.0.0
+{: .doc-sec2 }
+
+2022/11/30
+
+* Add: Support VRM 1.0 model load.
+
+
 #### v2.0.11
 {: .doc-sec2 }
 

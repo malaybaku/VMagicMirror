@@ -7,6 +7,14 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v3.0.0
+{: .doc-sec2 }
+
+2022/11/30
+
+* 追加: VRM 1.0形式のモデルロードに対応しました。
+
+
 #### v2.0.11
 {: .doc-sec2 }
 

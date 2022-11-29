@@ -13,7 +13,7 @@ lang: en
 
 2022/11/30
 
-* Add: Support VRM 1.0 model load.
+* Add: Support for VRM 1.0 model. VRM 0.x models are still available in this version.
 
 
 #### v2.0.11

@@ -1,5 +1,6 @@
 using UnityEngine;
-using VRM;
+using UniVRM10;
+using LookAtType = UniGLTF.Extensions.VRMC_vrm.LookAtType;
 
 namespace Baku.VMagicMirror
 {
@@ -36,21 +37,20 @@ namespace Baku.VMagicMirror
         }
 
         public bool _hasApplier { get; private set; }
-        private VRMLookAtBlendShapeApplyer _applier;
+        private VRM10ObjectLookAt _applier;
 
         public bool NeedOverwrite => _hasApplier;
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            var boneApplier = info.vrmRoot.GetComponent<VRMLookAtBlendShapeApplyer>();
-            if (boneApplier == null)
+            if (info.instance.Vrm.LookAt.LookAtType != LookAtType.expression)
             {
                 _hasApplier = false;
                 return;
             }
 
             _hasApplier = true;
-            _applier = boneApplier;
+            _applier = info.instance.Vrm.LookAt;
         }
 
         private void OnVrmDisposed()
@@ -69,13 +69,14 @@ namespace Baku.VMagicMirror
 
             var left = 0f;
             var right = 0f;
+            //NOTE: 挙動が怪しいかも…
             if (yaw < 0)
             {
-                left = Mathf.Clamp01(_applier.Horizontal.Map(-yaw));
+                left = Mathf.Clamp01(_applier.HorizontalInner.Map(-yaw));
             }
             else
             {
-                right = Mathf.Clamp01(_applier.Horizontal.Map(yaw));
+                right = Mathf.Clamp01(_applier.HorizontalOuter.Map(yaw));
             }
 
             var up = 0f;

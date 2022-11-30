@@ -63,26 +63,5 @@ namespace Baku.VMagicMirror
                 _values[k] = 0f;
             }
         }
-
-        public float GetValue(ExpressionKey key) => _keys.Contains(key) ? _values[key] : 0f;
-
-        public void SetZero(ExpressionKey key)
-        {
-            if (_keys.Contains(key))
-            {
-                _values[key] = 0f;
-            }
-        }
-
-        public void SetZero(IEnumerable<ExpressionKey> keys)
-        {
-            foreach (var k in keys)
-            {
-                if (_keys.Contains(k))
-                {
-                    _values[k] = 0f;
-                }
-            }
-        }
     }
 }

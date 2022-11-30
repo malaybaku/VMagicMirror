@@ -96,10 +96,17 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _leftEye = info.controlRig.GetBoneTransform(HumanBodyBones.LeftEye);
-            _rightEye = info.controlRig.GetBoneTransform(HumanBodyBones.RightEye);
-            _hasLeftEyeBone = _leftEye != null;
-            _hasRightEyeBone = _rightEye != null;
+            var controlRigBones = info.instance.Runtime.ControlRig.Bones;
+            _hasLeftEyeBone = controlRigBones.TryGetValue(HumanBodyBones.LeftEye, out var leftEyeBone);
+            if (_hasLeftEyeBone && leftEyeBone != null)
+            {
+                _leftEye = leftEyeBone.ControlTarget;
+            }
+            _hasRightEyeBone = controlRigBones.TryGetValue(HumanBodyBones.RightEye, out var rightEyeBone);
+            if (_hasRightEyeBone && rightEyeBone != null)
+            {
+                _rightEye = rightEyeBone.ControlTarget;
+            } 
             _hasModel = true;
         }
 

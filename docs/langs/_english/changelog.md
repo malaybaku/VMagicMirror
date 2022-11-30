@@ -15,6 +15,14 @@ lang: en
 
 * Add: Support for VRM 1.0 model. VRM 0.x models are still available in this version.
 
+Known issues on VRM 1.0 support
+
+* Hand position will be incorrect on first arm motion (keyboard typing, mouse pad control, etc.)
+* With some avatars, upper arm and elbow appearance get very bad.
+
+In the case of the latter issue, please try to open Setting Window > Motion > Arm, and set `Strength to keep upper arm to body[%]` value to zero.
+
+If you find some critical issues about this version, please downgrade to v2.0.11.
 
 #### v2.0.11
 {: .doc-sec2 }

@@ -54,6 +54,8 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            _accumulator.ResetValues();
+
             //NOTE: 関数をわざわざ分けるのは後方互換性のため + ウェイトに配慮しないほうが処理が一回り軽い見込みのため
             if (blendShapeInterpolator.NeedToInterpolate)
             {
@@ -78,21 +80,16 @@ namespace Baku.VMagicMirror
                 if (!_wtmBlendShape.KeepLipSync)
                 {
                     //そもそもリップシンクは切ってよいケース: シンプルにゼロ埋め + WtMを適用
-                    _accumulator.ResetValues();
                     _wtmBlendShape.Accumulate(_accumulator);
                 }
                 else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
-                    //WtM + パーフェクトシンクの口周りを適用するケース: 口周りのゼロ埋めをサボれるのでサボる
-                    _accumulator.SetZero(perfectSync.NonPerfectSyncKeys);
-                    _accumulator.SetZero(ExternalTrackerPerfectSync.Keys.PerfectSyncNonMouthKeys);
                     _wtmBlendShape.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);
                 }
                 else
                 {
                     //WtM + AIUEOの口を適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
-                    _accumulator.ResetValues();
                     _wtmBlendShape.Accumulate(_accumulator);
                     lipSync.Accumulate(_accumulator);
                 }
@@ -108,21 +105,16 @@ namespace Baku.VMagicMirror
                 //NOTE: WtMと同じく、パーフェクトシンクの口と組み合わす場合のコストに多少配慮した書き方。
                 if (!faceSwitch.KeepLipSync)
                 {
-                    _accumulator.ResetValues();
                     faceSwitch.Accumulate(_accumulator);
                 }
                 else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
-                    //Face Switch + パーフェクトシンクの口周りを適用: 口周りのパーフェクトシンクのゼロ埋めをサボれるのでサボる
-                    _accumulator.SetZero(perfectSync.NonPerfectSyncKeys);
-                    _accumulator.SetZero(ExternalTrackerPerfectSync.Keys.PerfectSyncNonMouthKeys);
                     faceSwitch.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);
                 }
                 else
                 {
                     //FaceSwitch + AIUEOを適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
-                    _accumulator.ResetValues();
                     faceSwitch.Accumulate(_accumulator);
                     lipSync.Accumulate(_accumulator);
                 }
@@ -135,9 +127,6 @@ namespace Baku.VMagicMirror
             //リップシンクは…ここも設定しだいで適用。
             if (perfectSync.IsReadyToAccumulate)
             {
-                //パーフェクトシンクじゃないクリップを0埋め
-                _accumulator.SetZero(perfectSync.NonPerfectSyncKeys);
-
                 //パーフェクトシンクのクリップを埋め: このとき口まわりは設定次第で0埋めか有効値で埋めるかが変化
                 perfectSync.Accumulate(
                     _accumulator, true, perfectSync.PreferWriteMouthBlendShape, true
@@ -159,7 +148,6 @@ namespace Baku.VMagicMirror
             // - 口: パーフェクトシンクの画像 or マイク
             // - 目: パーフェクトシンクの目 or webカメラ or AutoBlink
             // という使い分けがあるが、この分岐は各コンポーネントのレベルで面倒を見てもらえる
-            _accumulator.ResetValues();
             eyes.Accumulate(_accumulator);
             lipSync.Accumulate(_accumulator);
             
@@ -173,7 +161,6 @@ namespace Baku.VMagicMirror
             // - FaceSwitch / WtMの現在値は(KeepLipSyncも含めて)使わず、Interpolatorが代行してくれる
             // - ゼロ埋めの冗長化回避は無理なので諦めて、全部ゼロ埋めしておく
             // - ふだんの動きを適用するが、そこでは必ずweightが入る
-            _accumulator.ResetValues();
             blendShapeInterpolator.Accumulate(_accumulator);
             
             //Perfect Syncが適用 > Blinkは確定で無視。

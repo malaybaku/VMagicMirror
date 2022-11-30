@@ -1,4 +1,5 @@
-using VRM;
+using UniVRM10;
+using LookAtType = UniGLTF.Extensions.VRMC_vrm.LookAtType;
 
 namespace Baku.VMagicMirror
 {
@@ -20,21 +21,20 @@ namespace Baku.VMagicMirror
         }
 
         private bool _hasBoneApplier;
-        private VRMLookAtBoneApplyer _applier;
+        private VRM10ObjectLookAt _applier;
 
         public bool HasLookAtBoneApplier => _hasBoneApplier;
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            var boneApplier = info.vrmRoot.GetComponent<VRMLookAtBoneApplyer>();
-            if (boneApplier == null)
+            if (info.instance.Vrm.LookAt.LookAtType != LookAtType.bone)
             {
                 _hasBoneApplier = false;
                 return;
             }
 
             _hasBoneApplier = true;
-            _applier = boneApplier;
+            _applier = info.instance.Vrm.LookAt;
         }
 
         private void OnVrmDisposed()

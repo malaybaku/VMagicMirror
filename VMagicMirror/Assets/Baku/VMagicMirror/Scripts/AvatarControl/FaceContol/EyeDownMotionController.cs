@@ -14,10 +14,12 @@ namespace Baku.VMagicMirror
         public void Initialize(
             IVRMLoadable vrmLoadable, 
             ExternalTrackerDataSource exTracker,
-            FaceControlConfiguration config)
+            FaceControlConfiguration config,
+            ExpressionAccumulator resultSetter)
         {
             _config = config;
             _exTracker = exTracker;
+            _accumulator = resultSetter;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
@@ -28,6 +30,8 @@ namespace Baku.VMagicMirror
         private Vrm10RuntimeExpression _runtimeExpression = null;
         private bool _hasValidEyeSettings = false;
 
+        private ExpressionAccumulator _accumulator = null;
+        
         bool IEyeRotationRequestSource.IsActive => _hasValidEyeSettings && !_config.ShouldSkipNonMouthBlendShape;
         public Vector2 LeftEyeRotationRate { get; private set; }
         public Vector2 RightEyeRotationRate { get; private set; }
@@ -59,10 +63,12 @@ namespace Baku.VMagicMirror
             // このへんの値が1フレーム前の値ではなく同一フレームの値を参照できるともっと良い
             var leftBlink = shouldUseAlternativeBlink
                 ? _config.AlternativeBlinkL
-                : _runtimeExpression.GetWeight(ExpressionKey.BlinkLeft);
+                : _accumulator.GetValue(ExpressionKey.BlinkLeft);
+            //_runtimeExpression.GetWeight(ExpressionKey.BlinkLeft);
             var rightBlink = shouldUseAlternativeBlink
                 ? _config.AlternativeBlinkR
-                : _runtimeExpression.GetWeight(ExpressionKey.BlinkRight);
+                : _accumulator.GetValue(ExpressionKey.BlinkRight);
+            // _runtimeExpression.GetWeight(ExpressionKey.BlinkRight);
 
             LeftEyeRotationRate = new Vector2(0f, -leftBlink * eyeDownRateWhenEyeClosed);
             RightEyeRotationRate = new Vector2(0f, -rightBlink * eyeDownRateWhenEyeClosed);

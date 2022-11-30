@@ -63,5 +63,7 @@ namespace Baku.VMagicMirror
                 _values[k] = 0f;
             }
         }
+
+        public float GetValue(ExpressionKey key) => _values.TryGetValue(key, out var result) ? result : 0f;
     }
 }

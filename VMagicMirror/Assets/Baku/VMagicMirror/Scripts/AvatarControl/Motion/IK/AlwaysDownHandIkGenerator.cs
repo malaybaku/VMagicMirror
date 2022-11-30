@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror.IK
 
             vrmLoadable.VrmLoaded += info =>
             {
-                var animator = info.animator;
+                var animator = info.controlRig;
 
                 _hips = animator.GetBoneTransform(HumanBodyBones.Hips);
                 _rightUpperArm = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);

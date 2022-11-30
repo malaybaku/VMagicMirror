@@ -30,7 +30,6 @@ Transform:
   m_Children:
   - {fileID: 4403582645890784493}
   - {fileID: 4403582645735969391}
-  - {fileID: 5952249983603830923}
   - {fileID: 7502228934553232097}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -87,46 +86,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5203461303792189549}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &6280833885169497037
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 914461298883566549}
-    m_Modifications:
-    - target: {fileID: 410006747659649862, guid: 48e4e24e48cf43543ab508e6a42a1591,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 410006747659649862, guid: 48e4e24e48cf43543ab508e6a42a1591,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 410006747659649862, guid: 48e4e24e48cf43543ab508e6a42a1591,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 410006747659649862, guid: 48e4e24e48cf43543ab508e6a42a1591,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 853238483135863806, guid: 48e4e24e48cf43543ab508e6a42a1591,
-        type: 3}
-      propertyPath: m_Name
-      value: ReplacedVRMSpringBoneScheduler
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 48e4e24e48cf43543ab508e6a42a1591, type: 3}
---- !u!4 &5952249983603830923 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 410006747659649862, guid: 48e4e24e48cf43543ab508e6a42a1591,
-    type: 3}
-  m_PrefabInstance: {fileID: 6280833885169497037}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6638005332231117493
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -147,7 +106,7 @@ PrefabInstance:
     - target: {fileID: 3748028266611161172, guid: bc880b587a9f08e498a8c6de1fcf4650,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3748028266611161172, guid: bc880b587a9f08e498a8c6de1fcf4650,
         type: 3}

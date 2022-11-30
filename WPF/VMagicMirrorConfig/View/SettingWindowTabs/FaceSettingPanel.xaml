@@ -18,7 +18,7 @@
         <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
         <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
         <view:Lv50Converter x:Key="Lv50Converter"/>
-        <view:EmptyToNoneTextConverter x:Key="EmptyToNoneTextConverter"/>
+        <view:Vrm1BlendShapeNameOrNoneConverter x:Key="Vrm1BlendShapeNameOrNoneConverter" />
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled"
@@ -495,7 +495,7 @@
                                     <!-- NOTE: 言語と入力値の2つから表示が決まるため、MultiBindingしている -->
                                     <TextBlock>
                                         <TextBlock.Text>
-                                            <MultiBinding Converter="{StaticResource EmptyToNoneTextConverter}">
+                                            <MultiBinding Converter="{StaticResource Vrm1BlendShapeNameOrNoneConverter}">
                                                 <Binding Path=""/>
                                                 <Binding Path="LanguageName" Source="{x:Static vmm:LanguageSelector.Instance}"/>
                                             </MultiBinding>
@@ -525,7 +525,7 @@
                                 <DataTemplate>
                                     <TextBlock>
                                         <TextBlock.Text>
-                                            <MultiBinding Converter="{StaticResource EmptyToNoneTextConverter}">
+                                            <MultiBinding Converter="{StaticResource Vrm1BlendShapeNameOrNoneConverter}">
                                                 <Binding Path=""/>
                                                 <Binding Path="LanguageName" Source="{x:Static vmm:LanguageSelector.Instance}"/>
                                             </MultiBinding>

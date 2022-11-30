@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror.FK
             for (var i = (int) HumanBodyBones.Hips; i < (int) HumanBodyBones.LastBone; i++)
             {
                 var boneType = (HumanBodyBones) i;
-                var bone = info.animator.GetBoneTransform(boneType);
+                var bone = info.controlRig.GetBoneTransform(boneType);
                 if (bone != null)
                 {
                     _bones[boneType] = bone;

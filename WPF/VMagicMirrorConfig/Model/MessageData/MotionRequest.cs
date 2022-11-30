@@ -2,11 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Baku.VMagicMirrorConfig
 {
     //NOTE: Unity側のMotionRequestとプロパティ名を統一してます。片方だけいじらないように！
+
+    //VRM 0.x版の時代の設定ファイルと互換性を保つため、次のような挙動を取る
+    // - 通常のデータ引き回しの時点では、BlendShapeValuesはSurprisedクリップを含む
+    // - 設定ファイルからの値のI/Oをするとき、Surprisedの値はカスタムクリップ扱いで保存、ロードする
+    // - Unityにデータを送る段階で、VRM 0.x用のクリップ名で保持している値は読み替える
 
     /// <summary>ビルトインモーションまたはカスタムモーション、および表情制御のリクエスト情報を表す。</summary>
     public class MotionRequest
@@ -52,17 +58,77 @@ namespace Baku.VMagicMirrorConfig
         /// </summary>
         public List<BlendShapePairItem> ExtraBlendShapeValues { get; set; } = new List<BlendShapePairItem>();
 
-        /// <summary>この要素をJSONにシリアライズしたものを取得します。</summary>
-        /// <returns></returns>
-        public string ToJson()
+        public MotionRequest ToVrm10Request()
         {
+            //基本は値コピーだが、ブレンドシェイプ名をVRM 1.0のものに読み替えているのがポイント
+            return new MotionRequest()
+            {
+                MotionType = MotionType,
+                Word = Word,
+                BuiltInAnimationClipName = BuiltInAnimationClipName,
+                CustomMotionClipName = CustomMotionClipName,
+                AccessoryName = AccessoryName,
+                DurationWhenOnlyBlendShape = DurationWhenOnlyBlendShape,
+                UseBlendShape = UseBlendShape,
+                HoldBlendShape = HoldBlendShape,
+                PreferLipSync = PreferLipSync,
+                BlendShapeValues = BlendShapeValues.ToDictionary(
+                    p => DefaultBlendShapeNameStore.GetVrm10KeyName(p.Key),
+                    p => p.Value
+                    ),
+                ExtraBlendShapeValues = ExtraBlendShapeValues.ToList(),
+            };
+        }
+
+        public MotionRequest ToSaveRequest()
+        {
+            //基本は値コピーだが、Surprisedがカスタムクリップ側の冒頭に保存されるようにしている
+            return new MotionRequest()
+            {
+                MotionType = MotionType,
+                Word = Word,
+                BuiltInAnimationClipName = BuiltInAnimationClipName,
+                CustomMotionClipName = CustomMotionClipName,
+                AccessoryName = AccessoryName,
+                DurationWhenOnlyBlendShape = DurationWhenOnlyBlendShape,
+                UseBlendShape = UseBlendShape,
+                HoldBlendShape = HoldBlendShape,
+                PreferLipSync = PreferLipSync,
+                BlendShapeValues = BlendShapeValues.Where(p => p.Key != "Surprised")
+                    .ToDictionary(p => p.Key, p => p.Value),
+                ExtraBlendShapeValues = ExtraBlendShapeValues
+                    .Where(p=> p.Name != "Surprised")
+                    .Prepend(new BlendShapePairItem()
+                    {
+                        Name = "Surprised",
+                        Value = BlendShapeValues.TryGetValue("Surprised", out var value) ? value : 0
+                    })
+                    .ToList(),
+            };
+        }
+
+        public string ToVrm10Json()
+        {
+            var vrm10Data = ToVrm10Request();
+
             var serializer = new JsonSerializer();
             var sb = new StringBuilder();
             using (var writer = new StringWriter(sb))
             {
-                serializer.Serialize(writer, this);
+                serializer.Serialize(writer, vrm10Data);
             }
             return sb.ToString();
+        }
+
+        //JSONから読み出したデータのカスタムクリップ領域にSurprisedクリップの値がある場合、それをビルトイン扱いして初期化する
+        public void InitializeSurprisedBlendShapeValue()
+        {
+            BlendShapeValues["Surprised"] = 0;
+            if (ExtraBlendShapeValues.FirstOrDefault(p => p.Name == "Surprised") is { } target)
+            {
+                ExtraBlendShapeValues.Remove(target);
+                BlendShapeValues["Surprised"] = target.Value;
+            }
         }
 
         /// <summary>デフォルトの簡単な設定からなる動作リクエストを生成します。</summary>
@@ -192,13 +258,32 @@ namespace Baku.VMagicMirrorConfig
 
         public MotionRequest[] Requests { get; }
 
-        public string ToJson()
+        public string ToJsonForSave()
         {
+            var collection = new MotionRequestCollection(
+                Requests.Select(r => r.ToSaveRequest()).ToArray()
+                );
+
             var serializer = new JsonSerializer();
             var sb = new StringBuilder();
             using (var writer = new StringWriter(sb))
             {
-                serializer.Serialize(writer, this);
+                serializer.Serialize(writer, collection);
+            }
+            return sb.ToString();
+        }
+
+        public string ToJsonForVrm10()
+        {
+            var collection = new MotionRequestCollection(
+                Requests.Select(r => r.ToVrm10Request()).ToArray()
+                );
+
+            var serializer = new JsonSerializer();
+            var sb = new StringBuilder();
+            using (var writer = new StringWriter(sb))
+            {
+                serializer.Serialize(writer, collection);
             }
             return sb.ToString();
         }
@@ -211,9 +296,15 @@ namespace Baku.VMagicMirrorConfig
             var serializer = new JsonSerializer();
             using (var jsonReader = new JsonTextReader(reader))
             {
-                return
-                    serializer.Deserialize<MotionRequestCollection>(jsonReader) ??
+                var result = serializer.Deserialize<MotionRequestCollection>(jsonReader) ??
                     throw new InvalidOperationException();
+
+                foreach(var item in result.Requests)
+                {
+                    item.InitializeSurprisedBlendShapeValue();
+                }
+
+                return result;
             }
         }
     }

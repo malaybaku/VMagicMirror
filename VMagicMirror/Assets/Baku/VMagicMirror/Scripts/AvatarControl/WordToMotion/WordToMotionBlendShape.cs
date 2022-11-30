@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
-using VRM;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror
     public readonly struct WordToMotionBlendShapeApplyContent
     {
         private WordToMotionBlendShapeApplyContent(
-            bool hasValue, List<(BlendShapeKey, float)> keys, bool keepLipSync, bool isPreview)
+            bool hasValue, List<(ExpressionKey, float)> keys, bool keepLipSync, bool isPreview)
         {
             HasValue = hasValue;
             Keys = keys;
@@ -20,13 +20,13 @@ namespace Baku.VMagicMirror
         }
         
         public static WordToMotionBlendShapeApplyContent Empty { get; } 
-            = new WordToMotionBlendShapeApplyContent(false, new List<(BlendShapeKey, float)>(), false, false);
+            = new WordToMotionBlendShapeApplyContent(false, new List<(ExpressionKey, float)>(), false, false);
 
-        public static WordToMotionBlendShapeApplyContent Create(List<(BlendShapeKey, float)> keys, bool keepLipSync,
+        public static WordToMotionBlendShapeApplyContent Create(List<(ExpressionKey, float)> keys, bool keepLipSync,
             bool isPreview) => new WordToMotionBlendShapeApplyContent(true, keys, keepLipSync, isPreview);
 
         public bool HasValue { get; }
-        public List<(BlendShapeKey, float)> Keys { get; }
+        public List<(ExpressionKey, float)> Keys { get; }
         public bool KeepLipSync { get; }
         public bool IsPreview { get; }
         
@@ -35,24 +35,24 @@ namespace Baku.VMagicMirror
     /// <summary> Word To Motionのブレンドシェイプを適用する。 </summary>
     public class WordToMotionBlendShape : MonoBehaviour
     {
-        private static readonly BlendShapeKey[] _lipSyncKeys = new []
+        private static readonly ExpressionKey[] _lipSyncKeys = new []
         {
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.A),
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.I),
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.U),
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.E),
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.O),
+            ExpressionKey.CreateFromPreset(ExpressionPreset.aa),
+            ExpressionKey.CreateFromPreset(ExpressionPreset.ih),
+            ExpressionKey.CreateFromPreset(ExpressionPreset.ou),
+            ExpressionKey.CreateFromPreset(ExpressionPreset.ee),
+            ExpressionKey.CreateFromPreset(ExpressionPreset.oh),
         };
         
-        private BlendShapeKey[] _allBlendShapeKeys = new BlendShapeKey[0];
+        private ExpressionKey[] _allBlendShapeKeys = new ExpressionKey[0];
 
-        private readonly Dictionary<BlendShapeKey, float> _blendShape = new Dictionary<BlendShapeKey, float>();
+        private readonly Dictionary<ExpressionKey, float> _blendShape = new Dictionary<ExpressionKey, float>();
         
         private EyeBoneAngleSetter _eyeBoneResetter;
 
         private bool _hasDiff;
 
-        private readonly List<(BlendShapeKey, float)> _currentValueSource = new List<(BlendShapeKey, float)>(8);
+        private readonly List<(ExpressionKey, float)> _currentValueSource = new List<(ExpressionKey, float)>(8);
         private readonly Subject<WordToMotionBlendShapeApplyContent> _currentValue = new Subject<WordToMotionBlendShapeApplyContent>();
         public IObservable<WordToMotionBlendShapeApplyContent> CurrentValue => _currentValue;
         
@@ -62,18 +62,14 @@ namespace Baku.VMagicMirror
             _eyeBoneResetter = eyeBoneResetter;
         }
         
-        public void Initialize(VRMBlendShapeProxy proxy)
+        public void Initialize(VRM10ObjectExpression expression)
         {
-            _allBlendShapeKeys = proxy
-                .BlendShapeAvatar
-                .Clips
-                .Select(c => BlendShapeKeyFactory.CreateFrom(c.BlendShapeName))
-                .ToArray();
+            _allBlendShapeKeys = expression.LoadExpressionMap().Keys.ToArray();
         }
 
         public void DisposeProxy()
         {
-            _allBlendShapeKeys = Array.Empty<BlendShapeKey>();
+            _allBlendShapeKeys = Array.Empty<ExpressionKey>();
         }
 
         /// <summary> trueの場合、このスクリプトではリップシンクのブレンドシェイプに書き込みを行いません。 </summary>
@@ -124,7 +120,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="values"></param>
         /// <param name="keepLipSync"></param>
-        public void SetForPreview(IEnumerable<(BlendShapeKey, float)> values, bool keepLipSync)
+        public void SetForPreview(IEnumerable<(ExpressionKey, float)> values, bool keepLipSync)
         {
             //SetBlendShapesとは違ってClearしない: 前回と同じ値でよい場合、_hasDiff == falseになるようにしたい
             foreach (var (key, value) in values)
@@ -151,7 +147,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="values"></param>
         /// <param name="keepLipSync"></param>
-        public void SetBlendShapes(IEnumerable<(BlendShapeKey, float)> values, bool keepLipSync)
+        public void SetBlendShapes(IEnumerable<(ExpressionKey, float)> values, bool keepLipSync)
         {
             Clear();
             foreach (var (key, value) in values)
@@ -184,7 +180,7 @@ namespace Baku.VMagicMirror
         /// <summary> 現在このコンポーネントが適用すべきブレンドシェイプを持ってるかどうか </summary>
         public bool HasBlendShapeToApply => _blendShape.Count > 0;
         
-        public void Accumulate(VRMBlendShapeProxy proxy)
+        public void Accumulate(ExpressionAccumulator accumulator)
         {
             if (!HasBlendShapeToApply)
             {
@@ -205,7 +201,7 @@ namespace Baku.VMagicMirror
                 //これはフィルタすると重すぎるので「パーフェクトシンク使う人はそのくらい理解してくれ」という意味です
                 if (_blendShape.TryGetValue(key, out float value) && value > 0f)
                 {
-                    proxy.AccumulateValue(key, value);
+                    accumulator.Accumulate(key, value);
                 }
             }
             _eyeBoneResetter.ReserveReset = true;

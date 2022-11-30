@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using VRM;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -45,22 +45,22 @@ namespace Baku.VMagicMirror
         private readonly RecordLipSyncSource _lipSyncSource = new RecordLipSyncSource();
         public IMouthLipSyncSource LipSyncSource => _lipSyncSource;
 
-        private readonly Dictionary<BlendShapeKey, float> _blendShapeWeights = new Dictionary<BlendShapeKey, float>
+        private readonly Dictionary<ExpressionKey, float> _blendShapeWeights = new Dictionary<ExpressionKey, float>
         {
-            [BlendShapeKey.CreateFromPreset(BlendShapePreset.A)] = 0.0f,
-            [BlendShapeKey.CreateFromPreset(BlendShapePreset.E)] = 0.0f,
-            [BlendShapeKey.CreateFromPreset(BlendShapePreset.I)] = 0.0f,
-            [BlendShapeKey.CreateFromPreset(BlendShapePreset.O)] = 0.0f,
-            [BlendShapeKey.CreateFromPreset(BlendShapePreset.U)] = 0.0f,
+            [ExpressionKey.Aa] = 0f,
+            [ExpressionKey.Ee] = 0f,
+            [ExpressionKey.Ih] = 0f,
+            [ExpressionKey.Oh] = 0f,
+            [ExpressionKey.Ou] = 0f,
         };
 
-        private readonly BlendShapeKey[] _keys = new[]
+        private readonly ExpressionKey[] _keys = new[]
         {
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.A),
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.E),
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.I),
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.O),
-            BlendShapeKey.CreateFromPreset(BlendShapePreset.U),
+            ExpressionKey.Aa,
+            ExpressionKey.Ee, 
+            ExpressionKey.Ih, 
+            ExpressionKey.Oh, 
+            ExpressionKey.Ou, 
         };
 
         private VmmLipSyncContextBase _context;

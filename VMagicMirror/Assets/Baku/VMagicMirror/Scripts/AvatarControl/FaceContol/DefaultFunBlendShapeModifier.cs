@@ -1,24 +1,21 @@
-﻿using VRM;
+﻿using UniVRM10;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// 何もしてないときも若干Funのブレンドシェイプを入れるやつ。
-    /// </summary>
+    //TODO: めっちゃ廃止したい～
+    /// <summary> 何もしてないときも若干Funのブレンドシェイプを入れるやつ </summary>
     public class DefaultFunBlendShapeModifier
     {
-        private BlendShapeKey FunKey { get; } = BlendShapeKey.CreateFromPreset(BlendShapePreset.Fun);
-
         public float FaceDefaultFunValue { get; set; } = 0.0f;
 
-        public void Apply(VRMBlendShapeProxy proxy)
+        public void Apply(ExpressionAccumulator accumulator)
         {
-            proxy.AccumulateValue(FunKey, FaceDefaultFunValue);
+            accumulator.Accumulate(ExpressionKey.Relaxed, FaceDefaultFunValue);
         }
         
-        public void Reset(VRMBlendShapeProxy proxy)
+        public void Reset(ExpressionAccumulator accumulator)
         {
-            proxy.AccumulateValue(FunKey, 0);
+            accumulator.Accumulate(ExpressionKey.Relaxed, 0f);
         }
     }
 }

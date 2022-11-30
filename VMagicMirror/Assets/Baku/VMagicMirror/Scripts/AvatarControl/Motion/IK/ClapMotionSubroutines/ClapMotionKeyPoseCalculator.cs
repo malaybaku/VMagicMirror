@@ -1,5 +1,6 @@
 using Baku.VMagicMirror.IK.Utils;
 using UnityEngine;
+using UniVRM10;
 
 namespace Baku.VMagicMirror.IK
 {

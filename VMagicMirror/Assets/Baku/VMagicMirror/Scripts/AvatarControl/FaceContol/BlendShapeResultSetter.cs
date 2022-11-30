@@ -1,6 +1,6 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
 using UnityEngine;
-using VRM;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -18,11 +18,9 @@ namespace Baku.VMagicMirror
         [SerializeField] private BlendShapeInterpolator blendShapeInterpolator = null;
         
         private ExternalTrackerDataSource _exTracker = null;
-        private BlendShapeInitializer _initializer = null;
         private WordToMotionBlendShape _wtmBlendShape = null;
-
+        private ExpressionAccumulator _accumulator = null;
         private bool _hasModel = false;
-        private VRMBlendShapeProxy _blendShape = null;
         
         //NOTE: ここのコンポーネントの書き順は実は優先度を表している: 後ろのやつほど上書きの権利が強い
         [Inject]
@@ -30,25 +28,16 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable, 
             ExternalTrackerDataSource exTracker,
-            BlendShapeInitializer initializer,
-            WordToMotionBlendShape wtmBlendShape
+            WordToMotionBlendShape wtmBlendShape,
+            ExpressionAccumulator accumulator
             )
         {
             _exTracker = exTracker;
-            _initializer = initializer;
             _wtmBlendShape = wtmBlendShape;
+            _accumulator = accumulator;
             
-            vrmLoadable.VrmLoaded += info =>
-            {
-                _blendShape = info.blendShape;
-                _hasModel = true;
-            };
-
-            vrmLoadable.VrmDisposing += () =>
-            {
-                _hasModel = false;
-                _blendShape = null;
-            };
+            vrmLoadable.VrmLoaded += info => _hasModel = true;
+            vrmLoadable.VrmDisposing += () => _hasModel = false;
             
             blendShapeInterpolator.Setup(faceSwitch, wtmBlendShape);
         }
@@ -65,6 +54,8 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            _accumulator.ResetValues();
+
             //NOTE: 関数をわざわざ分けるのは後方互換性のため + ウェイトに配慮しないほうが処理が一回り軽い見込みのため
             if (blendShapeInterpolator.NeedToInterpolate)
             {
@@ -74,7 +65,8 @@ namespace Baku.VMagicMirror
             {
                 WriteClips();
             }
-            _blendShape.Apply();
+            
+            _accumulator.Apply();
         }
 
         private void WriteClips()
@@ -88,26 +80,21 @@ namespace Baku.VMagicMirror
                 if (!_wtmBlendShape.KeepLipSync)
                 {
                     //そもそもリップシンクは切ってよいケース: シンプルにゼロ埋め + WtMを適用
-                    _initializer.InitializeBlendShapes();
-                    _wtmBlendShape.Accumulate(_blendShape);
+                    _wtmBlendShape.Accumulate(_accumulator);
                 }
                 else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
-                    //WtM + パーフェクトシンクの口周りを適用するケース: 口周りのゼロ埋めをサボれるのでサボる
-                    _initializer.InitializeBlendShapes(perfectSync.NonPerfectSyncKeys);
-                    _initializer.InitializeBlendShapes(ExternalTrackerPerfectSync.Keys.PerfectSyncNonMouthKeys);
-                    _wtmBlendShape.Accumulate(_blendShape);
-                    perfectSync.Accumulate(_blendShape, false, true, false);
+                    _wtmBlendShape.Accumulate(_accumulator);
+                    perfectSync.Accumulate(_accumulator, false, true, false);
                 }
                 else
                 {
                     //WtM + AIUEOの口を適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
-                    _initializer.InitializeBlendShapes();
-                    _wtmBlendShape.Accumulate(_blendShape);
-                    lipSync.Accumulate(_blendShape);
+                    _wtmBlendShape.Accumulate(_accumulator);
+                    lipSync.Accumulate(_accumulator);
                 }
                 
-                neutralClipSettings.ApplyOffsetClip(_blendShape);
+                neutralClipSettings.AccumulateOffsetClip(_accumulator);
                 return;
             }
             
@@ -118,26 +105,21 @@ namespace Baku.VMagicMirror
                 //NOTE: WtMと同じく、パーフェクトシンクの口と組み合わす場合のコストに多少配慮した書き方。
                 if (!faceSwitch.KeepLipSync)
                 {
-                    _initializer.InitializeBlendShapes();
-                    faceSwitch.Accumulate(_blendShape);
+                    faceSwitch.Accumulate(_accumulator);
                 }
                 else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
-                    //Face Switch + パーフェクトシンクの口周りを適用: 口周りのパーフェクトシンクのゼロ埋めをサボれるのでサボる
-                    _initializer.InitializeBlendShapes(perfectSync.NonPerfectSyncKeys);
-                    _initializer.InitializeBlendShapes(ExternalTrackerPerfectSync.Keys.PerfectSyncNonMouthKeys);
-                    faceSwitch.Accumulate(_blendShape);
-                    perfectSync.Accumulate(_blendShape, false, true, false);
+                    faceSwitch.Accumulate(_accumulator);
+                    perfectSync.Accumulate(_accumulator, false, true, false);
                 }
                 else
                 {
                     //FaceSwitch + AIUEOを適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
-                    _initializer.InitializeBlendShapes();
-                    faceSwitch.Accumulate(_blendShape);
-                    lipSync.Accumulate(_blendShape);
+                    faceSwitch.Accumulate(_accumulator);
+                    lipSync.Accumulate(_accumulator);
                 }
 
-                neutralClipSettings.ApplyOffsetClip(_blendShape);
+                neutralClipSettings.AccumulateOffsetClip(_accumulator);
                 return;
             }
             
@@ -145,23 +127,20 @@ namespace Baku.VMagicMirror
             //リップシンクは…ここも設定しだいで適用。
             if (perfectSync.IsReadyToAccumulate)
             {
-                //パーフェクトシンクじゃないクリップを0埋め
-               _initializer.InitializeBlendShapes(perfectSync.NonPerfectSyncKeys);
-
                 //パーフェクトシンクのクリップを埋め: このとき口まわりは設定次第で0埋めか有効値で埋めるかが変化
                 perfectSync.Accumulate(
-                    _blendShape, true, perfectSync.PreferWriteMouthBlendShape, true
+                    _accumulator, true, perfectSync.PreferWriteMouthBlendShape, true
                     );
 
                 //外部トラッキングの口形状を使わない: このときはlipSyncのほうでも
                 //マイクベースのリップシンクが優先になっているので、それを適用
                 if (!perfectSync.PreferWriteMouthBlendShape)
                 {
-                    lipSync.Accumulate(_blendShape);
+                    lipSync.Accumulate(_accumulator);
                 }
 
-                neutralClipSettings.ApplyNeutralClip(_blendShape);
-                neutralClipSettings.ApplyOffsetClip(_blendShape);
+                neutralClipSettings.AccumulateNeutralClip(_accumulator);
+                neutralClipSettings.AccumulateOffsetClip(_accumulator);
                 return;
             }
             
@@ -169,12 +148,11 @@ namespace Baku.VMagicMirror
             // - 口: パーフェクトシンクの画像 or マイク
             // - 目: パーフェクトシンクの目 or webカメラ or AutoBlink
             // という使い分けがあるが、この分岐は各コンポーネントのレベルで面倒を見てもらえる
-            _initializer.InitializeBlendShapes();
-            eyes.Accumulate(_blendShape);
-            lipSync.Accumulate(_blendShape);
+            eyes.Accumulate(_accumulator);
+            lipSync.Accumulate(_accumulator);
             
-            neutralClipSettings.ApplyNeutralClip(_blendShape);
-            neutralClipSettings.ApplyOffsetClip(_blendShape);
+            neutralClipSettings.AccumulateNeutralClip(_accumulator);
+            neutralClipSettings.AccumulateOffsetClip(_accumulator);
         }
         
         private void WriteClipsWithInterpolation()
@@ -183,9 +161,7 @@ namespace Baku.VMagicMirror
             // - FaceSwitch / WtMの現在値は(KeepLipSyncも含めて)使わず、Interpolatorが代行してくれる
             // - ゼロ埋めの冗長化回避は無理なので諦めて、全部ゼロ埋めしておく
             // - ふだんの動きを適用するが、そこでは必ずweightが入る
-
-            _initializer.InitializeBlendShapes();
-            blendShapeInterpolator.Accumulate(_blendShape);
+            blendShapeInterpolator.Accumulate(_accumulator);
             
             //Perfect Syncが適用 > Blinkは確定で無視。
             //リップシンクは…ここも設定しだいで適用。
@@ -193,7 +169,7 @@ namespace Baku.VMagicMirror
             {
                 //パーフェクトシンクのクリップを埋め: このとき口まわりは設定次第で0埋めか有効値で埋めるかが変化
                 perfectSync.Accumulate(
-                    _blendShape, 
+                    _accumulator, 
                     true, 
                     perfectSync.PreferWriteMouthBlendShape, 
                     true,
@@ -205,11 +181,11 @@ namespace Baku.VMagicMirror
                 //マイクベースのリップシンクが優先になっているので、それを適用
                 if (!perfectSync.PreferWriteMouthBlendShape)
                 {
-                    lipSync.Accumulate(_blendShape, blendShapeInterpolator.MouthWeight);
+                    lipSync.Accumulate(_accumulator, blendShapeInterpolator.MouthWeight);
                 }
 
-                neutralClipSettings.ApplyNeutralClip(_blendShape, blendShapeInterpolator.NonMouthWeight);
-                neutralClipSettings.ApplyOffsetClip(_blendShape);
+                neutralClipSettings.AccumulateNeutralClip(_accumulator, blendShapeInterpolator.NonMouthWeight);
+                neutralClipSettings.AccumulateOffsetClip(_accumulator);
                 return;
             }
             
@@ -217,11 +193,11 @@ namespace Baku.VMagicMirror
             // - 口: パーフェクトシンクの画像 or マイク
             // - 目: パーフェクトシンクの目 or webカメラ or AutoBlink
             // という使い分けがあるが、この分岐は各コンポーネントのレベルで面倒を見てもらえる
-            eyes.Accumulate(_blendShape, blendShapeInterpolator.NonMouthWeight);
-            lipSync.Accumulate(_blendShape, blendShapeInterpolator.MouthWeight);
+            eyes.Accumulate(_accumulator, blendShapeInterpolator.NonMouthWeight);
+            lipSync.Accumulate(_accumulator, blendShapeInterpolator.MouthWeight);
             
-            neutralClipSettings.ApplyNeutralClip(_blendShape, blendShapeInterpolator.NonMouthWeight);
-            neutralClipSettings.ApplyOffsetClip(_blendShape);
+            neutralClipSettings.AccumulateNeutralClip(_accumulator, blendShapeInterpolator.NonMouthWeight);
+            neutralClipSettings.AccumulateOffsetClip(_accumulator);
         }
     }
 }

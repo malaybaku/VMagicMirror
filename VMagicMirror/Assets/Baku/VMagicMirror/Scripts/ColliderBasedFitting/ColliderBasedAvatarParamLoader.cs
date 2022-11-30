@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -25,13 +26,13 @@ namespace Baku.VMagicMirror
 
         private void ReadParams(VrmLoadedInfo info)
         {
-            var leftHand = info.animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
-            var leftPalm = GetLeftHandRaycastReferencePosition(info.animator, leftHand);
+            var leftHand = info.controlRig.GetBoneTransform(HumanBodyBones.LeftHand).position;
+            var leftPalm = GetLeftHandRaycastReferencePosition(info.controlRig, leftHand);
             
-            var rightHand = info.animator.GetBoneTransform(HumanBodyBones.RightHand).position;
-            var rightPalm = GetRightHandRaycastReferencePosition(info.animator, rightHand);
+            var rightHand = info.controlRig.GetBoneTransform(HumanBodyBones.RightHand).position;
+            var rightPalm = GetRightHandRaycastReferencePosition(info.controlRig, rightHand);
             
-            var height = info.animator.GetBoneTransform(HumanBodyBones.Head).position.y;
+            var height = info.controlRig.GetBoneTransform(HumanBodyBones.Head).position.y;
 
             using (var colliders = AvatarColliders.LoadMeshColliders(
                 info.vrmRoot.gameObject, colliderPrefab, transform))

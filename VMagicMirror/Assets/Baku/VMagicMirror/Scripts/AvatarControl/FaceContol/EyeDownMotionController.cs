@@ -1,6 +1,6 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
 using UnityEngine;
-using VRM;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -8,19 +8,18 @@ namespace Baku.VMagicMirror
     /// <summary> 瞬きに対して目と眉を下げる処理をするやつ </summary>
     public class EyeDownMotionController : MonoBehaviour, IEyeRotationRequestSource
     {
-        private static readonly BlendShapeKey BlinkLKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_L);
-        private static readonly BlendShapeKey BlinkRKey = BlendShapeKey.CreateFromPreset(BlendShapePreset.Blink_R);
-
         [SerializeField] private float eyeDownRateWhenEyeClosed = 1.0f;
 
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
             ExternalTrackerDataSource exTracker,
-            FaceControlConfiguration config)
+            FaceControlConfiguration config,
+            ExpressionAccumulator resultSetter)
         {
             _config = config;
             _exTracker = exTracker;
+            _accumulator = resultSetter;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
@@ -28,23 +27,25 @@ namespace Baku.VMagicMirror
         private FaceControlConfiguration _config;
         private ExternalTrackerDataSource _exTracker = null;
 
-        private VRMBlendShapeProxy _blendShapeProxy = null;
+        private Vrm10RuntimeExpression _runtimeExpression = null;
         private bool _hasValidEyeSettings = false;
 
+        private ExpressionAccumulator _accumulator = null;
+        
         bool IEyeRotationRequestSource.IsActive => _hasValidEyeSettings && !_config.ShouldSkipNonMouthBlendShape;
         public Vector2 LeftEyeRotationRate { get; private set; }
         public Vector2 RightEyeRotationRate { get; private set; }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _blendShapeProxy = info.blendShape;
-            _hasValidEyeSettings = CheckBlinkBlendShapeClips(_blendShapeProxy);
+            _runtimeExpression = info.RuntimeFacialExpression;
+            _hasValidEyeSettings = CheckBlinkBlendShapeClips(info.instance.Vrm.Expression);
         }
 
         private void OnVrmDisposing()
         {
             _hasValidEyeSettings = false;
-            _blendShapeProxy = null;
+            _runtimeExpression = null;
         }
 
         public void UpdateRotationRate()
@@ -62,22 +63,22 @@ namespace Baku.VMagicMirror
             // このへんの値が1フレーム前の値ではなく同一フレームの値を参照できるともっと良い
             var leftBlink = shouldUseAlternativeBlink
                 ? _config.AlternativeBlinkL
-                : _blendShapeProxy.GetValue(BlinkLKey);
+                : _accumulator.GetValue(ExpressionKey.BlinkLeft);
+            //_runtimeExpression.GetWeight(ExpressionKey.BlinkLeft);
             var rightBlink = shouldUseAlternativeBlink
                 ? _config.AlternativeBlinkR
-                : _blendShapeProxy.GetValue(BlinkRKey);
+                : _accumulator.GetValue(ExpressionKey.BlinkRight);
+            // _runtimeExpression.GetWeight(ExpressionKey.BlinkRight);
 
             LeftEyeRotationRate = new Vector2(0f, -leftBlink * eyeDownRateWhenEyeClosed);
             RightEyeRotationRate = new Vector2(0f, -rightBlink * eyeDownRateWhenEyeClosed);
         }
 
-        private static bool CheckBlinkBlendShapeClips(VRMBlendShapeProxy proxy)
+        private static bool CheckBlinkBlendShapeClips(VRM10ObjectExpression settings)
         {
             //NOTE: 隻眼/単眼でも補正はかかってほしい、という事でこういう感じ
-            var avatar = proxy.BlendShapeAvatar;
-            return 
-                (avatar.GetClip(BlinkLKey).Values.Length > 0 || avatar.GetClip(BlinkRKey).Values.Length > 0) &&
-                avatar.GetClip(BlendShapePreset.Blink).Values.Length > 0;
+            return (settings.BlinkLeft.HasValidBinds() || settings.BlinkRight.HasValidBinds()) &&
+                settings.Blink.HasValidBinds();
         }
     }
 }

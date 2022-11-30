@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using VRM;
+using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -20,7 +20,9 @@ namespace Baku.VMagicMirror
                     HasValidNeutralClipKey = !string.IsNullOrWhiteSpace(c.Content);
                     if (HasValidNeutralClipKey)
                     {
-                        NeutralClipKey = BlendShapeKeyFactory.CreateFrom(c.Content);
+                        NeutralClipKey = ExpressionKeyUtils.CreateKeyByName(
+                            BlendShapeCompatUtil.GetVrm10ClipName(c.Content)
+                            );
                     }
                 });
 
@@ -31,32 +33,34 @@ namespace Baku.VMagicMirror
                     HasValidOffsetClipKey = !string.IsNullOrWhiteSpace(c.Content);
                     if (HasValidOffsetClipKey)
                     {
-                        OffsetClipKey = BlendShapeKeyFactory.CreateFrom(c.Content);
+                        OffsetClipKey = ExpressionKeyUtils.CreateKeyByName(
+                            BlendShapeCompatUtil.GetVrm10ClipName(c.Content)
+                            );
                     }
                 });
         }
         
-        public void ApplyNeutralClip(VRMBlendShapeProxy proxy, float weight = 1f) 
+        public void AccumulateNeutralClip(ExpressionAccumulator accumulator, float weight = 1f) 
         {
             if (HasValidNeutralClipKey)
             {
-                proxy.AccumulateValue(NeutralClipKey, weight);
+                accumulator.Accumulate(NeutralClipKey, weight);
             }
         }
 
-        public void ApplyOffsetClip(VRMBlendShapeProxy proxy)
+        public void AccumulateOffsetClip(ExpressionAccumulator accumulator)
         {
             if (HasValidOffsetClipKey)
             {
-                proxy.AccumulateValue(OffsetClipKey, 1f);
+                accumulator.Accumulate(OffsetClipKey, 1f);
             }
         }
 
         private bool HasValidNeutralClipKey = false;
-        private BlendShapeKey NeutralClipKey;
+        private ExpressionKey NeutralClipKey;
 
         private bool HasValidOffsetClipKey = false;
-        private BlendShapeKey OffsetClipKey;
+        private ExpressionKey OffsetClipKey;
         
     }
 }

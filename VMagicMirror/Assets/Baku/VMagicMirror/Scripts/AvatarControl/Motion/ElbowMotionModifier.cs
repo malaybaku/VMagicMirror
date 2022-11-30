@@ -21,7 +21,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private float bodyRollRateToElbowWidthMinusFactor = 1.0f;
 
         //腰の真横より後ろにbendGoalを持っていくことで肘が前方に行きにくくするための補正値。
-        [SerializeField] private float bendGoalZOffset = -0.02f;
+        [SerializeField] private float bendGoalZOffset = -0.04f;
         
         public float WaistWidthHalf { get; private set; } = 0.15f;
         public float ElbowCloseStrength { get; private set; } = 0.30f;
@@ -101,8 +101,8 @@ namespace Baku.VMagicMirror
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _ik = info.vrmRoot.GetComponent<FullBodyBipedIK>();
-            var spineBone = info.animator.GetBoneTransform(HumanBodyBones.Spine);
+            _ik = info.fbbIk;
+            var spineBone = info.controlRig.GetBoneTransform(HumanBodyBones.Spine);
 
             _rightArmBendGoal = new GameObject().transform;
             _rightArmBendGoal.SetParent(spineBone);

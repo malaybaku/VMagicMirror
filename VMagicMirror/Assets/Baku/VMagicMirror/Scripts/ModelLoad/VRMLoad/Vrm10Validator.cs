@@ -33,8 +33,6 @@ namespace Baku.VMagicMirror
                 }
             }
 
-            Debug.Log("detect VRM 1.0 model");
-            LogOutput.Instance.Write("detect VRM 1.0 model");
             return _isVrm10;
         }
 

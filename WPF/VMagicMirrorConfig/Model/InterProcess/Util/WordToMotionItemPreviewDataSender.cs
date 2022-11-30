@@ -45,7 +45,7 @@ namespace Baku.VMagicMirrorConfig
 
         private void SendData(MotionRequest request)
         {
-            string content = request.ToJson();
+            string content = request.ToVrm10Json();
             _sender.SendMessage(
                 MessageFactory.Instance.SendWordToMotionPreviewInfo(content)
                 );

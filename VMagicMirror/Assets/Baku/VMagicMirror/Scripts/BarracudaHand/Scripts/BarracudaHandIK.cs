@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UniVRM10;
 
 namespace Baku.VMagicMirror.IK
 {
@@ -94,10 +95,10 @@ namespace Baku.VMagicMirror.IK
             //TODO: 書く場所はココじゃないかもしれないが、頭との相対位置でIKを決めた方がキャリブとの相性が良いかもしれないので考えること
             vrmLoadable.VrmLoaded += info =>
             {
-                _head = info.animator.GetBoneTransform(HumanBodyBones.Head);
+                _head = info.controlRig.GetBoneTransform(HumanBodyBones.Head);
                 _defaultHeadPosition = _head.position;
-                _ikCalculator.SetModel(info.animator, DownHand);
-                InitializeArmLengthFactor(info.animator);
+                _ikCalculator.SetModel(info.controlRig, DownHand);
+                InitializeArmLengthFactor(info.controlRig);
                 _hasModel = true;
             };
 

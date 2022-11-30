@@ -122,8 +122,8 @@ namespace Baku.VMagicMirror.IK
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            _keyPoseCalculator.SetupAvatarBodyParameter(info.animator);
-            var headHeight = info.animator.GetBoneTransform(HumanBodyBones.Head).position.y;
+            _keyPoseCalculator.SetupAvatarBodyParameter(info.controlRig);
+            var headHeight = info.controlRig.GetBoneTransform(HumanBodyBones.Head).position.y;
             //0を入れると0除算になるので一応避けておく
             _timeTableGenerator.HeadHeight = Mathf.Max(headHeight, 0.1f);
             _hasModel = true;

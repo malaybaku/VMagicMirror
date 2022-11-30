@@ -98,17 +98,20 @@ namespace Baku.VMagicMirror
             => JsonUtility.FromJson<MotionRequestCollection>(json);
     }
 
+    //NOTE: VRM 0.x時代との互換性についてはWPF側が吸収する想定なことに注意。
+    //Unity側はVRM 0.xのBlendShapeClipの呼称には関知しない
     [Serializable]
     public class BlendShapeValues
     {
-        public int Joy;
+        public int Happy;
         public int Neutral;
         public int Angry;
-        public int Sorrow;
-        public int Fun;
+        public int Sad;
+        public int Relaxed;
+        public int Surprised;
         public int Blink;
-        public int Blink_L;
-        public int Blink_R;
+        public int BlinkLeft;
+        public int BlinkRight;
         public int A;
         public int I;
         public int U;
@@ -121,14 +124,15 @@ namespace Baku.VMagicMirror
 
         public Dictionary<string, float> ToDic() => new Dictionary<string, float>()
         {
-            [nameof(Joy)] = Joy * 0.01f,
             [nameof(Neutral)] = Neutral * 0.01f,
+            [nameof(Happy)] = Happy * 0.01f,
             [nameof(Angry)] = Angry * 0.01f,
-            [nameof(Sorrow)] = Sorrow * 0.01f,
-            [nameof(Fun)] = Fun * 0.01f,
+            [nameof(Sad)] = Sad * 0.01f,
+            [nameof(Relaxed)] = Relaxed * 0.01f,
+            [nameof(Surprised)] = Surprised * 0.01f,
             [nameof(Blink)] = Blink * 0.01f,
-            [nameof(Blink_L)] = Blink_L * 0.01f,
-            [nameof(Blink_R)] = Blink_R * 0.01f,
+            [nameof(BlinkLeft)] = BlinkLeft * 0.01f,
+            [nameof(BlinkRight)] = BlinkRight * 0.01f,
             [nameof(A)] = A * 0.01f,
             [nameof(I)] = I * 0.01f,
             [nameof(U)] = U * 0.01f,

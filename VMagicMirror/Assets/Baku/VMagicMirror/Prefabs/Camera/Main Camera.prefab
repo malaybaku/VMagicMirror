@@ -188,7 +188,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.85
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -564,8 +564,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2ad687426819894b991a0bed05efd34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCam: {fileID: 1574337991341618299}
-  postProcessLayer: {fileID: 1574337991341618294}
 --- !u!1 &1574337991882445229
 GameObject:
   m_ObjectHideFlags: 0

@@ -71,8 +71,8 @@ namespace Baku.VMagicMirror
             fbbik.solver.rightLegChain.pull = 0f;
 
             fbbik.solver.SetLimbOrientations(new BipedLimbOrientations(
-                new BipedLimbOrientations.LimbOrientation(Vector3.forward, Vector3.forward, Vector3.left),
-                new BipedLimbOrientations.LimbOrientation(Vector3.forward, Vector3.forward, Vector3.left),
+                new BipedLimbOrientations.LimbOrientation(Vector3.forward, Vector3.forward, Vector3.up),
+                new BipedLimbOrientations.LimbOrientation(Vector3.forward, Vector3.forward, Vector3.down),
                 new BipedLimbOrientations.LimbOrientation(Vector3.forward, Vector3.forward, Vector3.left),
                 new BipedLimbOrientations.LimbOrientation(Vector3.forward, Vector3.forward, Vector3.left)
             ));

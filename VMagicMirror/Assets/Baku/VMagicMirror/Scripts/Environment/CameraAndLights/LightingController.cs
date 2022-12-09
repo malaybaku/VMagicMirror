@@ -6,6 +6,10 @@ namespace Baku.VMagicMirror
 {
     public class LightingController : MonoBehaviour
     {
+        //NOTE: 本質的な意味はない値だが、VRM 0.xから1.0に引き上げたら同等のライティングでも強すぎに見えるようになったため、
+        //この係数をかけて光量を抑える。(MToonの何かが変わったものと思われるけど把握できてない)
+        private const float LightIntensityConstFactor = 0.85f;
+        
         [SerializeField] private Light mainLight = null;
         [SerializeField] private Vector3 mainLightLocalEulerAngle = default;
         
@@ -140,7 +144,7 @@ namespace Baku.VMagicMirror
         }
 
         private void SetLightIntensity(float intensity)
-            => mainLight.intensity = intensity;
+            => mainLight.intensity = intensity * LightIntensityConstFactor;
 
         private void SetLightYaw(int yawDeg)
         {

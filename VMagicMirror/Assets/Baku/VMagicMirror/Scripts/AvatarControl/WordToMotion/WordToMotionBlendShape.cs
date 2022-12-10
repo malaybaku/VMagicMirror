@@ -120,7 +120,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="values"></param>
         /// <param name="keepLipSync"></param>
-        public void SetForPreview(IEnumerable<(ExpressionKey, float)> values, bool keepLipSync)
+        public void SetForPreview((ExpressionKey k, float v)[] values, bool keepLipSync)
         {
             //SetBlendShapesとは違ってClearしない: 前回と同じ値でよい場合、_hasDiff == falseになるようにしたい
             foreach (var (key, value) in values)
@@ -131,6 +131,19 @@ namespace Baku.VMagicMirror
                 {
                     _blendShape[key] = value;
                     _hasDiff = true;
+                }
+            }
+
+            //送られてない値は0扱いする
+            foreach (var key in _allBlendShapeKeys)
+            {
+                if (!values.Any(v => v.k.Equals(key)))
+                {
+                    if (_blendShape.ContainsKey(key) && _blendShape[key] > 0f)
+                    {
+                        _hasDiff = true;
+                    }
+                    _blendShape[key] = 0f;
                 }
             }
 
@@ -146,16 +159,22 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="values"></param>
         /// <param name="keepLipSync"></param>
-        public void SetBlendShapes(IEnumerable<(ExpressionKey, float)> values, bool keepLipSync)
+        public void SetBlendShapes((ExpressionKey k, float v)[] values, bool keepLipSync)
         {
             Clear();
+
+            foreach (var key in _allBlendShapeKeys)
+            {
+                _blendShape[key] = 0f;
+            }            
+            
             foreach (var (key, value) in values)
             {
                 _blendShape[key] = value;
                 //valuesがカラになるパターンはほぼ無いはずで、実質的にはいつも_hasDiff == trueになる
                 _hasDiff = true;
             }
-
+            
             if (KeepLipSync != keepLipSync)
             {
                 KeepLipSync = keepLipSync;

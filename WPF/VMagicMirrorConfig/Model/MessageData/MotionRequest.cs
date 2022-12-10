@@ -60,7 +60,9 @@ namespace Baku.VMagicMirrorConfig
 
         public MotionRequest ToVrm10Request()
         {
-            //基本は値コピーだが、ブレンドシェイプ名をVRM 1.0のものに読み替えているのがポイント
+            //基本は値コピーだが、以下の点で異なる
+            // - ブレンドシェイプ名をVRM 1.0のものに読み替える
+            // - 値が0であるようなカスタムブレンドシェイプは落とす (送信データを削るため)
             return new MotionRequest()
             {
                 MotionType = MotionType,
@@ -76,7 +78,7 @@ namespace Baku.VMagicMirrorConfig
                     p => DefaultBlendShapeNameStore.GetVrm10KeyName(p.Key),
                     p => p.Value
                     ),
-                ExtraBlendShapeValues = ExtraBlendShapeValues.ToList(),
+                ExtraBlendShapeValues = ExtraBlendShapeValues.Where(v => v.Value > 0).ToList(),
             };
         }
 

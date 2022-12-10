@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror
             ExpressionKey.CreateFromPreset(ExpressionPreset.oh),
         };
         
-        private ExpressionKey[] _allBlendShapeKeys = new ExpressionKey[0];
+        private ExpressionKey[] _allBlendShapeKeys = Array.Empty<ExpressionKey>();
 
         private readonly Dictionary<ExpressionKey, float> _blendShape = new Dictionary<ExpressionKey, float>();
         
@@ -125,7 +125,6 @@ namespace Baku.VMagicMirror
             //SetBlendShapesとは違ってClearしない: 前回と同じ値でよい場合、_hasDiff == falseになるようにしたい
             foreach (var (key, value) in values)
             {
-                //NOTE: Removeは不要。ロード中のアバターのClipはぜんぶ飛んでくるはずのため
                 if (_allBlendShapeKeys.Any(k => k.Name == key.Name) && 
                     (!_blendShape.ContainsKey(key) || Mathf.Abs(_blendShape[key] - value) > 0.005f)
                    )
@@ -134,7 +133,7 @@ namespace Baku.VMagicMirror
                     _hasDiff = true;
                 }
             }
-            
+
             if (KeepLipSync != keepLipSync)
             {
                 KeepLipSync = keepLipSync;
@@ -188,7 +187,6 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //NOTE: LateUpdateの実装(初期実装)と違い、必要なとこだけ狙ってAccumulateする
             for (int i = 0; i < _allBlendShapeKeys.Length; i++)
             {
                 var key = _allBlendShapeKeys[i];

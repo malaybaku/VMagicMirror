@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using mattatz.TransformControl;
 using UnityEngine;
@@ -33,6 +34,9 @@ namespace Baku.VMagicMirror
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones 
             = new Dictionary<AccessoryAttachTarget, Transform>();
 
+        private bool _firstEnabledCalled;
+        public Action<AccessoryItem> FirstEnabled;
+        
         private bool _visibleByWordToMotion;
         public bool VisibleByWordToMotion
         {
@@ -86,6 +90,43 @@ namespace Baku.VMagicMirror
 
         public void ConfirmLayoutChange() => HasLayoutChange = false;
 
+        public void LoadContent()
+        {
+            try
+            {
+                _file.LoadBinary();
+                switch (_file.Type)
+                {
+                    case AccessoryType.Png:
+                        InitializeImage(_file);
+                        break;
+                    case AccessoryType.Glb:
+                        var glbContext = AccessoryFileReader.LoadGlb(_file.FilePath, _file.Bytes);
+                        var glbObj = glbContext.Object;
+                        glbObj.transform.SetParent(modelParent);
+                        _fileActions = glbContext.Actions;
+                        break;
+                    case AccessoryType.Gltf:
+                        var gltfContext = AccessoryFileReader.LoadGltf(_file.FilePath, _file.Bytes);
+                        var gltfObj = gltfContext.Object;
+                        gltfObj.transform.SetParent(modelParent);
+                        _fileActions = gltfContext.Actions;
+                        break;
+                    case AccessoryType.NumberedPng:
+                        InitializeAnimatableImage(_file);
+                        break;
+                    default:
+                        LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
+                        break;
+                }
+            }
+            finally
+            {
+                //NOTE: glb / glTFの場合、バイナリって破棄しても安全なんだっけ…？(安全そうには見えるが)
+                _file.ReleaseBinary();
+            }
+        }
+        
         /// <summary>
         /// ビルボード動作時に参照するカメラ、およびファイルを指定してアイテムをロードします。
         /// </summary>
@@ -95,30 +136,7 @@ namespace Baku.VMagicMirror
         {
             _cam = cam;
             _file = file;
-            switch (file.Type)
-            {
-                case AccessoryType.Png:
-                    InitializeImage(file);
-                    break;
-                case AccessoryType.Glb:
-                    var glbContext = AccessoryFileReader.LoadGlb(file.FilePath, file.Bytes);
-                    var glbObj = glbContext.Object;
-                    glbObj.transform.SetParent(modelParent);
-                    _fileActions = glbContext.Actions;
-                    break;
-                case AccessoryType.Gltf:
-                    var gltfContext = AccessoryFileReader.LoadGltf(file.FilePath, file.Bytes);
-                    var gltfObj = gltfContext.Object; 
-                    gltfObj.transform.SetParent(modelParent);
-                    _fileActions = gltfContext.Actions;
-                    break;
-                case AccessoryType.NumberedPng:
-                    InitializeAnimatableImage(file);
-                    break;
-                default:
-                    LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
-                    break;
-            }
+
             SetVisibility(false);
         }
 
@@ -138,6 +156,12 @@ namespace Baku.VMagicMirror
         {
             if (ShouldBeVisible)
             {
+                if (!_firstEnabledCalled)
+                {
+                    FirstEnabled?.Invoke(this);
+                    _firstEnabledCalled = true;
+                }
+
                 _fileActions.Update(Time.deltaTime);
             }
         }

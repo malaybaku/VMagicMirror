@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UniGLTF;
 
 namespace Baku.VMagicMirror
 {
@@ -43,19 +44,11 @@ namespace Baku.VMagicMirror
         public const string FolderIdSuffix = ">";
         
         //NOTE: ちょっと冗長だが、フォルダパスもファイルパスもフルパスで指定する。
-        public AccessoryFile(string folderPath, AccessoryType type, byte[][] binaries)
-            : this("", folderPath, type, Array.Empty<byte>(), binaries)
+        public AccessoryFile(AccessoryType type, string filePath, string folderPath = "")
         {
-        }
-
-        public AccessoryFile(string filePath, AccessoryType type, byte[] bytes, string folderPath = "")
-            : this(filePath, folderPath, type, bytes, Array.Empty<byte[]>())
-        {
-        }
-        
-        private AccessoryFile(string path, string folderPath, AccessoryType type, byte[] bytes, byte[][] binaries)
-        {
-            FilePath = path;
+            Type = type;
+            FilePath = filePath;
+            _folderPath = folderPath;
             if (string.IsNullOrEmpty(folderPath))
             {
                 IsFolder = false;
@@ -66,15 +59,13 @@ namespace Baku.VMagicMirror
                 IsFolder = true;
                 FileId = Path.GetFileName(folderPath) + FolderIdSuffix;
             }
-            Type = type;
-            Bytes = bytes;
-            Binaries = binaries;
         }        
 
+        public AccessoryType Type { get; }
+
         public string FilePath { get; }
-        
-        //NOTE: 今のところ連番pngでのみ使う。
-        public byte[][] Binaries { get; }
+
+        private readonly string _folderPath;
         
         //NOTE: いまはフォルダパスが不要だから省いているが、プロパティとして保持してもよい
         
@@ -89,11 +80,62 @@ namespace Baku.VMagicMirror
         /// </remarks>
         public string FileId { get; }
         public bool IsFolder { get; }
+ 
+        //.png, .glbの本体、あるいは.gltfファイルで.gltfファイルそのもの。連番画像の場合はカラ 
+        public byte[] Bytes { get; private set; } = Array.Empty<byte>();
+
+        //連番画像の場合の連番バイナリ
+        public byte[][] Binaries { get; private set; } = Array.Empty<byte[]>();
         
-        //NOTE: 連番画像のような複数ファイルデータを扱う様になった場合、
-        //byte[][]みたいなデータ構造に変えてもよい
-        public byte[] Bytes { get; }
-        public AccessoryType Type { get; }
+        //バイナリロードが試行済みかどうか。「ロードしようとしたけど駄目でバイナリが空」というケースを検出するためのフラグ
+        public bool DataLoadTried { get; private set; }
+        
+        /// <summary>
+        /// アクセサリの実態が必要になった時点で呼び出すことで、ファイルからバイナリを取得します。
+        /// </summary>
+        public void LoadBinary()
+        {
+            if (DataLoadTried)
+            {
+                return;
+            }
+            DataLoadTried = true;
+            
+            switch (Type)
+            {
+                case AccessoryType.Png:
+                case AccessoryType.Glb:
+                case AccessoryType.Gltf:
+                    if (File.Exists(FilePath))
+                    {
+                        Bytes = File.ReadAllBytes(FilePath);
+                    }
+                    break;
+                case AccessoryType.NumberedPng:
+                    //念のため改めてチェック
+                    if (Directory.Exists(_folderPath))
+                    {
+                        var files = Directory.GetFiles(_folderPath);
+                        if (files.All(f => Path.GetExtension(f) == ".png"))
+                        {
+                            Binaries = files.OrderBy(f => f).Select(File.ReadAllBytes).ToArray();
+                        }
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 取得したバイナリを使い終わったあとで呼ぶことで、バイナリをGC対象にします。
+        /// </summary>
+        /// <remarks>
+        /// 例えばpng1枚のアクセサリの場合、Textureインスタンスが生成できた時点で呼び出してよい
+        /// </remarks>
+        public void ReleaseBinary()
+        {
+            Bytes = Array.Empty<byte>();
+            Binaries = Array.Empty<byte[]>();
+        }
         
         /// <summary>
         /// アプリの起動方法によって定まる検索先フォルダから、モデル、画像等を一括でロードします。
@@ -108,7 +150,7 @@ namespace Baku.VMagicMirror
             }
 
             var result = new List<AccessoryFile>();
-            //NOTE: 将来的に連番画像とかを扱いたい場合、GetFilesではなくGetDirectoriesも呼ぶ事になるはず
+
             foreach (var file in Directory.GetFiles(dir))
             {
                 //素朴に拡張子を信じる
@@ -125,8 +167,7 @@ namespace Baku.VMagicMirror
                     continue;
                 }
                 
-                var bytes = File.ReadAllBytes(file);
-                result.Add(new AccessoryFile(file, fileType, bytes));
+                result.Add(new AccessoryFile(fileType, file));
             }
 
             foreach (var childDir in Directory.GetDirectories(dir))
@@ -137,12 +178,12 @@ namespace Baku.VMagicMirror
                 if (gltfFiles.Length == 1)
                 {
                     var path = gltfFiles[0];
-                    result.Add(new AccessoryFile(path, AccessoryType.Gltf, File.ReadAllBytes(path), childDir));
+                    result.Add(new AccessoryFile(AccessoryType.Gltf, path, childDir));
                 }
                 else if (files.Length > 0 && files.All(f => Path.GetExtension(f) == ".png"))
                 {
                     var binaries = files.OrderBy(f => f).Select(File.ReadAllBytes).ToArray();
-                    result.Add(new AccessoryFile(childDir, AccessoryType.NumberedPng, binaries));
+                    result.Add(new AccessoryFile(AccessoryType.NumberedPng, childDir, childDir));
                 }
             }
             

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Baku.VMagicMirror
 {
     public interface IAccessoryFileActions
@@ -24,47 +22,5 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class EmptyFileActions : AccessoryFileActionsBase
     {
-    }
-    
-    public class ImageAccessoryActions : AccessoryFileActionsBase
-    {
-        public ImageAccessoryActions(Texture2D texture)
-        {
-            _texture = texture;
-        }
-        private Texture2D _texture;
-
-        public override void Dispose()
-        {
-            if (_texture != null)
-            {
-                Object.Destroy(_texture);                    
-            }
-            _texture = null;
-        }
-    }
-        
-    public class GlbFileAccessoryActions : AccessoryFileActionsBase
-    {
-        public GlbFileAccessoryActions(UniGLTF.ImporterContext context, UniGLTF.RuntimeGltfInstance instance)
-        {
-            _context = context;
-            _instance = instance;
-        }
-        
-        private UniGLTF.ImporterContext _context;
-        private UniGLTF.RuntimeGltfInstance _instance;
-        
-        public override void Dispose()
-        {
-            _context?.Dispose();
-            _context = null;
-
-            if (_instance != null)
-            {
-                _instance.Dispose();
-            }
-            _instance = null;
-        }
     }
 }

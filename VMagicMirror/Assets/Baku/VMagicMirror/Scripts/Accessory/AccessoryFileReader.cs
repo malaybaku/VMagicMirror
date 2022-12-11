@@ -26,17 +26,17 @@ namespace Baku.VMagicMirror
         // NOTE: ぜんぶ同じフォルダに入ってる事は保証されてない事に注意。
         // gltfや、(今は無いけど想定される例として)連番画像とかはフォルダを区切った中に入る。
 
-        public static AccessoryFileContext<Texture2D> LoadPngImage(byte[] bytes)
+        public static AccessoryFileContext<Texture2D> LoadPngImage(AccessoryFile file, byte[] bytes)
         {
             if (bytes == null || bytes.Length == 0)
             {
-                return new AccessoryFileContext<Texture2D>(null, new ImageAccessoryActions(null));
+                return new AccessoryFileContext<Texture2D>(null, new ImageAccessoryActions(file, null));
             }
 
             var tex = new Texture2D(8, 8, TextureFormat.RGBA32, false);
             tex.LoadImage(bytes);
             tex.Apply();
-            return new AccessoryFileContext<Texture2D>(tex, new ImageAccessoryActions(tex));
+            return new AccessoryFileContext<Texture2D>(tex, new ImageAccessoryActions(file, tex));
         }
 
         public static AccessoryFileContext<GameObject> LoadGltf(string path, byte[] bytes)

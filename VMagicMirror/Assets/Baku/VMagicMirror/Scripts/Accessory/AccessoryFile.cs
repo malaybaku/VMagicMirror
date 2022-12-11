@@ -80,7 +80,9 @@ namespace Baku.VMagicMirror
         /// </remarks>
         public string FileId { get; }
         public bool IsFolder { get; }
- 
+
+        //NOTE: バイナリはアンロードしない。ちょっと効率が悪いが、画像をリサイズしたいときに欲しくなるため。
+        
         //.png, .glbの本体、あるいは.gltfファイルで.gltfファイルそのもの。連番画像の場合はカラ 
         public byte[] Bytes { get; private set; } = Array.Empty<byte>();
 
@@ -125,6 +127,7 @@ namespace Baku.VMagicMirror
             }
         }
 
+        //NOTE: 
         /// <summary>
         /// 取得したバイナリを使い終わったあとで呼ぶことで、バイナリをGC対象にします。
         /// </summary>

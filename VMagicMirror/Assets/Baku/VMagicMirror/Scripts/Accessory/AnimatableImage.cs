@@ -17,16 +17,25 @@ namespace Baku.VMagicMirror
             Referred,
         }
         
-        readonly struct WrappedTexture
+        class WrappedTexture
         {
             public WrappedTexture(TextureTypes type, Texture2D texture)
+                :this (type, texture, Array.Empty<byte>())
+            {
+            }
+
+            public WrappedTexture(TextureTypes type, Texture2D texture, byte[] bytes)
             {
                 Type = type;
+                Bytes = bytes;
                 Texture = texture;
+                RawSize = texture != null ? Math.Max(texture.width, texture.height) : 0;
             }
             
             public TextureTypes Type { get; }
-            public Texture2D Texture { get; }
+            public byte[] Bytes { get; }
+            public Texture2D Texture { get; set; }
+            public int RawSize { get; }
         }
 
         //NOTE: アプリの生存期間中この1枚しか使わないため、特にDestroyもしない
@@ -76,6 +85,7 @@ namespace Baku.VMagicMirror
                             //来ないはず
                             _ => new WrappedTexture(TextureTypes.Empty, null),
                         };
+                        Debug.Log($"discard duplicated animatable image frame, {i}, {_textures[i].Type}");
                         hasSameBinary = true;
                         break;
                     }
@@ -92,10 +102,11 @@ namespace Baku.VMagicMirror
                 {
                     UnityEngine.Object.Destroy(rawTextures[i]);
                     _textures[i] = new WrappedTexture(TextureTypes.Empty, null);
+                    Debug.Log($"discard totally transparent animatable image frame, {i}");
                     continue;
                 }
                 
-                _textures[i] = new WrappedTexture(TextureTypes.Original, rawTextures[i]);
+                _textures[i] = new WrappedTexture(TextureTypes.Original, rawTextures[i], binaries[i]);
             }
         }
 
@@ -177,6 +188,12 @@ namespace Baku.VMagicMirror
             else
             {
                 FramePerSecond = layout.FramePerSecond;
+            }
+
+            var maxSize = layout.GetResolutionLimitSize();
+            foreach (var t in _textures.Where(t => t.Type == TextureTypes.Original))
+            {
+                AccessoryTextureResizer.ResizeImage(t.Texture, maxSize, t.Bytes, t.RawSize);
             }
         }
 

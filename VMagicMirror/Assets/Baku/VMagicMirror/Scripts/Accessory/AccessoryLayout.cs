@@ -17,6 +17,16 @@ namespace Baku.VMagicMirror
         World = 6,
     }
 
+    //値の定義順も含めてWPFと一致させる
+    public enum AccessoryImageResolutionLimit : int
+    {
+        None = 0,
+        Max1024 = 1,
+        Max512 = 2,
+        Max256 = 3,
+        Max128 = 4,
+    }
+
     [Serializable]
     public class AccessoryResetTargetItems
     {
@@ -45,5 +55,17 @@ namespace Baku.VMagicMirror
         public bool UseBillboardMode;
         //連番画像でのみ意味のある値
         public int FramePerSecond;
+        //画像または連番画像でのみ意味のある値 (※glTFのテクスチャに適用する手もあるが、面倒なので一旦パス)
+        public AccessoryImageResolutionLimit ResolutionLimit;
+
+        public int GetResolutionLimitSize() => ResolutionLimit switch
+        {
+            AccessoryImageResolutionLimit.Max1024 => 1024,
+            AccessoryImageResolutionLimit.Max512 => 512,
+            AccessoryImageResolutionLimit.Max256 => 256,
+            AccessoryImageResolutionLimit.Max128 => 128,
+            //無限大のことを指す
+            _ => 16384,
+        };
     }
 }

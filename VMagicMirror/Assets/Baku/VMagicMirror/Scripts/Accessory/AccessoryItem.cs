@@ -92,39 +92,33 @@ namespace Baku.VMagicMirror
 
         public void LoadContent()
         {
-            try
+            _file.LoadBinary();
+            switch (_file.Type)
             {
-                _file.LoadBinary();
-                switch (_file.Type)
-                {
-                    case AccessoryType.Png:
-                        InitializeImage(_file);
-                        break;
-                    case AccessoryType.Glb:
-                        var glbContext = AccessoryFileReader.LoadGlb(_file.FilePath, _file.Bytes);
-                        var glbObj = glbContext.Object;
-                        glbObj.transform.SetParent(modelParent, false);
-                        _fileActions = glbContext.Actions;
-                        break;
-                    case AccessoryType.Gltf:
-                        var gltfContext = AccessoryFileReader.LoadGltf(_file.FilePath, _file.Bytes);
-                        var gltfObj = gltfContext.Object;
-                        gltfObj.transform.SetParent(modelParent, false);
-                        _fileActions = gltfContext.Actions;
-                        break;
-                    case AccessoryType.NumberedPng:
-                        InitializeAnimatableImage(_file);
-                        break;
-                    default:
-                        LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
-                        break;
-                }
+                case AccessoryType.Png:
+                    InitializeImage(_file);
+                    break;
+                case AccessoryType.Glb:
+                    var glbContext = AccessoryFileReader.LoadGlb(_file.FilePath, _file.Bytes);
+                    var glbObj = glbContext.Object;
+                    glbObj.transform.SetParent(modelParent, false);
+                    _fileActions = glbContext.Actions;
+                    break;
+                case AccessoryType.Gltf:
+                    var gltfContext = AccessoryFileReader.LoadGltf(_file.FilePath, _file.Bytes);
+                    var gltfObj = gltfContext.Object;
+                    gltfObj.transform.SetParent(modelParent, false);
+                    _fileActions = gltfContext.Actions;
+                    break;
+                case AccessoryType.NumberedPng:
+                    InitializeAnimatableImage(_file);
+                    break;
+                default:
+                    LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
+                    break;
             }
-            finally
-            {
-                //NOTE: もしglb/glTFでbyte[]を捨てて怒られる場合はちょっと考える
-                _file.ReleaseBinary();
-            }
+            
+            _fileActions?.UpdateLayout(ItemLayout);
         }
         
         /// <summary>
@@ -185,7 +179,7 @@ namespace Baku.VMagicMirror
 
         private void InitializeImage(AccessoryFile file)
         {
-            var context = AccessoryFileReader.LoadPngImage(file.Bytes);
+            var context = AccessoryFileReader.LoadPngImage(file, file.Bytes);
             var tex = context.Object;
             _fileActions = context.Actions;
             

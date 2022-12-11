@@ -29,6 +29,24 @@ namespace Baku.VMagicMirror
             public Texture2D Texture { get; }
         }
 
+        //NOTE: アプリの生存期間中この1枚しか使わないため、特にDestroyもしない
+        private static Texture2D _transparentTexture;
+        private static Texture2D LoadTransparentTexture()
+        {
+            if (_transparentTexture == null)
+            {
+                _transparentTexture = new Texture2D(16, 16, TextureFormat.ARGB32, false);
+                var colors = _transparentTexture.GetPixels32();
+                for (var i = 0; i < colors.Length; i++)
+                {
+                    colors[i] = new Color32(0, 0, 0, 0);
+                }
+                _transparentTexture.SetPixels32(colors);
+                _transparentTexture.Apply();
+            }
+            return _transparentTexture;
+        }
+
         public AnimatableImage(byte[][] binaries)
         {
             var rawTextures = binaries
@@ -142,6 +160,10 @@ namespace Baku.VMagicMirror
             if (Renderer != null)
             {
                 Renderer.material.mainTexture = CurrentTexture;
+                if (CurrentTexture == null)
+                {
+                    Renderer.material.mainTexture = LoadTransparentTexture();
+                }
             }
         }
 

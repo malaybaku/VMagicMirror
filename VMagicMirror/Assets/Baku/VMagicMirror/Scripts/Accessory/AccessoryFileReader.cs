@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using UniGLTF;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -26,6 +28,11 @@ namespace Baku.VMagicMirror
 
         public static AccessoryFileContext<Texture2D> LoadPngImage(byte[] bytes)
         {
+            if (bytes == null || bytes.Length == 0)
+            {
+                return new AccessoryFileContext<Texture2D>(null, new ImageAccessoryActions(null));
+            }
+
             var tex = new Texture2D(8, 8, TextureFormat.RGBA32, false);
             tex.LoadImage(bytes);
             tex.Apply();
@@ -34,6 +41,11 @@ namespace Baku.VMagicMirror
 
         public static AccessoryFileContext<GameObject> LoadGltf(string path, byte[] bytes)
         {
+            if (!File.Exists(path) || bytes == null || bytes.Length == 0)
+            {
+                return new AccessoryFileContext<GameObject>(new GameObject("(empty)"), new EmptyFileActions());
+            }
+
             var parser = new AutoGltfFileParser(path);
             using var data = parser.Parse();
             return LoadGlbOrGltf(data);
@@ -41,6 +53,11 @@ namespace Baku.VMagicMirror
 
         public static AccessoryFileContext<GameObject> LoadGlb(string path, byte[] bytes)
         {
+            if (!File.Exists(path) || bytes == null || bytes.Length == 0)
+            {
+                return new AccessoryFileContext<GameObject>(new GameObject("(empty)"), new EmptyFileActions());
+            }
+
             var parser = new GlbLowLevelParser("", bytes);
             using var data = parser.Parse();
             return LoadGlbOrGltf(data);
@@ -48,6 +65,10 @@ namespace Baku.VMagicMirror
 
         public static AccessoryFileContext<AnimatableImage> LoadNumberedPngImage(byte[][] binaries)
         {
+            if (binaries == null)
+            {
+                binaries = Array.Empty<byte[]>();
+            }
             var res = new AnimatableImage(binaries);
             //他と違い、AnimatableImage自体がFileActionを実装済み
             return new AccessoryFileContext<AnimatableImage>(res, res);

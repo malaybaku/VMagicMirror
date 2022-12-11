@@ -6,10 +6,32 @@ namespace Baku.VMagicMirror
 {
     public class AnimatableImage : IDisposable, IAccessoryFileActions
     {
-        //NOTE: Texture2D[] を渡すほうがきれいかもしれん
+        //1コマ分の画像の表現方法
+        enum TextureTypes
+        {
+            //何も表示しない = 指定されたテクスチャの全pixelが透明だったのでnullでも代用できるケース
+            Empty,
+            //Destroyが必要な画像
+            Original,
+            //全く同じ画像が他で指定されている = その画像のIndexが分かってれば画像を適用できる
+            Referred,
+        }
+        
+        readonly struct WrappedTexture
+        {
+            public WrappedTexture(TextureTypes type, Texture2D texture)
+            {
+                Type = type;
+                Texture = texture;
+            }
+            
+            public TextureTypes Type { get; }
+            public Texture2D Texture { get; }
+        }
+
         public AnimatableImage(byte[][] binaries)
         {
-            _allTextures = binaries
+            var rawTextures = binaries
                 .Select(bin =>
                 {
                     var tex = new Texture2D(8, 8, TextureFormat.RGBA32, false);
@@ -18,7 +40,48 @@ namespace Baku.VMagicMirror
                     return tex;
                 })
                 .ToArray();
+
+            _textures = new WrappedTexture[rawTextures.Length];
+            for (var i = 0; i < _textures.Length; i++)
+            {
+                //他に同じ画像があったら使い回す
+                var hasSameBinary = false;
+                for (var j = 0; j < i - 1; j++)
+                {
+                    if (binaries[j].SequenceEqual(binaries[i]))
+                    {
+                        // 「透明テクスチャと一致する」というケースもあることに注意
+                        _textures[i] = _textures[j].Type switch
+                        {
+                            TextureTypes.Empty => new WrappedTexture(TextureTypes.Empty, null),
+                            TextureTypes.Original => new WrappedTexture(TextureTypes.Referred, _textures[j].Texture),
+                            //来ないはず
+                            _ => new WrappedTexture(TextureTypes.Empty, null),
+                        };
+                        hasSameBinary = true;
+                        break;
+                    }
+                }
+                if (hasSameBinary)
+                {
+                    UnityEngine.Object.Destroy(rawTextures[i]);
+                    continue;
+                }
+                
+                //完全透明なテクスチャは捨てる: 透明であることの検出が重たいけど、これは一瞬なので我慢してもろて…
+                var pixels = rawTextures[i].GetPixels32();
+                if (pixels.All(p => p.a == 0))
+                {
+                    UnityEngine.Object.Destroy(rawTextures[i]);
+                    _textures[i] = new WrappedTexture(TextureTypes.Empty, null);
+                    continue;
+                }
+                
+                _textures[i] = new WrappedTexture(TextureTypes.Original, rawTextures[i]);
+            }
         }
+
+        private WrappedTexture[] _textures;
 
         private float _timePerFrame = 1f / 15f;
         private int _framePerSecond = 15;
@@ -36,13 +99,14 @@ namespace Baku.VMagicMirror
             }
         }
 
+        //NOTE: 連番画像で透明な画像が入っている場合、正常な連番pngであってもnullが戻る事がある
         private Texture2D CurrentTexture
         {
             get
             {
-                if (_imageIndex >= 0 && _imageIndex < _allTextures.Length)
+                if (_imageIndex >= 0 && _imageIndex < _textures.Length)
                 {
-                    return _allTextures[_imageIndex];
+                    return _textures[_imageIndex].Texture;
                 }
                 else
                 {
@@ -50,9 +114,10 @@ namespace Baku.VMagicMirror
                 }
             }
         }
-        
-        public Texture2D FirstTexture => _allTextures.Length > 0 ? _allTextures[0] : null;
-        private Texture2D[] _allTextures;
+
+        //NOTE: nullを戻す事があるのはby-design
+        public Texture2D FirstValidTexture 
+            => _textures.FirstOrDefault(t => t.Type != TextureTypes.Empty).Texture;
 
         public Renderer Renderer { get; set; }
 
@@ -69,7 +134,7 @@ namespace Baku.VMagicMirror
 
             _timeCount -= _timePerFrame;
             _imageIndex++;
-            if (_imageIndex >= _allTextures.Length)
+            if (_imageIndex >= _textures.Length)
             {
                 _imageIndex = 0;
             }
@@ -110,11 +175,16 @@ namespace Baku.VMagicMirror
         
         public void Dispose()
         {
-            foreach (var texture in _allTextures)
+            foreach (var t in _textures)
             {
-                UnityEngine.Object.Destroy(texture);
+                if (t.Type == TextureTypes.Original && 
+                    t.Texture != null)
+                {
+                    UnityEngine.Object.Destroy(t.Texture);
+                }
             }
-            _allTextures = Array.Empty<Texture2D>();
+            
+            _textures = Array.Empty<WrappedTexture>();
         }
     }
 }

@@ -122,7 +122,7 @@ namespace Baku.VMagicMirror
             }
             finally
             {
-                //NOTE: glb / glTFの場合、バイナリって破棄しても安全なんだっけ…？(安全そうには見えるが)
+                //NOTE: もしglb/glTFでbyte[]を捨てて怒られる場合はちょっと考える
                 _file.ReleaseBinary();
             }
         }
@@ -162,7 +162,7 @@ namespace Baku.VMagicMirror
                     _firstEnabledCalled = true;
                 }
 
-                _fileActions.Update(Time.deltaTime);
+                _fileActions?.Update(Time.deltaTime);
             }
         }
         
@@ -199,13 +199,18 @@ namespace Baku.VMagicMirror
             context.Object.Renderer = imageRenderer;
             _fileActions = context.Actions;
             
-            var tex = context.Object.FirstTexture;
+            var tex = context.Object.FirstValidTexture;
             imageRenderer.material.mainTexture = tex;
             SetImageRendererAspect(tex);
         }
 
         private void SetImageRendererAspect(Texture2D tex)
         {
+            if (tex == null)
+            {
+                return;
+            }
+
             if (tex.width < tex.height)
             {
                 var aspect = tex.width * 1.0f / tex.height;

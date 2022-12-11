@@ -18,6 +18,13 @@ namespace Baku.VMagicMirror
         public virtual void UpdateLayout(AccessoryItemLayout layout) { }
         public virtual void OnVisibilityChanged(bool isVisible) { }
     }
+
+    /// <summary>
+    /// ファイルの実態がなく、アクセサリーがロード出来なかったときにカラの実装を差し込む
+    /// </summary>
+    public class EmptyFileActions : AccessoryFileActionsBase
+    {
+    }
     
     public class ImageAccessoryActions : AccessoryFileActionsBase
     {

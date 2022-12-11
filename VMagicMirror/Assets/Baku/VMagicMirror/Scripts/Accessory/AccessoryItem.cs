@@ -103,13 +103,13 @@ namespace Baku.VMagicMirror
                     case AccessoryType.Glb:
                         var glbContext = AccessoryFileReader.LoadGlb(_file.FilePath, _file.Bytes);
                         var glbObj = glbContext.Object;
-                        glbObj.transform.SetParent(modelParent);
+                        glbObj.transform.SetParent(modelParent, false);
                         _fileActions = glbContext.Actions;
                         break;
                     case AccessoryType.Gltf:
                         var gltfContext = AccessoryFileReader.LoadGltf(_file.FilePath, _file.Bytes);
                         var gltfObj = gltfContext.Object;
-                        gltfObj.transform.SetParent(modelParent);
+                        gltfObj.transform.SetParent(modelParent, false);
                         _fileActions = gltfContext.Actions;
                         break;
                     case AccessoryType.NumberedPng:

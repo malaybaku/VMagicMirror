@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror
             {
                 //他に同じ画像があったら使い回す
                 var hasSameBinary = false;
-                for (var j = 0; j < i - 1; j++)
+                for (var j = 0; j < i; j++)
                 {
                     if (binaries[j].SequenceEqual(binaries[i]))
                     {

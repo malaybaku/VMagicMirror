@@ -151,6 +151,8 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Accessory_Item_Rotation">Rotation</sys:String>
     <sys:String x:Key="Accessory_Item_Scale">Scale</sys:String>
     <sys:String x:Key="Accessory_Item_Fps">FPS (for numbered png)</sys:String>
+    <sys:String x:Key="Accessory_Item_MaxTextureSize">Image max size</sys:String>
+    <sys:String x:Key="Accessory_Item_MaxTextureSize_Unlimited">Unlimited</sys:String>
 
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>

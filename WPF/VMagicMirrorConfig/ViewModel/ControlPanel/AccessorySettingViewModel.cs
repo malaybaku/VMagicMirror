@@ -83,12 +83,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     public class AccessoryItemViewModel : ViewModelBase
     {
         public static string[] AvailableAttachTargets { get; }
+
+        public static AccessoryImageResolutionLimit[] AvailableResolutionLimits { get; }
+
         static AccessoryItemViewModel()
         {
             //NOTE: 多言語化したいかどうか微妙なライン…ぶっちゃけ多言語化したくない…
             AvailableAttachTargets = Enum.GetValues<AccessoryAttachTarget>()
                 .Select(e => e.ToString())
                 .ToArray();
+
+            //こっちはConverterで多言語化
+            AvailableResolutionLimits = Enum.GetValues<AccessoryImageResolutionLimit>();
         }
 
 
@@ -170,6 +176,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 UpdateItemFromUi();
             });
 
+            _resolutionLimit = _item.ResolutionLimit;
+
             UpdateShowInvalidBillboardWarning();
         }
 
@@ -207,6 +215,25 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> ShowInvalidBillboardWarning { get; } = new RProperty<bool>(false);
 
+
+        private AccessoryImageResolutionLimit _resolutionLimit = AccessoryImageResolutionLimit.None;
+        public AccessoryImageResolutionLimit ResolutionLimit
+        {
+            get => _resolutionLimit;
+            set
+            {
+                if (_resolutionLimit == value)
+                {
+                    return;
+                }
+
+                _resolutionLimit = value;
+                RaisePropertyChanged();
+                _item.ResolutionLimit = value;
+                UpdateItemFromUi();
+            }
+        }
+
         private void UpdateShowInvalidBillboardWarning()
         {
             ShowInvalidBillboardWarning.Value =
@@ -239,6 +266,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             RotZ.Value = _item.Rotation.Z;
             Scale.Value = _item.Scale.X;
             FramePerSecond.Value = _item.FramePerSecond;
+            ResolutionLimit = _item.ResolutionLimit;
 
             _isUpdatingByReceivedData = false;
         }

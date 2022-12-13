@@ -103,6 +103,7 @@ namespace Baku.VMagicMirrorConfig
                 item.Rotation = Vector3.Zero();
                 item.Scale = Vector3.One();
                 item.Name = Path.GetFileNameWithoutExtension(item.FileId);
+                item.ResolutionLimit = AccessoryImageResolutionLimit.None;
                 ItemUpdated?.Invoke(item);
             }
             SerializedSetting = JsonConvert.SerializeObject(Items);
@@ -157,6 +158,7 @@ namespace Baku.VMagicMirrorConfig
             target.Position = item.Position;
             target.Rotation = item.Rotation;
             target.Scale = item.Scale;
+            target.ResolutionLimit = item.ResolutionLimit;
             ItemUpdated?.Invoke(target);
         }
 

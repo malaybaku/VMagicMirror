@@ -18,7 +18,7 @@ namespace Baku.VMagicMirror
     }
 
     //値の定義順も含めてWPFと一致させる
-    public enum AccessoryImageResolutionLimit : int
+    public enum AccessoryImageResolutionLimit
     {
         None = 0,
         Max1024 = 1,
@@ -32,7 +32,6 @@ namespace Baku.VMagicMirror
     {
         public string[] FileIds;
     }
-
     
     [Serializable]
     public class AccessoryLayouts

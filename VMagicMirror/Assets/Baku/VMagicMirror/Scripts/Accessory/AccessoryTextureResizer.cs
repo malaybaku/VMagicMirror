@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror
 {
     public static class AccessoryTextureResizer
     {
-        //戻り値: 画像が生データのと同じ解像度ならtrue, 縮まっていればfalse
+        //戻り値: textureの解像度を変更したらtrue, そのまま戻したらfalse
         public static bool ResizeImage(
             Texture2D texture, int maxSize, byte[] rawBytes, int rawSize)
         {
@@ -28,29 +28,30 @@ namespace Baku.VMagicMirror
             {
                 if (rawSize <= maxSize)
                 {
-                    return true;
+                    return false;
                 }
                 else
                 {
                     TextureSizeUtil.GetSizeLimitedTexture(texture, maxSize);
-                    return false;
+                    return true;
                 }
             }
 
             if (size > maxSize)
             {
                 TextureSizeUtil.GetSizeLimitedTexture(texture, maxSize);
-                return false;
+                return true;
             }
             else if (size * 2 <= maxSize)
             {
                 var rawTexture = new Texture2D(16, 16, TextureFormat.ARGB32, false);
                 rawTexture.LoadImage(rawBytes);
                 rawTexture.Apply();
+                var currentWidth = texture.width;
                 TextureSizeUtil.GetSizeLimitedTexture(rawTexture, texture, maxSize);
-                var result = Math.Max(rawTexture.width, rawTexture.height) == rawSize;
                 Object.Destroy(rawTexture);
-                return result;
+                //NOTE: 通常はtrueになるはず(デカくできる見込みがあってデカくしているので)
+                return currentWidth != texture.width;
             }
             else
             {

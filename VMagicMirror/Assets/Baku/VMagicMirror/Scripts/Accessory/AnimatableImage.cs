@@ -146,7 +146,7 @@ namespace Baku.VMagicMirror
 
         //NOTE: nullを戻す事があるのはby-design
         public Texture2D FirstValidTexture 
-            => _textures.FirstOrDefault(t => t.Type != TextureTypes.Empty).Texture;
+            => _textures.FirstOrDefault(t => t.Type != TextureTypes.Empty)?.Texture;
 
         public Renderer Renderer { get; set; }
 

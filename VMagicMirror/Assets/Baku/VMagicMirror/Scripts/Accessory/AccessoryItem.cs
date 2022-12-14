@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using mattatz.TransformControl;
 using UnityEngine;
@@ -33,6 +34,9 @@ namespace Baku.VMagicMirror
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones 
             = new Dictionary<AccessoryAttachTarget, Transform>();
 
+        private bool _firstEnabledCalled;
+        public Action<AccessoryItem> FirstEnabled;
+        
         private bool _visibleByWordToMotion;
         public bool VisibleByWordToMotion
         {
@@ -86,6 +90,37 @@ namespace Baku.VMagicMirror
 
         public void ConfirmLayoutChange() => HasLayoutChange = false;
 
+        public void LoadContent()
+        {
+            _file.LoadBinary();
+            switch (_file.Type)
+            {
+                case AccessoryType.Png:
+                    InitializeImage(_file);
+                    break;
+                case AccessoryType.Glb:
+                    var glbContext = AccessoryFileReader.LoadGlb(_file.FilePath, _file.Bytes);
+                    var glbObj = glbContext.Object;
+                    glbObj.transform.SetParent(modelParent, false);
+                    _fileActions = glbContext.Actions;
+                    break;
+                case AccessoryType.Gltf:
+                    var gltfContext = AccessoryFileReader.LoadGltf(_file.FilePath, _file.Bytes);
+                    var gltfObj = gltfContext.Object;
+                    gltfObj.transform.SetParent(modelParent, false);
+                    _fileActions = gltfContext.Actions;
+                    break;
+                case AccessoryType.NumberedPng:
+                    InitializeAnimatableImage(_file);
+                    break;
+                default:
+                    LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
+                    break;
+            }
+            
+            _fileActions?.UpdateLayout(ItemLayout);
+        }
+        
         /// <summary>
         /// ビルボード動作時に参照するカメラ、およびファイルを指定してアイテムをロードします。
         /// </summary>
@@ -95,30 +130,7 @@ namespace Baku.VMagicMirror
         {
             _cam = cam;
             _file = file;
-            switch (file.Type)
-            {
-                case AccessoryType.Png:
-                    InitializeImage(file);
-                    break;
-                case AccessoryType.Glb:
-                    var glbContext = AccessoryFileReader.LoadGlb(file.FilePath, file.Bytes);
-                    var glbObj = glbContext.Object;
-                    glbObj.transform.SetParent(modelParent);
-                    _fileActions = glbContext.Actions;
-                    break;
-                case AccessoryType.Gltf:
-                    var gltfContext = AccessoryFileReader.LoadGltf(file.FilePath, file.Bytes);
-                    var gltfObj = gltfContext.Object; 
-                    gltfObj.transform.SetParent(modelParent);
-                    _fileActions = gltfContext.Actions;
-                    break;
-                case AccessoryType.NumberedPng:
-                    InitializeAnimatableImage(file);
-                    break;
-                default:
-                    LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
-                    break;
-            }
+
             SetVisibility(false);
         }
 
@@ -138,7 +150,13 @@ namespace Baku.VMagicMirror
         {
             if (ShouldBeVisible)
             {
-                _fileActions.Update(Time.deltaTime);
+                if (!_firstEnabledCalled)
+                {
+                    FirstEnabled?.Invoke(this);
+                    _firstEnabledCalled = true;
+                }
+
+                _fileActions?.Update(Time.deltaTime);
             }
         }
         
@@ -161,7 +179,7 @@ namespace Baku.VMagicMirror
 
         private void InitializeImage(AccessoryFile file)
         {
-            var context = AccessoryFileReader.LoadPngImage(file.Bytes);
+            var context = AccessoryFileReader.LoadPngImage(file, file.Bytes);
             var tex = context.Object;
             _fileActions = context.Actions;
             
@@ -175,13 +193,18 @@ namespace Baku.VMagicMirror
             context.Object.Renderer = imageRenderer;
             _fileActions = context.Actions;
             
-            var tex = context.Object.FirstTexture;
+            var tex = context.Object.FirstValidTexture;
             imageRenderer.material.mainTexture = tex;
             SetImageRendererAspect(tex);
         }
 
         private void SetImageRendererAspect(Texture2D tex)
         {
+            if (tex == null)
+            {
+                return;
+            }
+
             if (tex.width < tex.height)
             {
                 var aspect = tex.width * 1.0f / tex.height;

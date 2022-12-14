@@ -151,7 +151,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Accessory_Item_Rotation">Rotation</sys:String>
     <sys:String x:Key="Accessory_Item_Scale">Scale</sys:String>
     <sys:String x:Key="Accessory_Item_Fps">FPS (連番画像のみ)</sys:String>
-
+    <sys:String x:Key="Accessory_Item_MaxTextureSize">画像のサイズ上限</sys:String>
+    <sys:String x:Key="Accessory_Item_MaxTextureSize_Unlimited">上限なし</sys:String>
     
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">色を編集 (クリックで展開)</sys:String>

@@ -6,14 +6,16 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:ma="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:AccessoryItemViewModel}"
-             d:DesignHeight="270" d:DesignWidth="400">
+             d:DesignHeight="370" d:DesignWidth="400">
     <UserControl.Resources>
         <view:FileIdIndicationConverter x:Key="FileIdIndicationConverter"/>
         <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
+        <view:AccessoryResolutionLimitToTextConverter x:Key="AccessoryResolutionLimitToTextConverter"/>
     </UserControl.Resources>
     <StackPanel>
 
@@ -97,6 +99,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -249,6 +252,29 @@
                          Text="{Binding Value, ElementName=sliderItemFps}"
                          Visibility="{Binding CanEditFramePerSecond, Converter={StaticResource BooleanToVisibilityConverter}}"
                          />
+
+                <TextBlock Grid.Row="8" Grid.Column="0"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        Text="{DynamicResource Accessory_Item_MaxTextureSize}" 
+                        Visibility="{Binding CanEditFramePerSecond, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        />
+
+                <ComboBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2"
+                          Style="{StaticResource MahApps.Styles.ComboBox}"
+                          VerticalAlignment="Top"
+                          Height="25"
+                          Margin="0,2"
+                          Padding="0"
+                          SelectedItem="{Binding ResolutionLimit}"
+                          ItemsSource="{x:Static vm:AccessoryItemViewModel.AvailableResolutionLimits}"
+                          >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vmm:AccessoryImageResolutionLimit}"> 
+                            <TextBlock Text="{Binding Path=., Converter={StaticResource AccessoryResolutionLimitToTextConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </Grid>
         </StackPanel>
 

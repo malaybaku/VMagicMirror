@@ -11,6 +11,15 @@
         World = 6,
     }
 
+    public enum AccessoryImageResolutionLimit : int
+    {
+        None = 0,
+        Max1024 = 1,
+        Max512 = 2,
+        Max256 = 3,
+        Max128 = 4,
+    }
+
     public class AccessorySetting : SettingEntityBase
     {
         /// <summary>
@@ -30,7 +39,7 @@
         public AccessoryItemSetting[] Items { get; set; } = new AccessoryItemSetting[0];
     }
 
-    //TODO: 配列でデータ保持したい + シリアライズの瞬間だけjsonにしたい
+    //配列でデータ保持したい + シリアライズの瞬間だけjsonにしたい
     public class AccessoryItemSetting
     {
         public const char FolderIdSuffixChar = '>';
@@ -58,5 +67,7 @@
 
         // NOTE: 連番画像でのみ意味がある。Unity側は5 ~ 30の値の範囲が飛んでくることを期待している
         public int FramePerSecond { get; set; } = 15;
+
+        public AccessoryImageResolutionLimit ResolutionLimit { get; set; } = AccessoryImageResolutionLimit.None;
     }
 }

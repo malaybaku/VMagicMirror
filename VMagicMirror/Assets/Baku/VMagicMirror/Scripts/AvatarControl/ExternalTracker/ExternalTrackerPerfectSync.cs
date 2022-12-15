@@ -67,6 +67,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 command =>
                 {
                     IsActive = command.ToBoolean();
+                    _faceControlConfig.UsePerfectSync = IsActive;
                     //パーフェクトシンク中はまばたき目下げを切る: 切らないと動きすぎになる為
                     _faceControlConfig.ShouldStopEyeDownOnBlink = IsActive;
                 });

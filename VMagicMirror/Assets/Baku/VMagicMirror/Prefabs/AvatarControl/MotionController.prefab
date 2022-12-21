@@ -391,7 +391,7 @@ MonoBehaviour:
   bodyLeanIntegrator: {fileID: 8506340368463674577}
   bodyRollRateToElbowWidthPlusFactor: -0.2
   bodyRollRateToElbowWidthMinusFactor: 1
-  bendGoalZOffset: -0.04
+  bendGoalZOffset: -0.02
 --- !u!1 &5813678810404708600
 GameObject:
   m_ObjectHideFlags: 0

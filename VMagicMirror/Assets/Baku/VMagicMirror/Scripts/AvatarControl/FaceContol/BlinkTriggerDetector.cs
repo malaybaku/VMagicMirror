@@ -14,6 +14,8 @@ namespace Baku.VMagicMirror
     {
         private const float OpenToCloseValue = 0.8f;
         private const float CloseToOpenValue = 0.6f;
+        //まばたき直後、この秒数以内に目を閉じたら検出しなかった扱いに倒す
+        private const float BlinkReserveDuration = 0.3f;
 
         //閉じた後でゆっくり開くのはまばたきではない、とする。(これを通すのもアリだけどね)
         private const float BlinkCountLimit = 0.5f;
@@ -30,6 +32,9 @@ namespace Baku.VMagicMirror
         private bool _isEyesClosed;
         private float _eyeCloseCount;
 
+        private bool _blinkDetectReserved;
+        private float _blinkReserveCount = 0f;
+        
         private Subject<Unit> _blinkDetected = new Subject<Unit>();
         public IObservable<Unit> BlinkDetected => _blinkDetected;
 
@@ -50,6 +55,17 @@ namespace Baku.VMagicMirror
             if (_isEyesClosed)
             {
                 _eyeCloseCount += Time.deltaTime;
+            }
+
+            if (_blinkDetectReserved)
+            {
+                _blinkReserveCount += Time.deltaTime;
+                if (_blinkReserveCount >= BlinkReserveDuration)
+                {
+                    _blinkDetectReserved = false;
+                    _blinkReserveCount = 0f;
+                    _blinkDetected.OnNext(Unit.Default);
+                }
             }
         }
 
@@ -73,6 +89,7 @@ namespace Baku.VMagicMirror
                 if (left > OpenToCloseValue && right > OpenToCloseValue)
                 {
                     _isEyesClosed = true;
+                    _blinkDetectReserved = false;
                     _eyeCloseCount = 0f;
                 }
             }
@@ -83,11 +100,11 @@ namespace Baku.VMagicMirror
                     _isEyesClosed = false;
                     if (_eyeCloseCount < BlinkCountLimit)
                     {
-                        _blinkDetected.OnNext(Unit.Default);
+                        _blinkDetectReserved = true;
+                        _blinkReserveCount = 0;
                     }
                 }
             }
-            
         }
     }
 }

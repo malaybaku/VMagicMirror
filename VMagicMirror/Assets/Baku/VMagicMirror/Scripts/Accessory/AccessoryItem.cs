@@ -162,7 +162,8 @@ namespace Baku.VMagicMirror
         public void RunBlinkTrigger()
         {
             if (_file == null || _animator == null || ItemLayout == null ||
-                !ItemLayout.UseAsBlinkEffect
+                !ItemLayout.UseAsBlinkEffect || 
+                VisibleByBlinkTrigger
                 )
             {
                 return;

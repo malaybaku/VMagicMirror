@@ -152,7 +152,8 @@ namespace Baku.VMagicMirror
 
         private float _timeCount;
         private int _imageIndex;
-        
+        private bool _clampEnd;
+
         public void Update(float deltaTime)
         {
             _timeCount += deltaTime;
@@ -165,17 +166,10 @@ namespace Baku.VMagicMirror
             _imageIndex++;
             if (_imageIndex >= _textures.Length)
             {
-                _imageIndex = 0;
+                _imageIndex = _clampEnd ? _textures.Length - 1 : 0;
             }
 
-            if (Renderer != null)
-            {
-                Renderer.material.mainTexture = CurrentTexture;
-                if (CurrentTexture == null)
-                {
-                    Renderer.material.mainTexture = LoadTransparentTexture();
-                }
-            }
+            SetCurrentTextureToRenderer();
         }
 
         public void UpdateLayout(AccessoryItemLayout layout)
@@ -199,17 +193,35 @@ namespace Baku.VMagicMirror
 
         public void OnVisibilityChanged(bool isVisible)
         {
-            if (isVisible)
+            if (!isVisible)
             {
-                return;
+                ResetTime();
+                _clampEnd = false;
             }
+        }
 
+        public void ResetTime()
+        {
             _timeCount = 0f;
             _imageIndex = 0;
-            if (Renderer != null)
+            SetCurrentTextureToRenderer();
+        }
+
+        public void ClampEndUntilHidden()
+        {
+            _clampEnd = true;
+        }
+
+        public bool TryGetDuration(out float duration)
+        {
+            if (_textures == null || _textures.Length == 0)
             {
-                Renderer.material.mainTexture = CurrentTexture;
+                duration = 0f;
+                return false;
             }
+
+            duration = FramePerSecond * _textures.Length;
+            return true;
         }
         
         public void Dispose()
@@ -224,6 +236,20 @@ namespace Baku.VMagicMirror
             }
             
             _textures = Array.Empty<WrappedTexture>();
+        }
+
+        private void SetCurrentTextureToRenderer()
+        {
+            if (Renderer == null)
+            {
+                return;
+            }
+
+            Renderer.material.mainTexture = CurrentTexture;
+            if (CurrentTexture == null)
+            {
+                Renderer.material.mainTexture = LoadTransparentTexture();
+            }
         }
     }
 }

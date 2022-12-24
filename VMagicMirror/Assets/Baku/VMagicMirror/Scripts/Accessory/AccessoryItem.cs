@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using mattatz.TransformControl;
 using UnityEngine;
-using UniVRM10;
 
 namespace Baku.VMagicMirror
 {
@@ -37,6 +38,8 @@ namespace Baku.VMagicMirror
         private bool _firstEnabledCalled;
         public Action<AccessoryItem> FirstEnabled;
         
+        private CancellationTokenSource _blinkCts;
+
         private bool _visibleByWordToMotion;
         public bool VisibleByWordToMotion
         {
@@ -65,6 +68,20 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private bool _visibleByBlinkTrigger;
+        private bool VisibleByBlinkTrigger
+        {
+            get => _visibleByBlinkTrigger;
+            set
+            {
+                if (_visibleByBlinkTrigger != value)
+                {
+                    _visibleByBlinkTrigger = value;
+                    SetVisibility(ShouldBeVisible);
+                }
+            }
+        }
+        
         public bool ShouldBeVisible
         {
             get
@@ -77,7 +94,8 @@ namespace Baku.VMagicMirror
                 return 
                     ItemLayout.IsVisible ||
                     VisibleByWordToMotion ||
-                    VisibleByFaceSwitch;
+                    VisibleByFaceSwitch || 
+                    (VisibleByBlinkTrigger && ItemLayout.UseAsBlinkEffect);
             }
         }
         
@@ -141,6 +159,39 @@ namespace Baku.VMagicMirror
             Destroy(gameObject);
         }
 
+        public void RunBlinkTrigger()
+        {
+            if (_file == null || _animator == null || ItemLayout == null ||
+                !ItemLayout.UseAsBlinkEffect
+                )
+            {
+                return;
+            }
+
+            CheckFirstEnable();
+            if (_fileActions == null ||
+                !_fileActions.TryGetDuration(out var duration))
+            {
+                return;
+            }
+
+            _fileActions.ResetTime();
+            //NOTE: Clampを指定することで、アクセサリを非表示にするのが1フレーム遅れたときに最初の画像が2回見えるのを防ぐため
+            _fileActions.ClampEndUntilHidden();
+            VisibleByBlinkTrigger = true;
+            
+            _blinkCts?.Cancel();
+            _blinkCts?.Dispose();
+            _blinkCts = new CancellationTokenSource();
+            TurnOffBlinkTriggerBasedAccessory(duration, _blinkCts.Token).Forget();
+        }
+
+        private async UniTaskVoid TurnOffBlinkTriggerBasedAccessory(float delay, CancellationToken cancellationToken)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
+            VisibleByBlinkTrigger = false;
+        }
+
         private void Start()
         {
             transformControl.DragEnded += UpdateLayout;
@@ -150,13 +201,17 @@ namespace Baku.VMagicMirror
         {
             if (ShouldBeVisible)
             {
-                if (!_firstEnabledCalled)
-                {
-                    FirstEnabled?.Invoke(this);
-                    _firstEnabledCalled = true;
-                }
-
+                CheckFirstEnable();
                 _fileActions?.Update(Time.deltaTime);
+            }
+        }
+
+        private void CheckFirstEnable()
+        {
+            if (!_firstEnabledCalled)
+            {
+                FirstEnabled?.Invoke(this);
+                _firstEnabledCalled = true;
             }
         }
         
@@ -171,6 +226,9 @@ namespace Baku.VMagicMirror
 
         private void OnDestroy()
         {
+            _blinkCts?.Cancel();
+            _blinkCts?.Dispose();
+
             if (transformControl != null)
             {
                 transformControl.DragEnded -= UpdateLayout;
@@ -356,9 +414,7 @@ namespace Baku.VMagicMirror
             SetVisibility(ShouldBeVisible);
         }
 
-        /// <summary>
-        /// VRMがアンロードされたとき呼び出すことで、参照を外します。
-        /// </summary>
+        /// <summary> VRMがアンロードされたとき呼び出すことで、参照を外します。 </summary>
         public void UnsetModel()
         {
             transform.SetParent(null);
@@ -416,9 +472,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        /// <summary>
-        /// フリーレイアウトモードを終了するとき呼び出すことで、TransformControlを非表示にします。
-        /// </summary>
+        /// <summary> フリーレイアウトモードを終了するとき呼び出すことで、TransformControlを非表示にします。 </summary>
         public void EndControlItemTransform()
         {
             transformControl.mode = TransformControl.TransformMode.None;

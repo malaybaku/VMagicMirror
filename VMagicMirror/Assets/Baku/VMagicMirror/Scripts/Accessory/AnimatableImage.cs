@@ -220,7 +220,7 @@ namespace Baku.VMagicMirror
                 return false;
             }
 
-            duration = FramePerSecond * _textures.Length;
+            duration = _timePerFrame * _textures.Length;
             return true;
         }
         

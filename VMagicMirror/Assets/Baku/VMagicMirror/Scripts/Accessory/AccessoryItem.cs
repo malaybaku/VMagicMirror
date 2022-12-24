@@ -38,7 +38,7 @@ namespace Baku.VMagicMirror
         private bool _firstEnabledCalled;
         public Action<AccessoryItem> FirstEnabled;
         
-        private CancellationTokenSource _blinkCts;
+        private readonly CancellationTokenSource _blinkCts = new CancellationTokenSource();
 
         private bool _visibleByWordToMotion;
         public bool VisibleByWordToMotion
@@ -162,7 +162,7 @@ namespace Baku.VMagicMirror
         public void RunBlinkTrigger()
         {
             if (_file == null || _animator == null || ItemLayout == null ||
-                !ItemLayout.UseAsBlinkEffect || 
+                !ItemLayout.UseAsBlinkEffect ||
                 VisibleByBlinkTrigger
                 )
             {
@@ -181,9 +181,6 @@ namespace Baku.VMagicMirror
             _fileActions.ClampEndUntilHidden();
             VisibleByBlinkTrigger = true;
             
-            _blinkCts?.Cancel();
-            _blinkCts?.Dispose();
-            _blinkCts = new CancellationTokenSource();
             TurnOffBlinkTriggerBasedAccessory(duration, _blinkCts.Token).Forget();
         }
 
@@ -227,8 +224,8 @@ namespace Baku.VMagicMirror
 
         private void OnDestroy()
         {
-            _blinkCts?.Cancel();
-            _blinkCts?.Dispose();
+            _blinkCts.Cancel();
+            _blinkCts.Dispose();
 
             if (transformControl != null)
             {

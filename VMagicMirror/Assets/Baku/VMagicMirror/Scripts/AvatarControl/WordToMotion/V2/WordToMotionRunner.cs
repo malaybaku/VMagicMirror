@@ -88,7 +88,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 _blendShape.SetBlendShapes(
                     request.BlendShapeValuesDic.Select(
                         pair => (ExpressionKeyUtils.CreateKeyByName(pair.Key), pair.Value)
-                    ),
+                    ).ToArray(),
                     request.PreferLipSync
                 );
             }
@@ -166,7 +166,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 _blendShape.SetForPreview(
                     request.BlendShapeValuesDic.Select(
                         pair => (ExpressionKeyUtils.CreateKeyByName(pair.Key), pair.Value)
-                    ),
+                    ).ToArray(),
                     request.PreferLipSync
                 );
             }

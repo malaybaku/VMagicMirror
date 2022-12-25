@@ -10,6 +10,11 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
+    //TODO: このクラスでアクセサリ由来のメモリ消費量が爆発しないように工夫を入れる。
+    // - アクセサリのenable on/offに応じてリソースの初期化 + 解放を行う
+    // - 解放は何か一定のstableな戦略をとる。minimumでは「1回もactiveになってないうちはロードしない」とかでもいい
+    //   - (連番pngについては何かうまい方法を考えていただけると…)
+
     /// <summary>
     /// アクセサリー機能の管理としては一番えらいクラス
     /// </summary>
@@ -32,7 +37,8 @@ namespace Baku.VMagicMirror
             IMessageSender sender, 
             ExternalTrackerDataSource externalTrackerDataSource,
             DeviceTransformController deviceTransformController,
-            WordToMotionAccessoryRequest accessoryRequest
+            WordToMotionAccessoryRequest accessoryRequest,
+            BlinkTriggerDetector blinkTriggerDetector
             )
         {
             _cam = cam;
@@ -87,6 +93,10 @@ namespace Baku.VMagicMirror
             accessoryRequest.AccessoryRequest
                 .Subscribe(UpdateWordToMotionStatus)
                 .AddTo(this);
+
+            blinkTriggerDetector.BlinkDetected
+                .Subscribe(_ => FireBlinkTrigger())
+                .AddTo(this);
         }
 
         private void UpdateFaceSwitchStatus(string fileId)
@@ -103,6 +113,14 @@ namespace Baku.VMagicMirror
             foreach (var item in _items)
             {
                 item.VisibleByWordToMotion = item.FileId == fileId;
+            }
+        }
+
+        private void FireBlinkTrigger()
+        {
+            foreach (var item in _items)
+            {
+                item.RunBlinkTrigger();
             }
         }
 
@@ -138,6 +156,7 @@ namespace Baku.VMagicMirror
             {
                 var item = Instantiate(itemPrefab);
                 item.Initialize(_cam, file);
+                item.FirstEnabled += OnItemFirstEnabled;
                 if (_hasModel)
                 {
                     item.SetAnimator(_animator);
@@ -152,8 +171,14 @@ namespace Baku.VMagicMirror
             _items.Clear();
             foreach (var item in items)
             {
+                item.FirstEnabled -= OnItemFirstEnabled;
                 item.Dispose();
             }
+        }
+
+        private void OnItemFirstEnabled(AccessoryItem item)
+        {
+            item.LoadContent();
         }
         
         private void SetSingleAccessoryLayout(string json)

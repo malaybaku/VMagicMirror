@@ -8,6 +8,19 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.0.1
+{: .doc-sec2 }
+
+2022/12/25
+
+* Add: Numbered png accessory supports "Blink Effect" feature, which runs just after blinking. 
+* Add: Resolution limit option to image file based accessory.
+* Fix: Decrease light intensity, to make the look similar to v2.0.11 with VRM1.0 based shading.
+* Fix: Bad arm pose issue happend in v3.0.0.
+* Fix: Optimize facial expression related setting data, to prevent app crash.
+* Fix: Reduced memory usage related to accessory image data.
+
+
 #### v3.0.0
 {: .doc-sec2 }
 

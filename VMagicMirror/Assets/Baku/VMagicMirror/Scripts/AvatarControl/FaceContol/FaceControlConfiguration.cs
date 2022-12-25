@@ -17,6 +17,14 @@ namespace Baku.VMagicMirror
         /// </remarks>
         public FaceControlModes ControlMode { get; set; } = FaceControlModes.WebCam;
         
+        /// <summary>
+        /// パーフェクトシンクのon/offを取得、設定します。
+        /// このフラグがtrueであり、かつ<see cref="ControlMode"/>がExternalTrackerの場合はパーフェクトシンクがオンです。
+        /// </summary>
+        public bool UsePerfectSync { get; set; }
+
+        public bool PerfectSyncActive => ControlMode == FaceControlModes.ExternalTracker && UsePerfectSync;
+        
         #endregion
         
         #region 内部的に特定クラスがsetterを呼ぶ値で、読み取り側は直接使わないでOK

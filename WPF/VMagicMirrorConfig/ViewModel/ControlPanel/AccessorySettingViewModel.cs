@@ -83,12 +83,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     public class AccessoryItemViewModel : ViewModelBase
     {
         public static string[] AvailableAttachTargets { get; }
+
+        public static AccessoryImageResolutionLimit[] AvailableResolutionLimits { get; }
+
         static AccessoryItemViewModel()
         {
             //NOTE: 多言語化したいかどうか微妙なライン…ぶっちゃけ多言語化したくない…
             AvailableAttachTargets = Enum.GetValues<AccessoryAttachTarget>()
                 .Select(e => e.ToString())
                 .ToArray();
+
+            //こっちはConverterで多言語化
+            AvailableResolutionLimits = Enum.GetValues<AccessoryImageResolutionLimit>();
         }
 
 
@@ -170,6 +176,17 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 UpdateItemFromUi();
             });
 
+            UseAsBlinkEffect = new RProperty<bool>(_item.UseAsBlinkEffect, v =>
+            {
+                _item.UseAsBlinkEffect = v;
+                UpdateItemFromUi();
+            });
+
+            //連番画像以外ではまばたき連動できない。この制限は緩和する可能性もあるが、一旦コレで。
+            UseAsBlinkEffectSupported = _item.FileId.EndsWith(AccessoryItemSetting.FolderIdSuffixChar);
+
+            _resolutionLimit = _item.ResolutionLimit;
+
             UpdateShowInvalidBillboardWarning();
         }
 
@@ -207,6 +224,28 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> ShowInvalidBillboardWarning { get; } = new RProperty<bool>(false);
 
+
+        private AccessoryImageResolutionLimit _resolutionLimit = AccessoryImageResolutionLimit.None;
+        public AccessoryImageResolutionLimit ResolutionLimit
+        {
+            get => _resolutionLimit;
+            set
+            {
+                if (_resolutionLimit == value)
+                {
+                    return;
+                }
+
+                _resolutionLimit = value;
+                RaisePropertyChanged();
+                _item.ResolutionLimit = value;
+                UpdateItemFromUi();
+            }
+        }
+
+        public bool UseAsBlinkEffectSupported { get; }
+        public RProperty<bool> UseAsBlinkEffect { get; }
+
         private void UpdateShowInvalidBillboardWarning()
         {
             ShowInvalidBillboardWarning.Value =
@@ -239,6 +278,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             RotZ.Value = _item.Rotation.Z;
             Scale.Value = _item.Scale.X;
             FramePerSecond.Value = _item.FramePerSecond;
+            ResolutionLimit = _item.ResolutionLimit;
+            UseAsBlinkEffect.Value = _item.UseAsBlinkEffect;
 
             _isUpdatingByReceivedData = false;
         }

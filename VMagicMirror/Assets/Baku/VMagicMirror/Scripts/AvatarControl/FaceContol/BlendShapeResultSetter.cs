@@ -1,6 +1,5 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
 using UnityEngine;
-using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror

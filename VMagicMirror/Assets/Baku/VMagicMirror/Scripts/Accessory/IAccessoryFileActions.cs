@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Baku.VMagicMirror
 {
     public interface IAccessoryFileActions
@@ -9,6 +7,12 @@ namespace Baku.VMagicMirror
         void UpdateLayout(AccessoryItemLayout layout);
         //NOTE: isVisibleが切り替わってなくても呼ばれる事がある(現行実装では冗長に呼び出しても基本無害なので…)
         void OnVisibilityChanged(bool isVisible);
+
+        //NOTE: 連番画像にしか意味がない
+        //TODO: やっつけ感があるので何か直してほしい
+        bool TryGetDuration(out float duration);
+        void ResetTime();
+        void SetClampEndEnable(bool clamp);
     }
 
     public abstract class AccessoryFileActionsBase : IAccessoryFileActions
@@ -17,47 +21,19 @@ namespace Baku.VMagicMirror
         public virtual void Update(float deltaTime) { }
         public virtual void UpdateLayout(AccessoryItemLayout layout) { }
         public virtual void OnVisibilityChanged(bool isVisible) { }
+        public virtual bool TryGetDuration(out float duration)
+        {
+            duration = 0f;
+            return false;
+        }
+        public virtual void ResetTime() { }
+        public virtual void SetClampEndEnable(bool clamp) { }
     }
-    
-    public class ImageAccessoryActions : AccessoryFileActionsBase
-    {
-        public ImageAccessoryActions(Texture2D texture)
-        {
-            _texture = texture;
-        }
-        private Texture2D _texture;
 
-        public override void Dispose()
-        {
-            if (_texture != null)
-            {
-                Object.Destroy(_texture);                    
-            }
-            _texture = null;
-        }
-    }
-        
-    public class GlbFileAccessoryActions : AccessoryFileActionsBase
+    /// <summary>
+    /// ファイルの実態がなく、アクセサリーがロード出来なかったときにカラの実装を差し込む
+    /// </summary>
+    public class EmptyFileActions : AccessoryFileActionsBase
     {
-        public GlbFileAccessoryActions(UniGLTF.ImporterContext context, UniGLTF.RuntimeGltfInstance instance)
-        {
-            _context = context;
-            _instance = instance;
-        }
-        
-        private UniGLTF.ImporterContext _context;
-        private UniGLTF.RuntimeGltfInstance _instance;
-        
-        public override void Dispose()
-        {
-            _context?.Dispose();
-            _context = null;
-
-            if (_instance != null)
-            {
-                _instance.Dispose();
-            }
-            _instance = null;
-        }
     }
 }

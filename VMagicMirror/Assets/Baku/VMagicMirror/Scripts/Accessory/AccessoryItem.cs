@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using mattatz.TransformControl;
 using UnityEngine;
-using UniVRM10;
 
 namespace Baku.VMagicMirror
 {
@@ -33,6 +35,11 @@ namespace Baku.VMagicMirror
         private readonly Dictionary<AccessoryAttachTarget, Transform> _attachBones 
             = new Dictionary<AccessoryAttachTarget, Transform>();
 
+        private bool _firstEnabledCalled;
+        public Action<AccessoryItem> FirstEnabled;
+        
+        private readonly CancellationTokenSource _blinkCts = new CancellationTokenSource();
+
         private bool _visibleByWordToMotion;
         public bool VisibleByWordToMotion
         {
@@ -61,6 +68,20 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private bool _visibleByBlinkTrigger;
+        private bool VisibleByBlinkTrigger
+        {
+            get => _visibleByBlinkTrigger;
+            set
+            {
+                if (_visibleByBlinkTrigger != value)
+                {
+                    _visibleByBlinkTrigger = value;
+                    SetVisibility(ShouldBeVisible);
+                }
+            }
+        }
+        
         public bool ShouldBeVisible
         {
             get
@@ -73,7 +94,8 @@ namespace Baku.VMagicMirror
                 return 
                     ItemLayout.IsVisible ||
                     VisibleByWordToMotion ||
-                    VisibleByFaceSwitch;
+                    VisibleByFaceSwitch || 
+                    (VisibleByBlinkTrigger && ItemLayout.UseAsBlinkEffect);
             }
         }
         
@@ -86,6 +108,37 @@ namespace Baku.VMagicMirror
 
         public void ConfirmLayoutChange() => HasLayoutChange = false;
 
+        public void LoadContent()
+        {
+            _file.LoadBinary();
+            switch (_file.Type)
+            {
+                case AccessoryType.Png:
+                    InitializeImage(_file);
+                    break;
+                case AccessoryType.Glb:
+                    var glbContext = AccessoryFileReader.LoadGlb(_file.FilePath, _file.Bytes);
+                    var glbObj = glbContext.Object;
+                    glbObj.transform.SetParent(modelParent, false);
+                    _fileActions = glbContext.Actions;
+                    break;
+                case AccessoryType.Gltf:
+                    var gltfContext = AccessoryFileReader.LoadGltf(_file.FilePath, _file.Bytes);
+                    var gltfObj = gltfContext.Object;
+                    gltfObj.transform.SetParent(modelParent, false);
+                    _fileActions = gltfContext.Actions;
+                    break;
+                case AccessoryType.NumberedPng:
+                    InitializeAnimatableImage(_file);
+                    break;
+                default:
+                    LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
+                    break;
+            }
+            
+            _fileActions?.UpdateLayout(ItemLayout);
+        }
+        
         /// <summary>
         /// ビルボード動作時に参照するカメラ、およびファイルを指定してアイテムをロードします。
         /// </summary>
@@ -95,30 +148,7 @@ namespace Baku.VMagicMirror
         {
             _cam = cam;
             _file = file;
-            switch (file.Type)
-            {
-                case AccessoryType.Png:
-                    InitializeImage(file);
-                    break;
-                case AccessoryType.Glb:
-                    var glbContext = AccessoryFileReader.LoadGlb(file.FilePath, file.Bytes);
-                    var glbObj = glbContext.Object;
-                    glbObj.transform.SetParent(modelParent);
-                    _fileActions = glbContext.Actions;
-                    break;
-                case AccessoryType.Gltf:
-                    var gltfContext = AccessoryFileReader.LoadGltf(file.FilePath, file.Bytes);
-                    var gltfObj = gltfContext.Object; 
-                    gltfObj.transform.SetParent(modelParent);
-                    _fileActions = gltfContext.Actions;
-                    break;
-                case AccessoryType.NumberedPng:
-                    InitializeAnimatableImage(file);
-                    break;
-                default:
-                    LogOutput.Instance.Write($"WARN: Tried to load unknown data, id={_file.FileId}");
-                    break;
-            }
+
             SetVisibility(false);
         }
 
@@ -127,6 +157,37 @@ namespace Baku.VMagicMirror
         {
             _fileActions?.Dispose();
             Destroy(gameObject);
+        }
+
+        public void RunBlinkTrigger()
+        {
+            if (_file == null || _animator == null || ItemLayout == null ||
+                !ItemLayout.UseAsBlinkEffect ||
+                VisibleByBlinkTrigger
+                )
+            {
+                return;
+            }
+
+            CheckFirstEnable();
+            if (_fileActions == null ||
+                !_fileActions.TryGetDuration(out var duration))
+            {
+                return;
+            }
+
+            _fileActions.ResetTime();
+            _fileActions.SetClampEndEnable(true);
+            VisibleByBlinkTrigger = true;
+            
+            TurnOffBlinkTriggerBasedAccessory(duration, _blinkCts.Token).Forget();
+        }
+
+        private async UniTaskVoid TurnOffBlinkTriggerBasedAccessory(float delay, CancellationToken cancellationToken)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
+            VisibleByBlinkTrigger = false;
+            _fileActions?.SetClampEndEnable(false);
         }
 
         private void Start()
@@ -138,7 +199,17 @@ namespace Baku.VMagicMirror
         {
             if (ShouldBeVisible)
             {
-                _fileActions.Update(Time.deltaTime);
+                CheckFirstEnable();
+                _fileActions?.Update(Time.deltaTime);
+            }
+        }
+
+        private void CheckFirstEnable()
+        {
+            if (!_firstEnabledCalled)
+            {
+                FirstEnabled?.Invoke(this);
+                _firstEnabledCalled = true;
             }
         }
         
@@ -153,6 +224,9 @@ namespace Baku.VMagicMirror
 
         private void OnDestroy()
         {
+            _blinkCts.Cancel();
+            _blinkCts.Dispose();
+
             if (transformControl != null)
             {
                 transformControl.DragEnded -= UpdateLayout;
@@ -161,7 +235,7 @@ namespace Baku.VMagicMirror
 
         private void InitializeImage(AccessoryFile file)
         {
-            var context = AccessoryFileReader.LoadPngImage(file.Bytes);
+            var context = AccessoryFileReader.LoadPngImage(file, file.Bytes);
             var tex = context.Object;
             _fileActions = context.Actions;
             
@@ -175,13 +249,18 @@ namespace Baku.VMagicMirror
             context.Object.Renderer = imageRenderer;
             _fileActions = context.Actions;
             
-            var tex = context.Object.FirstTexture;
+            var tex = context.Object.FirstValidTexture;
             imageRenderer.material.mainTexture = tex;
             SetImageRendererAspect(tex);
         }
 
         private void SetImageRendererAspect(Texture2D tex)
         {
+            if (tex == null)
+            {
+                return;
+            }
+
             if (tex.width < tex.height)
             {
                 var aspect = tex.width * 1.0f / tex.height;
@@ -333,9 +412,7 @@ namespace Baku.VMagicMirror
             SetVisibility(ShouldBeVisible);
         }
 
-        /// <summary>
-        /// VRMがアンロードされたとき呼び出すことで、参照を外します。
-        /// </summary>
+        /// <summary> VRMがアンロードされたとき呼び出すことで、参照を外します。 </summary>
         public void UnsetModel()
         {
             transform.SetParent(null);
@@ -393,9 +470,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        /// <summary>
-        /// フリーレイアウトモードを終了するとき呼び出すことで、TransformControlを非表示にします。
-        /// </summary>
+        /// <summary> フリーレイアウトモードを終了するとき呼び出すことで、TransformControlを非表示にします。 </summary>
         public void EndControlItemTransform()
         {
             transformControl.mode = TransformControl.TransformMode.None;

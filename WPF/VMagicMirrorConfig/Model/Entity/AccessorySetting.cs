@@ -69,5 +69,9 @@
         public int FramePerSecond { get; set; } = 15;
 
         public AccessoryImageResolutionLimit ResolutionLimit { get; set; } = AccessoryImageResolutionLimit.None;
+
+        //連番画像アクセサリーでこの値がtrueになっていると、まばたきの直後に1サイクルぶん連番画像が再生される
+        public bool UseAsBlinkEffect { get; set; }
+
     }
 }

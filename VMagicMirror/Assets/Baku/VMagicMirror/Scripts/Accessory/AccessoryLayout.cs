@@ -56,6 +56,13 @@ namespace Baku.VMagicMirror
         public int FramePerSecond;
         //画像または連番画像でのみ意味のある値 (※glTFのテクスチャに適用する手もあるが、面倒なので一旦パス)
         public AccessoryImageResolutionLimit ResolutionLimit;
+        //連番画像でのみ意味があるものとして扱う
+        public bool UseAsBlinkEffect;
+
+        public bool CheckIsBlinkEffect()
+        {
+            return UseAsBlinkEffect && FileId.EndsWith(AccessoryFile.FolderIdSuffix);
+        }
 
         public int GetResolutionLimitSize() => ResolutionLimit switch
         {

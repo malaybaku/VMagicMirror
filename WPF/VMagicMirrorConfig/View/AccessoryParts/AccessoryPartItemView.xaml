@@ -108,6 +108,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
@@ -275,6 +276,16 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+
+                <CheckBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="6"
+                          HorizontalAlignment="Left"
+                          VerticalContentAlignment="Center"
+                          Margin="5,0"
+                          Visibility="{Binding UseAsBlinkEffectSupported, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          Content="{DynamicResource Accessory_Item_UseAsBlinkEffect}"
+                          IsChecked="{Binding UseAsBlinkEffect.Value}"
+                          />
+
             </Grid>
         </StackPanel>
 

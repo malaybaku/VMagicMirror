@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UniVRM10;
 using Zenject;
@@ -16,6 +17,8 @@ namespace Baku.VMagicMirror
 
         private bool _hasModel;
         private Vrm10RuntimeExpression _expression;
+        
+        public event Action<IReadOnlyDictionary<ExpressionKey, float>> PreApply; 
 
         public ExpressionAccumulator(IVRMLoadable vrmLoadable)
         {
@@ -54,7 +57,11 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void Apply() => _expression?.SetWeights(_values);
+        public void Apply()
+        {
+            PreApply?.Invoke(_values);
+            _expression?.SetWeights(_values);
+        }
 
         public void ResetValues()
         {

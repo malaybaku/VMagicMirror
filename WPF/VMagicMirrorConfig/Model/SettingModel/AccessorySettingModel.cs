@@ -104,6 +104,7 @@ namespace Baku.VMagicMirrorConfig
                 item.Scale = Vector3.One();
                 item.Name = Path.GetFileNameWithoutExtension(item.FileId);
                 item.ResolutionLimit = AccessoryImageResolutionLimit.None;
+                item.UseAsBlinkEffect = false;
                 ItemUpdated?.Invoke(item);
             }
             SerializedSetting = JsonConvert.SerializeObject(Items);

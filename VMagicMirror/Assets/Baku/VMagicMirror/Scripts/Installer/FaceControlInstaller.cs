@@ -23,6 +23,7 @@ namespace Baku.VMagicMirror.Installer
             container.BindInterfacesAndSelfTo<ExpressionAccumulator>().AsSingle();
             container.Bind<EyeLookAt>().AsSingle();
             container.BindInterfacesTo<EyeLookAtUpdater>().AsSingle();
+            container.BindInterfacesAndSelfTo<BlinkTriggerDetector>().AsSingle();
 
             //ブレンドシェイプの内訳の確認処理で、意味のある処理ではないけど一応つねに入れておく
             container.Bind<BlendShapeExclusivenessChecker>().AsSingle();

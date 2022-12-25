@@ -37,7 +37,8 @@ namespace Baku.VMagicMirror
             IMessageSender sender, 
             ExternalTrackerDataSource externalTrackerDataSource,
             DeviceTransformController deviceTransformController,
-            WordToMotionAccessoryRequest accessoryRequest
+            WordToMotionAccessoryRequest accessoryRequest,
+            BlinkTriggerDetector blinkTriggerDetector
             )
         {
             _cam = cam;
@@ -92,6 +93,10 @@ namespace Baku.VMagicMirror
             accessoryRequest.AccessoryRequest
                 .Subscribe(UpdateWordToMotionStatus)
                 .AddTo(this);
+
+            blinkTriggerDetector.BlinkDetected
+                .Subscribe(_ => FireBlinkTrigger())
+                .AddTo(this);
         }
 
         private void UpdateFaceSwitchStatus(string fileId)
@@ -108,6 +113,14 @@ namespace Baku.VMagicMirror
             foreach (var item in _items)
             {
                 item.VisibleByWordToMotion = item.FileId == fileId;
+            }
+        }
+
+        private void FireBlinkTrigger()
+        {
+            foreach (var item in _items)
+            {
+                item.RunBlinkTrigger();
             }
         }
 

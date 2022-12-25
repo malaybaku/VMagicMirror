@@ -89,9 +89,6 @@
                                   Content="{DynamicResource Layout_DeviceFreeLayout}"
                                   IsChecked="{Binding EnableDeviceFreeLayout.Value}"
                                   />
-
-
-
                     </Grid>
 
                     <Border Margin="5"

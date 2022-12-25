@@ -177,8 +177,7 @@ namespace Baku.VMagicMirror
             }
 
             _fileActions.ResetTime();
-            //NOTE: Clampを指定することで、アクセサリを非表示にするのが1フレーム遅れたときに最初の画像が2回見えるのを防ぐため
-            _fileActions.ClampEndUntilHidden();
+            _fileActions.SetClampEndEnable(true);
             VisibleByBlinkTrigger = true;
             
             TurnOffBlinkTriggerBasedAccessory(duration, _blinkCts.Token).Forget();
@@ -188,6 +187,7 @@ namespace Baku.VMagicMirror
         {
             await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
             VisibleByBlinkTrigger = false;
+            _fileActions?.SetClampEndEnable(false);
         }
 
         private void Start()

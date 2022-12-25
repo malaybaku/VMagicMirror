@@ -207,9 +207,9 @@ namespace Baku.VMagicMirror
             SetCurrentTextureToRenderer();
         }
 
-        public void ClampEndUntilHidden()
+        public void SetClampEndEnable(bool clamp)
         {
-            _clampEnd = true;
+            _clampEnd = clamp;
         }
 
         public bool TryGetDuration(out float duration)

@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
         //TODO: やっつけ感があるので何か直してほしい
         bool TryGetDuration(out float duration);
         void ResetTime();
-        void ClampEndUntilHidden();
+        void SetClampEndEnable(bool clamp);
     }
 
     public abstract class AccessoryFileActionsBase : IAccessoryFileActions
@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror
             return false;
         }
         public virtual void ResetTime() { }
-        public virtual void ClampEndUntilHidden() { }
+        public virtual void SetClampEndEnable(bool clamp) { }
     }
 
     /// <summary>

@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
         private const float OpenToCloseValue = 0.8f;
         private const float CloseToOpenValue = 0.6f;
         //まばたき直後、この秒数以内に目を閉じたら検出しなかった扱いに倒す
-        private const float BlinkReserveDuration = 0.3f;
+        private const float BlinkReserveDuration = 0.2f;
 
         //閉じた後でゆっくり開くのはまばたきではない、とする。(これを通すのもアリだけどね)
         private const float BlinkCountLimit = 0.5f;

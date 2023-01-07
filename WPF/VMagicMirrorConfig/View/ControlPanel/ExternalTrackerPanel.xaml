@@ -51,12 +51,6 @@
                                 IsEnabled="{Binding EnableExternalTracking.Value}"
                                 IsChecked="{Binding EnableExternalTrackerLipSync.Value}"
                                 />
-                    <CheckBox Margin="35,0,10,0" 
-                                VerticalContentAlignment="Center"
-                                Content="{DynamicResource ExTracker_Enable_EmphasizeExpression}" 
-                                IsEnabled="{Binding EnableExternalTracking.Value}"
-                                IsChecked="{Binding EnableExternalTrackerEmphasizeExpression.Value}"
-                                />
                     <CheckBox Margin="35,0,10,0"
                               IsEnabled="{Binding EnableExternalTracking.Value}"
                               IsChecked="{Binding DisableFaceTrackingHorizontalFlip.Value}"

@@ -103,7 +103,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> EnableExternalTracking => _model.EnableExternalTracking;
         public RProperty<bool> EnableExternalTrackerLipSync => _model.EnableExternalTrackerLipSync;
-        public RProperty<bool> EnableExternalTrackerEmphasizeExpression => _model.EnableExternalTrackerEmphasizeExpression;
         //NOTE: ここだけ外部トラッキングではなく、webカメラの顔トラと共通のフラグを触りに行ってることに注意
         public RProperty<bool> DisableFaceTrackingHorizontalFlip => _motionModel.DisableFaceTrackingHorizontalFlip;
         public RProperty<bool> EnableExternalTrackerPerfectSync => _model.EnableExternalTrackerPerfectSync;

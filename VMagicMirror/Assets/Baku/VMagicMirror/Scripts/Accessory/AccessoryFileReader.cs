@@ -86,6 +86,10 @@ namespace Baku.VMagicMirror
                 renderer.shadowCastingMode = ShadowCastingMode.Off;
                 renderer.receiveShadows = false;
             }
+            
+            //NOTE: オフ→オンしないとAnimationが正しく動かないので、わざと一回切る
+            instance.Root.SetActive(false);
+            instance.Root.SetActive(true);
             return new AccessoryFileContext<GameObject>(instance.Root, new GlbFileAccessoryActions(context, instance));
         }
     }

@@ -24,9 +24,6 @@ namespace Baku.VMagicMirrorConfig
             EnableExternalTrackerLipSync = new RProperty<bool>(
                 setting.EnableExternalTrackerLipSync, b => SendMessage(factory.ExTrackerEnableLipSync(b))
                 );
-            EnableExternalTrackerEmphasizeExpression = new RProperty<bool>(
-                setting.EnableExternalTrackerEmphasizeExpression, b => SendMessage(factory.ExTrackerEnableEmphasizeExpression(b))
-                );
             EnableExternalTrackerPerfectSync = new RProperty<bool>(
                 setting.EnableExternalTrackerPerfectSync, b => SendMessage(factory.ExTrackerEnablePerfectSync(b))
                 );
@@ -50,7 +47,6 @@ namespace Baku.VMagicMirrorConfig
         // 基本メニュー部分
         public RProperty<bool> EnableExternalTracking { get; }
         public RProperty<bool> EnableExternalTrackerLipSync { get; }
-        public RProperty<bool> EnableExternalTrackerEmphasizeExpression { get; }
 
         public RProperty<bool> EnableExternalTrackerPerfectSync { get; }
 

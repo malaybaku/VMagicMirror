@@ -166,7 +166,7 @@ namespace Baku.VMagicMirror
             foreach (var key in _allBlendShapeKeys)
             {
                 _blendShape[key] = 0f;
-            }            
+            }
             
             foreach (var (key, value) in values)
             {

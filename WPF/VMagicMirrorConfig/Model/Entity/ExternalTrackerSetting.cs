@@ -15,7 +15,6 @@
         // 基本メニュー部分
         public bool EnableExternalTracking { get; set; } = false;
         public bool EnableExternalTrackerLipSync { get; set; } = true;
-        public bool EnableExternalTrackerEmphasizeExpression { get; set; } = false;
         public bool EnableExternalTrackerPerfectSync { get; set; } = false;
 
         // アプリ別の設定 (※今んとこIPを一方的に表示するだけなのであんまり難しい事はないです)

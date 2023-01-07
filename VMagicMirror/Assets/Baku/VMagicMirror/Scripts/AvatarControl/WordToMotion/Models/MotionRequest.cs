@@ -112,11 +112,11 @@ namespace Baku.VMagicMirror
         public int Blink;
         public int BlinkLeft;
         public int BlinkRight;
-        public int A;
-        public int I;
-        public int U;
-        public int E;
-        public int O;
+        public int Aa;
+        public int Ih;
+        public int Ou;
+        public int Ee;
+        public int Oh;
         public int LookUp;
         public int LookDown;
         public int LookLeft;
@@ -133,11 +133,11 @@ namespace Baku.VMagicMirror
             [nameof(Blink)] = Blink * 0.01f,
             [nameof(BlinkLeft)] = BlinkLeft * 0.01f,
             [nameof(BlinkRight)] = BlinkRight * 0.01f,
-            [nameof(A)] = A * 0.01f,
-            [nameof(I)] = I * 0.01f,
-            [nameof(U)] = U * 0.01f,
-            [nameof(E)] = E * 0.01f,
-            [nameof(O)] = O * 0.01f,
+            [nameof(Aa)] = Aa * 0.01f,
+            [nameof(Ih)] = Ih * 0.01f,
+            [nameof(Ou)] = Ou * 0.01f,
+            [nameof(Ee)] = Ee * 0.01f,
+            [nameof(Oh)] = Oh * 0.01f,
             [nameof(LookUp)] = LookUp * 0.01f,
             [nameof(LookDown)] = LookDown * 0.01f,
             [nameof(LookLeft)] = LookLeft * 0.01f,

@@ -78,7 +78,6 @@
 - マウスポインタを目で追従する機能</sys:String>
     <sys:String x:Key="ExTracker_Enable">外部トラッキングを有効化</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">リップシンクも外部トラッキングの値を適用</sys:String>    
-    <sys:String x:Key="ExTracker_Enable_EmphasizeExpression">一部の表情を強調して適用</sys:String>    
 
     <sys:String x:Key="ExTracker_Enable_PerfectSync">パーフェクトシンクを使用</sys:String>
     <sys:String x:Key="ExTracker_PerfectSync_UseVRoidDefault">VRoid用のデフォルト設定を使う(※VRoidモデルでのみ動作)</sys:String>

@@ -73,9 +73,9 @@ In custom window you can take 4 actions.
 
 **NOTE**
 
-v2.0.2 and later version supports accessory visibility control during the item is played in item edit window.
+v2.0.2 and later version supports [accessory](../accessory) visibility control during the item is played in item edit window.
 
-See [Accessory](../accessory) page to check the detail of accessory feature.
+The accessory is visible during specified motion or facial expression is active.
 
 </div>
 

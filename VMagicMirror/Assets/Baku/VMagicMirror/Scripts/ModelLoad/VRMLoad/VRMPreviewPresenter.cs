@@ -57,6 +57,13 @@ namespace Baku.VMagicMirror
             if (_copiedThumbnail != null)
             {
                 Object.Destroy(_copiedThumbnail);
+                _copiedThumbnail = null;
+            }
+
+            //元画像が無いのでコピーも無しのままでよい
+            if (thumbnail == null)
+            {
+                return;
             }
 
             _copiedThumbnail = new Texture2D(thumbnail.width, thumbnail.height, thumbnail.format, false);

@@ -13,7 +13,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             _model = model;
 
-            ResetHandDownCustomPoseCommand = new ActionCommand(
+            ResetCustomHandDownPoseCommand = new ActionCommand(
                 () => _model.ResetCustomHandDownPose()
                 );
 
@@ -130,7 +130,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<int> WaitMotionPeriod => _model.WaitMotionPeriod;
 
 
-        public ActionCommand ResetHandDownCustomPoseCommand { get; }
+        public ActionCommand ResetCustomHandDownPoseCommand { get; }
         public ActionCommand ResetArmMotionSettingCommand { get; }
         public ActionCommand ResetHandMotionSettingCommand { get; }
         public ActionCommand ResetWaitMotionSettingCommand { get; }

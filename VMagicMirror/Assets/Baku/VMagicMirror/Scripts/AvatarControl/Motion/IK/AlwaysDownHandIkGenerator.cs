@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Data;
 using UniRx;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ namespace Baku.VMagicMirror.IK
         private const float ReferenceArmLength = 0.37f;
 
         // 腕のピンと張る度合いがこの値になるように手IKのy座標を調整する
-        private const float ArmRelaxFactor = 0.98f;
+        private const float ArmRelaxFactor = 0.99f;
 
         private readonly IKDataRecord _leftHand = new IKDataRecord();
         public IIKData LeftHand => _leftHand;

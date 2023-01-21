@@ -50,6 +50,9 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -104,6 +107,25 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+
+                        <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                                  Margin="5,15,5,0"
+                                  IsChecked="{Binding EnableCustomHandDownPose.Value}"
+                                  Content="{DynamicResource Motion_FullBody_EnableCustomHandDownPose}"/>
+                        <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                                   Margin="15,3"
+                                   Text="{DynamicResource Motion_FullBody_EnableCustomHandDownPose_Notice}"/>
+                        <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
+                                Width="NaN"
+                                HorizontalAlignment="Left"
+                                Margin="15,3"
+                                Visibility="{Binding EnableCustomHandDownPose.Value,
+                                                     Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Content="{DynamicResource Motion_FullBody_EnableCustomHandDownPose_Reset}"
+                                Command="{Binding ResetCustomHandDownPoseCommand}"
+                                />
+
+
                     </Grid>
                 </StackPanel>
             </Border>

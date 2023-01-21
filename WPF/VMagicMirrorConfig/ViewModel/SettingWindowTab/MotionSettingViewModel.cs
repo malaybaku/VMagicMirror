@@ -13,6 +13,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             _model = model;
 
+            ResetHandDownCustomPoseCommand = new ActionCommand(
+                () => _model.ResetCustomHandDownPose()
+                );
+
             ResetArmMotionSettingCommand = new ActionCommand(
                  () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetArmSetting)
                  );
@@ -103,7 +107,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         
         public RProperty<bool> EnableNoHandTrackMode => _model.EnableNoHandTrackMode;
         public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
-
+        public RProperty<bool> EnableCustomHandDownPose => _model.EnableCustomHandDownPose;
 
         public RProperty<bool> EnableHidRandomTyping => _model.EnableHidRandomTyping;
         public RProperty<bool> EnableShoulderMotionModify => _model.EnableShoulderMotionModify;
@@ -126,6 +130,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<int> WaitMotionPeriod => _model.WaitMotionPeriod;
 
 
+        public ActionCommand ResetHandDownCustomPoseCommand { get; }
         public ActionCommand ResetArmMotionSettingCommand { get; }
         public ActionCommand ResetHandMotionSettingCommand { get; }
         public ActionCommand ResetWaitMotionSettingCommand { get; }

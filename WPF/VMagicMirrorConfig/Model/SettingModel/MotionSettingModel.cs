@@ -29,7 +29,7 @@ namespace Baku.VMagicMirrorConfig
 
             EnableNoHandTrackMode = new RProperty<bool>(setting.EnableNoHandTrackMode, v => SendMessage(factory.EnableNoHandTrackMode(v)));
             EnableTwistBodyMotion = new RProperty<bool>(setting.EnableTwistBodyMotion, v => SendMessage(factory.EnableTwistBodyMotion(v)));
-            EnableCustomHandDownPose = new RProperty<bool>(setting.EnableCustomHandDownPose, v => SendMessage(factory.EnableHandDownModeCustomPose(v)));
+            EnableCustomHandDownPose = new RProperty<bool>(setting.EnableCustomHandDownPose, v => SendMessage(factory.EnableCustomHandDownPose(v)));
             CustomHandDownPose = new RProperty<string>(setting.CustomHandDownPose, v => SendMessage(factory.SetHandDownModeCustomPose(v)));
 
             EnableFaceTracking = new RProperty<bool>(setting.EnableFaceTracking, v => SendMessage(factory.EnableFaceTracking(v)));
@@ -142,7 +142,7 @@ namespace Baku.VMagicMirrorConfig
 
         private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
         {
-            if (e.Command != ReceiveMessageNames.UpdateHandDownPose)
+            if (e.Command != ReceiveMessageNames.UpdateCustomHandDownPose)
             {
                 return;
             }
@@ -163,7 +163,7 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<string> CustomHandDownPose { get; }
 
-        public void ResetCustomHandDownPose() => SendMessage(MessageFactory.Instance.ResetHandDownModeCustomPose());
+        public void ResetCustomHandDownPose() => SendMessage(MessageFactory.Instance.ResetCustomHandDownPose());
 
         #endregion
 

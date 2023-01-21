@@ -53,6 +53,8 @@ namespace Baku.VMagicMirror
         public Message UpdateAccessoryLayouts(string json) => WithArg(json);
 
         public Message VRM10SpecifiedButNotSupported(string pathOrModelName) => WithArg(pathOrModelName);
+
+        public Message UpdateHandDownRestPose(string json) => WithArg(json);
         
         #region VRoid
 

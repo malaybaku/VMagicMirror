@@ -78,9 +78,9 @@ namespace Baku.VMagicMirrorConfig
         public Message EnableNoHandTrackMode(bool enable) => WithArg(enable);
         public Message EnableTwistBodyMotion(bool enable) => WithArg(enable);
 
-        public Message EnableHandDownModeCustomPose(bool enable) => WithArg(enable);
+        public Message EnableCustomHandDownPose(bool enable) => WithArg(enable);
         public Message SetHandDownModeCustomPose(string poseJson) => WithArg(poseJson);
-        public Message ResetHandDownModeCustomPose() => NoArg();
+        public Message ResetCustomHandDownPose() => NoArg();
 
 
         public Message LengthFromWristToTip(int lengthCentimeter) => WithArg(lengthCentimeter);

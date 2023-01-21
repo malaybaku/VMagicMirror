@@ -10,27 +10,36 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// 手をおろした状態の手の姿勢をカスタムできるようにするやつ
     /// </summary>
-    public class CustomizedDownHandIk : MonoBehaviour
+    public class CustomizedDownHandIk : PresenterBase, ITickable
     {
-        private CustomizableHandIkTarget leftHand;
-        private CustomizableHandIkTarget rightHand;
-        private HandDownIkCalculator _handDownIkCalculator;
-        private IMessageSender _sender;
+        private readonly CustomizableHandIkTarget _leftHandTarget;
+        private readonly CustomizableHandIkTarget _rightHandTarget;
+
+        private readonly HandDownIkCalculator _handDownIkCalculator;
+        private readonly DeviceTransformController _deviceTransformController;
+        private readonly IMessageReceiver _receiver;
+        private readonly IMessageSender _sender;
+        private readonly IVRMLoadable _vrmLoadable;
 
         private readonly ReactiveProperty<bool> _enableFreeLayoutMode = new ReactiveProperty<bool>(false);
         private readonly ReactiveProperty<bool> _enableCustomHandDownPose = new ReactiveProperty<bool>(false);
         public IReadOnlyReactiveProperty<bool> EnableCustomHandDownPose => _enableCustomHandDownPose;
 
+        private readonly IKDataRecord _leftHand = new IKDataRecord();
+        public IIKData LeftHand => _leftHand;
+        private readonly IKDataRecord _rightHand = new IKDataRecord();
+        public IIKData RightHand => _rightHand;
+
         private readonly ReactiveProperty<bool> _showGizmo = new ReactiveProperty<bool>(false);
         private bool _hasModel;
-        private Transform _hips;
+        private Transform _leftUpperArm;
+        private Transform _rightUpperArm;
 
         private readonly HandDownRestPose _currentPose = new HandDownRestPose();
         private bool _leftControlIsActive;
         private bool _rightControlIsActive;
 
-        [Inject]
-        public void Initialize(
+        public CustomizedDownHandIk(
             IKTargetTransforms ikTargetTransforms, 
             HandDownIkCalculator handDownIkCalculator,
             IVRMLoadable vrmLoadable, 
@@ -39,62 +48,72 @@ namespace Baku.VMagicMirror
             DeviceTransformController deviceTransformController
             )
         {
-            leftHand = ikTargetTransforms.LeftHandDown;
-            rightHand = ikTargetTransforms.RightHandDown;
+            _leftHandTarget = ikTargetTransforms.LeftHandDown;
+            _rightHandTarget = ikTargetTransforms.RightHandDown;
             _sender = sender;
+            _receiver = receiver;
+            _vrmLoadable = vrmLoadable;
             _handDownIkCalculator = handDownIkCalculator;
+            _deviceTransformController = deviceTransformController;
+        }
 
-            receiver.AssignCommandHandler(
+        public override void Initialize()
+        {
+            _receiver.AssignCommandHandler(
                 VmmCommands.EnableCustomHandDownPose,
-                command => _enableCustomHandDownPose.Value = command.ToBoolean()
-            );
+                command =>
+                {
+                    _enableCustomHandDownPose.Value = command.ToBoolean();
+                });
 
-            receiver.AssignCommandHandler(
+            _receiver.AssignCommandHandler(
                 VmmCommands.EnableDeviceFreeLayout,
                 command => _enableFreeLayoutMode.Value = command.ToBoolean()
             );
 
-            receiver.AssignCommandHandler(
+            _receiver.AssignCommandHandler(
                 VmmCommands.SetHandDownModeCustomPose,
                 command => ApplyHandDownPose(command.Content)
             );
 
-            receiver.AssignCommandHandler(
+            _receiver.AssignCommandHandler(
                 VmmCommands.ResetCustomHandDownPose,
-                _ => ResetCustomHandDownPose()
-            );
+                _ =>
+                {
+                    ResetCustomHandDownPose();
+                    SendPose();
+                });
 
-            vrmLoadable.VrmLoaded += info =>
+            _vrmLoadable.VrmLoaded += info =>
             {
-                _hips = info.animator.GetBoneTransform(HumanBodyBones.Hips);
-                leftHand.TargetTransform.SetParent(_hips);
-                rightHand.TargetTransform.SetParent(_hips);
+                _leftUpperArm = info.animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+                _rightUpperArm = info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+                _leftHandTarget.TargetTransform.SetParent(_leftUpperArm);
+                _rightHandTarget.TargetTransform.SetParent(_rightUpperArm);
                 _hasModel = true;
             };
 
-            vrmLoadable.VrmDisposing += () =>
+            _vrmLoadable.VrmDisposing += () =>
             {
                 _hasModel = false;
-                leftHand.TargetTransform.SetParent(null);
-                rightHand.TargetTransform.SetParent(null);
-                _hips = null;
+                _leftHandTarget.TargetTransform.SetParent(null);
+                _rightHandTarget.TargetTransform.SetParent(null);
+                _leftUpperArm = null;
+                _rightUpperArm = null;
             };
 
-            deviceTransformController.ControlRequested
+            _deviceTransformController.ControlRequested
                 .Subscribe(OnDeviceControlRequested)
                 .AddTo(this);
-        }
-
-        private void Start()
-        {
+            
             _enableFreeLayoutMode
                 .CombineLatest(EnableCustomHandDownPose, (x, y) => x && y)
                 .DistinctUntilChanged()
                 .Subscribe(gizmoVisible =>
                 {
                     _showGizmo.Value = gizmoVisible;
-                    leftHand.SetGizmoImageActiveness(gizmoVisible);
-                    rightHand.SetGizmoImageActiveness(gizmoVisible);
+                    _leftHandTarget.SetGizmoImageActiveness(gizmoVisible);
+                    _rightHandTarget.SetGizmoImageActiveness(gizmoVisible);
                     if (!gizmoVisible)
                     {
                         _leftControlIsActive = false;
@@ -105,28 +124,49 @@ namespace Baku.VMagicMirror
         }
 
         //片方の手の位置を調整
-        private void Update()
+        void ITickable.Tick()
         {
+            //NOTE: デフォルトの手下ろしとは更新タイミングが微妙に違う事に注意。何か起こるかもしれない…
+            if (EnableCustomHandDownPose.Value)
+            {
+                UpdateIkDataRecord();
+            }
+
             if (!_showGizmo.Value)
             {
                 return;
             }
 
-            //左手のgizmoが操作され、確定した
-            if (_leftControlIsActive && !leftHand.TransformControl.IsDragging)
+            //gizmoの操作が確定するとWPF側にも姿勢が送られる
+            if (_leftControlIsActive && !_leftHandTarget.TransformControl.IsDragging)
             {
-                var pose = GetPoseFromTransform(leftHand.TargetTransform, true);
+                var pose = GetPoseFromTransform(_leftHandTarget.TargetTransform, true);
+                SetPosesToTransforms(pose);
+                SendPose();
+            }
+
+            if (_rightControlIsActive && !_rightHandTarget.TransformControl.IsDragging)
+            {
+                var pose = GetPoseFromTransform(_rightHandTarget.TargetTransform, false);
+                SetPosesToTransforms(pose);
+                SendPose();
+            }
+
+            _leftControlIsActive = _leftHandTarget.TransformControl.IsDragging;
+            _rightControlIsActive = _rightHandTarget.TransformControl.IsDragging;
+            
+            //操作中のgizmoは逐一見てIKに反映
+            if (_leftHandTarget.TransformControl.IsDragging)
+            {
+                var pose = GetPoseFromTransform(_leftHandTarget.TargetTransform, true);
                 SetPosesToTransforms(pose);
             }
 
-            if (_rightControlIsActive && !rightHand.TransformControl.IsDragging)
+            if (_rightHandTarget.TransformControl.IsDragging)
             {
-                var pose = GetPoseFromTransform(rightHand.TargetTransform, false);
+                var pose = GetPoseFromTransform(_rightHandTarget.TargetTransform, false);
                 SetPosesToTransforms(pose);
             }
-
-            _leftControlIsActive = leftHand.TransformControl.IsDragging;
-            _rightControlIsActive = rightHand.TransformControl.IsDragging;
         }
 
         private void OnDeviceControlRequested(TransformControlRequest request)
@@ -141,7 +181,7 @@ namespace Baku.VMagicMirror
                 mode == TransformControl.TransformMode.Translate || 
                 mode == TransformControl.TransformMode.Rotate;
             //scaleは許可されてないことに注意
-            leftHand.TransformControl.mode = useMode ? mode : TransformControl.TransformMode.None;
+            _leftHandTarget.TransformControl.mode = useMode ? mode : TransformControl.TransformMode.None;
         }
 
         private void ApplyHandDownPose(string poseJson)
@@ -199,20 +239,47 @@ namespace Baku.VMagicMirror
             _currentPose.LeftPosition = pose.LeftPosition;
             _currentPose.LeftRotation = pose.LeftRotation;
 
-            leftHand.TargetTransform.localPosition = _currentPose.LeftPosition;
-            leftHand.TargetTransform.localRotation = Quaternion.Euler(_currentPose.LeftRotation);
+            _leftHandTarget.TargetTransform.localPosition = _currentPose.LeftPosition;
+            _leftHandTarget.TargetTransform.localRotation = Quaternion.Euler(_currentPose.LeftRotation);
 
-            rightHand.TargetTransform.localPosition = new Vector3(
+            _rightHandTarget.TargetTransform.localPosition = new Vector3(
                 -_currentPose.LeftPosition.x,
                 _currentPose.LeftPosition.y,
                 _currentPose.LeftPosition.z
             );
 
             //TODO: これで合ってるかは要確認ですよ
-            rightHand.TargetTransform.localRotation = Quaternion.Euler(
+            _rightHandTarget.TargetTransform.localRotation = Quaternion.Euler(
                 _currentPose.LeftPosition.x,
                 -_currentPose.LeftPosition.y,
                 -_currentPose.LeftPosition.z
+            );
+        }
+
+        private void UpdateIkDataRecord()
+        {
+            if (!_hasModel)
+            {
+                return;
+            }
+
+            if (!_currentPose.IsValid)
+            {
+                ResetCustomHandDownPose();
+            }
+
+            _leftHand.Position = _leftUpperArm.TransformPoint(_currentPose.LeftPosition);
+            _leftHand.Rotation = _leftUpperArm.rotation * Quaternion.Euler(_currentPose.LeftRotation);
+            
+            _rightHand.Position = _rightUpperArm.TransformPoint(new Vector3(
+                -_currentPose.LeftPosition.x,
+                _currentPose.LeftPosition.y,
+                _currentPose.LeftPosition.z)
+            );
+            _rightHand.Rotation = _rightUpperArm.rotation * Quaternion.Euler(
+                _currentPose.LeftRotation.x,
+                -_currentPose.LeftRotation.y,
+                -_currentPose.LeftRotation.z
             );
         }
         
@@ -233,7 +300,6 @@ namespace Baku.VMagicMirror
                 LeftRotation = ik.Rotation.eulerAngles,
             };
             SetPosesToTransforms(pose);
-            SendPose();
         }
     }
 

@@ -51,7 +51,6 @@ namespace Baku.VMagicMirror.IK
             _leftHand.Rotation = LeftRot;
             _rightHand.Rotation = RightRot;
             _leftHandLocalFromHips.Rotation = LeftRot;
-            _rightHandLocalFromHips.Rotation = RightRot;
         }
 
         void IInitializable.Initialize()

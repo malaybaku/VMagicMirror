@@ -171,7 +171,7 @@ namespace Baku.VMagicMirror
             PenTabletProvider penTabletProvider,
             HandTracker handTracker,
             ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader,
-            HandDownIkCalculator handDownIkCalculator
+            SwitchableHandDownIkData switchableHandDownIk
             )
         {
             _reactionSources = new HandIkReactionSources(
@@ -207,7 +207,7 @@ namespace Baku.VMagicMirror
                 );
             Presentation = new PresentationHandIKGenerator(dependency, vrmLoadable, cam);
             _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
-            _downHand = new AlwaysDownHandIkGenerator(dependency, handDownIkCalculator);
+            _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
             barracudaHand.SetupDependency(dependency);

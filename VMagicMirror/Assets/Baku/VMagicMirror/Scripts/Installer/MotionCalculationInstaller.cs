@@ -16,6 +16,8 @@ namespace Baku.VMagicMirror.Installer
         public override void Install(DiContainer container)
         {
             container.Bind<HandDownIkCalculator>().AsSingle();
+            container.Bind<CustomizedDownHandIk>().AsSingle();
+            container.Bind<SwitchableHandDownIkData>().AsSingle();
             container.BindInstances(
                 handIKIntegrator,
                 faceAttitude,

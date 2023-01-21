@@ -7,9 +7,9 @@ namespace Baku.VMagicMirror.IK
     /// <summary>常に手を下げた姿勢になるような手IKの生成処理。</summary>
     public sealed class AlwaysDownHandIkGenerator : HandIkGeneratorBase
     {
-        private readonly HandDownIkCalculator _handDownIkCalculator;
-        public IIKData LeftHand => _handDownIkCalculator.LeftHand;
-        public IIKData RightHand => _handDownIkCalculator.RightHand;
+        private readonly SwitchableHandDownIkData _handDownIk;
+        public IIKData LeftHand => _handDownIk.LeftHand;
+        public IIKData RightHand => _handDownIk.RightHand;
 
         private readonly AlwaysHandDownState _leftHandState;
         public override IHandIkState LeftHandState => _leftHandState;
@@ -18,10 +18,10 @@ namespace Baku.VMagicMirror.IK
         public override IHandIkState RightHandState => _rightHandState; 
         
         public AlwaysDownHandIkGenerator(
-            HandIkGeneratorDependency dependency, HandDownIkCalculator handDownIkCalculator)
+            HandIkGeneratorDependency dependency, SwitchableHandDownIkData switchableHandDownIk)
             : base(dependency)
         {
-            _handDownIkCalculator = handDownIkCalculator;
+            _handDownIk = switchableHandDownIk;
             _leftHandState = new AlwaysHandDownState(this, ReactedHand.Left);
             _rightHandState = new AlwaysHandDownState(this, ReactedHand.Right);
 

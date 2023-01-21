@@ -27,6 +27,10 @@ namespace Baku.VMagicMirror.IK
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         public IIKData RightHand => _rightHand;
 
+        //NOTE: 「カスタム姿勢は左右対称」という前提を置いているので、片腕ぶんだけ公開しておく
+        private readonly IKDataRecord _leftHandLocalFromHips = new IKDataRecord();
+        public IIKData LeftHandLocalToHip => _leftHandLocalFromHips;
+
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ICoroutineSource _coroutineSource;
 
@@ -46,6 +50,8 @@ namespace Baku.VMagicMirror.IK
             _coroutineSource = coroutineSource;
             _leftHand.Rotation = LeftRot;
             _rightHand.Rotation = RightRot;
+            _leftHandLocalFromHips.Rotation = LeftRot;
+            _rightHandLocalFromHips.Rotation = RightRot;
         }
 
         void IInitializable.Initialize()
@@ -87,6 +93,10 @@ namespace Baku.VMagicMirror.IK
 
             _leftHand.Position = hipsPos + _leftPosHipsOffset;
             _rightHand.Position = hipsPos + _rightPosHipsOffset;
+
+            _leftHandLocalFromHips.Position = _hips.InverseTransformPoint(_leftHand.Position);
+            _leftHandLocalFromHips.Rotation = _leftHand.Rotation * Quaternion.Inverse(_hips.rotation);
+            
             _hasModel = true;
         }
 
@@ -140,36 +150,5 @@ namespace Baku.VMagicMirror.IK
                 _rightHand.Position = rightPos;
             }
         }
-
-        // private class AlwaysHandDownState : IHandIkState
-        // {
-        //     public AlwaysHandDownState(AlwaysDownHandIkGenerator parent, ReactedHand hand)
-        //     {
-        //         _parent = parent;
-        //         Hand = hand;
-        //         _data = hand == ReactedHand.Right ? _parent._rightHand : _parent._leftHand;
-        //     }
-        //
-        //     private readonly AlwaysDownHandIkGenerator _parent;
-        //     private readonly IIKData _data;
-        //
-        //     public bool SkipEnterIkBlend => false;
-        //     public void RaiseRequest() => RequestToUse?.Invoke(this);
-        //
-        //     public Vector3 Position => _data.Position;
-        //     public Quaternion Rotation => _data.Rotation;
-        //     public ReactedHand Hand { get; }
-        //     public HandTargetType TargetType => HandTargetType.AlwaysDown;
-        //     
-        //     public event Action<IHandIkState> RequestToUse;
-        //
-        //     public void Enter(IHandIkState prevState)
-        //     {
-        //     }
-        //
-        //     public void Quit(IHandIkState nextState)
-        //     {
-        //     }
-        // }
     }
 }

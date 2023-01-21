@@ -26,10 +26,10 @@ namespace Baku.VMagicMirror.IK
         public IIKData LeftHand => _leftHand;
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         public IIKData RightHand => _rightHand;
-
+        
         //NOTE: 「カスタム姿勢は左右対称」という前提を置いているので、片腕ぶんだけ公開しておく
-        private readonly IKDataRecord _leftHandLocalFromHips = new IKDataRecord();
-        public IIKData LeftHandLocalToHip => _leftHandLocalFromHips;
+        private readonly IKDataRecord _leftHandLocalFromUpperArm = new IKDataRecord();
+        public IIKData LeftHandLocalOnUpperArm => _leftHandLocalFromUpperArm;
 
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ICoroutineSource _coroutineSource;
@@ -50,7 +50,7 @@ namespace Baku.VMagicMirror.IK
             _coroutineSource = coroutineSource;
             _leftHand.Rotation = LeftRot;
             _rightHand.Rotation = RightRot;
-            _leftHandLocalFromHips.Rotation = LeftRot;
+            _leftHandLocalFromUpperArm.Rotation = LeftRot;
         }
 
         void IInitializable.Initialize()
@@ -93,8 +93,8 @@ namespace Baku.VMagicMirror.IK
             _leftHand.Position = hipsPos + _leftPosHipsOffset;
             _rightHand.Position = hipsPos + _rightPosHipsOffset;
 
-            _leftHandLocalFromHips.Position = _hips.InverseTransformPoint(_leftHand.Position);
-            _leftHandLocalFromHips.Rotation = _leftHand.Rotation * Quaternion.Inverse(_hips.rotation);
+            _leftHandLocalFromUpperArm.Position = _leftUpperArm.InverseTransformPoint(_leftHand.Position);
+            _leftHandLocalFromUpperArm.Rotation = Quaternion.Inverse(_leftUpperArm.rotation) * _leftHand.Rotation;
             
             _hasModel = true;
         }

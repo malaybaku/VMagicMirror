@@ -292,7 +292,7 @@ namespace Baku.VMagicMirror
         
         private void ResetCustomHandDownPose()
         {
-            var ik = _handDownIkCalculator.LeftHandLocalToHip;
+            var ik = _handDownIkCalculator.LeftHandLocalOnUpperArm;
             var pose = new HandDownRestPose()
             {
                 IsValid = true,

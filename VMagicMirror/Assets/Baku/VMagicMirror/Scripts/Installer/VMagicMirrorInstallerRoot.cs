@@ -24,6 +24,7 @@ namespace Baku.VMagicMirror.Installer
         {
             Container.BindInstance(loadingCoverController);
             Container.BindInterfacesTo<StartupLoadingCoverController>().AsSingle();
+            Container.Bind<CoroutineSource>().FromNewComponentOnNewGameObject();
 
             foreach (var installer in new InstallerBase[]
                 {

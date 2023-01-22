@@ -147,7 +147,7 @@ namespace Baku.VMagicMirrorConfig
                 return;
             }
 
-            CustomHandDownPose.Value = e.Args;
+            CustomHandDownPose.SilentSet(e.Args);
         }
 
         public RProperty<int> KeyboardAndMouseMotionMode { get; }

@@ -76,7 +76,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   global: 0
-  useDistance: 0
+  useDistance: 1
   distance: 12
   xyPlaneMode: 0
   gizmoRenderer: {fileID: 0}
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   global: 0
-  useDistance: 0
+  useDistance: 1
   distance: 12
   xyPlaneMode: 0
   gizmoRenderer: {fileID: 0}

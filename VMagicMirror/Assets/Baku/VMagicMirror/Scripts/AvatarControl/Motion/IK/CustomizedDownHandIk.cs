@@ -329,7 +329,7 @@ namespace Baku.VMagicMirror
         private void SendPose()
         {
             _sender.SendCommand(
-                MessageFactory.Instance.UpdateHandDownRestPose(JsonUtility.ToJson(_currentPose))
+                MessageFactory.Instance.UpdateCustomHandDownPose(JsonUtility.ToJson(_currentPose))
                 );
         }
         

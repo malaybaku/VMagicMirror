@@ -27,9 +27,8 @@ namespace Baku.VMagicMirror.IK
         private readonly IKDataRecord _rightHand = new IKDataRecord();
         public IIKData RightHand => _rightHand;
         
-        //NOTE: 「カスタム姿勢は左右対称」という前提を置いているので、片腕ぶんだけ公開しておく
-        private readonly IKDataRecord _leftHandLocalFromUpperArm = new IKDataRecord();
-        public IIKData LeftHandLocalOnUpperArm => _leftHandLocalFromUpperArm;
+        private readonly IKDataRecord _leftHandLocalFromHips = new IKDataRecord();
+        public IIKData LeftHandLocalFromHips => _leftHandLocalFromHips;
 
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ICoroutineSource _coroutineSource;
@@ -50,14 +49,14 @@ namespace Baku.VMagicMirror.IK
             _coroutineSource = coroutineSource;
             _leftHand.Rotation = LeftRot;
             _rightHand.Rotation = RightRot;
-            _leftHandLocalFromUpperArm.Rotation = LeftRot;
+            _leftHandLocalFromHips.Rotation = LeftRot;
         }
 
         void IInitializable.Initialize()
         {
             _vrmLoadable.VrmLoaded += info => SetupAvatar(info.animator);
             _vrmLoadable.VrmDisposing += ClearAvatarReference;
-            _coroutineSource.AssociatedBehaviour.StartCoroutine(SetHandPositionsIfHasModel());
+            _coroutineSource.StartCoroutine(SetHandPositionsIfHasModel());
         }
 
         private void SetupAvatar(Animator animator)
@@ -93,9 +92,9 @@ namespace Baku.VMagicMirror.IK
             _leftHand.Position = hipsPos + _leftPosHipsOffset;
             _rightHand.Position = hipsPos + _rightPosHipsOffset;
 
-            _leftHandLocalFromUpperArm.Position = _leftUpperArm.InverseTransformPoint(_leftHand.Position);
-            _leftHandLocalFromUpperArm.Rotation = Quaternion.Inverse(_leftUpperArm.rotation) * _leftHand.Rotation;
-            
+            _leftHandLocalFromHips.Position = _hips.InverseTransformPoint(_leftHand.Position);
+            _leftHandLocalFromHips.Rotation = Quaternion.Inverse(_hips.rotation) * _leftHand.Rotation;
+
             _hasModel = true;
         }
 

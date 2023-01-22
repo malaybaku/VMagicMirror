@@ -197,8 +197,8 @@ namespace Baku.VMagicMirror
                 if (EnableCustomHandDownPose.Value)
                 {
                     var hipsPos = _hips.position;
-                    _leftUpperArmPosOffset = (hipsPos - _leftUpperArm.position) - _defaultHipsToLeftUpperArm;
-                    _rightUpperArmPosOffset = (hipsPos - _rightUpperArm.position) - _defaultHipsToRightUpperArm;
+                    _leftUpperArmPosOffset = (_leftUpperArm.position - hipsPos) - _defaultHipsToLeftUpperArm;
+                    _rightUpperArmPosOffset = (_rightUpperArm.position - hipsPos) - _defaultHipsToRightUpperArm;
                 }
             }
         }

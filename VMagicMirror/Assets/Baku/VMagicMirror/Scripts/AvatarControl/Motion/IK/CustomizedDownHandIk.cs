@@ -150,6 +150,16 @@ namespace Baku.VMagicMirror
                 })
                 .AddTo(this);
 
+            // アプリ起動後で初めてこの機能を有効化した際に手が暴れないようにする
+            _enableCustomHandDownPose
+                .Subscribe(v =>
+                {
+                    if (v)
+                    {
+                        UpdateIk();
+                    }
+                });
+            
             //gizmoの操作が確定するとWPF側にも姿勢が送られる: ドラッグ操作の途中では内部的にのみ反映する
             _leftHandTarget.TransformControl.DragEnded += mode =>
             {

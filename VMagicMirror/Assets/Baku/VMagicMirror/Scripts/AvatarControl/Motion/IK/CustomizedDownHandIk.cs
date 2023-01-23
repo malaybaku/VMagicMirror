@@ -24,6 +24,7 @@ namespace Baku.VMagicMirror
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ICoroutineSource _coroutineSource;
 
+        private readonly ReactiveProperty<bool> _enableAlwaysHandDownMode = new ReactiveProperty<bool>(false);
         private readonly ReactiveProperty<bool> _enableFreeLayoutMode = new ReactiveProperty<bool>(false);
         private readonly ReactiveProperty<bool> _enableCustomHandDownPose = new ReactiveProperty<bool>(false);
         public IReadOnlyReactiveProperty<bool> EnableCustomHandDownPose => _enableCustomHandDownPose;
@@ -71,14 +72,17 @@ namespace Baku.VMagicMirror
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.EnableCustomHandDownPose,
-                command =>
-                {
-                    _enableCustomHandDownPose.Value = command.ToBoolean();
-                });
+                command => _enableCustomHandDownPose.Value = command.ToBoolean()
+            );
 
             _receiver.AssignCommandHandler(
                 VmmCommands.EnableDeviceFreeLayout,
                 command => _enableFreeLayoutMode.Value = command.ToBoolean()
+            );
+            
+            _receiver.AssignCommandHandler(
+                VmmCommands.EnableNoHandTrackMode,
+                command => _enableAlwaysHandDownMode.Value = command.ToBoolean()
             );
 
             _receiver.AssignCommandHandler(
@@ -99,8 +103,8 @@ namespace Baku.VMagicMirror
                 _hips = info.animator.GetBoneTransform(HumanBodyBones.Hips);
                 _leftUpperArm = info.animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
                 _rightUpperArm = info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
-                _leftHandTarget.TargetTransform.SetParent(_hips);
-                _rightHandTarget.TargetTransform.SetParent(_hips);
+                _leftHandTarget.TargetTransform.SetParent(_hips, false);
+                _rightHandTarget.TargetTransform.SetParent(_hips, false);
 
                 var hipsPos = _hips.position;
                 _defaultHipsToLeftUpperArm = _leftUpperArm.position - hipsPos;
@@ -128,7 +132,10 @@ namespace Baku.VMagicMirror
                 .AddTo(this);
             
             _enableFreeLayoutMode
-                .CombineLatest(EnableCustomHandDownPose, (x, y) => x && y)
+                .CombineLatest(
+                    EnableCustomHandDownPose, 
+                    _enableAlwaysHandDownMode,
+                    (x, y, z) => x && y && z)
                 .DistinctUntilChanged()
                 .Subscribe(gizmoVisible =>
                 {

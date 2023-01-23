@@ -117,7 +117,7 @@
                                   Margin="20,2,15,5"
                                   Visibility="{Binding EnableCustomHandDownPose.Value,
                                                       Converter={StaticResource BooleanToVisibilityConverter}}"
-                                  IsChecked="{Binding EnableFreeLayoutMode.Value}"
+                                  IsChecked="{Binding EnableDeviceFreeLayout.Value}"
                                   Content="{DynamicResource Layout_DeviceFreeLayout}"/>
                         <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
                                 Width="NaN"

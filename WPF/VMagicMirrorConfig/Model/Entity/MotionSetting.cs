@@ -20,6 +20,11 @@
 
         public bool EnableTwistBodyMotion { get; set; } = false;
 
+        public bool EnableCustomHandDownPose { get; set; } = false;
+
+        //NOTE: jsonがUnityから飛んでくるのを保持するだけ
+        public string CustomHandDownPose { get; set; } = "";
+
         #endregion
 
         #region Face
@@ -190,6 +195,9 @@
         public void ResetToDefault()
         {
             EnableNoHandTrackMode = false;
+            EnableTwistBodyMotion = false;
+            EnableCustomHandDownPose = false;
+            CustomHandDownPose = "";
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();

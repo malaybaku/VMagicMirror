@@ -13,12 +13,14 @@ namespace Baku.VMagicMirrorConfig
             public const string UseLookAtPointMainCamera = nameof(UseLookAtPointMainCamera);
         }
 
-        public MotionSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        public MotionSettingModel() : this(
+            ModelResolver.Instance.Resolve<IMessageSender>(),
+            ModelResolver.Instance.Resolve<IMessageReceiver>())
         {
         }
 
 
-        public MotionSettingModel(IMessageSender sender) : base(sender)
+        public MotionSettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             var factory = MessageFactory.Instance;
             var setting = MotionSetting.Default;
@@ -27,6 +29,8 @@ namespace Baku.VMagicMirrorConfig
 
             EnableNoHandTrackMode = new RProperty<bool>(setting.EnableNoHandTrackMode, v => SendMessage(factory.EnableNoHandTrackMode(v)));
             EnableTwistBodyMotion = new RProperty<bool>(setting.EnableTwistBodyMotion, v => SendMessage(factory.EnableTwistBodyMotion(v)));
+            EnableCustomHandDownPose = new RProperty<bool>(setting.EnableCustomHandDownPose, v => SendMessage(factory.EnableCustomHandDownPose(v)));
+            CustomHandDownPose = new RProperty<string>(setting.CustomHandDownPose, v => SendMessage(factory.SetHandDownModeCustomPose(v)));
 
             EnableFaceTracking = new RProperty<bool>(setting.EnableFaceTracking, v => SendMessage(factory.EnableFaceTracking(v)));
             AutoBlinkDuringFaceTracking = new RProperty<bool>(setting.AutoBlinkDuringFaceTracking, v => SendMessage(factory.AutoBlinkDuringFaceTracking(v)));
@@ -131,6 +135,19 @@ namespace Baku.VMagicMirrorConfig
             GamepadMotionMode = new RProperty<int>(
                 setting.GamepadMotionMode, v => SendMessage(factory.SetGamepadMotionMode(v))
                 );
+
+            receiver.ReceivedCommand += OnReceiveCommand;
+        }
+
+
+        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        {
+            if (e.Command != ReceiveMessageNames.UpdateCustomHandDownPose)
+            {
+                return;
+            }
+
+            CustomHandDownPose.SilentSet(e.Args);
         }
 
         public RProperty<int> KeyboardAndMouseMotionMode { get; }
@@ -141,6 +158,12 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> EnableNoHandTrackMode { get; }
 
         public RProperty<bool> EnableTwistBodyMotion { get; }
+
+        public RProperty<bool> EnableCustomHandDownPose { get; }
+
+        public RProperty<string> CustomHandDownPose { get; }
+
+        public void ResetCustomHandDownPose() => SendMessage(MessageFactory.Instance.ResetCustomHandDownPose());
 
         #endregion
 
@@ -202,9 +225,9 @@ namespace Baku.VMagicMirrorConfig
 
         //NOTE: dB単位なので0がデフォルト。対数ベースのほうがレンジ取りやすい
         public RProperty<int> MicrophoneSensitivity { get; }
- 
+
         public RProperty<bool> AdjustLipSyncByVolume { get; }
-        
+
         #endregion
 
         #region Arm
@@ -220,7 +243,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> ShowPresentationPointer { get; }
         public RProperty<int> PresentationArmRadiusMin { get; }
 
-        public bool PointerVisible => 
+        public bool PointerVisible =>
             KeyboardAndMouseMotionMode.Value == MotionSetting.KeyboardMouseMotionPresentation &&
             ShowPresentationPointer.Value;
 
@@ -323,6 +346,8 @@ namespace Baku.VMagicMirrorConfig
         {
             var setting = MotionSetting.Default;
             EnableNoHandTrackMode.Value = setting.EnableNoHandTrackMode;
+            EnableTwistBodyMotion.Value = setting.EnableTwistBodyMotion;
+            EnableCustomHandDownPose.Value = setting.EnableCustomHandDownPose;
             ResetFaceBasicSetting();
             ResetFaceEyeSetting();
             ResetFaceBlendShapeSetting();

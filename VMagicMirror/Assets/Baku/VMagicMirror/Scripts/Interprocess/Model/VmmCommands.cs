@@ -51,7 +51,10 @@
 
         public const string SetKeyboardAndMouseMotionMode = nameof(SetKeyboardAndMouseMotionMode);
         public const string SetGamepadMotionMode = nameof(SetGamepadMotionMode);
-
+        public const string EnableCustomHandDownPose = nameof(EnableCustomHandDownPose);
+        public const string SetHandDownModeCustomPose = nameof(SetHandDownModeCustomPose);
+        public const string ResetCustomHandDownPose = nameof(ResetCustomHandDownPose);
+            
         // Motion, Wait
         public const string EnableWaitMotion = nameof(EnableWaitMotion);
         public const string WaitMotionScale = nameof(WaitMotionScale);

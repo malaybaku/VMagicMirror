@@ -50,6 +50,10 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -104,6 +108,46 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+
+                        <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                                  Margin="5,15,5,0"
+                                  IsChecked="{Binding EnableCustomHandDownPose.Value}"
+                                  Content="{DynamicResource Motion_FullBody_EnableCustomHandDownPose}"/>
+                        <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                                  Margin="20,2,15,5"
+                                  Visibility="{Binding EnableCustomHandDownPose.Value,
+                                                      Converter={StaticResource BooleanToVisibilityConverter}}"
+                                  IsChecked="{Binding EnableDeviceFreeLayout.Value}"
+                                  Content="{DynamicResource Layout_DeviceFreeLayout}"/>
+                        <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
+                                Width="NaN"
+                                HorizontalAlignment="Left"
+                                Margin="20,5"
+                                Visibility="{Binding EnableCustomHandDownPose.Value,
+                                                     Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Content="{DynamicResource Motion_FullBody_EnableCustomHandDownPose_Reset}"
+                                Command="{Binding ResetCustomHandDownPoseCommand}"
+                                />
+                        <Border Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"
+                                Style="{StaticResource SideMarginSectionBorder}"
+                                HorizontalAlignment="Left"
+                                Margin="20,5,10,5"
+                                Padding="4"
+                                Visibility="{Binding EnableCustomHandDownPose.Value,
+                                                     Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Margin="2" Orientation="Horizontal">
+                                <md:PackIcon Kind="InformationOutline"
+                                             Margin="0"
+                                             VerticalAlignment="Center"
+                                             Foreground="{StaticResource PrimaryHueMidBrush}"
+                                             />
+                                <TextBlock Text="{DynamicResource Motion_FullBody_EnableCustomHandDownPose_AlwaysDownWarning}" 
+                                           Margin="10,0"
+                                           TextWrapping="Wrap"
+                                           />
+                            </StackPanel>
+                        </Border>
+
                     </Grid>
                 </StackPanel>
             </Border>

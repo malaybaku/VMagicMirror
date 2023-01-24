@@ -188,6 +188,12 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">Always-Hands-Down Mode (*Increase body move)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">Hands-Down Mode</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">Enable Twist Motion</sys:String>    
+    <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose">Custom Hand Down Pose</sys:String>    
+    <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Notice">*Pose adjuster appears on Free Layout Mode</sys:String>
+    <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_AlwaysDownWarning" xml:space="preserve">To edit hand pose,
+- Turn on "Always-Hands-Down Mode"
+- Turn on "Free Layout Mode"</sys:String>
+    <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">Reset Hand Down Pose to Default</sys:String>
     
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">Arm</sys:String>    

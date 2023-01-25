@@ -21,8 +21,8 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 
         private const int SleepMsDefault = 12;
         private const int SleepMsLowerLimit = 4;
-        //この回数だけUDP受信すると、そのたびに受信FPSを計算する
-        private const int ReceiveFpsCountInterval = 500;
+        //この回数で正常にUDP受信するたびに受信FPSを確認する
+        private const int ReceiveFpsCountInterval = 400;
         
         //テキストのGCAllocを避けるやつ
         private readonly StringBuilder _sb = new StringBuilder(2048);
@@ -371,10 +371,9 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 }
                 catch (Exception)
                 {
-                    //iFacialMocap側が完全に止まった可能性が高いので、FPSの測定をリセット
+                    //iFacialMocap側が停止した可能性が高いので、FPSの測定をリセット
                     receiveCount = 0;
                     sw.Restart();
-                    //Do nothing
                 }
 
                 if (receiveCount >= ReceiveFpsCountInterval)
@@ -386,7 +385,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                     //FPSが低い、という判定はそこそこ厳しく取る。互換性の観点で言うと基本SleepMsが短い方がよい、というのを踏まえてる
                     if (fps < 50)
                     {
-                        sleepMs--;
+                        sleepMs -= 2;
                         sleepMsReachedLowerLimit = sleepMs <= SleepMsLowerLimit;
                         LogOutput.Instance.Write($"iFacialMocap receive fps({fps}) is low, set sleep time to {sleepMs}ms");
                     }

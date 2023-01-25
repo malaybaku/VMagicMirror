@@ -94,11 +94,16 @@ Please see per-app specific setup process.
 
 iOS: **[iFacialMocap](../external_tracker_ifacialmocap)**
 
-Android: **[MeowFace](../external_tracker_meowface)**
-
-iFacialMocap is the recommended way because of its higher performance.
-
 (*This area will be updated when other app supported.)
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+Help about Android App [MeowFace](https://play.google.com/store/apps/details?id=com.suvidriel.meowface) has been removed, since the it  seems not work correctly anymore.
+
+</div>
+
 
 
 ### Supported Options 

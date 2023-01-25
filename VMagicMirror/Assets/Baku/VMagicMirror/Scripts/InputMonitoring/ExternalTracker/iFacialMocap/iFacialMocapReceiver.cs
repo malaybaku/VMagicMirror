@@ -3,11 +3,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
 {
@@ -17,6 +19,11 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         private const float CalibrateReflectDuration = 0.6f;
         private const int PortNumber = 49983;
 
+        private const int SleepMsDefault = 12;
+        private const int SleepMsLowerLimit = 4;
+        //この回数で正常にUDP受信するたびに受信FPSを確認する
+        private const int ReceiveFpsCountInterval = 400;
+        
         //テキストのGCAllocを避けるやつ
         private readonly StringBuilder _sb = new StringBuilder(2048);
         
@@ -335,6 +342,20 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                 LogOutput.Instance.Write(log);
             }
 
+            // Receiveのサボり方
+            // 前提:
+            // - iFacialMocapは60FPSでデータを送信してくる
+            // - VMagicMirrorの受信処理は極めて短時間で済むよう設計されてる
+            // やっていること:
+            // - 投機的に、受信のたびにThread.Sleepで休む
+            // - データの受信FPSが低い場合、Sleepが長すぎる可能性があるので徐々にSleepの長さを減らしていく
+
+            var sleepMsReachedLowerLimit = false;
+            var sleepMs = SleepMsDefault;
+            var receiveCount = 0;
+
+            var sw = new Stopwatch();
+            sw.Start();
             while (!token.IsCancellationRequested)
             {
                 try
@@ -343,13 +364,38 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
                     byte[] data = client.Receive(ref remoteEndPoint);
                     string message = Encoding.ASCII.GetString(data);
                     RawMessage = message;
+                    if (!sleepMsReachedLowerLimit)
+                    {
+                        receiveCount++;
+                    }
                 }
                 catch (Exception)
                 {
-                    //Do nothing
+                    //iFacialMocap側が停止した可能性が高いので、FPSの測定をリセット
+                    receiveCount = 0;
+                    sw.Restart();
                 }
+
+                if (receiveCount >= ReceiveFpsCountInterval)
+                {
+                    receiveCount = 0;
+                    var elapsed = sw.ElapsedMilliseconds;
+
+                    var fps = ReceiveFpsCountInterval * 1000 / elapsed ;
+                    //FPSが低い、という判定はそこそこ厳しく取る。互換性の観点で言うと基本SleepMsが短い方がよい、というのを踏まえてる
+                    if (fps < 50)
+                    {
+                        sleepMs -= 2;
+                        sleepMsReachedLowerLimit = sleepMs <= SleepMsLowerLimit;
+                        LogOutput.Instance.Write($"iFacialMocap receive fps({fps}) is low, set sleep time to {sleepMs}ms");
+                    }
+                    sw.Restart();
+                }
+                
+                Thread.Sleep(sleepMs);
             }
 
+            sw.Stop();
             try
             {
                 clientV4?.Close();

@@ -94,13 +94,16 @@ VMagicMirrorのコントロールパネルで`Ex Tracker`タブを選択し、`�
 
 iOS: **[iFacialMocapとの連携](../external_tracker_ifacialmocap)**
 
-Android: **[MeowFaceとの連携](../external_tracker_meowface)**
-
-どちらのアプリも利用できる場合、iFacialMocapの使用を推奨しています。
-
-これはOS自体のトラッキング性能が異なるなどの理由で、iFacialMocapのほうがトラッキング性能が高いためです。
-
 (※他のアプリケーションがサポートされた場合、ここに随時追記されます。)
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+※Androidでは以前まで[Meowface](https://play.google.com/store/apps/details?id=com.suvidriel.meowface)が利用できましたが、現在正常に動作しないことを確認しているため、案内を削除しました。
+
+</div>
+
 
 
 ### 外部トラッキングのオプション

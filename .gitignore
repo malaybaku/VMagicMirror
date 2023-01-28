@@ -106,6 +106,10 @@ sysinfo.txt
 /VMagicMirror/Assets/noribenLaserlight.meta
 /VMagicMirror/Assets/Butterfly.meta
 
+# Assets to ignore (for DEBUG purpose installed asset in author's env)
+
+/VMagicMirror/Assets/UnityChan/
+/VMagicMirror/Assets/UnityChan.meta
 
 # NOT ignore solution / project files of WPF
 !/WPF/**/*.sln

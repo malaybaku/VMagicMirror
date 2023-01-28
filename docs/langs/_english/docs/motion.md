@@ -32,6 +32,15 @@ When you choose `Pen Tablet` in `Key/Mouse Motion`, the avatar will look to the 
 
 Also, when you choose `Arcade Stick` in `Gamepad Motion`, the avatar will react to ABXY/L1L2R1R2 buttons and left stick input, and will ignore other inputs like start button press.
 
+`Custom Hand Down Pose`: This feature is available in v3.0.2 and later version. When turned on, the 
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+You need to turn on `Always-Hands-Down Mode` and enable `Free Layout Mode` to edit hand down pose.
+
+</div>
 
 #### Arm
 {: .doc-sec2 }

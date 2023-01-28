@@ -8,6 +8,23 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.0.2
+{: .doc-sec2 }
+
+2023/01/28
+
+* Add: Pose edit for hand down pose applied when "Always-Hands-Down" mode etc, in Setting Window > "Motion" tab > "Body" menu.
+* Fix: Error dialog appear bug, when VRM does not have thumbnail data.
+* Fix: Accessory with Word to Motion disappears soon, when "Keep Facial after motion" option is turned on.
+* Fix: In v3.0.0~v3.0.1, LipSync BlendShape (e.g. "Aa", "Ou") was not available in word to motion feature.
+* Fix: In v3.0.1, there were cases that glb data accessory's animation did not start correctly.
+* Removed: Help page about facial tracking app "MeowFace", which is available on Google Play for Android. Please see why I have removed it from [this issue](https://github.com/malaybaku/VMagicMirror/issues/886).
+
+Known issue:
+
+* "Always-Hands-Down" gizmo appears on drifted position after changing avatar. In this case, move the gizmo makes avatara's hand align to the gizmo.
+
+
 #### v3.0.1
 {: .doc-sec2 }
 

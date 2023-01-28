@@ -185,7 +185,6 @@ namespace Baku.VMagicMirror
                 }
                 else if (files.Length > 0 && files.All(f => Path.GetExtension(f) == ".png"))
                 {
-                    var binaries = files.OrderBy(f => f).Select(File.ReadAllBytes).ToArray();
                     result.Add(new AccessoryFile(AccessoryType.NumberedPng, childDir, childDir));
                 }
             }

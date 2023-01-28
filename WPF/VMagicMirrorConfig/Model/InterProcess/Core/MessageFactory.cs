@@ -78,6 +78,11 @@ namespace Baku.VMagicMirrorConfig
         public Message EnableNoHandTrackMode(bool enable) => WithArg(enable);
         public Message EnableTwistBodyMotion(bool enable) => WithArg(enable);
 
+        public Message EnableCustomHandDownPose(bool enable) => WithArg(enable);
+        public Message SetHandDownModeCustomPose(string poseJson) => WithArg(poseJson);
+        public Message ResetCustomHandDownPose() => NoArg();
+
+
         public Message LengthFromWristToTip(int lengthCentimeter) => WithArg(lengthCentimeter);
 
         public Message HandYOffsetBasic(int offsetCentimeter) => WithArg(offsetCentimeter);
@@ -288,7 +293,6 @@ namespace Baku.VMagicMirrorConfig
         //共通: 基本操作のオン/オフ + キャリブレーション
         public Message ExTrackerEnable(bool enable) => WithArg(enable);
         public Message ExTrackerEnableLipSync(bool enable) => WithArg(enable);
-        public Message ExTrackerEnableEmphasizeExpression(bool enable) => WithArg(enable);
         public Message ExTrackerEnablePerfectSync(bool enable) => WithArg(enable);
         public Message ExTrackerUseVRoidDefaultForPerfectSync(bool enable) => WithArg(enable);
         public Message ExTrackerCalibrate() => NoArg();

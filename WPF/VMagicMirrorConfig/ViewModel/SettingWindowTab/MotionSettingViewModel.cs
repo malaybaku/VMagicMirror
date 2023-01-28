@@ -5,13 +5,22 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 {
     public class MotionSettingViewModel : SettingViewModelBase
     {
-        public MotionSettingViewModel() : this(ModelResolver.Instance.Resolve<MotionSettingModel>())
+        public MotionSettingViewModel() : this(
+            ModelResolver.Instance.Resolve<MotionSettingModel>(),
+            ModelResolver.Instance.Resolve<LayoutSettingModel>()
+            )
         {
         }
 
-        internal MotionSettingViewModel(MotionSettingModel model)
+        internal MotionSettingViewModel(
+            MotionSettingModel model, LayoutSettingModel layoutModel)
         {
             _model = model;
+            _layoutModel = layoutModel;
+
+            ResetCustomHandDownPoseCommand = new ActionCommand(
+                () => _model.ResetCustomHandDownPose()
+                );
 
             ResetArmMotionSettingCommand = new ActionCommand(
                  () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetArmSetting)
@@ -35,6 +44,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         private readonly MotionSettingModel _model;
+        private readonly LayoutSettingModel _layoutModel;
 
         private void OnKeyboardAndMouseMotionModeChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -103,7 +113,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         
         public RProperty<bool> EnableNoHandTrackMode => _model.EnableNoHandTrackMode;
         public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
-
+        public RProperty<bool> EnableCustomHandDownPose => _model.EnableCustomHandDownPose;
+        public RProperty<bool> EnableDeviceFreeLayout => _layoutModel.EnableDeviceFreeLayout;
 
         public RProperty<bool> EnableHidRandomTyping => _model.EnableHidRandomTyping;
         public RProperty<bool> EnableShoulderMotionModify => _model.EnableShoulderMotionModify;
@@ -126,6 +137,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<int> WaitMotionPeriod => _model.WaitMotionPeriod;
 
 
+        public ActionCommand ResetCustomHandDownPoseCommand { get; }
         public ActionCommand ResetArmMotionSettingCommand { get; }
         public ActionCommand ResetHandMotionSettingCommand { get; }
         public ActionCommand ResetWaitMotionSettingCommand { get; }

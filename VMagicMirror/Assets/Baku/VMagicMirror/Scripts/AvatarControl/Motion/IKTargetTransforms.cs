@@ -8,13 +8,15 @@ namespace Baku.VMagicMirror.IK
     /// </summary>
     public class IKTargetTransforms : MonoBehaviour
     {
-        [SerializeField] private Transform lookAt = default;
-        [SerializeField] private Transform rightHand = default;
-        [SerializeField] private Transform leftHand = default;
-        [SerializeField] private Transform rightIndex = default;
-        [SerializeField] private Transform body = default;
-        [SerializeField] private Transform leftFoot = default;
-        [SerializeField] private Transform rightFoot = default;
+        [SerializeField] private Transform lookAt;
+        [SerializeField] private Transform rightHand;
+        [SerializeField] private Transform leftHand;
+        [SerializeField] private Transform rightIndex;
+        [SerializeField] private Transform body;
+        [SerializeField] private Transform leftFoot;
+        [SerializeField] private Transform rightFoot;
+        [SerializeField] private CustomizableHandIkTarget leftHandDown;
+        [SerializeField] private CustomizableHandIkTarget rightHandDown;
 
         public Transform LookAt => lookAt;
         public Transform RightHand => rightHand;
@@ -23,5 +25,8 @@ namespace Baku.VMagicMirror.IK
         public Transform Body => body;
         public Transform LeftFoot => leftFoot;
         public Transform RightFoot => rightFoot;
+
+        public CustomizableHandIkTarget LeftHandDown => leftHandDown;
+        public CustomizableHandIkTarget RightHandDown => rightHandDown;
     }
 }

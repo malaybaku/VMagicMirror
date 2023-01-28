@@ -94,11 +94,16 @@ Please see per-app specific setup process.
 
 iOS: **[iFacialMocap](../external_tracker_ifacialmocap)**
 
-Android: **[MeowFace](../external_tracker_meowface)**
-
-iFacialMocap is the recommended way because of its higher performance.
-
 (*This area will be updated when other app supported.)
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+Help about Android App [MeowFace](https://play.google.com/store/apps/details?id=com.suvidriel.meowface) has been removed, since the it  seems not work correctly anymore.
+
+</div>
+
 
 
 ### Supported Options 
@@ -107,7 +112,6 @@ iFacialMocap is the recommended way because of its higher performance.
 <div class="doc-ul" markdown="1">
 
 - `Apply LipSync using External Tracker Data`
-- `Emphasize Face Expressions`: Enable to emphasize eyebrow and mouth expression.
 - `Disable horizontal flip`: Enable to turn off horizontal flip process.\
 - `Use Perfect Sync`: Enable Perfect Sync. See detail at [Perfect Sync Tips](../../tips/perfect_sync).
 
@@ -120,8 +124,6 @@ There is also another feature that, the external app gets mouth shape by camera,
 On the other hand, the tracking precision decreases when the device cannot see your mouth (mainly because of mic or hop guard).
 
 In this case turn off `Apply LipSync using External Tracker Data` to use conventional microphone based lipsync.
-
-`Emphasize Face Expressions` option behaves differently whether Perfect Sync is enabled or disabled. This feature has risk of bad look in some VRM models, so check the appearance before using in live streaming etc.
 
 
 ### Face Switch

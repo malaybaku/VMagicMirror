@@ -78,7 +78,6 @@
 - マウスポインタを目で追従する機能</sys:String>
     <sys:String x:Key="ExTracker_Enable">外部トラッキングを有効化</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">リップシンクも外部トラッキングの値を適用</sys:String>    
-    <sys:String x:Key="ExTracker_Enable_EmphasizeExpression">一部の表情を強調して適用</sys:String>    
 
     <sys:String x:Key="ExTracker_Enable_PerfectSync">パーフェクトシンクを使用</sys:String>
     <sys:String x:Key="ExTracker_PerfectSync_UseVRoidDefault">VRoid用のデフォルト設定を使う(※VRoidモデルでのみ動作)</sys:String>
@@ -189,6 +188,11 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">つねに手下げモード (※体の動きが増えます)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">つねに手下げモード</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">ひねりモーション</sys:String>    
+    <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose">手を下げた位置を手動で調整</sys:String>    
+    <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_AlwaysDownWarning" xml:space="preserve">手の位置を編集するには
+「つねに手下げモード」がオンの状態で
+フリーレイアウトモードを有効にします</sys:String>
+    <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">手の位置をデフォルトにリセット</sys:String>
     
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">腕・ひじ</sys:String>

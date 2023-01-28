@@ -146,7 +146,9 @@ namespace Baku.VMagicMirror.WordToMotion
             //アクセサリの処理
             CancelAccessoryReset();
             _accessoryRequest.SetAccessoryRequest(request.AccessoryName);
-            if (!string.IsNullOrEmpty(request.AccessoryName))
+            //2つ目の条件は「表情が変えっぱなしになるならアクセサリも出っぱなしで良い」ということ。
+            if (!string.IsNullOrEmpty(request.AccessoryName) && 
+                !(request.UseBlendShape && request.HoldBlendShape))
             {
                 _accessoryResetCts = new CancellationTokenSource();
                 ResetAccessoryAsync(duration, _accessoryResetCts.Token).Forget();

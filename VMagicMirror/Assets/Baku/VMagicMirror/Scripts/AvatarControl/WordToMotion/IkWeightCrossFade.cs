@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using RootMotion.FinalIK;
 
 namespace Baku.VMagicMirror
@@ -131,6 +132,23 @@ namespace Baku.VMagicMirror
             _isFadeOut = false;
         }
 
+        /// <summary>
+        /// 「全身アニメーションを適用したい」という理由でIK weightを変化させたい場合に呼び出す
+        /// </summary>
+        /// <param name="targetWeight"></param>
+        public void SetBodyMotionBasedIkWeightRequest(float targetWeight)
+        {
+            //TODO: 本当はほかのweightに乗算した値として適用したい + 脚とかElbowも全部必要な気がするんだよな～
+            if (targetWeight > 0.5f)
+            {
+                FadeInArmIkWeights(0.5f);
+            }
+            else
+            {
+                FadeOutArmIkWeights(0.5f);
+            }
+        }
+        
         private void Update()
         {
             if (!_hasModel || _fadeCount > _fadeDuration)

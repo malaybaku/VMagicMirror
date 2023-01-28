@@ -14,7 +14,7 @@ lang: en
 2023/01/28
 
 * Add: Pose edit for hand down pose applied when "Always-Hands-Down" mode etc, in Setting Window > "Motion" tab > "Body" menu.
-* Fix: Error dialog appears when VRM does not have thumbnail data.
+* Fix: Error dialog appear bug, when VRM does not have thumbnail data.
 * Fix: Accessory with Word to Motion disappears soon, when "Keep Facial after motion" option is turned on.
 * Fix: In v3.0.0~v3.0.1, LipSync BlendShape (e.g. "Ah", "Ou") was not available in word to motion feature.
 * Fix: In v3.0.1, there were cases that glb data accessory's animation did not start correctly.

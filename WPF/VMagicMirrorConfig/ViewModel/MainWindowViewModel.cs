@@ -80,8 +80,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
             catch (Exception ex)
             {
-                //NOTE: 異常系で最小化が解除されないのを嫌ってこうしている
-                Application.Current.MainWindow.WindowState = WindowState.Normal;
                 LogOutput.Instance.Write(ex);
             }
             finally

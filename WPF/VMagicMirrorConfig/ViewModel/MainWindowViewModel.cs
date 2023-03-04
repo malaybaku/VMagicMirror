@@ -52,7 +52,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 await ModelResolver.Instance.Resolve<ImageQualitySetting>().InitializeQualitySelectionsAsync();
                 await ModelResolver.Instance.Resolve<CustomMotionList>().InitializeCustomMotionClipNamesAsync();
                 _runtimeHelper.Start();
-                ModelResolver.Instance.Resolve<PreferenceFileManager>().Load();
                 ModelResolver.Instance.Resolve<HotKeySetter>().Initialize();
 
                 if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastVrmLoadFilePath))

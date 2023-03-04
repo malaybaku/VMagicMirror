@@ -18,13 +18,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly SaveFileManager _saveFileManager;
         private readonly AvatarLoader _avatarLoader;
         private readonly AppQuitSetting _appQuitSetting;
+        private readonly PreferenceSettingModel _preferenceSetting;
 
         public HomeViewModel() : this(
             ModelResolver.Instance.Resolve<RootSettingModel>(),
             ModelResolver.Instance.Resolve<SaveFileManager>(),
             ModelResolver.Instance.Resolve<AvatarLoader>(),
             ModelResolver.Instance.Resolve<ScreenshotTaker>(),
-            ModelResolver.Instance.Resolve<AppQuitSetting>()
+            ModelResolver.Instance.Resolve<AppQuitSetting>(),
+            ModelResolver.Instance.Resolve<PreferenceSettingModel>()
             )
         {
         }
@@ -34,13 +36,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             SaveFileManager saveFileManager,
             AvatarLoader avatarLoader,
             ScreenshotTaker screenshotTaker,
-            AppQuitSetting appQuitSetting
+            AppQuitSetting appQuitSetting,
+            PreferenceSettingModel preferenceSetting
             )
         {
             _setting = rootSetting;
             _saveFileManager = saveFileManager;
             _avatarLoader = avatarLoader;
             _appQuitSetting = appQuitSetting;
+            _preferenceSetting = preferenceSetting;
             
             LoadVrmCommand = new ActionCommand(LoadVrmByFileOpenDialog);
             LoadVrmByFilePathCommand = new ActionCommand<string>(LoadVrmByFilePath);
@@ -82,7 +86,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public ReadOnlyObservableCollection<string> AvailableLanguageNames => LanguageSelector.Instance.AvailableLanguageNames;
         public RProperty<string> LanguageName => _setting.LanguageName;
-        public RProperty<bool> MinimizeOnLaunch => _setting.MinimizeOnLaunch;
+        public RProperty<bool> MinimizeOnLaunch => _preferenceSetting.MinimizeOnLaunch;
 
         //NOTE: ここは若干横着だが、モデル側に寄せるほどでも無い気がするのでコレで。
         private bool _activateOnStartup = false;

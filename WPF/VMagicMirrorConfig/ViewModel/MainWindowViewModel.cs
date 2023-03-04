@@ -39,11 +39,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 LanguageSelector.Instance.Initialize(_messageIo.Sender);
 
                 _saveFileManager.LoadAutoSave();
-                if (!_settingModel.MinimizeOnLaunch.Value)
-                {
-                    Application.Current.MainWindow.WindowState = WindowState.Normal;
-                }
-
                 //NOTE: 初回起動時だけカルチャベースで言語を設定する処理
                 _settingModel.InitializeLanguageIfNeeded();
 
@@ -57,7 +52,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 await ModelResolver.Instance.Resolve<ImageQualitySetting>().InitializeQualitySelectionsAsync();
                 await ModelResolver.Instance.Resolve<CustomMotionList>().InitializeCustomMotionClipNamesAsync();
                 _runtimeHelper.Start();
-                ModelResolver.Instance.Resolve<PreferenceFileManager>().Load();
                 ModelResolver.Instance.Resolve<HotKeySetter>().Initialize();
 
                 if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastVrmLoadFilePath))

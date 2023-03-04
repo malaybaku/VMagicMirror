@@ -20,7 +20,6 @@
     Height="730" Width="550"
     MinHeight="600" MinWidth="550"
     ShowDialogsOverTitleBar="False"
-    WindowState="Minimized"
     Background="{StaticResource TabAreaBackground}"
     d:DataContext="{d:DesignInstance vm:MainWindowViewModel}"
     >

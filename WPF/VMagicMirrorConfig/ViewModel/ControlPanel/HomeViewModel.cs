@@ -82,6 +82,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public ReadOnlyObservableCollection<string> AvailableLanguageNames => LanguageSelector.Instance.AvailableLanguageNames;
         public RProperty<string> LanguageName => _setting.LanguageName;
+        public RProperty<bool> MinimizeOnLaunch => _setting.MinimizeOnLaunch;
 
         //NOTE: ここは若干横着だが、モデル側に寄せるほどでも無い気がするのでコレで。
         private bool _activateOnStartup = false;

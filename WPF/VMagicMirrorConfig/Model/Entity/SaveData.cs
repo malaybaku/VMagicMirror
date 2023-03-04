@@ -24,6 +24,7 @@
         public bool AutoLoadLastLoadedVrm { get; set; } = false;
 
         public string? PreferredLanguageName { get; set; } = "";
+        public bool MinimizeOnLaunch { get; set; } = false;
 
         public bool LoadCharacterWhenLoad { get; set; } = true;
         public bool LoadNonCharacterWhenLoad { get; set; } = false;

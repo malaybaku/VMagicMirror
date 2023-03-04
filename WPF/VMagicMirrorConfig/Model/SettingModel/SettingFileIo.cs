@@ -141,6 +141,7 @@ namespace Baku.VMagicMirrorConfig
 
                 AutoLoadLastLoadedVrm = (mode == SettingFileReadWriteModes.AutoSave) ? autoLoadEnabled : false,
                 PreferredLanguageName = (mode == SettingFileReadWriteModes.AutoSave) ? _model.LanguageName.Value : "",
+                MinimizeOnLaunch = (mode == SettingFileReadWriteModes.AutoSave) ? _model.MinimizeOnLaunch.Value : false,
                 LoadCharacterWhenLoad = _model.LoadCharacterWhenLoadInternalFile.Value,
                 LoadNonCharacterWhenLoad = _model.LoadNonCharacterWhenLoadInternalFile.Value,
                 WindowSetting = _model.Window.Save(),
@@ -183,6 +184,7 @@ namespace Baku.VMagicMirrorConfig
                     _model.LastVrmLoadFilePath = saveData.LastLoadedVrmFilePath ?? "";
                     _model.LastLoadedVRoidModelId = saveData.LastLoadedVRoidModelId ?? "";
                     _model.AutoLoadLastLoadedVrm.Value = saveData.AutoLoadLastLoadedVrm;
+                    _model.MinimizeOnLaunch.Value = saveData.MinimizeOnLaunch;
                     _model.LanguageName.Value =
                         LanguageSelector.Instance.AvailableLanguageNames.Contains(saveData.PreferredLanguageName ?? "") ?
                         (saveData.PreferredLanguageName ?? "") :

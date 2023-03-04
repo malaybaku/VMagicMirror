@@ -39,6 +39,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 LanguageSelector.Instance.Initialize(_messageIo.Sender);
 
                 _saveFileManager.LoadAutoSave();
+                if (!_settingModel.MinimizeOnLaunch.Value)
+                {
+                    Application.Current.MainWindow.WindowState = WindowState.Normal;
+                }
+
                 //NOTE: 初回起動時だけカルチャベースで言語を設定する処理
                 _settingModel.InitializeLanguageIfNeeded();
 
@@ -81,6 +86,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
             catch (Exception ex)
             {
+                //NOTE: 異常系で最小化が解除されないのを嫌ってこうしている
+                Application.Current.MainWindow.WindowState = WindowState.Normal;
                 LogOutput.Instance.Write(ex);
             }
             finally

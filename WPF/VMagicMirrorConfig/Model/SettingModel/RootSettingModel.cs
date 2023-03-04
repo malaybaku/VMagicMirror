@@ -46,6 +46,7 @@ namespace Baku.VMagicMirrorConfig
         // LanguageSelectorのLanguageNameと異なり、ファイルにセーブする値を持つ。
         // 実際にResourceDictionaryが適用される値ではないのがポイント
         public RProperty<string> LanguageName { get; }
+        public RProperty<bool> MinimizeOnLaunch { get; } = new RProperty<bool>(false);
         public RProperty<bool> LoadCharacterWhenLoadInternalFile { get; } = new RProperty<bool>(true);
         public RProperty<bool> LoadNonCharacterWhenLoadInternalFile { get; } = new RProperty<bool>(false);
 

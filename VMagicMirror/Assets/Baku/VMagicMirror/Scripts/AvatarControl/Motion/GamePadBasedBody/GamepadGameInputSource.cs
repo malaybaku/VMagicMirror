@@ -36,11 +36,12 @@ namespace Baku.VMagicMirror.GameInput
         private bool _isCrouching;
         private readonly Subject<Unit> _jump = new Subject<Unit>();
 
+        //NOTE: スティックやジャンプ/しゃがみ指定の初期値はテキトーで、無いほうがマシなら未割り当てにしてもよい
         private readonly ReactiveProperty<GamepadMoveStickType> _stickType =
-            new ReactiveProperty<GamepadMoveStickType>(GamepadMoveStickType.None);
+            new ReactiveProperty<GamepadMoveStickType>(GamepadMoveStickType.LeftStick);
 
-        public GamepadKey JumpButton { get; set; } = GamepadKey.Unknown;
-        public GamepadKey CrouchButton { get; set; } = GamepadKey.Unknown;
+        public GamepadKey JumpButton { get; set; } = GamepadKey.A;
+        public GamepadKey CrouchButton { get; set; } = GamepadKey.X;
 
         private CompositeDisposable _disposable;
 
@@ -80,6 +81,7 @@ namespace Baku.VMagicMirror.GameInput
                     GamepadMoveStickType.RightStick => _gamepad.RightStickPosition,
                     GamepadMoveStickType.LeftArrowButton => _gamepad
                         .ObserveEveryValueChanged(g => g.ArrowButtonsStickPosition),
+                    _ => Observable.Return(Vector2Int.zero),
                 })
                 .Switch()
                 .Subscribe(OnMoveInputChanged)

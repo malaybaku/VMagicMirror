@@ -30,5 +30,7 @@ namespace Baku.VMagicMirror.GameInput
         Vector2 IGameInputSource.MoveInput => Vector2.zero;
         IObservable<Unit> IGameInputSource.Jump => Observable.Empty<Unit>();
         bool IGameInputSource.IsCrouching => false;
+
+        public static EmptyGameInputSource Instance { get; } = new EmptyGameInputSource();
     }
 }

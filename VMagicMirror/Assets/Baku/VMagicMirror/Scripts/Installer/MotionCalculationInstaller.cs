@@ -1,4 +1,5 @@
-﻿using Baku.VMagicMirror.IK;
+﻿using Baku.VMagicMirror.GameInput;
+using Baku.VMagicMirror.IK;
 using UnityEngine;
 using Zenject;
 
@@ -29,9 +30,17 @@ namespace Baku.VMagicMirror.Installer
             container.Bind(typeof(HeadMotionClipPlayer), typeof(IWordToMotionPlayer))
                 .FromInstance(headMotionClipPlayer)
                 .AsCached();
-            
+
             container.BindInterfacesAndSelfTo<ClapMotionPlayer>().AsSingle();
             container.BindInterfacesTo<FootIkSetter>().AsSingle();
+
+
+            container.BindInterfacesAndSelfTo<GamepadGameInputSource>().AsSingle();
+            container.BindInterfacesAndSelfTo<KeyboardGameInputSource>().AsSingle();
+            container.BindInterfacesTo<GameInputSourceSwitcher>()
+                .FromNewComponentOn(_ => gameObject)
+                .AsSingle();
+            container.BindInterfacesTo<GamepadInputBodyMotionController>().AsSingle();
         }
     }
 }

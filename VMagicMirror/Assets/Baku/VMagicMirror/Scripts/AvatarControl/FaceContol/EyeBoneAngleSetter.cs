@@ -40,6 +40,10 @@ namespace Baku.VMagicMirror
 
         private Transform _leftEye;
         private Transform _rightEye;
+        private Quaternion _leftEyeInitialLocalRot = Quaternion.identity;
+        private Quaternion _rightEyeInitialLocalRot = Quaternion.identity;
+        private Quaternion _leftEyeInitialGlobalRot = Quaternion.identity;
+        private Quaternion _rightEyeInitialGlobalRot = Quaternion.identity;
         private bool _hasModel;
         private bool _hasLeftEyeBone;
         private bool _hasRightEyeBone;
@@ -100,12 +104,17 @@ namespace Baku.VMagicMirror
             _hasLeftEyeBone = controlRigBones.TryGetValue(HumanBodyBones.LeftEye, out var leftEyeBone);
             if (_hasLeftEyeBone && leftEyeBone != null)
             {
+                //NOTE: UniVRMの適用タイミングに依存したくないので、自前で勝手に仮想ボーンを入れておく
                 _leftEye = leftEyeBone.ControlTarget;
+                _leftEyeInitialLocalRot = _leftEye.localRotation;
+                _leftEyeInitialLocalRot = _leftEye.rotation;
             }
             _hasRightEyeBone = controlRigBones.TryGetValue(HumanBodyBones.RightEye, out var rightEyeBone);
             if (_hasRightEyeBone && rightEyeBone != null)
             {
                 _rightEye = rightEyeBone.ControlTarget;
+                _rightEyeInitialLocalRot = _rightEye.localRotation;
+                _rightEyeInitialGlobalRot = _rightEye.rotation;
             } 
             _hasModel = true;
         }
@@ -209,12 +218,16 @@ namespace Baku.VMagicMirror
 
                 if (_hasLeftEyeBone)
                 {
-                    _leftEye.localRotation = Quaternion.Euler(leftPitch, leftYaw, 0f);
+                    ApplyLeftEyeLocalRotation(
+                        Quaternion.Euler(leftPitch, leftYaw, 0f)
+                    );
                 }
 
                 if (_hasRightEyeBone)
                 {
-                    _rightEye.localRotation = Quaternion.Euler(rightPitch, rightYaw, 0f);
+                    ApplyRightEyeLocalRotation(
+                        Quaternion.Euler(rightPitch, rightYaw, 0f)
+                    );
                 }                
             }
             else
@@ -238,6 +251,22 @@ namespace Baku.VMagicMirror
         private static float ScaleAndClampAngle(float x, float scale)
         {
             return Mathf.Clamp(x * scale, -AngleAbsLimit, AngleAbsLimit);
+        }
+
+        private void ApplyLeftEyeLocalRotation(Quaternion rot)
+        {
+            _leftEye.localRotation =
+                _leftEyeInitialLocalRot *
+                Quaternion.Inverse(_leftEyeInitialGlobalRot) *
+                rot * _leftEyeInitialGlobalRot;
+        }
+
+        private void ApplyRightEyeLocalRotation(Quaternion rot)
+        {
+            _rightEye.localRotation =
+                _rightEyeInitialLocalRot *
+                Quaternion.Inverse(_rightEyeInitialGlobalRot) *
+                rot * _rightEyeInitialGlobalRot;
         }
     }
 }

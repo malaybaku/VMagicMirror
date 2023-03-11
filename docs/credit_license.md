@@ -44,6 +44,8 @@ In VMagicMirror, the materials are replaced for the visual consistency.
 
 [OVRLipSync](https://developer.oculus.com/licenses/audio-3.2.2/)
 
+[Oculus LipSync Unity Integration](https://developer.oculus.com/licenses/audio-3.2.2/), with Caffe 0.8.1 and Caffe2 1.2.2
+
 [SimpleAnimation](https://github.com/Unity-Technologies/SimpleAnimation)
 
 [Zenject](https://github.com/svermeulen/Extenject)

@@ -1,13 +1,27 @@
 ﻿using Baku.VMagicMirrorConfig.ViewModel;
 using MahApps.Metro.Controls;
 using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.View
 {
     public partial class MainWindow : MetroWindow
     {
-        public MainWindow() => InitializeComponent();
+        public MainWindow()
+        {
+            InitializeComponent();
+
+            if (DesignerProperties.GetIsInDesignMode(this))
+            {
+                return;
+            }
+
+            if (ModelResolver.Instance.Resolve<PreferenceSettingModel>().MinimizeOnLaunch.Value)
+            {
+                WindowState = WindowState.Minimized;
+            }
+        }
 
         protected override void OnContentRendered(EventArgs e)
         {

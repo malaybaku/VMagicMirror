@@ -1,5 +1,4 @@
 ﻿using MaterialDesignThemes.Wpf;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -148,14 +147,19 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             {
                 _model.KeyboardAndMouseMotionMode.AddWeakEventHandler(UpdateKeyboardAndMouseMotionModeAsHandler);
                 _model.GamepadMotionMode.AddWeakEventHandler(UpdateGamepadMotionModeAsHandler);
+
+                _model.EnableNoHandTrackMode.AddWeakEventHandler(UpdateBodyMotionModeAsHandler);
+                _model.EnableGameInputLocomotionMode.AddWeakEventHandler(UpdateBodyMotionModeAsHandler);
+
                 UpdateKeyboardAndMouseMotionMode();
                 UpdateGamepadMotionMode();
+                UpdateBodyMotionMode();
             }
         }
 
         private readonly MotionSettingModel _model;
+        private bool _silentSetMode = false;
 
-        public RProperty<bool> EnableNoHandTrackMode => _model.EnableNoHandTrackMode;
         public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
 
         //モデル層から引っ張った方がよいかもしれないが、それは無理に頑張らないでもよいかも
@@ -164,6 +168,30 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
         public MotionModeSelectionViewModel[] GamepadMotions =>
             MotionModeSelectionViewModel.GamepadMotions;
+
+        public BodyMotionBaseModeSelectionViewModel[] BodyMotionAvailableModes => 
+            BodyMotionBaseModeSelectionViewModel.AvailableModes;
+
+        private BodyMotionBaseModeSelectionViewModel? _bodyMotionMode = null;
+        public BodyMotionBaseModeSelectionViewModel? BodyMotionMode
+        {
+            get => _bodyMotionMode;
+            set
+            {
+                if (_bodyMotionMode == value)
+                {
+                    return;
+                }
+
+                _bodyMotionMode = value;
+                if (value != null && !_silentSetMode)
+                {
+                    _model.EnableNoHandTrackMode.Value = value.Mode == BodyMotionBaseMode.NoHandTracking;
+                    _model.EnableGameInputLocomotionMode.Value = value.Mode == BodyMotionBaseMode.GameInputLocomotion;
+                }
+                RaisePropertyChanged();
+            }
+        }
 
         private MotionModeSelectionViewModel? _keyboardAndMouseMotionMode = null;
         public MotionModeSelectionViewModel? KeyboardAndMouseMotionMode
@@ -207,6 +235,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         private void UpdateGamepadMotionModeAsHandler(object? sender, PropertyChangedEventArgs e)
             => UpdateGamepadMotionMode();
 
+        private void UpdateBodyMotionModeAsHandler(object? sender, PropertyChangedEventArgs e)
+            => UpdateBodyMotionMode();
+
         private void UpdateKeyboardAndMouseMotionMode() =>
             KeyboardAndMouseMotionMode = KeyboardAndMouseMotions
                 .FirstOrDefault(m => m.Index == _model.KeyboardAndMouseMotionMode.Value);
@@ -214,6 +245,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         private void UpdateGamepadMotionMode() =>
              GamepadMotionMode = GamepadMotions
                 .FirstOrDefault(m => m.Index == _model.GamepadMotionMode.Value);
+
+        private void UpdateBodyMotionMode()
+        {
+            _silentSetMode = true;
+
+            var mode =
+                _model.EnableGameInputLocomotionMode.Value ? BodyMotionBaseMode.GameInputLocomotion :
+                _model.EnableNoHandTrackMode.Value ? BodyMotionBaseMode.NoHandTracking :
+                BodyMotionBaseMode.Default;
+
+            //NOTE: いちおうFirstOrDefaultにしているが、nullは戻ってこないはず
+            BodyMotionMode = BodyMotionAvailableModes.FirstOrDefault(m => m.Mode == mode);
+            _silentSetMode = false;
+        }
     }
 
     public class VisibilityViewModel : ViewModelBase

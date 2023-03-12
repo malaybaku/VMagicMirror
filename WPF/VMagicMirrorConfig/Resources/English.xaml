@@ -186,6 +186,10 @@ Disable foreground mode, or attach item to another one.</sys:String>
 
     <!-- Motion : Full Body -->
     <sys:String x:Key="Motion_FullBody">Upper Body</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode">Body Motion Style</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_Default">Default</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_Standing">Standing Only</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_GameInput">Game Locomotion</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">Always-Hands-Down Mode (*Increase body move)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">Hands-Down Mode</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">Enable Twist Motion</sys:String>    

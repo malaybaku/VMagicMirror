@@ -180,4 +180,31 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         };
     }
 
+    /// <summary>
+    /// 上半身モーションについて排他的な3モードを提示するやつ
+    /// </summary>
+    public class BodyMotionBaseModeSelectionViewModel
+    {
+        public BodyMotionBaseModeSelectionViewModel(BodyMotionBaseMode mode, string localizationKey)
+        {
+            Mode = mode;
+            _localizationKey = localizationKey;
+            Label.Value = LocalizedString.GetString(_localizationKey);
+            LanguageSelector.Instance.LanguageChanged +=
+                () => Label.Value = LocalizedString.GetString(_localizationKey);
+        }
+
+        private readonly string _localizationKey;
+        public BodyMotionBaseMode Mode { get; }
+
+        public RProperty<string> Label { get; } = new RProperty<string>("");
+
+        //NOTE: immutable arrayのほうが性質は良いのでそうしてもよい
+        public static BodyMotionBaseModeSelectionViewModel[] AvailableModes { get; } = new[]
+        {
+            new BodyMotionBaseModeSelectionViewModel(BodyMotionBaseMode.Default, "Motion_FullBody_BaseMode_Default"),
+            new BodyMotionBaseModeSelectionViewModel(BodyMotionBaseMode.NoHandTracking, "Motion_FullBody_BaseMode_Standing"),
+            new BodyMotionBaseModeSelectionViewModel(BodyMotionBaseMode.GameInputLocomotion, "Motion_FullBody_BaseMode_GameInput"),
+        };
+    }
 }

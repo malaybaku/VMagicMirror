@@ -76,6 +76,7 @@ namespace Baku.VMagicMirrorConfig
         #region モーション
 
         public Message EnableNoHandTrackMode(bool enable) => WithArg(enable);
+        public Message EnableGameInputLocomotionMode(bool enable) => WithArg(enable);
         public Message EnableTwistBodyMotion(bool enable) => WithArg(enable);
 
         public Message EnableCustomHandDownPose(bool enable) => WithArg(enable);

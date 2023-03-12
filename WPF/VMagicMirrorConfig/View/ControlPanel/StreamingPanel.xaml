@@ -400,10 +400,26 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
 
-                            <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="{DynamicResource Motion_FullBody_BaseMode}"/>
+                            <ComboBox Grid.Row="0" Grid.Column="1"
+                                    HorizontalAlignment="Stretch"                                 
+                                    Margin="5,0,5,5"
+                                    ItemsSource="{Binding BodyMotionBaseModes}"
+                                    SelectedItem="{Binding SelectedBodyMotionBaseMode, Mode=TwoWay}"
+                                    md:HintAssist.Hint="Select..."
+                                    >
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DisplayName}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <!--<CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                                       Margin="10,3"
                                       IsChecked="{Binding EnableNoHandTrackMode.Value}"
-                                      Content="{DynamicResource Motion_FullBody_NoHandTrackMode_Streaming}"/>
+                                      Content="{DynamicResource Motion_FullBody_NoHandTrackMode_Streaming}"/>-->
 
                             <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                       Margin="10,3"

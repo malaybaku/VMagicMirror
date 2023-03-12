@@ -23,6 +23,8 @@ namespace Baku.VMagicMirror
         private bool _hasModel;
         private Animator _animator;
 
+        private bool _sourceActive;
+        
         public GamepadInputBodyMotionController(
             IVRMLoadable vrmLoadable,
             IGameInputSourceSwitcher sourceSwitcher,
@@ -44,9 +46,19 @@ namespace Baku.VMagicMirror
                 .Subscribe(_ => TryJump())
                 .AddTo(_disposable);
 
+            _sourceSwitcher.IsActive
+                .Subscribe(sourceActive => SetSourceActive(sourceActive))
+                .AddTo(_disposable);
+            
             _bodyMotionActive
                 .Subscribe(v => RequestIkWeight(v ? 0f : 1f))
                 .AddTo(_disposable);
+        }
+
+        private void SetSourceActive(bool sourceActive)
+        {
+            
+            throw new NotImplementedException();
         }
 
         private void OnVrmLoaded(VrmLoadedInfo obj)

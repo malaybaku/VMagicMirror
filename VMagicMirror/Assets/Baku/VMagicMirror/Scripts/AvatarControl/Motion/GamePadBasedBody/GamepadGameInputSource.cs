@@ -1,6 +1,7 @@
 using System;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror.GameInput
 {
@@ -22,8 +23,11 @@ namespace Baku.VMagicMirror.GameInput
         Y,
     }
 
-    public class GamepadGameInputSource : IGameInputSource, IDisposable
+    public class GamepadGameInputSource : IGameInputSource, ITickable, IDisposable
     {
+        private const float MoveInputDiffPerSecond = 2f;
+        private const float MoveInputDeadZone = 0.15f;
+
         bool IGameInputSource.IsActive => _isActive;
         Vector2 IGameInputSource.MoveInput => _moveInput;
         bool IGameInputSource.IsCrouching => _isCrouching;
@@ -32,6 +36,8 @@ namespace Baku.VMagicMirror.GameInput
         private readonly XInputGamePad _gamepad;
 
         private bool _isActive;
+        private Vector2 _rawMoveInput;
+        private Vector2 _dumpedMoveInput;
         private Vector2 _moveInput;
         private bool _isCrouching;
         private readonly Subject<Unit> _jump = new Subject<Unit>();
@@ -106,9 +112,34 @@ namespace Baku.VMagicMirror.GameInput
             var input = new Vector2(moveInput.x * 1f / 32768f, moveInput.y * 1f / 32768f);
 
             //NOTE: 更に「カメラに向かって奥方向かどうか」みたいなフラグも配慮したい気がする
-            _moveInput = input;
+            _rawMoveInput = input;
         }
 
+        void ITickable.Tick()
+        {
+            var diff = _rawMoveInput - _dumpedMoveInput;
+            _dumpedMoveInput += Vector2.ClampMagnitude(diff, Mathf.Min(
+                diff.magnitude,
+                MoveInputDiffPerSecond * Time.deltaTime
+            ));
+            _moveInput = GetMoveInputWithDeadZone(_dumpedMoveInput);
+        }
+        
         void IDisposable.Dispose() => _disposable?.Dispose();
+
+        private static Vector2 GetMoveInputWithDeadZone(Vector2 input)
+        {
+            var magnitude = input.magnitude;
+            // - 0 ~ DeadZone: ゼロ
+            // - DeadZone ~ 1: 方向そのまま、大きさ0~1のベクトルに変形して割当
+            if (magnitude < MoveInputDeadZone)
+            {
+                return Vector2.zero;
+            }
+            else
+            {
+                return input / magnitude * Mathf.InverseLerp(MoveInputDeadZone, 1f, magnitude);
+            }
+        }
     }
 }

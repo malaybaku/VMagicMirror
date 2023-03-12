@@ -1,6 +1,7 @@
 ﻿using Baku.VMagicMirror.IK;
 using UnityEngine;
 using Zenject;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -25,16 +26,20 @@ namespace Baku.VMagicMirror
         private XInputGamePad _gamePad = null;
 
         [Inject]
-        public void Initialize(IMessageReceiver receiver, XInputGamePad gamePad)
+        public void Initialize(
+            IMessageReceiver receiver, 
+            XInputGamePad gamePad,
+            BodyMotionModeController motionModeController
+            )
         {
             _gamePad = gamePad;
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableNoHandTrackMode,
-                message =>
+
+            motionModeController.MotionMode
+                .Subscribe(mode =>
                 {
-                    var isHandDown = message.ToBoolean();
-                    handIkIntegrator.AlwaysHandDown.Value = isHandDown;
-                    gamePadBasedBodyLean.AlwaysHandDown = isHandDown;
+                    var defaultMotionDisabled = mode != BodyMotionMode.Default;
+                    handIkIntegrator.AlwaysHandDown.Value = defaultMotionDisabled;
+                    gamePadBasedBodyLean.AlwaysHandDown = defaultMotionDisabled;
                 });
             receiver.AssignCommandHandler(
                 VmmCommands.EnableTypingHandDownTimeout,

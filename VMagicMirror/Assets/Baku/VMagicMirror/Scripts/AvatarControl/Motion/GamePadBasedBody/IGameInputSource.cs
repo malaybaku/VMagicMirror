@@ -6,6 +6,7 @@ namespace Baku.VMagicMirror.GameInput
 {
     public interface IGameInputSourceSwitcher
     {
+        public IReadOnlyReactiveProperty<bool> IsActive { get; }
         public IReadOnlyReactiveProperty<IGameInputSource> Source { get; }
     }
     

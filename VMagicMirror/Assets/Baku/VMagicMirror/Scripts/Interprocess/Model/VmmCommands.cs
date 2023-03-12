@@ -62,6 +62,7 @@
         
         // Motion, Body
         public const string EnableNoHandTrackMode = nameof(EnableNoHandTrackMode);
+        public const string EnableGameInputLocomotionMode = nameof(EnableGameInputLocomotionMode);
         public const string EnableTwistBodyMotion = nameof(EnableTwistBodyMotion);
         public const string EnableBodyLeanZ = nameof(EnableBodyLeanZ);
 
@@ -100,6 +101,10 @@
         public const string EnableImageBasedHandTracking = nameof(EnableImageBasedHandTracking);
         public const string DisableHandTrackingHorizontalFlip = nameof(DisableHandTrackingHorizontalFlip);
         public const string EnableSendHandTrackingResult = nameof(EnableSendHandTrackingResult);
+
+        // Motion, GameInput
+        public const string UseGamePadForGameInput = nameof(UseGamePadForGameInput);
+        public const string UseKeyboardForGameInput = nameof(UseKeyboardForGameInput);
 
         //public const string EnableTouchTyping = nameof(EnableTouchTyping);
 

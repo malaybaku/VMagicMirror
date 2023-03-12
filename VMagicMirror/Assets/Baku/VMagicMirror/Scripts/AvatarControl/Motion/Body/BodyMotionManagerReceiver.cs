@@ -24,10 +24,6 @@ namespace Baku.VMagicMirror
                 VmmCommands.EnableBodyLeanZ,
                 message => bodyMotionManager.EnableImageBaseBodyLeanZ(message.ToBoolean())
                 );
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableNoHandTrackMode,
-                message => bodyMotionManager.SetNoHandTrackMode(message.ToBoolean())
-                );
             _waitingMotionSize = _bodyMotionManager.WaitingBodyMotion.MotionSize;
             SetWaitMotionScale(1.25f);
         }

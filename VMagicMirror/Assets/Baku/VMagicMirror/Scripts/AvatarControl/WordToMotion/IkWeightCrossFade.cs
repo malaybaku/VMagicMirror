@@ -23,33 +23,6 @@ namespace Baku.VMagicMirror
         private float _fadeCount = 0f;
         private float _fadeDuration = 0f;
 
-        private bool _forceStopHandIk = false;
-
-        /// <summary>
-        /// フェード等と無関係に手のIKを無効化するかどうかを取得、設定します。
-        /// ユーザー設定でタイピング(+クリック)動作を切りたいときに使う想定。
-        /// </summary>
-        public bool ForceStopHandIk
-        {
-            get => _forceStopHandIk;
-            set
-            {
-                if (_forceStopHandIk != value)
-                {
-                    _forceStopHandIk = value;
-                    //FadeOutのほうでもわざわざAPIを叩いているのはfadeのカウントを上書きするため
-                    if (value)
-                    {
-                        FadeOutArmIkWeights(0.5f);
-                    }
-                    else
-                    {
-                        FadeInArmIkWeights(0.5f);
-                    }
-                }
-            }
-        }
-        
         public void OnVrmLoaded(VrmLoadedInfo info)
         {
             _ik = info.fbbIk;
@@ -90,26 +63,6 @@ namespace Baku.VMagicMirror
             _isFadeOut = false;
             _fadeDuration = duration;
             _fadeCount = 0f;
-        }
-
-        /// <summary>直ちにIKのウェイトを0にします。</summary>
-        public void FadeOutArmIkWeightsImmediately()
-        {
-            if (!_hasModel)
-            {
-                return;
-            }
-            _ik.solver.leftShoulderEffector.positionWeight = 0;
-            _ik.solver.leftHandEffector.positionWeight = 0;
-            _ik.solver.leftHandEffector.rotationWeight = 0;
-            
-            _ik.solver.rightShoulderEffector.positionWeight = 0;
-            _ik.solver.rightHandEffector.positionWeight = 0;
-            _ik.solver.rightHandEffector.rotationWeight = 0;
-
-            elbowMotionModifier.ElbowIkRate = 0;
-            _fadeCount = _fadeDuration;
-            _isFadeOut = true;
         }
 
         /// <summary>直ちにIKのウェイトをもとの値に戻します。</summary>
@@ -164,12 +117,6 @@ namespace Baku.VMagicMirror
                 _fadeCount / _fadeDuration;
             rate = Mathf.Clamp(rate, 0f, 1f);
             rate = Mathf.SmoothStep(0, 1, rate);
-
-            //強制で止めている場合、ここで一時的に0に上書きしてしまう(この方法だとリセットが簡単なため)
-            if (ForceStopHandIk)
-            {
-                rate = 0;
-            }
 
             _ik.solver.leftShoulderEffector.positionWeight = _originLeftShoulderPositionWeight * rate;
             _ik.solver.leftHandEffector.positionWeight = _originLeftHandPositionWeight * rate;

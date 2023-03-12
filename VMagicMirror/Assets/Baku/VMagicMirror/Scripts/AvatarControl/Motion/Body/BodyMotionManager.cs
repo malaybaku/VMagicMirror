@@ -1,6 +1,7 @@
 ﻿using Baku.VMagicMirror.IK;
 using UnityEngine;
 using Zenject;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -36,14 +37,23 @@ namespace Baku.VMagicMirror
         private bool _isVrmLoaded = false;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, 
-            IKTargetTransforms ikTargets, FaceControlConfiguration faceControlConfig)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            IMessageReceiver receiver, 
+            IKTargetTransforms ikTargets,
+            FaceControlConfiguration faceControlConfig,
+            BodyMotionModeController modeController
+            )
         {
             _bodyIk = ikTargets.Body;
             _faceControlConfig = faceControlConfig;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             var _ = new BodyMotionManagerReceiver(receiver, this);
+
+            modeController.MotionMode
+                .Subscribe(mode => SetNoHandTrackMode(mode != BodyMotionMode.Default))
+                .AddTo(this);
         }
         
         private void Update()

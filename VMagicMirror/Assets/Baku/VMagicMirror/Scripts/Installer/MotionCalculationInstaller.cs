@@ -41,6 +41,8 @@ namespace Baku.VMagicMirror.Installer
                 .FromNewComponentOn(_ => gameObject)
                 .AsSingle();
             container.BindInterfacesTo<GamepadInputBodyMotionController>().AsSingle();
+
+            container.BindInterfacesAndSelfTo<BodyMotionModeController>().AsSingle();
         }
     }
 }

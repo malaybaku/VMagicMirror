@@ -1,11 +1,10 @@
 using UniRx;
-using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.GameInput
 {
     //NOTE: MonoBehaviourじゃなくていいんだけど[serializeField]からいじりたいので一時的に…
-    public class GameInputSourceSwitcher : MonoBehaviour, IGameInputSourceSwitcher
+    public class GameInputSourceSet : PresenterBase
     {
         public enum GameInputSourceType
         {
@@ -14,26 +13,19 @@ namespace Baku.VMagicMirror.GameInput
             Keyboard,
         }
 
-        [SerializeField] private GameInputSourceType sourceType = GameInputSourceType.None;
-
-        private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
-        public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
-
         private readonly ReactiveProperty<bool> _useGamePad = new ReactiveProperty<bool>(true);
         private readonly ReactiveProperty<bool> _useKeyboard = new ReactiveProperty<bool>(true);
 
-        private readonly ReactiveProperty<IGameInputSource> _source
-            = new ReactiveProperty<IGameInputSource>(EmptyGameInputSource.Instance);
-        //TODO: ここで返す内容はGamePadとKeyboardが混ざっててほしい
-        public IReadOnlyReactiveProperty<IGameInputSource> Source => _source;
+        public IGameInputSource[] Sources { get; }
 
-        private IMessageReceiver _receiver;
-        private BodyMotionModeController _bodyMotionModeController;
-        private GamepadGameInputSource _gamePadInput;
-        private KeyboardGameInputSource _keyboardInput;
+        private readonly IMessageReceiver _receiver;
+        private readonly BodyMotionModeController _bodyMotionModeController;
+        private readonly GamepadGameInputSource _gamePadInput;
+        private readonly KeyboardGameInputSource _keyboardInput;
+        private readonly CompositeDisposable _disposable = new CompositeDisposable();
 
         [Inject]
-        public void Construct(
+        public GameInputSourceSet(
             IMessageReceiver receiver,
             BodyMotionModeController bodyMotionModeController,
             GamepadGameInputSource gamePadInput, 
@@ -43,15 +35,11 @@ namespace Baku.VMagicMirror.GameInput
             _bodyMotionModeController = bodyMotionModeController;
             _gamePadInput = gamePadInput;
             _keyboardInput = keyboardInput;
-            //TODO: receiverの指示ベースでどれを使うか切り替える
+            Sources = new IGameInputSource[] { _gamePadInput, _keyboardInput };
         }
 
-        private void Start()
+        public override void Initialize()
         {
-            _bodyMotionModeController.MotionMode
-                .Subscribe(mode => _isActive.Value = mode == BodyMotionMode.GameInputLocomotion)
-                .AddTo(this);
-            
             _receiver.AssignCommandHandler(
                 VmmCommands.UseGamePadForGameInput,
                 command => _useGamePad.Value = command.ToBoolean()
@@ -62,29 +50,19 @@ namespace Baku.VMagicMirror.GameInput
                 command => _useKeyboard.Value = command.ToBoolean()
             );
 
-            _isActive
-                .CombineLatest(_useGamePad, (x, y) => x && y)
+            _bodyMotionModeController.MotionMode
+                .CombineLatest(
+                    _useGamePad, 
+                    (mode, useGamePad) => mode == BodyMotionMode.GameInputLocomotion && useGamePad)
                 .Subscribe(v => _gamePadInput.SetActive(v))
-                .AddTo(this);
+                .AddTo(_disposable);
 
-            _isActive
-                .CombineLatest(_useKeyboard, (x, y) => x && y)
+            _bodyMotionModeController.MotionMode
+                .CombineLatest(
+                    _useKeyboard, 
+                    (mode, useKeyboard) => mode == BodyMotionMode.GameInputLocomotion && useKeyboard)
                 .Subscribe(v => _keyboardInput.SetActive(v))
-                .AddTo(this);
+                .AddTo(_disposable);
         }
-        
-        //TODO: receiverベースで切り替えるようになったらUpdateは不要
-        private void Update()
-        {
-            _source.Value =
-                sourceType == GameInputSourceType.GamePad ? _gamePadInput :
-                sourceType == GameInputSourceType.Keyboard ? (IGameInputSource) _keyboardInput :
-                EmptyGameInputSource.Instance;
-            
-            _gamePadInput.SetActive(_source.Value == _gamePadInput);
-            _keyboardInput.SetActive(_source.Value == _keyboardInput);
-        }
-        
-        
     }
 }

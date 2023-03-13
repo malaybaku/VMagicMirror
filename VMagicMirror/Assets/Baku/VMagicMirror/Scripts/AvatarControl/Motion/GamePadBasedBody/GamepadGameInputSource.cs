@@ -29,8 +29,8 @@ namespace Baku.VMagicMirror.GameInput
         private const float MoveInputDeadZone = 0.15f;
 
         bool IGameInputSource.IsActive => _isActive;
-        Vector2 IGameInputSource.MoveInput => _moveInput;
-        bool IGameInputSource.IsCrouching => _isCrouching;
+        IObservable<Vector2> IGameInputSource.MoveInput => _moveInput;
+        IObservable<bool> IGameInputSource.IsCrouching => _isCrouching;
         public IObservable<Unit> Jump => _jump;
 
         private readonly XInputGamePad _gamepad;
@@ -38,8 +38,9 @@ namespace Baku.VMagicMirror.GameInput
         private bool _isActive;
         private Vector2 _rawMoveInput;
         private Vector2 _dumpedMoveInput;
-        private Vector2 _moveInput;
-        private bool _isCrouching;
+        
+        private ReactiveProperty<Vector2> _moveInput = new ReactiveProperty<Vector2>();
+        private ReactiveProperty<bool> _isCrouching = new ReactiveProperty<bool>();
         private readonly Subject<Unit> _jump = new Subject<Unit>();
 
         //NOTE: スティックやジャンプ/しゃがみ指定の初期値はテキトーで、無いほうがマシなら未割り当てにしてもよい
@@ -103,7 +104,7 @@ namespace Baku.VMagicMirror.GameInput
 
             if (data.Key == CrouchButton)
             {
-                _isCrouching = data.IsPressed;
+                _isCrouching.Value = data.IsPressed;
             }
         }
 
@@ -122,7 +123,7 @@ namespace Baku.VMagicMirror.GameInput
                 diff.magnitude,
                 MoveInputDiffPerSecond * Time.deltaTime
             ));
-            _moveInput = GetMoveInputWithDeadZone(_dumpedMoveInput);
+            _moveInput.Value = GetMoveInputWithDeadZone(_dumpedMoveInput);
         }
         
         void IDisposable.Dispose() => _disposable?.Dispose();

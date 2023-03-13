@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Baku.VMagicMirror.GameInput;
 using UniRx;
 using UnityEngine;
@@ -15,24 +16,23 @@ namespace Baku.VMagicMirror
         private static readonly int Crouch = Animator.StringToHash("Crouch");
 
         private readonly IVRMLoadable _vrmLoadable;
-        private readonly IGameInputSourceSwitcher _sourceSwitcher;
-        private readonly IkWeightCrossFade _ikWeightCrossFade;
+        private readonly GameInputSourceSet _sourceSet;
         private readonly ReactiveProperty<bool> _bodyMotionActive = new ReactiveProperty<bool>(false);
         private readonly CompositeDisposable _disposable = new CompositeDisposable();
 
         private bool _hasModel;
         private Animator _animator;
 
-        private bool _sourceActive;
+        private Vector2 _moveInput;
+        private bool _isCrouching;
         
         public GamepadInputBodyMotionController(
             IVRMLoadable vrmLoadable,
-            IGameInputSourceSwitcher sourceSwitcher,
-            IkWeightCrossFade ikWeightCrossFade)
+            GameInputSourceSet sourceSet
+            )
         {
             _vrmLoadable = vrmLoadable;
-            _sourceSwitcher = sourceSwitcher;
-            _ikWeightCrossFade = ikWeightCrossFade;
+            _sourceSet = sourceSet;
         }
 
         void IInitializable.Initialize()
@@ -40,25 +40,26 @@ namespace Baku.VMagicMirror
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmDisposing;
 
-            _sourceSwitcher.Source
-                .Select(source => source.Jump)
-                .Switch()
+            Observable.Merge(_sourceSet.Sources.Select(s => s.Jump))
                 .Subscribe(_ => TryJump())
                 .AddTo(_disposable);
 
-            _sourceSwitcher.IsActive
-                .Subscribe(sourceActive => SetSourceActive(sourceActive))
+            //NOTE: 1フレームで2デバイスから入力が来たら片方は無視したいが…
+            Observable.Merge(
+                _sourceSet.Sources
+                    .Select(s => s.MoveInput.DistinctUntilChanged()
+                    )
+                )
+                .Subscribe(v => _moveInput = v)
                 .AddTo(_disposable);
-            
-            _bodyMotionActive
-                .Subscribe(v => RequestIkWeight(v ? 0f : 1f))
-                .AddTo(_disposable);
-        }
 
-        private void SetSourceActive(bool sourceActive)
-        {
-            
-            throw new NotImplementedException();
+            Observable.Merge(
+                _sourceSet.Sources
+                    .Select(s => s.IsCrouching.DistinctUntilChanged()
+                    )
+                )
+                .Subscribe(v => _isCrouching = v)
+                .AddTo(_disposable);
         }
 
         private void OnVrmLoaded(VrmLoadedInfo obj)
@@ -75,17 +76,13 @@ namespace Baku.VMagicMirror
 
         private void TryJump()
         {
-            if (!_hasModel)
+            if (_hasModel && _bodyMotionActive.Value)
             {
-                return;
+                _animator.SetTrigger(Jump);
             }
-            _animator.SetTrigger(Jump);
         }
 
-        private void RequestIkWeight(float targetWeight) 
-            => _ikWeightCrossFade.SetBodyMotionBasedIkWeightRequest(targetWeight);
-
-        //NOTE: イベント入力との順序とか踏まえてLateTickにしてもいい
+        //NOTE: イベント入力との順序とか踏まえて必要な場合、LateTickにしてもいい
         void ITickable.Tick()
         {
             if (!_hasModel)
@@ -93,19 +90,12 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var source = _sourceSwitcher.Source.Value;
-            _bodyMotionActive.Value = source.IsActive;
-            if (!source.IsActive)
-            {
-                return;
-            }
+            _animator.SetBool(Active, _bodyMotionActive.Value);
 
-
-            var moveInput = source.MoveInput;
-            _animator.SetBool(Active, source.IsActive);
-            _animator.SetFloat(MoveRight, moveInput.x);
-            _animator.SetFloat(MoveForward, moveInput.y);
-            _animator.SetBool(Crouch, source.IsCrouching);
+            //NOTE: 使わない場合も一応入れておく、というスタイル
+            _animator.SetFloat(MoveRight, _moveInput.x);
+            _animator.SetFloat(MoveForward, _moveInput.y);
+            _animator.SetBool(Crouch, _isCrouching);
         }
 
         void IDisposable.Dispose() => _disposable.Dispose();

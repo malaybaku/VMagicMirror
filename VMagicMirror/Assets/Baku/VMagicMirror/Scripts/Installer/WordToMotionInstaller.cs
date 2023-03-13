@@ -8,7 +8,6 @@ namespace Baku.VMagicMirror.Installer
     {
         [SerializeField] private CustomMotionPlayer customMotionPlayerV2 = null;
         [SerializeField] private WordToMotionBlendShape blendShape = null;
-        [SerializeField] private IkWeightCrossFade ikWeightCrossFade = null;
         
         public override void Install(DiContainer container)
         {
@@ -16,10 +15,7 @@ namespace Baku.VMagicMirror.Installer
                 .FromInstance(customMotionPlayerV2)
                 .AsCached();
             container.Bind<WordToMotionAccessoryRequest>().AsSingle();
-            container.BindInstances(
-                blendShape, 
-                ikWeightCrossFade
-                );
+            container.BindInstance(blendShape).AsSingle();
         }
     }
 }

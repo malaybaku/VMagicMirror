@@ -166,7 +166,6 @@ GameObject:
   - component: {fileID: 7427902273662735820}
   - component: {fileID: 5439178198834556228}
   - component: {fileID: 7427902273662735816}
-  - component: {fileID: 7427902273662735818}
   - component: {fileID: 3568705224926989393}
   m_Layer: 0
   m_Name: WordToMotionController
@@ -206,7 +205,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customMotionPlayerV2: {fileID: 6633198739088308264}
   blendShape: {fileID: 7427902273662735816}
-  ikWeightCrossFade: {fileID: 7427902273662735818}
 --- !u!114 &7427902273662735816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,19 +217,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0d3d5a76a8dce45a64935054a8fd04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7427902273662735818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7427902273662735829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fea24974c6c68c74597dc46bd6bf070e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  elbowMotionModifier: {fileID: 0}
 --- !u!114 &3568705224926989393
 MonoBehaviour:
   m_ObjectHideFlags: 0

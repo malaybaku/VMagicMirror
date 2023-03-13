@@ -731,6 +731,7 @@ MonoBehaviour:
   colliderBasedAvatarParamLoader: {fileID: 8229117264469737190}
   nonImageBasedMotion: {fileID: 3373783041301125446}
   fingerController: {fileID: 2951044793089892564}
+  elbowMotionModifier: {fileID: 5813678810248240001}
 --- !u!114 &5470382612402142914
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,15 +7,18 @@ namespace Baku.VMagicMirror.Installer
 {
     public class MotionCalculationInstaller : InstallerBase
     {
-        [SerializeField] private HandIKIntegrator handIKIntegrator = null;
-        [SerializeField] private FaceAttitudeController faceAttitude = null;
-        [SerializeField] private HeadMotionClipPlayer headMotionClipPlayer = null;
-        [SerializeField] private ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader = null;
-        [SerializeField] private NonImageBasedMotion nonImageBasedMotion = null;
-        [SerializeField] private FingerController fingerController = null;
+        [SerializeField] private HandIKIntegrator handIKIntegrator;
+        [SerializeField] private FaceAttitudeController faceAttitude;
+        [SerializeField] private HeadMotionClipPlayer headMotionClipPlayer;
+        [SerializeField] private ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader;
+        [SerializeField] private NonImageBasedMotion nonImageBasedMotion;
+        [SerializeField] private FingerController fingerController;
+        [SerializeField] private ElbowMotionModifier elbowMotionModifier;
 
         public override void Install(DiContainer container)
         {
+            container.BindInterfacesAndSelfTo<BodyMotionModeController>().AsSingle();
+
             container.BindInterfacesAndSelfTo<HandDownIkCalculator>().AsSingle();
             container.BindInterfacesAndSelfTo<CustomizedDownHandIk>().AsSingle();
             container.Bind<SwitchableHandDownIkData>().AsSingle();
@@ -24,7 +27,8 @@ namespace Baku.VMagicMirror.Installer
                 faceAttitude,
                 colliderBasedAvatarParamLoader,
                 nonImageBasedMotion,
-                fingerController
+                fingerController,
+                elbowMotionModifier
             );
 
             container.Bind(typeof(HeadMotionClipPlayer), typeof(IWordToMotionPlayer))
@@ -37,12 +41,11 @@ namespace Baku.VMagicMirror.Installer
 
             container.BindInterfacesAndSelfTo<GamepadGameInputSource>().AsSingle();
             container.BindInterfacesAndSelfTo<KeyboardGameInputSource>().AsSingle();
-            container.BindInterfacesTo<GameInputSourceSwitcher>()
-                .FromNewComponentOn(_ => gameObject)
-                .AsSingle();
-            container.BindInterfacesTo<GamepadInputBodyMotionController>().AsSingle();
+            container.BindInterfacesAndSelfTo<GameInputSourceSet>().AsSingle();
 
-            container.BindInterfacesAndSelfTo<BodyMotionModeController>().AsSingle();
+            container.Bind<TaskBasedIkWeightFader>().AsSingle();
+            container.BindInterfacesTo<GameInputIKWeightController>().AsSingle();
+            container.BindInterfacesTo<GamepadInputBodyMotionController>().AsSingle();
         }
     }
 }

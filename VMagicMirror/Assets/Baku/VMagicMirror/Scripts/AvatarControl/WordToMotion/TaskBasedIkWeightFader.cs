@@ -93,7 +93,7 @@ namespace Baku.VMagicMirror
 
         public void Initialize()
         {
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+            _vrmLoadable.PostVrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
 
@@ -101,7 +101,7 @@ namespace Baku.VMagicMirror
         {
             CancelUpperBodyWeightTask();
             CancelFullBodyWeightTask();
-            _vrmLoadable.VrmLoaded -= OnVrmLoaded;
+            _vrmLoadable.PostVrmLoaded -= OnVrmLoaded;
             _vrmLoadable.VrmDisposing -= OnVrmDisposing;
         }
 
@@ -141,6 +141,8 @@ namespace Baku.VMagicMirror
             }
             
             _hasModel = true;
+            //ロード直後のweight更新をサボらないように明示的にフラグを立ててしまう
+            _weightIsDirty = true;
         }
 
         private void OnVrmDisposing()
@@ -260,6 +262,8 @@ namespace Baku.VMagicMirror
             s.bodyEffector.positionWeight = _originWeight.BodyPos * lowerFactor;
             s.leftFootEffector.positionWeight = _originWeight.LeftFootPos * lowerFactor;
             s.rightFootEffector.positionWeight = _originWeight.RightFootPos * lowerFactor;
+
+            _weightIsDirty = false;
         }
 
         private void SetFullBodyIkWeight(float weight)

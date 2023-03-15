@@ -194,3 +194,4 @@ VMagicMirrorでは元モデルに対し、他のデバイスとの一貫性を�
 
 日本語、英語以外のローカリゼーションでのContributionに興味がある場合、[about_localization.md](./about_localization.md)を参照して下さい。
 
+note: branchの保護について確認するためにテスト差分を発生させています…

@@ -162,6 +162,25 @@ namespace Baku.VMagicMirrorConfig
 
         #endregion
 
+        #region Game Input Locomotion
+
+        public Message UseGamepadForGameInput(bool use) => WithArg(use);
+        public Message UseKeyboardForGameInput(bool use) => WithArg(use);
+        public Message SetGamepadGameInputKeyAssign(string json) => WithArg(json);
+        public Message SetKeyboardGameInputKeyAssign(string json) => WithArg(json);
+
+        public Message EnableAlwaysRunGameInput(bool enable) => WithArg(enable);
+
+        //NOTE: 以下はKeyboardKeyAssignの一部に帰着させるかもしれない。
+        //これらを単独で送信する場合、これらのオプションはKeyAssignのjsonよりも優先されるイメージ
+        public Message EnableWasdMoveGameInput(bool enable) => WithArg(enable);
+        public Message EnableArrowKeyMoveGameInput(bool enable) => WithArg(enable);
+        public Message UseShiftRunGameInput(bool use) => WithArg(use);
+        public Message UseSpaceJumpGameInput(bool use) => WithArg(use);
+        public Message UseMouseMoveForLookAroundGameInput(bool use) => WithArg(use);
+
+        #endregion
+
         #region カメラの配置
 
         public Message CameraFov(int cameraFov) => WithArg(cameraFov);

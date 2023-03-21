@@ -1,0 +1,131 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.GamepadOutline"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="320"
+             Height="280">
+    <UserControl.Resources>
+        <Style x:Key="ButtonOrStick" TargetType="Ellipse">
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter Property="Stroke" Value="DarkGray"/>
+            <Setter Property="Fill" Value="Transparent"/>
+            <Setter Property="StrokeThickness" Value="2"/>
+        </Style>
+        <Style x:Key="StickEllipse" TargetType="Ellipse" BasedOn="{StaticResource ButtonOrStick}">
+            <Setter Property="Width" Value="35" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Fill" Value="LightGray" />
+        </Style>
+        <Style x:Key="ButtonEllipse" TargetType="Ellipse" BasedOn="{StaticResource ButtonOrStick}">
+            <Setter Property="Width" Value="18" />
+            <Setter Property="Height" Value="18" />
+        </Style>
+        <Style x:Key="SmallButtonEllipse" TargetType="Ellipse" BasedOn="{StaticResource ButtonOrStick}">
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Height" Value="8" />
+            <Setter Property="Fill" Value="LightGray" />
+        </Style>
+        <Style x:Key="OutlinePath" TargetType="Path">
+            <Setter Property="Stroke" Value="DarkGray"/>
+            <Setter Property="Fill" Value="Transparent"/>
+            <Setter Property="StrokeThickness" Value="2"/>
+        </Style>
+        <Style x:Key="PointPartPath" TargetType="Path">
+            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="Fill" Value="Transparent"/>
+            <Setter Property="StrokeThickness" Value="1"/>
+        </Style>
+        <Style x:Key="BodyPath" TargetType="Path" BasedOn="{StaticResource OutlinePath}">
+            <Setter Property="Data">
+                <Setter.Value>
+                    <PathGeometry Figures="M140,16 H100 Q80,16 50,30 Q10,120 10,150 Q15,190 38,190 C50,190 70,140 100,140 H140" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TriggerPath" TargetType="Path" BasedOn="{StaticResource OutlinePath}">
+            <Setter Property="Data">
+                <Setter.Value>
+                    <PathGeometry Figures="M100,15.5 L91,11 C73,12 65,14 50,30" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Viewbox Width="320" Height="280">
+            <Canvas Width="320" Height="280" ClipToBounds="False">
+                <Canvas.RenderTransform>
+                    <TranslateTransform X="20" Y="70"/>
+                </Canvas.RenderTransform>
+                <!-- Controller body and trigger -->
+                <Viewbox RenderTransformOrigin="0.5,0.5">
+                    <Viewbox.RenderTransform>
+                        <TransformGroup>
+                            <TranslateTransform X="-140"/>
+                            <ScaleTransform ScaleX="-1"/>
+                        </TransformGroup>
+                    </Viewbox.RenderTransform>
+                    <Grid>
+                        <Path Style="{StaticResource BodyPath}" />
+                        <Path Style="{StaticResource TriggerPath}"/>
+                    </Grid>
+                </Viewbox>
+                <Path Style="{StaticResource BodyPath}" />
+                <Path Style="{StaticResource TriggerPath}"/>
+
+                <!-- View (L) / Menu(R) button -->
+                <Ellipse Style="{StaticResource SmallButtonEllipse}" 
+                     Canvas.Left="116" Canvas.Top="54" />
+                <Ellipse Style="{StaticResource SmallButtonEllipse}" 
+                     Canvas.Left="160" Canvas.Top="54" HorizontalAlignment="Center" VerticalAlignment="Top" />
+
+
+                <!-- Stick -->
+                <Ellipse Style="{StaticResource StickEllipse}" 
+                     Canvas.Left="55" Canvas.Top="42" />
+                <Ellipse Style="{StaticResource StickEllipse}" 
+                     Canvas.Left="157" Canvas.Top="85" HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+                <Path Style="{StaticResource OutlinePath}"
+                  Fill="LightGray"
+                  Canvas.Left="85" Canvas.Top="83">
+                    <Path.Data>
+                        <PathGeometry Figures="M15,2 H25 V15 H38 V25 H25 V38 H15 V25 H2 V15 H15 Z"/>
+                    </Path.Data>
+                </Path>
+
+                <!--A, B, X, Y buttons-->
+                <Ellipse Style="{StaticResource ButtonEllipse}" 
+                     Canvas.Left="197" Canvas.Top="68"  
+                     />
+                <Ellipse Style="{StaticResource ButtonEllipse}" 
+                     Canvas.Left="215" Canvas.Top="50" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                     />
+                <Ellipse Style="{StaticResource ButtonEllipse}" 
+                     Canvas.Left="197" Canvas.Top="32" HorizontalAlignment="Center" VerticalAlignment="Center"
+                     />
+                <Ellipse Style="{StaticResource ButtonEllipse}" 
+                     Canvas.Left="179" Canvas.Top="50" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                     />
+
+                <!-- Left Parts -->
+                <Path Style="{StaticResource PointPartPath}">
+                    <Path.Data>
+                        <PathGeometry Figures="M75,10 L45,-55 H-20 M63,15 L45,-25 H-20 M115,55 L80,40 H-20 M65,75 L10,170 H-20 M85,110 L20,200 H-20"/>
+                    </Path.Data>
+                </Path>
+                <!-- Right Parts except ABXY buttons -->
+                <Path Style="{StaticResource PointPartPath}">
+                    <Path.Data>
+                        <PathGeometry Figures="M205,10 L235,-55 H300 M217,15 L235,-25 H300 M166,63 L250,140 H300 M187,115 L260,200 H300"/>
+                    </Path.Data>
+                </Path>
+
+                <!-- ABXY buttons -->
+                <Path Style="{StaticResource PointPartPath}">
+                    <Path.Data>
+                        <PathGeometry Figures="M213,35 L240,10 H300 M195,53 L260,40 H300 M230,65 L260,70 H300 M210,85 L240,100 H300"/>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Viewbox>
+    </Grid>
+</UserControl>

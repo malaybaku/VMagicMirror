@@ -513,6 +513,37 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="SettingFile_ApplyPortNumber">Apply</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">See How to Use (Open Web Page)</sys:String>
 
+    <!-- GameInput Key Assign -->
+    <sys:String x:Key="GameInputKeyAssign_Title">Game Input Key/Button Assign</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Gamepad">Gamepad</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Gamepad_Enable">Use Gamepad</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard">Keyboard / Mouse</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">Use Keyboard / Mouse</sys:String>
+    
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">Always Run</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">Always Aim</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Action_None">(None)</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Move">Move</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_LookAround">Look Around</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Run">Run</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Jump">Jump</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Crouch">Crouch</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Trigger">Trigger</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Punch">Punch</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_WasdMove">Use WASD to move</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">Use ARROW to move</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Use SHIFT to run</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Use SPACE to jump</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">Use mouse move to look around</sys:String>
+    <!-- ここはゲームパッドと同様に図示することで不要になるかも -->
+    <sys:String x:Key="GameInputKeyAssign_Mouse_LeftClick">Left Click</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_RightClick">Right Click</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_MiddleClick">Middle Click</sys:String>    
+    
     <!-- NOTE: used from ViewModel code. -->
     <sys:String x:Key="SettingFile_SaveCompleted">Saved Current Setting to No.{0}.</sys:String>
     <sys:String x:Key="SettingFile_LoadCompleted">Loaded Setting No.{0}.</sys:String>

@@ -515,6 +515,37 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="SettingFile_ApplyPortNumber">適用</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">使い方をチェック (Webページへ移動)</sys:String>
 
+    <!-- GameInput Key Assign -->
+    <sys:String x:Key="GameInputKeyAssign_Title">ゲーム入力 キー/ボタン割り当て</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Gamepad">ゲームパッド</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Gamepad_Enable">ゲームパッド入力を使用</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard">キーボード・マウス</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">キーボード入力を使用</sys:String>
+    
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">移動は常にダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">つねに銃を構える</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Action_None">(なし)</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Move">移動</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_LookAround">見回し</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Run">ダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Jump">ジャンプ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Crouch">しゃがみ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Trigger">銃を撃つ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Punch">パンチ</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_WasdMove">WASDで移動</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">矢印キーで移動</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Shiftキーでダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Spaceキーでジャンプ</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">マウス移動で見回し</sys:String>
+    <!-- ここはゲームパッドと同様に図示することで不要になるかも -->
+    <sys:String x:Key="GameInputKeyAssign_Mouse_LeftClick">左クリック</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_RightClick">右クリック</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_MiddleClick">中央クリック</sys:String>
+    
     <!-- NOTE: used from ViewModel code. -->
     <sys:String x:Key="SettingFile_SaveCompleted">設定を No.{0} に保存しました。</sys:String>
     <sys:String x:Key="SettingFile_LoadCompleted">設定 No.{0} をロードしました。</sys:String>

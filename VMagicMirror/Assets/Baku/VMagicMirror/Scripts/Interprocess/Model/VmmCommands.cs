@@ -103,10 +103,16 @@
         public const string EnableSendHandTrackingResult = nameof(EnableSendHandTrackingResult);
 
         // Motion, GameInput
-        public const string UseGamePadForGameInput = nameof(UseGamePadForGameInput);
+        public const string UseGamepadForGameInput = nameof(UseGamepadForGameInput);
         public const string UseKeyboardForGameInput = nameof(UseKeyboardForGameInput);
-
-        //public const string EnableTouchTyping = nameof(EnableTouchTyping);
+        public const string SetGamepadGameInputKeyAssign = nameof(SetGamepadGameInputKeyAssign);
+        public const string SetKeyboardGameInputKeyAssign = nameof(SetKeyboardGameInputKeyAssign);
+        public const string EnableAlwaysRunGameInput = nameof(EnableAlwaysRunGameInput);
+        public const string EnableWasdMoveGameInput = nameof(EnableWasdMoveGameInput);
+        public const string EnableArrowKeyMoveGameInput = nameof(EnableArrowKeyMoveGameInput);
+        public const string UseShiftRunGameInput = nameof(UseShiftRunGameInput);
+        public const string UseSpaceJumpGameInput = nameof(UseSpaceJumpGameInput);
+        public const string UseMouseMoveForLookAroundGameInput = nameof(UseMouseMoveForLookAroundGameInput);
 
         // Layout, camera
         public const string SetCustomCameraPosition = nameof(SetCustomCameraPosition);

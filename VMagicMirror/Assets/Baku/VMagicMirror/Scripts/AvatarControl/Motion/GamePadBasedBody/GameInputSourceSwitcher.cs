@@ -3,16 +3,8 @@ using Zenject;
 
 namespace Baku.VMagicMirror.GameInput
 {
-    //NOTE: MonoBehaviourじゃなくていいんだけど[serializeField]からいじりたいので一時的に…
     public class GameInputSourceSet : PresenterBase
     {
-        public enum GameInputSourceType
-        {
-            None,
-            GamePad,
-            Keyboard,
-        }
-
         private readonly ReactiveProperty<bool> _useGamePad = new ReactiveProperty<bool>(true);
         private readonly ReactiveProperty<bool> _useKeyboard = new ReactiveProperty<bool>(true);
 
@@ -41,7 +33,7 @@ namespace Baku.VMagicMirror.GameInput
         public override void Initialize()
         {
             _receiver.AssignCommandHandler(
-                VmmCommands.UseGamePadForGameInput,
+                VmmCommands.UseGamepadForGameInput,
                 command => _useGamePad.Value = command.ToBoolean()
             );
 

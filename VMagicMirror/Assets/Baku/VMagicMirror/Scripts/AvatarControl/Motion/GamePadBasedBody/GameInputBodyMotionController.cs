@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public sealed class GamepadInputBodyMotionController : IInitializable, ITickable, IDisposable
+    public sealed class GameInputBodyMotionController : PresenterBase, ITickable
     {
         private static readonly int Active = Animator.StringToHash("Active");
         private static readonly int Jump = Animator.StringToHash("Jump");
@@ -16,33 +16,39 @@ namespace Baku.VMagicMirror
         private static readonly int Crouch = Animator.StringToHash("Crouch");
 
         private readonly IVRMLoadable _vrmLoadable;
+        private readonly BodyMotionModeController _bodyMotionModeController;
         private readonly GameInputSourceSet _sourceSet;
-        private readonly ReactiveProperty<bool> _bodyMotionActive = new ReactiveProperty<bool>(false);
-        private readonly CompositeDisposable _disposable = new CompositeDisposable();
 
         private bool _hasModel;
         private Animator _animator;
 
+        private bool _bodyMotionActive;
         private Vector2 _moveInput;
         private bool _isCrouching;
         
-        public GamepadInputBodyMotionController(
+        public GameInputBodyMotionController(
             IVRMLoadable vrmLoadable,
+            BodyMotionModeController bodyMotionModeController,
             GameInputSourceSet sourceSet
             )
         {
             _vrmLoadable = vrmLoadable;
+            _bodyMotionModeController = bodyMotionModeController;
             _sourceSet = sourceSet;
         }
 
-        void IInitializable.Initialize()
+        public override void Initialize()
         {
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmDisposing;
 
+            _bodyMotionModeController.MotionMode
+                .Subscribe(mode => _bodyMotionActive = mode == BodyMotionMode.GameInputLocomotion)
+                .AddTo(this);
+            
             Observable.Merge(_sourceSet.Sources.Select(s => s.Jump))
                 .Subscribe(_ => TryJump())
-                .AddTo(_disposable);
+                .AddTo(this);
 
             //NOTE: 1フレームで2デバイスから入力が来たら片方は無視したいが…
             Observable.Merge(
@@ -51,7 +57,7 @@ namespace Baku.VMagicMirror
                     )
                 )
                 .Subscribe(v => _moveInput = v)
-                .AddTo(_disposable);
+                .AddTo(this);
 
             Observable.Merge(
                 _sourceSet.Sources
@@ -59,7 +65,7 @@ namespace Baku.VMagicMirror
                     )
                 )
                 .Subscribe(v => _isCrouching = v)
-                .AddTo(_disposable);
+                .AddTo(this);
         }
 
         private void OnVrmLoaded(VrmLoadedInfo obj)
@@ -76,7 +82,7 @@ namespace Baku.VMagicMirror
 
         private void TryJump()
         {
-            if (_hasModel && _bodyMotionActive.Value)
+            if (_hasModel && _bodyMotionActive)
             {
                 _animator.SetTrigger(Jump);
             }
@@ -89,15 +95,15 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+            
+            //非アクティブなときにベシベシ呼ばない方がいいかもしれない…
 
-            _animator.SetBool(Active, _bodyMotionActive.Value);
+            _animator.SetBool(Active, _bodyMotionActive);
 
             //NOTE: 使わない場合も一応入れておく、というスタイル
             _animator.SetFloat(MoveRight, _moveInput.x);
             _animator.SetFloat(MoveForward, _moveInput.y);
             _animator.SetBool(Crouch, _isCrouching);
         }
-
-        void IDisposable.Dispose() => _disposable.Dispose();
     }
 }

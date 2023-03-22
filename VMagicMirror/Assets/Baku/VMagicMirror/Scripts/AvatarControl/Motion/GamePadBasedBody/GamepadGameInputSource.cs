@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror.GameInput
         Y,
     }
 
-    public class GamepadGameInputSource : IGameInputSource, ITickable, IDisposable
+    public class GamepadGameInputSource : PresenterBase, IGameInputSource, ITickable
     {
         private const float MoveInputDiffPerSecond = 2f;
         private const float MoveInputDeadZone = 0.15f;
@@ -39,8 +39,8 @@ namespace Baku.VMagicMirror.GameInput
         private Vector2 _rawMoveInput;
         private Vector2 _dumpedMoveInput;
         
-        private ReactiveProperty<Vector2> _moveInput = new ReactiveProperty<Vector2>();
-        private ReactiveProperty<bool> _isCrouching = new ReactiveProperty<bool>();
+        private readonly ReactiveProperty<Vector2> _moveInput = new ReactiveProperty<Vector2>();
+        private readonly ReactiveProperty<bool> _isCrouching = new ReactiveProperty<bool>();
         private readonly Subject<Unit> _jump = new Subject<Unit>();
 
         //NOTE: スティックやジャンプ/しゃがみ指定の初期値はテキトーで、無いほうがマシなら未割り当てにしてもよい
@@ -50,14 +50,41 @@ namespace Baku.VMagicMirror.GameInput
         public GamepadKey JumpButton { get; set; } = GamepadKey.A;
         public GamepadKey CrouchButton { get; set; } = GamepadKey.X;
 
+        private readonly IMessageReceiver _receiver;
         private CompositeDisposable _disposable;
 
         //TODO: 設定も受け取らないといけない
-        public GamepadGameInputSource(XInputGamePad gamePad)
+        public GamepadGameInputSource(
+            IMessageReceiver receiver,
+            XInputGamePad gamePad)
         {
+            _receiver = receiver;
             _gamepad = gamePad;
         }
 
+        public override void Initialize()
+        {
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetGamepadGameInputKeyAssign,
+                command => ApplyGamepadKeyAssign(command.Content)
+                );
+        }
+
+        void ITickable.Tick()
+        {
+            var diff = _rawMoveInput - _dumpedMoveInput;
+            _dumpedMoveInput += Vector2.ClampMagnitude(diff, Mathf.Min(
+                diff.magnitude,
+                MoveInputDiffPerSecond * Time.deltaTime
+            ));
+            _moveInput.Value = GetMoveInputWithDeadZone(_dumpedMoveInput);
+        }
+        
+        private void ApplyGamepadKeyAssign(string content)
+        {
+            
+        }
+        
         /// <summary>
         /// trueで呼び出すとゲームパッドの入力監視を開始する。
         /// falseで呼び出すと入力監視を終了する。必要ないうちは切っておくのを想定している
@@ -110,24 +137,15 @@ namespace Baku.VMagicMirror.GameInput
 
         private void OnMoveInputChanged(Vector2Int moveInput)
         {
+            Debug.Log("OnMoveINputChanged");
             var input = new Vector2(moveInput.x * 1f / 32768f, moveInput.y * 1f / 32768f);
 
             //NOTE: 更に「カメラに向かって奥方向かどうか」みたいなフラグも配慮したい気がする
             _rawMoveInput = input;
         }
 
-        void ITickable.Tick()
-        {
-            var diff = _rawMoveInput - _dumpedMoveInput;
-            _dumpedMoveInput += Vector2.ClampMagnitude(diff, Mathf.Min(
-                diff.magnitude,
-                MoveInputDiffPerSecond * Time.deltaTime
-            ));
-            _moveInput.Value = GetMoveInputWithDeadZone(_dumpedMoveInput);
-        }
         
-        void IDisposable.Dispose() => _disposable?.Dispose();
-
+        
         private static Vector2 GetMoveInputWithDeadZone(Vector2 input)
         {
             var magnitude = input.magnitude;

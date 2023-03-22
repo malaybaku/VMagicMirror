@@ -73,7 +73,7 @@ namespace Baku.VMagicMirror
         private FullBodyBipedIK _ik;
         private SimpleAnimation _simpleAnimation;
         private bool _hasModel = false;
-        private bool _simpleAnimationShouldDisabled;
+        private bool _simpleAnimationActive = true;
         private Weights _originWeight = Weights.Default;
         
         //モデルとは独立な数値
@@ -135,7 +135,7 @@ namespace Baku.VMagicMirror
                 s.rightFootEffector.positionWeight
             );
             _simpleAnimation = info.vrmRoot.GetComponent<SimpleAnimation>();
-            if (_simpleAnimationShouldDisabled)
+            if (!_simpleAnimationActive)
             {
                 _simpleAnimation.enabled = false;
             }
@@ -170,15 +170,15 @@ namespace Baku.VMagicMirror
         //NOTE: fullBodyのWeightが0になったりならなかったりする間際で呼ばれる
         void SetSimpleAnimationEnable(bool enable)
         {
-            if (enable == _simpleAnimationShouldDisabled)
+            if (enable == _simpleAnimationActive)
             {
                 return;
             }
 
-            _simpleAnimationShouldDisabled = enable;
+            _simpleAnimationActive = enable;
             if (_hasModel)
             {
-                _simpleAnimation.enabled = !_simpleAnimationShouldDisabled;
+                _simpleAnimation.enabled = _simpleAnimationActive;
             }
         }
 

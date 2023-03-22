@@ -41,8 +41,6 @@ namespace Baku.VMagicMirror
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
         private Vrm10Instance _instance = null;
-        //NOTE: controlRigはinstanceとライフサイクルが違う(可能性がある)ので要注意
-        private Vrm10RuntimeControlRig _controlRig = null;
         
         private readonly ReactiveProperty<CurrentModelVersion> _modelVersion =
             new ReactiveProperty<CurrentModelVersion>(CurrentModelVersion.Unloaded);

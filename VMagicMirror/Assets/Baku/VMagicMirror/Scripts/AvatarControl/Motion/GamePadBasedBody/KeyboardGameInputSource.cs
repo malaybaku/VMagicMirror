@@ -72,7 +72,7 @@ namespace Baku.VMagicMirror.GameInput
 
         void ITickable.Tick()
         {
-            if (!_isActive)
+            if (!_isActive || _keyAssign.UseMouseLookAround)
             {
                 return;
             }

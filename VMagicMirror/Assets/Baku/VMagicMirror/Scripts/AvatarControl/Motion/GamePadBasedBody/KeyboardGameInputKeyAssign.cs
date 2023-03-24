@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror.GameInput
         public bool UseShiftRun = true;
         public bool UseSpaceJump = true;
 
-        //NOTE: 初期リリース時点では以下の値は使用せず、
+        //NOTE: 初期リリース時点では以下の値は使用せず、boolのフラグで指定できる限定的な処理だけを行う
 
         public string JumpKeyCode = nameof(KeyCode.Space);
         //雑記: しれっと書いてるがShiftはLeftShift / RightShiftを区別しない必要があり、意外と面倒

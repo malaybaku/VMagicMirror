@@ -98,6 +98,7 @@ sysinfo.txt
 /VMagicMirror/Assets/NuGet.meta
 /VMagicMirror/Assets/NuGetPackages.meta
 
+
 # Assets to ignore (from BOOTH)
 
 /VMagicMirror/Assets/noribenLaserlight/
@@ -110,6 +111,11 @@ sysinfo.txt
 
 /VMagicMirror/Assets/UnityChan/
 /VMagicMirror/Assets/UnityChan.meta
+
+# Assets to ignore: the folder can include purchased assets (for game input locomotion custom)
+
+/VMagicMirror/Assets/ThirdPartyMotions.meta
+/VMagicMirror/Assets/ThirdPartyMotions/
 
 # NOT ignore solution / project files of WPF
 !/WPF/**/*.sln

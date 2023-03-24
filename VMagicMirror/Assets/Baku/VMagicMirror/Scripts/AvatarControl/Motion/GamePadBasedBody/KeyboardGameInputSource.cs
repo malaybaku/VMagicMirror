@@ -14,7 +14,6 @@ namespace Baku.VMagicMirror.GameInput
 
         #region Interface 
         
-        bool IGameInputSource.IsActive => _isActive;
         IObservable<Vector2> IGameInputSource.MoveInput => _moveInput;
         IObservable<Vector2> IGameInputSource.LookAroundInput => _lookAroundInput;
 

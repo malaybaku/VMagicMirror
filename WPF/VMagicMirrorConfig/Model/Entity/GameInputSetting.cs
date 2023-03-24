@@ -57,7 +57,7 @@
     //Entityに移動していいんでは
     public class GameInputGamepadKeyAssign
     {
-        public GameInputButtonAction ButtonA { get; set; }
+        public GameInputButtonAction ButtonA { get; set; } = GameInputButtonAction.Jump;
         public GameInputButtonAction ButtonB { get; set; }
         public GameInputButtonAction ButtonX { get; set; }
         public GameInputButtonAction ButtonY { get; set; }
@@ -72,8 +72,8 @@
         public GameInputButtonAction ButtonMenu { get; set; }
 
         public GameInputStickAction DPadLeft { get; set; }
-        public GameInputStickAction StickLeft { get; set; }
-        public GameInputStickAction StickRight { get; set; }
+        public GameInputStickAction StickLeft { get; set; } = GameInputStickAction.Move;
+        public GameInputStickAction StickRight { get; set; } = GameInputStickAction.LookAround;
 
         //NOTE: 「戻り値は書き換えないでね」系のやつ
         public static GameInputGamepadKeyAssign Default { get; } = new();

@@ -199,6 +199,7 @@ Disable foreground mode, or attach item to another one.</sys:String>
 - Turn on "Always-Hands-Down Mode"
 - Turn on "Free Layout Mode"</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">Reset Hand Down Pose to Default</sys:String>
+    <sys:String x:Key="Motion_FullBody_OpenGameInputSetting">Game Locomotion Setting...</sys:String>
     
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">Arm</sys:String>    

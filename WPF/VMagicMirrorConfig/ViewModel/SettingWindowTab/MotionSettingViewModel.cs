@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Baku.VMagicMirrorConfig.View;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -32,6 +33,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetWaitMotionSetting)
                 );
 
+            OpenGameInputSettingWindowCommand = new ActionCommand(() => GameInputKeyAssignWindow.OpenOrActivateExistingWindow());
+
             if (IsInDesignMode)
             {
                 return;
@@ -41,19 +44,24 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model.GamepadMotionMode.AddWeakEventHandler(OnGamepadMotionModeChanged);
             UpdateKeyboardAndMouseMotionMode();
             UpdateGamepadMotionMode();
+
+            _model.EnableNoHandTrackMode.AddWeakEventHandler(UpdateBodyMotionModeAsHandler);
+            _model.EnableGameInputLocomotionMode.AddWeakEventHandler(UpdateBodyMotionModeAsHandler);
+            UpdateBodyMotionMode();
         }
 
         private readonly MotionSettingModel _model;
         private readonly LayoutSettingModel _layoutModel;
+        private bool _silentSetMode;
 
-        private void OnKeyboardAndMouseMotionModeChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            UpdateKeyboardAndMouseMotionMode();
-        }
-        private void OnGamepadMotionModeChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            UpdateGamepadMotionMode();
-        }
+        private void OnKeyboardAndMouseMotionModeChanged(object? sender, PropertyChangedEventArgs e) 
+            => UpdateKeyboardAndMouseMotionMode();
+
+        private void OnGamepadMotionModeChanged(object? sender, PropertyChangedEventArgs e) 
+            => UpdateGamepadMotionMode();
+
+        private void UpdateBodyMotionModeAsHandler(object? sender, PropertyChangedEventArgs e)
+            => UpdateBodyMotionMode();
 
         #region モーションの種類の制御
 
@@ -63,6 +71,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public MotionModeSelectionViewModel[] GamepadMotions =>
             MotionModeSelectionViewModel.GamepadMotions;
+
+        public RProperty<bool> EnableGameInputLocomotion => _model.EnableGameInputLocomotionMode;
 
         private MotionModeSelectionViewModel? _keyboardAndMouseMotionMode = null;
         public MotionModeSelectionViewModel? KeyboardAndMouseMotionMode
@@ -110,8 +120,43 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #endregion
 
-        
-        public RProperty<bool> EnableNoHandTrackMode => _model.EnableNoHandTrackMode;
+        public BodyMotionBaseModeSelectionViewModel[] BodyMotionAvailableModes =>
+            BodyMotionBaseModeSelectionViewModel.AvailableModes;
+
+        private BodyMotionBaseModeSelectionViewModel? _bodyMotionMode = null;
+        public BodyMotionBaseModeSelectionViewModel? BodyMotionMode
+        {
+            get => _bodyMotionMode;
+            set
+            {
+                if (_bodyMotionMode == value)
+                {
+                    return;
+                }
+
+                _bodyMotionMode = value;
+                if (value != null && !_silentSetMode)
+                {
+                    _model.EnableNoHandTrackMode.Value = value.Mode == BodyMotionBaseMode.NoHandTracking;
+                    _model.EnableGameInputLocomotionMode.Value = value.Mode == BodyMotionBaseMode.GameInputLocomotion;
+                }
+                RaisePropertyChanged();
+            }
+        }
+        private void UpdateBodyMotionMode()
+        {
+            _silentSetMode = true;
+
+            var mode =
+                _model.EnableGameInputLocomotionMode.Value ? BodyMotionBaseMode.GameInputLocomotion :
+                _model.EnableNoHandTrackMode.Value ? BodyMotionBaseMode.NoHandTracking :
+                BodyMotionBaseMode.Default;
+
+            //NOTE: いちおうFirstOrDefaultにしているが、nullは戻ってこないはず
+            BodyMotionMode = BodyMotionAvailableModes.FirstOrDefault(m => m.Mode == mode);
+            _silentSetMode = false;
+        }
+
         public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
         public RProperty<bool> EnableCustomHandDownPose => _model.EnableCustomHandDownPose;
         public RProperty<bool> EnableDeviceFreeLayout => _layoutModel.EnableDeviceFreeLayout;
@@ -136,7 +181,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<int> WaitMotionScale => _model.WaitMotionScale;
         public RProperty<int> WaitMotionPeriod => _model.WaitMotionPeriod;
 
-
+        public ActionCommand OpenGameInputSettingWindowCommand { get; }
         public ActionCommand ResetCustomHandDownPoseCommand { get; }
         public ActionCommand ResetArmMotionSettingCommand { get; }
         public ActionCommand ResetHandMotionSettingCommand { get; }

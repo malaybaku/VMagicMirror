@@ -1,4 +1,5 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using Baku.VMagicMirrorConfig.View;
+using MaterialDesignThemes.Wpf;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -142,7 +143,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         internal MotionViewModel(MotionSettingModel model)
         {
             _model = model;
-            
+
+            OpenGameInputSettingWindowCommand = new ActionCommand(() => GameInputKeyAssignWindow.OpenOrActivateExistingWindow());
+
             if (!IsInDesignMode)
             {
                 _model.KeyboardAndMouseMotionMode.AddWeakEventHandler(UpdateKeyboardAndMouseMotionModeAsHandler);
@@ -160,6 +163,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         private readonly MotionSettingModel _model;
         private bool _silentSetMode = false;
 
+        public ActionCommand OpenGameInputSettingWindowCommand { get; }
         public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
 
         //モデル層から引っ張った方がよいかもしれないが、それは無理に頑張らないでもよいかも
@@ -192,6 +196,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
                 RaisePropertyChanged();
             }
         }
+
+        public RProperty<bool> EnableGameInputLocomotion => _model.EnableGameInputLocomotionMode;
 
         private MotionModeSelectionViewModel? _keyboardAndMouseMotionMode = null;
         public MotionModeSelectionViewModel? KeyboardAndMouseMotionMode

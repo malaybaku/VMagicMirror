@@ -26,10 +26,12 @@ namespace Baku.VMagicMirror
         /// </summary>
         public Vector2 NormalizedCursorPosition { get; private set; }
 
+        public Vector2Int RawDiff { get; private set; }
+        
         private Vector2 _rawNormalizedPosition;
         
         private RawInputChecker _rawMouseMoveChecker = null;
-        private Vector2Int _prevCursosPos;
+        private Vector2Int _prevCursorPos;
 
         private float _monitorLeft;
         private float _monitorTop;
@@ -52,7 +54,7 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _rawMouseMoveChecker = GetComponent<RawInputChecker>();
-            _prevCursosPos = NativeMethods.GetWindowsMousePosition();
+            _prevCursorPos = NativeMethods.GetWindowsMousePosition();
             RefreshMonitorRects();
         }
 
@@ -74,12 +76,13 @@ namespace Baku.VMagicMirror
         private void UpdateRawPosition()
         {
             (int dx, int dy) = _rawMouseMoveChecker.GetAndReset();
+            RawDiff = new Vector2Int(dx, dy);
             var p = NativeMethods.GetWindowsMousePosition();
 
             //NOTE: (dx, dy)とabsDifが異なるケース == マウスがプログラム的に動かされちゃってるケース
             //FPSとかで遊んでない限りは2つの値は一致する
-            var absDif = p - _prevCursosPos;
-            _prevCursosPos = p;
+            var absDif = p - _prevCursorPos;
+            _prevCursorPos = p;
 
             if (_rawMouseMoveChecker.EnableFpsAssumedRightHand)
             {

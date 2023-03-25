@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public sealed class GameInputBodyMotionController : PresenterBase, ITickable
+    public class GameInputBodyMotionController : PresenterBase, ITickable
     {
         private const float MoveLerpSmoothTime = 0.3f;
         private const float LookAroundSmoothTime = 0.3f;
@@ -33,7 +33,7 @@ namespace Baku.VMagicMirror
         private bool _hasModel;
         private Animator _animator;
 
-        private bool _alwaysRun;
+        private bool _alwaysRun = true;
         private bool _bodyMotionActive;
 
         private Vector2 _rawMoveInput;

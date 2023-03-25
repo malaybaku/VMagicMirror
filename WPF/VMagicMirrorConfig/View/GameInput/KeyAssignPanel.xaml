@@ -8,10 +8,10 @@
              xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
-             MinWidth="500"
+             MinWidth="600"
              d:DataContext="{d:DesignInstance vm:KeyAssignViewModel}"
              d:DesignWidth="700"
-             d:DesignHeight="1200"
+             d:DesignHeight="1100"
              AllowDrop="True"
              >
     <UserControl.DataContext>
@@ -40,9 +40,87 @@
         </Style>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto"
-                    HorizontalScrollBarVisibility="Disabled"
-                    >
+                  HorizontalScrollBarVisibility="Disabled">
         <StackPanel Grid.Column="0" Margin="0,5">
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{DynamicResource GameInputKeyAssign_Header}"                 
+                           Style="{StaticResource SectionHeaderText}"
+                            />
+            </StackPanel>
+
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                           Text="{DynamicResource GameInputKeyAssign_Instruction}"
+                           TextWrapping="Wrap"
+                           />
+
+                <StackPanel Grid.Column="1">
+                    <Button 
+                        HorizontalAlignment="Stretch"
+                        Width="NaN"
+                        Margin="10"
+                        Command="{Binding SaceSettingFileCommand}"
+                        Content="{DynamicResource GameInputKeyAssign_Export}"
+                        />
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Width="NaN"
+                        Margin="10"
+                        Command="{Binding LoadSettingFileCommand}"
+                        Content="{DynamicResource GameInputKeyAssign_Import}"
+                        />
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,20,10">
+                <Button HorizontalAlignment="Left"
+                                Width="150"
+                                Margin="20,0"
+                                Command="{Binding ResetSettingsCommand}"
+                                >
+                    <StackPanel Style="{StaticResource IconTextSetStackPanel}">
+                        <md:PackIcon Style="{StaticResource IconTextSetIcon}"
+                                                Kind="Reload"
+                                                />
+                        <TextBlock Style="{StaticResource IconSetSetText}"
+                                            Text="{DynamicResource GameInputKeyAssign_Reset}"
+                                            />
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Padding="0"
+                    MinWidth="130"
+                    Command="{Binding OpenPerfectSyncTipsUrlCommand}"
+                    Content="{DynamicResource GameInputKeyAssign_SeeMore}"
+                    />
+            </StackPanel>
+
+            <Border Style="{StaticResource SectionBorder}" Padding="5" Margin="5">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <md:PackIcon Style="{StaticResource HeaderPackIcon}"
+                                        Kind="Settings"/>
+                        <TextBlock Style="{StaticResource HeaderText}"
+                                    Text="基本設定"
+                                    Margin="5"
+                                    />
+                    </StackPanel>
+                    <CheckBox Content="{DynamicResource GameInputKeyAssign_Option_AlwaysRun}"
+                              Margin="10"
+                              IsChecked="{Binding AlwaysRun.Value, Mode=TwoWay}"
+                              />
+                </StackPanel>
+            </Border>
+
             <Border Style="{StaticResource SectionBorder}"
                     Padding="5" Margin="5">
                 <StackPanel>
@@ -56,11 +134,11 @@
                     </StackPanel>
 
                     <CheckBox Content="{DynamicResource GameInputKeyAssign_Gamepad_Enable}"
-                              Margin="10,10,5,0"
+                              Margin="10,15"
                               IsChecked="{Binding GamepadEnabled.Value, Mode=TwoWay}"
                               />
 
-                    <Grid Height="280">
+                    <Grid Height="280" IsEnabled="{Binding GamepadEnabled.Value}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="340" />
@@ -71,7 +149,6 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="30"/>
-
                                 <RowDefinition Height="35"/>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="*"/>
@@ -79,8 +156,9 @@
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Row="0" Grid.Column="0"
@@ -100,31 +178,31 @@
                                        Text="L.Arrow"
                                        />
 
-                            <ComboBox Grid.Row="0" Grid.Column="1"
+                            <ComboBox Grid.Row="0" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonLTrigger.Value}"
                                       />
 
-                            <ComboBox Grid.Row="1" Grid.Column="1"
+                            <ComboBox Grid.Row="1" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonLB.Value}"
                                       />
 
-                            <ComboBox Grid.Row="3" Grid.Column="1"
+                            <ComboBox Grid.Row="3" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonView.Value}"
                                       />
 
-                            <ComboBox Grid.Row="5" Grid.Column="1"
+                            <ComboBox Grid.Row="5" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding StickActions}"
                                       SelectedValue="{Binding StickLeft.Value}"
                                       />
 
-                            <ComboBox Grid.Row="6" Grid.Column="1"
+                            <ComboBox Grid.Row="6" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding StickActions}"
                                       SelectedValue="{Binding DPadLeft.Value}"
@@ -150,8 +228,9 @@
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Row="0" Grid.Column="0"
@@ -182,42 +261,42 @@
                                        Text="R.Stick"
                                        />
 
-                            <ComboBox Grid.Row="0" Grid.Column="1"
+                            <ComboBox Grid.Row="0" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonRTrigger.Value}"
                                       />
-                            <ComboBox Grid.Row="1" Grid.Column="1"
+                            <ComboBox Grid.Row="1" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonRB.Value}"
                                       />
-                            <ComboBox Grid.Row="3" Grid.Column="1"
+                            <ComboBox Grid.Row="3" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonY.Value}"
                                       />
-                            <ComboBox Grid.Row="4" Grid.Column="1"
+                            <ComboBox Grid.Row="4" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonX.Value}"
                                       />
-                            <ComboBox Grid.Row="5" Grid.Column="1"
+                            <ComboBox Grid.Row="5" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonB.Value}"
                                       />
-                            <ComboBox Grid.Row="6" Grid.Column="1"
+                            <ComboBox Grid.Row="6" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonA.Value}"
                                       />
-                            <ComboBox Grid.Row="8" Grid.Column="1"
+                            <ComboBox Grid.Row="8" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonMenu.Value}"
                                       />
-                            <ComboBox Grid.Row="10" Grid.Column="1"
+                            <ComboBox Grid.Row="10" Grid.Column="2"
                                       Style="{StaticResource GameInputActionComboBox}"
                                       ItemsSource="{Binding StickActions}"
                                       SelectedValue="{Binding StickRight.Value}"
@@ -226,7 +305,6 @@
                     </Grid>
                 </StackPanel>
             </Border>
-
 
             <Border Style="{StaticResource SectionBorder}" Padding="5" Margin="5">
                 <StackPanel>
@@ -242,26 +320,44 @@
                               Margin="10,10,5,0"
                               IsChecked="{Binding KeyboardEnabled.Value, Mode=TwoWay}"
                               />
+                    <TextBlock Text="{DynamicResource GameInputKeyAssign_Keyboard_Section}"
+                               Margin="10,15,5,5"
+                               />
 
                     <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_WasdMove}"
-                              Margin="10,10,5,0"
+                              Margin="25,5,5,0"
                               IsChecked="{Binding UseWasdMove.Value, Mode=TwoWay}"
+                              IsEnabled="{Binding KeyboardEnabled.Value}"
                               />
                     <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_ArrowMove}"
-                              Margin="10,10,5,0"
+                              Margin="25,0"
                               IsChecked="{Binding UseArrowKeyMove.Value, Mode=TwoWay}"
+                              IsEnabled="{Binding KeyboardEnabled.Value}"
                               />
-
                     <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_ShiftRun}"
-                              Margin="10,10,5,0"
+                              Margin="25,0"
                               IsChecked="{Binding UseShiftRun.Value, Mode=TwoWay}"
+                              IsEnabled="{Binding KeyboardEnabled.Value}"
                               />
 
                     <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_SpaceJump}"
-                              Margin="10,10,5,0"
+                              Margin="25,0"
                               IsChecked="{Binding UseSpaceJump.Value, Mode=TwoWay}"
+                              IsEnabled="{Binding KeyboardEnabled.Value}"
                               />
-                    <Grid>
+
+                    <TextBlock Text="{DynamicResource GameInputKeyAssign_Mouse_Section}"
+                               Margin="10,15,5,5"
+                               />
+
+                    <CheckBox Content="{DynamicResource GameInputKeyAssign_Mouse_UseLookAround}"
+                              Margin="25,5,25,0"
+                              IsChecked="{Binding UseMouseToLookAround.Value, Mode=TwoWay}"
+                              IsEnabled="{Binding KeyboardEnabled.Value}"
+                              />
+
+                    <Grid Margin="25,5"
+                          IsEnabled="{Binding KeyboardEnabled.Value}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -269,6 +365,7 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="10"/>
                             <ColumnDefinition Width="120" />
                         </Grid.ColumnDefinitions>
 
@@ -282,17 +379,17 @@
                                    Text="{DynamicResource GameInputKeyAssign_Mouse_MiddleClick}"
                                    />
 
-                        <ComboBox Grid.Row="0" Grid.Column="1"
+                        <ComboBox Grid.Row="0" Grid.Column="2"
                                   Style="{StaticResource GameInputActionComboBox}"
                                   ItemsSource="{Binding ButtonActions}"
                                   SelectedValue="{Binding LeftClick.Value}"
                                   />
-                        <ComboBox Grid.Row="1" Grid.Column="1"
+                        <ComboBox Grid.Row="1" Grid.Column="2"
                                   Style="{StaticResource GameInputActionComboBox}"
                                   ItemsSource="{Binding ButtonActions}"
                                   SelectedValue="{Binding RightClick.Value}"
                                   />
-                        <ComboBox Grid.Row="2" Grid.Column="1"
+                        <ComboBox Grid.Row="2" Grid.Column="2"
                                   Style="{StaticResource GameInputActionComboBox}"
                                   ItemsSource="{Binding ButtonActions}"
                                   SelectedValue="{Binding MiddleClick.Value}"

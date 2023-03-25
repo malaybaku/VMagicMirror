@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Microsoft.Win32;
+using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -57,6 +58,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             MiddleClick = new RProperty<GameInputButtonAction>(
                 keyboard.MiddleClick, a => SetMouseClickAction(GameInputMouseButton.Middle, a));
 
+            ResetSettingsCommand = new ActionCommand(ResetSetting);
+            LoadSettingFileCommand = new ActionCommand(LoadSetting);
+            SaveSettingFileCommand = new ActionCommand(SaveSetting);
+
             if (!IsInDesignMode)
             {
                 WeakEventManager<GameInputSettingModel, GamepadKeyAssignUpdateEventArgs>.AddHandler(
@@ -78,6 +83,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> GamepadEnabled => _model.GamepadEnabled;
         public RProperty<bool> KeyboardEnabled => _model.KeyboardEnabled;
+
+        public RProperty<bool> AlwaysRun => _model.AlwaysRun;
 
         public RProperty<GameInputButtonAction> ButtonA { get; }
         public RProperty<GameInputButtonAction> ButtonB { get; }
@@ -115,6 +122,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<string> TriggerKeyCode { get; } = new RProperty<string>("");
         public RProperty<string> PunchKeyCode { get; } = new RProperty<string>("");
+
+        public ActionCommand ResetSettingsCommand { get; }
+        public ActionCommand SaveSettingFileCommand { get; }
+        public ActionCommand LoadSettingFileCommand { get; }
 
         public GameInputStickActionItemViewModel[] StickActions => GameInputStickActionItemViewModel.AvailableItems;
         public GameInputButtonActionItemViewModel[] ButtonActions => GameInputButtonActionItemViewModel.AvailableItems;
@@ -194,6 +205,46 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 _silentMode = false;
             }
+        }
+
+        private void SaveSetting()
+        {
+            const string ext = SpecialFilePath.GameInputSettingFileExt;
+            var dialog = new SaveFileDialog()
+            {
+                Title = "Save VMagicMirror Game Input Setting",
+                Filter = $"VMM Game Input Setting (*{ext})|*{ext}",
+                DefaultExt = ext,
+                AddExtension = true,
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                _model.SaveSetting(dialog.FileName);
+            }
+        }
+
+        private void LoadSetting()
+        {
+            const string ext = SpecialFilePath.GameInputSettingFileExt;
+
+            var dialog = new OpenFileDialog()
+            {
+                Title = "Load VMagicMirror Game Input Setting",
+                Filter = $"VMM Game Input Setting (*{ext})|*{ext}",
+                DefaultExt = ext,
+                Multiselect = false,
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                _model.LoadSetting(dialog.FileName);
+            }
+        }
+
+        private void ResetSetting()
+        {
+            SettingResetUtils.ResetSingleCategoryAsync(() => _model.ResetToDefault());
         }
 
     }

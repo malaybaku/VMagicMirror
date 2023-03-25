@@ -189,7 +189,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_FullBody_BaseMode">動きかた</sys:String>
     <sys:String x:Key="Motion_FullBody_BaseMode_Default">デフォルト</sys:String>
     <sys:String x:Key="Motion_FullBody_BaseMode_Standing">つねに手下げ</sys:String>
-    <sys:String x:Key="Motion_FullBody_BaseMode_GameInput">ゲーム移動風</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_GameInput">ゲーム入力</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">つねに手下げモード (※体の動きが増えます)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">つねに手下げモード</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">ひねりモーション</sys:String>    
@@ -517,11 +517,22 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">使い方をチェック (Webページへ移動)</sys:String>
 
     <!-- GameInput Key Assign -->
-    <sys:String x:Key="GameInputKeyAssign_Title">ゲーム入力 キー/ボタン割り当て</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Header">ゲーム入力 キー/ボタン割り当て</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">※この機能は試験的に導入しています。
+
+ 「配信」タブで「動きかた」を「ゲーム入力」にしたときの動かし方を設定します。
+
+- アバターがその場で移動・しゃがみ・ジャンプなどのアクションを取れるようになります。
+- 通常のword to motionが正常に動かない事があるので注意してください。        
+- この設定は専用のファイルに保存・読み込みできます。</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Reset">初期値にリセット</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Export">設定を保存</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Import">設定を読み込み</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_SeeMore">更に詳しく…</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Gamepad">ゲームパッド</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Gamepad_Enable">ゲームパッド入力を使用</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard">キーボード・マウス</sys:String>
-    <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">キーボード入力を使用</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">キーボード・マウス入力を使用</sys:String>
     
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">移動は常にダッシュ</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">つねに銃を構える</sys:String>
@@ -536,11 +547,13 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_Trigger">銃を撃つ</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_Punch">パンチ</sys:String>
 
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Section">キーボード:</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_WasdMove">WASDで移動</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">矢印キーで移動</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Shiftキーでダッシュ</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Spaceキーでジャンプ</sys:String>
 
+    <sys:String x:Key="GameInputKeyAssign_Mouse_Section">マウス:</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">マウス移動で見回し</sys:String>
     <!-- ここはゲームパッドと同様に図示することで不要になるかも -->
     <sys:String x:Key="GameInputKeyAssign_Mouse_LeftClick">左クリック</sys:String>

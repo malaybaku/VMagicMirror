@@ -515,7 +515,16 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">See How to Use (Open Web Page)</sys:String>
 
     <!-- GameInput Key Assign -->
-    <sys:String x:Key="GameInputKeyAssign_Title">Game Input Key/Button Assign</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Header">Game Input Key/Button Assign</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">*The feature is experimental.
+Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
+- In this mode, avatar acts move / jump / crouch etc.
+- Note that other motion features (Word to Motion) maybe not work correct.
+- This setting has independent setting file.</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Reset">Reset to Default</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Export">Export</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Import">Import</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_SeeMore">See More...</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Gamepad">Gamepad</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Gamepad_Enable">Use Gamepad</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard">Keyboard / Mouse</sys:String>
@@ -524,6 +533,7 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">Always Run</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">Always Aim</sys:String>
 
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Section">Keyboard:</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Action_None">(None)</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_Move">Move</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_LookAround">Look Around</sys:String>
@@ -539,6 +549,7 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Use SHIFT to run</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Use SPACE to jump</sys:String>
 
+    <sys:String x:Key="GameInputKeyAssign_Mouse_Section">Mouse:</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">Use mouse move to look around</sys:String>
     <!-- ここはゲームパッドと同様に図示することで不要になるかも -->
     <sys:String x:Key="GameInputKeyAssign_Mouse_LeftClick">Left Click</sys:String>

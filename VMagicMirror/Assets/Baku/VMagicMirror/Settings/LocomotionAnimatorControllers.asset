@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: LocomotionAnimatorControllers
   m_EditorClassIdentifier: 
   emptyController: {fileID: 9100000, guid: 155190fafd229a94fa7724237f773ff4, type: 2}
-  defaultController: {fileID: 22100000, guid: d8613d11002506446a3e727484ddee0a, type: 2}
+  defaultController: {fileID: 22100000, guid: 123a62b055d19964684818179c5a6154, type: 2}

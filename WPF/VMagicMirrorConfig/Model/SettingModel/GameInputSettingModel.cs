@@ -59,8 +59,8 @@ namespace Baku.VMagicMirrorConfig
 
         private readonly IMessageSender _sender;
 
-        public event EventHandler<GameInputGamepadKeyAssign>? GamepadKeyAssignUpdated;
-        public event EventHandler<GameInputKeyboardKeyAssign>? KeyboardKeyAssignUpdated;
+        public event EventHandler<GamepadKeyAssignUpdateEventArgs>? GamepadKeyAssignUpdated;
+        public event EventHandler<KeyboardKeyAssignUpdateEventArgs>? KeyboardKeyAssignUpdated;
 
         public GameInputGamepadKeyAssign GamepadKeyAssign { get; private set; }
         public GameInputKeyboardKeyAssign KeyboardKeyAssign { get; private set; }
@@ -169,6 +169,7 @@ namespace Baku.VMagicMirrorConfig
             }
 
             SendGamepadKeyAssign();
+            GamepadKeyAssignUpdated?.Invoke(this, new GamepadKeyAssignUpdateEventArgs(GamepadKeyAssign));
         }
 
         public void SetGamepadStickAction(GameInputGamepadStick stick, GameInputStickAction action)
@@ -195,6 +196,7 @@ namespace Baku.VMagicMirrorConfig
             }
 
             SendGamepadKeyAssign();
+            GamepadKeyAssignUpdated?.Invoke(this, new GamepadKeyAssignUpdateEventArgs(GamepadKeyAssign));
         }
 
         public void SetClickAction(GameInputMouseButton button, GameInputButtonAction action)
@@ -221,11 +223,12 @@ namespace Baku.VMagicMirrorConfig
             }
 
             SendKeyboardKeyAssign();
+            KeyboardKeyAssignUpdated?.Invoke(this, new KeyboardKeyAssignUpdateEventArgs(KeyboardKeyAssign));
         }
 
         public void AssignKeyAction(GameInputButtonAction action, string keyCode)
         {
-            //しばらく無しで良い…か…？
+            //NOTE: UIが未整備なので一旦無しにしてる。本当は実装がほしい
         }
 
         public void ResetToDefault() => ApplySetting(GameInputSetting.Default);

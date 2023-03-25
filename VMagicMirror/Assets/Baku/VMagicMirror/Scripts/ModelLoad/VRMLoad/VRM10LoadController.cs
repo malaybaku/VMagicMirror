@@ -31,11 +31,13 @@ namespace Baku.VMagicMirror
 
         private readonly IMessageSender _sender;
         private readonly IMessageReceiver _receiver;
-        private readonly BuiltInMotionClipData _builtInClip;
+        
+        //private readonly BuiltInMotionClipData _builtInClip;
         private readonly IKTargetTransforms _ikTargets;
         private readonly VrmLoadProcessBroker _previewBroker;
         private readonly ErrorIndicateSender _errorSender;
         private readonly ErrorInfoFactory _errorInfoFactory;
+        private readonly LocomotionSupportedAnimatorControllers _animatorControllers;
 
         private readonly CompositeDisposable _disposable = new CompositeDisposable();
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
@@ -50,20 +52,20 @@ namespace Baku.VMagicMirror
         public VRM10LoadController(
             IMessageSender sender,
             IMessageReceiver receiver,
-            BuiltInMotionClipData builtInClip,
             VrmLoadProcessBroker previewBroker,
             IKTargetTransforms ikTargets,
             ErrorIndicateSender errorSender,
-            ErrorInfoFactory errorInfoFactory
+            ErrorInfoFactory errorInfoFactory,
+            LocomotionSupportedAnimatorControllers animatorControllers
             )
         {
             _sender = sender;
             _receiver = receiver;
-            _builtInClip = builtInClip;
             _previewBroker = previewBroker;
             _ikTargets = ikTargets;
             _errorSender = errorSender;
             _errorInfoFactory = errorInfoFactory;
+            _animatorControllers = animatorControllers;
         }
 
         public void Initialize()
@@ -263,7 +265,7 @@ namespace Baku.VMagicMirror
             VRM10LoadControllerHelper.SetupVrm(instance, _ikTargets);
 
             var animator = go.GetComponent<Animator>();
-            animator.runtimeAnimatorController = _builtInClip.DefaultAnimatorController;
+            animator.runtimeAnimatorController = _animatorControllers.DefaultController;
             
             var renderers = go.GetComponentsInChildren<Renderer>();
             foreach (var r in renderers)

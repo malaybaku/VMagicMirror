@@ -3,8 +3,6 @@ using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
-    //TODO (ここはメモ欄として適切じゃないけど)
-    //ゲーム入力については他の設定ファイルと設定ファイル自体が分断してるという説ありそう
 
     public class KeyAssignViewModel : ViewModelBase
     {

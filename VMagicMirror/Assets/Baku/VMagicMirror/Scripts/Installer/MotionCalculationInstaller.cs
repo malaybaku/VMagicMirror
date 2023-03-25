@@ -45,7 +45,7 @@ namespace Baku.VMagicMirror.Installer
 
             container.BindInterfacesAndSelfTo<TaskBasedIkWeightFader>().AsSingle();
             container.BindInterfacesTo<GameInputIKWeightController>().AsSingle();
-            container.BindInterfacesTo<GameInputBodyMotionController>().AsSingle();
+            container.BindInterfacesAndSelfTo<GameInputBodyMotionController>().AsSingle();
         }
     }
 }

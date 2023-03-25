@@ -8,6 +8,7 @@
     xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+    xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
     mc:Ignorable="d"
     Title="VMagicMirror GameInput Key Assign" 
     Height="600"
@@ -35,5 +36,8 @@
             <Setter Property="Height" Value="40"/>
         </Style>
     </Window.Resources>
-    <view:KeyAssignPanel />
+    <Window.DataContext>
+        <vm:KeyAssignViewModel/>
+    </Window.DataContext>
+    <view:KeyAssignPanel/>
 </metro:MetroWindow>

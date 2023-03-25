@@ -14,9 +14,6 @@
              d:DesignHeight="1100"
              AllowDrop="True"
              >
-    <UserControl.DataContext>
-        <vm:HomeViewModel />
-    </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">

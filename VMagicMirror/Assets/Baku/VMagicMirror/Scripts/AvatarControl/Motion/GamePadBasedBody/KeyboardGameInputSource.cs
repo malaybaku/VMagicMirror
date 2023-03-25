@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror.GameInput
         private readonly MousePositionProvider _mousePositionProvider;
 
         private CompositeDisposable _disposable;
-        private KeyboardGameInputKeyAssign _keyAssign;
+        private KeyboardGameInputKeyAssign _keyAssign = KeyboardGameInputKeyAssign.LoadDefault();
         
         private bool _forwardKeyPressed;
         private bool _backKeyPressed;

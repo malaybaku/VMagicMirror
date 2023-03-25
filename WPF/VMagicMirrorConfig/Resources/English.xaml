@@ -538,11 +538,11 @@ Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
     <sys:String x:Key="GameInputKeyAssign_StickAction_Move">Move</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_LookAround">Look Around</sys:String>
 
-    <sys:String x:Key="GameInputKeyAssign_StickAction_Run">Run</sys:String>
-    <sys:String x:Key="GameInputKeyAssign_StickAction_Jump">Jump</sys:String>
-    <sys:String x:Key="GameInputKeyAssign_StickAction_Crouch">Crouch</sys:String>
-    <sys:String x:Key="GameInputKeyAssign_StickAction_Trigger">Trigger</sys:String>
-    <sys:String x:Key="GameInputKeyAssign_StickAction_Punch">Punch</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Run">Run</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Jump">Jump</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Crouch">Crouch</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Trigger">Trigger</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Punch">Punch</sys:String>
 
     <sys:String x:Key="GameInputKeyAssign_Keyboard_WasdMove">Use WASD to move</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">Use ARROW to move</sys:String>

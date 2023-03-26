@@ -119,7 +119,7 @@
         public bool KeyboardEnabled { get; set; } = true;
         public bool AlwaysRun { get; set; } = true;
 
-        public GameInputKeyboardKeyAssign KeyboardKeyAssign { get; } = new();
-        public GameInputGamepadKeyAssign GamepadKeyAssign { get; } = new();
+        public GameInputKeyboardKeyAssign KeyboardKeyAssign { get; set; } = new();
+        public GameInputGamepadKeyAssign GamepadKeyAssign { get; set; } = new();
     }
 }

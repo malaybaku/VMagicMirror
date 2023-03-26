@@ -118,9 +118,9 @@ namespace Baku.VMagicMirrorConfig
             using var jsonWriter = new JsonTextWriter(writer);
             try
             {
-                serializer.Serialize(jsonWriter, GamepadKeyAssign);
+                serializer.Serialize(jsonWriter, BuildCurrentSetting());
                 var json = sb.ToString();
-                File.WriteAllText(json, filePath);
+                File.WriteAllText(filePath, json);
             }
             catch (Exception ex)
             {
@@ -232,6 +232,20 @@ namespace Baku.VMagicMirrorConfig
         }
 
         public void ResetToDefault() => ApplySetting(GameInputSetting.Default);
+
+
+        private GameInputSetting BuildCurrentSetting()
+        {
+            //NOTE: KeyboardKeyAssignの値は逐一RP<T>と同期するので再書き込みは不要
+            return new GameInputSetting()
+            {
+                GamepadEnabled = GamepadEnabled.Value,
+                KeyboardEnabled = KeyboardEnabled.Value,
+                AlwaysRun = AlwaysRun.Value,
+                KeyboardKeyAssign = KeyboardKeyAssign,
+                GamepadKeyAssign = GamepadKeyAssign,
+            };
+        }
 
         void ApplySetting(GameInputSetting setting)
         {

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using Unity.Mathematics;
 using UnityEngine;
 using UniVRM10;
@@ -86,10 +87,17 @@ namespace Baku.VMagicMirror
 
         private Coroutine _coroutine = null;
 
+        private bool _isGameInputMode;
+        
         [Inject]
-        public void Initialize(KeyboardProvider keyboard)
+        public void Initialize(
+            KeyboardProvider keyboard,
+            BodyMotionModeController bodyMotionModeController)
         {
             _keyboard = keyboard;
+            bodyMotionModeController.MotionMode
+                .Subscribe(mode => _isGameInputMode = mode == BodyMotionMode.GameInputLocomotion)
+                .AddTo(this);
         }
         
         #region API
@@ -438,22 +446,22 @@ namespace Baku.VMagicMirror
                         var rot2Dof =
                             Quaternion.AngleAxis(angle, GetRotationAxis(i, j)) *
                             Quaternion.AngleAxis(_holdOpenLerpedAngles[i], Vector3.up);
-                        t.localRotation = Quaternion.Slerp(t.localRotation, rot2Dof, ApplyRate);
+                        SetRotation(t, Quaternion.Slerp(t.localRotation, rot2Dof, ApplyRate));
                         continue;
                     }
 
                     //上記以外: 単一方向に曲げるだけ
                     if (ApplyRate >= 1.0f)
                     {
-                        t.localRotation = GetFingerBendRotation(angle, i, j);
+                        SetRotation(t, GetFingerBendRotation(angle, i, j));
                     }
                     else
                     {
-                        t.localRotation = Quaternion.Slerp(
-                            t.localRotation, 
+                        SetRotation(t, Quaternion.Slerp(
+                            t.localRotation,
                             Quaternion.AngleAxis(angle, GetRotationAxis(i, j)),
                             ApplyRate
-                        );
+                        ));
                     }
                 }
             }
@@ -493,6 +501,15 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void SetRotation(Transform t, Quaternion localRotation)
+        {
+            if (_isGameInputMode)
+            {
+                return;
+            }
+            t.localRotation = localRotation;
+        }
+        
         private static readonly Quaternion MajorFingerBendRotation =
             Quaternion.AngleAxis(DefaultBendingAngle, Vector3.forward);
         private static readonly Quaternion ThumbSpecialBendRotation =
@@ -522,7 +539,6 @@ namespace Baku.VMagicMirror
             }
         }
 
-
         private static Vector3 GetRotationAxis(int fingerNumber, int jointIndex)
         {
             if ((fingerNumber == FingerConsts.LeftThumb || fingerNumber == FingerConsts.RightThumb) && 
@@ -551,21 +567,6 @@ namespace Baku.VMagicMirror
             }
 
             return math.clamp(angle, -ThumbProximalMaxBendAngle, ThumbProximalMaxBendAngle);
-        }
-        
-        private static float EvalAngleCurve(float t)
-        {
-            //10 > 25 > 10と直線的に動かしたい
-            if (t < 0.125f)
-            {
-                // return 10f + 15f * t / 0.125f;
-                return 10f + 120f * t;
-            }
-            else
-            {
-                return 25f - (t - .125f) * 120f;
-                // return 25f - 15f * (t - 0.125f) / 0.125f;
-            }
         }
 
         private void SetCoroutine(IEnumerator coroutine)

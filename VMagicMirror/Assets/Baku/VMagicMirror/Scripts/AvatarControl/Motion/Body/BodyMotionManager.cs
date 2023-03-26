@@ -36,6 +36,8 @@ namespace Baku.VMagicMirror
         private Vector3 _defaultBodyIkPosition;
         private bool _isVrmLoaded = false;
 
+        private bool _isGameInputMode;
+
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
@@ -52,13 +54,17 @@ namespace Baku.VMagicMirror
             var _ = new BodyMotionManagerReceiver(receiver, this);
 
             modeController.MotionMode
-                .Subscribe(mode => SetNoHandTrackMode(mode != BodyMotionMode.Default))
+                .Subscribe(mode =>
+                {
+                    SetNoHandTrackMode(mode != BodyMotionMode.Default);
+                    _isGameInputMode = mode == BodyMotionMode.GameInputLocomotion;
+                })
                 .AddTo(this);
         }
         
         private void Update()
         {
-            if (!_isVrmLoaded)
+            if (!_isVrmLoaded || _isGameInputMode)
             {
                 return;
             }

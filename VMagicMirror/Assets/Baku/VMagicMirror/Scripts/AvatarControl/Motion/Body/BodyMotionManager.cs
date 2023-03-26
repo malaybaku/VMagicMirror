@@ -1,4 +1,6 @@
-﻿using Baku.VMagicMirror.IK;
+﻿using System;
+using System.Linq;
+using Baku.VMagicMirror.IK;
 using UnityEngine;
 using Zenject;
 using UniRx;
@@ -37,6 +39,7 @@ namespace Baku.VMagicMirror
         private bool _isVrmLoaded = false;
 
         private bool _isGameInputMode;
+        private Transform[] _upperBodyBones = Array.Empty<Transform>();
 
         [Inject]
         public void Initialize(
@@ -72,7 +75,7 @@ namespace Baku.VMagicMirror
             var imageRelatedOffset = _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker
                 ? exTrackerBodyMotion.BodyOffset
                 : imageBasedBodyMotion.BodyIkXyOffset;
-            
+
             _bodyIk.localPosition =
                 _defaultBodyIkPosition + 
                 imageRelatedOffset +
@@ -81,10 +84,26 @@ namespace Baku.VMagicMirror
 
             //画像ベースの移動量はIKと体に利かす -> 体に移動量を足さないと腰だけ動いて見た目が怖くなります
             _vrmRoot.position = imageRelatedOffset;
-
             //スムージングはサブクラスの方でやっているのでコッチでは処理不要。
             //第1項は並進要素を腰回転にきかせて違和感をへらすためのやつです
             _vrmRoot.localRotation = BodyOffsetToBodyAngle(imageRelatedOffset) * bodyLeanIntegrator.BodyLeanSuggest;
+        }
+
+        private void LateUpdate()
+        {
+            if (!_isVrmLoaded || !_isGameInputMode)
+            {
+                return;
+            }            
+            
+            var imageRelatedOffset = _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker
+                ? exTrackerBodyMotion.BodyOffset
+                : imageBasedBodyMotion.BodyIkXyOffset;
+
+            //通常時と同じ角度を参照するが、適用方法が異なり、直接ホネに値が入る
+            ApplyRotationsToUpperBody(
+                BodyOffsetToBodyAngle(imageRelatedOffset) * bodyLeanIntegrator.BodyLeanSuggest
+            );
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -93,6 +112,15 @@ namespace Baku.VMagicMirror
             _defaultBodyIkPosition = _bodyIk.position;
             imageBasedBodyMotion.OnVrmLoaded(info);
             _vrmRoot = info.vrmRoot;
+
+            _upperBodyBones = new[]
+                {
+                    info.animator.GetBoneTransform(HumanBodyBones.Spine),
+                    info.animator.GetBoneTransform(HumanBodyBones.Chest),
+                    info.animator.GetBoneTransform(HumanBodyBones.UpperChest),
+                }
+                .Where(t => t != null)
+                .ToArray();
 
             _isVrmLoaded = true;
         }
@@ -103,6 +131,7 @@ namespace Baku.VMagicMirror
 
             _vrmRoot = null;
             imageBasedBodyMotion.OnVrmDisposing();
+            _upperBodyBones = Array.Empty<Transform>();
         }
         
         private Quaternion BodyOffsetToBodyAngle(Vector3 offset)
@@ -126,6 +155,31 @@ namespace Baku.VMagicMirror
         {
             imageBasedBodyMotion.NoHandTrackMode = enable;
             exTrackerBodyMotion.NoHandTrackMode = enable;
+        }
+
+        private void ApplyRotationsToUpperBody(Quaternion localRot)
+        {
+            //通常ありえない
+            if (_upperBodyBones.Length == 0)
+            {
+                return;
+            }
+
+            if (_upperBodyBones.Length == 1)
+            {
+                _upperBodyBones[0].localRotation *= localRot;
+                return;
+            }
+
+            var factor = 1f / _upperBodyBones.Length;
+            
+            localRot.ToAngleAxis(out var angle, out var axis);
+            var dividedRot = Quaternion.AngleAxis(angle * factor, axis);
+
+            foreach (var t in _upperBodyBones)
+            {
+                t.localRotation *= dividedRot;
+            }
         }
     }
 }

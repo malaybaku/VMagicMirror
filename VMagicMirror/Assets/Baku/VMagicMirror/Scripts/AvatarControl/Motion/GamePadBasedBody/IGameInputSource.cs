@@ -23,9 +23,9 @@ namespace Baku.VMagicMirror.GameInput
         IObservable<Vector2> LookAroundInput { get; }
         IObservable<bool> IsCrouching { get; }
         IObservable<bool> IsRunning { get; }
+        IObservable<bool> GunFire { get; }
 
         IObservable<Unit> Jump { get; }
         IObservable<Unit> Punch { get; }
-        IObservable<Unit> GunTrigger { get; }
     }
 }

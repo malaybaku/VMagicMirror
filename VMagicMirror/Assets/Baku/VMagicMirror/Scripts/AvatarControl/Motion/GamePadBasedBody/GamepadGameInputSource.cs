@@ -15,9 +15,9 @@ namespace Baku.VMagicMirror.GameInput
         IObservable<Vector2> IGameInputSource.LookAroundInput => _lookAroundInput;
         IObservable<bool> IGameInputSource.IsCrouching => _isCrouching;
         IObservable<bool> IGameInputSource.IsRunning => _isRunning;
+        IObservable<bool> IGameInputSource.GunFire => _gunFire;
         IObservable<Unit> IGameInputSource.Jump => _jump;
         IObservable<Unit> IGameInputSource.Punch => _punch;
-        IObservable<Unit> IGameInputSource.GunTrigger => _gunTrigger;
         
         #endregion
         
@@ -29,9 +29,9 @@ namespace Baku.VMagicMirror.GameInput
         private readonly ReactiveProperty<Vector2> _lookAroundInput = new ReactiveProperty<Vector2>();
         private readonly ReactiveProperty<bool> _isCrouching = new ReactiveProperty<bool>();
         private readonly ReactiveProperty<bool> _isRunning = new ReactiveProperty<bool>();
+        private readonly ReactiveProperty<bool> _gunFire = new ReactiveProperty<bool>();
         private readonly Subject<Unit> _jump = new Subject<Unit>();
         private readonly Subject<Unit> _punch = new Subject<Unit>();
-        private readonly Subject<Unit> _gunTrigger = new Subject<Unit>();
 
         private bool _isActive;
         private GamepadGameInputKeyAssign _keyAssign = GamepadGameInputKeyAssign.LoadDefault();
@@ -70,6 +70,7 @@ namespace Baku.VMagicMirror.GameInput
 
             _isRunning.Value = false;
             _isCrouching.Value = false;
+            _gunFire.Value = false;
         }
         
         private void ApplyKeyAssign(GamepadGameInputKeyAssign setting)
@@ -150,6 +151,12 @@ namespace Baku.VMagicMirror.GameInput
                 _isCrouching.Value = data.IsPressed;
                 return;
             }
+
+            if (action == GameInputButtonAction.Trigger)
+            {
+                _gunFire.Value = data.IsPressed;
+                return;
+            }
             
             //Trigger系の挙動はボタン下げでのみ起こる
             if (!data.IsPressed)
@@ -161,9 +168,6 @@ namespace Baku.VMagicMirror.GameInput
             {
                 case GameInputButtonAction.Punch:
                     _punch.OnNext(Unit.Default);
-                    break;
-                case GameInputButtonAction.Trigger:
-                    _gunTrigger.OnNext(Unit.Default);
                     break;
                 case GameInputButtonAction.Jump:
                     _jump.OnNext(Unit.Default);

@@ -19,10 +19,10 @@ namespace Baku.VMagicMirror.GameInput
 
         IObservable<bool> IGameInputSource.IsCrouching => _isCrouching;
         IObservable<bool> IGameInputSource.IsRunning => _isRunning;
+        IObservable<bool> IGameInputSource.GunFire => _gunFire;
         IObservable<Unit> IGameInputSource.Jump => _jump;
         IObservable<Unit> IGameInputSource.Punch => _punch;
-        IObservable<Unit> IGameInputSource.GunTrigger => _gunTrigger;
-
+        
         #endregion
         
         private bool _isActive;
@@ -30,9 +30,9 @@ namespace Baku.VMagicMirror.GameInput
         private readonly ReactiveProperty<Vector2> _lookAroundInput = new ReactiveProperty<Vector2>();
         private readonly ReactiveProperty<bool> _isCrouching = new ReactiveProperty<bool>();
         private readonly ReactiveProperty<bool> _isRunning = new ReactiveProperty<bool>();
+        private readonly ReactiveProperty<bool> _gunFire = new ReactiveProperty<bool>();
         private readonly Subject<Unit> _jump = new Subject<Unit>();
         private readonly Subject<Unit> _punch = new Subject<Unit>();
-        private readonly Subject<Unit> _gunTrigger = new Subject<Unit>();
 
         private readonly IKeyMouseEventSource _keySource;
         private readonly IMessageReceiver _receiver;
@@ -169,6 +169,7 @@ namespace Baku.VMagicMirror.GameInput
             _lookAroundInput.Value = Vector2.zero;
             _isRunning.Value = false;
             _isCrouching.Value = false;
+            _gunFire.Value = false;
 
             _forwardKeyPressed = false;
             _backKeyPressed = false;
@@ -284,6 +285,9 @@ namespace Baku.VMagicMirror.GameInput
                 case GameInputButtonAction.Crouch:
                     _isCrouching.Value = pressed;
                     return;
+                case GameInputButtonAction.Trigger:
+                    _gunFire.Value = pressed;
+                    return;
             }
 
             if (!pressed)
@@ -298,9 +302,6 @@ namespace Baku.VMagicMirror.GameInput
                     return;
                 case GameInputButtonAction.Punch:
                     _punch.OnNext(Unit.Default);
-                    return;
-                case GameInputButtonAction.Trigger:
-                    _gunTrigger.OnNext(Unit.Default);
                     return;
             }
         }

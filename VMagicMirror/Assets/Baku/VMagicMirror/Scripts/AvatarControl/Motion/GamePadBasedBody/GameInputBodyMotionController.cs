@@ -11,6 +11,9 @@ namespace Baku.VMagicMirror
         private const float MoveLerpSmoothTime = 0.1f;
         private const float LookAroundSmoothTime = 0.1f;
 
+        private const float GunFireYawSmoothTime = 0.1f;
+        private const float YawWhenGunFire = 45f;
+
         //スティックを右に倒したときに顔が右に向く量(deg)
         private const float HeadYawMaxDeg = 25f;
         //スティックを上下に倒したとき顔が上下に向く量(deg)
@@ -19,7 +22,7 @@ namespace Baku.VMagicMirror
         private static readonly int Active = Animator.StringToHash("Active");
         private static readonly int Jump = Animator.StringToHash("Jump");
         private static readonly int Punch = Animator.StringToHash("Punch");
-        private static readonly int GunTrigger = Animator.StringToHash("GunTrigger");
+        private static readonly int GunFire = Animator.StringToHash("GunFire");
         private static readonly int MoveRight = Animator.StringToHash("MoveRight");
         private static readonly int MoveForward = Animator.StringToHash("MoveForward");
         private static readonly int Crouch = Animator.StringToHash("Crouch");
@@ -32,6 +35,7 @@ namespace Baku.VMagicMirror
 
         private bool _hasModel;
         private Animator _animator;
+        private Transform _vrmRoot;
 
         private bool _alwaysRun = true;
         private bool _bodyMotionActive;
@@ -41,11 +45,15 @@ namespace Baku.VMagicMirror
         private bool _isCrouching;
         //NOTE: alwaysRun == trueのときはalwaysRunのほうが優先
         private bool _isRunning;
+        private bool _gunFire;
         private Vector2 _moveInput;
         private Vector2 _lookAroundInput;
 
         private Vector2 _moveInputDampSpeed;
         private Vector2 _lookAroundDampSpeed;
+        
+        private float _rootYaw;
+        private float _rootYawDampSpeed;
         
         public Quaternion LookAroundRotation { get; private set; } = Quaternion.identity;
         
@@ -82,9 +90,6 @@ namespace Baku.VMagicMirror
             Observable.Merge(_sourceSet.Sources.Select(s => s.Punch))
                 .Subscribe(_ => TryAct(Punch))
                 .AddTo(this);
-            Observable.Merge(_sourceSet.Sources.Select(s => s.GunTrigger))
-                .Subscribe(_ => TryAct(GunTrigger))
-                .AddTo(this);
 
             //NOTE: 2デバイスから同時に来るのは許容したうえで、
             //ゲームパッド側はスティックが0付近のとき何も飛んでこない、というのを期待してる
@@ -107,17 +112,23 @@ namespace Baku.VMagicMirror
                 .AddTo(this);
             
             Observable.Merge(
-                _sourceSet.Sources
-                    .Select(s => s.IsCrouching.DistinctUntilChanged()
-                    )
+                _sourceSet.Sources.Select(s => s.IsCrouching)
                 )
                 .Subscribe(v => _isCrouching = v)
                 .AddTo(this);
+            
+            Observable.Merge(
+                _sourceSet.Sources.Select(s => s.GunFire)
+                )
+                .Subscribe(v => _gunFire = v)
+                .AddTo(this);            
         }
 
         private void OnVrmLoaded(VrmLoadedInfo obj)
         {
             _animator = obj.animator;
+            _vrmRoot = obj.vrmRoot;
+            
             _hasModel = true;
             //モデルロードよりも先にゲーム入力が有効になってたときの適用漏れを防いでいる
             if (_bodyMotionActive)
@@ -130,6 +141,7 @@ namespace Baku.VMagicMirror
         {
             _hasModel = false;
             _animator = null;
+            _vrmRoot = null;
         }
 
         private void TryAct(int triggerHash)
@@ -164,11 +176,15 @@ namespace Baku.VMagicMirror
             _animator.SetFloat(MoveForward, 0f);
             _animator.SetBool(Crouch, false);
             _animator.SetBool(Run, false);
+            _animator.SetBool(GunFire, false);
 
             _moveInput = Vector2.zero;
             _lookAroundInput = Vector2.zero;
             _moveInputDampSpeed = Vector2.zero;
             _lookAroundDampSpeed = Vector2.zero;
+            _rootYaw = 0f;
+            _rootYawDampSpeed = 0f;
+            
             LookAroundRotation = Quaternion.identity;
         }
         
@@ -205,6 +221,15 @@ namespace Baku.VMagicMirror
             _animator.SetFloat(MoveForward, _moveInput.y);
             _animator.SetBool(Crouch, _isCrouching);
             _animator.SetBool(Run, _alwaysRun || _isRunning);
+            _animator.SetBool(GunFire, _gunFire);
+
+            _rootYaw = Mathf.SmoothDamp(
+                _rootYaw, 
+                _gunFire ? YawWhenGunFire : 0f, 
+                ref _rootYawDampSpeed, 
+                GunFireYawSmoothTime
+                );
+            _vrmRoot.localRotation = Quaternion.Euler(0f, _rootYaw, 0f);
         }
     }
 }

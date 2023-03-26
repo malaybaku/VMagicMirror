@@ -8,13 +8,13 @@ namespace Baku.VMagicMirror
 {
     public class GameInputBodyMotionController : PresenterBase, ITickable
     {
-        private const float MoveLerpSmoothTime = 0.3f;
-        private const float LookAroundSmoothTime = 0.3f;
+        private const float MoveLerpSmoothTime = 0.1f;
+        private const float LookAroundSmoothTime = 0.1f;
 
         //スティックを右に倒したときに顔が右に向く量(deg)
         private const float HeadYawMaxDeg = 25f;
         //スティックを上下に倒したとき顔が上下に向く量(deg)
-        private const float HeadPitchMaxDeg = 15f;
+        private const float HeadPitchMaxDeg = 25f;
 
         private static readonly int Active = Animator.StringToHash("Active");
         private static readonly int Jump = Animator.StringToHash("Jump");
@@ -119,6 +119,11 @@ namespace Baku.VMagicMirror
         {
             _animator = obj.animator;
             _hasModel = true;
+            //モデルロードよりも先にゲーム入力が有効になってたときの適用漏れを防いでいる
+            if (_bodyMotionActive)
+            {
+                _animator.SetBool(Active, true);
+            }
         }
 
         private void OnVrmDisposing()
@@ -196,8 +201,8 @@ namespace Baku.VMagicMirror
                 0f
                 );
             
-            _animator.SetFloat(MoveRight, _rawMoveInput.x);
-            _animator.SetFloat(MoveForward, _rawMoveInput.y);
+            _animator.SetFloat(MoveRight, _moveInput.x);
+            _animator.SetFloat(MoveForward, _moveInput.y);
             _animator.SetBool(Crouch, _isCrouching);
             _animator.SetBool(Run, _alwaysRun || _isRunning);
         }

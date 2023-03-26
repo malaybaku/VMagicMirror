@@ -118,14 +118,14 @@ namespace Baku.VMagicMirror.GameInput
             if (_keyAssign.StickRight != GameInputStickAction.None)
             {
                 _gamepad.RightStickPosition
-                    .Subscribe(v => OnStickUpdated(v, _keyAssign.StickLeft))
+                    .Subscribe(v => OnStickUpdated(v, _keyAssign.StickRight))
                     .AddTo(_disposable);
             }
 
             if (_keyAssign.DPadLeft != GameInputStickAction.None)
             {
                 _gamepad.ObserveEveryValueChanged(g => g.ArrowButtonsStickPosition)
-                    .Subscribe(v => OnStickUpdated(v, _keyAssign.StickLeft))
+                    .Subscribe(v => OnStickUpdated(v, _keyAssign.DPadLeft))
                     .AddTo(_disposable);
             }
         }
@@ -163,7 +163,7 @@ namespace Baku.VMagicMirror.GameInput
                     _punch.OnNext(Unit.Default);
                     break;
                 case GameInputButtonAction.Trigger:
-                    _punch.OnNext(Unit.Default);
+                    _gunTrigger.OnNext(Unit.Default);
                     break;
                 case GameInputButtonAction.Jump:
                     _jump.OnNext(Unit.Default);

@@ -86,7 +86,7 @@ namespace Baku.VMagicMirror
             //第1項は並進要素を腰回転にきかせて違和感をへらすためのやつです
             _vrmRoot.localRotation = BodyOffsetToBodyAngle(imageRelatedOffset) * bodyLeanIntegrator.BodyLeanSuggest;
         }
-        
+
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             //NOTE: VRMLoadControllerがロード時点でbodyIkの位置をキャラのHipsあたりに調整しているので、それを貰う
@@ -107,23 +107,22 @@ namespace Baku.VMagicMirror
         
         private Quaternion BodyOffsetToBodyAngle(Vector3 offset)
         {
-            float yaw = xToYawFactor * Mathf.Clamp(offset.x / xMaxLength, -1f, 1f);
-            float roll = xToRollFactor * Mathf.Clamp(-offset.x / xMaxLength, -1f, 1f);
-            float pitch = 0f;
+            var yaw = xToYawFactor * Mathf.Clamp(offset.x / xMaxLength, -1f, 1f);
+            var roll = xToRollFactor * Mathf.Clamp(-offset.x / xMaxLength, -1f, 1f);
+            var pitch = 0f;
             //下がるときだけ角度がつくことに注意
             if (offset.y < 0)
             {
-                float yFactor = Mathf.Clamp01(-offset.y / yMaxLength);
+                var yFactor = Mathf.Clamp01(-offset.y / yMaxLength);
                 pitch = yToPitchFactor * yFactor * yFactor;
             }
             
             return Quaternion.Euler(pitch, yaw, roll);
         }
 
-        public void EnableImageBaseBodyLeanZ(bool enable)
-            => imageBasedBodyMotion.EnableBodyLeanZ = enable;
+        public void EnableImageBaseBodyLeanZ(bool enable) => imageBasedBodyMotion.EnableBodyLeanZ = enable;
 
-        public void SetNoHandTrackMode(bool enable)
+        private void SetNoHandTrackMode(bool enable)
         {
             imageBasedBodyMotion.NoHandTrackMode = enable;
             exTrackerBodyMotion.NoHandTrackMode = enable;

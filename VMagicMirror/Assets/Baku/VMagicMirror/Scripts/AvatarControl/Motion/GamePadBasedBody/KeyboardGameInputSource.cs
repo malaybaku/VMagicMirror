@@ -196,20 +196,18 @@ namespace Baku.VMagicMirror.GameInput
 
             if (_keyAssign.UseWasdMove)
             {
-                _forwardKeyPressed = _forwardKeyPressed || key == "W";
-                _leftKeyPressed = _leftKeyPressed || key == "A";
-                _backKeyPressed = _backKeyPressed || key == "S";
-                _rightKeyPressed = _rightKeyPressed || key == "D";
-                return;
+                if (key == nameof(Keys.W)) _forwardKeyPressed = true;
+                if (key == nameof(Keys.A)) _leftKeyPressed = true;
+                if (key == nameof(Keys.S)) _backKeyPressed = true;
+                if (key == nameof(Keys.D)) _rightKeyPressed = true;
             }
 
             if (_keyAssign.UseArrowKeyMove)
             {
-                _forwardKeyPressed = _forwardKeyPressed || key == nameof(Keys.Up);
-                _leftKeyPressed = _leftKeyPressed || key == nameof(Keys.Left);
-                _backKeyPressed = _backKeyPressed || key == nameof(Keys.Down);
-                _rightKeyPressed = _rightKeyPressed || key == nameof(Keys.Right);
-                return;
+                if (key == nameof(Keys.Up)) _forwardKeyPressed = true;
+                if (key == nameof(Keys.Left)) _leftKeyPressed = true;
+                if (key == nameof(Keys.Down)) _backKeyPressed = true;
+                if (key == nameof(Keys.Right)) _rightKeyPressed = true;
             }
 
             //NOTE: MoveInputは変化しないことのほうが多いが、冗長に呼んでおく
@@ -309,10 +307,14 @@ namespace Baku.VMagicMirror.GameInput
         
         private void UpdateMoveInput()
         {
-            _moveInput.Value = new Vector2(
-                (_rightKeyPressed ? 1f : 0f) + (_leftKeyPressed ? -1f : 0f),
-                (_forwardKeyPressed ? 1f : 0f) + (_backKeyPressed ? -1f : 0f)
-            );
+            //斜め入力時にmagnitude = Sqrt(2)となるのを禁止: ゲームパッドの入力と揃えるため
+            _moveInput.Value = Vector2.ClampMagnitude(
+                new Vector2(
+                    (_rightKeyPressed ? 1f : 0f) + (_leftKeyPressed ? -1f : 0f),
+                    (_forwardKeyPressed ? 1f : 0f) + (_backKeyPressed ? -1f : 0f)
+                ), 
+                1f
+                );
         }
 
         public override void Dispose()

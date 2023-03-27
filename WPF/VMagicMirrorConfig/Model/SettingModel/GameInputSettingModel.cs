@@ -217,8 +217,8 @@ namespace Baku.VMagicMirrorConfig
             switch (button)
             {
                 case GameInputMouseButton.Left: KeyboardKeyAssign.LeftClick = action; break;
-                case GameInputMouseButton.Right: KeyboardKeyAssign.LeftClick = action; break;
-                case GameInputMouseButton.Middle: KeyboardKeyAssign.LeftClick = action; break;
+                case GameInputMouseButton.Right: KeyboardKeyAssign.RightClick = action; break;
+                case GameInputMouseButton.Middle: KeyboardKeyAssign.MiddleClick = action; break;
                 default: return;
             }
 

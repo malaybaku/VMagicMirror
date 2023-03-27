@@ -79,17 +79,17 @@
                         HorizontalAlignment="Right"
                         Margin="0,0,20,10">
                 <Button HorizontalAlignment="Left"
-                                Width="150"
-                                Margin="20,0"
-                                Command="{Binding ResetSettingsCommand}"
-                                >
+                        Width="150"
+                        Margin="20,0"
+                        Command="{Binding ResetSettingsCommand}"
+                        >
                     <StackPanel Style="{StaticResource IconTextSetStackPanel}">
                         <md:PackIcon Style="{StaticResource IconTextSetIcon}"
-                                                Kind="Reload"
-                                                />
+                                     Kind="Reload"
+                                     />
                         <TextBlock Style="{StaticResource IconSetSetText}"
-                                            Text="{DynamicResource GameInputKeyAssign_Reset}"
-                                            />
+                                   Text="{DynamicResource GameInputKeyAssign_Reset}"
+                                   />
                     </StackPanel>
                 </Button>
 

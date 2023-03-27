@@ -62,7 +62,7 @@
                         HorizontalAlignment="Stretch"
                         Width="NaN"
                         Margin="10"
-                        Command="{Binding SaceSettingFileCommand}"
+                        Command="{Binding SaveSettingFileCommand}"
                         Content="{DynamicResource GameInputKeyAssign_Export}"
                         />
                     <Button

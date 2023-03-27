@@ -228,7 +228,7 @@ namespace Baku.VMagicMirrorConfig
 
         public void AssignKeyAction(GameInputButtonAction action, string keyCode)
         {
-            //NOTE: UIが未整備なので一旦無しにしてる。本当は実装がほしい
+            //NOTE: キーボード用のキーアサインはUIが未整備なので一旦無しにしてる。本当は実装がほしい
         }
 
         public void ResetToDefault() => ApplySetting(GameInputSetting.Default);
@@ -261,9 +261,12 @@ namespace Baku.VMagicMirrorConfig
 
             KeyboardKeyAssign = setting.KeyboardKeyAssign;
             GamepadKeyAssign = setting.GamepadKeyAssign;
+
             //NOTE: Loadのときだけは冗長になっても良いので送っとく
             SendGamepadKeyAssign();
             SendKeyboardKeyAssign();
+            GamepadKeyAssignUpdated?.Invoke(this, new(GamepadKeyAssign));
+            KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
         }
 
         void SendGamepadKeyAssign()
@@ -280,8 +283,17 @@ namespace Baku.VMagicMirrorConfig
 
         private void SendKeyboardKeyAssign()
         {
+            //NOTE: 情報によっては個別に送ってるので冗長になる
+            var serializer = new JsonSerializer();
+            var sb = new StringBuilder();
+            using var writer = new StringWriter(sb);
+            using var jsonWriter = new JsonTextWriter(writer);
 
+            serializer.Serialize(jsonWriter, KeyboardKeyAssign);
+            var json = sb.ToString();
+            SendMessage(MessageFactory.Instance.SetKeyboardGameInputKeyAssign(json));
         }
+
 
         private void SendMessage(Message message) => _sender.SendMessage(message);
     }

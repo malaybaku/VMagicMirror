@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Baku.VMagicMirror.GameInput;
 using UniRx;
@@ -85,9 +86,11 @@ namespace Baku.VMagicMirror
                 .AddTo(this);
             
             Observable.Merge(_sourceSet.Sources.Select(s => s.Jump))
+                .ThrottleFirst(TimeSpan.FromSeconds(1.0f))
                 .Subscribe(_ => TryAct(Jump))
                 .AddTo(this);
             Observable.Merge(_sourceSet.Sources.Select(s => s.Punch))
+                .ThrottleFirst(TimeSpan.FromSeconds(0.7f))
                 .Subscribe(_ => TryAct(Punch))
                 .AddTo(this);
 

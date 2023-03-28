@@ -15,7 +15,11 @@ Game Input feature is an option of how to move you avatar during playing game.
 
 By default, the avatar grips gamepad or arcade stick objects and controls it with you.
 
-Game Input feature provides another option that, avatar moves rather like in-game character than the player.
+Game Input feature provides another option to move avatar moves rather like in-game character than the game player.
+
+<div class="row">
+{% include docimg.html file="./images/docs/game_input.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
 <div class="note-area" markdown="1">
 
@@ -91,5 +95,21 @@ Keyboard / Mouse:
 - `Left Click`: Assign an action to mouse left click. Available actions are same as gamepad button.
 - `Right Click`: Assign an action to mouse right click.
 - `Middle Click`: Assign an action to mouse middle click.
+
+</div>
+
+
+#### Load and Save Game Input Setting
+{: .doc-sec2 }
+
+By default, game input setting is saved when VMagicMirror quits.
+
+If you have several games and want to switch input settings quickly, then use `Export` to export the setting as `.vmm_gi` file, and load it by `Import` button.
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+Game Input setting is saved at different file from main setting file. Load or save main setting file does not affect game input config.
 
 </div>

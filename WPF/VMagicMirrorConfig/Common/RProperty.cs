@@ -9,7 +9,6 @@ namespace Baku.VMagicMirrorConfig
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class RProperty<T> : NotifiableBase
-        where T : IEquatable<T>
     {
         /// <summary>
         /// 初期値と、および値が変化したときのPropertyChanged呼び出し以外の処理を指定してインスタンスを初期化します。

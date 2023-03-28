@@ -376,18 +376,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c782f1019db36b41852dd350922fd8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1963776208 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7427902273662735818, guid: 1e7e415b712b9b041be3596ae23c356e,
-    type: 3}
-  m_PrefabInstance: {fileID: 7427902272773229850}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fea24974c6c68c74597dc46bd6bf070e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1993346254 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5813678810248240001, guid: f6c219998e9cac44181a454adad331bf,
@@ -703,6 +691,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: VRoidConnector
       objectReference: {fileID: 0}
+    - target: {fileID: 8072058360431612557, guid: 54f09e98778fa6940a40b9a11fbb9642,
+        type: 3}
+      propertyPath: targetPrefab
+      value: 
+      objectReference: {fileID: 1589745891226266, guid: 1074f5d5c8549bb4bacefa18d5b44ece,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54f09e98778fa6940a40b9a11fbb9642, type: 3}
 --- !u!4 &2677410104957813688 stripped
@@ -936,7 +930,7 @@ PrefabInstance:
         type: 3}
       propertyPath: ikWeightCrossFade
       value: 
-      objectReference: {fileID: 1963776208}
+      objectReference: {fileID: 0}
     - target: {fileID: 5813678810404708495, guid: f6c219998e9cac44181a454adad331bf,
         type: 3}
       propertyPath: particleStore

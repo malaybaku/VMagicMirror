@@ -1,4 +1,5 @@
-﻿using Baku.VMagicMirror.IK;
+﻿using Baku.VMagicMirror.GameInput;
+using Baku.VMagicMirror.IK;
 using RootMotion.FinalIK;
 using UnityEngine;
 using Zenject;
@@ -28,7 +29,6 @@ namespace Baku.VMagicMirror
 
         private readonly IKDataRecord _mouseBasedLookAt = new IKDataRecord();
         private readonly CameraBasedLookAtIk _camBasedLookAt = new CameraBasedLookAtIk();
-        
         private LookAtStyles _lookAtStyle = LookAtStyles.MousePointer;
         private Transform _head = null;
         private bool _hasModel = false;
@@ -37,7 +37,8 @@ namespace Baku.VMagicMirror
         private Transform _lookAtTarget = null;
         private FaceControlConfiguration _faceControlConfig;
         private PenTabletProvider _penTabletProvider;
-        
+        private KeyboardGameInputSource _keyboardGameInputSource;
+
         private LookAtIK _lookAtIk = null;
 
         private float _mouseActionCount = 0f;
@@ -50,12 +51,14 @@ namespace Baku.VMagicMirror
             Camera mainCam,
             IKTargetTransforms ikTargets,
             PenTabletProvider penTabletProvider,
-            FaceControlConfiguration faceControlConfig)
+            FaceControlConfiguration faceControlConfig,
+            KeyboardGameInputSource keyboardGameInputSource)
         {
             _camera = mainCam.transform;
             _lookAtTarget = ikTargets.LookAt;
             _faceControlConfig = faceControlConfig;
             _penTabletProvider = penTabletProvider;
+            _keyboardGameInputSource = keyboardGameInputSource;
 
             vrmLoadable.VrmLoaded += info =>
             {
@@ -164,10 +167,18 @@ namespace Baku.VMagicMirror
                 _lookAtIk.enabled = true;
             }
 
-            Vector3 pos = 
-                (_lookAtStyle == LookAtStyles.MousePointer) ? _mouseBasedLookAt.Position :
-                (_lookAtStyle == LookAtStyles.MainCamera) ? _camBasedLookAt.Position :
-                (_hasModel && _lookAtStyle == LookAtStyles.Fixed) ? _head.position + Vector3.forward * 5.0f : 
+            var lookAtStyle = _lookAtStyle;
+            //マウスがゲーム入力扱いの場合、LookAtもやると二重適用になって変なことになるため、コッチは切ってしまう
+            if (_keyboardGameInputSource.MouseMoveLookAroundActive && 
+                lookAtStyle == LookAtStyles.MousePointer)
+            {
+                lookAtStyle = LookAtStyles.Fixed;
+            }
+            
+            var pos = 
+                (lookAtStyle == LookAtStyles.MousePointer) ? _mouseBasedLookAt.Position :
+                (lookAtStyle == LookAtStyles.MainCamera) ? _camBasedLookAt.Position :
+                (_hasModel && lookAtStyle == LookAtStyles.Fixed) ? _head.position + Vector3.forward * 5.0f : 
                 new Vector3(1, 0, 1);
 
             //TODO: この処理をオンオフできてもいいかも？

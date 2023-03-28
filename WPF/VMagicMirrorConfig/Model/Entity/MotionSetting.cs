@@ -17,6 +17,7 @@
         #region Full Body 
 
         public bool EnableNoHandTrackMode { get; set; } = false;
+        public bool EnableGameInputLocomotionMode { get; set; } = false;
 
         public bool EnableTwistBodyMotion { get; set; } = false;
 
@@ -195,6 +196,7 @@
         public void ResetToDefault()
         {
             EnableNoHandTrackMode = false;
+            EnableGameInputLocomotionMode = false;
             EnableTwistBodyMotion = false;
             EnableCustomHandDownPose = false;
             CustomHandDownPose = "";

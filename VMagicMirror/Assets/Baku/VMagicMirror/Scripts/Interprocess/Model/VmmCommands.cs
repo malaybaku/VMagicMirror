@@ -62,6 +62,7 @@
         
         // Motion, Body
         public const string EnableNoHandTrackMode = nameof(EnableNoHandTrackMode);
+        public const string EnableGameInputLocomotionMode = nameof(EnableGameInputLocomotionMode);
         public const string EnableTwistBodyMotion = nameof(EnableTwistBodyMotion);
         public const string EnableBodyLeanZ = nameof(EnableBodyLeanZ);
 
@@ -101,7 +102,17 @@
         public const string DisableHandTrackingHorizontalFlip = nameof(DisableHandTrackingHorizontalFlip);
         public const string EnableSendHandTrackingResult = nameof(EnableSendHandTrackingResult);
 
-        //public const string EnableTouchTyping = nameof(EnableTouchTyping);
+        // Motion, GameInput
+        public const string UseGamepadForGameInput = nameof(UseGamepadForGameInput);
+        public const string UseKeyboardForGameInput = nameof(UseKeyboardForGameInput);
+        public const string SetGamepadGameInputKeyAssign = nameof(SetGamepadGameInputKeyAssign);
+        public const string SetKeyboardGameInputKeyAssign = nameof(SetKeyboardGameInputKeyAssign);
+        public const string EnableAlwaysRunGameInput = nameof(EnableAlwaysRunGameInput);
+        public const string EnableWasdMoveGameInput = nameof(EnableWasdMoveGameInput);
+        public const string EnableArrowKeyMoveGameInput = nameof(EnableArrowKeyMoveGameInput);
+        public const string UseShiftRunGameInput = nameof(UseShiftRunGameInput);
+        public const string UseSpaceJumpGameInput = nameof(UseSpaceJumpGameInput);
+        public const string UseMouseMoveForLookAroundGameInput = nameof(UseMouseMoveForLookAroundGameInput);
 
         // Layout, camera
         public const string SetCustomCameraPosition = nameof(SetCustomCameraPosition);

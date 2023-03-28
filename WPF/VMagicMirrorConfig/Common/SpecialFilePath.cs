@@ -14,6 +14,8 @@ namespace Baku.VMagicMirrorConfig
         private const string SaveSlotFileNamePrefix = "_save";
         private const string UpdateCheckFileName = "UpdateCheck";
 
+        public const string GameInputSettingFileExt = ".vmm_gi";
+
         //TODO: 「デバッグ実行時だけRootDirectoryを差し替えたい」という需要が考えられるが、良い手はあるか…？
         private static string RootDirectory { get; }
 
@@ -26,6 +28,7 @@ namespace Baku.VMagicMirrorConfig
         public static string UpdateCheckFilePath { get; }
 
         public static string PreferenceFilePath { get; }
+        public static string GameInputDefaultFilePath { get; }
 
         /// <summary>
         /// スロット番号を指定して保存ファイル名を指定します。0を指定した場合は特別にオートセーブファイルのパスを返します。
@@ -56,6 +59,7 @@ namespace Baku.VMagicMirrorConfig
             UpdateCheckFilePath = Path.Combine(SaveFileDir, UpdateCheckFileName);
             LogFilePath = Path.Combine(LogFileDir, LogTextName);
             PreferenceFilePath = Path.Combine(SaveFileDir, "_preferences");
+            GameInputDefaultFilePath = Path.Combine(SaveFileDir, "_game_input");
 
             Directory.CreateDirectory(RootDirectory);
             Directory.CreateDirectory(SaveFileDir);

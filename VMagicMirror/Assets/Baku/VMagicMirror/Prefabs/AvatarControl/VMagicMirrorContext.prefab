@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89715ad69b973a14899afa2c6730b30b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scriptableObjectInstallers: []
+  _scriptableObjectInstallers:
+  - {fileID: 11400000, guid: 954b2e62436e8694b92e0abe19aa6182, type: 2}
   _monoInstallers:
   - {fileID: 42090108536346765}
   _installerPrefabs: []
@@ -92,6 +93,7 @@ MonoBehaviour:
   deformableCounterPrefab: {fileID: 7689942653974604740, guid: 70558d4eae9159e459981bcfa4091921,
     type: 3}
   interProcess: {fileID: 2683631619848515584}
+  loadingCoverController: {fileID: 0}
 --- !u!114 &2683631619848515584
 MonoBehaviour:
   m_ObjectHideFlags: 0

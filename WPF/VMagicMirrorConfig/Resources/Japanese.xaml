@@ -71,6 +71,8 @@
     <sys:String x:Key="Streaming_Screenshot">スクリーンショット</sys:String>
     <sys:String x:Key="Streaming_Screenshot_OpenSaveFolder">保存フォルダ...</sys:String>
     
+    <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">ゲーム入力でもゲームパッドが使われています！</sys:String>
+    
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによるトラッキングを活用する機能です。
@@ -186,6 +188,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     
     <!-- Motion : Full Body -->
     <sys:String x:Key="Motion_FullBody">上半身</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode">動きかた</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_Default">デフォルト</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_Standing">つねに手下げ</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_GameInput">ゲーム入力</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">つねに手下げモード (※体の動きが増えます)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">つねに手下げモード</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">ひねりモーション</sys:String>    
@@ -194,6 +200,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 「つねに手下げモード」がオンの状態で
 フリーレイアウトモードを有効にします</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">手の位置をデフォルトにリセット</sys:String>
+    <sys:String x:Key="Motion_FullBody_OpenGameInputSetting">ゲーム入力の詳細設定…</sys:String>
     
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">腕・ひじ</sys:String>
@@ -511,6 +518,50 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="SettingFile_ApplyPortNumber">適用</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">使い方をチェック (Webページへ移動)</sys:String>
 
+    <!-- GameInput Key Assign -->
+    <sys:String x:Key="GameInputKeyAssign_Header">ゲーム入力 キー/ボタン割り当て</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">※この機能は試験的に導入しています。
+
+ 「配信」タブで「動きかた」を「ゲーム入力」にしたときの動かし方を設定します。
+
+- アバターがその場で移動・しゃがみ・ジャンプなどのアクションを取れるようになります。
+- 通常のword to motionが正常に動かない事があるので注意してください。        
+- この設定は専用のファイルに保存・読み込みできます。</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Reset">初期値にリセット</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Export">設定を保存</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Import">設定を読み込み</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_SeeMore">更に詳しく…</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Gamepad">ゲームパッド</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Gamepad_Enable">ゲームパッド入力を使用</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard">キーボード・マウス</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">キーボード・マウス入力を使用</sys:String>
+    
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">移動は常にダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">つねに銃を構える</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Action_None">(なし)</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Move">移動</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_LookAround">見回し</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Run">ダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Jump">ジャンプ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Crouch">しゃがみ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Trigger">銃を撃つ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Punch">パンチ</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Section">キーボード:</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_WasdMove">WASDで移動</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">矢印キーで移動</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Shiftキーでダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Spaceキーでジャンプ</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Mouse_Section">マウス:</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">マウス移動で見回し</sys:String>
+    <!-- ここはゲームパッドと同様に図示することで不要になるかも -->
+    <sys:String x:Key="GameInputKeyAssign_Mouse_LeftClick">左クリック</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_RightClick">右クリック</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_MiddleClick">中央クリック</sys:String>
+    
     <!-- NOTE: used from ViewModel code. -->
     <sys:String x:Key="SettingFile_SaveCompleted">設定を No.{0} に保存しました。</sys:String>
     <sys:String x:Key="SettingFile_LoadCompleted">設定 No.{0} をロードしました。</sys:String>

@@ -76,6 +76,7 @@ namespace Baku.VMagicMirrorConfig
         #region モーション
 
         public Message EnableNoHandTrackMode(bool enable) => WithArg(enable);
+        public Message EnableGameInputLocomotionMode(bool enable) => WithArg(enable);
         public Message EnableTwistBodyMotion(bool enable) => WithArg(enable);
 
         public Message EnableCustomHandDownPose(bool enable) => WithArg(enable);
@@ -158,6 +159,25 @@ namespace Baku.VMagicMirrorConfig
         public Message SetUseAvatarEyeBoneMap(bool use) => WithArg(use);
         public Message SetEyeBoneRotationScale(int percent) => WithArg(percent);
         public Message SetEyeBoneRotationScaleWithMap(int percent) => WithArg(percent);
+
+        #endregion
+
+        #region Game Input Locomotion
+
+        public Message UseGamepadForGameInput(bool use) => WithArg(use);
+        public Message UseKeyboardForGameInput(bool use) => WithArg(use);
+        public Message SetGamepadGameInputKeyAssign(string json) => WithArg(json);
+        public Message SetKeyboardGameInputKeyAssign(string json) => WithArg(json);
+
+        public Message EnableAlwaysRunGameInput(bool enable) => WithArg(enable);
+
+        //NOTE: 以下はKeyboardKeyAssignの一部に帰着させるかもしれない。
+        //これらを単独で送信する場合、これらのオプションはKeyAssignのjsonよりも優先されるイメージ
+        public Message EnableWasdMoveGameInput(bool enable) => WithArg(enable);
+        public Message EnableArrowKeyMoveGameInput(bool enable) => WithArg(enable);
+        public Message UseShiftRunGameInput(bool use) => WithArg(use);
+        public Message UseSpaceJumpGameInput(bool use) => WithArg(use);
+        public Message UseMouseMoveForLookAroundGameInput(bool use) => WithArg(use);
 
         #endregion
 

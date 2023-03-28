@@ -315,6 +315,8 @@ namespace Baku.VMagicMirror
         LTrigger,
         Start,
         Select,
+        //NOTE: キーアサインの話をするときに「アサイン無し」をやりたいので定義してる
+        Unknown,
     }
     
     /// <summary> ゲームパッドの状態を渡す用のクラス </summary>

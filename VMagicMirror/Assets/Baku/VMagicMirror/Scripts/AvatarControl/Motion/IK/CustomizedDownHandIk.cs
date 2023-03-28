@@ -23,6 +23,7 @@ namespace Baku.VMagicMirror
         private readonly IMessageSender _sender;
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ICoroutineSource _coroutineSource;
+        private readonly BodyMotionModeController _bodyMotionModeController;
 
         private readonly ReactiveProperty<bool> _enableAlwaysHandDownMode = new ReactiveProperty<bool>(false);
         private readonly ReactiveProperty<bool> _enableFreeLayoutMode = new ReactiveProperty<bool>(false);
@@ -55,7 +56,8 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             IMessageSender sender,
             DeviceTransformController deviceTransformController,
-            ICoroutineSource coroutineSource
+            ICoroutineSource coroutineSource,
+            BodyMotionModeController bodyMotionModeController
             )
         {
             _leftHandTarget = ikTargetTransforms.LeftHandDown;
@@ -66,6 +68,7 @@ namespace Baku.VMagicMirror
             _handDownIkCalculator = handDownIkCalculator;
             _deviceTransformController = deviceTransformController;
             _coroutineSource = coroutineSource;
+            _bodyMotionModeController = bodyMotionModeController;
         }
 
         public override void Initialize()
@@ -81,11 +84,6 @@ namespace Baku.VMagicMirror
             );
             
             _receiver.AssignCommandHandler(
-                VmmCommands.EnableNoHandTrackMode,
-                command => _enableAlwaysHandDownMode.Value = command.ToBoolean()
-            );
-
-            _receiver.AssignCommandHandler(
                 VmmCommands.SetHandDownModeCustomPose,
                 command => ApplyHandDownPose(command.Content)
             );
@@ -97,6 +95,10 @@ namespace Baku.VMagicMirror
                     ResetCustomHandDownPose();
                     SendPose();
                 });
+
+            _bodyMotionModeController.MotionMode
+                .Subscribe(mode => _enableAlwaysHandDownMode.Value = mode != BodyMotionMode.Default)
+                .AddTo(this);
 
             _vrmLoadable.VrmLoaded += info =>
             {

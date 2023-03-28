@@ -39,8 +39,16 @@ namespace Baku.VMagicMirror.GameInput
         private readonly MousePositionProvider _mousePositionProvider;
 
         private CompositeDisposable _disposable;
+        //NOTE: 個別のフラグ値がメッセージで飛んでくるものについては、このKeyAssignの中身よりもフラグ値が優先される
         private KeyboardGameInputKeyAssign _keyAssign = KeyboardGameInputKeyAssign.LoadDefault();
         
+        //TODO: 本当はコッチのフラグは使わずKeyAssignに寄せたい
+        private bool _useMouseLookAround = true;
+        private bool _useWasdMove = true;
+        private bool _useArrowKeyMove = true;
+        private bool _useShiftRun = true;
+        private bool _useSpaceJump = true;
+
         private bool _forwardKeyPressed;
         private bool _backKeyPressed;
         private bool _leftKeyPressed;
@@ -66,12 +74,33 @@ namespace Baku.VMagicMirror.GameInput
             _receiver.AssignCommandHandler(
                 VmmCommands.SetKeyboardGameInputKeyAssign,
                 command => UpdateKeyAssign(command.Content)
-                );
+            );
+            
+            _receiver.AssignCommandHandler(
+                VmmCommands.EnableWasdMoveGameInput,
+                command => _useWasdMove = command.ToBoolean()
+            );
+            _receiver.AssignCommandHandler(
+                VmmCommands.EnableArrowKeyMoveGameInput,
+                command => _useArrowKeyMove = command.ToBoolean()
+            );
+            _receiver.AssignCommandHandler(
+                VmmCommands.UseShiftRunGameInput,
+                command => _useShiftRun = command.ToBoolean()
+            );
+            _receiver.AssignCommandHandler(
+                VmmCommands.UseSpaceJumpGameInput,
+                command => _useSpaceJump = command.ToBoolean()
+            );
+            _receiver.AssignCommandHandler(
+                VmmCommands.UseMouseMoveForLookAroundGameInput,
+                command => _useMouseLookAround = command.ToBoolean()
+            );
         }
 
         void ITickable.Tick()
         {
-            if (!_isActive || _keyAssign.UseMouseLookAround)
+            if (!_isActive || _useMouseLookAround)
             {
                 return;
             }
@@ -179,7 +208,7 @@ namespace Baku.VMagicMirror.GameInput
 
         private void OnKeyDown(string key)
         {
-            if (_keyAssign.UseShiftRun && 
+            if (_useShiftRun && 
                 (key == nameof(Keys.ShiftKey) || key == nameof(Keys.LShiftKey) || key == nameof(Keys.RShiftKey))
                 )
             {
@@ -188,14 +217,14 @@ namespace Baku.VMagicMirror.GameInput
                 return;
             }
 
-            if (_keyAssign.UseSpaceJump && key == nameof(Keys.Space))
+            if (_useSpaceJump && key == nameof(Keys.Space))
             {
                 //Spaceもこの用途でのみ使うはず
                 _jump.OnNext(Unit.Default);
                 return;
             }
 
-            if (_keyAssign.UseWasdMove)
+            if (_useWasdMove)
             {
                 if (key == nameof(Keys.W)) _forwardKeyPressed = true;
                 if (key == nameof(Keys.A)) _leftKeyPressed = true;
@@ -203,7 +232,7 @@ namespace Baku.VMagicMirror.GameInput
                 if (key == nameof(Keys.D)) _rightKeyPressed = true;
             }
 
-            if (_keyAssign.UseArrowKeyMove)
+            if (_useArrowKeyMove)
             {
                 if (key == nameof(Keys.Up)) _forwardKeyPressed = true;
                 if (key == nameof(Keys.Left)) _leftKeyPressed = true;
@@ -217,7 +246,7 @@ namespace Baku.VMagicMirror.GameInput
 
         private void OnKeyUp(string key)
         {
-            if (_keyAssign.UseShiftRun && 
+            if (_useShiftRun && 
                 (key == nameof(Keys.ShiftKey) || key == nameof(Keys.LShiftKey) || key == nameof(Keys.RShiftKey))
                )
             {
@@ -225,7 +254,7 @@ namespace Baku.VMagicMirror.GameInput
                 return;
             }
 
-            if (_keyAssign.UseWasdMove)
+            if (_useWasdMove)
             {
                 if (key == "W") _forwardKeyPressed = false;
                 if (key == "A") _leftKeyPressed = false;
@@ -233,7 +262,7 @@ namespace Baku.VMagicMirror.GameInput
                 if (key == "D") _rightKeyPressed = false;
             }
 
-            if (_keyAssign.UseArrowKeyMove)
+            if (_useArrowKeyMove)
             {
                 if (key == nameof(Keys.Up)) _forwardKeyPressed = false;
                 if (key == nameof(Keys.Left)) _leftKeyPressed = false;

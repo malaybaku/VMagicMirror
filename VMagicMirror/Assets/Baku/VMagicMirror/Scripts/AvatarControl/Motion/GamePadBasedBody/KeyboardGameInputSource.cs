@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror.GameInput
     public class KeyboardGameInputSource : PresenterBase, ITickable, IGameInputSource
     {
         //NOTE: DPIが96の場合の値
-        private const float LookAroundNormalizeFactor = 100;
+        private const float LookAroundNormalizeFactor = 200;
         private const float MouseMoveThrottleCount = 0.4f;
 
         #region Interface 
@@ -58,6 +58,8 @@ namespace Baku.VMagicMirror.GameInput
         private Vector2Int _rawDiffSum;
         //マウスが動き続けている間は0より大きくなる値
         private float _mouseMoveCountDown;
+
+        public bool MouseMoveLookAroundActive => _isActive && _useMouseLookAround;
         
         public KeyboardGameInputSource(
             IKeyMouseEventSource keySource,
@@ -71,6 +73,8 @@ namespace Baku.VMagicMirror.GameInput
 
         public override void Initialize()
         {
+            LogOutput.Instance.Write($"screen dpi = {Screen.dpi:0.00}");
+            
             _receiver.AssignCommandHandler(
                 VmmCommands.SetKeyboardGameInputKeyAssign,
                 command => UpdateKeyAssign(command.Content)
@@ -100,8 +104,11 @@ namespace Baku.VMagicMirror.GameInput
 
         void ITickable.Tick()
         {
-            if (!_isActive || _useMouseLookAround)
+            if (!_isActive || !_useMouseLookAround)
             {
+                _mouseMoveCountDown = 0f;
+                _rawDiffSum = Vector2Int.zero;
+                _lookAroundInput.Value = Vector2.zero;
                 return;
             }
 
@@ -125,14 +132,15 @@ namespace Baku.VMagicMirror.GameInput
             else
             {
                 //NOTE: この積算だと「右上 -> 左上」みたくマウス動かしたときに真上を指すが、それは想定挙動とする
-                _rawDiffSum += rawDiff;
+                _rawDiffSum += new Vector2Int(rawDiff.x, -rawDiff.y);
                 var dpiRate = Screen.dpi / 96f;
                 if (dpiRate <= 0f)
                 {
                     dpiRate = 1f;
                 }
 
-                var input = (dpiRate / LookAroundNormalizeFactor) * new Vector2(_rawDiffSum.x, _rawDiffSum.y);
+                //rawDiffでは下方向が正であることに注意！
+                var input = (dpiRate / LookAroundNormalizeFactor) * new Vector2(_rawDiffSum.x, -_rawDiffSum.y);
                 _lookAroundInput.Value = Vector2.ClampMagnitude(input, 1f);
                 _mouseMoveCountDown = MouseMoveThrottleCount;
             }

@@ -54,6 +54,10 @@ namespace Baku.VMagicMirror.GameInput
         private bool _leftKeyPressed;
         private bool _rightKeyPressed;
 
+
+        private bool _hasPrevRawPosition;
+        private Vector2Int _prevRawPosition;
+        
         //マウスが動き続けている間はその移動値が蓄積され、そうでなければ0になるような値
         private Vector2Int _rawDiffSum;
         //マウスが動き続けている間は0より大きくなる値
@@ -112,11 +116,19 @@ namespace Baku.VMagicMirror.GameInput
                 return;
             }
 
-            //マウス移動の扱い
+            //マウス移動の取り扱いのアプローチ
             // - マウスの位置ではなく移動値に頼る。FPSだとマウスロックかかる事もあるのでそれ前提で考える
-            // - ちょっとだけmagnitudeも使うが、基本的に首がガン振りされてよい前提で考える
-            // - 一定時間動かないのを以て「入力がゼロに戻った」とみなす
-            var rawDiff = _mousePositionProvider.RawDiff;
+            // - ちょっとだけmagnitudeも使うが、わりと首がガン振りされてもよい前提で考える
+            // - 一定時間マウスが動かないことを「入力がゼロに戻った」事象とみなす
+            var rawPos = _mousePositionProvider.RawPosition;
+            var rawDiff = rawPos - _prevRawPosition;
+            if (!_hasPrevRawPosition)
+            {
+                rawDiff = Vector2Int.zero;
+                _hasPrevRawPosition = true;
+            }
+            _prevRawPosition = rawPos;
+
             if (rawDiff == Vector2Int.zero)
             {
                 if (_mouseMoveCountDown > 0f)
@@ -132,7 +144,7 @@ namespace Baku.VMagicMirror.GameInput
             else
             {
                 //NOTE: この積算だと「右上 -> 左上」みたくマウス動かしたときに真上を指すが、それは想定挙動とする
-                _rawDiffSum += new Vector2Int(rawDiff.x, -rawDiff.y);
+                _rawDiffSum += new Vector2Int(rawDiff.x, rawDiff.y);
                 var dpiRate = Screen.dpi / 96f;
                 if (dpiRate <= 0f)
                 {
@@ -199,6 +211,8 @@ namespace Baku.VMagicMirror.GameInput
 
         private void ResetInputs()
         {
+            _hasPrevRawPosition = false;
+            _prevRawPosition = Vector2Int.zero;
             _rawDiffSum = Vector2Int.zero;
             _mouseMoveCountDown = 0f;
 

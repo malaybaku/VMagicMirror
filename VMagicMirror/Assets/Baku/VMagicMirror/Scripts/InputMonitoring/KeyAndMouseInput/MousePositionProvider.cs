@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
+    //TODO: Unityのウィンドウが非アクティブなときにRawDiffが正しく取れなくなってそう
+    //これによって「FPS対策モード」のオプションが死んでそうなため要チェック。
+
     /// <summary>
     /// このクラスは何とマウスの現在位置を教えてくれるすごいクラスです
     /// </summary>
@@ -27,6 +30,8 @@ namespace Baku.VMagicMirror
         public Vector2 NormalizedCursorPosition { get; private set; }
 
         public Vector2Int RawDiff { get; private set; }
+
+        public Vector2Int RawPosition { get; private set; }
         
         private Vector2 _rawNormalizedPosition;
         
@@ -78,7 +83,8 @@ namespace Baku.VMagicMirror
             (int dx, int dy) = _rawMouseMoveChecker.GetAndReset();
             RawDiff = new Vector2Int(dx, dy);
             var p = NativeMethods.GetWindowsMousePosition();
-
+            RawPosition = p;
+            
             //NOTE: (dx, dy)とabsDifが異なるケース == マウスがプログラム的に動かされちゃってるケース
             //FPSとかで遊んでない限りは2つの値は一致する
             var absDif = p - _prevCursorPos;

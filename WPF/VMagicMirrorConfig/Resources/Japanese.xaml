@@ -71,6 +71,8 @@
     <sys:String x:Key="Streaming_Screenshot">スクリーンショット</sys:String>
     <sys:String x:Key="Streaming_Screenshot_OpenSaveFolder">保存フォルダ...</sys:String>
     
+    <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">ゲーム入力でもゲームパッドが使われています！</sys:String>
+    
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによるトラッキングを活用する機能です。
@@ -198,7 +200,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 「つねに手下げモード」がオンの状態で
 フリーレイアウトモードを有効にします</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">手の位置をデフォルトにリセット</sys:String>
-    <sys:String x:Key="Motion_FullBody_OpenGameInputSetting">ゲーム移動の詳細設定…</sys:String>
+    <sys:String x:Key="Motion_FullBody_OpenGameInputSetting">ゲーム入力の詳細設定…</sys:String>
     
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">腕・ひじ</sys:String>

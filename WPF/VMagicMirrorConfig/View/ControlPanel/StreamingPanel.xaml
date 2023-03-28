@@ -10,7 +10,7 @@
              xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d" 
              d:DesignWidth="540"
-             d:DesignHeight="650"             
+             d:DesignHeight="750"             
              >
     <UserControl.Resources>
         <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
@@ -804,6 +804,27 @@
                                 <emoji:TextBlock Text="↔️"/>
                             </Button>
                         </StackPanel>
+
+                        <md:Card Margin="5" 
+                                 Visibility="{Binding GameInputGamepadActive.Value,
+                                                      Converter={StaticResource BooleanToVisibilityConverter},
+                                                      FallbackValue=Visible}"
+                                 HorizontalAlignment="Center"
+                                 Padding="3">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <md:PackIcon Grid.Column="0"
+                                             VerticalAlignment="Center" 
+                                             Kind="WarningOutline" Foreground="{StaticResource MahApps.Brushes.Accent}" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{DynamicResource Streaming_WordToMotion_GameInputActiveWarning}" 
+                                           TextWrapping="Wrap"
+                                           />
+                            </Grid>
+                        </md:Card>
                     </StackPanel>
                 </Border>
             </StackPanel>

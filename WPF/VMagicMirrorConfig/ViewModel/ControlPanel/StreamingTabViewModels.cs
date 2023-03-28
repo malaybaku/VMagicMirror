@@ -407,13 +407,21 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
     public class WordToMotionViewModel : ViewModelBase
     {
-        public WordToMotionViewModel() : this(ModelResolver.Instance.Resolve<WordToMotionSettingModel>())
+        public WordToMotionViewModel() : this(
+            ModelResolver.Instance.Resolve<WordToMotionSettingModel>(),
+            ModelResolver.Instance.Resolve<MotionSettingModel>(),
+            ModelResolver.Instance.Resolve<GameInputSettingModel>())
         {
         }
 
-        internal WordToMotionViewModel(WordToMotionSettingModel model)
+        internal WordToMotionViewModel(
+            WordToMotionSettingModel model,
+            MotionSettingModel motionSettingModel,
+            GameInputSettingModel gameInputSettingModel)
         {
             _model = model;
+            _motionSettingModel = motionSettingModel;
+            _gameInputSettingModel = gameInputSettingModel;
             Devices = WordToMotionDeviceItemViewModel.LoadAvailableItems();
 
             if (IsInDesignMode)
@@ -429,10 +437,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             {
                 SelectedDevice = Devices.FirstOrDefault(d => d.Index == _model.SelectedDeviceType.Value);
                 EnableWordToMotion.Value = _model.SelectedDeviceType.Value != WordToMotionSetting.DeviceTypes.None;
+                CheckGamepadGameInputActiveness(_, __);
             };
+
+            GameInputGamepadActive.Value =
+                _model.SelectedDeviceType.Value == WordToMotionSetting.DeviceTypes.Gamepad && 
+                 _gameInputSettingModel.GamepadEnabled.Value &&
+                 _motionSettingModel.EnableGameInputLocomotionMode.Value;
+            _gameInputSettingModel.GamepadEnabled.AddWeakEventHandler(CheckGamepadGameInputActiveness);
+            _motionSettingModel.EnableGameInputLocomotionMode.AddWeakEventHandler(CheckGamepadGameInputActiveness);
         }
 
         private readonly WordToMotionSettingModel _model;
+        private readonly MotionSettingModel _motionSettingModel;
+        private readonly GameInputSettingModel _gameInputSettingModel;
 
         public RProperty<bool> EnableWordToMotion { get; } = new RProperty<bool>(true);
 
@@ -454,5 +472,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             }
         }
         public RProperty<int> SelectedDeviceType => _model.SelectedDeviceType;
+
+        public RProperty<bool> GameInputGamepadActive { get; } = new(false);
+
+        private void CheckGamepadGameInputActiveness(object? sender, PropertyChangedEventArgs e)
+        {
+            GameInputGamepadActive.Value =
+                _model.SelectedDeviceType.Value == WordToMotionSetting.DeviceTypes.Gamepad &&
+                _gameInputSettingModel.GamepadEnabled.Value &&
+                _motionSettingModel.EnableGameInputLocomotionMode.Value;
+        }
     }
 }

@@ -8,6 +8,16 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.1.0
+{: .doc-sec2 }
+
+2023/03/30
+
+* Add: [Game Input](../docs/game_input) mode, in that avatar moves like in-game character. This mode can be enabled at Streaming Tab > Motion > Body Motion Style and choose "Game Input".
+* Add: Option to launch VMagicMirror with control panel window minimized. The option is in Home tab > Other Preferenfces.
+* Fix: Eye bone odd behavior in VRM 1.0 model, when bone coordinate does not align to world XYZ axis.
+
+
 #### v3.0.2
 {: .doc-sec2 }
 

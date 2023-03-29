@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
     public class GameInputBodyMotionController : PresenterBase, ITickable
     {
         private const float MoveLerpSmoothTime = 0.1f;
-        private const float LookAroundSmoothTime = 0.1f;
+        private const float LookAroundSmoothTime = 0.15f;
 
         private const float GunFireYawSmoothTime = 0.1f;
         private const float YawWhenGunFire = 45f;

@@ -7,10 +7,8 @@ title: ゲーム入力
 
 このページでは、VMagicMirror v3.1.0以降で実装されているゲーム入力機能を紹介します。
 
-(※画像が未差し替え)
-
 <div class="row">
-{% include docimg.html file="./images/docs/accessory_header.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+{% include docimg.html file="./images/docs/game_input.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
 
 #### ゲーム入力機能とは
@@ -99,5 +97,21 @@ title: ゲーム入力
 - `左クリック`: 左クリックに機能を割り当てます。割り当てられる機能はゲームパッドのボタン用アクションと共通です。
 - `右クリック`: 右クリックに機能を割り当てます。
 - `中央クリック`: 中央クリックに機能を割り当てます。
+
+</div>
+
+
+#### 設定ファイルの保存とロード
+{: .doc-sec2 }
+
+ゲーム入力の設定はVMagicMirrorの終了時に自動で保存されます。
+
+もし遊んでいるゲームによって頻繁に設定を変えたい場合、`設定を保存`で設定を`vmm_gi`ファイルとして書き出しておき、必要に応じて`設定を読み込み`で読み込むことで、保存済みの設定を適用できます。
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+ゲーム入力の設定は通常の設定ファイルとは異なるファイルに保存されるため、通常の設定ファイルをセーブ/ロードしてもゲーム入力の設定内容には影響しません。
 
 </div>

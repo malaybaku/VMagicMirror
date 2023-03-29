@@ -1030,7 +1030,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LocomotionSupportedEmptyController
+  m_Name: LocomotionController_Empty
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: MoveRight
@@ -1721,7 +1721,7 @@ BlendTree:
     m_DirectBlendParameter: MoveRight
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc, type: 2}
+    m_Motion: {fileID: 7400000, guid: 8f93d971287f33b4dbe3ad9bbb1ead0b, type: 2}
     m_Threshold: 0.475
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -1859,7 +1859,7 @@ BlendTree:
     m_DirectBlendParameter: MoveRight
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc, type: 2}
+    m_Motion: {fileID: 7400000, guid: 8f93d971287f33b4dbe3ad9bbb1ead0b, type: 2}
     m_Threshold: 0.475
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1

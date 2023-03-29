@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror.GameInput
     {
         //NOTE: DPIが96の場合の値
         private const float LookAroundNormalizeFactor = 200;
-        private const float MouseMoveThrottleCount = 0.4f;
+        private const float MouseMoveThrottleCount = 0.6f;
 
         #region Interface 
         

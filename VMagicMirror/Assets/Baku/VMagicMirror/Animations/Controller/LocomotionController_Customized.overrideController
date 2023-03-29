@@ -6,7 +6,7 @@ AnimatorOverrideController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DefaultLocomotionController_02
+  m_Name: LocomotionController_Customized
   m_Controller: {fileID: 9100000, guid: 155190fafd229a94fa7724237f773ff4, type: 2}
   m_Clips:
   - m_OriginalClip: {fileID: 7400000, guid: f7c485c6cb87291499720365770af08e, type: 2}
@@ -41,8 +41,6 @@ AnimatorOverrideController:
     m_OverrideClip: {fileID: 7400000, guid: 2ff59a88e94e2b0499d9d19d5ee7e0cc, type: 3}
   - m_OriginalClip: {fileID: 7400000, guid: c3f771b8b60bfee489eb80481fd492cf, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 2ff59a88e94e2b0499d9d19d5ee7e0cc, type: 3}
-  - m_OriginalClip: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 39c56eccd7baaf44bbef1c7951357d77, type: 3}
   - m_OriginalClip: {fileID: 7400000, guid: 0f75bb4bc5523294aa2f9afccc9edf2b, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: 156dac4da55f663438adae2e9f74342c, type: 3}
   - m_OriginalClip: {fileID: 7400000, guid: 9c263b0d98e01334585286c36c791be0, type: 2}
@@ -58,3 +56,5 @@ AnimatorOverrideController:
   - m_OriginalClip: {fileID: 7400000, guid: 06bcd784d521a524298d134cb5288c16, type: 2}
     m_OverrideClip: {fileID: -203655887218126122, guid: 9b019deba6c43374b8aba5aade7efd29,
       type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 8f93d971287f33b4dbe3ad9bbb1ead0b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 39c56eccd7baaf44bbef1c7951357d77, type: 3}

@@ -75,9 +75,12 @@ namespace Baku.VMagicMirror
             rawAngle = Mathf.Repeat(rawAngle + 180f, 360f) - 180f;
             
             //角度を0側に寄せる: 動きが激しすぎるとアレなので
-            var rot = 
-                _gameInputBodyMotionController.LookAroundRotation *
-                Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
+            var gameInputRot = _gameInputBodyMotionController.LookAroundRotation;
+            //ややこしいが、合成した回転を鏡像反転することを考慮して事前に反転している
+            gameInputRot.y *= -1f;
+            gameInputRot.z *= -1f;
+            
+            var rot = gameInputRot * Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
             
             //ピッチだけ追加で絞る
             var pitchCheck = rot * Vector3.forward;

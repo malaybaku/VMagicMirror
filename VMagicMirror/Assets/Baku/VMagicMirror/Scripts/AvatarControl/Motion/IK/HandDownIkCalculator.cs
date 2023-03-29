@@ -127,7 +127,7 @@ namespace Baku.VMagicMirror.IK
 
                 var leftTargetLength = _leftArmLength * ArmRelaxFactor;
                 //UpperArmとWristの距離が一定になるようY軸の調整をするとこういう式になる
-                leftPos.y = leftUpperArmPos.y - Mathf.Sqrt(
+                leftPos.y = leftUpperArmPos.y - MathUtil.Sqrt(
                     leftTargetLength * leftTargetLength -
                     (leftPos.x - leftUpperArmPos.x) * (leftPos.x - leftUpperArmPos.x) -
                     (leftPos.z - leftUpperArmPos.z) * (leftPos.z - leftUpperArmPos.z)
@@ -138,7 +138,7 @@ namespace Baku.VMagicMirror.IK
 
                 var rightTargetLength = _rightArmLength * ArmRelaxFactor;
                 //UpperArmとWristの距離が一定になるようY軸の調整をするとこういう式になる
-                rightPos.y = rightUpperArmPos.y - Mathf.Sqrt(
+                rightPos.y = rightUpperArmPos.y - MathUtil.Sqrt(
                     rightTargetLength * rightTargetLength -
                     (rightPos.x - rightUpperArmPos.x) * (rightPos.x - rightUpperArmPos.x) -
                     (rightPos.z - rightUpperArmPos.z) * (rightPos.z - rightUpperArmPos.z)

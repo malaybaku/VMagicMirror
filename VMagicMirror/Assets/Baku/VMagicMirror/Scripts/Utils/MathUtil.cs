@@ -4,6 +4,8 @@ namespace Baku.VMagicMirror
 {
     public static class MathUtil
     {
+        public static float Sqrt(float v) => v > 0f ? Mathf.Sqrt(v) : 0f;
+
         /// <summary>
         /// Atan2の結果を[-180, 180]に収まることを保証して返します。
         /// </summary>
@@ -58,5 +60,7 @@ namespace Baku.VMagicMirror
         /// <returns></returns>
         public static Vector3 CalculateBezier(Vector3 start, Vector3 end, Vector3 control, float t) 
             => (1 - t) * (1 - t) * start + 2 * (1 - t) * t * control + t * t * end;
+
+        public static bool IsNaN(Vector3 v) => float.IsNaN(v.x) || float.IsNaN(v.y) || float.IsNaN(v.z);
     }
 }

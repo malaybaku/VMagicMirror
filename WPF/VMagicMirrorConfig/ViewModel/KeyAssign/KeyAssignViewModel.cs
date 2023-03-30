@@ -60,6 +60,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             LoadSettingFileCommand = new ActionCommand(LoadSetting);
             SaveSettingFileCommand = new ActionCommand(SaveSetting);
 
+            OpenDocUrlCommand = new ActionCommand(
+                () => UrlNavigate.Open(LocalizedString.GetString("URL_docs_game_input"))
+                );
+
             if (!IsInDesignMode)
             {
                 WeakEventManager<GameInputSettingModel, GamepadKeyAssignUpdateEventArgs>.AddHandler(
@@ -124,6 +128,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ResetSettingsCommand { get; }
         public ActionCommand SaveSettingFileCommand { get; }
         public ActionCommand LoadSettingFileCommand { get; }
+        public ActionCommand OpenDocUrlCommand { get; }
 
         public GameInputStickActionItemViewModel[] StickActions => GameInputStickActionItemViewModel.AvailableItems;
         public GameInputButtonActionItemViewModel[] ButtonActions => GameInputButtonActionItemViewModel.AvailableItems;

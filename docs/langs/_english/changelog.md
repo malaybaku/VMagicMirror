@@ -8,6 +8,15 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.1.1
+{: .doc-sec2 }
+
+2023/03/30
+
+* Fix: VRoid Hub collaboration to work correctly.
+* Fix: "See More..." button in game input key assign window work correctly.
+
+
 #### v3.1.0
 {: .doc-sec2 }
 

@@ -5,7 +5,7 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.1.0
+v3.1.1
 
 * Author: Baxter
 * 2023/Mar/30

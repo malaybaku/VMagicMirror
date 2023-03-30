@@ -664,6 +664,7 @@ webカメラでの顔トラッキングを有効にする場合は
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/docs/setting_files</sys:String>
     <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/docs/accessory</sys:String>
+    <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/docs/game_input</sys:String>
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>

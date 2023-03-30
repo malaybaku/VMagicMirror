@@ -96,7 +96,7 @@
                 <Button Style="{StaticResource MaterialDesignOutlinedButton}"
                     Padding="0"
                     MinWidth="130"
-                    Command="{Binding OpenPerfectSyncTipsUrlCommand}"
+                    Command="{Binding OpenDocUrlCommand}"
                     Content="{DynamicResource GameInputKeyAssign_SeeMore}"
                     />
             </StackPanel>

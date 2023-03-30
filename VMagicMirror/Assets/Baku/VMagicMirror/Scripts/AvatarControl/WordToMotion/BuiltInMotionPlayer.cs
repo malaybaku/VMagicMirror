@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
+using UniRx;
 using Zenject;
 
 namespace Baku.VMagicMirror.WordToMotion
@@ -18,20 +21,34 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly WordToMotionMapper _mapper;
         private readonly BuiltInMotionClipData _clipData;
         private readonly IVRMLoadable _vrmLoadable;
+        private readonly BodyMotionModeController _bodyMotionModeController;
 
-        private bool _hasModel = false;
-        private SimpleAnimation _simpleAnimation = null;
+        private bool _hasModel;
+        private SimpleAnimation _simpleAnimation;
+        private Animator _animator;
+        private bool _isGameInputMode;
 
-        private bool _isPlayingPreview = false;
+        private bool _isPlayingPreview;
         private string _previewClipName = "";
 
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
+        private static readonly Dictionary<string, int> ClipNameToTriggerHash = new Dictionary<string, int>()
+        {
+            ["Good"] = Animator.StringToHash("Good"),
+            ["Wave"] = Animator.StringToHash("Wave"),
+            ["Rokuro"] = Animator.StringToHash("Rokuro"),
+        };
+        
         [Inject]
-        public BuiltInMotionPlayer(IVRMLoadable vrmLoadable, BuiltInMotionClipData clipData)
+        public BuiltInMotionPlayer(
+            IVRMLoadable vrmLoadable,
+            BuiltInMotionClipData clipData,
+            BodyMotionModeController bodyMotionModeController)
         {
             _clipData = clipData;
             _mapper = new WordToMotionMapper(clipData);
+            _bodyMotionModeController = bodyMotionModeController;
             _vrmLoadable = vrmLoadable;
         }
 
@@ -39,6 +56,10 @@ namespace Baku.VMagicMirror.WordToMotion
         {
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmUnloaded;
+
+            _bodyMotionModeController.MotionMode
+                .Subscribe(mode => _isGameInputMode = mode == BodyMotionMode.GameInputLocomotion)
+                .AddTo(this);
         }
 
         public override void Dispose()
@@ -54,6 +75,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _simpleAnimation.playAutomatically = false;
             _simpleAnimation.AddState(_clipData.DefaultStandingAnimation, DefaultStateName);
             _simpleAnimation.Play(DefaultStateName);
+            _animator = info.animator;
             _hasModel = true;
         }
 
@@ -61,6 +83,7 @@ namespace Baku.VMagicMirror.WordToMotion
         {
             _hasModel = false;
             _simpleAnimation = null;
+            _animator = null;
         }
         
         private void RefreshCts()
@@ -96,12 +119,28 @@ namespace Baku.VMagicMirror.WordToMotion
                 //2回目がきちんと動くために。
                 _simpleAnimation.Rewind(clipName);
             }
-        
-            _simpleAnimation.Play(clipName);
+
+            if (_isGameInputMode)
+            {
+                //あるはずだけど一応チェック
+                if (ClipNameToTriggerHash.TryGetValue(clipName, out var triggerValue))
+                {
+                    _animator.SetTrigger(triggerValue);
+                }
+            }
+            else
+            {
+                _simpleAnimation.Play(clipName);
+            }
             duration = clip.length - WordToMotionRunner.IkFadeDuration;
 
             RefreshCts();
-            ResetToDefaultClipAsync(clip.length, _cts.Token).Forget();
+
+            //NOTE: ゲーム入力時はRuntimeAnimatorControllerの仕組みで遷移するので、明示的に戻す必要はない
+            if (!_isGameInputMode)
+            {
+                ResetToDefaultClipAsync(clip.length, _cts.Token).Forget();
+            }
         }
 
         private async UniTaskVoid ResetToDefaultClipAsync(float delay, CancellationToken cancellationToken)

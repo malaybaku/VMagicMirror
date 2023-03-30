@@ -28,16 +28,14 @@ namespace Baku.VMagicMirror
         /// <summary> -1 ~ 1の範囲で体のロール度合いを取得します。この値を公開することで、ヒジを適宜開けるようにするのが狙いです。 </summary>
         public float BodyRollRate { get; private set; } = 0f;
 
-        
-        public float BodyHorizontalOffsetSuggest { get; private set; } = 0f;
-
         //腰を左右に動かすとき、ついでに高さも少し下げる: 多少自然にするため。
         public Vector3 BodyOffsetSuggest => new Vector3(
-            BodyHorizontalOffsetSuggest,
-            -Mathf.Abs(BodyHorizontalOffsetSuggest) * x2y,
+            _bodyHorizontalOffsetSuggest,
+            -Mathf.Abs(_bodyHorizontalOffsetSuggest) * x2y,
             0
             );
 
+        private float _bodyHorizontalOffsetSuggest;
         private float _hipsHeightRate = 1.0f;
         
 
@@ -46,13 +44,13 @@ namespace Baku.VMagicMirror
         {
             vrmLoadable.VrmLoaded += info =>
             {
-                BodyHorizontalOffsetSuggest = 0;
+                _bodyHorizontalOffsetSuggest = 0;
                 float hipsHeight = info.controlRig.GetBoneTransform(HumanBodyBones.Hips).position.y;
                 //あまり非常識な値が来たらもう適当に蹴ってしまう。別に蹴ってもそこまで危険でもないし。
                 _hipsHeightRate = Mathf.Clamp(hipsHeight / ReferenceHipsHeight, 0.1f, 3f);
             };
         }
-        
+
         private void Update()
         {
             //NOTE:
@@ -73,7 +71,7 @@ namespace Baku.VMagicMirror
             float rollAngle = Mathf.Clamp(angle * axis.z, -_bodyRollReflectMaxDeg, _bodyRollReflectMaxDeg);
 
             BodyRollRate = rollAngle / _bodyRollReflectMaxDeg;
-            BodyHorizontalOffsetSuggest = rollAngle * _bodyRollDegToXOffsetFactor * _hipsHeightRate;
+            _bodyHorizontalOffsetSuggest = rollAngle * _bodyRollDegToXOffsetFactor * _hipsHeightRate;
         }
         
         

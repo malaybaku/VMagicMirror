@@ -56,6 +56,7 @@
     
     <sys:String x:Key="Home_OtherSettings_Header">Other Preferences</sys:String>
     <sys:String x:Key="Home_ActivateOnStartupHeader">Start on Windows startup</sys:String>
+    <sys:String x:Key="Home_MinimizeOnLaunch">Minimize control panel on start</sys:String>
     
     <!-- Streaming -->
     <sys:String x:Key="Streaming_Window">Window</sys:String>
@@ -70,7 +71,9 @@
     <sys:String x:Key="Streaming_Screenshot">Screenshot</sys:String>
     <sys:String x:Key="Streaming_Screenshot_OpenSaveFolder">Saved Folder...</sys:String>
     
-     <!-- Ex.Tracker -->
+    <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">Game Input also uses gamepad!</sys:String>
+
+    <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">Feature to use external tracking application.
 During this mode, following features are disabled.
@@ -185,6 +188,10 @@ Disable foreground mode, or attach item to another one.</sys:String>
 
     <!-- Motion : Full Body -->
     <sys:String x:Key="Motion_FullBody">Upper Body</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode">Body Motion Style</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_Default">Default</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_Standing">Standing Only</sys:String>
+    <sys:String x:Key="Motion_FullBody_BaseMode_GameInput">Game Locomotion</sys:String>
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode">Always-Hands-Down Mode (*Increase body move)</sys:String>    
     <sys:String x:Key="Motion_FullBody_NoHandTrackMode_Streaming">Hands-Down Mode</sys:String>    
     <sys:String x:Key="Motion_FullBody_TwistBodyMotion">Enable Twist Motion</sys:String>    
@@ -194,6 +201,7 @@ Disable foreground mode, or attach item to another one.</sys:String>
 - Turn on "Always-Hands-Down Mode"
 - Turn on "Free Layout Mode"</sys:String>
     <sys:String x:Key="Motion_FullBody_EnableCustomHandDownPose_Reset">Reset Hand Down Pose to Default</sys:String>
+    <sys:String x:Key="Motion_FullBody_OpenGameInputSetting">Game Locomotion Setting...</sys:String>
     
     <!-- Motion : Arm -->
     <sys:String x:Key="Motion_Arm">Arm</sys:String>    
@@ -508,6 +516,48 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="SettingFile_ApplyPortNumber">Apply</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">See How to Use (Open Web Page)</sys:String>
 
+    <!-- GameInput Key Assign -->
+    <sys:String x:Key="GameInputKeyAssign_Header">Game Input Key/Button Assign</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">*The feature is experimental.
+Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
+- In this mode, avatar acts move / jump / crouch etc.
+- Note that other motion features (Word to Motion) maybe not work correct.
+- This setting has independent setting file.</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Reset">Reset to Default</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Export">Export</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Import">Import</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_SeeMore">See More...</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Gamepad">Gamepad</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Gamepad_Enable">Use Gamepad</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard">Keyboard / Mouse</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">Use Keyboard / Mouse</sys:String>
+    
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">Always Run</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">Always Aim</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Section">Keyboard:</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Action_None">(None)</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_Move">Move</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_StickAction_LookAround">Look Around</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Run">Run</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Jump">Jump</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Crouch">Crouch</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Trigger">Trigger</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_ButtonAction_Punch">Punch</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_WasdMove">Use WASD to move</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">Use ARROW to move</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Use SHIFT to run</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Use SPACE to jump</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Mouse_Section">Mouse:</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">Use mouse move to look around</sys:String>
+    <!-- ここはゲームパッドと同様に図示することで不要になるかも -->
+    <sys:String x:Key="GameInputKeyAssign_Mouse_LeftClick">Left Click</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_RightClick">Right Click</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_MiddleClick">Middle Click</sys:String>    
+    
     <!-- NOTE: used from ViewModel code. -->
     <sys:String x:Key="SettingFile_SaveCompleted">Saved Current Setting to No.{0}.</sys:String>
     <sys:String x:Key="SettingFile_LoadCompleted">Loaded Setting No.{0}.</sys:String>

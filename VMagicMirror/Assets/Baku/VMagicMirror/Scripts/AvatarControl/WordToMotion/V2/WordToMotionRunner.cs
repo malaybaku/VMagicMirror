@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly IVRMLoadable _vrmLoadable;
         private readonly IWordToMotionPlayer[] _players;
         private readonly WordToMotionBlendShape _blendShape;
-        private readonly IkWeightCrossFade _ikWeightCrossFade;
+        private readonly TaskBasedIkWeightFader _ikWeightCrossFade;
         private readonly FingerController _fingerController;
         private readonly WordToMotionAccessoryRequest _accessoryRequest;
         
@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror.WordToMotion
             IVRMLoadable vrmLoadable,
             IEnumerable<IWordToMotionPlayer> players,
             WordToMotionBlendShape blendShape,
-            IkWeightCrossFade ikWeightCrossFade,
+            TaskBasedIkWeightFader ikWeightCrossFade,
             FingerController fingerController,
             WordToMotionAccessoryRequest accessoryRequest)
         {
@@ -52,17 +52,9 @@ namespace Baku.VMagicMirror.WordToMotion
             _vrmLoadable.VrmDisposing -= OnVrmUnloaded;
         }
 
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _blendShape.Initialize(info.instance.Vrm.Expression);
-            _ikWeightCrossFade.OnVrmLoaded(info); 
-        }
+        private void OnVrmLoaded(VrmLoadedInfo info) => _blendShape.Initialize(info.instance.Vrm.Expression);
 
-        private void OnVrmUnloaded()
-        {
-            _ikWeightCrossFade.OnVrmDisposing();
-            _blendShape.DisposeProxy();
-        }
+        private void OnVrmUnloaded() => _blendShape.DisposeProxy();
 
         //NOTE: Previewかどうかによらず、実行中クリップがただひとつ存在する事にする
         private MotionRequest _currentRequest;
@@ -117,13 +109,13 @@ namespace Baku.VMagicMirror.WordToMotion
                     {
                         // 直前モーションでIKオフにしてない場合、オフにしたいので実際そうする
                         _fingerController.FadeOutWeight(IkFadeDuration);
-                        _ikWeightCrossFade.FadeOutArmIkWeights(IkFadeDuration);
+                        _ikWeightCrossFade.SetUpperBodyIkWeight(0f, IkFadeDuration);
                     }
                     else if (!playablePlayer.UseIkAndFingerFade && _restoreIkOnMotionEnd)
                     {
                         // IKオフのモーション中にIK有効が期待されたモーションを行う場合、IKがオンになる
                         _fingerController.FadeInWeight(IkFadeDuration);
-                        _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
+                        _ikWeightCrossFade.SetUpperBodyIkWeight(1f, IkFadeDuration);
                     }
                 }
                 
@@ -195,12 +187,12 @@ namespace Baku.VMagicMirror.WordToMotion
                 if (_previewUseIkFade)
                 {
                     _fingerController.FadeOutWeight(IkFadeDuration);
-                    _ikWeightCrossFade.FadeOutArmIkWeights(IkFadeDuration);
+                    _ikWeightCrossFade.SetUpperBodyIkWeight(0f, IkFadeDuration);
                 }
                 else
                 {
                     _fingerController.FadeInWeight(IkFadeDuration);
-                    _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
+                    _ikWeightCrossFade.SetUpperBodyIkWeight(1f, IkFadeDuration);
                 }
             }
             
@@ -233,7 +225,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 player.Stop();
             }
             _fingerController.FadeInWeight(0f);
-            _ikWeightCrossFade.FadeInArmIkWeightsImmediately();
+            _ikWeightCrossFade.SetUpperBodyIkWeight(1f, 0f);
             _restoreIkOnMotionEnd = false;
         }
 
@@ -246,7 +238,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 if (fadeIkAndFinger)
                 {
                     _fingerController.FadeInWeight(IkFadeDuration);
-                    _ikWeightCrossFade.FadeInArmIkWeights(IkFadeDuration);
+                    _ikWeightCrossFade.SetUpperBodyIkWeight(1f, IkFadeDuration);
                 }
                 _restoreIkOnMotionEnd = false;
             }

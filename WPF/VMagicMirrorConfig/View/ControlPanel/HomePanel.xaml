@@ -163,9 +163,13 @@
                                           />
                             </DockPanel>
 
-                            <CheckBox Margin="10,10,10,6"
+                            <CheckBox Margin="10,10,10,5"
                                       Content="{DynamicResource Home_ActivateOnStartupHeader}"
                                       IsChecked="{Binding ActivateOnStartup}"
+                                      />
+                            <CheckBox Margin="10,5"
+                                      Content="{DynamicResource Home_MinimizeOnLaunch}"
+                                      IsChecked="{Binding MinimizeOnLaunch.Value}"
                                       />
                         </StackPanel>
                     </Border>

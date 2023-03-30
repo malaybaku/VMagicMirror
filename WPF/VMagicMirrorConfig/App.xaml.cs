@@ -13,6 +13,7 @@ namespace Baku.VMagicMirrorConfig
             base.OnStartup(e);
             DispatcherUnhandledException += OnUnhandledExceptionHappened;
             ModelInstaller.Initialize();
+            ModelResolver.Instance.Resolve<PreferenceFileManager>().Load();
         }
 
         protected override void OnExit(ExitEventArgs e)

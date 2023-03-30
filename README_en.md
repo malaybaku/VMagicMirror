@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.0.2
+v3.1.0
 
 * Author: Baxter
-* 2023/Jan/28
+* 2023/Mar/30
 
 The VRM avatar application without any special device.
 
@@ -37,7 +37,7 @@ It will be helpful in the following situations.
 
 [Booth](https://booth.pm/en/items/1272298).
 
-Run on Windows 10.
+Run on Windows 10 and Windows 11.
 
 Please see [Manual](https://malaybaku.github.io/VMagicMirror/) for the detail.
 
@@ -68,7 +68,7 @@ Maintainer's environment is as following.
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
-* [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)
+* [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
 * [Zenject](https://github.com/svermeulen/Extenject) (from Asset Store)
 * SharpDX.DirectInput 4.2.0

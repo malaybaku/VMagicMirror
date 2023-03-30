@@ -7,15 +7,20 @@ namespace Baku.VMagicMirrorConfig
 {
     class PreferenceFileManager
     {
-        public PreferenceFileManager() : this(ModelResolver.Instance.Resolve<HotKeySettingModel>())
+        public PreferenceFileManager() : this(
+            ModelResolver.Instance.Resolve<PreferenceSettingModel>(),
+            ModelResolver.Instance.Resolve<HotKeySettingModel>()
+            )
         {
         }
 
-        public PreferenceFileManager(HotKeySettingModel hotKeySetting)
+        public PreferenceFileManager(PreferenceSettingModel preferenceSetting, HotKeySettingModel hotKeySetting)
         {
+            _preferenceSetting = preferenceSetting;
             _hotKeySetting = hotKeySetting;
         }
 
+        private readonly PreferenceSettingModel _preferenceSetting;
         private readonly HotKeySettingModel _hotKeySetting;
 
         public void Save()
@@ -23,6 +28,7 @@ namespace Baku.VMagicMirrorConfig
             var data = new PreferenceData()
             {
                 HotKeySetting = _hotKeySetting.Save(),
+                MinimizeOnLaunch = _preferenceSetting.MinimizeOnLaunch.Value,
             };
             SaveInternal(data);
         }
@@ -31,6 +37,7 @@ namespace Baku.VMagicMirrorConfig
         {
             var data = LoadInternal();
             _hotKeySetting.Load(data.HotKeySetting);
+            _preferenceSetting.MinimizeOnLaunch.Value = data.MinimizeOnLaunch;
         }
 
         public void DeleteSaveFile()

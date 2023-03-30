@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3b97cb74fb75545a07d19ee8d25ad5, type: 3}
   m_Name: BuiltInClips
   m_EditorClassIdentifier: 
-  defaultAnimatorController: {fileID: 9100000, guid: 8274142a1807f5848a5dd1166db7d615,
+  defaultAnimatorController: {fileID: 22100000, guid: d8613d11002506446a3e727484ddee0a,
     type: 2}
   defaultStandingAnimation: {fileID: 7400000, guid: 66fb8f57b49136c42ab6f7b5b9f1f6dc,
     type: 2}

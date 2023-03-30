@@ -4,6 +4,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
+    //NOTE: 筋肉的には「首が横に振るときはピッチを下げるべき」みたいな解釈もあるけど一旦やらない
     public class FaceAttitudeController : MonoBehaviour
     {
         //NOTE: 頭部運動はどう早く見てもせいぜい2hzくらい、と考えつつ、カットオフを妥協して
@@ -37,14 +38,19 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 deadZoneEnterRange = new Vector3(50f, 6f, 6f);
         [SerializeField] private int deadZoneEnterCount = 6;
 
-        private FaceTracker _faceTracker = null;
+        private FaceTracker _faceTracker;
+        private GameInputBodyMotionController _gameInputBodyMotionController;
 
         public event Action<Vector3> ImageBaseFaceRotationUpdated;
 
         [Inject]
-        public void Initialize(FaceTracker faceTracker, IVRMLoadable vrmLoadable)
+        public void Initialize(
+            FaceTracker faceTracker,
+            GameInputBodyMotionController gameInputBodyMotionController,
+            IVRMLoadable vrmLoadable)
         {
             _faceTracker = faceTracker;
+            _gameInputBodyMotionController = gameInputBodyMotionController;
 
             vrmLoadable.VrmLoaded += info =>
             {
@@ -98,9 +104,8 @@ namespace Baku.VMagicMirror
                 ? GetHighPowerModeEulerAngle(_faceTracker.CurrentAnalyzer.Result, facePartsPitchYawFactor)
                 : GetLowPowerModeEulerAngle(_faceTracker.CurrentAnalyzer.Result, facePartsPitchYawFactor);
          
-            var target = Mul(rawTarget, headEulerAnglesFactor);
+            var target = Vector3.Scale(rawTarget, headEulerAnglesFactor);
 
-            float yawBefore = _anglesFilter.Output.y;
             var rotationAdjusted = _anglesFilter.Update(target);
             CheckDeadZone(rotationAdjusted - target);
             UpdateCutOffFrequency();
@@ -191,7 +196,7 @@ namespace Baku.VMagicMirror
         
         private void ApplyRotationToHeadBone(Vector3 rotationEuler)
         {
-            var rot = Quaternion.Euler(rotationEuler);
+            var rot = _gameInputBodyMotionController.LookAroundRotation * Quaternion.Euler(rotationEuler);
             
             //特に首と頭を一括で回すにあたって、コーナーケースを安全にするため以下のアプローチを取る
             // - 一旦今の回転値を混ぜて、
@@ -262,14 +267,6 @@ namespace Baku.VMagicMirror
                 faceAnalyzeResult.RollRad * Mathf.Rad2Deg
             );
         }
-        
-        //NOTE: 筋肉的には「首が横に振るときはピッチを下げるべき」みたいな解釈もあるけど一旦やらない
-
-        private static Vector3 Mul(Vector3 left, Vector3 right) => new Vector3(
-            left.x * right.x,
-            left.y * right.y,
-            left.z * right.z
-        );
     }
 }
 

@@ -21,14 +21,14 @@ namespace Baku.VMagicMirror
 
         //ほぼ全ての環境でアップサンプリングになる
         private const int SampleRate = 48000;
-        //4byteで(2ch平均で)1サンプルなので、コレで24000サンプル = 0.5secぶん
+        //byte[4] = short[2] = float[2] = 1サンプルなため、コレで24000サンプル = 0.5secぶん
         private const int BufferLength = 96000;
         private WaveInEvent _waveIn = null;
         private string _deviceName = "";
         public override string DeviceName => _deviceName;
 
         private int _processBufferIndex = 0;
-        private readonly float[] _processBuffer = new float[1024];
+        private readonly float[] _processBuffer = new float[2048];
 
         //NOTE: 1秒分のリングバッファにしたうえで音に対するズレは許容する
         private readonly object _bufferLock = new object();
@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            int byteLen = 0;
+            var byteLen = 0;
             lock (_bufferLock)
             {
                 byteLen = GetDataLength(BufferLength, _readIndex, _writeIndex);
@@ -141,7 +141,7 @@ namespace Baku.VMagicMirror
             }
             
             StopRecording();
-            int deviceNumber = FindDeviceNumber(microphoneName);
+            var deviceNumber = FindDeviceNumber(microphoneName);
             if (deviceNumber < 0)
             {
                 LogOutput.Instance.Write("Microphone with specified name was not detected: " + microphoneName);
@@ -218,18 +218,19 @@ namespace Baku.VMagicMirror
         private void ReadBuffer(int length)
         {
             //4byte -> 1sampleに変化させつつ読んでいく。lengthは4の倍数な前提であることに注意
-            for (int i = 0; i < length; i += 4)
+            for (var i = 0; i < length; i += 4)
             {
                 float c1 = BitConverter.ToInt16(_bufferOnRead, i);
                 float c2 = BitConverter.ToInt16(_bufferOnRead, i + 2);
 
-                _processBuffer[_processBufferIndex] = ShortToSingle * 0.5f * (c1 + c2);
-                _processBufferIndex++;
+                _processBuffer[_processBufferIndex] = ShortToSingle * c1;
+                _processBuffer[_processBufferIndex + 1] = ShortToSingle * c2;
+                _processBufferIndex += 2;
                 if (_processBufferIndex >= _processBuffer.Length)
                 {
                     ApplySensitivityToProcessBuffer(_processBuffer);
                     UpdateVolumeLevelAndSendIfNeeded(_processBuffer);
-                    OVRLipSync.ProcessFrame(Context, _processBuffer, Frame);
+                    OVRLipSync.ProcessFrame(Context, _processBuffer, Frame, true);
                     _processBufferIndex = 0;
                 }
             }
@@ -237,8 +238,8 @@ namespace Baku.VMagicMirror
         
         private static int FindDeviceNumber(string microphoneName)
         {
-            int count = WaveInEvent.DeviceCount;
-            for (int i = 0; i < count; i++)
+            var count = WaveInEvent.DeviceCount;
+            for (var i = 0; i < count; i++)
             {
                 if (WaveInEvent.GetCapabilities(i).ProductName == microphoneName)
                 {

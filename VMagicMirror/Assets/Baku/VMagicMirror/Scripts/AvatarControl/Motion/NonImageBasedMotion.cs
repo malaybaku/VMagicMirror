@@ -12,6 +12,7 @@ namespace Baku.VMagicMirror
     public class NonImageBasedMotion : MonoBehaviour, IEyeRotationRequestSource
     {
         private FaceControlConfiguration _faceConfig;
+        private GameInputBodyMotionController _gameInputBodyMotionController;
         private VoiceOnOffParser _voiceOnOffParser = null;
 
         //NOTE: 首の動きがeaseされるのを踏まえて気持ちゆっくりめ
@@ -42,10 +43,12 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
             FaceTracker faceTracker,
+            GameInputBodyMotionController gameInputBodyMotionController,
             VmmLipSyncContextBase lipSyncContext
             )
         {
             _faceTracker = faceTracker;
+            _gameInputBodyMotionController = gameInputBodyMotionController;
             
             receiver.AssignCommandHandler(
                 VmmCommands.EnableVoiceBasedMotion,
@@ -225,7 +228,7 @@ namespace Baku.VMagicMirror
             _activeJitter.PositionFactor = activeFactors.y;
             
             CalculateAngles();
-            _motionApplier.Apply(HeadRotation);
+            _motionApplier.Apply(_gameInputBodyMotionController.LookAroundRotation * HeadRotation);
         }
         
         private void CalculateAngles()

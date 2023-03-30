@@ -34,39 +34,29 @@ Setting Window consists of 8 tabs.
 |==================================|==========================================================|
 
 
+#### Advanced Features 
+{: .doc-sec2 }
+
+Followings are advanced features of VMagicMirror available
+
+|----------------------------------+-------------------------------------------------|
+| Feature                          | What you can                                 |
+|:--------------------------------:|:------------------------------------------------|
+| [External Tracker App](./external_tracker)      | High quality tracking with iOS app (iFacialMocap) |
+| [Accessory](./accessory)                    | Load image / 3D model and attach to the avatar  |
+| [Hand Tracking](./hand_tracking)            | Web camera based hand tracking       |
+| [Setting File Management](./setting_files)  | Setting file save/load features      |
+| [Game Motion Input](./game_input)                  | Game(FPS)-like motion by your avatar |
+|==================================|=================================================|
+
 #### External Tracker
 {: .doc-sec2 }
 
-This feature supports external application to move avatar with high precision.
+`External Tracker App`, `Accessory` and `Hand Tracking` features are available in the specific tab in control panel.
 
-Current version (v2.0.0) supports iOS app `iFacialMocap`.
+`Setting File Management` is mainly about feature available in `Home` tab.
 
-Please see the detail at [External Tracker App](./external_tracker) page.
-
-#### Accessory
-{: .doc-sec2 }
-
-v2.0.0 or later version supports accessory feature, which can load png image and some 3D models into the application.
-
-Please see detail in [Accessory](./accessory) page.
-
-
-#### Hand Tracking
-{: .doc-sec2 }
-
-v1.8.0 and later version supports `Hand Tracking` tab in control panel, to support webcam based hand tracking.
-
-Please see more in [Hand Tracking](./hand_tracking) page.
-
-
-#### Setting File Management
-
-VMagicMirror v1.6.2 and later version supports setting file save and load internally.
-
-Detail is in [Setting Files](./setting_files) page.
-
-This page refers both control panel `Home` tab functions and setting window `File` tab.
-
+`Game Input` is new feature from VMagicMirro v3.1.0. Turn on the feature by opening `Streaming` tab > `Motion` > `Body Motion Style` and select `Game Input`.
 
 #### Setting Window: Reset Settings to default
 {: .doc-sec2 }

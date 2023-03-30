@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.0.2
+v3.1.0
 
 * 作成: 獏星(ばくすたー)
-* 2023/01/28
+* 2023/03/30
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -35,7 +35,7 @@ WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリ�
 
 [Booth](https://booth.pm/ja/items/1272298)から取得可能です。
 
-Windows 10環境でお使いいただけます。
+Windows 10/11環境でお使いいただけます。
 
 操作方法については[マニュアル](https://malaybaku.github.io/VMagicMirror/)をご覧下さい。
 
@@ -67,7 +67,7 @@ Unity 2020.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フ
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
-* [OVRLipSync v1.28.0](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/1.28.0/)
+* [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
 * [Zenject](https://github.com/svermeulen/Extenject) (アセットストアから)
 * SharpDX.DirectInput 4.2.0

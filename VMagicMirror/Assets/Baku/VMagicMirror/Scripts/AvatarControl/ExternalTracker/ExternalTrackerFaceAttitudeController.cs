@@ -32,13 +32,19 @@ namespace Baku.VMagicMirror
         private bool _hasNeck = false;
         private Transform _neck = null;
         private Transform _head = null;
-        private ExternalTrackerDataSource _externalTracker = null;
+        private ExternalTrackerDataSource _externalTracker;
+        private GameInputBodyMotionController _gameInputBodyMotionController;
         private Quaternion _prevRotation = Quaternion.identity;
         
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, ExternalTrackerDataSource externalTracker)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            GameInputBodyMotionController gameInputBodyMotionController,
+            ExternalTrackerDataSource externalTracker
+            )
         {
             _externalTracker = externalTracker;
+            _gameInputBodyMotionController = gameInputBodyMotionController;
 
             vrmLoadable.VrmLoaded += info =>
             {
@@ -69,7 +75,12 @@ namespace Baku.VMagicMirror
             rawAngle = Mathf.Repeat(rawAngle + 180f, 360f) - 180f;
             
             //角度を0側に寄せる: 動きが激しすぎるとアレなので
-            var rot = Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
+            var gameInputRot = _gameInputBodyMotionController.LookAroundRotation;
+            //ややこしいが、合成した回転を鏡像反転することを考慮して事前に反転している
+            gameInputRot.y *= -1f;
+            gameInputRot.z *= -1f;
+            
+            var rot = gameInputRot * Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
             
             //ピッチだけ追加で絞る
             var pitchCheck = rot * Vector3.forward;

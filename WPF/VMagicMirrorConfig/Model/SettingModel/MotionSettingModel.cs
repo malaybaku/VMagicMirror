@@ -1,9 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using Baku.VMagicMirrorConfig.ViewModel;
+using Newtonsoft.Json;
 using System;
-using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
 {
+    public enum BodyMotionBaseMode
+    {
+        Default,
+        NoHandTracking, //常に手下げモード (Always Hand Down)のこと
+        GameInputLocomotion,
+    }
+
     class MotionSettingModel : SettingModelBase<MotionSetting>
     {
         static class LookAtStyles
@@ -28,6 +35,9 @@ namespace Baku.VMagicMirrorConfig
             //NOTE: 長大になってるのはプロパティの初期化仕様によるもの。半手動でテキスト変換して作ってます
 
             EnableNoHandTrackMode = new RProperty<bool>(setting.EnableNoHandTrackMode, v => SendMessage(factory.EnableNoHandTrackMode(v)));
+            EnableGameInputLocomotionMode = new RProperty<bool>(
+                setting.EnableGameInputLocomotionMode, v => SendMessage(factory.EnableGameInputLocomotionMode(v))
+                );
             EnableTwistBodyMotion = new RProperty<bool>(setting.EnableTwistBodyMotion, v => SendMessage(factory.EnableTwistBodyMotion(v)));
             EnableCustomHandDownPose = new RProperty<bool>(setting.EnableCustomHandDownPose, v => SendMessage(factory.EnableCustomHandDownPose(v)));
             CustomHandDownPose = new RProperty<string>(setting.CustomHandDownPose, v => SendMessage(factory.SetHandDownModeCustomPose(v)));
@@ -156,6 +166,7 @@ namespace Baku.VMagicMirrorConfig
         #region Full Body 
 
         public RProperty<bool> EnableNoHandTrackMode { get; }
+        public RProperty<bool> EnableGameInputLocomotionMode { get; }
 
         public RProperty<bool> EnableTwistBodyMotion { get; }
 
@@ -346,6 +357,7 @@ namespace Baku.VMagicMirrorConfig
         {
             var setting = MotionSetting.Default;
             EnableNoHandTrackMode.Value = setting.EnableNoHandTrackMode;
+            EnableGameInputLocomotionMode.Value = setting.EnableGameInputLocomotionMode;
             EnableTwistBodyMotion.Value = setting.EnableTwistBodyMotion;
             EnableCustomHandDownPose.Value = setting.EnableCustomHandDownPose;
             ResetFaceBasicSetting();
@@ -393,6 +405,5 @@ namespace Baku.VMagicMirrorConfig
                 SendMessage(MessageFactory.Instance.SetCalibrateFaceData(CalibrateFaceData.Value));
             }
         }
-
     }
 }

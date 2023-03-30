@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,7 @@ namespace Baku.VMagicMirrorConfig
 
         private ProgressDialogController? _mainProgress = null;
         private ProgressDialogController? _settingProgress = null;
+        private ProgressDialogController? _gameInputProgress = null;
         private TaskCompletionSource<bool>? _tcsProgress = null;
 
         /// <summary>
@@ -33,6 +35,8 @@ namespace Baku.VMagicMirrorConfig
             }
 
             var settingWindow = View.SettingWindow.CurrentWindow;
+            var gameInputWindow = View.GameInputKeyAssignWindow.CurrentWindow;
+
             using var ctsForMultiWindow = new CancellationTokenSource();
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ctsForMultiWindow.Token, cancellationToken);
 
@@ -44,22 +48,38 @@ namespace Baku.VMagicMirrorConfig
                     settings: SettingsForOkDialog(cts.Token)
                     );
 
-                if (settingWindow != null)
-                {
-                    await Task.WhenAny(
-                        mainWindowTask,
-                        settingWindow.ShowMessageAsync(
-                            title,
-                            content,
-                            settings: SettingsForOkDialog(cts.Token)
-                        )
-                    );
-                }
-                else
+                if (settingWindow == null && gameInputWindow == null)
                 {
                     await mainWindowTask;
                 }
-                //どっちかのダイアログが閉じたらもう片方も閉じる
+                else
+                {
+                    var tasks = new List<Task<MessageDialogResult>>(3)
+                    {
+                        mainWindowTask,
+                    };
+
+                    if (settingWindow != null)
+                    {
+                        tasks.Add(settingWindow.ShowMessageAsync(
+                            title,
+                            content,
+                            settings: SettingsForOkDialog(cts.Token)
+                        ));
+                    }
+
+                    if (gameInputWindow != null)
+                    {
+                        tasks.Add(gameInputWindow.ShowMessageAsync(
+                            title,
+                            content,
+                            settings: SettingsForOkDialog(cts.Token)
+                        ));
+                    }
+
+                    await Task.WhenAny(tasks);
+                }
+                //ダイアログはどれか1つが閉じたら全部閉じる
                 ctsForMultiWindow.Cancel();
                 return true;
             }
@@ -72,25 +92,42 @@ namespace Baku.VMagicMirrorConfig
                     SettingsForOkCancel(cts.Token)
                     );
 
-                if (settingWindow != null)
+                if (settingWindow == null && gameInputWindow == null)
                 {
-                    var firstTask = await Task.WhenAny(
+                    var result = await mainWindowTask;
+                    return result == MessageDialogResult.Affirmative;
+                }
+                else
+                {
+                    var tasks = new List<Task<MessageDialogResult>>(3)
+                    {
                         mainWindowTask,
-                        settingWindow.ShowMessageAsync(
+                    };
+
+                    if (settingWindow != null)
+                    {
+                        tasks.Add(settingWindow.ShowMessageAsync(
                             title,
                             content,
                             MessageDialogStyle.AffirmativeAndNegative,
                             SettingsForOkCancel(cts.Token)
-                        )
-                    );
-                    //どっちかのダイアログが閉じたらもう片方も閉じる
+                        ));
+                    }
+
+                    if (gameInputWindow != null)
+                    {
+                        tasks.Add(gameInputWindow.ShowMessageAsync(
+                            title,
+                            content,
+                            MessageDialogStyle.AffirmativeAndNegative,
+                            SettingsForOkCancel(cts.Token)
+                        ));
+                    }
+
+                    var firstTask = await Task.WhenAny(tasks);
+                    //1つのダイアログが閉じたら他も閉じる
                     ctsForMultiWindow.Cancel();
                     return firstTask.Result == MessageDialogResult.Affirmative;
-                }
-                else
-                {
-                    var result = await mainWindowTask;
-                    return result == MessageDialogResult.Affirmative;
                 }
             }
             else if (style == MessageBoxStyle.None)
@@ -105,9 +142,18 @@ namespace Baku.VMagicMirrorConfig
                 if (settingWindow != null)
                 {
                     _settingProgress = await settingWindow.ShowProgressAsync(
-                            title,
-                            content,
-                            settings: SettingsForProgress()
+                        title,
+                        content,
+                        settings: SettingsForProgress()
+                        );
+                }
+
+                if (gameInputWindow != null)
+                {
+                    _gameInputProgress = await settingWindow.ShowProgressAsync(
+                        title,
+                        content,
+                        settings: SettingsForProgress()
                         );
                 }
 
@@ -137,10 +183,16 @@ namespace Baku.VMagicMirrorConfig
                 await _settingProgress.CloseAsync();
             }
 
+            if (_gameInputProgress != null)
+            {
+                await _gameInputProgress.CloseAsync();
+            }
+
             _tcsProgress?.SetResult(true);
 
             _mainProgress = null;
             _settingProgress = null;
+            _gameInputProgress = null;
             _tcsProgress = null;
         }
 

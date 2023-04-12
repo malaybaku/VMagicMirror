@@ -532,7 +532,8 @@ Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
     <sys:String x:Key="GameInputKeyAssign_Keyboard">Keyboard / Mouse</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">Use Keyboard / Mouse</sys:String>
     
-    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">Always Run</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">Run by Default</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun_Note">*When enabled, "Run" button works as "Walk"</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">Always Aim</sys:String>
 
     <sys:String x:Key="GameInputKeyAssign_Keyboard_Section">Keyboard:</sys:String>

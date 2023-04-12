@@ -536,7 +536,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard">キーボード・マウス</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">キーボード・マウス入力を使用</sys:String>
     
-    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">移動は常にダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">移動はデフォルトでダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun_Note">※オンの場合、かわりに「ダッシュ」ボタンで歩くようになります</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">つねに銃を構える</sys:String>
 
     <sys:String x:Key="GameInputKeyAssign_Action_None">(なし)</sys:String>

@@ -112,8 +112,11 @@
                                     />
                     </StackPanel>
                     <CheckBox Content="{DynamicResource GameInputKeyAssign_Option_AlwaysRun}"
-                              Margin="10"
+                              Margin="10,10,10,5"
                               IsChecked="{Binding AlwaysRun.Value, Mode=TwoWay}"
+                              />
+                    <TextBlock Text="{DynamicResource GameInputKeyAssign_Option_AlwaysRun_Note}"
+                              Margin="20,0,25,10"
                               />
                 </StackPanel>
             </Border>

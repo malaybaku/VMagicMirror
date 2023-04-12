@@ -22,7 +22,8 @@ namespace Baku.VMagicMirror.GameInput
         /// </summary>
         IObservable<Vector2> LookAroundInput { get; }
         IObservable<bool> IsCrouching { get; }
-        IObservable<bool> IsRunning { get; }
+        //NOTE: I/Fの実装ではデフォルトが歩きか走りか考慮しないでOKで、切り替え指示が出てる…ということのみを通知する
+        IObservable<bool> IsRunWalkToggleActive { get; }
         IObservable<bool> GunFire { get; }
 
         IObservable<Unit> Jump { get; }

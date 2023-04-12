@@ -44,8 +44,7 @@ namespace Baku.VMagicMirror
         private Vector2 _rawMoveInput;
         private Vector2 _rawLookAroundInput;
         private bool _isCrouching;
-        //NOTE: alwaysRun == trueのときはalwaysRunのほうが優先
-        private bool _isRunning;
+        private bool _isRunWalkToggleActive;
         private bool _gunFire;
         private Vector2 _moveInput;
         private Vector2 _lookAroundInput;
@@ -109,9 +108,9 @@ namespace Baku.VMagicMirror
                 .AddTo(this);
 
             Observable.Merge(
-                _sourceSet.Sources.Select(s => s.IsRunning)
+                _sourceSet.Sources.Select(s => s.IsRunWalkToggleActive)
                 )
-                .Subscribe(v => _isRunning = v)
+                .Subscribe(v => _isRunWalkToggleActive = v)
                 .AddTo(this);
             
             Observable.Merge(
@@ -223,7 +222,11 @@ namespace Baku.VMagicMirror
             _animator.SetFloat(MoveRight, _moveInput.x);
             _animator.SetFloat(MoveForward, _moveInput.y);
             _animator.SetBool(Crouch, _isCrouching);
-            _animator.SetBool(Run, _alwaysRun || _isRunning);
+            //NOTE: XORでも書けるが読み味がどっちもどっちなので…要は以下どっちかなら走るという事
+            // - 基本歩き + 「ダッシュ」ボタンがオン
+            // - 基本ダッシュ + 「歩く」ボタンがオフ
+            _animator.SetBool(Run, 
+                (!_alwaysRun && _isRunWalkToggleActive) || (_alwaysRun && !_isRunWalkToggleActive));
             _animator.SetBool(GunFire, _gunFire);
 
             _rootYaw = Mathf.SmoothDamp(

@@ -227,24 +227,6 @@ namespace Baku.VMagicMirrorConfig
             KeyboardKeyAssignUpdated?.Invoke(this, new KeyboardKeyAssignUpdateEventArgs(KeyboardKeyAssign));
         }
 
-        private readonly List<string> _validatedCodesCache = new();
-        public string ValidateKeyCodes(string keyCodes)
-        {
-            _validatedCodesCache.Clear();
-            
-            var rawCodes = keyCodes.Split(',');
-            foreach (var code in rawCodes)
-            {
-                var res = GameInputKeyCodeValidator.TryValidate(code, out var validatedCode);
-                if (res != KeyCodeValidateResult.Failed)
-                {
-                    _validatedCodesCache.Add(validatedCode);
-                }
-            }
-
-            return string.Join(",", _validatedCodesCache);
-        }
-
         public void SetKeyAction(GameInputButtonAction action, string key)
         {
             var current = action switch

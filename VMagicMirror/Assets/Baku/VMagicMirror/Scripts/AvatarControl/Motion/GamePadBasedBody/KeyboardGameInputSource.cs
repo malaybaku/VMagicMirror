@@ -191,6 +191,7 @@ namespace Baku.VMagicMirror.GameInput
             try
             {
                 var setting = JsonUtility.FromJson<KeyboardGameInputKeyAssign>(json);
+                setting.OverwriteKeyCodeIntToKeyName();
                 ApplyKeyAssign(setting);
             }
             catch (Exception ex)
@@ -230,21 +231,34 @@ namespace Baku.VMagicMirror.GameInput
 
         private void OnKeyDown(string key)
         {
-            if (_useShiftRun && 
-                (key == nameof(Keys.ShiftKey) || key == nameof(Keys.LShiftKey) || key == nameof(Keys.RShiftKey))
-                )
+            if ((_useShiftRun && (key == nameof(Keys.ShiftKey) || key == nameof(Keys.LShiftKey) || key == nameof(Keys.RShiftKey))) || 
+                (_keyAssign.RunKeyCode == key))
             {
                 _isRunning.Value = true;
-                //shiftはコレ以外の入力に使ってないはずなので無視
-                return;
             }
 
-            if (_useSpaceJump && key == nameof(Keys.Space))
+            if (_keyAssign.CrouchKeyCode == key)
+            {
+                _isCrouching.Value = true;
+            }
+            
+            if (_keyAssign.TriggerKeyCode == key)
+            {
+                _gunFire.Value = true;
+            }
+
+            if ((_useSpaceJump && key == nameof(Keys.Space)) || 
+                _keyAssign.JumpKeyCode == key)
             {
                 //Spaceもこの用途でのみ使うはず
                 _jump.OnNext(Unit.Default);
-                return;
             }
+
+            if (_keyAssign.PunchKeyCode == key)
+            {
+                _punch.OnNext(Unit.Default);
+            }
+
 
             if (_useWasdMove)
             {
@@ -268,12 +282,20 @@ namespace Baku.VMagicMirror.GameInput
 
         private void OnKeyUp(string key)
         {
-            if (_useShiftRun && 
-                (key == nameof(Keys.ShiftKey) || key == nameof(Keys.LShiftKey) || key == nameof(Keys.RShiftKey))
-               )
+            if ((_useShiftRun && (key == nameof(Keys.ShiftKey) || key == nameof(Keys.LShiftKey) || key == nameof(Keys.RShiftKey))) || 
+                (_keyAssign.RunKeyCode == key))
             {
                 _isRunning.Value = false;
-                return;
+            }
+
+            if (_keyAssign.CrouchKeyCode == key)
+            {
+                _isCrouching.Value = false;
+            }
+            
+            if (_keyAssign.TriggerKeyCode == key)
+            {
+                _gunFire.Value = false;
             }
 
             if (_useWasdMove)

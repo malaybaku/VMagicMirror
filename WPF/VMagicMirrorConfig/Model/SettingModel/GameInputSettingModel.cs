@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -226,9 +227,53 @@ namespace Baku.VMagicMirrorConfig
             KeyboardKeyAssignUpdated?.Invoke(this, new KeyboardKeyAssignUpdateEventArgs(KeyboardKeyAssign));
         }
 
-        public void AssignKeyAction(GameInputButtonAction action, string keyCode)
+        private readonly List<string> _validatedCodesCache = new();
+        public string ValidateKeyCodes(string keyCodes)
         {
-            //NOTE: キーボード用のキーアサインはUIが未整備なので一旦無しにしてる。本当は実装がほしい
+            _validatedCodesCache.Clear();
+            
+            var rawCodes = keyCodes.Split(',');
+            foreach (var code in rawCodes)
+            {
+                var res = GameInputKeyCodeValidator.TryValidate(code, out var validatedCode);
+                if (res != KeyCodeValidateResult.Failed)
+                {
+                    _validatedCodesCache.Add(validatedCode);
+                }
+            }
+
+            return string.Join(",", _validatedCodesCache);
+        }
+
+        public void SetKeyAction(GameInputButtonAction action, string key)
+        {
+            var current = action switch
+            {
+                GameInputButtonAction.Jump => KeyboardKeyAssign.JumpKeyCode,
+                GameInputButtonAction.Crouch => KeyboardKeyAssign.CrouchKeyCode,
+                GameInputButtonAction.Run => KeyboardKeyAssign.RunKeyCode,
+                GameInputButtonAction.Trigger => KeyboardKeyAssign.TriggerKeyCode,
+                GameInputButtonAction.Punch => KeyboardKeyAssign.PunchKeyCode,
+                _ => "",
+            };
+
+            if (key == current)
+            {
+                return;
+            }
+
+            switch (action)
+            {
+                case GameInputButtonAction.Jump: KeyboardKeyAssign.JumpKeyCode = key; break;
+                case GameInputButtonAction.Crouch: KeyboardKeyAssign.CrouchKeyCode = key; break;
+                case GameInputButtonAction.Run: KeyboardKeyAssign.RunKeyCode = key; break;
+                case GameInputButtonAction.Trigger: KeyboardKeyAssign.TriggerKeyCode = key; break;
+                case GameInputButtonAction.Punch: KeyboardKeyAssign.PunchKeyCode = key; break;
+                default: return;
+            }
+
+            SendKeyboardKeyAssign();
+            KeyboardKeyAssignUpdated?.Invoke(this, new KeyboardKeyAssignUpdateEventArgs(KeyboardKeyAssign));
         }
 
         public void ResetToDefault() => ApplySetting(GameInputSetting.Default);
@@ -289,7 +334,7 @@ namespace Baku.VMagicMirrorConfig
             using var writer = new StringWriter(sb);
             using var jsonWriter = new JsonTextWriter(writer);
 
-            serializer.Serialize(jsonWriter, KeyboardKeyAssign);
+            serializer.Serialize(jsonWriter, KeyboardKeyAssign.GetKeyCodeTranslatedData());
             var json = sb.ToString();
             SendMessage(MessageFactory.Instance.SetKeyboardGameInputKeyAssign(json));
         }

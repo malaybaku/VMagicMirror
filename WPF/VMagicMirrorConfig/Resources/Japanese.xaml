@@ -555,6 +555,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">矢印キーで移動</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Shiftキーでダッシュ</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Spaceキーでジャンプ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_AdvancedAssign">その他のキーアサイン:</sys:String>
 
     <sys:String x:Key="GameInputKeyAssign_Mouse_Section">マウス:</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">マウス移動で見回し</sys:String>

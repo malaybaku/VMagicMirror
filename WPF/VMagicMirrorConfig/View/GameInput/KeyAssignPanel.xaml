@@ -11,7 +11,7 @@
              MinWidth="600"
              d:DataContext="{d:DesignInstance vm:KeyAssignViewModel}"
              d:DesignWidth="700"
-             d:DesignHeight="1100"
+             d:DesignHeight="1500"
              AllowDrop="True"
              >
     <UserControl.Resources>
@@ -345,6 +345,34 @@
                               IsChecked="{Binding UseSpaceJump.Value, Mode=TwoWay}"
                               IsEnabled="{Binding KeyboardEnabled.Value}"
                               />
+
+                    <TextBlock Text="{DynamicResource GameInputKeyAssign_Keyboard_AdvancedAssign}"
+                               Margin="25,15,25,5"
+                               />
+
+                    <ItemsControl ItemsSource="{Binding KeyAssigns}"
+                                  Margin="45,5"
+                                  HorizontalAlignment="Left">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:GameInputKeyAssingInputViewModel}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="240"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Label.Value}" />
+
+                                    <TextBox Grid.Column="1"
+                                             Text="{Binding Key.Value}"
+                                             >
+                                        <i:Interaction.Behaviors>
+                                            <view:TextKeyDownBehavior KeyDownCommand="{Binding KeyDownCommand}" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBox>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
                     <TextBlock Text="{DynamicResource GameInputKeyAssign_Mouse_Section}"
                                Margin="10,15,5,5"

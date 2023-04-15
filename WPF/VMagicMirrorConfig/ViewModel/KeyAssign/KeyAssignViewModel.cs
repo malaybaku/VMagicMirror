@@ -66,7 +66,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => UrlNavigate.Open(LocalizedString.GetString("URL_docs_game_input"))
                 );
 
-            KeyAssigns = Array.Empty<GameInputKeyAssingInputViewModel>();
+            KeyAssigns = Array.Empty<GameInputKeyAssignItemViewModel>();
 
             if (!IsInDesignMode)
             {
@@ -91,7 +91,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                         (GameInputButtonAction.Punch, _model.KeyboardKeyAssign.PunchKeyCode),
                     }.Select(pair =>
                     {
-                        var vm = new GameInputKeyAssingInputViewModel(pair.action, pair.keyCode);
+                        var vm = new GameInputKeyAssignItemViewModel(pair.action, pair.keyCode);
                         vm.RegisteredKeyChanged += key => _model.SetKeyAction(pair.action, key);
                         return vm;
                     })
@@ -142,7 +142,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand LoadSettingFileCommand { get; }
         public ActionCommand OpenDocUrlCommand { get; }
 
-        public GameInputKeyAssingInputViewModel[] KeyAssigns { get; }
+        public GameInputKeyAssignItemViewModel[] KeyAssigns { get; }
 
         public GameInputStickActionItemViewModel[] StickActions => GameInputStickActionItemViewModel.AvailableItems;
         public GameInputButtonActionItemViewModel[] ButtonActions => GameInputButtonActionItemViewModel.AvailableItems;

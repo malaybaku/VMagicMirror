@@ -354,22 +354,8 @@
                                   Margin="45,5"
                                   HorizontalAlignment="Left">
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:GameInputKeyAssingInputViewModel}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120"/>
-                                        <ColumnDefinition Width="240"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding Label.Value}" />
-
-                                    <TextBox Grid.Column="1"
-                                             Text="{Binding Key.Value}"
-                                             >
-                                        <i:Interaction.Behaviors>
-                                            <view:TextKeyDownBehavior KeyDownCommand="{Binding KeyDownCommand}" />
-                                        </i:Interaction.Behaviors>
-                                    </TextBox>
-                                </Grid>
+                            <DataTemplate DataType="{x:Type vm:GameInputKeyAssignItemViewModel}">
+                                <view:GameInputKeyAssignItem />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

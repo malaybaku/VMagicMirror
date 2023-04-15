@@ -23,7 +23,7 @@
                 HorizontalContentAlignment="Center"
                 >
             <i:Interaction.Behaviors>
-                <view:TextKeyDownBehavior KeyDownCommand="{Binding KeyDownCommand}" />
+                <view:TextPreviewKeyDownBehavior KeyDownCommand="{Binding KeyDownCommand}" />
             </i:Interaction.Behaviors>
         </TextBox>
         <TextBlock Grid.Column="1"

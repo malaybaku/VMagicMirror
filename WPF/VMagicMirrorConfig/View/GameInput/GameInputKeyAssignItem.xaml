@@ -20,15 +20,18 @@
 
         <TextBox Grid.Column="1"
                 Text="{Binding RegisteredKeyInput.Value, UpdateSourceTrigger=PropertyChanged}"
+                 HorizontalContentAlignment="Center"
+                 md:HintAssist.Hint="Press Key..."
                 >
             <i:Interaction.Behaviors>
                 <view:TextKeyDownBehavior KeyDownCommand="{Binding KeyDownCommand}" />
             </i:Interaction.Behaviors>
         </TextBox>
         <TextBlock Grid.Column="1"
+                   HorizontalAlignment="Center"
                    IsHitTestVisible="False"
-                    Text="{Binding RegisteredKey.Value}"
-                    />
+                   Text="{Binding RegisteredKey.Value}"
+                   />
 
         <Button Grid.Column="2" Style="{StaticResource MaterialDesignFlatButton}" 
                 Width="30" Height="30"  Margin="0" Padding="0"

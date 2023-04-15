@@ -56,10 +56,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            LogOutput.Instance.Write($"key down in game input text, key={key}");
-
             Key? nextKey = key;
-            if (key is Key.None or Key.Delete or Key.Back)
+            if (key is Key.None or Key.Delete or Key.Back or Key.LeftAlt or Key.RightAlt)
             {
                 nextKey = null;
             }
@@ -69,7 +67,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            _key = key;
+            _key = nextKey;
             RegisteredKey.Value = CreateRegisteredKeyString();
             RegisteredKeyChanged?.Invoke(_key?.ToString() ?? "");
         }
@@ -92,7 +90,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return "Num" + ((int)key - (int)Key.NumPad0).ToString();
             }
 
-            return new string(new char[] { KeyToStringUtil.GetCharFromKey(key) });
+            return key.ToString().ToUpper();
         }
     }
 }

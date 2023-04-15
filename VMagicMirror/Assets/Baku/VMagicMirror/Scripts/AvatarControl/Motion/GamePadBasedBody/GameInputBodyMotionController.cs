@@ -38,6 +38,7 @@ namespace Baku.VMagicMirror
         private Animator _animator;
         private Transform _vrmRoot;
 
+        private GameInputLocomotionStyle _locomotionStyle = GameInputLocomotionStyle.FirstPerson;
         private bool _alwaysRun = true;
         private bool _bodyMotionActive;
 
@@ -78,6 +79,11 @@ namespace Baku.VMagicMirror
             _receiver.AssignCommandHandler(
                 VmmCommands.EnableAlwaysRunGameInput,
                 command => _alwaysRun = command.ToBoolean()
+                );
+            
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetGameInputLocomotionStyle,
+                command => SetLocomotionStyle(command.ToInt())
                 );
             
             _bodyMotionModeController.MotionMode
@@ -171,8 +177,25 @@ namespace Baku.VMagicMirror
                 }
             }
         }
+
+        private void SetLocomotionStyle(int rawStyleValue)
+        {
+            if (rawStyleValue < (int)GameInputLocomotionStyle.FirstPerson ||
+                rawStyleValue > (int)GameInputLocomotionStyle.SideView2D)
+            {
+                return;
+            }
+
+            var style = (GameInputLocomotionStyle)rawStyleValue;
+            if (_locomotionStyle == style)
+            {
+                return;
+            }
+
+            _locomotionStyle = style;
+        }
         
-        void ResetParameters()
+        private void ResetParameters()
         {
             _animator.SetFloat(MoveRight, 0f);
             _animator.SetFloat(MoveForward, 0f);

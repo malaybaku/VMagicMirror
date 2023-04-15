@@ -1,5 +1,5 @@
 using System;
-using UnityEngine;
+using System.Windows.Forms;
 
 namespace Baku.VMagicMirror.GameInput
 {
@@ -17,17 +17,30 @@ namespace Baku.VMagicMirror.GameInput
         public bool UseShiftRun = true;
         public bool UseSpaceJump = true;
 
-        //NOTE: 初期リリース時点では以下の値は使用せず、boolのフラグで指定できる限定的な処理だけを行う
-
-        public string JumpKeyCode = nameof(KeyCode.Space);
-        //雑記: しれっと書いてるがShiftはLeftShift / RightShiftを区別しない必要があり、意外と面倒
-        public string RunKeyCode = "Shift";
+        //NOTE: ShiftとSpaceは上記のフラグで設定される場合、下記のキーコードで指定しなくても適用されるのがto-be
+        //これは後方互換性、およびShiftキーの取り回しがちょっと面倒=KeysではLShiftとRShiftが別扱いされてるのが理由
+        public string JumpKeyCode = nameof(Keys.Space);
+        public string RunKeyCode = "";
         public string CrouchKeyCode = "";
 
         public string TriggerKeyCode = "";
         public string PunchKeyCode = "";
 
         public static KeyboardGameInputKeyAssign LoadDefault() => new KeyboardGameInputKeyAssign();
+
+        public void OverwriteKeyCodeIntToKeyName()
+        {
+            JumpKeyCode = ParseIntToKeyName(JumpKeyCode);
+            RunKeyCode = ParseIntToKeyName(RunKeyCode);
+            CrouchKeyCode = ParseIntToKeyName(CrouchKeyCode);
+            TriggerKeyCode = ParseIntToKeyName(TriggerKeyCode);
+            PunchKeyCode = ParseIntToKeyName(PunchKeyCode);
+        }
+
+        private static string ParseIntToKeyName(string key) =>
+            string.IsNullOrEmpty(key) ? "" : 
+            int.TryParse(key, out var value) ? ((Keys)value).ToString() : 
+            "";
     }    
 }
 

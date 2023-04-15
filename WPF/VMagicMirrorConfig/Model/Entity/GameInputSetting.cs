@@ -1,6 +1,8 @@
-﻿namespace Baku.VMagicMirrorConfig
-{
+﻿using System;
+using System.Windows.Input;
 
+namespace Baku.VMagicMirrorConfig
+{
     public enum GameInputStickAction
     {
         None,
@@ -92,6 +94,7 @@
         public bool UseShiftRun { get; set; } = true;
         public bool UseSpaceJump { get; set; } = true;
 
+        //NOTE: これらのxxxKeyCodeにはSystem.Windows.Forms.KeyをToStringしたものが入る。カラの場合、アサインが無いことを示す
         public string JumpKeyCode { get; set; } = "Space";
         public string RunKeyCode { get; set; } = "Shift";
         public string CrouchKeyCode { get; set; } = "C";
@@ -100,6 +103,48 @@
         public string PunchKeyCode { get; set; } = "";
 
         public static GameInputKeyboardKeyAssign LoadDefault() => new();
+
+        //Unityに投げつける用に前処理したデータを生成する
+        public GameInputKeyboardKeyAssign GetKeyCodeTranslatedData()
+        {
+            var result = new GameInputKeyboardKeyAssign()
+            {
+                UseMouseLookAround = UseMouseLookAround,
+                LeftClick = LeftClick,
+                RightClick = RightClick,
+                MiddleClick = MiddleClick,
+                UseWasdMove = UseWasdMove,
+                UseArrowKeyMove = UseArrowKeyMove,
+                UseShiftRun = UseShiftRun,
+                UseSpaceJump = UseSpaceJump,
+            };
+
+            result.JumpKeyCode = TranslateKeyCode(JumpKeyCode);
+            result.RunKeyCode = TranslateKeyCode(RunKeyCode);
+            result.CrouchKeyCode = TranslateKeyCode(CrouchKeyCode);
+            result.TriggerKeyCode = TranslateKeyCode(TriggerKeyCode);
+            result.PunchKeyCode = TranslateKeyCode(PunchKeyCode);
+
+            return result;
+        }
+
+        private static string TranslateKeyCode(string wpfKey)
+        {
+            if (string.IsNullOrEmpty(wpfKey))
+            {
+                return "";
+            }
+
+            if (!Enum.TryParse<Key>(wpfKey, out var key))
+            {
+                return "";
+            }
+
+            //渋い気もするが、このkの整数値をテキストで書き込む
+            // -> Unity側はこの整数値をWindows.Forms.Keyとして解釈する
+            var k = KeyInterop.VirtualKeyFromKey(key);
+            return k.ToString();
+        }
     }
 
 

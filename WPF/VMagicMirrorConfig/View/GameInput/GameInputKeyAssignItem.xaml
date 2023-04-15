@@ -19,9 +19,8 @@
         <TextBlock Grid.Column="0" Text="{Binding Label.Value}" />
 
         <TextBox Grid.Column="1"
-                Text="{Binding RegisteredKeyInput.Value, UpdateSourceTrigger=PropertyChanged}"
-                 HorizontalContentAlignment="Center"
-                 md:HintAssist.Hint="Press Key..."
+                Text="{Binding RegisteredKeyInput.Value}"
+                HorizontalContentAlignment="Center"
                 >
             <i:Interaction.Behaviors>
                 <view:TextKeyDownBehavior KeyDownCommand="{Binding KeyDownCommand}" />

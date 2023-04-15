@@ -3,6 +3,16 @@ using System.Windows.Input;
 
 namespace Baku.VMagicMirrorConfig
 {
+    public enum GameInputLocomotionStyle
+    {
+        //スティックの向きはアバターの移動方向そのものであり、かつアバターの体は同じ方向を向き続ける
+        FirstPerson,
+        //スティックの向きにアバターの体が向き直る。左右や奥にスティックを倒した場合、アバターの顔は見えない事もある。
+        ThirdPerson,
+        //横スクロール用の3人称挙動で、左か右のいずれかにしか向かない
+        SideView2D,
+    }
+
     public enum GameInputStickAction
     {
         None,
@@ -163,6 +173,7 @@ namespace Baku.VMagicMirrorConfig
         public bool GamepadEnabled { get; set; } = true;
         public bool KeyboardEnabled { get; set; } = true;
         public bool AlwaysRun { get; set; } = true;
+        public int LocomotionStyleValue { get; set; } = 0;
 
         public GameInputKeyboardKeyAssign KeyboardKeyAssign { get; set; } = new();
         public GameInputGamepadKeyAssign GamepadKeyAssign { get; set; } = new();

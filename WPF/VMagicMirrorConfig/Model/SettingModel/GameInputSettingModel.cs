@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -25,6 +24,11 @@ namespace Baku.VMagicMirrorConfig
             GamepadEnabled = new RProperty<bool>(setting.GamepadEnabled, v => SendMessage(factory.UseGamepadForGameInput(v)));
             KeyboardEnabled = new RProperty<bool>(setting.KeyboardEnabled, v => SendMessage(factory.UseKeyboardForGameInput(v)));
             AlwaysRun = new RProperty<bool>(setting.AlwaysRun, v => SendMessage(factory.EnableAlwaysRunGameInput(v)));
+
+            LocomotionStyle = new RProperty<GameInputLocomotionStyle>(
+                GetLocomotionStyle(setting.LocomotionStyleValue),
+                v => factory.SetGameInputLocomotionStyle((int)v)
+            );
 
             UseMouseToLookAround = new RProperty<bool>(KeyboardKeyAssign.UseMouseLookAround, v =>
             {
@@ -69,6 +73,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> GamepadEnabled { get; }
         public RProperty<bool> KeyboardEnabled { get; }
         public RProperty<bool> AlwaysRun { get; }
+        public RProperty<GameInputLocomotionStyle> LocomotionStyle { get; }
         
         public RProperty<bool> UseMouseToLookAround { get; }
         public RProperty<bool> UseWasdMove { get; }
@@ -268,6 +273,7 @@ namespace Baku.VMagicMirrorConfig
             {
                 GamepadEnabled = GamepadEnabled.Value,
                 KeyboardEnabled = KeyboardEnabled.Value,
+                LocomotionStyleValue = (int)LocomotionStyle.Value,
                 AlwaysRun = AlwaysRun.Value,
                 KeyboardKeyAssign = KeyboardKeyAssign,
                 GamepadKeyAssign = GamepadKeyAssign,
@@ -278,6 +284,7 @@ namespace Baku.VMagicMirrorConfig
         {
             GamepadEnabled.Value = setting.GamepadEnabled;
             KeyboardEnabled.Value = setting.KeyboardEnabled;
+            LocomotionStyle.Value = GetLocomotionStyle(setting.LocomotionStyleValue);
             AlwaysRun.Value = setting.AlwaysRun;
 
             UseMouseToLookAround.Value = setting.KeyboardKeyAssign.UseMouseLookAround;
@@ -319,6 +326,14 @@ namespace Baku.VMagicMirrorConfig
             serializer.Serialize(jsonWriter, KeyboardKeyAssign.GetKeyCodeTranslatedData());
             var json = sb.ToString();
             SendMessage(MessageFactory.Instance.SetKeyboardGameInputKeyAssign(json));
+        }
+
+        private GameInputLocomotionStyle GetLocomotionStyle(int value)
+        {
+            //NOTE: 未来のバージョンから知らん値が降ってきたとき用のガード
+            return value >= 0 && value <= (int)GameInputLocomotionStyle.SideView2D
+                ? (GameInputLocomotionStyle)value
+                : GameInputLocomotionStyle.FirstPerson;
         }
 
 

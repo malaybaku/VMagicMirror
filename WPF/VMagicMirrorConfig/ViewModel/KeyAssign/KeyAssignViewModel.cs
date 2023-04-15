@@ -107,6 +107,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> AlwaysRun => _model.AlwaysRun;
 
+        public RProperty<GameInputLocomotionStyle> LocomotionStyle => _model.LocomotionStyle;
+
         public RProperty<GameInputButtonAction> ButtonA { get; }
         public RProperty<GameInputButtonAction> ButtonB { get; }
         public RProperty<GameInputButtonAction> ButtonX { get; }
@@ -144,9 +146,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public GameInputKeyAssignItemViewModel[] KeyAssigns { get; }
 
+        public GameInputLocomotionStyleViewModel[] LocomotionStyles => GameInputLocomotionStyleViewModel.AvailableItems;
         public GameInputStickActionItemViewModel[] StickActions => GameInputStickActionItemViewModel.AvailableItems;
         public GameInputButtonActionItemViewModel[] ButtonActions => GameInputButtonActionItemViewModel.AvailableItems;
-
 
         private void SetGamepadButtonAction(GameInputGamepadButton button, GameInputButtonAction action)
         {
@@ -269,6 +271,33 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             SettingResetUtils.ResetSingleCategoryAsync(() => _model.ResetToDefault());
         }
 
+    }
+
+    /// <summary>
+    /// ゲーム入力で移動入力をどういう風に扱うかのオプションを示すViewModel
+    /// </summary>
+    public class GameInputLocomotionStyleViewModel
+    {
+        public GameInputLocomotionStyleViewModel(GameInputLocomotionStyle style, string localizationKey)
+        {
+            Style = style;
+            _localizationKey = localizationKey;
+            Label.Value = LocalizedString.GetString(_localizationKey);
+            LanguageSelector.Instance.LanguageChanged +=
+                () => Label.Value = LocalizedString.GetString(_localizationKey);
+        }
+
+        private readonly string _localizationKey;
+        public GameInputLocomotionStyle Style { get; }
+        public RProperty<string> Label { get; } = new RProperty<string>("");
+
+        //NOTE: immutable arrayのほうが性質は良いのでそうしてもよい
+        public static GameInputLocomotionStyleViewModel[] AvailableItems { get; } = new GameInputLocomotionStyleViewModel[]
+        {
+            new (GameInputLocomotionStyle.FirstPerson, "GameInputKeyAssign_LocomotionStyle_FirstPerson"),
+            new (GameInputLocomotionStyle.ThirdPerson, "GameInputKeyAssign_LocomotionStyle_ThirdPerson"),
+            new (GameInputLocomotionStyle.SideView2D, "GameInputKeyAssign_LocomotionStyle_SideView2D"),
+        };
     }
 
     /// <summary>

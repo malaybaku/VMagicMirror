@@ -535,11 +535,17 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Gamepad_Enable">ゲームパッド入力を使用</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard">キーボード・マウス</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">キーボード・マウス入力を使用</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Option_LocomotionStyle">移動スタイル</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_LocomotionStyle_FirstPerson">1人称: つねに同じ向き</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_LocomotionStyle_ThirdPerson">3人称: 移動先を向く</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_LocomotionStyle_SideView2D">横スクロール風</sys:String>
     
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">移動はデフォルトでダッシュ</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun_Note">※オンの場合、かわりに「ダッシュ」ボタンで歩くようになります</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">つねに銃を構える</sys:String>
 
+    
     <sys:String x:Key="GameInputKeyAssign_Action_None">(なし)</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_Move">移動</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_LookAround">見回し</sys:String>

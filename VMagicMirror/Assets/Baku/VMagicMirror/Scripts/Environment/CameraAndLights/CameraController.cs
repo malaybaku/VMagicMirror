@@ -187,8 +187,6 @@ namespace Baku.VMagicMirror
         {
             cam.fieldOfView = fovDeg;
         }
-
-
     }
 
     [Serializable]

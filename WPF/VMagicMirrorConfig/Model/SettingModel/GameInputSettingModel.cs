@@ -27,7 +27,7 @@ namespace Baku.VMagicMirrorConfig
 
             LocomotionStyle = new RProperty<GameInputLocomotionStyle>(
                 GetLocomotionStyle(setting.LocomotionStyleValue),
-                v => factory.SetGameInputLocomotionStyle((int)v)
+                v => SendMessage(factory.SetGameInputLocomotionStyle((int)v))
             );
 
             UseMouseToLookAround = new RProperty<bool>(KeyboardKeyAssign.UseMouseLookAround, v =>

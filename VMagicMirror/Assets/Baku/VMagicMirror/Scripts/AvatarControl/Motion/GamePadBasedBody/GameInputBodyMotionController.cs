@@ -32,6 +32,7 @@ namespace Baku.VMagicMirror
         private readonly IVRMLoadable _vrmLoadable;
         private readonly IMessageReceiver _receiver;
         private readonly BodyMotionModeController _bodyMotionModeController;
+        private readonly GameInputBodyRootOrientationController _rootOrientationController;
         private readonly GameInputSourceSet _sourceSet;
 
         private bool _hasModel;
@@ -62,12 +63,14 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable,
             IMessageReceiver receiver,
             BodyMotionModeController bodyMotionModeController,
+            GameInputBodyRootOrientationController rootOrientationController,
             GameInputSourceSet sourceSet
             )
         {
             _vrmLoadable = vrmLoadable;
             _receiver = receiver;
             _bodyMotionModeController = bodyMotionModeController;
+            _rootOrientationController = rootOrientationController;
             _sourceSet = sourceSet;
         }
 
@@ -150,6 +153,7 @@ namespace Baku.VMagicMirror
             _hasModel = false;
             _animator = null;
             _vrmRoot = null;
+            _rootOrientationController.ResetImmediately();
         }
 
         private void TryAct(int triggerHash)
@@ -174,6 +178,7 @@ namespace Baku.VMagicMirror
                 if (!_bodyMotionActive)
                 {
                     ResetParameters();
+                    _rootOrientationController.ResetImmediately();
                 }
             }
         }
@@ -193,6 +198,7 @@ namespace Baku.VMagicMirror
             }
 
             _locomotionStyle = style;
+            _rootOrientationController.LocomotionStyle = style;
         }
         
         private void ResetParameters()
@@ -236,14 +242,39 @@ namespace Baku.VMagicMirror
                 LookAroundSmoothTime
                 );
 
-            LookAroundRotation = Quaternion.Euler(
-                -_lookAroundInput.y * HeadPitchMaxDeg,
-                _lookAroundInput.x * HeadYawMaxDeg,
-                0f
+            if (_locomotionStyle == GameInputLocomotionStyle.FirstPerson)
+            {
+                LookAroundRotation = Quaternion.Euler(
+                    -_lookAroundInput.y * HeadPitchMaxDeg,
+                    _lookAroundInput.x * HeadYawMaxDeg,
+                    0f
                 );
+            }
+            else
+            {
+                //NOTE: 3人称なりにヨー方向に目線を動かすのもアリで、やる場合は首だけよりはLookAtIKで上半身ごと動かしたい…
+                LookAroundRotation = Quaternion.Euler(-_lookAroundInput.y * HeadPitchMaxDeg, 0f, 0f);
+            }
             
-            _animator.SetFloat(MoveRight, _moveInput.x);
-            _animator.SetFloat(MoveForward, _moveInput.y);
+            _rootOrientationController.UpdateInput(_moveInput, Time.deltaTime);
+
+            switch (_locomotionStyle)
+            {
+                case GameInputLocomotionStyle.FirstPerson:
+                    _animator.SetFloat(MoveRight, _moveInput.x);
+                    _animator.SetFloat(MoveForward, _moveInput.y);
+                    break;
+                case GameInputLocomotionStyle.ThirdPerson:
+                    //NOTE: 補間出来たほうが少しキレイではある。横スクロールも同様
+                    _animator.SetFloat(MoveRight, 0f);
+                    _animator.SetFloat(MoveForward, _moveInput.magnitude);
+                    break;
+                case GameInputLocomotionStyle.SideView2D:
+                    _animator.SetFloat(MoveRight, 0f);
+                    _animator.SetFloat(MoveForward, Mathf.Abs(_moveInput.x));
+                    break;
+            }
+
             _animator.SetBool(Crouch, _isCrouching);
             //NOTE: XORでも書けるが読み味がどっちもどっちなので…要は以下どっちかなら走るという事
             // - 基本歩き + 「ダッシュ」ボタンがオン
@@ -258,7 +289,7 @@ namespace Baku.VMagicMirror
                 ref _rootYawDampSpeed, 
                 GunFireYawSmoothTime
                 );
-            _vrmRoot.localRotation = Quaternion.Euler(0f, _rootYaw, 0f);
+            _vrmRoot.localRotation = Quaternion.Euler(0f, _rootYaw, 0f) * _rootOrientationController.Rotation;
         }
     }
 }

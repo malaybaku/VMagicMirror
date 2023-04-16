@@ -123,7 +123,8 @@
 
                         <ComboBox Grid.Column="1"
                                   ItemsSource="{Binding LocomotionStyles}"
-                                  SelectedIndex="{Binding LocomotionStyleIndex,Mode=TwoWay}"
+                                  SelectedValuePath="Style"
+                                  SelectedValue="{Binding LocomotionStyle.Value}"
                                   >
                             <ComboBox.ItemTemplate>
                                 <DataTemplate DataType="{x:Type vm:GameInputLocomotionStyleViewModel}">

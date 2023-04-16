@@ -71,9 +71,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (!IsInDesignMode)
             {
-                _locomotionStyleIndex = (int)model.LocomotionStyle.Value;
-                model.LocomotionStyle.AddWeakEventHandler(OnLocomotionStyleUpdated);
-
                 WeakEventManager<GameInputSettingModel, GamepadKeyAssignUpdateEventArgs>.AddHandler(
                     _model,
                     nameof(_model.GamepadKeyAssignUpdated),
@@ -110,19 +107,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> KeyboardEnabled => _model.KeyboardEnabled;
 
         public RProperty<bool> AlwaysRun => _model.AlwaysRun;
-
-        private int _locomotionStyleIndex = 0;
-        public int LocomotionStyleIndex
-        {
-            get => _locomotionStyleIndex;
-            set
-            {
-                if (SetValue(ref _locomotionStyleIndex, value))
-                {
-                    _model.LocomotionStyle.Value = (GameInputLocomotionStyle)value;
-                }
-            }
-        }
+        public RProperty<GameInputLocomotionStyle> LocomotionStyle => _model.LocomotionStyle;
 
         public RProperty<GameInputButtonAction> ButtonA { get; }
         public RProperty<GameInputButtonAction> ButtonB { get; }
@@ -196,9 +181,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             => UpdateGamepadKeyAssign(e.Data);
         private void OnKeyboardKeyAssignUpdated(object? sender, KeyboardKeyAssignUpdateEventArgs e)
             => UpdateKeyboardKeyAssign(e.Data);
-
-        private void OnLocomotionStyleUpdated(object? sender, PropertyChangedEventArgs e) 
-            => LocomotionStyleIndex = (int)_model.LocomotionStyle.Value;
 
         private void UpdateGamepadKeyAssign(GameInputGamepadKeyAssign data)
         {

@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror.GameInput
     {
         private const float TurnDuration = 0.5f;
         private const float SideViewTurnDuration = 0.3f;
-        private const float MaxSpeed = 10f;
+        private const float MaxSpeed = 1000f;
 
         //NOTE: 入力判定側の措置としてこんなに小さい値は通してこないはずだが、念のため。
         private const float MagnitudeThreshold = 0.1f;
@@ -73,9 +73,14 @@ namespace Baku.VMagicMirror.GameInput
             if (direction.magnitude > MagnitudeThreshold)
             {
                 var directionOnCamera = _camera.transform.rotation * new Vector3(direction.x, 0f, direction.y);
-                yaw = Mathf.Atan2(directionOnCamera.x, directionOnCamera.z);
+                yaw = Mathf.Atan2(directionOnCamera.x, directionOnCamera.z) * Mathf.Rad2Deg;
                 _prevTargetYaw = yaw;
                 _directionMagnitude = direction.magnitude;
+            }
+
+            if (_directionMagnitude < MagnitudeThreshold)
+            {
+                return;
             }
 
             //NOTE: 180度付近の反転は常に時計周りで行う
@@ -102,8 +107,14 @@ namespace Baku.VMagicMirror.GameInput
             {
                 var vectorOnCamera = x > 0 ? SideViewRight : SideViewLeft;
                 var directionOnCamera = _camera.transform.rotation * vectorOnCamera;
-                yaw = Mathf.Atan2(directionOnCamera.x, directionOnCamera.z);
+                yaw = Mathf.Atan2(directionOnCamera.x, directionOnCamera.z) * Mathf.Rad2Deg;
                 _prevTargetYaw = yaw;
+                _directionMagnitude = Mathf.Abs(x);
+            }
+
+            if (_directionMagnitude < MagnitudeThreshold)
+            {
+                return;
             }
 
             //NOTE: 手前側に少し向き続ける状態になるので、単にDeltaAngleすると手前を経由する回転が生成される。はず。

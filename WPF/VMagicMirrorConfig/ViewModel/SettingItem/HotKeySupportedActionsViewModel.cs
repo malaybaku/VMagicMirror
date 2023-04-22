@@ -26,9 +26,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 new (new (HotKeyActions.SetCamera, 1, "")),
                 new (new (HotKeyActions.SetCamera, 2, "")),
                 new (new (HotKeyActions.SetCamera, 3, "")),
-                new (new (HotKeyActions.SetBodyMotionStyle, 1, "")),
-                new (new (HotKeyActions.SetBodyMotionStyle, 2, "")),
-                new (new (HotKeyActions.SetBodyMotionStyle, 3, "")),
+                new (new (HotKeyActions.SetBodyMotionStyle, (int) HotKeyActionBodyMotionStyle.Default , "")),
+                new (new (HotKeyActions.SetBodyMotionStyle, (int) HotKeyActionBodyMotionStyle.AlwaysHandDown, "")),
+                new (new (HotKeyActions.SetBodyMotionStyle, (int) HotKeyActionBodyMotionStyle.GameInputLocomotion, "")),
                 new (new (HotKeyActions.CallWtm, 1, "")),
                 new (new (HotKeyActions.CallWtm, 2, "")),
                 new (new (HotKeyActions.CallWtm, 3, "")),
@@ -178,7 +178,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     {
                         (int)HotKeyActionBodyMotionStyle.Default => "Default",
                         (int)HotKeyActionBodyMotionStyle.AlwaysHandDown => "AlwaysHandDown",
-                        (int)HotKeyActionBodyMotionStyle.GameInputLoomotion => "GameInputLocomotion",
+                        (int)HotKeyActionBodyMotionStyle.GameInputLocomotion => "GameInputLocomotion",
                         _ => "Unknown",
                     };
                     DisplayName = LocalizedString.GetString(SetBodyMotionStylePrefix + suffix);

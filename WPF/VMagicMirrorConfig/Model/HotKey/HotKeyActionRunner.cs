@@ -95,7 +95,7 @@ namespace Baku.VMagicMirrorConfig
                     _motionSetting.EnableNoHandTrackMode.Value = true;
                     _motionSetting.EnableGameInputLocomotionMode.Value = false;
                     break;
-                case (int)HotKeyActionBodyMotionStyle.GameInputLoomotion:
+                case (int)HotKeyActionBodyMotionStyle.GameInputLocomotion:
                     _motionSetting.EnableNoHandTrackMode.Value = false;
                     _motionSetting.EnableGameInputLocomotionMode.Value = true;
                     break;

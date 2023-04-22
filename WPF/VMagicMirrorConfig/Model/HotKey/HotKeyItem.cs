@@ -15,7 +15,7 @@ namespace Baku.VMagicMirrorConfig
     {
         Default = 0,
         AlwaysHandDown = 1,
-        GameInputLoomotion = 2,        
+        GameInputLocomotion = 2,        
     }
 
     /// <summary>

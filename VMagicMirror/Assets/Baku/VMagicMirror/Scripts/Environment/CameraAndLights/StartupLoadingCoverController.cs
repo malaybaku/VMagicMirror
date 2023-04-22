@@ -1,3 +1,4 @@
+using System;
 using UniRx;
 using Zenject;
 
@@ -64,9 +65,12 @@ namespace Baku.VMagicMirror
             if (_delayFadeout)
             {
                 //モデルがロード中かもしれないので、ロードが終わるまでは遅延させる
+                //NOTE: Delayをつけるのは「どうせ遅延させるし物理演算が落ち着くまで待ちたい…」という意図に基づく
+                _cover.SetModelLoadIndication();
                 _localVrmLoadEndedAtLeastOnce
                     .Where(v => v)
                     .First()
+                    .Delay(TimeSpan.FromSeconds(1f))
                     .Subscribe(_ => _cover.FadeOutAndDestroySelf())
                     .AddTo(this);
             }

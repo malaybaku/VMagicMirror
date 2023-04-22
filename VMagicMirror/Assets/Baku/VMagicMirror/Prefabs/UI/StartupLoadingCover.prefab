@@ -223,6 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 163826464570738751}
+  loadingText: {fileID: 163826465794254846}
 --- !u!95 &163826464570738751
 Animator:
   serializedVersion: 3

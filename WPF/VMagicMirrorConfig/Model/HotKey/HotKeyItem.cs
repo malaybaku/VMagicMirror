@@ -8,6 +8,14 @@ namespace Baku.VMagicMirrorConfig
         SetCamera,
         CallWtm,
         ToggleAccessory,
+        SetBodyMotionStyle,
+    }
+
+    public enum HotKeyActionBodyMotionStyle : int
+    {
+        Default = 0,
+        AlwaysHandDown = 1,
+        GameInputLoomotion = 2,        
     }
 
     /// <summary>

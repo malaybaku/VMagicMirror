@@ -26,6 +26,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 new (new (HotKeyActions.SetCamera, 1, "")),
                 new (new (HotKeyActions.SetCamera, 2, "")),
                 new (new (HotKeyActions.SetCamera, 3, "")),
+                new (new (HotKeyActions.SetBodyMotionStyle, 1, "")),
+                new (new (HotKeyActions.SetBodyMotionStyle, 2, "")),
+                new (new (HotKeyActions.SetBodyMotionStyle, 3, "")),
                 new (new (HotKeyActions.CallWtm, 1, "")),
                 new (new (HotKeyActions.CallWtm, 2, "")),
                 new (new (HotKeyActions.CallWtm, 3, "")),
@@ -129,6 +132,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private const string SetCameraFormat = "Hotkey_Action_SetCamera_Format";
         private const string CallWtmFormat = "Hotkey_Action_CallWtm_Format";
         private const string ToggleAccessoryFormat = "Hotkey_Action_ToggleAccessory_Format";
+        private const string SetBodyMotionStylePrefix = "Hotkey_Action_SetBodyMotionStyle_";
 
         //NOTE: カメラの指定 / Wtmの呼び出し用のインスタンスでは第二引数をnullにしてもよい
         internal HotKeySupportedActionViewModel(HotKeyActionContent content, AccessorySettingModel? accessorySetting = null)
@@ -168,6 +172,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                         LocalizedString.GetString(SetCameraFormat),
                         Content.ArgNumber
                     );
+                    break;
+                case HotKeyActions.SetBodyMotionStyle:
+                    var suffix = Content.ArgNumber switch
+                    {
+                        (int)HotKeyActionBodyMotionStyle.Default => "Default",
+                        (int)HotKeyActionBodyMotionStyle.AlwaysHandDown => "AlwaysHandDown",
+                        (int)HotKeyActionBodyMotionStyle.GameInputLoomotion => "GameInputLocomotion",
+                        _ => "Unknown",
+                    };
+                    DisplayName = LocalizedString.GetString(SetBodyMotionStylePrefix + suffix);
                     break;
                 case HotKeyActions.CallWtm:
                     DisplayName = string.Format(

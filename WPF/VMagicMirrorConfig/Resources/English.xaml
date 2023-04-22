@@ -490,10 +490,10 @@ Input favorite key combination in text area.
     <sys:String x:Key="Hotkey_Action_SetCamera_Format">Camera Pose: {0}</sys:String>
     <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motion: {0}</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">Accessory switch: {0}</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Default">Select Motion Style: Default</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">Select Motion Style: Standing Only</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">Select Motion Style: Game Locomotion</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">Select Motion Style: (Unknown)</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Default">Motion Style > Default</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">Motion Style > Standing Only</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">Motion Style > Game Locomotion</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">Motion Style > (Unknown)</sys:String>
     
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">Setting File Control</sys:String>

@@ -492,10 +492,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Hotkey_Action_SetCamera_Format">カメラワーク適用: {0}</sys:String>
     <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motion: {0}</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">アクセサリon/off: {0}</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Default">モーション方式を選択: デフォルト</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">モーション方式を選択: つねに手下げ</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">モーション方式を選択: ゲーム入力</sys:String>
-    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">モーション方式を選択: (不明な値)</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Default">モーション方式: デフォルト</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">モーション方式: つねに手下げ</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">モーション方式: ゲーム入力</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">モーション方式: (不明な値)</sys:String>
 
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">設定ファイルの操作</sys:String>

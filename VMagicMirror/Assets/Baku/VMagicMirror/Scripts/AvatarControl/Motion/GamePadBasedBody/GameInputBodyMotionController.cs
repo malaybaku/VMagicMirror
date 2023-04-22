@@ -293,7 +293,8 @@ namespace Baku.VMagicMirror
                     break;
                 case GameInputLocomotionStyle.SideView2D:
                     _animator.SetFloat(MoveRight, 0f);
-                    _animator.SetFloat(MoveForward, Mathf.Abs(_moveInput.x));
+                    //1.2fを掛けるのは、左右ピッタリの入力ではなく多少斜めになっていた場合にも全速移動扱いするため
+                    _animator.SetFloat(MoveForward, Mathf.Clamp01(Mathf.Abs(_moveInput.x) * 1.2f));
                     break;
             }
 

@@ -29,6 +29,7 @@ namespace Baku.VMagicMirror
         private static readonly int MoveForward = Animator.StringToHash("MoveForward");
         private static readonly int Crouch = Animator.StringToHash("Crouch");
         private static readonly int Run = Animator.StringToHash("Run");
+        private static readonly int Walk = Animator.StringToHash("Walk");
 
         private readonly IVRMLoadable _vrmLoadable;
         private readonly IMessageReceiver _receiver;
@@ -38,6 +39,7 @@ namespace Baku.VMagicMirror
 
         private bool _hasModel;
         private Animator _animator;
+        private int _baseLayerIndex;
         private Transform _vrmRoot;
 
         private GameInputLocomotionStyle _locomotionStyle = GameInputLocomotionStyle.FirstPerson;
@@ -102,11 +104,11 @@ namespace Baku.VMagicMirror
                 .AddTo(this);
             
             Observable.Merge(_sourceSet.Sources.Select(s => s.Jump))
-                .ThrottleFirst(TimeSpan.FromSeconds(1.0f))
+                .ThrottleFirst(TimeSpan.FromSeconds(0.2f))
                 .Subscribe(_ => TryAct(Jump))
                 .AddTo(this);
             Observable.Merge(_sourceSet.Sources.Select(s => s.Punch))
-                .ThrottleFirst(TimeSpan.FromSeconds(0.7f))
+                .ThrottleFirst(TimeSpan.FromSeconds(0.2f))
                 .Subscribe(_ => TryAct(Punch))
                 .AddTo(this);
 
@@ -147,6 +149,7 @@ namespace Baku.VMagicMirror
         {
             _animator = obj.animator;
             _vrmRoot = obj.vrmRoot;
+            _baseLayerIndex = _animator.GetLayerIndex("Base");
 
             _hasModel = true;
             //モデルロードよりも先にゲーム入力が有効になってたときの適用漏れを防いでいる
@@ -166,7 +169,15 @@ namespace Baku.VMagicMirror
 
         private void TryAct(int triggerHash)
         {
-            if (_hasModel && _bodyMotionActive)
+            if (!_hasModel || !_bodyMotionActive)
+            {
+                return;
+            }
+
+            var stateHash = _animator.GetCurrentAnimatorStateInfo(_baseLayerIndex).shortNameHash;
+            
+            //要するにアクション中は無視する…というガード
+            if (stateHash == Walk || stateHash == Run || stateHash == Crouch)
             {
                 _animator.SetTrigger(triggerHash);
             }

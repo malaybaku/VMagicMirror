@@ -4,16 +4,16 @@ namespace Baku.VMagicMirror.GameInput
 {
     public class GameInputBodyRootOrientationController
     {
-        private const float TurnDuration = 0.5f;
-        private const float SideViewTurnDuration = 0.3f;
-        private const float MaxSpeed = 1000f;
+        private const float TurnDuration = 0.2f;
+        private const float SideViewTurnDuration = 0.2f;
+        private const float MaxSpeed = 1400f;
 
         //NOTE: 入力判定側の措置としてこんなに小さい値は通してこないはずだが、念のため。
         private const float MagnitudeThreshold = 0.1f;
 
         //横スクロールでは左右どっちに向くときも少し手前を向かせる。真横だと違和感出がちなので
-        private static readonly Vector3 SideViewLeft = new Vector3(-1f, 0f, -0.2f);
-        private static readonly Vector3 SideViewRight = new Vector3(1f, 0f, -0.2f);
+        private static readonly Vector2 SideViewLeft = new Vector2(-1f, -0.2f).normalized;
+        private static readonly Vector2 SideViewRight = new Vector2(1f,  -0.2f).normalized;
 
         private readonly Camera _camera;
 
@@ -72,8 +72,7 @@ namespace Baku.VMagicMirror.GameInput
             
             if (direction.magnitude > MagnitudeThreshold)
             {
-                var directionOnCamera = _camera.transform.rotation * new Vector3(direction.x, 0f, direction.y);
-                yaw = Mathf.Atan2(directionOnCamera.x, directionOnCamera.z) * Mathf.Rad2Deg;
+                yaw = GetYawAngleOfThirdPerson(direction);
                 _prevTargetYaw = yaw;
                 _directionMagnitude = direction.magnitude;
             }
@@ -105,9 +104,9 @@ namespace Baku.VMagicMirror.GameInput
             var x = direction.x;
             if (Mathf.Abs(x) > MagnitudeThreshold)
             {
-                var vectorOnCamera = x > 0 ? SideViewRight : SideViewLeft;
-                var directionOnCamera = _camera.transform.rotation * vectorOnCamera;
-                yaw = Mathf.Atan2(directionOnCamera.x, directionOnCamera.z) * Mathf.Rad2Deg;
+                //実入力ではない値に差し替えて「左」か「右」の2択に帰着させる
+                var directionModified = x > 0 ? SideViewRight : SideViewLeft;
+                yaw = GetYawAngleOfThirdPerson(directionModified);
                 _prevTargetYaw = yaw;
                 _directionMagnitude = Mathf.Abs(x);
             }
@@ -132,5 +131,11 @@ namespace Baku.VMagicMirror.GameInput
         }
 
         private void UpdateRotation() => Rotation = Quaternion.AngleAxis(_yawAngle, Vector3.up);
+
+        private float GetYawAngleOfThirdPerson(Vector2 direction)
+        {
+            var directionOnCamera = _camera.transform.rotation * new Vector3(direction.x, 0f, direction.y);
+            return Mathf.Atan2(directionOnCamera.x, directionOnCamera.z) * Mathf.Rad2Deg;
+        }
     }
 }

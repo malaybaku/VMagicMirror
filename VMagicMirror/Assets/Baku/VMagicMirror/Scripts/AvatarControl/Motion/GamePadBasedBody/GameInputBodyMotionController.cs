@@ -10,6 +10,7 @@ namespace Baku.VMagicMirror
     public class GameInputBodyMotionController : PresenterBase, ITickable
     {
         private const float MoveLerpSmoothTime = 0.1f;
+        private const float MoveLerpSmoothTimeOnThirdPerson = 0.05f;
         private const float LookAroundSmoothTime = 0.15f;
 
         private const float GunFireYawSmoothTime = 0.1f;
@@ -56,6 +57,13 @@ namespace Baku.VMagicMirror
         
         private float _rootYaw;
         private float _rootYawDampSpeed;
+        
+        //NOTE: XORでも書けるが読み味がどっちもどっちなので…要は以下どっちかなら走るという事
+        // - 基本歩き + 「ダッシュ」ボタンがオン
+        // - 基本ダッシュ + 「歩く」ボタンがオフ
+        private bool IsRunning => 
+            (!_alwaysRun && _isRunWalkToggleActive) || 
+            (_alwaysRun && !_isRunWalkToggleActive);
         
         public Quaternion LookAroundRotation { get; private set; } = Quaternion.identity;
         
@@ -139,7 +147,7 @@ namespace Baku.VMagicMirror
         {
             _animator = obj.animator;
             _vrmRoot = obj.vrmRoot;
-            
+
             _hasModel = true;
             //モデルロードよりも先にゲーム入力が有効になってたときの適用漏れを防いでいる
             if (_bodyMotionActive)
@@ -199,6 +207,8 @@ namespace Baku.VMagicMirror
 
             _locomotionStyle = style;
             _rootOrientationController.LocomotionStyle = style;
+
+            _moveInputDampSpeed = Vector2.zero;
         }
         
         private void ResetParameters()
@@ -228,12 +238,24 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            _moveInput = Vector2.SmoothDamp(
-                _moveInput, 
-                _rawMoveInput, 
-                ref _moveInputDampSpeed, 
-                MoveLerpSmoothTime
+            if (_locomotionStyle == GameInputLocomotionStyle.FirstPerson)
+            {
+                _moveInput = Vector2.SmoothDamp(
+                    _moveInput, 
+                    _rawMoveInput, 
+                    ref _moveInputDampSpeed, 
+                    MoveLerpSmoothTime
                 );
+            }
+            else
+            {
+                _moveInput = Vector2.SmoothDamp(
+                    _moveInput, 
+                    _rawMoveInput, 
+                    ref _moveInputDampSpeed, 
+                    MoveLerpSmoothTimeOnThirdPerson
+                );
+            }
 
             _lookAroundInput = Vector2.SmoothDamp(
                 _lookAroundInput, 
@@ -279,8 +301,7 @@ namespace Baku.VMagicMirror
             //NOTE: XORでも書けるが読み味がどっちもどっちなので…要は以下どっちかなら走るという事
             // - 基本歩き + 「ダッシュ」ボタンがオン
             // - 基本ダッシュ + 「歩く」ボタンがオフ
-            _animator.SetBool(Run, 
-                (!_alwaysRun && _isRunWalkToggleActive) || (_alwaysRun && !_isRunWalkToggleActive));
+            _animator.SetBool(Run, IsRunning);
             _animator.SetBool(GunFire, _gunFire);
 
             _rootYaw = Mathf.SmoothDamp(

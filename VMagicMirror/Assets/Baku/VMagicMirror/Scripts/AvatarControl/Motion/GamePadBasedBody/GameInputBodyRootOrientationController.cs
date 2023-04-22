@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.GameInput
         //NOTE: 入力判定側の措置としてこんなに小さい値は通してこないはずだが、念のため。
         private const float MagnitudeThreshold = 0.1f;
 
-        //横スクロールでは左右どっちに向くときも少し手前を向かせる。真横だと違和感出がちなので
+        //横スクロールでは左右どっちに向くときもわずかに手前を向かせておく(10degくらい)
         private static readonly Vector2 SideViewLeft = new Vector2(-1f, -0.2f).normalized;
         private static readonly Vector2 SideViewRight = new Vector2(1f,  -0.2f).normalized;
 

@@ -8,6 +8,7 @@ namespace Baku.VMagicMirrorConfig
             ModelResolver.Instance.Resolve<HotKeySettingModel>(),
             ModelResolver.Instance.Resolve<HotKeyModel>(),
             ModelResolver.Instance.Resolve<LayoutSettingModel>(),
+            ModelResolver.Instance.Resolve<MotionSettingModel>(),
             ModelResolver.Instance.Resolve<WordToMotionSettingModel>(),
             ModelResolver.Instance.Resolve<AccessorySettingModel>()
             )
@@ -18,6 +19,7 @@ namespace Baku.VMagicMirrorConfig
             HotKeySettingModel setting,
             HotKeyModel model,
             LayoutSettingModel layoutSetting,
+            MotionSettingModel motionSetting,
             WordToMotionSettingModel wordToMotionSetting,
             AccessorySettingModel accessorySetting
             )
@@ -25,6 +27,7 @@ namespace Baku.VMagicMirrorConfig
             _setting = setting;
             _model = model;
             _layoutSetting = layoutSetting;
+            _motionSetting = motionSetting;
             _wordToMotionSetting = wordToMotionSetting;
             _accessorySetting = accessorySetting;
 
@@ -34,6 +37,7 @@ namespace Baku.VMagicMirrorConfig
         private readonly HotKeyModel _model;
         private readonly HotKeySettingModel _setting;
         private readonly LayoutSettingModel _layoutSetting;
+        private readonly MotionSettingModel _motionSetting;
         private readonly WordToMotionSettingModel _wordToMotionSetting;
         private readonly AccessorySettingModel _accessorySetting;
 
@@ -50,12 +54,16 @@ namespace Baku.VMagicMirrorConfig
                 case HotKeyActions.SetCamera:
                     _layoutSetting.QuickLoadViewPoint(content.ArgNumber);
                     break;
+                case HotKeyActions.SetBodyMotionStyle:
+                    SetMotionStyle(content.ArgNumber);
+                    break;
                 case HotKeyActions.CallWtm:
                     _wordToMotionSetting.Play(content.ArgNumber - 1);
                     break;
                 case HotKeyActions.ToggleAccessory:
                     ToggleAccessoryVisibility(content.ArgString);
                     break;
+
                 case HotKeyActions.None:
                 default:
                     //何もしない
@@ -74,5 +82,28 @@ namespace Baku.VMagicMirrorConfig
             item.IsVisible = !item.IsVisible;
             _accessorySetting.UpdateItemFromUi(item);
         }
+
+        private void SetMotionStyle(int style)
+        {
+            switch (style)
+            {
+                case (int)HotKeyActionBodyMotionStyle.Default:
+                    _motionSetting.EnableNoHandTrackMode.Value = false;
+                    _motionSetting.EnableGameInputLocomotionMode.Value = false;
+                    break;
+                case (int)HotKeyActionBodyMotionStyle.AlwaysHandDown:
+                    _motionSetting.EnableNoHandTrackMode.Value = true;
+                    _motionSetting.EnableGameInputLocomotionMode.Value = false;
+                    break;
+                case (int)HotKeyActionBodyMotionStyle.GameInputLoomotion:
+                    _motionSetting.EnableNoHandTrackMode.Value = false;
+                    _motionSetting.EnableGameInputLocomotionMode.Value = true;
+                    break;
+                default:
+                    //未知: 何もしない(将来verの設定ファイルを読むと起こりうる)
+                    break;
+            }
+        }
+
     }
 }

@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -8,6 +9,7 @@ namespace Baku.VMagicMirror
         private static readonly int HiddenStateHash = Animator.StringToHash("Hidden");
 
         [SerializeField] private Animator animator;
+        [SerializeField] private TextMeshProUGUI loadingText;
 
         private bool _fadeOutCalled = false;
 
@@ -33,6 +35,11 @@ namespace Baku.VMagicMirror
         public void FadeOutImmediate()
         {
             Destroy(gameObject);
+        }
+
+        public void SetModelLoadIndication()
+        {
+            loadingText.text = "Loading Model...";
         }
     }
 }

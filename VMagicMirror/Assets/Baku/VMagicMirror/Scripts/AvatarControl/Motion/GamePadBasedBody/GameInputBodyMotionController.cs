@@ -10,6 +10,7 @@ namespace Baku.VMagicMirror
     public class GameInputBodyMotionController : PresenterBase, ITickable
     {
         private const float MoveLerpSmoothTime = 0.1f;
+        private const float MoveLerpSmoothTimeOnThirdPerson = 0.05f;
         private const float LookAroundSmoothTime = 0.15f;
 
         private const float GunFireYawSmoothTime = 0.1f;
@@ -28,16 +29,20 @@ namespace Baku.VMagicMirror
         private static readonly int MoveForward = Animator.StringToHash("MoveForward");
         private static readonly int Crouch = Animator.StringToHash("Crouch");
         private static readonly int Run = Animator.StringToHash("Run");
+        private static readonly int Walk = Animator.StringToHash("Walk");
 
         private readonly IVRMLoadable _vrmLoadable;
         private readonly IMessageReceiver _receiver;
         private readonly BodyMotionModeController _bodyMotionModeController;
+        private readonly GameInputBodyRootOrientationController _rootOrientationController;
         private readonly GameInputSourceSet _sourceSet;
 
         private bool _hasModel;
         private Animator _animator;
+        private int _baseLayerIndex;
         private Transform _vrmRoot;
 
+        private GameInputLocomotionStyle _locomotionStyle = GameInputLocomotionStyle.FirstPerson;
         private bool _alwaysRun = true;
         private bool _bodyMotionActive;
 
@@ -55,18 +60,27 @@ namespace Baku.VMagicMirror
         private float _rootYaw;
         private float _rootYawDampSpeed;
         
+        //NOTE: XORでも書けるが読み味がどっちもどっちなので…要は以下どっちかなら走るという事
+        // - 基本歩き + 「ダッシュ」ボタンがオン
+        // - 基本ダッシュ + 「歩く」ボタンがオフ
+        private bool IsRunning => 
+            (!_alwaysRun && _isRunWalkToggleActive) || 
+            (_alwaysRun && !_isRunWalkToggleActive);
+        
         public Quaternion LookAroundRotation { get; private set; } = Quaternion.identity;
         
         public GameInputBodyMotionController(
             IVRMLoadable vrmLoadable,
             IMessageReceiver receiver,
             BodyMotionModeController bodyMotionModeController,
+            GameInputBodyRootOrientationController rootOrientationController,
             GameInputSourceSet sourceSet
             )
         {
             _vrmLoadable = vrmLoadable;
             _receiver = receiver;
             _bodyMotionModeController = bodyMotionModeController;
+            _rootOrientationController = rootOrientationController;
             _sourceSet = sourceSet;
         }
 
@@ -80,16 +94,21 @@ namespace Baku.VMagicMirror
                 command => _alwaysRun = command.ToBoolean()
                 );
             
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetGameInputLocomotionStyle,
+                command => SetLocomotionStyle(command.ToInt())
+                );
+            
             _bodyMotionModeController.MotionMode
                 .Subscribe(mode => SetActiveness(mode == BodyMotionMode.GameInputLocomotion))
                 .AddTo(this);
             
             Observable.Merge(_sourceSet.Sources.Select(s => s.Jump))
-                .ThrottleFirst(TimeSpan.FromSeconds(1.0f))
+                .ThrottleFirst(TimeSpan.FromSeconds(0.2f))
                 .Subscribe(_ => TryAct(Jump))
                 .AddTo(this);
             Observable.Merge(_sourceSet.Sources.Select(s => s.Punch))
-                .ThrottleFirst(TimeSpan.FromSeconds(0.7f))
+                .ThrottleFirst(TimeSpan.FromSeconds(0.2f))
                 .Subscribe(_ => TryAct(Punch))
                 .AddTo(this);
 
@@ -130,7 +149,8 @@ namespace Baku.VMagicMirror
         {
             _animator = obj.animator;
             _vrmRoot = obj.vrmRoot;
-            
+            _baseLayerIndex = _animator.GetLayerIndex("Base");
+
             _hasModel = true;
             //モデルロードよりも先にゲーム入力が有効になってたときの適用漏れを防いでいる
             if (_bodyMotionActive)
@@ -144,11 +164,20 @@ namespace Baku.VMagicMirror
             _hasModel = false;
             _animator = null;
             _vrmRoot = null;
+            _rootOrientationController.ResetImmediately();
         }
 
         private void TryAct(int triggerHash)
         {
-            if (_hasModel && _bodyMotionActive)
+            if (!_hasModel || !_bodyMotionActive)
+            {
+                return;
+            }
+
+            var stateHash = _animator.GetCurrentAnimatorStateInfo(_baseLayerIndex).shortNameHash;
+            
+            //要するにアクション中は無視する…というガード
+            if (stateHash == Walk || stateHash == Run || stateHash == Crouch)
             {
                 _animator.SetTrigger(triggerHash);
             }
@@ -168,11 +197,32 @@ namespace Baku.VMagicMirror
                 if (!_bodyMotionActive)
                 {
                     ResetParameters();
+                    _rootOrientationController.ResetImmediately();
                 }
             }
         }
+
+        private void SetLocomotionStyle(int rawStyleValue)
+        {
+            if (rawStyleValue < (int)GameInputLocomotionStyle.FirstPerson ||
+                rawStyleValue > (int)GameInputLocomotionStyle.SideView2D)
+            {
+                return;
+            }
+
+            var style = (GameInputLocomotionStyle)rawStyleValue;
+            if (_locomotionStyle == style)
+            {
+                return;
+            }
+
+            _locomotionStyle = style;
+            _rootOrientationController.LocomotionStyle = style;
+
+            _moveInputDampSpeed = Vector2.zero;
+        }
         
-        void ResetParameters()
+        private void ResetParameters()
         {
             _animator.SetFloat(MoveRight, 0f);
             _animator.SetFloat(MoveForward, 0f);
@@ -199,12 +249,24 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            _moveInput = Vector2.SmoothDamp(
-                _moveInput, 
-                _rawMoveInput, 
-                ref _moveInputDampSpeed, 
-                MoveLerpSmoothTime
+            if (_locomotionStyle == GameInputLocomotionStyle.FirstPerson)
+            {
+                _moveInput = Vector2.SmoothDamp(
+                    _moveInput, 
+                    _rawMoveInput, 
+                    ref _moveInputDampSpeed, 
+                    MoveLerpSmoothTime
                 );
+            }
+            else
+            {
+                _moveInput = Vector2.SmoothDamp(
+                    _moveInput, 
+                    _rawMoveInput, 
+                    ref _moveInputDampSpeed, 
+                    MoveLerpSmoothTimeOnThirdPerson
+                );
+            }
 
             _lookAroundInput = Vector2.SmoothDamp(
                 _lookAroundInput, 
@@ -213,20 +275,45 @@ namespace Baku.VMagicMirror
                 LookAroundSmoothTime
                 );
 
-            LookAroundRotation = Quaternion.Euler(
-                -_lookAroundInput.y * HeadPitchMaxDeg,
-                _lookAroundInput.x * HeadYawMaxDeg,
-                0f
+            if (_locomotionStyle == GameInputLocomotionStyle.FirstPerson)
+            {
+                LookAroundRotation = Quaternion.Euler(
+                    -_lookAroundInput.y * HeadPitchMaxDeg,
+                    _lookAroundInput.x * HeadYawMaxDeg,
+                    0f
                 );
+            }
+            else
+            {
+                //NOTE: 3人称なりにヨー方向に目線を動かすのもアリで、やる場合は首だけよりはLookAtIKで上半身ごと動かしたい…
+                LookAroundRotation = Quaternion.Euler(-_lookAroundInput.y * HeadPitchMaxDeg, 0f, 0f);
+            }
             
-            _animator.SetFloat(MoveRight, _moveInput.x);
-            _animator.SetFloat(MoveForward, _moveInput.y);
+            _rootOrientationController.UpdateInput(_moveInput, Time.deltaTime);
+
+            switch (_locomotionStyle)
+            {
+                case GameInputLocomotionStyle.FirstPerson:
+                    _animator.SetFloat(MoveRight, _moveInput.x);
+                    _animator.SetFloat(MoveForward, _moveInput.y);
+                    break;
+                case GameInputLocomotionStyle.ThirdPerson:
+                    //NOTE: 補間出来たほうが少しキレイではある。横スクロールも同様
+                    _animator.SetFloat(MoveRight, 0f);
+                    _animator.SetFloat(MoveForward, _moveInput.magnitude);
+                    break;
+                case GameInputLocomotionStyle.SideView2D:
+                    _animator.SetFloat(MoveRight, 0f);
+                    //1.2fを掛けるのは、左右ピッタリの入力ではなく多少斜めになっていた場合にも全速移動扱いするため
+                    _animator.SetFloat(MoveForward, Mathf.Clamp01(Mathf.Abs(_moveInput.x) * 1.2f));
+                    break;
+            }
+
             _animator.SetBool(Crouch, _isCrouching);
             //NOTE: XORでも書けるが読み味がどっちもどっちなので…要は以下どっちかなら走るという事
             // - 基本歩き + 「ダッシュ」ボタンがオン
             // - 基本ダッシュ + 「歩く」ボタンがオフ
-            _animator.SetBool(Run, 
-                (!_alwaysRun && _isRunWalkToggleActive) || (_alwaysRun && !_isRunWalkToggleActive));
+            _animator.SetBool(Run, IsRunning);
             _animator.SetBool(GunFire, _gunFire);
 
             _rootYaw = Mathf.SmoothDamp(
@@ -235,7 +322,7 @@ namespace Baku.VMagicMirror
                 ref _rootYawDampSpeed, 
                 GunFireYawSmoothTime
                 );
-            _vrmRoot.localRotation = Quaternion.Euler(0f, _rootYaw, 0f);
+            _vrmRoot.localRotation = Quaternion.Euler(0f, _rootYaw, 0f) * _rootOrientationController.Rotation;
         }
     }
 }

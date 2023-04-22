@@ -111,6 +111,30 @@
                                     Margin="5"
                                     />
                     </StackPanel>
+
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="200" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="{DynamicResource GameInputKeyAssign_Option_LocomotionStyle}"
+                                   Margin="10,0"/>
+
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding LocomotionStyles}"
+                                  SelectedValuePath="Style"
+                                  SelectedValue="{Binding LocomotionStyle.Value}"
+                                  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:GameInputLocomotionStyleViewModel}">
+                                    <TextBlock Text="{Binding Label.Value}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                    </Grid>
+
                     <CheckBox Content="{DynamicResource GameInputKeyAssign_Option_AlwaysRun}"
                               Margin="10,10,10,5"
                               IsChecked="{Binding AlwaysRun.Value, Mode=TwoWay}"

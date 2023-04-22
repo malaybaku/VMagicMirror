@@ -2,6 +2,13 @@ namespace Baku.VMagicMirror.GameInput
 {
     //NOTE: WPF側の定義と揃えてる + 設定ファイルにも載る名前であることに注意
 
+    public enum GameInputLocomotionStyle
+    {
+        FirstPerson = 0,
+        ThirdPerson = 1,
+        SideView2D = 2,
+    }
+
     public enum GameInputStickAction
     {
         None,

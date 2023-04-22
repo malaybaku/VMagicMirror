@@ -107,6 +107,7 @@
         public const string UseKeyboardForGameInput = nameof(UseKeyboardForGameInput);
         public const string SetGamepadGameInputKeyAssign = nameof(SetGamepadGameInputKeyAssign);
         public const string SetKeyboardGameInputKeyAssign = nameof(SetKeyboardGameInputKeyAssign);
+        public const string SetGameInputLocomotionStyle = nameof(SetGameInputLocomotionStyle);
         public const string EnableAlwaysRunGameInput = nameof(EnableAlwaysRunGameInput);
         public const string EnableWasdMoveGameInput = nameof(EnableWasdMoveGameInput);
         public const string EnableArrowKeyMoveGameInput = nameof(EnableArrowKeyMoveGameInput);

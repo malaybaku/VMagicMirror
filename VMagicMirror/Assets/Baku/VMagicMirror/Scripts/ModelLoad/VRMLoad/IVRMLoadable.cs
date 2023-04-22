@@ -16,6 +16,9 @@ namespace Baku.VMagicMirror
         
         /// <summary>VRMをアンロードするときに呼び出されます。</summary>
         event Action VrmDisposing;
+
+        /// <summary> ローカルファイルのVRMのロード処理について、成否によらず処理が終わると呼ばれます。 </summary>
+        public event Action LocalVrmLoadEnded;
         
         /// <summary> 現在のモデルがVRM 0.xなのかVRM 1.0なのかが分かるプロパティ </summary>
         IReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion { get; }

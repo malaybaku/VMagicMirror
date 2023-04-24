@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror.GameInput
         private const float MaxSpeed = 1400f;
 
         //NOTE: 入力判定側の措置としてこんなに小さい値は通してこないはずだが、念のため。
-        private const float MagnitudeThreshold = 0.1f;
+        private const float MagnitudeThreshold = 0.3f;
 
         //横スクロールでは左右どっちに向くときもわずかに手前を向かせておく(10degくらい)
         private static readonly Vector2 SideViewLeft = new Vector2(-1f, -0.2f).normalized;
@@ -74,8 +74,8 @@ namespace Baku.VMagicMirror.GameInput
             {
                 yaw = GetYawAngleOfThirdPerson(direction);
                 _prevTargetYaw = yaw;
-                _directionMagnitude = direction.magnitude;
             }
+            _directionMagnitude = direction.magnitude;
 
             if (_directionMagnitude < MagnitudeThreshold)
             {
@@ -86,10 +86,13 @@ namespace Baku.VMagicMirror.GameInput
             var deltaAngle = Mathf.DeltaAngle(_yawAngle + 10f, yaw) + 10f;
             var targetAngle = _yawAngle + deltaAngle;
 
-            //NOTE: スティックを弱く倒した場合は回転速度も遅くなる…というのがdeltaTimeに掛けてる値の効果
+            //NOTE: スティックを弱く倒した場合、回転が遅くなる
             _yawAngle = Mathf.SmoothDamp(
-                _yawAngle, targetAngle, ref _yawAngleVelocity, TurnDuration,
-                MaxSpeed, deltaTime * _directionMagnitude
+                _yawAngle,
+                targetAngle, 
+                ref _yawAngleVelocity, 
+                TurnDuration * DirectionMagnitudeToDurationFactor(_directionMagnitude),
+                MaxSpeed, deltaTime
             );
 
             //値域をつねに抑える。1人称に戻したときに暴れないようにするため
@@ -136,6 +139,12 @@ namespace Baku.VMagicMirror.GameInput
         {
             var directionOnCamera = _camera.transform.rotation * new Vector3(direction.x, 0f, direction.y);
             return Mathf.Atan2(directionOnCamera.x, directionOnCamera.z) * Mathf.Rad2Deg;
+        }
+
+        //スティックが浅く倒れていると向きの回転にかかる時間が長くなる…というファクター
+        private static float DirectionMagnitudeToDurationFactor(float magnitude)
+        {
+            return 1.0f / Mathf.Clamp(magnitude, 0.3f, 1f);
         }
     }
 }

@@ -73,7 +73,6 @@ namespace Baku.VMagicMirror
         public void Initialize(
             CustomMotionRepository repository, 
             BodyMotionModeController bodyMotionModeController,
-            GameInputBodyRootOrientationController gameInputBodyRootOrientationController,
             IVRMLoadable vrmLoadable)
         {
             _repository = repository;

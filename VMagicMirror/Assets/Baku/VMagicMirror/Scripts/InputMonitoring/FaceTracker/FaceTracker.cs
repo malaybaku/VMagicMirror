@@ -96,6 +96,7 @@ namespace Baku.VMagicMirror
         private bool _calibrationRequested = false;
         private float _faceNotDetectedCountDown = 0.0f;
 
+        private HorizontalFlipController _horizontalFlipController;
         private WebCamTexture _webCamTexture;
         private WebCamDevice _webCamDevice;
         private Color32[] _colors;
@@ -113,9 +114,7 @@ namespace Baku.VMagicMirror
             )
         {
             var _ = new FaceTrackerReceiver(receiver, this);
-            horizontalFlipController.DisableHorizontalFlip
-                .Subscribe(disable => DisableHorizontalFlip = disable)
-                .AddTo(this);
+            _horizontalFlipController = horizontalFlipController;
             _sender = sender;
         }
 
@@ -131,6 +130,10 @@ namespace Baku.VMagicMirror
             
             _dlibFaceAnalyzer.SetUp();
             _dnnFaceAnalyzer.SetUp();
+            
+            _horizontalFlipController.DisableHorizontalFlip
+                .Subscribe(disable => DisableHorizontalFlip = disable)
+                .AddTo(this);
         }
 
         private void Update()

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using UniRx;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -106,9 +106,16 @@ namespace Baku.VMagicMirror
 
         private IMessageSender _sender;
         [Inject]
-        public void Initialize(IMessageReceiver receiver, IMessageSender sender)
+        public void Initialize(
+            IMessageReceiver receiver, 
+            IMessageSender sender,
+            HorizontalFlipController horizontalFlipController
+            )
         {
             var _ = new FaceTrackerReceiver(receiver, this);
+            horizontalFlipController.DisableHorizontalFlip
+                .Subscribe(disable => DisableHorizontalFlip = disable)
+                .AddTo(this);
             _sender = sender;
         }
 

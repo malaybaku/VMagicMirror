@@ -58,7 +58,8 @@ namespace Baku.VMagicMirror.ExternalTracker
             IVRMLoadable vrmLoadable, 
             IMessageReceiver receiver, 
             IMessageSender sender,
-            FaceControlConfiguration config)
+            FaceControlConfiguration config,
+            HorizontalFlipController horizontalFlipController)
         {
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmUnloaded;
@@ -66,6 +67,9 @@ namespace Baku.VMagicMirror.ExternalTracker
             _config = config;
             
             var _ = new ExternalTrackerSettingReceiver(receiver, this);
+            horizontalFlipController.DisableHorizontalFlip
+                .Subscribe(disable => DisableHorizontalFlip = disable)
+                .AddTo(this);
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)

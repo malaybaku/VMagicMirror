@@ -523,10 +523,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">使い方をチェック (Webページへ移動)</sys:String>
 
     <!-- GameInput Key Assign -->
-    <sys:String x:Key="GameInputKeyAssign_Header">ゲーム入力 キー/ボタン割り当て</sys:String>
-    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">※この機能は試験的に導入しています。
-
- 「配信」タブで「動きかた」を「ゲーム入力」にしたときの動かし方を設定します。
+    <sys:String x:Key="GameInputKeyAssign_Header">ゲーム入力モード 設定</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">「配信」タブで「動きかた」を「ゲーム入力」にしたときの動かし方を設定します。
 
 - アバターがその場で移動・しゃがみ・ジャンプなどのアクションを取れるようになります。
 - 通常のword to motionが正常に動かない事があるので注意してください。        

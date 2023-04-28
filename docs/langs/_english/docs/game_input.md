@@ -21,13 +21,6 @@ Game Input feature provides another option to move avatar moves rather like in-g
 {% include docimg.html file="./images/docs/game_input.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
 
-<div class="note-area" markdown="1">
-
-**NOTE**
-
-This feature is in beta phase. Several improvements (e.g. additional action) are planned in future version.
-
-</div>
 
 #### How to Use
 {: .doc-sec2 }
@@ -77,7 +70,11 @@ Keyboard:
 
 Common: 
 
-- `Always Run`: When turned on, always run instead of walking. If you want to switch between walk and run by some inputs, turn off this option.
+- `Locomotion Style`: Change how to move to each direction.
+    - `First Person` keeps body forward. 
+    - `Third Person` makes avatar face to the direction where to move.
+    - `Side-Scrolling like` is similar to `Third Person` but this option makes avatar only 2 direction, left or right.
+- `Run by Default`: When turned on, always run instead of walking. When this option is enabled, `Run` action button makes avatar walk.
 
 Gamepad:
 
@@ -95,6 +92,7 @@ Keyboard / Mouse:
 - `Left Click`: Assign an action to mouse left click. Available actions are same as gamepad button.
 - `Right Click`: Assign an action to mouse right click.
 - `Middle Click`: Assign an action to mouse middle click.
+- `Additional Key Assign`: Assign any key to the actions, by select key input field right to the action and press key. Reset button can clear the key setting assigned to the action.
 
 </div>
 

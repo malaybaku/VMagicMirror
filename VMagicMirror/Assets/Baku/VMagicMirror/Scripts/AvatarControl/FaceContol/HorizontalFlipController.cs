@@ -13,8 +13,6 @@ namespace Baku.VMagicMirror
         public IReadOnlyReactiveProperty<bool> DisableHorizontalFlip => _disableHorizontalFlip;
 
         private readonly ReactiveProperty<bool> _uiOptionDisablesHorizontalFlip = new ReactiveProperty<bool>(false);
-        private readonly ReactiveProperty<bool> _gameInputLocomotionStyleIsThirdPerson =
-            new ReactiveProperty<bool>(false);
 
         [Inject]
         public HorizontalFlipController(
@@ -32,26 +30,20 @@ namespace Baku.VMagicMirror
                 VmmCommands.DisableFaceTrackingHorizontalFlip,
                 c => _uiOptionDisablesHorizontalFlip.Value = c.ToBoolean()
                 );
-            
-            _receiver.AssignCommandHandler(
-                VmmCommands.SetGameInputLocomotionStyle,
-                c => _gameInputLocomotionStyleIsThirdPerson.Value = 
-                    IsThirdPersonLocomotionStyle(c.ToInt())
-                );
 
             _uiOptionDisablesHorizontalFlip.CombineLatest(
                 _bodyMotionModeController.MotionMode,
-                _gameInputLocomotionStyleIsThirdPerson,
-                (option, mode, isThirdPersonGameInput) => 
+                _bodyMotionModeController.CurrentGameInputLocomotionStyle,
+                (option, mode, gameInputLocomotion) => 
                     option ||
-                    (mode == BodyMotionMode.GameInputLocomotion && isThirdPersonGameInput)
+                    (mode == BodyMotionMode.GameInputLocomotion && 
+                     IsThirdPersonLocomotionStyle(gameInputLocomotion))
                 )
                 .Subscribe(disable => _disableHorizontalFlip.Value = disable)
                 .AddTo(this);
         }
 
-        private bool IsThirdPersonLocomotionStyle(int rawValue) =>
-            rawValue == (int)GameInputLocomotionStyle.ThirdPerson ||
-            rawValue == (int)GameInputLocomotionStyle.SideView2D;
+        private static bool IsThirdPersonLocomotionStyle(GameInputLocomotionStyle style)
+            => style != GameInputLocomotionStyle.FirstPerson;
     }
 }

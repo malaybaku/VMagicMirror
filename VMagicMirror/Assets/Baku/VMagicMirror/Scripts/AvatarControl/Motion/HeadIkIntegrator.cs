@@ -83,17 +83,17 @@ namespace Baku.VMagicMirror
             _mouseActionCount = Mathf.Min(mouseActionCountMax, _mouseActionCount + Time.deltaTime * mouseMoveIncrementFactor);
 
             //画面中央 = カメラ位置なのでコレで空間的にだいたい正しいハズ
-            float xPos = (x - Screen.width * 0.5f) / 1000;
+            var xPos = (x - Screen.width * 0.5f) / 1000;
             //NOTE: Yについては目が上向きになりすぎないよう強めに制限する
-            float yPos = (y - Screen.height * 0.5f) / 1000;
+            var yPos = (y - Screen.height * 0.5f) / 1000;
             yPos -= 0.3f;
             if (yPos > 0)
             {
                 yPos *= 0.7f;
             }
 
-            float xClamped = Mathf.Clamp(xPos, -1f, 1f);
-            float yClamped = Mathf.Clamp(yPos, -1f, 0.5f);
+            var xClamped = Mathf.Clamp(xPos, -1f, 1f);
+            var yClamped = Mathf.Clamp(yPos, -1f, 0.5f);
             
             var baseLookAtPosition =
                 _camera.TransformPoint(xClamped, yClamped, 0) + 
@@ -111,7 +111,7 @@ namespace Baku.VMagicMirror
             }
             
             //カメラのZ成分が増える(=真後ろから見る)のに近づくにつれて奥側を向かせるようにする
-            float depthFactor = 1.0f;
+            var depthFactor = 1.0f;
             if (horizontalCamForward.z < 0.5f)
             {
                 depthFactor = (horizontalCamForward.z - 0.1f) * 2.5f;
@@ -120,7 +120,7 @@ namespace Baku.VMagicMirror
             //キャラを背後から映してるハズ: 奥行き方向にLookAtをずらしていく
             var camPosition = _camera.position;
             //Vector3.Dotのとこ = カメラからみてキャラが立ってる位置の奥行き。Yを考慮すると面倒なことになるため、XZ平面でやってます
-            float depth = (2 * depthFactor) * Mathf.Abs(Vector3.Dot(
+            var depth = (2 * depthFactor) * Mathf.Abs(Vector3.Dot(
                 new Vector3(camPosition.x, 0, camPosition.z), horizontalCamForward
                 ));
             _mouseBasedLookAt.Position = baseLookAtPosition + depth * camForward;
@@ -191,7 +191,7 @@ namespace Baku.VMagicMirror
             //TODO: この処理をオンオフできてもいいかも？
             if (RightHandTargetType == HandTargetType.PenTablet)
             {
-                float rate = Mathf.Clamp01(_mouseActionCount / penTabletFocusCount);
+                var rate = Mathf.Clamp01(_mouseActionCount / penTabletFocusCount);
                 pos = CreatePenTabletLookAt(pos, _penTabletProvider.GetPosFromScreenPoint(), rate);
             }
             
@@ -218,7 +218,7 @@ namespace Baku.VMagicMirror
             }
             
             //ペンタブからある程度離れたら二次カーブでLerpする。こうすると0.5f付近で繋がるし、問題も起きにくい…はず 
-            float distantAreaRate = (rate - .5f) * 2;
+            var distantAreaRate = (rate - .5f) * 2;
             return Vector3.Lerp(distanceLimitedResult, rawPos, distantAreaRate * distantAreaRate);
         }
 
@@ -228,8 +228,8 @@ namespace Baku.VMagicMirror
                 _motionModeController.MotionMode.Value == BodyMotionMode.GameInputLocomotion &&
                 _motionModeController.CurrentGameInputLocomotionStyle.Value != GameInputLocomotionStyle.FirstPerson;
         }
-        
-        class CameraBasedLookAtIk : IIKData
+
+        private class CameraBasedLookAtIk : IIKData
         {
             public Transform Camera { get; set; }
 
@@ -256,7 +256,7 @@ namespace Baku.VMagicMirror
             
                 //カメラのZ成分が増える(=真後ろから見る)のに近づくにつれて奥側を向かせる。
                 //このとき、途中のブレンディングをするとき正面向き成分を混ぜることで、遷移中のLookAtを体にめり込みにくくする
-                float depthFactor = 1.0f;
+                var depthFactor = 1.0f;
                 if (horizontalForward.z < 0.5f)
                 {
                     depthFactor = horizontalForward.z * 2;

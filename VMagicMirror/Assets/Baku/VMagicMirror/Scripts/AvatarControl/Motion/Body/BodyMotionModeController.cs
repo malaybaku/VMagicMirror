@@ -1,4 +1,5 @@
 using System;
+using Baku.VMagicMirror.GameInput;
 using UniRx;
 using Zenject;
 
@@ -31,6 +32,11 @@ namespace Baku.VMagicMirror
             new ReactiveProperty<BodyMotionMode>(BodyMotionMode.Default);
         public IReadOnlyReactiveProperty<BodyMotionMode> MotionMode => _motionMode;
 
+        private readonly ReactiveProperty<GameInputLocomotionStyle> _gameInputLocomotionStyle =
+            new ReactiveProperty<GameInputLocomotionStyle>(GameInputLocomotionStyle.FirstPerson);
+        public IReadOnlyReactiveProperty<GameInputLocomotionStyle> CurrentGameInputLocomotionStyle =>
+            _gameInputLocomotionStyle;
+
         private IDisposable _disposable;
 
         public void Initialize()
@@ -57,6 +63,22 @@ namespace Baku.VMagicMirror
                         modes.noHandTrack ? BodyMotionMode.StandingOnly :
                         BodyMotionMode.Default;
                 });
+            
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetGameInputLocomotionStyle,
+                command => SetGameInputLocomotionStyle(command.ToInt()));
+        }
+
+        private void SetGameInputLocomotionStyle(int value)
+        {
+            _gameInputLocomotionStyle.Value = value switch
+            {
+                0 => GameInputLocomotionStyle.FirstPerson,
+                1 => GameInputLocomotionStyle.ThirdPerson,
+                2 => GameInputLocomotionStyle.SideView2D,
+                //NOTE: 破綻防止ということでデフォルト値にフォールバック
+                _ => GameInputLocomotionStyle.FirstPerson,
+            };
         }
 
         public void Dispose()

@@ -521,9 +521,8 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">See How to Use (Open Web Page)</sys:String>
 
     <!-- GameInput Key Assign -->
-    <sys:String x:Key="GameInputKeyAssign_Header">Game Input Key/Button Assign</sys:String>
-    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">*The feature is experimental.
-Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
+    <sys:String x:Key="GameInputKeyAssign_Header">Game Locomotion Settings</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
 - In this mode, avatar acts move / jump / crouch etc.
 - Note that other motion features (Word to Motion) maybe not work correct.
 - This setting has independent setting file.</sys:String>
@@ -560,6 +559,7 @@ Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">Use ARROW to move</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Use SHIFT to run</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Use SPACE to jump</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_AdvancedAssign">Additional Key Assign:</sys:String>
 
     <sys:String x:Key="GameInputKeyAssign_Mouse_Section">Mouse:</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">Use mouse move to look around</sys:String>

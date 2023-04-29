@@ -20,6 +20,10 @@ lang: en
 * Fix: Bug in Game Locomotion mode that custom motion makes avatar move too quick on start and end.
 * Fix: Bug in app's startup, that loading view disappears too early when automatic VRM load option is enabled.
 
+Known Issue:
+
+* In Game Locomotion mode, there are some cases that avatar keeps standing pose and pose will not change. In this case, see `Streaming` tab > `Motion` > `Body Motion Style` and choose `Default` or `Standing Only`, and then re-choose `Game Locomotion` to recover the avatar's pose.
+
 
 #### v3.1.1
 {: .doc-sec2 }

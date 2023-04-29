@@ -22,6 +22,17 @@ Game Input feature provides another option to move avatar moves rather like in-g
 </div>
 
 
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+v3.2.0 has known issue about Game Locomotion with custom motion.
+
+In Game Locomotion mode, there are some cases that avatar keeps standing pose and pose will not change. In this case, see `Streaming` tab > `Motion` > `Body Motion Style` and choose `Default` or `Standing Only`, and then re-choose `Game Locomotion` to recover the avatar's pose.
+
+</div>
+
+
 #### How to Use
 {: .doc-sec2 }
 

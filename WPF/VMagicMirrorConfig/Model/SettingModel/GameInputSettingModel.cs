@@ -25,6 +25,11 @@ namespace Baku.VMagicMirrorConfig
             KeyboardEnabled = new RProperty<bool>(setting.KeyboardEnabled, v => SendMessage(factory.UseKeyboardForGameInput(v)));
             AlwaysRun = new RProperty<bool>(setting.AlwaysRun, v => SendMessage(factory.EnableAlwaysRunGameInput(v)));
 
+            LocomotionStyle = new RProperty<GameInputLocomotionStyle>(
+                GetLocomotionStyle(setting.LocomotionStyleValue),
+                v => SendMessage(factory.SetGameInputLocomotionStyle((int)v))
+            );
+
             UseMouseToLookAround = new RProperty<bool>(KeyboardKeyAssign.UseMouseLookAround, v =>
             {
                 KeyboardKeyAssign.UseMouseLookAround = v;
@@ -68,6 +73,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> GamepadEnabled { get; }
         public RProperty<bool> KeyboardEnabled { get; }
         public RProperty<bool> AlwaysRun { get; }
+        public RProperty<GameInputLocomotionStyle> LocomotionStyle { get; }
         
         public RProperty<bool> UseMouseToLookAround { get; }
         public RProperty<bool> UseWasdMove { get; }
@@ -226,9 +232,35 @@ namespace Baku.VMagicMirrorConfig
             KeyboardKeyAssignUpdated?.Invoke(this, new KeyboardKeyAssignUpdateEventArgs(KeyboardKeyAssign));
         }
 
-        public void AssignKeyAction(GameInputButtonAction action, string keyCode)
+        public void SetKeyAction(GameInputButtonAction action, string key)
         {
-            //NOTE: キーボード用のキーアサインはUIが未整備なので一旦無しにしてる。本当は実装がほしい
+            var current = action switch
+            {
+                GameInputButtonAction.Jump => KeyboardKeyAssign.JumpKeyCode,
+                GameInputButtonAction.Crouch => KeyboardKeyAssign.CrouchKeyCode,
+                GameInputButtonAction.Run => KeyboardKeyAssign.RunKeyCode,
+                GameInputButtonAction.Trigger => KeyboardKeyAssign.TriggerKeyCode,
+                GameInputButtonAction.Punch => KeyboardKeyAssign.PunchKeyCode,
+                _ => "",
+            };
+
+            if (key == current)
+            {
+                return;
+            }
+
+            switch (action)
+            {
+                case GameInputButtonAction.Jump: KeyboardKeyAssign.JumpKeyCode = key; break;
+                case GameInputButtonAction.Crouch: KeyboardKeyAssign.CrouchKeyCode = key; break;
+                case GameInputButtonAction.Run: KeyboardKeyAssign.RunKeyCode = key; break;
+                case GameInputButtonAction.Trigger: KeyboardKeyAssign.TriggerKeyCode = key; break;
+                case GameInputButtonAction.Punch: KeyboardKeyAssign.PunchKeyCode = key; break;
+                default: return;
+            }
+
+            SendKeyboardKeyAssign();
+            KeyboardKeyAssignUpdated?.Invoke(this, new KeyboardKeyAssignUpdateEventArgs(KeyboardKeyAssign));
         }
 
         public void ResetToDefault() => ApplySetting(GameInputSetting.Default);
@@ -241,6 +273,7 @@ namespace Baku.VMagicMirrorConfig
             {
                 GamepadEnabled = GamepadEnabled.Value,
                 KeyboardEnabled = KeyboardEnabled.Value,
+                LocomotionStyleValue = (int)LocomotionStyle.Value,
                 AlwaysRun = AlwaysRun.Value,
                 KeyboardKeyAssign = KeyboardKeyAssign,
                 GamepadKeyAssign = GamepadKeyAssign,
@@ -251,6 +284,7 @@ namespace Baku.VMagicMirrorConfig
         {
             GamepadEnabled.Value = setting.GamepadEnabled;
             KeyboardEnabled.Value = setting.KeyboardEnabled;
+            LocomotionStyle.Value = GetLocomotionStyle(setting.LocomotionStyleValue);
             AlwaysRun.Value = setting.AlwaysRun;
 
             UseMouseToLookAround.Value = setting.KeyboardKeyAssign.UseMouseLookAround;
@@ -289,9 +323,17 @@ namespace Baku.VMagicMirrorConfig
             using var writer = new StringWriter(sb);
             using var jsonWriter = new JsonTextWriter(writer);
 
-            serializer.Serialize(jsonWriter, KeyboardKeyAssign);
+            serializer.Serialize(jsonWriter, KeyboardKeyAssign.GetKeyCodeTranslatedData());
             var json = sb.ToString();
             SendMessage(MessageFactory.Instance.SetKeyboardGameInputKeyAssign(json));
+        }
+
+        private GameInputLocomotionStyle GetLocomotionStyle(int value)
+        {
+            //NOTE: 未来のバージョンから知らん値が降ってきたとき用のガード
+            return value >= 0 && value <= (int)GameInputLocomotionStyle.SideView2D
+                ? (GameInputLocomotionStyle)value
+                : GameInputLocomotionStyle.FirstPerson;
         }
 
 

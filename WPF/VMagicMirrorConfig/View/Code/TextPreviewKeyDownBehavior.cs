@@ -5,10 +5,7 @@ using System.Windows.Input;
 
 namespace Baku.VMagicMirrorConfig.View
 {
-    /// <summary>
-    /// Hot Keyの編集をするためのテキストボックスからKeyDown情報をコマンド的に送信するやつ
-    /// </summary>
-    public class TextKeyDownBehavior : Behavior<TextBox>
+    public class TextPreviewKeyDownBehavior : Behavior<TextBox>
     {
         public ICommand KeyDownCommand
         {
@@ -20,22 +17,21 @@ namespace Baku.VMagicMirrorConfig.View
             = DependencyProperty.RegisterAttached(
                 nameof(KeyDownCommand),
                 typeof(ICommand),
-                typeof(TextKeyDownBehavior)
+                typeof(TextPreviewKeyDownBehavior)
                 );
 
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.KeyDown += OnKeyDown;
+            AssociatedObject.PreviewKeyDown += OnKeyDown;
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            AssociatedObject.KeyDown -= OnKeyDown;
+            AssociatedObject.PreviewKeyDown -= OnKeyDown;
         }
 
-        //NOTE: 必要ならpreviewにするのもあり
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             TextKeyDownBehaviorUtil.OnKeyDown(e, key =>

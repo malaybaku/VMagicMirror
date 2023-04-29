@@ -492,7 +492,11 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Hotkey_Action_SetCamera_Format">カメラワーク適用: {0}</sys:String>
     <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motion: {0}</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">アクセサリon/off: {0}</sys:String>
-    
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Default">モーション方式: デフォルト</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">モーション方式: つねに手下げ</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">モーション方式: ゲーム入力</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">モーション方式: (不明な値)</sys:String>
+
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">設定ファイルの操作</sys:String>
     <sys:String x:Key="SettingFile_SaveAndLoad">セーブ・ロード</sys:String>
@@ -519,10 +523,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">使い方をチェック (Webページへ移動)</sys:String>
 
     <!-- GameInput Key Assign -->
-    <sys:String x:Key="GameInputKeyAssign_Header">ゲーム入力 キー/ボタン割り当て</sys:String>
-    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">※この機能は試験的に導入しています。
-
- 「配信」タブで「動きかた」を「ゲーム入力」にしたときの動かし方を設定します。
+    <sys:String x:Key="GameInputKeyAssign_Header">ゲーム入力モード 設定</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">「配信」タブで「動きかた」を「ゲーム入力」にしたときの動かし方を設定します。
 
 - アバターがその場で移動・しゃがみ・ジャンプなどのアクションを取れるようになります。
 - 通常のword to motionが正常に動かない事があるので注意してください。        
@@ -535,10 +537,17 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Gamepad_Enable">ゲームパッド入力を使用</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard">キーボード・マウス</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">キーボード・マウス入力を使用</sys:String>
+
+    <sys:String x:Key="GameInputKeyAssign_Option_LocomotionStyle">移動スタイル</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_LocomotionStyle_FirstPerson">1人称: つねに同じ向き</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_LocomotionStyle_ThirdPerson">3人称: 移動先を向く</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_LocomotionStyle_SideView2D">横スクロール風</sys:String>
     
-    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">移動は常にダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">移動はデフォルトでダッシュ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun_Note">※オンの場合、かわりに「ダッシュ」ボタンで歩くようになります</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">つねに銃を構える</sys:String>
 
+    
     <sys:String x:Key="GameInputKeyAssign_Action_None">(なし)</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_Move">移動</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_LookAround">見回し</sys:String>
@@ -554,6 +563,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">矢印キーで移動</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Shiftキーでダッシュ</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Spaceキーでジャンプ</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_AdvancedAssign">その他のキーアサイン:</sys:String>
 
     <sys:String x:Key="GameInputKeyAssign_Mouse_Section">マウス:</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">マウス移動で見回し</sys:String>

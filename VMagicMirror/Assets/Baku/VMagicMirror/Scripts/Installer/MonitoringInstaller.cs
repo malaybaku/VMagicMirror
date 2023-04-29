@@ -39,6 +39,8 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<IReleaseBeforeQuit>()
                 .FromInstance(globalHookInputChecker)
                 .AsCached();
+            
+            container.BindInterfacesAndSelfTo<HorizontalFlipController>().AsSingle();
         }
     }
 }

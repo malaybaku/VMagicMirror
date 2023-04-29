@@ -11,7 +11,7 @@
              MinWidth="600"
              d:DataContext="{d:DesignInstance vm:KeyAssignViewModel}"
              d:DesignWidth="700"
-             d:DesignHeight="1100"
+             d:DesignHeight="1500"
              AllowDrop="True"
              >
     <UserControl.Resources>
@@ -111,9 +111,36 @@
                                     Margin="5"
                                     />
                     </StackPanel>
+
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="200" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="{DynamicResource GameInputKeyAssign_Option_LocomotionStyle}"
+                                   Margin="10,0"/>
+
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding LocomotionStyles}"
+                                  SelectedValuePath="Style"
+                                  SelectedValue="{Binding LocomotionStyle.Value}"
+                                  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:GameInputLocomotionStyleViewModel}">
+                                    <TextBlock Text="{Binding Label.Value}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                    </Grid>
+
                     <CheckBox Content="{DynamicResource GameInputKeyAssign_Option_AlwaysRun}"
-                              Margin="10"
+                              Margin="10,10,10,5"
                               IsChecked="{Binding AlwaysRun.Value, Mode=TwoWay}"
+                              />
+                    <TextBlock Text="{DynamicResource GameInputKeyAssign_Option_AlwaysRun_Note}"
+                              Margin="20,0,25,10"
                               />
                 </StackPanel>
             </Border>
@@ -342,6 +369,20 @@
                               IsChecked="{Binding UseSpaceJump.Value, Mode=TwoWay}"
                               IsEnabled="{Binding KeyboardEnabled.Value}"
                               />
+
+                    <TextBlock Text="{DynamicResource GameInputKeyAssign_Keyboard_AdvancedAssign}"
+                               Margin="25,15,25,5"
+                               />
+
+                    <ItemsControl ItemsSource="{Binding KeyAssigns}"
+                                  Margin="45,5"
+                                  HorizontalAlignment="Left">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:GameInputKeyAssignItemViewModel}">
+                                <view:GameInputKeyAssignItem />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
                     <TextBlock Text="{DynamicResource GameInputKeyAssign_Mouse_Section}"
                                Margin="10,15,5,5"

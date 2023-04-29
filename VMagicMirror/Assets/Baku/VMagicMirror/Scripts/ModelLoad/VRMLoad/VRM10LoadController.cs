@@ -28,7 +28,8 @@ namespace Baku.VMagicMirror
         public event Action<VrmLoadedInfo> VrmLoaded; 
         public event Action<VrmLoadedInfo> PostVrmLoaded; 
         public event Action VrmDisposing;
-
+        public event Action LocalVrmLoadEnded;
+        
         private readonly IMessageSender _sender;
         private readonly IMessageReceiver _receiver;
         
@@ -140,15 +141,19 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void NotifyLoadModelFromFileEnded() => LocalVrmLoadEnded?.Invoke();
+
         private async UniTaskVoid LoadModel(string path)
         {
             if (!File.Exists(path))
             {
+                NotifyLoadModelFromFileEnded();
                 return;
             }
 
             if (Path.GetExtension(path).ToLower() != ".vrm")
             {
+                NotifyLoadModelFromFileEnded();
                 LogOutput.Instance.Write($"unknown file type: {path}");
                 return;
             }
@@ -175,9 +180,11 @@ namespace Baku.VMagicMirror
                     MessageFactory.Instance.ModelNameConfirmedOnLoad("VRM File: " + instance.Vrm.Meta.Name)
                     );
                 SetModel(instance);
+                NotifyLoadModelFromFileEnded();
             }
             catch (Exception ex)
             {
+                NotifyLoadModelFromFileEnded();
                 HandleLoadError(ex);
             }
         }

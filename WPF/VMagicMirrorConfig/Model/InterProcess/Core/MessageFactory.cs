@@ -169,6 +169,7 @@ namespace Baku.VMagicMirrorConfig
         public Message SetGamepadGameInputKeyAssign(string json) => WithArg(json);
         public Message SetKeyboardGameInputKeyAssign(string json) => WithArg(json);
 
+        public Message SetGameInputLocomotionStyle(int value) => WithArg(value);
         public Message EnableAlwaysRunGameInput(bool enable) => WithArg(enable);
 
         //NOTE: 以下はKeyboardKeyAssignの一部に帰着させるかもしれない。

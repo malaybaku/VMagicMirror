@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror.GameInput
         IObservable<Vector2> IGameInputSource.MoveInput => _moveInput;
         IObservable<Vector2> IGameInputSource.LookAroundInput => _lookAroundInput;
         IObservable<bool> IGameInputSource.IsCrouching => _isCrouching;
-        IObservable<bool> IGameInputSource.IsRunning => _isRunning;
+        IObservable<bool> IGameInputSource.IsRunWalkToggleActive => _isRunning;
         IObservable<bool> IGameInputSource.GunFire => _gunFire;
         IObservable<Unit> IGameInputSource.Jump => _jump;
         IObservable<Unit> IGameInputSource.Punch => _punch;

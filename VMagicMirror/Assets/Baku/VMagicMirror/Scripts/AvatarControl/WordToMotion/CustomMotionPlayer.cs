@@ -1,4 +1,5 @@
-﻿using Baku.VMagicMirror.MotionExporter;
+﻿using Baku.VMagicMirror.GameInput;
+using Baku.VMagicMirror.MotionExporter;
 using Baku.VMagicMirror.WordToMotion;
 using UniRx;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace Baku.VMagicMirror
 
         private readonly Subject<Unit> _lateUpdateRun = new Subject<Unit>();
         private CustomMotionRepository _repository;
+        private BodyMotionModeController _bodyMotionModeController;
 
         private bool _hasModel = false;
         private HumanPoseHandler _humanPoseHandler = null;
@@ -34,12 +36,29 @@ namespace Baku.VMagicMirror
         //NOTE: Execution Order Sensitiveな処理なのでUniTask.DelayFrameが使えないんですね～
         private void LateUpdate()
         {
+            var posBefore = Vector3.zero;
+            var rotBefore = Quaternion.identity;
+            if (_hasModel)
+            {
+                posBefore = _hips.localPosition;
+                rotBefore = _hips.localRotation;
+            }
+            
             _lateUpdateRun.OnNext(Unit.Default);
             if (_playRoutine?.HasUpdate == true)
             {
-                //NOTE: hipsは固定しないとどんどんズレる事があるのを確認したため、安全のために固定してます
-                _hips.localPosition = _originHipsPos;
-                _hips.localRotation = _originHipsRot;
+                if (_bodyMotionModeController.MotionMode.Value == BodyMotionMode.GameInputLocomotion)
+                {
+                    //ゲーム入力中はAnimatorで有効な姿勢が入ってるはずなのを信じて、HumanPoseHandlerが値を更新した分は巻き戻す
+                    _hips.localPosition = posBefore;
+                    _hips.localRotation = rotBefore;
+                }
+                else
+                {
+                    //NOTE: こっちでもゲーム入力時と同じ方式で処理しうるかもしれないが、誤差が蓄積されるのが怖いので固定値で。
+                    _hips.localPosition = _originHipsPos;
+                    _hips.localRotation = _originHipsRot;
+                }
             }
             _playRoutine?.ResetUpdateFlag();
         }
@@ -51,9 +70,13 @@ namespace Baku.VMagicMirror
         }
 
         [Inject]
-        public void Initialize(CustomMotionRepository repository, IVRMLoadable vrmLoadable)
+        public void Initialize(
+            CustomMotionRepository repository, 
+            BodyMotionModeController bodyMotionModeController,
+            IVRMLoadable vrmLoadable)
         {
             _repository = repository;
+            _bodyMotionModeController = bodyMotionModeController;
 
             vrmLoadable.VrmLoaded += info =>
             {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using UniRx;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -96,6 +96,7 @@ namespace Baku.VMagicMirror
         private bool _calibrationRequested = false;
         private float _faceNotDetectedCountDown = 0.0f;
 
+        private HorizontalFlipController _horizontalFlipController;
         private WebCamTexture _webCamTexture;
         private WebCamDevice _webCamDevice;
         private Color32[] _colors;
@@ -106,9 +107,14 @@ namespace Baku.VMagicMirror
 
         private IMessageSender _sender;
         [Inject]
-        public void Initialize(IMessageReceiver receiver, IMessageSender sender)
+        public void Initialize(
+            IMessageReceiver receiver, 
+            IMessageSender sender,
+            HorizontalFlipController horizontalFlipController
+            )
         {
             var _ = new FaceTrackerReceiver(receiver, this);
+            _horizontalFlipController = horizontalFlipController;
             _sender = sender;
         }
 
@@ -124,6 +130,10 @@ namespace Baku.VMagicMirror
             
             _dlibFaceAnalyzer.SetUp();
             _dnnFaceAnalyzer.SetUp();
+            
+            _horizontalFlipController.DisableHorizontalFlip
+                .Subscribe(disable => DisableHorizontalFlip = disable)
+                .AddTo(this);
         }
 
         private void Update()

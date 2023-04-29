@@ -1,4 +1,7 @@
 ﻿using Microsoft.Win32;
+using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -64,6 +67,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => UrlNavigate.Open(LocalizedString.GetString("URL_docs_game_input"))
                 );
 
+            KeyAssigns = Array.Empty<GameInputKeyAssignItemViewModel>();
+
             if (!IsInDesignMode)
             {
                 WeakEventManager<GameInputSettingModel, GamepadKeyAssignUpdateEventArgs>.AddHandler(
@@ -77,6 +82,21 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     nameof(_model.KeyboardKeyAssignUpdated),
                     OnKeyboardKeyAssignUpdated
                     );
+
+                KeyAssigns = new (GameInputButtonAction action, string keyCode)[]
+                    {
+                        (GameInputButtonAction.Jump,_model.KeyboardKeyAssign.JumpKeyCode),
+                        (GameInputButtonAction.Crouch, _model.KeyboardKeyAssign.CrouchKeyCode),
+                        (GameInputButtonAction.Run, _model.KeyboardKeyAssign.RunKeyCode),
+                        (GameInputButtonAction.Trigger, _model.KeyboardKeyAssign.TriggerKeyCode),
+                        (GameInputButtonAction.Punch, _model.KeyboardKeyAssign.PunchKeyCode),
+                    }.Select(pair =>
+                    {
+                        var vm = new GameInputKeyAssignItemViewModel(pair.action, pair.keyCode);
+                        vm.RegisteredKeyChanged += key => _model.SetKeyAction(pair.action, key);
+                        return vm;
+                    })
+                    .ToArray();
             }
         }
 
@@ -87,6 +107,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> KeyboardEnabled => _model.KeyboardEnabled;
 
         public RProperty<bool> AlwaysRun => _model.AlwaysRun;
+        public RProperty<GameInputLocomotionStyle> LocomotionStyle => _model.LocomotionStyle;
 
         public RProperty<GameInputButtonAction> ButtonA { get; }
         public RProperty<GameInputButtonAction> ButtonB { get; }
@@ -118,21 +139,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> UseShiftRun => _model.UseShiftRun;
         public RProperty<bool> UseSpaceJump => _model.UseSpaceJump;
 
-        public RProperty<string> JumpKeyCode { get; } = new RProperty<string>("");
-        public RProperty<string> RunKeyCode { get; } = new RProperty<string>("");
-        public RProperty<string> CrouchKeyCode { get; } = new RProperty<string>("");
-
-        public RProperty<string> TriggerKeyCode { get; } = new RProperty<string>("");
-        public RProperty<string> PunchKeyCode { get; } = new RProperty<string>("");
-
         public ActionCommand ResetSettingsCommand { get; }
         public ActionCommand SaveSettingFileCommand { get; }
         public ActionCommand LoadSettingFileCommand { get; }
         public ActionCommand OpenDocUrlCommand { get; }
 
+        public GameInputKeyAssignItemViewModel[] KeyAssigns { get; }
+
+        public GameInputLocomotionStyleViewModel[] LocomotionStyles => GameInputLocomotionStyleViewModel.AvailableItems;
         public GameInputStickActionItemViewModel[] StickActions => GameInputStickActionItemViewModel.AvailableItems;
         public GameInputButtonActionItemViewModel[] ButtonActions => GameInputButtonActionItemViewModel.AvailableItems;
-
 
         private void SetGamepadButtonAction(GameInputGamepadButton button, GameInputButtonAction action)
         {
@@ -202,7 +218,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 LeftClick.Value = data.LeftClick;
                 RightClick.Value = data.RightClick;
                 MiddleClick.Value = data.MiddleClick;
-                //これ以外はDataではなく個別のPropertyとして飛んでくるものしか使ってないので、一旦OK
+
+                KeyAssigns.FirstOrDefault(a => a.Action == GameInputButtonAction.Jump)?.SetKey(data.JumpKeyCode);
+                KeyAssigns.FirstOrDefault(a => a.Action == GameInputButtonAction.Crouch)?.SetKey(data.CrouchKeyCode);
+                KeyAssigns.FirstOrDefault(a => a.Action == GameInputButtonAction.Run)?.SetKey(data.RunKeyCode);
+                KeyAssigns.FirstOrDefault(a => a.Action == GameInputButtonAction.Trigger)?.SetKey(data.TriggerKeyCode);
+                KeyAssigns.FirstOrDefault(a => a.Action == GameInputButtonAction.Punch)?.SetKey(data.PunchKeyCode);
             }
             finally
             {
@@ -252,6 +273,32 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
     }
 
+    /// <summary>
+    /// ゲーム入力で移動入力をどういう風に扱うかのオプションを示すViewModel
+    /// </summary>
+    public class GameInputLocomotionStyleViewModel
+    {
+        public GameInputLocomotionStyleViewModel(GameInputLocomotionStyle style, string localizationKey)
+        {
+            Style = style;
+            _localizationKey = localizationKey;
+            Label.Value = LocalizedString.GetString(_localizationKey);
+            LanguageSelector.Instance.LanguageChanged +=
+                () => Label.Value = LocalizedString.GetString(_localizationKey);
+        }
+
+        private readonly string _localizationKey;
+        public GameInputLocomotionStyle Style { get; }
+        public RProperty<string> Label { get; } = new RProperty<string>("");
+
+        //NOTE: immutable arrayのほうが性質は良いのでそうしてもよい
+        public static GameInputLocomotionStyleViewModel[] AvailableItems { get; } = new GameInputLocomotionStyleViewModel[]
+        {
+            new (GameInputLocomotionStyle.FirstPerson, "GameInputKeyAssign_LocomotionStyle_FirstPerson"),
+            new (GameInputLocomotionStyle.ThirdPerson, "GameInputKeyAssign_LocomotionStyle_ThirdPerson"),
+            new (GameInputLocomotionStyle.SideView2D, "GameInputKeyAssign_LocomotionStyle_SideView2D"),
+        };
+    }
 
     /// <summary>
     /// ゲーム入力のうちスティックで取れるアクションを定義したもの
@@ -289,9 +336,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             Action = action;
             _localizationKey = localizationKey;
-            Label.Value = LocalizedString.GetString(_localizationKey);
-            LanguageSelector.Instance.LanguageChanged +=
-                () => Label.Value = LocalizedString.GetString(_localizationKey);
+            if (!string.IsNullOrEmpty(_localizationKey))
+            {
+                Label.Value = LocalizedString.GetString(_localizationKey);
+                LanguageSelector.Instance.LanguageChanged +=
+                    () => Label.Value = LocalizedString.GetString(_localizationKey);
+            }
         }
 
         private readonly string _localizationKey;

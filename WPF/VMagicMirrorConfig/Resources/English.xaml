@@ -490,6 +490,10 @@ Input favorite key combination in text area.
     <sys:String x:Key="Hotkey_Action_SetCamera_Format">Camera Pose: {0}</sys:String>
     <sys:String x:Key="Hotkey_Action_CallWtm_Format">Word To Motion: {0}</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleAccessory_Format">Accessory switch: {0}</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Default">Motion Style > Default</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">Motion Style > Standing Only</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">Motion Style > Game Locomotion</sys:String>
+    <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">Motion Style > (Unknown)</sys:String>
     
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">Setting File Control</sys:String>
@@ -517,9 +521,8 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="SettingFile_SeeMore">See How to Use (Open Web Page)</sys:String>
 
     <!-- GameInput Key Assign -->
-    <sys:String x:Key="GameInputKeyAssign_Header">Game Input Key/Button Assign</sys:String>
-    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">*The feature is experimental.
-Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
+    <sys:String x:Key="GameInputKeyAssign_Header">Game Locomotion Settings</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Instruction" xml:space="preserve">Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
 - In this mode, avatar acts move / jump / crouch etc.
 - Note that other motion features (Word to Motion) maybe not work correct.
 - This setting has independent setting file.</sys:String>
@@ -532,7 +535,13 @@ Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
     <sys:String x:Key="GameInputKeyAssign_Keyboard">Keyboard / Mouse</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_Enable">Use Keyboard / Mouse</sys:String>
     
-    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">Always Run</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_LocomotionStyle">Locomotion Style</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_LocomotionStyle_FirstPerson">First Person</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_LocomotionStyle_ThirdPerson">Third Person</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_LocomotionStyle_SideView2D">Side-Scrolling Like</sys:String>    
+
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun">Run by Default</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun_Note">*When enabled, "Run" button works as "Walk"</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">Always Aim</sys:String>
 
     <sys:String x:Key="GameInputKeyAssign_Keyboard_Section">Keyboard:</sys:String>
@@ -550,6 +559,7 @@ Setting applied when "Body Motion Style" is set to "Game Locomotion" mode.
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ArrowMove">Use ARROW to move</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_ShiftRun">Use SHIFT to run</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Use SPACE to jump</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_AdvancedAssign">Additional Key Assign:</sys:String>
 
     <sys:String x:Key="GameInputKeyAssign_Mouse_Section">Mouse:</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">Use mouse move to look around</sys:String>

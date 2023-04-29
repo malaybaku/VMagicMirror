@@ -46,11 +46,7 @@ namespace Baku.VMagicMirror
                 VmmCommands.SetCalibrateFaceData,
                 message => _faceTracker.SetCalibrateData(message.Content)
                 );
-            receiver.AssignCommandHandler(
-                VmmCommands.DisableFaceTrackingHorizontalFlip,
-                message => _faceTracker.DisableHorizontalFlip = message.ToBoolean()
-                );
-         
+
             receiver.AssignCommandHandler(
                 VmmCommands.EnableImageBasedHandTracking,
                 message => SetHandTrackingEnable(message.ToBoolean())

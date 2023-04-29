@@ -8,6 +8,23 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.2.0
+{: .doc-sec2 }
+
+2023/04/29
+
+* Add: In Game Locomotion mode, support keyboard key assigned to action like Crouch, Punch, etc.
+* Add: In Game Locomotion mode, add 3rd person view move styles.
+* Add: Hot Key action supports to switch body motion style from default / hand down / game input.
+* Change: In Game Locomotion mode "Always Run" option has changed to "Run by Default". During this option is on, run action button makes avatar walk instead.
+* Fix: Bug in Game Locomotion mode that custom motion makes avatar move too quick on start and end.
+* Fix: Bug in app's startup, that loading view disappears too early when automatic VRM load option is enabled.
+
+Known Issue:
+
+* In Game Locomotion mode, there are some cases that avatar keeps standing pose and pose will not change. In this case, see `Streaming` tab > `Motion` > `Body Motion Style` and choose `Default` or `Standing Only`, and then re-choose `Game Locomotion` to recover the avatar's pose.
+
+
 #### v3.1.1
 {: .doc-sec2 }
 

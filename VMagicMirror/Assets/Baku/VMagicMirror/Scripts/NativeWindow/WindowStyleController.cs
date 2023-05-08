@@ -607,17 +607,18 @@ namespace Baku.VMagicMirror
 
         private bool CheckWindowPositionValidity(RECT selfRect, List<RECT> monitorRects)
         {
-            //ウィンドウ位置を正常値とみなす条件: ウィンドウの左上、右上、中央の3点全てが、どれかのモニターの内側に含まれる
+            //ウィンドウ位置を正常とみなす条件: ウィンドウの「(左上 or 右上) + 中央上 + 中央」が、どれかのモニターの内側に含まれる
             var leftTop = new Vector2Int(selfRect.left, selfRect.top);
             var rightTop = new Vector2Int(selfRect.right, selfRect.top);
+            var centerTop = new Vector2Int((selfRect.left + selfRect.right) / 2, selfRect.top);
             var center = new Vector2Int(
                 (selfRect.left + selfRect.right) / 2,
                 (selfRect.top + selfRect.bottom) / 2
             );
 
             return
-                IsInsideSomeRect(leftTop, monitorRects) &&
-                IsInsideSomeRect(rightTop, monitorRects) &&
+                (IsInsideSomeRect(leftTop, monitorRects) || IsInsideSomeRect(rightTop, monitorRects)) &&
+                IsInsideSomeRect(centerTop, monitorRects) &&
                 IsInsideSomeRect(center, monitorRects);
         }
 

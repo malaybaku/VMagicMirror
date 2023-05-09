@@ -551,7 +551,8 @@ namespace Baku.VMagicMirror
 #endif
             }
 
-            //モニター間でDPI差がある環境では、ウィンドウが完全に移動するまで待つ必要がある
+            //前回起動時と同じモニター内にウィンドウを配置し終わってからサイズを適用するために待つ。
+            //こうしないと、モニター間のDPI差がある環境で再起動のたびにウィンドウサイズがずれてしまう
             await UniTask.DelayFrame(6, cancellationToken: cancellationToken);
             
             var width = PlayerPrefs.GetInt(InitialWidthKey, 0);

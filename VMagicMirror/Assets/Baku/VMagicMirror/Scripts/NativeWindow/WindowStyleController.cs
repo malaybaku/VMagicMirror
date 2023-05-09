@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UniRx;
 using Zenject;
@@ -136,7 +138,7 @@ namespace Baku.VMagicMirror
             SetWindowLong(hWnd, GWL_EXSTYLE, defaultExWindowStyle);
 #endif
             CheckSettingFileDirect();
-            _windowAreaIo.Load();
+            _windowAreaIo.LoadAsync(this.GetCancellationTokenOnDestroy()).Forget();
             _windowPositionCheckCount = windowPositionCheckInterval;            
         }
 
@@ -522,7 +524,6 @@ namespace Baku.VMagicMirror
         private const string InitialPositionYKey = "InitialPositionY";
         private const string InitialWidthKey = "InitialWidth";
         private const string InitialHeightKey = "InitialHeight";
-        private const string SavedWindowSizeReferenceDpi = "SavedWindowSizeReferenceDpi";
 
         private Vector2Int _prevWindowPosition = Vector2Int.zero;
         
@@ -530,7 +531,7 @@ namespace Baku.VMagicMirror
         /// アプリ起動時に呼び出すことで、前回に保存した設定があればそれを読みこんで適用します。
         /// また、適用結果によってウィンドウがユーザーから見えない位置に移動した場合は復帰処理を行います。
         /// </summary>
-        public void Load()
+        public async UniTaskVoid LoadAsync(CancellationToken cancellationToken)
         {
             if (PlayerPrefs.HasKey(InitialPositionXKey) && PlayerPrefs.HasKey(InitialPositionYKey))
             {
@@ -550,25 +551,18 @@ namespace Baku.VMagicMirror
 #endif
             }
 
+            //モニター間でDPI差がある環境では、ウィンドウが完全に移動するまで待つ必要がある
+            await UniTask.DelayFrame(6, cancellationToken: cancellationToken);
+            
             var width = PlayerPrefs.GetInt(InitialWidthKey, 0);
             var height = PlayerPrefs.GetInt(InitialHeightKey, 0);
-            var dpi = PlayerPrefs.GetFloat(SavedWindowSizeReferenceDpi, 0f);
-            if (dpi > 0f)
-            {
-                var currentDpi = Screen.dpi;
-                //正値になってても極端な値はいちおう弾きたい
-                var dpiFactor = Mathf.Clamp(currentDpi / dpi, 0.1f, 10f);
-                width = (int)(width * dpiFactor);
-                height = (int)(height * dpiFactor);
-            }
-
             if (width > 100 && height > 100)
             {
 #if !UNITY_EDITOR
                 SetUnityWindowSize(width, height);
 #endif
             }
-            
+
             AdjustIfWindowPositionInvalid();
         }
         
@@ -597,7 +591,6 @@ namespace Baku.VMagicMirror
                 PlayerPrefs.SetInt(InitialPositionYKey, rect.top);
                 PlayerPrefs.SetInt(InitialWidthKey, rect.right - rect.left);
                 PlayerPrefs.SetInt(InitialHeightKey, rect.bottom - rect.top);
-                PlayerPrefs.SetFloat(SavedWindowSizeReferenceDpi, Screen.dpi);
 #endif
             }
         }

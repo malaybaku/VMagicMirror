@@ -11,9 +11,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private Canvas overwriteCanvas;
         [SerializeField] private RawImage overwriteImage;
 
-        public SpoutSender SpoutSender => spoutSender;
-        public Camera WindowOverwriteCamera => windowOverwriteCamera;
-
         public void InitializeSpoutSender()
         {
             spoutSender.enabled = false;
@@ -21,8 +18,6 @@ namespace Baku.VMagicMirror
             spoutSender.sourceTexture = null;
         }
         
-        public void SetActive(bool active) => gameObject.SetActive(active);
-
         public void SetSpoutSenderActive(bool active) => spoutSender.enabled = active;
 
         public void SetOverwriteObjectsActive(bool active)

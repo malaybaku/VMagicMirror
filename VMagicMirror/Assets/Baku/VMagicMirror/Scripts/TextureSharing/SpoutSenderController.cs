@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror
         SameAsScreen = 0,
         Fixed1280 = 1,
         Fixed1920 = 2,
-        Fixed2540 = 3,
+        Fixed2560 = 3,
         Fixed3840 = 4,
     }
 
@@ -21,6 +21,7 @@ namespace Baku.VMagicMirror
     // -> 個人的にはあまり対応したくないが…
     public class SpoutSenderController : PresenterBase
     {
+        private readonly Camera _mainCamera;
         private readonly SpoutSenderWrapperView _view;
         private readonly IMessageReceiver _messageReceiver;
 
@@ -30,21 +31,21 @@ namespace Baku.VMagicMirror
             = new ReactiveProperty<SpoutResolutionType>(SpoutResolutionType.SameAsScreen);
 
         private RenderTexture _renderTexture = null;
-
         private CancellationTokenSource _textureSizePollingCts;
         
         public SpoutSenderController(
+            Camera mainCamera,
             SpoutSenderWrapperView view,
             IMessageReceiver messageReceiver
             )
         {
+            _mainCamera = mainCamera;
             _view = view;
             _messageReceiver = messageReceiver;
         }
 
         public override void Initialize()
         {
-            //textureの初期化は要らないけど、やったほうが少し清潔なので…
             _view.InitializeSpoutSender();
 
             _messageReceiver.AssignCommandHandler(
@@ -54,15 +55,14 @@ namespace Baku.VMagicMirror
          
             _messageReceiver.AssignCommandHandler(
                 VmmCommands.SetSpoutOutputResolution,
-                command => SetSpoutResolutionType(command.ToInt())
-                );
+                command => SetSpoutResolutionType(command.ToInt()));
             _messageReceiver.AssignCommandHandler(
                 VmmCommands.ShowSpoutOutputToWindow,
                 command => SetSpoutOutputToWindowActive(command.ToBoolean())
                 );
 
             _resolutionType
-                .Subscribe(ApplyResolutionType)
+                .Subscribe(_ => RefreshRenderTexture())
                 .AddTo(this);
 
             _isActive
@@ -92,12 +92,11 @@ namespace Baku.VMagicMirror
 
         private void SetSpoutActiveness(bool active)
         {
+            Debug.Log($"SetSpoutActiveness: {active}");
             _isActive.Value = active;
             _view.SetSpoutSenderActive(active);
-            if (active)
-            {
-                ApplyResolutionType(_resolutionType.Value);
-            }
+            _view.SetOverwriteObjectsActive(active);
+            RefreshRenderTexture();
         }
 
         private void SetSpoutResolutionType(int rawType)
@@ -109,20 +108,26 @@ namespace Baku.VMagicMirror
             }
 
             var type = (SpoutResolutionType)rawType;
-
             if (type == _resolutionType.Value)
             {
                 return;
             }
 
-            _resolutionType.Value = type;
-            ApplyResolutionType(type);
+            _resolutionType.Value = type; 
+            RefreshRenderTexture();
         }
 
-        private void ApplyResolutionType(SpoutResolutionType type)
+        private void RefreshRenderTexture()
         {
             DisposeTexture();
-            var (width, height) = GetResolution(type);
+            if (!_isActive.Value)
+            {
+                return;
+            }
+            var resolutionType = _resolutionType.Value;
+            
+            
+            var (width, height) = GetResolution(resolutionType);
             InitializeRenderTexture(width, height);
         }
 
@@ -132,7 +137,7 @@ namespace Baku.VMagicMirror
             {
                 case SpoutResolutionType.Fixed1280: return (1280, 720);
                 case SpoutResolutionType.Fixed1920: return (1920, 1080);
-                case SpoutResolutionType.Fixed2540: return (2540, 1440);
+                case SpoutResolutionType.Fixed2560: return (2560, 1440);
                 case SpoutResolutionType.Fixed3840: return (3840, 2160);
                 default: return (Screen.width, Screen.height);
             }           
@@ -140,7 +145,7 @@ namespace Baku.VMagicMirror
 
         private void SetSpoutOutputToWindowActive(bool active)
         {
-            //TODO: カメラの起動やら何やら
+            //TODO: カメラの起動やら何やら?
         }
 
         //画面サイズにテクスチャサイズを揃えるのを行う。ウィンドウリサイズ中の更新頻度は抑える
@@ -173,6 +178,7 @@ namespace Baku.VMagicMirror
         {
             //alphaを保持する、影とかも込みで送信したいため
             _renderTexture = new RenderTexture(width, height, 32, RenderTextureFormat.ARGB32);
+            _mainCamera.targetTexture = _renderTexture;
             _view.SetTexture(_renderTexture);
         }
         
@@ -187,6 +193,11 @@ namespace Baku.VMagicMirror
             if (_view != null)
             {
                 _view.SetTexture(null);
+            }
+
+            if (_mainCamera != null)
+            {
+                _mainCamera.targetTexture = null;
             }
         }
     }

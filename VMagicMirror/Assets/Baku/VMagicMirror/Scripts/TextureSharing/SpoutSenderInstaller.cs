@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
         public override void InstallBindings()
         {
             Container.BindInstance(spoutSenderView);
-            Container.BindInterfacesTo<SpoutSenderController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SpoutSenderController>().AsSingle();
         }
     }
 }

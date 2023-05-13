@@ -30,9 +30,20 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<SpoutResolutionType> _resolutionType 
             = new ReactiveProperty<SpoutResolutionType>(SpoutResolutionType.SameAsScreen);
 
+        //フリーレイアウトモードに入るとき強制的に「ウィンドウと同じ」にするので、モード解除前の値を覚えておく
+        private bool _freeLayoutActive; 
+        private SpoutResolutionType _resolutionTypeBeforeFreeLayout;
+        
         private RenderTexture _renderTexture = null;
         private CancellationTokenSource _textureSizePollingCts;
-        
+
+        private readonly ReactiveProperty<bool> _needFovModify = new ReactiveProperty<bool>(false);
+        /// <summary>
+        /// 「MainCameraの描画先が16:9のRenderTextureになっており、そのTextureをWindowに表示している」
+        /// という状況になったとき、そうでない場合と同様の見た目になるようカメラのFoVを直してほしい…という事でtrueになる値
+        /// </summary>
+        public IReadOnlyReactiveProperty<bool> NeedFovModify => _needFovModify;
+
         public SpoutSenderController(
             Camera mainCamera,
             SpoutSenderWrapperView view,
@@ -52,13 +63,13 @@ namespace Baku.VMagicMirror
                 VmmCommands.EnableSpoutOutput,
                 command => SetSpoutActiveness(command.ToBoolean())
                 );
-         
             _messageReceiver.AssignCommandHandler(
                 VmmCommands.SetSpoutOutputResolution,
                 command => SetSpoutResolutionType(command.ToInt()));
+            
             _messageReceiver.AssignCommandHandler(
-                VmmCommands.ShowSpoutOutputToWindow,
-                command => SetSpoutOutputToWindowActive(command.ToBoolean())
+                VmmCommands.EnableDeviceFreeLayout,
+                command => SetFreeLayoutActive(command.ToBoolean())
                 );
 
             _resolutionType
@@ -68,9 +79,10 @@ namespace Baku.VMagicMirror
             _isActive
                 .CombineLatest(_resolutionType, (active, type) => (active && type == SpoutResolutionType.SameAsScreen))
                 .DistinctUntilChanged()
-                .Subscribe(pollRenderTextureUpdate =>
+                .Subscribe(useWindowSizeRenderTexture =>
                 {
-                    if (pollRenderTextureUpdate)
+                    _view.SetAspectRatioFitterActive(!useWindowSizeRenderTexture);
+                    if (useWindowSizeRenderTexture)
                     {
                         StopPollRenderTextureSizeAdjust();
                         _textureSizePollingCts = new CancellationTokenSource();
@@ -81,6 +93,13 @@ namespace Baku.VMagicMirror
                         StopPollRenderTextureSizeAdjust();
                     }
                 })
+                .AddTo(this);
+
+            //ウィンドウにピッタリでないサイズになる = 時にはカメラのFoV調整が必要
+            _isActive
+                .CombineLatest(_resolutionType, (active, type) => (active && type != SpoutResolutionType.SameAsScreen))
+                .DistinctUntilChanged()
+                .Subscribe(value => _needFovModify.Value = value)
                 .AddTo(this);
         }
 
@@ -143,11 +162,34 @@ namespace Baku.VMagicMirror
             }           
         }
 
-        private void SetSpoutOutputToWindowActive(bool active)
+        private void SetFreeLayoutActive(bool active)
         {
-            //TODO: カメラの起動やら何やら?
-        }
+            //Spout送信中じゃないときにフリーレイアウトに入ったのは無視(ケアしてもいいがマイナーケースなので)
+            if (!_isActive.Value)
+            {
+                return;
+            }
 
+            //冗長に呼ばれてそうなケースも無視
+            if (_freeLayoutActive == active)
+            {
+                return;
+            }
+
+            _freeLayoutActive = true;
+            if (active)
+            {
+                _resolutionTypeBeforeFreeLayout = _resolutionType.Value;
+                //ここで強制的に「ウィンドウと同じ」にすることで、ギズモが正しく触れるようになる
+                _resolutionType.Value = SpoutResolutionType.SameAsScreen;
+            }
+            else
+            {
+                //フリーレイアウト前の値に戻す
+                _resolutionType.Value = _resolutionTypeBeforeFreeLayout;
+            }
+        }
+            
         //画面サイズにテクスチャサイズを揃えるのを行う。ウィンドウリサイズ中の更新頻度は抑える
         private async UniTaskVoid PollRenderTextureSizeAdjustAsync(CancellationToken cancellationToken)
         {
@@ -195,7 +237,7 @@ namespace Baku.VMagicMirror
                 _view.SetTexture(null);
             }
 
-            if (_mainCamera != null)
+            if (_mainCamera !=  null)
             {
                 _mainCamera.targetTexture = null;
             }

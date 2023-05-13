@@ -218,7 +218,6 @@
         // External Video Sharing
         public const string EnableSpoutOutput = nameof(EnableSpoutOutput);
         public const string SetSpoutOutputResolution = nameof(SetSpoutOutputResolution);
-        public const string ShowSpoutOutputToWindow = nameof(ShowSpoutOutputToWindow); 
         
         // VRoidHub
         public const string OpenVRoidSdkUi = nameof(OpenVRoidSdkUi);

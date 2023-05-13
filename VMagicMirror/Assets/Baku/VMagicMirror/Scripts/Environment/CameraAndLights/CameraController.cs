@@ -55,12 +55,6 @@ namespace Baku.VMagicMirror
                 message => ResetCameraPosition()
                 );
 
-            receiver.AssignCommandHandler(
-                VmmCommands.CameraFov, 
-                message => SetCameraFov(message.ToInt())
-                );
-
-
             receiver.AssignQueryHandler(
                 VmmQueries.CurrentCameraPosition, 
                 query =>
@@ -181,11 +175,6 @@ namespace Baku.VMagicMirror
                 cam.transform.position = _defaultCameraPosition;
                 cam.transform.rotation = Quaternion.Euler(_defaultCameraRotationEuler);
             }
-        }
-
-        private void SetCameraFov(int fovDeg)
-        {
-            cam.fieldOfView = fovDeg;
         }
     }
 

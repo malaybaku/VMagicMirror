@@ -10,6 +10,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private Camera windowOverwriteCamera;
         [SerializeField] private Canvas overwriteCanvas;
         [SerializeField] private RawImage overwriteImage;
+        [SerializeField] private AspectRatioFitter overwriteImageAspectRatioFitter;
 
         public void InitializeSpoutSender()
         {
@@ -31,6 +32,15 @@ namespace Baku.VMagicMirror
         {
             spoutSender.sourceTexture = texture;
             overwriteImage.texture = texture;
+        }
+
+        public void SetAspectRatioFitterActive(bool active)
+        {
+            overwriteImageAspectRatioFitter.enabled = active;
+            if (!active)
+            {
+                overwriteImage.transform.localScale = Vector3.one;
+            }
         }
     }
 }

@@ -24,8 +24,6 @@
 
         public bool EnableSpoutOutput { get; set; } = false;
         public int SpoutResolutionType { get; set; } = 0;
-        public bool ShowSpoutOutputToWindow { get; set; } = false;        
-
     }
 
     //NOTE: 「概念的にそうだから」という事で定義してるが、実際には使ってない

@@ -183,8 +183,6 @@ Output channel name is fixed to "VMagicMirror_Spout".</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920">1920 x 1080 (Fixed)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560">2560 x 1440 (Fixed)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840">3840 x 2160 (Fixed)</sys:String>
-    <sys:String x:Key="Window_SpoutOutput_ShowSpoutOutputToWindow">Render Spout output to Character Window</sys:String>
-    <sys:String x:Key="Window_SpoutOutput_ShowSpoutOutputToWindow_Notice">*This option will reduce rendering CPU/GPU load, but it might lead unstability about Character Window GUI control.</sys:String>
     
     <sys:String x:Key="Window_TransparencySupport">Character Transparency Support</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level">Transparency Level</sys:String>

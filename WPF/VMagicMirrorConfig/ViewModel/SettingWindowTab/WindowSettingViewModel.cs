@@ -74,7 +74,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> EnableSpoutOutput => _model.EnableSpoutOutput;
         public RProperty<int> SpoutResolutionType => _model.SpoutResolutionType;
-        public RProperty<bool> ShowSpoutOutputToWindow => _model.ShowSpoutOutputToWindow;
 
         public ActionCommand BackgroundImageSetCommand { get; }
         public ActionCommand BackgroundImageClearCommand { get; }

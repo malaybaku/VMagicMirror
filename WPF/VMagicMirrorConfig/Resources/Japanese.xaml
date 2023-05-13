@@ -183,8 +183,6 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920">1920 x 1080 (固定)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560">2560 x 1440 (固定)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840">3840 x 2160 (固定)</sys:String>
-    <sys:String x:Key="Window_SpoutOutput_ShowSpoutOutputToWindow">Spout出力をキャラクターウィンドウにも描画</sys:String>
-    <sys:String x:Key="Window_SpoutOutput_ShowSpoutOutputToWindow_Notice">この機能をオンにすると描画負荷が軽減される代わり、キャラクターウィンドウのGUI操作が不安定になります</sys:String>
     
     <sys:String x:Key="Window_TransparencySupport">キャラ透明化の詳細</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level">キャラの透明化レベル</sys:String>

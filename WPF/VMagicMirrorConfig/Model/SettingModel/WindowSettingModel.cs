@@ -82,11 +82,6 @@ namespace Baku.VMagicMirrorConfig
                 setting.SpoutResolutionType,
                 type => SendMessage(factory.SetSpoutOutputResolution(type))
                 );
-
-            ShowSpoutOutputToWindow = new RProperty<bool>(
-                setting.ShowSpoutOutputToWindow,
-                enable => SendMessage(factory.ShowSpoutOutputToWindow(enable))
-                );
         }
 
         public RProperty<int> R { get; }
@@ -104,7 +99,6 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> EnableSpoutOutput { get; }
         public RProperty<int> SpoutResolutionType { get; }
-        public RProperty<bool> ShowSpoutOutputToWindow { get; }
 
         #region Reset API
 

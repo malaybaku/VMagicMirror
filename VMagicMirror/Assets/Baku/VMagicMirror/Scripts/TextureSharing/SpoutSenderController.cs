@@ -48,17 +48,17 @@ namespace Baku.VMagicMirror
             _view.InitializeSpoutSender();
 
             _messageReceiver.AssignCommandHandler(
-                VmmCommands.EnableSpout,
+                VmmCommands.EnableSpoutOutput,
                 command => SetSpoutActiveness(command.ToBoolean())
                 );
          
             _messageReceiver.AssignCommandHandler(
-                VmmCommands.SetSpoutResolutionType,
+                VmmCommands.SetSpoutOutputResolution,
                 command => SetSpoutResolutionType(command.ToInt())
                 );
             _messageReceiver.AssignCommandHandler(
-                VmmCommands.EnableSharedTextureBasedMainScreenRender,
-                command => SetSharedTextureBasedMainScreenRenderActive(command.ToBoolean())
+                VmmCommands.ShowSpoutOutputToWindow,
+                command => SetSpoutOutputToWindowActive(command.ToBoolean())
                 );
 
             _resolutionType
@@ -138,7 +138,7 @@ namespace Baku.VMagicMirror
             }           
         }
 
-        private void SetSharedTextureBasedMainScreenRenderActive(bool active)
+        private void SetSpoutOutputToWindowActive(bool active)
         {
             //TODO: カメラの起動やら何やら
         }

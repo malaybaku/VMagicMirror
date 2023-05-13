@@ -216,9 +216,9 @@
         public const string ReloadAccessoryFiles = nameof(ReloadAccessoryFiles);
         
         // External Video Sharing
-        public const string EnableSpout = nameof(EnableSpout);
-        public const string SetSpoutResolutionType = nameof(SetSpoutResolutionType);
-        public const string EnableSharedTextureBasedMainScreenRender = nameof(EnableSharedTextureBasedMainScreenRender); 
+        public const string EnableSpoutOutput = nameof(EnableSpoutOutput);
+        public const string SetSpoutOutputResolution = nameof(SetSpoutOutputResolution);
+        public const string ShowSpoutOutputToWindow = nameof(ShowSpoutOutputToWindow); 
         
         // VRoidHub
         public const string OpenVRoidSdkUi = nameof(OpenVRoidSdkUi);

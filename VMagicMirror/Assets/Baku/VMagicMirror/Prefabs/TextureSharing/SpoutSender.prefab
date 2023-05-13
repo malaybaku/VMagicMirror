@@ -91,7 +91,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1714968248185237467}
-  - component: {fileID: 6067190646084675111}
   - component: {fileID: 5551199448068241020}
   - component: {fileID: 1714968248185237466}
   - component: {fileID: 8923987167396243329}
@@ -118,24 +117,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6067190646084675111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1714968248185237465}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08eca9f7688a0a24685b89133b020c8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _scriptableObjectInstallers: []
-  _monoInstallers:
-  - {fileID: 5551199448068241020}
-  _installerPrefabs: []
-  _autoRun: 1
-  _kernel: {fileID: 0}
 --- !u!114 &5551199448068241020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,6 +164,7 @@ MonoBehaviour:
   windowOverwriteCamera: {fileID: 5324224112796269586}
   overwriteCanvas: {fileID: 903500983047858340}
   overwriteImage: {fileID: 2106882152784307539}
+  overwriteImageAspectRatioFitter: {fileID: 2560344449667936330}
 --- !u!1 &4794119287318781955
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,7 +190,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4794119287318781955}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20, y: 0, z: 0}
+  m_LocalPosition: {x: 100, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1714968248185237467}
@@ -268,6 +250,7 @@ GameObject:
   - component: {fileID: 3087377530687176094}
   - component: {fileID: 4079650889345262943}
   - component: {fileID: 2106882152784307539}
+  - component: {fileID: 2560344449667936330}
   m_Layer: 5
   m_Name: OverwriteImage
   m_TagString: Untagged
@@ -329,3 +312,17 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &2560344449667936330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6199297317886910437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 4
+  m_AspectRatio: 1.7777778

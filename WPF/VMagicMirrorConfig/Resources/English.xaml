@@ -161,7 +161,7 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>
     
     <!-- Window -->
-    <sys:String x:Key="Window_Header">Window</sys:String>
+    <sys:String x:Key="Window_Header">Window / Video Output</sys:String>
     <sys:String x:Key="Window_Basics">Basic Settings</sys:String>
     <sys:String x:Key="Window_BackgroundColor">Background</sys:String>
     <sys:String x:Key="Window_Transparent">Transparent Window</sys:String>
@@ -173,6 +173,19 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">Load...</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Clear">Clear</sys:String>
 
+    <sys:String x:Key="Window_SpoutOutput">Spout</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spout feature support fixed resolution output.
+Output channel name is fixed to "VMagicMirror_Spout".</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Enable">Enable Spout Output</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution">Resolution:</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_SameAsScreen">Same as Window</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1280">1280 x 720 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920">1920 x 1080 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2540">2540 x 1440 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840">3840 x 2160 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_ShowSpoutOutputToWindow">Render Spout output to Character Window</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_ShowSpoutOutputToWindow_Notice">*This option will reduce rendering CPU/GPU load, but it might lead unstability about Character Window GUI control.</sys:String>
+    
     <sys:String x:Key="Window_TransparencySupport">Character Transparency Support</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level">Transparency Level</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Alpha">Alpha when Transparent(32-255)</sys:String>

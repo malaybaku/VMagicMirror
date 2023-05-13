@@ -183,6 +183,71 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
 
+                        <md:PackIcon Kind="ImageOutline"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+
+                        <TextBlock Text="{DynamicResource Window_SpoutOutput}"
+                                   Margin="5"
+                                   Style="{StaticResource HeaderText}"
+                                   />
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetSpoutOutputSettingCommand}"
+                                />
+                    </StackPanel>
+                    
+                    <TextBlock Text="{DynamicResource Window_SpoutOutput_Instruction}"
+                               Margin="15,10"
+                               />
+
+                    <CheckBox Content="{DynamicResource Window_SpoutOutput_Enable}"
+                              IsChecked="{Binding EnableSpoutOutput.Value, Mode=TwoWay}"
+                              Margin="15,0"
+                              />
+                    <StackPanel Orientation="Horizontal"
+                                Margin="30,5,5,5">
+                        <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution}"/>
+                        
+                        <ComboBox Width="200"
+                                  Margin="5"
+                                  SelectedIndex="{Binding SpoutOutputResolutionType.Value, Mode=TwoWay, FallbackValue=0}"
+                                  md:HintAssist.Hint="Select..."
+                                  Padding="0"
+                                  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentControl Content="{Binding}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <ComboBox.Items>
+                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_SameAsScreen}"/>
+                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_Fixed1280}"/>
+                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_Fixed1920}"/>
+                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_Fixed2540}"/>
+                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_Fixed3840}"/>
+                            </ComboBox.Items>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <CheckBox Content="{DynamicResource Window_SpoutOutput_ShowSpoutOutputToWindow}"
+                              IsChecked="{Binding ShowSpoutOutputToWindow.Value, Mode=TwoWay}"
+                              Margin="30,5"
+                              IsEnabled="{Binding EnableSpoutOutput.Value}"
+                              />
+
+
+                    <TextBlock Text="{DynamicResource Window_SpoutOutput_ShowSpoutOutputToWindow_Notice}"
+                               TextWrapping="Wrap"
+                               Margin="25,5,15,15"/>
+                </StackPanel>
+            </Border>
+
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+
                         <md:PackIcon Kind="LayersClear"
                                      Style="{StaticResource SettingHeaderPackIcon}"
                                      />

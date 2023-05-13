@@ -214,7 +214,12 @@
         public const string RequestResetAllAccessoryLayout = nameof(RequestResetAllAccessoryLayout);
         public const string RequestResetAccessoryLayout = nameof(RequestResetAccessoryLayout);
         public const string ReloadAccessoryFiles = nameof(ReloadAccessoryFiles);
-            
+        
+        // External Video Sharing
+        public const string EnableSpout = nameof(EnableSpout);
+        public const string SetSpoutResolutionType = nameof(SetSpoutResolutionType);
+        public const string EnableSharedTextureBasedMainScreenRender = nameof(EnableSharedTextureBasedMainScreenRender); 
+        
         // VRoidHub
         public const string OpenVRoidSdkUi = nameof(OpenVRoidSdkUi);
         public const string RequestLoadVRoidWithId = nameof(RequestLoadVRoidWithId);

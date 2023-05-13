@@ -211,22 +211,15 @@
                         
                         <ComboBox Width="200"
                                   Margin="5"
-                                  SelectedIndex="{Binding SpoutOutputResolutionType.Value, Mode=TwoWay, FallbackValue=0}"
-                                  md:HintAssist.Hint="Select..."
+                                  ItemsSource="{Binding SpoutResolutionTypes}"
+                                  SelectedIndex="{Binding SpoutResolutionType.Value, Mode=TwoWay, FallbackValue=0}"
                                   Padding="0"
                                   >
                             <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <ContentControl Content="{Binding}"/>
+                                <DataTemplate DataType="{x:Type vm:SpoutResolutionTypeNameViewModel}">
+                                    <TextBlock Text="{Binding Label.Value}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
-                            <ComboBox.Items>
-                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_SameAsScreen}"/>
-                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_Fixed1280}"/>
-                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_Fixed1920}"/>
-                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_Fixed2540}"/>
-                                <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution_Fixed3840}"/>
-                            </ComboBox.Items>
                         </ComboBox>
                     </StackPanel>
 

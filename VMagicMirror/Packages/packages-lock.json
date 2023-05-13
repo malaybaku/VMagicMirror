@@ -201,6 +201,15 @@
       },
       "hash": "1e8a6b35bdb545baaad88b60cc9d374c31786b2c"
     },
+    "jp.keijiro.klak.spout": {
+      "version": "2.0.3",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.screencapture": "1.0.0"
+      },
+      "url": "https://registry.npmjs.com"
+    },
     "jp.keijiro.mediapipe.blazepalm": {
       "version": "1.0.2",
       "depth": 0,

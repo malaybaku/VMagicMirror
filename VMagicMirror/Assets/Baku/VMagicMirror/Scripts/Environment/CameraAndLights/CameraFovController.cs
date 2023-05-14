@@ -1,25 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
-using Baku.VMagicMirror;
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class CameraFovController : PresenterBase
     {
+        //NOTE: 直近で可変値を想定しないでいいので定数にしている
+        private const float SpoutVideoAspect = 16f / 9f;
+
         private readonly Camera _mainCamera;
+        private readonly Camera _cameraForRay;
         private readonly IMessageReceiver _receiver;
         private readonly SpoutSenderController _spoutSenderController;
 
         private readonly ReactiveProperty<float> _baseFov = new ReactiveProperty<float>(40f);
 
+        private CancellationTokenSource _adjustFovCts;
+        
         public CameraFovController(
             Camera mainCamera,
+            [Inject(Id = "RefCameraForRay")] Camera cameraForRay,
             IMessageReceiver receiver, 
             SpoutSenderController spoutSenderController)
         {
             _mainCamera = mainCamera;
+            _cameraForRay = cameraForRay;
             _receiver = receiver;
             _spoutSenderController = spoutSenderController;
         }
@@ -33,36 +42,73 @@ namespace Baku.VMagicMirror
                 command => _baseFov.Value = command.ToInt()
                 );
 
-            _baseFov.CombineLatest(
-                    _spoutSenderController.NeedFovModify,
-                    (fov, needModify) => (fov, needModify)
-                )
-                .Subscribe(v =>
+            _baseFov
+                .Subscribe(fov =>
                 {
-                    var (fov, needModify) = v;
-                    if (!needModify)
+                    _cameraForRay.fieldOfView = fov;
+                    if (_spoutSenderController.NeedFovModify.Value)
                     {
-                        _mainCamera.fieldOfView = fov;
-                        return;
+                        _mainCamera.fieldOfView = GetModifiedFov(fov);
                     }
+                    else
+                    {
+                        //こっちがメジャーケース
+                        _mainCamera.fieldOfView = fov;
+                    }
+                })
+                .AddTo(this);
 
-                    var modified = GetModifiedFov(fov, Screen.width * 1f / Screen.height);
-                    _mainCamera.fieldOfView = modified;
+            _spoutSenderController.NeedFovModify
+                .Subscribe(needModify =>
+                {
+                    if (needModify)
+                    {
+                        StopAdjustFov();
+                        _adjustFovCts = new CancellationTokenSource();
+                        AdjustFovAsync(_adjustFovCts.Token).Forget();
+                    }
+                    else
+                    {
+                        StopAdjustFov();
+                        _mainCamera.fieldOfView = _baseFov.Value;
+                    }
                 })
                 .AddTo(this);
         }
 
-        private float GetModifiedFov(float fovDegree, float windowAspect)
+        public override void Dispose()
         {
-            //NOTE: Spoutの固定解像度のアス比が固定である前提で引数無しにしてる
-            const float SpoutAspect = 16f / 9f;
+            base.Dispose();
+            StopAdjustFov();
+        }
 
-            if (windowAspect <= SpoutAspect)
+        private async UniTaskVoid AdjustFovAsync(CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                _mainCamera.fieldOfView = GetModifiedFov(_baseFov.Value);
+                await UniTask.Delay(TimeSpan.FromSeconds(1f), cancellationToken: cancellationToken);
+            }
+        }
+
+        private void StopAdjustFov()
+        {
+            _adjustFovCts?.Cancel();
+            _adjustFovCts?.Dispose();
+            _adjustFovCts = null;
+        }
+        
+        private static float GetModifiedFov(float fovDegree)
+        {
+            var windowAspect = Screen.width * 1f / Screen.height;
+
+            if (windowAspect <= SpoutVideoAspect)
             {
                 return fovDegree;
             }
 
-            return Mathf.Rad2Deg * Mathf.Atan(Mathf.Tan(fovDegree * Mathf.Deg2Rad) * windowAspect / SpoutAspect);
+            var result = Mathf.Rad2Deg * 2f * Mathf.Atan(Mathf.Tan(fovDegree * Mathf.Deg2Rad * 0.5f) * windowAspect / SpoutVideoAspect);
+            return result;
         }
     }
 }

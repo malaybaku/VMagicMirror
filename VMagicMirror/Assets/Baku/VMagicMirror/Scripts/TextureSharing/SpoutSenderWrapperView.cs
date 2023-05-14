@@ -40,6 +40,7 @@ namespace Baku.VMagicMirror
             if (!active)
             {
                 overwriteImage.transform.localScale = Vector3.one;
+                overwriteImage.rectTransform.sizeDelta = Vector2.zero;
             }
         }
     }

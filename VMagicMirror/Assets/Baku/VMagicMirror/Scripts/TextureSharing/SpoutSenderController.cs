@@ -111,7 +111,6 @@ namespace Baku.VMagicMirror
 
         private void SetSpoutActiveness(bool active)
         {
-            Debug.Log($"SetSpoutActiveness: {active}");
             _isActive.Value = active;
             _view.SetSpoutSenderActive(active);
             _view.SetOverwriteObjectsActive(active);

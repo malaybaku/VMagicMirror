@@ -1,3 +1,4 @@
+using mattatz.TransformControl;
 using UnityEngine;
 using Zenject;
 
@@ -10,7 +11,7 @@ namespace Baku.VMagicMirror
     /// 真のMainCameraは「見た目はキープしたままFoVを書き換えて使う」という使われ方をするので、
     /// そのへんの実装詳細を隠すのがこのクラス
     /// </remarks>
-    public class CameraUtilWrapper
+    public class CameraUtilWrapper : PresenterBase
     {
         private readonly Camera _camera;
 
@@ -19,10 +20,13 @@ namespace Baku.VMagicMirror
             _camera = camera;
         }
 
-        //NOTE: どうしてもカメラ自体を渡したい場合だけ使う。普通はラッパーメソッドを使うほうがいい
-        public Camera Camera => _camera;
-
         public Ray ScreenPointToRay(Vector3 point) => _camera.ScreenPointToRay(point);
         public bool PixelRectContains(Vector3 point) => _camera.pixelRect.Contains(point);
+
+        public override void Initialize()
+        {
+            //NOTE: TransformControlとVMM本体の独立性ということで一応こういう渡し方にしておく
+            TransformControlCameraStore.Set(_camera);    
+        }
     }
 }

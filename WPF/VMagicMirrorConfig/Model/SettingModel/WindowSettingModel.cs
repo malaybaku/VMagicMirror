@@ -122,7 +122,6 @@ namespace Baku.VMagicMirrorConfig
             var setting = WindowSetting.Default;
             EnableSpoutOutput.Value = setting.EnableSpoutOutput;
             SpoutResolutionType.Value = setting.SpoutResolutionType;
-            ShowSpoutOutputToWindow.Value= setting.ShowSpoutOutputToWindow;
         }
 
         public override void ResetToDefault()

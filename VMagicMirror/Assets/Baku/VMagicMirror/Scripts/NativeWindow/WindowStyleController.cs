@@ -29,7 +29,6 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private float opaqueThreshold = 0.1f;
         [SerializeField] private float windowPositionCheckInterval = 5.0f;
-        [SerializeField] private Camera cam = null;
         [SerializeField] private CameraController cameraController = null;
 
         private float _windowPositionCheckCount = 0;
@@ -65,13 +64,21 @@ namespace Baku.VMagicMirror
         byte _currentWindowAlpha = 0xFF;
         const float AlphaLerpFactor = 0.2f;
 
+        private CameraUtilWrapper _camera;
         private IDisposable _mouseObserve;
 
         private readonly WindowAreaIo _windowAreaIo = new WindowAreaIo();
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, IKeyMouseEventSource keyboardEventSource)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            IMessageReceiver receiver, 
+            IKeyMouseEventSource keyboardEventSource,
+            CameraUtilWrapper cameraUtilWrapper
+            )
         {
+            _camera = cameraUtilWrapper;
+
             receiver.AssignCommandHandler(
                 VmmCommands.Chromakey,
                 message =>
@@ -402,16 +409,13 @@ namespace Baku.VMagicMirror
             while (Application.isPlaying)
             {
                 yield return wait;
-                ObservePixelUnderCursor(cam);
+                ObservePixelUnderCursor();
             }
             yield return null;
         }
 
-        /// <summary>
-        /// マウス直下の画素が透明かどうかを判定
-        /// </summary>
-        /// <param name="cam"></param>
-        private void ObservePixelUnderCursor(Camera cam)
+        /// <summary> マウス直下の画素が透明かどうかを判定 </summary>
+        private void ObservePixelUnderCursor()
         {
             if (!_prevMousePositionInitialized)
             {
@@ -429,7 +433,7 @@ namespace Baku.VMagicMirror
 
             //書いてる通りマウスがウィンドウ外にあるか、またはウィンドウ内であっても明らかに
             //キャラクター上にマウスがないと判断出来る場合は続きを処理しない。
-            if (!cam.pixelRect.Contains(mousePos) ||
+            if (!_camera.PixelRectContains(mousePos) ||
                 !CheckMouseMightBeOnCharacter(mousePos))
             {
                 _isOnOpaquePixel = false;
@@ -461,7 +465,7 @@ namespace Baku.VMagicMirror
 
         private bool CheckMouseMightBeOnCharacter(Vector2 mousePosition)
         {
-            var ray = cam.ScreenPointToRay(mousePosition);
+            var ray = _camera.ScreenPointToRay(mousePosition);
             //個別のメッシュでバウンディングボックスを調べることで大まかな判定になる仕組み。
             for (int i = 0; i < _renderers.Length; i++)
             {

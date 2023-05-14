@@ -32,8 +32,9 @@ namespace Baku.VMagicMirror
         private bool _shiftDownHandled;
 
         [Inject]
-        public void Inject(IKeyMouseEventSource keySource)
+        public void Inject(CameraUtilWrapper camera, IKeyMouseEventSource keySource)
         {
+            _camera = camera;
             //NOTE: ここでSubscribeした内容が使われるのはビルドのみ
             keySource.RawKeyDown
                 .Subscribe(key =>

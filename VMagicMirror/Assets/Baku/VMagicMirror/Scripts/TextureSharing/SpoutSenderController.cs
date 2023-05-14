@@ -125,14 +125,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var type = (SpoutResolutionType)rawType;
-            if (type == _resolutionType.Value)
-            {
-                return;
-            }
-
-            _resolutionType.Value = type; 
-            RefreshRenderTexture();
+            _resolutionType.Value = (SpoutResolutionType)rawType;
         }
 
         private void RefreshRenderTexture()
@@ -142,10 +135,8 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            var resolutionType = _resolutionType.Value;
-            
-            
-            var (width, height) = GetResolution(resolutionType);
+
+            var (width, height) = GetResolution(_resolutionType.Value);
             InitializeRenderTexture(width, height);
         }
 
@@ -189,7 +180,7 @@ namespace Baku.VMagicMirror
             }
         }
             
-        //画面サイズにテクスチャサイズを揃えるのを行う。ウィンドウリサイズ中の更新頻度は抑える
+        //画面サイズにテクスチャサイズを揃える。毎フレームやるとRenderTextureのallocしすぎになるため、頻度は抑える
         private async UniTaskVoid PollRenderTextureSizeAdjustAsync(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)

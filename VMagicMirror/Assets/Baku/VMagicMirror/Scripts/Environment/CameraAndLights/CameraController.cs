@@ -8,7 +8,6 @@ namespace Baku.VMagicMirror
 {
     public class CameraController : MonoBehaviour
     {
-        //[Inject] private ReceivedMessageHandler _handler = null;
         [SerializeField] private Camera cam = null;
         [SerializeField] private CameraTransformController transformController = null;
 
@@ -19,8 +18,6 @@ namespace Baku.VMagicMirror
         private Vector3 _customCameraRotationEuler = Vector3.zero;
 
         public bool IsInFreeCameraMode { get; private set; }
-
-        public Vector3 BaseCameraPosition => _customCameraPosition;
 
         [Inject]
         public void Initialize(IMessageReceiver receiver)

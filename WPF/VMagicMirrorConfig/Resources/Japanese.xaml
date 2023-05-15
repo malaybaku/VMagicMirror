@@ -175,7 +175,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 
     <sys:String x:Key="Window_SpoutOutput">Spout出力</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spoutを用いて固定解像度で映像を出力できます。
-出力チャンネル名は"VMagicMirror_Spout"で固定です。</sys:String>
+出力チャンネル名は"VMagicMirrorSpout"で固定です。</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Enable">Spoutを有効化</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution">解像度:</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_SameAsScreen">ウィンドウと同じ</sys:String>

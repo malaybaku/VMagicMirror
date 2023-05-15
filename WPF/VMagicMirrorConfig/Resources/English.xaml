@@ -175,7 +175,7 @@ Disable foreground mode, or attach item to another one.</sys:String>
 
     <sys:String x:Key="Window_SpoutOutput">Spout</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spout feature support fixed resolution output.
-Output channel name is fixed to "VMagicMirror_Spout".</sys:String>
+Output channel name is fixed to "VMagicMirrorSpout".</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Enable">Enable Spout Output</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution">Resolution:</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_SameAsScreen">Same as Window</sys:String>

@@ -91,7 +91,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return "Num" + ((int)key - (int)Key.NumPad0).ToString();
             }
 
-            return key.ToString().ToUpper();
+            //アルファベットのキーは大文字にするが、それ以外はそのまま
+            var value = key.ToString();
+            return value.Length == 1 ? value.ToUpper() : value;
         }
     }
 }

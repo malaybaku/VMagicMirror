@@ -26,6 +26,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetOpacity)
                 );
 
+            ResetSpoutOutputSettingCommand = new ActionCommand(
+                () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetSpoutOutput)
+                );
+
             if (IsInDesignMode)
             {
                 return;
@@ -68,11 +72,45 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<int> WholeWindowTransparencyLevel => _model.WholeWindowTransparencyLevel;
         public RProperty<int> AlphaValueOnTransparent => _model.AlphaValueOnTransparent;
 
+        public RProperty<bool> EnableSpoutOutput => _model.EnableSpoutOutput;
+        public RProperty<int> SpoutResolutionType => _model.SpoutResolutionType;
+
         public ActionCommand BackgroundImageSetCommand { get; }
         public ActionCommand BackgroundImageClearCommand { get; }
 
         public ActionCommand ResetWindowPositionCommand { get; }
         public ActionCommand ResetBackgroundColorSettingCommand { get; }
-        public ActionCommand ResetOpacitySettingCommand { get; }       
+        public ActionCommand ResetOpacitySettingCommand { get; }
+        public ActionCommand ResetSpoutOutputSettingCommand { get; }
+
+        public SpoutResolutionTypeNameViewModel[] SpoutResolutionTypes => SpoutResolutionTypeNameViewModel.AvailableItems;
+    }
+
+    public class SpoutResolutionTypeNameViewModel
+    {
+
+        public SpoutResolutionTypeNameViewModel(SpoutResolutionType type, string localizationKey)
+        {
+            Type = type;
+            _localizationKey = localizationKey;
+            Label.Value = LocalizedString.GetString(_localizationKey);
+            LanguageSelector.Instance.LanguageChanged +=
+                () => Label.Value = LocalizedString.GetString(_localizationKey);
+        }
+
+        private readonly string _localizationKey;
+        public SpoutResolutionType Type { get; }
+
+        public RProperty<string> Label { get; } = new RProperty<string>("");
+
+        //NOTE: immutable arrayのほうが性質は良いのでそうしてもよい
+        public static SpoutResolutionTypeNameViewModel[] AvailableItems { get; } = new SpoutResolutionTypeNameViewModel[]
+        {
+            new(SpoutResolutionType.SameAsWindow, "Window_SpoutOutput_Resolution_SameAsScreen"),
+            new(SpoutResolutionType.Fixed1280, "Window_SpoutOutput_Resolution_Fixed1280"),
+            new(SpoutResolutionType.Fixed1920, "Window_SpoutOutput_Resolution_Fixed1920"),
+            new(SpoutResolutionType.Fixed2560, "Window_SpoutOutput_Resolution_Fixed2560"),
+            new(SpoutResolutionType.Fixed3840, "Window_SpoutOutput_Resolution_Fixed3840"),
+        };
     }
 }

@@ -22,5 +22,17 @@
         public int WholeWindowTransparencyLevel { get; set; } = 2;
         public int AlphaValueOnTransparent { get; set; } = 128;
 
+        public bool EnableSpoutOutput { get; set; } = false;
+        public int SpoutResolutionType { get; set; } = 0;
+    }
+
+    //NOTE: 「概念的にそうだから」という事で定義してるが、実際には使ってない
+    public enum SpoutResolutionType
+    {
+        SameAsWindow = 0,
+        Fixed1280 = 1,
+        Fixed1920 = 2,
+        Fixed2560 = 3,
+        Fixed3840 = 4,
     }
 }

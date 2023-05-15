@@ -145,7 +145,7 @@ namespace mattatz.TransformControl
 
         private void Start()
         {
-            _cam = Camera.main;
+            _cam = TransformControlCameraStore.Get();
             EnsureGizmoRenderer();
             gizmoRenderer.Target = transform;
             gizmoRenderer.TargetCamera = _cam;

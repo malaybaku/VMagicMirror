@@ -161,8 +161,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Setting_Color_Expander_Header">色を編集 (クリックで展開)</sys:String>
     
     <!-- Window -->
-    <sys:String x:Key="Window_Header">ウィンドウ</sys:String>
-    <sys:String x:Key="Window_Basics">基本の設定</sys:String>
+    <sys:String x:Key="Window_Header">ウィンドウ・映像出力</sys:String>
+    <sys:String x:Key="Window_Basics">基本設定</sys:String>
     <sys:String x:Key="Window_BackgroundColor">背景色</sys:String>
     <sys:String x:Key="Window_Transparent">背景を透過</sys:String>
     <sys:String x:Key="Window_Draggable">(透過中)キャラ付近を掴んでドラッグ</sys:String>
@@ -172,6 +172,17 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_BackgroundImage">背景画像:</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">ロード...</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Clear">クリア</sys:String>
+
+    <sys:String x:Key="Window_SpoutOutput">Spout出力</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spoutを用いて固定解像度で映像を出力できます。
+出力チャンネル名は"VMagicMirrorSpout"で固定です。</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Enable">Spoutを有効化</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution">解像度:</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_SameAsScreen">ウィンドウと同じ</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1280">1280 x 720 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920">1920 x 1080 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560">2560 x 1440 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840">3840 x 2160 (固定)</sys:String>
     
     <sys:String x:Key="Window_TransparencySupport">キャラ透明化の詳細</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level">キャラの透明化レベル</sys:String>

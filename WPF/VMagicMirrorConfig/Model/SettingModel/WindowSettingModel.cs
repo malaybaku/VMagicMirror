@@ -72,6 +72,16 @@ namespace Baku.VMagicMirrorConfig
                 setting.AlphaValueOnTransparent,
                 i => SendMessage(factory.SetAlphaValueOnTransparent(i))
                 );
+
+            EnableSpoutOutput = new RProperty<bool>(
+                setting.EnableSpoutOutput,
+                enable => SendMessage(factory.EnableSpoutOutput(enable))
+                );
+
+            SpoutResolutionType = new RProperty<int>(
+                setting.SpoutResolutionType,
+                type => SendMessage(factory.SetSpoutOutputResolution(type))
+                );
         }
 
         public RProperty<int> R { get; }
@@ -87,6 +97,8 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> WholeWindowTransparencyLevel { get; }
         public RProperty<int> AlphaValueOnTransparent { get; }
 
+        public RProperty<bool> EnableSpoutOutput { get; }
+        public RProperty<int> SpoutResolutionType { get; }
 
         #region Reset API
 
@@ -105,6 +117,13 @@ namespace Baku.VMagicMirrorConfig
             AlphaValueOnTransparent.Value = setting.AlphaValueOnTransparent;
         }
 
+        public void ResetSpoutOutput()
+        {
+            var setting = WindowSetting.Default;
+            EnableSpoutOutput.Value = setting.EnableSpoutOutput;
+            SpoutResolutionType.Value = setting.SpoutResolutionType;
+        }
+
         public override void ResetToDefault()
         {
             var setting = WindowSetting.Default;
@@ -118,6 +137,7 @@ namespace Baku.VMagicMirrorConfig
             BackgroundImagePath.Value = setting.BackgroundImagePath;
 
             ResetOpacity();
+            ResetSpoutOutput();
             ResetWindowPosition();
         }
 

@@ -6,10 +6,7 @@ using Zenject;
 //コード元: http://esprog.hatenablog.com/entry/2016/03/20/033322
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// GameビューにてSceneビューのようなカメラの動きをマウス操作によって実現する
-    /// </summary>
-    [RequireComponent(typeof(Camera))]
+    /// <summary> Sceneビューのようなカメラの動きをマウス操作によって実現する </summary>
     public class CameraTransformController : MonoBehaviour
     {
         private const int LeftMouseButton = 0;
@@ -20,7 +17,7 @@ namespace Baku.VMagicMirror
         [SerializeField, Range(0.1f, 10f)] private float moveSpeed = 0.3f;
         [SerializeField, Range(0.1f, 10f)] private float rotateSpeed = 0.3f;
 
-        private Camera _cam;
+        private CameraUtilWrapper _camera;
         private Vector3 _preMousePos;
         private Vector3 _rotateCenterInThisAngleMove;
 
@@ -35,8 +32,9 @@ namespace Baku.VMagicMirror
         private bool _shiftDownHandled;
 
         [Inject]
-        public void Inject(IKeyMouseEventSource keySource)
+        public void Inject(CameraUtilWrapper camera, IKeyMouseEventSource keySource)
         {
+            _camera = camera;
             //NOTE: ここでSubscribeした内容が使われるのはビルドのみ
             keySource.RawKeyDown
                 .Subscribe(key =>
@@ -69,11 +67,6 @@ namespace Baku.VMagicMirror
                     }
                 })
                 .AddTo(this);
-        }
-        
-        private void Start()
-        {
-            _cam = GetComponent<Camera>();
         }
 
         private void Update()
@@ -158,7 +151,7 @@ namespace Baku.VMagicMirror
             // - 結果として「Y軸にちかいところで頑張って回転してます」感が出ればOK
             //ref: http://marupeke296.com/COL_3D_No19_LinesDistAndPos.html
 
-            var camRay = _cam.ScreenPointToRay(mousePosition);
+            var camRay = _camera.ScreenPointToRay(mousePosition);
             var p1 = camRay.origin;
             var v1 = camRay.direction;
 

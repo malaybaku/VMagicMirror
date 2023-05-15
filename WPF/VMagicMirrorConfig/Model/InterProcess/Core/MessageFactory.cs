@@ -69,6 +69,10 @@ namespace Baku.VMagicMirrorConfig
 
         public Message SetAlphaValueOnTransparent(int alpha) => WithArg(alpha);
 
+        public Message EnableSpoutOutput(bool enable) => WithArg(enable);
+        public Message SetSpoutOutputResolution(int type) => WithArg(type);
+
+
         public Message StartupEnded() => NoArg();
 
         #endregion

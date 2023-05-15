@@ -183,6 +183,54 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
 
+                        <md:PackIcon Kind="ImageOutline"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+
+                        <TextBlock Text="{DynamicResource Window_SpoutOutput}"
+                                   Margin="5"
+                                   Style="{StaticResource HeaderText}"
+                                   />
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetSpoutOutputSettingCommand}"
+                                />
+                    </StackPanel>
+                    
+                    <TextBlock Text="{DynamicResource Window_SpoutOutput_Instruction}"
+                               Margin="15,10"
+                               />
+
+                    <CheckBox Content="{DynamicResource Window_SpoutOutput_Enable}"
+                              IsChecked="{Binding EnableSpoutOutput.Value, Mode=TwoWay}"
+                              Margin="15,0"
+                              />
+                    <StackPanel Orientation="Horizontal"
+                                Margin="30,5,5,5">
+                        <TextBlock Text="{DynamicResource Window_SpoutOutput_Resolution}"/>
+
+                        <ComboBox Width="200"
+                                  Margin="5"
+                                  IsEnabled="{Binding EnableSpoutOutput.Value}"
+                                  ItemsSource="{Binding SpoutResolutionTypes}"
+                                  SelectedIndex="{Binding SpoutResolutionType.Value, Mode=TwoWay, FallbackValue=0}"
+                                  Padding="0"
+                                  >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:SpoutResolutionTypeNameViewModel}">
+                                    <TextBlock Text="{Binding Label.Value}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+
                         <md:PackIcon Kind="LayersClear"
                                      Style="{StaticResource SettingHeaderPackIcon}"
                                      />

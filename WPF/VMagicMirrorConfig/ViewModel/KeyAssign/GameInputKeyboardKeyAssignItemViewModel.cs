@@ -57,7 +57,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
 
             Key? nextKey = key;
-            if (key is Key.None or Key.Delete or Key.Back or Key.LeftAlt or Key.RightAlt)
+            if (key is Key.None or Key.Delete or Key.Back)
             {
                 nextKey = null;
             }
@@ -67,6 +67,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
+            //NOTE: (Left|Right)(Alt|Ctrl|Shift|Win)が入る事がある。はず。
             _key = nextKey;
             RegisteredKey.Value = CreateRegisteredKeyString();
             RegisteredKeyChanged?.Invoke(_key?.ToString() ?? "");
@@ -90,7 +91,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return "Num" + ((int)key - (int)Key.NumPad0).ToString();
             }
 
-            return key.ToString().ToUpper();
+            //アルファベットのキーは大文字にするが、それ以外はそのまま
+            var value = key.ToString();
+            return value.Length == 1 ? value.ToUpper() : value;
         }
     }
 }

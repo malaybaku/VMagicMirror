@@ -40,7 +40,7 @@ namespace Baku.VMagicMirrorConfig.View
                 {
                     KeyDownCommand.Execute(key);
                 }
-            });
+            }, true);
         }
     }
 }

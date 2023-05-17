@@ -22,6 +22,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model = model;
             _imageQuality = imageQuality;
 
+            AntiAliasStyle = new RProperty<AntiAliasStyles>(
+                GetAntiAliasStyle(_model.AntiAliasStyle.Value)
+                );
+
             ResetLightSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(async () =>
                 {
@@ -41,6 +45,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (!IsInDesignMode)
             {
+                model.AntiAliasStyle.AddWeakEventHandler(ApplyAntiAliasStyle);
+
                 model.LightR.AddWeakEventHandler(UpdateLightColor);
                 model.LightG.AddWeakEventHandler(UpdateLightColor);
                 model.LightB.AddWeakEventHandler(UpdateLightColor);
@@ -56,11 +62,39 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<string> ImageQuality => _imageQuality.ImageQuality;
         public ReadOnlyObservableCollection<string> ImageQualityNames => _imageQuality.ImageQualityNames;
+
+        public RProperty<AntiAliasStyles> AntiAliasStyle { get; }
+        public AntiAliasStyles[] AvailableAntiAliasStyle { get; } = new[]
+        {
+            AntiAliasStyles.None,
+            AntiAliasStyles.Low,
+            AntiAliasStyles.Mid,
+            AntiAliasStyles.High,
+        };
+
         public RProperty<bool> HalfFpsMode => _model.HalfFpsMode;
         public RProperty<bool> UseFrameReductionEffect => _model.UseFrameReductionEffect;
 
         void UpdateLightColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(LightColor));
         void UpdateBloomColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(BloomColor));
+
+        void ApplyAntiAliasStyle(object? sender, PropertyChangedEventArgs e) 
+            => AntiAliasStyle.Value = GetAntiAliasStyle(_model.AntiAliasStyle.Value);
+
+        void NotifyAntiAliasStyleChanged(object? sender, PropertyChangedEventArgs e)
+            => _model.AntiAliasStyle.Value = (int)AntiAliasStyle.Value;
+
+        static AntiAliasStyles GetAntiAliasStyle(int value)
+        {
+            if (value >= 0 && value <= (int)AntiAliasStyles.High)
+            {
+                return (AntiAliasStyles)value;
+            }
+            else
+            {
+                return AntiAliasStyles.None;
+            }
+        }
 
         #region Light
 

@@ -45,6 +45,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (!IsInDesignMode)
             {
+                AntiAliasStyle.AddWeakEventHandler(NotifyAntiAliasStyleChanged);
                 model.AntiAliasStyle.AddWeakEventHandler(ApplyAntiAliasStyle);
 
                 model.LightR.AddWeakEventHandler(UpdateLightColor);

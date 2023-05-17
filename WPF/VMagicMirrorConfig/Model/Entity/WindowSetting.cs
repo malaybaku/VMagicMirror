@@ -26,7 +26,6 @@
         public int SpoutResolutionType { get; set; } = 0;
     }
 
-    //NOTE: 「概念的にそうだから」という事で定義してるが、実際には使ってない
     public enum SpoutResolutionType
     {
         SameAsWindow = 0,

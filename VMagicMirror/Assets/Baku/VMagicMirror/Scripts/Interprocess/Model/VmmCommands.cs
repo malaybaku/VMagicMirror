@@ -150,6 +150,7 @@
 
         // Image Quality
         public const string SetImageQuality = nameof(SetImageQuality);
+        public const string SetAntiAliasStyle = nameof(SetAntiAliasStyle);
         public const string SetHalfFpsMode = nameof(SetHalfFpsMode);
 
         // Lighting 

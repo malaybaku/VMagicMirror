@@ -18,6 +18,7 @@ namespace Baku.VMagicMirrorConfig
             var factory = MessageFactory.Instance;
 
             //エフェクト関係は設定項目がシンプルなため、例外はほぼ無い(色関係のメッセージ送信がちょっと特殊なくらい)
+            AntiAliasStyle = new RProperty<int>(s.AntiAliasStyle, i => SendMessage(factory.SetAntiAliasStyle(i)));
             HalfFpsMode = new RProperty<bool>(s.HalfFpsMode, v => SendMessage(factory.SetHalfFpsMode(v)));
             UseFrameReductionEffect = new RProperty<bool>(
                 s.UseFrameReductionEffect, v => SendMessage(factory.UseFrameReductionEffect(v)));
@@ -55,6 +56,7 @@ namespace Baku.VMagicMirrorConfig
 
         #region Image Quality
 
+        public RProperty<int> AntiAliasStyle { get; }
         public RProperty<bool> HalfFpsMode { get; }
         public RProperty<bool> UseFrameReductionEffect { get; }
 

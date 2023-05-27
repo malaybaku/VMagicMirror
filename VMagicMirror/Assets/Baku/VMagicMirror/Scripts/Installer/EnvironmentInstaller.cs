@@ -17,6 +17,8 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<PostProcessLayer>().FromMethod(_ => GetComponent<PostProcessLayer>()).AsCached();
             container.BindInterfacesTo<CameraFovController>().AsSingle();
             container.Bind<CameraUtilWrapper>().AsSingle();
+
+            container.BindInterfacesTo<AntiAliasSettingSetter>().AsSingle();
         }
     }
 }

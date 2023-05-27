@@ -13,7 +13,7 @@ lang: en
 
 2023/05/28
 
-* Add: Support Spout output, at setting window > `Window` tab > `Spout Output`.
+* Add: Support Spout output, at setting window > `Window` tab > `Spout`.
 * Add: Support Anti-Alias (MSAA, Multisample Anti-Aliasing), from setting window > `Effects` tab > `Image Quality`.
 
 

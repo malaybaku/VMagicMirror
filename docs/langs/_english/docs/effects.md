@@ -18,6 +18,8 @@ lang: en
 
 `Image Quality`: Select whole image quality.
 
+`Anti Alias`: Choose anti alias (Multisample Anti-Alias) option. Note that higher setting leads more computational load. The feature is off by default.
+
 `Half FPS`: Switch to lower FPS. Useful when you need to reduce CPU usage.
 
 `Low FPS for Bone Motion`: Turn on to reduce avatar motion's FPS.  Note that this option does not reduce CPU usage.

@@ -7,6 +7,15 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v3.2.1
+{: .doc-sec2 }
+
+2023/05/28
+
+* 追加: Spout出力に対応しました。詳細設定ウィンドウの`ウィンドウ`タブ > `Spout出力`から使用できます。
+* 追加: アンチエイリアス(MSAA, Multisample Anti-Aliasing)を有効化できるようにしました。詳細設定ウィンドウの`エフェクト`タブ > `画質`から選択できます。
+
+
 #### v3.2.0
 {: .doc-sec2 }
 

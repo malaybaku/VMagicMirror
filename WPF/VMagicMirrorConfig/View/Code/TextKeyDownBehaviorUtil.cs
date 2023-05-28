@@ -5,7 +5,7 @@ namespace Baku.VMagicMirrorConfig.View
 {
     static class TextKeyDownBehaviorUtil
     {
-        public static void OnKeyDown(KeyEventArgs e, Action<Key> action)
+        public static void OnKeyDown(KeyEventArgs e, Action<Key> action, bool fireOnBasicModifierKeys = false)
         {
             if (e.Key == Key.Tab)
             {
@@ -13,13 +13,16 @@ namespace Baku.VMagicMirrorConfig.View
                 return;
             }
 
-            if (e.Key == Key.LeftShift || e.Key == Key.RightShift ||
-                e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl || 
-                e.Key == Key.LeftAlt || e.Key == Key.RightAlt || 
-                e.Key == Key.LWin || e.Key == Key.RWin)
+            if (!fireOnBasicModifierKeys)
             {
-                e.Handled = true;
-                return;
+                if (e.Key == Key.LeftShift || e.Key == Key.RightShift ||
+                    e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl ||
+                    e.Key == Key.LeftAlt || e.Key == Key.RightAlt ||
+                    e.Key == Key.LWin || e.Key == Key.RWin)
+                {
+                    e.Handled = true;
+                    return;
+                }
             }
 
             //Lock系を含む、「さすがにそれは無いやろ」系のキーを無視

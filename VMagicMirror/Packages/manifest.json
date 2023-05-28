@@ -28,6 +28,7 @@
     "jp.keijiro.mediapipe.blazepalm": "1.0.2",
     "jp.keijiro.mediapipe.handlandmark": "1.0.1",
     "jp.keijiro.test-assets": "1.0.1",
+    "jp.keijiro.klak.spout": "2.0.3",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",

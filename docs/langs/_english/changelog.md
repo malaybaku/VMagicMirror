@@ -8,6 +8,15 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.2.1
+{: .doc-sec2 }
+
+2023/05/28
+
+* Add: Support Spout output, at setting window > `Window` tab > `Spout`.
+* Add: Support Anti-Alias (MSAA, Multisample Anti-Aliasing), from setting window > `Effects` tab > `Image Quality`.
+
+
 #### v3.2.0
 {: .doc-sec2 }
 

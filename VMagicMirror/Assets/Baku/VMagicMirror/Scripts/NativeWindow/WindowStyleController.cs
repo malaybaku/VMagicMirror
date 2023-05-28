@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UniRx;
 using Zenject;
@@ -26,7 +29,6 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private float opaqueThreshold = 0.1f;
         [SerializeField] private float windowPositionCheckInterval = 5.0f;
-        [SerializeField] private Camera cam = null;
         [SerializeField] private CameraController cameraController = null;
 
         private float _windowPositionCheckCount = 0;
@@ -62,13 +64,21 @@ namespace Baku.VMagicMirror
         byte _currentWindowAlpha = 0xFF;
         const float AlphaLerpFactor = 0.2f;
 
+        private CameraUtilWrapper _camera;
         private IDisposable _mouseObserve;
 
         private readonly WindowAreaIo _windowAreaIo = new WindowAreaIo();
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver, IKeyMouseEventSource keyboardEventSource)
+        public void Initialize(
+            IVRMLoadable vrmLoadable, 
+            IMessageReceiver receiver, 
+            IKeyMouseEventSource keyboardEventSource,
+            CameraUtilWrapper cameraUtilWrapper
+            )
         {
+            _camera = cameraUtilWrapper;
+
             receiver.AssignCommandHandler(
                 VmmCommands.Chromakey,
                 message =>
@@ -135,7 +145,7 @@ namespace Baku.VMagicMirror
             SetWindowLong(hWnd, GWL_EXSTYLE, defaultExWindowStyle);
 #endif
             CheckSettingFileDirect();
-            _windowAreaIo.Load();
+            _windowAreaIo.LoadAsync(this.GetCancellationTokenOnDestroy()).Forget();
             _windowPositionCheckCount = windowPositionCheckInterval;            
         }
 
@@ -399,16 +409,13 @@ namespace Baku.VMagicMirror
             while (Application.isPlaying)
             {
                 yield return wait;
-                ObservePixelUnderCursor(cam);
+                ObservePixelUnderCursor();
             }
             yield return null;
         }
 
-        /// <summary>
-        /// マウス直下の画素が透明かどうかを判定
-        /// </summary>
-        /// <param name="cam"></param>
-        private void ObservePixelUnderCursor(Camera cam)
+        /// <summary> マウス直下の画素が透明かどうかを判定 </summary>
+        private void ObservePixelUnderCursor()
         {
             if (!_prevMousePositionInitialized)
             {
@@ -426,7 +433,7 @@ namespace Baku.VMagicMirror
 
             //書いてる通りマウスがウィンドウ外にあるか、またはウィンドウ内であっても明らかに
             //キャラクター上にマウスがないと判断出来る場合は続きを処理しない。
-            if (!cam.pixelRect.Contains(mousePos) ||
+            if (!_camera.PixelRectContains(mousePos) ||
                 !CheckMouseMightBeOnCharacter(mousePos))
             {
                 _isOnOpaquePixel = false;
@@ -458,7 +465,7 @@ namespace Baku.VMagicMirror
 
         private bool CheckMouseMightBeOnCharacter(Vector2 mousePosition)
         {
-            var ray = cam.ScreenPointToRay(mousePosition);
+            var ray = _camera.ScreenPointToRay(mousePosition);
             //個別のメッシュでバウンディングボックスを調べることで大まかな判定になる仕組み。
             for (int i = 0; i < _renderers.Length; i++)
             {
@@ -528,13 +535,13 @@ namespace Baku.VMagicMirror
         /// アプリ起動時に呼び出すことで、前回に保存した設定があればそれを読みこんで適用します。
         /// また、適用結果によってウィンドウがユーザーから見えない位置に移動した場合は復帰処理を行います。
         /// </summary>
-        public void Load()
+        public async UniTaskVoid LoadAsync(CancellationToken cancellationToken)
         {
             if (PlayerPrefs.HasKey(InitialPositionXKey) && PlayerPrefs.HasKey(InitialPositionYKey))
             {
 #if !UNITY_EDITOR
-                int x = PlayerPrefs.GetInt(InitialPositionXKey);
-                int y = PlayerPrefs.GetInt(InitialPositionYKey);
+                var x = PlayerPrefs.GetInt(InitialPositionXKey);
+                var y = PlayerPrefs.GetInt(InitialPositionYKey);
                 _prevWindowPosition = new Vector2Int(x, y);
                 SetUnityWindowPosition(x, y);
 #endif
@@ -548,15 +555,19 @@ namespace Baku.VMagicMirror
 #endif
             }
 
-            int width = PlayerPrefs.GetInt(InitialWidthKey, 0);
-            int height = PlayerPrefs.GetInt(InitialHeightKey, 0);
+            //前回起動時と同じモニター内にウィンドウを配置し終わってからサイズを適用するために待つ。
+            //こうしないと、モニター間のDPI差がある環境で再起動のたびにウィンドウサイズがずれてしまう
+            await UniTask.DelayFrame(6, cancellationToken: cancellationToken);
+            
+            var width = PlayerPrefs.GetInt(InitialWidthKey, 0);
+            var height = PlayerPrefs.GetInt(InitialHeightKey, 0);
             if (width > 100 && height > 100)
             {
 #if !UNITY_EDITOR
                 SetUnityWindowSize(width, height);
 #endif
             }
-            
+
             AdjustIfWindowPositionInvalid();
         }
         
@@ -606,33 +617,29 @@ namespace Baku.VMagicMirror
 
         private bool CheckWindowPositionValidity(RECT selfRect, List<RECT> monitorRects)
         {
-            //条件: どれか一つのモニター領域について以下を満たしていれば、想定どおりその位置にウィンドウを置いている、と推定する
-            // - 自身のウィンドウの左上隅がそのモニターの内側である
-            // - ウィンドウのタテヨコともに2/3以上がそのモニターに収まっている
-            foreach (var r in monitorRects)
-            {
-                if (!(selfRect.left >= r.left && selfRect.left < r.right && 
-                      selfRect.top >= r.top && selfRect.top < r.bottom))
-                {
-                    //左上隅がこのモニターに収まってない→関係ないウィンドウなので無視
-                    continue;
-                }
-                
-                //左上隅が収まってるモニターだった: ウィンドウの右下2/3のポイントがモニター内にあるかチェックし、
-                //極端にウィンドウが見切れてないか確認
-                int testX = selfRect.left + (selfRect.right - selfRect.left) * 2 / 3; 
-                int testY = selfRect.top + (selfRect.bottom - selfRect.top) * 2 / 3;
+            //ウィンドウ位置を正常とみなす条件: ウィンドウの「(左上 or 右上) + 中央上 + 中央」が、どれかのモニターの内側に含まれる
+            var leftTop = new Vector2Int(selfRect.left, selfRect.top);
+            var rightTop = new Vector2Int(selfRect.right, selfRect.top);
+            var centerTop = new Vector2Int((selfRect.left + selfRect.right) / 2, selfRect.top);
+            var center = new Vector2Int(
+                (selfRect.left + selfRect.right) / 2,
+                (selfRect.top + selfRect.bottom) / 2
+            );
 
-                //NOTE: ほぼ起きないハズだけど、同じ座標が2つのモニターに含まれていると判定されるケースに備え、
-                //ここの判定がfalseだった場合も他のモニターをチェックしていいような書き方にしておく
-                if (testX >= r.left && testX < r.right && testY >= r.top && testY < r.bottom)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return
+                (IsInsideSomeRect(leftTop, monitorRects) || IsInsideSomeRect(rightTop, monitorRects)) &&
+                IsInsideSomeRect(centerTop, monitorRects) &&
+                IsInsideSomeRect(center, monitorRects);
         }
 
+        private static bool IsInsideSomeRect(Vector2Int pos, List<RECT> rects)
+        {
+            return rects.Any(r => 
+                pos.x >= r.left && pos.x < r.right && 
+                pos.y >= r.top && pos.y < r.bottom
+                );
+        }
+        
         //プライマリモニターの右下にウィンドウを移動したのち、ウィンドウサイズが大きすぎない事を保証し、
         //その状態でウィンドウの位置/サイズを保存します。
         //この処理は異常復帰なので、ちょっと余裕をもってウィンドウを動かすことに注意して下さい。

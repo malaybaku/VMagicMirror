@@ -49,7 +49,7 @@ namespace Baku.VMagicMirror
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
-            Camera mainCam,
+            [Inject(Id = "RefCameraForRay")] Camera cam,
             IKTargetTransforms ikTargets,
             PenTabletProvider penTabletProvider,
             FaceControlConfiguration faceControlConfig,
@@ -57,7 +57,7 @@ namespace Baku.VMagicMirror
             BodyMotionModeController motionModeController
             )
         {
-            _camera = mainCam.transform;
+            _camera = cam.transform;
             _lookAtTarget = ikTargets.LookAt;
             _faceControlConfig = faceControlConfig;
             _penTabletProvider = penTabletProvider;

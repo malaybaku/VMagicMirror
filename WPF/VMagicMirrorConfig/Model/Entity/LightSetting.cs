@@ -12,6 +12,7 @@
 
         #region Image Quality
 
+        public int AntiAliasStyle { get; set; } = 0;
         public bool HalfFpsMode { get; set; } = false;
         public bool UseFrameReductionEffect { get; set; } = false;
         
@@ -61,5 +62,13 @@
 
         #endregion
 
+    }
+
+    public enum AntiAliasStyles
+    {
+        None = 0,
+        Low = 1,
+        Mid = 2,
+        High = 3,
     }
 }

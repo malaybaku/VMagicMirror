@@ -53,7 +53,7 @@
                     Content="{DynamicResource Hotkey_Reset}"
                     />
 
-            <CheckBox Content="Hot Keyを有効化"
+            <CheckBox Content="{DynamicResource Hotkey_Enable}"
                       IsChecked="{Binding EnableHotKey.Value}"
                       />
 

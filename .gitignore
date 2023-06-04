@@ -62,6 +62,7 @@ sysinfo.txt
 /VMagicMirror/Assets/VRMModels/
 /VMagicMirror/Assets/VRMLoaderUI/
 /VMagicMirror/Assets/VRoidSDK/
+/VMagicMirror/Assets/VRoidSDK_Custom/
 /VMagicMirror/Assets/XinputGamepad/
 /VMagicMirror/Assets/MidiJack/
 /VMagicMirror/Assets/SharpDX/
@@ -86,6 +87,7 @@ sysinfo.txt
 /VMagicMirror/Assets/VRMModels.meta
 /VMagicMirror/Assets/VRMLoaderUI.meta
 /VMagicMirror/Assets/VRoidSDK.meta
+/VMagicMirror/Assets/VRoidSDK_Custom.meta
 /VMagicMirror/Assets/XinputGamepad.meta
 /VMagicMirror/Assets/MidiJack.meta
 /VMagicMirror/Assets/SharpDX.meta

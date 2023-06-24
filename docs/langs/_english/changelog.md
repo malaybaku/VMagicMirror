@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.2.2
+{: .doc-sec2 }
+
+2023/06/25
+
+* Change: Update VRoid SDK version to v0.2.0. This update makes VRM1.0 model available from VRoid Hub, and support easier login steps to VRoid Hub.
+
+
 #### v3.2.1
 {: .doc-sec2 }
 

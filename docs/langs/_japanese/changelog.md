@@ -7,6 +7,14 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v3.2.2
+{: .doc-sec2 }
+
+2023/06/25
+
+* 変更: VRoid SDKバージョンをv0.2.0に更新しました。これにより、VRoid HubからVRM1.0が利用可能となり、またログイン手順が簡単になりました。
+
+
 #### v3.2.1
 {: .doc-sec2 }
 

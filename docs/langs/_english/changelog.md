@@ -11,7 +11,7 @@ lang: en
 #### v3.2.2
 {: .doc-sec2 }
 
-2023/06/25
+2023/06/28
 
 * Change: Update VRoid SDK version to v0.2.0. This update makes VRM1.0 model available from VRoid Hub, and support easier login steps to VRoid Hub.
 

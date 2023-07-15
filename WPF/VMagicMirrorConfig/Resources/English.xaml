@@ -31,6 +31,7 @@
     <sys:String x:Key="TopBar_Setting_Devices">Devices</sys:String>
     <sys:String x:Key="TopBar_Setting_Effects">Effects</sys:String>
     <sys:String x:Key="TopBar_Setting_HotKey">Hot Key</sys:String>
+    <sys:String x:Key="TopBar_Setting_VMCP">VMCP</sys:String>
     <sys:String x:Key="TopBar_Setting_FileIo">Files</sys:String>
         
     <!-- Home -->

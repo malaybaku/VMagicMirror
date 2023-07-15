@@ -31,6 +31,7 @@
     <sys:String x:Key="TopBar_Setting_Devices">デバイス</sys:String>
     <sys:String x:Key="TopBar_Setting_Effects">エフェクト</sys:String>
     <sys:String x:Key="TopBar_Setting_HotKey">Hot Key</sys:String>
+    <sys:String x:Key="TopBar_Setting_VMCP">VMCP</sys:String>
     <sys:String x:Key="TopBar_Setting_FileIo">ファイル</sys:String>
     
     <!-- Home -->
@@ -494,6 +495,27 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_Gamepad">ゲームパッド</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">キーボード (数字の0-9)</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDIコントローラ</sys:String>
+
+    <!-- VMCP -->
+    <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMC Protocol (VMCP)に対応する他アプリケーションからモーション情報を受信できます。
+VMagicMirrorは以下のモーションを受信して適用できます。
+
+- 頭部モーション
+- 表情
+- 両手の位置情報</sys:String>
+    <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
+
+    <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_AppName">アプリ名</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_PortNumber">ポート番号</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HeadPose">頭の姿勢</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_Facial">表情</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HandPose">手の姿勢</sys:String>
+    <sys:String x:Key="VMCP_Notice_Priority">*上のほうで指定した入力から優先で適用されます。</sys:String>
+    <sys:String x:Key="VMCP_Apply">変更を適用</sys:String>
+    <sys:String x:Key="VMCP_Revert">キャンセル</sys:String>
+    <!-- (あんまやりたくないが) キャリブレーション用のUIが欲しいかも… -->
 
     <!-- HotKey -->
     <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>

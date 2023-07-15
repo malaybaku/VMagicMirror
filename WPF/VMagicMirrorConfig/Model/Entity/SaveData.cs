@@ -37,6 +37,7 @@
         public LightSetting? LightSetting { get; set; }
 
         public WordToMotionSetting? WordToMotionSetting { get; set; }
+        public VMCPSetting? VMCPSetting { get; set; }
 
         public ExternalTrackerSetting? ExternalTrackerSetting { get; set; }
         public AccessorySetting? AccessorySetting { get; set; }

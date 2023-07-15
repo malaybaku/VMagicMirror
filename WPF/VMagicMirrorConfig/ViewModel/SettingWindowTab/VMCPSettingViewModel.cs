@@ -14,6 +14,7 @@
             _isDirty = new RProperty<bool>(false, _ => UpdateCanApply());
             ApplyChangeCommand = new ActionCommand(ApplyChange);
             RevertChangeCommand = new ActionCommand(RevertChange);
+            OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
 
             if (!IsInDesignMode)
             {
@@ -35,6 +36,7 @@
         
         public ActionCommand ApplyChangeCommand { get; }
         public ActionCommand RevertChangeCommand { get; }
+        public ActionCommand OpenDocUrlCommand { get; }
 
         private void UpdateCanApply()
         {
@@ -78,5 +80,11 @@
         }
 
         private void RevertChange() => LoadCurrentSettings();
+
+        private void OpenDocUrl()
+        {
+            var url = LocalizedString.GetString("URL_docs_vmc_protocol");
+            UrlNavigate.Open(url);
+        }
     }
 }

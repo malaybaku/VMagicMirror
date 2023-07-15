@@ -2,17 +2,14 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"             
-             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              d:DesignWidth="500"
              d:DesignHeight="750">
     <UserControl.DataContext>
-        <vm:WordToMotionSettingViewModel />
+        <vm:VMCPSettingViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -38,6 +35,7 @@
             <Button Style="{StaticResource MaterialDesignOutlinedButton}"
                     Padding="0"
                     MinWidth="130"
+                    Margin="10,0"
                     HorizontalAlignment="Right"
                     Command="{Binding OpenDocUrlCommand}"
                     Content="{DynamicResource VMCP_SeeMore}"
@@ -45,11 +43,11 @@
 
             <CheckBox Content="{DynamicResource VMCP_Enable}"
                       Margin="10,10,10,5"
-                      IsChecked="{Binding EnableVMCP.Value, Mode=TwoWay}"
+                      IsChecked="{Binding VMCPEnabled.Value, Mode=TwoWay}"
                       />
 
             <Grid Margin="5,10" 
-                  IsEnabled="{Binding EnableVMCP.Value}">
+                  IsEnabled="{Binding VMCPEnabled.Value}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="Auto"/>
@@ -94,13 +92,13 @@
                            />
 
                 <view:VMCPSourceItem Grid.Row="2" Grid.ColumnSpan="6"
-                                     DataContext="{Binding VMCPSource1}"
+                                     DataContext="{Binding Source1}"
                                      />
                 <view:VMCPSourceItem Grid.Row="3" Grid.ColumnSpan="6"
-                                     DataContext="{Binding VMCPSource2}"
+                                     DataContext="{Binding Source2}"
                                      />
                 <view:VMCPSourceItem Grid.Row="4" Grid.ColumnSpan="6"
-                                     DataContext="{Binding VMCPSource3}"
+                                     DataContext="{Binding Source3}"
                                      />
 
             </Grid>

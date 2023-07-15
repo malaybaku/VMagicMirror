@@ -685,6 +685,8 @@ Use this only after checking the licenses of VRM you will use.
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/en/docs/setting_files</sys:String>
     <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/en/docs/accessory</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/en/docs/game_input</sys:String>
+    <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/en/docs/vmc_protocol</sys:String>
+
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/en/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/en/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/en/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>

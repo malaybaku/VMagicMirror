@@ -495,6 +495,26 @@ Please test by typing "joy".</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">Keyboard (num 0-9)</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDI Controller</sys:String>
 
+    <!-- VMCP -->
+    <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMC Protocol (VMCP) can receive motion inputs from other apps.
+VMagicMirror supports to receive:
+
+- Head Pose
+- Facial BlendShape
+- Hand Pose</sys:String>
+    <sys:String x:Key="VMCP_SeeMore">See More...</sys:String>
+
+    <sys:String x:Key="VMCP_Enable">Enable VMC Protocol</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_AppName">App Name</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_PortNumber">Port Number</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HeadPose">Head Pose</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_Facial">Facial</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HandPose">Hand Pose</sys:String>
+    <sys:String x:Key="VMCP_Notice_Priority">*Upper Item is prior to receive input.</sys:String>
+    <sys:String x:Key="VMCP_Apply">Apply Changes</sys:String>
+    <sys:String x:Key="VMCP_Revert">Revert</sys:String>    
+    
     <!-- HotKey -->
     <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>
     <sys:String x:Key="Hotkey_Instruction" xml:space="preserve">This tab support hotkey (shortcut) edit.

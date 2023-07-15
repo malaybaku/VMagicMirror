@@ -502,7 +502,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 VMagicMirrorは以下のモーションを受信して適用できます。
 
 - 頭部モーション
-- 表情
+- 表情 (BlendShape)
 - 両手の位置情報</sys:String>
     <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
 

@@ -148,8 +148,9 @@ namespace Baku.VMagicMirror.VMCP
                 return;
             }
 
+            _headPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHeadPose));
+            _handPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHandPose));
             _blendShape.SetActive(_dataPassSettings.Any(s => s.ReceiveFacial));
-            //TODO: IKのオン/オフも同様に行う…はず
 
             // オプションがオンであっても受信しないケースがあるので注意
             for (var i = 0; i < _servers.Length; i++)

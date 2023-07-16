@@ -235,7 +235,7 @@
                                         ConverterParameter=7}"                        
                     />
             </TabItem.Header>
-            <view:WordToMotionSettingPanel Background="White" />
+            <view:VMCPSettingPanel Background="White" />
         </TabItem>
         <TabItem>
             <TabItem.Header>

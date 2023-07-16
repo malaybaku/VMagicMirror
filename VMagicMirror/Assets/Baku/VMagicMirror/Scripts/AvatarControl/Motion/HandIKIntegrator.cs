@@ -1,4 +1,5 @@
 ﻿using Baku.VMagicMirror.IK;
+using Baku.VMagicMirror.VMCP;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -54,7 +55,8 @@ namespace Baku.VMagicMirror
         private AlwaysDownHandIkGenerator _downHand;
         private PenTabletHandIKGenerator _penTablet;
         public ClapMotionHandIKGenerator ClapMotion { get; private set; }
-
+        private VMCPHandIkGenerator _vmcpHand;
+        
         private Transform _rightHandTarget = null;
         private Transform _leftHandTarget = null;
 
@@ -171,7 +173,8 @@ namespace Baku.VMagicMirror
             PenTabletProvider penTabletProvider,
             HandTracker handTracker,
             ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader,
-            SwitchableHandDownIkData switchableHandDownIk
+            SwitchableHandDownIkData switchableHandDownIk,
+            VMCPHandPose vmcpHandPose
             )
         {
             _reactionSources = new HandIkReactionSources(
@@ -210,6 +213,7 @@ namespace Baku.VMagicMirror
             _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
+            _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose);
             barracudaHand.SetupDependency(dependency);
 
             typing.SetUp(keyboardProvider, dependency);
@@ -221,7 +225,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _downHand, _penTablet, ClapMotion,
+                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _downHand, _penTablet, _vmcpHand, ClapMotion,
                 })
             {
                 if (generator.LeftHandState != null)

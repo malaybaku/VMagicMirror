@@ -9,36 +9,38 @@ namespace Baku.VMagicMirror.VMCP
     //NOTE: 上記の実現方法としてはコンストラクタ直すかDependencyにVMCPHandPoseを含めればよい
     public class VMCPHandIkGenerator : HandIkGeneratorBase
     {
-        private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
-        public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
-
-        public void SetActive(bool active)
-        {
-            _isActive.Value = active;
-            if (active)
-            {
-                _leftHandState.RaiseRequest();
-                _rightHandState.RaiseRequest();
-            }
-        }
-
-        //TODO: 送信側が直立ベースでIKを送って来る場合、ゲーム入力とかとの整合性を考えたい (ゲーム入力時は一括停止でもいいが)
-        public void SetLeftHandPose(Vector3 position, Quaternion rotation)
-        {
-            _leftHandState.Position = position;
-            _leftHandState.Rotation = rotation;
-        }
-
-        public void SetRightHandPose(Vector3 position, Quaternion rotation)
-        {
-            _rightHandState.Position = position;
-            _rightHandState.Rotation = rotation;
-        }
-
-        public VMCPHandIkGenerator(HandIkGeneratorDependency dependency) : base(dependency)
+        public VMCPHandIkGenerator(HandIkGeneratorDependency dependency, VMCPHandPose vmcpHandPose) : base(dependency)
         {
             _leftHandState = new VMCPHandIkState(ReactedHand.Left);
             _rightHandState = new VMCPHandIkState(ReactedHand.Right);
+
+            //オフ -> オンへの切り替え時だけリクエストが出るが、それ以上にバシバシ送ったほうが良ければ頻度を上げてもOK
+            vmcpHandPose.IsActive
+                .Subscribe(active =>
+                {
+                    if (active)
+                    {
+                        _leftHandState.RaiseRequest();
+                        _rightHandState.RaiseRequest();
+                    }                    
+                })
+                .AddTo(dependency.Component);
+
+            vmcpHandPose.LeftHandPose
+                .Subscribe(pose =>
+                {
+                    _leftHandState.Position = pose.Position;
+                    _leftHandState.Rotation = pose.Rotation;
+                })
+                .AddTo(dependency.Component);
+            
+            vmcpHandPose.RightHandPose
+                .Subscribe(pose =>
+                {
+                    _rightHandState.Position = pose.Position;
+                    _rightHandState.Rotation = pose.Rotation;
+                })
+                .AddTo(dependency.Component);
         }
 
         private readonly VMCPHandIkState _leftHandState;

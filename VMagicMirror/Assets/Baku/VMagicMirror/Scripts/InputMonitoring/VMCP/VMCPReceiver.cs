@@ -19,13 +19,14 @@ namespace Baku.VMagicMirror.VMCP
     {
         private const string HeadPoseParameterName = "Head";
         private const string LeftHandPoseParameterName = "LeftHand";
-        private const string RightPoseParameterName = "RightHand";
+        private const string RightHandPoseParameterName = "RightHand";
         
         private const int OscServerCount = 3;
         private readonly IMessageReceiver _messageReceiver;
         private readonly IFactory<uOscServer> _oscServerFactory;
         private readonly VMCPBlendShape _blendShape;
-        //TODO: IK系のクラスも手と頭で別々に用意してね
+        private readonly VMCPHeadPose _headPose;
+        private readonly VMCPHandPose _handPose;
 
         //NOTE: oscServerはOnDisableで止まるので、アプリ終了時の停止はこっちから呼ばないでよい
         private uOscServer[] _servers;
@@ -38,12 +39,16 @@ namespace Baku.VMagicMirror.VMCP
         public VMCPReceiver(
             IMessageReceiver messageReceiver, 
             IFactory<uOscServer> oscServerFactory,
-            VMCPBlendShape blendShape
+            VMCPBlendShape blendShape,
+            VMCPHeadPose headPose,
+            VMCPHandPose handPose
             )
         {
             _messageReceiver = messageReceiver;
             _oscServerFactory = oscServerFactory;
             _blendShape = blendShape;
+            _headPose = headPose;
+            _handPose = handPose;
         }
 
         public override void Initialize()
@@ -183,7 +188,10 @@ namespace Baku.VMagicMirror.VMCP
             switch (messageType)
             {
                 case VMCPMessageType.TrackerPose:
-                    //TODO: 頭と手を分けて何かする
+                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
+                    {
+                        ParseTrackerMessage(message, settings.ReceiveHeadPose, settings.ReceiveHandPose);
+                    }
                     break;
                 case VMCPMessageType.BlendShapeValue:
                     if (settings.ReceiveFacial)
@@ -205,9 +213,65 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
+        private void ParseTrackerMessage(uOSC.Message message, bool setHeadPose, bool setHandPose)
+        {
+            if (!(message.values.Length >= 8 && message.values[0] is string key))
+            {
+                return;
+            }
+
+            switch (key)
+            {
+                case HeadPoseParameterName:
+                    if (!setHeadPose)
+                    {
+                        return;
+                    }
+                    break;
+                case LeftHandPoseParameterName:
+                case RightHandPoseParameterName:
+                    if (!setHandPose)
+                    {
+                        return;
+                    }
+                    break;
+                default:
+                    return;
+            }
+            
+            if (!(message.values[1] is float posX &&
+                message.values[2] is float posY &&
+                message.values[3] is float posZ &&
+                message.values[4] is float rotX &&
+                message.values[5] is float rotY &&
+                message.values[6] is float rotZ &&
+                message.values[7] is float rotW))
+            {
+                return;
+            }
+
+            var pos = new Vector3(posX, posY, posZ);
+            var rot = new Quaternion(rotX, rotY, rotZ, rotW);
+
+            switch (key)
+            {
+                case HeadPoseParameterName:
+                    _headPose.SetPose(pos, rot);
+                    return;
+                case LeftHandPoseParameterName:
+                    _handPose.SetLeftHandPose(pos, rot);
+                    return;
+                case RightHandPoseParameterName:
+                    _handPose.SetRightHandPose(pos, rot);
+                    return;
+            }
+        }
+
         private void SetBlendShapeValue(uOSC.Message message)
         {
-            if (message.values[0] is string key && message.values[1] is float value)
+            if (message.values.Length >= 2 &&
+                message.values[0] is string key && 
+                message.values[1] is float value)
             {
                 _blendShape.SetValue(key, value);
             }

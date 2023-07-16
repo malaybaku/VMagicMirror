@@ -662,6 +662,8 @@ namespace Baku.VMagicMirror
         AlwaysDown,
         // NOTE: ClapMotionは「IKステートとして作られたビルトインモーション」で、他のステートに比べると一時的な使われ方をする
         ClapMotion,
+        // NOTE: VMCPの適用中は他のモードに切り替わらない
+        VMCPReceiveResult,
         Unknown,
     }
     

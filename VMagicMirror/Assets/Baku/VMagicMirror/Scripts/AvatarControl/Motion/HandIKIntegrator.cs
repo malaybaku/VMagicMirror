@@ -541,9 +541,13 @@ namespace Baku.VMagicMirror
         {
             var targetType = state.TargetType;
             
-            //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは拍手以外は禁止 + 拍手は実行中の優先度がすごく高い
+            //書いてる通りだが、
+            // - 同じ状態には遷移できない
+            // - 手下げモード、ないしVMCProtocolのときは拍手以外に遷移できない
+            // - 拍手は実行優先度がすごく高い
             if (_leftTargetType.Value == targetType || 
                 AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
+                _vmcpHand.IsActive.Value && targetType != HandTargetType.VMCPReceiveResult && targetType != HandTargetType.ClapMotion ||
                 _leftTargetType.Value == HandTargetType.ClapMotion && ClapMotion.ClapMotionRunning
                )
             {
@@ -570,8 +574,9 @@ namespace Baku.VMagicMirror
         {
             var targetType = state.TargetType;
             
-            //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは拍手以外は禁止 + 拍手は実行中の優先度がすごく高い
+            // 優先度の効かせ方はLeftHandと同じ
             if (_rightTargetType.Value == targetType || 
+                _vmcpHand.IsActive.Value && targetType != HandTargetType.VMCPReceiveResult && targetType != HandTargetType.ClapMotion ||
                 AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
                 _rightTargetType.Value == HandTargetType.ClapMotion && ClapMotion.ClapMotionRunning
                )

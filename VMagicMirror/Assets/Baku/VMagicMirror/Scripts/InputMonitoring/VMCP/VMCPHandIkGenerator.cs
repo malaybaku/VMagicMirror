@@ -11,6 +11,7 @@ namespace Baku.VMagicMirror.VMCP
     {
         public VMCPHandIkGenerator(HandIkGeneratorDependency dependency, VMCPHandPose vmcpHandPose) : base(dependency)
         {
+            _vmcpHandPose = vmcpHandPose;
             _leftHandState = new VMCPHandIkState(ReactedHand.Left);
             _rightHandState = new VMCPHandIkState(ReactedHand.Right);
 
@@ -43,10 +44,12 @@ namespace Baku.VMagicMirror.VMCP
                 .AddTo(dependency.Component);
         }
 
+        private readonly VMCPHandPose _vmcpHandPose;
         private readonly VMCPHandIkState _leftHandState;
         public override IHandIkState LeftHandState => _leftHandState;
         private readonly VMCPHandIkState _rightHandState;
         public override IHandIkState RightHandState => _rightHandState;
+        public IReadOnlyReactiveProperty<bool> IsActive => _vmcpHandPose.IsActive;
 
         class VMCPHandIkState : IHandIkState
         {

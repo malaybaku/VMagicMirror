@@ -220,6 +220,10 @@
         public const string EnableSpoutOutput = nameof(EnableSpoutOutput);
         public const string SetSpoutOutputResolution = nameof(SetSpoutOutputResolution);
         
+        // VMCP
+        public const string EnableVMCP = nameof(EnableVMCP);
+        public const string SetVMCPSources = nameof(SetVMCPSources);
+        
         // VRoidHub
         public const string OpenVRoidSdkUi = nameof(OpenVRoidSdkUi);
         public const string RequestLoadVRoidWithId = nameof(RequestLoadVRoidWithId);

@@ -24,6 +24,7 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<EyeLookAt>().AsSingle();
             container.BindInterfacesTo<EyeLookAtUpdater>().AsSingle();
             container.BindInterfacesAndSelfTo<BlinkTriggerDetector>().AsSingle();
+            container.BindInterfacesTo<FaceControlConfigurationReceiver>().AsSingle();
 
             //ブレンドシェイプの内訳の確認処理で、意味のある処理ではないけど一応つねに入れておく
             container.Bind<BlendShapeExclusivenessChecker>().AsSingle();

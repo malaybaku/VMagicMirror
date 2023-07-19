@@ -6,21 +6,8 @@ using Zenject;
 
 namespace Baku.VMagicMirror.VMCP
 {
-    public enum VMCPMessageType
-    {
-        //NOTE: VMCPで想定されててもVMagicMirror的に知らんやつはUnknownになる
-        Unknown,
-        TrackerPose,
-        BlendShapeValue,
-        BlendShapeApply,
-    }
-
     public class VMCPReceiver : PresenterBase
     {
-        private const string HeadPoseParameterName = "Head";
-        private const string LeftHandPoseParameterName = "LeftHand";
-        private const string RightHandPoseParameterName = "RightHand";
-        
         private const int OscServerCount = 3;
         private readonly IMessageReceiver _messageReceiver;
         private readonly IFactory<uOscServer> _oscServerFactory;
@@ -178,14 +165,7 @@ namespace Baku.VMagicMirror.VMCP
         {
             var settings = _dataPassSettings[sourceIndex];
 
-            var messageType = message.address switch
-            {
-                "/VMC/Ext/Tra/Pos" => VMCPMessageType.TrackerPose,
-                "/VMC/Ext/Blend/Val" => VMCPMessageType.BlendShapeValue,
-                "/VMC/Ext/Blend/Apply" => VMCPMessageType.BlendShapeApply,
-                _ => VMCPMessageType.Unknown,
-            };
-
+            var messageType = message.GetMessageType();
             switch (messageType)
             {
                 case VMCPMessageType.TrackerPose:
@@ -206,6 +186,8 @@ namespace Baku.VMagicMirror.VMCP
                         _blendShape.Apply();
                     }
                     break;
+                default:
+                    return;
             }
             
             if (messageType is VMCPMessageType.BlendShapeValue && settings.ReceiveFacial)
@@ -216,21 +198,17 @@ namespace Baku.VMagicMirror.VMCP
 
         private void ParseTrackerMessage(uOSC.Message message, bool setHeadPose, bool setHandPose)
         {
-            if (!(message.values.Length >= 8 && message.values[0] is string key))
+            var poseType = message.GetTrackerPoseType();
+            switch (poseType)
             {
-                return;
-            }
-
-            switch (key)
-            {
-                case HeadPoseParameterName:
+                case VMCPTrackerPoseType.Head:
                     if (!setHeadPose)
                     {
                         return;
                     }
                     break;
-                case LeftHandPoseParameterName:
-                case RightHandPoseParameterName:
+                case VMCPTrackerPoseType.LeftHand:
+                case VMCPTrackerPoseType.RightHand:
                     if (!setHandPose)
                     {
                         return;
@@ -239,30 +217,18 @@ namespace Baku.VMagicMirror.VMCP
                 default:
                     return;
             }
-            
-            if (!(message.values[1] is float posX &&
-                message.values[2] is float posY &&
-                message.values[3] is float posZ &&
-                message.values[4] is float rotX &&
-                message.values[5] is float rotY &&
-                message.values[6] is float rotZ &&
-                message.values[7] is float rotW))
-            {
-                return;
-            }
 
-            var pos = new Vector3(posX, posY, posZ);
-            var rot = new Quaternion(rotX, rotY, rotZ, rotW);
-
-            switch (key)
+            //NOTE: データが正常であるという前提で楽観的に取る。パフォーマンス重視です
+            var (pos, rot) = message.GetPose();
+            switch (poseType)
             {
-                case HeadPoseParameterName:
+                case VMCPTrackerPoseType.Head:
                     _headPose.SetPose(pos, rot);
                     return;
-                case LeftHandPoseParameterName:
+                case VMCPTrackerPoseType.LeftHand:
                     _handPose.SetLeftHandPose(pos, rot);
                     return;
-                case RightHandPoseParameterName:
+                case VMCPTrackerPoseType.RightHand:
                     _handPose.SetRightHandPose(pos, rot);
                     return;
             }
@@ -270,9 +236,7 @@ namespace Baku.VMagicMirror.VMCP
 
         private void SetBlendShapeValue(uOSC.Message message)
         {
-            if (message.values.Length >= 2 &&
-                message.values[0] is string key && 
-                message.values[1] is float value)
+            if (message.TryGetBlendShapeValue(out var key, out var value))
             {
                 _blendShape.SetValue(key, value);
             }

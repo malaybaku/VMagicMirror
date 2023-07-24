@@ -20,6 +20,7 @@ namespace Baku.VMagicMirror.VMCP
         LeftHand,
         RightHand,
         Spine,
+        Hips,
     }
     
     //NOTE: もし今後OSCを他の用途で使う場合、関数名をもうちょっと限定的なコンテキストに直すべき
@@ -38,15 +39,28 @@ namespace Baku.VMagicMirror.VMCP
             };
         }
 
-        public static VMCPTrackerPoseType GetTrackerPoseType(this uOSC.Message message)
+        public static string GetForwardKinematicBoneName(this uOSC.Message message)
         {
             var values = message.values;
             //pos + rotの値が揃ってないなら見る価値ないので、要素数は1ではなく8で見る
             if (values.Length < 8 || !(values[0] is string name))
             {
+                return "";
+            }
+            return name;
+        }
+        
+        public static VMCPTrackerPoseType GetTrackerPoseType(this uOSC.Message message, out string nameResult)
+        {
+            var values = message.values;
+            //pos + rotの値が揃ってないなら見る価値ないので、要素数は1ではなく8で見る
+            if (values.Length < 8 || !(values[0] is string name))
+            {
+                nameResult = "";
                 return VMCPTrackerPoseType.Unknown;
             }
 
+            nameResult = name;
             return name switch
             {
                 "Head" => VMCPTrackerPoseType.Head,

@@ -174,6 +174,9 @@ namespace Baku.VMagicMirror.VMCP
                         ParseTrackerMessage(message, settings.ReceiveHeadPose, settings.ReceiveHandPose);
                     }
                     break;
+                case VMCPMessageType.ForwardKinematics:
+                    //TODO: 対象のreceiverに応じたHumanoidにボーン姿勢としてキャッシュする
+                    break;
                 case VMCPMessageType.BlendShapeValue:
                     if (settings.ReceiveFacial)
                     {
@@ -198,7 +201,7 @@ namespace Baku.VMagicMirror.VMCP
 
         private void ParseTrackerMessage(uOSC.Message message, bool setHeadPose, bool setHandPose)
         {
-            var poseType = message.GetTrackerPoseType();
+            var poseType = message.GetTrackerPoseType(out _);
             switch (poseType)
             {
                 case VMCPTrackerPoseType.Head:

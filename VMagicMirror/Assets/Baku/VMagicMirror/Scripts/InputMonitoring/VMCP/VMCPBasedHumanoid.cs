@@ -11,11 +11,11 @@ namespace Baku.VMagicMirror.VMCP
     /// </summary>
     public class VMCPBasedHumanoid
     {
-        private const string HipsBoneName = nameof(HumanBodyBones.Hips);
-        private const string SpineBoneName = nameof(HumanBodyBones.Spine);
-        private const string HeadBoneName = nameof(HumanBodyBones.Head);
-        private const string LeftHandBoneName = nameof(HumanBodyBones.LeftHand);
-        private const string RightHandBoneName = nameof(HumanBodyBones.RightHand);
+        public static readonly string HipsBoneName = nameof(HumanBodyBones.Hips);
+        public static readonly string SpineBoneName = nameof(HumanBodyBones.Spine);
+        public static readonly string HeadBoneName = nameof(HumanBodyBones.Head);
+        public static readonly string LeftHandBoneName = nameof(HumanBodyBones.LeftHand);
+        public static readonly string RightHandBoneName = nameof(HumanBodyBones.RightHand);
 
         private static readonly (HumanBodyBones child, HumanBodyBones parent)[] BoneTree = new[]
         {
@@ -76,6 +76,8 @@ namespace Baku.VMagicMirror.VMCP
             (HumanBodyBones.LeftLittleDistal, HumanBodyBones.LeftLittleIntermediate),
         };
 
+        private bool _hasBoneHierarchy;
+
         //hipsの上にもhierarchyを用意しておく(取り回しが良さそうなため)
         private Transform _root = null;
         private Transform _hips = null;
@@ -98,6 +100,11 @@ namespace Baku.VMagicMirror.VMCP
         /// </summary>
         public void GenerateHumanoidBoneHierarchy()
         {
+            if (_hasBoneHierarchy)
+            {
+                return;
+            }
+
             _root = new GameObject("VMCPBasedHumanoid_Root").transform;
             foreach (var bone in Enum.GetValues(typeof(HumanBodyBones)).Cast<HumanBodyBones>())
             {
@@ -116,6 +123,7 @@ namespace Baku.VMagicMirror.VMCP
             _head = _boneMap[HeadBoneName].Transform;
             _leftHand = _boneMap[LeftHandBoneName].Transform;
             _rightHand = _boneMap[RightHandBoneName].Transform;
+            _hasBoneHierarchy = true;
         }
 
         private void BuildBoneHierarchy()
@@ -146,6 +154,11 @@ namespace Baku.VMagicMirror.VMCP
         // - 冗長ちゃうかと思ったらpositionが無い呼び出しを定義するのを検討してもOK
         public void SetLocalPose(string boneName, Vector3 position, Quaternion rotation)
         {
+            if (!_hasBoneHierarchy)
+            {
+                GenerateHumanoidBoneHierarchy();
+            }
+
             if (!_boneMap.TryGetValue(boneName, out var bone))
             {
                 return;
@@ -180,6 +193,11 @@ namespace Baku.VMagicMirror.VMCP
 
         private Pose GetFKPoseOnHips(Transform bone)
         {
+            if (!_hasBoneHierarchy)
+            {
+                return Pose.identity;
+            }
+
             return new Pose(
                 _hips.InverseTransformPoint(bone.position),
                 Quaternion.Inverse(_hips.rotation) * bone.rotation

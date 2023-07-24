@@ -67,6 +67,7 @@ namespace Baku.VMagicMirror.VMCP
                 "LeftHand" => VMCPTrackerPoseType.LeftHand,
                 "RightHand" => VMCPTrackerPoseType.RightHand,
                 "Spine" => VMCPTrackerPoseType.Spine,
+                "Hips" => VMCPTrackerPoseType.Hips,
                 _ => VMCPTrackerPoseType.Unknown,
             };
         }

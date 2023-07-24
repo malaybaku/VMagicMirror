@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror.VMCP
 {
-    public class VMCPReceiver : PresenterBase
+    public class VMCPReceiver : PresenterBase, ITickable
     {
         private const int OscServerCount = 3;
         private readonly IMessageReceiver _messageReceiver;
@@ -16,8 +16,9 @@ namespace Baku.VMagicMirror.VMCP
         private readonly VMCPHandPose _handPose;
 
         //NOTE: oscServerはOnDisableで止まるので、アプリ終了時の停止はこっちから呼ばないでよい
-        private uOscServer[] _servers;
-        private VMCPDataPassSettings[] _dataPassSettings;
+        private readonly uOscServer[] _servers = new uOscServer[OscServerCount];
+        private readonly VMCPDataPassSettings[] _dataPassSettings = new VMCPDataPassSettings[OscServerCount];
+        private readonly VMCPBasedHumanoid[] _receiverHumanoids = new VMCPBasedHumanoid[OscServerCount];
         
         private bool _optionEnabled;
         private VMCPSources _sources = VMCPSources.Empty;
@@ -40,13 +41,13 @@ namespace Baku.VMagicMirror.VMCP
 
         public override void Initialize()
         {
-            _servers = new uOscServer[OscServerCount];
-            _dataPassSettings = new VMCPDataPassSettings[OscServerCount];
             for (var i = 0; i < _servers.Length; i++)
             {
                 var sourceIndex = i;
                 _servers[i] = _oscServerFactory.Create();
                 _servers[i].onDataReceived.AddListener(message => OnOscDataReceived(sourceIndex, message));
+
+                _receiverHumanoids[i] = new VMCPBasedHumanoid();
             }
 
             _messageReceiver.AssignCommandHandler(
@@ -60,6 +61,39 @@ namespace Baku.VMagicMirror.VMCP
                 );
         }
 
+        public void Tick()
+        {
+            if (!_optionEnabled)
+            {
+                return;
+            }
+
+            for (var i = 0; i < OscServerCount; i++)
+            {
+                if (_dataPassSettings[i].ReceiveHeadPose)
+                {
+                    //NOTE: Headに並進項を入れようとするのもアリ
+                    var headPose = _receiverHumanoids[i].GetFKHeadPoseFromHips();
+                    _headPose.SetPoseOnHips(headPose);
+                }
+
+                if (_dataPassSettings[i].ReceiveHandPose)
+                {
+                    //NOTE: IKがあったらIK優先したいんだけどな～
+                    var leftHandPose = _receiverHumanoids[i].GetFKLeftHandPoseFromHips();
+                    var rightHandPose = _receiverHumanoids[i].GetFKRightHandPoseFromHips();
+                    _handPose.SetLeftHandPoseOnHips(
+                        leftHandPose.position,
+                        leftHandPose.rotation
+                    );
+                    _handPose.SetRightHandPoseOnHips(
+                        rightHandPose.position,
+                        rightHandPose.rotation
+                    );
+                }
+            }
+        }
+        
         private void SetReceiverActive(bool active)
         {
             if (_optionEnabled == active)
@@ -135,6 +169,12 @@ namespace Baku.VMagicMirror.VMCP
                 return;
             }
 
+            //けっこう積極的にリセットしちゃうが許容したい。ダメそうだったら何か考えてね
+            foreach (var humanoid in _receiverHumanoids)
+            {
+                humanoid.Clear();
+            }
+
             _headPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHeadPose));
             _handPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHandPose));
             _blendShape.SetActive(_dataPassSettings.Any(s => s.ReceiveFacial));
@@ -171,11 +211,14 @@ namespace Baku.VMagicMirror.VMCP
                 case VMCPMessageType.TrackerPose:
                     if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
                     {
-                        ParseTrackerMessage(message, settings.ReceiveHeadPose, settings.ReceiveHandPose);
+                        ApplyTrackerPose(message, _receiverHumanoids[sourceIndex]);
                     }
                     break;
                 case VMCPMessageType.ForwardKinematics:
-                    //TODO: 対象のreceiverに応じたHumanoidにボーン姿勢としてキャッシュする
+                    if (settings.ReceiveHeadPose || settings.ReceiveHandPose)
+                    {
+                        ApplyBoneLocalPose(message, _receiverHumanoids[sourceIndex]);
+                    }
                     break;
                 case VMCPMessageType.BlendShapeValue:
                     if (settings.ReceiveFacial)
@@ -199,26 +242,12 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
-        private void ParseTrackerMessage(uOSC.Message message, bool setHeadPose, bool setHandPose)
+        private void ApplyTrackerPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
         {
             var poseType = message.GetTrackerPoseType(out _);
-            switch (poseType)
+            if (poseType == VMCPTrackerPoseType.Unknown)
             {
-                case VMCPTrackerPoseType.Head:
-                    if (!setHeadPose)
-                    {
-                        return;
-                    }
-                    break;
-                case VMCPTrackerPoseType.LeftHand:
-                case VMCPTrackerPoseType.RightHand:
-                    if (!setHandPose)
-                    {
-                        return;
-                    }
-                    break;
-                default:
-                    return;
+                return;
             }
 
             //NOTE: データが正常であるという前提で楽観的に取る。パフォーマンス重視です
@@ -226,15 +255,26 @@ namespace Baku.VMagicMirror.VMCP
             switch (poseType)
             {
                 case VMCPTrackerPoseType.Head:
-                    _headPose.SetPose(pos, rot);
+                    humanoid.SetTrackerPose(VMCPBasedHumanoid.HeadBoneName, pos, rot);
                     return;
                 case VMCPTrackerPoseType.LeftHand:
-                    _handPose.SetLeftHandPose(pos, rot);
+                    humanoid.SetTrackerPose(VMCPBasedHumanoid.LeftHandBoneName, pos, rot);
                     return;
                 case VMCPTrackerPoseType.RightHand:
-                    _handPose.SetRightHandPose(pos, rot);
+                    humanoid.SetTrackerPose(VMCPBasedHumanoid.RightHandBoneName, pos, rot);
+                    return;
+                case VMCPTrackerPoseType.Hips:
+                    humanoid.SetTrackerPose(VMCPBasedHumanoid.HipsBoneName, pos, rot);
                     return;
             }
+        }
+
+        private void ApplyBoneLocalPose(uOSC.Message message, VMCPBasedHumanoid humanoid)
+        {
+            //NOTE: データが正常であるという前提で楽観的に取る。パフォーマンス重視です
+            var boneName = message.GetForwardKinematicBoneName();
+            var (pos, rot) = message.GetPose();
+            humanoid.SetLocalPose(boneName, pos, rot);
         }
 
         private void SetBlendShapeValue(uOSC.Message message)

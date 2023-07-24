@@ -1,5 +1,4 @@
-﻿using Baku.VMagicMirror.ExternalTracker;
-using Baku.VMagicMirror.VMCP;
+﻿using Baku.VMagicMirror.VMCP;
 using DG.Tweening;
 using UnityEngine;
 using Zenject;
@@ -105,8 +104,7 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            //TODO: 多分こうじゃなくて、直立時のアバター頭部とのオフセットにするとか、キャリブ値を参照するとかの工夫が必要
-            var offset = _vmcpHeadPose.Position;
+            var offset = _vmcpHeadPose.PositionOffset;
 
             var goal = _vmcpHeadPose.Connected.Value
                 ? new Vector3(

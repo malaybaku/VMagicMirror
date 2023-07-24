@@ -15,8 +15,8 @@ namespace Baku.VMagicMirror
                 .FromComponentInNewPrefab(oscServerPrefab)
                 .AsSingle();
             
-            Container.Bind<VMCPHandPose>().AsSingle();
-            Container.Bind<VMCPHeadPose>().AsSingle();
+            Container.BindInterfacesAndSelfTo<VMCPHandPose>().AsSingle();
+            Container.BindInterfacesAndSelfTo<VMCPHeadPose>().AsSingle();
             Container.Bind<VMCPBlendShape>().AsSingle();
             Container.BindInterfacesTo<VMCPReceiver>().AsSingle();
         }

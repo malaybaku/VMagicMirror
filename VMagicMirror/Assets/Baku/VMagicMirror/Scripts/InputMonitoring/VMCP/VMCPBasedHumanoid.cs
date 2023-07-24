@@ -168,6 +168,11 @@ namespace Baku.VMagicMirror.VMCP
             bone.Transform.localRotation = rotation;
         }
 
+        public Quaternion GetLocalRotation(string boneName)
+        {
+            return _boneMap.TryGetValue(boneName, out var bone) ? bone.Transform.localRotation : Quaternion.identity;
+        }
+        
         public Pose GetFKHeadPoseFromHips() => GetFKPoseOnHips(_head);
         public Pose GetFKLeftHandPoseFromHips() => GetFKPoseOnHips(_leftHand);
         public Pose GetFKRightHandPoseFromHips() => GetFKPoseOnHips(_rightHand);
@@ -213,18 +218,6 @@ namespace Baku.VMagicMirror.VMCP
             var hips = _trackerPoses[HipsBoneName];
             var targetBone = _trackerPoses[targetBoneName];
             return targetBone.GetTransformedBy(hips);
-        }
-
-        public Quaternion GetLocalRotation(string boneName)
-        {
-            if (_boneMap.TryGetValue(boneName, out var bone))
-            {
-                return bone.Transform.localRotation;
-            }
-            else
-            {
-                return Quaternion.identity;
-            }
         }
     }
 

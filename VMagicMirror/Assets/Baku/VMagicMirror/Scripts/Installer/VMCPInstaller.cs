@@ -17,6 +17,7 @@ namespace Baku.VMagicMirror
             
             Container.BindInterfacesAndSelfTo<VMCPHandPose>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPHeadPose>().AsSingle();
+            Container.BindInterfacesAndSelfTo<VMCPBasedFingerSetter>().AsSingle();
             Container.Bind<VMCPBlendShape>().AsSingle();
             Container.BindInterfacesTo<VMCPReceiver>().AsSingle();
         }

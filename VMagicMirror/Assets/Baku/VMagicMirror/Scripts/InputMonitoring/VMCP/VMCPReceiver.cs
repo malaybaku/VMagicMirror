@@ -166,6 +166,7 @@ namespace Baku.VMagicMirror.VMCP
                 {
                     server.StopServer();
                 }
+                _handPose.SetFingerSourceHumanoid(null);
                 return;
             }
 
@@ -178,6 +179,14 @@ namespace Baku.VMagicMirror.VMCP
             _headPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHeadPose));
             _handPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHandPose));
             _blendShape.SetActive(_dataPassSettings.Any(s => s.ReceiveFacial));
+
+            //指のFK用のリファレンスを決めておく
+            var handSourceHumanoidIndex = 
+                Array.FindIndex(_dataPassSettings, s => s.ReceiveHandPose);
+            _handPose.SetFingerSourceHumanoid(handSourceHumanoidIndex >= 0
+                ? _receiverHumanoids[handSourceHumanoidIndex]
+                : null
+            );
 
             // オプションがオンであっても受信しないケースがあるので注意
             for (var i = 0; i < _servers.Length; i++)

@@ -13,9 +13,9 @@
             ReceiveHeadPose = new(false);
             ReceiveFacial = new(false);
             ReceiveHandPose = new(false);
+            ResetCommand = new ActionCommand(ResetContent);
         }
 
-        //TODO: モデルが持ってる初期値を受け取りたい
         public VMCPSourceItemViewModel(VMCPSource model, VMCPSettingViewModel parent)
         {
             PortNumberIsInvalid = new RProperty<bool>(false);
@@ -41,7 +41,7 @@
             ResetCommand = new ActionCommand(ResetContent);
         }
 
-        private readonly VMCPSettingViewModel _parent;
+        private readonly VMCPSettingViewModel? _parent;
 
         public RProperty<string> Name { get; }
         //NOTE: 実際は0-65535の間の数字であってほしい
@@ -82,6 +82,6 @@
             };
         }
 
-        private void SetDirty() => _parent.SetDirty();
+        private void SetDirty() => _parent?.SetDirty();
     }
 }

@@ -102,6 +102,32 @@
                                      />
 
             </Grid>
+
+            <StackPanel Orientation="Horizontal"
+                        Margin="10" 
+                        IsEnabled="{Binding VMCPEnabled}">
+
+                <Button
+                    Padding="0"
+                    MinWidth="130"
+                    Margin="10,0"
+                    HorizontalAlignment="Right"
+                    IsEnabled="{Binding CanApply.Value}"
+                    Command="{Binding ApplyChangeCommand}"
+                    Content="{DynamicResource VMCP_Apply}"
+                    />
+
+                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Padding="0"
+                    MinWidth="130"
+                    Margin="10,0"
+                    HorizontalAlignment="Right"
+                    Command="{Binding RevertChangeCommand}"
+                    Content="{DynamicResource VMCP_Revert}"
+                    />
+
+            </StackPanel>
+            
         </StackPanel>
  
     </ScrollViewer>

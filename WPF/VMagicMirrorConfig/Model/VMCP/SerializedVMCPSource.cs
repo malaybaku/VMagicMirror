@@ -16,37 +16,39 @@ namespace Baku.VMagicMirrorConfig
     /// </remarks>
     public class SerializedVMCPSources
     {
-        public SerializedVMCPSource[] Sources { get; set; }
+        public SerializedVMCPSource[]? Sources { get; set; }
 
         public string ToSerializedData()
         {
-            var serializer = new JsonSerializer();
             var sb = new StringBuilder();
             using (var writer = new StringWriter(sb))
             using (var jsonWriter = new JsonTextWriter(writer))
             {
+                var serializer = new JsonSerializer();
                 serializer.Serialize(jsonWriter, this);
             }
             return sb.ToString();
         }
 
-        public VMCPSources ToSetting() => new VMCPSources(Sources.Select(s => s.ToSource()));
+        public VMCPSources ToSetting() => new VMCPSources(
+            Sources?.Select(s => s.ToSource()) ?? Enumerable.Empty<VMCPSource>()
+            );
 
         public static SerializedVMCPSources FromJson(string json)
         {
             try
             {
-                var serializer = new JsonSerializer();
                 using (var reader = new StringReader(json))
                 using (var jsonReader = new JsonTextReader(reader))
                 {
-                    return serializer.Deserialize<SerializedVMCPSources>(jsonReader) ?? SerializedVMCPSources.Empty;
+                    var serializer = new JsonSerializer();
+                    return serializer.Deserialize<SerializedVMCPSources>(jsonReader) ?? Empty;
                 }
             }
             catch (Exception ex)
             {
                 LogOutput.Instance.Write(ex);
-                return SerializedVMCPSources.Empty;
+                return Empty;
             }
         }
 
@@ -55,7 +57,7 @@ namespace Baku.VMagicMirrorConfig
             return new SerializedVMCPSources()
             {
                 Sources = sources.Sources
-                    .Select(s => new SerializedVMCPSource(s))
+                    .Select(SerializedVMCPSource.FromSource)
                     .ToArray(),
             };
         }
@@ -75,14 +77,18 @@ namespace Baku.VMagicMirrorConfig
         public bool ReceiveFacial { get; set; }
         public bool ReceiveHandPose { get; set; }
 
-        public SerializedVMCPSource(VMCPSource source)
+        public SerializedVMCPSource()
         {
-            Name = source.Name;
-            Port = source.Port;
-            ReceiveHeadPose = source.ReceiveHeadPose;
-            ReceiveFacial = source.ReceiveFacial;
-            ReceiveHandPose = source.ReceiveHandPose;
         }
+
+        public static SerializedVMCPSource FromSource(VMCPSource source) => new()
+        {
+            Name = source.Name,
+            Port = source.Port,
+            ReceiveHeadPose = source.ReceiveHeadPose,
+            ReceiveFacial = source.ReceiveFacial,
+            ReceiveHandPose = source.ReceiveHandPose,
+        };
 
         public VMCPSource ToSource() => new VMCPSource()
         {

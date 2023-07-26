@@ -462,6 +462,7 @@ namespace Baku.VMagicMirror
             Presentation.LateUpdate();
             _arcadeStickHand.LateUpdate();
             _penTablet.LateUpdate();
+            _vmcpHand.LateUpdate();
         }
         
         private void UpdateLeftHand()

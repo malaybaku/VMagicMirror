@@ -26,24 +26,25 @@ namespace Baku.VMagicMirror
         [Tooltip("ちょっとだけ直前フレームとの補間でならすファクター")]
         [SerializeField] private float lerpFactor = 18.0f;
         
-        public bool IsActive { get; set; } = true;
-
         private bool _hasModel = false;
         private bool _hasNeck = false;
         private Transform _neck = null;
         private Transform _head = null;
         private VMCPHeadPose _vmcpHeadPose;
+        private FaceControlConfiguration _faceControlConfiguration;
         private GameInputBodyMotionController _gameInputBodyMotionController;
         private Quaternion _prevRotation = Quaternion.identity;
         
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
+            FaceControlConfiguration faceControlConfiguration,
             GameInputBodyMotionController gameInputBodyMotionController,
             VMCPHeadPose vmcpHeadPose
             )
         {
             _vmcpHeadPose = vmcpHeadPose;
+            _faceControlConfiguration = faceControlConfiguration;
             _gameInputBodyMotionController = gameInputBodyMotionController;
 
             vrmLoadable.VrmLoaded += info =>
@@ -65,7 +66,9 @@ namespace Baku.VMagicMirror
 
         private void LateUpdate()
         {
-            if (!_hasModel || !IsActive)
+            if (!_hasModel || 
+                !_vmcpHeadPose.IsActive.Value ||
+                _faceControlConfiguration.ControlMode != FaceControlModes.VMCProtocol)
             {
                 _prevRotation = Quaternion.identity;
                 return;

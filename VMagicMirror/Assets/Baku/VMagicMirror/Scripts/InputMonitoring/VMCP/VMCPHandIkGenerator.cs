@@ -44,6 +44,12 @@ namespace Baku.VMagicMirror.VMCP
                 .AddTo(dependency.Component);
         }
 
+        public override void LateUpdate()
+        {
+            //指を適用する: FingerController経由じゃないことには注意
+            _vmcpHandPose.ApplyFingerLocalPose();
+        }
+
         private readonly VMCPHandPose _vmcpHandPose;
         private readonly VMCPHandIkState _leftHandState;
         public override IHandIkState LeftHandState => _leftHandState;

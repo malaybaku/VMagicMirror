@@ -15,6 +15,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private BodyLeanIntegrator bodyLeanIntegrator = null;
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
         [SerializeField] private ExternalTrackerBodyOffset exTrackerBodyMotion = null;
+        [SerializeField] private VMCPBodyOffset vmcpBodyOffset = null;
         [SerializeField] private WaitingBodyMotion waitingBodyMotion = null;
 
         [Tooltip("カメラに写った状態で体が横に並進する量の最大値")]
@@ -72,9 +73,12 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var imageRelatedOffset = _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker
-                ? exTrackerBodyMotion.BodyOffset
-                : imageBasedBodyMotion.BodyIkXyOffset;
+            var imageRelatedOffset = _faceControlConfig.ControlMode switch
+            {
+                FaceControlModes.VMCProtocol => vmcpBodyOffset.BodyOffset,
+                FaceControlModes.ExternalTracker => exTrackerBodyMotion.BodyOffset,
+                _ => imageBasedBodyMotion.BodyIkXyOffset,
+            };
 
             _bodyIk.localPosition =
                 _defaultBodyIkPosition + 

@@ -183,12 +183,14 @@ namespace Baku.VMagicMirror.VMCP
 
         public void Clear()
         {
+            _hasBoneHierarchy = false;
             if (_root != null)
             {
                 UnityEngine.Object.Destroy(_root.gameObject);
             }
 
             _root = null;
+            _hips = null;
             _head = null;
             _leftHand = null;
             _rightHand = null;

@@ -147,18 +147,10 @@ namespace Baku.VMagicMirror
                     ? Observable.Empty<Unit>()
                     : Observable.Timer(TimeSpan.FromSeconds(15f)).AsUnitObservable())
                 .Switch()
-                .Subscribe(_ =>
-                {
-                    Debug.Log("force zero jitter when inactive");
-                    _inactiveJitter.ForceGoalZero = true;
-                })
+                .Subscribe(_ => _inactiveJitter.ForceGoalZero = true)
                 .AddTo(this);
             _useActiveJitter.Where(v => v)
-                .Subscribe(_ =>
-                {
-                    Debug.Log("force non-zero jitter when inactive");
-                    _inactiveJitter.ForceGoalZero = false;
-                })
+                .Subscribe(_ => _inactiveJitter.ForceGoalZero = false)
                 .AddTo(this);
 
             _inactiveJitter.AngleRange = new Vector3(4f, 4f, 4f);

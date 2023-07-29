@@ -161,11 +161,13 @@ namespace Baku.VMagicMirror.VMCP
 
             if (!serverShouldActive)
             {
-                _blendShape.SetActive(false);
                 foreach (var server in _servers)
                 {
                     server.StopServer();
                 }
+                _blendShape.SetActive(false);
+                _headPose.SetActive(false);
+                _handPose.SetActive(false);
                 _handPose.SetFingerSourceHumanoid(null);
                 return;
             }

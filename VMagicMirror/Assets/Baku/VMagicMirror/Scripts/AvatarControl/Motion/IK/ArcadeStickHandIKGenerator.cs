@@ -16,7 +16,6 @@ namespace Baku.VMagicMirror.IK
         
         //ボタンを押すとき手ごと下に下げる移動量。
         private const float ButtonDownY = 0.01f;
-
         
         //右手の5本の指について、手首から指先までのオフセットを大まかにチェックしたもの。
         //指に対してはIKをあまり使いたくないため、FKを大まかに合わせるのに使う
@@ -80,7 +79,6 @@ namespace Baku.VMagicMirror.IK
                 }
             };
 
-            
             dependency.Events.GamepadButtonDown += key =>
             {
                 ButtonDown(key);
@@ -167,8 +165,8 @@ namespace Baku.VMagicMirror.IK
             (_latestButtonPos, _latestButtonRot) = _stickProvider.GetRightHand(key);
 
             //NOTE: 指をだいたい揃えるためにズラす動きがコレ
-            int fingerNumber = ArcadeStickFingerController.KeyToFingerNumber(key);
-            int offsetIndex = fingerNumber - 5;
+            var fingerNumber = ArcadeStickFingerController.KeyToFingerNumber(key);
+            var offsetIndex = fingerNumber - 5;
             //1倍ぴったりを適用すると指の曲げのぶんのズレで絵面がイマイチになる可能性もあるが、
             //余程手が大きくなければ大丈夫なはず
             _latestButtonPos -= _latestButtonRot * _wristToFingerOffsets[offsetIndex];

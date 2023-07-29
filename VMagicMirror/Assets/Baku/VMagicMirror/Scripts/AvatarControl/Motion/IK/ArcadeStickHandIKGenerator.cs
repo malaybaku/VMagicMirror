@@ -97,8 +97,11 @@ namespace Baku.VMagicMirror.IK
                 if (dependency.Config.RightTarget.Value == HandTargetType.ArcadeStick)
                 {
                     dependency.Reactions.ArcadeStickFinger.ButtonDown(key);
-                    var (pos, rot) = _stickProvider.GetRightHandRaw(key);
-                    dependency.Reactions.ParticleStore.RequestArcadeStickParticleStart(pos, rot);
+                    if (CheckKeySupportReactionEffect(key))
+                    {
+                        var (pos, rot) = _stickProvider.GetRightHandRaw(key);
+                        dependency.Reactions.ParticleStore.RequestArcadeStickParticleStart(pos, rot);
+                    }
                 }
             };
 
@@ -119,7 +122,17 @@ namespace Baku.VMagicMirror.IK
                 }
             };
         }
-        
+
+        private bool CheckKeySupportReactionEffect(GamepadKey key)
+        {
+            //NOTE: 意図はコメントアウトしてるほうのが近いが、数値比較のほうがシンプルなので…
+            return key >= GamepadKey.A && key <= GamepadKey.LTrigger;
+            // return 
+            //     key is GamepadKey.A || key is GamepadKey.B || key is GamepadKey.X || key is GamepadKey.Y ||
+            //     key is GamepadKey.LTrigger || key is GamepadKey.RTrigger || 
+            //     key is GamepadKey.LShoulder || key is GamepadKey.RShoulder;
+        }
+
         public override void Start()
         {
             //NOTE: 初期値が原点とかだと流石にキツいので、値を拾わせておく

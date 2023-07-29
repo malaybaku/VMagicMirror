@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UniRx;
+using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Baku.VMagicMirror
 {
@@ -66,8 +69,8 @@ namespace Baku.VMagicMirror
         }
         
         #region IEyeRotationRequestSource
-        
-        bool IEyeRotationRequestSource.IsActive => ShouldApply;
+
+        bool IEyeRotationRequestSource.IsActive => _shouldApply.Value;
         private Vector2 _eyeRotationRate = Vector2.zero;
         public Vector2 LeftEyeRotationRate => _eyeRotationRate;
         public Vector2 RightEyeRotationRate => _eyeRotationRate;
@@ -88,45 +91,19 @@ namespace Baku.VMagicMirror
         private float _actionBlendWeight = 0f;
         
         //音声またはキー入力とかによって「ユーザーが何かしら動いてるらしい」と判断できてる間はtrueになる値
-        private bool _rawActive = false;
+        private bool _rawUseActiveJitter = false;
         //rawActiveをもとに、頻繁なチャタリングが起きないように加工されたフラグ
-        private bool _active = false;
+        private readonly ReactiveProperty<bool> _useActiveJitter = new ReactiveProperty<bool>();
         private float _activeSwitchCountDown = 0f;
 
         //GUI上からこの処理を許可されてるかどうか
         private bool _operationEnabled = true;
 
-        
-        private bool _shouldApply = true;
-        private bool ShouldApply
-        {
-            get => _shouldApply;
-            set
-            {
-                if (_shouldApply == value)
-                {
-                    return;
-                }
-
-                _shouldApply = value;
-                if (!_shouldApply)
-                {
-                    _voiceOnOffParser.Reset(false);
-                    _rawActive = false;
-                    _active = false;
-                    _activeSwitchCountDown = 0f;
-                    _eyeRotationRate = Vector2.zero;
-                    _rawEyeRot = Vector2.zero;
-                    HeadRotation = Quaternion.identity;
-                    _activeJitter.Reset();
-                    _inactiveJitter.Reset();   
-                }
-            }
-        }
+        private readonly ReactiveProperty<bool> _shouldApply = new ReactiveProperty<bool>();
 
         //外部トラッキングについては接続できてる/できてないが明確なほうがバリューありそうなので、適用しない。
         //いっぽうwebカメラで顔トラが動く前 == 初期インストール直後を意味し、ここは親切にしたいので適用する。
-        private void UpdateShouldApply() => ShouldApply = 
+        private void UpdateShouldApply() => _shouldApply.Value = 
             FaceControlMode == FaceControlModes.None || 
             (FaceControlMode == FaceControlModes.WebCam && !_faceTracker.FaceDetectedAtLeastOnce);
         
@@ -147,6 +124,43 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
+            _shouldApply
+                .Where(v => !v)
+                .Skip(1)
+                .Subscribe(_ =>
+                {
+                    _voiceOnOffParser.Reset(false);
+                    _rawUseActiveJitter = false;
+                    _useActiveJitter.Value = false;
+                    _activeSwitchCountDown = 0f;
+                    _eyeRotationRate = Vector2.zero;
+                    _rawEyeRot = Vector2.zero;
+                    HeadRotation = Quaternion.identity;
+                    _activeJitter.Reset();
+                    _inactiveJitter.Reset();   
+                })
+                .AddTo(this);
+            
+            //inactiveJitterを適用する状態が一定時間続いたらJitter自体の動きも止め、そうでなければ再開する
+            _useActiveJitter
+                .Select(v => v
+                    ? Observable.Empty<Unit>()
+                    : Observable.Timer(TimeSpan.FromSeconds(15f)).AsUnitObservable())
+                .Switch()
+                .Subscribe(_ =>
+                {
+                    Debug.Log("force zero jitter when inactive");
+                    _inactiveJitter.ForceGoalZero = true;
+                })
+                .AddTo(this);
+            _useActiveJitter.Where(v => v)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("force non-zero jitter when inactive");
+                    _inactiveJitter.ForceGoalZero = false;
+                })
+                .AddTo(this);
+
             _inactiveJitter.AngleRange = new Vector3(4f, 4f, 4f);
             _inactiveJitter.ChangeTimeMin = 6.0f;
             _inactiveJitter.ChangeTimeMax = 15.0f;
@@ -204,7 +218,7 @@ namespace Baku.VMagicMirror
             }
             
             UpdateShouldApply();
-            if (!ShouldApply)
+            if (!_shouldApply.Value)
             {
                 return;
             }
@@ -235,22 +249,22 @@ namespace Baku.VMagicMirror
         {
             //NOTE: 初期実装で声パーサーしか使わないのをいいことにこういう実装。
             _voiceOnOffParser.Update();
-            _rawActive = _voiceOnOffParser.IsTalking;
+            _rawUseActiveJitter = _voiceOnOffParser.IsTalking;
 
             //チャタリングを防ぐようにして_activeに適用
             if (_activeSwitchCountDown > 0)
             {
                 _activeSwitchCountDown -= Time.deltaTime;
             }
-            if (_rawActive != _active && _activeSwitchCountDown <= 0f)
+            if (_rawUseActiveJitter != _useActiveJitter.Value && _activeSwitchCountDown <= 0f)
             {
-                _active = _rawActive;
+                _useActiveJitter.Value = _rawUseActiveJitter;
                 _activeSwitchCountDown = activeSwitchCoolDownDuration;
             }
 
             //アクション中かどうかでブレンドウェイトが片側に寄っていく(最後は0か1で落ち着く)
             _actionBlendWeight = Mathf.Clamp01(
-                _actionBlendWeight + Time.deltaTime / motionBlendDuration * (_active ? 1 : -1)
+                _actionBlendWeight + Time.deltaTime / motionBlendDuration * (_useActiveJitter.Value ? 1 : -1)
             );
             
             //個別の動きのアップデート
@@ -259,7 +273,7 @@ namespace Baku.VMagicMirror
             
             _rawEyeRot = Vector2.Lerp(_rawEyeRot, _rawEyeRotTarget, eyeSpeedFactor * Time.deltaTime);
 
-            float blendWeight = Mathf.SmoothStep(0, 1, _actionBlendWeight);
+            var blendWeight = Mathf.SmoothStep(0, 1, _actionBlendWeight);
             
             //アクティブ用と非アクティブ用の計算がどちらもキレイに走っているので、それらをブレンディングすれば勝ち
             HeadRotation = Quaternion.Slerp(
@@ -271,7 +285,6 @@ namespace Baku.VMagicMirror
             //非アクティブの目は便宜的に正面向き: ここは後で変わるかも。
             _eyeRotationRate = Vector2.Lerp(Vector2.zero, _rawEyeRot, blendWeight);
         }
-
     }
     
     /// <summary> 画像なしモーションの適用部分だけサブルーチン化したやつ </summary>

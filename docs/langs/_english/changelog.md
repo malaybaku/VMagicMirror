@@ -8,6 +8,15 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.2.3
+{: .doc-sec2 }
+
+2023/07/30
+
+* Change: Make microphone-based head motion to stop when certain time elapsed after voice input is missing.
+* Fix: In arcade stick mode, there were cases that particle appears from incorrect timing and positions. 
+
+
 #### v3.2.2
 {: .doc-sec2 }
 

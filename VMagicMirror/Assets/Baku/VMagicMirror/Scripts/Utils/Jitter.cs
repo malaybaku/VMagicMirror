@@ -28,6 +28,8 @@ namespace Baku.VMagicMirror
         public Quaternion CurrentRotation { get; private set; } = Quaternion.identity;
         
         private float _count = 0.0f;
+        
+        public bool ForceGoalZero { get; set; }
 
         public void Reset()
         {
@@ -45,13 +47,20 @@ namespace Baku.VMagicMirror
             if (_count < 0)
             {
                 _count = Random.Range(ChangeTimeMin, ChangeTimeMax);
-                var goalEuler = new Vector3(
-                    Random.Range(-AngleRange.x, +AngleRange.x),
-                    Random.Range(-AngleRange.y, +AngleRange.y), 
-                    UseZAngle ? Random.Range(-AngleRange.z, +AngleRange.z) : 0f
+                if (ForceGoalZero)
+                {
+                    _goalRotationEuler = Vector3.zero;
+                }
+                else
+                {
+                    var goalEuler = new Vector3(
+                        Random.Range(-AngleRange.x, +AngleRange.x),
+                        Random.Range(-AngleRange.y, +AngleRange.y), 
+                        UseZAngle ? Random.Range(-AngleRange.z, +AngleRange.z) : 0f
                     );
-                _goalRotationEuler = goalEuler;
-                JitterTargetEulerUpdated?.Invoke(goalEuler);
+                    _goalRotationEuler = goalEuler;
+                }
+                JitterTargetEulerUpdated?.Invoke(_goalRotationEuler);
             }
 
             //ゴール自体をLerpする: ゴールが急にジャンプすると力学ライクな計算してもカクカクしちゃうので

@@ -16,7 +16,6 @@ namespace Baku.VMagicMirror.IK
         
         //ボタンを押すとき手ごと下に下げる移動量。
         private const float ButtonDownY = 0.01f;
-
         
         //右手の5本の指について、手首から指先までのオフセットを大まかにチェックしたもの。
         //指に対してはIKをあまり使いたくないため、FKを大まかに合わせるのに使う
@@ -80,7 +79,6 @@ namespace Baku.VMagicMirror.IK
                 }
             };
 
-            
             dependency.Events.GamepadButtonDown += key =>
             {
                 ButtonDown(key);
@@ -97,8 +95,11 @@ namespace Baku.VMagicMirror.IK
                 if (dependency.Config.RightTarget.Value == HandTargetType.ArcadeStick)
                 {
                     dependency.Reactions.ArcadeStickFinger.ButtonDown(key);
-                    var (pos, rot) = _stickProvider.GetRightHandRaw(key);
-                    dependency.Reactions.ParticleStore.RequestArcadeStickParticleStart(pos, rot);
+                    if (CheckKeySupportReactionEffect(key))
+                    {
+                        var (pos, rot) = _stickProvider.GetRightHandRaw(key);
+                        dependency.Reactions.ParticleStore.RequestArcadeStickParticleStart(pos, rot);
+                    }
                 }
             };
 
@@ -119,7 +120,17 @@ namespace Baku.VMagicMirror.IK
                 }
             };
         }
-        
+
+        private bool CheckKeySupportReactionEffect(GamepadKey key)
+        {
+            //NOTE: 意図はコメントアウトしてるほうのが近いが、数値比較のほうがシンプルなので…
+            return key >= GamepadKey.A && key <= GamepadKey.LTrigger;
+            // return 
+            //     key is GamepadKey.A || key is GamepadKey.B || key is GamepadKey.X || key is GamepadKey.Y ||
+            //     key is GamepadKey.LTrigger || key is GamepadKey.RTrigger || 
+            //     key is GamepadKey.LShoulder || key is GamepadKey.RShoulder;
+        }
+
         public override void Start()
         {
             //NOTE: 初期値が原点とかだと流石にキツいので、値を拾わせておく
@@ -154,8 +165,8 @@ namespace Baku.VMagicMirror.IK
             (_latestButtonPos, _latestButtonRot) = _stickProvider.GetRightHand(key);
 
             //NOTE: 指をだいたい揃えるためにズラす動きがコレ
-            int fingerNumber = ArcadeStickFingerController.KeyToFingerNumber(key);
-            int offsetIndex = fingerNumber - 5;
+            var fingerNumber = ArcadeStickFingerController.KeyToFingerNumber(key);
+            var offsetIndex = fingerNumber - 5;
             //1倍ぴったりを適用すると指の曲げのぶんのズレで絵面がイマイチになる可能性もあるが、
             //余程手が大きくなければ大丈夫なはず
             _latestButtonPos -= _latestButtonRot * _wristToFingerOffsets[offsetIndex];

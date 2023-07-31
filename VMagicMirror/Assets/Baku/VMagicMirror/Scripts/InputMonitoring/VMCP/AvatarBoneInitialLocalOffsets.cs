@@ -49,6 +49,18 @@ namespace Baku.VMagicMirror.VMCP
             ResetLocalOffsets();
         }
 
+        public Vector3 GetLocalOffset(HumanBodyBones bone)
+        {
+            if (_initialLocalOffsets.TryGetValue(bone, out var offset))
+            {
+                return offset;
+            }
+            else
+            {
+                return Vector3.zero;
+            }
+        }
+
         private void ResetLocalOffsets()
         {
             foreach (var b in Bones)

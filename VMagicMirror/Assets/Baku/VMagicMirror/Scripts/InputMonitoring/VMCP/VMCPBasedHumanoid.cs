@@ -95,16 +95,21 @@ namespace Baku.VMagicMirror.VMCP
         //NOTE: IKポーズは単体で保存する、こっちはヒエラルキーに何かを用意する必要はない
         private readonly Dictionary<string, Pose> _trackerPoses = new Dictionary<string, Pose>(6);
 
+        private readonly AvatarBoneInitialLocalOffsets _boneOffsets;
+        private readonly bool HasBoneOffsetsSource;
+
         public VMCPBasedHumanoid()
         {
-            
+            _boneOffsets = null;
+            HasBoneOffsetsSource = false;
         }
         
         public VMCPBasedHumanoid(AvatarBoneInitialLocalOffsets boneOffsets)
         {
-            
+            _boneOffsets = boneOffsets;
+            HasBoneOffsetsSource = _boneOffsets != null;
         }
-        
+
         /// <summary>
         /// NOTE: この関数を呼ぶとHumanoidBoneの階層を持つGameObjectが生成される(ので、早すぎるタイミングでは呼んではいけない)
         /// </summary>
@@ -115,6 +120,12 @@ namespace Baku.VMagicMirror.VMCP
                 return;
             }
 
+            // ヒエラルキー構築はしたいが、ヒエラルキーのリファレンスになるべきモデルのロードが終わってない→何もしない
+            if (HasBoneOffsetsSource && !_boneOffsets.HasModel.Value)
+            {
+                return;
+            }
+            
             _root = new GameObject("VMCPBasedHumanoid_Root").transform;
             foreach (var bone in Enum.GetValues(typeof(HumanBodyBones)).Cast<HumanBodyBones>())
             {
@@ -128,6 +139,10 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             BuildBoneHierarchy();
+            if (HasBoneOffsetsSource)
+            {
+                ApplyLocalModelOffsets();
+            }
 
             _hips = _boneMap[HipsBoneName].Transform;
             _head = _boneMap[HeadBoneName].Transform;
@@ -154,6 +169,20 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
+        private void ApplyLocalModelOffsets()
+        {
+            foreach (var bone in Enum.GetValues(typeof(HumanBodyBones)).Cast<HumanBodyBones>())
+            {
+                if (bone == HumanBodyBones.LastBone)
+                {
+                    continue;
+                }
+
+                var boneName = bone.ToString();
+                _boneMap[boneName].Transform.localPosition = _boneOffsets.GetLocalOffset(bone);
+            }
+        }
+        
         public void SetTrackerPose(string boneName, Vector3 position, Quaternion rotation)
         {
             _trackerPoses[boneName] = new Pose(position, rotation);
@@ -169,12 +198,21 @@ namespace Baku.VMagicMirror.VMCP
                 GenerateHumanoidBoneHierarchy();
             }
 
+            if (!_hasBoneHierarchy)
+            {
+                return;
+            }
+
             if (!_boneMap.TryGetValue(boneName, out var bone))
             {
                 return;
             }
 
-            bone.Transform.localPosition = position;
+            // VMM側のボーン情報を正とする場合、モデル側のは無視
+            if (boneName != HipsBoneName && !HasBoneOffsetsSource)
+            {
+                bone.Transform.localPosition = position;
+            }
             bone.Transform.localRotation = rotation;
         }
 

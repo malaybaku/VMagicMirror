@@ -95,6 +95,16 @@ namespace Baku.VMagicMirror.VMCP
         //NOTE: IKポーズは単体で保存する、こっちはヒエラルキーに何かを用意する必要はない
         private readonly Dictionary<string, Pose> _trackerPoses = new Dictionary<string, Pose>(6);
 
+        public VMCPBasedHumanoid()
+        {
+            
+        }
+        
+        public VMCPBasedHumanoid(AvatarBoneInitialLocalOffsets boneOffsets)
+        {
+            
+        }
+        
         /// <summary>
         /// NOTE: この関数を呼ぶとHumanoidBoneの階層を持つGameObjectが生成される(ので、早すぎるタイミングでは呼んではいけない)
         /// </summary>

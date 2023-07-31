@@ -15,6 +15,7 @@ namespace Baku.VMagicMirror
                 .FromComponentInNewPrefab(oscServerPrefab)
                 .AsSingle();
             
+            Container.BindInterfacesAndSelfTo<AvatarBoneInitialLocalOffsets>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPHandPose>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPHeadPose>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPBasedFingerSetter>().AsSingle();

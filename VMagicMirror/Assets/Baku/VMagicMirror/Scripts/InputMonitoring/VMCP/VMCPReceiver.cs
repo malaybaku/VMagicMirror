@@ -11,6 +11,7 @@ namespace Baku.VMagicMirror.VMCP
         private const int OscServerCount = 3;
         private readonly IMessageReceiver _messageReceiver;
         private readonly IFactory<uOscServer> _oscServerFactory;
+        private readonly AvatarBoneInitialLocalOffsets _boneOffsets;
         private readonly VMCPBlendShape _blendShape;
         private readonly VMCPHeadPose _headPose;
         private readonly VMCPHandPose _handPose;
@@ -27,6 +28,7 @@ namespace Baku.VMagicMirror.VMCP
         public VMCPReceiver(
             IMessageReceiver messageReceiver, 
             IFactory<uOscServer> oscServerFactory,
+            AvatarBoneInitialLocalOffsets boneOffsets,
             VMCPBlendShape blendShape,
             VMCPHeadPose headPose,
             VMCPHandPose handPose
@@ -34,6 +36,7 @@ namespace Baku.VMagicMirror.VMCP
         {
             _messageReceiver = messageReceiver;
             _oscServerFactory = oscServerFactory;
+            _boneOffsets = boneOffsets;
             _blendShape = blendShape;
             _headPose = headPose;
             _handPose = handPose;
@@ -47,7 +50,7 @@ namespace Baku.VMagicMirror.VMCP
                 _servers[i] = _oscServerFactory.Create();
                 _servers[i].onDataReceived.AddListener(message => OnOscDataReceived(sourceIndex, message));
 
-                _receiverHumanoids[i] = new VMCPBasedHumanoid();
+                _receiverHumanoids[i] = new VMCPBasedHumanoid(_boneOffsets);
             }
 
             _messageReceiver.AssignCommandHandler(

@@ -11,6 +11,15 @@ namespace Baku.VMagicMirror.VMCP
     /// </summary>
     public class VMCPBlendShape : PresenterBase
     {
+        private static readonly HashSet<ExpressionKey> LipSyncKeys = new HashSet<ExpressionKey>()
+        {
+            ExpressionKey.Aa,
+            ExpressionKey.Ee,
+            ExpressionKey.Ih,
+            ExpressionKey.Oh,
+            ExpressionKey.Ou,
+        };
+
         private readonly Dictionary<ExpressionKey, float> _internalValues = new Dictionary<ExpressionKey, float>();
         private readonly Dictionary<ExpressionKey, float> _values = new Dictionary<ExpressionKey, float>();
         //送信側がVRM0.xのケースと1.0のケースで都合が変わるんですよ信じられますか
@@ -27,6 +36,7 @@ namespace Baku.VMagicMirror.VMCP
         {
             _vrmLoadable = vrmLoadable;
         }
+
         public override void Initialize()
         {
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
@@ -34,7 +44,7 @@ namespace Baku.VMagicMirror.VMCP
         }
 
         public void SetActive(bool active) => _isActive.Value = active;
-        
+
         public void SetValue(string rawKey, float value)
         {
             if (!_stringToKeyCache.TryGetValue(rawKey, out var key))
@@ -54,11 +64,30 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
-        public void AccumulateAppliedBlendShape(ExpressionAccumulator accumulator)
+        public void AccumulateLipSyncBlendShape(ExpressionAccumulator accumulator)
         {
+            if (!_hasModel)
+            {
+                return;
+            }
+            
+            foreach (var key in LipSyncKeys)
+            {
+                accumulator.Accumulate(key, _values[key]);
+            }
+        }
+        
+        public void AccumulateAllBlendShape(ExpressionAccumulator accumulator, float mouthWeight = 1f, float nonMouthWeight = 1f)
+        {
+            if (!_hasModel)
+            {
+                return;
+            }
+
             foreach (var pair in _values)
             {
-                accumulator.Accumulate(pair.Key, pair.Value);
+                var weight = LipSyncKeys.Contains(pair.Key) ? mouthWeight : nonMouthWeight;
+                accumulator.Accumulate(pair.Key, pair.Value * weight);
             }
         }
         

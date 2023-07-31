@@ -1,4 +1,5 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
+using Baku.VMagicMirror.VMCP;
 using UnityEngine;
 using Zenject;
 
@@ -18,6 +19,7 @@ namespace Baku.VMagicMirror
         
         private ExternalTrackerDataSource _exTracker = null;
         private WordToMotionBlendShape _wtmBlendShape = null;
+        private VMCPBlendShape _vmcpBlendShape = null;
         private ExpressionAccumulator _accumulator = null;
         private bool _hasModel = false;
         
@@ -28,11 +30,13 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable, 
             ExternalTrackerDataSource exTracker,
             WordToMotionBlendShape wtmBlendShape,
+            VMCPBlendShape vmcpBlendShape,
             ExpressionAccumulator accumulator
             )
         {
             _exTracker = exTracker;
             _wtmBlendShape = wtmBlendShape;
+            _vmcpBlendShape = vmcpBlendShape;
             _accumulator = accumulator;
             
             vrmLoadable.VrmLoaded += info => _hasModel = true;
@@ -41,7 +45,6 @@ namespace Baku.VMagicMirror
             blendShapeInterpolator.Setup(faceSwitch, wtmBlendShape);
         }
 
-        
         private void LateUpdate()
         {
             faceSwitch.UpdateCurrentValue();
@@ -86,6 +89,11 @@ namespace Baku.VMagicMirror
                     _wtmBlendShape.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);
                 }
+                else if (_vmcpBlendShape.IsActive.Value)
+                {
+                    _wtmBlendShape.Accumulate(_accumulator);
+                    _vmcpBlendShape.AccumulateLipSyncBlendShape(_accumulator);
+                }
                 else
                 {
                     //WtM + AIUEOの口を適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
@@ -110,6 +118,11 @@ namespace Baku.VMagicMirror
                 {
                     faceSwitch.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);
+                }
+                else if (_vmcpBlendShape.IsActive.Value)
+                {
+                    faceSwitch.Accumulate(_accumulator);
+                    _vmcpBlendShape.AccumulateLipSyncBlendShape(_accumulator);
                 }
                 else
                 {
@@ -138,6 +151,15 @@ namespace Baku.VMagicMirror
                     lipSync.Accumulate(_accumulator);
                 }
 
+                neutralClipSettings.AccumulateNeutralClip(_accumulator);
+                neutralClipSettings.AccumulateOffsetClip(_accumulator);
+                return;
+            }
+            
+            //VMCPで表情を適用 -> 全部入れる。VMCPで一部の表情だけ指定するのは認めない。
+            if (_vmcpBlendShape.IsActive.Value)
+            {
+                _vmcpBlendShape.AccumulateAllBlendShape(_accumulator);
                 neutralClipSettings.AccumulateNeutralClip(_accumulator);
                 neutralClipSettings.AccumulateOffsetClip(_accumulator);
                 return;
@@ -183,6 +205,19 @@ namespace Baku.VMagicMirror
                     lipSync.Accumulate(_accumulator, blendShapeInterpolator.MouthWeight);
                 }
 
+                neutralClipSettings.AccumulateNeutralClip(_accumulator, blendShapeInterpolator.NonMouthWeight);
+                neutralClipSettings.AccumulateOffsetClip(_accumulator);
+                return;
+            }
+            
+            //VMCPで表情を適用 > Perfect Syncと類似したマナーで捌くが、リップシンクのマイクを使わない等、いくつかの処理がシンプルになる
+            if (_vmcpBlendShape.IsActive.Value)
+            {
+                _vmcpBlendShape.AccumulateAllBlendShape(
+                    _accumulator,
+                    blendShapeInterpolator.MouthWeight,
+                    blendShapeInterpolator.NonMouthWeight
+                    );
                 neutralClipSettings.AccumulateNeutralClip(_accumulator, blendShapeInterpolator.NonMouthWeight);
                 neutralClipSettings.AccumulateOffsetClip(_accumulator);
                 return;

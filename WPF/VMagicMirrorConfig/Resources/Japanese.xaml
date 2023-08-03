@@ -498,7 +498,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
-    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMC Protocol (VMCP)に対応する他アプリケーションからモーション情報を受信できます。
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションからモーション情報を受信できます。
 VMagicMirrorは以下のモーションを受信して適用できます。
 
 - 頭部モーション
@@ -507,14 +507,20 @@ VMagicMirrorは以下のモーションを受信して適用できます。
     <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
 
     <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_AppName">アプリ名</sys:String>
+    <sys:String x:Key="VMCP_ReceiveSetting_Header">受信元の設定</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_Header">詳細設定</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_AppName">接続先アプリ名</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">アプリ名</sys:String>
     <sys:String x:Key="VMCP_GridLabel_PortNumber">ポート番号</sys:String>
     <sys:String x:Key="VMCP_GridLabel_HeadPose">頭の姿勢</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Facial">表情</sys:String>
     <sys:String x:Key="VMCP_GridLabel_HandPose">手の姿勢</sys:String>
-    <sys:String x:Key="VMCP_Notice_Priority">*上のほうで指定した入力から優先で適用されます。</sys:String>
+    <sys:String x:Key="VMCP_Notice_Priority">上で設定した受信元ほど優先して適用されます</sys:String>
+    <sys:String x:Key="VMCP_ShouldApply">*未適用の設定があります</sys:String>
     <sys:String x:Key="VMCP_Apply">変更を適用</sys:String>
     <sys:String x:Key="VMCP_Revert">キャンセル</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">VMCPの受信中はカメラ機能をオフ</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_DisableMicDuringActive">VMCPで表情を受信中はマイク機能をオフ</sys:String>
     <!-- (あんまやりたくないが) キャリブレーション用のUIが欲しいかも… -->
 
     <!-- HotKey -->
@@ -696,6 +702,9 @@ webカメラでの顔トラッキングを有効にする場合は
     
     <sys:String x:Key="DialogTitle_Vrm10NotSupported">VRM 1.0は未対応です</sys:String>
     <sys:String x:Key="DialogMessage_Vrm10NotSupported">VRM 1.0は今後のアップデートで対応予定です。このバージョンではVRM 0.xのモデルを使用して下さい。</sys:String>
+    
+    <sys:String x:Key="DialogTitle_ResetVmcpSourceItemConfirm">受信設定のリセット</sys:String>
+    <sys:String x:Key="DialogMessage_ResetVmcpSourceItemConfirm">選択したVMC Protocol受信の設定を削除しますか？</sys:String>    
     
     <!-- Snackbar Messages -->
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>

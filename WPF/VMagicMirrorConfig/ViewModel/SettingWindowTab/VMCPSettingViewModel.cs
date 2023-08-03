@@ -11,7 +11,7 @@
         internal VMCPSettingViewModel(VMCPSettingModel model)
         {
             _model = model;
-            _isDirty = new RProperty<bool>(false, _ => UpdateCanApply());
+            IsDirty = new RProperty<bool>(false, _ => UpdateCanApply());
             ApplyChangeCommand = new ActionCommand(ApplyChange);
             RevertChangeCommand = new ActionCommand(RevertChange);
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
@@ -24,15 +24,18 @@
 
         private readonly VMCPSettingModel _model;
 
-        private readonly RProperty<bool> _isDirty;
-        public RProperty<bool> CanApply = new(false);
+        public RProperty<bool> IsDirty { get; }
+        public RProperty<bool> CanApply { get; } = new(false);
 
         public RProperty<bool> VMCPEnabled => _model.VMCPEnabled;
         public VMCPSourceItemViewModel Source1 { get; private set; } = new();
         public VMCPSourceItemViewModel Source2 { get; private set; } = new();
         public VMCPSourceItemViewModel Source3 { get; private set; } = new();
 
-        public void SetDirty() => _isDirty.Value = true;
+        public RProperty<bool> DisableCameraDuringVMCPActive => _model.DisableCameraDuringVMCPActive;
+        public RProperty<bool> DisableMicDuringVMCPFacialActive => _model.DisableMicDuringVMCPFacialActive;
+
+        public void SetDirty() => IsDirty.Value = true;
         
         public ActionCommand ApplyChangeCommand { get; }
         public ActionCommand RevertChangeCommand { get; }
@@ -40,7 +43,7 @@
 
         private void UpdateCanApply()
         {
-            CanApply.Value = _isDirty.Value &&
+            CanApply.Value = IsDirty.Value &&
                 !Source1.PortNumberIsInvalid.Value &&
                 !Source2.PortNumberIsInvalid.Value &&
                 !Source3.PortNumberIsInvalid.Value;
@@ -63,7 +66,7 @@
             RaisePropertyChanged(nameof(Source1));
             RaisePropertyChanged(nameof(Source2));
             RaisePropertyChanged(nameof(Source3));
-            _isDirty.Value = false;
+            IsDirty.Value = false;
         }
 
         private void ApplyChange()
@@ -76,7 +79,7 @@
             });
 
             _model.SetVMCPSourceSetting(setting);
-            _isDirty.Value = false;
+            IsDirty.Value = false;
         }
 
         private void RevertChange() => LoadCurrentSettings();

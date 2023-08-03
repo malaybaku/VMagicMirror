@@ -55,15 +55,6 @@
 
         public ActionCommand ResetCommand { get; }
 
-        public void ResetContent()
-        {
-            Name.Value = "";
-            Port.Value = "0";
-            ReceiveHeadPose.Value = false;
-            ReceiveFacial.Value = false;
-            ReceiveHandPose.Value = false;
-        }
-
         public VMCPSource CreateSetting()
         {
             var rawPort = Port.Value;
@@ -80,6 +71,25 @@
                 ReceiveFacial = ReceiveFacial.Value,
                 ReceiveHandPose = ReceiveHandPose.Value,
             };
+        }
+
+        private async void ResetContent()
+        {
+            var indication = MessageIndication.ResetVmcpSourceItemConfirmation();
+            var result = await MessageBoxWrapper.Instance.ShowAsync(
+                indication.Title,
+                indication.Content,
+                MessageBoxWrapper.MessageBoxStyle.OKCancel
+                );
+
+            if (result)
+            {
+                Name.Value = "";
+                Port.Value = "0";
+                ReceiveHeadPose.Value = false;
+                ReceiveFacial.Value = false;
+                ReceiveHandPose.Value = false;
+            }
         }
 
         private void SetDirty() => _parent?.SetDirty();

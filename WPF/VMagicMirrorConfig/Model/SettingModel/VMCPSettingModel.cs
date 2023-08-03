@@ -13,10 +13,21 @@
                 defaultSetting.VMCPEnabled, v => SendMessage(MessageFactory.Instance.EnableVMCP(v)));
             SerializedVMCPSourceSetting = new(
                 defaultSetting.SerializedVMCPSourceSetting, v => SendMessage(MessageFactory.Instance.SetVMCPSources(v)));
+
+            DisableCameraDuringVMCPActive = new(
+                defaultSetting.DisableCameraDuringVMCPActive,
+                v => SendMessage(MessageFactory.Instance.SetDisableCameraDuringVMCPActive(v))
+                );
+            DisableMicDuringVMCPFacialActive = new(
+                defaultSetting.DisableMicDuringVMCPFacialActive,
+                v => SendMessage(MessageFactory.Instance.SetDisableMicDuringVMCPFacialActive(v))
+                );
         }
 
         public RProperty<bool> VMCPEnabled { get; }
         public RProperty<string> SerializedVMCPSourceSetting { get; }
+        public RProperty<bool> DisableCameraDuringVMCPActive { get; }
+        public RProperty<bool> DisableMicDuringVMCPFacialActive { get; }
 
         public VMCPSources GetCurrentSetting()
         {
@@ -35,6 +46,8 @@
             var defaultSetting = VMCPSetting.Default;
             VMCPEnabled.Value = defaultSetting.VMCPEnabled;
             SerializedVMCPSourceSetting.Value = defaultSetting.SerializedVMCPSourceSetting;
+            DisableCameraDuringVMCPActive.Value = defaultSetting.DisableCameraDuringVMCPActive;
+            DisableMicDuringVMCPFacialActive.Value = defaultSetting.DisableMicDuringVMCPFacialActive;
         }
     }
 }

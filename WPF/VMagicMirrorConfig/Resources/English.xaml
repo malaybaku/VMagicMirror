@@ -506,14 +506,20 @@ VMagicMirror supports to receive:
     <sys:String x:Key="VMCP_SeeMore">See More...</sys:String>
 
     <sys:String x:Key="VMCP_Enable">Enable VMC Protocol</sys:String>
+    <sys:String x:Key="VMCP_ReceiveSetting_Header">Receive Settings</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_Header">Advanced Settings</sys:String>    
     <sys:String x:Key="VMCP_GridLabel_AppName">App Name</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">App Name</sys:String>
     <sys:String x:Key="VMCP_GridLabel_PortNumber">Port Number</sys:String>
     <sys:String x:Key="VMCP_GridLabel_HeadPose">Head Pose</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Facial">Facial</sys:String>
     <sys:String x:Key="VMCP_GridLabel_HandPose">Hand Pose</sys:String>
-    <sys:String x:Key="VMCP_Notice_Priority">*Upper Item is prior to receive input.</sys:String>
+    <sys:String x:Key="VMCP_Notice_Priority">Upper item has higher priority</sys:String>
+    <sys:String x:Key="VMCP_ShouldApply">*There are unapplied changes.</sys:String>
     <sys:String x:Key="VMCP_Apply">Apply Changes</sys:String>
     <sys:String x:Key="VMCP_Revert">Revert</sys:String>    
+    <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">Disable Camera feature during VMCP is active</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_DisableMicDuringActive">Disable Mic feature during VMCP facial is active</sys:String>
     
     <!-- HotKey -->
     <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>
@@ -688,6 +694,9 @@ Use this only after checking the licenses of VRM you will use.
 
     <sys:String x:Key="DialogTitle_Vrm10NotSupported">VRM 1.0 is Not Supported</sys:String>
     <sys:String x:Key="DialogMessage_Vrm10NotSupported" xml:space="preserve">VRM 1.0 support is under development. Please use VRM 0.x model in this version.</sys:String>
+    
+    <sys:String x:Key="DialogTitle_ResetVmcpSourceItemConfirm">Reset Receive Setting</sys:String>
+    <sys:String x:Key="DialogMessage_ResetVmcpSourceItemConfirm">Are you sure to clear selected VMC Protocol setting?</sys:String>    
     
     <!-- Snackbar Messages -->
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>

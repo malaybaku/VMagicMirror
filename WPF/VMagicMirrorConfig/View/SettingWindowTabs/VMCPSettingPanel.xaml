@@ -17,117 +17,160 @@
         <view:BooleanToForegroundConverter x:Key="BooleanToForegroundConverter"/>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Disabled"
-                  >
-
+                  HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="10">
             <TextBlock 
                 Text="{DynamicResource VMCP_Header}"                 
                 Style="{StaticResource SectionHeaderText}"
                 />
 
-            <TextBlock Grid.Row="0"
-                        Text="{DynamicResource VMCP_Instruction}"
-                        TextWrapping="Wrap"
-                        Margin="10,10,10,0"
+            <Grid Margin="10">
+                <TextBlock Text="{DynamicResource VMCP_Instruction}"
+                       TextWrapping="Wrap"
+                       Margin="0"
+                       />
+
+                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Padding="0"
+                        MinWidth="130"
+                        Margin="10,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding OpenDocUrlCommand}"
+                        Content="{DynamicResource VMCP_SeeMore}"
                         />
 
-            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                    Padding="0"
-                    MinWidth="130"
-                    Margin="10,0"
-                    HorizontalAlignment="Right"
-                    Command="{Binding OpenDocUrlCommand}"
-                    Content="{DynamicResource VMCP_SeeMore}"
-                    />
+            </Grid>
 
             <CheckBox Content="{DynamicResource VMCP_Enable}"
                       Margin="10,10,10,5"
                       IsChecked="{Binding VMCPEnabled.Value, Mode=TwoWay}"
                       />
 
-            <Grid Margin="5,10" 
-                  IsEnabled="{Binding VMCPEnabled.Value}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="40"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="60" />
-                    <ColumnDefinition Width="60" />
-                    <ColumnDefinition Width="60" />
-                    <ColumnDefinition Width="30" />
-                </Grid.ColumnDefinitions>
+            <Border Style="{StaticResource SectionBorder}">
+                <StackPanel Margin="5">
+                    <StackPanel Margin="5,0,5,10"
+                                Orientation="Horizontal">
 
-                <TextBlock Grid.Row="0" Grid.Column="0"
-                           HorizontalAlignment="Center"
-                           Text="{DynamicResource VMCP_GridLabel_AppName}"
-                           />
-                <TextBlock Grid.Row="0" Grid.Column="1"
-                           HorizontalAlignment="Center"
-                           Text="{DynamicResource VMCP_GridLabel_PortNumber}"
-                           />
-                <TextBlock Grid.Row="0" Grid.Column="2"
-                           HorizontalAlignment="Center"
-                           Text="{DynamicResource VMCP_GridLabel_HeadPose}"
-                           />
-                <TextBlock Grid.Row="0" Grid.Column="3"
-                           HorizontalAlignment="Center"
-                           Text="{DynamicResource VMCP_GridLabel_Facial}"
-                           />
-                <TextBlock Grid.Row="0" Grid.Column="4"
-                           HorizontalAlignment="Center"
-                           Text="{DynamicResource VMCP_GridLabel_HandPose}"
-                           />
+                        <TextBlock Style="{StaticResource HeaderText}"
+                                Text="{DynamicResource VMCP_ReceiveSetting_Header}"
+                                   Margin="0"
+                                />
 
-                <Rectangle Grid.Row="1"
-                           Grid.ColumnSpan="5"
-                           Height="1"
-                           Fill="{StaticResource MahApps.Brushes.Gray2}"
-                           />
+                        <TextBlock Text="{DynamicResource VMCP_Notice_Priority}"
+                                   Margin="20,0,0,0"/>
+                    </StackPanel>
 
-                <view:VMCPSourceItem Grid.Row="2" Grid.ColumnSpan="6"
-                                     DataContext="{Binding Source1}"
-                                     />
-                <view:VMCPSourceItem Grid.Row="3" Grid.ColumnSpan="6"
-                                     DataContext="{Binding Source2}"
-                                     />
-                <view:VMCPSourceItem Grid.Row="4" Grid.ColumnSpan="6"
-                                     DataContext="{Binding Source3}"
-                                     />
+                    <Grid Margin="0" 
+                          IsEnabled="{Binding VMCPEnabled.Value}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="30" />
+                        </Grid.ColumnDefinitions>
 
-            </Grid>
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   HorizontalAlignment="Center"
+                                   Text="{DynamicResource VMCP_GridLabel_PortNumber}"
+                                   />
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   HorizontalAlignment="Center"
+                                   Text="{DynamicResource VMCP_GridLabel_HeadPose}"
+                                   />
+                        <TextBlock Grid.Row="0" Grid.Column="2"
+                                   HorizontalAlignment="Center"
+                                   Text="{DynamicResource VMCP_GridLabel_HandPose}"
+                                   />
+                        <TextBlock Grid.Row="0" Grid.Column="3"
+                                   HorizontalAlignment="Center"
+                                   Text="{DynamicResource VMCP_GridLabel_Facial}"
+                                   />
+                        <TextBlock Grid.Row="0" Grid.Column="4"
+                                   HorizontalAlignment="Center"
+                                   Text="{DynamicResource VMCP_GridLabel_AppName}"
+                                   />
 
-            <StackPanel Orientation="Horizontal"
-                        Margin="10" 
+                        <Rectangle Grid.Row="1"
+                                   Grid.ColumnSpan="5"
+                                   Height="1"
+                                   Fill="{StaticResource MahApps.Brushes.Gray2}"
+                                   />
+
+                        <view:VMCPSourceItem Grid.Row="2" Grid.ColumnSpan="6"
+                                             DataContext="{Binding Source1}"
+                                             />
+                        <view:VMCPSourceItem Grid.Row="3" Grid.ColumnSpan="6"
+                                             DataContext="{Binding Source2}"
+                                             />
+                        <view:VMCPSourceItem Grid.Row="4" Grid.ColumnSpan="6"
+                                             DataContext="{Binding Source3}"
+                                             />
+                    </Grid>
+
+                    
+                    <TextBlock Text="{DynamicResource VMCP_ShouldApply}"
+                               FontWeight="Bold"
+                               Margin="15,15,15,5"
+                               Visibility="{Binding IsDirty.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               />
+
+                    <StackPanel Orientation="Horizontal"
+                        Margin="0,5,0,5" 
                         IsEnabled="{Binding VMCPEnabled}">
 
-                <Button
-                    Padding="0"
-                    MinWidth="130"
-                    Margin="10,0"
-                    HorizontalAlignment="Right"
-                    IsEnabled="{Binding CanApply.Value}"
-                    Command="{Binding ApplyChangeCommand}"
-                    Content="{DynamicResource VMCP_Apply}"
-                    />
+                        <Button Padding="0"
+                                MinWidth="130"
+                                Margin="5,0"
+                                HorizontalAlignment="Right"
+                                IsEnabled="{Binding CanApply.Value}"
+                                Command="{Binding ApplyChangeCommand}"
+                                Content="{DynamicResource VMCP_Apply}"
+                                />
 
-                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                    Padding="0"
-                    MinWidth="130"
-                    Margin="10,0"
-                    HorizontalAlignment="Right"
-                    Command="{Binding RevertChangeCommand}"
-                    Content="{DynamicResource VMCP_Revert}"
-                    />
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Padding="0"
+                                MinWidth="130"
+                                Margin="10,0"
+                                HorizontalAlignment="Right"
+                                Command="{Binding RevertChangeCommand}"
+                                Content="{DynamicResource VMCP_Revert}"
+                                />
 
-            </StackPanel>
-            
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SectionBorder}">
+                <StackPanel Margin="5">
+                    <TextBlock Style="{StaticResource HeaderText}"
+                                Text="{DynamicResource VMCP_AdvancedSetting_Header}"
+                                Margin="5,0,5,10"
+                                />
+
+                    <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_DisableCameraDuringActive}"
+                              Margin="15,5"
+                              IsChecked="{Binding DisableCameraDuringVMCPActive.Value, Mode=TwoWay}"
+                              />
+                    <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_DisableMicDuringActive}"
+                              Margin="15,5"
+                              IsChecked="{Binding DisableMicDuringVMCPFacialActive.Value, Mode=TwoWay}"
+                              />
+
+                </StackPanel>
+            </Border>
+
+
         </StackPanel>
  
     </ScrollViewer>

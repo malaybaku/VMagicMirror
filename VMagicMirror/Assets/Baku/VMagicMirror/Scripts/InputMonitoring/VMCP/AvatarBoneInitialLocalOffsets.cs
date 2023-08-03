@@ -23,7 +23,11 @@ namespace Baku.VMagicMirror.VMCP
         {
             Bones = Enum.GetValues(typeof(HumanBodyBones))
                 .Cast<HumanBodyBones>()
-                .Where(b => b != HumanBodyBones.LastBone)
+                .Where(b => 
+                    b != HumanBodyBones.LastBone && 
+                    b != HumanBodyBones.LeftEye && 
+                    b != HumanBodyBones.RightEye && 
+                    b != HumanBodyBones.Jaw)
                 .ToArray();
         }
 

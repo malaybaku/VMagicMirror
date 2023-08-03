@@ -129,7 +129,10 @@ namespace Baku.VMagicMirror.VMCP
             _root = new GameObject("VMCPBasedHumanoid_Root").transform;
             foreach (var bone in Enum.GetValues(typeof(HumanBodyBones)).Cast<HumanBodyBones>())
             {
-                if (bone == HumanBodyBones.LastBone)
+                if (bone == HumanBodyBones.LastBone || 
+                    bone == HumanBodyBones.LeftEye || 
+                    bone == HumanBodyBones.RightEye || 
+                    bone == HumanBodyBones.Jaw)
                 {
                     continue;
                 }
@@ -173,7 +176,11 @@ namespace Baku.VMagicMirror.VMCP
         {
             foreach (var bone in Enum.GetValues(typeof(HumanBodyBones)).Cast<HumanBodyBones>())
             {
-                if (bone == HumanBodyBones.LastBone)
+                //NOTE: この辺のホネは直接FKで使う予定がないのでカット
+                if (bone == HumanBodyBones.LastBone ||
+                    bone == HumanBodyBones.LeftEye || 
+                    bone == HumanBodyBones.RightEye || 
+                    bone == HumanBodyBones.Jaw)
                 {
                     continue;
                 }

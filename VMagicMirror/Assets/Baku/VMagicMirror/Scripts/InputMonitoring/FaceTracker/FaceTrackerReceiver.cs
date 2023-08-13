@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using Baku.VMagicMirror.VMCP;
+using UniRx;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -11,32 +13,42 @@ namespace Baku.VMagicMirror
     public sealed class FaceTrackerReceiver 
     {
         private readonly FaceTracker _faceTracker;
+        private readonly VMCPActiveness _vmcpActiveness;
         
-        private bool _enableFaceTracking = true;
-        private bool _enableHighPowerMode = false;
-        private bool _enableHandTracking = false;
-        private string _cameraDeviceName = "";
-        private bool _enableExTracker = false;
+        private readonly ReactiveProperty<string> _cameraDeviceName = new ReactiveProperty<string>("");
+
+        private readonly ReactiveProperty<bool> _enableFaceTracking = new ReactiveProperty<bool>(true);
+        private readonly ReactiveProperty<bool> _enableHighPowerMode = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _enableHandTracking = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _enableExTracker = new ReactiveProperty<bool>(false);
+
+        private readonly ReactiveProperty<bool> _disableCameraDuringVmcpActive =
+            new ReactiveProperty<bool>(true);
         
-        public FaceTrackerReceiver(IMessageReceiver receiver, FaceTracker faceTracker)
+        public FaceTrackerReceiver(
+            IMessageReceiver receiver, 
+            FaceTracker faceTracker,
+            VMCPActiveness vmcpActiveness
+            )
         {
             _faceTracker = faceTracker;
-            
+            _vmcpActiveness = vmcpActiveness;
+
             receiver.AssignCommandHandler(
                 VmmCommands.SetCameraDeviceName,
-                message => SetCameraDeviceName(message.Content)
+                message => _cameraDeviceName.Value = message.Content
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.EnableFaceTracking,
-                message => SetEnableFaceTracking(message.ToBoolean())
+                message => _enableFaceTracking.Value = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.EnableWebCamHighPowerMode,
-                message => SetWebCamHighPowerMode(message.ToBoolean())
+                message => _enableHighPowerMode.Value = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerEnable,
-                message => SetEnableExTracker(message.ToBoolean())
+                message => _enableExTracker.Value = message.ToBoolean()
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.CalibrateFace,
@@ -49,58 +61,31 @@ namespace Baku.VMagicMirror
 
             receiver.AssignCommandHandler(
                 VmmCommands.EnableImageBasedHandTracking,
-                message => SetHandTrackingEnable(message.ToBoolean())
+                message => _enableHandTracking.Value = message.ToBoolean()
                 );
             
+            receiver.AssignCommandHandler(
+                VmmCommands.SetDisableCameraDuringVMCPActive,
+                message => _disableCameraDuringVmcpActive.Value = message.ToBoolean()
+            );
+
             receiver.AssignQueryHandler(
                 VmmQueries.CameraDeviceNames,
                 query => query.Result = DeviceNames.CreateDeviceNamesJson(GetCameraDeviceNames())
                 );
-        }
 
-        private void SetEnableFaceTracking(bool enable)
-        {
-            if (_enableFaceTracking == enable)
-            {
-                return;
-            }
+            Observable.Merge(
+                _cameraDeviceName.Skip(1).AsUnitObservable(),
+                _enableFaceTracking.Skip(1).AsUnitObservable(),
+                _enableHighPowerMode.Skip(1).AsUnitObservable(),
+                _enableHandTracking.Skip(1).AsUnitObservable(),
+                _enableExTracker.Skip(1).AsUnitObservable(),
+                _disableCameraDuringVmcpActive.Skip(1).AsUnitObservable(),
+                _vmcpActiveness.IsActive.Skip(1).AsUnitObservable()
+                )
+                .Subscribe(_ => UpdateFaceDetectorState())
+                .AddTo(_faceTracker);
 
-            _enableFaceTracking = enable;
-            UpdateFaceDetectorState();
-        }
-        
-        private void SetWebCamHighPowerMode(bool enable)
-        {
-            if (_enableHighPowerMode == enable)
-            {
-                return;
-            }
-
-            _enableHighPowerMode = enable;
-            UpdateFaceDetectorState();
-        }
-
-        private void SetHandTrackingEnable(bool enable)
-        {
-            _enableHandTracking = enable;
-            UpdateFaceDetectorState();
-        }
-
-        private void SetEnableExTracker(bool enable)
-        {
-            if (_enableExTracker == enable)
-            {
-                return;
-            }
-
-            _enableExTracker = enable;
-            UpdateFaceDetectorState();
-        }
-
-        private void SetCameraDeviceName(string content)
-        {
-            _cameraDeviceName = content;
-            UpdateFaceDetectorState();
         }
         
         private void UpdateFaceDetectorState()
@@ -110,22 +95,22 @@ namespace Baku.VMagicMirror
             //カメラが指定されてる→
             //  - 手トラッキングあり → 顔まわりがどうなっててもカメラは起こす
             //  - 手トラッキングなし → Ex.Trackerの状態と顔トラッキング自体のオンオフを見たうえで判断
-            bool canUseCamera = !string.IsNullOrEmpty(_cameraDeviceName);
+            var canUseCamera = !string.IsNullOrEmpty(_cameraDeviceName.Value);
             if (canUseCamera)
             {
                 canUseCamera =
-                    _enableHandTracking ||
-                    (_enableFaceTracking && !_enableExTracker);
+                    _enableHandTracking.Value ||
+                    (_enableFaceTracking.Value && !_enableExTracker.Value);
             }
 
             if (canUseCamera)
             {
                 var trackingMode = FaceTrackingMode.None;
-                if (_enableFaceTracking && !_enableExTracker)
+                if (_enableFaceTracking.Value && !_enableExTracker.Value)
                 {
-                    trackingMode = _enableHighPowerMode ? FaceTrackingMode.HighPower : FaceTrackingMode.LowPower;
+                    trackingMode = _enableHighPowerMode.Value ? FaceTrackingMode.HighPower : FaceTrackingMode.LowPower;
                 }
-                _faceTracker.ActivateCameraForFaceTracking(_cameraDeviceName, trackingMode);
+                _faceTracker.ActivateCameraForFaceTracking(_cameraDeviceName.Value, trackingMode);
             }
             else
             {
@@ -137,6 +122,5 @@ namespace Baku.VMagicMirror
             => WebCamTexture.devices
             .Select(d => d.name)
             .ToArray();
-        
     }
 }

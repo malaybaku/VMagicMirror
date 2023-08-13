@@ -80,6 +80,5 @@ Advanced Settings support detailed option. In most cases you should use default 
 <div class="doc-ul" markdown="1">
 
 - `Disable Camera feature during VMCP is active`: Turn on to disable webcam using features in VMagicMirror during VMCP is active. This option is on by default. You should enable this option if VMCP source app uses your PC's webcam.
-- `Disable Mic feature during VMCP facial is active`: Turn on to disable microphone recording process during VMCP based facial is active. The option is on by default, and even the option is off you cannot apply VMM's lipsync over the VMCP based facial.
 
 </div>

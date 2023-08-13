@@ -519,7 +519,6 @@ VMagicMirror supports to receive:
     <sys:String x:Key="VMCP_Apply">Apply Changes</sys:String>
     <sys:String x:Key="VMCP_Revert">Revert</sys:String>    
     <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">Disable Camera feature during VMCP is active</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_DisableMicDuringActive">Disable Mic feature during VMCP facial is active</sys:String>
     
     <!-- HotKey -->
     <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>

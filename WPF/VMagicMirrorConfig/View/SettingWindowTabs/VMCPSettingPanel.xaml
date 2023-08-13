@@ -162,10 +162,6 @@
                               Margin="15,5"
                               IsChecked="{Binding DisableCameraDuringVMCPActive.Value, Mode=TwoWay}"
                               />
-                    <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_DisableMicDuringActive}"
-                              Margin="15,5"
-                              IsChecked="{Binding DisableMicDuringVMCPFacialActive.Value, Mode=TwoWay}"
-                              />
 
                 </StackPanel>
             </Border>

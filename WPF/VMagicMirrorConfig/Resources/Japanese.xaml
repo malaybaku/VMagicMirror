@@ -520,7 +520,6 @@ VMagicMirrorは以下のモーションを受信して適用できます。
     <sys:String x:Key="VMCP_Apply">変更を適用</sys:String>
     <sys:String x:Key="VMCP_Revert">キャンセル</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">VMCPの受信中はカメラ機能をオフ</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_DisableMicDuringActive">VMCPで表情を受信中はマイク機能をオフ</sys:String>
     <!-- (あんまやりたくないが) キャリブレーション用のUIが欲しいかも… -->
 
     <!-- HotKey -->

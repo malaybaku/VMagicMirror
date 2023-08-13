@@ -33,7 +33,6 @@
         public VMCPSourceItemViewModel Source3 { get; private set; } = new();
 
         public RProperty<bool> DisableCameraDuringVMCPActive => _model.DisableCameraDuringVMCPActive;
-        public RProperty<bool> DisableMicDuringVMCPFacialActive => _model.DisableMicDuringVMCPFacialActive;
 
         public void SetDirty() => IsDirty.Value = true;
         

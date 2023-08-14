@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 using uOSC;
 using Zenject;
@@ -9,7 +10,11 @@ namespace Baku.VMagicMirror.VMCP
     public class VMCPReceiver : PresenterBase, ITickable
     {
         private const int OscServerCount = 3;
+        //この秒数だけ受信してなければステータスとして切断扱いになる
+        private const float DisconnectCount = 0.5f;
+        
         private readonly IMessageReceiver _messageReceiver;
+        private readonly IMessageSender _messageSender;
         private readonly IFactory<uOscServer> _oscServerFactory;
         private readonly AvatarBoneInitialLocalOffsets _boneOffsets;
         private readonly VMCPBlendShape _blendShape;
@@ -24,9 +29,17 @@ namespace Baku.VMagicMirror.VMCP
         private bool _optionEnabled;
         private VMCPSources _sources = VMCPSources.Empty;
 
+        private readonly bool[] _connected = new bool[OscServerCount];
+        //NOTE: ビットフラグで_connectedの状態を表す値(0~7)を入れる。変化検知のために使い、値そのものは読まない
+        private readonly ReactiveProperty<int> _connectedValue = new ReactiveProperty<int>(0);
+
+        private readonly float[] _disconnectCountDown = new float[OscServerCount];
+        
+        
         [Inject]
         public VMCPReceiver(
             IMessageReceiver messageReceiver, 
+            IMessageSender messageSender,
             IFactory<uOscServer> oscServerFactory,
             AvatarBoneInitialLocalOffsets boneOffsets,
             VMCPBlendShape blendShape,
@@ -35,6 +48,7 @@ namespace Baku.VMagicMirror.VMCP
             )
         {
             _messageReceiver = messageReceiver;
+            _messageSender = messageSender;
             _oscServerFactory = oscServerFactory;
             _boneOffsets = boneOffsets;
             _blendShape = blendShape;
@@ -62,6 +76,12 @@ namespace Baku.VMagicMirror.VMCP
                 VmmCommands.SetVMCPSources,
                 command => RefreshSettings(command.Content)
                 );
+            
+            //NOTE: 「複数ソースの受信設定していたのがほぼ同時に始まる」というケースに備えてDebounceしておく
+            _connectedValue
+                .Throttle(TimeSpan.FromSeconds(0.5f))
+                .Subscribe(_ => NotifyConnectStatus())
+                .AddTo(this);
         }
 
         public void Tick()
@@ -93,6 +113,16 @@ namespace Baku.VMagicMirror.VMCP
                         rightHandPose.position,
                         rightHandPose.rotation
                     );
+                }
+
+                //一定時間データを受信しなかった受信元は切断扱いになる
+                if (_disconnectCountDown[i] > 0f)
+                {
+                    _disconnectCountDown[i] -= Time.deltaTime;
+                    if (_disconnectCountDown[i] <= 0f)
+                    {
+                        UpdateConnectedStatus(i, false);
+                    }
                 }
             }
         }
@@ -159,9 +189,15 @@ namespace Baku.VMagicMirror.VMCP
 
         private void RefreshInternal()
         {
+            //設定の変更後はいったん未接続扱いにする。オプション無効化時などにステータスを切るのはコレで実現される
+            for (var i = 0; i < OscServerCount; i++)
+            {
+                UpdateConnectedStatus(i, false);
+            }
+            _connectedValue.Value = 0;
+
             var serverShouldActive =
                 _optionEnabled && _sources.Sources.Any(s => s.HasValidSetting());
-
             if (!serverShouldActive)
             {
                 foreach (var server in _servers)
@@ -215,10 +251,18 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
+        private void UpdateConnectedStatus(int index, bool connected)
+        {
+            _connected[index] = connected;
+            _connectedValue.Value = (_connected[2] ? 4 : 0) + (_connected[1] ? 2 : 0) + (_connected[0] ? 1 : 0);
+            _disconnectCountDown[index] = connected ? DisconnectCount : 0f;
+        }
+        
         private void OnOscDataReceived(int sourceIndex, uOSC.Message message)
         {
-            var settings = _dataPassSettings[sourceIndex];
+            UpdateConnectedStatus(sourceIndex, true);
 
+            var settings = _dataPassSettings[sourceIndex];
             var messageType = message.GetMessageType();
             switch (messageType)
             {
@@ -297,6 +341,12 @@ namespace Baku.VMagicMirror.VMCP
             {
                 _blendShape.SetValue(key, value);
             }
+        }
+
+        private void NotifyConnectStatus()
+        {
+            var json = new VMCPReceiveStatus(_connected).ToJson();
+            _messageSender.SendCommand(MessageFactory.Instance.NotifyVmcpReceiveStatus(json));
         }
     }
 }

@@ -160,6 +160,20 @@
                 <Setter Property="BorderBrush" Value="Transparent"/>
             </Style>
 
+            <Style x:Key="ControlPanelTabControl"
+                   TargetType="{x:Type dragablz:TabablzControl}"
+                   BasedOn="{StaticResource MaterialDesignAlternateTabablzControlStyle}">
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="{x:Type dragablz:DragablzItem}" BasedOn="{StaticResource MaterialDesignAlternateDragableTabItemStyle}">
+                            <Setter Property="Height" Value="50"/>
+                            <Setter Property="Padding" Value="8" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <Style x:Key="SettingHeaderPackIcon" TargetType="md:PackIcon">
                 <Setter Property="VerticalAlignment" Value="Center"/>
                 <Setter Property="Width" Value="25"/>

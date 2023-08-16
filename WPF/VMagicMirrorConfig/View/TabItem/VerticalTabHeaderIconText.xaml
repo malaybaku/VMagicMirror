@@ -5,23 +5,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="150">
-    <StackPanel Orientation="Horizontal" Margin="5,0">
+             d:DesignHeight="60" d:DesignWidth="150">
+    <StackPanel Orientation="Vertical" Margin="0">
         <StackPanel.RenderTransform>
             <TranslateTransform x:Name="PositionTransform"/>
         </StackPanel.RenderTransform>
         <md:PackIcon Name="packIcon"
-                     VerticalAlignment="Center"
-                     Margin="5,0,3,0"
+                     HorizontalAlignment="Center"
+                     Margin="0"
                      Width="22"
                      Height="22"
                      />
         
         <TextBlock Name="textBlock"
-                   FontSize="12"
+                   FontSize="10"
                    FontWeight="Bold"
                    VerticalAlignment="Center"
-                   Margin="3,0,5,0"
+                   Margin="0,4,0,0"
                    />
     </StackPanel>
 </UserControl>

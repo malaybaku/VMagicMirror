@@ -121,6 +121,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 UnityAppStarter.StartUnityApp();
             }
         }
+
+        public RProperty<bool> ShowVmcpTab { get; } = new RProperty<bool>(true);
     }
 
     public interface IWindowViewModel : IDisposable

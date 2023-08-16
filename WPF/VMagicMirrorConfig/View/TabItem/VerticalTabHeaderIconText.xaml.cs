@@ -97,7 +97,7 @@ namespace Baku.VMagicMirrorConfig.View
 
         private static void OnIconWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TabHeaderIconText control)
+            if (d is VerticalTabHeaderIconText control)
             {
                 control.packIcon.Width = (double)e.NewValue;
             }
@@ -105,7 +105,7 @@ namespace Baku.VMagicMirrorConfig.View
 
         private static void OnIconHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TabHeaderIconText control)
+            if (d is VerticalTabHeaderIconText control)
             {
                 control.packIcon.Height = (double)e.NewValue;
             }
@@ -113,7 +113,7 @@ namespace Baku.VMagicMirrorConfig.View
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TabHeaderIconText control)
+            if (d is VerticalTabHeaderIconText control)
             {
                 control.textBlock.Text = (string)e.NewValue;
             }
@@ -121,7 +121,7 @@ namespace Baku.VMagicMirrorConfig.View
 
         private static void OnIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TabHeaderIconText control)
+            if (d is VerticalTabHeaderIconText control)
             {
                 control.packIcon.Kind = (PackIconKind)e.NewValue;
             }
@@ -129,7 +129,7 @@ namespace Baku.VMagicMirrorConfig.View
 
         private static void OnTextMarginChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TabHeaderIconText control)
+            if (d is VerticalTabHeaderIconText control)
             {
                 control.textBlock.Margin = (Thickness)e.NewValue;
             }
@@ -137,7 +137,7 @@ namespace Baku.VMagicMirrorConfig.View
 
         private static void OnTranslateXChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is TabHeaderIconText control)
+            if (d is VerticalTabHeaderIconText control)
             {
                 control.PositionTransform.X = (double)e.NewValue;
             }

@@ -20,6 +20,7 @@
     <sys:String x:Key="TopBar_Home">Home</sys:String>
     <sys:String x:Key="TopBar_Streaming">Streaming</sys:String>
     <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">Accessory</sys:String>
     <sys:String x:Key="TopBar_HandTrack">Hands</sys:String>
     

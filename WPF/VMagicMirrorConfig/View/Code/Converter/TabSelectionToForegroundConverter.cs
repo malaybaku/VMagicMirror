@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -11,7 +10,6 @@ namespace Baku.VMagicMirrorConfig.View
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Debug.WriteLine($"value type == {value.GetType()}, {value}, param type == {parameter.GetType()}, {parameter}");
             if (value is not int v)
             {
                 return Binding.DoNothing;

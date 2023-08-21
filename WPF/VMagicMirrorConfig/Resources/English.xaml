@@ -133,6 +133,7 @@ VMagicMirror supports to receive:
     <sys:String x:Key="VMCP_AdvancedSetting_Header">Advanced Settings</sys:String>    
     <sys:String x:Key="VMCP_GridLabel_AppName">App Name</sys:String>
     <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">App Name</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_Connected">Connect</sys:String>
     <sys:String x:Key="VMCP_GridLabel_PortNumber">Port Number</sys:String>
     <sys:String x:Key="VMCP_GridLabel_HeadPose">Head Pose</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Facial">Facial</sys:String>

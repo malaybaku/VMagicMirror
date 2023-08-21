@@ -5,20 +5,25 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
+             xmlns:v="clr-namespace:Baku.VMagicMirrorConfig.View"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:VMCPSourceItemViewModel}"
              d:DesignHeight="40" d:DesignWidth="450">
+    <UserControl.Resources>
+        <v:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="60" />
             <ColumnDefinition Width="60" />
             <ColumnDefinition Width="60" />
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="50" />
             <ColumnDefinition Width="30" />
         </Grid.ColumnDefinitions>
 
@@ -40,8 +45,32 @@
                 md:HintAssist.Hint="{DynamicResource VMCP_GridLabel_AppName_Placeholder}"
                 />
 
+        <Ellipse Grid.Column="5"
+                 Width="18" Height="18"
+                 Stroke="{StaticResource MahApps.Brushes.Gray4}"
+                 StrokeDashArray="1.5 1.5"
+                 Visibility="{Binding Connected.Value, 
+                                      Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                 />
+        <Ellipse Grid.Column="5"
+                 Width="18" Height="18"
+                 Fill="{StaticResource PrimaryHueMidBrush}"
+                 Visibility="{Binding Connected.Value, 
+                                      Converter={StaticResource BooleanToVisibilityConverter}}"
+                 />
+        <md:PackIcon Grid.Column="5"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Width="12"
+                     Height="12"
+                     Foreground="White"
+                     Kind="Check"
+                     Visibility="{Binding Connected.Value, 
+                                          Converter={StaticResource BooleanToVisibilityConverter}}"             
+                     />
+
         <Button Style="{StaticResource CategorySettingResetButton}"
-                Grid.Column="5"
+                Grid.Column="6"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 Command="{Binding ResetCommand}"

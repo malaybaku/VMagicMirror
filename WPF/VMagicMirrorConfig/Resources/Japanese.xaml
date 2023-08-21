@@ -132,7 +132,8 @@ VMagicMirrorは以下のモーションを受信して適用できます。
     <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">受信元の設定</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_Header">詳細設定</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_AppName">接続先アプリ名</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_AppName">アプリ名</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_Connected">接続</sys:String>
     <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">アプリ名</sys:String>
     <sys:String x:Key="VMCP_GridLabel_PortNumber">ポート番号</sys:String>
     <sys:String x:Key="VMCP_GridLabel_HeadPose">頭の姿勢</sys:String>

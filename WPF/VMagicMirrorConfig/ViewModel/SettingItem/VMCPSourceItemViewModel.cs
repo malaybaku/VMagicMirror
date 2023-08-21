@@ -1,4 +1,6 @@
-﻿namespace Baku.VMagicMirrorConfig.ViewModel
+﻿using System;
+
+namespace Baku.VMagicMirrorConfig.ViewModel
 {
     //NOTE: コマンドベースでApplyしないと適用されんという使い方にする (これはポート番号の編集が絡むため)。
     //そのため、RPropertyは基本使わず、
@@ -14,12 +16,13 @@
             ReceiveFacial = new(false);
             ReceiveHandPose = new(false);
             ResetCommand = new ActionCommand(ResetContent);
+            _setDirtyAction = null;
         }
 
-        public VMCPSourceItemViewModel(VMCPSource model, VMCPSettingViewModel parent)
+        public VMCPSourceItemViewModel(VMCPSource model, Action setDirtyAction)
         {
             PortNumberIsInvalid = new RProperty<bool>(false);
-            _parent = parent;
+            _setDirtyAction = setDirtyAction;
 
             Name = new RProperty<string>(model.Name, _ => SetDirty());
             Port = new RProperty<string>(model.Port.ToString(), v =>
@@ -41,7 +44,7 @@
             ResetCommand = new ActionCommand(ResetContent);
         }
 
-        private readonly VMCPSettingViewModel? _parent;
+        private readonly Action? _setDirtyAction;
 
         public RProperty<string> Name { get; }
         //NOTE: 実際は0-65535の間の数字であってほしい
@@ -52,6 +55,8 @@
         public RProperty<bool> ReceiveHeadPose { get; set; }
         public RProperty<bool> ReceiveFacial { get; set; }
         public RProperty<bool> ReceiveHandPose { get; set; }
+
+        public RProperty<bool> Connected { get; } = new(false);
 
         public ActionCommand ResetCommand { get; }
 
@@ -92,6 +97,6 @@
             }
         }
 
-        private void SetDirty() => _parent?.SetDirty();
+        private void SetDirty() => _setDirtyAction?.Invoke();
     }
 }

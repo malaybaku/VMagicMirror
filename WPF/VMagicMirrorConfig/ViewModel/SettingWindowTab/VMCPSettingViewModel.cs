@@ -4,84 +4,51 @@
     public class VMCPSettingViewModel : SettingViewModelBase
     {
         public VMCPSettingViewModel() : this(
-            ModelResolver.Instance.Resolve<VMCPSettingModel>())
+            ModelResolver.Instance.Resolve<VMCPSettingModel>(),
+            ModelResolver.Instance.Resolve<PreferenceSettingModel>())
         {
         }
 
-        internal VMCPSettingViewModel(VMCPSettingModel model)
+        internal VMCPSettingViewModel(
+            VMCPSettingModel settingModel,
+            PreferenceSettingModel preferenceModel)
         {
-            _model = model;
-            IsDirty = new RProperty<bool>(false, _ => UpdateCanApply());
-            ApplyChangeCommand = new ActionCommand(ApplyChange);
-            RevertChangeCommand = new ActionCommand(RevertChange);
+            _settingModel = settingModel;
+            _preferenceModel = preferenceModel;
+            EnableVMCPTabOnControlPanelCommand = new ActionCommand(EnableVMCPTab);
+            DisableVMCPTabOnControlPanelCommand = new ActionCommand(DisableVMCPTab);
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
+        }
 
-            if (!IsInDesignMode)
+        private readonly VMCPSettingModel _settingModel;
+        private readonly PreferenceSettingModel _preferenceModel;
+
+        public RProperty<bool> ShowVMCPTabOnControlPanel => _preferenceModel.ShowVMCPTabOnControlPanel;
+
+        public ActionCommand EnableVMCPTabOnControlPanelCommand { get; }
+        public ActionCommand DisableVMCPTabOnControlPanelCommand { get; }
+        public ActionCommand OpenDocUrlCommand { get; }
+
+        public async void EnableVMCPTab()
+        {
+            var dialog = MessageIndication.EnableVMCPTab();
+            var result = await MessageBoxWrapper.Instance.ShowAsync(dialog.Title, dialog.Content, MessageBoxWrapper.MessageBoxStyle.OKCancel);
+            if (result)
             {
-                LoadCurrentSettings();
+                _preferenceModel.ShowVMCPTabOnControlPanel.Value = true;
             }
         }
 
-        private readonly VMCPSettingModel _model;
-
-        public RProperty<bool> IsDirty { get; }
-        public RProperty<bool> CanApply { get; } = new(false);
-
-        public RProperty<bool> VMCPEnabled => _model.VMCPEnabled;
-        public VMCPSourceItemViewModel Source1 { get; private set; } = new();
-        public VMCPSourceItemViewModel Source2 { get; private set; } = new();
-        public VMCPSourceItemViewModel Source3 { get; private set; } = new();
-
-        public RProperty<bool> DisableCameraDuringVMCPActive => _model.DisableCameraDuringVMCPActive;
-
-        public void SetDirty() => IsDirty.Value = true;
-        
-        public ActionCommand ApplyChangeCommand { get; }
-        public ActionCommand RevertChangeCommand { get; }
-        public ActionCommand OpenDocUrlCommand { get; }
-
-        private void UpdateCanApply()
+        public async void DisableVMCPTab()
         {
-            CanApply.Value = IsDirty.Value &&
-                !Source1.PortNumberIsInvalid.Value &&
-                !Source2.PortNumberIsInvalid.Value &&
-                !Source3.PortNumberIsInvalid.Value;
-        }
-
-        private void LoadCurrentSettings()
-        {
-            var sources = _model.GetCurrentSetting().Sources;
-
-            Source1 = new VMCPSourceItemViewModel(
-                sources.Count > 0 ? sources[0] : new VMCPSource(),
-                this);
-            Source2 = new VMCPSourceItemViewModel(
-                sources.Count > 1 ? sources[1] : new VMCPSource(),
-                this);
-            Source3 = new VMCPSourceItemViewModel(
-                sources.Count > 2 ? sources[2] : new VMCPSource(),
-                this);
-
-            RaisePropertyChanged(nameof(Source1));
-            RaisePropertyChanged(nameof(Source2));
-            RaisePropertyChanged(nameof(Source3));
-            IsDirty.Value = false;
-        }
-
-        private void ApplyChange()
-        {
-            var setting = new VMCPSources(new[]
+            var dialog = MessageIndication.DisableVMCPTab();
+            var result = await MessageBoxWrapper.Instance.ShowAsync(dialog.Title, dialog.Content, MessageBoxWrapper.MessageBoxStyle.OKCancel);
+            if (result)
             {
-                Source1.CreateSetting(),
-                Source2.CreateSetting(),
-                Source3.CreateSetting(),
-            });
-
-            _model.SetVMCPSourceSetting(setting);
-            IsDirty.Value = false;
+                _preferenceModel.ShowVMCPTabOnControlPanel.Value = false;
+                _settingModel.VMCPEnabled.Value = false;
+            }
         }
-
-        private void RevertChange() => LoadCurrentSettings();
 
         private void OpenDocUrl()
         {

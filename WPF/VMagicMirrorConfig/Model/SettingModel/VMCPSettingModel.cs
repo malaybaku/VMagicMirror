@@ -1,12 +1,18 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿using System;
+using System.Collections.Generic;
+
+namespace Baku.VMagicMirrorConfig
 {
     internal class VMCPSettingModel : SettingModelBase<VMCPSetting>
     {
-        public VMCPSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        public VMCPSettingModel() : this(
+            ModelResolver.Instance.Resolve<IMessageSender>(),
+            ModelResolver.Instance.Resolve<IMessageReceiver>()
+            )
         {
         }
 
-        public VMCPSettingModel(IMessageSender sender) : base(sender)
+        public VMCPSettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             var defaultSetting = VMCPSetting.Default;
             VMCPEnabled = new(
@@ -18,11 +24,32 @@
                 defaultSetting.DisableCameraDuringVMCPActive,
                 v => SendMessage(MessageFactory.Instance.SetDisableCameraDuringVMCPActive(v))
                 );
+
+            receiver.ReceivedCommand += OnReceiveCommand;
         }
 
         public RProperty<bool> VMCPEnabled { get; }
         public RProperty<string> SerializedVMCPSourceSetting { get; }
         public RProperty<bool> DisableCameraDuringVMCPActive { get; }
+
+        private readonly VMCPReceiveStatus _receiveStatus = new();
+        public IReadOnlyList<bool> Conneceted => _receiveStatus.Connected;
+
+        public event EventHandler? ConnectedStatusChanged;
+
+        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        {
+            if (e.Command != ReceiveMessageNames.NotifyVmcpReceiveStatus)
+            {
+                return;
+            }
+
+            var changed = _receiveStatus.ApplySerializedStatus(e.Args);
+            if (changed)
+            {
+                ConnectedStatusChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
 
         public VMCPSources GetCurrentSetting()
         {

@@ -119,6 +119,31 @@
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">舌を出すと</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">頬をふくらませると</sys:String>
 
+    <!-- VMCP -->
+    <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションからモーション情報を受信できます。
+VMagicMirrorは以下のモーションを受信して適用できます。
+
+- 頭部モーション
+- 表情 (BlendShape)
+- 両手の位置情報</sys:String>
+    <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
+
+    <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
+    <sys:String x:Key="VMCP_ReceiveSetting_Header">受信元の設定</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_Header">詳細設定</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_AppName">接続先アプリ名</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">アプリ名</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_PortNumber">ポート番号</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HeadPose">頭の姿勢</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_Facial">表情</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HandPose">手の姿勢</sys:String>
+    <sys:String x:Key="VMCP_Notice_Priority">上で設定した受信元ほど優先して適用されます</sys:String>
+    <sys:String x:Key="VMCP_ShouldApply">*未適用の設定があります</sys:String>
+    <sys:String x:Key="VMCP_Apply">変更を適用</sys:String>
+    <sys:String x:Key="VMCP_Revert">キャンセル</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">VMCPの受信中はカメラ機能をオフ</sys:String>    
+    
     <!-- HandTracking -->
     <sys:String x:Key="HandTracking_Header">ハンドトラッキング</sys:String>
     <sys:String x:Key="HandTracking_Instruction" xml:space="preserve">webカメラでのハンドトラッキングです。
@@ -497,31 +522,16 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">キーボード (数字の0-9)</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDIコントローラ</sys:String>
 
-    <!-- VMCP -->
-    <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
-    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションからモーション情報を受信できます。
-VMagicMirrorは以下のモーションを受信して適用できます。
+    <!-- VMCP Setting Window Only -->
+    <sys:String x:Key="VMCP_Setting_EnableVMCPTab">設定タブをメインウィンドウに表示</sys:String>
+    <sys:String x:Key="VMCP_Setting_DisableVMCPTab">設定タブをメインウィンドウから非表示</sys:String>
 
-- 頭部モーション
-- 表情 (BlendShape)
-- 両手の位置情報</sys:String>
-    <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
+    <sys:String x:Key="VMCP_Setting_EnableVMCPTab_Notice" xml:space="preserve">この機能は現在非表示になっています。
+「設定タブをメインウィンドウに表示」を選択すると、メインウィンドウに詳細設定タブが表示されます。</sys:String>
+    <sys:String x:Key="VMCP_Setting_DisableVMCPTab_Notice" xml:space="preserve">この機能は現在有効です。
+詳細設定はメインウィンドウ上の「VMCP」タブから設定できます。
 
-    <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
-    <sys:String x:Key="VMCP_ReceiveSetting_Header">受信元の設定</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_Header">詳細設定</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_AppName">接続先アプリ名</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">アプリ名</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_PortNumber">ポート番号</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HeadPose">頭の姿勢</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_Facial">表情</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HandPose">手の姿勢</sys:String>
-    <sys:String x:Key="VMCP_Notice_Priority">上で設定した受信元ほど優先して適用されます</sys:String>
-    <sys:String x:Key="VMCP_ShouldApply">*未適用の設定があります</sys:String>
-    <sys:String x:Key="VMCP_Apply">変更を適用</sys:String>
-    <sys:String x:Key="VMCP_Revert">キャンセル</sys:String>
-    <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">VMCPの受信中はカメラ機能をオフ</sys:String>
-    <!-- (あんまやりたくないが) キャリブレーション用のUIが欲しいかも… -->
+VMCPを使わない場合、「設定タブをメインウィンドウから非表示」でタブを非表示にできます。</sys:String>
 
     <!-- HotKey -->
     <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>
@@ -705,7 +715,15 @@ webカメラでの顔トラッキングを有効にする場合は
     
     <sys:String x:Key="DialogTitle_ResetVmcpSourceItemConfirm">受信設定のリセット</sys:String>
     <sys:String x:Key="DialogMessage_ResetVmcpSourceItemConfirm">選択したVMC Protocol受信の設定を削除しますか？</sys:String>    
-    
+
+    <sys:String x:Key="DialogTitle_EnableVMCPTab">VMC Protocolの設定を表示</sys:String>
+    <sys:String x:Key="DialogMessage_EnableVMCPTab">続行するとメインの設定ウィンドウに「VMCP」タブが追加されます。この変更はもとに戻す事ができます。</sys:String>    
+
+    <sys:String x:Key="DialogTitle_DisableVMCPTab">VMC Protocolの設定を非表示</sys:String>
+    <sys:String x:Key="DialogMessage_DisableVMCPTab" xml:space="preserve">続行するとメインの設定ウィンドウから「VMCP」タブを非表示にします。
+VMCPのデータが受信中の場合、この操作で受信機能はオフになります。
+それ以外の詳細設定は保持されます。</sys:String>    
+
     <!-- Snackbar Messages -->
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">選択されたマイクの接続を検出しました: {0}</sys:String>

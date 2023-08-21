@@ -39,134 +39,43 @@
                         Command="{Binding OpenDocUrlCommand}"
                         Content="{DynamicResource VMCP_SeeMore}"
                         />
-
             </Grid>
 
-            <CheckBox Content="{DynamicResource VMCP_Enable}"
-                      Margin="10,10,10,5"
-                      IsChecked="{Binding VMCPEnabled.Value, Mode=TwoWay}"
-                      />
+            <!-- Spacer -->
+            <Rectangle Height="20"/>
 
-            <Border Style="{StaticResource SectionBorder}">
-                <StackPanel Margin="5">
-                    <StackPanel Margin="5,0,5,10"
-                                Orientation="Horizontal">
+            <TextBlock Text="{DynamicResource VMCP_Setting_EnableVMCPTab_Notice}"
+                       TextWrapping="Wrap"
+                       Margin="15,10"
+                       Visibility="{Binding ShowVMCPTabOnControlPanel.Value, 
+                                         Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                       />
 
-                        <TextBlock Style="{StaticResource HeaderText}"
-                                Text="{DynamicResource VMCP_ReceiveSetting_Header}"
-                                   Margin="0"
-                                />
+            <Button Content="{DynamicResource VMCP_Setting_EnableVMCPTab}"
+                    HorizontalAlignment="Left"
+                    Width="NaN"
+                    Margin="10"
+                    Visibility="{Binding ShowVMCPTabOnControlPanel.Value, 
+                                         Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                    Command="{Binding EnableVMCPTabOnControlPanelCommand}"
+                    />
 
-                        <TextBlock Text="{DynamicResource VMCP_Notice_Priority}"
-                                   Margin="20,0,0,0"/>
-                    </StackPanel>
+            <TextBlock Text="{DynamicResource VMCP_Setting_DisableVMCPTab_Notice}"
+                       TextWrapping="Wrap"
+                       Margin="15,10"
+                       Visibility="{Binding ShowVMCPTabOnControlPanel.Value, 
+                                         Converter={StaticResource BooleanToVisibilityConverter}}"
+                       />
 
-                    <Grid Margin="0" 
-                          IsEnabled="{Binding VMCPEnabled.Value}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="40"/>
-                            <RowDefinition Height="40"/>
-                            <RowDefinition Height="40"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="30" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Row="0" Grid.Column="0"
-                                   HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_PortNumber}"
-                                   />
-                        <TextBlock Grid.Row="0" Grid.Column="1"
-                                   HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_HeadPose}"
-                                   />
-                        <TextBlock Grid.Row="0" Grid.Column="2"
-                                   HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_HandPose}"
-                                   />
-                        <TextBlock Grid.Row="0" Grid.Column="3"
-                                   HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_Facial}"
-                                   />
-                        <TextBlock Grid.Row="0" Grid.Column="4"
-                                   HorizontalAlignment="Center"
-                                   Text="{DynamicResource VMCP_GridLabel_AppName}"
-                                   />
-
-                        <Rectangle Grid.Row="1"
-                                   Grid.ColumnSpan="5"
-                                   Height="1"
-                                   Fill="{StaticResource MahApps.Brushes.Gray2}"
-                                   />
-
-                        <view:VMCPSourceItem Grid.Row="2" Grid.ColumnSpan="6"
-                                             DataContext="{Binding Source1}"
-                                             />
-                        <view:VMCPSourceItem Grid.Row="3" Grid.ColumnSpan="6"
-                                             DataContext="{Binding Source2}"
-                                             />
-                        <view:VMCPSourceItem Grid.Row="4" Grid.ColumnSpan="6"
-                                             DataContext="{Binding Source3}"
-                                             />
-                    </Grid>
-
-                    
-                    <TextBlock Text="{DynamicResource VMCP_ShouldApply}"
-                               FontWeight="Bold"
-                               Margin="15,15,15,5"
-                               Visibility="{Binding IsDirty.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
-                               />
-
-                    <StackPanel Orientation="Horizontal"
-                        Margin="0,5,0,5" 
-                        IsEnabled="{Binding VMCPEnabled}">
-
-                        <Button Padding="0"
-                                MinWidth="130"
-                                Margin="5,0"
-                                HorizontalAlignment="Right"
-                                IsEnabled="{Binding CanApply.Value}"
-                                Command="{Binding ApplyChangeCommand}"
-                                Content="{DynamicResource VMCP_Apply}"
-                                />
-
-                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                                Padding="0"
-                                MinWidth="130"
-                                Margin="10,0"
-                                HorizontalAlignment="Right"
-                                Command="{Binding RevertChangeCommand}"
-                                Content="{DynamicResource VMCP_Revert}"
-                                />
-
-                    </StackPanel>
-
-                </StackPanel>
-            </Border>
-
-            <Border Style="{StaticResource SectionBorder}">
-                <StackPanel Margin="5">
-                    <TextBlock Style="{StaticResource HeaderText}"
-                                Text="{DynamicResource VMCP_AdvancedSetting_Header}"
-                                Margin="5,0,5,10"
-                                />
-
-                    <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_DisableCameraDuringActive}"
-                              Margin="15,5"
-                              IsChecked="{Binding DisableCameraDuringVMCPActive.Value, Mode=TwoWay}"
-                              />
-
-                </StackPanel>
-            </Border>
-
-
+            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Content="{DynamicResource VMCP_Setting_DisableVMCPTab}"
+                    HorizontalAlignment="Left"
+                    Width="NaN"
+                    Margin="10"
+                    Visibility="{Binding ShowVMCPTabOnControlPanel.Value, 
+                                         Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Command="{Binding DisableVMCPTabOnControlPanelCommand}"
+                    />
         </StackPanel>
  
     </ScrollViewer>

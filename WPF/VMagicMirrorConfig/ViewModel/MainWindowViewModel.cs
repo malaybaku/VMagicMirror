@@ -23,7 +23,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _appQuitSetting = ModelResolver.Instance.Resolve<AppQuitSetting>();
             _avatarLoader = ModelResolver.Instance.Resolve<AvatarLoader>();
             _runtimeHelper = ModelResolver.Instance.Resolve<RuntimeHelper>();
+
+            if (IsInDesignMode)
+            {
+                ShowVmcpTab = new RProperty<bool>(true);
+            }
+            else
+            {
+                ShowVmcpTab = ModelResolver.Instance.Resolve<PreferenceSettingModel>().ShowVMCPTabOnControlPanel;
+            }
         }
+
+        public RProperty<bool> ShowVmcpTab { get; }
 
         public async void Initialize()
         {
@@ -121,8 +132,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 UnityAppStarter.StartUnityApp();
             }
         }
-
-        public RProperty<bool> ShowVmcpTab { get; } = new RProperty<bool>(true);
     }
 
     public interface IWindowViewModel : IDisposable

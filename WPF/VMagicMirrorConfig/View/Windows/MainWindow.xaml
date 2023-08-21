@@ -190,9 +190,5 @@
                      HorizontalAlignment="Center"
                      Margin="20,0"
                      />
-        <CheckBox HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                  IsChecked="{Binding ShowVmcpTab.Value}"
-                  >
-        </CheckBox>
     </Grid>
 </metro:MetroWindow>

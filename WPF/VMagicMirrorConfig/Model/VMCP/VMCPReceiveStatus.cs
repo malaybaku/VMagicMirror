@@ -46,6 +46,6 @@ namespace Baku.VMagicMirrorConfig
 
     public class SerializedVMCPReceiveStatus
     {
-        public bool[] Connected { get; set; }
+        public bool[]? Connected { get; set; }
     }
 }

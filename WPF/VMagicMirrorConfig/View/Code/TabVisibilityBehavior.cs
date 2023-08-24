@@ -2,7 +2,6 @@
 using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Controls;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig.View
@@ -22,7 +21,7 @@ namespace Baku.VMagicMirrorConfig.View
                 nameof(ShowVmcpTab),
                 typeof(bool),
                 typeof(TabVisibilityBehavior),
-                new PropertyMetadata(true, OnTabVisibilityChanged)
+                new PropertyMetadata(true, OnBehaviorPropertyChanged)
                 );
 
         public TabItem VmcpTab
@@ -35,23 +34,34 @@ namespace Baku.VMagicMirrorConfig.View
             nameof(VmcpTab),
             typeof(TabItem),
             typeof(TabVisibilityBehavior),
-            new PropertyMetadata(null)
+            new PropertyMetadata(null, OnBehaviorPropertyChanged)
             );
 
 
-        private static void OnTabVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnBehaviorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not TabVisibilityBehavior behavior)
+            if (d is TabVisibilityBehavior behavior)
             {
+                behavior.UpdateTargetTabVisibility();
+            }
+        }
+
+        protected override void OnAttached() => UpdateTargetTabVisibility();
+
+        private void UpdateTargetTabVisibility()
+        {
+            var tabControl = AssociatedObject;
+            if (tabControl == null)
+            {
+                //NOTE: ウィンドウの生成直後だと通過しうる
                 return;
             }
 
-            var tabControl = behavior.AssociatedObject;
-            var shouldShow = (bool)e.NewValue;
-            var tabItem = behavior.VmcpTab;
-            var currentVisible = tabControl.Items.Contains(tabItem);
+            var vmcpTab = VmcpTab;
+            var visible = ShowVmcpTab;
+            var currentVisible = tabControl.Items.Contains(vmcpTab);
 
-            if (shouldShow == currentVisible)
+            if (visible == currentVisible)
             {
                 return;
             }
@@ -63,11 +73,11 @@ namespace Baku.VMagicMirrorConfig.View
             // - VMCPより後方のタブを選択していた場合、タブが消えても選択タブを維持
             //   - もしVMCPタブが選択中だったら、ひとつ手前のタブが選択された状態にする
             // わざわざindexを保持するのは「いったん全部削除して入れ直す」というシーケンスになっているため
-            if (shouldShow && index >= TargetIndex)
+            if (visible && index >= TargetIndex)
             {
                 index++;
             }
-            else if(!shouldShow && index >= TargetIndex)
+            else if (!visible && index >= TargetIndex)
             {
                 index--;
             }
@@ -75,13 +85,13 @@ namespace Baku.VMagicMirrorConfig.View
             tabControl.Items.Clear();
             tabControl.IsHeaderPanelVisible = false;
 
-            if (shouldShow)
+            if (visible)
             {
-                items.Insert(TargetIndex, tabItem);
+                items.Insert(TargetIndex, vmcpTab);
             }
             else
             {
-                items.Remove(tabItem);
+                items.Remove(vmcpTab);
             }
 
             foreach (var item in items)

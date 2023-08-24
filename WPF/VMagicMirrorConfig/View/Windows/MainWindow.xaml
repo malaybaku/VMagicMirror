@@ -85,7 +85,6 @@
                     VmcpTab="{Binding ElementName=VmcpTabItem}"
                     ShowVmcpTab="{Binding ShowVmcpTab.Value}"
                     />
-                <!--InstructionVisibility="{Binding Visibility, ElementName=DragDropIndicator, Mode=OneWayToSource}"-->
             </i:Interaction.Behaviors>
             <dragablz:TabablzControl.DefaultHeaderItemStyle>
                 <Style TargetType="UserControl">
@@ -147,7 +146,7 @@
                                              ConverterParameter=3}"                           
                         />
                 </TabItem.Header>
-                <view:ExternalTrackerPanel Background="White" />
+                <view:VMCPControlPanel Background="White" />
             </TabItem>
             <TabItem>
                 <TabItem.Header>

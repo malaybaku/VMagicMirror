@@ -5,15 +5,20 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror.VMCP
 {
-    //TODO: VMCPHandPoseに依存する形でIKの姿勢を言わせるようにする
-    //NOTE: 上記の実現方法としてはコンストラクタ直すかDependencyにVMCPHandPoseを含めればよい
     public class VMCPHandIkGenerator : HandIkGeneratorBase
     {
-        public VMCPHandIkGenerator(HandIkGeneratorDependency dependency, VMCPHandPose vmcpHandPose) : base(dependency)
+        // VMCPが未受信になると0.5secで手を下ろす
+        // NOTE: 「未受信」はBarracudaHandとかのトラッキングロスよりは起きにくいのであまり凝った処理はしない。
+        // 送信元自体がトラッキングロスすることはあるが、その場合のモーション補間は送信元が頑張ってるはずなので信じる
+        private const float ConnectedBlendRate = 2f;
+        
+        public VMCPHandIkGenerator(
+            HandIkGeneratorDependency dependency, VMCPHandPose vmcpHandPose, AlwaysDownHandIkGenerator downHand) 
+            : base(dependency)
         {
             _vmcpHandPose = vmcpHandPose;
-            _leftHandState = new VMCPHandIkState(ReactedHand.Left);
-            _rightHandState = new VMCPHandIkState(ReactedHand.Right);
+            _leftHandState = new VMCPHandIkState(ReactedHand.Left, downHand.LeftHand);
+            _rightHandState = new VMCPHandIkState(ReactedHand.Right, downHand.RightHand);
 
             //オフ -> オンへの切り替え時だけリクエストが出るが、それ以上にバシバシ送ったほうが良ければ頻度を上げてもOK
             vmcpHandPose.IsActive
@@ -28,26 +33,37 @@ namespace Baku.VMagicMirror.VMCP
                 .AddTo(dependency.Component);
 
             vmcpHandPose.LeftHandPose
-                .Subscribe(pose =>
-                {
-                    _leftHandState.Position = pose.Position;
-                    _leftHandState.Rotation = pose.Rotation;
-                })
+                .Subscribe(pose => _leftHandState.SetRawPose(pose.Position, pose.Rotation))
                 .AddTo(dependency.Component);
             
             vmcpHandPose.RightHandPose
-                .Subscribe(pose =>
-                {
-                    _rightHandState.Position = pose.Position;
-                    _rightHandState.Rotation = pose.Rotation;
-                })
+                .Subscribe(pose => _rightHandState.SetRawPose(pose.Position, pose.Rotation))
                 .AddTo(dependency.Component);
+        }
+
+        public override void Update()
+        {
+            if (_vmcpHandPose.IsActive.Value)
+            {
+                var diff = Time.deltaTime * ConnectedBlendRate;
+                _connectedRate =
+                    Mathf.Clamp01(_vmcpHandPose.IsConnected.Value ? _connectedRate + diff : _connectedRate - diff);
+                _leftHandState.ApplyWithRate(_connectedRate);
+                _rightHandState.ApplyWithRate(_connectedRate);
+            }
+            else
+            {
+                _connectedRate = 0f;
+            }
         }
 
         public override void LateUpdate()
         {
             //指を適用する: FingerController経由じゃないことには注意
-            _vmcpHandPose.ApplyFingerLocalPose();
+            if (_vmcpHandPose.IsActive.Value && _vmcpHandPose.IsConnected.Value)
+            {
+                _vmcpHandPose.ApplyFingerLocalPose();
+            }
         }
 
         private readonly VMCPHandPose _vmcpHandPose;
@@ -56,16 +72,35 @@ namespace Baku.VMagicMirror.VMCP
         private readonly VMCPHandIkState _rightHandState;
         public override IHandIkState RightHandState => _rightHandState;
         public IReadOnlyReactiveProperty<bool> IsActive => _vmcpHandPose.IsActive;
+        
+        private float _connectedRate = 0f;
 
         class VMCPHandIkState : IHandIkState
         {
-            public VMCPHandIkState(ReactedHand hand)
+            public VMCPHandIkState(ReactedHand hand, IIKData downHand)
             {
                 Hand = hand;
+                _downHand = downHand;
             }
-            
-            public Vector3 Position { get; set; }
-            public Quaternion Rotation { get; set; } = Quaternion.identity;
+
+            public void SetRawPose(Vector3 position, Quaternion rotation)
+            {
+                _rawPosition = position;
+                _rawRotation = rotation;
+            }
+
+            public void ApplyWithRate(float rate)
+            {
+                Position = Vector3.Lerp(_downHand.Position, _rawPosition, rate);
+                Rotation = Quaternion.Slerp(_downHand.Rotation, _rawRotation, rate);
+            }
+
+            private readonly IIKData _downHand;
+            private Vector3 _rawPosition;
+            private Quaternion _rawRotation = Quaternion.identity;
+
+            public Vector3 Position { get; private set; }
+            public Quaternion Rotation { get; private set; } = Quaternion.identity;
             public bool SkipEnterIkBlend => true;
             public ReactedHand Hand { get; }
             public HandTargetType TargetType => HandTargetType.VMCPReceiveResult;

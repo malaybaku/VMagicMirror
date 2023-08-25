@@ -213,7 +213,7 @@ namespace Baku.VMagicMirror
             _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
-            _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose);
+            _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose, _downHand);
             barracudaHand.SetupDependency(dependency);
 
             typing.SetUp(keyboardProvider, dependency);
@@ -448,6 +448,7 @@ namespace Baku.VMagicMirror
             MidiHand.Update();
             _arcadeStickHand.Update();
             _penTablet.Update();
+            _vmcpHand.Update();
 
             //現在のステート + 必要なら直前ステートも参照してIKターゲットの位置、姿勢を更新する
             UpdateLeftHand();

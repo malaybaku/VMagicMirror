@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.VMCP
     {
         private const int OscServerCount = 3;
         //この秒数だけ受信してなければステータスとして切断扱いになる
-        private const float DisconnectCount = 0.5f;
+        public const float DisconnectCount = 0.5f;
         
         private readonly IMessageReceiver _messageReceiver;
         private readonly IMessageSender _messageSender;

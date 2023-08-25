@@ -9,8 +9,10 @@ namespace Baku.VMagicMirror.VMCP
     /// <summary>
     /// ロードされたVRMに定義されているキー値を、VMCPで受信した値ベースで受け渡しするクラス。
     /// </summary>
-    public class VMCPBlendShape : PresenterBase
+    public class VMCPBlendShape : PresenterBase, ITickable
     {
+        private const float DisconnectCount = VMCPReceiver.DisconnectCount;
+
         private static readonly HashSet<ExpressionKey> LipSyncKeys = new HashSet<ExpressionKey>()
         {
             ExpressionKey.Aa,
@@ -31,6 +33,9 @@ namespace Baku.VMagicMirror.VMCP
         private bool _hasModel;
         private readonly IVRMLoadable _vrmLoadable;
 
+        private bool _isConnected;
+        private float _disconnectCountDown;
+
         [Inject]
         public VMCPBlendShape(IVRMLoadable vrmLoadable)
         {
@@ -43,7 +48,32 @@ namespace Baku.VMagicMirror.VMCP
             _vrmLoadable.VrmDisposing += OnVrmUnloaded;
         }
 
-        public void SetActive(bool active) => _isActive.Value = active;
+        void ITickable.Tick()
+        {
+            if (!_isActive.Value || !_isConnected || _disconnectCountDown <= 0f)
+            {
+                return;
+            }
+
+            //接続しているはずなのにBlendShapeを一定時間受け取れてない場合、リセットする
+            _disconnectCountDown -= Time.deltaTime;
+            if (_disconnectCountDown <= 0f)
+            {
+                _isConnected = false;
+                ResetValues();   
+            }
+        }
+
+        public void SetActive(bool active)
+        {
+            if (_isActive.Value && !active)
+            {
+                _isConnected = false;
+                _disconnectCountDown = 0f;
+                ResetValues();
+            }
+            _isActive.Value = active;
+        }
 
         public void SetValue(string rawKey, float value)
         {
@@ -53,8 +83,19 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             _internalValues[key] = Mathf.Clamp01(value);
+            _isConnected = true;
+            _disconnectCountDown = DisconnectCount;
         }
 
+        private void ResetValues()
+        {
+            foreach (var key in _internalValues.Keys)
+            {
+                _internalValues[key] = 0f;
+                _values[key] = 0f;
+            }
+        }
+        
         public void Apply()
         {
             //NOTE: Applyでは公開値が切り替わるだけであり、このクラスがVRMの表情を書き換えていいわけではない

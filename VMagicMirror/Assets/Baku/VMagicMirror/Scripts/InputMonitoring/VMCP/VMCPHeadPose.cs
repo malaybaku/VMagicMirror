@@ -1,11 +1,15 @@
+using Google.Protobuf.WellKnownTypes;
 using UniRx;
 using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.VMCP
 {
-    public class VMCPHeadPose : IInitializable
+    public class VMCPHeadPose : IInitializable, ITickable
     {
+        private const float DisconnectCount = VMCPReceiver.DisconnectCount;
+        private const float ResetLerpFactor = 6f;
+
         private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
         public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
@@ -17,6 +21,9 @@ namespace Baku.VMagicMirror.VMCP
         //NOTE: 0にはしないでおく、一応
         private Vector3 _defaultHeadOffsetOnHips = Vector3.up;
         private bool _hasModel;
+
+        private bool _isConnected;
+        private float _disconnectCountDown;
 
         public VMCPHeadPose(IVRMLoadable vrmLoadable)
         {
@@ -41,18 +48,54 @@ namespace Baku.VMagicMirror.VMCP
             };
         }
 
+        void ITickable.Tick()
+        {
+            if (!_isActive.Value || !_isConnected || _disconnectCountDown <= 0f)
+            {
+                if (_isActive.Value)
+                {
+                    var factor = ResetLerpFactor * Time.deltaTime;
+                    PositionOffset = Vector3.Lerp(PositionOffset, Vector3.zero, factor);
+                    Rotation = Quaternion.Slerp(Rotation, Quaternion.identity, factor);
+                }
+                return;
+            }
+
+            //ポーズを一定時間受け取れてない場合、切断したものと見なす
+            _disconnectCountDown -= Time.deltaTime;
+            if (_disconnectCountDown <= 0f)
+            {
+                _isConnected = false;
+            }
+        }
+
         /// <summary> 直立時にゼロになるような、足元の座標系で見たときの頭の移動量 </summary>
         public Vector3 PositionOffset { get; private set; }
 
         /// <summary> 正面向きならゼロ回転になるような頭部回転 </summary>
         public Quaternion Rotation { get; private set; }
 
-        public void SetActive(bool active) => _isActive.Value = active;
+        public void SetActive(bool active)
+        {
+            _isActive.Value = active;
+            if (!active)
+            {
+                _isConnected = false;
+                _disconnectCountDown = 0f;
+            }
+        }
 
         public void SetPoseOnHips(Pose pose)
         {
+            if (!_hasModel)
+            {
+                return;
+            }
             PositionOffset = pose.position - _defaultHeadOffsetOnHips;
             Rotation = pose.rotation;
+
+            _isConnected = true;
+            _disconnectCountDown = DisconnectCount;
         }
     }
 }

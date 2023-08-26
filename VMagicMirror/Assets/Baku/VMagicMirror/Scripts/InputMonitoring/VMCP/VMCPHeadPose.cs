@@ -71,7 +71,7 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
-        public void SetConnected(bool connected) => _connected.Value = _isActive.Value && connected;
+        public void SetConnected(bool connected) => _connected.Value = connected;
 
         public void SetPoseOnHips(Pose pose)
         {

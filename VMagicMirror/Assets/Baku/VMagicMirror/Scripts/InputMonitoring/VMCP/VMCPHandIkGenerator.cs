@@ -61,7 +61,7 @@ namespace Baku.VMagicMirror.VMCP
         public override void LateUpdate()
         {
             //指を適用する: FingerController経由じゃないことには注意
-            if (_vmcpHandPose.IsActive.Value && _vmcpHandPose.IsConnected.Value)
+            if (_vmcpHandPose.IsActive.Value)
             {
                 _vmcpHandPose.ApplyFingerLocalPose();
             }

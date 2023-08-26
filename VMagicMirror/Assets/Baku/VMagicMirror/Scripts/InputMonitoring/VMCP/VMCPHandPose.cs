@@ -67,8 +67,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void SetConnected(bool connected)
-            => _isConnected.Value = _isActive.Value && connected;
+        public void SetConnected(bool connected) => _isConnected.Value = connected;
 
         public void SetFingerSourceHumanoid(VMCPBasedHumanoid humanoid)
             => _fingerSourceHumanoid = humanoid;

@@ -48,8 +48,9 @@ namespace Baku.VMagicMirror.VMCP
                 var diff = Time.deltaTime * ConnectedBlendRate;
                 _connectedRate =
                     Mathf.Clamp01(_vmcpHandPose.IsConnected.Value ? _connectedRate + diff : _connectedRate - diff);
-                _leftHandState.ApplyWithRate(_connectedRate);
-                _rightHandState.ApplyWithRate(_connectedRate);
+                var rate = Mathf.SmoothStep(0, 1, _connectedRate);
+                _leftHandState.ApplyWithRate(rate);
+                _rightHandState.ApplyWithRate(rate);
             }
             else
             {

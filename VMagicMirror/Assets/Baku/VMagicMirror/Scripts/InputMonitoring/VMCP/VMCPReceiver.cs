@@ -82,6 +82,10 @@ namespace Baku.VMagicMirror.VMCP
                 .Throttle(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => NotifyConnectStatus())
                 .AddTo(this);
+
+            _connectedValue
+                .Subscribe(_ => UpdateTrackerConnectStatus())
+                .AddTo(this);
         }
 
         public void Tick()
@@ -256,6 +260,39 @@ namespace Baku.VMagicMirror.VMCP
             _connected[index] = connected;
             _connectedValue.Value = (_connected[2] ? 4 : 0) + (_connected[1] ? 2 : 0) + (_connected[0] ? 1 : 0);
             _disconnectCountDown[index] = connected ? DisconnectCount : 0f;
+        }
+
+        private void UpdateTrackerConnectStatus()
+        {
+            //NOTE:
+            // - BlendShapeの受信状態は単に受信が停止したら検知可能なので、こういうケアをしないでよい
+            // - 非ActiveなときはHeadPose/HandPose側で勝手に切断扱いになるので、わざわざ叩かないでOK
+
+            if (_headPose.IsActive.Value)
+            {
+                for (var i = 0; i < _dataPassSettings.Length; i++)
+                {
+                    var setting = _dataPassSettings[i];
+                    if (setting.ReceiveHeadPose)
+                    {
+                        _headPose.SetConnected(_connected[i]);
+                        break;
+                    }
+                }
+            }
+
+            if (_handPose.IsActive.Value)
+            {
+                for (var i = 0; i < _dataPassSettings.Length; i++)
+                {
+                    var setting = _dataPassSettings[i];
+                    if (setting.ReceiveHandPose)
+                    {
+                        _handPose.SetConnected(_connected[i]);
+                        break;
+                    }
+                }
+            }
         }
         
         private void OnOscDataReceived(int sourceIndex, uOSC.Message message)

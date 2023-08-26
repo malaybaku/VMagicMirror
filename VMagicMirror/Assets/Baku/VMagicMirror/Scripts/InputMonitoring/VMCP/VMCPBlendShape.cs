@@ -22,6 +22,7 @@ namespace Baku.VMagicMirror.VMCP
             ExpressionKey.Ou,
         };
 
+        private readonly List<ExpressionKey> _keys = new List<ExpressionKey>();
         private readonly Dictionary<ExpressionKey, float> _internalValues = new Dictionary<ExpressionKey, float>();
         private readonly Dictionary<ExpressionKey, float> _values = new Dictionary<ExpressionKey, float>();
         //送信側がVRM0.xのケースと1.0のケースで都合が変わるんですよ信じられますか
@@ -50,17 +51,20 @@ namespace Baku.VMagicMirror.VMCP
 
         void ITickable.Tick()
         {
-            if (!_isActive.Value || !_isConnected || _disconnectCountDown <= 0f)
+            if (!_isActive.Value || !_isConnected)
             {
                 return;
             }
 
             //接続しているはずなのにBlendShapeを一定時間受け取れてない場合、リセットする
-            _disconnectCountDown -= Time.deltaTime;
-            if (_disconnectCountDown <= 0f)
+            if (_disconnectCountDown > 0f)
             {
-                _isConnected = false;
-                ResetValues();   
+                _disconnectCountDown -= Time.deltaTime;
+                if (_disconnectCountDown <= 0f)
+                {
+                    _isConnected = false;
+                    ResetValues();   
+                }
             }
         }
 
@@ -89,7 +93,7 @@ namespace Baku.VMagicMirror.VMCP
 
         private void ResetValues()
         {
-            foreach (var key in _internalValues.Keys)
+            foreach (var key in _keys)
             {
                 _internalValues[key] = 0f;
                 _values[key] = 0f;
@@ -134,9 +138,11 @@ namespace Baku.VMagicMirror.VMCP
         
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
+            _keys.Clear();
             _values.Clear();
             _internalValues.Clear();
             var keys = info.RuntimeFacialExpression.ExpressionKeys;
+            _keys.AddRange(keys);
             foreach (var key in keys)
             {
                 _values[key] = 0f;
@@ -162,6 +168,7 @@ namespace Baku.VMagicMirror.VMCP
         private void OnVrmUnloaded()
         {
             _hasModel = false;
+            _keys.Clear();
             _values.Clear();
             _internalValues.Clear();
             _stringToKeyCache.Clear();

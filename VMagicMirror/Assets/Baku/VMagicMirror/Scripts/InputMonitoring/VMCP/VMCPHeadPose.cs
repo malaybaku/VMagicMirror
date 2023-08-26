@@ -1,4 +1,3 @@
-using Google.Protobuf.WellKnownTypes;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -7,13 +6,11 @@ namespace Baku.VMagicMirror.VMCP
 {
     public class VMCPHeadPose : IInitializable, ITickable
     {
-        private const float DisconnectCount = VMCPReceiver.DisconnectCount;
         private const float ResetLerpFactor = 6f;
 
         private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
         public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
-        //TODO: 受信が一定時間滞った場合に非接続扱いできるようにしたい
         private readonly ReactiveProperty<bool> _connected = new ReactiveProperty<bool>(true);
         public IReadOnlyReactiveProperty<bool> Connected => _connected;
 
@@ -21,9 +18,6 @@ namespace Baku.VMagicMirror.VMCP
         //NOTE: 0にはしないでおく、一応
         private Vector3 _defaultHeadOffsetOnHips = Vector3.up;
         private bool _hasModel;
-
-        private bool _isConnected;
-        private float _disconnectCountDown;
 
         public VMCPHeadPose(IVRMLoadable vrmLoadable)
         {
@@ -50,24 +44,17 @@ namespace Baku.VMagicMirror.VMCP
 
         void ITickable.Tick()
         {
-            if (!_isActive.Value || !_isConnected || _disconnectCountDown <= 0f)
+            //受信してるはずだけどデータが更新されない -> 直立姿勢に戻す
+            if (_isActive.Value && !_connected.Value)
             {
-                if (_isActive.Value)
-                {
-                    var factor = ResetLerpFactor * Time.deltaTime;
-                    PositionOffset = Vector3.Lerp(PositionOffset, Vector3.zero, factor);
-                    Rotation = Quaternion.Slerp(Rotation, Quaternion.identity, factor);
-                }
-                return;
-            }
-
-            //ポーズを一定時間受け取れてない場合、切断したものと見なす
-            _disconnectCountDown -= Time.deltaTime;
-            if (_disconnectCountDown <= 0f)
-            {
-                _isConnected = false;
+                var factor = ResetLerpFactor * Time.deltaTime;
+                PositionOffset = Vector3.Lerp(PositionOffset, Vector3.zero, factor);
+                Rotation = Quaternion.Slerp(Rotation, Quaternion.identity, factor);
             }
         }
+
+        private Vector3 _rawPositionOffset;
+        private Quaternion _rawRotation;
 
         /// <summary> 直立時にゼロになるような、足元の座標系で見たときの頭の移動量 </summary>
         public Vector3 PositionOffset { get; private set; }
@@ -80,10 +67,11 @@ namespace Baku.VMagicMirror.VMCP
             _isActive.Value = active;
             if (!active)
             {
-                _isConnected = false;
-                _disconnectCountDown = 0f;
+                _connected.Value = false;
             }
         }
+
+        public void SetConnected(bool connected) => _connected.Value = _isActive.Value && connected;
 
         public void SetPoseOnHips(Pose pose)
         {
@@ -91,11 +79,16 @@ namespace Baku.VMagicMirror.VMCP
             {
                 return;
             }
-            PositionOffset = pose.position - _defaultHeadOffsetOnHips;
-            Rotation = pose.rotation;
 
-            _isConnected = true;
-            _disconnectCountDown = DisconnectCount;
+            _rawPositionOffset = pose.position - _defaultHeadOffsetOnHips;
+            _rawRotation = pose.rotation;
+
+            //NOTE: 非接続状態の場合、PositionOffsetやRotationは値をゼロに戻すので、書き込まないでおく
+            if (_isActive.Value && _connected.Value)
+            {
+                PositionOffset = _rawPositionOffset;
+                Rotation = _rawRotation;
+            }
         }
     }
 }

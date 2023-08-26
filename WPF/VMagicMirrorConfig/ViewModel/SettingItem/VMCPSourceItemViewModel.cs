@@ -31,10 +31,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 PortNumberIsInvalid.Value = 
                     !string.IsNullOrEmpty(v) &&
                     !(int.TryParse(v, out int i) && i >= 0 && i < 65536);
-                if (PortNumberIsInvalid.Value)
-                {
-                    SetDirty();
-                }
+                SetDirty();
             });
 
             ReceiveHeadPose = new RProperty<bool>(model.ReceiveHeadPose, _ => SetDirty());

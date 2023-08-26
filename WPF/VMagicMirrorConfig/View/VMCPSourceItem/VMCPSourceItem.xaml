@@ -28,7 +28,7 @@
         </Grid.ColumnDefinitions>
 
         <TextBox Grid.Column="0"
-                Text="{Binding Port.Value}"
+                 Text="{Binding Port.Value, UpdateSourceTrigger=PropertyChanged}"
                  md:HintAssist.Hint="12345"
                 />
         <CheckBox Grid.Column="1"

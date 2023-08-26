@@ -21,7 +21,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public VMCPSourceItemViewModel(VMCPSource model, Action setDirtyAction)
         {
-            PortNumberIsInvalid = new RProperty<bool>(false);
+            PortNumberIsInvalid = new(false);
             _setDirtyAction = setDirtyAction;
 
             Name = new RProperty<string>(model.Name, _ => SetDirty());

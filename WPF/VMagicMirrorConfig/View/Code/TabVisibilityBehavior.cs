@@ -58,6 +58,11 @@ namespace Baku.VMagicMirrorConfig.View
             }
 
             var vmcpTab = VmcpTab;
+            if (vmcpTab == null)
+            {
+                return;
+            }
+
             var visible = ShowVmcpTab;
             var currentVisible = tabControl.Items.Contains(vmcpTab);
 

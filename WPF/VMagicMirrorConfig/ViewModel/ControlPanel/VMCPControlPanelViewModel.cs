@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -25,6 +26,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 WeakEventManager<VMCPSettingModel, EventArgs>.AddHandler(
                     _model, nameof(_model.ConnectedStatusChanged), OnConnectedStatusChanged
                     );
+                _model.SerializedVMCPSourceSetting.AddWeakEventHandler(OnSerializedVMCPSourceSettingChanged);
                 ApplyConnectionStatus();
             }
         }
@@ -35,9 +37,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> CanApply { get; } = new(false);
 
         public RProperty<bool> VMCPEnabled => _model.VMCPEnabled;
-        public VMCPSourceItemViewModel Source1 { get; private set; } = new();
-        public VMCPSourceItemViewModel Source2 { get; private set; } = new();
-        public VMCPSourceItemViewModel Source3 { get; private set; } = new();
+        public VMCPSourceItemViewModel Source1 { get; set; } = new();
+        public VMCPSourceItemViewModel Source2 { get; set; } = new();
+        public VMCPSourceItemViewModel Source3 { get; set; } = new();
 
         public RProperty<bool> DisableCameraDuringVMCPActive => _model.DisableCameraDuringVMCPActive;
 
@@ -73,6 +75,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             RaisePropertyChanged(nameof(Source2));
             RaisePropertyChanged(nameof(Source3));
             IsDirty.Value = false;
+        }
+
+        private void OnSerializedVMCPSourceSettingChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            LoadCurrentSettings();
         }
 
         private void OnConnectedStatusChanged(object? sender, EventArgs e) => ApplyConnectionStatus();

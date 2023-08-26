@@ -122,6 +122,11 @@
                                              />
                     </Grid>
 
+                    <TextBlock Text="{DynamicResource VMCP_PortInputError}"
+                               Foreground="{StaticResource MaterialDesignValidationErrorBrush}"
+                               Margin="15,15,15,5"
+                               Visibility="{Binding HasInvalidPortNumber.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               />
 
                     <TextBlock Text="{DynamicResource VMCP_ShouldApply}"
                                FontWeight="Bold"

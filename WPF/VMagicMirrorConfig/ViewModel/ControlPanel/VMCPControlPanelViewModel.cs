@@ -15,7 +15,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         internal VMCPControlPanelViewModel(VMCPSettingModel model)
         {
             _model = model;
-            IsDirty = new RProperty<bool>(false, _ => UpdateCanApply());
+            IsDirty = new RProperty<bool>(false, _ => UpdateInputValidity());
             ApplyChangeCommand = new ActionCommand(ApplyChange);
             RevertChangeCommand = new ActionCommand(RevertChange);
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
@@ -35,6 +35,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> IsDirty { get; }
         public RProperty<bool> CanApply { get; } = new(false);
+        public RProperty<bool> HasInvalidPortNumber { get; } = new(false);
 
         public RProperty<bool> VMCPEnabled => _model.VMCPEnabled;
         public VMCPSourceItemViewModel Source1 { get; set; } = new();
@@ -43,18 +44,25 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> DisableCameraDuringVMCPActive => _model.DisableCameraDuringVMCPActive;
 
-        public void SetDirty() => IsDirty.Value = true;
+        public void SetDirty()
+        {
+            IsDirty.Value = true;
+            //NOTE: Dirtyがtrue -> trueのまま切り替わらない場合でもポート番号のvalidityが変わった可能性があるのでチェックしに行く
+            UpdateInputValidity();
+        }
         
         public ActionCommand ApplyChangeCommand { get; }
         public ActionCommand RevertChangeCommand { get; }
         public ActionCommand OpenDocUrlCommand { get; }
 
-        private void UpdateCanApply()
+        private void UpdateInputValidity()
         {
-            CanApply.Value = IsDirty.Value &&
-                !Source1.PortNumberIsInvalid.Value &&
-                !Source2.PortNumberIsInvalid.Value &&
-                !Source3.PortNumberIsInvalid.Value;
+            HasInvalidPortNumber.Value =
+                Source1.PortNumberIsInvalid.Value ||
+                Source2.PortNumberIsInvalid.Value ||
+                Source3.PortNumberIsInvalid.Value;
+
+            CanApply.Value = IsDirty.Value && !HasInvalidPortNumber.Value;
         }
 
         private void LoadCurrentSettings()

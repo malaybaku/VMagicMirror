@@ -47,11 +47,22 @@
 
         <Ellipse Grid.Column="5"
                  Width="18" Height="18"
-                 Stroke="{StaticResource MahApps.Brushes.Gray4}"
+                 Stroke="{StaticResource MahApps.Brushes.Gray6}"
                  StrokeDashArray="1.5 1.5"
                  Visibility="{Binding Connected.Value, 
                                       Converter={StaticResource BooleanReverseToVisibilityConverter}}"
                  />
+        <md:PackIcon Grid.Column="5"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Width="12"
+                     Height="12"
+                     Foreground="{StaticResource MahApps.Brushes.Gray6}"
+                     Kind="Multiply"
+                     Visibility="{Binding Connected.Value, 
+                                          Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                     />
+
         <Ellipse Grid.Column="5"
                  Width="18" Height="18"
                  Fill="{StaticResource PrimaryHueMidBrush}"

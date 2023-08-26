@@ -140,6 +140,7 @@ VMagicMirrorは以下のモーションを受信して適用できます。
     <sys:String x:Key="VMCP_GridLabel_Facial">表情</sys:String>
     <sys:String x:Key="VMCP_GridLabel_HandPose">手の姿勢</sys:String>
     <sys:String x:Key="VMCP_Notice_Priority">上で設定した受信元ほど優先して適用されます</sys:String>
+    <sys:String x:Key="VMCP_PortInputError">*ポート番号には0 ~ 65535の範囲の値を指定して下さい。</sys:String>
     <sys:String x:Key="VMCP_ShouldApply">*未適用の設定があります</sys:String>
     <sys:String x:Key="VMCP_Apply">変更を適用</sys:String>
     <sys:String x:Key="VMCP_Revert">キャンセル</sys:String>

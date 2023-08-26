@@ -124,14 +124,17 @@
 
                     <TextBlock Text="{DynamicResource VMCP_PortInputError}"
                                Foreground="{StaticResource MaterialDesignValidationErrorBrush}"
-                               Margin="15,15,15,5"
+                               Margin="15,5"
                                Visibility="{Binding HasInvalidPortNumber.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                                />
 
+                    <!-- Spacer -->
+                    <Rectangle Height="10"/>
+
                     <TextBlock Text="{DynamicResource VMCP_ShouldApply}"
                                FontWeight="Bold"
-                               Margin="15,15,15,5"
-                               Visibility="{Binding IsDirty.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               Margin="15,5"
+                               Visibility="{Binding CanApply.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                                />
 
                     <StackPanel Orientation="Horizontal"

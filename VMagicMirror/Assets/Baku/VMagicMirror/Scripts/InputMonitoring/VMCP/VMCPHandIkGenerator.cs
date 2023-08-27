@@ -13,10 +13,14 @@ namespace Baku.VMagicMirror.VMCP
         private const float ConnectedBlendRate = 2f;
         
         public VMCPHandIkGenerator(
-            HandIkGeneratorDependency dependency, VMCPHandPose vmcpHandPose, AlwaysDownHandIkGenerator downHand) 
+            HandIkGeneratorDependency dependency, 
+            VMCPHandPose vmcpHandPose, 
+            VMCPFingerController fingerController,
+            AlwaysDownHandIkGenerator downHand) 
             : base(dependency)
         {
             _vmcpHandPose = vmcpHandPose;
+            _fingerController = fingerController;
             _leftHandState = new VMCPHandIkState(ReactedHand.Left, downHand.LeftHand);
             _rightHandState = new VMCPHandIkState(ReactedHand.Right, downHand.RightHand);
 
@@ -39,6 +43,8 @@ namespace Baku.VMagicMirror.VMCP
             vmcpHandPose.RightHandPose
                 .Subscribe(pose => _rightHandState.SetRawPose(pose.Position, pose.Rotation))
                 .AddTo(dependency.Component);
+
+            _fingerController.SetLateUpdateCallback(LateUpdateCallback);
         }
 
         public override void Update()
@@ -58,16 +64,19 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
-        public override void LateUpdate()
+        private void LateUpdateCallback()
         {
+            
+            
             //指を適用する: FingerController経由じゃないことには注意
             if (_vmcpHandPose.IsActive.Value)
             {
                 _vmcpHandPose.ApplyFingerLocalPose();
             }
         }
-
+        
         private readonly VMCPHandPose _vmcpHandPose;
+        private readonly VMCPFingerController _fingerController;
         private readonly VMCPHandIkState _leftHandState;
         public override IHandIkState LeftHandState => _leftHandState;
         private readonly VMCPHandIkState _rightHandState;
@@ -102,7 +111,7 @@ namespace Baku.VMagicMirror.VMCP
 
             public Vector3 Position { get; private set; }
             public Quaternion Rotation { get; private set; } = Quaternion.identity;
-            public bool SkipEnterIkBlend => true;
+            public bool SkipEnterIkBlend => false;
             public ReactedHand Hand { get; }
             public HandTargetType TargetType => HandTargetType.VMCPReceiveResult;
 

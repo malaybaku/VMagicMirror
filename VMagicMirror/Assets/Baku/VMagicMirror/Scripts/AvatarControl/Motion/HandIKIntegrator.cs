@@ -174,7 +174,8 @@ namespace Baku.VMagicMirror
             HandTracker handTracker,
             ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader,
             SwitchableHandDownIkData switchableHandDownIk,
-            VMCPHandPose vmcpHandPose
+            VMCPHandPose vmcpHandPose,
+            VMCPFingerController vmcpFingerController
             )
         {
             _reactionSources = new HandIkReactionSources(
@@ -213,7 +214,7 @@ namespace Baku.VMagicMirror
             _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
-            _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose, _downHand);
+            _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose, vmcpFingerController, _downHand);
             barracudaHand.SetupDependency(dependency);
 
             typing.SetUp(keyboardProvider, dependency);
@@ -463,7 +464,6 @@ namespace Baku.VMagicMirror
             Presentation.LateUpdate();
             _arcadeStickHand.LateUpdate();
             _penTablet.LateUpdate();
-            _vmcpHand.LateUpdate();
         }
         
         private void UpdateLeftHand()

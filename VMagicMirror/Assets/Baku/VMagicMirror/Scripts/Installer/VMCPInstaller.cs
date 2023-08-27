@@ -22,6 +22,7 @@ namespace Baku.VMagicMirror
             Container.BindInterfacesAndSelfTo<VMCPBlendShape>().AsSingle();
             Container.BindInterfacesAndSelfTo<VMCPActiveness>().AsSingle();
             Container.BindInterfacesTo<VMCPReceiver>().AsSingle();
+            Container.Bind<VMCPFingerController>().FromNewComponentOnNewGameObject().AsSingle();
         }
     }
 }

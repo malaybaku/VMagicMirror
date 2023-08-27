@@ -10,14 +10,12 @@ This feature is available from v4.0.0
 
 In VMCP tab, you can use [VMC Protocol](https://protocol.vmc.info/) (VMCP) to receive pose and facial data from other applications which support VMC Protocol.
 
-(TODO: この画像をVMCPタブの画像に変更)
-
 <div class="row">
-{% include docimg.html file="/images/docs/devices_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/docs/vmcp_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
 
 
-#### 注意: VMC Protocolを使う前に
+#### Note: Before using VMC Protocol with VMagicMirror
 {: .doc-sec2 }
 
 In VMagicMirror, VMC Protocol is treated as a most advanced **unstable** feature, because there are so many VMCP supported apps.
@@ -28,24 +26,37 @@ VMagicMirror's author tests VMCP feature with following apps, though the apps al
 
 - [LuppetX 1.0.5](https://luppet.jp/)
 - [WebcamMotionCapture 1.9.0](https://webcammotioncapture.info/)
-- (TODO: スマホも何かはほしい、安定性に注意して選びたい)
 
 </div>
 
-Especially VMCP data communication from other devices (e.g. app running on smart phone) can be more unstable than receiving data from other app in PC.
+Especially VMCP data communication from other devices (e.g. app running on smart phone) can be more unstable and leads higher network load, than receiving data from other apps in PC.
 
 
 #### 1. Basic Usage
 {: .doc-sec2 }
 
-Turn on `Enable VMC Protocol` to enable the feature.
+By default VMCP feature is hidden in control panel window.
 
-Then, setup data source and click `Apply` to apply changes.
+To enable it, open setting window and select `VMCP` tab > `Show VMCP Tab on Main Window` to show settings UI on main control panel window.
+
+<div class="row">
+{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
+
+Then, select `VMCP` tab in control panel window.
+
+Check `Enable VMC Protocol` to enable the feature.
+
+Setup data source and click `Apply` to apply changes. 
 
 <div class="doc-ul" markdown="1">
 
 - Port number
-- Data to apply (Head, Hand, Facial)
+- Data to apply
+  - Head: Head pose.
+  - Hand: Hand and finger pose.
+  - Facial: Face Blendshape values.
+- App Name: this is just for memo area and does not have effect how app will behave.
 
 </div>
 
@@ -53,11 +64,13 @@ Then, setup data source and click `Apply` to apply changes.
 
 **NOTE**
 
-During VMC Protocol's hand pose receive is active, VMagicMirror's default motion features (e.g. keyboard typing motion) does not work.
+When VMC Protocol's hand pose receive is active, VMagicMirror's default motion features (e.g. keyboard typing motion) does not work.
 
 Exception is [Word to Motion](./expressions), which runs with higher priority than VMCP based motion.
 
 </div>
+
+`Status` area indicates check mark during receicing VMCP data.
 
 VMagicMirror recommends to load the same avatar both in VMCP source app and VMagicMirror.
 

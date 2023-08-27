@@ -9,10 +9,8 @@ VMagicMirrorはv4.0.0で`VMCP`タブを追加しました。
 
 このタブの設定により[VMC Protocol](https://protocol.vmc.info/)に対応した他アプリケーションからのデータを受信してアバターに適用できます。
 
-(TODO: この画像をVMCPタブの画像に変更)
-
 <div class="row">
-{% include docimg.html file="/images/docs/devices_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/docs/vmcp_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
 
 
@@ -28,23 +26,40 @@ VMagicMirrorの開発者は下記ソフトウェアを接続先として動作�
 
 - [LuppetX 1.0.5](https://luppet.jp/)
 - [WebcamMotionCapture 1.9.0](https://webcammotioncapture.info/)
-- (TODO: スマホも何かはほしい、安定性に注意して選びたい)
 
 </div>
 
-とくに、端末間でのVMC Protocolの送受信はアプリケーション次第で高負荷の原因になることに注意して下さい。
+とくに、異なる端末間でのVMC Protocolの送受信はアプリケーション次第で高負荷の原因になることに注意して下さい。
 
 
 
 #### 1. 基本的な使い方
 {: .doc-sec2 }
 
-本機能を使うには`VMCPを有効にする`をオンにします。
+本機能は初期状態では完全に無効になっています。
 
-続けて、データの受信元となるアプリケーションの設定を確認して下記を指定したのち、「変更を適用」で適用すると受信を開始、または停止します。
+`詳細設定ウィンドウを開く`から詳細設定を開き、`VMCP`タブから`設定タブをメインウィンドウに表示`を選択します。
+
+<div class="row">
+{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
+
+この操作によってコントロールパネルの`VMCP`タブが表示され、本機能が利用可能になります。
+
+
+これ以降はコントロールパネル側のタブで設定を行います。
+
+`VMCPを有効にする`をオンにすると受信処理が有効になります。
+
+続けて、データの受信元となるアプリケーションの設定を確認して下記を指定したのち、「変更を適用」で適用すると受信状態が更新されます。
+
+<div class="doc-ul" markdown="1">
 
 - ポート番号
-- 頭、手、表情のいずれを適用するか
+- 頭の姿勢、手の姿勢、表情のいずれを適用するか
+- アプリ名: これは単なるメモ用のエリアです。実際の挙動には影響しません。
+
+</div>
 
 <div class="note-area" markdown="1">
 
@@ -52,19 +67,21 @@ VMagicMirrorの開発者は下記ソフトウェアを接続先として動作�
 
 VMC Protocolの受信で手の姿勢を適用すると、VMagicMirrorがデフォルトで行っているモーション(キーボードのタイピング動作等)は発生しなくなります。
 
-ただし、VMC Protocolの受信中であっても[Word to Motion](./expressions)による表情切り替え/モーションは優先的に適用されます。
+ただし、VMC Protocolの受信中であっても[Word to Motion](./expressions)による表情切り替え等は優先的に適用されます。
 
 </div>
 
+受信に成功しているあいだ、`接続`エリアにチェックマークが表示されます。
 
-本機能を安定して使うために、送信側ソフトではVMagicMirrorで使っているのと同一のVRMをロードすることを推奨しています。
+
+本機能を安定して使うための推奨事項として、送信側ソフトではVMagicMirrorで使っているのと同一のVRMをロードして下さい。
 
 <div class="note-area" markdown="1">
 
 **NOTE**
 
 VMagicMirrorでは送信側ソフトで異なるアバターを使っている可能性を想定して姿勢データを処理をしています。
-見た目に問題が感じられない場合、アバターが異なる状態のまま本機能を使っても差し支えありません。
+見た目に問題が感じられない場合、アバターが不一致のまま本機能を使っても差し支えありません。
 
 </div>
 

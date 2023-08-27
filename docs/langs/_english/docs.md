@@ -44,10 +44,11 @@ Followings are advanced features of VMagicMirror available
 | Feature                          | What you can                                 |
 |:--------------------------------:|:------------------------------------------------|
 | [External Tracker App](./external_tracker)      | High quality tracking with iOS app (iFacialMocap) |
+| [VMC Protocol](./vmc_protocol)        | VMC Protocol based motion and facial                   |
 | [Accessory](./accessory)                    | Load image / 3D model and attach to the avatar  |
 | [Hand Tracking](./hand_tracking)            | Web camera based hand tracking       |
-| [Setting File Management](./setting_files)  | Setting file save/load features      |
 | [Game Motion Input](./game_input)                  | Game(FPS)-like motion by your avatar |
+| [Setting File Management](./setting_files)  | Setting file save/load features      |
 |==================================|=================================================|
 
 #### External Tracker

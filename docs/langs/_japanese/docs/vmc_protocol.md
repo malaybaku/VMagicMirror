@@ -5,9 +5,9 @@ title: VMC Protocol
 
 # VMC Protocol
 
-VMagicMirrorはv4.0.0で`VMCP`タブを追加しました。
+この機能はVMagicMirror v3.3.0から追加されました。
 
-このタブの設定により[VMC Protocol](https://protocol.vmc.info/)に対応した他アプリケーションからのデータを受信してアバターに適用できます。
+[VMC Protocol](https://protocol.vmc.info/)に対応した他アプリケーションからのデータを受信してアバターに適用できます。
 
 <div class="row">
 {% include docimg.html file="/images/docs/vmcp_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
@@ -73,7 +73,6 @@ VMC Protocolの受信で手の姿勢を適用すると、VMagicMirrorがデフ�
 
 受信に成功しているあいだ、`接続`エリアにチェックマークが表示されます。
 
-
 本機能を安定して使うための推奨事項として、送信側ソフトではVMagicMirrorで使っているのと同一のVRMをロードして下さい。
 
 <div class="note-area" markdown="1">
@@ -96,3 +95,19 @@ VMagicMirrorでは送信側ソフトで異なるアバターを使っている�
 - `VMCPの受信中はカメラ機能をオフ`: オンにすると、VMC Protocolを使用中はカメラ画像の取得を行わなくなります。デフォルトでオンになっています。
 
 </div>
+
+
+#### 3. 既知の問題と対処方法
+{: .doc-sec2 }
+
+VMagicMirror v3.3.0時点で以下の問題を確認しています。
+
+<div class="doc-ul" markdown="1">
+
+- ハンドトラッキングが反応しない: 「配信」タブ > 「モーション」 > 「動きかた」を`デフォルト`にしてください。それでも直らない場合、一度VMagicMirrorを再起動してみて下さい。
+- 「接続」のステータスが更新されない: 一度VMagicMirrorを再起動すると直る場合があります。
+- 送信元とVMagicMirrorの動作が揃わない: モーションの適用方法の都合で完全には動きが揃わない場合があります。差異が小さい場合、送信元のモーション調整で対応することをご検討下さい。不具合と思われるような大きな動きのずれについてはお問い合わせ下さい。
+
+</div>
+
+

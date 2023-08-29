@@ -23,8 +23,6 @@
     Background="{StaticResource TabAreaBackground}"
     >
     <Window.Resources>
-        <view:TabSelectionToForegroundConverter x:Key="SelectionToForeground"/>
-        <view:TabSelectionToBackgroundConverter x:Key="SelectionToBackground"/>
         <Style TargetType="{x:Type dragablz:TabablzControl}" BasedOn="{StaticResource MaterialDesignAlternateTabablzControlStyle}" >
             <Style.Resources>
                 <SolidColorBrush x:Key="SecondaryAccentBrush" Color="{StaticResource Primary400}"/>

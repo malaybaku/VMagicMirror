@@ -20,6 +20,7 @@
     <sys:String x:Key="TopBar_Home">Home</sys:String>
     <sys:String x:Key="TopBar_Streaming">Streaming</sys:String>
     <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">Accessory</sys:String>
     <sys:String x:Key="TopBar_HandTrack">Hands</sys:String>
     
@@ -31,6 +32,7 @@
     <sys:String x:Key="TopBar_Setting_Devices">Devices</sys:String>
     <sys:String x:Key="TopBar_Setting_Effects">Effects</sys:String>
     <sys:String x:Key="TopBar_Setting_HotKey">Hot Key</sys:String>
+    <sys:String x:Key="TopBar_Setting_VMCP">VMCP</sys:String>
     <sys:String x:Key="TopBar_Setting_FileIo">Files</sys:String>
         
     <!-- Home -->
@@ -116,6 +118,32 @@ Check "Keep LipSync" to make the lipsync continue.</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">Tongue out</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">Cheek puff</sys:String>
     
+    <!-- VMCP -->
+    <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMC Protocol (VMCP) can receive motion inputs from other apps.
+VMagicMirror supports to receive:
+
+- Head Pose
+- Facial BlendShape
+- Hand Pose</sys:String>
+    <sys:String x:Key="VMCP_SeeMore">See More...</sys:String>
+
+    <sys:String x:Key="VMCP_Enable">Enable VMC Protocol</sys:String>
+    <sys:String x:Key="VMCP_ReceiveSetting_Header">Receive Settings</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_Header">Advanced Settings</sys:String>    
+    <sys:String x:Key="VMCP_GridLabel_AppName">App Name</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">App Name</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_Connected">Connect</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_PortNumber">Port Number</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HeadPose">Head Pose</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_Facial">Facial</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HandPose">Hand Pose</sys:String>
+    <sys:String x:Key="VMCP_Notice_Priority">Upper item has higher priority</sys:String>
+    <sys:String x:Key="VMCP_PortInputError">*Port number must be in 0 - 65535.</sys:String>
+    <sys:String x:Key="VMCP_ShouldApply">*There are unapplied changes.</sys:String>
+    <sys:String x:Key="VMCP_Apply">Apply Changes</sys:String>
+    <sys:String x:Key="VMCP_Revert">Revert</sys:String>    
+    <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">Disable Camera feature during VMCP is active</sys:String>    
     
     <!-- HandTracking -->
     <sys:String x:Key="HandTracking_Header">Hand Tracking</sys:String>
@@ -494,6 +522,17 @@ Please test by typing "joy".</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_KeyboardTenKey">Keyboard (num 0-9)</sys:String>
     <sys:String x:Key="WordToMotion_DeviceItem_MidiController">MIDI Controller</sys:String>
 
+    <!-- VMCP Setting Window Only -->
+    <sys:String x:Key="VMCP_Setting_EnableVMCPTab">Show VMCP Tab on Main Window</sys:String>
+    <sys:String x:Key="VMCP_Setting_DisableVMCPTab">Hide VMCP Tab on Main Window</sys:String>
+
+    <sys:String x:Key="VMCP_Setting_EnableVMCPTab_Notice" xml:space="preserve">This feature is inactive.
+Select "Show VMCP Tab on Main Window" to show setting tab in main window.</sys:String>
+    <sys:String x:Key="VMCP_Setting_DisableVMCPTab_Notice" xml:space="preserve">This feature is active.
+Detailed setting is available at "VMCP" tab in main window. 
+
+If you do not use the feature, you can hide the tab by "Hide VMCP Tab on Main Window".</sys:String>
+
     <!-- HotKey -->
     <sys:String x:Key="Hotkey_Header">Hot Key</sys:String>
     <sys:String x:Key="Hotkey_Instruction" xml:space="preserve">This tab support hotkey (shortcut) edit.
@@ -668,6 +707,18 @@ Use this only after checking the licenses of VRM you will use.
     <sys:String x:Key="DialogTitle_Vrm10NotSupported">VRM 1.0 is Not Supported</sys:String>
     <sys:String x:Key="DialogMessage_Vrm10NotSupported" xml:space="preserve">VRM 1.0 support is under development. Please use VRM 0.x model in this version.</sys:String>
     
+    <sys:String x:Key="DialogTitle_ResetVmcpSourceItemConfirm">Reset Receive Setting</sys:String>
+    <sys:String x:Key="DialogMessage_ResetVmcpSourceItemConfirm">Are you sure to clear selected VMC Protocol setting?</sys:String>    
+    
+    <sys:String x:Key="DialogTitle_EnableVMCPTab">Show VMC Protocol Tab</sys:String>
+    <sys:String x:Key="DialogMessage_EnableVMCPTab" xml:space="preserve">Continue to show VMCP tab on the main control panel window.
+You can revert this setting from current tab.</sys:String>    
+
+    <sys:String x:Key="DialogTitle_DisableVMCPTab">Hide VMC Protocol Tab</sys:String>
+    <sys:String x:Key="DialogMessage_DisableVMCPTab" xml:space="preserve">Continue to hide VMCP tab on the main control panel window.
+If VMCP data receive is active, it will stop by this operation.
+VMCP receive settings is kept after the tab hidden.</sys:String>     
+    
     <!-- Snackbar Messages -->
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>
@@ -684,6 +735,8 @@ Use this only after checking the licenses of VRM you will use.
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/en/docs/setting_files</sys:String>
     <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/en/docs/accessory</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/en/docs/game_input</sys:String>
+    <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/en/docs/vmc_protocol</sys:String>
+
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/en/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/en/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/en/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>

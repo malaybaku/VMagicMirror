@@ -29,7 +29,6 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             
-            var _ = new FaceControlConfigurationReceiver(receiver, config);
             receiver.AssignCommandHandler(
                 VmmCommands.AutoBlinkDuringFaceTracking,
                 message => PreferAutoBlinkOnWebCamTracking = message.ToBoolean()

@@ -29,6 +29,7 @@ namespace Baku.VMagicMirrorConfig
             {
                 HotKeySetting = _hotKeySetting.Save(),
                 MinimizeOnLaunch = _preferenceSetting.MinimizeOnLaunch.Value,
+                ShowVMCPTabOnControlPanel = _preferenceSetting.ShowVMCPTabOnControlPanel.Value,
             };
             SaveInternal(data);
         }
@@ -38,6 +39,7 @@ namespace Baku.VMagicMirrorConfig
             var data = LoadInternal();
             _hotKeySetting.Load(data.HotKeySetting);
             _preferenceSetting.MinimizeOnLaunch.Value = data.MinimizeOnLaunch;
+            _preferenceSetting.ShowVMCPTabOnControlPanel.Value = data.ShowVMCPTabOnControlPanel;
         }
 
         public void DeleteSaveFile()

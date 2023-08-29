@@ -17,6 +17,7 @@ namespace Baku.VMagicMirrorConfig
             Gamepad = resolver.Resolve<GamepadSettingModel>();
             Light = resolver.Resolve<LightSettingModel>();
             WordToMotion = resolver.Resolve<WordToMotionSettingModel>();
+            VMCP = resolver.Resolve<VMCPSettingModel>();
             ExternalTracker = resolver.Resolve<ExternalTrackerSettingModel>();
             Automation = resolver.Resolve<AutomationSettingModel>();
             Accessory = resolver.Resolve<AccessorySettingModel>();
@@ -55,6 +56,7 @@ namespace Baku.VMagicMirrorConfig
         public GamepadSettingModel Gamepad { get; }
         public LightSettingModel Light { get; }
         public WordToMotionSettingModel WordToMotion { get; }
+        public VMCPSettingModel VMCP { get; }
         public ExternalTrackerSettingModel ExternalTracker { get; }
         public AutomationSettingModel Automation { get; }
         public AccessorySettingModel Accessory { get; }

@@ -6,6 +6,7 @@
         //Automationもこっちに保存してもよいと思う
 
         public bool MinimizeOnLaunch { get; set; }
+        public bool ShowVMCPTabOnControlPanel { get; set; }
 
         public HotKeySetting? HotKeySetting { get; set; }
 
@@ -24,6 +25,7 @@
             return new ()
             {
                 MinimizeOnLaunch = false,
+                ShowVMCPTabOnControlPanel = false,
                 HotKeySetting = new HotKeySetting(),
             };
         }

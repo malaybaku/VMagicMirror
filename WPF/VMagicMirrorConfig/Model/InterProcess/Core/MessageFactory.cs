@@ -348,6 +348,14 @@ namespace Baku.VMagicMirrorConfig
 
         #endregion
 
+        #region VMCP
+
+        public Message EnableVMCP(bool enable) => WithArg(enable);
+        public Message SetVMCPSources(string json) => WithArg(json);
+        public Message SetDisableCameraDuringVMCPActive(bool disable) => WithArg(disable);
+
+        #endregion
+
         #region その他
 
         public Message TakeScreenshot() => NoArg();

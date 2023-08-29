@@ -3,9 +3,9 @@ layout: page
 title: Expressions
 ---
 
-# 表情のコントロール
+# 表情/モーション
 
-ここではVMagicMirrorがサポートする表情コントロール方法である`Word to Motion`機能を紹介します。
+ここではVMagicMirrorがサポートする表情およびモーションのコントロール方法である`Word to Motion`機能を紹介します。
 
 #### 概要
 {: .doc-sec2 }

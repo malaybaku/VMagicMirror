@@ -63,9 +63,6 @@ namespace Baku.VMagicMirrorConfig
                     //ともかくモデルがロードされているため、実態に合わせておく
                     _setting.LoadedModelName = e.Args;
                     break;
-                case ReceiveMessageNames.VRM10SpecifiedButNotSupported:
-                    ShowVrm10DetectedMessage(e.Args);
-                    break;
             }
         }
 
@@ -144,18 +141,6 @@ namespace Baku.VMagicMirrorConfig
                 _sender.SendMessage(MessageFactory.Instance.OpenVrm(_setting.LastVrmLoadFilePath));
             }
         }
-
-        private async void ShowVrm10DetectedMessage(string pathOrModelName)
-        {
-            _ctsForDetectVrm10?.Cancel();
-            var indication = MessageIndication.Vrm10NotSupported();
-            await MessageBoxWrapper.Instance.ShowAsync(
-                indication.Title,
-                indication.Content + "\n\nModel: " + pathOrModelName,
-                MessageBoxWrapper.MessageBoxStyle.OK
-                );
-        }
-
 
         public async void LoadSavedVRoidModelAsync(string modelId, bool fromAutoSave)
         {

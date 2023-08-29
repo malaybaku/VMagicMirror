@@ -125,5 +125,25 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public static MessageIndication Vrm10NotSupported() => Load("Vrm10NotSupported");
 
+        /// <summary>
+        /// VMCPの設定をアイテム1つぶん削除するときの確認ダイアログ
+        /// </summary>
+        /// <returns></returns>
+        public static MessageIndication ResetVmcpSourceItemConfirmation() => Load("ResetVmcpSourceItemConfirm");
+
+        /// <summary>
+        /// VMCPの設定タブをコントロールパネルに表示するときの確認ダイアログ
+        /// </summary>
+        /// <returns></returns>
+        public static MessageIndication EnableVMCPTab() => Load("EnableVMCPTab");
+
+        /// <summary>
+        /// VMCPの設定タブをコントロールパネルから非表示にするときの確認ダイアログ
+        /// </summary>
+        /// <returns></returns>
+        public static MessageIndication DisableVMCPTab() => Load("DisableVMCPTab");
+
+
+
     }
 }

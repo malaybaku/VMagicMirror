@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8218640737285604640}
   - component: {fileID: 42090108536346765}
   - component: {fileID: 2683631619848515584}
+  - component: {fileID: 746078820610171895}
   m_Layer: 0
   m_Name: VMagicMirrorContext
   m_TagString: Untagged
@@ -48,6 +49,7 @@ MonoBehaviour:
   _scriptableObjectInstallers:
   - {fileID: 11400000, guid: 954b2e62436e8694b92e0abe19aa6182, type: 2}
   _monoInstallers:
+  - {fileID: 746078820610171895}
   - {fileID: 42090108536346765}
   _installerPrefabs: []
   _autoRun: 1
@@ -106,3 +108,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8567d6cb62371714e8e942528bc18d00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &746078820610171895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8218640737285604647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce93fd786f888004f9e1840bc57ba852, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oscServerPrefab: {fileID: 3003734258558408633, guid: 7cdb979d19b20e24cac0434a12ce0484,
+    type: 3}

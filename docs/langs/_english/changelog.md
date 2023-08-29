@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.3.0
+{: .doc-sec2 }
+
+2023/08/31
+
+* Add: VMC Protocol data receive support. See detail at: [VMC Protocol](../docs/vmc_protocol)
+
+
 #### v3.2.3
 {: .doc-sec2 }
 

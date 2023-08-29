@@ -123,9 +123,10 @@ Check "Keep LipSync" to make the lipsync continue.</sys:String>
     <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMC Protocol (VMCP) can receive motion inputs from other apps.
 VMagicMirror supports to receive:
 
-- Head Pose
-- Facial BlendShape
-- Hand Pose</sys:String>
+- Head: Head Pose
+- Hand: Hand Pose
+- Facial: Facial BlendShape
+</sys:String>
     <sys:String x:Key="VMCP_SeeMore">See More...</sys:String>
 
     <sys:String x:Key="VMCP_Enable">Enable VMC Protocol</sys:String>
@@ -133,11 +134,11 @@ VMagicMirror supports to receive:
     <sys:String x:Key="VMCP_AdvancedSetting_Header">Advanced Settings</sys:String>    
     <sys:String x:Key="VMCP_GridLabel_AppName">App Name</sys:String>
     <sys:String x:Key="VMCP_GridLabel_AppName_Placeholder">App Name</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_Connected">Connect</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_PortNumber">Port Number</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HeadPose">Head Pose</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_Connected">Status</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_PortNumber">Port</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HeadPose">Head</sys:String>
     <sys:String x:Key="VMCP_GridLabel_Facial">Facial</sys:String>
-    <sys:String x:Key="VMCP_GridLabel_HandPose">Hand Pose</sys:String>
+    <sys:String x:Key="VMCP_GridLabel_HandPose">Hand</sys:String>
     <sys:String x:Key="VMCP_Notice_Priority">Upper item has higher priority</sys:String>
     <sys:String x:Key="VMCP_PortInputError">*Port number must be in 0 - 65535.</sys:String>
     <sys:String x:Key="VMCP_ShouldApply">*There are unapplied changes.</sys:String>

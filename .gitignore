@@ -71,6 +71,7 @@ sysinfo.txt
 /VMagicMirror/Assets/MeshUtility/
 /VMagicMirror/Assets/MiscAssets/
 /VMagicMirror/Assets/uWindowCapture/
+/VMagicMirror/Assets/uOSC/
 /VMagicMirror/Assets/NuGet/
 /VMagicMirror/Assets/NuGetPackages/
 
@@ -96,6 +97,7 @@ sysinfo.txt
 /VMagicMirror/Assets/MeshUtility.meta
 /VMagicMirror/Assets/MiscAssets.meta
 /VMagicMirror/Assets/uWindowCapture.meta
+/VMagicMirror/Assets/uOSC.meta
 /VMagicMirror/uWindowCapture.log
 /VMagicMirror/Assets/NuGet.meta
 /VMagicMirror/Assets/NuGetPackages.meta

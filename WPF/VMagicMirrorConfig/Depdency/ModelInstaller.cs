@@ -34,6 +34,7 @@
             resolver.Add(new GamepadSettingModel());
             resolver.Add(new LightSettingModel());
             resolver.Add(new WordToMotionSettingModel());
+            resolver.Add(new VMCPSettingModel());
             resolver.Add(new ExternalTrackerSettingModel());
             resolver.Add(new AutomationSettingModel());
             resolver.Add(new AccessorySettingModel());

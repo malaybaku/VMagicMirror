@@ -85,6 +85,7 @@ GameObject:
   - component: {fileID: 5813678808713813108}
   - component: {fileID: 3376032428813691452}
   - component: {fileID: 6238302672375872197}
+  - component: {fileID: 129376348720160579}
   m_Layer: 0
   m_Name: BodyMotion
   m_TagString: Untagged
@@ -121,6 +122,7 @@ MonoBehaviour:
   bodyLeanIntegrator: {fileID: 8506340368463674577}
   imageBasedBodyMotion: {fileID: 5813678808713813112}
   exTrackerBodyMotion: {fileID: 6238302672375872197}
+  vmcpBodyOffset: {fileID: 129376348720160579}
   waitingBodyMotion: {fileID: 5813678808713813113}
   yMaxLength: 0.2
   xMaxLength: 0.2
@@ -226,6 +228,27 @@ MonoBehaviour:
   lerpFactor: 18
   lerpFactorOnLost: 3
   lerpFactorBlendDuration: 1
+--- !u!114 &129376348720160579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678808713813115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71c6350e4c3ace74cbde37b6e39f313a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  applyScale: {x: -0.15, y: 0.15, z: 0.1}
+  applyMin: {x: -0.02, y: -0.02, z: -0.01}
+  applyMax: {x: 0.02, y: 0.02, z: 0.01}
+  applyScaleWhenNoHandTrack: {x: -0.8, y: 0.7, z: 0.6}
+  applyMinWhenNoHandTrack: {x: -0.2, y: -0.2, z: -0.1}
+  applyMaxWhenNoHandTrack: {x: 0.2, y: 0.2, z: 0.1}
+  lerpFactor: 18
+  lerpFactorOnLost: 3
+  lerpFactorBlendDuration: 1
 --- !u!1 &5813678809054739212
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,6 +260,7 @@ GameObject:
   - component: {fileID: 5813678809054739211}
   - component: {fileID: 7319070492286949183}
   - component: {fileID: 5813678809054739210}
+  - component: {fileID: 5753114841520320764}
   - component: {fileID: 1338865419136667663}
   - component: {fileID: 3373783041301125446}
   - component: {fileID: 3163774597481480951}
@@ -295,6 +319,22 @@ MonoBehaviour:
   deadZoneLeaveCount: 3
   deadZoneEnterRange: {x: 50, y: 6, z: 6}
   deadZoneEnterCount: 6
+--- !u!114 &5753114841520320764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813678809054739212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf664d46ab8ca294790737c9076c29d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  angleApplyFactor: 0.8
+  pitchFactor: 0.8
+  pitchLimitDeg: 25
+  lerpFactor: 18
 --- !u!114 &1338865419136667663
 MonoBehaviour:
   m_ObjectHideFlags: 0

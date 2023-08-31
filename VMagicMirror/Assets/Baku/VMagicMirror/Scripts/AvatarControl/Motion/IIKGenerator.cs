@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -27,7 +28,7 @@ namespace Baku.VMagicMirror
         //public IKTargets Target { get; set; } = IKTargets.Body;
     }
 
-    public readonly struct IKDataStruct : IIKData
+    public readonly struct IKDataStruct : IIKData, IEquatable<IKDataStruct>
     {
         public IKDataStruct(Vector3 position, Quaternion rotation)
         {
@@ -36,6 +37,22 @@ namespace Baku.VMagicMirror
         }
         public Vector3 Position { get; }
         public Quaternion Rotation { get; }
+
+        public bool Equals(IKDataStruct other) 
+            => Position.Equals(other.Position) && Rotation.Equals(other.Rotation);
+
+        public override bool Equals(object obj) 
+            => obj is IKDataStruct other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Position.GetHashCode() * 397) ^ Rotation.GetHashCode();
+            }
+        }
+
+        public static IKDataStruct Empty { get; } = new IKDataStruct(Vector3.zero, Quaternion.identity);
     }
 
     /// <summary><see cref="IIKData"/>のIKが体のどの部位を動かすためのものかの一覧</summary>

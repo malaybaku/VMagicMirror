@@ -1,4 +1,5 @@
 ﻿using Baku.VMagicMirror.IK;
+using Baku.VMagicMirror.VMCP;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -54,7 +55,8 @@ namespace Baku.VMagicMirror
         private AlwaysDownHandIkGenerator _downHand;
         private PenTabletHandIKGenerator _penTablet;
         public ClapMotionHandIKGenerator ClapMotion { get; private set; }
-
+        private VMCPHandIkGenerator _vmcpHand;
+        
         private Transform _rightHandTarget = null;
         private Transform _leftHandTarget = null;
 
@@ -171,7 +173,9 @@ namespace Baku.VMagicMirror
             PenTabletProvider penTabletProvider,
             HandTracker handTracker,
             ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader,
-            SwitchableHandDownIkData switchableHandDownIk
+            SwitchableHandDownIkData switchableHandDownIk,
+            VMCPHandPose vmcpHandPose,
+            VMCPFingerController vmcpFingerController
             )
         {
             _reactionSources = new HandIkReactionSources(
@@ -210,6 +214,7 @@ namespace Baku.VMagicMirror
             _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
+            _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose, vmcpFingerController, _downHand);
             barracudaHand.SetupDependency(dependency);
 
             typing.SetUp(keyboardProvider, dependency);
@@ -221,7 +226,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _downHand, _penTablet, ClapMotion,
+                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _downHand, _penTablet, _vmcpHand, ClapMotion,
                 })
             {
                 if (generator.LeftHandState != null)
@@ -444,6 +449,7 @@ namespace Baku.VMagicMirror
             MidiHand.Update();
             _arcadeStickHand.Update();
             _penTablet.Update();
+            _vmcpHand.Update();
 
             //現在のステート + 必要なら直前ステートも参照してIKターゲットの位置、姿勢を更新する
             UpdateLeftHand();
@@ -537,9 +543,13 @@ namespace Baku.VMagicMirror
         {
             var targetType = state.TargetType;
             
-            //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは拍手以外は禁止 + 拍手は実行中の優先度がすごく高い
+            //書いてる通りだが、
+            // - 同じ状態には遷移できない
+            // - 手下げモード、ないしVMCProtocolのときは拍手以外に遷移できない
+            // - 拍手は実行優先度がすごく高い
             if (_leftTargetType.Value == targetType || 
                 AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
+                _vmcpHand.IsActive.Value && targetType != HandTargetType.VMCPReceiveResult && targetType != HandTargetType.ClapMotion ||
                 _leftTargetType.Value == HandTargetType.ClapMotion && ClapMotion.ClapMotionRunning
                )
             {
@@ -566,8 +576,9 @@ namespace Baku.VMagicMirror
         {
             var targetType = state.TargetType;
             
-            //書いてる通りだが、同じ状態には遷移できない + 手下げモードのときは拍手以外は禁止 + 拍手は実行中の優先度がすごく高い
+            // 優先度の効かせ方はLeftHandと同じ
             if (_rightTargetType.Value == targetType || 
+                _vmcpHand.IsActive.Value && targetType != HandTargetType.VMCPReceiveResult && targetType != HandTargetType.ClapMotion ||
                 AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
                 _rightTargetType.Value == HandTargetType.ClapMotion && ClapMotion.ClapMotionRunning
                )
@@ -662,6 +673,8 @@ namespace Baku.VMagicMirror
         AlwaysDown,
         // NOTE: ClapMotionは「IKステートとして作られたビルトインモーション」で、他のステートに比べると一時的な使われ方をする
         ClapMotion,
+        // NOTE: VMCPの適用中は他のモードに切り替わらない
+        VMCPReceiveResult,
         Unknown,
     }
     

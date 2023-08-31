@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.VMCPSettingPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"             
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="500"
+             d:DesignHeight="750">
+    <UserControl.DataContext>
+        <vm:VMCPSettingViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
+        <view:BooleanToForegroundConverter x:Key="BooleanToForegroundConverter"/>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="10">
+            <TextBlock 
+                Text="{DynamicResource VMCP_Header}"                 
+                Style="{StaticResource SectionHeaderText}"
+                />
+
+            <Grid Margin="10">
+                <TextBlock Text="{DynamicResource VMCP_Instruction}"
+                       TextWrapping="Wrap"
+                       Margin="0"
+                       />
+
+                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Padding="0"
+                        MinWidth="130"
+                        Margin="10,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding OpenDocUrlCommand}"
+                        Content="{DynamicResource VMCP_SeeMore}"
+                        />
+            </Grid>
+
+            <!-- Spacer -->
+            <Rectangle Height="20"/>
+
+            <TextBlock Text="{DynamicResource VMCP_Setting_EnableVMCPTab_Notice}"
+                       TextWrapping="Wrap"
+                       Margin="15,10"
+                       Visibility="{Binding ShowVMCPTabOnControlPanel.Value, 
+                                         Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                       />
+
+            <Button Content="{DynamicResource VMCP_Setting_EnableVMCPTab}"
+                    HorizontalAlignment="Left"
+                    Width="NaN"
+                    Margin="10"
+                    Visibility="{Binding ShowVMCPTabOnControlPanel.Value, 
+                                         Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                    Command="{Binding EnableVMCPTabOnControlPanelCommand}"
+                    />
+
+            <TextBlock Text="{DynamicResource VMCP_Setting_DisableVMCPTab_Notice}"
+                       TextWrapping="Wrap"
+                       Margin="15,10"
+                       Visibility="{Binding ShowVMCPTabOnControlPanel.Value, 
+                                         Converter={StaticResource BooleanToVisibilityConverter}}"
+                       />
+
+            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Content="{DynamicResource VMCP_Setting_DisableVMCPTab}"
+                    HorizontalAlignment="Left"
+                    Width="NaN"
+                    Margin="10"
+                    Visibility="{Binding ShowVMCPTabOnControlPanel.Value, 
+                                         Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Command="{Binding DisableVMCPTabOnControlPanelCommand}"
+                    />
+        </StackPanel>
+ 
+    </ScrollViewer>
+</UserControl>

@@ -29,6 +29,7 @@ Setting Window consists of 8 tabs.
 | [Effects](./effects)        | Light, shadow, bloom, and wind                                |
 | [Devices](./devices)        | Connection settings for gamepad and MIDI controller           |
 | [Expressions](./expressions)| Feature to move the character face and motion                 |
+| [VMC Protocol](./vmc_protocol) | Receive pose / facial data from VMC Protocol               |
 | [Hot Key](./hotkey)         | Customize shortcut key input to control settings              |
 | [Setting Files](./setting_files) | Advanced features to manage setting files                |
 |==================================|==========================================================|
@@ -43,10 +44,11 @@ Followings are advanced features of VMagicMirror available
 | Feature                          | What you can                                 |
 |:--------------------------------:|:------------------------------------------------|
 | [External Tracker App](./external_tracker)      | High quality tracking with iOS app (iFacialMocap) |
+| [VMC Protocol](./vmc_protocol)        | VMC Protocol based motion and facial                   |
 | [Accessory](./accessory)                    | Load image / 3D model and attach to the avatar  |
 | [Hand Tracking](./hand_tracking)            | Web camera based hand tracking       |
-| [Setting File Management](./setting_files)  | Setting file save/load features      |
 | [Game Motion Input](./game_input)                  | Game(FPS)-like motion by your avatar |
+| [Setting File Management](./setting_files)  | Setting file save/load features      |
 |==================================|=================================================|
 
 #### External Tracker

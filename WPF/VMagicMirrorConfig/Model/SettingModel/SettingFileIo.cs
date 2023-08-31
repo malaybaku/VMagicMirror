@@ -148,6 +148,7 @@ namespace Baku.VMagicMirrorConfig
                 LayoutSetting = _model.Layout.Save(),
                 LightSetting = _model.Light.Save(),
                 WordToMotionSetting = _model.WordToMotion.Save(),
+                VMCPSetting = _model.VMCP.Save(),
                 ExternalTrackerSetting = _model.ExternalTracker.Save(),
                 AccessorySetting = _model.Accessory.Save(),
                 AutomationSetting = _model.Automation.Save(),
@@ -229,6 +230,7 @@ namespace Baku.VMagicMirrorConfig
                     _model.Gamepad.Load(saveData.LayoutSetting?.Gamepad);
                     _model.Light.Load(saveData.LightSetting);
                     _model.WordToMotion.Load(saveData.WordToMotionSetting);
+                    _model.VMCP.Load(saveData.VMCPSetting);
                     _model.ExternalTracker.Load(saveData.ExternalTrackerSetting);
                     _model.Accessory.Load(saveData.AccessorySetting);
 

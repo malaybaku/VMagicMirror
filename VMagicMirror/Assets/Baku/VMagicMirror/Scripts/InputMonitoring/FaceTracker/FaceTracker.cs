@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Baku.VMagicMirror.VMCP;
 using UnityEngine;
 using UniRx;
 using Zenject;
@@ -110,10 +111,11 @@ namespace Baku.VMagicMirror
         public void Initialize(
             IMessageReceiver receiver, 
             IMessageSender sender,
-            HorizontalFlipController horizontalFlipController
+            HorizontalFlipController horizontalFlipController,
+            VMCPActiveness vmcpActiveness
             )
         {
-            var _ = new FaceTrackerReceiver(receiver, this);
+            var _ = new FaceTrackerReceiver(receiver, this, vmcpActiveness);
             _horizontalFlipController = horizontalFlipController;
             _sender = sender;
         }

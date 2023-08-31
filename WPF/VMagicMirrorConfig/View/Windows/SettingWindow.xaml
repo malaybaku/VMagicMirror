@@ -217,9 +217,10 @@
         </TabItem>
         <TabItem>
             <TabItem.Header>
+                <!-- NOTE: "VMCP"としか書きにくいのでそれで行きます。-->
                 <view:TabHeaderIconText 
-                    Text="{DynamicResource TopBar_Setting_HotKey}"                        
-                    IconKind="Keyboard"
+                    Text="{DynamicResource TopBar_Setting_VMCP}"                        
+                    IconKind="AlphaVBoxOutline"
                     IconWidth="17"
                     IconHeight="17"
                     TextMargin="0,0,0,0"
@@ -232,6 +233,27 @@
                                         ElementName=MainTabControl,
                                         Converter={StaticResource SelectionToForeground},
                                         ConverterParameter=7}"                        
+                    />
+            </TabItem.Header>
+            <view:VMCPSettingPanel Background="White" />
+        </TabItem>
+        <TabItem>
+            <TabItem.Header>
+                <view:TabHeaderIconText 
+                    Text="{DynamicResource TopBar_Setting_HotKey}"                        
+                    IconKind="Keyboard"
+                    IconWidth="17"
+                    IconHeight="17"
+                    TextMargin="0,0,0,0"
+                    TranslateX="-4"
+                    Background="{Binding SelectedIndex,
+                                        ElementName=MainTabControl,
+                                        Converter={StaticResource SelectionToBackground},
+                                        ConverterParameter=8}"
+                    Foreground="{Binding SelectedIndex,
+                                        ElementName=MainTabControl,
+                                        Converter={StaticResource SelectionToForeground},
+                                        ConverterParameter=8}"                        
                     />
             </TabItem.Header>
             <view:HotKeySettingPanel Background="White" />
@@ -248,11 +270,11 @@
                     Background="{Binding SelectedIndex,
                                         ElementName=MainTabControl,
                                         Converter={StaticResource SelectionToBackground},
-                                        ConverterParameter=8}"
+                                        ConverterParameter=9}"
                     Foreground="{Binding SelectedIndex,
                                         ElementName=MainTabControl,
                                         Converter={StaticResource SelectionToForeground},
-                                        ConverterParameter=8}"                        
+                                        ConverterParameter=9}"                        
                     />
             </TabItem.Header>
             <view:SettingIoPanel Background="White" />

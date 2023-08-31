@@ -1393,11 +1393,11 @@ PrefabInstance:
     - target: {fileID: 8218640737285604640, guid: 790d84fdbc606c944ad6592cf84f1ea9,
         type: 3}
       propertyPath: _monoInstallers.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8218640737285604640, guid: 790d84fdbc606c944ad6592cf84f1ea9,
         type: 3}
-      propertyPath: _monoInstallers.Array.data[1]
+      propertyPath: _monoInstallers.Array.data[2]
       value: 
       objectReference: {fileID: 1480384361}
     - target: {fileID: 8218640737285604641, guid: 790d84fdbc606c944ad6592cf84f1ea9,

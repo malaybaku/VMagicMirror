@@ -23,6 +23,12 @@ namespace Baku.VMagicMirror
         /// </summary>
         public bool UsePerfectSync { get; set; }
 
+        /// <summary>
+        /// VMCPによるBlendShapeの適用が有効かどうかを取得、設定します。
+        /// このフラグがtrueの場合、Word To Motion, Face Switchに次いでVMCPのBlendShapeが優先されます。
+        /// </summary>
+        public bool UseVMCPFacial { get; set; }
+        
         public bool PerfectSyncActive => ControlMode == FaceControlModes.ExternalTracker && UsePerfectSync;
         
         #endregion
@@ -90,5 +96,10 @@ namespace Baku.VMagicMirror
         WebCam,
         /// <summary> 外部アプリによる顔トラッキングを行っています。 </summary>
         ExternalTracker,
+        /// <summary> VMC Protocolで受信した頭部トラッキング </summary>
+        /// <remarks>
+        /// この値が指定されていてもBlendShapeは適用してない…というケースが想定されています。
+        /// </remarks>
+        VMCProtocol,
     }
 }

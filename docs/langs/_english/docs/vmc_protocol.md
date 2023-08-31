@@ -6,9 +6,9 @@ lang: en
 
 # VMC Protocol
 
-This feature is available from v4.0.0
+This feature is available from VMagicMirror v3.3.0.
 
-In VMCP tab, you can use [VMC Protocol](https://protocol.vmc.info/) (VMCP) to receive pose and facial data from other applications which support VMC Protocol.
+This feature supports [VMC Protocol](https://protocol.vmc.info/) (VMCP) to receive pose and facial data from other applications which support VMC Protocol.
 
 <div class="row">
 {% include docimg.html file="/images/docs/vmcp_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
@@ -95,3 +95,18 @@ Advanced Settings support detailed option. In most cases you should use default 
 - `Disable Camera feature during VMCP is active`: Turn on to disable webcam using features in VMagicMirror during VMCP is active. This option is on by default. You should enable this option if VMCP source app uses your PC's webcam.
 
 </div>
+
+
+#### 3. Known Issues
+{: .doc-sec2 }
+
+VMagicMirror v3.3.0 has following known issue.
+
+<div class="doc-ul" markdown="1">
+
+- Hand Tracking does not work with VMCP: Open `Streaming` tab > `Motion` > `Body Motion Style`, and select `Default`. If issue still continues, please try to restart VMagicMirror.
+- `Status`'s indication is incorrect: Restart VMagicMirror might solve the issue.
+- Motions are different between sender app and VMagicMirror: Partially this is by design, since VMagicMirror has its own motion modification inside the app. Please contact to developer if difference is so unnatural and seems to be a bug.
+
+</div>
+

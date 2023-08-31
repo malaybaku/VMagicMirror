@@ -79,6 +79,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 sources.Count > 2 ? sources[2] : new VMCPSource(),
                 SetDirty);
 
+
+            Source1.Connected.Value = sources.Count > 0 && _model.Conneceted[0];
+            Source2.Connected.Value = sources.Count > 1 && _model.Conneceted[1];
+            Source3.Connected.Value = sources.Count > 2 && _model.Conneceted[2];
+
             RaisePropertyChanged(nameof(Source1));
             RaisePropertyChanged(nameof(Source2));
             RaisePropertyChanged(nameof(Source3));

@@ -7,6 +7,14 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v3.3.0
+{: .doc-sec2 }
+
+2023/08/31
+
+* 追加: VMC Protocolのデータ受信機能を追加しました。詳細は[VMC Protocol](../docs/vmc_protocol)のページを参照下さい。
+
+
 #### v3.2.3
 {: .doc-sec2 }
 

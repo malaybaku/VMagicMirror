@@ -40,11 +40,12 @@ VMagicMirrorの開発者は下記ソフトウェアを接続先として動作�
 
 `詳細設定ウィンドウを開く`から詳細設定を開き、`VMCP`タブから`設定タブをメインウィンドウに表示`を選択します。
 
-<div class="row">
-{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
-</div>
-
 この操作によってコントロールパネルの`VMCP`タブが表示され、本機能が利用可能になります。
+
+<div class="row">
+{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/docs/vmcp_settings.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+</div>
 
 
 これ以降はコントロールパネル側のタブで設定を行います。

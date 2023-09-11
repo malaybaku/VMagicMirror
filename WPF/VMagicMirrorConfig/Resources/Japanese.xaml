@@ -159,6 +159,10 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
     <sys:String x:Key="HandTracking_Enable">ハンドトラッキングを有効化</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*動きかたのオプションで「つねに手下げ」が選択されています。
+ハンドトラッキングの結果を適用するには「デフォルト」に変更して下さい。</sys:String>
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
+    
     <sys:String x:Key="HandTracking_ShowAreaChecker">手の検出状況を表示(※カメラ映像は表示されません)</sys:String> 
     <sys:String x:Key="HandTracking_DetectionResult">手の検出状況:</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">ヒント:
@@ -733,8 +737,7 @@ VMCPのデータが受信中の場合、この操作で受信機能はオフに�
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">選択されたマイクの接続を検出しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">選択されたカメラの接続を検出しました: {0}</sys:String>
-    <sys:String x:Key="Snackbar_VMCP_FixBodyMotionStyle_Completed">動きかたのオプションを「デフォルト」に変更しました</sys:String>
-    
+    <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">動きかたのオプションを「デフォルト」に変更しました</sys:String>    
     
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(何もしない)</sys:String>

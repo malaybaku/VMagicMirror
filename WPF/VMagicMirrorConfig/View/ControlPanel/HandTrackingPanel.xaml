@@ -98,6 +98,25 @@
                                 IsChecked="{Binding EnableSendHandTrackingResult.Value}"
                                 />
 
+                    <md:Card Margin="15,5,5,0" 
+                         Visibility="{Binding BodyMotionStyleIncorrectForHandTracking.Value,
+                                              Converter={StaticResource BooleanToVisibilityConverter}}"
+                         HorizontalAlignment="Stretch"
+                         Padding="3">
+                        <StackPanel HorizontalAlignment="Left">
+                            <TextBlock Text="{DynamicResource HandTracking_BodyMotionModeIncorrect}" 
+                                               TextWrapping="Wrap"
+                                               />
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Content="{DynamicResource HandTracking_BodyMotionModeIncorrect_Fix}"
+                                Command="{Binding FixBodyMotionStyleCommand}"
+                                HorizontalAlignment="Left"
+                                Padding="2"
+                                Margin="5"
+                                />
+                        </StackPanel>
+                    </md:Card>                    
+                    
                     <TextBlock Margin="15,20,15,0" 
                                Text="{DynamicResource HandTracking_DetectionResult}"
                                Opacity="{Binding EnableSendHandTrackingResult.Value,

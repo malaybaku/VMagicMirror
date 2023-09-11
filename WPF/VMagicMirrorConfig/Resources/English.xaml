@@ -144,8 +144,8 @@ VMagicMirror supports to receive:
     <sys:String x:Key="VMCP_ShouldApply">*There are unapplied changes.</sys:String>
     <sys:String x:Key="VMCP_Apply">Apply Changes</sys:String>
     <sys:String x:Key="VMCP_Revert">Revert</sys:String>    
-    <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is set to "Standing Only."
-You need to change the option to "Default" to apply hand pose based on VMC Protocol.</sys:String>
+    <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
+Use "Default" to apply VMC Protocol based hand pose.</sys:String>
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">Use "Default" Option</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">Disable Camera feature during VMCP is active</sys:String>    
     

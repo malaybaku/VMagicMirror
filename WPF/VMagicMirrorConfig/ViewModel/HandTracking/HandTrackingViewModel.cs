@@ -4,7 +4,6 @@ using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
-    //TODO: モデルに引っ張られてFaceとMotionが同一ViewModelになっちゃってるが、分けるべき
     public class HandTrackingViewModel : SettingViewModelBase
     {
         public HandTrackingViewModel() : this(

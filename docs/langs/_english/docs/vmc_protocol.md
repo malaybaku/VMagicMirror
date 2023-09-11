@@ -39,11 +39,12 @@ By default VMCP feature is hidden in control panel window.
 
 To enable it, open setting window and select `VMCP` tab > `Show VMCP Tab on Main Window` to show settings UI on main control panel window.
 
-<div class="row">
-{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
-</div>
-
 Then, select `VMCP` tab in control panel window.
+
+<div class="row">
+{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/docs/vmcp_settings.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+</div>
 
 Check `Enable VMC Protocol` to enable the feature.
 

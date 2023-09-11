@@ -36,6 +36,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 ApplyConnectionStatus();
 
                 UpdateBodyMotionStyleCorrectness();
+
+                _model.VMCPEnabled.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
                 _motionSettingModel.EnableNoHandTrackMode.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
             }
         }
@@ -66,7 +68,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ApplyChangeCommand { get; }
         public ActionCommand RevertChangeCommand { get; }
         public ActionCommand OpenDocUrlCommand { get; }
-
         public ActionCommand FixBodyMotionStyleCommand { get; }
 
         private void UpdateInputValidity()
@@ -161,7 +162,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void FixBodyMotionStyle()
         {
-            _motionSettingModel.EnableNoHandTrackMode.Value = true;
+            _motionSettingModel.EnableNoHandTrackMode.Value = false;
             _motionSettingModel.EnableGameInputLocomotionMode.Value = false;
         }
     }

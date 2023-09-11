@@ -164,6 +164,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             _motionSettingModel.EnableNoHandTrackMode.Value = false;
             _motionSettingModel.EnableGameInputLocomotionMode.Value = false;
+            SnackbarWrapper.Enqueue(LocalizedString.GetString("Snackbar_VMCP_FixBodyMotionStyle_Completed"));
         }
     }
 }

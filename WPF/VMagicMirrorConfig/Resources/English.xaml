@@ -727,7 +727,8 @@ VMCP receive settings is kept after the tab hidden.</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">Selected Camera Detected: {0}</sys:String>    
-    
+    <sys:String x:Key="Snackbar_VMCP_FixBodyMotionStyle_Completed">Body Motion Style is set to: "Default"</sys:String>
+
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(Do Nothing)</sys:String>
     <sys:String x:Key="CommonUi_None">(None)</sys:String>

@@ -733,6 +733,8 @@ VMCPのデータが受信中の場合、この操作で受信機能はオフに�
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">選択されたマイクの接続を検出しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">選択されたカメラの接続を検出しました: {0}</sys:String>
+    <sys:String x:Key="Snackbar_VMCP_FixBodyMotionStyle_Completed">動きかたのオプションを「デフォルト」に変更しました</sys:String>
+    
     
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(何もしない)</sys:String>

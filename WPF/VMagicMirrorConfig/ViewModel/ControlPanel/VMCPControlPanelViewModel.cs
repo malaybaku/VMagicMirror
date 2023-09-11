@@ -8,17 +8,23 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     public class VMCPControlPanelViewModel : SettingViewModelBase
     {
         public VMCPControlPanelViewModel() : this(
-            ModelResolver.Instance.Resolve<VMCPSettingModel>())
+            ModelResolver.Instance.Resolve<VMCPSettingModel>(),
+            ModelResolver.Instance.Resolve<MotionSettingModel>())
         {
         }
 
-        internal VMCPControlPanelViewModel(VMCPSettingModel model)
+        internal VMCPControlPanelViewModel(
+            VMCPSettingModel model,
+            MotionSettingModel motionSettingModel)
         {
             _model = model;
+            _motionSettingModel = motionSettingModel;
+
             IsDirty = new RProperty<bool>(false, _ => UpdateInputValidity());
             ApplyChangeCommand = new ActionCommand(ApplyChange);
             RevertChangeCommand = new ActionCommand(RevertChange);
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
+            FixBodyMotionStyleCommand = new ActionCommand(FixBodyMotionStyle);
 
             if (!IsInDesignMode)
             {
@@ -28,10 +34,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     );
                 _model.SerializedVMCPSourceSetting.AddWeakEventHandler(OnSerializedVMCPSourceSettingChanged);
                 ApplyConnectionStatus();
+
+                UpdateBodyMotionStyleCorrectness();
+                _motionSettingModel.EnableNoHandTrackMode.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
             }
         }
 
         private readonly VMCPSettingModel _model;
+        private readonly MotionSettingModel _motionSettingModel;
 
         public RProperty<bool> IsDirty { get; }
         public RProperty<bool> CanApply { get; } = new(false);
@@ -44,6 +54,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> DisableCameraDuringVMCPActive => _model.DisableCameraDuringVMCPActive;
 
+        public RProperty<bool> BodyMotionStyleIncorrectForHandTracking { get; } = new(false);
+
         public void SetDirty()
         {
             IsDirty.Value = true;
@@ -54,6 +66,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ApplyChangeCommand { get; }
         public ActionCommand RevertChangeCommand { get; }
         public ActionCommand OpenDocUrlCommand { get; }
+
+        public ActionCommand FixBodyMotionStyleCommand { get; }
 
         private void UpdateInputValidity()
         {
@@ -87,13 +101,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             RaisePropertyChanged(nameof(Source1));
             RaisePropertyChanged(nameof(Source2));
             RaisePropertyChanged(nameof(Source3));
+            UpdateBodyMotionStyleCorrectness();
             IsDirty.Value = false;
         }
 
-        private void OnSerializedVMCPSourceSettingChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            LoadCurrentSettings();
-        }
+        private void OnSerializedVMCPSourceSettingChanged(object? sender, PropertyChangedEventArgs e) 
+            => LoadCurrentSettings();
+
+        private void OnBodyMotionStyleCorrectnessMaybeChanged(object? sender, PropertyChangedEventArgs e)
+            => UpdateBodyMotionStyleCorrectness();
 
         private void OnConnectedStatusChanged(object? sender, EventArgs e) => ApplyConnectionStatus();
 
@@ -124,10 +140,29 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void RevertChange() => LoadCurrentSettings();
 
+        private void UpdateBodyMotionStyleCorrectness()
+        {
+            var sourceHasHandTrackingOption =
+                (!Source1.PortNumberIsInvalid.Value && Source1.ReceiveHandPose.Value) ||
+                (!Source2.PortNumberIsInvalid.Value && Source2.ReceiveHandPose.Value) ||
+                (!Source3.PortNumberIsInvalid.Value && Source3.ReceiveHandPose.Value);
+
+            BodyMotionStyleIncorrectForHandTracking.Value =
+                sourceHasHandTrackingOption &&
+                _model.VMCPEnabled.Value && 
+                _motionSettingModel.EnableNoHandTrackMode.Value;
+        }
+
         private void OpenDocUrl()
         {
             var url = LocalizedString.GetString("URL_docs_vmc_protocol");
             UrlNavigate.Open(url);
+        }
+
+        private void FixBodyMotionStyle()
+        {
+            _motionSettingModel.EnableNoHandTrackMode.Value = true;
+            _motionSettingModel.EnableGameInputLocomotionMode.Value = false;
         }
     }
 }

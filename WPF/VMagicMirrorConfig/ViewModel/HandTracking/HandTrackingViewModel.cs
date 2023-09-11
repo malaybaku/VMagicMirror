@@ -43,8 +43,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     nameof(receiver.ReceivedCommand),
                     OnReceivedCommand
                     );
+
                 _model.EnableImageBasedHandTracking.AddWeakEventHandler(BodyMotionStyleIncorrectMaybeChanged);
                 _model.EnableNoHandTrackMode.AddWeakEventHandler(BodyMotionStyleIncorrectMaybeChanged);
+                UpdateBodyMotionStyleCorrectness();
             }
         }
 
@@ -69,9 +71,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         private void BodyMotionStyleIncorrectMaybeChanged(object? sender, PropertyChangedEventArgs e)
-            => UpdateBodyMotionStyleIncorrect();
+            => UpdateBodyMotionStyleCorrectness();
 
-        private void UpdateBodyMotionStyleIncorrect()
+        private void UpdateBodyMotionStyleCorrectness()
         {
             BodyMotionStyleIncorrectForHandTracking.Value =
                 _model.EnableImageBasedHandTracking.Value &&

@@ -35,10 +35,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 _model.SerializedVMCPSourceSetting.AddWeakEventHandler(OnSerializedVMCPSourceSettingChanged);
                 ApplyConnectionStatus();
 
-                UpdateBodyMotionStyleCorrectness();
-
                 _model.VMCPEnabled.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
                 _motionSettingModel.EnableNoHandTrackMode.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
+                UpdateBodyMotionStyleCorrectness();
             }
         }
 

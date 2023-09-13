@@ -9,6 +9,7 @@ using OpenCVForUnity.DnnModule;
 using OpenCVForUnity.ImgprocModule;
 using OpenCVForUnity.UtilsModule;
 using UnityEngine;
+using Range = OpenCVForUnity.CoreModule.Range;
 using Rect = UnityEngine.Rect;
 #endif
 

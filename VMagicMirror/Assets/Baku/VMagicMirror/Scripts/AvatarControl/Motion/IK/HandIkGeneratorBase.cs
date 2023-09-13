@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.IK
 {
-    public abstract class HandIkGeneratorBase
+    public abstract class HandIkGeneratorBase : IDisposable
     {
         public HandIkGeneratorBase(HandIkGeneratorDependency dependency)
         {
@@ -29,6 +30,10 @@ namespace Baku.VMagicMirror.IK
 
         /// <summary> HandIKIntegratorのLateUpdate内部で呼ばれます。 </summary>
         public virtual void LateUpdate()
+        {
+        }
+
+        public virtual void Dispose()
         {
         }
 

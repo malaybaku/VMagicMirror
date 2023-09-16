@@ -39,6 +39,7 @@ sysinfo.txt
 *.unitypackage
 
 /VMagicMirror/Logs/
+/VMagicMirror/UserSettings/
 
 # Streaming Assets (now only include DlibFaceLandmarkDetector, so it must be ignored)
 /VMagicMirror/Assets/StreamingAssets/

@@ -147,6 +147,7 @@ VMagicMirrorは以下のモーションを受信して適用できます。
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*動きかたのオプションで「つねに手下げ」が選択されています。
 VMC Protocolによる手の姿勢を適用するには「デフォルト」に変更して下さい。</sys:String>
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_NaiveBoneTransfer">補正なしで送信元ボーンの姿勢を適用</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">VMCPの受信中はカメラ機能をオフ</sys:String>    
     
     <!-- HandTracking -->

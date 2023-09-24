@@ -24,12 +24,17 @@ namespace Baku.VMagicMirrorConfig
                 defaultSetting.DisableCameraDuringVMCPActive,
                 v => SendMessage(MessageFactory.Instance.SetDisableCameraDuringVMCPActive(v))
                 );
-
+            EnableNaiveBoneTransfer = new(
+                defaultSetting.EnableNaiveBoneTransfer,
+                v => SendMessage(MessageFactory.Instance.SetVMCPNaiveBoneTransfer(v))
+                );
             receiver.ReceivedCommand += OnReceiveCommand;
         }
 
         public RProperty<bool> VMCPEnabled { get; }
         public RProperty<string> SerializedVMCPSourceSetting { get; }
+
+        public RProperty<bool> EnableNaiveBoneTransfer { get; }
         public RProperty<bool> DisableCameraDuringVMCPActive { get; }
 
         private readonly VMCPReceiveStatus _receiveStatus = new();

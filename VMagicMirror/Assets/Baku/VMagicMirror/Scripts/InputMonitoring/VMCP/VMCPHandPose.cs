@@ -17,7 +17,6 @@ namespace Baku.VMagicMirror
         private readonly IVRMLoadable _vrmLoadable;
         private readonly VMCPBasedFingerSetter _fingerSetter; 
         private Vector3 _defaultHipOffset = Vector3.up;
-        private VMCPBasedHumanoid _fingerSourceHumanoid = null;
         private bool _hasModel;
 
         public VMCPHandPose(
@@ -49,12 +48,13 @@ namespace Baku.VMagicMirror
         public IReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
         public IReadOnlyReactiveProperty<IKDataStruct> LeftHandPose => _leftHandPose;
         public IReadOnlyReactiveProperty<IKDataStruct> RightHandPose => _rightHandPose;
+        public VMCPBasedHumanoid Humanoid { get; private set; }
 
         public void ApplyFingerLocalPose()
         {
-            if (_fingerSourceHumanoid != null)
+            if (Humanoid != null)
             {
-                _fingerSetter.Set(_fingerSourceHumanoid);
+                _fingerSetter.Set(Humanoid);
             }
         }
 
@@ -69,8 +69,7 @@ namespace Baku.VMagicMirror
 
         public void SetConnected(bool connected) => _isConnected.Value = connected;
 
-        public void SetFingerSourceHumanoid(VMCPBasedHumanoid humanoid)
-            => _fingerSourceHumanoid = humanoid;
+        public void SetHumanoid(VMCPBasedHumanoid humanoid) => Humanoid = humanoid;
 
         public void SetLeftHandPoseOnHips(Vector3 position, Quaternion rotation)
             => _leftHandPose.Value = new IKDataStruct(_defaultHipOffset + position, rotation);

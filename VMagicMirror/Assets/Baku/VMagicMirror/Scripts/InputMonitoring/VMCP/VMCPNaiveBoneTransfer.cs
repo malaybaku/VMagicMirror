@@ -5,7 +5,7 @@ using Zenject;
 namespace Baku.VMagicMirror.VMCP
 {
     //NOTE: このクラスの`Set`はIKの適用より後、かつVRM1.0のRuntimeのProcess()よりは先に呼ばれる必要がある。のでMonoBehaviour。
-    public class VMCPRawBoneTransfer : MonoBehaviour
+    public class VMCPNaiveBoneTransfer : MonoBehaviour
     {
         //NOTE:
         // - このクラスの守備範囲はSpine ~ Headまでと両腕のShoulder ~ Handまで。

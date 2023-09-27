@@ -129,11 +129,31 @@ namespace Baku.VMagicMirror.VMCP
             _weightCts?.Dispose();
         }
 
+        //NOTE: 同一ボーンに対して毎フレーム最大1回しか呼ばない…という前提で実装されてる (補間の部分が)
         private void SetBoneRotations(VMCPBasedHumanoid source, Dictionary<string, Transform> dest)
         {
+            if (_applyWeight <= 0f)
+            {
+                return;
+            }
+
+            if (_applyWeight >= 1f)
+            {
+                foreach (var pair in dest)
+                {
+                    pair.Value.localRotation = source.GetLocalRotation(pair.Key);
+                }
+                return;
+            }
+            
+            //補間が必要なケースだけ補間する
             foreach (var pair in dest)
             {
-                pair.Value.localRotation = source.GetLocalRotation(pair.Key);
+                pair.Value.localRotation = Quaternion.Slerp(
+                    pair.Value.localRotation,
+                    source.GetLocalRotation(pair.Key),
+                    _applyWeight
+                );
             }
         }
 

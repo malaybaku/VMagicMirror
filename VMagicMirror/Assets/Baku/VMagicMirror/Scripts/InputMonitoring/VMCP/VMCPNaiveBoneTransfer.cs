@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
@@ -32,9 +34,10 @@ namespace Baku.VMagicMirror.VMCP
             HumanBodyBones.RightLowerArm,
             HumanBodyBones.RightHand,
         };
-        
+
         //NOTE: 腕以外でSpine ~ Head
         private readonly Dictionary<string, Transform> _upperBodyBones = new();
+
         //Shoulder~Handまでの両腕ぶん
         private readonly Dictionary<string, Transform> _armBones = new();
 
@@ -45,10 +48,14 @@ namespace Baku.VMagicMirror.VMCP
         private IVRMLoadable _vrmLoadable;
         private VMCPHandPose _vmcpHand;
         private VMCPHeadPose _vmcpHead;
-        
+
+        //NOTE: WordToMotionで上半身を動かすときweightを下げる
+        private CancellationTokenSource _weightCts;
+        private float _applyWeight = 1f;
+
         [Inject]
         public void Initialize(
-            IMessageReceiver receiver, IVRMLoadable vrmLoadable, 
+            IMessageReceiver receiver, IVRMLoadable vrmLoadable,
             VMCPHandPose vmcpHand, VMCPHeadPose vmcpHead)
         {
             _receiver = receiver;
@@ -59,8 +66,8 @@ namespace Baku.VMagicMirror.VMCP
             _receiver.AssignCommandHandler(
                 VmmCommands.SetVMCPNaiveBoneTransfer,
                 command => _boneTransferEnabled = command.ToBoolean()
-                );
-            
+            );
+
             _vrmLoadable.VrmLoaded += info =>
             {
                 var a = info.animator;
@@ -72,6 +79,7 @@ namespace Baku.VMagicMirror.VMCP
                         _upperBodyBones[bone.ToString()] = t;
                     }
                 }
+
                 foreach (var bone in ArmBones)
                 {
                     var t = a.GetBoneTransform(bone);
@@ -80,7 +88,7 @@ namespace Baku.VMagicMirror.VMCP
                         _armBones[bone.ToString()] = t;
                     }
                 }
-                
+
                 _hasModel = true;
             };
 
@@ -91,6 +99,9 @@ namespace Baku.VMagicMirror.VMCP
                 _armBones.Clear();
             };
         }
+
+        public void FadeInWeight(float duration) => FadeWeight(1f, duration);
+        public void FadeOutWeight(float duration) => FadeWeight(0f, duration);
 
         private void LateUpdate()
         {
@@ -112,11 +123,51 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
+        private void OnDestroy()
+        {
+            _weightCts?.Cancel();
+            _weightCts?.Dispose();
+        }
+
         private void SetBoneRotations(VMCPBasedHumanoid source, Dictionary<string, Transform> dest)
         {
             foreach (var pair in dest)
             {
                 pair.Value.localRotation = source.GetLocalRotation(pair.Key);
+            }
+        }
+
+        private void FadeWeight(float target, float duration)
+        {
+            _weightCts?.Cancel();
+            _weightCts?.Dispose();
+            _weightCts = new();
+            FadeWeightAsync(target, duration, _weightCts.Token).Forget();
+        }
+
+        private async UniTaskVoid FadeWeightAsync(float target, float duration, CancellationToken ct)
+        {
+            if (duration <= 0f)
+            {
+                _applyWeight = target;
+                return;
+            }
+
+            if (target > .5f)
+            {
+                while (_applyWeight < 1f)
+                {
+                    _applyWeight = Mathf.Clamp01(_applyWeight + Time.deltaTime / duration);
+                    await UniTask.NextFrame(ct);
+                }
+            }
+            else
+            {
+                while (_applyWeight > 0f)
+                {
+                    _applyWeight = Mathf.Clamp01(_applyWeight - Time.deltaTime / duration);
+                    await UniTask.NextFrame(ct);
+                }
             }
         }
     }

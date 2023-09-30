@@ -209,9 +209,9 @@ namespace Baku.VMagicMirror.VMCP
                     server.StopServer();
                 }
                 _blendShape.SetActive(false);
-                _headPose.SetActive(false);
+                _headPose.SetInactive();
                 _handPose.SetActive(false);
-                _handPose.SetFingerSourceHumanoid(null);
+                _handPose.SetHumanoid(null);
                 return;
             }
 
@@ -221,14 +221,23 @@ namespace Baku.VMagicMirror.VMCP
                 humanoid.Clear();
             }
 
-            _headPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHeadPose));
+            var headPoseRefIndex = Array.FindIndex(_dataPassSettings, s => s.ReceiveHeadPose);
+            if (headPoseRefIndex >= 0)
+            {
+                _headPose.SetActive(_receiverHumanoids[headPoseRefIndex]);
+            }
+            else
+            {
+                _headPose.SetInactive();
+            }
+
             _handPose.SetActive(_dataPassSettings.Any(s => s.ReceiveHandPose));
             _blendShape.SetActive(_dataPassSettings.Any(s => s.ReceiveFacial));
 
             //指のFK用のリファレンスを決めておく
             var handSourceHumanoidIndex = 
                 Array.FindIndex(_dataPassSettings, s => s.ReceiveHandPose);
-            _handPose.SetFingerSourceHumanoid(handSourceHumanoidIndex >= 0
+            _handPose.SetHumanoid(handSourceHumanoidIndex >= 0
                 ? _receiverHumanoids[handSourceHumanoidIndex]
                 : null
             );

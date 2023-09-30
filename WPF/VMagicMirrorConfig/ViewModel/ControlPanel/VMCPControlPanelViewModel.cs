@@ -53,6 +53,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public VMCPSourceItemViewModel Source2 { get; set; } = new();
         public VMCPSourceItemViewModel Source3 { get; set; } = new();
 
+        public RProperty<bool> EnableNaiveBoneTransfer => _model.EnableNaiveBoneTransfer;
         public RProperty<bool> DisableCameraDuringVMCPActive => _model.DisableCameraDuringVMCPActive;
 
         public RProperty<bool> BodyMotionStyleIncorrectForHandTracking { get; } = new(false);

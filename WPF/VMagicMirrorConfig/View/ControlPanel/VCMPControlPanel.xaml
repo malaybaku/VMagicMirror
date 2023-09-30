@@ -190,6 +190,11 @@
                                 Margin="5,0,5,10"
                                 />
 
+                    <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_NaiveBoneTransfer}"
+                              Margin="15,5"
+                              IsChecked="{Binding EnableNaiveBoneTransfer.Value, Mode=TwoWay}"
+                              />
+
                     <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_DisableCameraDuringActive}"
                               Margin="15,5"
                               IsChecked="{Binding DisableCameraDuringVMCPActive.Value, Mode=TwoWay}"

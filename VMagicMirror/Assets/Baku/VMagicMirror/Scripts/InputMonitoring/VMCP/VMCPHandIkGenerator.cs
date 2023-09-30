@@ -11,7 +11,8 @@ namespace Baku.VMagicMirror.VMCP
         // NOTE: 「未受信」はBarracudaHandとかのトラッキングロスよりは起きにくいのであまり凝った処理はしない。
         // 送信元自体がトラッキングロスすることはあるが、その場合のモーション補間は送信元が頑張ってるはずなので信じる
         private const float ConnectedBlendRate = 2f;
-        
+        private const float RaiseRequestInterval = 0.2f;
+
         public VMCPHandIkGenerator(
             HandIkGeneratorDependency dependency, 
             VMCPHandPose vmcpHandPose, 
@@ -24,15 +25,24 @@ namespace Baku.VMagicMirror.VMCP
             _leftHandState = new VMCPHandIkState(ReactedHand.Left, downHand.LeftHand);
             _rightHandState = new VMCPHandIkState(ReactedHand.Right, downHand.RightHand);
 
-            //オフ -> オンへの切り替え時だけリクエストが出るが、それ以上にバシバシ送ったほうが良ければ頻度を上げてもOK
+            //NOTE: 定期的にリクエストを飛ばすのは手下げモードのon/offの切り替わりに配慮している
             vmcpHandPose.IsActive
                 .Subscribe(active =>
                 {
                     if (active)
                     {
-                        _leftHandState.RaiseRequest();
-                        _rightHandState.RaiseRequest();
-                    }                    
+                        _raiseRequestDisposable.Disposable = Observable
+                            .Timer(TimeSpan.Zero, TimeSpan.FromSeconds(RaiseRequestInterval))
+                            .Subscribe(_ =>
+                            {
+                                _leftHandState.RaiseRequest();
+                                _rightHandState.RaiseRequest();
+                            });
+                    }
+                    else
+                    {
+                        _raiseRequestDisposable.Disposable = Disposable.Empty;
+                    }
                 })
                 .AddTo(dependency.Component);
 
@@ -64,10 +74,13 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
+        public override void Dispose()
+        {
+            _raiseRequestDisposable.Dispose();
+        }
+
         private void LateUpdateCallback()
         {
-            
-            
             //指を適用する: FingerController経由じゃないことには注意
             if (_vmcpHandPose.IsActive.Value)
             {
@@ -82,7 +95,8 @@ namespace Baku.VMagicMirror.VMCP
         private readonly VMCPHandIkState _rightHandState;
         public override IHandIkState RightHandState => _rightHandState;
         public IReadOnlyReactiveProperty<bool> IsActive => _vmcpHandPose.IsActive;
-        
+
+        private readonly SerialDisposable _raiseRequestDisposable = new SerialDisposable();
         private float _connectedRate = 0f;
 
         class VMCPHandIkState : IHandIkState

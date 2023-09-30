@@ -34,7 +34,7 @@ namespace Baku.VMagicMirror
             //NOTE: アクセサリ画像用のはずなので、ARGB32で読んでるはず
             var resized = new Texture2D(width, height, TextureFormat.ARGB32, false);
             Graphics.ConvertTexture(source, resized);
-            source.Resize(width, height);
+            source.Reinitialize(width, height);
             source.Apply();
             Graphics.ConvertTexture(resized, source);
             Object.Destroy(resized);
@@ -42,7 +42,7 @@ namespace Baku.VMagicMirror
 
         public static void GetSizeLimitedTexture(Texture2D source, Texture2D dest, int maxSize)
         {
-            dest.Resize(source.width, source.height);
+            dest.Reinitialize(source.width, source.height);
             dest.Apply();
             Graphics.ConvertTexture(source, dest);
             Object.Destroy(source);

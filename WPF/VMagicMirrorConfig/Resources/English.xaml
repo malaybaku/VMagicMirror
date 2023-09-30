@@ -144,6 +144,10 @@ VMagicMirror supports to receive:
     <sys:String x:Key="VMCP_ShouldApply">*There are unapplied changes.</sys:String>
     <sys:String x:Key="VMCP_Apply">Apply Changes</sys:String>
     <sys:String x:Key="VMCP_Revert">Revert</sys:String>    
+    <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
+Use "Default" to apply VMC Protocol based hand pose.</sys:String>
+    <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">Use "Default" Option</sys:String>
+    <sys:String x:Key="VMCP_AdvancedSetting_NaiveBoneTransfer">Apply received bone pose without any adjust</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">Disable Camera feature during VMCP is active</sys:String>    
     
     <!-- HandTracking -->
@@ -157,6 +161,10 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
     <sys:String x:Key="HandTracking_ShowAreaChecker">Show Detection Status (*raw image is not displayed)</sys:String>    
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
+Use "Default" to apply hand tracking result.</sys:String>
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Fix">Use "Default" Option</sys:String>
+    
     <sys:String x:Key="HandTracking_DetectionResult">Detection Status:</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">(Not Detected: Try raising hands next to the face)</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">Tips:
@@ -724,7 +732,8 @@ VMCP receive settings is kept after the tab hidden.</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">Selected Camera Detected: {0}</sys:String>    
-    
+    <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">Body Motion Style is set to: "Default"</sys:String>
+
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(Do Nothing)</sys:String>
     <sys:String x:Key="CommonUi_None">(None)</sys:String>

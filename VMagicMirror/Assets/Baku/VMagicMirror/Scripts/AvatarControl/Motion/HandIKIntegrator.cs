@@ -465,6 +465,12 @@ namespace Baku.VMagicMirror
             _arcadeStickHand.LateUpdate();
             _penTablet.LateUpdate();
         }
+
+        private void OnDestroy()
+        {
+            _vmcpHand.Dispose();
+            //NOTE: 他でもDisposeしたほうがいいものは追加してOK
+        }
         
         private void UpdateLeftHand()
         {
@@ -538,25 +544,48 @@ namespace Baku.VMagicMirror
                 t
             );
         }
+
+        private bool CanChangeState(HandTargetType current, HandTargetType target)
+        {
+            //書いてる通りだが、
+            // - 同じ状態には遷移できない
+            // - 拍手は実行優先度がすごく高いので、他の状態に遷移できない
+            // - 手下げモード有効時は手下げ or 拍手にしか遷移できない
+            // - VMCProtocolが有効だとVMCP or 手下げ or 拍手にしか遷移できない
+
+            if (current == target)
+            {
+                return false;
+            }
+
+            if (current == HandTargetType.ClapMotion && ClapMotion.ClapMotionRunning)
+            {
+                return false;
+            }
+            
+            if (AlwaysHandDown.Value && target != HandTargetType.AlwaysDown &&
+                target != HandTargetType.ClapMotion)
+            {
+                return false;
+            }
+            
+            if (_vmcpHand.IsActive.Value && target != HandTargetType.VMCPReceiveResult && 
+                target != HandTargetType.ClapMotion && target != HandTargetType.AlwaysDown
+               )
+            {
+                return false;
+            }
+            return true; 
+        }
         
         private void SetLeftHandState(IHandIkState state)
         {
-            var targetType = state.TargetType;
-            
-            //書いてる通りだが、
-            // - 同じ状態には遷移できない
-            // - 手下げモード、ないしVMCProtocolのときは拍手以外に遷移できない
-            // - 拍手は実行優先度がすごく高い
-            if (_leftTargetType.Value == targetType || 
-                AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
-                _vmcpHand.IsActive.Value && targetType != HandTargetType.VMCPReceiveResult && targetType != HandTargetType.ClapMotion ||
-                _leftTargetType.Value == HandTargetType.ClapMotion && ClapMotion.ClapMotionRunning
-               )
+            if (!CanChangeState(_leftTargetType.Value, state.TargetType))
             {
                 return;
             }
 
-            _leftTargetType.Value = targetType;
+            _leftTargetType.Value = state.TargetType;
             _prevLeftHand = _currentLeftHand;
             _currentLeftHand = state;
             
@@ -574,19 +603,12 @@ namespace Baku.VMagicMirror
 
         private void SetRightHandState(IHandIkState state)
         {
-            var targetType = state.TargetType;
-            
-            // 優先度の効かせ方はLeftHandと同じ
-            if (_rightTargetType.Value == targetType || 
-                _vmcpHand.IsActive.Value && targetType != HandTargetType.VMCPReceiveResult && targetType != HandTargetType.ClapMotion ||
-                AlwaysHandDown.Value && targetType != HandTargetType.AlwaysDown && targetType != HandTargetType.ClapMotion || 
-                _rightTargetType.Value == HandTargetType.ClapMotion && ClapMotion.ClapMotionRunning
-               )
+            if (!CanChangeState(_rightTargetType.Value, state.TargetType))
             {
                 return;
             }
 
-            _rightTargetType.Value = targetType;
+            _rightTargetType.Value = state.TargetType;
             _prevRightHand = _currentRightHand;
             _currentRightHand = state;
             

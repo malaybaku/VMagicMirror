@@ -353,6 +353,7 @@ namespace Baku.VMagicMirrorConfig
         public Message EnableVMCP(bool enable) => WithArg(enable);
         public Message SetVMCPSources(string json) => WithArg(json);
         public Message SetDisableCameraDuringVMCPActive(bool disable) => WithArg(disable);
+        public Message SetVMCPNaiveBoneTransfer(bool enable) => WithArg(enable);
 
         #endregion
 

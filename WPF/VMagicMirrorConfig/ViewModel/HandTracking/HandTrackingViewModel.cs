@@ -4,7 +4,6 @@ using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
-    //TODO: モデルに引っ張られてFaceとMotionが同一ViewModelになっちゃってるが、分けるべき
     public class HandTrackingViewModel : SettingViewModelBase
     {
         public HandTrackingViewModel() : this(
@@ -33,6 +32,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             OpenFullEditionDownloadUrlCommand = new ActionCommand(() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040"));
             OpenHandTrackingPageUrlCommand = new ActionCommand(() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_hand_tracking")));
+            FixBodyMotionStyleCommand = new ActionCommand(FixBodyMotionStyle);
 
             if (!IsInDesignMode)
             {
@@ -43,6 +43,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     nameof(receiver.ReceivedCommand),
                     OnReceivedCommand
                     );
+
+                _model.EnableImageBasedHandTracking.AddWeakEventHandler(BodyMotionStyleIncorrectMaybeChanged);
+                _model.EnableNoHandTrackMode.AddWeakEventHandler(BodyMotionStyleIncorrectMaybeChanged);
+                UpdateBodyMotionStyleCorrectness();
             }
         }
 
@@ -66,6 +70,23 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             CameraDeviceName.Value = _model.CameraDeviceName.Value;
         }
 
+        private void BodyMotionStyleIncorrectMaybeChanged(object? sender, PropertyChangedEventArgs e)
+            => UpdateBodyMotionStyleCorrectness();
+
+        private void UpdateBodyMotionStyleCorrectness()
+        {
+            BodyMotionStyleIncorrectForHandTracking.Value =
+                _model.EnableImageBasedHandTracking.Value &&
+                _model.EnableNoHandTrackMode.Value;
+        }
+
+        private void FixBodyMotionStyle()
+        {
+            _model.EnableNoHandTrackMode.Value = false;
+            _model.EnableGameInputLocomotionMode.Value = false;
+            SnackbarWrapper.Enqueue(LocalizedString.GetString("Snackbar_BodyMotionStyle_Set_Default"));
+        }
+
         public RProperty<bool> EnableImageBasedHandTracking => _model.EnableImageBasedHandTracking;
         private readonly RProperty<bool> _alwaysOn = new RProperty<bool>(true);
         public RProperty<bool> ShowEffectDuringHandTracking => FeatureLocker.FeatureLocked
@@ -77,8 +98,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public HandTrackingResultViewModel HandTrackingResult { get; } = new HandTrackingResultViewModel();
         public ActionCommand OpenFullEditionDownloadUrlCommand { get; }
         public ActionCommand OpenHandTrackingPageUrlCommand { get; }
+        public ActionCommand FixBodyMotionStyleCommand { get; }
 
         public RProperty<string> CameraDeviceName { get; }
         public ReadOnlyObservableCollection<string> CameraNames => _deviceListSource.CameraNames;
+
+        public RProperty<bool> BodyMotionStyleIncorrectForHandTracking { get; } = new(false);
     }
 }

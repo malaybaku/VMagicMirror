@@ -40,11 +40,12 @@ VMagicMirrorの開発者は下記ソフトウェアを接続先として動作�
 
 `詳細設定ウィンドウを開く`から詳細設定を開き、`VMCP`タブから`設定タブをメインウィンドウに表示`を選択します。
 
-<div class="row">
-{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
-</div>
-
 この操作によってコントロールパネルの`VMCP`タブが表示され、本機能が利用可能になります。
+
+<div class="row">
+{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/docs/vmcp_settings.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+</div>
 
 
 これ以降はコントロールパネル側のタブで設定を行います。
@@ -92,6 +93,7 @@ VMagicMirrorでは送信側ソフトで異なるアバターを使っている�
 
 <div class="doc-ul" markdown="1">
 
+- `補正なしで送信元ボーンの姿勢を適用`: オンにすると、受信した姿勢に特に補正を適用せずに適用します。とくに手の姿勢を適用するとき、肩やひじの挙動に違和感があればオンにして下さい。
 - `VMCPの受信中はカメラ機能をオフ`: オンにすると、VMC Protocolを使用中はカメラ画像の取得を行わなくなります。デフォルトでオンになっています。
 
 </div>
@@ -100,13 +102,11 @@ VMagicMirrorでは送信側ソフトで異なるアバターを使っている�
 #### 3. 既知の問題と対処方法
 {: .doc-sec2 }
 
-VMagicMirror v3.3.0時点で以下の問題を確認しています。
+VMagicMirror v3.3.1時点で以下の問題を確認しています。
 
 <div class="doc-ul" markdown="1">
 
-- ハンドトラッキングが反応しない: 「配信」タブの「モーション」 > 「動きかた」で`デフォルト`を選択してください。それでも直らない場合、一度VMagicMirrorを再起動してみて下さい。
-- 「接続」のステータスが更新されない: 一度VMagicMirrorを再起動すると直る場合があります。
-- 送信元とVMagicMirrorの動作が揃わない: モーションの適用方法の都合で完全には動きが揃わない場合があります。差異が小さい場合、送信元のモーション調整で対応することをご検討下さい。不具合と思われるような大きな動きのずれについてはお問い合わせ下さい。
+- `補正なしで送信元ボーンの姿勢を適用`をオンにしている場合、Word to Motion機能のうなづきモーション/拍手モーションが動かない事があります。
 
 </div>
 

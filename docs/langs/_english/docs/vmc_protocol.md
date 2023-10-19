@@ -39,11 +39,12 @@ By default VMCP feature is hidden in control panel window.
 
 To enable it, open setting window and select `VMCP` tab > `Show VMCP Tab on Main Window` to show settings UI on main control panel window.
 
-<div class="row">
-{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
-</div>
-
 Then, select `VMCP` tab in control panel window.
+
+<div class="row">
+{% include docimg.html file="/images/docs/vmcp_enable.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+{% include docimg.html file="/images/docs/vmcp_settings.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+</div>
 
 Check `Enable VMC Protocol` to enable the feature.
 
@@ -92,6 +93,7 @@ Advanced Settings support detailed option. In most cases you should use default 
 
 <div class="doc-ul" markdown="1">
 
+- `Apply received bone pose without any adjust`: Turn on to apply VMCP based bone pose as-is. Enable this option especially when avatar's arm has bad appearance.
 - `Disable Camera feature during VMCP is active`: Turn on to disable webcam using features in VMagicMirror during VMCP is active. This option is on by default. You should enable this option if VMCP source app uses your PC's webcam.
 
 </div>
@@ -100,13 +102,11 @@ Advanced Settings support detailed option. In most cases you should use default 
 #### 3. Known Issues
 {: .doc-sec2 }
 
-VMagicMirror v3.3.0 has following known issue.
+VMagicMirror v3.3.1 has following known issue.
 
 <div class="doc-ul" markdown="1">
 
-- Hand Tracking does not work with VMCP: Open `Streaming` tab > `Motion` > `Body Motion Style`, and select `Default`. If issue still continues, please try to restart VMagicMirror.
-- `Status`'s indication is incorrect: Restart VMagicMirror might solve the issue.
-- Motions are different between sender app and VMagicMirror: Partially this is by design, since VMagicMirror has its own motion modification inside the app. Please contact to developer if difference is so unnatural and seems to be a bug.
+- When `Apply received bone pose without any adjust` is on, some of Word to Motion's motion does not work (e.g. nodding, clapping).
 
 </div>
 

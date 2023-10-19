@@ -8,6 +8,16 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.3.1
+{: .doc-sec2 }
+
+2023/09/30
+
+* Add: Option in VMC Protocol, to apply raw received bone poses without adjustment.
+* Fix: In specific use case VMC Protocol based hand poses were not applied.
+* Change: Unity version is changed to 2022.3.7f1.
+
+
 #### v3.3.0
 {: .doc-sec2 }
 

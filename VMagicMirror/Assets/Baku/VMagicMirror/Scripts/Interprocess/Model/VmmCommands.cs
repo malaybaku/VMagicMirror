@@ -223,6 +223,7 @@
         // VMCP
         public const string EnableVMCP = nameof(EnableVMCP);
         public const string SetVMCPSources = nameof(SetVMCPSources);
+        public const string SetVMCPNaiveBoneTransfer = nameof(SetVMCPNaiveBoneTransfer);
         public const string SetDisableCameraDuringVMCPActive = nameof(SetDisableCameraDuringVMCPActive);
         
         // VRoidHub

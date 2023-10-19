@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Baku.VMagicMirror.VMCP;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UniVRM10;
@@ -16,6 +17,8 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly IWordToMotionPlayer[] _players;
         private readonly WordToMotionBlendShape _blendShape;
         private readonly TaskBasedIkWeightFader _ikWeightCrossFade;
+        //NOTE: IKじゃないけどIKと同じくweight fadeの概念がある
+        private readonly VMCPNaiveBoneTransfer _vmcpNaiveBoneTransfer;
         private readonly FingerController _fingerController;
         private readonly WordToMotionAccessoryRequest _accessoryRequest;
         
@@ -24,6 +27,7 @@ namespace Baku.VMagicMirror.WordToMotion
             IEnumerable<IWordToMotionPlayer> players,
             WordToMotionBlendShape blendShape,
             TaskBasedIkWeightFader ikWeightCrossFade,
+            VMCPNaiveBoneTransfer vmcpNaiveBoneTransfer,
             FingerController fingerController,
             WordToMotionAccessoryRequest accessoryRequest)
         {
@@ -31,6 +35,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _players = players.ToArray();
             _blendShape = blendShape;
             _ikWeightCrossFade = ikWeightCrossFade;
+            _vmcpNaiveBoneTransfer = vmcpNaiveBoneTransfer;
             _fingerController = fingerController;
             _accessoryRequest = accessoryRequest;
         }
@@ -110,12 +115,14 @@ namespace Baku.VMagicMirror.WordToMotion
                         // 直前モーションでIKオフにしてない場合、オフにしたいので実際そうする
                         _fingerController.FadeOutWeight(IkFadeDuration);
                         _ikWeightCrossFade.SetUpperBodyIkWeight(0f, IkFadeDuration);
+                        _vmcpNaiveBoneTransfer.FadeOutWeight(IkFadeDuration);
                     }
                     else if (!playablePlayer.UseIkAndFingerFade && _restoreIkOnMotionEnd)
                     {
                         // IKオフのモーション中にIK有効が期待されたモーションを行う場合、IKがオンになる
                         _fingerController.FadeInWeight(IkFadeDuration);
                         _ikWeightCrossFade.SetUpperBodyIkWeight(1f, IkFadeDuration);
+                        _vmcpNaiveBoneTransfer.FadeInWeight(IkFadeDuration);
                     }
                 }
                 
@@ -188,11 +195,13 @@ namespace Baku.VMagicMirror.WordToMotion
                 {
                     _fingerController.FadeOutWeight(IkFadeDuration);
                     _ikWeightCrossFade.SetUpperBodyIkWeight(0f, IkFadeDuration);
+                    _vmcpNaiveBoneTransfer.FadeOutWeight(IkFadeDuration);
                 }
                 else
                 {
                     _fingerController.FadeInWeight(IkFadeDuration);
                     _ikWeightCrossFade.SetUpperBodyIkWeight(1f, IkFadeDuration);
+                    _vmcpNaiveBoneTransfer.FadeInWeight(IkFadeDuration);
                 }
             }
             
@@ -226,6 +235,7 @@ namespace Baku.VMagicMirror.WordToMotion
             }
             _fingerController.FadeInWeight(0f);
             _ikWeightCrossFade.SetUpperBodyIkWeight(1f, 0f);
+            _vmcpNaiveBoneTransfer.FadeInWeight(0f);
             _restoreIkOnMotionEnd = false;
         }
 
@@ -239,6 +249,7 @@ namespace Baku.VMagicMirror.WordToMotion
                 {
                     _fingerController.FadeInWeight(IkFadeDuration);
                     _ikWeightCrossFade.SetUpperBodyIkWeight(1f, IkFadeDuration);
+                    _vmcpNaiveBoneTransfer.FadeInWeight(IkFadeDuration);
                 }
                 _restoreIkOnMotionEnd = false;
             }

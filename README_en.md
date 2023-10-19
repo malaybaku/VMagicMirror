@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.3.0
+v3.3.1
 
 * Author: Baxter
-* 2023/Aug/31
+* 2023/Sep/30
 
 The VRM avatar application without any special device.
 
@@ -116,6 +116,7 @@ Also there are some UPM based dependencies.
 
 * [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
 * [UniRx](https://github.com/neuecc/UniRx)
+* [KlakSpout](https://github.com/keijiro/KlakSpout)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * This is fork repository and not the original.
 

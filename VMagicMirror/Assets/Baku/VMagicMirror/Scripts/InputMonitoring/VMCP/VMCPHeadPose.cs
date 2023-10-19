@@ -11,9 +11,14 @@ namespace Baku.VMagicMirror.VMCP
         private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
         public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
-        private readonly ReactiveProperty<bool> _connected = new ReactiveProperty<bool>(true);
-        public IReadOnlyReactiveProperty<bool> Connected => _connected;
+        private readonly ReactiveProperty<bool> _isConnected = new ReactiveProperty<bool>(true);
+        public IReadOnlyReactiveProperty<bool> IsConnected => _isConnected;
 
+        /// <summary>
+        /// NOTE: <see cref="IsActive"/>がtrueのときだけ非nullになれる
+        /// </summary>
+        public VMCPBasedHumanoid Humanoid { get; private set; }
+        
         private readonly IVRMLoadable _vrmLoadable;
         //NOTE: 0にはしないでおく、一応
         private Vector3 _defaultHeadOffsetOnHips = Vector3.up;
@@ -45,7 +50,7 @@ namespace Baku.VMagicMirror.VMCP
         void ITickable.Tick()
         {
             //受信してるはずだけどデータが更新されない -> 直立姿勢に戻す
-            if (_isActive.Value && !_connected.Value)
+            if (_isActive.Value && !_isConnected.Value)
             {
                 var factor = ResetLerpFactor * Time.deltaTime;
                 PositionOffset = Vector3.Lerp(PositionOffset, Vector3.zero, factor);
@@ -62,16 +67,28 @@ namespace Baku.VMagicMirror.VMCP
         /// <summary> 正面向きならゼロ回転になるような頭部回転 </summary>
         public Quaternion Rotation { get; private set; }
 
-        public void SetActive(bool active)
+        public void SetActive(VMCPBasedHumanoid humanoid)
+        {
+            Humanoid = humanoid;
+            SetActiveInternal(true);
+        }
+
+        public void SetInactive()
+        {
+            SetActiveInternal(false);
+            Humanoid = null;
+        }
+
+        void SetActiveInternal(bool active)
         {
             _isActive.Value = active;
             if (!active)
             {
-                _connected.Value = false;
+                _isConnected.Value = false;
             }
         }
 
-        public void SetConnected(bool connected) => _connected.Value = connected;
+        public void SetConnected(bool connected) => _isConnected.Value = connected;
 
         public void SetPoseOnHips(Pose pose)
         {
@@ -84,7 +101,7 @@ namespace Baku.VMagicMirror.VMCP
             _rawRotation = pose.rotation;
 
             //NOTE: 非接続状態の場合、PositionOffsetやRotationは値をゼロに戻すので、書き込まないでおく
-            if (_isActive.Value && _connected.Value)
+            if (_isActive.Value && _isConnected.Value)
             {
                 PositionOffset = _rawPositionOffset;
                 Rotation = _rawRotation;

@@ -5,7 +5,7 @@ REM example: `build_unity.cmd full dev`
 
 REM use following instead, if editor is NOT from Hub
 REM set UNITY_EXE="%ProgramFiles%\Unity\Editor\Unity.exe"
-set UNITY_EXE="%ProgramFiles%\Unity\Hub\Editor\2020.3.22f1\Editor\Unity.exe"
+set UNITY_EXE="%ProgramFiles%\Unity\Hub\Editor\2022.3.7f1\Editor\Unity.exe"
 
 cd %~dp0
 
@@ -38,6 +38,28 @@ if %1 == standard (
 
 set PROJ_PATH=%~dp0\..\VMagicMirror
 set SAVE_PATH=%~dp0\..\%BIN_FOLDER%
+
+REM 1: Set script symbol and exit, to apply symbol changes
+
+echo %time%
+echo "Build Unity: Setup script symbol..."
+
+%UNITY_EXE% ^
+-batchmode -quit ^
+-projectPath %PROJ_PATH% ^
+-SavePath=%SAVE_PATH% ^
+-Edition=%APP_EDITION% ^
+-Env=%APP_ENV% ^
+-executeMethod Baku.VMagicMirror.BuildHelper.DoPrepareScriptDefineSymbol
+
+echo %time%
+echo "Build Unity: Sleep 5sec, to wait script symbol update starts..."
+timeout /t 5 > nul
+
+REM 2: Run actual build
+
+echo %time%
+echo "Build Unity: Run build..."
 
 %UNITY_EXE% ^
 -batchmode -quit ^

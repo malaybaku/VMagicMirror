@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
         private const string AutoSaveSettingFileName = "_autosave";
         private const string LogTextName = "log.txt";
         
-        private static bool IsDebugRun
+        public static bool UseDevFolder
         {
             get
             {
@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror
         {
             RootDirectory = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), 
-                IsDebugRun ? "VMagicMirror_Dev_Files" : "VMagicMirror_Files"
+                UseDevFolder ? "VMagicMirror_Dev_Files" : "VMagicMirror_Files"
                 );
 
             ScreenShotDirectory = Path.Combine(RootDirectory, "Screenshots");

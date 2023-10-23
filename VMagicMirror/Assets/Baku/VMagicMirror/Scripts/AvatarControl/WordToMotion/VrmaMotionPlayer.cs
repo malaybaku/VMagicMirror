@@ -50,6 +50,8 @@ namespace Baku.VMagicMirror
         {
             _lowerBodyBones.Clear();
             _lowerBodyBoneRotationCache.Clear();
+
+            _vrm10Runtime = info.instance.Runtime;
             var animator = info.animator;
             foreach (var bone in LowerBodyBones)
             {
@@ -67,8 +69,14 @@ namespace Baku.VMagicMirror
         private void OnModelDisposed()
         {
             _hasModel = false;
+            _vrm10Runtime = null;
+
             _lowerBodyBones.Clear();
             _lowerBodyBoneRotationCache.Clear();
+            
+            _repository.Stop();
+            _playing = false;
+            _playingPreview = false;
         }
         
         void ILateTickable.LateTick()
@@ -129,12 +137,23 @@ namespace Baku.VMagicMirror
 
         bool IWordToMotionPlayer.CanPlay(MotionRequest request)
         {
+            if (!_hasModel)
+            {
+                return false;
+            }
+
             var targetItem = FindFileItem(request.CustomMotionClipName);
             return targetItem.IsValid;
         }
 
         void IWordToMotionPlayer.Play(MotionRequest request, out float duration)
         {
+            if (!_hasModel)
+            {
+                duration = 1f;
+                return;
+            }
+
             var targetItem = FindFileItem(request.CustomMotionClipName);
             if (!targetItem.IsValid)
             {
@@ -148,12 +167,22 @@ namespace Baku.VMagicMirror
         //TODO: Game InputでもVRMAを使う場合、この方法で止めるのはNG
         void IWordToMotionPlayer.Stop()
         {
+            if (!_hasModel)
+            {
+                return;
+            }
+
             _repository.Stop();
             _playing = false;
         }
 
         void IWordToMotionPlayer.PlayPreview(MotionRequest request)
         {
+            if (!_hasModel)
+            {
+                return;
+            }
+
             var targetItem = FindFileItem(request.CustomMotionClipName);
             if (!targetItem.IsValid)
             {
@@ -167,10 +196,14 @@ namespace Baku.VMagicMirror
         //TODO: Stop()と同じ
         void IWordToMotionPlayer.StopPreview()
         {
+            if (!_hasModel)
+            {
+                return;
+            }
+
             _repository.Stop();
             _playing = false;
             _playingPreview = false;
         }
-
     }
 }

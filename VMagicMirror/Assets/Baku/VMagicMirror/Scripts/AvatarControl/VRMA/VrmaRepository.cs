@@ -30,8 +30,11 @@ namespace Baku.VMagicMirror
         private bool _instanceInitializeStarted;
         private bool _instanceInitialized;
 
-        public IReadOnlyList<string> GetAvailableMotionNames()
-            => GetAvailableFileItems().Select(item => item.FileName).ToArray();
+        public VrmaInstance PeekInstance => _instances.Count > 0 ? _instances[0] : null;
+        
+        public IReadOnlyList<string> GetAvailableMotionNames() => GetAvailableFileItems()
+            .Select(item => item.FileName)
+            .ToArray();
         
         public IReadOnlyList<VrmaFileItem> GetAvailableFileItems()
         {

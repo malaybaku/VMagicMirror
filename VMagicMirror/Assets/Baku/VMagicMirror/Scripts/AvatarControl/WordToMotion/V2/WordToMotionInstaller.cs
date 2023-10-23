@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror.WordToMotion
             //Container.BindInterfacesTo<EmptyRequestSource>().AsSingle();
             
             Container.Bind<VrmaRepository>().AsSingle();
-            //Container.BindInterfacesAndSelfTo<VrmaMotionPlayer>().AsSingle();
+            Container.BindInterfacesAndSelfTo<VrmaMotionPlayer>().AsSingle();
 
             //どっちが良いか微妙なライン…うーん…
             Container.BindInterfacesAndSelfTo<BuiltInMotionPlayer>().AsSingle();

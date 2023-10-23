@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
         bool CanPlay(MotionRequest request);
         
         /// <summary>
-        /// モーションを実行する。この関数が呼ばれた場合、実装側ではAbort()を呼ばないでも勝手に通常姿勢に戻るようにする。
+        /// モーションを実行する。この関数が呼ばれた場合、実装側では<see cref="Stop()"/>を呼ばないでも勝手に通常姿勢に戻るようにする。
         /// </summary>
         /// <param name="request"></param>
         /// <param name="duration"></param>

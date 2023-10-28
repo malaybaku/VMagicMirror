@@ -21,6 +21,20 @@ namespace Baku.VMagicMirror
             _disposed = false;
         }
 
+        public float Duration
+        {
+            get
+            {
+                if (_disposed)
+                {
+                    return 1f;
+                }
+                return Animation.clip.length;
+            }
+        }
+
+        public bool IsPlaying => !_disposed && Animation.isPlaying;
+        
         public void PlayFromStart(bool isLoop)
         {
             if (_disposed)
@@ -29,7 +43,8 @@ namespace Baku.VMagicMirror
             }
                 
             Animation.Rewind();
-            Animation.wrapMode = isLoop ? WrapMode.Loop : WrapMode.Once;
+            //NOTE: clampにすることで、終了時にそのままの値が保持されてBlend時の破綻が減る(はず)
+            Animation.wrapMode = isLoop ? WrapMode.Loop : WrapMode.Clamp;
             Animation.Play();
         }
 

@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -12,39 +10,30 @@ namespace Baku.VMagicMirror
     public class VrmaMotionPlayer : PresenterBase, ILateTickable, IWordToMotionPlayer
     {
         public const float FadeDuration = 0.5f;
-
-        //NOTE: Toesが任意ボーンなことに注意
-        private static readonly HumanBodyBones[] LowerBodyBones = {
-            HumanBodyBones.Hips,
-            HumanBodyBones.LeftUpperLeg,
-            HumanBodyBones.LeftLowerLeg,
-            HumanBodyBones.LeftFoot,
-            HumanBodyBones.LeftToes,
-            HumanBodyBones.RightUpperLeg,
-            HumanBodyBones.RightLowerLeg,
-            HumanBodyBones.RightFoot,
-            HumanBodyBones.RightToes,
-        };
         
-        public VrmaMotionPlayer(VrmaRepository repository, IVRMLoadable vrmLoadable)
+        public VrmaMotionPlayer(
+            VrmaRepository repository,
+            IVRMLoadable vrmLoadable,
+            VrmaMotionSetter motionSetter)
         {
             _repository = repository;
             _vrmLoadable = vrmLoadable;
+            _motionSetter = motionSetter;
         }
         
         private readonly IVRMLoadable _vrmLoadable;
         private readonly VrmaRepository _repository;
+        private readonly VrmaMotionSetter _motionSetter;
 
         private bool _hasModel;
-        private Vrm10Runtime _vrm10Runtime;
-        private readonly Dictionary<HumanBodyBones, Transform> _lowerBodyBones = new();
-        private readonly Dictionary<HumanBodyBones, Quaternion> _lowerBodyBoneRotationCache = new();
-        private Vector3 _hipLocalPositionCache;
-
         private bool _playing;
         private bool _playingPreview;
+        //「VRMAの再生中にStop()が呼ばれて停止処理中である」という状態のときだけtrue
+        private bool _stopRunning;
 
-        private CancellationTokenSource _playCanceller;
+        //NOTE: Previewでないアニメーションの再生(in/outのフェード込み)に相当する。
+        //停止処理をなめらかに行う…みたいなのも含む
+        private CancellationTokenSource _cts;
 
         public override void Initialize()
         {
@@ -55,7 +44,7 @@ namespace Baku.VMagicMirror
         public override void Dispose()
         {
             base.Dispose();
-            CancelStopPlaying();
+            CancelCurrentPlay();
         }
 
         bool IWordToMotionPlayer.UseIkAndFingerFade => true;
@@ -85,14 +74,19 @@ namespace Baku.VMagicMirror
                 duration = 1f;
                 return;
             }
-            _repository.Run(targetItem, false, out duration);
+
+            if (!_repository.TryGetDuration(targetItem, out duration))
+            {
+                return;
+            }
+
             //NOTE: I/Fの戻り値としてはIK FadeInするの時間を引いて答えておく
             duration -= FadeDuration;
+            
+            CancelCurrentPlay();
+            _cts = new();
             _playing = true;
-
-            CancelStopPlaying();
-            _playCanceller = new();
-            StopAsync(duration, _playCanceller.Token).Forget();
+            RunAnimationAsync(targetItem, _cts.Token).Forget();
         }
 
         //TODO: Game InputでもVRMAを使う場合、この方法で止めるのはNG
@@ -103,9 +97,15 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            CancelStopPlaying();
-            _repository.Stop();
-            _playing = false;
+            if (_stopRunning && !_repository.PeekInstance.IsPlaying)
+            {
+                return;
+            }
+
+            CancelCurrentPlay();
+            _cts = new();
+            _stopRunning = true;
+            StopAsync(_cts.Token).Forget();
         }
 
         void IWordToMotionPlayer.PlayPreview(MotionRequest request)
@@ -120,8 +120,9 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
-            CancelStopPlaying();
-            _repository.Run(targetItem, true, out _);
+            CancelCurrentPlay();
+            _repository.StopAllAnimations();
+            _repository.Run(targetItem, true);
             _playingPreview = true;
             _playing = false;
         }
@@ -134,14 +135,15 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            _repository.Stop();
+            _repository.StopAllAnimations();
             _playing = false;
             _playingPreview = false;
         }
 
+        //TODO: Previewもタスク志向で書いた方がクラスとして見通し良いかも…
         void ILateTickable.LateTick()
         {
-            if (!_playing && !_playingPreview)
+            if (!_playingPreview)
             {
                 return;
             }
@@ -153,77 +155,105 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //Retarget処理はUniVRM実装に頼ったほうが無難なので使う + それはそうと腰から下は動かさないのがWord to Motionの期待値なのでそうしている
-            CacheLowerBodyTransforms();
-            Vrm10Retarget.Retarget(
-                anim.Instance.ControlRig, (_vrm10Runtime.ControlRig, _vrm10Runtime.ControlRig)
-            );
-            RestoreLowerBodyTransforms();
+            _motionSetter.Set(anim, 1f);
         } 
         
         private void OnModelLoaded(VrmLoadedInfo info)
         {
-            _lowerBodyBones.Clear();
-            _lowerBodyBoneRotationCache.Clear();
-
-            _vrm10Runtime = info.instance.Runtime;
-            var animator = info.animator;
-            foreach (var bone in LowerBodyBones)
-            {
-                var t = animator.GetBoneTransform(bone);
-                if (t != null)
-                {
-                    _lowerBodyBones[bone] = t;
-                    //NOTE: 値を一応入れてるが、別に無くても破綻はしないつもり
-                    _lowerBodyBoneRotationCache[bone] = Quaternion.identity;
-                }
-            }
             _hasModel = true;
         }
         
         private void OnModelDisposed()
         {
             _hasModel = false;
-            _vrm10Runtime = null;
-
-            _lowerBodyBones.Clear();
-            _lowerBodyBoneRotationCache.Clear();
-            
-            _repository.Stop();
+            _repository.StopAllAnimations();
             _playing = false;
             _playingPreview = false;
         }
 
-        private async UniTaskVoid StopAsync(float duration, CancellationToken cancellationToken)
+        private async UniTaskVoid RunAnimationAsync(VrmaFileItem item, CancellationToken cancellationToken)
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(duration), cancellationToken: cancellationToken);
-            Stop();
-        }
-        
-        private void CancelStopPlaying()
-        {
-            Debug.Log(nameof(CancelStopPlaying));
-            _playCanceller?.Cancel();
-            _playCanceller?.Dispose();
-            _playCanceller = null;
-        }
-        
-        private void CacheLowerBodyTransforms()
-        {
-            foreach (var pair in _lowerBodyBones)
+            //やること: 適用率を0 > 1 > 0に遷移させつつ適用していく
+            //出だしの適用時にそのままの状態 or 直前に再生してたanimのいずれを使うかはその場のノリで決める
+            _repository.Run(item, false);
+            var anim = _repository.PeekInstance;
+            var animDuration = _repository.PeekInstance.Duration;
+            var count = 0f;
+            while (count < animDuration)
             {
-                _lowerBodyBoneRotationCache[pair.Key] = pair.Value.localRotation;
+                var rate = 1f;
+
+                if (count < FadeDuration)
+                {
+                    //0 -> 1
+                    rate = Mathf.Clamp01(count / FadeDuration);
+                }
+                else if (count > animDuration - FadeDuration)
+                {
+                    // 1 -> 0
+                    rate = Mathf.Clamp01((animDuration - count) / FadeDuration);
+                }
+                else
+                {
+                    //rate = 1, このケースでは補間が要らない
+                    _repository.StopPrevAnimation();
+                }
+
+                //NOTE: rate == 1とか0のケースの最適化はmotionSetterにケアさせる
+                if (_repository.PrevInstance is { IsPlaying: true } playingPrev)
+                {
+                    //VRMAどうしの補間中にしか通らない、珍しい寄りのパス
+                    _motionSetter.Set(playingPrev, anim, rate);
+                }
+                else
+                {
+                    _motionSetter.Set(anim, rate);
+                }
+                
+                //NOTE: LateTick相当くらいのタイミングを狙っていることに注意
+                await UniTask.NextFrame(PlayerLoopTiming.LastPreLateUpdate,　cancellationToken);
+                count += Time.deltaTime;
             }
-            _hipLocalPositionCache = _lowerBodyBones[HumanBodyBones.Hips].localPosition;
+         
+            StopImmediate();
         }
 
-        private void RestoreLowerBodyTransforms()
+        private async UniTaskVoid StopAsync(CancellationToken cancellationToken)
         {
-            foreach (var pair in _lowerBodyBoneRotationCache)
+            try
             {
-                _lowerBodyBones[pair.Key].localRotation = pair.Value;
+                var count = 0f;
+                var anim = _repository.PeekInstance;
+                var animDuration = _repository.PeekInstance.Duration;
+                while (count < FadeDuration)
+                {
+                    await UniTask.NextFrame(cancellationToken);
+                    count += Time.deltaTime;
+                }
+
+                StopImmediate();
             }
-            _lowerBodyBones[HumanBodyBones.Hips].localPosition = _hipLocalPositionCache;
+            finally
+            {
+                _stopRunning = false;
+            }
+        }
+        
+        //NOTE: コレを呼ぶ場合、明示的にアニメーションを停止なり直ちに開始なりすることが期待されるので注意
+        private void CancelCurrentPlay()
+        {
+            Debug.Log(nameof(CancelCurrentPlay));
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+        }
+
+        private void StopImmediate()
+        {
+            CancelCurrentPlay();
+            _repository.StopCurrentAnimation();
+            _playing = false;
+            _playingPreview = false;
         }
         
         //NOTE: モーション名として拡張子付きのファイル名が使われている事を期待している

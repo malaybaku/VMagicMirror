@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror
 
         /// <summary>
         /// このPlayerではないPlayerを実行するときや、プレビューの開始、終了時に呼ばれる。
-        /// 実装側は(何もせずモーションを実行するのも含めて)通常の姿勢に比較的さっさと戻るように努力することが期待される。
+        /// 実装側では姿勢ジャンプが発生しにくいようにモーションの適用をやめるのが期待される。
         /// </summary>
         void Stop();
 
@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror
         void PlayPreview(MotionRequest request);
         
         /// <summary>
-        /// プレビューを停止する。Abort()に比べて強引にモーションを停止してもよい。
+        /// プレビューを停止する。実装側は<see cref="Stop"/>に比べると強引かつ即座にモーションを停止してもよい。
         /// </summary>
         void StopPreview();
     }    

@@ -8,7 +8,16 @@ lang: en
 
 This feature is available in v3.4.0 and later version of VMagicMirror.
 
-You can use VRM Animation (VRMA) file to apply customized motion to your avatar, similar to [Use Custom Motion](./use_custom_motion).
+You can use VRM Animation (VRMA) file to apply customized motion to your avatar, similar to Custom Motion referred at [Use Custom Motion](./use_custom_motion) page.
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+This feature is experimental, and has some restrictions. Note that VRMA's specification might change by future updates.
+You should keep to use Custom Motion feature if you want to avoid update-related issues.
+
+</div>
 
 
 #### 1. Target and Limitation

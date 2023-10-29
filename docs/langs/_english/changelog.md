@@ -13,7 +13,7 @@ lang: en
 
 2023/10/30
 
-* Add: Support for VRM Animation(.vrma) in Word to Motion feature. See detail at: [Use VRM Animation](../tips/use_vrma)
+* Add: Experimental support for VRM Animation(.vrma) in Word to Motion feature. See detail at: [Use VRM Animation](../tips/use_vrma)
 * Change: Internal UniVRM version update to v0.114.0. This update is for VRM Animation support.
 * Fix: v3.3.1 Full Edition's issue that custom motions / accessories were not loaded correctly. This issue was because of Unity version update in previous update, and thus it is version-specific issue.
 

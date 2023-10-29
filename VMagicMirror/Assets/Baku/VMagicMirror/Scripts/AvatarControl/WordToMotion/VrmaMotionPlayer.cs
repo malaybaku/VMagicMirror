@@ -120,6 +120,13 @@ namespace Baku.VMagicMirror
             {
                 return;
             }
+
+            if (_repository.PeekInstance.File.Equals(targetItem) &&
+                _repository.PeekInstance.IsLoopPlaying)
+            {
+                return;
+            }
+            
             CancelCurrentPlay();
             _repository.StopAllAnimations();
             _repository.Run(targetItem, true);
@@ -244,7 +251,6 @@ namespace Baku.VMagicMirror
         //NOTE: コレを呼ぶ場合、明示的にアニメーションを停止なり直ちに開始なりすることが期待されるので注意
         private void CancelCurrentPlay()
         {
-            Debug.Log(nameof(CancelCurrentPlay));
             _cts?.Cancel();
             _cts?.Dispose();
             _cts = null;

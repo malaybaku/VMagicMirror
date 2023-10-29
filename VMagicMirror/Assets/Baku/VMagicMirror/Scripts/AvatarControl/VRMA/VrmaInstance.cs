@@ -34,6 +34,7 @@ namespace Baku.VMagicMirror
         }
 
         public bool IsPlaying => !_disposed && Animation.isPlaying;
+        public bool IsLoopPlaying => IsPlaying && Animation.wrapMode == WrapMode.Loop;
         
         public void PlayFromStart(bool isLoop)
         {

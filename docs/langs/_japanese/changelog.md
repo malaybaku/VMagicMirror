@@ -7,6 +7,16 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v3.4.0
+{: .doc-sec2 }
+
+2023/10/30
+
+* 追加: VRM Animation(.vrma)形式のモーションをWord to Motion機能で使えるようになりました。詳細は[VRM AnimationをVMagicMirrorで使う](../tips/use_vrma)のページを参照ください。
+* 変更: 内部的にUniVRMのバージョンをv0.114.0に更新しました。この更新はVRM Animationをサポートする目的で行っています。
+* 修正: Unityバージョンの更新で起こっていた、v3.3.1 Full Editionでモーション/アクセサリーなどのデータが正常に参照できない問題を修正しました。
+
+
 #### v3.3.1
 {: .doc-sec2 }
 

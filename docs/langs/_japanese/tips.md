@@ -33,4 +33,6 @@ title: Tips
 
 [カスタムモーションをVMagicMirrorで使う](./use_custom_motion)
 
+[VRM AnimationをVMagicMirrorで使う](./use_vrma)
+
 [アクセサリ機能で使えるGLBファイルの入手方法](./get_glb_data)

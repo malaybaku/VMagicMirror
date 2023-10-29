@@ -34,4 +34,6 @@ Basic usage is in [Get Started](../get_started), and setting window detail is in
 
 [Use Custom Motion](./use_custom_motion)
 
+[Use VRM Animation](./use_vrma)
+
 [How to get GLB Data for Accessory Feature](./get_glb_data)

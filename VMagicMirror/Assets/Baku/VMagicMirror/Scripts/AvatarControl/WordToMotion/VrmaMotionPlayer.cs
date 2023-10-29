@@ -174,7 +174,7 @@ namespace Baku.VMagicMirror
         private async UniTaskVoid RunAnimationAsync(VrmaFileItem item, CancellationToken cancellationToken)
         {
             //やること: 適用率を0 > 1 > 0に遷移させつつ適用していく
-            //出だしの適用時にそのままの状態 or 直前に再生してたanimのいずれを使うかはその場のノリで決める
+            //prevのアニメーションを適用するかどうかは動的にチェックして決める
             _repository.Run(item, false);
             var anim = _repository.PeekInstance;
             var animDuration = _repository.PeekInstance.Duration;
@@ -185,17 +185,18 @@ namespace Baku.VMagicMirror
 
                 if (count < FadeDuration)
                 {
-                    //0 -> 1
+                    //0 -> 1, 始まってすぐ
                     rate = Mathf.Clamp01(count / FadeDuration);
                 }
                 else if (count > animDuration - FadeDuration)
                 {
-                    // 1 -> 0
+                    // 1 -> 0, 終了間近
+                    _repository.StopPrevAnimation();
                     rate = Mathf.Clamp01((animDuration - count) / FadeDuration);
                 }
                 else
                 {
-                    //rate = 1, このケースでは補間が要らない
+                    // 中間部分。このタイミングでは補間が要らない
                     _repository.StopPrevAnimation();
                 }
 
@@ -211,7 +212,7 @@ namespace Baku.VMagicMirror
                 }
                 
                 //NOTE: LateTick相当くらいのタイミングを狙っていることに注意
-                await UniTask.NextFrame(PlayerLoopTiming.LastPreLateUpdate,　cancellationToken);
+                await UniTask.NextFrame(cancellationToken);
                 count += Time.deltaTime;
             }
          
@@ -224,13 +225,14 @@ namespace Baku.VMagicMirror
             {
                 var count = 0f;
                 var anim = _repository.PeekInstance;
-                var animDuration = _repository.PeekInstance.Duration;
-                while (count < FadeDuration)
+                while (count < FadeDuration && _repository.PeekInstance.IsPlaying)
                 {
+                    var rate = 1f - Mathf.Clamp01(count / FadeDuration);
+                    _motionSetter.Set(anim, rate);
+
                     await UniTask.NextFrame(cancellationToken);
                     count += Time.deltaTime;
                 }
-
                 StopImmediate();
             }
             finally

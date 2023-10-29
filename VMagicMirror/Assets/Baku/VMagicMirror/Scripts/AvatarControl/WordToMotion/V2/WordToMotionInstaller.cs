@@ -18,6 +18,10 @@ namespace Baku.VMagicMirror.WordToMotion
             //Empty入れても入れなくても挙動に影響しない…はず…
             //Container.BindInterfacesTo<EmptyRequestSource>().AsSingle();
             
+            Container.Bind<VrmaRepository>().AsSingle();
+            Container.BindInterfacesAndSelfTo<VrmaMotionSetter>().AsSingle();
+            Container.BindInterfacesAndSelfTo<VrmaMotionPlayer>().AsSingle();
+
             //どっちが良いか微妙なライン…うーん…
             Container.BindInterfacesAndSelfTo<BuiltInMotionPlayer>().AsSingle();
             //Container.BindInterfacesTo<BuiltInMotionPlayerV2>().AsSingle();

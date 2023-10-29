@@ -11,6 +11,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly IMessageReceiver _receiver;
         private readonly WordToMotionRequestRepository _repository;
         private readonly CustomMotionRepository _customMotionRepository;
+        private readonly VrmaRepository _vrmaRepository;
         private readonly WordToMotionRequester _requester;
         private WordToMotionRunner _runner;
         private readonly IRequestSource[] _sources;
@@ -19,6 +20,7 @@ namespace Baku.VMagicMirror.WordToMotion
             IMessageReceiver receiver,
             WordToMotionRequestRepository repository,
             CustomMotionRepository customMotionRepository,
+            VrmaRepository vrmaRepository,
             WordToMotionRequester requester,
             WordToMotionRunner runner,
             IEnumerable<IRequestSource> sources
@@ -27,6 +29,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _receiver = receiver;
             _repository = repository;
             _customMotionRepository = customMotionRepository;
+            _vrmaRepository = vrmaRepository;
             _requester = requester;
             _runner = runner;
             _sources = sources.ToArray();
@@ -70,7 +73,12 @@ namespace Baku.VMagicMirror.WordToMotion
                 VmmQueries.GetAvailableCustomMotionClipNames,
                 q =>
                 {
-                    q.Result = string.Join("\t", _customMotionRepository.LoadAvailableCustomMotionNames());
+                    //カスタムモーションと呼ばれるものがvmm_motionとvrmaの2種類ある
+                    q.Result = string.Join("\t", 
+                        _customMotionRepository
+                            .LoadAvailableCustomMotionNames()
+                            .Concat(_vrmaRepository.GetAvailableMotionNames())
+                        );
                     Debug.Log("Get Available CustomMotion Clip Names, result = " + q.Result);
                 });
 
@@ -104,6 +112,8 @@ namespace Baku.VMagicMirror.WordToMotion
             _requester.PreviewRequested
                 .Subscribe(_runner.RunAsPreview)
                 .AddTo(this);
+            
+            _vrmaRepository.Initialize();
         }
         
         private void SetWordToMotionInputType(int deviceType)

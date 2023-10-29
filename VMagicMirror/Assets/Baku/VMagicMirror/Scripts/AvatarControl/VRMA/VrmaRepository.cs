@@ -12,6 +12,7 @@ namespace Baku.VMagicMirror
 {
     //NOTE: このクラスがやることは2つ
     //- 既定のフォルダから利用可能なモーションを持ってきて保持しておく
+    //  - このとき、1VRMAあたり2インスタンスを生成する。これは同じモーションどうしの補間をケアするため。
     //- 指定したアニメーションを再生する
     //- 同時に再生されるアニメーションを最大2つに制限する
     //  - 2つまで許容するのはモーションどうしのブレンドのため
@@ -87,8 +88,42 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var index = _instances.FindIndex(i => i.File.Equals(file));
-            if (index < 0)
+            //NOTE: 正常な呼び出しのばあい、指定したfileに相当するインスタンスが2つあることに注意
+            var firstIndex = -1;
+            var secondIndex = -1;
+            var useFirstIndex = true;
+            for (var i = 0; i < _instances.Count; i++)
+            {
+                var instance = _instances[i];
+                if (!instance.File.Equals(file))
+                {
+                    continue;
+                }
+
+                if (firstIndex == -1)
+                {
+                    firstIndex = i;
+                    if (instance.IsPlaying)
+                    {
+                        //実行中: もっと古いインスタンスを拾いに行く
+                        useFirstIndex = false;
+                        continue;
+                    }
+                    else
+                    {
+                        //実行してないアニメーションを指定した場合、ここのbreakを通過する。大半はこれで済む
+                        break;
+                    }
+                }
+
+                //同じアニメーションが既に実行中の場合、ここを通過
+                secondIndex = i;
+                useFirstIndex = false;
+                break;
+            }
+
+            var index = useFirstIndex ? firstIndex : secondIndex;
+            if (index == -1)
             {
                 return;
             }
@@ -157,17 +192,20 @@ namespace Baku.VMagicMirror
             {
                 foreach (var fileItem in GetAvailableFileItems())
                 {
-                    using var data = new AutoGltfFileParser(fileItem.FilePath).Parse();
-                    using var loader = new VrmAnimationImporter(data);
-                    var instance = await loader.LoadAsync(new ImmediateCaller());
-                    var vrm10AnimationInstance = instance.GetComponent<Vrm10AnimationInstance>();
-                    vrm10AnimationInstance.ShowBoxMan(false);
+                    for (var _ = 0; _ < 2; _++)
+                    {
+                        using var data = new AutoGltfFileParser(fileItem.FilePath).Parse();
+                        using var loader = new VrmAnimationImporter(data);
+                        var instance = await loader.LoadAsync(new ImmediateCaller());
+                        var vrm10AnimationInstance = instance.GetComponent<Vrm10AnimationInstance>();
+                        vrm10AnimationInstance.ShowBoxMan(false);
 
-                    _instances.Add(new VrmaInstance(
-                        fileItem,
-                        vrm10AnimationInstance,
-                        instance.GetComponent<Animation>()
-                    ));
+                        _instances.Add(new VrmaInstance(
+                            fileItem,
+                            vrm10AnimationInstance,
+                            instance.GetComponent<Animation>()
+                        ));
+                    }
                 }
             }
             catch (Exception ex)

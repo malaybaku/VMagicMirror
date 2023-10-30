@@ -7,7 +7,7 @@ title: VRM AnimationをVMagicMirrorで使用する
 
 この機能はv3.4.0およびそれ以降のVMagicMirrorで利用できます。
 
-従来のカスタムモーション機能(「[カスタムモーションをVMagicMirrorで使用する](./use_custom_motion)」)に加え、VRMの標準定義となったVRM Animation形式のモーション(以下、VRMA)を適用できます。
+従来のカスタムモーション機能(「[カスタムモーションをVMagicMirrorで使用する](../use_custom_motion)」)に加え、VRMの標準定義となったVRM Animation形式のモーション(以下、VRMA)を適用できます。
 
 <div class="note-area" markdown="1">
 
@@ -49,7 +49,7 @@ VMagicMirrorを起動していない状態で、VRMAファイル(`.vrma`)を`(�
 
 もし`Motions`フォルダがまだない場合、フォルダを新規作成して下さい。
 
-※このフォルダは[カスタムモーションをVMagicMirrorで使用する](./use_custom_motion)と共通です。ファイルの拡張子が従来のカスタムモーションと異なるため、VMagicMirrorでは適切に区別して読み込まれます。
+※このフォルダは[カスタムモーションをVMagicMirrorで使用する](../use_custom_motion)と共通です。ファイルの拡張子が従来のカスタムモーションと異なるため、VMagicMirrorでは適切に区別して読み込まれます。
 
 #### 3. Word to Motion機能での選択
 {: .doc-sec2 }

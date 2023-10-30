@@ -21,7 +21,7 @@ Following steps enable to use non-built-in motions in VMagicMirror.
 
 `VRM Animation` file is supported from VMagicMirror v3.4.0, and it has different setup steps and different restrictions.
 
-See detail at [Use VRM Animation](./use_vrma) page.
+See detail at [Use VRM Animation](../use_vrma) page.
 
 </div>
 

@@ -9,6 +9,16 @@ title: VRM AnimationをVMagicMirrorで使用する
 
 従来のカスタムモーション機能(「[カスタムモーションをVMagicMirrorで使用する](./use_custom_motion)」)に加え、VRMの標準定義となったVRM Animation形式のモーション(以下、VRMA)を適用できます。
 
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+この機能は後述の制限等も踏まえ、実験的に導入しています。VRMAの仕様が今後変わりうることにも注意して下さい。
+
+より安定した機能としては、上述しているカスタムモーション機能をご使用ください。
+
+</div>
+
 
 #### 1. 適用できる機能と制限事項
 {: .doc-sec2 }

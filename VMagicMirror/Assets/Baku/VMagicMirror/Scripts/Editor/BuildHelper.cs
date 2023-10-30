@@ -17,8 +17,29 @@ namespace Baku.VMagicMirror
         private const string EnvArgPrefix = "-Env=";
         private const string EditionArgPrefix = "-Edition=";
 
-        [MenuItem("VMagicMirror/Prod_Standard_Build", false, 1)]
-        public static void DoStandardProdBuild()
+        [MenuItem("VMagicMirror/Reset Script Symbols", false, 1)]
+        public static void ResetScriptSymbols()
+        {
+            //NOTE: 通常の開発時の組み合わせはScript Symbolが少ないほうに倒しておく
+            PrepareScriptDefineSymbol(true, true);
+        }
+        
+        [MenuItem("VMagicMirror/Symbols: Dev Standard", false, 11)]
+        public static void PrepareDevStandardSymbols() 
+            => PrepareScriptDefineSymbol(false, false);
+        [MenuItem("VMagicMirror/Symbols: Prod Full", false, 12)]
+        public static void PrepareDeFullSymbols() 
+            => PrepareScriptDefineSymbol(true, false);
+        
+        [MenuItem("VMagicMirror/Symbols: Prod Standard", false, 21)]
+        public static void PrepareProdStandardSymbols() 
+            => PrepareScriptDefineSymbol(false, true);
+        [MenuItem("VMagicMirror/Symbols: Prod Full", false, 22)]
+        public static void PrepareProdFullSymbols() 
+            => PrepareScriptDefineSymbol(true, true);
+        
+        [MenuItem("VMagicMirror/Build", false, 31)]
+        public static void TryBuild()
         {
             var folder = EditorUtility.SaveFolderPanel("Build Standard Edition", "", "Bin_Standard");
             if (string.IsNullOrEmpty(folder))
@@ -26,50 +47,20 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            BuildVMagicMirror(folder, false, true);
+            BuildVMagicMirror(folder);
         }
         
-        [MenuItem("VMagicMirror/Prod_Full_Build", false, 2)]
-        public static void DoFullProdBuild()
+        //NOTE: コマンドラインから使う用で、ビルドの前に1回これだけ呼んでEditorを終了しておくことにより、Symbol更新のタイミングバグを防ぐ
+        //"-Env=Prod"
+        //"-Edition=Full" 
+        public static void DoPrepareScriptDefineSymbol()
         {
-            var folder = EditorUtility.SaveFolderPanel("Build Standard Edition", "", "Bin");
-            if (string.IsNullOrEmpty(folder))
-            {
-                return;
-            }
-            
-            BuildVMagicMirror(folder, true, true);       
-        }
-
-        [MenuItem("VMagicMirror/Dev_Standard_Build", false, 21)]
-        public static void DoStandardDevBuild()
-        {
-            var folder = EditorUtility.SaveFolderPanel(
-                "(Dev) Build Standard Edition", "", "Bin_Standard_Dev"
-                );
-            if (string.IsNullOrEmpty(folder))
-            {
-                return;
-            }
-            
-            BuildVMagicMirror(folder, false, false);
+            var isFullEdition = CheckIsFullEditionFromArgs();
+            var isProd = CheckIsProdFromArgs();
+            PrepareScriptDefineSymbol(isFullEdition, isProd);
         }
         
-        [MenuItem("VMagicMirror/Dev_Full_Build", false, 22)]
-        public static void DoFullDevBuild()
-        {
-            var folder = EditorUtility.SaveFolderPanel(
-                "(Dev) Build Full Edition", "", "Bin_Dev"
-                );
-            if (string.IsNullOrEmpty(folder))
-            {
-                return;
-            }
-            
-            BuildVMagicMirror(folder, true, false);       
-        }
-
-        //NOTE: コマンドラインから使う用。以下のようなオプションをつけて用いる
+        //NOTE: コマンドラインから使う用。以下のようなオプションをつけて用いる。
         //"-SavePath=C:\Hoge\Fuga"
         //"-Env=Prod"
         //"-Edition=Full" 
@@ -78,9 +69,10 @@ namespace Baku.VMagicMirror
             var savePath = GetSavePathFromArgs();
             var isFullEdition = CheckIsFullEditionFromArgs();
             var isProd = CheckIsProdFromArgs();
+
             if (!string.IsNullOrEmpty(savePath))
             {
-                BuildVMagicMirror(savePath, isFullEdition, isProd);
+                BuildVMagicMirror(savePath);
             }
 
             if (isProd)
@@ -89,60 +81,58 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private static void BuildVMagicMirror(string folder, bool isFullEdition, bool isProd)
+        private static void PrepareScriptDefineSymbol(bool isFullEdition, bool isProd)
         {
-            
-            //NOTE: ビルド直前にスクリプトシンボルを追加し、ビルドしてから元に戻す
-            var defineSymbols = PlayerSettings
+            //NOTE: スクリプトシンボルに過不足があれば直す。追加だけでなく削除も含むことに注意
+            var symbols = PlayerSettings
                 .GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
-                .Split( ';');
-
-            if (!isFullEdition || !isProd)
+                .Split(';')
+                .ToList();
+            var isDirty = false;
+            
+            if (!isFullEdition && !symbols.Contains(VmmFeatureLockedSymbol))
             {
-                var addedSymbols = new List<string>(defineSymbols);
-                if (isFullEdition && addedSymbols.Contains(VmmFeatureLockedSymbol))
-                {
-                    addedSymbols.Remove(VmmFeatureLockedSymbol);
-                }
-                    
-                if (!isFullEdition && !addedSymbols.Contains(VmmFeatureLockedSymbol))
-                {
-                    addedSymbols.Add(VmmFeatureLockedSymbol);
-                }
-
-                if (isProd && addedSymbols.Contains(DevEnvSymbol))
-                {
-                    addedSymbols.Remove(DevEnvSymbol);
-                }
-                
-                if (!isProd && !addedSymbols.Contains(DevEnvSymbol))
-                {
-                    addedSymbols.Add(DevEnvSymbol);
-                }
-                
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                    EditorUserBuildSettings.selectedBuildTargetGroup,
-                    addedSymbols.ToArray()
-                );
+                symbols.Add(VmmFeatureLockedSymbol);
+                isDirty = true;
             }
 
-            try
+            if (isFullEdition && symbols.Contains(VmmFeatureLockedSymbol))
             {
-                string savePath = Path.Combine(folder, "VMagicMirror.exe");
-                BuildPipeline.BuildPlayer(
-                    EditorBuildSettings.scenes.Where(s => s.enabled).ToArray(),
-                    savePath,
-                    BuildTarget.StandaloneWindows64,
-                    BuildOptions.None
-                );
+                symbols.Remove(VmmFeatureLockedSymbol);
+                isDirty = true;
             }
-            finally
+
+            if (!isProd && !symbols.Contains(DevEnvSymbol))
+            {
+                symbols.Add(DevEnvSymbol);
+                isDirty = true;
+            }
+
+            if (isProd && symbols.Contains(DevEnvSymbol))
+            {
+                symbols.Remove(DevEnvSymbol);
+                isDirty = true;
+            }
+
+
+            if (isDirty)
             {
                 PlayerSettings.SetScriptingDefineSymbolsForGroup(
                     EditorUserBuildSettings.selectedBuildTargetGroup,
-                    defineSymbols
+                    symbols.ToArray()
                 );
             }
+        }
+        
+        private static void BuildVMagicMirror(string folder)
+        {
+            var savePath = Path.Combine(folder, "VMagicMirror.exe");
+            BuildPipeline.BuildPlayer(
+                EditorBuildSettings.scenes.Where(s => s.enabled).ToArray(),
+                savePath,
+                BuildTarget.StandaloneWindows64,
+                BuildOptions.None
+            );
         }
 
         [PostProcessBuild(1)]

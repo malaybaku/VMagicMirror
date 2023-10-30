@@ -13,6 +13,17 @@ title: カスタムモーションをVMagicMirrorで使用する
 2. エクスポートしたモーションを特定のフォルダに配置します。
 3. Word to Motion機能から、追加したモーションを選択します。
 
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+VRMの標準定義ファイルであるVRM AnimationファイルはVMagicMirro v3.4.0からサポートしていますが、準備の方法や制限事項が異なります。
+
+詳しくは[VRM AnimationをVMagicMirrorで使用する](./use_vrma)を参照ください。
+
+</div>
+
 #### 必要な環境や知識
 {: .doc-sec2 }
 

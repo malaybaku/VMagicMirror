@@ -28,6 +28,11 @@ namespace Baku.VMagicMirror
         
         public override void Initialize()
         {
+            //NOTE: このクラスの仕事かというと微妙だが、ビルド設定を吐かせておく(不具合調査上都合がよいので)
+            LogOutput.Instance.Write(
+                $"Environment: Feature Lock = {FeatureLocker.IsFeatureLocked}, Dev = {SpecialFiles.UseDevFolder}"
+            );
+
             _vrmLoadable.LocalVrmLoadEnded += () => _localVrmLoadEndedAtLeastOnce.Value = true;
 
             _receiver.AssignCommandHandler(

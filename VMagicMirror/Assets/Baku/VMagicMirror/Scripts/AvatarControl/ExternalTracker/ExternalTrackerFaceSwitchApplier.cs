@@ -16,10 +16,12 @@ namespace Baku.VMagicMirror
             Key = key;
         }
 
-        public static FaceSwitchKeyApplyContent Empty() => new FaceSwitchKeyApplyContent(false, false, default);
+        //NOTE: default指定してName == nullになってると怒られる事があるので便宜的にneutralで代用している
+        public static FaceSwitchKeyApplyContent Empty()
+            => new(false, false, ExpressionKey.Neutral);
 
         public static FaceSwitchKeyApplyContent Create(ExpressionKey key, bool keepLipSync) =>
-            new FaceSwitchKeyApplyContent(true, keepLipSync, key);
+            new(true, keepLipSync, key);
         
         public bool HasValue { get; }
         public bool KeepLipSync { get; }
@@ -34,8 +36,8 @@ namespace Baku.VMagicMirror
         private EyeBoneAngleSetter _eyeBoneResetter;
         private string _latestClipName = "";
 
-        private readonly ReactiveProperty<FaceSwitchKeyApplyContent> _currentValue 
-            = new ReactiveProperty<FaceSwitchKeyApplyContent>(FaceSwitchKeyApplyContent.Empty());
+        private readonly ReactiveProperty<FaceSwitchKeyApplyContent> _currentValue
+            = new(FaceSwitchKeyApplyContent.Empty());
         public IReadOnlyReactiveProperty<FaceSwitchKeyApplyContent> CurrentValue => _currentValue;
 
 

@@ -14,6 +14,18 @@ Following steps enable to use non-built-in motions in VMagicMirror.
 2. Put exported motion file to specific folder.
 3. Select the motion on Word to Motion feature.
 
+
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+`VRM Animation` file is supported from VMagicMirror v3.4.0, and it has different setup steps and different restrictions.
+
+See detail at [Use VRM Animation](./use_vrma) page.
+
+</div>
+
+
 #### Prerequisite
 {: .doc-sec2 }
 

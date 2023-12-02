@@ -12,16 +12,6 @@ This page is about webcam based hand tracking feature, supported in VMagicMirror
 {% include docimg.html file="./images/docs/hand_tracking.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
 
-<div class="note-area" markdown="1">
-
-**NOTE**
-
-This page is for v1.8.0 or later version.
-
-If you have older version, please see  [(v1.7.0b and older ver) Using Hand Tracking](../hand_tracking) instead.
-
-</div>
-
 #### Feature / Expected Usage
 {: .doc-sec2 }
 

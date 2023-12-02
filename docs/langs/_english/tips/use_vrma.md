@@ -8,7 +8,7 @@ lang: en
 
 This feature is available in v3.4.0 and later version of VMagicMirror.
 
-You can use VRM Animation (VRMA) file to apply customized motion to your avatar, similar to Custom Motion referred at [Use Custom Motion](./use_custom_motion) page.
+You can use VRM Animation (VRMA) file to apply customized motion to your avatar, similar to Custom Motion referred at [Use Custom Motion](../use_custom_motion) page.
 
 <div class="note-area" markdown="1">
 
@@ -48,7 +48,7 @@ Before starting VMagicMirror, put VRMA file(`.vrma`) at `(My Document)\VMagicMir
 
 If `Motions` folder does not exist, create new one.
 
-The folder is same as referred in [Use Custom Motion](./use_custom_motion). VMagicMirror classify them based on the file extension.
+The folder is same as referred in [Use Custom Motion](../use_custom_motion). VMagicMirror classify them based on the file extension.
 
 #### 3. Use in Expressions Feature
 {: .doc-sec2 }

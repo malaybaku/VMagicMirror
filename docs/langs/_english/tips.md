@@ -24,11 +24,7 @@ Basic usage is in [Get Started](../get_started), and setting window detail is in
 
 [Change Keyboard and Touchpad Appearance](./change_textures)
 
-[Load Background Image](./load_background_image)
-
 [Use VMagicMirror on Mac](./use_on_mac)
-
-[(v1.7.0b and older ver) Using Hand Tracking](./using_hand_tracking)
 
 [Perfect Sync](./perfect_sync)
 

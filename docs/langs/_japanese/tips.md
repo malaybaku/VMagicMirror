@@ -23,11 +23,7 @@ title: Tips
 
 [キーボードやタッチパッドの見た目を変更する](./change_textures)
 
-[背景画像をロードする](./load_background_image)
-
 [MacでVMagicMirrorを使う](./use_on_mac)
-
-[(v1.7.0b以前)ハンドトラッキングの使用について](./using_hand_tracking)
 
 [パーフェクトシンク](./perfect_sync)
 

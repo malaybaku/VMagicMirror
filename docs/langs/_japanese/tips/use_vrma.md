@@ -23,7 +23,7 @@ title: VRM AnimationをVMagicMirrorで使用する
 #### 1. 適用できる機能と制限事項
 {: .doc-sec2 }
 
-v3.4.0時点では、VRM Animationを[表情/モーション](../../docs/expressions)で使用できます。
+v3.4.0時点では、VRMAを[表情/モーション](../../docs/expressions)のカスタムモーションとして使用できます。
 
 [ゲーム入力機能](../../docs/game_input)についても対応を検討中です。
 
@@ -36,13 +36,20 @@ v3.4.0時点では、VRM Animationを[表情/モーション](../../docs/express
 - ターンを行うような、正面向きから大きく動くモーションの挙動は保証しかねます。
 - 手首より先の、指先のモーションは保証しかねます。
 
-VMagicMirror自体の制限ではありませんが、UniVRM v0.115.0時点ではBVHからVRMAファイルを生成したとき指のモーション情報が保存されません。
-このため指の挙動については動作保証が不十分になっており、かつ指モーションを含むVRMAの生成については別の手段を用いる必要があります。
-
 </div>
 
 
-#### 2. ファイルの配置
+#### 2. VRM Animation (.vrma) ファイルの入手方法
+{: .doc-sec2 }
+
+2023年12月時点で、VRMAファイル (`.vrma`) の入手方法の例は2通り挙げられます。
+
+[AnimationClipToVrmaSample](https://github.com/malaybaku/AnimationClipToVrmaSample) のプロジェクトを使用すると、Unity上でHumanoid向けのモーションデータとして読み込まれたAnimationClipをVRMAファイルに変換できます。この方法を用いる場合、詳細な使い方はリンク先を参照ください。
+
+また、UniVRM v0.114.0以降のバージョンではBVHファイルを `.vrma` ファイルに変換できます。この変換処理を行うと指のモーション情報が欠落し、 `.vrma` ファイルには保存されない事に注意してください。
+
+
+#### 3. ファイルの配置
 {: .doc-sec2 }
 
 VMagicMirrorを起動していない状態で、VRMAファイル(`.vrma`)を`(マイドキュメント)\VMagicMirror_Files\Motions`以下に配置します。
@@ -51,7 +58,7 @@ VMagicMirrorを起動していない状態で、VRMAファイル(`.vrma`)を`(�
 
 ※このフォルダは[カスタムモーションをVMagicMirrorで使用する](../use_custom_motion)と共通です。ファイルの拡張子が従来のカスタムモーションと異なるため、VMagicMirrorでは適切に区別して読み込まれます。
 
-#### 3. Word to Motion機能での選択
+#### 4. Word to Motion機能での選択
 {: .doc-sec2 }
 
 VMagicMirrorを起動し、[表情/モーション](../../docs/expressions)にある手順で編集ウィンドウを開きます。

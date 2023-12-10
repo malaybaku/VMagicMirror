@@ -307,10 +307,10 @@ namespace Baku.VMagicMirrorConfig
         public Message RequestCustomMotionDoctor() => NoArg();
 
         /// <summary>
-        /// Query 
+        /// Query : 引数をtrueにすると .vrma 形式になってるものだけ返却してくれる
         /// </summary>
         /// <returns></returns>
-        public Message GetAvailableCustomMotionClipNames() => NoArg();
+        public Message GetAvailableCustomMotionClipNames(bool vrmaOnly) => WithArg(vrmaOnly);
 
         #endregion
 

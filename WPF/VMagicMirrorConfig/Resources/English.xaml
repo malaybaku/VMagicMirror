@@ -609,7 +609,7 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysRun_Note">*When enabled, "Run" button works as "Walk"</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Option_AlwaysAim">Always Aim</sys:String>
 
-    <sys:String x:Key="GameInputKeyAssign_Keyboard_Section">Keyboard:</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Keyboard_Section">Keyboard (Click to Hide)</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Action_None">(None)</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_Move">Move</sys:String>
     <sys:String x:Key="GameInputKeyAssign_StickAction_LookAround">Look Around</sys:String>
@@ -626,7 +626,7 @@ VRoid Hub model is not supported in this feature.</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_SpaceJump">Use SPACE to jump</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Keyboard_AdvancedAssign">Additional Key Assign:</sys:String>
 
-    <sys:String x:Key="GameInputKeyAssign_Mouse_Section">Mouse:</sys:String>
+    <sys:String x:Key="GameInputKeyAssign_Mouse_Section">Mouse (Click to Hide)</sys:String>
     <sys:String x:Key="GameInputKeyAssign_Mouse_UseLookAround">Use mouse move to look around</sys:String>
     <!-- ここはゲームパッドと同様に図示することで不要になるかも -->
     <sys:String x:Key="GameInputKeyAssign_Mouse_LeftClick">Left Click</sys:String>

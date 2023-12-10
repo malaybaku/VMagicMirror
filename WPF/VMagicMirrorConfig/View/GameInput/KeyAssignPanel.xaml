@@ -349,97 +349,102 @@
                               Margin="10,10,5,0"
                               IsChecked="{Binding KeyboardEnabled.Value, Mode=TwoWay}"
                               />
-                    <TextBlock Text="{DynamicResource GameInputKeyAssign_Keyboard_Section}"
-                               Margin="10,15,5,5"
-                               />
+                    <Expander Header="{DynamicResource GameInputKeyAssign_Keyboard_Section}"
+                              IsExpanded="True"
+                              Margin="10,15,5,5"
+                              >
+                        <StackPanel>
+                            <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_WasdMove}"
+                                      Margin="25,5,5,0"
+                                      IsChecked="{Binding UseWasdMove.Value, Mode=TwoWay}"
+                                      IsEnabled="{Binding KeyboardEnabled.Value}"
+                                      />
+                            <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_ArrowMove}"
+                                      Margin="25,0"
+                                      IsChecked="{Binding UseArrowKeyMove.Value, Mode=TwoWay}"
+                                      IsEnabled="{Binding KeyboardEnabled.Value}"
+                                      />
+                            <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_ShiftRun}"
+                                          Margin="25,0"
+                                          IsChecked="{Binding UseShiftRun.Value, Mode=TwoWay}"
+                                          IsEnabled="{Binding KeyboardEnabled.Value}"
+                                          />
 
-                    <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_WasdMove}"
-                              Margin="25,5,5,0"
-                              IsChecked="{Binding UseWasdMove.Value, Mode=TwoWay}"
-                              IsEnabled="{Binding KeyboardEnabled.Value}"
-                              />
-                    <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_ArrowMove}"
-                              Margin="25,0"
-                              IsChecked="{Binding UseArrowKeyMove.Value, Mode=TwoWay}"
-                              IsEnabled="{Binding KeyboardEnabled.Value}"
-                              />
-                    <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_ShiftRun}"
-                              Margin="25,0"
-                              IsChecked="{Binding UseShiftRun.Value, Mode=TwoWay}"
-                              IsEnabled="{Binding KeyboardEnabled.Value}"
-                              />
+                            <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_SpaceJump}"
+                                          Margin="25,0"
+                                          IsChecked="{Binding UseSpaceJump.Value, Mode=TwoWay}"
+                                          IsEnabled="{Binding KeyboardEnabled.Value}"
+                                          />
 
-                    <CheckBox Content="{DynamicResource GameInputKeyAssign_Keyboard_SpaceJump}"
-                              Margin="25,0"
-                              IsChecked="{Binding UseSpaceJump.Value, Mode=TwoWay}"
-                              IsEnabled="{Binding KeyboardEnabled.Value}"
-                              />
+                            <TextBlock Text="{DynamicResource GameInputKeyAssign_Keyboard_AdvancedAssign}"
+                                           Margin="25,15,25,5"
+                                           />
 
-                    <TextBlock Text="{DynamicResource GameInputKeyAssign_Keyboard_AdvancedAssign}"
-                               Margin="25,15,25,5"
-                               />
+                            <ItemsControl ItemsSource="{Binding KeyAssigns}"
+                                                  Margin="45,5"
+                                                  HorizontalAlignment="Left">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:GameInputKeyAssignItemViewModel}">
+                                        <view:GameInputKeyAssignItem />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Expander>
 
-                    <ItemsControl ItemsSource="{Binding KeyAssigns}"
-                                  Margin="45,5"
-                                  HorizontalAlignment="Left">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:GameInputKeyAssignItemViewModel}">
-                                <view:GameInputKeyAssignItem />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
 
-                    <TextBlock Text="{DynamicResource GameInputKeyAssign_Mouse_Section}"
-                               Margin="10,15,5,5"
-                               />
+                    <Expander Header="{DynamicResource GameInputKeyAssign_Mouse_Section}"
+                              IsExpanded="True"
+                              Margin="10,15,5,10"
+                              >
+                        <StackPanel>
+                            <CheckBox Content="{DynamicResource GameInputKeyAssign_Mouse_UseLookAround}"
+                                      Margin="25,5,25,0"
+                                      IsChecked="{Binding UseMouseToLookAround.Value, Mode=TwoWay}"
+                                      IsEnabled="{Binding KeyboardEnabled.Value}"
+                                      />
 
-                    <CheckBox Content="{DynamicResource GameInputKeyAssign_Mouse_UseLookAround}"
-                              Margin="25,5,25,0"
-                              IsChecked="{Binding UseMouseToLookAround.Value, Mode=TwoWay}"
-                              IsEnabled="{Binding KeyboardEnabled.Value}"
-                              />
+                            <Grid Margin="25,5"
+                                  IsEnabled="{Binding KeyboardEnabled.Value}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="120" />
+                                </Grid.ColumnDefinitions>
 
-                    <Grid Margin="25,5"
-                          IsEnabled="{Binding KeyboardEnabled.Value}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="120" />
-                        </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                           Text="{DynamicResource GameInputKeyAssign_Mouse_LeftClick}"
+                                           />
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                           Text="{DynamicResource GameInputKeyAssign_Mouse_RightClick}"
+                                           />
+                                <TextBlock Grid.Row="2" Grid.Column="0"
+                                           Text="{DynamicResource GameInputKeyAssign_Mouse_MiddleClick}"
+                                           />
 
-                        <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="{DynamicResource GameInputKeyAssign_Mouse_LeftClick}"
-                                   />
-                        <TextBlock Grid.Row="1" Grid.Column="0"
-                                   Text="{DynamicResource GameInputKeyAssign_Mouse_RightClick}"
-                                   />
-                        <TextBlock Grid.Row="2" Grid.Column="0"
-                                   Text="{DynamicResource GameInputKeyAssign_Mouse_MiddleClick}"
-                                   />
-
-                        <ComboBox Grid.Row="0" Grid.Column="2"
-                                  Style="{StaticResource GameInputActionComboBox}"
-                                  ItemsSource="{Binding ButtonActions}"
-                                  SelectedValue="{Binding LeftClick.Value}"
-                                  />
-                        <ComboBox Grid.Row="1" Grid.Column="2"
-                                  Style="{StaticResource GameInputActionComboBox}"
-                                  ItemsSource="{Binding ButtonActions}"
-                                  SelectedValue="{Binding RightClick.Value}"
-                                  />
-                        <ComboBox Grid.Row="2" Grid.Column="2"
-                                  Style="{StaticResource GameInputActionComboBox}"
-                                  ItemsSource="{Binding ButtonActions}"
-                                  SelectedValue="{Binding MiddleClick.Value}"
-                                  />
-
-                    </Grid>
-
+                                <ComboBox Grid.Row="0" Grid.Column="2"
+                                          Style="{StaticResource GameInputActionComboBox}"
+                                          ItemsSource="{Binding ButtonActions}"
+                                          SelectedValue="{Binding LeftClick.Value}"
+                                          />
+                                <ComboBox Grid.Row="1" Grid.Column="2"
+                                          Style="{StaticResource GameInputActionComboBox}"
+                                          ItemsSource="{Binding ButtonActions}"
+                                          SelectedValue="{Binding RightClick.Value}"
+                                          />
+                                <ComboBox Grid.Row="2" Grid.Column="2"
+                                          Style="{StaticResource GameInputActionComboBox}"
+                                          ItemsSource="{Binding ButtonActions}"
+                                          SelectedValue="{Binding MiddleClick.Value}"
+                                          />
+                            </Grid>
+                        </StackPanel>
+                    </Expander>
                 </StackPanel>
             </Border>
         </StackPanel>

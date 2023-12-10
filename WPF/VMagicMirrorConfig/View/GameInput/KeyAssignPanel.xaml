@@ -6,6 +6,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
              MinWidth="600"
@@ -16,6 +17,7 @@
              >
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <view:GameInputActionKeyToStringConverter x:Key="GameInputActionKeyToStringConverter"/>
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Width" Value="20"/>
@@ -29,8 +31,11 @@
             <Setter Property="SelectedValuePath" Value="Action" />
             <Setter Property="ItemTemplate">
                 <Setter.Value>
-                    <DataTemplate DataType="{x:Type vm:GameInputButtonActionItemViewModel}">
-                        <TextBlock Text="{Binding Label.Value}" />
+                    <DataTemplate DataType="{x:Type vmm:GameInputActionKey}">
+                        <!--DataType="{x:Type vm:GameInputButtonActionItemViewModel}">-->
+                        <!--<TextBlock Text="{Binding Label.Value}" />-->
+                        <TextBlock Text="{Binding 
+                                            Converter={StaticResource GameInputActionKeyToStringConverter}}" />
                     </DataTemplate>
                 </Setter.Value>
             </Setter>

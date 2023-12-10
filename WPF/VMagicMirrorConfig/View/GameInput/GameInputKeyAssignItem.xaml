@@ -10,14 +10,19 @@
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:GameInputKeyAssignItemViewModel}"
              d:DesignHeight="40" d:DesignWidth="450">
+    <UserControl.Resources>
+        <view:GameInputActionKeyToStringConverter x:Key="GameInputActionKeyToStringConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="40"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="0" Text="{Binding Label.Value}" />
-
+        <TextBlock Grid.Column="0"
+                   Text="{Binding ActionKey,
+                                  Converter={StaticResource GameInputActionKeyToStringConverter}}" 
+                   />
         <TextBox Grid.Column="1"
                 Text="{Binding RegisteredKeyInput.Value}"
                 HorizontalContentAlignment="Center"

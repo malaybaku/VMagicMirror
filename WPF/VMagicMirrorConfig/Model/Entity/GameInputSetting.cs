@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Input;
 
 namespace Baku.VMagicMirrorConfig
@@ -22,7 +23,8 @@ namespace Baku.VMagicMirrorConfig
 
     public enum GameInputButtonAction
     {
-        None,
+        Custom = -1,
+        None = 0,
         Jump,
         Crouch,
         Run,
@@ -65,7 +67,21 @@ namespace Baku.VMagicMirrorConfig
         Middle,
     }
 
+    /// <summary>
+    /// <see cref="GameInputButtonAction.Custom"/>のカスタムの詳細を記述するクラス
+    /// </summary>
+    public class GameInputCustomAction
+    {
+        //NOTE: string 1つなのにclass化するのはループとかマスクとかIKどうするとか設定したい可能性に配慮するため
+        public string CustomKey { get; set; } = "";
+    }
 
+    public class KeyboardKeyWithGameInputCustomAction
+    {
+        public GameInputCustomAction CustomAction { get; set; } = new();
+        public string KeyCode { get; set; } = "";
+    }
+    
     //Entityに移動していいんでは
     public class GameInputGamepadKeyAssign
     {
@@ -83,6 +99,34 @@ namespace Baku.VMagicMirrorConfig
         public GameInputButtonAction ButtonView { get; set; }
         public GameInputButtonAction ButtonMenu { get; set; }
 
+        public GameInputCustomAction CustomButtonA { get; set; } = new();
+        public GameInputCustomAction CustomButtonB { get; set; } = new();
+        public GameInputCustomAction CustomButtonX { get; set; } = new();
+        public GameInputCustomAction CustomButtonY { get; set; } = new();
+
+        public GameInputCustomAction CustomButtonLButton { get; set; } = new();
+        public GameInputCustomAction CustomButtonLTrigger { get; set; } = new();
+        public GameInputCustomAction CustomButtonRButton { get; set; } = new();
+        public GameInputCustomAction CustomButtonRTrigger { get; set; } = new();
+
+        public GameInputCustomAction CustomButtonView { get; set; } = new();
+        public GameInputCustomAction CustomButtonMenu { get; set; } = new();
+
+        public GameInputActionKey ButtonAKey => new(ButtonA, CustomButtonA);
+        public GameInputActionKey ButtonBKey => new(ButtonB, CustomButtonB);
+        public GameInputActionKey ButtonXKey => new(ButtonX, CustomButtonX);
+        public GameInputActionKey ButtonYKey => new(ButtonY, CustomButtonY);
+
+        public GameInputActionKey ButtonLButtonKey => new(ButtonLButton, CustomButtonLButton);
+        public GameInputActionKey ButtonLTriggerKey => new(ButtonLTrigger, CustomButtonLTrigger);
+        public GameInputActionKey ButtonRButtonKey => new(ButtonRButton, CustomButtonRButton);
+        public GameInputActionKey ButtonRTriggerKey => new(ButtonRTrigger, CustomButtonRTrigger);
+
+        public GameInputActionKey ButtonViewKey => new(ButtonView, CustomButtonView);
+        public GameInputActionKey ButtonMenuKey => new(ButtonMenu, CustomButtonMenu);
+
+
+
         public GameInputStickAction DPadLeft { get; set; }
         public GameInputStickAction StickLeft { get; set; } = GameInputStickAction.Move;
         public GameInputStickAction StickRight { get; set; } = GameInputStickAction.LookAround;
@@ -97,6 +141,13 @@ namespace Baku.VMagicMirrorConfig
         public GameInputButtonAction LeftClick { get; set; }
         public GameInputButtonAction RightClick { get; set; }
         public GameInputButtonAction MiddleClick { get; set; }
+        public GameInputCustomAction CustomLeftClick { get; set; } = new();
+        public GameInputCustomAction CustomRightClick { get; set; } = new();
+        public GameInputCustomAction CustomMiddleClick { get; set; } = new();
+        public GameInputActionKey LeftClickKey => new(LeftClick, CustomLeftClick);
+        public GameInputActionKey RightClickKey => new(RightClick, CustomRightClick);
+        public GameInputActionKey MiddleClickKey => new(MiddleClick, CustomMiddleClick);
+
 
         //よくあるやつなので + このキーアサインでは補助キーを無視したいのでShiftも特別扱い
         public bool UseWasdMove { get; set; } = true;
@@ -111,6 +162,9 @@ namespace Baku.VMagicMirrorConfig
 
         public string TriggerKeyCode { get; set; } = "";
         public string PunchKeyCode { get; set; } = "";
+
+        public KeyboardKeyWithGameInputCustomAction[] CustomActions { get; set; } 
+            = Array.Empty<KeyboardKeyWithGameInputCustomAction>();
 
         public static GameInputKeyboardKeyAssign LoadDefault() => new();
 
@@ -134,6 +188,13 @@ namespace Baku.VMagicMirrorConfig
             result.CrouchKeyCode = TranslateKeyCode(CrouchKeyCode);
             result.TriggerKeyCode = TranslateKeyCode(TriggerKeyCode);
             result.PunchKeyCode = TranslateKeyCode(PunchKeyCode);
+            result.CustomActions = CustomActions
+                .Select(a => new KeyboardKeyWithGameInputCustomAction()
+                {
+                    KeyCode = TranslateKeyCode(a.KeyCode),
+                    CustomAction = a.CustomAction,
+                })
+                .ToArray();
 
             return result;
         }

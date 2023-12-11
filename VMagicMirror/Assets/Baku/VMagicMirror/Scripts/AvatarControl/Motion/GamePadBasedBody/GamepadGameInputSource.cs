@@ -18,6 +18,7 @@ namespace Baku.VMagicMirror.GameInput
         IObservable<bool> IGameInputSource.GunFire => _gunFire;
         IObservable<Unit> IGameInputSource.Jump => _jump;
         IObservable<Unit> IGameInputSource.Punch => _punch;
+        IObservable<string> IGameInputSource.CustomMotion => _customMotion;
         
         #endregion
         
@@ -25,14 +26,15 @@ namespace Baku.VMagicMirror.GameInput
         private readonly IMessageReceiver _receiver;
         private CompositeDisposable _disposable;
 
-        private readonly ReactiveProperty<Vector2> _moveInput = new ReactiveProperty<Vector2>();
-        private readonly ReactiveProperty<Vector2> _lookAroundInput = new ReactiveProperty<Vector2>();
-        private readonly ReactiveProperty<bool> _isCrouching = new ReactiveProperty<bool>();
-        private readonly ReactiveProperty<bool> _isRunning = new ReactiveProperty<bool>();
-        private readonly ReactiveProperty<bool> _gunFire = new ReactiveProperty<bool>();
-        private readonly Subject<Unit> _jump = new Subject<Unit>();
-        private readonly Subject<Unit> _punch = new Subject<Unit>();
-
+        private readonly ReactiveProperty<Vector2> _moveInput = new();
+        private readonly ReactiveProperty<Vector2> _lookAroundInput = new();
+        private readonly ReactiveProperty<bool> _isCrouching = new();
+        private readonly ReactiveProperty<bool> _isRunning = new();
+        private readonly ReactiveProperty<bool> _gunFire = new();
+        private readonly Subject<Unit> _jump = new();
+        private readonly Subject<Unit> _punch = new();
+        private readonly Subject<string> _customMotion = new();
+        
         private bool _isActive;
         private GamepadGameInputKeyAssign _keyAssign = GamepadGameInputKeyAssign.LoadDefault();
         
@@ -172,6 +174,13 @@ namespace Baku.VMagicMirror.GameInput
                 case GameInputButtonAction.Jump:
                     _jump.OnNext(Unit.Default);
                     break;
+                case GameInputButtonAction.Custom:
+                    var key = GetButtonActionCustomKey(data.Key);
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        _customMotion.OnNext(key);
+                    }
+                    break;
             }
         }
 
@@ -225,6 +234,24 @@ namespace Baku.VMagicMirror.GameInput
                 GamepadKey.Start => _keyAssign.ButtonMenu,
                 
                 _ => GameInputButtonAction.None,
+            };
+        }
+
+        private string GetButtonActionCustomKey(GamepadKey key)
+        {
+            return key switch
+            {
+                GamepadKey.A => _keyAssign.CustomButtonAKey,
+                GamepadKey.B => _keyAssign.CustomButtonBKey,
+                GamepadKey.X => _keyAssign.CustomButtonXKey,
+                GamepadKey.Y => _keyAssign.CustomButtonYKey,
+                GamepadKey.LShoulder => _keyAssign.CustomButtonLButtonKey,
+                GamepadKey.LTrigger => _keyAssign.CustomButtonLTriggerKey,
+                GamepadKey.RShoulder => _keyAssign.CustomButtonRButtonKey,
+                GamepadKey.RTrigger=> _keyAssign.CustomButtonRTriggerKey,
+                GamepadKey.Select => _keyAssign.CustomButtonViewKey,
+                GamepadKey.Start => _keyAssign.CustomButtonMenuKey,
+                _ => "",
             };
         }
 

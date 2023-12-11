@@ -22,17 +22,19 @@ namespace Baku.VMagicMirror.GameInput
         IObservable<bool> IGameInputSource.GunFire => _gunFire;
         IObservable<Unit> IGameInputSource.Jump => _jump;
         IObservable<Unit> IGameInputSource.Punch => _punch;
+        IObservable<string> IGameInputSource.CustomMotion => _customMotion;
         
         #endregion
         
         private bool _isActive;
-        private readonly ReactiveProperty<Vector2> _moveInput = new ReactiveProperty<Vector2>();
-        private readonly ReactiveProperty<Vector2> _lookAroundInput = new ReactiveProperty<Vector2>();
-        private readonly ReactiveProperty<bool> _isCrouching = new ReactiveProperty<bool>();
-        private readonly ReactiveProperty<bool> _isRunning = new ReactiveProperty<bool>();
-        private readonly ReactiveProperty<bool> _gunFire = new ReactiveProperty<bool>();
-        private readonly Subject<Unit> _jump = new Subject<Unit>();
-        private readonly Subject<Unit> _punch = new Subject<Unit>();
+        private readonly ReactiveProperty<Vector2> _moveInput = new();
+        private readonly ReactiveProperty<Vector2> _lookAroundInput = new();
+        private readonly ReactiveProperty<bool> _isCrouching = new();
+        private readonly ReactiveProperty<bool> _isRunning = new();
+        private readonly ReactiveProperty<bool> _gunFire = new();
+        private readonly Subject<Unit> _jump = new();
+        private readonly Subject<Unit> _punch = new();
+        private readonly Subject<string> _customMotion = new();
 
         private readonly IKeyMouseEventSource _keySource;
         private readonly IMessageReceiver _receiver;
@@ -259,6 +261,17 @@ namespace Baku.VMagicMirror.GameInput
                 _punch.OnNext(Unit.Default);
             }
 
+            foreach (var custom in _keyAssign.CustomActions)
+            {
+                if (custom.KeyCode == key)
+                {
+                    var actionKey = custom.CustomActionKey;
+                    if (!string.IsNullOrEmpty(actionKey))
+                    {
+                        _customMotion.OnNext(actionKey);
+                    }
+                }
+            }
 
             if (_useWasdMove)
             {

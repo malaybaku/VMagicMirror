@@ -28,5 +28,8 @@ namespace Baku.VMagicMirror.GameInput
 
         IObservable<Unit> Jump { get; }
         IObservable<Unit> Punch { get; }
+        
+        /// <summary> .vrma のカスタムモーションはココからkeyを指定して発火 </summary>
+        IObservable<string> CustomMotion { get; }
     }
 }

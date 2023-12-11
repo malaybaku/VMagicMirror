@@ -8,7 +8,6 @@ namespace Baku.VMagicMirror
     public class VrmaMotionSetter : PresenterBase
     {
         private const int BoneMax = (int)HumanBodyBones.LastBone;
-        private const int ResetUpdateFrameCount = 2;
 
         struct LateTickContent
         {

@@ -24,6 +24,7 @@ namespace Baku.VMagicMirror
         private readonly IVRMLoadable _vrmLoadable;
         private readonly VrmaRepository _repository;
         private readonly VrmaMotionSetter _motionSetter;
+        private readonly VrmaMotionSetterLocker _motionSetterLocker = new();
 
         private bool _hasModel;
         private bool _playing;
@@ -80,6 +81,13 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            //ゲーム入力のほうでVRMAが再生中だと反応できないようにしておく
+            //※Word to Motionを常時優先する説もある (普段は何でもかんでもWtMが最優先ではあるので)
+            if (!_motionSetter.TryLock(_motionSetterLocker))
+            {
+                return;
+            }
+            
             //NOTE: I/Fの戻り値としてはIK FadeInするの時間を引いて答えておく
             duration -= FadeDuration;
             
@@ -89,7 +97,8 @@ namespace Baku.VMagicMirror
             RunAnimationAsync(targetItem, _cts.Token).Forget();
         }
 
-        //TODO: Game InputでもVRMAを使う場合、この方法で止めるのはNG
+        //NOTE: ゲーム入力とWtMで同じモーションを使うとちょっと変になる可能性がある。
+        //いったんマイナーケースだと思って許容している
         public void Stop()
         {
             if (!_hasModel)
@@ -180,6 +189,8 @@ namespace Baku.VMagicMirror
 
         private async UniTaskVoid RunAnimationAsync(VrmaFileItem item, CancellationToken cancellationToken)
         {
+            _motionSetter.FixHipLocalPosition = true;
+
             //やること: 適用率を0 > 1 > 0に遷移させつつ適用していく
             //prevのアニメーションを適用するかどうかは動的にチェックして決める
             _repository.Run(item, false);
@@ -245,6 +256,7 @@ namespace Baku.VMagicMirror
             finally
             {
                 _stopRunning = false;
+                _motionSetter.ReleaseLock();
             }
         }
         
@@ -262,6 +274,7 @@ namespace Baku.VMagicMirror
             _repository.StopCurrentAnimation();
             _playing = false;
             _playingPreview = false;
+            _motionSetter.ReleaseLock();
         }
         
         //NOTE: モーション名として拡張子付きのファイル名が使われている事を期待している

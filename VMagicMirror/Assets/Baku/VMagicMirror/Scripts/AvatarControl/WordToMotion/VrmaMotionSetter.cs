@@ -5,6 +5,10 @@ using UniRx;
 
 namespace Baku.VMagicMirror
 {
+    public sealed class VrmaMotionSetterLocker
+    {
+    }
+
     public class VrmaMotionSetter : PresenterBase
     {
         private const int BoneMax = (int)HumanBodyBones.LastBone;
@@ -25,7 +29,9 @@ namespace Baku.VMagicMirror
         private readonly Dictionary<HumanBodyBones, Quaternion> _fromCache = new();
         //実行順序の関係で、LateTickの処理内容だけ特定した値をキャッシュして用いる
         private LateTickContent _content;
-        
+
+        private bool _isLocked = false;
+
         private readonly IVRMLoadable _vrmLoadable;
         private readonly LateUpdateSourceAfterFinalIK _lateUpdateSource;
         
@@ -54,33 +60,42 @@ namespace Baku.VMagicMirror
             }
 
             _content.HasUpdate = false;
-            var hipPos = GetHipLocalPosition();
+            var hipPos = GetHipFixedLocalPosition();
 
             if (_content.UsePrevValue && _content.Rate <= 0f)
             {
                 ApplyRawVrma(_content.Prev);
-                _hips.localPosition = hipPos;
+                ApplyHipFixedLocalPosition(hipPos);
                 return;
             }
 
             if (_content.Rate >= 1f)
             {
                 ApplyRawVrma(_content.Current);
-                _hips.localPosition = hipPos;
+                ApplyHipFixedLocalPosition(hipPos);
                 return;
             }
 
-            //beforeの姿勢をキャッシュする / VRMAどうしを補間する場合は
+            //beforeの姿勢をキャッシュする / VRMAどうしを補間する場合だけの話
             if (_content.UsePrevValue)
             {
                 ApplyRawVrma(_content.Prev);
             }
             CacheRotations();
+            hipPos = _hips.localPosition;
 
-            //afterの姿勢を適用してからblend + hipsが動かないように元の位置に戻す
             ApplyRawVrma(_content.Current);
+            //afterの姿勢を適用してからblend
             SetBlendedRotations(_content.Rate);
-            _hips.localPosition = hipPos;
+
+            if (FixHipLocalPosition)
+            {
+                ApplyHipFixedLocalPosition(hipPos);
+            }
+            else
+            {
+                _hips.localPosition = Vector3.Lerp(hipPos, _hips.localPosition, _content.Rate);
+            }
         }
         
         private void OnModelLoaded(VrmLoadedInfo info)
@@ -114,6 +129,35 @@ namespace Baku.VMagicMirror
             _runtime = null;
         }
 
+        public VrmaMotionSetterLocker Locker { get; private set; }
+
+        public bool FixHipLocalPosition { get; set; }
+        
+        /// <summary>
+        /// MotionSetterを使うときに呼び出すことで、他クラスから処理を呼ばないようにLockerを設定する
+        /// </summary>
+        /// <returns></returns>
+        public bool TryLock(VrmaMotionSetterLocker locker)
+        {
+            //NOTE: Lock済みのを再Lockするのは成功扱いにすることに注意
+            if (Locker != null && Locker != locker)
+            {
+                return false;
+            }
+
+            Locker = locker;
+            return true;
+        }
+
+        /// <summary>
+        /// <see cref="TryLock"/> を呼んだクラスがこれを呼ぶことで、クラスを専有している状態を解除する
+        /// </summary>
+        public void ReleaseLock()
+        {
+            Locker = null;
+            _isLocked = false;
+        }
+        
         /// <summary>
         /// 現在の姿勢に対し、VRMAのモーションを指定した適用率で適用する
         /// </summary>
@@ -160,8 +204,21 @@ namespace Baku.VMagicMirror
             );
         }
 
-        private Vector3 GetHipLocalPosition() => _bones[HumanBodyBones.Hips].localPosition;
+        private Vector3 GetHipFixedLocalPosition() => _hips.localPosition;
 
+        /// <summary>
+        /// あらかじめGetHipFixedLocalPosition()で取得しておいた値を指定して呼び出す。
+        /// Hipsの位置を固定するモードの場合だけ、実際に位置の固定処理として動作する
+        /// </summary>
+        /// <param name="pos"></param>
+        private void ApplyHipFixedLocalPosition(Vector3 pos)
+        {
+            if (FixHipLocalPosition)
+            {
+                _hips.localPosition = pos;
+            }
+        }
+        
         private void CacheRotations()
         {
             foreach (var pair in _bones)

@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Baku.VMagicMirror.GameInput;
+using Cysharp.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -21,6 +24,9 @@ namespace Baku.VMagicMirror
         //スティックを上下に倒したとき顔が上下に向く量(deg)
         private const float HeadPitchMaxDeg = 25f;
 
+        private const float CustomMotionFadeInDuration = 0.05f;
+        private const float CustomMotionFadeOutDuration = 0.1f;
+        
         private static readonly int Active = Animator.StringToHash("Active");
         private static readonly int Jump = Animator.StringToHash("Jump");
         private static readonly int Punch = Animator.StringToHash("Punch");
@@ -36,7 +42,14 @@ namespace Baku.VMagicMirror
         private readonly BodyMotionModeController _bodyMotionModeController;
         private readonly GameInputBodyRootOrientationController _rootOrientationController;
         private readonly GameInputSourceSet _sourceSet;
+        private readonly VrmaRepository _vrmaRepository;
+        private readonly VrmaMotionSetter _vrmaMotionSetter;
+        private readonly VrmaMotionSetterLocker _vrmaMotionSetterLocker = new();
+        private readonly CancellationTokenSource _cts = new();
 
+        private readonly HashSet<string> _customMotionActionKeys = new();
+        private bool _customMotionActionKeysInitialized;
+        
         private bool _hasModel;
         private Animator _animator;
         private int _baseLayerIndex;
@@ -45,6 +58,7 @@ namespace Baku.VMagicMirror
         private GameInputLocomotionStyle _locomotionStyle = GameInputLocomotionStyle.FirstPerson;
         private bool _alwaysRun = true;
         private bool _bodyMotionActive;
+        private bool _customMotionRunning;
 
         private Vector2 _rawMoveInput;
         private Vector2 _rawLookAroundInput;
@@ -112,6 +126,11 @@ namespace Baku.VMagicMirror
                 .Subscribe(_ => TryAct(Punch))
                 .AddTo(this);
 
+            Observable.Merge(_sourceSet.Sources.Select(s => s.CustomMotion))
+                .ThrottleFirst(TimeSpan.FromSeconds(0.2f))
+                .Subscribe(TryRunCustomMotion)
+                .AddTo(this);
+
             //NOTE: 2デバイスから同時に来るのは許容したうえで、
             //ゲームパッド側はスティックが0付近のとき何も飛んでこない、というのを期待してる
             Observable.Merge(
@@ -145,6 +164,13 @@ namespace Baku.VMagicMirror
                 .AddTo(this);            
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            _cts.Cancel();
+            _cts.Dispose();
+        }
+
         private void OnVrmLoaded(VrmLoadedInfo obj)
         {
             _animator = obj.animator;
@@ -176,11 +202,97 @@ namespace Baku.VMagicMirror
 
             var stateHash = _animator.GetCurrentAnimatorStateInfo(_baseLayerIndex).shortNameHash;
             
-            //要するにアクション中は無視する…というガード
-            if (stateHash == Walk || stateHash == Run || stateHash == Crouch)
+            //アクション中は無視する
+            if ((stateHash == Walk || stateHash == Run || stateHash == Crouch) && 
+                !_customMotionRunning
+                )
             {
                 _animator.SetTrigger(triggerHash);
             }
+        }
+
+        private void TryRunCustomMotion(string actionKey)
+        {
+            if (!_hasModel || !_bodyMotionActive || !IsAvailableCustomMotionKey(actionKey))
+            {
+                return;
+            }
+
+            var item = _vrmaRepository
+                .GetAvailableFileItems()
+                .First(i => i.FileName == actionKey);
+            
+            var stateHash = _animator.GetCurrentAnimatorStateInfo(_baseLayerIndex).shortNameHash;
+            
+            //要するにアクション中は無視する…というガード
+            //CustomMotion中のCustomMotion呼び出しも許可しない
+            if (!(stateHash == Walk || stateHash == Run || stateHash == Crouch) || 
+                _customMotionRunning)
+            {
+                return;
+            }
+
+            if (!_vrmaMotionSetter.TryLock(_vrmaMotionSetterLocker))
+            {
+                return;
+            }
+            
+            _customMotionRunning = true;
+            RunCustomMotionAsync(item, _cts.Token).Forget();
+        }
+
+        private async UniTaskVoid RunCustomMotionAsync(VrmaFileItem item, CancellationToken ct)
+        {
+            _vrmaMotionSetter.FixHipLocalPosition = false;
+
+            //やること: 適用率を0 > 1 > 0に遷移させつつ適用していく
+            //prevのアニメーションを適用するかどうかは動的にチェックして決める
+            _vrmaRepository.Run(item, false);
+            var anim = _vrmaRepository.PeekInstance;
+            var animDuration = _vrmaRepository.PeekInstance.Duration;
+            var count = 0f;
+            while (count < animDuration)
+            {
+                var rate = 1f;
+
+                if (count < CustomMotionFadeInDuration)
+                {
+                    //0 -> 1, 始まってすぐ
+                    rate = Mathf.Clamp01(count / CustomMotionFadeInDuration);
+                }
+                else if (count > animDuration - CustomMotionFadeOutDuration)
+                {
+                    // 1 -> 0, 終了間近
+                    // 終了間近になった時点で他のモーションに遷移してもOKにしておく
+                    _customMotionRunning = false;
+                    _vrmaRepository.StopPrevAnimation();
+                    rate = Mathf.Clamp01((animDuration - count) / CustomMotionFadeOutDuration);
+                }
+                else
+                {
+                    // 中間部分。このタイミングでは補間が要らない
+                    _vrmaRepository.StopPrevAnimation();
+                }
+
+                //NOTE: rate == 1とか0のケースの最適化はmotionSetterにケアさせる
+                if (_vrmaRepository.PrevInstance is { IsPlaying: true } playingPrev)
+                {
+                    //VRMAどうしの補間中にしか通らない、珍しい寄りのパス
+                    _vrmaMotionSetter.Set(playingPrev, anim, rate);
+                }
+                else
+                {
+                    _vrmaMotionSetter.Set(anim, rate);
+                }
+                
+                //NOTE: LateTick相当くらいのタイミングを狙っていることに注意
+                await UniTask.NextFrame(ct);
+                count += Time.deltaTime;
+            }            
+            
+            _vrmaRepository.StopCurrentAnimation();
+            _vrmaMotionSetter.ReleaseLock();
+            _customMotionRunning = false;
         }
 
         private void SetActiveness(bool active)
@@ -220,6 +332,16 @@ namespace Baku.VMagicMirror
             _rootOrientationController.LocomotionStyle = style;
 
             _moveInputDampSpeed = Vector2.zero;
+        }
+
+        private bool IsAvailableCustomMotionKey(string actionKey)
+        {
+            if (!_customMotionActionKeysInitialized)
+            {
+                _customMotionActionKeys.UnionWith(_vrmaRepository.GetAvailableMotionNames());
+                _customMotionActionKeysInitialized = true;
+            }
+            return _customMotionActionKeys.Contains(actionKey);
         }
         
         private void ResetParameters()

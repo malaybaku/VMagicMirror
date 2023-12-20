@@ -27,19 +27,26 @@
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="5"/>
         </Style>
-        <Style x:Key="GameInputActionComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+        <Style x:Key="GameInputButtonActionComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
             <Setter Property="SelectedValuePath" Value="Action" />
             <Setter Property="ItemTemplate">
                 <Setter.Value>
                     <DataTemplate DataType="{x:Type vmm:GameInputActionKey}">
-                        <!--DataType="{x:Type vm:GameInputButtonActionItemViewModel}">-->
-                        <!--<TextBlock Text="{Binding Label.Value}" />-->
-                        <TextBlock Text="{Binding 
-                                            Converter={StaticResource GameInputActionKeyToStringConverter}}" />
+                        <TextBlock Text="{Binding Converter={StaticResource GameInputActionKeyToStringConverter}}" />
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="GameInputStickActionComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="SelectedValuePath" Value="Action" />
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate DataType="{x:Type vm:GameInputButtonActionItemViewModel}">
+                        <TextBlock Text="{Binding Label.Value}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>        
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
@@ -208,31 +215,31 @@
                                        />
 
                             <ComboBox Grid.Row="0" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonLTrigger.Value}"
                                       />
 
                             <ComboBox Grid.Row="1" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonLB.Value}"
                                       />
 
                             <ComboBox Grid.Row="3" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonView.Value}"
                                       />
 
                             <ComboBox Grid.Row="5" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputStickActionComboBox}"
                                       ItemsSource="{Binding StickActions}"
                                       SelectedValue="{Binding StickLeft.Value}"
                                       />
 
                             <ComboBox Grid.Row="6" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputStickActionComboBox}"
                                       ItemsSource="{Binding StickActions}"
                                       SelectedValue="{Binding DPadLeft.Value}"
                                       />
@@ -291,42 +298,42 @@
                                        />
 
                             <ComboBox Grid.Row="0" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonRTrigger.Value}"
                                       />
                             <ComboBox Grid.Row="1" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonRB.Value}"
                                       />
                             <ComboBox Grid.Row="3" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonY.Value}"
                                       />
                             <ComboBox Grid.Row="4" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonX.Value}"
                                       />
                             <ComboBox Grid.Row="5" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonB.Value}"
                                       />
                             <ComboBox Grid.Row="6" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonA.Value}"
                                       />
                             <ComboBox Grid.Row="8" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputButtonActionComboBox}"
                                       ItemsSource="{Binding ButtonActions}"
                                       SelectedValue="{Binding ButtonMenu.Value}"
                                       />
                             <ComboBox Grid.Row="10" Grid.Column="2"
-                                      Style="{StaticResource GameInputActionComboBox}"
+                                      Style="{StaticResource GameInputStickActionComboBox}"
                                       ItemsSource="{Binding StickActions}"
                                       SelectedValue="{Binding StickRight.Value}"
                                       />
@@ -428,17 +435,17 @@
                                            />
 
                                 <ComboBox Grid.Row="0" Grid.Column="2"
-                                          Style="{StaticResource GameInputActionComboBox}"
+                                          Style="{StaticResource GameInputButtonActionComboBox}"
                                           ItemsSource="{Binding ButtonActions}"
                                           SelectedValue="{Binding LeftClick.Value}"
                                           />
                                 <ComboBox Grid.Row="1" Grid.Column="2"
-                                          Style="{StaticResource GameInputActionComboBox}"
+                                          Style="{StaticResource GameInputButtonActionComboBox}"
                                           ItemsSource="{Binding ButtonActions}"
                                           SelectedValue="{Binding RightClick.Value}"
                                           />
                                 <ComboBox Grid.Row="2" Grid.Column="2"
-                                          Style="{StaticResource GameInputActionComboBox}"
+                                          Style="{StaticResource GameInputButtonActionComboBox}"
                                           ItemsSource="{Binding ButtonActions}"
                                           SelectedValue="{Binding MiddleClick.Value}"
                                           />

@@ -65,11 +65,11 @@ namespace Baku.VMagicMirrorConfig
                 KeyboardKeyAssign.UseSpaceJump = v;
                 SendMessage(factory.UseSpaceJumpGameInput(v));
             });
-
         }
 
         private readonly IMessageSender _sender;
         private readonly CustomMotionList _motionList;
+        private GameInputActionKey[] _customActionKeys = Array.Empty<GameInputActionKey>();
 
         public event EventHandler<GamepadKeyAssignUpdateEventArgs>? GamepadKeyAssignUpdated;
         public event EventHandler<KeyboardKeyAssignUpdateEventArgs>? KeyboardKeyAssignUpdated;
@@ -124,6 +124,13 @@ namespace Baku.VMagicMirrorConfig
 
         public void SaveSetting(string filePath)
         {
+            //NOTE: 起動直後にアプリケーションが終了する場合ここを通る
+            //たぶん問題ないはずだが、カスタムモーションの登録状況に責任を持ちにくいので止めておく感じにしている
+            if (!_motionList.IsInitialized)
+            {
+                return;
+            }
+
             var serializer = new JsonSerializer();
             var sb = new StringBuilder();
 
@@ -141,7 +148,13 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        public void LoadSettingFromDefaultFile() => LoadSetting(SpecialFilePath.GameInputDefaultFilePath);
+        public async void InitializeAsync()
+        {
+            LoadSetting(SpecialFilePath.GameInputDefaultFilePath);
+            await _motionList.WaitCustomMotionsCompletedAsync();
+            CheckCustomActionKeys();
+        }
+
         public void SaveSettingToDefaultFile() => SaveSetting(SpecialFilePath.GameInputDefaultFilePath);
 
         public void SetGamepadButtonAction(GameInputGamepadButton button, GameInputActionKey actionKey)
@@ -325,8 +338,10 @@ namespace Baku.VMagicMirrorConfig
         //この関数が呼ばれると、カスタムアクション用のキーボード設定に過不足があった場合の内容が修正される。
         // - 指定した一覧にはあるのに設定として保持してない -> キーアサインがない状態で追加
         // - 指定した一覧に入ってないものが設定に含まれる   -> 削除 
-        public void RefreshCustomActionKeys(GameInputActionKey[] actionKeys)
+        private void CheckCustomActionKeys()
         {
+            var actionKeys = _customActionKeys;
+
             var currentKeys = KeyboardKeyAssign
                 .CustomActions
                 .Select(a => GameInputActionKey.Custom(a.CustomAction.CustomKey))
@@ -444,6 +459,9 @@ namespace Baku.VMagicMirrorConfig
             SendKeyboardKeyAssign();
             GamepadKeyAssignUpdated?.Invoke(this, new(GamepadKeyAssign));
             KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
+
+            //NOTE: ここも冗長になりうるが、冗長でもOK
+            CheckCustomActionKeys();
         }
 
         void SendGamepadKeyAssign()

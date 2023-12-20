@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Input;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -9,9 +8,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public GameInputKeyAssignItemViewModel(GameInputActionKey actionKey, string keyCode)
         {
             ActionKey = actionKey;
-            //_actionItem = GameInputButtonActionItemViewModel.AvailableItems.FirstOrDefault(item => item.Action == action)
-            //    ?? new GameInputButtonActionItemViewModel(GameInputButtonAction.None, "");
-
             KeyDownCommand = new ActionCommand<object>(OnKeyDown);
             ClearInputCommand = new ActionCommand(ClearInput);
             SetKey(keyCode);

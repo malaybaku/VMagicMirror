@@ -25,6 +25,7 @@
             resolver.Add(new ScreenshotTaker());
             resolver.Add(new HotKeyModel());
             resolver.Add(new FaceMotionBlendShapeNameStore());
+            resolver.Add(new CustomMotionList());
 
             resolver.Add(new GameInputSettingModel());
             resolver.Add(new PreferenceSettingModel());
@@ -49,7 +50,6 @@
 
             resolver.Add(new RuntimeHelper());
             resolver.Add(new DeviceListSource());
-            resolver.Add(new CustomMotionList());
             resolver.Add(new ImageQualitySetting());
             resolver.Add(new WordToMotionRuntimeConfig());
             resolver.Add(new ExternalTrackerRuntimeConfig());

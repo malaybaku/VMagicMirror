@@ -23,12 +23,9 @@ namespace Baku.VMagicMirrorConfig
         private readonly ObservableCollection<string> _vrmaCustomMotionClipNames = new();
         public ReadOnlyObservableCollection<string> VrmaCustomMotionClipNames { get; }
 
-        private readonly TaskCompletionSource<bool> _customMotionsInitialized = new();
+        private readonly TaskCompletionSource<bool> _initializeTcs = new();
 
-        public async Task WaitCustomMotionsCompletedAsync()
-        {
-            await _customMotionsInitialized.Task;
-        }
+        public async Task WaitCustomMotionsCompletedAsync() => await _initializeTcs.Task;
 
         private readonly object _isInitializedLock = new();
         private bool _isInitialized = false;
@@ -54,8 +51,7 @@ namespace Baku.VMagicMirrorConfig
             }
 
             IsInitialized = true;
-            _customMotionsInitialized.SetResult(true);
-
+            _initializeTcs.SetResult(true);
         }
 
         private async Task<string[]> GetCustomMotionClipNamesAsync(bool vrmaOnly)

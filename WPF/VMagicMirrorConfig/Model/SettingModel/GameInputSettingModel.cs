@@ -151,7 +151,12 @@ namespace Baku.VMagicMirrorConfig
         public async void InitializeAsync()
         {
             LoadSetting(SpecialFilePath.GameInputDefaultFilePath);
+
             await _motionList.WaitCustomMotionsCompletedAsync();
+            _customActionKeys = _motionList.VrmaCustomMotionClipNames
+                .Select(GameInputActionKey.Custom)
+                .ToArray();
+
             CheckCustomActionKeys();
         }
 
@@ -464,7 +469,7 @@ namespace Baku.VMagicMirrorConfig
             CheckCustomActionKeys();
         }
 
-        void SendGamepadKeyAssign()
+        private void SendGamepadKeyAssign()
         {
             var serializer = new JsonSerializer();
             var sb = new StringBuilder();

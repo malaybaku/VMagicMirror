@@ -28,7 +28,6 @@
             <Setter Property="Padding" Value="5"/>
         </Style>
         <Style x:Key="GameInputButtonActionComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
-            <Setter Property="SelectedValuePath" Value="Action" />
             <Setter Property="ItemTemplate">
                 <Setter.Value>
                     <DataTemplate DataType="{x:Type vmm:GameInputActionKey}">
@@ -41,7 +40,7 @@
             <Setter Property="SelectedValuePath" Value="Action" />
             <Setter Property="ItemTemplate">
                 <Setter.Value>
-                    <DataTemplate DataType="{x:Type vm:GameInputButtonActionItemViewModel}">
+                    <DataTemplate DataType="{x:Type vm:GameInputStickActionItemViewModel}">
                         <TextBlock Text="{Binding Label.Value}" />
                     </DataTemplate>
                 </Setter.Value>

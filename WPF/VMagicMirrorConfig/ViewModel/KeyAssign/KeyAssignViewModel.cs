@@ -88,7 +88,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 OnKeyboardKeyAssignUpdated
                 );
 
-            ButtonActions = _model.LoadAvailableActionKeys();
+            ButtonActions = _model.GetAvailableActionKeys();
 
             var keyAssignViewModels = new List<GameInputKeyAssignItemViewModel>();
             keyAssignViewModels.AddRange(
@@ -169,7 +169,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public GameInputLocomotionStyleViewModel[] LocomotionStyles => GameInputLocomotionStyleViewModel.AvailableItems;
         public GameInputStickActionItemViewModel[] StickActions => GameInputStickActionItemViewModel.AvailableItems;
 
-//        public GameInputButtonActionItemViewModel[] ButtonActions => GameInputButtonActionItemViewModel.AvailableItems;
         public GameInputActionKey[] ButtonActions { get; }
 
         private void SetGamepadButtonAction(GameInputGamepadButton button, GameInputActionKey actionKey)
@@ -390,39 +389,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             new (GameInputStickAction.None, "GameInputKeyAssign_Action_None"),
             new (GameInputStickAction.Move, "GameInputKeyAssign_StickAction_Move"),
             new (GameInputStickAction.LookAround, "GameInputKeyAssign_StickAction_LookAround"),
-        };
-    }
-
-    /// <summary>
-    /// ゲーム入力のうちスティックで取れるアクションを定義したもの
-    /// </summary>
-    public class GameInputButtonActionItemViewModel
-    {
-        public GameInputButtonActionItemViewModel(GameInputButtonAction action, string localizationKey)
-        {
-            Action = action;
-            _localizationKey = localizationKey;
-            if (!string.IsNullOrEmpty(_localizationKey))
-            {
-                Label.Value = LocalizedString.GetString(_localizationKey);
-                LanguageSelector.Instance.LanguageChanged +=
-                    () => Label.Value = LocalizedString.GetString(_localizationKey);
-            }
-        }
-
-        private readonly string _localizationKey;
-        public GameInputButtonAction Action { get; }
-        public RProperty<string> Label { get; } = new RProperty<string>("");
-
-        //NOTE: immutable arrayのほうが性質は良いのでそうしてもよい
-        public static GameInputButtonActionItemViewModel[] AvailableItems { get; } = new GameInputButtonActionItemViewModel[]
-        {
-            new (GameInputButtonAction.None, "GameInputKeyAssign_Action_None"),
-            new (GameInputButtonAction.Jump, "GameInputKeyAssign_ButtonAction_Jump"),
-            new (GameInputButtonAction.Crouch, "GameInputKeyAssign_ButtonAction_Crouch"),
-            new (GameInputButtonAction.Run, "GameInputKeyAssign_ButtonAction_Run"),
-            new (GameInputButtonAction.Trigger, "GameInputKeyAssign_ButtonAction_Trigger"),
-            new (GameInputButtonAction.Punch, "GameInputKeyAssign_ButtonAction_Punch"),
         };
     }
 }

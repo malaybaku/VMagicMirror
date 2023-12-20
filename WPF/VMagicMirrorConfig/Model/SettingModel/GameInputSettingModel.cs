@@ -406,7 +406,7 @@ namespace Baku.VMagicMirrorConfig
         //NOTE:
         // 起動直後でcustomMotionListが空の状態で呼ぶと .vrma を含まない結果が戻ってしまうが、
         // この問題は特にケアしない(ゲーム入力の設定ウィンドウが開くまでは呼ばれないはずなので)
-        public GameInputActionKey[] LoadAvailableActionKeys()
+        public GameInputActionKey[] GetAvailableActionKeys()
         {
 
             var result = new List<GameInputActionKey>()
@@ -419,12 +419,7 @@ namespace Baku.VMagicMirrorConfig
                 GameInputActionKey.BuiltIn(GameInputButtonAction.Punch),
             };
 
-            foreach (var vrmaMotionKey in _motionList.VrmaCustomMotionClipNames)
-            {
-
-                result.Add(GameInputActionKey.Custom(vrmaMotionKey));
-            }
-
+            result.AddRange(_customActionKeys);
             return result.ToArray();
         }
 

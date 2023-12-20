@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Input;
+using Newtonsoft.Json;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -112,17 +113,27 @@ namespace Baku.VMagicMirrorConfig
         public GameInputCustomAction CustomButtonView { get; set; } = new();
         public GameInputCustomAction CustomButtonMenu { get; set; } = new();
 
+        [JsonIgnore]
         public GameInputActionKey ButtonAKey => new(ButtonA, CustomButtonA);
+        [JsonIgnore]
         public GameInputActionKey ButtonBKey => new(ButtonB, CustomButtonB);
+        [JsonIgnore]
         public GameInputActionKey ButtonXKey => new(ButtonX, CustomButtonX);
+        [JsonIgnore]
         public GameInputActionKey ButtonYKey => new(ButtonY, CustomButtonY);
 
+        [JsonIgnore]
         public GameInputActionKey ButtonLButtonKey => new(ButtonLButton, CustomButtonLButton);
+        [JsonIgnore]
         public GameInputActionKey ButtonLTriggerKey => new(ButtonLTrigger, CustomButtonLTrigger);
+        [JsonIgnore]
         public GameInputActionKey ButtonRButtonKey => new(ButtonRButton, CustomButtonRButton);
+        [JsonIgnore]
         public GameInputActionKey ButtonRTriggerKey => new(ButtonRTrigger, CustomButtonRTrigger);
 
+        [JsonIgnore]
         public GameInputActionKey ButtonViewKey => new(ButtonView, CustomButtonView);
+        [JsonIgnore]
         public GameInputActionKey ButtonMenuKey => new(ButtonMenu, CustomButtonMenu);
 
 
@@ -144,8 +155,11 @@ namespace Baku.VMagicMirrorConfig
         public GameInputCustomAction CustomLeftClick { get; set; } = new();
         public GameInputCustomAction CustomRightClick { get; set; } = new();
         public GameInputCustomAction CustomMiddleClick { get; set; } = new();
+        [JsonIgnore]
         public GameInputActionKey LeftClickKey => new(LeftClick, CustomLeftClick);
+        [JsonIgnore]
         public GameInputActionKey RightClickKey => new(RightClick, CustomRightClick);
+        [JsonIgnore]
         public GameInputActionKey MiddleClickKey => new(MiddleClick, CustomMiddleClick);
 
 

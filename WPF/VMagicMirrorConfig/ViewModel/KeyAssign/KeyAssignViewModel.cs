@@ -71,51 +71,52 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             ButtonActions = Array.Empty<GameInputActionKey>();
 
-            if (!IsInDesignMode)
+            if (IsInDesignMode)
             {
-                WeakEventManager<GameInputSettingModel, GamepadKeyAssignUpdateEventArgs>.AddHandler(
-                    _model,
-                    nameof(_model.GamepadKeyAssignUpdated),
-                    OnGamepadKeyAssignUpdated
-                    );
+                return;
+            }
 
-                WeakEventManager<GameInputSettingModel, KeyboardKeyAssignUpdateEventArgs>.AddHandler(
-                    _model,
-                    nameof(_model.KeyboardKeyAssignUpdated),
-                    OnKeyboardKeyAssignUpdated
-                    );
+            WeakEventManager<GameInputSettingModel, GamepadKeyAssignUpdateEventArgs>.AddHandler(
+                _model,
+                nameof(_model.GamepadKeyAssignUpdated),
+                OnGamepadKeyAssignUpdated
+                );
 
-                ButtonActions = _model.LoadAvailableActionKeys();
+            WeakEventManager<GameInputSettingModel, KeyboardKeyAssignUpdateEventArgs>.AddHandler(
+                _model,
+                nameof(_model.KeyboardKeyAssignUpdated),
+                OnKeyboardKeyAssignUpdated
+                );
 
+            ButtonActions = _model.LoadAvailableActionKeys();
 
-                var keyAssignViewModels = new List<GameInputKeyAssignItemViewModel>();
-                keyAssignViewModels.AddRange(
-                    new (GameInputButtonAction action, string keyCode)[]
-                    {
-                        (GameInputButtonAction.Jump,_model.KeyboardKeyAssign.JumpKeyCode),
-                        (GameInputButtonAction.Crouch, _model.KeyboardKeyAssign.CrouchKeyCode),
-                        (GameInputButtonAction.Run, _model.KeyboardKeyAssign.RunKeyCode),
-                        (GameInputButtonAction.Trigger, _model.KeyboardKeyAssign.TriggerKeyCode),
-                        (GameInputButtonAction.Punch, _model.KeyboardKeyAssign.PunchKeyCode),
-                    }.Select(pair => CreateKeyAssignItemViewModel(
-                        GameInputActionKey.BuiltIn(pair.action),
-                        pair.keyCode
-                        )
-                    ));
-
-                keyAssignViewModels.AddRange(_model
-                    .LoadCustomActionKeys()
-                    .Select(actionKey => CreateKeyAssignItemViewModel(
-                        actionKey,
-                        _model.FindKeyCodeOfCustomAction(actionKey)
-                        )
-                    ));
-
-
-                foreach (var keyAssign in keyAssignViewModels)
+            var keyAssignViewModels = new List<GameInputKeyAssignItemViewModel>();
+            keyAssignViewModels.AddRange(
+                new (GameInputButtonAction action, string keyCode)[]
                 {
-                    KeyAssigns.Add(keyAssign);
-                }
+                    (GameInputButtonAction.Jump,_model.KeyboardKeyAssign.JumpKeyCode),
+                    (GameInputButtonAction.Crouch, _model.KeyboardKeyAssign.CrouchKeyCode),
+                    (GameInputButtonAction.Run, _model.KeyboardKeyAssign.RunKeyCode),
+                    (GameInputButtonAction.Trigger, _model.KeyboardKeyAssign.TriggerKeyCode),
+                    (GameInputButtonAction.Punch, _model.KeyboardKeyAssign.PunchKeyCode),
+                }.Select(pair => CreateKeyAssignItemViewModel(
+                    GameInputActionKey.BuiltIn(pair.action),
+                    pair.keyCode
+                    )
+                ));
+
+            keyAssignViewModels.AddRange(_model
+                .LoadCustomActionKeys()
+                .Select(actionKey => CreateKeyAssignItemViewModel(
+                    actionKey,
+                    _model.FindKeyCodeOfCustomAction(actionKey)
+                    )
+                ));
+
+
+            foreach (var keyAssign in keyAssignViewModels)
+            {
+                KeyAssigns.Add(keyAssign);
             }
         }
 

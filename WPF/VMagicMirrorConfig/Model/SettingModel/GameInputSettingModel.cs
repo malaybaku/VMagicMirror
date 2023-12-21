@@ -340,11 +340,18 @@ namespace Baku.VMagicMirrorConfig
             KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
         }
 
-        //この関数が呼ばれると、カスタムアクション用のキーボード設定に過不足があった場合の内容が修正される。
+        //Unity側からカスタムモーション一覧を受け取ったより後でこの関数が呼ばれると、
+        //カスタムアクション用のキーボード設定に過不足があった場合の内容が修正される。
         // - 指定した一覧にはあるのに設定として保持してない -> キーアサインがない状態で追加
         // - 指定した一覧に入ってないものが設定に含まれる   -> 削除 
         private void CheckCustomActionKeys()
         {
+            //一覧を受け取れてない = 一致チェックをする準備ができてないのでパス
+            if (!_motionList.IsInitialized)
+            {
+                return;
+            }
+
             var actionKeys = _customActionKeys;
 
             var currentKeys = KeyboardKeyAssign
@@ -367,8 +374,8 @@ namespace Baku.VMagicMirrorConfig
                     KeyCode = FindKeyCodeOfCustomAction(key),
                 };
             }
-
             KeyboardKeyAssign.CustomActions = resultCustomActions.ToArray();
+
             SendKeyboardKeyAssign();
             KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
         }
@@ -408,7 +415,6 @@ namespace Baku.VMagicMirrorConfig
         // この問題は特にケアしない(ゲーム入力の設定ウィンドウが開くまでは呼ばれないはずなので)
         public GameInputActionKey[] GetAvailableActionKeys()
         {
-
             var result = new List<GameInputActionKey>()
             {
                 GameInputActionKey.BuiltIn(GameInputButtonAction.None),
@@ -438,7 +444,7 @@ namespace Baku.VMagicMirrorConfig
             };
         }
 
-        void ApplySetting(GameInputSetting setting)
+        private void ApplySetting(GameInputSetting setting)
         {
             GamepadEnabled.Value = setting.GamepadEnabled;
             KeyboardEnabled.Value = setting.KeyboardEnabled;
@@ -460,7 +466,6 @@ namespace Baku.VMagicMirrorConfig
             GamepadKeyAssignUpdated?.Invoke(this, new(GamepadKeyAssign));
             KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
 
-            //NOTE: ここも冗長になりうるが、冗長でもOK
             CheckCustomActionKeys();
         }
 

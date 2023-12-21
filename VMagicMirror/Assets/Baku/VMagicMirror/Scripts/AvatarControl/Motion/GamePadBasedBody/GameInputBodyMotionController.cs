@@ -87,6 +87,8 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable,
             IMessageReceiver receiver,
             BodyMotionModeController bodyMotionModeController,
+            VrmaRepository vrmaRepository,
+            VrmaMotionSetter vrmaMotionSetter,
             GameInputBodyRootOrientationController rootOrientationController,
             GameInputSourceSet sourceSet
             )
@@ -94,6 +96,8 @@ namespace Baku.VMagicMirror
             _vrmLoadable = vrmLoadable;
             _receiver = receiver;
             _bodyMotionModeController = bodyMotionModeController;
+            _vrmaRepository = vrmaRepository;
+            _vrmaMotionSetter = vrmaMotionSetter;
             _rootOrientationController = rootOrientationController;
             _sourceSet = sourceSet;
         }

@@ -8,7 +8,7 @@ namespace Baku.VMagicMirrorConfig
         public GameInputActionKey(GameInputButtonAction actionType, GameInputCustomAction customAction) 
         {
             ActionType = actionType;
-            CustomActionKey = actionType is GameInputButtonAction.Custom ? "" : customAction.CustomKey;
+            CustomActionKey = actionType is GameInputButtonAction.Custom ? customAction.CustomKey : "";
         }
 
         private GameInputActionKey(GameInputButtonAction actionType, string key)
@@ -33,6 +33,8 @@ namespace Baku.VMagicMirrorConfig
         public override bool Equals(object? obj) => obj is GameInputActionKey other && Equals(other);
         
         public override int GetHashCode() => HashCode.Combine(ActionType, CustomActionKey);
+
+        public override string ToString() => $"ActionKey:{ActionType}{(ActionType is GameInputButtonAction.Custom ? "-" + CustomActionKey : "")}";
 
         public static GameInputActionKey BuiltIn(GameInputButtonAction action)
             => new(action, new GameInputCustomAction());

@@ -81,6 +81,9 @@ namespace Baku.VMagicMirrorConfig
     {
         public GameInputCustomAction CustomAction { get; set; } = new();
         public string KeyCode { get; set; } = "";
+
+        [JsonIgnore]
+        public GameInputActionKey CustomActionKey => GameInputActionKey.Custom(CustomAction.CustomKey);
     }
     
     //Entityに移動していいんでは
@@ -135,7 +138,6 @@ namespace Baku.VMagicMirrorConfig
         public GameInputActionKey ButtonViewKey => new(ButtonView, CustomButtonView);
         [JsonIgnore]
         public GameInputActionKey ButtonMenuKey => new(ButtonMenu, CustomButtonMenu);
-
 
 
         public GameInputStickAction DPadLeft { get; set; }
@@ -243,8 +245,8 @@ namespace Baku.VMagicMirrorConfig
         /// NOTE: 規約としてこの値は書き換えません。
         /// デフォルト値を参照したい人が、プロパティ読み込みのみの為だけに使います。
         /// </summary>
-        public static GameInputSetting Default { get; } = new();
-
+        public static GameInputSetting LoadDefault() => new();
+        
         public bool GamepadEnabled { get; set; } = true;
         public bool KeyboardEnabled { get; set; } = true;
         public bool AlwaysRun { get; set; } = true;

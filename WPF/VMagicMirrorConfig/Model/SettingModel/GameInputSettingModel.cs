@@ -20,8 +20,8 @@ namespace Baku.VMagicMirrorConfig
         {
             _sender = sender;
             _motionList = customMotionList;
-            var setting = GameInputSetting.Default;
-
+            var setting = GameInputSetting.LoadDefault();
+            
             GamepadKeyAssign = setting.GamepadKeyAssign;
             KeyboardKeyAssign = setting.KeyboardKeyAssign;
 
@@ -69,8 +69,8 @@ namespace Baku.VMagicMirrorConfig
 
         private readonly IMessageSender _sender;
         private readonly CustomMotionList _motionList;
-        private GameInputActionKey[] _customActionKeys = Array.Empty<GameInputActionKey>();
-
+        private GameInputActionKey[]? _customActionKeys = null;
+        
         public event EventHandler<GamepadKeyAssignUpdateEventArgs>? GamepadKeyAssignUpdated;
         public event EventHandler<KeyboardKeyAssignUpdateEventArgs>? KeyboardKeyAssignUpdated;
 
@@ -87,9 +87,6 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> UseArrowKeyMove { get; }
         public RProperty<bool> UseShiftRun { get; }
         public RProperty<bool> UseSpaceJump { get; }
-
-        public static string GetSettingFolderPath() => SpecialFilePath.SaveFileDir;
-        public static string GetFileIoExt() => SpecialFilePath.GameInputSettingFileExt;
 
         public void LoadSetting(string filePath)
         {
@@ -152,11 +149,9 @@ namespace Baku.VMagicMirrorConfig
         {
             LoadSetting(SpecialFilePath.GameInputDefaultFilePath);
 
-            await _motionList.WaitCustomMotionsCompletedAsync();
-            _customActionKeys = _motionList.VrmaCustomMotionClipNames
-                .Select(GameInputActionKey.Custom)
-                .ToArray();
-
+            // 設定ファイルの読み込みより後でカスタムモーションの一覧が来るとカスタムモーション一覧の整合性チェックをしてない状態が作れてしまうので、
+            // 明示的に待機 + チェックをやっておく
+            await _motionList.WaitCustomMotionInitializeAsync();
             CheckCustomActionKeys();
         }
 
@@ -346,13 +341,13 @@ namespace Baku.VMagicMirrorConfig
         // - 指定した一覧に入ってないものが設定に含まれる   -> 削除 
         private void CheckCustomActionKeys()
         {
-            //一覧を受け取れてない = 一致チェックをする準備ができてないのでパス
+            // Unityから一覧を受け取る前だと一致チェックできないので、修正を試みない
             if (!_motionList.IsInitialized)
             {
                 return;
             }
 
-            var actionKeys = _customActionKeys;
+            var actionKeys = LoadCustomActionKeys();
 
             var currentKeys = KeyboardKeyAssign
                 .CustomActions
@@ -381,7 +376,7 @@ namespace Baku.VMagicMirrorConfig
         }
 
 
-        public void ResetToDefault() => ApplySetting(GameInputSetting.Default);
+        public void ResetToDefault() => ApplySetting(GameInputSetting.LoadDefault());
 
         /// <summary>
         /// NOTE: BuiltInアクションに対しても定義できるが、直近で必要ないため使っていない
@@ -391,8 +386,8 @@ namespace Baku.VMagicMirrorConfig
         public string FindKeyCodeOfCustomAction(GameInputActionKey action)
         {
             var item = KeyboardKeyAssign.CustomActions
-                .FirstOrDefault(a => a.CustomAction.Equals(action));
-
+                .FirstOrDefault(a => a.CustomActionKey.Equals(action));
+                
             if (item != null)
             {
                 return item.KeyCode;
@@ -405,9 +400,18 @@ namespace Baku.VMagicMirrorConfig
 
         public GameInputActionKey[] LoadCustomActionKeys()
         {
-            return _motionList.VrmaCustomMotionClipNames
-                .Select(GameInputActionKey.Custom)
-                .ToArray();
+            if (!_motionList.IsInitialized)
+            {
+                return Array.Empty<GameInputActionKey>();
+            }
+
+            if (_customActionKeys == null)
+            {
+                _customActionKeys = _motionList.VrmaCustomMotionClipNames
+                    .Select(GameInputActionKey.Custom)
+                    .ToArray();
+            }
+            return _customActionKeys;
         }
 
         //NOTE:
@@ -425,7 +429,7 @@ namespace Baku.VMagicMirrorConfig
                 GameInputActionKey.BuiltIn(GameInputButtonAction.Punch),
             };
 
-            result.AddRange(_customActionKeys);
+            result.AddRange(LoadCustomActionKeys());
             return result.ToArray();
         }
 

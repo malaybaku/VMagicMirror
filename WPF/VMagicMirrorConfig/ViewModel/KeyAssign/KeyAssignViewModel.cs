@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 
@@ -69,10 +68,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => UrlNavigate.Open(LocalizedString.GetString("URL_docs_game_input"))
                 );
 
-            ButtonActions = Array.Empty<GameInputActionKey>();
-
             if (IsInDesignMode)
             {
+                ButtonActions = Array.Empty<GameInputActionKey>();
                 return;
             }
 
@@ -123,6 +121,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly GameInputSettingModel _model;
         private bool _silentMode = false;
 
+        #region Properties
+
         public RProperty<bool> GamepadEnabled => _model.GamepadEnabled;
         public RProperty<bool> KeyboardEnabled => _model.KeyboardEnabled;
 
@@ -170,6 +170,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public GameInputStickActionItemViewModel[] StickActions => GameInputStickActionItemViewModel.AvailableItems;
 
         public GameInputActionKey[] ButtonActions { get; }
+
+        #endregion
+
 
         private void SetGamepadButtonAction(GameInputGamepadButton button, GameInputActionKey actionKey)
         {

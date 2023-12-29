@@ -25,7 +25,7 @@ namespace Baku.VMagicMirrorConfig
 
         private readonly TaskCompletionSource<bool> _initializeTcs = new();
 
-        public async Task WaitCustomMotionsCompletedAsync() => await _initializeTcs.Task;
+        public async Task WaitCustomMotionInitializeAsync() => await _initializeTcs.Task;
 
         private readonly object _isInitializedLock = new();
         private bool _isInitialized = false;

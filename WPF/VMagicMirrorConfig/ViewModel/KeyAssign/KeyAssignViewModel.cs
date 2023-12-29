@@ -22,6 +22,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             var gamepad = IsInDesignMode ? new GameInputGamepadKeyAssign() : model.GamepadKeyAssign;
             var keyboard = IsInDesignMode ? new GameInputKeyboardKeyAssign() : model.KeyboardKeyAssign;
+            ButtonActions = IsInDesignMode ? Array.Empty<GameInputActionKey>() : _model.GetAvailableActionKeys();
 
             ButtonA = new RProperty<GameInputActionKey>(
                 gamepad.ButtonAKey, a => SetGamepadButtonAction(GameInputGamepadButton.A, a));
@@ -70,7 +71,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (IsInDesignMode)
             {
-                ButtonActions = Array.Empty<GameInputActionKey>();
                 return;
             }
 
@@ -85,8 +85,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 nameof(_model.KeyboardKeyAssignUpdated),
                 OnKeyboardKeyAssignUpdated
                 );
-
-            ButtonActions = _model.GetAvailableActionKeys();
 
             var keyAssignViewModels = new List<GameInputKeyAssignItemViewModel>();
             keyAssignViewModels.AddRange(

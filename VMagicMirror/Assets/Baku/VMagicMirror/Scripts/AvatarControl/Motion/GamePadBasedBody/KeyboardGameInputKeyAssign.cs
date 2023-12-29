@@ -44,6 +44,11 @@ namespace Baku.VMagicMirror.GameInput
             CrouchKeyCode = ParseIntToKeyName(CrouchKeyCode);
             TriggerKeyCode = ParseIntToKeyName(TriggerKeyCode);
             PunchKeyCode = ParseIntToKeyName(PunchKeyCode);
+
+            foreach (var ca in CustomActions)
+            {
+                ca.KeyCode = ParseIntToKeyName(ca.KeyCode);
+            }
         }
 
         public static KeyboardGameInputKeyAssign LoadDefault() => new()

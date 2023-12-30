@@ -266,8 +266,6 @@ namespace Baku.VMagicMirror
                 if (count > animDuration - CustomMotionHipFadeOutDuration)
                 {
                     //終了間際, 1->0に下がっていく
-                    // 終了間近になった時点で他のモーションに遷移してもOK
-                    //_customMotionRunning = false;
                     _vrmaRepository.StopPrevAnimation();
                     hipRate = Mathf.Clamp01((animDuration - count) / CustomMotionHipFadeOutDuration);
                 }
@@ -278,7 +276,7 @@ namespace Baku.VMagicMirror
                 }
                 else
                 {
-                    // 中間部分。このタイミングで補間が要らない事を明示的に宣言しておく
+                    // 中間部分。このタイミングで補間が要らなくなるので明示的に宣言しておく
                     _vrmaRepository.StopPrevAnimation();
                 }                
 

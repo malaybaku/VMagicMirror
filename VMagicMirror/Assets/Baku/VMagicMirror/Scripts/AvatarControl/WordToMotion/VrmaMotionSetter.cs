@@ -20,6 +20,8 @@ namespace Baku.VMagicMirror
             public VrmaInstance Prev { get; set; }
             public VrmaInstance Current { get; set; }
             public float Rate { get; set; }
+            //NOTE: Hipだけゆっくり補間しても良い
+            public float HipRate { get; set; }
         }
         
         private bool _hasModel;
@@ -62,14 +64,14 @@ namespace Baku.VMagicMirror
             _content.HasUpdate = false;
             var hipPos = GetHipFixedLocalPosition();
 
-            if (_content.UsePrevValue && _content.Rate <= 0f)
+            if (_content.UsePrevValue && _content.Rate <= 0f && _content.Rate <= 0f)
             {
                 ApplyRawVrma(_content.Prev);
                 ApplyHipFixedLocalPosition(hipPos);
                 return;
             }
 
-            if (_content.Rate >= 1f)
+            if (_content.Rate >= 1f && _content.HipRate >= 1f)
             {
                 ApplyRawVrma(_content.Current);
                 ApplyHipFixedLocalPosition(hipPos);
@@ -86,7 +88,11 @@ namespace Baku.VMagicMirror
 
             ApplyRawVrma(_content.Current);
             //afterの姿勢を適用してからblend
-            SetBlendedRotations(_content.Rate);
+            //このとき「HipRate < 1 だが Rate == 1」というケースでRotationの書き込みをサボると効率がよい
+            if (_content.Rate < 1f)
+            {
+                SetBlendedRotations(_content.Rate);
+            }
 
             if (FixHipLocalPosition)
             {
@@ -94,7 +100,7 @@ namespace Baku.VMagicMirror
             }
             else
             {
-                _hips.localPosition = Vector3.Lerp(hipPos, _hips.localPosition, _content.Rate);
+                _hips.localPosition = Vector3.Lerp(hipPos, _hips.localPosition, _content.HipRate);
             }
         }
         
@@ -163,7 +169,8 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="anim"></param>
         /// <param name="rate"></param>
-        public void Set(VrmaInstance anim, float rate)
+        /// <param name="hipRate"></param>
+        public void Set(VrmaInstance anim, float rate, float hipRate = -1f)
         {
             if (!_hasModel)
             {
@@ -174,7 +181,9 @@ namespace Baku.VMagicMirror
             _content.UsePrevValue = false;
             _content.Prev = null;
             _content.Current = anim;
-            _content.Rate = rate;
+            var smoothRate = Mathf.SmoothStep(0, 1, rate);
+            _content.Rate = smoothRate;
+            _content.HipRate = hipRate >= 0f ? Mathf.SmoothStep(0, 1, hipRate) : smoothRate;
         }
         
         /// <summary>
@@ -183,7 +192,8 @@ namespace Baku.VMagicMirror
         /// <param name="prev"></param>
         /// <param name="anim"></param>
         /// <param name="rate"></param>
-        public void Set(VrmaInstance prev, VrmaInstance anim, float rate)
+        /// <param name="hipRate"></param>
+        public void Set(VrmaInstance prev, VrmaInstance anim, float rate, float hipRate = -1f)
         {
             if (!_hasModel)
             {
@@ -194,7 +204,9 @@ namespace Baku.VMagicMirror
             _content.UsePrevValue = rate < 1f;
             _content.Prev = prev;
             _content.Current = anim;
-            _content.Rate = rate;
+            var smoothRate = Mathf.SmoothStep(0, 1, rate);
+            _content.Rate = smoothRate;
+            _content.HipRate = hipRate >= 0f ? Mathf.SmoothStep(0, 1, hipRate) : smoothRate;
         }
 
         private void ApplyRawVrma(VrmaInstance instance)
@@ -227,7 +239,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        //NOTE: 引数は0-1の範囲が前提
+        //NOTE: 引数は0-1の範囲を想定しており、0や1ピッタリでは呼ばずに済む方が理想的
         // - 0.0: fromCacheの値を使う
         // - 1.0: 現在の値が優先
         private void SetBlendedRotations(float rate)

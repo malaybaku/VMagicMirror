@@ -24,8 +24,11 @@ namespace Baku.VMagicMirror
         //スティックを上下に倒したとき顔が上下に向く量(deg)
         private const float HeadPitchMaxDeg = 25f;
 
+        //Hipsの並進が急だと違和感が出るので、ボーン回転だけシャープに補間させる
         private const float CustomMotionFadeInDuration = 0.05f;
-        private const float CustomMotionFadeOutDuration = 0.1f;
+        private const float CustomMotionFadeOutDuration = 0.25f;
+        private const float CustomMotionHipFadeInDuration = 0.25f;
+        private const float CustomMotionHipFadeOutDuration = 0.25f;
         
         private static readonly int Active = Animator.StringToHash("Active");
         private static readonly int Jump = Animator.StringToHash("Jump");
@@ -258,35 +261,47 @@ namespace Baku.VMagicMirror
             while (count < animDuration)
             {
                 var rate = 1f;
+                var hipRate = 1f;
 
-                if (count < CustomMotionFadeInDuration)
+                if (count > animDuration - CustomMotionHipFadeOutDuration)
+                {
+                    //終了間際, 1->0に下がっていく
+                    // 終了間近になった時点で他のモーションに遷移してもOK
+                    //_customMotionRunning = false;
+                    _vrmaRepository.StopPrevAnimation();
+                    hipRate = Mathf.Clamp01((animDuration - count) / CustomMotionHipFadeOutDuration);
+                }
+                else if (count < CustomMotionHipFadeInDuration)
                 {
                     //0 -> 1, 始まってすぐ
-                    rate = Mathf.Clamp01(count / CustomMotionFadeInDuration);
+                    hipRate = Mathf.Clamp01(count / CustomMotionHipFadeInDuration);
                 }
-                else if (count > animDuration - CustomMotionFadeOutDuration)
+                else
                 {
-                    // 1 -> 0, 終了間近
-                    // 終了間近になった時点で他のモーションに遷移してもOKにしておく
-                    _customMotionRunning = false;
+                    // 中間部分。このタイミングで補間が要らない事を明示的に宣言しておく
                     _vrmaRepository.StopPrevAnimation();
+                }                
+
+                if (count > animDuration - CustomMotionFadeOutDuration)
+                {
+                    // 終了間近
                     rate = Mathf.Clamp01((animDuration - count) / CustomMotionFadeOutDuration);
                 }
-                else
+                else if (count < CustomMotionFadeInDuration)
                 {
-                    // 中間部分。このタイミングでは補間が要らない
-                    _vrmaRepository.StopPrevAnimation();
+                    // 始まってすぐ
+                    rate = Mathf.Clamp01(count / CustomMotionFadeInDuration);
                 }
-
-                //NOTE: rate == 1とか0のケースの最適化はmotionSetterにケアさせる
+                
+                //NOTE: rate == 1とかrate == 0のケースの最適化はmotionSetterにケアさせる
                 if (_vrmaRepository.PrevInstance is { IsPlaying: true } playingPrev)
                 {
-                    //VRMAどうしの補間中にしか通らない、珍しい寄りのパス
-                    _vrmaMotionSetter.Set(playingPrev, anim, rate);
+                    //VRMAどうしの補間中にしか通らないパスで、通るのは珍しい
+                    _vrmaMotionSetter.Set(playingPrev, anim, rate, hipRate);
                 }
                 else
                 {
-                    _vrmaMotionSetter.Set(anim, rate);
+                    _vrmaMotionSetter.Set(anim, rate, hipRate);
                 }
                 
                 //NOTE: LateTick相当くらいのタイミングを狙っていることに注意

@@ -25,18 +25,15 @@ You should keep to use Custom Motion feature if you want to avoid update-related
 
 v3.4.0 supports VRMA in [Expressions](../../docs/expressions) feature.
 
-[Game Input](../../docs/game_input) is unsupported, though the author consider to support it.
+From v3.5.0, [Game Input](../../docs/game_input) also supports VRMA.
 
 There are some limitations:
 
 <div class="doc-ul" markdown="1">
 
 - Facial expression animations are not applied, even when VRMA file has them.
-- `Hips` bone's position is constrained to keep its position. This might lead odd behavior if the VRMA is jump or crouch motion etc.
+- In Expresion feature, `Hips` bone's position is constrained to keep its position. This might lead odd behavior if the VRMA is jump or crouch motion etc.
 - The appearance may be odd for the motion with large yaw-angle change, like 360deg turn motion.
-- Finger motion might be odd.
-
-UniVRM at v0.115.0 does not save finger's motion, when using its `BVH to VRMA` file generation feature. This is why finger motion is not debugged well. Also you need to find another way to generate VRMA with finger motion.
 
 </div>
 
@@ -46,9 +43,10 @@ UniVRM at v0.115.0 does not save finger's motion, when using its `BVH to VRMA` f
 
 As of 2023 Dec, there are two ways to obtain VRM Animation file.
 
-By using [AnimationClipToVrmaSample](https://github.com/malaybaku/AnimationClipToVrmaSample) project, you can convert Humanoid AnimationClip data in Unity project to `.vrma` file. See detail in the repository (, though repository is JP based).
+<div class="doc-ul" markdown="1">
 
-UniVRM 0.114.0 and later version has feature to convert BVH file to `.vrma` files. Note that this convert process cannot maintain fingers' motion.
+- By [AnimationClipToVrmaSample](https://github.com/malaybaku/AnimationClipToVrmaSample) project, you can convert Humanoid AnimationClip data in Unity project to `.vrma` file. See detail in the repository (, though repository is JP based).
+- UniVRM 0.114.0 and later version has feature to convert BVH file to `.vrma` files. Note that this convert process cannot maintain fingers' motion.
 
 
 #### 3. Setup file
@@ -60,7 +58,23 @@ If `Motions` folder does not exist, create new one.
 
 The folder is same as referred in [Use Custom Motion](../use_custom_motion). VMagicMirror classify them based on the file extension.
 
-#### 4. Use in Expressions Feature
+
+#### 4. Setup for Game Input Feature
+{: .doc-sec2 }
+
+Start VMagicMirror and open settings about [Game Input](../../docs/game_input).
+
+Then, specify how to run the motion for each input way.
+
+<div class="doc-ul" markdown="1">
+
+- Button, Mouse Click: Select motion to play from dropdown list.
+- Keyboard: Assign key to each VRMA file.
+
+</div>
+
+
+#### 5. Use in Expressions Feature
 {: .doc-sec2 }
 
 Start VMagicMirror, and edit item accoring to [Expressions](../../docs/expressions) page.

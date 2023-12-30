@@ -1,21 +1,27 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Baku.VMagicMirrorConfig
 {
     class GameInputSettingModel
     {
-        public GameInputSettingModel() : this(ModelResolver.Instance.Resolve<IMessageSender>())
+        public GameInputSettingModel() : this(
+            ModelResolver.Instance.Resolve<IMessageSender>(),
+            ModelResolver.Instance.Resolve<CustomMotionList>()
+            )
         {
         }
 
-        public GameInputSettingModel(IMessageSender sender)
+        public GameInputSettingModel(IMessageSender sender, CustomMotionList customMotionList)
         {
             _sender = sender;
-            var setting = GameInputSetting.Default;
-
+            _motionList = customMotionList;
+            var setting = GameInputSetting.LoadDefault();
+            
             GamepadKeyAssign = setting.GamepadKeyAssign;
             KeyboardKeyAssign = setting.KeyboardKeyAssign;
 
@@ -59,11 +65,12 @@ namespace Baku.VMagicMirrorConfig
                 KeyboardKeyAssign.UseSpaceJump = v;
                 SendMessage(factory.UseSpaceJumpGameInput(v));
             });
-
         }
 
         private readonly IMessageSender _sender;
-
+        private readonly CustomMotionList _motionList;
+        private GameInputActionKey[]? _customActionKeys = null;
+        
         public event EventHandler<GamepadKeyAssignUpdateEventArgs>? GamepadKeyAssignUpdated;
         public event EventHandler<KeyboardKeyAssignUpdateEventArgs>? KeyboardKeyAssignUpdated;
 
@@ -80,9 +87,6 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> UseArrowKeyMove { get; }
         public RProperty<bool> UseShiftRun { get; }
         public RProperty<bool> UseSpaceJump { get; }
-
-        public static string GetSettingFolderPath() => SpecialFilePath.SaveFileDir;
-        public static string GetFileIoExt() => SpecialFilePath.GameInputSettingFileExt;
 
         public void LoadSetting(string filePath)
         {
@@ -117,6 +121,13 @@ namespace Baku.VMagicMirrorConfig
 
         public void SaveSetting(string filePath)
         {
+            //NOTE: 起動直後にアプリケーションが終了する場合ここを通る
+            //たぶん問題ないはずだが、カスタムモーションの登録状況に責任を持ちにくいので止めておく感じにしている
+            if (!_motionList.IsInitialized)
+            {
+                return;
+            }
+
             var serializer = new JsonSerializer();
             var sb = new StringBuilder();
 
@@ -134,44 +145,84 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        public void LoadSettingFromDefaultFile() => LoadSetting(SpecialFilePath.GameInputDefaultFilePath);
+        public async void InitializeAsync()
+        {
+            LoadSetting(SpecialFilePath.GameInputDefaultFilePath);
+
+            // 設定ファイルの読み込みより後でカスタムモーションの一覧が来るとカスタムモーション一覧の整合性チェックをしてない状態が作れてしまうので、
+            // 明示的に待機 + チェックをやっておく
+            await _motionList.WaitCustomMotionInitializeAsync();
+            CheckCustomActionKeys();
+        }
+
         public void SaveSettingToDefaultFile() => SaveSetting(SpecialFilePath.GameInputDefaultFilePath);
 
-        public void SetGamepadButtonAction(GameInputGamepadButton button, GameInputButtonAction action)
+        public void SetGamepadButtonAction(GameInputGamepadButton button, GameInputActionKey actionKey)
         {
-            var current = button switch
+            var currentKey = button switch
             {
-                GameInputGamepadButton.A => GamepadKeyAssign.ButtonA,
-                GameInputGamepadButton.B => GamepadKeyAssign.ButtonB,
-                GameInputGamepadButton.X => GamepadKeyAssign.ButtonX,
-                GameInputGamepadButton.Y => GamepadKeyAssign.ButtonY,
-                GameInputGamepadButton.LB => GamepadKeyAssign.ButtonLButton,
-                GameInputGamepadButton.RB => GamepadKeyAssign.ButtonRButton,
-                GameInputGamepadButton.LTrigger => GamepadKeyAssign.ButtonLTrigger,
-                GameInputGamepadButton.RTrigger => GamepadKeyAssign.ButtonRTrigger,
-                GameInputGamepadButton.View => GamepadKeyAssign.ButtonView,
-                GameInputGamepadButton.Menu => GamepadKeyAssign.ButtonMenu,
-                _ => GameInputButtonAction.None,
+                GameInputGamepadButton.A => GamepadKeyAssign.ButtonAKey,
+                GameInputGamepadButton.B => GamepadKeyAssign.ButtonBKey,
+                GameInputGamepadButton.X => GamepadKeyAssign.ButtonXKey,
+                GameInputGamepadButton.Y => GamepadKeyAssign.ButtonYKey,
+                GameInputGamepadButton.LB => GamepadKeyAssign.ButtonLButtonKey,
+                GameInputGamepadButton.RB => GamepadKeyAssign.ButtonRButtonKey,
+                GameInputGamepadButton.LTrigger => GamepadKeyAssign.ButtonLTriggerKey,
+                GameInputGamepadButton.RTrigger => GamepadKeyAssign.ButtonRTriggerKey,
+                GameInputGamepadButton.View => GamepadKeyAssign.ButtonViewKey,
+                GameInputGamepadButton.Menu => GamepadKeyAssign.ButtonMenuKey,
+                _ => GameInputActionKey.Empty,
             };
 
-            if (action == current)
+            if (actionKey.Equals(currentKey))
             {
                 return;
             }
 
             switch(button)
             {
-                case GameInputGamepadButton.A: GamepadKeyAssign.ButtonA = action; break;
-                case GameInputGamepadButton.B: GamepadKeyAssign.ButtonB = action; break;
-                case GameInputGamepadButton.X: GamepadKeyAssign.ButtonX = action; break;
-                case GameInputGamepadButton.Y: GamepadKeyAssign.ButtonY = action; break;
-                case GameInputGamepadButton.LB: GamepadKeyAssign.ButtonLButton = action; break;
-                case GameInputGamepadButton.RB: GamepadKeyAssign.ButtonRButton = action; break;
-                case GameInputGamepadButton.LTrigger: GamepadKeyAssign.ButtonLTrigger = action; break;
-                case GameInputGamepadButton.RTrigger: GamepadKeyAssign.ButtonRTrigger = action; break;
-                case GameInputGamepadButton.View: GamepadKeyAssign.ButtonView = action; break;
-                case GameInputGamepadButton.Menu: GamepadKeyAssign.ButtonMenu = action; break;
-                default: return;
+                case GameInputGamepadButton.A:
+                    GamepadKeyAssign.ButtonA = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonA = actionKey.CustomAction;
+                    break;
+                case GameInputGamepadButton.B:
+                    GamepadKeyAssign.ButtonB = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonB = actionKey.CustomAction;
+                    break;
+                case GameInputGamepadButton.X:
+                    GamepadKeyAssign.ButtonX = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonX = actionKey.CustomAction;
+                    break;
+                case GameInputGamepadButton.Y:
+                    GamepadKeyAssign.ButtonY = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonY = actionKey.CustomAction;
+                    break;
+                case GameInputGamepadButton.LB:
+                    GamepadKeyAssign.ButtonLButton = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonLButton = actionKey.CustomAction;
+                    break;
+                case GameInputGamepadButton.RB:
+                    GamepadKeyAssign.ButtonRButton = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonRButton = actionKey.CustomAction;
+                    break;
+                case GameInputGamepadButton.LTrigger:
+                    GamepadKeyAssign.ButtonLTrigger = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonLTrigger = actionKey.CustomAction;
+                    break;
+                case GameInputGamepadButton.RTrigger:
+                    GamepadKeyAssign.ButtonRTrigger = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonRTrigger = actionKey.CustomAction;
+                    break;
+                case GameInputGamepadButton.View:
+                    GamepadKeyAssign.ButtonView = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonView = actionKey.CustomAction;
+                    break;
+                case GameInputGamepadButton.Menu:
+                    GamepadKeyAssign.ButtonMenu = actionKey.ActionType;
+                    GamepadKeyAssign.CustomButtonMenu = actionKey.CustomAction;
+                    break;
+                default:
+                    return;
             }
 
             SendGamepadKeyAssign();
@@ -205,42 +256,52 @@ namespace Baku.VMagicMirrorConfig
             GamepadKeyAssignUpdated?.Invoke(this, new GamepadKeyAssignUpdateEventArgs(GamepadKeyAssign));
         }
 
-        public void SetClickAction(GameInputMouseButton button, GameInputButtonAction action)
+        public void SetClickAction(GameInputMouseButton button, GameInputActionKey actionKey)
         {
             var current = button switch
             {
-                GameInputMouseButton.Left => KeyboardKeyAssign.LeftClick,
-                GameInputMouseButton.Right => KeyboardKeyAssign.RightClick,
-                GameInputMouseButton.Middle => KeyboardKeyAssign.MiddleClick,
-                _ => GameInputButtonAction.None,
+                GameInputMouseButton.Left => KeyboardKeyAssign.LeftClickKey,
+                GameInputMouseButton.Right => KeyboardKeyAssign.RightClickKey,
+                GameInputMouseButton.Middle => KeyboardKeyAssign.MiddleClickKey,
+                _ => GameInputActionKey.Empty,
             };
 
-            if (action == current)
+            if (actionKey.Equals(current))
             {
                 return;
             }
 
             switch (button)
             {
-                case GameInputMouseButton.Left: KeyboardKeyAssign.LeftClick = action; break;
-                case GameInputMouseButton.Right: KeyboardKeyAssign.RightClick = action; break;
-                case GameInputMouseButton.Middle: KeyboardKeyAssign.MiddleClick = action; break;
+                case GameInputMouseButton.Left:
+                    KeyboardKeyAssign.LeftClick = actionKey.ActionType;
+                    KeyboardKeyAssign.CustomLeftClick = actionKey.CustomAction;
+                    break;
+                case GameInputMouseButton.Right:
+                    KeyboardKeyAssign.RightClick = actionKey.ActionType;
+                    KeyboardKeyAssign.CustomRightClick = actionKey.CustomAction;
+                    break;
+                case GameInputMouseButton.Middle: 
+                    KeyboardKeyAssign.MiddleClick = actionKey.ActionType;
+                    KeyboardKeyAssign.CustomMiddleClick = actionKey.CustomAction;
+                    break;
                 default: return;
             }
 
             SendKeyboardKeyAssign();
-            KeyboardKeyAssignUpdated?.Invoke(this, new KeyboardKeyAssignUpdateEventArgs(KeyboardKeyAssign));
+            KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
         }
 
-        public void SetKeyAction(GameInputButtonAction action, string key)
+        public void SetKeyAction(GameInputActionKey actionKey, string key)
         {
-            var current = action switch
+            var current = actionKey.ActionType switch
             {
                 GameInputButtonAction.Jump => KeyboardKeyAssign.JumpKeyCode,
                 GameInputButtonAction.Crouch => KeyboardKeyAssign.CrouchKeyCode,
                 GameInputButtonAction.Run => KeyboardKeyAssign.RunKeyCode,
                 GameInputButtonAction.Trigger => KeyboardKeyAssign.TriggerKeyCode,
                 GameInputButtonAction.Punch => KeyboardKeyAssign.PunchKeyCode,
+                GameInputButtonAction.Custom => FindKeyCodeOfCustomAction(actionKey),
                 _ => "",
             };
 
@@ -249,21 +310,128 @@ namespace Baku.VMagicMirrorConfig
                 return;
             }
 
-            switch (action)
+            switch (actionKey.ActionType)
             {
                 case GameInputButtonAction.Jump: KeyboardKeyAssign.JumpKeyCode = key; break;
                 case GameInputButtonAction.Crouch: KeyboardKeyAssign.CrouchKeyCode = key; break;
                 case GameInputButtonAction.Run: KeyboardKeyAssign.RunKeyCode = key; break;
                 case GameInputButtonAction.Trigger: KeyboardKeyAssign.TriggerKeyCode = key; break;
                 case GameInputButtonAction.Punch: KeyboardKeyAssign.PunchKeyCode = key; break;
+                case GameInputButtonAction.Custom:
+                    var target = KeyboardKeyAssign
+                        .CustomActions
+                        .FirstOrDefault(a => a.CustomAction.CustomKey == actionKey.CustomActionKey);
+                    if (target == null)
+                    {
+                        return;
+                    }
+
+                    target.KeyCode = key;
+                    break;
                 default: return;
             }
 
             SendKeyboardKeyAssign();
-            KeyboardKeyAssignUpdated?.Invoke(this, new KeyboardKeyAssignUpdateEventArgs(KeyboardKeyAssign));
+            KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
         }
 
-        public void ResetToDefault() => ApplySetting(GameInputSetting.Default);
+        //Unity側からカスタムモーション一覧を受け取ったより後でこの関数が呼ばれると、
+        //カスタムアクション用のキーボード設定に過不足があった場合の内容が修正される。
+        // - 指定した一覧にはあるのに設定として保持してない -> キーアサインがない状態で追加
+        // - 指定した一覧に入ってないものが設定に含まれる   -> 削除 
+        private void CheckCustomActionKeys()
+        {
+            // Unityから一覧を受け取る前だと一致チェックできないので、修正を試みない
+            if (!_motionList.IsInitialized)
+            {
+                return;
+            }
+
+            var actionKeys = LoadCustomActionKeys();
+
+            var currentKeys = KeyboardKeyAssign
+                .CustomActions
+                .Select(a => GameInputActionKey.Custom(a.CustomAction.CustomKey))
+                .ToHashSet();
+
+            if (currentKeys.SetEquals(actionKeys))
+            {
+                return;
+            }
+
+            var resultCustomActions = new KeyboardKeyWithGameInputCustomAction[actionKeys.Length];
+            for (var i = 0; i < resultCustomActions.Length; i++)
+            {
+                var key = actionKeys[i];
+                resultCustomActions[i] = new KeyboardKeyWithGameInputCustomAction()
+                {
+                    CustomAction = new GameInputCustomAction() { CustomKey = key.CustomActionKey },
+                    KeyCode = FindKeyCodeOfCustomAction(key),
+                };
+            }
+            KeyboardKeyAssign.CustomActions = resultCustomActions.ToArray();
+
+            SendKeyboardKeyAssign();
+            KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
+        }
+
+
+        public void ResetToDefault() => ApplySetting(GameInputSetting.LoadDefault());
+
+        /// <summary>
+        /// NOTE: BuiltInアクションに対しても定義できるが、直近で必要ないため使っていない
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public string FindKeyCodeOfCustomAction(GameInputActionKey action)
+        {
+            var item = KeyboardKeyAssign.CustomActions
+                .FirstOrDefault(a => a.CustomActionKey.Equals(action));
+                
+            if (item != null)
+            {
+                return item.KeyCode;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public GameInputActionKey[] LoadCustomActionKeys()
+        {
+            if (!_motionList.IsInitialized)
+            {
+                return Array.Empty<GameInputActionKey>();
+            }
+
+            if (_customActionKeys == null)
+            {
+                _customActionKeys = _motionList.VrmaCustomMotionClipNames
+                    .Select(GameInputActionKey.Custom)
+                    .ToArray();
+            }
+            return _customActionKeys;
+        }
+
+        //NOTE:
+        // 起動直後でcustomMotionListが空の状態で呼ぶと .vrma を含まない結果が戻ってしまうが、
+        // この問題は特にケアしない(ゲーム入力の設定ウィンドウが開くまでは呼ばれないはずなので)
+        public GameInputActionKey[] GetAvailableActionKeys()
+        {
+            var result = new List<GameInputActionKey>()
+            {
+                GameInputActionKey.BuiltIn(GameInputButtonAction.None),
+                GameInputActionKey.BuiltIn(GameInputButtonAction.Jump),
+                GameInputActionKey.BuiltIn(GameInputButtonAction.Crouch),
+                GameInputActionKey.BuiltIn(GameInputButtonAction.Run),
+                GameInputActionKey.BuiltIn(GameInputButtonAction.Trigger),
+                GameInputActionKey.BuiltIn(GameInputButtonAction.Punch),
+            };
+
+            result.AddRange(LoadCustomActionKeys());
+            return result.ToArray();
+        }
 
 
         private GameInputSetting BuildCurrentSetting()
@@ -280,7 +448,7 @@ namespace Baku.VMagicMirrorConfig
             };
         }
 
-        void ApplySetting(GameInputSetting setting)
+        private void ApplySetting(GameInputSetting setting)
         {
             GamepadEnabled.Value = setting.GamepadEnabled;
             KeyboardEnabled.Value = setting.KeyboardEnabled;
@@ -301,9 +469,11 @@ namespace Baku.VMagicMirrorConfig
             SendKeyboardKeyAssign();
             GamepadKeyAssignUpdated?.Invoke(this, new(GamepadKeyAssign));
             KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
+
+            CheckCustomActionKeys();
         }
 
-        void SendGamepadKeyAssign()
+        private void SendGamepadKeyAssign()
         {
             var serializer = new JsonSerializer();
             var sb = new StringBuilder();

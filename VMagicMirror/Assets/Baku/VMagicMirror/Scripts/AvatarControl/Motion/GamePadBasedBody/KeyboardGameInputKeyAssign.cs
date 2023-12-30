@@ -4,6 +4,15 @@ using System.Windows.Forms;
 namespace Baku.VMagicMirror.GameInput
 {
     [Serializable]
+    public class KeyboardGameInputCustomAction
+    {
+        public GameInputCustomAction CustomAction;
+        public string KeyCode;
+
+        public string CustomActionKey => CustomAction?.CustomKey ?? "";
+    }
+    
+    [Serializable]
     public class KeyboardGameInputKeyAssign
     {
         public bool UseMouseLookAround = true;
@@ -26,7 +35,7 @@ namespace Baku.VMagicMirror.GameInput
         public string TriggerKeyCode = "";
         public string PunchKeyCode = "";
 
-        public static KeyboardGameInputKeyAssign LoadDefault() => new KeyboardGameInputKeyAssign();
+        public KeyboardGameInputCustomAction[] CustomActions;
 
         public void OverwriteKeyCodeIntToKeyName()
         {
@@ -35,7 +44,17 @@ namespace Baku.VMagicMirror.GameInput
             CrouchKeyCode = ParseIntToKeyName(CrouchKeyCode);
             TriggerKeyCode = ParseIntToKeyName(TriggerKeyCode);
             PunchKeyCode = ParseIntToKeyName(PunchKeyCode);
+
+            foreach (var ca in CustomActions)
+            {
+                ca.KeyCode = ParseIntToKeyName(ca.KeyCode);
+            }
         }
+
+        public static KeyboardGameInputKeyAssign LoadDefault() => new()
+        {
+            CustomActions = Array.Empty<KeyboardGameInputCustomAction>(),
+        };
 
         private static string ParseIntToKeyName(string key) =>
             string.IsNullOrEmpty(key) ? "" : 

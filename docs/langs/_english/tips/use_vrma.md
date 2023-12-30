@@ -41,7 +41,17 @@ UniVRM at v0.115.0 does not save finger's motion, when using its `BVH to VRMA` f
 </div>
 
 
-#### 2. Setup file
+#### 2. How to prepare VRM Animation (.vrma) file
+{: .doc-sec2 }
+
+As of 2023 Dec, there are two ways to obtain VRM Animation file.
+
+By using [AnimationClipToVrmaSample](https://github.com/malaybaku/AnimationClipToVrmaSample) project, you can convert Humanoid AnimationClip data in Unity project to `.vrma` file. See detail in the repository (, though repository is JP based).
+
+UniVRM 0.114.0 and later version has feature to convert BVH file to `.vrma` files. Note that this convert process cannot maintain fingers' motion.
+
+
+#### 3. Setup file
 {: .doc-sec2 }
 
 Before starting VMagicMirror, put VRMA file(`.vrma`) at `(My Document)\VMagicMirror_Files\Motions` folder.
@@ -50,7 +60,7 @@ If `Motions` folder does not exist, create new one.
 
 The folder is same as referred in [Use Custom Motion](../use_custom_motion). VMagicMirror classify them based on the file extension.
 
-#### 3. Use in Expressions Feature
+#### 4. Use in Expressions Feature
 {: .doc-sec2 }
 
 Start VMagicMirror, and edit item accoring to [Expressions](../../docs/expressions) page.

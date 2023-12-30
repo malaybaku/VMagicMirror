@@ -7,6 +7,15 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v3.5.0
+{: .doc-sec2 }
+
+2023/12/31
+
+* 追加: VRM Animation(.vrma)形式のモーションを、[ゲーム入力](../docs/game_input)機能から使えるようになりました。詳細はゲーム入力に関するページ、あるいは[VRM AnimationをVMagicMirrorで使う](../tips/use_vrma)のページを参照下さい。
+* 修正: PC上のファイルからVRM1.0のモデルを読み込んだとき、「過剰な暴力表現」のOK/NG表記が正しく表記できていなかったのを修正しました。
+
+
 #### v3.4.0
 {: .doc-sec2 }
 

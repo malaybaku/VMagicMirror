@@ -8,6 +8,15 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.5.0
+{: .doc-sec2 }
+
+2023/12/31
+
+* Add: Support VRM Animation(.vrma) motion in [Game Input](../docs/game_input) feature. See detail at [Game Input](../docs/game_input), or [Use VRM Animation](../tips/use_vrma) pages.
+* Fix: When loading VRM1.0 model from PC file, the license indication about excessively violence expression was not correct.
+
+
 #### v3.4.0
 {: .doc-sec2 }
 

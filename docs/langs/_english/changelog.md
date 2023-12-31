@@ -16,6 +16,11 @@ lang: en
 * Add: Support VRM Animation(.vrma) motion in [Game Input](../docs/game_input) feature. See detail at [Game Input](../docs/game_input), or [Use VRM Animation](../tips/use_vrma) pages.
 * Fix: When loading VRM1.0 model from PC file, the license indication about excessively violence expression was not correct.
 
+Known Issues:
+
+* If .vrma file is assigned to some button input and is deleted, then the action display name become empty in next launch. This will not have bad effect, but I recommend to reset selection state to "None". 
+* Mouse click input cannot launch VRM Animation motion when. This issue will be fixed in next version.
+
 
 #### v3.4.0
 {: .doc-sec2 }

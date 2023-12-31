@@ -108,6 +108,16 @@ Keyboard / Mouse:
 </div>
 
 
+#### Use Custom Motion in Game Input
+{: .doc-sec2 }
+
+v3.5.0 and later version supports custom motion based on [VRM Animation](../../tips/use_vrma) (.vrma) file. See detail at [VRM Animation](../../tips/use_vrma) page.
+
+This feature supports one shot motion like punch or jump, which acts some single action and return to default pose.
+
+Note that v3.5.0 and current version does not support to replace move motion, or playing some motion with loop.
+
+
 #### Load and Save Game Input Setting
 {: .doc-sec2 }
 

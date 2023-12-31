@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
@@ -58,7 +59,9 @@ namespace Baku.VMagicMirrorConfig
         {
             var rawClipNames = await _sender.QueryMessageAsync(
                 MessageFactory.Instance.GetAvailableCustomMotionClipNames(vrmaOnly));
-            return rawClipNames.Split('\t');
+            return rawClipNames.Split('\t')
+                .Where(v => !string.IsNullOrEmpty(v))
+                .ToArray();
         }
     }
 }

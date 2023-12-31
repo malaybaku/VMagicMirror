@@ -68,19 +68,10 @@ namespace Baku.VMagicMirror.WordToMotion
             //     VmmCommands.RequestCustomMotionDoctor,
             //     _ => { }
             // );
-            
+
             _receiver.AssignQueryHandler(
                 VmmQueries.GetAvailableCustomMotionClipNames,
-                q =>
-                {
-                    //カスタムモーションと呼ばれるものがvmm_motionとvrmaの2種類ある
-                    q.Result = string.Join("\t", 
-                        _customMotionRepository
-                            .LoadAvailableCustomMotionNames()
-                            .Concat(_vrmaRepository.GetAvailableMotionNames())
-                        );
-                    Debug.Log("Get Available CustomMotion Clip Names, result = " + q.Result);
-                });
+                SetAvailableMotionClipNames);
 
             //リクエストは等価に扱う && 頻度は制御する、という話
             _sources
@@ -115,7 +106,7 @@ namespace Baku.VMagicMirror.WordToMotion
             
             _vrmaRepository.Initialize();
         }
-        
+
         private void SetWordToMotionInputType(int deviceType)
         {
             var type = (SourceType) deviceType;
@@ -159,6 +150,25 @@ namespace Baku.VMagicMirror.WordToMotion
             {
                 LogOutput.Instance.Write(ex);
             }
+        }
+
+        private void SetAvailableMotionClipNames(ReceivedQuery q)
+        {
+            //カスタムモーションと呼ばれるものがvmm_motionとvrmaの2種類あるが、引数によってはvrmaのみを返却する
+            var vrmaOnly = q.ToBoolean();
+            if (vrmaOnly)
+            {
+                q.Result = string.Join("\t", _vrmaRepository.GetAvailableMotionNames());
+            }
+            else
+            {
+                q.Result = string.Join("\t", 
+                    _customMotionRepository
+                        .LoadAvailableCustomMotionNames()
+                        .Concat(_vrmaRepository.GetAvailableMotionNames())
+                );
+            }
+            Debug.Log("Get Available CustomMotion Clip Names, result = " + q.Result);
         }
     }
 }

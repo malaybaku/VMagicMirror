@@ -18,7 +18,8 @@ namespace Baku.VMagicMirror.GameInput
 
     public enum GameInputButtonAction
     {
-        None,
+        Custom = -1,
+        None = 0,
         Jump,
         Crouch,
         Run,

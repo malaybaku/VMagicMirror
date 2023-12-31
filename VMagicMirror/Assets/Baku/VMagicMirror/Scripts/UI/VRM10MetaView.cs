@@ -147,9 +147,9 @@ namespace Baku.VMagicMirror
                 
                 avatarPermission.text = GetAvatarPermissionString(meta.AvatarPermission, locale);
                 allowExcessiveViolentUsage.text = 
-                    GetUsageAllowString(meta.AllowExcessivelySexualUsage == true, locale);
+                    GetUsageAllowString(meta.AllowExcessivelyViolentUsage == true, locale);
                 allowExcessiveViolentUsage.color =
-                    GetUsageAllowColor(meta.AllowExcessivelySexualUsage == true);
+                    GetUsageAllowColor(meta.AllowExcessivelyViolentUsage == true);
                 allowExcessiveSexualUsage.text =
                     GetUsageAllowString(meta.AllowExcessivelySexualUsage == true, locale);
                 allowExcessiveSexualUsage.color =

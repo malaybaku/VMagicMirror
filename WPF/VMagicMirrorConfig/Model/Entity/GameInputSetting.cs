@@ -75,6 +75,11 @@ namespace Baku.VMagicMirrorConfig
     {
         //NOTE: string 1つなのにclass化するのはループとかマスクとかIKどうするとか設定したい可能性に配慮するため
         public string CustomKey { get; set; } = "";
+
+        public GameInputCustomAction CreateCopy() => new GameInputCustomAction()
+        {
+            CustomKey = CustomKey,
+        };
     }
 
     public class KeyboardKeyWithGameInputCustomAction
@@ -193,6 +198,9 @@ namespace Baku.VMagicMirrorConfig
                 LeftClick = LeftClick,
                 RightClick = RightClick,
                 MiddleClick = MiddleClick,
+                CustomLeftClick = CustomLeftClick.CreateCopy(),
+                CustomRightClick = CustomRightClick.CreateCopy(),
+                CustomMiddleClick = CustomMiddleClick.CreateCopy(),
                 UseWasdMove = UseWasdMove,
                 UseArrowKeyMove = UseArrowKeyMove,
                 UseShiftRun = UseShiftRun,

@@ -20,6 +20,14 @@ namespace Baku.VMagicMirror.GameInput
         public GameInputButtonAction RightClick;
         public GameInputButtonAction MiddleClick;
 
+        public GameInputCustomAction CustomLeftClick;
+        public GameInputCustomAction CustomRightClick;
+        public GameInputCustomAction CustomMiddleClick;
+
+        public string CustomLeftClickKey => CustomLeftClick?.CustomKey ?? "";
+        public string CustomRightClickKey => CustomRightClick?.CustomKey ?? "";
+        public string CustomMiddleClickKey => CustomMiddleClick?.CustomKey ?? "";
+
         //よくあるやつなので + このキーアサインでは補助キーを無視したいのでShiftも特別扱い
         public bool UseWasdMove = true;
         public bool UseArrowKeyMove = true;

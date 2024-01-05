@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.GameInput
 
         public string CustomLeftClickKey => CustomLeftClick?.CustomKey ?? "";
         public string CustomRightClickKey => CustomRightClick?.CustomKey ?? "";
-        public string CustomMiddleClickKey => CustomLeftClick?.CustomKey ?? "";
+        public string CustomMiddleClickKey => CustomMiddleClick?.CustomKey ?? "";
 
         //よくあるやつなので + このキーアサインでは補助キーを無視したいのでShiftも特別扱い
         public bool UseWasdMove = true;

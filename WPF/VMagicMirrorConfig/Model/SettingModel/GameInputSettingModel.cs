@@ -335,10 +335,15 @@ namespace Baku.VMagicMirrorConfig
             KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
         }
 
-        //Unity側からカスタムモーション一覧を受け取ったより後でこの関数が呼ばれると、
-        //カスタムアクション用のキーボード設定に過不足があった場合の内容が修正される。
-        // - 指定した一覧にはあるのに設定として保持してない -> キーアサインがない状態で追加
+        // Unity側からカスタムモーション一覧を受けとった後で呼ぶことで、
+        // 現在ファイルからロードしているアクションとの整合性をチェックする。
+        //
+        // キーボード設定: 過不足があると、
+        // - 指定した一覧にはあるのに設定として保持してない -> キーアサインなしの状態で追加
         // - 指定した一覧に入ってないものが設定に含まれる   -> 削除 
+        // 
+        // ゲームパッド、およびマウスクリック: 過不足があると、
+        // - 存在しないカスタムアクションを指定しているボタンやクリックに対するアクションの割当がNoneにリセットされる
         private void CheckCustomActionKeys()
         {
             // Unityから一覧を受け取る前だと一致チェックできないので、修正を試みない
@@ -359,6 +364,53 @@ namespace Baku.VMagicMirrorConfig
                 return;
             }
 
+            //ボタンとクリックの整合性をとる
+            // - クリックはこの後のキーボード整合性チェックのあとで必ずデータが送られるので、個別に送らないでOK
+            // - ゲームパッド部分は、ここで修正が入ったら明示的に送り直しておく (※実際は送らないでもUnity側で無視するはずではあるが)
+            UpdateGamepadAndMouseCustomActionBasedOnActionKeys(actionKeys);
+
+            UpdateKeyboardCustomActionBasedOnActionKeys(actionKeys);
+        }
+
+        //NOTE: この関数は
+        // - 現在ロード中のキーボード設定とUnity側で認識しているカスタムモーションを見比べて、一覧が整合してない場合に呼び出すのを想定している
+        // - この関数を呼び出すと
+        //   - ゲームパッドのボタンに存在しないカスタムアクションがあった場合は「なし」に割当が修正され、それをUnityにも送信する
+        //   - マウスクリックに対しても存在しないカスタムアクションがあったら「なし」に割当を修正するが、Unityにはデータを送信しない
+        private void UpdateGamepadAndMouseCustomActionBasedOnActionKeys(GameInputActionKey[] actionKeys)
+        {
+            //mouse
+            if (!actionKeys.Contains(KeyboardKeyAssign.LeftClickKey))
+            {
+                KeyboardKeyAssign.LeftClick = GameInputButtonAction.None;
+                KeyboardKeyAssign.CustomLeftClick.CustomKey = "";
+            }
+
+            if (!actionKeys.Contains(KeyboardKeyAssign.RightClickKey))
+            {
+                KeyboardKeyAssign.RightClick = GameInputButtonAction.None;
+                KeyboardKeyAssign.CustomRightClick.CustomKey = "";
+            }
+
+            if (!actionKeys.Contains(KeyboardKeyAssign.MiddleClickKey))
+            {
+                KeyboardKeyAssign.MiddleClick = GameInputButtonAction.None;
+                KeyboardKeyAssign.CustomMiddleClick.CustomKey = "";
+            }
+
+            //gamepad
+            if (GamepadKeyAssign.TryResetMissingCustomAction(actionKeys))
+            {
+                SendGamepadKeyAssign();
+                GamepadKeyAssignUpdated?.Invoke(this, new(GamepadKeyAssign));
+            }
+        }
+
+        //NOTE: この関数は
+        // - 現在ロード中のキーボード設定とUnity側で認識しているカスタムモーションを見比べて、一覧が整合してない場合に呼び出すのを想定している
+        // - この関数を呼び出すと、必ずキーボードの設定をUnity側へ送信し直す
+        private void UpdateKeyboardCustomActionBasedOnActionKeys(GameInputActionKey[] actionKeys)
+        {
             var resultCustomActions = new KeyboardKeyWithGameInputCustomAction[actionKeys.Length];
             for (var i = 0; i < resultCustomActions.Length; i++)
             {
@@ -374,7 +426,6 @@ namespace Baku.VMagicMirrorConfig
             SendKeyboardKeyAssign();
             KeyboardKeyAssignUpdated?.Invoke(this, new(KeyboardKeyAssign));
         }
-
 
         public void ResetToDefault() => ApplySetting(GameInputSetting.LoadDefault());
 

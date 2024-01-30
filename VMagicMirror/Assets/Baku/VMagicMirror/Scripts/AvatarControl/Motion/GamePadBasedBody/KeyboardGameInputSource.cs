@@ -336,27 +336,27 @@ namespace Baku.VMagicMirror.GameInput
             switch (button)
             {
                 case MouseButtonEventNames.LDown:
-                    ApplyMouseInput(_keyAssign.LeftClick, true);
+                    ApplyMouseInput(_keyAssign.LeftClick, _keyAssign.CustomLeftClickKey, true);
                     return;
                 case MouseButtonEventNames.LUp:
-                    ApplyMouseInput(_keyAssign.LeftClick, false);
+                    ApplyMouseInput(_keyAssign.LeftClick, _keyAssign.CustomLeftClickKey, false);
                     return;
                 case MouseButtonEventNames.RDown:
-                    ApplyMouseInput(_keyAssign.RightClick, true);
+                    ApplyMouseInput(_keyAssign.RightClick, _keyAssign.CustomRightClickKey, true);
                     return;
                 case MouseButtonEventNames.RUp:
-                    ApplyMouseInput(_keyAssign.RightClick, false);
+                    ApplyMouseInput(_keyAssign.RightClick, _keyAssign.CustomRightClickKey, false);
                     return;
                 case MouseButtonEventNames.MDown:
-                    ApplyMouseInput(_keyAssign.MiddleClick, true);
+                    ApplyMouseInput(_keyAssign.MiddleClick, _keyAssign.CustomMiddleClickKey, true);
                     return;
                 case MouseButtonEventNames.MUp:
-                    ApplyMouseInput(_keyAssign.MiddleClick, false);
+                    ApplyMouseInput(_keyAssign.MiddleClick, _keyAssign.CustomMiddleClickKey, false);
                     return;
             }
         }
 
-        private void ApplyMouseInput(GameInputButtonAction action, bool pressed)
+        private void ApplyMouseInput(GameInputButtonAction action, string customActionKey, bool pressed)
         {
             if (action == GameInputButtonAction.None)
             {
@@ -388,6 +388,12 @@ namespace Baku.VMagicMirror.GameInput
                     return;
                 case GameInputButtonAction.Punch:
                     _punch.OnNext(Unit.Default);
+                    return;
+                case GameInputButtonAction.Custom:
+                    if (!string.IsNullOrEmpty(customActionKey))
+                    {
+                        _customMotion.OnNext(customActionKey);
+                    }
                     return;
             }
         }

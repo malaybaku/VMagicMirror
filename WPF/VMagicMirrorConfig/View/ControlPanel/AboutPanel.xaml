@@ -17,7 +17,7 @@
         <TextBlock Style="{StaticResource NoteText}"
                         Text="{x:Static vmm:AppConsts.AppName}"/>
         <TextBlock Style="{StaticResource NoteText}"
-                        Text="Copyright (c) 2019-2023 獏星(ばくすたー)"/>
+                        Text="Copyright (c) 獏星(ばくすたー)"/>
         <TextBlock Style="{StaticResource NoteText}"
                         ToolTip="https://github.com/malaybaku/VMagicMirror">
                 <Hyperlink Click="OnClickHyperLinkToGitHub">Source (GitHub)</Hyperlink>

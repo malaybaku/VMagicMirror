@@ -11,6 +11,6 @@ namespace Baku.VMagicMirrorConfig
         public static string AppFullNameWithEnvSuffix => 
             AppFullName + (TargetEnvironmentChecker.CheckDevEnvFlagEnabled() ? "(Dev)" : "");
 
-        public static VmmAppVersion AppVersion => new VmmAppVersion(3, 5, 0);
+        public static VmmAppVersion AppVersion => new VmmAppVersion(3, 5, 1);
     }
 }

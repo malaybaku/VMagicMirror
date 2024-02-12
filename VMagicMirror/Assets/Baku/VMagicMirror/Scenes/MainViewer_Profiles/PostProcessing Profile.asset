@@ -45,14 +45,14 @@ MonoBehaviour:
     overrideState: 1
     value: 15
   threshold:
-    overrideState: 0
+    overrideState: 1
     value: 0.5
   edgeColor:
     overrideState: 1
     value: {r: 1, g: 1, b: 1, a: 1}
   outlineOverwriteAlpha:
-    overrideState: 0
-    value: 0.02
+    overrideState: 1
+    value: 0.8
   highQualityMode:
     overrideState: 1
     value: 0
@@ -156,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a79b01ea5641d4aa6daa2e23605641, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1

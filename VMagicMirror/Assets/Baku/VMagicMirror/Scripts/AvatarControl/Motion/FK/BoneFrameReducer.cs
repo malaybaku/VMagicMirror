@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using UniVRM10;
+using VRM;
 using Zenject;
 
 namespace Baku.VMagicMirror.FK
@@ -33,6 +35,7 @@ namespace Baku.VMagicMirror.FK
         private bool _frameReduceEnabled = false;
 
         private VRM10InstanceUpdater _instanceUpdater;
+        private Vrm10Instance _vrm10Instance;
 
         [Inject]
         public void Initialize(
@@ -54,6 +57,7 @@ namespace Baku.VMagicMirror.FK
             _bones.Clear();
             _reducedRotations.Clear();
             _tempRotations.Clear();
+            _vrm10Instance = info.instance;
 
             for (var i = (int) HumanBodyBones.Hips; i < (int) HumanBodyBones.LastBone; i++)
             {
@@ -73,6 +77,7 @@ namespace Baku.VMagicMirror.FK
         private void OnModelUnloaded()
         {
             _bones.Clear();
+            _vrm10Instance = null;
             _hasModel = false;
         }
 
@@ -129,11 +134,19 @@ namespace Baku.VMagicMirror.FK
 
         private void PostRuntimeProcess()
         {
+            if (!_hasModel || !_frameReduceEnabled)
+            {
+                return;
+            }
+
             _bones[HumanBodyBones.Hips].position = _tempHipsPosition;
             foreach (var rotPair in _tempRotations)
             {
                 _bones[rotPair.Key].localRotation = rotPair.Value;
             }
+            
+            //TODO: 揺れものの暴れ対策で必要なのはそうだが、メチャクチャ重たいはずなのでもっと軽い方法で代替したい…
+            _vrm10Instance.Runtime.ReconstructSpringBone();
         }
     }
 }

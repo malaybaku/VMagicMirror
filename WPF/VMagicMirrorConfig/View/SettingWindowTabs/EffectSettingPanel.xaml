@@ -626,7 +626,7 @@
                         <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                                   Margin="10,10,10,15"
                                   Content="{DynamicResource OutlineEffect_HighQualityMode}"
-                                  IsChecked="{Binding EnableOutlineEffect.Value}"
+                                  IsChecked="{Binding OutlineEffectHighQualityMode.Value}"
                                   />
 
                     </Grid>

@@ -38,6 +38,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ResetBloomSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetBloomSetting)
                 );
+            ResetOutlineEffectSettingCommand = new ActionCommand(
+                () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetOutlineEffectSetting)
+                );
             ResetWindSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetWindSetting)
                 );
@@ -55,6 +58,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 model.BloomR.AddWeakEventHandler(UpdateBloomColor);
                 model.BloomG.AddWeakEventHandler(UpdateBloomColor);
                 model.BloomB.AddWeakEventHandler(UpdateBloomColor);
+               
+                model.OutlineEffectR.AddWeakEventHandler(UpdateOutlineEffectColor);
+                model.OutlineEffectG.AddWeakEventHandler(UpdateOutlineEffectColor);
+                model.OutlineEffectB.AddWeakEventHandler(UpdateOutlineEffectColor);
             }
         }
 
@@ -78,6 +85,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         void UpdateLightColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(LightColor));
         void UpdateBloomColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(BloomColor));
+        void UpdateOutlineEffectColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(OutlineEffectColor));
 
         void ApplyAntiAliasStyle(object? sender, PropertyChangedEventArgs e) 
             => AntiAliasStyle.Value = GetAntiAliasStyle(_model.AntiAliasStyle.Value);
@@ -158,6 +166,28 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #endregion
 
+        #region OutlineEffect
+
+        public RProperty<bool> EnableOutlineEffect => _model.EnableOutlineEffect;
+        public RProperty<int> OutlineEffectThickness => _model.OutlineEffectThickness;
+        public RProperty<int> OutlineEffectR => _model.OutlineEffectR;
+        public RProperty<int> OutlineEffectG => _model.OutlineEffectG;
+        public RProperty<int> OutlineEffectB => _model.OutlineEffectB;
+        public RProperty<bool> OutlineEffectHighQualityMode => _model.OutlineEffectHighQualityMode;
+
+        public Color OutlineEffectColor
+        {
+            get => Color.FromRgb((byte)OutlineEffectR.Value, (byte)OutlineEffectG.Value, (byte)OutlineEffectB.Value);
+            set
+            {
+                OutlineEffectR.Value = value.R;
+                OutlineEffectG.Value = value.G;
+                OutlineEffectB.Value = value.B;
+            }
+        }
+
+        #endregion
+
         #region Wind
 
         public RProperty<bool> EnableWind => _model.EnableWind;
@@ -172,6 +202,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ResetLightSettingCommand { get; }
         public ActionCommand ResetShadowSettingCommand { get; }
         public ActionCommand ResetBloomSettingCommand { get; }
+        public ActionCommand ResetOutlineEffectSettingCommand { get; }
         public ActionCommand ResetWindSettingCommand { get; }
 
         private async void ResetImageQuality()

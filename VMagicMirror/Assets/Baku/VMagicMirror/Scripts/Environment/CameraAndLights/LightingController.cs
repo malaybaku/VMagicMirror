@@ -30,6 +30,9 @@ namespace Baku.VMagicMirror
         //制限版でGUI側にtrue相当の値が表示されるが、これはGUI側が別途決め打ちしてくれてる
         private bool _showEffectDuringTracking = false;
 
+        private bool _windowFrameVisible = true;
+        private bool _enableOutlineEffect = false;
+        
         [Inject]
         public void Initialize(IMessageReceiver receiver)
         {
@@ -92,9 +95,19 @@ namespace Baku.VMagicMirror
                 });
 
             receiver.AssignCommandHandler(
+                VmmCommands.WindowFrameVisibility,
+                message =>
+                {
+                    _windowFrameVisible = message.ToBoolean();
+                    SetOutlineEffectActive(_windowFrameVisible, _enableOutlineEffect);
+                });
+            receiver.AssignCommandHandler(
                 VmmCommands.OutlineEffectEnable,
-                message => SetOutlineEffectActive(message.ToBoolean())
-            );
+                message =>
+                {
+                    _enableOutlineEffect = message.ToBoolean();
+                    SetOutlineEffectActive(_windowFrameVisible, _enableOutlineEffect);
+                });
             receiver.AssignCommandHandler(
                 VmmCommands.OutlineEffectThickness,
                 message => SetOutlineEffectThickness(message.ToInt())
@@ -232,8 +245,8 @@ namespace Baku.VMagicMirror
         private void SetBloomThreshold(float threshold)
             => _bloom.threshold.value = threshold;
 
-        private void SetOutlineEffectActive(bool active)
-            => _vmmAlphaEdge.active = active;
+        private void SetOutlineEffectActive(bool windowFrameVisible, bool enableOutlineEffect) 
+            => _vmmAlphaEdge.active = !windowFrameVisible && enableOutlineEffect;
 
         //NOTE: GUIからは整数指定するが設定上はfloat
         private void SetOutlineEffectThickness(int thickness)

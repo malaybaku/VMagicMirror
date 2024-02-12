@@ -27,9 +27,9 @@ Shader "Hidden/Vmm/AlphaEdge"
             float d = length(float2(lu - rd, ld - ru));
 
             // 8方位に増やす: ちょっと見栄えがよくなる
+            float3 offsets2 = _Thickness * _MainTex_TexelSize.xyx * float3(0.5, 0.5, 0.0);
             if (_HighQualityMode > 0.5)
             {
-                float3 offsets2 = _Thickness * _MainTex_TexelSize.xyx * float3(0.5, 0.5, 0.0);
                 const float up = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord + offsets2.zy).a;
                 const float down = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord - offsets2.zy).a;
                 const float left = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord + offsets2.xz).a;
@@ -60,6 +60,19 @@ Shader "Hidden/Vmm/AlphaEdge"
             
             result.a = lerp(original.a, 1.0, outline);
             result.rgb = lerp(original.rgb, _EdgeColor.rgb, outline);
+
+            // NOTE: 画面端が不透明なとき、その領域にはOutlineの色が適用される
+            // これにより、バストアップ構図で背景透過していると下端にoutlineが効くようになる
+            const float edge_factor =
+                step(1.0 - offsets2.x, i.texcoord.x) +
+                step(i.texcoord.x, offsets2.x) +
+                step(1.0 - offsets2.y, i.texcoord.y) +
+                step(i.texcoord.y, offsets2.y);
+
+            const float apply_edge_outline =
+                step(1.0, edge_factor) * step(_OutlineOverwriteAlpha, original.a);
+            result.a = lerp(result.a, _EdgeColor.a, apply_edge_outline);
+            result.rgb = lerp(result.rgb, _EdgeColor.rgb, apply_edge_outline);
             
             return result;
         }

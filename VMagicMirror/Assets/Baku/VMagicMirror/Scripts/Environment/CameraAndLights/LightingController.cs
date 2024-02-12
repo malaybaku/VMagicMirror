@@ -22,6 +22,7 @@ namespace Baku.VMagicMirror
 
         private Color _color = Color.white;
         private Bloom _bloom;
+        private VmmAlphaEdge _vmmAlphaEdge;
         private VmmVhs _vmmVhs;
         private VmmMonochrome _vmmMonochrome;
         private bool _handTrackingEnabled = false;
@@ -89,7 +90,28 @@ namespace Baku.VMagicMirror
                     float[] bloomRgb = message.ToColorFloats();
                     SetBloomColor(bloomRgb[0], bloomRgb[1], bloomRgb[2]);
                 });
-            
+
+            receiver.AssignCommandHandler(
+                VmmCommands.OutlineEffectEnable,
+                message => SetOutlineEffectActive(message.ToBoolean())
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.OutlineEffectThickness,
+                message => SetOutlineEffectThickness(message.ToInt())
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.OutlineEffectColor,
+                message =>
+                {
+                    var rgb = message.ToColorFloats();
+                    var color = new Color(rgb[0], rgb[1], rgb[2]);
+                    SetOutlineEffectEdgeColor(color);
+                });
+            receiver.AssignCommandHandler(
+                VmmCommands.OutlineEffectHighQualityMode,
+                message => SetOutlineEffectHighQualityMode(message.ToBoolean())
+            );
+
             receiver.AssignCommandHandler(
                 VmmCommands.EnableImageBasedHandTracking,
                 message =>
@@ -110,6 +132,7 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _bloom = postProcess.profile.GetSetting<Bloom>();
+            _vmmAlphaEdge = postProcess.profile.GetSetting<VmmAlphaEdge>();
             _vmmMonochrome = postProcess.profile.GetSetting<VmmMonochrome>();
             _vmmVhs = postProcess.profile.GetSetting<VmmVhs>();
         }
@@ -209,6 +232,19 @@ namespace Baku.VMagicMirror
         private void SetBloomThreshold(float threshold)
             => _bloom.threshold.value = threshold;
 
+        private void SetOutlineEffectActive(bool active)
+            => _vmmAlphaEdge.active = active;
+
+        //NOTE: GUIからは整数指定するが設定上はfloat
+        private void SetOutlineEffectThickness(int thickness)
+            => _vmmAlphaEdge.thickness.Override(thickness);
+
+        private void SetOutlineEffectEdgeColor(Color color)
+            => _vmmAlphaEdge.edgeColor.Override(color);
+
+        private void SetOutlineEffectHighQualityMode(bool useHighQualityMode)
+            => _vmmAlphaEdge.highQualityMode.Override(useHighQualityMode);
+        
         private void UpdateRetroEffectStatus()
         {
             bool enableEffect =_handTrackingEnabled &&

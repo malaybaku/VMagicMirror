@@ -53,6 +53,17 @@
 
         #endregion
 
+        #region Outline Effect
+
+        public bool EnableOutlineEffect { get; set; } = false;
+        public int OutlineEffectThickness { get; set; } = 20;
+        public int OutlineEffectR { get; set; } = 255;
+        public int OutlineEffectG { get; set; } = 255;
+        public int OutlineEffectB { get; set; } = 255;
+        public bool OutlineEffectHighQualityMode { get; set; } = false;
+
+        #endregion
+
         #region Wind
 
         public bool EnableWind { get; set; } = true;

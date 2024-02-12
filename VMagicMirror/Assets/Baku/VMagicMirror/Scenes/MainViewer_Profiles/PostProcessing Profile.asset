@@ -25,6 +25,37 @@ MonoBehaviour:
   scanline:
     overrideState: 1
     value: 0.117
+--- !u!114 &-4968429724501136736
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7e0b21f9fde1c429ce58be087a0258, type: 3}
+  m_Name: VmmAlphaEdge
+  m_EditorClassIdentifier: 
+  active: 0
+  enabled:
+    overrideState: 1
+    value: 1
+  thickness:
+    overrideState: 1
+    value: 15
+  threshold:
+    overrideState: 0
+    value: 0.5
+  edgeColor:
+    overrideState: 1
+    value: {r: 1, g: 1, b: 1, a: 1}
+  outlineOverwriteAlpha:
+    overrideState: 0
+    value: 0.02
+  highQualityMode:
+    overrideState: 1
+    value: 0
 --- !u!114 &-4431195256121071682
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -112,6 +143,7 @@ MonoBehaviour:
   - {fileID: 114612591270388130}
   - {fileID: -679367385162691271}
   - {fileID: 1713800730463470002}
+  - {fileID: -4968429724501136736}
 --- !u!114 &114612591270388130
 MonoBehaviour:
   m_ObjectHideFlags: 3

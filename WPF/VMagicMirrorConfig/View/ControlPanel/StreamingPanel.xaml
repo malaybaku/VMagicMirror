@@ -530,6 +530,25 @@
                                   Content="{DynamicResource OutlineEffect_Enable_Short}"
                                   IsChecked="{Binding UseOutlineEffect.Value}"
                                   />
+
+                        <Grid Margin="5"
+                              Visibility="{Binding ShowOutlineEffectWarning.Value,
+                                                   Converter={StaticResource BooleanToVisibilityConverter},
+                                                   FallbackValue=Collapsed}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <md:PackIcon Grid.Column="0"
+                                         VerticalAlignment="Center" 
+                                         Kind="WarningOutline" Foreground="{StaticResource MahApps.Brushes.Accent}" />
+                            <TextBlock Grid.Column="1"
+                                       FontWeight="Bold"
+                                       Text="{DynamicResource Streaming_Visibility_OutlineWillNotWorkWarning}" 
+                                       TextWrapping="Wrap"
+                                       />
+                        </Grid>
+
                         <CheckBox Style="{StaticResource SmallMarginCheckBox}"
                                   Content="{DynamicResource Wind_Enable_Streaming}"
                                   IsChecked="{Binding EnableWind.Value}"
@@ -571,23 +590,6 @@
                             </ComboBox>
                         </Grid>
 
-                        <Grid Margin="5,10"
-                              Visibility="{Binding ShowOutlineEffectWarning.Value,
-                                                   Converter={StaticResource BooleanToVisibilityConverter},
-                                                   FallbackValue=Collapsed}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <md:PackIcon Grid.Column="0"
-                                         VerticalAlignment="Center" 
-                                         Kind="WarningOutline" Foreground="{StaticResource MahApps.Brushes.Accent}" />
-                            <TextBlock Grid.Column="1"
-                                       FontWeight="Bold"
-                                       Text="{DynamicResource Streaming_Visibility_OutlineWillNotWorkWarning}" 
-                                       TextWrapping="Wrap"
-                                       />
-                        </Grid>
                     </StackPanel>
                 </Border>
 

@@ -527,12 +527,12 @@
                                   IsChecked="{Binding EnableShadow.Value}"
                                   />
                         <CheckBox Style="{StaticResource SmallMarginCheckBox}"
-                                  Content="{DynamicResource Wind_Enable_Streaming}"
-                                  IsChecked="{Binding EnableWind.Value}"
+                                  Content="{DynamicResource OutlineEffect_Enable_Short}"
+                                  IsChecked="{Binding UseOutlineEffect.Value}"
                                   />
                         <CheckBox Style="{StaticResource SmallMarginCheckBox}"
-                                  Content="{DynamicResource Light_BgAdjust}"
-                                  IsChecked="{Binding UseDesktopLightAdjust.Value}"
+                                  Content="{DynamicResource Wind_Enable_Streaming}"
+                                  IsChecked="{Binding EnableWind.Value}"
                                   />
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -571,6 +571,23 @@
                             </ComboBox>
                         </Grid>
 
+                        <Grid Margin="5,10"
+                              Visibility="{Binding ShowOutlineEffectWarning.Value,
+                                                   Converter={StaticResource BooleanToVisibilityConverter},
+                                                   FallbackValue=Collapsed}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <md:PackIcon Grid.Column="0"
+                                         VerticalAlignment="Center" 
+                                         Kind="WarningOutline" Foreground="{StaticResource MahApps.Brushes.Accent}" />
+                            <TextBlock Grid.Column="1"
+                                       FontWeight="Bold"
+                                       Text="{DynamicResource Streaming_Visibility_OutlineWillNotWorkWarning}" 
+                                       TextWrapping="Wrap"
+                                       />
+                        </Grid>
                     </StackPanel>
                 </Border>
 

@@ -20,36 +20,19 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         static HotKeySupportedActionsViewModel()
         {
-            ConstAvailableHotKeyActions = new HotKeySupportedActionViewModel[]
+            ConstAvailableHotKeyActions = new HotKeySupportedActionViewModel[7 + 40];
+            ConstAvailableHotKeyActions[0] = new(new(HotKeyActions.None, 0, ""));
+            ConstAvailableHotKeyActions[1] = new(new(HotKeyActions.SetCamera, 1, ""));
+            ConstAvailableHotKeyActions[2] = new(new(HotKeyActions.SetCamera, 2, ""));
+            ConstAvailableHotKeyActions[3] = new(new(HotKeyActions.SetCamera, 3, ""));
+            ConstAvailableHotKeyActions[4] = new(new(HotKeyActions.SetBodyMotionStyle, (int)HotKeyActionBodyMotionStyle.Default, ""));
+            ConstAvailableHotKeyActions[5] = new(new(HotKeyActions.SetBodyMotionStyle, (int)HotKeyActionBodyMotionStyle.AlwaysHandDown, ""));
+            ConstAvailableHotKeyActions[6] = new(new(HotKeyActions.SetBodyMotionStyle, (int)HotKeyActionBodyMotionStyle.GameInputLocomotion, ""));                
+
+            for (var i = 0; i < 40; i++)
             {
-                new (new (HotKeyActions.None, 0, "")),
-                new (new (HotKeyActions.SetCamera, 1, "")),
-                new (new (HotKeyActions.SetCamera, 2, "")),
-                new (new (HotKeyActions.SetCamera, 3, "")),
-                new (new (HotKeyActions.SetBodyMotionStyle, (int) HotKeyActionBodyMotionStyle.Default , "")),
-                new (new (HotKeyActions.SetBodyMotionStyle, (int) HotKeyActionBodyMotionStyle.AlwaysHandDown, "")),
-                new (new (HotKeyActions.SetBodyMotionStyle, (int) HotKeyActionBodyMotionStyle.GameInputLocomotion, "")),
-                new (new (HotKeyActions.CallWtm, 1, "")),
-                new (new (HotKeyActions.CallWtm, 2, "")),
-                new (new (HotKeyActions.CallWtm, 3, "")),
-                new (new (HotKeyActions.CallWtm, 4, "")),
-                new (new (HotKeyActions.CallWtm, 5, "")),
-                new (new (HotKeyActions.CallWtm, 6, "")),
-                new (new (HotKeyActions.CallWtm, 7, "")),
-                new (new (HotKeyActions.CallWtm, 8, "")),
-                new (new (HotKeyActions.CallWtm, 9, "")),
-                new (new (HotKeyActions.CallWtm, 10, "")),
-                new (new (HotKeyActions.CallWtm, 11, "")),
-                new (new (HotKeyActions.CallWtm, 12, "")),
-                new (new (HotKeyActions.CallWtm, 13, "")),
-                new (new (HotKeyActions.CallWtm, 14, "")),
-                new (new (HotKeyActions.CallWtm, 15, "")),
-                new (new (HotKeyActions.CallWtm, 16, "")),
-                new (new (HotKeyActions.CallWtm, 17, "")),
-                new (new (HotKeyActions.CallWtm, 18, "")),
-                new (new (HotKeyActions.CallWtm, 19, "")),
-                new (new (HotKeyActions.CallWtm, 20, "")),
-            };
+                ConstAvailableHotKeyActions[7 + i] = new(new(HotKeyActions.CallWtm, i + 1, ""));
+            }
         }
 
         private HotKeySupportedActionsViewModel() : this(

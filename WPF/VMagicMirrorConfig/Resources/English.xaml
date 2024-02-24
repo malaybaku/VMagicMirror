@@ -73,6 +73,7 @@
     <sys:String x:Key="Streaming_Screenshot">Screenshot</sys:String>
     <sys:String x:Key="Streaming_Screenshot_OpenSaveFolder">Saved Folder...</sys:String>
     
+    <sys:String x:Key="Streaming_Visibility_OutlineWillNotWorkWarning">Outline is not applied because "Transparent Window" is off.</sys:String>
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">Game Input also uses gamepad!</sys:String>
 
     <!-- Ex.Tracker -->
@@ -456,6 +457,12 @@ Translate (2 way):
     <sys:String x:Key="Bloom">Bloom</sys:String>
     <sys:String x:Key="Bloom_Intensity">Intensity [%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">Threshold [%]</sys:String>
+    
+    <sys:String x:Key="OutlineEffect">Outline (require transparent background)</sys:String>
+    <sys:String x:Key="OutlineEffect_Enable">Enable Outline Effect</sys:String>
+    <sys:String x:Key="OutlineEffect_Enable_Short">Outline if BG Transparent</sys:String>
+    <sys:String x:Key="OutlineEffect_Thickness">Thickness</sys:String>
+    <sys:String x:Key="OutlineEffect_HighQualityMode">High Quality Mode (*Require higher GPU resources)</sys:String>    
     
     <sys:String x:Key="Wind">Wind</sys:String>
     <sys:String x:Key="Wind_Enable">Enable Wind</sys:String>

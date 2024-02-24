@@ -1,5 +1,6 @@
 ﻿using Baku.VMagicMirrorConfig.View;
 using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -271,6 +272,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
     {
         public VisibilityViewModel() : this(
             ModelResolver.Instance.Resolve<LoadedAvatarInfo>(),
+            ModelResolver.Instance.Resolve<WindowSettingModel>(),
             ModelResolver.Instance.Resolve<LayoutSettingModel>(),
             ModelResolver.Instance.Resolve<GamepadSettingModel>(),
             ModelResolver.Instance.Resolve<LightSettingModel>()
@@ -280,11 +282,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
         internal VisibilityViewModel(
             LoadedAvatarInfo loadedAvatar,
+            WindowSettingModel window,
             LayoutSettingModel layout, 
             GamepadSettingModel gamepad, 
             LightSettingModel effects)
         {
             _loadedAvatar = loadedAvatar;
+            _window = window;
             _layout = layout;
             _gamepad = gamepad;
             _effects = effects;
@@ -301,10 +305,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
                 _layout.SelectedTypingEffectId.AddWeakEventHandler(OnTypingEffectIdChanged);
                 _typingEffectItem = TypingEffectSelections
                     .FirstOrDefault(v => v.Id == _layout.SelectedTypingEffectId.Value);
+
+                _window.IsTransparent.AddWeakEventHandler(OnOutlineEffectWarningMaybeChanged);
+                _effects.EnableOutlineEffect.AddWeakEventHandler(OnOutlineEffectWarningMaybeChanged);
+                ShowOutlineEffectWarning.Value = !_window.IsTransparent.Value && _effects.EnableOutlineEffect.Value;
             }
         }
 
         private readonly LoadedAvatarInfo _loadedAvatar;
+        private readonly WindowSettingModel _window;
         private readonly LayoutSettingModel _layout;
         private readonly GamepadSettingModel _gamepad;
         private readonly LightSettingModel _effects;
@@ -315,9 +324,22 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
         public RProperty<bool> GamepadVisibility => _gamepad.GamepadVisibility;
         public RProperty<bool> EnableShadow => _effects.EnableShadow;
         public RProperty<bool> EnableWind => _effects.EnableWind;
-        public RProperty<bool> UseDesktopLightAdjust => _effects.UseDesktopLightAdjust;
+
+        //public RProperty<bool> UseDesktopLightAdjust => _effects.UseDesktopLightAdjust;
+        public RProperty<bool> UseOutlineEffect => _effects.EnableOutlineEffect;
+
+        /// <summary>
+        /// 背景不透明なのに縁取りエフェクトをオンにしているあいだtrueになる
+        /// </summary>
+        public RProperty<bool> ShowOutlineEffectWarning { get; } = new(false);
 
         public ActionCommand ShowPenUnavaiableWarningCommand { get; }
+
+
+        private void OnOutlineEffectWarningMaybeChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            ShowOutlineEffectWarning.Value = !_window.IsTransparent.Value && _effects.EnableOutlineEffect.Value;
+        }
 
 
         #region タイピングエフェクト

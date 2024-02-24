@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -48,6 +47,18 @@ namespace Baku.VMagicMirrorConfig
             BloomG = new RProperty<int>(s.BloomG, _ => sendBloomColor());
             BloomB = new RProperty<int>(s.BloomB, _ => sendBloomColor());
 
+            EnableOutlineEffect = new RProperty<bool>(s.EnableOutlineEffect, v => SendMessage(factory.OutlineEffectEnable(v)));
+            OutlineEffectThickness = new RProperty<int>(s.OutlineEffectThickness, v => SendMessage(factory.OutlineEffectThickness(v)));
+            Action sendOutlineEffectColor = () =>
+                SendMessage(factory.OutlineEffectColor(OutlineEffectR?.Value ?? 255, OutlineEffectG?.Value ?? 255, OutlineEffectB?.Value ?? 255));
+            OutlineEffectR = new RProperty<int>(s.OutlineEffectR, _ => sendOutlineEffectColor());
+            OutlineEffectG = new RProperty<int>(s.OutlineEffectG, _ => sendOutlineEffectColor());
+            OutlineEffectB = new RProperty<int>(s.OutlineEffectB, _ => sendOutlineEffectColor());
+            OutlineEffectHighQualityMode = new RProperty<bool>(
+                s.OutlineEffectHighQualityMode,
+                v => SendMessage(factory.OutlineEffectHighQualityMode(v))
+                );
+
             EnableWind = new RProperty<bool>(s.EnableWind, b => SendMessage(factory.WindEnable(b)));
             WindStrength = new RProperty<int>(s.WindStrength, i => SendMessage(factory.WindStrength(i)));
             WindInterval = new RProperty<int>(s.WindInterval, i => SendMessage(factory.WindInterval(i)));
@@ -94,6 +105,18 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> BloomR { get; }
         public RProperty<int> BloomG { get; }
         public RProperty<int> BloomB { get; }
+
+        #endregion
+
+        #region OutlineEffect
+
+        public RProperty<bool> EnableOutlineEffect { get; }
+        public RProperty<int> OutlineEffectThickness { get; }
+        public RProperty<bool> OutlineEffectHighQualityMode { get; }
+
+        public RProperty<int> OutlineEffectR { get; }
+        public RProperty<int> OutlineEffectG { get; }
+        public RProperty<int> OutlineEffectB { get; }
 
         #endregion
 
@@ -149,6 +172,17 @@ namespace Baku.VMagicMirrorConfig
             BloomThreshold.Value = setting.BloomThreshold;
         }
 
+        public void ResetOutlineEffectSetting()
+        {
+            var setting = LightSetting.Default;
+            EnableOutlineEffect.Value = setting.EnableOutlineEffect;
+            OutlineEffectThickness.Value = setting.OutlineEffectThickness;
+            OutlineEffectR.Value = setting.OutlineEffectR;
+            OutlineEffectG.Value = setting.OutlineEffectG;
+            OutlineEffectB.Value = setting.OutlineEffectB;
+            OutlineEffectHighQualityMode.Value = setting.OutlineEffectHighQualityMode;
+        }
+
         public void ResetWindSetting()
         {
             var setting = LightSetting.Default;
@@ -163,6 +197,7 @@ namespace Baku.VMagicMirrorConfig
             ResetLightSetting();
             ResetShadowSetting();
             ResetBloomSetting();
+            ResetOutlineEffectSetting();
             ResetWindSetting();
             ResetImageQuality();
         }

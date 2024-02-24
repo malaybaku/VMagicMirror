@@ -1,4 +1,5 @@
 using System;
+using UniRx;
 using UnityEngine;
 using UniVRM10;
 using Zenject;
@@ -13,6 +14,11 @@ namespace Baku.VMagicMirror
     {
         private bool _hasModel;
         private Vrm10Instance _instance;
+
+        private readonly Subject<Unit> _preRuntimeProcessed = new();
+        private readonly Subject<Unit> _postRuntimeProcessed = new();
+        public IObservable<Unit> PostRuntimeProcess => _postRuntimeProcessed;
+        public IObservable<Unit> PreRuntimeProcess => _preRuntimeProcessed;
         
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable)
@@ -34,7 +40,9 @@ namespace Baku.VMagicMirror
         {
             if (_hasModel)
             {
+                _preRuntimeProcessed.OnNext(Unit.Default);
                 _instance.Runtime.Process();
+                _postRuntimeProcessed.OnNext(Unit.Default);
             }
         }
     }

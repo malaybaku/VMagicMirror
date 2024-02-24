@@ -1,6 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
+using UniVRM10;
+using VRM;
 using Zenject;
 
 namespace Baku.VMagicMirror.FK
@@ -20,11 +22,9 @@ namespace Baku.VMagicMirror.FK
         [SerializeField] private float updateInterval = 0.05f;
 
         //NOTE: 揺れものはフルFPSでええねん、という事です
-        private readonly Dictionary<HumanBodyBones, Transform> _bones = new Dictionary<HumanBodyBones, Transform>();
-        private readonly Dictionary<HumanBodyBones, Quaternion> _reducedRotations =
-            new Dictionary<HumanBodyBones, Quaternion>();   
-        private readonly Dictionary<HumanBodyBones, Quaternion> _tempRotations =
-            new Dictionary<HumanBodyBones, Quaternion>();
+        private readonly Dictionary<HumanBodyBones, Transform> _bones = new();
+        private readonly Dictionary<HumanBodyBones, Quaternion> _reducedRotations = new();   
+        private readonly Dictionary<HumanBodyBones, Quaternion> _tempRotations = new();
 
         private Vector3 _reducedHipsPosition;
         private Vector3 _tempHipsPosition;
@@ -34,15 +34,22 @@ namespace Baku.VMagicMirror.FK
 
         private bool _frameReduceEnabled = false;
 
+        private VRM10InstanceUpdater _instanceUpdater;
+        private Vrm10Instance _vrm10Instance;
+
         [Inject]
-        public void Initialize(IMessageReceiver receiver, IVRMLoadable vrmLoadable)
+        public void Initialize(
+            IMessageReceiver receiver, 
+            IVRMLoadable vrmLoadable,
+            VRM10InstanceUpdater instanceUpdater
+            )
         {
             vrmLoadable.VrmLoaded += OnModelLoaded;
             vrmLoadable.VrmDisposing += OnModelUnloaded;
             receiver.AssignCommandHandler(
                 VmmCommands.UseFrameReductionEffect,
-                c => _frameReduceEnabled = c.ToBoolean()
-            );
+                c => _frameReduceEnabled = c.ToBoolean());
+            _instanceUpdater = instanceUpdater;
         }
 
         private void OnModelLoaded(VrmLoadedInfo info)
@@ -50,6 +57,7 @@ namespace Baku.VMagicMirror.FK
             _bones.Clear();
             _reducedRotations.Clear();
             _tempRotations.Clear();
+            _vrm10Instance = info.instance;
 
             for (var i = (int) HumanBodyBones.Hips; i < (int) HumanBodyBones.LastBone; i++)
             {
@@ -69,15 +77,28 @@ namespace Baku.VMagicMirror.FK
         private void OnModelUnloaded()
         {
             _bones.Clear();
+            _vrm10Instance = null;
             _hasModel = false;
         }
 
         private void Start()
         {
-            StartCoroutine(RestoreFullFpsPose());
+            _instanceUpdater.PreRuntimeProcess
+                .Subscribe(_ => PreRuntimeProcess())
+                .AddTo(this);
+            _instanceUpdater.PostRuntimeProcess
+                .Subscribe(_ => PostRuntimeProcess())
+                .AddTo(this);
+            // StartCoroutine(RestoreFullFpsPose());
         }
 
-        private void LateUpdate()
+        //やってること
+        // 1. 仮想骨が読み取られる前に「reduceした状態で適用するボーン値」を取って
+        //   - キャッシュ値で上書きする
+        //   - たまにキャッシュ値を更新する
+        // 2. 仮想骨が転写されたら、上書きしてしまった値は戻してく
+        //   - ※揺れものの計算に対して無害にするためだが、VRM1.0とこの処理は相性がすごく悪いかも…
+        private void PreRuntimeProcess()
         {
             if (!_hasModel || !_frameReduceEnabled)
             {
@@ -85,9 +106,6 @@ namespace Baku.VMagicMirror.FK
                 return;
             }
 
-            //2つのことをやる
-            // 1. 一定間隔で「reduceした状態で適用するボーン値」を取る
-            // 2. ボーン情報をreduce値に全部書き換えて描画させてから描画後に元に戻す -> 揺れものの計算をいい感じにするため
             _updateCount += Time.deltaTime;
             if (_updateCount >= updateInterval)
             {
@@ -114,23 +132,21 @@ namespace Baku.VMagicMirror.FK
             }
         }
 
-        private IEnumerator RestoreFullFpsPose()
+        private void PostRuntimeProcess()
         {
-            var eof = new WaitForEndOfFrame();
-            while (true)
+            if (!_hasModel || !_frameReduceEnabled)
             {
-                yield return eof;
-                if (!_hasModel || !_frameReduceEnabled)
-                {
-                    continue;
-                }
-
-                _bones[HumanBodyBones.Hips].position = _tempHipsPosition;
-                foreach (var rotPair in _tempRotations)
-                {
-                    _bones[rotPair.Key].localRotation = rotPair.Value;
-                }
+                return;
             }
+
+            _bones[HumanBodyBones.Hips].position = _tempHipsPosition;
+            foreach (var rotPair in _tempRotations)
+            {
+                _bones[rotPair.Key].localRotation = rotPair.Value;
+            }
+            
+            //TODO: 揺れものの暴れ対策で必要なのはそうだが、メチャクチャ重たいはずなのでもっと軽い方法で代替したい…
+            _vrm10Instance.Runtime.ReconstructSpringBone();
         }
     }
 }

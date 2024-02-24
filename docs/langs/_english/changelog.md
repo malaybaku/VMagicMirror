@@ -8,6 +8,16 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.6.0
+{: .doc-sec2 }
+
+2024/02/25
+
+* Add: Outline effect in Streaming tab, to shows outline on the avatar when transparent window is on. Detailed setting is on Settings Windows > "Effect" tab > "Outline" menu.
+* Changed: Hot Key can launch up to 40 items of Word to Motion.
+* Changed: Desktop color based light adjust feature is no more in Streaming Tab. The feature itself is available in Setting Window > "Effect" tab > "Light" menu.
+
+
 #### v3.5.1
 {: .doc-sec2 }
 

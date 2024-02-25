@@ -24,11 +24,13 @@ lang: en
 
 `Low FPS for Bone Motion`: Turn on to reduce avatar motion's FPS.  Note that this option does not reduce CPU usage.
 
-`Light`: Color, intensity, and direction of light.
+`Light`: Support color, intensity, and direction of light settings. `Desktop Color Based Lighting` applies whole monitor's content color dynamically.
 
 `Shadow`: Intensity and direction of shadow.
 
 `Bloom`: Color and intensity of bloom.
+
+`Outline`: Available from v3.6.0. Supports outline width, color and quality. Outline effect is applied when `Transparent Window` is enabled. Note that, when there is almost-opaque visual (including bloom and shadow), outline will also applied to those elements.
 
 `Wind`: Strength and direction of wind.
 

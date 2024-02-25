@@ -7,7 +7,7 @@
              xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d"
-             d:DesignHeight="1350"
+             d:DesignHeight="2050"
              d:DesignWidth="350"
              >
     <UserControl.DataContext>
@@ -491,6 +491,144 @@
                         <TextBox Grid.Row="1" Grid.Column="2"
                                  Text="{Binding Value, ElementName=sliderBloomThreshold}"
                                  />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+
+                        <md:PackIcon Kind="BabyFaceOutline"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+
+                        <TextBlock Text="{DynamicResource OutlineEffect}"
+                                   Margin="5"
+                                   Style="{StaticResource HeaderText}"
+                                   />
+
+                        <md:Card Style="{StaticResource ColorIndicatorCard}">
+                            <Rectangle>
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="{Binding OutlineEffectColor}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </md:Card>
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetOutlineEffectSettingCommand}"
+                                />
+                    </StackPanel>
+
+                    <CheckBox Margin="10,5,10,5"
+                              Content="{DynamicResource OutlineEffect_Enable}"
+                              IsChecked="{Binding EnableOutlineEffect.Value}"
+                              />
+
+                    <md:Card md:ShadowAssist.ShadowDepth="Depth1" 
+                             Margin="5,10" 
+                             Padding="0">
+
+                        <Expander Margin="0">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Edit" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Setting_Color_Expander_Header}"/>
+                                </StackPanel>
+                            </Expander.Header>
+
+                            <Grid>
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                           Text="R"/>
+                                <Slider Grid.Row="0" Grid.Column="1"
+                                        x:Name="sliderOutlineEffectR"
+                                        Value="{Binding OutlineEffectR.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="0" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=sliderOutlineEffectR}"
+                                         />
+
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                           Text="G"/>
+                                <Slider Grid.Row="1" Grid.Column="1"
+                                        x:Name="sliderOutlineEffectG"
+                                        Value="{Binding OutlineEffectG.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="1" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=sliderOutlineEffectG}"
+                                         />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0"
+                                           Text="B"/>
+                                <Slider Grid.Row="2" Grid.Column="1"
+                                        x:Name="sliderOutlineEffectB"
+                                        Value="{Binding OutlineEffectB.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="2" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=sliderOutlineEffectB}"
+                                         />
+
+                                <md:ColorPicker Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" 
+                                                Height="200"
+                                                Margin="20"
+                                                Color="{Binding OutlineEffectColor, Mode=TwoWay}"
+                                                />
+                            </Grid>
+                        </Expander>
+                    </md:Card>
+
+                    <Grid Margin="5">
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                <Setter Property="TextAlignment" Value="Center"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Text="{DynamicResource OutlineEffect_Thickness}" />
+                        <Slider Grid.Row="0" Grid.Column="1"
+                                x:Name="sliderOutlineEffectThickness"
+                                Minimum="1"
+                                Maximum="150"
+                                Value="{Binding OutlineEffectThickness.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="0" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderOutlineEffectThickness}"
+                                 />
+
+                        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                  Margin="10,10,10,15"
+                                  Content="{DynamicResource OutlineEffect_HighQualityMode}"
+                                  IsChecked="{Binding OutlineEffectHighQualityMode.Value}"
+                                  />
+
                     </Grid>
                 </StackPanel>
             </Border>

@@ -27,8 +27,8 @@ namespace Baku.VMagicMirror
         [MenuItem("VMagicMirror/Symbols: Dev Standard", false, 11)]
         public static void PrepareDevStandardSymbols() 
             => PrepareScriptDefineSymbol(false, false);
-        [MenuItem("VMagicMirror/Symbols: Prod Full", false, 12)]
-        public static void PrepareDeFullSymbols() 
+        [MenuItem("VMagicMirror/Symbols: Dev Full", false, 12)]
+        public static void PrepareDevFullSymbols() 
             => PrepareScriptDefineSymbol(true, false);
         
         [MenuItem("VMagicMirror/Symbols: Prod Standard", false, 21)]

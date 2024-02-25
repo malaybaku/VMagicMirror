@@ -173,6 +173,11 @@
         public const string BloomThreshold = nameof(BloomThreshold);
         public const string BloomColor = nameof(BloomColor);
 
+        public const string OutlineEffectEnable = nameof(OutlineEffectEnable);
+        public const string OutlineEffectThickness = nameof(OutlineEffectThickness);
+        public const string OutlineEffectColor = nameof(OutlineEffectColor);
+        public const string OutlineEffectHighQualityMode = nameof(OutlineEffectHighQualityMode);
+        
         public const string ShowEffectDuringHandTracking = nameof(ShowEffectDuringHandTracking);
 
         public const string WindEnable = nameof(WindEnable);

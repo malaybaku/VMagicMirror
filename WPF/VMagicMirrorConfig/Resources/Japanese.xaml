@@ -73,6 +73,7 @@
     <sys:String x:Key="Streaming_Screenshot">スクリーンショット</sys:String>
     <sys:String x:Key="Streaming_Screenshot_OpenSaveFolder">保存フォルダ...</sys:String>
     
+    <sys:String x:Key="Streaming_Visibility_OutlineWillNotWorkWarning">「背景を透過」がオフのため縁取りは無効になっています。</sys:String>
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">ゲーム入力でもゲームパッドが使われています！</sys:String>
     
     <!-- Ex.Tracker -->
@@ -456,6 +457,12 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Bloom">Bloom</sys:String>
     <sys:String x:Key="Bloom_Intensity">強さ[%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">しきい値[%]</sys:String>
+    
+    <sys:String x:Key="OutlineEffect">縁取り (背景透過でのみ有効)</sys:String>
+    <sys:String x:Key="OutlineEffect_Enable_Short">縁取り (背景透過時のみ)</sys:String>
+    <sys:String x:Key="OutlineEffect_Enable">縁取りエフェクトをオン</sys:String>
+    <sys:String x:Key="OutlineEffect_Thickness">縁の分厚さ</sys:String>
+    <sys:String x:Key="OutlineEffect_HighQualityMode">高品質モード (*GPU負荷が増えます)</sys:String>
     
     <sys:String x:Key="Wind">風</sys:String>
     <sys:String x:Key="Wind_Enable">風を有効化</sys:String>

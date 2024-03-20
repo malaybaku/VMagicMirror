@@ -303,33 +303,45 @@ namespace Baku.VMagicMirror
                 }
 
                 var rate = 1f;
+                var hipRate = 1f;
 
                 if (animDuration > 0 && count > animDuration - CustomMotionHipFadeOutDuration)
                 {
                     //終了間際, 1->0に下がっていく
                     _vrmaRepository.StopPrevAnimation();
-                    rate = Mathf.Clamp01((animDuration - count) / CustomMotionHipFadeOutDuration);
+                    hipRate = Mathf.Clamp01((animDuration - count) / CustomMotionHipFadeOutDuration);
                 }
                 else if (count < CustomMotionHipFadeInDuration)
                 {
                     //0 -> 1, 始まってすぐ
-                    rate = Mathf.Clamp01(count / CustomMotionHipFadeInDuration);
+                    hipRate = Mathf.Clamp01(count / CustomMotionHipFadeInDuration);
                 }
                 else
                 {
                     // 中間部分。このタイミングで補間が要らなくなるので明示的に宣言しておく
                     _vrmaRepository.StopPrevAnimation();
                 }
+
+                if (animDuration > 0 && count > animDuration - CustomMotionFadeOutDuration)
+                {
+                    // 終了間近
+                    rate = Mathf.Clamp01((animDuration - count) / CustomMotionFadeOutDuration);
+                }
+                else if (count < CustomMotionFadeInDuration)
+                {
+                    // 始まってすぐ
+                    rate = Mathf.Clamp01(count / CustomMotionFadeInDuration);
+                }
                 
                 //NOTE: rate == 1とかrate == 0のケースの最適化はmotionSetterにケアさせる
                 if (_vrmaRepository.PrevInstance is { IsPlaying: true } playingPrev)
                 {
                     //VRMAどうしの補間中にしか通らないパスで、通るのは珍しい
-                    _vrmaMotionSetter.Set(playingPrev, anim, rate, rate);
+                    _vrmaMotionSetter.Set(playingPrev, anim, rate, hipRate);
                 }
                 else
                 {
-                    _vrmaMotionSetter.Set(anim, rate, rate);
+                    _vrmaMotionSetter.Set(anim, rate, hipRate);
                 }
                 
                 //NOTE: LateTick相当くらいのタイミングを狙っていることに注意

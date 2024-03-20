@@ -62,7 +62,6 @@ namespace Baku.VMagicMirror
         public bool TryGetDuration(VrmaFileItem file, out float duration)
         {
             //NOTE: ロード前にめっちゃ急いで呼び出されたら適当に答える
-            //。わかりやすさのため
             if (!_instanceInitialized)
             {
                 duration = 1f;

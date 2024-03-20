@@ -122,6 +122,16 @@ namespace Baku.VMagicMirror
                 command => SetLocomotionStyle(command.ToInt())
                 );
             
+            // ループモーションが効きっぱなしになるのを禁止する
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetKeyboardGameInputKeyAssign,
+                _ => StopLoopCustomMotion()
+                );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetGamepadGameInputKeyAssign,
+                _ => StopLoopCustomMotion()
+                );
+            
             _bodyMotionModeController.MotionMode
                 .Subscribe(mode => SetActiveness(mode == BodyMotionMode.GameInputLocomotion))
                 .AddTo(this);
@@ -184,8 +194,7 @@ namespace Baku.VMagicMirror
             base.Dispose();
             _cts.Cancel();
             _cts.Dispose();
-            _loopCustomMotionCts?.Cancel();
-            _loopCustomMotionCts?.Dispose();
+            StopLoopCustomMotion();
         }
 
         private void OnVrmLoaded(VrmLoadedInfo obj)
@@ -207,11 +216,8 @@ namespace Baku.VMagicMirror
             _hasModel = false;
             _animator = null;
             _vrmRoot = null;
-            _rootOrientationController.ResetImmediately();
-            
-            _loopCustomMotionCts?.Cancel();
-            _loopCustomMotionCts?.Dispose();
-            _loopCustomMotionCts = null;
+            _rootOrientationController.ResetImmediately(); 
+            StopLoopCustomMotion();
         }
 
         private void TryAct(int triggerHash)
@@ -260,8 +266,7 @@ namespace Baku.VMagicMirror
             
             _customMotionRunning = true;
             _currentRunningVrmaItem = item;
-            _loopCustomMotionCts?.Cancel();
-            _loopCustomMotionCts?.Dispose();
+            StopLoopCustomMotion();
             _loopCustomMotionCts = new();
             RunCustomMotionAsync(item, _cts.Token, _loopCustomMotionCts.Token).Forget();
         }
@@ -274,11 +279,16 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            StopLoopCustomMotion();
+        }
+
+        private void StopLoopCustomMotion()
+        {
             _loopCustomMotionCts?.Cancel();
             _loopCustomMotionCts?.Dispose();
             _loopCustomMotionCts = null;
         }
-
+        
         //NOTE: 2つ目のtokenはループモーションでのみ参照され、かつ即時ではなく遅延つきで終了処理を行う
         private async UniTaskVoid RunCustomMotionAsync(VrmaFileItem item, CancellationToken ct, CancellationToken loopMotionCt)
         {
@@ -369,6 +379,7 @@ namespace Baku.VMagicMirror
                 if (!_bodyMotionActive)
                 {
                     ResetParameters();
+                    StopLoopCustomMotion();
                     _rootOrientationController.ResetImmediately();
                 }
             }

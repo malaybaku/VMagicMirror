@@ -175,14 +175,33 @@ namespace Baku.VMagicMirror
         private void InitializeFileItems()
         {
             _fileItems.Clear();
-            var folder = SpecialFiles.MotionsDirectory;
+
+            if (!Directory.Exists(SpecialFiles.MotionsDirectory))
+            {
+                Directory.CreateDirectory(SpecialFiles.MotionsDirectory);
+            }
+
+            if (!Directory.Exists(SpecialFiles.LoopMotionsDirectory))
+            {
+                Directory.CreateDirectory(SpecialFiles.LoopMotionsDirectory);
+            }
+
             foreach (var filePath in Directory
-                .GetFiles(folder)
+                .GetFiles(SpecialFiles.MotionsDirectory)
                 .Where(file => Path.GetExtension(file) == VrmaFileExtension)
                 .Select(Path.GetFullPath)
                 )
             {
-                _fileItems.Add(new VrmaFileItem(filePath));
+                _fileItems.Add(new VrmaFileItem(filePath, false));
+            }
+
+            foreach (var filePath in Directory
+                .GetFiles(SpecialFiles.LoopMotionsDirectory)
+                .Where(file => Path.GetExtension(file) == VrmaFileExtension)
+                .Select(Path.GetFullPath)
+                )
+            {
+                _fileItems.Add(new VrmaFileItem(filePath, true));
             }
         }
         

@@ -366,6 +366,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private void InitializeBuiltInClipNames()
         {
             //NOTE: 数が少ないのでハードコーディングで済ます
+            _availableBuiltInClipNames.Add("Reset");
             _availableBuiltInClipNames.Add("Wave");
             _availableBuiltInClipNames.Add("Rokuro");
             _availableBuiltInClipNames.Add("Good");

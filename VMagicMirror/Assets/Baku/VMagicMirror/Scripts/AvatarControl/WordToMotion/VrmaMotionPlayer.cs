@@ -90,11 +90,22 @@ namespace Baku.VMagicMirror
             
             //NOTE: I/Fの戻り値としてはIK FadeInするの時間を引いて答えておく
             duration -= FadeDuration;
+            if (targetItem.Loop)
+            {
+                duration = -1f;
+            }
             
             CancelCurrentPlay();
             _cts = new();
             _playing = true;
-            RunAnimationAsync(targetItem, _cts.Token).Forget();
+            if (targetItem.Loop)
+            {
+                RunLoopAnimationAsync(targetItem, _cts.Token).Forget();
+            }
+            else
+            {
+                RunAnimationAsync(targetItem, _cts.Token).Forget();
+            }
         }
 
         //NOTE: ゲーム入力とWtMで同じモーションを使うとちょっと変になる可能性がある。
@@ -237,6 +248,48 @@ namespace Baku.VMagicMirror
             StopImmediate();
         }
 
+        private async UniTaskVoid RunLoopAnimationAsync(VrmaFileItem item, CancellationToken cancellationToken)
+        {
+            //非ループ版との違い
+            // 1. 実行時にループ扱いでスタートする
+            // 2. モーションはフェードインするだけで、フェードアウトはケアしない
+            // 3. 2に基づき、StopImmediateは呼ぶ必要がない
+            _motionSetter.FixHipLocalPosition = true;
+
+            _repository.Run(item, true);
+            var anim = _repository.PeekInstance;
+            var count = 0f;
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var rate = 1f;
+
+                if (count < FadeDuration)
+                {
+                    //0 -> 1, 始まってすぐ
+                    rate = Mathf.Clamp01(count / FadeDuration);
+                }
+                else
+                {
+                    // 中間部分。このタイミングでは補間が要らない
+                    _repository.StopPrevAnimation();
+                }
+
+                //NOTE: rate == 1とか0のケースの最適化はmotionSetterにケアさせる
+                if (_repository.PrevInstance is { IsPlaying: true } playingPrev)
+                {
+                    _motionSetter.Set(playingPrev, anim, rate);
+                }
+                else
+                {
+                    _motionSetter.Set(anim, rate);
+                }
+                
+                //NOTE: LateTick相当くらいのタイミングを狙っていることに注意
+                await UniTask.NextFrame(cancellationToken);
+                count += Time.deltaTime;
+            }
+        }
+        
         private async UniTaskVoid StopAsync(CancellationToken cancellationToken)
         {
             try

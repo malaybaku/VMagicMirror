@@ -49,6 +49,8 @@ namespace Baku.VMagicMirror
         private readonly VrmaMotionSetter _vrmaMotionSetter;
         private readonly VrmaMotionSetterLocker _vrmaMotionSetterLocker = new();
         private readonly CancellationTokenSource _cts = new();
+        private VrmaFileItem _currentRunningVrmaItem;
+        private CancellationTokenSource _loopCustomMotionCts = new();
 
         private readonly HashSet<string> _customMotionActionKeys = new();
         private bool _customMotionActionKeysInitialized;
@@ -138,6 +140,12 @@ namespace Baku.VMagicMirror
                 .Subscribe(TryRunCustomMotion)
                 .AddTo(this);
 
+            //NOTE: ループモーションについては単にマージせずにcount up / count downみたくする手もあるが、
+            //ここの挙動を詰めるのは面倒なのでマージしてしまいます
+            Observable.Merge(_sourceSet.Sources.Select(s => s.StopCustomMotion))
+                .Subscribe(TryStopLoopCustomMotion)
+                .AddTo(this);
+            
             //NOTE: 2デバイスから同時に来るのは許容したうえで、
             //ゲームパッド側はスティックが0付近のとき何も飛んでこない、というのを期待してる
             Observable.Merge(
@@ -176,6 +184,8 @@ namespace Baku.VMagicMirror
             base.Dispose();
             _cts.Cancel();
             _cts.Dispose();
+            _loopCustomMotionCts?.Cancel();
+            _loopCustomMotionCts?.Dispose();
         }
 
         private void OnVrmLoaded(VrmLoadedInfo obj)
@@ -198,6 +208,10 @@ namespace Baku.VMagicMirror
             _animator = null;
             _vrmRoot = null;
             _rootOrientationController.ResetImmediately();
+            
+            _loopCustomMotionCts?.Cancel();
+            _loopCustomMotionCts?.Dispose();
+            _loopCustomMotionCts = null;
         }
 
         private void TryAct(int triggerHash)
@@ -245,70 +259,87 @@ namespace Baku.VMagicMirror
             }
             
             _customMotionRunning = true;
-            RunCustomMotionAsync(item, _cts.Token).Forget();
+            _currentRunningVrmaItem = item;
+            _loopCustomMotionCts?.Cancel();
+            _loopCustomMotionCts?.Dispose();
+            _loopCustomMotionCts = new();
+            RunCustomMotionAsync(item, _cts.Token, _loopCustomMotionCts.Token).Forget();
+        }
+        
+        private void TryStopLoopCustomMotion(string actionKey)
+        {
+            if (!_currentRunningVrmaItem.IsValid ||
+                _currentRunningVrmaItem.FileName != actionKey)
+            {
+                return;
+            }
+
+            _loopCustomMotionCts?.Cancel();
+            _loopCustomMotionCts?.Dispose();
+            _loopCustomMotionCts = null;
         }
 
-        private async UniTaskVoid RunCustomMotionAsync(VrmaFileItem item, CancellationToken ct)
+        //NOTE: 2つ目のtokenはループモーションでのみ参照され、かつ即時ではなく遅延つきで終了処理を行う
+        private async UniTaskVoid RunCustomMotionAsync(VrmaFileItem item, CancellationToken ct, CancellationToken loopMotionCt)
         {
             _vrmaMotionSetter.FixHipLocalPosition = false;
 
             //やること: 適用率を0 > 1 > 0に遷移させつつ適用していく
             //prevのアニメーションを適用するかどうかは動的にチェックして決める
-            _vrmaRepository.Run(item, false);
+            _vrmaRepository.Run(item, item.Loop);
             var anim = _vrmaRepository.PeekInstance;
-            var animDuration = _vrmaRepository.PeekInstance.Duration;
+            // ループモーションに対してはキャンセルが指示されることで有限の値が入る
+            var animDuration = item.Loop
+                ? -1f
+                : _vrmaRepository.PeekInstance.Duration;
+            
             var count = 0f;
-            while (count < animDuration)
+            while (animDuration < 0 || count < animDuration)
             {
-                var rate = 1f;
-                var hipRate = 1f;
+                // ループの終了を指定されるとフェードアウト用にanimDurationが設定される
+                if (animDuration < 0 && loopMotionCt.IsCancellationRequested)
+                {
+                    animDuration = count + CustomMotionFadeOutDuration;
+                }
 
-                if (count > animDuration - CustomMotionHipFadeOutDuration)
+                var rate = 1f;
+
+                if (animDuration > 0 && count > animDuration - CustomMotionHipFadeOutDuration)
                 {
                     //終了間際, 1->0に下がっていく
                     _vrmaRepository.StopPrevAnimation();
-                    hipRate = Mathf.Clamp01((animDuration - count) / CustomMotionHipFadeOutDuration);
+                    rate = Mathf.Clamp01((animDuration - count) / CustomMotionHipFadeOutDuration);
                 }
                 else if (count < CustomMotionHipFadeInDuration)
                 {
                     //0 -> 1, 始まってすぐ
-                    hipRate = Mathf.Clamp01(count / CustomMotionHipFadeInDuration);
+                    rate = Mathf.Clamp01(count / CustomMotionHipFadeInDuration);
                 }
                 else
                 {
                     // 中間部分。このタイミングで補間が要らなくなるので明示的に宣言しておく
                     _vrmaRepository.StopPrevAnimation();
-                }                
-
-                if (count > animDuration - CustomMotionFadeOutDuration)
-                {
-                    // 終了間近
-                    rate = Mathf.Clamp01((animDuration - count) / CustomMotionFadeOutDuration);
-                }
-                else if (count < CustomMotionFadeInDuration)
-                {
-                    // 始まってすぐ
-                    rate = Mathf.Clamp01(count / CustomMotionFadeInDuration);
                 }
                 
                 //NOTE: rate == 1とかrate == 0のケースの最適化はmotionSetterにケアさせる
                 if (_vrmaRepository.PrevInstance is { IsPlaying: true } playingPrev)
                 {
                     //VRMAどうしの補間中にしか通らないパスで、通るのは珍しい
-                    _vrmaMotionSetter.Set(playingPrev, anim, rate, hipRate);
+                    _vrmaMotionSetter.Set(playingPrev, anim, rate, rate);
                 }
                 else
                 {
-                    _vrmaMotionSetter.Set(anim, rate, hipRate);
+                    _vrmaMotionSetter.Set(anim, rate, rate);
                 }
                 
                 //NOTE: LateTick相当くらいのタイミングを狙っていることに注意
                 await UniTask.NextFrame(ct);
                 count += Time.deltaTime;
-            }            
-            
+            }
+
             _vrmaRepository.StopCurrentAnimation();
             _vrmaMotionSetter.ReleaseLock();
+            _currentRunningVrmaItem = default;
             _customMotionRunning = false;
         }
 

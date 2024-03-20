@@ -22,7 +22,8 @@ namespace Baku.VMagicMirror.GameInput
         IObservable<bool> IGameInputSource.GunFire => _gunFire;
         IObservable<Unit> IGameInputSource.Jump => _jump;
         IObservable<Unit> IGameInputSource.Punch => _punch;
-        IObservable<string> IGameInputSource.CustomMotion => _customMotion;
+        IObservable<string> IGameInputSource.StartCustomMotion => _customMotion;
+        IObservable<string> IGameInputSource.StopCustomMotion => _stopCustomMotion;
         
         #endregion
         
@@ -35,6 +36,7 @@ namespace Baku.VMagicMirror.GameInput
         private readonly Subject<Unit> _jump = new();
         private readonly Subject<Unit> _punch = new();
         private readonly Subject<string> _customMotion = new();
+        private readonly Subject<string> _stopCustomMotion = new();
 
         private readonly IKeyMouseEventSource _keySource;
         private readonly IMessageReceiver _receiver;
@@ -309,6 +311,18 @@ namespace Baku.VMagicMirror.GameInput
             if (_keyAssign.TriggerKeyCode == key)
             {
                 _gunFire.Value = false;
+            }
+
+            foreach (var custom in _keyAssign.CustomActions)
+            {
+                if (custom.KeyCode == key)
+                {
+                    var actionKey = custom.CustomActionKey;
+                    if (!string.IsNullOrEmpty(actionKey))
+                    {
+                        _stopCustomMotion.OnNext(actionKey);
+                    }
+                }
             }
 
             if (_useWasdMove)

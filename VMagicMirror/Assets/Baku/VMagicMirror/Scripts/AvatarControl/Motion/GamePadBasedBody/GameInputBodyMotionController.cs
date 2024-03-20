@@ -133,7 +133,7 @@ namespace Baku.VMagicMirror
                 .Subscribe(_ => TryAct(Punch))
                 .AddTo(this);
 
-            Observable.Merge(_sourceSet.Sources.Select(s => s.CustomMotion))
+            Observable.Merge(_sourceSet.Sources.Select(s => s.StartCustomMotion))
                 .ThrottleFirst(TimeSpan.FromSeconds(0.2f))
                 .Subscribe(TryRunCustomMotion)
                 .AddTo(this);

@@ -206,9 +206,10 @@ namespace Baku.VMagicMirror
         
         private async UniTaskVoid InitializeInstancesAsync()
         {
-            try
+            //ファイル単位で読み込み不正があっても他のロードに影響しないようにしておく
+            foreach (var fileItem in GetAvailableFileItems())
             {
-                foreach (var fileItem in GetAvailableFileItems())
+                try
                 {
                     for (var _ = 0; _ < 2; _++)
                     {
@@ -225,15 +226,12 @@ namespace Baku.VMagicMirror
                         ));
                     }
                 }
+                catch (Exception ex)
+                {
+                    LogOutput.Instance.Write(ex);
+                }
             }
-            catch (Exception ex)
-            {
-                LogOutput.Instance.Write(ex);
-            }
-            finally
-            {
-                _instanceInitialized = true;
-            }
+            _instanceInitialized = true;
         }
     }
 }

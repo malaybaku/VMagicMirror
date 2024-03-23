@@ -388,8 +388,23 @@ namespace Baku.VMagicMirror.GameInput
                 case GameInputButtonAction.Trigger:
                     _gunFire.Value = pressed;
                     return;
-            }
+                case GameInputButtonAction.Custom:
+                    if (string.IsNullOrEmpty(customActionKey))
+                    {
+                        return;
+                    }
 
+                    if (pressed)
+                    {
+                        _customMotion.OnNext(customActionKey);
+                    }
+                    else
+                    {
+                        _stopCustomMotion.OnNext(customActionKey);
+                    }
+                    return;
+            }
+            
             if (!pressed)
             {
                 return;
@@ -402,12 +417,6 @@ namespace Baku.VMagicMirror.GameInput
                     return;
                 case GameInputButtonAction.Punch:
                     _punch.OnNext(Unit.Default);
-                    return;
-                case GameInputButtonAction.Custom:
-                    if (!string.IsNullOrEmpty(customActionKey))
-                    {
-                        _customMotion.OnNext(customActionKey);
-                    }
                     return;
             }
         }

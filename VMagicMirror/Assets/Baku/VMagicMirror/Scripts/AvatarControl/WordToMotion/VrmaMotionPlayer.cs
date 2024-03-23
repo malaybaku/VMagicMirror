@@ -296,6 +296,11 @@ namespace Baku.VMagicMirror
             {
                 var count = 0f;
                 var anim = _repository.PeekInstance;
+                if (anim == null)
+                {
+                    return;
+                }
+
                 while (count < FadeDuration && _repository.PeekInstance.IsPlaying)
                 {
                     var rate = 1f - Mathf.Clamp01(count / FadeDuration);

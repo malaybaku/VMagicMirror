@@ -156,44 +156,44 @@
       }
     },
     "com.vrmc.gltf": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.114.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/UniGLTF#v0.121.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.114.0",
+        "com.vrmc.vrmshaders": "0.121.0",
         "com.unity.modules.animation": "1.0.0"
       },
-      "hash": "d90b26b9878c135aff8502afc72cdf72a68d7618"
+      "hash": "640fabea73060227c33d0e4386e0ba504a99c3e4"
     },
     "com.vrmc.univrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.114.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM#v0.121.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.114.0",
-        "com.vrmc.gltf": "0.114.0",
+        "com.vrmc.vrmshaders": "0.121.0",
+        "com.vrmc.gltf": "0.121.0",
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "d90b26b9878c135aff8502afc72cdf72a68d7618"
+      "hash": "640fabea73060227c33d0e4386e0ba504a99c3e4"
     },
     "com.vrmc.vrm": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.114.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRM10#v0.121.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.vrmc.vrmshaders": "0.114.0",
-        "com.vrmc.gltf": "0.114.0"
+        "com.vrmc.vrmshaders": "0.121.0",
+        "com.vrmc.gltf": "0.121.0"
       },
-      "hash": "d90b26b9878c135aff8502afc72cdf72a68d7618"
+      "hash": "640fabea73060227c33d0e4386e0ba504a99c3e4"
     },
     "com.vrmc.vrmshaders": {
-      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.114.0",
+      "version": "https://github.com/vrm-c/UniVRM.git?path=/Assets/VRMShaders#v0.121.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.modules.imageconversion": "1.0.0"
       },
-      "hash": "d90b26b9878c135aff8502afc72cdf72a68d7618"
+      "hash": "640fabea73060227c33d0e4386e0ba504a99c3e4"
     },
     "jp.keijiro.klak.spout": {
       "version": "2.0.3",

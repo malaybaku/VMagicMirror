@@ -174,6 +174,7 @@ namespace Baku.VMagicMirror
         private void InitializeFileItems()
         {
             _fileItems.Clear();
+            var nonLoopFileNames = new List<string>();
 
             if (!Directory.Exists(SpecialFiles.MotionsDirectory))
             {
@@ -191,7 +192,9 @@ namespace Baku.VMagicMirror
                 .Select(Path.GetFullPath)
                 )
             {
-                _fileItems.Add(new VrmaFileItem(filePath, false));
+                var item = new VrmaFileItem(filePath, false);
+                _fileItems.Add(item);
+                nonLoopFileNames.Add(item.FileName);
             }
 
             foreach (var filePath in Directory
@@ -200,7 +203,12 @@ namespace Baku.VMagicMirror
                 .Select(Path.GetFullPath)
                 )
             {
-                _fileItems.Add(new VrmaFileItem(filePath, true));
+                // NOTE: 値の評価方法を揃えたいのでWhere句ではなくコッチでやっている
+                var item = new VrmaFileItem(filePath, true);
+                if (!nonLoopFileNames.Contains(item.FileName))
+                {
+                    _fileItems.Add(item);
+                }
             }
         }
         

@@ -5,16 +5,19 @@ namespace Baku.VMagicMirror
 {
     public readonly struct VrmaFileItem : IEquatable<VrmaFileItem>
     {
-        public VrmaFileItem(string filePath)
+        public VrmaFileItem(string filePath, bool loop)
         {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
             FileNameWithExtension = Path.GetFileNameWithoutExtension(filePath);
+            Loop = loop;
         }
 
         public string FileName { get; }
         public string FileNameWithExtension { get; }
         public string FilePath { get; }
+        /// <summary> ループ想定のモーションを置いてるフォルダから読み出したファイルに対してtrueになる </summary>
+        public bool Loop { get; }
 
         public bool IsValid => !string.IsNullOrEmpty(FileName);
         

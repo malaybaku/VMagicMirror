@@ -30,6 +30,11 @@ namespace Baku.VMagicMirror.GameInput
         IObservable<Unit> Punch { get; }
         
         /// <summary> .vrma のカスタムモーションはココからkeyを指定して発火 </summary>
-        IObservable<string> CustomMotion { get; }
+        IObservable<string> StartCustomMotion { get; }
+        /// <summary>
+        /// .vrma のカスタムモーションが割当たっているボタン/キーを離すことで発火する。
+        /// ただし、この発火でモーションが止まるのはループモーションのみ
+        /// </summary>
+        IObservable<string> StopCustomMotion { get; }
     }
 }

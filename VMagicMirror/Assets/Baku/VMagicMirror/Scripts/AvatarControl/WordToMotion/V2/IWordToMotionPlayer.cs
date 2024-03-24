@@ -15,7 +15,11 @@ namespace Baku.VMagicMirror
         bool CanPlay(MotionRequest request);
         
         /// <summary>
-        /// モーションを実行する。この関数が呼ばれた場合、実装側では<see cref="Stop()"/>を呼ばないでも勝手に通常姿勢に戻るようにする。
+        /// モーションを実行する。
+        /// この関数が呼ばれた場合、実装側では
+        /// - Loopしないモーションの場合、<see cref="Stop()"/>を呼ばないでも勝手に通常姿勢に戻るようにする。
+        /// - Loopするモーションの場合、<see cref="Stop()"/>を呼ぶまではモーションを持続させる。
+        /// durationはループモーションの場合マイナスの値を返却し、そうでない場合は通常の長さを返却する
         /// </summary>
         /// <param name="request"></param>
         /// <param name="duration"></param>

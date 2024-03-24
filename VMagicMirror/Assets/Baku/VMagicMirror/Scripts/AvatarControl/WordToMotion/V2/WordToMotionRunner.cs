@@ -241,6 +241,12 @@ namespace Baku.VMagicMirror.WordToMotion
 
         private async UniTaskVoid ResetMotionAsync(float delay, bool fadeIkAndFinger, CancellationToken cancellationToken)
         {
+            if (delay < 0)
+            {
+                //モーションがループの場合はココを通過
+                return;
+            }
+
             try
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
@@ -261,6 +267,12 @@ namespace Baku.VMagicMirror.WordToMotion
         
         private async UniTaskVoid ResetBlendShapeAsync(float delay, CancellationToken cancellationToken)
         {
+            if (delay < 0)
+            {
+                //モーションがループの場合はココを通過
+                return;
+            }
+
             try
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);
@@ -274,6 +286,12 @@ namespace Baku.VMagicMirror.WordToMotion
 
         private async UniTaskVoid ResetAccessoryAsync(float delay, CancellationToken cancellationToken)
         {
+            if (delay < 0)
+            {
+                //モーションがループの場合はココを通過
+                return;
+            }
+
             try
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: cancellationToken);

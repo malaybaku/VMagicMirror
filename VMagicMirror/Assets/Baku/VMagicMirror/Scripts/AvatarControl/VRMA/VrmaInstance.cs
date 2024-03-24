@@ -12,7 +12,8 @@ namespace Baku.VMagicMirror
         public VrmaFileItem File { get; }
         public Vrm10AnimationInstance Instance { get; }
         public Animation Animation { get; }
-
+        public bool Loop => File.Loop;
+        
         public VrmaInstance(VrmaFileItem file, Vrm10AnimationInstance instance, Animation animation)
         {
             File = file;

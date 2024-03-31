@@ -7,6 +7,16 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v3.7.0
+{: .doc-sec2 }
+
+2024/03/31
+
+* 追加: VRM Animationの再生機能でモーションをループさせられるようになりました。セットアップ方法は[VRM AnimationをVMagicMirrorで使う](../tips/use_vrma)を参照ください。
+* 修正: v3.6.0 でBloomのエフェクトが動作しなくなっていたのを修正しました。 
+* 修正: 一部の vrma ファイルについて、ファイルが正常であるにもかかわらず読み込めないことがある問題を対策しました。
+
+
 #### v3.6.0
 {: .doc-sec2 }
 

@@ -62,7 +62,6 @@ namespace Baku.VMagicMirror
         public bool TryGetDuration(VrmaFileItem file, out float duration)
         {
             //NOTE: ロード前にめっちゃ急いで呼び出されたら適当に答える
-            //。わかりやすさのため
             if (!_instanceInitialized)
             {
                 duration = 1f;
@@ -175,22 +174,50 @@ namespace Baku.VMagicMirror
         private void InitializeFileItems()
         {
             _fileItems.Clear();
-            var folder = SpecialFiles.MotionsDirectory;
+            var nonLoopFileNames = new List<string>();
+
+            if (!Directory.Exists(SpecialFiles.MotionsDirectory))
+            {
+                Directory.CreateDirectory(SpecialFiles.MotionsDirectory);
+            }
+
+            if (!Directory.Exists(SpecialFiles.LoopMotionsDirectory))
+            {
+                Directory.CreateDirectory(SpecialFiles.LoopMotionsDirectory);
+            }
+
             foreach (var filePath in Directory
-                .GetFiles(folder)
+                .GetFiles(SpecialFiles.MotionsDirectory)
                 .Where(file => Path.GetExtension(file) == VrmaFileExtension)
                 .Select(Path.GetFullPath)
                 )
             {
-                _fileItems.Add(new VrmaFileItem(filePath));
+                var item = new VrmaFileItem(filePath, false);
+                _fileItems.Add(item);
+                nonLoopFileNames.Add(item.FileName);
+            }
+
+            foreach (var filePath in Directory
+                .GetFiles(SpecialFiles.LoopMotionsDirectory)
+                .Where(file => Path.GetExtension(file) == VrmaFileExtension)
+                .Select(Path.GetFullPath)
+                )
+            {
+                // NOTE: 値の評価方法を揃えたいのでWhere句ではなくコッチでやっている
+                var item = new VrmaFileItem(filePath, true);
+                if (!nonLoopFileNames.Contains(item.FileName))
+                {
+                    _fileItems.Add(item);
+                }
             }
         }
         
         private async UniTaskVoid InitializeInstancesAsync()
         {
-            try
+            //ファイル単位で読み込み不正があっても他のロードに影響しないようにしておく
+            foreach (var fileItem in GetAvailableFileItems())
             {
-                foreach (var fileItem in GetAvailableFileItems())
+                try
                 {
                     for (var _ = 0; _ < 2; _++)
                     {
@@ -207,15 +234,12 @@ namespace Baku.VMagicMirror
                         ));
                     }
                 }
+                catch (Exception ex)
+                {
+                    LogOutput.Instance.Write(ex);
+                }
             }
-            catch (Exception ex)
-            {
-                LogOutput.Instance.Write(ex);
-            }
-            finally
-            {
-                _instanceInitialized = true;
-            }
+            _instanceInitialized = true;
         }
     }
 }

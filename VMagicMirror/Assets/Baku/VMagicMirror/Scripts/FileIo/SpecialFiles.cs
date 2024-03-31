@@ -42,7 +42,10 @@ namespace Baku.VMagicMirror
         public static string MotionsDirectory => Application.isEditor 
             ? Path.Combine(Application.streamingAssetsPath, "Motions") 
             : Path.Combine(RootDirectory, "Motions");
-        
+
+        public static string LoopMotionsDirectory
+            => Path.Combine(MotionsDirectory, "Loop");
+
         public static string GetTextureReplacementPath(string textureFileName) => Application.isEditor
             ? Path.Combine(Application.streamingAssetsPath, textureFileName)
             : Path.Combine(RootDirectory, "Textures", textureFileName);

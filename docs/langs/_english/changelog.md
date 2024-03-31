@@ -11,7 +11,7 @@ lang: en
 #### v3.7.0
 {: .doc-sec2 }
 
-2024/03/29
+2024/03/31
 
 * Add: Support to run VRM Animation as loop motion. See detail at [Use VRM Animation](../tips/use_vrma).
 * Fixed: In v3.6.0, Bloom effect did not work correctly.

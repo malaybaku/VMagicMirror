@@ -34,6 +34,14 @@ lang: en
 
 `Wind`: Strength and direction of wind.
 
+<div class="note-area" markdown="1">
+
+**NOTE**
+
+`Desktop Color Based Lighting` option uses a kind of window capture API and it leads yellow frame effect on your monitor. 
+
+</div>
+
 #### 2. Hint
 {: .doc-sec2 }
 

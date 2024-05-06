@@ -278,6 +278,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_Arm_MouseAndKeyMode_None">動作なし</sys:String>
     <sys:String x:Key="Motion_Arm_GamepadMode_Default">デフォルト</sys:String>
     <sys:String x:Key="Motion_Arm_GamepadMode_ArcadeStick">アーケードスティック</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode_CarHandle">カーアクション</sys:String>
     <sys:String x:Key="Motion_Arm_GamepadMode_GunController">ガンコントローラ</sys:String>
 
     <!-- Motion : Hand -->

@@ -161,12 +161,12 @@ namespace Baku.VMagicMirror
         Gamepad = 0,
         /// <summary> アケコン </summary>
         ArcadeStick = 1,
+        /// <summary> 車のハンドルっぽいやつ </summary>
+        CarController = 2,
         /// <summary> 不明なため未サポート </summary>
         Unknown = 3,
         // /// <summary> ガンコン </summary>
         // GunController = 2,
-        // /// <summary> 車のハンドルっぽいやつ </summary>
-        // CarController = 3,
     }
 
     public enum KeyboardAndMouseMotionModes

@@ -127,14 +127,13 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode 
-            = new ReactiveProperty<GamepadMotionModes>(GamepadMotionModes.Gamepad);
+        private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode = new(GamepadMotionModes.Gamepad);
 
         private readonly ReactiveProperty<KeyboardAndMouseMotionModes> _keyboardAndMouseMotionMode = 
-            new ReactiveProperty<KeyboardAndMouseMotionModes>(KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
+            new(KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
         
         //NOTE: これはすごく特別なフラグで、これが立ってると手のIKに何か入った場合でも手が下がりっぱなしになる
-        public ReactiveProperty<bool> AlwaysHandDown { get; } = new ReactiveProperty<bool>(false);
+        public ReactiveProperty<bool> AlwaysHandDown { get; } = new(false);
 
         public bool IsLeftHandGripGamepad => _leftTargetType.Value == HandTargetType.Gamepad;
         public bool IsRightHandGripGamepad => _rightTargetType.Value == HandTargetType.Gamepad;

@@ -24,13 +24,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5933559195360744185}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6432728701393205835}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1784795306958615815
 MonoBehaviour:
@@ -49,6 +50,8 @@ MonoBehaviour:
     type: 3}
   arcadeStickProvider: {fileID: 6167114964147250039, guid: b72ecbe2757ebee4ba22fe5c8d70c8d3,
     type: 3}
+  carHandleProvider: {fileID: 2065479404992935130, guid: 35c99e14ff68e2349aa44b26205ebe5c,
+    type: 3}
   keyboardProvider: {fileID: 1224206899735044971, guid: c9713bdffd55f144f8a376413b0063cb,
     type: 3}
   touchPadProvider: {fileID: 8074230364789003341, guid: 96adbbcc2b186b2489c6acabb7d62549,
@@ -66,6 +69,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5933559195360744184}
     m_Modifications:
     - target: {fileID: 63078896318268246, guid: acd3fd0b869ac9943a796b6ec1d24506,
@@ -420,6 +424,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5838226657027795473, guid: acd3fd0b869ac9943a796b6ec1d24506, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: acd3fd0b869ac9943a796b6ec1d24506, type: 3}
 --- !u!4 &6432728701393205835 stripped
 Transform:

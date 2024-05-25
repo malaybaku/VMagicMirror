@@ -331,7 +331,6 @@ MonoBehaviour:
   eyes:
   - {fileID: 79273756}
   - {fileID: 1468730442}
-  ik: {fileID: 611224691}
   factor: -30
   eyeFactor: -6
 --- !u!1001 &463015525

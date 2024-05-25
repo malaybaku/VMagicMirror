@@ -689,6 +689,7 @@ namespace Baku.VMagicMirror
         PenTablet,
         Gamepad,
         ArcadeStick,
+        CarHandle,
         MidiController,
         ImageBaseHand,
         AlwaysDown,

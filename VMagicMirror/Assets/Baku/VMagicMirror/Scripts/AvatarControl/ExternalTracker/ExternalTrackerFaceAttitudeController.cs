@@ -34,16 +34,19 @@ namespace Baku.VMagicMirror
         private Transform _head = null;
         private ExternalTrackerDataSource _externalTracker;
         private GameInputBodyMotionController _gameInputBodyMotionController;
+        private CarHandleBasedFK _carHandleBasedFk;
         private Quaternion _prevRotation = Quaternion.identity;
         
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, 
             GameInputBodyMotionController gameInputBodyMotionController,
+            CarHandleBasedFK carHandleBasedFk,
             ExternalTrackerDataSource externalTracker
             )
         {
             _externalTracker = externalTracker;
+            _carHandleBasedFk = carHandleBasedFk;
             _gameInputBodyMotionController = gameInputBodyMotionController;
 
             vrmLoadable.VrmLoaded += info =>
@@ -79,8 +82,16 @@ namespace Baku.VMagicMirror
             //ややこしいが、合成した回転を鏡像反転することを考慮して事前に反転している
             gameInputRot.y *= -1f;
             gameInputRot.z *= -1f;
+
+            var carHandleRot = _carHandleBasedFk.GetHeadYawRotation();
+            //これもgameInputと同様
+            carHandleRot.y *= -1f;
+            carHandleRot.z *= -1f;
             
-            var rot = gameInputRot * Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
+            var rot = 
+                gameInputRot *
+                carHandleRot * 
+                Quaternion.AngleAxis(rawAngle * angleApplyFactor, rawAxis);
             
             //ピッチだけ追加で絞る
             var pitchCheck = rot * Vector3.forward;

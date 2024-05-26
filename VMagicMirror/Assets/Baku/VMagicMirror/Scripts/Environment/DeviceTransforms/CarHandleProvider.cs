@@ -18,11 +18,13 @@ namespace Baku.VMagicMirror
         [SerializeField] private Transform steering;
 
         [SerializeField] private Vector3 neckToHandlePosition;
+        [SerializeField] private AnimationCurve angleToHeadYawRateCurve;
         
         private bool _hasModel;
         private Vector3 _neckOrHeadPositionFromRoot = Vector3.up;
 
         public Transform RootTransform => transform;
+        public Transform OffsetAddedTransform => offset;
         //NOTE: 実際はフリーレイアウトモードでスケールするのが正しい
         public float CarHandleRadius => 0.2f;
         
@@ -34,6 +36,9 @@ namespace Baku.VMagicMirror
         {
             steering.localRotation = Quaternion.Euler(0, 0, angle);
         }
+
+        public float GetHeadYawRateFromAngleRate(float rateAbs) 
+            => angleToHeadYawRateCurve.Evaluate(rateAbs);
 
         [Inject]
         public void Initialize(IVRMLoadable vrmLoadable)

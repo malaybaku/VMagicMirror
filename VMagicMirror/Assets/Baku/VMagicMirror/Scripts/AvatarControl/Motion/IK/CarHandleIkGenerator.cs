@@ -9,39 +9,32 @@ namespace Baku.VMagicMirror.IK
     /// - 角度に対して両手のIK位置を決める
     /// - とくに、途中の持ち替え操作に対応している
     /// </summary>
-    
     public class CarHandleIkGenerator : HandIkGeneratorBase
     {
-        // [SerializeField] private Transform leftHandIkTarget = null;
-        // [SerializeField] private Transform rightHandIkTarget = null;
-        // [SerializeField] private Transform bodyRotationTarget = null;
-        //
-        // [SerializeField] private Transform centerOfHandle = null;
-        // [SerializeField] private Transform handleRotationVisual = null;
-
         //TODO: Dependencyから受け取る値たち
-        private Transform centerOfHandle;
-        private float HandleRadius = 0.4f;
-        private AnimationCurve angleToHeadYawRateCurve;
+        private Transform CenterOfHandle => _provider.OffsetAddedTransform;
+        private float HandleRadius => _provider.CarHandleRadius;
+        // private AnimationCurve angleToHeadYawRateCurve;
 
-
-        private const float bodyRotationAngleLimit = 3f;
         private const float HandleGripChangeDuration = 0.3f;
-
-
+        
         private const float AngleUpperOffset = 30f;
         private const float AngleDownDiff = 50f;
         private const float AngleUpDiff = 120f;
         private const float MaxAngle = 540f;
-        private float currentAngle;
 
+        private float CurrentAngle => _angleGenerator.HandleAngle;
+
+        private readonly CarHandleAngleGenerator _angleGenerator;
         private readonly CarHandleProvider _provider;
         
         public CarHandleIkGenerator(
             HandIkGeneratorDependency dependency,
+            CarHandleAngleGenerator angleGenerator,
             CarHandleProvider provider
             ) : base(dependency)
         {
+            _angleGenerator = angleGenerator;
             _provider = provider;
 
             _leftHandState = new HandleHandState(
@@ -81,19 +74,7 @@ namespace Baku.VMagicMirror.IK
         public override IHandIkState LeftHandState => _leftHandState;
         private readonly HandleHandState _rightHandState;
         public override IHandIkState RightHandState => _rightHandState;
-
-        //下記の公開値はHandIkじゃないけど、HandIkの適用中に値が効く
-
-        private readonly ReactiveProperty<float> _bodyRotationRate = new(0f);
-        //NOTE: 1になると最大限まで左に傾く
-        public IReadOnlyReactiveProperty<float> BodyRotationRate => _bodyRotationRate;
-
-        private readonly ReactiveProperty<float> _eyeRotationRate = new(0f);
-        public IReadOnlyReactiveProperty<float> EyeRotationRate => _eyeRotationRate;
-
-        private readonly ReactiveProperty<float> _headYawRotationRate = new(0);
-        public IReadOnlyReactiveProperty<float> HeadYawRotationRate => _headYawRotationRate;
-
+        
         private static float Sigmoid(float value, float factor, float pow)
         {
             return 2f / (1 + Mathf.Pow(pow, -value / factor)) - 1f;
@@ -101,28 +82,21 @@ namespace Baku.VMagicMirror.IK
 
         private static float GetBodyRotationRate(float angle) => Sigmoid(angle, 180f, 4);
 
-        private float GetHeadRotationRate(float angle)
-        {
-            //NOTE: 0~90degあたりにほぼ不感になるエリアが欲しいのでカーブを使ってます
-            var rate = Mathf.Clamp01(Mathf.Abs(angle / MaxAngle));
-            return Mathf.Sign(angle) * angleToHeadYawRateCurve.Evaluate(rate);
-        }
-
         private float GetEyeRotationRate(float angle) => Sigmoid(angle, 85f, 4);
         
         public override void Update()
         {
-            if (centerOfHandle == null)
+            if (CenterOfHandle == null)
             {
                 return;
             }
 
             //NOTE: 定数化したら更新を省けるやつがあるので、コード自体を省くこと！
-            _leftHandState.HandleTransform = centerOfHandle;
+            _leftHandState.HandleTransform = CenterOfHandle;
             _leftHandState.HandleRadius = HandleRadius;
             _leftHandState.GripChangeMoveDuration = HandleGripChangeDuration;
 
-            _rightHandState.HandleTransform = centerOfHandle;
+            _rightHandState.HandleTransform = CenterOfHandle;
             _rightHandState.HandleRadius = HandleRadius;
             _rightHandState.GripChangeMoveDuration = HandleGripChangeDuration;
 
@@ -138,32 +112,10 @@ namespace Baku.VMagicMirror.IK
             //NOTE: スティックの右方向が正にする場合、 `angle = -stick.x` みたいな関係になりうるので注意 
 
             var dt = Time.deltaTime;
-            _leftHandState.HandleAngle = currentAngle;
-            _rightHandState.HandleAngle = currentAngle;
+            _leftHandState.HandleAngle = CurrentAngle;
+            _rightHandState.HandleAngle = CurrentAngle;
             _leftHandState.Update(dt);
             _rightHandState.Update(dt);
-            _bodyRotationRate.Value = GetBodyRotationRate(currentAngle);
-            _headYawRotationRate.Value = GetHeadRotationRate(currentAngle);
-            _eyeRotationRate.Value = GetEyeRotationRate(currentAngle);
-
-            //ApplyCurrentPoses();
-        }
-
-        //NOTE: ここは本来別のクラスでやってほしい
-        private void ApplyCurrentPoses()
-        {
-            // handleRotationVisual.localRotation = Quaternion.AngleAxis(currentAngle, Vector3.forward);
-            //
-            // var leftPose = _leftHandState.CurrentPose.Value;
-            // var rightPose = _rightHandState.CurrentPose.Value;
-            // leftHandIkTarget.SetPositionAndRotation(_leftHandState.CurrentPose.Value.position, leftPose.rotation);
-            // rightHandIkTarget.SetPositionAndRotation(rightPose.position, rightPose.rotation);
-            //
-            // if (bodyRotationTarget != null)
-            // {
-            //     bodyRotationTarget.localRotation = 
-            //         Quaternion.AngleAxis(bodyRotationAngleLimit * BodyRotationRate.Value, Vector3.forward);
-            // }
         }
 
         class HandleHandState : IHandIkState
@@ -371,52 +323,5 @@ namespace Baku.VMagicMirror.IK
             
             #endregion
         }
-        
-        
-        // private class CarHandleHandIkState : IHandIkState
-        // {
-        //     public CarHandleHandIkState(CarHandleIkGenerator parent, ReactedHand hand)
-        //     {
-        //         _parent = parent;
-        //         Hand = hand;
-        //         _data = hand == ReactedHand.Right ? _parent._rightHand : _parent._leftHand;
-        //     }
-        //     private readonly CarHandleIkGenerator _parent;
-        //     private readonly IIKData _data;
-        //
-        //     public bool SkipEnterIkBlend => false;
-        //     public void RaiseRequest() => RequestToUse?.Invoke(this);
-        //
-        //     public Vector3 Position => _data.Position;
-        //     public Quaternion Rotation => _data.Rotation;
-        //     public ReactedHand Hand { get; }
-        //     public HandTargetType TargetType => HandTargetType.CarHandle;
-        //     public event Action<IHandIkState> RequestToUse;
-        //     
-        //     public void Enter(IHandIkState prevState)
-        //     {
-        //         if (Hand == ReactedHand.Left)
-        //         {
-        //             _parent.Dependency.Reactions.GamepadFinger.GripLeftHand();
-        //         }
-        //         else
-        //         {
-        //             _parent.Dependency.Reactions.GamepadFinger.GripRightHand();
-        //         }
-        //     }
-        //
-        //     public void Quit(IHandIkState nextState)
-        //     {
-        //         if (Hand == ReactedHand.Left)
-        //         {
-        //             _parent.Dependency.Reactions.GamepadFinger.ReleaseLeftHand();
-        //         }
-        //         else
-        //         {
-        //             _parent.Dependency.Reactions.GamepadFinger.ReleaseRightHand();
-        //         }
-        //     }
-        // }
-
     }
 }

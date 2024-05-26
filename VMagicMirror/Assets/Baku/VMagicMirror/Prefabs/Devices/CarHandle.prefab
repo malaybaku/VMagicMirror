@@ -48,6 +48,48 @@ MonoBehaviour:
   offset: {fileID: 3138706418017973560}
   steering: {fileID: 7975857017850049907}
   neckToHandlePosition: {x: 0, y: 0, z: 0.35}
+  angleToHeadYawRateCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0.29538673
+      tangentMode: 65
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.17728679
+      value: 0.052368164
+      inSlope: 0.29538673
+      outSlope: 0.3676052
+      tangentMode: 5
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.16847757
+    - serializedVersion: 3
+      time: 0.5598227
+      value: 0.90689087
+      inSlope: 0.5963697
+      outSlope: 0.5963697
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.17956503
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &3767429794907629684
 GameObject:
   m_ObjectHideFlags: 0

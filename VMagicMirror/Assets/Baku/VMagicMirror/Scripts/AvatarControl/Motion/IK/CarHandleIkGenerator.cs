@@ -16,7 +16,6 @@ namespace Baku.VMagicMirror.IK
         private const float AngleUpperOffset = 30f;
         private const float AngleDownDiff = 50f;
         private const float AngleUpDiff = 120f;
-        private const float MaxAngle = 540f;
 
         private readonly CarHandleAngleGenerator _angleGenerator;
         private readonly CarHandleProvider _provider;
@@ -35,10 +34,12 @@ namespace Baku.VMagicMirror.IK
             _provider = provider;
 
             _leftHandState = new HandleHandState(
-                this, ReactedHand.Left, 150f, 150f, 60f
+                this, ReactedHand.Left, 150f, 150f, 60f,
+                Quaternion.Euler(90f, 90f, 0)
                 );
             _rightHandState = new HandleHandState(
-                this, ReactedHand.Right, 30f, 60f, 150f
+                this, ReactedHand.Right, 30f, 60f, 150f,
+                Quaternion.Euler(-90f, -90f, 0)
                 );
             
             //該当モードでスティックに触ると両手がハンドル用IKになる: 片手ずつでもいいかもだが
@@ -112,16 +113,18 @@ namespace Baku.VMagicMirror.IK
 
             public HandleHandState(
                 CarHandleIkGenerator parent, ReactedHand hand, 
-                float defaultAngle, float angleMinusDiff, float anglePlusDiff)
+                float defaultAngle, float angleMinusDiff, float anglePlusDiff,
+                Quaternion rotationOffset)
             {
                 _parent = parent;
                 Hand = hand;
                 DefaultAngle = defaultAngle;
                 AngleMinusDiff = angleMinusDiff;
                 AnglePlusDiff = anglePlusDiff;
+                _rotationOffset = rotationOffset;
             }
 
-            
+            private readonly Quaternion _rotationOffset;
             private readonly CarHandleIkGenerator _parent;
             
             /// <summary> ハンドルが0度のときに掴んでる角度 </summary>
@@ -149,6 +152,7 @@ namespace Baku.VMagicMirror.IK
             private readonly ReactiveProperty<Pose> _currentPose = new (Pose.identity);
             public IReadOnlyReactiveProperty<Pose> CurrentPose => _currentPose;
 
+            //NOTE: 指の制御のために使ってもいいような値
             private readonly ReactiveProperty<bool> _isGripping = new(false);
             public IReadOnlyReactiveProperty<bool> IsGripping => _isGripping;
 
@@ -236,7 +240,7 @@ namespace Baku.VMagicMirror.IK
             {
                 var t = HandleTransform;
                 
-                var rotation = t.rotation * Quaternion.AngleAxis(angle, Vector3.forward);
+                var rotation = t.rotation * Quaternion.AngleAxis(angle, Vector3.forward) * _rotationOffset;
                 var position =
                     t.position +
                     Quaternion.AngleAxis(angle, t.forward) * (HandleRadius * t.right);

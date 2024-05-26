@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror.IK
         private readonly HandIKIntegrator _handIKIntegrator;
         private readonly XInputGamePad _gamepad;
 
-        private GamepadLeanModes _leanMode;
+        private GamepadLeanModes _leanMode = GamepadLeanModes.GamepadLeanLeftStick;
         private bool _useCarHandle;
         private float _coolDownCount;
 

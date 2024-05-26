@@ -115,10 +115,8 @@ namespace Baku.VMagicMirror
         public void SetGamepadMotionMode(int modeIndex)
         {
             if (modeIndex >= 0 &&
-                modeIndex <= (int) GamepadMotionModes.Unknown &&
+                modeIndex < (int) GamepadMotionModes.Unknown &&
                 modeIndex != (int) _gamepadMotionMode.Value
-                //DEBUG: とりあえずアケコンと通常ゲームパッドだけやる
-                && (modeIndex == 0 || modeIndex == 1)
                 )
             {   
                 _gamepadMotionMode.Value = (GamepadMotionModes) modeIndex;

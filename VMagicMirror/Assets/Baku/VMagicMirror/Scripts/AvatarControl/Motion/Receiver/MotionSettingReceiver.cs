@@ -112,7 +112,6 @@ namespace Baku.VMagicMirror
                 VmmCommands.SetKeyboardAndMouseMotionMode,
                 v => handIkIntegrator.SetKeyboardAndMouseMotionMode(v.ToInt())
                 ); 
-            
         }
 
         private void SetDeviceTypeForWordToMotion(int deviceType)
@@ -147,26 +146,6 @@ namespace Baku.VMagicMirror
             handIkIntegrator.Typing.YOffsetAfterKeyDown = offset;
             handIkIntegrator.MidiHand.HandOffsetAfterKeyDown = offset;
         }
-    }
-    
-    /// <summary>
-    /// ゲームパッド由来のモーションをどういう見た目で反映するか、というオプション。
-    /// </summary>
-    /// <remarks>
-    /// どれを選んでいるにせよ、Word to Motionをゲームパッドでやっている間は処理が止まるなどの基本的な特徴は共通
-    /// </remarks>
-    public enum GamepadMotionModes
-    {
-        /// <summary> 普通のゲームパッド </summary>
-        Gamepad = 0,
-        /// <summary> アケコン </summary>
-        ArcadeStick = 1,
-        /// <summary> 車のハンドルっぽいやつ </summary>
-        CarController = 2,
-        /// <summary> 不明なため未サポート </summary>
-        Unknown = 3,
-        // /// <summary> ガンコン </summary>
-        // GunController = 2,
     }
 
     public enum KeyboardAndMouseMotionModes

@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror
     /// 車のハンドル入力の状態に応じて各所のFK(体、頭、目)を計算するやつ。
     /// 
     /// </summary>
-    public class CarHandleBasedFk
+    public class CarHandleBasedFK
     {
         private const float BodyRotationAngleLimit = 3f;
 
@@ -16,7 +16,7 @@ namespace Baku.VMagicMirror
         private readonly CarHandleAngleGenerator _angleGenerator;
 
         [Inject]
-        public CarHandleBasedFk(
+        public CarHandleBasedFK(
             CarHandleProvider carHandleProvider,
             CarHandleAngleGenerator angleGenerator)
         {

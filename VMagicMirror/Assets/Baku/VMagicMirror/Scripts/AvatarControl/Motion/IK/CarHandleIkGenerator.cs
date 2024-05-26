@@ -11,11 +11,6 @@ namespace Baku.VMagicMirror.IK
     /// </summary>
     public class CarHandleIkGenerator : HandIkGeneratorBase
     {
-        //TODO: Dependencyから受け取る値たち
-        private Transform CenterOfHandle => _provider.OffsetAddedTransform;
-        private float HandleRadius => _provider.CarHandleRadius;
-        // private AnimationCurve angleToHeadYawRateCurve;
-
         private const float HandleGripChangeDuration = 0.3f;
         
         private const float AngleUpperOffset = 30f;
@@ -23,11 +18,13 @@ namespace Baku.VMagicMirror.IK
         private const float AngleUpDiff = 120f;
         private const float MaxAngle = 540f;
 
-        private float CurrentAngle => _angleGenerator.HandleAngle;
-
         private readonly CarHandleAngleGenerator _angleGenerator;
         private readonly CarHandleProvider _provider;
         
+        private Transform CenterOfHandle => _provider.OffsetAddedTransform;
+        private float HandleRadius => _provider.CarHandleRadius;
+        private float CurrentAngle => _angleGenerator.HandleAngle;
+
         public CarHandleIkGenerator(
             HandIkGeneratorDependency dependency,
             CarHandleAngleGenerator angleGenerator,
@@ -74,15 +71,6 @@ namespace Baku.VMagicMirror.IK
         public override IHandIkState LeftHandState => _leftHandState;
         private readonly HandleHandState _rightHandState;
         public override IHandIkState RightHandState => _rightHandState;
-        
-        private static float Sigmoid(float value, float factor, float pow)
-        {
-            return 2f / (1 + Mathf.Pow(pow, -value / factor)) - 1f;
-        }
-
-        private static float GetBodyRotationRate(float angle) => Sigmoid(angle, 180f, 4);
-
-        private float GetEyeRotationRate(float angle) => Sigmoid(angle, 85f, 4);
         
         public override void Update()
         {

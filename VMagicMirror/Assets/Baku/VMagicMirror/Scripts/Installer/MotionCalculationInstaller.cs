@@ -48,6 +48,8 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<GameInputBodyRootOrientationController>().AsSingle();
             container.BindInterfacesAndSelfTo<GameInputBodyMotionController>().AsSingle();
 
+            container.Bind<CarHandleBasedFK>().AsSingle();
+            
             container.Bind<LateUpdateSourceAfterFinalIK>().FromNewComponentOnNewGameObject().AsSingle();
         }
     }

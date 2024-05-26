@@ -113,7 +113,8 @@ namespace Baku.VMagicMirror.IK
             var axis = 0f;
             if (hasInput)
             {
-                axis = _invertStickValue ? -_stickAxisX : _stickAxisX;
+                //NOTE: 左右反転のポリシーの関係で「invertのとき符号反転しない」という書き方になっている。ちょっと変だけど意図的です
+                axis = _invertStickValue ? _stickAxisX : -_stickAxisX;
             }
 
             if (!hasInput && _coolDownCount < CoolDownTime)

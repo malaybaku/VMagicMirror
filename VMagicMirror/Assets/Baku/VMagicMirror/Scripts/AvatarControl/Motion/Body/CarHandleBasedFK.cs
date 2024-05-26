@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
     /// <summary>
     /// 車のハンドル入力の状態に応じて各所のFK(体、頭、目)を計算するやつ。
     /// </summary>
-    public class CarHandleBasedFK
+    public class CarHandleBasedFK : IEyeRotationRequestSource
     {
         private const float BodyRotationAngleLimit = 3f;
 
@@ -30,7 +30,10 @@ namespace Baku.VMagicMirror
         public bool IsActive => 
             _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
             _bodyMotionModeController.GamepadMotionMode.Value is GamepadMotionModes.CarController;
-        
+
+        public Vector2 LeftEyeRotationRate => GetEyeRotationRate();
+        public Vector2 RightEyeRotationRate => GetEyeRotationRate();
+
         public Quaternion GetBodyLeanSuggest()
         {
             var handleRate = _angleGenerator.HandleRate.Value;
@@ -40,17 +43,21 @@ namespace Baku.VMagicMirror
 
         public Quaternion GetHeadYawRotation()
         {
-            var rate = _angleGenerator.HandleRate.Value;
+            //NOTE: 左右反転の整合を取るために値をひっくり返す
+            var rate = -_angleGenerator.HandleRate.Value;
+
             //NOTE: 0~90degあたりにほぼ不感になるエリアが欲しいのでカーブを使ってます
-            var angleRate = Mathf.Sign(rate) * _carHandleProvider.GetHeadYawRateFromAngleRate(rate);
+            var angleRate = Mathf.Sign(rate) * _carHandleProvider.GetHeadYawRateFromAngleRate(Mathf.Abs(rate));
             var angle = angleRate * 30f;
             return Quaternion.Euler(0f, angle, 0f);
         }
 
-        public float GetEyeRotationRate()
+        private Vector2 GetEyeRotationRate()
         {
-            var rate = _angleGenerator.HandleRate.Value;
-            return Sigmoid(rate, .157f, 4);
+            //NOTE: 左右の整合性を取るために符号をひっくり返してます
+            var rate = -_angleGenerator.HandleRate.Value;
+            var rateX = Sigmoid(rate, .157f, 4);
+            return new Vector2(rateX, 0f);
         }
         
         private static float Sigmoid(float value, float factor, float pow)

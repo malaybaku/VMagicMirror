@@ -6,23 +6,30 @@ namespace Baku.VMagicMirror
 {
     /// <summary>
     /// 車のハンドル入力の状態に応じて各所のFK(体、頭、目)を計算するやつ。
-    /// 
     /// </summary>
     public class CarHandleBasedFK
     {
         private const float BodyRotationAngleLimit = 3f;
 
+        private readonly BodyMotionModeController _bodyMotionModeController;
         private readonly CarHandleProvider _carHandleProvider;
         private readonly CarHandleAngleGenerator _angleGenerator;
 
         [Inject]
         public CarHandleBasedFK(
+            BodyMotionModeController bodyMotionModeController,
             CarHandleProvider carHandleProvider,
             CarHandleAngleGenerator angleGenerator)
         {
+            _bodyMotionModeController = bodyMotionModeController;
             _carHandleProvider = carHandleProvider;
             _angleGenerator = angleGenerator;
         }
+
+        //NOTE: 他にも何かありそうな気がするが一旦忘れとく
+        public bool IsActive => 
+            _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
+            _bodyMotionModeController.GamepadMotionMode.Value is GamepadMotionModes.CarController;
         
         public Quaternion GetBodyLeanSuggest()
         {

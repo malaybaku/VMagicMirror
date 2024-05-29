@@ -39,12 +39,12 @@ namespace Baku.VMagicMirror
 
         public void SetLayoutParameter(DeviceLayoutAutoAdjustParameters parameters)
         {
-            var height = 1.2f * parameters.HeightFactor;
-            var forward = 0.35f * parameters.ArmLengthFactor;
+            var height = .9f * parameters.HeightFactor;
+            var forward = 0.28f * parameters.ArmLengthFactor;
 
             var t = transform;
             t.localScale = Vector3.one;
-            t.localRotation = Quaternion.identity;
+            t.localRotation = Quaternion.Euler(30f, 0f, 0f);
             t.localPosition = new Vector3(0f, height, forward);
         }
     }

@@ -49,9 +49,9 @@ namespace Baku.VMagicMirror
         public GamepadHandIKGenerator GamepadHand { get; private set; }
         public MidiHandIkGenerator MidiHand { get; private set; }
         public PresentationHandIKGenerator Presentation { get; private set; }
+        public CarHandleIkGenerator CarHandle { get; private set; }
 
         private ArcadeStickHandIKGenerator _arcadeStickHand;
-        private CarHandleIkGenerator _carHandleHand;
         private AlwaysDownHandIkGenerator _downHand;
         private PenTabletHandIKGenerator _penTablet;
         public ClapMotionHandIKGenerator ClapMotion { get; private set; }
@@ -211,7 +211,7 @@ namespace Baku.VMagicMirror
                 );
             Presentation = new PresentationHandIKGenerator(dependency, vrmLoadable, cam);
             _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
-            _carHandleHand = new CarHandleIkGenerator(dependency, carHandleAngleGenerator, carHandleProvider, carHandleFingerController);
+            CarHandle = new CarHandleIkGenerator(dependency, carHandleAngleGenerator, carHandleProvider, carHandleFingerController);
             _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
@@ -227,7 +227,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, _carHandleHand, Presentation, _downHand, _penTablet, _vmcpHand, ClapMotion,
+                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, CarHandle, Presentation, _downHand, _penTablet, _vmcpHand, ClapMotion,
                 })
             {
                 if (generator.LeftHandState != null)
@@ -419,6 +419,7 @@ namespace Baku.VMagicMirror
             Presentation.Start();
             GamepadHand.Start();
             MidiHand.Start();
+            CarHandle.Start();
             _arcadeStickHand.Start();
         }
         
@@ -448,7 +449,7 @@ namespace Baku.VMagicMirror
             GamepadHand.Update();
             MidiHand.Update();
             _arcadeStickHand.Update();
-            _carHandleHand.Update();
+            CarHandle.Update();
             _penTablet.Update();
             _vmcpHand.Update();
 

@@ -75,21 +75,14 @@ namespace Baku.VMagicMirror.IK
         public override IHandIkState LeftHandState => _leftHandState;
         private readonly HandleHandState _rightHandState;
         public override IHandIkState RightHandState => _rightHandState;
+        public float WristToTipLength { get; set; } = 0.12f;
         
-        public override void Update()
+        public override void Start()
         {
-            if (CenterOfHandle == null)
-            {
-                return;
-            }
-
-            //NOTE: 定数化したら更新を省けるやつがあるので、コード自体を省くこと！
             _leftHandState.HandleTransform = CenterOfHandle;
-            _leftHandState.HandleRadius = HandleRadius;
             _leftHandState.GripChangeMoveDuration = HandleGripChangeDuration;
 
             _rightHandState.HandleTransform = CenterOfHandle;
-            _rightHandState.HandleRadius = HandleRadius;
             _rightHandState.GripChangeMoveDuration = HandleGripChangeDuration;
 
             _leftHandState.DefaultAngle = 180f - AngleUpperOffset;
@@ -99,7 +92,21 @@ namespace Baku.VMagicMirror.IK
             _rightHandState.DefaultAngle = AngleUpperOffset;
             _rightHandState.AngleMinusDiff = AngleDownDiff;
             _rightHandState.AnglePlusDiff = AngleUpDiff;
+        }
+        
+        public override void Update()
+        {
+            if (!(Dependency.Config.LeftTarget.Value is HandTargetType.CarHandle ||
+                Dependency.Config.RightTarget.Value is HandTargetType.CarHandle))
+            {
+                return;
+            }
 
+            _leftHandState.HandleRadius = HandleRadius;
+            _leftHandState.WristToPalmLength = WristToTipLength * 0.5f;
+            _rightHandState.HandleRadius = HandleRadius;
+            _rightHandState.WristToPalmLength = WristToTipLength * 0.5f;
+            
             //NOTE: スティックの右方向が正にする場合、 `angle = -stick.x` みたいな関係になりうるので注意 
             var dt = Time.deltaTime;
             _leftHandState.HandleAngle = CurrentAngle;
@@ -107,6 +114,7 @@ namespace Baku.VMagicMirror.IK
             _leftHandState.Update(dt);
             _rightHandState.Update(dt);
 
+            _provider.SetSteeringRotation(_angleGenerator.HandleAngle);
             UpdateFingerState();
         }
 
@@ -198,11 +206,6 @@ namespace Baku.VMagicMirror.IK
             
             public void Update(float deltaTime)
             {
-                if (HandleTransform == null)
-                {
-                    return;
-                }
-
                 var (gripChangeCount, targetAngle) = CalculateHandleTarget();
                 if (gripChangeCount != _gripChangeCount)
                 {
@@ -269,11 +272,13 @@ namespace Baku.VMagicMirror.IK
             private Pose GetHandleGrippedPose(float angle)
             {
                 var t = HandleTransform;
+                var localForward = t.forward;
                 
                 var rotation = t.rotation * Quaternion.AngleAxis(angle, Vector3.forward) * _rotationOffset;
                 var position =
                     t.position +
-                    Quaternion.AngleAxis(angle, t.forward) * (HandleRadius * t.right);
+                    localForward * (-WristToPalmLength) +
+                    Quaternion.AngleAxis(angle, localForward) * (HandleRadius * t.right);
     
                 return new Pose(position, rotation);
             }
@@ -313,6 +318,7 @@ namespace Baku.VMagicMirror.IK
             
             public ReactedHand Hand { get; }
             public HandTargetType TargetType => HandTargetType.CarHandle;
+            public float WristToPalmLength { get; set; } = 0.06f;
 
             public event Action<IHandIkState> RequestToUse;
 

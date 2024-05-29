@@ -134,6 +134,7 @@ namespace Baku.VMagicMirror
             handIkIntegrator.Typing.HandToTipLength = v;
             handIkIntegrator.MouseMove.HandToTipLength = v;
             handIkIntegrator.MidiHand.WristToTipLength = v;
+            handIkIntegrator.CarHandle.WristToTipLength = v;
         }
         
         private void SetHandYOffsetBasic(float offset)

@@ -19,6 +19,7 @@ namespace Baku.VMagicMirror.IK
 
         private readonly CarHandleAngleGenerator _angleGenerator;
         private readonly CarHandleProvider _provider;
+        private readonly CarHandleFingerController _fingerController;
         
         private Transform CenterOfHandle => _provider.OffsetAddedTransform;
         private float HandleRadius => _provider.CarHandleRadius;
@@ -27,11 +28,13 @@ namespace Baku.VMagicMirror.IK
         public CarHandleIkGenerator(
             HandIkGeneratorDependency dependency,
             CarHandleAngleGenerator angleGenerator,
-            CarHandleProvider provider
+            CarHandleProvider provider,
+            CarHandleFingerController fingerController
             ) : base(dependency)
         {
             _angleGenerator = angleGenerator;
             _provider = provider;
+            _fingerController = fingerController;
 
             _leftHandState = new HandleHandState(
                 this, ReactedHand.Left, 150f, 150f, 60f,
@@ -96,17 +99,44 @@ namespace Baku.VMagicMirror.IK
             _rightHandState.DefaultAngle = AngleUpperOffset;
             _rightHandState.AngleMinusDiff = AngleDownDiff;
             _rightHandState.AnglePlusDiff = AngleUpDiff;
-           
-            
-            //NOTE: スティックの右方向が正にする場合、 `angle = -stick.x` みたいな関係になりうるので注意 
 
+            //NOTE: スティックの右方向が正にする場合、 `angle = -stick.x` みたいな関係になりうるので注意 
             var dt = Time.deltaTime;
             _leftHandState.HandleAngle = CurrentAngle;
             _rightHandState.HandleAngle = CurrentAngle;
             _leftHandState.Update(dt);
             _rightHandState.Update(dt);
+
+            UpdateFingerState();
         }
 
+        private void UpdateFingerState()
+        {
+            if (Dependency.Config.LeftTarget.Value is HandTargetType.CarHandle)
+            {
+                if (_leftHandState.IsGripping.Value)
+                {
+                    _fingerController.GripLeftHand();
+                }
+                else
+                {
+                    _fingerController.ReleaseLeftHand();       
+                }
+            }
+
+            if (Dependency.Config.RightTarget.Value is HandTargetType.CarHandle)
+            {
+                if (_rightHandState.IsGripping.Value)
+                {
+                    _fingerController.GripRightHand();
+                }
+                else
+                {
+                    _fingerController.ReleaseRightHand();       
+                }
+            }
+        }
+        
         class HandleHandState : IHandIkState
         {
             // NOTE: 角度は真右を始点、反時計周りを正としてdegreeで指定する(例外は都度書く)

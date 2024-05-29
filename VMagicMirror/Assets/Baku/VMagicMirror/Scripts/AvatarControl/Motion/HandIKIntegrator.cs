@@ -169,6 +169,7 @@ namespace Baku.VMagicMirror
             ArcadeStickProvider arcadeStickProvider,
             CarHandleAngleGenerator carHandleAngleGenerator,
             CarHandleProvider carHandleProvider,
+            CarHandleFingerController carHandleFingerController,
             PenTabletProvider penTabletProvider,
             HandTracker handTracker,
             ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader,
@@ -210,7 +211,7 @@ namespace Baku.VMagicMirror
                 );
             Presentation = new PresentationHandIKGenerator(dependency, vrmLoadable, cam);
             _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
-            _carHandleHand = new CarHandleIkGenerator(dependency, carHandleAngleGenerator, carHandleProvider);
+            _carHandleHand = new CarHandleIkGenerator(dependency, carHandleAngleGenerator, carHandleProvider, carHandleFingerController);
             _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);

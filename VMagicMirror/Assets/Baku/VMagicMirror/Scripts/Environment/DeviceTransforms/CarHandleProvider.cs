@@ -25,8 +25,8 @@ namespace Baku.VMagicMirror
 
         public Transform RootTransform => transform;
         public Transform OffsetAddedTransform => offset;
-        //NOTE: 実際はフリーレイアウトモードでスケールするのが正しい
-        public float CarHandleRadius => 0.2f;
+        //NOTE: 実際はこの値が更にフリーレイアウトモードでスケールする…はず
+        public float CarHandleRadius => 0.18f;
         
         /// <summary>
         /// ステアリングの回転量をdegree単位で指定することで、表示状態を更新する

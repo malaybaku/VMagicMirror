@@ -156,13 +156,13 @@ namespace Baku.VMagicMirror
             _keyboardControl.mode = _keyboardVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             _touchPadControl.mode = _touchPadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             _gamepadControl.mode = _gamepadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
-            //NOTE: アケコン/ハンドルは実機スケールを重んじるため、スケール変化は認めない
+            //NOTE:
+            // アケコンは実機スケールを重んじるため、スケール変化は認めない
+            // 車のハンドルも物理ベースで同様に考えうるが、ハンドルについてはスケールがxyzで歪まないことだけ保証している
             _arcadeStickControl.mode = _arcadeStickVisibility.IsVisible && _mode != TransformControl.TransformMode.Scale 
                 ? _mode
                 : TransformControl.TransformMode.None;
-            _carHandleControl.mode = _carHandleVisibility.IsVisible && _mode != TransformControl.TransformMode.Scale
-                ? _mode
-                : TransformControl.TransformMode.None;
+            _carHandleControl.mode = _carHandleVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             _midiControl.mode = _midiControllerVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             _penTabletControl.mode = _penTabletVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
 
@@ -171,9 +171,51 @@ namespace Baku.VMagicMirror
                 _transformControls[i].Control();
             }
             
+            AdjustCarHandleScale();
+            
             _controlRequested.OnNext(new TransformControlRequest(_preferWorldCoordinate, _mode));
         }
 
+        //CarHandleのscaleのx,y,z成分が等しい状態にする
+        private void AdjustCarHandleScale()
+        {
+            if (_carHandleControl.mode != TransformControl.TransformMode.Scale)
+            {
+                return;
+            }
+
+            const float ScaleDiffThreshold = 0.0001f;
+
+            //scaleに仲間外れの値がある場合、その値が編集されたと見なして他2つの値を追従させる
+            var t = _carHandleControl.transform;
+            
+            var scale = t.localScale;
+
+            var xy = Mathf.Abs(scale.x - scale.y) > ScaleDiffThreshold;
+            var yz = Mathf.Abs(scale.y - scale.z) > ScaleDiffThreshold;
+            var zx = Mathf.Abs(scale.z - scale.x) > ScaleDiffThreshold;
+            if (!xy && !yz && !zx)
+            {
+                //このフレームでscaleが変動してない限りはここを通過する
+                return;
+            }
+
+            //どこかのスケールが変化した場合
+            if (!xy)
+            {
+                //xyが等しい -> zが仲間はずれなのでzの値を採用する。以降の分岐も同じ考え方による
+                t.localScale = Vector3.one * scale.z;
+            }
+            else if (!yz)
+            {
+                t.localScale = Vector3.one * scale.x;
+            }
+            else
+            {
+                t.localScale = Vector3.one * scale.y;
+            }
+        }
+        
         private void CreateCanvasIfNotExist()
         {
             if (!_hasCanvas)

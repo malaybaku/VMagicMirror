@@ -49,6 +49,7 @@ namespace Baku.VMagicMirror.Installer
             container.BindInterfacesAndSelfTo<GameInputBodyMotionController>().AsSingle();
 
             container.BindInterfacesAndSelfTo<CarHandleAngleGenerator>().AsSingle();
+            container.Bind<CarHandleFingerController>().AsSingle();
             container.Bind<CarHandleBasedFK>().AsSingle();
             
             container.Bind<LateUpdateSourceAfterFinalIK>().FromNewComponentOnNewGameObject().AsSingle();

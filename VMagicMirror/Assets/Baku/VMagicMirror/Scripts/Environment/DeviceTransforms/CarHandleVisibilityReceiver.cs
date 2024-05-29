@@ -60,7 +60,7 @@ namespace Baku.VMagicMirror
                 .To(
                     () => _deformer.Factor, 
                     v => _deformer.Factor = v, 
-                    visible ? 0.0f : 0.5f, 
+                    visible ? 0.0f : 1.0f, 
                     0.5f)
                 .SetEase(Ease.OutCubic)
                 .OnStart(() =>

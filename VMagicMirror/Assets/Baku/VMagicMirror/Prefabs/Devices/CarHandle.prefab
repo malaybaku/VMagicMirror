@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3690609866054722518}
   - component: {fileID: 2447347616739445632}
   - component: {fileID: 1993073406050250868}
+  - component: {fileID: 8941411347322145325}
   m_Layer: 0
   m_Name: Object_5
   m_TagString: Untagged
@@ -40,7 +41,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 438112581605517392}
-  m_Mesh: {fileID: -2346428509227581198, guid: 1b33e602b0b44a940962c64abd4058a1, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!23 &1993073406050250868
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -83,6 +84,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8941411347322145325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438112581605517392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: -2346428509227581198, guid: 1b33e602b0b44a940962c64abd4058a1,
+      type: 3}
+    Target:
+      meshFilter: {fileID: 2447347616739445632}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 627030824324925011}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &2457249424336435430
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,8 +250,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   update: 1
-  factor: 0
-  falloff: 2
+  factor: 1
+  falloff: 0
   center: {fileID: 3872552686382944650}
 --- !u!1 &3316704001274811573
 GameObject:
@@ -232,6 +264,7 @@ GameObject:
   - component: {fileID: 2944111013741538688}
   - component: {fileID: 5406446559002418984}
   - component: {fileID: 6526186824470442498}
+  - component: {fileID: 8763232601968147042}
   m_Layer: 0
   m_Name: Object_4
   m_TagString: Untagged
@@ -261,7 +294,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3316704001274811573}
-  m_Mesh: {fileID: 1490853210837764799, guid: 1b33e602b0b44a940962c64abd4058a1, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!23 &6526186824470442498
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -304,6 +337,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8763232601968147042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3316704001274811573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85212d1b13358614ca54e74ba56f93ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignOriginalMeshOnDisable: 1
+  updateMode: 0
+  normalsRecalculation: 0
+  boundsRecalculation: 0
+  colliderRecalculation: 0
+  meshCollider: {fileID: 0}
+  data:
+    OriginalMesh: {fileID: 1490853210837764799, guid: 1b33e602b0b44a940962c64abd4058a1,
+      type: 3}
+    Target:
+      meshFilter: {fileID: 5406446559002418984}
+      skinnedMeshRenderer: {fileID: 0}
+    initialized: 1
+  deformerElements:
+  - component: {fileID: 627030824324925011}
+    active: 1
+  customBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!1 &4790300773857350072
 GameObject:
   m_ObjectHideFlags: 0

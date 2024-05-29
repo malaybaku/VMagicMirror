@@ -16,6 +16,9 @@ namespace Baku.VMagicMirror.IK
         private const float AngleUpperOffset = 30f;
         private const float AngleDownDiff = 50f;
         private const float AngleUpDiff = 120f;
+        
+        //ハンドルに対して手首が垂直ではなくハンドルに沿う方向に倒れてる角度
+        private const float GripHandPitchAngle = 45f;
 
         private readonly CarHandleAngleGenerator _angleGenerator;
         private readonly CarHandleProvider _provider;
@@ -38,11 +41,11 @@ namespace Baku.VMagicMirror.IK
 
             _leftHandState = new HandleHandState(
                 this, ReactedHand.Left, 150f, 150f, 60f,
-                Quaternion.Euler(90f, 90f, 0)
+                Quaternion.Euler(90f, 90f, -GripHandPitchAngle)
                 );
             _rightHandState = new HandleHandState(
                 this, ReactedHand.Right, 30f, 60f, 150f,
-                Quaternion.Euler(-90f, -90f, 0)
+                Quaternion.Euler(-90f, -90f, GripHandPitchAngle)
                 );
             
             //該当モードでスティックに触ると両手がハンドル用IKになる: 片手ずつでもいいかもだが
@@ -147,8 +150,10 @@ namespace Baku.VMagicMirror.IK
         
         class HandleHandState : IHandIkState
         {
-            // NOTE: 角度は真右を始点、反時計周りを正としてdegreeで指定する(例外は都度書く)
+            private static readonly float SinGripHandPitch = Mathf.Sin(GripHandPitchAngle * Mathf.Deg2Rad);
+            private static readonly float CosGripHandPitch = Mathf.Cos(GripHandPitchAngle * Mathf.Deg2Rad);
 
+            // NOTE: 角度は真右を始点、反時計周りを正としてdegreeで指定する(例外は都度書く)
             public HandleHandState(
                 CarHandleIkGenerator parent, ReactedHand hand, 
                 float defaultAngle, float angleMinusDiff, float anglePlusDiff,
@@ -273,13 +278,15 @@ namespace Baku.VMagicMirror.IK
             {
                 var t = HandleTransform;
                 var localForward = t.forward;
-                
+
                 var rotation = t.rotation * Quaternion.AngleAxis(angle, Vector3.forward) * _rotationOffset;
+                //NOTE: 大まかには手首はハンドルの周縁部そのものよりも中心にちょっと寄ってるような姿勢になる
                 var position =
                     t.position +
-                    localForward * (-WristToPalmLength) +
-                    Quaternion.AngleAxis(angle, localForward) * (HandleRadius * t.right);
-    
+                    localForward * (-WristToPalmLength * CosGripHandPitch) +
+                    Quaternion.AngleAxis(angle, localForward) * 
+                        ((HandleRadius - WristToPalmLength * SinGripHandPitch) * t.right);
+
                 return new Pose(position, rotation);
             }
 
@@ -302,7 +309,7 @@ namespace Baku.VMagicMirror.IK
                 }
                 var positionOffset = (zOffsetRate * NonGripZOffset) * HandleTransform.forward;
 
-                //TODO: Quaternionコレでキレイにならないのでは？
+                //NOTE: スッと遷移するため、Quaternionの補間はこのくらいで十分いい感じになる
                 return new Pose(
                     Vector3.Lerp(startPose.position, endPose.position, rate) + positionOffset,
                     Quaternion.Slerp(startPose.rotation, endPose.rotation, rate)

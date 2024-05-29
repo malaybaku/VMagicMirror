@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror
             {
                 case FingerConsts.LeftThumb:
                 case FingerConsts.RightThumb:
-                    return 35f;
+                    return 25f;
                 default:
                     return 40f;
             }

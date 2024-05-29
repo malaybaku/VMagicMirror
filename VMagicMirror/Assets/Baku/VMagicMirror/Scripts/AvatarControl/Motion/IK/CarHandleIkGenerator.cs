@@ -280,12 +280,22 @@ namespace Baku.VMagicMirror.IK
                 var localForward = t.forward;
 
                 var rotation = t.rotation * Quaternion.AngleAxis(angle, Vector3.forward) * _rotationOffset;
-                //NOTE: 大まかには手首はハンドルの周縁部そのものよりも中心にちょっと寄ってるような姿勢になる
+                //NOTE:
+                // 大まかには手首はハンドルの周縁部そのものよりも中心にちょっと寄ってるような姿勢になる。
+                // コメントアウトしてる方は「それらしい計算だけどハンドルに指が食い込むからボツ！」みたいな理屈でボツにしている。
+                // 実際に使ってるほうの計算は手とハンドルがちょっと離れるぶん指が食い込みにくい
+
+                // var position =
+                //     t.position +
+                //     localForward * (-WristToPalmLength * CosGripHandPitch) +
+                //     Quaternion.AngleAxis(angle, localForward) * 
+                //         ((HandleRadius - WristToPalmLength * SinGripHandPitch) * t.right);
+
                 var position =
                     t.position +
-                    localForward * (-WristToPalmLength * CosGripHandPitch) +
+                    localForward * (-WristToPalmLength) +
                     Quaternion.AngleAxis(angle, localForward) * 
-                        ((HandleRadius - WristToPalmLength * SinGripHandPitch) * t.right);
+                    ((HandleRadius - WristToPalmLength * SinGripHandPitch * 0.7f) * t.right);
 
                 return new Pose(position, rotation);
             }

@@ -48,7 +48,7 @@ namespace Baku.VMagicMirror
 
             //NOTE: 0~90degあたりにほぼ不感になるエリアが欲しいのでカーブを使ってます
             var angleRate = Mathf.Sign(rate) * _carHandleProvider.GetHeadYawRateFromAngleRate(Mathf.Abs(rate));
-            var angle = angleRate * 30f;
+            var angle = angleRate * 20f;
             return Quaternion.Euler(0f, angle, 0f);
         }
 

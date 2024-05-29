@@ -46,6 +46,7 @@ namespace Baku.VMagicMirror
         private TransformControl _midiControl = null;
         private TransformControl _gamepadControl= null;
         private TransformControl _arcadeStickControl= null;
+        private TransformControl _carHandleControl = null;
         private TransformControl _penTabletControl = null;
         private Transform _gamepadModelScaleTarget = null;
         
@@ -59,6 +60,7 @@ namespace Baku.VMagicMirror
             _midiControl,
             _gamepadControl,
             _arcadeStickControl,
+            _carHandleControl,
             _penTabletControl,
         };
 
@@ -92,6 +94,7 @@ namespace Baku.VMagicMirror
         private TouchpadVisibility _touchPadVisibility;
         private GamepadVisibilityReceiver _gamepadVisibility;
         private ArcadeStickVisibilityReceiver _arcadeStickVisibility;
+        private CarHandleVisibilityReceiver _carHandleVisibility;
         private PenTabletVisibility _penTabletVisibility;
         private MidiControllerVisibility _midiControllerVisibility;
                 
@@ -105,6 +108,7 @@ namespace Baku.VMagicMirror
             MidiControllerProvider midiController,
             GamepadProvider gamepad,
             ArcadeStickProvider arcadeStick,
+            CarHandleProvider carHandle,
             PenTabletProvider penTablet
         )
         {
@@ -116,6 +120,7 @@ namespace Baku.VMagicMirror
             _midiControl = midiController.TransformControl;
             _gamepadControl = gamepad.TransformControl;
             _arcadeStickControl = arcadeStick.TransformControl;
+            _carHandleControl = carHandle.TransformControl;
             _penTabletControl = penTablet.TransformControl;
             _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
             
@@ -123,6 +128,7 @@ namespace Baku.VMagicMirror
             _touchPadVisibility =  _touchPadControl.GetComponent<TouchpadVisibility>();
             _gamepadVisibility = _gamepadControl.GetComponent<GamepadVisibilityReceiver>();
             _arcadeStickVisibility = _arcadeStickControl.GetComponent<ArcadeStickVisibilityReceiver>();
+            _carHandleVisibility = _carHandleControl.GetComponent<CarHandleVisibilityReceiver>();
             _midiControllerVisibility = _midiControl.GetComponent<MidiControllerVisibility>();
             _penTabletVisibility = _penTabletControl.GetComponent<PenTabletVisibility>();
             
@@ -150,8 +156,11 @@ namespace Baku.VMagicMirror
             _keyboardControl.mode = _keyboardVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             _touchPadControl.mode = _touchPadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
             _gamepadControl.mode = _gamepadVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
-            //NOTE: アケコンは実機スケールを重んじるため、スケール変化は認めない
+            //NOTE: アケコン/ハンドルは実機スケールを重んじるため、スケール変化は認めない
             _arcadeStickControl.mode = _arcadeStickVisibility.IsVisible && _mode != TransformControl.TransformMode.Scale 
+                ? _mode
+                : TransformControl.TransformMode.None;
+            _carHandleControl.mode = _carHandleVisibility.IsVisible && _mode != TransformControl.TransformMode.Scale
                 ? _mode
                 : TransformControl.TransformMode.None;
             _midiControl.mode = _midiControllerVisibility.IsVisible ? _mode : TransformControl.TransformMode.None;
@@ -212,6 +221,7 @@ namespace Baku.VMagicMirror
                 midi = ToItem(_midiControl.transform),
                 gamepad = ToItem(_gamepadControl.transform),
                 arcadeStick = ToItem(_arcadeStickControl.transform),
+                carHandle = ToItem(_carHandleControl.transform),
                 penTablet = ToItem(_penTabletControl.transform),
                 gamepadModelScale = _gamepadModelScaleTarget.localScale.x,
             };
@@ -245,6 +255,7 @@ namespace Baku.VMagicMirror
                 ApplyItem(data.midi, _midiControl.transform);
                 ApplyItem(data.gamepad, _gamepadControl.transform);
                 ApplyItem(data.arcadeStick, _arcadeStickControl.transform);
+                ApplyItem(data.carHandle, _carHandleControl.transform);
                 ApplyItem(data.penTablet, _penTabletControl.transform);
 
                 _gamepadModelScale = Mathf.Clamp(
@@ -300,6 +311,7 @@ namespace Baku.VMagicMirror
             FindObjectOfType<GamepadProvider>().SetLayoutByParameter(parameters);
             FindObjectOfType<ArcadeStickProvider>().SetLayoutByParameter(parameters);
             FindObjectOfType<PenTabletProvider>().SetLayoutParameter(parameters);
+            FindObjectOfType<CarHandleProvider>().SetLayoutParameter(parameters);
             //デバイス移動が入るので必ず送信
             SendDeviceLayoutData();
         }
@@ -317,6 +329,7 @@ namespace Baku.VMagicMirror
             FindObjectOfType<GamepadProvider>().SetLayoutByParameter(parameters);
             FindObjectOfType<ArcadeStickProvider>().SetLayoutByParameter(parameters);
             FindObjectOfType<PenTabletProvider>().SetLayoutParameter(parameters);
+            FindObjectOfType<CarHandleProvider>().SetLayoutParameter(parameters);
             SendDeviceLayoutData();
         }
 
@@ -364,6 +377,7 @@ namespace Baku.VMagicMirror
         public DeviceLayoutItem midi;
         public DeviceLayoutItem gamepad;
         public DeviceLayoutItem arcadeStick;
+        public DeviceLayoutItem carHandle;
         public DeviceLayoutItem penTablet;
         public float gamepadModelScale;
     }

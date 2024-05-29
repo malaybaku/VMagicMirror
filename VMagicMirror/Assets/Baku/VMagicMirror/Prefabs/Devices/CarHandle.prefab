@@ -48,7 +48,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 438112581605517392}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -93,6 +93,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1795383079595422825}
   - component: {fileID: 2065479404992935130}
+  - component: {fileID: 4230855241644607740}
+  - component: {fileID: 21559323284940690}
+  - component: {fileID: 627030824324925011}
   m_Layer: 0
   m_Name: CarHandle
   m_TagString: Untagged
@@ -130,7 +133,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {fileID: 3138706418017973560}
   steering: {fileID: 7975857017850049907}
-  neckToHandlePosition: {x: 0, y: 0, z: 0.35}
   angleToHeadYawRateCurve:
     serializedVersion: 2
     m_Curve:
@@ -173,6 +175,52 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  transformControl: {fileID: 21559323284940690}
+--- !u!114 &4230855241644607740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2457249424336435430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0764e93bf2166748a4c5cc646bb3d40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &21559323284940690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2457249424336435430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acc6365877f8440a2933de30abb074cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  global: 0
+  useDistance: 1
+  distance: 12
+  xyPlaneMode: 0
+  gizmoRenderer: {fileID: 0}
+--- !u!114 &627030824324925011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2457249424336435430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed3b0ca782ac90447977ba1eb2b74c7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  update: 1
+  factor: 0
+  falloff: 2
+  center: {fileID: 3872552686382944650}
 --- !u!1 &3316704001274811573
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,7 +269,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3316704001274811573}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

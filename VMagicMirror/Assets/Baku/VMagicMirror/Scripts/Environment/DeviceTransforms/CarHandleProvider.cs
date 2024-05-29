@@ -1,5 +1,5 @@
+using mattatz.TransformControl;
 using UnityEngine;
-using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -13,20 +13,17 @@ namespace Baku.VMagicMirror
         // - RootTransform => ユーザーがフリーレイアウトで編集することによって移動し、それ以外では移動しない
         //   - OffsetTransform => 揺れとか前後傾の動きによって多少オフセットすることがある
         //     - Steering => ハンドルの回転量に応じて、Z軸のみに回転する。ハンドルのMeshRendererがつくのもココ
-
         [SerializeField] private Transform offset;
         [SerializeField] private Transform steering;
-
-        [SerializeField] private Vector3 neckToHandlePosition;
         [SerializeField] private AnimationCurve angleToHeadYawRateCurve;
-        
-        private bool _hasModel;
-        private Vector3 _neckOrHeadPositionFromRoot = Vector3.up;
 
+        [SerializeField] private TransformControl transformControl = default;
+        public TransformControl TransformControl => transformControl;
+        
         public Transform RootTransform => transform;
         public Transform OffsetAddedTransform => offset;
         //NOTE: 実際はこの値が更にフリーレイアウトモードでスケールする…はず
-        public float CarHandleRadius => 0.18f;
+        public float CarHandleRadius => 0.18f * transform.localScale.x;
         
         /// <summary>
         /// ステアリングの回転量をdegree単位で指定することで、表示状態を更新する
@@ -40,36 +37,15 @@ namespace Baku.VMagicMirror
         public float GetHeadYawRateFromAngleRate(float rateAbs) 
             => angleToHeadYawRateCurve.Evaluate(rateAbs);
 
-        [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable)
+        public void SetLayoutParameter(DeviceLayoutAutoAdjustParameters parameters)
         {
-            vrmLoadable.VrmLoaded += info =>
-            {
-                var neckOrHead = info.animator.GetBoneTransform(HumanBodyBones.Neck);
-                if (neckOrHead == null)
-                {
-                    neckOrHead = info.animator.GetBoneTransform(HumanBodyBones.Head);
-                }
-                _neckOrHeadPositionFromRoot = neckOrHead.position;
-                _hasModel = true;
-            };
+            var height = 1.2f * parameters.HeightFactor;
+            var forward = 0.35f * parameters.ArmLengthFactor;
 
-            vrmLoadable.VrmDisposing += () =>
-            {
-                _hasModel = false;
-                _neckOrHeadPositionFromRoot = Vector3.up;
-            };
-        }
-
-        //TODO: ホントは無しにしてフリーレイアウトでの編集に寄せるべき
-        private void Update()
-        {
-            if (_hasModel)
-            {
-                return;
-            }
-
-            transform.localPosition = _neckOrHeadPositionFromRoot + neckToHandlePosition;
+            var t = transform;
+            t.localScale = Vector3.one;
+            t.localRotation = Quaternion.identity;
+            t.localPosition = new Vector3(0f, height, forward);
         }
     }
 }

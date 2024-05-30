@@ -21,6 +21,7 @@ namespace Baku.VMagicMirror
         private Material _penTabletMaterial;
         private Material _penMaterial;
         private Material _arcadeStickMaterial;
+        private Material _carHandleMaterial;
 
         public Material GetKeyMaterial()
             => _keyMaterial ??= LoadMaterial("key.png", "Key", "Key");
@@ -51,7 +52,7 @@ namespace Baku.VMagicMirror
             => _arcadeStickMaterial ??= LoadMaterial("arcade_stick.png", "ArcadeStickItem", "Key");
 
         public Material GetCarHandleMaterial()
-            => _arcadeStickMaterial ??= LoadMaterial("car_handle.png", "CarHandle", "CarHandle");
+            => _carHandleMaterial ??= LoadMaterial("car_handle.png", "CarHandle", "CarHandle");
         
         private Material LoadMaterial(string textureFileName, string materialName, string defaultTextureName)
         {

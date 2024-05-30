@@ -50,6 +50,8 @@ namespace Baku.VMagicMirror
         public Material GetArcadeStickMaterial()
             => _arcadeStickMaterial ??= LoadMaterial("arcade_stick.png", "ArcadeStickItem", "Key");
 
+        public Material GetCarHandleMaterial()
+            => _arcadeStickMaterial ??= LoadMaterial("car_handle.png", "CarHandle", "CarHandle");
         
         private Material LoadMaterial(string textureFileName, string materialName, string defaultTextureName)
         {

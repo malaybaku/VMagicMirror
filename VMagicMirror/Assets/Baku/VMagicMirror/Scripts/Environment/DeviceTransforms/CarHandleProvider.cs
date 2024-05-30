@@ -24,6 +24,14 @@ namespace Baku.VMagicMirror
         public Transform OffsetAddedTransform => offset;
         //NOTE: 実際はこの値が更にフリーレイアウトモードでスケールする…はず
         public float CarHandleRadius => 0.18f * transform.localScale.x;
+
+        void Start()
+        {
+            foreach (var r in GetComponentsInChildren<Renderer>())
+            {
+                r.material = HIDMaterialUtil.Instance.GetCarHandleMaterial();
+            }
+        }
         
         /// <summary>
         /// ステアリングの回転量をdegree単位で指定することで、表示状態を更新する

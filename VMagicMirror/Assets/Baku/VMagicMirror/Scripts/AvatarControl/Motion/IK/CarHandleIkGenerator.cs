@@ -11,8 +11,6 @@ namespace Baku.VMagicMirror.IK
     /// </summary>
     public class CarHandleIkGenerator : HandIkGeneratorBase
     {
-        private const float HandleGripChangeDuration = 0.3f;
-        
         private const float AngleUpperOffset = 30f;
         private const float AngleDownDiff = 50f;
         private const float AngleUpDiff = 120f;
@@ -83,10 +81,7 @@ namespace Baku.VMagicMirror.IK
         public override void Start()
         {
             _leftHandState.HandleTransform = CenterOfHandle;
-            _leftHandState.GripChangeMoveDuration = HandleGripChangeDuration;
-
             _rightHandState.HandleTransform = CenterOfHandle;
-            _rightHandState.GripChangeMoveDuration = HandleGripChangeDuration;
 
             _leftHandState.DefaultAngle = 180f - AngleUpperOffset;
             _leftHandState.AngleMinusDiff = AngleUpDiff;
@@ -110,7 +105,6 @@ namespace Baku.VMagicMirror.IK
             _rightHandState.HandleRadius = HandleRadius;
             _rightHandState.WristToPalmLength = WristToTipLength * 0.5f;
             
-            //NOTE: スティックの右方向が正にする場合、 `angle = -stick.x` みたいな関係になりうるので注意 
             var dt = Time.deltaTime;
             _leftHandState.HandleAngle = CurrentAngle;
             _rightHandState.HandleAngle = CurrentAngle;
@@ -150,6 +144,7 @@ namespace Baku.VMagicMirror.IK
         
         class HandleHandState : IHandIkState
         {
+            private const float GripChangeMoveDuration = 0.3f;
             private static readonly float SinGripHandPitch = Mathf.Sin(GripHandPitchAngle * Mathf.Deg2Rad);
             private static readonly float CosGripHandPitch = Mathf.Cos(GripHandPitchAngle * Mathf.Deg2Rad);
 
@@ -199,18 +194,22 @@ namespace Baku.VMagicMirror.IK
             private readonly ReactiveProperty<bool> _isGripping = new(false);
             public IReadOnlyReactiveProperty<bool> IsGripping => _isGripping;
 
-            //NOTE: 正であることが必須
-            public float GripChangeMoveDuration { get; set; } = 0.3f;
-
+            private bool _isInitialized = false;
             //NOTE: ハンドルの持ち替え回数を示す値で、1回握り直すたびに増える
             private int _gripChangeCount;
-            
-            private float _prevHandleAngle;
             private float _gripChangeMotionCount = 0;
             private Pose _gripMotionStartPose = Pose.identity;
             
             public void Update(float deltaTime)
             {
+                //初回呼び出し時は便宜的に掴んでる位置から計算を始める
+                if (!_isInitialized)
+                {
+                    _isInitialized = true;
+                    _isGripping.Value = true;
+                    _currentPose.Value = GetHandleGrippedPose(0f);
+                }
+
                 var (gripChangeCount, targetAngle) = CalculateHandleTarget();
                 if (gripChangeCount != _gripChangeCount)
                 {

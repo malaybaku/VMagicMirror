@@ -134,9 +134,8 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 `Batches`フォルダ内のコマンドからビルドが可能です。
 バッチファイル等の引数の指定方法については、ファイル内のコメントを参照して下さい。
 
-Unityについては諸々のアセットを導入済みであることが必要なこと、および`build_unity.cmd`で厳格にUnityバージョンが指定されていることに注意して下さい。
-2021/11/18時点では2020.3.22f1をビルドに使用しています。
-事情があって異なるバージョンのUnityエディタを用いる場合は、`build_unity.cmd`内のUnityのパスを修正します。
+Unityについては諸々のアセットを導入済みであることが必要なこと、およびビルドに用いるUnityバージョンが`build_unity.cmd`で指定されていることに注意して下さい。
+事情があって異なるバージョンのUnityエディタをビルドに用いる場合、`build_unity.cmd`内のUnityのパスを修正します。
 
 また、`create_installer.cmd`を使用するには[Inno Setup](https://jrsoftware.org/isinfo.php)のインストールが必要です。
 

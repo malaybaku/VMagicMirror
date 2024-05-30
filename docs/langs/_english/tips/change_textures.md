@@ -27,10 +27,13 @@ Put the images to replace in this folder. Please use specific file name for each
 * Pen, when pen tablet motion enabled: `pen.png`
 * Pen tablet, when pen tablet motion enabled: `pen_tablet.png`
 * Arcade stick parts: `arcade_stick.png`
+* Car steering: `car_handle.png`
 
 You do not have to put all of the images. Put files which you want to overwrite.
 
-For the gamepad and pen, see following uv template. Other parts do not have UV template because those images are used as-is. First image in below shows the example to replace key and touch pad.
+For the gamepad and pen, see following UV template. Car steering model only supports single-colored image based texture replace.
+
+Other parts do not have UV template because those images are used as-is. First image in below shows the example to replace key and touch pad.
 
 After the setup, start `VMagicMirror.exe` to load the specified image.
 

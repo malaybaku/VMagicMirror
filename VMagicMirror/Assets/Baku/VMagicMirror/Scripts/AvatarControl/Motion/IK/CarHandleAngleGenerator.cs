@@ -17,12 +17,12 @@ namespace Baku.VMagicMirror.IK
 
         //この秒数だけ入力がないとハンドル角度を中央に戻していく
         private const float CoolDownTime = 2.5f;
-
-        //デフォルト角度からハンドルいっぱいに回すまでにかかる秒数
-        private const float HandleMoveDuration = 2.2f;
-
         //小さいスティック入力は無視する
         private const float StickThreshold = 0.3f;
+        //2.5秒くらいでハンドルを回し切る
+        private const float HandleRateChangeSpeed = 0.4f;
+        //Dampをさっと入る
+        private const float HandleRateChangeDampDuration = 0.4f;
 
         private readonly IMessageReceiver _receiver;
         private readonly BodyMotionModeController _bodyMotionModeController;
@@ -34,6 +34,10 @@ namespace Baku.VMagicMirror.IK
         private float _coolDownCount;
 
         private float _handleRateSpeed;
+        private float _currentHandleRateTarget;
+
+        private float _stickAxisX = 0f;
+        private bool _invertStickValue;
 
         [Inject]
         public CarHandleAngleGenerator(
@@ -56,9 +60,6 @@ namespace Baku.VMagicMirror.IK
 
         public float HandleAngle => _handleRate.Value * MaxAngle;
 
-        private float _stickAxisX = 0f;
-        private bool _invertStickValue;
-        
         public override void Initialize()
         {
             _receiver.AssignCommandHandler(
@@ -95,7 +96,6 @@ namespace Baku.VMagicMirror.IK
                 .Subscribe(stick => _stickAxisX = stick.x * StickValueToRateFactor)
                 .AddTo(this);
         }
-
         
         //NOTE: この計算自体は大して重くないので常に回しとく
         void ITickable.Tick()
@@ -117,31 +117,38 @@ namespace Baku.VMagicMirror.IK
                 axis = _invertStickValue ? _stickAxisX : -_stickAxisX;
             }
 
-            if (!hasInput && _coolDownCount < CoolDownTime)
+            if (hasInput)
+            {
+                _coolDownCount = 0f;
+            }
+            else if (!hasInput && _coolDownCount < CoolDownTime)
             {
                 _coolDownCount += Time.deltaTime;
             }
 
-            var targetValue = 0f;
             if (hasInput)
             {
-                targetValue = GetTargetRate(axis);
+                var diff = GetTargetRate(axis);
+                _currentHandleRateTarget = Mathf.Clamp(
+                    _currentHandleRateTarget + diff * HandleRateChangeSpeed * Time.deltaTime,
+                    -1f,
+                    1f
+                );
             }
             else if (_coolDownCount >= CoolDownTime)
             {
-                targetValue = 0f;
-            }
-            else
-            {
-                //値が据え置きになるように
-                targetValue = _handleRate.Value;
+                _currentHandleRateTarget = Mathf.MoveTowards(
+                    _currentHandleRateTarget, 
+                    0, 
+                    0.4f * HandleRateChangeSpeed * Time.deltaTime
+                );
             }
 
-            _handleRate.Value =  Mathf.SmoothDamp(
+            _handleRate.Value = Mathf.SmoothDamp(
                 _handleRate.Value,
-                targetValue,
+                _currentHandleRateTarget,
                 ref _handleRateSpeed,
-                HandleMoveDuration,
+                HandleRateChangeDampDuration,
                 100f
             );
         }

@@ -16,6 +16,7 @@ namespace Baku.VMagicMirror
     {
         private FaceControlConfiguration _faceConfig;
         private GameInputBodyMotionController _gameInputBodyMotionController;
+        private CarHandleBasedFK _carHandleBasedFk;
         private VoiceOnOffParser _voiceOnOffParser = null;
 
         //NOTE: 首の動きがeaseされるのを踏まえて気持ちゆっくりめ
@@ -47,11 +48,13 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable,
             FaceTracker faceTracker,
             GameInputBodyMotionController gameInputBodyMotionController,
+            CarHandleBasedFK carHandleBasedFk,
             VmmLipSyncContextBase lipSyncContext
             )
         {
             _faceTracker = faceTracker;
             _gameInputBodyMotionController = gameInputBodyMotionController;
+            _carHandleBasedFk = carHandleBasedFk;
             
             receiver.AssignCommandHandler(
                 VmmCommands.EnableVoiceBasedMotion,
@@ -234,7 +237,10 @@ namespace Baku.VMagicMirror
             _activeJitter.PositionFactor = activeFactors.y;
             
             CalculateAngles();
-            _motionApplier.Apply(_gameInputBodyMotionController.LookAroundRotation * HeadRotation);
+            _motionApplier.Apply(
+                _gameInputBodyMotionController.LookAroundRotation * 
+                _carHandleBasedFk.GetHeadYawRotation() *
+                HeadRotation);
         }
         
         private void CalculateAngles()

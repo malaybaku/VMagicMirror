@@ -183,13 +183,15 @@ https://github.com/malaybaku/VMagicMirror/blob/master/WPF/VMagicMirrorConfig/VMa
 https://malaybaku.github.io/VMagicMirror/credit_license
 
 
-### 5.2. ゲームパッドモデルについて
+### 5.2. Creative Commons Licenseに基づくモデルについて
 
-このレポジトリに含まれる`Gamepad.fbx`は #616 に於いて導入しており、Attribution 4.0 International (CC BY 4.0)に従います。
+このレポジトリに含まれる下記モデルはCreative Commons Attributionライセンスに基づいて使用し、レポジトリに含まれます。
 
-作成者: Negyek
+- `Gamepad.fbx` (作成者: Negyek)
+- `CarSteering.glb` (作成者: CaskeThis)
 
 VMagicMirrorでは元モデルに対し、他のデバイスとの一貫性を保つためにマテリアルを適用しているほか、カスタマイズのためにテクスチャを変更可能にしています。
+
 
 ## 6. ローカリゼーションについて
 

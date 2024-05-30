@@ -49,9 +49,9 @@ namespace Baku.VMagicMirror
         public GamepadHandIKGenerator GamepadHand { get; private set; }
         public MidiHandIkGenerator MidiHand { get; private set; }
         public PresentationHandIKGenerator Presentation { get; private set; }
+        public CarHandleIkGenerator CarHandle { get; private set; }
 
         private ArcadeStickHandIKGenerator _arcadeStickHand;
-        //private ImageBaseHandIkGenerator _imageBaseHand;
         private AlwaysDownHandIkGenerator _downHand;
         private PenTabletHandIKGenerator _penTablet;
         public ClapMotionHandIKGenerator ClapMotion { get; private set; }
@@ -115,10 +115,8 @@ namespace Baku.VMagicMirror
         public void SetGamepadMotionMode(int modeIndex)
         {
             if (modeIndex >= 0 &&
-                modeIndex <= (int) GamepadMotionModes.Unknown &&
+                modeIndex < (int) GamepadMotionModes.Unknown &&
                 modeIndex != (int) _gamepadMotionMode.Value
-                //DEBUG: とりあえずアケコンと通常ゲームパッドだけやる
-                && (modeIndex == 0 || modeIndex == 1)
                 )
             {   
                 _gamepadMotionMode.Value = (GamepadMotionModes) modeIndex;
@@ -127,14 +125,13 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode 
-            = new ReactiveProperty<GamepadMotionModes>(GamepadMotionModes.Gamepad);
+        private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode = new(GamepadMotionModes.Gamepad);
 
         private readonly ReactiveProperty<KeyboardAndMouseMotionModes> _keyboardAndMouseMotionMode = 
-            new ReactiveProperty<KeyboardAndMouseMotionModes>(KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
+            new(KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
         
         //NOTE: これはすごく特別なフラグで、これが立ってると手のIKに何か入った場合でも手が下がりっぱなしになる
-        public ReactiveProperty<bool> AlwaysHandDown { get; } = new ReactiveProperty<bool>(false);
+        public ReactiveProperty<bool> AlwaysHandDown { get; } = new(false);
 
         public bool IsLeftHandGripGamepad => _leftTargetType.Value == HandTargetType.Gamepad;
         public bool IsRightHandGripGamepad => _rightTargetType.Value == HandTargetType.Gamepad;
@@ -170,6 +167,9 @@ namespace Baku.VMagicMirror
             MidiControllerProvider midiControllerProvider,
             TouchPadProvider touchPadProvider,
             ArcadeStickProvider arcadeStickProvider,
+            CarHandleAngleGenerator carHandleAngleGenerator,
+            CarHandleProvider carHandleProvider,
+            CarHandleFingerController carHandleFingerController,
             PenTabletProvider penTabletProvider,
             HandTracker handTracker,
             ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader,
@@ -211,6 +211,7 @@ namespace Baku.VMagicMirror
                 );
             Presentation = new PresentationHandIKGenerator(dependency, vrmLoadable, cam);
             _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
+            CarHandle = new CarHandleIkGenerator(dependency, carHandleAngleGenerator, carHandleProvider, carHandleFingerController);
             _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
@@ -226,7 +227,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, Presentation, _downHand, _penTablet, _vmcpHand, ClapMotion,
+                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, CarHandle, Presentation, _downHand, _penTablet, _vmcpHand, ClapMotion,
                 })
             {
                 if (generator.LeftHandState != null)
@@ -255,10 +256,9 @@ namespace Baku.VMagicMirror
         private IHandIkState _currentLeftHand = null;
 
         //NOTE: 値自体はCurrentRightHand.TargetTypeとかと等しい。値を他のIKに露出するために使う
-        private readonly ReactiveProperty<HandTargetType> _leftTargetType 
-            = new ReactiveProperty<HandTargetType>(HandTargetType.Keyboard);
-        private readonly ReactiveProperty<HandTargetType> _rightTargetType
-            = new ReactiveProperty<HandTargetType>(HandTargetType.Keyboard);
+        private readonly ReactiveProperty<HandTargetType> _leftTargetType = new(HandTargetType.Keyboard);
+        private readonly ReactiveProperty<HandTargetType> _rightTargetType = new(HandTargetType.Keyboard);
+        public ReactiveProperty<HandTargetType> LeftTargetType => _leftTargetType;
         public ReactiveProperty<HandTargetType> RightTargetType => _rightTargetType;
 
         #region API
@@ -419,6 +419,7 @@ namespace Baku.VMagicMirror
             Presentation.Start();
             GamepadHand.Start();
             MidiHand.Start();
+            CarHandle.Start();
             _arcadeStickHand.Start();
         }
         
@@ -448,6 +449,7 @@ namespace Baku.VMagicMirror
             GamepadHand.Update();
             MidiHand.Update();
             _arcadeStickHand.Update();
+            CarHandle.Update();
             _penTablet.Update();
             _vmcpHand.Update();
 
@@ -690,6 +692,7 @@ namespace Baku.VMagicMirror
         PenTablet,
         Gamepad,
         ArcadeStick,
+        CarHandle,
         MidiController,
         ImageBaseHand,
         AlwaysDown,

@@ -59,7 +59,7 @@ namespace Baku.VMagicMirror
         private bool CanReceiveStickData =>
             !AlwaysHandDown &&
             !UseGamepadForWordToMotion &&
-            _motionMode != GamepadMotionModes.ArcadeStick;
+            _motionMode is GamepadMotionModes.Gamepad;
 
         private void Update()
         {
@@ -160,7 +160,7 @@ namespace Baku.VMagicMirror
         public void SetGamepadMotionMode(int modeIndex)
         {
             _motionMode = (GamepadMotionModes) modeIndex;
-            if (_motionMode == GamepadMotionModes.ArcadeStick)
+            if (_motionMode is not GamepadMotionModes.Gamepad)
             {
                 ApplyLeanMotion(Vector2Int.zero);
             }

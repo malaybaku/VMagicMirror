@@ -279,6 +279,7 @@ Output channel name is fixed to "VMagicMirrorSpout".</sys:String>
     <sys:String x:Key="Motion_Arm_MouseAndKeyMode_None">None</sys:String>
     <sys:String x:Key="Motion_Arm_GamepadMode_Default">Default</sys:String>
     <sys:String x:Key="Motion_Arm_GamepadMode_ArcadeStick">Arcade Stick</sys:String>
+    <sys:String x:Key="Motion_Arm_GamepadMode_CarHandle">Car Handle</sys:String>
     <sys:String x:Key="Motion_Arm_GamepadMode_GunController">Gun Controller</sys:String>
 
     <!-- Motion : Hand -->

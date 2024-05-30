@@ -35,6 +35,7 @@ namespace Baku.VMagicMirror
         private EyeBoneAngleMapApplier _boneApplier;
         private EyeBlendShapeMapApplier _blendShapeApplier;
         private EyeLookAt _eyeLookAt;
+        private CarHandleBasedFK _carHandleBasedFk;
         //NOTE: BlendShapeResultSetterの更に後処理として呼び出す(ホントは前処理で値を入れたいが、Execution Order的に難しい)
         private ExpressionAccumulator _expressionAccumulator;
 
@@ -65,11 +66,13 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable,
             EyeLookAt eyeLookAt,
             NonImageBasedMotion nonImageBasedMotion,
+            CarHandleBasedFK carHandleBasedFk,
             ExpressionAccumulator expressionAccumulator)
         {
             _nonImageBasedMotion = nonImageBasedMotion;
             _boneApplier = new EyeBoneAngleMapApplier(vrmLoadable);
             _blendShapeApplier = new EyeBlendShapeMapApplier(vrmLoadable);
+            _carHandleBasedFk = carHandleBasedFk;
             _expressionAccumulator = expressionAccumulator;
             _eyeLookAt = eyeLookAt;
 
@@ -138,6 +141,7 @@ namespace Baku.VMagicMirror
                 eyeJitter,
                 externalTrackerEyeJitter,
                 eyeDownMotionController,
+                _carHandleBasedFk,
             };
         }
 

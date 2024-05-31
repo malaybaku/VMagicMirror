@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.8.0
+{: .doc-sec2 }
+
+2024/05/31
+
+* Add: Option for car steering motion, in `Streaming Tab` > `Motion` > `Gamepad Motion` menu. `View` > `Gamepad` checkbox controls car steering object's visibility.
+
+
 #### v3.7.0
 {: .doc-sec2 }
 

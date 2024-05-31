@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.7.0
+v3.8.0
 
 * 作成: 獏星(ばくすたー)
-* 2024/03/31
+* 2024/05/31
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -134,9 +134,8 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 `Batches`フォルダ内のコマンドからビルドが可能です。
 バッチファイル等の引数の指定方法については、ファイル内のコメントを参照して下さい。
 
-Unityについては諸々のアセットを導入済みであることが必要なこと、および`build_unity.cmd`で厳格にUnityバージョンが指定されていることに注意して下さい。
-2021/11/18時点では2020.3.22f1をビルドに使用しています。
-事情があって異なるバージョンのUnityエディタを用いる場合は、`build_unity.cmd`内のUnityのパスを修正します。
+Unityについては諸々のアセットを導入済みであることが必要なこと、およびビルドに用いるUnityバージョンが`build_unity.cmd`で指定されていることに注意して下さい。
+事情があって異なるバージョンのUnityエディタをビルドに用いる場合、`build_unity.cmd`内のUnityのパスを修正します。
 
 また、`create_installer.cmd`を使用するには[Inno Setup](https://jrsoftware.org/isinfo.php)のインストールが必要です。
 
@@ -183,13 +182,15 @@ https://github.com/malaybaku/VMagicMirror/blob/master/WPF/VMagicMirrorConfig/VMa
 https://malaybaku.github.io/VMagicMirror/credit_license
 
 
-### 5.2. ゲームパッドモデルについて
+### 5.2. Creative Commons Licenseに基づくモデルについて
 
-このレポジトリに含まれる`Gamepad.fbx`は #616 に於いて導入しており、Attribution 4.0 International (CC BY 4.0)に従います。
+このレポジトリに含まれる下記モデルはCreative Commons Attributionライセンスに基づいて使用し、レポジトリに含まれます。
 
-作成者: Negyek
+- `Gamepad.fbx` (作成者: Negyek)
+- `CarSteering.glb` (作成者: CaskeThis)
 
 VMagicMirrorでは元モデルに対し、他のデバイスとの一貫性を保つためにマテリアルを適用しているほか、カスタマイズのためにテクスチャを変更可能にしています。
+
 
 ## 6. ローカリゼーションについて
 

@@ -221,7 +221,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             new MotionModeSelectionViewModel(0, "Motion_Arm_GamepadMode_Default"),
             new MotionModeSelectionViewModel(1, "Motion_Arm_GamepadMode_ArcadeStick"),
-            //NOTE: Gun ControllerとかCar Handleとかも想定していたが、Unity側の実装が間に合ってないので無し。
+            new MotionModeSelectionViewModel(2, "Motion_Arm_GamepadMode_CarHandle"),
+            //NOTE: Gun Controllerとかも想定していたが、Unity側の実装が間に合ってないので無し。
         };
     }
 

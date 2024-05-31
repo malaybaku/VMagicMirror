@@ -37,11 +37,14 @@ namespace Baku.VMagicMirror
 
         private float _bodyHorizontalOffsetSuggest;
         private float _hipsHeightRate = 1.0f;
-        
 
+        private CarHandleBasedFK _carHandleBasedFk;
+        
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable)
+        public void Initialize(IVRMLoadable vrmLoadable, CarHandleBasedFK carHandleBasedFk)
         {
+            _carHandleBasedFk = carHandleBasedFk;
+
             vrmLoadable.VrmLoaded += info =>
             {
                 _bodyHorizontalOffsetSuggest = 0;
@@ -57,18 +60,24 @@ namespace Baku.VMagicMirror
             // _faceAngleToBodyAngle: 3DOFぜんぶ
             // imageBasedBodyMotion: ロール
             // gamePadBasedBodyLean: ロールとピッチ
+            // carHandle: ロール
             // どれも角度は小さめなので雑にかけてます
             BodyLeanSuggest =
                 _faceAngleToBodyAngle.BodyLeanSuggest *
                 _imageBasedBodyMotion.BodyLeanSuggest *
                 _gamepadBasedBodyLean.BodyLeanSuggest;
+
+            if (_carHandleBasedFk.IsActive)
+            {
+                BodyLeanSuggest *= _carHandleBasedFk.GetBodyLeanSuggest();
+            }
             
             //ロール角を拾う。
             BodyLeanSuggest.ToAngleAxis(out float angle, out Vector3 axis);
             angle = Mathf.Repeat(angle + 180f, 360f) - 180f;
 
-            //NOTE: これは近似計算になるハズだけど、まあ十分だろうと。
-            float rollAngle = Mathf.Clamp(angle * axis.z, -_bodyRollReflectMaxDeg, _bodyRollReflectMaxDeg);
+            //NOTE: これは近似計算だが実用上足りてそうなやつ
+            var rollAngle = Mathf.Clamp(angle * axis.z, -_bodyRollReflectMaxDeg, _bodyRollReflectMaxDeg);
 
             BodyRollRate = rollAngle / _bodyRollReflectMaxDeg;
             _bodyHorizontalOffsetSuggest = rollAngle * _bodyRollDegToXOffsetFactor * _hipsHeightRate;

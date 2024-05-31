@@ -40,6 +40,7 @@ namespace Baku.VMagicMirror
 
         private FaceTracker _faceTracker;
         private GameInputBodyMotionController _gameInputBodyMotionController;
+        private CarHandleBasedFK _carHandleBasedFk;
 
         public event Action<Vector3> ImageBaseFaceRotationUpdated;
 
@@ -47,10 +48,12 @@ namespace Baku.VMagicMirror
         public void Initialize(
             FaceTracker faceTracker,
             GameInputBodyMotionController gameInputBodyMotionController,
+            CarHandleBasedFK carHandleBasedFk,
             IVRMLoadable vrmLoadable)
         {
             _faceTracker = faceTracker;
             _gameInputBodyMotionController = gameInputBodyMotionController;
+            _carHandleBasedFk = carHandleBasedFk;
 
             vrmLoadable.VrmLoaded += info =>
             {
@@ -196,7 +199,10 @@ namespace Baku.VMagicMirror
         
         private void ApplyRotationToHeadBone(Vector3 rotationEuler)
         {
-            var rot = _gameInputBodyMotionController.LookAroundRotation * Quaternion.Euler(rotationEuler);
+            var rot =
+                _gameInputBodyMotionController.LookAroundRotation * 
+                _carHandleBasedFk.GetHeadYawRotation() *
+                Quaternion.Euler(rotationEuler);
             
             //特に首と頭を一括で回すにあたって、コーナーケースを安全にするため以下のアプローチを取る
             // - 一旦今の回転値を混ぜて、

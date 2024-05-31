@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.7.0
+v3.8.0
 
 * Author: Baxter
-* 2024/Mar/31
+* 2024/May/31
 
 The VRM avatar application without any special device.
 
@@ -184,13 +184,15 @@ This page is similar, but it also refers to the libraries which are used in past
 https://malaybaku.github.io/VMagicMirror/credit_license
 
 
-### 5.2. About Gamepad Model Data 
+### 5.2. About Model data under Creative Commons Attribution
 
-`Gamepad.fbx` in this repository is introduced in #616 , and the model is under Attribution 4.0 International (CC BY 4.0).
+This repository includes following model data files under Attribution 4.0 International (CC BY 4.0).
 
-Author: Negyek
+- `Gamepad.fbx` (Author: Negyek)
+- `CarSteering.glb` (Author: CaskeThis)
 
 VMagicMirror applies material for visual consistency, and allow texture replacement to support visual customize.
+
 
 ## 6. About Localization Contribution
 

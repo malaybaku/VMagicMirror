@@ -10,7 +10,10 @@ namespace Baku.VMagicMirrorConfig.View
         private void OnClickHyperLinkToGitHub(object sender, RoutedEventArgs e)
             => UrlNavigate.Open("https://github.com/malaybaku/VMagicMirror");
 
-        private void OnClickHyperLinkToModelData(object sender, RoutedEventArgs e)
+        private void OnClickHyperLinkToGamepadModelData(object sender, RoutedEventArgs e)
             => UrlNavigate.Open("https://github.com/malaybaku/VMagicMirror/pull/616");
+
+        private void OnClickHyperLinkToCarSteeringModelData(object sender, RoutedEventArgs e)
+            => UrlNavigate.Open("https://sketchfab.com/3d-models/steering-wheel-rally-car-c83da5e0c5ea4e6095295dec147b3cfe");
     }
 }

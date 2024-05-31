@@ -28,10 +28,15 @@
 
         <TextBlock Style="{StaticResource NoteText}"
                    Text="VMagicMirror uses model data by Attribution 4.0 International (CC BY 4.0)"/>
-        <TextBlock Style="{StaticResource NoteText}"
-                   Text="Model data is by : Negyek"/>
-        <TextBlock>
-                <Hyperlink Click="OnClickHyperLinkToModelData">Source (Pull Request URL of the model)</Hyperlink>
+        <TextBlock Style="{StaticResource NoteText}" Margin="15,5"
+                   Text="Gamepad.fbx is by : Negyek"/>
+        <TextBlock Margin="30,0,0,5">
+                <Hyperlink Click="OnClickHyperLinkToGamepadModelData">Source (Pull Request URL of the model)</Hyperlink>
+        </TextBlock>
+        <TextBlock Style="{StaticResource NoteText}" Margin="15,5"
+                   Text="CarSteering.glb is by : Caske This"/>
+        <TextBlock Margin="30,0,0,5">
+                <Hyperlink Click="OnClickHyperLinkToCarSteeringModelData">Source (Sketchfab URL)</Hyperlink>
         </TextBlock>
         <TextBlock Style="{StaticResource NoteText}"
                    Text="In VMagicMirror, the material is adjusted for the visual consistency, and texture replacement is allowed."/>

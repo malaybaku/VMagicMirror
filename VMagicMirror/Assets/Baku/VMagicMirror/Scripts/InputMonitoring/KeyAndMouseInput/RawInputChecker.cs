@@ -28,18 +28,18 @@ namespace Baku.VMagicMirror
         private WindowProcedureHook _windowProcedureHook = null;
 
         public IObservable<string> RawKeyDown => _rawKeyDown;
-        private readonly Subject<string> _rawKeyDown = new Subject<string>();
+        private readonly Subject<string> _rawKeyDown = new();
         
         public IObservable<string> RawKeyUp => _rawKeyUp;
-        private readonly Subject<string> _rawKeyUp = new Subject<string>();
+        private readonly Subject<string> _rawKeyUp = new();
         
         public IObservable<string> KeyDown => _keyDown;
-        private readonly Subject<string> _keyDown = new Subject<string>();
+        private readonly Subject<string> _keyDown = new();
         public IObservable<string> KeyUp => _keyUp;
-        private readonly Subject<string> _keyUp = new Subject<string>();
+        private readonly Subject<string> _keyUp = new();
 
         public IObservable<string> MouseButton => _mouseButton;
-        private readonly Subject<string> _mouseButton = new Subject<string>();
+        private readonly Subject<string> _mouseButton = new();
 
         private readonly object _timeLock = new();
         private float _time = 0f;
@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror
         
         private int _dx;
         private int _dy;
-        private readonly object _diffLock = new object();
+        private readonly object _diffLock = new();
         
         public bool EnableFpsAssumedRightHand { get; private set; } = false;
 
@@ -90,11 +90,11 @@ namespace Baku.VMagicMirror
         private bool _randomizeKey = false;
 
         //直前フレームで下がった/上がったキーのコード。(多分大丈夫なんだけど)イベントハンドラを短時間で抜けときたいのでこういう持ち方にする
-        private readonly ConcurrentQueue<int> _downKeys = new ConcurrentQueue<int>();
-        private readonly ConcurrentQueue<int> _upKeys = new ConcurrentQueue<int>();
+        private readonly ConcurrentQueue<int> _downKeys = new();
+        private readonly ConcurrentQueue<int> _upKeys = new();
         
         //打鍵ランダム化の際、押したキーがランダムになっちゃってもKeyUpで破綻が起きなくなるようにするため、どこを押したか覚えるキュー
-        private readonly Queue<string> _randomizedDownKeyQueue = new Queue<string>();
+        private readonly Queue<string> _randomizedDownKeyQueue = new();
         
         #endregion
         

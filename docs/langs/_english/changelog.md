@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.8.1
+{: .doc-sec2 }
+
+2024/06/30
+
+* Fixed: Add the workardound of issue that key up event is ignored for some mode (Game Input feature etc.) .
+
+
 #### v3.8.0
 {: .doc-sec2 }
 

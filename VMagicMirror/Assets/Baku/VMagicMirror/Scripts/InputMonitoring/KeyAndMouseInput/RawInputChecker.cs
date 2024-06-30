@@ -19,28 +19,43 @@ namespace Baku.VMagicMirror
         private const string MouseRDownEventName = "RDown";
         private const string MouseMDownEventName = "MDown";
         
+        // キー押下後にKey Upイベントが一定時間飛んでこない場合にキーを離したものとみなすタイムアウト値。
+        // VMMのメニューバーを掴みながらKeyの上げ下げをするなどの操作をするとKey Upイベントが検出できなくなるので、その対策として用いる
+        private const float KeyUpForceDuration = 2.0f;
+        // キー上げ処理を検証する周期。毎フレームやるほどではないので…
+        private const float KeyUpForceCheckInterval = 0.4f;
+        
         private WindowProcedureHook _windowProcedureHook = null;
 
         public IObservable<string> RawKeyDown => _rawKeyDown;
-        private readonly Subject<string> _rawKeyDown = new Subject<string>();
+        private readonly Subject<string> _rawKeyDown = new();
         
         public IObservable<string> RawKeyUp => _rawKeyUp;
-        private readonly Subject<string> _rawKeyUp = new Subject<string>();
+        private readonly Subject<string> _rawKeyUp = new();
         
         public IObservable<string> KeyDown => _keyDown;
-        private readonly Subject<string> _keyDown = new Subject<string>();
+        private readonly Subject<string> _keyDown = new();
         public IObservable<string> KeyUp => _keyUp;
-        private readonly Subject<string> _keyUp = new Subject<string>();
+        private readonly Subject<string> _keyUp = new();
 
         public IObservable<string> MouseButton => _mouseButton;
-        private readonly Subject<string> _mouseButton = new Subject<string>();
+        private readonly Subject<string> _mouseButton = new();
 
+        private readonly object _timeLock = new();
+        private float _time = 0f;
+        //NOTE: Time.timeにメインスレッド以外からアクセスするためのラッパー
+        private float CurrentTime
+        {
+            get { lock (_timeLock) return _time; }
+            set { lock (_timeLock) _time = value; }
+        }
+        
 
         #region マウス
         
         private int _dx;
         private int _dy;
-        private readonly object _diffLock = new object();
+        private readonly object _diffLock = new();
         
         public bool EnableFpsAssumedRightHand { get; private set; } = false;
 
@@ -65,18 +80,21 @@ namespace Baku.VMagicMirror
         
         #region キーボード
         
-        //NOTE: これはウィンドウプロシージャ側のみが参照する値で、
-        //WM_INPUTベースで上がった/下がったをここにポンポン入れていく
+        private readonly object _keyDownLock = new();
+
+        //NOTE: 下記はおもにウィンドウプロシージャで更新しつつ、自動キー離し処理のためにメインスレッドからも見に来る。
+        //基本的には WM_INPUT ベースでの現在値が入る
         private readonly bool[] _keyDownFlags = new bool[256];
+        private readonly float[] _keyDownTimes = new float[256];
         
         private bool _randomizeKey = false;
 
         //直前フレームで下がった/上がったキーのコード。(多分大丈夫なんだけど)イベントハンドラを短時間で抜けときたいのでこういう持ち方にする
-        private readonly ConcurrentQueue<int> _downKeys = new ConcurrentQueue<int>();
-        private readonly ConcurrentQueue<int> _upKeys = new ConcurrentQueue<int>();
+        private readonly ConcurrentQueue<int> _downKeys = new();
+        private readonly ConcurrentQueue<int> _upKeys = new();
         
         //打鍵ランダム化の際、押したキーがランダムになっちゃってもKeyUpで破綻が起きなくなるようにするため、どこを押したか覚えるキュー
-        private readonly Queue<string> _randomizedDownKeyQueue = new Queue<string>();
+        private readonly Queue<string> _randomizedDownKeyQueue = new();
         
         #endregion
         
@@ -125,10 +143,16 @@ namespace Baku.VMagicMirror
             _windowProcedureHook = new WindowProcedureHook();
             _windowProcedureHook.StartObserve();
             _windowProcedureHook.ReceiveRawInput += OnReceiveRawInput;
+
+            //KeyUpの検出漏れがないか一定周期で見る
+            Observable.Interval(TimeSpan.FromSeconds(KeyUpForceCheckInterval))
+                .Subscribe(_ => ReleaseKeyByTimeout())
+                .AddTo(this);
         }
 
         private void Update()
         {
+            CurrentTime = Time.time;
 #if UNITY_EDITOR
             EditorCheckKeyDown();
 #endif
@@ -197,7 +221,6 @@ namespace Baku.VMagicMirror
         private void OnReceiveRawInput(IntPtr lParam)
         {
             var data = RawInputData.FromHandle(lParam);
-            
             if (data is RawInputMouseData mouseData && mouseData.Mouse.Flags.HasFlag(RawMouseFlags.MoveRelative))
             {
                 AddDif(mouseData.Mouse.LastX, mouseData.Mouse.LastY);
@@ -217,20 +240,52 @@ namespace Baku.VMagicMirror
                 //NOTE: ↓はkey.Flags % 2 == 0と書くのと同じような意味
                 bool isDown = !key.Flags.HasFlag(RawKeyboardFlags.Up);
                 
-                if (_keyDownFlags[code] == isDown)
+                lock (_keyDownLock)
                 {
-                    //キーが押しっぱなしの場合にイベントがバシバシ来るのをここで止める
-                    return;
-                }
+                    if (isDown)
+                    {
+                        //押しっぱなし状態のとき、ここを繰り返し通過する
+                        _keyDownTimes[code] = CurrentTime;
+                    }
+  
+                    if (_keyDownFlags[code] == isDown)
+                    {
+                        // 特にキーが押しっぱなしの場合のイベント発火をここでガードしておく
+                        return;
+                    }
 
-                _keyDownFlags[code] = isDown;
-                if (isDown)
-                {
-                    _downKeys.Enqueue(code);
+                    _keyDownFlags[code] = isDown;
+                    if (isDown)
+                    {
+                        _downKeys.Enqueue(code);
+                    }
+                    else
+                    {
+                        _upKeys.Enqueue(code);
+                    }
                 }
-                else
+            }
+        }
+
+        // キー押下したままの判定になっていてキー上げが発火していないキーを強制的に離した扱いにする
+        private void ReleaseKeyByTimeout()
+        {
+            var t = Time.time;
+            lock (_keyDownLock)
+            {
+                for (var i = 0; i < _keyDownFlags.Length; i++)
                 {
-                    _upKeys.Enqueue(code);
+                    // modifier系のキーは押しっぱなしでも連打相当のイベントが飛んでこないため、離した判定にするのもやめておく
+                    if (IsModifierKey((Keys)i))
+                    {
+                        continue;
+                    }
+
+                    if (_keyDownFlags[i] && t - _keyDownTimes[i] > KeyUpForceDuration)
+                    {
+                        _keyDownFlags[i] = false;
+                        _upKeys.Enqueue(i);
+                    }
                 }
             }
         }
@@ -319,6 +374,13 @@ namespace Baku.VMagicMirror
             }
         }
         
+        private static bool IsModifierKey(Keys key)
+        {
+            return key is 
+                Keys.LShiftKey or Keys.RShiftKey or 
+                Keys.LControlKey or Keys.RControlKey or 
+                Keys.LMenu or Keys.RMenu;
+        }
         
         //NOTE: DIのほうがキレイだけど、分けるほどコードサイズが無いので直書きで。
         #if UNITY_EDITOR

@@ -156,7 +156,6 @@ namespace Baku.VMagicMirror
 #if UNITY_EDITOR
             EditorCheckKeyDown();
 #endif
-
             while (_downKeys.TryDequeue(out int keyCode))
             {
                 //キーイベントとしてマウスボタンの情報も載っているので理屈上正しくなるように割り当てる。
@@ -220,7 +219,19 @@ namespace Baku.VMagicMirror
 
         private void OnReceiveRawInput(IntPtr lParam)
         {
-            var data = RawInputData.FromHandle(lParam);
+            var messageData = RawInputData.FromHandle(lParam);
+            ProcessRawInputData(messageData);
+
+            //NOTE: きわめて短時間に複数のイベントが飛んできている場合、それがBufferedDataに入っているので拾いに行く
+            var bufferedData = RawInputData.GetBufferedData();
+            foreach (var data in bufferedData)
+            {
+                ProcessRawInputData(data);
+            }
+        }
+
+        private void ProcessRawInputData(RawInputData data)
+        {
             if (data is RawInputMouseData mouseData && mouseData.Mouse.Flags.HasFlag(RawMouseFlags.MoveRelative))
             {
                 AddDif(mouseData.Mouse.LastX, mouseData.Mouse.LastY);
@@ -228,7 +239,7 @@ namespace Baku.VMagicMirror
             else if (data is RawInputKeyboardData keyData)
             {
                 var key = keyData.Keyboard;
-                int code = GetKeyCode(key);
+                var code = GetKeyCode(key);
                 //255は「良く分からん」的なキー情報なので弾く。
                 //とくにNumLockがオフのときArrow / INS / DEL / HOME / END / PgUp / PgDnを叩くと、
                 //(なぜか)255の入力と該当キー入力の2重のイベントが吹っ飛んでくるので、それを無視するのが狙い
@@ -238,8 +249,7 @@ namespace Baku.VMagicMirror
                 }
                 
                 //NOTE: ↓はkey.Flags % 2 == 0と書くのと同じような意味
-                bool isDown = !key.Flags.HasFlag(RawKeyboardFlags.Up);
-                
+                var isDown = !key.Flags.HasFlag(RawKeyboardFlags.Up);
                 lock (_keyDownLock)
                 {
                     if (isDown)
@@ -305,7 +315,11 @@ namespace Baku.VMagicMirror
 
         private void RegisterKeyboard()
         {
-#if !UNITY_EDITOR
+            if (Application.isEditor)
+            {
+                return;
+            }
+            
             try
             {
                 RawInputDevice.RegisterDevice(
@@ -317,20 +331,20 @@ namespace Baku.VMagicMirror
             catch (Exception ex)
             {
                 LogOutput.Instance.Write(ex);
-            }
-#endif          
+            }   
         }
 
         private void UnregisterKeyboard()
         {
-#if !UNITY_EDITOR
-            RawInputDevice.UnregisterDevice(HidUsageAndPage.Keyboard);            
-#endif
+            if (!Application.isEditor)
+            {
+                RawInputDevice.UnregisterDevice(HidUsageAndPage.Keyboard);            
+            }
         }
         
         private static int GetKeyCode(RawKeyboard key)
         {
-            int code = key.VirutalKey;
+            var code = key.VirutalKey;
             
             switch (code)
             {

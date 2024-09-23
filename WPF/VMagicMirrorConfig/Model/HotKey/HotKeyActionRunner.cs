@@ -8,9 +8,12 @@ namespace Baku.VMagicMirrorConfig
             ModelResolver.Instance.Resolve<HotKeySettingModel>(),
             ModelResolver.Instance.Resolve<HotKeyModel>(),
             ModelResolver.Instance.Resolve<LayoutSettingModel>(),
+            ModelResolver.Instance.Resolve<LightSettingModel>(),
             ModelResolver.Instance.Resolve<MotionSettingModel>(),
             ModelResolver.Instance.Resolve<WordToMotionSettingModel>(),
-            ModelResolver.Instance.Resolve<AccessorySettingModel>()
+            ModelResolver.Instance.Resolve<AccessorySettingModel>(),
+            ModelResolver.Instance.Resolve<GamepadSettingModel>(),
+            ModelResolver.Instance.Resolve<VMCPSettingModel>()
             )
         {
         }
@@ -19,17 +22,23 @@ namespace Baku.VMagicMirrorConfig
             HotKeySettingModel setting,
             HotKeyModel model,
             LayoutSettingModel layoutSetting,
+            LightSettingModel lightSetting,
             MotionSettingModel motionSetting,
             WordToMotionSettingModel wordToMotionSetting,
-            AccessorySettingModel accessorySetting
+            AccessorySettingModel accessorySetting,
+            GamepadSettingModel gamepadSetting,
+            VMCPSettingModel vmcpSetting
             )
         {
             _setting = setting;
             _model = model;
             _layoutSetting = layoutSetting;
+            _lightSetting = lightSetting;
             _motionSetting = motionSetting;
             _wordToMotionSetting = wordToMotionSetting;
             _accessorySetting = accessorySetting;
+            _gamepadSetting = gamepadSetting;
+            _vmcpSetting = vmcpSetting;
 
             _model.ActionRequested += OnActionRequested;
         }
@@ -37,9 +46,12 @@ namespace Baku.VMagicMirrorConfig
         private readonly HotKeyModel _model;
         private readonly HotKeySettingModel _setting;
         private readonly LayoutSettingModel _layoutSetting;
+        private readonly LightSettingModel _lightSetting;
         private readonly MotionSettingModel _motionSetting;
         private readonly WordToMotionSettingModel _wordToMotionSetting;
         private readonly AccessorySettingModel _accessorySetting;
+        private readonly VMCPSettingModel _vmcpSetting;
+        private readonly GamepadSettingModel _gamepadSetting;
 
         private void OnActionRequested(HotKeyActionContent content)
         {
@@ -63,7 +75,27 @@ namespace Baku.VMagicMirrorConfig
                 case HotKeyActions.ToggleAccessory:
                     ToggleAccessoryVisibility(content.ArgString);
                     break;
-
+                case HotKeyActions.ToggleVMCPSendActive:
+                    _vmcpSetting.VMCPEnabled.Value = !_vmcpSetting.VMCPEnabled.Value;
+                    break;
+                case HotKeyActions.ToggleKeyboardVisibility:
+                    _layoutSetting.HidVisibility.Value = !_layoutSetting.HidVisibility.Value;
+                    break;
+                case HotKeyActions.TogglePenVisibility:
+                    _layoutSetting.PenVisibility.Value = !_layoutSetting.PenVisibility.Value;
+                    break;
+                case HotKeyActions.ToggleGamepadVisibility:
+                    _gamepadSetting.GamepadVisibility.Value = !_gamepadSetting.GamepadVisibility.Value;
+                    break;
+                case HotKeyActions.ToggleShadowVisibility:
+                    _lightSetting.EnableShadow.Value = !_lightSetting.EnableShadow.Value;
+                    break;
+                case HotKeyActions.ToggleOutlineVisibility:
+                    _lightSetting.EnableOutlineEffect.Value = !_lightSetting.EnableOutlineEffect.Value;
+                    break;
+                case HotKeyActions.ToggleWindVisibility:
+                    _lightSetting.EnableWind.Value = !_lightSetting.EnableWind.Value;
+                    break;
                 case HotKeyActions.None:
                 default:
                     //何もしない

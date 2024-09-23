@@ -75,7 +75,7 @@ namespace Baku.VMagicMirrorConfig
                 case HotKeyActions.ToggleAccessory:
                     ToggleAccessoryVisibility(content.ArgString);
                     break;
-                case HotKeyActions.ToggleVMCPSendActive:
+                case HotKeyActions.ToggleVMCPReceiveActive:
                     _vmcpSetting.VMCPEnabled.Value = !_vmcpSetting.VMCPEnabled.Value;
                     break;
                 case HotKeyActions.ToggleKeyboardVisibility:

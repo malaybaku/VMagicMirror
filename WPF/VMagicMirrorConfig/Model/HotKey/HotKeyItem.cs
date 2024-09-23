@@ -9,7 +9,7 @@ namespace Baku.VMagicMirrorConfig
         CallWtm,
         ToggleAccessory,
         SetBodyMotionStyle,
-        ToggleVMCPSendActive,
+        ToggleVMCPReceiveActive,
         ToggleKeyboardVisibility, // NOTE: このへんのToggle shortcutは、後から「Toggle/Hide/Show」みたいな下位分類をつけて拡張してもよい
         TogglePenVisibility,
         ToggleGamepadVisibility,

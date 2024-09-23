@@ -49,7 +49,7 @@ namespace Baku.VMagicMirror
             float right = MapClamp(rawRightBlink);
             if (right < 0.9f)
             {
-                Mathf.Lerp(right, blinkValueOnSquint, rawRightSquint);
+                right = Mathf.Lerp(right, blinkValueOnSquint, rawRightSquint);
             }
             right = Mathf.Clamp(right, _blinkSource.Right - subLimit, 1.0f);
             _blinkSource.Right = Mathf.Clamp01(right);

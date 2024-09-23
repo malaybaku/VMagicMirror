@@ -567,6 +567,13 @@ Input favorite key combination in text area.
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_AlwaysHandDown">Motion Style > Standing Only</sys:String>
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_GameInputLocomotion">Motion Style > Game Locomotion</sys:String>
     <sys:String x:Key="Hotkey_Action_SetBodyMotionStyle_Unknown">Motion Style > (Unknown)</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleVMCPReceiveActive">Toggle VMC Protocol Receive Activeness</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleKeyboardVisibility">Toggle Keyboard Visibility</sys:String>
+    <sys:String x:Key="Hotkey_Action_TogglePenVisibility">Toggle Pen Visibility</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleGamepadVisibility">Toggle Gamepad Visibility</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleShadowVisibility">Toggle Shadow Activeness</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleOutlineVisibility">Toggle Outline Activeness</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleWindVisibility">Toggle Wind Activeness</sys:String>
     
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">Setting File Control</sys:String>

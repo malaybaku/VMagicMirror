@@ -120,12 +120,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
     public class HotKeySupportedActionViewModel : ViewModelBase
     {
-        private const string DisplayNameKeyPrefix = "HotKey_Action_";
-        private const string None = "Hotkey_Action_None";
-        private const string SetCameraFormat = "Hotkey_Action_SetCamera_Format";
-        private const string CallWtmFormat = "Hotkey_Action_CallWtm_Format";
-        private const string ToggleAccessoryFormat = "Hotkey_Action_ToggleAccessory_Format";
-        private const string SetBodyMotionStylePrefix = "Hotkey_Action_SetBodyMotionStyle_";
+        private const string DisplayNameKeyPrefix = "Hotkey_Action_";
+        private const string None = DisplayNameKeyPrefix + "None";
+        private const string SetCameraFormat = DisplayNameKeyPrefix + "SetCamera_Format";
+        private const string CallWtmFormat = DisplayNameKeyPrefix + "CallWtm_Format";
+        private const string ToggleAccessoryFormat = DisplayNameKeyPrefix + "ToggleAccessory_Format";
+        private const string SetBodyMotionStylePrefix = DisplayNameKeyPrefix + "SetBodyMotionStyle_";
 
         //NOTE: カメラの指定 / Wtmの呼び出し用のインスタンスでは第二引数をnullにしてもよい
         internal HotKeySupportedActionViewModel(HotKeyActionContent content, AccessorySettingModel? accessorySetting = null)

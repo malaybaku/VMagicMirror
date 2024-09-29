@@ -8,6 +8,15 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.8.3
+{: .doc-sec2 }
+
+2024/09/30
+
+* Add: Add functions to Hotkey feature, to toggle VMC Protocol activeness, and toggle visibility of keyboard, gamepad etc.
+* Fixed: Bug that avatar's left eye tends to be closed, when using iFacialMocap and perfect option is off.
+
+
 #### v3.8.2
 {: .doc-sec2 }
 

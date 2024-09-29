@@ -217,6 +217,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 case HotKeyActions.TogglePenVisibility:
                     DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.TogglePenVisibility));
                     break;
+                case HotKeyActions.ToggleGamepadVisibility:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleGamepadVisibility));
+                    break;
                 case HotKeyActions.ToggleShadowVisibility:
                     DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleShadowVisibility));
                     break;

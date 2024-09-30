@@ -20,18 +20,27 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         static HotKeySupportedActionsViewModel()
         {
-            ConstAvailableHotKeyActions = new HotKeySupportedActionViewModel[7 + 40];
+            ConstAvailableHotKeyActions = new HotKeySupportedActionViewModel[14 + 40];
             ConstAvailableHotKeyActions[0] = new(new(HotKeyActions.None, 0, ""));
             ConstAvailableHotKeyActions[1] = new(new(HotKeyActions.SetCamera, 1, ""));
             ConstAvailableHotKeyActions[2] = new(new(HotKeyActions.SetCamera, 2, ""));
             ConstAvailableHotKeyActions[3] = new(new(HotKeyActions.SetCamera, 3, ""));
             ConstAvailableHotKeyActions[4] = new(new(HotKeyActions.SetBodyMotionStyle, (int)HotKeyActionBodyMotionStyle.Default, ""));
             ConstAvailableHotKeyActions[5] = new(new(HotKeyActions.SetBodyMotionStyle, (int)HotKeyActionBodyMotionStyle.AlwaysHandDown, ""));
-            ConstAvailableHotKeyActions[6] = new(new(HotKeyActions.SetBodyMotionStyle, (int)HotKeyActionBodyMotionStyle.GameInputLocomotion, ""));                
+            ConstAvailableHotKeyActions[6] = new(new(HotKeyActions.SetBodyMotionStyle, (int)HotKeyActionBodyMotionStyle.GameInputLocomotion, ""));
+
+            ConstAvailableHotKeyActions[7] = new(new(HotKeyActions.ToggleVMCPReceiveActive, 0, ""));
+            ConstAvailableHotKeyActions[8] = new(new(HotKeyActions.ToggleKeyboardVisibility, 0, ""));
+            ConstAvailableHotKeyActions[9] = new(new(HotKeyActions.TogglePenVisibility, 0, ""));
+            ConstAvailableHotKeyActions[10] = new(new(HotKeyActions.ToggleGamepadVisibility, 0, ""));
+            ConstAvailableHotKeyActions[11] = new(new(HotKeyActions.ToggleShadowVisibility, 0, ""));
+            ConstAvailableHotKeyActions[12] = new(new(HotKeyActions.ToggleOutlineVisibility, 0, ""));
+            ConstAvailableHotKeyActions[13] = new(new(HotKeyActions.ToggleWindVisibility, 0, ""));
+
 
             for (var i = 0; i < 40; i++)
             {
-                ConstAvailableHotKeyActions[7 + i] = new(new(HotKeyActions.CallWtm, i + 1, ""));
+                ConstAvailableHotKeyActions[14 + i] = new(new(HotKeyActions.CallWtm, i + 1, ""));
             }
         }
 
@@ -111,11 +120,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
     public class HotKeySupportedActionViewModel : ViewModelBase
     {
-        private const string None = "Hotkey_Action_None";
-        private const string SetCameraFormat = "Hotkey_Action_SetCamera_Format";
-        private const string CallWtmFormat = "Hotkey_Action_CallWtm_Format";
-        private const string ToggleAccessoryFormat = "Hotkey_Action_ToggleAccessory_Format";
-        private const string SetBodyMotionStylePrefix = "Hotkey_Action_SetBodyMotionStyle_";
+        private const string DisplayNameKeyPrefix = "Hotkey_Action_";
+        private const string None = DisplayNameKeyPrefix + "None";
+        private const string SetCameraFormat = DisplayNameKeyPrefix + "SetCamera_Format";
+        private const string CallWtmFormat = DisplayNameKeyPrefix + "CallWtm_Format";
+        private const string ToggleAccessoryFormat = DisplayNameKeyPrefix + "ToggleAccessory_Format";
+        private const string SetBodyMotionStylePrefix = DisplayNameKeyPrefix + "SetBodyMotionStyle_";
 
         //NOTE: カメラの指定 / Wtmの呼び出し用のインスタンスでは第二引数をnullにしてもよい
         internal HotKeySupportedActionViewModel(HotKeyActionContent content, AccessorySettingModel? accessorySetting = null)
@@ -196,6 +206,28 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                         LocalizedString.GetString(ToggleAccessoryFormat),
                         accessoryDisplayName
                     );
+                    break;
+
+                case HotKeyActions.ToggleVMCPReceiveActive:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleVMCPReceiveActive));
+                    break;
+                case HotKeyActions.ToggleKeyboardVisibility:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleKeyboardVisibility));
+                    break;
+                case HotKeyActions.TogglePenVisibility:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.TogglePenVisibility));
+                    break;
+                case HotKeyActions.ToggleGamepadVisibility:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleGamepadVisibility));
+                    break;
+                case HotKeyActions.ToggleShadowVisibility:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleShadowVisibility));
+                    break;
+                case HotKeyActions.ToggleOutlineVisibility:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleOutlineVisibility));
+                    break;
+                case HotKeyActions.ToggleWindVisibility:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleWindVisibility));
                     break;
                 case HotKeyActions.None:
                 default:

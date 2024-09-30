@@ -4,11 +4,18 @@ namespace Baku.VMagicMirrorConfig
 {
     public enum HotKeyActions : int
     {
-        None,
+        None = 0,
         SetCamera,
         CallWtm,
         ToggleAccessory,
         SetBodyMotionStyle,
+        ToggleVMCPReceiveActive,
+        ToggleKeyboardVisibility, // NOTE: このへんのToggle shortcutは、後から「Toggle/Hide/Show」みたいな下位分類をつけて拡張してもよい
+        TogglePenVisibility,
+        ToggleGamepadVisibility,
+        ToggleShadowVisibility,
+        ToggleOutlineVisibility,
+        ToggleWindVisibility, // NOTE: Windに対してVisibilityという言い方をするのは「表示」タブにあるから
     }
 
     public enum HotKeyActionBodyMotionStyle : int

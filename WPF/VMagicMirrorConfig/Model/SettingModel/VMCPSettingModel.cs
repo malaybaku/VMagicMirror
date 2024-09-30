@@ -38,7 +38,7 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> DisableCameraDuringVMCPActive { get; }
 
         private readonly VMCPReceiveStatus _receiveStatus = new();
-        public IReadOnlyList<bool> Conneceted => _receiveStatus.Connected;
+        public IReadOnlyList<bool> Connected => _receiveStatus.Connected;
 
         public event EventHandler? ConnectedStatusChanged;
 

@@ -38,7 +38,12 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<GamepadMotionModes> _gamepadMotionMode = new(GamepadMotionModes.Gamepad);
         //NOTE: 名前がちょっとややこしいが、GameInputModeじゃないほうの「ゲームパッドを何かしら掴んでるモーションの種類」のほう
         public IReadOnlyReactiveProperty<GamepadMotionModes> GamepadMotionMode => _gamepadMotionMode;
-        
+
+        private readonly ReactiveProperty<KeyboardAndMouseMotionModes> _keyboardAndMouseMotionMode
+            = new(KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
+        //NOTE: Noneという値も入る(Noneになると「キー入力は監視はしてるけどモーション的には無いのと同様に扱う」という状態でNoneになる)ことに注意
+        public IReadOnlyReactiveProperty<KeyboardAndMouseMotionModes> KeyboardAndMouseMotionMode
+            => _keyboardAndMouseMotionMode;
         
         private IDisposable _disposable;
 
@@ -63,6 +68,11 @@ namespace Baku.VMagicMirror
                 VmmCommands.EnableGameInputLocomotionMode,
                 command => _enableGameInputLocomotionMode.Value = command.ToBoolean()
             );
+         
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetKeyboardAndMouseMotionMode,
+                message => SetKeyboardAndMouseMotionMode(message.ToInt())
+            );
             
             _disposable = _enableNoHandTrackMode
                 .CombineLatest(
@@ -80,6 +90,14 @@ namespace Baku.VMagicMirror
             _receiver.AssignCommandHandler(
                 VmmCommands.SetGameInputLocomotionStyle,
                 command => SetGameInputLocomotionStyle(command.ToInt()));
+        }
+
+        private void SetKeyboardAndMouseMotionMode(int modeIndex)
+        {
+            if (modeIndex is >= (int) KeyboardAndMouseMotionModes.None and < (int) KeyboardAndMouseMotionModes.Unknown)
+            {
+                _keyboardAndMouseMotionMode.Value = (KeyboardAndMouseMotionModes) modeIndex;
+            }
         }
 
         private void SetGameInputLocomotionStyle(int value)

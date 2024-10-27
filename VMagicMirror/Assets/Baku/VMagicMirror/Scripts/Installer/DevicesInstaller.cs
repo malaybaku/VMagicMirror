@@ -16,7 +16,6 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private PenController penController = null;
         [SerializeField] private MidiControllerProvider midiControllerProvider = null;
         [SerializeField] private ParticleStore particleStore = null;
-        
 
         public Transform Transform => transform;
         
@@ -62,8 +61,6 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<CarHandleProvider>()
                 .FromComponentInNewPrefab(carHandleProvider)
                 .AsCached();
-
-            container.BindInterfacesTo<GamepadVisibilityUpdater>().AsSingle();
         }
     }
 

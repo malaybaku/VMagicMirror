@@ -5,13 +5,13 @@ using UnityEngine;
 namespace Baku.VMagicMirror
 {
     [RequireComponent(typeof(MagnetDeformer))]
-    public class CarHandleVisibilityView : MonoBehaviour
+    public class ArcadeStickVisibilityView : MonoBehaviour
     {
         private DeformableCounter _deformableCounter;
         private MagnetDeformer _deformer;
         private Renderer[] _renderers;
 
-        public bool IsVisible { get; private set; }
+        public bool IsVisible { get; private set; } = false;
 
         public void Setup(DeformableCounter deformableCounter)
         {
@@ -32,7 +32,7 @@ namespace Baku.VMagicMirror
                 .To(
                     () => _deformer.Factor, 
                     v => _deformer.Factor = v, 
-                    visible ? 0.0f : 1.0f, 
+                    visible ? 0.0f : 0.5f, 
                     0.5f)
                 .SetEase(Ease.OutCubic)
                 .OnStart(() =>

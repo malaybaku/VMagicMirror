@@ -93,8 +93,8 @@ namespace Baku.VMagicMirror
         private KeyboardVisibility _keyboardVisibility;
         private TouchpadVisibility _touchPadVisibility;
         private GamepadVisibilityView _gamepadVisibility;
-        private ArcadeStickVisibilityReceiver _arcadeStickVisibility;
-        private CarHandleVisibilityReceiver _carHandleVisibility;
+        private ArcadeStickVisibilityView _arcadeStickVisibility;
+        private CarHandleVisibilityView _carHandleVisibility;
         private PenTabletVisibility _penTabletVisibility;
         private MidiControllerVisibility _midiControllerVisibility;
                 
@@ -127,8 +127,8 @@ namespace Baku.VMagicMirror
             _keyboardVisibility = _keyboardControl.GetComponent<KeyboardVisibility>();
             _touchPadVisibility =  _touchPadControl.GetComponent<TouchpadVisibility>();
             _gamepadVisibility = _gamepadControl.GetComponent<GamepadVisibilityView>();
-            _arcadeStickVisibility = _arcadeStickControl.GetComponent<ArcadeStickVisibilityReceiver>();
-            _carHandleVisibility = _carHandleControl.GetComponent<CarHandleVisibilityReceiver>();
+            _arcadeStickVisibility = _arcadeStickControl.GetComponent<ArcadeStickVisibilityView>();
+            _carHandleVisibility = _carHandleControl.GetComponent<CarHandleVisibilityView>();
             _midiControllerVisibility = _midiControl.GetComponent<MidiControllerVisibility>();
             _penTabletVisibility = _penTabletControl.GetComponent<PenTabletVisibility>();
             

@@ -34,10 +34,6 @@ namespace Baku.VMagicMirror
 
         public bool IsVisible { get; private set; }
 
-        // trueの場合、ゲームパッドから両手が離れるとゲームパッドが非表示になる。
-        // 実質const値だが、設定で変えうるのでRP<bool>にしてある
-        private readonly ReactiveProperty<bool> _hideWhenHandIsNotOnGamepad = new(true);
-
         private void Start()
         {
             _deformer = GetComponent<MagnetDeformer>();
@@ -46,7 +42,7 @@ namespace Baku.VMagicMirror
             //NOTE: 初期値で1回だけ発火してほしいので最初だけAsUnitObservableになっている
             Observable.Merge(
                 _deviceVisibilityManager.GamepadVisible.AsUnitObservable(),
-                _hideWhenHandIsNotOnGamepad.AsUnitWithoutLatest(),
+                _deviceVisibilityManager.HideUnusedDevices.AsUnitWithoutLatest(),
                 _bodyMotionModeController.MotionMode.AsUnitWithoutLatest(),
                 _bodyMotionModeController.GamepadMotionMode.AsUnitWithoutLatest(),
                 _handIkIntegrator.LeftTargetType.AsUnitWithoutLatest(),
@@ -58,7 +54,7 @@ namespace Baku.VMagicMirror
 
         private bool IsGamepadVisible()
         {
-            // 設定の組み合わせに基づいたvisibilityをチェック
+            // 設定の組み合わせに基づいたvisibilityがオフならその時点で非表示にしておく
             var settingBasedResult = 
                 _deviceVisibilityManager.GamepadVisible.Value &&
                 _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
@@ -69,7 +65,7 @@ namespace Baku.VMagicMirror
                 return false;
             }
 
-            if (!_hideWhenHandIsNotOnGamepad.Value)
+            if (!_deviceVisibilityManager.HideUnusedDevices.Value)
             {
                 return true;
             }

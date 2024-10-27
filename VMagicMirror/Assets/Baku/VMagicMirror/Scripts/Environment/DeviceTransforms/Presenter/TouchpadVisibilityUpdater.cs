@@ -36,6 +36,7 @@ namespace Baku.VMagicMirror
                 _deviceVisibilityRepository.HideUnusedDevices.AsUnitWithoutLatest(),
                 _bodyMotionModeController.MotionMode.AsUnitWithoutLatest(),
                 _bodyMotionModeController.KeyboardAndMouseMotionMode.AsUnitWithoutLatest(),
+                _handIkIntegrator.LeftTargetType.AsUnitWithoutLatest(),
                 _handIkIntegrator.RightTargetType.AsUnitWithoutLatest()
                 )
                 .Subscribe(_ => _view.SetVisibility(IsTouchpadVisible()))
@@ -60,8 +61,11 @@ namespace Baku.VMagicMirror
                 return true;
             }
             
+            //NOTE: キーボードに左右どっちかの手が乗ってる場合、キーマウ操作の一環と見なして表示してもOKにする。
+            // 特に右手のキーボードを許容しないとキーマウの行き来でデバイスが出入りしてうるさいので、その対策をしている
             return
-                _handIkIntegrator.RightTargetType.Value is HandTargetType.Mouse;
+                _handIkIntegrator.LeftTargetType.Value is HandTargetType.Keyboard || 
+                _handIkIntegrator.RightTargetType.Value is HandTargetType.Mouse or HandTargetType.Keyboard;
         }
     }
 }

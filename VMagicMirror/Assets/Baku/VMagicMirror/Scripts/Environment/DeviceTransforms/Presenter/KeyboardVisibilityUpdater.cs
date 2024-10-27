@@ -67,10 +67,11 @@ namespace Baku.VMagicMirror
             {
                 return true;
             }
-            
+
+            // NOTE: マウスパッド操作中は「キーマウ操作」という括りで考えてキーボードも表示する
             return
                 _handIkIntegrator.LeftTargetType.Value is HandTargetType.Keyboard ||
-                _handIkIntegrator.RightTargetType.Value is HandTargetType.Keyboard;
+                _handIkIntegrator.RightTargetType.Value is HandTargetType.Keyboard or HandTargetType.Mouse;
         }
     }
 }

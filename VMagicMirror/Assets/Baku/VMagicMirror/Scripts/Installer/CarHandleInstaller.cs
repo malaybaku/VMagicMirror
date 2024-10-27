@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
         public override void InstallBindings()
         {
             Container.BindInstance(visibilityView);
-            Container.BindInterfacesAndSelfTo<CarHandleVisibilityUpdater>().AsSingle();
+            Container.BindInterfacesTo<CarHandleVisibilityUpdater>().AsSingle();
         }
     }
 }

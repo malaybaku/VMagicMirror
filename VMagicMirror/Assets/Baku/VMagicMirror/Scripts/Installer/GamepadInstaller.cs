@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
         public override void InstallBindings()
         {
             Container.BindInstance(visibilityView);
-            Container.BindInterfacesAndSelfTo<GamepadVisibilityUpdater>().AsSingle();
+            Container.BindInterfacesTo<GamepadVisibilityUpdater>().AsSingle();
         }
     }
 }

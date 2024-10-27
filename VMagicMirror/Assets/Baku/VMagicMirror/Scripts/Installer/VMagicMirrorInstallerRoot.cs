@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.LuaScript;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.Installer
@@ -19,6 +20,8 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private DeformableCounter deformableCounterPrefab = null;
         [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
         [SerializeField] private StartupLoadingCover loadingCoverController = null;
+
+        [SerializeField] private LuaScriptSpriteCanvas luaScriptSpriteCanvas;
         
         public override void InstallBindings()
         {
@@ -58,6 +61,11 @@ namespace Baku.VMagicMirror.Installer
                 .FromComponentInNewPrefab(accessoryControllerPrefab)
                 .AsCached()
                 .NonLazy();
+
+            Container.Bind<LuaScriptSpriteCanvas>()
+                .FromComponentInNewPrefab(luaScriptSpriteCanvas)
+                .AsCached();
+            Container.BindInterfacesTo<ScriptCaller>().AsSingle();
             
             WordToMotion.WordToMotionInstaller.Install(Container);
         }

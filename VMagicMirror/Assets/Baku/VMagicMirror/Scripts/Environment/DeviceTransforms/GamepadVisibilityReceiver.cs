@@ -70,7 +70,7 @@ namespace Baku.VMagicMirror
                 return true;
             }
 
-            // この行まで到達した場合、設定に加えて手IKの状態も検証される
+            // この行まで到達した場合、設定に加えて動的な手IKの状態も考慮して表示/非表示を決める
             return
                 _handIkIntegrator.LeftTargetType.Value is HandTargetType.Gamepad ||
                 _handIkIntegrator.RightTargetType.Value is HandTargetType.Gamepad;

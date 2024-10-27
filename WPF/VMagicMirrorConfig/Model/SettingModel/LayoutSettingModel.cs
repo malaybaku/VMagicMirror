@@ -39,6 +39,8 @@ namespace Baku.VMagicMirrorConfig
             PenVisibility = new RProperty<bool>(s.PenVisibility, b => SendMessage(factory.SetPenVisibility(b)));
             SelectedTypingEffectId = new RProperty<int>(s.SelectedTypingEffectId, i => SendMessage(factory.SetKeyboardTypingEffectType(i)));
 
+            HideUnusedDevices = new RProperty<bool>(s.HideUnusedDevices, b => SendMessage(factory.SetHideUnusedDevices(b)));
+
             EnableFreeCameraMode = new RProperty<bool>(false, b => OnEnableFreeCameraModeChanged(b));
             EnableDeviceFreeLayout = new RProperty<bool>(false, v => SendMessage(factory.EnableDeviceFreeLayout(v)));
 
@@ -63,7 +65,9 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> PenVisibility { get; }
         public RProperty<int> SelectedTypingEffectId { get; }
 
-        //NOTE: この3つの値はファイルには保存しない
+        public RProperty<bool> HideUnusedDevices { get; }
+
+        //NOTE: この2つの値はファイルには保存しない
         public RProperty<bool> EnableFreeCameraMode { get; }
         public RProperty<bool> EnableDeviceFreeLayout { get; }
 
@@ -195,6 +199,7 @@ namespace Baku.VMagicMirrorConfig
             MidiControllerVisibility.Value = setting.MidiControllerVisibility;
             //NOTE: ここにGamepadのvisibilityも載ってたけど消した。必要なら書かないといけない
             SelectedTypingEffectId.Value = setting.SelectedTypingEffectId;
+            HideUnusedDevices.Value = setting.HideUnusedDevices;
         }
 
         public void ResetMidiSetting()

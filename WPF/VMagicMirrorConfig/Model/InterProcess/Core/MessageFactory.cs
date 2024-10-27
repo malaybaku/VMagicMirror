@@ -214,6 +214,9 @@ namespace Baku.VMagicMirrorConfig
 
         public Message SetKeyboardTypingEffectType(int typeIndex) => WithArg(typeIndex);
 
+        // NOTE: Gamepadとかにも全般的に影響する想定のフラグ
+        public Message SetHideUnusedDevices(bool hide) => WithArg(hide);
+
         public Message EnableDeviceFreeLayout(bool enable) => WithArg(enable);
 
         public Message SetDeviceLayout(string data) => WithArg(data);

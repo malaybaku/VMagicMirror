@@ -8,25 +8,23 @@ namespace Baku.VMagicMirror
         [Inject]
         public GamepadVisibilityUpdater(
             GamepadVisibilityView view,
-            DeviceVisibilityManager deviceVisibilityManager,
+            DeviceVisibilityRepository deviceVisibilityRepository,
             BodyMotionModeController bodyMotionModeController,
             HandIKIntegrator handIKIntegrator,
             DeformableCounter deformableCounter)
         {
             _view = view;
-            _deviceVisibilityManager = deviceVisibilityManager;
+            _deviceVisibilityRepository = deviceVisibilityRepository;
             _bodyMotionModeController = bodyMotionModeController;
             _handIkIntegrator = handIKIntegrator;
             _deformableCounter = deformableCounter;
         }
         
         private GamepadVisibilityView _view;
-        private DeviceVisibilityManager _deviceVisibilityManager;
+        private DeviceVisibilityRepository _deviceVisibilityRepository;
         private BodyMotionModeController _bodyMotionModeController;
         private HandIKIntegrator _handIkIntegrator;
         private DeformableCounter _deformableCounter;
-
-        public bool IsVisible { get; private set; }
 
         public override void Initialize()
         {
@@ -34,8 +32,8 @@ namespace Baku.VMagicMirror
 
             //NOTE: 初期値で1回だけ発火してほしいので最初だけAsUnitObservableになっている
             Observable.Merge(
-                _deviceVisibilityManager.GamepadVisible.AsUnitObservable(),
-                _deviceVisibilityManager.HideUnusedDevices.AsUnitWithoutLatest(),
+                _deviceVisibilityRepository.GamepadVisible.AsUnitObservable(),
+                _deviceVisibilityRepository.HideUnusedDevices.AsUnitWithoutLatest(),
                 _bodyMotionModeController.MotionMode.AsUnitWithoutLatest(),
                 _bodyMotionModeController.GamepadMotionMode.AsUnitWithoutLatest(),
                 _handIkIntegrator.LeftTargetType.AsUnitWithoutLatest(),
@@ -49,7 +47,7 @@ namespace Baku.VMagicMirror
         {
             // 設定の組み合わせに基づいたvisibilityがオフならその時点で非表示にしておく
             var settingBasedResult = 
-                _deviceVisibilityManager.GamepadVisible.Value &&
+                _deviceVisibilityRepository.GamepadVisible.Value &&
                 _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
                 _bodyMotionModeController.GamepadMotionMode.Value is GamepadMotionModes.Gamepad;
 
@@ -58,7 +56,7 @@ namespace Baku.VMagicMirror
                 return false;
             }
 
-            if (!_deviceVisibilityManager.HideUnusedDevices.Value)
+            if (!_deviceVisibilityRepository.HideUnusedDevices.Value)
             {
                 return true;
             }

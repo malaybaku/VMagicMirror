@@ -3,12 +3,12 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public class DeviceVisibilityManager : PresenterBase
+    public class DeviceVisibilityRepository : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
 
         [Inject]
-        public DeviceVisibilityManager(IMessageReceiver receiver)
+        public DeviceVisibilityRepository(IMessageReceiver receiver)
         {
             _receiver = receiver;
         }

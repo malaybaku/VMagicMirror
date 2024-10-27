@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror.Installer
 
             container.BindInstance(controller);
 
-            container.BindInterfacesAndSelfTo<DeviceVisibilityManager>().AsSingle();
+            container.BindInterfacesAndSelfTo<DeviceVisibilityRepository>().AsSingle();
             
             //NOTE: ペンタブより先にバインドしといたほうが無難(PenTabletProvider側で必要)
             container.Bind<PenController>()

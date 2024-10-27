@@ -5,7 +5,7 @@ namespace Baku.VMagicMirror
 {
     public class KeyboardInstaller : MonoInstaller
     {
-        [SerializeField] private KeyboardVisibility visibilityView;
+        [SerializeField] private KeyboardVisibilityView visibilityView;
 
         public override void InstallBindings()
         {

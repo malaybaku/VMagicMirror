@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
     /// キーボードの見える/見えないの制御。
     /// 普通のMagnetDeformerベースの処理に加えて、プレゼン/ペンタブモードでは右手のキーを非表示にする処理もやる
     /// </summary>
-    public class KeyboardVisibility : DeviceVisibilityBase
+    public class KeyboardVisibilityView : DeviceVisibilityBase
     {
         [SerializeField] private MeshRenderer rightHandMeshRenderer = null;
         [SerializeField] private MagnetDeformer rightHandMeshMagnetDeformer = null;

@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
     {
         [Inject]
         public KeyboardVisibilityUpdater(
-            KeyboardVisibility view,
+            KeyboardVisibilityView view,
             DeviceVisibilityRepository deviceVisibilityRepository,
             BodyMotionModeController bodyMotionModeController,
             HandIKIntegrator handIKIntegrator,
@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror
             _deformableCounter = deformableCounter;
         }
         
-        private KeyboardVisibility _view;
+        private KeyboardVisibilityView _view;
         private DeviceVisibilityRepository _deviceVisibilityRepository;
         private BodyMotionModeController _bodyMotionModeController;
         private HandIKIntegrator _handIkIntegrator;

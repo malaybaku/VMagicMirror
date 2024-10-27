@@ -90,7 +90,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         public IObservable<TransformControlRequest> ControlRequested => _controlRequested;
 
-        private KeyboardVisibility _keyboardVisibility;
+        private KeyboardVisibilityView _keyboardVisibility;
         private TouchpadVisibility _touchPadVisibility;
         private GamepadVisibilityView _gamepadVisibility;
         private ArcadeStickVisibilityView _arcadeStickVisibility;
@@ -124,7 +124,7 @@ namespace Baku.VMagicMirror
             _penTabletControl = penTablet.TransformControl;
             _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
             
-            _keyboardVisibility = _keyboardControl.GetComponent<KeyboardVisibility>();
+            _keyboardVisibility = _keyboardControl.GetComponent<KeyboardVisibilityView>();
             _touchPadVisibility =  _touchPadControl.GetComponent<TouchpadVisibility>();
             _gamepadVisibility = _gamepadControl.GetComponent<GamepadVisibilityView>();
             _arcadeStickVisibility = _arcadeStickControl.GetComponent<ArcadeStickVisibilityView>();

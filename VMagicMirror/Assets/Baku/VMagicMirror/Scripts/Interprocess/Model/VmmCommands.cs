@@ -123,6 +123,7 @@
         public const string CameraFov = nameof(CameraFov);
 
         // Layout, device layouts
+        public const string HideUnusedDevices = nameof(HideUnusedDevices);
         public const string SetDeviceLayout = nameof(SetDeviceLayout);
         public const string ResetDeviceLayout = nameof(ResetDeviceLayout);
         

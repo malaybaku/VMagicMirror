@@ -1,43 +1,36 @@
-﻿using System;
-using Deform;
-using DG.Tweening;
-using UniRx;
-using UnityEngine;
+﻿using UniRx;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    [RequireComponent(typeof(MagnetDeformer))]
-    public class GamepadVisibilityReceiver : MonoBehaviour
+    public sealed class GamepadVisibilityUpdater : PresenterBase
     {
-        //TODO: 非MonoBehaviour化できそう
         [Inject]
-        public void Initialize(
+        public GamepadVisibilityUpdater(
+            GamepadVisibilityView view,
             DeviceVisibilityManager deviceVisibilityManager,
             BodyMotionModeController bodyMotionModeController,
             HandIKIntegrator handIKIntegrator,
             DeformableCounter deformableCounter)
         {
+            _view = view;
             _deviceVisibilityManager = deviceVisibilityManager;
             _bodyMotionModeController = bodyMotionModeController;
             _handIkIntegrator = handIKIntegrator;
             _deformableCounter = deformableCounter;
         }
-
+        
+        private GamepadVisibilityView _view;
         private DeviceVisibilityManager _deviceVisibilityManager;
         private BodyMotionModeController _bodyMotionModeController;
         private HandIKIntegrator _handIkIntegrator;
         private DeformableCounter _deformableCounter;
 
-        private MagnetDeformer _deformer = null;
-        private Renderer[] _renderers = Array.Empty<Renderer>();
-
         public bool IsVisible { get; private set; }
 
-        private void Start()
+        public override void Initialize()
         {
-            _deformer = GetComponent<MagnetDeformer>();
-            _renderers = GetComponentsInChildren<Renderer>();
+            _view.Setup(_deformableCounter);
 
             //NOTE: 初期値で1回だけ発火してほしいので最初だけAsUnitObservableになっている
             Observable.Merge(
@@ -48,7 +41,7 @@ namespace Baku.VMagicMirror
                 _handIkIntegrator.LeftTargetType.AsUnitWithoutLatest(),
                 _handIkIntegrator.RightTargetType.AsUnitWithoutLatest()
                 )
-                .Subscribe(_ => SetGamepadVisibility(IsGamepadVisible()))
+                .Subscribe(_ => _view.SetVisible(IsGamepadVisible()))
                 .AddTo(this);
         }
 
@@ -74,42 +67,6 @@ namespace Baku.VMagicMirror
             return
                 _handIkIntegrator.LeftTargetType.Value is HandTargetType.Gamepad ||
                 _handIkIntegrator.RightTargetType.Value is HandTargetType.Gamepad;
-        }
-        
-        private void SetGamepadVisibility(bool visible)
-        {
-            if (visible == IsVisible)
-            {
-                return;
-            }
-            
-            IsVisible = visible;
-            DOTween
-                .To(
-                    () => _deformer.Factor, 
-                    v => _deformer.Factor = v, 
-                    visible ? 0.0f : 0.6f, 
-                    0.5f)
-                .SetEase(Ease.OutCubic)
-                .OnStart(() =>
-                {
-                    _deformableCounter.Increment();
-                    if (visible)
-                    {
-                        foreach (var r in _renderers)
-                        {
-                            r.enabled = true;
-                        }
-                    }
-                })
-                .OnComplete(() =>
-                {
-                    _deformableCounter.Decrement();
-                    foreach (var r in _renderers)
-                    {
-                        r.enabled = IsVisible;
-                    }
-                });
         }
     }
 }

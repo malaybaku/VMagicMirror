@@ -62,6 +62,8 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<CarHandleProvider>()
                 .FromComponentInNewPrefab(carHandleProvider)
                 .AsCached();
+
+            container.BindInterfacesTo<GamepadVisibilityUpdater>().AsSingle();
         }
     }
 

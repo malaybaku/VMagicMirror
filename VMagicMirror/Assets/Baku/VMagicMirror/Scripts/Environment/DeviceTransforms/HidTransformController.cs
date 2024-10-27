@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror
         private MidiControllerProvider _midiController = null;
         private ParticleStore _particleStore = null;
         
-        private TouchpadVisibility _touchPadVisibility = null;
+        private TouchpadVisibilityView _touchPadVisibility = null;
         private PenTabletVisibility _penTabletVisibility = null;
         private MidiControllerVisibility _midiControllerVisibility = null;
 
@@ -45,7 +45,7 @@ namespace Baku.VMagicMirror
             _touchPad = touchPad;
             _midiController = midiController;
             _particleStore = particleStore;
-            _touchPadVisibility = touchPad.GetComponent<TouchpadVisibility>();
+            _touchPadVisibility = touchPad.GetComponent<TouchpadVisibilityView>();
             _penTabletVisibility = penTablet.GetComponent<PenTabletVisibility>();
             _midiControllerVisibility = midiController.GetComponent<MidiControllerVisibility>();
             

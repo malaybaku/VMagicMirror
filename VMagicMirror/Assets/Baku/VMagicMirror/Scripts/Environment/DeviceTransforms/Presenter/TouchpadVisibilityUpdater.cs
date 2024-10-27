@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror
     {
         [Inject]
         public TouchpadVisibilityUpdater(
-            TouchpadVisibility view,
+            TouchpadVisibilityView view,
             DeviceVisibilityRepository deviceVisibilityRepository,
             BodyMotionModeController bodyMotionModeController,
             HandIKIntegrator handIKIntegrator,
@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror
             _deformableCounter = deformableCounter;
         }
         
-        private TouchpadVisibility _view;
+        private TouchpadVisibilityView _view;
         private DeviceVisibilityRepository _deviceVisibilityRepository;
         private BodyMotionModeController _bodyMotionModeController;
         private HandIKIntegrator _handIkIntegrator;

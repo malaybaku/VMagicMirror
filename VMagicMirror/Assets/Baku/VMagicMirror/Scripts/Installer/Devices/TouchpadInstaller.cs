@@ -5,7 +5,7 @@ namespace Baku.VMagicMirror
 {
     public class TouchpadInstaller : MonoInstaller
     {
-        [SerializeField] private TouchpadVisibility visibilityView;
+        [SerializeField] private TouchpadVisibilityView visibilityView;
 
         public override void InstallBindings()
         {

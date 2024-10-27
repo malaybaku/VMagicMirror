@@ -17,6 +17,7 @@ namespace Baku.VMagicMirror
 
     public class BodyMotionModeController : IInitializable, IDisposable
     {
+        [Inject]
         public BodyMotionModeController(IMessageReceiver receiver)
         {
             _receiver = receiver;

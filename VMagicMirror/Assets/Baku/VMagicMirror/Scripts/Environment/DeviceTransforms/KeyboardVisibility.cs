@@ -10,7 +10,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class KeyboardVisibility : DeviceVisibilityBase
     {
-        //NOTE: MeshRendererは
         [SerializeField] private MeshRenderer rightHandMeshRenderer = null;
         [SerializeField] private MagnetDeformer rightHandMeshMagnetDeformer = null;
         private KeyboardAndMouseMotionModes _motionModes = KeyboardAndMouseMotionModes.KeyboardAndTouchPad;

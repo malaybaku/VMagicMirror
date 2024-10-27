@@ -3,11 +3,11 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    public sealed class KeyboardVisibilityUpdater : PresenterBase
+    public sealed class PenTabletVisibilityUpdater : PresenterBase
     {
         [Inject]
-        public KeyboardVisibilityUpdater(
-            KeyboardVisibilityView view,
+        public PenTabletVisibilityUpdater(
+            PenTabletVisibilityView view,
             DeviceVisibilityRepository deviceVisibilityRepository,
             BodyMotionModeController bodyMotionModeController,
             HandIKIntegrator handIKIntegrator,
@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror
             _deformableCounter = deformableCounter;
         }
         
-        private KeyboardVisibilityView _view;
+        private PenTabletVisibilityView _view;
         private DeviceVisibilityRepository _deviceVisibilityRepository;
         private BodyMotionModeController _bodyMotionModeController;
         private HandIKIntegrator _handIkIntegrator;
@@ -36,27 +36,19 @@ namespace Baku.VMagicMirror
                 _deviceVisibilityRepository.HideUnusedDevices.AsUnitWithoutLatest(),
                 _bodyMotionModeController.MotionMode.AsUnitWithoutLatest(),
                 _bodyMotionModeController.KeyboardAndMouseMotionMode.AsUnitWithoutLatest(),
-                _handIkIntegrator.LeftTargetType.AsUnitWithoutLatest(),
                 _handIkIntegrator.RightTargetType.AsUnitWithoutLatest()
                 )
-                .Subscribe(_ => _view.SetVisibility(IsKeyboardVisible()))
-                .AddTo(this);
-
-            _bodyMotionModeController
-                .KeyboardAndMouseMotionMode
-                .Subscribe(mode => _view.SetRightHandMeshRendererActive(
-                    mode is KeyboardAndMouseMotionModes.KeyboardAndTouchPad
-                ))
+                .Subscribe(_ => _view.SetVisibility(IsTouchpadVisible()))
                 .AddTo(this);
         }
 
-        private bool IsKeyboardVisible()
+        private bool IsTouchpadVisible()
         {
             // 設定の組み合わせに基づいたvisibilityがオフならその時点で非表示にする。手下げモードのときも表示しない
             var settingBasedResult =
                 _deviceVisibilityRepository.HidVisible.Value &&
                 _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
-                _bodyMotionModeController.KeyboardAndMouseMotionMode.Value is not KeyboardAndMouseMotionModes.None;
+                _bodyMotionModeController.KeyboardAndMouseMotionMode.Value is KeyboardAndMouseMotionModes.PenTablet;
 
             if (!settingBasedResult)
             {
@@ -67,12 +59,8 @@ namespace Baku.VMagicMirror
             {
                 return true;
             }
-
-            // NOTE: マウスパッド操作中は「キーマウ操作」という括りで考えてキーボードも表示する
-            // ペンタブやプレゼンテーションモードの右手はマウスの一種とは見なさない (このケースではキー入力が全部左手扱いになっているはず)
-            return
-                _handIkIntegrator.LeftTargetType.Value is HandTargetType.Keyboard ||
-                _handIkIntegrator.RightTargetType.Value is HandTargetType.Keyboard or HandTargetType.Mouse;
+            
+            return _handIkIntegrator.RightTargetType.Value is HandTargetType.PenTablet;
         }
     }
 }

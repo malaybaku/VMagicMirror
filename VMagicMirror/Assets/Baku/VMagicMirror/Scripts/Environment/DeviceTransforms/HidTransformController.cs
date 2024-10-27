@@ -24,7 +24,6 @@ namespace Baku.VMagicMirror
         private MidiControllerProvider _midiController = null;
         private ParticleStore _particleStore = null;
         
-        private TouchpadVisibilityView _touchPadVisibility = null;
         private PenTabletVisibility _penTabletVisibility = null;
         private MidiControllerVisibility _midiControllerVisibility = null;
 
@@ -45,7 +44,6 @@ namespace Baku.VMagicMirror
             _touchPad = touchPad;
             _midiController = midiController;
             _particleStore = particleStore;
-            _touchPadVisibility = touchPad.GetComponent<TouchpadVisibilityView>();
             _penTabletVisibility = penTablet.GetComponent<PenTabletVisibility>();
             _midiControllerVisibility = midiController.GetComponent<MidiControllerVisibility>();
             
@@ -148,11 +146,6 @@ namespace Baku.VMagicMirror
 
         private void UpdateHidVisibilities()
         {
-            _touchPadVisibility.SetVisibility(
-                _isHidVisible &&
-                (_motionMode == KeyboardAndMouseMotionModes.KeyboardAndTouchPad || 
-                 _motionMode == KeyboardAndMouseMotionModes.Presentation)
-            );
             _penTabletVisibility.SetVisibility(
                 _isHidVisible && _motionMode == KeyboardAndMouseMotionModes.PenTablet
             );

@@ -1,6 +1,6 @@
 ﻿namespace Baku.VMagicMirror
 {
-    public class PenTabletVisibility : DeviceVisibilityBase
+    public class PenTabletVisibilityView : DeviceVisibilityBase
     {
         protected override void OnStart()
         {

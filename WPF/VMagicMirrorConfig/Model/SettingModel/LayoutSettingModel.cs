@@ -39,7 +39,7 @@ namespace Baku.VMagicMirrorConfig
             PenVisibility = new RProperty<bool>(s.PenVisibility, b => SendMessage(factory.SetPenVisibility(b)));
             SelectedTypingEffectId = new RProperty<int>(s.SelectedTypingEffectId, i => SendMessage(factory.SetKeyboardTypingEffectType(i)));
 
-            HideUnusedDevices = new RProperty<bool>(s.HideUnusedDevices, b => SendMessage(factory.SetHideUnusedDevices(b)));
+            HideUnusedDevices = new RProperty<bool>(s.HideUnusedDevices, b => SendMessage(factory.HideUnusedDevices(b)));
 
             EnableFreeCameraMode = new RProperty<bool>(false, b => OnEnableFreeCameraModeChanged(b));
             EnableDeviceFreeLayout = new RProperty<bool>(false, v => SendMessage(factory.EnableDeviceFreeLayout(v)));

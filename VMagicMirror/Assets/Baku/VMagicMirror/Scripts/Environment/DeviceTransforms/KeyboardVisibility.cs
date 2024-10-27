@@ -1,6 +1,5 @@
 ﻿using Deform;
 using UnityEngine;
-using Zenject;
 
 namespace Baku.VMagicMirror
 {
@@ -12,7 +11,7 @@ namespace Baku.VMagicMirror
     {
         [SerializeField] private MeshRenderer rightHandMeshRenderer = null;
         [SerializeField] private MagnetDeformer rightHandMeshMagnetDeformer = null;
-        private KeyboardAndMouseMotionModes _motionModes = KeyboardAndMouseMotionModes.KeyboardAndTouchPad;
+        //private KeyboardAndMouseMotionModes _motionModes = KeyboardAndMouseMotionModes.KeyboardAndTouchPad;
 
         protected override void OnRendererEnableUpdated(bool enable)
         {
@@ -24,22 +23,27 @@ namespace Baku.VMagicMirror
             rightHandMeshMagnetDeformer.Factor = v;
         }
 
-        [Inject]
-        public void SetupRightHandVisibility(IMessageReceiver receiver)
+        // [Inject]
+        // public void SetupRightHandVisibility(IMessageReceiver receiver)
+        // {
+        //     receiver.AssignCommandHandler(
+        //         VmmCommands.SetKeyboardAndMouseMotionMode,
+        //         message => SetMotionMode(message.ToInt()));
+        // }
+
+        public void SetRightHandMeshRendererActive(bool active)
         {
-            receiver.AssignCommandHandler(
-                VmmCommands.SetKeyboardAndMouseMotionMode,
-                message => SetMotionMode(message.ToInt()));
+            rightHandMeshRenderer.gameObject.SetActive(active);
         }
         
-        private void SetMotionMode(int modeIndex)
-        {
-            if (modeIndex >= 0 && modeIndex < (int) KeyboardAndMouseMotionModes.Unknown)
-            {
-                _motionModes = (KeyboardAndMouseMotionModes) modeIndex;
-                rightHandMeshRenderer.gameObject.SetActive(_motionModes == KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
-            }
-        }
+        // private void SetMotionMode(int modeIndex)
+        // {
+        //     if (modeIndex >= 0 && modeIndex < (int) KeyboardAndMouseMotionModes.Unknown)
+        //     {
+        //         _motionModes = (KeyboardAndMouseMotionModes) modeIndex;
+        //         rightHandMeshRenderer.gameObject.SetActive(_motionModes == KeyboardAndMouseMotionModes.KeyboardAndTouchPad);
+        //     }
+        // }
     }
 }
 

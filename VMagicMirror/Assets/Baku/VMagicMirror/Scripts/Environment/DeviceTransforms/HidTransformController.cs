@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Zenject;
-using Baku.VMagicMirror.InterProcess;
 
 namespace Baku.VMagicMirror
 {
@@ -24,11 +23,7 @@ namespace Baku.VMagicMirror
         private MidiControllerProvider _midiController = null;
         private ParticleStore _particleStore = null;
         
-        private PenTabletVisibilityView _penTabletVisibility = null;
         private MidiControllerVisibility _midiControllerVisibility = null;
-
-        private bool _isHidVisible = true;
-        private KeyboardAndMouseMotionModes _motionMode = KeyboardAndMouseMotionModes.KeyboardAndTouchPad;
 
         [Inject]
         public void Initialize(
@@ -44,17 +39,9 @@ namespace Baku.VMagicMirror
             _touchPad = touchPad;
             _midiController = midiController;
             _particleStore = particleStore;
-            _penTabletVisibility = penTablet.GetComponent<PenTabletVisibilityView>();
+            //NOTE: 利用頻度が少なそうだから…という理由であえて触ってないが、MidiControllerもKeyboard等と同じくVisibilitViewに書き換えてよい
             _midiControllerVisibility = midiController.GetComponent<MidiControllerVisibility>();
-            
-            receiver.AssignCommandHandler(
-                VmmCommands.HidVisibility,
-                message => SetHidVisibility(message.ToBoolean())
-                );
-            receiver.AssignCommandHandler(
-                VmmCommands.SetKeyboardAndMouseMotionMode,
-                message => SetHidMotionMode(message.ToInt())
-            );
+
             receiver.AssignCommandHandler(
                 VmmCommands.MidiControllerVisibility,
                 message => SetMidiVisibility(message.ToBoolean())
@@ -125,30 +112,6 @@ namespace Baku.VMagicMirror
                 );
                 midiTransform.localScale = p.ArmLengthFactor * refMidiScale;
             }
-        }
-
-        private void SetHidVisibility(bool v)
-        {
-            _isHidVisible = v;
-            UpdateHidVisibilities();
-        }
-
-        private void SetHidMotionMode(int mode)
-        {
-            if (mode < 0 || mode >= (int) KeyboardAndMouseMotionModes.Unknown)
-            {
-                return;
-            }
-
-            _motionMode = (KeyboardAndMouseMotionModes) mode;
-            UpdateHidVisibilities();
-        }
-
-        private void UpdateHidVisibilities()
-        {
-            _penTabletVisibility.SetVisibility(
-                _isHidVisible && _motionMode == KeyboardAndMouseMotionModes.PenTablet
-            );
         }
 
         private void SetMidiVisibility(bool v)

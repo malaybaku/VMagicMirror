@@ -51,7 +51,7 @@ namespace Baku.VMagicMirror
             // 設定の組み合わせに基づいたvisibilityがオフならその時点で非表示にしておく
             var settingBasedResult =
                 _deviceVisibilityRepository.GamepadVisible.Value &&
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
+                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default or BodyMotionMode.StandingOnly &&
                 _bodyMotionModeController.GamepadMotionMode.Value is GamepadMotionModes.CarController;
 
             if (!settingBasedResult)
@@ -66,6 +66,7 @@ namespace Baku.VMagicMirror
 
             // この行まで到達した場合、設定に加えて動的な手IKの状態も考慮して表示/非表示を決める
             return
+                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default && 
                 _handIkIntegrator.LeftTargetType.Value is HandTargetType.CarHandle ||
                 _handIkIntegrator.RightTargetType.Value is HandTargetType.CarHandle;
         }

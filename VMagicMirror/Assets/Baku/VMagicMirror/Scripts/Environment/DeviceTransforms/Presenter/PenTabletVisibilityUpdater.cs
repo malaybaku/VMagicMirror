@@ -44,10 +44,10 @@ namespace Baku.VMagicMirror
 
         private bool IsTouchpadVisible()
         {
-            // 設定の組み合わせに基づいたvisibilityがオフならその時点で非表示にする。手下げモードのときも表示しない
+            // 設定の組み合わせに基づいたvisibilityがオフならその時点で非表示にする。ただし手下げモードのときは表示するほうに寄せておく
             var settingBasedResult =
                 _deviceVisibilityRepository.HidVisible.Value &&
-                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default &&
+                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default or BodyMotionMode.StandingOnly &&
                 _bodyMotionModeController.KeyboardAndMouseMotionMode.Value is KeyboardAndMouseMotionModes.PenTablet;
 
             if (!settingBasedResult)
@@ -60,7 +60,9 @@ namespace Baku.VMagicMirror
                 return true;
             }
             
-            return _handIkIntegrator.RightTargetType.Value is HandTargetType.PenTablet;
+            return 
+                _bodyMotionModeController.MotionMode.Value is BodyMotionMode.Default && 
+                _handIkIntegrator.RightTargetType.Value is HandTargetType.PenTablet;
         }
     }
 }

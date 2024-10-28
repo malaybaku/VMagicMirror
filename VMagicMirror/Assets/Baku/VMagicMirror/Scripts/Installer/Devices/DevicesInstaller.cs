@@ -16,7 +16,6 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private PenController penController = null;
         [SerializeField] private MidiControllerProvider midiControllerProvider = null;
         [SerializeField] private ParticleStore particleStore = null;
-        
 
         public Transform Transform => transform;
         
@@ -29,6 +28,8 @@ namespace Baku.VMagicMirror.Installer
 
             container.BindInstance(controller);
 
+            container.BindInterfacesAndSelfTo<DeviceVisibilityRepository>().AsSingle();
+            
             //NOTE: ペンタブより先にバインドしといたほうが無難(PenTabletProvider側で必要)
             container.Bind<PenController>()
                 .FromComponentInNewPrefab(penController)

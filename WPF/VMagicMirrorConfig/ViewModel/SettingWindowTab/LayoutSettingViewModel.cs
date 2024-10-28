@@ -103,7 +103,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> PenVisibility => _model.PenVisibility;
         public RProperty<bool> MidiControllerVisibility => _model.MidiControllerVisibility;
         public RProperty<bool> GamepadVisibility => _gamepadModel.GamepadVisibility;
+        public RProperty<bool> HideUnusedDevices => _model.HideUnusedDevices;
         public RProperty<bool> PenUnavailable => _loadedAvatar.ModelDoesNotSupportPen;
+
 
         public RProperty<bool> EnableDeviceFreeLayout => _model.EnableDeviceFreeLayout;
 

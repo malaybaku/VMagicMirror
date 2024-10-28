@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 2191938032076595646}
   - component: {fileID: 6206299127056181281}
   - component: {fileID: 5176997793618571541}
+  - component: {fileID: 2247828533555177146}
+  - component: {fileID: 2094643960588069842}
   m_Layer: 0
   m_Name: TouchPad
   m_TagString: Untagged
@@ -30,12 +32,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8074230364789003343}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.48296294, y: 0.22414392, z: -0.12940955, w: 0.8365163}
   m_LocalPosition: {x: 0.25, y: 0.98, z: 0.25}
   m_LocalScale: {x: 0.15, y: 0.15, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 60, y: 30, z: 0}
 --- !u!33 &8074230364789003339
 MeshFilter:
@@ -56,6 +59,7 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -174,3 +178,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 989652552c2b90144b1cab0e8c5c0039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2247828533555177146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8074230364789003343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e2917393adc9441be9d88428c85e24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visibilityView: {fileID: 5176997793618571541}
+--- !u!114 &2094643960588069842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8074230364789003343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08eca9f7688a0a24685b89133b020c8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scriptableObjectInstallers: []
+  _monoInstallers:
+  - {fileID: 2247828533555177146}
+  _installerPrefabs: []
+  _autoRun: 1
+  _kernel: {fileID: 0}

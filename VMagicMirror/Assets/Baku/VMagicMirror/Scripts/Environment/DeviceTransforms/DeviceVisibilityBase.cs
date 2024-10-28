@@ -13,29 +13,47 @@ namespace Baku.VMagicMirror
 
         private MagnetDeformer _deformer = null;
         private Renderer _renderer = null;
-        private bool _latestVisibility = true;
-        public bool IsVisible => _latestVisibility;
+        public bool IsVisible { get; private set; } = true;
 
         /// <summary>
         /// <see cref="OnStart"/>以降で参照可能な、メインのレンダラーを取得します。
         /// </summary>
         protected Renderer MainRenderer => _renderer;
 
-        private void Start()
-        {
-            _deformer = GetComponent<MagnetDeformer>();
-            _renderer = GetComponentInChildren<Renderer>();
-            OnStart();
-        }
+        private bool _componentInitialized;
 
         /// <summary>
         /// Start関数の時点で実行されます。
         /// </summary>
         protected virtual void OnStart()
         {
-            
+        }
+        
+        private void Start()
+        {
+            InitializeComponents();
+            OnStart();
         }
 
+        public void Setup(DeformableCounter deformableCounter)
+        {
+            //NOTE: このクラスを使ってる全箇所がSetupを呼ぶようになったら _deformableCounterのfield injectionをやめてよい
+            _deformableCounter = deformableCounter;
+            InitializeComponents();
+        }
+
+        private void InitializeComponents()
+        {
+            if (_componentInitialized)
+            {
+                return;
+            }
+
+            _componentInitialized = true;
+            _deformer = GetComponent<MagnetDeformer>();
+            _renderer = GetComponentInChildren<Renderer>();
+        }
+        
         /// <summary>
         /// メインのRendererの有効/無効を書き換えたときに呼び出します。サブのメッシュのvisibilityを変えたりするのに使えます。
         /// </summary>
@@ -54,7 +72,7 @@ namespace Baku.VMagicMirror
 
         public void SetVisibility(bool visible)
         {
-            _latestVisibility = visible;
+            IsVisible = visible;
             DOTween
                 .To(
                     () => _deformer.Factor, 
@@ -78,8 +96,8 @@ namespace Baku.VMagicMirror
                 .OnComplete(() =>
                 {
                     _deformableCounter.Decrement();
-                    _renderer.enabled = _latestVisibility;
-                    OnRendererEnableUpdated(_latestVisibility);
+                    _renderer.enabled = IsVisible;
+                    OnRendererEnableUpdated(IsVisible);
                 });
         }
     }

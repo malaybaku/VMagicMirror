@@ -93,7 +93,7 @@ namespace Baku.VMagicMirror
         }
 
         public ReactiveProperty<WordToMotionDeviceAssign> WordToMotionDevice { get; } =
-            new ReactiveProperty<WordToMotionDeviceAssign>(WordToMotionDeviceAssign.KeyboardWord);
+            new(WordToMotionDeviceAssign.KeyboardWord);
         
         public bool EnablePresentationMode => _keyboardAndMouseMotionMode.Value == KeyboardAndMouseMotionModes.Presentation;
         
@@ -258,8 +258,8 @@ namespace Baku.VMagicMirror
         //NOTE: 値自体はCurrentRightHand.TargetTypeとかと等しい。値を他のIKに露出するために使う
         private readonly ReactiveProperty<HandTargetType> _leftTargetType = new(HandTargetType.Keyboard);
         private readonly ReactiveProperty<HandTargetType> _rightTargetType = new(HandTargetType.Keyboard);
-        public ReactiveProperty<HandTargetType> LeftTargetType => _leftTargetType;
-        public ReactiveProperty<HandTargetType> RightTargetType => _rightTargetType;
+        public IReadOnlyReactiveProperty<HandTargetType> LeftTargetType => _leftTargetType;
+        public IReadOnlyReactiveProperty<HandTargetType> RightTargetType => _rightTargetType;
 
         #region API
 

@@ -8,6 +8,15 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.8.4
+{: .doc-sec2 }
+
+2024/10/31
+
+* Add: Option to hide unused devices automatically in character window. The feature is available at settings window > `Layout` > `Devices Visibility` > `Hide Unused Devices`.
+* Other: A library for Lua script (NLua) has been introduced to project. Note that the library does not affects the behavior of this version.
+
+
 #### v3.8.3
 {: .doc-sec2 }
 

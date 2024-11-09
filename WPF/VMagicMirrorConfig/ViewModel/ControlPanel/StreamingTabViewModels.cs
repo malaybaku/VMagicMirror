@@ -369,6 +369,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
             new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexLight, "Light", PackIconKind.FlashOn),
             //new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexLaser, "Laser", PackIconKind.Wand),
             new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexButtefly, "Butterfly", PackIconKind.DotsHorizontal),
+            new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexManga, "Manga", PackIconKind.Comment),
         };
 
         private void OnTypingEffectIdChanged(object? sender, PropertyChangedEventArgs e)

@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.9.0
+{: .doc-sec2 }
+
+2024/11/30
+
+* Add: `Manga` effect option added to `Typing Effect`, to show manga-like effect.
+
+
 #### v3.8.4
 {: .doc-sec2 }
 

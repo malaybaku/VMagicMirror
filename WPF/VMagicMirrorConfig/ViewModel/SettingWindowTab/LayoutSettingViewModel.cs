@@ -136,6 +136,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexLight, "Light", PackIconKind.FlashOn),
             //new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexLaser, "Laser", PackIconKind.Wand),
             new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexButtefly, "Butterfly", PackIconKind.DotsHorizontal),
+            new TypingEffectSelectionItem(LayoutSetting.TypingEffectIndexManga, "Manga", PackIconKind.Comment),
         };
 
         #endregion
@@ -156,7 +157,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
     }
 
-    //Recordで書けそうと思ってたが、なんか挙動が
+    //Recordで書けそうと思ってたが、なんか挙動が悪いので諦めている
     public class TypingEffectSelectionItem
     {
         public TypingEffectSelectionItem(int id, string name, PackIconKind iconKind)

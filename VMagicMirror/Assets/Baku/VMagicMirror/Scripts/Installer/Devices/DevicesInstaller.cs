@@ -16,6 +16,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private PenController penController = null;
         [SerializeField] private MidiControllerProvider midiControllerProvider = null;
         [SerializeField] private ParticleStore particleStore = null;
+        [SerializeField] private MangaParticleView mangaParticleView = null;
 
         public Transform Transform => transform;
         
@@ -29,7 +30,12 @@ namespace Baku.VMagicMirror.Installer
             container.BindInstance(controller);
 
             container.BindInterfacesAndSelfTo<DeviceVisibilityRepository>().AsSingle();
+            container.BindInterfacesAndSelfTo<ParticleModeController>().AsSingle();
             
+            // NOTE: マンガ風パーティクルは構造上はほかのパーティクルと違ってデバイス類との関連が薄いが、似てはいるのでここで管理してる
+            container.BindInstance(mangaParticleView);
+            container.BindInterfacesTo<MangaParticleController>().AsSingle();
+
             //NOTE: ペンタブより先にバインドしといたほうが無難(PenTabletProvider側で必要)
             container.Bind<PenController>()
                 .FromComponentInNewPrefab(penController)

@@ -183,6 +183,7 @@ This page is similar, but it also refers to the libraries which are used in past
 
 https://malaybaku.github.io/VMagicMirror/credit_license
 
+Note that some images are created with [Otomanopee](https://github.com/Gutenberg-Labo/Otomanopee) font. This is not license notice, since the font itself is not redistributed.
 
 ### 5.2. About Model data under Creative Commons Attribution
 

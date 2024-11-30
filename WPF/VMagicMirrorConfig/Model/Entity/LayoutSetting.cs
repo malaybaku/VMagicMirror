@@ -8,6 +8,7 @@
         public const int TypingEffectIndexLight = 1;
         //private const int TypingEffectIndexLaser = 2;
         public const int TypingEffectIndexButtefly = 3;
+        public const int TypingEffectIndexManga = 4;
 
         /// <summary>
         /// NOTE: 規約としてこの値は書き換えません。

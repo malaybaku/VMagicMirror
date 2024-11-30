@@ -28,12 +28,19 @@ Put the images to replace in this folder. Please use specific file name for each
 * Pen tablet, when pen tablet motion enabled: `pen_tablet.png`
 * Arcade stick parts: `arcade_stick.png`
 * Car steering: `car_handle.png`
+* (v3.9.0 and later) Manga effect key down: `manga_keydown.png`
+* (v3.9.0 and later) Manga effect enter key down: `manga_enter_keydown.png`
+* (v3.9.0 and later) Manga effect mouse click: `manga_click.png`
+* (v3.9.0 and later) Manga effect gamepad button: `manga_gamepad_button.png`
+* (v3.9.0 and later) Manga effect gamepad stick: `manga_gameoad_stick.png`
 
 You do not have to put all of the images. Put files which you want to overwrite.
 
 For the gamepad and pen, see following UV template. Car steering model only supports single-colored image based texture replace.
 
 Other parts do not have UV template because those images are used as-is. First image in below shows the example to replace key and touch pad.
+
+For the images that file name starts with `manga_`, aspect ratio should be 4:3.
 
 After the setup, start `VMagicMirror.exe` to load the specified image.
 

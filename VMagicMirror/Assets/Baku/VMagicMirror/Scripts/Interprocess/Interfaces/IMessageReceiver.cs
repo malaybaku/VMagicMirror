@@ -54,6 +54,16 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(command, c => target.Value = c.ToInt());
         }
         
+        public static void BindEnumProperty<T>(
+            this IMessageReceiver receiver,
+            string command,
+            IReactiveProperty<T> target) where T : Enum
+        {
+            receiver.AssignCommandHandler(command, 
+                c => target.Value = (T)Enum.ToObject(typeof(T), c.ToInt())
+                );
+        }
+        
         public static void BindPercentageProperty(
             this IMessageReceiver receiver,
             string command,

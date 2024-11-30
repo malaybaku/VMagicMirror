@@ -1,5 +1,6 @@
 ﻿namespace Baku.VMagicMirror
 {
+    //TODO: ParticleStoreの
     public class ParticleControlReceiver
     {
         private const int InvalidTypingEffectIndex = ParticleStore.InvalidTypingEffectIndex;

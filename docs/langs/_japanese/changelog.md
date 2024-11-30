@@ -7,6 +7,14 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v3.9.0
+{: .doc-sec2 }
+
+2024/11/30
+
+* 追加: `タイピング演出` に `Manga` オプションを追加し、擬音ライクなエフェクト表現をサポートしました。
+
+
 #### v3.8.4
 {: .doc-sec2 }
 

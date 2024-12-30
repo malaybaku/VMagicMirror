@@ -8,6 +8,14 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.9.1
+{: .doc-sec2 }
+
+2024/12/30
+
+* Fixed: In v3.9.0, `Manga` effect did not appear in Spout output.
+
+
 #### v3.9.0
 {: .doc-sec2 }
 

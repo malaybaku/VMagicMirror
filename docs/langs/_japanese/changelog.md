@@ -7,6 +7,14 @@ title: Change Log
 
 <div class="doc-ul" markdown="1">
 
+#### v3.9.1
+{: .doc-sec2 }
+
+2024/12/30
+
+* 修正: v3.9.0で追加した `Manga` エフェクトがSpout出力の映像に表示されない問題を修正しました。
+
+
 #### v3.9.0
 {: .doc-sec2 }
 

@@ -1199,6 +1199,11 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4532191653127153807, guid: 24289ce6f3f366c4088007663df50e59,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1629460661}
     - target: {fileID: 5933559195360744184, guid: 24289ce6f3f366c4088007663df50e59,
         type: 3}
       propertyPath: m_RootOrder

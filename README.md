@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.8.3
+v3.9.1
 
 * 作成: 獏星(ばくすたー)
-* 2024/09/30
+* 2024/12/30
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -181,6 +181,8 @@ https://github.com/malaybaku/VMagicMirror/blob/master/WPF/VMagicMirrorConfig/VMa
 
 https://malaybaku.github.io/VMagicMirror/credit_license
 
+また、本レポジトリに含む画像の一部は [Otomanopee](https://github.com/Gutenberg-Labo/Otomanopee) フォントを使って作成しています。フォント自体を再配布するものではないため、あくまで補足情報として記載しています。
+
 
 ### 5.2. Creative Commons Licenseに基づくモデルについて
 
@@ -190,7 +192,6 @@ https://malaybaku.github.io/VMagicMirror/credit_license
 - `CarSteering.glb` (作成者: CaskeThis)
 
 VMagicMirrorでは元モデルに対し、他のデバイスとの一貫性を保つためにマテリアルを適用しているほか、カスタマイズのためにテクスチャを変更可能にしています。
-
 
 ## 6. ローカリゼーションについて
 

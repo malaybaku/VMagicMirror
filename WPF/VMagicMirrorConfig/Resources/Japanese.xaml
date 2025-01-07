@@ -397,6 +397,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Layout_Hid_TypingEffect_None">なし</sys:String>
     <sys:String x:Key="Layout_Hid_TypingEffect_Text">テキスト</sys:String>
     <sys:String x:Key="Layout_Hid_TypingEffect_Light">ライト</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Manga">マンガ風</sys:String>
+
+    <sys:String x:Key="Layout_HideUnusedDevices">操作中ではないデバイスを自動で隠す</sys:String>
     
     <sys:String x:Key="Layout_Gamepad">ゲームパッド</sys:String>    
 

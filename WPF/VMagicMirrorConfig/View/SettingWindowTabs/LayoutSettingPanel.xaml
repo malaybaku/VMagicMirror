@@ -235,6 +235,12 @@
                         <TextBlock Text="{DynamicResource Layout_MidiVisible}"/>
                     </CheckBox>
 
+                    <CheckBox Margin="20,10,20,0"
+                              VerticalContentAlignment="Center"
+                              IsChecked="{Binding HideUnusedDevices.Value}">
+                        <TextBlock Text="{DynamicResource Layout_HideUnusedDevices}"/>
+                    </CheckBox>
+
                     <Grid Margin="17,5,5,5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>

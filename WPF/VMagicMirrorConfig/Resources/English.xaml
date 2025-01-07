@@ -397,7 +397,10 @@ Translate (2 way):
     <sys:String x:Key="Layout_Hid_TypingEffect_None">None</sys:String>
     <sys:String x:Key="Layout_Hid_TypingEffect_Text">Text</sys:String>
     <sys:String x:Key="Layout_Hid_TypingEffect_Light">Light</sys:String>
+    <sys:String x:Key="Layout_Hid_TypingEffect_Manga">Manga</sys:String>
 
+    <sys:String x:Key="Layout_HideUnusedDevices">Hide Unused Devices</sys:String>
+    
     <sys:String x:Key="Layout_Gamepad">Gamepad</sys:String>    
     
     <sys:String x:Key="Layout_Texture_Tips_Notice">NOTE: To change device's appearance, please see the tips below.</sys:String>

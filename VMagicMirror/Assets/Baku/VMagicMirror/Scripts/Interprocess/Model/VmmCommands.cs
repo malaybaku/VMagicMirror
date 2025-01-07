@@ -123,6 +123,7 @@
         public const string CameraFov = nameof(CameraFov);
 
         // Layout, device layouts
+        public const string HideUnusedDevices = nameof(HideUnusedDevices);
         public const string SetDeviceLayout = nameof(SetDeviceLayout);
         public const string ResetDeviceLayout = nameof(ResetDeviceLayout);
         
@@ -140,8 +141,6 @@
         public const string EnableGamepad = nameof(EnableGamepad);
         public const string PreferDirectInputGamepad = nameof(PreferDirectInputGamepad);
 
-        public const string GamepadHeight = nameof(GamepadHeight);
-        public const string GamepadHorizontalScale = nameof(GamepadHorizontalScale);
         public const string GamepadVisibility = nameof(GamepadVisibility);
 
         public const string GamepadLeanMode = nameof(GamepadLeanMode);

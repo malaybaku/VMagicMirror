@@ -8,6 +8,31 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v3.9.1
+{: .doc-sec2 }
+
+2024/12/30
+
+* Fixed: In v3.9.0, `Manga` effect did not appear in Spout output.
+
+
+#### v3.9.0
+{: .doc-sec2 }
+
+2024/11/30
+
+* Add: `Manga` effect option added to `Typing Effect`, to show manga-like effect.
+
+
+#### v3.8.4
+{: .doc-sec2 }
+
+2024/10/31
+
+* Add: Option to hide unused devices automatically in character window. The feature is available at settings window > `Layout` > `Devices Visibility` > `Hide Unused Devices`.
+* Other: A library for Lua script (NLua) has been introduced to project. Note that the library does not affects the behavior of this version.
+
+
 #### v3.8.3
 {: .doc-sec2 }
 

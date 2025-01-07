@@ -8,6 +8,7 @@ namespace Baku.VMagicMirror
     public class ParticleStore : MonoBehaviour
     {
         public const int InvalidTypingEffectIndex = -1;
+        public const int MangaTypingEffectIndex = 4;
 
         [Serializable]
         class ParticlePrefabInfo
@@ -82,7 +83,7 @@ namespace Baku.VMagicMirror
             _keyboardParticleParent = keyboard.transform;
             _mouseParticlePrefabParent = touchPad.transform;
             
-            var _ = new ParticleControlReceiver(receiver, this);
+            _ = new ParticleControlReceiver(receiver, this);
         }
 
         private void Start()
@@ -166,8 +167,6 @@ namespace Baku.VMagicMirror
                     SetupArcadeStickParticle(arcadeStickIndex);
                 }
             }
-            
-            
         }
 
         /// <summary>
@@ -346,6 +345,7 @@ namespace Baku.VMagicMirror
                 _penTabletEndParticle.Play();
             }
         }
+      
         private void ClearKeyAndPadParticles()
         {
             for (int i = 0; i < _keyParticles.Length; i++)

@@ -468,6 +468,22 @@ namespace Baku.VMagicMirror
                     _keyUp.OnNext(keyName);
                 }
             }
+
+            {
+                var enterKey = nameof(Keys.Enter);
+                
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    _keyDown.OnNext(enterKey);
+                    _rawKeyDown.OnNext(enterKey);
+                }
+
+                if (Input.GetKeyUp(KeyCode.Return))
+                {
+                    _keyUp.OnNext(enterKey);
+                    _rawKeyUp.OnNext(enterKey);
+                }
+            }
         }
         
         #endif

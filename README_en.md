@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.8.3
+v3.9.1
 
 * Author: Baxter
-* 2024/Sep/30
+* 2024/Dec/30
 
 The VRM avatar application without any special device.
 
@@ -183,6 +183,7 @@ This page is similar, but it also refers to the libraries which are used in past
 
 https://malaybaku.github.io/VMagicMirror/credit_license
 
+Note that some images are created with [Otomanopee](https://github.com/Gutenberg-Labo/Otomanopee) font. This is not license notice, since the font itself is not redistributed.
 
 ### 5.2. About Model data under Creative Commons Attribution
 

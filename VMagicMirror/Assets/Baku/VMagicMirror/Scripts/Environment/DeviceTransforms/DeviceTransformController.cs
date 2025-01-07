@@ -90,12 +90,12 @@ namespace Baku.VMagicMirror
         /// </summary>
         public IObservable<TransformControlRequest> ControlRequested => _controlRequested;
 
-        private KeyboardVisibility _keyboardVisibility;
-        private TouchpadVisibility _touchPadVisibility;
-        private GamepadVisibilityReceiver _gamepadVisibility;
-        private ArcadeStickVisibilityReceiver _arcadeStickVisibility;
-        private CarHandleVisibilityReceiver _carHandleVisibility;
-        private PenTabletVisibility _penTabletVisibility;
+        private KeyboardVisibilityView _keyboardVisibility;
+        private TouchpadVisibilityView _touchPadVisibility;
+        private GamepadVisibilityView _gamepadVisibility;
+        private ArcadeStickVisibilityView _arcadeStickVisibility;
+        private CarHandleVisibilityView _carHandleVisibility;
+        private PenTabletVisibilityView _penTabletVisibility;
         private MidiControllerVisibility _midiControllerVisibility;
                 
         [Inject]
@@ -124,13 +124,13 @@ namespace Baku.VMagicMirror
             _penTabletControl = penTablet.TransformControl;
             _gamepadModelScaleTarget = gamepad.ModelScaleTarget;
             
-            _keyboardVisibility = _keyboardControl.GetComponent<KeyboardVisibility>();
-            _touchPadVisibility =  _touchPadControl.GetComponent<TouchpadVisibility>();
-            _gamepadVisibility = _gamepadControl.GetComponent<GamepadVisibilityReceiver>();
-            _arcadeStickVisibility = _arcadeStickControl.GetComponent<ArcadeStickVisibilityReceiver>();
-            _carHandleVisibility = _carHandleControl.GetComponent<CarHandleVisibilityReceiver>();
+            _keyboardVisibility = _keyboardControl.GetComponent<KeyboardVisibilityView>();
+            _touchPadVisibility =  _touchPadControl.GetComponent<TouchpadVisibilityView>();
+            _gamepadVisibility = _gamepadControl.GetComponent<GamepadVisibilityView>();
+            _arcadeStickVisibility = _arcadeStickControl.GetComponent<ArcadeStickVisibilityView>();
+            _carHandleVisibility = _carHandleControl.GetComponent<CarHandleVisibilityView>();
             _midiControllerVisibility = _midiControl.GetComponent<MidiControllerVisibility>();
-            _penTabletVisibility = _penTabletControl.GetComponent<PenTabletVisibility>();
+            _penTabletVisibility = _penTabletControl.GetComponent<PenTabletVisibilityView>();
             
             receiver.AssignCommandHandler(
                 VmmCommands.EnableDeviceFreeLayout,

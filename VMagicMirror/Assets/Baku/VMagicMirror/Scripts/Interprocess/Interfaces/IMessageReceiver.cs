@@ -1,4 +1,6 @@
 ﻿using System;
+using UniRx;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
@@ -30,5 +32,64 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="command"></param>
         void ReceiveCommand(ReceivedCommand command);
+    }
+
+    //TODO: AssignCommandHandlerの直呼びを極力減らして下記に寄せていく
+    // Assign~ が引き続き使われる想定ケースはJSONが飛んできてパースするやつとか
+    public static class MessageReceiverExtension
+    {
+        public static void BindBoolProperty(
+            this IMessageReceiver receiver,
+            string command,
+            IReactiveProperty<bool> target)
+        {
+            receiver.AssignCommandHandler(command, c => target.Value = c.ToBoolean());
+        }
+
+        public static void BindIntProperty(
+            this IMessageReceiver receiver,
+            string command,
+            IReactiveProperty<int> target)
+        {
+            receiver.AssignCommandHandler(command, c => target.Value = c.ToInt());
+        }
+        
+        public static void BindEnumProperty<T>(
+            this IMessageReceiver receiver,
+            string command,
+            IReactiveProperty<T> target) where T : Enum
+        {
+            receiver.AssignCommandHandler(command, 
+                c => target.Value = (T)Enum.ToObject(typeof(T), c.ToInt())
+                );
+        }
+        
+        public static void BindPercentageProperty(
+            this IMessageReceiver receiver,
+            string command,
+            IReactiveProperty<float> target)
+        {
+            receiver.AssignCommandHandler(command, c => target.Value = c.ParseAsPercentage());
+        }
+
+        public static void BindCentimeterProperty(
+            this IMessageReceiver receiver,
+            string command,
+            IReactiveProperty<float> target)
+        {
+            receiver.AssignCommandHandler(command, c => target.Value = c.ParseAsCentimeter());
+        }
+
+        public static void BindColorProperty(
+            this IMessageReceiver receiver,
+            string command,
+            IReactiveProperty<Color> target)
+        {
+            receiver.AssignCommandHandler(command, c =>
+            {
+                var argb = c.ToColorFloats();
+                target.Value = new Color(argb[0], argb[1], argb[2], argb[3]);
+            });
+        }
     }
 }

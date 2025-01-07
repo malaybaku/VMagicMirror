@@ -35,4 +35,10 @@ In `Layout` tab you can access to the parameters to adjust surrounding device la
 
 `MIDI Controller`: Check to show device.
 
+`Hide Unused Devices`: If checked, keyboard and gamepad like objects are automatially hidden during the avatar controller other devices. This option is off by default.
+
 `Typing Effect`: Set typing effect.
+
+In v3.9.0 and later version, `Typing Effect` includes `Manga` option. This effect also works for gamepad inputs and effect appears foreground.
+
+The textures used in each devices and `Manga` effect can be customized by preparing png image. Please see detail at [Change Textures](../tips/change_textures).

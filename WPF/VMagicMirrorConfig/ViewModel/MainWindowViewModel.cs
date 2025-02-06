@@ -64,6 +64,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 await ModelResolver.Instance.Resolve<CustomMotionList>().InitializeCustomMotionClipNamesAsync();
                 _runtimeHelper.Start();
                 ModelResolver.Instance.Resolve<HotKeySetter>().Initialize();
+                ModelResolver.Instance.Resolve<BuddySettingModel>().Load();
                 ModelResolver.Instance.Resolve<GameInputSettingModel>().InitializeAsync();
 
                 if (_settingModel.AutoLoadLastLoadedVrm.Value && !string.IsNullOrEmpty(_settingModel.LastVrmLoadFilePath))
@@ -125,6 +126,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             LargePointerController.Instance.Close();
             ModelResolver.Instance.Resolve<DeviceListSource>().Dispose();
             ModelResolver.Instance.Resolve<GameInputSettingModel>().SaveSettingToDefaultFile();
+            ModelResolver.Instance.Resolve<BuddySettingModel>().Save();
 
             //UX的には再起動を意味する
             if (_appQuitSetting.SkipAutoSaveAndRestart)

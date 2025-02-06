@@ -1,0 +1,89 @@
+﻿using Baku.VMagicMirrorConfig.BuddySettingsMessages;
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Linq;
+
+namespace Baku.VMagicMirrorConfig
+{
+    public class BuddySettingsSender
+    {
+        private readonly IMessageSender _sender;
+
+        public BuddySettingsSender() : this(ModelResolver.Instance.Resolve<IMessageSender>()) { }
+
+        internal BuddySettingsSender(IMessageSender sender)
+        {
+            _sender = sender;
+        }
+
+        /// <summary>
+        /// あるBuddyの現在のプロパティ一式を送信する
+        /// </summary>
+        /// <param name="buddy"></param>
+        public void NotifyBuddyProperties(BuddyData buddy)
+        {
+            var settings = new BuddySettingsMessage()
+            {
+                // NOTE: stringはカラならnullにしてしまうことにより、
+                // 受信側(Unity)には空文字扱いさせつつJSONのkey:valueの書き込みを省略している
+                BuddyId = buddy.Metadata.FolderName,
+                Properties = buddy.Properties
+                    .Select(prop => new BuddySettingsPropertyMessage()
+                    {
+                        Name = prop.Metadata.Name,
+                        Type = prop.Metadata.ValueType.ToString(),
+                        BoolValue = prop.Value.BoolValue,
+                        IntValue = prop.Value.IntValue,
+                        FloatValue = prop.Value.FloatValue,
+                        StringValue = string.IsNullOrEmpty(prop.Value.StringValue) ? null : prop.Value.StringValue,
+                        Vector2Value = prop.Value.Vector2Value,
+                        Vector3Value = prop.Value.Vector3Value,
+                    }).ToArray(),
+            };
+            using var sw = new StringWriter();
+            new JsonSerializer().Serialize(sw, settings);
+            _sender.SendMessage(MessageFactory.Instance.BuddyRefreshData(sw.ToString()));
+        }
+
+        /// <summary>
+        /// あるBuddyのうち特定の1つのプロパティを送信する
+        /// </summary>
+        /// <param name="buddy"></param>
+        /// <param name="property"></param>
+        /// <param name="valueSetter"></param>
+        private void NotifyProperty(
+            BuddyMetadata buddy,
+            BuddyPropertyMetadata property,
+            Action<BuddySettingsPropertyMessage> valueSetter
+            )
+        {
+            var msg = new BuddySettingsPropertyMessage()
+            {
+                BuddyId = buddy.FolderName,
+                Name = property.Name,
+                Type = property.ValueType.ToString(),
+            };
+            valueSetter(msg);
+            using var sw = new StringWriter();
+            new JsonSerializer().Serialize(sw, msg);
+            _sender.SendMessage(MessageFactory.Instance.BuddySetProperty(sw.ToString()));
+        }
+
+        public void NotifyBoolProperty(BuddyMetadata buddy, BuddyPropertyMetadata property, bool value)
+            => NotifyProperty(buddy, property, msg => msg.BoolValue = value);
+        public void NotifyIntProperty(BuddyMetadata buddy, BuddyPropertyMetadata property, int value)
+            => NotifyProperty(buddy, property, msg => msg.IntValue = value);
+        public void NotifyFloatProperty(BuddyMetadata buddy, BuddyPropertyMetadata property, float value)
+            => NotifyProperty(buddy, property, msg => msg.FloatValue = value);
+        public void NotifyStringProperty(BuddyMetadata buddy, BuddyPropertyMetadata property, string value)
+            => NotifyProperty(buddy, property, msg => msg.StringValue = value);
+        public void NotifyVector2Property(BuddyMetadata buddy, BuddyPropertyMetadata property, BuddyVector2 value)
+            => NotifyProperty(buddy, property, msg => msg.Vector2Value = value);
+        public void NotifyVector3Property(BuddyMetadata buddy, BuddyPropertyMetadata property, BuddyVector3 value)
+            => NotifyProperty(buddy, property, msg => msg.Vector3Value = value);
+
+        public void SetMainAvatarOutputActive(bool v)
+            => _sender.SendMessage(MessageFactory.Instance.BuddySetMainAvatarOutputActive(v));
+    }
+}

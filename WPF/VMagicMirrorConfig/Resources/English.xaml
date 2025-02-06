@@ -22,6 +22,7 @@
     <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
     <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">Accessory</sys:String>
+    <sys:String x:Key="TopBar_Buddy">Buddy</sys:String>
     <sys:String x:Key="TopBar_HandTrack">Hands</sys:String>
     
     <!-- Top Tab In Setting -->
@@ -195,6 +196,16 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize">Image max size</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize_Unlimited">Unlimited</sys:String>
 
+    <!-- Buddy -->
+    <sys:String x:Key="Buddy_Header">Buddy</sys:String>
+    <sys:String x:Key="Buddy_Instruction" xml:space="preserve">Setup assets and scripts in "Buddy" folder to show buddy characters.</sys:String>
+    <sys:String x:Key="Buddy_OpenFolder">Open Folder</sys:String>
+    <sys:String x:Key="Buddy_SeeMore">See More...</sys:String>
+    <sys:String x:Key="Buddy_ReloadAll">Reload All</sys:String>
+
+    <sys:String x:Key="Buddy_Item_Reload">Reload</sys:String>
+    <sys:String x:Key="Buddy_Item_FolderName">Folder: </sys:String>
+    
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>
     
@@ -762,6 +773,7 @@ VMCP receive settings is kept after the tab hidden.</sys:String>
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/en/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/en/docs/setting_files</sys:String>
     <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/en/docs/accessory</sys:String>
+    <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/en/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/en/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/en/docs/vmc_protocol</sys:String>
 

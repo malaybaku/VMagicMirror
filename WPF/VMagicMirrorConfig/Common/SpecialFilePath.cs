@@ -23,12 +23,14 @@ namespace Baku.VMagicMirrorConfig
         public static string LogFileDir { get; }
         public static string LogFilePath { get; }
         public static string AccessoryFileDir { get; }
+        public static string BuddyDir { get; }
         public static string UnityAppPath { get; }
         public static string AutoSaveSettingFilePath { get; }
         public static string UpdateCheckFilePath { get; }
 
         public static string PreferenceFilePath { get; }
         public static string GameInputDefaultFilePath { get; }
+        public static string BuddySettingsFilePath { get; }
 
         /// <summary>
         /// スロット番号を指定して保存ファイル名を指定します。0を指定した場合は特別にオートセーブファイルのパスを返します。
@@ -55,11 +57,13 @@ namespace Baku.VMagicMirrorConfig
             SaveFileDir = Path.Combine(RootDirectory, "Saves");
             LogFileDir = Path.Combine(RootDirectory, "Logs");
             AccessoryFileDir = Path.Combine(RootDirectory, "Accessory");
+            BuddyDir = Path.Combine(RootDirectory, "Buddy");
             AutoSaveSettingFilePath = Path.Combine(SaveFileDir, AutoSaveSettingFileName);
             UpdateCheckFilePath = Path.Combine(SaveFileDir, UpdateCheckFileName);
             LogFilePath = Path.Combine(LogFileDir, LogTextName);
             PreferenceFilePath = Path.Combine(SaveFileDir, "_preferences");
             GameInputDefaultFilePath = Path.Combine(SaveFileDir, "_game_input");
+            BuddySettingsFilePath = Path.Combine(SaveFileDir, "_buddy");
 
             Directory.CreateDirectory(RootDirectory);
             Directory.CreateDirectory(SaveFileDir);

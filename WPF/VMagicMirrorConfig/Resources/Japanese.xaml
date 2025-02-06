@@ -22,6 +22,7 @@
     <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
     <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">アクセサリー</sys:String>
+    <sys:String x:Key="TopBar_Buddy">サブキャラ</sys:String>
     <sys:String x:Key="TopBar_HandTrack">ハンドトラッキング</sys:String>
     
     <!-- Top Tab in Setting Window -->
@@ -194,6 +195,16 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Accessory_Item_Fps">FPS (連番画像のみ)</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize">画像のサイズ上限</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize_Unlimited">上限なし</sys:String>
+    
+    <!-- Buddy -->
+    <sys:String x:Key="Buddy_Header">サブキャラ</sys:String>
+    <sys:String x:Key="Buddy_Instruction" xml:space="preserve">"Buddy"フォルダ内で適切に画像/3Dモデル/スクリプトを配置することで、サブキャラを表示できます。</sys:String>
+    <sys:String x:Key="Buddy_OpenFolder">フォルダを開く</sys:String>
+    <sys:String x:Key="Buddy_SeeMore">さらに詳しく...</sys:String>
+    <sys:String x:Key="Buddy_ReloadAll">全て再読み込み</sys:String>
+
+    <sys:String x:Key="Buddy_Item_Reload">再読み込み</sys:String>
+    <sys:String x:Key="Buddy_Item_FolderName">フォルダ名: </sys:String>
     
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">色を編集 (クリックで展開)</sys:String>
@@ -768,6 +779,7 @@ VMCPのデータが受信中の場合、この操作で受信機能はオフに�
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/docs/setting_files</sys:String>
     <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/docs/accessory</sys:String>
+    <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/docs/vmc_protocol</sys:String>
     

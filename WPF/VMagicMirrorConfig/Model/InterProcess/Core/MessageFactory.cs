@@ -12,11 +12,9 @@ namespace Baku.VMagicMirrorConfig
         private MessageFactory() { }
 
         //メッセージのCommandには呼び出した関数の名前が入る: もともとnameof(Hoge)のように関数名を入れていたが、その必要が無くなった
-        private static Message NoArg([CallerMemberName] string command = "")
-            => new Message(command);
+        private static Message NoArg([CallerMemberName] string command = "") => new(command);
 
-        private static Message WithArg(string content, [CallerMemberName] string command = "")
-            => new Message(command, content);
+        private static Message WithArg(string content, [CallerMemberName] string command = "") => new(command, content);
 
         private static Message WithArg(bool content, [CallerMemberName] string command = "")
             => WithArg(content.ToString(), command);
@@ -353,6 +351,31 @@ namespace Baku.VMagicMirrorConfig
         public Message RequestResetAllAccessoryLayout() => NoArg();
         public Message RequestResetAccessoryLayout(string fileNamesJson) => WithArg(fileNamesJson);
         public Message ReloadAccessoryFiles() => NoArg();
+
+        #endregion
+
+        #region Buddy
+
+        public Message BuddySetMainAvatarOutputActive(bool active) => WithArg(active);
+        
+        // NOTE: 単にon/offすることに加え、同一folderを立て続けにDisable => Enableすると実質リロードとして動くのも期待してる
+        public Message BuddyDisable(string folder) => WithArg(folder);
+        public Message BuddyEnable(string folder) => WithArg(folder);
+
+        /// <summary>
+        /// BuddySetPropertyと違い、1Buddyぶんの全プロパティ値をリフレッシュ指示として送る
+        /// プロパティを空配列で渡すと実質的にデータ削除みたいなことも可能
+        /// </summary>
+        /// <param name="valueJson"></param>
+        /// <returns></returns>
+        public Message BuddyRefreshData(string valueJson) => WithArg(valueJson);
+        
+        /// <summary>
+        /// 特定のBuddyの1プロパティだけ編集したときの送信に使うやつ
+        /// </summary>
+        /// <param name="valueJson"></param>
+        /// <returns></returns>
+        public Message BuddySetProperty(string valueJson) => WithArg(valueJson);
 
         #endregion
 

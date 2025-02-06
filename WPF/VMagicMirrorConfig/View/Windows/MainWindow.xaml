@@ -168,11 +168,29 @@
             <TabItem>
                 <TabItem.Header>
                     <view:VerticalTabHeaderIconText 
+                        Text="{DynamicResource TopBar_Buddy}"                        
+                        IconKind="FavoriteFace">
+                        <view:VerticalTabHeaderIconText.Foreground>
+                            <MultiBinding Converter="{StaticResource DecrementableTabSelectionToForegroundConverter}"
+                                          ConverterParameter="5">
+                                <Binding Path="SelectedIndex" ElementName="MainTabControl"/>
+                                <Binding Path="DataContext.ShowVmcpTab.Value" 
+                                         RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=metro:MetroWindow}" />
+                            </MultiBinding>
+                        </view:VerticalTabHeaderIconText.Foreground>
+                    </view:VerticalTabHeaderIconText>
+                </TabItem.Header>
+                <view:BuddyPanel Background="White" />
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <view:VerticalTabHeaderIconText 
                         Text="{DynamicResource TopBar_HandTrack}"                        
                         IconKind="Hand">
                         <view:VerticalTabHeaderIconText.Foreground>
                             <MultiBinding Converter="{StaticResource DecrementableTabSelectionToForegroundConverter}"
-                                          ConverterParameter="5">
+                                          ConverterParameter="6">
                                 <Binding Path="SelectedIndex"
                                          ElementName="MainTabControl" />
                                 <Binding Path="DataContext.ShowVmcpTab.Value" 

@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
                 _mainAvatarOutputActive
                 );
         }
-ls
+
         private readonly ReactiveProperty<bool> _mainAvatarOutputActive = new(false);
         // TODO: この設定を使うクラスを用意して、そのクラスからのイベントをいい感じに遮断したりする 
         public IReadOnlyReactiveProperty<bool> MainAvatarOutputActive => _mainAvatarOutputActive;

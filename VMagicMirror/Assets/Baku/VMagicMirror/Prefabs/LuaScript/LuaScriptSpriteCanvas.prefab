@@ -28,7 +28,7 @@ RectTransform:
   m_GameObject: {fileID: 7819015672138514153}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -36,8 +36,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_SizeDelta: {x: 1280, y: 720}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8708544155153628992
 Canvas:
   m_ObjectHideFlags: 0
@@ -47,7 +47,7 @@ Canvas:
   m_GameObject: {fileID: 7819015672138514153}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 2
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -96,5 +96,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2492a41bfa1a0d43821a1da4f0b466f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 8708544155153628992}
   scriptSpriteInstancePrefab: {fileID: 3893454672750628633, guid: 7a3c7ab65dcdb04458cd69ac53171ae8,
     type: 3}
+  distanceFromCamera: 0.1
+  canvasWidth: 1280

@@ -220,6 +220,13 @@
         public const string RequestResetAccessoryLayout = nameof(RequestResetAccessoryLayout);
         public const string ReloadAccessoryFiles = nameof(ReloadAccessoryFiles);
         
+        // Buddy
+        public const string BuddySetMainAvatarOutputActive = nameof(BuddySetMainAvatarOutputActive);
+        public const string BuddyEnable = nameof(BuddyEnable);
+        public const string BuddyDisable = nameof(BuddyDisable);
+        public const string BuddyRefreshData = nameof(BuddyRefreshData);
+        public const string BuddySetProperty = nameof(BuddySetProperty);
+        
         // External Video Sharing
         public const string EnableSpoutOutput = nameof(EnableSpoutOutput);
         public const string SetSpoutOutputResolution = nameof(SetSpoutOutputResolution);

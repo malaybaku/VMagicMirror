@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
         
         public static string ScreenShotDirectory { get; }
 
-        public static string ScriptDirectory { get; }
+        public static string BuddyRootDirectory { get; }
 
         //モーションやテクスチャ差し替えは以下の優先度になることに注意
         //- エディタの場合: StreamingAssets
@@ -65,7 +65,7 @@ namespace Baku.VMagicMirror
             ScreenShotDirectory = Path.Combine(RootDirectory, "Screenshots");
             SaveFileDir = Path.Combine(RootDirectory, "Saves");
             LogFileDir = Path.Combine(RootDirectory, "Logs");
-            ScriptDirectory = Path.Combine(RootDirectory, "Scripts");
+            BuddyRootDirectory = Path.Combine(RootDirectory, "Buddy");
             
             AutoSaveSettingFilePath = Path.Combine(SaveFileDir, AutoSaveSettingFileName);
             LogFilePath = Path.Combine(LogFileDir, LogTextName);
@@ -73,7 +73,7 @@ namespace Baku.VMagicMirror
             Directory.CreateDirectory(RootDirectory);
             Directory.CreateDirectory(SaveFileDir);
             Directory.CreateDirectory(LogFileDir);
-            Directory.CreateDirectory(ScriptDirectory);
+            Directory.CreateDirectory(BuddyRootDirectory);
         }
     }
 }

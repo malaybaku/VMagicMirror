@@ -65,7 +65,7 @@ namespace Baku.VMagicMirror.Installer
             Container.Bind<LuaScriptSpriteCanvas>()
                 .FromComponentInNewPrefab(luaScriptSpriteCanvas)
                 .AsCached();
-            Container.BindInterfacesTo<ScriptCaller>().AsSingle();
+            ScriptApiInstaller.Install(Container);
             
             WordToMotion.WordToMotionInstaller.Install(Container);
         }

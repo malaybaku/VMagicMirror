@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror.LuaScript
             _receiver = receiver;
             _repository = repository;
         }
-        
+
         public override void Initialize()
         {
             _receiver.AssignCommandHandler(
@@ -28,8 +28,9 @@ namespace Baku.VMagicMirror.LuaScript
             _receiver.AssignCommandHandler(
                 VmmCommands.BuddySetProperty,
                 c => SetBuddyProperty(c.Content)
-            )
-        
+            );
+        }
+
         private void SetBuddyProperty(string json)
         {
             Debug.Log("SetBuddyProperty," + json);

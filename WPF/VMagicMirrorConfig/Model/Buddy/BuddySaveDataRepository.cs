@@ -24,6 +24,8 @@ namespace Baku.VMagicMirrorConfig
                     StringValue = p.Value.StringValue,
                     Vector2Value = p.Value.Vector2Value,
                     Vector3Value = p.Value.Vector3Value,
+                    Transform2DValue = p.Value.Transform2DValue,
+                    Transform3DValue = p.Value.Transform3DValue,
                 }).ToArray(),
             };
         }

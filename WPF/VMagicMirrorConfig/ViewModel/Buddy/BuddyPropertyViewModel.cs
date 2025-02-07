@@ -84,6 +84,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                         v => Vector3Value.Value = _value.Vector3Value.WithZ(v)
                         );
                     break;
+                case BuddyPropertyType.Transform2D:
+                    Transform2DValue = new RProperty<BuddyTransform2D>(
+                        _value.Transform2DValue,
+                        v =>
+                        {
+                            _value.Transform2DValue = v;
+                            _settingSender.NotifyTransform2DProperty(_buddyMetadata, _metadata, v);
+                        });
+                    break;
                 default:
                     throw new NotSupportedException();
             }
@@ -109,6 +118,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<float> VectorX { get; } = new RProperty<float>(0f);
         public RProperty<float> VectorY { get; } = new RProperty<float>(0f);
         public RProperty<float> VectorZ { get; } = new RProperty<float>(0f);
+        public RProperty<BuddyTransform2D> Transform2DValue { get; } = new RProperty<BuddyTransform2D>(default);
 
         public int IntRangeMin => _metadata.IntRangeMin;
         public int IntRangeMax => _metadata.IntRangeMax;

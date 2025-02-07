@@ -31,7 +31,8 @@ namespace Baku.VMagicMirrorConfig.RawData
         [JsonProperty("vector2Data")] public RawBuddyVector2PropertyMetadata? Vector2Data { get; set; }
         [JsonProperty("vector3Data")] public RawBuddyVector3PropertyMetadata? Vector3Data { get; set; }
         [JsonProperty("quaternionData")] public RawBuddyQuaternionPropertyMetadata? QuaternionData { get; set; }
-
+        [JsonProperty("transform2DData")] public RawBuddyTransform2DPropertyMetadata? Transform2DData { get; set; }
+        [JsonProperty("transform3DData")] public RawBuddyTransform3DPropertyMetadata? Transform3DData { get; set; }
     }
 
     // NOTE: 以下のうち、min/max/optionsはjson上で指定がなければnullになることが期待値
@@ -92,16 +93,89 @@ namespace Baku.VMagicMirrorConfig.RawData
         public RawBuddyVector3 DefaultValue { get; set; }
     }
 
+    public class RawBuddyTransform2DPropertyMetadata
+    {
+        [JsonProperty("defaultValue")]
+        public RawBuddyTransform2D DefaultValue { get; set; }
+    }
+
+    public class RawBuddyTransform3DPropertyMetadata
+    {
+        [JsonProperty("defaultValue")]
+        public RawBuddyTransform3D DefaultValue { get; set; }
+    }
+
     public struct RawBuddyVector2
     {
+        public RawBuddyVector2(float x, float y) : this()
+        {
+            X = x;
+            Y = y;
+        }
+
         [JsonProperty("x")] public float X { get; set; }
         [JsonProperty("y")] public float Y { get; set; }
+
+        public BuddyVector2 ToBuddyVector2() => new(X, Y);
     }
 
     public struct RawBuddyVector3
     {
+        public RawBuddyVector3(float x, float y, float z) : this()
+        {
+            X = x;
+            Y = y; 
+            Z = z;
+        }
+
         [JsonProperty("x")] public float X { get; set; }
         [JsonProperty("y")] public float Y { get; set; }
         [JsonProperty("z")] public float Z { get; set; }
+
+        public BuddyVector3 ToBuddyVector3() => new(X, Y, Z);
+    }
+
+    public struct RawBuddyTransform2D
+    {
+        public RawBuddyTransform2D()
+        {
+        }
+
+        [JsonProperty("position")]
+        public RawBuddyVector2 Position { get; set; } = new RawBuddyVector2(0.3f, 0.5f);
+
+        [JsonProperty("rotation")]
+        public RawBuddyVector3 Rotation { get; set; }
+
+        [JsonProperty("scale")]
+        public float Scale { get; set; } = 0.1f;
+
+        public BuddyTransform2D ToTransform2D() => new(Position.ToBuddyVector2(), Rotation.ToBuddyVector3(), Scale);
+    }
+
+    public struct RawBuddyTransform3D
+    {
+        public RawBuddyTransform3D()
+        {
+        }
+
+        [JsonProperty("position")]
+        public RawBuddyVector3 Position { get; set; } = new RawBuddyVector3(1f, 0f, 0f);
+
+        [JsonProperty("rotation")]
+        public RawBuddyVector3 Rotation { get; set; }
+
+        [JsonProperty("scale")]
+        public float Scale { get; set; } = 1f;
+
+        [JsonProperty("parentBone")]
+        public string ParentBone { get; set; } = "";
+
+        public BuddyTransform3D ToTransform3D() => new(
+            Position.ToBuddyVector3(),
+            Rotation.ToBuddyVector3(), 
+            Scale, 
+            Enum.TryParse<BuddyParentBone>(ParentBone, out var bone) ? bone : BuddyParentBone.None
+            );
     }
 }

@@ -189,6 +189,59 @@
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.QuaternionTemplate>
+            <view:BuddyPropertyDataTemplateSelector.Transform2DTemplate>
+                <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" 
+                                   Text="{Binding DisplayName}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" 
+                                   Margin="8,0"
+                                   Text="Pos:"
+                                   TextAlignment="Right"/>
+                        <TextBox Grid.Row="0"
+                                Grid.Column="2" 
+                                Text="{Binding Transform2DValue.Value.Position.X}"/>
+                        <TextBox Grid.Row="0"
+                                Grid.Column="3"
+                                Text="{Binding Transform2DValue.Value.Position.Y}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="1" 
+                                   Margin="8,0"
+                                   Text="Rot:"
+                                   TextAlignment="Right"/>
+                        <TextBox Grid.Row="1"
+                                Grid.Column="2" 
+                                Text="{Binding Transform2DValue.Value.Rotation.X}"/>
+                        <TextBox Grid.Row="1"
+                                Grid.Column="3"
+                                Text="{Binding Transform2DValue.Value.Rotation.Y}"/>
+                        <TextBox Grid.Row="1"
+                                Grid.Column="4"
+                                Text="{Binding Transform2DValue.Value.Rotation.Z}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="1" 
+                                   Margin="8,0"
+                                   Text="Scale:"
+                                   TextAlignment="Right"/>
+                        <TextBox Grid.Row="2" Grid.Column="2" 
+                                 Text="{Binding Transform2DValue.Value.Scale}"/>
+
+                    </Grid>
+                </DataTemplate>
+            </view:BuddyPropertyDataTemplateSelector.Transform2DTemplate>
         </view:BuddyPropertyDataTemplateSelector>
     </UserControl.Resources>
     <StackPanel>
@@ -259,6 +312,8 @@
                 ItemsSource="{Binding Properties}"
                 ItemTemplateSelector="{StaticResource BuddyPropertyDataTemplateSelector}"
                 />
+            
+            <!-- todo: 3Dのもガッと作って後でItemTemplateに移動 -->
         </StackPanel>
     </StackPanel>
 </UserControl>

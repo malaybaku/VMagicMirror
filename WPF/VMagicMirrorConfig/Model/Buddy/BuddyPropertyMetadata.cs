@@ -15,6 +15,8 @@ namespace Baku.VMagicMirrorConfig
         Vector2,
         Vector3,
         Quaternion,
+        Transform2D,
+        Transform3D,
     }
 
     public class BuddyPropertyMetadata
@@ -30,8 +32,8 @@ namespace Baku.VMagicMirrorConfig
         public string Name { get; }
         public string DisplayName { get; }
 
-        public BuddyPropertyType ValueType { get;}
-        public BuddyPropertyType VisualType { get;}
+        public BuddyPropertyType ValueType { get; }
+        public BuddyPropertyType VisualType { get; }
 
         public bool DefaultBoolValue { get; private init; }
         public int DefaultIntValue { get; private init; }
@@ -39,6 +41,8 @@ namespace Baku.VMagicMirrorConfig
         public string DefaultStringValue { get; private init; } = "";
         public BuddyVector2 DefaultVector2Value { get; private init; }
         public BuddyVector3 DefaultVector3Value { get; private init; }
+        public BuddyTransform2D DefaultTransform2DValue { get; private init; }
+        public BuddyTransform3D DefaultTransform3DValue { get; private init; }
 
         public int IntRangeMin { get; private init; }
         public int IntRangeMax { get; private init; }
@@ -132,6 +136,22 @@ namespace Baku.VMagicMirrorConfig
                 DefaultVector3Value = defaultValue,
             };
         }
+
+        public static BuddyPropertyMetadata Transform2D(string name, string displayName, BuddyTransform2D defaultValue)
+        {
+            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Transform2D)
+            {
+                DefaultTransform2DValue = defaultValue,
+            };
+        }
+
+        public static BuddyPropertyMetadata Transform3D(string name, string displayName, BuddyTransform3D defaultValue)
+        {
+            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Transform3D)
+            {
+                DefaultTransform3DValue = defaultValue,
+            };
+        }
     }
 
     public static class BuddyPropertyTypeExtension
@@ -150,6 +170,8 @@ namespace Baku.VMagicMirrorConfig
                 BuddyPropertyType.Vector2 => BuddyPropertyType.Vector2,
                 BuddyPropertyType.Vector3 => BuddyPropertyType.Vector3,
                 BuddyPropertyType.Quaternion => BuddyPropertyType.Quaternion,
+                BuddyPropertyType.Transform2D => BuddyPropertyType.Transform2D,
+                BuddyPropertyType.Transform3D => BuddyPropertyType.Transform3D,
                 _ => throw new NotSupportedException(),
             };
         }

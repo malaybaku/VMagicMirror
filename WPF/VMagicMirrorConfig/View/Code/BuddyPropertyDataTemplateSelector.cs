@@ -17,7 +17,8 @@ namespace Baku.VMagicMirrorConfig.View
         public DataTemplate? Vector2Template { get; set; }
         public DataTemplate? Vector3Template { get; set; }
         public DataTemplate? QuaternionTemplate { get; set; }
-
+        public DataTemplate? Transform2DTemplate { get; set; }
+        public DataTemplate? Transform3DTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -38,6 +39,8 @@ namespace Baku.VMagicMirrorConfig.View
                 BuddyPropertyType.Vector2 => Vector2Template,
                 BuddyPropertyType.Vector3 => Vector3Template,
                 BuddyPropertyType.Quaternion => QuaternionTemplate,
+                BuddyPropertyType.Transform2D => Transform2DTemplate,
+                BuddyPropertyType.Transform3D => Transform3DTemplate,
                 _ => null,
             };
 

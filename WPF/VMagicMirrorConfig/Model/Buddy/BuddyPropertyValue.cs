@@ -36,6 +36,14 @@
         {
             Vector3Value = value,
         };
+        public static BuddyPropertyValue Transform2D(BuddyTransform2D value) => new(BuddyPropertyType.Transform2D)
+        {
+            Transform2DValue = value,
+        };
+        public static BuddyPropertyValue Transform3D(BuddyTransform3D value) => new(BuddyPropertyType.Transform3D)
+        {
+            Transform3DValue = value,
+        };
 
         public bool BoolValue { get; set; }
         public int IntValue { get; set; }
@@ -43,6 +51,8 @@
         public string StringValue { get; set; } = "";
         public BuddyVector2 Vector2Value { get; set; }
         public BuddyVector3 Vector3Value { get; set; }
+        public BuddyTransform2D Transform2DValue { get; set; }
+        public BuddyTransform3D Transform3DValue { get; set; }
 
         public BuddyPropertyType Type { get; }
     }

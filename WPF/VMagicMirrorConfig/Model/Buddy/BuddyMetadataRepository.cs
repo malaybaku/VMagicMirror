@@ -207,6 +207,16 @@ namespace Baku.VMagicMirrorConfig
                         displayName,
                         eulerAngleDefault
                         );
+                case "transform2D":
+                    var transform2DDefault = src.Transform2DData?.DefaultValue ?? new RawBuddyTransform2D();
+                    return BuddyPropertyMetadata.Transform2D(
+                        name, displayName, transform2DDefault.ToTransform2D()
+                        );
+                case "transform3D":
+                    var transform3DDefault = src.Transform3DData?.DefaultValue ?? new RawBuddyTransform3D();
+                    return BuddyPropertyMetadata.Transform3D(
+                        name, displayName, transform3DDefault.ToTransform3D()
+                        );
                 default:
                     throw new ArgumentException("Unsupported type is specified for property");
             }

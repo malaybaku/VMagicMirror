@@ -26,12 +26,15 @@ namespace Baku.VMagicMirrorConfig
         public string Type { get; set; } = "";
 
         //NOTE: 「同じキーにbool/number/stringどれかが入る」というのも渋いので、それを避けている
+        //TODOかも: これもTypeがあるんだからBool以降はDefaultValueでIgnoreすべきでは
         public bool BoolValue { get; set; }
         public int IntValue { get; set; }
         public float FloatValue { get; set; }
         public string StringValue { get; set; } = "";
         public BuddyVector2 Vector2Value { get; set; }
         public BuddyVector3 Vector3Value { get; set; }
+        public BuddyTransform2D Transform2DValue { get; set; }
+        public BuddyTransform3D Transform3DValue { get; set; }
 
         public BuddyPropertyValue ToValue() => Type switch
         {
@@ -42,6 +45,8 @@ namespace Baku.VMagicMirrorConfig
             nameof(BuddyPropertyType.Vector2) => BuddyPropertyValue.Vector2(Vector2Value),
             nameof(BuddyPropertyType.Vector3) => BuddyPropertyValue.Vector3(Vector3Value),
             nameof(BuddyPropertyType.Quaternion) => BuddyPropertyValue.Quaternion(Vector3Value),
+            nameof(BuddyPropertyType.Transform2D) => BuddyPropertyValue.Transform2D(Transform2DValue),
+            nameof(BuddyPropertyType.Transform3D) => BuddyPropertyValue.Transform3D(Transform3DValue),
             _ => throw new NotSupportedException(),
         };
     }

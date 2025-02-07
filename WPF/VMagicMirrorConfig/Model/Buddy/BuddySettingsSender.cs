@@ -82,6 +82,10 @@ namespace Baku.VMagicMirrorConfig
             => NotifyProperty(buddy, property, msg => msg.Vector2Value = value);
         public void NotifyVector3Property(BuddyMetadata buddy, BuddyPropertyMetadata property, BuddyVector3 value)
             => NotifyProperty(buddy, property, msg => msg.Vector3Value = value);
+        public void NotifyTransform2DProperty(BuddyMetadata buddy, BuddyPropertyMetadata property, BuddyTransform2D value)
+            => NotifyProperty(buddy, property, msg => msg.Transform2DValue = value);
+        public void NotifyTransform3DProperty(BuddyMetadata buddy, BuddyPropertyMetadata property, BuddyTransform3D value)
+            => NotifyProperty(buddy, property, msg => msg.Transform3DValue = value);
 
         public void SetMainAvatarOutputActive(bool v)
             => _sender.SendMessage(MessageFactory.Instance.BuddySetMainAvatarOutputActive(v));

@@ -13,13 +13,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     {
         public BuddySettingViewModel() : this(
             ModelResolver.Instance.Resolve<BuddySettingModel>(),
+            ModelResolver.Instance.Resolve<LayoutSettingModel>(),
             ModelResolver.Instance.Resolve<BuddySettingsSender>())
         {
         }
 
-        internal BuddySettingViewModel(BuddySettingModel model, BuddySettingsSender buddySettingsSender)
+        internal BuddySettingViewModel(
+            BuddySettingModel model,
+            LayoutSettingModel layoutSettingModel,
+            BuddySettingsSender buddySettingsSender)
         {
             _model = model;
+            _layoutSettingModel = layoutSettingModel;
             _buddySettingsSender = buddySettingsSender;
             Items = new ReadOnlyObservableCollection<BuddyItemViewModel>(_items);
 
@@ -37,7 +42,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
 
         private readonly BuddySettingModel _model;
+        private readonly LayoutSettingModel _layoutSettingModel;
         private readonly BuddySettingsSender _buddySettingsSender;
+
+        public RProperty<bool> EnableDeviceFreeLayout => _layoutSettingModel.EnableDeviceFreeLayout;
+
 
         public RProperty<bool> MainAvatarOutputActive => _model.MainAvatarOutputActive;
 

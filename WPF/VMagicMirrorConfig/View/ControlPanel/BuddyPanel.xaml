@@ -88,6 +88,14 @@
                                 />
                     </Grid>
 
+                    <Grid>
+                        <CheckBox HorizontalAlignment="Left"
+                                  Margin="10,0" 
+                                  Content="{DynamicResource Layout_DeviceFreeLayout}"
+                                  IsChecked="{Binding EnableDeviceFreeLayout.Value}"
+                                  />
+                    </Grid>
+
                     <Border Margin="5"
                             BorderBrush="{StaticResource MaterialDesignToolForeground}"
                             BorderThickness="1">

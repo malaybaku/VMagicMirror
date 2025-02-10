@@ -58,6 +58,7 @@
             resolver.Add(new LargePointerVisibility());
             resolver.Add(new MicrophoneStatus());
             resolver.Add(new FaceSettingReceiver());
+            resolver.Add(new BuddySettingsReceiver());
 
             resolver.Add(new PreferenceFileManager());
 

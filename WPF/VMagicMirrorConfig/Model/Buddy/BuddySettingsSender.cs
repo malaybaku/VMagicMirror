@@ -39,6 +39,8 @@ namespace Baku.VMagicMirrorConfig
                         StringValue = string.IsNullOrEmpty(prop.Value.StringValue) ? null : prop.Value.StringValue,
                         Vector2Value = prop.Value.Vector2Value,
                         Vector3Value = prop.Value.Vector3Value,
+                        Transform2DValue = prop.Value.Transform2DValue,
+                        Transform3DValue = prop.Value.Transform3DValue,
                     }).ToArray(),
             };
             using var sw = new StringWriter();

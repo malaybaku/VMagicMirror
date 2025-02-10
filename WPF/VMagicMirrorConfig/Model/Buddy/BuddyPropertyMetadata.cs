@@ -190,6 +190,8 @@ namespace Baku.VMagicMirrorConfig
                 BuddyPropertyType.Vector2 => BuddyPropertyValue.Vector2(metadata.DefaultVector2Value),
                 BuddyPropertyType.Vector3 => BuddyPropertyValue.Vector3(metadata.DefaultVector3Value),
                 BuddyPropertyType.Quaternion => BuddyPropertyValue.Quaternion(metadata.DefaultVector3Value),
+                BuddyPropertyType.Transform2D => BuddyPropertyValue.Transform2D(metadata.DefaultTransform2DValue),
+                BuddyPropertyType.Transform3D => BuddyPropertyValue.Transform3D(metadata.DefaultTransform3DValue),
                 _ => throw new NotSupportedException(),
             };
         }

@@ -137,39 +137,36 @@ namespace Baku.VMagicMirrorConfig.RawData
 
     public struct RawBuddyTransform2D
     {
-        public RawBuddyTransform2D()
-        {
-        }
-
         [JsonProperty("position")]
-        public RawBuddyVector2 Position { get; set; } = new RawBuddyVector2(0.3f, 0.5f);
-
+        public RawBuddyVector2 Position { get; set; }
         [JsonProperty("rotation")]
         public RawBuddyVector3 Rotation { get; set; }
 
         [JsonProperty("scale")]
-        public float Scale { get; set; } = 0.1f;
+        public float Scale { get; set; }
 
         public BuddyTransform2D ToTransform2D() => new(Position.ToBuddyVector2(), Rotation.ToBuddyVector3(), Scale);
+
+        public static RawBuddyTransform2D CreateDefaultValue() => new()
+        {
+            Position = new RawBuddyVector2(0.3f, 0.5f),
+            Scale = 0.1f,
+        };
     }
 
     public struct RawBuddyTransform3D
     {
-        public RawBuddyTransform3D()
-        {
-        }
-
         [JsonProperty("position")]
-        public RawBuddyVector3 Position { get; set; } = new RawBuddyVector3(1f, 0f, 0f);
+        public RawBuddyVector3 Position { get; set; }
 
         [JsonProperty("rotation")]
         public RawBuddyVector3 Rotation { get; set; }
 
         [JsonProperty("scale")]
-        public float Scale { get; set; } = 1f;
+        public float Scale { get; set; }
 
         [JsonProperty("parentBone")]
-        public string ParentBone { get; set; } = "";
+        public string ParentBone { get; set; }
 
         public BuddyTransform3D ToTransform3D() => new(
             Position.ToBuddyVector3(),
@@ -177,5 +174,12 @@ namespace Baku.VMagicMirrorConfig.RawData
             Scale, 
             Enum.TryParse<BuddyParentBone>(ParentBone, out var bone) ? bone : BuddyParentBone.None
             );
+
+        public static RawBuddyTransform3D CreateDefaultValue() => new()
+        {
+            Position = new RawBuddyVector3(1f, 0f, 0f),
+            Scale = 1f,
+            ParentBone = "",
+        };
     }
 }

@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.BuddyTransform2DPropertyView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type={x:Type vm:BuddyTransform2DPropertyViewModel}}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <!-- TODO: vmを作ってdesignInstanceで入れておく -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" 
+                            Text="{Binding DisplayName}" />
+        <TextBlock Grid.Row="0" Grid.Column="1" 
+                            Margin="8,0"
+                            Text="Pos:"
+                            TextAlignment="Right"/>
+        <TextBox Grid.Row="0"
+                        Grid.Column="2" 
+                        Text="{Binding PositionX.Value}"/>
+        <TextBox Grid.Row="0"
+                        Grid.Column="3"
+                        Text="{Binding PositionY.Value}"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="1" 
+                            Margin="8,0"
+                            Text="Rot:"
+                            TextAlignment="Right"/>
+        <TextBox Grid.Row="1"
+                        Grid.Column="2" 
+                        Text="{Binding RotationX.Value}"/>
+        <TextBox Grid.Row="1"
+                        Grid.Column="3"
+                        Text="{Binding RotationY.Value}"/>
+        <TextBox Grid.Row="1"
+                        Grid.Column="4"
+                        Text="{Binding RotationZ.Value}"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="1" 
+                            Margin="8,0"
+                            Text="Scale:"
+                            TextAlignment="Right"/>
+        <TextBox Grid.Row="2" Grid.Column="2" 
+                    Text="{Binding Scale.Value}"/>
+    </Grid>
+</UserControl>

@@ -31,5 +31,8 @@
         public const string VRoidModelLoadCanceled = nameof(VRoidModelLoadCanceled);
 
         public const string NotifyVmcpReceiveStatus = nameof(NotifyVmcpReceiveStatus);
+
+        public const string NotifyBuddy2DLayout = nameof(NotifyBuddy2DLayout);
+        public const string NotifyBuddy3DLayout = nameof(NotifyBuddy3DLayout);
     }
 }

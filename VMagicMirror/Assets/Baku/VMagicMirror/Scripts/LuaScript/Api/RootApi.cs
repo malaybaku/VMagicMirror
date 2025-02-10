@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Scripting;
 
@@ -11,9 +13,13 @@ namespace Baku.VMagicMirror.LuaScript.Api
     [Preserve]
     public class RootApi
     {
+        //TODO: Layoutと同じくSpriteにもInstanceのレポジトリとUpdaterを作りたい
         private readonly List<Sprite2DApi> _sprites = new();
         public IReadOnlyList<Sprite2DApi> Sprites => _sprites;
 
+        private readonly Subject<Sprite2DApi> _spriteCreated = new();
+        public IObservable<Sprite2DApi> SpriteCreated => _spriteCreated;
+        
         private readonly string _baseDir;
         public RootApi(string baseDir)
         {
@@ -29,9 +35,11 @@ namespace Baku.VMagicMirror.LuaScript.Api
             _sprites.Clear();
         }
 
-        //NOTE: スクリプトが呼ばれる前に非nullで初期化されるのが期待値
+        //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
         [Preserve]
         public PropertyApi Property { get; internal set; } = null;
+        [Preserve]
+        public TransformsApi Transforms { get; internal set; } = null;
 
         [Preserve]
         public void Log(string value)
@@ -60,6 +68,7 @@ namespace Baku.VMagicMirror.LuaScript.Api
         {
             var result = new Sprite2DApi(_baseDir);
             _sprites.Add(result);
+            _spriteCreated.OnNext(result);
             return result;
         }
         

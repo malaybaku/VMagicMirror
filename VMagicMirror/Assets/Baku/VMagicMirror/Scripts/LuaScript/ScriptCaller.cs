@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using Baku.VMagicMirror.LuaScript.Api;
 using NLua;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -13,8 +14,10 @@ namespace Baku.VMagicMirror.LuaScript
     // このクラスはアプリ終了時以外にもスクリプトのリロード要求で破棄されることがあり、この方法で破棄される場合はロードしたリソースを解放する。
     public class ScriptCaller
     {
-        private readonly RootApi _api;
+        internal RootApi Api { get; }
         private readonly Lua _lua;
+
+        private readonly CompositeDisposable _disposable = new();
 
         //「定義されてれば呼ぶ」系のコールバックメソッド。今のとこupdateしかないが他も増やしてよい + 増えたら管理方法を考えた方が良さそう
         private LuaFunction _updateFunction;
@@ -32,15 +35,20 @@ namespace Baku.VMagicMirror.LuaScript
             EntryScriptDirectory = Path.GetDirectoryName(entryScriptPath);
             BuddyId = Path.GetFileName(EntryScriptDirectory);
             _spriteCanvas = spriteCanvas;
-            _api = new RootApi(EntryScriptDirectory);
+            Api = new RootApi(EntryScriptDirectory);
             _lua = new Lua();
         }
         
         public void Initialize()
         {
             _lua.State.Encoding = Encoding.UTF8;
-            _lua["api"] = _api;
+            _lua["api"] = Api;
             _lua[nameof(Sprite2DTransitionStyle)] = Sprite2DTransitionStyleValues.Instance;
+
+            // APIの生成時にSpriteのインスタンスまで入ってる状態にしておく (ヒエラルキーの構築時に最初からインスタンスがあるほうが都合がよいため)
+            Api.SpriteCreated
+                .Subscribe(sprite => sprite.Instance = _spriteCanvas.CreateSpriteInstance())
+                .AddTo(_disposable);
             
             if (!File.Exists(EntryScriptPath))
             {
@@ -68,8 +76,9 @@ namespace Baku.VMagicMirror.LuaScript
 
         public void Dispose()
         {
-            _api.Dispose();
+            Api.Dispose();
             _lua?.Dispose();
+            _disposable.Dispose();
         }
 
         public void Tick()
@@ -85,28 +94,25 @@ namespace Baku.VMagicMirror.LuaScript
                 Debug.LogException(e);
             }
             
-            foreach (var sprite in _api.Sprites)
+            foreach (var sprite in Api.Sprites)
             {
                 UpdateSprite(sprite);
             }
         }
 
-        public void SetPropertyApi(PropertyApi api) => _api.Property = api;
+        public void SetPropertyApi(PropertyApi api) => Api.Property = api;
+        public void SetTransformsApi(TransformsApi api) => Api.Transforms = api;
 
         // TODO: Scriptのメイン処理ではない(3DイラストとかVRMまでここに書いてたら手に負えない)のでコードの置き場所は考える
         private void UpdateSprite(Sprite2DApi sprite)
         {
-            if (sprite.Instance == null)
-            {
-                sprite.Instance = _spriteCanvas.CreateInstance();
-            }
-
             var pos = sprite.Position;
             if (sprite.Effects.Floating.IsActive)
             {
                 pos = GetAndUpdateFloatingPosition(pos, sprite.Effects.Floating);
             }
-            sprite.Instance.SetPosition(pos);
+            // TODO: 不要になる or 必要だけどanchorじゃない方法で適用する…となりそうで、ややこしいので一旦ストップ
+            //sprite.Instance.SetPosition(pos);
 
             var size = sprite.Size;
             if (sprite.Effects.BounceDeform.IsActive)

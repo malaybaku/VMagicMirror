@@ -78,8 +78,6 @@ namespace Baku.VMagicMirror.LuaScript
             }
         }
         
-        public void SetTexture(Texture2D texture) => rawImage.texture = texture;
-        
         public void SetPosition(Vector2 position)
         {
             var rt = RectTransform;
@@ -95,7 +93,7 @@ namespace Baku.VMagicMirror.LuaScript
             RectTransform.sizeDelta = size * 1280;
         }
 
-        //TODO: なでなでに反応できてほしい気がする…
+        //TODO: なでなでに反応できてほしい気がするので、PointerMoveも検討したほうがいいかも
         // メインアバターに無いんかい！となるかもだが、アバターは自分だから撫でれんでも…という思想で行くとサブキャラだけ撫でられるのもアリそう
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData) 
             => _pointerEntered.OnNext(Unit.Default);
@@ -103,5 +101,20 @@ namespace Baku.VMagicMirror.LuaScript
             => _pointerExit.OnNext(Unit.Default);
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
             => _pointerClicked.OnNext(Unit.Default);
+
+        public void SetParent(LuaScriptTransform2DInstance parent)
+        {
+            // NOTE: SetParentした瞬間はparentにピッタリくっつく位置に移動させてるが、これでいいかは諸説ありそう
+            // (そもそもPosition, Scale, Sizeの概念的な整備しないとダメかも…)
+            var rt = RectTransform;
+            rt.SetParent(parent.transform);
+            parent.NotifyChildAdded();
+            if (parent != null)
+            {
+                rt.localPosition = Vector3.zero;
+                rt.localRotation = Quaternion.identity;
+                rt.localScale = Vector3.one;
+            }
+        }
     }
 }

@@ -47,8 +47,26 @@ namespace Baku.VMagicMirror.LuaScript.Api
 
         [Preserve]
         public Vector2 Position { get; set; }
+
+        [Preserve] public Vector2 Size { get; set; } = Vector2.one;
+        
+        // NOTE: scale/pivotはエフェクトからは制御しないのでこうなってる
+        // Effectからも制御する場合、普通に値だけ保持する方向に修正する
+        // (scaleは特に「ぷにぷに」とか実装したら修正しそう…)
         [Preserve]
-        public Vector2 Size { get; set; }
+        public Vector2 Scale
+        {
+            get => Instance.RectTransform.localScale;
+            set => Instance.RectTransform.localScale = new Vector3(value.x, value.y, 1f);
+        }
+
+        [Preserve]
+        public Vector2 Pivot
+        {
+            get => Instance.RectTransform.pivot;
+            set => Instance.RectTransform.pivot = value;
+        }
+        
         [Preserve]
         public SpriteEffectApi Effects { get; } = new();
 
@@ -108,6 +126,12 @@ namespace Baku.VMagicMirror.LuaScript.Api
                 var fullPath = Path.Combine(_baseDir, path).ToLower();
                 Load(fullPath);
             });
+        }
+
+        [Preserve]
+        public void SetParent(Transform2DApi parent)
+        {
+            Instance.SetParent(parent.GetInstance());
         }
         
         private bool Load(string fullPath)

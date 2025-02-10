@@ -61,6 +61,9 @@ namespace Baku.VMagicMirror.LuaScript
             // }
         }
 
+        public ScriptCaller FindScriptCaller(string buddyId)
+            => _loadedScripts.FirstOrDefault(s => s.BuddyId == buddyId);
+        
         private void DisableBuddy(string dir)
         {
             var existingScriptIndex = _loadedScripts.FindIndex(

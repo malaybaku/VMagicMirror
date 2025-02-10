@@ -28,6 +28,8 @@ namespace Baku.VMagicMirror.Buddy
         public string StringValue;
         public BuddyVector2 Vector2Value;
         public BuddyVector3 Vector3Value;
+        public BuddyTransform2D Transform2DValue;
+        public BuddyTransform3D Transform3DValue;
     }
     
     [Serializable]
@@ -37,6 +39,7 @@ namespace Baku.VMagicMirror.Buddy
         public float Y;
 
         public Vector2 ToVector2() => new(X, Y);
+        public static BuddyVector2 FromVector2(Vector2 v) => new() { X = v.x, Y = v.y };
     }
 
     [Serializable]
@@ -48,5 +51,26 @@ namespace Baku.VMagicMirror.Buddy
 
         public Vector3 ToVector3() => new(X, Y, Z);
         public Quaternion ToQuaternion() => Quaternion.Euler(X, Y, Z);
+        public static BuddyVector3 FromVector3(Vector3 v) => new() { X = v.x, Y = v.y, Z = v.z };
+    }
+
+    //NOTE: 下記2つはデータ上はPropertyの一種として飛んでくるが、Unityの内部ではLayoutという(Propertyと別の)枠組みで扱っている
+    [Serializable]
+    public struct BuddyTransform2D
+    {
+        public BuddyVector2 Position;
+        public BuddyVector3 Rotation;
+        public float Scale;
+    }
+
+    [Serializable]
+    public struct BuddyTransform3D
+    {
+        public BuddyVector3 Position;
+        public BuddyVector3 Rotation;
+        public float Scale;
+        // NOTE: アタッチ先ボーンがない場合は -1 が入ってるのが期待値ではある。
+        // が、もしかしたら処理の都合でbool (HasParentBone)を後付けするかも
+        public int ParentBone;
     }
 }

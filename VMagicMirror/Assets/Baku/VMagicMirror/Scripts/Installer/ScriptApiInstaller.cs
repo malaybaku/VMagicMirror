@@ -1,3 +1,4 @@
+using Baku.VMagicMirror.Buddy;
 using Baku.VMagicMirror.LuaScript;
 
 namespace Baku.VMagicMirror
@@ -11,9 +12,14 @@ namespace Baku.VMagicMirror
 
             Container.BindInterfacesAndSelfTo<BuddySettingsRepository>().AsSingle();
             Container.Bind<BuddyPropertyRepository>().AsSingle();
+            Container.Bind<BuddyLayoutRepository>().AsSingle();
+            Container.Bind<BuddyTransformInstanceRepository>().AsSingle();
+            
             Container.BindInterfacesTo<BuddyPropertyUpdater>().AsSingle();
+            Container.BindInterfacesTo<BuddyLayoutUpdater>().AsSingle();
 
             Container.BindInterfacesTo<ScriptCallerRegisterer>().AsSingle();
+            Container.BindInterfacesTo<BuddyLayoutEditNotifier>().AsSingle();
         }
     }
 }

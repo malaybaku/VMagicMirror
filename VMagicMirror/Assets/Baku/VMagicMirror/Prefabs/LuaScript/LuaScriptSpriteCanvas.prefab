@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8708544155153628992}
   - component: {fileID: 9196912844168962105}
   - component: {fileID: 3466238353687275096}
+  - component: {fileID: 3646250572448481681}
   m_Layer: 5
   m_Name: LuaScriptSpriteCanvas
   m_TagString: Untagged
@@ -99,5 +100,24 @@ MonoBehaviour:
   canvas: {fileID: 8708544155153628992}
   scriptSpriteInstancePrefab: {fileID: 3893454672750628633, guid: 7a3c7ab65dcdb04458cd69ac53171ae8,
     type: 3}
+  scriptTransform2DInstancePrefab: {fileID: 2625639068454743990, guid: 8f5c90451ee895349912b2e41fb2221a,
+    type: 3}
   distanceFromCamera: 0.1
   canvasWidth: 1280
+--- !u!114 &3646250572448481681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7819015672138514153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295

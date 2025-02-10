@@ -6,6 +6,8 @@ namespace Baku.VMagicMirror.Buddy
     // 文字列ベースでシリアライズしてWPFから送られるため、Unity側ではintの実数値やバージョン更新による互換性はケア不要
     public enum BuddyPropertyType
     {
+        // NOTE: Propertyの通し方をゴニョゴニョするために、内部で便宜的に「不明」扱いすることがある
+        Unknown,
         Bool,
         Int,
         Float,
@@ -13,6 +15,8 @@ namespace Baku.VMagicMirror.Buddy
         Vector2,
         Vector3,
         Quaternion,
+        Transform2D,
+        Transform3D,
     }
 
     // TODO: たぶんAPIに引っ越す…ような気がする

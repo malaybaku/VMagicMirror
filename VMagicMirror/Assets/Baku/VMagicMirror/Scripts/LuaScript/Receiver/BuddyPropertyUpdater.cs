@@ -4,9 +4,7 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror.LuaScript
 {
-    /// <summary>
-    /// WPFからBuddyのプロパティ情報を受けてレポジトリに保存するクラス
-    /// </summary>
+    /// <summary> WPFからBuddyのプロパティ情報を受けてレポジトリに保存するクラス </summary>
     public class BuddyPropertyUpdater : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
@@ -33,12 +31,14 @@ namespace Baku.VMagicMirror.LuaScript
 
         private void SetBuddyProperty(string json)
         {
-            Debug.Log("SetBuddyProperty," + json);
             try
             {
                 var msg = JsonUtility.FromJson<BuddySettingsPropertyMessage>(json);
                 var api = _repository.Get(msg.BuddyId);
-                api.AddOrUpdate(ConvertToProperty(msg));
+                if (TryConvertToProperty(msg, out var property))
+                {
+                    api.AddOrUpdate(property);
+                }
             }
             catch (Exception ex)
             {
@@ -49,7 +49,6 @@ namespace Baku.VMagicMirror.LuaScript
 
         private void RefreshBuddyProperty(string json)
         {
-            Debug.Log("RefreshBuddyProperty," + json);
             try
             {
                 var msg = JsonUtility.FromJson<BuddySettingsMessage>(json);
@@ -59,7 +58,10 @@ namespace Baku.VMagicMirror.LuaScript
                 // NOTE: property側のBuddyIdは空欄になっているはず & 無視してOK
                 foreach (var property in msg.Properties)
                 {
-                    api.AddOrUpdate(ConvertToProperty(property));
+                    if (TryConvertToProperty(property, out var convertedProperty))
+                    {
+                        api.AddOrUpdate(convertedProperty);
+                    }
                 }
             }
             catch (Exception ex)
@@ -69,10 +71,10 @@ namespace Baku.VMagicMirror.LuaScript
             }
         }
 
-        // NOTE: BuddyData に対しても使う気がするぞい
-        private static BuddyProperty ConvertToProperty(BuddySettingsPropertyMessage msg)
+        private static bool TryConvertToProperty(BuddySettingsPropertyMessage msg, out BuddyProperty result)
         {
-            return msg.Type switch
+            // Transform2D/3Dは意図して無視し、それ以外は本当に未知なので(コーディングエラーであると見て)弾く
+            result = msg.Type switch
             {
                 nameof(BuddyPropertyType.Bool) => BuddyProperty.Bool(msg.Name, msg.BoolValue),
                 nameof(BuddyPropertyType.Int) => BuddyProperty.Int(msg.Name, msg.IntValue),
@@ -81,8 +83,11 @@ namespace Baku.VMagicMirror.LuaScript
                 nameof(BuddyPropertyType.Vector2) => BuddyProperty.Vector2(msg.Name, msg.Vector2Value.ToVector2()),
                 nameof(BuddyPropertyType.Vector3) => BuddyProperty.Vector3(msg.Name, msg.Vector3Value.ToVector3()),
                 nameof(BuddyPropertyType.Quaternion) => BuddyProperty.Quaternion(msg.Name, msg.Vector3Value.ToQuaternion()),
+                nameof(BuddyPropertyType.Transform2D) => null,
+                nameof(BuddyPropertyType.Transform3D) => null,
                 _ => throw new NotSupportedException(),
             };
+            return result != null;
         }
     }
 }

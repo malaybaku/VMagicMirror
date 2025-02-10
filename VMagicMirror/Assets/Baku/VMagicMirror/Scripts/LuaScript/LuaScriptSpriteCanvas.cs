@@ -8,6 +8,7 @@ namespace Baku.VMagicMirror.LuaScript
     {
         [SerializeField] private Canvas canvas;
         [SerializeField] private LuaScriptSpriteInstance scriptSpriteInstancePrefab;
+        [SerializeField] private LuaScriptTransform2DInstance scriptTransform2DInstancePrefab;
 
         // NOTE: 画面前面アクセサリーとの整合性のためにもっと手前に持ってこないとダメかも
         [SerializeField] private float distanceFromCamera = 0.1f;
@@ -15,9 +16,17 @@ namespace Baku.VMagicMirror.LuaScript
         
         public RectTransform RectTransform => (RectTransform)transform;
 
-        public LuaScriptSpriteInstance CreateInstance() 
+        public LuaScriptSpriteInstance CreateSpriteInstance() 
             => Instantiate(scriptSpriteInstancePrefab, RectTransform);
 
+        /// <summary>
+        /// ScriptLoaderがスクリプトをロードしている段階で呼ぶことで、Buddyが使う事があるTransform2Dを生成してCanvas上に配置する。
+        /// 呼び出し直後は位置もサイズも保証されないことに注意
+        /// </summary>
+        /// <returns></returns>
+        public LuaScriptTransform2DInstance CreateTransform2DInstance()
+            => Instantiate(scriptTransform2DInstancePrefab, RectTransform);
+        
         private Camera _mainCamera;
         private (float fov, int windowWidth, int windowHeight) _canvasSizeStatus = (0f, 0, 0);
         
@@ -57,7 +66,7 @@ namespace Baku.VMagicMirror.LuaScript
             canvasRect.sizeDelta = new Vector2(canvasWidth, canvasHeight);
 
             // ワールドスケールで適用したいCanvasの縦幅と、決定済みのcanvasHeightからscaleが求まる
-            var worldCanvasHeight = Mathf.Tan(_mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * distanceFromCamera;
+            var worldCanvasHeight = 2f * Mathf.Tan(_mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * distanceFromCamera;
             var localScale = worldCanvasHeight / canvasHeight;
             canvas.transform.localScale = Vector3.one * localScale;
         }

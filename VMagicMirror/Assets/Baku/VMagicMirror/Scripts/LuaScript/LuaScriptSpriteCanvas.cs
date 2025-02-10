@@ -1,7 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     [RequireComponent(typeof(Canvas))]
     public class LuaScriptSpriteCanvas : MonoBehaviour

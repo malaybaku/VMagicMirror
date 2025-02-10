@@ -3,7 +3,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-namespace Baku.VMagicMirror.LuaScript.Api
+namespace Baku.VMagicMirror.Buddy.Api
 {
     public class Sprite2DTransitionStyleValues
     {

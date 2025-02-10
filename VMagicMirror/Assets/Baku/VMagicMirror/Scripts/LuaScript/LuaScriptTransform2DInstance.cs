@@ -3,7 +3,7 @@ using Baku.VMagicMirror.Buddy;
 using UniRx;
 using UnityEngine;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     /// <summary>
     /// <see cref="LuaScriptSpriteInstance"/>に似ているが、スクリプトではなくエンドユーザーが位置決めをするようなRectTransformの一種

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Baku.VMagicMirror.Buddy;
 using UnityEngine.Scripting;
 
-namespace Baku.VMagicMirror.LuaScript.Api
+namespace Baku.VMagicMirror.Buddy.Api
 {
     /// <summary>
     /// ユーザーが調整したプロパティを取得できるAPI。

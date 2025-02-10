@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Baku.VMagicMirror.Buddy;
-using Baku.VMagicMirror.LuaScript.Api;
+using Baku.VMagicMirror.Buddy.Api;
 using UniRx;
 using UnityEngine;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     /// <summary>
     /// WPFからBuddyのプロパティ情報を受けてレポジトリに保存するクラス

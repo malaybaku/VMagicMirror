@@ -1,11 +1,11 @@
 using System;
-using Baku.VMagicMirror.LuaScript.Api;
+using Baku.VMagicMirror.Buddy.Api;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     public class LuaScriptSpriteInstance : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {

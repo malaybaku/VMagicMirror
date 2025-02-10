@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Baku.VMagicMirror.LuaScript.Api
+namespace Baku.VMagicMirror.Buddy.Api
 {
     public class ScreenApi
     {

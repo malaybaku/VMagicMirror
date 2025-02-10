@@ -1,5 +1,4 @@
 using Baku.VMagicMirror.Buddy;
-using Baku.VMagicMirror.LuaScript;
 
 namespace Baku.VMagicMirror
 {

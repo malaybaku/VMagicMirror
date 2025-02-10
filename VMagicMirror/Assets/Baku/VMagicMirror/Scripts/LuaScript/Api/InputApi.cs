@@ -1,7 +1,7 @@
 using System;
 using UniRx;
 
-namespace Baku.VMagicMirror.LuaScript.Api
+namespace Baku.VMagicMirror.Buddy.Api
 {
     //NOTE: このAPIレイヤーは直接Luaに露出する使い方はせず、コールバック関数を呼ぶときに使いたい
     public class InputApi

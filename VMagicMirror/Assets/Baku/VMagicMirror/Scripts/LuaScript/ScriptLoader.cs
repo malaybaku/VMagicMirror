@@ -5,7 +5,7 @@ using System.Linq;
 using UniRx;
 using Zenject;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     // ScriptRoot以下の構造はこうする
     // VMM_Files/SubCharacters/

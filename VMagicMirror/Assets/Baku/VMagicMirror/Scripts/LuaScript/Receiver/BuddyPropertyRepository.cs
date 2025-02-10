@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Baku.VMagicMirror.LuaScript.Api;
+using Baku.VMagicMirror.Buddy.Api;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     /// <summary>
     /// Buddyのプロパティを保持しておくクラス。

@@ -2,7 +2,7 @@ using System;
 using Baku.VMagicMirror.Buddy;
 using UnityEngine;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     /// <summary> WPFからBuddyのプロパティ情報を受けてレポジトリに保存するクラス </summary>
     public class BuddyPropertyUpdater : PresenterBase

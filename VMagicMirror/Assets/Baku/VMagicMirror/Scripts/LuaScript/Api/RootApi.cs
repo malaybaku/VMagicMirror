@@ -5,7 +5,7 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-namespace Baku.VMagicMirror.LuaScript.Api
+namespace Baku.VMagicMirror.Buddy.Api
 {
     /// <summary>
     /// VMMのScriptでトップレベルから呼ぶ関数をここに入れる

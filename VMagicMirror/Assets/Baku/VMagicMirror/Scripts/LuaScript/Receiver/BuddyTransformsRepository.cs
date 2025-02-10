@@ -4,7 +4,7 @@ using System.Linq;
 using UniRx;
 using Object = UnityEngine.Object;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     public class BuddyTransformInstanceRepository
     {

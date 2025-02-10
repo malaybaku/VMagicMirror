@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Baku.VMagicMirror.LuaScript.Api
+namespace Baku.VMagicMirror.Buddy.Api
 {
     // NOTE: エフェクト設定はAPI上は「数値を入れるだけ」に見える
     

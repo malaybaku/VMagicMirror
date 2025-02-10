@@ -1,4 +1,4 @@
-﻿using Baku.VMagicMirror.LuaScript;
+﻿using Baku.VMagicMirror.Buddy;
 using UnityEngine;
 using Zenject;
 

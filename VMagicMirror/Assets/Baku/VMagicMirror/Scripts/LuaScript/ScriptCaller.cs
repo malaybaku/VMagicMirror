@@ -1,13 +1,13 @@
 using System;
 using System.IO;
 using System.Text;
-using Baku.VMagicMirror.LuaScript.Api;
+using Baku.VMagicMirror.Buddy.Api;
 using NLua;
 using UniRx;
 using UnityEngine;
 using Zenject;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     // フォルダを指定されてスクリプトを実行するためのクラス。
     // このクラスは勝手に動き出さずに、ScriptLoaderからの指定に基づいて動作を開始/終了する。

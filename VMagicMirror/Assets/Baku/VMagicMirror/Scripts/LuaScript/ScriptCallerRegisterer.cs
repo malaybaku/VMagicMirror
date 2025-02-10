@@ -1,7 +1,6 @@
 using UniRx;
-using UnityEngine;
 
-namespace Baku.VMagicMirror.LuaScript
+namespace Baku.VMagicMirror.Buddy
 {
     public class ScriptCallerRegisterer : PresenterBase
     {

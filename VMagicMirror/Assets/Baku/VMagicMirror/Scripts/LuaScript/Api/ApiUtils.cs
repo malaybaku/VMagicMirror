@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Baku.VMagicMirror.LuaScript.Api
+namespace Baku.VMagicMirror.Buddy.Api
 {
     public static class ApiUtils
     {

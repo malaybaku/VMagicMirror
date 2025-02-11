@@ -42,6 +42,9 @@ namespace Baku.VMagicMirror.Buddy.Api
         public TransformsApi Transforms { get; internal set; } = null;
 
         [Preserve]
+        public AvatarMotionEventApi AvatarMotionEvent { get; } = new();
+        
+        [Preserve]
         public void Log(string value)
         {
             if (Application.isEditor)

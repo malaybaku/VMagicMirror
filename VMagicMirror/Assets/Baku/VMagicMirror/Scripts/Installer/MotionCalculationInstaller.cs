@@ -14,6 +14,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private NonImageBasedMotion nonImageBasedMotion;
         [SerializeField] private FingerController fingerController;
         [SerializeField] private ElbowMotionModifier elbowMotionModifier;
+        [SerializeField] private TypingHandIKGenerator typingHandIKGenerator;
 
         public override void Install(DiContainer container)
         {
@@ -28,7 +29,8 @@ namespace Baku.VMagicMirror.Installer
                 colliderBasedAvatarParamLoader,
                 nonImageBasedMotion,
                 fingerController,
-                elbowMotionModifier
+                elbowMotionModifier,
+                typingHandIKGenerator
             );
 
             container.Bind(typeof(HeadMotionClipPlayer), typeof(IWordToMotionPlayer))

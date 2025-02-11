@@ -1,4 +1,6 @@
+using NLua;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
@@ -24,10 +26,18 @@ namespace Baku.VMagicMirror.Buddy.Api
 
     public class AvatarPoseApi
     {
-        public bool IsLoaded() => false;
-        public Vector3 GetBonePosition(HumanBodyBones bone) => Vector3.zero;
-        public Quaternion GetBoneRotation(HumanBodyBones bone) => Quaternion.identity;
+        public bool IsLoaded => false;
+        public Vector3 GetBoneGlobalPosition(HumanBodyBones bone) => Vector3.zero;
+        public Quaternion GetBoneGlobalRotation(HumanBodyBones bone) => Quaternion.identity;
+        public Vector3 GetBoneLocalPosition(HumanBodyBones bone) => Vector3.zero;
+        public Quaternion GetBoneLocalRotation(HumanBodyBones bone) => Quaternion.identity;
 
         public string CurrentMotionName() => "";
+    }
+
+    public class AvatarMotionEventApi
+    {
+        [Preserve]
+        public LuaFunction OnKeyboardKeyDown { get; set; }
     }
 }

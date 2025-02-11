@@ -1,4 +1,5 @@
 using Baku.VMagicMirror.Buddy;
+using Baku.VMagicMirror.Buddy.Api;
 
 namespace Baku.VMagicMirror
 {
@@ -7,6 +8,7 @@ namespace Baku.VMagicMirror
         public override void InstallBindings()
         {
             Container.BindIFactory<string, ScriptCaller>().AsSingle();
+            Container.BindIFactory<RootApi, ScriptEventInvoker>().AsSingle();
             Container.BindInterfacesAndSelfTo<ScriptLoader>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<BuddySettingsRepository>().AsSingle();
@@ -19,6 +21,8 @@ namespace Baku.VMagicMirror
 
             Container.BindInterfacesTo<ScriptCallerRegisterer>().AsSingle();
             Container.BindInterfacesTo<BuddyLayoutEditNotifier>().AsSingle();
+
+            Container.BindInterfacesAndSelfTo<InputEventApiImplement>().AsSingle();
         }
     }
 }

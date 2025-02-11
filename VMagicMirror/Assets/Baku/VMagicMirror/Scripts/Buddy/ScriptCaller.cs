@@ -16,7 +16,7 @@ namespace Baku.VMagicMirror.Buddy
     {
         internal RootApi Api { get; }
         private readonly Lua _lua;
-
+        private readonly ScriptEventInvoker _scriptEventInvoker;
         private readonly CompositeDisposable _disposable = new();
 
         //「定義されてれば呼ぶ」系のコールバックメソッド。今のとこupdateしかないが他も増やしてよい + 増えたら管理方法を考えた方が良さそう
@@ -29,7 +29,11 @@ namespace Baku.VMagicMirror.Buddy
         public string BuddyId { get; }
         
         [Inject]
-        public ScriptCaller(string entryScriptPath, BuddySpriteCanvas spriteCanvas)
+        public ScriptCaller(
+            string entryScriptPath,
+            BuddySpriteCanvas spriteCanvas,
+            IFactory<RootApi, ScriptEventInvoker> scriptEventInvokerFactory
+            )
         {
             EntryScriptPath = entryScriptPath;
             EntryScriptDirectory = Path.GetDirectoryName(entryScriptPath);
@@ -37,6 +41,9 @@ namespace Baku.VMagicMirror.Buddy
             _spriteCanvas = spriteCanvas;
             Api = new RootApi(EntryScriptDirectory);
             _lua = new Lua();
+            
+            // readonlyにできると嬉しいのでここでやっているが、問題があればInitialize()の中とかで初期化してもよい
+            _scriptEventInvoker = scriptEventInvokerFactory.Create(Api);
         }
         
         public void Initialize()
@@ -72,12 +79,15 @@ namespace Baku.VMagicMirror.Buddy
                 LogOutput.Instance.Write(e);
                 Debug.LogException(e);
             }
+
+            _scriptEventInvoker.Initialize();
         }
 
         public void Dispose()
         {
             Api.Dispose();
             _lua?.Dispose();
+            _scriptEventInvoker.Dispose();
             _disposable.Dispose();
         }
 

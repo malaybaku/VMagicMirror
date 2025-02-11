@@ -7,8 +7,8 @@ namespace Baku.VMagicMirror.Buddy
     public class BuddySpriteCanvas : MonoBehaviour
     {
         [SerializeField] private Canvas canvas;
-        [SerializeField] private BuddySpriteInstance scriptSpriteInstancePrefab;
-        [SerializeField] private BuddyTransform2DInstance scriptTransform2DInstancePrefab;
+        [SerializeField] private BuddySpriteInstance spriteInstancePrefab;
+        [SerializeField] private BuddyTransform2DInstance transform2DInstancePrefab;
 
         // NOTE: 画面前面アクセサリーとの整合性のためにもっと手前に持ってこないとダメかも
         [SerializeField] private float distanceFromCamera = 0.1f;
@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror.Buddy
         public RectTransform RectTransform => (RectTransform)transform;
 
         public BuddySpriteInstance CreateSpriteInstance() 
-            => Instantiate(scriptSpriteInstancePrefab, RectTransform);
+            => Instantiate(spriteInstancePrefab, RectTransform);
 
         /// <summary>
         /// ScriptLoaderがスクリプトをロードしている段階で呼ぶことで、Buddyが使う事があるTransform2Dを生成してCanvas上に配置する。
@@ -25,7 +25,7 @@ namespace Baku.VMagicMirror.Buddy
         /// </summary>
         /// <returns></returns>
         public BuddyTransform2DInstance CreateTransform2DInstance()
-            => Instantiate(scriptTransform2DInstancePrefab, RectTransform);
+            => Instantiate(transform2DInstancePrefab, RectTransform);
         
         private Camera _mainCamera;
         private (float fov, int windowWidth, int windowHeight) _canvasSizeStatus = (0f, 0, 0);

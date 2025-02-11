@@ -1,18 +1,17 @@
 using System;
-using Baku.VMagicMirror.Buddy;
 using UniRx;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
 {
     /// <summary>
-    /// <see cref="LuaScriptSpriteInstance"/>に似ているが、スクリプトではなくエンドユーザーが位置決めをするようなRectTransformの一種
+    /// <see cref="BuddySpriteInstance"/>に似ているが、スクリプトではなくエンドユーザーが位置決めをするようなRectTransformの一種
     /// </summary>
     /// <remarks>
     /// オブジェクトが使われないとき == Buddyがオフのときはオブジェクトが破棄されるのが期待値なため、
     /// このクラスはgameObject.SetActiveを使わないし、使うべきでもない
     /// </remarks>
-    public class LuaScriptTransform2DInstance : MonoBehaviour
+    public class BuddyTransform2DInstance : MonoBehaviour
     {
         [SerializeField] private Transform2DGizmo gizmo;
 

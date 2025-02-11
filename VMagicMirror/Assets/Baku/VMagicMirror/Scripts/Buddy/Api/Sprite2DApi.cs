@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         private bool _fileNotFoundErrorLogged = false;
         private bool _pathInvalidErrorLogged = false;
         
-        internal LuaScriptSpriteInstance Instance { get; set; }
+        internal BuddySpriteInstance Instance { get; set; }
         // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
         internal Texture2D CurrentTexture { get; private set; }
         // NOTE: この値はトランジション処理をやっているクラスがトランジションを完了すると、自動でNoneに切り替わる

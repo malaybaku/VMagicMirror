@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly IMessageReceiver _receiver;
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ScriptLoader _scriptLoader;
-        private readonly LuaScriptSpriteCanvas _spriteCanvas;
+        private readonly BuddySpriteCanvas _spriteCanvas;
         private readonly BuddyLayoutRepository _layoutLayoutRepository;
         private readonly BuddyTransformInstanceRepository _transformInstanceRepository;
         // NOTE: インスタンスのキャッシュは誰が持つ？
@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.Buddy
             IMessageReceiver receiver, 
             IVRMLoadable vrmLoadable,
             ScriptLoader scriptLoader,
-            LuaScriptSpriteCanvas spriteCanvas,
+            BuddySpriteCanvas spriteCanvas,
             BuddyLayoutRepository layoutRepository,
             BuddyTransformInstanceRepository transformInstanceRepository)
         {
@@ -137,7 +137,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             var layouts = _layoutLayoutRepository.Get(scriptCaller.BuddyId);
 
-            var transform2DInstances = new Dictionary<string, LuaScriptTransform2DInstance>();
+            var transform2DInstances = new Dictionary<string, BuddyTransform2DInstance>();
             foreach (var pair in layouts.Transform2Ds)
             {
                 var instance = _spriteCanvas.CreateTransform2DInstance();

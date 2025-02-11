@@ -10,13 +10,13 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly Dictionary<string, SingleBuddyTransforms> _transforms = new();
 
-        private readonly Subject<LuaScriptTransform2DInstance> _added2D = new();
-        public IObservable<LuaScriptTransform2DInstance> Added2D => _added2D;
+        private readonly Subject<BuddyTransform2DInstance> _added2D = new();
+        public IObservable<BuddyTransform2DInstance> Added2D => _added2D;
 
-        public IEnumerable<LuaScriptTransform2DInstance> GetTransform2DInstances()
+        public IEnumerable<BuddyTransform2DInstance> GetTransform2DInstances()
             => _transforms.Values.SelectMany(ts => ts.GetTransform2DInstances());
         
-        public void AddTransform2D(string buddyId, string name, LuaScriptTransform2DInstance instance)
+        public void AddTransform2D(string buddyId, string name, BuddyTransform2DInstance instance)
         {
             if (!_transforms.TryGetValue(buddyId, out var transforms))
             {
@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror.Buddy
             _added2D.OnNext(instance);
         }
         
-        public bool TryGetTransform2D(string buddyId, string name, out LuaScriptTransform2DInstance result)
+        public bool TryGetTransform2D(string buddyId, string name, out BuddyTransform2DInstance result)
         {
             if (_transforms.TryGetValue(buddyId, out var transforms) &&
                 transforms.TryGetTransform2D(name, out var existingResult))
@@ -55,12 +55,12 @@ namespace Baku.VMagicMirror.Buddy
 
         class SingleBuddyTransforms
         {
-            private readonly Dictionary<string, LuaScriptTransform2DInstance> _transform2Ds = new();
+            private readonly Dictionary<string, BuddyTransform2DInstance> _transform2Ds = new();
             //3Dも併設する
 
-            public IEnumerable<LuaScriptTransform2DInstance> GetTransform2DInstances() => _transform2Ds.Values;
+            public IEnumerable<BuddyTransform2DInstance> GetTransform2DInstances() => _transform2Ds.Values;
             
-            public void AddTransform2D(string name, LuaScriptTransform2DInstance instance)
+            public void AddTransform2D(string name, BuddyTransform2DInstance instance)
             {
                 // キーが被ってるのにここに到達している場合は以下いずれかが起こっている
                 // - manifest.jsonのパース時に名称の重複チェックができてない
@@ -71,7 +71,7 @@ namespace Baku.VMagicMirror.Buddy
                 }
             }
 
-            public bool TryGetTransform2D(string name, out LuaScriptTransform2DInstance result)
+            public bool TryGetTransform2D(string name, out BuddyTransform2DInstance result)
                 => _transform2Ds.TryGetValue(name, out result);
             
             public void Dispose()

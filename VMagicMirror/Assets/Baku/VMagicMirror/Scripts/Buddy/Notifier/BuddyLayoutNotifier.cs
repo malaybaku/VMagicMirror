@@ -45,7 +45,7 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
         }
 
-        private void Notify2DLayoutUpdated(LuaScriptTransform2DInstance instance)
+        private void Notify2DLayoutUpdated(BuddyTransform2DInstance instance)
         {
             var msg = new BuddySettingsPropertyMessage()
             {

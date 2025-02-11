@@ -4,11 +4,11 @@ using Zenject;
 namespace Baku.VMagicMirror.Buddy
 {
     [RequireComponent(typeof(Canvas))]
-    public class LuaScriptSpriteCanvas : MonoBehaviour
+    public class BuddySpriteCanvas : MonoBehaviour
     {
         [SerializeField] private Canvas canvas;
-        [SerializeField] private LuaScriptSpriteInstance scriptSpriteInstancePrefab;
-        [SerializeField] private LuaScriptTransform2DInstance scriptTransform2DInstancePrefab;
+        [SerializeField] private BuddySpriteInstance scriptSpriteInstancePrefab;
+        [SerializeField] private BuddyTransform2DInstance scriptTransform2DInstancePrefab;
 
         // NOTE: 画面前面アクセサリーとの整合性のためにもっと手前に持ってこないとダメかも
         [SerializeField] private float distanceFromCamera = 0.1f;
@@ -16,7 +16,7 @@ namespace Baku.VMagicMirror.Buddy
         
         public RectTransform RectTransform => (RectTransform)transform;
 
-        public LuaScriptSpriteInstance CreateSpriteInstance() 
+        public BuddySpriteInstance CreateSpriteInstance() 
             => Instantiate(scriptSpriteInstancePrefab, RectTransform);
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.Buddy
         /// 呼び出し直後は位置もサイズも保証されないことに注意
         /// </summary>
         /// <returns></returns>
-        public LuaScriptTransform2DInstance CreateTransform2DInstance()
+        public BuddyTransform2DInstance CreateTransform2DInstance()
             => Instantiate(scriptTransform2DInstancePrefab, RectTransform);
         
         private Camera _mainCamera;

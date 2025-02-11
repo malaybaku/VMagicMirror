@@ -21,7 +21,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
         [SerializeField] private StartupLoadingCover loadingCoverController = null;
 
-        [SerializeField] private LuaScriptSpriteCanvas luaScriptSpriteCanvas;
+        [SerializeField] private BuddySpriteCanvas luaScriptSpriteCanvas;
         
         public override void InstallBindings()
         {
@@ -62,7 +62,7 @@ namespace Baku.VMagicMirror.Installer
                 .AsCached()
                 .NonLazy();
 
-            Container.Bind<LuaScriptSpriteCanvas>()
+            Container.Bind<BuddySpriteCanvas>()
                 .FromComponentInNewPrefab(luaScriptSpriteCanvas)
                 .AsCached();
             ScriptApiInstaller.Install(Container);

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    public class LuaScriptSpriteInstance : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
+    public class BuddySpriteInstance : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {
         private const float TransitionDuration = 0.5f;
 
@@ -102,7 +102,7 @@ namespace Baku.VMagicMirror.Buddy
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
             => _pointerClicked.OnNext(Unit.Default);
 
-        public void SetParent(LuaScriptTransform2DInstance parent)
+        public void SetParent(BuddyTransform2DInstance parent)
         {
             // NOTE: SetParentした瞬間はparentにピッタリくっつく位置に移動させてるが、これでいいかは諸説ありそう
             // (そもそもPosition, Scale, Sizeの概念的な整備しないとダメかも…)

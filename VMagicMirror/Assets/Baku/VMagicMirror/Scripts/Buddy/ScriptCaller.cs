@@ -22,14 +22,14 @@ namespace Baku.VMagicMirror.Buddy
         //「定義されてれば呼ぶ」系のコールバックメソッド。今のとこupdateしかないが他も増やしてよい + 増えたら管理方法を考えた方が良さそう
         private LuaFunction _updateFunction;
 
-        private readonly LuaScriptSpriteCanvas _spriteCanvas;
+        private readonly BuddySpriteCanvas _spriteCanvas;
         // NOTE: 呼び出し元クラスは、Initialize()が呼ばれる時点でこのパスにlua拡張子のファイルが存在することを保証している
         public string EntryScriptPath { get; }
         public string EntryScriptDirectory { get; }
         public string BuddyId { get; }
         
         [Inject]
-        public ScriptCaller(string entryScriptPath, LuaScriptSpriteCanvas spriteCanvas)
+        public ScriptCaller(string entryScriptPath, BuddySpriteCanvas spriteCanvas)
         {
             EntryScriptPath = entryScriptPath;
             EntryScriptDirectory = Path.GetDirectoryName(entryScriptPath);

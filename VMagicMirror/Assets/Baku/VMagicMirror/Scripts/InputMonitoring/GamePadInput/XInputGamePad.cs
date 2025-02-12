@@ -48,33 +48,33 @@ namespace Baku.VMagicMirror
         }
 
         //DirectInputによって入力キャプチャをこっそり代行してくれるやつ
-        private readonly DirectInputGamePad _directInputAlternative = new DirectInputGamePad();
+        private readonly DirectInputGamePad _directInputAlternative = new();
         
         //このクラス自身がforeachで使うときはこっち
-        private HashSet<ObservableButton> _buttons = new HashSet<ObservableButton>();
+        private HashSet<ObservableButton> _buttons = new();
         //DirectInput入力で代わりに上書きするときはここからアクセス
-        private readonly List<ObservableButton> _buttonsList = new List<ObservableButton>(16);
-        private readonly Subject<GamepadKeyData> _buttonSubject = new Subject<GamepadKeyData>();
+        private readonly List<ObservableButton> _buttonsList = new(16);
+        private readonly Subject<GamepadKeyData> _buttonSubject = new();
 
-        private readonly Subject<Vector2Int> _rightStick = new Subject<Vector2Int>();
-        private readonly Subject<Vector2Int> _leftStick = new Subject<Vector2Int>();
+        private readonly Subject<Vector2Int> _rightStick = new();
+        private readonly Subject<Vector2Int> _leftStick = new();
 
         private Vector2Int _rightStickPosition = Vector2Int.zero;
         private Vector2Int _leftStickPosition = Vector2Int.zero;
 
-        private bool _hasValidArrowButtons = false;
+        private bool _hasValidArrowButtons;
         private ObservableButton _arrowRight;
         private ObservableButton _arrowDown;
         private ObservableButton _arrowLeft;
         private ObservableButton _arrowUp;
 
-        private bool _isLeftTriggerDown = false;
-        private bool _isRightTriggerDown = false;
+        private bool _isLeftTriggerDown;
+        private bool _isRightTriggerDown;
 
         //Updateで実処理を呼んでもいいかどうか
         private bool _updateEnabled = true;
         //XInputよりもDirectInputで取得できるコントローラを使うべきかどうか(PS4コンではtrue)
-        private bool _preferDirectInput = false;
+        private bool _preferDirectInput;
 
         public void SetEnableGamepad(bool enableGamepad)
         {

@@ -1,4 +1,6 @@
+using System;
 using Baku.VMagicMirror.ExternalTracker;
+using UniRx;
 using UniVRM10;
 
 namespace Baku.VMagicMirror.Buddy
@@ -9,6 +11,7 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ExpressionAccumulator _expressionAccumulator;
+        private readonly BlinkDetector _blinkDetector;
         
         // NOTE: 重要な注意点として、現時点では設定がカラ(「何もしない」)になってるFaceSwitchは条件を満たしても検出できない。
         // - つまり、漫符みたいなサブキャラを作るのがちょっとムズい
@@ -20,18 +23,24 @@ namespace Baku.VMagicMirror.Buddy
             IVRMLoadable vrmLoadable,
             ExpressionAccumulator expressionAccumulator,
             ExternalTrackerDataSource externalTrackerDataSource,
-            FaceSwitchExtractor faceSwitchExtractor)
+            FaceSwitchExtractor faceSwitchExtractor,
+            BlinkDetector blinkDetector)
         {
             _vrmLoadable = vrmLoadable;
             _expressionAccumulator = expressionAccumulator;
             _externalTrackerDataSource = externalTrackerDataSource;
             _faceSwitchExtractor = faceSwitchExtractor;
+            _blinkDetector = blinkDetector;
 
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmUnloaded;
         }
 
         public bool IsLoaded { get; private set; }
+
+        // TODO: 「BuddyがBlinkedを購読するまではBlinkDetectorを止めておく」みたいなガードが出来たら嬉しい
+        // Blinkに関してはパフォーマンス影響が小さそうだが、他所でも応用が効きそうなので何かは考えてほしい
+        public IObservable<Unit> Blinked => _blinkDetector.Blinked();
 
         // NOTE: 下記の関数はモデルのロード前にfalse/0が戻るので、IsLoadedはチェックしないでよい
         public bool HasKey(string key, bool isCustomKey)
@@ -46,6 +55,21 @@ namespace Baku.VMagicMirror.Buddy
             return _expressionAccumulator.GetValue(expressionKey);
         }
 
+        // NOTE: Happyとかに連動したサブキャラが作りやすい方がいいよね、という主旨で公開したいAPIがコレ。
+        // TODO: 需要駆動で作ってるけど実装どうしよ
+
+        /// <summary>
+        /// Word to MotionまたはFace Switchによって適用された表情のブレンドシェイプがある場合、
+        /// その中でも値がもっとも大きいものを取得する。
+        /// リップシンク、まばたき、パーフェクトシンクで動いているブレンドシェイプは値が大きくても返却しない。
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public string GetUserOperationActiveBlendShape()
+        {
+            throw new NotImplementedException();
+        }
+        
         //TODO: Clip名も欲しいような気もする…
         /// <summary>
         /// FaceSwitch機能の適用状況を取得する。

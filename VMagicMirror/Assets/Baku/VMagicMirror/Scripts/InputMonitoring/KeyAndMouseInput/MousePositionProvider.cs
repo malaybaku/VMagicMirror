@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    //TODO: Unityのウィンドウが非アクティブなときにRawDiffが正しく取れなくなってそう
+    //TODO: Unityのウィンドウが非アクティブなときにRawDiffが正しく取れなくなってそう?
     //これによって「FPS対策モード」のオプションが死んでそうなため要チェック。
 
     /// <summary>
@@ -29,12 +29,17 @@ namespace Baku.VMagicMirror
         /// </summary>
         public Vector2 NormalizedCursorPosition { get; private set; }
 
+        /// <summary>
+        /// _x, _yを対スクリーン比率にしているもの。[-0.5, 0.5]の区間に収まっていると画面内をさす。画面外のこともある
+        /// </summary>
+        public Vector2 RawNormalizedPositionNotClamped { get; private set; } 
+
         public Vector2Int RawDiff { get; private set; }
 
         public Vector2Int RawPosition { get; private set; }
         
         private Vector2 _rawNormalizedPosition;
-        
+
         private RawInputChecker _rawMouseMoveChecker = null;
         private Vector2Int _prevCursorPos;
 
@@ -130,11 +135,15 @@ namespace Baku.VMagicMirror
             //dx/dyの影響でモニター外の座標を見に行っちゃうのを防ぐのが狙い
             FindCursorIncludedMonitor(p.x, p.y);
 
-            //NOTE: 右方向を+X, 上方向を+Y, 値域を(-0.5, 0.5)にするための変形をやって完成
+            //NOTE: 右方向を+X, 上方向を+Y, 値域の基準を [-0.5, 0.5] にする。
+            RawNormalizedPositionNotClamped = new Vector2(
+                (_x - _monitorLeft) * _monitorWidthInv - 0.5f,
+                0.5f - (_y - _monitorTop) * _monitorHeightInv
+            );
             _rawNormalizedPosition = new Vector2(
-                Mathf.Clamp((_x - _monitorLeft) * _monitorWidthInv - 0.5f, -0.5f, 0.5f),
-                Mathf.Clamp(0.5f - (_y - _monitorTop) * _monitorHeightInv, -0.5f, 0.5f)
-                );           
+                Mathf.Clamp(RawNormalizedPositionNotClamped.x, -0.5f, 0.5f),
+                Mathf.Clamp(RawNormalizedPositionNotClamped.y, -0.5f, 0.5f)
+                );
         }
 
         private void RefreshMonitorRects()

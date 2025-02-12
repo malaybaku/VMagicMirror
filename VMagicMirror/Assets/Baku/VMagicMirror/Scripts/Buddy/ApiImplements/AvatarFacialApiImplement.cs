@@ -1,3 +1,4 @@
+using Baku.VMagicMirror.ExternalTracker;
 using UniVRM10;
 
 namespace Baku.VMagicMirror.Buddy
@@ -8,11 +9,23 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ExpressionAccumulator _expressionAccumulator;
+        
+        // NOTE: 重要な注意点として、現時点では設定がカラ(「何もしない」)になってるFaceSwitchは条件を満たしても検出できない。
+        // - つまり、漫符みたいなサブキャラを作るのがちょっとムズい
+        // - 「アバターの表情が実際変わるかどうか」という観点で見れば検出できないのも納得感はある
+        private readonly ExternalTrackerDataSource _externalTrackerDataSource;
+        private readonly FaceSwitchExtractor _faceSwitchExtractor;
 
-        public AvatarFacialApiImplement(IVRMLoadable vrmLoadable, ExpressionAccumulator expressionAccumulator)
+        public AvatarFacialApiImplement(
+            IVRMLoadable vrmLoadable,
+            ExpressionAccumulator expressionAccumulator,
+            ExternalTrackerDataSource externalTrackerDataSource,
+            FaceSwitchExtractor faceSwitchExtractor)
         {
             _vrmLoadable = vrmLoadable;
             _expressionAccumulator = expressionAccumulator;
+            _externalTrackerDataSource = externalTrackerDataSource;
+            _faceSwitchExtractor = faceSwitchExtractor;
 
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmUnloaded;
@@ -31,6 +44,25 @@ namespace Baku.VMagicMirror.Buddy
         {
             var expressionKey = CreateExpressionKey(key, isCustomKey);
             return _expressionAccumulator.GetValue(expressionKey);
+        }
+
+        //TODO: Clip名も欲しいような気もする…
+        /// <summary>
+        /// FaceSwitch機能の適用状況を取得する。
+        /// 戻り値は既定のstringのいくつか、またはFaceSwitchが適用中でなければ空文字列になる。
+        /// 
+        /// Word to Motion機能で表情を適用している間は、
+        /// この値が "" 以外の値を返すが実際には表情は適用されていない…という状況も起こり得る。
+        /// </summary>
+        /// <returns></returns>
+        public string GetActiveFaceSwitch()
+        {
+            if (!_externalTrackerDataSource.Connected)
+            {
+                return "";
+            }
+
+            return ConvertFaceSwitchActionToName(_faceSwitchExtractor.ActiveItem.Action);
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -72,6 +104,23 @@ namespace Baku.VMagicMirror.Buddy
                 nameof(ExpressionPreset.neutral) => ExpressionKey.Neutral,
                 // NOTE: 不明な名称の場合もエラーにするほどではない…という想定
                 _ => ExpressionKey.Neutral,
+            };
+        }
+
+        private static string ConvertFaceSwitchActionToName(FaceSwitchAction action)
+        {
+            // NOTE: None以外は実質ToString()してるのと変わらないが、
+            // enumのrenameでAPIが壊れないようにしたいので(一見冗長でも)リテラルに変換してる
+            return action switch
+            {
+                FaceSwitchAction.MouthSmile => "MouthSmile",
+                FaceSwitchAction.EyeSquint => "EyeSquint",
+                FaceSwitchAction.EyeWide => "EyeWide",
+                FaceSwitchAction.BrowUp => "BrowUp",
+                FaceSwitchAction.BrowDown => "BrowDown",
+                FaceSwitchAction.CheekPuff => "CheekPuff",
+                FaceSwitchAction.TongueOut => "TongueOut",
+                _ => "",
             };
         }
     }

@@ -34,6 +34,19 @@ namespace Baku.VMagicMirror
         [SerializeField] private Transform modelScaleTarget = null;
         public Transform ModelScaleTarget => modelScaleTarget;
 
+        private GamepadVisibilityView _visibilityView = null;
+        public GamepadVisibilityView GetVisibilityView()
+        {
+            if (_visibilityView == null)
+            {
+                _visibilityView = GetComponent<GamepadVisibilityView>();
+            }
+            return _visibilityView;
+        }
+        
+        // NOTE: ゲームパッドは動きが追加で入っているので、GamepadProvider.transformを返すとビジュアル的にちょっとズレた位置になってしまう
+        public Pose GetModelRootPose() => new(modelRoot.position, modelRoot.rotation); 
+
         [Inject]
         public void Initialize(IDevicesRoot parent) => transform.parent = parent.Transform;
 

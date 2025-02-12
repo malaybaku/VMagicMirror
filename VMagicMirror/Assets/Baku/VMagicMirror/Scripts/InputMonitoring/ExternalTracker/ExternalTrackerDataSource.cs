@@ -347,8 +347,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
         }
 
-        private readonly ReactiveProperty<ActiveFaceSwitchItem> _activeFaceSwitchItem =
-            new ReactiveProperty<ActiveFaceSwitchItem>();
+        private readonly ReactiveProperty<ActiveFaceSwitchItem> _activeFaceSwitchItem = new();
         public IReadOnlyReactiveProperty<ActiveFaceSwitchItem> ActiveFaceSwitchItem => _activeFaceSwitchItem;
 
         /// <summary> FaceSwitch機能で指定されたブレンドシェイプがあればその名称を取得し、なければ空文字を取得します。 </summary>

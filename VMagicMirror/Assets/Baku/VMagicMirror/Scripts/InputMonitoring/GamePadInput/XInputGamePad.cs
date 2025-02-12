@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UniRx;
 
@@ -14,10 +15,11 @@ namespace Baku.VMagicMirror
 
         private const int StickPositionDiffThreshold = 1000;
 
-        private readonly XInputCapture _xInputCapture = new XInputCapture();
+        private readonly XInputCapture _xInputCapture = new();
         
         public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
+        //TODO: 動作が壊れないことを評価したうえで普通にReactivePropertyに置き換えたい…
         /// <summary>
         /// Position is (x, y), and both x and y are in short (MIN=-32768, MAX=+32767)
         /// </summary>
@@ -110,8 +112,11 @@ namespace Baku.VMagicMirror
                     _directInputAlternative.Stop();
                 }
             }
-        }        
-        
+        }
+
+        public bool GetButtonDown(GamepadKey key) 
+            => _buttons.FirstOrDefault(b => b.Key == key)?.IsPressed ?? false;
+
         private void Start()
         {
             _buttonsList.Add(new ObservableButton(GamepadKey.Start, XInputCapture.Buttons.START, _buttonSubject));
@@ -262,14 +267,15 @@ namespace Baku.VMagicMirror
         {
             public ObservableButton(GamepadKey key, int flag, Subject<GamepadKeyData> subject)
             {
-                _key = key;
+                Key = key;
                 _flag = flag;
                 _subject = subject;
             }
 
-            private readonly GamepadKey _key;
             private readonly int _flag;
             private readonly Subject<GamepadKeyData> _subject;
+
+            public GamepadKey Key { get; }
 
             private bool _isPressed = false;
             public bool IsPressed
@@ -280,7 +286,7 @@ namespace Baku.VMagicMirror
                     if (_isPressed != value)
                     {
                         _isPressed = value;
-                        _subject.OnNext(new GamepadKeyData(_key, IsPressed));
+                        _subject.OnNext(new GamepadKeyData(Key, IsPressed));
                     }
                 }
             }

@@ -11,9 +11,9 @@ namespace Baku.VMagicMirror.Buddy
     public class ScriptEventInvoker : PresenterBase
     {
         private readonly RootApi _api;
-        private readonly InputEventApiImplement _inputEventApiImplement;
+        private readonly AvatarMotionEventApiImplement _inputEventApiImplement;
         
-        public ScriptEventInvoker(RootApi api, InputEventApiImplement inputEventApiImplement)
+        public ScriptEventInvoker(RootApi api, AvatarMotionEventApiImplement inputEventApiImplement)
         {
             _api = api;
             _inputEventApiImplement = inputEventApiImplement;

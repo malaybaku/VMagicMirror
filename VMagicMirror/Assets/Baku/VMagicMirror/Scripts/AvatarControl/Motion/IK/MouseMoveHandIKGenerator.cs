@@ -1,4 +1,5 @@
 ﻿using System;
+using UniRx;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.IK
@@ -14,9 +15,12 @@ namespace Baku.VMagicMirror.IK
         private const float WristYawSpeedFactor = 12f;
         private const float SpeedFactor = 12f;
         
-        private readonly IKDataRecord _rightHand = new IKDataRecord();
-        private readonly IKDataRecord _blendedRightHand = new IKDataRecord();
+        private readonly IKDataRecord _rightHand = new();
+        private readonly IKDataRecord _blendedRightHand = new();
 
+        private readonly Subject<string> _mouseClickMotionStarted = new();
+        public IObservable<string> MouseClickMotionStarted => _mouseClickMotionStarted;
+        
         #region IHandIkState
 
         public bool SkipEnterIkBlend => false;
@@ -110,6 +114,7 @@ namespace Baku.VMagicMirror.IK
                     dependency.Reactions.FingerController.OnMouseButton(eventName);
                     dependency.Reactions.ParticleStore.RequestMouseClickParticle();
                     ResetHandDownTimeout(false);
+                    _mouseClickMotionStarted.OnNext(eventName);
                 }
             };
         }

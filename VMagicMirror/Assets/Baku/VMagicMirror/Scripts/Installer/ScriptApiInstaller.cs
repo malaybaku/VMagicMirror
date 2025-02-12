@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror
             Container.BindInterfacesTo<ScriptCallerRegisterer>().AsSingle();
             Container.BindInterfacesTo<BuddyLayoutEditNotifier>().AsSingle();
 
-            Container.BindInterfacesAndSelfTo<InputEventApiImplement>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AvatarMotionEventApiImplement>().AsSingle();
         }
     }
 }

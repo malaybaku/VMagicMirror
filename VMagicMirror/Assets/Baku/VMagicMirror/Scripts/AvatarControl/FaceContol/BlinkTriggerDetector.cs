@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
         private bool _blinkDetectReserved;
         private float _blinkReserveCount = 0f;
         
-        private Subject<Unit> _blinkDetected = new Subject<Unit>();
+        private Subject<Unit> _blinkDetected = new();
         public IObservable<Unit> BlinkDetected => _blinkDetected;
 
         public BlinkTriggerDetector(FaceControlConfiguration config, ExpressionAccumulator accumulator)

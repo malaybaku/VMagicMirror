@@ -263,6 +263,18 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private TransformControl transformControl = null;
         public TransformControl TransformControl => transformControl;
+
+        private KeyboardVisibilityView _visibilityView = null;
+        public KeyboardVisibilityView GetVisibilityView()
+        {
+            if (_visibilityView == null)
+            {
+                _visibilityView = GetComponent<KeyboardVisibilityView>();
+            }
+            return _visibilityView;
+        }
+        
+        public Pose GetPose() => new(transform.position, transform.rotation); 
         
         private Transform[][] _keys = null;
 

@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.VMCP
     {
         private const float DisconnectCount = VMCPReceiver.DisconnectCount;
 
-        private static readonly HashSet<ExpressionKey> LipSyncKeys = new HashSet<ExpressionKey>()
+        private static readonly HashSet<ExpressionKey> LipSyncKeys = new()
         {
             ExpressionKey.Aa,
             ExpressionKey.Ee,
@@ -22,13 +22,13 @@ namespace Baku.VMagicMirror.VMCP
             ExpressionKey.Ou,
         };
 
-        private readonly List<ExpressionKey> _keys = new List<ExpressionKey>();
-        private readonly Dictionary<ExpressionKey, float> _internalValues = new Dictionary<ExpressionKey, float>();
-        private readonly Dictionary<ExpressionKey, float> _values = new Dictionary<ExpressionKey, float>();
+        private readonly List<ExpressionKey> _keys = new();
+        private readonly Dictionary<ExpressionKey, float> _internalValues = new();
+        private readonly Dictionary<ExpressionKey, float> _values = new();
         //送信側がVRM0.xのケースと1.0のケースで都合が変わるんですよ信じられますか
-        private readonly Dictionary<string, ExpressionKey> _stringToKeyCache = new Dictionary<string, ExpressionKey>();
+        private readonly Dictionary<string, ExpressionKey> _stringToKeyCache = new();
 
-        private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _isActive = new(false);
         public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
         private bool _hasModel;
@@ -135,6 +135,8 @@ namespace Baku.VMagicMirror.VMCP
                 accumulator.Accumulate(pair.Key, pair.Value * weight);
             }
         }
+
+        public IReadOnlyDictionary<ExpressionKey, float> GetCurrentValues() => _values;
         
         private void OnVrmLoaded(VrmLoadedInfo info)
         {

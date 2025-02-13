@@ -1,61 +1,47 @@
-﻿using System;
+﻿using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror
 {
     /// <summary> リップシンクの音量レベルベースで喋ってる/喋ってないを判断する処理 </summary>
-    public class VoiceOnOffParser
+    public class VoiceOnOffParser : ITickable
     {
+        [Inject]
         public VoiceOnOffParser(VmmLipSyncContextBase lipSync)
         {
             _lipSync = lipSync;
         }
-        private readonly VmmLipSyncContextBase _lipSync = null;
 
-        // Visemeのなかでこのしきい値を超える値が一つでもあれば、発声中だと判定する
-        public float VisemeThreshold { get; set; }
+        private readonly VmmLipSyncContextBase _lipSync;
 
-        /// <summary> このフレーム数だけvisemeが連続でオンだったら発話状態と判断 </summary>
-        public int OnCountThreshold { get; set; } = 3;
+        // NOTE: デフォルト値は「そこそこちゃんと喋ってないと検出しない」という値になることを志向した60FPS想定の値になっている
+
+        /// <summary> Visemeのなかでこのしきい値を超える値が一つでもあれば、発声中だと判定する </summary>
+        public float VisemeThreshold { get; set; } = 0.2f;
+
+        /// <summary> このフレーム数だけvisemeが連続でオンだったら発話状態と判断する </summary>
+        public int OnCountThreshold { get; set; } = 6;
 
         /// <summary> このフレーム数だけvisemeが連続でオンだったら非発話状態と判断 </summary>
-        public int OffCountThreshold { get; set; } = 3;
+        public int OffCountThreshold { get; set; } = 16;
 
-        private bool _isTalking = false;
-        /// <summary> 現在発話中っぽいかどうかを取得します。 </summary>
-        public bool IsTalking
-        {
-            get => _isTalking;
-            private set
-            {
-                if (_isTalking != value)
-                {
-                    _isTalking = value;
-                    IsTalkingChanged?.Invoke(value);
-                }
-            }
-        }
-        
-        /// <summary> <see cref="IsTalking"/>が変化すると発火します。 </summary>
-        public event Action<bool> IsTalkingChanged;
+        private readonly ReactiveProperty<bool> _isTalking = new();
+        /// <summary> 現在発話中かどうかを取得します。 </summary>
+        public IReadOnlyReactiveProperty<bool> IsTalking => _isTalking;
 
         private int _lipSyncOffCount = 0;
         private int _lipSyncOnCount = 0;
         
-        /// <summary>
-        /// 発生を検出していないデフォルト状態に戻す。
-        /// この関数でIsTalkingが書き換わる場合もイベントが飛ばないことに注意
-        /// </summary>
-        public void Reset(bool raiseTalkingChange)
+        /// <summary> 発生を検出していないデフォルト状態に戻す。 </summary>
+        public void Reset()
         {
-            _isTalking = false;
+            _isTalking.Value = false;
             _lipSyncOffCount = 0;
             _lipSyncOnCount = 0;
         }
         
-        /// <summary>
-        /// 基本的に毎フレーム呼び出すことで、発話中かどうかの判定状態をアップデートします。
-        /// </summary>
-        public void Update()
+        /// <summary> 発話中かどうかの判定をアップデートする </summary>
+        void ITickable.Tick()
         {
             //ざっくりやりたいこと: 音節の区切りをvisemeベースで推定し、visemeが有→無に転じたところで音節が区切れたものと扱う。
             //ただし、毎フレームでやるとノイズ耐性が低いので、数フレーム連続で続いた場合の立ち上がり/立ち下がりだけを扱う。
@@ -82,7 +68,7 @@ namespace Baku.VMagicMirror
                 _lipSyncOffCount = 0;
                 if (_lipSyncOnCount >= OnCountThreshold)
                 {
-                    IsTalking = true;
+                    _isTalking.Value = true;
                     _lipSyncOnCount = OnCountThreshold;
                 }
             }
@@ -92,7 +78,7 @@ namespace Baku.VMagicMirror
                 _lipSyncOnCount = 0;
                 if (_lipSyncOffCount >= OffCountThreshold)
                 {
-                    IsTalking = false;
+                    _isTalking.Value = false;
                     _lipSyncOffCount = OffCountThreshold;
                 }
             }

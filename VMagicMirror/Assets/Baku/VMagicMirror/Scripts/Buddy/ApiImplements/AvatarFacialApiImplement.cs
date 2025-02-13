@@ -18,18 +18,24 @@ namespace Baku.VMagicMirror.Buddy
         // - 「アバターの表情が実際変わるかどうか」という観点で見れば検出できないのも納得感はある
         private readonly ExternalTrackerDataSource _externalTrackerDataSource;
         private readonly FaceSwitchExtractor _faceSwitchExtractor;
+        private readonly FaceControlConfiguration _faceControlConfig;
+        private readonly UserOperationBlendShapeResultRepository _userOperationBlendShapeResultRepository;
 
         public AvatarFacialApiImplement(
             IVRMLoadable vrmLoadable,
             ExpressionAccumulator expressionAccumulator,
             ExternalTrackerDataSource externalTrackerDataSource,
             FaceSwitchExtractor faceSwitchExtractor,
+            FaceControlConfiguration faceControlConfig,
+            UserOperationBlendShapeResultRepository userOperationBlendShapeResultRepository,
             BlinkDetector blinkDetector)
         {
             _vrmLoadable = vrmLoadable;
             _expressionAccumulator = expressionAccumulator;
             _externalTrackerDataSource = externalTrackerDataSource;
             _faceSwitchExtractor = faceSwitchExtractor;
+            _faceControlConfig = faceControlConfig;
+            _userOperationBlendShapeResultRepository = userOperationBlendShapeResultRepository;
             _blinkDetector = blinkDetector;
 
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
@@ -38,6 +44,8 @@ namespace Baku.VMagicMirror.Buddy
 
         public bool IsLoaded { get; private set; }
 
+        public bool UsePerfectSync => _faceControlConfig.UsePerfectSync;
+        
         // TODO: 「BuddyがBlinkedを購読するまではBlinkDetectorを止めておく」みたいなガードが出来たら嬉しい
         // Blinkに関してはパフォーマンス影響が小さそうだが、他所でも応用が効きそうなので何かは考えてほしい
         public IObservable<Unit> Blinked => _blinkDetector.Blinked();
@@ -59,20 +67,32 @@ namespace Baku.VMagicMirror.Buddy
         // TODO: 需要駆動で作ってるけど実装どうしよ
 
         /// <summary>
-        /// Word to MotionまたはFace Switchによって適用された表情のブレンドシェイプがある場合、
+        /// Word to Motion / Face Switchによって適用された表情のブレンドシェイプがある場合、または
+        /// VMC Protocolで「喜怒哀楽 + 驚き」のいずれの表情が適用されている場合、
         /// その中でも値がもっとも大きいものを取得する。
-        /// リップシンク、まばたき、パーフェクトシンクで動いているブレンドシェイプは値が大きくても返却しない。
+        /// 上記以外の、リップシンク、まばたき、パーフェクトシンクで動いているブレンドシェイプは値が大きくても取得しない。
+        ///
+        /// この値はアバターとサブキャラの表情を連動させる目的で使うのが想定されている。
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public string GetUserOperationActiveBlendShape()
+        public ExpressionKey? GetUserOperationActiveBlendShape()
         {
-            throw new NotImplementedException();
+            if (_userOperationBlendShapeResultRepository.HasActiveKey)
+            {
+                return _userOperationBlendShapeResultRepository.ActiveKey;
+            }
+            else
+            {
+                return null;
+            }
         }
         
-        //TODO: Clip名も欲しいような気もする…
+        //TODO: これは削除してGetUserOperationActiveBlendShapeだけにする…というのもアリかもしれない
+        // Buddyの実装してみてから考えるのがヨサソウ。
+
         /// <summary>
-        /// FaceSwitch機能の適用状況を取得する。
+        /// FaceSwitch機能の検出状態を取得する。
         /// 戻り値は既定のstringのいくつか、またはFaceSwitchが適用中でなければ空文字列になる。
         /// 
         /// Word to Motion機能で表情を適用している間は、

@@ -10,6 +10,15 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class BlendShapeResultSetter : MonoBehaviour
     {
+        
+        enum BlendShapeOperationType
+        {
+            None,
+            VmcProtocol,
+            FaceSwitch,
+            WordToMotion,
+        }
+
         [SerializeField] private LipSyncIntegrator lipSync = null;
         [SerializeField] private FaceControlManager eyes = null;
         [SerializeField] private ExternalTrackerPerfectSync perfectSync = null;
@@ -21,6 +30,7 @@ namespace Baku.VMagicMirror
         private WordToMotionBlendShape _wtmBlendShape = null;
         private VMCPBlendShape _vmcpBlendShape = null;
         private ExpressionAccumulator _accumulator = null;
+        private UserOperationBlendShapeResultRepository _resultRepository;
         private bool _hasModel = false;
         
         //NOTE: ここのコンポーネントの書き順は実は優先度を表している: 後ろのやつほど上書きの権利が強い
@@ -31,13 +41,15 @@ namespace Baku.VMagicMirror
             ExternalTrackerDataSource exTracker,
             WordToMotionBlendShape wtmBlendShape,
             VMCPBlendShape vmcpBlendShape,
-            ExpressionAccumulator accumulator
+            ExpressionAccumulator accumulator,
+            UserOperationBlendShapeResultRepository resultRepository
             )
         {
             _exTracker = exTracker;
             _wtmBlendShape = wtmBlendShape;
             _vmcpBlendShape = vmcpBlendShape;
             _accumulator = accumulator;
+            _resultRepository = resultRepository;
             
             vrmLoadable.VrmLoaded += info => _hasModel = true;
             vrmLoadable.VrmDisposing += () => _hasModel = false;
@@ -53,6 +65,7 @@ namespace Baku.VMagicMirror
             
             if (!_hasModel)
             {
+                _resultRepository.SetAsInactive();
                 return;
             }
 
@@ -68,6 +81,7 @@ namespace Baku.VMagicMirror
                 WriteClips();
             }
             
+            SetUserOperationBlendShape();
             _accumulator.Apply();
         }
 
@@ -232,6 +246,26 @@ namespace Baku.VMagicMirror
             
             neutralClipSettings.AccumulateNeutralClip(_accumulator, blendShapeInterpolator.NonMouthWeight);
             neutralClipSettings.AccumulateOffsetClip(_accumulator);
+        }
+
+        private void SetUserOperationBlendShape()
+        {
+            if (_wtmBlendShape.HasBlendShapeToApply)
+            {
+                _resultRepository.SetWordToMotionResult(_wtmBlendShape.CurrentValue.Value);
+            }
+            else if (faceSwitch.HasClipToApply)
+            {
+                _resultRepository.SetFaceSwitchResult(faceSwitch.CurrentValue.Value);
+            }
+            else if (_vmcpBlendShape.IsActive.Value)
+            {
+                _resultRepository.SetVmcpResult(_vmcpBlendShape.GetCurrentValues());
+            }
+            else
+            {
+                _resultRepository.SetAsInactive();
+            }
         }
     }
 }

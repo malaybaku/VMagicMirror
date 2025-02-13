@@ -20,10 +20,11 @@ namespace Baku.VMagicMirror
         }
         
         public static WordToMotionBlendShapeApplyContent Empty { get; } 
-            = new WordToMotionBlendShapeApplyContent(false, new List<(ExpressionKey, float)>(), false, false);
+            = new(false, new List<(ExpressionKey, float)>(), false, false);
 
-        public static WordToMotionBlendShapeApplyContent Create(List<(ExpressionKey, float)> keys, bool keepLipSync,
-            bool isPreview) => new WordToMotionBlendShapeApplyContent(true, keys, keepLipSync, isPreview);
+        public static WordToMotionBlendShapeApplyContent Create(
+            List<(ExpressionKey, float)> keys, bool keepLipSync, bool isPreview
+            ) => new(true, keys, keepLipSync, isPreview);
 
         public bool HasValue { get; }
         public List<(ExpressionKey, float)> Keys { get; }
@@ -46,15 +47,16 @@ namespace Baku.VMagicMirror
         
         private ExpressionKey[] _allBlendShapeKeys = Array.Empty<ExpressionKey>();
 
-        private readonly Dictionary<ExpressionKey, float> _blendShape = new Dictionary<ExpressionKey, float>();
+        private readonly Dictionary<ExpressionKey, float> _blendShape = new();
         
         private EyeBoneAngleSetter _eyeBoneResetter;
 
         private bool _hasDiff;
 
-        private readonly List<(ExpressionKey, float)> _currentValueSource = new List<(ExpressionKey, float)>(8);
-        private readonly Subject<WordToMotionBlendShapeApplyContent> _currentValue = new Subject<WordToMotionBlendShapeApplyContent>();
-        public IObservable<WordToMotionBlendShapeApplyContent> CurrentValue => _currentValue;
+        private readonly List<(ExpressionKey, float)> _currentValueSource = new(8);
+        private readonly ReactiveProperty<WordToMotionBlendShapeApplyContent> _currentValue 
+            = new(WordToMotionBlendShapeApplyContent.Empty);
+        public IReadOnlyReactiveProperty<WordToMotionBlendShapeApplyContent> CurrentValue => _currentValue;
         
         [Inject]
         public void Initialize(EyeBoneAngleSetter eyeBoneResetter)
@@ -107,11 +109,11 @@ namespace Baku.VMagicMirror
 
             if (_currentValueSource.Count > 0)
             {
-                _currentValue.OnNext(WordToMotionBlendShapeApplyContent.Create(_currentValueSource, KeepLipSync, IsPreview));
+                _currentValue.Value = WordToMotionBlendShapeApplyContent.Create(_currentValueSource, KeepLipSync, IsPreview);
             }
             else
             {
-                _currentValue.OnNext(WordToMotionBlendShapeApplyContent.Empty);
+                _currentValue.Value = WordToMotionBlendShapeApplyContent.Empty;
             }
         }
 

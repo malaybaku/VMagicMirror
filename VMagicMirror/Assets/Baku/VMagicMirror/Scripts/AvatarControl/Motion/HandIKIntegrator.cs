@@ -50,10 +50,10 @@ namespace Baku.VMagicMirror
         public MidiHandIkGenerator MidiHand { get; private set; }
         public PresentationHandIKGenerator Presentation { get; private set; }
         public CarHandleIkGenerator CarHandle { get; private set; }
+        public ArcadeStickHandIKGenerator ArcadeStickHand { get; private set; }
+        public PenTabletHandIKGenerator PenTabletHand { get; private set; }
 
-        private ArcadeStickHandIKGenerator _arcadeStickHand;
         private AlwaysDownHandIkGenerator _downHand;
-        private PenTabletHandIKGenerator _penTablet;
         public ClapMotionHandIKGenerator ClapMotion { get; private set; }
         private VMCPHandIkGenerator _vmcpHand;
         
@@ -75,7 +75,7 @@ namespace Baku.VMagicMirror
             {
                 _enableHidArmMotion = value;
                 MouseMove.EnableUpdate = value;
-                _penTablet.EnableUpdate = value;
+                PenTabletHand.EnableUpdate = value;
             }
         }
 
@@ -146,7 +146,7 @@ namespace Baku.VMagicMirror
             {
                 Typing.YOffsetAlways = value;
                 MouseMove.YOffset = value;
-                _penTablet.YOffset = value;
+                PenTabletHand.YOffset = value;
                 MidiHand.HandOffsetAlways = value;
             }
         }
@@ -210,10 +210,10 @@ namespace Baku.VMagicMirror
                 dependency, vrmLoadable, waitingBody, gamepadProvider, gamepadSetting
                 );
             Presentation = new PresentationHandIKGenerator(dependency, vrmLoadable, cam);
-            _arcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
+            ArcadeStickHand = new ArcadeStickHandIKGenerator(dependency, vrmLoadable, arcadeStickProvider);
             CarHandle = new CarHandleIkGenerator(dependency, carHandleAngleGenerator, carHandleProvider, carHandleFingerController);
             _downHand = new AlwaysDownHandIkGenerator(dependency, switchableHandDownIk);
-            _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
+            PenTabletHand = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
             _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose, vmcpFingerController, _downHand);
             barracudaHand.SetupDependency(dependency);
@@ -227,7 +227,7 @@ namespace Baku.VMagicMirror
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
                 {
-                    MouseMove, MidiHand, GamepadHand, _arcadeStickHand, CarHandle, Presentation, _downHand, _penTablet, _vmcpHand, ClapMotion,
+                    MouseMove, MidiHand, GamepadHand, ArcadeStickHand, CarHandle, Presentation, _downHand, PenTabletHand, _vmcpHand, ClapMotion,
                 })
             {
                 if (generator.LeftHandState != null)
@@ -420,7 +420,7 @@ namespace Baku.VMagicMirror
             GamepadHand.Start();
             MidiHand.Start();
             CarHandle.Start();
-            _arcadeStickHand.Start();
+            ArcadeStickHand.Start();
         }
         
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -448,9 +448,9 @@ namespace Baku.VMagicMirror
             Presentation.Update();
             GamepadHand.Update();
             MidiHand.Update();
-            _arcadeStickHand.Update();
+            ArcadeStickHand.Update();
             CarHandle.Update();
-            _penTablet.Update();
+            PenTabletHand.Update();
             _vmcpHand.Update();
 
             //現在のステート + 必要なら直前ステートも参照してIKターゲットの位置、姿勢を更新する
@@ -464,8 +464,8 @@ namespace Baku.VMagicMirror
             GamepadHand.LateUpdate();
             MidiHand.LateUpdate();
             Presentation.LateUpdate();
-            _arcadeStickHand.LateUpdate();
-            _penTablet.LateUpdate();
+            ArcadeStickHand.LateUpdate();
+            PenTabletHand.LateUpdate();
         }
 
         private void OnDestroy()

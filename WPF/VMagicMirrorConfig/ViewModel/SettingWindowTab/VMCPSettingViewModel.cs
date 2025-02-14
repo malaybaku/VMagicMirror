@@ -47,6 +47,7 @@
             {
                 _preferenceModel.ShowVMCPTabOnControlPanel.Value = false;
                 _settingModel.VMCPEnabled.Value = false;
+                _settingModel.VMCPSendEnabled.Value = false;
             }
         }
 

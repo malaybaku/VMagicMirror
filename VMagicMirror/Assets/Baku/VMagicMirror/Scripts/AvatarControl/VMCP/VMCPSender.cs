@@ -86,12 +86,12 @@ namespace Baku.VMagicMirror.VMCP
 
         private uOscClient _oscClient;
         private CancellationTokenSource _cts;
-        private VmcProtocolDestSettings _settings;
+        private VmcProtocolSendSettings _settings = VmcProtocolSendSettings.CreateDefaultSetting();
 
         private bool _isLoaded;
         private Animator _animator;
         
-        // 任意ボーンのチェックを頻発させたくないので、GetBoneTransformの結果はキャッシュする
+        // NOTE: 任意ボーンのチェックが発生しすぎないようにするために、GetBoneTransformの結果はキャッシュする
         private readonly bool[] _boneValidity = new bool[(int)HumanBodyBones.LastBone];
         private readonly Transform[] _boneTransforms = new Transform[(int)HumanBodyBones.LastBone];
         
@@ -120,9 +120,12 @@ namespace Baku.VMagicMirror.VMCP
                 );
 
             _receiver.AssignCommandHandler(
-                VmmCommands.SetVMCPDestSettings,
-                c => SetVmcpDestSettings(c.Content)
-                );
+                VmmCommands.SetVMCPSendSettings,
+                c =>
+                {
+                    SetVmcpSendSettings(c.Content);
+                    ActivateIfNeeded();
+                });
 
             _sendEnabled.Subscribe(SetActive).AddTo(this);
         }
@@ -171,12 +174,12 @@ namespace Baku.VMagicMirror.VMCP
 
         private bool HasValidSettings()
         {
-            if (string.IsNullOrEmpty(_settings.destAddress))
+            if (string.IsNullOrEmpty(_settings.SendAddress))
             {
                 return false;
             }
 
-            if (_settings.destPort < 0 || _settings.destPort > 65535)
+            if (_settings.SendPort < 0 || _settings.SendPort > 65535)
             {
                 return false;
             }
@@ -188,16 +191,12 @@ namespace Baku.VMagicMirror.VMCP
         // NOTE: 送信開始に失敗してもUIの通知とかはしない (Serverならいざ知らずClientなら十分レアだと思うので)
         private void SetActive(bool active)
         {
+            //TODO: 無効な設定でactiveになったあとで設定が有効化したケースをケアしたい
             try
             {
                 if (active && HasValidSettings())
                 {
-                    _oscClient.address = _settings.destAddress;
-                    _oscClient.port = _settings.destPort;
-                    _oscClient.StartClient();
-                    CancelTask();
-                    _cts = new CancellationTokenSource();
-                    SendVmcpAsync(_cts.Token).Forget();
+                    Activate();
                 }
                 else
                 {
@@ -210,12 +209,39 @@ namespace Baku.VMagicMirror.VMCP
                 LogOutput.Instance.Write(ex);
             }
         }
+
+        private void ActivateIfNeeded()
+        {
+            if (_oscClient.isRunning || !_sendEnabled.Value || !HasValidSettings())
+            {
+                return;
+            }
+
+            try
+            {
+                Activate();
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
+        }
+
+        private void Activate()
+        {
+            _oscClient.address = _settings.SendAddress;
+            _oscClient.port = _settings.SendPort;
+            _oscClient.StartClient();
+            CancelTask();
+            _cts = new CancellationTokenSource();
+            SendVmcpAsync(_cts.Token).Forget();            
+        }
         
-        private void SetVmcpDestSettings(string json)
+        private void SetVmcpSendSettings(string json)
         {
             try
             {
-                var settings = JsonUtility.FromJson<VmcProtocolDestSettings>(json);
+                var settings = JsonUtility.FromJson<VmcProtocolSendSettings>(json);
                 _settings = settings;
             }
             catch (Exception ex)
@@ -233,7 +259,7 @@ namespace Baku.VMagicMirror.VMCP
             {
                 await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
                 // NOTE: 一応 >= で判定しているが、VMMのtargetFrameRateは30 or 60しか取らない想定
-                if (Application.targetFrameRate >= 60 && _settings.prefer30fps)
+                if (Application.targetFrameRate >= 60 && _settings.Prefer30Fps)
                 {
                     await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
                 }
@@ -244,14 +270,14 @@ namespace Baku.VMagicMirror.VMCP
                 }
                 
                 //TODOかも: BundleにPose + Facial両方押し込む説あるかも？
-                if (_settings.sendBone && CanSendPose())
+                if (_settings.SendBonePose && CanSendPose())
                 {
-                    SendBonePoses(_settings.sendFingerBone);
+                    SendBonePoses(_settings.SendFingerBonePose);
                 }
 
-                if (_settings.sendFacial)
+                if (_settings.SendFacial)
                 {
-                    SendFacials(_settings.sendNonStandardFacial, _settings.useVrm0Facial);
+                    SendFacials(_settings.SendNonStandardFacial, _settings.UseVrm0Facial);
                 }
             }
         }
@@ -331,29 +357,43 @@ namespace Baku.VMagicMirror.VMCP
         private static string ConvertToVrm0FacialName(string name)
             => Vrm0FacialNameMap.GetValueOrDefault(name, name);
     }
-
+    
     [Serializable]
-    public class VmcProtocolDestSettings
+    public class VmcProtocolSendSettings
     {
-        public string destAddress;
-        public int destPort;
+        public string SendAddress;
+        public int SendPort;
         
         // 指以外のボーンの姿勢を送信する
-        public bool sendBone;
+        public bool SendBonePose;
         // 指ボーンの姿勢を送信する。このオプションはsendBone == falseでは無視される
-        public bool sendFingerBone;
+        public bool SendFingerBonePose;
         // VRM1.0の標準表情を一通り送信する
-        public bool sendFacial;
+        public bool SendFacial;
         // VRMの標準ではない表情も送信する。このオプションはsendFacial == falseでは無視される
-        public bool sendNonStandardFacial;
+        public bool SendNonStandardFacial;
 
         // trueの場合、ブレンドシェイプ名をVRM0相当に変換する。
-        public bool useVrm0Facial;
+        public bool UseVrm0Facial;
         
         // trueの場合、アプリケーションが60fpsで実行していても30FPSでデータを送信しようとする
-        public bool prefer30fps;
+        public bool Prefer30Fps;
+
         // アバターの手足の位置をトラッカー姿勢とみなして送信する: あってもいいかもと思ったが、VMM的にはニガテ分野なので無しにしとく
-        // public bool sendTracker;
+        // public bool SendTrackerPose;
+        
+        //NOTE: WPF側と初期値をあわせている
+        public static VmcProtocolSendSettings CreateDefaultSetting() => new()
+        {
+            SendAddress = "127.0.0.1",
+            SendPort = 9000,
+            SendBonePose = true,
+            SendFingerBonePose = true,
+            SendFacial = true,
+            SendNonStandardFacial = false,
+            UseVrm0Facial = true,
+            Prefer30Fps = false,
+        };
     }
 }
 

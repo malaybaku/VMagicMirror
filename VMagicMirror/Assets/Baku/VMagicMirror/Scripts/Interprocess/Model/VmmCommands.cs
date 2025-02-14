@@ -238,9 +238,10 @@
         public const string SetDisableCameraDuringVMCPActive = nameof(SetDisableCameraDuringVMCPActive);
 
         // VMCP (send)
-        public const string SetVMCPDestSettings = nameof(SetVMCPDestSettings);
         public const string EnableVMCPSend = nameof(EnableVMCPSend);
-
+        public const string SetVMCPSendSettings = nameof(SetVMCPSendSettings);
+        public const string ShowEffectDuringVMCPSendEnabled = nameof(ShowEffectDuringVMCPSendEnabled);
+            
         // VRoidHub
         public const string OpenVRoidSdkUi = nameof(OpenVRoidSdkUi);
         public const string RequestLoadVRoidWithId = nameof(RequestLoadVRoidWithId);

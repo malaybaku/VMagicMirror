@@ -18,15 +18,13 @@ namespace Baku.VMagicMirrorConfig
     {
         public SerializedVMCPSource[]? Sources { get; set; }
 
-        public string ToSerializedData()
+        public string ToJson()
         {
             var sb = new StringBuilder();
-            using (var writer = new StringWriter(sb))
-            using (var jsonWriter = new JsonTextWriter(writer))
-            {
-                var serializer = new JsonSerializer();
-                serializer.Serialize(jsonWriter, this);
-            }
+            using var writer = new StringWriter(sb);
+            using var jsonWriter = new JsonTextWriter(writer);
+            var serializer = new JsonSerializer();
+            serializer.Serialize(jsonWriter, this);
             return sb.ToString();
         }
 
@@ -38,12 +36,10 @@ namespace Baku.VMagicMirrorConfig
         {
             try
             {
-                using (var reader = new StringReader(json))
-                using (var jsonReader = new JsonTextReader(reader))
-                {
-                    var serializer = new JsonSerializer();
-                    return serializer.Deserialize<SerializedVMCPSources>(jsonReader) ?? Empty;
-                }
+                using var reader = new StringReader(json);
+                using var jsonReader = new JsonTextReader(reader);
+                var serializer = new JsonSerializer();
+                return serializer.Deserialize<SerializedVMCPSources>(jsonReader) ?? Empty;
             }
             catch (Exception ex)
             {

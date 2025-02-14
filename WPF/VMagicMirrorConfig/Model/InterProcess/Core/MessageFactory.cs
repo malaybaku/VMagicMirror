@@ -386,6 +386,10 @@ namespace Baku.VMagicMirrorConfig
         public Message SetDisableCameraDuringVMCPActive(bool disable) => WithArg(disable);
         public Message SetVMCPNaiveBoneTransfer(bool enable) => WithArg(enable);
 
+        public Message EnableVMCPSend(bool enable) => WithArg(enable);
+        public Message SetVMCPSendSettings(string json) => WithArg(json);
+        public Message ShowEffectDuringVMCPSendEnabled(bool enable) => WithArg(enable);
+
         #endregion
 
         #region その他
@@ -415,7 +419,7 @@ namespace Baku.VMagicMirrorConfig
 
         public Message OpenVRoidSdkUi() => NoArg();
         public Message RequestLoadVRoidWithId(string modelId) => WithArg(modelId);
-
+ 
         #endregion
 
     }

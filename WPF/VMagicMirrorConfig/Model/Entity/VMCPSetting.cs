@@ -2,10 +2,16 @@
 {
     public class VMCPSetting : SettingEntityBase
     {
+        // Receive
         public bool VMCPEnabled { get; set; }
         public string SerializedVMCPSourceSetting { get; set; } = "";
         public bool DisableCameraDuringVMCPActive { get; set; } = true;
         public bool EnableNaiveBoneTransfer { get; set; } = false;
+
+        // Send
+        public bool VMCPSendEnabled { get; set; }
+        public string SerializedVMCPSendSetting { get; set; } = "";
+        public bool ShowEffectDuringSendEnabled { get; set; } = false;
 
         public void Reset()
         {
@@ -13,6 +19,10 @@
             SerializedVMCPSourceSetting = "";
             EnableNaiveBoneTransfer = false;
             DisableCameraDuringVMCPActive = true;
+
+            VMCPSendEnabled = false;
+            SerializedVMCPSendSetting = "";
+            ShowEffectDuringSendEnabled = false;
         }
 
         //使用者側が書き換えない前提でラフに公開してる

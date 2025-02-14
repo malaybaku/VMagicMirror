@@ -3,7 +3,7 @@ using Baku.VMagicMirror.Buddy.Api;
 
 namespace Baku.VMagicMirror
 {
-    public class ScriptApiInstaller : Zenject.Installer<ScriptApiInstaller>
+    public class BuddySystemInstaller : Zenject.Installer<BuddySystemInstaller>
     {
         public override void InstallBindings()
         {
@@ -23,6 +23,12 @@ namespace Baku.VMagicMirror
             Container.BindInterfacesTo<BuddyLayoutEditNotifier>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<AvatarMotionEventApiImplement>().AsSingle();
+            Container.Bind<AvatarFacialApiImplement>().AsSingle();
+            Container.Bind<AvatarLoadApiImplement>().AsSingle();
+            Container.Bind<AvatarPoseApiImplement>().AsSingle();
+            Container.Bind<DeviceLayoutApiImplement>().AsSingle();
+            Container.BindInterfacesAndSelfTo<RawInputApiImplement>().AsSingle();
+            Container.BindInterfacesAndSelfTo<WordToMotionEventApiImplement>().AsSingle();
         }
     }
 }

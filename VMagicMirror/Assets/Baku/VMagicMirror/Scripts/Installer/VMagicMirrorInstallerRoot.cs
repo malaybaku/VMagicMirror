@@ -65,7 +65,7 @@ namespace Baku.VMagicMirror.Installer
             Container.Bind<BuddySpriteCanvas>()
                 .FromComponentInNewPrefab(luaScriptSpriteCanvas)
                 .AsCached();
-            ScriptApiInstaller.Install(Container);
+            BuddySystemInstaller.Install(Container);
             
             WordToMotion.WordToMotionInstaller.Install(Container);
         }

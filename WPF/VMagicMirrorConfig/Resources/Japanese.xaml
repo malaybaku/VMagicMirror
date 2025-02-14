@@ -176,8 +176,8 @@
 
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
-    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションからモーション情報を受信できます。
-VMagicMirrorは以下のモーションを受信して適用できます。
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションとの間でモーション情報を送受信できます。
+とくに受信については、VMagicMirrorは以下のモーションを受信して適用できます。
 
 - 頭部モーション
 - 表情 (BlendShape)
@@ -204,7 +204,25 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_NaiveBoneTransfer">補正なしで送信元ボーンの姿勢を適用</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">VMCPの受信中はカメラ機能をオフ</sys:String>    
-    
+
+    <sys:String x:Key="VMCP_Send_Enable">VMCPによる送信を有効化</sys:String>
+    <sys:String x:Key="VMCP_Send_Header">データ送信の設定</sys:String>
+    <sys:String x:Key="VMCP_Send_DestAddress">送信先アドレス</sys:String>
+    <sys:String x:Key="VMCP_Send_DestPort">送信先ポート</sys:String>
+    <sys:String x:Key="VMCP_Send_SendBone">姿勢データを送信</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFingerBone">指ボーンの姿勢も送信する</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFacial">表情データを送信</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFacialNonStandard">標準ブレンドシェイプ以外もすべて送信</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFacialVrm0">VRM0.x のブレンドシェイプ名を使用 (送信先がVRM1.0未対応ならオンにします)</sys:String>
+    <sys:String x:Key="VMCP_Send_Prefer30fps">60FPSで実行している時も30FPSで送信</sys:String>    
+    <sys:String x:Key="VMCP_Send_EditionLimitationNote" xml:space="preserve">※基本エディションではVMCPの送信を有効化すると視覚エフェクトが適用されます。
+ただし、送信データの内容はフルエディションと完全に同じです。
+フルエディションではエフェクトを無効化できます。</sys:String>
+    <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">データ送信中に視覚エフェクトを適用</sys:String>
+    <sys:String x:Key="VMCP_Send_GetFullEdition">フルエディションを入手</sys:String>
+    <sys:String x:Key="VMCP_Send_IpAddressError">* IPアドレスの形式を確認してください。</sys:String>
+    <sys:String x:Key="VMCP_Send_PortInputError">* 0 ~ 65535の範囲の値を指定して下さい。</sys:String>
+
     <!-- HandTracking -->
     <sys:String x:Key="HandTracking_Header">ハンドトラッキング</sys:String>
     <sys:String x:Key="HandTracking_Instruction" xml:space="preserve">webカメラでのハンドトラッキングです。

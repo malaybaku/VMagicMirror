@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Net;
 using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -20,20 +21,42 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _model = model;
             _motionSettingModel = motionSettingModel;
 
-            IsDirty = new RProperty<bool>(false, _ => UpdateInputValidity());
-            ApplyChangeCommand = new ActionCommand(ApplyChange);
-            RevertChangeCommand = new ActionCommand(RevertChange);
+            IsDirty = new RProperty<bool>(false, _ => UpdateReceiveSettingInputValidity());
+            ApplyChangeCommand = new ActionCommand(ApplyReceiveSettings);
+            RevertChangeCommand = new ActionCommand(RevertReceiveSettingsChange);
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
             FixBodyMotionStyleCommand = new ActionCommand(FixBodyMotionStyle);
 
+
+            ApplySendSettingsCommand = new ActionCommand(ApplySendSettings);
+            RevertSendSettingsCommand = new ActionCommand(RevertSendSettings);
+            OpenFullEditionDownloadUrlCommand = new ActionCommand(OpenFullEditionUrl);
+
+            IsSendSettingsDirty = new RProperty<bool>(false, _ => UpdateSendSettingsValidity());
+            ShowEffectWhenSendEnabled = FeatureLocker.FeatureLocked
+                ? _alwaysTrue
+                : _model.ShowEffectDuringVMCPSendEnabled;
+
+            var sendSetting = _model.GetCurrentSendSetting();
+            SendAddress = new RProperty<string>(sendSetting.SendAddress, _ => SetSendSettingsDirty());
+            SendPort = new RProperty<int>(sendSetting.SendPort, _ => SetSendSettingsDirty());
+            SendBonePose = new RProperty<bool>(sendSetting.SendBonePose, _ => SetSendSettingsDirty());
+            SendFingerBonePose = new RProperty<bool>(sendSetting.SendFingerBonePose, _ => SetSendSettingsDirty());
+            SendFacial = new RProperty<bool>(sendSetting.SendFacial, _ => SetSendSettingsDirty());
+            SendNonStandardFacial = new RProperty<bool>(sendSetting.SendNonStandardFacial, _ => SetSendSettingsDirty());
+            SendUseVrm0Facial = new RProperty<bool>(sendSetting.UseVrm0Facial, _ => SetSendSettingsDirty());
+            SendPrefer30Fps = new RProperty<bool>(sendSetting.Prefer30Fps, _ => SetSendSettingsDirty());
+            ForceToShowVisualEffectWhenSendEnabled = FeatureLocker.FeatureLocked;
+            
+
             if (!IsInDesignMode)
             {
-                LoadCurrentSettings();
+                LoadCurrentReceiveSettings();
                 WeakEventManager<VMCPSettingModel, EventArgs>.AddHandler(
-                    _model, nameof(_model.ConnectedStatusChanged), OnConnectedStatusChanged
+                    _model, nameof(_model.ConnectedStatusChanged), OnReceiveConnectStatusChanged
                     );
                 _model.SerializedVMCPSourceSetting.AddWeakEventHandler(OnSerializedVMCPSourceSettingChanged);
-                ApplyConnectionStatus();
+                ApplyReceiveConnectionStatus();
 
                 _model.VMCPEnabled.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
                 _motionSettingModel.EnableNoHandTrackMode.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
@@ -44,6 +67,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly VMCPSettingModel _model;
         private readonly MotionSettingModel _motionSettingModel;
 
+        // Receive
         public RProperty<bool> IsDirty { get; }
         public RProperty<bool> CanApply { get; } = new(false);
         public RProperty<bool> HasInvalidPortNumber { get; } = new(false);
@@ -58,11 +82,33 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> BodyMotionStyleIncorrectForHandTracking { get; } = new(false);
 
-        public void SetDirty()
+        // Send
+        public RProperty<bool> IsSendSettingsDirty { get; }
+        public RProperty<bool> CanApplySendSettings { get; } = new(false);
+        public RProperty<bool> HasInvalidSendPortNumber { get; } = new(false);
+        public RProperty<bool> HasInvalidSendAddress { get; } = new(false);
+
+        // Sendのうち機能制限に関する部分
+        public bool ForceToShowVisualEffectWhenSendEnabled { get; }
+        public RProperty<bool> ShowEffectWhenSendEnabled { get; }
+        private readonly RProperty<bool> _alwaysTrue = new(true);
+
+        // Sendのうち機能制限とは関係ない部分
+        public RProperty<string> SendAddress { get; }
+        public RProperty<int> SendPort { get; }
+        public RProperty<bool> VMCPSendEnabled => _model.VMCPSendEnabled;
+        public RProperty<bool> SendBonePose { get; }
+        public RProperty<bool> SendFingerBonePose { get; }
+        public RProperty<bool> SendFacial { get; }
+        public RProperty<bool> SendNonStandardFacial { get; }
+        public RProperty<bool> SendUseVrm0Facial { get; }
+        public RProperty<bool> SendPrefer30Fps { get; }
+
+        private void SetReceiveSettingsDirty()
         {
             IsDirty.Value = true;
             //NOTE: Dirtyがtrue -> trueのまま切り替わらない場合でもポート番号のvalidityが変わった可能性があるのでチェックしに行く
-            UpdateInputValidity();
+            UpdateReceiveSettingInputValidity();
         }
         
         public ActionCommand ApplyChangeCommand { get; }
@@ -70,7 +116,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand OpenDocUrlCommand { get; }
         public ActionCommand FixBodyMotionStyleCommand { get; }
 
-        private void UpdateInputValidity()
+        public ActionCommand ApplySendSettingsCommand { get; }
+        public ActionCommand RevertSendSettingsCommand { get; }
+        public ActionCommand OpenFullEditionDownloadUrlCommand { get; }
+
+        private void UpdateReceiveSettingInputValidity()
         {
             HasInvalidPortNumber.Value =
                 Source1.PortNumberIsInvalid.Value ||
@@ -80,19 +130,19 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             CanApply.Value = IsDirty.Value && !HasInvalidPortNumber.Value;
         }
 
-        private void LoadCurrentSettings()
+        private void LoadCurrentReceiveSettings()
         {
-            var sources = _model.GetCurrentSetting().Sources;
+            var sources = _model.GetCurrentReceiveSetting().Sources;
 
             Source1 = new VMCPSourceItemViewModel(
                 sources.Count > 0 ? sources[0] : new VMCPSource(),
-                SetDirty);
+                SetReceiveSettingsDirty);
             Source2 = new VMCPSourceItemViewModel(
                 sources.Count > 1 ? sources[1] : new VMCPSource(),
-                SetDirty);
+                SetReceiveSettingsDirty);
             Source3 = new VMCPSourceItemViewModel(
                 sources.Count > 2 ? sources[2] : new VMCPSource(),
-                SetDirty);
+                SetReceiveSettingsDirty);
 
 
             Source1.Connected.Value = sources.Count > 0 && _model.Connected[0];
@@ -107,14 +157,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         private void OnSerializedVMCPSourceSettingChanged(object? sender, PropertyChangedEventArgs e) 
-            => LoadCurrentSettings();
+            => LoadCurrentReceiveSettings();
 
         private void OnBodyMotionStyleCorrectnessMaybeChanged(object? sender, PropertyChangedEventArgs e)
             => UpdateBodyMotionStyleCorrectness();
 
-        private void OnConnectedStatusChanged(object? sender, EventArgs e) => ApplyConnectionStatus();
+        private void OnReceiveConnectStatusChanged(object? sender, EventArgs e) => ApplyReceiveConnectionStatus();
 
-        private void ApplyConnectionStatus()
+        private void ApplyReceiveConnectionStatus()
         {
             var connected = _model.Connected;
             if (connected.Count < 3)
@@ -126,7 +176,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             Source3.Connected.Value = connected[2];
         }
 
-        private void ApplyChange()
+        private void ApplyReceiveSettings()
         {
             var setting = new VMCPSources(
             [
@@ -139,7 +189,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             IsDirty.Value = false;
         }
 
-        private void RevertChange() => LoadCurrentSettings();
+        private void RevertReceiveSettingsChange() => LoadCurrentReceiveSettings();
 
         private void UpdateBodyMotionStyleCorrectness()
         {
@@ -154,11 +204,67 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 _motionSettingModel.EnableNoHandTrackMode.Value;
         }
 
+        private void SetSendSettingsDirty()
+        {
+            IsSendSettingsDirty.Value = true;
+            //NOTE: Dirtyがtrue -> trueのままでもポート番号のvalidityが変わった可能性があるのでチェックする
+            // (Receiveと同じ考え方)
+            UpdateSendSettingsValidity();
+        }
+
+        private void UpdateSendSettingsValidity()
+        {
+            var port = SendPort.Value;
+
+            // NOTE: Addressについては、Unity側で uOscClient.StartClient が内部的に IPAddress.Parse を使うのと揃えている
+            HasInvalidPortNumber.Value = port < 0 || port > 65535;
+            HasInvalidSendAddress.Value = !IPAddress.TryParse(SendAddress.Value, out _);
+
+            CanApplySendSettings.Value = !HasInvalidPortNumber.Value || !HasInvalidSendAddress.Value;
+        }
+
+
+        private void RevertSendSettings()
+        {
+            var sendSetting = _model.GetCurrentSendSetting();
+            SendAddress.Value = sendSetting.SendAddress;
+            SendPort.Value = sendSetting.SendPort;
+            SendBonePose.Value = sendSetting.SendBonePose;
+            SendFingerBonePose.Value = sendSetting.SendFingerBonePose;
+            SendFacial.Value = sendSetting.SendFacial;
+            SendNonStandardFacial.Value = sendSetting.SendNonStandardFacial;
+            SendUseVrm0Facial.Value = sendSetting.UseVrm0Facial;
+            SendPrefer30Fps.Value = sendSetting.Prefer30Fps;
+            // NOTE: Applyしても変化がない可能性もあるが、それはOK (Model側でSendがガードされるはず)
+            ApplySendSettings();
+        }
+
+        private void ApplySendSettings()
+        {
+            _model.SetVMCPSendSetting(new VMCPSendSetting()
+            {
+                SendAddress = SendAddress.Value,
+                SendPort = SendPort.Value,
+                SendBonePose = SendBonePose.Value,
+                SendFingerBonePose = SendFingerBonePose.Value,
+                SendFacial = SendFacial.Value,
+                SendNonStandardFacial = SendNonStandardFacial.Value,
+                UseVrm0Facial = SendUseVrm0Facial.Value,
+                Prefer30Fps = SendPrefer30Fps.Value,
+            });
+
+            IsSendSettingsDirty.Value = false;
+            CanApplySendSettings.Value = false;
+        }
+
         private void OpenDocUrl()
         {
             var url = LocalizedString.GetString("URL_docs_vmc_protocol");
             UrlNavigate.Open(url);
         }
+
+        private void OpenFullEditionUrl() 
+            => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040");
 
         private void FixBodyMotionStyle()
         {

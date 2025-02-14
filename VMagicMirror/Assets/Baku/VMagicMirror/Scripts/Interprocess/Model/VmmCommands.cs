@@ -231,12 +231,16 @@
         public const string EnableSpoutOutput = nameof(EnableSpoutOutput);
         public const string SetSpoutOutputResolution = nameof(SetSpoutOutputResolution);
         
-        // VMCP
+        // VMCP (recv)
         public const string EnableVMCP = nameof(EnableVMCP);
         public const string SetVMCPSources = nameof(SetVMCPSources);
         public const string SetVMCPNaiveBoneTransfer = nameof(SetVMCPNaiveBoneTransfer);
         public const string SetDisableCameraDuringVMCPActive = nameof(SetDisableCameraDuringVMCPActive);
-        
+
+        // VMCP (send)
+        public const string SetVMCPDestSettings = nameof(SetVMCPDestSettings);
+        public const string EnableVMCPSend = nameof(EnableVMCPSend);
+
         // VRoidHub
         public const string OpenVRoidSdkUi = nameof(OpenVRoidSdkUi);
         public const string RequestLoadVRoidWithId = nameof(RequestLoadVRoidWithId);

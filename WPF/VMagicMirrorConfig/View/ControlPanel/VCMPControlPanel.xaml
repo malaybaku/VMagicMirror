@@ -7,7 +7,7 @@
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="750" d:DesignWidth="550"
+             d:DesignHeight="1250" d:DesignWidth="550"
              >
     <UserControl.DataContext>
         <vm:VMCPControlPanelViewModel />
@@ -180,14 +180,9 @@
                         </StackPanel>
                     </md:Card>
                     
-                </StackPanel>
-            </Border>
-
-            <Border Style="{StaticResource SectionBorder}">
-                <StackPanel Margin="5">
                     <TextBlock Style="{StaticResource HeaderText}"
                                 Text="{DynamicResource VMCP_AdvancedSetting_Header}"
-                                Margin="5,0,5,10"
+                                Margin="5,20,5,10"
                                 />
 
                     <CheckBox Content="{DynamicResource VMCP_AdvancedSetting_NaiveBoneTransfer}"
@@ -199,6 +194,120 @@
                               Margin="15,5"
                               IsChecked="{Binding DisableCameraDuringVMCPActive.Value, Mode=TwoWay}"
                               />
+
+                </StackPanel>
+            </Border>
+
+            <CheckBox Content="{DynamicResource VMCP_Send_Enable}"
+                      Margin="10,10,10,5"
+                      IsChecked="{Binding VMCPEnabled.Value, Mode=TwoWay}"
+                      />
+            <Border Style="{StaticResource SectionBorder}">
+                <StackPanel Margin="5">
+                    <md:ColorZone Mode="Dark"
+                        Margin="-10,5" 
+                        Padding="5"
+                        Visibility="{Binding ForceToShowVisualEffectWhenSendEnabled, 
+                                            Converter={StaticResource BooleanToVisibilityConverter}}"
+                        >
+                        <Grid Margin="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       FontWeight="Bold"
+                                       Text="{DynamicResource VMCP_Send_EditionLimitationNote}"
+                                       TextWrapping="Wrap"
+                                       />
+                            <Button Grid.Column="1" 
+                                        Width="NaN"
+                                    Padding="4"
+                                    VerticalAlignment="Center"
+                                    Margin="5,0"
+                                    Command="{Binding OpenFullEditionDownloadUrlCommand}"
+                                    Content="{DynamicResource HandTracking_GetFullEdition}"
+                                    />
+                        </Grid>
+                    </md:ColorZone>
+                    <TextBlock Style="{StaticResource HeaderText}"
+                                Text="{DynamicResource VMCP_Send_Header}"
+                                Margin="5,10"
+                                />
+                    <CheckBox Margin="15,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_ShowEffectDuringEnabled}" 
+                              IsEnabled="{Binding ForceToShowVisualEffectWhenSendEnabled}"
+                              IsChecked="{Binding ShowEffectWhenSendEnabled.Value}"
+                              />
+
+                    <Grid Margin="15,5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Text="{DynamicResource VMCP_Send_DestAddress}"
+                                   />
+                        <TextBox Grid.Row="0" Grid.Column="1"
+                            Text="{Binding SendAddress.Value}"
+                            md:HintAssist.Hint="127.0.0.1"
+                            />
+                        <TextBlock Grid.Row="0" Grid.Column="2"
+                                   VerticalAlignment="Bottom"
+                                   Foreground="{StaticResource MaterialDesignValidationErrorBrush}"
+                                   Visibility="{Binding HasInvalidSendAddress.Value,
+                                                        Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Text="{DynamicResource VMCP_Send_IpAddressError}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="{DynamicResource VMCP_Send_DestPort}"
+                                   />
+                        <TextBox Grid.Row="1" Grid.Column="1"
+                            Text="{Binding SendPort.Value}"
+                            md:HintAssist.Hint="9000"
+                            />
+                        <TextBlock Grid.Row="1" Grid.Column="2"
+                                   VerticalAlignment="Bottom"
+                                   Foreground="{StaticResource MaterialDesignValidationErrorBrush}"
+                                   Visibility="{Binding HasInvalidSendPortNumber.Value,
+                                                        Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Text="{DynamicResource VMCP_Send_PortInputError}"/>
+
+                    </Grid>
+
+                    <CheckBox Margin="15,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendBone}" 
+                              IsChecked="{Binding SendBonePose.Value}"
+                              />
+                    <CheckBox Margin="35,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendFingerBone}" 
+                              IsEnabled="{Binding SendBonePose.Value}"
+                              IsChecked="{Binding SendFingerBonePose.Value}"
+                              />
+                    <CheckBox Margin="15,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendFacial}" 
+                              IsChecked="{Binding SendFacial.Value}"
+                              />
+                    <CheckBox Margin="35,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendFacialNonStandard}" 
+                              IsEnabled="{Binding SendFacial.Value}"
+                              IsChecked="{Binding SendNonStandardFacial.Value}"
+                              />
+                    <CheckBox Margin="35,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendFacialVrm0}" 
+                              IsEnabled="{Binding SendFacial.Value}"
+                              IsChecked="{Binding SendUseVrm0Facial.Value}"
+                              />
+                    <CheckBox Margin="15,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_Prefer30fps}" 
+                              IsChecked="{Binding SendPrefer30Fps.Value}"
+                              />
+
+
 
                 </StackPanel>
             </Border>

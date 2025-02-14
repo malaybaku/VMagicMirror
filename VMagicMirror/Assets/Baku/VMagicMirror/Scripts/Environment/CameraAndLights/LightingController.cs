@@ -27,10 +27,13 @@ namespace Baku.VMagicMirror
         private VmmVhs _vmmVhs;
         private VmmMonochrome _vmmMonochrome;
         private bool _handTrackingEnabled = false;
-        private bool _vmcpSendEnabled = false;
         //NOTE: この値自体はビルドバージョンによらずfalseがデフォルトで良いことに注意。
-        //制限版でGUI側にtrue相当の値が表示されるが、これはGUI側が別途決め打ちしてくれてる
+        // 制限版でGUI側にtrue相当の値が表示されるが、これはGUI側が別途決め打ちしてくれてる。
+        // ハンドトラッキング以外の条件 (VMCP, サブキャラの一部機能)についても同様
         private bool _showEffectDuringTracking = false;
+
+        private bool _vmcpSendEnabled = false;
+        private bool _showEffectDuringVmcpSendEnabled = false;
 
         private bool _windowFrameVisible = true;
         private bool _enableOutlineEffect = false;
@@ -169,6 +172,13 @@ namespace Baku.VMagicMirror
                     _vmcpSendEnabled = message.ToBoolean();
                     UpdateRetroEffectStatus();
                 });
+            receiver.AssignCommandHandler(
+                VmmCommands.ShowEffectDuringVMCPSendEnabled,
+                message =>
+                {
+                    _showEffectDuringVmcpSendEnabled = message.ToBoolean();
+                    UpdateRetroEffectStatus();
+                });
         }
         
         private void Start()
@@ -290,9 +300,9 @@ namespace Baku.VMagicMirror
         
         private void UpdateRetroEffectStatus()
         {
-            var enableEffect = 
-                (_handTrackingEnabled || _vmcpSendEnabled) &&
-                (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking);
+            var enableEffect =
+                (_handTrackingEnabled && (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking)) ||
+                (_vmcpSendEnabled && (FeatureLocker.IsFeatureLocked || _showEffectDuringVmcpSendEnabled));
 
             _vmmMonochrome.active = enableEffect;
             _vmmVhs.active = enableEffect;

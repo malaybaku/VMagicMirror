@@ -125,3 +125,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   oscServerPrefab: {fileID: 3003734258558408633, guid: 7cdb979d19b20e24cac0434a12ce0484,
     type: 3}
+  oscClientPrefab: {fileID: 4695339249747742599, guid: 5581e835d84347e4884df973878fb653,
+    type: 3}

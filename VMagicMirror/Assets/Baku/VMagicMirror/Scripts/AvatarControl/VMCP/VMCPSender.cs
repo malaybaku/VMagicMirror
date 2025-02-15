@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UniRx;
@@ -121,11 +122,7 @@ namespace Baku.VMagicMirror.VMCP
 
             _receiver.AssignCommandHandler(
                 VmmCommands.SetVMCPSendSettings,
-                c =>
-                {
-                    SetVmcpSendSettings(c.Content);
-                    ActivateIfNeeded();
-                });
+                c => SetVmcpSendSettings(c.Content));
 
             _sendEnabled.Subscribe(SetActive).AddTo(this);
         }
@@ -184,7 +181,12 @@ namespace Baku.VMagicMirror.VMCP
                 return false;
             }
 
-            // NOTE: IPAddressとしての正当性とかまでは見ないで通してしまう (そこはuOSCに押し付けておく)
+            // NOTE: uOscClientも内部的にIPAddress.Parseするので、それに準ずる形
+            if (!IPAddress.TryParse(_settings.SendAddress, out _))
+            {
+                return false;
+            }
+
             return true;
         }
         
@@ -210,23 +212,6 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
-        private void ActivateIfNeeded()
-        {
-            if (_oscClient.isRunning || !_sendEnabled.Value || !HasValidSettings())
-            {
-                return;
-            }
-
-            try
-            {
-                Activate();
-            }
-            catch (Exception ex)
-            {
-                LogOutput.Instance.Write(ex);
-            }
-        }
-
         private void Activate()
         {
             _oscClient.address = _settings.SendAddress;
@@ -243,6 +228,18 @@ namespace Baku.VMagicMirror.VMCP
             {
                 var settings = JsonUtility.FromJson<VmcProtocolSendSettings>(json);
                 _settings = settings;
+
+                if (_oscClient.isRunning && HasValidSettings())
+                {
+                    // 起動中のOscClientの送信先だけ更新し、タスクは動いたままにする
+                    _oscClient.address = _settings.SendAddress;
+                    _oscClient.port = _settings.SendPort;
+                }
+                else if (_sendEnabled.Value && !_oscClient.isRunning)
+                {
+                    // 設定が無効→有効に切り替わるとここを通過する。この場合、タスク自体も走らせ直す
+                    Activate();
+                }
             }
             catch (Exception ex)
             {
@@ -257,11 +254,11 @@ namespace Baku.VMagicMirror.VMCP
             // (可能性がある場合、例外時に続行する方に寄せるべきか考えたいので)
             while (!cancellationToken.IsCancellationRequested)
             {
-                await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
+                await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate, cancellationToken);
                 // NOTE: 一応 >= で判定しているが、VMMのtargetFrameRateは30 or 60しか取らない想定
                 if (Application.targetFrameRate >= 60 && _settings.Prefer30Fps)
                 {
-                    await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
+                    await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate, cancellationToken);
                 }
 
                 if (!_isLoaded)
@@ -269,7 +266,6 @@ namespace Baku.VMagicMirror.VMCP
                     continue;
                 }
                 
-                //TODOかも: BundleにPose + Facial両方押し込む説あるかも？
                 if (_settings.SendBonePose && CanSendPose())
                 {
                     SendBonePoses(_settings.SendFingerBonePose);
@@ -287,14 +283,13 @@ namespace Baku.VMagicMirror.VMCP
         private void SendBonePoses(bool sendFingerBone)
         {
             var bundle = new Bundle();
-            // VMMではRoot自体は動かない
-            // TODO: ※Root自体は動かないはず…だが、ゲーム入力中にRootごと回してるかもしれないので、ゲーム入力モードだけきちんと見たほうがいい
+            // NOTE: VMMではRootは普段動かないことが多いが、ゲーム入力モードではRootが回転したりする
             var root= _animator.transform;
             var rootPos = root.position;
             var rootRot = root.rotation;
             bundle.Add(new uOSC.Message(
                 "/VMC/Ext/Root/Pos", 
-                rootPos.x, rootPos.y, rootPos.z, rootRot.x, rootRot.y, rootRot.z, rootRot.w
+                "", rootPos.x, rootPos.y, rootPos.z, rootRot.x, rootRot.y, rootRot.z, rootRot.w
                 ));
 
             var lastBoneInclusive = sendFingerBone
@@ -308,9 +303,22 @@ namespace Baku.VMagicMirror.VMCP
                 }
 
                 var bone = _boneTransforms[i];
-                bundle.Add(BonePoseMessage(
-                    BoneNames[i], bone.localPosition, bone.localRotation
+                if (i == (int)HumanBodyBones.Hips)
+                {
+                    // 「Hipsのローカル姿勢 == Rootから見た姿勢」に明示的に計算する。
+                    // こうしないとゲーム入力モードのジャンプ/しゃがみとかでHipsが動いたのを反映できないため
+                    var hipsLocalPosition = root.InverseTransformPoint(bone.position);
+                    var hipsLocalRotation = Quaternion.Inverse(rootRot) * bone.rotation;
+                    bundle.Add(BonePoseMessage(
+                        BoneNames[i], hipsLocalPosition, hipsLocalRotation
                     ));
+                }
+                else
+                {
+                    bundle.Add(BonePoseMessage(
+                        BoneNames[i], bone.localPosition, bone.localRotation
+                    ));
+                }
             }
 
             _oscClient.Send(bundle);

@@ -7,13 +7,14 @@
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="1250" d:DesignWidth="550"
+             d:DesignHeight="1450" d:DesignWidth="550"
              >
     <UserControl.DataContext>
         <vm:VMCPControlPanelViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <view:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
         <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
         <view:BooleanToForegroundConverter x:Key="BooleanToForegroundConverter"/>
     </UserControl.Resources>
@@ -200,7 +201,7 @@
 
             <CheckBox Content="{DynamicResource VMCP_Send_Enable}"
                       Margin="10,10,10,5"
-                      IsChecked="{Binding VMCPEnabled.Value, Mode=TwoWay}"
+                      IsChecked="{Binding VMCPSendEnabled.Value, Mode=TwoWay}"
                       />
             <Border Style="{StaticResource SectionBorder}">
                 <StackPanel Margin="5">
@@ -236,7 +237,8 @@
                                 />
                     <CheckBox Margin="15,0,10,0" 
                               Content="{DynamicResource VMCP_Send_ShowEffectDuringEnabled}" 
-                              IsEnabled="{Binding ForceToShowVisualEffectWhenSendEnabled}"
+                              IsEnabled="{Binding ForceToShowVisualEffectWhenSendEnabled,
+                                                  Converter={StaticResource BooleanReverseConverter}}"
                               IsChecked="{Binding ShowEffectWhenSendEnabled.Value}"
                               />
 
@@ -306,6 +308,36 @@
                               Content="{DynamicResource VMCP_Send_Prefer30fps}" 
                               IsChecked="{Binding SendPrefer30Fps.Value}"
                               />
+
+                    <TextBlock Text="{DynamicResource VMCP_ShouldApply}"
+                               FontWeight="Bold"
+                               Margin="15,15,15,0"
+                               Visibility="{Binding CanApplySendSettings.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               />
+
+                    <StackPanel Orientation="Horizontal"
+                        Margin="0,10,0,5" 
+                        IsEnabled="{Binding VMCPEnabled}">
+
+                        <Button Padding="0"
+                                MinWidth="130"
+                                Margin="5,0"
+                                HorizontalAlignment="Right"
+                                IsEnabled="{Binding CanApplySendSettings.Value}"
+                                Command="{Binding ApplySendSettingsCommand}"
+                                Content="{DynamicResource VMCP_Apply}"
+                                />
+
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Padding="0"
+                                MinWidth="130"
+                                Margin="10,0"
+                                HorizontalAlignment="Right"
+                                Command="{Binding RevertSendSettingsCommand}"
+                                Content="{DynamicResource VMCP_Revert}"
+                                />
+
+                    </StackPanel>
 
 
 

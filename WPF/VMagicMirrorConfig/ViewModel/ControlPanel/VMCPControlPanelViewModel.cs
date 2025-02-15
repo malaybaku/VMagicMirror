@@ -60,7 +60,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
                 _model.VMCPEnabled.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
                 _motionSettingModel.EnableNoHandTrackMode.AddWeakEventHandler(OnBodyMotionStyleCorrectnessMaybeChanged);
+
+                _model.SerializedVMCPSendSetting.AddWeakEventHandler(OnSerializedVMCPSendSettingChanged);
                 UpdateBodyMotionStyleCorrectness();
+
+                UpdateSendSettingsValidity();
             }
         }
 
@@ -164,6 +168,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void OnReceiveConnectStatusChanged(object? sender, EventArgs e) => ApplyReceiveConnectionStatus();
 
+        private void OnSerializedVMCPSendSettingChanged(object? sender, PropertyChangedEventArgs e)
+            => LoadCurrentSendSettings();
+
         private void ApplyReceiveConnectionStatus()
         {
             var connected = _model.Connected;
@@ -217,14 +224,16 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             var port = SendPort.Value;
 
             // NOTE: Addressについては、Unity側で uOscClient.StartClient が内部的に IPAddress.Parse を使うのと揃えている
-            HasInvalidPortNumber.Value = port < 0 || port > 65535;
+            HasInvalidSendPortNumber.Value = port < 0 || port > 65535;
             HasInvalidSendAddress.Value = !IPAddress.TryParse(SendAddress.Value, out _);
 
-            CanApplySendSettings.Value = !HasInvalidPortNumber.Value || !HasInvalidSendAddress.Value;
+            CanApplySendSettings.Value = !HasInvalidSendPortNumber.Value && !HasInvalidSendAddress.Value;
         }
 
 
-        private void RevertSendSettings()
+        private void RevertSendSettings() => LoadCurrentSendSettings();
+
+        private void LoadCurrentSendSettings()
         {
             var sendSetting = _model.GetCurrentSendSetting();
             SendAddress.Value = sendSetting.SendAddress;

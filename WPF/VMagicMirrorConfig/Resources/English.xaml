@@ -771,8 +771,8 @@ You can revert this setting from current tab.</sys:String>
 
     <sys:String x:Key="DialogTitle_DisableVMCPTab">Hide VMC Protocol Tab</sys:String>
     <sys:String x:Key="DialogMessage_DisableVMCPTab" xml:space="preserve">Continue to hide VMCP tab on the main control panel window.
-If VMCP data receive is active, it will stop by this operation.
-VMCP receive settings is kept after the tab hidden.</sys:String>     
+This operation will disable VMCP data send and receive if they are active.
+Detailed settings about VMCP send and receive is kept after the tab is hidden.</sys:String>     
     
     <!-- Snackbar Messages -->
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>

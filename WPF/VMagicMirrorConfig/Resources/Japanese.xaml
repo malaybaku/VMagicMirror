@@ -825,8 +825,8 @@ webカメラでの顔トラッキングを有効にする場合は
     <sys:String x:Key="DialogMessage_EnableVMCPTab">続行するとメインの設定ウィンドウに「VMCP」タブが追加されます。この変更はもとに戻す事ができます。</sys:String>    
 
     <sys:String x:Key="DialogTitle_DisableVMCPTab">VMC Protocolの設定を非表示</sys:String>
-    <sys:String x:Key="DialogMessage_DisableVMCPTab" xml:space="preserve">続行するとメインの設定ウィンドウから「VMCP」タブを非表示にします。
-VMCPのデータが受信中の場合、この操作で受信機能はオフになります。
+    <sys:String x:Key="DialogMessage_DisableVMCPTab" xml:space="preserve">続行すると、メインの設定ウィンドウから「VMCP」タブを非表示にします。
+VMCPのデータを送受信中の場合、この操作をすることで送受信はオフになります。
 それ以外の詳細設定は保持されます。</sys:String>    
 
     <!-- Snackbar Messages -->

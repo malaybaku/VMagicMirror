@@ -33,12 +33,12 @@ namespace Baku.VMagicMirrorConfig
                 setting.VMCPSendEnabled,
                 v => SendMessage(MessageFactory.Instance.EnableVMCPSend(v))
                 );
-            SerializedSendSetting = new(                
+            SerializedVMCPSendSetting = new(                
                 setting.SerializedVMCPSendSetting,
                 v => SendMessage(MessageFactory.Instance.SetVMCPSendSettings(v))
                 );
             ShowEffectDuringVMCPSendEnabled = new(
-                setting.ShowEffectDuringSendEnabled,
+                setting.ShowEffectDuringVMCPSendEnabled,
                 v => SendMessage(MessageFactory.Instance.ShowEffectDuringVMCPSendEnabled(v))
                 );
 
@@ -57,7 +57,7 @@ namespace Baku.VMagicMirrorConfig
 
         // 送信系のプロパティ: 送信のほうがシンプル
         public RProperty<bool> VMCPSendEnabled { get; }
-        public RProperty<string> SerializedSendSetting { get; }
+        public RProperty<string> SerializedVMCPSendSetting { get; }
         public RProperty<bool> ShowEffectDuringVMCPSendEnabled { get; }
 
         public event EventHandler? ConnectedStatusChanged;
@@ -91,13 +91,13 @@ namespace Baku.VMagicMirrorConfig
         public VMCPSendSetting GetCurrentSendSetting()
         {
             return SerializedVMCPSendSettings
-                .FromJson(SerializedSendSetting.Value)
+                .FromJson(SerializedVMCPSendSetting.Value)
                 .ToSetting();
         }
 
         public void SetVMCPSendSetting(VMCPSendSetting setting)
         {
-            SerializedSendSetting.Value = SerializedVMCPSendSettings.FromSetting(setting).ToJson();
+            SerializedVMCPSendSetting.Value = SerializedVMCPSendSettings.FromSetting(setting).ToJson();
         }
 
         public override void ResetToDefault()
@@ -108,8 +108,8 @@ namespace Baku.VMagicMirrorConfig
             DisableCameraDuringVMCPActive.Value = defaultSetting.DisableCameraDuringVMCPActive;
 
             VMCPEnabled.Value = defaultSetting.VMCPEnabled;
-            SerializedSendSetting.Value = defaultSetting.SerializedVMCPSendSetting;
-            ShowEffectDuringVMCPSendEnabled.Value = defaultSetting.ShowEffectDuringSendEnabled;
+            SerializedVMCPSendSetting.Value = defaultSetting.SerializedVMCPSendSetting;
+            ShowEffectDuringVMCPSendEnabled.Value = defaultSetting.ShowEffectDuringVMCPSendEnabled;
         }
     }
 }

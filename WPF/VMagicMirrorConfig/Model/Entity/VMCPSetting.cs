@@ -11,8 +11,8 @@
         // Send
         public bool VMCPSendEnabled { get; set; }
         public string SerializedVMCPSendSetting { get; set; } = "";
-        public bool ShowEffectDuringSendEnabled { get; set; } = false;
-
+        public bool ShowEffectDuringVMCPSendEnabled { get; set; } = false;
+        
         public void Reset()
         {
             VMCPEnabled = false;
@@ -22,7 +22,7 @@
 
             VMCPSendEnabled = false;
             SerializedVMCPSendSetting = "";
-            ShowEffectDuringSendEnabled = false;
+            ShowEffectDuringVMCPSendEnabled = false;
         }
 
         //使用者側が書き換えない前提でラフに公開してる

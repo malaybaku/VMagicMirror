@@ -63,9 +63,9 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly RootApi _api;
 
-        private readonly AvatarLoadApiImplement _avatarLoadApi;
+        private readonly AvatarLoadApiImplement _avatarLoad;
         private readonly AvatarMotionEventApiImplement _avatarMotionEvent;
-        private readonly AvatarFacialApiImplement _avatarFacialApi;
+        private readonly AvatarFacialApiImplement _avatarFacial;
 
         private readonly Queue<BuddyCallbackItem> _callbackQueue = new();
         private readonly CancellationTokenSource _cts = new();
@@ -75,12 +75,15 @@ namespace Baku.VMagicMirror.Buddy
         
         public ScriptEventInvoker(
             RootApi api,
-            AvatarMotionEventApiImplement inputEventApiImplement,
-            AvatarLoadApiImplement avatarLoadApi)
+            AvatarLoadApiImplement avatarLoad,
+            AvatarMotionEventApiImplement avatarMotionEvent,
+            AvatarFacialApiImplement avatarFacial
+            )
         {
             _api = api;
-            _avatarMotionEvent = inputEventApiImplement;
-            _avatarLoadApi = avatarLoadApi;
+            _avatarLoad = avatarLoad;
+            _avatarMotionEvent = avatarMotionEvent;
+            _avatarFacial = avatarFacial;
         }
         
         //NOTE: 下記のInitializeと本クラスのDisposeはScriptCallerから明示的に呼ばれるのが期待値
@@ -90,8 +93,8 @@ namespace Baku.VMagicMirror.Buddy
             // (Buddyが増えたときにSubscribeの総量が絞りやすい)
          
             //TODO: Unloadが遅延発火することあるの難しいな… / Loadedは遅延しても害が少ないから良い気がするけども
-            ConnectNoArgFunc(_avatarLoadApi.Loaded, () => _api.AvatarLoadEvent.Loaded);
-            ConnectNoArgFunc(_avatarLoadApi.Unloaded, () => _api.AvatarLoadEvent.UnLoaded);
+            ConnectNoArgFunc(_avatarLoad.Loaded, () => _api.AvatarLoadEvent.Loaded);
+            ConnectNoArgFunc(_avatarLoad.Unloaded, () => _api.AvatarLoadEvent.UnLoaded);
             
             ConnectOneArgFunc(
                 _avatarMotionEvent.KeyboardKeyDown,
@@ -118,7 +121,7 @@ namespace Baku.VMagicMirror.Buddy
             );
             
             ConnectNoArgFunc(
-                _avatarFacialApi.Blinked,
+                _avatarFacial.Blinked,
                 () => _api.AvatarFacial.OnBlinked
                 );
             

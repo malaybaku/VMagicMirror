@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Baku.VMagicMirror.Buddy;
 using UnityEngine.Scripting;
 
 namespace Baku.VMagicMirror.Buddy.Api

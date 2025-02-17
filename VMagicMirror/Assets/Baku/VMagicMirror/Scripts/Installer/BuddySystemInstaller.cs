@@ -19,9 +19,9 @@ namespace Baku.VMagicMirror
             Container.BindInterfacesTo<BuddyPropertyUpdater>().AsSingle();
             Container.BindInterfacesTo<BuddyLayoutUpdater>().AsSingle();
 
-            Container.BindInterfacesTo<ScriptCallerRegisterer>().AsSingle();
             Container.BindInterfacesTo<BuddyLayoutEditNotifier>().AsSingle();
 
+            Container.Bind<ApiImplementBundle>().AsSingle();
             Container.BindInterfacesAndSelfTo<AvatarMotionEventApiImplement>().AsSingle();
             Container.Bind<AvatarFacialApiImplement>().AsSingle();
             Container.Bind<AvatarLoadApiImplement>().AsSingle();

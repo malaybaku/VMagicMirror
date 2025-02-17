@@ -26,9 +26,12 @@ namespace Baku.VMagicMirror.Buddy.Api
         public IObservable<Sprite2DApi> SpriteCreated => _spriteCreated;
         
         private readonly string _baseDir;
-        public RootApi(string baseDir)
+        
+        public RootApi(string baseDir, string buddyId, ApiImplementBundle apiImplementBundle)
         {
             _baseDir = baseDir;
+            AvatarFacial = new AvatarFacialApi(apiImplementBundle.FacialApi);
+            Property = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
         }
 
         internal void Dispose()
@@ -44,13 +47,15 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
-        [Preserve]
-        public PropertyApi Property { get; internal set; } = null;
-        [Preserve]
-        public TransformsApi Transforms { get; internal set; } = null;
+        [Preserve] public PropertyApi Property { get; } = null;
+        [Preserve] public TransformsApi Transforms { get; internal set; } = null;
 
-        [Preserve]
-        public AvatarMotionEventApi AvatarMotionEvent { get; } = new();
+        [Preserve] public AvatarLoadEventApi AvatarLoadEvent { get; } = new();
+        [Preserve] public AvatarMotionEventApi AvatarMotionEvent { get; } = new();
+
+        [Preserve] public AvatarFacialApi AvatarFacial { get; }
+
+        
         
         [Preserve]
         public void Log(string value)

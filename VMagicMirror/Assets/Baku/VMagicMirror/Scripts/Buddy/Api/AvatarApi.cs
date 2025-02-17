@@ -4,13 +4,12 @@ using UnityEngine.Scripting;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class AvatarApi
+    public class AvatarLoadEventApi
     {
-        public AvatarBodyParameterApi BodyParameter { get; } = new();
-        public AvatarFacialApi Facial { get; } = new();
-        public AvatarPoseApi Pose { get; } = new();
+        [Preserve] public LuaFunction Loaded { get; set; }
+        [Preserve] public LuaFunction UnLoaded { get; set; }
     }
-
+    
     public class AvatarBodyParameterApi
     {
         //TODO: 身長っぽい値とか？
@@ -19,9 +18,20 @@ namespace Baku.VMagicMirror.Buddy.Api
     
     public class AvatarFacialApi
     {
-        public string CurrentFacial => "";
-        public bool HasClip(string name) => false;
-        
+        private readonly AvatarFacialApiImplement _impl;
+        public AvatarFacialApi(AvatarFacialApiImplement impl)
+        {
+            _impl = impl;
+        }
+
+        [Preserve] public string CurrentFacial => _impl.GetUserOperationActiveBlendShape()?.ToString() ?? "";
+        [Preserve] public bool IsTalking => _impl.IsTalking.Value;
+        [Preserve] public bool UsePerfectSync => _impl.UsePerfectSync;
+        [Preserve] public LuaFunction OnBlinked { get; set; }
+
+        [Preserve] public bool HasClip(string name, bool customKey) => _impl.HasKey(name, customKey);
+        [Preserve] public float GetCurrentValue(string name, bool customKey) => _impl.GetBlendShapeValue(name, customKey);
+        [Preserve] public string GetActiveFaceSwitch() => _impl.GetActiveFaceSwitch();
     }
 
     public class AvatarPoseApi
@@ -37,7 +47,12 @@ namespace Baku.VMagicMirror.Buddy.Api
 
     public class AvatarMotionEventApi
     {
-        [Preserve]
-        public LuaFunction OnKeyboardKeyDown { get; set; }
+        [Preserve] public LuaFunction OnKeyboardKeyDown { get; set; }
+        
+        [Preserve] public LuaFunction OnTouchPadMouseButtonDown { get; set; }
+        [Preserve] public LuaFunction OnPenTabletMouseButtonDown { get; set; }
+
+        [Preserve] public LuaFunction OnGamepadButtonDown { get; set; }
+        [Preserve]public LuaFunction OnArcadeStickButtonDown { get; set; }
     }
 }

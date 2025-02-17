@@ -32,6 +32,7 @@ namespace Baku.VMagicMirror.Buddy
         public ScriptCaller(
             string entryScriptPath,
             BuddySpriteCanvas spriteCanvas,
+            ApiImplementBundle apiImplementBundle,
             IFactory<RootApi, ScriptEventInvoker> scriptEventInvokerFactory
             )
         {
@@ -39,7 +40,7 @@ namespace Baku.VMagicMirror.Buddy
             EntryScriptDirectory = Path.GetDirectoryName(entryScriptPath);
             BuddyId = Path.GetFileName(EntryScriptDirectory);
             _spriteCanvas = spriteCanvas;
-            Api = new RootApi(EntryScriptDirectory);
+            Api = new RootApi(EntryScriptDirectory, BuddyId, apiImplementBundle);
             _lua = new Lua();
             
             // readonlyにできると嬉しいのでここでやっているが、問題があればInitialize()の中とかで初期化してもよい
@@ -110,7 +111,6 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
 
-        public void SetPropertyApi(PropertyApi api) => Api.Property = api;
         public void SetTransformsApi(TransformsApi api) => Api.Transforms = api;
 
         // TODO: Scriptのメイン処理ではない(3DイラストとかVRMまでここに書いてたら手に負えない)のでコードの置き場所は考える

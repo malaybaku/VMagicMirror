@@ -80,6 +80,7 @@ namespace Baku.VMagicMirror.VMCP
         private readonly IMessageReceiver _receiver;
         private readonly IVRMLoadable _vrmLoadable;
         private readonly BodyMotionModeController _bodyMotionModeController;
+        private readonly EyeBoneAngleSetter _eyeBoneAngleSetter;
         private readonly ExpressionAccumulator _expressionAccumulator;
         private readonly IFactory<uOscClient> _oscClientFactory;
 
@@ -100,12 +101,14 @@ namespace Baku.VMagicMirror.VMCP
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
             BodyMotionModeController bodyMotionModeController,
+            EyeBoneAngleSetter eyeBoneAngleSetter,
             ExpressionAccumulator expressionAccumulator,
             IFactory<uOscClient> oscClientFactory)
         {
             _receiver = receiver;
             _vrmLoadable = vrmLoadable;
             _bodyMotionModeController = bodyMotionModeController;
+            _eyeBoneAngleSetter = eyeBoneAngleSetter;
             _expressionAccumulator = expressionAccumulator;
             _oscClientFactory = oscClientFactory;
         }
@@ -311,6 +314,19 @@ namespace Baku.VMagicMirror.VMCP
                     var hipsLocalRotation = Quaternion.Inverse(rootRot) * bone.rotation;
                     bundle.Add(BonePoseMessage(
                         BoneNames[i], hipsLocalPosition, hipsLocalRotation
+                    ));
+                }
+                else if (i == (int)HumanBodyBones.LeftEye)
+                {
+                    //NOTE: 目ボーンだけはControlRigを無視して制御しているので、その制御結果を明示的に持ってくる
+                    bundle.Add(BonePoseMessage(
+                        BoneNames[i], bone.localPosition, _eyeBoneAngleSetter.LeftEyeLocalRotation
+                    ));
+                }
+                else if (i == (int)HumanBodyBones.RightEye)
+                {
+                    bundle.Add(BonePoseMessage(
+                        BoneNames[i], bone.localPosition, _eyeBoneAngleSetter.RightEyeLocalRotation
                     ));
                 }
                 else

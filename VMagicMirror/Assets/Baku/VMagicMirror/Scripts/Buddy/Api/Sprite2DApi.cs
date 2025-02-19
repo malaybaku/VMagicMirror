@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Scripting;
+using Object = UnityEngine.Object;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
@@ -44,6 +46,12 @@ namespace Baku.VMagicMirror.Buddy.Api
         internal bool IsActive { get; private set; } = true;
         
         private readonly Dictionary<string, Texture2D> _textures = new();
+
+        [Preserve]
+        public void SetPosition(Vector2 position)
+        {
+            throw new NotImplementedException();
+        }
 
         [Preserve]
         public Vector2 Position { get; set; }
@@ -142,11 +150,11 @@ namespace Baku.VMagicMirror.Buddy.Api
                 return true;
             }
 
-            if (!ApiUtils.IsChildDirectory(SpecialFiles.BuddyRootDirectory, fullPath))
+            if (!ApiUtils.IsInBuddyDirectory(fullPath))
             {
                 if (!_pathInvalidErrorLogged)
                 {
-                    LogOutput.Instance.Write("Specified path is not in SubCharacter directory: " + fullPath);
+                    LogOutput.Instance.Write("Specified path is not in Buddy directory: " + fullPath);
                 }
                 _pathInvalidErrorLogged = true;
                 return false;

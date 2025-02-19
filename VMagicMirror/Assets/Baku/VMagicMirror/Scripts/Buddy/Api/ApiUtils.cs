@@ -16,6 +16,14 @@ namespace Baku.VMagicMirror.Buddy.Api
             return file.StartsWith(dir, StringComparison.InvariantCultureIgnoreCase);
         }
 
+        /// <summary>
+        /// 指定したファイルがBuddyフォルダ内のファイルかどうかを判定する
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static bool IsInBuddyDirectory(string file)
+            => IsChildDirectory(SpecialFiles.BuddyRootDirectory, file);
+
         public static void Try(Action act)
         {
             try

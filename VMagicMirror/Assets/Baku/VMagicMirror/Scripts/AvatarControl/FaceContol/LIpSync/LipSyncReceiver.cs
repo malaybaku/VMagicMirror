@@ -1,4 +1,5 @@
 ﻿using System;
+using Baku.VMagicMirror.Buddy;
 using Baku.VMagicMirror.VMCP;
 using UniRx;
 using UnityEngine;
@@ -17,23 +18,23 @@ namespace Baku.VMagicMirror
         private AnimMorphEasedTarget _animMorphEasedTarget;
         private LipSyncIntegrator _lipSyncIntegrator;
         private VMCPBlendShape _vmcpBlendShape;
+        private AvatarFacialApiImplement _buddyAvatarFacialApi;
 
-        private readonly ReactiveProperty<string> _deviceName = new ReactiveProperty<string>("");
-        private readonly ReactiveProperty<bool> _isLipSyncActive = new ReactiveProperty<bool>(true);
-        private readonly ReactiveProperty<bool> _isExTrackerActive = new ReactiveProperty<bool>(false);
-        private readonly ReactiveProperty<bool> _isExTrackerLipSyncActive = new ReactiveProperty<bool>(true);
+        private readonly ReactiveProperty<string> _deviceName = new("");
+        private readonly ReactiveProperty<bool> _isLipSyncActive = new(true);
+        private readonly ReactiveProperty<bool> _isExTrackerActive = new(false);
+        private readonly ReactiveProperty<bool> _isExTrackerLipSyncActive = new(true);
 
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
-            VMCPBlendShape vmcpBlendShape)
+            VMCPBlendShape vmcpBlendShape,
+            AvatarFacialApiImplement buddyAvatarFacialApi)
         {
             _vmcpBlendShape = vmcpBlendShape;
+            _buddyAvatarFacialApi = buddyAvatarFacialApi;
 
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableLipSync,
-                message => SetLipSyncEnable(message.ToBoolean())
-            );
+            receiver.BindBoolProperty(VmmCommands.EnableLipSync, _isLipSyncActive);
             receiver.AssignCommandHandler(
                 VmmCommands.SetMicrophoneDeviceName,
                 message => SetMicrophoneDeviceName(message.Content)
@@ -42,14 +43,8 @@ namespace Baku.VMagicMirror
                 VmmCommands.SetMicrophoneSensitivity,
                 message => SetMicrophoneSensitivity(message.ToInt())
                 );
-            receiver.AssignCommandHandler(
-                VmmCommands.ExTrackerEnable,
-                message => SetExTrackerEnable(message.ToBoolean())
-            );
-            receiver.AssignCommandHandler(
-                VmmCommands.ExTrackerEnableLipSync,
-                message => SetExTrackerLipSyncEnable(message.ToBoolean())
-            );
+            receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _isExTrackerActive);
+            receiver.BindBoolProperty(VmmCommands.ExTrackerEnableLipSync, _isExTrackerLipSyncActive);
 
             receiver.AssignQueryHandler(
                 VmmQueries.CurrentMicrophoneDeviceName,
@@ -74,7 +69,8 @@ namespace Baku.VMagicMirror
                 _isExTrackerActive,
                 _isExTrackerLipSyncActive,
                 _vmcpBlendShape.IsActive,
-                (a, b, c, d, e) => Unit.Default
+                _buddyAvatarFacialApi.RequireMicrophoneRecording,
+                (a, b, c, d, e, f) => Unit.Default
                 )
                 .Skip(1)
                 .Subscribe(_ => RefreshMicrophoneLipSyncStatus())
@@ -84,10 +80,7 @@ namespace Baku.VMagicMirror
         //[dB]単位であることに注意
         private void SetMicrophoneSensitivity(int sensitivity) => _lipSyncContext.Sensitivity = sensitivity;
 
-        private void SetLipSyncEnable(bool isEnabled) => _isLipSyncActive.Value = isEnabled;
         private void SetMicrophoneDeviceName(string deviceName) => _deviceName.Value = deviceName;
-        private void SetExTrackerEnable(bool enable) => _isExTrackerActive.Value = enable;
-        private void SetExTrackerLipSyncEnable(bool enable) => _isExTrackerLipSyncActive.Value = enable;
 
         private void RefreshMicrophoneLipSyncStatus()
         {
@@ -95,9 +88,11 @@ namespace Baku.VMagicMirror
             _lipSyncContext.StopRecording();
 
             var shouldStartReceive =
-                !_vmcpBlendShape.IsActive.Value && 
-                _isLipSyncActive.Value &&
-                !(_isExTrackerActive.Value && _isExTrackerLipSyncActive.Value);
+                _buddyAvatarFacialApi.RequireMicrophoneRecording.Value || (
+                    !_vmcpBlendShape.IsActive.Value && 
+                    _isLipSyncActive.Value &&
+                    !(_isExTrackerActive.Value && _isExTrackerLipSyncActive.Value)
+                );
 
             _animMorphEasedTarget.ShouldReceiveData = shouldStartReceive;
             _lipSyncIntegrator.PreferExternalTrackerLipSync = _isExTrackerActive.Value && _isExTrackerLipSyncActive.Value;

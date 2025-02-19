@@ -11,33 +11,35 @@ namespace Baku.VMagicMirror.Buddy
             AvatarFacialApiImplement facialApi,
             AvatarPoseApiImplement poseApi,
             AvatarMotionEventApiImplement motionEventApi,
-            CameraApiImplement cameraApi,
             DeviceLayoutApiImplement deviceLayoutApi,
-            RawInputApiImplement rawInputApi,
-            WordToMotionEventApiImplement wordToMotionEventApi
+            InputApiImplement rawInputApi,
+            WordToMotionEventApiImplement wordToMotionEventApi,
+            AudioApiImplement audioApi,
+            ScreenApiImplement screenApi
         )
         {
             BuddyPropertyRepository = buddyPropertyRepository;
-            LoadApi = loadApi;
-            FacialApi = facialApi;
-            PoseApi = poseApi;
-            MotionEventApi = motionEventApi;
-            CameraApi = cameraApi;
+            AvatarLoadApi = loadApi;
+            AvatarFacialApi = facialApi;
+            AvatarPoseApi = poseApi;
+            AvatarMotionEventApi = motionEventApi;
             DeviceLayoutApi = deviceLayoutApi;
             RawInputApi = rawInputApi;
             WordToMotionEventApi = wordToMotionEventApi;
+            AudioApi = audioApi;
+            ScreenApi = screenApi;
         }
         
         // SpriteCanvasとかもここに帰着できる方が体裁が良いかも
         public BuddyPropertyRepository BuddyPropertyRepository { get; }
-        public AvatarLoadApiImplement LoadApi { get; }
-        public AvatarFacialApiImplement FacialApi { get; }
-        public AvatarPoseApiImplement PoseApi { get; }
-        public AvatarMotionEventApiImplement MotionEventApi { get; }
-        public CameraApiImplement CameraApi { get; }
+        public AvatarLoadApiImplement AvatarLoadApi { get; }
+        public AvatarFacialApiImplement AvatarFacialApi { get; }
+        public AvatarPoseApiImplement AvatarPoseApi { get; }
+        public AvatarMotionEventApiImplement AvatarMotionEventApi { get; }
         public DeviceLayoutApiImplement DeviceLayoutApi { get; }
-        public RawInputApiImplement RawInputApi { get; }
+        public InputApiImplement RawInputApi { get; }
         public WordToMotionEventApiImplement WordToMotionEventApi { get; }
-
+        public AudioApiImplement AudioApi { get; }
+        public ScreenApiImplement ScreenApi { get; }
     }
 }

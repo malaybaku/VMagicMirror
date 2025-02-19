@@ -22,6 +22,7 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private StartupLoadingCover loadingCoverController = null;
 
         [SerializeField] private BuddySpriteCanvas luaScriptSpriteCanvas;
+        [SerializeField] private BuddyAudioSources buddyAudioSources;
         
         public override void InstallBindings()
         {
@@ -64,6 +65,9 @@ namespace Baku.VMagicMirror.Installer
 
             Container.Bind<BuddySpriteCanvas>()
                 .FromComponentInNewPrefab(luaScriptSpriteCanvas)
+                .AsCached();
+            Container.Bind<BuddyAudioSources>()
+                .FromComponentInNewPrefab(buddyAudioSources)
                 .AsCached();
             BuddySystemInstaller.Install(Container);
             

@@ -23,13 +23,13 @@ namespace Baku.VMagicMirror
 
             Container.Bind<ApiImplementBundle>().AsSingle();
 
+            Container.Bind<AudioApiImplement>().AsSingle();
             Container.Bind<AvatarLoadApiImplement>().AsSingle();
             Container.Bind<AvatarPoseApiImplement>().AsSingle();
             Container.BindInterfacesAndSelfTo<AvatarMotionEventApiImplement>().AsSingle();
             Container.Bind<AvatarFacialApiImplement>().AsSingle();
-            Container.Bind<CameraApiImplement>().AsSingle();
             Container.Bind<DeviceLayoutApiImplement>().AsSingle();
-            Container.BindInterfacesAndSelfTo<RawInputApiImplement>().AsSingle();
+            Container.BindInterfacesAndSelfTo<InputApiImplement>().AsSingle();
             Container.BindInterfacesAndSelfTo<WordToMotionEventApiImplement>().AsSingle();
         }
     }

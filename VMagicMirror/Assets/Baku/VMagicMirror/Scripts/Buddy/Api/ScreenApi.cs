@@ -4,10 +4,15 @@ namespace Baku.VMagicMirror.Buddy.Api
 {
     public class ScreenApi
     {
-        public int Width() => Screen.width;
-        public int Height() => Screen.height;
+        private readonly ScreenApiImplement _impl;
+        
+        public ScreenApi(ScreenApiImplement impl)
+        {
+            _impl = impl;
+        }
 
-        //TODO: 透過中かどうかを返したい
-        public bool IsTransparent => false;
+        public int Width => Screen.width;
+        public int Height => Screen.height;
+        public bool IsTransparent => _impl.IsTransparent;
     }
 }

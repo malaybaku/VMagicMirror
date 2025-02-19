@@ -1,33 +1,32 @@
-using System;
-using UniRx;
+using NLua;
+using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    //NOTE: このAPIレイヤーは直接Luaに露出する使い方はせず、コールバック関数を呼ぶときに使いたい
     public class InputApi
     {
-        public IObservable<string> OnKeyboardDown => onKeyboardKeyDown;
-        private readonly Subject<string> onKeyboardKeyDown = new();
-        
-        public IObservable<string> OnKeyboardUp => onKeyboardKeyUp;
-        private readonly Subject<string> onKeyboardKeyUp = new();
+        private readonly InputApiImplement _impl;
 
-        public IObservable<string> OnGamepadButtonDown => onGamepadButtonDown;
-        private readonly Subject<string> onGamepadButtonDown = new();
-        
-        public IObservable<string> OnGamepadButtonUp => onGamepadButtonUp;
-        private readonly Subject<string> onGamepadButtonUp = new();
+        public InputApi(InputApiImplement impl)
+        {
+            _impl = impl;
+        }
+     
+        [Preserve] public Vector2 MousePosition => _impl.GetNonDimensionalMousePosition();
 
-        public void InvokeOnKeyboardDown(string key) 
-            => FeatureLocker.InvokeWithFeatureLock(() => onKeyboardKeyDown.OnNext(key));
-        public void InvokeOnKeyboardUp(string key)
-            => FeatureLocker.InvokeWithFeatureLock(() => onKeyboardKeyUp.OnNext(key));
+        // GamePadButton(int)の引数が欲しい
+        [Preserve] public LuaFunction GamepadButtonDown { get; set; }
+        [Preserve] public LuaFunction GamepadButtonUp { get; set; }
 
-        public void InvokeOnGamepadButtonDown(string key) 
-            => FeatureLocker.InvokeWithFeatureLock(() => onGamepadButtonDown.OnNext(key));
-        public void InvokeOnGamepadButtonUp(string key)
-            => FeatureLocker.InvokeWithFeatureLock(() => onGamepadButtonUp.OnNext(key));
+        // ENTER以外のキー名は通知されない (全て "" になる) 
+        [Preserve] public LuaFunction KeyboardKeyDown { get; set; }
+        [Preserve] public LuaFunction KeyboardKeyUp { get; set; }
         
+        // TODO: enumの変換を噛ませたい
+        [Preserve] public bool GetGamepadButton(GamepadKey key) => _impl.GetGamepadButton(key);
+
         
     }
- }
+}
+

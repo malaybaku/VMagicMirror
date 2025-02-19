@@ -14,15 +14,18 @@ namespace Baku.VMagicMirror.Buddy
     /// 正確なマウス位置、アバターのモーションを伴わないマウスクリック、キーボードのキーは取れない
     /// (ちょっとセンシティブな感じがするので)
     /// </remarks>
-    public class RawInputApiImplement : PresenterBase
+    public class InputApiImplement : PresenterBase
     {
+        private readonly IKeyMouseEventSource _keyMouseEventSource;
         private readonly XInputGamePad _gamepad;
         private readonly MousePositionProvider _mousePositionProvider;
 
-        public RawInputApiImplement(
+        public InputApiImplement(
+            IKeyMouseEventSource keyMouseEventSource,
             XInputGamePad gamepad,
             MousePositionProvider mousePositionProvider)
         {
+            _keyMouseEventSource = keyMouseEventSource;
             _gamepad = gamepad;
             _mousePositionProvider = mousePositionProvider;
         }
@@ -30,6 +33,22 @@ namespace Baku.VMagicMirror.Buddy
         //TODO: Gamepad側がstickPositionをReactivePropertyとして公開するようになったらPresenterBaseの実装は無くしてOK
         public override void Initialize()
         {
+
+            _keyMouseEventSource.KeyDown
+                .Subscribe(key =>
+                {
+                    var keyName = key.ToLower() == "enter" ? "enter" : "";
+                    _onKeyboardKeyDown.OnNext(keyName);
+                })
+                .AddTo(this);
+            _keyMouseEventSource.KeyUp
+                .Subscribe(key =>
+                {
+                    var keyName = key.ToLower() == "enter" ? "enter" : "";
+                    _onKeyboardKeyUp.OnNext(keyName);
+                })
+                .AddTo(this);
+                
             _gamepad.LeftStickPosition
                 .Subscribe(p => _leftStickPosition = new Vector2(p.x / 32768f, p.y / 32768f))
                 .AddTo(this);
@@ -38,6 +57,20 @@ namespace Baku.VMagicMirror.Buddy
                 .Subscribe(p => _rightStickPosition = new Vector2(p.x / 32768f, p.y / 32768f))
                 .AddTo(this);
         }
+
+        /// <summary>
+        /// 画面サイズを基準とし、マウスの現在位置をXYいずれも[-0.5, 0.5]くらいに収まる値として表現した値を取得する。
+        /// アバターの表示ウィンドウにマウスが収まっていない場合、上記より大きな値を取ることがある
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetNonDimensionalMousePosition() 
+            => _mousePositionProvider.RawNormalizedPositionNotClamped;
+
+        private readonly Subject<string> _onKeyboardKeyDown = new();
+        public IObservable<string> OnKeyboardKeyDown => _onKeyboardKeyDown;
+        
+        private readonly Subject<string> _onKeyboardKeyUp = new();
+        public IObservable<string> OnKeyboardKeyUp => _onKeyboardKeyUp;
 
         // NOTE: 呼び出し元でGamepadKeyとintないしstringの変換をするのが期待値
         // スクリプト上で `GamepadButton.A` みたく書かせて実態がintになってるのが無難そうではある
@@ -52,13 +85,6 @@ namespace Baku.VMagicMirror.Buddy
         public IObservable<(GamepadKey, bool)> GamepadButton => _gamepad
             .ButtonUpDown
             .Select(data => (data.Key, data.IsPressed));
-
-        /// <summary>
-        /// 画面サイズを基準とし、マウスの現在位置をXYいずれも[-0.5, 0.5]くらいに収まる値として表現した値を取得する。
-        /// アバターの表示ウィンドウにマウスが収まっていない場合、上記より大きな値を取ることがある
-        /// </summary>
-        /// <returns></returns>
-        public Vector2 GetNonDimensionalMousePosition() 
-            => _mousePositionProvider.RawNormalizedPositionNotClamped;
+        
     }
 }

@@ -1,12 +1,11 @@
 using System;
+using System.Collections.Generic;
 using Baku.VMagicMirror.ExternalTracker;
 using UniRx;
 using UniVRM10;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    // TODO: このクラスに「まばたきした」のイベントとか「FaceSwitchの状態」とかの情報も入れてしまいたい
-    // (たぶん実装は全然違うので、その辺のステータス監視するクラスは別で生やすのが良いが)
     public class AvatarFacialApiImplement
     {
         private readonly IVRMLoadable _vrmLoadable;
@@ -22,6 +21,8 @@ namespace Baku.VMagicMirror.Buddy
         private readonly FaceControlConfiguration _faceControlConfig;
         private readonly UserOperationBlendShapeResultRepository _userOperationBlendShapeResultRepository;
 
+        private readonly HashSet<object> _microphoneRecordRequireBuddies = new();
+        
         public AvatarFacialApiImplement(
             IVRMLoadable vrmLoadable,
             ExpressionAccumulator expressionAccumulator,
@@ -45,7 +46,10 @@ namespace Baku.VMagicMirror.Buddy
             _vrmLoadable.VrmDisposing += OnVrmUnloaded;
         }
 
-        public bool IsLoaded { get; private set; }
+        private bool _isLoaded;
+        
+        private readonly ReactiveProperty<bool> _requireMicrophoneRecording = new();
+        public IReadOnlyReactiveProperty<bool> RequireMicrophoneRecording => _requireMicrophoneRecording;
 
         public bool UsePerfectSync => _faceControlConfig.UsePerfectSync;
 
@@ -54,6 +58,19 @@ namespace Baku.VMagicMirror.Buddy
         // TODO: 「BuddyがBlinkedを購読するまではBlinkDetectorを止めておく」みたいなガードが出来たら嬉しい
         // Blinkに関してはパフォーマンス影響が小さそうだが、他所でも応用が効きそうなので何かは考えてほしい
         public IObservable<Unit> Blinked => _blinkDetector.Blinked();
+
+        //IsTalkingとか (まだないが) LipSyncの取得APIを呼ぶときに下記のRegisterを呼ぶことで、マイクの録音が止まってたら開始を要求できる
+        public void RegisterApiInstanceAsMicrophoneRequire(object obj)
+        {
+            _microphoneRecordRequireBuddies.Add(obj);
+            _requireMicrophoneRecording.Value = true;
+        }
+
+        public void UnregisterApiInstanceAsMicrophoneRequire(object obj)
+        {
+            _microphoneRecordRequireBuddies.Remove(obj);
+            _requireMicrophoneRecording.Value = _microphoneRecordRequireBuddies.Count > 0;
+        }
 
         // NOTE: 下記の関数はモデルのロード前にfalse/0が戻るので、IsLoadedはチェックしないでよい
         public bool HasKey(string key, bool isCustomKey)
@@ -113,12 +130,12 @@ namespace Baku.VMagicMirror.Buddy
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            IsLoaded = true;
+            _isLoaded = true;
         }
 
         private void OnVrmUnloaded()
         {
-            IsLoaded = false;
+            _isLoaded = false;
         }
 
         private static ExpressionKey CreateExpressionKey(string key, bool isCustomKey)

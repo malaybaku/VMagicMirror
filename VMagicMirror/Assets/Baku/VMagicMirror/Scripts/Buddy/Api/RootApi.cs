@@ -30,8 +30,12 @@ namespace Baku.VMagicMirror.Buddy.Api
         public RootApi(string baseDir, string buddyId, ApiImplementBundle apiImplementBundle)
         {
             _baseDir = baseDir;
-            AvatarFacial = new AvatarFacialApi(apiImplementBundle.FacialApi);
             Property = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
+            AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
+            AvatarFacial = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
+            Audio = new AudioApi(baseDir, apiImplementBundle.AudioApi);
+            DeviceLayout = new DeviceLayoutApi(apiImplementBundle.DeviceLayoutApi);
+            Screen = new ScreenApi(apiImplementBundle.ScreenApi);
         }
 
         internal void Dispose()
@@ -42,19 +46,27 @@ namespace Baku.VMagicMirror.Buddy.Api
             }
             _sprites.Clear();
 
+            AvatarFacial.Dispose();
+
             _cts.Cancel();
             _cts.Dispose();
         }
 
+        //TODO: FeatureLockについては、ここで記述されるプロパティ単位で
+        //「丸ごとOK or 丸ごと塞がってる」となるのが分かりやすさ的には望ましい
+
         //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
         [Preserve] public PropertyApi Property { get; } = null;
         [Preserve] public TransformsApi Transforms { get; internal set; } = null;
-
+        [Preserve] public DeviceLayoutApi DeviceLayout { get; }
+        
+        // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう
         [Preserve] public AvatarLoadEventApi AvatarLoadEvent { get; } = new();
+        [Preserve] public AvatarPoseApi AvatarPose { get; }
         [Preserve] public AvatarMotionEventApi AvatarMotionEvent { get; } = new();
-
         [Preserve] public AvatarFacialApi AvatarFacial { get; }
-
+        [Preserve] public AudioApi Audio { get; }
+        [Preserve] public ScreenApi Screen { get; }
         
         
         [Preserve]
@@ -78,7 +90,10 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             UniTask.Void(async () =>
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(delaySeconds), cancellationToken: _cts.Token);
+                await UniTask.Delay(TimeSpan.FromSeconds(delaySeconds),
+                    cancellationToken: _cts.Token,
+                    delayTiming: PlayerLoopTiming.LastPostLateUpdate
+                    );
                 ApiUtils.Try(() => func.Call());
             });
         }
@@ -92,11 +107,19 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             UniTask.Void(async () =>
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(firstDelay), cancellationToken: _cts.Token);
+                await UniTask.Delay(
+                    TimeSpan.FromSeconds(firstDelay),
+                    cancellationToken: _cts.Token,
+                    delayTiming: PlayerLoopTiming.LastPostLateUpdate
+                    );
                 while (!_cts.IsCancellationRequested)
                 {
                     ApiUtils.Try(() => func.Call());
-                    await UniTask.Delay(TimeSpan.FromSeconds(intervalSeconds), cancellationToken: _cts.Token);
+                    await UniTask.Delay(
+                        TimeSpan.FromSeconds(intervalSeconds),
+                        cancellationToken: _cts.Token,
+                        delayTiming: PlayerLoopTiming.LastPostLateUpdate
+                        );
                 }
             });
         }

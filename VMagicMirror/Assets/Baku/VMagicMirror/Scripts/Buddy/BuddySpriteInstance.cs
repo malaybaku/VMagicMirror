@@ -78,12 +78,25 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
         
+        // TODO: positionの扱いはもうちょっと検討が要りそう…
+        /// <summary>
+        /// SpriteCanvasから見たグローバル座標にスプライトを移動させる
+        /// </summary>
+        /// <param name="position"></param>
         public void SetPosition(Vector2 position)
         {
+            //NOTE: Parentを付け替えないでもInverseTransformPointとかでも行ける？
             var rt = RectTransform;
+            var currentParent = rt.parent;
+
+            var canvas = GetComponentInParent<BuddySpriteCanvas>();
+            rt.SetParent(canvas.RectTransform);
+            
             rt.anchorMin = position;
             rt.anchorMax = position;
             rt.anchoredPosition = Vector2.zero;
+            
+            rt.SetParent(currentParent);
         }
 
         public void SetSize(Vector2 size)
@@ -108,9 +121,9 @@ namespace Baku.VMagicMirror.Buddy
             // (そもそもPosition, Scale, Sizeの概念的な整備しないとダメかも…)
             var rt = RectTransform;
             rt.SetParent(parent.transform);
-            parent.NotifyChildAdded();
             if (parent != null)
             {
+                parent.NotifyChildAdded();
                 rt.localPosition = Vector3.zero;
                 rt.localRotation = Quaternion.identity;
                 rt.localScale = Vector3.one;

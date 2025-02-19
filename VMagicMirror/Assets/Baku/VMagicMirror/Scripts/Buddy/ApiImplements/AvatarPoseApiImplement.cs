@@ -95,5 +95,24 @@ namespace Baku.VMagicMirror.Buddy
             }
             _isLoaded = true;
         }
+
+        public Vector3 GetRootPosition()
+        {
+            if (!_isLoaded)
+            {
+                return Vector3.zero;
+            }
+            //TODO: ControlRigの場合もコレで大丈夫だったっけ…というのは確認したほうが無難
+            return _animator.transform.position;
+        }
+
+        public Quaternion GetRootRotation()
+        {
+            if (!_isLoaded)
+            {
+                return Quaternion.identity;
+            }
+            return _animator.transform.rotation;
+        }
     }
 }

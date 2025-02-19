@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3229239767030054774}
   - component: {fileID: 3893454672750628633}
   m_Layer: 5
-  m_Name: LuaScriptSpriteInstance
+  m_Name: BuddySprite2DInstance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: 2625639068454743990}
   - component: {fileID: 7951422528594384277}
   m_Layer: 5
-  m_Name: LuaScriptTransform2DInstance
+  m_Name: BuddyTransform2DInstance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

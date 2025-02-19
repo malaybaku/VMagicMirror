@@ -99,6 +99,8 @@ MonoBehaviour:
   loadingCoverController: {fileID: 0}
   luaScriptSpriteCanvas: {fileID: 3466238353687275096, guid: 441d1d31f0a1c1b45b422205770f483d,
     type: 3}
+  buddyAudioSources: {fileID: 2740337308457020041, guid: 5b96818834e6ac7439a90d1a624198cf,
+    type: 3}
 --- !u!114 &2683631619848515584
 MonoBehaviour:
   m_ObjectHideFlags: 0

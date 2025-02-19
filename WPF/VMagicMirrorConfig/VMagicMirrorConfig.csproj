@@ -12,6 +12,7 @@
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <ApplicationIcon>.\Images\vmmc_logo.ico</ApplicationIcon>
     <SelfContained>true</SelfContained>
+    <NoWarn>$(NoWarn);IDE0130</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Images\vmmc_logo.ico" />

@@ -128,12 +128,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void ApplyChange()
         {
-            var setting = new VMCPSources(new[]
-            {
+            var setting = new VMCPSources(
+            [
                 Source1.CreateSetting(),
                 Source2.CreateSetting(),
                 Source3.CreateSetting(),
-            });
+            ]);
 
             _model.SetVMCPSourceSetting(setting);
             IsDirty.Value = false;

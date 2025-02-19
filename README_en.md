@@ -59,7 +59,7 @@ Open Unity project with Unity 2022.3.x, and open WPF project with Visual Studio 
 Maintainer's environment is as following.
 
 * Unity 2022.3.7f1 Personal
-* Visual Studio Community 2022 (17.4.4)
+* Visual Studio Community 2022 (17.13.0)
     * Component ".NET Desktop Development" is required.
     * Also Component "C++ Desktop Development" is required, for Unity Burst compiler.
 

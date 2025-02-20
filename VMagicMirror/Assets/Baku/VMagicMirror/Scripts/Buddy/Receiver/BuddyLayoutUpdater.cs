@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly IMessageReceiver _receiver;
         private readonly IVRMLoadable _vrmLoadable;
-        private readonly ScriptLoader _scriptLoader;
+        private readonly IScriptLoader _scriptLoader;
         private readonly BuddySpriteCanvas _spriteCanvas;
         private readonly BuddyLayoutRepository _layoutLayoutRepository;
         private readonly BuddyTransformInstanceRepository _transformInstanceRepository;
@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror.Buddy
         public BuddyLayoutUpdater(
             IMessageReceiver receiver, 
             IVRMLoadable vrmLoadable,
-            ScriptLoader scriptLoader,
+            IScriptLoader scriptLoader,
             BuddySpriteCanvas spriteCanvas,
             BuddyLayoutRepository layoutRepository,
             BuddyTransformInstanceRepository transformInstanceRepository)
@@ -133,7 +133,7 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
 
-        private void CreateTransformInstance(ScriptCaller scriptCaller)
+        private void CreateTransformInstance(IScriptCaller scriptCaller)
         {
             var layouts = _layoutLayoutRepository.Get(scriptCaller.BuddyId);
 
@@ -158,7 +158,7 @@ namespace Baku.VMagicMirror.Buddy
             ));
         }
 
-        private void DeleteTransformInstance(ScriptCaller scriptCaller) 
+        private void DeleteTransformInstance(IScriptCaller scriptCaller) 
             => _transformInstanceRepository.DeleteInstance(scriptCaller.BuddyId);
 
         private bool TryGetBuddyTransform2DLayout(BuddySettingsPropertyMessage msg, out BuddyTransform2DLayout result)

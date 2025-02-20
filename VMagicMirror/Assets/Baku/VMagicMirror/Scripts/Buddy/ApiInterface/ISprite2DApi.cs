@@ -1,6 +1,5 @@
 namespace Baku.VMagicMirror.Buddy.Api.Interface
 {
-    // NOTE: この型は内部的にも使っていいかも(Noneは公開する価値がちょっと薄いが)
     public enum Sprite2DTransitionStyle
     {
         None = 0,
@@ -17,13 +16,13 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         Vector2 Scale { get; set; }
         Vector2 Pivot { get; set; }
         
-        SpriteEffectApi Effects { get; }
+        ISpriteEffectApi Effects { get; }
 
         void SetPosition(Vector2 position);
 
         void Hide();
 
-        void Show(string path) => Show(path, Sprite2DTransitionStyle.Immediate);
+        void Show(string path);
         void Show(string path, Sprite2DTransitionStyle style);
 
         void Preload(string path);

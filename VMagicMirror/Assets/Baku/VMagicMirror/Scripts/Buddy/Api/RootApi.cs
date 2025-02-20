@@ -2,28 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Baku.VMagicMirror.Buddy.Api.Interface;
 using Cysharp.Threading.Tasks;
-using NLua;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    /// <summary>
-    /// VMMのScriptでトップレベルから呼ぶ関数をここに入れる
-    /// </summary>
-    [Preserve]
-    public class RootApi
+    public class RootApi : IRootApi
     {
         private readonly CancellationTokenSource _cts = new();
 
         //TODO: Layoutと同じくSpriteにもInstanceのレポジトリとUpdaterを作りたい
         private readonly List<Sprite2DApi> _sprites = new();
-        public IReadOnlyList<Sprite2DApi> Sprites => _sprites;
+        internal IReadOnlyList<Sprite2DApi> Sprites => _sprites;
 
         private readonly Subject<Sprite2DApi> _spriteCreated = new();
-        public IObservable<Sprite2DApi> SpriteCreated => _spriteCreated;
+        internal IObservable<Sprite2DApi> SpriteCreated => _spriteCreated;
         
         private readonly string _baseDir;
 
@@ -32,8 +27,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _baseDir = baseDir;
             Property = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
-            AvatarFacial = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
-            Audio = new AudioApi(baseDir, apiImplementBundle.AudioApi);
+            _avatarFacial = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
+            _audio = new AudioApi(baseDir, apiImplementBundle.AudioApi);
             DeviceLayout = new DeviceLayoutApi(apiImplementBundle.DeviceLayoutApi);
             Screen = new ScreenApi(apiImplementBundle.ScreenApi);
         }
@@ -46,33 +41,35 @@ namespace Baku.VMagicMirror.Buddy.Api
             }
             _sprites.Clear();
 
-            AvatarFacial.Dispose();
+            _avatarFacial.Dispose();
+            _audio.Dispose();
 
             _cts.Cancel();
             _cts.Dispose();
         }
 
-        [Preserve] public Action StartCS { get; set; }
-        [Preserve] public Action<float> UpdateCS { get; set; }
+        public Action Start { get; set; }
+        public Action<float> Update { get; set; }
 
         //TODO: FeatureLockについては、ここで記述されるプロパティ単位で
         //「丸ごとOK or 丸ごと塞がってる」となるのが分かりやすさ的には望ましい
 
         //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
-        [Preserve] public PropertyApi Property { get; } = null;
-        [Preserve] public TransformsApi Transforms { get; internal set; } = null;
-        [Preserve] public DeviceLayoutApi DeviceLayout { get; }
+        public IPropertyApi Property { get; }
+        public ITransformsApi Transforms { get; internal set; }
+        public IDeviceLayoutApi DeviceLayout { get; }
         
         // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう
-        [Preserve] public AvatarLoadEventApi AvatarLoadEvent { get; } = new();
-        [Preserve] public AvatarPoseApi AvatarPose { get; }
-        [Preserve] public AvatarMotionEventApi AvatarMotionEvent { get; } = new();
-        [Preserve] public AvatarFacialApi AvatarFacial { get; }
-        [Preserve] public AudioApi Audio { get; }
-        [Preserve] public ScreenApi Screen { get; }
+        public IAvatarLoadEventApi AvatarLoadEvent { get; } = new AvatarLoadEventApi();
+        public IAvatarPoseApi AvatarPose { get; }
+        public IAvatarMotionEventApi AvatarMotionEvent { get; } = new AvatarMotionEventApi();
+        private readonly AvatarFacialApi _avatarFacial;
+        public IAvatarFacialApi AvatarFacial => _avatarFacial;
         
+        private readonly AudioApi _audio;
+        public IAudioApi Audio => _audio;
+        public IScreenApi Screen { get; }
         
-        [Preserve]
         public void Log(string value)
         {
             if (Application.isEditor)
@@ -85,11 +82,9 @@ namespace Baku.VMagicMirror.Buddy.Api
             }
         }
 
-        [Preserve]
         public float Random() => UnityEngine.Random.value;
 
-        [Preserve]
-        public void InvokeDelay(LuaFunction func, float delaySeconds)
+        public void InvokeDelay(Action func, float delaySeconds)
         {
             UniTask.Void(async () =>
             {
@@ -97,16 +92,14 @@ namespace Baku.VMagicMirror.Buddy.Api
                     cancellationToken: _cts.Token,
                     delayTiming: PlayerLoopTiming.LastPostLateUpdate
                     );
-                ApiUtils.Try(() => func.Call());
+                ApiUtils.Try(() => func?.Invoke());
             });
         }
 
-        [Preserve]
-        public void InvokeInterval(LuaFunction func, float intervalSeconds)
+        public void InvokeInterval(Action func, float intervalSeconds)
             => InvokeInterval(func, intervalSeconds, 0f);
 
-        [Preserve]
-        public void InvokeInterval(LuaFunction func, float intervalSeconds, float firstDelay)
+        public void InvokeInterval(Action func, float intervalSeconds, float firstDelay)
         {
             UniTask.Void(async () =>
             {
@@ -117,7 +110,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                     );
                 while (!_cts.IsCancellationRequested)
                 {
-                    ApiUtils.Try(() => func.Call());
+                    ApiUtils.Try(() => func?.Invoke());
                     await UniTask.Delay(
                         TimeSpan.FromSeconds(intervalSeconds),
                         cancellationToken: _cts.Token,
@@ -127,8 +120,6 @@ namespace Baku.VMagicMirror.Buddy.Api
             });
         }
 
-        // 名前もうちょい短くしたい…？
-        [Preserve]
         public bool ValidateFilePath(string path)
         {
             var fullPath = Path.Combine(_baseDir, path);
@@ -137,16 +128,12 @@ namespace Baku.VMagicMirror.Buddy.Api
                 File.Exists(path);
         }
         
-        [Preserve]
-        public Sprite2DApi Create2DSprite()
+        public ISprite2DApi Create2DSprite()
         {
             var result = new Sprite2DApi(_baseDir);
             _sprites.Add(result);
             _spriteCreated.OnNext(result);
             return result;
         }
-        
-        [Preserve]
-        public Vector2 Vector2(float x, float y) => new(x, y);
     }
 }

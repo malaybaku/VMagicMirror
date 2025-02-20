@@ -1,8 +1,9 @@
+using Baku.VMagicMirror.Buddy.Api.Interface;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class ScreenApi
+    public class ScreenApi : IScreenApi
     {
         private readonly ScreenApiImplement _impl;
         

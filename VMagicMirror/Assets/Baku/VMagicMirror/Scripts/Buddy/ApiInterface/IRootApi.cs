@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Baku.VMagicMirror.Buddy.Api.Interface
 {
@@ -8,8 +7,6 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// </summary>
     public interface IRootApi
     {
-        public IReadOnlyList<ISprite2DApi> Sprites { get; }
-
         Action Start { get; set; }
         Action<float> Update { get; set; }
 

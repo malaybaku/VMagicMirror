@@ -1,17 +1,24 @@
+using Baku.VMagicMirror.Buddy.Api.Interface;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    // NOTE: エフェクト設定はAPI上は「数値を入れるだけ」に見える
+    // NOTE: 個々のエフェクトについて、値域などがInterface側のdocで決めてあるので、その値域への範囲制限等はこのファイルの中で効かせておく
     
-    public class BounceDeformSpriteEffect
+    public class SpriteEffectApi : ISpriteEffectApi
+    {
+        public FloatingSpriteEffect InternalFloating { get; } = new();
+        public BounceDeformSpriteEffect InternalBounceDeform { get; } = new();
+
+        IFloatingSpriteEffect ISpriteEffectApi.Floating => InternalFloating;
+        IBounceDeformSpriteEffect ISpriteEffectApi.BounceDeform => InternalBounceDeform;
+    }
+
+    public class BounceDeformSpriteEffect : IBounceDeformSpriteEffect
     {
         internal float ElapsedTime { get; set; }
 
         private bool _isActive;
-        /// <summary>
-        /// trueにするとエフェクトが作動する。
-        /// </summary>
         public bool IsActive
         {
             get => _isActive;
@@ -26,10 +33,6 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         private float _intensity = 0.5f;
-        /// <summary>
-        /// エフェクトの強度を [0, 1] の範囲で指定する。1より大きい値も入れられるが、入れると動きがかなり極端になる。
-        /// 初期値は0.5
-        /// </summary>
         public float Intensity
         {
             get => _intensity;
@@ -37,32 +40,20 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         private float _duration = 0.5f;
-        /// <summary>
-        /// エフェクトの開始～終了までの周期。すでにエフェクトが起動しているときに書き換えると動きが飛ぶこともある。
-        /// 初期値は0.5
-        /// 範囲は [0.01, 5]
-        /// </summary>
         public float Duration
         {
             get => _duration;
             set => _duration = Mathf.Clamp(value, 0.01f, 5f);
         }
 
-        /// <summary>
-        /// trueの場合、エフェクトが効き続ける。falseの場合、1回ぶん動くと自動で<see cref="IsActive"/>がfalseになる。
-        /// 初期値はtrue
-        /// </summary>
         public bool Loop { get; set; } = true;
     }
 
-    public class FloatingSpriteEffect
+    public class FloatingSpriteEffect : IFloatingSpriteEffect
     {
         internal float ElapsedTime { get; set; }
 
         private bool _isActive;
-        /// <summary>
-        /// trueにするとエフェクトが作動する。
-        /// </summary>
         public bool IsActive
         {
             get => _isActive;
@@ -77,10 +68,6 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         private float _intensity = 0.5f;
-        /// <summary>
-        /// 上昇幅を画面座標ベースで [0, 1] で指定する。相場は0.05~0.15くらいのつもり
-        /// 初期値は0.05
-        /// </summary>
         public float Intensity
         {
             get => _intensity;
@@ -88,11 +75,6 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         private float _duration = 2f;
-        /// <summary>
-        /// エフェクトの開始～終了までの周期。すでにエフェクトが起動しているときに書き換えると動きが飛ぶこともある。
-        /// 初期値は2
-        /// 範囲は [0.1, 10]
-        /// </summary>
         public float Duration
         {
             get => _duration;
@@ -100,11 +82,5 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         // Floatはループしかせんやろ…ということでLoopオプションは省いている
-    }
-    
-    public class SpriteEffectApi
-    {
-        public FloatingSpriteEffect Floating { get; } = new();
-        public BounceDeformSpriteEffect BounceDeform { get; } = new();
     }
 }

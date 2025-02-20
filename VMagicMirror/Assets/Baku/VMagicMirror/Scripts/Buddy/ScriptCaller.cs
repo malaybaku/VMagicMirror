@@ -6,13 +6,17 @@ using NLua;
 using UniRx;
 using UnityEngine;
 using Zenject;
+using Sprite2DTransitionStyle = Baku.VMagicMirror.Buddy.Api.Sprite2DTransitionStyle;
+using Vector2 = UnityEngine.Vector2;
 
 namespace Baku.VMagicMirror.Buddy
 {
+    // TODO: Lua版実装として、ScriptCallerから派生させた実装に直したい
+    
     // フォルダを指定されてスクリプトを実行するためのクラス。
     // このクラスは勝手に動き出さずに、ScriptLoaderからの指定に基づいて動作を開始/終了する。
     // このクラスはアプリ終了時以外にもスクリプトのリロード要求で破棄されることがあり、この方法で破棄される場合はロードしたリソースを解放する。
-    public class ScriptCaller
+    public class ScriptCaller : IScriptCaller
     {
         internal RootApi Api { get; }
         private readonly Lua _lua;
@@ -46,12 +50,13 @@ namespace Baku.VMagicMirror.Buddy
             // readonlyにできると嬉しいのでここでやっているが、問題があればInitialize()の中とかで初期化してもよい
             _scriptEventInvoker = scriptEventInvokerFactory.Create(Api);
         }
+
+        public string CreateEntryScriptPath(string dir) => Path.Combine(dir, "main.lua");
         
         public void Initialize()
         {
             _lua.State.Encoding = Encoding.UTF8;
             _lua["api"] = Api;
-            _lua[nameof(Sprite2DTransitionStyle)] = Sprite2DTransitionStyleValues.Instance;
 
             // APIの生成時にSpriteのインスタンスまで入ってる状態にしておく (ヒエラルキーの構築時に最初からインスタンスがあるほうが都合がよいため)
             Api.SpriteCreated
@@ -116,18 +121,18 @@ namespace Baku.VMagicMirror.Buddy
         // TODO: Scriptのメイン処理ではない(3DイラストとかVRMまでここに書いてたら手に負えない)のでコードの置き場所は考える
         private void UpdateSprite(Sprite2DApi sprite)
         {
-            var pos = sprite.Position;
+            var pos = sprite.InternalPosition;
             if (sprite.Effects.Floating.IsActive)
             {
-                pos = GetAndUpdateFloatingPosition(pos, sprite.Effects.Floating);
+                pos = GetAndUpdateFloatingPosition(pos, sprite.InternalEffects.InternalFloating);
             }
             // TODO: 不要になる or 必要だけどanchorじゃない方法で適用する…となりそうで、ややこしいので一旦ストップ
             //sprite.Instance.SetPosition(pos);
 
-            var size = sprite.Size;
+            var size = sprite.InternalSize;
             if (sprite.Effects.BounceDeform.IsActive)
             {
-                size = GetAndUpdateBounceDeformedSize(size, sprite.Effects.BounceDeform);
+                size = GetAndUpdateBounceDeformedSize(size, sprite.InternalEffects.InternalBounceDeform);
             }
             sprite.Instance.SetSize(size);
             var isTransitionDone =

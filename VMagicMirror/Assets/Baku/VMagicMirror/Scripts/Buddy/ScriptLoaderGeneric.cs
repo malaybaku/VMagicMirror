@@ -7,22 +7,25 @@ using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 {
+    //TODO: LuaでもC#でもLoaderの実装は9割一緒っぽいので差分コーディングしたい…
+    
     // ScriptRoot以下の構造はこうする
-    // VMM_Files/SubCharacters/
+    // VMM_Files/Buddy/
     // - CharaA/
-    //   - main.lua
+    //   - main.xx
     //   - sprite.png
     //   - ...
     // - CharaB/
-    //   - main.lua
+    //   - main.xx
     //   - sprite.png
     //   - ...
    
-    public class ScriptLoader : PresenterBase, ITickable, IScriptLoader
+    public class ScriptLoaderGeneric : PresenterBase, IScriptLoader
     {
         private readonly IMessageReceiver _receiver;
-        private readonly IFactory<string, ScriptCaller> _scriptCallerFactory;
-        private readonly List<ScriptCaller> _loadedScripts = new();
+        private readonly IScriptCallerPathGenerator _callerPathGenerator;
+        private readonly IFactory<string, IScriptCaller> _scriptCallerFactory;
+        private readonly List<IScriptCaller> _loadedScripts = new();
 
         private readonly Subject<IScriptCaller> _scriptLoading = new();
         /// <summary> スクリプトを新しくロードするときに発火する。APIを差し込んだりするのに使う </summary>
@@ -33,11 +36,13 @@ namespace Baku.VMagicMirror.Buddy
         public IObservable<IScriptCaller> ScriptDisposing => _scriptDisposing;
         
         [Inject]
-        public ScriptLoader(
+        public ScriptLoaderGeneric(
             IMessageReceiver receiver,
-            IFactory<string, ScriptCaller> scriptCallerFactory)
+            IScriptCallerPathGenerator callerPathGenerator,
+            IFactory<string, IScriptCaller> scriptCallerFactory)
         {
             _receiver = receiver;
+            _callerPathGenerator = callerPathGenerator;
             _scriptCallerFactory = scriptCallerFactory;
         }
         
@@ -74,7 +79,7 @@ namespace Baku.VMagicMirror.Buddy
         private void EnableBuddy(string dir)
         {
             // エントリポイントがなければ必ず無視
-            var entryScriptPath = Path.Combine(dir, "main.lua");
+            var entryScriptPath = _callerPathGenerator.CreateEntryScriptPath(dir);
             if (!File.Exists(entryScriptPath))
             {
                 return;
@@ -102,14 +107,6 @@ namespace Baku.VMagicMirror.Buddy
                 script.Dispose();
             }
             _loadedScripts.Clear();
-        }
-
-        void ITickable.Tick()
-        {
-            foreach (var script in _loadedScripts)
-            {
-                //script.Tick();
-            }
         }
     }
 }

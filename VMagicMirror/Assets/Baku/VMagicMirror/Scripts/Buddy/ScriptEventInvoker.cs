@@ -1,3 +1,4 @@
+//TODO: Luaを本格的にボツにしたら削除する。
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -89,41 +90,41 @@ namespace Baku.VMagicMirror.Buddy
         //NOTE: 下記のInitializeと本クラスのDisposeはScriptCallerから明示的に呼ばれるのが期待値
         public override void Initialize()
         {
-            //NOTE: 「コールバックが未登録ならSubscribeもしないでおく」というスタイルもあるかも
-            // (Buddyが増えたときにSubscribeの総量が絞りやすい)
-         
-            //TODO: Unloadが遅延発火することあるの難しいな… / Loadedは遅延しても害が少ないから良い気がするけども
-            ConnectNoArgFunc(_avatarLoad.Loaded, () => _api.AvatarLoadEvent.Loaded);
-            ConnectNoArgFunc(_avatarLoad.Unloaded, () => _api.AvatarLoadEvent.UnLoaded);
-            
-            ConnectOneArgFunc(
-                _avatarMotionEvent.KeyboardKeyDown,
-                () => _api.AvatarMotionEvent.OnKeyboardKeyDown
-                );
-
-            ConnectNoArgFunc(
-                _avatarMotionEvent.TouchPadMouseButtonDown,
-                () => _api.AvatarMotionEvent.OnTouchPadMouseButtonDown
-            );
-            ConnectNoArgFunc(
-                _avatarMotionEvent.PenTabletMouseButtonDown,
-                () => _api.AvatarMotionEvent.OnPenTabletMouseButtonDown
-            );
-            
-            ConnectOneArgFunc(
-                _avatarMotionEvent.GamepadButtonDown,
-                () => _api.AvatarMotionEvent.OnGamepadButtonDown,
-                v => v.Item2
-            );
-            ConnectOneArgFunc(
-                _avatarMotionEvent.ArcadeStickButtonDown,
-                () => _api.AvatarMotionEvent.OnArcadeStickButtonDown
-            );
-            
-            ConnectNoArgFunc(
-                _avatarFacial.Blinked,
-                () => _api.AvatarFacial.OnBlinked
-                );
+            // //NOTE: 「コールバックが未登録ならSubscribeもしないでおく」というスタイルもあるかも
+            // // (Buddyが増えたときにSubscribeの総量が絞りやすい)
+            //
+            // //TODO: Unloadが遅延発火することあるの難しいな… / Loadedは遅延しても害が少ないから良い気がするけども
+            // ConnectNoArgFunc(_avatarLoad.Loaded, () => _api.AvatarLoadEvent.LoadedLua);
+            // ConnectNoArgFunc(_avatarLoad.Unloaded, () => _api.AvatarLoadEvent.UnLoadedLua);
+            //
+            // ConnectOneArgFunc(
+            //     _avatarMotionEvent.KeyboardKeyDown,
+            //     () => _api.AvatarMotionEvent.OnKeyboardKeyDown
+            //     );
+            //
+            // ConnectNoArgFunc(
+            //     _avatarMotionEvent.TouchPadMouseButtonDown,
+            //     () => _api.AvatarMotionEvent.OnTouchPadMouseButtonDown
+            // );
+            // ConnectNoArgFunc(
+            //     _avatarMotionEvent.PenTabletMouseButtonDown,
+            //     () => _api.AvatarMotionEvent.OnPenTabletMouseButtonDown
+            // );
+            //
+            // ConnectOneArgFunc(
+            //     _avatarMotionEvent.GamepadButtonDown,
+            //     () => _api.AvatarMotionEvent.OnGamepadButtonDown,
+            //     v => v.Item2
+            // );
+            // ConnectOneArgFunc(
+            //     _avatarMotionEvent.ArcadeStickButtonDown,
+            //     () => _api.AvatarMotionEvent.OnArcadeStickButtonDown
+            // );
+            //
+            // ConnectNoArgFunc(
+            //     _avatarFacial.Blinked,
+            //     () => _api.AvatarFacial.OnBlinkedLua
+            //     );
             
             InvokeCallbackAsync(_cts.Token).Forget();
         }

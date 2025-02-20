@@ -15,6 +15,8 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         public float y;
         
         // TODO: operator含めて色々と定義する
+
+        public static Vector2 zero => new(0f, 0f);
     }
     
     /// <summary>
@@ -34,6 +36,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         public float z;
 
         // TODO: operator含めて色々と定義する
+        public static Vector3 zero => new(0f, 0f, 0f);
     }
 
     /// <summary>
@@ -55,6 +58,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         public float w;
 
         // TODO: operator含めて色々と定義する
+        public static Quaternion identity => new(0, 0, 0, 1);
     }
 
     /// <summary>

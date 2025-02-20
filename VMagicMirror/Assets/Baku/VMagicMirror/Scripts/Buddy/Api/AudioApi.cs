@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Baku.VMagicMirror.Buddy.Api.Interface;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class AudioApi
+    public class AudioApi : IAudioApi
     {
         private const int ClipCacheCount = 10;
         // 番号が若いほうが最近使ったclip
@@ -24,7 +24,6 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl = impl;
         }
 
-        [Preserve]
         public void Play(string path)
         {
             var fullPath = Path.Combine(_baseDir, path);

@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using UnityEngine.Scripting;
+using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class TransformsApi
+    public class TransformsApi : ITransformsApi
     {
         private readonly Dictionary<string, Transform2DApi> _transform2d;
 
@@ -17,11 +16,10 @@ namespace Baku.VMagicMirror.Buddy.Api
             );
         }
 
-        [Preserve]
-        public Transform2DApi GetTransform2D(string key) => _transform2d.GetValueOrDefault(key);
+        public ITransform2DApi GetTransform2D(string key) => _transform2d.GetValueOrDefault(key);
     }
     
-    public class Transform2DApi
+    public class Transform2DApi : ITransform2DApi
     {
         public Transform2DApi(BuddyTransform2DInstance instance)
         {
@@ -34,8 +32,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         /// <returns></returns>
         internal BuddyTransform2DInstance GetInstance() => _instance;
         
-        [Preserve] public Vector2 Position => _instance.Position;
-        [Preserve] public float Scale => _instance.Scale;
-        [Preserve] public Quaternion Rotation => _instance.Rotation;
+        public Vector2 Position => _instance.Position.ToApiValue();
+        public float Scale => _instance.Scale;
+        public Quaternion Rotation => _instance.Rotation.ToApiValue();
     }
 }

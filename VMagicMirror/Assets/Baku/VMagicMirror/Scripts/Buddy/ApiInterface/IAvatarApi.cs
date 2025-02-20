@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         Action UnLoaded { get; set; }
     }
     
-    public interface AvatarBodyParameterApi
+    public interface IAvatarBodyParameterApi
     {
         //TODO: 身長っぽい値とかを入れるかもしれないやつ
         //あんまピンと来なければ無しにしてもいい
@@ -50,8 +50,8 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         Action OnPenTabletMouseButtonDown { get; set; }
 
         // TODO: C#に対してであればenumを渡すスタイルにしちゃっても良いかも
-        Action<string> OnGamepadButtonDown { get; set; }
-        Action<string> OnArcadeStickButtonDown { get; set; }
+        Action<GamepadKey> OnGamepadButtonDown { get; set; }
+        Action<GamepadKey> OnArcadeStickButtonDown { get; set; }
     }
     
     /// <summary> UnityEngineのHumanBodyBonesと同じ順序で定義された人型ボーン情報の一覧です。 </summary>

@@ -7,9 +7,20 @@ namespace Baku.VMagicMirror
     {
         public override void InstallBindings()
         {
-            Container.BindIFactory<string, ScriptCaller>().AsSingle();
-            Container.BindIFactory<RootApi, ScriptEventInvoker>().AsSingle();
-            Container.BindInterfacesAndSelfTo<ScriptLoader>().AsSingle();
+            // Lua
+            // Container.BindInterfacesTo<LuaScriptCallerPathGenerator>().AsSingle();
+            // Container.BindIFactory<string, IScriptCaller>().To<ScriptCallerLua>().AsSingle();
+            // Container.BindIFactory<RootApi, ScriptEventInvoker>().AsSingle();
+            // NOST: ↓これは多分消せる
+            //Container.BindInterfacesAndSelfTo<ScriptLoader>().AsSingle();
+
+            // C#
+            Container.BindInterfacesTo<CSharpScriptCallerPathGenerator>().AsSingle();
+            Container.BindIFactory<string, IScriptCaller>().To<ScriptCallerCSharp>().AsSingle();
+            Container.BindIFactory<RootApi, ScriptEventInvokerCSharp>().AsSingle();
+
+            // 以下はだいたい共通 (Lua/C#差でコードいじるとこも多少あるかもだが)
+            Container.BindInterfacesAndSelfTo<ScriptLoaderGeneric>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<BuddySettingsRepository>().AsSingle();
             Container.Bind<BuddyPropertyRepository>().AsSingle();
@@ -23,6 +34,7 @@ namespace Baku.VMagicMirror
 
             Container.Bind<ApiImplementBundle>().AsSingle();
 
+            Container.Bind<ScreenApiImplement>().AsSingle();
             Container.Bind<AudioApiImplement>().AsSingle();
             Container.Bind<AvatarLoadApiImplement>().AsSingle();
             Container.Bind<AvatarPoseApiImplement>().AsSingle();

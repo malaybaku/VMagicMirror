@@ -7,17 +7,17 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         Vector2 MousePosition { get; }
 
         //TODO: enumにしたい寄り
-        Action<ApiGamepadKey> GamepadButtonDown { get; set; }
-        Action<ApiGamepadKey> GamepadButtonUp { get; set; }
+        Action<GamepadKey> GamepadButtonDown { get; set; }
+        Action<GamepadKey> GamepadButtonUp { get; set; }
 
         // ENTER以外のキー名は通知されない (全て "" になる) 
         Action<string> KeyboardKeyDown { get; set; }
         Action<string> KeyboardKeyUp { get; set; }
 
-        bool GetGamepadButton(ApiGamepadKey key);
+        bool GetGamepadButton(GamepadKey key);
     }
 
-    public enum ApiGamepadKey
+    public enum GamepadKey
     {
         LEFT,
         RIGHT,

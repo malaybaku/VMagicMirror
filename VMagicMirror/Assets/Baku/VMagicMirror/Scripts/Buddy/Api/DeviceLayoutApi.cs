@@ -1,8 +1,8 @@
-using UnityEngine;
+using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class DeviceLayoutApi
+    public class DeviceLayoutApi : IDeviceLayoutApi
     {
         private readonly DeviceLayoutApiImplement _impl;
         public DeviceLayoutApi(DeviceLayoutApiImplement impl)
@@ -10,12 +10,13 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl = impl;
         }
 
-        public Pose GetCameraPose() => _impl.GetCameraPose();
+        public Interface.Pose GetCameraPose() => _impl.GetCameraPose().ToApiValue();
         public float GetCameraFov() => _impl.GetCameraFov();
-        public Pose GetKeyboardPose() => _impl.GetKeyboardPose();
-        public Pose GetTouchpadPose() => _impl.GetTouchpadPose();
-        public Pose GetPenTabletPose() => _impl.GetPenTabletPose();
-        public Pose GetGamepadPose() => _impl.GetGamepadPose();
+
+        public Interface.Pose GetKeyboardPose() => _impl.GetKeyboardPose().ToApiValue();
+        public Interface.Pose GetTouchpadPose() => _impl.GetTouchpadPose().ToApiValue();
+        public Interface.Pose GetPenTabletPose() => _impl.GetPenTabletPose().ToApiValue();
+        public Interface.Pose GetGamepadPose() => _impl.GetGamepadPose().ToApiValue();
         public bool GetKeyboardVisible() => _impl.GetKeyboardVisible();
         public bool GetTouchpadVisible() => _impl.GetTouchpadVisible();
         public bool GetPenTabletVisible() => _impl.GetPenTabletVisible();

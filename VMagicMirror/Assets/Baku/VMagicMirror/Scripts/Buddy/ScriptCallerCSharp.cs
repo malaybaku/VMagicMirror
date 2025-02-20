@@ -68,11 +68,10 @@ namespace Baku.VMagicMirror.Buddy
                 // TODO: asm渡しすぎてそう、ちょっと絞りたい
                 // TODO: 逆にImportsは少なすぎの予感ある
                 var scriptOptions = ScriptOptions.Default
-                    .WithImports("System", "UnityEngine")
+                    .WithImports("System", "Baku.VMagicMirror.Buddy.Api.Interface")
                     .WithReferences(
                         typeof(object).Assembly,
-                        typeof(Transform).Assembly,
-                        typeof(RootApi).Assembly
+                        typeof(Api.Interface.IRootApi).Assembly
                     );
 
                 // NOTE:

@@ -9,6 +9,9 @@ namespace Baku.VMagicMirror.Buddy.Api
     {
         [Preserve] public LuaFunction Loaded { get; set; }
         [Preserve] public LuaFunction UnLoaded { get; set; }
+
+        [Preserve] public Action LoadedCS { get; set; }
+        [Preserve] public Action UnLoadedCS { get; set; }
     }
     
     public class AvatarBodyParameterApi
@@ -39,6 +42,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         [Preserve] public bool UsePerfectSync => _impl.UsePerfectSync;
         [Preserve] public LuaFunction OnBlinked { get; set; }
+        [Preserve] public Action OnBlinkedCS { get; set; }
 
         [Preserve] public bool HasClip(string name, bool customKey) => _impl.HasKey(name, customKey);
         [Preserve] public float GetCurrentValue(string name, bool customKey) => _impl.GetBlendShapeValue(name, customKey);

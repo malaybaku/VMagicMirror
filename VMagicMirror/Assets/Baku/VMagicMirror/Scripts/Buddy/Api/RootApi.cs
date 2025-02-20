@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         public IObservable<Sprite2DApi> SpriteCreated => _spriteCreated;
         
         private readonly string _baseDir;
-        
+
         public RootApi(string baseDir, string buddyId, ApiImplementBundle apiImplementBundle)
         {
             _baseDir = baseDir;
@@ -51,6 +51,9 @@ namespace Baku.VMagicMirror.Buddy.Api
             _cts.Cancel();
             _cts.Dispose();
         }
+
+        [Preserve] public Action StartCS { get; set; }
+        [Preserve] public Action<float> UpdateCS { get; set; }
 
         //TODO: FeatureLockについては、ここで記述されるプロパティ単位で
         //「丸ごとOK or 丸ごと塞がってる」となるのが分かりやすさ的には望ましい

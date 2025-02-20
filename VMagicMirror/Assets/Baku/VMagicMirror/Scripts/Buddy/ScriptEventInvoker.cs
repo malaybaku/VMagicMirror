@@ -8,7 +8,7 @@ using UniRx;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    public readonly struct BuddyCallbackItem
+    public readonly struct BuddyLuaCallbackItem
     {
         /// <summary>
         /// NOTE: 引数が2つ以下のときにobject[]を生成するのをケチって避けておく
@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror.Buddy
         /// <summary> ArgTypeがMultipleの場合、全ての引数がこの配列に入っている </summary>
         public object[] Args { get; }
 
-        private BuddyCallbackItem(
+        private BuddyLuaCallbackItem(
             LuaFunction func, ArgCountType argType, object arg0, object arg1, object[] args
             )
         {
@@ -42,16 +42,16 @@ namespace Baku.VMagicMirror.Buddy
             Args = args;
         }
 
-        public static BuddyCallbackItem NoArg(LuaFunction func) 
+        public static BuddyLuaCallbackItem NoArg(LuaFunction func) 
             => new(func, ArgCountType.Zero, null, null, Array.Empty<object>());
 
-        public static BuddyCallbackItem OneArg(LuaFunction func, object arg)
+        public static BuddyLuaCallbackItem OneArg(LuaFunction func, object arg)
             => new(func, ArgCountType.One, arg, null, Array.Empty<object>());
 
-        public static BuddyCallbackItem TwoArg(LuaFunction func, object arg0, object arg1)
+        public static BuddyLuaCallbackItem TwoArg(LuaFunction func, object arg0, object arg1)
             => new(func, ArgCountType.Two, arg0, arg1, Array.Empty<object>());
 
-        public static BuddyCallbackItem MultipleArg(LuaFunction func, object[] args)
+        public static BuddyLuaCallbackItem MultipleArg(LuaFunction func, object[] args)
             => new(func, ArgCountType.Multiple, null, null, args);
     }
     
@@ -67,7 +67,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly AvatarMotionEventApiImplement _avatarMotionEvent;
         private readonly AvatarFacialApiImplement _avatarFacial;
 
-        private readonly Queue<BuddyCallbackItem> _callbackQueue = new();
+        private readonly Queue<BuddyLuaCallbackItem> _callbackQueue = new();
         private readonly CancellationTokenSource _cts = new();
 
         private readonly object[] _oneArgCache = new object[1];
@@ -147,23 +147,23 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
 
-        private void Invoke(BuddyCallbackItem item)
+        private void Invoke(BuddyLuaCallbackItem item)
         {
             switch (item.ArgType)
             {
-                case BuddyCallbackItem.ArgCountType.Zero:
+                case BuddyLuaCallbackItem.ArgCountType.Zero:
                     ApiUtils.Try(() => item.Function.Call());
                     break;
-                case BuddyCallbackItem.ArgCountType.One:
+                case BuddyLuaCallbackItem.ArgCountType.One:
                     _oneArgCache[0] = item.Arg0;
                     ApiUtils.Try(() => item.Function.Call(_oneArgCache));
                     break;
-                case BuddyCallbackItem.ArgCountType.Two:
+                case BuddyLuaCallbackItem.ArgCountType.Two:
                     _twoArgCache[0] = item.Arg0;
                     _twoArgCache[1] = item.Arg1;
                     ApiUtils.Try(() => item.Function.Call(_twoArgCache));
                     break;
-                case BuddyCallbackItem.ArgCountType.Multiple:
+                case BuddyLuaCallbackItem.ArgCountType.Multiple:
                     ApiUtils.Try(() => item.Function.Call(item.Args));
                     break;
             }
@@ -178,7 +178,7 @@ namespace Baku.VMagicMirror.Buddy
                     {
                         return;
                     }
-                    _callbackQueue.Enqueue(BuddyCallbackItem.NoArg(func));
+                    _callbackQueue.Enqueue(BuddyLuaCallbackItem.NoArg(func));
                 })
                 .AddTo(this);
         }
@@ -197,7 +197,7 @@ namespace Baku.VMagicMirror.Buddy
                         return;
                     }
                     var arg = argConverter(v);
-                    _callbackQueue.Enqueue(BuddyCallbackItem.OneArg(func, arg));
+                    _callbackQueue.Enqueue(BuddyLuaCallbackItem.OneArg(func, arg));
                 })
                 .AddTo(this);
         }
@@ -213,7 +213,7 @@ namespace Baku.VMagicMirror.Buddy
                         return;
                     }
                     var args = argConverter(v);
-                    _callbackQueue.Enqueue(BuddyCallbackItem.TwoArg(func, args.Item1, args.Item2));
+                    _callbackQueue.Enqueue(BuddyLuaCallbackItem.TwoArg(func, args.Item1, args.Item2));
                 })
                 .AddTo(this);
         }
@@ -229,7 +229,7 @@ namespace Baku.VMagicMirror.Buddy
                         return;
                     }
                     var args = argConverter(v);
-                    _callbackQueue.Enqueue(BuddyCallbackItem.MultipleArg(func, args));
+                    _callbackQueue.Enqueue(BuddyLuaCallbackItem.MultipleArg(func, args));
                 })
                 .AddTo(this);
         }

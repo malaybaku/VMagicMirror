@@ -4,9 +4,13 @@ using UniRx;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    // フォルダを指定されてスクリプトを実行するためのクラス。
-    // このクラスは勝手に動き出さずに、ScriptLoaderからの指定に基づいて動作を開始/終了する。
-    // このクラスはアプリ終了時以外にもスクリプトのリロード要求で破棄されることがあり、この方法で破棄される場合はロードしたリソースを解放する。
+    /// <summary>
+    /// エントリポイントの指定に基づいてサブキャラのスクリプトを実行する基底クラス。
+    /// このクラスはアプリ終了時以外にもスクリプトのリロード要求で破棄されることがあり、この方法で破棄される場合はロードしたリソースを解放する。
+    /// </summary>
+    /// <remarks>
+    /// このクラスではスクリプトの言語に関知しない(継承先で言語特有の処置を行う)。
+    /// </remarks>
     public abstract class ScriptCallerBase : IScriptCaller
     {
         internal RootApi Api { get; }
@@ -31,8 +35,6 @@ namespace Baku.VMagicMirror.Buddy
             Api = new RootApi(EntryScriptDirectory, BuddyId, apiImplementBundle);
         }
         
-        public abstract string CreateEntryScriptPath(string dir);
-
         public virtual void Initialize()
         {
             // APIの生成時にSpriteのインスタンスまで入ってる状態にしておく (ヒエラルキーの構築時に最初からインスタンスがあるほうが都合がよいため)

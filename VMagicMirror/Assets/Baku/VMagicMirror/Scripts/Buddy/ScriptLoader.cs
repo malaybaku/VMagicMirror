@@ -18,6 +18,10 @@ namespace Baku.VMagicMirror.Buddy
     //   - sprite.png
     //   - ...
    
+    /// <summary>
+    /// サブキャラのスクリプトのロード/停止を行うクラス。
+    /// このクラスはスクリプトの言語に依存しない処理を行う…というのがポイント
+    /// </summary>
     public class ScriptLoader : PresenterBase
     {
         private readonly IMessageReceiver _receiver;

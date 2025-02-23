@@ -17,13 +17,9 @@ namespace Baku.VMagicMirror.Buddy
             Api = api;
         }
 
-        [Preserve] 
-        public RootApi Api { get; }
+        [Preserve] public RootApi Api { get; }
     }
 
-    /// <summary>
-    /// <see cref="ScriptCaller"/>をCSharpスクリプトで乗っ取るすごいやつだよ
-    /// </summary>
     public class ScriptCallerCSharp : ScriptCallerBase
     {
         private readonly ScriptEventInvokerCSharp _eventInvoker;
@@ -42,8 +38,6 @@ namespace Baku.VMagicMirror.Buddy
         {
             _eventInvoker = scriptEventInvokerFactory.Create(Api);
         }
-
-        public override string CreateEntryScriptPath(string dir) => Path.Combine(dir, "main.cs");
 
         public override void Initialize()
         {

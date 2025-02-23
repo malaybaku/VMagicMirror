@@ -40,7 +40,7 @@ namespace Baku.VMagicMirror.Buddy
         }
 
         // NOTE: 1回のアプリケーション実行中にフォルダのリネーム起因で別のBuddyに同じBuddyIdが割り当てられた場合、
-        // その2つ(以上)のBuddyのログは単一のファイルに入ることがあるが、それは許容
+        // その2つ(以上)のBuddyのログは同じファイルに記録される。これはby-design
         private BuddySingleFileLogger GetLogger(string buddyId)
         {
             // NOTE: ファイルパスとして使うので、トラブル防止のためにlowerに統一してしまう

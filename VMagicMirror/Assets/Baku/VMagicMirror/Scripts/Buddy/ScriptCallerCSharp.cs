@@ -56,7 +56,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             if (!File.Exists(EntryScriptPath))
             {
-                LogOutput.Instance.Write($"Error, script does not exist at: {EntryScriptPath}");
+                BuddyLogger.Instance.Log(BuddyId, $"[Error] Script does not exist at: {EntryScriptPath}");
                 return;
             }
 
@@ -65,8 +65,7 @@ namespace Baku.VMagicMirror.Buddy
             {
                 var code = await File.ReadAllTextAsync(EntryScriptPath, cancellationToken);
 
-                // TODO: asm渡しすぎてそう、ちょっと絞りたい
-                // TODO: 逆にImportsは少なすぎの予感ある
+                // TODO: Importsを増やす可能性を考えた方がいいかも
                 var scriptOptions = ScriptOptions.Default
                     .WithImports("System", "Baku.VMagicMirror.Buddy.Api.Interface")
                     .WithReferences(
@@ -81,14 +80,20 @@ namespace Baku.VMagicMirror.Buddy
                 _scriptState = await _script.RunAsync(
                     new CSharpScriptGlobals(Api),
                     cancellationToken: cancellationToken);
-                
+
                 _eventInvoker.Initialize();
+            }
+            catch (CompilationErrorException compilationErrorException)
+            {
+                // NOTE: コンパイルエラーに対してはスタックトレースの表示が余計なので、ログの出し方を変える。
+                // 何なら、このケースではWPF側に通知を送ったりしてもよい。
+                BuddyLogger.Instance.Log(BuddyId, $"[Error] Script has compile error. {compilationErrorException.Message}");
             }
             catch (Exception ex)
             {
-                LogOutput.Instance.Write("Failed to load script at:" + EntryScriptPath);
-                LogOutput.Instance.Write(ex);
-                Debug.LogException(ex);
+                //TODO: compile errorの場合の表示をスッキリさせたい
+                BuddyLogger.Instance.Log(BuddyId, "[Error] Failed to load script at:" + EntryScriptPath);
+                BuddyLogger.Instance.Log(BuddyId, ex);
             }
         }
         

@@ -95,11 +95,11 @@ namespace Baku.VMagicMirror.Buddy
                 
                 // Start/Updateもここで呼ぶことにより、アバター等の状態が完全に確定した状態でのみスクリプトが実行されるのを保証する
                 InvokeStartIfNeeded();
-                ApiUtils.Try(() => _api.Update?.Invoke(Time.deltaTime));
+                ApiUtils.Try(_api.BuddyId, () => _api.Update?.Invoke(Time.deltaTime));
 
                 while (_callbackQueue.TryDequeue(out var callback))
                 {
-                    ApiUtils.Try(() => callback());
+                    ApiUtils.Try(_api.BuddyId, () => callback());
                 }
                 
                 // 最後の最後でスプライトの状態を更新する
@@ -120,7 +120,7 @@ namespace Baku.VMagicMirror.Buddy
             if (!_startCalled)
             {
                 _startCalled = true;
-                ApiUtils.Try(() => _api.Start?.Invoke());
+                ApiUtils.Try(_api.BuddyId, () => _api.Start?.Invoke());
             }
         }
         

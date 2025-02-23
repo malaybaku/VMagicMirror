@@ -5,7 +5,6 @@ using System.Threading;
 using Baku.VMagicMirror.Buddy.Api.Interface;
 using Cysharp.Threading.Tasks;
 using UniRx;
-using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
@@ -21,6 +20,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         internal IObservable<Sprite2DApi> SpriteCreated => _spriteCreated;
         
         private readonly string _baseDir;
+        private LogLevel _logLevel = LogLevel.Log;
 
         public RootApi(string baseDir, string buddyId, ApiImplementBundle apiImplementBundle)
         {
@@ -48,6 +48,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _cts.Dispose();
         }
 
+        internal string BuddyId { get; }
+
         public Action Start { get; set; }
         public Action<float> Update { get; set; }
 
@@ -72,16 +74,32 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         public void Log(string value)
         {
-            if (Application.isEditor)
+            if ((int)_logLevel >= (int)LogLevel.Log)
             {
-                Debug.Log(value);
-            }
-            else
-            {
-                LogOutput.Instance.Write(value);
+                BuddyLogger.Instance.Log(BuddyId, GetLogHeader(LogLevel.Log) + value);
             }
         }
 
+        public void LogWarning(string value)
+        {
+            if ((int)_logLevel >= (int)LogLevel.Warning)
+            {
+                BuddyLogger.Instance.Log(BuddyId, GetLogHeader(LogLevel.Warning) + value);
+            }
+        }
+
+        public void LogError(string value)
+        {
+            if ((int)_logLevel >= (int)LogLevel.Error)
+            {
+                BuddyLogger.Instance.Log(BuddyId, GetLogHeader(LogLevel.Error) + value);
+            }
+        }
+
+        public void SetLogLevel(LogLevel level) => _logLevel = level;
+
+        private string GetLogHeader(LogLevel level) => $"[{level}]";
+        
         public float Random() => UnityEngine.Random.value;
 
         public void InvokeDelay(Action func, float delaySeconds)
@@ -92,7 +110,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                     cancellationToken: _cts.Token,
                     delayTiming: PlayerLoopTiming.LastPostLateUpdate
                     );
-                ApiUtils.Try(() => func?.Invoke());
+                ApiUtils.Try(BuddyId, () => func?.Invoke());
             });
         }
 
@@ -110,7 +128,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                     );
                 while (!_cts.IsCancellationRequested)
                 {
-                    ApiUtils.Try(() => func?.Invoke());
+                    ApiUtils.Try(BuddyId, () => func?.Invoke());
                     await UniTask.Delay(
                         TimeSpan.FromSeconds(intervalSeconds),
                         cancellationToken: _cts.Token,
@@ -130,7 +148,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         public ISprite2DApi Create2DSprite()
         {
-            var result = new Sprite2DApi(_baseDir);
+            var result = new Sprite2DApi(_baseDir, BuddyId);
             _sprites.Add(result);
             _spriteCreated.OnNext(result);
             return result;

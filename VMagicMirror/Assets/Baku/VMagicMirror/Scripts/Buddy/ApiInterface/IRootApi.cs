@@ -27,6 +27,10 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         IScreenApi Screen { get; }
 
         void Log(string value);
+        void LogWarning(string value);
+        void LogError(string value);
+        void SetLogLevel(LogLevel level);
+        
         float Random();
         void InvokeDelay(Action func, float delaySeconds);
         void InvokeInterval(Action func, float intervalSeconds);
@@ -36,5 +40,13 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         bool ValidateFilePath(string path);
 
         ISprite2DApi Create2DSprite();
+    }
+
+    public enum LogLevel
+    {
+        None,
+        Error,
+        Warning,
+        Log,
     }
 }

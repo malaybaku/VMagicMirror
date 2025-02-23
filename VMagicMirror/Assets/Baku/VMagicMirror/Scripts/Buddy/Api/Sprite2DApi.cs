@@ -84,10 +84,12 @@ namespace Baku.VMagicMirror.Buddy.Api
         public ISpriteEffectApi Effects => InternalEffects;
 
         private readonly string _baseDir;
+        private readonly string _buddyId;
 
-        internal Sprite2DApi(string baseDir)
+        internal Sprite2DApi(string baseDir, string buddyId)
         {
             _baseDir = baseDir;
+            _buddyId = buddyId;
         }
 
         internal void Dispose()
@@ -113,7 +115,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public void Show(string path, Interface.Sprite2DTransitionStyle style)
         {
-            ApiUtils.Try(() =>
+            ApiUtils.Try(_buddyId, () =>
             {
                 var fullPath = Path.Combine(_baseDir, path).ToLower();
                 if (!Load(fullPath))
@@ -132,7 +134,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public void Preload(string path)
         {
-            ApiUtils.Try(() =>
+            ApiUtils.Try(_buddyId, () =>
             {
                 var fullPath = Path.Combine(_baseDir, path).ToLower();
                 Load(fullPath);

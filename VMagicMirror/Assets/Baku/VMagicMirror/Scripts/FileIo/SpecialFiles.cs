@@ -28,6 +28,7 @@ namespace Baku.VMagicMirror
         private static string SaveFileDir { get; }
         public static string LogFileDir { get; }
         public static string LogFilePath { get; }
+        public static string BuddyLogFileDir { get; }
 
         public static string AutoSaveSettingFilePath { get; }
 
@@ -66,6 +67,7 @@ namespace Baku.VMagicMirror
             SaveFileDir = Path.Combine(RootDirectory, "Saves");
             LogFileDir = Path.Combine(RootDirectory, "Logs");
             BuddyRootDirectory = Path.Combine(RootDirectory, "Buddy");
+            BuddyLogFileDir = Path.Combine(LogFileDir, "Buddy");
             
             AutoSaveSettingFilePath = Path.Combine(SaveFileDir, AutoSaveSettingFileName);
             LogFilePath = Path.Combine(LogFileDir, LogTextName);

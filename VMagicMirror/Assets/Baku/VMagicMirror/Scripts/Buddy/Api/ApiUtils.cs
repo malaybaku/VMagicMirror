@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         public static bool IsInBuddyDirectory(string file)
             => IsChildDirectory(SpecialFiles.BuddyRootDirectory, file);
 
-        public static void Try(Action act)
+        public static void Try(string buddyId, Action act)
         {
             try
             {
@@ -41,8 +41,8 @@ namespace Baku.VMagicMirror.Buddy.Api
                 {
                     Debug.LogException(ex);
                 }
-                LogOutput.Instance.Write("Error in script execution:");
-                LogOutput.Instance.Write(ex);
+                
+                BuddyLogger.Instance.Log(buddyId, ex);
             }
         }
     }

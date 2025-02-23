@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly IMessageReceiver _receiver;
         private readonly IVRMLoadable _vrmLoadable;
-        private readonly IScriptLoader _scriptLoader;
+        private readonly ScriptLoader _scriptLoader;
         private readonly BuddySpriteCanvas _spriteCanvas;
         private readonly BuddyLayoutRepository _layoutLayoutRepository;
         private readonly BuddyTransformInstanceRepository _transformInstanceRepository;
@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror.Buddy
         public BuddyLayoutUpdater(
             IMessageReceiver receiver, 
             IVRMLoadable vrmLoadable,
-            IScriptLoader scriptLoader,
+            ScriptLoader scriptLoader,
             BuddySpriteCanvas spriteCanvas,
             BuddyLayoutRepository layoutRepository,
             BuddyTransformInstanceRepository transformInstanceRepository)

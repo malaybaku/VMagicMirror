@@ -7,8 +7,6 @@ using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    //TODO: LuaでもC#でもLoaderの実装は9割一緒っぽいので差分コーディングしたい…
-    
     // ScriptRoot以下の構造はこうする
     // VMM_Files/Buddy/
     // - CharaA/
@@ -20,10 +18,9 @@ namespace Baku.VMagicMirror.Buddy
     //   - sprite.png
     //   - ...
    
-    public class ScriptLoaderGeneric : PresenterBase, IScriptLoader
+    public class ScriptLoader : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
-        private readonly IScriptCallerPathGenerator _callerPathGenerator;
         private readonly IFactory<string, IScriptCaller> _scriptCallerFactory;
         private readonly List<IScriptCaller> _loadedScripts = new();
 
@@ -36,13 +33,11 @@ namespace Baku.VMagicMirror.Buddy
         public IObservable<IScriptCaller> ScriptDisposing => _scriptDisposing;
         
         [Inject]
-        public ScriptLoaderGeneric(
+        public ScriptLoader(
             IMessageReceiver receiver,
-            IScriptCallerPathGenerator callerPathGenerator,
             IFactory<string, IScriptCaller> scriptCallerFactory)
         {
             _receiver = receiver;
-            _callerPathGenerator = callerPathGenerator;
             _scriptCallerFactory = scriptCallerFactory;
         }
         
@@ -79,13 +74,13 @@ namespace Baku.VMagicMirror.Buddy
         private void EnableBuddy(string dir)
         {
             // エントリポイントがなければ必ず無視
-            var entryScriptPath = _callerPathGenerator.CreateEntryScriptPath(dir);
+            var entryScriptPath = Path.Combine(dir, SpecialFiles.BuddyEntryScriptFileName);
             if (!File.Exists(entryScriptPath))
             {
                 return;
             }
 
-            // 読み込み済みなら無視する: リロードしたいならWPF側がDisable => Enableを順にやって欲しい…という仕様
+            // 読み込み済みなら無視する: リロードしたい場合、WPF側がDisable => Enableを順に送ってくるのが期待挙動
             if (_loadedScripts.Any(
                 s => string.Compare(s.EntryScriptPath, entryScriptPath, StringComparison.OrdinalIgnoreCase) == 0
                 ))

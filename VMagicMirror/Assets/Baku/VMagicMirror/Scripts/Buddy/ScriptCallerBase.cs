@@ -1,9 +1,6 @@
-using System;
 using System.IO;
 using Baku.VMagicMirror.Buddy.Api;
-using NLua;
 using UniRx;
-using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -14,9 +11,6 @@ namespace Baku.VMagicMirror.Buddy
     {
         internal RootApi Api { get; }
         private readonly CompositeDisposable _disposable = new();
-
-        //「定義されてれば呼ぶ」系のコールバックメソッド。今のとこupdateしかないが他も増やしてよい + 増えたら管理方法を考えた方が良さそう
-        private LuaFunction _updateFunction;
 
         private readonly BuddySpriteCanvas _spriteCanvas;
         // NOTE: 呼び出し元クラスは、Initialize()が呼ばれる時点でこのパスにlua拡張子のファイルが存在することを保証している

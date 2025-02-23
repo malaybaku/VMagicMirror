@@ -11,6 +11,8 @@ namespace Baku.VMagicMirror
         //セーブファイルには拡張子をつけない(手で触らない想定なため)
         private const string AutoSaveSettingFileName = "_autosave";
         private const string LogTextName = "log.txt";
+
+        public const string BuddyEntryScriptFileName = "main.cs";
         
         public static bool UseDevFolder
         {

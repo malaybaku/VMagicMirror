@@ -7,20 +7,12 @@ namespace Baku.VMagicMirror
     {
         public override void InstallBindings()
         {
-            // Lua
-            // Container.BindInterfacesTo<LuaScriptCallerPathGenerator>().AsSingle();
-            // Container.BindIFactory<string, IScriptCaller>().To<ScriptCallerLua>().AsSingle();
-            // Container.BindIFactory<RootApi, ScriptEventInvoker>().AsSingle();
-            // NOST: ↓これは多分消せる
-            //Container.BindInterfacesAndSelfTo<ScriptLoader>().AsSingle();
-
-            // C#
-            Container.BindInterfacesTo<CSharpScriptCallerPathGenerator>().AsSingle();
+            // ScriptがC#であることに高度に依存してるクラスはこの辺
             Container.BindIFactory<string, IScriptCaller>().To<ScriptCallerCSharp>().AsSingle();
             Container.BindIFactory<RootApi, ScriptEventInvokerCSharp>().AsSingle();
 
-            // 以下はだいたい共通 (Lua/C#差でコードいじるとこも多少あるかもだが)
-            Container.BindInterfacesAndSelfTo<ScriptLoaderGeneric>().AsSingle();
+            // 以下は言語依存性が低めのクラス (せいぜいファイル名とかで拡張子を見に行く程度)
+            Container.BindInterfacesAndSelfTo<ScriptLoader>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<BuddySettingsRepository>().AsSingle();
             Container.Bind<BuddyPropertyRepository>().AsSingle();

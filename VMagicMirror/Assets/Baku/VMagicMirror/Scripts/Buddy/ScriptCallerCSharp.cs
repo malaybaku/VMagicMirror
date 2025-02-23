@@ -6,7 +6,6 @@ using Cysharp.Threading.Tasks;
 using Zenject;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace Baku.VMagicMirror.Buddy

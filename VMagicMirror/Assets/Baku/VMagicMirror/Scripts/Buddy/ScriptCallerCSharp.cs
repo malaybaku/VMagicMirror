@@ -93,6 +93,7 @@ namespace Baku.VMagicMirror.Buddy
         public override void Dispose()
         {
             base.Dispose();
+            _eventInvoker.Dispose();
             _runScriptCts.Cancel();
             _runScriptCts.Dispose();
         }

@@ -46,10 +46,10 @@ namespace Baku.VMagicMirrorConfig
             // - メタデータの定義ファイルがある
             // - メタデータがJSONとして読めそうである
 
-            var entryScriptPath = Path.Combine(folderPath, "main.lua");
+            var entryScriptPath = Path.Combine(folderPath, SpecialFilePath.BuddyEntryScriptFileName);
             if (!File.Exists(entryScriptPath))
             {
-                LogOutput.Instance.Write("entry script file (main.lua) does not exist at path: " + entryScriptPath);
+                LogOutput.Instance.Write($"Entry script file ({SpecialFilePath.BuddyEntryScriptFileName}) does not exist at path: {entryScriptPath}");
                 result = null;
                 return false;
             }

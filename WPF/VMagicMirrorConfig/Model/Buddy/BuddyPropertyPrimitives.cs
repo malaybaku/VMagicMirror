@@ -100,7 +100,7 @@ namespace Baku.VMagicMirrorConfig
         public BuddyTransform3D WithPosition(BuddyVector3 position) => new(position, Rotation, Scale, ParentBone);
         public BuddyTransform3D WithRotation(BuddyVector3 rotation) => new(Position, rotation, Scale, ParentBone);
         public BuddyTransform3D WithScale(float scale) => new(Position, Rotation, scale, ParentBone);
-        public BuddyTransform3D WithAttachedBone(BuddyParentBone bone) => new BuddyTransform3D(Position, Rotation, Scale, bone);
+        public BuddyTransform3D WithParentBone(BuddyParentBone bone) => new BuddyTransform3D(Position, Rotation, Scale, bone);
 
         public bool Equals(BuddyTransform3D other) =>
             Position.Equals(other.Position) &&
@@ -113,10 +113,64 @@ namespace Baku.VMagicMirrorConfig
         public override int GetHashCode() => HashCode.Combine(Position, Rotation, Scale, ParentBone);
     }
 
+    // NOTE: Unityでも同じenumを定義しており、違いはLastBoneがないことだけ
     public enum BuddyParentBone
     {
-        //TODO: 網羅的に、UnityのHumanBodyBonesと同じ名前で定義したい
-        None = 0,
-        Hips,
+        None = -1,
+        Hips = 0,
+        LeftUpperLeg,
+        RightUpperLeg,
+        LeftLowerLeg,
+        RightLowerLeg,
+        LeftFoot,
+        RightFoot,
+        Spine,
+        Chest,
+        Neck,
+        Head,
+        LeftShoulder,
+        RightShoulder,
+        LeftUpperArm,
+        RightUpperArm,
+        LeftLowerArm,
+        RightLowerArm,
+        LeftHand,
+        RightHand,
+        LeftToes,
+        RightToes,
+        LeftEye,
+        RightEye,
+        Jaw,
+        LeftThumbProximal,
+        LeftThumbIntermediate,
+        LeftThumbDistal,
+        LeftIndexProximal,
+        LeftIndexIntermediate,
+        LeftIndexDistal,
+        LeftMiddleProximal,
+        LeftMiddleIntermediate,
+        LeftMiddleDistal,
+        LeftRingProximal,
+        LeftRingIntermediate,
+        LeftRingDistal,
+        LeftLittleProximal,
+        LeftLittleIntermediate,
+        LeftLittleDistal,
+        RightThumbProximal,
+        RightThumbIntermediate,
+        RightThumbDistal,
+        RightIndexProximal,
+        RightIndexIntermediate,
+        RightIndexDistal,
+        RightMiddleProximal,
+        RightMiddleIntermediate,
+        RightMiddleDistal,
+        RightRingProximal,
+        RightRingIntermediate,
+        RightRingDistal,
+        RightLittleProximal,
+        RightLittleIntermediate,
+        RightLittleDistal,
+        UpperChest,
     }
 }

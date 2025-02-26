@@ -49,7 +49,7 @@ namespace Baku.VMagicMirrorConfig.BuddySettingsMessages
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public BuddyTransform2D Transform2DValue { get; set; }
 
-        //TODO?: ParentBoneのシリアライズがintになりそうなのはちょっと性質は悪い。最悪諦めてもUnity側で手に負えるけど
+        //NOTE: ParentBoneのシリアライズはintになるのが前提なことに注意
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public BuddyTransform3D Transform3DValue { get; set; }
     }

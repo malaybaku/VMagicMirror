@@ -149,7 +149,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         public ISprite2DApi Create2DSprite()
         {
-            var result = new Sprite2DApi(BuddyId);
+            var result = new Sprite2DApi(_baseDir, BuddyId);
             _sprites.Add(result);
             _spriteCreated.OnNext(result);
             return result;

@@ -32,7 +32,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             }
         }
 
-        private float _intensity = 0.5f;
+        private float _intensity = 0.2f;
         public float Intensity
         {
             get => _intensity;

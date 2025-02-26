@@ -1,3 +1,4 @@
+using System.IO;
 using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
@@ -12,11 +13,20 @@ namespace Baku.VMagicMirror.Buddy.Api
 
     public class Sprite2DApi : ISprite2DApi
     {
-        // TODO: このフラグをうまく使って「1つのインスタンスあたり最大1回までエラーログが出る」みたいな挙動を作りたい
-        private bool _fileNotFoundErrorLogged = false;
-        private bool _pathInvalidErrorLogged = false;
+        private readonly string _baseDir;
+        private readonly string _buddyId;
+        private bool _fileNotFoundErrorLogged;
+        private bool _pathInvalidErrorLogged;
+        
+        internal Sprite2DApi(string baseDir, string buddyId)
+        {
+            _baseDir = baseDir;
+            _buddyId = buddyId;
+        }
 
+        // TODO: Instanceを見たいときにAPI経由で参照しないで済むようにしたい
         internal BuddySpriteInstance Instance { get; set; }
+        internal void Dispose() => Instance.Dispose();
 
         Vector2 ISprite2DApi.LocalPosition
         {
@@ -36,7 +46,6 @@ namespace Baku.VMagicMirror.Buddy.Api
             set => Instance.Size = value.ToEngineValue();
         }
         
-
         Vector2 ISprite2DApi.Pivot
         {
             get => Instance.Pivot.ToApiValue();
@@ -45,39 +54,35 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         ISpriteEffectApi ISprite2DApi.Effects => Instance.SpriteEffects;
 
-        private readonly string _buddyId;
-
-        internal Sprite2DApi(string buddyId)
+        public void Preload(string path) => ApiUtils.Try(_buddyId, () =>
         {
-            _buddyId = buddyId;
-        }
+            var fullPath = GetFullPath(path);
+            var result = Instance.Load(fullPath);
+            HandleTextureLoadResult(fullPath, result);
+        });
 
-        // TODO: 単にInstanceが直接Disposeされるだけ…という状態にしたい
-        internal void Dispose() => Instance.Dispose();
-
-        public void Hide() => Instance.SetActive(false);
-        
         public void Show(string path) => Show(path, Interface.Sprite2DTransitionStyle.Immediate);
 
         public void Show(string path, Interface.Sprite2DTransitionStyle style)
         {
             ApiUtils.Try(_buddyId, () =>
             {
+                var fullPath = GetFullPath(path);
                 var clamped = UnityEngine.Mathf.Clamp(
                     (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.RightFlip
                 );
 
-                var loadResult = Instance.Show(path, (Sprite2DTransitionStyle)clamped);
-                HandleTextureLoadResult(path, loadResult);
+                var loadResult = Instance.Show(fullPath, (Sprite2DTransitionStyle)clamped);
+                HandleTextureLoadResult(fullPath, loadResult);
+                if (loadResult == TextureLoadResult.Success)
+                {
+                    Instance.SetActive(true);
+                }
             });
         }
 
-        public void Preload(string path) => ApiUtils.Try(_buddyId, () =>
-        {
-            var result = Instance.Load(path);
-            HandleTextureLoadResult(path, result);
-        });
-
+        public void Hide() => Instance.SetActive(false);
+        
         public void SetPosition(Vector2 position) => Instance.SetPosition(position.ToEngineValue());
 
         public void SetParent(ITransform2DApi parent)
@@ -86,6 +91,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             Instance.SetParent(parentInstance);
         }
 
+        private string GetFullPath(string path) => Path.Combine(_baseDir, path);
+        
         private void HandleTextureLoadResult(string fullPath, TextureLoadResult loadResult)
         {
             if (loadResult is TextureLoadResult.FailurePathIsNotInBuddyDirectory)

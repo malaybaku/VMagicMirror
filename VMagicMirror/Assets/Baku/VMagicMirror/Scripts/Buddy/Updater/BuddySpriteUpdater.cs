@@ -65,12 +65,17 @@ namespace Baku.VMagicMirror.Buddy
                 }
                 else
                 {
+                    effect.ElapsedTime = 0f;
                     effect.IsActive = false;
                     return pose;
                 }
             }
-
-            var rate = t / effect.Duration;
+            else
+            {
+                effect.ElapsedTime = t;
+            }
+            
+            var rate = effect.ElapsedTime / effect.Duration;
             // bounceRate > 0 のとき、横に平べったくなる。マイナスの場合は縦に伸びる
             var bounceRate = Mathf.Sin(rate * Mathf.PI * 2f);
             
@@ -99,12 +104,11 @@ namespace Baku.VMagicMirror.Buddy
             }
 
             var t = effect.ElapsedTime + Time.deltaTime;
-            if (t > effect.Duration)
-            {
-                effect.ElapsedTime = t - effect.Duration;
-            }
+            effect.ElapsedTime = (t > effect.Duration)
+                ? t - effect.Duration
+                : t;
 
-            var rate = t / effect.Duration;
+            var rate = effect.ElapsedTime / effect.Duration;
             var yRate = 0.5f * (1 - Mathf.Cos(rate * Mathf.PI * 2f));
             return pose.WithPos(pose.Pos + new Vector2(0, yRate * effect.Intensity));
         }

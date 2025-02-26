@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Baku.VMagicMirror.Buddy.Api.Interface;
@@ -7,16 +8,25 @@ namespace Baku.VMagicMirror.Buddy.Api
     public class TransformsApi : ITransformsApi
     {
         private readonly Dictionary<string, Transform2DApi> _transform2d;
+        private readonly Dictionary<string, Transform3DApi> _transform3d;
 
-        public TransformsApi(Dictionary<string, BuddyTransform2DInstance> transform2Ds)
+        public TransformsApi(
+            IReadOnlyDictionary<string, BuddyTransform2DInstance> transform2Ds,
+            IReadOnlyDictionary<string, BuddyTransform3DInstance> transform3Ds)
         {
             _transform2d = transform2Ds.ToDictionary(
                 pair => pair.Key,
                 pair => new Transform2DApi(pair.Value)
             );
+
+            _transform3d = transform3Ds.ToDictionary(
+                pair => pair.Key,
+                pair => new Transform3DApi(pair.Value)
+            );
         }
 
         public ITransform2DApi GetTransform2D(string key) => _transform2d.GetValueOrDefault(key);
+        public ITransform3DApi GetTransform3D(string key) => _transform3d.GetValueOrDefault(key);
     }
     
     public class Transform2DApi : ITransform2DApi

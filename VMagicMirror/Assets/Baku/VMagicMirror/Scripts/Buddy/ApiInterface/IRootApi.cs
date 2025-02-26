@@ -40,6 +40,9 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         bool ValidateFilePath(string path);
 
         ISprite2DApi Create2DSprite();
+        ISprite3DApi Create3DSprite();
+        IGlbApi CreateGlb();
+        IVrmApi CreateVrm();
     }
 
     public enum LogLevel

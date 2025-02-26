@@ -21,8 +21,9 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
         [SerializeField] private StartupLoadingCover loadingCoverController = null;
 
-        [SerializeField] private BuddySpriteCanvas luaScriptSpriteCanvas;
+        [SerializeField] private BuddySpriteCanvas buddySpriteCanvas;
         [SerializeField] private BuddyAudioSources buddyAudioSources;
+        [SerializeField] private BuddyTransform3DInstance buddyTransform3DInstancePrefab;
         
         public override void InstallBindings()
         {
@@ -64,11 +65,14 @@ namespace Baku.VMagicMirror.Installer
                 .NonLazy();
 
             Container.Bind<BuddySpriteCanvas>()
-                .FromComponentInNewPrefab(luaScriptSpriteCanvas)
+                .FromComponentInNewPrefab(buddySpriteCanvas)
                 .AsCached();
             Container.Bind<BuddyAudioSources>()
                 .FromComponentInNewPrefab(buddyAudioSources)
                 .AsCached();
+            Container.BindIFactory<BuddyTransform3DInstance>()
+                .FromComponentInNewPrefab(buddyTransform3DInstancePrefab)
+                .AsSingle();
             BuddySystemInstaller.Install(Container);
             
             WordToMotion.WordToMotionInstaller.Install(Container);

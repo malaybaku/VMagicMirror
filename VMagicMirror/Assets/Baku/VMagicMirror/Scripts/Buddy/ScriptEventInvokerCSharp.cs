@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly AvatarLoadApiImplement _avatarLoad;
         private readonly AvatarMotionEventApiImplement _avatarMotionEvent;
         private readonly AvatarFacialApiImplement _avatarFacial;
-        private readonly BuddySpriteUpdater _spriteUpdater = new();
+        private readonly BuddySprite2DUpdater _spriteUpdater = new();
 
         private readonly Queue<Action> _callbackQueue = new();
         private readonly CancellationTokenSource _cts = new();
@@ -109,9 +109,10 @@ namespace Baku.VMagicMirror.Buddy
 
         private void UpdateSprites()
         {
+            // TODO: _api経由じゃなくてSpriteの一覧的なやつを見に行くでよい…ということにしたい
             foreach (var sprite in _api.Sprites)
             {
-                _spriteUpdater.UpdateSprite(sprite);
+                _spriteUpdater.UpdateSprite(sprite.Instance);
             }
         }
         

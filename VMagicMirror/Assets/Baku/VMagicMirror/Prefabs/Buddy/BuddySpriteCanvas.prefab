@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3466238353687275096}
   - component: {fileID: 3646250572448481681}
   m_Layer: 5
-  m_Name: BuddySprite2DCanvas
+  m_Name: BuddySpriteCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

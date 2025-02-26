@@ -1,11 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Baku.VMagicMirror.Buddy.Api.Interface;
-using UnityEngine;
-using Object = UnityEngine.Object;
-using Vector2 = UnityEngine.Vector2;
-using Vector3 = UnityEngine.Vector3;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
@@ -19,132 +12,73 @@ namespace Baku.VMagicMirror.Buddy.Api
 
     public class Sprite2DApi : ISprite2DApi
     {
-        // 毎フレームログ出力しないように…ということで
+        // TODO: このフラグをうまく使って「1つのインスタンスあたり最大1回までエラーログが出る」みたいな挙動を作りたい
         private bool _fileNotFoundErrorLogged = false;
         private bool _pathInvalidErrorLogged = false;
 
         internal BuddySpriteInstance Instance { get; set; }
 
-        // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
-        internal Texture2D CurrentTexture { get; private set; }
-
-        // NOTE: この値はトランジション処理をやっているクラスがトランジションを完了すると、自動でNoneに切り替わる
-        internal Sprite2DTransitionStyle CurrentTransitionStyle { get; set; } = Sprite2DTransitionStyle.None;
-
-        internal bool IsActive { get; private set; } = true;
-
-        private readonly Dictionary<string, Texture2D> _textures = new();
-
-        internal Vector2 InternalPosition { get; set; }
-
-        Interface.Vector2 ISprite2DApi.Position
+        Vector2 ISprite2DApi.LocalPosition
         {
-            get => InternalPosition.ToApiValue();
-            set => InternalPosition = value.ToEngineValue();
+            get => Instance.LocalPosition.ToApiValue();
+            set => Instance.LocalPosition = value.ToEngineValue();
         }
 
-        internal Vector2 InternalSize { get; set; }
-
-        Interface.Vector2 ISprite2DApi.Size
+        Quaternion ISprite2DApi.LocalRotation
         {
-            get => InternalSize.ToApiValue();
-            set => InternalSize = value.ToEngineValue();
+            get => Instance.LocalRotation.ToApiValue();
+            set => Instance.LocalRotation = value.ToEngineValue();
         }
 
-        // NOTE: scale/pivotはエフェクトからは制御しないのでこうなってる
-        // Effectからも制御する場合、普通に値だけ保持する方向に修正する
-        // (scaleは特に「ぷにぷに」とか実装したら修正しそう…)
-        internal Vector2 InternalScale
+        Vector2 ISprite2DApi.Size
         {
-            get => Instance.RectTransform.localScale;
-            set => Instance.RectTransform.localScale = new Vector3(value.x, value.y, 1f);
-        }
-
-        Interface.Vector2 ISprite2DApi.Scale
-        {
-            get => InternalScale.ToApiValue();
-            set => InternalScale = value.ToEngineValue();
-        }
-
-
-        internal Vector2 InternalPivot
-        {
-            get => Instance.RectTransform.pivot;
-            set => Instance.RectTransform.pivot = value;
+            get => Instance.Size.ToApiValue();
+            set => Instance.Size = value.ToEngineValue();
         }
         
-        Interface.Vector2 ISprite2DApi.Pivot
+
+        Vector2 ISprite2DApi.Pivot
         {
-            get => InternalPivot.ToApiValue();
-            set => InternalPivot = value.ToEngineValue();
+            get => Instance.Pivot.ToApiValue();
+            set => Instance.Pivot = value.ToEngineValue();
         }
 
-        public SpriteEffectApi InternalEffects { get; } = new();
-        // NOTE: ここだけEffectApi自体がデータ的に定義されてるので素朴にnew()してよい
-        public ISpriteEffectApi Effects => InternalEffects;
+        ISpriteEffectApi ISprite2DApi.Effects => Instance.SpriteEffects;
 
-        private readonly string _baseDir;
         private readonly string _buddyId;
 
-        internal Sprite2DApi(string baseDir, string buddyId)
+        internal Sprite2DApi(string buddyId)
         {
-            _baseDir = baseDir;
             _buddyId = buddyId;
         }
 
-        internal void Dispose()
-        {
-            CurrentTexture = null;
-            foreach (var t in _textures.Values)
-            {
-                Object.Destroy(t);
-            }
+        // TODO: 単にInstanceが直接Disposeされるだけ…という状態にしたい
+        internal void Dispose() => Instance.Dispose();
 
-            _textures.Clear();
-            if (Instance != null)
-            {
-                Object.Destroy(Instance.gameObject);
-            }
-
-            Instance = null;
-        }
-
-        public void Hide() => IsActive = false;
-
+        public void Hide() => Instance.SetActive(false);
+        
         public void Show(string path) => Show(path, Interface.Sprite2DTransitionStyle.Immediate);
 
         public void Show(string path, Interface.Sprite2DTransitionStyle style)
         {
             ApiUtils.Try(_buddyId, () =>
             {
-                var fullPath = Path.Combine(_baseDir, path).ToLower();
-                if (!Load(fullPath))
-                {
-                    return;
-                }
-
-                CurrentTexture = _textures[fullPath];
-                var clampedStyle = Mathf.Clamp(
+                var clamped = UnityEngine.Mathf.Clamp(
                     (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.RightFlip
                 );
-                CurrentTransitionStyle = (Sprite2DTransitionStyle)clampedStyle;
-                IsActive = true;
+
+                var loadResult = Instance.Show(path, (Sprite2DTransitionStyle)clamped);
+                HandleTextureLoadResult(path, loadResult);
             });
         }
 
-        public void Preload(string path)
+        public void Preload(string path) => ApiUtils.Try(_buddyId, () =>
         {
-            ApiUtils.Try(_buddyId, () =>
-            {
-                var fullPath = Path.Combine(_baseDir, path).ToLower();
-                Load(fullPath);
-            });
-        }
+            var result = Instance.Load(path);
+            HandleTextureLoadResult(path, result);
+        });
 
-        public void SetPosition(Interface.Vector2 position)
-        {
-            throw new NotImplementedException();
-        }
+        public void SetPosition(Vector2 position) => Instance.SetPosition(position.ToEngineValue());
 
         public void SetParent(ITransform2DApi parent)
         {
@@ -152,45 +86,25 @@ namespace Baku.VMagicMirror.Buddy.Api
             Instance.SetParent(parentInstance);
         }
 
-        private bool Load(string fullPath)
+        private void HandleTextureLoadResult(string fullPath, TextureLoadResult loadResult)
         {
-            if (_textures.ContainsKey(fullPath))
-            {
-                // cacheを使えばよい
-                return true;
-            }
-
-            if (!ApiUtils.IsInBuddyDirectory(fullPath))
+            if (loadResult is TextureLoadResult.FailurePathIsNotInBuddyDirectory)
             {
                 if (!_pathInvalidErrorLogged)
                 {
-                    LogOutput.Instance.Write("Specified path is not in Buddy directory: " + fullPath);
+                    BuddyLogger.Instance.Log(_buddyId, "[Error] Specified path is not in Buddy directory: " + fullPath);
                 }
 
                 _pathInvalidErrorLogged = true;
-                return false;
             }
-
-            if (!File.Exists(fullPath))
+            else if (loadResult is TextureLoadResult.FailureFileNotFound)
             {
                 if (!_fileNotFoundErrorLogged)
                 {
-                    LogOutput.Instance.Write("File not found: " + fullPath);
+                    BuddyLogger.Instance.Log(_buddyId, "[Error] Specified file does not exist: " + fullPath);
                 }
-
                 _fileNotFoundErrorLogged = true;
-                return false;
             }
-
-
-            var bytes = File.ReadAllBytes(fullPath);
-            var texture = new Texture2D(32, 32);
-            texture.LoadImage(bytes);
-            texture.wrapMode = TextureWrapMode.Clamp;
-            texture.filterMode = FilterMode.Bilinear;
-            texture.Apply(false, true);
-            _textures[fullPath] = texture;
-            return true;
         }
     }
 }

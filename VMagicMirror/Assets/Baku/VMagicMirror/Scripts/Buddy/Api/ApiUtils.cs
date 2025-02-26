@@ -1,5 +1,6 @@
 using System;
-using Baku.VMagicMirror.Buddy.Api.Interface;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using HumanBodyBones = UnityEngine.HumanBodyBones;
 using Quaternion = UnityEngine.Quaternion;
@@ -45,6 +46,38 @@ namespace Baku.VMagicMirror.Buddy.Api
                 BuddyLogger.Instance.Log(buddyId, ex);
             }
         }
+
+        public static TextureLoadResult TryGetTexture2D(string fullPath, out Texture2D texture)
+        {    
+            if (!IsInBuddyDirectory(fullPath))
+            {
+                texture = default;
+                return TextureLoadResult.FailurePathIsNotInBuddyDirectory;
+            }
+
+            if (!File.Exists(fullPath))
+            {
+                texture = default;
+                return TextureLoadResult.FailureFileNotFound;
+            }
+
+            var bytes = File.ReadAllBytes(fullPath);
+            var result = new Texture2D(32, 32);
+            result.LoadImage(bytes);
+            result.wrapMode = TextureWrapMode.Clamp;
+            result.filterMode = FilterMode.Bilinear;
+            result.Apply(false, true);
+            texture = result;
+            return TextureLoadResult.Success;
+        }
+
+    }
+
+    public enum TextureLoadResult
+    {
+        Success,
+        FailurePathIsNotInBuddyDirectory,
+        FailureFileNotFound,
     }
 
     public static class ValueDataExtensions
@@ -58,6 +91,9 @@ namespace Baku.VMagicMirror.Buddy.Api
         // NOTE: enumは数値まで揃えてるやつはそのままキャストすればOK。これは逆方向でも同様
         public static GamepadKey ToEngineValue(this Interface.GamepadKey key) => (GamepadKey)key;
         public static HumanBodyBones ToEngineValue(this Interface.HumanBodyBones bone) => (HumanBodyBones)bone;
+
+        public static Sprite2DTransitionStyle ToEngineValue(this Interface.Sprite2DTransitionStyle style)
+            => (Sprite2DTransitionStyle)style;
         
         #endregion
 
@@ -69,6 +105,9 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public static Interface.GamepadKey ToApiValue(this GamepadKey key) => (Interface.GamepadKey)key;
         public static Interface.HumanBodyBones ToApiValue(this HumanBodyBones bone) => (Interface.HumanBodyBones)bone;
+
+        public static Interface.Sprite2DTransitionStyle ToApiValue(this Sprite2DTransitionStyle style)
+            => (Interface.Sprite2DTransitionStyle)style;
 
         public static Interface.Pose ToApiValue(this UnityEngine.Pose p) 
             => new(p.position.ToApiValue(), p.rotation.ToApiValue());

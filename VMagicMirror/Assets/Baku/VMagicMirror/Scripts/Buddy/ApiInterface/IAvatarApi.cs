@@ -54,9 +54,13 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         Action<GamepadKey> OnArcadeStickButtonDown { get; set; }
     }
     
-    /// <summary> UnityEngineのHumanBodyBonesと同じ順序で定義された人型ボーン情報の一覧です。 </summary>
+    /// <summary>
+    /// UnityEngineのHumanBodyBonesと同じ順序で定義された人型ボーン情報の一覧です。
+    /// ただし、UnityEngineの値とは異なり、無効なボーンを表す <see cref="HumanBodyBones.None"/> が追加で定義されています。
+    /// </summary>
     public enum HumanBodyBones
     {
+        None = -1,
         Hips = 0,
         LeftUpperLeg,
         RightUpperLeg,

@@ -30,7 +30,7 @@ namespace Baku.VMagicMirror.Buddy
             _receiver.BindBoolProperty(VmmCommands.EnableDeviceFreeLayout, _freeLayoutActive);
 
             //NOTE: インスタンスの破棄について、ちゃんとRemovedをチェックするようにしてもそれはそれでOK
-            _repository.Added2D
+            _repository.Transform2DAdded
                 .Subscribe(instance =>
                 {
                     instance.LayoutUpdated
@@ -40,6 +40,16 @@ namespace Baku.VMagicMirror.Buddy
                 })
                 .AddTo(this);
 
+            _repository.Transform3DAdded
+                .Subscribe(instance =>
+                {
+                    instance.LayoutUpdated
+                        .Subscribe(_ => Notify3DLayoutUpdated(instance))
+                        .AddTo(instance);
+                    instance.SetGizmoActive(_freeLayoutActive.Value);
+                })
+                .AddTo(this);
+            
             _freeLayoutActive.Skip(1)
                 .Subscribe(SetGizmoActive)
                 .AddTo(this);
@@ -64,10 +74,37 @@ namespace Baku.VMagicMirror.Buddy
                 JsonUtility.ToJson(msg)
                 ));
         }
+        
+        private void Notify3DLayoutUpdated(BuddyTransform3DInstance instance)
+        {
+            // NOTE: フリーレイアウトで編集しうるのはPos/Rot/Scaleの3つだけで、ParentBoneは編集はされない想定
+            var msg = new BuddySettingsPropertyMessage()
+            {
+                BuddyId = instance.BuddyId,
+                Name = instance.InstanceName,
+                Type = nameof(BuddyPropertyType.Transform3D),
+                Transform3DValue = new BuddyTransform3D()
+                {
+                    Position = BuddyVector3.FromVector3(instance.LocalPosition),
+                    Rotation = BuddyVector3.FromVector3(instance.LocalRotation.eulerAngles),
+                    Scale = instance.Scale,
+                    ParentBone = instance.HasParentBone ? (int) instance.ParentBone : -1
+                },
+            };
+            
+            _sender.SendCommand(MessageFactory.Instance.NotifyBuddy3DLayout(
+                JsonUtility.ToJson(msg)
+            ));
+        }
 
         private void SetGizmoActive(bool active)
         {
             foreach (var instance in _repository.GetTransform2DInstances())
+            {
+                instance.SetGizmoActive(active);
+            }
+
+            foreach (var instance in _repository.GetTransform3DInstances())
             {
                 instance.SetGizmoActive(active);
             }

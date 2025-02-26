@@ -25,6 +25,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         public RootApi(string baseDir, string buddyId, ApiImplementBundle apiImplementBundle)
         {
             _baseDir = baseDir;
+            BuddyId = buddyId;
             Property = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
             _avatarFacial = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
@@ -148,10 +149,25 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         public ISprite2DApi Create2DSprite()
         {
-            var result = new Sprite2DApi(_baseDir, BuddyId);
+            var result = new Sprite2DApi(BuddyId);
             _sprites.Add(result);
             _spriteCreated.OnNext(result);
             return result;
+        }
+
+        public ISprite3DApi Create3DSprite()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGlbApi CreateGlb()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IVrmApi CreateVrm()
+        {
+            throw new NotImplementedException();
         }
     }
 }

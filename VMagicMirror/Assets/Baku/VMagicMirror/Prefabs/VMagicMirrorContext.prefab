@@ -97,9 +97,11 @@ MonoBehaviour:
     type: 3}
   interProcess: {fileID: 2683631619848515584}
   loadingCoverController: {fileID: 0}
-  luaScriptSpriteCanvas: {fileID: 3466238353687275096, guid: 441d1d31f0a1c1b45b422205770f483d,
+  buddySpriteCanvas: {fileID: 3466238353687275096, guid: 441d1d31f0a1c1b45b422205770f483d,
     type: 3}
   buddyAudioSources: {fileID: 2740337308457020041, guid: 5b96818834e6ac7439a90d1a624198cf,
+    type: 3}
+  buddyTransform3DInstancePrefab: {fileID: 9112393599949851860, guid: 928fd0582ce6c844ab17ce36c8db6d4f,
     type: 3}
 --- !u!114 &2683631619848515584
 MonoBehaviour:

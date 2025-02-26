@@ -6,17 +6,20 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    /// <summary>
-    /// WPFからBuddyのプロパティ情報を受けてレポジトリに保存するクラス
-    /// </summary>
+    /// <summary> WPFからBuddyのプロパティ情報を受けてインスタンス生成とか設定の保存とかをするクラス </summary>
     public class BuddyLayoutUpdater : PresenterBase
     {
         private readonly IMessageReceiver _receiver;
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ScriptLoader _scriptLoader;
         private readonly BuddySpriteCanvas _spriteCanvas;
-        private readonly BuddyLayoutRepository _layoutLayoutRepository;
+        private readonly BuddyLayoutRepository _buddyLayoutRepository;
         private readonly BuddyTransformInstanceRepository _transformInstanceRepository;
+        private readonly Buddy3DInstanceCreator _buddy3DInstanceCreator;
+
+        private bool _hasModel;
+        private Animator _animator;
+        
         // NOTE: インスタンスのキャッシュは誰が持つ？
         //このクラスで持つならクラス名がUpdaterじゃなさそうだが
 
@@ -25,14 +28,16 @@ namespace Baku.VMagicMirror.Buddy
             IVRMLoadable vrmLoadable,
             ScriptLoader scriptLoader,
             BuddySpriteCanvas spriteCanvas,
-            BuddyLayoutRepository layoutRepository,
+            Buddy3DInstanceCreator buddy3DInstanceCreator,
+            BuddyLayoutRepository buddyLayoutRepository,
             BuddyTransformInstanceRepository transformInstanceRepository)
         {
             _receiver = receiver;
             _vrmLoadable = vrmLoadable;
             _scriptLoader = scriptLoader;
             _spriteCanvas = spriteCanvas;
-            _layoutLayoutRepository = layoutRepository;
+            _buddy3DInstanceCreator = buddy3DInstanceCreator;
+            _buddyLayoutRepository = buddyLayoutRepository;
             _transformInstanceRepository = transformInstanceRepository;
         }
 
@@ -62,14 +67,39 @@ namespace Baku.VMagicMirror.Buddy
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
-            // ロード済みのインスタンスで、VRMのボーンにアタッチしたいようなものがあれば実際にアタッチする
-            // TODO: 3Dの実装が進行したら中身を入れる。Canvasベースの2Dでは何もしないでOK
+            // NOTE: ロード済みのインスタンスで、VRMのボーンにアタッチしたいようなものがあれば実際にアタッチする…というのをやっている
+            foreach (var transform in _transformInstanceRepository.GetTransform3DInstances())
+            {
+                if (!_buddyLayoutRepository
+                    .Get(transform.BuddyId)
+                    .Transform3Ds
+                    .TryGetValue(transform.InstanceName, out var layout))
+                {
+                    continue;
+                }
+
+                if (!layout.HasParentBone)
+                {
+                    continue;
+                }
+
+                var parentBone = info.animator.GetBoneTransformAscending(layout.ParentBone);
+                transform.SetParent(parentBone);
+            }
+
+            _animator = info.animator;
+            _hasModel = true;
         }
 
         private void OnVrmDisposing()
         {
-            // VRMのボーンにアタッチ済みだったTransformがあったらそれを剥がす(剥がさないと一緒に破棄されちゃうので)
-            // TODO: 3Dの実装が進行したら中身を入れる。Canvasベースの2Dでは何もしないでOK
+            _hasModel = false;
+            _animator = null;
+            
+            foreach (var transform in _transformInstanceRepository.GetTransform3DInstances())
+            {
+                transform.RemoveParent();
+            }
         }
 
         private void SetBuddyLayout(string json)
@@ -83,7 +113,7 @@ namespace Baku.VMagicMirror.Buddy
                 // - インスタンスがある場合、そのインスタンスに値を適用する
                 if (TryGetBuddyTransform2DLayout(msg, out var layout2d))
                 {
-                    _layoutLayoutRepository.Get(msg.BuddyId).AddOrUpdate(msg.Name, layout2d);
+                    _buddyLayoutRepository.Get(msg.BuddyId).AddOrUpdate(msg.Name, layout2d);
                     if (_transformInstanceRepository.TryGetTransform2D(msg.BuddyId, msg.Name, out var instance))
                     {
                         instance.Position = layout2d.Position;
@@ -93,8 +123,11 @@ namespace Baku.VMagicMirror.Buddy
                 }
                 else if (TryGetBuddyTransform3DLayout(msg, out var layout3d))
                 {
-                    _layoutLayoutRepository.Get(msg.BuddyId).AddOrUpdate(msg.Name, layout3d);
-                    //TODO: ここでもインスタンスへの値の適用がしたい
+                    _buddyLayoutRepository.Get(msg.BuddyId).AddOrUpdate(msg.Name, layout3d);
+                    if (_transformInstanceRepository.TryGetTransform3D(msg.BuddyId, msg.Name, out var instance))
+                    {
+                        ApplyLayout3D(instance, layout3d);
+                    }
                 }
             }
             catch (Exception ex)
@@ -111,7 +144,7 @@ namespace Baku.VMagicMirror.Buddy
                 var settings = JsonUtility.FromJson<BuddySettingsMessage>(json);
                 // リフレッシュなので、現存するプロパティをクリアして受信値で上書きする。
                 // リフレッシュはBuddyが非アクティブの状態でしか発生しないはずのため、インスタンスは見に行かない 
-                var layouts = _layoutLayoutRepository.Get(settings.BuddyId);
+                var layouts = _buddyLayoutRepository.Get(settings.BuddyId);
                 layouts.Clear();
                 foreach (var msg in settings.Properties)
                 {
@@ -135,7 +168,7 @@ namespace Baku.VMagicMirror.Buddy
 
         private void CreateTransformInstance(IScriptCaller scriptCaller)
         {
-            var layouts = _layoutLayoutRepository.Get(scriptCaller.BuddyId);
+            var layouts = _buddyLayoutRepository.Get(scriptCaller.BuddyId);
 
             var transform2DInstances = new Dictionary<string, BuddyTransform2DInstance>();
             foreach (var pair in layouts.Transform2Ds)
@@ -151,16 +184,53 @@ namespace Baku.VMagicMirror.Buddy
                 _transformInstanceRepository.AddTransform2D(scriptCaller.BuddyId, pair.Key, instance);
             }
 
-            //TODO: 3Dも同じような流れで追加する
+            var transform3DInstances = new Dictionary<string, BuddyTransform3DInstance>();
+            foreach (var pair in layouts.Transform3Ds)
+            {
+                var instance = _buddy3DInstanceCreator.CreateTransform3D();
+                instance.BuddyId = scriptCaller.BuddyId;
+                instance.InstanceName = pair.Key;
+
+                ApplyLayout3D(instance, pair.Value);
+                
+                transform3DInstances[pair.Key] = instance;
+                _transformInstanceRepository.AddTransform3D(scriptCaller.BuddyId, pair.Key, instance);
+            }
 
             scriptCaller.SetTransformsApi(new TransformsApi(
-                transform2DInstances
+                transform2DInstances,
+                transform3DInstances
             ));
         }
 
         private void DeleteTransformInstance(IScriptCaller scriptCaller) 
             => _transformInstanceRepository.DeleteInstance(scriptCaller.BuddyId);
 
+        private void ApplyLayout3D(BuddyTransform3DInstance instance, BuddyTransform3DLayout layout3d)
+        {
+            instance.LocalPosition = layout3d.Position;
+            instance.LocalRotation = layout3d.Rotation;
+            instance.Scale = layout3d.Scale;
+
+            var parentChanged = (
+                layout3d.HasParentBone != instance.HasParentBone ||
+                layout3d.ParentBone != instance.ParentBone
+            );
+            instance.HasParentBone = layout3d.HasParentBone;
+            instance.ParentBone = layout3d.ParentBone;
+            if (parentChanged && _hasModel)
+            {
+                if (layout3d.HasParentBone)
+                {
+                    instance.SetParent(_animator.GetBoneTransformAscending(layout3d.ParentBone));
+                }
+                else
+                {
+                    instance.RemoveParent();
+                }
+            }
+        }
+        
         private bool TryGetBuddyTransform2DLayout(BuddySettingsPropertyMessage msg, out BuddyTransform2DLayout result)
         {
             if (msg.Type != nameof(BuddyPropertyType.Transform2D))

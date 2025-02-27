@@ -37,7 +37,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 ? _alwaysTrue
                 : _model.ShowEffectDuringVMCPSendEnabled;
 
-            var sendSetting = _model.GetCurrentSendSetting();
+            var sendSetting = IsInDesignMode 
+                ? VMCPSendSetting.Default() 
+                : _model.GetCurrentSendSetting();
             SendAddress = new RProperty<string>(sendSetting.SendAddress, _ => SetSendSettingsDirty());
             SendPort = new RProperty<int>(sendSetting.SendPort, _ => SetSendSettingsDirty());
             SendBonePose = new RProperty<bool>(sendSetting.SendBonePose, _ => SetSendSettingsDirty());

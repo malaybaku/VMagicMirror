@@ -25,8 +25,6 @@ namespace Baku.VMagicMirror.Buddy
         public string BuddyId { get; set; } = "";
         public string InstanceName { get; set; } = "";
 
-        public void SetGizmoActive(bool active) => transformControl.gameObject.SetActive(active);
-
         /// <summary> NOTE: アタッチ先がない場合はnullにしておく </summary>
         public HumanBodyBones? AttachedBone { get; set; }
 
@@ -52,6 +50,57 @@ namespace Baku.VMagicMirror.Buddy
         public HumanBodyBones ParentBone { get; set; }
         
         public void SetParent(Transform parentBone) => transform.SetParent(parentBone, false);
-        public void RemoveParent() => transform.SetParent(null);
+        public void RemoveParent() => transform.SetParent(null, false);
+
+        public void SetTransformControlActive(bool active) => transformControl.enabled = active;
+
+        /// <summary>
+        /// フリーレイアウトが有効な間は毎フレーム呼び続ける想定
+        /// </summary>
+        /// <param name="request"></param>
+        public void SetTransformControlRequest(TransformControlRequest request)
+        {
+            transformControl.global = request.WorldCoordinate;
+            transformControl.mode = request.Mode;
+            transformControl.Control();
+
+            if (request.Mode != TransformControl.TransformMode.Scale)
+            {
+                return;
+            }
+            
+            //スケールについては1軸だけいじったとき、残りの2軸を追従させる
+            var scale = transform.localScale;
+            if (Mathf.Abs(scale.x - scale.y) > Mathf.Epsilon ||
+                Mathf.Abs(scale.y - scale.z) > Mathf.Epsilon ||
+                Mathf.Abs(scale.z - scale.x) > Mathf.Epsilon
+               )
+            {
+                //3つの値から1つだけ仲間はずれになっている物があるはずなので、それを探す
+                var b1 = Mathf.Abs(scale.x - scale.y) > Mathf.Epsilon;
+                var b2 = Mathf.Abs(scale.z - scale.x) > Mathf.Epsilon;
+
+                var nextScale = scale.x;
+                if (!b1)
+                {
+                    nextScale = scale.z;
+                }
+                else if (!b2)
+                {
+                    nextScale = scale.y;
+                }
+                //上記以外はxだけズレてる or 全軸バラバラのケースなため、x軸を使う
+                transform.localScale = Vector3.one * nextScale;
+            }
+        }
+
+        private void Start()
+        {
+            // NOTE: OnDestroyで外す…ほどでもないのでつけっぱなしにしておく
+            transformControl.DragEnded += OnTransformControlDragEnded;
+        }
+        
+        private void OnTransformControlDragEnded(TransformControl.TransformMode mode) 
+            => _layoutUpdated.OnNext(Unit.Default);
     }
 }

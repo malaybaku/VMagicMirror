@@ -47,6 +47,25 @@ namespace Baku.VMagicMirror.Buddy.Api
             }
         }
 
+        public static T Try<T>(string buddyId, Func<T> func, T valueWhenFailed = default)
+        {
+            try
+            {
+                return func();
+            }
+            catch (Exception ex)
+            {
+                if (Application.isEditor)
+                {
+                    Debug.LogException(ex);
+                }
+                
+                BuddyLogger.Instance.Log(buddyId, ex);
+
+                return valueWhenFailed;
+            }
+        }
+
         public static TextureLoadResult TryGetTexture2D(string fullPath, out Texture2D texture)
         {    
             if (!IsInBuddyDirectory(fullPath))

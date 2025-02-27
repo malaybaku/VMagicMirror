@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     {
         Vector3 LocalPosition { get; set; }
         Quaternion LocalRotation { get; set; }
-        Vector2 LocalScale { get; set; }
+        Vector3 LocalScale { get; set; }
 
         // ワールド座標のGet/Set API. とくに、Setについては次のフレームで(親のTransform3DApiが移動するなどで)結果が保持されるとは限らないことに注意
         public Vector3 GetPosition();

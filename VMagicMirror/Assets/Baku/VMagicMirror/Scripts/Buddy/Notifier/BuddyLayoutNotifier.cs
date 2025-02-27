@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror.Buddy
                     instance.LayoutUpdated
                         .Subscribe(_ => Notify3DLayoutUpdated(instance))
                         .AddTo(instance);
-                    instance.SetGizmoActive(_freeLayoutActive.Value);
+                    instance.SetTransformControlActive(_freeLayoutActive.Value);
                 })
                 .AddTo(this);
             
@@ -106,7 +106,7 @@ namespace Baku.VMagicMirror.Buddy
 
             foreach (var instance in _repository.GetTransform3DInstances())
             {
-                instance.SetGizmoActive(active);
+                instance.SetTransformControlActive(active);
             }
         }
     }

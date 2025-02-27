@@ -1,16 +1,20 @@
+using System;
+using System.IO;
 using Baku.VMagicMirror.Buddy.Api.Interface;
-using Quaternion = Baku.VMagicMirror.Buddy.Api.Interface.Quaternion;
-using Vector3 = Baku.VMagicMirror.Buddy.Api.Interface.Vector3;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
     public class GlbApi : IGlbApi
     {
-        public GlbApi(BuddyGlbInstance instance)
+        public GlbApi(string baseDir, string buddyId, BuddyGlbInstance instance)
         {
+            _baseDir = baseDir;
+            _buddyId = buddyId;
             _instance = instance;
         }
 
+        private readonly string _baseDir;
+        private readonly string _buddyId;
         private readonly BuddyGlbInstance _instance;
         
         public Vector3 LocalPosition
@@ -25,7 +29,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             set => _instance.LocalRotation = value.ToEngineValue();
         }
 
-        public Vector2 LocalScale
+        public Vector3 LocalScale
         {
             get => _instance.LocalScale.ToApiValue();
             set => _instance.LocalScale = value.ToEngineValue();
@@ -42,12 +46,24 @@ namespace Baku.VMagicMirror.Buddy.Api
             _instance.SetParent(parentInstance);
         }
 
-        public void Load(string path) => _instance.Load(path);
+        public void Load(string path) => Try(() =>
+        {
+            var fullPath = Path.Combine(_baseDir, path);
+            _instance.Load(fullPath);
+        });
+
         public void Show() => _instance.Show();
         public void Hide() => _instance.Hide();
 
-        public string[] GetAnimationNames() => _instance.GetAnimationNames();
-        public void RunAnimation(string name) => _instance.RunAnimation(name, false, true);
-        public void StopAnimation() => _instance.StopAnimation();
+        public string[] GetAnimationNames() => Try(
+            () => _instance.GetAnimationNames(), 
+            Array.Empty<string>()
+            );
+
+        public void RunAnimation(string name) => Try(() => _instance.RunAnimation(name, false, true));
+        public void StopAnimation() => Try(() => _instance.StopAnimation());
+
+        private void Try(Action act) => ApiUtils.Try(_buddyId, act);
+        private T Try<T>(Func<T> func, T valueWhenFailed = default) => ApiUtils.Try(_buddyId, func, valueWhenFailed);
     }
 }

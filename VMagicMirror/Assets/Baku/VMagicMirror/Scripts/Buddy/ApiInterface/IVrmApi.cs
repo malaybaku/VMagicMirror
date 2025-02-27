@@ -1,13 +1,13 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Baku.VMagicMirror.Buddy.Api.Interface
 {
     public interface IVrmApi : IObject3DApi
     {
-        // TODO: LoadAsyncとかがよい？
-        // 実装都合でタスク化するのも検討していいが、
-        void Load(string path);
+        Task LoadAsync(string path);
 
+        // NOTE: LoadAsyncが終わったあとで呼び出すのが期待値
         void Show();
 
         // ポーズ

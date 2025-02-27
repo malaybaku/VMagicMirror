@@ -66,9 +66,7 @@ namespace Baku.VMagicMirror.Buddy
                         typeof(Api.Interface.IRootApi).Assembly
                     );
 
-                // NOTE:
-                //   Scriptは一回だけ実行する (コールバック登録とかまでそれで終わらす)
-                //   …というモデルだが、内部の変数とか更新するうえで不都合だったら直すかも。
+                // NOTE: scriptStateはコールバックの呼び出し結果等を受けて更新されるが、VMMのコードからは直接見に行かない
                 _script = CSharpScript.Create(code, scriptOptions, globalsType: typeof(CSharpScriptGlobals));
                 _scriptState = await _script.RunAsync(
                     new CSharpScriptGlobals(Api),

@@ -17,10 +17,10 @@ namespace Baku.VMagicMirror.Buddy
         [SerializeField] private RawImage rawImage;
         
         // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
-        internal Texture2D CurrentTexture { get; private set; }
+        public Texture2D CurrentTexture { get; private set; }
 
         // NOTE: この値はトランジション処理をやっているクラスがトランジションを完了すると、自動でNoneに切り替わる
-        internal Sprite2DTransitionStyle CurrentTransitionStyle { get; set; } = Sprite2DTransitionStyle.None;
+        public Sprite2DTransitionStyle CurrentTransitionStyle { get; set; } = Sprite2DTransitionStyle.None;
 
         private readonly Dictionary<string, Texture2D> _textures = new();
         
@@ -92,6 +92,7 @@ namespace Baku.VMagicMirror.Buddy
             if (transitionStyle == Sprite2DTransitionStyle.None)
             {
                 _transitionTime = 0f;
+                CurrentTransitionStyle = Sprite2DTransitionStyle.None;
                 return (Quaternion.identity, false);
             }
 
@@ -99,6 +100,7 @@ namespace Baku.VMagicMirror.Buddy
             {
                 _transitionTime = 0f;
                 rawImage.texture = texture;
+                CurrentTransitionStyle = Sprite2DTransitionStyle.None;
                 return (Quaternion.identity, true);
             }
             
@@ -120,6 +122,7 @@ namespace Baku.VMagicMirror.Buddy
                 if (_transitionTime >= TransitionDuration)
                 {
                     _transitionTime = 0f;
+                    CurrentTransitionStyle = Sprite2DTransitionStyle.None;
                     return (Quaternion.identity, true);
                 }
                 else
@@ -235,6 +238,6 @@ namespace Baku.VMagicMirror.Buddy
             return TextureLoadResult.Success;
         }
         
-        public void SetActive(bool active) => gameObject.SetActive(true);
+        public void SetActive(bool active) => gameObject.SetActive(active);
     }
 }

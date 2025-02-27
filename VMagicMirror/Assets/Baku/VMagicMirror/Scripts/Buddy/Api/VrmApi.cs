@@ -1,16 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Baku.VMagicMirror.Buddy.Api.Interface;
+using Cysharp.Threading.Tasks;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
     public class VrmApi : IVrmApi
     {
-        public VrmApi(BuddyVrmInstance instance)
+        public VrmApi(string baseDir, string buddyId, BuddyVrmInstance instance)
         {
+            _baseDir = baseDir;
+            _buddyId = buddyId;
             _instance = instance;
         }
 
+        private readonly string _baseDir;
+        private readonly string _buddyId;
         private readonly BuddyVrmInstance _instance;
         
         public Vector3 LocalPosition
@@ -25,7 +32,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             set => _instance.LocalRotation = value.ToEngineValue();
         }
 
-        public Vector2 LocalScale
+        public Vector3 LocalScale
         {
             get => _instance.LocalScale.ToApiValue();
             set => _instance.LocalScale = value.ToEngineValue();
@@ -42,17 +49,16 @@ namespace Baku.VMagicMirror.Buddy.Api
             _instance.SetParent(parentInstance);
         }
 
-        public void Hide() => _instance.Hide();
-
-        public void Load(string path)
+        public async Task LoadAsync(string path)
         {
-            throw new NotImplementedException();
+            //TODO: パス不正とかファイルが見つからないとかの場合に1回だけエラーが出したい
+            // Sprite2Dの処理を使い回せるとgood
+            var fullPath = Path.Combine(_baseDir, path);
+            await _instance.LoadAsync(fullPath);
         }
 
-        public void Show()
-        {
-            throw new NotImplementedException();
-        }
+        public void Show() => _instance.SetActive(true);
+        public void Hide() => _instance.SetActive(false);
 
         public void SetBoneRotation(HumanBodyBones bone, Quaternion localRotation)
         {
@@ -94,14 +100,21 @@ namespace Baku.VMagicMirror.Buddy.Api
             throw new NotImplementedException();
         }
 
+        public async Task PreloadVrmAnimationAsync(string path)
+        {
+            await UniTask.SwitchToMainThread();
+            await _instance.PreloadAnimationAsync(path);
+        }
+        
         public void RunVrma(string path, bool immediate)
         {
-            throw new NotImplementedException();
+            var fullPath = Path.Combine(_baseDir, path);
+            _instance.RunVrma(fullPath, immediate);
         }
 
         public void StopVrma()
         {
-            throw new NotImplementedException();
+            _instance.StopVrma();
         }
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Baku.VMagicMirror.Buddy.Api.Interface
 {
@@ -10,6 +12,9 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         Action Start { get; set; }
         Action<float> Update { get; set; }
 
+        SynchronizationContext MainThreadContext { get; }
+        Task RunOnMainThread(Task task);
+        
         //TODO: FeatureLockについては、ここで記述されるプロパティ単位で
         //「丸ごとOK or 丸ごと塞がってる」となるのが分かりやすさ的には望ましい
 

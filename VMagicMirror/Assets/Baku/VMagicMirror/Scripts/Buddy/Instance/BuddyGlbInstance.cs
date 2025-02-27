@@ -77,6 +77,8 @@ namespace Baku.VMagicMirror.Buddy
         
         private void Load(byte[] bytes)
         {
+            DeleteInstance();
+
             var parser = new GlbLowLevelParser("", bytes);
             using var data = parser.Parse();
 
@@ -94,8 +96,8 @@ namespace Baku.VMagicMirror.Buddy
                     renderer.receiveShadows = false;
                 }
 
-                //NOTE: オフ→オンしないとAnimationが正しく動かないので、わざと一回切る
-                // ※animationが複数あるときにどう切り替えるかは…要調査
+                // NOTE: Animationをデフォルトで再生状態にするためにオフ→オンする (アクセサリーでやってるのと同じ処理)。
+                // サブキャラの場合は明示的に実行するまでアニメーションしない択もあるのが悩ましいが…
                 _gltfInstance.Root.SetActive(false);
                 _gltfInstance.Root.SetActive(true);
 
@@ -121,5 +123,7 @@ namespace Baku.VMagicMirror.Buddy
                 ? Array.Empty<string>()
                 : _gltfInstance.AnimationClips.Select(c => c.name).ToArray();
         }
+
+        public void Dispose() => DeleteInstance();
     }
 }

@@ -103,16 +103,26 @@ namespace Baku.VMagicMirror.Buddy
                 }
                 
                 // 最後の最後でスプライトの状態を更新する
-                UpdateSprites();
+                UpdateInstances();
             }
         }
 
-        private void UpdateSprites()
+        private void UpdateInstances()
         {
             // TODO: _api経由じゃなくてSpriteの一覧的なやつを見に行くでよい…ということにしたい
             foreach (var sprite in _api.Sprites)
             {
                 _spriteUpdater.UpdateSprite(sprite.Instance);
+            }
+
+            foreach (var vrm in _api.Vrms)
+            {
+                vrm.UpdateInstance();
+            }
+
+            foreach (var sprite3d in _api.Sprite3Ds)
+            {
+                sprite3d.DoTransition(Time.deltaTime);
             }
         }
         

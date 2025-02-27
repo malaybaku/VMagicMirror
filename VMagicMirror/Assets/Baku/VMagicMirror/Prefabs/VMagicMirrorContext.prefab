@@ -103,6 +103,8 @@ MonoBehaviour:
     type: 3}
   buddyTransform3DInstancePrefab: {fileID: 9112393599949851860, guid: 928fd0582ce6c844ab17ce36c8db6d4f,
     type: 3}
+  buddySprite3DInstancePrefab: {fileID: 7272758562949004422, guid: 1c1d027c992de744b80bb3951ca98e6b,
+    type: 3}
 --- !u!114 &2683631619848515584
 MonoBehaviour:
   m_ObjectHideFlags: 0

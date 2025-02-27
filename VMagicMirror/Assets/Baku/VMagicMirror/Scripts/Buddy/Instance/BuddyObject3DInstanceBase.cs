@@ -19,14 +19,10 @@ namespace Baku.VMagicMirror.Buddy
             set => transform.localRotation = value;
         }
 
-        public Vector2 LocalScale
+        public Vector3 LocalScale
         {
-            get
-            {
-                var scale = transform.localScale;
-                return new Vector2(scale.x, scale.y);
-            }
-            set => transform.localScale = new Vector3(value.x, value.y, 1f);
+            get => transform.localScale;
+            set => transform.localScale = value;
         }
 
         public Vector3 GetWorldPosition() => transform.position;

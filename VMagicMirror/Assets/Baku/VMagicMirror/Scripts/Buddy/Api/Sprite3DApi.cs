@@ -1,14 +1,19 @@
+using System.IO;
 using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
     public class Sprite3DApi : ISprite3DApi
     {
-        public Sprite3DApi(BuddySprite3DInstance instance)
+        public Sprite3DApi(string baseDir, string buddyId, BuddySprite3DInstance instance)
         {
+            _baseDir = baseDir;
+            _buddyId = buddyId;
             _instance = instance;
         }
 
+        private readonly string _baseDir;
+        private readonly string _buddyId;
         private readonly BuddySprite3DInstance _instance;
         
         public Vector3 LocalPosition
@@ -23,7 +28,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             set => _instance.LocalRotation = value.ToEngineValue();
         }
 
-        public Vector2 LocalScale
+        public Vector3 LocalScale
         {
             get => _instance.LocalScale.ToApiValue();
             set => _instance.LocalScale = value.ToEngineValue();
@@ -40,8 +45,18 @@ namespace Baku.VMagicMirror.Buddy.Api
             _instance.SetParent(parentInstance);
         }
 
-        public void Preload(string path) => _instance.Preload(path);
-        public void Show(string path) => _instance.Show(path);
-        public void Hide() => _instance.Hide();
+        public void Preload(string path)
+        {
+            var fullPath = Path.Combine(_baseDir, path);
+            _instance.Preload(fullPath);
+        }
+
+        public void Show(string path)
+        {
+            var fullPath = Path.Combine(_baseDir, path);
+            _instance.Show(fullPath);
+        }
+
+        public void Hide() => _instance.SetActive(false);
     }
 }

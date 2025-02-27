@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Baku.VMagicMirror.Buddy.Api;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -16,7 +17,9 @@ namespace Baku.VMagicMirror.Buddy
         private readonly BuddyLayoutRepository _buddyLayoutRepository;
         private readonly BuddyTransformInstanceRepository _transformInstanceRepository;
         private readonly Buddy3DInstanceCreator _buddy3DInstanceCreator;
-
+        private readonly DeviceTransformController _deviceTransformController;
+        
+        private ReactiveProperty<bool> _freeLayoutEnabled = new();
         private bool _hasModel;
         private Animator _animator;
         
@@ -30,7 +33,8 @@ namespace Baku.VMagicMirror.Buddy
             BuddySpriteCanvas spriteCanvas,
             Buddy3DInstanceCreator buddy3DInstanceCreator,
             BuddyLayoutRepository buddyLayoutRepository,
-            BuddyTransformInstanceRepository transformInstanceRepository)
+            BuddyTransformInstanceRepository transformInstanceRepository,
+            DeviceTransformController deviceTransformController)
         {
             _receiver = receiver;
             _vrmLoadable = vrmLoadable;
@@ -39,6 +43,7 @@ namespace Baku.VMagicMirror.Buddy
             _buddy3DInstanceCreator = buddy3DInstanceCreator;
             _buddyLayoutRepository = buddyLayoutRepository;
             _transformInstanceRepository = transformInstanceRepository;
+            _deviceTransformController = deviceTransformController;
         }
 
         public override void Initialize()
@@ -56,6 +61,18 @@ namespace Baku.VMagicMirror.Buddy
                 c => SetBuddyLayout(c.Content)
             );
 
+            _receiver.BindBoolProperty(VmmCommands.EnableDeviceFreeLayout, _freeLayoutEnabled);
+
+            _freeLayoutEnabled
+                .Subscribe(v =>
+                {
+                    if (!v)
+                    {
+                        ResetTransformControlMode();
+                    }
+                })
+                .AddTo(this);
+            
             // NOTE: スクリプトのロード時点でLayout情報は既に手元にあるのが前提になっている
             _scriptLoader.ScriptLoading
                 .Subscribe(CreateTransformInstance)
@@ -63,7 +80,12 @@ namespace Baku.VMagicMirror.Buddy
             _scriptLoader.ScriptDisposing
                 .Subscribe(DeleteTransformInstance)
                 .AddTo(this);
+
+            _deviceTransformController.ControlRequested
+                .Subscribe(ControlTransform3Ds)
+                .AddTo(this);
         }
+
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
@@ -155,6 +177,7 @@ namespace Baku.VMagicMirror.Buddy
                     }
                     else if (TryGetBuddyTransform3DLayout(msg, out var layout3d))
                     {
+                        Debug.Log($"AddOrUpdate Layout3D, {json}");
                         layouts.AddOrUpdate(msg.Name, layout3d);
                     }
                 }
@@ -270,6 +293,23 @@ namespace Baku.VMagicMirror.Buddy
                 parentBone
             );
             return true;
+        }
+
+        private void ResetTransformControlMode()
+        {
+            foreach (var transform in _transformInstanceRepository.GetTransform3DInstances())
+            {
+                transform.SetTransformControlActive(false);
+            }
+        }
+
+        private void ControlTransform3Ds(TransformControlRequest request)
+        {
+            foreach (var transform in _transformInstanceRepository.GetTransform3DInstances())
+            {
+                transform.SetTransformControlActive(true);
+                transform.SetTransformControlRequest(request);
+            }
         }
     }
 }

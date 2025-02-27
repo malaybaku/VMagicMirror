@@ -24,7 +24,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" 
-                            Text="{Binding DisplayName}" />
+                            Text="{Binding Name}" />
         <TextBlock Grid.Row="0" Grid.Column="1" 
                             Margin="8,0"
                             Text="Pos:"

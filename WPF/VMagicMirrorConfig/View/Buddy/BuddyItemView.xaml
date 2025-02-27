@@ -194,6 +194,11 @@
                     <view:BuddyTransform2DPropertyView DataContext="{Binding Transform2DValue}"/>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.Transform2DTemplate>
+            <view:BuddyPropertyDataTemplateSelector.Transform3DTemplate>
+                <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
+                    <view:BuddyTransform3DPropertyView DataContext="{Binding Transform3DValue}"/>
+                </DataTemplate>
+            </view:BuddyPropertyDataTemplateSelector.Transform3DTemplate>
         </view:BuddyPropertyDataTemplateSelector>
     </UserControl.Resources>
     <StackPanel>

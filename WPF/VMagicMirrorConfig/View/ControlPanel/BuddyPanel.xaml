@@ -33,11 +33,12 @@
                                Text="{DynamicResource Buddy_Header}" 
                                Margin="10,5"/>
 
-                        <Button HorizontalAlignment="Right"
+                        <!-- 「サブキャラ全体にかかる設定のリセット」の需要はまだ無いので消しておく。開発者モードとか考慮すると何かあるかも -->
+                        <!--<Button HorizontalAlignment="Right"
                                 Margin="10,0"
                                 Style="{StaticResource CategorySettingResetButton}"
                                 Command="{Binding ResetCommand}"
-                                />
+                                />-->
                     </Grid>
                     
                     <TextBlock Margin="15,5" 

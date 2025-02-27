@@ -87,6 +87,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 case BuddyPropertyType.Transform2D:
                     Transform2DValue = new BuddyTransform2DPropertyViewModel(_settingSender, _buddyMetadata, buddyProperty);
                     break;
+                case BuddyPropertyType.Transform3D:
+                    Transform3DValue = new BuddyTransform3DPropertyViewModel(_settingSender, _buddyMetadata, buddyProperty);
+                    break;
                 default:
                     throw new NotSupportedException();
             }
@@ -112,8 +115,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<float> VectorX { get; } = new RProperty<float>(0f);
         public RProperty<float> VectorY { get; } = new RProperty<float>(0f);
         public RProperty<float> VectorZ { get; } = new RProperty<float>(0f);
-        //NOTE: プロパティの実態がTransform2Dの場合以外はnull
+        //NOTE: プロパティの実態がTransform2DやTransform3Dの場合以外はnull
         public BuddyTransform2DPropertyViewModel? Transform2DValue { get; }
+        public BuddyTransform3DPropertyViewModel? Transform3DValue { get; }
 
         public int IntRangeMin => _metadata.IntRangeMin;
         public int IntRangeMax => _metadata.IntRangeMax;
@@ -156,6 +160,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                         throw new InvalidOperationException("Transform2D reset requested, but property is not specified");
                     }
                     Transform2DValue.ResetToDefault();
+                    break;
+                case BuddyPropertyType.Transform3D:
+                    if (Transform3DValue == null)
+                    {
+                        // NOTE: コーディングエラーでのみ発生
+                        throw new InvalidOperationException("Transform3D reset requested, but property is not specified");
+                    }
+                    Transform3DValue.ResetToDefault();
                     break;
                 default:
                     throw new NotSupportedException();

@@ -51,6 +51,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void OnTransform2DUpdated(object? sender, EventArgs e) => SetValuesSilently();
 
+        public string Name => _metadata.Name;
+
         public RProperty<float> PositionX { get; }
         public RProperty<float> PositionY { get; }
 

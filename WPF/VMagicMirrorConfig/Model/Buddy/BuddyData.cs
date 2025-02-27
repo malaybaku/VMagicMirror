@@ -23,9 +23,18 @@ namespace Baku.VMagicMirrorConfig
     {
         /// <summary> 
         /// Unity側の操作に由来してTransform2Dの値が更新されると発火する。
-        /// ViewModelはこの値を受信したとき、IPCのメッセージを送信せずにUI表示だけ更新することが望ましい
+        /// ViewModelはこの値を受信したとき、IPCのメッセージを送信せずにUI表示だけ更新することが望ましい。
+        /// 3Dも同様
         /// </summary>
         public event EventHandler<EventArgs>? Transform2DValueUpdated;
         public void NotifyTransform2DUpdated() => Transform2DValueUpdated?.Invoke(this, EventArgs.Empty);
+
+        /// <summary> 
+        /// Unity側の操作に由来してTransform2Dの値が更新されると発火する。
+        /// ViewModelはこの値を受信したとき、IPCのメッセージを送信せずにUI表示だけ更新することが望ましい
+        /// </summary>
+        public event EventHandler<EventArgs>? Transform3DValueUpdated;
+        public void NotifyTransform3DUpdated() => Transform3DValueUpdated?.Invoke(this, EventArgs.Empty);
+
     }
 }

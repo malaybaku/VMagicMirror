@@ -38,7 +38,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             Scale = new RProperty<float>(v.Scale, v => SetAndNotify(Value.WithScale(v)));
 
             WeakEventManager<BuddyProperty, EventArgs>.AddHandler(
-                buddyProperty, nameof(buddyProperty.Transform2DValueUpdated), OnTransform2DUpdated
+                buddyProperty, nameof(buddyProperty.Transform3DValueUpdated), OnTransform3DUpdated
                 );
         }
 
@@ -58,11 +58,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _value.Transform3DValue = value;
             if (!_silent)
             {
-                _settingSender.NotifyTransform2DProperty(_buddyMetadata, _metadata, _value.Transform2DValue);
+                _settingSender.NotifyTransform3DProperty(_buddyMetadata, _metadata, _value.Transform3DValue);
             }
         }
 
-        private void OnTransform2DUpdated(object? sender, EventArgs e) => SetValuesSilently();
+        private void OnTransform3DUpdated(object? sender, EventArgs e) => SetValuesSilently();
+
+        public string Name => _metadata.Name;
 
         public RProperty<float> PositionX { get; }
         public RProperty<float> PositionY { get; }

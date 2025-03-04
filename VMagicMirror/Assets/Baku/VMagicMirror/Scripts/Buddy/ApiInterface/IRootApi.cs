@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 namespace Baku.VMagicMirror.Buddy.Api.Interface
 {
     /// <summary>
-    /// Scriptから `Api` 変数としてアクセスできるような、APIのベースになるインスタンス。
+    /// スクリプトから <c>Api</c> 変数としてアクセスできるような、サブキャラの制御に利用できるAPI群です。
     /// </summary>
     public interface IRootApi
     {
-        Action Start { get; set; }
-        Action<float> Update { get; set; }
+        /// <summary>
+        /// サブキャラのロード後に一度呼ばれます。
+        /// </summary>
+        event Action Start;
+        event Action<float> Update;
 
         SynchronizationContext MainThreadContext { get; }
         Task RunOnMainThread(Task task);
@@ -30,6 +33,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         IAvatarFacialApi AvatarFacial { get; }
         IAudioApi Audio { get; }
         IScreenApi Screen { get; }
+        IGuiApi Gui { get; }
 
         void Log(string value);
         void LogWarning(string value);

@@ -9,9 +9,11 @@ namespace Baku.VMagicMirror.Buddy.Api
     {
         public FloatingSpriteEffect InternalFloating { get; } = new();
         public BounceDeformSpriteEffect InternalBounceDeform { get; } = new();
+        public JumpSpriteEffect InternalJump { get; } = new();
 
         IFloatingSpriteEffect ISpriteEffectApi.Floating => InternalFloating;
         IBounceDeformSpriteEffect ISpriteEffectApi.BounceDeform => InternalBounceDeform;
+        IJumpSpriteEffect ISpriteEffectApi.Jump => InternalJump;
     }
 
     public class BounceDeformSpriteEffect : IBounceDeformSpriteEffect
@@ -82,5 +84,18 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         // Floatはループしかせんやろ…ということでLoopオプションは省いている
+    }
+
+    public class JumpSpriteEffect : IJumpSpriteEffect
+    {
+        public void Jump(float intensity, float duration, int count)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Stop()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

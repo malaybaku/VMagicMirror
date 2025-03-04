@@ -5,8 +5,23 @@ namespace Baku.VMagicMirror.Buddy.Api
 {
     public class AvatarLoadEventApi : IAvatarLoadEventApi
     {
-        public Action Loaded { get; set; }
-        public Action UnLoaded { get; set; }
+        internal void InvokeLoadedInternal() => Loaded?.Invoke();
+        internal void InvokeUnloadedInternal() => Unloaded?.Invoke();
+
+        private readonly AvatarLoadApiImplement _impl;
+        public AvatarLoadEventApi(AvatarLoadApiImplement impl)
+        {
+            _impl = impl;
+        }
+
+        // NOTE:
+        // これだとイベントの発火より先にフラグが変わるケースが出てくる。
+        // - Invoke関数の中でフラグが変わるような書き方もアリ
+        // - が、falseに倒すのはなるべく素早くやったほうがいいという考え方もある
+        public bool IsLoaded => _impl.IsLoaded;
+
+        public event Action Loaded;
+        public event Action Unloaded;
     }
 
     // NOTE: I/F側のコメントを参照。
@@ -22,6 +37,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl = impl;
         }
 
+        internal void InvokeOnBlinkedInternal() => OnBlinked?.Invoke();
+
         public string CurrentFacial => _impl.GetUserOperationActiveBlendShape()?.ToString() ?? "";
         public bool IsTalking
         {
@@ -35,9 +52,10 @@ namespace Baku.VMagicMirror.Buddy.Api
         // TODO: LipSyncのAIUEOが分かるようなプロパティが欲しい & 声量のdB値も欲しい
 
         public bool UsePerfectSync => _impl.UsePerfectSync;
-        public Action OnBlinked { get; set; }
 
-        public bool HasClip(string name, bool customKey) => _impl.HasKey(name, customKey);
+        public event Action OnBlinked;
+
+        public bool HasClip(string name) => _impl.HasKey(name, true);
         public float GetCurrentValue(string name, bool customKey) => _impl.GetBlendShapeValue(name, customKey);
         public string GetActiveFaceSwitch() => _impl.GetActiveFaceSwitch();
 
@@ -56,27 +74,32 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         // NOTE: RootPositionはほぼゼロだが、Rotのほうはゲーム入力モードで回ることがあるので公開してもバチ当たらない…というモチベがある
-        public Interface.Vector3 GetRootPosition() => _impl.GetRootPosition().ToApiValue();
-        public Interface.Quaternion GetRootRotation() => _impl.GetRootRotation().ToApiValue();
+        public Vector3 GetRootPosition() => _impl.GetRootPosition().ToApiValue();
+        public Quaternion GetRootRotation() => _impl.GetRootRotation().ToApiValue();
         
-        public Interface.Vector3 GetBoneGlobalPosition(HumanBodyBones bone)
+        //TODO: useParentBoneオプションをimplにわたす
+        public Vector3 GetBoneGlobalPosition(HumanBodyBones bone, bool useParentBone)
             => _impl.GetBoneGlobalPosition(bone.ToEngineValue()).ToApiValue();
-        public Interface.Quaternion GetBoneGlobalRotation(HumanBodyBones bone) 
+        public Quaternion GetBoneGlobalRotation(HumanBodyBones bone, bool useParentBone) 
             => _impl.GetBoneGlobalRotation(bone.ToEngineValue()).ToApiValue();
-        public Interface.Vector3 GetBoneLocalPosition(HumanBodyBones bone) 
+        public Vector3 GetBoneLocalPosition(HumanBodyBones bone, bool useParentBone) 
             => _impl.GetBoneLocalPosition(bone.ToEngineValue()).ToApiValue();
-        public Interface.Quaternion GetBoneLocalRotation(HumanBodyBones bone) 
+        public Quaternion GetBoneLocalRotation(HumanBodyBones bone, bool useParentBone) 
             => _impl.GetBoneLocalRotation(bone.ToEngineValue()).ToApiValue();
     }
 
     public class AvatarMotionEventApi : IAvatarMotionEventApi
     {
-        public Action<string> OnKeyboardKeyDown { get; set; }
+        internal void InvokeOnKeyboardKeyDownInternal(string key) => OnKeyboardKeyDown?.Invoke(key);
+        internal void InvokeOnTouchPadMouseButtonDownInternal() => OnTouchPadMouseButtonDown?.Invoke();
+        internal void InvokeOnPenTabletMouseButtonDownInternal() => OnPenTabletMouseButtonDown?.Invoke();
+        internal void InvokeOnGamepadButtonDownInternal(GamepadButton button) => OnGamepadButtonDown?.Invoke(button);
+        internal void InvokeOnArcadeStickButtonDownInternal(GamepadButton button) => OnArcadeStickButtonDown?.Invoke(button);
         
-        public Action OnTouchPadMouseButtonDown { get; set; }
-        public Action OnPenTabletMouseButtonDown { get; set; }
-
-        public Action<Interface.GamepadKey> OnGamepadButtonDown { get; set; }
-        public Action<Interface.GamepadKey> OnArcadeStickButtonDown { get; set; }
+        public event Action<string> OnKeyboardKeyDown;
+        public event Action OnTouchPadMouseButtonDown;
+        public event Action OnPenTabletMouseButtonDown;
+        public event Action<GamepadButton> OnGamepadButtonDown;
+        public event Action<GamepadButton> OnArcadeStickButtonDown;
     }
 }

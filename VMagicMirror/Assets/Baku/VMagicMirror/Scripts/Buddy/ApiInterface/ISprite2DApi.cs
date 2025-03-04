@@ -1,8 +1,5 @@
-using UnityEngine.Scripting;
-
 namespace Baku.VMagicMirror.Buddy.Api.Interface
 {
-    [Preserve]
     public enum Sprite2DTransitionStyle
     {
         None = 0,
@@ -11,7 +8,6 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         RightFlip = 3,
     }
     
-    [Preserve]
     public interface ISprite2DApi
     {
         void Preload(string path);

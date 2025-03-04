@@ -42,39 +42,36 @@ namespace Baku.VMagicMirror.Buddy
         // NOTE: まだC#版は検証段階なので、一部のイベントにのみ対応している
         public override void Initialize()
         {
-            ConnectNoArgFunc(_avatarLoad.Loaded, () => _api.AvatarLoadEvent.Loaded);
-            ConnectNoArgFunc(_avatarLoad.Unloaded, () => _api.AvatarLoadEvent.UnLoaded);
+            ConnectNoArgFunc(_avatarLoad.Loaded, () => _api.AvatarLoadEventInternal.InvokeLoadedInternal);
+            ConnectNoArgFunc(_avatarLoad.Unloaded, () => _api.AvatarLoadEventInternal.InvokeUnloadedInternal);
 
             ConnectOneArgFunc(
                 _avatarMotionEvent.KeyboardKeyDown,
-                () => _api.AvatarMotionEvent.OnKeyboardKeyDown
+                () => _api.AvatarMotionEventInternal.InvokeOnKeyboardKeyDownInternal
                 );
-
-            // ConnectOneArgFunc(
-            //     _avatarMotionEvent.KeyboardKeyDown,
-            //     () => _api.AvatarMotionEvent.OnKeyboardKeyDown
-            //     );
-            //
-            // ConnectNoArgFunc(
-            //     _avatarMotionEvent.TouchPadMouseButtonDown,
-            //     () => _api.AvatarMotionEvent.OnTouchPadMouseButtonDown
-            // );
-            // ConnectNoArgFunc(
-            //     _avatarMotionEvent.PenTabletMouseButtonDown,
-            //     () => _api.AvatarMotionEvent.OnPenTabletMouseButtonDown
-            // );
-            //
-            // ConnectOneArgFunc(
-            //     _avatarMotionEvent.GamepadButtonDown,
-            //     () => _api.AvatarMotionEvent.OnGamepadButtonDown,
-            //     v => v.Item2
-            // );
-            // ConnectOneArgFunc(
-            //     _avatarMotionEvent.ArcadeStickButtonDown,
-            //     () => _api.AvatarMotionEvent.OnArcadeStickButtonDown
-            // );
             
-            ConnectNoArgFunc(_avatarFacial.Blinked, () => _api.AvatarFacial.OnBlinked);
+            ConnectNoArgFunc(
+                _avatarMotionEvent.TouchPadMouseButtonDown,
+                () => _api.AvatarMotionEventInternal.InvokeOnTouchPadMouseButtonDownInternal
+            );
+            ConnectNoArgFunc(
+                _avatarMotionEvent.PenTabletMouseButtonDown,
+                () => _api.AvatarMotionEventInternal.InvokeOnPenTabletMouseButtonDownInternal
+            );
+            
+            ConnectOneArgFunc(
+                _avatarMotionEvent.GamepadButtonDown,
+                () => _api.AvatarMotionEventInternal.InvokeOnGamepadButtonDownInternal,
+                v => v.Item2.ToApiValue()
+            );
+
+            ConnectOneArgFunc(
+                _avatarMotionEvent.ArcadeStickButtonDown,
+                () => _api.AvatarMotionEventInternal.InvokeOnArcadeStickButtonDownInternal,
+                v => v.ToApiValue()
+            );
+            
+            ConnectNoArgFunc(_avatarFacial.Blinked, () => _api.AvatarFacialInternal.InvokeOnBlinkedInternal);
             
             InvokeCallbackAsync(_cts.Token).Forget();
         }
@@ -94,8 +91,8 @@ namespace Baku.VMagicMirror.Buddy
                 await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate, cancellationToken: cancellationToken);
                 
                 // Start/Updateもここで呼ぶことにより、アバター等の状態が完全に確定した状態でのみスクリプトが実行されるのを保証する
-                InvokeStartIfNeeded();
-                ApiUtils.Try(_api.BuddyId, () => _api.Update?.Invoke(Time.deltaTime));
+                InvokeStartEventsIfNeeded();
+                ApiUtils.Try(_api.BuddyId, () => _api.InvokeUpdated(Time.deltaTime));
 
                 while (_callbackQueue.TryDequeue(out var callback))
                 {
@@ -126,12 +123,17 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
         
-        private void InvokeStartIfNeeded()
+        private void InvokeStartEventsIfNeeded()
         {
             if (!_startCalled)
             {
                 _startCalled = true;
-                ApiUtils.Try(_api.BuddyId, () => _api.Start?.Invoke());
+                ApiUtils.Try(_api.BuddyId, () => _api.InvokeStarted());
+                
+                if (_api.AvatarLoadEventInternal.IsLoaded)
+                {
+                    ApiUtils.Try(_api.BuddyId, () => _api.AvatarLoadEventInternal.InvokeLoadedInternal());
+                }
             }
         }
         

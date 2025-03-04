@@ -40,6 +40,9 @@ namespace Baku.VMagicMirror.Buddy
             set => transform.localRotation = value;
         }
 
+        public Vector3 Position => transform.position;
+        public Quaternion Rotation => transform.rotation;
+
         public float Scale
         {
             get => transform.localScale.x;

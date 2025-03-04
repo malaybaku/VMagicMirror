@@ -1,0 +1,21 @@
+namespace Baku.VMagicMirror.Buddy.Api.Interface
+{
+    // NOTE: WebViewベースにするかUIで頑張るかでフォントとかガワの様子が変わってくる
+    public interface IGuiApi
+    {
+        IGuiArea CreateGuiArea();
+    }
+
+    // NOTE:
+    // - これはクラスなので、
+    // - 左右=[0, 1], 下上=[0, 1]で画面サイズ比ベースの指定になる(ので、Sizeをキレイに指定するのはちょっと難しい)
+    public interface IGuiArea
+    {
+        Vector2 Position { get; set; }
+        Vector2 Size { get; set; }
+        Vector2 Pivot { get; set; }
+
+        void SetActive(bool active);
+        void ShowText(string content, bool immediate);
+    }
+}

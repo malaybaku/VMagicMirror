@@ -107,8 +107,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         public static Vector3 ToEngineValue(this Interface.Vector3 v) => new(v.x, v.y, v.z);
         public static Quaternion ToEngineValue(this Interface.Quaternion v) => new(v.x, v.y, v.z, v.w);
 
-        // NOTE: enumは数値まで揃えてるやつはそのままキャストすればOK。これは逆方向でも同様
-        public static GamepadKey ToEngineValue(this Interface.GamepadKey key) => (GamepadKey)key;
+        // NOTE: enumは数値の並びが揃っているものはそのままキャストするだけでOK。これは逆方向でも同様
+        public static GamepadKey ToEngineValue(this Interface.GamepadButton key) => (GamepadKey)key;
         public static HumanBodyBones ToEngineValue(this Interface.HumanBodyBones bone) => (HumanBodyBones)bone;
 
         public static Sprite2DTransitionStyle ToEngineValue(this Interface.Sprite2DTransitionStyle style)
@@ -122,7 +122,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         public static Interface.Vector3 ToApiValue(this Vector3 v) => new(v.x, v.y, v.z);
         public static Interface.Quaternion ToApiValue(this Quaternion v) => new(v.x, v.y, v.z, v.w);
 
-        public static Interface.GamepadKey ToApiValue(this GamepadKey key) => (Interface.GamepadKey)key;
+        public static Interface.GamepadButton ToApiValue(this GamepadKey key) => (Interface.GamepadButton)key;
         public static Interface.HumanBodyBones ToApiValue(this HumanBodyBones bone) => (Interface.HumanBodyBones)bone;
 
         public static Interface.Sprite2DTransitionStyle ToApiValue(this Sprite2DTransitionStyle style)

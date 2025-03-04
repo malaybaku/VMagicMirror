@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 {
     public class RootApi : IRootApi
     {
-        private Buddy3DInstanceCreator _buddy3DInstanceCreator;
+        private readonly Buddy3DInstanceCreator _buddy3DInstanceCreator;
         private readonly CancellationTokenSource _cts = new();
 
         //TODO: Layoutと同じくSpriteにもInstanceのレポジトリとUpdaterを作りたい
@@ -40,14 +40,16 @@ namespace Baku.VMagicMirror.Buddy.Api
             _baseDir = baseDir;
             BuddyId = buddyId;
             Property = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
+            AvatarLoadEventInternal = new AvatarLoadEventApi(apiImplementBundle.AvatarLoadApi);
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
-            _avatarFacial = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
+            AvatarFacialInternal = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
             _audio = new AudioApi(baseDir, apiImplementBundle.AudioApi);
             DeviceLayout = new DeviceLayoutApi(apiImplementBundle.DeviceLayoutApi);
             Screen = new ScreenApi(apiImplementBundle.ScreenApi);
 
             _buddy3DInstanceCreator = apiImplementBundle.Buddy3DInstanceCreator;
             MainThreadContext = SynchronizationContext.Current;
+            _gui = new GuiApi(apiImplementBundle.BuddyGuiCanvas);
         }
 
         internal void Dispose()
@@ -76,18 +78,23 @@ namespace Baku.VMagicMirror.Buddy.Api
             }
             _sprite3Ds.Clear();
             
-            _avatarFacial.Dispose();
+            AvatarFacialInternal.Dispose();
             _audio.Dispose();
 
+            _gui.Dispose();
+            
             _cts.Cancel();
             _cts.Dispose();
         }
 
         internal string BuddyId { get; }
 
-        public Action Start { get; set; }
-        public Action<float> Update { get; set; }
+        internal void InvokeStarted() => Start?.Invoke();
+        public event Action Start;
 
+        internal void InvokeUpdated(float deltaTime) => Update?.Invoke(deltaTime);
+        public event Action<float> Update;
+        
         public SynchronizationContext MainThreadContext { get; }
 
         public async Task RunOnMainThread(Task task)
@@ -105,15 +112,23 @@ namespace Baku.VMagicMirror.Buddy.Api
         public IDeviceLayoutApi DeviceLayout { get; }
         
         // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう
-        public IAvatarLoadEventApi AvatarLoadEvent { get; } = new AvatarLoadEventApi();
+
+        internal AvatarLoadEventApi AvatarLoadEventInternal { get; }
+        public IAvatarLoadEventApi AvatarLoadEvent => AvatarLoadEventInternal;
         public IAvatarPoseApi AvatarPose { get; }
-        public IAvatarMotionEventApi AvatarMotionEvent { get; } = new AvatarMotionEventApi();
-        private readonly AvatarFacialApi _avatarFacial;
-        public IAvatarFacialApi AvatarFacial => _avatarFacial;
+
+        internal AvatarMotionEventApi AvatarMotionEventInternal { get; } = new();
+        public IAvatarMotionEventApi AvatarMotionEvent => AvatarMotionEventInternal;
+
+        internal AvatarFacialApi AvatarFacialInternal { get; }
+        public IAvatarFacialApi AvatarFacial => AvatarFacialInternal;
         
         private readonly AudioApi _audio;
         public IAudioApi Audio => _audio;
         public IScreenApi Screen { get; }
+
+        private readonly GuiApi _gui;
+        public IGuiApi Gui => _gui;
         
         public void Log(string value)
         {

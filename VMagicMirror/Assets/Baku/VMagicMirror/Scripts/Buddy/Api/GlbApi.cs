@@ -60,7 +60,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             Array.Empty<string>()
             );
 
-        public void RunAnimation(string name) => Try(() => _instance.RunAnimation(name, false, true));
+        public void RunAnimation(string name, bool loop) => Try(() => _instance.RunAnimation(name, loop, true));
         public void StopAnimation() => Try(() => _instance.StopAnimation());
 
         private void Try(Action act) => ApiUtils.Try(_buddyId, act);

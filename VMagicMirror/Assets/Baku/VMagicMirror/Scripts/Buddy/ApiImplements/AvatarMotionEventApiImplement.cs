@@ -34,19 +34,19 @@ namespace Baku.VMagicMirror.Buddy
         /// </summary>
         public IObservable<Unit> PenTabletMouseButtonDown => _penTabletMouseButtonDown;
 
-        private readonly Subject<(ReactedHand, string)> _gamepadButtonDown = new();
+        private readonly Subject<(ReactedHand, GamepadKey)> _gamepadButtonDown = new();
         /// <summary>
         /// ゲームパッドが表示された状態で何らかのゲームパッドのボタンを押すと、押し込みに対して発火する。
         /// スティック入力に対しては発火しない
         /// </summary>
-        public IObservable<(ReactedHand, string)> GamepadButtonDown => _gamepadButtonDown;
+        public IObservable<(ReactedHand, GamepadKey)> GamepadButtonDown => _gamepadButtonDown;
 
-        private readonly Subject<string> _arcadeStickButtonDown = new();
+        private readonly Subject<GamepadKey> _arcadeStickButtonDown = new();
         /// <summary>
         /// アーケードスティックが表示された状態でゲームパッドのボタンを押すと、押し込みに対して発火する。
         /// スティックには反応せず、かつアーケードスティック上で対応していないボタンを押した場合も反応しない
         /// </summary>
-        public IObservable<string> ArcadeStickButtonDown => _arcadeStickButtonDown;
+        public IObservable<GamepadKey> ArcadeStickButtonDown => _arcadeStickButtonDown;
 
         private readonly BodyMotionModeController _bodyMotionModeController;
         private readonly HandIKIntegrator _handIKIntegrator;
@@ -171,12 +171,12 @@ namespace Baku.VMagicMirror.Buddy
                 return;
             }
 
-            var keyName = ConvertGamepadKeyNameToString(key);
-            if (string.IsNullOrEmpty(keyName))
+            if (!IsValidKey(key))
             {
                 return;
             }
-            _gamepadButtonDown.OnNext((hand, keyName));
+
+            _gamepadButtonDown.OnNext((hand, key));
         }
         
         private void OnArcadeStickButtonDownMotionStarted(GamepadKey key)
@@ -186,35 +186,15 @@ namespace Baku.VMagicMirror.Buddy
                 return;
             }
 
-            var keyName = ConvertGamepadKeyNameToString(key);
-            if (string.IsNullOrEmpty(keyName))
+            if (!IsValidKey(key))
             {
                 return;
             }
-            _arcadeStickButtonDown.OnNext(keyName);
+
+            _arcadeStickButtonDown.OnNext(key);
         }
 
-        private static string ConvertGamepadKeyNameToString(GamepadKey key)
-        {
-            return key switch
-            {
-                GamepadKey.A => "A",
-                GamepadKey.B => "B",
-                GamepadKey.X => "X",
-                GamepadKey.Y => "Y",
-                GamepadKey.Start => "Start",
-                GamepadKey.Select => "Select",
-                GamepadKey.LShoulder => "LShoulder",
-                GamepadKey.RShoulder => "RShoulder",
-                GamepadKey.LTrigger => "LTrigger",
-                GamepadKey.RTrigger => "RTrigger",
-                GamepadKey.LEFT => "ArrowLeft",
-                GamepadKey.RIGHT => "ArrowRight",
-                GamepadKey.UP => "ArrowUp",
-                GamepadKey.DOWN => "ArrowDown",
-                _ => "",
-            };
-        }
+        private static bool IsValidKey(GamepadKey key) => key is not GamepadKey.Unknown;
         
         private static string ConvertHandTargetTypeToString(HandTargetType type)
         {

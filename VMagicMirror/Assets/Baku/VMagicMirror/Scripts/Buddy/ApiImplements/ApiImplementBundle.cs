@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.Buddy
             AvatarPoseApi = poseApi;
             AvatarMotionEventApi = motionEventApi;
             DeviceLayoutApi = deviceLayoutApi;
-            RawInputApi = rawInputApi;
+            InputApi = rawInputApi;
             WordToMotionEventApi = wordToMotionEventApi;
             AudioApi = audioApi;
             ScreenApi = screenApi;
@@ -40,7 +40,7 @@ namespace Baku.VMagicMirror.Buddy
         public AvatarPoseApiImplement AvatarPoseApi { get; }
         public AvatarMotionEventApiImplement AvatarMotionEventApi { get; }
         public DeviceLayoutApiImplement DeviceLayoutApi { get; }
-        public InputApiImplement RawInputApi { get; }
+        public InputApiImplement InputApi { get; }
         public WordToMotionEventApiImplement WordToMotionEventApi { get; }
         public AudioApiImplement AudioApi { get; }
         public ScreenApiImplement ScreenApi { get; }

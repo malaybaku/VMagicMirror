@@ -31,6 +31,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         IAvatarPoseApi AvatarPose { get; }
         IAvatarMotionEventApi AvatarMotionEvent { get; }
         IAvatarFacialApi AvatarFacial { get; }
+        IInputApi Input { get; }
         IAudioApi Audio { get; }
         IScreenApi Screen { get; }
         IGuiApi Gui { get; }
@@ -52,13 +53,43 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         ISprite3DApi Create3DSprite();
         IGlbApi CreateGlb();
         IVrmApi CreateVrm();
+        
+        //TODO: コレ系の設定がうまくbundleできると嬉しい
+        AppLanguage Language { get; }
     }
 
+    /// <summary>
+    /// サブキャラのログ出力の詳細度です。
+    /// </summary>
+    /// <remarks>
+    ///
+    /// </remarks>
     public enum LogLevel
     {
+        /// <summary>  </summary>
         None,
         Error,
         Warning,
         Log,
+    }
+
+    /// <summary> VMagicMirrorの表示に使用している言語です。 </summary>
+    /// <remarks>
+    /// <para>
+    /// VMagicMirrorではローカライズシステムの実装都合により、この値は日英以外の言語選択を正しく判別しません。
+    /// 日英以外の言語が <see cref="Unknown"/> として判定される場合があることに注意して下さい。
+    /// </para>
+    /// <para>
+    /// 多言語に対応したサブキャラを作成したい場合、 <see cref="IPropertyApi"/> でユーザーによる言語選択を個別にサポートすることを検討して下さい。
+    /// </para>
+    /// </remarks>
+    public enum AppLanguage
+    {
+        /// <summary> 日本語、英語のいずれでもない言語 </summary>
+        Unknown = 0,
+        /// <summary> 日本語 </summary>
+        Japanese,
+        /// <summary> 英語 </summary>
+        English,
     }
 }

@@ -54,6 +54,11 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         /// </remarks>
         void StopAnimation();
 
+        /// <summary>
+        /// オブジェクトを非表示にします。
+        /// </summary>
+        void Hide();
+
         //TODO: エフェクト (サイズキープしてぷにぷにするとか) も欲しい
     }
 }

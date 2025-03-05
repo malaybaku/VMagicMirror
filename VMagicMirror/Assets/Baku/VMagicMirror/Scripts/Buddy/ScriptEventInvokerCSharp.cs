@@ -17,6 +17,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly RootApi _api;
 
         private readonly AvatarLoadApiImplement _avatarLoad;
+        private readonly InputApiImplement _input;
         private readonly AvatarMotionEventApiImplement _avatarMotionEvent;
         private readonly AvatarFacialApiImplement _avatarFacial;
         private readonly BuddySprite2DUpdater _spriteUpdater = new();
@@ -28,12 +29,14 @@ namespace Baku.VMagicMirror.Buddy
         
         public ScriptEventInvokerCSharp(
             RootApi api,
+            InputApiImplement input,
             AvatarLoadApiImplement avatarLoad,
             AvatarMotionEventApiImplement avatarMotionEvent,
             AvatarFacialApiImplement avatarFacial
             )
         {
             _api = api;
+            _input = input;
             _avatarLoad = avatarLoad;
             _avatarMotionEvent = avatarMotionEvent;
             _avatarFacial = avatarFacial;
@@ -62,13 +65,30 @@ namespace Baku.VMagicMirror.Buddy
             ConnectOneArgFunc(
                 _avatarMotionEvent.GamepadButtonDown,
                 () => _api.AvatarMotionEventInternal.InvokeOnGamepadButtonDownInternal,
-                v => v.Item2.ToApiValue()
+                v => v.Item2
             );
 
             ConnectOneArgFunc(
                 _avatarMotionEvent.ArcadeStickButtonDown,
-                () => _api.AvatarMotionEventInternal.InvokeOnArcadeStickButtonDownInternal,
-                v => v.ToApiValue()
+                () => _api.AvatarMotionEventInternal.InvokeOnArcadeStickButtonDownInternal
+            );
+            
+            ConnectOneArgFunc(
+                _input.OnKeyboardKeyDown,
+                () => _api.InputInternal.InvokeKeyboardKeyDown
+            );
+            ConnectOneArgFunc(
+                _input.OnKeyboardKeyUp,
+                () => _api.InputInternal.InvokeKeyboardKeyUp
+            );
+            
+            ConnectOneArgFunc(
+                _input.GamepadButtonDown,
+                () => _api.InputInternal.InvokeGamepadButtonDown
+            );
+            ConnectOneArgFunc(
+                _input.GamepadButtonUp,
+                () => _api.InputInternal.InvokeGamepadButtonUp
             );
             
             ConnectNoArgFunc(_avatarFacial.Blinked, () => _api.AvatarFacialInternal.InvokeOnBlinkedInternal);

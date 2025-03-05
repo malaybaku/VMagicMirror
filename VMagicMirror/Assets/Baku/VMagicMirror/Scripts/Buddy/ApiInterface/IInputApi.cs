@@ -25,6 +25,26 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         /// <summary> ゲームパッドのボタンが離されると発火します。 </summary>
         event Action<GamepadButton> GamepadButtonUp;
 
+        /// <summary>
+        /// ゲームパッドの左スティックの値を取得します。
+        /// </summary>
+        /// <remarks>
+        /// x成分は左が <c>-1</c>、右が <c>1</c> に対応します。
+        /// y成分は下が <c>-1</c>、上が <c>1</c> に対応します。
+        /// 取得できるベクトルの <see cref="Vector2.magnitude"/> は1以下の値になります。
+        /// </remarks>
+        Vector2 GamepadLeftStick { get; }
+
+        /// <summary>
+        /// ゲームパッドの右スティックの値を取得します。
+        /// </summary>
+        /// <remarks>
+        /// x成分は左が <c>-1</c>、右が <c>1</c> に対応します。
+        /// y成分は下が <c>-1</c>、上が <c>1</c> に対応します。
+        /// 取得できるベクトルの <see cref="Vector2.magnitude"/> は1以下の値になります。
+        /// </remarks>
+        Vector2 GamepadRightStick { get; }
+        
         // ENTER以外のキー名は通知されない (全て "" になる) 
 
         /// <summary>

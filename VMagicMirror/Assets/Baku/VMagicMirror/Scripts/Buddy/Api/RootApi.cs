@@ -43,6 +43,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             AvatarLoadEventInternal = new AvatarLoadEventApi(apiImplementBundle.AvatarLoadApi);
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
             AvatarFacialInternal = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
+            InputInternal = new(apiImplementBundle.InputApi);
             _audio = new AudioApi(baseDir, apiImplementBundle.AudioApi);
             DeviceLayout = new DeviceLayoutApi(apiImplementBundle.DeviceLayoutApi);
             Screen = new ScreenApi(apiImplementBundle.ScreenApi);
@@ -122,6 +123,9 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         internal AvatarFacialApi AvatarFacialInternal { get; }
         public IAvatarFacialApi AvatarFacial => AvatarFacialInternal;
+
+        internal InputApi InputInternal { get; }
+        public IInputApi Input => InputInternal;
         
         private readonly AudioApi _audio;
         public IAudioApi Audio => _audio;
@@ -129,6 +133,9 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         private readonly GuiApi _gui;
         public IGuiApi Gui => _gui;
+        
+        // TODO: 実際に選択中の言語を返す
+        public AppLanguage Language => throw new NotImplementedException();
         
         public void Log(string value)
         {

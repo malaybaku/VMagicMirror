@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UniGLTF;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace Baku.VMagicMirror.Buddy
         private bool _hasModel = false;
         // NOTE: このインスタンスは存在する場合BuddyVrmInstanceの子要素になっている(ので、オブジェクトごと破棄することができる)
         private Vrm10Instance _instance = null;
+        private Animator _animator;
 
         private readonly Dictionary<string, Vrm10AnimationInstance> _animations = new();
         private Vrm10AnimationInstance _prevAnim;
@@ -62,6 +64,7 @@ namespace Baku.VMagicMirror.Buddy
                 }
 
                 _instance = instance;
+                _animator = instance.GetComponent<Animator>();
                 //NOTE: Script Execution OrderをVMM側で制御したいのでこうする
                 instance.UpdateType = Vrm10Instance.UpdateTypes.None;
                 
@@ -77,7 +80,7 @@ namespace Baku.VMagicMirror.Buddy
                 t.localPosition = Vector3.zero;
                 t.localRotation = Quaternion.identity;
                 t.localScale = Vector3.one;
-                Debug.LogWarning($"Loading VRM done! at :{path}");
+                _hasModel = true;
             }
             catch (Exception)
             {
@@ -91,13 +94,14 @@ namespace Baku.VMagicMirror.Buddy
 
         private void ReleaseCurrentVrm()
         {
-            Debug.LogWarning($"Release current VRM...");
+            _hasModel = false;
             if (_instance != null)
             {
                 Destroy(_instance.gameObject);
             }
 
             _instance = null;
+            _animator = null;
         }
 
         public void SetActive(bool active) => gameObject.SetActive(active);
@@ -146,7 +150,7 @@ namespace Baku.VMagicMirror.Buddy
             _instance.Runtime.VrmAnimation = _anim;
         }
 
-        public void StopVrma()
+        public void StopVrma(bool immediate)
         {
             if (!_hasModel)
             {
@@ -154,6 +158,145 @@ namespace Baku.VMagicMirror.Buddy
             }
 
             _instance.Runtime.VrmAnimation = null;
+        }
+
+        public void SetBoneRotation(HumanBodyBones bone, Quaternion localRotation)
+        {
+            if (!_hasModel)
+            {
+                return;
+            }
+            throw new NotImplementedException();
+        }
+
+        public void SetHipsLocalPosition(Vector3 position)
+        {
+            if (!_hasModel)
+            {
+                return;
+            }
+
+            var hipsBone = _animator.GetBoneTransform(HumanBodyBones.Hips);
+            // 親がnullかどうかを見ているが、より具体的にはTransform3Dが親要素として割り当たってるかどうかを見ている
+            if (transform.parent != null)
+            {
+                var baseTransform = transform.parent;
+                var worldPosition = baseTransform.TransformPoint(position);
+                hipsBone.position = worldPosition;
+            }
+            else
+            {
+                hipsBone.position = position;
+            }
+        }
+
+        public void SetHipsPosition(Vector3 position)
+        {
+            if (!_hasModel)
+            {
+                return;
+            }
+            
+            var hipsBone = _animator.GetBoneTransform(HumanBodyBones.Hips);
+            hipsBone.position = position;
+        }
+
+        public void SetMuscles(float?[] muscles)
+        {
+            if (!_hasModel || muscles == null)
+            {
+                return;
+            }
+
+            // TODO: Rootが間違ってるかも知れないので注意
+            var handler = new HumanPoseHandler(_animator.avatar, _instance.transform);
+            HumanPose pose = default;
+            handler.GetHumanPose(ref pose);
+
+            // NOTE: このdestMusclesはfield値なので再代入しないでOK
+            var destMuscles = pose.muscles;
+            for (var i = 0; i < destMuscles.Length; i++)
+            {
+                if (i >= muscles.Length)
+                {
+                    // 引数の配列が短すぎると通る。普通は通らない想定
+                    break;
+                }
+
+                var v = muscles[i];
+                if (v.HasValue)
+                {
+                    destMuscles[i] = v.Value;
+                }
+            }
+            
+            handler.SetHumanPose(ref pose);
+        }
+
+        public string[] GetCustomBlendShapeNames()
+        {
+            if (!_hasModel)
+            {
+                return Array.Empty<string>();
+            }
+
+            return _instance.Runtime
+                .Expression
+                .ExpressionKeys
+                .Where(key => key.Preset == ExpressionPreset.custom)
+                .Select(key => key.Name)
+                .ToArray();
+        }
+
+        public bool HasCustomBlendShape(string s)
+        {
+            if (!_hasModel)
+            {
+                return false;
+            }
+
+            return _instance.Runtime
+                .Expression
+                .ExpressionKeys
+                .Any(key => key.Preset == ExpressionPreset.custom && key.Name == s);
+        }
+
+        public float GetBlendShapeValue(string s, bool customClip)
+        {
+            if (!_hasModel)
+            {
+                return 0f;
+            }
+
+            var key = CreateExpressionKey(s, customClip);
+
+            return _instance.Runtime
+                .Expression
+                .ActualWeights
+                .GetValueOrDefault(key, 0f);
+        }
+
+        public void SetBlendShapeValue(string s, bool customClip, float value)
+        {
+            if (!_hasModel)
+            {
+                return;
+            }
+            
+            var key = CreateExpressionKey(s, customClip);
+            _instance.Runtime.Expression.SetWeight(key, value);
+        }
+
+        private static ExpressionKey CreateExpressionKey(string s, bool customClip)
+        {
+            return !customClip && Enum.TryParse<ExpressionPreset>(s, out var preset)
+                ? ExpressionKey.CreateFromPreset(preset)
+                : ExpressionKey.CreateCustom(s);
+        }
+
+        public float GetVrmaLength(string fullPath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

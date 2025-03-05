@@ -61,60 +61,51 @@ namespace Baku.VMagicMirror.Buddy.Api
         public void Hide() => _instance.SetActive(false);
 
         public void SetBoneRotation(HumanBodyBones bone, Quaternion localRotation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetHipsPosition(Vector3 position)
-        {
-            throw new NotImplementedException();
-        }
+            => _instance.SetBoneRotation(bone.ToEngineValue(), localRotation.ToEngineValue());
+        public void SetHipsLocalPosition(Vector3 position) 
+            => _instance.SetHipsLocalPosition(position.ToEngineValue());
+        public void SetHipsPosition(Vector3 position) 
+            => _instance.SetHipsPosition(position.ToEngineValue());
 
         public void SetBoneRotations(IReadOnlyDictionary<HumanBodyBones, Quaternion> localRotations)
         {
-            throw new NotImplementedException();
+            // NOTE: Dictごと渡す方が早そうな場合、Keyの型変換をAPIで行うのをサボってもOK
+            foreach (var (bone, rotation) in localRotations)
+            {
+                _instance.SetBoneRotation(bone.ToEngineValue(), rotation.ToEngineValue());
+            }
         }
 
-        public void SetMuscles(float?[] muscles)
-        {
-            throw new NotImplementedException();
-        }
-        
-        public string[] GetCustomBlendShapeNames()
-        {
-            throw new System.NotImplementedException();
-        }
+        public void SetMuscles(float?[] muscles) => _instance.SetMuscles(muscles);
 
-        public bool HasBlendShape(string name)
-        {
-            throw new System.NotImplementedException();
-        }
+        public string[] GetCustomBlendShapeNames() => _instance.GetCustomBlendShapeNames();
 
-        public float GetBlendShape(string name)
-        {
-            throw new System.NotImplementedException();
-        }
+        public bool HasBlendShape(string name) => _instance.HasCustomBlendShape(name);
 
-        public void SetBlendShape(string name, float value)
-        {
-            throw new NotImplementedException();
-        }
+        public float GetBlendShape(string name, bool customClip) => _instance.GetBlendShapeValue(name, customClip);
 
+        public void SetBlendShape(string name, bool customClip, float value)
+            => _instance.SetBlendShapeValue(name, customClip, value);
+
+        // TODO: たぶんVrma自体を別の型として分けるので、Preloadの概念はなくなりそう
         public async Task PreloadVrmAnimationAsync(string path)
         {
             await UniTask.SwitchToMainThread();
             await _instance.PreloadAnimationAsync(path);
         }
         
-        public void RunVrma(string path, bool immediate)
+        public void RunVrma(string path, bool loop, bool immediate)
         {
             var fullPath = Path.Combine(_baseDir, path);
             _instance.RunVrma(fullPath, immediate);
         }
 
-        public void StopVrma()
+        public void StopVrma(bool immediate) => _instance.StopVrma(immediate);
+
+        public float GetVrmaLength(string path)
         {
-            _instance.StopVrma();
+            var fullPath = Path.Combine(_baseDir, path);
+            return _instance.GetVrmaLength(fullPath);
         }
     }
 }

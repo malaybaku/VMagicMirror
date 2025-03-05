@@ -7,7 +7,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// 特にVRM1.0で定義されているプリセット表情の名称を定義したクラスです。
     /// 
     /// </summary>
-    public static class BlendShapeClipNames
+    public static class BlendShapePresetNames
     {
         public static string Happy { get; } = ToCamelCase(nameof(Happy));
         public static string Angry { get; } = ToCamelCase(nameof(Angry));

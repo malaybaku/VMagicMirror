@@ -81,10 +81,5 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         ///   多くのケースで、ユーザーにレイアウトの編集サポートを提供するためにこの関数を呼び出すことが適しています。
         /// </remarks>
         void SetParent(ITransform3DApi parent);
-        
-        /// <summary>
-        /// オブジェクトを非表示にします。
-        /// </summary>
-        void Hide();
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -20,6 +21,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly XInputGamePad _gamepad;
         private readonly MousePositionProvider _mousePositionProvider;
 
+        [Inject]
         public InputApiImplement(
             IKeyMouseEventSource keyMouseEventSource,
             XInputGamePad gamepad,
@@ -37,14 +39,14 @@ namespace Baku.VMagicMirror.Buddy
             _keyMouseEventSource.KeyDown
                 .Subscribe(key =>
                 {
-                    var keyName = key.ToLower() == "enter" ? "enter" : "";
+                    var keyName = key.ToLower() == "enter" ? "Enter" : "";
                     _onKeyboardKeyDown.OnNext(keyName);
                 })
                 .AddTo(this);
             _keyMouseEventSource.KeyUp
                 .Subscribe(key =>
                 {
-                    var keyName = key.ToLower() == "enter" ? "enter" : "";
+                    var keyName = key.ToLower() == "enter" ? "Enter" : "";
                     _onKeyboardKeyUp.OnNext(keyName);
                 })
                 .AddTo(this);
@@ -77,14 +79,19 @@ namespace Baku.VMagicMirror.Buddy
         public bool GetGamepadButton(GamepadKey key) => _gamepad.GetButtonDown(key);
 
         //TODO: この辺のキャッシュはGamepad側のリファクタで不要になるはず
-        private Vector2 _leftStickPosition =Vector2.zero;
-        private Vector2 _rightStickPosition =Vector2.zero;
+        private Vector2 _leftStickPosition = Vector2.zero;
+        private Vector2 _rightStickPosition = Vector2.zero;
         public Vector2 GetGamepadLeftStickPosition() => _leftStickPosition;
         public Vector2 GetGamepadRightStickPosition() => _rightStickPosition;
         
-        public IObservable<(GamepadKey, bool)> GamepadButton => _gamepad
+        public IObservable<GamepadKey> GamepadButtonDown => _gamepad
             .ButtonUpDown
-            .Select(data => (data.Key, data.IsPressed));
+            .Where(data => data.IsPressed)
+            .Select(data => data.Key);
+        public IObservable<GamepadKey> GamepadButtonUp => _gamepad
+            .ButtonUpDown
+            .Where(data => !data.IsPressed)
+            .Select(data => data.Key);
         
     }
 }

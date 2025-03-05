@@ -93,8 +93,10 @@ namespace Baku.VMagicMirror.Buddy.Api
         internal void InvokeOnKeyboardKeyDownInternal(string key) => OnKeyboardKeyDown?.Invoke(key);
         internal void InvokeOnTouchPadMouseButtonDownInternal() => OnTouchPadMouseButtonDown?.Invoke();
         internal void InvokeOnPenTabletMouseButtonDownInternal() => OnPenTabletMouseButtonDown?.Invoke();
-        internal void InvokeOnGamepadButtonDownInternal(GamepadButton button) => OnGamepadButtonDown?.Invoke(button);
-        internal void InvokeOnArcadeStickButtonDownInternal(GamepadButton button) => OnArcadeStickButtonDown?.Invoke(button);
+        internal void InvokeOnGamepadButtonDownInternal(GamepadKey button)
+            => OnGamepadButtonDown?.Invoke(button.ToApiValue());
+        internal void InvokeOnArcadeStickButtonDownInternal(GamepadKey button) 
+            => OnArcadeStickButtonDown?.Invoke(button.ToApiValue());
         
         public event Action<string> OnKeyboardKeyDown;
         public event Action OnTouchPadMouseButtonDown;

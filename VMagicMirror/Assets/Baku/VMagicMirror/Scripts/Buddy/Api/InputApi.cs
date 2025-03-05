@@ -1,32 +1,36 @@
-using NLua;
-using UnityEngine;
-using UnityEngine.Scripting;
+using System;
+using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class InputApi
+    public class InputApi : IInputApi
     {
         private readonly InputApiImplement _impl;
+        private Vector2 _gamepadLeftStick;
+        private Vector2 _gamepadRightStick;
 
         public InputApi(InputApiImplement impl)
         {
             _impl = impl;
         }
-     
-        [Preserve] public Vector2 MousePosition => _impl.GetNonDimensionalMousePosition();
-
-        // GamePadButton(int)の引数が欲しい
-        [Preserve] public LuaFunction GamepadButtonDown { get; set; }
-        [Preserve] public LuaFunction GamepadButtonUp { get; set; }
-
-        // ENTER以外のキー名は通知されない (全て "" になる) 
-        [Preserve] public LuaFunction KeyboardKeyDown { get; set; }
-        [Preserve] public LuaFunction KeyboardKeyUp { get; set; }
         
-        // TODO: enumの変換を噛ませたい
-        [Preserve] public bool GetGamepadButton(GamepadKey key) => _impl.GetGamepadButton(key);
+        internal void InvokeKeyboardKeyDown(string key) => KeyboardKeyDown?.Invoke(key);
+        internal void InvokeKeyboardKeyUp(string key) => KeyboardKeyUp?.Invoke(key);
+        internal void InvokeGamepadButtonDown(GamepadKey key) => GamepadButtonDown?.Invoke(key.ToApiValue());
+        internal void InvokeGamepadButtonUp(GamepadKey key) => GamepadButtonUp?.Invoke(key.ToApiValue());
 
-        
+        public event Action<GamepadButton> GamepadButtonDown;
+        public event Action<GamepadButton> GamepadButtonUp;
+        public event Action<string> KeyboardKeyDown;
+        public event Action<string> KeyboardKeyUp;
+
+        public Vector2 MousePosition => _impl.GetNonDimensionalMousePosition().ToApiValue();
+
+        public Vector2 GamepadLeftStick => _impl.GetGamepadLeftStickPosition().ToApiValue();
+
+        public Vector2 GamepadRightStick => _impl.GetGamepadRightStickPosition().ToApiValue();
+
+        public bool GetGamepadButton(GamepadButton key) => _impl.GetGamepadButton(key.ToEngineValue());
     }
 }
 

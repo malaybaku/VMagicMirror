@@ -140,7 +140,7 @@ namespace Baku.VMagicMirror.Buddy
                     {
                         instance.Position = layout2d.Position;
                         instance.RotationEuler = layout2d.RotationEuler;
-                        instance.Scale = layout2d.Scale;
+                        instance.Scale = Vector2.one * layout2d.Scale;
                     }
                 }
                 else if (TryGetBuddyTransform3DLayout(msg, out var layout3d))
@@ -193,7 +193,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             var layouts = _buddyLayoutRepository.Get(scriptCaller.BuddyId);
 
-            var transform2DInstances = new Dictionary<string, BuddyTransform2DInstance>();
+            var transform2DInstances = new Dictionary<string, BuddyManifestTransform2DInstance>();
             foreach (var pair in layouts.Transform2Ds)
             {
                 var instance = _spriteCanvas.CreateTransform2DInstance();
@@ -202,12 +202,12 @@ namespace Baku.VMagicMirror.Buddy
 
                 instance.Position = pair.Value.Position;
                 instance.RotationEuler = pair.Value.RotationEuler;
-                instance.Scale = pair.Value.Scale;
+                instance.Scale = Vector2.one * pair.Value.Scale;
                 transform2DInstances[pair.Key] = instance;
                 _transformInstanceRepository.AddTransform2D(scriptCaller.BuddyId, pair.Key, instance);
             }
 
-            var transform3DInstances = new Dictionary<string, BuddyTransform3DInstance>();
+            var transform3DInstances = new Dictionary<string, BuddyManifestTransform3DInstance>();
             foreach (var pair in layouts.Transform3Ds)
             {
                 var instance = _buddy3DInstanceCreator.CreateTransform3D();
@@ -220,7 +220,7 @@ namespace Baku.VMagicMirror.Buddy
                 _transformInstanceRepository.AddTransform3D(scriptCaller.BuddyId, pair.Key, instance);
             }
 
-            scriptCaller.SetTransformsApi(new TransformsApi(
+            scriptCaller.SetTransformsApi(new ManifestTransformsApi(
                 transform2DInstances,
                 transform3DInstances
             ));
@@ -229,11 +229,11 @@ namespace Baku.VMagicMirror.Buddy
         private void DeleteTransformInstance(IScriptCaller scriptCaller) 
             => _transformInstanceRepository.DeleteInstance(scriptCaller.BuddyId);
 
-        private void ApplyLayout3D(BuddyTransform3DInstance instance, BuddyTransform3DLayout layout3d)
+        private void ApplyLayout3D(BuddyManifestTransform3DInstance instance, BuddyTransform3DLayout layout3d)
         {
             instance.LocalPosition = layout3d.Position;
             instance.LocalRotation = layout3d.Rotation;
-            instance.Scale = layout3d.Scale;
+            instance.LocalScale = Vector3.one * layout3d.Scale;
 
             var parentChanged = (
                 layout3d.HasParentBone != instance.HasParentBone ||

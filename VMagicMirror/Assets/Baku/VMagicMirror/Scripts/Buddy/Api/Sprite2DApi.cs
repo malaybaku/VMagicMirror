@@ -18,38 +18,25 @@ namespace Baku.VMagicMirror.Buddy.Api
         private bool _fileNotFoundErrorLogged;
         private bool _pathInvalidErrorLogged;
         
-        internal Sprite2DApi(string baseDir, string buddyId)
+        internal Sprite2DApi(string baseDir, string buddyId, BuddySpriteInstance instance)
         {
             _baseDir = baseDir;
             _buddyId = buddyId;
+            Instance = instance;
+            _transform = new Transform2D(instance.GetTransform2DInstance());
         }
 
         // TODO: Instanceを見たいときにAPI経由で参照しないで済むようにしたい
-        internal BuddySpriteInstance Instance { get; set; }
+        internal BuddySpriteInstance Instance { get; }
         internal void Dispose() => Instance.Dispose();
 
-        Vector2 ISprite2DApi.LocalPosition
-        {
-            get => Instance.LocalPosition.ToApiValue();
-            set => Instance.LocalPosition = value.ToEngineValue();
-        }
-
-        Quaternion ISprite2DApi.LocalRotation
-        {
-            get => Instance.LocalRotation.ToApiValue();
-            set => Instance.LocalRotation = value.ToEngineValue();
-        }
-
+        private readonly Transform2D _transform;
+        ITransform2D ISprite2DApi.Transform => _transform;
+        
         Vector2 ISprite2DApi.Size
         {
             get => Instance.Size.ToApiValue();
             set => Instance.Size = value.ToEngineValue();
-        }
-        
-        Vector2 ISprite2DApi.Pivot
-        {
-            get => Instance.Pivot.ToApiValue();
-            set => Instance.Pivot = value.ToEngineValue();
         }
 
         ISpriteEffectApi ISprite2DApi.Effects => Instance.SpriteEffects;
@@ -84,12 +71,6 @@ namespace Baku.VMagicMirror.Buddy.Api
         public void Hide() => Instance.SetActive(false);
         
         public void SetPosition(Vector2 position) => Instance.SetPosition(position.ToEngineValue());
-
-        public void SetParent(ITransform2DApi parent)
-        {
-            var parentInstance = ((Transform2DApi)parent).GetInstance();
-            Instance.SetParent(parentInstance);
-        }
 
         private string GetFullPath(string path) => Path.Combine(_baseDir, path);
         

@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
 
         //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
         IPropertyApi Property { get; }
-        ITransformsApi Transforms { get; }
+        IManifestTransforms Transforms { get; }
         IDeviceLayoutApi DeviceLayout { get; }
         
         // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう

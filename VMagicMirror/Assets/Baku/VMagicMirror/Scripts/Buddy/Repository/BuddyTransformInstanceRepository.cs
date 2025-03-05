@@ -10,19 +10,19 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly Dictionary<string, SingleBuddyTransforms> _transforms = new();
 
-        private readonly Subject<BuddyTransform2DInstance> _transform2DAdded = new();
-        public IObservable<BuddyTransform2DInstance> Transform2DAdded => _transform2DAdded;
+        private readonly Subject<BuddyManifestTransform2DInstance> _transform2DAdded = new();
+        public IObservable<BuddyManifestTransform2DInstance> Transform2DAdded => _transform2DAdded;
 
-        private readonly Subject<BuddyTransform3DInstance> _transform3DAdded = new();
-        public IObservable<BuddyTransform3DInstance> Transform3DAdded => _transform3DAdded;
+        private readonly Subject<BuddyManifestTransform3DInstance> _transform3DAdded = new();
+        public IObservable<BuddyManifestTransform3DInstance> Transform3DAdded => _transform3DAdded;
 
-        public IEnumerable<BuddyTransform2DInstance> GetTransform2DInstances()
+        public IEnumerable<BuddyManifestTransform2DInstance> GetTransform2DInstances()
             => _transforms.Values.SelectMany(ts => ts.GetTransform2DInstances());
 
-        public IEnumerable<BuddyTransform3DInstance> GetTransform3DInstances()
+        public IEnumerable<BuddyManifestTransform3DInstance> GetTransform3DInstances()
             => _transforms.Values.SelectMany(ts => ts.GetTransform3DInstances());
         
-        public void AddTransform2D(string buddyId, string name, BuddyTransform2DInstance instance)
+        public void AddTransform2D(string buddyId, string name, BuddyManifestTransform2DInstance instance)
         {
             if (!_transforms.TryGetValue(buddyId, out var transforms))
             {
@@ -33,7 +33,7 @@ namespace Baku.VMagicMirror.Buddy
             _transform2DAdded.OnNext(instance);
         }
         
-        public void AddTransform3D(string buddyId, string name, BuddyTransform3DInstance instance)
+        public void AddTransform3D(string buddyId, string name, BuddyManifestTransform3DInstance instance)
         {
             if (!_transforms.TryGetValue(buddyId, out var transforms))
             {
@@ -44,7 +44,7 @@ namespace Baku.VMagicMirror.Buddy
             _transform3DAdded.OnNext(instance);
         }
 
-        public bool TryGetTransform2D(string buddyId, string name, out BuddyTransform2DInstance result)
+        public bool TryGetTransform2D(string buddyId, string name, out BuddyManifestTransform2DInstance result)
         {
             if (_transforms.TryGetValue(buddyId, out var transforms) &&
                 transforms.TryGetTransform2D(name, out var existingResult))
@@ -59,7 +59,7 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
 
-        public bool TryGetTransform3D(string buddyId, string name, out BuddyTransform3DInstance result)
+        public bool TryGetTransform3D(string buddyId, string name, out BuddyManifestTransform3DInstance result)
         {
             if (_transforms.TryGetValue(buddyId, out var transforms) &&
                 transforms.TryGetTransform3D(name, out var existingResult))
@@ -87,13 +87,13 @@ namespace Baku.VMagicMirror.Buddy
 
         class SingleBuddyTransforms
         {
-            private readonly Dictionary<string, BuddyTransform2DInstance> _transform2Ds = new();
-            private readonly Dictionary<string, BuddyTransform3DInstance> _transform3Ds = new();
+            private readonly Dictionary<string, BuddyManifestTransform2DInstance> _transform2Ds = new();
+            private readonly Dictionary<string, BuddyManifestTransform3DInstance> _transform3Ds = new();
 
-            public IEnumerable<BuddyTransform2DInstance> GetTransform2DInstances() => _transform2Ds.Values;
-            public IEnumerable<BuddyTransform3DInstance> GetTransform3DInstances() => _transform3Ds.Values;
+            public IEnumerable<BuddyManifestTransform2DInstance> GetTransform2DInstances() => _transform2Ds.Values;
+            public IEnumerable<BuddyManifestTransform3DInstance> GetTransform3DInstances() => _transform3Ds.Values;
             
-            public void AddTransform2D(string name, BuddyTransform2DInstance instance)
+            public void AddTransform2D(string name, BuddyManifestTransform2DInstance instance)
             {
                 // キーが被ってるのにここに到達している場合は以下いずれかが起こっている
                 // - manifest.jsonのパース時に名称の重複チェックができてない
@@ -104,7 +104,7 @@ namespace Baku.VMagicMirror.Buddy
                 }
             }
 
-            public void AddTransform3D(string name, BuddyTransform3DInstance instance)
+            public void AddTransform3D(string name, BuddyManifestTransform3DInstance instance)
             {
                 if (!_transform3Ds.TryAdd(name, instance))
                 {
@@ -112,10 +112,10 @@ namespace Baku.VMagicMirror.Buddy
                 }
             }
 
-            public bool TryGetTransform2D(string name, out BuddyTransform2DInstance result)
+            public bool TryGetTransform2D(string name, out BuddyManifestTransform2DInstance result)
                 => _transform2Ds.TryGetValue(name, out result);
 
-            public bool TryGetTransform3D(string name, out BuddyTransform3DInstance result)
+            public bool TryGetTransform3D(string name, out BuddyManifestTransform3DInstance result)
                 => _transform3Ds.TryGetValue(name, out result);
             
             public void Dispose()

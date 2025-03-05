@@ -37,10 +37,11 @@ namespace Baku.VMagicMirror.Buddy
         
         public virtual void Initialize()
         {
-            // APIの生成時にSpriteのインスタンスまで入ってる状態にしておく (ヒエラルキーの構築時に最初からインスタンスがあるほうが都合がよいため)
-            Api.SpriteCreated
-                .Subscribe(sprite => sprite.Instance = _spriteCanvas.CreateSpriteInstance())
-                .AddTo(_disposable);
+            // TODO: コードを完全に削除 or 生成されたインスタンスを何かのレポジトリに登録する感じの処理だけやりたい
+            // (API経由でしかインスタンスにアクセスできないのも困る、みたいな話はあるので)
+            // Api.SpriteCreated
+            //     .Subscribe(sprite => sprite.Instance = _spriteCanvas.CreateSpriteInstance())
+            //     .AddTo(_disposable);
         }
         
         public virtual void Dispose()
@@ -49,6 +50,6 @@ namespace Baku.VMagicMirror.Buddy
             _disposable.Dispose();
         }
 
-        public void SetTransformsApi(TransformsApi api) => Api.Transforms = api;
+        public void SetTransformsApi(ManifestTransformsApi api) => Api.Transforms = api;
     }
 }

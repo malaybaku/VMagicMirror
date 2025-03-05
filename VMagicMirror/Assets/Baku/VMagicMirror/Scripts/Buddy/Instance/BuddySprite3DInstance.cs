@@ -14,12 +14,15 @@ namespace Baku.VMagicMirror.Buddy
     }
     
     // TODO: 2Dと同じく、PointerEnter的なイベントに反応できてほしいので、やり方を考えてね
-    public class BuddySprite3DInstance : BuddyObject3DInstanceBase
+    public class BuddySprite3DInstance : MonoBehaviour
     {
         private const float TransitionDuration = 0.5f;
 
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private BuddyTransform3DInstance transform3DInstance;
 
+        public BuddyTransform3DInstance Transform3DInstance => transform3DInstance;
+        
         // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
         public Sprite CurrentSprite { get; private set; }
 

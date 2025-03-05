@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror.Buddy
     {
         [SerializeField] private Canvas canvas;
         [SerializeField] private BuddySpriteInstance spriteInstancePrefab;
-        [SerializeField] private BuddyTransform2DInstance transform2DInstancePrefab;
+        [SerializeField] private BuddyManifestTransform2DInstance transform2DInstancePrefab;
 
         // NOTE: 画面前面アクセサリーとの整合性のためにもっと手前に持ってこないとダメかも
         [SerializeField] private float distanceFromCamera = 0.1f;
@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.Buddy
         /// 呼び出し直後は位置もサイズも保証されないことに注意
         /// </summary>
         /// <returns></returns>
-        public BuddyTransform2DInstance CreateTransform2DInstance()
+        public BuddyManifestTransform2DInstance CreateTransform2DInstance()
             => Instantiate(transform2DInstancePrefab, RectTransform);
         
         private Camera _mainCamera;

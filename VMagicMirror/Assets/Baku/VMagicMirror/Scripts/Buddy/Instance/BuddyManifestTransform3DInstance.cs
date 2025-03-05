@@ -6,13 +6,13 @@ using UnityEngine;
 namespace Baku.VMagicMirror.Buddy
 {
     /// <summary>
-    /// <see cref="BuddySpriteInstance"/>に似ているが、スクリプトではなくエンドユーザーが位置決めをするようなRectTransformの一種
+    /// スクリプトではなくエンドユーザーが位置決めできるような3DのTransform情報
     /// </summary>
     /// <remarks>
     /// オブジェクトが使われないとき == Buddyがオフのときはオブジェクトが破棄されるのが期待値なため、
     /// このクラスはgameObject.SetActiveを使わないし、使うべきでもない
     /// </remarks>
-    public class BuddyTransform3DInstance : MonoBehaviour
+    public class BuddyManifestTransform3DInstance : MonoBehaviour
     {
         [SerializeField] private TransformControl transformControl;
 
@@ -43,10 +43,10 @@ namespace Baku.VMagicMirror.Buddy
         public Vector3 Position => transform.position;
         public Quaternion Rotation => transform.rotation;
 
-        public float Scale
+        public Vector3 LocalScale
         {
-            get => transform.localScale.x;
-            set => transform.localScale = Vector3.one * value;
+            get => transform.localScale;
+            set => transform.localScale = value;
         }
 
         public bool HasParentBone { get; set; }

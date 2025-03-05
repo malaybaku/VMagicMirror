@@ -17,6 +17,7 @@ namespace Baku.VMagicMirror.Buddy
             AudioApiImplement audioApi,
             ScreenApiImplement screenApi,
             Buddy3DInstanceCreator buddy3DInstanceCreator,
+            BuddySpriteCanvas buddySpriteCanvas,
             BuddyGuiCanvas buddyGuiCanvas
         )
         {
@@ -31,6 +32,7 @@ namespace Baku.VMagicMirror.Buddy
             AudioApi = audioApi;
             ScreenApi = screenApi;
             Buddy3DInstanceCreator = buddy3DInstanceCreator;
+            BuddySpriteCanvas = buddySpriteCanvas;
             BuddyGuiCanvas = buddyGuiCanvas;
         }
         
@@ -47,6 +49,7 @@ namespace Baku.VMagicMirror.Buddy
         
         // NOTE: コレと同列の扱いでSpriteCanvasとかも置きたい
         public Buddy3DInstanceCreator Buddy3DInstanceCreator { get; }
+        public BuddySpriteCanvas BuddySpriteCanvas { get; }
         public BuddyGuiCanvas BuddyGuiCanvas { get; }
     }
 }

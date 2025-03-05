@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
         }
 
-        private void Notify2DLayoutUpdated(BuddyTransform2DInstance instance)
+        private void Notify2DLayoutUpdated(BuddyManifestTransform2DInstance instance)
         {
             var msg = new BuddySettingsPropertyMessage()
             {
@@ -66,7 +66,7 @@ namespace Baku.VMagicMirror.Buddy
                 {
                     Position = BuddyVector2.FromVector2(instance.Position),
                     Rotation = BuddyVector3.FromVector3(instance.RotationEuler),
-                    Scale = instance.Scale,
+                    Scale = instance.Scale.x,
                 },
             };
             
@@ -75,7 +75,7 @@ namespace Baku.VMagicMirror.Buddy
                 ));
         }
         
-        private void Notify3DLayoutUpdated(BuddyTransform3DInstance instance)
+        private void Notify3DLayoutUpdated(BuddyManifestTransform3DInstance instance)
         {
             // NOTE: フリーレイアウトで編集しうるのはPos/Rot/Scaleの3つだけで、ParentBoneは編集はされない想定
             var msg = new BuddySettingsPropertyMessage()
@@ -87,7 +87,7 @@ namespace Baku.VMagicMirror.Buddy
                 {
                     Position = BuddyVector3.FromVector3(instance.LocalPosition),
                     Rotation = BuddyVector3.FromVector3(instance.LocalRotation.eulerAngles),
-                    Scale = instance.Scale,
+                    Scale = instance.LocalScale.x,
                     ParentBone = instance.HasParentBone ? (int) instance.ParentBone : -1
                 },
             };

@@ -83,6 +83,7 @@ GameObject:
   - component: {fileID: 8309990510099467970}
   - component: {fileID: 7773346747758398563}
   - component: {fileID: 3893454672750628633}
+  - component: {fileID: 1191889479048459887}
   m_Layer: 5
   m_Name: BuddySprite2DInstance
   m_TagString: Untagged
@@ -130,8 +131,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b880237122333064b870f17162f86f1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  transform2DInstance: {fileID: 1191889479048459887}
   effectorRectTransform: {fileID: 2638544493674196237}
   rawImage: {fileID: 3551046504495353867}
+--- !u!114 &1191889479048459887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4063885427426382093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 211fd3d94228db1468bb3af2170054d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  content: {fileID: 8309990510099467970}
 --- !u!1 &7526188120558449032
 GameObject:
   m_ObjectHideFlags: 0

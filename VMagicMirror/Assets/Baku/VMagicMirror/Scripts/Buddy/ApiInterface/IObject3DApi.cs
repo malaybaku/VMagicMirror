@@ -80,6 +80,6 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         ///   この関数を呼び出すことで、指定した<paramref name="parent"/>をユーザーが設定から編集してオブジェクトの基本的な姿勢、サイズなどを編集できるようになります。
         ///   多くのケースで、ユーザーにレイアウトの編集サポートを提供するためにこの関数を呼び出すことが適しています。
         /// </remarks>
-        void SetParent(ITransform3DApi parent);
+        void SetParent(IReadOnlyTransform3D parent);
     }
 }

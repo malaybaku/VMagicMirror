@@ -10,7 +10,7 @@ using VRMShaders;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    public class BuddyVrmInstance : BuddyObject3DInstanceBase
+    public class BuddyVrmInstance : MonoBehaviour
     {
         private bool _hasModel = false;
         // NOTE: このインスタンスは存在する場合BuddyVrmInstanceの子要素になっている(ので、オブジェクトごと破棄することができる)
@@ -20,6 +20,16 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Dictionary<string, Vrm10AnimationInstance> _animations = new();
         private Vrm10AnimationInstance _prevAnim;
         private Vrm10AnimationInstance _anim;
+
+        public BuddyTransform3DInstance GetTransform3D()
+        {
+            var instance = GetComponent<BuddyTransform3DInstance>();
+            if (instance != null)
+            {
+                return instance;
+            }
+            return gameObject.AddComponent<BuddyTransform3DInstance>();
+        }
 
         public void UpdateInstance()
         {

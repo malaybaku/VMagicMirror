@@ -1,80 +1,106 @@
 using System;
-using UniRx;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
 {
     /// <summary>
-    /// <see cref="BuddySpriteInstance"/>に似ているが、スクリプトではなくエンドユーザーが位置決めをするようなRectTransformの一種
+    /// 実質的に <see cref="Api.Interface.ITransform2D"/> を実装しているようなクラス。
+    /// Sprite2DとかGuiAreaとかの実装で使う予定
     /// </summary>
-    /// <remarks>
-    /// オブジェクトが使われないとき == Buddyがオフのときはオブジェクトが破棄されるのが期待値なため、
-    /// このクラスはgameObject.SetActiveを使わないし、使うべきでもない
-    /// </remarks>
     public class BuddyTransform2DInstance : MonoBehaviour
     {
-        [SerializeField] private Transform2DGizmo gizmo;
-
-        private readonly Subject<Unit> _layoutUpdated = new();
-        /// <summary> ギズモを使ってドラッグ操作によりレイアウトを編集すると、ドラッグ操作の終了時に発火する </summary>
-        public IObservable<Unit> LayoutUpdated => _layoutUpdated;
-
-        public string BuddyId { get; set; } = "";
-        public string InstanceName { get; set; } = "";
+        // このオブジェクトがSetParentの対象になったときに提示するRectTransformを指定しておく。
+        // Sprite2Dの場合は (Sprite/Effector/Image) の3階層が1セットになったりするので、
+        // Imageの部分が登録してあればOK
+        [SerializeField] private RectTransform content;
         
-        private RectTransform _rt;
-        private RectTransform RectTransform
-        {
-            get
-            {
-                if (_rt == null)
-                {
-                    _rt = GetComponent<RectTransform>();
-                }
+        private RectTransform RectTransform => (RectTransform)transform;
 
-                return _rt;
+        public RectTransform ContentTransform => content; 
+
+        // TODO: anchorを使う等で、普通のLocalPositionとは違う方法で指定する想定
+        public Vector2 LocalPosition
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+  
+        public Quaternion LocalRotation
+        {
+            get => RectTransform.localRotation;
+            set => RectTransform.localRotation = value;
+        }
+        
+        private Vector2 _localScale = Vector2.one;
+        public Vector2 LocalScale
+        {
+            get => _localScale;
+            set
+            {
+                _localScale = value;
+                transform.localScale = new Vector3(value.x, value.y, 1f);
             }
         }
         
         public Vector2 Position
         {
-            get => RectTransform.anchorMin;
-            set
-            {
-                RectTransform.anchorMin = value;
-                RectTransform.anchorMax = value;
-            }
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
-        public float Scale
+        public Quaternion Rotation
         {
-            get => RectTransform.localScale.x;
-            // NOTE: 2Dなので厚み方向は無視
-            set
-            {
-                //gizmoは見かけ上大きさが変わらないようにしている
-                RectTransform.localScale = new Vector3(value, value, 1);
-                gizmo.SetScale(value < 1e-5 ? 1 : 1 / value);
-            }
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
-        private Vector3 _rotationEuler = Vector3.zero;
-        public Vector3 RotationEuler
+        public Vector2 Pivot
         {
-            get => _rotationEuler;
-            set
+            get => RectTransform.pivot;
+            set => RectTransform.pivot = value;
+        }
+
+        // TODO: positionの扱いはもうちょっと検討が要りそう…
+        /// <summary>
+        /// SpriteCanvasから見たグローバル座標にスプライトを移動させる
+        /// </summary>
+        /// <param name="position"></param>
+        public void SetPosition(Vector2 position)
+        {
+            //NOTE: Parentを付け替えないでもInverseTransformPointとかでも行ける？
+            var rt = RectTransform;
+            var currentParent = rt.parent;
+
+            var canvas = GetComponentInParent<BuddySpriteCanvas>();
+            rt.SetParent(canvas.RectTransform);
+            
+            rt.anchorMin = position;
+            rt.anchorMax = position;
+            rt.anchoredPosition = Vector2.zero;
+            
+            rt.SetParent(currentParent);
+        }
+
+        public void SetParent(BuddyManifestTransform2DInstance parent)
+        {
+            // NOTE: SetParentした瞬間はparentにピッタリくっつく位置に移動させてるが、これでいいかは諸説ありそう
+            // (そもそもPosition, Scale, Sizeの概念的な整備しないとダメかも…)
+            var rt = RectTransform;
+            rt.SetParent(parent.transform);
+            if (parent != null)
             {
-                _rotationEuler = value;
-                RectTransform.localRotation = Quaternion.Euler(value);
+                parent.NotifyChildAdded();
+                rt.localPosition = Vector3.zero;
+                rt.localRotation = Quaternion.identity;
+                rt.localScale = Vector3.one;
             }
         }
 
-        public Quaternion Rotation => RectTransform.localRotation;
-        
-        public void SetGizmoActive(bool active) => gizmo.SetActive(active);
-        // NOTE: ギズモがなるべく前面に出続けるための処置
-        public void NotifyChildAdded() => gizmo.SetAsLastSibling();
-        // NOTE: ギズモからPosition/Rotation/Scaleを更新した場合にドラッグ終了時に呼び出す
-        public void NotifyLayoutUpdated() => _layoutUpdated.OnNext(Unit.Default);
+        public void RemoveParent()
+        {
+            //TODO: scaleとかがこれで無事に済むか確認しないとダメそう
+            var canvas = GetComponentInParent<BuddySpriteCanvas>();
+            transform.SetParent(canvas.RectTransform, false);
+        }
     }
 }

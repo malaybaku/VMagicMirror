@@ -20,6 +20,6 @@ namespace Baku.VMagicMirror.Buddy
         /// スクリプトに対してTransform操作用のAPI実装を登録する。スクリプトの実行開始前に呼び出されているのが望ましい。
         /// </summary>
         /// <param name="api"></param>
-        void SetTransformsApi(TransformsApi api);
+        void SetTransformsApi(ManifestTransformsApi api);
     }
 }

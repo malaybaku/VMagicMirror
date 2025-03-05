@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror.Buddy
         }
 
         // モデル
-        [SerializeField] private BuddyTransform2DInstance instance;
+        [SerializeField] private BuddyManifestTransform2DInstance instance;
         [SerializeField] private RectTransform gizmoRoot;
         [SerializeField] private GameObject translateXGizmo;
         [SerializeField] private GameObject translateYGizmo;

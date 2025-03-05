@@ -13,8 +13,11 @@ namespace Baku.VMagicMirror.Buddy
     {
         private const float TransitionDuration = 0.5f;
 
+        [SerializeField] private BuddyTransform2DInstance transform2DInstance;
         [SerializeField] private RectTransform effectorRectTransform;
         [SerializeField] private RawImage rawImage;
+
+        public BuddyTransform2DInstance GetTransform2DInstance() => transform2DInstance;
         
         // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
         public Texture2D CurrentTexture { get; private set; }
@@ -42,17 +45,40 @@ namespace Baku.VMagicMirror.Buddy
         // TODO: anchorを使う等で、普通のLocalPositionとは違う方法で指定する
         public Vector2 LocalPosition
         {
-            get;
-            set;
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
-        // NOTE: Vector3に変更するかも
+  
         public Quaternion LocalRotation
         {
             get => RectTransform.localRotation;
             set => RectTransform.localRotation = value;
         }
         
-        // TODO: デフォが1になるようなキメにできたほうが嬉しい
+        private Vector2 _localScale = Vector2.one;
+        public Vector2 LocalScale
+        {
+            get => _localScale;
+            set
+            {
+                _localScale = value;
+                transform.localScale = new Vector3(value.x, value.y, 1f);
+            }
+        }
+        
+        public Vector2 Position
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        public Quaternion Rotation
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        // TODO: デフォが1になるようなキメにできたほうが嬉しいかも (Sizeなら諦める手もあるが)
         private Vector2 _size = new(0.1f, 0.1f);
         public Vector2 Size
         {
@@ -153,7 +179,7 @@ namespace Baku.VMagicMirror.Buddy
             rt.SetParent(currentParent);
         }
 
-        public void SetParent(BuddyTransform2DInstance parent)
+        public void SetParent(BuddyManifestTransform2DInstance parent)
         {
             // NOTE: SetParentした瞬間はparentにピッタリくっつく位置に移動させてるが、これでいいかは諸説ありそう
             // (そもそもPosition, Scale, Sizeの概念的な整備しないとダメかも…)

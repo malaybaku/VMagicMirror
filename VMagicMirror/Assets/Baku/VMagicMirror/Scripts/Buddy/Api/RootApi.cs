@@ -12,6 +12,8 @@ namespace Baku.VMagicMirror.Buddy.Api
     public class RootApi : IRootApi
     {
         private readonly Buddy3DInstanceCreator _buddy3DInstanceCreator;
+        private readonly BuddySpriteCanvas _spriteCanvas;
+
         private readonly CancellationTokenSource _cts = new();
 
         //TODO: Layoutと同じくSpriteにもInstanceのレポジトリとUpdaterを作りたい
@@ -49,6 +51,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             Screen = new ScreenApi(apiImplementBundle.ScreenApi);
 
             _buddy3DInstanceCreator = apiImplementBundle.Buddy3DInstanceCreator;
+            _spriteCanvas = apiImplementBundle.BuddySpriteCanvas;
             MainThreadContext = SynchronizationContext.Current;
             _gui = new GuiApi(apiImplementBundle.BuddyGuiCanvas);
         }
@@ -109,7 +112,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
         public IPropertyApi Property { get; }
-        public ITransformsApi Transforms { get; internal set; }
+        public IManifestTransforms Transforms { get; internal set; }
         public IDeviceLayoutApi DeviceLayout { get; }
         
         // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう
@@ -213,7 +216,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         public ISprite2DApi Create2DSprite()
         {
-            var result = new Sprite2DApi(_baseDir, BuddyId);
+            var instance = _spriteCanvas.CreateSpriteInstance();
+            var result = new Sprite2DApi(_baseDir, BuddyId, instance);
             _sprites.Add(result);
             _spriteCreated.OnNext(result);
             return result;

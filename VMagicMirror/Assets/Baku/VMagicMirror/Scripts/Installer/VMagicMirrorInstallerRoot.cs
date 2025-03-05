@@ -22,8 +22,9 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private StartupLoadingCover loadingCoverController = null;
 
         [SerializeField] private BuddySpriteCanvas buddySpriteCanvas;
+        [SerializeField] private BuddyGuiCanvas buddyGuiCanvas;
         [SerializeField] private BuddyAudioSources buddyAudioSources;
-        [SerializeField] private BuddyTransform3DInstance buddyTransform3DInstancePrefab;
+        [SerializeField] private BuddyManifestTransform3DInstance buddyTransform3DInstancePrefab;
         [SerializeField] private BuddySprite3DInstance buddySprite3DInstancePrefab;
         
         public override void InstallBindings()
@@ -68,10 +69,13 @@ namespace Baku.VMagicMirror.Installer
             Container.Bind<BuddySpriteCanvas>()
                 .FromComponentInNewPrefab(buddySpriteCanvas)
                 .AsCached();
+            Container.Bind<BuddyGuiCanvas>()
+                .FromComponentInNewPrefab(buddyGuiCanvas)
+                .AsCached();
             Container.Bind<BuddyAudioSources>()
                 .FromComponentInNewPrefab(buddyAudioSources)
                 .AsCached();
-            Container.BindIFactory<BuddyTransform3DInstance>()
+            Container.BindIFactory<BuddyManifestTransform3DInstance>()
                 .FromComponentInNewPrefab(buddyTransform3DInstancePrefab)
                 .AsSingle();
             Container.BindIFactory<BuddySprite3DInstance>()

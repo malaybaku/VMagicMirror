@@ -6,8 +6,11 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// <summary>
     /// VRMのロードと操作を行うAPIです。
     /// </summary>
-    public interface IVrmApi : IObject3DApi
+    public interface IVrmApi
     {
+        /// <summary> オブジェクトの基本姿勢に関する値を取得します。 </summary>
+        ITransform3D Transform { get; }
+        
         /// <summary>
         /// ファイルパスを指定してVRMをロードします。
         /// </summary>
@@ -39,7 +42,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         /// </summary>
         /// <param name="position">Hipsボーンの位置</param>
         /// <remarks>
-        /// <see cref="IObject3DApi.SetParent"/> で親となる<see cref="ITransform3DApi"/>を指定している場合、
+        /// <see cref="IObject3DApi.SetParent"/> で親となる<see cref="IReadOnlyTransform3D"/>を指定している場合、
         /// <paramref name="position"/> は親要素に対するローカルな位置として扱われます。
         /// そうでない場合、<paramref name="position"/> はワールド座標の位置として扱われます。
         /// </remarks>

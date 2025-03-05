@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    public class BuddyGlbInstance : BuddyObject3DInstanceBase
+    public class BuddyGlbInstance : MonoBehaviour
     {
         private ImporterContext _importerContext = null;
         private RuntimeGltfInstance _gltfInstance = null;
@@ -15,6 +15,16 @@ namespace Baku.VMagicMirror.Buddy
         private bool _hasAnimationComponent = false;
         private Animation _gltfAnimation = null;
         
+        public BuddyTransform3DInstance GetTransform3D()
+        {
+            var instance = GetComponent<BuddyTransform3DInstance>();
+            if (instance != null)
+            {
+                return instance;
+            }
+            return gameObject.AddComponent<BuddyTransform3DInstance>();
+        }
+
         public void Load(string fullPath)
         {
             if (!File.Exists(fullPath))

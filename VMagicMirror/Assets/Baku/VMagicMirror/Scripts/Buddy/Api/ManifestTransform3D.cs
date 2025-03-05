@@ -2,21 +2,21 @@ using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class Transform3DApi : ITransform3DApi
+    public class ManifestTransform3D : IReadOnlyTransform3D
     {
-        public Transform3DApi(BuddyTransform3DInstance instance)
+        public ManifestTransform3D(BuddyManifestTransform3DInstance instance)
         {
             _instance = instance;
         }
 
-        private readonly BuddyTransform3DInstance _instance;
-        internal BuddyTransform3DInstance GetInstance() => _instance;
+        private readonly BuddyManifestTransform3DInstance _instance;
+        internal BuddyManifestTransform3DInstance GetInstance() => _instance;
         
         public Vector3 LocalPosition => _instance.LocalPosition.ToApiValue();
         public Quaternion LocalRotation => _instance.LocalRotation.ToApiValue();
         public Vector3 Position => _instance.Position.ToApiValue();
         public Quaternion Rotation => _instance.Rotation.ToApiValue();
-        public float Scale => _instance.Scale;
+        public Vector3 LocalScale => _instance.LocalScale.ToApiValue();
 
         public HumanBodyBones AttachedBone
         {

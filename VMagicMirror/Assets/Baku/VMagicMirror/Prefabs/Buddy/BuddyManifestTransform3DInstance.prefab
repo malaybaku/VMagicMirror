@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9112393599949851860}
   - component: {fileID: 6287264878286684599}
   m_Layer: 0
-  m_Name: BuddyTransform3DInstance
+  m_Name: BuddyManifestTransform3DInstance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

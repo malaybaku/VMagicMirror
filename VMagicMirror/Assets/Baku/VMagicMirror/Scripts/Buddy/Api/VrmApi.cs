@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class VrmApi : IVrmApi
+    public class VrmApi : IVrm
     {
         public VrmApi(string baseDir, string buddyId, BuddyVrmInstance instance)
         {

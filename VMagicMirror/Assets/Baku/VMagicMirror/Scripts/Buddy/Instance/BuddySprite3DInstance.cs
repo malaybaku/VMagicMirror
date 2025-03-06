@@ -23,6 +23,9 @@ namespace Baku.VMagicMirror.Buddy
 
         public BuddyTransform3DInstance Transform3DInstance => transform3DInstance;
         
+        // NOTE: setterはコンポーネントを生成するメソッドのみから用いる。InjectするほどでもないのでDIは使ってない
+        public string BuddyId { get; set; }
+        
         // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
         public Sprite CurrentSprite { get; private set; }
 

@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror.Buddy.Api
     /// ユーザーが調整したプロパティを取得できるAPI。
     /// サブキャラの表示位置やスピード、ユーザー名の変更などに対応する
     /// </summary>
-    public class PropertyApi : IPropertyApi
+    public class PropertyApi : IProperty
     {
         // NOTE:
         // - リロードする場合はインスタンスが丸ごと破棄される(べきである)ため、Clear()関数はない

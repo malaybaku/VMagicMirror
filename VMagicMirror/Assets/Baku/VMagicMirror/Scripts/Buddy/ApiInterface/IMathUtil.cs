@@ -5,7 +5,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// <summary>
     /// 数学的な処理を提供するAPIです。
     /// </summary>
-    public interface IMathApi
+    public interface IMathUtil
     {
         /// <summary>
         /// ワールド上の位置を画面から見た座標に変換します。

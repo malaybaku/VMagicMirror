@@ -2,7 +2,7 @@ using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class DeviceLayoutApi : IDeviceLayoutApi
+    public class DeviceLayoutApi : IDeviceLayout
     {
         private readonly DeviceLayoutApiImplement _impl;
         public DeviceLayoutApi(DeviceLayoutApiImplement impl)

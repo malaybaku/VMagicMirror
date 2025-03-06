@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.Buddy
             public static EffectAppliedPose Default() => new(Vector2.zero, Quaternion.identity, Vector2.one);
         }
         
-        public void UpdateSprite(BuddySpriteInstance sprite)
+        public void UpdateSprite(BuddySprite2DInstance sprite)
         {
             var pose = EffectAppliedPose.Default();
 

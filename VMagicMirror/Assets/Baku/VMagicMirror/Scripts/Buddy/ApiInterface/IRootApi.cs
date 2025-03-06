@@ -22,19 +22,19 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         //「丸ごとOK or 丸ごと塞がってる」となるのが分かりやすさ的には望ましい
 
         //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
-        IPropertyApi Property { get; }
+        IProperty Property { get; }
         IManifestTransforms Transforms { get; }
-        IDeviceLayoutApi DeviceLayout { get; }
+        IDeviceLayout DeviceLayout { get; }
         
         // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう
-        IAvatarLoadEventApi AvatarLoadEvent { get; }
-        IAvatarPoseApi AvatarPose { get; }
-        IAvatarMotionEventApi AvatarMotionEvent { get; }
-        IAvatarFacialApi AvatarFacial { get; }
-        IInputApi Input { get; }
-        IAudioApi Audio { get; }
-        IScreenApi Screen { get; }
-        IGuiApi Gui { get; }
+        IAvatarLoadEvent AvatarLoadEvent { get; }
+        IAvatarPose AvatarPose { get; }
+        IAvatarMotionEvent AvatarMotionEvent { get; }
+        IAvatarFacial AvatarFacial { get; }
+        IInput Input { get; }
+        IAudio Audio { get; }
+        IScreen Screen { get; }
+        IGui Gui { get; }
 
         void Log(string value);
         void LogWarning(string value);
@@ -49,10 +49,10 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         // NOTE: Luaじゃないから不要 or 名前もうちょい短くしたい…？
         bool ValidateFilePath(string path);
 
-        ISprite2DApi Create2DSprite();
-        ISprite3DApi Create3DSprite();
-        IGlbApi CreateGlb();
-        IVrmApi CreateVrm();
+        ISprite2D Create2DSprite();
+        ISprite3D Create3DSprite();
+        IGlb CreateGlb();
+        IVrm CreateVrm();
         
         //TODO: コレ系の設定がうまくbundleできると嬉しい
         AppLanguage Language { get; }
@@ -80,7 +80,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// 日英以外の言語が <see cref="Unknown"/> として判定される場合があることに注意して下さい。
     /// </para>
     /// <para>
-    /// 多言語に対応したサブキャラを作成したい場合、 <see cref="IPropertyApi"/> でユーザーによる言語選択を個別にサポートすることを検討して下さい。
+    /// 多言語に対応したサブキャラを作成したい場合、 <see cref="IProperty"/> でユーザーによる言語選択を個別にサポートすることを検討して下さい。
     /// </para>
     /// </remarks>
     public enum AppLanguage

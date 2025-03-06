@@ -21,6 +21,9 @@ namespace Baku.VMagicMirror.Buddy
         private Vrm10AnimationInstance _prevAnim;
         private Vrm10AnimationInstance _anim;
 
+        // NOTE: setterはコンポーネントを生成するメソッドのみから用いる。InjectするほどでもないのでDIは使ってない
+        public string BuddyId { get; set; }
+
         public BuddyTransform3DInstance GetTransform3D()
         {
             var instance = GetComponent<BuddyTransform3DInstance>();

@@ -11,14 +11,14 @@ namespace Baku.VMagicMirror.Buddy
         // TODO: FreeLayoutのオン/オフは単一のRepositoryで持ちたい…
         private readonly IMessageReceiver _receiver;
         private readonly IMessageSender _sender;
-        private readonly BuddyTransformInstanceRepository _repository;
+        private readonly BuddyManifestTransformInstanceRepository _repository;
 
         private readonly ReactiveProperty<bool> _freeLayoutActive = new();
         
         public BuddyLayoutEditNotifier(
             IMessageReceiver receiver,
             IMessageSender sender,
-            BuddyTransformInstanceRepository repository)
+            BuddyManifestTransformInstanceRepository repository)
         {
             _sender = sender;
             _receiver = receiver;

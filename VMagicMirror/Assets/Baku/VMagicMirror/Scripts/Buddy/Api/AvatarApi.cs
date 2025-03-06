@@ -3,7 +3,7 @@ using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class AvatarLoadEventApi : IAvatarLoadEventApi
+    public class AvatarLoadEventApi : IAvatarLoadEvent
     {
         internal void InvokeLoadedInternal() => Loaded?.Invoke();
         internal void InvokeUnloadedInternal() => Unloaded?.Invoke();
@@ -25,11 +25,11 @@ namespace Baku.VMagicMirror.Buddy.Api
     }
 
     // NOTE: I/F側のコメントを参照。
-    public class AvatarBodyParameterApi : IAvatarBodyParameterApi
+    public class AvatarBodyParameterApi : IAvatarBodyParameter
     {
     }
     
-    public class AvatarFacialApi : IAvatarFacialApi
+    public class AvatarFacialApi : IAvatarFacial
     {
         private readonly AvatarFacialApiImplement _impl;
         public AvatarFacialApi(AvatarFacialApiImplement impl)
@@ -65,7 +65,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
     }
 
-    public class AvatarPoseApi : IAvatarPoseApi
+    public class AvatarPoseApi : IAvatarPose
     {
         private readonly AvatarPoseApiImplement _impl;
         public AvatarPoseApi(AvatarPoseApiImplement impl)
@@ -88,7 +88,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             => _impl.GetBoneLocalRotation(bone.ToEngineValue()).ToApiValue();
     }
 
-    public class AvatarMotionEventApi : IAvatarMotionEventApi
+    public class AvatarMotionEventApi : IAvatarMotionEvent
     {
         internal void InvokeOnKeyboardKeyDownInternal(string key) => OnKeyboardKeyDown?.Invoke(key);
         internal void InvokeOnTouchPadMouseButtonDownInternal() => OnTouchPadMouseButtonDown?.Invoke();

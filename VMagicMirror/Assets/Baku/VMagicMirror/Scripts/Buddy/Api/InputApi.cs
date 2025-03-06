@@ -3,7 +3,7 @@ using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class InputApi : IInputApi
+    public class InputApi : IInput
     {
         private readonly InputApiImplement _impl;
         private Vector2 _gamepadLeftStick;

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    public class BuddySpriteInstance : MonoBehaviour, 
+    public class BuddySprite2DInstance : MonoBehaviour, 
         IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerMoveHandler
     {
         private const float TransitionDuration = 0.5f;
@@ -100,6 +100,9 @@ namespace Baku.VMagicMirror.Buddy
 
         // NOTE: ここだけEffectApi自体がデータ的に定義されてるので素朴にnew()してよい
         public SpriteEffectApi SpriteEffects { get; } = new();
+        
+        //TODO: インスタンスの生成直後に値が入ってて欲しい
+        public string BuddyId { get; set; }
 
         private float _transitionTime = 0f;
         

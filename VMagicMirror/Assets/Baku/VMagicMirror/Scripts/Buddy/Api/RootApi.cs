@@ -17,8 +17,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         private readonly CancellationTokenSource _cts = new();
 
         //TODO: Layoutと同じくSpriteにもInstanceのレポジトリとUpdaterを作りたい
-        private readonly List<Sprite2DApi> _sprites = new();
-        internal IReadOnlyList<Sprite2DApi> Sprites => _sprites;
+        private readonly List<Sprite2DApi> _sprite2Ds = new();
+        internal IReadOnlyList<Sprite2DApi> Sprite2Ds => _sprite2Ds;
 
         private readonly List<BuddyVrmInstance> _vrms = new();
         internal IReadOnlyList<BuddyVrmInstance> Vrms => _vrms;
@@ -58,28 +58,9 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         internal void Dispose()
         {
-            foreach (var sprite in _sprites)
-            {
-                sprite.Dispose();
-            }
-            _sprites.Clear();
-
-            foreach (var vrm in _vrms)
-            {
-                vrm.Dispose();
-            }
+            _sprite2Ds.Clear();
             _vrms.Clear();
-            
-            foreach (var glb in _glbs)
-            {
-                glb.Dispose();
-            }
             _glbs.Clear();
-
-            foreach (var sprite in _sprite3Ds)
-            {
-                sprite.Dispose();
-            }
             _sprite3Ds.Clear();
             
             AvatarFacialInternal.Dispose();
@@ -111,31 +92,31 @@ namespace Baku.VMagicMirror.Buddy.Api
         //「丸ごとOK or 丸ごと塞がってる」となるのが分かりやすさ的には望ましい
 
         //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
-        public IPropertyApi Property { get; }
+        public IProperty Property { get; }
         public IManifestTransforms Transforms { get; internal set; }
-        public IDeviceLayoutApi DeviceLayout { get; }
+        public IDeviceLayout DeviceLayout { get; }
         
         // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう
 
         internal AvatarLoadEventApi AvatarLoadEventInternal { get; }
-        public IAvatarLoadEventApi AvatarLoadEvent => AvatarLoadEventInternal;
-        public IAvatarPoseApi AvatarPose { get; }
+        public IAvatarLoadEvent AvatarLoadEvent => AvatarLoadEventInternal;
+        public IAvatarPose AvatarPose { get; }
 
         internal AvatarMotionEventApi AvatarMotionEventInternal { get; } = new();
-        public IAvatarMotionEventApi AvatarMotionEvent => AvatarMotionEventInternal;
+        public IAvatarMotionEvent AvatarMotionEvent => AvatarMotionEventInternal;
 
         internal AvatarFacialApi AvatarFacialInternal { get; }
-        public IAvatarFacialApi AvatarFacial => AvatarFacialInternal;
+        public IAvatarFacial AvatarFacial => AvatarFacialInternal;
 
         internal InputApi InputInternal { get; }
-        public IInputApi Input => InputInternal;
+        public IInput Input => InputInternal;
         
         private readonly AudioApi _audio;
-        public IAudioApi Audio => _audio;
-        public IScreenApi Screen { get; }
+        public IAudio Audio => _audio;
+        public IScreen Screen { get; }
 
         private readonly GuiApi _gui;
-        public IGuiApi Gui => _gui;
+        public IGui Gui => _gui;
         
         // TODO: 実際に選択中の言語を返す
         public AppLanguage Language => throw new NotImplementedException();
@@ -214,32 +195,32 @@ namespace Baku.VMagicMirror.Buddy.Api
                 File.Exists(path);
         }
         
-        public ISprite2DApi Create2DSprite()
+        public ISprite2D Create2DSprite()
         {
-            var instance = _spriteCanvas.CreateSpriteInstance();
+            var instance = _spriteCanvas.CreateSpriteInstance(BuddyId);
             var result = new Sprite2DApi(_baseDir, BuddyId, instance);
-            _sprites.Add(result);
+            _sprite2Ds.Add(result);
             _spriteCreated.OnNext(result);
             return result;
         }
 
-        public ISprite3DApi Create3DSprite()
+        public ISprite3D Create3DSprite()
         {
-            var instance = _buddy3DInstanceCreator.CreateSprite3DInstance();
+            var instance = _buddy3DInstanceCreator.CreateSprite3DInstance(BuddyId);
             _sprite3Ds.Add(instance);
             return new Sprite3DApi(_baseDir, BuddyId, instance);
         }
 
-        public IGlbApi CreateGlb()
+        public IGlb CreateGlb()
         {
-            var instance = _buddy3DInstanceCreator.CreateGlbInstance();
+            var instance = _buddy3DInstanceCreator.CreateGlbInstance(BuddyId);
             _glbs.Add(instance);
             return new GlbApi(_baseDir, BuddyId, instance);
         }
 
-        public IVrmApi CreateVrm()
+        public IVrm CreateVrm()
         {
-            var instance = _buddy3DInstanceCreator.CreateVrmInstance();
+            var instance = _buddy3DInstanceCreator.CreateVrmInstance(BuddyId);
             _vrms.Add(instance);
             return new VrmApi(_baseDir, BuddyId, instance);
         }

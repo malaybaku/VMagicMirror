@@ -3,7 +3,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// <summary>
     /// 音声の再生に関連するAPIです。
     /// </summary>
-    public interface IAudioApi
+    public interface IAudio
     { 
         /// <summary>
         /// ファイルパスを指定して音声を再生します。

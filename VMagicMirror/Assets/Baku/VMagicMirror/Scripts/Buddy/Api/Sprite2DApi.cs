@@ -11,14 +11,14 @@ namespace Baku.VMagicMirror.Buddy.Api
         RightFlip = 3,
     }
 
-    public class Sprite2DApi : ISprite2DApi
+    public class Sprite2DApi : ISprite2D
     {
         private readonly string _baseDir;
         private readonly string _buddyId;
         private bool _fileNotFoundErrorLogged;
         private bool _pathInvalidErrorLogged;
         
-        internal Sprite2DApi(string baseDir, string buddyId, BuddySpriteInstance instance)
+        internal Sprite2DApi(string baseDir, string buddyId, BuddySprite2DInstance instance)
         {
             _baseDir = baseDir;
             _buddyId = buddyId;
@@ -27,19 +27,18 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         // TODO: Instanceを見たいときにAPI経由で参照しないで済むようにしたい
-        internal BuddySpriteInstance Instance { get; }
-        internal void Dispose() => Instance.Dispose();
+        internal BuddySprite2DInstance Instance { get; }
 
         private readonly Transform2D _transform;
-        ITransform2D ISprite2DApi.Transform => _transform;
+        ITransform2D ISprite2D.Transform => _transform;
         
-        Vector2 ISprite2DApi.Size
+        Vector2 ISprite2D.Size
         {
             get => Instance.Size.ToApiValue();
             set => Instance.Size = value.ToEngineValue();
         }
 
-        ISpriteEffectApi ISprite2DApi.Effects => Instance.SpriteEffects;
+        ISpriteEffect ISprite2D.Effects => Instance.SpriteEffects;
 
         public void Preload(string path) => ApiUtils.Try(_buddyId, () =>
         {

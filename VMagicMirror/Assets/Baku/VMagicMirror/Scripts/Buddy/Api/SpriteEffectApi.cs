@@ -5,15 +5,15 @@ namespace Baku.VMagicMirror.Buddy.Api
 {
     // NOTE: 個々のエフェクトについて、値域などがInterface側のdocで決めてあるので、その値域への範囲制限等はこのファイルの中で効かせておく
     
-    public class SpriteEffectApi : ISpriteEffectApi
+    public class SpriteEffectApi : ISpriteEffect
     {
         public FloatingSpriteEffect InternalFloating { get; } = new();
         public BounceDeformSpriteEffect InternalBounceDeform { get; } = new();
         public JumpSpriteEffect InternalJump { get; } = new();
 
-        IFloatingSpriteEffect ISpriteEffectApi.Floating => InternalFloating;
-        IBounceDeformSpriteEffect ISpriteEffectApi.BounceDeform => InternalBounceDeform;
-        IJumpSpriteEffect ISpriteEffectApi.Jump => InternalJump;
+        IFloatingSpriteEffect ISpriteEffect.Floating => InternalFloating;
+        IBounceDeformSpriteEffect ISpriteEffect.BounceDeform => InternalBounceDeform;
+        IJumpSpriteEffect ISpriteEffect.Jump => InternalJump;
     }
 
     public class BounceDeformSpriteEffect : IBounceDeformSpriteEffect

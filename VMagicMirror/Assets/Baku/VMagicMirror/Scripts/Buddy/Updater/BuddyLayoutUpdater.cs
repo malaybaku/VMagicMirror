@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly ScriptLoader _scriptLoader;
         private readonly BuddySpriteCanvas _spriteCanvas;
         private readonly BuddyLayoutRepository _buddyLayoutRepository;
-        private readonly BuddyTransformInstanceRepository _transformInstanceRepository;
+        private readonly BuddyManifestTransformInstanceRepository _transformInstanceRepository;
         private readonly Buddy3DInstanceCreator _buddy3DInstanceCreator;
         private readonly DeviceTransformController _deviceTransformController;
         
@@ -33,7 +33,7 @@ namespace Baku.VMagicMirror.Buddy
             BuddySpriteCanvas spriteCanvas,
             Buddy3DInstanceCreator buddy3DInstanceCreator,
             BuddyLayoutRepository buddyLayoutRepository,
-            BuddyTransformInstanceRepository transformInstanceRepository,
+            BuddyManifestTransformInstanceRepository transformInstanceRepository,
             DeviceTransformController deviceTransformController)
         {
             _receiver = receiver;
@@ -210,9 +210,9 @@ namespace Baku.VMagicMirror.Buddy
             var transform3DInstances = new Dictionary<string, BuddyManifestTransform3DInstance>();
             foreach (var pair in layouts.Transform3Ds)
             {
-                var instance = _buddy3DInstanceCreator.CreateTransform3D();
-                instance.BuddyId = scriptCaller.BuddyId;
-                instance.InstanceName = pair.Key;
+                var instance = _buddy3DInstanceCreator.CreateManifestTransform3D(
+                    scriptCaller.BuddyId, pair.Key
+                    );
 
                 ApplyLayout3D(instance, pair.Value);
                 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class ScreenApi : IScreenApi
+    public class ScreenApi : IScreen
     {
         private readonly ScreenApiImplement _impl;
         

@@ -99,6 +99,8 @@ MonoBehaviour:
   loadingCoverController: {fileID: 0}
   buddySpriteCanvas: {fileID: 3466238353687275096, guid: 441d1d31f0a1c1b45b422205770f483d,
     type: 3}
+  buddyGuiCanvas: {fileID: 5330777756273787563, guid: f26036ea10910e34db7ffef674426588,
+    type: 3}
   buddyAudioSources: {fileID: 2740337308457020041, guid: 5b96818834e6ac7439a90d1a624198cf,
     type: 3}
   buddyTransform3DInstancePrefab: {fileID: 9112393599949851860, guid: 928fd0582ce6c844ab17ce36c8db6d4f,

@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// サブキャラの設定として、エンドユーザーが編集や調整を行うプロパティを公開し、このAPIでその調整後の値を取得できます。
     /// マニフェストにプロパティを定義する方法については (todo: xref) を参照して下さい。
     /// </remarks>
-    public interface IPropertyApi
+    public interface IProperty
     {
         /// <summary>
         /// bool値として定義したプロパティの現在値を取得します。

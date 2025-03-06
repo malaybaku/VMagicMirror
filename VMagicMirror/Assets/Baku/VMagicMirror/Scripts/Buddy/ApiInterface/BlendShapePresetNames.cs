@@ -3,7 +3,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     // NOTE: PerfectSync用のキーも網羅的に定義したほうが親切かも。ただし、その場合はクラスを分けた方が良さそう
 
     /// <summary>
-    /// <see cref="IAvatarFacialApi"/>などで適用されることのあるブレンドシェイプ名のうち、
+    /// <see cref="IAvatarFacial"/>などで適用されることのあるブレンドシェイプ名のうち、
     /// 特にVRM1.0で定義されているプリセット表情の名称を定義したクラスです。
     /// 
     /// </summary>

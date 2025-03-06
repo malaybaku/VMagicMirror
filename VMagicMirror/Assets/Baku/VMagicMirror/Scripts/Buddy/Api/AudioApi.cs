@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class AudioApi : IAudioApi
+    public class AudioApi : IAudio
     {
         private const int ClipCacheCount = 10;
         // 番号が若いほうが最近使ったclip

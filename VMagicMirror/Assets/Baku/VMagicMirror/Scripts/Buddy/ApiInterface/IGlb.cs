@@ -3,7 +3,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// <summary>
     /// GLBファイルを読み込めるような3Dオブジェクトです。
     /// </summary>
-    public interface IGlbApi
+    public interface IGlb
     {
         /// <summary> オブジェクトの基本姿勢に関する値を取得します。 </summary>
         ITransform3D Transform { get; }

@@ -3,7 +3,7 @@ using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class Sprite3DApi : ISprite3DApi
+    public class Sprite3DApi : ISprite3D
     {
         public Sprite3DApi(string baseDir, string buddyId, BuddySprite3DInstance instance)
         {

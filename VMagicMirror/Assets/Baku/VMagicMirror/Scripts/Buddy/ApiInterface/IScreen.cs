@@ -3,7 +3,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// <summary>
     /// アバターを表示しているウィンドウの状態に関するAPIです。
     /// </summary>
-    public interface IScreenApi
+    public interface IScreen
     {
         /// <summary>
         /// ウィンドウの横幅をピクセル単位で取得します。

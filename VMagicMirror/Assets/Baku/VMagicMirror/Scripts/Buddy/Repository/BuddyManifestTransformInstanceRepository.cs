@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniRx;
+using Zenject;
 using Object = UnityEngine.Object;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    public class BuddyTransformInstanceRepository
+    public class BuddyManifestTransformInstanceRepository
     {
+        [Inject]
+        public BuddyManifestTransformInstanceRepository() { }
+        
         private readonly Dictionary<string, SingleBuddyTransforms> _transforms = new();
 
         private readonly Subject<BuddyManifestTransform2DInstance> _transform2DAdded = new();

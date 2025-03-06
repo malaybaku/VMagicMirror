@@ -1,3 +1,5 @@
+using System;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -7,17 +9,25 @@ namespace Baku.VMagicMirror.Buddy
     public class BuddySpriteCanvas : MonoBehaviour
     {
         [SerializeField] private Canvas canvas;
-        [SerializeField] private BuddySpriteInstance spriteInstancePrefab;
+        [SerializeField] private BuddySprite2DInstance spriteInstancePrefab;
         [SerializeField] private BuddyManifestTransform2DInstance transform2DInstancePrefab;
 
         // NOTE: 画面前面アクセサリーとの整合性のためにもっと手前に持ってこないとダメかも
         [SerializeField] private float distanceFromCamera = 0.1f;
         [SerializeField] private float canvasWidth = 1280f;
+
+        private readonly Subject<BuddySprite2DInstance> _spriteCreated = new();
+        public IObservable<BuddySprite2DInstance> SpriteCreated => _spriteCreated;
         
         public RectTransform RectTransform => (RectTransform)transform;
 
-        public BuddySpriteInstance CreateSpriteInstance() 
-            => Instantiate(spriteInstancePrefab, RectTransform);
+        public BuddySprite2DInstance CreateSpriteInstance(string buddyId)
+        {
+            var result = Instantiate(spriteInstancePrefab, RectTransform);
+            result.BuddyId = buddyId;
+            _spriteCreated.OnNext(result);
+            return result;
+        }
 
         /// <summary>
         /// ScriptLoaderがスクリプトをロードしている段階で呼ぶことで、Buddyが使う事があるTransform2Dを生成してCanvas上に配置する。

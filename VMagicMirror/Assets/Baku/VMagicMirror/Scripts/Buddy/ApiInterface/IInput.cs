@@ -5,7 +5,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// <summary>
     /// キーボード、マウス、ゲームパッドなどの入力状態を取得できるAPIです。
     /// </summary>
-    public interface IInputApi
+    public interface IInput
     {
         /// <summary>
         /// マウスポインターの現在の位置を、画面座標を基準として取得します。

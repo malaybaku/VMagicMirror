@@ -17,12 +17,14 @@ namespace Baku.VMagicMirror
             Container.BindInterfacesAndSelfTo<BuddySettingsRepository>().AsSingle();
             Container.Bind<BuddyPropertyRepository>().AsSingle();
             Container.Bind<BuddyLayoutRepository>().AsSingle();
-            Container.Bind<BuddyTransformInstanceRepository>().AsSingle();
-
+            Container.Bind<BuddyManifestTransformInstanceRepository>().AsSingle();
+            Container.Bind<BuddyRuntimeObjectRepository>().AsSingle();
+            
             Container.Bind<Buddy3DInstanceCreator>().AsSingle();
             Container.BindInterfacesTo<BuddyPropertyUpdater>().AsSingle();
             Container.BindInterfacesTo<BuddyLayoutUpdater>().AsSingle();
             Container.BindInterfacesTo<BuddyTransform3DBoneAttachUpdater>().AsSingle();
+            Container.BindInterfacesTo<BuddyRuntimeObjectUpdater>().AsSingle();
 
             Container.BindInterfacesTo<BuddyLayoutEditNotifier>().AsSingle();
 

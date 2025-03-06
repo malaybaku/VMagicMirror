@@ -4,7 +4,7 @@ using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class GlbApi : IGlbApi
+    public class GlbApi : IGlb
     {
         public GlbApi(string baseDir, string buddyId, BuddyGlbInstance instance)
         {

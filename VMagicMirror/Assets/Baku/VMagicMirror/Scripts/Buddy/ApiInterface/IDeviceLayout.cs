@@ -1,6 +1,6 @@
 namespace Baku.VMagicMirror.Buddy.Api.Interface
 {
-    public interface IDeviceLayoutApi
+    public interface IDeviceLayout
     {
         Pose GetCameraPose();
         float GetCameraFov();

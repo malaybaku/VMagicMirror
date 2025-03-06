@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// <summary>
     /// アバターのロード状態に関するAPIです。
     /// </summary>
-    public interface IAvatarLoadEventApi
+    public interface IAvatarLoadEvent
     {
         /// <summary>
         /// アバターがロード済みであれば <c>true</c>、そうでなければ <c>false</c> を取得します。
@@ -30,7 +30,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         event Action Unloaded;
     }
     
-    public interface IAvatarBodyParameterApi
+    public interface IAvatarBodyParameter
     {
         //TODO: 身長っぽい値とかを入れるかもしれないやつ
         //あんまピンと来なければ無しにしてもいい
@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// <summary>
     /// アバターの表情の状態に関するAPIです。
     /// </summary>
-    public interface IAvatarFacialApi
+    public interface IAvatarFacial
     {
         /// <summary>
         /// 現在アバターに適用されている表情のうち、表情トラッキング以外の方法で明示的に適用された表情のBlendShapeClipの名称を取得します。
@@ -112,7 +112,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         string GetActiveFaceSwitch();
     }
 
-    public interface IAvatarPoseApi
+    public interface IAvatarPose
     {
         // NOTE: RootPositionはほぼゼロだが、Rotのほうはゲーム入力モードで回ることがあるので公開してもバチ当たらない…というモチベがある
         
@@ -197,7 +197,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         Quaternion GetBoneLocalRotation(HumanBodyBones bone, bool useParentBone = true);
     }
 
-    public interface IAvatarMotionEventApi
+    public interface IAvatarMotionEvent
     {
         /// <summary>
         /// アバターがキーボードを打鍵するモーションを行う状態になっており、実際に打鍵モーションを開始した場合に発火します。

@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 
 // TODO: 本当はUnityEngine.Quaternionに依存しないような実装にしたい。
 // が、Quaternionの再実装はそこそこ大変なので、サボって内部的にUnityEngine.Quaternionを参照している。

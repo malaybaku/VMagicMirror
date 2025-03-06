@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         RightFlip = 3,
     }
     
-    public interface ISprite2DApi
+    public interface ISprite2D
     {
         /// <summary> 位置や回転などの、オブジェクトの基本的な配置に関するAPIを取得します。 </summary>
         ITransform2D Transform { get; }
@@ -56,6 +56,6 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         Vector2 Size { get; set; } 
 
         /// <summary> スプライトに適用するエフェクトの設定を取得します。 </summary>
-        ISpriteEffectApi Effects { get; }
+        ISpriteEffect Effects { get; }
     }
 }

@@ -1,6 +1,6 @@
 namespace Baku.VMagicMirror.Buddy.Api.Interface
 {
-    public interface ISprite3DApi
+    public interface ISprite3D
     {
         /// <summary> オブジェクトの基本姿勢に関する値を取得します。 </summary>
         ITransform3D Transform { get; }

@@ -127,7 +127,7 @@ namespace Baku.VMagicMirror.Buddy
         private void UpdateInstances()
         {
             // TODO: _api経由じゃなくてSpriteの一覧的なやつを見に行くでよい…ということにしたい
-            foreach (var sprite in _api.Sprites)
+            foreach (var sprite in _api.Sprite2Ds)
             {
                 _spriteUpdater.UpdateSprite(sprite.Instance);
             }

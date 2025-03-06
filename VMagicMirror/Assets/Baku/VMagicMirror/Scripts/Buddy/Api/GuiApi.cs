@@ -3,7 +3,7 @@ using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    public class GuiApi : IGuiApi
+    public class GuiApi : IGui
     {
         private readonly BuddyGuiCanvas _canvas;
         private readonly List<BuddyGuiAreaInstance> _instances = new();
@@ -35,7 +35,11 @@ namespace Baku.VMagicMirror.Buddy.Api
         public GuiArea(BuddyGuiAreaInstance instance)
         {
             _instance = instance;
+            _transform = new Transform2D(instance.GetTransform2DInstance());
         }
+
+        private readonly Transform2D _transform;
+        public ITransform2D Transform => _transform;
         
         public Vector2 Position
         {

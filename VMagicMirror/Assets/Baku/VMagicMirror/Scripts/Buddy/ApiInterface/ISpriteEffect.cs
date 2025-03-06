@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
     /// </para>
     /// 
     /// </remarks>
-    public interface ISpriteEffectApi
+    public interface ISpriteEffect
     {
         /// <summary>
         /// 浮遊しているような視覚効果を適用するエフェクトの設定を取得します。

@@ -1,4 +1,3 @@
-using System;
 using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
@@ -44,34 +43,63 @@ namespace Baku.VMagicMirror.Buddy.Api
             set => _instance.Rotation = value.ToEngineValue();
         }
 
-        // TODO: SetParentの結果に即した値にしたい
         public HumanBodyBones AttachedBone
         {
             get
             {
-                throw new NotImplementedException();
+                if (_instance.ParentType != BuddyTransform3DInstance.ParentTypes.AvatarBone)
+                {
+                    return HumanBodyBones.None;
+                }
+
+                var bone = _instance.ParentBone.Value;
+                return bone == UnityEngine.HumanBodyBones.LastBone
+                    ? HumanBodyBones.None 
+                    : bone.ToApiValue();
             }
         }
 
         public void SetParent(IReadOnlyTransform3D parent)
         {
-            var parentInstance = ((ManifestTransform3D)parent).GetInstance();
-            _instance.SetParent(parentInstance);
+            switch (parent)
+            {
+                case ManifestTransform3D manifestTransform3D:
+                    _instance.SetParent(manifestTransform3D.GetInstance());
+                    break;
+                case Transform3D transform3D:
+                    _instance.SetParent(transform3D._instance);
+                    break;
+                default:
+                    _instance.RemoveParent();
+                    break;
+            }
         }
 
         public void SetParent(ITransform3D parent)
         {
-            throw new System.NotImplementedException();
+            switch (parent)
+            {
+                case Transform3D transform3D:
+                    _instance.SetParent(transform3D._instance);
+                    break;
+                default:
+                    _instance.RemoveParent();
+                    break;
+            }
         }
 
         public void SetParent(HumanBodyBones bone)
         {
-            throw new System.NotImplementedException();
+            if (bone is HumanBodyBones.None or HumanBodyBones.LastBone)
+            {
+                _instance.RemoveParent();
+            }
+            else
+            {
+                _instance.SetParentBone(bone.ToEngineValue());
+            }
         }
 
-        public void RemoveParent()
-        {
-            throw new System.NotImplementedException();
-        }
+        public void RemoveParent() => _instance.RemoveParent();
     }
 }

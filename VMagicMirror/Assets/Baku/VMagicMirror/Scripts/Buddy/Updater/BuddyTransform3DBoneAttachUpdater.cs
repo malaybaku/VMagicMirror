@@ -81,7 +81,7 @@ namespace Baku.VMagicMirror.Buddy
                 }
                 else
                 {
-                    instance.RemoteParentAvatarBone();
+                    instance.RemoveParentAvatarBone();
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace Baku.VMagicMirror.Buddy
 
             if (instance.ParentBone.Value == HumanBodyBones.LastBone)
             {
-                instance.RemoteParentAvatarBone();
+                instance.RemoveParentAvatarBone();
             }
             else
             {

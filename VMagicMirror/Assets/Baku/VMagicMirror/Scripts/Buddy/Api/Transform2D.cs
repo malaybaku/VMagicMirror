@@ -54,8 +54,6 @@ namespace Baku.VMagicMirror.Buddy.Api
             get => _instance.Rotation.ToApiValue();
             set => _instance.Rotation = value.ToEngineValue();
         }
-
-        //TODO? AsReadOnlyとか増えそう
         
         public void SetParent(IReadOnlyTransform2D parent)
         {

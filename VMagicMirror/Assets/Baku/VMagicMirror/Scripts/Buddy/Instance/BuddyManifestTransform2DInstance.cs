@@ -38,12 +38,8 @@ namespace Baku.VMagicMirror.Buddy
         
         public Vector2 Position
         {
-            get => RectTransform.anchorMin;
-            set
-            {
-                RectTransform.anchorMin = value;
-                RectTransform.anchorMax = value;
-            }
+            get => RectTransform.anchoredPosition;
+            set => RectTransform.anchoredPosition = value;
         }
 
         public Vector2 Scale
@@ -56,9 +52,9 @@ namespace Baku.VMagicMirror.Buddy
             // NOTE: 2Dなので厚み方向は無視
             set
             {
-                //gizmoは見かけ上大きさが変わらないようにしている
+                // gizmoは見かけ上大きさが変わらないようにしたい & スケールがめっちゃ小さい場合は諦める
                 // TODO: Vec2になったことでスケール維持の処理がちょっと怪しくなったかも…
-                RectTransform.localScale = new Vector2(value.x, value.y);
+                RectTransform.localScale = new Vector3(value.x, value.y, 1f);
                 gizmo.SetScale(value.magnitude < 1e-5 ? 1 : 1 / value.magnitude);
             }
         }

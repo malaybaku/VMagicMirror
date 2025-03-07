@@ -2,12 +2,6 @@ using Baku.VMagicMirror.Buddy.Api.Interface;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    //TODO: GuiAreaもTransform2Dの一種として扱うようにする過程で汎用化がいりそう
-    // 3Dと同じく、Transform2DInstanceみたいな別コンポーネントを見に行くように設計をいじる…というのが一番ありそう
-
-    /// <summary>
-    /// Spriteの実装に
-    /// </summary>
     public class Transform2D : ITransform2D, IReadOnlyTransform2D
     {
         private readonly BuddyTransform2DInstance _instance;
@@ -57,13 +51,31 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         public void SetParent(IReadOnlyTransform2D parent)
         {
-            var parentInstance = ((ManifestTransform2D)parent).GetInstance();
-            _instance.SetParent(parentInstance);
+            switch (parent)
+            {
+                case ManifestTransform2D manifestTransform2D:
+                    _instance.SetParent(manifestTransform2D.GetInstance());
+                    break;
+                case Transform2D transform2D:
+                    _instance.SetParent(transform2D._instance);
+                    break;
+                default:
+                    _instance.RemoveParent();
+                    break;
+            }
         }
         
         public void SetParent(ITransform2D parent)
         {
-            throw new System.NotImplementedException();
+            switch (parent)
+            {
+                case Transform2D transform2D:
+                    _instance.SetParent(transform2D._instance);
+                    break;
+                default:
+                    _instance.RemoveParent();
+                    break;
+            }
         }
 
         public void RemoveParent() => _instance.RemoveParent();

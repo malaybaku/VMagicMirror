@@ -14,14 +14,6 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         /// <summary>
         /// 画面上での位置を取得します。
         /// </summary>
-        /// <remarks>
-        /// <para>
-        ///   x成分は画面の左端が0、右端が1に対応します。
-        /// </para>
-        /// <para>
-        ///   y成分は画面の下端が0、上端が1に対応します。
-        /// </para>
-        /// </remarks>
         Vector2 Position { get; }
         
         /// <summary>
@@ -30,6 +22,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         /// <remarks>
         /// とくにz軸まわりの回転が、奥行き方向への変更を伴わない回転を表します。
         /// 通常、この値はz軸回りのみの回転を表した値になります。
+        /// ただし、計算誤差などによってz軸以外の微小な回転を含む値を返すことがあります。
         /// </remarks>
         Quaternion Rotation { get; }
 

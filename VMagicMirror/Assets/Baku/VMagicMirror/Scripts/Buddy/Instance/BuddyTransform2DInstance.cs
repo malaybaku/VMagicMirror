@@ -1,11 +1,10 @@
-using System;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
 {
     /// <summary>
-    /// 実質的に <see cref="Api.Interface.ITransform2D"/> を実装しているようなクラス。
-    /// Sprite2DとかGuiAreaとかの実装で使う予定
+    /// 実質的に <see cref="Api.Interface.ITransform2D"/> を実装しているようなクラスで、
+    /// スクリプトから動的生成した2Dオブジェクトの基本位置をコレで制御する
     /// </summary>
     public class BuddyTransform2DInstance : MonoBehaviour
     {
@@ -16,13 +15,25 @@ namespace Baku.VMagicMirror.Buddy
         
         private RectTransform RectTransform => (RectTransform)transform;
 
-        public RectTransform ContentTransform => content; 
+        private BuddySpriteCanvas _parentSpriteCanvas;
+        private BuddySpriteCanvas ParentSpriteCanvas
+        {
+            get
+            {
+                if (_parentSpriteCanvas == null)
+                {
+                    _parentSpriteCanvas = GetComponentInParent<BuddySpriteCanvas>();
+                }
+                return _parentSpriteCanvas;
+            }
+        }
 
-        // TODO: anchorを使う等で、普通のLocalPositionとは違う方法で指定する想定
+        public RectTransform ContentTransform => content != null ? content : RectTransform; 
+
         public Vector2 LocalPosition
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get => RectTransform.anchoredPosition;
+            set => RectTransform.anchoredPosition = value;
         }
   
         public Quaternion LocalRotation
@@ -44,14 +55,24 @@ namespace Baku.VMagicMirror.Buddy
         
         public Vector2 Position
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get
+            {
+                //TODO: 実際にはcanvasのサイズを掛ける処理とかが居るはずなので、数値を見てその辺をいじる。setterも同様
+                var localPositionToCanvas =
+                    ParentSpriteCanvas.RectTransform.InverseTransformPoint(transform.position);
+                return localPositionToCanvas;
+            }
+            set
+            {
+                var worldPosition = ParentSpriteCanvas.RectTransform.TransformPoint(value);
+                transform.position = worldPosition;
+            }
         }
 
         public Quaternion Rotation
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get => Quaternion.Inverse(ParentSpriteCanvas.RectTransform.rotation) * transform.rotation;
+            set => transform.rotation = ParentSpriteCanvas.RectTransform.rotation * value;
         }
 
         public Vector2 Pivot
@@ -59,48 +80,45 @@ namespace Baku.VMagicMirror.Buddy
             get => RectTransform.pivot;
             set => RectTransform.pivot = value;
         }
-
-        // TODO: positionの扱いはもうちょっと検討が要りそう…
-        /// <summary>
-        /// SpriteCanvasから見たグローバル座標にスプライトを移動させる
-        /// </summary>
-        /// <param name="position"></param>
-        public void SetPosition(Vector2 position)
-        {
-            //NOTE: Parentを付け替えないでもInverseTransformPointとかでも行ける？
-            var rt = RectTransform;
-            var currentParent = rt.parent;
-
-            var canvas = GetComponentInParent<BuddySpriteCanvas>();
-            rt.SetParent(canvas.RectTransform);
-            
-            rt.anchorMin = position;
-            rt.anchorMax = position;
-            rt.anchoredPosition = Vector2.zero;
-            
-            rt.SetParent(currentParent);
-        }
-
+        
         public void SetParent(BuddyManifestTransform2DInstance parent)
         {
-            // NOTE: SetParentした瞬間はparentにピッタリくっつく位置に移動させてるが、これでいいかは諸説ありそう
-            // (そもそもPosition, Scale, Sizeの概念的な整備しないとダメかも…)
-            var rt = RectTransform;
-            rt.SetParent(parent.transform);
-            if (parent != null)
+            if (parent == null)
             {
-                parent.NotifyChildAdded();
-                rt.localPosition = Vector3.zero;
-                rt.localRotation = Quaternion.identity;
-                rt.localScale = Vector3.one;
+                RemoveParent();
+                return;
             }
+
+            var localPosition = LocalPosition;
+
+            RectTransform.SetParent(parent.transform, false);
+            parent.NotifyChildAdded();
+
+            // anchoredPositionの扱いが信用できないので明示的に再更新している
+            // TODO: worldPositionStays=falseでも良さげだったら下記をやらないでもいい
+            LocalPosition = localPosition;
         }
 
+        public void SetParent(BuddyTransform2DInstance parent)
+        {
+            if (parent == null)
+            {
+                RemoveParent();
+                return;
+            }
+
+            var localPosition = LocalPosition;
+            RectTransform.SetParent(parent.ContentTransform, false);
+            // TODO: SetParentと同様、不要そうなら削除してOK
+            LocalPosition = localPosition;
+        }
+        
         public void RemoveParent()
         {
-            //TODO: scaleとかがこれで無事に済むか確認しないとダメそう
-            var canvas = GetComponentInParent<BuddySpriteCanvas>();
-            transform.SetParent(canvas.RectTransform, false);
+            var localPosition = LocalPosition;
+            transform.SetParent(ParentSpriteCanvas.RectTransform, false);
+            // TODO: SetParentと同様、不要そうなら削除してOK
+            LocalPosition = localPosition;
         }
     }
 }

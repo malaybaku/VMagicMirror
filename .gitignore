@@ -41,6 +41,9 @@ sysinfo.txt
 /VMagicMirror/Logs/
 /VMagicMirror/UserSettings/
 
+# Ignore debug wpf file path setting. The file is used in Unity Editor play mode if the file exists
+/VMagicMirror/debug_wpf_exe_path.txt
+
 # Streaming Assets (now only include DlibFaceLandmarkDetector, so it must be ignored)
 /VMagicMirror/Assets/StreamingAssets/
 /VMagicMirror/Assets/StreamingAssets.meta

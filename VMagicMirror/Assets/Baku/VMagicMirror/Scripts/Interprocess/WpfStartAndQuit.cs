@@ -8,6 +8,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using Baku.VMagicMirror.Mmf;
 using Zenject;
+using Debug = UnityEngine.Debug;
 
 namespace Baku.VMagicMirror
 {
@@ -23,10 +24,10 @@ namespace Baku.VMagicMirror
                 );
 
         private IMessageSender _sender = null;
-        private List<IReleaseBeforeQuit> _releaseItems = new List<IReleaseBeforeQuit>();
+        private List<IReleaseBeforeQuit> _releaseItems = new();
 
-        private readonly Atomic<bool> _releaseRunning = new Atomic<bool>();
-        private readonly Atomic<bool> _releaseCompleted = new Atomic<bool>();
+        private readonly Atomic<bool> _releaseRunning = new();
+        private readonly Atomic<bool> _releaseCompleted = new();
 
         [Inject]
         public void Initialize(IMessageSender sender, List<IReleaseBeforeQuit> releaseNeededItems)
@@ -90,36 +91,66 @@ namespace Baku.VMagicMirror
 
         private IEnumerator ActivateWpf()
         {
-            string path = GetWpfPath();
-            if (File.Exists(path))
+            //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
+            yield return null;
+            yield return null;
+
+            if (Application.isEditor)
             {
-                //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
-                yield return null;
-                yield return null;
-                var startInfo = new ProcessStartInfo()
+                try
                 {
-                    FileName = path,
-                    Arguments = "/channelId " + MmfChannelIdSource.ChannelId
-                };
-#if !UNITY_EDITOR
-                Process.Start(startInfo);
-                _sender.SendCommand(MessageFactory.Instance.SetUnityProcessId(Process.GetCurrentProcess().Id));
-#endif
+                    ActivateWpfFromEditor();
+                }
+                catch (Exception ex)
+                {
+                    // ログは出すけど想定内エラーということにする
+                    Debug.LogException(ex);
+                }
+                yield break;
             }
+            
+            var path = GetWpfPath();
+            if (!File.Exists(path))
+            {
+                yield break;
+            }
+            
+            StartProcess(path);
+            // WPF側のウィンドウ閉じでUnity側が閉じられるようにProcess Idを教えておく。これはEditorの場合は不要
+            _sender.SendCommand(MessageFactory.Instance.SetUnityProcessId(Process.GetCurrentProcess().Id));
         }
 
-        private void CloseWpfWindow()
+        private void ActivateWpfFromEditor()
         {
-            try
+            // pj直下にデバッグ用のexeのパスを書いたファイルを置いておき、それを読みに行く
+            var editorWpfExePathFile = Path.Combine(
+                Path.GetDirectoryName(Application.dataPath),
+                "debug_wpf_exe_path.txt"
+            );
+
+            var exePath = "";
+            if (File.Exists(editorWpfExePathFile))
             {
-                Process.GetProcesses()
-                    .FirstOrDefault(p => p.ProcessName == ConfigProcessName)
-                    ?.CloseMainWindow();
+                exePath = File.ReadAllText(editorWpfExePathFile);
             }
-            catch (Exception)
+
+            if (!File.Exists(exePath))
             {
-                //タイミング的にログ吐くのもちょっと危ないため、やらない
+                return;
             }
+
+            // NOTE: ビルド版と異なり、Process Idは教えない(= WPF側はUnity Editorを終了させないようにしとく)
+            StartProcess(exePath);
+        }
+
+        private void StartProcess(string exePath)
+        {
+            var startInfo = new ProcessStartInfo()
+            {
+                FileName = exePath,
+                Arguments = "/channelId " + MmfChannelIdSource.ChannelId
+            };
+            Process.Start(startInfo);
         }
     }
 }

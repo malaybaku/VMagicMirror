@@ -15,6 +15,9 @@ namespace Baku.VMagicMirror.Buddy
         public IEnumerable<BuddyVrmInstance> GetAllVrmInstances() 
             => _repo.Values.SelectMany(r => r.Vrms);
 
+        public SingleBuddyObjectInstanceRepository Get(string buddyId)
+            => _repo.GetValueOrDefault(buddyId, null);
+
         public void AddSprite2D(BuddySprite2DInstance instance) 
             => GetOrCreate(instance.BuddyId).AddSprite2D(instance);
 
@@ -48,9 +51,6 @@ namespace Baku.VMagicMirror.Buddy
             _repo[buddyId] = repo;
             return repo;
         }
-
-        private SingleBuddyObjectInstanceRepository Get(string buddyId)
-            => _repo.GetValueOrDefault(buddyId, null);
     }
 
     public class SingleBuddyObjectInstanceRepository
@@ -62,10 +62,10 @@ namespace Baku.VMagicMirror.Buddy
 
         public string BuddyId { get; }
 
-        private List<BuddySprite2DInstance> _sprite2Ds = new();
-        private List<BuddySprite3DInstance> _sprite3Ds = new();
-        private List<BuddyGlbInstance> _glbs = new();
-        private List<BuddyVrmInstance> _vrms = new();
+        private readonly List<BuddySprite2DInstance> _sprite2Ds = new();
+        private readonly List<BuddySprite3DInstance> _sprite3Ds = new();
+        private readonly List<BuddyGlbInstance> _glbs = new();
+        private readonly List<BuddyVrmInstance> _vrms = new();
 
         public IReadOnlyList<BuddySprite2DInstance> Sprite2Ds => _sprite2Ds;
         public IReadOnlyList<BuddySprite3DInstance> Sprite3Ds => _sprite3Ds;

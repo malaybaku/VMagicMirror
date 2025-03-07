@@ -15,35 +15,33 @@ namespace Baku.VMagicMirror.Buddy.Api
     {
         private readonly string _baseDir;
         private readonly string _buddyId;
+        private readonly BuddySprite2DInstance _instance;
+
         private bool _fileNotFoundErrorLogged;
         private bool _pathInvalidErrorLogged;
-        
+
         internal Sprite2DApi(string baseDir, string buddyId, BuddySprite2DInstance instance)
         {
             _baseDir = baseDir;
             _buddyId = buddyId;
-            Instance = instance;
-            _transform = new Transform2D(instance.GetTransform2DInstance());
+            _instance = instance;
+            Transform = new Transform2D(instance.GetTransform2DInstance());
         }
 
-        // TODO: Instanceを見たいときにAPI経由で参照しないで済むようにしたい
-        internal BuddySprite2DInstance Instance { get; }
+        public ITransform2D Transform { get; }
 
-        private readonly Transform2D _transform;
-        ITransform2D ISprite2D.Transform => _transform;
-        
         Vector2 ISprite2D.Size
         {
-            get => Instance.Size.ToApiValue();
-            set => Instance.Size = value.ToEngineValue();
+            get => _instance.Size.ToApiValue();
+            set => _instance.Size = value.ToEngineValue();
         }
 
-        ISpriteEffect ISprite2D.Effects => Instance.SpriteEffects;
+        ISpriteEffect ISprite2D.Effects => _instance.SpriteEffects;
 
         public void Preload(string path) => ApiUtils.Try(_buddyId, () =>
         {
             var fullPath = GetFullPath(path);
-            var result = Instance.Load(fullPath);
+            var result = _instance.Load(fullPath);
             HandleTextureLoadResult(fullPath, result);
         });
 
@@ -58,21 +56,19 @@ namespace Baku.VMagicMirror.Buddy.Api
                     (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.RightFlip
                 );
 
-                var loadResult = Instance.Show(fullPath, (Sprite2DTransitionStyle)clamped);
+                var loadResult = _instance.Show(fullPath, (Sprite2DTransitionStyle)clamped);
                 HandleTextureLoadResult(fullPath, loadResult);
                 if (loadResult == TextureLoadResult.Success)
                 {
-                    Instance.SetActive(true);
+                    _instance.SetActive(true);
                 }
             });
         }
 
-        public void Hide() => Instance.SetActive(false);
-        
-        public void SetPosition(Vector2 position) => Instance.SetPosition(position.ToEngineValue());
+        public void Hide() => _instance.SetActive(false);
 
         private string GetFullPath(string path) => Path.Combine(_baseDir, path);
-        
+
         private void HandleTextureLoadResult(string fullPath, TextureLoadResult loadResult)
         {
             if (loadResult is TextureLoadResult.FailurePathIsNotInBuddyDirectory)
@@ -90,6 +86,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                 {
                     BuddyLogger.Instance.Log(_buddyId, "[Error] Specified file does not exist: " + fullPath);
                 }
+
                 _fileNotFoundErrorLogged = true;
             }
         }

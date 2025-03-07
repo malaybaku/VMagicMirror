@@ -5,6 +5,7 @@ using Baku.VMagicMirror.Buddy.Api;
 using Cysharp.Threading.Tasks;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 { 
@@ -16,10 +17,8 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly RootApi _api;
 
-        private readonly AvatarLoadApiImplement _avatarLoad;
-        private readonly InputApiImplement _input;
-        private readonly AvatarMotionEventApiImplement _avatarMotionEvent;
-        private readonly AvatarFacialApiImplement _avatarFacial;
+        private readonly BuddyRuntimeObjectRepository _runtimeObjectRepository;
+        private readonly ApiImplementBundle _apiImplements;
         private readonly BuddySprite2DUpdater _spriteUpdater = new();
 
         private readonly Queue<Action> _callbackQueue = new();
@@ -27,71 +26,77 @@ namespace Baku.VMagicMirror.Buddy
 
         private bool _startCalled;
         
+        [Inject]
         public ScriptEventInvokerCSharp(
             RootApi api,
-            InputApiImplement input,
-            AvatarLoadApiImplement avatarLoad,
-            AvatarMotionEventApiImplement avatarMotionEvent,
-            AvatarFacialApiImplement avatarFacial
+            ApiImplementBundle apiImplements,
+            BuddyRuntimeObjectRepository runtimeObjectRepository
             )
         {
             _api = api;
-            _input = input;
-            _avatarLoad = avatarLoad;
-            _avatarMotionEvent = avatarMotionEvent;
-            _avatarFacial = avatarFacial;
+            _apiImplements = apiImplements;
+            _runtimeObjectRepository = runtimeObjectRepository;
         }
         
         // NOTE: まだC#版は検証段階なので、一部のイベントにのみ対応している
         public override void Initialize()
         {
-            ConnectNoArgFunc(_avatarLoad.Loaded, () => _api.AvatarLoadEventInternal.InvokeLoadedInternal);
-            ConnectNoArgFunc(_avatarLoad.Unloaded, () => _api.AvatarLoadEventInternal.InvokeUnloadedInternal);
+            ConnectNoArgFunc(
+                _apiImplements.AvatarLoadApi.Loaded, 
+                () => _api.AvatarLoadEventInternal.InvokeLoadedInternal
+            );
+            ConnectNoArgFunc(
+                _apiImplements.AvatarLoadApi.Unloaded, 
+                () => _api.AvatarLoadEventInternal.InvokeUnloadedInternal
+            );
 
             ConnectOneArgFunc(
-                _avatarMotionEvent.KeyboardKeyDown,
+                _apiImplements.AvatarMotionEventApi.KeyboardKeyDown,
                 () => _api.AvatarMotionEventInternal.InvokeOnKeyboardKeyDownInternal
-                );
+            );
             
             ConnectNoArgFunc(
-                _avatarMotionEvent.TouchPadMouseButtonDown,
+                _apiImplements.AvatarMotionEventApi.TouchPadMouseButtonDown,
                 () => _api.AvatarMotionEventInternal.InvokeOnTouchPadMouseButtonDownInternal
             );
             ConnectNoArgFunc(
-                _avatarMotionEvent.PenTabletMouseButtonDown,
+                _apiImplements.AvatarMotionEventApi.PenTabletMouseButtonDown,
                 () => _api.AvatarMotionEventInternal.InvokeOnPenTabletMouseButtonDownInternal
             );
             
             ConnectOneArgFunc(
-                _avatarMotionEvent.GamepadButtonDown,
+                _apiImplements.AvatarMotionEventApi.GamepadButtonDown,
                 () => _api.AvatarMotionEventInternal.InvokeOnGamepadButtonDownInternal,
                 v => v.Item2
             );
 
             ConnectOneArgFunc(
-                _avatarMotionEvent.ArcadeStickButtonDown,
+                _apiImplements.AvatarMotionEventApi.ArcadeStickButtonDown,
                 () => _api.AvatarMotionEventInternal.InvokeOnArcadeStickButtonDownInternal
             );
             
             ConnectOneArgFunc(
-                _input.OnKeyboardKeyDown,
+                _apiImplements.InputApi.OnKeyboardKeyDown,
                 () => _api.InputInternal.InvokeKeyboardKeyDown
             );
             ConnectOneArgFunc(
-                _input.OnKeyboardKeyUp,
+                _apiImplements.InputApi.OnKeyboardKeyUp,
                 () => _api.InputInternal.InvokeKeyboardKeyUp
             );
             
             ConnectOneArgFunc(
-                _input.GamepadButtonDown,
+                _apiImplements.InputApi.GamepadButtonDown,
                 () => _api.InputInternal.InvokeGamepadButtonDown
             );
             ConnectOneArgFunc(
-                _input.GamepadButtonUp,
+                _apiImplements.InputApi.GamepadButtonUp,
                 () => _api.InputInternal.InvokeGamepadButtonUp
             );
             
-            ConnectNoArgFunc(_avatarFacial.Blinked, () => _api.AvatarFacialInternal.InvokeOnBlinkedInternal);
+            ConnectNoArgFunc(
+                _apiImplements.AvatarFacialApi.Blinked,
+                () => _api.AvatarFacialInternal.InvokeOnBlinkedInternal
+            );
             
             InvokeCallbackAsync(_cts.Token).Forget();
         }
@@ -126,34 +131,42 @@ namespace Baku.VMagicMirror.Buddy
 
         private void UpdateInstances()
         {
+            var objects = _runtimeObjectRepository.Get(_api.BuddyId);
+            
             // TODO: _api経由じゃなくてSpriteの一覧的なやつを見に行くでよい…ということにしたい
-            foreach (var sprite in _api.Sprite2Ds)
+            foreach (var sprite in objects.Sprite2Ds)
             {
-                _spriteUpdater.UpdateSprite(sprite.Instance);
+                _spriteUpdater.UpdateSprite(sprite);
             }
 
-            foreach (var vrm in _api.Vrms)
+            foreach (var sprite3d in objects.Sprite3Ds)
             {
-                vrm.UpdateInstance();
-            }
-
-            foreach (var sprite3d in _api.Sprite3Ds)
-            {
+                // TODO: この辺も条件が複雑になったらUpdaterを分けた方がヨサソウ
                 sprite3d.DoTransition(Time.deltaTime);
+            }
+
+            foreach (var vrm in objects.Vrms)
+            {
+                // Sprite3Dに同じ
+                vrm.UpdateInstance();
             }
         }
         
         private void InvokeStartEventsIfNeeded()
         {
-            if (!_startCalled)
+            if (_startCalled)
             {
-                _startCalled = true;
-                ApiUtils.Try(_api.BuddyId, () => _api.InvokeStarted());
-                
-                if (_api.AvatarLoadEventInternal.IsLoaded)
-                {
-                    ApiUtils.Try(_api.BuddyId, () => _api.AvatarLoadEventInternal.InvokeLoadedInternal());
-                }
+                return;
+            }
+
+            _startCalled = true;
+            ApiUtils.Try(_api.BuddyId, () => _api.InvokeStarted());
+
+            // NOTE: 書いてる通りだが、Scriptの起動時にすでにアバターがロード済みだった場合、明示的にロードイベントのコールバックを呼ぶ。
+            // ノリは MonoBehaviour.OnEnable に少し似てるが、Startより後で発火することには注意
+            if (_api.AvatarLoadEventInternal.IsLoaded)
+            {
+                ApiUtils.Try(_api.BuddyId, () => _api.AvatarLoadEventInternal.InvokeLoadedInternal());
             }
         }
         

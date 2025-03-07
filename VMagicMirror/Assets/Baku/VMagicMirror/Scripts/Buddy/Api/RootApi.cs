@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Baku.VMagicMirror.Buddy.Api.Interface;
 using Cysharp.Threading.Tasks;
-using UniRx;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
@@ -15,21 +13,6 @@ namespace Baku.VMagicMirror.Buddy.Api
         private readonly BuddySpriteCanvas _spriteCanvas;
 
         private readonly CancellationTokenSource _cts = new();
-
-        //TODO: Layoutと同じくSpriteにもInstanceのレポジトリとUpdaterを作りたい
-        private readonly List<Sprite2DApi> _sprite2Ds = new();
-        internal IReadOnlyList<Sprite2DApi> Sprite2Ds => _sprite2Ds;
-
-        private readonly List<BuddyVrmInstance> _vrms = new();
-        internal IReadOnlyList<BuddyVrmInstance> Vrms => _vrms;
-        
-        private readonly List<BuddyGlbInstance> _glbs = new();
-
-        private readonly List<BuddySprite3DInstance> _sprite3Ds = new();
-        internal IReadOnlyList<BuddySprite3DInstance> Sprite3Ds => _sprite3Ds;
-        
-        private readonly Subject<Sprite2DApi> _spriteCreated = new();
-        internal IObservable<Sprite2DApi> SpriteCreated => _spriteCreated;
         
         private readonly string _baseDir;
         private LogLevel _logLevel = LogLevel.Log;
@@ -45,7 +28,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             AvatarLoadEventInternal = new AvatarLoadEventApi(apiImplementBundle.AvatarLoadApi);
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
             AvatarFacialInternal = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
-            InputInternal = new(apiImplementBundle.InputApi);
+            InputInternal = new InputApi(apiImplementBundle.InputApi);
             _audio = new AudioApi(baseDir, apiImplementBundle.AudioApi);
             DeviceLayout = new DeviceLayoutApi(apiImplementBundle.DeviceLayoutApi);
             Screen = new ScreenApi(apiImplementBundle.ScreenApi);
@@ -58,11 +41,6 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         internal void Dispose()
         {
-            _sprite2Ds.Clear();
-            _vrms.Clear();
-            _glbs.Clear();
-            _sprite3Ds.Clear();
-            
             AvatarFacialInternal.Dispose();
             _audio.Dispose();
 
@@ -199,29 +177,24 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             var instance = _spriteCanvas.CreateSpriteInstance(BuddyId);
             var result = new Sprite2DApi(_baseDir, BuddyId, instance);
-            _sprite2Ds.Add(result);
-            _spriteCreated.OnNext(result);
             return result;
         }
 
         public ISprite3D Create3DSprite()
         {
             var instance = _buddy3DInstanceCreator.CreateSprite3DInstance(BuddyId);
-            _sprite3Ds.Add(instance);
             return new Sprite3DApi(_baseDir, BuddyId, instance);
         }
 
         public IGlb CreateGlb()
         {
             var instance = _buddy3DInstanceCreator.CreateGlbInstance(BuddyId);
-            _glbs.Add(instance);
             return new GlbApi(_baseDir, BuddyId, instance);
         }
 
         public IVrm CreateVrm()
         {
             var instance = _buddy3DInstanceCreator.CreateVrmInstance(BuddyId);
-            _vrms.Add(instance);
             return new VrmApi(_baseDir, BuddyId, instance);
         }
     }

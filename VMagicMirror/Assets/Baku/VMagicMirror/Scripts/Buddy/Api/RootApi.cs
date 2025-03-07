@@ -176,26 +176,26 @@ namespace Baku.VMagicMirror.Buddy.Api
         public ISprite2D Create2DSprite()
         {
             var instance = _spriteCanvas.CreateSpriteInstance(BuddyId);
-            var result = new Sprite2DApi(_baseDir, BuddyId, instance);
+            var result = new Sprite2DApi(_baseDir, instance);
             return result;
         }
 
         public ISprite3D Create3DSprite()
         {
             var instance = _buddy3DInstanceCreator.CreateSprite3DInstance(BuddyId);
-            return new Sprite3DApi(_baseDir, BuddyId, instance);
+            return new Sprite3DApi(_baseDir, instance);
         }
 
         public IGlb CreateGlb()
         {
             var instance = _buddy3DInstanceCreator.CreateGlbInstance(BuddyId);
-            return new GlbApi(_baseDir, BuddyId, instance);
+            return new GlbApi(_baseDir, instance);
         }
 
         public IVrm CreateVrm()
         {
             var instance = _buddy3DInstanceCreator.CreateVrmInstance(BuddyId);
-            return new VrmApi(_baseDir, BuddyId, instance);
+            return new VrmApi(_baseDir, instance);
         }
     }
 }

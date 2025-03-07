@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -9,20 +8,18 @@ namespace Baku.VMagicMirror.Buddy.Api
 {
     public class VrmApi : IVrm
     {
-        public VrmApi(string baseDir, string buddyId, BuddyVrmInstance instance)
+        private readonly string _baseDir;
+        private readonly BuddyVrmInstance _instance;
+        private string BuddyId => _instance.BuddyId;
+
+        public VrmApi(string baseDir, BuddyVrmInstance instance)
         {
             _baseDir = baseDir;
-            _buddyId = buddyId;
             _instance = instance;
-            _transform = new Transform3D(instance.GetTransform3D());
+            Transform = new Transform3D(instance.GetTransform3D());
         }
 
-        private readonly string _baseDir;
-        private readonly string _buddyId;
-        private readonly BuddyVrmInstance _instance;
-
-        private readonly Transform3D _transform;
-        public ITransform3D Transform => _transform;
+        public ITransform3D Transform { get; }
 
         public async Task LoadAsync(string path)
         {

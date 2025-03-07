@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Object = UnityEngine.Object;
 
@@ -12,12 +13,15 @@ namespace Baku.VMagicMirror.Buddy
         public IEnumerable<BuddyGlbInstance> GetAllGlbInstances()
             => _repo.Values.SelectMany(r => r.Glbs);
 
-        public IEnumerable<BuddyVrmInstance> GetAllVrmInstances() 
+        public IEnumerable<BuddyVrmInstance> GetAllVrmInstances()
             => _repo.Values.SelectMany(r => r.Vrms);
 
-        public SingleBuddyObjectInstanceRepository Get(string buddyId)
-            => _repo.GetValueOrDefault(buddyId, null);
-
+        public bool TryGet(string buddyId, out SingleBuddyObjectInstanceRepository result)
+        {
+            result = Get(buddyId);
+            return result != null;
+        }
+        
         public void AddSprite2D(BuddySprite2DInstance instance) 
             => GetOrCreate(instance.BuddyId).AddSprite2D(instance);
 
@@ -39,9 +43,12 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
 
+        private SingleBuddyObjectInstanceRepository Get(string buddyId)
+            => _repo.GetValueOrDefault(buddyId.ToLower(CultureInfo.InvariantCulture), null);
+
         private SingleBuddyObjectInstanceRepository GetOrCreate(string buddyId)
         {
-            buddyId = buddyId.ToLower();
+            buddyId = buddyId.ToLower(CultureInfo.InvariantCulture);
             if (_repo.TryGetValue(buddyId, out var cached))
             {
                 return cached;

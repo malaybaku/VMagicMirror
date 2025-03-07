@@ -52,6 +52,7 @@ namespace Baku.VMagicMirror
             var result = _sprite3DInstanceFactory.Create();
             result.BuddyId = buddyId;   
             _transform3dCreated.OnNext(result.Transform3DInstance);
+            _sprite3dCreated.OnNext(result);
             return result;
         }
 
@@ -62,6 +63,7 @@ namespace Baku.VMagicMirror
             var result = obj.AddComponent<BuddyVrmInstance>();
             result.BuddyId = buddyId;
             _transform3dCreated.OnNext(result.GetTransform3D());
+            _vrmCreated.OnNext(result);
             return result;
         }
 
@@ -71,6 +73,7 @@ namespace Baku.VMagicMirror
             var result = obj.AddComponent<BuddyGlbInstance>();
             result.BuddyId = buddyId;
             _transform3dCreated.OnNext(result.GetTransform3D());
+            _glbCreated.OnNext(result);
             return result;
         }
     }

@@ -131,21 +131,26 @@ namespace Baku.VMagicMirror.Buddy
 
         private void UpdateInstances()
         {
-            var objects = _runtimeObjectRepository.Get(_api.BuddyId);
+            if (!_runtimeObjectRepository.TryGet(_api.BuddyId, out var repo))
+            {
+                // NOTE: サブキャラが1つもspriteやオブジェクトを生成していない場合に加えて、
+                // (なるべく通過しないでほしいが) サブキャラのDispose後のタイミング次第で通る可能性もある
+                return;
+            }
             
             // TODO: _api経由じゃなくてSpriteの一覧的なやつを見に行くでよい…ということにしたい
-            foreach (var sprite in objects.Sprite2Ds)
+            foreach (var sprite in repo.Sprite2Ds)
             {
                 _spriteUpdater.UpdateSprite(sprite);
             }
 
-            foreach (var sprite3d in objects.Sprite3Ds)
+            foreach (var sprite3d in repo.Sprite3Ds)
             {
                 // TODO: この辺も条件が複雑になったらUpdaterを分けた方がヨサソウ
                 sprite3d.DoTransition(Time.deltaTime);
             }
 
-            foreach (var vrm in objects.Vrms)
+            foreach (var vrm in repo.Vrms)
             {
                 // Sprite3Dに同じ
                 vrm.UpdateInstance();

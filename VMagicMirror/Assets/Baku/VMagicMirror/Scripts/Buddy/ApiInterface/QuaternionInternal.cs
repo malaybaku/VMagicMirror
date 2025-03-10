@@ -1,7 +1,9 @@
 namespace Baku.VMagicMirror.Buddy.Api.Interface
 {
     // Quaternionのうち、メンバーのシグネチャ自体がUnityEngineにかかるようなものを分離した定義。
-    // このファイルだけ分離しているのはdocfxのパースのエラー対策であり、Runtime的な意味は特にない。
+    // NOTE:
+    //   このファイルをdocfxが無視することで (※privateメンバーしかないので実際に無視しても害がない)、
+    //   docfxからUnityEngineのdllを見に行かないでもソース全体のパースができるようにしている
     public partial struct Quaternion
     {
         private UnityEngine.Quaternion ToIQ() => new(x, y, z, w);

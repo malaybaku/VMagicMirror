@@ -41,6 +41,13 @@ namespace Baku.VMagicMirror.Buddy.Api
             GetClipAndPlayAsync(fullPath, _cts.Token).Forget();
         }
 
+        public void Play(byte[] data)
+        {
+            // TODO: バイナリからAudioClipを取得する処理が欲しい
+            // というか、使い回しを考えるとAPIシグネチャがアカンのでは…？
+            throw new NotImplementedException();
+        }
+        
         private bool TryPlayFromCache(string fullPath)
         {
             for (var i = 0; i < _clipCache.Count; i++)

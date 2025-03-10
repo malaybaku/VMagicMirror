@@ -15,7 +15,7 @@ namespace Baku.VMagicMirrorConfig
         private const string UpdateCheckFileName = "UpdateCheck";
 
         public const string GameInputSettingFileExt = ".vmm_gi";
-        public const string BuddyEntryScriptFileName = "main.cs";
+        public const string BuddyEntryScriptFileName = "main.csx";
 
         //TODO: 「デバッグ実行時だけRootDirectoryを差し替えたい」という需要が考えられるが、良い手はあるか…？
         private static string RootDirectory { get; }

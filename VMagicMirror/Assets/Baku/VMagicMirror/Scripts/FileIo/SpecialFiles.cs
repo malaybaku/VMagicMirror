@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror
         private const string AutoSaveSettingFileName = "_autosave";
         private const string LogTextName = "log.txt";
 
-        public const string BuddyEntryScriptFileName = "main.cs";
+        public const string BuddyEntryScriptFileName = "main.csx";
         
         public static bool UseDevFolder
         {

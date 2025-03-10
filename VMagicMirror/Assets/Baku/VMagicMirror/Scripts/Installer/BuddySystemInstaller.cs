@@ -40,6 +40,9 @@ namespace Baku.VMagicMirror
             Container.Bind<DeviceLayoutApiImplement>().AsSingle();
             Container.BindInterfacesAndSelfTo<InputApiImplement>().AsSingle();
             Container.BindInterfacesAndSelfTo<WordToMotionEventApiImplement>().AsSingle();
+
+            // ユーザースクリプト編集のサポート用の機能
+            Container.BindInterfacesTo<BuddyApiFileCopyInitializer>().AsSingle();
         }
     }
 }

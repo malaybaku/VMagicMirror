@@ -58,13 +58,11 @@ namespace Baku.VMagicMirror
         //アクセサリはWPF/Unity双方からディレクトリ走査する都合上、エディタ実行であってもstreamingAssetsは使わない
         public static string AccessoryDirectory => Path.Combine(RootDirectory, "Accessory");
 
-        public const string BuddyReferenceDataDirectoryName = "_Reference";
         public static string BuddyReferenceDataDirectory 
-            => Path.Combine(BuddyRootDirectory, BuddyReferenceDataDirectoryName);
+            => Path.Combine(BuddyRootDirectory, "_Reference");
 
-        public const string BuddyReferenceDataGlobalScriptName = "Globals.csx";
         public static string BuddyReferenceDataGlobalScriptPath
-            => Path.Combine(BuddyReferenceDataDirectory, BuddyReferenceDataGlobalScriptName);
+            => Path.Combine(BuddyReferenceDataDirectory, "Globals.csx");
         
         static SpecialFiles()
         {

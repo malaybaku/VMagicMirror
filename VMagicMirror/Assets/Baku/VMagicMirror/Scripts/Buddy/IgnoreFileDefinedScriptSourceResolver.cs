@@ -12,9 +12,6 @@ namespace Baku.VMagicMirror.Buddy
     /// </summary>
     public class IgnoreFileDefinedScriptSourceResolver : SourceReferenceResolver
     {
-        private static readonly string IgnoredPath 
-            = $@"..\{SpecialFiles.BuddyReferenceDataDirectoryName}\{SpecialFiles.BuddyReferenceDataGlobalScriptName}";
-
         private readonly SourceReferenceResolver _defaultResolver;
         
         private static IgnoreFileDefinedScriptSourceResolver _instance;

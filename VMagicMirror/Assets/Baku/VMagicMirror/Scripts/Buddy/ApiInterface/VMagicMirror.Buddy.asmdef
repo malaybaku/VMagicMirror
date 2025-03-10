@@ -1,5 +1,5 @@
 {
-    "name": "Baku.VMagicMirror.Buddy.Api.Interface",
+    "name": "VMagicMirror.Buddy",
     "rootNamespace": "",
     "references": [],
     "includePlatforms": [],

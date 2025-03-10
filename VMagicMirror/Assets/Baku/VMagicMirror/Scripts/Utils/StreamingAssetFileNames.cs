@@ -12,6 +12,6 @@ namespace Baku.VMagicMirror
         public const string LoaderUiFolder = "VRMLoaderUI";
 
         /// <summary> サブキャラのAPI定義に関するxml docファイル。実行時にVMM_Files以下にコピーして使う </summary>
-        public const string BuddyApiXmlDocFileName = "Baku.VMagicMirror.Buddy.Api.Interface.xml";
+        public const string BuddyApiXmlDocFileName = "VMagicMirror.Buddy.xml";
     }
 }

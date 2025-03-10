@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror.Buddy
     /// <summary>
     /// Transform2Dをフリーレイアウトで移動させられるすごいやつだよ
     /// </summary>
-    public class Transform2DGizmo :  MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+    public class BuddyManifestTransform2DGizmo :  MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
         private enum Transform2DDragType
         {
@@ -94,6 +94,8 @@ namespace Baku.VMagicMirror.Buddy
 
             _localPositionOnPointerDown = _parentCanvasTransform.InverseTransformPoint(gizmoRoot.position);
             _offset = _localPositionOnPointerDown - pointerLocalPoint;
+            Debug.Log($"local pos on pointer down... {_localPositionOnPointerDown.x:0.0}, {_localPositionOnPointerDown.y:0.0}");
+            Debug.Log($"local pos on pointer down local point.. {pointerLocalPoint.x:0.0}, {pointerLocalPoint.y:0.0}");
             _isDragged = false;
         }
 
@@ -114,23 +116,23 @@ namespace Baku.VMagicMirror.Buddy
                 case Transform2DDragType.TranslateX:
                 case Transform2DDragType.TranslateY:
                 case Transform2DDragType.TranslateXY:
-                    var destLocalPoint = pointerLocalPoint + _offset;
-                    var canvasSize = _parentCanvasTransform.sizeDelta;
-                    // 書いてる通りではあるが、ゴールとしてはanchorMin/anchorMaxに使える[0, 1]の範囲の値にしている
-                    var anchorX = destLocalPoint.x / canvasSize.x + 0.5f;
-                    var anchorY = destLocalPoint.y / canvasSize.y + 0.5f;
+                    // NOTE: SpriteCanvas内では anchor = (0,0) の座標系を使うので、第3項がないと画面の半分ぶんズレてしまう
+                    var destLocalPoint =
+                        pointerLocalPoint +
+                        _offset +
+                        _parentCanvasTransform.sizeDelta * 0.5f;
 
                     if (_currentDragType is Transform2DDragType.TranslateX)
                     {
-                        instance.Position = new Vector2(anchorX, instance.Position.y);
+                        instance.Position = new Vector2(destLocalPoint.x, instance.Position.y);
                     }
                     else if (_currentDragType is Transform2DDragType.TranslateY)
                     {
-                        instance.Position = new Vector2(instance.Position.x, anchorY);
+                        instance.Position = new Vector2(instance.Position.x, destLocalPoint.y);
                     }
                     else
                     {
-                        instance.Position = new Vector2(anchorX, anchorY);
+                        instance.Position = destLocalPoint;
                     }
                     break;
                 default:

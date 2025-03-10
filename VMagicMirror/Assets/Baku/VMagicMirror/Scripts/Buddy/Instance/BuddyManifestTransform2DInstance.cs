@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.Buddy
     /// </remarks>
     public class BuddyManifestTransform2DInstance : MonoBehaviour
     {
-        [SerializeField] private Transform2DGizmo gizmo;
+        [SerializeField] private BuddyManifestTransform2DGizmo gizmo;
 
         private readonly Subject<Unit> _layoutUpdated = new();
         /// <summary> ギズモを使ってドラッグ操作によりレイアウトを編集すると、ドラッグ操作の終了時に発火する </summary>
@@ -23,18 +23,7 @@ namespace Baku.VMagicMirror.Buddy
         public string InstanceName { get; set; } = "";
         
         private RectTransform _rt;
-        private RectTransform RectTransform
-        {
-            get
-            {
-                if (_rt == null)
-                {
-                    _rt = GetComponent<RectTransform>();
-                }
-
-                return _rt;
-            }
-        }
+        private RectTransform RectTransform => _rt ??= (RectTransform)transform;
         
         public Vector2 Position
         {

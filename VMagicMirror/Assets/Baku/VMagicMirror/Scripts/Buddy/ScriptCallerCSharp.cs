@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using Baku.VMagicMirror.Buddy.Api;
 using Cysharp.Threading.Tasks;
@@ -58,14 +60,19 @@ namespace Baku.VMagicMirror.Buddy
             try
             {
                 var code = await File.ReadAllTextAsync(EntryScriptPath, cancellationToken);
-
+                
                 // NOTE:
                 // - WithImportsをするとスクリプトの編集体験(=インテリセンス回り)を快適にするのが難しいのが既知なため、Importsしない。
                 // - Importsを足すことは破壊的変更になりうる…というのは注意すること
                 // - 自動Importsに関するオプションをmanifest.jsonに足すとかで回避はできるので、まあ程々に…
-
+                
+                // TODO: EmitDebugInformationをオンするのを「開発者モード中だけ」みたいな条件にしぼりたい (普段からオンだとパフォーマンス的にもったいないので)
                 var scriptOptions = ScriptOptions.Default
                     //.WithImports("System", "VMagicMirror.Buddy")
+                    .WithFilePath(EntryScriptPath)
+                    .WithFileEncoding(Encoding.UTF8)
+                    .WithEmitDebugInformation(true)
+                    .WithSourceResolver(IgnoreFileDefinedScriptSourceResolver.Instance)
                     .WithReferences(
                         typeof(object).Assembly,
                         typeof(BuddyApi.IRootApi).Assembly
@@ -82,14 +89,31 @@ namespace Baku.VMagicMirror.Buddy
             catch (CompilationErrorException compilationErrorException)
             {
                 // NOTE: コンパイルエラーに対してはスタックトレースの表示が余計なので、ログの出し方を変える。
-                // 何なら、このケースではWPF側に通知を送ったりしてもよい。
+                // TODO: このケースでWPF側にエラー情報を投げたい
                 BuddyLogger.Instance.Log(BuddyId, $"[Error] Script has compile error. {compilationErrorException.Message}");
             }
             catch (Exception ex)
             {
-                //TODO: compile errorの場合の表示をスッキリさせたい
                 BuddyLogger.Instance.Log(BuddyId, "[Error] Failed to load script at:" + EntryScriptPath);
                 BuddyLogger.Instance.Log(BuddyId, ex);
+                
+                // TODO: ここでも開発者モード中だったらWPF側にエラー表示できる…とかだと嬉しい
+                BuddyLogger.Instance.Log(BuddyId, ex.StackTrace);
+                // スタックトレースからスクリプト内の行番号を抽出
+                // NOTE: Roslynのスクリプトは "Submission#0" という名前で実行される(らしい)
+                var scriptStackFrame = ex.StackTrace?
+                    .Split('\n')
+                    .FirstOrDefault(line => line.Contains("Submission#0")); 
+
+                if (scriptStackFrame != null)
+                {
+                    var parts = scriptStackFrame.Split(' ');
+                    var lineInfo = parts.FirstOrDefault(p => p.Contains(":line"));
+                    if (lineInfo != null)
+                    {
+                        BuddyLogger.Instance.Log(BuddyId, $"Error occurred at {lineInfo.Trim()}");
+                    }
+                }
             }
         }
         

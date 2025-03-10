@@ -9,14 +9,14 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         /// <summary>
         /// 名称を指定して、2DのTransformへの参照を取得します。
         /// </summary>
-        /// <param name="key">Transformの名称を</param>
+        /// <param name="key">Transformの名称</param>
         /// <returns><paramref name="key"/>が実際に定義されていればそれに対応するTransformの参照、そうでなければ<c>null</c></returns>
         IReadOnlyTransform2D GetTransform2D(string key);
 
         /// <summary>
         /// 名称を指定して、3DのTransformへの参照を取得します。
         /// </summary>
-        /// <param name="key">Transformの名称を</param>
+        /// <param name="key">Transformの名称</param>
         /// <returns><paramref name="key"/>が実際に定義されていればそれに対応するTransformの参照、そうでなければ<c>null</c></returns>
         IReadOnlyTransform3D GetTransform3D(string key);
     }

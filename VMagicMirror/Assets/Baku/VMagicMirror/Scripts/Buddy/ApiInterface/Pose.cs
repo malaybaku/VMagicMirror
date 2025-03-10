@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     /// <summary>
     /// 位置と回転のペアを表すデータです。

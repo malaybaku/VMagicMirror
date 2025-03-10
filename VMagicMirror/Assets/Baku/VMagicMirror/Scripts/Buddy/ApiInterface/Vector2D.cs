@@ -1,6 +1,6 @@
 using System;
 
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     /// <summary>
     /// UnityEngineのVector2とほぼ同等のことが出来るようなデータ。

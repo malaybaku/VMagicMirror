@@ -7,6 +7,7 @@ using Zenject;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using UnityEngine.Scripting;
+using BuddyApi = VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -67,7 +68,7 @@ namespace Baku.VMagicMirror.Buddy
                     //.WithImports("System", "VMagicMirror.Buddy")
                     .WithReferences(
                         typeof(object).Assembly,
-                        typeof(Api.Interface.IRootApi).Assembly
+                        typeof(BuddyApi.IRootApi).Assembly
                     );
 
                 // NOTE: scriptStateはコールバックの呼び出し結果等を受けて更新されるが、VMMのコードからは直接見に行かない

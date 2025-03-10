@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Baku.VMagicMirror.Buddy.Api.Interface;
+using VMagicMirror.Buddy;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 

@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     //TODO: manifest.jsonの定義方法をリンクさせたremarks docが欲しい
     /// <summary>

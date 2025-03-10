@@ -1,4 +1,4 @@
-using Baku.VMagicMirror.Buddy.Api.Interface;
+using VMagicMirror.Buddy;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy.Api

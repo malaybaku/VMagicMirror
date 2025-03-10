@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     // NOTE: 名前は変えるかも、本当に純粋な数学演算というよりは「計算っぽい処理」を押し込んでおきたいので
 

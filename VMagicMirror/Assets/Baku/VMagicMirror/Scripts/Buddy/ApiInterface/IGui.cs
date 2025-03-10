@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     // NOTE: WebViewベースにするかUIで頑張るかでフォントとかガワの様子が変わってくる
     public interface IGui

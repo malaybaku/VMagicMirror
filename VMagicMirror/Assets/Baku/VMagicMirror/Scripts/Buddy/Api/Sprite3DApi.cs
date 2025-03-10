@@ -1,5 +1,5 @@
 using System.IO;
-using Baku.VMagicMirror.Buddy.Api.Interface;
+using VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {

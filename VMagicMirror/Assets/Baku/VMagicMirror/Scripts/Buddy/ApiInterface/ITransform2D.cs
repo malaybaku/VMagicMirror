@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     //TODO: 座標系について内容そのもの or 基本ルール的なのが書いてあるdocに導線を張る
     /// <summary>

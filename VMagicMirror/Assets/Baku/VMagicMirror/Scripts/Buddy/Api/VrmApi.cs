@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Baku.VMagicMirror.Buddy.Api.Interface;
+using VMagicMirror.Buddy;
 using Cysharp.Threading.Tasks;
 
 namespace Baku.VMagicMirror.Buddy.Api

@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     /// <summary>
     /// 姿勢を取得・編集できるような3DオブジェクトのTransform情報です。
@@ -67,7 +67,7 @@ namespace Baku.VMagicMirror.Buddy.Api.Interface
         /// </remarks>
         void SetParent(IReadOnlyTransform3D parent);
 
-        /// <inheritdoc cref="SetParent(Baku.VMagicMirror.Buddy.Api.Interface.IReadOnlyTransform3D)"/>
+        /// <inheritdoc cref="SetParent(IReadOnlyTransform3D)"/>
         void SetParent(ITransform3D parent);
 
         /// <summary>

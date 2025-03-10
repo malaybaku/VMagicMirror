@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Baku.VMagicMirror.Buddy
 {
     /// <summary>
-    /// 実質的に <see cref="Api.Interface.ITransform2D"/> を実装しているようなクラスで、
+    /// 実質的に <see cref="VMagicMirror.Buddy.ITransform2D"/> を実装しているようなクラスで、
     /// スクリプトから動的生成した2Dオブジェクトの基本位置をコレで制御する
     /// </summary>
     public class BuddyTransform2DInstance : MonoBehaviour

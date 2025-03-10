@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     /// <summary>
     /// GLBファイルを読み込めるような3Dオブジェクトです。

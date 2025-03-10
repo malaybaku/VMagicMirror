@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     /// <summary> 音声の再生に関連するAPIです。 </summary>
     public interface IAudio

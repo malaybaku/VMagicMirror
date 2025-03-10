@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     // NOTE: PerfectSync用のキーも網羅的に定義したほうが親切かも。ただし、その場合はクラスを分けた方が良さそう
 

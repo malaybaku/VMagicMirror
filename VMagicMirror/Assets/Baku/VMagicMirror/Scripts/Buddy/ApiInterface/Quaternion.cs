@@ -4,7 +4,7 @@ using System;
 // が、Quaternionの再実装はそこそこ大変なので、サボって内部的にUnityEngine.Quaternionを参照している。
 // ここが自前実装になれば Api.Interface のアセンブリが UnityEngine を完全に参照しなくなって構造上良いので、なるべくやりたい
 // (※完全な自前実装は不要で、System.Numericsとかを持ってくるのもアリ)
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     /// <summary>
     /// UnityEngineのQuaternionとほぼ同等のことが出来る四元数のデータです。

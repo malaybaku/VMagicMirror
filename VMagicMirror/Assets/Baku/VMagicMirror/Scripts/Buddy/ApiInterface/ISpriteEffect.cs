@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     // NOTE: エフェクト設定はAPI上では数値の集まりに見えるだけの値なため、インターフェースではなく具象クラスとして定義されている
     

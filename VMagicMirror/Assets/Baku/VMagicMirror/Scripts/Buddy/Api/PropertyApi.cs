@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Baku.VMagicMirror.Buddy.Api.Interface;
-using Vector2 = UnityEngine.Vector2;
-using Vector3 = UnityEngine.Vector3;
-using Quaternion = UnityEngine.Quaternion;
+using UnityEngine;
+using BuddyApi = VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
@@ -10,7 +8,7 @@ namespace Baku.VMagicMirror.Buddy.Api
     /// ユーザーが調整したプロパティを取得できるAPI。
     /// サブキャラの表示位置やスピード、ユーザー名の変更などに対応する
     /// </summary>
-    public class PropertyApi : IProperty
+    public class PropertyApi : BuddyApi.IProperty
     {
         // NOTE:
         // - リロードする場合はインスタンスが丸ごと破棄される(べきである)ため、Clear()関数はない
@@ -29,13 +27,13 @@ namespace Baku.VMagicMirror.Buddy.Api
         public float GetFloat(string key) => Get(key) is float v ? v : 0f;
         public string GetString(string key) => Get(key) is string v ? v : "";
 
-        public Interface.Vector2 GetVector2(string key) 
-            => Get(key) is Vector2 v ? v.ToApiValue() : Interface.Vector2.zero;
+        public BuddyApi.Vector2 GetVector2(string key) 
+            => Get(key) is Vector2 v ? v.ToApiValue() : BuddyApi.Vector2.zero;
 
-        public Interface.Vector3 GetVector3(string key)
-            => Get(key) is Vector3 v ? v.ToApiValue() : Interface.Vector3.zero;
+        public BuddyApi.Vector3 GetVector3(string key)
+            => Get(key) is Vector3 v ? v.ToApiValue() : BuddyApi.Vector3.zero;
 
-        public Interface.Quaternion GetQuaternion(string key)
-            => Get(key) is Quaternion v ? v.ToApiValue() : Interface.Quaternion.identity;
+        public BuddyApi.Quaternion GetQuaternion(string key)
+            => Get(key) is Quaternion v ? v.ToApiValue() : BuddyApi.Quaternion.identity;
     }
 }

@@ -1,7 +1,7 @@
 using System;
 
 // NOTE: ビルド時の挙動が怪しい場合、interfaceメンバーに[Preserve]をつけるのを検討してもOK
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     /// <summary>
     /// アバターのロード状態に関するAPIです。

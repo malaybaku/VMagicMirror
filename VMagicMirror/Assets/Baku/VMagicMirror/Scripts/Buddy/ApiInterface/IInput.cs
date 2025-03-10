@@ -1,6 +1,6 @@
 using System;
 
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     /// <summary>
     /// キーボード、マウス、ゲームパッドなどの入力状態を取得できるAPIです。

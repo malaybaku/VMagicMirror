@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using HumanBodyBones = UnityEngine.HumanBodyBones;
-using Quaternion = UnityEngine.Quaternion;
-using Vector2 = UnityEngine.Vector2;
-using Vector3 = UnityEngine.Vector3;
+using BuddyApi = VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
@@ -103,32 +99,32 @@ namespace Baku.VMagicMirror.Buddy.Api
     {
         #region API to UnityEngine
         
-        public static Vector2 ToEngineValue(this Interface.Vector2 v) => new(v.x, v.y);
-        public static Vector3 ToEngineValue(this Interface.Vector3 v) => new(v.x, v.y, v.z);
-        public static Quaternion ToEngineValue(this Interface.Quaternion v) => new(v.x, v.y, v.z, v.w);
+        public static Vector2 ToEngineValue(this BuddyApi.Vector2 v) => new(v.x, v.y);
+        public static Vector3 ToEngineValue(this BuddyApi.Vector3 v) => new(v.x, v.y, v.z);
+        public static Quaternion ToEngineValue(this BuddyApi.Quaternion v) => new(v.x, v.y, v.z, v.w);
 
         // NOTE: enumは数値の並びが揃っているものはそのままキャストするだけでOK。これは逆方向でも同様
-        public static GamepadKey ToEngineValue(this Interface.GamepadButton key) => (GamepadKey)key;
-        public static HumanBodyBones ToEngineValue(this Interface.HumanBodyBones bone) => (HumanBodyBones)bone;
+        public static GamepadKey ToEngineValue(this BuddyApi.GamepadButton key) => (GamepadKey)key;
+        public static HumanBodyBones ToEngineValue(this BuddyApi.HumanBodyBones bone) => (HumanBodyBones)bone;
 
-        public static Sprite2DTransitionStyle ToEngineValue(this Interface.Sprite2DTransitionStyle style)
+        public static Sprite2DTransitionStyle ToEngineValue(this BuddyApi.Sprite2DTransitionStyle style)
             => (Sprite2DTransitionStyle)style;
         
         #endregion
 
         #region UnityEngine to API
         
-        public static Interface.Vector2 ToApiValue(this Vector2 v) => new(v.x, v.y);
-        public static Interface.Vector3 ToApiValue(this Vector3 v) => new(v.x, v.y, v.z);
-        public static Interface.Quaternion ToApiValue(this Quaternion v) => new(v.x, v.y, v.z, v.w);
+        public static BuddyApi.Vector2 ToApiValue(this Vector2 v) => new(v.x, v.y);
+        public static BuddyApi.Vector3 ToApiValue(this Vector3 v) => new(v.x, v.y, v.z);
+        public static BuddyApi.Quaternion ToApiValue(this Quaternion v) => new(v.x, v.y, v.z, v.w);
 
-        public static Interface.GamepadButton ToApiValue(this GamepadKey key) => (Interface.GamepadButton)key;
-        public static Interface.HumanBodyBones ToApiValue(this HumanBodyBones bone) => (Interface.HumanBodyBones)bone;
+        public static BuddyApi.GamepadButton ToApiValue(this GamepadKey key) => (BuddyApi.GamepadButton)key;
+        public static BuddyApi.HumanBodyBones ToApiValue(this HumanBodyBones bone) => (BuddyApi.HumanBodyBones)bone;
 
-        public static Interface.Sprite2DTransitionStyle ToApiValue(this Sprite2DTransitionStyle style)
-            => (Interface.Sprite2DTransitionStyle)style;
+        public static BuddyApi.Sprite2DTransitionStyle ToApiValue(this Sprite2DTransitionStyle style)
+            => (BuddyApi.Sprite2DTransitionStyle)style;
 
-        public static Interface.Pose ToApiValue(this UnityEngine.Pose p) 
+        public static BuddyApi.Pose ToApiValue(this Pose p) 
             => new(p.position.ToApiValue(), p.rotation.ToApiValue());
         
         #endregion

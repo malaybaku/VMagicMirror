@@ -1,5 +1,6 @@
 using System.IO;
-using Baku.VMagicMirror.Buddy.Api.Interface;
+using VMagicMirror.Buddy;
+using BuddyApi = VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
@@ -44,9 +45,9 @@ namespace Baku.VMagicMirror.Buddy.Api
             HandleTextureLoadResult(fullPath, result);
         });
 
-        public void Show(string path) => Show(path, Interface.Sprite2DTransitionStyle.Immediate);
+        public void Show(string path) => Show(path, BuddyApi.Sprite2DTransitionStyle.Immediate);
 
-        public void Show(string path, Interface.Sprite2DTransitionStyle style)
+        public void Show(string path, BuddyApi.Sprite2DTransitionStyle style)
         {
             ApiUtils.Try(BuddyId, () =>
             {

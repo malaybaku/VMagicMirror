@@ -1,4 +1,4 @@
-namespace Baku.VMagicMirror.Buddy.Api.Interface
+namespace VMagicMirror.Buddy
 {
     // Quaternionのうち、メンバーのシグネチャ自体がUnityEngineにかかるようなものを分離した定義。
     // NOTE:

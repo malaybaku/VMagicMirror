@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using Baku.VMagicMirror.Buddy.Api.Interface;
+using VMagicMirror.Buddy;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy

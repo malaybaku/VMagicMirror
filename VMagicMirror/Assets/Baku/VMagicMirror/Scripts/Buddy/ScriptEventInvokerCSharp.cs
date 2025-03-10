@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror.Buddy
 
         private readonly BuddyRuntimeObjectRepository _runtimeObjectRepository;
         private readonly ApiImplementBundle _apiImplements;
-        private readonly BuddySprite2DUpdater _spriteUpdater = new();
+        private readonly BuddySprite2DUpdater _spriteUpdater;
 
         private readonly Queue<Action> _callbackQueue = new();
         private readonly CancellationTokenSource _cts = new();
@@ -30,11 +30,13 @@ namespace Baku.VMagicMirror.Buddy
         public ScriptEventInvokerCSharp(
             RootApi api,
             ApiImplementBundle apiImplements,
+            BuddySprite2DUpdater spriteUpdater,
             BuddyRuntimeObjectRepository runtimeObjectRepository
             )
         {
             _api = api;
             _apiImplements = apiImplements;
+            _spriteUpdater = spriteUpdater;
             _runtimeObjectRepository = runtimeObjectRepository;
         }
         

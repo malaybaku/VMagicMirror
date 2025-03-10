@@ -77,8 +77,8 @@ namespace Baku.VMagicMirror.Buddy
 
         public Vector2 Pivot
         {
-            get => RectTransform.pivot;
-            set => RectTransform.pivot = value;
+            get => content.pivot;
+            set => content.pivot = value;
         }
         
         public void SetParent(BuddyManifestTransform2DInstance parent)

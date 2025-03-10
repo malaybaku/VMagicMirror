@@ -196,7 +196,7 @@ namespace Baku.VMagicMirror.Buddy
             var transform2DInstances = new Dictionary<string, BuddyManifestTransform2DInstance>();
             foreach (var pair in layouts.Transform2Ds)
             {
-                var instance = _spriteCanvas.CreateTransform2DInstance();
+                var instance = _spriteCanvas.CreateManifestTransform2DInstance();
                 instance.BuddyId = scriptCaller.BuddyId;
                 instance.InstanceName = pair.Key;
 

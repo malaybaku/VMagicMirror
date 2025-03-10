@@ -1,11 +1,20 @@
 using Baku.VMagicMirror.Buddy.Api;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 {
     /// <summary> BuddySpriteについてエフェクト + トランジションに関する処置を行うクラス </summary>
     public class BuddySprite2DUpdater
     {
+        private readonly Camera _mainCamera;
+        
+        [Inject]
+        public BuddySprite2DUpdater(Camera mainCamera)
+        {
+            _mainCamera = mainCamera;
+        }
+        
         readonly struct EffectAppliedPose
         {
             public EffectAppliedPose(Vector2 pos, Quaternion rot, Vector2 scale)
@@ -30,21 +39,19 @@ namespace Baku.VMagicMirror.Buddy
         {
             var pose = EffectAppliedPose.Default();
 
+            // NOTE: エフェクトの影響で位置がズレてからFlipすると見た目が悪そうなので、先にFlipの計算を入れてしまう
+            if (!sprite.Transition.IsCompleted)
+            {
+                BuddySprite2DInstanceTransition transition;
+                (pose, transition) = DoTransition(sprite, Time.deltaTime, pose, sprite.Transition);
+                sprite.Transition = transition;
+            }
+
             var effects = sprite.SpriteEffects;
             pose = Floating(pose, effects.InternalFloating);
             pose = Bounce(pose, effects.InternalBounceDeform);
-
-            // TODO: ここもエフェクトと似たように書きたいが、テクスチャの差し替えタイミングの管理が必要なことには注意する
-            var (addRot, isTransitionDone) = sprite.DoTransition(Time.deltaTime, sprite.CurrentTexture, sprite.CurrentTransitionStyle);
-            if (isTransitionDone)
-            {
-                sprite.CurrentTransitionStyle = Sprite2DTransitionStyle.None;
-            }
-
-            pose = pose.WithRot(addRot * pose.Rot);
-
-            // NOTE: Posは実際には画面サイズに配慮したスケールにしたい。ので、実は親になってるTransform2Dとかの影響も受ける
-            sprite.EffectorRectTransform.anchoredPosition = pose.Pos * 720f;
+            
+            sprite.EffectorRectTransform.anchoredPosition = pose.Pos;
             sprite.EffectorRectTransform.localRotation = pose.Rot;
             sprite.EffectorRectTransform.localScale = new Vector3(pose.Scale.x, pose.Scale.y, 1f);
         }
@@ -111,6 +118,61 @@ namespace Baku.VMagicMirror.Buddy
             var rate = effect.ElapsedTime / effect.Duration;
             var yRate = 0.5f * (1 - Mathf.Cos(rate * Mathf.PI * 2f));
             return pose.WithPos(pose.Pos + new Vector2(0, yRate * effect.Intensity));
+        }
+
+        private (EffectAppliedPose, BuddySprite2DInstanceTransition) DoTransition(
+            BuddySprite2DInstance instance, float deltaTime, EffectAppliedPose pose, BuddySprite2DInstanceTransition transition)
+        {
+            if (transition.Style is Sprite2DTransitionStyle.None)
+            {
+                // 通らないはずだけど一応
+                return (pose, transition);
+            }
+            
+            if (transition.Style == Sprite2DTransitionStyle.Immediate)
+            {
+                instance.SetTexture(transition.UnAppliedTextureKey);
+                return (pose, BuddySprite2DInstanceTransition.None);
+            }
+            
+            // TEMP: LeftFlipだけ実装してある。、ホントはRightFlipとかy=0を軸に倒す実装も欲しいいったん常にLeftFlip
+            transition.Time += deltaTime;
+
+            if (transition.IsCompleted)
+            {
+                if (transition.HasUnAppliedTextureKey)
+                {
+                    instance.SetTexture(transition.UnAppliedTextureKey);
+                }
+                return (pose, BuddySprite2DInstanceTransition.None);
+            }
+            
+            // NOTE: 計算が凝っているのは、world space UIでカメラに対してUIが垂直になって隠れる角度が90度であることが保証されないため
+            // NOTE: 移動しながらこの計算して合わせに行くと見えがキモいかもなので注意
+            var cameraToInstance =
+                _mainCamera.transform.InverseTransformPoint(instance.transform.position).normalized;
+            cameraToInstance.y = 0f;
+            var dir = cameraToInstance.normalized;
+            // NOTE: なぜか0.5倍するといい感じになるが、幾何的になぜコレでいいのかが分かってない…ちゃんと理解したい
+            var additionalAngle = 0.5f * Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+
+            if (transition.Rate < 0.5f)
+            {
+                var yaw = (90f + additionalAngle) * (transition.Rate / 0.5f);
+                return (pose.WithRot(pose.Rot * Quaternion.Euler(0, yaw, 0)), transition);
+            }
+            else
+            {
+                if (transition.HasUnAppliedTextureKey)
+                {
+                    instance.SetTexture(transition.UnAppliedTextureKey);
+                    transition.UnAppliedTextureKey = "";
+                }
+
+                // NOTE: 0 .. 90deg 付近から -90degにジャンプして-90 .. 0 に進める感じ
+                var yaw = Mathf.Lerp(additionalAngle - 90f, 0, (transition.Rate - 0.5f) * 2f);
+                return (pose.WithRot(pose.Rot * Quaternion.Euler(0, yaw, 0)), transition);
+            }            
         }
     }
 }

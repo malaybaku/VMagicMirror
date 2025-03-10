@@ -34,7 +34,7 @@ namespace Baku.VMagicMirror.Buddy
         /// 呼び出し直後は位置もサイズも保証されないことに注意
         /// </summary>
         /// <returns></returns>
-        public BuddyManifestTransform2DInstance CreateTransform2DInstance()
+        public BuddyManifestTransform2DInstance CreateManifestTransform2DInstance()
             => Instantiate(transform2DInstancePrefab, RectTransform);
         
         private Camera _mainCamera;

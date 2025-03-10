@@ -69,18 +69,13 @@ namespace Baku.VMagicMirror.Buddy.Api
             }
         }
 
-        private float _intensity = 0.05f;
-        public float Intensity
-        {
-            get => _intensity;
-            set => _intensity = Mathf.Clamp01(value);
-        }
+        public float Intensity { get; set; } = 24f;
 
         private float _duration = 2f;
         public float Duration
         {
             get => _duration;
-            set => _duration = Mathf.Clamp(value, 0.1f, 10f);
+            set => _duration = Mathf.Max(value, 0.01f);
         }
 
         // Floatはループしかせんやろ…ということでLoopオプションは省いている

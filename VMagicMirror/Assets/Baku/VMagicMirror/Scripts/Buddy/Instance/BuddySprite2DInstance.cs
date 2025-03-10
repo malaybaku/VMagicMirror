@@ -8,11 +8,39 @@ using UnityEngine.UI;
 
 namespace Baku.VMagicMirror.Buddy
 {
+    public struct BuddySprite2DInstanceTransition
+    {
+        private const float TransitionDuration = 2f;
+
+        public Sprite2DTransitionStyle Style { get; set; }
+        public float Time { get; set; }
+        /// <summary>
+        /// Transition中に適用したいテクスチャ名があるうちはそのキーになり、適用したら空文字列になるような値
+        /// </summary>
+        public string UnAppliedTextureKey { get; set; }
+        public bool HasUnAppliedTextureKey => !string.IsNullOrEmpty(UnAppliedTextureKey);
+
+        public float Rate => Time / TransitionDuration;
+        public bool IsCompleted => Style is Sprite2DTransitionStyle.None || Time >= TransitionDuration;
+
+        public static BuddySprite2DInstanceTransition Create(Sprite2DTransitionStyle style, string textureKey) => new()
+        {
+            Style = style,
+            Time = 0f,
+            UnAppliedTextureKey = textureKey,
+        };
+        
+        public static BuddySprite2DInstanceTransition None => new()
+        {
+            Style = Sprite2DTransitionStyle.None,
+            Time = 0f,
+            UnAppliedTextureKey = "",
+        };
+    }
+    
     public class BuddySprite2DInstance : MonoBehaviour, 
         IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerMoveHandler
     {
-        private const float TransitionDuration = 0.5f;
-
         [SerializeField] private BuddyTransform2DInstance transform2DInstance;
         [SerializeField] private RectTransform effectorRectTransform;
         [SerializeField] private RawImage rawImage;
@@ -22,8 +50,8 @@ namespace Baku.VMagicMirror.Buddy
         // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
         public Texture2D CurrentTexture { get; private set; }
 
-        // NOTE: この値はトランジション処理をやっているクラスがトランジションを完了すると、自動でNoneに切り替わる
-        public Sprite2DTransitionStyle CurrentTransitionStyle { get; set; } = Sprite2DTransitionStyle.None;
+        // NOTE: この値は BuddySpriteUpdater が更新してよい前提で公開される
+        public BuddySprite2DInstanceTransition Transition { get; set; } = BuddySprite2DInstanceTransition.None;
 
         private readonly Dictionary<string, Texture2D> _textures = new();
         
@@ -42,158 +70,22 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Subject<Unit> _pointerClicked = new();
         public IObservable<Unit> PointerClicked => _pointerClicked;
 
-        // TODO: anchorを使う等で、普通のLocalPositionとは違う方法で指定する
-        public Vector2 LocalPosition
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
-  
-        public Quaternion LocalRotation
-        {
-            get => RectTransform.localRotation;
-            set => RectTransform.localRotation = value;
-        }
-        
-        private Vector2 _localScale = Vector2.one;
-        public Vector2 LocalScale
-        {
-            get => _localScale;
-            set
-            {
-                _localScale = value;
-                transform.localScale = new Vector3(value.x, value.y, 1f);
-            }
-        }
-        
-        public Vector2 Position
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
-
-        public Quaternion Rotation
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
-
-        // TODO: デフォが1になるようなキメにできたほうが嬉しいかも (Sizeなら諦める手もあるが)
-        private Vector2 _size = new(0.1f, 0.1f);
         public Vector2 Size
         {
-            get => _size;
-            set
-            {
-                _size = value;
-                //親のCanvasに対して比率ベースで決めたい
-                //正直良くわからんので一旦てきとうにやっています
-                RectTransform.sizeDelta = value * 1280;
-            }
-        }
-
-        public Vector2 Pivot
-        {
-            get => RectTransform.pivot;
-            set => RectTransform.pivot = value;
+            get => rawImage.rectTransform.sizeDelta;
+            set => rawImage.rectTransform.sizeDelta = value;
         }
 
         // NOTE: ここだけEffectApi自体がデータ的に定義されてるので素朴にnew()してよい
         public SpriteEffectApi SpriteEffects { get; } = new();
         
-        //TODO: インスタンスの生成直後に値が入ってて欲しい
         public string BuddyId { get; set; }
 
-        private float _transitionTime = 0f;
-        
-        //TODO: Transition自体にもEffectApiくらいの粒度のデータ型が欲しいかも
-
-        /// <summary>
-        /// 画像切り替えについて時間を積算しながら、エフェクトとして適用したい回転値を返す
-        /// この呼び出しによってトランジションが完了した場合はtrueを返し、そうでなければfalseを返す
-        /// </summary>
-        /// <param name="deltaTime"></param>
-        /// <param name="texture"></param>
-        /// <param name="transitionStyle"></param>
-        /// <returns></returns>
-        public (Quaternion rot, bool isDone) DoTransition(float deltaTime, Texture2D texture, Sprite2DTransitionStyle transitionStyle)
+        public void SetTexture(string key)
         {
-            if (transitionStyle == Sprite2DTransitionStyle.None)
+            if (_textures.TryGetValue(key, out var texture))
             {
-                _transitionTime = 0f;
-                CurrentTransitionStyle = Sprite2DTransitionStyle.None;
-                return (Quaternion.identity, false);
-            }
-
-            if (transitionStyle == Sprite2DTransitionStyle.Immediate)
-            {
-                _transitionTime = 0f;
                 rawImage.texture = texture;
-                CurrentTransitionStyle = Sprite2DTransitionStyle.None;
-                return (Quaternion.identity, true);
-            }
-            
-            // TEMP:
-            // - いったん常にLeftFlip
-            // - Transition中に呼ばれたケースを無視
-            // - ユーザーがlocalRotationを適用してるケースも無視
-            _transitionTime += deltaTime;
-            var rate = Mathf.Clamp01(_transitionTime / TransitionDuration);
-            if (rate < 0.5f)
-            {
-                return (Quaternion.Euler(0, 180f * rate, 0), false);
-            }
-            else
-            {
-                // NOTE: 0 .. 90deg から -90degにジャンプして-90 .. 0 に進める感じ
-                rawImage.texture = texture;
-                var rot = Quaternion.Euler(0, 180f * (rate - 1f), 0);
-                if (_transitionTime >= TransitionDuration)
-                {
-                    _transitionTime = 0f;
-                    CurrentTransitionStyle = Sprite2DTransitionStyle.None;
-                    return (Quaternion.identity, true);
-                }
-                else
-                {
-                    return (rot, false);
-                }
-            }
-        }
-        
-        // TODO: positionの扱いはもうちょっと検討が要りそう…
-        /// <summary>
-        /// SpriteCanvasから見たグローバル座標にスプライトを移動させる
-        /// </summary>
-        /// <param name="position"></param>
-        public void SetPosition(Vector2 position)
-        {
-            //NOTE: Parentを付け替えないでもInverseTransformPointとかでも行ける？
-            var rt = RectTransform;
-            var currentParent = rt.parent;
-
-            var canvas = GetComponentInParent<BuddySpriteCanvas>();
-            rt.SetParent(canvas.RectTransform);
-            
-            rt.anchorMin = position;
-            rt.anchorMax = position;
-            rt.anchoredPosition = Vector2.zero;
-            
-            rt.SetParent(currentParent);
-        }
-
-        public void SetParent(BuddyManifestTransform2DInstance parent)
-        {
-            // NOTE: SetParentした瞬間はparentにピッタリくっつく位置に移動させてるが、これでいいかは諸説ありそう
-            // (そもそもPosition, Scale, Sizeの概念的な整備しないとダメかも…)
-            var rt = RectTransform;
-            rt.SetParent(parent.transform);
-            if (parent != null)
-            {
-                parent.NotifyChildAdded();
-                rt.localPosition = Vector3.zero;
-                rt.localRotation = Quaternion.identity;
-                rt.localScale = Vector3.one;
             }
         }
 
@@ -262,7 +154,7 @@ namespace Baku.VMagicMirror.Buddy
             }
 
             CurrentTexture = _textures[fullPath];
-            CurrentTransitionStyle = style;
+            Transition = BuddySprite2DInstanceTransition.Create(style, fullPath);
             
             return TextureLoadResult.Success;
         }

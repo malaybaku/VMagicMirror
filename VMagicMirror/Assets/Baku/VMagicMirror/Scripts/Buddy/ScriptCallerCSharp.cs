@@ -58,9 +58,13 @@ namespace Baku.VMagicMirror.Buddy
             {
                 var code = await File.ReadAllTextAsync(EntryScriptPath, cancellationToken);
 
-                // TODO: Importsを増やす可能性を考えた方がいいかも
+                // NOTE:
+                // - WithImportsをするとスクリプトの編集体験(=インテリセンス回り)を快適にするのが難しいのが既知なため、Importsしない。
+                // - Importsを足すことは破壊的変更になりうる…というのは注意すること
+                // - 自動Importsに関するオプションをmanifest.jsonに足すとかで回避はできるので、まあ程々に…
+
                 var scriptOptions = ScriptOptions.Default
-                    .WithImports("System", "Baku.VMagicMirror.Buddy.Api.Interface")
+                    //.WithImports("System", "VMagicMirror.Buddy")
                     .WithReferences(
                         typeof(object).Assembly,
                         typeof(Api.Interface.IRootApi).Assembly

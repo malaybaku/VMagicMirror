@@ -13,6 +13,11 @@ namespace VMagicMirror.Buddy
         /// サブキャラのロード後に一度呼ばれます。
         /// </summary>
         event Action Start;
+        
+        /// <summary>
+        /// 毎フレームごと、つまり描画内容の更新のたびに呼ばれます。
+        /// 引数には前回のフレームからの経過時間が秒単位で渡されます。
+        /// </summary>
         event Action<float> Update;
 
         SynchronizationContext MainThreadContext { get; }
@@ -21,9 +26,13 @@ namespace VMagicMirror.Buddy
         //TODO: FeatureLockについては、ここで記述されるプロパティ単位で
         //「丸ごとOK or 丸ごと塞がってる」となるのが分かりやすさ的には望ましい
 
-        //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
+        /// <summary> マニフェストで定義されたプロパティの現在値にアクセスできるAPIを取得します。 </summary>
         IProperty Property { get; }
+
+        /// <summary> マニフェストで定義されたTransformの参照にアクセスできるAPIを取得します。 </summary>
         IManifestTransforms Transforms { get; }
+        
+        /// <summary> アバターの周辺のデバイス配置に関するAPIを取得します。 </summary>
         IDeviceLayout DeviceLayout { get; }
         
         // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう
@@ -36,6 +45,11 @@ namespace VMagicMirror.Buddy
         IScreen Screen { get; }
         IGui Gui { get; }
 
+        //TODO: 出力先ファイルがどこなのか説明を書きたい
+        /// <summary>
+        /// ログ情報を出力します。
+        /// </summary>
+        /// <param name="value"></param>
         void Log(string value);
         void LogWarning(string value);
         void LogError(string value);

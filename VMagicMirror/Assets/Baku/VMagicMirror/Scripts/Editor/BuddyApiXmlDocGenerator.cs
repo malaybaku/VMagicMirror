@@ -43,6 +43,20 @@ namespace Baku.VMagicMirror
             GenerateXml();
         }
 
+        [MenuItem("VMagicMirror/Generate Buddy API XML (Copy)")]
+        public static void GenerateXmlForBuddyApiAndCopy()
+        {
+            GenerateXml();
+            File.Copy(
+                OutputXmlPath, 
+                Path.Combine(
+                    SpecialFiles.BuddyReferenceDataDirectory,
+                    XmlFileName
+                    ),
+                true
+            );
+        }
+
         /// <summary>
         /// サブキャラ用のAPIのdllおよびxmlをStreamingAssetsフォルダに対して生成したあと、dllファイルを削除する。
         /// </summary>

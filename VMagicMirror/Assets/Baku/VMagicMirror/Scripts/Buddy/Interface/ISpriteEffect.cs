@@ -117,7 +117,7 @@ namespace VMagicMirror.Buddy
         /// <param name="count">時間内に行うジャンプの回数</param>
         /// <remarks>
         ///   <paramref name="count"/> が2以上である場合、<paramref name="duration"/> の時間内に複数回のジャンプ動作を行います。
-        ///   ジャンプの軌道は放物軌道として、パラメータから自動で計算されます。
+        ///   ジャンプの軌道は放物軌道として、指定したパラメータから自動で計算されます。
         /// </remarks>
         void Jump(float duration, float intensity, int count);
 

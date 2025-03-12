@@ -8,12 +8,14 @@ namespace Baku.VMagicMirror.Buddy.Api
     {
         private readonly string _baseDir;
         private readonly BuddyGlbInstance _instance;
+        private readonly BuddyLogger _logger;
         private string BuddyId => _instance.BuddyId;
 
-        public GlbApi(string baseDir, BuddyGlbInstance instance)
+        public GlbApi(string baseDir, BuddyGlbInstance instance, BuddyLogger logger)
         {
             _baseDir = baseDir;
             _instance = instance;
+            _logger = logger;
             Transform = new Transform3D(instance.GetTransform3D());
         }
 
@@ -36,7 +38,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         public void RunAnimation(string name, bool loop) => Try(() => _instance.RunAnimation(name, loop, true));
         public void StopAnimation() => Try(() => _instance.StopAnimation());
 
-        private void Try(Action act) => ApiUtils.Try(BuddyId, act);
-        private T Try<T>(Func<T> func, T valueWhenFailed = default) => ApiUtils.Try(BuddyId, func, valueWhenFailed);
+        private void Try(Action act) => ApiUtils.Try(BuddyId, _logger, act);
+        private T Try<T>(Func<T> func, T valueWhenFailed = default) => ApiUtils.Try(BuddyId, _logger, func, valueWhenFailed);
     }
 }

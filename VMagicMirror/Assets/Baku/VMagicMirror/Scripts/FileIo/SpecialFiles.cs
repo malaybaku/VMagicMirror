@@ -63,6 +63,11 @@ namespace Baku.VMagicMirror
 
         public static string BuddyReferenceDataGlobalScriptPath
             => Path.Combine(BuddyReferenceDataDirectory, "Globals.csx");
+
+        // NOTE: .txt にするのはメインのログファイルと揃えつつ、
+        // WPFからファイルを開くときにテキストエディタで開かれるのを保証しやすくするため
+        public static string GetBuddyLogFilePath(string buddyId)
+            => Path.Combine(BuddyLogFileDir, buddyId + ".txt");
         
         static SpecialFiles()
         {

@@ -53,7 +53,6 @@ namespace VMagicMirror.Buddy
         void Log(string value);
         void LogWarning(string value);
         void LogError(string value);
-        void SetLogLevel(LogLevel level);
         
         float Random();
         void InvokeDelay(Action func, float delaySeconds);
@@ -70,21 +69,6 @@ namespace VMagicMirror.Buddy
         
         //TODO: コレ系の設定がうまくbundleできると嬉しい
         AppLanguage Language { get; }
-    }
-
-    /// <summary>
-    /// サブキャラのログ出力の詳細度です。
-    /// </summary>
-    /// <remarks>
-    ///
-    /// </remarks>
-    public enum LogLevel
-    {
-        /// <summary>  </summary>
-        None,
-        Error,
-        Warning,
-        Log,
     }
 
     /// <summary> VMagicMirrorの表示に使用している言語です。 </summary>

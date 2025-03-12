@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         public static bool IsInBuddyDirectory(string file)
             => IsChildDirectory(SpecialFiles.BuddyRootDirectory, file);
 
-        public static void Try(string buddyId, Action act)
+        public static void Try(string buddyId, BuddyLogger logger, Action act)
         {
             try
             {
@@ -39,11 +39,11 @@ namespace Baku.VMagicMirror.Buddy.Api
                     Debug.LogException(ex);
                 }
                 
-                BuddyLogger.Instance.Log(buddyId, ex);
+                logger.LogRuntimeException(buddyId, ex);
             }
         }
 
-        public static T Try<T>(string buddyId, Func<T> func, T valueWhenFailed = default)
+        public static T Try<T>(string buddyId, BuddyLogger logger, Func<T> func, T valueWhenFailed = default)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                     Debug.LogException(ex);
                 }
                 
-                BuddyLogger.Instance.Log(buddyId, ex);
+                logger.LogRuntimeException(buddyId, ex);
 
                 return valueWhenFailed;
             }

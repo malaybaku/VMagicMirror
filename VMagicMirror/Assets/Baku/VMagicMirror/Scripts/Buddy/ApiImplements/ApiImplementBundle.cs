@@ -6,7 +6,9 @@ namespace Baku.VMagicMirror.Buddy
     public class ApiImplementBundle
     {
         public ApiImplementBundle(
+            BuddySettingsRepository settingsRepository,
             BuddyPropertyRepository buddyPropertyRepository,
+            BuddyLogger logger,
             AvatarLoadApiImplement loadApi,
             AvatarFacialApiImplement facialApi,
             AvatarPoseApiImplement poseApi,
@@ -21,6 +23,8 @@ namespace Baku.VMagicMirror.Buddy
             BuddyGuiCanvas buddyGuiCanvas
         )
         {
+            SettingsRepository = settingsRepository;
+            Logger = logger;
             BuddyPropertyRepository = buddyPropertyRepository;
             AvatarLoadApi = loadApi;
             AvatarFacialApi = facialApi;
@@ -36,6 +40,8 @@ namespace Baku.VMagicMirror.Buddy
             BuddyGuiCanvas = buddyGuiCanvas;
         }
         
+        public BuddySettingsRepository SettingsRepository { get; }
+        public BuddyLogger Logger { get; }
         public BuddyPropertyRepository BuddyPropertyRepository { get; }
         public AvatarLoadApiImplement AvatarLoadApi { get; }
         public AvatarFacialApiImplement AvatarFacialApi { get; }

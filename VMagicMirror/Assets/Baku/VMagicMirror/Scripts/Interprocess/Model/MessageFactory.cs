@@ -5,10 +5,8 @@ namespace Baku.VMagicMirror
 {
     class MessageFactory
     {
-        //Singleton
         private static MessageFactory _instance;
-        public static MessageFactory Instance
-            => _instance ?? (_instance = new MessageFactory());
+        public static MessageFactory Instance => _instance ??= new MessageFactory();
         private MessageFactory() { }
 
         //コマンド名 = メソッド名になる(NoArgもWithArgも共通)
@@ -61,6 +59,8 @@ namespace Baku.VMagicMirror
         public Message NotifyBuddy2DLayout(string json) => WithArg(json);
         public Message NotifyBuddy3DLayout(string json) => WithArg(json);
 
+        public Message NotifyBuddyLog(string json) => WithArg(json);
+        
         #endregion
         
         #region VRoid

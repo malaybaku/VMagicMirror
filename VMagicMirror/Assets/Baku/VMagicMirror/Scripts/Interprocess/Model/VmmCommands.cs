@@ -226,7 +226,11 @@
         public const string BuddyDisable = nameof(BuddyDisable);
         public const string BuddyRefreshData = nameof(BuddyRefreshData);
         public const string BuddySetProperty = nameof(BuddySetProperty);
-        
+
+        // Buddy (開発者モード)
+        public const string BuddySetDeveloperModeActive = nameof(BuddySetDeveloperModeActive);
+        public const string BuddySetDeveloperModeLogLevel = nameof(BuddySetDeveloperModeLogLevel);
+
         // External Video Sharing
         public const string EnableSpoutOutput = nameof(EnableSpoutOutput);
         public const string SetSpoutOutputResolution = nameof(SetSpoutOutputResolution);

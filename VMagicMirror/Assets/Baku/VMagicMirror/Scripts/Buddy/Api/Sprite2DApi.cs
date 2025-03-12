@@ -16,15 +16,17 @@ namespace Baku.VMagicMirror.Buddy.Api
     {
         private readonly string _baseDir;
         private readonly BuddySprite2DInstance _instance;
+        private readonly BuddyLogger _logger;
         private string BuddyId => _instance.BuddyId;
 
         private bool _fileNotFoundErrorLogged;
         private bool _pathInvalidErrorLogged;
 
-        internal Sprite2DApi(string baseDir, BuddySprite2DInstance instance)
+        internal Sprite2DApi(string baseDir, BuddySprite2DInstance instance, BuddyLogger logger)
         {
             _baseDir = baseDir;
             _instance = instance;
+            _logger = logger;
             Transform = new Transform2D(instance.GetTransform2DInstance());
         }
 
@@ -38,7 +40,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         ISpriteEffect ISprite2D.Effects => _instance.SpriteEffects;
 
-        public void Preload(string path) => ApiUtils.Try(BuddyId, () =>
+        public void Preload(string path) => ApiUtils.Try(BuddyId, _logger, () =>
         {
             var fullPath = GetFullPath(path);
             var result = _instance.Load(fullPath);
@@ -49,7 +51,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public void Show(string path, BuddyApi.Sprite2DTransitionStyle style)
         {
-            ApiUtils.Try(BuddyId, () =>
+            ApiUtils.Try(BuddyId, _logger, () =>
             {
                 var fullPath = GetFullPath(path);
                 var clamped = UnityEngine.Mathf.Clamp(
@@ -75,7 +77,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             {
                 if (!_pathInvalidErrorLogged)
                 {
-                    BuddyLogger.Instance.Log(BuddyId, "[Error] Specified path is not in Buddy directory: " + fullPath);
+                    _logger.Log(BuddyId, "Specified path is not in Buddy directory: " + fullPath, BuddyLogLevel.Error);
                 }
 
                 _pathInvalidErrorLogged = true;
@@ -84,7 +86,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             {
                 if (!_fileNotFoundErrorLogged)
                 {
-                    BuddyLogger.Instance.Log(BuddyId, "[Error] Specified file does not exist: " + fullPath);
+                    _logger.Log(BuddyId, "Specified file does not exist: " + fullPath, BuddyLogLevel.Error);
                 }
 
                 _fileNotFoundErrorLogged = true;

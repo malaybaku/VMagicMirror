@@ -1,121 +1,116 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Linq;
+using Microsoft.CodeAnalysis.Scripting;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 {
-    /// <summary>
-    /// <see cref="LogOutput"/>と似ているが、サブキャラ用のログを出力するクラス。
-    /// サブキャラ1つごとにファイルを1つ生成する点が異なる
-    /// </summary>
-    public class BuddyLogger 
+    
+    // TODO: LogLevelは用途が広いのでここじゃないとこで定義したほうが良いかも
+    public enum BuddyLogLevel
     {
-        private static BuddyLogger _instance;
-        public static BuddyLogger Instance => _instance ??= new BuddyLogger();
-
-        private readonly string _dir;
-        private readonly Dictionary<string, BuddySingleFileLogger> _loggers = new();
-
-        private BuddyLogger()
-        {
-            _dir = SpecialFiles.BuddyLogFileDir;
-            if (Directory.Exists(_dir))
-            {
-                Directory.Delete(_dir, true);
-            }
-            Directory.CreateDirectory(_dir);
-        }
-
-        public void Log(string buddyId, string content)
-        {
-            var logger = GetLogger(buddyId);
-            logger.Log(content);
-        }
-
-        public void Log(string buddyId, Exception ex)
-        {
-            var logger = GetLogger(buddyId);
-            logger.Log(ex);
-        }
-
-        // NOTE: 1回のアプリケーション実行中にフォルダのリネーム起因で別のBuddyに同じBuddyIdが割り当てられた場合、
-        // その2つ(以上)のBuddyのログは同じファイルに記録される。これはby-design
-        private BuddySingleFileLogger GetLogger(string buddyId)
-        {
-            // NOTE: ファイルパスとして使うので、トラブル防止のためにlowerに統一してしまう
-            buddyId = buddyId.ToLower();
-            
-            if (_loggers.TryGetValue(buddyId, out var cached))
-            {
-                return cached;
-            }
-
-            var logger = new BuddySingleFileLogger(
-                Path.Combine(_dir, buddyId + ".log")
-            );
-            _loggers[buddyId] = logger;
-            return logger;
-        }
+        Fatal = 0,
+        Error = 1,
+        Warning = 2,
+        Info = 3,
+        Verbose = 4,
     }
 
-    public class BuddySingleFileLogger
+    /// <summary>
+    /// Buddyのログについて、ファイル出力とWPFへの送信の双方を設定に基づいて行うクラス
+    /// </summary>
+    public class BuddyLogger
     {
-        private readonly string _filePath;
-        private readonly string _fileName;
-        private readonly object _writeLock = new();
-
-        public BuddySingleFileLogger(string filePath)
+        private readonly BuddySettingsRepository _settingsRepository;
+        private readonly BuddyFileLogger _fileLogger;
+        private readonly BuddyMessageSender _sender;
+        
+        [Inject]
+        public BuddyLogger(
+            BuddySettingsRepository settingsRepository,
+            BuddyFileLogger fileLogger,
+            BuddyMessageSender sender)
         {
-            _filePath = filePath;
-            _fileName = Path.GetFileName(_filePath);
+            _settingsRepository = settingsRepository;
+            _fileLogger = fileLogger;
+            _sender = sender;
         }
         
-        public void Log(string text)
+        public void Log(string buddyId, string message, BuddyLogLevel level)
         {
-            // ※エディタ実行時に「ファイル出力 + ログ出力する」にするのもアリ
-            if (Application.isEditor)
+            LogInternal(buddyId, message, level);
+        }
+        
+        public void LogCompileError(string buddyId, CompilationErrorException ex)
+        {
+            var message = $"Script has compile error: {ex.Message}";
+            LogInternal(buddyId, message, BuddyLogLevel.Fatal);
+            LogExceptionInternal(buddyId, ex);
+        }
+        
+        // TODO: FatalじゃなくてErrorくらいの扱いにするオプションが欲しいかも
+        public void LogRuntimeException(string buddyId, Exception ex)
+        {
+            if (!_settingsRepository.DeveloperModeActive.Value)
             {
-                Debug.Log($"[Buddy:{_fileName}] {text}");
+                LogRuntimeExceptionSimple(buddyId, ex);
                 return;
             }
 
-            if (!File.Exists(_filePath))
+            // NOTE: 開発者モードがオフの状態であらかじめ起動していたBuddyについても
+            // スタックトレースを拾おうとするが、それは拾えないので、その場合はSimple版の挙動に帰着する
+            
+            // スタックトレースからスクリプト内の行番号を抽出
+            // NOTE: Roslynのスクリプトは "Submission#0" という名前で実行される(らしい)
+            var scriptStackFrame = ex.StackTrace?
+                .Split('\n')
+                .FirstOrDefault(line => line.Contains("Submission#0"));
+
+            if (scriptStackFrame == null)
             {
-                lock (_writeLock)
-                {
-                    File.WriteAllText(_filePath, "");
-                }
+                LogRuntimeExceptionSimple(buddyId, ex);
+                return;
+            }
+            
+            var parts = scriptStackFrame.Split(' ');
+            var lineInfo = parts.FirstOrDefault(p => p.Contains(":line"));
+            if (lineInfo == null)
+            {
+                LogRuntimeExceptionSimple(buddyId, ex);
+                return;
             }
 
-            lock (_writeLock)
-            {
-                try
-                {
-                    using var sw = new StreamWriter(_filePath, true);
-                    sw.WriteLine(text);
-                }
-                catch (Exception)
-                {
-                    //諦める
-                }
-            }
+            var message = $"Runtime Error [{lineInfo.Trim()}]: {ex.Message}";
+            LogInternal(buddyId, message, BuddyLogLevel.Fatal);
+            LogExceptionInternal(buddyId, ex);
         }
 
-        public void Log(Exception ex)
+        private void LogRuntimeExceptionSimple(string buddyId, Exception ex)
         {
-            if (ex != null)
-            {
-                Log(ExToString(ex));
-            }
+            LogInternal(buddyId, ex.Message, BuddyLogLevel.Fatal);
+            LogExceptionInternal(buddyId, ex);
+        }
+
+        // NOTE: このメソッドではファイルにのみスタックトレース等の詳細を含む情報を記録する。例外に対してLogInternalの直後に呼ぶのが望ましい
+        private void LogExceptionInternal(string buddyId, Exception ex)
+        {
+            _fileLogger.Log(buddyId, ex);
         }
         
-        private static string ExToString(Exception ex)
+        private void LogInternal(string buddyId, string message, BuddyLogLevel level)
         {
-            return DateTime.Now.ToString("yyyyMMdd_HHmmss") + "\n" +
-                ex.GetType().Name + "\n" +
-                ex.Message + "\n" +
-                ex.StackTrace;
-        }   
+            var currentLogLevel = _settingsRepository.LogLevel.Value;
+            if (level > currentLogLevel)
+            {
+                return;
+            }
+
+            var content = GetLogHeader(level) + message;
+            _fileLogger.Log(buddyId, content);
+            _sender.NotifyBuddyLogMessage(buddyId, content, level);
+        }
+
+        private static string GetLogHeader(BuddyLogLevel level) => $"[{level}]";
     }
 }

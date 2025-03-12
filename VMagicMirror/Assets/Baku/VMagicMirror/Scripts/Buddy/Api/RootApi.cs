@@ -7,15 +7,18 @@ using Cysharp.Threading.Tasks;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
+    // TODO: 一部のAPIの戻り値は _settingsRepository に基づいて制限したい
+    
     public class RootApi : IRootApi
     {
+        private readonly BuddySettingsRepository _settingsRepository;
+        private readonly BuddyLogger _logger;
         private readonly Buddy3DInstanceCreator _buddy3DInstanceCreator;
         private readonly BuddySpriteCanvas _spriteCanvas;
 
         private readonly CancellationTokenSource _cts = new();
         
         private readonly string _baseDir;
-        private LogLevel _logLevel = LogLevel.Log;
 
         public RootApi(
             string baseDir,
@@ -24,6 +27,9 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             _baseDir = baseDir;
             BuddyId = buddyId;
+            _settingsRepository = apiImplementBundle.SettingsRepository;
+            _logger = apiImplementBundle.Logger;
+            
             Property = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
             AvatarLoadEventInternal = new AvatarLoadEventApi(apiImplementBundle.AvatarLoadApi);
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
@@ -98,35 +104,11 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         // TODO: 実際に選択中の言語を返す
         public AppLanguage Language => throw new NotImplementedException();
-        
-        public void Log(string value)
-        {
-            if ((int)_logLevel >= (int)LogLevel.Log)
-            {
-                BuddyLogger.Instance.Log(BuddyId, GetLogHeader(LogLevel.Log) + value);
-            }
-        }
 
-        public void LogWarning(string value)
-        {
-            if ((int)_logLevel >= (int)LogLevel.Warning)
-            {
-                BuddyLogger.Instance.Log(BuddyId, GetLogHeader(LogLevel.Warning) + value);
-            }
-        }
+        public void Log(string value) => _logger.Log(BuddyId, value, BuddyLogLevel.Info);
+        public void LogWarning(string value) => _logger.Log(BuddyId, value, BuddyLogLevel.Warning);
+        public void LogError(string value) => _logger.Log(BuddyId, value, BuddyLogLevel.Error);
 
-        public void LogError(string value)
-        {
-            if ((int)_logLevel >= (int)LogLevel.Error)
-            {
-                BuddyLogger.Instance.Log(BuddyId, GetLogHeader(LogLevel.Error) + value);
-            }
-        }
-
-        public void SetLogLevel(LogLevel level) => _logLevel = level;
-
-        private string GetLogHeader(LogLevel level) => $"[{level}]";
-        
         public float Random() => UnityEngine.Random.value;
 
         public void InvokeDelay(Action func, float delaySeconds)
@@ -137,7 +119,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                     cancellationToken: _cts.Token,
                     delayTiming: PlayerLoopTiming.LastPostLateUpdate
                     );
-                ApiUtils.Try(BuddyId, () => func?.Invoke());
+                ApiUtils.Try(BuddyId, _logger, () => func?.Invoke());
             });
         }
 
@@ -155,7 +137,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                     );
                 while (!_cts.IsCancellationRequested)
                 {
-                    ApiUtils.Try(BuddyId, () => func?.Invoke());
+                    ApiUtils.Try(BuddyId, _logger, () => func?.Invoke());
                     await UniTask.Delay(
                         TimeSpan.FromSeconds(intervalSeconds),
                         cancellationToken: _cts.Token,
@@ -176,20 +158,20 @@ namespace Baku.VMagicMirror.Buddy.Api
         public ISprite2D Create2DSprite()
         {
             var instance = _spriteCanvas.CreateSpriteInstance(BuddyId);
-            var result = new Sprite2DApi(_baseDir, instance);
+            var result = new Sprite2DApi(_baseDir, instance, _logger);
             return result;
         }
 
         public ISprite3D Create3DSprite()
         {
             var instance = _buddy3DInstanceCreator.CreateSprite3DInstance(BuddyId);
-            return new Sprite3DApi(_baseDir, instance);
+            return new Sprite3DApi(_baseDir, instance, _logger);
         }
 
         public IGlb CreateGlb()
         {
             var instance = _buddy3DInstanceCreator.CreateGlbInstance(BuddyId);
-            return new GlbApi(_baseDir, instance);
+            return new GlbApi(_baseDir, instance, _logger);
         }
 
         public IVrm CreateVrm()

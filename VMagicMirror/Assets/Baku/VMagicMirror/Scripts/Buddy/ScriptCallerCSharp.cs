@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using Baku.VMagicMirror.Buddy.Api;
@@ -26,6 +25,8 @@ namespace Baku.VMagicMirror.Buddy
     public class ScriptCallerCSharp : ScriptCallerBase
     {
         private readonly ScriptEventInvokerCSharp _eventInvoker;
+        private readonly BuddySettingsRepository _settings;
+        private readonly BuddyLogger _logger;
         private readonly CancellationTokenSource _runScriptCts = new();
 
         private Script<object> _script;
@@ -34,11 +35,15 @@ namespace Baku.VMagicMirror.Buddy
         [Inject]
         public ScriptCallerCSharp(
             string entryScriptPath,
+            BuddySettingsRepository settings,
+            BuddyMessageSender messageSender,
             BuddySpriteCanvas spriteCanvas,
             ApiImplementBundle apiImplementBundle,
             IFactory<RootApi, ScriptEventInvokerCSharp> scriptEventInvokerFactory
         ) : base(entryScriptPath, spriteCanvas, apiImplementBundle)
         {
+            _settings = settings;
+            _logger = apiImplementBundle.Logger;
             _eventInvoker = scriptEventInvokerFactory.Create(Api);
         }
 
@@ -52,7 +57,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             if (!File.Exists(EntryScriptPath))
             {
-                BuddyLogger.Instance.Log(BuddyId, $"[Error] Script does not exist at: {EntryScriptPath}");
+                _logger.Log(BuddyId, $"Script does not exist at: {EntryScriptPath}", BuddyLogLevel.Fatal);
                 return;
             }
 
@@ -61,17 +66,19 @@ namespace Baku.VMagicMirror.Buddy
             {
                 var code = await File.ReadAllTextAsync(EntryScriptPath, cancellationToken);
                 
-                // NOTE:
+                // NOTE: WithImportsについて
                 // - WithImportsをするとスクリプトの編集体験(=インテリセンス回り)を快適にするのが難しいのが既知なため、Importsしない。
                 // - Importsを足すことは破壊的変更になりうる…というのは注意すること
                 // - 自動Importsに関するオプションをmanifest.jsonに足すとかで回避はできるので、まあ程々に…
                 
-                // TODO: EmitDebugInformationをオンするのを「開発者モード中だけ」みたいな条件にしぼりたい (普段からオンだとパフォーマンス的にもったいないので)
+                // NOTE: EmitDebugInformationについて
+                // - 開発者モードの場合だけRuntimeError時の行数とかが言えてほしいため、
+                
                 var scriptOptions = ScriptOptions.Default
                     //.WithImports("System", "VMagicMirror.Buddy")
                     .WithFilePath(EntryScriptPath)
                     .WithFileEncoding(Encoding.UTF8)
-                    .WithEmitDebugInformation(true)
+                    .WithEmitDebugInformation(_settings.DeveloperModeActive.Value)
                     .WithSourceResolver(IgnoreFileDefinedScriptSourceResolver.Instance)
                     .WithReferences(
                         typeof(object).Assembly,
@@ -88,32 +95,13 @@ namespace Baku.VMagicMirror.Buddy
             }
             catch (CompilationErrorException compilationErrorException)
             {
-                // NOTE: コンパイルエラーに対してはスタックトレースの表示が余計なので、ログの出し方を変える。
-                // TODO: このケースでWPF側にエラー情報を投げたい
-                BuddyLogger.Instance.Log(BuddyId, $"[Error] Script has compile error. {compilationErrorException.Message}");
+                _logger.LogCompileError(BuddyId, compilationErrorException);
             }
             catch (Exception ex)
             {
-                BuddyLogger.Instance.Log(BuddyId, "[Error] Failed to load script at:" + EntryScriptPath);
-                BuddyLogger.Instance.Log(BuddyId, ex);
-                
-                // TODO: ここでも開発者モード中だったらWPF側にエラー表示できる…とかだと嬉しい
-                BuddyLogger.Instance.Log(BuddyId, ex.StackTrace);
-                // スタックトレースからスクリプト内の行番号を抽出
-                // NOTE: Roslynのスクリプトは "Submission#0" という名前で実行される(らしい)
-                var scriptStackFrame = ex.StackTrace?
-                    .Split('\n')
-                    .FirstOrDefault(line => line.Contains("Submission#0")); 
-
-                if (scriptStackFrame != null)
-                {
-                    var parts = scriptStackFrame.Split(' ');
-                    var lineInfo = parts.FirstOrDefault(p => p.Contains(":line"));
-                    if (lineInfo != null)
-                    {
-                        BuddyLogger.Instance.Log(BuddyId, $"Error occurred at {lineInfo.Trim()}");
-                    }
-                }
+                // NOTE: エラーそのもの + 「最初のロードでコケてますよ」の2トピックがある…という扱いにしたいので2回ログする流れになっている
+                _logger.LogRuntimeException(BuddyId, ex);
+                _logger.Log(BuddyId, "Failed to load script at:" + EntryScriptPath, BuddyLogLevel.Fatal);
             }
         }
         

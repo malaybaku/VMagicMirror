@@ -14,7 +14,12 @@ namespace Baku.VMagicMirror
             // 以下は言語依存性が低めのクラス (せいぜいファイル名とかで拡張子を見に行く程度)
             Container.BindInterfacesAndSelfTo<ScriptLoader>().AsSingle();
 
+            // NOTE: BuddyLoggerを経由せずにFileLoggerを使うのは今のところ想定ユースケースがないので禁止している
+            Container.Bind<BuddyFileLogger>().AsSingle().WhenInjectedInto<BuddyLogger>();
+            Container.Bind<BuddyLogger>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<BuddySettingsRepository>().AsSingle();
+            Container.Bind<BuddyMessageSender>().AsSingle();
             Container.Bind<BuddyPropertyRepository>().AsSingle();
             Container.Bind<BuddyLayoutRepository>().AsSingle();
             Container.Bind<BuddyManifestTransformInstanceRepository>().AsSingle();

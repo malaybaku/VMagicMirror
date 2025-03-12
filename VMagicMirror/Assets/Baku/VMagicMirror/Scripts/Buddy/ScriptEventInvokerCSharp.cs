@@ -15,27 +15,34 @@ namespace Baku.VMagicMirror.Buddy
     /// </summary>
     public class ScriptEventInvokerCSharp : PresenterBase
     {
-        private readonly RootApi _api;
+        // TODO: コールバックの一部を _settings によって遮断する
+        private readonly BuddySettingsRepository _settings;
 
+        private readonly RootApi _api;
         private readonly BuddyRuntimeObjectRepository _runtimeObjectRepository;
         private readonly ApiImplementBundle _apiImplements;
         private readonly BuddySprite2DUpdater _spriteUpdater;
+        private readonly BuddyLogger _logger;
 
         private readonly Queue<Action> _callbackQueue = new();
         private readonly CancellationTokenSource _cts = new();
-
+            
         private bool _startCalled;
         
         [Inject]
         public ScriptEventInvokerCSharp(
+            BuddySettingsRepository settings,
             RootApi api,
             ApiImplementBundle apiImplements,
             BuddySprite2DUpdater spriteUpdater,
             BuddyRuntimeObjectRepository runtimeObjectRepository
             )
         {
+            _settings = settings;
+
             _api = api;
             _apiImplements = apiImplements;
+            _logger = apiImplements.Logger;
             _spriteUpdater = spriteUpdater;
             _runtimeObjectRepository = runtimeObjectRepository;
         }
@@ -119,11 +126,11 @@ namespace Baku.VMagicMirror.Buddy
                 
                 // Start/Updateもここで呼ぶことにより、アバター等の状態が完全に確定した状態でのみスクリプトが実行されるのを保証する
                 InvokeStartEventsIfNeeded();
-                ApiUtils.Try(_api.BuddyId, () => _api.InvokeUpdated(Time.deltaTime));
+                ApiUtils.Try(_api.BuddyId, _logger, () => _api.InvokeUpdated(Time.deltaTime));
 
                 while (_callbackQueue.TryDequeue(out var callback))
                 {
-                    ApiUtils.Try(_api.BuddyId, () => callback());
+                    ApiUtils.Try(_api.BuddyId, _logger, () => callback());
                 }
                 
                 // 最後の最後でスプライトの状態を更新する
@@ -167,13 +174,13 @@ namespace Baku.VMagicMirror.Buddy
             }
 
             _startCalled = true;
-            ApiUtils.Try(_api.BuddyId, () => _api.InvokeStarted());
+            ApiUtils.Try(_api.BuddyId, _logger, () => _api.InvokeStarted());
 
             // NOTE: 書いてる通りだが、Scriptの起動時にすでにアバターがロード済みだった場合、明示的にロードイベントのコールバックを呼ぶ。
             // ノリは MonoBehaviour.OnEnable に少し似てるが、Startより後で発火することには注意
             if (_api.AvatarLoadEventInternal.IsLoaded)
             {
-                ApiUtils.Try(_api.BuddyId, () => _api.AvatarLoadEventInternal.InvokeLoadedInternal());
+                ApiUtils.Try(_api.BuddyId, _logger, () => _api.AvatarLoadEventInternal.InvokeLoadedInternal());
             }
         }
         

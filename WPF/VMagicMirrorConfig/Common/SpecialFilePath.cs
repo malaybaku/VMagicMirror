@@ -78,6 +78,9 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public static bool IsAutoSaveFileExist() => File.Exists(AutoSaveSettingFilePath);
 
+        // NOTE: Unity側でのパス生成方法に揃えている。
+        public static string GetBuddyLogFilePath(string buddyId) 
+            => Path.Combine(LogFileDir, "Buddy", buddyId + ".txt");
 
     }
 }

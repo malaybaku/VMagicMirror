@@ -34,12 +34,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             if (!IsInDesignMode)
             {
-                WeakEventManager<BuddySettingModel, EventArgs>.AddHandler(_model, nameof(_model.BuddiesReloaded), OnBuddiesReloaded);
-                WeakEventManager<BuddySettingModel, BuddyDataEventArgs>.AddHandler(_model, nameof(_model.BuddyUpdated), OnBuddyUpdated);
+                WeakEventManager<BuddySettingModel, EventArgs>
+                    .AddHandler(_model, nameof(_model.BuddiesReloaded), OnBuddiesReloaded);
+                WeakEventManager<BuddySettingModel, BuddyDataEventArgs>
+                    .AddHandler(_model, nameof(_model.BuddyUpdated), OnBuddyUpdated);
+                WeakEventManager<BuddySettingModel, BuddyLogMessageEventArgs>
+                    .AddHandler(_model, nameof(_model.ReceivedLog), OnBuddyLogReceived);
                 OnBuddiesReloaded();
             }
         }
-
 
         private readonly BuddySettingModel _model;
         private readonly LayoutSettingModel _layoutSettingModel;
@@ -47,8 +50,25 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> EnableDeviceFreeLayout => _layoutSettingModel.EnableDeviceFreeLayout;
 
+        public string MainAvatarOutputActiveLabel
+        {
+            get
+            {
+                if (IsInDesignMode)
+                {
+                    return "メインアバターAPIを使用";
+                }
+
+                return FeatureLocker.FeatureLocked
+                    ? LocalizedString.GetString("Buddy_MainAvatarOutputActive_StandardEdition")
+                    : LocalizedString.GetString("Buddy_MainAvatarOutputActive_FullEdition");
+            }
+        }
 
         public RProperty<bool> MainAvatarOutputActive => _model.MainAvatarOutputActive;
+        public RProperty<bool> DeveloperModeActive => _model.DeveloperModeActive;
+        public RProperty<int> DeveloperModeLogLevel => _model.DeveloperModeLogLevel;
+
 
         private readonly ObservableCollection<BuddyItemViewModel> _items = new();
         public ReadOnlyObservableCollection<BuddyItemViewModel> Items { get; }        
@@ -84,6 +104,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _items.Insert(e.Index, item);
         }
 
+        private void OnBuddyLogReceived(object? sender, BuddyLogMessageEventArgs e)
+        {
+            // 例えば現在のログレベルが Error のときに Warning が飛んできたら無視する
+            if (e.BuddyLogLevel > _model.CurrentLogLevel)
+            {
+                return;
+            }
+
+            _items.FirstOrDefault(_items => _items.BuddyId == e.BuddyId)
+                ?.EnqueueLogMessage(e.Message);
+        }
+
         internal void ReloadBuddy(BuddyData buddy) => _model.ReloadBuddy(buddy);
 
         private void OpenBuddyFolder()
@@ -103,13 +135,20 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     /// <summary> 単一のBuddyの設定に対応するVM </summary>
     public class BuddyItemViewModel
     {
+        private const int LogMessageMaxCount = 10;
+
         private readonly BuddyData _buddyData;
 
         internal BuddyItemViewModel(BuddySettingsSender settingsSender, BuddyData buddyData)
         {
             _buddyData = buddyData;
+            LogMessages = new ReadOnlyObservableCollection<string>(_logMessages);
+
             ReloadCommand = new ActionCommand(() => ReloadRequested?.Invoke(_buddyData));
             ResetSettingsCommand = new ActionCommand(ResetSettingsAsync);
+            ClearLogCommand = new ActionCommand(ClearLog);
+            OpenLogFileCommand = new ActionCommand(OpenLogFile);
+
             Properties = buddyData.Properties
                 .Select(p => new BuddyPropertyViewModel(settingsSender, buddyData.Metadata, p))
                 .ToArray();
@@ -122,10 +161,30 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ReloadCommand { get; }
         public ActionCommand ResetSettingsCommand { get; }
 
+        public ActionCommand ClearLogCommand { get; }
+        public ActionCommand OpenLogFileCommand { get; }
+
         public IReadOnlyList<BuddyPropertyViewModel> Properties { get; }
 
+        public string BuddyId => FolderName;
         public string FolderName => _buddyData.Metadata.FolderName;
         public string DisplayName => _buddyData.Metadata.DisplayName;
+
+        // TODO: info以下 / warn / error以上 くらいで3色に分けたくなりそう。stringの書式ベースでView側で勝手にやるでもいいが
+        private readonly ObservableCollection<string> _logMessages = [];
+        public ReadOnlyObservableCollection<string> LogMessages { get; }
+
+        public void EnqueueLogMessage(BuddyLogMessage message)
+        {
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                _logMessages.Add(message.Message);
+                while (_logMessages.Count > LogMessageMaxCount)
+                {
+                    _logMessages.RemoveAt(0);
+                }
+            });
+        }
 
         private async void ResetSettingsAsync()
         {
@@ -148,6 +207,28 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 property.ResetToDefault();
             }
+        }
+
+        // NOTE: Enqueueとのタイミングを考えてBeginInvokeしてもいいが、まあいい加減に…
+        private void ClearLog() => _logMessages.Clear();
+
+        private void OpenLogFile()
+        {
+            var filePath = SpecialFilePath.GetBuddyLogFilePath(BuddyId);
+            if (!File.Exists(filePath))
+            {
+                var snackbarMessage = string.Format(
+                    LocalizedString.GetString("Snackbar_Buddy_LogFileNotFound_Format"),
+                    BuddyId
+                    );
+                SnackbarWrapper.Enqueue(snackbarMessage);
+                return;
+            }
+
+            Process.Start(new ProcessStartInfo(filePath)
+            {
+                UseShellExecute = true,
+            });
         }
     }
 }

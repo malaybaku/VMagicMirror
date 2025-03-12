@@ -126,7 +126,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             LargePointerController.Instance.Close();
             ModelResolver.Instance.Resolve<DeviceListSource>().Dispose();
             ModelResolver.Instance.Resolve<GameInputSettingModel>().SaveSettingToDefaultFile();
-            ModelResolver.Instance.Resolve<BuddySettingModel>().Save();
+            ModelResolver.Instance.Resolve<BuddySettingModel>().SaveBuddySettings();
 
             //UX的には再起動を意味する
             if (_appQuitSetting.SkipAutoSaveAndRestart)

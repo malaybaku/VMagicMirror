@@ -43,6 +43,8 @@
         public AccessorySetting? AccessorySetting { get; set; }
 
         public AutomationSetting? AutomationSetting { get; set; }
+
+        public BuddySetting? BuddySetting { get; set; }
     }
 
     //NOTE: メタデータ的にモデル名だけ読み込むときのシリアライズで使うクラスです

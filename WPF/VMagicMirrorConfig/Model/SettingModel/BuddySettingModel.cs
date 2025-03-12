@@ -4,7 +4,49 @@ using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
 {
-    public class BuddySettingModel
+    public record BuddyLogMessage(string BuddyId, string Message, int LogLevel)
+    {
+        public BuddyLogLevel Level
+        {
+            get
+            {
+                if (LogLevel >= (int)BuddyLogLevel.Fatal && LogLevel <= (int)BuddyLogLevel.Verbose)
+                {
+                    return (BuddyLogLevel)LogLevel;
+                }
+                else
+                {
+                    // 未知なので重大扱いに倒しておく
+                    return BuddyLogLevel.Fatal;
+                }
+            }
+        }
+    }
+
+    public class BuddyLogMessageEventArgs : EventArgs
+    {
+        public BuddyLogMessageEventArgs(BuddyLogMessage message) => Message = message;
+        public BuddyLogMessage Message { get; }
+
+        public string BuddyId => Message.BuddyId;
+        public string LogMessage => Message.Message;
+        public BuddyLogLevel BuddyLogLevel => Message.Level;
+    }
+
+    /// <summary> 特定のBuddyだけを再読み込みしたときに発火するイベントのデータ </summary>
+    public class BuddyDataEventArgs : EventArgs
+    {
+        public BuddyDataEventArgs(BuddyData data, int index)
+        {
+            BuddyData = data;
+            Index = index;
+        }
+
+        public BuddyData BuddyData { get; }
+        public int Index { get; }
+    }
+
+    internal class BuddySettingModel : SettingModelBase<BuddySetting>
     {
         public BuddySettingModel() : this(
             ModelResolver.Instance.Resolve<IMessageSender>(),
@@ -14,10 +56,21 @@ namespace Baku.VMagicMirrorConfig
         }
 
         internal BuddySettingModel(IMessageSender sender, BuddySettingsSender buddySettingsSender)
+            : base(sender)
         {
             _sender = sender;
             _buddySettingsSender = buddySettingsSender;
-            MainAvatarOutputActive = new RProperty<bool>(false, v => _buddySettingsSender.SetMainAvatarOutputActive(v));
+
+            var defaultSetting = BuddySetting.Default;
+            MainAvatarOutputActive = new RProperty<bool>(
+                defaultSetting.MainAvatarOutputActive, 
+                v => _buddySettingsSender.SetMainAvatarOutputActive(v));
+            DeveloperModeActive = new RProperty<bool>(
+                defaultSetting.DeveloperModeActive,
+                v => _buddySettingsSender.SetDeveloperModeActive(v));
+            DeveloperModeLogLevel = new RProperty<int>(
+                defaultSetting.DeveloperModeLogLevel,
+                v => _buddySettingsSender.SetDeveloperModeLogLevel(v));
         }
 
         private readonly IMessageSender _sender;
@@ -29,10 +82,24 @@ namespace Baku.VMagicMirrorConfig
         /// <summary> 特定のBuddyだけを読み込み直したとき、Buddiesの内訳が更新されてから発火する </summary>
         public event EventHandler<BuddyDataEventArgs>? BuddyUpdated;
 
-        public RProperty<bool> MainAvatarOutputActive { get; }
+        /// <summary>
+        /// Buddyのログが送られてくると発火する。
+        /// NOTE: モデルはデータを保持しない == Buddy関連のビューがもし閉じるならエラー履歴は消えてもよい事にしている
+        /// </summary>
+        public event EventHandler<BuddyLogMessageEventArgs>? ReceivedLog;
 
-        private List<BuddyData> _buddies = new();
+        public RProperty<bool> DeveloperModeActive { get; }
+        public RProperty<bool> MainAvatarOutputActive { get; }
+        public RProperty<int> DeveloperModeLogLevel { get; }
+
+        // NOTE: 開発者モードが無効な場合、セーブしてある設定は無視する
+        public BuddyLogLevel CurrentLogLevel => DeveloperModeActive.Value
+            ? (BuddyLogLevel)DeveloperModeLogLevel.Value
+            : BuddyLogLevel.Fatal;
+
+        private List<BuddyData> _buddies = [];
         public IReadOnlyList<BuddyData> Buddies => _buddies;
+
 
         /// <summary>
         /// アプリケーションの起動時に一回呼ぶことで、<see cref="Buddies"/>にちゃんとしたデータが入った状態にする
@@ -102,7 +169,7 @@ namespace Baku.VMagicMirrorConfig
         /// <summary>
         /// アプリケーションの終了時に呼ぶことで、現在<see cref="Buddies"/>にある編集済みのプロパティ値を保存する
         /// </summary>
-        public void Save()
+        public void SaveBuddySettings()
             => BuddySaveDataRepository.SaveSetting(MainAvatarOutputActive.Value, _buddies, SpecialFilePath.BuddySettingsFilePath);
 
         public BuddyProperty? FindProperty(string buddyId, string name)
@@ -111,6 +178,21 @@ namespace Baku.VMagicMirrorConfig
                 .FirstOrDefault(b => b.Metadata.FolderName == buddyId)
                 ?.Properties
                 ?.FirstOrDefault(p => p.Metadata.Name == name);
+        }
+
+        public void NotifyBuddyLog(BuddyLogMessage log)
+            => ReceivedLog?.Invoke(this, new BuddyLogMessageEventArgs(log));
+
+        public override void ResetToDefault()
+        {
+            // TODO: Buddyのプロパティのリセットはしない、理由は2つ
+            // - 内部挙動として、各Buddyの設定はメインの設定ファイルとは別である
+            // - UIとして、Buddyのプロパティは各Buddyごとにリセットするほうが望ましいはず
+
+            var defaultSetting = BuddySetting.Default;
+            MainAvatarOutputActive.Value = defaultSetting.MainAvatarOutputActive;
+            DeveloperModeActive.Value = defaultSetting.DeveloperModeActive;
+            DeveloperModeLogLevel.Value = defaultSetting.DeveloperModeLogLevel;
         }
 
         private void Load(BuddySaveData data)
@@ -190,18 +272,5 @@ namespace Baku.VMagicMirrorConfig
         
         private void DisableBuddy(BuddyMetadata buddy)
             => _sender.SendMessage(MessageFactory.Instance.BuddyDisable(buddy.FolderPath));
-    }
-
-    /// <summary> 特定のBuddyだけを再読み込みしたときに発火するイベントのデータ </summary>
-    public class BuddyDataEventArgs : EventArgs
-    {
-        public BuddyDataEventArgs(BuddyData data, int index) : base()
-        {
-            BuddyData = data;
-            Index = index;
-        }
-
-        public BuddyData BuddyData { get; }
-        public int Index { get; }
     }
 }

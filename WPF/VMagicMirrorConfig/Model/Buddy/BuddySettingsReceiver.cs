@@ -36,6 +36,9 @@ namespace Baku.VMagicMirrorConfig
                     case ReceiveMessageNames.NotifyBuddy3DLayout:
                         TrySetBuddy3DLayout(e.Args);
                         break;
+                    case ReceiveMessageNames.NotifyBuddyLog:
+                        SetBuddyLog(e.Args);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -84,6 +87,15 @@ namespace Baku.VMagicMirrorConfig
 
             property.Value.Transform3DValue = message.Transform3DValue;
             property.NotifyTransform3DUpdated();
+        }
+
+        private void SetBuddyLog(string json)
+        {
+            var msg = JsonConvert.DeserializeObject<BuddyLogMessage>(json);
+            if (msg != null)
+            {
+                _buddySettingModel.NotifyBuddyLog(msg);
+            }
         }
     }
 }

@@ -91,5 +91,11 @@ namespace Baku.VMagicMirrorConfig
 
         public void SetMainAvatarOutputActive(bool v)
             => _sender.SendMessage(MessageFactory.Instance.BuddySetMainAvatarOutputActive(v));
+
+        public void SetDeveloperModeActive(bool v)
+            => _sender.SendMessage(MessageFactory.Instance.BuddySetDeveloperModeActive(v));
+
+        public void SetDeveloperModeLogLevel(int v)
+            => _sender.SendMessage(MessageFactory.Instance.BuddySetDeveloperModeLogLevel(v));
     }
 }

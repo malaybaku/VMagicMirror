@@ -152,6 +152,7 @@ namespace Baku.VMagicMirrorConfig
                 ExternalTrackerSetting = _model.ExternalTracker.Save(),
                 AccessorySetting = _model.Accessory.Save(),
                 AutomationSetting = _model.Automation.Save(),
+                BuddySetting = _model.Buddy.Save(),
             };
 
             saveData.LastLoadedVrmName =
@@ -233,6 +234,7 @@ namespace Baku.VMagicMirrorConfig
                     _model.VMCP.Load(saveData.VMCPSetting);
                     _model.ExternalTracker.Load(saveData.ExternalTrackerSetting);
                     _model.Accessory.Load(saveData.AccessorySetting);
+                    _model.Buddy.Load(saveData.BuddySetting);
 
                     //固定スロットからロード/セーブする場合にオートメーション設定をいじってしまうと
                     //「オートメーションで設定変えたらオートメーションがオフになって反応しなくなった」という珍事が起きる。ポート番号が変わる場合も同様。

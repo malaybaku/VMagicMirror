@@ -223,7 +223,17 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 
     <sys:String x:Key="Buddy_Item_Reload">再読み込み</sys:String>
     <sys:String x:Key="Buddy_Item_FolderName">フォルダ名: </sys:String>
-    
+
+    <sys:String x:Key="Buddy_MainAvatarOutputActive_StandardEdition">メインアバターAPIを使用 (Standard Editionでオンにするとエフェクトがかかります)</sys:String>
+    <sys:String x:Key="Buddy_MainAvatarOutputActive_FullEdition">メインアバターAPIを使用 (通常はオンにします)</sys:String>
+
+    <sys:String x:Key="Buddy_DeveloperMode">開発者モード</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_Instruction" xml:space="preserve">開発者モードをオンにした状態でサブキャラを起動すると、
+スクリプトの実行時エラーのより詳しい情報がログファイルに出力できるようになります。
+</sys:String>
+    <sys:String x:Key="Buddy_DeveloperMode_LogLevel">ログの詳細度: </sys:String>
+    <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">ログファイルを開く</sys:String>
+ 
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">色を編集 (クリックで展開)</sys:String>
     
@@ -786,6 +796,7 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">選択されたマイクの接続を検出しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">選択されたカメラの接続を検出しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">動きかたのオプションを「デフォルト」に変更しました</sys:String>    
+    <sys:String x:Key="Snackbar_Buddy_LogFileNotFound_Format">指定したサブキャラのログファイルは存在しません: {0}</sys:String>
     
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(何もしない)</sys:String>

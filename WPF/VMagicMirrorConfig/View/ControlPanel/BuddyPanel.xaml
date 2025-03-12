@@ -40,12 +40,11 @@
                                 Command="{Binding ResetCommand}"
                                 />-->
                     </Grid>
-                    
+
                     <TextBlock Margin="15,5" 
                                 Text="{DynamicResource Buddy_Instruction}"/>
 
-                    <!-- TODO: 文言調整 -->
-                    <CheckBox Content="メインアバターAPIを使用 (Standard Editionでオンにするとエフェクトがかかります)"
+                    <CheckBox Content="{Binding MainAvatarOutputActiveLabel}"
                               IsChecked="{Binding MainAvatarOutputActive.Value}"                              
                               />
 
@@ -95,8 +94,51 @@
                                   Content="{DynamicResource Layout_DeviceFreeLayout}"
                                   IsChecked="{Binding EnableDeviceFreeLayout.Value}"
                                   />
+
+                        <CheckBox HorizontalAlignment="Right"
+                                  Margin="10,0"
+                                  Content="{DynamicResource Buddy_DeveloperMode}"
+                                  IsChecked="{Binding DeveloperModeActive.Value}"
+                                  />
                     </Grid>
 
+                    <Border Style="{StaticResource SectionBorder}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Style="{StaticResource HeaderText}"
+                                       Margin="10"
+                                       Text="{DynamicResource Buddy_DeveloperMode}"
+                                       />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"                               
+                                       Text="{DynamicResource Buddy_DeveloperMode_Instruction}"
+                                       />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                       Text="{DynamicResource Buddy_DeveloperMode_LogLevel}"
+                                       />
+
+                            <ComboBox Grid.Row="2" Grid.Column="1"
+                                      HorizontalAlignment="Left"
+                                      Width="100"
+                                      ItemsSource="{Binding AvailableLogLevelNames}"
+                                      SelectedIndex="{Binding DeveloperModeLogLevel.Value}"
+                                      />
+                        </Grid>
+                    </Border>
+
+                    
                     <Border Margin="5"
                             BorderBrush="{StaticResource MaterialDesignToolForeground}"
                             BorderThickness="1">

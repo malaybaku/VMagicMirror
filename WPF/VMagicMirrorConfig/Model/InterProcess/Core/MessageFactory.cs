@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
+// NOTE: 「static memberにできます」の警告が出るが、ここは意図してinstance memberなので無視しとく
+#pragma warning disable CA1822
+
 namespace Baku.VMagicMirrorConfig
 {
     class MessageFactory
@@ -357,7 +360,9 @@ namespace Baku.VMagicMirrorConfig
         #region Buddy
 
         public Message BuddySetMainAvatarOutputActive(bool active) => WithArg(active);
-        
+        public Message BuddySetDeveloperModeActive(bool active) => WithArg(active);
+        public Message BuddySetDeveloperModeLogLevel(int level) => WithArg(level);
+
         // NOTE: 単にon/offすることに加え、同一folderを立て続けにDisable => Enableすると実質リロードとして動くのも期待してる
         public Message BuddyDisable(string folder) => WithArg(folder);
         public Message BuddyEnable(string folder) => WithArg(folder);
@@ -419,8 +424,10 @@ namespace Baku.VMagicMirrorConfig
 
         public Message OpenVRoidSdkUi() => NoArg();
         public Message RequestLoadVRoidWithId(string modelId) => WithArg(modelId);
- 
+
         #endregion
 
     }
 }
+
+#pragma warning restore CA1822

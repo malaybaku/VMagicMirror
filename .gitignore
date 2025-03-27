@@ -78,6 +78,7 @@ sysinfo.txt
 /VMagicMirror/Assets/uOSC/
 /VMagicMirror/Assets/NuGet/
 /VMagicMirror/Assets/NuGetPackages/
+/VMagicMirror/Assets/CSharpScripting/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
 /VMagicMirror/Assets/OpenCVforUnity.meta
@@ -105,6 +106,7 @@ sysinfo.txt
 /VMagicMirror/uWindowCapture.log
 /VMagicMirror/Assets/NuGet.meta
 /VMagicMirror/Assets/NuGetPackages.meta
+/VMagicMirror/Assets/CSharpScripting.meta
 
 
 # Assets to ignore (from BOOTH)

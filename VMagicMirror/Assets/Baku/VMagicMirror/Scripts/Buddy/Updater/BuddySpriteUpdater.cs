@@ -1,3 +1,4 @@
+using System;
 using Baku.VMagicMirror.Buddy.Api;
 using UnityEngine;
 using Zenject;
@@ -141,16 +142,15 @@ namespace Baku.VMagicMirror.Buddy
                 // 通らないはずだけど一応
                 return (pose, transition);
             }
-            
-            if (transition.Style == Sprite2DTransitionStyle.Immediate)
+
+            if (transition.Style is Sprite2DTransitionStyle.Immediate)
             {
                 instance.SetTexture(transition.UnAppliedTextureKey);
                 return (pose, BuddySprite2DInstanceTransition.None);
             }
-            
-            // TEMP: LeftFlipだけ実装してある。、ホントはRightFlipとかy=0を軸に倒す実装も欲しいいったん常にLeftFlip
-            transition.Time += deltaTime;
 
+            // 時刻経過の考え方 + 終端まで行ったらNoneになること等は共通なのでここで処理しとく
+            transition.Time += deltaTime;
             if (transition.IsCompleted)
             {
                 if (transition.HasUnAppliedTextureKey)
@@ -160,6 +160,29 @@ namespace Baku.VMagicMirror.Buddy
                 return (pose, BuddySprite2DInstanceTransition.None);
             }
             
+            switch (transition.Style)
+            {
+                case Sprite2DTransitionStyle.LeftFlip:
+                    return DoHorizontalFlipTransition(instance, pose, transition, true);
+                case Sprite2DTransitionStyle.RightFlip:
+                    return DoHorizontalFlipTransition(instance, pose, transition, false);
+                case Sprite2DTransitionStyle.BottomFlip:
+                    return DoBottomFlipTransition(instance, pose, transition);
+                case Sprite2DTransitionStyle.None:
+                case Sprite2DTransitionStyle.Immediate:
+                    // 実装ミスでのみ通過する(すでにガードしてあるので)
+                    throw new InvalidOperationException();
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private (EffectAppliedPose, BuddySprite2DInstanceTransition) DoHorizontalFlipTransition(
+            BuddySprite2DInstance instance,
+            EffectAppliedPose pose,
+            BuddySprite2DInstanceTransition transition,
+            bool isLeft)
+        {
             // NOTE: 計算が凝っているのは、world space UIでカメラに対してUIが垂直になって隠れる角度が90度であることが保証されないため
             // NOTE: 移動しながらこの計算して合わせに行くと見えがキモいかもなので注意
             var cameraToInstance =
@@ -169,9 +192,12 @@ namespace Baku.VMagicMirror.Buddy
             // NOTE: なぜか0.5倍するといい感じになるが、幾何的になぜコレでいいのかが分かってない…ちゃんと理解したい
             var additionalAngle = 0.5f * Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
 
+            var yawFactor = isLeft ? 1f : -1f;
+            
             if (transition.Rate < 0.5f)
             {
                 var yaw = (90f + additionalAngle) * (transition.Rate / 0.5f);
+                yaw *= yawFactor;
                 return (pose.AddRot(pose.Rot * Quaternion.Euler(0, yaw, 0)), transition);
             }
             else
@@ -184,8 +210,57 @@ namespace Baku.VMagicMirror.Buddy
 
                 // NOTE: 0 .. 90deg 付近から -90degにジャンプして-90 .. 0 に進める感じ
                 var yaw = Mathf.Lerp(additionalAngle - 90f, 0, (transition.Rate - 0.5f) * 2f);
+                yaw *= yawFactor;
                 return (pose.AddRot(pose.Rot * Quaternion.Euler(0, yaw, 0)), transition);
-            }            
+            }
+        }
+
+        private (EffectAppliedPose, BuddySprite2DInstanceTransition) DoBottomFlipTransition(
+            BuddySprite2DInstance instance,
+            EffectAppliedPose pose,
+            BuddySprite2DInstanceTransition transition)
+        {
+            // NOTE: BottomFlipもHorizontalと同じく「カメラから見えなくなる角度に倒す」という計算をする
+            var cameraToInstance =
+                _mainCamera.transform.InverseTransformPoint(instance.transform.position).normalized;
+            cameraToInstance.x = 0f;
+            var dir = cameraToInstance.normalized;
+            var additionalAngle = -Mathf.Atan2(dir.y, dir.z) * Mathf.Rad2Deg;
+
+            var rotAngle = 90f + additionalAngle;
+            if (transition.Rate < 0.45f)
+            {
+                var easeRate = transition.Rate / 0.45f;
+                //var pitch = rotAngle * easeRate;
+                var pitch = rotAngle * EaseInBack(easeRate);
+                return (pose.AddRot(pose.Rot * Quaternion.Euler(pitch, 0, 0)), transition);
+            }
+            else if (transition.Rate < 0.55f)
+            {
+                //倒れきった状態でキープ
+                return (pose.AddRot(pose.Rot * Quaternion.Euler(rotAngle, 0, 0)), transition);
+            }
+            else
+            {
+                if (transition.HasUnAppliedTextureKey)
+                {
+                    instance.SetTexture(transition.UnAppliedTextureKey);
+                    transition.UnAppliedTextureKey = "";
+                }
+
+                // 冒頭の動きをひっくり返したやつ
+                var easeRate = (1 - transition.Rate) / 0.45f;
+                //var pitch = rotAngle * easeRate;
+                var pitch = rotAngle * EaseInBack(easeRate);
+                return (pose.AddRot(pose.Rot * Quaternion.Euler(pitch, 0, 0)), transition);
+            }
+        }
+
+        private static float EaseInBack(float x)
+        {
+            const float c1 = 1.70158f;
+            const float c3 = c1 + 1;
+            return x * x * (c3 * x - c1);
         }
     }
 }

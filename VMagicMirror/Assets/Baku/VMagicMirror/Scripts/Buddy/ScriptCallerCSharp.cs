@@ -36,7 +36,6 @@ namespace Baku.VMagicMirror.Buddy
         public ScriptCallerCSharp(
             string entryScriptPath,
             BuddySettingsRepository settings,
-            BuddyMessageSender messageSender,
             BuddySpriteCanvas spriteCanvas,
             ApiImplementBundle apiImplementBundle,
             IFactory<RootApi, ScriptEventInvokerCSharp> scriptEventInvokerFactory
@@ -99,7 +98,9 @@ namespace Baku.VMagicMirror.Buddy
             }
             catch (Exception ex)
             {
-                // NOTE: エラーそのもの + 「最初のロードでコケてますよ」の2トピックがある…という扱いにしたいので2回ログする流れになっている
+                // NOTE:
+                // - エラーそのもの + 「最初のロードでコケてますよ」の2トピックがある…という扱いにしたいので2回ログを取る
+                // - 非開発者に対してはエラーそのものの内容がWPF側に表示されるのが期待値
                 _logger.LogRuntimeException(BuddyId, ex);
                 _logger.Log(BuddyId, "Failed to load script at:" + EntryScriptPath, BuddyLogLevel.Fatal);
             }

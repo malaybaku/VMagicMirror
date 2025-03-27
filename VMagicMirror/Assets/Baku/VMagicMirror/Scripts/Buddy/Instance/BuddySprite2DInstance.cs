@@ -10,7 +10,9 @@ namespace Baku.VMagicMirror.Buddy
 {
     public struct BuddySprite2DInstanceTransition
     {
-        private const float TransitionDuration = 2f;
+        // TODO: Transitionの種類によってDurationを変えたい
+        // そもそも引数で受け取れるようにせい、ということかもしれないが
+        private const float TransitionDuration = 0.8f;
 
         public Sprite2DTransitionStyle Style { get; set; }
         public float Time { get; set; }

@@ -4,9 +4,11 @@ namespace VMagicMirror.Buddy
 
     /// <summary>
     /// <see cref="IAvatarFacial"/>などで適用されることのあるブレンドシェイプ名のうち、
-    /// 特にVRM1.0で定義されているプリセット表情の名称を定義したクラスです。
-    /// 
+    /// VRM1.0 の標準として定義されるブレンドシェイプの名称を定義したクラスです。
     /// </summary>
+    /// <remarks>
+    /// VRM1.0 の標準以外のブレンドシェイプとしては、パーフェクトシンクに関するブレンドシェイプ名が <see cref="PerfectSyncBlendShapeNames"/> で定義されています。
+    /// </remarks>
     public static class BlendShapePresetNames
     {
         public static string Happy { get; } = ToCamelCase(nameof(Happy));

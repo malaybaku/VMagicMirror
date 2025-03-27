@@ -29,11 +29,11 @@ namespace Baku.VMagicMirror
                 );
 
             _developerModeActive.CombineLatest(
-                    _developerModeLogLevel,
-                    (isDeveloperMode, logLevel) =>
-                        isDeveloperMode && logLevel >= (int)BuddyLogLevel.Fatal && logLevel <= (int)BuddyLogLevel.Verbose 
-                            ? (BuddyLogLevel)logLevel 
-                            : BuddyLogLevel.Fatal)
+                _developerModeLogLevel,
+                (isDeveloperMode, logLevel) =>
+                    isDeveloperMode && logLevel >= (int)BuddyLogLevel.Fatal && logLevel <= (int)BuddyLogLevel.Verbose 
+                        ? (BuddyLogLevel)logLevel 
+                        : BuddyLogLevel.Fatal)
                 .Subscribe(level => _logLevel.Value = level)
                 .AddTo(this);
 

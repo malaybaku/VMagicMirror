@@ -1,13 +1,5 @@
 namespace VMagicMirror.Buddy
 {
-    public enum Sprite2DTransitionStyle
-    {
-        None = 0,
-        Immediate = 1,
-        LeftFlip = 2,
-        RightFlip = 3,
-    }
-    
     public interface ISprite2D
     {
         /// <summary> 位置や回転などの、オブジェクトの基本的な配置に関するAPIを取得します。 </summary>

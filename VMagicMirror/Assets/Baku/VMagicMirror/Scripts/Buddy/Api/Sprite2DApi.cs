@@ -4,12 +4,17 @@ using BuddyApi = VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
+    // NOTE: 内部のコードでAPI用の型を見に行かないで済むように二重定義している
+    /// <summary>
+    /// <see cref="BuddyApi.Sprite2DTransitionStyle"/> と同じやつ
+    /// </summary>
     public enum Sprite2DTransitionStyle
     {
         None = 0,
         Immediate = 1,
         LeftFlip = 2,
         RightFlip = 3,
+        BottomFlip = 4,
     }
 
     public class Sprite2DApi : ISprite2D
@@ -55,7 +60,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             {
                 var fullPath = GetFullPath(path);
                 var clamped = UnityEngine.Mathf.Clamp(
-                    (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.RightFlip
+                    (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.BottomFlip
                 );
 
                 var loadResult = _instance.Show(fullPath, (Sprite2DTransitionStyle)clamped);

@@ -67,11 +67,12 @@ namespace Baku.VMagicMirror.Buddy
         
         public void Log(string text)
         {
-            // ※エディタ実行時に「ファイル出力 + ログ出力する」にするのもアリ
+            // NOTE:
+            // エディタで気軽に見れるようにエディタコンソールにも出力する。
+            // そのうえでファイルI/Oの挙動はビルドに準じたいので、ファイルにも出力しておく
             if (Application.isEditor)
             {
                 Debug.Log($"[Buddy:{_fileName}] {text}");
-                return;
             }
 
             if (!File.Exists(_filePath))

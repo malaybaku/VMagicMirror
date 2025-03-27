@@ -16,10 +16,9 @@ namespace Baku.VMagicMirror
 
             // NOTE: BuddyLoggerを経由せずにFileLoggerを使うのは今のところ想定ユースケースがないので禁止している
             Container.Bind<BuddyFileLogger>().AsSingle().WhenInjectedInto<BuddyLogger>();
-            Container.Bind<BuddyLogger>().AsSingle();
+            Container.BindInterfacesAndSelfTo<BuddyLogger>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<BuddySettingsRepository>().AsSingle();
-            Container.Bind<BuddyMessageSender>().AsSingle();
             Container.Bind<BuddyPropertyRepository>().AsSingle();
             Container.Bind<BuddyLayoutRepository>().AsSingle();
             Container.Bind<BuddyManifestTransformInstanceRepository>().AsSingle();

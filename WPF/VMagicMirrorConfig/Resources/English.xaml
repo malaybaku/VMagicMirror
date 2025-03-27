@@ -223,10 +223,17 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Buddy_Item_Reload">Reload</sys:String>
     <sys:String x:Key="Buddy_Item_FolderName">Folder: </sys:String>
 
+    <sys:String x:Key="Buddy_Log_FatalError">Fatal Error Happened!</sys:String>
+
     <sys:String x:Key="Buddy_DeveloperMode">Developer Mode</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_Enabled">Developer Mode is Enabled</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_Instruction" xml:space="preserve">When buddies starts after Developer Mode is enabled,
-they outputs more detailed log information to the log file.
+more detailed log information will be written to the log file.
+
+*Log data may not be appear when there are too many logs.
+Please open the log file of the buddy to confirm actual logs in this case.
 </sys:String>
+    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">About Developer Mode…</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_LogLevel">Log Level</sys:String>
     <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">Open Log File</sys:String>
 
@@ -782,6 +789,7 @@ This operation will disable VMCP data send and receive if they are active.
 Detailed settings about VMCP send and receive is kept after the tab is hidden.</sys:String>     
     
     <!-- Snackbar Messages -->
+    <sys:String x:Key="Snackbar_General_TextCopied">Copied to Clipboard</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">Selected Camera Detected: {0}</sys:String>    

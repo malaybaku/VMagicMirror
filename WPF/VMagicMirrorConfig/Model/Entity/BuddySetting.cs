@@ -17,6 +17,15 @@
         Verbose = 4,
     }
 
+    public static class BuddyLogLevelExtension
+    {
+        public static bool IsMoreSevereThan(this BuddyLogLevel level, BuddyLogLevel other)
+            => level < other;
+
+        public static bool IsEqualOrMoreSevereThan(this BuddyLogLevel level, BuddyLogLevel other)
+            => level <= other;
+    }
+
     public class BuddySetting : SettingEntityBase
     {
         public bool MainAvatarOutputActive { get; set; }

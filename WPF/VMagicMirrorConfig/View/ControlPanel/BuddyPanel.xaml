@@ -102,7 +102,8 @@
                                   />
                     </Grid>
 
-                    <Border Style="{StaticResource SectionBorder}">
+                    <Border Style="{StaticResource SectionBorder}"
+                            Visibility="{Binding DeveloperModeActive.Value, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -116,9 +117,19 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
+                            <Button Grid.Row="0" Grid.RowSpan="4"
+                                    Grid.Column="0" Grid.ColumnSpan="2"
+                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="5"
+                                    Command="{Binding OpenDeveloperModeDocUrlCommand}"
+                                    Content="{DynamicResource Buddy_DeveloperMode_SeeMore}"
+                                    />
+
                             <TextBlock Style="{StaticResource HeaderText}"
                                        Margin="10"
-                                       Text="{DynamicResource Buddy_DeveloperMode}"
+                                       Text="{DynamicResource Buddy_DeveloperMode_Enabled}"
                                        />
 
                             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"                               

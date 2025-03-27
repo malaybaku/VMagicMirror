@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             OpenBuddyFolderCommand = new ActionCommand(OpenBuddyFolder);
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
+            OpenDeveloperModeDocUrlCommand = new ActionCommand(OpenDeveloperDocUrl);
             ReloadAllCommand = new ActionCommand(() => _model.ReloadAll());
 
             if (!IsInDesignMode)
@@ -40,10 +42,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     .AddHandler(_model, nameof(_model.BuddyUpdated), OnBuddyUpdated);
                 WeakEventManager<BuddySettingModel, BuddyLogMessageEventArgs>
                     .AddHandler(_model, nameof(_model.ReceivedLog), OnBuddyLogReceived);
+
+                _model.DeveloperModeActive.AddWeakEventHandler(OnModelDeveloperModeChanged);
                 OnBuddiesReloaded();
             }
         }
-
         private readonly BuddySettingModel _model;
         private readonly LayoutSettingModel _layoutSettingModel;
         private readonly BuddySettingsSender _buddySettingsSender;
@@ -73,8 +76,17 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly ObservableCollection<BuddyItemViewModel> _items = new();
         public ReadOnlyObservableCollection<BuddyItemViewModel> Items { get; }        
 
+        public string[] AvailableLogLevelNames { get; } = [
+            "Fatal",
+            "Error",
+            "Warning",
+            "Info", 
+            "Verbose",
+        ];
+
         public ActionCommand OpenBuddyFolderCommand { get; }
         public ActionCommand OpenDocUrlCommand { get; }
+        public ActionCommand OpenDeveloperModeDocUrlCommand { get; }
         public ActionCommand ReloadAllCommand { get; }
 
         private void OnBuddiesReloaded(object? sender, EventArgs e) => OnBuddiesReloaded();
@@ -89,6 +101,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             foreach (var buddy in _model.Buddies)
             {
                 var item = new BuddyItemViewModel(_buddySettingsSender, buddy);
+                item.SetDeveloperModeActive(DeveloperModeActive.Value);
                 item.ReloadRequested += ReloadBuddy;
                 _items.Add(item);
             }
@@ -116,7 +129,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 ?.EnqueueLogMessage(e.Message);
         }
 
-        internal void ReloadBuddy(BuddyData buddy) => _model.ReloadBuddy(buddy);
+        public void ReloadBuddy(BuddyData buddy) => _model.ReloadBuddy(buddy);
+
+        private void OnModelDeveloperModeChanged(object? sender, PropertyChangedEventArgs args)
+        {
+            foreach(var item in _items)
+            {
+                item.SetDeveloperModeActive(DeveloperModeActive.Value);
+            }
+        }
 
         private void OpenBuddyFolder()
         {
@@ -130,6 +151,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         private void OpenDocUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_buddy"));
+        private void OpenDeveloperDocUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_buddy_developer"));
     }
 
     /// <summary> 単一のBuddyの設定に対応するVM </summary>
@@ -142,25 +164,42 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         internal BuddyItemViewModel(BuddySettingsSender settingsSender, BuddyData buddyData)
         {
             _buddyData = buddyData;
-            LogMessages = new ReadOnlyObservableCollection<string>(_logMessages);
+            LogMessages = new ReadOnlyObservableCollection<BuddyLogMessage>(_logMessages);
 
             ReloadCommand = new ActionCommand(() => ReloadRequested?.Invoke(_buddyData));
             ResetSettingsCommand = new ActionCommand(ResetSettingsAsync);
+
+            CopyLogMessageCommand = new ActionCommand(CopyLogMessage);
             ClearLogCommand = new ActionCommand(ClearLog);
             OpenLogFileCommand = new ActionCommand(OpenLogFile);
 
             Properties = buddyData.Properties
                 .Select(p => new BuddyPropertyViewModel(settingsSender, buddyData.Metadata, p))
                 .ToArray();
+
+            // NOTE: 普通のRxならもっとシンプルに書けるけど、まあコレでも困らないので…
+            IsDeveloperMode.PropertyChanged += (_, __) => HasNonDeveloperError.Value = !IsDeveloperMode.Value && CurrentFatalError.Value != null;
+            CurrentFatalError.PropertyChanged += (_, __) => HasNonDeveloperError.Value = !IsDeveloperMode.Value && CurrentFatalError.Value != null;
         }
 
         public event Action<BuddyData>? ReloadRequested;
 
         public RProperty<bool> IsActive => _buddyData.IsActive;
 
+        public RProperty<bool> IsDeveloperMode { get; } = new(false);
+        
+        // trueの場合、サブキャラのタイトルバー的な部分がエラー表示になる
+        public RProperty<bool> HasError { get; } = new(false);
+
+        // これがtrue、かつ開発者モードがオフの場合、非開発者向けのエラー表示を行う
+        public RProperty<bool> HasNonDeveloperError { get; } = new(false);
+
+        private BuddyLogLevel _mostSevereErrorLevel = BuddyLogLevel.Verbose;
+
         public ActionCommand ReloadCommand { get; }
         public ActionCommand ResetSettingsCommand { get; }
 
+        public ActionCommand CopyLogMessageCommand { get; }
         public ActionCommand ClearLogCommand { get; }
         public ActionCommand OpenLogFileCommand { get; }
 
@@ -171,19 +210,50 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public string DisplayName => _buddyData.Metadata.DisplayName;
 
         // TODO: info以下 / warn / error以上 くらいで3色に分けたくなりそう。stringの書式ベースでView側で勝手にやるでもいいが
-        private readonly ObservableCollection<string> _logMessages = [];
-        public ReadOnlyObservableCollection<string> LogMessages { get; }
+        private readonly ObservableCollection<BuddyLogMessage> _logMessages = [];
+        public ReadOnlyObservableCollection<BuddyLogMessage> LogMessages { get; }
+
+        /// <summary> 非開発者に表示する想定の重大エラー </summary>
+        public RProperty<BuddyLogMessage?> CurrentFatalError { get; } = new(null);
+
+        public void SetDeveloperModeActive(bool active)
+        {
+            IsDeveloperMode.Value = active;
+            UpdateHasError();
+        }
+
 
         public void EnqueueLogMessage(BuddyLogMessage message)
         {
+            // NOTE: Fatal Errorはクリアしないと更新されない。
+            // これはログがコロコロ変わるのを防ぐのと、最初のエラーが一番怪しいよねというヒューリスティックも踏まえた処置
+            if (message.Level is BuddyLogLevel.Fatal &&
+                (CurrentFatalError.Value == null || CurrentFatalError.Value.Level < BuddyLogLevel.Fatal))
+            {
+                CurrentFatalError.Value = message;
+            }
+
+            // NOTE: エラーのserverityはClearしない限りは下がらない
+            _mostSevereErrorLevel = message.Level.IsMoreSevereThan(_mostSevereErrorLevel) ? message.Level : _mostSevereErrorLevel;
+            UpdateHasError();
+
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                _logMessages.Add(message.Message);
+                _logMessages.Add(message);
                 while (_logMessages.Count > LogMessageMaxCount)
                 {
                     _logMessages.RemoveAt(0);
                 }
             });
+        }
+
+        private void UpdateHasError()
+        {
+            // 書いてる通りではあるが、開発者モードでは「Fatalではないがスクリプトから自己申告したエラー」もエラーと見なす
+            var threshold = IsDeveloperMode.Value
+                ? BuddyLogLevel.Error
+                : BuddyLogLevel.Fatal;
+            HasError.Value = _mostSevereErrorLevel.IsEqualOrMoreSevereThan(threshold);
         }
 
         private async void ResetSettingsAsync()
@@ -209,8 +279,34 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
+        private void CopyLogMessage()
+        {
+            if (IsDeveloperMode.Value)
+            {
+                if (_logMessages.Count > 0)
+                {
+                    Clipboard.SetText(string.Join("\n", _logMessages.Select(m => m.Message)));
+                    SnackbarWrapper.Enqueue(LocalizedString.GetString("Snackbar_General_TextCopied"));
+                }
+            }
+            else
+            {
+                if (CurrentFatalError.Value != null)
+                {
+                    Clipboard.SetText(CurrentFatalError.Value.Message);
+                    SnackbarWrapper.Enqueue(LocalizedString.GetString("Snackbar_General_TextCopied"));
+                }
+            }
+        }
+
         // NOTE: Enqueueとのタイミングを考えてBeginInvokeしてもいいが、まあいい加減に…
-        private void ClearLog() => _logMessages.Clear();
+        private void ClearLog()
+        {
+            _logMessages.Clear();
+            _mostSevereErrorLevel = BuddyLogLevel.Verbose;
+            CurrentFatalError.Value = null;
+            HasError.Value = false;
+        }
 
         private void OpenLogFile()
         {

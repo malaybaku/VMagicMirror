@@ -14,6 +14,7 @@
              d:DesignHeight="370" d:DesignWidth="400">
     <UserControl.Resources>
         <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
+        <view:BuddyLogLevelToForegroundConverter x:Key="BuddyLogLevelToForegroundConverter"/>
         <view:BuddyPropertyDataTemplateSelector x:Key="BuddyPropertyDataTemplateSelector">
             <!-- TODO: Template達の見た目はどこかで整形せねばならん… -->
             <view:BuddyPropertyDataTemplateSelector.BoolTemplate>
@@ -204,7 +205,6 @@
     <StackPanel>
 
         <ToggleButton 
-            Style="{StaticResource MahApps.Styles.Button}"
             d:IsChecked="True"
             x:Name="ExpanderToggle"
             ma:ControlsHelper.CornerRadius="0"
@@ -219,24 +219,38 @@
             Padding="0"                       
             md:ButtonAssist.CornerRadius="0"
             >
+            <ToggleButton.Style>
+                <Style TargetType="ToggleButton" BasedOn="{StaticResource MahApps.Styles.Button}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasError.Value}" Value="True">
+                            <Setter Property="Background" Value="{StaticResource SecondaryAccentBrush}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ToggleButton.Style>
             <StackPanel Orientation="Horizontal">
                 <Grid Width="15" Margin="3,0">
                     <md:PackIcon Kind="ChevronRight"
-                                    HorizontalAlignment="Left" VerticalAlignment="Center"
-                                    Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanReverseToVisibilityConverter}}"
-                                    />
+                                 HorizontalAlignment="Left" VerticalAlignment="Center"
+                                 Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                                 />
                     <md:PackIcon Kind="ChevronDown"
-                                    HorizontalAlignment="Left" VerticalAlignment="Center"
-                                    Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                    />
+                                 HorizontalAlignment="Left" VerticalAlignment="Center"
+                                 Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 />
                 </Grid>
                 <CheckBox Style="{StaticResource MahApps.Styles.CheckBox}"
-                            Width="20" Margin="5,0"
-                            IsChecked="{Binding IsActive.Value}"
-                            />
+                          Width="20" Margin="5,0"
+                          IsChecked="{Binding IsActive.Value}"
+                          />
                 <TextBlock Foreground="{StaticResource MaterialDesignBody}" 
-                        Style="{StaticResource {x:Type TextBlock}}"
-                        Text="{Binding DisplayName, FallbackValue=BuddyName}"/>
+                           Style="{StaticResource {x:Type TextBlock}}"
+                           Text="{Binding DisplayName, FallbackValue=BuddyName}"/>
+
+                <md:PackIcon Kind="WarningOutline" 
+                             VerticalAlignment="Center"
+                             Visibility="{Binding HasError.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             />
             </StackPanel>
         </ToggleButton>
         <StackPanel Margin="15,5"
@@ -256,14 +270,125 @@
 
             <Grid Margin="0">
                 <Button HorizontalAlignment="Right"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    Margin="10,0"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Margin="10,0"
                         Padding="0"
                         Width="80"
                         Content="再読み込み"
-                    Command="{Binding ReloadCommand}"
-                    />
+                        Command="{Binding ReloadCommand}"
+                        />
             </Grid>
+
+            <!-- 開発者モード: 直近N件のログを並べる-->
+            <Border Margin="-15,10"
+                    Background="#F3F4F6"                    
+                    Visibility="{Binding IsDeveloperMode.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    >
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="8">
+                        <Button
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Width="24" Height="24"
+                            Padding="0"
+                            Command="{Binding CopyLogMessageCommand}"
+                            ToolTip="Copy to Clipboard"
+                            >
+                            <md:PackIcon Kind="ContentCopy" Width="16" Height="16" />
+                        </Button>
+
+                        <Button
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Width="24" Height="24"
+                            Margin="4,0"
+                            Padding="0"
+                            Command="{Binding OpenLogFileCommand}"
+                            ToolTip="Open Log File"
+                            >
+                            <md:PackIcon Kind="File" Width="16" Height="16" />
+                        </Button>
+
+                        <Button
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Width="24" Height="24"
+                            Padding="0"
+                            Command="{Binding ClearLogCommand}"
+                            ToolTip="Clear Log"
+                            >
+                            <md:PackIcon Kind="DeleteOutline" Width="16" Height="16" />
+                        </Button>
+
+                        <TextBlock Text="Log" FontWeight="Bold"
+                                   Margin="8,0"/>
+
+                    </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Visible"
+                                    HorizontalScrollBarVisibility="Auto"
+                                    Height="120"
+                                  PreviewMouseWheel="LogMessageScrollViewer_PreviewMouseWheel"
+                                  >
+                        <ItemsControl ItemsSource="{Binding LogMessages}"
+                                      Margin="4,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vmm:BuddyLogMessage}">
+                                    <TextBlock Text="{Binding Message}"
+                                               FontFamily="Consolas"
+                                               TextWrapping="Wrap"
+                                               FontSize="10"
+                                               Foreground="{Binding Converter={StaticResource BuddyLogLevelToForegroundConverter}}"
+                                               />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>                
+            </Border>
+
+            <!-- 開発者モードではない: 直近の重大エラーを1件だけ表示する -->
+            <Border Margin="-15,10"
+                    Background="#F3F4F6"                                        
+                    Visibility="{Binding HasNonDeveloperError.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    >
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="8">
+                        <Button
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Width="24" Height="24"
+                            Padding="0"
+                            Command="{Binding CopyLogMessageCommand}"
+                            ToolTip="Copy to Clipboard"
+                            >
+                            <md:PackIcon Kind="ContentCopy" Width="16" Height="16" />
+                        </Button>
+
+                        <Button
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Width="24" Height="24"
+                            Padding="0"
+                            Margin="4,0"
+                            Command="{Binding ClearLogCommand}"
+                            ToolTip="Ignore Error"
+                            >
+                            <md:PackIcon Kind="EyeOff" Width="16" Height="16" />
+                        </Button>
+
+                        <TextBlock Text="{DynamicResource Buddy_Log_FatalError}"
+                                   Margin="4,0"
+                                   FontWeight="Bold"
+                                   />
+
+                    </StackPanel>
+                    <TextBlock Text="{Binding CurrentFatalError.Value.Message}"
+                               Margin="8"
+                               FontFamily="Consolas"
+                               TextWrapping="Wrap"
+                               FontSize="12"
+                               Foreground="#FF2800"
+                               />
+                </StackPanel>
+            </Border>
+
+
 
             <ItemsControl 
                 ItemsSource="{Binding Properties}"

@@ -224,13 +224,20 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Buddy_Item_Reload">再読み込み</sys:String>
     <sys:String x:Key="Buddy_Item_FolderName">フォルダ名: </sys:String>
 
+    <sys:String x:Key="Buddy_Log_FatalError">サブキャラの開始時、または実行中にエラーが発生しました！</sys:String>
+
     <sys:String x:Key="Buddy_MainAvatarOutputActive_StandardEdition">メインアバターAPIを使用 (Standard Editionでオンにするとエフェクトがかかります)</sys:String>
     <sys:String x:Key="Buddy_MainAvatarOutputActive_FullEdition">メインアバターAPIを使用 (通常はオンにします)</sys:String>
 
     <sys:String x:Key="Buddy_DeveloperMode">開発者モード</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_Enabled">開発者モードが有効です</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_Instruction" xml:space="preserve">開発者モードをオンにした状態でサブキャラを起動すると、
-スクリプトの実行時エラーのより詳しい情報がログファイルに出力できるようになります。
+エラー情報が詳細に取得できたり、ログの出力レベルを選択したりできます。
+        
+※ログを大量に出力している場合は本ウィンドウでログの一部が表示されないことがあるため、
+各サブキャラのログファイルを直接開いてください。
 </sys:String>
+    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">開発者モードの詳細…</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_LogLevel">ログの詳細度: </sys:String>
     <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">ログファイルを開く</sys:String>
  
@@ -792,12 +799,13 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
 それ以外の詳細設定は保持されます。</sys:String>    
 
     <!-- Snackbar Messages -->
+    <sys:String x:Key="Snackbar_General_TextCopied">テキストをコピーしました</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">選択されたマイクの接続を検出しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">選択されたカメラの接続を検出しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">動きかたのオプションを「デフォルト」に変更しました</sys:String>    
     <sys:String x:Key="Snackbar_Buddy_LogFileNotFound_Format">指定したサブキャラのログファイルは存在しません: {0}</sys:String>
-    
+
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(何もしない)</sys:String>
     <sys:String x:Key="CommonUi_None">(なし)</sys:String>
@@ -815,5 +823,8 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
+    
+    <!-- TODO: メインのVMMのマニュアルと別のURLに差し替える -->
+    <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
     
 </ResourceDictionary>

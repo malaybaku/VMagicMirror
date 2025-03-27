@@ -1,0 +1,190 @@
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+
+namespace Baku.VMagicMirror.MediaPipeTracker
+{
+    public class TrackingLostHandCalculator
+    {
+        private const float ArmStretchRateOnEnd = 0.98f;
+        private const float TrackingLostWaitDuration = 0.25f;
+
+        private const float TrackingLostMotionDuration = 1.2f;
+        // 手を下ろすのに対して遅れて回転を戻す…というのをやりたい場合、下記のdelayを正の値にする
+        private const float TrackingLostRotationDelay = 0.0f;
+        private const float TrackingLostPoseDuration = TrackingLostMotionDuration + TrackingLostRotationDelay;
+
+        private static readonly Vector3 HandDownStartTangent = new Vector3(0, -1f, 0.1f);
+        
+        private CancellationTokenSource _leftHandCts;
+        private CancellationTokenSource _rightHandCts;
+
+        private Animator _animator;
+        private Vector3 _rootToLeftUpperArm;
+        private Vector3 _rootToRightUpperArm;
+        private float _leftArmLength;
+        private float _rightArmLength;
+
+        private Pose _leftLastTrackedPose = Pose.identity;
+        private Quaternion _leftLastTrackedLocalRotation = Quaternion.identity;
+
+        private Pose _rightLastTrackedPose = Pose.identity;
+        private Quaternion _rightLastTrackedLocalRotation = Quaternion.identity;
+            
+        // NOTE: Cancelを呼ばない限り、トラッキングロストの終端姿勢が適用され終わったあともずっとtrueになる
+        public bool LeftHandTrackingLostRunning => _leftHandCts != null;
+        public bool RightHandTrackingLostRunning => _rightHandCts != null;
+        
+        // NOTE:
+        // - トラッキングロスト中だけ意味のある値が入る
+        // - アバターのrootから見た姿勢を指定する (!= ワールド姿勢)
+
+        // TODO: rotationが不要かも…
+        public Pose LeftHandPose { get; private set; } = Pose.identity;
+        public Pose RightHandPose { get; private set; } = Pose.identity;
+        
+        public Quaternion LeftHandLocalRotation { get; private set; } = Quaternion.identity;
+        public Quaternion RightHandLocalRotation { get; private set; } = Quaternion.identity;
+
+        public void SetupAnimator(Animator animator)
+        {
+            _animator = animator;
+            var leftUpperArmPosition = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
+            var rightUpperArmPosition = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
+            var rootPosition = animator.transform.position;
+            // NOTE: 関数の呼び出し時点ではAnimatorがTポーズである…という前提の実装。そうでない場合、lowerArmも取得して累積する
+            var leftHandPosition = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
+            var rightHandPosition = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
+
+            _rootToLeftUpperArm = leftUpperArmPosition - rootPosition;
+            _rootToRightUpperArm = rightUpperArmPosition - rootPosition;
+            _leftArmLength = (leftHandPosition - leftUpperArmPosition).magnitude;
+            _rightArmLength = (rightHandPosition - rightUpperArmPosition).magnitude;
+        }
+
+        /// <summary>
+        /// NOTE: lastTrackedPoseはワールド座標ではなく、アバターのrootから見た姿勢を指定する
+        /// </summary>
+        /// <param name="trackedPose"></param>
+        /// <param name="handLocalRotation"></param>
+        public void RunLeftHandTrackingLost(Pose trackedPose, Quaternion handLocalRotation)
+        {
+            CancelLeftHand();
+            _leftHandCts = new CancellationTokenSource();
+
+            _leftLastTrackedPose = trackedPose;
+            _leftLastTrackedLocalRotation = handLocalRotation;
+            RunLeftHandLostInternal(_leftHandCts.Token).Forget();
+        }
+
+        /// <summary>
+        /// NOTE: lastTrackedPoseはワールド座標ではなく、アバターのrootから見た姿勢を指定する
+        /// </summary>
+        /// <param name="trackedPose"></param>
+        /// <param name="handLocalRotation"></param>
+        public void RunRightHandTrackingLost(Pose trackedPose, Quaternion handLocalRotation)
+        {
+            CancelRightHand();
+            _rightHandCts = new CancellationTokenSource();
+
+            _rightLastTrackedPose = trackedPose;
+            _rightLastTrackedLocalRotation = handLocalRotation;
+            RunRightHandLostInternal(_rightHandCts.Token).Forget();
+        }
+        
+        public void CancelLeftHand()
+        {
+            _leftHandCts?.Cancel();
+            _leftHandCts?.Dispose();
+            _leftHandCts = null;
+        }
+        
+        public void CancelRightHand()
+        {
+            _rightHandCts?.Cancel();
+            _rightHandCts?.Dispose();
+            _rightHandCts = null;
+        }
+
+        public Pose GetLeftHandTrackingLostEndPose()
+        {
+            var rot = Quaternion.Euler(-8f, 0, 70f);
+            var pos = _rootToLeftUpperArm + rot * Vector3.left * (_leftArmLength * ArmStretchRateOnEnd);
+            return new Pose(pos, rot);
+        }
+        
+        public Pose GetRightHandTrackingLostEndPose()
+        {
+            var rot = Quaternion.Euler(-8f, 0, -70f);
+            var pos = _rootToRightUpperArm + rot * Vector3.right * (_rightArmLength * ArmStretchRateOnEnd);
+            return new Pose(pos, rot);
+        }
+        
+        private async UniTaskVoid RunLeftHandLostInternal(CancellationToken cancellationToken)
+        {
+            LeftHandPose = _leftLastTrackedPose;
+            LeftHandLocalRotation = _leftLastTrackedLocalRotation;
+            await UniTask.Delay(TimeSpan.FromSeconds(TrackingLostWaitDuration), cancellationToken: cancellationToken);
+            
+            var endPose = GetLeftHandTrackingLostEndPose();
+            var time = 0f;
+            while (time < TrackingLostPoseDuration)
+            {
+                var positionRate = Mathf.SmoothStep(0, 1, time / TrackingLostMotionDuration);
+                var position = MathUtil.GetCubicBezierWithStartTangent(
+                    _leftLastTrackedPose.position, endPose.position, HandDownStartTangent, positionRate
+                );
+
+                var rotationRate =
+                    Mathf.SmoothStep(0, 1, (time - TrackingLostRotationDelay) / TrackingLostMotionDuration);
+                var rotation = 
+                    Quaternion.Slerp(_leftLastTrackedPose.rotation, endPose.rotation, rotationRate);
+                var handLocalRotation = 
+                    Quaternion.Slerp(_leftLastTrackedLocalRotation, Quaternion.identity, rotationRate);
+
+                LeftHandPose = new Pose(position, rotation);
+                LeftHandLocalRotation = handLocalRotation;
+                
+                await UniTask.NextFrame(cancellationToken);
+                time += Time.deltaTime;
+            }
+            
+            LeftHandPose = endPose;
+            LeftHandLocalRotation = Quaternion.identity;
+        }
+        
+        private async UniTaskVoid RunRightHandLostInternal(CancellationToken cancellationToken)
+        {
+            RightHandPose = _rightLastTrackedPose;
+            RightHandLocalRotation = _rightLastTrackedLocalRotation;
+            await UniTask.Delay(TimeSpan.FromSeconds(TrackingLostWaitDuration), cancellationToken: cancellationToken);
+            
+            var endPose = GetRightHandTrackingLostEndPose();
+            var time = 0f;
+            while (time < TrackingLostPoseDuration)
+            {
+                var positionRate = Mathf.SmoothStep(0, 1, time / TrackingLostMotionDuration);
+                var position = MathUtil.GetCubicBezierWithStartTangent(
+                    _rightLastTrackedPose.position, endPose.position, HandDownStartTangent, positionRate
+                );
+
+                var rotationRate =
+                    Mathf.SmoothStep(0, 1, (time - TrackingLostRotationDelay) / TrackingLostMotionDuration);
+                var rotation = 
+                    Quaternion.Slerp(_rightLastTrackedPose.rotation, endPose.rotation, rotationRate);
+                var handLocalRotation = 
+                    Quaternion.Slerp(_rightLastTrackedLocalRotation, Quaternion.identity, rotationRate);
+
+                RightHandPose = new Pose(position, rotation);
+                RightHandLocalRotation = handLocalRotation;
+                
+                await UniTask.NextFrame(cancellationToken);
+                time += Time.deltaTime;
+            }
+            
+            RightHandPose = endPose;
+            RightHandLocalRotation = Quaternion.identity;
+        }
+    }
+}

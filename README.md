@@ -80,6 +80,7 @@ Unity 2022.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フ
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
+* [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
 
 FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。
 
@@ -88,6 +89,8 @@ FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセッ�
 "Fly,Baby." および "LaserLightShader"はBOOTHで販売されているアセットで、ビルドに必須ではありませんが、もし導入しない場合、タイピング演出が一部動かなくなります。
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
+
+MediaPipeUnityPluginについては、モデルデータ(`.bytes`拡張子を含むファイル)を `StreamingAssets/MediaPipeTracker` フォルダ以下に移動します。
 
 SharpDXは次の手順で導入します。
 

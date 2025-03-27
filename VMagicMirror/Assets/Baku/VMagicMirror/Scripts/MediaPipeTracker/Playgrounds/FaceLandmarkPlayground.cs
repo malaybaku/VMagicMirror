@@ -5,13 +5,25 @@ using UnityEngine;
 using Mediapipe;
 using Mediapipe.Tasks.Core;
 using Mediapipe.Tasks.Vision.FaceLandmarker;
+using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    public class FaceLandmarkPlayground : MediapipeTaskRunnerBase
+    public class FaceLandmarkPlayground : MediaPipeTrackerTaskBase
     {
         private const string FaceModelFileName = "face_landmarker_v2_with_blendshapes.bytes";
 
+        [Inject]
+        public FaceLandmarkPlayground(
+            WebCamTextureSource textureSource,
+            KinematicSetter kinematicSetter, 
+            FacialSetter facialSetter,
+            CameraCalibrator calibrator,
+            LandmarksVisualizer landmarksVisualizer
+        ) : base(textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        {
+        }
+        
         // matrixを使って得た並進量をm単位っぽい値に変換するときに使うスケール値。
         // NOTE: 検証時点では決め打ちするが、動きの大きさとしてユーザーにオプションを公開してもよい
         [SerializeField] private float faceTranslateScale = 0.01f;

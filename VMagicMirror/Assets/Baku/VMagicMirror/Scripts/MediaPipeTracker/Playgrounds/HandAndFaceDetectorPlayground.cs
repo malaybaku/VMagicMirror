@@ -6,6 +6,7 @@ using Mediapipe;
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Core;
 using Mediapipe.Tasks.Vision.FaceDetector;
+using Zenject;
 using Rect = Mediapipe.Tasks.Components.Containers.Rect;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
@@ -26,6 +27,17 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private FaceDetector _detector;
         private int _interlaceCount;
 
+        [Inject]
+        public HandAndFaceDetectorPlayground(
+            WebCamTextureSource textureSource,
+            KinematicSetter kinematicSetter, 
+            FacialSetter facialSetter,
+            CameraCalibrator calibrator,
+            LandmarksVisualizer landmarksVisualizer
+        ) : base(textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        {
+        }
+        
         protected override void OnStartTask()
         {
             base.OnStartTask();

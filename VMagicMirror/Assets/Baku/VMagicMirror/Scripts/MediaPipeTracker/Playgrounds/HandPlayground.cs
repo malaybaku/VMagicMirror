@@ -6,13 +6,17 @@ using Mediapipe;
 using Mediapipe.Tasks.Components.Containers;
 using Mediapipe.Tasks.Core;
 using Mediapipe.Tasks.Vision.HandLandmarker;
+using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    public class HandPlayground : MediapipeTaskRunnerBase
+    public class HandPlayground : MediaPipeTrackerTaskBase
     {
+        // TODO: MediaPipeTracker全体として一環した値を一箇所に定義して使いたい
+        // - かつ、設定をユーザーが変更する可能性にも備えたい
+
         // 「カメラ映像の左端～右端まで手が動いたときにリアル空間上で何mだけ手が動いたことにするか」というスケール値
-        [SerializeField] private float handOffsetScale = 0.6f;
+        private const float handOffsetScale = 0.6f;
 
         protected float HandOffsetScale => handOffsetScale;
 
@@ -25,6 +29,16 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private HandLandmarker _landmarker;
         private HandPoseSetter _handPoseSetter;
 
+        [Inject]
+        public HandPlayground(
+            WebCamTextureSource textureSource,
+            KinematicSetter kinematicSetter, 
+            FacialSetter facialSetter,
+            CameraCalibrator calibrator,
+            LandmarksVisualizer landmarksVisualizer
+        ) : base(textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        {
+        }
         
         protected override void OnStartTask()
         {

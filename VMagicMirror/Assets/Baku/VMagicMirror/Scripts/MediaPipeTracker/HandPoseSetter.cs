@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Baxter;
 using UnityEngine;
 using Mediapipe.Tasks.Components.Containers;
 

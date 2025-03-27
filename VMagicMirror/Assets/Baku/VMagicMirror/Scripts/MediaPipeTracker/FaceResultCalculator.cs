@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Baxter;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.MediaPipeTracker

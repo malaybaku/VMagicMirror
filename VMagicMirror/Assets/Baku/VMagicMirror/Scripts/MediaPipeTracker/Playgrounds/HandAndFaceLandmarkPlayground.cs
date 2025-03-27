@@ -4,6 +4,7 @@ using UnityEngine;
 using Mediapipe;
 using Mediapipe.Tasks.Core;
 using Mediapipe.Tasks.Vision.FaceLandmarker;
+using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
@@ -24,6 +25,17 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private int _interlaceCount;
 
         private readonly Dictionary<string, float> _blendShapeValues = new(52);
+
+        [Inject]
+        public HandAndFaceLandmarkPlayground(
+            WebCamTextureSource textureSource,
+            KinematicSetter kinematicSetter, 
+            FacialSetter facialSetter,
+            CameraCalibrator calibrator,
+            LandmarksVisualizer landmarksVisualizer
+        ) : base(textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        {
+        }
         
         protected override void OnStartTask()
         {

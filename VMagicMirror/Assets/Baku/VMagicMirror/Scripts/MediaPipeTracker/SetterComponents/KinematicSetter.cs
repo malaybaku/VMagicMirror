@@ -3,7 +3,7 @@ using Baku.VMagicMirror.MediaPipeTracker;
 using RootMotion.FinalIK;
 using UnityEngine;
 
-namespace Baxter
+namespace Baku.VMagicMirror.MediaPipeTracker
 {
     /// <summary>
     /// マルチスレッドを考慮したうえでIK/FKを適用するすごいやつだよ

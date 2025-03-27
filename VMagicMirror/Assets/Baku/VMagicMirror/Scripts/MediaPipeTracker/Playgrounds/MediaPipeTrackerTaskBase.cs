@@ -1,39 +1,54 @@
 using System;
-using Baxter;
 using UnityEngine;
 using UniRx;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
+    // ref:
     // Holistic: https://ai.google.dev/edge/mediapipe/solutions/vision/holistic_landmarker?hl=ja
     // Hand: https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker?hl=ja
     // Pose: https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker?hl=ja
     // Face Detector: https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector?hl=ja
     // Face Landmark: https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker?hl=ja
 
-    // TODO: 最終的にはMonoBehaviourをやめてVMMのPresenterBaseに移行予定
-    public abstract class MediapipeTaskRunnerBase : MonoBehaviour
+    public abstract class MediaPipeTrackerTaskBase
     {
-        [SerializeField] private WebCamTextureSource textureSource;
-        [SerializeField] private KinematicSetter kinematicSetter;
-        [SerializeField] private FacialSetter facialSetter;
-        [SerializeField] private CameraCalibrator calibrator;
-        [SerializeField] private LandmarksVisualizer landmarksVisualizer;
+        public MediaPipeTrackerTaskBase(
+            WebCamTextureSource textureSource,
+            KinematicSetter kinematicSetter, 
+            FacialSetter facialSetter,
+            CameraCalibrator calibrator,
+            LandmarksVisualizer landmarksVisualizer
+        )
+        {
+            _textureSource = textureSource;
+            _kinematicSetter = kinematicSetter;
+            _facialSetter = facialSetter;
+            _calibrator = calibrator;
+            _landmarksVisualizer = landmarksVisualizer;
+        }
+
+        private WebCamTextureSource _textureSource;
+         private KinematicSetter _kinematicSetter;
+         private FacialSetter _facialSetter;
+         private CameraCalibrator _calibrator;
+        private LandmarksVisualizer _landmarksVisualizer;
 
         private IDisposable _textureSourceSubscriber = null;
 
-        protected KinematicSetter KinematicSetter => kinematicSetter;
-        protected FacialSetter FacialSetter => facialSetter;
-        protected LandmarksVisualizer LandmarksVisualizer => landmarksVisualizer;
-        protected CameraCalibrator Calibrator => calibrator;
+        protected KinematicSetter KinematicSetter => _kinematicSetter;
+        protected FacialSetter FacialSetter => _facialSetter;
+        //TODO: デバッグが終わったら削除したい
+        protected LandmarksVisualizer LandmarksVisualizer => _landmarksVisualizer;
+        protected CameraCalibrator Calibrator => _calibrator;
         
-        protected int WebCamTextureWidth => textureSource.Width;
-        protected int WebCamTextureHeight => textureSource.Height;
+        protected int WebCamTextureWidth => _textureSource.Width;
+        protected int WebCamTextureHeight => _textureSource.Height;
         
         /// <summary>
         /// NOTE: 横長になると1より大きくなる
         /// </summary>
-        protected float WebCamTextureAspect => textureSource.Width * 1f / textureSource.Height;
+        protected float WebCamTextureAspect => _textureSource.Width * 1f / _textureSource.Height;
         
         protected abstract void OnStartTask();
         protected abstract void OnStopTask();
@@ -54,29 +69,22 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _onResultCalledPrevTimestamp = timestampMillisecond;
             }
         }
-        
-        private void OnEnable()
+
+        public void StartTask()
         {
             // Stopしないでもシーケンス上は大丈夫だけど、まあ気になるので…
             StopTask();
-            StartTask();
-        }
-        
-        private void OnDisable() => StopTask();
-        
-        private void StartTask()
-        {
             OnStartTask();
 
             // NOTE: OnResult的なやつが発火するまでIO<T>を無視するような実装もアリだが、
             // Mediapipeのdocによるとコールバックの発火側もよしなにdropすることがあるらしく、無視したらしたで面倒そうなので素通しする。
             // 負荷をケチる場合、そもそもtextureSource側でImageを生成するのをサボるとこまでやるのがよさそう
-            _textureSourceSubscriber = textureSource
+            _textureSourceSubscriber = _textureSource
                 .ImageUpdated
                 .Subscribe(OnWebCamImageUpdated);
         }
 
-        private void StopTask()
+        public void StopTask()
         {
             OnStopTask();
             _textureSourceSubscriber?.Dispose();

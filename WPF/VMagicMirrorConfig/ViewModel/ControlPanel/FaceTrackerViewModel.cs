@@ -6,7 +6,10 @@ using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
-    public class ExternalTrackerViewModel : SettingViewModelBase
+    // NOTE: 開発経緯について
+    // - もともと FaceTracker ではなくExternalTracker 専用のViewModelがあった
+    // - webカメラによる顔トラッキングの機能が増えた過程で、UIが ExternalTracker 専用ではなく、顔トラッキング全般に関するものにシフトした
+    public class FaceTrackerViewModel : SettingViewModelBase
     {
         //private readonly ExternalTrackerBlendShapeNameStore _blendShapeNameStore
         //    = new ExternalTrackerBlendShapeNameStore();
@@ -15,7 +18,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly ExternalTrackerRuntimeConfig _runtimeConfig;
         private readonly MotionSettingModel _motionModel;
 
-        public ExternalTrackerViewModel() : this(
+        public FaceTrackerViewModel() : this(
             ModelResolver.Instance.Resolve<ExternalTrackerSettingModel>(),
             ModelResolver.Instance.Resolve<ExternalTrackerRuntimeConfig>(),
             ModelResolver.Instance.Resolve<MotionSettingModel>(),
@@ -25,7 +28,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
 
-        internal ExternalTrackerViewModel(
+        internal FaceTrackerViewModel(
             ExternalTrackerSettingModel model,
             ExternalTrackerRuntimeConfig runtimeConfig,
             MotionSettingModel motionModel,

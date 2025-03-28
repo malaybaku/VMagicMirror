@@ -6,7 +6,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     /// <summary> 表情スイッチの個別アイテムのビューモデル </summary>
     public class ExternalTrackerFaceSwitchItemViewModel : ViewModelBase
     {
-        public ExternalTrackerFaceSwitchItemViewModel(ExternalTrackerViewModel parent, ExternalTrackerFaceSwitchItem model)
+        public ExternalTrackerFaceSwitchItemViewModel(FaceTrackerViewModel parent, ExternalTrackerFaceSwitchItem model)
         {
             _parent = parent;
             _model = model;
@@ -21,7 +21,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         internal void UnsubscribeLanguageSelector()
             => LanguageSelector.Instance.LanguageChanged -= RefreshInstruction;
 
-        private readonly ExternalTrackerViewModel _parent;
+        private readonly FaceTrackerViewModel _parent;
         private readonly ExternalTrackerFaceSwitchItem _model;
 
         #region 保存しないでよい値

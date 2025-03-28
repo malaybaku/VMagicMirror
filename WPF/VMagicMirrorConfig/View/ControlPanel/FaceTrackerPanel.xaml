@@ -10,7 +10,7 @@
              d:DesignHeight="850" d:DesignWidth="550"
              >
     <UserControl.DataContext>
-        <vm:ExternalTrackerViewModel />
+        <vm:FaceTrackerViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
         <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />

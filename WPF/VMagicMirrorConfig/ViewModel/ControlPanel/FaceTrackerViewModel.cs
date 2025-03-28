@@ -66,6 +66,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             WeakEventManager<ExternalTrackerSettingModel, EventArgs>.AddHandler(
                 model, nameof(model.FaceSwitchSettingReloaded), OnFaceSwitchSettingReloaded);
             WeakEventManager<ExternalTrackerSettingModel, EventArgs>.AddHandler(model, nameof(model.Loaded), OnModelLoaded);
+
+            _motionModel.EnableWebCamHighPowerMode.AddWeakEventHandler(OnWebCamHighPowerModeChanged);
+            EnableExternalTracking.AddWeakEventHandler(OnEnableExternalTrackingChanged);
+            UpdateBaseMode();
+
             LoadFaceSwitchSetting();
         }
 
@@ -102,13 +107,95 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
-        #region 基本メニュー部分
+        private void OnWebCamHighPowerModeChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
 
+        private void OnEnableExternalTrackingChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
+
+        private void UpdateBaseMode()
+        {
+            var preferHighPowerModeInWebCamera =
+                _motionModel.EnableWebCamHighPowerMode.Value ||
+                _motionModel.EnableImageBasedHandTracking.Value;
+            // NOTE: ハンドトラッキングが有効だと高負荷モードになる (MediaPipeが起動するため)
+            UseLiteWebCamera.Value = !_model.EnableExternalTracking.Value && !preferHighPowerModeInWebCamera;
+            UseHighPowerWebCamera.Value = !_model.EnableExternalTracking.Value && preferHighPowerModeInWebCamera;
+            HighPowerWebCameraAppliedByHandTracking.Value = 
+                _model.EnableExternalTracking.Value &&
+                !_motionModel.EnableWebCamHighPowerMode.Value &&
+                _motionModel.EnableImageBasedHandTracking.Value;
+
+
+            FaceSwitchSupported.Value = _model.EnableExternalTracking.Value || UseHighPowerWebCamera.Value;
+            // NOTE: ExTrackerは「このフラグがオンならオン」という優先度なので、ここで更新しないでよい
+        }
+
+
+        #region 基本モードの状態や、状態に応じた機能の利用可否のフラグ群
+
+        // NOTE: 下記の3フラグはどれか一つだけオンになるように制御される。
+        // 「ExTrackerが有効なら残り2つはオフ扱い」などの暗黙の優先度仕様を踏まえて値を制御するので、Settingの値をそのまま反映するわけではない
+        public RProperty<bool> UseLiteWebCamera { get; } = new RProperty<bool>(false);
+        public RProperty<bool> UseHighPowerWebCamera { get; } = new RProperty<bool>(false);
         public RProperty<bool> EnableExternalTracking => _model.EnableExternalTracking;
+        // 「ハンドトラッキングさえ切ったら低負荷モードになるような組み合わせで高負荷モードになってるとき」だけtrueになるフラグ
+        public RProperty<bool> HighPowerWebCameraAppliedByHandTracking { get; } = new RProperty<bool>(false);
+
+
+        public RProperty<bool> FaceSwitchSupported { get; } = new RProperty<bool>(false);
+
+        // 高負荷Webカメラの場合だけ、「Face Switchが使えるけどCheekPuffとかTongueOutは使えない」という制限がかかる。UI上で注意喚起するために使う
+        public RProperty<bool> FaceSwitchHasLimitation => UseHighPowerWebCamera;
+
+
+        private ActionCommand _selectWebCamLowPowerCommand;
+        private ActionCommand _selectWebCamHighPowerCommand;
+        private ActionCommand _selectExTrackerCommand;
+
+        public ActionCommand SelectWebCamLowPowerCommand 
+            => _selectWebCamLowPowerCommand ??= new ActionCommand(SelectWebCamLowPower);
+        public ActionCommand SelectWebCamHighPowerCommand
+            => _selectWebCamHighPowerCommand ??= new ActionCommand(SelectWebCamHighPower);
+        public ActionCommand SelectExTrackerCommand
+            => _selectExTrackerCommand ??= new ActionCommand(SelectExTracker);
+
+        private void SelectWebCamLowPower()
+        {
+            _model.EnableExternalTracking.Value = false;
+            _motionModel.EnableWebCamHighPowerMode.Value = false;
+        }
+        private void SelectWebCamHighPower()
+        {
+            _model.EnableExternalTracking.Value = false;
+            _motionModel.EnableWebCamHighPowerMode.Value = true;
+        }
+
+        private void SelectExTracker()
+        {
+            _model.EnableExternalTracking.Value = true;
+        }
+
+        #endregion
+
+        #region Ex.Tracker
+
         public RProperty<bool> EnableExternalTrackerLipSync => _model.EnableExternalTrackerLipSync;
         //NOTE: ここだけ外部トラッキングではなく、webカメラの顔トラと共通のフラグを触りに行ってることに注意
         public RProperty<bool> DisableFaceTrackingHorizontalFlip => _motionModel.DisableFaceTrackingHorizontalFlip;
         public RProperty<bool> EnableExternalTrackerPerfectSync => _model.EnableExternalTrackerPerfectSync;
+
+
+
+        private ActionCommand? _calibrateCommand = null;
+        public ActionCommand CalibrateCommand
+            => _calibrateCommand ??= new ActionCommand(Calibrate);
+
+        private void Calibrate() => _model.SendCalibrateRequest();
+        public ActionCommand ResetSettingsCommand { get; }
+
+        #endregion
+
+
+        #region パーフェクトシンク関連
 
         public ActionCommand OpenPerfectSyncTipsUrlCommand { get; }
 
@@ -141,13 +228,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 MessageBoxWrapper.MessageBoxStyle.OK
                 );
         }
-
-        private ActionCommand? _calibrateCommand = null;
-        public ActionCommand CalibrateCommand
-            => _calibrateCommand ??= new ActionCommand(Calibrate);
-
-        private void Calibrate() => _model.SendCalibrateRequest();
-        public ActionCommand ResetSettingsCommand { get; }
 
         #endregion
 

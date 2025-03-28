@@ -14,6 +14,7 @@
     </UserControl.DataContext>
     <UserControl.Resources>
         <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
+        <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter" />
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Width" Value="20"/>
@@ -23,7 +24,25 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" 
                   HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="5,15">
-            <Border Style="{StaticResource SectionBorder}">
+
+            <TextBlock Style="{StaticResource HeaderText}"
+                       Text="顔トラッキングの種類"/>
+            <StackPanel Orientation="Horizontal" 
+                        Margin="5,5,5,15">
+                <Button Content="webカメラ (軽量)"
+                        Width="NaN"
+                        Command="{Binding SelectWebCamLowPowerCommand}"/>
+                <Button Content="webカメラ (高品質)"
+                        Width="NaN"
+                        Command="{Binding SelectWebCamHighPowerCommand}"/>
+                <Button Content="外部トラッキング"
+                        Width="NaN"
+                        Command="{Binding SelectExTrackerCommand}"/>
+            </StackPanel>
+            
+            <Border Style="{StaticResource SectionBorder}"
+                    Visibility="{Binding EnableExternalTracking.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    >
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <md:PackIcon Style="{StaticResource HeaderPackIcon}" 
@@ -40,23 +59,23 @@
 
                     <TextBlock Margin="15,5" 
                                 Text="{DynamicResource ExTracker_Instruction}"/>
-                    <CheckBox Margin="15,10,15,0" 
+                    <!--<CheckBox Margin="15,10,15,0" 
                                 VerticalContentAlignment="Center"
                                 Content="{DynamicResource ExTracker_Enable}" 
                                 IsChecked="{Binding EnableExternalTracking.Value}"
-                                />
-                    <CheckBox Margin="35,0,10,0" 
+                                />-->
+                    <CheckBox Margin="15,0,10,0" 
                                 VerticalContentAlignment="Center"
                                 Content="{DynamicResource ExTracker_Enable_ImageLipSync}" 
                                 IsEnabled="{Binding EnableExternalTracking.Value}"
                                 IsChecked="{Binding EnableExternalTrackerLipSync.Value}"
                                 />
-                    <CheckBox Margin="35,0,10,0"
+                    <CheckBox Margin="15,0,10,0"
                               IsEnabled="{Binding EnableExternalTracking.Value}"
                               IsChecked="{Binding DisableFaceTrackingHorizontalFlip.Value}"
                               Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
                               />
-                    <Grid Margin="35,0,0,5"
+                    <Grid Margin="15,0,0,5"
                           IsEnabled="{Binding EnableExternalTracking.Value}">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -104,6 +123,7 @@
             </Border>
 
             <Border Style="{StaticResource SectionBorder}"
+                    Visibility="{Binding EnableExternalTracking.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Padding="5">
                 <StackPanel>
                     <Grid>
@@ -223,7 +243,22 @@
                                    Text="{DynamicResource ExTracker_FaceSwitch}" 
                                    Margin="5"/>
                     </StackPanel>
-                    
+
+                    <md:Card Margin="15,5,5,0" 
+                             Visibility="{Binding FaceSwitchSupported.Value, Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                             HorizontalAlignment="Stretch"
+                             Background="{StaticResource SecondaryHueMidBrush}" Padding="3">
+                        <StackPanel VerticalAlignment="Center" 
+                                    HorizontalAlignment="Center">
+                            <TextBlock 
+                                Text="*Webカメラ (軽量) では表情を検出できないため、この機能は動作しません。
+                                
+                                ただし、VMC Protocolでパーフェクトシンク用の表情を受信している場合、その表情にもとづいて表情スイッチが適用されます。"
+                                TextWrapping="Wrap"
+                                />
+                        </StackPanel>
+                    </md:Card>
+
                     <TextBlock Margin="15,5"
                                Text="{DynamicResource ExTracker_FaceSwitch_Instruction}"/>
 

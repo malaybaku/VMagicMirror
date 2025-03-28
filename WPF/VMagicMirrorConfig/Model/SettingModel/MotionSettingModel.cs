@@ -1,5 +1,4 @@
-﻿using Baku.VMagicMirrorConfig.ViewModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace Baku.VMagicMirrorConfig
@@ -79,6 +78,8 @@ namespace Baku.VMagicMirrorConfig
                 setting.MoveEyesDuringFaceClipApplied, v => SendMessage(factory.EnableEyeMotionDuringClipApplied(v)));
             DisableBlendShapeInterpolate = new RProperty<bool>(
                 setting.DisableBlendShapeInterpolate, v => SendMessage(factory.DisableBlendShapeInterpolate(v)));
+            UsePerfectSyncWithWebCamera = new RProperty<bool>(
+                setting.UsePerfectSyncWithWebCamera, v => SendMessage(factory.UsePerfectSyncWithWebCamera(v)));
 
             //TODO: 排他のタイミング次第でRadioButtonが使えなくなってしまうので要検証
             UseLookAtPointNone = new RProperty<bool>(setting.UseLookAtPointNone, v =>
@@ -211,6 +212,8 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> MoveEyesDuringFaceClipApplied { get; }
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
+
+        public RProperty<bool> UsePerfectSyncWithWebCamera { get; }
 
         public void RequestCalibrateFace() => SendMessage(MessageFactory.Instance.CalibrateFace());
 

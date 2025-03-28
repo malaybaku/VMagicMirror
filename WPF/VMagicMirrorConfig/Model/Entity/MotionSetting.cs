@@ -61,6 +61,8 @@
 
         public bool DisableBlendShapeInterpolate { get; set; } = false;
 
+        public bool UsePerfectSyncWithWebCamera { get; set; } = false;
+
         #endregion
 
         #region Eye
@@ -141,6 +143,8 @@
             LipSyncMicrophoneDeviceName = "";
             MicrophoneSensitivity = 0;
             AdjustLipSyncByVolume = true;
+
+            UsePerfectSyncWithWebCamera = false;
         }
 
         public void ResetFaceEyeSetting()

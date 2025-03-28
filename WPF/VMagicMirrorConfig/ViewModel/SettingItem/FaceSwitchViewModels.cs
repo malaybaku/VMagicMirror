@@ -4,9 +4,9 @@ using System.Linq;
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
     /// <summary> 表情スイッチの個別アイテムのビューモデル </summary>
-    public class ExternalTrackerFaceSwitchItemViewModel : ViewModelBase
+    public class FaceSwitchItemViewModel : ViewModelBase
     {
-        public ExternalTrackerFaceSwitchItemViewModel(FaceTrackerViewModel parent, ExternalTrackerFaceSwitchItem model)
+        public FaceSwitchItemViewModel(FaceTrackerViewModel parent, ExternalTrackerFaceSwitchItem model)
         {
             _parent = parent;
             _model = model;

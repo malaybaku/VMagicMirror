@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.ExternalTrackerFaceSwitchTemplateItem"
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.FaceSwitchTemplateItem"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,7 +8,7 @@
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:vmm="clr-namespace:Baku.VMagicMirrorConfig"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance Type={x:Type vm:ExternalTrackerFaceSwitchItemViewModel}}"             
+             d:DataContext="{d:DesignInstance Type={x:Type vm:FaceSwitchItemViewModel}}"             
              d:DesignWidth="450">
     <UserControl.Resources>
         <view:Vrm1BlendShapeNameOrDoNothingConverter x:Key="Vrm1BlendShapeNameOrDoNothingConverter" />

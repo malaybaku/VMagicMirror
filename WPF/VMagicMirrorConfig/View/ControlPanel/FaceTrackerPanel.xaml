@@ -281,8 +281,8 @@
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:ExternalTrackerFaceSwitchItemViewModel}">
-                                <view:ExternalTrackerFaceSwitchTemplateItem />
+                            <DataTemplate DataType="{x:Type vm:FaceSwitchItemViewModel}">
+                                <view:FaceSwitchTemplateItem />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

@@ -101,7 +101,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             foreach (var item in _model.FaceSwitchSetting.Items)
             {
-                var vm = new ExternalTrackerFaceSwitchItemViewModel(this, item);
+                var vm = new FaceSwitchItemViewModel(this, item);
                 vm.SubscribeLanguageSelector();
                 FaceSwitchItems.Add(vm);
             }
@@ -288,14 +288,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> ShowAccessoryOption { get; } = new RProperty<bool>(false);
 
         /// <summary>
-        /// 子要素になってる<see cref="ExternalTrackerFaceSwitchItemViewModel"/>から呼び出すことで、
+        /// 子要素になってる<see cref="FaceSwitchItemViewModel"/>から呼び出すことで、
         /// 現在の設定を保存した状態にします。
         /// </summary>
         public void SaveFaceSwitchSetting() => _model.SaveFaceSwitchSetting();
 
         /// <summary> UIで個別設定として表示する、表情スイッチの要素です。 </summary>
-        public ObservableCollection<ExternalTrackerFaceSwitchItemViewModel> FaceSwitchItems { get; }
-            = new ObservableCollection<ExternalTrackerFaceSwitchItemViewModel>();
+        public ObservableCollection<FaceSwitchItemViewModel> FaceSwitchItems { get; }
+            = new ObservableCollection<FaceSwitchItemViewModel>();
 
         /// <summary> Face Switch機能で表示可能なブレンドシェイプ名の一覧です。 </summary>
         public ReadOnlyObservableCollection<string> BlendShapeNames => _runtimeConfig.BlendShapeNames;

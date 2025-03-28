@@ -2,9 +2,9 @@
 
 namespace Baku.VMagicMirrorConfig.View
 {
-    public partial class ExternalTrackerPanel : UserControl
+    public partial class FaceTrackerPanel : UserControl
     {
-        public ExternalTrackerPanel()
+        public FaceTrackerPanel()
         {
             InitializeComponent();
         }

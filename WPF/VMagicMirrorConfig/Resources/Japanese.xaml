@@ -19,7 +19,7 @@
     <!-- Top Tab -->
     <sys:String x:Key="TopBar_Home">ホーム</sys:String>
     <sys:String x:Key="TopBar_Streaming">配信</sys:String>
-    <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_FaceTracker">顔トラッキング</sys:String>
     <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">アクセサリー</sys:String>
     <sys:String x:Key="TopBar_HandTrack">ハンドトラッキング</sys:String>

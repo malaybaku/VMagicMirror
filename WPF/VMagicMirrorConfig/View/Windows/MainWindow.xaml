@@ -125,7 +125,7 @@
             <TabItem>
                 <TabItem.Header>
                     <view:VerticalTabHeaderIconText 
-                        Text="{DynamicResource TopBar_ExternalFaceTrack}"                        
+                        Text="{DynamicResource TopBar_FaceTracker}"                        
                         IconKind="FaceRecognition"                        
                         Foreground="{Binding SelectedIndex,
                                              ElementName=MainTabControl,

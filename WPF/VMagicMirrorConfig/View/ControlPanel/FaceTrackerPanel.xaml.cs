@@ -1,12 +1,34 @@
-﻿using System.Windows.Controls;
+﻿using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Baku.VMagicMirrorConfig.View
 {
+    // NOTE: イベントハンドラの実装はStreamingPanelのと同じで、ツールチップの表示制御に関するもの。
     public partial class FaceTrackerPanel : UserControl
     {
         public FaceTrackerPanel()
         {
             InitializeComponent();
+        }
+
+        private async void OnHighPowerModeLimitationButtonClicked(object? sender, System.Windows.RoutedEventArgs e)
+        {
+            //何も仕掛けないとボタンクリック時にツールチップが閉じてしまうので、それを開くための措置
+            if (sender is Button { ToolTip: ToolTip tooltip })
+            {
+                await Task.Delay(16);
+                tooltip.PlacementTarget = sender as Button;
+                tooltip.IsOpen = true;
+            }
+        }
+
+        private void OnHighPowerModeLimitationButtonMouseLeave(object? sender, System.Windows.Input.MouseEventArgs e)
+        {
+            //明確に切らないと出っぱなしになりがちなので、マウスが動いたらさっさと消してしまう
+            if (sender is Button { ToolTip: ToolTip tooltip })
+            {
+                tooltip.IsOpen = false;
+            }
         }
     }
 }

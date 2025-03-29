@@ -92,7 +92,16 @@
     
 - This mode is recommended to apply your motion to the avatar with high quality, without additional devices.
 - Note that the mode leads higher CPU load. Change to Lite mode when playing games, etc. 
-- In this mode, Face Switch and Perfect Sync features are partially available.</sys:String>
+- In this mode, Face Switch and Perfect Sync features are partially available.
+- Some limitations exist for facial expression detection.</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice_Title">Detail...</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice" xml:space="preserve">In this mode, following facial expression cannot be detected.
+Face Switch feature for these condition does not work.
+
+- Cheek Puff
+- Tongue Out
+
+Use Extarnel Tracker mode to detect and apply these exressions.</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">Enable Forward/Backward Move</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">Apply Eye Motion based on Web Camera</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            

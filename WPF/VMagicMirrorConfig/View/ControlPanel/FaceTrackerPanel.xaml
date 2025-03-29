@@ -117,8 +117,26 @@
                     </StackPanel>
 
 
-                    <TextBlock Margin="15,5" 
-                                Text="{DynamicResource FaceTracker_HighPowerWebCamera_Instruction}"/>
+                    <Grid Margin="15,5">
+                        <TextBlock Text="{DynamicResource FaceTracker_HighPowerWebCamera_Instruction}"/>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                Content="{DynamicResource FaceTracker_HighPowerWebCamera_LimitationNotice_Title}"
+                                Click="OnHighPowerModeLimitationButtonClicked"
+                                MouseLeave="OnHighPowerModeLimitationButtonMouseLeave"
+                                HorizontalAlignment="Right"                    
+                                VerticalAlignment="Bottom"
+                                Width="NaN"
+                                Padding="3"
+                                >
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    <TextBlock Text="{DynamicResource FaceTracker_HighPowerWebCamera_LimitationNotice_Title}"/>
+                                </ToolTip>
+                            </Button.ToolTip>
+                        </Button>
+
+                    </Grid>
+
 
                     <md:Card Margin="15,5,5,0" 
                             Visibility="{Binding HighPowerWebCameraAppliedByHandTracking.Value,

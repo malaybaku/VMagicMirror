@@ -92,7 +92,17 @@
     
 - PC単体で、アバターへの動きをなるべく正確に反映したいときに使用します。
 - PC負荷は高くなるため、ゲームなどを起動している場合は注意してください。
-- パーフェクトシンクの表情の一部が適用できます。</sys:String>
+- パーフェクトシンクの表情の一部が適用できます。
+- 検出できる表情には制限があります。</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice_Title">詳しく...</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice" xml:space="preserve">webカメラ (高品質) の顔トラッキングでは、
+以下の表情はトラッキングできず、表情スイッチ機能も動作しません。
+
+- 頬をふくらませる
+- 舌を出す
+
+これらの表情を検出したい場合は、外部トラッキング機能を使用してください。</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">手前・奥への移動を有効化</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">カメラで検出した目の動きを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>

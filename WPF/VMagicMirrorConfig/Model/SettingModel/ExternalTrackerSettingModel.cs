@@ -111,7 +111,21 @@ namespace Baku.VMagicMirrorConfig
         public override void ResetToDefault()
         {
             Load(ExternalTrackerSetting.Default);
+            ResetFaceSwitchSetting();
+        }
 
+        public void ResetSettingExceptFaceSwitch()
+        {
+            var setting = ExternalTrackerSetting.Default;
+            EnableExternalTrackerLipSync.Value = setting.EnableExternalTrackerLipSync;
+            EnableExternalTrackerPerfectSync.Value = setting.EnableExternalTrackerPerfectSync;
+            TrackSourceType.Value = setting.TrackSourceType;
+            IFacialMocapTargetIpAddress.Value = setting.IFacialMocapTargetIpAddress;
+            CalibrateData.Value = setting.CalibrateData;
+        }
+
+        public void ResetFaceSwitchSetting()
+        {
             //NOTE: Entityのデフォルト値ではFaceSwitch設定が空になっているため、明示的にデフォルトを読み直す
             FaceSwitchSetting = ExternalTrackerFaceSwitchSetting.LoadDefault();
             SaveFaceSwitchSetting();

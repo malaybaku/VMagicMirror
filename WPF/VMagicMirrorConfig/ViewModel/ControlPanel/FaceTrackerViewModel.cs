@@ -17,12 +17,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly ExternalTrackerSettingModel _model;
         private readonly ExternalTrackerRuntimeConfig _runtimeConfig;
         private readonly MotionSettingModel _motionModel;
+        private readonly DeviceListSource _deviceList;
 
         public FaceTrackerViewModel() : this(
             ModelResolver.Instance.Resolve<ExternalTrackerSettingModel>(),
             ModelResolver.Instance.Resolve<ExternalTrackerRuntimeConfig>(),
             ModelResolver.Instance.Resolve<MotionSettingModel>(),
-            ModelResolver.Instance.Resolve<AccessorySettingModel>()
+            ModelResolver.Instance.Resolve<AccessorySettingModel>(),
+            ModelResolver.Instance.Resolve<DeviceListSource>()
             )
         {
         }
@@ -32,12 +34,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ExternalTrackerSettingModel model,
             ExternalTrackerRuntimeConfig runtimeConfig,
             MotionSettingModel motionModel,
-            AccessorySettingModel accessoryModel
+            AccessorySettingModel accessoryModel,
+            DeviceListSource deviceList
             )
         {
             _model = model;
             _runtimeConfig = runtimeConfig;
             _motionModel = motionModel;
+            _deviceList = deviceList;
 
             AvailableAccessoryNames = new AccessoryItemNamesViewModel(accessoryModel);
 
@@ -51,12 +55,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 async () => await model.DisableExternalTrackerWithConfirmAsync()
                 );
             ShowMissingBlendShapeNotificationCommand = new ActionCommand(ShowMissingBlendShapeNotification);
-            ResetSettingsCommand = new ActionCommand(
-                () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetToDefault)
-                );
 
             if (IsInDesignMode)
             {
+                // NOTE: 視認性のためにプレビュー上ではUIがだいたい展開した状態にする。
+                UseLiteWebCamera.Value = true;
+                UseHighPowerWebCamera.Value = true;
+                HighPowerWebCameraAppliedByHandTracking.Value = true;
                 return;
             }
 
@@ -147,9 +152,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> FaceSwitchHasLimitation => UseHighPowerWebCamera;
 
 
-        private ActionCommand _selectWebCamLowPowerCommand;
-        private ActionCommand _selectWebCamHighPowerCommand;
-        private ActionCommand _selectExTrackerCommand;
+        private ActionCommand? _selectWebCamLowPowerCommand;
+        private ActionCommand? _selectWebCamHighPowerCommand;
+        private ActionCommand? _selectExTrackerCommand;
 
         public ActionCommand SelectWebCamLowPowerCommand 
             => _selectWebCamLowPowerCommand ??= new ActionCommand(SelectWebCamLowPower);
@@ -176,6 +181,34 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #endregion
 
+        #region web camera
+
+        // NOTE: 歴史的経緯で名前がねじれてるけど意図的です
+        public RProperty<bool> EnableWebCamera => _motionModel.EnableFaceTracking;
+        public RProperty<string> WebCameraDeviceName => _motionModel.CameraDeviceName;
+
+        public ReadOnlyObservableCollection<string> WebCameraNames => _deviceList.CameraNames;
+        public RProperty<bool> EnableWebCameraHighPowerModeBlink => _motionModel.EnableWebCameraHighPowerModeBlink;
+        public RProperty<bool> EnableWebCameraHighPowerModeLipSync => _motionModel.EnableWebCameraHighPowerModeLipSync;
+        public RProperty<bool> EnableWebCameraHighPowerModeMoveZ => _motionModel.EnableWebCameraHighPowerModeMoveZ;
+
+        // todo: 前後移動のオンオフも欲しいかも
+
+
+        public RProperty<bool> EnableWebCameraHighPowerModePerfectSync => _motionModel.UsePerfectSyncWithWebCamera;
+
+        private ActionCommand? _calibrateWebCameraCommand;
+        public ActionCommand CalibrateWebCameraCommand => _calibrateWebCameraCommand ??= new ActionCommand(CalibrateWebCamera);
+
+        private void CalibrateWebCamera() => _motionModel.RequestCalibrateFace();
+
+        // NOTE: LowPowerモードにはオリジナルの設定がないし、項目数も少ないので、そっち用のリセットコマンドは実装していない
+        private ActionCommand? _resetWebCameraHighPowerModeSettingsCommand;
+        public ActionCommand ResetWebCameraHighPowerModeSettingsCommand => _resetWebCameraHighPowerModeSettingsCommand ??= new ActionCommand(ResetWebCameraHighPowerModeSettings);
+        private void ResetWebCameraHighPowerModeSettings() => _motionModel.ResetWebCameraHighPowerModeSettings();
+
+        #endregion
+
         #region Ex.Tracker
 
         public RProperty<bool> EnableExternalTrackerLipSync => _model.EnableExternalTrackerLipSync;
@@ -190,7 +223,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             => _calibrateCommand ??= new ActionCommand(Calibrate);
 
         private void Calibrate() => _model.SendCalibrateRequest();
-        public ActionCommand ResetSettingsCommand { get; }
+
+        private ActionCommand? _resetExternalTrackerSettingsCommand;
+
+        public ActionCommand ResetExternalTrackerSettingsCommand
+            => _resetExternalTrackerSettingsCommand ??= new ActionCommand(ResetExternalTrackerSettings);
+
+        private void ResetExternalTrackerSettings() 
+            => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetSettingExceptFaceSwitch);
 
         #endregion
 
@@ -282,7 +322,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #endregion
 
-        #region 表情スイッチのやつ
+        #region 表情スイッチ
 
         //UI表示の同期のためだけに使う値で、Modelとは関係ない
         public RProperty<bool> ShowAccessoryOption { get; } = new RProperty<bool>(false);
@@ -308,6 +348,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         /// 使用中のブレンドシェイプ名の情報を実態に合わせます。
         /// </summary>
         public void RefreshUsedBlendshapeNames() => _runtimeConfig.RefreshBlendShapeNames();
+
+        private ActionCommand? _resetFaceSwitchSettingCommand;
+        public ActionCommand ResetFaceSwitchSettingCommand
+            => _resetFaceSwitchSettingCommand ??= new ActionCommand(ResetFaceSwitchSetting);
+        private void ResetFaceSwitchSetting() 
+            => SettingResetUtils.ResetSingleCategoryAsync(() => _model.ResetFaceSwitchSetting());
 
         #endregion
 

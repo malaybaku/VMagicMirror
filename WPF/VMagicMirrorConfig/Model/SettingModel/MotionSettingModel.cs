@@ -81,6 +81,15 @@ namespace Baku.VMagicMirrorConfig
             UsePerfectSyncWithWebCamera = new RProperty<bool>(
                 setting.UsePerfectSyncWithWebCamera, v => SendMessage(factory.UsePerfectSyncWithWebCamera(v)));
 
+            EnableWebCameraHighPowerModeBlink = new RProperty<bool>(
+                setting.EnableWebCameraHighPowerModeBlink, v => SendMessage(factory.EnableWebCameraHighPowerModeBlink(v)));
+
+            EnableWebCameraHighPowerModeLipSync = new RProperty<bool>(
+                setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(factory.EnableWebCameraHighPowerModeLipSync(v)));
+
+            EnableWebCameraHighPowerModeMoveZ = new RProperty<bool>(
+                setting.EnableWebCameraHighPowerModeMoveZ, v => SendMessage(factory.EnableWebCameraHighPowerModeMoveZ(v)));
+
             //TODO: 排他のタイミング次第でRadioButtonが使えなくなってしまうので要検証
             UseLookAtPointNone = new RProperty<bool>(setting.UseLookAtPointNone, v =>
             {
@@ -214,6 +223,10 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
 
         public RProperty<bool> UsePerfectSyncWithWebCamera { get; }
+
+        public RProperty<bool> EnableWebCameraHighPowerModeBlink { get; }
+        public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
+        public RProperty<bool> EnableWebCameraHighPowerModeMoveZ { get; }
 
         public void RequestCalibrateFace() => SendMessage(MessageFactory.Instance.CalibrateFace());
 
@@ -407,6 +420,15 @@ namespace Baku.VMagicMirrorConfig
             {
                 SendMessage(MessageFactory.Instance.SetCalibrateFaceData(CalibrateFaceData.Value));
             }
+        }
+
+        public void ResetWebCameraHighPowerModeSettings()
+        {
+            var setting = MotionSetting.Default;
+            UsePerfectSyncWithWebCamera.Value = setting.UsePerfectSyncWithWebCamera;
+            EnableWebCameraHighPowerModeBlink.Value = setting.EnableWebCameraHighPowerModeBlink;
+            EnableWebCameraHighPowerModeLipSync.Value = setting.EnableWebCameraHighPowerModeLipSync;
+            EnableWebCameraHighPowerModeMoveZ.Value = setting.EnableWebCameraHighPowerModeMoveZ;
         }
     }
 }

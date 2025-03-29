@@ -62,6 +62,9 @@
         public bool DisableBlendShapeInterpolate { get; set; } = false;
 
         public bool UsePerfectSyncWithWebCamera { get; set; } = false;
+        public bool EnableWebCameraHighPowerModeBlink { get; set; } = true;
+        public bool EnableWebCameraHighPowerModeLipSync { get; set; } = false;
+        public bool EnableWebCameraHighPowerModeMoveZ { get; set; } = true;
 
         #endregion
 
@@ -144,7 +147,11 @@
             MicrophoneSensitivity = 0;
             AdjustLipSyncByVolume = true;
 
+            EnableWebCamHighPowerMode = false;
             UsePerfectSyncWithWebCamera = false;
+            EnableWebCameraHighPowerModeBlink = true;
+            EnableWebCameraHighPowerModeLipSync = false;
+            EnableWebCameraHighPowerModeMoveZ = true;
         }
 
         public void ResetFaceEyeSetting()

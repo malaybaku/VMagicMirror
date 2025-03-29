@@ -76,11 +76,37 @@
     <sys:String x:Key="Streaming_Visibility_OutlineWillNotWorkWarning">Outline is not applied because "Transparent Window" is off.</sys:String>
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">Game Input also uses gamepad!</sys:String>
 
+    <!-- Face Tracker -->
+    <sys:String x:Key="FaceTracker_EnableWebCamera">Use Web Camera</sys:String>
+    <sys:String x:Key="FaceTracker_EnablePerfectSync">Use Perfect Sync</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Title">Web Camera (Lite)</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with low CPU load.
+
+- This mode is useful to apply your motion to the avatar without additional device, with low PC load.
+- When disabling the camera in this mode, the app will run very light.
+- High power mode is automatically applied during hand tracking is active.
+- The mode has limitation about Face Switch feature, image based blink, etc.</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">Web Camera (High Power)</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with high CPU load.
+    
+- This mode is recommended to apply your motion to the avatar with high quality, without additional devices.
+- Note that the mode leads higher CPU load. Change to Lite mode when playing games, etc. 
+- In this mode, Face Switch and Perfect Sync features are partially available.</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">Enable Forward/Backward Move</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">Apply Eye Motion based on Web Camera</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Current selected mode is Web Camera (Lite), but Web Camera (High Power) is automatically applied during hand tracking is enabled.</sys:String>            
+    
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">Feature to use external tracking application.
+
+- Can apply high quality face tracking data with less PC load.
+- For the avatar with perfect sync support, this mode is most recommended.
+        
 During this mode, following features are disabled.
-- Web camera based tracking
 - Eye motion to see the mouse pointer</sys:String>
     <sys:String x:Key="ExTracker_Enable">Enable External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">Apply LipSync using External Tracker Data</sys:String>    

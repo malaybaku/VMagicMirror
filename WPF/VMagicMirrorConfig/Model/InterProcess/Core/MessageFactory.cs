@@ -138,6 +138,10 @@ namespace Baku.VMagicMirrorConfig
         public Message DisableBlendShapeInterpolate(bool enable) => WithArg(enable);
         
         public Message UsePerfectSyncWithWebCamera(bool enable) => WithArg(enable);
+        
+        public Message EnableWebCameraHighPowerModeBlink(bool enable) => WithArg(enable);
+        public Message EnableWebCameraHighPowerModeLipSync(bool enable) => WithArg(enable);
+        public Message EnableWebCameraHighPowerModeMoveZ(bool enable) => WithArg(enable);
 
         /// <summary>
         /// Query.

@@ -75,12 +75,38 @@
     
     <sys:String x:Key="Streaming_Visibility_OutlineWillNotWorkWarning">「背景を透過」がオフのため縁取りは無効になっています。</sys:String>
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">ゲーム入力でもゲームパッドが使われています！</sys:String>
+
+    <!-- Face Tracker -->
+    <sys:String x:Key="FaceTracker_EnableWebCamera">webカメラをオン</sys:String>
+    <sys:String x:Key="FaceTracker_EnablePerfectSync">パーフェクトシンクを使用</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Title">webカメラ (軽量)</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">webカメラを用いて、低負荷に顔トラッキングを行います。
+
+- PC単体で、CPU負荷を抑えながらアバターにも動きを反映したいときに使用します。
+- このモードでカメラの使用を停止した場合、非常に低負荷で動作します。
+- ハンドトラッキングをオンにすると、自動で高品質モードに切り替わります。
+- 表情スイッチ機能が使えないなどの制限があります。</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">webカメラ (高品質)</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">webカメラを用いて、高品質な顔トラッキングを行います。
     
+- PC単体で、アバターへの動きをなるべく正確に反映したいときに使用します。
+- PC負荷は高くなるため、ゲームなどを起動している場合は注意してください。
+- パーフェクトシンクの表情の一部が適用できます。</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">手前・奥への移動を有効化</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">カメラで検出した目の動きを適用</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">現在はwebカメラ (軽量) が選択されていますが、ハンドトラッキングが有効になっている間は自動で webカメラ (高品質) のトラッキングが適用されます。</sys:String>            
+        
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>
-    <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによるトラッキングを活用する機能です。
+    <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによる顔トラッキングを行います。
+
+- PCの負荷は抑えながら、高精度な顔トラッキングが利用できます。        
+- アバターがパーフェクトシンクに対応している場合、このモードが最も正確に表情を反映します。
+        
 外部トラッキングをオンにすると、以下の機能は一時的に無効化されます。
-- Webカメラでの顔トラッキング
 - マウスポインタを目で追従する機能</sys:String>
     <sys:String x:Key="ExTracker_Enable">外部トラッキングを有効化</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">リップシンクも外部トラッキングの値を適用</sys:String>    

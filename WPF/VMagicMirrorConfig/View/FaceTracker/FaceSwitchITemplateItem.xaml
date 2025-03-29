@@ -27,7 +27,6 @@
         <!--Style="{StaticResource MaterialDesignFilledComboBox}"-->
         <ComboBox Grid.Column="0"
                   Style="{StaticResource MaterialDesignComboBox}"
-                  md:ComboBoxAssist.ClassicMode="True"
                   Margin="5,0" 
                   ItemsSource="{Binding AvailablePercentages}"
                   SelectedValue="{Binding Threshold}"

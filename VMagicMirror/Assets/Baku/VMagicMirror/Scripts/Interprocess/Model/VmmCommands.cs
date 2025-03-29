@@ -69,7 +69,6 @@
         // Motion, Face
         public const string EnableFaceTracking = nameof(EnableFaceTracking);
         public const string SetCameraDeviceName = nameof(SetCameraDeviceName);
-        public const string EnableWebCamHighPowerMode = nameof(EnableWebCamHighPowerMode);
         public const string AutoBlinkDuringFaceTracking = nameof(AutoBlinkDuringFaceTracking);
         public const string EnableHeadRotationBasedBlinkAdjust = nameof(EnableHeadRotationBasedBlinkAdjust);
         public const string EnableLipSyncBasedBlinkAdjust = nameof(EnableLipSyncBasedBlinkAdjust);
@@ -83,6 +82,13 @@
         public const string FaceOffsetClip = nameof(FaceOffsetClip);
         public const string EnableEyeMotionDuringClipApplied = nameof(EnableEyeMotionDuringClipApplied);
         public const string DisableBlendShapeInterpolate = nameof(DisableBlendShapeInterpolate);
+
+        // Motion, Face, WebCam high power mode
+        public const string EnableWebCamHighPowerMode = nameof(EnableWebCamHighPowerMode);
+        public const string UsePerfectSyncWithWebCamera = nameof(UsePerfectSyncWithWebCamera);
+        public const string EnableWebCameraHighPowerModeBlink = nameof(EnableWebCameraHighPowerModeBlink);
+        public const string EnableWebCameraHighPowerModeLipSync = nameof(EnableWebCameraHighPowerModeLipSync);
+        public const string EnableWebCameraHighPowerModeMoveZ = nameof(EnableWebCameraHighPowerModeMoveZ);
 
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);

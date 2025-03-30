@@ -14,8 +14,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             Container.BindInterfacesAndSelfTo<WebCamTextureSource>().AsSingle();
 
-            Container.Bind<KinematicSetterTimingInvoker>().FromNewComponentOnNewGameObject();
+            //TODO: たぶんTimingInvoker自体を削除できると思うので、なるべく消したい…
+            Container.Bind<KinematicSetterTimingInvoker>().FromNewComponentOnNewGameObject().AsCached();
             Container.BindInterfacesAndSelfTo<KinematicSetter>().AsSingle();
+
+            // TODO: 実装がちゃんとしてないので注意！
+            Container.BindInterfacesAndSelfTo<FacialSetter>().AsSingle();
             
             Container.Bind<HandPlayground>().AsSingle();
             Container.Bind<FaceLandmarkPlayground>().AsSingle();

@@ -13,11 +13,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// </summary>
     public class KinematicSetter : PresenterBase, ITickable
     {
-        // TODO: 直接書き込むのではなく IKTarget的なやつにする
-        [SerializeField] private Transform leftHandIkTarget;
-        [SerializeField] private Transform rightHandIkTarget;
-
-        private MediapipePoseSetterSettings poseSettings;
+        // [SerializeField] private Transform leftHandIkTarget;
+        // [SerializeField] private Transform rightHandIkTarget;
+        // TODO: IIKDataRecordとかに整形したい
+        private Pose leftHandIkTarget;
+        private Pose rightHandIkTarget;
+        
 
         //[SerializeField] private bool isMirrorMode;
         
@@ -27,11 +28,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Range(0f, 1f)] [SerializeField] private float rootPositionSmoothRate = 0.3f;
         [Range(0f, 1f)] [SerializeField] private float headFkSmoothRateDetector = 0.2f;
 
-        private IVRMLoadable _vrmLoadable;
-        private KinematicSetterTimingInvoker _timingInvoker;
-        private BodyScaleCalculator _bodyScaleCalculator;
-        private TrackingLostHandCalculator _trackingLostHandCalculator;
-        private MediaPipeTrackerSettingsRepository _settingsRepository;
+        private readonly IVRMLoadable _vrmLoadable;
+        private readonly KinematicSetterTimingInvoker _timingInvoker;
+        private readonly BodyScaleCalculator _bodyScaleCalculator;
+        private readonly TrackingLostHandCalculator _trackingLostHandCalculator;
+        private readonly MediaPipeTrackerSettingsRepository _settingsRepository;
+        private readonly MediapipePoseSetterSettings _poseSetterSettings;
         private readonly object _poseLock = new();
 
         // NOTE: ポーズに関しては「トラッキング結果を保存する関数群」の部分で反転を掛けるので、内部計算はあまり反転しない
@@ -74,7 +76,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediapipePoseSetterSettings poseSettings,
             MediaPipeTrackerSettingsRepository settingsRepository,
             BodyScaleCalculator bodyScaleCalculator,
-            TrackingLostHandCalculator trackingLostHandCalculator
+            TrackingLostHandCalculator trackingLostHandCalculator,
+            MediapipePoseSetterSettings poseSetterSettings
         )
         {
             _vrmLoadable = vrmLoadable;
@@ -82,6 +85,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _settingsRepository = settingsRepository;
             _bodyScaleCalculator = bodyScaleCalculator;
             _trackingLostHandCalculator = trackingLostHandCalculator;
+            _poseSetterSettings = poseSetterSettings;
         }
 
         public override void Initialize()
@@ -107,15 +111,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     _bones[bone] = boneTransform;
                 }
             }
-            
-            // TODO: 不要？
-            var leftHandLostPose = _trackingLostHandCalculator.GetLeftHandTrackingLostEndPose();
-            leftHandIkTarget.localPosition = leftHandLostPose.position;
-            leftHandIkTarget.localRotation = leftHandLostPose.rotation;
-            
-            var rightHandLostPose = _trackingLostHandCalculator.GetRightHandTrackingLostEndPose();
-            rightHandIkTarget.localPosition = rightHandLostPose.position;
-            rightHandIkTarget.localRotation = rightHandLostPose.rotation;
         }
 
         private void OnVrmUnloaded()
@@ -127,15 +122,34 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         }
         
         #region トラッキング結果を保存する関数群
+
+        public bool HeadTracked
+        {
+            get
+            {
+                lock (_poseLock)
+                {
+                    return _hasHeadPose.Value;
+                }
+            }
+        }
+        
+        public Pose GetHeadPose()
+        {
+            lock (_poseLock)
+            {
+                return _headPose;
+            }
+        }
         
         public void SetHeadPose6Dof(Pose pose)
         {
             lock (_poseLock)
             {
                 var pos = new Vector3(
-                    pose.position.x * poseSettings.Face6DofHorizontalScale,
-                    pose.position.y * poseSettings.Face6DofHorizontalScale,
-                    pose.position.z * poseSettings.Face6DofDepthScale
+                    pose.position.x * _poseSetterSettings.Face6DofHorizontalScale,
+                    pose.position.y * _poseSetterSettings.Face6DofHorizontalScale,
+                    pose.position.z * _poseSetterSettings.Face6DofDepthScale
                 );
                 if (IsFaceMirrored)
                 {
@@ -273,6 +287,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         void ITickable.Tick()
         {
+            // TODO: Hand Tracking関連でどーしてもクラス内で処理したいことがある場合だけ書く。そうでない場合、ITickableごと削除する
+            return;
+            
             lock (_poseLock)
             {
                 var rootPosition = _hasHeadPose.Value
@@ -293,7 +310,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                             boneTransform.localRotation = Quaternion.Slerp(
                                 boneTransform.localRotation,
                                 pair.Value,
-                                poseSettings.FingerBoneSmoothRate
+                                _poseSetterSettings.FingerBoneSmoothRate
                             );
                         }
                         else
@@ -317,13 +334,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
                 var leftHandPose = GetLeftHandPose();
                 var nextPos =
-                    Vector3.Lerp(leftHandIkTarget.localPosition, leftHandPose.position, poseSettings.HandIkSmoothRate);
-                leftHandIkTarget.localPosition = Vector3.MoveTowards(
-                    leftHandIkTarget.localPosition, nextPos, poseSettings.HandMoveSpeedMax * Time.deltaTime
+                    Vector3.Lerp(leftHandIkTarget.position, leftHandPose.position, _poseSetterSettings.HandIkSmoothRate);
+                leftHandIkTarget.position = Vector3.MoveTowards(
+                    leftHandIkTarget.position, nextPos, _poseSetterSettings.HandMoveSpeedMax * Time.deltaTime
                 );
                 
-                leftHandIkTarget.localRotation =
-                    Quaternion.Slerp(leftHandIkTarget.localRotation, leftHandPose.rotation, poseSettings.HandIkSmoothRate);
+                leftHandIkTarget.rotation =
+                    Quaternion.Slerp(leftHandIkTarget.rotation, leftHandPose.rotation, _poseSetterSettings.HandIkSmoothRate);
                 SetLeftHandEffectorWeight(1f, 1f);
                 return;
             }
@@ -334,14 +351,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 var localRotEuler = _lastTrackedLeftHandLocalRotation.eulerAngles;
                 Debug.Log($"run left hand tracking lost, local rot = {localRotEuler.x:0.0}, {localRotEuler.y:0.0}, {localRotEuler.z:0.0}");
                 var lastTrackedPose = new Pose(
-                    leftHandIkTarget.localPosition - rootPosition,
-                    leftHandIkTarget.localRotation
+                    leftHandIkTarget.position - rootPosition,
+                    leftHandIkTarget.rotation
                 );
                 _trackingLostHandCalculator.RunLeftHandTrackingLost(lastTrackedPose, _lastTrackedLeftHandLocalRotation);
             }
 
-            leftHandIkTarget.localPosition = rootPosition + _trackingLostHandCalculator.LeftHandPose.position;
-            leftHandIkTarget.localRotation = _trackingLostHandCalculator.LeftHandPose.rotation;
+            leftHandIkTarget.position = rootPosition + _trackingLostHandCalculator.LeftHandPose.position;
+            leftHandIkTarget.rotation = _trackingLostHandCalculator.LeftHandPose.rotation;
             
             SetLeftHandEffectorWeight(1f, 0f);
         }
@@ -354,13 +371,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
                 var rightHandPose = GetRightHandPose();
                 var nextPos =
-                    Vector3.Lerp(rightHandIkTarget.localPosition, rightHandPose.position, poseSettings.HandIkSmoothRate);
-                rightHandIkTarget.localPosition = Vector3.MoveTowards(
-                    rightHandIkTarget.localPosition, nextPos, poseSettings.HandMoveSpeedMax * Time.deltaTime
+                    Vector3.Lerp(rightHandIkTarget.position, rightHandPose.position, _poseSetterSettings.HandIkSmoothRate);
+                rightHandIkTarget.position = Vector3.MoveTowards(
+                    rightHandIkTarget.position, nextPos, _poseSetterSettings.HandMoveSpeedMax * Time.deltaTime
                 );
                 
-                rightHandIkTarget.localRotation =
-                    Quaternion.Slerp(rightHandIkTarget.localRotation, rightHandPose.rotation, poseSettings.HandIkSmoothRate);
+                rightHandIkTarget.rotation =
+                    Quaternion.Slerp(rightHandIkTarget.rotation, rightHandPose.rotation, _poseSetterSettings.HandIkSmoothRate);
                 SetRightHandEffectorWeight(1f, 1f);
                 return;
             }
@@ -369,14 +386,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             if (!_trackingLostHandCalculator.RightHandTrackingLostRunning)
             {
                 var trackedPose = new Pose(
-                    rightHandIkTarget.localPosition - rootPosition,
-                    rightHandIkTarget.localRotation
+                    rightHandIkTarget.position - rootPosition,
+                    rightHandIkTarget.rotation
                 );
                 _trackingLostHandCalculator.RunRightHandTrackingLost(trackedPose, _lastTrackedRightHandLocalRotation);
             }
 
-            rightHandIkTarget.localPosition = rootPosition + _trackingLostHandCalculator.RightHandPose.position;
-            rightHandIkTarget.localRotation = _trackingLostHandCalculator.RightHandPose.rotation;
+            rightHandIkTarget.position = rootPosition + _trackingLostHandCalculator.RightHandPose.position;
+            rightHandIkTarget.rotation = _trackingLostHandCalculator.RightHandPose.rotation;
             SetRightHandEffectorWeight(1f, 0f);
         }
         
@@ -431,15 +448,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var rawNormalizedPos = isLeftHand ? _leftHandNormalizedPos : _rightHandNormalizedPos;
 
             // NOTE: scaled~ のほうは画像座標ベースの計算に使う。 world~ のほうは実際にユーザーが手を動かした量の推定値になっている
-            var scaledNormalizedPos = rawNormalizedPos * poseSettings.Hand2DofNormalizedHorizontalScale;
-            var worldPosDiffXy = rawNormalizedPos * poseSettings.Hand2DofWorldHorizontalScale;
+            var scaledNormalizedPos = rawNormalizedPos * _poseSetterSettings.Hand2DofNormalizedHorizontalScale;
+            var worldPosDiffXy = rawNormalizedPos * _poseSetterSettings.Hand2DofWorldHorizontalScale;
             
             // ポイント
             // - 手が伸び切らない程度に前に出すのを基本とする
             // - 画面中心から離れるほど奥行きをキャンセルして真横方向にする
             var forwardRate = Mathf.Sqrt(1 - Mathf.Clamp01(scaledNormalizedPos.sqrMagnitude));
             var handForwardOffset =
-                _bodyScaleCalculator.LeftArmLength * 0.7f * poseSettings.Hand2DofDepthScale * forwardRate;
+                _bodyScaleCalculator.LeftArmLength * 0.7f * _poseSetterSettings.Hand2DofDepthScale * forwardRate;
 
             var handPositionOffset = new Vector3(
                 worldPosDiffXy.x * _bodyScaleCalculator.BodyHeightFactor,
@@ -452,7 +469,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var additionalRotation = Quaternion.Slerp(
                 Quaternion.identity,
                 GetHandAdditionalRotation(scaledNormalizedPos, isLeftHand),
-                poseSettings.HandRotationModifyWeight
+                _poseSetterSettings.HandRotationModifyWeight
             );
             
             var baseRotation = isLeftHand ? _leftHandRot : _rightHandRot;
@@ -471,7 +488,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var forwardRate = Mathf.Sqrt(1 - Mathf.Clamp01(normalizedPos.sqrMagnitude));
 
             var direction = new Vector3(
-                normalizedPos.x, normalizedPos.y, forwardRate * poseSettings.Hand2DofDepthScale
+                normalizedPos.x, normalizedPos.y, forwardRate * _poseSetterSettings.Hand2DofDepthScale
                 );
             return Quaternion.LookRotation(direction) * rotWhenHandIsCenter;
         }

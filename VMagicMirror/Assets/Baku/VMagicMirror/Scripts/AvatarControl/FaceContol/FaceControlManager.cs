@@ -59,7 +59,7 @@ namespace Baku.VMagicMirror
             
             var blinkSource =
                 _config.ControlMode == FaceControlModes.ExternalTracker ? externalTrackerBlink.BlinkSource :
-                (_config.ControlMode == FaceControlModes.WebCam && !PreferAutoBlinkOnWebCamTracking) ? imageBasedBlinkController.BlinkSource :
+                (_config.ControlMode == FaceControlModes.WebCamLowPower && !PreferAutoBlinkOnWebCamTracking) ? imageBasedBlinkController.BlinkSource :
                 autoBlink.BlinkSource;
             
             accumulator.Accumulate(ExpressionKey.BlinkLeft, blinkSource.Left * weight);

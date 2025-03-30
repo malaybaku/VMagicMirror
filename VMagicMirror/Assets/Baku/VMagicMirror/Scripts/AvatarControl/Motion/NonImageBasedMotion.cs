@@ -108,9 +108,9 @@ namespace Baku.VMagicMirror
         //いっぽうwebカメラで顔トラが動く前 == 初期インストール直後を意味し、ここは親切にしたいので適用する。
         private void UpdateShouldApply() => _shouldApply.Value = 
             FaceControlMode == FaceControlModes.None || 
-            (FaceControlMode == FaceControlModes.WebCam && !_faceTracker.FaceDetectedAtLeastOnce);
+            (FaceControlMode == FaceControlModes.WebCamLowPower && !_faceTracker.FaceDetectedAtLeastOnce);
         
-        private FaceControlModes _faceControlMode = FaceControlModes.WebCam;
+        private FaceControlModes _faceControlMode = FaceControlModes.WebCamLowPower;
         public FaceControlModes FaceControlMode
         {
             get => _faceControlMode;

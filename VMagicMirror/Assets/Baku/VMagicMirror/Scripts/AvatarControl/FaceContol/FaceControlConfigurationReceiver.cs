@@ -69,7 +69,7 @@ namespace Baku.VMagicMirror
             _config.ControlMode =
                 _vmcpHeadPose.IsActive.Value ? FaceControlModes.VMCProtocol :
                 _enableExTracker.Value ? FaceControlModes.ExternalTracker :
-                _enableWebCamTracking.Value ? FaceControlModes.WebCam :
+                _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :
                 FaceControlModes.None;
         }
     }

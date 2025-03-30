@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
         /// <remarks>
         /// setterを呼んでいいのは適切なメッセージをIPCで受信しているクラスだけです。
         /// </remarks>
-        public FaceControlModes ControlMode { get; set; } = FaceControlModes.WebCam;
+        public FaceControlModes ControlMode { get; set; } = FaceControlModes.WebCamLowPower;
         
         /// <summary>
         /// パーフェクトシンクのon/offを取得、設定します。
@@ -92,8 +92,10 @@ namespace Baku.VMagicMirror
     {
         /// <summary> 顔トラッキングを行っていません。 </summary>
         None,
-        /// <summary> ウェブカメラの顔トラッキングを行っています。 </summary>
-        WebCam,
+        /// <summary> Webカメラで低負荷な顔トラッキングを行っています。 </summary>
+        WebCamLowPower,
+        /// <summary> Webカメラの高負荷な顔トラッキングを行っています。 </summary>
+        WebCamHighPower,
         /// <summary> 外部アプリによる顔トラッキングを行っています。 </summary>
         ExternalTracker,
         /// <summary> VMC Protocolで受信した頭部トラッキング </summary>

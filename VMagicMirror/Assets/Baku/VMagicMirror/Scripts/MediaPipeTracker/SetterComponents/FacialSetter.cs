@@ -1,31 +1,62 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using VRM;
+using UniVRM10;
+using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    //TODO: 「BlinkSource、LipSyncSource、PerfectSync用の何か」らへんとして動作するようにI/F実装として整理していく
+    //TODO: 下記のようなことをやって「BlinkSource、LipSyncSource、PerfectSync用の何か」らへんとして動作するようにI/Fを整える
+    // - 他のコードとノリを合わせてIVRMLoadableを見に行く
+    // - 必要ならblinkerとかlipsyncのサブクラスを持って、そっちに値を流す
     
     /// <summary>
     /// <see cref="FaceResultSetter"/> 等に向けて、Mediapipe Face Landmarkerで取得した表情の情報を集約するやつ
-    /// 
     /// </summary>
-    public class FacialSetter : MonoBehaviour
+    public class FacialSetter : PresenterBase
     {
-        [SerializeField] private VRMBlendShapeProxy blendShapeProxy;
+        private readonly IVRMLoadable _vrmLoadable;
+        private readonly object _dataLock = new();
 
-        // NOTE: Play Mode中に増えたキーは減らない…という前提を置く
-        private readonly Dictionary<BlendShapeKey, float> _values = new();
-        private readonly List<BlendShapeKey> _valuesKeyCache = new();
-        private readonly object _dictLock = new();
+        private readonly HashSet<ExpressionKey> _availableCustomKeys = new();
+        private readonly Dictionary<ExpressionKey, float> _values = new();
+        private readonly List<ExpressionKey> _valuesKeyCache = new();
+        private bool _hasModel;
+        
+        [Inject]
+        public FacialSetter(IVRMLoadable vrmLoadable)
+        {
+            _vrmLoadable = vrmLoadable;
+        }
+        
+        public override void Initialize()
+        {
+            _vrmLoadable.VrmLoaded += OnModelLoaded;
+            _vrmLoadable.VrmDisposing += OnModelUnloaded;
+        }
 
-        private readonly HashSet<BlendShapeKey> _availableCustomKeys = new();
+        private void OnModelUnloaded()
+        {
+            _hasModel = false;
+            _availableCustomKeys.Clear();
+        }
+
+        private void OnModelLoaded(VrmLoadedInfo info)
+        {
+            lock (_dataLock)
+            {
+                _availableCustomKeys.Clear();
+                _availableCustomKeys.UnionWith(info.RuntimeFacialExpression
+                    .ExpressionKeys
+                    .Where(key => key.Preset is ExpressionPreset.custom)
+                );
+                _hasModel = true;
+            }
+        }
 
         public void SetValues(IEnumerable<KeyValuePair<string, float>> values)
         {
-            lock (_dictLock)
+            lock (_dataLock)
             {
                 foreach (var (keyName, value) in values)
                 {
@@ -40,7 +71,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         public void ResetValues()
         {
-            lock (_dictLock)
+            lock (_dataLock)
             {
                 _valuesKeyCache.Clear();
                 _valuesKeyCache.AddRange(_values.Keys);
@@ -51,7 +82,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
-        private bool TryGetTargetKey(string keyName, out BlendShapeKey result)
+        private bool TryGetTargetKey(string keyName, out ExpressionKey result)
         {
             if (_availableCustomKeys.Any(
                     k => k.Name.Equals(keyName, StringComparison.InvariantCultureIgnoreCase)
@@ -62,27 +93,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 );
                 return true;
             }
-            else
-            {
-                result = default;
-                return false;
-            }
-        }
 
-        private void Start()
-        {
-            _availableCustomKeys.UnionWith(blendShapeProxy.BlendShapeAvatar.Clips
-                .Select(c => c.Key)
-                .Where(key => key.Preset is BlendShapePreset.Unknown)
-            );
-        }
-
-        private void Update()
-        {
-            lock (_dictLock)
-            {
-                blendShapeProxy.SetValues(_values);
-            }
+            result = default;
+            return false;
         }
     }
 }

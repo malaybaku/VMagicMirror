@@ -104,8 +104,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         }
 
         
+        //NOTE: prefabをちゃんと作ってないので一旦塞いでる。デバッグで必要になったらprefabのセットアップをしてガードを外せば動くはず。
         private void Update()
         {
+            enabled = false;
+            return;
             lock (_positionsLock)
             {
                 UpdatePositionsInternal();

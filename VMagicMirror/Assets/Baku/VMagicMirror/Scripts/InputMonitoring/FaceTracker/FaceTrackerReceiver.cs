@@ -15,15 +15,13 @@ namespace Baku.VMagicMirror
         private readonly FaceTracker _faceTracker;
         private readonly VMCPActiveness _vmcpActiveness;
         
-        private readonly ReactiveProperty<string> _cameraDeviceName = new ReactiveProperty<string>("");
+        private readonly ReactiveProperty<string> _cameraDeviceName = new("");
 
-        private readonly ReactiveProperty<bool> _enableFaceTracking = new ReactiveProperty<bool>(true);
-        private readonly ReactiveProperty<bool> _enableHighPowerMode = new ReactiveProperty<bool>(false);
-        private readonly ReactiveProperty<bool> _enableHandTracking = new ReactiveProperty<bool>(false);
-        private readonly ReactiveProperty<bool> _enableExTracker = new ReactiveProperty<bool>(false);
-
-        private readonly ReactiveProperty<bool> _disableCameraDuringVmcpActive =
-            new ReactiveProperty<bool>(true);
+        private readonly ReactiveProperty<bool> _enableFaceTracking = new(true);
+        private readonly ReactiveProperty<bool> _enableHighPowerMode = new(false);
+        private readonly ReactiveProperty<bool> _enableHandTracking = new(false);
+        private readonly ReactiveProperty<bool> _enableExTracker = new(false);
+        private readonly ReactiveProperty<bool> _disableCameraDuringVmcpActive = new(true);
         
         public FaceTrackerReceiver(
             IMessageReceiver receiver, 
@@ -34,40 +32,20 @@ namespace Baku.VMagicMirror
             _faceTracker = faceTracker;
             _vmcpActiveness = vmcpActiveness;
 
-            receiver.AssignCommandHandler(
-                VmmCommands.SetCameraDeviceName,
-                message => _cameraDeviceName.Value = message.Content
-                );
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableFaceTracking,
-                message => _enableFaceTracking.Value = message.ToBoolean()
-                );
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableWebCamHighPowerMode,
-                message => _enableHighPowerMode.Value = message.ToBoolean()
-                );
-            receiver.AssignCommandHandler(
-                VmmCommands.ExTrackerEnable,
-                message => _enableExTracker.Value = message.ToBoolean()
-                );
-            receiver.AssignCommandHandler(
-                VmmCommands.CalibrateFace,
-                message => _faceTracker.StartCalibration()
-                );
+            receiver.BindStringProperty(VmmCommands.SetCameraDeviceName, _cameraDeviceName);
+            receiver.BindBoolProperty(VmmCommands.EnableFaceTracking, _enableFaceTracking);
+            receiver.BindBoolProperty(VmmCommands.EnableWebCamHighPowerMode, _enableHighPowerMode);
+            receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _enableExTracker);
+            receiver.BindAction(VmmCommands.CalibrateFace, _faceTracker.StartCalibration);
             receiver.AssignCommandHandler(
                 VmmCommands.SetCalibrateFaceData,
                 message => _faceTracker.SetCalibrateData(message.Content)
                 );
 
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableImageBasedHandTracking,
-                message => _enableHandTracking.Value = message.ToBoolean()
+            receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _enableHandTracking);
+            receiver.BindBoolProperty(
+                VmmCommands.SetDisableCameraDuringVMCPActive, _disableCameraDuringVmcpActive
                 );
-            
-            receiver.AssignCommandHandler(
-                VmmCommands.SetDisableCameraDuringVMCPActive,
-                message => _disableCameraDuringVmcpActive.Value = message.ToBoolean()
-            );
 
             receiver.AssignQueryHandler(
                 VmmQueries.CameraDeviceNames,
@@ -85,7 +63,6 @@ namespace Baku.VMagicMirror
                 )
                 .Subscribe(_ => UpdateFaceDetectorState())
                 .AddTo(_faceTracker);
-
         }
         
         private void UpdateFaceDetectorState()
@@ -118,7 +95,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private string[] GetCameraDeviceNames()
+        private static string[] GetCameraDeviceNames()
             => WebCamTexture.devices
             .Select(d => d.name)
             .ToArray();

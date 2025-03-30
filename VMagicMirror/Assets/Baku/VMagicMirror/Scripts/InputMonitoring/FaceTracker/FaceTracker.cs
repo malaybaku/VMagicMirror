@@ -40,7 +40,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private int trackMinIntervalMillisecOnHighPower = 40;
         
         /// <summary> キャリブレーションの内容 </summary>
-        public CalibrationData CalibrationData { get; } = new CalibrationData();
+        public CalibrationData CalibrationData { get; } = new();
 
         /// <summary> 顔検出スレッド上で、顔情報がアップデートされると発火します。 </summary>
         public event Action<FaceDetectionUpdateStatus> FaceDetectionUpdated;
@@ -52,15 +52,15 @@ namespace Baku.VMagicMirror
         public event Action WebCamTextureDisposed;
 
         /// <summary> カメラが初期化済みかどうか </summary>
-        public bool HasInitDone { get; private set; } = false;
-        private bool _isInitWaiting = false;
+        public bool HasInitDone { get; private set; }
+        private bool _isInitWaiting;
 
         /// <summary> カメラを起動してから1度以上顔が検出されたかどうか </summary>
-        public bool FaceDetectedAtLeastOnce { get; private set; } = false;
+        public bool FaceDetectedAtLeastOnce { get; private set; }
 
         //実際に接続できてるかどうかはさておき「カメラを使ってるつもり」というあいだはtrueになるフラグ。
         private FaceTrackingMode _trackingMode;
-        private NoneFaceAnalyzer _noneFaceAnalyzer = new NoneFaceAnalyzer();
+        private readonly NoneFaceAnalyzer _noneFaceAnalyzer = new();
         private DlibFaceAnalyzeRoutine _dlibFaceAnalyzer;
         private DnnFaceAnalyzeRoutine _dnnFaceAnalyzer;
         public FaceAnalyzeRoutineBase CurrentAnalyzer
@@ -94,8 +94,8 @@ namespace Baku.VMagicMirror
         private int TrackMinIntervalMs =>
             IsHighPowerMode ? trackMinIntervalMillisecOnHighPower : trackMinIntervalMillisec;
 
-        private bool _calibrationRequested = false;
-        private float _faceNotDetectedCountDown = 0.0f;
+        private bool _calibrationRequested;
+        private float _faceNotDetectedCountDown;
 
         private HorizontalFlipController _horizontalFlipController;
         private WebCamTexture _webCamTexture;

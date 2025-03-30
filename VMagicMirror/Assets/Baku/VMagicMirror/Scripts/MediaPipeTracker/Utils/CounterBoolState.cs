@@ -22,6 +22,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _currentCount = initialState ? _onCount : _offCount;
             Value = initialState;
         }
+
+        public void Reset(bool initialState)
+        {
+            _targetValue = initialState;
+            _currentCount = initialState ? _onCount : _offCount;
+            Value = initialState;
+        }
         
         public void Set(bool value)
         {

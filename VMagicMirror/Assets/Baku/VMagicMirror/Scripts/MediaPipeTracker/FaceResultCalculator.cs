@@ -16,7 +16,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private const string RightEyeDownKey = "eyeLookDownRight";
         private const string RightEyeUpKey = "eyeLookUpRight";
 
-        private readonly KinematicSetter _kinematicSetter;
         private readonly FacialSetter _facialSetter;
         
         private readonly HashSet<string> _latestBlendShapeNames = new();
@@ -29,7 +28,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         public FaceResultSetter(KinematicSetter kinematicSetter, FacialSetter facialSetter)
         {
-            _kinematicSetter = kinematicSetter;
             _facialSetter = facialSetter;
         }
 

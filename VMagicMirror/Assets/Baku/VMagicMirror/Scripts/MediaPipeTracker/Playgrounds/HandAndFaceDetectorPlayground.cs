@@ -11,16 +11,19 @@ using Rect = Mediapipe.Tasks.Components.Containers.Rect;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
+    // TODO: v4.0.0の実装方針ではこのクラス使わないかもしれない。要検討
+    // iFacialMocap + ハンドトラッキングの場合、キャリブレーションの瞬間だけFace (Detector|Landmarker)が動いてれば用が足りるので、
+    // 実際に使わなさそうだったら使わない方向に寄せる
     public class HandAndFaceDetectorPlayground : HandPlayground
     {
-        [SerializeField] private bool useInterlace = false;
-        [SerializeField] private bool requestCalibration;
+        private bool useInterlace = false;
+        private bool requestCalibration;
 
-        [SerializeField] private float yawMax = 30f;
-        [SerializeField] private float yawMaxPositionRate = 0.8f;
+        private float yawMax = 30f;
+        private float yawMaxPositionRate = 0.8f;
         
-        [SerializeField] private float pitchMax = 30f;
-        [SerializeField] private float pitchMaxPositionRate = 0.8f;
+        private float pitchMax = 30f;
+        private float pitchMaxPositionRate = 0.8f;
         
         private const string FaceModelFileName = "blaze_face_short_range.bytes";
 
@@ -128,7 +131,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 EstimateRollAngle(positions)
                 );
             
-            KinematicSetter.SetHeadPose2Dof(nosePos, headAngle);
+            // NOTE: 低負荷顔トラッキングとしてもMediaPipeを使う機運になったらここを復活させる
+            //KinematicSetter.SetHeadPose2Dof(nosePos, headAngle);
             
             if (requestCalibration)
             {

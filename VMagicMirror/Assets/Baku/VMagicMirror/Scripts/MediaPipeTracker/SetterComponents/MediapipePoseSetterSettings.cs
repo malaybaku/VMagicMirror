@@ -1,10 +1,9 @@
-using System;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    [Serializable]
-    public class MediapipePoseSetterSettings
+    [CreateAssetMenu(fileName = "PoseSetterSettings", menuName = "MediaPipe/PoseSetterSettings")]
+    public class MediapipePoseSetterSettings : ScriptableObject
     {
         // xy軸の移動の大きさの係数
         [SerializeField] private float bodyHorizontalMoveScale = 1.0f;
@@ -19,7 +18,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Range(0f, 1f)]
         [SerializeField] private float handRotationModifyWeight = 0.5f;
         
-        // NOTE: 使わないでいいはずなので
+        [SerializeField] private float handIkSmoothRate = 18f;
+        [SerializeField] private float fingerBoneSmoothRate = 18f;
+
+        // NOTE: アバターが極端に大きい場合は上限を緩和してもいいが、あんまり細かくはケアしたくない…
+        // 手のIKの1secあたりの最大移動距離で、とくにトラッキング中の動作に対して適用される。
+        [SerializeField] private float handMoveSpeedMax = 1.4f;
+
+        public float HandIkSmoothRate => handIkSmoothRate;
+        public float FingerBoneSmoothRate => fingerBoneSmoothRate;
+        public float HandMoveSpeedMax => handMoveSpeedMax;
+        
+        // NOTE: 使わないでいいはずなので無し
         // public float RawHorizontalMoveScale => horizontalMoveScale;
 
         // NOTE: FaceLandmarker の出力がおおむねcm単位であることが分かっているので、こういう変換を行っている

@@ -23,15 +23,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         ) : base(textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
         {
         }
-        
-        // matrixを使って得た並進量をm単位っぽい値に変換するときに使うスケール値。
-        // NOTE: 検証時点では決め打ちするが、動きの大きさとしてユーザーにオプションを公開してもよい
-        [SerializeField] private float faceTranslateScale = 0.01f;
-        
-        // NOTE: VMMの場合、これに相当する値はキャリブレーションで取得すべきである。
-        // というか、iFMのキャリブと同様にdepthに限定せず、「基準となる正面顔に対してのカメラの(現実の)localPos/Rot」を
-        // キャリブレーション結果として保存することが望ましい
-        [SerializeField] private float baseDepth = 0.5f;
 
         private FaceLandmarker _landmarker;
         private FaceResultSetter _faceSetter;

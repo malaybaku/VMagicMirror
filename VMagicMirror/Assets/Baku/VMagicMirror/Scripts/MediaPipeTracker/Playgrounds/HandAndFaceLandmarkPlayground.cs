@@ -10,13 +10,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 {
     public class HandAndFaceLandmarkPlayground : HandPlayground
     {
-        [SerializeField] private bool useInterlace = false;
-        
-        // NOTE: FaceLandmarkPlaygroundと同じ使い方をするやつ
-        [SerializeField] private float faceTranslateScale = 0.01f;
-        [SerializeField] private float baseDepth = 0.5f;
-
-        [SerializeField] private bool requestCalibration;
+        //TODO: インターレース可能なときにやるかどうか」という設定はGUIに公開したい
+        private bool useInterlace = false;
+        // TODO: GUIのキャリブレーションボタンの結果を受けてフラグを(このクラスじゃないどこかで)立てたい
+        private bool requestCalibration;
 
         private const string FaceModelFileName = "face_landmarker_v2_with_blendshapes.bytes";
 

@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
@@ -15,16 +16,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private const float TrackingLostRotationDelay = 0.0f;
         private const float TrackingLostPoseDuration = TrackingLostMotionDuration + TrackingLostRotationDelay;
 
-        private static readonly Vector3 HandDownStartTangent = new Vector3(0, -1f, 0.1f);
-        
+        private static readonly Vector3 HandDownStartTangent = new(0, -1f, 0.1f);
+
+        private readonly BodyScaleCalculator _bodyScaleCalculator;
+
         private CancellationTokenSource _leftHandCts;
         private CancellationTokenSource _rightHandCts;
-
-        private Animator _animator;
-        private Vector3 _rootToLeftUpperArm;
-        private Vector3 _rootToRightUpperArm;
-        private float _leftArmLength;
-        private float _rightArmLength;
 
         private Pose _leftLastTrackedPose = Pose.identity;
         private Quaternion _leftLastTrackedLocalRotation = Quaternion.identity;
@@ -46,21 +43,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         public Quaternion LeftHandLocalRotation { get; private set; } = Quaternion.identity;
         public Quaternion RightHandLocalRotation { get; private set; } = Quaternion.identity;
-
-        public void SetupAnimator(Animator animator)
+        
+        [Inject]
+        public TrackingLostHandCalculator(BodyScaleCalculator bodyScaleCalculator)
         {
-            _animator = animator;
-            var leftUpperArmPosition = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
-            var rightUpperArmPosition = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
-            var rootPosition = animator.transform.position;
-            // NOTE: 関数の呼び出し時点ではAnimatorがTポーズである…という前提の実装。そうでない場合、lowerArmも取得して累積する
-            var leftHandPosition = animator.GetBoneTransform(HumanBodyBones.LeftHand).position;
-            var rightHandPosition = animator.GetBoneTransform(HumanBodyBones.RightHand).position;
-
-            _rootToLeftUpperArm = leftUpperArmPosition - rootPosition;
-            _rootToRightUpperArm = rightUpperArmPosition - rootPosition;
-            _leftArmLength = (leftHandPosition - leftUpperArmPosition).magnitude;
-            _rightArmLength = (rightHandPosition - rightUpperArmPosition).magnitude;
+            _bodyScaleCalculator = bodyScaleCalculator;
         }
 
         /// <summary>
@@ -110,14 +97,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public Pose GetLeftHandTrackingLostEndPose()
         {
             var rot = Quaternion.Euler(-8f, 0, 70f);
-            var pos = _rootToLeftUpperArm + rot * Vector3.left * (_leftArmLength * ArmStretchRateOnEnd);
+            var pos = 
+                _bodyScaleCalculator.RootToLeftUpperArm + 
+                rot * Vector3.left * (_bodyScaleCalculator.LeftArmLength * ArmStretchRateOnEnd);
             return new Pose(pos, rot);
         }
         
         public Pose GetRightHandTrackingLostEndPose()
         {
             var rot = Quaternion.Euler(-8f, 0, -70f);
-            var pos = _rootToRightUpperArm + rot * Vector3.right * (_rightArmLength * ArmStretchRateOnEnd);
+            var pos =
+                _bodyScaleCalculator.RootToRightUpperArm +
+                rot * Vector3.right * (_bodyScaleCalculator.RightArmLength * ArmStretchRateOnEnd);
             return new Pose(pos, rot);
         }
         

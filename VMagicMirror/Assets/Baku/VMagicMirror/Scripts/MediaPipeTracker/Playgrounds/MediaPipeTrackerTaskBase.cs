@@ -15,41 +15,40 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     {
         public MediaPipeTrackerTaskBase(
             WebCamTextureSource textureSource,
-            KinematicSetter kinematicSetter, 
+            KinematicSetter kinematicSetter,
             FacialSetter facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer
         )
         {
             _textureSource = textureSource;
-            _kinematicSetter = kinematicSetter;
-            _facialSetter = facialSetter;
-            _calibrator = calibrator;
-            _landmarksVisualizer = landmarksVisualizer;
+            KinematicSetter = kinematicSetter;
+            FacialSetter = facialSetter;
+            Calibrator = calibrator;
+            LandmarksVisualizer = landmarksVisualizer;
         }
 
-        private WebCamTextureSource _textureSource;
-         private KinematicSetter _kinematicSetter;
-         private FacialSetter _facialSetter;
-         private CameraCalibrator _calibrator;
-        private LandmarksVisualizer _landmarksVisualizer;
+        private readonly WebCamTextureSource _textureSource;
 
         private IDisposable _textureSourceSubscriber = null;
 
-        protected KinematicSetter KinematicSetter => _kinematicSetter;
-        protected FacialSetter FacialSetter => _facialSetter;
-        //TODO: デバッグが終わったら削除したい
-        protected LandmarksVisualizer LandmarksVisualizer => _landmarksVisualizer;
-        protected CameraCalibrator Calibrator => _calibrator;
-        
+        protected KinematicSetter KinematicSetter { get; }
+
+        protected FacialSetter FacialSetter { get; }
+
+        // NOTE: visualizerはそのうち削除もアリ。Instantiateしないのが保証されてれば残ってもよいが
+        protected LandmarksVisualizer LandmarksVisualizer { get; }
+
+        protected CameraCalibrator Calibrator { get; }
+
         protected int WebCamTextureWidth => _textureSource.Width;
         protected int WebCamTextureHeight => _textureSource.Height;
-        
+
         /// <summary>
         /// NOTE: 横長になると1より大きくなる
         /// </summary>
         protected float WebCamTextureAspect => _textureSource.Width * 1f / _textureSource.Height;
-        
+
         protected abstract void OnStartTask();
         protected abstract void OnStopTask();
         protected abstract void OnWebCamImageUpdated(WebCamImageSource source);
@@ -70,7 +69,19 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
-        public void StartTask()
+        public void SetTaskActive(bool isActive)
+        {
+            if (isActive)
+            {
+                StartTask();
+            }
+            else
+            {
+                StopTask();
+            }
+        }
+        
+        public None StartTask()
         {
             // Stopしないでもシーケンス上は大丈夫だけど、まあ気になるので…
             StopTask();
@@ -82,13 +93,17 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _textureSourceSubscriber = _textureSource
                 .ImageUpdated
                 .Subscribe(OnWebCamImageUpdated);
+            
+            return None.Value;
         }
 
-        public void StopTask()
+        public None StopTask()
         {
             OnStopTask();
             _textureSourceSubscriber?.Dispose();
             _textureSourceSubscriber = null;
+            
+            return None.Value;
         }
     }
 }

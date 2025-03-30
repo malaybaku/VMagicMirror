@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 using Debug = UnityEngine.Debug;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
@@ -38,30 +39,57 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// Mediapipeのタスクの基盤処理として、WebCamTextureを起動してカメラ画像が更新されたらIObservableで発火するやつ
     /// </summary>
-    public class WebCamTextureSource : MonoBehaviour
+    public class WebCamTextureSource : IDisposable
     {
-        [SerializeField] private WebCamSettings settings;
-        [SerializeField] private RawImage screen;
-        [SerializeField] private bool showFpsLog;
+        // NOTE: debug中だけtrueにする
+        private const bool ShowFpsLog = false;
 
+        private readonly WebCamSettings _settings;
+        
         private CancellationTokenSource _cts;
         private WebCamTexture _webCamTexture;
         private int _imageUpdatedCount;
         private long _imageUpdatedPrevTimestamp;
 
         private readonly Subject<WebCamImageSource> _imageUpdated = new();
-
         /// <summary>
-        /// TODO: これだと「発火した値をキャッシュしちゃダメ」という仕様になるが、マルチスレッドと相性が悪いかも。
-        /// WebCamImageの(というか、その中のImageの)キャッシュを次の didUpdateThisFrame まで持たすような構造は有りそう。
+        /// Webカメラのテクスチャが更新されたフレームで発火する。
+        /// 購読側では発火に対してDelayつきで画像を読み出そうとしたとき、正しく読めることは保証されない。
         /// </summary>
         public IObservable<WebCamImageSource> ImageUpdated => _imageUpdated;
 
         public int Width { get; private set; }
         public int Height { get; private set; }
 
+        [Inject]
+        public WebCamTextureSource(WebCamSettings settings)
+        {
+            _settings = settings;
+
+            // 初期値がゼロだと流石にアレなので値を入れておく
+            Width = _settings.Width;
+            Height = _settings.Height;
+        }
+
+        /// <summary>
+        /// Webカメラのテクスチャの取得を開始、または停止する。<paramref name="deviceName"/>は開始する場合のみ値が使われる
+        /// </summary>
+        /// <param name="active"></param>
+        /// <param name="deviceName"></param>
+        public void SetActive(bool active, string deviceName)
+        {
+            if (active)
+            {
+                StartWebCam(deviceName);
+            }
+            else
+            {
+                StopWebCam();
+            }
+        }
+        
         // NOTE: start/stopメソッドはVMMへの移植を想定して書いているが、VMMに持ってくまでは使わないでヨイ
-        public void StartWebCam(string deviceName)
+        private void StartWebCam(string deviceName)
         {
             StopWebCam();
             var index = GetDeviceIndex(deviceName);
@@ -69,7 +97,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             CaptureWebCamTextureAsync(index, _cts.Token).Forget();
         }
 
-        public void StopWebCam()
+        private void StopWebCam()
         {
             _cts?.Cancel();
             _cts?.Dispose();
@@ -79,26 +107,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 _webCamTexture.Stop();
             }
-            _webCamTexture = null;
-        }        
-        
-        // NOTE: VMM本体の場合、このStartが不要になって、他クラスからStart/Stopしてほしい感じになる(& MonoBehaviourでもなくなるはず)
-        private void Start()
-        {
-            Width = settings.Width;
-            Height = settings.Height;
 
-            var index = GetDeviceIndex(settings.PreferredName);
-            if (index < 0)
-            {
-                index = 0;
-            }
-            _cts = new CancellationTokenSource();
-            
-            CaptureWebCamTextureAsync(index, _cts.Token).Forget();
+            _webCamTexture = null;
+            // NOTE: ここでWidth/Heightをリセットしてもいいが、しないでも破綻しないはずなので放っておく
         }
 
-        private void OnDestroy() => StopWebCam();
+        void IDisposable.Dispose() => StopWebCam();
 
         private async UniTaskVoid CaptureWebCamTextureAsync(int deviceIndex, CancellationToken cancellationToken)
         {
@@ -133,20 +147,21 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void LogImageUpdated(long timestampMillisecond)
         {
-            // NOTE: カウント自体は常時行うが、ログ出力をするのはオプションで有効になっているときだけ…というくらいにしておく
-            // (別に最適化したいわけじゃないからね)
+            if (!ShowFpsLog)
+            {
+                return;
+            }
+
             _imageUpdatedCount++;
             if (_imageUpdatedCount % 30 == 0)
             {
                 var elapsedTime = (timestampMillisecond - _imageUpdatedPrevTimestamp) * 0.001f;
                 var rate = 30 / elapsedTime;
-                if (showFpsLog)
-                {
-                    Debug.Log($"WebCamTexture DidUpdate 30 times, Elapsed={elapsedTime:0.000}, fps={rate:0.0}");
-                }
+                Debug.Log($"WebCamTexture DidUpdate 30 times, Elapsed={elapsedTime:0.000}, fps={rate:0.0}");
                 _imageUpdatedPrevTimestamp = timestampMillisecond;
             }
         }
+
         private async UniTask PrepareWebCamTextureAsync(int deviceIndex, CancellationToken cancellationToken)
         {
             if (WebCamTexture.devices.Length == 0)
@@ -156,16 +171,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
 
             var webCamDevice = WebCamTexture.devices[deviceIndex];
-            _webCamTexture = new WebCamTexture(webCamDevice.name, settings.Width, settings.Height, settings.Fps);
+            _webCamTexture = new WebCamTexture(webCamDevice.name, _settings.Width, _settings.Height, _settings.Fps);
             _webCamTexture.Play();
 
             // NOTE: MacOS用の処置らしいのでなくても済むかもしれないが、あってもとくに困らないので入れている 
             await UniTask.WaitUntil(() => _webCamTexture.width > 16, cancellationToken: cancellationToken);
 
-            screen.texture = _webCamTexture;
             Width = _webCamTexture.width;
             Height = _webCamTexture.height;
-            Debug.Log($"WebCamTexture (w,h), request=({settings.Width},{settings.Height}), actual=({Width},{Height})");
+            LogOutput.Instance.Write($"MediaPipeTracker: WebCamTexture (w,h), request=({_settings.Width},{_settings.Height}), actual=({Width},{Height})");
         }
         
         // NOTE: 一致しない場合は-1を返す
@@ -173,16 +187,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             if (WebCamTexture.devices.Length == 0)
             {
-                Debug.LogWarning("No WebCam device");
                 return -1;
             }
 
             var devices = WebCamTexture.devices;
-            foreach (var d in devices)
-            {
-                Debug.Log("WebCam Device Name: " + d.name);
-            }
-
             var deviceIndex = Array.FindIndex(devices, d => d.name == deviceName);
             return deviceIndex >= 0 ? deviceIndex : -1;
         }

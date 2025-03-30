@@ -1,16 +1,21 @@
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    public class BodyScaleCalculator
+    public class BodyScaleCalculator : PresenterBase
     {
         // 適当な標準体型での root-nose の高さ、および upperArm-hand の距離
         // ※noseまでの高さを使うのは、VRoid のモデルで大体鼻くらいの高さにheadボーンがあるため
         private const float DefaultBodyHeight = 1.5f;
         public const float DefaultArmLength = 0.6f;
 
+        private readonly IVRMLoadable _vrmLoadable;
+        
+        
         // NOTE: 仮置きの値は「むちゃくちゃじゃなければOK」くらいのやつ
-        public float ArmLength { get; private set; } = DefaultArmLength;
+        public float LeftArmLength { get; private set; } = DefaultArmLength;
+        public float RightArmLength { get; private set; } = DefaultArmLength;
         public float BodyHeight { get; private set; } = DefaultBodyHeight;
         
         // Tポーズの状態で取得した各ボーンの位置
@@ -19,13 +24,23 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public Vector3 RootToRightUpperArm { get; private set; }
 
         public float BodyHeightFactor { get; private set; } = 1f;
-
-        /// <summary>
-        /// 直立したAnimatorを渡すことで、体格に関する諸元を計算する
-        /// </summary>
-        /// <param name="target"></param>
-        public void Calculate(Animator target)
+        
+        [Inject]
+        public BodyScaleCalculator(IVRMLoadable vrmLoadable)
         {
+            _vrmLoadable = vrmLoadable;
+        }
+        
+        public override void Initialize()
+        {
+            _vrmLoadable.VrmLoaded += OnVrmLoaded;
+        }
+
+        // TODO: 体型計算してるコード、統一したい…
+        private void OnVrmLoaded(VrmLoadedInfo info)
+        {
+            var target = info.animator;
+            
             var rootPosition = target.transform.position;
 
             var head = target.GetBoneTransform(HumanBodyBones.Head);
@@ -36,9 +51,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var rightWrist = target.GetBoneTransform(HumanBodyBones.RightHand);
 
             var bodyHeight = head.position.y - rootPosition.y;
-            var armLength = Vector3.Distance(leftWrist.position, leftUpperArm.position);
+            var leftArmLength = Vector3.Distance(leftWrist.position, leftUpperArm.position);
+            var rightArmLength = Vector3.Distance(rightWrist.position, rightUpperArm.position);
 
-            ArmLength = armLength;
+            LeftArmLength = leftArmLength;
+            RightArmLength = rightArmLength;
             BodyHeight = bodyHeight;
             BodyHeightFactor = bodyHeight / DefaultBodyHeight;
 
@@ -46,5 +63,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             RootToLeftUpperArm = leftUpperArm.position - rootPosition;
             RootToRightUpperArm = rightUpperArm.position - rootPosition;
         }
+
     }
 }

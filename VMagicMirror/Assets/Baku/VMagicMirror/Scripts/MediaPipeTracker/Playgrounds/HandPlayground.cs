@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 using Mediapipe;
@@ -10,19 +9,11 @@ using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
+    // NOTE: 「外部トラッキング(≒iFacialMocap) + ハンドトラッキング」の場合にだけ有効になる
     public class HandPlayground : MediaPipeTrackerTaskBase
     {
-        // TODO: MediaPipeTracker全体として一環した値を一箇所に定義して使いたい
-        // - かつ、設定をユーザーが変更する可能性にも備えたい
-
-        // 「カメラ映像の左端～右端まで手が動いたときにリアル空間上で何mだけ手が動いたことにするか」というスケール値
-        private const float handOffsetScale = 0.6f;
-
-        protected float HandOffsetScale => handOffsetScale;
-
-        // hand_landmark_(full|lite) というのもあるが、こっちはlegacyのデータなのか動作しない 
+        // NOTE: MediaPipeの標準的なモデルデータでは hand_landmark_(full|lite) という名称のものもあるが、これはlegacyのデータなのか動作しない 
         private const string ModelFileName = "hand_landmarker.bytes";
-
         private const string LeftHandHandednessName = "Left";
         private const string RightHandHandednessName = "Right";
 

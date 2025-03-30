@@ -6,6 +6,12 @@ using VRM;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
+    //TODO: 「BlinkSource、LipSyncSource、PerfectSync用の何か」らへんとして動作するようにI/F実装として整理していく
+    
+    /// <summary>
+    /// <see cref="FaceResultSetter"/> 等に向けて、Mediapipe Face Landmarkerで取得した表情の情報を集約するやつ
+    /// 
+    /// </summary>
     public class FacialSetter : MonoBehaviour
     {
         [SerializeField] private VRMBlendShapeProxy blendShapeProxy;

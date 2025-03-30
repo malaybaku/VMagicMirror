@@ -67,27 +67,25 @@ namespace Baku.VMagicMirror
         
         private void UpdateFaceDetectorState()
         {
-            //NOTE: ココ結構条件が複雑
-            //カメラが未指定 → とにかくダメなのでカメラは止める
-            //カメラが指定されてる→
-            //  - 手トラッキングあり → 顔まわりがどうなっててもカメラは起こす
-            //  - 手トラッキングなし → Ex.Trackerの状態と顔トラッキング自体のオンオフを見たうえで判断
-            var canUseCamera = !string.IsNullOrEmpty(_cameraDeviceName.Value);
-            if (canUseCamera)
-            {
-                canUseCamera =
-                    _enableHandTracking.Value ||
-                    (_enableFaceTracking.Value && !_enableExTracker.Value);
-            }
+            // NOTE: MediaPipe実装が増えたため、カメラの起動する条件は限定的になった。下記すべてが該当することが必要
+            // - 有効なカメラ名を指定している
+            // - 顔トラが有効
+            // - 高負荷モードがオフ、かつExTrackerもオフ == 顔トラッキングのモードとして低負荷モードを指定されている
+            // - ハンドトラッキングがオフ (※ハンドトラッキングがオンの場合、高負荷モードがオフでもMediaPipeのほうが起動する)
+            // - VMC Protocolがオフ or オンだけどカメラをそのまま動かしてよい
+            //   - ※ここの存在価値は怪しいので条件として外すかもだが…
 
-            if (canUseCamera)
+            var useCameraForLowPowerFaceTracking = 
+                !string.IsNullOrEmpty(_cameraDeviceName.Value) &&
+                _enableFaceTracking.Value &&
+                !_enableHighPowerMode.Value &&
+                !_enableExTracker.Value &&
+                !_enableHandTracking.Value &&
+                (!_vmcpActiveness.IsActive.Value || !_disableCameraDuringVmcpActive.Value);
+
+            if (useCameraForLowPowerFaceTracking)
             {
-                var trackingMode = FaceTrackingMode.None;
-                if (_enableFaceTracking.Value && !_enableExTracker.Value)
-                {
-                    trackingMode = _enableHighPowerMode.Value ? FaceTrackingMode.HighPower : FaceTrackingMode.LowPower;
-                }
-                _faceTracker.ActivateCameraForFaceTracking(_cameraDeviceName.Value, trackingMode);
+                _faceTracker.ActivateCameraForFaceTracking(_cameraDeviceName.Value, FaceTrackingMode.LowPower);
             }
             else
             {

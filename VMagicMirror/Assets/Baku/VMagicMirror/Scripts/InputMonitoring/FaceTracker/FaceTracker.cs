@@ -17,6 +17,7 @@ namespace Baku.VMagicMirror
         /// <summary> DlibFaceLandmarkDetectorによる低負荷な顔トラッキングを回します。 </summary>
         LowPower,
         /// <summary> OpenCvForUnityのdnnを使った、やや高負荷な顔トラッキングを回します。 </summary>
+        [Obsolete]
         HighPower
     }
     
@@ -62,14 +63,14 @@ namespace Baku.VMagicMirror
         private FaceTrackingMode _trackingMode;
         private readonly NoneFaceAnalyzer _noneFaceAnalyzer = new();
         private DlibFaceAnalyzeRoutine _dlibFaceAnalyzer;
-        private DnnFaceAnalyzeRoutine _dnnFaceAnalyzer;
+        //private DnnFaceAnalyzeRoutine _dnnFaceAnalyzer;
         public FaceAnalyzeRoutineBase CurrentAnalyzer
         {
             get
             {
                 switch (_trackingMode)
                 {
-                    case FaceTrackingMode.HighPower: return _dnnFaceAnalyzer;
+                    //case FaceTrackingMode.HighPower: return _dnnFaceAnalyzer;
                     case FaceTrackingMode.LowPower: return _dlibFaceAnalyzer;
                     default: return _noneFaceAnalyzer;
                     
@@ -77,7 +78,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public bool IsHighPowerMode => _trackingMode == FaceTrackingMode.HighPower;
+        public bool IsHighPowerMode => false; // _trackingMode == FaceTrackingMode.HighPower;
 
         private bool _disableHorizontalFlip;
         public bool DisableHorizontalFlip
@@ -87,7 +88,7 @@ namespace Baku.VMagicMirror
             {
                 _disableHorizontalFlip = value;
                 _dlibFaceAnalyzer.DisableHorizontalFlip = value;
-                _dnnFaceAnalyzer.DisableHorizontalFlip = value;
+                //_dnnFaceAnalyzer.DisableHorizontalFlip = value;
             } 
         }
 
@@ -125,13 +126,13 @@ namespace Baku.VMagicMirror
             CalibrationData.SetDefaultValues();
             
             _dlibFaceAnalyzer = new DlibFaceAnalyzeRoutine(StreamingAssetFileNames.DlibFaceTrackingDataFileName);
-            _dnnFaceAnalyzer = new DnnFaceAnalyzeRoutine();
+            //_dnnFaceAnalyzer = new DnnFaceAnalyzeRoutine();
             //イベントを素通し
             _dlibFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;
-            _dnnFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;
+            //_dnnFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;
             
             _dlibFaceAnalyzer.SetUp();
-            _dnnFaceAnalyzer.SetUp();
+            //_dnnFaceAnalyzer.SetUp();
             
             _horizontalFlipController.DisableHorizontalFlip
                 .Subscribe(disable => DisableHorizontalFlip = disable)
@@ -237,7 +238,7 @@ namespace Baku.VMagicMirror
         private void OnDestroy()
         {
             Dispose();
-            _dnnFaceAnalyzer.Dispose();
+            //_dnnFaceAnalyzer.Dispose();
             _dlibFaceAnalyzer.Dispose();
         }
 

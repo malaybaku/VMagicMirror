@@ -101,7 +101,7 @@
 
             <!-- 「webカメラ (軽量)」のときのUI -->
             <Border Style="{StaticResource SectionBorder}"
-                    Visibility="{Binding UseLiteWebCamera.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Visibility="{Binding UseHighPowerWebCamera.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                     >
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">

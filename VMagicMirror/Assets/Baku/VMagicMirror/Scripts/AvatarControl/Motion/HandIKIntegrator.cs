@@ -171,7 +171,6 @@ namespace Baku.VMagicMirror
             CarHandleProvider carHandleProvider,
             CarHandleFingerController carHandleFingerController,
             PenTabletProvider penTabletProvider,
-            HandTracker handTracker,
             ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader,
             SwitchableHandDownIkData switchableHandDownIk,
             VMCPHandPose vmcpHandPose,

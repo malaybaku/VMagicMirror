@@ -10,7 +10,6 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private RawInputChecker robustRawInputChecker = null;
         [SerializeField] private MousePositionProvider mousePositionProvider = null;
         [SerializeField] private FaceTracker faceTracker = null;
-        [SerializeField] private HandTracker handTracker = null;
         [SerializeField] private ExternalTrackerDataSource externalTracker = null;
         [SerializeField] private XInputGamePad gamepadListener = null;
         [SerializeField] private MidiInputObserver midiInputObserver = null;
@@ -23,7 +22,6 @@ namespace Baku.VMagicMirror.Installer
                 .AsCached();
             container.BindInstance(mousePositionProvider);
             container.BindInstance(faceTracker);
-            container.BindInstance(handTracker);
             container.BindInstance(externalTracker);
             container.BindInstance(externalTracker.FaceSwitchExtractor);
             container.BindInstance(gamepadListener);

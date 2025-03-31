@@ -51,15 +51,22 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // - headPose.position は root位置の移動として反映する
         private readonly CounterBoolState _hasHeadPose = new(3, 5);
         private Pose _headPose = Pose.identity;
+        // NOTE: このtimeは以下のように使う。 (left|right)Hand のほうも同じ
+        // - _hasHeadPose がtrueになると積算されはじめる
+        // - SetHeadPose か ClearHeadPose のいずれかでカウントをリセットする
+        //   - つまり、トラッキングできてるかどうかによらず、結果が振ってさえいればリセットされ続ける
+        // - 一定値を超えた場合、トラッキングロストと同様に扱って _hasHeadPose をリセットする
+        private float _headResultLostTime = 0f;
 
         private readonly CounterBoolState _hasLeftHandPose = new(3, 5);
         private Vector2 _leftHandNormalizedPos;
         private Quaternion _leftHandRot = Quaternion.identity;
+        private float _leftHandResultLostTime = 0f;
 
         private readonly CounterBoolState _hasRightHandPose = new(3, 5);
         private Vector2 _rightHandNormalizedPos;
         private Quaternion _rightHandRot = Quaternion.identity;
-
+        private float _rightHandResultLostTime = 0f;
         
         [Inject]
         public KinematicSetter(
@@ -150,6 +157,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 }
                 _headPose = new Pose(pos, pose.rotation);
                 _hasHeadPose.Set(true);
+                _headResultLostTime = 0f;
             }
         }
         
@@ -158,6 +166,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             lock (_poseLock)
             {
                 _hasHeadPose.Set(false);
+                _headResultLostTime = 0f;
             }
         }
         
@@ -192,10 +201,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (IsHandMirrored)
                 {
                     _hasRightHandPose.Set(false);
+                    _rightHandResultLostTime = 0f;
                 }
                 else
                 {
                     _hasLeftHandPose.Set(false);
+                    _leftHandResultLostTime = 0f;
                 }
             }
         }
@@ -222,10 +233,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (IsHandMirrored)
                 {
                     _hasLeftHandPose.Set(false);
+                    _leftHandResultLostTime = 0f;
                 }
                 else
                 {
                     _hasRightHandPose.Set(false);
+                    _rightHandResultLostTime = 0f;
                 }
             }
         }
@@ -236,6 +249,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _leftHandNormalizedPos = pos;
             _leftHandRot = rot * MediapipeMathUtil.GetVrmForwardHandRotation(true);
             _hasLeftHandPose.Set(true);
+            _leftHandResultLostTime = 0f;
         }
 
         private void SetRightHandPoseInternal(Vector2 pos, Quaternion rot)
@@ -243,6 +257,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _rightHandNormalizedPos = pos;
             _rightHandRot = rot * MediapipeMathUtil.GetVrmForwardHandRotation(false);
             _hasRightHandPose.Set(true);
+            _rightHandResultLostTime = 0f;
         }
 
         // NOTE: Headについてはこの関数では制御せず、代わりに SetHeadPose の結果を用いる
@@ -279,20 +294,45 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         void ITickable.Tick()
         {
-            // TODO: Hand Tracking関連でどーしてもクラス内で処理したいことがある場合だけ書く。そうでない場合、ITickableごと削除する
+            lock (_poseLock)
+            {
+                if (_hasHeadPose.Value)
+                {
+                    _headResultLostTime += Time.deltaTime;
+                    if (_headResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
+                    {
+                        _hasHeadPose.Reset(false);
+                        _headResultLostTime = 0f;
+                    }
+                }
+                
+                if (_hasLeftHandPose.Value)
+                {
+                    _leftHandResultLostTime += Time.deltaTime;
+                    if (_leftHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
+                    {
+                        _hasLeftHandPose.Reset(false);
+                        _leftHandResultLostTime = 0f;
+                    }
+                }
+                
+                if (_hasRightHandPose.Value)
+                {
+                    _rightHandResultLostTime += Time.deltaTime;
+                    if (_rightHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
+                    {
+                        _hasRightHandPose.Reset(false);
+                        _rightHandResultLostTime = 0f;
+                    }
+                }
+            }
+            
+
+            // NOTE: ハンドトラッキングの都合で必要なものがあれば復活させてもいいが、多分クラスを分ける感じになるはず
             return;
             
             lock (_poseLock)
             {
-                var rootPosition = _hasHeadPose.Value
-                    ? GetHeadPositionOffset()
-                    : Vector3.zero;
-                _targetAnimator.transform.localPosition = Vector3.Lerp(
-                    _targetAnimator.transform.localPosition,
-                    rootPosition,
-                    rootPositionSmoothRate
-                );
-                
                 foreach (var pair in _rotationsBeforeIK)
                 {
                     if (_bones.TryGetValue(pair.Key, out var boneTransform))

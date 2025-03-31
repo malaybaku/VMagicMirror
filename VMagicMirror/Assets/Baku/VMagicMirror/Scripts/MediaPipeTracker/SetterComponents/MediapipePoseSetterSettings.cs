@@ -5,6 +5,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     [CreateAssetMenu(fileName = "PoseSetterSettings", menuName = "MediaPipe/PoseSetterSettings")]
     public class MediapipePoseSetterSettings : ScriptableObject
     {
+        // (通常は起きないはずだが) この秒数だけMediaPipeの結果が受信できなかった場合、
+        // MediaPipeのタスク結果とは無関係にトラッキングロストと見なす
+        [SerializeField] private float trackingLostTimeThreshold = 0.3f;
+
         // xy軸の移動の大きさの係数
         [SerializeField] private float bodyHorizontalMoveScale = 1.0f;
         // z軸の移動の大きさの係数。この値は Face Landmarker BS を使っているときだけ使われる。0にすると奥行きの移動をナシにする
@@ -47,5 +51,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public float Hand2DofWorldHorizontalScale => 0.3f * handHorizontalMoveScale;
         public float Hand2DofDepthScale => handDepthMoveScale;
         public float HandRotationModifyWeight => handRotationModifyWeight;
+        public float TrackingLostTimeThreshold => trackingLostTimeThreshold;
     }
 }

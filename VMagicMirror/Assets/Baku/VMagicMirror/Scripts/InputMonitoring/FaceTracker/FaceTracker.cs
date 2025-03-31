@@ -261,12 +261,25 @@ namespace Baku.VMagicMirror
             Dispose();
         }
 
-        public void StartCalibration() => _calibrationRequested = true;
+        public void StartCalibration()
+        {
+            // NOTE: dlib用のカメラを起動してないときにのキャリブレーション要求は無視する。
+            // このガードは、主に高負荷モードの顔トラッキング中に適用される
+            if (HasInitDone)
+            {
+                _calibrationRequested = true;
+            }
+        }
 
         public void SetCalibrateData(string data)
         {
             try
             {
+                if (string.IsNullOrEmpty(data))
+                {
+                    return;
+                }
+
                 var calibrationData = JsonUtility.FromJson<CalibrationData>(data);
                 CalibrationData.faceSize = calibrationData.faceSize;
                 CalibrationData.faceCenter = calibrationData.faceCenter;

@@ -76,6 +76,7 @@
         public const string DisableFaceTrackingHorizontalFlip = nameof(DisableFaceTrackingHorizontalFlip);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
+        public const string SetCalibrateFaceDataHighPower = nameof(SetCalibrateFaceDataHighPower);
 
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
         public const string FaceNeutralClip = nameof(FaceNeutralClip);

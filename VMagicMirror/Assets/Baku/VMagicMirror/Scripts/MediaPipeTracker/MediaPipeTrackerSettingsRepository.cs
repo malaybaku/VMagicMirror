@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
@@ -15,6 +16,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// </summary>
     public class MediaPipeTrackerSettingsRepository
     {
+        private readonly IMessageSender _sender;
+        
+        [Inject]
+        public MediaPipeTrackerSettingsRepository(IMessageSender sender)
+        {
+            _sender = sender;
+        }
+
         public Atomic<bool> IsFaceMirrored { get; } = new(true);
         public Atomic<bool> IsHandMirrored { get; } = new(true);
 
@@ -27,14 +36,27 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly Atomic<CameraCalibrationData> _cameraCalibrationData 
             = new(CameraCalibrationData.Empty());
         public CameraCalibrationData CurrentCalibrationData => _cameraCalibrationData.Value;
-
+        
         /// <summary>
-        /// ファイル等にセーブされていたキャリブレーション情報を適用します。。
+        /// ファイル等にセーブされていたキャリブレーション情報を適用します。
         /// </summary>
-        /// <param name="data"></param>
-        public void ApplyReceivedCalibrationData(MediaPipeCalibrationData data)
+        /// <param name="json"></param>
+        public void ApplyReceivedCalibrationData(string json)
         {
-            _cameraCalibrationData.Value = data.ToData();
+            try
+            {
+                if (string.IsNullOrEmpty(json))
+                {
+                    return;
+                }
+
+                var data = JsonUtility.FromJson<MediaPipeCalibrationData>(json);
+                _cameraCalibrationData.Value = data.ToData();
+            }
+            catch (Exception ex)
+            {
+                LogOutput.Instance.Write(ex);
+            }
         }
 
         public void RaiseCalibrationRequest() => _hasCalibrationRequest.Value = true;
@@ -47,10 +69,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public void SetCalibrationResult(CameraCalibrationData data)
         {
             _cameraCalibrationData.Value = data;
-            var json = JsonUtility.ToJson(MediaPipeCalibrationData.Create(data));
-            // TODO: senderでキャリブレーション値を送信する
-
             _hasCalibrationRequest.Value = false;
+
+            var json = JsonUtility.ToJson(MediaPipeCalibrationData.Create(data));
+            _sender.SendCommand(MessageFactory.Instance.SetCalibrationFaceDataHighPower(json));
         }
     }
 

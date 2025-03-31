@@ -82,8 +82,21 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // _receiver.AssignCommandHandler(VmmCommands.EnableWebCameraHighPowerModeLipSync,);
             // _receiver.AssignCommandHandler(VmmCommands.EnableWebCameraHighPowerModeMoveZ,);
 
-            // TODO: キャリブレーション結果の受信については新規のVmmCommandsを用意して受信する
-            _receiver.BindAction(VmmCommands.CalibrateFace, _settingsRepository.RaiseCalibrationRequest);
+            // TODO: ハンドトラッキングだけ動いてるときのキャリブレーションの実装 = 一瞬だけFaceTaskを起こす処理の実装
+            // NOTE: MediaPipeのトラッキングが動いてない場合、キャリブレーションは実行されない
+            _receiver.BindAction(VmmCommands.CalibrateFace, () =>
+            {
+                if (_isFaceTaskRunning.Value || 
+                    _isHandTaskRunning.Value || 
+                    _isHandAndFaceTaskRunning.Value)
+                {
+                    _settingsRepository.RaiseCalibrationRequest();
+                }
+            });
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetCalibrateFaceDataHighPower, 
+                message => _settingsRepository.ApplyReceivedCalibrationData(message.Content)
+                );
 
             _disableFaceHorizontalFlip
                 .Subscribe(disableMirror => _settingsRepository.IsFaceMirrored.Value = !disableMirror)

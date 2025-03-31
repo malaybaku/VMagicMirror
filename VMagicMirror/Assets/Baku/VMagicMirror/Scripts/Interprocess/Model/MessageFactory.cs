@@ -27,6 +27,7 @@ namespace Baku.VMagicMirror
         public Message CloseConfigWindow() => NoArg();
 
         public Message SetCalibrationFaceData(string data) => WithArg(data);
+        public Message SetCalibrationFaceDataHighPower(string data) => WithArg(data);
 
         public Message MicrophoneVolumeLevel(int level) => WithArg($"{level}");
         

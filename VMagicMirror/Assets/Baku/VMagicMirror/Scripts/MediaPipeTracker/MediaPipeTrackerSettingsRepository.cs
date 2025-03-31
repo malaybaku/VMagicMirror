@@ -17,6 +17,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     {
         public Atomic<bool> IsFaceMirrored { get; } = new(true);
         public Atomic<bool> IsHandMirrored { get; } = new(true);
+
+        // NOTE: 手と表情を同時にトラッキングする場合だけtrueになりうる想定だが、そもそも使わなくなるかも。今のところIPCでは受けていない、
+        public Atomic<bool> UseInterlace { get; } = new(false);
         
         private readonly Atomic<bool> _hasCalibrationRequest = new();
         public bool HasCalibrationRequest => _hasCalibrationRequest.Value;

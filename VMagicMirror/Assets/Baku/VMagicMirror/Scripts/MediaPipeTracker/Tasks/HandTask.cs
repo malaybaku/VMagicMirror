@@ -22,12 +22,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         [Inject]
         public HandTask(
+            MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
             KinematicSetter kinematicSetter, 
             FacialSetter facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer
-        ) : base(textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        ) : base(settingsRepository, textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
         {
         }
         

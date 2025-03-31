@@ -15,19 +15,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         [Inject]
         public FaceLandmarkTask(
+            MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
             KinematicSetter kinematicSetter, 
             FacialSetter facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer
-        ) : base(textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        ) : base(settingsRepository, textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
         {
         }
 
         private FaceLandmarker _landmarker;
         private FaceResultSetter _faceSetter;
-        private int _interlaceCount;
-
         private readonly Dictionary<string, float> _blendShapeValues = new(52);
         
         protected override void OnStartTask()
@@ -83,6 +82,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(matrix, Calibrator.GetCalibrationData());
             KinematicSetter.SetHeadPose6Dof(headPose);
 
+            if (SettingsRepository.HasCalibrationRequest)
+            {
+                _ = Calibrator.TrySetSixDofData(result);
+            }
             // VisualizeAllFaceLandmark2D(result);
             // VisualizeAllFaceLandmark3D(result);
         }

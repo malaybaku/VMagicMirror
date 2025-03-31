@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Mediapipe;
 using Mediapipe.Tasks.Core;
 using Mediapipe.Tasks.Vision.FaceLandmarker;
@@ -10,11 +9,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 {
     public class HandAndFaceLandmarkTask : HandTask
     {
-        //TODO: インターレース可能なときにやるかどうか」という設定はGUIに公開したい
-        private bool useInterlace = false;
-        // TODO: GUIのキャリブレーションボタンの結果を受けてフラグを(このクラスじゃないどこかで)立てたい
-        private bool requestCalibration;
-
         private const string FaceModelFileName = "face_landmarker_v2_with_blendshapes.bytes";
 
         private FaceLandmarker _landmarker;
@@ -25,12 +19,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         [Inject]
         public HandAndFaceLandmarkTask(
+            MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
             KinematicSetter kinematicSetter, 
             FacialSetter facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer
-        ) : base(textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        ) : base(settingsRepository, textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
         {
         }
         
@@ -63,7 +58,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         protected override void OnWebCamImageUpdated(WebCamImageSource source)
         {
-            if (useInterlace)
+            if (SettingsRepository.UseInterlace.Value)
             {
                 // インターレースあり: 1枚ずつ交代でHand / Faceで使う
                 _interlaceCount = (_interlaceCount + 1) % 2;
@@ -112,24 +107,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(matrix, Calibrator.GetCalibrationData());
             KinematicSetter.SetHeadPose6Dof(headPose);
 
-            if (requestCalibration)
+            if (SettingsRepository.HasCalibrationRequest)
             {
-                if (Calibrator.TrySetSixDofData(result))
-                {
-                    Debug.Log("6dof calibration success!");
-                    var data = Calibrator.GetCalibrationData();
-                    // NOTE: cm単位くらいのはず…という前提でposは0.01倍しちゃう
-                    var rawPose = data.CameraLocalPose;
-                    var scaledPose = new Pose(rawPose.position * 0.01f, rawPose.rotation);
-                    LandmarksVisualizer.SetPose(scaledPose);
-                }
-                else
-                {
-                    Debug.Log("6dof calibration failed!");
-                }
-
-                // NOTE: ホントはマルチスレッドからアクセスしないほうがヨイが…
-                requestCalibration = false;
+                _ = Calibrator.TrySetSixDofData(result);
             }
         }
     }

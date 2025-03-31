@@ -17,9 +17,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private Pose leftHandIkTarget;
         private Pose rightHandIkTarget;
         
-        // NOTE: Face Landmarkerの検出結果はかなり安定してるのでスムージングは控えめでよい
-        // いろいろなkinematicの追従weight / frame (60fps基準)
-        
+        [Obsolete]
         private float rootPositionSmoothRate = 0.3f;
 
         private readonly IVRMLoadable _vrmLoadable;

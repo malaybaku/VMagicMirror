@@ -265,10 +265,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97de58a2f3e06a640908129ca6f17bc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  applyScale: {x: -0.15, y: 0.15, z: 0.1}
+  applyScale: {x: 0.15, y: 0.15, z: 0.1}
   applyMin: {x: -0.02, y: -0.02, z: -0.01}
   applyMax: {x: 0.02, y: 0.02, z: 0.01}
-  applyScaleWhenNoHandTrack: {x: -0.8, y: 0.7, z: 0.6}
+  applyScaleWhenNoHandTrack: {x: 0.8, y: 0.7, z: 0.6}
   applyMinWhenNoHandTrack: {x: -0.2, y: -0.2, z: -0.3}
   applyMaxWhenNoHandTrack: {x: 0.2, y: 0.2, z: 0.3}
   lerpFactor: 18

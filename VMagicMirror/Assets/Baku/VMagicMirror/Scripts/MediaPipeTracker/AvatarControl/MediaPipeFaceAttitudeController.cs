@@ -80,16 +80,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             //_externalTracker.HeadRotation.ToAngleAxis(out float rawAngle, out var rawAxis);
             rawAngle = Mathf.Repeat(rawAngle + 180f, 360f) - 180f;
             
+            // NOTE: ExTrackerの実装だとここでgameInputやcarHandleの回転を左右反転するが、MediaPipe版では幾何的に正しく計算してるので不要
             //角度を0側に寄せる: 動きが激しすぎるとアレなので
             var gameInputRot = _gameInputBodyMotionController.LookAroundRotation;
-            //ややこしいが、合成した回転を鏡像反転することを考慮して事前に反転している
-            gameInputRot.y *= -1f;
-            gameInputRot.z *= -1f;
-
             var carHandleRot = _carHandleBasedFk.GetHeadYawRotation();
-            //これもgameInputと同様
-            carHandleRot.y *= -1f;
-            carHandleRot.z *= -1f;
             
             var rot = 
                 gameInputRot *
@@ -106,10 +100,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 Vector3.right
                 );
             rot *= pitchResetRot;
-
-            //鏡像反転
-            rot.y *= -1;
-            rot.z *= -1;
 
             //もう一度角度をチェックし、合計がデカすぎたら絞る
             rot.ToAngleAxis(out float totalDeg, out var totalAxis);

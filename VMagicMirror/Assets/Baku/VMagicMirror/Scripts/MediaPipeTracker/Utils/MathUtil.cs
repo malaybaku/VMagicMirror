@@ -89,10 +89,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         }
 
         // 左右反転系のやつ
-        public static Vector2 Mirror(Vector2 v) => new Vector2(-v.x, v.y);
-        public static Vector3 Mirror(Vector3 v) => new Vector3(-v.x, v.y, v.z);
-        public static Quaternion Mirror(Quaternion q) => new Quaternion(q.x, -q.y, -q.z, q.w);
-        public static Pose Mirror(Pose p) => new Pose(Mirror(p.position), Mirror(p.rotation));
+        public static Vector2 Mirror(Vector2 v) => new(-v.x, v.y);
+        public static Vector3 Mirror(Vector3 v) => new(-v.x, v.y, v.z);
+        public static Quaternion Mirror(Quaternion q) => new(q.x, -q.y, -q.z, q.w);
+        public static Pose Mirror(Pose p) => new(Mirror(p.position), Mirror(p.rotation));
         
         public static HumanBodyBones Mirror(HumanBodyBones bone) => MirroredBones.GetValueOrDefault(bone, bone);
         

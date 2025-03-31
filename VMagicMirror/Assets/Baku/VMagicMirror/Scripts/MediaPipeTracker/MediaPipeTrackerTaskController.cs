@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         }
 
         // IPCで直接受け取る値
-        private readonly ReactiveProperty<bool> _faceTrackingEnabled = new();
+        private readonly ReactiveProperty<bool> _faceTrackingEnabled = new(true);
         private readonly ReactiveProperty<string> _cameraDeviceName = new("");
         private readonly ReactiveProperty<bool> _useWebCamHighPowerMode = new();
         private readonly ReactiveProperty<bool> _useHandTracking = new();

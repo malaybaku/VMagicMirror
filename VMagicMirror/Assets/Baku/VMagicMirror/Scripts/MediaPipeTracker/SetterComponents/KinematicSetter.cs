@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using RootMotion.FinalIK;
-using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -13,20 +13,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// </summary>
     public class KinematicSetter : PresenterBase, ITickable
     {
-        // [SerializeField] private Transform leftHandIkTarget;
-        // [SerializeField] private Transform rightHandIkTarget;
-        // TODO: IIKDataRecordとかに整形したい
+        // TODO: IIKDataRecordとかに整形する or 補間処理等が入ったIK値を別のクラスで持つようにする
         private Pose leftHandIkTarget;
         private Pose rightHandIkTarget;
         
-
-        //[SerializeField] private bool isMirrorMode;
-        
-        // NOTE: Face Landmarkerの検出結果はかなり安定してるのでスムージングは非常に弱め landmarkはdetectorに比べると検出結果が非常に安定しているため、スムージングしない
+        // NOTE: Face Landmarkerの検出結果はかなり安定してるのでスムージングは控えめでよい
         // いろいろなkinematicの追従weight / frame (60fps基準)
         
-        [Range(0f, 1f)] [SerializeField] private float rootPositionSmoothRate = 0.3f;
-        [Range(0f, 1f)] [SerializeField] private float headFkSmoothRateDetector = 0.2f;
+        private float rootPositionSmoothRate = 0.3f;
 
         private readonly IVRMLoadable _vrmLoadable;
         private readonly KinematicSetterTimingInvoker _timingInvoker;
@@ -93,7 +87,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmUnloaded;
             
-            _timingInvoker.OnLateUpdate.Subscribe(_ => OnLateUpdate()).AddTo(this);
+            //_timingInvoker.OnLateUpdate.Subscribe(_ => OnLateUpdate()).AddTo(this);
             
         }
 
@@ -397,6 +391,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             SetRightHandEffectorWeight(1f, 0f);
         }
         
+        //TODO: 頭部トラッキングまで実装した範囲でobsoleteに見えてるのでobsoleteにしている。
+        // ハンドトラッキングの処理次第でobsoleteじゃない可能性もあるが、IKより後で適用したい処理があるならクラス分けたい気もする…
+        [Obsolete]
         private void OnLateUpdate()
         {
             lock (_poseLock)

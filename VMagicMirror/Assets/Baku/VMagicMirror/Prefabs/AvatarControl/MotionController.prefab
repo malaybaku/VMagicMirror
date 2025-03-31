@@ -269,8 +269,8 @@ MonoBehaviour:
   applyMin: {x: -0.02, y: -0.02, z: -0.01}
   applyMax: {x: 0.02, y: 0.02, z: 0.01}
   applyScaleWhenNoHandTrack: {x: -0.8, y: 0.7, z: 0.6}
-  applyMinWhenNoHandTrack: {x: -0.2, y: -0.2, z: -0.1}
-  applyMaxWhenNoHandTrack: {x: 0.2, y: 0.2, z: 0.1}
+  applyMinWhenNoHandTrack: {x: -0.2, y: -0.2, z: -0.3}
+  applyMaxWhenNoHandTrack: {x: 0.2, y: 0.2, z: 0.3}
   lerpFactor: 18
   lerpFactorOnLost: 3
   lerpFactorBlendDuration: 1

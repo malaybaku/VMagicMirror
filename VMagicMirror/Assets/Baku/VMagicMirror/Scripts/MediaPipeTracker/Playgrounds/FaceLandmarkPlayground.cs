@@ -66,9 +66,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _faceSetter.ClearBlendShapes();
                 KinematicSetter.ClearHeadPose();
                 
-                LandmarksVisualizer.ClearPositions();
-                LandmarksVisualizer.UnsetSingleMatrix();
-                LandmarksVisualizer.Visualizer2D.Clear();
+                // LandmarksVisualizer.ClearPositions();
+                // LandmarksVisualizer.UnsetSingleMatrix();
+                // LandmarksVisualizer.Visualizer2D.Clear();
                 return;
             }
 
@@ -83,8 +83,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(matrix, Calibrator.GetCalibrationData());
             KinematicSetter.SetHeadPose6Dof(headPose);
 
-            VisualizeAllFaceLandmark2D(result);
-            VisualizeAllFaceLandmark3D(result);
+            // VisualizeAllFaceLandmark2D(result);
+            // VisualizeAllFaceLandmark3D(result);
         }
 
         private void VisualizeAllFaceLandmark2D(FaceLandmarkerResult result)

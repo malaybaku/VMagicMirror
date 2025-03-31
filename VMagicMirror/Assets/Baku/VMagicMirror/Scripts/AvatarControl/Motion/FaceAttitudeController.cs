@@ -103,9 +103,7 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var rawTarget = _faceTracker.IsHighPowerMode
-                ? GetHighPowerModeEulerAngle(_faceTracker.CurrentAnalyzer.Result, facePartsPitchYawFactor)
-                : GetLowPowerModeEulerAngle(_faceTracker.CurrentAnalyzer.Result, facePartsPitchYawFactor);
+            var rawTarget = GetLowPowerModeEulerAngle(_faceTracker.CurrentAnalyzer.Result, facePartsPitchYawFactor);
          
             var target = Vector3.Scale(rawTarget, headEulerAnglesFactor);
 
@@ -256,22 +254,6 @@ namespace Baku.VMagicMirror
             );
 
             return result;
-        }
-
-        private static Vector3 GetHighPowerModeEulerAngle(
-            IFaceAnalyzeResult faceAnalyzeResult, Vector2 pitchYawFactor
-            )
-        {
-            //低負荷版と違い、ヨー/ピッチ連成を考慮しない。必要そうだったら考慮するように直す
-            var pitchRate = Mathf.Clamp(faceAnalyzeResult.PitchRate, -1f, 1f);
-            //ちょっとだけ縮める。DNNベースの計算だとヨーがけっこうビシッと出るのだけど、
-            //ビシッとしすぎてて横顔になってしまいやすいので
-            var yawRate = Mathf.Clamp(faceAnalyzeResult.YawRate, -.9f, .9f);
-            return new Vector3(
-                pitchRate * pitchYawFactor.x,
-                yawRate * pitchYawFactor.y,
-                faceAnalyzeResult.RollRad * Mathf.Rad2Deg
-            );
         }
     }
 }

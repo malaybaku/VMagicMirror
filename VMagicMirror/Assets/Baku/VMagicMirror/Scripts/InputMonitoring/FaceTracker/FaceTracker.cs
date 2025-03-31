@@ -16,9 +16,6 @@ namespace Baku.VMagicMirror
         None,
         /// <summary> DlibFaceLandmarkDetectorによる低負荷な顔トラッキングを回します。 </summary>
         LowPower,
-        /// <summary> OpenCvForUnityのdnnを使った、やや高負荷な顔トラッキングを回します。 </summary>
-        [Obsolete]
-        HighPower
     }
     
     /// <summary>
@@ -38,7 +35,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private float notTrackedResetSpeedFactor = 3.0f;
         [Tooltip("検出処理が走る最短間隔をミリ秒単位で規定します。")]
         [SerializeField] private int trackMinIntervalMillisec = 60;
-        [SerializeField] private int trackMinIntervalMillisecOnHighPower = 40;
         
         /// <summary> キャリブレーションの内容 </summary>
         public CalibrationData CalibrationData { get; } = new();
@@ -63,22 +59,18 @@ namespace Baku.VMagicMirror
         private FaceTrackingMode _trackingMode;
         private readonly NoneFaceAnalyzer _noneFaceAnalyzer = new();
         private DlibFaceAnalyzeRoutine _dlibFaceAnalyzer;
-        //private DnnFaceAnalyzeRoutine _dnnFaceAnalyzer;
+
         public FaceAnalyzeRoutineBase CurrentAnalyzer
         {
             get
             {
                 switch (_trackingMode)
                 {
-                    //case FaceTrackingMode.HighPower: return _dnnFaceAnalyzer;
                     case FaceTrackingMode.LowPower: return _dlibFaceAnalyzer;
                     default: return _noneFaceAnalyzer;
-                    
                 }
             }
         }
-
-        public bool IsHighPowerMode => false; // _trackingMode == FaceTrackingMode.HighPower;
 
         private bool _disableHorizontalFlip;
         public bool DisableHorizontalFlip
@@ -88,12 +80,10 @@ namespace Baku.VMagicMirror
             {
                 _disableHorizontalFlip = value;
                 _dlibFaceAnalyzer.DisableHorizontalFlip = value;
-                //_dnnFaceAnalyzer.DisableHorizontalFlip = value;
             } 
         }
 
-        private int TrackMinIntervalMs =>
-            IsHighPowerMode ? trackMinIntervalMillisecOnHighPower : trackMinIntervalMillisec;
+        private int TrackMinIntervalMs => trackMinIntervalMillisec;
 
         private bool _calibrationRequested;
         private float _faceNotDetectedCountDown;
@@ -126,13 +116,8 @@ namespace Baku.VMagicMirror
             CalibrationData.SetDefaultValues();
             
             _dlibFaceAnalyzer = new DlibFaceAnalyzeRoutine(StreamingAssetFileNames.DlibFaceTrackingDataFileName);
-            //_dnnFaceAnalyzer = new DnnFaceAnalyzeRoutine();
-            //イベントを素通し
             _dlibFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;
-            //_dnnFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;
-            
             _dlibFaceAnalyzer.SetUp();
-            //_dnnFaceAnalyzer.SetUp();
             
             _horizontalFlipController.DisableHorizontalFlip
                 .Subscribe(disable => DisableHorizontalFlip = disable)
@@ -238,7 +223,6 @@ namespace Baku.VMagicMirror
         private void OnDestroy()
         {
             Dispose();
-            //_dnnFaceAnalyzer.Dispose();
             _dlibFaceAnalyzer.Dispose();
         }
 

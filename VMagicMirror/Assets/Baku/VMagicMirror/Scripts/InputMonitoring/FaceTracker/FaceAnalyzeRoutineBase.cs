@@ -187,12 +187,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public struct FaceDetectionUpdateStatus
     {
-#if VMAGICMIRROR_USE_OPENCV
-        /// <summary> 解析元の画像。DnnFaceAnalyzeRoutineが送信元だった場合、ここに値が入る </summary>
-        public OpenCVForUnity.CoreModule.Mat RgbaMat { get; set; } 
-#endif        
-
-        /// <summary> 解析元の画像。DlibFaceAnalyzeRoutineが送信元だった場合、ここに値が入る </summary>
+        /// <summary> 解析元の画像 </summary>
         public Color32[] Image { get; set; }
 
         /// <summary> 画像の幅 </summary>

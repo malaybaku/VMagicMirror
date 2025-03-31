@@ -21,9 +21,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // TODO: 実装がちゃんとしてないので注意！
             Container.BindInterfacesAndSelfTo<FacialSetter>().AsSingle();
             
-            Container.Bind<HandPlayground>().AsSingle();
-            Container.Bind<FaceLandmarkPlayground>().AsSingle();
-            Container.Bind<HandAndFaceLandmarkPlayground>().AsSingle();
+            Container.Bind<HandTask>().AsSingle();
+            Container.Bind<FaceLandmarkTask>().AsSingle();
+            Container.Bind<HandAndFaceLandmarkTask>().AsSingle();
             Container.BindInterfacesAndSelfTo<MediaPipeTrackerTaskController>().AsSingle();
         }
     }

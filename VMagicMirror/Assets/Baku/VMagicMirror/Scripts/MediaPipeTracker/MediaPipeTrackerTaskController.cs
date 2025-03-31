@@ -15,9 +15,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     public class MediaPipeTrackerTaskController : PresenterBase
     {
         private IMessageReceiver _receiver;
-        private readonly HandPlayground _hand;
-        private readonly FaceLandmarkPlayground _face;
-        private readonly HandAndFaceLandmarkPlayground _handAndFace;
+        private readonly HandTask _hand;
+        private readonly FaceLandmarkTask _face;
+        private readonly HandAndFaceLandmarkTask _handAndFace;
 
         private readonly MediaPipeTrackerSettingsRepository _settingsRepository;
 
@@ -31,9 +31,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             IMessageReceiver receiver,
             MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource webCamTextureSource,
-            HandPlayground hand,
-            FaceLandmarkPlayground face,
-            HandAndFaceLandmarkPlayground handAndFace
+            HandTask hand,
+            FaceLandmarkTask face,
+            HandAndFaceLandmarkTask handAndFace
             )
         {
             _receiver = receiver;

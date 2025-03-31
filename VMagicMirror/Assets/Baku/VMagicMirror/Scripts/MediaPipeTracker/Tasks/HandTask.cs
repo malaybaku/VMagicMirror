@@ -10,7 +10,7 @@ using Zenject;
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
     // NOTE: 「外部トラッキング(≒iFacialMocap) + ハンドトラッキング」の場合にだけ有効になる
-    public class HandPlayground : MediaPipeTrackerTaskBase
+    public class HandTask : MediaPipeTrackerTaskBase
     {
         // NOTE: MediaPipeの標準的なモデルデータでは hand_landmark_(full|lite) という名称のものもあるが、これはlegacyのデータなのか動作しない 
         private const string ModelFileName = "hand_landmarker.bytes";
@@ -21,7 +21,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private HandPoseSetter _handPoseSetter;
 
         [Inject]
-        public HandPlayground(
+        public HandTask(
             WebCamTextureSource textureSource,
             KinematicSetter kinematicSetter, 
             FacialSetter facialSetter,

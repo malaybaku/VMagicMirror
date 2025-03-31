@@ -11,10 +11,10 @@ using Rect = Mediapipe.Tasks.Components.Containers.Rect;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    // TODO: v4.0.0の実装方針ではこのクラス使わないかもしれない。要検討
+    // TODO: v4.0.0の実装方針ではこのクラス使わないかも…で、ホントに使わない場合は削除してよい
     // iFacialMocap + ハンドトラッキングの場合、キャリブレーションの瞬間だけFace (Detector|Landmarker)が動いてれば用が足りるので、
     // 実際に使わなさそうだったら使わない方向に寄せる
-    public class HandAndFaceDetectorPlayground : HandPlayground
+    public class HandAndFaceDetectorTask : HandTask
     {
         private bool useInterlace = false;
         private bool requestCalibration;
@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private int _interlaceCount;
 
         [Inject]
-        public HandAndFaceDetectorPlayground(
+        public HandAndFaceDetectorTask(
             WebCamTextureSource textureSource,
             KinematicSetter kinematicSetter, 
             FacialSetter facialSetter,

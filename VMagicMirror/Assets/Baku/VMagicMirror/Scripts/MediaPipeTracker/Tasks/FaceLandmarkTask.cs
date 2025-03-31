@@ -9,12 +9,12 @@ using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    public class FaceLandmarkPlayground : MediaPipeTrackerTaskBase
+    public class FaceLandmarkTask : MediaPipeTrackerTaskBase
     {
         private const string FaceModelFileName = "face_landmarker_v2_with_blendshapes.bytes";
 
         [Inject]
-        public FaceLandmarkPlayground(
+        public FaceLandmarkTask(
             WebCamTextureSource textureSource,
             KinematicSetter kinematicSetter, 
             FacialSetter facialSetter,

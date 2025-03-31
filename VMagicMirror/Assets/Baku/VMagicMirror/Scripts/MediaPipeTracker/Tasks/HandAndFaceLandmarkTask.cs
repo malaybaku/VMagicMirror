@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    public class HandAndFaceLandmarkPlayground : HandPlayground
+    public class HandAndFaceLandmarkTask : HandTask
     {
         //TODO: インターレース可能なときにやるかどうか」という設定はGUIに公開したい
         private bool useInterlace = false;
@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly Dictionary<string, float> _blendShapeValues = new(52);
 
         [Inject]
-        public HandAndFaceLandmarkPlayground(
+        public HandAndFaceLandmarkTask(
             WebCamTextureSource textureSource,
             KinematicSetter kinematicSetter, 
             FacialSetter facialSetter,

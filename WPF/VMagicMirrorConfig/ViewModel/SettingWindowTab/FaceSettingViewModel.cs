@@ -113,7 +113,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public ActionCommand CalibrateFaceCommand { get; }
 
-        public RProperty<string> CalibrateFaceData => _model.CalibrateFaceData;
         public RProperty<int> FaceDefaultFun => _model.FaceDefaultFun;
 
         public ReadOnlyObservableCollection<string> BlendShapeNames => _blendShapeNameStore.BlendShapeNames;

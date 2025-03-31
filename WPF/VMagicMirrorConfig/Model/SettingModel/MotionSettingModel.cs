@@ -69,6 +69,7 @@ namespace Baku.VMagicMirrorConfig
 
             CameraDeviceName = new RProperty<string>(setting.CameraDeviceName, v => SendMessage(factory.SetCameraDeviceName(v)));
             CalibrateFaceData = new RProperty<string>(setting.CalibrateFaceData, v => SendMessage(factory.SetCalibrateFaceData(v)));
+            CalibrateFaceDataHighPower = new RProperty<string>(setting.CalibrateFaceDataHighPower, v => SendMessage(factory.SetCalibrateFaceDataHighPower(v)));
 
             FaceDefaultFun = new RProperty<int>(setting.FaceDefaultFun, v => SendMessage(factory.FaceDefaultFun(v)));
             FaceNeutralClip = new RProperty<string>(setting.FaceNeutralClip, v => SendMessage(factory.FaceNeutralClip(v)));
@@ -214,6 +215,7 @@ namespace Baku.VMagicMirrorConfig
         /// NOTE: この値はUIに出す必要はないが、起動時に空でなければ送り、Unityからデータが来たら受け取り、終了時にはセーブする。
         /// </summary>
         public RProperty<string> CalibrateFaceData { get; }
+        public RProperty<string> CalibrateFaceDataHighPower { get; }
 
         public RProperty<int> FaceDefaultFun { get; }
         public RProperty<string> FaceNeutralClip { get; }
@@ -419,6 +421,11 @@ namespace Baku.VMagicMirrorConfig
             if (!string.IsNullOrEmpty(CalibrateFaceData.Value))
             {
                 SendMessage(MessageFactory.Instance.SetCalibrateFaceData(CalibrateFaceData.Value));
+            }
+
+            if (!string.IsNullOrEmpty(CalibrateFaceDataHighPower.Value))
+            {
+                SendMessage(MessageFactory.Instance.SetCalibrateFaceDataHighPower(CalibrateFaceDataHighPower.Value));
             }
         }
 

@@ -109,8 +109,10 @@ namespace Baku.VMagicMirrorConfig
         public Message WaitMotionScale(int scalePercent) => WithArg(scalePercent);
         public Message WaitMotionPeriod(int periodSec) => WithArg(periodSec);
 
+        // NOTE: Unity側の状態によって実際に行うキャリブレーションは変わる(低負荷/高負荷では別々のキャリブレーションを行う)
         public Message CalibrateFace() => NoArg();
         public Message SetCalibrateFaceData(string data) => WithArg(data);
+        public Message SetCalibrateFaceDataHighPower(string data) => WithArg(data);
 
         public Message EnableFaceTracking(bool enable) => WithArg(enable);
         public Message SetCameraDeviceName(string deviceName) => WithArg(deviceName);

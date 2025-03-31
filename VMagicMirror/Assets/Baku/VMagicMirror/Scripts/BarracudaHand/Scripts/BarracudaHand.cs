@@ -135,11 +135,12 @@ namespace Baku.VMagicMirror.IK
 
             vrmLoadable.VrmLoaded += _ => _hasModel = true;
             vrmLoadable.VrmDisposing += () => _hasModel = false;
-            
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableImageBasedHandTracking,
-                c => ImageProcessEnabled = c.ToBoolean()
-            );
+ 
+            // TODO: 一旦ここを切ることでBarracudaのハンドトラッキングを切ってるが、ソースコードを完全に削除したい
+            // receiver.AssignCommandHandler(
+            //     VmmCommands.EnableImageBasedHandTracking,
+            //     c => ImageProcessEnabled = c.ToBoolean()
+            // );
             
             receiver.AssignCommandHandler(
                 VmmCommands.DisableHandTrackingHorizontalFlip,

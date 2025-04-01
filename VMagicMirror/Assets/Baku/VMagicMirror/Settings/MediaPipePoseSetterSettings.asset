@@ -21,3 +21,6 @@ MonoBehaviour:
   handIkSmoothRate: 18
   fingerBoneSmoothRate: 18
   handMoveSpeedMax: 1.4
+  trackingLostWaitDuration: 0.25
+  trackingLostMotionDuration: 0.6
+  trackingLostRotationDelay: 0

@@ -22,9 +22,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly IVRMLoadable _vrmLoadable;
         private readonly KinematicSetter _kinematicSetter;
         private readonly TrackingLostHandCalculator _trackingLostHandCalculator;
-        private readonly MediaPipeTrackerSettingsRepository _settingsRepository;
         private readonly MediapipePoseSetterSettings _poseSetterSettings;
         private readonly CancellationTokenSource _cts = new();
+        private readonly MediaPipeHandFinger _finger;
 
         private bool _hasModel;
         private Transform _leftHandBone;
@@ -35,7 +35,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private Quaternion _leftHandLocalRotation = Quaternion.identity;
         private Quaternion _rightHandLocalRotation = Quaternion.identity;
         
-        private readonly MediaPipeHandFinger _finger = new();
         private HandIkGeneratorDependency _dependency;
         private AlwaysDownHandIkGenerator _downHandIk;
         
@@ -44,17 +43,20 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Inject]
         public MediaPipeHand(
             IVRMLoadable vrmLoadable,
+            FingerController fingerController,
             KinematicSetter kinematicSetter, 
             TrackingLostHandCalculator trackingLostHandCalculator,
+            MediaPipeFingerPoseCalculator fingerPoseCalculator,
             MediaPipeTrackerSettingsRepository settingsRepository,
             MediapipePoseSetterSettings poseSetterSettings)
         {
             _vrmLoadable = vrmLoadable;
             _kinematicSetter = kinematicSetter;
             _trackingLostHandCalculator = trackingLostHandCalculator;
-            _settingsRepository = settingsRepository;
             _poseSetterSettings = poseSetterSettings;
 
+            // NOTE: 指の操作はFingerControllerに委譲されている
+            _finger = new MediaPipeHandFinger(settingsRepository, fingerPoseCalculator, fingerController);
             _leftHandState = new MediaPipeHandState(ReactedHand.Left, _finger);
             _rightHandState = new MediaPipeHandState(ReactedHand.Right, _finger);
         }
@@ -65,7 +67,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private readonly MediaPipeHandState _rightHandState;
         public IHandIkState RightHandState => _rightHandState;
-
 
         public void SetDependency(HandIkGeneratorDependency dependency, AlwaysDownHandIkGenerator downHandIk)
         {
@@ -141,6 +142,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             
             UpdateLeftHand();
             UpdateRightHand();
+            if (_dependency.Config.LeftTarget.Value is HandTargetType.ImageBaseHand)
+            {
+                _finger.ApplyLeftHandFinger();
+            }
+            
+            if (_dependency.Config.RightTarget.Value is HandTargetType.ImageBaseHand)
+            {
+                _finger.ApplyRightHandFinger();
+            }
         }
 
         private void UpdateLeftHand()
@@ -211,14 +221,62 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private class MediaPipeHandFinger
         {
-            public void ReleaseLeftHand()
+            private readonly MediaPipeTrackerSettingsRepository _settingsRepository;
+            private readonly MediaPipeFingerPoseCalculator _fingerPoseCalculator;
+            private readonly FingerController _fingerController;
+
+            public MediaPipeHandFinger(
+                MediaPipeTrackerSettingsRepository settingsRepository,
+                MediaPipeFingerPoseCalculator fingerPoseCalculator,
+                FingerController fingerController
+                )
             {
-                Debug.LogError("MediaPipeの指は未反映ですよ！");
+                _settingsRepository = settingsRepository;
+                _fingerPoseCalculator = fingerPoseCalculator;
+                _fingerController = fingerController;
             }
 
+            public void ApplyLeftHandFinger()
+                => ApplyFingerAngles(FingerConsts.LeftThumb, FingerConsts.LeftLittle);
+
+            public void ApplyRightHandFinger() 
+                => ApplyFingerAngles(FingerConsts.RightThumb, FingerConsts.RightLittle);
+
+            private void ApplyFingerAngles(int thumbIndex, int littleIndex)
+            {
+                var mirrored = _settingsRepository.IsHandMirrored.Value;
+                for (var i = thumbIndex; i <= littleIndex; i++)
+                {
+                    var angles = _fingerPoseCalculator.GetFingerAngles(i, mirrored);
+                    
+                    _fingerController.Hold(i, GetFingerBendAngle(
+                        angles.proximal, angles.intermediate, angles.distal
+                    ));
+                    // NOTE: 親指のopenの制御がキモくなりそうな場合、親指だけここをスキップすべき
+                    _fingerController.HoldOpen(i, angles.open);
+                }
+            }
+            
+            // NOTE: ちょっともったいないが、曲げ角度を平均して適用する
+            private static float GetFingerBendAngle(float proximal, float intermediate, float distal)
+                => (proximal + intermediate + distal) / 3.0f;
+            
+            public void ReleaseLeftHand()
+            {
+                for (var i = FingerConsts.LeftThumb; i < FingerConsts.LeftLittle + 1; i++)
+                {
+                    _fingerController.Release(i);
+                    _fingerController.ReleaseOpen(i);
+                }
+            }
+        
             public void ReleaseRightHand()
             {
-                Debug.LogError("MediaPipeの指は未反映ですよ！");
+                for (var i = FingerConsts.RightThumb; i < FingerConsts.RightLittle + 1; i++)
+                {
+                    _fingerController.Release(i);
+                    _fingerController.ReleaseOpen(i);
+                }
             }
         }
 

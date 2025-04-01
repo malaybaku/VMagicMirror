@@ -17,8 +17,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private const string LeftHandHandednessName = "Left";
         private const string RightHandHandednessName = "Right";
 
+        private readonly MediaPipeFingerPoseCalculator _fingerPoseCalculator;
         private HandLandmarker _landmarker;
-        private HandPoseSetter _handPoseSetter;
 
         [Inject]
         public HandTask(
@@ -27,15 +27,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             KinematicSetter kinematicSetter, 
             FacialSetter facialSetter,
             CameraCalibrator calibrator,
-            LandmarksVisualizer landmarksVisualizer
+            LandmarksVisualizer landmarksVisualizer,
+            MediaPipeFingerPoseCalculator fingerPoseCalculator
         ) : base(settingsRepository, textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
         {
+            _fingerPoseCalculator = fingerPoseCalculator;
         }
         
         protected override void OnStartTask()
         {
-            _handPoseSetter ??= new HandPoseSetter(KinematicSetter);
-            
             var options = new HandLandmarkerOptions(
                 baseOptions: new BaseOptions(
                     modelAssetPath: FilePathUtil.GetModelFilePath(ModelFileName)
@@ -120,23 +120,23 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private void SetLeftHandPose(NormalizedLandmarks landmarks, Landmarks worldLandmarks)
         {
             // 指のFK + 手首のローカル回転の取得までは下記で実施
-            _handPoseSetter.SetLeftHandPose(worldLandmarks);
+            _fingerPoseCalculator.SetLeftHandPose(worldLandmarks);
 
             // 手首の位置は normalized の画像座標に基づいた値を言う。このとき、縦横のスケールだけ合わせる
             var wristLandmark = landmarks.landmarks[0];
             var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
             var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
-            KinematicSetter.SetLeftHandPose(posOffset, _handPoseSetter.LeftHandRotation);
+            KinematicSetter.SetLeftHandPose(posOffset, _fingerPoseCalculator.LeftHandRotation);
         }
 
         private void SetRightHandPose(NormalizedLandmarks landmarks, Landmarks worldLandmarks)
         {
-            _handPoseSetter.SetRightHandPose(worldLandmarks);
+            _fingerPoseCalculator.SetRightHandPose(worldLandmarks);
 
             var wristLandmark = landmarks.landmarks[0];
             var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
             var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
-            KinematicSetter.SetRightHandPose(posOffset, _handPoseSetter.RightHandRotation);
+            KinematicSetter.SetRightHandPose(posOffset, _fingerPoseCalculator.RightHandRotation);
         }
     }
 }

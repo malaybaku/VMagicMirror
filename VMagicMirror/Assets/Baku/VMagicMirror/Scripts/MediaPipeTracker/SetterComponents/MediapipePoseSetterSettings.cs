@@ -29,6 +29,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // 手のIKの1secあたりの最大移動距離で、とくにトラッキング中の動作に対して適用される。
         [SerializeField] private float handMoveSpeedMax = 1.4f;
 
+        [SerializeField] private float trackingLostWaitDuration = 0.25f;
+        [SerializeField] private float trackingLostMotionDuration = 1.2f;
+        // 手を下ろすのに対して遅れて回転を戻す…というのをやりたい場合、下記のdelayを正の値にする
+        [SerializeField] private float trackingLostRotationDelay = 0.0f;
+        
         public float HandIkSmoothRate => handIkSmoothRate;
         public float FingerBoneSmoothRate => fingerBoneSmoothRate;
         public float HandMoveSpeedMax => handMoveSpeedMax;
@@ -52,5 +57,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public float Hand2DofDepthScale => handDepthMoveScale;
         public float HandRotationModifyWeight => handRotationModifyWeight;
         public float TrackingLostTimeThreshold => trackingLostTimeThreshold;
+
+        public float TrackingLostWaitDuration => trackingLostWaitDuration;
+        public float TrackingLostMotionDuration => trackingLostMotionDuration;
+        public float TrackingLostRotationDelay => trackingLostRotationDelay;
+        
     }
 }

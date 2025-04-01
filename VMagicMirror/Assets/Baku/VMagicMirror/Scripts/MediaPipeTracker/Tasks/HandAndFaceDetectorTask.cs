@@ -37,8 +37,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             KinematicSetter kinematicSetter, 
             FacialSetter facialSetter,
             CameraCalibrator calibrator,
-            LandmarksVisualizer landmarksVisualizer
-        ) : base(settingsRepository, textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+            LandmarksVisualizer landmarksVisualizer,
+            MediaPipeFingerPoseCalculator fingerPoseCalculator
+        ) : base(settingsRepository, textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer, fingerPoseCalculator)
         {
         }
         

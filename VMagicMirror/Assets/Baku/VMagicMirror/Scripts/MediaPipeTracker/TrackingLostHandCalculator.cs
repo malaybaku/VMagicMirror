@@ -9,14 +9,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 {
     public class TrackingLostHandCalculator
     {
-        private const float TrackingLostWaitDuration = 0.25f;
-        private const float TrackingLostMotionDuration = 1.2f;
-        // 手を下ろすのに対して遅れて回転を戻す…というのをやりたい場合、下記のdelayを正の値にする
-        private const float TrackingLostRotationDelay = 0.0f;
-        private const float TrackingLostPoseDuration = TrackingLostMotionDuration + TrackingLostRotationDelay;
-
         private static readonly Vector3 HandDownStartTangent = new(0, -1f, 0.1f);
 
+        private readonly MediapipePoseSetterSettings _poseSetterSettings;
         // TODO: 普通のメソッドで受けるよりInjectしたほうがいいかも
         private AlwaysDownHandIkGenerator _downHandIk;
 
@@ -28,7 +23,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private Pose _rightLastTrackedPose = Pose.identity;
         private Quaternion _rightLastTrackedLocalRotation = Quaternion.identity;
-            
+
+        private float TrackingLostWaitDuration => _poseSetterSettings.TrackingLostWaitDuration;
+        private float TrackingLostMotionDuration => _poseSetterSettings.TrackingLostMotionDuration;
+        private float TrackingLostRotationDelay => _poseSetterSettings.TrackingLostRotationDelay; 
+        private float TrackingLostPoseDuration => 
+            _poseSetterSettings.TrackingLostMotionDuration + _poseSetterSettings.TrackingLostRotationDelay;
+
         // NOTE: Cancelを呼ばない限り、トラッキングロストの終端姿勢が適用され終わったあともずっとtrueになる
         public bool LeftHandTrackingLostRunning => _leftHandCts != null;
         public bool RightHandTrackingLostRunning => _rightHandCts != null;
@@ -49,8 +50,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public Quaternion RightHandLocalRotation { get; private set; } = Quaternion.identity;
 
         [Inject]
-        public TrackingLostHandCalculator()
+        public TrackingLostHandCalculator(MediapipePoseSetterSettings poseSetterSettings)
         {
+            _poseSetterSettings = poseSetterSettings;
         }
 
         public void SetupDownHandIk(AlwaysDownHandIkGenerator downHandIk) => _downHandIk = downHandIk;

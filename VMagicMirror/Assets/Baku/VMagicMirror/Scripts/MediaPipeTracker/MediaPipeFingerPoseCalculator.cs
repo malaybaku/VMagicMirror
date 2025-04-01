@@ -30,22 +30,23 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// Mediapipeで取得した手のLandmarkを使ってFK/IKを指定するやつ
     /// </summary>
-    public class HandPoseSetter
+    public class MediaPipeFingerPoseCalculator
     {
         public const int HandLandmarkCount = 21;
 
-        private readonly KinematicSetter _kinematicSetter;
+        //private readonly KinematicSetter _kinematicSetter;
 
         // 指の回転をまとめて計算したときのキャッシュに使う (使わないでも書けるが、煩雑になるので…)
         
-        // 要素はHumanBodyBones.(Left|Right)ThumbnProximal から順に入る
-        private readonly Quaternion[] _rotationCache = new Quaternion[15];
+        // 要素はHumanBodyBones.(Left|Right)ThumbProximal から順に入る
+        //private readonly Quaternion[] _rotationCache = new Quaternion[15];
 
-        public HandPoseSetter(KinematicSetter forwardKinematicSetter)
-        {
-            _kinematicSetter = forwardKinematicSetter;
-        }
-
+        // FingerConsts.LeftThumb から順に値が入る。
+        // _bendAngles のほうは指の付け根から順
+        // _openAngles は第三関節の値のみなので、それが入る
+        private readonly float[] _bendAngles = new float[30];
+        private readonly float[] _openAngles = new float[10];
+        
         public bool LeftHandPoseHasValidValue { get; private set; }
         public bool RightHandPoseHasValidValue { get; private set; }
 
@@ -55,6 +56,27 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public void SetLeftHandPose(Landmarks worldLandmarks) => SetHandPose(worldLandmarks, true);
         public void SetRightHandPose(Landmarks worldLandmarks) => SetHandPose(worldLandmarks, false);
 
+        public (float proximal, float intermediate, float distal, float open) GetFingerAngles(
+            int fingerIndex, bool mirror)
+        {
+            if (fingerIndex < 0 || fingerIndex >= 10)
+            {
+                return (0, 0, 0,0 );
+            }
+
+            if (mirror)
+            {
+                fingerIndex = (fingerIndex + 5) % 10;
+            }
+
+            return (
+                _bendAngles[fingerIndex * 3],
+                _bendAngles[fingerIndex * 3 + 1],
+                _bendAngles[fingerIndex * 3 + 2],
+                _openAngles[fingerIndex] * (mirror ? -1 : 1)
+            );
+        }
+        
         private void SetHandPose(Landmarks worldLandmarks, bool isLeftHand)
         {
             // Holisticではここのガードに引っかかることがある
@@ -93,7 +115,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             // NOTE: VRMの手のワールド姿勢ではなく、 KinematicSetter.SetLeftHandPose で必要な回転にしている。
             var handRotation = Quaternion.LookRotation(zAxis, yAxis);
-            var fingerRotations = GetFingerRotations(wristPose, landmarks, isLeftHand);
+            UpdateFingerRotations(wristPose, landmarks, isLeftHand);
 
             var startBone = isLeftHand
                 ? (int)HumanBodyBones.LeftThumbProximal
@@ -102,7 +124,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             for (var i = 0; i < 15; i++)
             {
                 var fingerBone = (HumanBodyBones)(i + startBone);
-                _kinematicSetter.SetLocalRotationBeforeIK(fingerBone, fingerRotations[i]);
+                //_kinematicSetter.SetLocalRotationBeforeIK(fingerBone, fingerRotations[i]);
             }
 
             if (isLeftHand)
@@ -117,7 +139,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
-        private Quaternion[] GetFingerRotations(WristPose wristPose, List<Landmark> landmarks, bool isLeft)
+        private void UpdateFingerRotations(WristPose wristPose, List<Landmark> landmarks, bool isLeft)
         {
             for (var i = 0; i < 5; i++)
             {
@@ -136,7 +158,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     proximal = GetThumbProximalBendAngle(wristPose, j3, j2);
                 }
 
-                //NOTE: 指がある程度ピンとしてる場合のみ、パー/チョップの検出のために追加で計算する
+                var angleIndex = isLeft ? i : i + 5;
+                _bendAngles[3 * angleIndex] = proximal;
+                _bendAngles[3 * angleIndex + 1] = intermediate;
+                _bendAngles[3 * angleIndex + 2] = distal;
+                
+                // 指がある程度ピンとしてる場合のみ、パー/チョップの検出のために追加で計算する。符号の正負には注意
+                // 例: 左手の場合、パーの姿勢を取ると人差し指はプラス、小指はマイナスのopenAngleになるのが想定挙動
                 var openAngle = 0f;
                 if (proximal + intermediate + distal < 120f)
                 {
@@ -154,39 +182,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 // - 指ごとに丁寧にプラマイを絞っていくのも有効
                 openAngle = Mathf.Clamp(openAngle, -30f, 30f);
 
+                // TODO: ThumbのopenAngleの扱いがムズい
                 if (i == 0)
                 {
-                    _rotationCache[3 * i] = GetThumbRot(proximal, openAngle, isLeft);
-                    _rotationCache[3 * i + 1] = GetThumbRot(intermediate, 0f, isLeft);
-                    _rotationCache[3 * i + 2] = GetThumbRot(distal, 0f, isLeft);
+                    _openAngles[angleIndex] = 0f;
                 }
                 else
                 {
-                    _rotationCache[3 * i] = GetRot(proximal, openAngle, isLeft);
-                    _rotationCache[3 * i + 1] = GetRot(intermediate, 0f, isLeft);
-                    _rotationCache[3 * i + 2] = GetRot(distal, 0f, isLeft);
+                    _openAngles[angleIndex] = openAngle;
                 }
             }
-
-            return _rotationCache;
         }
 
-        // NOTE: Thumbでもそれ以外でも、openAngleは正負まで呼び出し元でケアするのが期待値。
-        // 例: 左手の場合、パーの姿勢を取ると人差し指はプラス、小指はマイナスのopenAngleが渡ってくるのが期待値。右手はその逆になる。
-
-        private static Quaternion GetThumbRot(float bendAngle, float openAngle, bool isLeftHand)
-        {
-            // TODO: ほんとはTポーズ時点での状態も踏まえて計算したい
-            // 「Tポーズ時点で指がちょっと開いてる」みたいな状態も考慮したいので
-            var yawFactor = isLeftHand ? -1 : 1f;
-            return Quaternion.Euler(0, bendAngle * yawFactor, 0);
-        }
-
-        private static Quaternion GetRot(float bendAngle, float openAngle, bool isLeftHand)
-        {
-            var rollFactor = isLeftHand ? 1 : -1f;
-            return Quaternion.Euler(0, openAngle, bendAngle * rollFactor);
-        }
         
         // TEMP: 親指は回転の計算がムズいので、ぜんぶ曲げ角度として取る
         private static float GetThumbProximalBendAngle(WristPose wristPose, Vector3 j3, Vector3 j2) 

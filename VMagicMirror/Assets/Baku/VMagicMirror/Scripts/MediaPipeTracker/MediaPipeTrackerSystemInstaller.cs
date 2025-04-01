@@ -26,6 +26,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             Container.Bind<HandAndFaceLandmarkTask>().AsSingle();
             Container.BindInterfacesAndSelfTo<MediaPipeTrackerTaskController>().AsSingle();
 
+            Container.Bind<MediaPipeFingerPoseCalculator>().AsSingle();
             Container.BindInterfacesAndSelfTo<MediaPipeHand>().AsSingle();
         }
     }

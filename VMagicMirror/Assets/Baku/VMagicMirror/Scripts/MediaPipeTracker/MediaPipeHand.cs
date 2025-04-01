@@ -10,8 +10,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// - <see cref="HandIKIntegrator"/> では (Left|Right)Hand とかFingerの出力を参照する
     /// - MediaPipeTrackerの内部からは、このクラスにトラッキング結果を流し込む
     /// </summary>
-    public class MediaPipeHand
-    {
+    public class MediaPipeHand : ITickable
+{
         [Inject]
         public MediaPipeHand()
         {
@@ -22,11 +22,28 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly MediaPipeHandFinger _finger = new();
 
         private readonly MediaPipeHandState _leftHandState;
-        public IHandIkState LeftHand => _leftHandState;
+        public IHandIkState LeftHandState => _leftHandState;
 
         private readonly MediaPipeHandState _rightHandState;
-        public IHandIkState RightHand => _rightHandState;
+        public IHandIkState RightHandState => _rightHandState;
 
+        private HandIkGeneratorDependency _dependency;
+        private bool IsInitialized => _dependency != null;
+
+        public void SetDependency(HandIkGeneratorDependency dependency)
+        {
+            _dependency = dependency;
+        }
+        
+        // NOTE: HandIkIntegratorにUpdate/LateUpdateを呼ばせるスタイルにしてもよいかも。タイミングの都合次第になる
+        void ITickable.Tick()
+        {
+            if (!IsInitialized)
+            {
+                return;
+            }
+            
+        }
 
         private class MediaPipeHandFinger
         {

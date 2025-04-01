@@ -1,4 +1,5 @@
 ﻿using Baku.VMagicMirror.IK;
+using Baku.VMagicMirror.MediaPipeTracker;
 using Baku.VMagicMirror.VMCP;
 using UniRx;
 using UnityEngine;
@@ -56,6 +57,7 @@ namespace Baku.VMagicMirror
         private PenTabletHandIKGenerator _penTablet;
         public ClapMotionHandIKGenerator ClapMotion { get; private set; }
         private VMCPHandIkGenerator _vmcpHand;
+        private MediaPipeHand _mediaPipeHand;
         
         private Transform _rightHandTarget = null;
         private Transform _leftHandTarget = null;
@@ -174,7 +176,8 @@ namespace Baku.VMagicMirror
             ColliderBasedAvatarParamLoader colliderBasedAvatarParamLoader,
             SwitchableHandDownIkData switchableHandDownIk,
             VMCPHandPose vmcpHandPose,
-            VMCPFingerController vmcpFingerController
+            VMCPFingerController vmcpFingerController,
+            MediaPipeHand mediaPipeHand
             )
         {
             _reactionSources = new HandIkReactionSources(
@@ -215,13 +218,17 @@ namespace Baku.VMagicMirror
             _penTablet = new PenTabletHandIKGenerator(dependency, vrmLoadable, penTabletProvider);
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
             _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose, vmcpFingerController, _downHand);
-            barracudaHand.SetupDependency(dependency);
+
+            //barracudaHand.SetupDependency(dependency);
+            _mediaPipeHand = mediaPipeHand;
+            _mediaPipeHand.SetDependency(dependency);
 
             typing.SetUp(keyboardProvider, dependency);
 
             MouseMove.DownHand = _downHand;
             typing.DownHand = _downHand;
-            barracudaHand.DownHand = _downHand;
+            // TODO?: MediaPipeで手降ろし姿勢が参照したければ同様にしてもOK (参照したほうが姿勢の連続性は取りやすい)
+            //barracudaHand.DownHand = _downHand;
 
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]
@@ -242,8 +249,10 @@ namespace Baku.VMagicMirror
             
             Typing.LeftHand.RequestToUse += SetLeftHandState;
             Typing.RightHand.RequestToUse += SetRightHandState;
-            barracudaHand.LeftHandState.RequestToUse += SetLeftHandState;
-            barracudaHand.RightHandState.RequestToUse += SetRightHandState;
+            // barracudaHand.LeftHandState.RequestToUse += SetLeftHandState;
+            // barracudaHand.RightHandState.RequestToUse += SetRightHandState;
+            _mediaPipeHand.LeftHandState.RequestToUse += SetLeftHandState;
+            _mediaPipeHand.RightHandState.RequestToUse += SetRightHandState;
         }
 
         //NOTE: prevのStateは初めて手がキーボードから離れるまではnull

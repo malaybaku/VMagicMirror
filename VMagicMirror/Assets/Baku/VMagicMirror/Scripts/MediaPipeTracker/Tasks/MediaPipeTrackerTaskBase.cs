@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
             MediaPipeKinematicSetter mediaPipeKinematicSetter,
-            MediaPipeFacialSetter facialSetter,
+            MediaPipeFacialValueRepository facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer
         )
@@ -36,7 +36,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         protected MediaPipeKinematicSetter MediaPipeKinematicSetter { get; }
 
-        protected MediaPipeFacialSetter FacialSetter { get; }
+        protected MediaPipeFacialValueRepository FacialSetter { get; }
 
         // NOTE: visualizerはそのうち削除もアリ。Instantiateしないのが保証されてれば残ってもよいが
         protected LandmarksVisualizer LandmarksVisualizer { get; }

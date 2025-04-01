@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
             MediaPipeKinematicSetter mediaPipeKinematicSetter, 
-            MediaPipeFacialSetter facialSetter,
+            MediaPipeFacialValueRepository facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer,
             MediaPipeFingerPoseCalculator fingerPoseCalculator

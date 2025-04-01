@@ -34,6 +34,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // 手を下ろすのに対して遅れて回転を戻す…というのをやりたい場合、下記のdelayを正の値にする
         [SerializeField] private float trackingLostRotationDelay = 0.0f;
         
+        // NOTE: Blink関連の数値は ExternalTrackerBlink で定義してるのと同じセットを定義している。数値を揃える必要はないけど。
+        [Range(0f, 0.4f)] [SerializeField] private float eyeMapMin = 0.2f;
+        [Range(0.6f, 1f)] [SerializeField] private float eyeMapMax = 0.8f;
+        [Tooltip("eyeSquintのブレンドシェイプ値が1に近いほど、BlinkL/Rをこの値に近づける")]
+        [Range(0f, 1f)] [SerializeField] private float blinkValueOnSquint = 0.5f;
+        [Tooltip("目が開く方向へブレンドシェイプ値を変更するとき、60FPSの1フレームあたりで変更できる値の上限")]
+        [SerializeField] private float blinkOpenSpeedMax = 0.1f;
+        
         public float HandIkSmoothRate => handIkSmoothRate;
         public float FingerBoneSmoothRate => fingerBoneSmoothRate;
         public float HandMoveSpeedMax => handMoveSpeedMax;
@@ -61,6 +69,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public float TrackingLostWaitDuration => trackingLostWaitDuration;
         public float TrackingLostMotionDuration => trackingLostMotionDuration;
         public float TrackingLostRotationDelay => trackingLostRotationDelay;
+        
+        
+        
+        public float EyeMapMin => eyeMapMin;
+        public float EyeMapMax => eyeMapMax;
+        public float BlinkValueOnSquint => blinkValueOnSquint;
+        public float BlinkOpenSpeedMax => blinkOpenSpeedMax;
         
     }
 }

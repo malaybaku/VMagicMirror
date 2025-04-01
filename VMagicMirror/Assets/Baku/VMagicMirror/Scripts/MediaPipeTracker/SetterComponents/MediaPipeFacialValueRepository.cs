@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// <see cref="FaceResultSetter"/> 等に向けて、Mediapipe Face Landmarkerで取得した表情の情報を集約するやつ
     /// </summary>
-    public class MediaPipeFacialSetter : PresenterBase
+    public class MediaPipeFacialValueRepository : PresenterBase
     {
         private readonly IVRMLoadable _vrmLoadable;
         private readonly object _dataLock = new();
@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private bool _hasModel;
         
         [Inject]
-        public MediaPipeFacialSetter(IVRMLoadable vrmLoadable)
+        public MediaPipeFacialValueRepository(IVRMLoadable vrmLoadable)
         {
             _vrmLoadable = vrmLoadable;
         }

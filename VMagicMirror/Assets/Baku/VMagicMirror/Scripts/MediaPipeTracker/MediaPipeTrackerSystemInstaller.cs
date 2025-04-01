@@ -16,10 +16,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             //TODO: たぶんTimingInvoker自体を削除できると思うので、なるべく消したい…
             Container.Bind<KinematicSetterTimingInvoker>().FromNewComponentOnNewGameObject().AsCached();
-            Container.BindInterfacesAndSelfTo<KinematicSetter>().AsSingle();
+            Container.BindInterfacesAndSelfTo<MediaPipeKinematicSetter>().AsSingle();
 
             // TODO: 実装がちゃんとしてないので注意！
-            Container.BindInterfacesAndSelfTo<FacialSetter>().AsSingle();
+            Container.BindInterfacesAndSelfTo<MediaPipeFacialSetter>().AsSingle();
             
             Container.Bind<HandTask>().AsSingle();
             Container.Bind<FaceLandmarkTask>().AsSingle();

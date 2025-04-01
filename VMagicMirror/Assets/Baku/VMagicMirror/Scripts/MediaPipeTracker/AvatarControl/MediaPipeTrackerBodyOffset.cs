@@ -33,7 +33,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private FaceControlConfiguration _config;
         //private ExternalTrackerDataSource _externalTracker;
-        private KinematicSetter _kinematicSetter;
+        private MediaPipeKinematicSetter _mediaPipeKinematicSetter;
         
         private Vector3 _scale = Vector3.zero;
         private Vector3 _min = Vector3.zero;
@@ -42,10 +42,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private float _currentLerpFactor;
         
         [Inject]
-        public void Initialize(FaceControlConfiguration config, KinematicSetter kinematicSetter)//  ExternalTrackerDataSource externalTracker)
+        public void Initialize(FaceControlConfiguration config, MediaPipeKinematicSetter mediaPipeKinematicSetter)//  ExternalTrackerDataSource externalTracker)
         {
             _config = config;
-            _kinematicSetter = kinematicSetter;
+            _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
             //_externalTracker = externalTracker;
         }
         
@@ -108,9 +108,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
 
-            var offset = _kinematicSetter.GetHeadPose().position; // _externalTracker.HeadPositionOffset;
+            var offset = _mediaPipeKinematicSetter.GetHeadPose().position; // _externalTracker.HeadPositionOffset;
             
-            var goal = _kinematicSetter.HeadTracked // _externalTracker.Connected
+            var goal = _mediaPipeKinematicSetter.HeadTracked // _externalTracker.Connected
                 ? new Vector3(
                     Mathf.Clamp(offset.x * _scale.x, _min.x, _max.x),
                     Mathf.Clamp(offset.y * _scale.y, _min.y, _max.y),
@@ -118,7 +118,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 )
                 : Vector3.zero;
 
-            if (_kinematicSetter.HeadTracked) //_externalTracker.Connected)
+            if (_mediaPipeKinematicSetter.HeadTracked) //_externalTracker.Connected)
             {
                 var addedLerp = 
                     _currentLerpFactor +

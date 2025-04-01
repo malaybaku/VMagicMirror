@@ -17,11 +17,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public FaceLandmarkTask(
             MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
-            KinematicSetter kinematicSetter, 
-            FacialSetter facialSetter,
+            MediaPipeKinematicSetter mediaPipeKinematicSetter, 
+            MediaPipeFacialSetter facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer
-        ) : base(settingsRepository, textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialSetter, calibrator, landmarksVisualizer)
         {
         }
 
@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         protected override void OnStartTask()
         {
-            _faceSetter ??= new FaceResultSetter(KinematicSetter, FacialSetter);
+            _faceSetter ??= new FaceResultSetter(MediaPipeKinematicSetter, FacialSetter);
             
             var options = new FaceLandmarkerOptions(
                 baseOptions: new BaseOptions(
@@ -63,7 +63,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             if (result.faceBlendshapes is not { Count: > 0 })
             {
                 _faceSetter.ClearBlendShapes();
-                KinematicSetter.ClearHeadPose();
+                MediaPipeKinematicSetter.ClearHeadPose();
                 return;
             }
 
@@ -76,7 +76,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             var matrix = result.facialTransformationMatrixes[0];
             var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(matrix, Calibrator.GetCalibrationData());
-            KinematicSetter.SetHeadPose6Dof(headPose);
+            MediaPipeKinematicSetter.SetHeadPose6Dof(headPose);
 
             if (SettingsRepository.HasCalibrationRequest)
             {

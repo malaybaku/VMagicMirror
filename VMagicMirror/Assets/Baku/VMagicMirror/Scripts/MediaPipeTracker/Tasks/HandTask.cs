@@ -24,12 +24,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public HandTask(
             MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
-            KinematicSetter kinematicSetter, 
-            FacialSetter facialSetter,
+            MediaPipeKinematicSetter mediaPipeKinematicSetter, 
+            MediaPipeFacialSetter facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer,
             MediaPipeFingerPoseCalculator fingerPoseCalculator
-        ) : base(settingsRepository, textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialSetter, calibrator, landmarksVisualizer)
         {
             _fingerPoseCalculator = fingerPoseCalculator;
         }
@@ -65,8 +65,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 result.handLandmarks == null ||
                 result.handWorldLandmarks == null)
             {
-                KinematicSetter.ClearLeftHandPose();
-                KinematicSetter.ClearRightHandPose();
+                MediaPipeKinematicSetter.ClearLeftHandPose();
+                MediaPipeKinematicSetter.ClearRightHandPose();
 
                 //LandmarksVisualizer.ClearPositions();
                 //LandmarksVisualizer.Visualizer2D.Clear();
@@ -98,12 +98,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             if (!hasLeftHand)
             {
-                KinematicSetter.ClearLeftHandPose();
+                MediaPipeKinematicSetter.ClearLeftHandPose();
             }
 
             if (!hasRightHand)
             {
-                KinematicSetter.ClearRightHandPose();
+                MediaPipeKinematicSetter.ClearRightHandPose();
             }
         }
 
@@ -126,7 +126,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var wristLandmark = landmarks.landmarks[0];
             var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
             var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
-            KinematicSetter.SetLeftHandPose(posOffset, _fingerPoseCalculator.LeftHandRotation);
+            MediaPipeKinematicSetter.SetLeftHandPose(posOffset, _fingerPoseCalculator.LeftHandRotation);
         }
 
         private void SetRightHandPose(NormalizedLandmarks landmarks, Landmarks worldLandmarks)
@@ -136,7 +136,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var wristLandmark = landmarks.landmarks[0];
             var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
             var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
-            KinematicSetter.SetRightHandPose(posOffset, _fingerPoseCalculator.RightHandRotation);
+            MediaPipeKinematicSetter.SetRightHandPose(posOffset, _fingerPoseCalculator.RightHandRotation);
         }
     }
 }

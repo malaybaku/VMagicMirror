@@ -16,15 +16,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public MediaPipeTrackerTaskBase(
             MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
-            KinematicSetter kinematicSetter,
-            FacialSetter facialSetter,
+            MediaPipeKinematicSetter mediaPipeKinematicSetter,
+            MediaPipeFacialSetter facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer
         )
         {
             SettingsRepository = settingsRepository;
             _textureSource = textureSource;
-            KinematicSetter = kinematicSetter;
+            MediaPipeKinematicSetter = mediaPipeKinematicSetter;
             FacialSetter = facialSetter;
             Calibrator = calibrator;
             LandmarksVisualizer = landmarksVisualizer;
@@ -34,9 +34,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private IDisposable _textureSourceSubscriber = null;
 
-        protected KinematicSetter KinematicSetter { get; }
+        protected MediaPipeKinematicSetter MediaPipeKinematicSetter { get; }
 
-        protected FacialSetter FacialSetter { get; }
+        protected MediaPipeFacialSetter FacialSetter { get; }
 
         // NOTE: visualizerはそのうち削除もアリ。Instantiateしないのが保証されてれば残ってもよいが
         protected LandmarksVisualizer LandmarksVisualizer { get; }

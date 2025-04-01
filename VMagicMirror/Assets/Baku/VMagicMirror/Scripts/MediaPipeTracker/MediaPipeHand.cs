@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     public class MediaPipeHand : PresenterBase, ITickable
     {
         private readonly IVRMLoadable _vrmLoadable;
-        private readonly KinematicSetter _kinematicSetter;
+        private readonly MediaPipeKinematicSetter _mediaPipeKinematicSetter;
         private readonly TrackingLostHandCalculator _trackingLostHandCalculator;
         private readonly MediapipePoseSetterSettings _poseSetterSettings;
         private readonly CancellationTokenSource _cts = new();
@@ -44,14 +44,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public MediaPipeHand(
             IVRMLoadable vrmLoadable,
             FingerController fingerController,
-            KinematicSetter kinematicSetter, 
+            MediaPipeKinematicSetter mediaPipeKinematicSetter, 
             TrackingLostHandCalculator trackingLostHandCalculator,
             MediaPipeFingerPoseCalculator fingerPoseCalculator,
             MediaPipeTrackerSettingsRepository settingsRepository,
             MediapipePoseSetterSettings poseSetterSettings)
         {
             _vrmLoadable = vrmLoadable;
-            _kinematicSetter = kinematicSetter;
+            _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
             _trackingLostHandCalculator = trackingLostHandCalculator;
             _poseSetterSettings = poseSetterSettings;
 
@@ -155,7 +155,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void UpdateLeftHand()
         {
-            if (_kinematicSetter.TryGetLeftHandPose(out var leftHandPose))
+            if (_mediaPipeKinematicSetter.TryGetLeftHandPose(out var leftHandPose))
             {
                 _trackingLostHandCalculator.CancelLeftHand();
 
@@ -188,7 +188,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void UpdateRightHand()
         {
-            if (_kinematicSetter.TryGetRightHandPose(out var rightHandPose))
+            if (_mediaPipeKinematicSetter.TryGetRightHandPose(out var rightHandPose))
             {
                 _trackingLostHandCalculator.CancelRightHand();
 

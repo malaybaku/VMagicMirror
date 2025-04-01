@@ -14,8 +14,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// マルチスレッドを考慮したうえでIK/FKの計算をするすごいやつだよ
     /// </summary>
-    public class KinematicSetter : PresenterBase, ITickable
-    {
+    public class MediaPipeKinematicSetter : PresenterBase, ITickable
+    {        
         private readonly IVRMLoadable _vrmLoadable;
         private readonly BodyScaleCalculator _bodyScaleCalculator;
         private readonly MediaPipeTrackerSettingsRepository _settingsRepository;
@@ -60,7 +60,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private float _rightHandResultLostTime = 0f;
         
         [Inject]
-        public KinematicSetter(
+        public MediaPipeKinematicSetter(
             IVRMLoadable vrmLoadable, 
             MediapipePoseSetterSettings poseSettings,
             MediaPipeTrackerSettingsRepository settingsRepository,

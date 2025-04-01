@@ -34,12 +34,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public HandAndFaceDetectorTask(
             MediaPipeTrackerSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
-            KinematicSetter kinematicSetter, 
-            FacialSetter facialSetter,
+            MediaPipeKinematicSetter mediaPipeKinematicSetter, 
+            MediaPipeFacialSetter facialSetter,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer,
             MediaPipeFingerPoseCalculator fingerPoseCalculator
-        ) : base(settingsRepository, textureSource, kinematicSetter, facialSetter, calibrator, landmarksVisualizer, fingerPoseCalculator)
+        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialSetter, calibrator, landmarksVisualizer, fingerPoseCalculator)
         {
         }
         
@@ -97,7 +97,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             LogOnResultCalled(timestamp);
             if (result.detections is not { Count: > 0 })
             {
-                KinematicSetter.ClearHeadPose();
+                MediaPipeKinematicSetter.ClearHeadPose();
                 LandmarksVisualizer.Visualizer2D.Clear();
                 return;
             }

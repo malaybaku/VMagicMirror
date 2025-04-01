@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private bool _hasNeck = false;
         private Transform _neck = null;
         private Transform _head = null;
-        private KinematicSetter _kinematicSetter;
+        private MediaPipeKinematicSetter _mediaPipeKinematicSetter;
         //private ExternalTrackerDataSource _externalTracker;
         private GameInputBodyMotionController _gameInputBodyMotionController;
         private CarHandleBasedFK _carHandleBasedFk;
@@ -42,11 +42,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             IVRMLoadable vrmLoadable, 
             GameInputBodyMotionController gameInputBodyMotionController,
             CarHandleBasedFK carHandleBasedFk,
-            KinematicSetter kinematicSetter
+            MediaPipeKinematicSetter mediaPipeKinematicSetter
             //ExternalTrackerDataSource externalTracker
             )
         {
-            _kinematicSetter = kinematicSetter;
+            _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
             //_externalTracker = externalTracker;
             _carHandleBasedFk = carHandleBasedFk;
             _gameInputBodyMotionController = gameInputBodyMotionController;
@@ -76,7 +76,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
             
-            _kinematicSetter.GetHeadPose().rotation.ToAngleAxis(out float rawAngle, out var rawAxis);
+            _mediaPipeKinematicSetter.GetHeadPose().rotation.ToAngleAxis(out float rawAngle, out var rawAxis);
             //_externalTracker.HeadRotation.ToAngleAxis(out float rawAngle, out var rawAxis);
             rawAngle = Mathf.Repeat(rawAngle + 180f, 360f) - 180f;
             

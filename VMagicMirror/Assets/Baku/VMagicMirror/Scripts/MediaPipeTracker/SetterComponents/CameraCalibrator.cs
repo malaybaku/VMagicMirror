@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         public CameraCalibrationData GetCalibrationData() => _repository.CurrentCalibrationData;
         
-        public bool TrySetTwoDofData(DetectionResult result)
+        public bool TrySetTwoDofData(DetectionResult result, float webCamTextureAspect)
         {
             if (result.detections is not { Count: > 0 })
             {
@@ -28,14 +28,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             // 鼻先を顔の中心と見なす。これ以外だとboundの中心を取る方法があるが、どっちも一長一短なので鼻でやっている
             var noseKeyPoint = detect.keypoints[2];
-            var faceCenterNormalizedPosition = new Vector2(noseKeyPoint.x, 1f - noseKeyPoint.y);
-
+            var faceCenterNormalizedPosition =
+                MediapipeMathUtil.GetTrackingNormalizePosition(noseKeyPoint, webCamTextureAspect);
+            
             var currentData = _repository.CurrentCalibrationData;
             _repository.SetCalibrationResult(currentData.WithTwoDoF(faceCenterNormalizedPosition));
             return true;
         }
 
-        public bool TrySetSixDofData(FaceLandmarkerResult result)
+        public bool TrySetSixDofData(FaceLandmarkerResult result, float webCamTextureAspect)
         {
             if (result.facialTransformationMatrixes is not { Count: > 0 })
             {
@@ -52,7 +53,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             
             // NOTE: matrixesがあるのでlandmarkも必ず存在する前提
             var noseLandmark = result.faceLandmarks[0].landmarks[0];
-            var faceCenterNormalizedPosition = new Vector2(1f - noseLandmark.x, 1f - noseLandmark.y);
+            var faceCenterNormalizedPosition
+                = MediapipeMathUtil.GetTrackingNormalizePosition(noseLandmark, webCamTextureAspect);
 
             _repository.SetCalibrationResult(
                 CameraCalibrationData.SixDoF(faceCenterNormalizedPosition, faceToCameraPose)

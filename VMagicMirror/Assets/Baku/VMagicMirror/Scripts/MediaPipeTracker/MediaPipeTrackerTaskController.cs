@@ -14,7 +14,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// </summary>
     public class MediaPipeTrackerTaskController : PresenterBase
     {
-        private IMessageReceiver _receiver;
+        private readonly IMessageReceiver _receiver;
         private readonly HandTask _hand;
         private readonly FaceLandmarkTask _face;
         private readonly HandAndFaceLandmarkTask _handAndFace;
@@ -108,6 +108,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private void SubscribeTaskRunningFlags()
         {
+            // 下記の3つのフラグは2つ以上同時にtrueにならないように実装している (ちょっと読み取りにくいが)
+            
             _faceTrackingEnabled
                 .CombineLatest(
                     _cameraDeviceName,
@@ -159,14 +161,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .Subscribe(run => _face.SetTaskActive(run))
                 .AddTo(this);
 
-            // TODO: faceが疎通した後で下記のコメントアウトを外し、handを含めた挙動を見ていく
-            // _isHandTaskRunning
-            //     .Subscribe(run => _hand.SetTaskActive(run))
-            //     .AddTo(this);
-            //
-            // _isHandAndFaceTaskRunning
-            //     .Subscribe(run => _handAndFace.SetTaskActive(run))
-            //     .AddTo(this);
+            _isHandTaskRunning
+                .Subscribe(run => _hand.SetTaskActive(run))
+                .AddTo(this);
+            
+            _isHandAndFaceTaskRunning
+                .Subscribe(run => _handAndFace.SetTaskActive(run))
+                .AddTo(this);
             
             // NOTE: FaceTrackerとの競合回避するうえで、オフにする処理の一部はThrottleFrameできないかも…
             // - ↑が実際に合っていた場合、FaceTrackerと本クラスでWebCamTextureの取得排他できるようなクラスを用意するのが良さそう
@@ -182,7 +183,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 .ThrottleFrame(1)
                 .DistinctUntilChanged()
                 .Subscribe(value => _webCamTextureSource.SetActive(value.useWebCam, value.cameraDeviceName))
-                .AddTo(this);            
+                .AddTo(this);
+
+            _isHandTaskRunning
+                .CombineLatest(
+                    _isHandAndFaceTaskRunning, 
+                    (x, y) => x || y
+                )
+                .Subscribe(v => _settingsRepository.IsHandTrackingActive = v)
+                .AddTo(this);
         }
         
         public override void Dispose()

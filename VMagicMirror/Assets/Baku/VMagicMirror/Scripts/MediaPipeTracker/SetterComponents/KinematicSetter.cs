@@ -1,29 +1,23 @@
-using System;
 using System.Collections.Generic;
-using RootMotion.FinalIK;
 using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
     // TODO: LateUpdateのタイミングの問題の対処だけMonoBehaviourに切り出して、このクラス自体はPresenterBaseか何かにしたい
+    // NOTE
+    // - このクラスではmirrorの反映、およびトラッキングロストしてるかどうかの判定までを行う
+    //   - 特にトラッキングロストに関してステートフルである
+    // - 姿勢の平滑化はこのクラスでは計算しない
+    //   - この点ではステートレス
 
     /// <summary>
-    /// マルチスレッドを考慮したうえでIK/FKを適用するすごいやつだよ
+    /// マルチスレッドを考慮したうえでIK/FKの計算をするすごいやつだよ
     /// </summary>
     public class KinematicSetter : PresenterBase, ITickable
     {
-        // TODO: IIKDataRecordとかに整形する or 補間処理等が入ったIK値を別のクラスで持つようにする
-        private Pose leftHandIkTarget;
-        private Pose rightHandIkTarget;
-        
-        [Obsolete]
-        private float rootPositionSmoothRate = 0.3f;
-
         private readonly IVRMLoadable _vrmLoadable;
-        private readonly KinematicSetterTimingInvoker _timingInvoker;
         private readonly BodyScaleCalculator _bodyScaleCalculator;
-        private readonly TrackingLostHandCalculator _trackingLostHandCalculator;
         private readonly MediaPipeTrackerSettingsRepository _settingsRepository;
         private readonly MediapipePoseSetterSettings _poseSetterSettings;
         private readonly object _poseLock = new();
@@ -35,10 +29,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // メインスレッドのみから使う値
         private bool _hasModel;
         private Animator _targetAnimator;
-        private FullBodyBipedIK _fbbik;
         private readonly Dictionary<HumanBodyBones, Transform> _bones = new();
-        private Quaternion _lastTrackedLeftHandLocalRotation = Quaternion.identity;
-        private Quaternion _lastTrackedRightHandLocalRotation = Quaternion.identity;
         
         // マルチスレッドで読み書きする値
         // Forward Kinematic
@@ -71,19 +62,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Inject]
         public KinematicSetter(
             IVRMLoadable vrmLoadable, 
-            KinematicSetterTimingInvoker timingInvoker,
             MediapipePoseSetterSettings poseSettings,
             MediaPipeTrackerSettingsRepository settingsRepository,
             BodyScaleCalculator bodyScaleCalculator,
-            TrackingLostHandCalculator trackingLostHandCalculator,
             MediapipePoseSetterSettings poseSetterSettings
         )
         {
             _vrmLoadable = vrmLoadable;
-            _timingInvoker = timingInvoker;
             _settingsRepository = settingsRepository;
             _bodyScaleCalculator = bodyScaleCalculator;
-            _trackingLostHandCalculator = trackingLostHandCalculator;
             _poseSetterSettings = poseSetterSettings;
         }
 
@@ -91,16 +78,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmUnloaded;
-            
-            //_timingInvoker.OnLateUpdate.Subscribe(_ => OnLateUpdate()).AddTo(this);
-            
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _targetAnimator = info.animator;
-            _fbbik = info.fbbIk;
-            
             for (var i = 0; i < (int)HumanBodyBones.LastBone; i++)
             {
                 var bone = (HumanBodyBones)i;
@@ -114,13 +96,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void OnVrmUnloaded()
         {
-            _fbbik = null;
             _targetAnimator = null;
-
             _bones.Clear();
         }
         
-        #region トラッキング結果を保存する関数群
+        #region トラッキング結果のI/O
 
         public bool HeadTracked
         {
@@ -169,6 +149,21 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _headResultLostTime = 0f;
             }
         }
+
+        public bool TryGetLeftHandPose(out Pose result)
+        {
+            lock (_poseLock)
+            {
+                if (_hasHeadPose.Value && _hasLeftHandPose.Value)
+                {
+                    result = GetHandPose(true);
+                    return true;
+                }
+                
+                result = Pose.identity;
+                return false;
+            }
+        }
         
         /// <summary>
         /// NOTE: posは「画像座標で、x軸方向を基準として画像のアス比の影響だけ除去したもの」を指定する。
@@ -208,6 +203,21 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     _hasLeftHandPose.Set(false);
                     _leftHandResultLostTime = 0f;
                 }
+            }
+        }
+
+        public bool TryGetRightHandPose(out Pose result)
+        {
+            lock (_poseLock)
+            {
+                if (_hasHeadPose.Value && _hasRightHandPose.Value)
+                {
+                    result = GetHandPose(false);
+                    return true;
+                }
+                
+                result = Pose.identity;
+                return false;
             }
         }
 
@@ -331,6 +341,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // NOTE: ハンドトラッキングの都合で必要なものがあれば復活させてもいいが、多分クラスを分ける感じになるはず
             return;
             
+            // TODO: 指の姿勢適用についても別クラスに移行する。
+            // そもそもDictでキャッシュ持つのは相性悪いかもしれないので、それを直してもよい
             lock (_poseLock)
             {
                 foreach (var pair in _rotationsBeforeIK)
@@ -351,131 +363,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                         }
                     }
                 }
-
-                UpdateLeftHandIk();
-                UpdateRightHandIk();
             }
         }
-
-        private void UpdateLeftHandIk()
-        {
-            // note: headが分かってないなりにIKを適用しちゃう手もある展が、マイナーケースっぽいので無しで。
-            if (_hasHeadPose.Value && _hasLeftHandPose.Value)
-            {
-                _trackingLostHandCalculator.CancelLeftHand();
-
-                var leftHandPose = GetLeftHandPose();
-                var nextPos =
-                    Vector3.Lerp(leftHandIkTarget.position, leftHandPose.position, _poseSetterSettings.HandIkSmoothRate);
-                leftHandIkTarget.position = Vector3.MoveTowards(
-                    leftHandIkTarget.position, nextPos, _poseSetterSettings.HandMoveSpeedMax * Time.deltaTime
-                );
-                
-                leftHandIkTarget.rotation =
-                    Quaternion.Slerp(leftHandIkTarget.rotation, leftHandPose.rotation, _poseSetterSettings.HandIkSmoothRate);
-                SetLeftHandEffectorWeight(1f, 1f);
-                return;
-            }
-
-            var rootPosition = _targetAnimator.transform.localPosition;
-            if (!_trackingLostHandCalculator.LeftHandTrackingLostRunning)
-            {
-                var localRotEuler = _lastTrackedLeftHandLocalRotation.eulerAngles;
-                Debug.Log($"run left hand tracking lost, local rot = {localRotEuler.x:0.0}, {localRotEuler.y:0.0}, {localRotEuler.z:0.0}");
-                var lastTrackedPose = new Pose(
-                    leftHandIkTarget.position - rootPosition,
-                    leftHandIkTarget.rotation
-                );
-                _trackingLostHandCalculator.RunLeftHandTrackingLost(lastTrackedPose, _lastTrackedLeftHandLocalRotation);
-            }
-
-            leftHandIkTarget.position = rootPosition + _trackingLostHandCalculator.LeftHandPose.position;
-            leftHandIkTarget.rotation = _trackingLostHandCalculator.LeftHandPose.rotation;
-            
-            SetLeftHandEffectorWeight(1f, 0f);
-        }
-
-        private void UpdateRightHandIk()
-        {
-            if (_hasHeadPose.Value && _hasRightHandPose.Value)
-            {
-                _trackingLostHandCalculator.CancelRightHand();
-
-                var rightHandPose = GetRightHandPose();
-                var nextPos =
-                    Vector3.Lerp(rightHandIkTarget.position, rightHandPose.position, _poseSetterSettings.HandIkSmoothRate);
-                rightHandIkTarget.position = Vector3.MoveTowards(
-                    rightHandIkTarget.position, nextPos, _poseSetterSettings.HandMoveSpeedMax * Time.deltaTime
-                );
-                
-                rightHandIkTarget.rotation =
-                    Quaternion.Slerp(rightHandIkTarget.rotation, rightHandPose.rotation, _poseSetterSettings.HandIkSmoothRate);
-                SetRightHandEffectorWeight(1f, 1f);
-                return;
-            }
-            
-            var rootPosition = _targetAnimator.transform.localPosition;
-            if (!_trackingLostHandCalculator.RightHandTrackingLostRunning)
-            {
-                var trackedPose = new Pose(
-                    rightHandIkTarget.position - rootPosition,
-                    rightHandIkTarget.rotation
-                );
-                _trackingLostHandCalculator.RunRightHandTrackingLost(trackedPose, _lastTrackedRightHandLocalRotation);
-            }
-
-            rightHandIkTarget.position = rootPosition + _trackingLostHandCalculator.RightHandPose.position;
-            rightHandIkTarget.rotation = _trackingLostHandCalculator.RightHandPose.rotation;
-            SetRightHandEffectorWeight(1f, 0f);
-        }
-        
-        //TODO: 頭部トラッキングまで実装した範囲でobsoleteに見えてるのでobsoleteにしている。
-        // ハンドトラッキングの処理次第でobsoleteじゃない可能性もあるが、IKより後で適用したい処理があるならクラス分けたい気もする…
-        [Obsolete]
-        private void OnLateUpdate()
-        {
-            lock (_poseLock)
-            {
-                // NOTE: VMMの場合これをworld rotにするのもアリ
-                if (_hasHeadPose.Value)
-                {
-                    _bones[HumanBodyBones.Head].localRotation = _headPose.rotation;
-                }
-
-                if (_hasHeadPose.Value && _hasLeftHandPose.Value)
-                {
-                    _lastTrackedLeftHandLocalRotation = _bones[HumanBodyBones.LeftHand].localRotation;
-                }
-                else if (_trackingLostHandCalculator.LeftHandTrackingLostRunning)
-                {
-                    _bones[HumanBodyBones.LeftHand].localRotation = _trackingLostHandCalculator.LeftHandLocalRotation;
-                }
-                
-                if (_hasHeadPose.Value && _hasRightHandPose.Value)
-                {
-                    _lastTrackedRightHandLocalRotation = _bones[HumanBodyBones.RightHand].localRotation;
-                }
-                else if (_trackingLostHandCalculator.RightHandTrackingLostRunning)
-                {
-                    _bones[HumanBodyBones.RightHand].localRotation = _trackingLostHandCalculator.RightHandLocalRotation;
-                }
-            }
-        }
-
-        private void SetLeftHandEffectorWeight(float positionWeight, float rotationWeight)
-        {
-            _fbbik.solver.leftHandEffector.positionWeight = positionWeight;
-            _fbbik.solver.leftHandEffector.rotationWeight = rotationWeight;
-        }
-        
-        private void SetRightHandEffectorWeight(float positionWeight, float rotationWeight)
-        {
-            _fbbik.solver.rightHandEffector.positionWeight = positionWeight;
-            _fbbik.solver.rightHandEffector.rotationWeight = rotationWeight;
-        }
-        
-        private Pose GetLeftHandPose() => GetHandPose(true);
-        private Pose GetRightHandPose() => GetHandPose(false);
 
         // NOTE: 大まかには位置決めのほうがメインになっている
         private Pose GetHandPose(bool isLeftHand)
@@ -510,7 +399,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var baseRotation = isLeftHand ? _leftHandRot : _rightHandRot;
             return new Pose(handPosition, additionalRotation * baseRotation);
             // 補正計算の結果だけをチェックしたい場合はコッチを有効にする
-            // return new Pose(handPosition, rotation * MediapipeMathUtil.GetVrmForwardHandRotation(isLeftHand));
+            // return new Pose(handPosition, additionalRotation * MediapipeMathUtil.GetVrmForwardHandRotation(isLeftHand));
         }
         
         // 手の回転をおおよそ肩に対して球面的にするための補正回転を生成する
@@ -527,7 +416,5 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 );
             return Quaternion.LookRotation(direction) * rotWhenHandIsCenter;
         }
-        
-        private Vector3 GetHeadPositionOffset() => _headPose.position * _bodyScaleCalculator.BodyHeightFactor;
     }
 }

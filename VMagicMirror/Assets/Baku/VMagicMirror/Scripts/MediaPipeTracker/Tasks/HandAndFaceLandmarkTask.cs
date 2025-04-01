@@ -88,13 +88,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 _faceSetter.ClearBlendShapes();
                 KinematicSetter.ClearHeadPose();
-                LandmarksVisualizer.Visualizer2D.Clear();
                 return;
             }
-
-            // LandmarksVisualizer.Visualizer2D.SetPositions(
-            //     result.faceLandmarks[0].landmarks.Select(m => m.ToVector2())
-            //     );
             
             // 一度入った BlendShape はPlayMode中に消えない…という前提でこうしてます
             foreach (var c in result.faceBlendshapes[0].categories)
@@ -109,7 +104,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             if (SettingsRepository.HasCalibrationRequest)
             {
-                _ = Calibrator.TrySetSixDofData(result);
+                _ = Calibrator.TrySetSixDofData(result, WebCamTextureAspect);
             }
         }
     }

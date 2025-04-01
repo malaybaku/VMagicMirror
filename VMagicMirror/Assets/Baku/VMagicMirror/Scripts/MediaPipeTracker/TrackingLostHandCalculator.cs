@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Baku.VMagicMirror.IK;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
@@ -8,9 +9,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 {
     public class TrackingLostHandCalculator
     {
-        private const float ArmStretchRateOnEnd = 0.98f;
         private const float TrackingLostWaitDuration = 0.25f;
-
         private const float TrackingLostMotionDuration = 1.2f;
         // 手を下ろすのに対して遅れて回転を戻す…というのをやりたい場合、下記のdelayを正の値にする
         private const float TrackingLostRotationDelay = 0.0f;
@@ -18,7 +17,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private static readonly Vector3 HandDownStartTangent = new(0, -1f, 0.1f);
 
-        private readonly BodyScaleCalculator _bodyScaleCalculator;
+        // TODO: 普通のメソッドで受けるよりInjectしたほうがいいかも
+        private AlwaysDownHandIkGenerator _downHandIk;
 
         private CancellationTokenSource _leftHandCts;
         private CancellationTokenSource _rightHandCts;
@@ -33,6 +33,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public bool LeftHandTrackingLostRunning => _leftHandCts != null;
         public bool RightHandTrackingLostRunning => _rightHandCts != null;
         
+        // NOTE: 「(Left|Right)HandTrackingLostRunningがtrueであり、かつ終端姿勢の適用までは終わってない」ときだけtrueになる
+        public bool LeftHandTrackingLostMotionInProgress { get; private set; }
+        public bool RightHandTrackingLostMotionInProgress { get; private set; }
+        
         // NOTE:
         // - トラッキングロスト中だけ意味のある値が入る
         // - アバターのrootから見た姿勢を指定する (!= ワールド姿勢)
@@ -43,12 +47,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         public Quaternion LeftHandLocalRotation { get; private set; } = Quaternion.identity;
         public Quaternion RightHandLocalRotation { get; private set; } = Quaternion.identity;
-        
+
         [Inject]
-        public TrackingLostHandCalculator(BodyScaleCalculator bodyScaleCalculator)
+        public TrackingLostHandCalculator()
         {
-            _bodyScaleCalculator = bodyScaleCalculator;
         }
+
+        public void SetupDownHandIk(AlwaysDownHandIkGenerator downHandIk) => _downHandIk = downHandIk;
 
         /// <summary>
         /// NOTE: lastTrackedPoseはワールド座標ではなく、アバターのrootから見た姿勢を指定する
@@ -62,6 +67,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             _leftLastTrackedPose = trackedPose;
             _leftLastTrackedLocalRotation = handLocalRotation;
+            LeftHandTrackingLostMotionInProgress = true;
             RunLeftHandLostInternal(_leftHandCts.Token).Forget();
         }
 
@@ -77,6 +83,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             _rightLastTrackedPose = trackedPose;
             _rightLastTrackedLocalRotation = handLocalRotation;
+            RightHandTrackingLostMotionInProgress = true;
             RunRightHandLostInternal(_rightHandCts.Token).Forget();
         }
         
@@ -85,6 +92,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _leftHandCts?.Cancel();
             _leftHandCts?.Dispose();
             _leftHandCts = null;
+            
+            LeftHandTrackingLostMotionInProgress = false;
         }
         
         public void CancelRightHand()
@@ -92,25 +101,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _rightHandCts?.Cancel();
             _rightHandCts?.Dispose();
             _rightHandCts = null;
+            
+            RightHandTrackingLostMotionInProgress = false;
         }
 
-        public Pose GetLeftHandTrackingLostEndPose()
-        {
-            var rot = Quaternion.Euler(-8f, 0, 70f);
-            var pos = 
-                _bodyScaleCalculator.RootToLeftUpperArm + 
-                rot * Vector3.left * (_bodyScaleCalculator.LeftArmLength * ArmStretchRateOnEnd);
-            return new Pose(pos, rot);
-        }
-        
-        public Pose GetRightHandTrackingLostEndPose()
-        {
-            var rot = Quaternion.Euler(-8f, 0, -70f);
-            var pos =
-                _bodyScaleCalculator.RootToRightUpperArm +
-                rot * Vector3.right * (_bodyScaleCalculator.RightArmLength * ArmStretchRateOnEnd);
-            return new Pose(pos, rot);
-        }
+        private Pose GetLeftHandDownPose() => _downHandIk.LeftHand.GetPose();
+        private Pose GetRightHandTrackingLostEndPose() => _downHandIk.RightHand.GetPose();
         
         private async UniTaskVoid RunLeftHandLostInternal(CancellationToken cancellationToken)
         {
@@ -118,10 +114,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             LeftHandLocalRotation = _leftLastTrackedLocalRotation;
             await UniTask.Delay(TimeSpan.FromSeconds(TrackingLostWaitDuration), cancellationToken: cancellationToken);
             
-            var endPose = GetLeftHandTrackingLostEndPose();
             var time = 0f;
             while (time < TrackingLostPoseDuration)
             {
+                var endPose = GetLeftHandDownPose();
                 var positionRate = Mathf.SmoothStep(0, 1, time / TrackingLostMotionDuration);
                 var position = MathUtil.GetCubicBezierWithStartTangent(
                     _leftLastTrackedPose.position, endPose.position, HandDownStartTangent, positionRate
@@ -140,9 +136,16 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 await UniTask.NextFrame(cancellationToken);
                 time += Time.deltaTime;
             }
-            
-            LeftHandPose = endPose;
-            LeftHandLocalRotation = Quaternion.identity;
+
+            LeftHandTrackingLostMotionInProgress = false;
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                // NOTE: 設定によって手下げ姿勢が引き続き変わるかもしれないので、毎回適用している
+                LeftHandPose = GetLeftHandDownPose();
+                LeftHandLocalRotation = Quaternion.identity;
+                await UniTask.NextFrame(cancellationToken);
+            }
         }
         
         private async UniTaskVoid RunRightHandLostInternal(CancellationToken cancellationToken)
@@ -151,10 +154,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             RightHandLocalRotation = _rightLastTrackedLocalRotation;
             await UniTask.Delay(TimeSpan.FromSeconds(TrackingLostWaitDuration), cancellationToken: cancellationToken);
             
-            var endPose = GetRightHandTrackingLostEndPose();
             var time = 0f;
             while (time < TrackingLostPoseDuration)
             {
+                var endPose = GetRightHandTrackingLostEndPose();
                 var positionRate = Mathf.SmoothStep(0, 1, time / TrackingLostMotionDuration);
                 var position = MathUtil.GetCubicBezierWithStartTangent(
                     _rightLastTrackedPose.position, endPose.position, HandDownStartTangent, positionRate
@@ -174,8 +177,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 time += Time.deltaTime;
             }
             
-            RightHandPose = endPose;
-            RightHandLocalRotation = Quaternion.identity;
+            RightHandTrackingLostMotionInProgress = false;
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                RightHandPose = GetRightHandTrackingLostEndPose();
+                RightHandLocalRotation = Quaternion.identity;
+                await UniTask.NextFrame(cancellationToken);
+            }
         }
     }
 }

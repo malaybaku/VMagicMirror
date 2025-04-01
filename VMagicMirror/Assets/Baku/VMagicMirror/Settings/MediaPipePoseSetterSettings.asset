@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc3b4f236688a294385a5d575bb04437, type: 3}
   m_Name: MediaPipePoseSetterSettings
   m_EditorClassIdentifier: 
+  trackingLostTimeThreshold: 0.3
   bodyHorizontalMoveScale: 1
   faceDepthMoveScale: 1
-  handHorizontalMoveScale: 1
+  handHorizontalMoveScale: 2
   handDepthMoveScale: 1
   handRotationModifyWeight: 0.5
   handIkSmoothRate: 18

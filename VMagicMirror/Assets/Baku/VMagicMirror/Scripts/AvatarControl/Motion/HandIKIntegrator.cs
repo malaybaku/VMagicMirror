@@ -221,14 +221,12 @@ namespace Baku.VMagicMirror
 
             //barracudaHand.SetupDependency(dependency);
             _mediaPipeHand = mediaPipeHand;
-            _mediaPipeHand.SetDependency(dependency);
+            _mediaPipeHand.SetDependency(dependency, _downHand);
 
             typing.SetUp(keyboardProvider, dependency);
 
             MouseMove.DownHand = _downHand;
             typing.DownHand = _downHand;
-            // TODO?: MediaPipeで手降ろし姿勢が参照したければ同様にしてもOK (参照したほうが姿勢の連続性は取りやすい)
-            //barracudaHand.DownHand = _downHand;
 
             //TODO: TypingだけMonoBehaviourなせいで若干ダサい
             foreach (var generator in new HandIkGeneratorBase[]

@@ -68,8 +68,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 KinematicSetter.ClearLeftHandPose();
                 KinematicSetter.ClearRightHandPose();
 
-                LandmarksVisualizer.ClearPositions();
-                LandmarksVisualizer.Visualizer2D.Clear();
+                //LandmarksVisualizer.ClearPositions();
+                //LandmarksVisualizer.Visualizer2D.Clear();
                 return;
             }
 
@@ -83,7 +83,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 {
                     case LeftHandHandednessName:
                         SetLeftHandPose(result.handLandmarks[i], result.handWorldLandmarks[i]);
-                        VisualizeLeftHand(result.handLandmarks[i], result.handWorldLandmarks[i]);
                         hasLeftHand = true;
                         break;
                     case RightHandHandednessName:
@@ -127,7 +126,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var wristLandmark = landmarks.landmarks[0];
             var normalizedPos = MediapipeMathUtil.GetTrackingNormalizePosition(wristLandmark, WebCamTextureAspect);
             var posOffset = MediapipeMathUtil.GetNormalized2DofPositionDiff(normalizedPos, Calibrator.GetCalibrationData());
-
             KinematicSetter.SetLeftHandPose(posOffset, _handPoseSetter.LeftHandRotation);
         }
 

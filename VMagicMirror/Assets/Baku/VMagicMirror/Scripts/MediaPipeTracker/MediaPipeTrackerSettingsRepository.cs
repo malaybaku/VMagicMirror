@@ -24,6 +24,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _sender = sender;
         }
 
+        // NOTE: この値はメインスレッドでしか読まない想定なのでAtomic無し (つけても害はない)
+        public bool IsHandTrackingActive { get; set; }
+
         public Atomic<bool> IsFaceMirrored { get; } = new(true);
         public Atomic<bool> IsHandMirrored { get; } = new(true);
 

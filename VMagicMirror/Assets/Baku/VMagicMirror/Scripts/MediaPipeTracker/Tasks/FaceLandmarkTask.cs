@@ -64,10 +64,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 _faceSetter.ClearBlendShapes();
                 KinematicSetter.ClearHeadPose();
-                
-                // LandmarksVisualizer.ClearPositions();
-                // LandmarksVisualizer.UnsetSingleMatrix();
-                // LandmarksVisualizer.Visualizer2D.Clear();
                 return;
             }
 
@@ -84,10 +80,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             if (SettingsRepository.HasCalibrationRequest)
             {
-                _ = Calibrator.TrySetSixDofData(result);
+                _ = Calibrator.TrySetSixDofData(result, WebCamTextureAspect);
             }
-            // VisualizeAllFaceLandmark2D(result);
-            // VisualizeAllFaceLandmark3D(result);
         }
 
         private void VisualizeAllFaceLandmark2D(FaceLandmarkerResult result)

@@ -137,7 +137,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             
             if (requestCalibration)
             {
-                var calibrationSuccess = Calibrator.TrySetTwoDofData(result);
+                var calibrationSuccess = Calibrator.TrySetTwoDofData(result, WebCamTextureAspect);
                 Debug.Log($"2dof calibration, success?={calibrationSuccess}");
                 // NOTE: ホントはマルチスレッドからアクセスしないほうがヨイが、まあデバッグ表示なので…
                 requestCalibration = false;

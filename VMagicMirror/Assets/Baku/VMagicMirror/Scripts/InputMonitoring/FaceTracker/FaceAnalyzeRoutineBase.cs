@@ -19,9 +19,6 @@ namespace Baku.VMagicMirror
         protected int _inputWidth = 0;
         protected int _inputHeight = 0;
         
-        /// <summary> 顔検出を行っているスレッド(非UIスレッド)上で、顔情報がアップデートされると発火します。 </summary>
-        public event Action<FaceDetectionUpdateStatus> FaceDetectionUpdated;
-        
         private readonly object _isActiveLock = new object();
         private bool _isActive = false;
         public bool IsActive
@@ -167,19 +164,6 @@ namespace Baku.VMagicMirror
                 RunFaceDetection();
             }
         }
-        
-        protected void RaiseFaceDetectionUpdate(FaceDetectionUpdateStatus status)
-        {
-            try
-            {
-                FaceDetectionUpdated?.Invoke(status);
-            }
-            catch (Exception ex)
-            {
-                LogOutput.Instance.Write(ex);
-            }
-        }
-
     }
     
     /// <summary>

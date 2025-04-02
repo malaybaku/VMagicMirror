@@ -39,15 +39,6 @@ namespace Baku.VMagicMirror
         /// <summary> キャリブレーションの内容 </summary>
         public CalibrationData CalibrationData { get; } = new();
 
-        /// <summary> 顔検出スレッド上で、顔情報がアップデートされると発火します。 </summary>
-        public event Action<FaceDetectionUpdateStatus> FaceDetectionUpdated;
-
-        /// <summary> WebCamTextureの初期化が完了すると発火します。 </summary>
-        public event Action<WebCamTexture> WebCamTextureInitialized;
-        
-        /// <summary> WebCamTextureを破棄するとき発火します。破棄済みの状態で冗長に呼ばれることもあります。 </summary>
-        public event Action WebCamTextureDisposed;
-
         /// <summary> カメラが初期化済みかどうか </summary>
         public bool HasInitDone { get; private set; }
         private bool _isInitWaiting;
@@ -116,7 +107,6 @@ namespace Baku.VMagicMirror
             CalibrationData.SetDefaultValues();
             
             _dlibFaceAnalyzer = new DlibFaceAnalyzeRoutine(StreamingAssetFileNames.DlibFaceTrackingDataFileName);
-            _dlibFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;
             _dlibFaceAnalyzer.SetUp();
             
             _horizontalFlipController.DisableHorizontalFlip
@@ -336,7 +326,6 @@ namespace Baku.VMagicMirror
 
             _isInitWaiting = false;
             HasInitDone = true;
-            WebCamTextureInitialized?.Invoke(_webCamTexture);
             _faceNotDetectedCountDown = activeButNotTrackedCount;
 
             if (_colors == null || _colors.Length != _webCamTexture.width * _webCamTexture.height)
@@ -359,8 +348,6 @@ namespace Baku.VMagicMirror
                 Destroy(_webCamTexture);
                 _webCamTexture = null;
             }
-            
-            WebCamTextureDisposed?.Invoke();
         }
     }
 }

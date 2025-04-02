@@ -1,9 +1,10 @@
 using UnityEngine;
 using Zenject;
-using Keys = Baku.VMagicMirror.ExternalTracker.ExternalTrackerPerfectSync.Keys;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
+    using Keys = MediaPipeBlendShapeKeys;
+
     public class MediaPipeLipSync : ITickable
     {
         private readonly MediaPipeFacialValueRepository _facialValueRepository;
@@ -40,12 +41,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
 
-            var jawOpen = _facialValueRepository.GetValue(Keys.JawOpen);
-            var jawForward = _facialValueRepository.GetValue(Keys.JawForward);
-            var mouthLeftSmile = _facialValueRepository.GetValue(Keys.MouthSmileLeft);
-            var mouthRightSmile = _facialValueRepository.GetValue(Keys.MouthSmileRight);
-            var mouthPucker = _facialValueRepository.GetValue(Keys.MouthPucker);
-            var mouthFunnel = _facialValueRepository.GetValue(Keys.MouthFunnel);
+            var jawOpen = _facialValueRepository.GetValue(Keys.jawOpen);
+            var jawForward = _facialValueRepository.GetValue(Keys.jawForward);
+            var mouthLeftSmile = _facialValueRepository.GetValue(Keys.mouthSmileLeft);
+            var mouthRightSmile = _facialValueRepository.GetValue(Keys.mouthSmileRight);
+            var mouthPucker = _facialValueRepository.GetValue(Keys.mouthPucker);
+            var mouthFunnel = _facialValueRepository.GetValue(Keys.mouthFunnel);
 
             // NOTE: ExternalTrackerLipSync でも同じ補正をしているが、
             // ARKitとMediaPipeの特性が揃ってる必然性はあんま無いので、数値等を変えてもよい

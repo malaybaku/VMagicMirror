@@ -146,7 +146,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             lock (_poseLock)
             {
                 _hasHeadPose.Set(false);
-                _headResultLostTime = 0f;
             }
         }
 
@@ -196,12 +195,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (IsHandMirrored)
                 {
                     _hasRightHandPose.Set(false);
-                    _rightHandResultLostTime = 0f;
                 }
                 else
                 {
                     _hasLeftHandPose.Set(false);
-                    _leftHandResultLostTime = 0f;
                 }
             }
         }
@@ -243,12 +240,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 if (IsHandMirrored)
                 {
                     _hasLeftHandPose.Set(false);
-                    _leftHandResultLostTime = 0f;
                 }
                 else
                 {
                     _hasRightHandPose.Set(false);
-                    _rightHandResultLostTime = 0f;
                 }
             }
         }

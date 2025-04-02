@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary> 瞬きに対して目と眉を下げる処理をするやつ </summary>
+    /// <summary> 瞬きに対して目を下げる処理をするやつ </summary>
     public class EyeDownMotionController : MonoBehaviour, IEyeRotationRequestSource
     {
         [SerializeField] private float eyeDownRateWhenEyeClosed = 1.0f;

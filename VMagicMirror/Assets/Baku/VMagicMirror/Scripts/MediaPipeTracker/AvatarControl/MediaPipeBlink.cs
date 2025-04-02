@@ -1,9 +1,10 @@
 using UnityEngine;
 using Zenject;
-using Keys = Baku.VMagicMirror.ExternalTracker.ExternalTrackerPerfectSync.Keys;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
+    using Keys = MediaPipeBlendShapeKeys;
+
     public class MediaPipeBlink : ITickable
     {
         private readonly MediaPipeFacialValueRepository _facialSetter;
@@ -30,10 +31,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             var subLimit = _poseSetterSettings.BlinkOpenSpeedMax * Time.deltaTime * 60f;
 
-            var rightBlink = _facialSetter.GetValue(Keys.EyeBlinkRight);
-            var rightSquint = _facialSetter.GetValue(Keys.EyeSquintRight);
-            var leftBlink = _facialSetter.GetValue(Keys.EyeBlinkLeft);
-            var leftSquint = _facialSetter.GetValue(Keys.EyeSquintLeft);
+            var rightBlink = _facialSetter.GetValue(Keys.eyeBlinkRight);
+            var rightSquint = _facialSetter.GetValue(Keys.eyeSquintRight);
+            var leftBlink = _facialSetter.GetValue(Keys.eyeBlinkLeft);
+            var leftSquint = _facialSetter.GetValue(Keys.eyeSquintLeft);
             var mirrored = _settingsRepository.IsFaceMirrored.Value;
 
             var rawLeftBlink = mirrored ? rightBlink : leftBlink;

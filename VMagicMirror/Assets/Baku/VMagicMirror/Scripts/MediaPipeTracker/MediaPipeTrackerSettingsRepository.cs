@@ -28,11 +28,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // NOTE: このへん値はTaskより後の適用フェーズで使う == メインスレッドでしか使わない想定なのでAtomic無し (つけても害はない)
         public bool IsHandTrackingActive { get; set; }
 
-        private readonly ReactiveProperty<bool> _shouldUseLipSyncResult = new(true);
+        private readonly ReactiveProperty<bool> _shouldUseLipSyncResult = new();
         public IReadOnlyReactiveProperty<bool> ShouldUseLipSyncResult => _shouldUseLipSyncResult;
         public void SetShouldUseLipSyncResult(bool value) => _shouldUseLipSyncResult.Value = value;
 
-        public bool ShouldUseEyeResult { get; set; }
+        public bool ShouldUseEyeResult { get; set; } = true;
         public bool ShouldUsePerfectSyncResult { get; set; }
         public bool EnableBodyMoveZAxis { get; set; }
 

@@ -1,63 +1,28 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UniVRM10;
 using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    //TODO: 下記のようなことをやって「BlinkSource、LipSyncSource、PerfectSync用の何か」らへんとして動作するようにI/Fを整える
-    // - 他のコードとノリを合わせてIVRMLoadableを見に行く
-    // - 必要ならblinkerとかlipsyncのサブクラスを持って、そっちに値を流す
-    
     /// <summary>
-    /// <see cref="FaceResultSetter"/> 等に向けて、Mediapipe Face Landmarkerで取得した表情の情報を集約するやつ
+    /// Mediapipe Face Landmarkerで取得した表情の情報を保持するクラス。データが古くなると自動で捨てる実装も入っている
     /// </summary>
-    public class MediaPipeFacialValueRepository : PresenterBase, ITickable
+    public class MediaPipeFacialValueRepository : ITickable
     {
-        private readonly IVRMLoadable _vrmLoadable;
         private readonly MediapipePoseSetterSettings _settings;
         private readonly object _dataLock = new();
 
         private readonly CounterBoolState _isTracked = new(3, 5);
-        private readonly HashSet<ExpressionKey> _availableCustomKeys = new();
-        private readonly Dictionary<ExpressionKey, float> _values = new();
-        private readonly HashSet<ExpressionKey> _valuesKeyCache = new();
-        private bool _hasModel;
+        private readonly Dictionary<string, float> _values = new();
         private float _trackLostTime;
         
         [Inject]
-        public MediaPipeFacialValueRepository(
-            IVRMLoadable vrmLoadable,
-            MediapipePoseSetterSettings settings)
+        public MediaPipeFacialValueRepository(MediapipePoseSetterSettings settings)
         {
-            _vrmLoadable = vrmLoadable;
             _settings = settings;
-        }
-        
-        public override void Initialize()
-        {
-            _vrmLoadable.VrmLoaded += OnModelLoaded;
-            _vrmLoadable.VrmDisposing += OnModelUnloaded;
-        }
-
-        private void OnModelUnloaded()
-        {
-            _hasModel = false;
-            _availableCustomKeys.Clear();
-        }
-
-        private void OnModelLoaded(VrmLoadedInfo info)
-        {
-            lock (_dataLock)
+            foreach(var key in MediaPipeBlendShapeKeys.Keys)
             {
-                _availableCustomKeys.Clear();
-                _availableCustomKeys.UnionWith(info.RuntimeFacialExpression
-                    .ExpressionKeys
-                    .Where(key => key.Preset is ExpressionPreset.custom)
-                );
-                _hasModel = true;
+                _values[key] = 0f;
             }
         }
 
@@ -72,26 +37,22 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
         
-        //TODO: case sensitiveの対策検討？
-        // MediaPipeが言ってくるほうはケース固定だから大丈夫じゃない？まあ何にせよ注意は必要だし文面化はしたい
         /// <summary>
-        /// NOTE: typoの防止策としては、必要なキーを <see cref="Baku.VMagicMirror.ExternalTracker.ExternalTrackerPerfectSync.Keys"/> を参照して取得するのが良い…のか…？
+        /// NOTE: <see cref="MediaPipeBlendShapeKeys"/> で定義されたキーを指定すること。
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public float GetValue(ExpressionKey key) => _values.GetValueOrDefault(key, 0f);
+        public float GetValue(string key) => _values.GetValueOrDefault(key, 0f);
 
         public void SetValues(IEnumerable<KeyValuePair<string, float>> values)
         {
             lock (_dataLock)
             {
+                // NOTE: 前提として (valuesのキー一覧) == (_valuesのキー一覧) であることを期待してるが、
+                // パフォーマンス的にそのチェックをしたくないので省く
                 foreach (var (keyName, value) in values)
                 {
-                    // NOTE: 大文字/小文字をケアしてます
-                    if (TryGetTargetKey(keyName, out var key))
-                    {
-                        _values[key] = value;
-                    }
+                    _values[keyName] = value;
                 }
                 
                 _isTracked.Set(true);
@@ -99,12 +60,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
+        /// <summary>
+        /// NOTE: 画像の解析結果として顔が検出できなかったときに呼び出す。
+        /// このメソッドを続けて何度か呼び出すことで、実際にトラッキングロストしたものと見なされる。
+        /// </summary>
         public void RequestReset()
         {
             lock (_dataLock)
             {
                 _isTracked.Set(false);
-                _trackLostTime = 0f;
                 if (!_isTracked.Value)
                 {
                     ResetFacialValues();
@@ -114,28 +78,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void ResetFacialValues()
         {
-            // NOTE: MediaPipeのブレンドシェイプ数は特に変動しない…という前提の実装
-            _valuesKeyCache.UnionWith(_values.Keys);
-            foreach (var key in _valuesKeyCache)
+            foreach (var key in MediaPipeBlendShapeKeys.Keys)
             {
                 _values[key] = 0f;
             }
-        }
-        
-        private bool TryGetTargetKey(string keyName, out ExpressionKey result)
-        {
-            if (_availableCustomKeys.Any(
-                    k => k.Name.Equals(keyName, StringComparison.InvariantCultureIgnoreCase)
-                    ))
-            {
-                result = _availableCustomKeys.First(
-                    k => k.Name.Equals(keyName, StringComparison.InvariantCultureIgnoreCase)
-                );
-                return true;
-            }
-
-            result = default;
-            return false;
         }
 
         void ITickable.Tick()

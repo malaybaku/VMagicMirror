@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using Zenject;
-using Keys = Baku.VMagicMirror.ExternalTracker.ExternalTrackerPerfectSync.Keys;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
+    using Keys = MediaPipeBlendShapeKeys;
+
     /// <summary>
     /// MediaPipeによる表情トラッキングに基づいた眼球運動をするやつ。
     /// </summary>
@@ -51,18 +52,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
             
             var leftX = 
-                _facialValueRepository.GetValue(Keys.EyeLookInLeft) - 
-                _facialValueRepository.GetValue(Keys.EyeLookOutLeft);
+                _facialValueRepository.GetValue(Keys.eyeLookInLeft) - 
+                _facialValueRepository.GetValue(Keys.eyeLookOutLeft);
             var leftY =
-                _facialValueRepository.GetValue(Keys.EyeLookUpLeft) - 
-                _facialValueRepository.GetValue(Keys.EyeLookDownLeft);
+                _facialValueRepository.GetValue(Keys.eyeLookUpLeft) - 
+                _facialValueRepository.GetValue(Keys.eyeLookDownLeft);
         
             var rightX = 
-                _facialValueRepository.GetValue(Keys.EyeLookOutRight) -
-                _facialValueRepository.GetValue(Keys.EyeLookInRight);
+                _facialValueRepository.GetValue(Keys.eyeLookOutRight) -
+                _facialValueRepository.GetValue(Keys.eyeLookInRight);
             var rightY = 
-                _facialValueRepository.GetValue(Keys.EyeLookUpRight) -
-                _facialValueRepository.GetValue(Keys.EyeLookDownRight);
+                _facialValueRepository.GetValue(Keys.eyeLookUpRight) -
+                _facialValueRepository.GetValue(Keys.eyeLookDownRight);
 
             if (_runtimeSettings.IsFaceMirrored.Value)
             {

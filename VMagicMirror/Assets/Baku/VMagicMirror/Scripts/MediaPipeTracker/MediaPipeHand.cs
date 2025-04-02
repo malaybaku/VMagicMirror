@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediaPipeKinematicSetter mediaPipeKinematicSetter, 
             TrackingLostHandCalculator trackingLostHandCalculator,
             MediaPipeFingerPoseCalculator fingerPoseCalculator,
-            MediaPipeTrackerSettingsRepository settingsRepository,
+            MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             MediapipePoseSetterSettings poseSetterSettings)
         {
             _vrmLoadable = vrmLoadable;
@@ -221,12 +221,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private class MediaPipeHandFinger
         {
-            private readonly MediaPipeTrackerSettingsRepository _settingsRepository;
+            private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
             private readonly MediaPipeFingerPoseCalculator _fingerPoseCalculator;
             private readonly FingerController _fingerController;
 
             public MediaPipeHandFinger(
-                MediaPipeTrackerSettingsRepository settingsRepository,
+                MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
                 MediaPipeFingerPoseCalculator fingerPoseCalculator,
                 FingerController fingerController
                 )

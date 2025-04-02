@@ -18,7 +18,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     {        
         private readonly IVRMLoadable _vrmLoadable;
         private readonly BodyScaleCalculator _bodyScaleCalculator;
-        private readonly MediaPipeTrackerSettingsRepository _settingsRepository;
+        private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
         private readonly MediapipePoseSetterSettings _poseSetterSettings;
         private readonly object _poseLock = new();
 
@@ -63,7 +63,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public MediaPipeKinematicSetter(
             IVRMLoadable vrmLoadable, 
             MediapipePoseSetterSettings poseSettings,
-            MediaPipeTrackerSettingsRepository settingsRepository,
+            MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             BodyScaleCalculator bodyScaleCalculator,
             MediapipePoseSetterSettings poseSetterSettings
         )

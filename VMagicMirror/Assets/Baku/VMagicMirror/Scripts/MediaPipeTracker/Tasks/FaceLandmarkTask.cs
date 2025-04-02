@@ -15,24 +15,21 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         [Inject]
         public FaceLandmarkTask(
-            MediaPipeTrackerSettingsRepository settingsRepository,
+            MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
             MediaPipeKinematicSetter mediaPipeKinematicSetter, 
-            MediaPipeFacialValueRepository facialSetter,
+            MediaPipeFacialValueRepository facialValueRepository,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer
-        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialSetter, calibrator, landmarksVisualizer)
+        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialValueRepository, calibrator, landmarksVisualizer)
         {
         }
 
         private FaceLandmarker _landmarker;
-        private FaceResultSetter _faceSetter;
         private readonly Dictionary<string, float> _blendShapeValues = new(52);
         
         protected override void OnStartTask()
         {
-            _faceSetter ??= new FaceResultSetter(MediaPipeKinematicSetter, FacialSetter);
-            
             var options = new FaceLandmarkerOptions(
                 baseOptions: new BaseOptions(
                     modelAssetPath: FilePathUtil.GetModelFilePath(FaceModelFileName)
@@ -62,7 +59,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             if (result.faceBlendshapes is not { Count: > 0 })
             {
-                _faceSetter.ClearBlendShapes();
+                FacialValueRepository.RequestReset();
                 MediaPipeKinematicSetter.ClearHeadPose();
                 return;
             }
@@ -72,7 +69,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 _blendShapeValues[c.categoryName] = c.score;
             }
-            _faceSetter.SetPerfectSyncBlendShapes(_blendShapeValues);
+            FacialValueRepository.SetValues(_blendShapeValues);
 
             var matrix = result.facialTransformationMatrixes[0];
             var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(matrix, Calibrator.GetCalibrationData());

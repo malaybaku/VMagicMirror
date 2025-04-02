@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.MediaPipeTracker;
+using UniRx;
+using UnityEngine;
 using UniVRM10;
 using Zenject;
 
@@ -19,31 +21,34 @@ namespace Baku.VMagicMirror
         
         private bool _hasModel = false;
         private FaceControlConfiguration _config;
+        private MediaPipeBlink _mediaPipeBlink;
+        private MediaPipeEyeJitter _mediaPipeEyeJitter;
 
+        // WebCam (低負荷) でのトラッキング中に自動瞬きを使う場合はtrue
+        private readonly ReactiveProperty<bool> AutoBlinkOnWebCamLowPower = new(true);
+        
         [Inject]
         public void Initialize(
             IVRMLoadable vrmLoadable, IMessageReceiver receiver, IMessageSender sender, 
-            FaceControlConfiguration config)
+            FaceControlConfiguration config,
+            MediaPipeBlink mediaPipeBlink,
+            MediaPipeEyeJitter mediaPipeEyeJitter)
         {
             _config = config;
+            _mediaPipeBlink = mediaPipeBlink;
+            _mediaPipeEyeJitter = mediaPipeEyeJitter;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
             
-            receiver.AssignCommandHandler(
-                VmmCommands.AutoBlinkDuringFaceTracking,
-                message => PreferAutoBlinkOnWebCamTracking = message.ToBoolean()
-            );
+            receiver.BindBoolProperty(VmmCommands.AutoBlinkDuringFaceTracking, AutoBlinkOnWebCamLowPower);
             receiver.AssignCommandHandler(
                 VmmCommands.FaceDefaultFun,
                 message => DefaultBlendShape.FaceDefaultFunValue = message.ParseAsPercentage()
             );
         }
         
-        public DefaultFunBlendShapeModifier DefaultBlendShape { get; } = new DefaultFunBlendShapeModifier();
+        public DefaultFunBlendShapeModifier DefaultBlendShape { get; } = new();
 
-        /// <summary> WebCamベースのトラッキング中でも自動まばたきを優先するかどうかを取得、設定します。 </summary>
-        public bool PreferAutoBlinkOnWebCamTracking { get; set; } = true;
-        
         public void Accumulate(ExpressionAccumulator accumulator, float weight = 1f)
         {
             if (!_hasModel)
@@ -56,23 +61,48 @@ namespace Baku.VMagicMirror
             //の3ケースでは適用されると困る。
             //で、ここに書いておくと上記3ケースではそもそもAccumulateが呼ばれないため、うまく動く。
             DefaultBlendShape.Apply(accumulator);
-            
-            var blinkSource =
-                _config.ControlMode == FaceControlModes.ExternalTracker ? externalTrackerBlink.BlinkSource :
-                (_config.ControlMode == FaceControlModes.WebCamLowPower && !PreferAutoBlinkOnWebCamTracking) ? imageBasedBlinkController.BlinkSource :
-                autoBlink.BlinkSource;
-            
+
+            var blinkSource = _config.ControlMode switch
+            {
+                FaceControlModes.ExternalTracker => externalTrackerBlink.BlinkSource,
+                // NOTE: TrackedじゃなくてもEnabledだったら _mediaPipeBlink.BlinkSource に帰着…としてもよい
+                FaceControlModes.WebCamHighPower when _mediaPipeBlink.IsEnabledAndTracked 
+                    => _mediaPipeBlink.BlinkSource,
+                FaceControlModes.WebCamLowPower when !AutoBlinkOnWebCamLowPower.Value
+                    => imageBasedBlinkController.BlinkSource,
+                _ => autoBlink.BlinkSource
+            };
+
             accumulator.Accumulate(ExpressionKey.BlinkLeft, blinkSource.Left * weight);
             accumulator.Accumulate(ExpressionKey.BlinkRight, blinkSource.Right * weight);
         }
 
         private void Update()
         {
-            //眼球運動はモード別で切り替える。外部トラッキング中はホンモノのJitterが使えるから使えばいいじゃん、という話
-            bool canUseExternalEyeJitter =
-                _config.ControlMode == FaceControlModes.ExternalTracker && externalTrackEyeJitter.IsTracked;
-            randomEyeJitter.IsActive = !canUseExternalEyeJitter;
-            externalTrackEyeJitter.IsActive = canUseExternalEyeJitter;
+            // TODO: VMCPで目ボーンの上書きしたいケースがカバーできてないかも…？
+
+            // 眼球運動はモード別で切り替える。
+            // 外部トラッキングや高負荷カメラでは検出結果にLookAtが入ってるので、それをそのまま使う…という話
+            switch (_config.ControlMode)
+            {
+                // NOTE: Trackedではない場合にも各々のEyeJitterに帰着するようにするのもアリ
+                // (「自動のとトラッキングのが頻繁に切り替わると見た目が悪い」みたいな問題が起こったら特に改変すべき)
+                case FaceControlModes.ExternalTracker when externalTrackEyeJitter.IsTracked:
+                    externalTrackEyeJitter.IsActive = true;
+                    _mediaPipeEyeJitter.IsActive = false;
+                    randomEyeJitter.IsActive = false;
+                    break;
+                case FaceControlModes.WebCamHighPower when _mediaPipeEyeJitter.IsEnabledAndTracked:
+                    externalTrackEyeJitter.IsActive = false;
+                    _mediaPipeEyeJitter.IsActive = true;
+                    randomEyeJitter.IsActive = false;
+                    break;
+                default:
+                    externalTrackEyeJitter.IsActive = false;
+                    _mediaPipeEyeJitter.IsActive = false;
+                    randomEyeJitter.IsActive = true;
+                    break;
+            }
         }
                 
         private void OnVrmLoaded(VrmLoadedInfo info)

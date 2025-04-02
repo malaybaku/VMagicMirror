@@ -42,6 +42,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Tooltip("目が開く方向へブレンドシェイプ値を変更するとき、60FPSの1フレームあたりで変更できる値の上限")]
         [SerializeField] private float blinkOpenSpeedMax = 0.1f;
         
+        [Range(0f, 0.4f)]
+        [SerializeField] private float lipSyncBlendShapeMin = 0.15f;
+
+        [Range(0.4f, 1f)]
+        [SerializeField] private float lipSyncBlendShapeMax = 0.6f;
+        
+        
         public float HandIkSmoothRate => handIkSmoothRate;
         public float FingerBoneSmoothRate => fingerBoneSmoothRate;
         public float HandMoveSpeedMax => handMoveSpeedMax;
@@ -70,12 +77,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public float TrackingLostMotionDuration => trackingLostMotionDuration;
         public float TrackingLostRotationDelay => trackingLostRotationDelay;
         
-        
-        
         public float EyeMapMin => eyeMapMin;
         public float EyeMapMax => eyeMapMax;
         public float BlinkValueOnSquint => blinkValueOnSquint;
         public float BlinkOpenSpeedMax => blinkOpenSpeedMax;
         
+        public float LipSyncBlendShapeMin => lipSyncBlendShapeMin;
+        public float LipSyncBlendShapeMax => lipSyncBlendShapeMax;
     }
 }

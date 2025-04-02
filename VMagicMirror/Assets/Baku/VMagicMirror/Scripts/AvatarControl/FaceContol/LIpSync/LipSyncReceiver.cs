@@ -1,4 +1,5 @@
 ﻿using System;
+using Baku.VMagicMirror.MediaPipeTracker;
 using Baku.VMagicMirror.VMCP;
 using UniRx;
 using UnityEngine;
@@ -18,38 +19,46 @@ namespace Baku.VMagicMirror
         private LipSyncIntegrator _lipSyncIntegrator;
         private VMCPBlendShape _vmcpBlendShape;
 
-        private readonly ReactiveProperty<string> _deviceName = new ReactiveProperty<string>("");
-        private readonly ReactiveProperty<bool> _isLipSyncActive = new ReactiveProperty<bool>(true);
-        private readonly ReactiveProperty<bool> _isExTrackerActive = new ReactiveProperty<bool>(false);
-        private readonly ReactiveProperty<bool> _isExTrackerLipSyncActive = new ReactiveProperty<bool>(true);
+        private readonly ReactiveProperty<string> _microphoneDeviceName = new("");
+        private readonly ReactiveProperty<bool> _isMicrophoneLipSyncActive = new(true);
+        private readonly ReactiveProperty<bool> _isExTrackerLipSyncActive = new(true);
 
+        // このフラグがオンの場合、マイクを止める方向に処理を寄せたい
+        private readonly ReactiveProperty<bool> _isImageBaseLipSyncActive = new(false);
+        
+        // NOTE: FaceControlConfig使ったほうがいい？
+        private FaceControlConfiguration _faceControlConfig;
+        private MediaPipeTrackerRuntimeSettingsRepository _mediaPipeTrackerRuntimeSettings;
+        
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
-            VMCPBlendShape vmcpBlendShape)
+            VMCPBlendShape vmcpBlendShape,
+            FaceControlConfiguration faceControlConfig,
+            MediaPipeTrackerRuntimeSettingsRepository mediaPipeTrackerRuntimeSettings
+            )
         {
             _vmcpBlendShape = vmcpBlendShape;
+            _faceControlConfig = faceControlConfig;
+            _mediaPipeTrackerRuntimeSettings = mediaPipeTrackerRuntimeSettings;
 
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableLipSync,
-                message => SetLipSyncEnable(message.ToBoolean())
-            );
-            receiver.AssignCommandHandler(
-                VmmCommands.SetMicrophoneDeviceName,
-                message => SetMicrophoneDeviceName(message.Content)
-            );
+            receiver.BindBoolProperty(VmmCommands.EnableLipSync, _isMicrophoneLipSyncActive);
+            receiver.BindStringProperty(VmmCommands.SetMicrophoneDeviceName, _microphoneDeviceName);
+            // NOTE: [dB]単位であることに注意
             receiver.AssignCommandHandler(
                 VmmCommands.SetMicrophoneSensitivity,
-                message => SetMicrophoneSensitivity(message.ToInt())
+                message => _lipSyncContext.Sensitivity = message.ToInt()
                 );
-            receiver.AssignCommandHandler(
-                VmmCommands.ExTrackerEnable,
-                message => SetExTrackerEnable(message.ToBoolean())
-            );
+
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerEnableLipSync,
-                message => SetExTrackerLipSyncEnable(message.ToBoolean())
-            );
+                m =>
+                {
+                    var value = m.ToBoolean();
+                    _isExTrackerLipSyncActive.Value = value;
+                    // TODO: フラグの渡し方がハンパすぎるので、 _lipSyncIntegrator側で勝手にフラグを見に行ってほしい気もする…
+                    _lipSyncIntegrator.PreferExternalTrackerLipSync = value;
+                });
 
             receiver.AssignQueryHandler(
                 VmmQueries.CurrentMicrophoneDeviceName,
@@ -69,25 +78,31 @@ namespace Baku.VMagicMirror
             _animMorphEasedTarget = GetComponent<AnimMorphEasedTarget>();
             _lipSyncIntegrator = GetComponent<LipSyncIntegrator>();
 
-            _deviceName.CombineLatest(
-                _isLipSyncActive,
-                _isExTrackerActive,
-                _isExTrackerLipSyncActive,
+            _faceControlConfig.FaceControlMode
+                .CombineLatest(
+                    _isExTrackerLipSyncActive,
+                    _mediaPipeTrackerRuntimeSettings.ShouldUseLipSyncResult,
+                    (mode, exTrackerLipSync, webCamHighPowerLipSync) => (mode, exTrackerLipSync, webCamHighPowerLipSync)
+                )
+                .Subscribe(value =>
+                {
+                    var (mode, exTrackerLipSync, webCamHighPowerLipSync) = value;
+                    _isImageBaseLipSyncActive.Value = 
+                        (mode is FaceControlModes.ExternalTracker && exTrackerLipSync) ||
+                        (mode is FaceControlModes.WebCamHighPower && webCamHighPowerLipSync);
+                })
+                .AddTo(this);
+            
+            _microphoneDeviceName.CombineLatest(
+                _isMicrophoneLipSyncActive,
+                _isImageBaseLipSyncActive,
                 _vmcpBlendShape.IsActive,
-                (a, b, c, d, e) => Unit.Default
+                (a, b, c, d) => Unit.Default
                 )
                 .Skip(1)
                 .Subscribe(_ => RefreshMicrophoneLipSyncStatus())
                 .AddTo(this);
         }
-
-        //[dB]単位であることに注意
-        private void SetMicrophoneSensitivity(int sensitivity) => _lipSyncContext.Sensitivity = sensitivity;
-
-        private void SetLipSyncEnable(bool isEnabled) => _isLipSyncActive.Value = isEnabled;
-        private void SetMicrophoneDeviceName(string deviceName) => _deviceName.Value = deviceName;
-        private void SetExTrackerEnable(bool enable) => _isExTrackerActive.Value = enable;
-        private void SetExTrackerLipSyncEnable(bool enable) => _isExTrackerLipSyncActive.Value = enable;
 
         private void RefreshMicrophoneLipSyncStatus()
         {
@@ -95,18 +110,17 @@ namespace Baku.VMagicMirror
             _lipSyncContext.StopRecording();
 
             var shouldStartReceive =
-                !_vmcpBlendShape.IsActive.Value && 
-                _isLipSyncActive.Value &&
-                !(_isExTrackerActive.Value && _isExTrackerLipSyncActive.Value);
+                !_vmcpBlendShape.IsActive.Value &&
+                _isMicrophoneLipSyncActive.Value &&
+                !_isImageBaseLipSyncActive.Value;
 
             _animMorphEasedTarget.ShouldReceiveData = shouldStartReceive;
-            _lipSyncIntegrator.PreferExternalTrackerLipSync = _isExTrackerActive.Value && _isExTrackerLipSyncActive.Value;
             
             if (shouldStartReceive)
             {
                 try
                 {
-                    _lipSyncContext.StartRecording(_deviceName.Value);
+                    _lipSyncContext.StartRecording(_microphoneDeviceName.Value);
                 }
                 catch (Exception ex)
                 {

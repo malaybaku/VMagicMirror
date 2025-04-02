@@ -8,12 +8,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     public class CameraCalibrator
     {
         [Inject]
-        public CameraCalibrator(MediaPipeTrackerSettingsRepository repository)
+        public CameraCalibrator(MediaPipeTrackerRuntimeSettingsRepository repository)
         {
             _repository = repository;
         }
     
-        private readonly MediaPipeTrackerSettingsRepository _repository;
+        private readonly MediaPipeTrackerRuntimeSettingsRepository _repository;
 
         public CameraCalibrationData GetCalibrationData() => _repository.CurrentCalibrationData;
         

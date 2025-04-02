@@ -1,4 +1,5 @@
 using System;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -14,23 +15,32 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// MediaPipeTrackerの設定のうち、IPCによって動的に変化するような値を保持するレポジトリ
     /// </summary>
-    public class MediaPipeTrackerSettingsRepository
+    public class MediaPipeTrackerRuntimeSettingsRepository
     {
         private readonly IMessageSender _sender;
         
         [Inject]
-        public MediaPipeTrackerSettingsRepository(IMessageSender sender)
+        public MediaPipeTrackerRuntimeSettingsRepository(IMessageSender sender)
         {
             _sender = sender;
         }
 
-        // NOTE: この値はメインスレッドでしか読まない想定なのでAtomic無し (つけても害はない)
+        // NOTE: このへん値はTaskより後の適用フェーズで使う == メインスレッドでしか使わない想定なのでAtomic無し (つけても害はない)
         public bool IsHandTrackingActive { get; set; }
 
+        private readonly ReactiveProperty<bool> _shouldUseLipSyncResult = new(true);
+        public IReadOnlyReactiveProperty<bool> ShouldUseLipSyncResult => _shouldUseLipSyncResult;
+        public void SetShouldUseLipSyncResult(bool value) => _shouldUseLipSyncResult.Value = value;
+
+        public bool ShouldUseEyeResult { get; set; }
+        public bool ShouldUsePerfectSyncResult { get; set; }
+        public bool EnableBodyMoveZAxis { get; set; }
+
+        // NOTE: ここから下はMediaPipeのタスクから直接使う == メインスレッド外から使うことがある
         public Atomic<bool> IsFaceMirrored { get; } = new(true);
         public Atomic<bool> IsHandMirrored { get; } = new(true);
 
-        // NOTE: 手と表情を同時にトラッキングする場合だけtrueになりうる想定だが、そもそも使わなくなるかも。今のところIPCでは受けていない、
+        // NOTE: 手と表情を同時にトラッキングする場合だけtrueになりうる想定だが、そもそも使わなくなるかも。今のところIPCでは受けていない
         public Atomic<bool> UseInterlace { get; } = new(false);
         
         private readonly Atomic<bool> _hasCalibrationRequest = new();
@@ -39,7 +49,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly Atomic<CameraCalibrationData> _cameraCalibrationData 
             = new(CameraCalibrationData.Empty());
         public CameraCalibrationData CurrentCalibrationData => _cameraCalibrationData.Value;
-        
+
         /// <summary>
         /// ファイル等にセーブされていたキャリブレーション情報を適用します。
         /// </summary>

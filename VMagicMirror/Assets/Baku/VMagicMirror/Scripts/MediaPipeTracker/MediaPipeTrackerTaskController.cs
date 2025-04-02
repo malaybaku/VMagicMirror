@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly FaceLandmarkTask _face;
         private readonly HandAndFaceLandmarkTask _handAndFace;
 
-        private readonly MediaPipeTrackerSettingsRepository _settingsRepository;
+        private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
 
         // TODO: Dlib用のFaceTrackerもWebCamTextureを使っているが、集約したい
         // 楽観的にはDlibFaceLandmarkも使うのやめれば解決する)
@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Inject]
         public MediaPipeTrackerTaskController(
             IMessageReceiver receiver,
-            MediaPipeTrackerSettingsRepository settingsRepository,
+            MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             WebCamTextureSource webCamTextureSource,
             HandTask hand,
             FaceLandmarkTask face,
@@ -76,11 +76,23 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _useHandTracking);
             _receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _useExternalTracking);
             
-            // TODO: SettingsRepository あるいは KinematicSetter にわたす
-            // _receiver.AssignCommandHandler(VmmCommands.UsePerfectSyncWithWebCamera,);
-            // _receiver.AssignCommandHandler(VmmCommands.EnableWebCameraHighPowerModeBlink,);
-            // _receiver.AssignCommandHandler(VmmCommands.EnableWebCameraHighPowerModeLipSync,);
-            // _receiver.AssignCommandHandler(VmmCommands.EnableWebCameraHighPowerModeMoveZ,);
+            _receiver.AssignCommandHandler(
+                VmmCommands.UsePerfectSyncWithWebCamera,
+                m => _settingsRepository.ShouldUsePerfectSyncResult = m.ToBoolean()
+                );
+
+            _receiver.AssignCommandHandler(
+                VmmCommands.EnableWebCameraHighPowerModeBlink,
+                m => _settingsRepository.ShouldUseEyeResult = m.ToBoolean()
+                );
+            _receiver.AssignCommandHandler(
+                VmmCommands.EnableWebCameraHighPowerModeLipSync,
+                m => _settingsRepository.SetShouldUseLipSyncResult(m.ToBoolean())
+                );
+            _receiver.AssignCommandHandler(
+                VmmCommands.EnableWebCameraHighPowerModeMoveZ,
+                m => _settingsRepository.EnableBodyMoveZAxis = m.ToBoolean()
+                );
 
             // TODO: ハンドトラッキングだけ動いてるときのキャリブレーションの実装 = 一瞬だけFaceTaskを起こす処理の実装
             // NOTE: MediaPipeのトラッキングが動いてない場合、キャリブレーションは実行されない

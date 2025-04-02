@@ -12,29 +12,26 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private const string FaceModelFileName = "face_landmarker_v2_with_blendshapes.bytes";
 
         private FaceLandmarker _landmarker;
-        private FaceResultSetter _faceSetter;
         private int _interlaceCount;
 
         private readonly Dictionary<string, float> _blendShapeValues = new(52);
 
         [Inject]
         public HandAndFaceLandmarkTask(
-            MediaPipeTrackerSettingsRepository settingsRepository,
+            MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
             MediaPipeKinematicSetter mediaPipeKinematicSetter, 
-            MediaPipeFacialValueRepository facialSetter,
+            MediaPipeFacialValueRepository facialValueRepository,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer,
             MediaPipeFingerPoseCalculator fingerPoseCalculator
-        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialSetter, calibrator, landmarksVisualizer, fingerPoseCalculator)
+        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialValueRepository, calibrator, landmarksVisualizer, fingerPoseCalculator)
         {
         }
         
         protected override void OnStartTask()
         {
             base.OnStartTask();
-
-            _faceSetter ??= new FaceResultSetter(MediaPipeKinematicSetter, FacialSetter);
             
             var options = new FaceLandmarkerOptions(
                 baseOptions: new BaseOptions(
@@ -87,7 +84,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             if (result.faceBlendshapes is not { Count: > 0 })
             {
-                _faceSetter.ClearBlendShapes();
+                FacialValueRepository.RequestReset();
                 MediaPipeKinematicSetter.ClearHeadPose();
                 return;
             }
@@ -97,7 +94,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 _blendShapeValues[c.categoryName] = c.score;
             }
-            _faceSetter.SetPerfectSyncBlendShapes(_blendShapeValues);
+            FacialValueRepository.SetValues(_blendShapeValues);
 
             var matrix = result.facialTransformationMatrixes[0];
             var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(matrix, Calibrator.GetCalibrationData());

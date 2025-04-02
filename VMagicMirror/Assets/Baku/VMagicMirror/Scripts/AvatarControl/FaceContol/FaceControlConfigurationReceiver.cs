@@ -61,13 +61,14 @@ namespace Baku.VMagicMirror
         {
             //TODO: 「ハンドトラッキングが有効だと顔トラは低負荷ではなく高負荷になる」という条件が複数箇所に定義されてるのを直したい
             var webCamHighPowerModeActive = _enableWebCamHighPowerMode.Value || _enableHandTracking.Value;
-            
-            _config.ControlMode =
+
+            _config.SetFaceControlMode(
                 _vmcpHeadPose.IsActive.Value ? FaceControlModes.VMCProtocol :
                 _enableExTracker.Value ? FaceControlModes.ExternalTracker :
                 (_enableWebCamTracking.Value && webCamHighPowerModeActive) ? FaceControlModes.WebCamHighPower :
                 _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :
-                FaceControlModes.None;
+                FaceControlModes.None
+            );
         }
     }
 }

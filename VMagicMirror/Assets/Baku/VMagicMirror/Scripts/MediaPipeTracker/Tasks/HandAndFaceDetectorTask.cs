@@ -32,14 +32,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         [Inject]
         public HandAndFaceDetectorTask(
-            MediaPipeTrackerSettingsRepository settingsRepository,
+            MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             WebCamTextureSource textureSource,
             MediaPipeKinematicSetter mediaPipeKinematicSetter, 
-            MediaPipeFacialValueRepository facialSetter,
+            MediaPipeFacialValueRepository facialValueRepository,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer,
             MediaPipeFingerPoseCalculator fingerPoseCalculator
-        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialSetter, calibrator, landmarksVisualizer, fingerPoseCalculator)
+        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialValueRepository, calibrator, landmarksVisualizer, fingerPoseCalculator)
         {
         }
         

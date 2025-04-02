@@ -1,4 +1,6 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
+using Google.Protobuf.WellKnownTypes;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -15,7 +17,13 @@ namespace Baku.VMagicMirror
         /// <remarks>
         /// setterを呼んでいいのは適切なメッセージをIPCで受信しているクラスだけです。
         /// </remarks>
-        public FaceControlModes ControlMode { get; set; } = FaceControlModes.WebCamLowPower;
+        public FaceControlModes ControlMode => _faceControlMode.Value;
+
+        private readonly ReactiveProperty<FaceControlModes> _faceControlMode 
+            = new(FaceControlModes.WebCamLowPower);
+        public IReadOnlyReactiveProperty<FaceControlModes> FaceControlMode => _faceControlMode;
+
+        public void SetFaceControlMode(FaceControlModes mode) => _faceControlMode.Value = mode;
         
         /// <summary>
         /// パーフェクトシンクのon/offを取得、設定します。

@@ -67,7 +67,7 @@
         public bool UsePerfectSyncWithWebCamera { get; set; } = false;
         public bool EnableWebCameraHighPowerModeBlink { get; set; } = true;
         public bool EnableWebCameraHighPowerModeLipSync { get; set; } = false;
-        public bool EnableWebCameraHighPowerModeMoveZ { get; set; } = true;
+        public bool EnableWebCameraHighPowerModeMoveZ { get; set; } = false;
 
         #endregion
 

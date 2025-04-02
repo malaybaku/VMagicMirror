@@ -41,7 +41,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private WaitingBodyMotion waitingBody = null;
         [SerializeField] private FingerController fingerController = null;
         [SerializeField] private GamepadHandIKGenerator.GamepadHandIkGeneratorSetting gamepadSetting = default;
-        [SerializeField] private BarracudaHand barracudaHand = null;
 
         //TODO: 相互参照になっててキモいのでできれば直してほしい…
         [SerializeField] private ElbowMotionModifier elbowMotionModifier;
@@ -219,7 +218,6 @@ namespace Baku.VMagicMirror
             ClapMotion = new ClapMotionHandIKGenerator(dependency, vrmLoadable, elbowMotionModifier, colliderBasedAvatarParamLoader);
             _vmcpHand = new VMCPHandIkGenerator(dependency, vmcpHandPose, vmcpFingerController, _downHand);
 
-            //barracudaHand.SetupDependency(dependency);
             _mediaPipeHand = mediaPipeHand;
             _mediaPipeHand.SetDependency(dependency, _downHand);
 
@@ -247,8 +245,6 @@ namespace Baku.VMagicMirror
             
             Typing.LeftHand.RequestToUse += SetLeftHandState;
             Typing.RightHand.RequestToUse += SetRightHandState;
-            // barracudaHand.LeftHandState.RequestToUse += SetLeftHandState;
-            // barracudaHand.RightHandState.RequestToUse += SetRightHandState;
             _mediaPipeHand.LeftHandState.RequestToUse += SetLeftHandState;
             _mediaPipeHand.RightHandState.RequestToUse += SetRightHandState;
         }

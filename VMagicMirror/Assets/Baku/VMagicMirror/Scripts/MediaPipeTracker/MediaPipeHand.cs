@@ -7,15 +7,13 @@ using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    // TODO: HandDownIkGeneratorを受け取ることで、手下げの位置をカスタムしたケースにも対応させたい
-    // TODO: 指の実装が全然入ってないので入れてね
     // TODO: トラッキングロス中は手の回転をFKで決めたいが、テキトーにやってるとぜんぶIKになっちゃうので注意！
     // - FKのto-beからIK決めてもいいけど、まあそれはそれで面倒なやつ
     
     /// <summary>
-    /// <see cref="BarracudaHandIK"/> の置き換えになるやつ
+    /// ハンドトラッキングの結果をアバターに適用可能なIK情報に変換するやつ。
     /// - <see cref="HandIKIntegrator"/> では (Left|Right)Hand を参照する
-    /// - Fingerの制御も何かしらいい感じにやる (はず)
+    /// - Fingerの制御も何かしらいい感じにやる
     /// </summary>
     public class MediaPipeHand : PresenterBase, ITickable
     {

@@ -493,8 +493,6 @@ GameObject:
   - component: {fileID: 5813678810404708595}
   - component: {fileID: 5813678810404708492}
   - component: {fileID: 1854631572515027688}
-  - component: {fileID: 6033017557083037692}
-  - component: {fileID: 4348687020419730657}
   m_Layer: 0
   m_Name: HandAndHeadIK
   m_TagString: Untagged
@@ -566,7 +564,7 @@ MonoBehaviour:
   fingerController: {fileID: 2951044793089892564}
   gamepadSetting:
     imageBasedBodyMotion: {fileID: 5813678808713813112}
-  barracudaHand: {fileID: 6033017557083037692}
+  barracudaHand: {fileID: 0}
   elbowMotionModifier: {fileID: 5813678810248240001}
 --- !u!114 &5813678810404708592
 MonoBehaviour:
@@ -715,51 +713,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fingerController: {fileID: 2951044793089892564}
---- !u!114 &6033017557083037692
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678810404708600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 501b3c1eb4500fc4999029c3ecdb2257, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _resources: {fileID: 11400000, guid: 91bfddd4f6a664d13be4b4a5340a2099, type: 2}
-  _useAsyncReadback: 1
-  ik: {fileID: 4348687020419730657}
-  scoreThreshold: 0.75
-  skipStyle: 2
-  resolution: {x: 1280, y: 960}
-  textureWidthRateForOneHand: 0.6
-  dataSendInterval: 0.1
---- !u!114 &4348687020419730657
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5813678810404708600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65b91c837ced3be4db99b28bac19d626, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fingerController: {fileID: 2951044793089892564}
-  rightHandOffset: {x: 0.25, y: 0, z: 0}
-  commonAdditionalOffset: {x: 0, y: 0, z: 0.25}
-  motionScale: {x: 0.5, y: 0.5, z: 0.5}
-  positionSmoothFactor: 12
-  rotationSmoothFactor: 12
-  positionMaxSpeed: 1.1
-  headOffsetToHandFactor: 0.05
-  lostCount: 0.6
-  lostCircleMotionLerpFactor: 1
-  lostEndMotionLerpFactor: 12
-  lostMotionDuration: 1
-  handLimitSetting: {fileID: 11400000, guid: ea221caa40a8ae54d9d5b8d584f54c81, type: 2}
 --- !u!1 &5813678810510073684
 GameObject:
   m_ObjectHideFlags: 0

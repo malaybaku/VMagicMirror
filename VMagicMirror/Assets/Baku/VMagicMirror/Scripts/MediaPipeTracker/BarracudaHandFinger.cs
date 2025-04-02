@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
     /// <summary>
+    /// 旧実装の残骸で、数学処理の参考として一時的に残しているクラス。
+    ///
     /// MediaPipeの指FK情報をストアするクラス。
     /// </summary>
+    [Obsolete]
     public class BarracudaHandFinger
     {
         public BarracudaHandFinger(

@@ -50,20 +50,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 return;
             }
-            
-            var leftX = 
-                _facialValueRepository.GetValue(Keys.eyeLookInLeft) - 
-                _facialValueRepository.GetValue(Keys.eyeLookOutLeft);
-            var leftY =
-                _facialValueRepository.GetValue(Keys.eyeLookUpLeft) - 
-                _facialValueRepository.GetValue(Keys.eyeLookDownLeft);
-        
-            var rightX = 
-                _facialValueRepository.GetValue(Keys.eyeLookOutRight) -
-                _facialValueRepository.GetValue(Keys.eyeLookInRight);
-            var rightY = 
-                _facialValueRepository.GetValue(Keys.eyeLookUpRight) -
-                _facialValueRepository.GetValue(Keys.eyeLookDownRight);
+
+            var eye = _facialValueRepository.BlendShapes.Eye;
+            var leftX = eye.LeftLookIn - eye.LeftLookOut;
+            var leftY = eye.LeftLookUp - eye.LeftLookDown;
+            var rightX = eye.RightLookOut - eye.RightLookIn;
+            var rightY = eye.RightLookUp - eye.RightLookDown;
 
             if (_runtimeSettings.IsFaceMirrored.Value)
             {

@@ -31,16 +31,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             var subLimit = _poseSetterSettings.BlinkOpenSpeedMax * Time.deltaTime * 60f;
 
-            var rightBlink = _facialSetter.GetValue(Keys.eyeBlinkRight);
-            var rightSquint = _facialSetter.GetValue(Keys.eyeSquintRight);
-            var leftBlink = _facialSetter.GetValue(Keys.eyeBlinkLeft);
-            var leftSquint = _facialSetter.GetValue(Keys.eyeSquintLeft);
+            var eye = _facialSetter.BlendShapes.Eye;
             var mirrored = _settingsRepository.IsFaceMirrored.Value;
 
-            var rawLeftBlink = mirrored ? rightBlink : leftBlink;
-            var rawLeftSquint = mirrored ? rightSquint : leftSquint;
-            var rawRightBlink = mirrored ? leftBlink : rightBlink;
-            var rawRightSquint = mirrored ? leftSquint : rightSquint;
+            var rawLeftBlink = mirrored ? eye.RightBlink : eye.LeftBlink;
+            var rawLeftSquint = mirrored ? eye.RightSquint : eye.LeftSquint;
+            var rawRightBlink = mirrored ? eye.LeftBlink : eye.RightBlink;
+            var rawRightSquint = mirrored ? eye.LeftSquint : eye.RightSquint;
 
             var left = MapClamp(rawLeftBlink);
             if (left < 0.9f)

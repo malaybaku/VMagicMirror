@@ -41,18 +41,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
 
-            var jawOpen = _facialValueRepository.GetValue(Keys.jawOpen);
-            var jawForward = _facialValueRepository.GetValue(Keys.jawForward);
-            var mouthLeftSmile = _facialValueRepository.GetValue(Keys.mouthSmileLeft);
-            var mouthRightSmile = _facialValueRepository.GetValue(Keys.mouthSmileRight);
-            var mouthPucker = _facialValueRepository.GetValue(Keys.mouthPucker);
-            var mouthFunnel = _facialValueRepository.GetValue(Keys.mouthFunnel);
+            var mouth = _facialValueRepository.BlendShapes.Mouth;
+            var jaw = _facialValueRepository.BlendShapes.Jaw;
 
             // NOTE: ExternalTrackerLipSync でも同じ補正をしているが、
             // ARKitとMediaPipeの特性が揃ってる必然性はあんま無いので、数値等を変えてもよい
-            var a = MapClamp(2.0f * jawOpen);
-            var i = MapClamp(0.6f * (mouthLeftSmile + mouthRightSmile) - 0.1f);
-            var u = MapClamp(0.4f * (mouthPucker + mouthFunnel + jawForward));
+            var a = MapClamp(2.0f * jaw.Open);
+            var i = MapClamp(0.6f * (mouth.LeftSmile + mouth.RightSmile) - 0.1f);
+            var u = MapClamp(0.4f * (mouth.Pucker + mouth.Funnel + jaw.Forward));
 
             if (a + i + u > 1.0f)
             {

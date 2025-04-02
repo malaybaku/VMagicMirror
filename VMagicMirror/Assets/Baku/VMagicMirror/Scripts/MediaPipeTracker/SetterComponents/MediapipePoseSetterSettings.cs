@@ -23,6 +23,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [SerializeField] private float handRotationModifyWeight = 0.5f;
         
         [SerializeField] private float handIkSmoothRate = 18f;
+        [SerializeField] private float handInertiaFactorToLogTrackedSpeed = 6f;
+        [SerializeField] private float handInertiaFactorWhenLost = 6f;
         [SerializeField] private float fingerBoneSmoothRate = 18f;
 
         // NOTE: アバターが極端に大きい場合は上限を緩和してもいいが、あんまり細かくはケアしたくない…
@@ -50,6 +52,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         
         public float HandIkSmoothRate => handIkSmoothRate;
+        public float HandInertiaFactorToLogTrackedSpeed => handInertiaFactorToLogTrackedSpeed;
+        public float HandInertiaFactorWhenLost => handInertiaFactorWhenLost;
         public float FingerBoneSmoothRate => fingerBoneSmoothRate;
         public float HandMoveSpeedMax => handMoveSpeedMax;
         

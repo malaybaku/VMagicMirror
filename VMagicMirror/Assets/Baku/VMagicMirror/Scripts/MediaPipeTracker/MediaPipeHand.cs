@@ -32,6 +32,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // - トラッキングロストの計算をするときの始点に使う
         private Quaternion _leftHandLocalRotation = Quaternion.identity;
         private Quaternion _rightHandLocalRotation = Quaternion.identity;
+
+        // NOTE: 下記の速度はトラッキングロスト状態に入るとゼロに戻る
+        private Vector3 _leftHandTrackedSpeed = Vector3.zero;
+        private Vector3 _rightHandTrackedSpeed = Vector3.zero;
         
         private HandIkGeneratorDependency _dependency;
         private AlwaysDownHandIkGenerator _downHandIk;
@@ -153,20 +157,40 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private void UpdateLeftHand()
         {
-            if (_mediaPipeKinematicSetter.TryGetLeftHandPose(out var leftHandPose))
+            if (_mediaPipeKinematicSetter.TryGetLeftHandPose(out var handPose, out var maybeLost))
             {
                 _trackingLostHandCalculator.CancelLeftHand();
+                    var dt = Time.deltaTime;
 
-                var dt = Time.deltaTime;
-                var nextPos = Vector3.Lerp(
-                    _leftHandState.Position, leftHandPose.position, _poseSetterSettings.HandIkSmoothRate * dt
-                );
-                _leftHandState.Position = Vector3.MoveTowards(
-                    _leftHandState.Position, nextPos, _poseSetterSettings.HandMoveSpeedMax * dt
-                );
-                _leftHandState.Rotation = Quaternion.Slerp(
-                    _leftHandState.Rotation, leftHandPose.rotation, _poseSetterSettings.HandIkSmoothRate * dt
-                );
+                if (maybeLost)
+                {
+                    // 局所的なのも含めてロストした場合: 回転は据え置きし、位置は惰性で動かす。短時間のはずなので加減速は無し
+                    _leftHandTrackedSpeed *= 1f - _poseSetterSettings.HandInertiaFactorWhenLost * dt;
+                    var inertiaSpeed = 
+                        Vector3.ClampMagnitude(_leftHandTrackedSpeed, _poseSetterSettings.HandMoveSpeedMax);
+                    _leftHandState.Position += inertiaSpeed * dt;
+                }
+                else
+                {
+                    // ロストしてなさそうな場合: pos/rotを平滑化しながら適用したうえで、ロスト時の慣性移動に使うための速度を更新
+                    var nextPosUnclamped = Vector3.Lerp(
+                        _leftHandState.Position, handPose.position, _poseSetterSettings.HandIkSmoothRate * dt
+                    );
+                    var nextPosClamped = Vector3.MoveTowards(
+                        _leftHandState.Position, nextPosUnclamped, _poseSetterSettings.HandMoveSpeedMax * dt
+                    );
+                    
+                    _leftHandTrackedSpeed = Vector3.Lerp(
+                        _leftHandTrackedSpeed, 
+                        (nextPosClamped - _leftHandState.Position) / dt,
+                        _poseSetterSettings.HandInertiaFactorToLogTrackedSpeed * dt
+                    );
+                    
+                    _leftHandState.Position = nextPosClamped;
+                    _leftHandState.Rotation = Quaternion.Slerp(
+                        _leftHandState.Rotation, handPose.rotation, _poseSetterSettings.HandIkSmoothRate * dt
+                    );
+                }
                 
                 _leftHandState.RaiseRequestToUse();
             }
@@ -181,25 +205,48 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
                 _leftHandState.Position = _trackingLostHandCalculator.LeftHandPose.position;
                 _leftHandState.Rotation = _trackingLostHandCalculator.LeftHandPose.rotation;
+                
+                // 完全にロスト場合
+                _leftHandTrackedSpeed = Vector3.zero;
             }
         }
 
         private void UpdateRightHand()
         {
-            if (_mediaPipeKinematicSetter.TryGetRightHandPose(out var rightHandPose))
+            if (_mediaPipeKinematicSetter.TryGetRightHandPose(out var handPose, out var maybeLost))
             {
                 _trackingLostHandCalculator.CancelRightHand();
-
                 var dt = Time.deltaTime;
-                var nextPos = Vector3.Lerp(
-                    _rightHandState.Position, rightHandPose.position, _poseSetterSettings.HandIkSmoothRate * dt
-                );
-                _rightHandState.Position = Vector3.MoveTowards(
-                    _rightHandState.Position, nextPos, _poseSetterSettings.HandMoveSpeedMax * dt
-                );
-                _rightHandState.Rotation = Quaternion.Slerp(
-                    _rightHandState.Rotation, rightHandPose.rotation, _poseSetterSettings.HandIkSmoothRate * dt
-                );
+
+                if (maybeLost)
+                {
+                    // NOTE: Vector3.zero に向けたLerpがしたいのでこう書いてる
+                    _rightHandTrackedSpeed *= 1f - _poseSetterSettings.HandInertiaFactorWhenLost * dt;
+                    var inertiaSpeed = 
+                        Vector3.ClampMagnitude(_rightHandTrackedSpeed, _poseSetterSettings.HandMoveSpeedMax);
+                    
+                    _rightHandState.Position += inertiaSpeed * dt;
+                }
+                else
+                {
+                    var nextPosUnclamped = Vector3.Lerp(
+                        _rightHandState.Position, handPose.position, _poseSetterSettings.HandIkSmoothRate * dt
+                    );
+                    var nextPosClamped = Vector3.MoveTowards(
+                        _rightHandState.Position, nextPosUnclamped, _poseSetterSettings.HandMoveSpeedMax * dt
+                    );
+                    
+                    _rightHandTrackedSpeed = Vector3.Lerp(
+                        _rightHandTrackedSpeed, 
+                        (nextPosClamped - _rightHandState.Position) / dt,
+                        _poseSetterSettings.HandInertiaFactorToLogTrackedSpeed * dt
+                    );
+                    
+                    _rightHandState.Position = nextPosClamped;
+                    _rightHandState.Rotation = Quaternion.Slerp(
+                        _rightHandState.Rotation, handPose.rotation, _poseSetterSettings.HandIkSmoothRate * dt
+                    );
+                }
 
                 _rightHandState.RaiseRequestToUse();
             }

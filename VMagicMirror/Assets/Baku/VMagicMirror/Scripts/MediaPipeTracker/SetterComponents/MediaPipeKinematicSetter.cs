@@ -49,12 +49,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // - 一定値を超えた場合、トラッキングロストと同様に扱って _hasHeadPose をリセットする
         private float _headResultLostTime = 0f;
 
-        private readonly CounterBoolState _hasLeftHandPose = new(3, 5);
+        private readonly CounterBoolState _hasLeftHandPose = new(3, 15);
         private Vector2 _leftHandNormalizedPos;
         private Quaternion _leftHandRot = Quaternion.identity;
         private float _leftHandResultLostTime = 0f;
 
-        private readonly CounterBoolState _hasRightHandPose = new(3, 5);
+        private readonly CounterBoolState _hasRightHandPose = new(3, 15);
         private Vector2 _rightHandNormalizedPos;
         private Quaternion _rightHandRot = Quaternion.identity;
         private float _rightHandResultLostTime = 0f;
@@ -149,10 +149,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
-        public bool TryGetLeftHandPose(out Pose result)
+        // NOTE: maybeLostは、トラッキングロストが始まってるかもしれないときにtrueになる。トラッキングロスト動作の前で惰性を演出したい場合に用いる
+        public bool TryGetLeftHandPose(out Pose result, out bool maybeLost)
         {
             lock (_poseLock)
             {
+                // Valueがfalse = 平滑化の結果としてロスト扱い
+                // LatestSetValueがfalse = 平滑化の結果には出てないけどロストしてるかも…という状態
+                maybeLost = !_hasLeftHandPose.Value || !_hasLeftHandPose.LatestSetValue;
+
                 if (_hasHeadPose.Value && _hasLeftHandPose.Value)
                 {
                     result = GetHandPose(true);
@@ -203,10 +208,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
-        public bool TryGetRightHandPose(out Pose result)
+        public bool TryGetRightHandPose(out Pose result, out bool maybeLost)
         {
             lock (_poseLock)
             {
+                maybeLost = !_hasRightHandPose.Value || !_hasRightHandPose.LatestSetValue;
+
                 if (_hasHeadPose.Value && _hasRightHandPose.Value)
                 {
                     result = GetHandPose(false);

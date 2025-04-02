@@ -19,8 +19,16 @@ MonoBehaviour:
   handDepthMoveScale: 1
   handRotationModifyWeight: 0.5
   handIkSmoothRate: 18
+  handInertiaFactorToLogTrackedSpeed: 6
+  handInertiaFactorWhenLost: 2
   fingerBoneSmoothRate: 18
   handMoveSpeedMax: 1.4
-  trackingLostWaitDuration: 0.25
+  trackingLostWaitDuration: 0
   trackingLostMotionDuration: 0.6
   trackingLostRotationDelay: 0
+  eyeMapMin: 0.2
+  eyeMapMax: 0.8
+  blinkValueOnSquint: 0.5
+  blinkOpenSpeedMax: 0.1
+  lipSyncBlendShapeMin: 0.15
+  lipSyncBlendShapeMax: 0.6

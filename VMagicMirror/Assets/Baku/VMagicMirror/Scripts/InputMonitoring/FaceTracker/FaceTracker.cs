@@ -109,7 +109,7 @@ namespace Baku.VMagicMirror
             _dlibFaceAnalyzer = new DlibFaceAnalyzeRoutine(StreamingAssetFileNames.DlibFaceTrackingDataFileName);
             _dlibFaceAnalyzer.SetUp();
             
-            _horizontalFlipController.DisableHorizontalFlip
+            _horizontalFlipController.DisableFaceHorizontalFlip
                 .Subscribe(disable => DisableHorizontalFlip = disable)
                 .AddTo(this);
         }

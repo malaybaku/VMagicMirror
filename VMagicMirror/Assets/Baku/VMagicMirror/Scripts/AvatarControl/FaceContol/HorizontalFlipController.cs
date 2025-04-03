@@ -9,10 +9,15 @@ namespace Baku.VMagicMirror
         private readonly IMessageReceiver _receiver;
         private readonly BodyMotionModeController _bodyMotionModeController;
         
-        private readonly ReactiveProperty<bool> _disableHorizontalFlip = new ReactiveProperty<bool>(false);
-        public IReadOnlyReactiveProperty<bool> DisableHorizontalFlip => _disableHorizontalFlip;
+        private readonly ReactiveProperty<bool> _disableFaceHorizontalFlip = new(false);
+        public IReadOnlyReactiveProperty<bool> DisableFaceHorizontalFlip => _disableFaceHorizontalFlip;
+        
+        private readonly ReactiveProperty<bool> _disableHandHorizontalFlip = new(false);
+        public IReadOnlyReactiveProperty<bool> DisableHandHorizontalFlip => _disableHandHorizontalFlip;
 
-        private readonly ReactiveProperty<bool> _uiOptionDisablesHorizontalFlip = new ReactiveProperty<bool>(false);
+        // NOTE: 書いてる通り、UI上では手以外と手の反転オプションが独立の存在するので、そこは注意。
+        private readonly ReactiveProperty<bool> _uiOptionDisablesFaceHorizontalFlip = new(false);
+        private readonly ReactiveProperty<bool> _uiOptionDisablesHandHorizontalFlip = new(false);
 
         [Inject]
         public HorizontalFlipController(
@@ -26,12 +31,17 @@ namespace Baku.VMagicMirror
 
         public override void Initialize()
         {
-            _receiver.AssignCommandHandler(
+            _receiver.BindBoolProperty(
                 VmmCommands.DisableFaceTrackingHorizontalFlip,
-                c => _uiOptionDisablesHorizontalFlip.Value = c.ToBoolean()
-                );
+                _uiOptionDisablesFaceHorizontalFlip
+            );
 
-            _uiOptionDisablesHorizontalFlip.CombineLatest(
+            _receiver.BindBoolProperty(
+                VmmCommands.DisableHandTrackingHorizontalFlip,
+                _uiOptionDisablesHandHorizontalFlip
+            );
+            
+            _uiOptionDisablesFaceHorizontalFlip.CombineLatest(
                 _bodyMotionModeController.MotionMode,
                 _bodyMotionModeController.CurrentGameInputLocomotionStyle,
                 (option, mode, gameInputLocomotion) => 
@@ -39,7 +49,19 @@ namespace Baku.VMagicMirror
                     (mode == BodyMotionMode.GameInputLocomotion && 
                      IsThirdPersonLocomotionStyle(gameInputLocomotion))
                 )
-                .Subscribe(disable => _disableHorizontalFlip.Value = disable)
+                .Subscribe(disable => _disableFaceHorizontalFlip.Value = disable)
+                .AddTo(this);
+            
+            
+            _uiOptionDisablesHandHorizontalFlip.CombineLatest(
+                _bodyMotionModeController.MotionMode,
+                _bodyMotionModeController.CurrentGameInputLocomotionStyle,
+                (option, mode, gameInputLocomotion) => 
+                    option ||
+                    (mode == BodyMotionMode.GameInputLocomotion && 
+                     IsThirdPersonLocomotionStyle(gameInputLocomotion))
+                )
+                .Subscribe(disable => _disableHandHorizontalFlip.Value = disable)
                 .AddTo(this);
         }
 

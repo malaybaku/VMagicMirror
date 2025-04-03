@@ -67,7 +67,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             _config = config;
             
             var _ = new ExternalTrackerSettingReceiver(receiver, this);
-            horizontalFlipController.DisableHorizontalFlip
+            horizontalFlipController.DisableFaceHorizontalFlip
                 .Subscribe(disable => DisableHorizontalFlip = disable)
                 .AddTo(this);
         }

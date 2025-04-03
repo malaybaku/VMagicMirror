@@ -20,7 +20,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly HandAndFaceLandmarkTask _handAndFace;
 
         private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
-
+        private readonly HorizontalFlipController _horizontalFlipController;
+        
         // TODO: Dlib用のFaceTrackerもWebCamTextureを使っているが、集約したい
         // 楽観的にはDlibFaceLandmarkも使うのやめれば解決する)
         // 各タスクの稼働状況から定まるフラグ
@@ -30,6 +31,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public MediaPipeTrackerTaskController(
             IMessageReceiver receiver,
             MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
+            HorizontalFlipController horizontalFlipController,
             WebCamTextureSource webCamTextureSource,
             HandTask hand,
             FaceLandmarkTask face,
@@ -39,6 +41,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _receiver = receiver;
             _settingsRepository = settingsRepository;
             _webCamTextureSource = webCamTextureSource;
+            _horizontalFlipController = horizontalFlipController;
 
             _hand = hand;
             _face = face;
@@ -51,8 +54,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly ReactiveProperty<bool> _useWebCamHighPowerMode = new();
         private readonly ReactiveProperty<bool> _useHandTracking = new();
         private readonly ReactiveProperty<bool> _useExternalTracking = new();
-        private readonly ReactiveProperty<bool> _disableFaceHorizontalFlip = new();
-        private readonly ReactiveProperty<bool> _disableHandHorizontalFlip = new();
         
         // それぞれのMediaPipeタスクの稼働状況
         private readonly ReactiveProperty<bool> _isFaceTaskRunning = new();
@@ -69,8 +70,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private void SubscribeIpcMessages()
         {
             _receiver.BindBoolProperty(VmmCommands.EnableFaceTracking, _faceTrackingEnabled);
-            _receiver.BindBoolProperty(VmmCommands.DisableFaceTrackingHorizontalFlip, _disableFaceHorizontalFlip);
-            _receiver.BindBoolProperty(VmmCommands.DisableHandTrackingHorizontalFlip, _disableHandHorizontalFlip);
             _receiver.BindStringProperty(VmmCommands.SetCameraDeviceName, _cameraDeviceName);
             _receiver.BindBoolProperty(VmmCommands.EnableWebCamHighPowerMode, _useWebCamHighPowerMode);
             _receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _useHandTracking);
@@ -78,7 +77,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             
             _receiver.AssignCommandHandler(
                 VmmCommands.UsePerfectSyncWithWebCamera,
-                m => _settingsRepository.ShouldUsePerfectSyncResult = m.ToBoolean()
+                m => _settingsRepository.SetShouldUsePerfectSyncResult(m.ToBoolean())
                 );
 
             _receiver.AssignCommandHandler(
@@ -110,10 +109,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 message => _settingsRepository.ApplyReceivedCalibrationData(message.Content)
                 );
 
-            _disableFaceHorizontalFlip
+            _horizontalFlipController.DisableFaceHorizontalFlip
                 .Subscribe(disableMirror => _settingsRepository.IsFaceMirrored.Value = !disableMirror)
                 .AddTo(this);
-            _disableHandHorizontalFlip
+
+            _horizontalFlipController.DisableHandHorizontalFlip
                 .Subscribe(disableMirror => _settingsRepository.IsHandMirrored.Value = !disableMirror)
                 .AddTo(this);
         }

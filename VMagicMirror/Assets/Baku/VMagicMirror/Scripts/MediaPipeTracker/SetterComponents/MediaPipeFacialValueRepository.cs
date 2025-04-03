@@ -84,7 +84,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 }
 
                 _trackLostTime += Time.deltaTime;
-                if (_trackLostTime >= _settings.TrackingLostWaitDuration)
+                if (_trackLostTime >= _settings.TrackingLostTimeThreshold)
                 {
                     _isTracked.Reset(false);
                     _trackLostTime = 0f;

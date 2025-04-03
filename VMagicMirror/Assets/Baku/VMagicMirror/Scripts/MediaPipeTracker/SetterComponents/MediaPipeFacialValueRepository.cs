@@ -100,6 +100,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         private void ResetFacialValues()
         {
+            _blendShapes.Eye.LeftBlink = 0f;
             _blendShapes.Eye.LeftLookUp = 0f;
             _blendShapes.Eye.LeftLookDown = 0f;
             _blendShapes.Eye.LeftLookIn = 0f;
@@ -169,6 +170,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             switch (keyName)
             {
+                case Keys.eyeBlinkLeft: _blendShapes.Eye.LeftBlink = value; break;
                 case Keys.eyeLookUpLeft: _blendShapes.Eye.LeftLookUp = value; break;
                 case Keys.eyeLookDownLeft: _blendShapes.Eye.LeftLookDown = value; break;
                 case Keys.eyeLookInLeft: _blendShapes.Eye.LeftLookIn = value; break;

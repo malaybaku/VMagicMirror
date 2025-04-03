@@ -3,8 +3,6 @@ using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    using Keys = MediaPipeBlendShapeKeys;
-
     /// <summary>
     /// MediaPipeによる表情トラッキングに基づいた眼球運動をするやつ。
     /// </summary>

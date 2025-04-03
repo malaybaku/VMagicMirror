@@ -33,7 +33,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public void SetShouldUseLipSyncResult(bool value) => _shouldUseLipSyncResult.Value = value;
 
         public bool ShouldUseEyeResult { get; set; } = true;
-        public bool ShouldUsePerfectSyncResult { get; set; }
+        
+        private readonly ReactiveProperty<bool> _shouldUsePerfectSyncResult = new();
+        public IReadOnlyReactiveProperty<bool> ShouldUsePerfectSyncResult => _shouldUsePerfectSyncResult;
+        public void SetShouldUsePerfectSyncResult(bool value) => _shouldUsePerfectSyncResult.Value = value;
         public bool EnableBodyMoveZAxis { get; set; }
 
         // NOTE: ここから下はMediaPipeのタスクから直接使う == メインスレッド外から使うことがある

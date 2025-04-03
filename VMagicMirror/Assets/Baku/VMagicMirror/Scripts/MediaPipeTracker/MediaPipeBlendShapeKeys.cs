@@ -5,7 +5,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 {
     /// <summary>
     /// MediaPipeのFace Landmarkerが出力するブレンドシェイプ名の一覧。
-    /// iOSのARFaceAnchorの呼称と酷似しているが、以下が異なる。
+    /// iOSのARFaceAnchorの呼称とかと酷似しているが、以下が異なる。
     ///
     /// - _neutral がある
     /// - tongueOut がない
@@ -19,79 +19,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class MediaPipeBlendShapeKeys
     {
-        private static readonly string[] _keys = {
-            neutral,
-
-            //目
-            eyeBlinkLeft,
-            eyeLookUpLeft,
-            eyeLookDownLeft,
-            eyeLookInLeft,
-            eyeLookOutLeft,
-            eyeWideLeft,
-            eyeSquintLeft,
-
-            eyeBlinkRight,
-            eyeLookUpRight,
-            eyeLookDownRight,
-            eyeLookInRight,
-            eyeLookOutRight,
-            eyeWideRight,
-            eyeSquintRight,
-
-            //口(多い)
-            mouthLeft,
-            mouthSmileLeft,
-            mouthFrownLeft,
-            mouthPressLeft,
-            mouthUpperUpLeft,
-            mouthLowerDownLeft,
-            mouthStretchLeft,
-            mouthDimpleLeft,
-
-            mouthRight,
-            mouthSmileRight,
-            mouthFrownRight,
-            mouthPressRight,
-            mouthUpperUpRight,
-            mouthLowerDownRight,
-            mouthStretchRight,
-            mouthDimpleRight,
-            
-            mouthClose,
-            mouthFunnel,
-            mouthPucker,
-            mouthShrugUpper,
-            mouthShrugLower,
-            mouthRollUpper,
-            mouthRollLower,
-            
-            //あご
-            jawOpen,
-            jawForward,
-            jawLeft,
-            jawRight,
-            
-            //鼻
-            noseSneerLeft,
-            noseSneerRight,
-
-            //ほお
-            cheekPuff,
-            cheekSquintLeft,
-            cheekSquintRight,
-            
-            //まゆげ
-            browDownLeft,
-            browOuterUpLeft,
-            browDownRight,
-            browOuterUpRight,
-            browInnerUp,  
-        };
-
-        public static IReadOnlyList<string> Keys => _keys;
-        
-        // その他
+        // その他: MediaPipe Face Landmarkerではトラッキング結果に入っているのでドキュメンテーションも兼ねて書いているが、VMMでは使っていない
         public const string neutral = "_neutral";
 
         //目

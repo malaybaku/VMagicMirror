@@ -3,8 +3,6 @@ using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    using Keys = MediaPipeBlendShapeKeys;
-
     public class MediaPipeLipSync : ITickable
     {
         private readonly MediaPipeFacialValueRepository _facialValueRepository;

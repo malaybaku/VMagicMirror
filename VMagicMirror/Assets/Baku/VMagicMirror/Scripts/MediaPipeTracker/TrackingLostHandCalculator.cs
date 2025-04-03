@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private Pose _rightLastTrackedPose = Pose.identity;
         private Quaternion _rightLastTrackedLocalRotation = Quaternion.identity;
 
-        private float TrackingLostWaitDuration => _poseSetterSettings.TrackingLostWaitDuration;
+        private float TrackingLostWaitDuration => _poseSetterSettings.TrackingLostMotionWaitPhaseDuration;
         private float TrackingLostMotionDuration => _poseSetterSettings.TrackingLostMotionDuration;
         private float TrackingLostRotationDelay => _poseSetterSettings.TrackingLostRotationDelay; 
         private float TrackingLostPoseDuration => 

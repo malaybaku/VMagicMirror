@@ -77,7 +77,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public float HandRotationModifyWeight => handRotationModifyWeight;
         public float TrackingLostTimeThreshold => trackingLostTimeThreshold;
 
-        public float TrackingLostWaitDuration => trackingLostWaitDuration;
+        public float TrackingLostMotionWaitPhaseDuration => trackingLostWaitDuration;
         public float TrackingLostMotionDuration => trackingLostMotionDuration;
         public float TrackingLostRotationDelay => trackingLostRotationDelay;
         

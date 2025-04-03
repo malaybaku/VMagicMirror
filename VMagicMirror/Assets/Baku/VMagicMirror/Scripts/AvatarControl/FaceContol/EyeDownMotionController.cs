@@ -1,4 +1,5 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
+using Baku.VMagicMirror.MediaPipeTracker;
 using UnityEngine;
 using UniVRM10;
 using Zenject;
@@ -14,18 +15,21 @@ namespace Baku.VMagicMirror
         public void Initialize(
             IVRMLoadable vrmLoadable, 
             ExternalTrackerDataSource exTracker,
+            MediaPipeFacialValueRepository mediaPipeFacial,
             FaceControlConfiguration config,
             ExpressionAccumulator resultSetter)
         {
             _config = config;
             _exTracker = exTracker;
+            _mediaPipeFacial = mediaPipeFacial;
             _accumulator = resultSetter;
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
         }
 
         private FaceControlConfiguration _config;
-        private ExternalTrackerDataSource _exTracker = null;
+        private ExternalTrackerDataSource _exTracker;
+        private MediaPipeFacialValueRepository _mediaPipeFacial;
 
         private Vrm10RuntimeExpression _runtimeExpression = null;
         private bool _hasValidEyeSettings = false;
@@ -58,7 +62,8 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            var shouldUseAlternativeBlink = _exTracker.Connected && _config.ShouldStopEyeDownOnBlink;            
+            var shouldUseAlternativeBlink = 
+                (_exTracker.Connected || _mediaPipeFacial.IsTracked) && _config.ShouldStopEyeDownOnBlink;            
 
             // このへんの値が1フレーム前の値ではなく同一フレームの値を参照できるともっと良い
             var leftBlink = shouldUseAlternativeBlink

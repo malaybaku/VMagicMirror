@@ -15,7 +15,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly object _dataLock = new();
 
         private readonly CounterBoolState _isTracked = new(3, 5);
-        // private readonly Dictionary<string, float> _values = new();
         private float _trackLostTime;
 
         private readonly RecordFaceTrackBlendShapes _blendShapes = new();
@@ -41,10 +40,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         /// <summary>
         /// NOTE: <see cref="MediaPipeBlendShapeKeys"/> で定義されたキーを指定すること。
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="values"></param>
         /// <returns></returns>
-        //public float GetValue(string key) => _values.GetValueOrDefault(key, 0f);
-
         public void SetValues(IEnumerable<KeyValuePair<string, float>> values)
         {
             lock (_dataLock)

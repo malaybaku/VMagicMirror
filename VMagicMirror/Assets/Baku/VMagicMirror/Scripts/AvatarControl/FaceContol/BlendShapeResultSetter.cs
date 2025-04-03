@@ -17,7 +17,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private NeutralClipSettings neutralClipSettings = null;
         [SerializeField] private BlendShapeInterpolator blendShapeInterpolator = null;
         
-        private ExternalTrackerDataSource _exTracker = null;
         private WordToMotionBlendShape _wtmBlendShape = null;
         private VMCPBlendShape _vmcpBlendShape = null;
         private ExpressionAccumulator _accumulator = null;
@@ -28,13 +27,11 @@ namespace Baku.VMagicMirror
         public void Initialize(
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable, 
-            ExternalTrackerDataSource exTracker,
             WordToMotionBlendShape wtmBlendShape,
             VMCPBlendShape vmcpBlendShape,
             ExpressionAccumulator accumulator
             )
         {
-            _exTracker = exTracker;
             _wtmBlendShape = wtmBlendShape;
             _vmcpBlendShape = vmcpBlendShape;
             _accumulator = accumulator;
@@ -84,7 +81,7 @@ namespace Baku.VMagicMirror
                     //そもそもリップシンクは切ってよいケース: シンプルにゼロ埋め + WtMを適用
                     _wtmBlendShape.Accumulate(_accumulator);
                 }
-                else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                else if (perfectSync.IsConnected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
                     _wtmBlendShape.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);
@@ -114,7 +111,7 @@ namespace Baku.VMagicMirror
                 {
                     faceSwitch.Accumulate(_accumulator);
                 }
-                else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                else if (perfectSync.IsConnected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
                     faceSwitch.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);

@@ -29,15 +29,24 @@ namespace Baku.VMagicMirror
         /// パーフェクトシンクのon/offを取得、設定します。
         /// このフラグがtrueであり、かつ<see cref="ControlMode"/>がExternalTrackerの場合はパーフェクトシンクがオンです。
         /// </summary>
-        public bool UsePerfectSync { get; set; }
+        public bool UseExternalTrackerPerfectSync { get; set; }
 
+        /// <summary>
+        /// Webカメラの高負荷モードにおいてパーフェクトシンクを使用するかどうかを取得、設定します。
+        /// このフラグがtrueであり、かつ<see cref="ControlMode"/>がWebCamHighPowerの場合はパーフェクトシンクがオンです。
+        /// </summary>
+        public bool UseWebCamHighPowerModePerfectSync { get; set; }
+        
         /// <summary>
         /// VMCPによるBlendShapeの適用が有効かどうかを取得、設定します。
         /// このフラグがtrueの場合、Word To Motion, Face Switchに次いでVMCPのBlendShapeが優先されます。
         /// </summary>
         public bool UseVMCPFacial { get; set; }
-        
-        public bool PerfectSyncActive => ControlMode == FaceControlModes.ExternalTracker && UsePerfectSync;
+
+        //TODO: このフラグ自体を直接ExternalTrackerPerfectSyncからsetすべきでは？？
+        public bool PerfectSyncActive =>
+            (ControlMode is FaceControlModes.ExternalTracker && UseExternalTrackerPerfectSync) ||
+            (ControlMode is FaceControlModes.WebCamHighPower && UseWebCamHighPowerModePerfectSync);
         
         #endregion
         

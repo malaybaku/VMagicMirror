@@ -163,8 +163,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         //NOTE: このクラス以外はデータソースの種類に関知しない(しないほうがよい)ことに注意
         private int _currentSourceType = SourceTypeNone;
         
-        /// <summary> トラッキングの有効/無効を切り替えます。 </summary>
-        public void EnableTracking(bool enable)
+        private void EnableTracking(bool enable)
         {
             if (_trackingEnabled == enable)
             {
@@ -173,8 +172,8 @@ namespace Baku.VMagicMirror.ExternalTracker
             
             UpdateReceiver(enable, _currentSourceType);
         }
-        
-        public void Calibrate()
+
+        private void Calibrate()
         {
             //トラッキング前にキャリブすると訳わからないので禁止！
             if (!Connected)
@@ -197,7 +196,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             _trackedCount = 0f;
         }
 
-        public void SetCalibrationData(string json)
+        private void SetCalibrationData(string json)
         {
             try
             {
@@ -209,8 +208,8 @@ namespace Baku.VMagicMirror.ExternalTracker
                 LogOutput.Instance.Write(ex);
             }
         }
-        
-        public void SetSourceType(int sourceType)
+
+        private void SetSourceType(int sourceType)
         {
             if (sourceType == _currentSourceType || 
                 sourceType < 0 ||
@@ -281,17 +280,9 @@ namespace Baku.VMagicMirror.ExternalTracker
         /// <summary> 外部トラッキングに接続できているかどうかを取得します。 </summary>
         public bool Connected => _notTrackCount < notTrackCountLimit;
 
-
-        #region 連携先の機能サポートチェック
-
         /// <summary> 現在、頭部の並進移動トラッキングがサポートされているかどうかを取得します。</summary>
         public bool SupportFacePositionOffset => CurrentProvider.SupportFacePositionOffset;
 
-        /// <summary>現在、ハンドトラッキングをサポートするかどうかを取得します。</summary>
-        public bool SupportHandTracking => CurrentProvider.SupportHandTracking;
-
-        #endregion
-        
         #region トラッキングデータの内訳
 
         public bool DisableHorizontalFlip => _horizontalFlipController?.DisableFaceHorizontalFlip.Value ?? false;
@@ -372,7 +363,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         private readonly RecordFaceTrackSource _record = new RecordFaceTrackSource();
         public IFaceTrackSource FaceTrackSource => _record;
         
-        public bool SupportHandTracking => false;
         public bool SupportFacePositionOffset => false;
 
         public Quaternion HeadRotation => Quaternion.identity;

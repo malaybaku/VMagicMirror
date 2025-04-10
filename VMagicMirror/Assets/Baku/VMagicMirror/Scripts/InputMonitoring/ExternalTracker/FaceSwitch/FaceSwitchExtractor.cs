@@ -85,7 +85,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         /// 顔情報を指定することで、適用すべきブレンドシェイプ名を更新します。
         /// </summary>
         /// <param name="source"></param>
-        public void Update(IFaceTrackSource source)
+        public void Update(IFaceTrackBlendShapes source)
         {
             for (int i = 0; i < _itemsToCheck.Length; i++)
             {
@@ -105,7 +105,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         }
 
         //NOTE: このキーはWPF側が決め打ちしてるやつです
-        private static float ExtractSpecifiedBlendShape(IFaceTrackSource source, string key)
+        private static float ExtractSpecifiedBlendShape(IFaceTrackBlendShapes source, string key)
         {
             switch (key)
             {

@@ -18,6 +18,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private float _trackLostTime;
 
         private readonly RecordFaceTrackBlendShapes _blendShapes = new();
+        // NOTE: getterにマルチスレッド対策がないのは意図的。最悪ケースでも値が多少古い程度で済むはずなのでいい加減にしてある
         public IFaceTrackBlendShapes BlendShapes => _blendShapes;
         
         [Inject]

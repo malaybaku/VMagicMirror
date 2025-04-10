@@ -438,9 +438,7 @@
             </Border>
 
             <!-- 「表情筋でブレンドシェイプクリップを発動する」という設定のUIがここに来ます。カオスになったら別ウィンドウに分けます。 -->
-            <Border Style="{StaticResource SectionBorder}"
-                    IsEnabled="{Binding EnableExternalTracking.Value}">
-
+            <Border Style="{StaticResource SectionBorder}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal"
                                 Margin="0,0,0,5">
@@ -477,6 +475,27 @@
                         </Grid>
                     </md:Card>
 
+                    <md:Card Margin="15,5,5,0" 
+                             Visibility="{Binding FaceSwitchLimited.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             HorizontalAlignment="Stretch"
+                             Padding="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <md:PackIcon Grid.Column="0"
+                                         Kind="WarningOutline"
+                                         Margin="5"
+                                         Foreground="{StaticResource PrimaryHueMidBrush}"
+                                         VerticalAlignment="Center" />
+                            <TextBlock  Grid.Column="1"
+                                        Text="Webカメラ (高品質) の顔トラッキングでは「舌を出す」と「頬をふくらませる」の表情は検出できないことに注意してください。"
+                                        TextWrapping="Wrap"
+                                        />
+                        </Grid>
+                    </md:Card>                    
+                    
                     <TextBlock Margin="15,5"
                                Text="{DynamicResource ExTracker_FaceSwitch_Instruction}"/>
 

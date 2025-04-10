@@ -11,9 +11,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     // - webカメラによる顔トラッキングの機能が増えた過程で、UIが ExternalTracker 専用ではなく、顔トラッキング全般に関するものにシフトした
     public class FaceTrackerViewModel : SettingViewModelBase
     {
-        //private readonly ExternalTrackerBlendShapeNameStore _blendShapeNameStore
-        //    = new ExternalTrackerBlendShapeNameStore();
-
         private readonly ExternalTrackerSettingModel _model;
         private readonly ExternalTrackerRuntimeConfig _runtimeConfig;
         private readonly MotionSettingModel _motionModel;
@@ -147,6 +144,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
 
         public RProperty<bool> FaceSwitchSupported { get; } = new RProperty<bool>(false);
+        // NOTE: 制限つきでFace Switchが動くケースは実際にはwebカメラの高負荷モードだけだが、View向けに読み替えを行ってプロパティを公開してる
+        public RProperty<bool> FaceSwitchLimited => UseHighPowerWebCamera;
 
         // 高負荷Webカメラの場合だけ、「Face Switchが使えるけどCheekPuffとかTongueOutは使えない」という制限がかかる。UI上で注意喚起するために使う
         public RProperty<bool> FaceSwitchHasLimitation => UseHighPowerWebCamera;

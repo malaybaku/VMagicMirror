@@ -40,7 +40,6 @@ namespace Baku.VMagicMirror
         private readonly IMessageReceiver _messageReceiver;
         private readonly FaceSwitchExtractor _faceSwitch;
         private readonly FaceControlConfiguration _config;
-        private readonly ExternalTrackerDataSource _externalTracker;
         private readonly EyeBoneAngleSetter _eyeBoneSetter;
 
         [Inject]
@@ -56,24 +55,25 @@ namespace Baku.VMagicMirror
             _messageReceiver = messageReceiver;
             _faceSwitch = faceSwitch;
             _config = config;
-            _externalTracker = externalTracker;
             _eyeBoneSetter = eyeBoneSetter;
         }
         
         private bool _hasModel;
         private float _faceSwitchKeepCount;
 
+        /// <summary>
+        /// <see cref="FaceSwitchExtractor.ActiveItem"/> に対してチャタリング防止を加味した現在のFaceSwitchの値
+        /// </summary>
+        private ActiveFaceSwitchItem _faceSwitchItem = ActiveFaceSwitchItem.Empty;
+
+        // NOTE: 上記の値に対してExpressionKeyへの変換、およびトラッキングロスしたケースもケアした、公開可能なFaceSwitchの値
         private readonly ReactiveProperty<FaceSwitchKeyApplyContent> _currentValue
             = new(FaceSwitchKeyApplyContent.Empty());
         public IReadOnlyReactiveProperty<FaceSwitchKeyApplyContent> CurrentValue => _currentValue;
         
-        private readonly ReactiveProperty<ActiveFaceSwitchItem> _activeFaceSwitchItem = new();
-        public IReadOnlyReactiveProperty<ActiveFaceSwitchItem> ActiveFaceSwitchItem => _activeFaceSwitchItem;
-
-        
-        //public bool HasClipToApply => !string.IsNullOrEmpty(_externalTracker.FaceSwitchClipName);
-        public bool KeepLipSync => _currentValue.Value.KeepLipSync;
         public bool HasClipToApply => _currentValue.Value.HasValue;
+        // NOTE: `HasValue &&` もチェックしたほうがロバストだが、冗長なはずなのでやってない
+        public bool KeepLipSync => _currentValue.Value.KeepLipSync;
 
         public override void Initialize()
         {
@@ -105,8 +105,9 @@ namespace Baku.VMagicMirror
         private void OnVrmUnloaded()
         {
             _hasModel = false;
-            _currentValue.Value = FaceSwitchKeyApplyContent.Empty();
             _faceSwitch.AvatarBlendShapeNames = Array.Empty<string>();
+            _faceSwitchItem = ActiveFaceSwitchItem.Empty;
+            _currentValue.Value = FaceSwitchKeyApplyContent.Empty();
         }
 
         private void SetFaceSwitchSetting(string json)
@@ -121,47 +122,6 @@ namespace Baku.VMagicMirror
             }
         }
         
-        // NOTE: タイミングが重要なのでTickでは実装してないが、毎フレーム呼ばれる想定
-        public void UpdateCurrentValue(float deltaTime)
-        {
-            if (!_hasModel)
-            {
-                _faceSwitch.ResetUpdateCalledFlag();
-                return;
-            }
-
-            // 書いてる通りだが、チャタリングしないようにしたうえでFaceSwitchの現在有効な値を切り替える
-            if (_faceSwitchKeepCount > 0)
-            {
-                _faceSwitchKeepCount -= deltaTime;
-            }
-
-            if (_faceSwitchKeepCount <= 0 && !ActiveFaceSwitchItem.Value.Equals(_faceSwitch.ActiveItem))
-            {
-                _activeFaceSwitchItem.Value = _faceSwitch.ActiveItem;
-                _faceSwitchKeepCount = FaceSwitchMinimumKeepDuration;
-            }
-            
-            // NOTE:
-            // 誰もUpdateを呼んでない場合、トラッキングロストしている or Webカメラ等が完全に止まってるはずなので、
-            // その場合も何も適用しない
-            if (!_faceSwitch.UpdateCalled || _activeFaceSwitchItem.Value.IsEmpty)
-            {
-                _currentValue.Value = FaceSwitchKeyApplyContent.Empty();
-                return;
-            }
-
-            _faceSwitch.ResetUpdateCalledFlag();
-
-            var activeItem = _activeFaceSwitchItem.Value;
-            var key = ExpressionKeyUtils.CreateKeyByName(activeItem.ClipName);
-            _currentValue.Value = FaceSwitchKeyApplyContent.Create(
-                key,
-                activeItem.KeepLipSync,
-                activeItem.AccessoryName
-            );
-        }
-
         /// <summary>
         /// NOTE: FaceSwitchの結果への補間が必要なケースでは <see cref="BlendShapeInterpolator"/> が補間を代行するので、
         /// このクラスとしてはweightつきのAccumulate関数は不要
@@ -178,6 +138,51 @@ namespace Baku.VMagicMirror
             accumulator.Accumulate(_currentValue.Value.Key, 1f);
             //表情を適用した = 目ボーンは正面向きになってほしい
             _eyeBoneSetter.ReserveReset = true;
+        }
+        
+        // NOTE: タイミングが重要なのでTickでは実装してないが、毎フレーム呼ばれる想定
+        public void UpdateCurrentValue(float deltaTime)
+        {
+            UpdateCurrentValueInternal(deltaTime);
+            _config.FaceSwitchActive = _currentValue.Value.HasValue;
+        }
+
+        private void UpdateCurrentValueInternal(float deltaTime)
+        {
+            if (!_hasModel)
+            {
+                _faceSwitch.ResetUpdateCalledFlag();
+                return;
+            }
+
+            // 書いてる通りだが、チャタリングしないようにしたうえでFaceSwitchの現在有効な値を切り替える
+            if (_faceSwitchKeepCount > 0)
+            {
+                _faceSwitchKeepCount -= deltaTime;
+            }
+
+            if (_faceSwitchKeepCount <= 0 && !_faceSwitchItem.Equals(_faceSwitch.ActiveItem))
+            {
+                _faceSwitchItem = _faceSwitch.ActiveItem;
+                _faceSwitchKeepCount = FaceSwitchMinimumKeepDuration;
+            }
+            
+            // NOTE:
+            // 誰もUpdateを呼んでない場合、トラッキングロストしている or Webカメラ等が完全に止まってるはずなので、
+            // その場合も何も適用しない
+            if (!_faceSwitch.UpdateCalled || _faceSwitchItem.IsEmpty)
+            {
+                _currentValue.Value = FaceSwitchKeyApplyContent.Empty();
+                _config.FaceSwitchActive = false;
+                return;
+            }
+
+            _faceSwitch.ResetUpdateCalledFlag();
+            _currentValue.Value = FaceSwitchKeyApplyContent.Create(
+                ExpressionKeyUtils.CreateKeyByName(_faceSwitchItem.ClipName),
+                _faceSwitchItem.KeepLipSync,
+                _faceSwitchItem.AccessoryName
+            );
         }
     }
 }

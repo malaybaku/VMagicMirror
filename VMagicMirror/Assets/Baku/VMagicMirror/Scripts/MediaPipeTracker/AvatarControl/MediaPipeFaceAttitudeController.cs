@@ -25,6 +25,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Tooltip("ちょっとだけ直前フレームとの補間でならすファクター")]
         [SerializeField] private float lerpFactor = 18.0f;
         
+        [Tooltip("トラッキングロスト時に姿勢を戻す速度のファクター。通常時よりかなり遅めに設定する")]
+        [SerializeField] private float lerpFactorOnLost = 3f;
+
         public bool IsActive { get; set; } = true;
 
         private bool _hasModel = false;
@@ -75,9 +78,20 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _prevRotation = Quaternion.identity;
                 return;
             }
-            
-            _mediaPipeKinematicSetter.GetHeadPose().rotation.ToAngleAxis(out float rawAngle, out var rawAxis);
-            //_externalTracker.HeadRotation.ToAngleAxis(out float rawAngle, out var rawAxis);
+
+            // NOTE: トラッキングしていない場合は正面向きに戻すのでこういう書き方
+            var rawAngle = 0f;
+            var rawAxis = Vector3.forward;
+
+            // NOTE: この判定により、トラッキングロストしてから戻るまでに少しディレイがつく
+            var isTracked =
+                _mediaPipeKinematicSetter.TryGetHeadPose(out var headPose) ||
+                !_mediaPipeKinematicSetter.IsHeadPoseLostEnoughLong();
+            if (isTracked)
+            {
+                headPose.rotation.ToAngleAxis(out rawAngle, out rawAxis);
+            }
+
             rawAngle = Mathf.Repeat(rawAngle + 180f, 360f) - 180f;
             
             // NOTE: ExTrackerの実装だとここでgameInputやcarHandleの回転を左右反転するが、MediaPipe版では幾何的に正しく計算してるので不要
@@ -107,7 +121,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             totalDeg = Mathf.Clamp(totalDeg, -HeadTotalRotationLimitDeg, HeadTotalRotationLimitDeg);
             rot = Quaternion.AngleAxis(totalDeg, totalAxis);
 
-            rot = Quaternion.Slerp(_prevRotation, rot, lerpFactor * Time.deltaTime);
+            var t = (isTracked ? lerpFactor : lerpFactorOnLost) * Time.deltaTime;
+            rot = Quaternion.Slerp(_prevRotation, rot, t);
             _prevRotation = rot;
             
             //曲がりすぎを防止しつつ、首と頭に回転を割り振る(首が無いモデルなら頭に全振り)

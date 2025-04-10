@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror
             )
         {
             // 理由: FaceSwitchをExTracker以外からも発動可能にするよう仕様変更しているので
-            Debug.Log("FaceSwitchUpdaterに以降してクラスごと削除したい");
+            Debug.LogError("FaceSwitchUpdaterに以降してクラスごと削除したい");
 
             _config = config;
             _externalTracker = externalTracker;

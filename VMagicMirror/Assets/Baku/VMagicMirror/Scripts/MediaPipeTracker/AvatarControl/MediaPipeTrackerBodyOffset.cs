@@ -12,6 +12,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// </remarks>
     public class MediaPipeTrackerBodyOffset : MonoBehaviour
     {
+        private const float TrackingLostWaitTime = 0.5f;
         private const float TweenDuration = 0.5f;
         
         [Tooltip("受け取った値の適用スケール。割と小さい方がいいかも")]
@@ -107,9 +108,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
 
-            var offset = _mediaPipeKinematicSetter.GetHeadPose().position;
+            var isHeadTracked =
+                _mediaPipeKinematicSetter.TryGetHeadPose(out var headPose) ||
+                !_mediaPipeKinematicSetter.IsHeadPoseLostEnoughLong();
             
-            var goal = _mediaPipeKinematicSetter.HeadTracked
+            var offset = headPose.position;
+            
+            var goal = isHeadTracked
                 ? new Vector3(
                     Mathf.Clamp(offset.x * _scale.x, _min.x, _max.x),
                     Mathf.Clamp(offset.y * _scale.y, _min.y, _max.y),
@@ -117,7 +122,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 )
                 : Vector3.zero;
 
-            if (_mediaPipeKinematicSetter.HeadTracked)
+            if (isHeadTracked)
             {
                 var addedLerp = 
                     _currentLerpFactor +

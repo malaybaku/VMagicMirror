@@ -6,6 +6,7 @@ using UnityEngine;
 using UniVRM10;
 using Zenject;
 
+//TODO: ExternalTrackerと関係ないnamespaceやクラス名に直したい
 namespace Baku.VMagicMirror.ExternalTracker
 {
     //TODO: 処理順が以下になってると多分正しいので、これがScript Execution Orderで保証されてるかチェック

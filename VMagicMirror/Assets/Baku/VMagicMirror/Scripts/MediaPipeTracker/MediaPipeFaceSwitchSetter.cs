@@ -17,7 +17,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         void ITickable.Tick()
         {
-            // NOTE: FaceSwitchのオフじゃなくて無視のみで大丈夫か、という問題はある…かも。
+            // NOTE: Webカメラ高負荷トラッキングさえ有効ならばUpdateしちゃう…というスタイルもある。
+            // 動作としてはトラッキングロス時にFace SwitchがリセットされてればOK
             if (!_facialValue.IsTracked)
             {
                 return;

@@ -22,8 +22,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _settingsRepository = settingsRepository;
             _poseSetterSettings = poseSetterSettings;
         }
-
-        public bool IsEnabledAndTracked => _settingsRepository.ShouldUseEyeResult && _facialSetter.IsTracked;
         
         void ITickable.Tick()
         {

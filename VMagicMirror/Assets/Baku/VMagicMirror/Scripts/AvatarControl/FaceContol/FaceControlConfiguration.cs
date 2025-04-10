@@ -1,5 +1,4 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
-using Google.Protobuf.WellKnownTypes;
 using UniRx;
 
 namespace Baku.VMagicMirror
@@ -43,7 +42,9 @@ namespace Baku.VMagicMirror
         /// </summary>
         public bool UseVMCPFacial { get; set; }
 
-        //TODO: このフラグ自体を直接ExternalTrackerPerfectSyncからsetすべきでは？？
+        /// <summary>
+        /// 外部トラッキング機能またはWebカメラ機能に基づいてパーフェクトシンクを適用する場合はtrue、そうでなければfalse
+        /// </summary>
         public bool PerfectSyncActive =>
             (ControlMode is FaceControlModes.ExternalTracker && UseExternalTrackerPerfectSync) ||
             (ControlMode is FaceControlModes.WebCamHighPower && UseWebCamHighPowerModePerfectSync);
@@ -54,22 +55,9 @@ namespace Baku.VMagicMirror
 
         /// <summary>
         /// FaceSwitchが動作しているかどうかを取得、設定します。
+        /// setterを使っていいのは<see cref="FaceSwitchUpdater"/>だけです。
         /// </summary>
-        /// <remarks>
-        /// setterを使っていいのは<see cref="ExternalTrackerDataSource"/>だけです。
-        /// これがtrueのとき、ほかのブレンドシェイプ関連のクラスではVRMBlendShapeProxyに対して
-        /// AccumulateとかApplyを呼ばないことが望ましいです。
-        /// </remarks>
         public bool FaceSwitchActive { get; set; }
-        
-        /// <summary>
-        /// 外部トラッカーによるFaceSwitchが動作し、かつリップシンクを停止してほしいかどうかを取得、設定します。
-        /// </summary>
-        /// <remarks>
-        /// setterを使っていいのは<see cref="ExternalTrackerDataSource"/>だけです。
-        /// このフラグがtrueのとき、リップシンク系の処理はVRMBlendShapeにアクセスしないことが望ましいです。
-        /// </remarks>
-        public bool FaceSwitchRequestStopLipSync { get; set; }
         
         /// <summary>
         /// 外部トラッカーによるパーフェクトシンクによって、通常と異なる瞬き処理をしているとtrueになります。

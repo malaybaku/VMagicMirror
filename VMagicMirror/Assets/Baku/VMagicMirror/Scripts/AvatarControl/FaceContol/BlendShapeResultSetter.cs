@@ -138,7 +138,7 @@ namespace Baku.VMagicMirror
             }
 
             //TODO: こっちはfaceSwitchの削除に伴って削除したい
-            if (faceSwitch.HasClipToApply)
+            if (false && faceSwitch.HasClipToApply)
             {
                 //NOTE: WtMと同じく、パーフェクトシンクの口と組み合わす場合のコストに多少配慮した書き方。
                 if (!faceSwitch.KeepLipSync)

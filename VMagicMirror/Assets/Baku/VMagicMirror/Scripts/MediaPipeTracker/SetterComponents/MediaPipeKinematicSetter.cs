@@ -101,23 +101,27 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         }
         
         #region トラッキング結果のI/O
-
-        public bool HeadTracked
-        {
-            get
-            {
-                lock (_poseLock)
-                {
-                    return _hasHeadPose.Value;
-                }
-            }
-        }
         
-        public Pose GetHeadPose()
+        public bool IsHeadPoseLostEnoughLong()
         {
             lock (_poseLock)
             {
-                return _headPose;
+                return _headResultLostTime > _poseSetterSettings.TrackingLostPoseAndFacialResetWait;
+            }
+        }
+        
+        /// <summary>
+        /// NOTE: 一度でもトラッキングに成功したあとで戻り値がfalseになった場合、resultにはトラッキングロスト直前の姿勢が入る。
+        /// つまり、戻り値がfalseの場合でもresultを参照し続けた場合、トラッキングロス時の姿勢を適用できる
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public bool TryGetHeadPose(out Pose result)
+        {
+            lock (_poseLock)
+            {
+                result = _headPose;
+                return _hasHeadPose.Value;
             }
         }
         
@@ -314,37 +318,29 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             lock (_poseLock)
             {
-                if (_hasHeadPose.Value)
+                _headResultLostTime += Time.deltaTime;
+                if (_hasHeadPose.Value &&
+                    _headResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
-                    _headResultLostTime += Time.deltaTime;
-                    if (_headResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
-                    {
-                        _hasHeadPose.Reset(false);
-                        _headResultLostTime = 0f;
-                    }
+                    _hasHeadPose.Reset(false);
                 }
                 
-                if (_hasLeftHandPose.Value)
+                _leftHandResultLostTime += Time.deltaTime;
+                if (_hasLeftHandPose.Value &&
+                    _leftHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
-                    _leftHandResultLostTime += Time.deltaTime;
-                    if (_leftHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
-                    {
-                        _hasLeftHandPose.Reset(false);
-                        _leftHandResultLostTime = 0f;
-                    }
+                    _hasLeftHandPose.Reset(false);
+                    _leftHandResultLostTime = 0f;
                 }
                 
-                if (_hasRightHandPose.Value)
+                _rightHandResultLostTime += Time.deltaTime;
+                if (_hasRightHandPose.Value &&
+                    _rightHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
                 {
-                    _rightHandResultLostTime += Time.deltaTime;
-                    if (_rightHandResultLostTime > _poseSetterSettings.TrackingLostTimeThreshold)
-                    {
-                        _hasRightHandPose.Reset(false);
-                        _rightHandResultLostTime = 0f;
-                    }
+                    _hasRightHandPose.Reset(false);
+                    _rightHandResultLostTime = 0f;
                 }
             }
-            
 
             // NOTE: ハンドトラッキングの都合で必要なものがあれば復活させてもいいが、多分クラスを分ける感じになるはず
             return;

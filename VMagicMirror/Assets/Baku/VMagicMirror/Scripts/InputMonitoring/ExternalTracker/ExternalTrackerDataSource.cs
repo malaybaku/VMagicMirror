@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker.iFacialMocap;
 using UniRx;
-using UniVRM10;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -20,9 +18,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         private const int SourceTypeNone = 0;
         private const int SourceTypeIFacialMocap = 1;
 
-        //いちど適用したFaceSwitchは最小でもこの秒数だけ維持するよ、という下限値。チャタリングを防ぐのが狙い。
-        private const float FaceSwitchMinimumKeepDuration = 0.5f;
-
         [Tooltip("顔トラがロスした場合、これにtime.deltaTimeをかけた分のLerpファクターで値を減衰させていく")]
         [SerializeField] private float lossBreakRate = 3.0f;
         
@@ -34,13 +29,10 @@ namespace Baku.VMagicMirror.ExternalTracker
         [Tooltip("トラッキングロス後に再度トラッキングが開始したとき、この秒数をかけてリカバー用のブレンディングを行う")]
         [SerializeField] private float trackRecoverDuration = 1.0f;
         
-        
         //顔トラッキングが更新されなかった秒数
         private float _notTrackCount = 0f;
         //顔トラッキングがされた秒数
         private float _trackedCount = 0f;
-        
-        private float _faceSwitchKeepCount = 0f;
         
         //ソースが「なし」のときに便宜的に割り当てるための、常に顔が中央にあり、無表情であるとみなせるような顔トラッキングデータ
         private readonly EmptyExternalTrackSourceProvider _emptyProvider = new();
@@ -56,14 +48,11 @@ namespace Baku.VMagicMirror.ExternalTracker
         
         [Inject]
         public void Initialize(
-            IVRMLoadable vrmLoadable, 
             IMessageReceiver receiver, 
             IMessageSender sender,
             FaceControlConfiguration config,
             HorizontalFlipController horizontalFlipController)
         {
-            vrmLoadable.VrmLoaded += OnVrmLoaded;
-            vrmLoadable.VrmDisposing += OnVrmUnloaded;
             _horizontalFlipController = horizontalFlipController;
             _sender = sender;
             _config = config;
@@ -86,27 +75,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             );
         }
 
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _faceSwitchExtractor.AvatarBlendShapeNames = info
-                .instance.Vrm.Expression.LoadExpressionMap()
-                .Keys.Select(k =>
-                {
-                    var result = k.Name;
-                    if (k.Preset != ExpressionPreset.custom)
-                    {
-                        result = char.ToUpper(result[0]) + result.Substring(1);
-                    }
-                    return result;
-                })
-                .ToArray();
-        }
-
-        private void OnVrmUnloaded()
-        {
-            _faceSwitchExtractor.AvatarBlendShapeNames = Array.Empty<string>();
-        }
-        
         private void OnFaceTrackUpdated(IFaceTrackSource source)
         {
             _notTrackCount = 0;
@@ -117,17 +85,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             if (_notTrackCount < notTrackCountLimit)
             {
                 _notTrackCount += Time.deltaTime;
-            }
-
-            if (_faceSwitchKeepCount > 0)
-            {
-                _faceSwitchKeepCount -= Time.deltaTime;
-            }
-            
-            if (_faceSwitchKeepCount <= 0 && !ActiveFaceSwitchItem.Value.Equals(_faceSwitchExtractor.ActiveItem))
-            {
-                _activeFaceSwitchItem.Value = _faceSwitchExtractor.ActiveItem;
-                _faceSwitchKeepCount = FaceSwitchMinimumKeepDuration;
             }
 
             //空トラッカーを仮想的に更新するやつ
@@ -148,12 +105,10 @@ namespace Baku.VMagicMirror.ExternalTracker
                 CurrentProvider.BreakToBasePosition(1 - lossBreakRate * Time.deltaTime);
             }
 
-            //FaceSwitchExtractorの処理がなにげに重いので、外部トラッキング非使用時に通らないようガードしてます
-            if (CurrentProvider != _emptyProvider)
+            // NOTE: 外部トラッキングがちゃんと動いてる場合以外はFace Switchを触らない(webカメラとかが代わりに適宜Updateを呼ぶはず)
+            if (_trackingEnabled && CurrentProvider != _emptyProvider)
             {
                 _faceSwitchExtractor.Update(CurrentSource);
-                _config.FaceSwitchActive = !string.IsNullOrEmpty(FaceSwitchClipName);
-                _config.FaceSwitchRequestStopLipSync = _config.FaceSwitchActive && !_activeFaceSwitchItem.Value.KeepLipSync;
             }
         }
 
@@ -335,7 +290,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         }
 
         private readonly ReactiveProperty<ActiveFaceSwitchItem> _activeFaceSwitchItem = new();
-        public IReadOnlyReactiveProperty<ActiveFaceSwitchItem> ActiveFaceSwitchItem => _activeFaceSwitchItem;
 
         /// <summary> FaceSwitch機能で指定されたブレンドシェイプがあればその名称を取得し、なければ空文字を取得します。 </summary>
         public string FaceSwitchClipName => Connected ? _activeFaceSwitchItem.Value.ClipName : "";

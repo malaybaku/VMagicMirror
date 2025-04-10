@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoader,
             IMessageReceiver receiver,
             IMessageSender sender, 
-            ExternalTrackerDataSource externalTrackerDataSource,
+            FaceSwitchUpdater faceSwitchUpdater,
             DeviceTransformController deviceTransformController,
             WordToMotionAccessoryRequest accessoryRequest,
             BlinkTriggerDetector blinkTriggerDetector
@@ -81,8 +81,9 @@ namespace Baku.VMagicMirror
                 c => ResetAccessoryLayout(c.Content)
                 );
 
-            externalTrackerDataSource.ActiveFaceSwitchItem
-                .Select(a => a.AccessoryName)
+            faceSwitchUpdater.CurrentValue
+                .Select(value => value.HasValue ? value.AccessoryName : "")
+                .DistinctUntilChanged()
                 .Subscribe(UpdateFaceSwitchStatus)
                 .AddTo(this);
 

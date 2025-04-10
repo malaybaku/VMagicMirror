@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -9,8 +10,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// Mediapipe Face Landmarkerで取得した表情の情報を保持するクラス。データが古くなると自動で捨てる実装も入っている
     /// </summary>
-    public class MediaPipeFacialValueRepository : ITickable
+    public class MediaPipeFacialValueRepository : PresenterBase, ITickable
     {
+        // NOTE: PoseSetterSettingで定義してもいいけど、あんまり可変にするビジョンが見えないのでconstで
+        private const float FaceResetLerpFactor = 6f;
+
+        private readonly FaceControlConfiguration _faceControlConfig;
         private readonly MediapipePoseSetterSettings _settings;
         private readonly object _dataLock = new();
 
@@ -22,8 +27,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public IFaceTrackBlendShapes BlendShapes => _blendShapes;
         
         [Inject]
-        public MediaPipeFacialValueRepository(MediapipePoseSetterSettings settings)
+        public MediaPipeFacialValueRepository(
+            FaceControlConfiguration faceControlConfig,
+            MediapipePoseSetterSettings settings)
         {
+            _faceControlConfig = faceControlConfig;
             _settings = settings;
         }
 
@@ -68,100 +76,107 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             lock (_dataLock)
             {
                 _isTracked.Set(false);
-                if (!_isTracked.Value)
-                {
-                    ResetFacialValues();
-                }
             }
+        }
+
+        public override void Initialize()
+        {
+            // 書いてる通りだが、MediaPipeを使わない状態に切り替わる場合は直ちにブレンドシェイプをリセットしておく。
+            // これにより、webカメラを使ってないときのTickの処理がちょっと減る
+            _faceControlConfig.FaceControlMode
+                .Where(mode => mode is FaceControlModes.WebCamHighPower)
+                .Subscribe(_ => ResetFacialValues(0f))
+                .AddTo(this);
         }
 
         void ITickable.Tick()
         {
             lock (_dataLock)
             {
-                if (!_isTracked.Value)
-                {
-                    return;
-                }
-
                 _trackLostTime += Time.deltaTime;
-                if (_trackLostTime >= _settings.TrackingLostTimeThreshold)
+                if (_isTracked.Value && _trackLostTime >= _settings.TrackingLostTimeThreshold)
                 {
                     _isTracked.Reset(false);
-                    _trackLostTime = 0f;
-                    ResetFacialValues();
+                }
+
+                // トラッキングロス時はゆっくり値をゼロに戻す
+                if (_faceControlConfig.ControlMode is FaceControlModes.WebCamHighPower &&
+                    !_isTracked.Value &&
+                    _trackLostTime > _settings.TrackingLostPoseAndFacialResetWait)
+                {
+                    ResetFacialValues(1 - FaceResetLerpFactor * Time.deltaTime);
                 }
             }
         }
 
         // NOTE: ここから下をいじる場合、手作業というよりは正規表現でいじったほうがよい
         
-        private void ResetFacialValues()
+        private void ResetFacialValues(float breakRate)
         {
-            _blendShapes.Eye.LeftBlink = 0f;
-            _blendShapes.Eye.LeftLookUp = 0f;
-            _blendShapes.Eye.LeftLookDown = 0f;
-            _blendShapes.Eye.LeftLookIn = 0f;
-            _blendShapes.Eye.LeftLookOut = 0f;
-            _blendShapes.Eye.LeftWide = 0f;
-            _blendShapes.Eye.LeftSquint = 0f;
+            _blendShapes.Eye.LeftBlink *= breakRate;
+            _blendShapes.Eye.LeftLookUp *= breakRate;
+            _blendShapes.Eye.LeftLookDown *= breakRate;
+            _blendShapes.Eye.LeftLookIn *= breakRate;
+            _blendShapes.Eye.LeftLookOut *= breakRate;
+            _blendShapes.Eye.LeftWide *= breakRate;
+            _blendShapes.Eye.LeftSquint *= breakRate;
 
-            _blendShapes.Eye.RightBlink = 0f;
-            _blendShapes.Eye.RightLookUp = 0f;
-            _blendShapes.Eye.RightLookDown = 0f;
-            _blendShapes.Eye.RightLookIn = 0f;
-            _blendShapes.Eye.RightLookOut = 0f;
-            _blendShapes.Eye.RightWide = 0f;
-            _blendShapes.Eye.RightSquint = 0f;
+            _blendShapes.Eye.RightBlink *= breakRate;
+            _blendShapes.Eye.RightLookUp *= breakRate;
+            _blendShapes.Eye.RightLookDown *= breakRate;
+            _blendShapes.Eye.RightLookIn *= breakRate;
+            _blendShapes.Eye.RightLookOut *= breakRate;
+            _blendShapes.Eye.RightWide *= breakRate;
+            _blendShapes.Eye.RightSquint *= breakRate;
 
             //口(多い)
-            _blendShapes.Mouth.Left = 0f;
-            _blendShapes.Mouth.LeftSmile = 0f;
-            _blendShapes.Mouth.LeftFrown = 0f;
-            _blendShapes.Mouth.LeftPress = 0f;
-            _blendShapes.Mouth.LeftUpperUp = 0f;
-            _blendShapes.Mouth.LeftLowerDown = 0f;
-            _blendShapes.Mouth.LeftStretch = 0f;
-            _blendShapes.Mouth.LeftDimple = 0f;
+            _blendShapes.Mouth.Left *= breakRate;
+            _blendShapes.Mouth.LeftSmile *= breakRate;
+            _blendShapes.Mouth.LeftFrown *= breakRate;
+            _blendShapes.Mouth.LeftPress *= breakRate;
+            _blendShapes.Mouth.LeftUpperUp *= breakRate;
+            _blendShapes.Mouth.LeftLowerDown *= breakRate;
+            _blendShapes.Mouth.LeftStretch *= breakRate;
+            _blendShapes.Mouth.LeftDimple *= breakRate;
 
-            _blendShapes.Mouth.Right = 0f;
-            _blendShapes.Mouth.RightSmile = 0f;
-            _blendShapes.Mouth.RightFrown = 0f;
-            _blendShapes.Mouth.RightPress = 0f;
-            _blendShapes.Mouth.RightUpperUp = 0f;
-            _blendShapes.Mouth.RightLowerDown = 0f;
-            _blendShapes.Mouth.RightStretch = 0f;
-            _blendShapes.Mouth.RightDimple = 0f;
+            _blendShapes.Mouth.Right *= breakRate;
+            _blendShapes.Mouth.RightSmile *= breakRate;
+            _blendShapes.Mouth.RightFrown *= breakRate;
+            _blendShapes.Mouth.RightPress *= breakRate;
+            _blendShapes.Mouth.RightUpperUp *= breakRate;
+            _blendShapes.Mouth.RightLowerDown *= breakRate;
+            _blendShapes.Mouth.RightStretch *= breakRate;
+            _blendShapes.Mouth.RightDimple *= breakRate;
 
-            _blendShapes.Mouth.Close = 0f;
-            _blendShapes.Mouth.Funnel = 0f;
-            _blendShapes.Mouth.Pucker = 0f;
-            _blendShapes.Mouth.ShrugUpper = 0f;
-            _blendShapes.Mouth.ShrugLower = 0f;
-            _blendShapes.Mouth.RollUpper = 0f;
-            _blendShapes.Mouth.RollLower = 0f;
+            _blendShapes.Mouth.Close *= breakRate;
+            _blendShapes.Mouth.Funnel *= breakRate;
+            _blendShapes.Mouth.Pucker *= breakRate;
+            _blendShapes.Mouth.ShrugUpper *= breakRate;
+            _blendShapes.Mouth.ShrugLower *= breakRate;
+            _blendShapes.Mouth.RollUpper *= breakRate;
+            _blendShapes.Mouth.RollLower *= breakRate;
 
             //あご
-            _blendShapes.Jaw.Open = 0f;
-            _blendShapes.Jaw.Forward = 0f;
-            _blendShapes.Jaw.Left = 0f;
-            _blendShapes.Jaw.Right = 0f;
+            _blendShapes.Jaw.Open *= breakRate;
+            _blendShapes.Jaw.Forward *= breakRate;
+            _blendShapes.Jaw.Left *= breakRate;
+            _blendShapes.Jaw.Right *= breakRate;
 
             //鼻
-            _blendShapes.Nose.LeftSneer = 0f;
-            _blendShapes.Nose.RightSneer = 0f;
+            _blendShapes.Nose.LeftSneer *= breakRate;
+            _blendShapes.Nose.RightSneer *= breakRate;
 
             //ほお
-            _blendShapes.Cheek.Puff = 0f;
-            _blendShapes.Cheek.LeftSquint = 0f;
-            _blendShapes.Cheek.RightSquint = 0f;
+            _blendShapes.Cheek.Puff *= breakRate;
+            _blendShapes.Cheek.LeftSquint *= breakRate;
+            _blendShapes.Cheek.RightSquint *= breakRate;
 
             //まゆげ
-            _blendShapes.Brow.LeftDown = 0f;
-            _blendShapes.Brow.LeftOuterUp = 0f;
-            _blendShapes.Brow.RightDown = 0f;
-            _blendShapes.Brow.RightOuterUp = 0f;
-            _blendShapes.Brow.InnerUp = 0f;  
+            _blendShapes.Brow.LeftDown *= breakRate;
+            _blendShapes.Brow.LeftOuterUp *= breakRate;
+            _blendShapes.Brow.RightDown *= breakRate;
+            _blendShapes.Brow.RightOuterUp *= breakRate;
+            _blendShapes.Brow.InnerUp *= breakRate;  
         }
 
         private void SetValue(string keyName, float value)

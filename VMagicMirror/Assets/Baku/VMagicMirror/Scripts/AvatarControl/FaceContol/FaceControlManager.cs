@@ -65,9 +65,8 @@ namespace Baku.VMagicMirror
             var blinkSource = _config.ControlMode switch
             {
                 FaceControlModes.ExternalTracker => externalTrackerBlink.BlinkSource,
-                // NOTE: TrackedじゃなくてもEnabledだったら _mediaPipeBlink.BlinkSource に帰着…としてもよい
-                FaceControlModes.WebCamHighPower when _mediaPipeBlink.IsEnabledAndTracked 
-                    => _mediaPipeBlink.BlinkSource,
+                // NOTE: ここでIsTrackedも検証しておくパターンもアリ
+                FaceControlModes.WebCamHighPower => _mediaPipeBlink.BlinkSource,
                 FaceControlModes.WebCamLowPower when !AutoBlinkOnWebCamLowPower.Value
                     => imageBasedBlinkController.BlinkSource,
                 _ => autoBlink.BlinkSource

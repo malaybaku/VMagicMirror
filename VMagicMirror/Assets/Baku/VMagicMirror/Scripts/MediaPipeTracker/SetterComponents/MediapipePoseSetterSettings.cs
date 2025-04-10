@@ -49,7 +49,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         [Range(0.4f, 1f)]
         [SerializeField] private float lipSyncBlendShapeMax = 0.6f;
-        
+
+        // トラッキングロスト時にこの秒数だけ待ってから姿勢なり表情なりをゼロ方向にリセットする…という値。
+        [SerializeField] private float trackingLostPoseAndFacialResetWait = 0.5f;
         
         public float HandIkSmoothRate => handIkSmoothRate;
         public float HandInertiaFactorToLogTrackedSpeed => handInertiaFactorToLogTrackedSpeed;
@@ -80,7 +82,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public float TrackingLostMotionWaitPhaseDuration => trackingLostWaitDuration;
         public float TrackingLostMotionDuration => trackingLostMotionDuration;
         public float TrackingLostRotationDelay => trackingLostRotationDelay;
-        
+
+        public float TrackingLostPoseAndFacialResetWait => trackingLostPoseAndFacialResetWait;
+
         public float EyeMapMin => eyeMapMin;
         public float EyeMapMax => eyeMapMax;
         public float BlinkValueOnSquint => blinkValueOnSquint;

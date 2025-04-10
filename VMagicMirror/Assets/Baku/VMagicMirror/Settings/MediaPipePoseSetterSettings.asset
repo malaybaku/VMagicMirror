@@ -32,3 +32,4 @@ MonoBehaviour:
   blinkOpenSpeedMax: 0.1
   lipSyncBlendShapeMin: 0.15
   lipSyncBlendShapeMax: 0.6
+  trackingLostPoseAndFacialResetWait: 0.5

@@ -22,8 +22,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         public bool IsEmpty =>
             string.IsNullOrEmpty(ClipName) && string.IsNullOrEmpty(AccessoryName);
         
-        public static readonly ActiveFaceSwitchItem Empty 
-            = new ActiveFaceSwitchItem("", false, "");
+        public static readonly ActiveFaceSwitchItem Empty = new("", false, "");
 
         public bool Equals(ActiveFaceSwitchItem other) =>
             ClipName == other.ClipName &&

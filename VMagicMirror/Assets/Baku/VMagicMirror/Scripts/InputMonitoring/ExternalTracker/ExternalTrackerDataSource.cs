@@ -43,8 +43,8 @@ namespace Baku.VMagicMirror.ExternalTracker
         private float _faceSwitchKeepCount = 0f;
         
         //ソースが「なし」のときに便宜的に割り当てるための、常に顔が中央にあり、無表情であるとみなせるような顔トラッキングデータ
-        private readonly EmptyExternalTrackSourceProvider _emptyProvider = new EmptyExternalTrackSourceProvider();
-        private readonly FaceSwitchExtractor _faceSwitchExtractor = new FaceSwitchExtractor();
+        private readonly EmptyExternalTrackSourceProvider _emptyProvider = new();
+        private readonly FaceSwitchExtractor _faceSwitchExtractor = new();
         public FaceSwitchExtractor FaceSwitchExtractor => _faceSwitchExtractor;
 
         private IExternalTrackSourceProvider _currentProvider = null;
@@ -110,7 +110,7 @@ namespace Baku.VMagicMirror.ExternalTracker
                 _faceSwitchKeepCount -= Time.deltaTime;
             }
             
-            if (_faceSwitchKeepCount <= 0 && !ActiveFaceSwitchItem.Equals(_faceSwitchExtractor.ActiveItem))
+            if (_faceSwitchKeepCount <= 0 && !ActiveFaceSwitchItem.Value.Equals(_faceSwitchExtractor.ActiveItem))
             {
                 _activeFaceSwitchItem.Value = _faceSwitchExtractor.ActiveItem;
                 _faceSwitchKeepCount = FaceSwitchMinimumKeepDuration;
@@ -347,8 +347,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
         }
 
-        private readonly ReactiveProperty<ActiveFaceSwitchItem> _activeFaceSwitchItem =
-            new ReactiveProperty<ActiveFaceSwitchItem>();
+        private readonly ReactiveProperty<ActiveFaceSwitchItem> _activeFaceSwitchItem = new();
         public IReadOnlyReactiveProperty<ActiveFaceSwitchItem> ActiveFaceSwitchItem => _activeFaceSwitchItem;
 
         /// <summary> FaceSwitch機能で指定されたブレンドシェイプがあればその名称を取得し、なければ空文字を取得します。 </summary>

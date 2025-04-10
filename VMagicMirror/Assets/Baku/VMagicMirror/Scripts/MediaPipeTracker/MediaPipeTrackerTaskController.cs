@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// MediaPipeによるトラッキング関連のIPCぜんぶを管理するクラス。
     /// 以下を行う
-    /// - 設定に応じて、MediaPipeのタスクとかWebカメラのStart/Sop
+    /// - 設定に応じて、MediaPipeのタスクとかWebカメラのStart/Stop
     /// - 「bool値とかで持っていればOK」系の設定を適切なクラスに横流し
     /// </summary>
     public class MediaPipeTrackerTaskController : PresenterBase
@@ -24,7 +24,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         // TODO: Dlib用のFaceTrackerもWebCamTextureを使っているが、集約したい
         // 楽観的にはDlibFaceLandmarkも使うのやめれば解決する)
-        // 各タスクの稼働状況から定まるフラグ
         private readonly WebCamTextureSource _webCamTextureSource;
 
         [Inject]

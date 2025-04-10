@@ -135,6 +135,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     pos = MathUtil.Mirror(pos);
                     pose = MathUtil.Mirror(pose);
                 }
+
+                if (!_settingsRepository.EnableBodyMoveZAxis)
+                {
+                    pos.z = 0f;
+                }
+                
                 _headPose = new Pose(pos, pose.rotation);
                 _hasHeadPose.Set(true);
                 _headResultLostTime = 0f;

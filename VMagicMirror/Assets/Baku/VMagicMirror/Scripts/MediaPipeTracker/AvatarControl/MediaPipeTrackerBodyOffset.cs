@@ -15,15 +15,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private const float TweenDuration = 0.5f;
         
         [Tooltip("受け取った値の適用スケール。割と小さい方がいいかも")]
-        [SerializeField] private Vector3 applyScale = new Vector3(0.3f, 0.3f, 0.3f);
+        [SerializeField] private Vector3 applyScale = new(0.3f, 0.3f, 0.3f);
         //NOTE: 移動量もフレーバー程度ということで小さめに。
-        [SerializeField] private Vector3 applyMin = new Vector3(-0.05f, -0.05f, -0.02f);
-        [SerializeField] private Vector3 applyMax = new Vector3(0.05f, 0.05f, 0.02f);
+        [SerializeField] private Vector3 applyMin = new(-0.05f, -0.05f, -0.02f);
+        [SerializeField] private Vector3 applyMax = new(0.05f, 0.05f, 0.02f);
 
         //NOTE: この場合もxの比率は1.0にはせず、代わりに首回転にもとづく胴体の回転で並進が載るのに頼る
-        [SerializeField] private Vector3 applyScaleWhenNoHandTrack = new Vector3(0.8f, 1f, 0.6f);
-        [SerializeField] private Vector3 applyMinWhenNoHandTrack = new Vector3(-0.2f, -0.2f, -0.1f);
-        [SerializeField] private Vector3 applyMaxWhenNoHandTrack = new Vector3(0.2f, 0.2f, 0.1f);
+        [SerializeField] private Vector3 applyScaleWhenNoHandTrack = new(0.8f, 1f, 0.6f);
+        [SerializeField] private Vector3 applyMinWhenNoHandTrack = new(-0.2f, -0.2f, -0.1f);
+        [SerializeField] private Vector3 applyMaxWhenNoHandTrack = new(0.2f, 0.2f, 0.1f);
         
         [SerializeField] private float lerpFactor = 18f;
         [Tooltip("トラッキングロス時にゆっくり原点に戻すために使うLerpFactor")]
@@ -42,11 +42,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private float _currentLerpFactor;
         
         [Inject]
-        public void Initialize(FaceControlConfiguration config, MediaPipeKinematicSetter mediaPipeKinematicSetter)//  ExternalTrackerDataSource externalTracker)
+        public void Initialize(FaceControlConfiguration config, MediaPipeKinematicSetter mediaPipeKinematicSetter)
         {
             _config = config;
             _mediaPipeKinematicSetter = mediaPipeKinematicSetter;
-            //_externalTracker = externalTracker;
         }
         
         public Vector3 BodyOffset { get; private set; }
@@ -108,9 +107,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
 
-            var offset = _mediaPipeKinematicSetter.GetHeadPose().position; // _externalTracker.HeadPositionOffset;
+            var offset = _mediaPipeKinematicSetter.GetHeadPose().position;
             
-            var goal = _mediaPipeKinematicSetter.HeadTracked // _externalTracker.Connected
+            var goal = _mediaPipeKinematicSetter.HeadTracked
                 ? new Vector3(
                     Mathf.Clamp(offset.x * _scale.x, _min.x, _max.x),
                     Mathf.Clamp(offset.y * _scale.y, _min.y, _max.y),
@@ -118,7 +117,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 )
                 : Vector3.zero;
 
-            if (_mediaPipeKinematicSetter.HeadTracked) //_externalTracker.Connected)
+            if (_mediaPipeKinematicSetter.HeadTracked)
             {
                 var addedLerp = 
                     _currentLerpFactor +

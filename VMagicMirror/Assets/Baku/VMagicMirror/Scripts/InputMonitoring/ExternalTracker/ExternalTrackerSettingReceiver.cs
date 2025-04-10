@@ -23,10 +23,6 @@ namespace Baku.VMagicMirror
                 VmmCommands.ExTrackerSetSource,
                 c => dataSource.SetSourceType(c.ToInt())
                 );
-            receiver.AssignCommandHandler(
-                VmmCommands.ExTrackerSetFaceSwitchSetting,
-                c => dataSource.SetFaceSwitchSetting(c.Content)
-                );
         }
     }
 }

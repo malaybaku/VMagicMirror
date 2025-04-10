@@ -49,6 +49,9 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
         } 
         
+        // NOTE: IsDirtyじゃないので注意 (値が据え置きでもよい)
+        public bool UpdateCalled { get; private set; }
+        
         //NOTE: WPF側のデフォルト表示と同じ構成の初期状態を入れておく
         private FaceSwitchSettings _setting = FaceSwitchSettings.LoadDefault();
         /// <summary> 設定ファイルから読み込まれて送信された設定 </summary>
@@ -62,6 +65,8 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
         }
 
+        public void ResetUpdateCalledFlag() => UpdateCalled = false;
+        
         //ロードされたアバターと設定を突き合わせた結果得られる、確認すべき条件セットの一覧
         private FaceSwitchItem[] _itemsToCheck = Array.Empty<FaceSwitchItem>();
 
@@ -86,7 +91,8 @@ namespace Baku.VMagicMirror.ExternalTracker
         /// <param name="source"></param>
         public void Update(IFaceTrackBlendShapes source)
         {
-            for (int i = 0; i < _itemsToCheck.Length; i++)
+            UpdateCalled = true;
+            for (var i = 0; i < _itemsToCheck.Length; i++)
             {
                 if (ExtractSpecifiedBlendShape(source, _itemsToCheck[i].source) > _itemsToCheck[i].threshold * 0.01f)
                 {

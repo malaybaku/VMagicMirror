@@ -16,22 +16,26 @@ namespace Baku.VMagicMirror
         [SerializeField] private ExternalTrackerFaceSwitchApplier faceSwitch = null;
         [SerializeField] private NeutralClipSettings neutralClipSettings = null;
         [SerializeField] private BlendShapeInterpolator blendShapeInterpolator = null;
-        
-        private WordToMotionBlendShape _wtmBlendShape = null;
-        private VMCPBlendShape _vmcpBlendShape = null;
-        private ExpressionAccumulator _accumulator = null;
-        private bool _hasModel = false;
+
+        private FaceSwitchUpdater _faceSwitchUpdater;
+        private WordToMotionBlendShape _wtmBlendShape;
+        private VMCPBlendShape _vmcpBlendShape;
+        private ExpressionAccumulator _accumulator;
+        private bool _hasModel;
         
         //NOTE: ここのコンポーネントの書き順は実は優先度を表している: 後ろのやつほど上書きの権利が強い
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable, 
+            FaceSwitchUpdater faceSwitchUpdater,
             WordToMotionBlendShape wtmBlendShape,
             VMCPBlendShape vmcpBlendShape,
             ExpressionAccumulator accumulator
             )
         {
+            Debug.LogError("FaceSwitchをSerializeField上の定義からも削除したい");
+            _faceSwitchUpdater = faceSwitchUpdater;
             _wtmBlendShape = wtmBlendShape;
             _vmcpBlendShape = vmcpBlendShape;
             _accumulator = accumulator;
@@ -39,11 +43,12 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info => _hasModel = true;
             vrmLoadable.VrmDisposing += () => _hasModel = false;
             
-            blendShapeInterpolator.Setup(faceSwitch, wtmBlendShape);
+            blendShapeInterpolator.Setup(faceSwitchUpdater, faceSwitch, wtmBlendShape);
         }
 
         private void LateUpdate()
         {
+            _faceSwitchUpdater.UpdateCurrentValue(Time.deltaTime);
             faceSwitch.UpdateCurrentValue();
             _wtmBlendShape.UpdateCurrentValue();
             blendShapeInterpolator.UpdateWeight();
@@ -104,6 +109,35 @@ namespace Baku.VMagicMirror
             
             //FaceSwitchが適用 > PerfectSync、Blinkは確定で無視。
             //リップシンクは設定しだいで適用。
+            if (_faceSwitchUpdater.HasClipToApply)
+            {
+                //NOTE: WtMと同じく、パーフェクトシンクの口と組み合わす場合のコストに多少配慮した書き方。
+                if (!_faceSwitchUpdater.KeepLipSync)
+                {
+                    _faceSwitchUpdater.Accumulate(_accumulator);
+                }
+                else if (perfectSync.IsConnected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                {
+                    _faceSwitchUpdater.Accumulate(_accumulator);
+                    perfectSync.Accumulate(_accumulator, false, true, false);
+                }
+                else if (_vmcpBlendShape.IsActive.Value)
+                {
+                    _faceSwitchUpdater.Accumulate(_accumulator);
+                    _vmcpBlendShape.AccumulateLipSyncBlendShape(_accumulator);
+                }
+                else
+                {
+                    //FaceSwitch + AIUEOを適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
+                    _faceSwitchUpdater.Accumulate(_accumulator);
+                    lipSync.Accumulate(_accumulator);
+                }
+
+                neutralClipSettings.AccumulateOffsetClip(_accumulator);
+                return;
+            }
+
+            //TODO: こっちはfaceSwitchの削除に伴って削除したい
             if (faceSwitch.HasClipToApply)
             {
                 //NOTE: WtMと同じく、パーフェクトシンクの口と組み合わす場合のコストに多少配慮した書き方。

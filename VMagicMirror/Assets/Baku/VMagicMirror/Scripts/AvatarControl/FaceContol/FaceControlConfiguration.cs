@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror
         #region 内部的に特定クラスがsetterを呼ぶ値で、読み取り側は直接使わないでOK
 
         /// <summary>
-        /// 外部トラッカーによるFaceSwitchが動作しているかどうかを取得、設定します。
+        /// FaceSwitchが動作しているかどうかを取得、設定します。
         /// </summary>
         /// <remarks>
         /// setterを使っていいのは<see cref="ExternalTrackerDataSource"/>だけです。

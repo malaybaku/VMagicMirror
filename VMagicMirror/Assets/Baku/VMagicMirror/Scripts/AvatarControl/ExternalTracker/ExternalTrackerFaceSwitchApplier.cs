@@ -1,33 +1,10 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker;
 using UniRx;
-using UniVRM10;
 
 namespace Baku.VMagicMirror
 {
-    public readonly struct FaceSwitchKeyApplyContent
-    {
-        private FaceSwitchKeyApplyContent(bool hasValue, bool keepLipSync, ExpressionKey key)
-        {
-            HasValue = hasValue;
-            KeepLipSync = keepLipSync;
-            Key = key;
-        }
-
-        //NOTE: default指定してName == nullになってると怒られる事があるので便宜的にneutralで代用している
-        public static FaceSwitchKeyApplyContent Empty()
-            => new(false, false, ExpressionKey.Neutral);
-
-        public static FaceSwitchKeyApplyContent Create(ExpressionKey key, bool keepLipSync) =>
-            new(true, keepLipSync, key);
-        
-        public bool HasValue { get; }
-        public bool KeepLipSync { get; }
-        public ExpressionKey Key { get; }
-    }
-        
     public class ExternalTrackerFaceSwitchApplier : MonoBehaviour
     {
         private bool _hasModel = false;
@@ -49,6 +26,9 @@ namespace Baku.VMagicMirror
             EyeBoneAngleSetter eyeBoneResetter
             )
         {
+            // 理由: FaceSwitchをExTracker以外からも発動可能にするよう仕様変更しているので
+            Debug.Log("FaceSwitchUpdaterに以降してクラスごと削除したい");
+
             _config = config;
             _externalTracker = externalTracker;
             _eyeBoneResetter = eyeBoneResetter;
@@ -86,7 +66,7 @@ namespace Baku.VMagicMirror
             else
             {
                 var key = ExpressionKeyUtils.CreateKeyByName(_externalTracker.FaceSwitchClipName);
-                _currentValue.Value = FaceSwitchKeyApplyContent.Create(key, _externalTracker.KeepLipSyncForFaceSwitch);
+                _currentValue.Value = FaceSwitchKeyApplyContent.Create(key, _externalTracker.KeepLipSyncForFaceSwitch, "");
                 _latestClipName = _externalTracker.FaceSwitchClipName;
             }
         }

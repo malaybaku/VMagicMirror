@@ -210,22 +210,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             UpdateReceiver(_trackingEnabled, sourceType);
         }
 
-        /// <summary>
-        /// FaceSwitchの設定をJSON文字列で受け取って更新します。
-        /// </summary>
-        /// <param name="json"></param>
-        public void SetFaceSwitchSetting(string json)
-        {
-            try
-            {
-                _faceSwitchExtractor.Setting = JsonUtility.FromJson<FaceSwitchSettings>(json);
-            }
-            catch (Exception ex)
-            {
-                LogOutput.Instance.Write(ex);
-            }
-        }
-
         private void UpdateReceiver(bool enable, int sourceType)
         {
             //NOTE: ここのスイッチングではUDPの受信開始/停止が走るので、切り替えが最小限になるよう若干ガチガチに書いてます

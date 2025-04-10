@@ -52,6 +52,7 @@ namespace Baku.VMagicMirror.ExternalTracker
 
         private IMessageSender _sender = null;
         private FaceControlConfiguration _config = null;
+        private HorizontalFlipController _horizontalFlipController;
         
         [Inject]
         public void Initialize(
@@ -63,13 +64,26 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmUnloaded;
+            _horizontalFlipController = horizontalFlipController;
             _sender = sender;
             _config = config;
             
-            var _ = new ExternalTrackerSettingReceiver(receiver, this);
-            horizontalFlipController.DisableFaceHorizontalFlip
-                .Subscribe(disable => DisableHorizontalFlip = disable)
-                .AddTo(this);
+            receiver.AssignCommandHandler(
+                VmmCommands.ExTrackerEnable,
+                c => EnableTracking(c.ToBoolean())
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.ExTrackerCalibrate,
+                _ => Calibrate()
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.ExTrackerSetCalibrateData,
+                c => SetCalibrationData(c.Content)
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.ExTrackerSetSource,
+                c => SetSourceType(c.ToInt())
+            );
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -196,8 +210,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
         }
         
-        public void SetFaceHorizontalFlipDisable(bool disableFlip) => DisableHorizontalFlip = disableFlip;
-
         public void SetSourceType(int sourceType)
         {
             if (sourceType == _currentSourceType || 
@@ -282,7 +294,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         
         #region トラッキングデータの内訳
 
-        public bool DisableHorizontalFlip { get; private set; }
+        public bool DisableHorizontalFlip => _horizontalFlipController?.DisableFaceHorizontalFlip.Value ?? false;
         
         /// <summary>
         /// 現在の顔トラッキング情報を取得します。

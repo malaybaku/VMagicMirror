@@ -66,7 +66,6 @@ Unity 2022.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フ
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
 * [Zenject](https://github.com/svermeulen/Extenject) (アセットストアから)
@@ -82,7 +81,7 @@ Unity 2022.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フ
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
 
-FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。
+FinalIK, Dlib FaceLandmark Detectorは有償アセットであることに注意してください。
 
 [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)は[NAudio](https://github.com/naudio/NAudio)を導入するために使用しています。
 
@@ -101,18 +100,6 @@ RawInput.Sharpもほぼ同様の導入手順です。
 
 - NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
 - 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
-
-OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のように書き換えます。
-
-```
-    abstract public class DisposableOpenCVObject : DisposableObject
-    {
-
-//        internal IntPtr nativeObj;
-        //Change to public member
-        public IntPtr nativeObj;
-
-```
 
 以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
 

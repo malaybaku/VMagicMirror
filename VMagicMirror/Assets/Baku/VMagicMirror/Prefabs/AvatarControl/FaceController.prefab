@@ -283,7 +283,7 @@ MonoBehaviour:
   eyeMapMin: 0.25
   eyeMapMax: 0.7
   blinkValueOnSquint: 0.3
-  blinkOpenSpeedMax: 0.1
+  blinkOpenSpeedMax: 0.2
 --- !u!114 &1428360342779558990
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -29,7 +29,7 @@ MonoBehaviour:
   eyeMapMin: 0.2
   eyeMapMax: 0.8
   blinkValueOnSquint: 0.5
-  blinkOpenSpeedMax: 0.1
+  blinkOpenSpeedMax: 0.2
   lipSyncBlendShapeMin: 0.15
   lipSyncBlendShapeMax: 0.6
   trackingLostPoseAndFacialResetWait: 0.5

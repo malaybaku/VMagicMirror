@@ -5,6 +5,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 {
     public class MediaPipeBlink : ITickable
     {
+        private const float OpenBlink = 0.2f;
+        private const float CloseBlink = 0.5f;
+        
         private readonly MediaPipeFacialValueRepository _facialSetter;
         private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
         private readonly MediapipePoseSetterSettings _poseSetterSettings;
@@ -31,9 +34,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var mirrored = _settingsRepository.IsFaceMirrored.Value;
 
             var rawLeftBlink = mirrored ? eye.RightBlink : eye.LeftBlink;
-            var rawLeftSquint = mirrored ? eye.RightSquint : eye.LeftSquint;
+            var rawLeftSquint = 0f; //mirrored ? eye.RightSquint : eye.LeftSquint;
             var rawRightBlink = mirrored ? eye.LeftBlink : eye.RightBlink;
-            var rawRightSquint = mirrored ? eye.LeftSquint : eye.RightSquint;
+            var rawRightSquint = 0f; //mirrored ? eye.LeftSquint : eye.RightSquint;
 
             var left = MapClamp(rawLeftBlink);
             if (left < 0.9f)
@@ -55,7 +58,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         //0-1の範囲の値をmin-maxの幅のなかにギュッとあれします
         private float MapClamp(float value) => Mathf.Clamp01(
-            (value - _poseSetterSettings.EyeMapMin) / (_poseSetterSettings.EyeMapMax - _poseSetterSettings.EyeMapMin)
+            // (value - _poseSetterSettings.EyeMapMin) / (_poseSetterSettings.EyeMapMax - _poseSetterSettings.EyeMapMin)
+            (value - OpenBlink) / (CloseBlink - OpenBlink)
             );
     }
 }

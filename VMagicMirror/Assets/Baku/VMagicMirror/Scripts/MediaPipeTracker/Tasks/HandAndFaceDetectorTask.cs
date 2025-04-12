@@ -38,8 +38,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediaPipeFacialValueRepository facialValueRepository,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer,
-            MediaPipeFingerPoseCalculator fingerPoseCalculator
-        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialValueRepository, calibrator, landmarksVisualizer, fingerPoseCalculator)
+            MediaPipeFingerPoseCalculator fingerPoseCalculator,
+            MediaPipeTrackerStatusPreviewSender previewSender
+        ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialValueRepository, calibrator, landmarksVisualizer, fingerPoseCalculator, previewSender)
         {
         }
         

@@ -20,11 +20,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediaPipeKinematicSetter mediaPipeKinematicSetter, 
             MediaPipeFacialValueRepository facialValueRepository,
             CameraCalibrator calibrator,
-            LandmarksVisualizer landmarksVisualizer
+            LandmarksVisualizer landmarksVisualizer,
+            MediaPipeTrackerStatusPreviewSender previewSender
         ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialValueRepository, calibrator, landmarksVisualizer)
         {
+            _previewSender = previewSender;
         }
 
+        private readonly MediaPipeTrackerStatusPreviewSender _previewSender;
         private FaceLandmarker _landmarker;
         private readonly Dictionary<string, float> _blendShapeValues = new(52);
         
@@ -70,6 +73,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _blendShapeValues[c.categoryName] = c.score;
             }
             FacialValueRepository.SetValues(_blendShapeValues);
+
+            var eye = FacialValueRepository.BlendShapes.Eye;
+            _previewSender.SetBlinkResult(eye.LeftBlink, eye.RightBlink);
 
             var matrix = result.facialTransformationMatrixes[0];
             var headPose = MediapipeMathUtil.GetCalibratedFaceLocalPose(matrix, Calibrator.GetCalibrationData());

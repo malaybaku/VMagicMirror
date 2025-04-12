@@ -28,6 +28,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             Container.BindInterfacesAndSelfTo<MediaPipeHand>().AsSingle();
 
             Container.BindInterfacesTo<MediaPipeFaceSwitchSetter>().AsSingle();
+            Container.BindInterfacesAndSelfTo<MediaPipeTrackerStatusPreviewSender>().AsSingle();
         }
     }
 }

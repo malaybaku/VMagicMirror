@@ -17,6 +17,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private const string LeftHandHandednessName = "Left";
         private const string RightHandHandednessName = "Right";
 
+        protected MediaPipeTrackerStatusPreviewSender PreviewSender { get; }
+
         private readonly MediaPipeFingerPoseCalculator _fingerPoseCalculator;
         private HandLandmarker _landmarker;
 
@@ -28,10 +30,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             MediaPipeFacialValueRepository facialValueRepository,
             CameraCalibrator calibrator,
             LandmarksVisualizer landmarksVisualizer,
-            MediaPipeFingerPoseCalculator fingerPoseCalculator
+            MediaPipeFingerPoseCalculator fingerPoseCalculator,
+            MediaPipeTrackerStatusPreviewSender previewSender
         ) : base(settingsRepository, textureSource, mediaPipeKinematicSetter, facialValueRepository, calibrator, landmarksVisualizer)
         {
             _fingerPoseCalculator = fingerPoseCalculator;
+            PreviewSender = previewSender;
         }
         
         protected override void OnStartTask()
@@ -104,6 +108,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             if (!hasRightHand)
             {
                 MediaPipeKinematicSetter.ClearRightHandPose();
+            }
+
+            if (hasLeftHand || hasRightHand)
+            {
+                PreviewSender.SetHandTrackingResult(result);
             }
         }
 

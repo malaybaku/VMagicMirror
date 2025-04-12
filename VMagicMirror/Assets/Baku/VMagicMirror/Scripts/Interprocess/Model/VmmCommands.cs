@@ -92,6 +92,10 @@
         public const string EnableWebCameraHighPowerModeLipSync = nameof(EnableWebCameraHighPowerModeLipSync);
         public const string EnableWebCameraHighPowerModeMoveZ = nameof(EnableWebCameraHighPowerModeMoveZ);
 
+        public const string SetWebCamEyeOpenBlinkValue = nameof(SetWebCamEyeOpenBlinkValue);
+        public const string SetWebCamEyeCloseBlinkValue = nameof(SetWebCamEyeCloseBlinkValue);
+        public const string SetEyeBlendShapePreviewActive = nameof(SetEyeBlendShapePreviewActive);
+
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);
         public const string SetMicrophoneDeviceName = nameof(SetMicrophoneDeviceName);

@@ -5,9 +5,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 {
     public class MediaPipeBlink : ITickable
     {
-        private const float OpenBlink = 0.2f;
-        private const float CloseBlink = 0.5f;
-        
         private readonly MediaPipeFacialValueRepository _facialSetter;
         private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
         private readonly MediapipePoseSetterSettings _poseSetterSettings;
@@ -33,33 +30,24 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             var eye = _facialSetter.BlendShapes.Eye;
             var mirrored = _settingsRepository.IsFaceMirrored.Value;
 
+            // NOTE: iFacialMocap連携の実装ではSquintのブレンドシェイプ値も参照しているが、
+            // MediaPipeでは値があまり動かなくて信用できないので無視する (= 半目を安定してアバターに適用することは諦める)
             var rawLeftBlink = mirrored ? eye.RightBlink : eye.LeftBlink;
-            var rawLeftSquint = 0f; //mirrored ? eye.RightSquint : eye.LeftSquint;
             var rawRightBlink = mirrored ? eye.LeftBlink : eye.RightBlink;
-            var rawRightSquint = 0f; //mirrored ? eye.LeftSquint : eye.RightSquint;
 
-            var left = MapClamp(rawLeftBlink);
-            if (left < 0.9f)
-            {
-                left = Mathf.Lerp(left, _poseSetterSettings.BlinkValueOnSquint, rawLeftSquint);
-            }
             //NOTE: 開くほうは速度制限があるけど閉じるほうは一瞬でいい、という方式。右目も同様。
+            var left = MapClamp(rawLeftBlink);
             left = Mathf.Clamp(left, _blinkSource.Left - subLimit, 1.0f);
             _blinkSource.Left = Mathf.Clamp01(left);
 
             var right = MapClamp(rawRightBlink);
-            if (right < 0.9f)
-            {
-                right = Mathf.Lerp(right, _poseSetterSettings.BlinkValueOnSquint, rawRightSquint);
-            }
             right = Mathf.Clamp(right, _blinkSource.Right - subLimit, 1.0f);
             _blinkSource.Right = Mathf.Clamp01(right);
         }
 
         //0-1の範囲の値をmin-maxの幅のなかにギュッとあれします
         private float MapClamp(float value) => Mathf.Clamp01(
-            // (value - _poseSetterSettings.EyeMapMin) / (_poseSetterSettings.EyeMapMax - _poseSetterSettings.EyeMapMin)
-            (value - OpenBlink) / (CloseBlink - OpenBlink)
+            (value - _settingsRepository.EyeOpenBlinkValue) / (_settingsRepository.EyeCloseBlinkValue - _settingsRepository.EyeOpenBlinkValue)
             );
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using UniRx;
 using UnityEngine;
@@ -87,9 +86,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 VmmCommands.EnableWebCameraHighPowerModeLipSync,
                 m => _settingsRepository.SetShouldUseLipSyncResult(m.ToBoolean())
                 );
+            
             _receiver.AssignCommandHandler(
                 VmmCommands.EnableWebCameraHighPowerModeMoveZ,
                 m => _settingsRepository.EnableBodyMoveZAxis = m.ToBoolean()
+                );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetWebCamEyeOpenBlinkValue,
+                m => _settingsRepository.EyeOpenBlinkValue = m.ParseAsPercentage()
+                );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetWebCamEyeCloseBlinkValue,
+                m => _settingsRepository.EyeCloseBlinkValue = m.ParseAsPercentage()
                 );
 
             // TODO: ハンドトラッキングだけ動いてるときのキャリブレーションの実装 = 一瞬だけFaceTaskを起こす処理の実装

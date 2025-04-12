@@ -56,6 +56,8 @@ namespace Baku.VMagicMirror
         public Message UpdateCustomHandDownPose(string json) => WithArg(json);
         
         public Message NotifyVmcpReceiveStatus(string json) => WithArg(json);
+
+        public Message EyeBlendShapeValues(string json) => WithArg(json);
         
         #region VRoid
 

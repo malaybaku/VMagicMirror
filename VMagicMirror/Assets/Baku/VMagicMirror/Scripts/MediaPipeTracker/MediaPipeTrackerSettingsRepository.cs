@@ -41,6 +41,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public void SetShouldUsePerfectSyncResult(bool value) => _shouldUsePerfectSyncResult.Value = value;
         public bool EnableBodyMoveZAxis { get; set; }
 
+        public float EyeOpenBlinkValue { get; set; } = 0.2f;
+        public float EyeCloseBlinkValue { get; set; } = 0.5f;
+        
         // NOTE: ここから下はMediaPipeのタスクから直接使う == メインスレッド外から使うことがある
         public Atomic<bool> IsFaceMirrored { get; } = new(true);
         public Atomic<bool> IsHandMirrored { get; } = new(true);

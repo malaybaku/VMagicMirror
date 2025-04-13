@@ -91,6 +91,11 @@ namespace Baku.VMagicMirrorConfig
             EnableWebCameraHighPowerModeMoveZ = new RProperty<bool>(
                 setting.EnableWebCameraHighPowerModeMoveZ, v => SendMessage(factory.EnableWebCameraHighPowerModeMoveZ(v)));
 
+            WebCamEyeOpenBlinkValue = new RProperty<int>(
+                setting.WebCamEyeOpenBlinkValue, v => SendMessage(factory.SetWebCamEyeOpenBlinkValue(v)));
+            WebCamEyeCloseBlinkValue = new RProperty<int>(
+                setting.WebCamEyeCloseBlinkValue, v => SendMessage(factory.SetWebCamEyeCloseBlinkValue(v)));
+
             //TODO: 排他のタイミング次第でRadioButtonが使えなくなってしまうので要検証
             UseLookAtPointNone = new RProperty<bool>(setting.UseLookAtPointNone, v =>
             {
@@ -229,6 +234,10 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> EnableWebCameraHighPowerModeBlink { get; }
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
         public RProperty<bool> EnableWebCameraHighPowerModeMoveZ { get; }
+        
+        // NOTE: Openのほうが値としては小さい想定(+0付近)
+        public RProperty<int> WebCamEyeOpenBlinkValue { get; }
+        public RProperty<int> WebCamEyeCloseBlinkValue { get; }
 
         public void RequestCalibrateFace() => SendMessage(MessageFactory.Instance.CalibrateFace());
 

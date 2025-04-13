@@ -69,6 +69,10 @@
         public bool EnableWebCameraHighPowerModeLipSync { get; set; } = false;
         public bool EnableWebCameraHighPowerModeMoveZ { get; set; } = false;
 
+        public int WebCamEyeOpenBlinkValue { get; set; } = 0;
+        public int WebCamEyeCloseBlinkValue { get; set; } = 50;
+
+
         #endregion
 
         #region Eye
@@ -155,6 +159,10 @@
             EnableWebCameraHighPowerModeBlink = true;
             EnableWebCameraHighPowerModeLipSync = false;
             EnableWebCameraHighPowerModeMoveZ = true;
+            // NOTE: ちょっとややこしいが、この設定はトラッキングの設定であってアバターの目に関する設定ではないので、
+            // FaceEyeSettingのリセットと紐づける必要はない
+            WebCamEyeOpenBlinkValue = 0;
+            WebCamEyeCloseBlinkValue = 50;
         }
 
         public void ResetFaceEyeSetting()

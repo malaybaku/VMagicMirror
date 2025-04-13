@@ -247,17 +247,25 @@
                                     />
                     </Grid>
 
-
-                    <Button Width="NaN" 
+                    <Grid>
+                        <Button Width="NaN" 
                             HorizontalAlignment="Left"
-                            Margin="25,5,15,10"
+                            Margin="25,10"
                             Command="{Binding CalibrateWebCameraCommand}"
                             >
-                        <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="AutoFix" />
-                            <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
-                        </StackPanel>
-                    </Button>
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="AutoFix" />
+                                <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Width="NaN"
+                                HorizontalAlignment="Right"
+                                Margin="10"
+                                Content="まばたきのトラッキング設定を開く"
+                                Command="{Binding OpenEyeCalibrationWindowCommand}"
+                                />
+                    </Grid>
                 </StackPanel>
             </Border>
 
@@ -467,9 +475,7 @@
                                          Foreground="{StaticResource PrimaryHueMidBrush}"
                                          VerticalAlignment="Center" />
                             <TextBlock  Grid.Column="1"
-                                        Text="Webカメラ (軽量) では表情を検出できないため、この機能は動作しません。
-                                
-                                        ただし、VMC Protocolでパーフェクトシンク用の表情を受信している場合、その表情にもとづいて表情スイッチが適用されます。"
+                                        Text="{DynamicResource FaceSwitch_Notice_WebCamLowPower}"
                                         TextWrapping="Wrap"
                                         />
                         </Grid>
@@ -490,8 +496,8 @@
                                          Foreground="{StaticResource PrimaryHueMidBrush}"
                                          VerticalAlignment="Center" />
                             <TextBlock  Grid.Column="1"
-                                        Text="Webカメラ (高品質) の顔トラッキングでは「舌を出す」と「頬をふくらませる」の表情は検出できないことに注意してください。"
                                         TextWrapping="Wrap"
+                                        Text="{DynamicResource FaceSwitch_Notice_WebCamHighPower}"
                                         />
                         </Grid>
                     </md:Card>                    

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -144,6 +145,11 @@ namespace Baku.VMagicMirrorConfig
         public Message EnableWebCameraHighPowerModeBlink(bool enable) => WithArg(enable);
         public Message EnableWebCameraHighPowerModeLipSync(bool enable) => WithArg(enable);
         public Message EnableWebCameraHighPowerModeMoveZ(bool enable) => WithArg(enable);
+
+        public Message SetWebCamEyeOpenBlinkValue(int value) => WithArg(value);
+        public Message SetWebCamEyeCloseBlinkValue(int value) => WithArg(value);
+
+        public Message SetEyeBlendShapePreviewActive(bool active) => WithArg(active);
 
         /// <summary>
         /// Query.

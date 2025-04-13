@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Baku.VMagicMirrorConfig.View;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -205,6 +206,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private ActionCommand? _resetWebCameraHighPowerModeSettingsCommand;
         public ActionCommand ResetWebCameraHighPowerModeSettingsCommand => _resetWebCameraHighPowerModeSettingsCommand ??= new ActionCommand(ResetWebCameraHighPowerModeSettings);
         private void ResetWebCameraHighPowerModeSettings() => _motionModel.ResetWebCameraHighPowerModeSettings();
+
+        private ActionCommand? _openEyeCalibrationWindowCommand;
+        public ActionCommand OpenEyeCalibrationWindowCommand => _openEyeCalibrationWindowCommand ??= new ActionCommand(OpenEyeCalibrationWindow);
+        private void OpenEyeCalibrationWindow() => FaceTrackingEyeCalibrationWindow.OpenOrActivateExistingWindow();
 
         #endregion
 

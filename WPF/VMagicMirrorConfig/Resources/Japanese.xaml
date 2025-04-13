@@ -107,8 +107,8 @@
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">カメラで検出した目の動きを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
 
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">現在はwebカメラ (軽量) が選択されていますが、ハンドトラッキングが有効になっている間は自動で webカメラ (高品質) のトラッキングが適用されます。</sys:String>            
-        
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">現在はwebカメラ (軽量) が選択されていますが、ハンドトラッキングが有効になっている間は自動で webカメラ (高品質) のトラッキングが適用されます。</sys:String>
+
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによる顔トラッキングを行います。
@@ -140,6 +140,15 @@
     <sys:String x:Key="ExTracker_iFM_HasTrouble_OpenUrl">トラブルシューティングを開く(webページへ)</sys:String>
 
     <sys:String x:Key="ExTracker_FaceSwitch">表情スイッチ</sys:String>
+    
+    <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Webカメラ (軽量) では表情を検出できないため、この機能は動作しません。
+ただし、VMC Protocolでパーフェクトシンク用の表情を受信している場合、その表情にもとづいて表情スイッチが適用されます。</sys:String>
+
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">
+        Webカメラ (高品質) の顔トラッキングでは「舌を出す」と「頬をふくらませる」の表情は検出できないことに注意してください。
+    </sys:String>
+
+    
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
 「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">アクセサリーオプションを表示</sys:String>
@@ -156,6 +165,18 @@
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">舌を出すと</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">頬をふくらませると</sys:String>
 
+    <!-- Face Tracker Eye Calibration -->
+    <sys:String x:Key="EyeCalibration_Header">目のトラッキングの詳細設定</sys:String>
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">このウィンドウでは、ユーザーの目のトラッキングについて詳細設定を行います。
+ここで行える設定は、顔トラッキングで「Webカメラ (高品質)」を選択している間だけ適用されます。
+
+- webカメラの位置を変更したり、めがねを買い替えたりすると再設定が必要な場合があります。
+- アバターを切り替えるだけの場合、通常は再設定は不要です。
+  - アバターの目の動きに関する設定は「詳細設定」ウィンドウの「顔・表情」タブから行えます。        
+</sys:String>
+
+    <sys:String x:Key="EyeCalibration_"></sys:String>
+    
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
     <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションからモーション情報を受信できます。

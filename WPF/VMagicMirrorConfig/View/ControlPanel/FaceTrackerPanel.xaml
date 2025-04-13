@@ -1,0 +1,536 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.FaceTrackerPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="1850" d:DesignWidth="550"
+             >
+    <UserControl.DataContext>
+        <vm:FaceTrackerViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
+        <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter" />
+        <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
+        <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="5,15">
+
+            <TextBlock Style="{StaticResource HeaderText}"
+                       Text="顔トラッキングの種類"/>
+            <StackPanel Orientation="Horizontal" 
+                        Margin="5,5,5,15">
+                <Button Content="webカメラ (軽量)"
+                        Width="NaN"
+                        Command="{Binding SelectWebCamLowPowerCommand}"/>
+                <Button Content="webカメラ (高品質)"
+                        Width="NaN"
+                        Command="{Binding SelectWebCamHighPowerCommand}"/>
+                <Button Content="外部トラッキング"
+                        Width="NaN"
+                        Command="{Binding SelectExTrackerCommand}"/>
+            </StackPanel>
+
+            <!-- 「webカメラ (軽量)」のときのUI -->
+            <Border Style="{StaticResource SectionBorder}"
+                    Visibility="{Binding UseLiteWebCamera.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    >
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <md:PackIcon Style="{StaticResource HeaderPackIcon}" 
+                                     Width="18" Height="18"
+                                        Kind="FaceRecognition" />
+                        <TextBlock Style="{StaticResource HeaderText}" 
+                                    Text="{DynamicResource FaceTracker_LiteWebCamera_Title}" 
+                                    Margin="10,5"/>
+                    </StackPanel>
+
+
+                    <TextBlock Margin="15,5" 
+                                Text="{DynamicResource FaceTracker_LiteWebCamera_Instruction}"/>
+
+                    <Grid Margin="15,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox Grid.Column="0"
+                                  Margin="0"
+                                  IsChecked="{Binding EnableWebCamera.Value}"
+                                  Content="{DynamicResource FaceTracker_EnableWebCamera}"
+                                  />
+                        <ComboBox Grid.Column="2"
+                                HorizontalAlignment="Stretch"
+                                Margin="5,0"
+                                IsEnabled="{Binding EnableWebCamera.Value}"
+                                ItemsSource="{Binding WebCameraNames}"
+                                SelectedItem="{Binding WebCameraDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
+                                md:HintAssist.Hint="Camera"
+                                />
+
+                    </Grid>
+
+                    <CheckBox Margin="15,0,10,0"
+                              IsChecked="{Binding DisableFaceTrackingHorizontalFlip.Value}"
+                              Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
+                              />
+
+                    <Button Width="NaN" 
+                            HorizontalAlignment="Left"
+                            Margin="25,5,15,10"
+                            Command="{Binding CalibrateWebCameraCommand}"
+                            >
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="AutoFix" />
+                            <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- 「webカメラ (軽量)」のときのUI -->
+            <Border Style="{StaticResource SectionBorder}"
+                    Visibility="{Binding UseHighPowerWebCamera.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    >
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <md:PackIcon Style="{StaticResource HeaderPackIcon}" 
+                                     Width="18" Height="18"
+                                        Kind="FaceRecognition" />
+                        <TextBlock Style="{StaticResource HeaderText}" 
+                                    Text="{DynamicResource FaceTracker_HighPowerWebCamera_Title}" 
+                                    Margin="10,5"/>
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetWebCameraHighPowerModeSettingsCommand}"
+                                />
+                    </StackPanel>
+
+
+                    <Grid Margin="15,5">
+                        <TextBlock Text="{DynamicResource FaceTracker_HighPowerWebCamera_Instruction}"/>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                Content="{DynamicResource FaceTracker_HighPowerWebCamera_LimitationNotice_Title}"
+                                Click="OnHighPowerModeLimitationButtonClicked"
+                                MouseLeave="OnHighPowerModeLimitationButtonMouseLeave"
+                                HorizontalAlignment="Right"                    
+                                VerticalAlignment="Bottom"
+                                Width="NaN"
+                                Padding="3"
+                                >
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    <TextBlock Text="{DynamicResource FaceTracker_HighPowerWebCamera_LimitationNotice_Title}"/>
+                                </ToolTip>
+                            </Button.ToolTip>
+                        </Button>
+
+                    </Grid>
+
+
+                    <md:Card Margin="15,5,5,0" 
+                            Visibility="{Binding HighPowerWebCameraAppliedByHandTracking.Value,
+                                                Converter={StaticResource BooleanToVisibilityConverter}}"
+                            HorizontalAlignment="Center"
+                            Padding="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <md:PackIcon Grid.Column="0"
+                                         Kind="WarningOutline"
+                                         Margin="5"
+                                         Foreground="{StaticResource PrimaryHueMidBrush}"
+                                         VerticalAlignment="Center" />
+                            <TextBlock 
+                                Grid.Column="1"
+                                Text="{DynamicResource FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice}"
+                                TextWrapping="Wrap"
+                                />
+                        </Grid>
+                    </md:Card>
+
+
+                    <Grid Margin="15,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox Grid.Column="0"
+                                  Margin="0"
+                                  IsChecked="{Binding EnableWebCamera.Value}"
+                                  Content="{DynamicResource FaceTracker_EnableWebCamera}"
+                                  />
+                        <ComboBox Grid.Column="2"
+                                HorizontalAlignment="Stretch"
+                                Margin="5,0"
+                                IsEnabled="{Binding EnableWebCamera.Value}"
+                                ItemsSource="{Binding WebCameraNames}"
+                                SelectedItem="{Binding WebCameraDeviceName.Value, Converter={StaticResource WhiteSpaceStringToNullConverter}}"
+                                md:HintAssist.Hint="Camera"
+                                />
+
+                    </Grid>
+
+                    <CheckBox Margin="15,0,10,0"
+                              IsChecked="{Binding DisableFaceTrackingHorizontalFlip.Value}"
+                              Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
+                              />
+                    <CheckBox Margin="15,0,10,0"
+                              IsChecked="{Binding EnableWebCameraHighPowerModeMoveZ.Value}"
+                              Content="{DynamicResource FaceTracker_HighPowerWebCamera_EnableMoveZ}"
+                              />
+
+                    <CheckBox Margin="15,0,10,0" 
+                                VerticalContentAlignment="Center"
+                                Content="{DynamicResource FaceTracker_HighPowerWebCamera_UseImageBasedBlink}" 
+                                IsChecked="{Binding EnableWebCameraHighPowerModeBlink.Value}"
+                                />
+                    <CheckBox Margin="15,0,10,0" 
+                                VerticalContentAlignment="Center"
+                                Content="{DynamicResource FaceTracker_HighPowerWebCamera_UseImageBasedLipSync}" 
+                                IsChecked="{Binding EnableWebCameraHighPowerModeLipSync.Value}"
+                                />
+                    <Grid Margin="15,0,0,5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <CheckBox Grid.Row="0" 
+                                      Margin="0"
+                                      VerticalContentAlignment="Center"
+                                      Content="{DynamicResource ExTracker_Enable_PerfectSync}"                               
+                                      IsChecked="{Binding EnableWebCameraHighPowerModePerfectSync.Value}"
+                                      />
+                        <Button Grid.Row="1"
+                                    HorizontalAlignment="Left"
+                                    Margin="25,5"
+                                    Padding="5"
+                                    Width="NaN"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Foreground="Black"
+                                    Visibility="{Binding ShouldNotifyMissingBlendShapeClipNames.Value,
+                                                         Converter={StaticResource BooleanToVisibilityConverter}, 
+                                                         FallbackValue=Collapsed}"
+                                    Command="{Binding ShowMissingBlendShapeNotificationCommand}"                            
+                                    >
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="WarningOutline"
+                                                 Margin="0"
+                                                 VerticalAlignment="Center"
+                                                 Foreground="{StaticResource PrimaryHueMidBrush}"
+                                                 />
+                                <TextBlock Text="{DynamicResource ExTracker_PerfectSync_MissingBlendShape_Header}" 
+                                               Margin="3,0"
+                                               />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Row="0" Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Padding="0"
+                                    VerticalAlignment="Top"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,0,10,0"
+                                    Command="{Binding OpenPerfectSyncTipsUrlCommand}"
+                                    Content="{DynamicResource ExTracker_HowTo_PerfectSync}"
+                                    />
+                    </Grid>
+
+                    <Grid>
+                        <Button Width="NaN" 
+                            HorizontalAlignment="Left"
+                            Margin="25,10"
+                            Command="{Binding CalibrateWebCameraCommand}"
+                            >
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="AutoFix" />
+                                <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button Width="NaN"
+                                HorizontalAlignment="Right"
+                                Margin="10"
+                                Content="まばたきのトラッキング設定を開く"
+                                Command="{Binding OpenEyeCalibrationWindowCommand}"
+                                />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+
+            <!-- 「外部トラッキング」をオンにしたときのUI -->
+            <Border Style="{StaticResource SectionBorder}"
+                    Visibility="{Binding EnableExternalTracking.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    >
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <md:PackIcon Style="{StaticResource HeaderPackIcon}" 
+                                     Width="18" Height="18"
+                                        Kind="FaceRecognition" />
+                        <TextBlock Style="{StaticResource HeaderText}" 
+                                    Text="{DynamicResource ExTracker_Title}" 
+                                    Margin="10,5"/>
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetExternalTrackerSettingsCommand}"
+                                />
+                    </StackPanel>
+
+
+                    <TextBlock Margin="15,5" 
+                                Text="{DynamicResource ExTracker_Instruction}"/>
+                    <CheckBox Margin="15,0,10,0"
+                              IsChecked="{Binding DisableFaceTrackingHorizontalFlip.Value}"
+                              Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
+                              />
+                    <CheckBox Margin="15,0,10,0" 
+                                VerticalContentAlignment="Center"
+                                Content="{DynamicResource ExTracker_Enable_ImageLipSync}" 
+                                IsChecked="{Binding EnableExternalTrackerLipSync.Value}"
+                                />
+                    <Grid Margin="15,0,0,5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <CheckBox Grid.Row="0" 
+                                      Margin="0"
+                                      VerticalContentAlignment="Center"
+                                      Content="{DynamicResource ExTracker_Enable_PerfectSync}"                               
+                                      IsChecked="{Binding EnableExternalTrackerPerfectSync.Value}"
+                                      />
+                        <Button Grid.Row="1"
+                                    HorizontalAlignment="Left"
+                                    Margin="25,5"
+                                    Padding="5"
+                                    Width="NaN"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Foreground="Black"
+                                    Visibility="{Binding ShouldNotifyMissingBlendShapeClipNames.Value,
+                                                         Converter={StaticResource BooleanToVisibilityConverter}, 
+                                                         FallbackValue=Collapsed}"
+                                    Command="{Binding ShowMissingBlendShapeNotificationCommand}"                            
+                                    >
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="WarningOutline"
+                                                 Margin="0"
+                                                 VerticalAlignment="Center"
+                                                 Foreground="{StaticResource PrimaryHueMidBrush}"
+                                                 />
+                                <TextBlock Text="{DynamicResource ExTracker_PerfectSync_MissingBlendShape_Header}" 
+                                               Margin="3,0"
+                                               />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Row="0" Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    Padding="0"
+                                    VerticalAlignment="Top"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,0,10,0"
+                                    Command="{Binding OpenPerfectSyncTipsUrlCommand}"
+                                    Content="{DynamicResource ExTracker_HowTo_PerfectSync}"
+                                    />
+                    </Grid>
+
+                    <Grid Margin="0,15,0,5">
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <md:PackIcon Style="{StaticResource HeaderPackIcon}" 
+                                         Kind="ApplicationImport" />
+                            <TextBlock Style="{StaticResource HeaderText}" 
+                                       Text="{DynamicResource ExTracker_SourceSelect}" 
+                                       Margin="5"/>
+                        </StackPanel>
+
+ 
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Padding="0"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Right"
+                                Margin="0,3,3,0"
+                                Command="{Binding OpenInstructionUrlCommand}"
+                                Content="{DynamicResource ExTracker_Source_HowToCollaborate}"
+                                />
+                    </Grid>
+                    
+                    <TextBlock Margin="15,5" 
+                               Text="{DynamicResource ExTracker_SourceSelect_Instruction}"/>
+                    <Grid Margin="15,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <!--<RowDefinition Height="50"/>-->
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <RadioButton Grid.Row="0" Grid.Column="0"
+                                     VerticalContentAlignment="Center"
+                                     Content="{DynamicResource ExTracker_Source_None}"
+                                     IsChecked="{Binding IsTrackSourceNone}"
+                                     />
+                        <RadioButton Grid.Row="1" Grid.Column="0"
+                                     VerticalContentAlignment="Center"
+                                     Content="{DynamicResource ExTracker_Source_iFacialMocap}"
+                                     IsChecked="{Binding IsTrackSourceIFacialMocap}"
+                                     />
+                        <StackPanel Grid.Row="1" Grid.Column="1" 
+                                    IsEnabled="{Binding IsTrackSourceIFacialMocap}"
+                                    Margin="10,0"
+                                    Orientation="Horizontal"
+                                    >
+                            <TextBox Text="{Binding IFacialMocapTargetIpAddress.Value}"
+                                     md:HintAssist.Hint="{DynamicResource ExTracker_iFM_IpHint}"
+                                     Width="150"
+                                     />
+                            <Button Padding="0" Margin="8"
+                                    Width="100"
+                                    HorizontalAlignment="Stretch"
+                                    Content="Connect" 
+                                    Command="{Binding RefreshIFacialMocapTargetCommand}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <md:Card Padding="3"
+                             Visibility="{Binding IFacialMocapTroubleMessage.Value, 
+                                                  Converter={StaticResource StringNotEmptyToVisibilityConverter}, 
+                                                  FallbackValue=Collapsed}"
+                             >
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="3">
+                                <md:PackIcon Kind="WarningOutline" VerticalAlignment="Center"
+                                             Foreground="{StaticResource PrimaryHueMidBrush}"
+                                             />
+                                <TextBlock FontWeight="Bold"
+                                       Text="{DynamicResource ExTracker_iFM_HasTrouble_Header}"
+                                       />
+                            </StackPanel>
+                            <TextBlock Text="{Binding IFacialMocapTroubleMessage.Value}"
+                                       Margin="10,0"
+                                       TextWrapping="Wrap"                                       
+                                       />
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                    HorizontalAlignment="Right"
+                                    Padding="3"
+                                    Margin="5"
+                                    Command="{Binding OpenIFMTroubleShootCommand}"
+                                    Content="{DynamicResource ExTracker_iFM_HasTrouble_OpenUrl}"
+                                    />
+
+                        </StackPanel>
+                    </md:Card>
+
+
+                    <Button Width="NaN" 
+                            HorizontalAlignment="Left"
+                            Margin="25,5,15,10"
+                            Command="{Binding CalibrateCommand}"
+                            >
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="AutoFix" />
+                            <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- 「表情筋でブレンドシェイプクリップを発動する」という設定のUIがここに来ます。カオスになったら別ウィンドウに分けます。 -->
+            <Border Style="{StaticResource SectionBorder}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,0,0,5">
+                        <md:PackIcon Style="{StaticResource HeaderPackIcon}" 
+                                     Kind="SmileyOutline" />
+                        <TextBlock Style="{StaticResource HeaderText}" 
+                                   Text="{DynamicResource ExTracker_FaceSwitch}" 
+                                   Margin="5"/>
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetFaceSwitchSettingCommand}"
+                                />
+                    </StackPanel>
+
+                    <md:Card Margin="15,5,5,0" 
+                             Visibility="{Binding FaceSwitchSupported.Value, Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                             HorizontalAlignment="Stretch"
+                             Padding="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <md:PackIcon Grid.Column="0"
+                                         Kind="WarningOutline"
+                                         Margin="5"
+                                         Foreground="{StaticResource PrimaryHueMidBrush}"
+                                         VerticalAlignment="Center" />
+                            <TextBlock  Grid.Column="1"
+                                        Text="{DynamicResource FaceSwitch_Notice_WebCamLowPower}"
+                                        TextWrapping="Wrap"
+                                        />
+                        </Grid>
+                    </md:Card>
+
+                    <md:Card Margin="15,5,5,0" 
+                             Visibility="{Binding FaceSwitchLimited.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             HorizontalAlignment="Stretch"
+                             Padding="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <md:PackIcon Grid.Column="0"
+                                         Kind="WarningOutline"
+                                         Margin="5"
+                                         Foreground="{StaticResource PrimaryHueMidBrush}"
+                                         VerticalAlignment="Center" />
+                            <TextBlock  Grid.Column="1"
+                                        TextWrapping="Wrap"
+                                        Text="{DynamicResource FaceSwitch_Notice_WebCamHighPower}"
+                                        />
+                        </Grid>
+                    </md:Card>                    
+                    
+                    <TextBlock Margin="15,5"
+                               Text="{DynamicResource ExTracker_FaceSwitch_Instruction}"/>
+
+                    <CheckBox Margin="15,5" 
+                              VerticalContentAlignment="Center"
+                              Content="{DynamicResource ExTracker_FaceSwitch_ShowAccessoryOption}" 
+                              IsChecked="{Binding ShowAccessoryOption.Value}"
+                              />
+
+                    <TextBlock Width="100"
+                               Margin="15,15,15,5"
+                               HorizontalAlignment="Right"
+                               TextAlignment="Center"
+                               Text="{DynamicResource ExTracker_FaceSwitch_KeepLipSync}"/>
+                    <ItemsControl Margin="15,5"
+                                  ItemsSource="{Binding FaceSwitchItems}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:FaceSwitchItemViewModel}">
+                                <view:FaceSwitchTemplateItem />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

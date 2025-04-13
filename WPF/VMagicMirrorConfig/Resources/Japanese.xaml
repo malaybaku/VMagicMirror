@@ -19,7 +19,7 @@
     <!-- Top Tab -->
     <sys:String x:Key="TopBar_Home">ホーム</sys:String>
     <sys:String x:Key="TopBar_Streaming">配信</sys:String>
-    <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_FaceTracker">顔トラッキング</sys:String>
     <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">アクセサリー</sys:String>
     <sys:String x:Key="TopBar_HandTrack">ハンドトラッキング</sys:String>
@@ -75,12 +75,48 @@
     
     <sys:String x:Key="Streaming_Visibility_OutlineWillNotWorkWarning">「背景を透過」がオフのため縁取りは無効になっています。</sys:String>
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">ゲーム入力でもゲームパッドが使われています！</sys:String>
+
+    <!-- Face Tracker -->
+    <sys:String x:Key="FaceTracker_EnableWebCamera">webカメラをオン</sys:String>
+    <sys:String x:Key="FaceTracker_EnablePerfectSync">パーフェクトシンクを使用</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Title">webカメラ (軽量)</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">webカメラを用いて、低負荷に顔トラッキングを行います。
+
+- PC単体で、CPU負荷を抑えながらアバターにも動きを反映したいときに使用します。
+- このモードでカメラの使用を停止した場合、非常に低負荷で動作します。
+- ハンドトラッキングをオンにすると、自動で高品質モードに切り替わります。
+- 表情スイッチ機能が使えないなどの制限があります。</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">webカメラ (高品質)</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">webカメラを用いて、高品質な顔トラッキングを行います。
     
+- PC単体で、アバターへの動きをなるべく正確に反映したいときに使用します。
+- PC負荷は高くなるため、ゲームなどを起動している場合は注意してください。
+- パーフェクトシンクの表情の一部が適用できます。
+- 検出できる表情には制限があります。</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice_Title">詳しく...</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice" xml:space="preserve">webカメラ (高品質) の顔トラッキングでは、
+以下の表情はトラッキングできず、表情スイッチ機能も動作しません。
+
+- 頬をふくらませる
+- 舌を出す
+
+これらの表情を検出したい場合は、外部トラッキング機能を使用してください。</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">手前・奥への移動を有効化</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">カメラで検出した目の動きを適用</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">現在はwebカメラ (軽量) が選択されていますが、ハンドトラッキングが有効になっている間は自動で webカメラ (高品質) のトラッキングが適用されます。</sys:String>
+
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>
-    <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによるトラッキングを活用する機能です。
+    <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによる顔トラッキングを行います。
+
+- PCの負荷は抑えながら、高精度な顔トラッキングが利用できます。        
+- アバターがパーフェクトシンクに対応している場合、このモードが最も正確に表情を反映します。
+        
 外部トラッキングをオンにすると、以下の機能は一時的に無効化されます。
-- Webカメラでの顔トラッキング
 - マウスポインタを目で追従する機能</sys:String>
     <sys:String x:Key="ExTracker_Enable">外部トラッキングを有効化</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">リップシンクも外部トラッキングの値を適用</sys:String>    
@@ -104,6 +140,15 @@
     <sys:String x:Key="ExTracker_iFM_HasTrouble_OpenUrl">トラブルシューティングを開く(webページへ)</sys:String>
 
     <sys:String x:Key="ExTracker_FaceSwitch">表情スイッチ</sys:String>
+    
+    <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Webカメラ (軽量) では表情を検出できないため、この機能は動作しません。
+ただし、VMC Protocolでパーフェクトシンク用の表情を受信している場合、その表情にもとづいて表情スイッチが適用されます。</sys:String>
+
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">
+        Webカメラ (高品質) の顔トラッキングでは「舌を出す」と「頬をふくらませる」の表情は検出できないことに注意してください。
+    </sys:String>
+
+    
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
 「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">アクセサリーオプションを表示</sys:String>
@@ -120,6 +165,18 @@
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">舌を出すと</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">頬をふくらませると</sys:String>
 
+    <!-- Face Tracker Eye Calibration -->
+    <sys:String x:Key="EyeCalibration_Header">目のトラッキングの詳細設定</sys:String>
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">このウィンドウでは、ユーザーの目のトラッキングについて詳細設定を行います。
+ここで行える設定は、顔トラッキングで「Webカメラ (高品質)」を選択している間だけ適用されます。
+
+- webカメラの位置を変更したり、めがねを買い替えたりすると再設定が必要な場合があります。
+- アバターを切り替えるだけの場合、通常は再設定は不要です。
+  - アバターの目の動きに関する設定は「詳細設定」ウィンドウの「顔・表情」タブから行えます。        
+</sys:String>
+
+    <sys:String x:Key="EyeCalibration_"></sys:String>
+    
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
     <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションからモーション情報を受信できます。
@@ -169,7 +226,8 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
     <sys:String x:Key="HandTracking_DetectionResult">手の検出状況:</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">ヒント:
 - 手の全体をカメラ視野に収めるとトラッキングが安定します。
-- カメラの中央を避け、やや左右の位置を使用して下さい。</sys:String>
+- 手で顔を隠すことは避けてください。
+- 両手でのトラッキングが安定しない場合、片手だけを映してトラッキングするようにすると安定します。</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">未検出: 顔の横に手を挙げてみて下さい</sys:String>
     <sys:String x:Key="HandTracking_LearnMore">詳細 (Web)</sys:String>    
     

@@ -69,20 +69,32 @@
         // Motion, Face
         public const string EnableFaceTracking = nameof(EnableFaceTracking);
         public const string SetCameraDeviceName = nameof(SetCameraDeviceName);
-        public const string EnableWebCamHighPowerMode = nameof(EnableWebCamHighPowerMode);
         public const string AutoBlinkDuringFaceTracking = nameof(AutoBlinkDuringFaceTracking);
         public const string EnableHeadRotationBasedBlinkAdjust = nameof(EnableHeadRotationBasedBlinkAdjust);
         public const string EnableLipSyncBasedBlinkAdjust = nameof(EnableLipSyncBasedBlinkAdjust);
         public const string EnableVoiceBasedMotion = nameof(EnableVoiceBasedMotion);
+        // NOTE: HorizontalFlipControllerのみからこの値を参照すること (ゲーム入力モードの状態とかも踏まえて最終的な反転on/offを計算するため)
         public const string DisableFaceTrackingHorizontalFlip = nameof(DisableFaceTrackingHorizontalFlip);
         public const string CalibrateFace = nameof(CalibrateFace);
         public const string SetCalibrateFaceData = nameof(SetCalibrateFaceData);
+        public const string SetCalibrateFaceDataHighPower = nameof(SetCalibrateFaceDataHighPower);
 
         public const string FaceDefaultFun = nameof(FaceDefaultFun);
         public const string FaceNeutralClip = nameof(FaceNeutralClip);
         public const string FaceOffsetClip = nameof(FaceOffsetClip);
         public const string EnableEyeMotionDuringClipApplied = nameof(EnableEyeMotionDuringClipApplied);
         public const string DisableBlendShapeInterpolate = nameof(DisableBlendShapeInterpolate);
+
+        // Motion, Face, WebCam high power mode
+        public const string EnableWebCamHighPowerMode = nameof(EnableWebCamHighPowerMode);
+        public const string UsePerfectSyncWithWebCamera = nameof(UsePerfectSyncWithWebCamera);
+        public const string EnableWebCameraHighPowerModeBlink = nameof(EnableWebCameraHighPowerModeBlink);
+        public const string EnableWebCameraHighPowerModeLipSync = nameof(EnableWebCameraHighPowerModeLipSync);
+        public const string EnableWebCameraHighPowerModeMoveZ = nameof(EnableWebCameraHighPowerModeMoveZ);
+
+        public const string SetWebCamEyeOpenBlinkValue = nameof(SetWebCamEyeOpenBlinkValue);
+        public const string SetWebCamEyeCloseBlinkValue = nameof(SetWebCamEyeCloseBlinkValue);
+        public const string SetEyeBlendShapePreviewActive = nameof(SetEyeBlendShapePreviewActive);
 
         // Motion, Mouth
         public const string EnableLipSync = nameof(EnableLipSync);
@@ -99,6 +111,7 @@
 
         // Motion, Image-based Hand
         public const string EnableImageBasedHandTracking = nameof(EnableImageBasedHandTracking);
+        // NOTE: HorizontalFlipControllerのみからこの値を参照すること (ゲーム入力モードの状態とかも踏まえて最終的な反転on/offを計算するため)
         public const string DisableHandTrackingHorizontalFlip = nameof(DisableHandTrackingHorizontalFlip);
         public const string EnableSendHandTrackingResult = nameof(EnableSendHandTrackingResult);
 

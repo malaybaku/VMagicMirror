@@ -13,9 +13,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> LeftDetected { get; } = new RProperty<bool>(false);
         public RProperty<bool> RightDetected { get; } = new RProperty<bool>(false);
 
-        public RProperty<float> LeftConfidence { get; } = new RProperty<float>(0f);
-        public RProperty<float> RightConfidence { get; } = new RProperty<float>(0f);
-
         //NOTE: 21ポイント、というのは滅多に変わらないハズだけど、一応変わってもいいように実装する。
         //配列を2本使うのは、比較的ラクに(かつメモリに優しく)View側に変更通知を行うため
 
@@ -29,9 +26,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public void SetResult(HandTrackingResult model)
         {
             LeftDetected.Value = model.Left.Detected;
-            LeftConfidence.Value = model.Left.Confidence;
             RightDetected.Value = model.Right.Detected;
-            RightConfidence.Value = model.Right.Confidence;
             LeftOrRightDetected.Value = model.Left.Detected || model.Right.Detected;
 
             SwapBuffer(model);
@@ -41,9 +36,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 var src = model.Left.Points;
                 for (int i = 0; i < LeftPoints.Length; i++)
                 {
-                    LeftPoints[i].X = src[i].X * PanelWidth;
-                    //NOTE: UI座標系は上が0になってるので反転が必要
-                    LeftPoints[i].Y = (1.0 - src[i].Y) * PanelHeight;
+                    //NOTE: ミラーした状態で表示したいので反転している
+                    LeftPoints[i].X = (1.0 - src[i].X) * PanelWidth;
+                    LeftPoints[i].Y = src[i].Y * PanelHeight;
                 }
                 //NOTE: 配列スワップ + 値の書き込みが終わったのを受けてViewに通知
                 RaisePropertyChanged(nameof(LeftPoints));
@@ -54,8 +49,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 var src = model.Right.Points;
                 for (int i = 0; i < RightPoints.Length; i++)
                 {
-                    RightPoints[i].X = src[i].X * PanelWidth;
-                    RightPoints[i].Y = (1.0 - src[i].Y) * PanelHeight;
+                    RightPoints[i].X = (1.0 - src[i].X) * PanelWidth;
+                    RightPoints[i].Y = src[i].Y * PanelHeight;
                 }
                 RaisePropertyChanged(nameof(RightPoints));
             }

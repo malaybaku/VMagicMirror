@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.MediaPipeTracker;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror.Installer
@@ -60,6 +61,8 @@ namespace Baku.VMagicMirror.Installer
                 .NonLazy();
             
             WordToMotion.WordToMotionInstaller.Install(Container);
+            
+            MediaPipeTrackerSystemInstaller.Install(Container);
         }
     }
 }

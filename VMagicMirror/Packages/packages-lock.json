@@ -17,6 +17,15 @@
       "dependencies": {},
       "hash": "33d32baea4d50040e0601b725a694dcf3dcf6640"
     },
+    "com.github.homuler.mediapipe": {
+      "version": "file:com.github.homuler.mediapipe",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.test-framework": "1.0.0"
+      }
+    },
     "com.malaybaku.managed-midijack": {
       "version": "https://github.com/malaybaku/MidiJack.git?path=/Assets/MidiJack",
       "depth": 0,
@@ -36,15 +45,6 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {}
-    },
-    "com.unity.ai.navigation": {
-      "version": "1.1.4",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.modules.ai": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.barracuda": {
       "version": "3.0.0",
@@ -84,7 +84,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "3.0.24",
+      "version": "3.0.35",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -113,9 +113,9 @@
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.settings-manager": "1.0.3",
+        "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.physics": "1.0.0",
-        "com.unity.modules.imgui": "1.0.0"
+        "com.unity.settings-manager": "1.0.3"
       },
       "url": "https://packages.unity.com"
     },
@@ -202,31 +202,6 @@
       "dependencies": {
         "com.unity.modules.screencapture": "1.0.0"
       },
-      "url": "https://registry.npmjs.com"
-    },
-    "jp.keijiro.mediapipe.blazepalm": {
-      "version": "1.0.2",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.barracuda": "1.4.0-preview"
-      },
-      "url": "https://registry.npmjs.com"
-    },
-    "jp.keijiro.mediapipe.handlandmark": {
-      "version": "1.0.1",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.barracuda": "1.4.0-preview"
-      },
-      "url": "https://registry.npmjs.com"
-    },
-    "jp.keijiro.test-assets": {
-      "version": "1.0.1",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
       "url": "https://registry.npmjs.com"
     },
     "com.unity.modules.ai": {

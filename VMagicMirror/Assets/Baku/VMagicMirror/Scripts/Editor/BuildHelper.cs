@@ -164,9 +164,8 @@ namespace Baku.VMagicMirror
             //顔トラッキングのモデルファイル以外のファイルも削除
             foreach (var file in Directory.GetFiles(streamingAssetDir))
             {
-                string fileName = Path.GetFileName(file);
-                if (fileName != StreamingAssetFileNames.DnnModelFileName &&
-                    fileName != StreamingAssetFileNames.DlibFaceTrackingDataFileName)
+                var fileName = Path.GetFileName(file);
+                if (fileName != StreamingAssetFileNames.DlibFaceTrackingDataFileName)
                 {
                     File.Delete(file);
                 }

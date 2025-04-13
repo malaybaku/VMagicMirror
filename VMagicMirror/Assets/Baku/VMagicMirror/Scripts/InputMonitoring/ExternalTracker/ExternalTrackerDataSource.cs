@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker.iFacialMocap;
-using UniRx;
-using UniVRM10;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -20,9 +17,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         private const int SourceTypeNone = 0;
         private const int SourceTypeIFacialMocap = 1;
 
-        //いちど適用したFaceSwitchは最小でもこの秒数だけ維持するよ、という下限値。チャタリングを防ぐのが狙い。
-        private const float FaceSwitchMinimumKeepDuration = 0.5f;
-
         [Tooltip("顔トラがロスした場合、これにtime.deltaTimeをかけた分のLerpファクターで値を減衰させていく")]
         [SerializeField] private float lossBreakRate = 3.0f;
         
@@ -34,65 +28,50 @@ namespace Baku.VMagicMirror.ExternalTracker
         [Tooltip("トラッキングロス後に再度トラッキングが開始したとき、この秒数をかけてリカバー用のブレンディングを行う")]
         [SerializeField] private float trackRecoverDuration = 1.0f;
         
-        
         //顔トラッキングが更新されなかった秒数
         private float _notTrackCount = 0f;
         //顔トラッキングがされた秒数
         private float _trackedCount = 0f;
         
-        private float _faceSwitchKeepCount = 0f;
-        
         //ソースが「なし」のときに便宜的に割り当てるための、常に顔が中央にあり、無表情であるとみなせるような顔トラッキングデータ
-        private readonly EmptyExternalTrackSourceProvider _emptyProvider = new EmptyExternalTrackSourceProvider();
-        private readonly FaceSwitchExtractor _faceSwitchExtractor = new FaceSwitchExtractor();
-        public FaceSwitchExtractor FaceSwitchExtractor => _faceSwitchExtractor;
+        private readonly EmptyExternalTrackSourceProvider _emptyProvider = new();
 
         private IExternalTrackSourceProvider _currentProvider = null;
         private IExternalTrackSourceProvider CurrentProvider => _currentProvider ?? _emptyProvider;
 
         private IMessageSender _sender = null;
-        private FaceControlConfiguration _config = null;
+        private FaceSwitchExtractor _faceSwitchExtractor;
+        private HorizontalFlipController _horizontalFlipController;
         
         [Inject]
         public void Initialize(
-            IVRMLoadable vrmLoadable, 
             IMessageReceiver receiver, 
             IMessageSender sender,
-            FaceControlConfiguration config,
+            FaceSwitchExtractor faceSwitchExtractor,
             HorizontalFlipController horizontalFlipController)
         {
-            vrmLoadable.VrmLoaded += OnVrmLoaded;
-            vrmLoadable.VrmDisposing += OnVrmUnloaded;
             _sender = sender;
-            _config = config;
+            _faceSwitchExtractor = faceSwitchExtractor;
+            _horizontalFlipController = horizontalFlipController;
             
-            var _ = new ExternalTrackerSettingReceiver(receiver, this);
-            horizontalFlipController.DisableHorizontalFlip
-                .Subscribe(disable => DisableHorizontalFlip = disable)
-                .AddTo(this);
+            receiver.AssignCommandHandler(
+                VmmCommands.ExTrackerEnable,
+                c => EnableTracking(c.ToBoolean())
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.ExTrackerCalibrate,
+                _ => Calibrate()
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.ExTrackerSetCalibrateData,
+                c => SetCalibrationData(c.Content)
+            );
+            receiver.AssignCommandHandler(
+                VmmCommands.ExTrackerSetSource,
+                c => SetSourceType(c.ToInt())
+            );
         }
 
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _faceSwitchExtractor.AvatarBlendShapeNames = info
-                .instance.Vrm.Expression.LoadExpressionMap()
-                .Keys.Select(k =>
-                {
-                    var result = k.Name;
-                    if (k.Preset != ExpressionPreset.custom)
-                    {
-                        result = char.ToUpper(result[0]) + result.Substring(1);
-                    }
-                    return result;
-                })
-                .ToArray();
-        }
-
-        private void OnVrmUnloaded()
-        {
-            _faceSwitchExtractor.AvatarBlendShapeNames = Array.Empty<string>();
-        }
-        
         private void OnFaceTrackUpdated(IFaceTrackSource source)
         {
             _notTrackCount = 0;
@@ -103,17 +82,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             if (_notTrackCount < notTrackCountLimit)
             {
                 _notTrackCount += Time.deltaTime;
-            }
-
-            if (_faceSwitchKeepCount > 0)
-            {
-                _faceSwitchKeepCount -= Time.deltaTime;
-            }
-            
-            if (_faceSwitchKeepCount <= 0 && !ActiveFaceSwitchItem.Equals(_faceSwitchExtractor.ActiveItem))
-            {
-                _activeFaceSwitchItem.Value = _faceSwitchExtractor.ActiveItem;
-                _faceSwitchKeepCount = FaceSwitchMinimumKeepDuration;
             }
 
             //空トラッカーを仮想的に更新するやつ
@@ -134,12 +102,10 @@ namespace Baku.VMagicMirror.ExternalTracker
                 CurrentProvider.BreakToBasePosition(1 - lossBreakRate * Time.deltaTime);
             }
 
-            //FaceSwitchExtractorの処理がなにげに重いので、外部トラッキング非使用時に通らないようガードしてます
-            if (CurrentProvider != _emptyProvider)
+            // NOTE: 外部トラッキングがちゃんと動いてる場合以外はFace Switchを触らない(webカメラとかが代わりに適宜Updateを呼ぶはず)
+            if (_trackingEnabled && CurrentProvider != _emptyProvider)
             {
                 _faceSwitchExtractor.Update(CurrentSource);
-                _config.FaceSwitchActive = !string.IsNullOrEmpty(FaceSwitchClipName);
-                _config.FaceSwitchRequestStopLipSync = _config.FaceSwitchActive && !_activeFaceSwitchItem.Value.KeepLipSync;
             }
         }
 
@@ -149,8 +115,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         //NOTE: このクラス以外はデータソースの種類に関知しない(しないほうがよい)ことに注意
         private int _currentSourceType = SourceTypeNone;
         
-        /// <summary> トラッキングの有効/無効を切り替えます。 </summary>
-        public void EnableTracking(bool enable)
+        private void EnableTracking(bool enable)
         {
             if (_trackingEnabled == enable)
             {
@@ -159,8 +124,8 @@ namespace Baku.VMagicMirror.ExternalTracker
             
             UpdateReceiver(enable, _currentSourceType);
         }
-        
-        public void Calibrate()
+
+        private void Calibrate()
         {
             //トラッキング前にキャリブすると訳わからないので禁止！
             if (!Connected)
@@ -183,7 +148,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             _trackedCount = 0f;
         }
 
-        public void SetCalibrationData(string json)
+        private void SetCalibrationData(string json)
         {
             try
             {
@@ -195,10 +160,8 @@ namespace Baku.VMagicMirror.ExternalTracker
                 LogOutput.Instance.Write(ex);
             }
         }
-        
-        public void SetFaceHorizontalFlipDisable(bool disableFlip) => DisableHorizontalFlip = disableFlip;
 
-        public void SetSourceType(int sourceType)
+        private void SetSourceType(int sourceType)
         {
             if (sourceType == _currentSourceType || 
                 sourceType < 0 ||
@@ -208,22 +171,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
             
             UpdateReceiver(_trackingEnabled, sourceType);
-        }
-
-        /// <summary>
-        /// FaceSwitchの設定をJSON文字列で受け取って更新します。
-        /// </summary>
-        /// <param name="json"></param>
-        public void SetFaceSwitchSetting(string json)
-        {
-            try
-            {
-                _faceSwitchExtractor.Setting = JsonUtility.FromJson<FaceSwitchSettings>(json);
-            }
-            catch (Exception ex)
-            {
-                LogOutput.Instance.Write(ex);
-            }
         }
 
         private void UpdateReceiver(bool enable, int sourceType)
@@ -285,20 +232,12 @@ namespace Baku.VMagicMirror.ExternalTracker
         /// <summary> 外部トラッキングに接続できているかどうかを取得します。 </summary>
         public bool Connected => _notTrackCount < notTrackCountLimit;
 
-
-        #region 連携先の機能サポートチェック
-
         /// <summary> 現在、頭部の並進移動トラッキングがサポートされているかどうかを取得します。</summary>
         public bool SupportFacePositionOffset => CurrentProvider.SupportFacePositionOffset;
 
-        /// <summary>現在、ハンドトラッキングをサポートするかどうかを取得します。</summary>
-        public bool SupportHandTracking => CurrentProvider.SupportHandTracking;
-
-        #endregion
-        
         #region トラッキングデータの内訳
 
-        public bool DisableHorizontalFlip { get; private set; }
+        public bool DisableHorizontalFlip => _horizontalFlipController?.DisableFaceHorizontalFlip.Value ?? false;
         
         /// <summary>
         /// 現在の顔トラッキング情報を取得します。
@@ -347,16 +286,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
         }
 
-        private readonly ReactiveProperty<ActiveFaceSwitchItem> _activeFaceSwitchItem =
-            new ReactiveProperty<ActiveFaceSwitchItem>();
-        public IReadOnlyReactiveProperty<ActiveFaceSwitchItem> ActiveFaceSwitchItem => _activeFaceSwitchItem;
-
-        /// <summary> FaceSwitch機能で指定されたブレンドシェイプがあればその名称を取得し、なければ空文字を取得します。 </summary>
-        public string FaceSwitchClipName => Connected ? _activeFaceSwitchItem.Value.ClipName : "";
-        
-        public bool KeepLipSyncForFaceSwitch => 
-            !string.IsNullOrEmpty(_activeFaceSwitchItem.Value.ClipName) && _activeFaceSwitchItem.Value.KeepLipSync;
-
         #endregion
     }
 
@@ -374,10 +303,9 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
         }
 
-        private readonly RecordFaceTrackSource _record = new RecordFaceTrackSource();
+        private readonly RecordFaceTrackSource _record = new();
         public IFaceTrackSource FaceTrackSource => _record;
         
-        public bool SupportHandTracking => false;
         public bool SupportFacePositionOffset => false;
 
         public Quaternion HeadRotation => Quaternion.identity;

@@ -26,6 +26,7 @@
             resolver.Add(new HotKeyModel());
             resolver.Add(new FaceMotionBlendShapeNameStore());
             resolver.Add(new CustomMotionList());
+            resolver.Add(new EyeBlendShapePreviewReceiver());
 
             resolver.Add(new GameInputSettingModel());
             resolver.Add(new PreferenceSettingModel());

@@ -196,16 +196,6 @@
                                   md:HintAssist.Hint="Camera"
                                   />
 
-                        <CheckBox Grid.Row="5" Grid.Column="1"                            
-                                  Grid.ColumnSpan="2"
-                                  Margin="15,0,0,0"
-                                  IsEnabled="{Binding EnableFaceTracking.Value}"
-                                  IsChecked="{Binding EnableWebCamHighPowerMode.Value}"
-                                  >
-                            <CheckBox.Content>
-                                <TextBlock Text="{DynamicResource Motion_Face_EnableWebCamHighPowerMode}"/>
-                            </CheckBox.Content>
-                        </CheckBox>
                         <CheckBox Grid.Row="6" Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"

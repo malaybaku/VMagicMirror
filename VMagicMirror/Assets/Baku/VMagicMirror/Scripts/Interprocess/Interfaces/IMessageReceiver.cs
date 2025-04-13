@@ -38,6 +38,11 @@ namespace Baku.VMagicMirror
     // Assign~ が引き続き使われる想定ケースはJSONが飛んできてパースするやつとか
     public static class MessageReceiverExtension
     {
+        public static void BindAction(this IMessageReceiver receiver, string command, Action action)
+        {
+            receiver.AssignCommandHandler(command, _ => action());
+        }
+        
         public static void BindBoolProperty(
             this IMessageReceiver receiver,
             string command,
@@ -90,6 +95,15 @@ namespace Baku.VMagicMirror
                 var argb = c.ToColorFloats();
                 target.Value = new Color(argb[0], argb[1], argb[2], argb[3]);
             });
+        }
+
+        public static void BindStringProperty(
+            this IMessageReceiver receiver,
+            string command,
+            IReactiveProperty<string> target
+        )
+        {
+            receiver.AssignCommandHandler(command, c => target.Value = c.Content);
         }
     }
 }

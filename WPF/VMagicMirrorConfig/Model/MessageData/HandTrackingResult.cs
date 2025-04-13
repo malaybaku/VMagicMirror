@@ -1,26 +1,18 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace Baku.VMagicMirrorConfig
 {
 
-    /// <summary>
-    /// ハンドトラッキングの結果データのうちGUIで出したいもの
-    /// </summary>
+    /// <summary> ハンドトラッキングの結果データのうちGUIで出したいもの </summary>
     public record HandTrackingResult(HandTrackingSingleResult Left, HandTrackingSingleResult Right);
 
-    /// <summary>
-    /// ハンドトラッキングの結果データのうち片手分
-    /// </summary>
-    public record HandTrackingSingleResult(
-        bool Detected, 
-        float Confidence,
-        Point[] Points
-        )
+    /// <summary> ハンドトラッキングの結果データのうち片手分 </summary>
+    public record HandTrackingSingleResult(bool Detected, Point[] Points)
     {
-        public static HandTrackingSingleResult Empty() => new HandTrackingSingleResult(false, 0f, Array.Empty<Point>());
+        public static HandTrackingSingleResult Empty() => new HandTrackingSingleResult(false, Array.Empty<Point>());
     }
 
     public static class HandTrackingResultBuilder
@@ -29,43 +21,15 @@ namespace Baku.VMagicMirrorConfig
         {
             try
             {
-                var jobj = JObject.Parse(json);
-
-                var left = jobj["left"] as JObject;
-                var right = jobj["right"] as JObject;
-                var leftPoints = new List<Point>();
-
-                if (left?["points"] is JArray rawLeftPoints)
+                var serialized = JsonConvert.DeserializeObject<SerializedHandTrackingResult>(json);
+                if (serialized == null)
                 {
-                    foreach (var p in rawLeftPoints)
-                    {
-                        if (p?["x"] is JValue px && p?["y"] is JValue py)
-                        {
-                            leftPoints.Add(new Point((double)px, (double)py));
-                        }
-                    }
+                    return new HandTrackingResult(HandTrackingSingleResult.Empty(), HandTrackingSingleResult.Empty());
                 }
-
-                var rightPoints = new List<Point>();
-                if (right?["points"] is JArray rawRightPoints)
-                {
-                    foreach (var p in rawRightPoints)
-                    {
-                        if (p?["x"] is JValue px && p?["y"] is JValue py)
-                        {
-                            rightPoints.Add(new Point((double)px, (double)py));
-                        }
-                    }
-                }
-
-                bool leftDetected = (left?["is_detected"] is JValue ld) && (bool)ld;
-                float leftConfidence = (left?["confidence"] is JValue lc) ? (float)lc : 0f;
-                bool rightDetected = (right?["is_detected"] is JValue rd) && (bool)rd;
-                float rightConfidence = (right?["confidence"] is JValue rc) ? (float)rc : 0f;
 
                 return new HandTrackingResult(
-                    new HandTrackingSingleResult(leftDetected, leftConfidence, leftPoints.ToArray()),
-                    new HandTrackingSingleResult(rightDetected, rightConfidence, rightPoints.ToArray())
+                    new HandTrackingSingleResult(serialized.HasLeftHand, serialized.GetLeftHandPoints()),
+                    new HandTrackingSingleResult(serialized.HasRightHand, serialized.GetRightHandPoints())
                     );
             }
             catch (Exception ex)
@@ -74,5 +38,44 @@ namespace Baku.VMagicMirrorConfig
                 return new HandTrackingResult(HandTrackingSingleResult.Empty(), HandTrackingSingleResult.Empty());
             }
         }
+    }
+
+    public class SerializedHandTrackingResult
+    {
+
+        public bool HasLeftHand { get; set; }
+
+        public bool HasRightHand { get; set; }
+
+        // NOTE: 下記はHasLeftHand/HasRightHandがtrueのときのみ有効。falseの場合、nullになったり空配列になったりする
+        public SerializedHandTrackingResultPoint[]? LeftHandPoints { get; set; } 
+            = Array.Empty<SerializedHandTrackingResultPoint>();
+
+        public SerializedHandTrackingResultPoint[]? RightHandPoints { get; set; } 
+            = Array.Empty<SerializedHandTrackingResultPoint>();
+
+        public Point[] GetLeftHandPoints()
+        {
+            if (LeftHandPoints == null || LeftHandPoints.Length == 0)
+            {
+                return Array.Empty<Point>();
+            }
+            return LeftHandPoints.Select(p => new Point(p.X, p.Y)).ToArray();
+        }
+
+        public Point[] GetRightHandPoints()
+        {
+            if (RightHandPoints == null || RightHandPoints.Length == 0)
+            {
+                return Array.Empty<Point>();
+            }
+            return RightHandPoints.Select(p => new Point(p.X, p.Y)).ToArray();
+        }
+    }
+
+    public class SerializedHandTrackingResultPoint
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
     }
 }

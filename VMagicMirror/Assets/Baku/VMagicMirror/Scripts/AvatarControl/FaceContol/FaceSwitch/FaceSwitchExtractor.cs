@@ -2,7 +2,7 @@
 using System.Linq;
 using Zenject;
 
-namespace Baku.VMagicMirror.ExternalTracker
+namespace Baku.VMagicMirror
 {
     /// <summary>
     /// FaceSwitchで現在指定しているアイテムを表す要素で、キー的に扱えるようなもの

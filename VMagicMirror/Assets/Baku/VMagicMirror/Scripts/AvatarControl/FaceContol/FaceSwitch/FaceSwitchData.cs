@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Baku.VMagicMirror.ExternalTracker
+namespace Baku.VMagicMirror
 {
     /// <summary>
     /// WPFから飛んでくる、FaceSwitchの設定一覧

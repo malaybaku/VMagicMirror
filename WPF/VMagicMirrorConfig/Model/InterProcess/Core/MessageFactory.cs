@@ -301,6 +301,10 @@ namespace Baku.VMagicMirrorConfig
         public Message BloomIntensity(int intensityPercent) => WithArg(intensityPercent);
         public Message BloomThreshold(int thresholdPercent) => WithArg(thresholdPercent);
 
+        public Message AmbientOcclusionEnable(bool enable) => WithArg(enable);
+        public Message AmbientOcclusionIntensity(int intensityPercent) => WithArg(intensityPercent);
+        public Message AmbientOcclusionColor(int r, int g, int b) => WithArg($"{r},{g},{b}");
+
         public Message OutlineEffectEnable(bool active) => WithArg(active);
         public Message OutlineEffectThickness(int thickness) => WithArg(thickness);
         public Message OutlineEffectColor(int r, int g, int b) => WithArg($"{r},{g},{b}");

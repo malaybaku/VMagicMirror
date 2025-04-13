@@ -172,11 +172,8 @@
 
 - webカメラの位置を変更したり、めがねを買い替えたりすると再設定が必要な場合があります。
 - アバターを切り替えるだけの場合、通常は再設定は不要です。
-  - アバターの目の動きに関する設定は「詳細設定」ウィンドウの「顔・表情」タブから行えます。        
-</sys:String>
+- アバターの目の動きに関する設定は「詳細設定」ウィンドウの「顔・表情」タブから行えます。</sys:String>
 
-    <sys:String x:Key="EyeCalibration_"></sys:String>
-    
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
     <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションからモーション情報を受信できます。

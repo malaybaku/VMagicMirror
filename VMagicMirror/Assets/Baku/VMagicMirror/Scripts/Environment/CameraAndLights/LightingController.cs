@@ -22,6 +22,7 @@ namespace Baku.VMagicMirror
 
         private Color _color = Color.white;
         private Bloom _bloom;
+        private AmbientOcclusion _ambientOcclusion;
         private VmmAlphaEdge _vmmAlphaEdge;
         private VmmVhs _vmmVhs;
         private VmmMonochrome _vmmMonochrome;
@@ -90,7 +91,7 @@ namespace Baku.VMagicMirror
                 VmmCommands.BloomColor,
                 message =>
                 {
-                    float[] bloomRgb = message.ToColorFloats();
+                    var bloomRgb = message.ToColorFloats();
                     SetBloomColor(bloomRgb[0], bloomRgb[1], bloomRgb[2]);
                 });
 
@@ -140,11 +141,30 @@ namespace Baku.VMagicMirror
                     _showEffectDuringTracking = message.ToBoolean();
                     UpdateRetroEffectStatus();
                 });
+
+            receiver.AssignCommandHandler(
+                VmmCommands.AmbientOcclusionEnable,
+                message => _ambientOcclusion.active = message.ToBoolean()
+                );
+
+            receiver.AssignCommandHandler(
+                VmmCommands.AmbientOcclusionIntensity,
+                message => _ambientOcclusion.intensity.value = message.ParseAsPercentage()
+                );
+
+            receiver.AssignCommandHandler(
+                VmmCommands.AmbientOcclusionColor,
+                message =>
+                {
+                    var rgb = message.ToColorFloats();
+                    _ambientOcclusion.color.value = new Color(rgb[0], rgb[1], rgb[2]);
+                });
         }
         
         private void Start()
         {
             _bloom = postProcess.profile.GetSetting<Bloom>();
+            _ambientOcclusion = postProcess.profile.GetSetting<AmbientOcclusion>();
             _vmmAlphaEdge = postProcess.profile.GetSetting<VmmAlphaEdge>();
             _vmmMonochrome = postProcess.profile.GetSetting<VmmMonochrome>();
             _vmmVhs = postProcess.profile.GetSetting<VmmVhs>();
@@ -260,7 +280,7 @@ namespace Baku.VMagicMirror
         
         private void UpdateRetroEffectStatus()
         {
-            bool enableEffect =_handTrackingEnabled &&
+            var enableEffect =_handTrackingEnabled &&
                 (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking);
 
             _vmmMonochrome.active = enableEffect;

@@ -718,6 +718,134 @@
                 </StackPanel>
             </Border>
 
+            <Border Style="{StaticResource SideMarginSectionBorder}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <md:PackIcon Kind="Blur"
+                                     Style="{StaticResource SettingHeaderPackIcon}"
+                                     />
+                        <TextBlock Text="Ambient Occlusion"
+                                   Margin="5"
+                                   Style="{StaticResource HeaderText}"
+                                   />
+                        
+                        <md:Card Style="{StaticResource ColorIndicatorCard}">
+                            <Rectangle>
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="{Binding AmbientOcclusionColor}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </md:Card>
+
+                        <Button Style="{StaticResource CategorySettingResetButton}"
+                                Command="{Binding ResetAmbientOcclusionSettingCommand}"
+                                />
+                    </StackPanel>
+
+                    <md:Card md:ShadowAssist.ShadowDepth="Depth1" 
+                             Margin="5,10" 
+                             Padding="0">
+                        <Expander Margin="0">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <md:PackIcon Kind="Edit" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{DynamicResource Setting_Color_Expander_Header}"/>
+                                </StackPanel>
+                            </Expander.Header>
+
+                            <Grid>
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                           Text="R"/>
+                                <Slider Grid.Row="0" Grid.Column="1"
+                                        x:Name="sliderAmbientOcclusionR"
+                                        Value="{Binding AmbientOcclusionR.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="0" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=sliderAmbientOcclusionR}"
+                                         />
+
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                           Text="G"/>
+                                <Slider Grid.Row="1" Grid.Column="1"
+                                        x:Name="sliderAmbientOcclusionG"
+                                        Value="{Binding AmbientOcclusionG.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="1" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=sliderAmbientOcclusionG}"
+                                         />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0"
+                                           Text="B"/>
+                                <Slider Grid.Row="2" Grid.Column="1"
+                                        x:Name="sliderAmbientOcclusionB"
+                                        Value="{Binding AmbientOcclusionB.Value, Mode=TwoWay}"
+                                        />
+                                <TextBox Grid.Row="2" Grid.Column="2"
+                                         Text="{Binding Value, ElementName=sliderAmbientOcclusionB}"
+                                         />
+
+                                <md:ColorPicker Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" 
+                                                Height="200"
+                                                Margin="20"
+                                                Color="{Binding AmbientOcclusionColor, Mode=TwoWay}"
+                                                />
+                            </Grid>
+                        </Expander>
+                    </md:Card>
+
+                    <Grid Margin="5">
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                <Setter Property="TextAlignment" Value="Center"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox Grid.Row="0" Grid.Column="0"
+                                  Content="Enable"
+                                  IsChecked="{Binding EnableAmbientOcclusion.Value, Mode=TwoWay}"
+                                  />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="Intensity [%]" />
+                        <Slider Grid.Row="1" Grid.Column="1"
+                                x:Name="sliderAmbientOcclusionIntensity"
+                                Minimum="0"
+                                Maximum="500"
+                                Value="{Binding AmbientOcclusionIntensity.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="1" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderAmbientOcclusionIntensity}"
+                                 />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
         </StackPanel>
     </ScrollViewer>
 

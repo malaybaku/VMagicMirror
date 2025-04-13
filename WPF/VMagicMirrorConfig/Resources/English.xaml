@@ -212,8 +212,9 @@ Use "Default" to apply hand tracking result.</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult">Detection Status:</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">(Not Detected: Try raising hands next to the face)</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">Tips:
-- Put whole hand inside the camera view to stabilize.
-- Put hands slight left or right, than the center.</sys:String>
+- Keeping your entire hand within the camera frame helps stable tracking.
+- Avoid to hide the face with hands.
+- Single hand tracking is more stable than tracking two hands at the same time.</sys:String>
     <sys:String x:Key="HandTracking_LearnMore">More...</sys:String>    
       
     <!-- Accessory Panel -->

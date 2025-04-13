@@ -13,7 +13,6 @@ namespace Baku.VMagicMirror
         [SerializeField] private LipSyncIntegrator lipSync = null;
         [SerializeField] private FaceControlManager eyes = null;
         [SerializeField] private ExternalTrackerPerfectSync perfectSync = null;
-        [SerializeField] private ExternalTrackerFaceSwitchApplier faceSwitch = null;
         [SerializeField] private NeutralClipSettings neutralClipSettings = null;
         [SerializeField] private BlendShapeInterpolator blendShapeInterpolator = null;
 
@@ -34,7 +33,6 @@ namespace Baku.VMagicMirror
             ExpressionAccumulator accumulator
             )
         {
-            Debug.LogError("FaceSwitchをSerializeField上の定義からも削除したい");
             _faceSwitchUpdater = faceSwitchUpdater;
             _wtmBlendShape = wtmBlendShape;
             _vmcpBlendShape = vmcpBlendShape;
@@ -43,13 +41,12 @@ namespace Baku.VMagicMirror
             vrmLoadable.VrmLoaded += info => _hasModel = true;
             vrmLoadable.VrmDisposing += () => _hasModel = false;
             
-            blendShapeInterpolator.Setup(faceSwitchUpdater, faceSwitch, wtmBlendShape);
+            blendShapeInterpolator.Setup(faceSwitchUpdater, wtmBlendShape);
         }
 
         private void LateUpdate()
         {
             _faceSwitchUpdater.UpdateCurrentValue(Time.deltaTime);
-            faceSwitch.UpdateCurrentValue();
             _wtmBlendShape.UpdateCurrentValue();
             blendShapeInterpolator.UpdateWeight();
             
@@ -137,35 +134,6 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //TODO: こっちはfaceSwitchの削除に伴って削除したい
-            if (false && faceSwitch.HasClipToApply)
-            {
-                //NOTE: WtMと同じく、パーフェクトシンクの口と組み合わす場合のコストに多少配慮した書き方。
-                if (!faceSwitch.KeepLipSync)
-                {
-                    faceSwitch.Accumulate(_accumulator);
-                }
-                else if (perfectSync.IsConnected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
-                {
-                    faceSwitch.Accumulate(_accumulator);
-                    perfectSync.Accumulate(_accumulator, false, true, false);
-                }
-                else if (_vmcpBlendShape.IsActive.Value)
-                {
-                    faceSwitch.Accumulate(_accumulator);
-                    _vmcpBlendShape.AccumulateLipSyncBlendShape(_accumulator);
-                }
-                else
-                {
-                    //FaceSwitch + AIUEOを適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
-                    faceSwitch.Accumulate(_accumulator);
-                    lipSync.Accumulate(_accumulator);
-                }
-
-                neutralClipSettings.AccumulateOffsetClip(_accumulator);
-                return;
-            }
-            
             //Perfect Syncが適用 > Blinkは確定で無視。
             //リップシンクは…ここも設定しだいで適用。
             if (perfectSync.IsReadyToAccumulate)

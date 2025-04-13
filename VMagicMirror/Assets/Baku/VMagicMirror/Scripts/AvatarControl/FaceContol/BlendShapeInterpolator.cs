@@ -84,12 +84,8 @@ namespace Baku.VMagicMirror
         private readonly ReactiveProperty<bool> _hasWordToMotionOutput = new(false);
         private readonly ReactiveProperty<bool> _hasFaceSwitchOutput = new(false);
 
-        public void Setup(
-            FaceSwitchUpdater faceSwitchUpdater,
-            ExternalTrackerFaceSwitchApplier faceSwitch,
-            WordToMotionBlendShape wtmBlendShape)
+        public void Setup(FaceSwitchUpdater faceSwitchUpdater, WordToMotionBlendShape wtmBlendShape)
         {
-            Debug.LogError("ちゃんと動いてそうになったらfaceSwitch引数を削除したい");
             faceSwitchUpdater.CurrentValue
                 .Subscribe(v =>
                 {

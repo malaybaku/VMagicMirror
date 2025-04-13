@@ -2,7 +2,6 @@
 using UnityEngine;
 using Zenject;
 using Baku.VMagicMirror.ExternalTracker.iFacialMocap;
-using UniRx;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -36,26 +35,24 @@ namespace Baku.VMagicMirror.ExternalTracker
         
         //ソースが「なし」のときに便宜的に割り当てるための、常に顔が中央にあり、無表情であるとみなせるような顔トラッキングデータ
         private readonly EmptyExternalTrackSourceProvider _emptyProvider = new();
-        private readonly FaceSwitchExtractor _faceSwitchExtractor = new();
-        public FaceSwitchExtractor FaceSwitchExtractor => _faceSwitchExtractor;
 
         private IExternalTrackSourceProvider _currentProvider = null;
         private IExternalTrackSourceProvider CurrentProvider => _currentProvider ?? _emptyProvider;
 
         private IMessageSender _sender = null;
-        private FaceControlConfiguration _config = null;
+        private FaceSwitchExtractor _faceSwitchExtractor;
         private HorizontalFlipController _horizontalFlipController;
         
         [Inject]
         public void Initialize(
             IMessageReceiver receiver, 
             IMessageSender sender,
-            FaceControlConfiguration config,
+            FaceSwitchExtractor faceSwitchExtractor,
             HorizontalFlipController horizontalFlipController)
         {
-            _horizontalFlipController = horizontalFlipController;
             _sender = sender;
-            _config = config;
+            _faceSwitchExtractor = faceSwitchExtractor;
+            _horizontalFlipController = horizontalFlipController;
             
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerEnable,
@@ -289,14 +286,6 @@ namespace Baku.VMagicMirror.ExternalTracker
             }
         }
 
-        private readonly ReactiveProperty<ActiveFaceSwitchItem> _activeFaceSwitchItem = new();
-
-        /// <summary> FaceSwitch機能で指定されたブレンドシェイプがあればその名称を取得し、なければ空文字を取得します。 </summary>
-        public string FaceSwitchClipName => Connected ? _activeFaceSwitchItem.Value.ClipName : "";
-        
-        public bool KeepLipSyncForFaceSwitch => 
-            !string.IsNullOrEmpty(_activeFaceSwitchItem.Value.ClipName) && _activeFaceSwitchItem.Value.KeepLipSync;
-
         #endregion
     }
 
@@ -314,7 +303,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         {
         }
 
-        private readonly RecordFaceTrackSource _record = new RecordFaceTrackSource();
+        private readonly RecordFaceTrackSource _record = new();
         public IFaceTrackSource FaceTrackSource => _record;
         
         public bool SupportFacePositionOffset => false;

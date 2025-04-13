@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Zenject;
 
 namespace Baku.VMagicMirror.ExternalTracker
 {
@@ -35,6 +36,9 @@ namespace Baku.VMagicMirror.ExternalTracker
     /// </summary>
     public class FaceSwitchExtractor
     {
+        [Inject]
+        public FaceSwitchExtractor() { }
+        
         public ActiveFaceSwitchItem ActiveItem { get; private set; } = ActiveFaceSwitchItem.Empty;
 
         private string[] _avatarBlendShapeNames = Array.Empty<string>();

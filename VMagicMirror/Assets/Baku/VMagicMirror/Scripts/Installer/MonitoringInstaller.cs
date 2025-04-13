@@ -1,4 +1,5 @@
-﻿using Baku.VMagicMirror.ExternalTracker;
+﻿using System.ComponentModel;
+using Baku.VMagicMirror.ExternalTracker;
 using UnityEngine;
 using Zenject;
 
@@ -22,8 +23,9 @@ namespace Baku.VMagicMirror.Installer
                 .AsCached();
             container.BindInstance(mousePositionProvider);
             container.BindInstance(faceTracker);
+            
+            container.Bind<FaceSwitchExtractor>().AsSingle();
             container.BindInstance(externalTracker);
-            container.BindInstance(externalTracker.FaceSwitchExtractor);
             container.BindInterfacesAndSelfTo<FaceSwitchUpdater>().AsSingle();
             container.BindInstance(gamepadListener);
             container.BindInstance(midiInputObserver);

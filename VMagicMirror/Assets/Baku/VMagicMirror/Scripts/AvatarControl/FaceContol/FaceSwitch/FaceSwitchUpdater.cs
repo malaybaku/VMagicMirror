@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Baku.VMagicMirror.ExternalTracker;
 using UniRx;
 using UnityEngine;
 using UniVRM10;
@@ -48,7 +47,6 @@ namespace Baku.VMagicMirror
             IMessageReceiver messageReceiver,
             FaceSwitchExtractor faceSwitch,
             FaceControlConfiguration config,
-            ExternalTrackerDataSource externalTracker,
             EyeBoneAngleSetter eyeBoneSetter)
         {
             _vrmLoadable = vrmLoadable;

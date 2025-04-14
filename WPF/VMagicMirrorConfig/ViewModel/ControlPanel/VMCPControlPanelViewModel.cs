@@ -229,7 +229,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             HasInvalidSendPortNumber.Value = port < 0 || port > 65535;
             HasInvalidSendAddress.Value = !IPAddress.TryParse(SendAddress.Value, out _);
 
-            CanApplySendSettings.Value = !HasInvalidSendPortNumber.Value && !HasInvalidSendAddress.Value;
+            CanApplySendSettings.Value = 
+                IsSendSettingsDirty.Value && 
+                !HasInvalidSendPortNumber.Value && 
+                !HasInvalidSendAddress.Value;
         }
 
 

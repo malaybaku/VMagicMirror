@@ -312,12 +312,12 @@
                     <TextBlock Text="{DynamicResource VMCP_ShouldApply}"
                                FontWeight="Bold"
                                Margin="15,15,15,0"
-                               Visibility="{Binding CanApplySendSettings.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               Visibility="{Binding IsSendSettingsDirty.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                                />
 
                     <StackPanel Orientation="Horizontal"
                         Margin="0,10,0,5" 
-                        IsEnabled="{Binding VMCPEnabled.Value}">
+                        IsEnabled="{Binding VMCPSendEnabled.Value}">
 
                         <Button Padding="0"
                                 MinWidth="130"

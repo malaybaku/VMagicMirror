@@ -114,7 +114,7 @@ namespace Baku.VMagicMirror
                 //NOTE: UniVRMの適用タイミングに依存したくないので、自前で勝手に仮想ボーンを入れておく
                 _leftEye = leftEyeBone.ControlTarget;
                 _leftEyeInitialLocalRot = _leftEye.localRotation;
-                _leftEyeInitialLocalRot = _leftEye.rotation;
+                _leftEyeInitialGlobalRot = _leftEye.rotation;
             }
             _hasRightEyeBone = controlRigBones.TryGetValue(HumanBodyBones.RightEye, out var rightEyeBone);
             if (_hasRightEyeBone && rightEyeBone != null)

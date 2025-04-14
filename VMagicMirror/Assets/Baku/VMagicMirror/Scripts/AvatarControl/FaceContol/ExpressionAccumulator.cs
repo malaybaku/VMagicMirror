@@ -72,5 +72,6 @@ namespace Baku.VMagicMirror
         }
 
         public float GetValue(ExpressionKey key) => _values.TryGetValue(key, out var result) ? result : 0f;
+        public IReadOnlyDictionary<ExpressionKey, float> GetValues() => _values;
     }
 }

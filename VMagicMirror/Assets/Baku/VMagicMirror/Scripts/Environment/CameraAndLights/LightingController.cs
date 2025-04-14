@@ -27,6 +27,7 @@ namespace Baku.VMagicMirror
         private VmmVhs _vmmVhs;
         private VmmMonochrome _vmmMonochrome;
         private bool _handTrackingEnabled = false;
+        private bool _vmcpSendEnabled = false;
         //NOTE: この値自体はビルドバージョンによらずfalseがデフォルトで良いことに注意。
         //制限版でGUI側にtrue相当の値が表示されるが、これはGUI側が別途決め打ちしてくれてる
         private bool _showEffectDuringTracking = false;
@@ -158,6 +159,15 @@ namespace Baku.VMagicMirror
                 {
                     var rgb = message.ToColorFloats();
                     _ambientOcclusion.color.value = new Color(rgb[0], rgb[1], rgb[2]);
+
+                });
+
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableVMCPSend,
+                message =>
+                {
+                    _vmcpSendEnabled = message.ToBoolean();
+                    UpdateRetroEffectStatus();
                 });
         }
         
@@ -280,7 +290,8 @@ namespace Baku.VMagicMirror
         
         private void UpdateRetroEffectStatus()
         {
-            var enableEffect =_handTrackingEnabled &&
+            var enableEffect = 
+                (_handTrackingEnabled || _vmcpSendEnabled) &&
                 (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking);
 
             _vmmMonochrome.active = enableEffect;

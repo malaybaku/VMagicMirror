@@ -1,4 +1,3 @@
-using Baku.VMagicMirror.ExternalTracker;
 using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker

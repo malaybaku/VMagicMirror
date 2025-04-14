@@ -55,7 +55,9 @@ namespace Baku.VMagicMirror
         
         // NOTE: IsDirtyじゃないので注意 (値が据え置きでもよい)
         public bool UpdateCalled { get; private set; }
-        
+        // 1FrameでUpdate()を1~複数回呼んだうちの1回以上でFaceSwitchが適用されるとtrueになる。
+        private bool _isFaceSwitchActivatedInThisUpdate;
+
         //NOTE: WPF側のデフォルト表示と同じ構成の初期状態を入れておく
         private FaceSwitchSettings _setting = FaceSwitchSettings.LoadDefault();
         /// <summary> 設定ファイルから読み込まれて送信された設定 </summary>
@@ -69,8 +71,12 @@ namespace Baku.VMagicMirror
             }
         }
 
-        public void ResetUpdateCalledFlag() => UpdateCalled = false;
-        
+        public void ResetUpdateCalledFlag()
+        {
+            UpdateCalled = false;
+            _isFaceSwitchActivatedInThisUpdate = false;
+        }
+
         //ロードされたアバターと設定を突き合わせた結果得られる、確認すべき条件セットの一覧
         private FaceSwitchItem[] _itemsToCheck = Array.Empty<FaceSwitchItem>();
 
@@ -105,12 +111,19 @@ namespace Baku.VMagicMirror
                         _itemsToCheck[i].keepLipSync,
                         _itemsToCheck[i].accessoryName
                     );
+                    _isFaceSwitchActivatedInThisUpdate = true;
                     return;
                 }
             }
             
-            //一つも該当しない場合
-            ActiveItem = ActiveFaceSwitchItem.Empty;
+            // NOTE: 以下が連続したときにはFace Switchが有効値になるようにしているリセットされちゃうのを防いでいる。
+            // - Face Switchを検出したソースAがUpdateを呼ぶ
+            // - Face Switchを検出してないソースBがUpdateを呼ぶ
+            // よりシンプルに、ソースごとにUpdate()関数自体を分けたほうがいいのかもしれないが…
+            if (!_isFaceSwitchActivatedInThisUpdate)
+            {
+                ActiveItem = ActiveFaceSwitchItem.Empty;
+            }
         }
 
         //NOTE: このキーはWPF側が決め打ちしてるやつです

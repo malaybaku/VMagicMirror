@@ -836,7 +836,7 @@
                         <Slider Grid.Row="1" Grid.Column="1"
                                 x:Name="sliderAmbientOcclusionIntensity"
                                 Minimum="0"
-                                Maximum="500"
+                                Maximum="200"
                                 Value="{Binding AmbientOcclusionIntensity.Value, Mode=TwoWay}"
                                 />
                         <TextBox Grid.Row="1" Grid.Column="2"

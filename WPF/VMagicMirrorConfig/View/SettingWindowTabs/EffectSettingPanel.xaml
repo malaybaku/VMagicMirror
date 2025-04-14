@@ -724,7 +724,7 @@
                         <md:PackIcon Kind="Blur"
                                      Style="{StaticResource SettingHeaderPackIcon}"
                                      />
-                        <TextBlock Text="Ambient Occlusion"
+                        <TextBlock Text="{DynamicResource AO_Title}"
                                    Margin="5"
                                    Style="{StaticResource HeaderText}"
                                    />
@@ -741,6 +741,10 @@
                                 Command="{Binding ResetAmbientOcclusionSettingCommand}"
                                 />
                     </StackPanel>
+
+                    <CheckBox Content="{DynamicResource AO_Enable}"
+                              IsChecked="{Binding EnableAmbientOcclusion.Value, Mode=TwoWay}"
+                              />
 
                     <md:Card md:ShadowAssist.ShadowDepth="Depth1" 
                              Margin="5,10" 
@@ -811,35 +815,21 @@
                     </md:Card>
 
                     <Grid Margin="5">
-                        <Grid.Resources>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                <Setter Property="TextAlignment" Value="Center"/>
-                            </Style>
-                        </Grid.Resources>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="3*" />
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
 
-                        <CheckBox Grid.Row="0" Grid.Column="0"
-                                  Content="Enable"
-                                  IsChecked="{Binding EnableAmbientOcclusion.Value, Mode=TwoWay}"
-                                  />
-
-                        <TextBlock Grid.Row="1" Grid.Column="0"
-                                   Text="Intensity [%]" />
-                        <Slider Grid.Row="1" Grid.Column="1"
+                        <TextBlock Grid.Column="0"
+                                   Text="{DynamicResource AO_Intensity}" />
+                        <Slider Grid.Column="1"
                                 x:Name="sliderAmbientOcclusionIntensity"
                                 Minimum="0"
                                 Maximum="200"
                                 Value="{Binding AmbientOcclusionIntensity.Value, Mode=TwoWay}"
                                 />
-                        <TextBox Grid.Row="1" Grid.Column="2"
+                        <TextBox Grid.Column="2"
                                  Text="{Binding Value, ElementName=sliderAmbientOcclusionIntensity}"
                                  />
                     </Grid>

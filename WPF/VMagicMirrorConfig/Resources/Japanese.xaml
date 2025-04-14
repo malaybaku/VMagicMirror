@@ -517,6 +517,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Bloom_Intensity">強さ[%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">しきい値[%]</sys:String>
     
+    <sys:String x:Key="AO_Title">Ambient Occlusion</sys:String>
+    <sys:String x:Key="AO_Enable">エフェクトを有効化</sys:String>
+    <sys:String x:Key="AO_Intensity">エフェクトの強さ[%]</sys:String>
+    
     <sys:String x:Key="OutlineEffect">縁取り (背景透過でのみ有効)</sys:String>
     <sys:String x:Key="OutlineEffect_Enable_Short">縁取り (背景透過時のみ)</sys:String>
     <sys:String x:Key="OutlineEffect_Enable">縁取りエフェクトをオン</sys:String>

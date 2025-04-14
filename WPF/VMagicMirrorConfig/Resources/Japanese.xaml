@@ -216,8 +216,9 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
     <sys:String x:Key="VMCP_Send_SendFacialVrm0">VRM0.x のブレンドシェイプ名を使用 (送信先がVRM1.0未対応ならオンにします)</sys:String>
     <sys:String x:Key="VMCP_Send_Prefer30fps">60FPSで実行している時も30FPSで送信</sys:String>    
     <sys:String x:Key="VMCP_Send_EditionLimitationNote" xml:space="preserve">※基本エディションではVMCPの送信を有効化すると視覚エフェクトが適用されます。
-ただし、送信データの内容はフルエディションと完全に同じです。
-フルエディションではエフェクトを無効化できます。</sys:String>
+また、基本エディションでは「ゲーム入力モード」機能を使用中はモーションが送信されません。
+それ以外の送信データはフルエディションと全く同じです。
+フルエディションでは視覚エフェクトを無効化できます。</sys:String>
     <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">データ送信中に視覚エフェクトを適用</sys:String>
     <sys:String x:Key="VMCP_Send_GetFullEdition">フルエディションを入手</sys:String>
     <sys:String x:Key="VMCP_Send_IpAddressError">* IPアドレスの形式を確認してください。</sys:String>

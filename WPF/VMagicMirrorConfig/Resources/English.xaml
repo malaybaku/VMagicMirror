@@ -204,7 +204,7 @@ Use "Default" to apply VMC Protocol based hand pose.</sys:String>
     <sys:String x:Key="VMCP_Send_SendFacialVrm0">Convert to VRM0.x BlendShape Name (Enable when target app cannot load VRM1.0)</sys:String>
     <sys:String x:Key="VMCP_Send_Prefer30fps">Limit Data Rate to 30/sec</sys:String>    
     <sys:String x:Key="VMCP_Send_EditionLimitationNote" xml:space="preserve">Standard Edition shows visual effect during VMC Protorol data send feature is active,
-though the data is exactly same as Full Edition.
+The data is exactly same as Full Edition, except that motion data will not sent during Game Input feature is active.
 Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">Show Effect</sys:String>
     <sys:String x:Key="VMCP_Send_GetFullEdition">Get Full Edition</sys:String>

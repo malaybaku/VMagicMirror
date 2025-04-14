@@ -281,8 +281,6 @@ namespace Baku.VMagicMirror.VMCP
             }
         }
 
-        //TODO: ボーン名の入れ方とかが想定通りか自信ないのでデバッグちゃんとやってね
-        
         private void SendBonePoses(bool sendFingerBone)
         {
             var bundle = new Bundle();

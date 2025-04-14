@@ -168,19 +168,20 @@ namespace Baku.VMagicMirror
             // NOTE:
             // 誰もUpdateを呼んでない場合、トラッキングロストしている or Webカメラ等が完全に止まってるはずなので、
             // その場合も何も適用しない
-            if (!_faceSwitch.UpdateCalled || _faceSwitchItem.IsEmpty)
+            if (_faceSwitch.UpdateCalled && !_faceSwitchItem.IsEmpty)
+            {
+                _currentValue.Value = FaceSwitchKeyApplyContent.Create(
+                    ExpressionKeyUtils.CreateKeyByName(_faceSwitchItem.ClipName),
+                    _faceSwitchItem.KeepLipSync,
+                    _faceSwitchItem.AccessoryName
+                );
+            }
+            else
             {
                 _currentValue.Value = FaceSwitchKeyApplyContent.Empty();
-                _config.FaceSwitchActive = false;
-                return;
             }
 
             _faceSwitch.ResetUpdateCalledFlag();
-            _currentValue.Value = FaceSwitchKeyApplyContent.Create(
-                ExpressionKeyUtils.CreateKeyByName(_faceSwitchItem.ClipName),
-                _faceSwitchItem.KeepLipSync,
-                _faceSwitchItem.AccessoryName
-            );
         }
     }
 }

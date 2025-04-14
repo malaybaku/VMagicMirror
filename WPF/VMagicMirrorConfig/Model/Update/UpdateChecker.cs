@@ -16,7 +16,7 @@ namespace Baku.VMagicMirrorConfig
     /// <summary>
     /// アプリ起動時に適当に走らせるとアプリ更新チェックができるすごいやつだよ
     /// </summary>
-    class UpdateChecker
+    public class UpdateChecker
     {
         private const string StandardEditionUrl = "https://baku-dreameater.booth.pm/items/1272298";
         private const string FullEditionUrl = "https://baku-dreameater.booth.pm/items/3064040";

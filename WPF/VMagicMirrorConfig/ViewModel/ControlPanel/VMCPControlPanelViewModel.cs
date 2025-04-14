@@ -33,7 +33,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             OpenFullEditionDownloadUrlCommand = new ActionCommand(OpenFullEditionUrl);
 
             IsSendSettingsDirty = new RProperty<bool>(false, _ => UpdateSendSettingsValidity());
-            ShowEffectWhenSendEnabled = FeatureLocker.FeatureLocked
+            ShowEffectWhenSendEnabled = FeatureLocker.FeatureLocked || IsInDesignMode
                 ? _alwaysTrue
                 : _model.ShowEffectDuringVMCPSendEnabled;
 

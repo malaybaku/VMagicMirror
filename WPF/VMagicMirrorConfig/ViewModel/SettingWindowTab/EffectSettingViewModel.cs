@@ -35,6 +35,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ResetShadowSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetShadowSetting)
                 );
+            ResetAmbientOcclusionSettingCommand = new ActionCommand(
+                () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetAmbientOcclusionSetting)
+                );
             ResetBloomSettingCommand = new ActionCommand(
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetBloomSetting)
                 );
@@ -62,6 +65,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 model.OutlineEffectR.AddWeakEventHandler(UpdateOutlineEffectColor);
                 model.OutlineEffectG.AddWeakEventHandler(UpdateOutlineEffectColor);
                 model.OutlineEffectB.AddWeakEventHandler(UpdateOutlineEffectColor);
+
+                model.AmbientOcclusionR.AddWeakEventHandler(UpdateAmbientOcclusionColor);
+                model.AmbientOcclusionG.AddWeakEventHandler(UpdateAmbientOcclusionColor);
+                model.AmbientOcclusionB.AddWeakEventHandler(UpdateAmbientOcclusionColor);
             }
         }
 
@@ -86,6 +93,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         void UpdateLightColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(LightColor));
         void UpdateBloomColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(BloomColor));
         void UpdateOutlineEffectColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(OutlineEffectColor));
+        void UpdateAmbientOcclusionColor(object? sender, PropertyChangedEventArgs e) => RaisePropertyChanged(nameof(AmbientOcclusionColor));
 
         void ApplyAntiAliasStyle(object? sender, PropertyChangedEventArgs e) 
             => AntiAliasStyle.Value = GetAntiAliasStyle(_model.AntiAliasStyle.Value);
@@ -141,6 +149,27 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<int> ShadowYaw => _model.ShadowYaw;
         public RProperty<int> ShadowPitch => _model.ShadowPitch;
         public RProperty<int> ShadowDepthOffset => _model.ShadowDepthOffset;
+
+        #endregion
+
+        #region Ambient Occlusion
+
+        public RProperty<bool> EnableAmbientOcclusion => _model.EnableAmbientOcclusion;
+        public RProperty<int> AmbientOcclusionIntensity => _model.AmbientOcclusionIntensity;
+        public RProperty<int> AmbientOcclusionR => _model.AmbientOcclusionR;
+        public RProperty<int> AmbientOcclusionG => _model.AmbientOcclusionG;
+        public RProperty<int> AmbientOcclusionB => _model.AmbientOcclusionB;
+
+        public Color AmbientOcclusionColor
+        {
+            get => Color.FromRgb((byte)AmbientOcclusionR.Value, (byte)AmbientOcclusionG.Value, (byte)AmbientOcclusionB.Value);
+            set
+            {
+                AmbientOcclusionR.Value = value.R;
+                AmbientOcclusionG.Value = value.G;
+                AmbientOcclusionB.Value = value.B;
+            }
+        }
 
         #endregion
 
@@ -201,6 +230,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public ActionCommand ResetLightSettingCommand { get; }
         public ActionCommand ResetShadowSettingCommand { get; }
+        public ActionCommand ResetAmbientOcclusionSettingCommand { get; }
         public ActionCommand ResetBloomSettingCommand { get; }
         public ActionCommand ResetOutlineEffectSettingCommand { get; }
         public ActionCommand ResetWindSettingCommand { get; }

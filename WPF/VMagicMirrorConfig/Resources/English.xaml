@@ -506,6 +506,10 @@ Translate (2 way):
     <sys:String x:Key="Bloom_Intensity">Intensity [%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">Threshold [%]</sys:String>
     
+    <sys:String x:Key="AO_Title">Ambient Occlusion</sys:String>
+    <sys:String x:Key="AO_Enable">Enable Effect</sys:String>
+    <sys:String x:Key="AO_Intensity">Intensity [%]</sys:String>
+    
     <sys:String x:Key="OutlineEffect">Outline (require transparent background)</sys:String>
     <sys:String x:Key="OutlineEffect_Enable">Enable Outline Effect</sys:String>
     <sys:String x:Key="OutlineEffect_Enable_Short">Outline if BG Transparent</sys:String>

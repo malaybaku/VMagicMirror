@@ -185,6 +185,10 @@
         public const string BloomThreshold = nameof(BloomThreshold);
         public const string BloomColor = nameof(BloomColor);
 
+        public const string AmbientOcclusionEnable = nameof(AmbientOcclusionEnable);
+        public const string AmbientOcclusionIntensity = nameof(AmbientOcclusionIntensity);
+        public const string AmbientOcclusionColor = nameof(AmbientOcclusionColor);
+
         public const string OutlineEffectEnable = nameof(OutlineEffectEnable);
         public const string OutlineEffectThickness = nameof(OutlineEffectThickness);
         public const string OutlineEffectColor = nameof(OutlineEffectColor);

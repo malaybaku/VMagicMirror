@@ -83,8 +83,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 StopTask();
             }
         }
-        
-        public None StartTask()
+
+        private void StartTask()
         {
             // Stopしないでもシーケンス上は大丈夫だけど、まあ気になるので…
             StopTask();
@@ -96,17 +96,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _textureSourceSubscriber = _textureSource
                 .ImageUpdated
                 .Subscribe(OnWebCamImageUpdated);
-            
-            return None.Value;
         }
 
-        public None StopTask()
+        public void StopTask()
         {
             OnStopTask();
             _textureSourceSubscriber?.Dispose();
             _textureSourceSubscriber = null;
-            
-            return None.Value;
         }
     }
 }

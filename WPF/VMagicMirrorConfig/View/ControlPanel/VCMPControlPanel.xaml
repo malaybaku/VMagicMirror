@@ -235,12 +235,6 @@
                                 Text="{DynamicResource VMCP_Send_Header}"
                                 Margin="5,10"
                                 />
-                    <CheckBox Margin="15,0,10,0" 
-                              Content="{DynamicResource VMCP_Send_ShowEffectDuringEnabled}" 
-                              IsEnabled="{Binding ForceToShowVisualEffectWhenSendEnabled,
-                                                  Converter={StaticResource BooleanReverseConverter}}"
-                              IsChecked="{Binding ShowEffectWhenSendEnabled.Value}"
-                              />
 
                     <Grid Margin="15,5">
                         <Grid.RowDefinitions>
@@ -265,6 +259,7 @@
                                    Visibility="{Binding HasInvalidSendAddress.Value,
                                                         Converter={StaticResource BooleanToVisibilityConverter}}"
                                    Text="{DynamicResource VMCP_Send_IpAddressError}"/>
+                        
                         <TextBlock Grid.Row="1" Grid.Column="0"
                                    Text="{DynamicResource VMCP_Send_DestPort}"
                                    />
@@ -280,34 +275,6 @@
                                    Text="{DynamicResource VMCP_Send_PortInputError}"/>
 
                     </Grid>
-
-                    <CheckBox Margin="15,0,10,0" 
-                              Content="{DynamicResource VMCP_Send_SendBone}" 
-                              IsChecked="{Binding SendBonePose.Value}"
-                              />
-                    <CheckBox Margin="35,0,10,0" 
-                              Content="{DynamicResource VMCP_Send_SendFingerBone}" 
-                              IsEnabled="{Binding SendBonePose.Value}"
-                              IsChecked="{Binding SendFingerBonePose.Value}"
-                              />
-                    <CheckBox Margin="15,0,10,0" 
-                              Content="{DynamicResource VMCP_Send_SendFacial}" 
-                              IsChecked="{Binding SendFacial.Value}"
-                              />
-                    <CheckBox Margin="35,0,10,0" 
-                              Content="{DynamicResource VMCP_Send_SendFacialNonStandard}" 
-                              IsEnabled="{Binding SendFacial.Value}"
-                              IsChecked="{Binding SendNonStandardFacial.Value}"
-                              />
-                    <CheckBox Margin="35,0,10,0" 
-                              Content="{DynamicResource VMCP_Send_SendFacialVrm0}" 
-                              IsEnabled="{Binding SendFacial.Value}"
-                              IsChecked="{Binding SendUseVrm0Facial.Value}"
-                              />
-                    <CheckBox Margin="15,0,10,0" 
-                              Content="{DynamicResource VMCP_Send_Prefer30fps}" 
-                              IsChecked="{Binding SendPrefer30Fps.Value}"
-                              />
 
                     <TextBlock Text="{DynamicResource VMCP_ShouldApply}"
                                FontWeight="Bold"
@@ -340,7 +307,45 @@
                     </StackPanel>
 
 
+                    <TextBlock Style="{StaticResource HeaderText}"
+                                Text="{DynamicResource VMCP_AdvancedSetting_Header}"
+                                Margin="5,20,5,10"
+                                />
 
+                    <CheckBox Margin="15,0,10,10" 
+                              Content="{DynamicResource VMCP_Send_ShowEffectDuringEnabled}" 
+                              IsEnabled="{Binding ForceToShowVisualEffectWhenSendEnabled,
+                                                  Converter={StaticResource BooleanReverseConverter}}"
+                              IsChecked="{Binding ShowEffectWhenSendEnabled.Value}"
+                              />
+
+                    <CheckBox Margin="15,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendBone}" 
+                              IsChecked="{Binding SendBonePose.Value}"
+                              />
+                    <CheckBox Margin="35,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendFingerBone}" 
+                              IsEnabled="{Binding SendBonePose.Value}"
+                              IsChecked="{Binding SendFingerBonePose.Value}"
+                              />
+                    <CheckBox Margin="15,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendFacial}" 
+                              IsChecked="{Binding SendFacial.Value}"
+                              />
+                    <CheckBox Margin="35,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendFacialNonStandard}" 
+                              IsEnabled="{Binding SendFacial.Value}"
+                              IsChecked="{Binding SendNonStandardFacial.Value}"
+                              />
+                    <CheckBox Margin="35,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_SendFacialVrm0}" 
+                              IsEnabled="{Binding SendFacial.Value}"
+                              IsChecked="{Binding SendUseVrm0Facial.Value}"
+                              />
+                    <CheckBox Margin="15,0,10,0" 
+                              Content="{DynamicResource VMCP_Send_Prefer30fps}" 
+                              IsChecked="{Binding SendPrefer30Fps.Value}"
+                              />
                 </StackPanel>
             </Border>
         </StackPanel>

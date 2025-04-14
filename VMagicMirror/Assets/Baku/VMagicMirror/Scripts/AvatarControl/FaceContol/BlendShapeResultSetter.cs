@@ -10,15 +10,6 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class BlendShapeResultSetter : MonoBehaviour
     {
-        
-        enum BlendShapeOperationType
-        {
-            None,
-            VmcProtocol,
-            FaceSwitch,
-            WordToMotion,
-        }
-
         [SerializeField] private LipSyncIntegrator lipSync = null;
         [SerializeField] private FaceControlManager eyes = null;
         [SerializeField] private ExternalTrackerPerfectSync perfectSync = null;
@@ -253,9 +244,9 @@ namespace Baku.VMagicMirror
             {
                 _resultRepository.SetWordToMotionResult(_wtmBlendShape.CurrentValue.Value);
             }
-            else if (faceSwitch.HasClipToApply)
+            else if (_faceSwitchUpdater.HasClipToApply)
             {
-                _resultRepository.SetFaceSwitchResult(faceSwitch.CurrentValue.Value);
+                _resultRepository.SetFaceSwitchResult(_faceSwitchUpdater.CurrentValue.Value);
             }
             else if (_vmcpBlendShape.IsActive.Value)
             {

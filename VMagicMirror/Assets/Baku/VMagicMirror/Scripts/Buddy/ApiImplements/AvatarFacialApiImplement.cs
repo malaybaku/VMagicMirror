@@ -51,7 +51,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly ReactiveProperty<bool> _requireMicrophoneRecording = new();
         public IReadOnlyReactiveProperty<bool> RequireMicrophoneRecording => _requireMicrophoneRecording;
 
-        public bool UsePerfectSync => _faceControlConfig.UsePerfectSync;
+        public bool UsePerfectSync => _faceControlConfig.PerfectSyncActive;
 
         public IReadOnlyReactiveProperty<bool> IsTalking => _voiceOnOffParser.IsTalking;
         

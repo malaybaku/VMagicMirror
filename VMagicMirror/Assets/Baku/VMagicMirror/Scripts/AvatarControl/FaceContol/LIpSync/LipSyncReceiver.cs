@@ -102,7 +102,7 @@ namespace Baku.VMagicMirror
                 _isImageBaseLipSyncActive,
                 _vmcpBlendShape.IsActive,
                 _buddyAvatarFacialApi.RequireMicrophoneRecording,
-                (a, b, c, d, e, f) => Unit.Default
+                (a, b, c, d, e) => Unit.Default
                 )
                 .Skip(1)
                 .Subscribe(_ => RefreshMicrophoneLipSyncStatus())

@@ -32,8 +32,9 @@ namespace Baku.VMagicMirror
             Container.BindIFactory<uOscClient>()
                 .FromComponentInNewPrefab(oscClientPrefab)
                 .AsSingle();
-            Container.BindInterfacesTo<VMCPSender>()
-                .AsSingle();
+            Container.BindInterfacesTo<VMCPSender>().AsSingle();
+
+            Container.BindInterfacesTo<VMCPFaceSwitchSetter>().AsSingle();
         }
     }
 }

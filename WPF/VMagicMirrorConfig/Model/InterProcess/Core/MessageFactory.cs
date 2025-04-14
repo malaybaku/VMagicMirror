@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -110,8 +111,10 @@ namespace Baku.VMagicMirrorConfig
         public Message WaitMotionScale(int scalePercent) => WithArg(scalePercent);
         public Message WaitMotionPeriod(int periodSec) => WithArg(periodSec);
 
+        // NOTE: Unity側の状態によって実際に行うキャリブレーションは変わる(低負荷/高負荷では別々のキャリブレーションを行う)
         public Message CalibrateFace() => NoArg();
         public Message SetCalibrateFaceData(string data) => WithArg(data);
+        public Message SetCalibrateFaceDataHighPower(string data) => WithArg(data);
 
         public Message EnableFaceTracking(bool enable) => WithArg(enable);
         public Message SetCameraDeviceName(string deviceName) => WithArg(deviceName);
@@ -137,6 +140,17 @@ namespace Baku.VMagicMirrorConfig
         public Message FaceOffsetClip(string clipName) => WithArg(clipName);
 
         public Message DisableBlendShapeInterpolate(bool enable) => WithArg(enable);
+        
+        public Message UsePerfectSyncWithWebCamera(bool enable) => WithArg(enable);
+        
+        public Message EnableWebCameraHighPowerModeBlink(bool enable) => WithArg(enable);
+        public Message EnableWebCameraHighPowerModeLipSync(bool enable) => WithArg(enable);
+        public Message EnableWebCameraHighPowerModeMoveZ(bool enable) => WithArg(enable);
+
+        public Message SetWebCamEyeOpenBlinkValue(int value) => WithArg(value);
+        public Message SetWebCamEyeCloseBlinkValue(int value) => WithArg(value);
+
+        public Message SetEyeBlendShapePreviewActive(bool active) => WithArg(active);
 
         /// <summary>
         /// Query.
@@ -288,6 +302,10 @@ namespace Baku.VMagicMirrorConfig
         public Message BloomIntensity(int intensityPercent) => WithArg(intensityPercent);
         public Message BloomThreshold(int thresholdPercent) => WithArg(thresholdPercent);
 
+        public Message AmbientOcclusionEnable(bool enable) => WithArg(enable);
+        public Message AmbientOcclusionIntensity(int intensityPercent) => WithArg(intensityPercent);
+        public Message AmbientOcclusionColor(int r, int g, int b) => WithArg($"{r},{g},{b}");
+
         public Message OutlineEffectEnable(bool active) => WithArg(active);
         public Message OutlineEffectThickness(int thickness) => WithArg(thickness);
         public Message OutlineEffectColor(int r, int g, int b) => WithArg($"{r},{g},{b}");
@@ -424,7 +442,7 @@ namespace Baku.VMagicMirrorConfig
 
         public Message OpenVRoidSdkUi() => NoArg();
         public Message RequestLoadVRoidWithId(string modelId) => WithArg(modelId);
-
+ 
         #endregion
 
     }

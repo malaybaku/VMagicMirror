@@ -25,11 +25,10 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
         private const int ReceiveFpsCountInterval = 400;
         
         //テキストのGCAllocを避けるやつ
-        private readonly StringBuilder _sb = new StringBuilder(2048);
+        private readonly StringBuilder _sb = new(2048);
         
-        private readonly RecordFaceTrackSource _faceTrackSource = new RecordFaceTrackSource();
+        private readonly RecordFaceTrackSource _faceTrackSource = new();
         public override IFaceTrackSource FaceTrackSource => _faceTrackSource;
-        public override bool SupportHandTracking => false;
         public override bool SupportFacePositionOffset => true;
         public override Quaternion HeadRotation 
             => _smoothOffsetRotation * _faceTrackSource.FaceTransform.Rotation;

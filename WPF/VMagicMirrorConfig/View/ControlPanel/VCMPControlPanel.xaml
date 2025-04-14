@@ -235,12 +235,6 @@
                                 Text="{DynamicResource VMCP_Send_Header}"
                                 Margin="5,10"
                                 />
-                    <CheckBox Margin="15,0,10,0" 
-                              Content="{DynamicResource VMCP_Send_ShowEffectDuringEnabled}" 
-                              IsEnabled="{Binding ForceToShowVisualEffectWhenSendEnabled,
-                                                  Converter={StaticResource BooleanReverseConverter}}"
-                              IsChecked="{Binding ShowEffectWhenSendEnabled.Value}"
-                              />
 
                     <Grid Margin="15,5">
                         <Grid.RowDefinitions>
@@ -265,6 +259,7 @@
                                    Visibility="{Binding HasInvalidSendAddress.Value,
                                                         Converter={StaticResource BooleanToVisibilityConverter}}"
                                    Text="{DynamicResource VMCP_Send_IpAddressError}"/>
+                        
                         <TextBlock Grid.Row="1" Grid.Column="0"
                                    Text="{DynamicResource VMCP_Send_DestPort}"
                                    />
@@ -280,6 +275,49 @@
                                    Text="{DynamicResource VMCP_Send_PortInputError}"/>
 
                     </Grid>
+
+                    <TextBlock Text="{DynamicResource VMCP_ShouldApply}"
+                               FontWeight="Bold"
+                               Margin="15,15,15,0"
+                               Visibility="{Binding IsSendSettingsDirty.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               />
+
+                    <StackPanel Orientation="Horizontal"
+                        Margin="0,10,0,5" 
+                        IsEnabled="{Binding VMCPSendEnabled.Value}">
+
+                        <Button Padding="0"
+                                MinWidth="130"
+                                Margin="5,0"
+                                HorizontalAlignment="Right"
+                                IsEnabled="{Binding CanApplySendSettings.Value}"
+                                Command="{Binding ApplySendSettingsCommand}"
+                                Content="{DynamicResource VMCP_Apply}"
+                                />
+
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Padding="0"
+                                MinWidth="130"
+                                Margin="10,0"
+                                HorizontalAlignment="Right"
+                                Command="{Binding RevertSendSettingsCommand}"
+                                Content="{DynamicResource VMCP_Revert}"
+                                />
+
+                    </StackPanel>
+
+
+                    <TextBlock Style="{StaticResource HeaderText}"
+                                Text="{DynamicResource VMCP_AdvancedSetting_Header}"
+                                Margin="5,20,5,10"
+                                />
+
+                    <CheckBox Margin="15,0,10,10" 
+                              Content="{DynamicResource VMCP_Send_ShowEffectDuringEnabled}" 
+                              IsEnabled="{Binding ForceToShowVisualEffectWhenSendEnabled,
+                                                  Converter={StaticResource BooleanReverseConverter}}"
+                              IsChecked="{Binding ShowEffectWhenSendEnabled.Value}"
+                              />
 
                     <CheckBox Margin="15,0,10,0" 
                               Content="{DynamicResource VMCP_Send_SendBone}" 
@@ -308,39 +346,6 @@
                               Content="{DynamicResource VMCP_Send_Prefer30fps}" 
                               IsChecked="{Binding SendPrefer30Fps.Value}"
                               />
-
-                    <TextBlock Text="{DynamicResource VMCP_ShouldApply}"
-                               FontWeight="Bold"
-                               Margin="15,15,15,0"
-                               Visibility="{Binding CanApplySendSettings.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
-                               />
-
-                    <StackPanel Orientation="Horizontal"
-                        Margin="0,10,0,5" 
-                        IsEnabled="{Binding VMCPEnabled.Value}">
-
-                        <Button Padding="0"
-                                MinWidth="130"
-                                Margin="5,0"
-                                HorizontalAlignment="Right"
-                                IsEnabled="{Binding CanApplySendSettings.Value}"
-                                Command="{Binding ApplySendSettingsCommand}"
-                                Content="{DynamicResource VMCP_Apply}"
-                                />
-
-                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                                Padding="0"
-                                MinWidth="130"
-                                Margin="10,0"
-                                HorizontalAlignment="Right"
-                                Command="{Binding RevertSendSettingsCommand}"
-                                Content="{DynamicResource VMCP_Revert}"
-                                />
-
-                    </StackPanel>
-
-
-
                 </StackPanel>
             </Border>
         </StackPanel>

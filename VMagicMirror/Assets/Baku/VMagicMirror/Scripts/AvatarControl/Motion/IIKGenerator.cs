@@ -18,6 +18,11 @@ namespace Baku.VMagicMirror
         Quaternion Rotation { get; }
     }
 
+    public static class IIKDataExtension
+    {
+        public static Pose GetPose(this IIKData data) => new(data.Position, data.Rotation);
+    }
+
     /// <summary>単純なレコード的な形式による<see cref="IIKData"/>の実装です。</summary>
     public class IKDataRecord : IIKData
     {

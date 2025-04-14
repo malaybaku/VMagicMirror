@@ -67,7 +67,6 @@ Maintainer's environment is as following.
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
 * [Zenject](https://github.com/svermeulen/Extenject) (from Asset Store)
@@ -81,14 +80,17 @@ Maintainer's environment is as following.
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
+* [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
 
-Should be noted that `FinalIK`, `Dlib FaceLandmark Detector`, and `OpenCV for Unity` are paid assets.
+Note that `FinalIK` and `Dlib FaceLandmark Detector` are paid assets.
 
 [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity) is necessary to import [NAudio](https://github.com/naudio/NAudio).
 
 "Fly,Baby." and "LaserLightShader" are available on BOOTH, and they are optional. If you do not introduce them, some of typing effects will not work correctly.
 
 Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
+
+About MediaPipeUnityPlugin, put `.bytes` files in the package into `StreamingAssets/MediaPipeTracker` folder.
 
 Install SharpDX by following steps.
 
@@ -99,18 +101,6 @@ RawInput.Sharp can be installed with almost same work flow.
 
 - Get `.nupkg` from NuGet gallery and expand as zip to get `lib/netstandard1.1/RawInput.Sharp.dll`
 - Create `RawInputSharp` folder in Unity project's Assets folder, and put dll into the folder.
-
-For OpenCVforUnity, edit `DisposableOpenCVObject.cs`: 
-
-```
-    abstract public class DisposableOpenCVObject : DisposableObject
-    {
-
-//        internal IntPtr nativeObj;
-        //Change to public member
-        public IntPtr nativeObj;
-
-```
 
 Also there are some UPM based dependencies.
 

@@ -127,6 +127,9 @@ sysinfo.txt
 /VMagicMirror/Assets/ThirdPartyMotions.meta
 /VMagicMirror/Assets/ThirdPartyMotions/
 
+# Embedded package which should be installed by unitypackage based operation
+/VMagicMirror/Packages/com.github.homuler.mediapipe/
+
 # NOT ignore solution / project files of WPF
 !/WPF/**/*.sln
 !/WPF/**/*.csproj

@@ -27,6 +27,7 @@
             resolver.Add(new FaceMotionBlendShapeNameStore());
             resolver.Add(new CustomMotionList());
             resolver.Add(new BuddySettingsSender());
+            resolver.Add(new EyeBlendShapePreviewReceiver());
 
             resolver.Add(new BuddySettingModel());
             resolver.Add(new GameInputSettingModel());

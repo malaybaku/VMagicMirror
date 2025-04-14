@@ -8,6 +8,9 @@ namespace Baku.VMagicMirror
     {
         /// <summary>低負荷モード時のピッチオフセット </summary>
         public float pitchRateOffset;
+
+        // NOTE: DNN(OpenCVの顔トラ)はもう使ってないが、ダウングレードとの相性を考慮して一応残している。
+        // VMM v4系のバージョンをいくつかリリースしたら消してもよい
         public float dnnPitchRateOffset;
         
         //NOTE: 以下2つはdlibとdnnがほぼ同じ値を返すため、あえて分けない

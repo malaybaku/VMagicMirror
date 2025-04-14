@@ -1,5 +1,4 @@
-﻿using Baku.VMagicMirrorConfig.ViewModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace Baku.VMagicMirrorConfig
@@ -70,6 +69,7 @@ namespace Baku.VMagicMirrorConfig
 
             CameraDeviceName = new RProperty<string>(setting.CameraDeviceName, v => SendMessage(factory.SetCameraDeviceName(v)));
             CalibrateFaceData = new RProperty<string>(setting.CalibrateFaceData, v => SendMessage(factory.SetCalibrateFaceData(v)));
+            CalibrateFaceDataHighPower = new RProperty<string>(setting.CalibrateFaceDataHighPower, v => SendMessage(factory.SetCalibrateFaceDataHighPower(v)));
 
             FaceDefaultFun = new RProperty<int>(setting.FaceDefaultFun, v => SendMessage(factory.FaceDefaultFun(v)));
             FaceNeutralClip = new RProperty<string>(setting.FaceNeutralClip, v => SendMessage(factory.FaceNeutralClip(v)));
@@ -79,6 +79,22 @@ namespace Baku.VMagicMirrorConfig
                 setting.MoveEyesDuringFaceClipApplied, v => SendMessage(factory.EnableEyeMotionDuringClipApplied(v)));
             DisableBlendShapeInterpolate = new RProperty<bool>(
                 setting.DisableBlendShapeInterpolate, v => SendMessage(factory.DisableBlendShapeInterpolate(v)));
+            UsePerfectSyncWithWebCamera = new RProperty<bool>(
+                setting.UsePerfectSyncWithWebCamera, v => SendMessage(factory.UsePerfectSyncWithWebCamera(v)));
+
+            EnableWebCameraHighPowerModeBlink = new RProperty<bool>(
+                setting.EnableWebCameraHighPowerModeBlink, v => SendMessage(factory.EnableWebCameraHighPowerModeBlink(v)));
+
+            EnableWebCameraHighPowerModeLipSync = new RProperty<bool>(
+                setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(factory.EnableWebCameraHighPowerModeLipSync(v)));
+
+            EnableWebCameraHighPowerModeMoveZ = new RProperty<bool>(
+                setting.EnableWebCameraHighPowerModeMoveZ, v => SendMessage(factory.EnableWebCameraHighPowerModeMoveZ(v)));
+
+            WebCamEyeOpenBlinkValue = new RProperty<int>(
+                setting.WebCamEyeOpenBlinkValue, v => SendMessage(factory.SetWebCamEyeOpenBlinkValue(v)));
+            WebCamEyeCloseBlinkValue = new RProperty<int>(
+                setting.WebCamEyeCloseBlinkValue, v => SendMessage(factory.SetWebCamEyeCloseBlinkValue(v)));
 
             //TODO: 排他のタイミング次第でRadioButtonが使えなくなってしまうので要検証
             UseLookAtPointNone = new RProperty<bool>(setting.UseLookAtPointNone, v =>
@@ -204,6 +220,7 @@ namespace Baku.VMagicMirrorConfig
         /// NOTE: この値はUIに出す必要はないが、起動時に空でなければ送り、Unityからデータが来たら受け取り、終了時にはセーブする。
         /// </summary>
         public RProperty<string> CalibrateFaceData { get; }
+        public RProperty<string> CalibrateFaceDataHighPower { get; }
 
         public RProperty<int> FaceDefaultFun { get; }
         public RProperty<string> FaceNeutralClip { get; }
@@ -211,6 +228,16 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> MoveEyesDuringFaceClipApplied { get; }
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
+
+        public RProperty<bool> UsePerfectSyncWithWebCamera { get; }
+
+        public RProperty<bool> EnableWebCameraHighPowerModeBlink { get; }
+        public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
+        public RProperty<bool> EnableWebCameraHighPowerModeMoveZ { get; }
+        
+        // NOTE: Openのほうが値としては小さい想定(+0付近)
+        public RProperty<int> WebCamEyeOpenBlinkValue { get; }
+        public RProperty<int> WebCamEyeCloseBlinkValue { get; }
 
         public void RequestCalibrateFace() => SendMessage(MessageFactory.Instance.CalibrateFace());
 
@@ -404,6 +431,20 @@ namespace Baku.VMagicMirrorConfig
             {
                 SendMessage(MessageFactory.Instance.SetCalibrateFaceData(CalibrateFaceData.Value));
             }
+
+            if (!string.IsNullOrEmpty(CalibrateFaceDataHighPower.Value))
+            {
+                SendMessage(MessageFactory.Instance.SetCalibrateFaceDataHighPower(CalibrateFaceDataHighPower.Value));
+            }
+        }
+
+        public void ResetWebCameraHighPowerModeSettings()
+        {
+            var setting = MotionSetting.Default;
+            UsePerfectSyncWithWebCamera.Value = setting.UsePerfectSyncWithWebCamera;
+            EnableWebCameraHighPowerModeBlink.Value = setting.EnableWebCameraHighPowerModeBlink;
+            EnableWebCameraHighPowerModeLipSync.Value = setting.EnableWebCameraHighPowerModeLipSync;
+            EnableWebCameraHighPowerModeMoveZ.Value = setting.EnableWebCameraHighPowerModeMoveZ;
         }
     }
 }

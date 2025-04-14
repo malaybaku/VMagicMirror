@@ -8,10 +8,12 @@
         public const string SetUnityProcessId = nameof(SetUnityProcessId);
         public const string CloseConfigWindow = nameof(CloseConfigWindow);
         public const string SetCalibrationFaceData = nameof(SetCalibrationFaceData);
+        public const string SetCalibrationFaceDataHighPower = nameof(SetCalibrationFaceDataHighPower);
         public const string AutoAdjustResults = nameof(AutoAdjustResults);
         public const string UpdateDeviceLayout = nameof(UpdateDeviceLayout);
         public const string UpdateCustomHandDownPose = nameof(UpdateCustomHandDownPose);
         public const string MicrophoneVolumeLevel = nameof(MicrophoneVolumeLevel);
+        public const string EyeBlendShapeValues = nameof(EyeBlendShapeValues);
 
         public const string ExtraBlendShapeClipNames = nameof(ExtraBlendShapeClipNames);
 

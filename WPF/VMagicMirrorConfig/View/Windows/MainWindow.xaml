@@ -125,7 +125,7 @@
             <TabItem>
                 <TabItem.Header>
                     <view:VerticalTabHeaderIconText 
-                        Text="{DynamicResource TopBar_ExternalFaceTrack}"                        
+                        Text="{DynamicResource TopBar_FaceTracker}"                        
                         IconKind="FaceRecognition"                        
                         Foreground="{Binding SelectedIndex,
                                              ElementName=MainTabControl,
@@ -133,7 +133,7 @@
                                              ConverterParameter=2}"                           
                         />
                 </TabItem.Header>
-                <view:ExternalTrackerPanel Background="White" />
+                <view:FaceTrackerPanel Background="White" />
             </TabItem>
             <TabItem x:Name="VmcpTabItem">
                 <TabItem.Header>

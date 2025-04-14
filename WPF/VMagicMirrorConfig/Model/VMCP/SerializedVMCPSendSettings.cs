@@ -10,6 +10,16 @@ namespace Baku.VMagicMirrorConfig
     /// </summary>
     public class SerializedVMCPSendSettings
     {
+        public string SendAddress { get; set; } = "";
+        public int SendPort { get; set; }
+
+        public bool SendBonePose { get; set; }
+        public bool SendFingerBonePose { get; set; }
+        public bool SendFacial { get; set; }
+        public bool SendNonStandardFacial { get; set; }
+        public bool UseVrm0Facial { get; set; }
+        public bool Prefer30Fps { get; set; }
+
         public VMCPSendSetting ToSetting() => new()
         {
             SendAddress = SendAddress,
@@ -22,15 +32,7 @@ namespace Baku.VMagicMirrorConfig
             Prefer30Fps = Prefer30Fps,
         };
 
-        public string ToJson()
-        {
-            var sb = new StringBuilder();
-            using var writer = new StringWriter(sb);
-            using var jsonWriter = new JsonTextWriter(writer);
-            var serializer = new JsonSerializer();
-            serializer.Serialize(jsonWriter, this);
-            return sb.ToString();
-        }
+        public string ToJson() => JsonConvert.SerializeObject(this);
 
         public static SerializedVMCPSendSettings FromSetting(VMCPSendSetting setting) => new()
         {
@@ -48,10 +50,12 @@ namespace Baku.VMagicMirrorConfig
         {
             try
             {
-                using var reader = new StringReader(json);
-                using var jsonReader = new JsonTextReader(reader);
-                var serializer = new JsonSerializer();
-                return serializer.Deserialize<SerializedVMCPSendSettings>(jsonReader) ?? CreateDefault();
+                if (string.IsNullOrEmpty(json))
+                {
+                    return CreateDefault();
+                }
+
+                return JsonConvert.DeserializeObject<SerializedVMCPSendSettings>(json) ?? CreateDefault();
             }
             catch (Exception ex)
             {
@@ -59,17 +63,6 @@ namespace Baku.VMagicMirrorConfig
                 return CreateDefault();
             }
         }
-
-
-        public string SendAddress { get; set; } = "";
-        public int SendPort { get; set; }
-
-        public bool SendBonePose { get; set; }
-        public bool SendFingerBonePose { get; set; }
-        public bool SendFacial { get; set; }
-        public bool SendNonStandardFacial { get; set; }
-        public bool UseVrm0Facial { get; set; }
-        public bool Prefer30Fps { get; set; }
 
         public static SerializedVMCPSendSettings CreateDefault() => FromSetting(VMCPSendSetting.Default());
     }

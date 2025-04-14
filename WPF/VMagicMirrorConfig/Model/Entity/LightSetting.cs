@@ -42,6 +42,16 @@
 
         #endregion
 
+        #region Ambient Occlusion
+
+        public bool EnableAmbientOcclusion { get; set; } = false;
+        public int AmbientOcclusionIntensity { get; set; } = 15;
+        public int AmbientOcclusionR { get; set; } = 0;
+        public int AmbientOcclusionG { get; set; } = 0;
+        public int AmbientOcclusionB { get; set; } = 0;
+
+        #endregion
+
         #region Bloom
 
         public int BloomIntensity { get; set; } = 50;

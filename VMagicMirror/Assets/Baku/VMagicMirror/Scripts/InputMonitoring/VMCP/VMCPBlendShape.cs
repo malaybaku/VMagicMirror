@@ -11,6 +11,8 @@ namespace Baku.VMagicMirror.VMCP
     /// </summary>
     public class VMCPBlendShape : PresenterBase, ITickable
     {
+        // Perfect Syncっぽいキーをこの数の種類だけ受信した場合、送信元が送っているのがパーフェクトシンク用のキー情報であると見なす
+        private const int CountToTreatPerfectSyncValid = 26;
         private const float DisconnectCount = VMCPReceiver.DisconnectCount;
 
         private static readonly HashSet<ExpressionKey> LipSyncKeys = new()
@@ -31,6 +33,15 @@ namespace Baku.VMagicMirror.VMCP
         private readonly ReactiveProperty<bool> _isActive = new(false);
         public IReadOnlyReactiveProperty<bool> IsActive => _isActive;
 
+        private readonly RecordFaceTrackBlendShapes _faceSwitchBlendShapes = new();
+        // NOTE: この値は「受信値がPerfect SyncっぽければFace Switchの入力値にしていい値」として公開する。
+        // ただし、VMCPで常にPerfect Syncを受信するわけではないので、その判定も別途やっている…というのがすぐ下のRP<bool>
+        public IFaceTrackBlendShapes FaceTrackBlendShapes => _faceSwitchBlendShapes;
+
+        private readonly ReactiveProperty<bool> _seemsToHavePerfectSyncData = new();
+        public IReadOnlyReactiveProperty<bool> SeemsToHavePerfectSyncData => _seemsToHavePerfectSyncData;
+        private readonly HashSet<string> _receivedPerfectSyncKeys = new();
+        
         private bool _hasModel;
         private readonly IVRMLoadable _vrmLoadable;
 
@@ -89,6 +100,14 @@ namespace Baku.VMagicMirror.VMCP
             _internalValues[key] = Mathf.Clamp01(value);
             _isConnected = true;
             _disconnectCountDown = DisconnectCount;
+
+            var isPerfectSyncKey = VMCPBlendShapePerfectSyncKeys.TrySet(
+                rawKey, value, _faceSwitchBlendShapes, out var camelCaseKey);
+            if (isPerfectSyncKey && !_seemsToHavePerfectSyncData.Value)
+            {
+                _receivedPerfectSyncKeys.Add(camelCaseKey);
+                _seemsToHavePerfectSyncData.Value = _receivedPerfectSyncKeys.Count >= CountToTreatPerfectSyncValid;
+            }
         }
 
         private void ResetValues()
@@ -98,6 +117,9 @@ namespace Baku.VMagicMirror.VMCP
                 _internalValues[key] = 0f;
                 _values[key] = 0f;
             }
+            
+            _receivedPerfectSyncKeys.Clear();
+            _seemsToHavePerfectSyncData.Value = false;
         }
         
         public void Apply()
@@ -153,7 +175,7 @@ namespace Baku.VMagicMirror.VMCP
             }
 
             // ここでVRM0用のキーも入れておくことで、VRM0.xのSender Appから「A」が来たとき「Aa」に紐付ける…みたいな措置が取れる。
-            // * Senderが VRM1.0未対応なケースをケアしないで良くなったら消したいが、2023-24年くらいでは絶対そうならないと思う
+            // * Senderが VRM1.0未対応なケースをケアしないで良くなったら消したいが、2025年内とかでは絶対そうならないと思う
             var vrm0KeyMap = Vrm0BlendShapeKeyUtils.CreateVrm0StringKeyToVrm1KeyMap();
             foreach (var pair in vrm0KeyMap)
             {

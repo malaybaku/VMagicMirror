@@ -55,8 +55,11 @@ namespace Baku.VMagicMirrorConfig
         private readonly VMCPReceiveStatus _receiveStatus = new();
         public IReadOnlyList<bool> Connected => _receiveStatus.Connected;
 
-        // 送信系のプロパティ: 送信のほうがシンプル
+        // 送信系のプロパティ
         public RProperty<bool> VMCPSendEnabled { get; }
+
+        // NOTE: 設計がちょっと捻れているが、多分悪さはしないのでほっといてある
+        // (受信側の Serialized~ 相当の部分と EnableNaive~ 等の設定が全部1本にシリアライズされてる)
         public RProperty<string> SerializedVMCPSendSetting { get; }
         public RProperty<bool> ShowEffectDuringVMCPSendEnabled { get; }
 
@@ -98,6 +101,66 @@ namespace Baku.VMagicMirrorConfig
         public void SetVMCPSendSetting(VMCPSendSetting setting)
         {
             SerializedVMCPSendSetting.Value = SerializedVMCPSendSettings.FromSetting(setting).ToJson();
+        }
+
+        public void SetSendBonePose(bool value)
+        {
+            var setting = GetCurrentSendSetting();
+            if (setting.SendBonePose != value)
+            {
+                setting.SendBonePose = value;
+                SetVMCPSendSetting(setting);
+            }
+        }
+
+        public void SetSendFingerBonePose(bool value)
+        {
+            var setting = GetCurrentSendSetting();
+            if (setting.SendFingerBonePose != value)
+            {
+                setting.SendFingerBonePose = value;
+                SetVMCPSendSetting(setting);
+            }
+        }
+
+        public void SetSendFacial(bool value)
+        {
+            var setting = GetCurrentSendSetting();
+            if (setting.SendFacial != value)
+            {
+                setting.SendFacial = value;
+                SetVMCPSendSetting(setting);
+            }
+        }
+
+        public void SetSendNonStandardFacial(bool value)
+        {
+            var setting = GetCurrentSendSetting();
+            if (setting.SendNonStandardFacial != value)
+            {
+                setting.SendNonStandardFacial = value;
+                SetVMCPSendSetting(setting);
+            }
+        }
+
+        public void SetUseVrm0Facial(bool value)
+        {
+            var setting = GetCurrentSendSetting();
+            if (setting.UseVrm0Facial != value)
+            {
+                setting.UseVrm0Facial = value;
+                SetVMCPSendSetting(setting);
+            }
+        }
+
+        public void SetPrefer30Fps(bool value)
+        {
+            var setting = GetCurrentSendSetting();
+            if (setting.Prefer30Fps != value)
+            {
+                setting.Prefer30Fps = value;
+                SetVMCPSendSetting(setting);
+            }
         }
 
         public override void ResetToDefault()

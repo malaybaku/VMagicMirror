@@ -1,4 +1,5 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -15,44 +16,48 @@ namespace Baku.VMagicMirror
         /// <remarks>
         /// setterを呼んでいいのは適切なメッセージをIPCで受信しているクラスだけです。
         /// </remarks>
-        public FaceControlModes ControlMode { get; set; } = FaceControlModes.WebCam;
+        public FaceControlModes ControlMode => _faceControlMode.Value;
+
+        private readonly ReactiveProperty<FaceControlModes> _faceControlMode 
+            = new(FaceControlModes.WebCamLowPower);
+        public IReadOnlyReactiveProperty<FaceControlModes> FaceControlMode => _faceControlMode;
+
+        public void SetFaceControlMode(FaceControlModes mode) => _faceControlMode.Value = mode;
         
         /// <summary>
         /// パーフェクトシンクのon/offを取得、設定します。
         /// このフラグがtrueであり、かつ<see cref="ControlMode"/>がExternalTrackerの場合はパーフェクトシンクがオンです。
         /// </summary>
-        public bool UsePerfectSync { get; set; }
+        public bool UseExternalTrackerPerfectSync { get; set; }
 
+        /// <summary>
+        /// Webカメラの高負荷モードにおいてパーフェクトシンクを使用するかどうかを取得、設定します。
+        /// このフラグがtrueであり、かつ<see cref="ControlMode"/>がWebCamHighPowerの場合はパーフェクトシンクがオンです。
+        /// </summary>
+        public bool UseWebCamHighPowerModePerfectSync { get; set; }
+        
         /// <summary>
         /// VMCPによるBlendShapeの適用が有効かどうかを取得、設定します。
         /// このフラグがtrueの場合、Word To Motion, Face Switchに次いでVMCPのBlendShapeが優先されます。
         /// </summary>
         public bool UseVMCPFacial { get; set; }
-        
-        public bool PerfectSyncActive => ControlMode == FaceControlModes.ExternalTracker && UsePerfectSync;
+
+        /// <summary>
+        /// 外部トラッキング機能またはWebカメラ機能に基づいてパーフェクトシンクを適用する場合はtrue、そうでなければfalse
+        /// </summary>
+        public bool PerfectSyncActive =>
+            (ControlMode is FaceControlModes.ExternalTracker && UseExternalTrackerPerfectSync) ||
+            (ControlMode is FaceControlModes.WebCamHighPower && UseWebCamHighPowerModePerfectSync);
         
         #endregion
         
         #region 内部的に特定クラスがsetterを呼ぶ値で、読み取り側は直接使わないでOK
 
         /// <summary>
-        /// 外部トラッカーによるFaceSwitchが動作しているかどうかを取得、設定します。
+        /// FaceSwitchが動作しているかどうかを取得、設定します。
+        /// setterを使っていいのは<see cref="FaceSwitchUpdater"/>だけです。
         /// </summary>
-        /// <remarks>
-        /// setterを使っていいのは<see cref="ExternalTrackerDataSource"/>だけです。
-        /// これがtrueのとき、ほかのブレンドシェイプ関連のクラスではVRMBlendShapeProxyに対して
-        /// AccumulateとかApplyを呼ばないことが望ましいです。
-        /// </remarks>
         public bool FaceSwitchActive { get; set; }
-        
-        /// <summary>
-        /// 外部トラッカーによるFaceSwitchが動作し、かつリップシンクを停止してほしいかどうかを取得、設定します。
-        /// </summary>
-        /// <remarks>
-        /// setterを使っていいのは<see cref="ExternalTrackerDataSource"/>だけです。
-        /// このフラグがtrueのとき、リップシンク系の処理はVRMBlendShapeにアクセスしないことが望ましいです。
-        /// </remarks>
-        public bool FaceSwitchRequestStopLipSync { get; set; }
         
         /// <summary>
         /// 外部トラッカーによるパーフェクトシンクによって、通常と異なる瞬き処理をしているとtrueになります。
@@ -92,8 +97,10 @@ namespace Baku.VMagicMirror
     {
         /// <summary> 顔トラッキングを行っていません。 </summary>
         None,
-        /// <summary> ウェブカメラの顔トラッキングを行っています。 </summary>
-        WebCam,
+        /// <summary> Webカメラで低負荷な顔トラッキングを行っています。 </summary>
+        WebCamLowPower,
+        /// <summary> Webカメラの高負荷な顔トラッキングを行っています。 </summary>
+        WebCamHighPower,
         /// <summary> 外部アプリによる顔トラッキングを行っています。 </summary>
         ExternalTracker,
         /// <summary> VMC Protocolで受信した頭部トラッキング </summary>

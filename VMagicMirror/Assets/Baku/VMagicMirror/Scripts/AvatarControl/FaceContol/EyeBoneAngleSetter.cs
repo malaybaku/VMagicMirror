@@ -1,3 +1,4 @@
+using Baku.VMagicMirror.MediaPipeTracker;
 using UnityEngine;
 using UniVRM10;
 using Zenject;
@@ -35,10 +36,11 @@ namespace Baku.VMagicMirror
         private EyeBoneAngleMapApplier _boneApplier;
         private EyeBlendShapeMapApplier _blendShapeApplier;
         private EyeLookAt _eyeLookAt;
+        private MediaPipeEyeJitter _mediaPipeEyeJitter;
         private CarHandleBasedFK _carHandleBasedFk;
         //NOTE: BlendShapeResultSetterの更に後処理として呼び出す(ホントは前処理で値を入れたいが、Execution Order的に難しい)
         private ExpressionAccumulator _expressionAccumulator;
-
+        
         private Transform _leftEye;
         private Transform _rightEye;
         private Quaternion _leftEyeInitialLocalRot = Quaternion.identity;
@@ -70,12 +72,14 @@ namespace Baku.VMagicMirror
             EyeLookAt eyeLookAt,
             NonImageBasedMotion nonImageBasedMotion,
             CarHandleBasedFK carHandleBasedFk,
+            MediaPipeEyeJitter mediaPipeEyeJitter,
             ExpressionAccumulator expressionAccumulator)
         {
             _nonImageBasedMotion = nonImageBasedMotion;
             _boneApplier = new EyeBoneAngleMapApplier(vrmLoadable);
             _blendShapeApplier = new EyeBlendShapeMapApplier(vrmLoadable);
             _carHandleBasedFk = carHandleBasedFk;
+            _mediaPipeEyeJitter = mediaPipeEyeJitter;
             _expressionAccumulator = expressionAccumulator;
             _eyeLookAt = eyeLookAt;
 
@@ -145,6 +149,7 @@ namespace Baku.VMagicMirror
             {
                 _nonImageBasedMotion,
                 eyeJitter,
+                _mediaPipeEyeJitter,
                 externalTrackerEyeJitter,
                 eyeDownMotionController,
                 _carHandleBasedFk,

@@ -16,8 +16,10 @@ namespace Baku.VMagicMirror
         private readonly VMCPBlendShape _vmcpBlendShape;
         private readonly VMCPHeadPose _vmcpHeadPose;
 
-        private readonly ReactiveProperty<bool> _enableWebCamTracking = new ReactiveProperty<bool>(true);
-        private readonly ReactiveProperty<bool> _enableExTracker = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _enableWebCamTracking = new(true);
+        private readonly ReactiveProperty<bool> _enableWebCamHighPowerMode = new(false);
+        private readonly ReactiveProperty<bool> _enableExTracker = new(false);
+        private readonly ReactiveProperty<bool> _enableHandTracking = new(false);
 
         [Inject]
         public FaceControlConfigurationReceiver(
@@ -34,43 +36,39 @@ namespace Baku.VMagicMirror
 
         public override void Initialize()
         {
-            _receiver.AssignCommandHandler(
-                VmmCommands.EnableFaceTracking,
-                message =>
-                {
-                    _enableWebCamTracking.Value = message.ToBoolean();
-                    SetFaceControlMode();
-                });
+            _receiver.BindBoolProperty(VmmCommands.EnableFaceTracking, _enableWebCamTracking);
+            _receiver.BindBoolProperty(VmmCommands.EnableWebCamHighPowerMode, _enableWebCamHighPowerMode);
+            _receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _enableExTracker);
+            _receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _enableHandTracking);
             
-            _receiver.AssignCommandHandler(
-                VmmCommands.ExTrackerEnable,
-                message =>
-                {
-                    _enableExTracker.Value = message.ToBoolean();
-                    SetFaceControlMode();
-                });
-
-            Observable.Merge(
-                _vmcpHeadPose.IsActive,
+            
+            _vmcpHeadPose.IsActive.CombineLatest(
                 _enableWebCamTracking,
-                _enableExTracker
+                _enableWebCamHighPowerMode,
+                _enableExTracker,
+                _enableHandTracking,
+                (a0, a1, a2, a3, a4) => Unit.Default
                 )
                 .Subscribe(_ => SetFaceControlMode())
                 .AddTo(this);
 
-            _vmcpBlendShape
-                .IsActive
+            _vmcpBlendShape.IsActive
                 .Subscribe(active => _config.UseVMCPFacial = active)
                 .AddTo(this);
         }
 
         void SetFaceControlMode()
         {
-            _config.ControlMode =
+            //TODO: 「ハンドトラッキングが有効だと顔トラは低負荷ではなく高負荷になる」という条件が複数箇所に定義されてるのを直したい
+            var webCamHighPowerModeActive = _enableWebCamHighPowerMode.Value || _enableHandTracking.Value;
+
+            _config.SetFaceControlMode(
                 _vmcpHeadPose.IsActive.Value ? FaceControlModes.VMCProtocol :
                 _enableExTracker.Value ? FaceControlModes.ExternalTracker :
-                _enableWebCamTracking.Value ? FaceControlModes.WebCam :
-                FaceControlModes.None;
+                (_enableWebCamTracking.Value && webCamHighPowerModeActive) ? FaceControlModes.WebCamHighPower :
+                _enableWebCamTracking.Value ? FaceControlModes.WebCamLowPower :
+                FaceControlModes.None
+            );
         }
     }
 }

@@ -73,13 +73,6 @@ namespace Baku.VMagicMirror
             //顔が取れないのでCompletedフラグは立てないままでOK
             if (faceRects == null || faceRects.Count == 0)
             {
-                RaiseFaceDetectionUpdate(new FaceDetectionUpdateStatus()
-                {
-                    Image = _dlibInputColors,
-                    Width = width,
-                    Height = height,
-                    HasValidFaceArea = false,
-                });
                 return;
             }
 
@@ -99,15 +92,6 @@ namespace Baku.VMagicMirror
                 return;
             }
             
-            RaiseFaceDetectionUpdate(new FaceDetectionUpdateStatus()
-            {
-                Image = _dlibInputColors,
-                Width = width,
-                Height = height,
-                HasValidFaceArea = true,
-                FaceArea = mainPersonRect,
-            });
-
             HasResultToApply = true;
         }
 

@@ -19,7 +19,7 @@
     <!-- Top Tab -->
     <sys:String x:Key="TopBar_Home">Home</sys:String>
     <sys:String x:Key="TopBar_Streaming">Streaming</sys:String>
-    <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_FaceTracker">Face Tracking</sys:String>
     <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">Accessory</sys:String>
     <sys:String x:Key="TopBar_Buddy">Buddy</sys:String>
@@ -77,11 +77,46 @@
     <sys:String x:Key="Streaming_Visibility_OutlineWillNotWorkWarning">Outline is not applied because "Transparent Window" is off.</sys:String>
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">Game Input also uses gamepad!</sys:String>
 
+    <!-- Face Tracker -->
+    <sys:String x:Key="FaceTracker_EnableWebCamera">Use Web Camera</sys:String>
+    <sys:String x:Key="FaceTracker_EnablePerfectSync">Use Perfect Sync</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Title">Web Camera (Lite)</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with low CPU load.
+
+- This mode is useful to apply your motion to the avatar without additional device, with low PC load.
+- When disabling the camera in this mode, the app will run very light.
+- High power mode is automatically applied during hand tracking is active.
+- The mode has limitation about Face Switch feature, image based blink, etc.</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">Web Camera (High Power)</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with high CPU load.
+    
+- This mode is recommended to apply your motion to the avatar with high quality, without additional devices.
+- Note that the mode leads higher CPU load. Change to Lite mode when playing games, etc. 
+- In this mode, Face Switch and Perfect Sync features are partially available.
+- Some limitations exist for facial expression detection.</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice_Title">Detail...</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice" xml:space="preserve">In this mode, following facial expression cannot be detected.
+Face Switch feature for these condition does not work.
+
+- Cheek Puff
+- Tongue Out
+
+Use Extarnel Tracker mode to detect and apply these exressions.</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">Enable Forward/Backward Move</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">Apply Eye Motion based on Web Camera</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Current selected mode is Web Camera (Lite), but Web Camera (High Power) is automatically applied during hand tracking is enabled.</sys:String>            
+    
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">Feature to use external tracking application.
+
+- Can apply high quality face tracking data with less PC load.
+- For the avatar with perfect sync support, this mode is most recommended.
+        
 During this mode, following features are disabled.
-- Web camera based tracking
 - Eye motion to see the mouse pointer</sys:String>
     <sys:String x:Key="ExTracker_Enable">Enable External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">Apply LipSync using External Tracker Data</sys:String>    
@@ -105,6 +140,14 @@ During this mode, following features are disabled.
     <sys:String x:Key="ExTracker_iFM_HasTrouble_OpenUrl">Open Troubleshoot web page</sys:String>    
     
     <sys:String x:Key="ExTracker_FaceSwitch">Face Switch</sys:String>
+
+    <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Web Camera (Lite) does not detect facial data for this feature.
+If VMC Protocol is active and it receives perfect sync facial data, then Face Switch will work based on the data.</sys:String>
+
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">
+        Web Camera (High Power) does not detect "Tongue Out" and "Cheek puff" data.
+    </sys:String>
+    
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">Activates seleceted BlendShape by making specific face expression.
 Check "Keep LipSync" to make the lipsync continue.</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">Show Accessory Option</sys:String>
@@ -162,7 +205,7 @@ Use "Default" to apply VMC Protocol based hand pose.</sys:String>
     <sys:String x:Key="VMCP_Send_SendFacialVrm0">Convert to VRM0.x BlendShape Name (Enable when target app cannot load VRM1.0)</sys:String>
     <sys:String x:Key="VMCP_Send_Prefer30fps">Limit Data Rate to 30/sec</sys:String>    
     <sys:String x:Key="VMCP_Send_EditionLimitationNote" xml:space="preserve">Standard Edition shows visual effect during VMC Protorol data send feature is active,
-though the data is exactly same as Full Edition.
+The data is exactly same as Full Edition, except that motion data will not sent during Game Input feature is active.
 Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">Show Effect</sys:String>
     <sys:String x:Key="VMCP_Send_GetFullEdition">Get Full Edition</sys:String>
@@ -187,8 +230,9 @@ Use "Default" to apply hand tracking result.</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult">Detection Status:</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">(Not Detected: Try raising hands next to the face)</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">Tips:
-- Put whole hand inside the camera view to stabilize.
-- Put hands slight left or right, than the center.</sys:String>
+- Keeping your entire hand within the camera frame helps stable tracking.
+- Avoid to hide the face with hands.
+- Single hand tracking is more stable than tracking two hands at the same time.</sys:String>
     <sys:String x:Key="HandTracking_LearnMore">More...</sys:String>    
       
     <!-- Accessory Panel -->
@@ -503,6 +547,10 @@ Translate (2 way):
     <sys:String x:Key="Bloom">Bloom</sys:String>
     <sys:String x:Key="Bloom_Intensity">Intensity [%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">Threshold [%]</sys:String>
+    
+    <sys:String x:Key="AO_Title">Ambient Occlusion</sys:String>
+    <sys:String x:Key="AO_Enable">Enable Effect</sys:String>
+    <sys:String x:Key="AO_Intensity">Intensity [%]</sys:String>
     
     <sys:String x:Key="OutlineEffect">Outline (require transparent background)</sys:String>
     <sys:String x:Key="OutlineEffect_Enable">Enable Outline Effect</sys:String>

@@ -33,7 +33,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             OpenFullEditionDownloadUrlCommand = new ActionCommand(OpenFullEditionUrl);
 
             IsSendSettingsDirty = new RProperty<bool>(false, _ => UpdateSendSettingsValidity());
-            ShowEffectWhenSendEnabled = FeatureLocker.FeatureLocked
+            ShowEffectWhenSendEnabled = FeatureLocker.FeatureLocked || IsInDesignMode
                 ? _alwaysTrue
                 : _model.ShowEffectDuringVMCPSendEnabled;
 
@@ -42,12 +42,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 : _model.GetCurrentSendSetting();
             SendAddress = new RProperty<string>(sendSetting.SendAddress, _ => SetSendSettingsDirty());
             SendPort = new RProperty<int>(sendSetting.SendPort, _ => SetSendSettingsDirty());
-            SendBonePose = new RProperty<bool>(sendSetting.SendBonePose, _ => SetSendSettingsDirty());
-            SendFingerBonePose = new RProperty<bool>(sendSetting.SendFingerBonePose, _ => SetSendSettingsDirty());
-            SendFacial = new RProperty<bool>(sendSetting.SendFacial, _ => SetSendSettingsDirty());
-            SendNonStandardFacial = new RProperty<bool>(sendSetting.SendNonStandardFacial, _ => SetSendSettingsDirty());
-            SendUseVrm0Facial = new RProperty<bool>(sendSetting.UseVrm0Facial, _ => SetSendSettingsDirty());
-            SendPrefer30Fps = new RProperty<bool>(sendSetting.Prefer30Fps, _ => SetSendSettingsDirty());
+
+            SendBonePose = new RProperty<bool>(sendSetting.SendBonePose, v => _model.SetSendBonePose(v));
+            SendFingerBonePose = new RProperty<bool>(sendSetting.SendFingerBonePose, v => _model.SetSendFingerBonePose(v));
+            SendFacial = new RProperty<bool>(sendSetting.SendFacial, v => _model.SetSendFacial(v));
+            SendNonStandardFacial = new RProperty<bool>(sendSetting.SendNonStandardFacial, v => _model.SetSendNonStandardFacial(v));
+            SendUseVrm0Facial = new RProperty<bool>(sendSetting.UseVrm0Facial, v => _model.SetUseVrm0Facial(v));
+            SendPrefer30Fps = new RProperty<bool>(sendSetting.Prefer30Fps, v => _model.SetPrefer30Fps(v));
+
             ForceToShowVisualEffectWhenSendEnabled = FeatureLocker.FeatureLocked;
             
 
@@ -89,6 +91,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> BodyMotionStyleIncorrectForHandTracking { get; } = new(false);
 
         // Send
+
+        // NOTE: Dirty性が発生するのはAddress/Portまでで、BoneとかFacialとかの粒度の変更は即時適用
         public RProperty<bool> IsSendSettingsDirty { get; }
         public RProperty<bool> CanApplySendSettings { get; } = new(false);
         public RProperty<bool> HasInvalidSendPortNumber { get; } = new(false);
@@ -229,7 +233,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             HasInvalidSendPortNumber.Value = port < 0 || port > 65535;
             HasInvalidSendAddress.Value = !IPAddress.TryParse(SendAddress.Value, out _);
 
-            CanApplySendSettings.Value = !HasInvalidSendPortNumber.Value && !HasInvalidSendAddress.Value;
+            CanApplySendSettings.Value = 
+                IsSendSettingsDirty.Value && 
+                !HasInvalidSendPortNumber.Value && 
+                !HasInvalidSendAddress.Value;
         }
 
 
@@ -246,7 +253,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             SendNonStandardFacial.Value = sendSetting.SendNonStandardFacial;
             SendUseVrm0Facial.Value = sendSetting.UseVrm0Facial;
             SendPrefer30Fps.Value = sendSetting.Prefer30Fps;
-            // NOTE: Applyしても変化がない可能性もあるが、それはOK (Model側でSendがガードされるはず)
+
+            // NOTE:
+            // - Applyしても変化がない可能性もあるが、それはOK (Model側でSendがガードされるはず)
+            // - Applyの中でDirtyフラグがリセットされる前提でApplyだけ呼んでいる
             ApplySendSettings();
         }
 

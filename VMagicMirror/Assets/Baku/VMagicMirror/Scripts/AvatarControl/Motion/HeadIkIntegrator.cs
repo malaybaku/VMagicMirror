@@ -155,10 +155,10 @@ namespace Baku.VMagicMirror
             _mouseActionCount = Mathf.Max(0f, _mouseActionCount - Time.deltaTime);
             _camBasedLookAt.CheckDepthAndWeight(_head);
 
-            // - 外部トラッキングが有効ならLookAtはなくす。外部トラッキングの精度がよいので。
-            // - 3人称視点でゲーム入力ベースの移動をする場合、正面付近に対してLookAtするとかえって不自然なので何もしない
+            // - 十分高精度な顔トラッキングを行っている場合、マウスへの視線追従をしたくないのでLookAtを切る
+            // - 3人称視点でゲーム入力ベースの移動をする場合、正面付近に対してLookAtするとかえって不自然なので、この場合も何もしない
             if (_hasModel && 
-                (_faceControlConfig.ControlMode == FaceControlModes.ExternalTracker ||
+                (_faceControlConfig.ControlMode is FaceControlModes.WebCamHighPower or FaceControlModes.ExternalTracker ||
                 IsGameInputAndThirdPersonViewMode()))
             {
                 //NOTE: 外部トラッキング + PenTabletのときにLookAtをやるべきかという問題があるが、無視する。

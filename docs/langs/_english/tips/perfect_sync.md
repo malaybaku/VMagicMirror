@@ -48,7 +48,7 @@ There are 2 ways to try Perfect Sync right now.
 
 The first way is to load ready-to-use model.
 
-Download [千駄ヶ谷 渋（iPhone用BlendShapeあり）](https://hub.vroid.com/characters/7307666808713466197/models/1090122510476995853), and load on VMagicMirror. Then, open `Ex.Tracker` tab and connect to the iOS app. Then turn on `Use Perfect Sync` check.
+Download [AvatarSample_A パーフェクトシンク対応](https://hub.vroid.com/characters/2287322741607496883/models/1995551907338074831), and load on VMagicMirror. Then, open `Ex.Tracker` tab and connect to the iOS app. Then turn on `Use Perfect Sync` check.
 
 That's it! Try move your eyebrow, mouth, or tongue as you want.
 

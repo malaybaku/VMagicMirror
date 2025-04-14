@@ -62,6 +62,9 @@ namespace Baku.VMagicMirror
         /// <summary> 目の移動ウェイトを小さくしたい場合、毎フレーム指定する </summary>
         public float ReserveWeight { get; set; } = 1f;
 
+        public Quaternion LeftEyeLocalRotation { get; private set; } = Quaternion.identity;
+        public Quaternion RightEyeLocalRotation { get; private set; } = Quaternion.identity;
+        
         [Inject]
         public void Initialize(
             IMessageReceiver receiver, 
@@ -134,6 +137,9 @@ namespace Baku.VMagicMirror
 
             _leftEye = null;
             _rightEye = null;
+            
+            LeftEyeLocalRotation = Quaternion.identity;
+            RightEyeLocalRotation = Quaternion.identity;
         }
 
         private void Start()
@@ -264,6 +270,7 @@ namespace Baku.VMagicMirror
 
         private void ApplyLeftEyeLocalRotation(Quaternion rot)
         {
+            LeftEyeLocalRotation = rot;
             _leftEye.localRotation =
                 _leftEyeInitialLocalRot *
                 Quaternion.Inverse(_leftEyeInitialGlobalRot) *
@@ -272,6 +279,7 @@ namespace Baku.VMagicMirror
 
         private void ApplyRightEyeLocalRotation(Quaternion rot)
         {
+            RightEyeLocalRotation = rot;
             _rightEye.localRotation =
                 _rightEyeInitialLocalRot *
                 Quaternion.Inverse(_rightEyeInitialGlobalRot) *

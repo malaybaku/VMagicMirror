@@ -15,6 +15,11 @@ namespace Baku.VMagicMirror
         Fixed1920 = 2,
         Fixed2560 = 3,
         Fixed3840 = 4,
+        // NOTE: ここから下は途中のバージョンで追加されている縦長解像度を表す。1280等の数値は縦幅であって横幅ではないので注意
+        Fixed1280Vertical = 5,
+        Fixed1920Vertical = 6,
+        Fixed2560Vertical = 7,
+        Fixed3840Vertical = 8,
     }
 
     //TODO: Spoutにだけ背景透過で描画投げたい需要があるらしいが対応するかどうか
@@ -25,19 +30,19 @@ namespace Baku.VMagicMirror
         private readonly SpoutSenderWrapperView _view;
         private readonly IMessageReceiver _messageReceiver;
 
-        private readonly ReactiveProperty<bool> _isActive = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _isActive = new(false);
 
         private readonly ReactiveProperty<SpoutResolutionType> _resolutionType 
-            = new ReactiveProperty<SpoutResolutionType>(SpoutResolutionType.SameAsScreen);
+            = new(SpoutResolutionType.SameAsScreen);
 
         //フリーレイアウトモードに入るとき強制的に「ウィンドウと同じ」にするので、モード解除前の値を覚えておく
         private bool _freeLayoutActive; 
         private SpoutResolutionType _resolutionTypeBeforeFreeLayout;
         
-        private RenderTexture _renderTexture = null;
+        private RenderTexture _renderTexture;
         private CancellationTokenSource _textureSizePollingCts;
 
-        private readonly ReactiveProperty<bool> _needFovModify = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _needFovModify = new(false);
         /// <summary>
         /// 「MainCameraの描画先が16:9のRenderTextureになっており、そのTextureをWindowに表示している」
         /// という状況になったとき、そうでない場合と同様の見た目になるようカメラのFoVを直してほしい…という事でtrueになる値
@@ -73,7 +78,21 @@ namespace Baku.VMagicMirror
                 );
 
             _resolutionType
-                .Subscribe(_ => RefreshRenderTexture())
+                .Subscribe(resolution =>
+                {
+                    // NOTE: SetAspectRatioFitterActive と一緒に呼ぶように調整してもよい(そっちのほうが少しだけバグりにくいかも)
+                    // NOTE: アス比と別で、そもそもAspectRatioFitterのon/offもcontrolされる
+                    if (resolution > SpoutResolutionType.SameAsScreen && resolution <= SpoutResolutionType.Fixed3840)
+                    {
+                        _view.SetAspectRatioStyle(SpoutSenderWrapperView.AspectRatioStyle.Landscape);
+                    }
+                    else if (resolution <= SpoutResolutionType.Fixed3840Vertical)
+                    {
+                        _view.SetAspectRatioStyle(SpoutSenderWrapperView.AspectRatioStyle.Portrait);
+                    }
+
+                    RefreshRenderTexture();
+                })
                 .AddTo(this);
 
             _isActive
@@ -120,7 +139,7 @@ namespace Baku.VMagicMirror
         private void SetSpoutResolutionType(int rawType)
         {
             //ダウングレードしたユーザー環境で起きうる: 起きたら無視
-            if (rawType < 0 || rawType > (int)SpoutResolutionType.Fixed3840)
+            if (rawType < 0 || rawType > (int)SpoutResolutionType.Fixed3840Vertical)
             {
                 return;
             }
@@ -148,6 +167,10 @@ namespace Baku.VMagicMirror
                 case SpoutResolutionType.Fixed1920: return (1920, 1080);
                 case SpoutResolutionType.Fixed2560: return (2560, 1440);
                 case SpoutResolutionType.Fixed3840: return (3840, 2160);
+                case SpoutResolutionType.Fixed1280Vertical: return (720, 1280);
+                case SpoutResolutionType.Fixed1920Vertical: return (1080, 1920);
+                case SpoutResolutionType.Fixed2560Vertical: return (1440, 2560);
+                case SpoutResolutionType.Fixed3840Vertical: return (2160, 3840);
                 default: return (Screen.width, Screen.height);
             }           
         }

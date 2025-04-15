@@ -287,7 +287,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 
     <sys:String x:Key="Window_SpoutOutput">Spout出力</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spoutを用いて固定解像度で映像を出力できます。
-出力チャンネル名は"VMagicMirrorSpout"で固定です。</sys:String>
+
+- 出力チャンネル名は"VMagicMirrorSpout"で固定です。
+- 縦長の解像度を選ぶとキャラクターウィンドウの左右が黒く表示されることがありますが、これは正常な動作です。</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Enable">Spoutを有効化</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution">解像度:</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_SameAsScreen">ウィンドウと同じ</sys:String>
@@ -295,6 +297,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920">1920 x 1080 (固定)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560">2560 x 1440 (固定)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840">3840 x 2160 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1280Vertical">720 x 1280 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920Vertical">1080 x 1920 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560Vertical">1440 x 2560 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840Vertical">2160 x 3840 (固定)</sys:String>
     
     <sys:String x:Key="Window_TransparencySupport">キャラ透明化の詳細</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level">キャラの透明化レベル</sys:String>

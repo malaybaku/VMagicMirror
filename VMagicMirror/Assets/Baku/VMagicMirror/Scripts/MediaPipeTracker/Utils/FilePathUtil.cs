@@ -9,7 +9,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         {
             return Path.Combine(
                 Application.streamingAssetsPath,
-                "MediapipeTracker",
+                StreamingAssetFileNames.MediaPipeTrackerFolder,
                 fileName
             );
         }

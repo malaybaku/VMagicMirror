@@ -152,16 +152,17 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            //VRMLoaderUI以外のディレクトリは削除
+            // フォルダ: VRMLoaderUI, MediaPipeTrackerだけがruntimeで必要
             foreach (var dir in Directory.GetDirectories(streamingAssetDir))
             {
-                if (Path.GetFileName(dir) != StreamingAssetFileNames.LoaderUiFolder)
+                if (Path.GetFileName(dir) != StreamingAssetFileNames.LoaderUiFolder &&
+                    Path.GetFileName(dir) != StreamingAssetFileNames.MediaPipeTrackerFolder)
                 {
                     Directory.Delete(dir, true);
                 }
             }
             
-            //顔トラッキングのモデルファイル以外のファイルも削除
+            //　ファイル: Dlibの顔トラッキングのファイルだけStreamingAssets直下に置く想定
             foreach (var file in Directory.GetFiles(streamingAssetDir))
             {
                 var fileName = Path.GetFileName(file);

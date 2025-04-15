@@ -9,5 +9,7 @@ namespace Baku.VMagicMirror
         /// </summary>
         public const string LoaderUiFolder = "VRMLoaderUI";
 
+        public const string MediaPipeTrackerFolder = "MediaPipeTracker";
+
     }
 }

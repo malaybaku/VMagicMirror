@@ -264,9 +264,9 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Window_Basics">Basic Settings</sys:String>
     <sys:String x:Key="Window_BackgroundColor">Background</sys:String>
     <sys:String x:Key="Window_Transparent">Transparent Window</sys:String>
-    <sys:String x:Key="Window_Draggable">(When Transparent) Drag character</sys:String>
+    <sys:String x:Key="Window_Draggable">(When Transparent) Drag avatar</sys:String>
     <sys:String x:Key="Window_TopMost">(When Transparent) Always Foreground</sys:String>
-    <sys:String x:Key="Window_ResetPosition">Reset Character Position</sys:String>
+    <sys:String x:Key="Window_ResetPosition">Reset Avatar Position</sys:String>
     
     <sys:String x:Key="Window_BackgroundImage">BG Image:</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">Load...</sys:String>
@@ -274,23 +274,29 @@ Disable foreground mode, or attach item to another one.</sys:String>
 
     <sys:String x:Key="Window_SpoutOutput">Spout</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spout feature support fixed resolution output.
-Output channel name is fixed to "VMagicMirrorSpout".</sys:String>
+
+- Output channel name is fixed to "VMagicMirrorSpout".
+- When using a portrait (vertical) resolution, black bars may appear on the sides of the avatar window.</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Enable">Enable Spout Output</sys:String>
-    <sys:String x:Key="Window_SpoutOutput_Resolution">Resolution:</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution">Resolution (Width x Height):</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_SameAsScreen">Same as Window</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1280">1280 x 720 (Fixed)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920">1920 x 1080 (Fixed)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560">2560 x 1440 (Fixed)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840">3840 x 2160 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1280Vertical">720 x 1280 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920Vertical">1080 x 1920 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560Vertical">1440 x 2560 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840Vertical">2160 x 3840 (Fixed)</sys:String>
     
-    <sys:String x:Key="Window_TransparencySupport">Character Transparency Support</sys:String>
+    <sys:String x:Key="Window_TransparencySupport">Avatar Transparency Support</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level">Transparency Level</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Alpha">Alpha when Transparent(32-255)</sys:String>
 
     <sys:String x:Key="Window_TransparencySupport_Level_0">Level 0: Always NOT transparent.</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_1">Level 1: Transparent if "Drag character" is off, and mouse pointer is close to the character.</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_2">Level 2: Transparent if mouse pointer is close to the character.</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_3">Level 3: Transparent if "Drag character" is off.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_1">Level 1: Transparent if "Drag avatar" is off, and mouse pointer is close to the avatar.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_2">Level 2: Transparent if mouse pointer is close to the avatar.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_3">Level 3: Transparent if "Drag avatar" is off.</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level_4">Level 4: Always transparent.</sys:String>
    
     <!-- Motion -->
@@ -547,7 +553,7 @@ Translate (2 way):
     <sys:String x:Key="WordToMotion_Enable">Enable Word to Motion</sys:String>
     <sys:String x:Key="WordToMotion_UseGamepadForInput">Use gamepad as launcher</sys:String>
     <sys:String x:Key="WordToMotion_Instruction" xml:space="preserve">This tab is `Word to Motion` tab.
-`Word to Motion` feature supports character motion by your word input.
+`Word to Motion` feature supports avatar motion by your word input.
 Please test by typing "joy".</sys:String>
     <sys:String x:Key="WordToMotion_AssignDevice">Assign device for this function</sys:String>
     <sys:String x:Key="WordToMotion_AssignDevice_None">None</sys:String>
@@ -650,8 +656,8 @@ Input favorite key combination in text area.
     <sys:String x:Key="SettingFile_Load">Load</sys:String>
     <sys:String x:Key="SettingFile_Save_Instruction">Select target to save.</sys:String>
     <sys:String x:Key="SettingFile_Load_Instruction">Select data to load.</sys:String>
-    <sys:String x:Key="SettingFile_LoadCharacter">Load Character</sys:String>
-    <sys:String x:Key="SettingFile_LoadNonCharacter">Load Non-Character Settings</sys:String>
+    <sys:String x:Key="SettingFile_LoadCharacter">Load Avatar</sys:String>
+    <sys:String x:Key="SettingFile_LoadNonCharacter">Load Non-Avatar Settings</sys:String>
     <sys:String x:Key="SettingFile_Export">Export</sys:String>
     <sys:String x:Key="SettingFile_Import">Import</sys:String>
 
@@ -731,7 +737,7 @@ VRoid Hub model is not supported in this feature.</sys:String>
     
     <!-- Dialog Messages -->
     <sys:String x:Key="DialogTitle_LoadLocalVrm">Load VRM</sys:String>
-    <sys:String x:Key="DialogMessage_LoadLocalVrm">Please confirm the license in viewer window. Do you load the character?</sys:String>
+    <sys:String x:Key="DialogMessage_LoadLocalVrm">Please confirm the license in viewer window. Do you load the avatar?</sys:String>
     <sys:String x:Key="DialogTitle_ResetAllSetting">Reset Setting</sys:String>
     <sys:String x:Key="DialogMessage_ResetAllSetting" xml:space="preserve">Reset process will delete current setting, and VMagicMirror will restart.
 
@@ -776,7 +782,7 @@ Choose 'OK' to enable webcam based tracking.
     <sys:String x:Key="DialogTitle_ConfirmSettingFileLoad">Setting File Load</sys:String>
     <sys:String x:Key="DialogMessage_ConfirmSettingFileLoad" xml:space="preserve">Are you sure to load setting No.{0}?
 
-If you load with non-character option, most of the settings will be overwritten.</sys:String>    
+If you load with non-avatar option, most of the settings will be overwritten.</sys:String>    
 
     <sys:String x:Key="DialogTitle_GuardSettingWindowDuringSaveLoad">Save / Load Process Running</sys:String>
     <sys:String x:Key="DialogMessage_GuardSettingWindowDuringSaveLoad">Setting window is locked during save and load process.</sys:String>
@@ -784,7 +790,7 @@ If you load with non-character option, most of the settings will be overwritten.
     <sys:String x:Key="DialogTitle_EnableAutomation">Enable Automation</sys:String>
     <sys:String x:Key="DialogMessage_EnableAutomation" xml:space="preserve">Are you sure to enable automation feature?
 
-This feature enable switch setting and change character without GUI operation.
+This feature enable switch setting and change avatar without GUI operation.
 Use this only after checking the licenses of VRM you will use.
 </sys:String>    
     <sys:String x:Key="DialogTitle_DisableAutomation">Disable Automation</sys:String>

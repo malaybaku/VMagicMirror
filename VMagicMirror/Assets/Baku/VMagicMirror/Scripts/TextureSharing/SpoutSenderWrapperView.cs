@@ -6,6 +6,14 @@ namespace Baku.VMagicMirror
 {
     public class SpoutSenderWrapperView : MonoBehaviour
     {
+        public enum AspectRatioStyle
+        {
+            /// <summary> 横長 16:9 </summary>
+            Landscape,
+            /// <summary> 縦長 9:16 </summary>
+            Portrait,
+        }
+        
         [SerializeField] private SpoutSender spoutSender;
         [SerializeField] private Camera windowOverwriteCamera;
         [SerializeField] private Canvas overwriteCanvas;
@@ -41,6 +49,23 @@ namespace Baku.VMagicMirror
             {
                 overwriteImage.transform.localScale = Vector3.one;
                 overwriteImage.rectTransform.sizeDelta = Vector2.zero;
+            }
+        }
+
+        public void SetAspectRatioStyle(AspectRatioStyle style)
+        {
+            // NOTE: 縦長についてはFitInParentしないと見えが大幅に変わる(めっちゃ拡大されたように見える)ため、
+            // 諦めてウィンドウの左右に黒帯が出るようにする
+            switch (style)
+            {
+                case AspectRatioStyle.Landscape:
+                    overwriteImageAspectRatioFitter.aspectRatio = 16f / 9f;
+                    overwriteImageAspectRatioFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                    return;
+                case AspectRatioStyle.Portrait:
+                    overwriteImageAspectRatioFitter.aspectRatio = 9f / 16f;
+                    overwriteImageAspectRatioFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+                    return;
             }
         }
     }

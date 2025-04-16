@@ -40,7 +40,7 @@ namespace Baku.VMagicMirrorConfig
         public void LoadDefaultItems()
         {
             ExtraBlendShapeClipNames.Clear();
-            //NOTE: 現在ロードされてるキャラがいたら、そのキャラのブレンドシェイプをただちに当て直す
+            //NOTE: 現在ロードされてるアバターがいたら、そのアバターのブレンドシェイプをただちに当て直す
             ExtraBlendShapeClipNames.AddRange(_latestAvaterExtraClipNames);
             
             _setting.LoadDefaultMotionRequests(ExtraBlendShapeClipNames);

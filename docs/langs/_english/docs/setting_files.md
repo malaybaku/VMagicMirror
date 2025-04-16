@@ -24,8 +24,8 @@ You should use this feature when you are working with several models, for exampl
 
 <div class="doc-ul" markdown="1">
 
-- There are same character but different clothes models, and you want to switch them quickly
-- There are characters with different proportion or face settings, and you want to switch them quickly
+- There are same avatar but different clothes models, and you want to switch them quickly
+- There are avatars with different proportion or face settings, and you want to switch them quickly
 
 </div>
 
@@ -56,7 +56,7 @@ When VMagicMirror starts, auto save data is loaded as the default data.
 
 `Load` has options `Load Character` and `Load Non-Character`.
 
-When check only `Load Character`, only the character is applied in saved data. It is default option, and is useful to switch save character with different clothes.
+When check only `Load Character`, only the avatar is applied in saved data. It is default option, and is useful to switch save avatar with different clothes.
 
 When check `Load Non-Character`, other settings like face tracking and layout etc. will be loaded.
 
@@ -76,7 +76,7 @@ VRoid Hub model always requires license confirmation, because the license may be
 
 `Export` and `Import` is extra features to save and load setting as a file in any folder.
 
-`Export` does not save character info, so `Import` only load non-character settings.
+`Export` does not save avatar info, so `Import` only load non-avatar settings.
 
 
 ### Advanced Feature: Automation

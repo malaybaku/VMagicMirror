@@ -13,10 +13,10 @@ This tips writes about the setup for streaming.
 #### Choose screen capture or Window capture
 {: .doc-sec2 }
 
-For the popular streaming software like OBS, usually you have 2 ways to capture the character shown on VMagicMirror.
+For the popular streaming software like OBS, usually you have 2 ways to capture the avatar shown on VMagicMirror.
 
 1. Screen capture: capture whole screen or part of the screen.
-2. Window capture: disable character window transparency, and capture the window.
+2. Window capture: disable avatar window transparency, and capture the window.
 
 Screen capture uses as-is image. This way has the merit to be easy to understand what happens, and shadow and semi-transparent interfaces (like touch pad) are correctly shown.
 
@@ -53,14 +53,14 @@ In setting window,
 3. (Small effect): `Effects` tab, set `Image Quality` to lower one.
 4. (Small effect): `Effects` tab, set `Bloom`'s `Intensity` to 0.
 
-#### Consider How to Place the Character
+#### Consider How to Place the Avatar
 {: .doc-sec2 }
 
-When placing the character please consider NOT to show the avatar hands or arms.
+When placing the avatar please consider NOT to show the avatar hands or arms.
 
 As usual VTuber shows only upper than shoulder, the hand motion might lead unnatural image.
 
-Even in this case shoulder and upper-arm motion is reflected to the streaming, and this makes character more lively.
+Even in this case shoulder and upper-arm motion is reflected to the streaming, and this makes avatar more lively.
 
 If the streaming is mainly for the talking, you can choose the layout the camera is hidden.
 
@@ -71,7 +71,7 @@ If you want to apply bust-up layout and also want to show the hand motion, then 
 #### Choose how to Switch the Face Expressions
 {: .doc-sec2 }
 
-You can use several way to switch the character's face expressions.
+You can use several way to switch the avatar's face expressions.
 
 1. Keyboard, word input
 2. Keyboard, number key

@@ -26,7 +26,7 @@ Note that, this video refers older version, so some GUI has changed.
 
 </div>
 
-### 1. Start and Load Character
+### 1. Start and Load Avatar
 {: .doc-sec1 }
 
 First step depends on the version of `VMagicMirror` you have.
@@ -78,7 +78,7 @@ Please avoid special folder like `Program Files`, as those folder will lead tons
 #### 1-3. Load Model after Start
 {: .doc-sec2 }
 
-After the app started there appears 2 windows. One window shows GUI ("Control Panel"), and the other window shows character ("Character Window").
+After the app started there appears 2 windows. One window shows GUI ("Control Panel"), and the other window shows avatar ("Avatar Window").
 
 When you close one of the window, the other window also closes and VMagicMirror quits. If you do not want to show control panel, then minimize it.
 
@@ -96,16 +96,16 @@ See [Download Troubleshoot](../download#troubleshoot_first_startup) in this case
 
 </div>
 
-There are 2 ways to load character, from VRM file on the PC or from VRoid Hub.
+There are 2 ways to load avatar, from VRM file on the PC or from VRoid Hub.
 
-To use the file on PC, click `Load from File` to select file. Confirm the license and click `OK` to load the character.
+To use the file on PC, click `Load from File` to select file. Confirm the license and click `OK` to load the avatar.
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_020_load_vrm.jpg" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
 {% include docimg.html file="./images/get_started/img00_030_load_vrm_confirmation.jpg" customclass="col s6 m6 l4" imgclass="fit-doc-img" %}
 </div>
 
-To use the model in VRoid Hub click `Load from VRoid Hub`, then character window will shows VRoid Hub loader UI, with authentication instruction in the first time.
+To use the model in VRoid Hub click `Load from VRoid Hub`, then avatar window will shows VRoid Hub loader UI, with authentication instruction in the first time.
 
 After login, choose the avatar and check condition of use, then load.
 
@@ -127,13 +127,13 @@ See the detail at [Tips: Use VRoid Hub Avatar](../tips/use_vroid_hub).
 
 </div>
 
-If you want to load the character automatically on next boot, then check `Load current VRM on next startup`.
+If you want to load the avatar automatically on next boot, then check `Load current VRM on next startup`.
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_040_after_loaded.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
 </div>
 
-Also, if your character is not shown correctly, try `Adjust size by VRM` button. You can more chances to fix the layout later.
+Also, if your avatar is not shown correctly, try `Adjust size by VRM` button. You can more chances to fix the layout later.
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_160_not_good_layout_example.jpg" customclass="col s12 m6" imgclass="fit-doc-img" %}
@@ -151,9 +151,9 @@ Also, if your character is not shown correctly, try `Adjust size by VRM` button.
 #### 2.1. Window
 {: .doc-sec2 }
 
-Turn on `Transparent Window` to make character window to transparent. 
+Turn on `Transparent Window` to make avatar window to transparent. 
 
-When the window is transparent and `(When Transparent) Drag the character` is turned on, you can left-click and drag to move the character.
+When the window is transparent and `(When Transparent) Drag the character` is turned on, you can left-click and drag to move the avatar.
 
 If you do not want the dragging feature, then turn off `Drag the character` after placing your avatar.
 
@@ -187,17 +187,17 @@ Also you can set background image when `Transparent Window` is turn off, from `L
 
 If the model's face does not rotate in face tracking, please open [FAQ](../questions) and see "Face not rotate when using face tracking" section.
 
-If your face is not at the center for the web camera, or you are too near/far to the camera, the character indication might be unnatural. In this case, click `Calibrate position` to adjust.
+If your face is not at the center for the web camera, or you are too near/far to the camera, the avatar indication might be unnatural. In this case, click `Calibrate position` to adjust.
 
 <div class="note-area" markdown="1">
 
 **Hint**
 
-When your character always look downward then look down and `Calibrate position` to adjust. It makes your avatar to look up always.
+When your avatar always look downward then look down and `Calibrate position` to adjust. It makes your avatar to look up always.
 
 </div>
 
-`Eye Look Target` sets where to see. In default you can use `Mouse` so that the character looks the orientation mouse pointer exists.
+`Eye Look Target` sets where to see. In default you can use `Mouse` so that the avatar looks the orientation mouse pointer exists.
 
 <div class="note-area" markdown="1">
 
@@ -218,7 +218,7 @@ Motion menu support to custom how the avatar moves by user inputs.
 
 You can select the reaction when using keyboard/mouse, and gamepad separately.
 
-Also this menu has `Hands-Down Mode` check, which forces character's arms always down. This mode also increases the body movement. In this mode the body movement increases slightly.
+Also this menu has `Hands-Down Mode` check, which forces avatar's arms always down. This mode also increases the body movement. In this mode the body movement increases slightly.
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_210_motion_modes.jpg" customclass="col s12 m4 l4" imgclass="fit-doc-img" %}
@@ -249,7 +249,7 @@ If this does not help, then disable shadow.
 #### 2.5. Camera
 {: .doc-sec2 }
 
-This "Camera" means eyesight on the character window.
+This "Camera" means eyesight on the avatar window.
 
 When you use this feature turn off `Transparent Window` first. Then, check `Free Camera Mode` to move the point of view.
 
@@ -278,11 +278,11 @@ During this setup you can use `Quick Save` and `Quick Load` buttons to save or l
 There is another way to setup camera position, keeping `Transparent Window` on.
 
 1. Check on `(When Transparent) Drag Character`
-2. Left click the character
+2. Left click the avatar
 3. Adjust camera position
 4. After adjusting, check off `(When Transparent)Drag Character`
 
-This is useful, but you will be more easily lost the character out of the window area.
+This is useful, but you will be more easily lost the avatar out of the window area.
 
 In this case press `Reset Position`, or turn off `Transparent Window` to see the actual layout.
 
@@ -297,7 +297,7 @@ Turn on `Free Layout` to enter device free layout mode.
 
 When enter this mode `Transparent Window` is turned off.
 
-During this mode the control UI appears at the top-left corner of character window.
+During this mode the control UI appears at the top-left corner of avatar window.
 
 <div class="doc-ul" markdown="1">
 

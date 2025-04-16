@@ -61,9 +61,9 @@ In custom window you can take 4 actions.
     * v1.6.0 and later version supports custom motion import feature. See detail at [Use Custom Motion](../../tips/use_custom_motion) tips.
 3. Face expression setting.
     * Turn on `Enable Face Expression` check to play some face expression in this item.
-    * `Duration when Body Motion is None [sec]` defines how long the character keep the face.
+    * `Duration when Body Motion is None [sec]` defines how long the avatar keep the face.
     * `Keep LipSync active` enables lipsync during the face expression is applied, for the blendshape without mouth motion.
-    * If `Keep face after motion` is on, then character face does not change after the duration.
+    * If `Keep face after motion` is on, then avatar face does not change after the duration.
 4. Set BlendShapes. 
     * **NOTE:** Basically, set only one blend shape to non-zero, and set other values to zero.
 

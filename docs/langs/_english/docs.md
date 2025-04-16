@@ -22,13 +22,13 @@ Setting Window consists of 8 tabs.
 |----------------------------------+----------------------------------------------------------|
 | Tab Name                         | Description                                              |
 |:--------------------------------:|:---------------------------------------------------------|
-| [Window](./window)          | Control character window                                      |
+| [Window](./window)          | Control avatar window                                      |
 | [Face](./face)              | Adjust facial motion setting except [External Tracker App](./external_tracker).      |
-| [Motion](./motion)          | Adjust character size related parameters and motion scale     |
+| [Motion](./motion)          | Adjust avatar size related parameters and motion scale     |
 | [Layout](./layout)          | Layout of camera and devices, and device based motion setting |
 | [Effects](./effects)        | Light, shadow, bloom, and wind                                |
 | [Devices](./devices)        | Connection settings for gamepad and MIDI controller           |
-| [Expressions](./expressions)| Feature to move the character face and motion                 |
+| [Expressions](./expressions)| Feature to move the avatar face and motion                 |
 | [VMC Protocol](./vmc_protocol) | Receive pose / facial data from VMC Protocol               |
 | [Hot Key](./hotkey)         | Customize shortcut key input to control settings              |
 | [Setting Files](./setting_files) | Advanced features to manage setting files                |

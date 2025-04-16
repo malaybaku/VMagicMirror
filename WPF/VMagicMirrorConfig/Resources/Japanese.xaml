@@ -44,7 +44,7 @@
     <sys:String x:Key="Home_VrmDragDropInstruction">ドラッグ &amp; ドロップでVRMをロード</sys:String>
 
     <sys:String x:Key="Home_LoadVrmOnNextStartup">次回の起動時にも同じVRMを読み込む</sys:String>
-    <sys:String x:Key="Home_AutoAdjust">キャラ体格で補正</sys:String>
+    <sys:String x:Key="Home_AutoAdjust">アバター体格で補正</sys:String>
 
     <sys:String x:Key="Home_Manual_Header">使い方</sys:String>
     <sys:String x:Key="Home_Manual_Open">マニュアルのURLにアクセス</sys:String>
@@ -277,7 +277,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_Basics">基本設定</sys:String>
     <sys:String x:Key="Window_BackgroundColor">背景色</sys:String>
     <sys:String x:Key="Window_Transparent">背景を透過</sys:String>
-    <sys:String x:Key="Window_Draggable">(透過中)キャラ付近を掴んでドラッグ</sys:String>
+    <sys:String x:Key="Window_Draggable">(透過中)アバター付近を掴んでドラッグ</sys:String>
     <sys:String x:Key="Window_TopMost">(透過中)アバターをつねに最前面で表示</sys:String>
     <sys:String x:Key="Window_ResetPosition">アバター位置のリセット</sys:String>
     
@@ -302,14 +302,14 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560Vertical">1440 x 2560 (固定)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840Vertical">2160 x 3840 (固定)</sys:String>
     
-    <sys:String x:Key="Window_TransparencySupport">キャラ透明化の詳細</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level">キャラの透明化レベル</sys:String>
+    <sys:String x:Key="Window_TransparencySupport">アバター透明化の詳細</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level">アバターの透明化レベル</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Alpha">透明になるときの透明度(32-255)</sys:String>
     
     <sys:String x:Key="Window_TransparencySupport_Level_0">レベル0: つねに不透明です。</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_1">レベル1: 「キャラ付近を掴んでドラッグ」がオフで、かつキャラの近くにマウスポインタがあれば、半透明になります。</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_2">レベル2: キャラの近くにマウスポインタがあれば、半透明になります。</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_3">レベル3: 「キャラ付近を掴んでドラッグ」がオフならば、半透明になります。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_1">レベル1: 「アバター付近を掴んでドラッグ」がオフで、かつアバターの近くにマウスポインタがあれば、半透明になります。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_2">レベル2: アバターの近くにマウスポインタがあれば、半透明になります。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_3">レベル3: 「アバター付近を掴んでドラッグ」がオフならば、半透明になります。</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level_4">レベル4: つねに半透明になります。</sys:String>
         
     <!-- Motion -->
@@ -500,7 +500,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Devices_Gamepad_PreferDirectInput">DirectInputを使用 (DUAL SHOCK 4を使う場合オン)</sys:String>
     <sys:String x:Key="Devices_GamepadDeviceNumber">デバイス番号</sys:String>
     
-    <sys:String x:Key="Devices_GamepadLean">キャラ傾き入力</sys:String>
+    <sys:String x:Key="Devices_GamepadLean">アバター傾き入力</sys:String>
     <sys:String x:Key="Devices_GamepadLean_None">なし</sys:String>
     <sys:String x:Key="Devices_GamepadLean_LeftButtons">左十字キー</sys:String>
     <sys:String x:Key="Devices_GamepadLean_LeftStick">左スティック</sys:String>
@@ -532,7 +532,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 
     <sys:String x:Key="Shadow">影</sys:String>
     <sys:String x:Key="Shadow_Enable">影を有効化</sys:String>
-    <sys:String x:Key="Shadow_Enable_Streaming">キャラの影</sys:String>
+    <sys:String x:Key="Shadow_Enable_Streaming">アバターの影</sys:String>
     <sys:String x:Key="Shadow_Intensity">濃さ[%]</sys:String>
     <sys:String x:Key="Shadow_Yaw">向き(横)[deg]</sys:String>
     <sys:String x:Key="Shadow_Pitch">向き(上下)[deg]</sys:String>
@@ -670,8 +670,8 @@ VMCPを使わない場合、「設定タブをメインウィンドウから非�
     <sys:String x:Key="SettingFile_Load">ロード</sys:String>
     <sys:String x:Key="SettingFile_Save_Instruction">保存先を選択して下さい。</sys:String>
     <sys:String x:Key="SettingFile_Load_Instruction">ロードするデータを選択して下さい。</sys:String>
-    <sys:String x:Key="SettingFile_LoadCharacter">キャラをロード</sys:String>
-    <sys:String x:Key="SettingFile_LoadNonCharacter">キャラ以外の情報をロード</sys:String>
+    <sys:String x:Key="SettingFile_LoadCharacter">アバターをロード</sys:String>
+    <sys:String x:Key="SettingFile_LoadNonCharacter">アバター以外の情報をロード</sys:String>
     <sys:String x:Key="SettingFile_Export">エクスポート</sys:String>
     <sys:String x:Key="SettingFile_Import">インポート</sys:String>
     
@@ -801,7 +801,7 @@ webカメラでの顔トラッキングを有効にする場合は
     <sys:String x:Key="DialogTitle_ConfirmSettingFileLoad">設定をロード</sys:String>
     <sys:String x:Key="DialogMessage_ConfirmSettingFileLoad" xml:space="preserve">設定 No.{0} をロードしますか？
         
-キャラ以外の設定をロードすると、現在の設定が上書きされます。</sys:String>
+アバター以外の設定をロードすると、現在の設定が上書きされます。</sys:String>
 
     <sys:String x:Key="DialogTitle_GuardSettingWindowDuringSaveLoad">セーブ/ロード操作中</sys:String>
     <sys:String x:Key="DialogMessage_GuardSettingWindowDuringSaveLoad">設定ファイルのセーブ/ロード中は設定ウィンドウは操作できません。</sys:String>

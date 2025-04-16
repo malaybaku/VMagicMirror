@@ -278,8 +278,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_BackgroundColor">背景色</sys:String>
     <sys:String x:Key="Window_Transparent">背景を透過</sys:String>
     <sys:String x:Key="Window_Draggable">(透過中)キャラ付近を掴んでドラッグ</sys:String>
-    <sys:String x:Key="Window_TopMost">(透過中)キャラクターをつねに最前面で表示</sys:String>
-    <sys:String x:Key="Window_ResetPosition">キャラクター位置のリセット</sys:String>
+    <sys:String x:Key="Window_TopMost">(透過中)アバターをつねに最前面で表示</sys:String>
+    <sys:String x:Key="Window_ResetPosition">アバター位置のリセット</sys:String>
     
     <sys:String x:Key="Window_BackgroundImage">背景画像:</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">ロード...</sys:String>
@@ -566,7 +566,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="WordToMotion_Enable">Word to Motionを有効化</sys:String>
     <sys:String x:Key="WordToMotion_UseGamepadForInput">ゲームパッドのボタンで表情/モーションを実行</sys:String>
     <sys:String x:Key="WordToMotion_Instruction" xml:space="preserve">このタブは `Word to Motion` タブです。
-`Word to Motion`は、単語をタイピングするとキャラクターを動かせる機能です。
+`Word to Motion`は、単語をタイピングするとアバターを動かせる機能です。
 ためしに "joy" とタイピングしてみてください。</sys:String>
     <sys:String x:Key="WordToMotion_AssignDevice">この機能専用にデバイスを割り当て</sys:String>
     <sys:String x:Key="WordToMotion_AssignDevice_None">なし</sys:String>
@@ -606,9 +606,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="WordToMotion_Face_PreferLipSync">リップシンクを続行</sys:String>
     
     <sys:String x:Key="WordToMotion_Face_CommonClip_Header">基本の表情</sys:String>
-    <sys:String x:Key="WordToMotion_Face_ExtraClip_Header">キャラ固有の表情</sys:String>
+    <sys:String x:Key="WordToMotion_Face_ExtraClip_Header">モデル固有の表情</sys:String>
     
-    <sys:String x:Key="WordToMotion_EnablePreview">現在のキャラクターでプレビュー</sys:String>    
+    <sys:String x:Key="WordToMotion_EnablePreview">現在のアバターでプレビュー</sys:String>    
         
     <sys:String x:Key="WordToMotion_MidiAssign">MIDIのノート割り当て</sys:String>
     <sys:String x:Key="WordToMotion_MidiAssign_MidiNotActive_Title">MIDI入力を有効化します</sys:String>
@@ -677,7 +677,7 @@ VMCPを使わない場合、「設定タブをメインウィンドウから非�
     
     <sys:String x:Key="SettingFile_Automation">オートメーション</sys:String>
     <sys:String x:Key="SettingFile_Instruction" xml:space="preserve">注意:
-この機能を使うとGUIを操作せずにキャラクターを切り替えられます。
+この機能を使うとGUIを操作せずにアバターを切り替えられます。
 ライセンスを十分確認したモデルでのみ、この機能を使用して下さい。
 
 また、本機能ではVRoid Hubモデルへの自動切り替えはできません。</sys:String>
@@ -771,7 +771,7 @@ VMCPを使わない場合、「設定タブをメインウィンドウから非�
     <sys:String x:Key="DialogTitle_InvalidIpAddress">無効なIPアドレス</sys:String>
     <sys:String x:Key="DialogMessage_InvalidIpAddress">無効なIPアドレスが指定されています。入力を確認して下さい。</sys:String>
     <sys:String x:Key="DialogTitle_ShowVRoidSdkUi">VRoid Hubに接続中</sys:String>
-    <sys:String x:Key="DialogMessage_ShowVRoidSdkUi">キャラクターウィンドウ上でモデルを選択するか、またはキャンセルしてください。</sys:String>
+    <sys:String x:Key="DialogMessage_ShowVRoidSdkUi">アバターウィンドウ上でモデルを選択するか、またはキャンセルしてください。</sys:String>
     <sys:String x:Key="DialogTitle_LoadPreviousVRoidModel">VRoid Hubに接続中</sys:String>
     <sys:String x:Key="DialogMessage_LoadPreviousVRoidModel">前回使用したモデルのロードを試みています。モデルをロードするか、またはキャンセルしてください。</sys:String>
     <sys:String x:Key="DialogTitle_LoadSavedVRoidModel">VRoid Hubに接続中</sys:String>
@@ -809,7 +809,7 @@ webカメラでの顔トラッキングを有効にする場合は
     <sys:String x:Key="DialogTitle_EnableAutomation">オートメーションの有効化</sys:String>
     <sys:String x:Key="DialogMessage_EnableAutomation" xml:space="preserve">オートメーションを有効化しますか？
 
-オートメーション機能ではGUIを操作せずにキャラクター、設定を切り替えられます。
+オートメーション機能ではGUIを操作せずにアバター、設定を切り替えられます。
 ライセンスを十分よく確認したモデルに対してのみ、この機能を使用して下さい。
 </sys:String>
 

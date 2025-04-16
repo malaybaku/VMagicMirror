@@ -115,7 +115,7 @@ In this case, you can reset the window position.
 <div class="doc-ul" markdown="1">
 
 1. Move Control panel to near to the left top side of screen.
-2. Open setting window and show `Window` tab to select `Reset Character Position`.
+2. Open setting window and show `Window` tab to select `Reset Avatar Position`.
     + If you could find avatar then [2: Get Started](../get_started) will support your setup.
 3. If the avatar still does not appear, then turn off `Transparent Background` on setting window `Window` tab and check if you can see green window at the right side of control panel.
 4. Setting window `Layout` tab, see `Camera` menu, and press `Reset Position` to reset the camera position.

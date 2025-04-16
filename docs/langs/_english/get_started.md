@@ -153,9 +153,9 @@ Also, if your avatar is not shown correctly, try `Adjust size by VRM` button. Yo
 
 Turn on `Transparent Window` to make avatar window to transparent. 
 
-When the window is transparent and `(When Transparent) Drag the character` is turned on, you can left-click and drag to move the avatar.
+When the window is transparent and `(When Transparent) Drag the avatar` is turned on, you can left-click and drag to move the avatar.
 
-If you do not want the dragging feature, then turn off `Drag the character` after placing your avatar.
+If you do not want the dragging feature, then turn off `Drag the avatar` after placing your avatar.
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_060_transparent_bg.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
@@ -277,10 +277,10 @@ During this setup you can use `Quick Save` and `Quick Load` buttons to save or l
 
 There is another way to setup camera position, keeping `Transparent Window` on.
 
-1. Check on `(When Transparent) Drag Character`
+1. Check on `(When Transparent) Drag Avatar`
 2. Left click the avatar
 3. Adjust camera position
-4. After adjusting, check off `(When Transparent)Drag Character`
+4. After adjusting, check off `(When Transparent)Drag Avatar`
 
 This is useful, but you will be more easily lost the avatar out of the window area.
 

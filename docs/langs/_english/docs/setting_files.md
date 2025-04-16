@@ -54,11 +54,11 @@ When VMagicMirror starts, auto save data is loaded as the default data.
 
 </div>
 
-`Load` has options `Load Character` and `Load Non-Character`.
+`Load` has options `Load Avatar` and `Load Non-Avatar`.
 
-When check only `Load Character`, only the avatar is applied in saved data. It is default option, and is useful to switch save avatar with different clothes.
+When check only `Load Avatar`, only the avatar is applied in saved data. It is default option, and is useful to switch save avatar with different clothes.
 
-When check `Load Non-Character`, other settings like face tracking and layout etc. will be loaded.
+When check `Load Non-Avatar`, other settings like face tracking and layout etc. will be loaded.
 
 When both option is unchecked, the data will not be loaded.
 
@@ -126,8 +126,8 @@ You can change 3 parameters in `args`.
 <div class="doc-ul" markdown="1">
 
 - `index`: Data index to load. specify an integer value between 1 and 15.
-- `load_character`: Equivalent to `Load Character` check in basic load GUI. Set `true` or `false`.
-- `load_non_character`: Equivalent to `Load Non-Character` check in basic load GUI. Set `true` or `false`.
+- `load_character`: Equivalent to `Load Avatar` check in basic load GUI. Set `true` or `false`.
+- `load_non_character`: Equivalent to `Load Non-Avatar` check in basic load GUI. Set `true` or `false`.
 
 </div>
 

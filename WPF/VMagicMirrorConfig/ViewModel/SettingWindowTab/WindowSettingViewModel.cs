@@ -111,6 +111,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             new(SpoutResolutionType.Fixed1920, "Window_SpoutOutput_Resolution_Fixed1920"),
             new(SpoutResolutionType.Fixed2560, "Window_SpoutOutput_Resolution_Fixed2560"),
             new(SpoutResolutionType.Fixed3840, "Window_SpoutOutput_Resolution_Fixed3840"),
+            new(SpoutResolutionType.Fixed1280Vertical, "Window_SpoutOutput_Resolution_Fixed1280Vertical"),
+            new(SpoutResolutionType.Fixed1920Vertical, "Window_SpoutOutput_Resolution_Fixed1920Vertical"),
+            new(SpoutResolutionType.Fixed2560Vertical, "Window_SpoutOutput_Resolution_Fixed2560Vertical"),
+            new(SpoutResolutionType.Fixed3840Vertical, "Window_SpoutOutput_Resolution_Fixed3840Vertical"),
         };
     }
 }

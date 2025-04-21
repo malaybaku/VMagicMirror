@@ -6,7 +6,7 @@ lang: en
 
 # Motion
 
-`Motion` tab can adjust character's proportion and motion related parameters.
+`Motion` tab can adjust avatar's proportion and motion related parameters.
 
 {% include docimg.html file="/images/docs/motion_top.png" %}
 
@@ -51,9 +51,9 @@ You need to turn on `Always-Hands-Down Mode` and enable `Free Layout Mode` to ed
 
 `Modify shoulder motion`: Make shoulder motion richer. Enabled by default.
 
-`Waist width [cm]`: Set how much the character put his/her elbow outside.
+`Waist width [cm]`: Set how much the avatar put his/her elbow outside.
 
-`Strength to keep upper arm to body [%]`: If set larger value, the character's pose obeys more strictly to `Waits width [cm]` value.
+`Strength to keep upper arm to body [%]`: If set larger value, the avatar's pose obeys more strictly to `Waist width [cm]` value.
 
 Please see the following example of default value, close elbow, or open elbow.
 

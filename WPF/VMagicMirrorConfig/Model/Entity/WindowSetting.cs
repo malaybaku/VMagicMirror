@@ -33,5 +33,11 @@
         Fixed1920 = 2,
         Fixed2560 = 3,
         Fixed3840 = 4,
+        // NOTE: ここから下は縦長解像度で、v3.9.1まででは存在しなかったオプション。
+        // `1280` 等の数値は縦幅であって横幅ではないので注意
+        Fixed1280Vertical = 5,
+        Fixed1920Vertical = 6,
+        Fixed2560Vertical = 7,
+        Fixed3840Vertical = 8,
     }
 }

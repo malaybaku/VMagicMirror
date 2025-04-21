@@ -5,7 +5,7 @@ title: VRoid Hubのアバター利用について
 
 # Tips: VRoid Hubのアバター利用について
 
-VMagicMirror v1.0.0以降ではVRoid Hubにアップロードされたキャラクターを使用できます。
+VMagicMirror v1.0.0以降ではVRoid Hubにアップロードされたアバターを使用できます。
 
 VRoid Hubとの連携機能では手軽に多くのモデルを利用できますが、次のことに注意して下さい。
 

@@ -50,7 +50,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public ActionCommand CancelCommand { get; }
 
-        //デフォルトではキャラロードだけ有効にして、「同じモデルで服が違うのをパッと切り替えます」みたいなUXを重視しておく。
+        //デフォルトではアバターロードだけ有効にして、「同じモデルで服が違うのをパッと切り替えます」みたいなUXを重視しておく。
         public RProperty<bool> LoadCharacterWhenSettingLoaded { get; }
         public RProperty<bool> LoadNonCharacterWhenSettingLoaded { get; } 
 

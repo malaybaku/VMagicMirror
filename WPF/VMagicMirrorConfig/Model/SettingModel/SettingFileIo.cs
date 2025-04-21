@@ -270,7 +270,7 @@ namespace Baku.VMagicMirrorConfig
         None,
         /// <summary>ローカルVRMの情報だけ読み込む</summary>
         Character,
-        /// <summary>キャラ以外の情報だけ読み込む</summary>
+        /// <summary>アバター以外の情報だけ読み込む</summary>
         NonCharacter,
         /// <summary>全て読み込む: 普通はこれ</summary>
         All,

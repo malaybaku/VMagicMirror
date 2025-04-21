@@ -100,7 +100,7 @@ namespace Baku.VMagicMirrorConfig
         /// <summary> UIに表示するのが妥当と考えられるブレンドシェイプクリップ名の一覧です。 </summary>
         public ReadOnlyObservableCollection<string> BlendShapeNames { get; }
 
-        //Unityで読み込まれたキャラクターのブレンドシェイプ名の一覧です。
+        //Unityで読み込まれたアバターのブレンドシェイプ名の一覧です。
         //NOTE: この値は標準ブレンドシェイプ名を含んでいてもいなくてもOK。ただし現行動作では標準ブレンドシェイプ名は含まない。
         private string[] _avatarClipNames = Array.Empty<string>();
 

@@ -80,7 +80,7 @@ Some game runs program to move mouse position to the center of game window.
 
 (FPS games need this type of program to support mouse-based camera control without getting unexpected mouse position.)
 
-It results the fixed mouse position and eye / head position of character, even if you are moving mouse physically.
+It results the fixed mouse position and eye / head position of avatar, even if you are moving mouse physically.
 
 One example of the popular software which leads the trouble is VRChat Desktop Mode.
 
@@ -105,7 +105,7 @@ If not, please check following points to help face tracking system.
 
 Showing entire face helps eye blink tracking, because face tracking system finds your face by detecting your whole face landmark points (including mouth, eyebrows, and of course eyes).
 
-#### After loading VRM character window seems disappear
+#### After loading VRM avatar window seems disappear
 {: .doc-sec2 }
 
 This issue might happen when you have changed display resolution or placement.
@@ -115,11 +115,11 @@ In this case, you can reset the window position.
 <div class="doc-ul" markdown="1">
 
 1. Move Control panel to near to the left top side of screen.
-2. Open setting window and show `Window` tab to select `Reset Character Position`.
-    + If you could find character then [2: Get Started](../get_started) will support your setup.
-3. If the character still does not appear, then turn off `Transparent Background` on setting window `Window` tab and check if you can see green window at the right side of control panel.
+2. Open setting window and show `Window` tab to select `Reset Avatar Position`.
+    + If you could find avatar then [2: Get Started](../get_started) will support your setup.
+3. If the avatar still does not appear, then turn off `Transparent Background` on setting window `Window` tab and check if you can see green window at the right side of control panel.
 4. Setting window `Layout` tab, see `Camera` menu, and press `Reset Position` to reset the camera position.
-    + If you could find character then [2: Get Started](../get_started) will support your setup.
+    + If you could find avatar then [2: Get Started](../get_started) will support your setup.
 
 </div>
 
@@ -128,7 +128,7 @@ If you still have trouble, then please try the way in `VMagicMirror stops soon a
 #### Nothing happens after select .vrm on `Load VRM`
 {: .doc-sec2 }
 
-Security software can be the cause of this issue, as VMagicMirror operates interprocess communication between character window and control panel.
+Security software can be the cause of this issue, as VMagicMirror operates interprocess communication between avatar window and control panel.
 
 Please try to disable the security software in this case.
 
@@ -139,7 +139,7 @@ As far as the creator knows, COMODO Internet Security leads this issue, but it i
 
 <div class="doc-ul" markdown="1">
 
-* It is possible the character uses `Unlit` style shader and this case shadow might not appear.
+* It is possible the avatar uses `Unlit` style shader and this case shadow might not appear.
 * When your model is based on VRoidStudio and texture is partially transparent, some transparent part happens to be drawn with half transparent style.
 
 </div>
@@ -164,7 +164,7 @@ Please quit VMagicMirror, move the folder to another (multi-byte character free)
 #### Transparent background does not work in Windows 11
 {: .doc-sec2 }
 
-When you have updated OS version and character window cannot get transparent background, please check next section `Select Transparent background, but get black background color`.
+When you have updated OS version and avatar window cannot get transparent background, please check next section `Select Transparent background, but get black background color`.
 
 This issue might happen when you update NVIDIA graphics driver with `clean install` option, or install OS itself with clean install style.
 

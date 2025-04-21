@@ -10,5 +10,7 @@ namespace Baku.VMagicMirror
 
         /// <summary> サブキャラのAPI定義に関するxml docファイル。実行時にVMM_Files以下にコピーして使う </summary>
         public const string BuddyApiXmlDocFileName = "VMagicMirror.Buddy.xml";
+
+        public const string MediaPipeTrackerFolder = "MediaPipeTracker";
     }
 }

@@ -21,7 +21,7 @@ namespace Baku.VMagicMirrorConfig
 
         public int SelectedDeviceType { get; set; } = DeviceTypes.KeyboardWord;
 
-        //NOTE: 「UIに出さないけど保存はしたい」系のデータで、キャラロード時にUnityから勝手に送られてくる
+        //NOTE: 「UIに出さないけど保存はしたい」系のデータで、アバターロード時にUnityから勝手に送られてくる
         public List<string> ExtraBlendShapeClipNames { get; set; } = new List<string>();
 
         /// <summary>

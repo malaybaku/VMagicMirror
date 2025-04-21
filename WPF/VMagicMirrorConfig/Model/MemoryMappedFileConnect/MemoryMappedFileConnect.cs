@@ -264,7 +264,7 @@ namespace Baku.VMagicMirrorConfig.Mmf
             {
                 while (!token.IsCancellationRequested)
                 {
-                    Message? msg = null;
+                    Message msg;
                     //送るものが無いうちは待ち
                     while (!_writeMessageQueue.TryDequeue(out msg))
                     {
@@ -273,12 +273,6 @@ namespace Baku.VMagicMirrorConfig.Mmf
                             return;
                         }
                         Thread.Sleep(1);
-                    }
-
-                    if (msg == null)
-                    {
-                        //来ないはずだが念のため
-                        continue;
                     }
 
                     //書き込みOKになるまで待ち
@@ -362,7 +356,7 @@ namespace Baku.VMagicMirrorConfig.Mmf
             }
         }
 
-        class Message
+        private readonly struct Message
         {
             private Message(string text, bool isReply, int id)
             {

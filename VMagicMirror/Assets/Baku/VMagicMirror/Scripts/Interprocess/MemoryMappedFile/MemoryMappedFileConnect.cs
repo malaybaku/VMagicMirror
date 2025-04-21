@@ -62,13 +62,12 @@ namespace Baku.VMagicMirror.Mmf
         private readonly byte[] _readBuffer = new byte[MemoryMappedFileCapacity];
 
         //送りたいメッセージ(クエリとコマンド両方)の一覧
-        private readonly ConcurrentQueue<Message> _writeMessageQueue = new ConcurrentQueue<Message>();
+        private readonly ConcurrentQueue<Message> _writeMessageQueue = new();
 
         //返信待ちクエリの一覧
-        private readonly ConcurrentDictionary<int, TaskCompletionSource<string>> _sendedQueries
-            = new ConcurrentDictionary<int, TaskCompletionSource<string>>();
+        private readonly ConcurrentDictionary<int, TaskCompletionSource<string>> _sendedQueries = new();
 
-        private readonly object _requestIdLock = new object();
+        private readonly object _requestIdLock = new();
         private int _requestId = 0;
         private int RequestId
         {
@@ -88,22 +87,22 @@ namespace Baku.VMagicMirror.Mmf
             }
         }
 
-        private readonly object _receiverLock = new object();
+        private readonly object _receiverLock = new();
         private MemoryMappedFile _receiver;
         private MemoryMappedViewAccessor _receiverAccessor;
 
-        private readonly object _senderLock = new object();
+        private readonly object _senderLock = new();
         private MemoryMappedFile _sender;
         private MemoryMappedViewAccessor _senderAccessor;
 
-        private Thread _sendThread = null;
-        private Thread _receiveThread = null;
+        private Thread _sendThread;
+        private Thread _receiveThread;
         private CancellationTokenSource _cts;
 
         public event EventHandler<ReceiveCommandEventArgs> ReceiveCommand;
         public event EventHandler<ReceiveQueryEventArgs> ReceiveQuery;
 
-        public bool IsConnected { get; private set; } = false;
+        public bool IsConnected { get; private set; }
 
         public async Task StartInternal(string pipeName, bool isServer)
         {
@@ -225,9 +224,9 @@ namespace Baku.VMagicMirror.Mmf
   
         private void ReadMessage()
         {
-            string message = "";
-            bool isReply = false;
-            int id = 0;
+            var message = "";
+            var isReply = false;
+            var id = 0;
 
             lock (_receiverLock)
             {
@@ -236,10 +235,10 @@ namespace Baku.VMagicMirror.Mmf
                     return;
                 }
                 
-                short messageType = _receiverAccessor.ReadInt16(2);
+                var messageType = _receiverAccessor.ReadInt16(2);
                 isReply = messageType > 0;
                 id = _receiverAccessor.ReadInt32(4);
-                int bodyLength = _receiverAccessor.ReadInt32(8);
+                var bodyLength = _receiverAccessor.ReadInt32(8);
 
                 _receiverAccessor.ReadArray(12, _readBuffer, 0, bodyLength);
                 message = Encoding.UTF8.GetString(_readBuffer, 0, bodyLength);
@@ -338,7 +337,7 @@ namespace Baku.VMagicMirror.Mmf
                 _senderAccessor.Write(2, (short)(msg.IsReply ? 1 : 0));
                 _senderAccessor.Write(4, msg.Id);
 
-                byte[] data = Encoding.UTF8.GetBytes(msg.Text);
+                var data = Encoding.UTF8.GetBytes(msg.Text);
                 _senderAccessor.Write(8, data.Length);
                 _senderAccessor.WriteArray(12, data, 0, data.Length);
 
@@ -400,9 +399,9 @@ namespace Baku.VMagicMirror.Mmf
             /// </summary>
             public int Id { get; }
 
-            public static Message Command(string text) => new Message(text, false, 0);
-            public static Message Query(string text, int id) => new Message(text, false, id);
-            public static Message Response(string text, int id) => new Message(text, true, id);
+            public static Message Command(string text) => new(text, false, 0);
+            public static Message Query(string text, int id) => new(text, false, id);
+            public static Message Response(string text, int id) => new(text, true, id);
         }
     }   
 }

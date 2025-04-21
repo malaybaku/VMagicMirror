@@ -36,7 +36,13 @@ namespace Baku.VMagicMirror.Mmf
     //メッセージのバイナリフォーマットについて
     //0-1: 書き込み状態フラグ。
     // - 0: 受信完了。このときはWriteする側だけが触ってよい
-    // - 1: 送信完了。このときはReadする側だけが触ってよい
+    // - 1: 送信完了(メッセージサイズ超過無し)。このときはReadする側だけが触ってよい
+    // - 2: 送信完了(メッセージサイズ超過あり)。このときはReadする側だけが触ってよい
+    // 
+    // とくにこの値が2の場合、長いメッセージがブツ切りで送受信されることを意味する。
+    // - 受信側は次のメッセージを繋げて読み込む準備を行い、送信側は次のメッセージを繋げて書き込む。
+    // - 2-7バイト目は、メッセージの最初から最後まで同じ値が入り続ける
+    // - 8-11バイト目は、ぶつ切りにしたチャンクの長さが入る。メッセージの全長は末尾が飛んでくるまでは分からないが、それはby-design
 
     //2-3: メッセージタイプ
     // - 0: 自発的に送信したメッセージ
@@ -59,6 +65,9 @@ namespace Baku.VMagicMirror.Mmf
     public abstract class MemoryMappedNamedConnectBase
     {
         private const long MemoryMappedFileCapacity = 262114;
+        private const int MessageHeaderSize = 12;
+        private const int MaxMessageBodySize = (int)MemoryMappedFileCapacity - MessageHeaderSize;
+
         private readonly byte[] _readBuffer = new byte[MemoryMappedFileCapacity];
 
         //送りたいメッセージ(クエリとコマンド両方)の一覧
@@ -137,9 +146,9 @@ namespace Baku.VMagicMirror.Mmf
             _receiverAccessor = _receiver.CreateViewAccessor();
             _senderAccessor = _sender.CreateViewAccessor();
 
-            _receiveThread = new Thread(() => ReadThread());
+            _receiveThread = new Thread(() => ReadThread(_cts.Token));
             _receiveThread.Start();
-            _sendThread = new Thread(() => WriteThread());
+            _sendThread = new Thread(() => WriteThread(_cts.Token));
             _sendThread.Start();
             IsConnected = true;
         }
@@ -190,15 +199,15 @@ namespace Baku.VMagicMirror.Mmf
         private void SendQueryResponse(string command, int id)
             => _writeMessageQueue.Enqueue(Message.Response(command, id));
 
-        private void ReadThread()
+        private void ReadThread(CancellationToken token)
         {
             try
             {
-                while (!_cts.Token.IsCancellationRequested)
+                while (!token.IsCancellationRequested)
                 {
                     while (!CheckReceivedMessageExists())
                     {
-                        if (_cts.Token.IsCancellationRequested)
+                        if (token.IsCancellationRequested)
                         {
                             return;
                         }
@@ -269,38 +278,52 @@ namespace Baku.VMagicMirror.Mmf
             }
         }
 
-        private void WriteThread()
+        private void WriteThread(CancellationToken token)
         {
             try
             {
-                while (!_cts.Token.IsCancellationRequested)
+                while (!token.IsCancellationRequested)
                 {
                     Message msg;
                     //送るものが無いうちは待ち
                     while (!_writeMessageQueue.TryDequeue(out msg))
                     {
-                        if (_cts.Token.IsCancellationRequested)
+                        if (token.IsCancellationRequested)
                         {
                             return;
                         }
                         Thread.Sleep(1);
                     }
 
-                    //書き込みOKになるまで待ち
-                    while (!CheckCanWriteMessage())
-                    {
-                        if (_cts.Token.IsCancellationRequested)
-                        {
-                            return;
-                        }
-                        Thread.Sleep(1);
-                    }
-
-                    WriteMessage(msg);
+                    WriteSingleMessage(msg, token);
                 }
             }
             catch (NullReferenceException)
             {
+            }
+        }
+
+        private void WriteSingleMessage(Message msg, CancellationToken token)
+        {
+            // NOTE: 1メッセージを分割して送ることがあり、かつ毎回書き込み許可を待つので、そこそこ複雑
+            var offset = 0;
+            while (true)
+            {
+                //書き込みOKになるまで待ち
+                while (!CheckCanWriteMessage())
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                    Thread.Sleep(1);
+                }
+
+                offset = WriteMessageV2(msg, offset);
+                if (offset == -1)
+                {
+                    return;
+                }
             }
         }
 
@@ -313,7 +336,53 @@ namespace Baku.VMagicMirror.Mmf
                     _senderAccessor.ReadByte(0) == 0;
             }
         }
+        
+        /// <summary>
+        /// 単一のメッセージを送信する
+        /// </summary>
+        /// <param name="msg">送信するメッセージ</param>
+        /// <param name="offset">最初は0, メッセージを分割しながら送る場合は前回の呼び出し時の戻り値</param>
+        /// <returns>データを送りきった場合は -1, そうでなければデータの続きを送るときに指定すべきoffsetの値</returns>
+        private int WriteMessageV2(Message msg, int offset)
+        {
+            if (!IsConnected)
+            {
+                return -1;
+            }
 
+            lock (_senderLock)
+            {
+                if (_senderAccessor == null)
+                {
+                    return -1;
+                }
+
+                _senderAccessor.Write(2, (short)(msg.IsReply ? 1 : 0));
+                _senderAccessor.Write(4, msg.Id);
+
+                // NOTE: ここで分割するメッセージについても毎回ぜんぶGetBytesするのが勿体ないが、
+                // そもそも分割するほど大きいメッセージは珍しいので、一旦気にしないことにしている
+                var data = Encoding.UTF8.GetBytes(msg.Text);
+
+                if (data.Length > MaxMessageBodySize)
+                {
+                    // データが収まりきらない: 書ける範囲までで区切って送る
+                    _senderAccessor.Write(8, MaxMessageBodySize);
+                    _senderAccessor.WriteArray(12, data, offset, MaxMessageBodySize);
+                    _senderAccessor.Write(0, (byte)2);
+                    return offset + MaxMessageBodySize;
+                }
+                else
+                {
+                    // データが全部書ける: 単に書き込む
+                    _senderAccessor.Write(8, data.Length);
+                    _senderAccessor.WriteArray(12, data, offset, data.Length - offset);
+                    _senderAccessor.Write(0, (byte)1);
+                    return -1;
+                }
+            }
+        }
+        
         private void WriteMessage(Message msg)
         {
             if (!IsConnected)

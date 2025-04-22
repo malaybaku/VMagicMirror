@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror.InterProcess
 #pragma warning restore CS4014
         }
 
-        private readonly IpcMessageDispatcher _dispatcher = new IpcMessageDispatcher();
+        private readonly IpcMessageDispatcher _dispatcher = new();
         private readonly MemoryMappedFileConnector _server;
 
         public event Action<Message> SendingMessage;
@@ -79,14 +79,14 @@ namespace Baku.VMagicMirror.InterProcess
             var command = (i == -1) ? rawContent : rawContent[..i];
             var content = (i == -1) ? "" : rawContent[(i + 1)..];
 
-            string res = await _dispatcher.ReceiveQuery(new ReceivedQuery(command, content));
+            var res = await _dispatcher.ReceiveQuery(new ReceivedQuery(command, content));
             _server.SendQueryResponse(res, value.id);
         }
         
         //コマンド名と引数名の区切り文字のインデックスを探します。
         private static int FindColonCharIndex(string s)
         {
-            for (int i = 0; i < s.Length; i++)
+            for (var i = 0; i < s.Length; i++)
             {
                 if (s[i] == ':')
                 {

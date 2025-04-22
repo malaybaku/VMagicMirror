@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+// TODO: Write/Readでクラスを分けたい、流石にちょっと長いし1クラスになってる必然性が無さそう
+
 //https://github.com/malaybaku/UnityMemoryMappedFile
 //Unityはサーバー役をする
 
@@ -33,16 +35,15 @@ namespace Baku.VMagicMirror.Mmf
         public async Task Start(string name) => await StartInternal(name, true);
     }
 
-    //メッセージのバイナリフォーマットについて
+    // 読み書きするデータ単位 (単一メッセージ or メッセージの一部) のバイナリフォーマットについて
     //0-1: 書き込み状態フラグ。
     // - 0: 受信完了。このときはWriteする側だけが触ってよい
-    // - 1: 送信完了(メッセージサイズ超過無し)。このときはReadする側だけが触ってよい
-    // - 2: 送信完了(メッセージサイズ超過あり)。このときはReadする側だけが触ってよい
+    // - 1: 送信完了(メッセージの末尾)。このときはReadする側だけが触ってよい
+    // - 2: 送信完了(メッセージの末尾以外)。このときはReadする側だけが触ってよい
     // 
-    // とくにこの値が2の場合、長いメッセージがブツ切りで送受信されることを意味する。
+    // とくにこの値が2の場合、長いメッセージの一部であることを表す。値が1の場合も、分割したメッセージの最後である場合がある。
     // - 受信側は次のメッセージを繋げて読み込む準備を行い、送信側は次のメッセージを繋げて書き込む。
-    // - 2-7バイト目は、メッセージの最初から最後まで同じ値が入り続ける
-    // - 8-11バイト目は、ぶつ切りにしたチャンクの長さが入る。メッセージの全長は末尾が飛んでくるまでは分からないが、それはby-design
+    // - 2-11バイト目は、分割したメッセージのどの部分でも値が共通
 
     //2-3: メッセージタイプ
     // - 0: 自発的に送信したメッセージ
@@ -53,10 +54,14 @@ namespace Baku.VMagicMirror.Mmf
     // - 1以上: リクエストIDは有効で、このとき受信した側は同じIDで文字列レスポンスを返す
     //          メッセージタイプが1(レスポンス)の場合、かならずこちらになる。
 
-    //8-11: ボディのバイナリ長
-    // - 12バイト以降に入ってるメッセージの長さ
+    //8-11: メッセージ全体のバイナリ長
+    // - メッセージが短い場合、12-15バイトに入る値と同じ
+    // - メッセージが長い場合はメッセージを分けて送るため、12-15
+    
+    //12-15: このチャンクのバイナリ長
+    // - 16バイト以降に入ってるメッセージの長さ
 
-    //12-: ボディ
+    //16-: ボディ
     // - UTF8エンコードした文字列をバイナリ化したもの
 
     /// <summary>
@@ -65,9 +70,13 @@ namespace Baku.VMagicMirror.Mmf
     public abstract class MemoryMappedNamedConnectBase
     {
         private const long MemoryMappedFileCapacity = 262114;
-        private const int MessageHeaderSize = 12;
+        private const int MessageHeaderSize = 16;
         private const int MaxMessageBodySize = (int)MemoryMappedFileCapacity - MessageHeaderSize;
 
+        private const int MessageStateWriteReady = 0;
+        private const int MessageStateSingleReadReady = 1;
+        private const int MessageStateMultiReadReady = 2;
+        
         private readonly byte[] _readBuffer = new byte[MemoryMappedFileCapacity];
 
         //送りたいメッセージ(クエリとコマンド両方)の一覧
@@ -205,15 +214,16 @@ namespace Baku.VMagicMirror.Mmf
             {
                 while (!token.IsCancellationRequested)
                 {
-                    while (!CheckReceivedMessageExists())
-                    {
-                        if (token.IsCancellationRequested)
-                        {
-                            return;
-                        }
-                        Thread.Sleep(1);
-                    }
-                    ReadMessage();
+                    ReadSingleMessage(token);
+
+                    // var receiveState = GetReceiveState();
+                    // if (receiveState == MessageStateWriteReady)
+                    // {
+                    //     // 読めるメッセージがないので、次を待つ
+                    //     Thread.Sleep(1);
+                    //     continue;
+                    // }
+                    //ReadMessage();
                 }
             }
             catch (NullReferenceException)
@@ -221,16 +231,78 @@ namespace Baku.VMagicMirror.Mmf
             }
         }
 
-        private bool CheckReceivedMessageExists()
+        private int GetReceiveState()
         {
             lock (_receiverLock)
             {
-                return 
-                    _receiverAccessor != null && 
-                    _receiverAccessor.ReadByte(0) == 1;
+                return _receiverAccessor?.ReadByte(0) ?? 0;
             }
         }
-  
+
+        // NOTE: 1メッセージが複数データに分かれて送られる場合のデータ結合はこの関数の中でやる
+        private void ReadSingleMessage(CancellationToken token)
+        {
+            var message = "";
+            var isReply = false;
+            var id = 0;
+            var totalDataLength = 0;
+            var offset = 0;
+
+            // NOTE: 多くの場合はただ単に _readBuffer を使うが、メッセージが長い場合はそのメッセージサイズだけ確保したバイト列を作る
+            var messageBytes = _readBuffer;
+            
+            // メッセージが来るまで待つ
+            while (!token.IsCancellationRequested)
+            {
+                if (GetReceiveState() != MessageStateWriteReady)
+                {
+                    break;
+                }
+                Thread.Sleep(1);
+            }
+            
+            // メッセージのBody以外の情報はここで確定
+            lock (_receiverLock)
+            {
+                var messageType = _receiverAccessor.ReadInt16(2);
+                isReply = messageType > 0;
+                id = _receiverAccessor.ReadInt32(4);
+                totalDataLength = _receiverAccessor.ReadInt32(8);
+            }
+
+            // 使いまわし用のBufferより大きいデータを受け取るときに通過する。通過するのは割と珍しい…という前提でこういう実装
+            if (totalDataLength > messageBytes.Length)
+            {
+                messageBytes = new byte[totalDataLength];
+            }
+
+            // メッセージの末尾まで読んでいく
+            while (true)
+            {
+                var dataLength = _receiverAccessor.ReadInt32(12);
+                _receiverAccessor.ReadArray(16, messageBytes, offset, dataLength);
+                offset += dataLength;
+                
+                if (offset >= totalDataLength)
+                {
+                    // メッセージの末尾まで読むとココを通過して終了
+                    _receiverAccessor.Write(0, (byte)0);
+                    HandleReceivedMessage(message, id, isReply);
+                    return;
+                }
+                
+                // まだ続きがある: 次のデータチャンクを待つ
+                while (!token.IsCancellationRequested)
+                {
+                    if (GetReceiveState() != MessageStateWriteReady)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(1);
+                }
+            }
+        }
+
         private void ReadMessage()
         {
             var message = "";
@@ -254,7 +326,11 @@ namespace Baku.VMagicMirror.Mmf
                 _receiverAccessor.Write(0, (byte)0);
             }
 
+            HandleReceivedMessage(message, id, isReply);
+        }
 
+        private void HandleReceivedMessage(string message, int id, bool isReply)
+        {
             //3パターンある
             // - こちらが投げたQueryの返答が戻ってきた
             // - Commandを受け取った
@@ -277,7 +353,7 @@ namespace Baku.VMagicMirror.Mmf
                 ReceiveQuery?.Invoke(this, new ReceiveQueryEventArgs(query));
             }
         }
-
+        
         private void WriteThread(CancellationToken token)
         {
             try
@@ -367,17 +443,19 @@ namespace Baku.VMagicMirror.Mmf
                 if (data.Length > MaxMessageBodySize)
                 {
                     // データが収まりきらない: 書ける範囲までで区切って送る
-                    _senderAccessor.Write(8, MaxMessageBodySize);
-                    _senderAccessor.WriteArray(12, data, offset, MaxMessageBodySize);
-                    _senderAccessor.Write(0, (byte)2);
+                    _senderAccessor.Write(8, data.Length);
+                    _senderAccessor.Write(12, MaxMessageBodySize);
+                    _senderAccessor.WriteArray(16, data, offset, MaxMessageBodySize);
+                    _senderAccessor.Write(0, (byte)MessageStateMultiReadReady);
                     return offset + MaxMessageBodySize;
                 }
                 else
                 {
                     // データが全部書ける: 単に書き込む
                     _senderAccessor.Write(8, data.Length);
-                    _senderAccessor.WriteArray(12, data, offset, data.Length - offset);
-                    _senderAccessor.Write(0, (byte)1);
+                    _senderAccessor.Write(12, data.Length);
+                    _senderAccessor.WriteArray(16, data, offset, data.Length - offset);
+                    _senderAccessor.Write(0, (byte)MessageStateSingleReadReady);
                     return -1;
                 }
             }

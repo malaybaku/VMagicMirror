@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Concurrent;
 using System.IO.MemoryMappedFiles;
 using System.Text;
@@ -12,8 +13,8 @@ namespace Baku.VMagicMirror.Mmf
         private sealed class InternalWriter
         {
             // NOTE: ファイルはOpenExistingとかでも開くことがあり、直ちに開けるとは保証できないのでnullableになる
-            private MemoryMappedFile _file;
-            private MemoryMappedViewAccessor _accessor;
+            private MemoryMappedFile? _file;
+            private MemoryMappedViewAccessor? _accessor;
             private readonly object _senderLock = new();
             
             // 送りたいメッセージ(クエリとコマンド両方)の一覧
@@ -38,7 +39,7 @@ namespace Baku.VMagicMirror.Mmf
             }
 
             private readonly object _requestIdLock = new();
-            private int _requestId = 0;
+            private int _requestId;
             private int RequestId
             {
                 get

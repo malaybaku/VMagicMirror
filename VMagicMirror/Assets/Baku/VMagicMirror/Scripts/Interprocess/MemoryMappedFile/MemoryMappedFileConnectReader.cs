@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,11 +12,9 @@ namespace Baku.VMagicMirror.Mmf
         {
             private readonly object _readLock = new();
             private readonly byte[] _readBuffer = new byte[MemoryMappedFileCapacity];
-            private MemoryMappedFile _file;
-            private MemoryMappedViewAccessor _accessor;
-            
-            private Task _task;
-            
+            private MemoryMappedFile? _file;
+            private MemoryMappedViewAccessor? _accessor;
+
             private bool CanReadMessage
             {
                 get
@@ -24,9 +23,9 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
 
-            public event Action<string> ReceiveCommand;
-            public event Action<(int id, string message)> ReceiveQuery;
-            public event Action<(int id, string message)> ReceiveQueryResponse;
+            public event Action<string>? ReceiveCommand;
+            public event Action<(int id, string message)>? ReceiveQuery;
+            public event Action<(int id, string message)>? ReceiveQueryResponse;
             
             
             public async Task RunAsync(MemoryMappedFile file, CancellationToken token)
@@ -72,6 +71,11 @@ namespace Baku.VMagicMirror.Mmf
                 // メッセージのBody以外の情報はここで確定
                 lock (_readLock)
                 {
+                    if (_accessor == null)
+                    {
+                        return;
+                    }
+                    
                     var messageType = _accessor.ReadInt16(2);
                     isReply = messageType > 0;
                     id = _accessor.ReadInt32(4);
@@ -89,8 +93,20 @@ namespace Baku.VMagicMirror.Mmf
                 var offset = 0;
                 while (true)
                 {
-                    var dataLength = _accessor.ReadInt32(12);
-                    _accessor.ReadArray(16, messageBytes, offset, dataLength);
+                    int dataLength;
+                    lock (_readLock)
+                    {
+                        // _accessor == nullの場合、メッセージがハンパであっても中断する(アプリ終了のはずなので)
+                        if (_accessor == null)
+                        {
+                            return;
+                        }
+                        
+                        dataLength = _accessor.ReadInt32(12);
+                        _accessor.ReadArray(16, messageBytes, offset, dataLength);
+                        _accessor.Write(0, (byte)0);
+                    }
+
                     offset += dataLength;
                     if (offset >= totalDataLength)
                     {
@@ -102,7 +118,6 @@ namespace Baku.VMagicMirror.Mmf
                 }
 
                 // メッセージの末尾まで読むとココを通過して終了
-                _accessor.Write(0, (byte)0);
                 var message = System.Text.Encoding.UTF8.GetString(messageBytes, 0, totalDataLength);
                 HandleReceivedMessage(message, id, isReply);
             }
@@ -113,9 +128,6 @@ namespace Baku.VMagicMirror.Mmf
                 {
                     await Task.Delay(1, token);
                 }
-
-                return;
-
             }
             
             private void HandleReceivedMessage(string message, int id, bool isReply)

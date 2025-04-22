@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,16 +58,16 @@ namespace Baku.VMagicMirror.Mmf
         private readonly InternalReader _reader = new();
         private readonly CancellationTokenSource _cts = new();
 
-        private Task _readerTask;
-        private Task _writerTask;
+        private Task? _readerTask;
+        private Task? _writerTask;
         
-        public event Action<string> ReceiveCommand
+        public event Action<string>? ReceiveCommand
         {
             add => _reader.ReceiveCommand += value;
             remove => _reader.ReceiveCommand -= value;
         }
         
-        public event Action<(int id, string content)> ReceiveQuery
+        public event Action<(int id, string content)>? ReceiveQuery
         {
             add => _reader.ReceiveQuery += value;
             remove => _reader.ReceiveQuery -= value;
@@ -131,7 +132,10 @@ namespace Baku.VMagicMirror.Mmf
             
             try
             {
-                await _readerTask;
+                if (_readerTask != null)
+                {
+                    await _readerTask;
+                }
             }
             catch (OperationCanceledException)
             {
@@ -139,7 +143,10 @@ namespace Baku.VMagicMirror.Mmf
 
             try
             {
-                await _writerTask;
+                if (_writerTask != null)
+                {
+                    await _writerTask;
+                }
             }
             catch (OperationCanceledException)
             {

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using System.Threading.Tasks;
 using Baku.VMagicMirror.Mmf;
+using Cysharp.Threading.Tasks;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -37,7 +37,7 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            StartCoroutine(ActivateWpf());
+            ActivateWpfAsync(this.GetCancellationTokenOnDestroy()).Forget();
             //NOTE: WPF側はProcess.CloseMainWindowを使ってUnityを閉じようとする。
             //かつ、Unity側で単体で閉じる方法も今のところはメインウィンドウ閉じのみ。
             Application.wantsToQuit += OnApplicationWantsToQuit;
@@ -88,37 +88,26 @@ namespace Baku.VMagicMirror
             Application.Quit();
         }
 
-        private IEnumerator ActivateWpf()
+        private async UniTaskVoid ActivateWpfAsync(CancellationToken token)
         {
-            string path = GetWpfPath();
-            if (File.Exists(path))
+            var path = GetWpfPath();
+            if (!File.Exists(path))
             {
-                //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
-                yield return null;
-                yield return null;
-                var startInfo = new ProcessStartInfo()
-                {
-                    FileName = path,
-                    Arguments = "/channelId " + MmfChannelIdSource.ChannelId
-                };
-#if !UNITY_EDITOR
+                return;
+            }
+
+            //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
+            await UniTask.DelayFrame(2, cancellationToken: token);
+            var startInfo = new ProcessStartInfo()
+            {
+                FileName = path,
+                Arguments = "/channelId " + MmfChannelIdSource.ChannelId
+            };
+
+            if (!Application.isEditor)
+            {
                 Process.Start(startInfo);
                 _sender.SendCommand(MessageFactory.Instance.SetUnityProcessId(Process.GetCurrentProcess().Id));
-#endif
-            }
-        }
-
-        private void CloseWpfWindow()
-        {
-            try
-            {
-                Process.GetProcesses()
-                    .FirstOrDefault(p => p.ProcessName == ConfigProcessName)
-                    ?.CloseMainWindow();
-            }
-            catch (Exception)
-            {
-                //タイミング的にログ吐くのもちょっと危ないため、やらない
             }
         }
     }

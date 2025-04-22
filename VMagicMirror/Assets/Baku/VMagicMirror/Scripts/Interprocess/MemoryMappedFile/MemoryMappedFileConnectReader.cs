@@ -1,4 +1,5 @@
-﻿#nullable enable
+﻿// NOTE: このファイルはUnityとWPF双方から参照されていることに注意
+#nullable enable
 using System;
 using System.IO.MemoryMappedFiles;
 using System.Threading;

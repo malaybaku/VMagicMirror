@@ -10,16 +10,13 @@ namespace Baku.VMagicMirror.InterProcess
         IMessageReceiver, IMessageSender, IMessageDispatcher,
         IReleaseBeforeQuit, ITickable
     {
-        private MmfBasedMessageIo()
+        [Inject]
+        public MmfBasedMessageIo()
         {
             _server = new MemoryMappedFileConnector();
             _server.ReceiveCommand += OnReceiveCommand;
             _server.ReceiveQuery += OnReceiveQuery;
-            //NOTE: awaitする意味がないのでawaitをつけず、かつコレは警告が出るので止めてます。
-            //コンストラクタでいきなりStartするのがマナー悪い、というのは無くもないです
-#pragma warning disable CS4014
             _server.StartAsServer(MmfChannelIdSource.ChannelId);
-#pragma warning restore CS4014
         }
 
         private readonly IpcMessageDispatcher _dispatcher = new();

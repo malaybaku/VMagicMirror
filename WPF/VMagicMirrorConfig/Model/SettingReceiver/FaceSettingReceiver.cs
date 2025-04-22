@@ -31,7 +31,7 @@ namespace Baku.VMagicMirrorConfig
         private readonly MotionSettingModel _motionSetting;
         private readonly FaceMotionBlendShapeNameStore _store;
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
             switch (e.Command)
             {

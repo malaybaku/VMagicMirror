@@ -37,12 +37,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             if (!IsInDesignMode)
             {
                 _model.CameraDeviceName.AddWeakEventHandler(OnCameraDeviceNameChanged);
-                //NOTE: ここでは表示にのみ影響するメッセージを受け取るため、ViewModelではあるが直接Receiverのイベントを見に行く
-                WeakEventManager<IMessageReceiver, CommandReceivedEventArgs>.AddHandler(
-                    receiver,
-                    nameof(receiver.ReceivedCommand),
-                    OnReceivedCommand
-                    );
+                // NOTE: ここでは表示にのみ影響するメッセージを受け取るため、ViewModelではあるが直接Receiverのイベントを見に行く
+                // NOTE: WeakEvent Patternになっていないが、HandTrackingのタブのライフサイクルはアプリ全体と同じなので問題にはならないはず
+                receiver.ReceivedCommand += OnReceivedCommand;
 
                 _model.EnableImageBasedHandTracking.AddWeakEventHandler(BodyMotionStyleIncorrectMaybeChanged);
                 _model.EnableNoHandTrackMode.AddWeakEventHandler(BodyMotionStyleIncorrectMaybeChanged);
@@ -53,7 +50,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly MotionSettingModel _model;
         private readonly DeviceListSource _deviceListSource;
 
-        private void OnReceivedCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceivedCommand(CommandReceivedData e)
         {
             switch (e.Command)
             {

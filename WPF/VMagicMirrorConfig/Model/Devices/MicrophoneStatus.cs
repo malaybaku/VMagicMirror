@@ -49,7 +49,7 @@
         /// </summary>
         public RProperty<int> MicrophoneVolumeValue { get; } = new RProperty<int>(0);
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
             if (e.Command == ReceiveMessageNames.MicrophoneVolumeLevel && 
                 ShowMicrophoneVolume.Value && 

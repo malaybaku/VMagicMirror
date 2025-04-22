@@ -19,7 +19,7 @@ namespace Baku.VMagicMirrorConfig
 
         public event EventHandler<EyeBlendShapeValuesEventArgs>? EyeBlendShapeValuesReceived;
 
-        private void OnReceivedCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceivedCommand(CommandReceivedData e)
         {
             if (e.Command != ReceiveMessageNames.EyeBlendShapeValues)
             {

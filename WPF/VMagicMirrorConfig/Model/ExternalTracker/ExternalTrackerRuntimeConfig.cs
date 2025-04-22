@@ -29,7 +29,7 @@ namespace Baku.VMagicMirrorConfig
         private readonly ExternalTrackerSettingModel _setting;
         private readonly ExternalTrackerBlendShapeNameStore _blendShapeNameStore = new();
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
             if (e.Command == ReceiveMessageNames.ExtraBlendShapeClipNames)
             {

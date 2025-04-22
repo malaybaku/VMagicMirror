@@ -104,7 +104,7 @@ namespace Baku.VMagicMirrorConfig
         }
 
         /// <summary> コマンド受信時に、UIスレッド上で発火する。 </summary>
-        public event EventHandler<CommandReceivedEventArgs>? ReceivedCommand;
+        public event Action<CommandReceivedData>? ReceivedCommand;
 
         /// <summary> クエリ受信時に、UIスレッド上で発火する。 </summary>
         public event EventHandler<QueryReceivedEventArgs>? ReceivedQuery;
@@ -116,7 +116,7 @@ namespace Baku.VMagicMirrorConfig
             var args = (i == -1) ? "" : content[(i + 1)..];
 
             App.Current.Dispatcher.BeginInvoke(new Action(
-                () => ReceivedCommand?.Invoke(this, new CommandReceivedEventArgs(command, args))
+                () => ReceivedCommand?.Invoke(new CommandReceivedData(command, args))
                 ));
         }
 

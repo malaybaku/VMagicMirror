@@ -17,14 +17,9 @@ namespace Baku.VMagicMirror.Mmf
             private MemoryMappedViewAccessor? _accessor;
             private readonly object _senderLock = new();
             
-            // 送りたいメッセージ(クエリとコマンド両方)の一覧
+            // 送りたいMessageの一覧。コマンド、クエリ、クエリのレスポンスを区別せず一列に並べる
             private readonly ConcurrentQueue<Message> _messages = new();
-
-            // クエリのタスク一覧
-            // NOTE: このタスクは実際にはreaderの受信によって完了するので、
-            // このクラスじゃなくて親クラスでConcurrentDictionaryを持ってるほうが自然かもしれない…
-            private readonly ConcurrentDictionary<int, TaskCompletionSource<string>> _queries = new();
-
+            
             private bool CanWriteMessage
             {
                 get
@@ -35,16 +30,6 @@ namespace Baku.VMagicMirror.Mmf
                             _accessor != null &&
                             _accessor.ReadByte(0) == MessageStateWriteReady;
                     }
-                }
-            }
-
-            private readonly object _requestIdLock = new();
-            private int _requestId;
-            private int RequestId
-            {
-                get
-                {
-                    lock (_requestIdLock) return _requestId;
                 }
             }
 
@@ -88,46 +73,8 @@ namespace Baku.VMagicMirror.Mmf
             }
 
             public void SendCommand(string content) => _messages.Enqueue(Message.Command(content));
-            
+            public void SendQuery(int id, string content) => _messages.Enqueue(Message.Query(content, id));
             public void SendQueryResponse(string content, int id) => _messages.Enqueue(Message.Response(content, id));
-
-            public Task<string> SendQueryAsync(string content)
-            {
-                IncrementRequestId();
-                _messages.Enqueue(Message.Query(content, RequestId));
-
-                //すぐには返せないので完了予約だけ投げておしまい
-                var source = new TaskCompletionSource<string>();
-                _queries.TryAdd(RequestId, source);
-
-                return source.Task;
-            }
-
-            private void IncrementRequestId()
-            {
-                lock (_requestIdLock)
-                {
-                    _requestId++;
-                    //クエリのIDは1 ~ (int.MaxValue - 1)の範囲で回るようにしておく
-                    if (_requestId == int.MaxValue)
-                    {
-                        _requestId = 1;
-                    }
-                }
-            }
-            
-            /// <summary>
-            /// Queryの返信が戻ってきたときに呼ぶことで、Queryのタスクに戻り値を付与して完了扱いにする
-            /// </summary>
-            /// <param name="id"></param>
-            /// <param name="content"></param>
-            public void TrySetQueryResult(int id, string content)
-            {
-                if (_queries.TryRemove(id, out var src))
-                {
-                    src.SetResult(content);
-                }
-            }
 
             // NOTE: メッセージが長い場合は分割して送るような実装が入ってる
             private async Task WriteSingleMessageAsync(Message msg, CancellationToken token)

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Collections.Concurrent;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,8 +59,14 @@ namespace Baku.VMagicMirror.Mmf
         private readonly InternalReader _reader = new();
         private readonly CancellationTokenSource _cts = new();
 
+        // writerが送信して返信待ちのクエリ一覧
+        private readonly ConcurrentDictionary<int, TaskCompletionSource<string>> _queries = new();
+        
         private Task? _readerTask;
         private Task? _writerTask;
+        
+        private readonly object _requestIdLock = new();
+        private int _requestId;
         
         public event Action<string>? ReceiveCommand
         {
@@ -78,8 +85,11 @@ namespace Baku.VMagicMirror.Mmf
             // NOTE: 完了待ちクエリの一覧を(writerではなく)本クラスが直接持っている方が自然かもしれない…
             _reader.ReceiveQueryResponse += value =>
             {
-                var (id, command) = value;
-                _writer.TrySetQueryResult(id, command);
+                var (id, content) = value;
+                if (_queries.TryRemove(id, out var source))
+                {
+                    source.SetResult(content);
+                }
             };
         }
         
@@ -154,9 +164,38 @@ namespace Baku.VMagicMirror.Mmf
         }
 
         public void SendCommand(string command) => _writer.SendCommand(command);
-        public async Task<string> SendQueryAsync(string command) => await _writer.SendQueryAsync(command);
+       
+        /// <summary>
+        /// NOTE: この関数は内部的にawaitしないので、呼び出し元は明示的にawaitすること
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        public async Task<string> SendQueryAsync(string command)
+        {
+            var source = new TaskCompletionSource<string>();
+            var id = GenerateQueryId();
+            _queries.TryAdd(id, source);
+            _writer.SendQuery(id, command);
+            return await source.Task;
+        }
+
         public void SendQueryResponse(string command, int id) => _writer.SendQueryResponse(command, id);
 
+        
+        private int GenerateQueryId()
+        {
+            lock (_requestIdLock)
+            {
+                _requestId++;
+                //クエリのIDは1 ~ (int.MaxValue - 1)の範囲で回るようにしておく
+                if (_requestId == int.MaxValue)
+                {
+                    _requestId = 1;
+                }
+                return _requestId;
+            }
+        }
+        
         private readonly struct Message
         {
             private Message(string text, bool isReply, int id)

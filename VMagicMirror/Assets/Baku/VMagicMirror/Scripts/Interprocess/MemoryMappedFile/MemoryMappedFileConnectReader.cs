@@ -24,8 +24,8 @@ namespace Baku.VMagicMirror.Mmf
             }
 
             public event Action<string>? ReceiveCommand;
-            public event Action<(int id, string message)>? ReceiveQuery;
-            public event Action<(int id, string message)>? ReceiveQueryResponse;
+            public event Action<(int id, string content)>? ReceiveQuery;
+            public event Action<(int id, string content)>? ReceiveQueryResponse;
             
             
             public async Task RunAsync(MemoryMappedFile file, CancellationToken token)

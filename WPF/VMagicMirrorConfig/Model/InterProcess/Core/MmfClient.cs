@@ -1,4 +1,4 @@
-﻿using Baku.VMagicMirrorConfig.Mmf;
+﻿using Baku.VMagicMirror.Mmf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,16 +16,16 @@ namespace Baku.VMagicMirrorConfig
 
         public MmfClient()
         {
-            _client = new MemoryMappedFileConnectClient();
+            _client = new MemoryMappedFileConnector();
             _client.ReceiveCommand += OnReceivedCommand;
             _client.ReceiveQuery += OnReceivedQuery;
         }
 
-        private readonly MemoryMappedFileConnectClient _client;
+        private readonly MemoryMappedFileConnector _client;
 
-        private bool _isCompositeMode = false;
-        //NOTE: 64というキャパシティはどんぶり勘定です
-        private readonly List<Message> _compositeMessages = new List<Message>(64);
+        private bool _isCompositeMode;
+        //NOTE: 64というキャパシティはどんぶり勘定
+        private readonly List<Message> _compositeMessages = new(64);
 
         #region IMessageSender
 
@@ -87,23 +87,20 @@ namespace Baku.VMagicMirrorConfig
 
         #region IMessageReceiver
 
-        public void Start()
+        // TODO: Start/Stopいずれも、内部的にでもいいからキャンセルをちゃんと扱いたい…
+
+        public async void Start()
         {
             //NOTE: この実装だと受信開始するまで送信もできない(ややヘンテコな感じがする)が、気にしないことにする
-            StartAsync();
-        }
-
-        private async void StartAsync()
-        {
             string channelName = CommandLineArgParser.TryLoadMmfFileName(out var givenName)
                 ? givenName
                 : DefaultChannelName;
-            await _client.StartAsync(channelName);
+            await _client.StartAsClientAsync(channelName);
         }
 
-        public void Stop()
+        public async void Stop()
         {
-            _client.Stop();
+            await _client.StopAsync();
         }
 
         /// <summary> コマンド受信時に、UIスレッド上で発火する。 </summary>
@@ -112,31 +109,33 @@ namespace Baku.VMagicMirrorConfig
         /// <summary> クエリ受信時に、UIスレッド上で発火する。 </summary>
         public event EventHandler<QueryReceivedEventArgs>? ReceivedQuery;
 
-        private void OnReceivedCommand(object? sender, ReceiveCommandEventArgs e)
+        private void OnReceivedCommand(string content)
         {
-            string content = e.Command;
-            int i = FindColonCharIndex(content);
-            string command = (i == -1) ? content : content.Substring(0, i);
-            string args = (i == -1) ? "" : content.Substring(i + 1);
+            var i = FindColonCharIndex(content);
+            var command = (i == -1) ? content : content[..i];
+            var args = (i == -1) ? "" : content[(i + 1)..];
 
             App.Current.Dispatcher.BeginInvoke(new Action(
                 () => ReceivedCommand?.Invoke(this, new CommandReceivedEventArgs(command, args))
                 ));
         }
 
-        private void OnReceivedQuery(object? sender, ReceiveQueryEventArgs e)
+        private void OnReceivedQuery((int id, string content) value)
         {
-            string content = e.Query.Query;
-            int i = FindColonCharIndex(content);
-            string command = (i == -1) ? content : content.Substring(0, i);
-            string args = (i == -1) ? "" : content.Substring(i + 1);
+            var content = value.content;
+            var i = FindColonCharIndex(content);
+            var command = (i == -1) ? content : content[..i];
+            var args = (i == -1) ? "" : content[(i + 1)..];
 
             var ea = new QueryReceivedEventArgs(command, args);
 
             App.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 ReceivedQuery?.Invoke(this, ea);
-                e.Query.Reply(string.IsNullOrWhiteSpace(ea.Result) ? "" : ea.Result);
+                _client.SendQueryResponse(
+                    string.IsNullOrWhiteSpace(ea.Result) ? "" : ea.Result, 
+                    value.id
+                );
             }));
         }
 

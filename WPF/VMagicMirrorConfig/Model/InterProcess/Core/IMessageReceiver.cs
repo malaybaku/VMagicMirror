@@ -24,6 +24,7 @@ namespace Baku.VMagicMirrorConfig
         public string Args { get; }
     }
 
+    // NOTE: 2025/04時点でWPFがQueryを受け取るケースは存在しないっぽい。初使用時には注意してデバッグすること
     public class QueryReceivedEventArgs : EventArgs
     {
         public QueryReceivedEventArgs(string command, string args)

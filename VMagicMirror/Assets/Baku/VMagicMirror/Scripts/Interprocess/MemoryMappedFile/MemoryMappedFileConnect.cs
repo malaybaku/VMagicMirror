@@ -1,518 +1,154 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.IO.MemoryMappedFiles;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-// TODO: Write/Readでクラスを分けたい、流石にちょっと長いし1クラスになってる必然性が無さそう
-
-//https://github.com/malaybaku/UnityMemoryMappedFile
-//Unityはサーバー役をする
+// NOTE: このクラス及びInternalWriter, InternalReaderはUnityとWPFで同じ実装を使っている。
 
 //用語: 
-// Message: Command, Query, Responseのいずれかのテキストメッセージの事。
+// Message: Command, Query, Responseのいずれかのテキストメッセージ
+//   Content: Messageの実態であるようなstring
 // Command: 戻り値がない、投げっぱなしのメッセージ
 // Query: 戻り値が欲しいメッセージで、受け取った側がじゅうぶん短時間で戻り値を構成できるようなもの。
 // Response: Queryへの返信
 // ※戻り値の計算に長時間かかる処理はCommandの往復で表現する
 
+// 読み書きするデータ単位 (単一メッセージ or メッセージの一部) のバイナリフォーマットについて
+//0-1: 書き込み状態フラグ。
+// - 0: 受信完了。このときはWriteする側だけが触ってよい
+// - 1: 送信完了(メッセージの末尾)。このときはReadする側だけが触ってよい
+
+//2-3: メッセージの種類
+// - 0: CommandまたはQuery
+// - 1: Response
+
+//4-7: リクエストID
+// - 0: Commandの場合この値を指定して、投げっぱなしのメッセージを表す
+// - 1以上: Queryの場合は返信に使ってほしいID値を表す。Responseの場合、どのQueryに対してのレスポンスであるかをIDで指定する。
+//   - Query用のIDは送信側が一意性を保つように生成する
+
+//8-11: メッセージ全体のバイナリ長
+// - メッセージが短い場合、1つのデータに全データが収まるため、ここの値は12-15バイトに入る値と等しい
+// - メッセージが長い場合は分けて送るため、12-15の値とココの値が一致しなくなる
+
+//12-15: このチャンクのバイナリ長
+// - 16バイト以降に入ってるメッセージの長さ
+//   - NOTE: データがメッセージの一部である場合にoffsetを指定することが考えられるが、
+// 　        メッセージには順序保証があってoffsetは不要なはずなので、offset情報はない。
+
+//16-: ボディ
+// - 文字列をUTF8扱いでバイナリ化したもの
+
 namespace Baku.VMagicMirror.Mmf
 {
     /// <summary>
-    /// MemoryMappedFileで通信するクライアント
+    /// <see cref="MemoryMappedFile"/> を内部的に使ってで送りっぱなしのコマンドとレスポンスが必要なクエリを送受信できるやつだよ
     /// </summary>
-    public class MemoryMappedFileConnectClient : MemoryMappedNamedConnectBase
-    {
-        public async Task StartAsync(string name) => await StartInternal(name, false);
-    }
-
-    /// <summary>
-    /// MemoryMappedFileで通信するサーバー
-    /// </summary>
-    public class MemoryMappedFileConnectServer : MemoryMappedNamedConnectBase
-    {
-        public async Task Start(string name) => await StartInternal(name, true);
-    }
-
-    // 読み書きするデータ単位 (単一メッセージ or メッセージの一部) のバイナリフォーマットについて
-    //0-1: 書き込み状態フラグ。
-    // - 0: 受信完了。このときはWriteする側だけが触ってよい
-    // - 1: 送信完了(メッセージの末尾)。このときはReadする側だけが触ってよい
-    // - 2: 送信完了(メッセージの末尾以外)。このときはReadする側だけが触ってよい
-    // 
-    // とくにこの値が2の場合、長いメッセージの一部であることを表す。値が1の場合も、分割したメッセージの最後である場合がある。
-    // - 受信側は次のメッセージを繋げて読み込む準備を行い、送信側は次のメッセージを繋げて書き込む。
-    // - 2-11バイト目は、分割したメッセージのどの部分でも値が共通
-
-    //2-3: メッセージタイプ
-    // - 0: 自発的に送信したメッセージ
-    // - 1: レスポンスとして返すメッセージ
-
-    //4-7: リクエストID
-    // - 0: リクエストIDは無効で、投げっぱなしのメッセージを表す
-    // - 1以上: リクエストIDは有効で、このとき受信した側は同じIDで文字列レスポンスを返す
-    //          メッセージタイプが1(レスポンス)の場合、かならずこちらになる。
-
-    //8-11: メッセージ全体のバイナリ長
-    // - メッセージが短い場合、12-15バイトに入る値と同じ
-    // - メッセージが長い場合はメッセージを分けて送るため、12-15
-    
-    //12-15: このチャンクのバイナリ長
-    // - 16バイト以降に入ってるメッセージの長さ
-
-    //16-: ボディ
-    // - UTF8エンコードした文字列をバイナリ化したもの
-
-    /// <summary>
-    /// MMFを用いて、投げっぱなしコマンドとレスポンス必須コマンドの2種類が送受信できる凄いやつだよ
-    /// </summary>
-    public abstract class MemoryMappedNamedConnectBase
+    public sealed partial class MemoryMappedFileConnector
     {
         private const long MemoryMappedFileCapacity = 262114;
         private const int MessageHeaderSize = 16;
         private const int MaxMessageBodySize = (int)MemoryMappedFileCapacity - MessageHeaderSize;
 
         private const int MessageStateWriteReady = 0;
-        private const int MessageStateSingleReadReady = 1;
-        private const int MessageStateMultiReadReady = 2;
+        private const int MessageStateReadReady = 1;
+
+        private readonly InternalWriter _writer = new();
+        private readonly InternalReader _reader = new();
+        private readonly CancellationTokenSource _cts = new();
+
+        private Task _readerTask;
+        private Task _writerTask;
         
-        private readonly byte[] _readBuffer = new byte[MemoryMappedFileCapacity];
-
-        //送りたいメッセージ(クエリとコマンド両方)の一覧
-        private readonly ConcurrentQueue<Message> _writeMessageQueue = new();
-
-        //返信待ちクエリの一覧
-        private readonly ConcurrentDictionary<int, TaskCompletionSource<string>> _sendedQueries = new();
-
-        private readonly object _requestIdLock = new();
-        private int _requestId = 0;
-        private int RequestId
+        public event Action<string> ReceiveCommand
         {
-            get { lock (_requestIdLock) return _requestId; }
+            add => _reader.ReceiveCommand += value;
+            remove => _reader.ReceiveCommand -= value;
+        }
+        
+        public event Action<(int id, string content)> ReceiveQuery
+        {
+            add => _reader.ReceiveQuery += value;
+            remove => _reader.ReceiveQuery -= value;
         }
 
-        private void IncrementRequestId()
+        public MemoryMappedFileConnector()
         {
-            lock (_requestIdLock)
+            // NOTE: 完了待ちクエリの一覧を(writerではなく)本クラスが直接持っている方が自然かもしれない…
+            _reader.ReceiveQueryResponse += value =>
             {
-                _requestId++;
-                //クエリのIDは1 ~ (int.MaxValue - 1)の範囲で回るようにしておく
-                if (_requestId == int.MaxValue)
-                {
-                    _requestId = 1;
-                }
-            }
+                var (id, command) = value;
+                _writer.TrySetQueryResult(id, command);
+            };
+        }
+        
+        public void StartAsServer(string name)
+        {
+            var readerFile = MemoryMappedFile.CreateOrOpen(name + "_receiver", MemoryMappedFileCapacity);
+            _readerTask = _reader.RunAsync(readerFile, _cts.Token);
+
+            var writerFile = MemoryMappedFile.CreateOrOpen(name + "_sender", MemoryMappedFileCapacity);
+            _writerTask = _writer.RunAsync(writerFile, _cts.Token);
         }
 
-        private readonly object _receiverLock = new();
-        private MemoryMappedFile _receiver;
-        private MemoryMappedViewAccessor _receiverAccessor;
-
-        private readonly object _senderLock = new();
-        private MemoryMappedFile _sender;
-        private MemoryMappedViewAccessor _senderAccessor;
-
-        private Thread _sendThread;
-        private Thread _receiveThread;
-        private CancellationTokenSource _cts;
-
-        public event EventHandler<ReceiveCommandEventArgs> ReceiveCommand;
-        public event EventHandler<ReceiveQueryEventArgs> ReceiveQuery;
-
-        public bool IsConnected { get; private set; }
-
-        public async Task StartInternal(string pipeName, bool isServer)
+        // NOTE: キャンセルが必要な場合は内部的なCancellationTokenSourceでキャンセルされる。
+        // 外部からのtokenを受け付けてもいいが、今のライフサイクル設計だと不要そうなので頑張ってない
+        public async Task StartAsClientAsync(string name)
         {
-            _cts = new CancellationTokenSource();
-            if (isServer)
-            {
-                _receiver = MemoryMappedFile.CreateOrOpen(pipeName + "_receiver", MemoryMappedFileCapacity);
-                _sender = MemoryMappedFile.CreateOrOpen(pipeName + "_sender", MemoryMappedFileCapacity);
-            }
-            else
-            {
-                while (true)
-                {
-                    try
-                    {
-                        //サーバーと逆方向
-                        _receiver = MemoryMappedFile.OpenExisting(pipeName + "_sender");
-                        _sender = MemoryMappedFile.OpenExisting(pipeName + "_receiver");
-                        break;
-                    }
-                    catch (System.IO.FileNotFoundException)
-                    {
-                    }
-
-                    if (_cts.Token.IsCancellationRequested)
-                    {
-                        return;
-                    }
-                    await Task.Delay(100);
-                }
-            }
-            _receiverAccessor = _receiver.CreateViewAccessor();
-            _senderAccessor = _sender.CreateViewAccessor();
-
-            _receiveThread = new Thread(() => ReadThread(_cts.Token));
-            _receiveThread.Start();
-            _sendThread = new Thread(() => WriteThread(_cts.Token));
-            _sendThread.Start();
-            IsConnected = true;
-        }
-
-        public void SendCommand(string command)
-            => _writeMessageQueue.Enqueue(Message.Command(command));
-
-        public Task<string> SendQueryAsync(string command)
-        {
-            IncrementRequestId();
-            _writeMessageQueue.Enqueue(Message.Query(command, RequestId));
-
-            //すぐには返せないので完了予約だけ投げておしまい
-            var source = new TaskCompletionSource<string>();
-            _sendedQueries.TryAdd(RequestId, source);
-
-            return source.Task;
-        }
-
-        public async Task StopAsync()
-        {
-            IsConnected = false;
-            _cts?.Cancel();
+            MemoryMappedFile readerFile;
+            MemoryMappedFile writerFile;
             
-            lock (_receiverLock)
+            while (true)
             {
-                _receiverAccessor?.Dispose();
-                _receiver?.Dispose();
-                _receiverAccessor = null;
-                _receiver = null;
-            }
-
-            lock (_senderLock)
-            {
-                _senderAccessor?.Dispose();
-                _sender?.Dispose();
-                _senderAccessor = null;
-                _sender = null;
-            }
-
-            await Task.Run(() =>
-            {
-                _receiveThread.Join();
-                _sendThread.Join();
-            });
-        }
-
-        private void SendQueryResponse(string command, int id)
-            => _writeMessageQueue.Enqueue(Message.Response(command, id));
-
-        private void ReadThread(CancellationToken token)
-        {
-            try
-            {
-                while (!token.IsCancellationRequested)
+                try
                 {
-                    ReadSingleMessage(token);
-
-                    // var receiveState = GetReceiveState();
-                    // if (receiveState == MessageStateWriteReady)
-                    // {
-                    //     // 読めるメッセージがないので、次を待つ
-                    //     Thread.Sleep(1);
-                    //     continue;
-                    // }
-                    //ReadMessage();
-                }
-            }
-            catch (NullReferenceException)
-            {
-            }
-        }
-
-        private int GetReceiveState()
-        {
-            lock (_receiverLock)
-            {
-                return _receiverAccessor?.ReadByte(0) ?? 0;
-            }
-        }
-
-        // NOTE: 1メッセージが複数データに分かれて送られる場合のデータ結合はこの関数の中でやる
-        private void ReadSingleMessage(CancellationToken token)
-        {
-            var message = "";
-            var isReply = false;
-            var id = 0;
-            var totalDataLength = 0;
-            var offset = 0;
-
-            // NOTE: 多くの場合はただ単に _readBuffer を使うが、メッセージが長い場合はそのメッセージサイズだけ確保したバイト列を作る
-            var messageBytes = _readBuffer;
-            
-            // メッセージが来るまで待つ
-            while (!token.IsCancellationRequested)
-            {
-                if (GetReceiveState() != MessageStateWriteReady)
-                {
+                    //NOTE: サーバーと逆方向の呼称になることに注意
+                    readerFile = MemoryMappedFile.OpenExisting(name + "_sender");
+                    writerFile = MemoryMappedFile.OpenExisting(name + "_receiver");
                     break;
                 }
-                Thread.Sleep(1);
+                catch (System.IO.FileNotFoundException)
+                {
+                    // server側がファイルオープンしてないときに通過する。この場合、ファイルが開くまで待つ
+                }
+
+                if (_cts.Token.IsCancellationRequested)
+                {
+                    return;
+                }
+                await Task.Delay(100);
             }
             
-            // メッセージのBody以外の情報はここで確定
-            lock (_receiverLock)
-            {
-                var messageType = _receiverAccessor.ReadInt16(2);
-                isReply = messageType > 0;
-                id = _receiverAccessor.ReadInt32(4);
-                totalDataLength = _receiverAccessor.ReadInt32(8);
-            }
-
-            // 使いまわし用のBufferより大きいデータを受け取るときに通過する。通過するのは割と珍しい…という前提でこういう実装
-            if (totalDataLength > messageBytes.Length)
-            {
-                messageBytes = new byte[totalDataLength];
-            }
-
-            // メッセージの末尾まで読んでいく
-            while (true)
-            {
-                var dataLength = _receiverAccessor.ReadInt32(12);
-                _receiverAccessor.ReadArray(16, messageBytes, offset, dataLength);
-                offset += dataLength;
-                
-                if (offset >= totalDataLength)
-                {
-                    // メッセージの末尾まで読むとココを通過して終了
-                    _receiverAccessor.Write(0, (byte)0);
-                    HandleReceivedMessage(message, id, isReply);
-                    return;
-                }
-                
-                // まだ続きがある: 次のデータチャンクを待つ
-                while (!token.IsCancellationRequested)
-                {
-                    if (GetReceiveState() != MessageStateWriteReady)
-                    {
-                        break;
-                    }
-                    Thread.Sleep(1);
-                }
-            }
+            _readerTask = _reader.RunAsync(readerFile, _cts.Token);
+            _writerTask = _writer.RunAsync(writerFile, _cts.Token);
         }
 
-        private void ReadMessage()
+        // NOTE: MemoryMappedFileが閉じるまで待ちたい…という意図があることに注意
+        public async Task StopAsync()
         {
-            var message = "";
-            var isReply = false;
-            var id = 0;
-
-            lock (_receiverLock)
-            {
-                if (_receiverAccessor == null)
-                {
-                    return;
-                }
-                
-                var messageType = _receiverAccessor.ReadInt16(2);
-                isReply = messageType > 0;
-                id = _receiverAccessor.ReadInt32(4);
-                var bodyLength = _receiverAccessor.ReadInt32(8);
-
-                _receiverAccessor.ReadArray(12, _readBuffer, 0, bodyLength);
-                message = Encoding.UTF8.GetString(_readBuffer, 0, bodyLength);
-                _receiverAccessor.Write(0, (byte)0);
-            }
-
-            HandleReceivedMessage(message, id, isReply);
-        }
-
-        private void HandleReceivedMessage(string message, int id, bool isReply)
-        {
-            //3パターンある
-            // - こちらが投げたQueryの返答が戻ってきた
-            // - Commandを受け取った
-            // - Queryを受け取った
-            if (isReply)
-            {
-                if (_sendedQueries.TryRemove(id, out var src))
-                {
-                    //戻ってきた結果によってTaskが完了となる
-                    src.SetResult(message);
-                }
-            }
-            else if (id == 0)
-            {
-                ReceiveCommand?.Invoke(this, new ReceiveCommandEventArgs(message));
-            }
-            else
-            {
-                var query = new ReceivedQuery(message, id, this);
-                ReceiveQuery?.Invoke(this, new ReceiveQueryEventArgs(query));
-            }
-        }
-        
-        private void WriteThread(CancellationToken token)
-        {
+            _cts.Cancel();
+            _cts.Dispose();
+            
             try
             {
-                while (!token.IsCancellationRequested)
-                {
-                    Message msg;
-                    //送るものが無いうちは待ち
-                    while (!_writeMessageQueue.TryDequeue(out msg))
-                    {
-                        if (token.IsCancellationRequested)
-                        {
-                            return;
-                        }
-                        Thread.Sleep(1);
-                    }
-
-                    WriteSingleMessage(msg, token);
-                }
+                await _readerTask;
             }
-            catch (NullReferenceException)
+            catch (OperationCanceledException)
+            {
+            }
+
+            try
+            {
+                await _writerTask;
+            }
+            catch (OperationCanceledException)
             {
             }
         }
 
-        private void WriteSingleMessage(Message msg, CancellationToken token)
-        {
-            // NOTE: 1メッセージを分割して送ることがあり、かつ毎回書き込み許可を待つので、そこそこ複雑
-            var offset = 0;
-            while (true)
-            {
-                //書き込みOKになるまで待ち
-                while (!CheckCanWriteMessage())
-                {
-                    if (token.IsCancellationRequested)
-                    {
-                        return;
-                    }
-                    Thread.Sleep(1);
-                }
-
-                offset = WriteMessageV2(msg, offset);
-                if (offset == -1)
-                {
-                    return;
-                }
-            }
-        }
-
-        private bool CheckCanWriteMessage()
-        {
-            lock (_senderLock)
-            {
-                return
-                    _senderAccessor != null &&
-                    _senderAccessor.ReadByte(0) == 0;
-            }
-        }
-        
-        /// <summary>
-        /// 単一のメッセージを送信する
-        /// </summary>
-        /// <param name="msg">送信するメッセージ</param>
-        /// <param name="offset">最初は0, メッセージを分割しながら送る場合は前回の呼び出し時の戻り値</param>
-        /// <returns>データを送りきった場合は -1, そうでなければデータの続きを送るときに指定すべきoffsetの値</returns>
-        private int WriteMessageV2(Message msg, int offset)
-        {
-            if (!IsConnected)
-            {
-                return -1;
-            }
-
-            lock (_senderLock)
-            {
-                if (_senderAccessor == null)
-                {
-                    return -1;
-                }
-
-                _senderAccessor.Write(2, (short)(msg.IsReply ? 1 : 0));
-                _senderAccessor.Write(4, msg.Id);
-
-                // NOTE: ここで分割するメッセージについても毎回ぜんぶGetBytesするのが勿体ないが、
-                // そもそも分割するほど大きいメッセージは珍しいので、一旦気にしないことにしている
-                var data = Encoding.UTF8.GetBytes(msg.Text);
-
-                if (data.Length > MaxMessageBodySize)
-                {
-                    // データが収まりきらない: 書ける範囲までで区切って送る
-                    _senderAccessor.Write(8, data.Length);
-                    _senderAccessor.Write(12, MaxMessageBodySize);
-                    _senderAccessor.WriteArray(16, data, offset, MaxMessageBodySize);
-                    _senderAccessor.Write(0, (byte)MessageStateMultiReadReady);
-                    return offset + MaxMessageBodySize;
-                }
-                else
-                {
-                    // データが全部書ける: 単に書き込む
-                    _senderAccessor.Write(8, data.Length);
-                    _senderAccessor.Write(12, data.Length);
-                    _senderAccessor.WriteArray(16, data, offset, data.Length - offset);
-                    _senderAccessor.Write(0, (byte)MessageStateSingleReadReady);
-                    return -1;
-                }
-            }
-        }
-        
-        private void WriteMessage(Message msg)
-        {
-            if (!IsConnected)
-            {
-                return;
-            }
-
-            lock (_senderLock)
-            {
-                if (_senderAccessor == null)
-                {
-                    return;
-                }
-                
-                _senderAccessor.Write(2, (short)(msg.IsReply ? 1 : 0));
-                _senderAccessor.Write(4, msg.Id);
-
-                var data = Encoding.UTF8.GetBytes(msg.Text);
-                _senderAccessor.Write(8, data.Length);
-                _senderAccessor.WriteArray(12, data, 0, data.Length);
-
-                _senderAccessor.Write(0, (byte)1);
-            }
-        }
-        
-        public class ReceivedQuery
-        {
-            public ReceivedQuery(string content, int id, MemoryMappedNamedConnectBase pipe)
-            {
-                Query = content;
-                _id = id;
-                _pipe = pipe;
-            }
-
-            private readonly MemoryMappedNamedConnectBase _pipe;
-            private readonly int _id;
-
-            public bool HasReplyCompleted { get; private set; }
-            public string Query { get; }
-
-            public void Reply(string content)
-            {
-                //2回やらない
-                if (HasReplyCompleted)
-                {
-                    return;
-                }
-
-                _pipe.SendQueryResponse(content, _id);
-                HasReplyCompleted = true;
-            }
-        }
+        public void SendCommand(string command) => _writer.SendCommand(command);
+        public async Task<string> SendQueryAsync(string command) => await _writer.SendQueryAsync(command);
+        public void SendQueryResponse(string command, int id) => _writer.SendQueryResponse(command, id);
 
         private readonly struct Message
         {

@@ -12,18 +12,18 @@ namespace Baku.VMagicMirror.InterProcess
     {
         private MmfBasedMessageIo()
         {
-            _server = new MemoryMappedFileConnectServer();
+            _server = new MemoryMappedFileConnector();
             _server.ReceiveCommand += OnReceiveCommand;
             _server.ReceiveQuery += OnReceiveQuery;
             //NOTE: awaitする意味がないのでawaitをつけず、かつコレは警告が出るので止めてます。
             //コンストラクタでいきなりStartするのがマナー悪い、というのは無くもないです
 #pragma warning disable CS4014
-            _server.Start(MmfChannelIdSource.ChannelId);
+            _server.StartAsServer(MmfChannelIdSource.ChannelId);
 #pragma warning restore CS4014
         }
 
         private readonly IpcMessageDispatcher _dispatcher = new IpcMessageDispatcher();
-        private readonly MemoryMappedFileConnectServer _server;
+        private readonly MemoryMappedFileConnector _server;
 
         public event Action<Message> SendingMessage;
 
@@ -63,25 +63,24 @@ namespace Baku.VMagicMirror.InterProcess
 
         public void Tick() => _dispatcher.Tick();
 
-        private void OnReceiveCommand(object sender, ReceiveCommandEventArgs e)
+        private void OnReceiveCommand(string rawContent)
         {
-            string rawContent = e.Command;
-            int i = FindColonCharIndex(rawContent);
-            string command = (i == -1) ? rawContent : rawContent.Substring(0, i);
-            string content = (i == -1) ? "" : rawContent.Substring(i + 1);
+            var i = FindColonCharIndex(rawContent);
+            var command = (i == -1) ? rawContent : rawContent[..i];
+            var content = (i == -1) ? "" : rawContent[(i + 1)..];
 
             _dispatcher.ReceiveCommand(new ReceivedCommand(command, content));
         }
         
-        private async void OnReceiveQuery(object sender, ReceiveQueryEventArgs e)
+        private async void OnReceiveQuery((int id, string content) value)
         {
-            string rawContent = e.Query.Query;
-            int i = FindColonCharIndex(rawContent);
-            string command = (i == -1) ? rawContent : rawContent.Substring(0, i);
-            string content = (i == -1) ? "" : rawContent.Substring(i + 1);
+            var rawContent = value.content;
+            var i = FindColonCharIndex(rawContent);
+            var command = (i == -1) ? rawContent : rawContent[..i];
+            var content = (i == -1) ? "" : rawContent[(i + 1)..];
 
             string res = await _dispatcher.ReceiveQuery(new ReceivedQuery(command, content));
-            e.Query.Reply(res);
+            _server.SendQueryResponse(res, value.id);
         }
         
         //コマンド名と引数名の区切り文字のインデックスを探します。

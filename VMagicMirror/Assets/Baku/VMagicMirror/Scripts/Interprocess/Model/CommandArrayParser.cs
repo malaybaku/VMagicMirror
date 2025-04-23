@@ -5,17 +5,22 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror
 {
-    // TODO: メッセージがstringではなくバイナリベースになるので、ここの構造は見直す必要がある
-    // そもそもIPCのメッセージがちゃんとキューを積めるようになったらこのクラスが不要になるので、その方向で解決できるのが一番嬉しい…
+    // NOTE: このクラス、というか「結合したメッセージ」がstring扱いになっているのは歴史的経緯によるもの。
+    // - 理想形としてはIPCが根本的にQueueに対応したら本クラスは不要になるため、現状ではイビツな方法で互換性を保っている
     public static class CommandArrayParser
     {
+        /// <summary>
+        /// contentは「コマンドのbinaryを一つずつbase64エンコードしたstringの配列」であることを期待してる
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
         public static IEnumerable<ReceivedCommand> ParseCommandArray(string content)
         {
             try
             {
                 return JsonUtility.FromJson<MessageItemArray>(content)
                     .items
-                    .Select(c => new ReceivedCommand((VmmCommands)c.C, c.A));
+                    .Select(item => new ReceivedCommand(Convert.FromBase64String(item)));
             }
             catch (Exception ex)
             {
@@ -26,16 +31,8 @@ namespace Baku.VMagicMirror
     }
     
     [Serializable]
-    public class MessageItem
-    {
-        public int C;
-        public string A;
-    }
-    
-    //TODO: メッセージ(byte[])をb64エンコードしたstringの配列…ということにしたい
-    [Serializable]
     public class MessageItemArray
     {
-        public MessageItem[] items;
+        public string[] items;
     }
 }

@@ -14,8 +14,7 @@ namespace Baku.VMagicMirror
 {
     public class WpfStartAndQuit : MonoBehaviour
     {
-        private const string ConfigProcessName = "VMagicMirrorConfig";
-        private static readonly string ConfigExePath = "ConfigApp\\VMagicMirrorConfig.exe";
+        private const string ConfigExePath = "ConfigApp\\VMagicMirrorConfig.exe";
 
         private static string GetWpfPath()
             => Path.Combine(
@@ -23,11 +22,11 @@ namespace Baku.VMagicMirror
                 ConfigExePath
                 );
 
-        private IMessageSender _sender = null;
-        private List<IReleaseBeforeQuit> _releaseItems = new List<IReleaseBeforeQuit>();
+        private IMessageSender _sender;
+        private List<IReleaseBeforeQuit> _releaseItems = new();
 
-        private readonly Atomic<bool> _releaseRunning = new Atomic<bool>();
-        private readonly Atomic<bool> _releaseCompleted = new Atomic<bool>();
+        private readonly Atomic<bool> _releaseRunning = new();
+        private readonly Atomic<bool> _releaseCompleted = new();
 
         [Inject]
         public void Initialize(IMessageSender sender, List<IReleaseBeforeQuit> releaseNeededItems)

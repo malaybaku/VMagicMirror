@@ -23,8 +23,9 @@ namespace Baku.VMagicMirror.InterProcess
         private readonly MemoryMappedFileConnector _server;
 
         public event Action<Message> SendingMessage;
-
-        public void SendCommand(Message message)
+        public bool LastMessageSent => _server.LastMessageSent;
+        
+        public void SendCommand(Message message, bool isLastMessage = false)
         {
             try
             {
@@ -34,7 +35,7 @@ namespace Baku.VMagicMirror.InterProcess
             {
                 LogOutput.Instance.Write(ex);                
             }
-            _server.SendCommand(message.Command + ":" + message.Content);
+            _server.SendCommand(message.Command + ":" + message.Content, isLastMessage);
         }
 
         public async Task<string> SendQueryAsync(Message message) 

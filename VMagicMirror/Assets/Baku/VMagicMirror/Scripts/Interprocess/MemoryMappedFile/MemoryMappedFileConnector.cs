@@ -81,6 +81,8 @@ namespace Baku.VMagicMirror.Mmf
             remove => _reader.ReceiveQuery -= value;
         }
 
+        public bool LastMessageSent => _writer.LastMessageSent;
+
         public MemoryMappedFileConnector()
         {
             // NOTE: 完了待ちクエリの一覧を(writerではなく)本クラスが直接持っている方が自然かもしれない…
@@ -93,7 +95,7 @@ namespace Baku.VMagicMirror.Mmf
                 }
             };
         }
-        
+
         public void StartAsServer(string name)
         {
             var readerFile = MemoryMappedFile.CreateOrOpen(name + "_receiver", MemoryMappedFileCapacity);
@@ -164,7 +166,7 @@ namespace Baku.VMagicMirror.Mmf
             }
         }
 
-        public void SendCommand(string command) => _writer.SendCommand(command);
+        public void SendCommand(string command, bool isLastMessage = false) => _writer.SendCommand(command, isLastMessage);
        
         /// <summary>
         /// NOTE: この関数は内部的にawaitしないので、呼び出し元は明示的にawaitすること

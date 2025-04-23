@@ -20,6 +20,20 @@ namespace Baku.VMagicMirror.Mmf
             
             // 送りたいMessageの一覧。コマンド、クエリ、クエリのレスポンスを区別せず一列に並べる
             private readonly ConcurrentQueue<Message> _messages = new();
+
+            private readonly object _lastMessageLock = new();
+            private bool _lastMessageEnqueued;
+            private bool LastMessageEnqueued
+            {
+                get
+                {
+                    lock (_lastMessageLock) return _lastMessageEnqueued;
+                }
+                set
+                {
+                    lock (_lastMessageLock) _lastMessageEnqueued = value;
+                }
+            }
             
             private bool CanWriteMessage
             {
@@ -34,6 +48,8 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
 
+            public bool LastMessageSent { get; private set; }
+            
             // NOTE: Start / Stopがライフサイクルで1回ずつしか呼ばれない前提でこういう書き方にしてる
             public async Task RunAsync(MemoryMappedFile file, CancellationToken token)
             {
@@ -55,6 +71,11 @@ namespace Baku.VMagicMirror.Mmf
                         }
 
                         await WriteSingleMessageAsync(msg, token);
+                        if (LastMessageEnqueued && _messages.IsEmpty)
+                        {
+                            LastMessageSent = true;
+                            return;
+                        }
                     }
                 }
                 catch (NullReferenceException)
@@ -73,7 +94,21 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
 
-            public void SendCommand(string content) => _messages.Enqueue(Message.Command(content));
+            public void SendCommand(string content, bool isLastMessage)
+            {
+                if (LastMessageEnqueued)
+                {
+                    return;
+                }
+                
+                _messages.Enqueue(Message.Command(content));
+
+                if (isLastMessage)
+                {
+                    LastMessageEnqueued = true;
+                }
+            }
+
             public void SendQuery(int id, string content) => _messages.Enqueue(Message.Query(content, id));
             public void SendQueryResponse(string content, int id) => _messages.Enqueue(Message.Response(content, id));
 

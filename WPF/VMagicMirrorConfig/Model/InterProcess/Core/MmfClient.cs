@@ -46,9 +46,7 @@ namespace Baku.VMagicMirrorConfig
 
             try
             {
-                //NOTE: 前バージョンが投げっぱなし通信だったため、ここでも戻り値はとらない
-                var body = Encoding.UTF8.GetBytes(message.Command + ":" + message.Content);
-                _client.SendCommand(body);
+                _client.SendCommand(message.Data);
             }
             catch (Exception ex)
             {
@@ -60,8 +58,7 @@ namespace Baku.VMagicMirrorConfig
         {
             try
             {
-                var body = Encoding.UTF8.GetBytes(message.Command + ":" + message.Content);
-                var rawResponse = await _client.SendQueryAsync(body);
+                var rawResponse = await _client.SendQueryAsync(message.Data);
                 return Encoding.UTF8.GetString(rawResponse.Span);
             }
             catch (Exception ex)

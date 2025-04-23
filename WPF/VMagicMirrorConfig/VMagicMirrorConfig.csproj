@@ -25,6 +25,10 @@
     <Compile 
       Include="..\..\VMagicMirror\Assets\Baku\VMagicMirror\Scripts\Interprocess\MemoryMappedFile\*.cs"
       Link="Shared/MemoryMappedFile/%(Filename)%(Extension)" />
+    <Compile
+      Include="..\..\VMagicMirror\Assets\Baku\VMagicMirror\Scripts\Interprocess\IpcMessage\*.cs"
+      Link="Shared/IpcMessage/%(Filename)%(Extension)" />
+
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dragablz" Version="0.0.3.223" />

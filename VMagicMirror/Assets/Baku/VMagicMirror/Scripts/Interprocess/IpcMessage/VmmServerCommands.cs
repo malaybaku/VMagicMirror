@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Baku.VMagicMirror
 {
     /// <summary>

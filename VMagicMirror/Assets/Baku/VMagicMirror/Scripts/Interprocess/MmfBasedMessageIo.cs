@@ -38,16 +38,12 @@ namespace Baku.VMagicMirror.InterProcess
                 LogOutput.Instance.Write(ex);                
             }
 
-            var body = Encoding.UTF8.GetBytes(
-                message.Command + ":" + message.Content
-            );
-            _server.SendCommand(body, isLastMessage);
+            _server.SendCommand(message.Data, isLastMessage);
         }
 
         public async Task<string> SendQueryAsync(Message message)
         {
-            var body = Encoding.UTF8.GetBytes(message.Command + ":" + message.Content);
-            var response = await _server.SendQueryAsync(body);
+            var response = await _server.SendQueryAsync(message.Data);
             return Encoding.UTF8.GetString(response.Span);
         }
         

@@ -1,18 +1,39 @@
-﻿namespace Baku.VMagicMirror
+﻿using System;
+using Baku.VMagicMirror.IpcMessage;
+
+namespace Baku.VMagicMirror
 {
-    public class Message
+    /// <summary>
+    /// UnityからWPF向けに送信するメッセージ
+    /// </summary>
+    public readonly struct Message
     {
-        public Message(string command, string content)
+        private Message(VmmServerCommands command, ReadOnlyMemory<byte> data)
         {
-            Command = command?.Replace(":", "") ?? "";
-            Content = content ?? "";
+            Command = command;
+            Data = data;
         }
+        
+        public VmmServerCommands Command { get; }
+        public ReadOnlyMemory<byte> Data { get; }
 
-        public Message(string command) : this(command, "")
-        {
-        }
+        public static Message None(VmmServerCommands command)
+            => new(command, MessageSerializer.None((ushort)command));
 
-        public string Command { get; }
-        public string Content { get; }
+        public static Message String(VmmServerCommands command, string value)
+            => new(command, MessageSerializer.String((ushort)command, value));
+
+        // public Message(string command, string content)
+        // {
+        //     Command = command?.Replace(":", "") ?? "";
+        //     Content = content ?? "";
+        // }
+        //
+        // public Message(string command) : this(command, "")
+        // {
+        // }
+        //
+        // public string Command { get; }
+        // public string Content { get; }
     }
 }

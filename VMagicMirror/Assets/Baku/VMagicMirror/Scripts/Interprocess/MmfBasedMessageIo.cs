@@ -78,7 +78,7 @@ namespace Baku.VMagicMirror.InterProcess
             var content = (i == -1) ? "" : rawContent[(i + 1)..];
 
             var res = await _dispatcher.ReceiveQuery(new ReceivedQuery(command, content));
-            _server.SendQueryResponse(res, value.id);
+            _server.SendQueryResponse(value.id, res);
         }
         
         //コマンド名と引数名の区切り文字のインデックスを探します。

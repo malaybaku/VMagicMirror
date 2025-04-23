@@ -109,8 +109,25 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
 
-            public void SendQuery(int id, string content) => _messages.Enqueue(Message.Query(content, id));
-            public void SendQueryResponse(string content, int id) => _messages.Enqueue(Message.Response(content, id));
+            public void SendQuery(int id, string content)
+            {
+                if (LastMessageEnqueued)
+                {
+                    return;
+                }
+
+                _messages.Enqueue(Message.Query(content, id));
+            }
+
+            public void SendQueryResponse(int id, string content)
+            {
+                if (LastMessageEnqueued)
+                {
+                    return;
+                }
+
+                _messages.Enqueue(Message.Response(content, id));
+            }
 
             // NOTE: メッセージが長い場合は分割して送るような実装が入ってる
             private async Task WriteSingleMessageAsync(Message msg, CancellationToken token)

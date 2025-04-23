@@ -166,24 +166,23 @@ namespace Baku.VMagicMirror.Mmf
             }
         }
 
-        public void SendCommand(string command, bool isLastMessage = false) => _writer.SendCommand(command, isLastMessage);
+        public void SendCommand(string content, bool isLastMessage = false) => _writer.SendCommand(content, isLastMessage);
        
         /// <summary>
         /// NOTE: この関数は内部的にawaitしないので、呼び出し元は明示的にawaitすること
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="content"></param>
         /// <returns></returns>
-        public async Task<string> SendQueryAsync(string command)
+        public async Task<string> SendQueryAsync(string content)
         {
             var source = new TaskCompletionSource<string>();
             var id = GenerateQueryId();
             _queries.TryAdd(id, source);
-            _writer.SendQuery(id, command);
+            _writer.SendQuery(id, content);
             return await source.Task;
         }
 
-        public void SendQueryResponse(string command, int id) => _writer.SendQueryResponse(command, id);
-
+        public void SendQueryResponse(int id, string content) => _writer.SendQueryResponse(id, content);
         
         private int GenerateQueryId()
         {

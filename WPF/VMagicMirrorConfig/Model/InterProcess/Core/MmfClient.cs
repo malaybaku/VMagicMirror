@@ -133,8 +133,8 @@ namespace Baku.VMagicMirrorConfig
             {
                 ReceivedQuery?.Invoke(this, ea);
                 _client.SendQueryResponse(
-                    string.IsNullOrWhiteSpace(ea.Result) ? "" : ea.Result, 
-                    value.id
+                    value.id,
+                    string.IsNullOrWhiteSpace(ea.Result) ? "" : ea.Result
                 );
             }));
         }

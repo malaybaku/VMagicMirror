@@ -65,23 +65,16 @@ namespace Baku.VMagicMirror.InterProcess
             await _server.StopAsync();
         }
 
-        public void Tick() => _dispatcher.Tick();
+        void ITickable.Tick() => _dispatcher.Tick();
 
         private void OnReceiveCommand(ReadOnlyMemory<byte> data)
         {
-            // TODO: ReceivedCommand側を改修したら、contentではなく単にdata自体を渡すように変更したい
-            var command = MessageDeserializer.GetCommandId(data);
-            var content = MessageDeserializer.ToString(data);
-            _dispatcher.ReceiveCommand(new ReceivedCommand((VmmCommands)command, content));
+            _dispatcher.ReceiveCommand(new ReceivedCommand(data));
         }
         
         private async void OnReceiveQuery((int id, ReadOnlyMemory<byte> data) value)
         {
-            // TODO: ReceivedCommand側を改修したら、contentではなく単にdata自体を渡すように変更したい
-            var command = MessageDeserializer.GetCommandId(value.data);
-            var content = MessageDeserializer.ToString(value.data);
-
-            var res = await _dispatcher.ReceiveQuery(new ReceivedQuery((VmmCommands)command, content));
+            var res = await _dispatcher.ReceiveQuery(new ReceivedQuery(value.data));
             var body = Encoding.UTF8.GetBytes(res);
             _server.SendQueryResponse(value.id, body);
         }

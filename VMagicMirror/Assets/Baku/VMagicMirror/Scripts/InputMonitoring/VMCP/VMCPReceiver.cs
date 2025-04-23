@@ -74,7 +74,7 @@ namespace Baku.VMagicMirror.VMCP
             
             _messageReceiver.AssignCommandHandler(
                 VmmCommands.SetVMCPSources,
-                command => RefreshSettings(command.Content)
+                command => RefreshSettings(command.StringValue)
                 );
             
             //NOTE: 「複数ソースの受信設定していたのがほぼ同時に始まる」というケースに備えてDebounceしておく

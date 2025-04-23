@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             );
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerSetCalibrateData,
-                c => SetCalibrationData(c.Content)
+                c => SetCalibrationData(c.StringValue)
             );
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerSetSource,

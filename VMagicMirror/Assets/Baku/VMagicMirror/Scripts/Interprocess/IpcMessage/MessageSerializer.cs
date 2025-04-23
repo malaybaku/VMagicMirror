@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror.IpcMessage
         String = 4,
         ByteArray = 5,
         IntArray = 6,
-        Array = 7,
+        FloatArray = 7,
     }
 
     public static class MessageSerializer
@@ -82,7 +82,7 @@ namespace Baku.VMagicMirror.IpcMessage
         public static byte[] FloatArray(ushort commandId, float[] value)
         {
             var result = new byte[4 + value.Length * 4];
-            SetupHeader(result, commandId, (ushort) MessageValueTypes.Array);
+            SetupHeader(result, commandId, (ushort) MessageValueTypes.FloatArray);
             for (var i = 0; i < value.Length; i++)
             {
                 BitConverter.TryWriteBytes(result[(i * 4 + 4)..], value[i]);

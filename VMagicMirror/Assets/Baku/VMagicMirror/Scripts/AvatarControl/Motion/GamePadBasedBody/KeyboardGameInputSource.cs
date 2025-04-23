@@ -85,7 +85,7 @@ namespace Baku.VMagicMirror.GameInput
             
             _receiver.AssignCommandHandler(
                 VmmCommands.SetKeyboardGameInputKeyAssign,
-                command => UpdateKeyAssign(command.Content)
+                command => UpdateKeyAssign(command.StringValue)
             );
             
             _receiver.AssignCommandHandler(

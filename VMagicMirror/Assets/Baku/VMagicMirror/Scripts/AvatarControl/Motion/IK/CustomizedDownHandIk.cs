@@ -85,7 +85,7 @@ namespace Baku.VMagicMirror
             
             _receiver.AssignCommandHandler(
                 VmmCommands.SetHandDownModeCustomPose,
-                command => ApplyHandDownPose(command.Content)
+                command => ApplyHandDownPose(command.StringValue)
             );
 
             _receiver.AssignCommandHandler(

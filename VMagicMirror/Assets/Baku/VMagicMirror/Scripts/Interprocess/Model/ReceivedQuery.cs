@@ -1,54 +1,27 @@
-﻿using System.Linq;
+﻿using System;
+using Baku.VMagicMirror.IpcMessage;
 
 namespace Baku.VMagicMirror
 {
     public class ReceivedQuery
     {
-        public ReceivedQuery(VmmCommands command) : this(command, "")
+        public ReceivedQuery(ReadOnlyMemory<byte> data)
         {
-        }
-
-        public ReceivedQuery(VmmCommands command, string content)
-        {
-            Command = command;
-            Content = content ?? "";
+            RawData = data;
+            Command = (VmmCommands) MessageDeserializer.GetCommandId(data);
+            ValueType = MessageDeserializer.GetValueType(data);
             Result = "";
         }
 
+        public ReadOnlyMemory<byte> RawData { get; }
         public VmmCommands Command { get; }
-        public string Content { get; }
+        public MessageValueTypes ValueType { get; }
+
+        // NOTE: Bool以外へのデシリアライズがないのは単に使ってる場所がないからで、追加はしてよい
+        public bool ToBoolean() => MessageDeserializer.ToBool(RawData);
+        
+        // NOTE: Queryのレスポンスはstringじゃなくても良いのだが、
+        // 現行実装ではstringでそれっぽい結果になるものしか扱ってなさそうなので、stringのみをサポートしている
         public string Result { get; set; }
-
-        public bool ToBoolean()
-            => bool.TryParse(Content, out bool result) ?
-            result :
-            false;
-
-        public int ToInt()
-            => int.TryParse(Content, out int result) ? result : 0;
-
-        public float ParseAsPercentage()
-            => int.TryParse(Content, out int result) ?
-                result * 0.01f :
-                0.0f;
-
-        public float ParseAsCentimeter()
-            => int.TryParse(Content, out int result) ?
-                result * 0.01f :
-                0.0f;
-
-        public int[] ToIntArray()
-            => Content.Split(',')
-                .Select(e => int.TryParse(e, out int result) ? result : 0)
-                .ToArray();
-
-        /// <summary>
-        /// コマンドによってLength==3(RGB)の場合とLength==4(ARGB)の場合があるので注意
-        /// </summary>
-        /// <returns></returns>
-        public float[] ToColorFloats()
-            => ToIntArray()
-            .Select(v => v / 255.0f)
-            .ToArray();
     }
 }

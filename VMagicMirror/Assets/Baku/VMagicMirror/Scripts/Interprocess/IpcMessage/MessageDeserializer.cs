@@ -9,8 +9,20 @@ namespace Baku.VMagicMirror.IpcMessage
     {
         public static ushort GetCommandId(ReadOnlyMemory<byte> data)
         {
-            if (data.Length < 2) throw new ArgumentException("Data is too short");
+            if (data.Length < 2)
+            {
+                return 0;
+            }
             return BitConverter.ToUInt16(data.Span);
+        }
+
+        public static MessageValueTypes GetValueType(ReadOnlyMemory<byte> data)
+        {
+            if (data.Length < 4)
+            {
+                return MessageValueTypes.None;
+            }
+            return (MessageValueTypes)BitConverter.ToUInt16(data.Span);
         }
         
         public static bool ToBool(ReadOnlyMemory<byte> data)

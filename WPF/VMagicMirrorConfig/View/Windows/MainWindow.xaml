@@ -69,6 +69,12 @@
                         <MenuItem Header="{DynamicResource TitleBar_Check_Update}" 
                                   Command="{Binding CheckUpdateCommand}"
                                   />
+                        <!-- NOTE: 独立なデバッグウィンドウを用意してココから開くようにも改修しうるが、まだ欲しい機能が少ないので無し -->
+                        <MenuItem Header="Debug_SendLargeData"
+                                  Visibility="{Binding IsDebugBuild, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                  Command="{Binding SendLargeDataCommand}"
+                                  />
+
                     </CompositeCollection>
                 </metro:DropDownButton.ItemsSource>
             </metro:DropDownButton>

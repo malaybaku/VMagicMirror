@@ -24,9 +24,9 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
 
-            public event Action<string>? ReceiveCommand;
-            public event Action<(int id, string content)>? ReceiveQuery;
-            public event Action<(int id, string content)>? ReceiveQueryResponse;
+            public event Action<ReadOnlyMemory<byte>>? ReceiveCommand;
+            public event Action<(int id, ReadOnlyMemory<byte> content)>? ReceiveQuery;
+            public event Action<(int id, ReadOnlyMemory<byte> content)>? ReceiveQueryResponse;
             
             
             public async Task RunAsync(MemoryMappedFile file, CancellationToken token)
@@ -119,7 +119,10 @@ namespace Baku.VMagicMirror.Mmf
                 }
 
                 // メッセージの末尾まで読むとココを通過して終了
-                var message = System.Text.Encoding.UTF8.GetString(messageBytes, 0, totalDataLength);
+                // NOTE: allocがもったいなく見えるかもしれないが、messageが消費されるのはメインスレッドであり、
+                // messageの読み込みより前に次のデータ読み込みを行ってbufferが上書きされうるので、別で用意したほうが安全である
+                var message = new byte[totalDataLength];
+                Array.Copy(messageBytes, message, totalDataLength);
                 HandleReceivedMessage(message, id, isReply);
             }
 
@@ -131,7 +134,7 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
             
-            private void HandleReceivedMessage(string message, int id, bool isReply)
+            private void HandleReceivedMessage(ReadOnlyMemory<byte> message, int id, bool isReply)
             {
                 //3パターンある
                 // - こちらが投げたQueryの返答が戻ってきた

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
@@ -46,7 +47,8 @@ namespace Baku.VMagicMirrorConfig
             try
             {
                 //NOTE: 前バージョンが投げっぱなし通信だったため、ここでも戻り値はとらない
-                _client.SendCommand(message.Command + ":" + message.Content);
+                var body = Encoding.UTF8.GetBytes(message.Command + ":" + message.Content);
+                _client.SendCommand(body);
             }
             catch (Exception ex)
             {
@@ -58,8 +60,9 @@ namespace Baku.VMagicMirrorConfig
         {
             try
             {
-                var response = await _client.SendQueryAsync(message.Command + ":" + message.Content);
-                return response;
+                var body = Encoding.UTF8.GetBytes(message.Command + ":" + message.Content);
+                var rawResponse = await _client.SendQueryAsync(body);
+                return Encoding.UTF8.GetString(rawResponse.Span);
             }
             catch (Exception ex)
             {
@@ -109,8 +112,9 @@ namespace Baku.VMagicMirrorConfig
         /// <summary> クエリ受信時に、UIスレッド上で発火する。 </summary>
         public event EventHandler<QueryReceivedEventArgs>? ReceivedQuery;
 
-        private void OnReceivedCommand(string content)
+        private void OnReceivedCommand(ReadOnlyMemory<byte> data)
         {
+            var content = Encoding.UTF8.GetString(data.Span);
             var i = FindColonCharIndex(content);
             var command = (i == -1) ? content : content[..i];
             var args = (i == -1) ? "" : content[(i + 1)..];
@@ -120,9 +124,9 @@ namespace Baku.VMagicMirrorConfig
                 ));
         }
 
-        private void OnReceivedQuery((int id, string content) value)
+        private void OnReceivedQuery((int id, ReadOnlyMemory<byte> data) value)
         {
-            var content = value.content;
+            var content = Encoding.UTF8.GetString(value.data.Span);
             var i = FindColonCharIndex(content);
             var command = (i == -1) ? content : content[..i];
             var args = (i == -1) ? "" : content[(i + 1)..];
@@ -132,10 +136,8 @@ namespace Baku.VMagicMirrorConfig
             App.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 ReceivedQuery?.Invoke(this, ea);
-                _client.SendQueryResponse(
-                    value.id,
-                    string.IsNullOrWhiteSpace(ea.Result) ? "" : ea.Result
-                );
+                var resultBody = Encoding.UTF8.GetBytes(ea.Result ?? "");
+                _client.SendQueryResponse(value.id, resultBody);
             }));
         }
 

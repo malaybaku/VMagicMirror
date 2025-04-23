@@ -94,7 +94,7 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
 
-            public void SendCommand(string content, bool isLastMessage)
+            public void SendCommand(ReadOnlyMemory<byte> content, bool isLastMessage)
             {
                 if (LastMessageEnqueued)
                 {
@@ -109,7 +109,7 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
 
-            public void SendQuery(int id, string content)
+            public void SendQuery(int id, ReadOnlyMemory<byte> content)
             {
                 if (LastMessageEnqueued)
                 {
@@ -119,7 +119,7 @@ namespace Baku.VMagicMirror.Mmf
                 _messages.Enqueue(Message.Query(content, id));
             }
 
-            public void SendQueryResponse(int id, string content)
+            public void SendQueryResponse(int id, ReadOnlyMemory<byte> content)
             {
                 if (LastMessageEnqueued)
                 {
@@ -132,7 +132,7 @@ namespace Baku.VMagicMirror.Mmf
             // NOTE: メッセージが長い場合は分割して送るような実装が入ってる
             private async Task WriteSingleMessageAsync(Message msg, CancellationToken token)
             {
-                var data = Encoding.UTF8.GetBytes(msg.Text);
+                var data = msg.Body;
                 // 送信成功したバイナリサイズの合計値
                 var writeSize = 0;
                 while (!token.IsCancellationRequested && writeSize < data.Length)
@@ -157,7 +157,7 @@ namespace Baku.VMagicMirror.Mmf
             // NOTE:
             //  - 戻り値はデータを書き込んだバイト数。
             //  - ただし、書き込みが失敗した場合には -1 を返す。-1 が戻った場合、それ以降は書き込みを試みないのが期待値
-            private int WriteMessage(Message msg, byte[] data, int offset)
+            private int WriteMessage(Message msg, ReadOnlyMemory<byte> data, int offset)
             {
                 lock (_senderLock)
                 {
@@ -175,7 +175,12 @@ namespace Baku.VMagicMirror.Mmf
                         ? MaxMessageBodySize
                         : data.Length - offset;
                     _accessor.Write(12, writeLength);
-                    _accessor.WriteArray(16, data, offset, writeLength);
+
+                    var span = data.Span[offset..];
+                    for (var i = 0; i < writeLength; i++)
+                    {
+                        _accessor.Write(16 + i, span[i]);
+                    }
                     _accessor.Write(0, (byte)MessageStateReadReady);
                     return writeLength;
                 }

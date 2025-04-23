@@ -4,18 +4,18 @@ namespace Baku.VMagicMirror
 {
     public class ReceivedQuery
     {
-        public ReceivedQuery(string command) : this(command, "")
+        public ReceivedQuery(VmmCommands command) : this(command, "")
         {
         }
 
-        public ReceivedQuery(string command, string content)
+        public ReceivedQuery(VmmCommands command, string content)
         {
-            Command = command ?? "";
+            Command = command;
             Content = content ?? "";
             Result = "";
         }
 
-        public string Command { get; }
+        public VmmCommands Command { get; }
         public string Content { get; }
         public string Result { get; set; }
 

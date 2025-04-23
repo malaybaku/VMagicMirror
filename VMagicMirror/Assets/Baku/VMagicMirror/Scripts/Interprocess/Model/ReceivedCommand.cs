@@ -4,17 +4,18 @@ namespace Baku.VMagicMirror
 {
     public struct ReceivedCommand
     {
-        public ReceivedCommand(string command) : this(command, "")
+        public ReceivedCommand(VmmCommands command) : this(command, "")
         {
         }
 
-        public ReceivedCommand(string command, string content)
+        public ReceivedCommand(VmmCommands command, string content)
         {
-            Command = command ?? "";
+            Command = command;
             Content = content ?? "";
         }
 
-        public string Command { get; }
+        public VmmCommands Command { get; }
+        //TODO: ここでraw dataを ReadOnlyMemory<byte>で持ってしまって、デシリアライズの実装はMessageDeserializerを呼ぶようにしたい
         public string Content { get; }
 
         public bool ToBoolean()

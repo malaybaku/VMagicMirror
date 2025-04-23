@@ -70,7 +70,7 @@ namespace Baku.VMagicMirror.WordToMotion
             // );
 
             _receiver.AssignQueryHandler(
-                VmmQueries.GetAvailableCustomMotionClipNames,
+                VmmCommands.GetAvailableCustomMotionClipNames,
                 SetAvailableMotionClipNames);
 
             //リクエストは等価に扱う && 頻度は制御する、という話

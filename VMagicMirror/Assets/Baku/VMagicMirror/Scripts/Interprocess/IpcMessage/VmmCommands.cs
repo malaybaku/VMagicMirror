@@ -3,7 +3,7 @@
     // NOTE:
     // - ここのenumの値はWPF/Unityで実行時に揃ってることが必要 ≒ メッセージを追加定義した時点でWPF側はリビルドが必須。
     // - 値は永続化されず、アプリケーションの実行中にのみ使うので、途中に値を追加定義するぶんにはOK
-    public enum VmmCommands : short
+    public enum VmmCommands : ushort
     {
         // NOTE: Queryに対する返信のCommandsは0扱いになる
         Unknown = 0,
@@ -288,6 +288,9 @@
         
         // Debug
         DebugSendLargeData,
+        
+        // Unused: 取りうるコマンドIDの最大値が分かるように定義している
+        LastCommandId,
     }
 }
 

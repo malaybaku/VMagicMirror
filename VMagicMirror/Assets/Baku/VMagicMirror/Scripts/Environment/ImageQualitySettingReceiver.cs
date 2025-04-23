@@ -18,7 +18,7 @@ namespace Baku.VMagicMirror
                 );
 
             receiver.AssignQueryHandler(
-                VmmQueries.GetQualitySettingsInfo,
+                VmmCommands.GetQualitySettingsInfo,
                 q =>
                 {
                     q.Result = JsonUtility.ToJson(new ImageQualityInfo()
@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror
                 });
             
             receiver.AssignQueryHandler(
-                VmmQueries.ApplyDefaultImageQuality,
+                VmmCommands.ApplyDefaultImageQuality,
                 q => { 
                     SetImageQuality(defaultQualityName);
                     q.Result = defaultQualityName;

@@ -7,8 +7,9 @@ namespace Baku.VMagicMirror.InterProcess
 {
     public class IpcMessageDispatcher : IMessageReceiver, IMessageDispatcher
     {
-        private readonly Dictionary<string, Action<ReceivedCommand>> _commandHandlers = new();
-        private readonly Dictionary<string, Action<ReceivedQuery>> _queryHandlers = new();
+        // NOTE: コマンド数が大したことない & 基本的に全コマンドにAssignする必要があるので、Action<>[] にしてしまったほうが良さそう
+        private readonly Dictionary<VmmCommands, Action<ReceivedCommand>> _commandHandlers = new();
+        private readonly Dictionary<VmmCommands, Action<ReceivedQuery>> _queryHandlers = new();
 
         private readonly ConcurrentQueue<ReceivedCommand> _receivedCommands = new();
         private readonly ConcurrentQueue<QueryQueueItem> _receivedQueries = new();
@@ -27,7 +28,7 @@ namespace Baku.VMagicMirror.InterProcess
             }
         }
         
-        public void AssignCommandHandler(string command, Action<ReceivedCommand> handler)
+        public void AssignCommandHandler(VmmCommands command, Action<ReceivedCommand> handler)
         {
             //NOTE: 同じコマンドを複数のハンドラが読む場合、Actionの加算になる。差し替えてはいけないのがポイント
             if (_commandHandlers.ContainsKey(command))
@@ -40,7 +41,7 @@ namespace Baku.VMagicMirror.InterProcess
             }
         }
 
-        public void AssignQueryHandler(string query, Action<ReceivedQuery> handler)
+        public void AssignQueryHandler(VmmCommands query, Action<ReceivedQuery> handler)
         {
             if (_queryHandlers.ContainsKey(query))
             {

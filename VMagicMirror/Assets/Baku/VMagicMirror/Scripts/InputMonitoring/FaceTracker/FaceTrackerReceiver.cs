@@ -48,7 +48,7 @@ namespace Baku.VMagicMirror
                 );
 
             receiver.AssignQueryHandler(
-                VmmQueries.CameraDeviceNames,
+                VmmCommands.CameraDeviceNames,
                 query => query.Result = DeviceNames.CreateDeviceNamesJson(GetCameraDeviceNames())
                 );
 

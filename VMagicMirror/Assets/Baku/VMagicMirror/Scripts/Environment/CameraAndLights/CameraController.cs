@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror
                 );
 
             receiver.AssignQueryHandler(
-                VmmQueries.CurrentCameraPosition, 
+                VmmCommands.CurrentCameraPosition, 
                 query =>
                 {
                     var t = cam.transform;

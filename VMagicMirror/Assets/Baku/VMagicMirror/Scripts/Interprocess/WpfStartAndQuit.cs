@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -56,13 +57,14 @@ namespace Baku.VMagicMirror
             }
             _releaseRunning.Value = true;
 
-            //前処理: この時点でMMFとかは既に閉じておく
+            //前処理
             foreach (var item in _releaseItems)
             {
                 item.ReleaseBeforeCloseConfig();
             }
-            
-            _sender?.SendCommand(MessageFactory.Instance.CloseConfigWindow());
+
+            // NOTE: UnityではこのコマンドだけがLast扱い
+            _sender.SendCommand(MessageFactory.Instance.CloseConfigWindow(), true);
 
             //特にリリースするものがないケース: 本来ありえないんだけど、理屈上はほしいので書いておく
             if (_releaseItems.Count == 0)
@@ -72,12 +74,29 @@ namespace Baku.VMagicMirror
                 return true;
             }
             
-            ReleaseItemsAsync();
+            ReleaseItemsAsync().Forget();
             return _releaseCompleted.Value;
         }
 
-        private async void ReleaseItemsAsync()
+        private async UniTaskVoid ReleaseItemsAsync()
         {
+            // - WPFを終了させるコマンドの送信完了を待つ
+            // - このとき、WPFが想定外の事情で先に完全終了してると進まないことがあるので、そこはTimeoutで捌く
+            var cancellationToken = this.GetCancellationTokenOnDestroy();
+            try
+            {
+                await UniTask
+                    .WaitUntil(() => _sender.LastMessageSent, cancellationToken: cancellationToken)
+                    .Timeout(TimeSpan.FromSeconds(1));
+            }
+            catch (TimeoutException)
+            {
+            }
+            catch (OperationCanceledException)
+            {
+                // コッチはEditorでのみ通過するはず
+            }
+            
             await Task.WhenAll(
                 _releaseItems.Select(item => item.ReleaseResources())
             );

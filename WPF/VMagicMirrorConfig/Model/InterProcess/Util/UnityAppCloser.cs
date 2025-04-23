@@ -9,7 +9,7 @@ namespace Baku.VMagicMirrorConfig
 
         public UnityAppCloser(IMessageReceiver receiver)
         {
-            receiver.ReceivedCommand += (sender, e) =>
+            receiver.ReceivedCommand += (e) =>
             {
                 if (e.Command == ReceiveMessageNames.SetUnityProcessId &&
                     int.TryParse(e.Args, out int processId)

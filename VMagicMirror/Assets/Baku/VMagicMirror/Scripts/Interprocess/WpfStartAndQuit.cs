@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using System.Threading.Tasks;
 using Baku.VMagicMirror.Mmf;
+using Cysharp.Threading.Tasks;
 using Zenject;
 
 namespace Baku.VMagicMirror
 {
     public class WpfStartAndQuit : MonoBehaviour
     {
-        private const string ConfigProcessName = "VMagicMirrorConfig";
-        private static readonly string ConfigExePath = "ConfigApp\\VMagicMirrorConfig.exe";
+        private const string ConfigExePath = "ConfigApp\\VMagicMirrorConfig.exe";
 
         private static string GetWpfPath()
             => Path.Combine(
@@ -22,11 +22,11 @@ namespace Baku.VMagicMirror
                 ConfigExePath
                 );
 
-        private IMessageSender _sender = null;
-        private List<IReleaseBeforeQuit> _releaseItems = new List<IReleaseBeforeQuit>();
+        private IMessageSender _sender;
+        private List<IReleaseBeforeQuit> _releaseItems = new();
 
-        private readonly Atomic<bool> _releaseRunning = new Atomic<bool>();
-        private readonly Atomic<bool> _releaseCompleted = new Atomic<bool>();
+        private readonly Atomic<bool> _releaseRunning = new();
+        private readonly Atomic<bool> _releaseCompleted = new();
 
         [Inject]
         public void Initialize(IMessageSender sender, List<IReleaseBeforeQuit> releaseNeededItems)
@@ -37,7 +37,7 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            StartCoroutine(ActivateWpf());
+            ActivateWpfAsync(this.GetCancellationTokenOnDestroy()).Forget();
             //NOTE: WPF側はProcess.CloseMainWindowを使ってUnityを閉じようとする。
             //かつ、Unity側で単体で閉じる方法も今のところはメインウィンドウ閉じのみ。
             Application.wantsToQuit += OnApplicationWantsToQuit;
@@ -56,13 +56,14 @@ namespace Baku.VMagicMirror
             }
             _releaseRunning.Value = true;
 
-            //前処理: この時点でMMFとかは既に閉じておく
+            //前処理
             foreach (var item in _releaseItems)
             {
                 item.ReleaseBeforeCloseConfig();
             }
-            
-            _sender?.SendCommand(MessageFactory.Instance.CloseConfigWindow());
+
+            // NOTE: UnityではこのコマンドだけがLast扱い
+            _sender.SendCommand(MessageFactory.Instance.CloseConfigWindow(), true);
 
             //特にリリースするものがないケース: 本来ありえないんだけど、理屈上はほしいので書いておく
             if (_releaseItems.Count == 0)
@@ -72,12 +73,29 @@ namespace Baku.VMagicMirror
                 return true;
             }
             
-            ReleaseItemsAsync();
+            ReleaseItemsAsync().Forget();
             return _releaseCompleted.Value;
         }
 
-        private async void ReleaseItemsAsync()
+        private async UniTaskVoid ReleaseItemsAsync()
         {
+            // - WPFを終了させるコマンドの送信完了を待つ
+            // - このとき、WPFが想定外の事情で先に完全終了してると進まないことがあるので、そこはTimeoutで捌く
+            var cancellationToken = this.GetCancellationTokenOnDestroy();
+            try
+            {
+                await UniTask
+                    .WaitUntil(() => _sender.LastMessageSent, cancellationToken: cancellationToken)
+                    .Timeout(TimeSpan.FromSeconds(1));
+            }
+            catch (TimeoutException)
+            {
+            }
+            catch (OperationCanceledException)
+            {
+                // コッチはEditorでのみ通過するはず
+            }
+            
             await Task.WhenAll(
                 _releaseItems.Select(item => item.ReleaseResources())
             );
@@ -88,37 +106,26 @@ namespace Baku.VMagicMirror
             Application.Quit();
         }
 
-        private IEnumerator ActivateWpf()
+        private async UniTaskVoid ActivateWpfAsync(CancellationToken token)
         {
-            string path = GetWpfPath();
-            if (File.Exists(path))
+            var path = GetWpfPath();
+            if (!File.Exists(path))
             {
-                //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
-                yield return null;
-                yield return null;
-                var startInfo = new ProcessStartInfo()
-                {
-                    FileName = path,
-                    Arguments = "/channelId " + MmfChannelIdSource.ChannelId
-                };
-#if !UNITY_EDITOR
+                return;
+            }
+
+            //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
+            await UniTask.DelayFrame(2, cancellationToken: token);
+            var startInfo = new ProcessStartInfo()
+            {
+                FileName = path,
+                Arguments = "/channelId " + MmfChannelIdSource.ChannelId
+            };
+
+            if (!Application.isEditor)
+            {
                 Process.Start(startInfo);
                 _sender.SendCommand(MessageFactory.Instance.SetUnityProcessId(Process.GetCurrentProcess().Id));
-#endif
-            }
-        }
-
-        private void CloseWpfWindow()
-        {
-            try
-            {
-                Process.GetProcesses()
-                    .FirstOrDefault(p => p.ProcessName == ConfigProcessName)
-                    ?.CloseMainWindow();
-            }
-            catch (Exception)
-            {
-                //タイミング的にログ吐くのもちょっと危ないため、やらない
             }
         }
     }

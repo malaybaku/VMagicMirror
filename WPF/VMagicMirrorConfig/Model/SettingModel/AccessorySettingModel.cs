@@ -127,7 +127,7 @@ namespace Baku.VMagicMirrorConfig
             SerializedSetting = JsonConvert.SerializeObject(Items);
         }
 
-        private void OnReceivedCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceivedCommand(CommandReceivedData e)
         {
             if (e.Command == ReceiveMessageNames.UpdateAccessoryLayouts)
             {

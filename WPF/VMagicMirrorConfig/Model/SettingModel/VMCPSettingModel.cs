@@ -65,7 +65,7 @@ namespace Baku.VMagicMirrorConfig
 
         public event EventHandler? ConnectedStatusChanged;
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
             if (e.Command != ReceiveMessageNames.NotifyVmcpReceiveStatus)
             {

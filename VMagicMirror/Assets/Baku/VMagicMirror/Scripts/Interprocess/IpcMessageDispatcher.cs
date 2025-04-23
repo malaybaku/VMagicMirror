@@ -7,14 +7,11 @@ namespace Baku.VMagicMirror.InterProcess
 {
     public class IpcMessageDispatcher : IMessageReceiver, IMessageDispatcher
     {
-        private readonly Dictionary<string, Action<ReceivedCommand>> _commandHandlers
-            = new Dictionary<string, Action<ReceivedCommand>>();
-        
-        private readonly Dictionary<string, Action<ReceivedQuery>> _queryHandlers
-            = new Dictionary<string, Action<ReceivedQuery>>();
+        private readonly Dictionary<string, Action<ReceivedCommand>> _commandHandlers = new();
+        private readonly Dictionary<string, Action<ReceivedQuery>> _queryHandlers = new();
 
-        private readonly ConcurrentQueue<ReceivedCommand> _receivedCommands = new ConcurrentQueue<ReceivedCommand>();
-        private readonly ConcurrentQueue<QueryQueueItem> _receivedQueries = new ConcurrentQueue<QueryQueueItem>();
+        private readonly ConcurrentQueue<ReceivedCommand> _receivedCommands = new();
+        private readonly ConcurrentQueue<QueryQueueItem> _receivedQueries = new();
 
         //NOTE: ITickableっぽいからTickにしてるだけで、メインスレッド保証があるならどこで呼んでもいい。
         public void Tick()
@@ -97,14 +94,14 @@ namespace Baku.VMagicMirror.InterProcess
             item.ResultSource.SetResult(item.Query.Result);
         }
 
-        class QueryQueueItem
+        private class QueryQueueItem
         {
             public QueryQueueItem(ReceivedQuery query)
             {
                 Query = query;
             }
             public ReceivedQuery Query { get; }
-            public TaskCompletionSource<string> ResultSource { get; } = new TaskCompletionSource<string>();
+            public TaskCompletionSource<string> ResultSource { get; } = new();
         }
         
     }

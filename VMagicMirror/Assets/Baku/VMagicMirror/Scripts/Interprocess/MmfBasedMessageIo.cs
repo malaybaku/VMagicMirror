@@ -10,24 +10,22 @@ namespace Baku.VMagicMirror.InterProcess
         IMessageReceiver, IMessageSender, IMessageDispatcher,
         IReleaseBeforeQuit, ITickable
     {
-        private MmfBasedMessageIo()
+        [Inject]
+        public MmfBasedMessageIo()
         {
-            _server = new MemoryMappedFileConnectServer();
+            _server = new MemoryMappedFileConnector();
             _server.ReceiveCommand += OnReceiveCommand;
             _server.ReceiveQuery += OnReceiveQuery;
-            //NOTE: awaitする意味がないのでawaitをつけず、かつコレは警告が出るので止めてます。
-            //コンストラクタでいきなりStartするのがマナー悪い、というのは無くもないです
-#pragma warning disable CS4014
-            _server.Start(MmfChannelIdSource.ChannelId);
-#pragma warning restore CS4014
+            _server.StartAsServer(MmfChannelIdSource.ChannelId);
         }
 
-        private readonly IpcMessageDispatcher _dispatcher = new IpcMessageDispatcher();
-        private readonly MemoryMappedFileConnectServer _server;
+        private readonly IpcMessageDispatcher _dispatcher = new();
+        private readonly MemoryMappedFileConnector _server;
 
         public event Action<Message> SendingMessage;
-
-        public void SendCommand(Message message)
+        public bool LastMessageSent => _server.LastMessageSent;
+        
+        public void SendCommand(Message message, bool isLastMessage = false)
         {
             try
             {
@@ -37,7 +35,7 @@ namespace Baku.VMagicMirror.InterProcess
             {
                 LogOutput.Instance.Write(ex);                
             }
-            _server.SendCommand(message.Command + ":" + message.Content);
+            _server.SendCommand(message.Command + ":" + message.Content, isLastMessage);
         }
 
         public async Task<string> SendQueryAsync(Message message) 
@@ -63,31 +61,30 @@ namespace Baku.VMagicMirror.InterProcess
 
         public void Tick() => _dispatcher.Tick();
 
-        private void OnReceiveCommand(object sender, ReceiveCommandEventArgs e)
+        private void OnReceiveCommand(string rawContent)
         {
-            string rawContent = e.Command;
-            int i = FindColonCharIndex(rawContent);
-            string command = (i == -1) ? rawContent : rawContent.Substring(0, i);
-            string content = (i == -1) ? "" : rawContent.Substring(i + 1);
+            var i = FindColonCharIndex(rawContent);
+            var command = (i == -1) ? rawContent : rawContent[..i];
+            var content = (i == -1) ? "" : rawContent[(i + 1)..];
 
             _dispatcher.ReceiveCommand(new ReceivedCommand(command, content));
         }
         
-        private async void OnReceiveQuery(object sender, ReceiveQueryEventArgs e)
+        private async void OnReceiveQuery((int id, string content) value)
         {
-            string rawContent = e.Query.Query;
-            int i = FindColonCharIndex(rawContent);
-            string command = (i == -1) ? rawContent : rawContent.Substring(0, i);
-            string content = (i == -1) ? "" : rawContent.Substring(i + 1);
+            var rawContent = value.content;
+            var i = FindColonCharIndex(rawContent);
+            var command = (i == -1) ? rawContent : rawContent[..i];
+            var content = (i == -1) ? "" : rawContent[(i + 1)..];
 
-            string res = await _dispatcher.ReceiveQuery(new ReceivedQuery(command, content));
-            e.Query.Reply(res);
+            var res = await _dispatcher.ReceiveQuery(new ReceivedQuery(command, content));
+            _server.SendQueryResponse(res, value.id);
         }
         
         //コマンド名と引数名の区切り文字のインデックスを探します。
         private static int FindColonCharIndex(string s)
         {
-            for (int i = 0; i < s.Length; i++)
+            for (var i = 0; i < s.Length; i++)
             {
                 if (s[i] == ':')
                 {

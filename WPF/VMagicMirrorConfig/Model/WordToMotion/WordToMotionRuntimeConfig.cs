@@ -46,7 +46,7 @@ namespace Baku.VMagicMirrorConfig
             _setting.LoadDefaultMotionRequests(ExtraBlendShapeClipNames);
         }
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
             if (e.Command != ReceiveMessageNames.ExtraBlendShapeClipNames)
             {

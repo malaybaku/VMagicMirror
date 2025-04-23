@@ -16,7 +16,7 @@ namespace Baku.VMagicMirrorConfig
         public void Start() => _receiver.ReceivedCommand += OnReceive;
         public void End() => _receiver.ReceivedCommand -= OnReceive;
 
-        private void OnReceive(object? sender, CommandReceivedEventArgs e)
+        private void OnReceive(CommandReceivedData e)
         {
             if (e.Command != ReceiveMessageNames.MidiNoteOn)
             {

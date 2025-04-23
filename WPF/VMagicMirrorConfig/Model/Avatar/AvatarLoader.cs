@@ -37,7 +37,7 @@ namespace Baku.VMagicMirrorConfig
 
         private CancellationTokenSource? _ctsForDetectVrm10;
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
             switch (e.Command)
             {

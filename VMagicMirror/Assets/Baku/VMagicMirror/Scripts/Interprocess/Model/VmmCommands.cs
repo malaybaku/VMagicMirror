@@ -258,6 +258,9 @@
         
         // Meta message
         public const string CommandArray = nameof(CommandArray);
+        
+        // Debug
+        public const string DebugSendLargeData = nameof(DebugSendLargeData);
     }
 }
 

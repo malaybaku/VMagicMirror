@@ -218,7 +218,7 @@ namespace Baku.VMagicMirrorConfig
 
         #endregion
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
             if (e.Command == ReceiveMessageNames.UpdateDeviceLayout)
             {

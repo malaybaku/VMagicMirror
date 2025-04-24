@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
     public static class CommandArrayParser
     {
         /// <summary>
-        /// contentは「コマンドのbinaryを一つずつbase64エンコードしたstringの配列」であることを期待してる
+        /// contentは「コマンドのbinaryを一つずつbase64エンコードしたstringの配列をJSONにしたもの」であることを期待してる
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>

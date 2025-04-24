@@ -15,7 +15,7 @@ namespace Baku.VMagicMirrorConfig
             return new JObject()
             {
                 ["items"] = new JArray(
-                    commands.Select(c => Convert.ToBase64String(c.Data.Span))
+                    commands.Select(c => Convert.ToBase64String(c.Data.Span)).ToArray()
                     ),
             }.ToString(Formatting.None);
         }

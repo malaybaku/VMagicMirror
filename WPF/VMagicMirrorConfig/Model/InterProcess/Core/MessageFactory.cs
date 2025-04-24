@@ -21,13 +21,16 @@ namespace Baku.VMagicMirrorConfig
 
         private static Message IntContent(VmmCommands command, int content) => Message.Int(VmmCommands.Unknown, content);
 
+        private static Message IntArrayContent(VmmCommands command, int[] content) => Message.IntArray(command, content);
+
         public Message Language(string langName) => StringContent(VmmCommands.Language, langName);
+
 
         #region HID Input
 
-        //public Message KeyDown(string keyName) => WithArg(VmmCommands.KeyDown, keyName);
+        //public Message KeyDown(string keyName) => StringContent(VmmCommands.KeyDown, keyName);
         public Message MouseButton(string info) => StringContent(VmmCommands.MouseButton, info);
-        //public Message MouseMoved(int x, int y) => WithArg(VmmCommands.MouseMoved, $"{x},{y}");
+        //public Message MouseMoved(int x, int y) => StringContent(VmmCommands.MouseMoved, $"{x},{y}");
 
         #endregion
 
@@ -45,7 +48,7 @@ namespace Baku.VMagicMirrorConfig
 
         #region ウィンドウ
 
-        public Message Chromakey(int a, int r, int g, int b) => StringContent(VmmCommands.Chromakey, $"{a},{r},{g},{b}");
+        public Message Chromakey(int a, int r, int g, int b) => IntArrayContent(VmmCommands.Chromakey, [a, r, g, b]);
 
         public Message WindowFrameVisibility(bool v) => BoolContent(VmmCommands.WindowFrameVisibility, v);
         public Message IgnoreMouse(bool v) => BoolContent(VmmCommands.IgnoreMouse, v);
@@ -59,7 +62,7 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public Message SetBackgroundImagePath(string path) => StringContent(VmmCommands.SetBackgroundImagePath, path);
 
-        public Message MoveWindow(int x, int y) => StringContent(VmmCommands.MoveWindow, $"{x},{y}");
+        public Message MoveWindow(int x, int y) => IntArrayContent(VmmCommands.MoveWindow, [x, y]);
         public Message ResetWindowSize() => None(VmmCommands.ResetWindowSize);
 
         public Message SetWholeWindowTransparencyLevel(int level) => IntContent(VmmCommands.SetWholeWindowTransparencyLevel, level);
@@ -281,7 +284,7 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public Message ApplyDefaultImageQuality() => None(VmmCommands.ApplyDefaultImageQuality);
 
-        public Message LightColor(int r, int g, int b) => StringContent(VmmCommands.LightColor, $"{r},{g},{b}");
+        public Message LightColor(int r, int g, int b) => IntArrayContent(VmmCommands.LightColor, [r, g, b]);
         public Message LightIntensity(int intensityPercent) => IntContent(VmmCommands.LightIntensity, intensityPercent);
         public Message LightYaw(int angleDeg) => IntContent(VmmCommands.LightYaw, angleDeg);
         public Message LightPitch(int angleDeg) => IntContent(VmmCommands.LightPitch, angleDeg);
@@ -293,17 +296,17 @@ namespace Baku.VMagicMirrorConfig
         public Message ShadowPitch(int angleDeg) => IntContent(VmmCommands.ShadowPitch, angleDeg);
         public Message ShadowDepthOffset(int depthCentimeter) => IntContent(VmmCommands.ShadowDepthOffset, depthCentimeter);
 
-        public Message BloomColor(int r, int g, int b) => StringContent(VmmCommands.BloomColor, $"{r},{g},{b}");
+        public Message BloomColor(int r, int g, int b) => IntArrayContent(VmmCommands.BloomColor, [r, g, b]);
         public Message BloomIntensity(int intensityPercent) => IntContent(VmmCommands.BloomIntensity, intensityPercent);
         public Message BloomThreshold(int thresholdPercent) => IntContent(VmmCommands.BloomThreshold, thresholdPercent);
 
         public Message AmbientOcclusionEnable(bool enable) => BoolContent(VmmCommands.AmbientOcclusionEnable, enable);
         public Message AmbientOcclusionIntensity(int intensityPercent) => IntContent(VmmCommands.AmbientOcclusionIntensity, intensityPercent);
-        public Message AmbientOcclusionColor(int r, int g, int b) => StringContent(VmmCommands.AmbientOcclusionColor, $"{r},{g},{b}");
+        public Message AmbientOcclusionColor(int r, int g, int b) => IntArrayContent(VmmCommands.AmbientOcclusionColor, [r, g, b]);
 
         public Message OutlineEffectEnable(bool active) => BoolContent(VmmCommands.OutlineEffectEnable, active);
         public Message OutlineEffectThickness(int thickness) => IntContent(VmmCommands.OutlineEffectThickness, thickness);
-        public Message OutlineEffectColor(int r, int g, int b) => StringContent(VmmCommands.OutlineEffectColor, $"{r},{g},{b}");
+        public Message OutlineEffectColor(int r, int g, int b) => IntArrayContent(VmmCommands.OutlineEffectColor, [r, g, b]);
         public Message OutlineEffectHighQualityMode(bool enable) => BoolContent(VmmCommands.OutlineEffectHighQualityMode, enable);
         
         public Message WindEnable(bool enableWind) => BoolContent(VmmCommands.WindEnable, enableWind);

@@ -30,8 +30,6 @@ namespace Baku.VMagicMirrorConfig
         //NOTE: 64というキャパシティはどんぶり勘定
         private readonly List<Message> _compositeMessages = new(64);
 
-        #region IMessageSender
-
         public void SendMessage(Message message)
         {
             if (_isCompositeMode)
@@ -56,7 +54,7 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        public async Task<string> QueryMessageAsync(Message message)
+        async Task<string> IMessageSender.QueryMessageAsync(Message message)
         {
             try
             {
@@ -70,12 +68,12 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        public void StartCommandComposite()
+        void IMessageSender.StartCommandComposite()
         {
             _isCompositeMode = true;
         }
 
-        public void EndCommandComposite()
+		void IMessageSender.EndCommandComposite()
         {
             _isCompositeMode = false;
             if (_compositeMessages.Count > 0)
@@ -85,13 +83,10 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        #endregion
-
-        #region IMessageReceiver
 
         // TODO: Start/Stopいずれも、内部的にでもいいからキャンセルをちゃんと扱いたい…
 
-        public async void Start()
+        async void IMessageReceiver.Start()
         {
             //NOTE: この実装だと受信開始するまで送信もできない(ややヘンテコな感じがする)が、気にしないことにする
             string channelName = CommandLineArgParser.TryLoadMmfFileName(out var givenName)
@@ -100,7 +95,7 @@ namespace Baku.VMagicMirrorConfig
             await _client.StartAsClientAsync(channelName);
         }
 
-        public async void Stop()
+        async void IMessageReceiver.Stop()
         {
             await _client.StopAsync();
         }
@@ -130,21 +125,5 @@ namespace Baku.VMagicMirrorConfig
                 _client.SendQueryResponse(value.id, responseData);
             }));
         }
-
-        //コマンド名と引数名の区切り文字のインデックスを探します。
-        private static int FindColonCharIndex(string s)
-        {
-            for (int i = 0; i < s.Length; i++)
-            {
-                if (s[i] == ':')
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        #endregion
-
     }
 }

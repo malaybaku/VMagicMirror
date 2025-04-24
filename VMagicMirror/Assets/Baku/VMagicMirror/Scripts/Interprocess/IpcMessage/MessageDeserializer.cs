@@ -30,7 +30,6 @@ namespace Baku.VMagicMirror.IpcMessage
             ValidateDataLength(data, 5);
             ValidateType(data, MessageValueTypes.Bool);
 
-            if (data.Length < 5) throw new ArgumentException("Invalid data length for Bool");
             return data.Span[4] != 0;
         }
         
@@ -39,7 +38,6 @@ namespace Baku.VMagicMirror.IpcMessage
             ValidateDataLength(data, 8);
             ValidateType(data, MessageValueTypes.Int);
 
-            if (data.Length < 8) throw new ArgumentException("Invalid data length for Int");
             return BitConverter.ToInt32(data.Span[4..]);
         }
         
@@ -48,7 +46,6 @@ namespace Baku.VMagicMirror.IpcMessage
             ValidateDataLength(data, 8);
             ValidateType(data, MessageValueTypes.Float);
 
-            if (data.Length < 8) throw new ArgumentException("Invalid data length for Float");
             return BitConverter.ToSingle(data.Span[4..]);
         }
 

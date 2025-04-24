@@ -268,9 +268,9 @@ namespace Baku.VMagicMirrorConfig
         }
 
         private void EnableBuddy(BuddyMetadata buddy)
-            => _sender.SendMessage(MessageFactory.Instance.BuddyEnable(buddy.FolderPath));
+            => _sender.SendMessage(MessageFactory.BuddyEnable(buddy.FolderPath));
         
         private void DisableBuddy(BuddyMetadata buddy)
-            => _sender.SendMessage(MessageFactory.Instance.BuddyDisable(buddy.FolderPath));
+            => _sender.SendMessage(MessageFactory.BuddyDisable(buddy.FolderPath));
     }
 }

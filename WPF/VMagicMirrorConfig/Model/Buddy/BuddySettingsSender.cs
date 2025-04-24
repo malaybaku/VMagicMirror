@@ -45,7 +45,7 @@ namespace Baku.VMagicMirrorConfig
             };
             using var sw = new StringWriter();
             new JsonSerializer().Serialize(sw, settings);
-            _sender.SendMessage(MessageFactory.Instance.BuddyRefreshData(sw.ToString()));
+            _sender.SendMessage(MessageFactory.BuddyRefreshData(sw.ToString()));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Baku.VMagicMirrorConfig
             valueSetter(msg);
             using var sw = new StringWriter();
             new JsonSerializer().Serialize(sw, msg);
-            _sender.SendMessage(MessageFactory.Instance.BuddySetProperty(sw.ToString()));
+            _sender.SendMessage(MessageFactory.BuddySetProperty(sw.ToString()));
         }
 
         public void NotifyBoolProperty(BuddyMetadata buddy, BuddyPropertyMetadata property, bool value)
@@ -90,12 +90,12 @@ namespace Baku.VMagicMirrorConfig
             => NotifyProperty(buddy, property, msg => msg.Transform3DValue = value);
 
         public void SetMainAvatarOutputActive(bool v)
-            => _sender.SendMessage(MessageFactory.Instance.BuddySetMainAvatarOutputActive(v));
+            => _sender.SendMessage(MessageFactory.BuddySetMainAvatarOutputActive(v));
 
         public void SetDeveloperModeActive(bool v)
-            => _sender.SendMessage(MessageFactory.Instance.BuddySetDeveloperModeActive(v));
+            => _sender.SendMessage(MessageFactory.BuddySetDeveloperModeActive(v));
 
         public void SetDeveloperModeLogLevel(int v)
-            => _sender.SendMessage(MessageFactory.Instance.BuddySetDeveloperModeLogLevel(v));
+            => _sender.SendMessage(MessageFactory.BuddySetDeveloperModeLogLevel(v));
     }
 }

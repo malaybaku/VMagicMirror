@@ -1,4 +1,5 @@
-﻿using Baku.VMagicMirrorConfig.BuddySettingsMessages;
+﻿using Baku.VMagicMirror;
+using Baku.VMagicMirrorConfig.BuddySettingsMessages;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -24,20 +25,20 @@ namespace Baku.VMagicMirrorConfig
         private readonly IMessageReceiver _receiver;
         private readonly BuddySettingModel _buddySettingModel;
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
             try
             {
                 switch (e.Command)
                 {
-                    case ReceiveMessageNames.NotifyBuddy2DLayout:
-                        TrySetBuddy2DLayout(e.Args);
+                    case VmmServerCommands.NotifyBuddy2DLayout:
+                        TrySetBuddy2DLayout(e.GetStringValue());
                         break;
-                    case ReceiveMessageNames.NotifyBuddy3DLayout:
-                        TrySetBuddy3DLayout(e.Args);
+                    case VmmServerCommands.NotifyBuddy3DLayout:
+                        TrySetBuddy3DLayout(e.GetStringValue());
                         break;
-                    case ReceiveMessageNames.NotifyBuddyLog:
-                        SetBuddyLog(e.Args);
+                    case VmmServerCommands.NotifyBuddyLog:
+                        SetBuddyLog(e.GetStringValue());
                         break;
                 }
             }

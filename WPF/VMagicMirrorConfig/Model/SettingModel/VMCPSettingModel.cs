@@ -16,30 +16,30 @@ namespace Baku.VMagicMirrorConfig
         {
             var setting = VMCPSetting.Default;
             VMCPEnabled = new(
-                setting.VMCPEnabled, v => SendMessage(MessageFactory.Instance.EnableVMCP(v)));
+                setting.VMCPEnabled, v => SendMessage(MessageFactory.EnableVMCP(v)));
             SerializedVMCPSourceSetting = new(
-                setting.SerializedVMCPSourceSetting, v => SendMessage(MessageFactory.Instance.SetVMCPSources(v)));
+                setting.SerializedVMCPSourceSetting, v => SendMessage(MessageFactory.SetVMCPSources(v)));
 
             DisableCameraDuringVMCPActive = new(
                 setting.DisableCameraDuringVMCPActive,
-                v => SendMessage(MessageFactory.Instance.SetDisableCameraDuringVMCPActive(v))
+                v => SendMessage(MessageFactory.SetDisableCameraDuringVMCPActive(v))
                 );
             EnableNaiveBoneTransfer = new(
                 setting.EnableNaiveBoneTransfer,
-                v => SendMessage(MessageFactory.Instance.SetVMCPNaiveBoneTransfer(v))
+                v => SendMessage(MessageFactory.SetVMCPNaiveBoneTransfer(v))
                 );
 
             VMCPSendEnabled = new(
                 setting.VMCPSendEnabled,
-                v => SendMessage(MessageFactory.Instance.EnableVMCPSend(v))
+                v => SendMessage(MessageFactory.EnableVMCPSend(v))
                 );
             SerializedVMCPSendSetting = new(                
                 setting.SerializedVMCPSendSetting,
-                v => SendMessage(MessageFactory.Instance.SetVMCPSendSettings(v))
+                v => SendMessage(MessageFactory.SetVMCPSendSettings(v))
                 );
             ShowEffectDuringVMCPSendEnabled = new(
                 setting.ShowEffectDuringVMCPSendEnabled,
-                v => SendMessage(MessageFactory.Instance.ShowEffectDuringVMCPSendEnabled(v))
+                v => SendMessage(MessageFactory.ShowEffectDuringVMCPSendEnabled(v))
                 );
 
             receiver.ReceivedCommand += OnReceiveCommand;

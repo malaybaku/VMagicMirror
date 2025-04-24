@@ -78,7 +78,7 @@ namespace Baku.VMagicMirrorConfig
             _isCompositeMode = false;
             if (_compositeMessages.Count > 0)
             {
-                SendMessage(MessageFactory.Instance.CommandArray(_compositeMessages));
+                SendMessage(MessageFactory.CommandArray(_compositeMessages));
                 _compositeMessages.Clear();
             }
         }

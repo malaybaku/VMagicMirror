@@ -96,7 +96,7 @@ namespace Baku.VMagicMirrorConfig
                 )
             {
                 LogOutput.Instance.Write($"Load Local VRM, setting no={index}, automation={fromAutomation}, path={loadedVrmPath}");
-                _sender.SendMessage(MessageFactory.Instance.OpenVrm(loadedVrmPath));
+                _sender.SendMessage(MessageFactory.OpenVrm(loadedVrmPath));
                 _setting.OnLocalModelLoaded(loadedVrmPath);
             }
             else if(content != SettingFileReadContent.NonCharacter && 

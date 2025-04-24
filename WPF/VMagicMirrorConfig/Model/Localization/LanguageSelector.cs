@@ -94,7 +94,7 @@ namespace Baku.VMagicMirrorConfig
                 : _dictionaryLoader.GetLoadedDictionaries()[languageName];
 
             Application.Current.Resources.MergedDictionaries[0] = dict;
-            _sender?.SendMessage(MessageFactory.Instance.Language(languageName));
+            _sender?.SendMessage(MessageFactory.Language(languageName));
         }
 
         /// <summary>

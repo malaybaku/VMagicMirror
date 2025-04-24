@@ -47,7 +47,7 @@ namespace Baku.VMagicMirrorConfig
         {
             string content = request.ToVrm10Json();
             _sender.SendMessage(
-                MessageFactory.Instance.SendWordToMotionPreviewInfo(content)
+                MessageFactory.SendWordToMotionPreviewInfo(content)
                 );
         }
     }

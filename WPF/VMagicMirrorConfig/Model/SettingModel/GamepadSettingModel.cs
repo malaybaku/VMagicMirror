@@ -17,12 +17,10 @@
         public GamepadSettingModel(IMessageSender sender) : base(sender)
         {
             var s = GamepadSetting.Default;
-            var factory = MessageFactory.Instance;
-
-
+          
             GamepadEnabled = new RProperty<bool>(s.GamepadEnabled, b =>
             {
-                SendMessage(factory.EnableGamepad(b));
+                SendMessage(MessageFactory.EnableGamepad(b));
                 if (!b && GamepadVisibility != null)
                 {
                     //読み込み無効なら表示する価値は無いであろう、と判断
@@ -30,8 +28,8 @@
                 }
             });
 
-            PreferDirectInputGamepad = new RProperty<bool>(s.PreferDirectInputGamepad, b => SendMessage(factory.PreferDirectInputGamepad(b)));
-            GamepadVisibility = new RProperty<bool>(s.GamepadVisibility, b => SendMessage(factory.GamepadVisibility(b)));
+            PreferDirectInputGamepad = new RProperty<bool>(s.PreferDirectInputGamepad, b => SendMessage(MessageFactory.PreferDirectInputGamepad(b)));
+            GamepadVisibility = new RProperty<bool>(s.GamepadVisibility, b => SendMessage(MessageFactory.GamepadVisibility(b)));
 
             //排他になるように制御
             //TODO: RadioButtonの要請により、「一瞬たりとてフラグが2つ同時に立つのは許さん」みたいな要件もありうるので試しておくこと。
@@ -40,7 +38,7 @@
             {
                 if (b)
                 {
-                    SendMessage(factory.GamepadLeanMode(LeanModeNames.GamepadLeanNone));
+                    SendMessage(MessageFactory.GamepadLeanMode(LeanModeNames.GamepadLeanNone));
                     GamepadLeanLeftStick?.Set(false);
                     GamepadLeanRightStick?.Set(false);
                     GamepadLeanLeftButtons?.Set(false);
@@ -50,7 +48,7 @@
             {
                 if (b)
                 {
-                    SendMessage(factory.GamepadLeanMode(LeanModeNames.GamepadLeanLeftStick));
+                    SendMessage(MessageFactory.GamepadLeanMode(LeanModeNames.GamepadLeanLeftStick));
                     GamepadLeanNone.Value = false;
                     GamepadLeanRightStick?.Set(false);
                     GamepadLeanLeftButtons?.Set(false);
@@ -60,7 +58,7 @@
             {
                 if (b)
                 {
-                    SendMessage(factory.GamepadLeanMode(LeanModeNames.GamepadLeanRightStick));
+                    SendMessage(MessageFactory.GamepadLeanMode(LeanModeNames.GamepadLeanRightStick));
                     GamepadLeanNone.Value = false;
                     GamepadLeanLeftStick.Value = false;
                     GamepadLeanLeftButtons?.Set(false);
@@ -70,7 +68,7 @@
             {
                 if (b)
                 {
-                    SendMessage(factory.GamepadLeanMode(LeanModeNames.GamepadLeanLeftButtons));
+                    SendMessage(MessageFactory.GamepadLeanMode(LeanModeNames.GamepadLeanLeftButtons));
                     GamepadLeanNone.Value = false;
                     GamepadLeanLeftStick.Value = false;
                     GamepadLeanRightStick.Value = false;
@@ -78,9 +76,9 @@
             });
 
             GamepadLeanReverseHorizontal = new RProperty<bool>(
-                s.GamepadLeanReverseHorizontal, b => SendMessage(factory.GamepadLeanReverseHorizontal(b))
+                s.GamepadLeanReverseHorizontal, b => SendMessage(MessageFactory.GamepadLeanReverseHorizontal(b))
                 );
-            GamepadLeanReverseVertical = new RProperty<bool>(s.GamepadLeanReverseVertical, b => SendMessage(factory.GamepadLeanReverseVertical(b)));
+            GamepadLeanReverseVertical = new RProperty<bool>(s.GamepadLeanReverseVertical, b => SendMessage(MessageFactory.GamepadLeanReverseVertical(b)));
         }
 
         public RProperty<bool> GamepadEnabled { get; }

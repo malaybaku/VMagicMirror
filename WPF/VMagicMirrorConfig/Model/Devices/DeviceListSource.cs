@@ -54,7 +54,7 @@ namespace Baku.VMagicMirrorConfig
 
         private async Task InitializeMicrophoneNamesAsync(bool refresh)
         {
-            string rawNames = await _sender.QueryMessageAsync(MessageFactory.Instance.CameraDeviceNames());
+            string rawNames = await _sender.QueryMessageAsync(MessageFactory.CameraDeviceNames());
             var names = DeviceNames.FromJson(rawNames, "Camera").Names;
             GetDispatcher().Invoke(() =>
             {
@@ -75,7 +75,7 @@ namespace Baku.VMagicMirrorConfig
 
         private async Task InitializeCameraNamesAsync(bool refresh)
         {
-            var rawNames = await _sender.QueryMessageAsync(MessageFactory.Instance.MicrophoneDeviceNames());
+            var rawNames = await _sender.QueryMessageAsync(MessageFactory.MicrophoneDeviceNames());
             var names = DeviceNames.FromJson(rawNames, "Microphone").Names;
             GetDispatcher().Invoke(() =>
             {
@@ -135,7 +135,7 @@ namespace Baku.VMagicMirrorConfig
                 {
                     if (!micIsInDeviceNames && micIsInDeviceNamesNew)
                     {
-                        _sender.SendMessage(MessageFactory.Instance.SetMicrophoneDeviceName(microphoneName));
+                        _sender.SendMessage(MessageFactory.SetMicrophoneDeviceName(microphoneName));
                         EnqueueMessageToSnackbar(string.Format(
                             LocalizedString.GetString(MicrophoneReconnectedFormatKey),
                             microphoneName
@@ -156,7 +156,7 @@ namespace Baku.VMagicMirrorConfig
                     !webcamIsInDeviceNames &&
                     _cameraNames.Contains(_setting.CameraDeviceName.Value))
                 {
-                    _sender.SendMessage(MessageFactory.Instance.SetCameraDeviceName(cameraName));
+                    _sender.SendMessage(MessageFactory.SetCameraDeviceName(cameraName));
                     EnqueueMessageToSnackbar(string.Format(
                         LocalizedString.GetString(CameraReconnectedFormatKey),
                         cameraName

@@ -53,7 +53,7 @@ namespace Baku.VMagicMirrorConfig
         {
             //必要なアイテムのデータだけ投げつける
             var json = JsonConvert.SerializeObject(item);
-            SendMessage(MessageFactory.Instance.SetSingleAccessoryLayout(json));  
+            SendMessage(MessageFactory.SetSingleAccessoryLayout(json));  
         }
 
         public void NotifyItemNameMaybeChanged(AccessoryItemSetting item)
@@ -70,7 +70,7 @@ namespace Baku.VMagicMirrorConfig
             
             //「ファイルからの再読み込み」「レイアウト適用」「初読み込みアイテムのリセット」という
             //最大3個のメッセージを連続で送る
-            SendMessage(MessageFactory.Instance.ReloadAccessoryFiles());
+            SendMessage(MessageFactory.ReloadAccessoryFiles());
             SendLayoutSetup(Items, missingFileIds);
         }
 
@@ -81,7 +81,7 @@ namespace Baku.VMagicMirrorConfig
                 FileIds = new[] { fileId },
             };
             var json = JsonConvert.SerializeObject(files);
-            SendMessage(MessageFactory.Instance.RequestResetAccessoryLayout(json));
+            SendMessage(MessageFactory.RequestResetAccessoryLayout(json));
         }
 
         //VMagicMirrorが初起動の場合、「再読み込み」ボタンを押したのに相当する処理を行います。
@@ -108,9 +108,9 @@ namespace Baku.VMagicMirrorConfig
                 ItemUpdated?.Invoke(item);
             }
             SerializedSetting = JsonConvert.SerializeObject(Items);
-            SendMessage(MessageFactory.Instance.SetAccessoryLayout(SerializedSetting));
+            SendMessage(MessageFactory.SetAccessoryLayout(SerializedSetting));
             //アイテムの位置はUnity側で調整してもらう
-            SendMessage(MessageFactory.Instance.RequestResetAllAccessoryLayout());
+            SendMessage(MessageFactory.RequestResetAllAccessoryLayout());
         }
 
 
@@ -202,7 +202,7 @@ namespace Baku.VMagicMirrorConfig
         private void SendLayoutSetup(AccessoryItems items, string[] missingFileIds)
         {
             var json = JsonConvert.SerializeObject(items);
-            SendMessage(MessageFactory.Instance.SetAccessoryLayout(json));
+            SendMessage(MessageFactory.SetAccessoryLayout(json));
 
             //設定ファイルになかったアイテムの情報はUnityが決めていいよ、というのをUnity側に通知する
             if (missingFileIds.Length > 0)
@@ -213,7 +213,7 @@ namespace Baku.VMagicMirrorConfig
                 };
 
                 var msg = JsonConvert.SerializeObject(files);
-                SendMessage(MessageFactory.Instance.RequestResetAccessoryLayout(msg));
+                SendMessage(MessageFactory.RequestResetAccessoryLayout(msg));
             }
         }
 

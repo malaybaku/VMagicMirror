@@ -60,7 +60,7 @@
         }
 
         private void SetMicrophoneVolumeVisibility(bool visible)
-            => _sender.SendMessage(MessageFactory.Instance.SetMicrophoneVolumeVisibility(visible));
+            => _sender.SendMessage(MessageFactory.SetMicrophoneVolumeVisibility(visible));
 
     }
 }

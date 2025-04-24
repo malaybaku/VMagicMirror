@@ -134,7 +134,7 @@ namespace Baku.VMagicMirror
             
             StartProcess(path);
             // WPF側のウィンドウ閉じでUnity側が閉じられるようにProcess Idを教えておく。これはEditorの場合は不要
-            _sender.SendCommand(MessageFactory.Instance.SetUnityProcessId(Process.GetCurrentProcess().Id));
+            _sender.SendCommand(MessageFactory.SetUnityProcessId(Process.GetCurrentProcess().Id));
         }
 
         private void ActivateWpfFromEditor()

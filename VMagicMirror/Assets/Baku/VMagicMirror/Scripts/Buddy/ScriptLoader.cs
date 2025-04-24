@@ -49,12 +49,12 @@ namespace Baku.VMagicMirror.Buddy
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.BuddyDisable,
-                c => DisableBuddy(c.Content)
+                c => DisableBuddy(c.GetStringValue())
             );
 
             _receiver.AssignCommandHandler(
                 VmmCommands.BuddyEnable,
-                c => EnableBuddy(c.Content)
+                c => EnableBuddy(c.GetStringValue())
             );
         }
 

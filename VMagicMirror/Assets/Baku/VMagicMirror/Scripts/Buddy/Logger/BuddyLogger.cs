@@ -135,7 +135,7 @@ namespace Baku.VMagicMirror.Buddy
                 Message = message,
                 LogLevel = (int)logLevel,
             });
-            _sender.SendCommand(MessageFactory.Instance.NotifyBuddyLog(content));
+            _sender.SendCommand(MessageFactory.NotifyBuddyLog(content));
         }
 
         // ログレベルに対して字数を揃えた文字列を返す

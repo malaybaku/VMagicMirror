@@ -53,12 +53,12 @@ namespace Baku.VMagicMirror.Buddy
 
             _receiver.AssignCommandHandler(
                 VmmCommands.BuddyRefreshData,
-                c => RefreshBuddyLayout(c.Content)
+                c => RefreshBuddyLayout(c.GetStringValue())
             );
 
             _receiver.AssignCommandHandler(
                 VmmCommands.BuddySetProperty,
-                c => SetBuddyLayout(c.Content)
+                c => SetBuddyLayout(c.GetStringValue())
             );
 
             _receiver.BindBoolProperty(VmmCommands.EnableDeviceFreeLayout, _freeLayoutEnabled);

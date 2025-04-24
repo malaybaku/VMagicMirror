@@ -44,8 +44,6 @@ namespace Baku.VMagicMirror
 
         public static Message EyeBlendShapeValues(string json) => Message.String(VmmServerCommands.EyeBlendShapeValues, json);
 
-        public static Message EyeBlendShapeValues(string json) => Message.String(VmmServerCommands.EyeBlendShapeValue, json);
-
         public static Message NotifyBuddy2DLayout(string json) => Message.String(VmmServerCommands.NotifyBuddy2DLayout, json);
         public static Message NotifyBuddy3DLayout(string json) => Message.String(VmmServerCommands.NotifyBuddy3DLayout, json);
 

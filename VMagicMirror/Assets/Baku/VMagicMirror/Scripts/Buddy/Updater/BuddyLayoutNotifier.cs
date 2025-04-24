@@ -70,7 +70,7 @@ namespace Baku.VMagicMirror.Buddy
                 },
             };
             
-            _sender.SendCommand(MessageFactory.Instance.NotifyBuddy2DLayout(
+            _sender.SendCommand(MessageFactory.NotifyBuddy2DLayout(
                 JsonUtility.ToJson(msg)
                 ));
         }
@@ -92,7 +92,7 @@ namespace Baku.VMagicMirror.Buddy
                 },
             };
             
-            _sender.SendCommand(MessageFactory.Instance.NotifyBuddy3DLayout(
+            _sender.SendCommand(MessageFactory.NotifyBuddy3DLayout(
                 JsonUtility.ToJson(msg)
             ));
         }

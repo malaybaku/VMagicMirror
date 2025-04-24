@@ -20,12 +20,12 @@ namespace Baku.VMagicMirror.Buddy
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.BuddyRefreshData,
-                c => RefreshBuddyProperty(c.Content)
+                c => RefreshBuddyProperty(c.GetStringValue())
             );
 
             _receiver.AssignCommandHandler(
                 VmmCommands.BuddySetProperty,
-                c => SetBuddyProperty(c.Content)
+                c => SetBuddyProperty(c.GetStringValue())
             );
         }
 

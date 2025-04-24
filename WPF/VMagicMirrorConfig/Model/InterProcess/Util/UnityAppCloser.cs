@@ -12,11 +12,9 @@ namespace Baku.VMagicMirrorConfig
         {
             receiver.ReceivedCommand += (e) =>
             {
-                if (e.Command is VmmServerCommands.SetUnityProcessId &&
-                    int.TryParse(e.GetStringValue(), out int processId)
-                    )
+                if (e.Command is VmmServerCommands.SetUnityProcessId)
                 {
-                    _unityProcessId = processId;
+                    _unityProcessId = e.ToInt();
                 }
             };
         }

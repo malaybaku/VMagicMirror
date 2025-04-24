@@ -4,7 +4,7 @@ namespace Baku.VMagicMirror
 {
     static class MessageFactory
     {
-        public static Message SetUnityProcessId(int id) => Message.String(VmmServerCommands.SetUnityProcessId, id.ToString());
+        public static Message SetUnityProcessId(int id) => Message.Int(VmmServerCommands.SetUnityProcessId, id);
 
         public static Message ModelNameConfirmedOnLoad(string modelName) => Message.String(VmmServerCommands.ModelNameConfirmedOnLoad, modelName);
         
@@ -15,7 +15,7 @@ namespace Baku.VMagicMirror
         public static Message SetCalibrationFaceData(string data) => Message.String(VmmServerCommands.SetCalibrationFaceData, data);
         public static Message SetCalibrationFaceDataHighPower(string data) => Message.String(VmmServerCommands.SetCalibrationFaceDataHighPower, data);
 
-        public static Message MicrophoneVolumeLevel(int level) => Message.String(VmmServerCommands.MicrophoneVolumeLevel, $"{level}");
+        public static Message MicrophoneVolumeLevel(int level) => Message.Int(VmmServerCommands.MicrophoneVolumeLevel, level);
         
         public static Message AutoAdjustResults(AutoAdjustParameters parameters) => Message.String(VmmServerCommands.AutoAdjustResults, JsonUtility.ToJson(parameters));
         
@@ -23,7 +23,7 @@ namespace Baku.VMagicMirror
 
         public static Message ExtraBlendShapeClipNames(string names) => Message.String(VmmServerCommands.ExtraBlendShapeClipNames, names);
 
-        public static Message MidiNoteOn(int noteNumber) => Message.String(VmmServerCommands.MidiNoteOn, $"{noteNumber}");
+        public static Message MidiNoteOn(int noteNumber) => Message.Int(VmmServerCommands.MidiNoteOn, noteNumber);
 
         public static Message ExTrackerCalibrateComplete(string data) => Message.String(VmmServerCommands.ExTrackerCalibrateComplete, data);
         
@@ -34,7 +34,7 @@ namespace Baku.VMagicMirror
         public static Message SetHandTrackingResult(string json) => Message.String(VmmServerCommands.SetHandTrackingResult, json);
 
         //普通falseになるようにするため、ちょっと変な言い回しにしてます
-        public static Message SetModelDoesNotSupportPen(bool doesNotSupport) => Message.String(VmmServerCommands.SetModelDoesNotSupportPen, $"{doesNotSupport}");
+        public static Message SetModelDoesNotSupportPen(bool doesNotSupport) => Message.Bool(VmmServerCommands.SetModelDoesNotSupportPen, doesNotSupport);
         
         public static Message UpdateAccessoryLayouts(string json) => Message.String(VmmServerCommands.UpdateAccessoryLayouts, json);
 

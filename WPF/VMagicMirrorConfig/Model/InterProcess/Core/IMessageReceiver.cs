@@ -42,6 +42,9 @@ namespace Baku.VMagicMirrorConfig
         // NOTE: 値の場合は _refValue に放り込まず、都度byte[]から読み出す…という使い分けをしていることに注意
         private readonly object? _refValue;
 
+        public bool ToBool() => MessageDeserializer.ToBool(RawData);
+        public int ToInt() => MessageDeserializer.ToInt(RawData);
+
         // NOTE: byte[] とかを取得するGetter Methodを提供してないが、これは単に「それを使うメッセージがまだない」というだけであり、実装するぶんにはOK
         public string GetStringValue() => (string)_refValue!;
     }

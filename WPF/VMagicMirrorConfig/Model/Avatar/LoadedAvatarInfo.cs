@@ -20,7 +20,7 @@ namespace Baku.VMagicMirrorConfig
         {
             if (e.Command is VmmServerCommands.SetModelDoesNotSupportPen)
             {
-                ModelDoesNotSupportPen.Value = bool.TryParse(e.GetStringValue(), out var result) && result;
+                ModelDoesNotSupportPen.Value = e.ToBool();
             }
         } 
 

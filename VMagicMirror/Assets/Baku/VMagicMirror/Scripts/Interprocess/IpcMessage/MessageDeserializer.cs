@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror.IpcMessage
             {
                 return MessageValueTypes.None;
             }
-            return (MessageValueTypes)BitConverter.ToUInt16(data.Span);
+            return (MessageValueTypes)BitConverter.ToUInt16(data.Span[2..]);
         }
         
         public static bool ToBool(ReadOnlyMemory<byte> data)

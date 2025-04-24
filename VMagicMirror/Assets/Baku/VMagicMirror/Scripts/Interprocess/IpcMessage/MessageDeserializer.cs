@@ -19,8 +19,9 @@ namespace Baku.VMagicMirror.IpcMessage
 
         public static MessageValueTypes GetValueType(ReadOnlyMemory<byte> data)
         {
-            ValidateDataLength(data, 2);
-            if (data.Length < 4) return MessageValueTypes.None;
+            // NOTE: None扱いの(CommandIdのみの)データを2byteで送るのは将来の仕様変更としてはアリ。
+            // そういうメッセージが大量に増えたら2byteで送るのを検討してもよい
+            ValidateDataLength(data, 4);
             return (MessageValueTypes)BitConverter.ToUInt16(data.Span[2..]);
         }
         

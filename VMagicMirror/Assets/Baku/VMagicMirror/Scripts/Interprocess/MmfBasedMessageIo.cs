@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Baku.VMagicMirror.IpcMessage;
 using Baku.VMagicMirror.Mmf;
 using Zenject;
 
@@ -35,16 +36,20 @@ namespace Baku.VMagicMirror.InterProcess
             {
                 LogOutput.Instance.Write(ex);                
             }
-            _server.SendCommand(message.Command + ":" + message.Content, isLastMessage);
+
+            _server.SendCommand(message.Data, isLastMessage);
         }
 
-        public async Task<string> SendQueryAsync(Message message) 
-            => await _server.SendQueryAsync(message.Command + ":" + message.Content);
+        public async Task<string> SendQueryAsync(Message message)
+        {
+            var data = await _server.SendQueryAsync(message.Data);
+            return new ReceivedCommand(data).GetStringValue();
+        }
         
-        public void AssignCommandHandler(string command, Action<ReceivedCommand> handler)
+        public void AssignCommandHandler(VmmCommands command, Action<ReceivedCommand> handler)
             => _dispatcher.AssignCommandHandler(command, handler);
 
-        public void AssignQueryHandler(string query, Action<ReceivedQuery> handler)
+        public void AssignQueryHandler(VmmCommands query, Action<ReceivedQuery> handler)
             => _dispatcher.AssignQueryHandler(query, handler);
 
         public void ReceiveCommand(ReceivedCommand command) => _dispatcher.ReceiveCommand(command);
@@ -59,39 +64,18 @@ namespace Baku.VMagicMirror.InterProcess
             await _server.StopAsync();
         }
 
-        public void Tick() => _dispatcher.Tick();
+        void ITickable.Tick() => _dispatcher.Tick();
 
-        private void OnReceiveCommand(string rawContent)
+        private void OnReceiveCommand(ReadOnlyMemory<byte> data)
         {
-            var i = FindColonCharIndex(rawContent);
-            var command = (i == -1) ? rawContent : rawContent[..i];
-            var content = (i == -1) ? "" : rawContent[(i + 1)..];
-
-            _dispatcher.ReceiveCommand(new ReceivedCommand(command, content));
+            _dispatcher.ReceiveCommand(new ReceivedCommand(data));
         }
         
-        private async void OnReceiveQuery((int id, string content) value)
+        private async void OnReceiveQuery((int id, ReadOnlyMemory<byte> data) value)
         {
-            var rawContent = value.content;
-            var i = FindColonCharIndex(rawContent);
-            var command = (i == -1) ? rawContent : rawContent[..i];
-            var content = (i == -1) ? "" : rawContent[(i + 1)..];
-
-            var res = await _dispatcher.ReceiveQuery(new ReceivedQuery(command, content));
-            _server.SendQueryResponse(res, value.id);
-        }
-        
-        //コマンド名と引数名の区切り文字のインデックスを探します。
-        private static int FindColonCharIndex(string s)
-        {
-            for (var i = 0; i < s.Length; i++)
-            {
-                if (s[i] == ':')
-                {
-                    return i;
-                }
-            }
-            return -1;
+            var res = await _dispatcher.ReceiveQuery(new ReceivedQuery(value.data));
+            var body = MessageSerializer.String((ushort)VmmCommands.Unknown, res);
+            _server.SendQueryResponse(value.id, body);
         }
     }
 }

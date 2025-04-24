@@ -70,7 +70,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 }
             }
 
-            _sender.SendMessage(MessageFactory.Instance.DebugSendLargeData(sb.ToString()));
+            _sender.SendMessage(MessageFactory.DebugSendLargeData(sb.ToString()));
         }
     }
 }

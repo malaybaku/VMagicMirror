@@ -38,13 +38,13 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(
                 VmmCommands.SetCustomCameraPosition, 
                 message => 
-                    SetCustomCameraPosition(message.Content, true)
+                    SetCustomCameraPosition(message.GetStringValue(), true)
                     );
 
             receiver.AssignCommandHandler(
                 VmmCommands.QuickLoadViewPoint, 
                 message => 
-                    SetCustomCameraPosition(message.Content, true)
+                    SetCustomCameraPosition(message.GetStringValue(), true)
                     );
 
             receiver.AssignCommandHandler(
@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror
                 );
 
             receiver.AssignQueryHandler(
-                VmmQueries.CurrentCameraPosition, 
+                VmmCommands.CurrentCameraPosition, 
                 query =>
                 {
                     var t = cam.transform;

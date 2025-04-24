@@ -25,45 +25,43 @@ namespace Baku.VMagicMirrorConfig
             GamepadKeyAssign = setting.GamepadKeyAssign;
             KeyboardKeyAssign = setting.KeyboardKeyAssign;
 
-            var factory = MessageFactory.Instance;
-
-            GamepadEnabled = new RProperty<bool>(setting.GamepadEnabled, v => SendMessage(factory.UseGamepadForGameInput(v)));
-            KeyboardEnabled = new RProperty<bool>(setting.KeyboardEnabled, v => SendMessage(factory.UseKeyboardForGameInput(v)));
-            AlwaysRun = new RProperty<bool>(setting.AlwaysRun, v => SendMessage(factory.EnableAlwaysRunGameInput(v)));
+            GamepadEnabled = new RProperty<bool>(setting.GamepadEnabled, v => SendMessage(MessageFactory.UseGamepadForGameInput(v)));
+            KeyboardEnabled = new RProperty<bool>(setting.KeyboardEnabled, v => SendMessage(MessageFactory.UseKeyboardForGameInput(v)));
+            AlwaysRun = new RProperty<bool>(setting.AlwaysRun, v => SendMessage(MessageFactory.EnableAlwaysRunGameInput(v)));
 
             LocomotionStyle = new RProperty<GameInputLocomotionStyle>(
                 GetLocomotionStyle(setting.LocomotionStyleValue),
-                v => SendMessage(factory.SetGameInputLocomotionStyle((int)v))
+                v => SendMessage(MessageFactory.SetGameInputLocomotionStyle((int)v))
             );
 
             UseMouseToLookAround = new RProperty<bool>(KeyboardKeyAssign.UseMouseLookAround, v =>
             {
                 KeyboardKeyAssign.UseMouseLookAround = v;
-                SendMessage(factory.UseMouseMoveForLookAroundGameInput(v));
+                SendMessage(MessageFactory.UseMouseMoveForLookAroundGameInput(v));
             });
 
             UseWasdMove = new RProperty<bool>(KeyboardKeyAssign.UseWasdMove, v =>
             {
                 KeyboardKeyAssign.UseWasdMove = v;
-                SendMessage(factory.EnableWasdMoveGameInput(v));
+                SendMessage(MessageFactory.EnableWasdMoveGameInput(v));
             });
 
             UseArrowKeyMove = new RProperty<bool>(KeyboardKeyAssign.UseArrowKeyMove, v =>
             {
                 KeyboardKeyAssign.UseArrowKeyMove = v;
-                SendMessage(factory.EnableArrowKeyMoveGameInput(v));
+                SendMessage(MessageFactory.EnableArrowKeyMoveGameInput(v));
             });
 
             UseShiftRun = new RProperty<bool>(KeyboardKeyAssign.UseShiftRun, v =>
             {
                 KeyboardKeyAssign.UseShiftRun = v;
-                SendMessage(factory.UseShiftRunGameInput(v));
+                SendMessage(MessageFactory.UseShiftRunGameInput(v));
             });
 
             UseSpaceJump = new RProperty<bool>(KeyboardKeyAssign.UseSpaceJump, v =>
             {
                 KeyboardKeyAssign.UseSpaceJump = v;
-                SendMessage(factory.UseSpaceJumpGameInput(v));
+                SendMessage(MessageFactory.UseSpaceJumpGameInput(v));
             });
         }
 
@@ -533,7 +531,7 @@ namespace Baku.VMagicMirrorConfig
 
             serializer.Serialize(jsonWriter, GamepadKeyAssign);
             var json = sb.ToString();
-            SendMessage(MessageFactory.Instance.SetGamepadGameInputKeyAssign(json));
+            SendMessage(MessageFactory.SetGamepadGameInputKeyAssign(json));
         }
 
         private void SendKeyboardKeyAssign()
@@ -546,7 +544,7 @@ namespace Baku.VMagicMirrorConfig
 
             serializer.Serialize(jsonWriter, KeyboardKeyAssign.GetKeyCodeTranslatedData());
             var json = sb.ToString();
-            SendMessage(MessageFactory.Instance.SetKeyboardGameInputKeyAssign(json));
+            SendMessage(MessageFactory.SetKeyboardGameInputKeyAssign(json));
         }
 
         private GameInputLocomotionStyle GetLocomotionStyle(int value)

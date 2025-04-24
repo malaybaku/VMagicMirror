@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Baku.VMagicMirror;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace Baku.VMagicMirrorConfig
         {
             switch (e.Command)
             {
-                case ReceiveMessageNames.VRoidModelLoadCompleted:
+                case VmmServerCommands.VRoidModelLoadCompleted:
                     //WPF側のダイアログによるUIガードを終了: _isVRoidHubUiActiveフラグは別のとこで折るのでここでは無視でOK
                     if (_isVRoidHubUiActive)
                     {
@@ -49,19 +50,19 @@ namespace Baku.VMagicMirrorConfig
                     }
 
                     //ファイルパスではなくモデルID側を最新情報として覚えておく
-                    _setting.OnVRoidModelLoaded(e.Args);
+                    _setting.OnVRoidModelLoaded(e.GetStringValue());
 
                     break;
-                case ReceiveMessageNames.VRoidModelLoadCanceled:
+                case VmmServerCommands.VRoidModelLoadCanceled:
                     //WPF側のダイアログによるUIガードを終了
                     if (_isVRoidHubUiActive)
                     {
                         MessageBoxWrapper.Instance.SetDialogResult(false);
                     }
                     break;
-                case ReceiveMessageNames.ModelNameConfirmedOnLoad:
+                case VmmServerCommands.ModelNameConfirmedOnLoad:
                     //ともかくモデルがロードされているため、実態に合わせておく
-                    _setting.LoadedModelName = e.Args;
+                    _setting.LoadedModelName = e.GetStringValue();
                     break;
             }
         }
@@ -85,7 +86,7 @@ namespace Baku.VMagicMirrorConfig
                 return;
             }
 
-            _sender.SendMessage(MessageFactory.Instance.OpenVrmPreview(filePath));
+            _sender.SendMessage(MessageFactory.OpenVrmPreview(filePath));
 
             var indication = MessageIndication.LoadVrmConfirmation();
 
@@ -100,14 +101,14 @@ namespace Baku.VMagicMirrorConfig
 
                 if (res)
                 {
-                    _sender.SendMessage(MessageFactory.Instance.OpenVrm(filePath));
+                    _sender.SendMessage(MessageFactory.OpenVrm(filePath));
                     //NOTE: この時点だとモデルのロードの成否が不明なため、
                     //Unityからロード成功を通知されるまでは記録しないのも手
                     _setting.OnLocalModelLoaded(filePath);
                 }
                 else
                 {
-                    _sender.SendMessage(MessageFactory.Instance.CancelLoadVrm());
+                    _sender.SendMessage(MessageFactory.CancelLoadVrm());
                 }
             }
             finally
@@ -120,7 +121,7 @@ namespace Baku.VMagicMirrorConfig
         {
             PrepareShowUiOnUnity();
 
-            _sender.SendMessage(MessageFactory.Instance.OpenVRoidSdkUi());
+            _sender.SendMessage(MessageFactory.OpenVRoidSdkUi());
 
             //VRoidHub側の操作が終わるまでダイアログでガードをかける: モーダル的な管理状態をファイルロードの場合と揃える為
             _isVRoidHubUiActive = true;
@@ -138,7 +139,7 @@ namespace Baku.VMagicMirrorConfig
         {
             if (File.Exists(_setting.LastVrmLoadFilePath))
             {
-                _sender.SendMessage(MessageFactory.Instance.OpenVrm(_setting.LastVrmLoadFilePath));
+                _sender.SendMessage(MessageFactory.OpenVrm(_setting.LastVrmLoadFilePath));
             }
         }
 
@@ -152,7 +153,7 @@ namespace Baku.VMagicMirrorConfig
             PrepareShowUiOnUnity();
 
             //NOTE: モデルIDを載せる以外は通常のUIオープンと同じフロー
-            _sender.SendMessage(MessageFactory.Instance.RequestLoadVRoidWithId(modelId));
+            _sender.SendMessage(MessageFactory.RequestLoadVRoidWithId(modelId));
 
             _isVRoidHubUiActive = true;
             //自動セーブなら「前回のモデル」だしそれ以外なら「設定ファイルに乗ってたモデル」となる。分けといたほうがわかりやすいので分ける。
@@ -168,7 +169,7 @@ namespace Baku.VMagicMirrorConfig
             EndShowUiOnUnity();
         }
 
-        public void RequestAutoAdjust() => _sender.SendMessage(MessageFactory.Instance.RequestAutoAdjust());
+        public void RequestAutoAdjust() => _sender.SendMessage(MessageFactory.RequestAutoAdjust());
 
         //Unity側でウィンドウを表示するとき、最前面と透過を無効にする必要があるため、その準備にあたる処理を行います。
         private void PrepareShowUiOnUnity()

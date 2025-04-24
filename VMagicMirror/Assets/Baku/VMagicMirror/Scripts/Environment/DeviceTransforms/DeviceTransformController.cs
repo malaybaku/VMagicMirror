@@ -138,7 +138,7 @@ namespace Baku.VMagicMirror
             );
             receiver.AssignCommandHandler(
                 VmmCommands.SetDeviceLayout,
-                command => SetDeviceLayout(command.Content)
+                command => SetDeviceLayout(command.GetStringValue())
             );
             receiver.AssignCommandHandler(
                 VmmCommands.ResetDeviceLayout,
@@ -267,7 +267,7 @@ namespace Baku.VMagicMirror
                 penTablet = ToItem(_penTabletControl.transform),
                 gamepadModelScale = _gamepadModelScaleTarget.localScale.x,
             };
-            _sender?.SendCommand(MessageFactory.Instance.UpdateDeviceLayout(data));
+            _sender?.SendCommand(MessageFactory.UpdateDeviceLayout(data));
 
             DeviceLayoutItem ToItem(Transform t)
             {
@@ -314,7 +314,7 @@ namespace Baku.VMagicMirror
                 
                 //タイミングバグを踏むと嫌 + Setによって実際にレイアウトが変わるので、
                 //「確かに受け取ったよ」という主旨で受信値をエコーバック
-                _sender?.SendCommand(MessageFactory.Instance.UpdateDeviceLayout(data));
+                _sender?.SendCommand(MessageFactory.UpdateDeviceLayout(data));
             }
             catch (Exception ex)
             {

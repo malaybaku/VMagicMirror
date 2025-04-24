@@ -17,6 +17,7 @@ namespace Baku.VMagicMirror.Mmf
             private MemoryMappedFile? _file;
             private MemoryMappedViewAccessor? _accessor;
             private readonly object _senderLock = new();
+            private readonly byte[] _writeBuffer = new byte[MemoryMappedFileCapacity];
             
             // 送りたいMessageの一覧。コマンド、クエリ、クエリのレスポンスを区別せず一列に並べる
             private readonly ConcurrentQueue<Message> _messages = new();
@@ -94,7 +95,7 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
 
-            public void SendCommand(string content, bool isLastMessage)
+            public void SendCommand(ReadOnlyMemory<byte> content, bool isLastMessage)
             {
                 if (LastMessageEnqueued)
                 {
@@ -109,13 +110,30 @@ namespace Baku.VMagicMirror.Mmf
                 }
             }
 
-            public void SendQuery(int id, string content) => _messages.Enqueue(Message.Query(content, id));
-            public void SendQueryResponse(string content, int id) => _messages.Enqueue(Message.Response(content, id));
+            public void SendQuery(int id, ReadOnlyMemory<byte> content)
+            {
+                if (LastMessageEnqueued)
+                {
+                    return;
+                }
+
+                _messages.Enqueue(Message.Query(content, id));
+            }
+
+            public void SendQueryResponse(int id, ReadOnlyMemory<byte> content)
+            {
+                if (LastMessageEnqueued)
+                {
+                    return;
+                }
+
+                _messages.Enqueue(Message.Response(content, id));
+            }
 
             // NOTE: メッセージが長い場合は分割して送るような実装が入ってる
             private async Task WriteSingleMessageAsync(Message msg, CancellationToken token)
             {
-                var data = Encoding.UTF8.GetBytes(msg.Text);
+                var data = msg.Body;
                 // 送信成功したバイナリサイズの合計値
                 var writeSize = 0;
                 while (!token.IsCancellationRequested && writeSize < data.Length)
@@ -127,7 +145,7 @@ namespace Baku.VMagicMirror.Mmf
                     }
 
                     // 書き込んだあと、正常に書き込めていればサイズを累積して続行
-                    var size = WriteMessage(msg, data, writeSize);
+                    var size = WriteMessage(msg, writeSize);
                     if (size < 0)
                     {
                         return;
@@ -140,8 +158,9 @@ namespace Baku.VMagicMirror.Mmf
             // NOTE:
             //  - 戻り値はデータを書き込んだバイト数。
             //  - ただし、書き込みが失敗した場合には -1 を返す。-1 が戻った場合、それ以降は書き込みを試みないのが期待値
-            private int WriteMessage(Message msg, byte[] data, int offset)
+            private int WriteMessage(Message msg, int offset)
             {
+                var data = msg.Body;
                 lock (_senderLock)
                 {
                     if (_accessor == null)
@@ -158,7 +177,12 @@ namespace Baku.VMagicMirror.Mmf
                         ? MaxMessageBodySize
                         : data.Length - offset;
                     _accessor.Write(12, writeLength);
-                    _accessor.WriteArray(16, data, offset, writeLength);
+
+                    // _accessor.WriteArrayはSpanを直接受けないため、byte[]に書いてから書き込む
+                    // NOTE: 書き込み側のメッセージを単に byte[] で受けるようにしてバッファを挟むのをやめてもよい
+                    data.Span[offset..(offset + writeLength)].CopyTo(_writeBuffer);
+                    _accessor.WriteArray(16, _writeBuffer, 0, writeLength);
+
                     _accessor.Write(0, (byte)MessageStateReadReady);
                     return writeLength;
                 }

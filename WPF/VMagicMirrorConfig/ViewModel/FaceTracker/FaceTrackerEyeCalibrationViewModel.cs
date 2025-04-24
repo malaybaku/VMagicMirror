@@ -30,7 +30,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
             EnableEyeBlendShapeValuePreview = new RProperty<bool>(
                 false,
-                v => _sender.SendMessage(MessageFactory.Instance.SetEyeBlendShapePreviewActive(v))
+                v => _sender.SendMessage(MessageFactory.SetEyeBlendShapePreviewActive(v))
             );
 
             if (!IsInDesignMode)
@@ -70,7 +70,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public void RequestDisableEyeBlendShapeValuePreview()
         {
-            _sender.SendMessage(MessageFactory.Instance.SetEyeBlendShapePreviewActive(false));
+            _sender.SendMessage(MessageFactory.SetEyeBlendShapePreviewActive(false));
         }
     }
 }

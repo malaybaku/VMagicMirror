@@ -1,4 +1,6 @@
-﻿namespace Baku.VMagicMirrorConfig
+﻿using Baku.VMagicMirror;
+
+namespace Baku.VMagicMirrorConfig
 {
     /// <summary>
     /// ロードされたアバターの情報のうちGUIの表示に影響があるものを保持する
@@ -16,9 +18,9 @@
 
         private void OnReceiveCommand(CommandReceivedData e)
         {
-            if (e.Command == ReceiveMessageNames.SetModelDoesNotSupportPen)
+            if (e.Command is VmmServerCommands.SetModelDoesNotSupportPen)
             {
-                ModelDoesNotSupportPen.Value = bool.TryParse(e.Args, out var result) && result;
+                ModelDoesNotSupportPen.Value = e.ToBool();
             }
         } 
 

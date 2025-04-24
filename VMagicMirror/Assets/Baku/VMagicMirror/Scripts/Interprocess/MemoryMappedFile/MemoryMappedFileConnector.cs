@@ -61,7 +61,7 @@ namespace Baku.VMagicMirror.Mmf
         private readonly CancellationTokenSource _cts = new();
 
         // writerが送信して返信待ちのクエリ一覧
-        private readonly ConcurrentDictionary<int, TaskCompletionSource<string>> _queries = new();
+        private readonly ConcurrentDictionary<int, TaskCompletionSource<ReadOnlyMemory<byte>>> _queries = new();
         
         private Task? _readerTask;
         private Task? _writerTask;
@@ -69,13 +69,13 @@ namespace Baku.VMagicMirror.Mmf
         private readonly object _requestIdLock = new();
         private int _requestId;
         
-        public event Action<string>? ReceiveCommand
+        public event Action<ReadOnlyMemory<byte>>? ReceiveCommand
         {
             add => _reader.ReceiveCommand += value;
             remove => _reader.ReceiveCommand -= value;
         }
         
-        public event Action<(int id, string content)>? ReceiveQuery
+        public event Action<(int id, ReadOnlyMemory<byte> content)>? ReceiveQuery
         {
             add => _reader.ReceiveQuery += value;
             remove => _reader.ReceiveQuery -= value;
@@ -166,24 +166,23 @@ namespace Baku.VMagicMirror.Mmf
             }
         }
 
-        public void SendCommand(string command, bool isLastMessage = false) => _writer.SendCommand(command, isLastMessage);
+        public void SendCommand(ReadOnlyMemory<byte> content, bool isLastMessage = false) => _writer.SendCommand(content, isLastMessage);
        
         /// <summary>
         /// NOTE: この関数は内部的にawaitしないので、呼び出し元は明示的にawaitすること
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="content"></param>
         /// <returns></returns>
-        public async Task<string> SendQueryAsync(string command)
+        public async Task<ReadOnlyMemory<byte>> SendQueryAsync(ReadOnlyMemory<byte> content)
         {
-            var source = new TaskCompletionSource<string>();
+            var source = new TaskCompletionSource<ReadOnlyMemory<byte>>();
             var id = GenerateQueryId();
             _queries.TryAdd(id, source);
-            _writer.SendQuery(id, command);
+            _writer.SendQuery(id, content);
             return await source.Task;
         }
 
-        public void SendQueryResponse(string command, int id) => _writer.SendQueryResponse(command, id);
-
+        public void SendQueryResponse(int id, ReadOnlyMemory<byte> content) => _writer.SendQueryResponse(id, content);
         
         private int GenerateQueryId()
         {
@@ -201,9 +200,9 @@ namespace Baku.VMagicMirror.Mmf
         
         private readonly struct Message
         {
-            private Message(string text, bool isReply, int id)
+            private Message(ReadOnlyMemory<byte> body, bool isReply, int id)
             {
-                Text = text;
+                Body = body;
                 IsReply = isReply;
                 Id = id;
             }
@@ -211,7 +210,7 @@ namespace Baku.VMagicMirror.Mmf
             /// <summary>
             /// メッセージのボディ部
             /// </summary>
-            public string Text { get; }
+            public ReadOnlyMemory<byte> Body { get; }
 
             /// <summary>
             /// このメッセージが相手からのクエリの返信かどうか
@@ -225,9 +224,9 @@ namespace Baku.VMagicMirror.Mmf
             /// </summary>
             public int Id { get; }
 
-            public static Message Command(string text) => new(text, false, 0);
-            public static Message Query(string text, int id) => new(text, false, id);
-            public static Message Response(string text, int id) => new(text, true, id);
+            public static Message Command(ReadOnlyMemory<byte> content) => new(content, false, 0);
+            public static Message Query(ReadOnlyMemory<byte> content, int id) => new(content, false, id);
+            public static Message Response(ReadOnlyMemory<byte> content, int id) => new(content, true, id);
         }
     }   
 }

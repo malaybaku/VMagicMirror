@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.LookAtStyle,
-                message => headIkIntegrator.SetLookAtStyle(message.Content)
+                message => headIkIntegrator.SetLookAtStyle(message.GetStringValue())
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.EnableGamepad,
@@ -78,8 +78,8 @@ namespace Baku.VMagicMirror
                 VmmCommands.GamepadLeanMode,
                 message =>
                 {
-                    gamePadBasedBodyLean.SetGamepadLeanMode(message.Content);
-                    GamepadHandIk.SetGamepadLeanMode(message.Content);
+                    gamePadBasedBodyLean.SetGamepadLeanMode(message.GetStringValue());
+                    GamepadHandIk.SetGamepadLeanMode(message.GetStringValue());
                 });
             receiver.AssignCommandHandler(
                 VmmCommands.GamepadLeanReverseHorizontal,

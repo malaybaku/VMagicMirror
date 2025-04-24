@@ -532,7 +532,7 @@ namespace Baku.VMagicMirror.ExternalTracker
 
             if (missedBlendShapeNames.Count > 0)
             {
-                _sender.SendCommand(MessageFactory.Instance.ExTrackerSetPerfectSyncMissedClipNames(
+                _sender.SendCommand(MessageFactory.ExTrackerSetPerfectSyncMissedClipNames(
                     $"Missing Count: {missedBlendShapeNames.Count} / 52,\n" + 
                     string.Join("\n", missedBlendShapeNames)
                     ));
@@ -540,7 +540,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             else
             {
                 //空文字列を送ることでエラーが解消したことを通知する
-                _sender.SendCommand(MessageFactory.Instance.ExTrackerSetPerfectSyncMissedClipNames(""));
+                _sender.SendCommand(MessageFactory.ExTrackerSetPerfectSyncMissedClipNames(""));
             }
         }
     

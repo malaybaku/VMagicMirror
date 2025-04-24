@@ -63,7 +63,7 @@ namespace Baku.VMagicMirror
             }
 
             // NOTE: UnityではこのコマンドだけがLast扱い
-            _sender.SendCommand(MessageFactory.Instance.CloseConfigWindow(), true);
+            _sender.SendCommand(MessageFactory.CloseConfigWindow(), true);
 
             //特にリリースするものがないケース: 本来ありえないんだけど、理屈上はほしいので書いておく
             if (_releaseItems.Count == 0)
@@ -125,7 +125,7 @@ namespace Baku.VMagicMirror
             if (!Application.isEditor)
             {
                 Process.Start(startInfo);
-                _sender.SendCommand(MessageFactory.Instance.SetUnityProcessId(Process.GetCurrentProcess().Id));
+                _sender.SendCommand(MessageFactory.SetUnityProcessId(Process.GetCurrentProcess().Id));
             }
         }
     }

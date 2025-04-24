@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             );
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerSetCalibrateData,
-                c => SetCalibrationData(c.Content)
+                c => SetCalibrationData(c.GetStringValue())
             );
             receiver.AssignCommandHandler(
                 VmmCommands.ExTrackerSetSource,
@@ -139,7 +139,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             {
                 iFacialMocap = iFacialMocapReceiver.CalibrationData,
             };
-            _sender.SendCommand(MessageFactory.Instance.ExTrackerCalibrateComplete(
+            _sender.SendCommand(MessageFactory.ExTrackerCalibrateComplete(
                 JsonUtility.ToJson(data)
                 ));   
 

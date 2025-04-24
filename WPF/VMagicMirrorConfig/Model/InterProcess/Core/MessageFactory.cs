@@ -1,269 +1,264 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using Baku.VMagicMirror;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Baku.VMagicMirrorConfig
 {
-    class MessageFactory
+    // NOTE: できればこのクラスを削除したい。VmmCommandsをenum化したことによってFactoryを使う意義が薄まっているため。
+    // 引数をこのクラスで一回絞っておくメリットを取る場合は残すのもアリ
+    static class MessageFactory
     {
-        private static MessageFactory? _instance;
-        public static MessageFactory Instance
-            => _instance ??= new MessageFactory();
-        private MessageFactory() { }
+        private static Message None(VmmCommands command) => Message.None(command);
 
-        //メッセージのCommandには呼び出した関数の名前が入る: もともとnameof(Hoge)のように関数名を入れていたが、その必要が無くなった
-        private static Message NoArg([CallerMemberName] string command = "")
-            => new Message(command);
+        private static Message StringContent(VmmCommands command, string content) => Message.String(command, content);
 
-        private static Message WithArg(string content, [CallerMemberName] string command = "")
-            => new Message(command, content);
+        private static Message BoolContent(VmmCommands command, bool content) => Message.Bool(command, content);
 
-        private static Message WithArg(bool content, [CallerMemberName] string command = "")
-            => WithArg(content.ToString(), command);
+        private static Message IntContent(VmmCommands command, int content) => Message.Int(command, content);
 
-        private static Message WithArg(int content, [CallerMemberName] string command = "")
-            => WithArg(content.ToString(), command);
+        private static Message IntArrayContent(VmmCommands command, int[] content) => Message.IntArray(command, content);
 
-        public Message Language(string langName) => WithArg(langName);
+
+
+        public static Message Language(string langName) => StringContent(VmmCommands.Language, langName);
+
 
         #region HID Input
 
-        public Message KeyDown(string keyName) => WithArg(keyName);
-        public Message MouseButton(string info) => WithArg(info);
-        public Message MouseMoved(int x, int y) => WithArg($"{x},{y}");
+        //public static Message KeyDown(string keyName) => StringContent(VmmCommands.KeyDown, keyName);
+        public static Message MouseButton(string info) => StringContent(VmmCommands.MouseButton, info);
+        //public static Message MouseMoved(int x, int y) => StringContent(VmmCommands.MouseMoved, $"{x},{y}");
 
         #endregion
 
         #region VRM Load
 
-        public Message OpenVrmPreview(string filePath) => WithArg(filePath);
-        public Message OpenVrm(string filePath) => WithArg(filePath);
-        public Message AccessToVRoidHub() => NoArg();
+        public static Message OpenVrmPreview(string filePath) => StringContent(VmmCommands.OpenVrmPreview, filePath);
+        public static Message OpenVrm(string filePath) => StringContent(VmmCommands.OpenVrm, filePath);
+        //public static Message AccessToVRoidHub() => NoArg(VmmCommands.AccessToVRoidHub);
 
-        public Message CancelLoadVrm() => NoArg();
+        public static Message CancelLoadVrm() => None(VmmCommands.CancelLoadVrm);
 
-        public Message RequestAutoAdjust() => NoArg();
+        public static Message RequestAutoAdjust() => None(VmmCommands.RequestAutoAdjust);
 
         #endregion
 
         #region ウィンドウ
 
-        public Message Chromakey(int a, int r, int g, int b) => WithArg($"{a},{r},{g},{b}");
+        public static Message Chromakey(int a, int r, int g, int b) => IntArrayContent(VmmCommands.Chromakey, [a, r, g, b]);
 
-        public Message WindowFrameVisibility(bool v) => WithArg(v);
-        public Message IgnoreMouse(bool v) => WithArg(v);
-        public Message TopMost(bool v) => WithArg(v);
-        public Message WindowDraggable(bool v) => WithArg(v);
+        public static Message WindowFrameVisibility(bool v) => BoolContent(VmmCommands.WindowFrameVisibility, v);
+        public static Message IgnoreMouse(bool v) => BoolContent(VmmCommands.IgnoreMouse, v);
+        public static Message TopMost(bool v) => BoolContent(VmmCommands.TopMost, v);
+        public static Message WindowDraggable(bool v) => BoolContent(VmmCommands.WindowDraggable, v);
 
         /// <summary>
         /// NOTE: 空文字列なら背景画像を外す処理をやる。
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public Message SetBackgroundImagePath(string path) => WithArg(path);
+        public static Message SetBackgroundImagePath(string path) => StringContent(VmmCommands.SetBackgroundImagePath, path);
 
-        public Message MoveWindow(int x, int y) => WithArg($"{x},{y}");
-        public Message ResetWindowSize() => NoArg();
+        public static Message MoveWindow(int x, int y) => IntArrayContent(VmmCommands.MoveWindow, [x, y]);
+        public static Message ResetWindowSize() => None(VmmCommands.ResetWindowSize);
 
-        public Message SetWholeWindowTransparencyLevel(int level) => WithArg(level);
+        public static Message SetWholeWindowTransparencyLevel(int level) => IntContent(VmmCommands.SetWholeWindowTransparencyLevel, level);
 
-        public Message SetAlphaValueOnTransparent(int alpha) => WithArg(alpha);
+        public static Message SetAlphaValueOnTransparent(int alpha) => IntContent(VmmCommands.SetAlphaValueOnTransparent, alpha);
 
-        public Message EnableSpoutOutput(bool enable) => WithArg(enable);
-        public Message SetSpoutOutputResolution(int type) => WithArg(type);
+        public static Message EnableSpoutOutput(bool enable) => BoolContent(VmmCommands.EnableSpoutOutput, enable);
+        public static Message SetSpoutOutputResolution(int type) => IntContent(VmmCommands.SetSpoutOutputResolution, type);
 
 
-        public Message StartupEnded() => NoArg();
+        public static Message StartupEnded() => None(VmmCommands.StartupEnded);
 
         #endregion
 
         #region モーション
 
-        public Message EnableNoHandTrackMode(bool enable) => WithArg(enable);
-        public Message EnableGameInputLocomotionMode(bool enable) => WithArg(enable);
-        public Message EnableTwistBodyMotion(bool enable) => WithArg(enable);
+        public static Message EnableNoHandTrackMode(bool enable) => BoolContent(VmmCommands.EnableNoHandTrackMode, enable);
+        public static Message EnableGameInputLocomotionMode(bool enable) => BoolContent(VmmCommands.EnableGameInputLocomotionMode, enable);
+        public static Message EnableTwistBodyMotion(bool enable) => BoolContent(VmmCommands.EnableTwistBodyMotion, enable);
 
-        public Message EnableCustomHandDownPose(bool enable) => WithArg(enable);
-        public Message SetHandDownModeCustomPose(string poseJson) => WithArg(poseJson);
-        public Message ResetCustomHandDownPose() => NoArg();
+        public static Message EnableCustomHandDownPose(bool enable) => BoolContent(VmmCommands.EnableCustomHandDownPose, enable);
+        public static Message SetHandDownModeCustomPose(string poseJson) => StringContent(VmmCommands.SetHandDownModeCustomPose, poseJson);
+        public static Message ResetCustomHandDownPose() => None(VmmCommands.ResetCustomHandDownPose);
 
 
-        public Message LengthFromWristToTip(int lengthCentimeter) => WithArg(lengthCentimeter);
+        public static Message LengthFromWristToTip(int lengthCentimeter) => IntContent(VmmCommands.LengthFromWristToTip, lengthCentimeter);
 
-        public Message HandYOffsetBasic(int offsetCentimeter) => WithArg(offsetCentimeter);
-        public Message HandYOffsetAfterKeyDown(int offsetCentimeter) => WithArg(offsetCentimeter);
+        public static Message HandYOffsetBasic(int offsetCentimeter) => IntContent(VmmCommands.HandYOffsetBasic, offsetCentimeter);
+        public static Message HandYOffsetAfterKeyDown(int offsetCentimeter) => IntContent(VmmCommands.HandYOffsetAfterKeyDown, offsetCentimeter);
 
-        public Message EnableHidRandomTyping(bool enable) => WithArg(enable);
-        public Message EnableShoulderMotionModify(bool enable) => WithArg(enable);
-        public Message EnableTypingHandDownTimeout(bool enable) => WithArg(enable);
-        public Message SetWaistWidth(int waistWidthCentimeter) => WithArg(waistWidthCentimeter);
-        public Message SetElbowCloseStrength(int strengthPercent) => WithArg(strengthPercent);
+        public static Message EnableHidRandomTyping(bool enable) => BoolContent(VmmCommands.EnableHidRandomTyping, enable);
+        public static Message EnableShoulderMotionModify(bool enable) => BoolContent(VmmCommands.EnableShoulderMotionModify, enable);
+        public static Message EnableTypingHandDownTimeout(bool enable) => BoolContent(VmmCommands.EnableTypingHandDownTimeout, enable);
+        public static Message SetWaistWidth(int waistWidthCentimeter) => IntContent(VmmCommands.SetWaistWidth, waistWidthCentimeter);
+        public static Message SetElbowCloseStrength(int strengthPercent) => IntContent(VmmCommands.SetElbowCloseStrength, strengthPercent);
 
-        public Message EnableFpsAssumedRightHand(bool enable) => WithArg(enable);
-        public Message PresentationArmRadiusMin(int radiusMinCentimeter) => WithArg(radiusMinCentimeter);
+        public static Message EnableFpsAssumedRightHand(bool enable) => BoolContent(VmmCommands.EnableFpsAssumedRightHand, enable);
+        public static Message PresentationArmRadiusMin(int radiusMinCentimeter) => IntContent(VmmCommands.PresentationArmRadiusMin, radiusMinCentimeter);
 
-        public Message SetKeyboardAndMouseMotionMode(int modeIndex) => WithArg(modeIndex);
-        public Message SetGamepadMotionMode(int modeIndex) => WithArg(modeIndex);
+        public static Message SetKeyboardAndMouseMotionMode(int modeIndex) => IntContent(VmmCommands.SetKeyboardAndMouseMotionMode, modeIndex);
+        public static Message SetGamepadMotionMode(int modeIndex) => IntContent(VmmCommands.SetGamepadMotionMode, modeIndex);
 
-        public Message EnableWaitMotion(bool enable) => WithArg(enable);
-        public Message WaitMotionScale(int scalePercent) => WithArg(scalePercent);
-        public Message WaitMotionPeriod(int periodSec) => WithArg(periodSec);
+        public static Message EnableWaitMotion(bool enable) => BoolContent(VmmCommands.EnableWaitMotion, enable);
+        public static Message WaitMotionScale(int scalePercent) => IntContent(VmmCommands.WaitMotionScale, scalePercent);
+        public static Message WaitMotionPeriod(int periodSec) => IntContent(VmmCommands.WaitMotionPeriod, periodSec);
 
         // NOTE: Unity側の状態によって実際に行うキャリブレーションは変わる(低負荷/高負荷では別々のキャリブレーションを行う)
-        public Message CalibrateFace() => NoArg();
-        public Message SetCalibrateFaceData(string data) => WithArg(data);
-        public Message SetCalibrateFaceDataHighPower(string data) => WithArg(data);
+        public static Message CalibrateFace() => None(VmmCommands.CalibrateFace);
+        public static Message SetCalibrateFaceData(string data) => StringContent(VmmCommands.SetCalibrateFaceData, data);
+        public static Message SetCalibrateFaceDataHighPower(string data) => StringContent(VmmCommands.SetCalibrateFaceDataHighPower, data);
 
-        public Message EnableFaceTracking(bool enable) => WithArg(enable);
-        public Message SetCameraDeviceName(string deviceName) => WithArg(deviceName);
-        public Message AutoBlinkDuringFaceTracking(bool enable) => WithArg(enable);
-        public Message EnableBodyLeanZ(bool enable) => WithArg(enable);
-        public Message EnableLipSyncBasedBlinkAdjust(bool enable) => WithArg(enable);
-        public Message EnableHeadRotationBasedBlinkAdjust(bool enable) => WithArg(enable);
-        public Message EnableVoiceBasedMotion(bool enable) => WithArg(enable);
+        public static Message EnableFaceTracking(bool enable) => BoolContent(VmmCommands.EnableFaceTracking, enable);
+        public static Message SetCameraDeviceName(string deviceName) => StringContent(VmmCommands.SetCameraDeviceName, deviceName);
+        public static Message AutoBlinkDuringFaceTracking(bool enable) => BoolContent(VmmCommands.AutoBlinkDuringFaceTracking, enable);
+        public static Message EnableBodyLeanZ(bool enable) => BoolContent(VmmCommands.EnableBodyLeanZ, enable);
+        public static Message EnableLipSyncBasedBlinkAdjust(bool enable) => BoolContent(VmmCommands.EnableLipSyncBasedBlinkAdjust, enable);
+        public static Message EnableHeadRotationBasedBlinkAdjust(bool enable) => BoolContent(VmmCommands.EnableHeadRotationBasedBlinkAdjust, enable);
+        public static Message EnableVoiceBasedMotion(bool enable) => BoolContent(VmmCommands.EnableVoiceBasedMotion, enable);
         //NOTE: falseのほうが普通だよ、という状態にするため、disable云々というやや面倒な言い方になってる事に注意
-        public Message DisableFaceTrackingHorizontalFlip(bool disable) => WithArg(disable);
+        public static Message DisableFaceTrackingHorizontalFlip(bool disable) => BoolContent(VmmCommands.DisableFaceTrackingHorizontalFlip, disable);
 
-        public Message EnableImageBasedHandTracking(bool enable) => WithArg(enable);
-        public Message ShowEffectDuringHandTracking(bool enable) => WithArg(enable);
+        public static Message EnableImageBasedHandTracking(bool enable) => BoolContent(VmmCommands.EnableImageBasedHandTracking, enable);
+        public static Message ShowEffectDuringHandTracking(bool enable) => BoolContent(VmmCommands.ShowEffectDuringHandTracking, enable);
         //Faceと同じく、disableという言い回しに注意
-        public Message DisableHandTrackingHorizontalFlip(bool disable) => WithArg(disable);
-        public Message EnableSendHandTrackingResult(bool enable) => WithArg(enable);
+        public static Message DisableHandTrackingHorizontalFlip(bool disable) => BoolContent(VmmCommands.DisableHandTrackingHorizontalFlip, disable);
+        public static Message EnableSendHandTrackingResult(bool enable) => BoolContent(VmmCommands.EnableSendHandTrackingResult, enable);
 
 
-        public Message EnableWebCamHighPowerMode(bool enable) => WithArg(enable);
+        public static Message EnableWebCamHighPowerMode(bool enable) => BoolContent(VmmCommands.EnableWebCamHighPowerMode, enable);
 
-        public Message FaceDefaultFun(int percentage) => WithArg(percentage);
-        public Message FaceNeutralClip(string clipName) => WithArg(clipName);
-        public Message FaceOffsetClip(string clipName) => WithArg(clipName);
+        public static Message FaceDefaultFun(int percentage) => IntContent(VmmCommands.FaceDefaultFun, percentage);
+        public static Message FaceNeutralClip(string clipName) => StringContent(VmmCommands.FaceNeutralClip, clipName);
+        public static Message FaceOffsetClip(string clipName) => StringContent(VmmCommands.FaceOffsetClip, clipName);
 
-        public Message DisableBlendShapeInterpolate(bool enable) => WithArg(enable);
+        public static Message DisableBlendShapeInterpolate(bool enable) => BoolContent(VmmCommands.DisableBlendShapeInterpolate, enable);
         
-        public Message UsePerfectSyncWithWebCamera(bool enable) => WithArg(enable);
+        public static Message UsePerfectSyncWithWebCamera(bool enable) => BoolContent(VmmCommands.UsePerfectSyncWithWebCamera, enable);
         
-        public Message EnableWebCameraHighPowerModeBlink(bool enable) => WithArg(enable);
-        public Message EnableWebCameraHighPowerModeLipSync(bool enable) => WithArg(enable);
-        public Message EnableWebCameraHighPowerModeMoveZ(bool enable) => WithArg(enable);
+        public static Message EnableWebCameraHighPowerModeBlink(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeBlink, enable);
+        public static Message EnableWebCameraHighPowerModeLipSync(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeLipSync, enable);
+        public static Message EnableWebCameraHighPowerModeMoveZ(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeMoveZ, enable);
 
-        public Message SetWebCamEyeOpenBlinkValue(int value) => WithArg(value);
-        public Message SetWebCamEyeCloseBlinkValue(int value) => WithArg(value);
+        public static Message SetWebCamEyeOpenBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeOpenBlinkValue, value);
+        public static Message SetWebCamEyeCloseBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeCloseBlinkValue, value);
 
-        public Message SetEyeBlendShapePreviewActive(bool active) => WithArg(active);
+        public static Message SetEyeBlendShapePreviewActive(bool active) => BoolContent(VmmCommands.SetEyeBlendShapePreviewActive, active);
 
         /// <summary>
         /// Query.
         /// </summary>
         /// <returns></returns>
-        public Message CameraDeviceNames() => NoArg();
+        public static Message CameraDeviceNames() => None(VmmCommands.CameraDeviceNames);
 
-        public Message EnableTouchTyping(bool enable) => WithArg(enable);
+        //public static Message EnableTouchTyping(bool enable) => WithArg(VmmCommands.EnableTouchTyping, enable);
 
-        public Message EnableLipSync(bool enable) => WithArg(enable);
+        public static Message EnableLipSync(bool enable) => BoolContent(VmmCommands.EnableLipSync, enable);
 
-        public Message SetMicrophoneDeviceName(string deviceName) => WithArg(deviceName);
-        public Message SetMicrophoneSensitivity(int sensitivity) => WithArg(sensitivity);
-        public Message SetMicrophoneVolumeVisibility(bool isVisible) => WithArg(isVisible);
-        public Message AdjustLipSyncByVolume(bool adjust) => WithArg(adjust);
+        public static Message SetMicrophoneDeviceName(string deviceName) => StringContent(VmmCommands.SetMicrophoneDeviceName, deviceName);
+        public static Message SetMicrophoneSensitivity(int sensitivity) => IntContent(VmmCommands.SetMicrophoneSensitivity, sensitivity);
+        public static Message SetMicrophoneVolumeVisibility(bool isVisible) => BoolContent(VmmCommands.SetMicrophoneVolumeVisibility, isVisible);
+        public static Message AdjustLipSyncByVolume(bool adjust) => BoolContent(VmmCommands.AdjustLipSyncByVolume, adjust);
         
         /// <summary>
         /// Query.
         /// </summary>
         /// <returns></returns>
-        public Message MicrophoneDeviceNames() => NoArg();
+        public static Message MicrophoneDeviceNames() => None(VmmCommands.MicrophoneDeviceNames);
 
-        public Message LookAtStyle(string v) => WithArg(v);
-        public Message EnableEyeMotionDuringClipApplied(bool enable) => WithArg(enable);
-        public Message SetUseAvatarEyeBoneMap(bool use) => WithArg(use);
-        public Message SetEyeBoneRotationScale(int percent) => WithArg(percent);
-        public Message SetEyeBoneRotationScaleWithMap(int percent) => WithArg(percent);
+        public static Message LookAtStyle(string v) => StringContent(VmmCommands.LookAtStyle, v);
+        public static Message EnableEyeMotionDuringClipApplied(bool enable) => BoolContent(VmmCommands.EnableEyeMotionDuringClipApplied, enable);
+        public static Message SetUseAvatarEyeBoneMap(bool use) => BoolContent(VmmCommands.SetUseAvatarEyeBoneMap, use);
+        public static Message SetEyeBoneRotationScale(int percent) => IntContent(VmmCommands.SetEyeBoneRotationScale, percent);
+        public static Message SetEyeBoneRotationScaleWithMap(int percent) => IntContent(VmmCommands.SetEyeBoneRotationScaleWithMap, percent);
 
         #endregion
 
         #region Game Input Locomotion
 
-        public Message UseGamepadForGameInput(bool use) => WithArg(use);
-        public Message UseKeyboardForGameInput(bool use) => WithArg(use);
-        public Message SetGamepadGameInputKeyAssign(string json) => WithArg(json);
-        public Message SetKeyboardGameInputKeyAssign(string json) => WithArg(json);
+        public static Message UseGamepadForGameInput(bool use) => BoolContent(VmmCommands.UseGamepadForGameInput, use);
+        public static Message UseKeyboardForGameInput(bool use) => BoolContent(VmmCommands.UseKeyboardForGameInput, use);
+        public static Message SetGamepadGameInputKeyAssign(string json) => StringContent(VmmCommands.SetGamepadGameInputKeyAssign, json);
+        public static Message SetKeyboardGameInputKeyAssign(string json) => StringContent(VmmCommands.SetKeyboardGameInputKeyAssign, json);
 
-        public Message SetGameInputLocomotionStyle(int value) => WithArg(value);
-        public Message EnableAlwaysRunGameInput(bool enable) => WithArg(enable);
+        public static Message SetGameInputLocomotionStyle(int value) => IntContent(VmmCommands.SetGameInputLocomotionStyle, value);
+        public static Message EnableAlwaysRunGameInput(bool enable) => BoolContent(VmmCommands.EnableAlwaysRunGameInput, enable);
 
         //NOTE: 以下はKeyboardKeyAssignの一部に帰着させるかもしれない。
         //これらを単独で送信する場合、これらのオプションはKeyAssignのjsonよりも優先されるイメージ
-        public Message EnableWasdMoveGameInput(bool enable) => WithArg(enable);
-        public Message EnableArrowKeyMoveGameInput(bool enable) => WithArg(enable);
-        public Message UseShiftRunGameInput(bool use) => WithArg(use);
-        public Message UseSpaceJumpGameInput(bool use) => WithArg(use);
-        public Message UseMouseMoveForLookAroundGameInput(bool use) => WithArg(use);
+        public static Message EnableWasdMoveGameInput(bool enable) => BoolContent(VmmCommands.EnableWasdMoveGameInput, enable);
+        public static Message EnableArrowKeyMoveGameInput(bool enable) => BoolContent(VmmCommands.EnableArrowKeyMoveGameInput, enable);
+        public static Message UseShiftRunGameInput(bool use) => BoolContent(VmmCommands.UseShiftRunGameInput, use);
+        public static Message UseSpaceJumpGameInput(bool use) => BoolContent(VmmCommands.UseSpaceJumpGameInput, use);
+        public static Message UseMouseMoveForLookAroundGameInput(bool use) => BoolContent(VmmCommands.UseMouseMoveForLookAroundGameInput, use);
 
         #endregion
 
         #region カメラの配置
 
-        public Message CameraFov(int cameraFov) => WithArg(cameraFov);
-        public Message SetCustomCameraPosition(string posData) => WithArg(posData);
-        public Message QuickLoadViewPoint(string posData) => WithArg(posData);
+        public static Message CameraFov(int cameraFov) => IntContent(VmmCommands.CameraFov, cameraFov);
+        public static Message SetCustomCameraPosition(string posData) => StringContent(VmmCommands.SetCustomCameraPosition, posData);
+        public static Message QuickLoadViewPoint(string posData) => StringContent(VmmCommands.QuickLoadViewPoint, posData);
 
-        public Message EnableFreeCameraMode(bool enable) => WithArg(enable);
+        public static Message EnableFreeCameraMode(bool enable) => BoolContent(VmmCommands.EnableFreeCameraMode, enable);
 
-        public Message ResetCameraPosition() => NoArg();
+        public static Message ResetCameraPosition() => None(VmmCommands.ResetCameraPosition);
 
         /// <summary>
         /// Query.
         /// </summary>
         /// <returns></returns>
-        public Message CurrentCameraPosition() => NoArg();
+        public static Message CurrentCameraPosition() => None(VmmCommands.CurrentCameraPosition);
 
         #endregion
 
         #region キーボード・マウスパッド
 
-        public Message HidVisibility(bool visible) => WithArg(visible);
+        public static Message HidVisibility(bool visible) => BoolContent(VmmCommands.HidVisibility, visible);
 
-        public Message SetPenVisibility(bool visible) => WithArg(visible);
+        public static Message SetPenVisibility(bool visible) => BoolContent(VmmCommands.SetPenVisibility, visible);
 
-        public Message MidiControllerVisibility(bool visible) => WithArg(visible);
+        public static Message MidiControllerVisibility(bool visible) => BoolContent(VmmCommands.MidiControllerVisibility, visible);
 
-        public Message SetKeyboardTypingEffectType(int typeIndex) => WithArg(typeIndex);
+        public static Message SetKeyboardTypingEffectType(int typeIndex) => IntContent(VmmCommands.SetKeyboardTypingEffectType, typeIndex);
 
         // NOTE: Gamepadとかにも全般的に影響する想定のフラグ
-        public Message HideUnusedDevices(bool hide) => WithArg(hide);
+        public static Message HideUnusedDevices(bool hide) => BoolContent(VmmCommands.HideUnusedDevices, hide);
 
-        public Message EnableDeviceFreeLayout(bool enable) => WithArg(enable);
+        public static Message EnableDeviceFreeLayout(bool enable) => BoolContent(VmmCommands.EnableDeviceFreeLayout, enable);
 
-        public Message SetDeviceLayout(string data) => WithArg(data);
+        public static Message SetDeviceLayout(string data) => StringContent(VmmCommands.SetDeviceLayout, data);
 
-        public Message ResetDeviceLayout() => NoArg();
+        public static Message ResetDeviceLayout() => None(VmmCommands.ResetDeviceLayout);
 
         /// <summary>
         /// Query.
         /// </summary>
         /// <returns></returns>
-        public Message CurrentDeviceLayout() => NoArg();
+        //public static Message CurrentDeviceLayout() => NoArg(VmmCommands.CurrentDeviceLayout);
 
         #endregion
 
         #region MIDI
 
-        public Message EnableMidiRead(bool enable) => WithArg(enable);
+        public static Message EnableMidiRead(bool enable) => BoolContent(VmmCommands.EnableMidiRead, enable);
 
         #endregion
 
         #region ゲームパッド
 
-        public Message EnableGamepad(bool enable) => WithArg(enable);
-        public Message PreferDirectInputGamepad(bool preferDirectInput) => WithArg(preferDirectInput);
-        public Message GamepadHeight(int height) => WithArg(height);
-        public Message GamepadHorizontalScale(int scale) => WithArg(scale);
+        public static Message EnableGamepad(bool enable) => BoolContent(VmmCommands.EnableGamepad, enable);
+        public static Message PreferDirectInputGamepad(bool preferDirectInput) => BoolContent(VmmCommands.PreferDirectInputGamepad, preferDirectInput);
+        //public static Message GamepadHeight(int height) => WithArg(VmmCommands.GamepadHeight, height);
+        //public static Message GamepadHorizontalScale(int scale) => WithArg(VmmCommands.GamepadHorizontalScale, scale);
 
-        public Message GamepadVisibility(bool visibility) => WithArg(visibility);
+        public static Message GamepadVisibility(bool visibility) => BoolContent(VmmCommands.GamepadVisibility, visibility);
 
-        public Message GamepadLeanMode(string v) => WithArg(v);
+        public static Message GamepadLeanMode(string v) => StringContent(VmmCommands.GamepadLeanMode, v);
 
-        public Message GamepadLeanReverseHorizontal(bool reverse) => WithArg(reverse);
-        public Message GamepadLeanReverseVertical(bool reverse) => WithArg(reverse);
+        public static Message GamepadLeanReverseHorizontal(bool reverse) => BoolContent(VmmCommands.GamepadLeanReverseHorizontal, reverse);
+        public static Message GamepadLeanReverseVertical(bool reverse) => BoolContent(VmmCommands.GamepadLeanReverseVertical, reverse);
 
         #endregion
 
@@ -273,124 +268,137 @@ namespace Baku.VMagicMirrorConfig
         /// Query.
         /// </summary>
         /// <returns></returns>
-        public Message GetQualitySettingsInfo() => NoArg();
-        public Message SetImageQuality(string name) => WithArg(name);
-        public Message SetAntiAliasStyle(int style) => WithArg(style);
-        public Message SetHalfFpsMode(bool enable) => WithArg(enable);
-        public Message UseFrameReductionEffect(bool enable) => WithArg(enable);
+        public static Message GetQualitySettingsInfo() => None(VmmCommands.GetQualitySettingsInfo);
+        public static Message SetImageQuality(string name) => StringContent(VmmCommands.SetImageQuality, name);
+        public static Message SetAntiAliasStyle(int style) => IntContent(VmmCommands.SetAntiAliasStyle, style);
+        public static Message SetHalfFpsMode(bool enable) => BoolContent(VmmCommands.SetHalfFpsMode, enable);
+        public static Message UseFrameReductionEffect(bool enable) => BoolContent(VmmCommands.UseFrameReductionEffect, enable);
 
         /// <summary>
         /// Query
         /// </summary>
         /// <returns></returns>
-        public Message ApplyDefaultImageQuality() => NoArg();
+        public static Message ApplyDefaultImageQuality() => None(VmmCommands.ApplyDefaultImageQuality);
 
-        public Message LightColor(int r, int g, int b) => WithArg($"{r},{g},{b}");
-        public Message LightIntensity(int intensityPercent) => WithArg(intensityPercent);
-        public Message LightYaw(int angleDeg) => WithArg(angleDeg);
-        public Message LightPitch(int angleDeg) => WithArg(angleDeg);
-        public Message UseDesktopLightAdjust(bool use) => WithArg(use);
+        public static Message LightColor(int r, int g, int b) => IntArrayContent(VmmCommands.LightColor, [r, g, b]);
+        public static Message LightIntensity(int intensityPercent) => IntContent(VmmCommands.LightIntensity, intensityPercent);
+        public static Message LightYaw(int angleDeg) => IntContent(VmmCommands.LightYaw, angleDeg);
+        public static Message LightPitch(int angleDeg) => IntContent(VmmCommands.LightPitch, angleDeg);
+        public static Message UseDesktopLightAdjust(bool use) => BoolContent(VmmCommands.UseDesktopLightAdjust, use);
 
-        public Message ShadowEnable(bool enable) => WithArg(enable);
-        public Message ShadowIntensity(int intensityPercent) => WithArg(intensityPercent);
-        public Message ShadowYaw(int angleDeg) => WithArg(angleDeg);
-        public Message ShadowPitch(int angleDeg) => WithArg(angleDeg);
-        public Message ShadowDepthOffset(int depthCentimeter) => WithArg(depthCentimeter);
+        public static Message ShadowEnable(bool enable) => BoolContent(VmmCommands.ShadowEnable, enable);
+        public static Message ShadowIntensity(int intensityPercent) => IntContent(VmmCommands.ShadowIntensity, intensityPercent);
+        public static Message ShadowYaw(int angleDeg) => IntContent(VmmCommands.ShadowYaw, angleDeg);
+        public static Message ShadowPitch(int angleDeg) => IntContent(VmmCommands.ShadowPitch, angleDeg);
+        public static Message ShadowDepthOffset(int depthCentimeter) => IntContent(VmmCommands.ShadowDepthOffset, depthCentimeter);
 
-        public Message BloomColor(int r, int g, int b) => WithArg($"{r},{g},{b}");
-        public Message BloomIntensity(int intensityPercent) => WithArg(intensityPercent);
-        public Message BloomThreshold(int thresholdPercent) => WithArg(thresholdPercent);
+        public static Message BloomColor(int r, int g, int b) => IntArrayContent(VmmCommands.BloomColor, [r, g, b]);
+        public static Message BloomIntensity(int intensityPercent) => IntContent(VmmCommands.BloomIntensity, intensityPercent);
+        public static Message BloomThreshold(int thresholdPercent) => IntContent(VmmCommands.BloomThreshold, thresholdPercent);
 
-        public Message AmbientOcclusionEnable(bool enable) => WithArg(enable);
-        public Message AmbientOcclusionIntensity(int intensityPercent) => WithArg(intensityPercent);
-        public Message AmbientOcclusionColor(int r, int g, int b) => WithArg($"{r},{g},{b}");
+        public static Message AmbientOcclusionEnable(bool enable) => BoolContent(VmmCommands.AmbientOcclusionEnable, enable);
+        public static Message AmbientOcclusionIntensity(int intensityPercent) => IntContent(VmmCommands.AmbientOcclusionIntensity, intensityPercent);
+        public static Message AmbientOcclusionColor(int r, int g, int b) => IntArrayContent(VmmCommands.AmbientOcclusionColor, [r, g, b]);
 
-        public Message OutlineEffectEnable(bool active) => WithArg(active);
-        public Message OutlineEffectThickness(int thickness) => WithArg(thickness);
-        public Message OutlineEffectColor(int r, int g, int b) => WithArg($"{r},{g},{b}");
-        public Message OutlineEffectHighQualityMode(bool enable) => WithArg(enable);
+        public static Message OutlineEffectEnable(bool active) => BoolContent(VmmCommands.OutlineEffectEnable, active);
+        public static Message OutlineEffectThickness(int thickness) => IntContent(VmmCommands.OutlineEffectThickness, thickness);
+        public static Message OutlineEffectColor(int r, int g, int b) => IntArrayContent(VmmCommands.OutlineEffectColor, [r, g, b]);
+        public static Message OutlineEffectHighQualityMode(bool enable) => BoolContent(VmmCommands.OutlineEffectHighQualityMode, enable);
         
-        public Message WindEnable(bool enableWind) => WithArg(enableWind);
-        public Message WindStrength(int strength) => WithArg(strength);
-        public Message WindInterval(int percentage) => WithArg(percentage);
-        public Message WindYaw(int windYaw) => WithArg(windYaw);
+        public static Message WindEnable(bool enableWind) => BoolContent(VmmCommands.WindEnable, enableWind);
+        public static Message WindStrength(int strength) => IntContent(VmmCommands.WindStrength, strength);
+        public static Message WindInterval(int percentage) => IntContent(VmmCommands.WindInterval, percentage);
+        public static Message WindYaw(int windYaw) => IntContent(VmmCommands.WindYaw, windYaw);
 
         #endregion
 
         #region Word To Motion
 
-        public Message ReloadMotionRequests(string content) => WithArg(content);
+        public static Message ReloadMotionRequests(string content) => StringContent(VmmCommands.ReloadMotionRequests, content);
 
         //NOTE: 以下の3つはユーザーが動作チェックに使う
-        public Message PlayWordToMotionItem(string word) => WithArg(word);
-        public Message EnableWordToMotionPreview(bool enable) => WithArg(enable);
-        public Message SendWordToMotionPreviewInfo(string json) => WithArg(json);
-        public Message SetDeviceTypeToStartWordToMotion(int deviceType) => WithArg(deviceType);
+        public static Message PlayWordToMotionItem(string word) => StringContent(VmmCommands.PlayWordToMotionItem, word);
+        public static Message EnableWordToMotionPreview(bool enable) => BoolContent(VmmCommands.EnableWordToMotionPreview, enable);
+        public static Message SendWordToMotionPreviewInfo(string json) => StringContent(VmmCommands.SendWordToMotionPreviewInfo, json);
+        public static Message SetDeviceTypeToStartWordToMotion(int deviceType) => IntContent(VmmCommands.SetDeviceTypeToStartWordToMotion, deviceType);
 
-        public Message LoadMidiNoteToMotionMap(string content) => WithArg(content);
-        public Message RequireMidiNoteOnMessage(bool require) => WithArg(require);
+        public static Message LoadMidiNoteToMotionMap(string content) => StringContent(VmmCommands.LoadMidiNoteToMotionMap, content);
+        public static Message RequireMidiNoteOnMessage(bool require) => BoolContent(VmmCommands.RequireMidiNoteOnMessage, require);
 
-        public Message RequestCustomMotionDoctor() => NoArg();
+        public static Message RequestCustomMotionDoctor() => None(VmmCommands.RequestCustomMotionDoctor);
 
         /// <summary>
         /// Query : 引数をtrueにすると .vrma 形式になってるものだけ返却してくれる
         /// </summary>
         /// <returns></returns>
-        public Message GetAvailableCustomMotionClipNames(bool vrmaOnly) => WithArg(vrmaOnly);
+        public static Message GetAvailableCustomMotionClipNames(bool vrmaOnly) => BoolContent(VmmCommands.GetAvailableCustomMotionClipNames, vrmaOnly);
 
         #endregion
 
         #region External Tracker
 
         //共通: 基本操作のオン/オフ + キャリブレーション
-        public Message ExTrackerEnable(bool enable) => WithArg(enable);
-        public Message ExTrackerEnableLipSync(bool enable) => WithArg(enable);
-        public Message ExTrackerEnablePerfectSync(bool enable) => WithArg(enable);
-        public Message ExTrackerUseVRoidDefaultForPerfectSync(bool enable) => WithArg(enable);
-        public Message ExTrackerCalibrate() => NoArg();
+        public static Message ExTrackerEnable(bool enable) => BoolContent(VmmCommands.ExTrackerEnable, enable);
+        public static Message ExTrackerEnableLipSync(bool enable) => BoolContent(VmmCommands.ExTrackerEnableLipSync, enable);
+        public static Message ExTrackerEnablePerfectSync(bool enable) => BoolContent(VmmCommands.ExTrackerEnablePerfectSync, enable);
+        //public static Message ExTrackerUseVRoidDefaultForPerfectSync(bool enable) => WithArg(VmmCommands.ExTrackerUseVRoidDefaultForPerfectSync, enable);
+        public static Message ExTrackerCalibrate() => None(VmmCommands.ExTrackerCalibrate);
         //NOTE: このdataについて詳細
         // - Unityが送ってくるのをまるごと保持してたデータを返すだけで、WPF側では中身に関知しない
         // - 想定する内部構成としては、全トラッカータイプのデータが1つの文字列に入ったものを想定してます
         //   (連携先がたかだか5アプリくらいを見込んでるので、これでも手に負えるハズ)
-        public Message ExTrackerSetCalibrateData(string data) => WithArg(data);
+        public static Message ExTrackerSetCalibrateData(string data) => StringContent(VmmCommands.ExTrackerSetCalibrateData, data);
 
         //連携先の切り替え + アプリ固有設定の送信
-        public Message ExTrackerSetSource(int sourceType) => WithArg(sourceType);
-        public Message ExTrackerSetApplicationValue(ExternalTrackerSettingData data) => WithArg(data.ToJsonString());
+        public static Message ExTrackerSetSource(int sourceType) => IntContent(VmmCommands.ExTrackerSetSource, sourceType);
+        public static Message ExTrackerSetApplicationValue(ExternalTrackerSettingData data) => StringContent(VmmCommands.ExTrackerSetApplicationValue, data.ToJsonString());
 
         //共通: 表情スイッチ機能
         //NOTE: 設計を安全にするため、全設定をガッと送る機能しか認めていません。
-        public Message ExTrackerSetFaceSwitchSetting(string settingJson) => WithArg(settingJson);
+        public static Message ExTrackerSetFaceSwitchSetting(string settingJson) => StringContent(VmmCommands.ExTrackerSetFaceSwitchSetting, settingJson);
 
         #endregion
 
         #region Accessory
 
-        public Message SetSingleAccessoryLayout(string json) => WithArg(json);
-        public Message SetAccessoryLayout(string json) => WithArg(json);
-        public Message RequestResetAllAccessoryLayout() => NoArg();
-        public Message RequestResetAccessoryLayout(string fileNamesJson) => WithArg(fileNamesJson);
-        public Message ReloadAccessoryFiles() => NoArg();
+        public static Message SetSingleAccessoryLayout(string json) => StringContent(VmmCommands.SetSingleAccessoryLayout, json);
+        public static Message SetAccessoryLayout(string json) => StringContent(VmmCommands.SetAccessoryLayout, json);
+        public static Message RequestResetAllAccessoryLayout() => None(VmmCommands.RequestResetAllAccessoryLayout);
+        public static Message RequestResetAccessoryLayout(string fileNamesJson) => StringContent(VmmCommands.RequestResetAccessoryLayout, fileNamesJson);
+        public static Message ReloadAccessoryFiles() => None(VmmCommands.ReloadAccessoryFiles);
 
         #endregion
 
         #region VMCP
 
-        public Message EnableVMCP(bool enable) => WithArg(enable);
-        public Message SetVMCPSources(string json) => WithArg(json);
-        public Message SetDisableCameraDuringVMCPActive(bool disable) => WithArg(disable);
-        public Message SetVMCPNaiveBoneTransfer(bool enable) => WithArg(enable);
+        public static Message EnableVMCP(bool enable) => BoolContent(VmmCommands.EnableVMCP, enable);
+        public static Message SetVMCPSources(string json) => StringContent(VmmCommands.SetVMCPSources, json);
+        public static Message SetDisableCameraDuringVMCPActive(bool disable) => BoolContent(VmmCommands.SetDisableCameraDuringVMCPActive, disable);
+        public static Message SetVMCPNaiveBoneTransfer(bool enable) => BoolContent(VmmCommands.SetVMCPNaiveBoneTransfer, enable);
 
-        public Message EnableVMCPSend(bool enable) => WithArg(enable);
-        public Message SetVMCPSendSettings(string json) => WithArg(json);
-        public Message ShowEffectDuringVMCPSendEnabled(bool enable) => WithArg(enable);
+        public static Message EnableVMCPSend(bool enable) => BoolContent(VmmCommands.EnableVMCPSend, enable);
+        public static Message SetVMCPSendSettings(string json) => StringContent(VmmCommands.SetVMCPSendSettings, json);
+        public static Message ShowEffectDuringVMCPSendEnabled(bool enable) => BoolContent(VmmCommands.ShowEffectDuringVMCPSendEnabled, enable);
 
         #endregion
 
         #region その他
 
-        public Message TakeScreenshot() => NoArg();
-        public Message OpenScreenshotFolder() => NoArg();
+        public static Message TakeScreenshot() => None(VmmCommands.TakeScreenshot);
+        public static Message OpenScreenshotFolder() => None(VmmCommands.OpenScreenshotFolder);
+
+        #endregion
+
+        #region VRoid SDK
+
+        public static Message OpenVRoidSdkUi() => None(VmmCommands.OpenVRoidSdkUi);
+        public static Message RequestLoadVRoidWithId(string modelId) => StringContent(VmmCommands.RequestLoadVRoidWithId, modelId);
+
+        #endregion
+
+        #region Debug
+
+        public static Message DebugSendLargeData(string data) => StringContent(VmmCommands.DebugSendLargeData, data);
 
         #endregion
 
@@ -405,21 +413,8 @@ namespace Baku.VMagicMirrorConfig
         /// 狙い: 投げっぱなしのコマンドを集約してひとまとめで送る。
         /// クエリは個別にawaitしてほしい関係でココに混ぜるのはちょっと難しい
         /// </remarks>
-        public Message CommandArray(IEnumerable<Message> commands)
-            => WithArg(CommandArrayBuilder.BuildCommandArrayString(commands));
-
-        #endregion
-
-        #region VRoid SDK
-
-        public Message OpenVRoidSdkUi() => NoArg();
-        public Message RequestLoadVRoidWithId(string modelId) => WithArg(modelId);
-
-        #endregion
-
-        #region Debug
-
-        public Message DebugSendLargeData(string data) => WithArg(data);
+        public static Message CommandArray(IEnumerable<Message> commands)
+            => StringContent(VmmCommands.CommandArray, CommandArrayBuilder.BuildCommandArrayString(commands));
 
         #endregion
     }

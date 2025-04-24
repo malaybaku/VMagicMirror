@@ -93,7 +93,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _hasCalibrationRequest.Value = false;
 
             var json = JsonUtility.ToJson(MediaPipeCalibrationData.Create(data));
-            _sender.SendCommand(MessageFactory.Instance.SetCalibrationFaceDataHighPower(json));
+            _sender.SendCommand(MessageFactory.SetCalibrationFaceDataHighPower(json));
         }
     }
 

@@ -82,7 +82,7 @@ namespace Baku.VMagicMirror
 
             if (_sendMicrophoneVolumeLevel)
             {
-                _sender.SendCommand(MessageFactory.Instance.MicrophoneVolumeLevel(CurrentVolumeLevel));
+                _sender.SendCommand(MessageFactory.MicrophoneVolumeLevel(CurrentVolumeLevel));
             }
         }
 

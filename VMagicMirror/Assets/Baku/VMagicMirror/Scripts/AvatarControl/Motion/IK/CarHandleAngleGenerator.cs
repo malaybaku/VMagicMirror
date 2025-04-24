@@ -66,7 +66,7 @@ namespace Baku.VMagicMirror.IK
                 VmmCommands.GamepadLeanMode,
                 command =>
                 {
-                    var leanModeName = command.Content;
+                    var leanModeName = command.GetStringValue();
                     _leanMode = Enum.TryParse<GamepadLeanModes>(leanModeName, out var result)
                         ? result
                         : GamepadLeanModes.GamepadLeanNone;

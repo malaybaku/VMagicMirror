@@ -125,7 +125,7 @@ namespace Baku.VMagicMirror.VMCP
 
             _receiver.AssignCommandHandler(
                 VmmCommands.SetVMCPSendSettings,
-                c => SetVmcpSendSettings(c.Content));
+                c => SetVmcpSendSettings(c.GetStringValue()));
 
             _sendEnabled.Subscribe(SetActive).AddTo(this);
         }

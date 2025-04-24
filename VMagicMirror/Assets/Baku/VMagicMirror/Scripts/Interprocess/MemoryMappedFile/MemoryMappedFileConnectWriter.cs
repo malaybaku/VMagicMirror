@@ -145,7 +145,7 @@ namespace Baku.VMagicMirror.Mmf
                     }
 
                     // 書き込んだあと、正常に書き込めていればサイズを累積して続行
-                    var size = WriteMessage(msg, data, writeSize);
+                    var size = WriteMessage(msg, writeSize);
                     if (size < 0)
                     {
                         return;
@@ -158,8 +158,9 @@ namespace Baku.VMagicMirror.Mmf
             // NOTE:
             //  - 戻り値はデータを書き込んだバイト数。
             //  - ただし、書き込みが失敗した場合には -1 を返す。-1 が戻った場合、それ以降は書き込みを試みないのが期待値
-            private int WriteMessage(Message msg, ReadOnlyMemory<byte> data, int offset)
+            private int WriteMessage(Message msg, int offset)
             {
+                var data = msg.Body;
                 lock (_senderLock)
                 {
                     if (_accessor == null)
@@ -178,6 +179,7 @@ namespace Baku.VMagicMirror.Mmf
                     _accessor.Write(12, writeLength);
 
                     // _accessor.WriteArrayはSpanを直接受けないため、byte[]に書いてから書き込む
+                    // NOTE: 書き込み側のメッセージを単に byte[] で受けるようにしてバッファを挟むのをやめてもよい
                     data.Span[offset..(offset + writeLength)].CopyTo(_writeBuffer);
                     _accessor.WriteArray(16, _writeBuffer, 0, writeLength);
 

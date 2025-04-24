@@ -106,7 +106,7 @@ namespace Baku.VMagicMirror
                 VmmCommands.MoveWindow,
                 message =>
                 {
-                    int[] xy = message.ToIntArray();
+                    var xy = message.ToIntArray();
                     MoveWindow(xy[0], xy[1]);
                 });
             receiver.AssignCommandHandler(
@@ -131,7 +131,7 @@ namespace Baku.VMagicMirror
             });
             
             vrmLoadable.PreVrmLoaded += info => _renderers = info.renderers;
-            vrmLoadable.VrmDisposing += () => _renderers = new Renderer[0];
+            vrmLoadable.VrmDisposing += () => _renderers = Array.Empty<Renderer>();
         }
 
         private void Awake()

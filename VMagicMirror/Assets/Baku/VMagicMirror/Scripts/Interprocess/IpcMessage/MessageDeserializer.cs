@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Baku.VMagicMirror.IpcMessage
 {
@@ -7,38 +8,45 @@ namespace Baku.VMagicMirror.IpcMessage
     // - 高速化は特に頑張ってないが、インライン化とかMemoryMarshal.Readとか使う余地はある
     public static class MessageDeserializer
     {
+        // NOTE: 「WPF/Unity双方でデバッグビルドではこのシンボルを使っている」ということに依存している
+        const string DevEnvSymbol = "DEV_ENV";
+        
         public static ushort GetCommandId(ReadOnlyMemory<byte> data)
         {
-            if (data.Length < 2)
-            {
-                return 0;
-            }
+            ValidateDataLength(data, 2);
             return BitConverter.ToUInt16(data.Span);
         }
 
         public static MessageValueTypes GetValueType(ReadOnlyMemory<byte> data)
         {
-            if (data.Length < 4)
-            {
-                return MessageValueTypes.None;
-            }
+            ValidateDataLength(data, 2);
+            if (data.Length < 4) return MessageValueTypes.None;
             return (MessageValueTypes)BitConverter.ToUInt16(data.Span[2..]);
         }
         
         public static bool ToBool(ReadOnlyMemory<byte> data)
         {
+            ValidateDataLength(data, 5);
+            ValidateType(data, MessageValueTypes.Bool);
+
             if (data.Length < 5) throw new ArgumentException("Invalid data length for Bool");
             return data.Span[4] != 0;
         }
         
         public static int ToInt(ReadOnlyMemory<byte> data)
         {
+            ValidateDataLength(data, 8);
+            ValidateType(data, MessageValueTypes.Int);
+
             if (data.Length < 8) throw new ArgumentException("Invalid data length for Int");
             return BitConverter.ToInt32(data.Span[4..]);
         }
         
         public static float ToFloat(ReadOnlyMemory<byte> data)
         {
+            ValidateDataLength(data, 8);
+            ValidateType(data, MessageValueTypes.Float);
+
             if (data.Length < 8) throw new ArgumentException("Invalid data length for Float");
             return BitConverter.ToSingle(data.Span[4..]);
         }
@@ -47,18 +55,24 @@ namespace Baku.VMagicMirror.IpcMessage
 
         public static string ToString(ReadOnlyMemory<byte> data)
         {
+            ValidateType(data, MessageValueTypes.String);
+
             if (data.Length < 5) return "";
             return System.Text.Encoding.UTF8.GetString(data.Span[4..]);
         }
         
         public static byte[] ToByteArray(ReadOnlyMemory<byte> data)
         {
+            ValidateType(data, MessageValueTypes.ByteArray);
+
             if (data.Length < 5) return Array.Empty<byte>();
             return data.Span[4..].ToArray();
         }
         
         public static int[] ToIntArray(ReadOnlyMemory<byte> data)
         {
+            ValidateType(data, MessageValueTypes.IntArray);
+
             if (data.Length < 8) return Array.Empty<int>();
             var count = (data.Length - 4) / 4;
             var result = new int[count];
@@ -74,6 +88,8 @@ namespace Baku.VMagicMirror.IpcMessage
 
         public static float[] ToFloatArray(ReadOnlyMemory<byte> data)
         {
+            ValidateType(data, MessageValueTypes.FloatArray);
+            
             if (data.Length < 8) return Array.Empty<float>();
             var count = (data.Length - 4) / 4;
             var result = new float[count];
@@ -85,6 +101,26 @@ namespace Baku.VMagicMirror.IpcMessage
             }
             
             return result;
+        }
+
+        // 実装ミスでのみ送受信で型がマッチしなかったり、長さが不適切だったりするケースが発生しうる
+        [Conditional(DevEnvSymbol)]
+        private static void ValidateDataLength(ReadOnlyMemory<byte> data, int minLength)
+        {
+            if (data.Length < minLength)
+            {
+                throw new ArgumentException($"Data length is less than {minLength}, actual={data.Length}");;
+            }
+        }
+        
+        [Conditional(DevEnvSymbol)]
+        private static void ValidateType(ReadOnlyMemory<byte> data, MessageValueTypes expected)
+        {
+            var valueType = GetValueType(data);
+            if (valueType != expected)
+            {
+                throw new ArgumentException($"Data is not {expected}, actual={valueType}");
+            }
         }
     }
 }

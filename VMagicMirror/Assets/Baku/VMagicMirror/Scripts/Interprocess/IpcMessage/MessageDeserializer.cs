@@ -42,22 +42,24 @@ namespace Baku.VMagicMirror.IpcMessage
             if (data.Length < 8) throw new ArgumentException("Invalid data length for Float");
             return BitConverter.ToSingle(data.Span[4..]);
         }
-        
+
+        // NOTE: バイナリ長が4byteの場合も不正なわけではない(空である)ことに注意
+
         public static string ToString(ReadOnlyMemory<byte> data)
         {
-            if (data.Length < 5) throw new ArgumentException("Invalid data length for String");
+            if (data.Length < 5) return "";
             return System.Text.Encoding.UTF8.GetString(data.Span[4..]);
         }
         
         public static byte[] ToByteArray(ReadOnlyMemory<byte> data)
         {
-            if (data.Length < 5) throw new ArgumentException("Invalid data length for ByteArray");
+            if (data.Length < 5) return Array.Empty<byte>();
             return data.Span[4..].ToArray();
         }
         
         public static int[] ToIntArray(ReadOnlyMemory<byte> data)
         {
-            if (data.Length < 8) throw new ArgumentException("Invalid data length for IntArray");
+            if (data.Length < 8) return Array.Empty<int>();
             var count = (data.Length - 4) / 4;
             var result = new int[count];
 
@@ -72,7 +74,7 @@ namespace Baku.VMagicMirror.IpcMessage
 
         public static float[] ToFloatArray(ReadOnlyMemory<byte> data)
         {
-            if (data.Length < 8) throw new ArgumentException("Invalid data length for IntArray");
+            if (data.Length < 8) return Array.Empty<float>();
             var count = (data.Length - 4) / 4;
             var result = new float[count];
 

@@ -51,13 +51,17 @@ namespace Baku.VMagicMirror.IpcMessage
             BitConverter.TryWriteBytes(result.AsSpan()[4..], value);
             return result;
         }
-        
+
+        // NOTE: stringや配列はnullはNGだがカラにするのはOKであり、空の場合はデータの全長が4byteになる
         public static byte[] String(ushort commandId, string value)
         {
             var strBytes = System.Text.Encoding.UTF8.GetBytes(value);
             var result = new byte[4 + strBytes.Length];
             SetupHeader(result, commandId, (ushort) MessageValueTypes.String);
-            Array.Copy(strBytes, 0, result, 4, strBytes.Length);
+            if (strBytes.Length > 0)
+            {
+                Array.Copy(strBytes, 0, result, 4, strBytes.Length);
+            }
             return result;
         }
         
@@ -65,14 +69,17 @@ namespace Baku.VMagicMirror.IpcMessage
         {
             var result = new byte[4 + value.Length];
             SetupHeader(result, commandId, (ushort) MessageValueTypes.ByteArray);
-            Array.Copy(value, 0, result, 4, value.Length);
+            if (value.Length > 0)
+            {
+                Array.Copy(value, 0, result, 4, value.Length);
+            }
             return result;
         }
-        
+
         public static byte[] IntArray(ushort commandId, IReadOnlyList<int> value)
         {
             var result = new byte[4 + value.Count * 4];
-            SetupHeader(result, commandId, (ushort) MessageValueTypes.IntArray);
+            SetupHeader(result, commandId, (ushort)MessageValueTypes.IntArray);
             for (var i = 0; i < value.Count; i++)
             {
                 BitConverter.TryWriteBytes(result.AsSpan()[(i * 4 + 4)..], value[i]);

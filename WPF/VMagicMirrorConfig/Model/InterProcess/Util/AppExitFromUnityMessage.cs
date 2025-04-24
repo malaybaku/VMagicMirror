@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Baku.VMagicMirror;
+using System;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -11,11 +12,11 @@ namespace Baku.VMagicMirrorConfig
             receiver.ReceivedCommand += OnReceivedCommand;
         }
 
-        private void OnReceivedCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceivedCommand(CommandReceivedData e)
         {
             switch (e.Command)
             {
-                case ReceiveMessageNames.CloseConfigWindow:
+                case VmmServerCommands.CloseConfigWindow:
                     Application.Current.Dispatcher?.BeginInvoke(
                         new Action(() => Application.Current.MainWindow.Close()),
                         DispatcherPriority.ApplicationIdle

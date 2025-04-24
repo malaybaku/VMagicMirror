@@ -49,18 +49,17 @@
         /// </summary>
         public RProperty<int> MicrophoneVolumeValue { get; } = new RProperty<int>(0);
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
-            if (e.Command == ReceiveMessageNames.MicrophoneVolumeLevel && 
-                ShowMicrophoneVolume.Value && 
-                int.TryParse(e.Args, out int i))
+            if (e.Command is VMagicMirror.VmmServerCommands.MicrophoneVolumeLevel && 
+                ShowMicrophoneVolume.Value)
             {
-                MicrophoneVolumeValue.Value = i;
+                MicrophoneVolumeValue.Value = e.ToInt();
             }
         }
 
         private void SetMicrophoneVolumeVisibility(bool visible)
-            => _sender.SendMessage(MessageFactory.Instance.SetMicrophoneVolumeVisibility(visible));
+            => _sender.SendMessage(MessageFactory.SetMicrophoneVolumeVisibility(visible));
 
     }
 }

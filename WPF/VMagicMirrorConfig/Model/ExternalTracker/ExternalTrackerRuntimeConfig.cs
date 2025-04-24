@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Baku.VMagicMirror;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -29,14 +30,15 @@ namespace Baku.VMagicMirrorConfig
         private readonly ExternalTrackerSettingModel _setting;
         private readonly ExternalTrackerBlendShapeNameStore _blendShapeNameStore = new();
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
-            if (e.Command == ReceiveMessageNames.ExtraBlendShapeClipNames)
+            var command = e.Command;
+            if (command is VmmServerCommands.ExtraBlendShapeClipNames)
             {
                 try
                 {
                     //いちおう信頼はするけどIPCだし…みたいな書き方です
-                    var names = e.Args
+                    var names = e.GetStringValue()
                         .Split(',')
                         .Where(w => !string.IsNullOrEmpty(w))
                         .ToArray();
@@ -47,18 +49,18 @@ namespace Baku.VMagicMirrorConfig
                     LogOutput.Instance.Write(ex);
                 }
             }
-            else if (e.Command == ReceiveMessageNames.ExTrackerCalibrateComplete)
+            else if (command is VmmServerCommands.ExTrackerCalibrateComplete)
             {
                 //キャリブレーション結果を向こうから受け取る: この場合は、ただ覚えてるだけでよい
-                _setting.CalibrateData.SilentSet(e.Args);
+                _setting.CalibrateData.SilentSet(e.GetStringValue());
             }
-            else if (e.Command == ReceiveMessageNames.ExTrackerSetPerfectSyncMissedClipNames)
+            else if (command == VmmServerCommands.ExTrackerSetPerfectSyncMissedClipNames)
             {
-                MissingBlendShapeNames.Value = e.Args;
+                MissingBlendShapeNames.Value = e.GetStringValue();
             }
-            else if (e.Command == ReceiveMessageNames.ExTrackerSetIFacialMocapTroubleMessage)
+            else if (command == VmmServerCommands.ExTrackerSetIFacialMocapTroubleMessage)
             {
-                IFacialMocapTroubleMessage.Value = e.Args;
+                IFacialMocapTroubleMessage.Value = e.GetStringValue();
             }
         }
 

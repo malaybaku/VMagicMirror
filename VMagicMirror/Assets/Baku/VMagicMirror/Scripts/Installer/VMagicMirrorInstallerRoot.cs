@@ -87,6 +87,11 @@ namespace Baku.VMagicMirror.Installer
             WordToMotion.WordToMotionInstaller.Install(Container);
             
             MediaPipeTrackerSystemInstaller.Install(Container);
+
+            if (DebugEnvChecker.IsDevEnvOrEditor)
+            {
+                Container.BindInterfacesTo<DebugVmmCommandReceiver>().AsSingle();
+            }
         }
     }
 }

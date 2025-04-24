@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror
                 content = content,
                 level = (int)errorLevel,
             });
-            _sender.SendCommand(MessageFactory.Instance.RequestShowError(data));
+            _sender.SendCommand(MessageFactory.RequestShowError(data));
         }
     }
 }

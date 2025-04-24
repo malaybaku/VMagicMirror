@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror
             receiver.BindAction(VmmCommands.CalibrateFace, _faceTracker.StartCalibration);
             receiver.AssignCommandHandler(
                 VmmCommands.SetCalibrateFaceData,
-                message => _faceTracker.SetCalibrateData(message.Content)
+                message => _faceTracker.SetCalibrateData(message.GetStringValue())
                 );
 
             receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _enableHandTracking);
@@ -48,7 +48,7 @@ namespace Baku.VMagicMirror
                 );
 
             receiver.AssignQueryHandler(
-                VmmQueries.CameraDeviceNames,
+                VmmCommands.CameraDeviceNames,
                 query => query.Result = DeviceNames.CreateDeviceNamesJson(GetCameraDeviceNames())
                 );
 

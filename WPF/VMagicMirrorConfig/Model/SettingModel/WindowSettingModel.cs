@@ -13,7 +13,6 @@ namespace Baku.VMagicMirrorConfig
         public WindowSettingModel(IMessageSender sender) : base(sender)
         {
             var setting = WindowSetting.Default;
-            var factory = MessageFactory.Instance;
 
             R = new RProperty<int>(setting.R, _ => SendBackgroundColor());
             G = new RProperty<int>(setting.G, _ => SendBackgroundColor());
@@ -24,7 +23,7 @@ namespace Baku.VMagicMirrorConfig
                 //透明 = ウィンドウフレーム不要。逆も然り
                 //NOTE: 後方互換性の都合で必ず背景色の変更の前にフレームの有無を変える。
                 //逆にするとウィンドウサイズを維持するための処理が正しく走らない。
-                SendMessage(factory.WindowFrameVisibility(!b));
+                SendMessage(MessageFactory.WindowFrameVisibility(!b));
 
                 //ここで透明or不透明の背景を送りつけるとUnity側がよろしく背景透過にしてくれる
                 SendBackgroundColor();
@@ -35,52 +34,52 @@ namespace Baku.VMagicMirrorConfig
                     //背景透過になった時点でクリックスルーしてほしそうなフラグが立ってる => 実際にやる
                     if (WindowDraggable?.Value == false)
                     {
-                        SendMessage(factory.IgnoreMouse(true));
+                        SendMessage(MessageFactory.IgnoreMouse(true));
                     }
                 }
                 else
                 {
                     //背景透過でない=クリックスルーできなくする
-                    SendMessage(factory.IgnoreMouse(true));
+                    SendMessage(MessageFactory.IgnoreMouse(true));
                 }
             });
 
             WindowDraggable = new RProperty<bool>(setting.WindowDraggable, b =>
             {
-                SendMessage(factory.WindowDraggable(b));
+                SendMessage(MessageFactory.WindowDraggable(b));
                 //すでにウィンドウが透明ならばクリックスルーもついでにやる。不透明の場合、絶対にクリックスルーにはしない
                 if (IsTransparent.Value)
                 {
                     //ドラッグできない = クリックスルー、なのでフラグが反転することに注意
-                    SendMessage(factory.IgnoreMouse(!b));
+                    SendMessage(MessageFactory.IgnoreMouse(!b));
                 }
             });
 
-            TopMost = new RProperty<bool>(setting.TopMost, b => SendMessage(factory.TopMost(b)));
+            TopMost = new RProperty<bool>(setting.TopMost, b => SendMessage(MessageFactory.TopMost(b)));
 
             BackgroundImagePath = new RProperty<string>(
                 setting.BackgroundImagePath,
-                s => SendMessage(factory.SetBackgroundImagePath(s))
+                s => SendMessage(MessageFactory.SetBackgroundImagePath(s))
                 );
 
             WholeWindowTransparencyLevel = new RProperty<int>(
                 setting.WholeWindowTransparencyLevel,
-                i => SendMessage(factory.SetWholeWindowTransparencyLevel(i))
+                i => SendMessage(MessageFactory.SetWholeWindowTransparencyLevel(i))
                 );
 
             AlphaValueOnTransparent = new RProperty<int>(
                 setting.AlphaValueOnTransparent,
-                i => SendMessage(factory.SetAlphaValueOnTransparent(i))
+                i => SendMessage(MessageFactory.SetAlphaValueOnTransparent(i))
                 );
 
             EnableSpoutOutput = new RProperty<bool>(
                 setting.EnableSpoutOutput,
-                enable => SendMessage(factory.EnableSpoutOutput(enable))
+                enable => SendMessage(MessageFactory.EnableSpoutOutput(enable))
                 );
 
             SpoutResolutionType = new RProperty<int>(
                 setting.SpoutResolutionType,
-                type => SendMessage(factory.SetSpoutOutputResolution(type))
+                type => SendMessage(MessageFactory.SetSpoutOutputResolution(type))
                 );
         }
 
@@ -147,8 +146,8 @@ namespace Baku.VMagicMirrorConfig
         {
             //NOTE: ウィンドウが被ると困るのを踏まえ、すぐ上ではなく右わきに寄せる点にご注目
             var pos = WindowPositionUtil.GetThisWindowRightTopPosition();
-            SendMessage(MessageFactory.Instance.MoveWindow(pos.X, pos.Y));
-            SendMessage(MessageFactory.Instance.ResetWindowSize());
+            SendMessage(MessageFactory.MoveWindow(pos.X, pos.Y));
+            SendMessage(MessageFactory.ResetWindowSize());
         }
 
 
@@ -159,11 +158,11 @@ namespace Baku.VMagicMirrorConfig
         {
             if (IsTransparent.Value == true)
             {
-                SendMessage(MessageFactory.Instance.Chromakey(0, 0, 0, 0));
+                SendMessage(MessageFactory.Chromakey(0, 0, 0, 0));
             }
             else
             {
-                SendMessage(MessageFactory.Instance.Chromakey(
+                SendMessage(MessageFactory.Chromakey(
                     255, R.Value, G.Value, B.Value
                     ));
             }

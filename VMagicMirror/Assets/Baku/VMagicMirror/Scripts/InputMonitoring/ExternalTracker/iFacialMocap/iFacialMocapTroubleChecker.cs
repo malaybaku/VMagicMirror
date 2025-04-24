@@ -42,7 +42,7 @@ namespace Baku.VMagicMirror.ExternalTracker.iFacialMocap
             if (_troubleMessage != message)
             {
                 _troubleMessage = message;
-                _sender.SendCommand(MessageFactory.Instance.ExTrackerSetIFacialMocapTroubleMessage(_troubleMessage));
+                _sender.SendCommand(MessageFactory.ExTrackerSetIFacialMocapTroubleMessage(_troubleMessage));
             }
         }
 

@@ -122,8 +122,9 @@ namespace Baku.VMagicMirror
 
             sender.SendingMessage += message =>
             {
-                if (message.Command == nameof(MessageFactory.VRoidModelLoadCanceled) ||
-                    message.Command == nameof(MessageFactory.VRoidModelLoadCompleted))
+                if (message.Command is
+                    VmmServerCommands.VRoidModelLoadCanceled or 
+                    VmmServerCommands.VRoidModelLoadCompleted)
                 {
                     RegisterKeyboard();
                 }

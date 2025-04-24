@@ -17,20 +17,19 @@ namespace Baku.VMagicMirrorConfig
         public WordToMotionSettingModel(IMessageSender sender, IMessageReceiver receiver) : base(sender)
         {
             var settings = WordToMotionSetting.Default;
-            var factory = MessageFactory.Instance;
 
             _motionRequests = MotionRequestCollection.LoadDefault();
             _midiNoteToMotionMap = MidiNoteToMotionMap.LoadDefault();
 
             PreviewDataSender = new WordToMotionItemPreviewDataSender(sender);
 
-            SelectedDeviceType = new RProperty<int>(settings.SelectedDeviceType, i => SendMessage(factory.SetDeviceTypeToStartWordToMotion(i)));
+            SelectedDeviceType = new RProperty<int>(settings.SelectedDeviceType, i => SendMessage(MessageFactory.SetDeviceTypeToStartWordToMotion(i)));
             ItemsContentString = new RProperty<string>(settings.ItemsContentString);
-            ItemsContentStringToSync = new RProperty<string>("", s => SendMessage(factory.ReloadMotionRequests(s)));
-            MidiNoteMapString = new RProperty<string>(settings.MidiNoteMapString, s => SendMessage(factory.LoadMidiNoteToMotionMap(s)));
+            ItemsContentStringToSync = new RProperty<string>("", s => SendMessage(MessageFactory.ReloadMotionRequests(s)));
+            MidiNoteMapString = new RProperty<string>(settings.MidiNoteMapString, s => SendMessage(MessageFactory.LoadMidiNoteToMotionMap(s)));
             EnablePreview = new RProperty<bool>(false, b =>
             {
-                SendMessage(factory.EnableWordToMotionPreview(b));
+                SendMessage(MessageFactory.EnableWordToMotionPreview(b));
                 if (b)
                 {
                     PreviewDataSender.Start();
@@ -132,7 +131,7 @@ namespace Baku.VMagicMirrorConfig
         /// </summary>
         /// <param name="item"></param>
         public void Play(MotionRequest item)
-            => SendMessage(MessageFactory.Instance.PlayWordToMotionItem(item.ToVrm10Json()));
+            => SendMessage(MessageFactory.PlayWordToMotionItem(item.ToVrm10Json()));
 
 
         public void Play(int index)
@@ -287,9 +286,9 @@ namespace Baku.VMagicMirrorConfig
         }
 
         public void RequireMidiNoteOnMessage(bool require) 
-            => SendMessage(MessageFactory.Instance.RequireMidiNoteOnMessage(require));
+            => SendMessage(MessageFactory.RequireMidiNoteOnMessage(require));
         
         public void RequestCustomMotionDoctor()
-            => SendMessage(MessageFactory.Instance.RequestCustomMotionDoctor());
+            => SendMessage(MessageFactory.RequestCustomMotionDoctor());
     }
 }

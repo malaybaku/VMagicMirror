@@ -19,16 +19,16 @@ namespace Baku.VMagicMirrorConfig
 
         public event EventHandler<EyeBlendShapeValuesEventArgs>? EyeBlendShapeValuesReceived;
 
-        private void OnReceivedCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceivedCommand(CommandReceivedData e)
         {
-            if (e.Command != ReceiveMessageNames.EyeBlendShapeValues)
+            if (e.Command is not VMagicMirror.VmmServerCommands.EyeBlendShapeValues)
             {
                 return;
             }
 
             try
             {
-                var values = JsonConvert.DeserializeObject<RawEyeBlendShapeValues>(e.Args);
+                var values = JsonConvert.DeserializeObject<RawEyeBlendShapeValues>(e.GetStringValue());
                 if (values == null)
                 {
                     return;

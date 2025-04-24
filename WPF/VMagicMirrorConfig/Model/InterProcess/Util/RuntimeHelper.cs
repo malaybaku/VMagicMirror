@@ -54,6 +54,6 @@ namespace Baku.VMagicMirrorConfig
         }
 
         //NOTE: 野暮用なのでここに直接実装してます
-        public void SendStartupEnded() => _sender.SendMessage(MessageFactory.Instance.StartupEnded());
+        public void SendStartupEnded() => _sender.SendMessage(MessageFactory.StartupEnded());
     }
 }

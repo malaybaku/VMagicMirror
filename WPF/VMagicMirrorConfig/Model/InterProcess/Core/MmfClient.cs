@@ -1,4 +1,6 @@
-﻿using Baku.VMagicMirrorConfig.Mmf;
+﻿using Baku.VMagicMirror;
+using Baku.VMagicMirror.IpcMessage;
+using Baku.VMagicMirror.Mmf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,18 +18,16 @@ namespace Baku.VMagicMirrorConfig
 
         public MmfClient()
         {
-            _client = new MemoryMappedFileConnectClient();
+            _client = new MemoryMappedFileConnector();
             _client.ReceiveCommand += OnReceivedCommand;
             _client.ReceiveQuery += OnReceivedQuery;
         }
 
-        private readonly MemoryMappedFileConnectClient _client;
+        private readonly MemoryMappedFileConnector _client;
 
-        private bool _isCompositeMode = false;
-        //NOTE: 64というキャパシティはどんぶり勘定です
-        private readonly List<Message> _compositeMessages = new List<Message>(64);
-
-        #region IMessageSender
+        private bool _isCompositeMode;
+        //NOTE: 64というキャパシティはどんぶり勘定
+        private readonly List<Message> _compositeMessages = new(64);
 
         public void SendMessage(Message message)
         {
@@ -35,18 +35,18 @@ namespace Baku.VMagicMirrorConfig
             {
                 //同じコマンド名の古いメッセージは削除し、最新値だけ残す
                 //設定更新のコマンドはsetterメソッド的なのでこういう事をしても大丈夫
-                if (_compositeMessages.FirstOrDefault(m => m.Command == message.Command) is Message msg)
+                if (_compositeMessages.FindIndex(m => m.Command == message.Command) is int x && x >= 0)
                 {
-                    _compositeMessages.Remove(msg);
+                    _compositeMessages.RemoveAt(x);
                 }
+
                 _compositeMessages.Add(message);
                 return;
             }
 
             try
             {
-                //NOTE: 前バージョンが投げっぱなし通信だったため、ここでも戻り値はとらない
-                _client.SendCommand(message.Command + ":" + message.Content);
+                _client.SendCommand(message.Data);
             }
             catch (Exception ex)
             {
@@ -54,12 +54,12 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        public async Task<string> QueryMessageAsync(Message message)
+        async Task<string> IMessageSender.QueryMessageAsync(Message message)
         {
             try
             {
-                var response = await _client.SendQueryAsync(message.Command + ":" + message.Content);
-                return response;
+                var rawResponse = await _client.SendQueryAsync(message.Data);
+                return new CommandReceivedData(rawResponse).GetStringValue();
             }
             catch (Exception ex)
             {
@@ -68,92 +68,62 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        public void StartCommandComposite()
+        void IMessageSender.StartCommandComposite()
         {
             _isCompositeMode = true;
         }
 
-        public void EndCommandComposite()
+		void IMessageSender.EndCommandComposite()
         {
             _isCompositeMode = false;
             if (_compositeMessages.Count > 0)
             {
-                SendMessage(MessageFactory.Instance.CommandArray(_compositeMessages));
+                SendMessage(MessageFactory.CommandArray(_compositeMessages));
                 _compositeMessages.Clear();
             }
         }
 
-        #endregion
 
-        #region IMessageReceiver
+        // TODO: Start/Stopいずれも、内部的にでもいいからキャンセルをちゃんと扱いたい…
 
-        public void Start()
+        async void IMessageReceiver.Start()
         {
             //NOTE: この実装だと受信開始するまで送信もできない(ややヘンテコな感じがする)が、気にしないことにする
-            StartAsync();
-        }
-
-        private async void StartAsync()
-        {
             string channelName = CommandLineArgParser.TryLoadMmfFileName(out var givenName)
                 ? givenName
                 : DefaultChannelName;
-            await _client.StartAsync(channelName);
+            await _client.StartAsClientAsync(channelName);
         }
 
-        public void Stop()
+        async void IMessageReceiver.Stop()
         {
-            _client.Stop();
+            await _client.StopAsync();
         }
 
         /// <summary> コマンド受信時に、UIスレッド上で発火する。 </summary>
-        public event EventHandler<CommandReceivedEventArgs>? ReceivedCommand;
+        public event Action<CommandReceivedData>? ReceivedCommand;
 
         /// <summary> クエリ受信時に、UIスレッド上で発火する。 </summary>
         public event EventHandler<QueryReceivedEventArgs>? ReceivedQuery;
 
-        private void OnReceivedCommand(object? sender, ReceiveCommandEventArgs e)
+        private void OnReceivedCommand(ReadOnlyMemory<byte> data)
         {
-            string content = e.Command;
-            int i = FindColonCharIndex(content);
-            string command = (i == -1) ? content : content.Substring(0, i);
-            string args = (i == -1) ? "" : content.Substring(i + 1);
-
             App.Current.Dispatcher.BeginInvoke(new Action(
-                () => ReceivedCommand?.Invoke(this, new CommandReceivedEventArgs(command, args))
+                () => ReceivedCommand?.Invoke(new CommandReceivedData(data))
                 ));
         }
 
-        private void OnReceivedQuery(object? sender, ReceiveQueryEventArgs e)
+        private void OnReceivedQuery((int id, ReadOnlyMemory<byte> data) value)
         {
-            string content = e.Query.Query;
-            int i = FindColonCharIndex(content);
-            string command = (i == -1) ? content : content.Substring(0, i);
-            string args = (i == -1) ? "" : content.Substring(i + 1);
-
-            var ea = new QueryReceivedEventArgs(command, args);
+            var ea = new QueryReceivedEventArgs(value.data);
 
             App.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 ReceivedQuery?.Invoke(this, ea);
-                e.Query.Reply(string.IsNullOrWhiteSpace(ea.Result) ? "" : ea.Result);
+
+                var responseData = MessageSerializer.String((ushort)VmmServerCommands.Unknown, ea.Result);
+                _client.SendQueryResponse(value.id, responseData);
             }));
         }
-
-        //コマンド名と引数名の区切り文字のインデックスを探します。
-        private static int FindColonCharIndex(string s)
-        {
-            for (int i = 0; i < s.Length; i++)
-            {
-                if (s[i] == ':')
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        #endregion
-
     }
 }

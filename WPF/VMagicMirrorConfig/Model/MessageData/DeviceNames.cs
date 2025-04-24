@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace Baku.VMagicMirrorConfig
@@ -26,17 +25,15 @@ namespace Baku.VMagicMirrorConfig
             try
             {
                 var serializer = new JsonSerializer();
-                using (var reader = new StringReader(data))
-                using (var jsonReader = new JsonTextReader(reader))
-                {
-                    return serializer.Deserialize<DeviceNames>(jsonReader) ?? new DeviceNames(new string[0]);
-                }
+                using var reader = new StringReader(data);
+                using var jsonReader = new JsonTextReader(reader);
+                return serializer.Deserialize<DeviceNames>(jsonReader) ?? new DeviceNames([]);
             }
             catch (Exception ex)
             {
                 LogOutput.Instance.Write("Failed to get DeviceNames of " + usageName);
                 LogOutput.Instance.Write(ex);
-                return new DeviceNames(new string[0]);
+                return new DeviceNames([]);
             }
         }
     }

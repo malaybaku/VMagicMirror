@@ -65,11 +65,11 @@ namespace Baku.VMagicMirror
                 });
 
             receiver.AssignQueryHandler(
-                VmmQueries.CurrentMicrophoneDeviceName,
+                VmmCommands.CurrentMicrophoneDeviceName,
                 query => query.Result = _lipSyncContext.DeviceName
             );
             receiver.AssignQueryHandler(
-                VmmQueries.MicrophoneDeviceNames,
+                VmmCommands.MicrophoneDeviceNames,
                 query => query.Result = DeviceNames.CreateDeviceNamesJson(
                     _lipSyncContext.GetAvailableDeviceNames()
                     )

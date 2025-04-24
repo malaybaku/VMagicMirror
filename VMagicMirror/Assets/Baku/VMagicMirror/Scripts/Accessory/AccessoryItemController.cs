@@ -66,11 +66,11 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.SetAccessoryLayout,
-                c => SetAllAccessoryLayout(c.Content)
+                c => SetAllAccessoryLayout(c.GetStringValue())
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.SetSingleAccessoryLayout,
-                c => SetSingleAccessoryLayout(c.Content)
+                c => SetSingleAccessoryLayout(c.GetStringValue())
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.RequestResetAllAccessoryLayout,
@@ -78,7 +78,7 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.RequestResetAccessoryLayout,
-                c => ResetAccessoryLayout(c.Content)
+                c => ResetAccessoryLayout(c.GetStringValue())
                 );
 
             faceSwitchUpdater.CurrentValue
@@ -294,7 +294,7 @@ namespace Baku.VMagicMirror
             };
 
             var msg = JsonUtility.ToJson(layouts);
-            _sender.SendCommand(MessageFactory.Instance.UpdateAccessoryLayouts(msg));
+            _sender.SendCommand(MessageFactory.UpdateAccessoryLayouts(msg));
         }
     }
 }

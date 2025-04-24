@@ -22,6 +22,15 @@
     <Page Remove="Localizations\Chinese_Simplified.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile 
+      Include="..\..\VMagicMirror\Assets\Baku\VMagicMirror\Scripts\Interprocess\MemoryMappedFile\*.cs"
+      Link="Shared/MemoryMappedFile/%(Filename)%(Extension)" />
+    <Compile
+      Include="..\..\VMagicMirror\Assets\Baku\VMagicMirror\Scripts\Interprocess\IpcMessage\*.cs"
+      Link="Shared/IpcMessage/%(Filename)%(Extension)" />
+
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Dragablz" Version="0.0.3.223" />
     <PackageReference Include="Emoji.Wpf" Version="0.3.3" />
     <PackageReference Include="MahApps.Metro" Version="2.4.9" />

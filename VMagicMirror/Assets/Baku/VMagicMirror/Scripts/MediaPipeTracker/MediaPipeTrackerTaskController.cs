@@ -113,7 +113,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             });
             _receiver.AssignCommandHandler(
                 VmmCommands.SetCalibrateFaceDataHighPower, 
-                message => _settingsRepository.ApplyReceivedCalibrationData(message.Content)
+                message => _settingsRepository.ApplyReceivedCalibrationData(message.GetStringValue())
                 );
 
             _horizontalFlipController.DisableFaceHorizontalFlip

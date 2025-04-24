@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using System.Threading.Tasks;
 using Baku.VMagicMirror.Mmf;
+using Cysharp.Threading.Tasks;
 using Zenject;
 using Debug = UnityEngine.Debug;
 
@@ -14,16 +15,15 @@ namespace Baku.VMagicMirror
 {
     public class WpfStartAndQuit : MonoBehaviour
     {
-        private const string ConfigProcessName = "VMagicMirrorConfig";
-        private static readonly string ConfigExePath = "ConfigApp\\VMagicMirrorConfig.exe";
+        private const string ConfigExePath = "ConfigApp\\VMagicMirrorConfig.exe";
 
         private static string GetWpfPath()
             => Path.Combine(
                 Path.GetDirectoryName(Application.dataPath),
                 ConfigExePath
                 );
+        private IMessageSender _sender;
 
-        private IMessageSender _sender = null;
         private List<IReleaseBeforeQuit> _releaseItems = new();
 
         private readonly Atomic<bool> _releaseRunning = new();
@@ -38,7 +38,7 @@ namespace Baku.VMagicMirror
         
         private void Start()
         {
-            StartCoroutine(ActivateWpf());
+            ActivateWpfAsync(this.GetCancellationTokenOnDestroy()).Forget();
             //NOTE: WPF側はProcess.CloseMainWindowを使ってUnityを閉じようとする。
             //かつ、Unity側で単体で閉じる方法も今のところはメインウィンドウ閉じのみ。
             Application.wantsToQuit += OnApplicationWantsToQuit;
@@ -57,13 +57,14 @@ namespace Baku.VMagicMirror
             }
             _releaseRunning.Value = true;
 
-            //前処理: この時点でMMFとかは既に閉じておく
+            //前処理
             foreach (var item in _releaseItems)
             {
                 item.ReleaseBeforeCloseConfig();
             }
-            
-            _sender?.SendCommand(MessageFactory.Instance.CloseConfigWindow());
+
+            // NOTE: UnityではこのコマンドだけがLast扱い
+            _sender.SendCommand(MessageFactory.CloseConfigWindow(), true);
 
             //特にリリースするものがないケース: 本来ありえないんだけど、理屈上はほしいので書いておく
             if (_releaseItems.Count == 0)
@@ -73,12 +74,29 @@ namespace Baku.VMagicMirror
                 return true;
             }
             
-            ReleaseItemsAsync();
+            ReleaseItemsAsync().Forget();
             return _releaseCompleted.Value;
         }
 
-        private async void ReleaseItemsAsync()
+        private async UniTaskVoid ReleaseItemsAsync()
         {
+            // - WPFを終了させるコマンドの送信完了を待つ
+            // - このとき、WPFが想定外の事情で先に完全終了してると進まないことがあるので、そこはTimeoutで捌く
+            var cancellationToken = this.GetCancellationTokenOnDestroy();
+            try
+            {
+                await UniTask
+                    .WaitUntil(() => _sender.LastMessageSent, cancellationToken: cancellationToken)
+                    .Timeout(TimeSpan.FromSeconds(1));
+            }
+            catch (TimeoutException)
+            {
+            }
+            catch (OperationCanceledException)
+            {
+                // コッチはEditorでのみ通過するはず
+            }
+            
             await Task.WhenAll(
                 _releaseItems.Select(item => item.ReleaseResources())
             );
@@ -89,11 +107,10 @@ namespace Baku.VMagicMirror
             Application.Quit();
         }
 
-        private IEnumerator ActivateWpf()
+        private async UniTaskVoid ActivateWpfAsync(CancellationToken token)
         {
             //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
-            yield return null;
-            yield return null;
+            await UniTask.DelayFrame(2, cancellationToken: token);
 
             if (Application.isEditor)
             {
@@ -106,13 +123,13 @@ namespace Baku.VMagicMirror
                     // ログは出すけど想定内エラーということにする
                     Debug.LogException(ex);
                 }
-                yield break;
+                return;
             }
             
             var path = GetWpfPath();
             if (!File.Exists(path))
             {
-                yield break;
+                return;
             }
             
             StartProcess(path);

@@ -12,14 +12,14 @@ namespace Baku.VMagicMirror
         /// </summary>
         /// <param name="command"></param>
         /// <param name="handler"></param>
-        void AssignCommandHandler(string command, Action<ReceivedCommand> handler);
+        void AssignCommandHandler(VmmCommands command, Action<ReceivedCommand> handler);
 
         /// <summary>
         /// クエリ名をハンドラを指定してクエリを受信できるようにします。指定したハンドラはメインスレッドで呼ばれます。
         /// </summary>
         /// <param name="query"></param>
         /// <param name="handler"></param>
-        void AssignQueryHandler(string query, Action<ReceivedQuery> handler);
+        void AssignQueryHandler(VmmCommands query, Action<ReceivedQuery> handler);
 
         //NOTE: 現状Unregister的なものは不要。繋ぎっぱなしでよいため。
     }
@@ -38,14 +38,14 @@ namespace Baku.VMagicMirror
     // Assign~ が引き続き使われる想定ケースはJSONが飛んできてパースするやつとか
     public static class MessageReceiverExtension
     {
-        public static void BindAction(this IMessageReceiver receiver, string command, Action action)
+        public static void BindAction(this IMessageReceiver receiver, VmmCommands command, Action action)
         {
             receiver.AssignCommandHandler(command, _ => action());
         }
         
         public static void BindBoolProperty(
             this IMessageReceiver receiver,
-            string command,
+            VmmCommands command,
             IReactiveProperty<bool> target)
         {
             receiver.AssignCommandHandler(command, c => target.Value = c.ToBoolean());
@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror
 
         public static void BindIntProperty(
             this IMessageReceiver receiver,
-            string command,
+            VmmCommands command,
             IReactiveProperty<int> target)
         {
             receiver.AssignCommandHandler(command, c => target.Value = c.ToInt());
@@ -61,7 +61,7 @@ namespace Baku.VMagicMirror
         
         public static void BindEnumProperty<T>(
             this IMessageReceiver receiver,
-            string command,
+            VmmCommands command,
             IReactiveProperty<T> target) where T : Enum
         {
             receiver.AssignCommandHandler(command, 
@@ -71,7 +71,7 @@ namespace Baku.VMagicMirror
         
         public static void BindPercentageProperty(
             this IMessageReceiver receiver,
-            string command,
+            VmmCommands command,
             IReactiveProperty<float> target)
         {
             receiver.AssignCommandHandler(command, c => target.Value = c.ParseAsPercentage());
@@ -79,7 +79,7 @@ namespace Baku.VMagicMirror
 
         public static void BindCentimeterProperty(
             this IMessageReceiver receiver,
-            string command,
+            VmmCommands command,
             IReactiveProperty<float> target)
         {
             receiver.AssignCommandHandler(command, c => target.Value = c.ParseAsCentimeter());
@@ -87,7 +87,7 @@ namespace Baku.VMagicMirror
 
         public static void BindColorProperty(
             this IMessageReceiver receiver,
-            string command,
+            VmmCommands command,
             IReactiveProperty<Color> target)
         {
             receiver.AssignCommandHandler(command, c =>
@@ -99,11 +99,11 @@ namespace Baku.VMagicMirror
 
         public static void BindStringProperty(
             this IMessageReceiver receiver,
-            string command,
+            VmmCommands command,
             IReactiveProperty<string> target
         )
         {
-            receiver.AssignCommandHandler(command, c => target.Value = c.Content);
+            receiver.AssignCommandHandler(command, c => target.Value = c.GetStringValue());
         }
     }
 }

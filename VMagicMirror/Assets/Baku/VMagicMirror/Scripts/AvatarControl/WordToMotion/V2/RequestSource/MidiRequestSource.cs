@@ -38,7 +38,7 @@ namespace Baku.VMagicMirror.WordToMotion
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.LoadMidiNoteToMotionMap,
-                c => LoadMidiNoteToMotionMap(c.Content)
+                c => LoadMidiNoteToMotionMap(c.GetStringValue())
                 );
             _receiver.AssignCommandHandler(
                 VmmCommands.RequireMidiNoteOnMessage,
@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror.WordToMotion
 
                     if (_redirectNoteOnMessageToIpc)
                     {
-                        _sender.SendCommand(MessageFactory.Instance.MidiNoteOn(noteNumber));
+                        _sender.SendCommand(MessageFactory.MidiNoteOn(noteNumber));
                     }
 
                     if (_noteNumberToMotionMap.ContainsKey(noteNumber))

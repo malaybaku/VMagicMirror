@@ -139,7 +139,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             {
                 iFacialMocap = iFacialMocapReceiver.CalibrationData,
             };
-            _sender.SendCommand(MessageFactory.Instance.ExTrackerCalibrateComplete(
+            _sender.SendCommand(MessageFactory.ExTrackerCalibrateComplete(
                 JsonUtility.ToJson(data)
                 ));   
 

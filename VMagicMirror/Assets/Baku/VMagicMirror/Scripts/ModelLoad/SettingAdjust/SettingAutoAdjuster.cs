@@ -102,7 +102,7 @@ namespace Baku.VMagicMirror
                     ));
                 
                 //3. 決定したパラメータをコンフィグ側に送る
-                _sender.SendCommand(MessageFactory.Instance.AutoAdjustResults(parameters));
+                _sender.SendCommand(MessageFactory.AutoAdjustResults(parameters));
             }
             catch(Exception ex)
             {

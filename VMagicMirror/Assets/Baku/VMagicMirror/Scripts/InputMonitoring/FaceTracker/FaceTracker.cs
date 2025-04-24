@@ -177,7 +177,7 @@ namespace Baku.VMagicMirror
                 {
                     _calibrationRequested = false;
                     _sender.SendCommand(
-                        MessageFactory.Instance.SetCalibrationFaceData(JsonUtility.ToJson(CalibrationData))
+                        MessageFactory.SetCalibrationFaceData(JsonUtility.ToJson(CalibrationData))
                         );
                 }
 

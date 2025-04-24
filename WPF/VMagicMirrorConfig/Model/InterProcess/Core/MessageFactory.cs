@@ -7,11 +7,6 @@ namespace Baku.VMagicMirrorConfig
     // 引数をこのクラスで一回絞っておくメリットを取る場合は残すのもアリ
     static class MessageFactory
     {
-        //private static MessageFactory? _instance;
-        //public static MessageFactory Instance
-        //    => _instance ??= new MessageFactory();
-        //private MessageFactory() { }
-
         private static Message None(VmmCommands command) => Message.None(command);
 
         private static Message StringContent(VmmCommands command, string content) => Message.String(command, content);

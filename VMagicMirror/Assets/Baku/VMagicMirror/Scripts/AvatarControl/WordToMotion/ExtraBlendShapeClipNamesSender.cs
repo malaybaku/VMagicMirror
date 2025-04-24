@@ -20,7 +20,7 @@ namespace Baku.VMagicMirror
                         .Select(k => k.Name)              
                     );
                 sender.SendCommand(
-                    MessageFactory.Instance.ExtraBlendShapeClipNames(names)
+                    MessageFactory.ExtraBlendShapeClipNames(names)
                 );
             };
         }

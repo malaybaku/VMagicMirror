@@ -96,7 +96,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             void SendResult(SerializedHandTrackingResult result)
             {
-                _sender.SendCommand(MessageFactory.Instance.SetHandTrackingResult(
+                _sender.SendCommand(MessageFactory.SetHandTrackingResult(
                     JsonUtility.ToJson(result)
                 ));
             }
@@ -113,7 +113,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _blinkResultToSend.Value = null;
             if (data != null)
             {
-                _sender.SendCommand(MessageFactory.Instance.EyeBlendShapeValues(
+                _sender.SendCommand(MessageFactory.EyeBlendShapeValues(
                     JsonUtility.ToJson(data)
                 ));
             }
@@ -191,7 +191,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             };
             _blinkResultToSend.Value = serialized;
 
-            _sender.SendCommand(MessageFactory.Instance.EyeBlendShapeValues(
+            _sender.SendCommand(MessageFactory.EyeBlendShapeValues(
                 JsonUtility.ToJson(serialized)
             ));
         }

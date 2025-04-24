@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror.WordToMotion
 
                     if (_redirectNoteOnMessageToIpc)
                     {
-                        _sender.SendCommand(MessageFactory.Instance.MidiNoteOn(noteNumber));
+                        _sender.SendCommand(MessageFactory.MidiNoteOn(noteNumber));
                     }
 
                     if (_noteNumberToMotionMap.ContainsKey(noteNumber))

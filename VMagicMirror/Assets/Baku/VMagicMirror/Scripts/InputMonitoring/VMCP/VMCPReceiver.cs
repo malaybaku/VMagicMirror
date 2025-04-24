@@ -392,7 +392,7 @@ namespace Baku.VMagicMirror.VMCP
         private void NotifyConnectStatus()
         {
             var json = new VMCPReceiveStatus(_connected).ToJson();
-            _messageSender.SendCommand(MessageFactory.Instance.NotifyVmcpReceiveStatus(json));
+            _messageSender.SendCommand(MessageFactory.NotifyVmcpReceiveStatus(json));
         }
     }
 }

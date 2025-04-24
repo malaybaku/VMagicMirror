@@ -294,7 +294,7 @@ namespace Baku.VMagicMirror
             };
 
             var msg = JsonUtility.ToJson(layouts);
-            _sender.SendCommand(MessageFactory.Instance.UpdateAccessoryLayouts(msg));
+            _sender.SendCommand(MessageFactory.UpdateAccessoryLayouts(msg));
         }
     }
 }

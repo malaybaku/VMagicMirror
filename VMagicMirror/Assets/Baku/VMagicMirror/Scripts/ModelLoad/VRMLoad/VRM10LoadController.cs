@@ -177,7 +177,7 @@ namespace Baku.VMagicMirror
                 }
                 
                 _sender.SendCommand(
-                    MessageFactory.Instance.ModelNameConfirmedOnLoad("VRM File: " + instance.Vrm.Meta.Name)
+                    MessageFactory.ModelNameConfirmedOnLoad("VRM File: " + instance.Vrm.Meta.Name)
                     );
                 SetModel(instance);
                 NotifyLoadModelFromFileEnded();

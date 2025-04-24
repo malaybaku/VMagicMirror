@@ -17,6 +17,7 @@ namespace Baku.VMagicMirror.Mmf
             private MemoryMappedFile? _file;
             private MemoryMappedViewAccessor? _accessor;
             private readonly object _senderLock = new();
+            private readonly byte[] _writeBuffer = new byte[MemoryMappedFileCapacity];
             
             // 送りたいMessageの一覧。コマンド、クエリ、クエリのレスポンスを区別せず一列に並べる
             private readonly ConcurrentQueue<Message> _messages = new();
@@ -176,11 +177,10 @@ namespace Baku.VMagicMirror.Mmf
                         : data.Length - offset;
                     _accessor.Write(12, writeLength);
 
-                    var span = data.Span[offset..];
-                    for (var i = 0; i < writeLength; i++)
-                    {
-                        _accessor.Write(16 + i, span[i]);
-                    }
+                    // _accessor.WriteArrayはSpanを直接受けないため、byte[]に書いてから書き込む
+                    data.Span[offset..(offset + writeLength)].CopyTo(_writeBuffer);
+                    _accessor.WriteArray(16, _writeBuffer, 0, writeLength);
+
                     _accessor.Write(0, (byte)MessageStateReadReady);
                     return writeLength;
                 }

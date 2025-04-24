@@ -35,10 +35,11 @@ namespace Baku.VMagicMirrorConfig
             {
                 //同じコマンド名の古いメッセージは削除し、最新値だけ残す
                 //設定更新のコマンドはsetterメソッド的なのでこういう事をしても大丈夫
-                if (_compositeMessages.FirstOrDefault(m => m.Command == message.Command) is Message msg)
+                if (_compositeMessages.FindIndex(m => m.Command == message.Command) is int x && x >= 0)
                 {
-                    _compositeMessages.Remove(msg);
+                    _compositeMessages.RemoveAt(x);
                 }
+
                 _compositeMessages.Add(message);
                 return;
             }

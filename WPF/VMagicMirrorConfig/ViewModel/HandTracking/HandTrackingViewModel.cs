@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Baku.VMagicMirror;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 
@@ -54,8 +55,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             switch (e.Command)
             {
-                case ReceiveMessageNames.SetHandTrackingResult:
-                    HandTrackingResult.SetResult(HandTrackingResultBuilder.FromJson(e.Args));
+                case VmmServerCommands.SetHandTrackingResult:
+                    HandTrackingResult.SetResult(HandTrackingResultBuilder.FromJson(e.GetStringValue()));
                     break;
                 default:
                     break;

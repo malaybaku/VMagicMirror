@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Baku.VMagicMirror;
+using System;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
@@ -35,21 +36,21 @@ namespace Baku.VMagicMirrorConfig
         {
             switch (e.Command)
             {
-                case ReceiveMessageNames.SetCalibrationFaceData:
+                case VmmServerCommands.SetCalibrationFaceData:
                     // NOTE: Unity側がすでにこの値を把握しているので、投げ返す必要がない。HighPowerのほうも同様
-                    _motionSetting.CalibrateFaceData.SilentSet(e.Args);
+                    _motionSetting.CalibrateFaceData.SilentSet(e.GetStringValue());
                     break;
-                case ReceiveMessageNames.SetCalibrationFaceDataHighPower:
-                    _motionSetting.CalibrateFaceDataHighPower.SilentSet(e.Args);
+                case VmmServerCommands.SetCalibrationFaceDataHighPower:
+                    _motionSetting.CalibrateFaceDataHighPower.SilentSet(e.GetStringValue());
                     break;
-                case ReceiveMessageNames.AutoAdjustResults:
-                    _motionSetting.SetAutoAdjustResults(e.Args);
+                case VmmServerCommands.AutoAdjustResults:
+                    _motionSetting.SetAutoAdjustResults(e.GetStringValue());
                     break;
-                case ReceiveMessageNames.ExtraBlendShapeClipNames:
+                case VmmServerCommands.ExtraBlendShapeClipNames:
                     try
                     {
                         //いちおう信頼はするけどIPCだし…みたいな書き方。FaceSwitchと同じ
-                        var names = e.Args
+                        var names = e.GetStringValue()
                             .Split(',')
                             .Where(w => !string.IsNullOrEmpty(w))
                             .ToArray();

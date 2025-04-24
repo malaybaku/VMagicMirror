@@ -1,4 +1,6 @@
-﻿using Baku.VMagicMirror.Mmf;
+﻿using Baku.VMagicMirror;
+using Baku.VMagicMirror.IpcMessage;
+using Baku.VMagicMirror.Mmf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,30 +113,21 @@ namespace Baku.VMagicMirrorConfig
 
         private void OnReceivedCommand(ReadOnlyMemory<byte> data)
         {
-            var content = Encoding.UTF8.GetString(data.Span);
-            var i = FindColonCharIndex(content);
-            var command = (i == -1) ? content : content[..i];
-            var args = (i == -1) ? "" : content[(i + 1)..];
-
             App.Current.Dispatcher.BeginInvoke(new Action(
-                () => ReceivedCommand?.Invoke(new CommandReceivedData(command, args))
+                () => ReceivedCommand?.Invoke(new CommandReceivedData(data))
                 ));
         }
 
         private void OnReceivedQuery((int id, ReadOnlyMemory<byte> data) value)
         {
-            var content = Encoding.UTF8.GetString(value.data.Span);
-            var i = FindColonCharIndex(content);
-            var command = (i == -1) ? content : content[..i];
-            var args = (i == -1) ? "" : content[(i + 1)..];
-
-            var ea = new QueryReceivedEventArgs(command, args);
+            var ea = new QueryReceivedEventArgs(value.data);
 
             App.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 ReceivedQuery?.Invoke(this, ea);
-                var resultBody = Encoding.UTF8.GetBytes(ea.Result ?? "");
-                _client.SendQueryResponse(value.id, resultBody);
+
+                var responseData = MessageSerializer.String((ushort)VmmCommands.Unknown, ea.Result ?? "");
+                _client.SendQueryResponse(value.id, responseData);
             }));
         }
 

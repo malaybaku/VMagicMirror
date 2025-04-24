@@ -67,12 +67,12 @@ namespace Baku.VMagicMirrorConfig
 
         private void OnReceiveCommand(CommandReceivedData e)
         {
-            if (e.Command != ReceiveMessageNames.NotifyVmcpReceiveStatus)
+            if (e.Command is not VMagicMirror.VmmServerCommands.NotifyVmcpReceiveStatus)
             {
                 return;
             }
 
-            var changed = _receiveStatus.ApplySerializedStatus(e.Args);
+            var changed = _receiveStatus.ApplySerializedStatus(e.GetStringValue());
             if (changed)
             {
                 ConnectedStatusChanged?.Invoke(this, EventArgs.Empty);

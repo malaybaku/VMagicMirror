@@ -18,12 +18,12 @@ namespace Baku.VMagicMirrorConfig
 
         private void OnReceive(CommandReceivedData e)
         {
-            if (e.Command != ReceiveMessageNames.MidiNoteOn)
+            if (e.Command is not VMagicMirror.VmmServerCommands.MidiNoteOn)
             {
                 return;
             }
 
-            if (int.TryParse(e.Args, out var noteNumber))
+            if (int.TryParse(e.GetStringValue(), out var noteNumber))
             {
                 MidiNoteOn?.Invoke(this, new MidiNoteEventArgs(noteNumber));
             }

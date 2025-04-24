@@ -129,11 +129,11 @@ namespace Baku.VMagicMirrorConfig
 
         private void OnReceivedCommand(CommandReceivedData e)
         {
-            if (e.Command == ReceiveMessageNames.UpdateAccessoryLayouts)
+            if (e.Command is VMagicMirror.VmmServerCommands.UpdateAccessoryLayouts)
             {
                 try
                 {
-                    var deserialized = DeserializeRaw(e.Args);
+                    var deserialized = DeserializeRaw(e.GetStringValue());
                     foreach(var item in deserialized.Items)
                     {
                         UpdateExistingLayout(item);

@@ -219,10 +219,10 @@ namespace Baku.VMagicMirrorConfig
 
         private void OnReceiveCommand(CommandReceivedData e)
         {
-            if (e.Command == ReceiveMessageNames.UpdateDeviceLayout)
+            if (e.Command is VMagicMirror.VmmServerCommands.UpdateDeviceLayout)
             {
                 //NOTE: Unity側から来た値なため、送り返さないでよいことに注意
-                DeviceLayout.SilentSet(e.Args);
+                DeviceLayout.SilentSet(e.GetStringValue());
             }
         }
     }

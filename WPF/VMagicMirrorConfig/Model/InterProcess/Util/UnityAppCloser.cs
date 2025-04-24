@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Baku.VMagicMirror;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
@@ -11,8 +12,8 @@ namespace Baku.VMagicMirrorConfig
         {
             receiver.ReceivedCommand += (e) =>
             {
-                if (e.Command == ReceiveMessageNames.SetUnityProcessId &&
-                    int.TryParse(e.Args, out int processId)
+                if (e.Command is VmmServerCommands.SetUnityProcessId &&
+                    int.TryParse(e.GetStringValue(), out int processId)
                     )
                 {
                     _unityProcessId = processId;

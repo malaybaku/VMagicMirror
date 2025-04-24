@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Baku.VMagicMirror;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace Baku.VMagicMirrorConfig
         {
             switch (e.Command)
             {
-                case ReceiveMessageNames.VRoidModelLoadCompleted:
+                case VmmServerCommands.VRoidModelLoadCompleted:
                     //WPF側のダイアログによるUIガードを終了: _isVRoidHubUiActiveフラグは別のとこで折るのでここでは無視でOK
                     if (_isVRoidHubUiActive)
                     {
@@ -49,19 +50,19 @@ namespace Baku.VMagicMirrorConfig
                     }
 
                     //ファイルパスではなくモデルID側を最新情報として覚えておく
-                    _setting.OnVRoidModelLoaded(e.Args);
+                    _setting.OnVRoidModelLoaded(e.GetStringValue());
 
                     break;
-                case ReceiveMessageNames.VRoidModelLoadCanceled:
+                case VmmServerCommands.VRoidModelLoadCanceled:
                     //WPF側のダイアログによるUIガードを終了
                     if (_isVRoidHubUiActive)
                     {
                         MessageBoxWrapper.Instance.SetDialogResult(false);
                     }
                     break;
-                case ReceiveMessageNames.ModelNameConfirmedOnLoad:
+                case VmmServerCommands.ModelNameConfirmedOnLoad:
                     //ともかくモデルがロードされているため、実態に合わせておく
-                    _setting.LoadedModelName = e.Args;
+                    _setting.LoadedModelName = e.GetStringValue();
                     break;
             }
         }

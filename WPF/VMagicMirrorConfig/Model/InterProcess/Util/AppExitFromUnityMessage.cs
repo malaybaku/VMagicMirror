@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Baku.VMagicMirror;
+using System;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -15,7 +16,7 @@ namespace Baku.VMagicMirrorConfig
         {
             switch (e.Command)
             {
-                case ReceiveMessageNames.CloseConfigWindow:
+                case VmmServerCommands.CloseConfigWindow:
                     Application.Current.Dispatcher?.BeginInvoke(
                         new Action(() => Application.Current.MainWindow.Close()),
                         DispatcherPriority.ApplicationIdle

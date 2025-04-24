@@ -51,9 +51,9 @@
 
         private void OnReceiveCommand(CommandReceivedData e)
         {
-            if (e.Command == ReceiveMessageNames.MicrophoneVolumeLevel && 
+            if (e.Command is VMagicMirror.VmmServerCommands.MicrophoneVolumeLevel && 
                 ShowMicrophoneVolume.Value && 
-                int.TryParse(e.Args, out int i))
+                int.TryParse(e.GetStringValue(), out int i))
             {
                 MicrophoneVolumeValue.Value = i;
             }

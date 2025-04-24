@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Baku.VMagicMirror;
+using Newtonsoft.Json;
 using System;
 
 namespace Baku.VMagicMirrorConfig
@@ -167,12 +168,10 @@ namespace Baku.VMagicMirrorConfig
 
         private void OnReceiveCommand(CommandReceivedData e)
         {
-            if (e.Command != ReceiveMessageNames.UpdateCustomHandDownPose)
+            if (e.Command is VmmServerCommands.UpdateCustomHandDownPose)
             {
-                return;
+                CustomHandDownPose.SilentSet(e.GetStringValue());
             }
-
-            CustomHandDownPose.SilentSet(e.Args);
         }
 
         public RProperty<int> KeyboardAndMouseMotionMode { get; }

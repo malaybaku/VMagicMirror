@@ -54,14 +54,13 @@ namespace Baku.VMagicMirrorConfig
             RawData = data;
             Command = (VmmServerCommands)MessageDeserializer.GetCommandId(data);
             ValueType = MessageDeserializer.GetValueType(data);
-            Result = "";
         }
 
         public ReadOnlyMemory<byte> RawData { get; }
         public VmmServerCommands Command { get; }
         public MessageValueTypes ValueType { get; }
 
-        // NOTE: そもそもQueryが未使用なのでValueのデシリアライズを実装していない。必要になったら追加してよい
+        // NOTE: Unity->WPFのQueryは未使用なのでValueTypeに応じたデシリアライズ処理を実装していない。必要になったら追加してよい
 
         // NOTE: Queryのレスポンスはstringじゃなくても良いのだが、
         // 現行実装ではstringでそれっぽい結果になるものしか扱ってなさそうなので、stringのみをサポートしている

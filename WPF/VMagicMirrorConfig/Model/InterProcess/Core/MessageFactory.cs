@@ -11,12 +11,13 @@ namespace Baku.VMagicMirrorConfig
 
         private static Message StringContent(VmmCommands command, string content) => Message.String(command, content);
 
-        private static Message BoolContent(VmmCommands command, bool content) 
-            => Message.Bool(command, content);
+        private static Message BoolContent(VmmCommands command, bool content) => Message.Bool(command, content);
 
-        private static Message IntContent(VmmCommands command, int content) => Message.Int(VmmCommands.Unknown, content);
+        private static Message IntContent(VmmCommands command, int content) => Message.Int(command, content);
 
         private static Message IntArrayContent(VmmCommands command, int[] content) => Message.IntArray(command, content);
+
+
 
         public static Message Language(string langName) => StringContent(VmmCommands.Language, langName);
 

@@ -43,8 +43,8 @@ namespace Baku.VMagicMirror.InterProcess
 
         public async Task<string> SendQueryAsync(Message message)
         {
-            var response = await _server.SendQueryAsync(message.Data);
-            return Encoding.UTF8.GetString(response.Span);
+            var data = await _server.SendQueryAsync(message.Data);
+            return new ReceivedCommand(data).GetStringValue();
         }
         
         public void AssignCommandHandler(VmmCommands command, Action<ReceivedCommand> handler)
@@ -75,7 +75,7 @@ namespace Baku.VMagicMirror.InterProcess
         private async void OnReceiveQuery((int id, ReadOnlyMemory<byte> data) value)
         {
             var res = await _dispatcher.ReceiveQuery(new ReceivedQuery(value.data));
-            var body = Encoding.UTF8.GetBytes(res);
+            var body = MessageSerializer.String((ushort)VmmCommands.Unknown, res);
             _server.SendQueryResponse(value.id, body);
         }
     }

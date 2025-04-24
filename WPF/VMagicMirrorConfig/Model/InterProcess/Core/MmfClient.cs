@@ -59,7 +59,7 @@ namespace Baku.VMagicMirrorConfig
             try
             {
                 var rawResponse = await _client.SendQueryAsync(message.Data);
-                return Encoding.UTF8.GetString(rawResponse.Span);
+                return new CommandReceivedData(rawResponse).GetStringValue();
             }
             catch (Exception ex)
             {

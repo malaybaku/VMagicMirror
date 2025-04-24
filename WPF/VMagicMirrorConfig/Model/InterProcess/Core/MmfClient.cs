@@ -121,7 +121,7 @@ namespace Baku.VMagicMirrorConfig
             {
                 ReceivedQuery?.Invoke(this, ea);
 
-                var responseData = MessageSerializer.String((ushort)VmmCommands.Unknown, ea.Result ?? "");
+                var responseData = MessageSerializer.String((ushort)VmmServerCommands.Unknown, ea.Result ?? "");
                 _client.SendQueryResponse(value.id, responseData);
             }));
         }

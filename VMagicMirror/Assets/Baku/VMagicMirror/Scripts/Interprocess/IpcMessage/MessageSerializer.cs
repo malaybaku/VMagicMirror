@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 // ペイロードになってるデータのフォーマット
 // 0-1: コマンドID, ただしクエリへのレスポンスの場合は0でよい
@@ -39,7 +40,7 @@ namespace Baku.VMagicMirror.IpcMessage
         {
             var result = new byte[8];
             SetupHeader(result, commandId, (ushort) MessageValueTypes.Int);
-            BitConverter.TryWriteBytes(result[4..], value);
+            BitConverter.TryWriteBytes(result.AsSpan()[4..], value);
             return result;
         }
         
@@ -47,7 +48,7 @@ namespace Baku.VMagicMirror.IpcMessage
         {
             var result = new byte[8];
             SetupHeader(result, commandId, (ushort) MessageValueTypes.Float);
-            BitConverter.TryWriteBytes(result[4..], value);
+            BitConverter.TryWriteBytes(result.AsSpan()[4..], value);
             return result;
         }
         
@@ -68,24 +69,24 @@ namespace Baku.VMagicMirror.IpcMessage
             return result;
         }
         
-        public static byte[] IntArray(ushort commandId, int[] value)
+        public static byte[] IntArray(ushort commandId, IReadOnlyList<int> value)
         {
-            var result = new byte[4 + value.Length * 4];
+            var result = new byte[4 + value.Count * 4];
             SetupHeader(result, commandId, (ushort) MessageValueTypes.IntArray);
-            for (var i = 0; i < value.Length; i++)
+            for (var i = 0; i < value.Count; i++)
             {
-                BitConverter.TryWriteBytes(result[(i * 4 + 4)..], value[i]);
+                BitConverter.TryWriteBytes(result.AsSpan()[(i * 4 + 4)..], value[i]);
             }
             return result;
         }
         
-        public static byte[] FloatArray(ushort commandId, float[] value)
+        public static byte[] FloatArray(ushort commandId, IReadOnlyList<float> value)
         {
-            var result = new byte[4 + value.Length * 4];
+            var result = new byte[4 + value.Count * 4];
             SetupHeader(result, commandId, (ushort) MessageValueTypes.FloatArray);
-            for (var i = 0; i < value.Length; i++)
+            for (var i = 0; i < value.Count; i++)
             {
-                BitConverter.TryWriteBytes(result[(i * 4 + 4)..], value[i]);
+                BitConverter.TryWriteBytes(result.AsSpan()[(i * 4 + 4)..], value[i]);
             }
             return result;
         }

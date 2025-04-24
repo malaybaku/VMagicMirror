@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Baku.VMagicMirror.IpcMessage;
 using Baku.VMagicMirror.Mmf;
 using Zenject;
-using Encoding = System.Text.Encoding;
 
 namespace Baku.VMagicMirror.InterProcess
 {

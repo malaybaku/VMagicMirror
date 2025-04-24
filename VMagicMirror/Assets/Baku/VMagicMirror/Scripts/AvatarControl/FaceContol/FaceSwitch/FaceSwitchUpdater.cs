@@ -80,7 +80,7 @@ namespace Baku.VMagicMirror
             
             _messageReceiver.AssignCommandHandler(
                 VmmCommands.ExTrackerSetFaceSwitchSetting,
-                m => SetFaceSwitchSetting(m.StringValue)
+                m => SetFaceSwitchSetting(m.GetStringValue())
                 );
         }
 

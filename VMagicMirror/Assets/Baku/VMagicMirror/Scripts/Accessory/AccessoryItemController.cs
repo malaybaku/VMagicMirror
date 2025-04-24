@@ -66,11 +66,11 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.SetAccessoryLayout,
-                c => SetAllAccessoryLayout(c.StringValue)
+                c => SetAllAccessoryLayout(c.GetStringValue())
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.SetSingleAccessoryLayout,
-                c => SetSingleAccessoryLayout(c.StringValue)
+                c => SetSingleAccessoryLayout(c.GetStringValue())
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.RequestResetAllAccessoryLayout,
@@ -78,7 +78,7 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.RequestResetAccessoryLayout,
-                c => ResetAccessoryLayout(c.StringValue)
+                c => ResetAccessoryLayout(c.GetStringValue())
                 );
 
             faceSwitchUpdater.CurrentValue

@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror
         {
             receiver.AssignCommandHandler(
                 VmmCommands.SetBackgroundImagePath,
-                command => BackgroundImagePath = command.StringValue);
+                command => BackgroundImagePath = command.GetStringValue());
 
             receiver.AssignCommandHandler(
                 VmmCommands.WindowFrameVisibility,

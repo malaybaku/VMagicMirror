@@ -31,7 +31,7 @@ namespace Baku.VMagicMirror
         {
             receiver.AssignCommandHandler(
                 VmmCommands.MouseButton,
-                c => _mouseButton.OnNext(c.StringValue)
+                c => _mouseButton.OnNext(c.GetStringValue())
                 );
         }
 

@@ -50,7 +50,7 @@ namespace Baku.VMagicMirror.GameInput
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.SetGamepadGameInputKeyAssign,
-                command => ApplyGamepadKeyAssign(command.StringValue)
+                command => ApplyGamepadKeyAssign(command.GetStringValue())
                 );
         }
 

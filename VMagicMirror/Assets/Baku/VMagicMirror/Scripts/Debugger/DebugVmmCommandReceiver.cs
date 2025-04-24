@@ -17,7 +17,7 @@ namespace Baku.VMagicMirror
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.DebugSendLargeData,
-                command => CheckLargeDataContent(command.StringValue)
+                command => CheckLargeDataContent(command.GetStringValue())
                 );
         }
 

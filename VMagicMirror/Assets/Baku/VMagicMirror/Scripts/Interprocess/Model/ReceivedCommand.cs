@@ -11,31 +11,32 @@ namespace Baku.VMagicMirror
         public ReceivedCommand(ReadOnlyMemory<byte> data)
         {
             RawData = data;
-            Command = (VmmCommands) MessageDeserializer.GetCommandId(data);
+            Command = (VmmCommands)MessageDeserializer.GetCommandId(data);
             ValueType = MessageDeserializer.GetValueType(data);
 
-            StringValue = "";
-            ByteArrayValue = Array.Empty<byte>();
-            IntArrayValue = Array.Empty<int>();
-            FloatArrayValue = Array.Empty<float>();
-            switch (ValueType)
+            _refValue = ValueType switch
             {
-                case MessageValueTypes.String: StringValue = MessageDeserializer.ToString(data); break;
-                case MessageValueTypes.ByteArray: ByteArrayValue = MessageDeserializer.ToByteArray(data); break;
-                case MessageValueTypes.IntArray: IntArrayValue = MessageDeserializer.ToIntArray(data); break;
-                case MessageValueTypes.FloatArray: FloatArrayValue = MessageDeserializer.ToFloatArray(data); break;
-            }
+                MessageValueTypes.String => MessageDeserializer.ToString(data),
+                MessageValueTypes.ByteArray => MessageDeserializer.ToByteArray(data),
+                MessageValueTypes.IntArray => MessageDeserializer.ToIntArray(data),
+                MessageValueTypes.FloatArray => MessageDeserializer.ToFloatArray(data),
+                _ => null,
+            };
         }
 
         public ReadOnlyMemory<byte> RawData { get; }
         public VmmCommands Command { get; }
         public MessageValueTypes ValueType { get; }
 
-        // NOTE: 配列とstringは複数回デシリアライズするとダルいので保持してしまう
-        public string StringValue { get; }
-        public byte[] ByteArrayValue { get; }
-        public int[] IntArrayValue { get; }
-        public float[] FloatArrayValue { get; }
+        // NOTE: 値の場合は _refValue に放り込まず、都度byte[]から読み出す…という使い分けをしていることに注意
+        private readonly object _refValue;
+
+        //　NOTE: ここだけToStringだとキモいので名前を避けてます
+        public string GetStringValue() => (string)_refValue;
+
+        public byte[] ToByteArray() => (byte[])_refValue;
+        public int[] ToIntArray() => (int[])_refValue;
+        public float[] ToFloatArray() => (float[])_refValue;
         
         //public string Content { get; }
 
@@ -47,18 +48,11 @@ namespace Baku.VMagicMirror
         public float ParseAsPercentage() => MessageDeserializer.ToInt(RawData) * 0.01f;
         public float ParseAsCentimeter() => MessageDeserializer.ToInt(RawData) * 0.01f;
 
-        // TODO: 送信側がそもそも "0,1" みたいなstringを投げつけてるのをちゃんとしたIntArrayに直す。Colorのほうも同様
-        public int[] ToIntArray()
-            => StringValue.Split(',')
-                .Select(e => int.TryParse(e, out int result) ? result : 0)
-                .ToArray();
-        
         /// <summary>
         /// コマンドによってLength==3(RGB)の場合とLength==4(ARGB)の場合があるので注意
         /// </summary>
         /// <returns></returns>
-        public float[] ToColorFloats()
-            => ToIntArray()
+        public float[] ToColorFloats() => ToIntArray()
             .Select(v => v / 255.0f)
             .ToArray();
     }

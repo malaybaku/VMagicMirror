@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror
         public ImageQualitySettingReceiver(IMessageReceiver receiver, string defaultQualityName)
         {
             receiver.AssignCommandHandler(VmmCommands.SetImageQuality,
-                c => SetImageQuality(c.StringValue)
+                c => SetImageQuality(c.GetStringValue())
             );
             receiver.AssignCommandHandler(
                 VmmCommands.SetHalfFpsMode,

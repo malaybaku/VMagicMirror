@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror
             receiver.BindAction(VmmCommands.CalibrateFace, _faceTracker.StartCalibration);
             receiver.AssignCommandHandler(
                 VmmCommands.SetCalibrateFaceData,
-                message => _faceTracker.SetCalibrateData(message.StringValue)
+                message => _faceTracker.SetCalibrateData(message.GetStringValue())
                 );
 
             receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _enableHandTracking);

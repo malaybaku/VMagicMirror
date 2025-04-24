@@ -103,7 +103,7 @@ namespace Baku.VMagicMirror
             IReactiveProperty<string> target
         )
         {
-            receiver.AssignCommandHandler(command, c => target.Value = c.StringValue);
+            receiver.AssignCommandHandler(command, c => target.Value = c.GetStringValue());
         }
     }
 }

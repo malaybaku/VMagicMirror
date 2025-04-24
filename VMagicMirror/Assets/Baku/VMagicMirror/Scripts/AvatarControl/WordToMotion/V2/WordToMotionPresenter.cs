@@ -39,11 +39,11 @@ namespace Baku.VMagicMirror.WordToMotion
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.ReloadMotionRequests,
-                message => ReloadMotionRequests(message.StringValue)
+                message => ReloadMotionRequests(message.GetStringValue())
             );
             _receiver.AssignCommandHandler(
                 VmmCommands.PlayWordToMotionItem,
-                message => PlayWordToMotionItem(message.StringValue)
+                message => PlayWordToMotionItem(message.GetStringValue())
             );
             
             _receiver.AssignCommandHandler(
@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror.WordToMotion
             
             _receiver.AssignCommandHandler(
                 VmmCommands.SendWordToMotionPreviewInfo,
-                message => ReceiveWordToMotionPreviewInfo(message.StringValue)
+                message => ReceiveWordToMotionPreviewInfo(message.GetStringValue())
             );
             
             _receiver.AssignCommandHandler(

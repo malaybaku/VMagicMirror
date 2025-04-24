@@ -138,7 +138,7 @@ namespace Baku.VMagicMirror
             );
             receiver.AssignCommandHandler(
                 VmmCommands.SetDeviceLayout,
-                command => SetDeviceLayout(command.StringValue)
+                command => SetDeviceLayout(command.GetStringValue())
             );
             receiver.AssignCommandHandler(
                 VmmCommands.ResetDeviceLayout,

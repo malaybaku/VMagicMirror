@@ -13,7 +13,7 @@
                 VmmCommands.Language,
                 message => 
                     //NOTE: WPF側が第3言語に対応する可能性があるが、Unity側は日英のみで通す
-                    Language = message.StringValue == "Japanese" ? "Japanese" : "English"
+                    Language = message.GetStringValue() == "Japanese" ? "Japanese" : "English"
             );
         }
 

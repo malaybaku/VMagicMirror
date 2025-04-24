@@ -38,13 +38,13 @@ namespace Baku.VMagicMirror
             receiver.AssignCommandHandler(
                 VmmCommands.SetCustomCameraPosition, 
                 message => 
-                    SetCustomCameraPosition(message.StringValue, true)
+                    SetCustomCameraPosition(message.GetStringValue(), true)
                     );
 
             receiver.AssignCommandHandler(
                 VmmCommands.QuickLoadViewPoint, 
                 message => 
-                    SetCustomCameraPosition(message.StringValue, true)
+                    SetCustomCameraPosition(message.GetStringValue(), true)
                     );
 
             receiver.AssignCommandHandler(

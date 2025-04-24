@@ -38,7 +38,7 @@ namespace Baku.VMagicMirror.WordToMotion
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.LoadMidiNoteToMotionMap,
-                c => LoadMidiNoteToMotionMap(c.StringValue)
+                c => LoadMidiNoteToMotionMap(c.GetStringValue())
                 );
             _receiver.AssignCommandHandler(
                 VmmCommands.RequireMidiNoteOnMessage,

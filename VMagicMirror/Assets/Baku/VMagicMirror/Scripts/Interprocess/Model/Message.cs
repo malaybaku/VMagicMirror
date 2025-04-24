@@ -3,9 +3,7 @@ using Baku.VMagicMirror.IpcMessage;
 
 namespace Baku.VMagicMirror
 {
-    /// <summary>
-    /// UnityからWPF向けに送信するメッセージ
-    /// </summary>
+    /// <summary> UnityからWPF向けに送信するメッセージ全般 </summary>
     public readonly struct Message
     {
         private Message(VmmServerCommands command, ReadOnlyMemory<byte> data)
@@ -22,18 +20,13 @@ namespace Baku.VMagicMirror
 
         public static Message String(VmmServerCommands command, string value)
             => new(command, MessageSerializer.String((ushort)command, value));
+        
+        public static Message Bool(VmmServerCommands command, bool value)
+            => new(command, MessageSerializer.Bool((ushort)command, value));
 
-        // public Message(string command, string content)
-        // {
-        //     Command = command?.Replace(":", "") ?? "";
-        //     Content = content ?? "";
-        // }
-        //
-        // public Message(string command) : this(command, "")
-        // {
-        // }
-        //
-        // public string Command { get; }
-        // public string Content { get; }
+        public static Message Int(VmmServerCommands command, int value)
+            => new(command, MessageSerializer.Int((ushort)command, value));
+        
+        // NOTE: BoolやIntがまだないが、追加してよい。
     }
 }

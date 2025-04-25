@@ -71,7 +71,7 @@ namespace Baku.VMagicMirror.InterProcess
             _dispatcher.ReceiveCommand(new ReceivedCommand(data));
         }
         
-        private async void OnReceiveQuery((int id, ReadOnlyMemory<byte> data) value)
+        private async void OnReceiveQuery((ushort id, ReadOnlyMemory<byte> data) value)
         {
             var res = await _dispatcher.ReceiveQuery(new ReceivedQuery(value.data));
             var body = MessageSerializer.String((ushort)VmmCommands.Unknown, res);

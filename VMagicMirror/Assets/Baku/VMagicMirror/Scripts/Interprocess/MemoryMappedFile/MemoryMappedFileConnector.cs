@@ -17,30 +17,29 @@ using System.Threading.Tasks;
 // ※戻り値の計算に長時間かかる処理はCommandの往復で表現する
 
 // 読み書きするデータ単位 (単一メッセージ or メッセージの一部) のバイナリフォーマットについて
-//0-1: 書き込み状態フラグ。
-// - 0: 受信完了。このときはWriteする側だけが触ってよい
-// - 1: 送信完了(メッセージの末尾)。このときはReadする側だけが触ってよい
+//0: 状態フラグ (byte)
+// - MessageStateEmpty, MessageStateDataExist, MessageStateRewindのいずれかの値を取る
 
-//2-3: メッセージの種類
+//1: メッセージの種類 (byte)
 // - 0: CommandまたはQuery
 // - 1: Response
 
-//4-7: リクエストID
+//2-3: リクエストID (ushort)
 // - 0: Commandの場合この値を指定して、投げっぱなしのメッセージを表す
 // - 1以上: Queryの場合は返信に使ってほしいID値を表す。Responseの場合、どのQueryに対してのレスポンスであるかをIDで指定する。
 //   - Query用のIDは送信側が一意性を保つように生成する
 
-//8-11: メッセージ全体のバイナリ長
+//4-7: メッセージ全体のバイナリ長 (int)
 // - メッセージが短い場合、1つのデータに全データが収まるため、ここの値は12-15バイトに入る値と等しい
 // - メッセージが長い場合は分けて送るため、12-15の値とココの値が一致しなくなる
 
-//12-15: このチャンクのバイナリ長
+//8-11: このチャンクのバイナリ長 (int)
 // - 16バイト以降に入ってるメッセージの長さ
 //   - NOTE: データがメッセージの一部である場合にoffsetを指定することが考えられるが、
 // 　        メッセージには順序保証があってoffsetは不要なはずなので、offset情報はない。
 
-//16-: ボディ
-// - 文字列をUTF8扱いでバイナリ化したもの
+//12-: ボディ (byte[])
+// - 呼び出し元が指定したバイナリ、またはそのバイナリの一部
 
 namespace Baku.VMagicMirror.Mmf
 {
@@ -50,12 +49,19 @@ namespace Baku.VMagicMirror.Mmf
     public sealed partial class MemoryMappedFileConnector
     {
         private const long MemoryMappedFileCapacity = 262114;
-        private const int MessageHeaderSize = 16;
-        private const int MaxMessageBodySize = (int)MemoryMappedFileCapacity - MessageHeaderSize;
+        private const int MessageHeaderSize = 12;
 
-        private const int MessageStateWriteReady = 0;
-        private const int MessageStateReadReady = 1;
+        // データが書き込まれてない場合のチャンクの冒頭バイトの値
+        private const byte MessageStateEmpty = 0;
+        // 読み込み対象になるようなデータが書き込まれている場合のチャンクの冒頭バイトの値
+        private const byte MessageStateDataExist = 1;
+        // ファイルの末尾に到達しており、読み/書き双方が先頭に戻るべきであることを示すチャンク(※チャンクといっても1byteだが)の冒頭バイトの値。
+        private const byte MessageStateRewind = 2;
 
+        // NOTE: Command, Query, Responseで0,1,2を割り当てても別によい(必要ないから区別してないだけ)
+        private const byte MessageTypeCommandOrQuery = 0;
+        private const byte MessageTypeResponse = 1;
+        
         private readonly InternalWriter _writer = new();
         private readonly InternalReader _reader = new();
         private readonly CancellationTokenSource _cts = new();
@@ -67,7 +73,7 @@ namespace Baku.VMagicMirror.Mmf
         private Task? _writerTask;
         
         private readonly object _requestIdLock = new();
-        private int _requestId;
+        private ushort _requestId;
         
         public event Action<ReadOnlyMemory<byte>>? ReceiveCommand
         {
@@ -75,7 +81,7 @@ namespace Baku.VMagicMirror.Mmf
             remove => _reader.ReceiveCommand -= value;
         }
         
-        public event Action<(int id, ReadOnlyMemory<byte> content)>? ReceiveQuery
+        public event Action<(ushort queryId, ReadOnlyMemory<byte> content)>? ReceiveQuery
         {
             add => _reader.ReceiveQuery += value;
             remove => _reader.ReceiveQuery -= value;
@@ -182,15 +188,16 @@ namespace Baku.VMagicMirror.Mmf
             return await source.Task;
         }
 
-        public void SendQueryResponse(int id, ReadOnlyMemory<byte> content) => _writer.SendQueryResponse(id, content);
+        public void SendQueryResponse(ushort id, ReadOnlyMemory<byte> content) => _writer.SendQueryResponse(id, content);
         
-        private int GenerateQueryId()
+        private ushort GenerateQueryId()
         {
             lock (_requestIdLock)
             {
                 _requestId++;
-                //クエリのIDは1 ~ (int.MaxValue - 1)の範囲で回るようにしておく
-                if (_requestId == int.MaxValue)
+                // クエリのIDは1 ~ (ushort.MaxValue - 1) の範囲で連番で回す。
+                // NOTE: クエリはすぐに消費される前提でしか使ってないので、ushortが一巡してIDが被ったからといって実害はない
+                if (_requestId == ushort.MaxValue)
                 {
                     _requestId = 1;
                 }
@@ -200,11 +207,11 @@ namespace Baku.VMagicMirror.Mmf
         
         private readonly struct Message
         {
-            private Message(ReadOnlyMemory<byte> body, bool isReply, int id)
+            private Message(ReadOnlyMemory<byte> body, bool isReply, ushort queryId)
             {
                 Body = body;
                 IsReply = isReply;
-                Id = id;
+                QueryId = queryId;
             }
 
             /// <summary>
@@ -222,11 +229,11 @@ namespace Baku.VMagicMirror.Mmf
             /// こちらからのクエリ送信の場合は送るクエリのID、
             /// 相手へのクエリ返信の場合は相手が送ってきたクエリのID
             /// </summary>
-            public int Id { get; }
+            public ushort QueryId { get; }
 
             public static Message Command(ReadOnlyMemory<byte> content) => new(content, false, 0);
-            public static Message Query(ReadOnlyMemory<byte> content, int id) => new(content, false, id);
-            public static Message Response(ReadOnlyMemory<byte> content, int id) => new(content, true, id);
+            public static Message Query(ReadOnlyMemory<byte> content, ushort id) => new(content, false, id);
+            public static Message Response(ReadOnlyMemory<byte> content, ushort id) => new(content, true, id);
         }
     }   
 }

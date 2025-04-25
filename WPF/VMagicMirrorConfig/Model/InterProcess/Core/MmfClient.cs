@@ -113,7 +113,7 @@ namespace Baku.VMagicMirrorConfig
                 ));
         }
 
-        private void OnReceivedQuery((int id, ReadOnlyMemory<byte> data) value)
+        private void OnReceivedQuery((ushort id, ReadOnlyMemory<byte> data) value)
         {
             var ea = new QueryReceivedEventArgs(value.data);
 

@@ -67,7 +67,7 @@ namespace Baku.VMagicMirror.Mmf
                         // 非同期処理が必要ないうちはここで待機: 待ってる間にアプリケーション終了する場合はDelayのところで抜ける
                         if (!shouldRun)
                         {
-                            await Task.Delay(10, token);
+                            await Task.Delay(10, token).ConfigureAwait(false);
                             continue;
                         }
                         
@@ -174,7 +174,7 @@ namespace Baku.VMagicMirror.Mmf
                     // ファイル末尾に到達した場合は非同期処理に帰着して、ファイル冒頭に戻す。
                     if (RewindRequired)
                     {
-                        await RewindAsync(token);
+                        await RewindAsync(token).ConfigureAwait(false);
                     }
 
                     // 書き込んだあと、正常に書き込めていればサイズを累積して続行
@@ -207,7 +207,7 @@ namespace Baku.VMagicMirror.Mmf
                         return;
                     }
                     
-                    await Task.Delay(1, token);
+                    await Task.Delay(1, token).ConfigureAwait(false);
                 }
             }
 

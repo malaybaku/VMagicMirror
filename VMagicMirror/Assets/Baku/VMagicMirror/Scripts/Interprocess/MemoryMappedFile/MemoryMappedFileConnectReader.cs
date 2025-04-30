@@ -15,7 +15,6 @@ namespace Baku.VMagicMirror.Mmf
         // - 特に、チャンクの先頭バイトが `2` のチャンクを検出したら、indexを0に戻しつつ、MMFの冒頭1バイトを `0` にリセット
         public sealed class InternalReader
         {
-            private readonly object _readLock = new();
             private readonly byte[] _readBuffer = new byte[MemoryMappedFileCapacity];
             private MemoryMappedFile? _file;
             private MemoryMappedViewAccessor? _accessor;
@@ -29,11 +28,8 @@ namespace Baku.VMagicMirror.Mmf
             
             public async Task RunAsync(MemoryMappedFile file, CancellationToken token)
             {
-                lock (_readLock)
-                {
-                    _file = file;
-                    _accessor = file.CreateViewAccessor();
-                }
+                _file = file;
+                _accessor = file.CreateViewAccessor();
 
                 try
                 {
@@ -48,13 +44,10 @@ namespace Baku.VMagicMirror.Mmf
                 }
                 finally
                 {
-                    lock (_readLock)
-                    {
-                        _file?.Dispose();
-                        _file = null;
-                        _accessor?.Dispose();
-                        _accessor = null;
-                    }
+                    _file?.Dispose();
+                    _file = null;
+                    _accessor?.Dispose();
+                    _accessor = null;
                 }
             }
             
@@ -68,18 +61,15 @@ namespace Baku.VMagicMirror.Mmf
                 var totalDataLength = 0;
 
                 // メッセージのBody以外の情報はここで確定
-                lock (_readLock)
+                if (_accessor == null)
                 {
-                    if (_accessor == null)
-                    {
-                        return;
-                    }
-
-                    var accessorOffset = _index;
-                    isReply = _accessor.ReadByte(accessorOffset + 1) == MessageTypeResponse;
-                    queryId = _accessor.ReadUInt16(accessorOffset + 2);
-                    totalDataLength = _accessor.ReadInt32(accessorOffset + 4);
+                    return;
                 }
+
+                var accessorOffset = _index;
+                isReply = _accessor.ReadByte(accessorOffset + 1) == MessageTypeResponse;
+                queryId = _accessor.ReadUInt16(accessorOffset + 2);
+                totalDataLength = _accessor.ReadInt32(accessorOffset + 4);
 
                 // 使いまわし用のBufferより大きいデータが来そうな場合だけ別でallocする。このallocは滅多に起きない想定
                 var messageBytes = _readBuffer;
@@ -92,26 +82,19 @@ namespace Baku.VMagicMirror.Mmf
                 var offset = 0;
                 while (true)
                 {
-                    int dataLength;
-                    lock (_readLock)
+                    // _accessor == nullの場合、メッセージがハンパであっても中断する(アプリ終了のはずなので)
+                    if (_accessor == null)
                     {
-                        // _accessor == nullの場合、メッセージがハンパであっても中断する(アプリ終了のはずなので)
-                        if (_accessor == null)
-                        {
-                            return;
-                        }
-
-                        var accessorOffset = _index;
-                        
-                        // NOTE:
-                        // - チャンクの1~7byteは分割されたメッセージの2つ目以降でも同じ値が入っているので、コレ以降のループでは再読み込みしない
-                        // - dataLengthがMMFの末尾からはみ出さないことはwriterが保証してるはずなので、わざわざ検証しない
-                        dataLength = _accessor.ReadInt32(accessorOffset + 8);
-                        _accessor.ReadArray(accessorOffset + 12, messageBytes, offset, dataLength);
-                        // _accessor.Write(0, (byte)0);
-
-                        _index += dataLength + MessageHeaderSize;
+                        return;
                     }
+
+                    // NOTE:
+                    // - チャンクの1~7byteは分割されたメッセージの2つ目以降でも同じ値が入っているので、コレ以降のループでは再読み込みしない
+                    // - dataLengthがMMFの末尾からはみ出さないことはwriterが保証してるはずなので、わざわざ検証しない
+                    var dataLength = _accessor.ReadInt32(_index + 8);
+                    _accessor.ReadArray(_index + 12, messageBytes, offset, dataLength);
+                    
+                    _index += dataLength + MessageHeaderSize;
 
                     offset += dataLength;
                     if (offset >= totalDataLength)
@@ -135,16 +118,12 @@ namespace Baku.VMagicMirror.Mmf
             {
                 while (!token.IsCancellationRequested)
                 {
-                    byte state = 0;
-                    lock (_readLock)
+                    if (_accessor == null)
                     {
-                        if (_accessor == null)
-                        {
-                            return;
-                        }
-                        
-                        state = _accessor.ReadByte(_index);
+                        return;
                     }
+
+                    var state = _accessor.ReadByte(_index);
 
                     switch (state)
                     {
@@ -157,15 +136,8 @@ namespace Baku.VMagicMirror.Mmf
                             return;
                         case MessageStateRewind:
                             // readerがrewindフラグ(≒MMFのファイル末尾)まで到達した = readerもwriterもファイル冒頭に戻る
-                            lock (_readLock)
-                            {
-                                if (_accessor == null)
-                                {
-                                    return;
-                                }
-                                _accessor.Write(0, MessageStateEmpty);
-                                _index = 0;
-                            }
+                            _accessor.Write(0, MessageStateEmpty);
+                            _index = 0;
                             await Task.Delay(1, token);
                             break;
                         default:

@@ -143,7 +143,10 @@ namespace Baku.VMagicMirror.Mmf
             _writerTask = _writer.RunAsync(writerFile, _cts.Token);
         }
 
-        // NOTE: MemoryMappedFileが閉じるまで待ちたい…という意図があることに注意
+        /// <summary>
+        /// MMFへの読み書き処理を停止し、安全に読み書きが停止できるまで待機します。
+        /// このタスクをawaitしたとき、元のcontextに戻ることは保証されません。
+        /// </summary>
         public async Task StopAsync()
         {
             _cts.Cancel();

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Baku.VMagicMirror.IpcMessage;
 using Baku.VMagicMirror.Mmf;
+using Cysharp.Threading.Tasks;
 using Zenject;
 
 namespace Baku.VMagicMirror.InterProcess
@@ -61,7 +62,11 @@ namespace Baku.VMagicMirror.InterProcess
 
         public async Task ReleaseResources()
         {
-            await _server.StopAsync();
+            // NOTE: MMFの処理はメインスレッドと関係ないとこで走っているので明示的に戻らせる
+            await using (UniTask.ReturnToMainThread())
+            {
+                await _server.StopAsync();
+            }
         }
 
         void ITickable.Tick() => _dispatcher.Tick();

@@ -12,9 +12,6 @@ namespace Baku.VMagicMirrorConfig
     {
         /// <summary>
         /// メッセージを送信します。
-        /// <see cref="StartCommandComposite"/>が呼び出されていない場合、メッセージを直ちに送信します。
-        /// <see cref="StartCommandComposite"/>が呼び出されている場合、
-        /// メッセージは<see cref="EndCommandComposite"/>が呼ばれた時点で一括送信されます。
         /// </summary>
         /// <param name="message"></param>
         void SendMessage(Message message);
@@ -25,17 +22,5 @@ namespace Baku.VMagicMirrorConfig
         /// <param name="message"></param>
         /// <returns></returns>
         Task<string> QueryMessageAsync(Message message);
-
-        /// <summary>
-        /// <see cref="SendMessage(Message)"/>でのメッセージ送信を蓄積するモードに入ります。
-        /// 蓄積されたメッセージは<see cref="EndCommandComposite"/>を呼び出すと一括送信されます。
-        /// </summary>
-        void StartCommandComposite();
-
-        /// <summary>
-        /// <see cref="StartCommandComposite"/>を呼び出して以降に、
-        /// <see cref="SendMessage(Message)"/>で送信するよう指定されたメッセージをまとめて送信します。
-        /// </summary>
-        void EndCommandComposite();
     }
 }

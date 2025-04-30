@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror.Mmf
                 {
                     while (!token.IsCancellationRequested)
                     {
-                        await ReadSingleMessageAsync(token);
+                        await ReadSingleMessageAsync(token).ConfigureAwait(false);
                     }
                 }
                 catch (NullReferenceException)
@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror.Mmf
             // NOTE: 1メッセージが複数データに分かれて送られる場合のデータ結合はこの関数の中でやる
             private async Task ReadSingleMessageAsync(CancellationToken token)
             {
-                await WaitReadReadyAsync(token);
+                await WaitReadReadyAsync(token).ConfigureAwait(false);
 
                 var isReply = false;
                 ushort queryId = 0;
@@ -101,9 +101,9 @@ namespace Baku.VMagicMirror.Mmf
                     {
                         break;
                     }
-
+                    
                     // まだ続きがある: 次のデータチャンクを待つ
-                    await WaitReadReadyAsync(token);
+                    await WaitReadReadyAsync(token).ConfigureAwait(false);
                 }
 
                 // メッセージの末尾まで読むとココを通過して終了
@@ -129,7 +129,7 @@ namespace Baku.VMagicMirror.Mmf
                     {
                         case MessageStateEmpty:
                             // 何もないので待つ: アプリ起動中の大体の時間はここを通過し続ける
-                            await Task.Delay(1, token);
+                            await Task.Delay(1, token).ConfigureAwait(false);
                             break;
                         case MessageStateDataExist:
                             // 単にデータを読めばいい状態になった
@@ -138,7 +138,7 @@ namespace Baku.VMagicMirror.Mmf
                             // readerがrewindフラグ(≒MMFのファイル末尾)まで到達した = readerもwriterもファイル冒頭に戻る
                             _accessor.Write(0, MessageStateEmpty);
                             _index = 0;
-                            await Task.Delay(1, token);
+                            await Task.Delay(1, token).ConfigureAwait(false);
                             break;
                         default:
                             throw new InvalidOperationException("unsupported message state");

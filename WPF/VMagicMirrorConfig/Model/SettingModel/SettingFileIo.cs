@@ -66,11 +66,7 @@ namespace Baku.VMagicMirrorConfig
 
             try
             {
-                //NOTE: ファイルロードではメッセージが凄い量になるので、
-                //コンポジットして「1つの大きいメッセージ」として書き込むためにこうしてます
-                _sender.StartCommandComposite();
                 LoadSettingSub(path, mode, content, fromAutomation);
-                _sender.EndCommandComposite();
             }
             catch (Exception ex)
             {

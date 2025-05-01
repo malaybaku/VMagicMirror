@@ -401,21 +401,5 @@ namespace Baku.VMagicMirrorConfig
         public static Message DebugSendLargeData(string data) => StringContent(VmmCommands.DebugSendLargeData, data);
 
         #endregion
-
-        #region メタメッセージ
-
-        /// <summary>
-        /// クエリでないコマンドをひとまとめにしたコマンド。
-        /// </summary>
-        /// <param name="commands"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// 狙い: 投げっぱなしのコマンドを集約してひとまとめで送る。
-        /// クエリは個別にawaitしてほしい関係でココに混ぜるのはちょっと難しい
-        /// </remarks>
-        public static Message CommandArray(IEnumerable<Message> commands)
-            => StringContent(VmmCommands.CommandArray, CommandArrayBuilder.BuildCommandArrayString(commands));
-
-        #endregion
     }
 }

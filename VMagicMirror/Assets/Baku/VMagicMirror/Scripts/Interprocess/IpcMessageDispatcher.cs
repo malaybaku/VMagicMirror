@@ -73,20 +73,7 @@ namespace Baku.VMagicMirror.InterProcess
         
         public void ReceiveCommand(ReceivedCommand command)
         {
-            if (command.Command == VmmCommands.CommandArray)
-            {
-                //コマンドの一括送信を受け取ったとき: バラバラにしてキューに詰めておく
-                var commands = CommandArrayParser.ParseCommandArray(command.GetStringValue());
-                foreach (var c in commands)
-                {
-                    _receivedCommands.Enqueue(c);
-                }
-            }
-            else
-            {
-                //普通の受信
-                _receivedCommands.Enqueue(command);
-            }
+            _receivedCommands.Enqueue(command);
         }
 
         public Task<string> ReceiveQuery(ReceivedQuery query)

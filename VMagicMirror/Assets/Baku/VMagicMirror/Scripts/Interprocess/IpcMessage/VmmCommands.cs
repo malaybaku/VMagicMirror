@@ -294,9 +294,6 @@
         OpenVRoidSdkUi,
         RequestLoadVRoidWithId,
         
-        // Meta message
-        CommandArray,
-        
         // Debug
         DebugSendLargeData,
         

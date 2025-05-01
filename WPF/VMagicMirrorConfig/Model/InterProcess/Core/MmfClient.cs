@@ -2,8 +2,6 @@
 using Baku.VMagicMirror.IpcMessage;
 using Baku.VMagicMirror.Mmf;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Baku.VMagicMirrorConfig
@@ -25,25 +23,8 @@ namespace Baku.VMagicMirrorConfig
 
         private readonly MemoryMappedFileConnector _client;
 
-        private bool _isCompositeMode;
-        //NOTE: 64というキャパシティはどんぶり勘定
-        private readonly List<Message> _compositeMessages = new(64);
-
         public void SendMessage(Message message)
         {
-            if (_isCompositeMode)
-            {
-                //同じコマンド名の古いメッセージは削除し、最新値だけ残す
-                //設定更新のコマンドはsetterメソッド的なのでこういう事をしても大丈夫
-                if (_compositeMessages.FindIndex(m => m.Command == message.Command) is int x && x >= 0)
-                {
-                    _compositeMessages.RemoveAt(x);
-                }
-
-                _compositeMessages.Add(message);
-                return;
-            }
-
             try
             {
                 _client.SendCommand(message.Data);
@@ -67,22 +48,6 @@ namespace Baku.VMagicMirrorConfig
                 return "";
             }
         }
-
-        void IMessageSender.StartCommandComposite()
-        {
-            _isCompositeMode = true;
-        }
-
-		void IMessageSender.EndCommandComposite()
-        {
-            _isCompositeMode = false;
-            if (_compositeMessages.Count > 0)
-            {
-                SendMessage(MessageFactory.CommandArray(_compositeMessages));
-                _compositeMessages.Clear();
-            }
-        }
-
 
         // TODO: Start/Stopいずれも、内部的にでもいいからキャンセルをちゃんと扱いたい…
 
@@ -113,7 +78,7 @@ namespace Baku.VMagicMirrorConfig
                 ));
         }
 
-        private void OnReceivedQuery((int id, ReadOnlyMemory<byte> data) value)
+        private void OnReceivedQuery((ushort id, ReadOnlyMemory<byte> data) value)
         {
             var ea = new QueryReceivedEventArgs(value.data);
 

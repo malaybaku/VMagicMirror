@@ -79,6 +79,7 @@ sysinfo.txt
 /VMagicMirror/Assets/NuGet/
 /VMagicMirror/Assets/NuGetPackages/
 /VMagicMirror/Assets/CSharpScripting/
+/VMagicMirror/Assets/BuddyPresetData/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
 /VMagicMirror/Assets/OpenCVforUnity.meta
@@ -107,6 +108,7 @@ sysinfo.txt
 /VMagicMirror/Assets/NuGet.meta
 /VMagicMirror/Assets/NuGetPackages.meta
 /VMagicMirror/Assets/CSharpScripting.meta
+/VMagicMirror/Assets/BuddyPresetData.meta
 
 
 # Assets to ignore (from BOOTH)

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667c3571561609446a675afcf39844fc, type: 3}
+  m_Name: BuddyPresetResources
+  m_EditorClassIdentifier: 
+  textures:
+  - name: A_default
+    textureBinary: {fileID: 4900000, guid: f46ee08a97b108c4ba31d73af560e940, type: 3}
+  - name: A_blink
+    textureBinary: {fileID: 4900000, guid: a01439d96e63b1745af90c62fc8067d0, type: 3}
+  - name: A_mouthOpen
+    textureBinary: {fileID: 4900000, guid: 8a36d5af1de12ac4096bc86bdcace64c, type: 3}
+  - name: A_blink_mouthOpen
+    textureBinary: {fileID: 4900000, guid: 615173ab179554742868c65a6034e2b7, type: 3}
+  - name: A_happy
+    textureBinary: {fileID: 4900000, guid: 148fad5538ab51c41b47e8f85b184683, type: 3}
+  - name: A_angry
+    textureBinary: {fileID: 4900000, guid: 44f112191bb634a46b984db9d3c73575, type: 3}
+  - name: A_sad
+    textureBinary: {fileID: 4900000, guid: 932ae765d1ef9b148bf78e52ec000221, type: 3}
+  - name: A_relaxed
+    textureBinary: {fileID: 4900000, guid: 29490c5d7a220944ab3eb739907e5e68, type: 3}
+  - name: A_surprised
+    textureBinary: {fileID: 4900000, guid: d7696eb2b32589e4985cf4c8583e531e, type: 3}
+  - name: A_wink
+    textureBinary: {fileID: 4900000, guid: 9df68d529c3c0964e8c15431215bf91c, type: 3}
+  - name: A_smug_face
+    textureBinary: {fileID: 4900000, guid: 3e613e8d39e02b041b76e43c43df71a3, type: 3}
+  vrms:
+  - name: A
+    vrmBinary: {fileID: 4900000, guid: d131e45cb9e8f5947bbc5ca651e7b36f, type: 3}

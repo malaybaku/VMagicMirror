@@ -31,6 +31,11 @@ namespace Baku.VMagicMirror.Buddy.Api
             var fullPath = Path.Combine(_baseDir, path);
             _instance.Show(fullPath);
         });
+        
+        public void ShowPreset(string name) => ApiUtils.Try(BuddyId, _logger, () =>
+        {
+            _instance.ShowPreset(name);
+        });
 
         public void Hide() => _instance.SetActive(false);
     }

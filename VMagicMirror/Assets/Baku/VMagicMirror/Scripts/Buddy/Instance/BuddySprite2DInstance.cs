@@ -49,6 +49,8 @@ namespace Baku.VMagicMirror.Buddy
 
         public BuddyTransform2DInstance GetTransform2DInstance() => transform2DInstance;
         
+        public BuddyPresetResources PresetResources { get; set; }
+        
         // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
         public Texture2D CurrentTexture { get; private set; }
 
@@ -159,6 +161,23 @@ namespace Baku.VMagicMirror.Buddy
             Transition = BuddySprite2DInstanceTransition.Create(style, fullPath);
             
             return TextureLoadResult.Success;
+        }
+
+        public TextureLoadResult ShowPreset(string presetName, Sprite2DTransitionStyle style)
+        {
+            if (PresetResources == null)
+            {
+                throw new InvalidOperationException("PresetResources is not initialized");
+            }
+            
+            if (PresetResources.TryGetTexture(presetName, out var texture))
+            {
+                CurrentTexture = texture;
+                Transition = BuddySprite2DInstanceTransition.Create(style, presetName);
+                return TextureLoadResult.Success;
+            }
+
+            return TextureLoadResult.FailureFileNotFound;
         }
         
         public void SetActive(bool active) => gameObject.SetActive(active);

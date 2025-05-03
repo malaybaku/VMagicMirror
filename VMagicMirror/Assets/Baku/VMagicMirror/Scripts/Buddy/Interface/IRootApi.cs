@@ -54,6 +54,10 @@ namespace VMagicMirror.Buddy
         void LogWarning(string value);
         void LogError(string value);
         
+        /// <summary>
+        /// 0以上、1未満のランダムな値を取得します。
+        /// </summary>
+        /// <returns></returns>
         float Random();
         void InvokeDelay(Action func, float delaySeconds);
         void InvokeInterval(Action func, float intervalSeconds);
@@ -66,6 +70,7 @@ namespace VMagicMirror.Buddy
         ISprite3D Create3DSprite();
         IGlb CreateGlb();
         IVrm CreateVrm();
+        IVrmAnimation CreateVrmAnimation();
         
         //TODO: コレ系の設定がうまくbundleできると嬉しい
         AppLanguage Language { get; }

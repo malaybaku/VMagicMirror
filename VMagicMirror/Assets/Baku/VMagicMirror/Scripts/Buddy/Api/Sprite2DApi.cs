@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using VMagicMirror.Buddy;
 using BuddyApi = VMagicMirror.Buddy;
@@ -72,6 +73,22 @@ namespace Baku.VMagicMirror.Buddy.Api
             });
         }
 
+        public void ShowPreset(string name) => ShowPreset(name, BuddyApi.Sprite2DTransitionStyle.Immediate);
+
+        public void ShowPreset(string name, BuddyApi.Sprite2DTransitionStyle style)
+        {
+            ApiUtils.Try(BuddyId, _logger, () =>
+            {
+                var clamped = UnityEngine.Mathf.Clamp(
+                    (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.BottomFlip
+                );
+
+                // NOTE: Presetのロードエラーはコーディングの段階で間違ってないと起こらないので、エラーは起こるだけ繰り返し表示する
+                var loadResult = _instance.ShowPreset(name, (Sprite2DTransitionStyle)clamped);
+                HandlePresetTextureLoadResult(name, loadResult);
+            });
+        }
+
         public void Hide() => _instance.SetActive(false);
 
         private string GetFullPath(string path) => Path.Combine(_baseDir, path);
@@ -95,6 +112,14 @@ namespace Baku.VMagicMirror.Buddy.Api
                 }
 
                 _fileNotFoundErrorLogged = true;
+            }
+        }
+
+        private void HandlePresetTextureLoadResult(string name, TextureLoadResult result)
+        {
+            if (result is TextureLoadResult.FailureFileNotFound)
+            {
+                _logger.Log(BuddyId, "Specified preset does not exist: " + name, BuddyLogLevel.Error);
             }
         }
     }

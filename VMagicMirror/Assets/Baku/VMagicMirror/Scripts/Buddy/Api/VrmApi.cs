@@ -29,6 +29,11 @@ namespace Baku.VMagicMirror.Buddy.Api
             await _instance.LoadAsync(fullPath);
         }
 
+        public async Task LoadPresetAsync(string name)
+        {
+            await _instance.LoadPresetAsync(name);
+        }
+
         public void Show() => _instance.SetActive(true);
         public void Hide() => _instance.SetActive(false);
 
@@ -58,26 +63,13 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public void SetBlendShape(string name, bool customClip, float value)
             => _instance.SetBlendShapeValue(name, customClip, value);
-
-        // TODO: たぶんVrma自体を別の型として分けるので、Preloadの概念はなくなりそう
-        public async Task PreloadVrmAnimationAsync(string path)
-        {
-            await UniTask.SwitchToMainThread();
-            await _instance.PreloadAnimationAsync(path);
-        }
         
-        public void RunVrma(string path, bool loop, bool immediate)
+        public void RunVrma(IVrmAnimation animation, bool loop, bool immediate)
         {
-            var fullPath = Path.Combine(_baseDir, path);
-            _instance.RunVrma(fullPath, immediate);
+            var api = (VrmAnimationApi)animation;
+            _instance.RunVrma(api.Instance, immediate);
         }
 
         public void StopVrma(bool immediate) => _instance.StopVrma(immediate);
-
-        public float GetVrmaLength(string path)
-        {
-            var fullPath = Path.Combine(_baseDir, path);
-            return _instance.GetVrmaLength(fullPath);
-        }
     }
 }

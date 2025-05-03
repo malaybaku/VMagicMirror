@@ -4,7 +4,7 @@ namespace VMagicMirror.Buddy
     {
         /// <summary> 位置や回転などの、オブジェクトの基本的な配置に関するAPIを取得します。 </summary>
         ITransform2D Transform { get; }
-        
+
         /// <summary>
         /// ファイルパスを指定して画像を事前にロードします。
         /// </summary>
@@ -37,6 +37,44 @@ namespace VMagicMirror.Buddy
         /// この関数はサブキャラの表情を切り替える場合などに適しています。
         /// </remarks>
         void Show(string path, Sprite2DTransitionStyle style);
+
+        /// <summary>
+        /// プリセット画像の名称を指定して画像を表示します。
+        /// </summary>
+        /// <param name="name">プリセット画像の名称</param>
+        /// <remarks>
+        /// プリセット画像とは、アプリケーション自体に組み込まれていてサブキャラとして利用可能な画像のことです。
+        /// 
+        /// <paramref name="name"/> に指定可能な値の詳細や、画像切り替え時の演出を調整する場合の呼び出しについては <see cref="ShowPreset(string, Sprite2DTransitionStyle)"/> を参照して下さい。
+        /// </remarks>
+        void ShowPreset(string name);
+
+        /// <summary>
+        /// プリセット画像の名称、および切り替え演出を指定して画像を表示します。
+        /// </summary>
+        /// <param name="name">プリセット画像の名称</param>
+        /// <param name="style">画像切り替えのスタイル</param>
+        /// <remarks>
+        /// プリセット画像とは、アプリケーション自体に組み込まれていてサブキャラとして利用可能な画像のことです。
+        /// v4.0.0では <paramref name="name"/> として以下の値を指定できます。
+        /// 
+        /// <list type="bullet">
+        ///   <item> "A_default" </item>
+        ///   <item> "A_blink" </item>
+        ///   <item> "A_mouthOpen" </item>
+        ///   <item> "A_blink_mouthOpen" </item>
+        ///   <item> "A_happy" </item>
+        ///   <item> "A_angry" </item>
+        ///   <item> "A_sad" </item>
+        ///   <item> "A_relaxed" </item>
+        ///   <item> "A_surprised" </item>
+        ///   <item> "A_wink" </item>
+        ///   <item> "A_smug_face" </item>
+        /// </list>
+        ///
+        /// この関数はサブキャラの表情を切り替える場合などに適しています。
+        /// </remarks>
+        void ShowPreset(string name, Sprite2DTransitionStyle style);
         
         /// <summary>
         /// サブキャラを非表示にします。

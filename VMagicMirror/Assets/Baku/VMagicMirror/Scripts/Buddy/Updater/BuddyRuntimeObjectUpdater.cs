@@ -41,6 +41,10 @@ namespace Baku.VMagicMirror.Buddy
                 .Subscribe(instance => _repository.AddVrm(instance))
                 .AddTo(this);
             
+            _instanceCreator.VrmAnimationCreated
+                .Subscribe(instance => _repository.AddVrmAnimation(instance))
+                .AddTo(this);
+            
             _scriptLoader.ScriptDisposing
                 .Subscribe(caller => _repository.DeleteBuddy(caller.BuddyId))
                 .AddTo(this);

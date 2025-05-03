@@ -18,6 +18,20 @@ namespace VMagicMirror.Buddy
         /// <returns></returns>
         Task LoadAsync(string path);
 
+        /// <summary>
+        /// 名称を指定してプリセットVRMをロードします。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// プリセットVRMとは、アプリケーション本体に組み込まれたVRMのことです。
+        /// このメソッドでVRMをロードする場合、事前にVRMを用意する必要はありません。
+        /// 
+        /// v4.0.0では <paramref name="name"/> に指定できる値は <c>"A"</c> のみです。
+        /// これ以外の名称を指定した場合、 <see cref="LoadAsync"/> で存在しないファイルを指定した場合と同様のエラーになります。
+        /// </remarks>
+        Task LoadPresetAsync(string name);
+        
         // NOTE: LoadAsyncが終わったあとで呼び出すのが期待値
         void Show();
 
@@ -112,12 +126,17 @@ namespace VMagicMirror.Buddy
 
         // VRMA
         /// <summary>
-        /// VRM Animation (.vrma) のファイルパスを指定してVRM Animationを再生します。
+        /// VRM Animationを再生します。
         /// </summary>
-        /// <param name="path">VRM Animationファイルのパス</param>
+        /// <param name="animation">対象になるVRM Animation</param>
         /// <param name="loop">VRM Animationをループ実行したい場合は <c>true</c>、そうでなければ<c>false</c></param>
         /// <param name="immediate">補間を行わずにただちに指定したアニメーションを再生する場合は <c>true</c>、現在のポーズとの補間を行う場合は <c>false</c></param>
-        void RunVrma(string path, bool loop, bool immediate);
+        /// <remarks>
+        /// v4.0.0の時点では <paramref name="immediate"/> オプションの値によらず、補間を行わない動作が適用されます。
+        /// このフラグは将来のバージョンで参照されるようになります。
+        /// バージョンアップによる挙動変更を避けたい場合、 <paramref name="immediate"/> の値としては <c>true</c> を指定してください。
+        /// </remarks>
+        void RunVrma(IVrmAnimation animation, bool loop, bool immediate);
         
         /// <summary>
         /// <see cref="RunVrma"/> で再生したVRM Animationを停止します。
@@ -125,20 +144,12 @@ namespace VMagicMirror.Buddy
         /// <param name="immediate">補間を行わずにただちに停止させる場合は <c>true</c>、現在のポーズとの補間を行いながら停止させる場合は <c>false</c></param>
         /// <remarks>
         /// VRM Animationを再生していない状態でこの関数を呼び出した場合、何も起こりません。
+        /// 
+        /// v4.0.0の時点では <paramref name="immediate"/> オプションの値によらず、補間を行わない動作が適用されます。
+        /// このフラグは将来のバージョンで参照されるようになります。
+        /// バージョンアップによる挙動変更を避けたい場合、 <paramref name="immediate"/> の値としては <c>true</c> を指定してください。
         /// </remarks>
         void StopVrma(bool immediate);
-       
-        // TODO: こうするよりVRMA型を提供すべきじゃないか？めんどい感じもしないではないけど
 
-        /// <summary>
-        /// 指定したファイルパスに定義されているVRM Animationの再生時間を秒単位で取得します。
-        /// </summary>
-        /// <param name="path">VRM Animationファイルのパス</param>
-        /// <returns>VRM Animationの再生時間の秒数</returns>
-        /// <remarks>
-        /// 指定したパスにファイルが存在しない場合や、VRM Animationとして正常に読み込めない場合、
-        /// この関数は <c>-1</c> を返します。
-        /// </remarks>
-        float GetVrmaLength(string path);
     }
 }

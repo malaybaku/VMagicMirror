@@ -25,6 +25,7 @@ namespace Baku.VMagicMirror.Buddy
         
         // NOTE: setterはコンポーネントを生成するメソッドのみから用いる。InjectするほどでもないのでDIは使ってない
         public string BuddyId { get; set; }
+        public BuddyPresetResources PresetResources { get; set; }
         
         // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
         public Sprite CurrentSprite { get; private set; }
@@ -32,13 +33,15 @@ namespace Baku.VMagicMirror.Buddy
         internal Sprite3DTransitionStyle CurrentTransitionStyle { get; set; } = Sprite3DTransitionStyle.None;
 
         private readonly Dictionary<string, Sprite> _sprites = new();
+        private readonly Dictionary<string, Sprite> _presetSprites = new();
 
         public void SetActive(bool active) => gameObject.SetActive(active);
 
         public void Preload(string fullPath) => Load(fullPath);
 
-        public void Show(string fullPath) => Show(fullPath, Sprite3DTransitionStyle.Immediate);
-
+        public TextureLoadResult Show(string fullPath) 
+            => Show(fullPath, Sprite3DTransitionStyle.Immediate);
+        
         /// <summary>
         /// 必要なら画像のロードを行ったうえで表示する
         /// </summary>
@@ -62,6 +65,36 @@ namespace Baku.VMagicMirror.Buddy
             return TextureLoadResult.Success;
         }
         
+        public TextureLoadResult ShowPreset(string presetName)
+            => ShowPreset(presetName, Sprite3DTransitionStyle.Immediate);
+
+        // NOTE: Presetはロードしてキャッシュすることがない(アプリ上でTexture2Dが共用される)ことに注意
+        public TextureLoadResult ShowPreset(string presetName, Sprite3DTransitionStyle style)
+        {
+            if (PresetResources == null)
+            {
+                throw new InvalidOperationException("PresetResources is not initialized");
+            }
+            
+            if (_presetSprites.TryGetValue(presetName, out var spriteCache))
+            {
+                CurrentSprite = spriteCache;
+                CurrentTransitionStyle = style;
+                return TextureLoadResult.Success;
+            }
+            
+            if (PresetResources.TryGetTexture(presetName, out var texture))
+            {
+                var sprite = CreateSprite(texture);
+                _presetSprites[presetName] = sprite;
+                CurrentSprite = sprite;
+                CurrentTransitionStyle = style;
+                return TextureLoadResult.Success;
+            }
+
+            return TextureLoadResult.FailureFileNotFound;
+        }
+        
         /// <summary>
         /// 画像のロード処理はするが、ただちに表示するわけではなく、キャッシュにデータを乗せる
         /// </summary>
@@ -83,7 +116,7 @@ namespace Baku.VMagicMirror.Buddy
             return loadResult;
         }        
 
-        private Sprite CreateSprite(Texture2D texture)
+        private static Sprite CreateSprite(Texture2D texture)
         {
             // NOTE: 長いほうが常に1mになるようにする。漫符等の装飾ではこのスケールが邪魔になることもあるが、そこは調整してもらう感じで…
             var pixelsPerUnit = Mathf.Max(texture.width, texture.height);
@@ -111,6 +144,12 @@ namespace Baku.VMagicMirror.Buddy
             }
             _sprites.Clear();
 
+            // Presetのテクスチャは共用なのでDestroyしない
+            foreach (var t in _presetSprites.Values)
+            {
+                Destroy(t);
+            }
+            
             Destroy(gameObject);
         }
     }

@@ -179,5 +179,11 @@ namespace Baku.VMagicMirror.Buddy.Api
             var instance = _buddy3DInstanceCreator.CreateVrmInstance(BuddyId);
             return new VrmApi(_baseDir, instance);
         }
+
+        public IVrmAnimation CreateVrmAnimation()
+        {
+            var instance = _buddy3DInstanceCreator.CreateVrmAnimationInstance(BuddyId);
+            return new VrmAnimationApi(_baseDir, instance);
+        }
     }
 }

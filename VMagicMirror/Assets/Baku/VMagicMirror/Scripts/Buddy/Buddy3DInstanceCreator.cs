@@ -11,6 +11,7 @@ namespace Baku.VMagicMirror
     {
         private readonly IFactory<BuddyManifestTransform3DInstance> _transform3DInstanceFactory;
         private readonly IFactory<BuddySprite3DInstance> _sprite3DInstanceFactory;
+        private readonly BuddyPresetResources _buddyPresetResources;
 
         private readonly Subject<BuddyTransform3DInstance> _transform3dCreated = new();
         /// <summary>
@@ -29,13 +30,19 @@ namespace Baku.VMagicMirror
         private readonly Subject<BuddyVrmInstance> _vrmCreated = new();
         public IObservable<BuddyVrmInstance> VrmCreated => _vrmCreated;
         
+        private readonly Subject<BuddyVrmAnimationInstance> _vrmAnimationCreated = new();
+        public IObservable<BuddyVrmAnimationInstance> VrmAnimationCreated => _vrmAnimationCreated;
+        
         [Inject]
         public Buddy3DInstanceCreator(
             IFactory<BuddyManifestTransform3DInstance> transform3DInstanceFactory,
-            IFactory<BuddySprite3DInstance> sprite3DInstanceFactory)
+            IFactory<BuddySprite3DInstance> sprite3DInstanceFactory,
+            BuddyPresetResources presetResources
+            )
         {
             _transform3DInstanceFactory = transform3DInstanceFactory;
             _sprite3DInstanceFactory = sprite3DInstanceFactory;
+            _buddyPresetResources = presetResources;
         }
 
         // NOTE: この関数だけScript APIとは別のタイミングで(スクリプトの起動の直前くらいに)呼ばれる
@@ -50,7 +57,8 @@ namespace Baku.VMagicMirror
         public BuddySprite3DInstance CreateSprite3DInstance(string buddyId)
         {
             var result = _sprite3DInstanceFactory.Create();
-            result.BuddyId = buddyId;   
+            result.BuddyId = buddyId;
+            result.PresetResources = _buddyPresetResources;
             _transform3dCreated.OnNext(result.Transform3DInstance);
             _sprite3dCreated.OnNext(result);
             return result;
@@ -75,6 +83,16 @@ namespace Baku.VMagicMirror
             _transform3dCreated.OnNext(result.GetTransform3D());
             _glbCreated.OnNext(result);
             return result;
+        }
+
+        // NOTE: VrmAnimationはそれ自体をギズモとかで制御するわけではないが、ロード/アンロードの特性がVRM/GLBに似ているのでここで生成する
+        public BuddyVrmAnimationInstance CreateVrmAnimationInstance(string buddyId)
+        {
+            var result = new BuddyVrmAnimationInstance
+            {
+                BuddyId = buddyId,
+            };
+            return result; 
         }
     }
 }

@@ -25,6 +25,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             var result = Instantiate(spriteInstancePrefab, RectTransform);
             result.BuddyId = buddyId;
+            result.PresetResources = _presetResources;
             _spriteCreated.OnNext(result);
             return result;
         }
@@ -38,12 +39,14 @@ namespace Baku.VMagicMirror.Buddy
             => Instantiate(transform2DInstancePrefab, RectTransform);
         
         private Camera _mainCamera;
+        private BuddyPresetResources _presetResources;
         private (float fov, int windowWidth, int windowHeight) _canvasSizeStatus = (0f, 0, 0);
         
         [Inject]
-        public void Construct(Camera mainCamera)
+        public void Construct(Camera mainCamera, BuddyPresetResources presetResources)
         {
             _mainCamera = mainCamera;
+            _presetResources = presetResources;
         }
 
         private void Start()

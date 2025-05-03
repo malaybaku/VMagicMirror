@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
+using NAudio.SoundFont;
 using UniGLTF;
 using UnityEngine;
 using UniVRM10;
-using VRMShaders;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -14,16 +15,17 @@ namespace Baku.VMagicMirror.Buddy
     {
         private bool _hasModel = false;
         // NOTE: このインスタンスは存在する場合BuddyVrmInstanceの子要素になっている(ので、オブジェクトごと破棄することができる)
-        private Vrm10Instance _instance = null;
+        private Vrm10Instance _instance;
         private Animator _animator;
 
-        private readonly Dictionary<string, Vrm10AnimationInstance> _animations = new();
-        private Vrm10AnimationInstance _prevAnim;
-        private Vrm10AnimationInstance _anim;
+        private BuddyVrmAnimationInstance _prevAnim;
+        private BuddyVrmAnimationInstance _anim;
 
         // NOTE: setterはコンポーネントを生成するメソッドのみから用いる。InjectするほどでもないのでDIは使ってない
         public string BuddyId { get; set; }
 
+        public BuddyPresetResources PresetResources { get; set; }
+        
         public BuddyTransform3DInstance GetTransform3D()
         {
             var instance = GetComponent<BuddyTransform3DInstance>();
@@ -58,11 +60,31 @@ namespace Baku.VMagicMirror.Buddy
             }
 
             ReleaseCurrentVrm();
+            var bytes = await File.ReadAllBytesAsync(path);
+            await LoadFromBytesAsync(bytes);
+        }
+
+        public async Task LoadPresetAsync(string presetName)
+        {
+            if (PresetResources == null)
+            {
+                throw new InvalidOperationException("PresetResources is not initialized");
+            }
+
+            if (!PresetResources.TryGetVrm(presetName, out var bytes))
+            {
+                Debug.LogError("VRM not found");
+            }
+
+            ReleaseCurrentVrm();
+            await LoadFromBytesAsync(bytes);
+        }
+
+        private async Task LoadFromBytesAsync(byte[] bytes)
+        {
             Vrm10Instance instance = null;
             try
             {
-                var bytes = await File.ReadAllBytesAsync(path);
-                Debug.LogWarning($"Start Loading VRM at :{path}");
                 instance = await Vrm10.LoadBytesAsync(bytes,
                     true,
                     ControlRigGenerationOption.Generate,
@@ -104,7 +126,7 @@ namespace Baku.VMagicMirror.Buddy
                 throw;
             }
         }
-
+        
         private void ReleaseCurrentVrm()
         {
             _hasModel = false;
@@ -121,31 +143,15 @@ namespace Baku.VMagicMirror.Buddy
 
         public void Dispose()
         {
-            foreach (var anim in _animations.Values)
-            {
-                anim.GetComponent<RuntimeGltfInstance>().Dispose();
-            }
-            _animations.Clear();
             _anim = null;
             _prevAnim = null;
 
             Destroy(gameObject);
         }
 
-        public async UniTask PreloadAnimationAsync(string fullPath)
+        public void RunVrma(BuddyVrmAnimationInstance anim, bool immediate)
         {
-            using var data = new AutoGltfFileParser(fullPath).Parse();
-            using var loader = new VrmAnimationImporter(data);
-            var gltfInstance = await loader.LoadAsync(new ImmediateCaller());
-            var instance = gltfInstance.GetComponent<Vrm10AnimationInstance>();
-            instance.ShowBoxMan(false);
-
-            _animations[fullPath] = instance;
-        }
-        
-        public void RunVrma(string fullPath, bool immediate)
-        {
-            if (!_animations.ContainsKey(fullPath) || !_hasModel)
+            if (!anim.IsLoaded || !_hasModel)
             {
                 return;
             }
@@ -156,11 +162,11 @@ namespace Baku.VMagicMirror.Buddy
             }
             _prevAnim = _anim;
             
-            var anim = _animations[fullPath];
+            //var anim = _animations[fullPath];
             _anim = anim;
 
             // TODO: コレだと補間ができないので、メインアバターでやってるのと同水準のことをしたい…
-            _instance.Runtime.VrmAnimation = _anim;
+            _instance.Runtime.VrmAnimation = anim.Instance;
         }
 
         public void StopVrma(bool immediate)
@@ -305,11 +311,6 @@ namespace Baku.VMagicMirror.Buddy
             return !customClip && Enum.TryParse<ExpressionPreset>(s, out var preset)
                 ? ExpressionKey.CreateFromPreset(preset)
                 : ExpressionKey.CreateCustom(s);
-        }
-
-        public float GetVrmaLength(string fullPath)
-        {
-            throw new NotImplementedException();
         }
     }
 }

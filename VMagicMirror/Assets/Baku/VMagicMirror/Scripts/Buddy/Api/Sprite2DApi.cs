@@ -33,11 +33,14 @@ namespace Baku.VMagicMirror.Buddy.Api
             _baseDir = baseDir;
             _instance = instance;
             _logger = logger;
+
             Transform = new Transform2D(instance.GetTransform2DInstance());
+            DefaultSpritesSetting = new DefaultSpritesSettingApi(_instance.DefaultSpritesSetting);
         }
 
         public ITransform2D Transform { get; }
-
+        public IDefaultSpritesSetting DefaultSpritesSetting { get; }
+        
         Vector2 ISprite2D.Size
         {
             get => _instance.Size.ToApiValue();
@@ -90,6 +93,34 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         public void Hide() => _instance.SetActive(false);
+
+        public void SetupDefaultSprites(
+            string defaultImagePath,
+            string blinkImagePath,
+            string mouthOpenImagePath,
+            string blinkMouthOpenImagePath
+            ) => ApiUtils.Try(BuddyId, _logger, () =>
+        {
+            var setupResult = _instance.SetupDefaultSprites(
+                GetFullPath(defaultImagePath),
+                GetFullPath(blinkImagePath),
+                GetFullPath(mouthOpenImagePath),
+                GetFullPath(blinkMouthOpenImagePath)
+            );
+            HandleTextureLoadResult(defaultImagePath, setupResult);
+        });
+
+        // NOTE: このメソッドは内部的なコーディングエラーが無い限り成功するはず
+        public void SetupDefaultSpritesByPreset() => _instance.SetupDefaultSpritesByPreset();
+        
+        public void ShowDefaultSprites() => ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle.Immediate);
+        public void ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle style)
+        {
+            var clamped = UnityEngine.Mathf.Clamp(
+                (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.BottomFlip
+            );
+            _instance.ShowDefaultSprites((Sprite2DTransitionStyle)clamped);
+        }
 
         private string GetFullPath(string path) => Path.Combine(_baseDir, path);
 

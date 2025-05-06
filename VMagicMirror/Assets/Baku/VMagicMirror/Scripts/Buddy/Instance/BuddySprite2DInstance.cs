@@ -19,24 +19,49 @@ namespace Baku.VMagicMirror.Buddy
         /// <summary>
         /// Transition中に適用したいテクスチャ名があるうちはそのキーになり、適用したら空文字列になるような値
         /// </summary>
-        public string UnAppliedTextureKey { get; set; }
-        public bool HasUnAppliedTextureKey => !string.IsNullOrEmpty(UnAppliedTextureKey);
+        public Texture2D UnAppliedTexture { get; set; }
+        public bool HasUnAppliedTexture => UnAppliedTexture != null;
+        
+        // NOTE: 実質 init set だが、ガチガチにするほどでもないのでsetterが外から見えている
+        public bool IsDefaultSprites { get; set; }
 
         public float Rate => Time / TransitionDuration;
         public bool IsCompleted => Style is Sprite2DTransitionStyle.None || Time >= TransitionDuration;
 
-        public static BuddySprite2DInstanceTransition Create(Sprite2DTransitionStyle style, string textureKey) => new()
+        /// <summary>
+        /// デフォルト以外の、1枚ごとに個別で取り扱える画像へのトランジションを表すインスタンスを生成する
+        /// </summary>
+        /// <param name="style"></param>
+        /// <param name="texture"></param>
+        /// <returns></returns>
+        public static BuddySprite2DInstanceTransition CreateCustom(Sprite2DTransitionStyle style, Texture2D texture) => new()
         {
             Style = style,
             Time = 0f,
-            UnAppliedTextureKey = textureKey,
+            UnAppliedTexture = texture,
+            IsDefaultSprites = false,
+        };
+
+        /// <summary>
+        /// デフォルト立ち絵へのトランジションを表すインスタンスを生成する
+        /// </summary>
+        /// <param name="style"></param>
+        /// <param name="texture"></param>
+        /// <returns></returns>
+        public static BuddySprite2DInstanceTransition CreateDefault(Sprite2DTransitionStyle style, Texture2D texture) => new()
+        {
+            Style = style,
+            Time = 0f,
+            UnAppliedTexture = texture,
+            IsDefaultSprites = true,
         };
         
         public static BuddySprite2DInstanceTransition None => new()
         {
             Style = Sprite2DTransitionStyle.None,
             Time = 0f,
-            UnAppliedTextureKey = "",
+            UnAppliedTexture = null,
+            IsDefaultSprites = false,
         };
     }
     
@@ -51,9 +76,11 @@ namespace Baku.VMagicMirror.Buddy
         
         public BuddyPresetResources PresetResources { get; set; }
         
-        // NOTE: CurrentTransitionStyleがNone以外な場合、このテクスチャが実際に表示されているとは限らない
-        public Texture2D CurrentTexture { get; private set; }
-
+        /// <summary>
+        /// 実際に表示されているテクスチャがデフォルト立ち絵由来のものならtrueになる。トランジションの開始時点では変化しないことに注意
+        /// </summary>
+        public bool IsDefaultSpritesActive { get; private set; }
+        
         // NOTE: この値は BuddySpriteUpdater が更新してよい前提で公開される
         public BuddySprite2DInstanceTransition Transition { get; set; } = BuddySprite2DInstanceTransition.None;
 
@@ -82,15 +109,23 @@ namespace Baku.VMagicMirror.Buddy
 
         // NOTE: ここだけEffectApi自体がデータ的に定義されてるので素朴にnew()してよい
         public SpriteEffectApi SpriteEffects { get; } = new();
-        
+
+        public BuddyDefaultSpritesSettingInstance DefaultSpritesSetting { get; } = new();
+
+        public BuddyDefaultSpritesInstance DefaultSpritesInstance { get; } = new(false);
+        public BuddyDefaultSpritesUpdater DefaultSpritesUpdater { get; set; }
+
         public string BuddyId { get; set; }
 
-        public void SetTexture(string key)
+        /// <summary>
+        /// 実際に表示されるテクスチャを更新する。とくに、第二引数によってテクスチャがデフォルト立ち絵のものであるかどうかも明示的に指定する。
+        /// </summary>
+        /// <param name="texture"></param>
+        /// <param name="isDefaultSpritesTexture"></param>
+        public void SetTexture(Texture2D texture, bool isDefaultSpritesTexture)
         {
-            if (_textures.TryGetValue(key, out var texture))
-            {
-                rawImage.texture = texture;
-            }
+            rawImage.texture = texture;
+            IsDefaultSpritesActive = isDefaultSpritesTexture;
         }
 
         //TODO: なでなでに反応できてほしい気がするので、PointerMoveも検討したほうがいいかも
@@ -109,12 +144,12 @@ namespace Baku.VMagicMirror.Buddy
 
         public void Dispose()
         {
-            CurrentTexture = null;
             foreach (var t in _textures.Values)
             {
                 Destroy(t);
             }
             _textures.Clear();
+            DefaultSpritesInstance.Dispose();
 
             Destroy(gameObject);
         }
@@ -157,8 +192,7 @@ namespace Baku.VMagicMirror.Buddy
                 }
             }
 
-            CurrentTexture = _textures[fullPath];
-            Transition = BuddySprite2DInstanceTransition.Create(style, fullPath);
+            Transition = BuddySprite2DInstanceTransition.CreateCustom(style, _textures[fullPath]);
             
             return TextureLoadResult.Success;
         }
@@ -172,8 +206,7 @@ namespace Baku.VMagicMirror.Buddy
             
             if (PresetResources.TryGetTexture(presetName, out var texture))
             {
-                CurrentTexture = texture;
-                Transition = BuddySprite2DInstanceTransition.Create(style, presetName);
+                Transition = BuddySprite2DInstanceTransition.CreateCustom(style,texture);
                 return TextureLoadResult.Success;
             }
 
@@ -181,5 +214,59 @@ namespace Baku.VMagicMirror.Buddy
         }
         
         public void SetActive(bool active) => gameObject.SetActive(active);
+
+        public TextureLoadResult SetupDefaultSprites(
+            string defaultPath,
+            string blinkPath,
+            string mouthOpenPath,
+            string blinkMouthOpenPath
+            )
+        {
+            // TODO: 失敗判定
+            var defaultResult = ApiUtils.TryGetTexture2D(defaultPath, out var defaultTexture);
+            var blinkResult = ApiUtils.TryGetTexture2D(blinkPath, out var blinkTexture);
+            var mouthOpenResult =  ApiUtils.TryGetTexture2D(mouthOpenPath, out var mouthOpenTexture);
+            var blinkMouthOpenResult = ApiUtils.TryGetTexture2D(blinkMouthOpenPath, out var blinkMouthOpenTexture);
+
+            // 一つでも失敗してたら続行しない (※defaultさえ通ってれば通す…みたいなのもアリかも。)
+            if (defaultResult is not TextureLoadResult.Success) return defaultResult;
+            if (blinkResult is not TextureLoadResult.Success) return blinkResult;
+            if (mouthOpenResult is not TextureLoadResult.Success) return mouthOpenResult;
+            if (blinkMouthOpenResult is not TextureLoadResult.Success) return blinkMouthOpenResult;
+            
+            DefaultSpritesInstance.SetupTexture(
+                true,
+                defaultTexture,
+                blinkTexture,
+                mouthOpenTexture,
+                blinkMouthOpenTexture
+                );
+            return TextureLoadResult.Success;
+        }
+
+        public void SetupDefaultSpritesByPreset()
+        {
+            var sprites = PresetResources.GetDefaultSprites();
+            DefaultSpritesInstance.SetupTexture(
+                false,
+                sprites.DefaultTexture,
+                sprites.BlinkTexture,
+                sprites.MouthOpenTexture,
+                sprites.BlinkMouthOpenTexture
+                );
+        }
+
+        public void ShowDefaultSprites(Sprite2DTransitionStyle style)
+        {
+            Transition = BuddySprite2DInstanceTransition.CreateDefault(
+                style, DefaultSpritesInstance.CurrentTexture
+                );
+        }
+
+        public void UpdateDefaultSpritesState()
+        {
+            DefaultSpritesUpdater.Update();
+            DefaultSpritesInstance.SetState(DefaultSpritesUpdater.State);
+        }
     }
 }

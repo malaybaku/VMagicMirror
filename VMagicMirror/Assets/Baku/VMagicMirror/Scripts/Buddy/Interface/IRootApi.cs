@@ -10,6 +10,17 @@ namespace VMagicMirror.Buddy
     public interface IRootApi
     {
         /// <summary>
+        /// メインアバターの姿勢や表情の状態出力、およびユーザーのマイク入力など、メインアバターの制御に関する情報にアクセス可能かどうかを取得します。
+        /// </summary>
+        /// <remarks>
+        /// この値はアプリケーションのEditionおよびユーザー設定によって変化します。
+        /// 値が <c>false</c> の場合、 <see cref="AvatarMotionEvent"/> のイベントが発火しなかったり、 <see cref="AvatarPose"/> で有効なポーズが取得できなかったりする状態になります。
+        /// 
+        /// ユーザー入力がないとスタックしてしまうような挙動をサブキャラに実装する場合、このフラグを組み合わせて挙動をカスタムすることでスタックを防げます。
+        /// </remarks>
+        bool AvatarOutputFeatureEnabled { get; }
+        
+        /// <summary>
         /// サブキャラのロード後に一度呼ばれます。
         /// </summary>
         event Action Start;

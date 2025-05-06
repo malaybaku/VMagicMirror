@@ -4,6 +4,26 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
 {
+    public readonly struct BuddyDefaultSprites
+    {
+        public Texture2D DefaultTexture { get; }
+        public Texture2D BlinkTexture { get; }
+        public Texture2D MouthOpenTexture { get; }
+        public Texture2D BlinkMouthOpenTexture { get; }
+        
+        public BuddyDefaultSprites(
+            Texture2D defaultSprite,
+            Texture2D blinkTexture,
+            Texture2D mouthOpenSprite,
+            Texture2D blinkMouthOpenTexture)
+        {
+            DefaultTexture = defaultSprite;
+            BlinkTexture = blinkTexture;
+            MouthOpenTexture = mouthOpenSprite;
+            BlinkMouthOpenTexture = blinkMouthOpenTexture;
+        }
+    }
+    
     /// <summary>
     /// アプリケーション本体に組み込むサブキャラのアセット情報を保持するクラス
     /// </summary>
@@ -84,6 +104,26 @@ namespace Baku.VMagicMirror.Buddy
 
             result = null;
             return false;
+        }
+
+        // NOTE: 本来はこれに対してもキーを指定すべきだが、v4.0.0ではデフォルトスプライトを一種類しか提供しないので決め打ちする
+        public BuddyDefaultSprites GetDefaultSprites()
+        {
+            if (TryGetTexture("A_default", out var defaultSprite) &&
+                TryGetTexture("A_blink", out var blinkSprite) &&
+                TryGetTexture("A_mouthOpen", out var mouthOpenSprite) &&
+                TryGetTexture("A_blinkMouthOpen", out var blinkMouthOpenSprite))
+            {
+                return new BuddyDefaultSprites(
+                    defaultSprite,
+                    blinkSprite,
+                    mouthOpenSprite,
+                    blinkMouthOpenSprite);
+            }
+            else
+            {
+                throw new InvalidOperationException("Default sprites not found");
+            }
         }
     }
     

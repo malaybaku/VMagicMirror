@@ -15,6 +15,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         private readonly BuddyLogger _logger;
         private readonly Buddy3DInstanceCreator _buddy3DInstanceCreator;
         private readonly BuddySpriteCanvas _spriteCanvas;
+        // NOTE: 他のreadonlyフィールドを↓から導出されるプロパティに変更してもOK
+        private readonly ApiImplementBundle _apiImplementBundle;
 
         private readonly CancellationTokenSource _cts = new();
         
@@ -29,6 +31,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             BuddyId = buddyId;
             _settingsRepository = apiImplementBundle.SettingsRepository;
             _logger = apiImplementBundle.Logger;
+            _apiImplementBundle = apiImplementBundle;
             
             Property = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
             AvatarLoadEventInternal = new AvatarLoadEventApi(apiImplementBundle.AvatarLoadApi);
@@ -57,6 +60,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         internal string BuddyId { get; }
+
+        bool IRootApi.AvatarOutputFeatureEnabled => _settingsRepository.MainAvatarOutputActive.Value;
 
         internal void InvokeStarted() => Start?.Invoke();
         public event Action Start;
@@ -157,7 +162,9 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         public ISprite2D Create2DSprite()
         {
-            var instance = _spriteCanvas.CreateSpriteInstance(BuddyId);
+            var instance = _spriteCanvas.CreateSpriteInstance(
+                BuddyId, _settingsRepository, _apiImplementBundle.AvatarFacialApi
+                );
             var result = new Sprite2DApi(_baseDir, instance, _logger);
             return result;
         }

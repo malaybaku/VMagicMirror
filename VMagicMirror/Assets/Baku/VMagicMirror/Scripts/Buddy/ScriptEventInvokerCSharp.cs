@@ -147,7 +147,6 @@ namespace Baku.VMagicMirror.Buddy
                 return;
             }
             
-            // TODO: _api経由じゃなくてSpriteの一覧的なやつを見に行くでよい…ということにしたい
             foreach (var sprite in repo.Sprite2Ds)
             {
                 _spriteUpdater.UpdateSprite(sprite);

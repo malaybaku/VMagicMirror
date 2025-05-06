@@ -43,8 +43,19 @@ namespace Baku.VMagicMirror.Buddy
         
         public void UpdateSprite(BuddySprite2DInstance sprite)
         {
-            var pose = EffectAppliedPose.Default();
+            if (sprite.DefaultSpritesInstance.HasValidSetup)
+            {
+                sprite.UpdateDefaultSpritesState();
+            }
 
+            // NOTE: デフォルト絵はトランジションと無関係に上書きできる。毎フレーム呼ぶが、実際には瞬きのon/offなどでたまーに変わる
+            if (sprite.IsDefaultSpritesActive)
+            {
+                sprite.SetTexture(sprite.DefaultSpritesInstance.CurrentTexture, true);
+            }
+            
+            // Effectによるポーズの更新
+            var pose = EffectAppliedPose.Default();
             var effects = sprite.SpriteEffects;
             pose = Floating(pose, effects.InternalFloating);
             pose = Bounce(pose, effects.InternalBounceDeform);
@@ -53,6 +64,14 @@ namespace Baku.VMagicMirror.Buddy
             // NOTE: Transitionのポーズ変形はz軸以外の回転を含むため、これを最後にやる (先にやると回転の合成がヘンになる)
             if (!sprite.Transition.IsCompleted)
             {
+                // NOTE: 遷移先がデフォルト立ち絵の場合、その遷移先が変わっているのも後追いしておく(ここまでせんでも良いかもだが)
+                if (sprite.Transition.IsDefaultSprites && sprite.Transition.HasUnAppliedTexture)
+                {
+                    var t = sprite.Transition;
+                    t.UnAppliedTexture = sprite.DefaultSpritesInstance.CurrentTexture;
+                    sprite.Transition = t;
+                }
+                
                 BuddySprite2DInstanceTransition transition;
                 (pose, transition) = DoTransition(sprite, Time.deltaTime, pose, sprite.Transition);
                 sprite.Transition = transition;
@@ -145,7 +164,7 @@ namespace Baku.VMagicMirror.Buddy
 
             if (transition.Style is Sprite2DTransitionStyle.Immediate)
             {
-                instance.SetTexture(transition.UnAppliedTextureKey);
+                instance.SetTexture(transition.UnAppliedTexture, transition.IsDefaultSprites);
                 return (pose, BuddySprite2DInstanceTransition.None);
             }
 
@@ -153,9 +172,9 @@ namespace Baku.VMagicMirror.Buddy
             transition.Time += deltaTime;
             if (transition.IsCompleted)
             {
-                if (transition.HasUnAppliedTextureKey)
+                if (transition.HasUnAppliedTexture)
                 {
-                    instance.SetTexture(transition.UnAppliedTextureKey);
+                    instance.SetTexture(transition.UnAppliedTexture, transition.IsDefaultSprites);
                 }
                 return (pose, BuddySprite2DInstanceTransition.None);
             }
@@ -202,10 +221,10 @@ namespace Baku.VMagicMirror.Buddy
             }
             else
             {
-                if (transition.HasUnAppliedTextureKey)
+                if (transition.HasUnAppliedTexture)
                 {
-                    instance.SetTexture(transition.UnAppliedTextureKey);
-                    transition.UnAppliedTextureKey = "";
+                    instance.SetTexture(transition.UnAppliedTexture, transition.IsDefaultSprites);
+                    transition.UnAppliedTexture = null;
                 }
 
                 // NOTE: 0 .. 90deg 付近から -90degにジャンプして-90 .. 0 に進める感じ
@@ -242,10 +261,10 @@ namespace Baku.VMagicMirror.Buddy
             }
             else
             {
-                if (transition.HasUnAppliedTextureKey)
+                if (transition.HasUnAppliedTexture)
                 {
-                    instance.SetTexture(transition.UnAppliedTextureKey);
-                    transition.UnAppliedTextureKey = "";
+                    instance.SetTexture(transition.UnAppliedTexture, transition.IsDefaultSprites);
+                    transition.UnAppliedTexture = null;
                 }
 
                 // 冒頭の動きをひっくり返したやつ

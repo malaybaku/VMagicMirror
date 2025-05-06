@@ -112,7 +112,8 @@ namespace Baku.VMagicMirror.Buddy
             if (TryGetTexture("A_default", out var defaultSprite) &&
                 TryGetTexture("A_blink", out var blinkSprite) &&
                 TryGetTexture("A_mouthOpen", out var mouthOpenSprite) &&
-                TryGetTexture("A_blinkMouthOpen", out var blinkMouthOpenSprite))
+                // TODO: blinkMouthOpenとつなげるかも
+                TryGetTexture("A_blink_mouthOpen", out var blinkMouthOpenSprite))
             {
                 return new BuddyDefaultSprites(
                     defaultSprite,

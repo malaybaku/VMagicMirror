@@ -19,7 +19,8 @@ namespace Baku.VMagicMirror.Buddy
             Api = api;
         }
 
-        [Preserve] public RootApi Api { get; }
+        // NOTE: RootApiじゃなくてIRootApiにする必要があるので注意
+        [Preserve] public BuddyApi.IRootApi Api { get; }
     }
 
     public class ScriptCallerCSharp : ScriptCallerBase

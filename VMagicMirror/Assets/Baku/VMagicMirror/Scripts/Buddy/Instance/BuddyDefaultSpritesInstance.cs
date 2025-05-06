@@ -100,9 +100,7 @@ namespace Baku.VMagicMirror
                     _ => throw new ArgumentOutOfRangeException(nameof(state)),
                 };
             }
-            throw new NotImplementedException();
         }
-
 
         // NOTE: 今のところClearするAPIは提供してないが、Disposeより早い段階でClearしてもよいのでpublicにしている
         public void Clear()

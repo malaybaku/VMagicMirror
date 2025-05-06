@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror
     /// </summary>
     public static class BuddyApiXmlDocGenerator
     {
-        private const string ApiScriptDir = @"Assets\Baku\VMagicMirror\Scripts\Buddy\ApiInterface";
+        private const string ApiScriptDir = @"Assets\Baku\VMagicMirror\Scripts\Buddy\Interface";
         private static readonly string ApiScriptDirPath = ApiScriptDir.Replace('\\', '/') + "/";
 
         private const string XmlFileName = StreamingAssetFileNames.BuddyApiXmlDocFileName;

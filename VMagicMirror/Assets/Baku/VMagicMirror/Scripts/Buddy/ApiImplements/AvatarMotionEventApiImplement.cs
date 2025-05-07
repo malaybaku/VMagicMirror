@@ -143,8 +143,7 @@ namespace Baku.VMagicMirror.Buddy
             }
 
             // ENTERキーだけ教える & 他はキー名はヒミツ
-            var eventKeyName =
-                keyName.ToLower() == "enter" ? "enter" : "";
+            var eventKeyName = keyName.ToLower() == "enter" ? "Enter" : "";
             _keyboardKeyDown.OnNext(eventKeyName);
         }
 

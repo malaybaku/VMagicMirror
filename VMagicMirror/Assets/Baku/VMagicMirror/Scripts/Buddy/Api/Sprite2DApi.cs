@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using UnityEngine;
 using VMagicMirror.Buddy;
 using BuddyApi = VMagicMirror.Buddy;
 
@@ -41,7 +42,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         public ITransform2D Transform { get; }
         public IDefaultSpritesSetting DefaultSpritesSetting { get; }
         
-        Vector2 ISprite2D.Size
+        BuddyApi.Vector2 ISprite2D.Size
         {
             get => _instance.Size.ToApiValue();
             set => _instance.Size = value.ToEngineValue();
@@ -56,18 +57,18 @@ namespace Baku.VMagicMirror.Buddy.Api
             HandleTextureLoadResult(fullPath, result);
         });
 
-        public void Show(string path) => Show(path, BuddyApi.Sprite2DTransitionStyle.Immediate);
+        public void Show(string path) => Show(path, BuddyApi.Sprite2DTransitionStyle.Immediate, 0f);
 
-        public void Show(string path, BuddyApi.Sprite2DTransitionStyle style)
+        public void Show(string path, BuddyApi.Sprite2DTransitionStyle style, float duration)
         {
             ApiUtils.Try(BuddyId, _logger, () =>
             {
                 var fullPath = GetFullPath(path);
-                var clamped = UnityEngine.Mathf.Clamp(
-                    (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.BottomFlip
-                );
-
-                var loadResult = _instance.Show(fullPath, (Sprite2DTransitionStyle)clamped);
+                var loadResult = _instance.Show(
+                    fullPath,
+                    GetClampedStyle(style),
+                    Mathf.Max(duration, 0f)
+                    );
                 HandleTextureLoadResult(fullPath, loadResult);
                 if (loadResult == TextureLoadResult.Success)
                 {
@@ -76,9 +77,9 @@ namespace Baku.VMagicMirror.Buddy.Api
             });
         }
 
-        public void ShowPreset(string name) => ShowPreset(name, BuddyApi.Sprite2DTransitionStyle.Immediate);
+        public void ShowPreset(string name) => ShowPreset(name, BuddyApi.Sprite2DTransitionStyle.Immediate, 0f);
 
-        public void ShowPreset(string name, BuddyApi.Sprite2DTransitionStyle style)
+        public void ShowPreset(string name, BuddyApi.Sprite2DTransitionStyle style, float duration)
         {
             ApiUtils.Try(BuddyId, _logger, () =>
             {
@@ -87,7 +88,11 @@ namespace Baku.VMagicMirror.Buddy.Api
                 );
 
                 // NOTE: Presetのロードエラーはコーディングの段階で間違ってないと起こらないので、エラーは起こるだけ繰り返し表示する
-                var loadResult = _instance.ShowPreset(name, (Sprite2DTransitionStyle)clamped);
+                var loadResult = _instance.ShowPreset(
+                    name,
+                    (Sprite2DTransitionStyle)clamped,
+                    Mathf.Max(duration, 0f)
+                    );
                 HandlePresetTextureLoadResult(name, loadResult);
             });
         }
@@ -113,13 +118,13 @@ namespace Baku.VMagicMirror.Buddy.Api
         // NOTE: このメソッドは内部的なコーディングエラーが無い限り成功するはず
         public void SetupDefaultSpritesByPreset() => _instance.SetupDefaultSpritesByPreset();
         
-        public void ShowDefaultSprites() => ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle.Immediate);
-        public void ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle style)
+        public void ShowDefaultSprites() => ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle.Immediate, 0f);
+        public void ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle style, float duration)
         {
-            var clamped = UnityEngine.Mathf.Clamp(
-                (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.BottomFlip
+            _instance.ShowDefaultSprites(
+                GetClampedStyle(style),
+                Mathf.Max(duration, 0f) 
             );
-            _instance.ShowDefaultSprites((Sprite2DTransitionStyle)clamped);
         }
 
         private string GetFullPath(string path) => Path.Combine(_baseDir, path);
@@ -152,6 +157,14 @@ namespace Baku.VMagicMirror.Buddy.Api
             {
                 _logger.Log(BuddyId, "Specified preset does not exist: " + name, BuddyLogLevel.Error);
             }
+        }
+
+        private static Sprite2DTransitionStyle GetClampedStyle(BuddyApi.Sprite2DTransitionStyle style)
+        {
+            var clamped = Mathf.Clamp(
+                (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.BottomFlip
+            );
+            return (Sprite2DTransitionStyle)clamped;
         }
     }
 }

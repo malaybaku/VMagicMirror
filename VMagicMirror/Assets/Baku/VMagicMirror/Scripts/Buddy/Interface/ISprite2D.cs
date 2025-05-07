@@ -6,7 +6,7 @@ namespace VMagicMirror.Buddy
         ITransform2D Transform { get; }
 
         /// <summary>
-        /// <see cref="SetupDefaultSprites"/> や <see cref="ShowDefaultSprites(Sprite2DTransitionStyle)"/> を用いて適用できる、
+        /// <see cref="SetupDefaultSprites"/> や <see cref="ShowDefaultSprites(Sprite2DTransitionStyle, float)"/> を用いて適用できる、
         /// デフォルトの立ち絵についての動作の設定を取得します。
         /// </summary>
         IDefaultSpritesSetting DefaultSpritesSetting { get; }
@@ -30,11 +30,11 @@ namespace VMagicMirror.Buddy
         /// <param name="blinkMouthOpenImagePath">目を閉じ、口を開いている立ち絵の画像ファイルのパス</param>
         /// <remarks>
         /// この関数はセットアップのために一度だけ呼び出します。
-        /// その後、 <see cref="ShowDefaultSprites(Sprite2DTransitionStyle)"/> を呼び出すことで指定した画像が表示されます。
+        /// その後、 <see cref="ShowDefaultSprites(Sprite2DTransitionStyle, float)"/> を呼び出すことで指定した画像が表示されます。
         ///
-        /// 簡易的なセットアップでサブキャラのまばたき、口パクを動かす場合、この関数で基本の立ち絵をセットアップします。
-        /// まばたきや口パクを詳細に制御したい場合、このメソッドは使用せず、
-        /// <see cref="Show(string, Sprite2DTransitionStyle)"/> を使用します。
+        /// 簡易的なセットアップでサブキャラのまばたき、口パクを動かしたい場合、この関数で基本の立ち絵をセットアップします。
+        /// まばたきや口パクをより詳細に制御したい場合、このメソッドは使用せず、代わりに
+        /// <see cref="Show(string)"/> や <see cref="Show(string, Sprite2DTransitionStyle, float)"/> を使用します。
         /// </remarks>
         void SetupDefaultSprites(
             string defaultImagePath,
@@ -52,8 +52,8 @@ namespace VMagicMirror.Buddy
         void SetupDefaultSpritesByPreset();
 
         /// <summary>
-        /// <see cref="SetupDefaultSprites"/> でセットアップした立ち絵を表示します。
-        /// メソッドの詳細は　<see cref="ShowDefaultSprites(Sprite2DTransitionStyle)"/> を参照して下さい。
+        /// <see cref="SetupDefaultSprites"/> でセットアップした立ち絵を直ちに表示します。
+        /// メソッドの詳細は　<see cref="ShowDefaultSprites(Sprite2DTransitionStyle, float)"/> を参照して下さい。
         /// </summary>
         void ShowDefaultSprites();
 
@@ -61,29 +61,38 @@ namespace VMagicMirror.Buddy
         /// <see cref="SetupDefaultSprites"/> でセットアップしたデフォルトの立ち絵を表示します。
         /// </summary>
         /// <param name="style">画像切り替えのスタイル。指定しない場合、ただちに画像が切り替わります。</param>
+        /// <param name="duration">画像切り替え動作を実行する秒数。0以下の値を指定した場合、ただちに画像が切り替わります。</param>
         /// <remarks>
         /// この関数を呼び出す場合、あらかじめ <see cref="SetupDefaultSprites"/> でセットアップを行う必要があります。
         /// 事前に <see cref="SetupDefaultSprites"/> を呼び出していなかった場合、このメソッドを呼び出しても何も起こりません。
         /// </remarks>
-        void ShowDefaultSprites(Sprite2DTransitionStyle style);
+        void ShowDefaultSprites(Sprite2DTransitionStyle style, float duration);
         
         /// <summary>
-        /// ファイルパスを指定して画像を表示します。。
-        /// メソッドの詳細は　<see cref="Show(string, Sprite2DTransitionStyle)"/> を参照して下さい。
+        /// ファイルパスを指定して画像を表示します。
         /// </summary>
         /// <param name="path">画像ファイルのパス</param>
+        /// <remarks>
+        /// このメソッドでは画像は指定されたものへ直ちに切り替わります。
+        /// 
+        /// アニメーションを適用しながら画像を切り替えたい場合は　<see cref="Show(string, Sprite2DTransitionStyle, float)"/> を使用します。
+        /// </remarks>
         void Show(string path);
 
         /// <summary>
         /// ファイルパスと切り替え演出を指定して画像を表示します。
         /// </summary>
         /// <param name="path">画像ファイルのパス</param>
-        /// <param name="style">画像切り替えのスタイル。指定しない場合、ただちに画像が切り替わります。</param>
+        /// <param name="style">画像切り替えのスタイル。。</param>
+        /// <param name="duration">画像切り替え動作を実行する秒数。0以下の値を指定した場合、ただちに画像が切り替わります。</param>
         /// <remarks>
         /// <see cref="Preload"/> を呼び出したことのある画像や起動後に表示したことのある画像のパスを指定した場合、
         /// すでに読み込み済みの画像が再利用されます。
+        ///
+        /// <paramref name="style"/> として <see cref="Sprite2DTransitionStyle.Immediate"/> を指定した場合、 <paramref name="duration"/> の値は無視され、ただちに画像が切り替わります。
+        /// これは <see cref="Show(string)"/> と同じ動作です。
         /// </remarks>
-        void Show(string path, Sprite2DTransitionStyle style);
+        void Show(string path, Sprite2DTransitionStyle style, float duration);
 
         /// <summary>
         /// プリセット画像の名称を指定して画像を表示します。
@@ -92,7 +101,7 @@ namespace VMagicMirror.Buddy
         /// <remarks>
         /// プリセット画像とは、アプリケーション自体に組み込まれていてサブキャラとして利用可能な画像のことです。
         /// 
-        /// <paramref name="name"/> に指定可能な値の詳細や、画像切り替え時の演出を調整する場合の呼び出しについては <see cref="ShowPreset(string, Sprite2DTransitionStyle)"/> を参照して下さい。
+        /// <paramref name="name"/> に指定可能な値の詳細や、画像切り替え時の演出を調整する場合の呼び出しについては <see cref="ShowPreset(string, Sprite2DTransitionStyle, float)"/> を参照して下さい。
         /// </remarks>
         void ShowPreset(string name);
 
@@ -101,6 +110,7 @@ namespace VMagicMirror.Buddy
         /// </summary>
         /// <param name="name">プリセット画像の名称</param>
         /// <param name="style">画像切り替えのスタイル</param>
+        /// <param name="duration">画像切り替え動作を実行する秒数。0以下の値を指定した場合、ただちに画像が切り替わります。</param>
         /// <remarks>
         /// プリセット画像とは、アプリケーション自体に組み込まれていてサブキャラとして利用可能な画像のことです。
         /// v4.0.0では <paramref name="name"/> として以下の値を指定できます。
@@ -120,8 +130,10 @@ namespace VMagicMirror.Buddy
         /// </list>
         ///
         /// この関数はサブキャラの表情を切り替える場合などに適しています。
+        /// 
+        /// その他の用途については <see cref="Show(string, Sprite2DTransitionStyle, float)"/> を参照して下さい。
         /// </remarks>
-        void ShowPreset(string name, Sprite2DTransitionStyle style);
+        void ShowPreset(string name, Sprite2DTransitionStyle style, float duration);
         
         /// <summary>
         /// サブキャラを非表示にします。

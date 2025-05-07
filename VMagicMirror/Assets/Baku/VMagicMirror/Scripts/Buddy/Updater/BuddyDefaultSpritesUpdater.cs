@@ -19,14 +19,16 @@ namespace Baku.VMagicMirror.Buddy
     /// </summary>
     public class BuddyDefaultSpritesUpdater 
     {
-        private const float BlinkDuration = 0.1f;
+        private const float BlinkDuration = 0.15f;
         private const float BlinkDelayMin = 0.1f;
         private const float BlinkDelayMax = 0.4f;
-        private const float SyncBlinkProbability = 0.7f;
+        // NOTE: この確率をDefaultSpritesSettingで可変にしてもよいかも
+        private const float SyncBlinkProbability = 0.8f;
         
         private readonly BuddySettingsRepository _settingsRepository;
         private readonly AvatarFacialApiImplement _facialApiImplement;
         private readonly BuddySprite2DInstance _instance;
+        private IDisposable _blinkObserver;
 
         public BuddyDefaultSpritesUpdater(
             BuddySettingsRepository settingsRepository,
@@ -65,8 +67,6 @@ namespace Baku.VMagicMirror.Buddy
             _instance.DefaultSpritesSetting.SyncMouthBlendShapeToMainAvatar &&
             _settingsRepository.MainAvatarOutputActive.Value;
 
-        private IDisposable _blinkObserver;
-        
         public void Initialize()
         {
             _blinkObserver = _facialApiImplement
@@ -91,7 +91,7 @@ namespace Baku.VMagicMirror.Buddy
             // _nextBlinkTime ~ (_nextBlinkTime + BlinkDuration) : まばたき中
             if (_blinkWaitTime < _nextBlinkTime)
             {
-                _isBlinking = true;
+                _isBlinking = false;
             }
             else if (_blinkWaitTime < _nextBlinkTime + BlinkDuration)
             {
@@ -99,14 +99,20 @@ namespace Baku.VMagicMirror.Buddy
             }
             else
             {
-                _isBlinking = true;
+                _isBlinking = false;
                 _blinkWaitTime = 0f;
                 _nextBlinkIsSyncBased = false;
-                _nextBlinkTime = Random.Range(BlinkDelayMin, BlinkDelayMax);
+                var intervalMin = _instance.DefaultSpritesSetting.BlinkIntervalMin;
+                var intervalMax = _instance.DefaultSpritesSetting.BlinkIntervalMax;
+
+                // NOTE: min/maxをヘンテコにセットしても耐えるようにしている
+                _nextBlinkTime =
+                    (intervalMax <= intervalMin) ? intervalMin :
+                    Random.Range(intervalMin, intervalMax);
             }
         }
 
-        // 「ちょっと遅れてまばたきする動作」を一定の確率で予約する。
+        // メインアバターのまばたきに対し、「ちょっと遅れてまばたきする動作」を一定の確率で予約する。
         private void OnBlinked()
         {
             if (!SyncBlink || 

@@ -45,15 +45,9 @@ namespace Baku.VMagicMirror.Buddy
         {
             if (sprite.DefaultSpritesInstance.HasValidSetup)
             {
-                sprite.UpdateDefaultSpritesState();
+                sprite.UpdateDefaultSpritesTexture();
             }
 
-            // NOTE: デフォルト絵はトランジションと無関係に上書きできる。毎フレーム呼ぶが、実際には瞬きのon/offなどでたまーに変わる
-            if (sprite.IsDefaultSpritesActive)
-            {
-                sprite.SetTexture(sprite.DefaultSpritesInstance.CurrentTexture, true);
-            }
-            
             // Effectによるポーズの更新
             var pose = EffectAppliedPose.Default();
             var effects = sprite.SpriteEffects;
@@ -162,7 +156,7 @@ namespace Baku.VMagicMirror.Buddy
                 return (pose, transition);
             }
 
-            if (transition.Style is Sprite2DTransitionStyle.Immediate)
+            if (transition.IsImmediate)
             {
                 instance.SetTexture(transition.UnAppliedTexture, transition.IsDefaultSprites);
                 return (pose, BuddySprite2DInstanceTransition.None);

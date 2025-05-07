@@ -10,11 +10,10 @@ namespace Baku.VMagicMirror.Buddy
 {
     public struct BuddySprite2DInstanceTransition
     {
-        // TODO: Transitionの種類によってDurationを変えたい
-        // そもそも引数で受け取れるようにせい、ということかもしれないが
-        private const float TransitionDuration = 0.8f;
-
         public Sprite2DTransitionStyle Style { get; set; }
+        // NOTE: この値は0以下の場合、「1Fで実行してね」的なTransitionを表すように動く
+        public float TransitionDuration { get; set; }
+
         public float Time { get; set; }
         /// <summary>
         /// Transition中に適用したいテクスチャ名があるうちはそのキーになり、適用したら空文字列になるような値
@@ -26,20 +25,31 @@ namespace Baku.VMagicMirror.Buddy
         public bool IsDefaultSprites { get; set; }
 
         public float Rate => Time / TransitionDuration;
-        public bool IsCompleted => Style is Sprite2DTransitionStyle.None || Time >= TransitionDuration;
+        // NOTE: Immediateフラグが立ってる場合、「Durationは0かもしれんが未完了」という意味になる
+        public bool IsCompleted =>
+            Style is Sprite2DTransitionStyle.None ||
+            (!IsImmediate && Time >= TransitionDuration);
+        
+        // NOTE: このフラグが立っている場合、ただちに未適用テクスチャを適用し、遷移状態を Transition.None に上書きすることが望ましい
+        public bool IsImmediate => Style is Sprite2DTransitionStyle.Immediate || TransitionDuration <= 0f;
 
         /// <summary>
         /// デフォルト以外の、1枚ごとに個別で取り扱える画像へのトランジションを表すインスタンスを生成する
         /// </summary>
         /// <param name="style"></param>
         /// <param name="texture"></param>
+        /// <param name="duration">
+        /// </param>
         /// <returns></returns>
-        public static BuddySprite2DInstanceTransition CreateCustom(Sprite2DTransitionStyle style, Texture2D texture) => new()
+        public static BuddySprite2DInstanceTransition CreateCustom(
+            Sprite2DTransitionStyle style, Texture2D texture, float duration
+            ) => new()
         {
             Style = style,
+            TransitionDuration = duration,
+            IsDefaultSprites = false,
             Time = 0f,
             UnAppliedTexture = texture,
-            IsDefaultSprites = false,
         };
 
         /// <summary>
@@ -47,21 +57,26 @@ namespace Baku.VMagicMirror.Buddy
         /// </summary>
         /// <param name="style"></param>
         /// <param name="texture"></param>
+        /// <param name="duration"></param>
         /// <returns></returns>
-        public static BuddySprite2DInstanceTransition CreateDefault(Sprite2DTransitionStyle style, Texture2D texture) => new()
+        public static BuddySprite2DInstanceTransition CreateDefault(
+            Sprite2DTransitionStyle style, Texture2D texture, float duration
+            ) => new()
         {
             Style = style,
+            TransitionDuration = duration,
+            IsDefaultSprites = true,
             Time = 0f,
             UnAppliedTexture = texture,
-            IsDefaultSprites = true,
         };
         
         public static BuddySprite2DInstanceTransition None => new()
         {
             Style = Sprite2DTransitionStyle.None,
+            TransitionDuration = 0f,
+            IsDefaultSprites = false,
             Time = 0f,
             UnAppliedTexture = null,
-            IsDefaultSprites = false,
         };
     }
     
@@ -150,6 +165,7 @@ namespace Baku.VMagicMirror.Buddy
             }
             _textures.Clear();
             DefaultSpritesInstance.Dispose();
+            DefaultSpritesUpdater.Dispose();
 
             Destroy(gameObject);
         }
@@ -180,8 +196,9 @@ namespace Baku.VMagicMirror.Buddy
         /// </summary>
         /// <param name="fullPath"></param>
         /// <param name="style"></param>
+        /// <param name="duration"></param>
         /// <returns></returns>
-        public TextureLoadResult Show(string fullPath, Sprite2DTransitionStyle style)
+        public TextureLoadResult Show(string fullPath, Sprite2DTransitionStyle style, float duration)
         {
             if (!_textures.ContainsKey(fullPath))
             {
@@ -192,12 +209,12 @@ namespace Baku.VMagicMirror.Buddy
                 }
             }
 
-            Transition = BuddySprite2DInstanceTransition.CreateCustom(style, _textures[fullPath]);
+            Transition = BuddySprite2DInstanceTransition.CreateCustom(style, _textures[fullPath], duration);
             
             return TextureLoadResult.Success;
         }
 
-        public TextureLoadResult ShowPreset(string presetName, Sprite2DTransitionStyle style)
+        public TextureLoadResult ShowPreset(string presetName, Sprite2DTransitionStyle style, float duration)
         {
             if (PresetResources == null)
             {
@@ -206,7 +223,7 @@ namespace Baku.VMagicMirror.Buddy
             
             if (PresetResources.TryGetTexture(presetName, out var texture))
             {
-                Transition = BuddySprite2DInstanceTransition.CreateCustom(style,texture);
+                Transition = BuddySprite2DInstanceTransition.CreateCustom(style,texture, duration);
                 return TextureLoadResult.Success;
             }
 
@@ -256,17 +273,23 @@ namespace Baku.VMagicMirror.Buddy
                 );
         }
 
-        public void ShowDefaultSprites(Sprite2DTransitionStyle style)
+        public void ShowDefaultSprites(Sprite2DTransitionStyle style, float duration)
         {
             Transition = BuddySprite2DInstanceTransition.CreateDefault(
-                style, DefaultSpritesInstance.CurrentTexture
+                style, DefaultSpritesInstance.CurrentTexture, duration
                 );
         }
 
-        public void UpdateDefaultSpritesState()
+        public void UpdateDefaultSpritesTexture()
         {
             DefaultSpritesUpdater.Update();
             DefaultSpritesInstance.SetState(DefaultSpritesUpdater.State);
+            if (IsDefaultSpritesActive)
+            {
+                // NOTE: デフォルト絵を当ててよい状態なら実際に当てる。
+                // この呼び出しで実際にテクスチャが変わるフレームは疎で、まばたきのon/offがたまーに効く程度
+                SetTexture(DefaultSpritesInstance.CurrentTexture, true);
+            }
         }
     }
 }

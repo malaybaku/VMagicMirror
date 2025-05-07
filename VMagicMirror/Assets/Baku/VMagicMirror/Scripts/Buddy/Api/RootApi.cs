@@ -71,10 +71,13 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         public SynchronizationContext MainThreadContext { get; }
 
-        public async Task RunOnMainThread(Task task)
+        public void RunOnMainThread(Func<Task> task)
         {
-            await UniTask.SwitchToMainThread();
-            await task;
+            Task.Run(async () =>
+            {
+                await UniTask.SwitchToMainThread();
+                await task();
+            });
         }
         
         //TODO: FeatureLockについては、ここで記述されるプロパティ単位で

@@ -36,11 +36,13 @@ namespace Baku.VMagicMirror
                         : BuddyLogLevel.Fatal)
                 .Subscribe(level => _logLevel.Value = level)
                 .AddTo(this);
-
         }
 
-        private readonly ReactiveProperty<bool> _mainAvatarOutputActive = new(false);
-        // TODO: この設定を使うクラスを用意して、そのクラスからのイベントをいい感じに遮断したりする 
+        // NOTE: 初期値はEditionで変化する。ちょっと特殊
+        // (※「常にGUI側が値を明示する」ということにして常にfalse初期値にしたほうが良いかも)
+        private readonly ReactiveProperty<bool> _mainAvatarOutputActive = new(
+            !FeatureLocker.IsFeatureLocked
+            );
         public IReadOnlyReactiveProperty<bool> MainAvatarOutputActive => _mainAvatarOutputActive;
 
         private readonly ReactiveProperty<bool> _developerModeActive = new(false);

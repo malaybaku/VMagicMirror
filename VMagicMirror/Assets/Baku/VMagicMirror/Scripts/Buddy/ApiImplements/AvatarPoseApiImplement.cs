@@ -5,6 +5,7 @@ namespace Baku.VMagicMirror.Buddy
 {
     public class AvatarPoseApiImplement
     {
+        private readonly BuddySettingsRepository _buddySettingsRepository;
         private readonly IVRMLoadable _vrmLoadable;
 
         private Animator _animator;
@@ -12,9 +13,11 @@ namespace Baku.VMagicMirror.Buddy
         private readonly BodyMotionModeController _bodyMotionMode;
 
         public AvatarPoseApiImplement(
+            BuddySettingsRepository buddySettingsRepository,
             IVRMLoadable vrmLoadable,
             BodyMotionModeController bodyMotionMode)
         {
+            _buddySettingsRepository = buddySettingsRepository;
             _vrmLoadable = vrmLoadable;
             _vrmLoadable.VrmLoaded += OnVrmLoaded;
             _vrmLoadable.VrmDisposing += OnVrmUnloaded;
@@ -22,12 +25,23 @@ namespace Baku.VMagicMirror.Buddy
         }
 
         private bool _isLoaded;
+        private bool IsMainAvatarOutputActive =>
+            _buddySettingsRepository.MainAvatarOutputActive.Value;
 
-        public bool UseGameInputMotion => _bodyMotionMode.MotionMode.Value is BodyMotionMode.GameInputLocomotion;
-        public bool UseStandingOnlyMode => _bodyMotionMode.MotionMode.Value is BodyMotionMode.StandingOnly;
+        public bool UseGameInputMotion =>
+            IsMainAvatarOutputActive && 
+            _bodyMotionMode.MotionMode.Value is BodyMotionMode.GameInputLocomotion;
+        public bool UseStandingOnlyMode =>
+            IsMainAvatarOutputActive &&
+            _bodyMotionMode.MotionMode.Value is BodyMotionMode.StandingOnly;
         
         public Vector3 GetBoneGlobalPosition(HumanBodyBones bone)
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return Vector3.zero;
+            }
+
             if (!TryGetBone(bone, out var boneTransform))
             {
                 return Vector3.zero;
@@ -37,6 +51,11 @@ namespace Baku.VMagicMirror.Buddy
 
         public Quaternion GetBoneGlobalRotation(HumanBodyBones bone)
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return Quaternion.identity;
+            }
+
             if (!TryGetBone(bone, out var boneTransform))
             {
                 return Quaternion.identity;
@@ -46,6 +65,11 @@ namespace Baku.VMagicMirror.Buddy
 
         public Vector3 GetBoneLocalPosition(HumanBodyBones bone)
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return Vector3.zero;
+            }
+
             if (!TryGetBone(bone, out var boneTransform))
             {
                 return Vector3.zero;
@@ -55,6 +79,11 @@ namespace Baku.VMagicMirror.Buddy
 
         public Quaternion GetBoneLocalRotation(HumanBodyBones bone)
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return Quaternion.identity;
+            }
+
             if (!TryGetBone(bone, out var boneTransform))
             {
                 return Quaternion.identity;
@@ -98,6 +127,11 @@ namespace Baku.VMagicMirror.Buddy
 
         public Vector3 GetRootPosition()
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return Vector3.zero;
+            }
+            
             if (!_isLoaded)
             {
                 return Vector3.zero;
@@ -108,6 +142,11 @@ namespace Baku.VMagicMirror.Buddy
 
         public Quaternion GetRootRotation()
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return Quaternion.identity;
+            }
+            
             if (!_isLoaded)
             {
                 return Quaternion.identity;

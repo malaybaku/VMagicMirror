@@ -48,15 +48,20 @@ namespace Baku.VMagicMirror.Buddy
         /// </summary>
         public IObservable<GamepadKey> ArcadeStickButtonDown => _arcadeStickButtonDown;
 
+        private readonly BuddySettingsRepository _buddySettingsRepository;
         private readonly BodyMotionModeController _bodyMotionModeController;
         private readonly HandIKIntegrator _handIKIntegrator;
         private readonly CancellationTokenSource _cts = new();
 
+        private bool IsMainAvatarOutputActive => _buddySettingsRepository.MainAvatarOutputActive.Value;
+        
         public AvatarMotionEventApiImplement(
+            BuddySettingsRepository buddySettingsRepository,
             BodyMotionModeController bodyMotionModeController,
             HandIKIntegrator handIKIntegrator
             )
         {
+            _buddySettingsRepository = buddySettingsRepository;
             _bodyMotionModeController = bodyMotionModeController;
             _handIKIntegrator = handIKIntegrator;
         }
@@ -64,20 +69,30 @@ namespace Baku.VMagicMirror.Buddy
         public override void Initialize()
         {
             // TODO: 「clap中」を完全に無視したほうがいいかもしれない (空文字じゃなくてnullを入れてWhere句で弾く…とかのworkaroundを取ると行けそう)
-            _handIKIntegrator.LeftTargetType
+            _buddySettingsRepository.MainAvatarOutputActive
                 .CombineLatest(
+                    _handIKIntegrator.LeftTargetType,
                     _bodyMotionModeController.MotionMode,
-                    (type, mode) => mode != BodyMotionMode.Default ? HandTargetType.Unknown : type)
+                    (outputActive, type, mode) =>
+                        !outputActive ? HandTargetType.Unknown :
+                        mode != BodyMotionMode.Default ? HandTargetType.Unknown :
+                        type
+                    )
                 .Select(ConvertHandTargetTypeToString)
                 .DistinctUntilChanged()
                 .Where(v => v != null)
                 .Subscribe(targetTypeName => _leftHandTargetType.Value = targetTypeName)
                 .AddTo(this);
 
-            _handIKIntegrator.RightTargetType
+            _buddySettingsRepository.MainAvatarOutputActive
                 .CombineLatest(
+                    _handIKIntegrator.RightTargetType,
                     _bodyMotionModeController.MotionMode,
-                    (type, mode) => mode != BodyMotionMode.Default ? HandTargetType.Unknown : type)
+                    (outputActive, type, mode) =>
+                        !outputActive ? HandTargetType.Unknown :
+                        mode != BodyMotionMode.Default ? HandTargetType.Unknown :
+                        type
+                    )
                 .Select(ConvertHandTargetTypeToString)
                 .DistinctUntilChanged()
                 .Where(v => v != null)
@@ -97,6 +112,7 @@ namespace Baku.VMagicMirror.Buddy
             // - 体の動作モード + 手IKのモードの実態を見ることで、そのモーションが本当に適用されてそうかを見に行く
             //   - こっちはイベントハンドラっぽい関数の中で随時やってる
             _handIKIntegrator.Typing.KeyDownMotionStarted
+                .Where(_ => IsMainAvatarOutputActive)
                 .Subscribe(value => OnKeyboardKeyDownMotionStarted(value.hand, value.key))
                 .AddTo(this);
 
@@ -111,10 +127,12 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
             
             _handIKIntegrator.GamepadHand.ButtonDownMotionStarted
+                .Where(_ => IsMainAvatarOutputActive)
                 .Subscribe(v => OnGamepadButtonDownMotionStarted(v.hand, v.key))
                 .AddTo(this);
 
             _handIKIntegrator.ArcadeStickHand.ButtonDownMotionStarted
+                .Where(_ => IsMainAvatarOutputActive)
                 .Subscribe(OnArcadeStickButtonDownMotionStarted)
                 .AddTo(this);
         }
@@ -149,6 +167,11 @@ namespace Baku.VMagicMirror.Buddy
 
         private bool CanRaiseMouseClickMotionStartEvent(string eventName)
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return false;
+            }
+
             if (eventName is not 
                 (MouseButtonEventNames.LDown or MouseButtonEventNames.RDown or MouseButtonEventNames.MDown)
                )

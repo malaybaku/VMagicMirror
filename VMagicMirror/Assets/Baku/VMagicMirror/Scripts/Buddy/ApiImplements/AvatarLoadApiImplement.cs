@@ -13,7 +13,9 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly IVRMLoadable _vrmLoadable;
 
-        public AvatarLoadApiImplement(IVRMLoadable vrmLoadable)
+        public AvatarLoadApiImplement(
+            BuddySettingsRepository buddySettingsRepository,
+            IVRMLoadable vrmLoadable)
         {
             _vrmLoadable = vrmLoadable;
             
@@ -35,7 +37,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Subject<Unit> _unloaded = new();
         public IObservable<Unit> Loaded => _loaded;
         public IObservable<Unit> Unloaded => _unloaded;
-        
+
         public bool IsLoaded { get; private set; }
     }
 }

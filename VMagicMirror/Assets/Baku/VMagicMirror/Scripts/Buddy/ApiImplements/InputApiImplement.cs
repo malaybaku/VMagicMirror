@@ -17,26 +17,29 @@ namespace Baku.VMagicMirror.Buddy
     /// </remarks>
     public class InputApiImplement : PresenterBase
     {
+        private readonly BuddySettingsRepository _buddySettingsRepository;
         private readonly IKeyMouseEventSource _keyMouseEventSource;
         private readonly XInputGamePad _gamepad;
         private readonly MousePositionProvider _mousePositionProvider;
 
         [Inject]
         public InputApiImplement(
+            BuddySettingsRepository buddySettingsRepository,
             IKeyMouseEventSource keyMouseEventSource,
             XInputGamePad gamepad,
             MousePositionProvider mousePositionProvider)
         {
+            _buddySettingsRepository = buddySettingsRepository;
             _keyMouseEventSource = keyMouseEventSource;
             _gamepad = gamepad;
             _mousePositionProvider = mousePositionProvider;
         }
-
+        
         //TODO: Gamepad側がstickPositionをReactivePropertyとして公開するようになったらPresenterBaseの実装は無くしてOK
         public override void Initialize()
         {
-
             _keyMouseEventSource.KeyDown
+                .Where(_ => MainAvatarOutputActive)
                 .Subscribe(key =>
                 {
                     var keyName = key.ToLower() == "enter" ? "Enter" : "";
@@ -44,6 +47,7 @@ namespace Baku.VMagicMirror.Buddy
                 })
                 .AddTo(this);
             _keyMouseEventSource.KeyUp
+                .Where(_ => MainAvatarOutputActive)
                 .Subscribe(key =>
                 {
                     var keyName = key.ToLower() == "enter" ? "Enter" : "";
@@ -59,6 +63,8 @@ namespace Baku.VMagicMirror.Buddy
                 .Subscribe(p => _rightStickPosition = new Vector2(p.x / 32768f, p.y / 32768f))
                 .AddTo(this);
         }
+
+        private bool MainAvatarOutputActive => _buddySettingsRepository.MainAvatarOutputActive.Value;
 
         /// <summary>
         /// 画面サイズを基準とし、マウスの現在位置をXYいずれも[-0.5, 0.5]くらいに収まる値として表現した値を取得する。
@@ -76,20 +82,47 @@ namespace Baku.VMagicMirror.Buddy
 
         // NOTE: 呼び出し元でGamepadKeyとintないしstringの変換をするのが期待値
         // スクリプト上で `GamepadButton.A` みたく書かせて実態がintになってるのが無難そうではある
-        public bool GetGamepadButton(GamepadKey key) => _gamepad.GetButtonDown(key);
+        public bool GetGamepadButton(GamepadKey key)
+        {
+            if (!MainAvatarOutputActive)
+            {
+                return false;
+            }
+            
+            return _gamepad.GetButtonDown(key);
+        }
 
         //TODO: この辺のキャッシュはGamepad側のリファクタで不要になるはず
         private Vector2 _leftStickPosition = Vector2.zero;
         private Vector2 _rightStickPosition = Vector2.zero;
-        public Vector2 GetGamepadLeftStickPosition() => _leftStickPosition;
-        public Vector2 GetGamepadRightStickPosition() => _rightStickPosition;
-        
+        public Vector2 GetGamepadLeftStickPosition()
+        {
+            if (!MainAvatarOutputActive)
+            {
+                return Vector2.zero;
+            }
+
+            return _leftStickPosition;
+        }
+
+        public Vector2 GetGamepadRightStickPosition()
+        {
+            if (!MainAvatarOutputActive)
+            {
+                return Vector2.zero;
+            }
+            
+            return _rightStickPosition;
+        }
+
         public IObservable<GamepadKey> GamepadButtonDown => _gamepad
             .ButtonUpDown
+            .Where(_ => MainAvatarOutputActive)
             .Where(data => data.IsPressed)
             .Select(data => data.Key);
         public IObservable<GamepadKey> GamepadButtonUp => _gamepad
             .ButtonUpDown
+            .Where(_ => MainAvatarOutputActive)
             .Where(data => !data.IsPressed)
             .Select(data => data.Key);
         

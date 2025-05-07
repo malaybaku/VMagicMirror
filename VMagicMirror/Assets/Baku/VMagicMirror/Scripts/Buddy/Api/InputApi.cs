@@ -24,13 +24,13 @@ namespace Baku.VMagicMirror.Buddy.Api
         public event Action<string> KeyboardKeyDown;
         public event Action<string> KeyboardKeyUp;
 
-        public Vector2 MousePosition => _impl.GetNonDimensionalMousePosition().ToApiValue();
+        Vector2 IInput.MousePosition => _impl.GetNonDimensionalMousePosition().ToApiValue();
 
-        public Vector2 GamepadLeftStick => _impl.GetGamepadLeftStickPosition().ToApiValue();
+        Vector2 IInput.GamepadLeftStick => _impl.GetGamepadLeftStickPosition().ToApiValue();
 
-        public Vector2 GamepadRightStick => _impl.GetGamepadRightStickPosition().ToApiValue();
+        Vector2 IInput.GamepadRightStick => _impl.GetGamepadRightStickPosition().ToApiValue();
 
-        public bool GetGamepadButton(GamepadButton key) => _impl.GetGamepadButton(key.ToEngineValue());
+        bool IInput.GetGamepadButton(GamepadButton key) => _impl.GetGamepadButton(key.ToEngineValue());
     }
 }
 

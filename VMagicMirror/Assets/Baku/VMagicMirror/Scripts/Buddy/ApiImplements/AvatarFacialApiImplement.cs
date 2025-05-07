@@ -8,6 +8,7 @@ namespace Baku.VMagicMirror.Buddy
 {
     public class AvatarFacialApiImplement
     {
+        private readonly BuddySettingsRepository _buddySettingsRepository;
         private readonly IVRMLoadable _vrmLoadable;
         private readonly ExpressionAccumulator _expressionAccumulator;
         private readonly BlinkDetector _blinkDetector;
@@ -24,7 +25,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly HashSet<object> _microphoneRecordRequireBuddies = new();
         
         public AvatarFacialApiImplement(
-            IVRMLoadable vrmLoadable,
+            BuddySettingsRepository buddySettingsRepository,
             ExpressionAccumulator expressionAccumulator,
             ExternalTrackerDataSource externalTrackerDataSource,
             FaceSwitchExtractor faceSwitchExtractor,
@@ -33,7 +34,7 @@ namespace Baku.VMagicMirror.Buddy
             BlinkDetector blinkDetector,
             VoiceOnOffParser voiceOnOffParser)
         {
-            _vrmLoadable = vrmLoadable;
+            _buddySettingsRepository = buddySettingsRepository;
             _expressionAccumulator = expressionAccumulator;
             _externalTrackerDataSource = externalTrackerDataSource;
             _faceSwitchExtractor = faceSwitchExtractor;
@@ -41,12 +42,9 @@ namespace Baku.VMagicMirror.Buddy
             _userOperationBlendShapeResultRepository = userOperationBlendShapeResultRepository;
             _blinkDetector = blinkDetector;
             _voiceOnOffParser = voiceOnOffParser;
-
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmUnloaded;
         }
 
-        private bool _isLoaded;
+        private bool IsMainAvatarOutputActive => _buddySettingsRepository.MainAvatarOutputActive.Value;
         
         private readonly ReactiveProperty<bool> _requireMicrophoneRecording = new();
         public IReadOnlyReactiveProperty<bool> RequireMicrophoneRecording => _requireMicrophoneRecording;
@@ -57,7 +55,9 @@ namespace Baku.VMagicMirror.Buddy
         
         // TODO: 「BuddyがBlinkedを購読するまではBlinkDetectorを止めておく」みたいなガードが出来たら嬉しい
         // Blinkに関してはパフォーマンス影響が小さそうだが、他所でも応用が効きそうなので何かは考えてほしい
-        public IObservable<Unit> Blinked => _blinkDetector.Blinked();
+        public IObservable<Unit> Blinked => _blinkDetector
+            .Blinked()
+            .Where(_ => IsMainAvatarOutputActive);
 
         //IsTalkingとか (まだないが) LipSyncの取得APIを呼ぶときに下記のRegisterを呼ぶことで、マイクの録音が止まってたら開始を要求できる
         public void RegisterApiInstanceAsMicrophoneRequire(object obj)
@@ -75,12 +75,22 @@ namespace Baku.VMagicMirror.Buddy
         // NOTE: 下記の関数はモデルのロード前にfalse/0が戻るので、IsLoadedはチェックしないでよい
         public bool HasKey(string key, bool isCustomKey)
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return false;
+            }
+
             var expressionKey = CreateExpressionKey(key, isCustomKey);
             return _expressionAccumulator.HasKey(expressionKey);
         }
 
         public float GetBlendShapeValue(string key, bool isCustomKey)
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return 0f;
+            }
+
             var expressionKey = CreateExpressionKey(key, isCustomKey);
             return _expressionAccumulator.GetValue(expressionKey);
         }
@@ -97,6 +107,11 @@ namespace Baku.VMagicMirror.Buddy
         /// <returns></returns>
         public ExpressionKey? GetUserOperationActiveBlendShape()
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return null;
+            }
+
             if (_userOperationBlendShapeResultRepository.HasActiveKey)
             {
                 return _userOperationBlendShapeResultRepository.ActiveKey;
@@ -120,22 +135,17 @@ namespace Baku.VMagicMirror.Buddy
         /// <returns></returns>
         public string GetActiveFaceSwitch()
         {
+            if (!IsMainAvatarOutputActive)
+            {
+                return "";
+            }
+
             if (!_externalTrackerDataSource.Connected)
             {
                 return "";
             }
 
             return ConvertFaceSwitchActionToName(_faceSwitchExtractor.ActiveItem.Action);
-        }
-
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _isLoaded = true;
-        }
-
-        private void OnVrmUnloaded()
-        {
-            _isLoaded = false;
         }
 
         private static ExpressionKey CreateExpressionKey(string key, bool isCustomKey)

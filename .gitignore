@@ -148,3 +148,7 @@ sysinfo.txt
 docs/_site/
 docs/.jekyll-cache/
 docs/Gemfile.lock
+
+# Ignore docfx output (they should be moved to docs repo)
+docs_buddy/_site/
+docs_buddy/api/

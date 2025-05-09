@@ -1,5 +1,6 @@
 using System;
 using UniRx;
+using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -13,9 +14,8 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly IVRMLoadable _vrmLoadable;
 
-        public AvatarLoadApiImplement(
-            BuddySettingsRepository buddySettingsRepository,
-            IVRMLoadable vrmLoadable)
+        [Inject]
+        public AvatarLoadApiImplement(IVRMLoadable vrmLoadable)
         {
             _vrmLoadable = vrmLoadable;
             

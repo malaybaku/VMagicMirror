@@ -29,6 +29,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             _baseDir = baseDir;
             BuddyId = buddyId;
+            BuddyFolder = BuddyFolder.Create(buddyId);
             _settingsRepository = apiImplementBundle.SettingsRepository;
             _logger = apiImplementBundle.Logger;
             _apiImplementBundle = apiImplementBundle;
@@ -59,7 +60,15 @@ namespace Baku.VMagicMirror.Buddy.Api
             _cts.Dispose();
         }
 
+        // NOTE: stringで引き回すとややこしいかもしれない == BuddyId型を作ったほうがいいかも
+        /// <summary>
+        /// NOTE: IdはRuntimeObjectやLayoutなどでBuddyを特定するときに用いる。
+        /// </summary>
         internal string BuddyId { get; }
+        /// <summary>
+        /// NOTE: ログ情報の出力ではBuddyFolderを使う
+        /// </summary>
+        internal BuddyFolder BuddyFolder { get; }
 
         bool IRootApi.AvatarOutputFeatureEnabled => _settingsRepository.MainAvatarOutputActive.Value;
 
@@ -113,9 +122,9 @@ namespace Baku.VMagicMirror.Buddy.Api
         // TODO: 実際に選択中の言語を返す
         public AppLanguage Language => throw new NotImplementedException();
 
-        public void Log(string value) => _logger.Log(BuddyId, value, BuddyLogLevel.Info);
-        public void LogWarning(string value) => _logger.Log(BuddyId, value, BuddyLogLevel.Warning);
-        public void LogError(string value) => _logger.Log(BuddyId, value, BuddyLogLevel.Error);
+        public void Log(string value) => _logger.Log(BuddyFolder, value, BuddyLogLevel.Info);
+        public void LogWarning(string value) => _logger.Log(BuddyFolder, value, BuddyLogLevel.Warning);
+        public void LogError(string value) => _logger.Log(BuddyFolder, value, BuddyLogLevel.Error);
 
         public float Random() => UnityEngine.Random.value;
 
@@ -127,7 +136,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                     cancellationToken: _cts.Token,
                     delayTiming: PlayerLoopTiming.LastPostLateUpdate
                     );
-                ApiUtils.Try(BuddyId, _logger, () => func?.Invoke());
+                ApiUtils.Try(BuddyFolder, _logger, () => func?.Invoke());
             });
         }
 
@@ -145,7 +154,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                     );
                 while (!_cts.IsCancellationRequested)
                 {
-                    ApiUtils.Try(BuddyId, _logger, () => func?.Invoke());
+                    ApiUtils.Try(BuddyFolder, _logger, () => func?.Invoke());
                     await UniTask.Delay(
                         TimeSpan.FromSeconds(intervalSeconds),
                         cancellationToken: _cts.Token,
@@ -155,6 +164,9 @@ namespace Baku.VMagicMirror.Buddy.Api
             });
         }
 
+        // TODO: 親フォルダへの遡りを禁止しても抜け道が多すぎるのでやめていい気がする
+        // どっちかというと現在実行中のフォルダが分かることのほうが価値があるのでは？
+        // - 例: webから画像を取ってきてサブキャラ自身のフォルダに(cache的に)保存する
         public bool ValidateFilePath(string path)
         {
             var fullPath = Path.Combine(_baseDir, path);
@@ -166,7 +178,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         public ISprite2D Create2DSprite()
         {
             var instance = _spriteCanvas.CreateSpriteInstance(
-                BuddyId, _settingsRepository, _apiImplementBundle.AvatarFacialApi
+                BuddyFolder, _settingsRepository, _apiImplementBundle.AvatarFacialApi
                 );
             var result = new Sprite2DApi(_baseDir, instance, _logger);
             return result;
@@ -174,25 +186,25 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public ISprite3D Create3DSprite()
         {
-            var instance = _buddy3DInstanceCreator.CreateSprite3DInstance(BuddyId);
+            var instance = _buddy3DInstanceCreator.CreateSprite3DInstance(BuddyFolder);
             return new Sprite3DApi(_baseDir, instance, _logger);
         }
 
         public IGlb CreateGlb()
         {
-            var instance = _buddy3DInstanceCreator.CreateGlbInstance(BuddyId);
+            var instance = _buddy3DInstanceCreator.CreateGlbInstance(BuddyFolder);
             return new GlbApi(_baseDir, instance, _logger);
         }
 
         public IVrm CreateVrm()
         {
-            var instance = _buddy3DInstanceCreator.CreateVrmInstance(BuddyId);
+            var instance = _buddy3DInstanceCreator.CreateVrmInstance(BuddyFolder);
             return new VrmApi(_baseDir, instance);
         }
 
         public IVrmAnimation CreateVrmAnimation()
         {
-            var instance = _buddy3DInstanceCreator.CreateVrmAnimationInstance(BuddyId);
+            var instance = _buddy3DInstanceCreator.CreateVrmAnimationInstance(BuddyFolder);
             return new VrmAnimationApi(_baseDir, instance);
         }
     }

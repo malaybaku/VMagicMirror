@@ -156,7 +156,8 @@ namespace Baku.VMagicMirror
             foreach (var dir in Directory.GetDirectories(streamingAssetDir))
             {
                 if (Path.GetFileName(dir) != StreamingAssetFileNames.LoaderUiFolder &&
-                    Path.GetFileName(dir) != StreamingAssetFileNames.MediaPipeTrackerFolder)
+                    Path.GetFileName(dir) != StreamingAssetFileNames.MediaPipeTrackerFolder &&
+                    Path.GetFileName(dir) != StreamingAssetFileNames.DefaultBuddyFolder)
                 {
                     Directory.Delete(dir, true);
                 }

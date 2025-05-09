@@ -54,10 +54,10 @@ namespace Baku.VMagicMirror
             return result;
         }
 
-        public BuddySprite3DInstance CreateSprite3DInstance(string buddyId)
+        public BuddySprite3DInstance CreateSprite3DInstance(BuddyFolder buddyFolder)
         {
             var result = _sprite3DInstanceFactory.Create();
-            result.BuddyId = buddyId;
+            result.BuddyFolder = buddyFolder;
             result.PresetResources = _buddyPresetResources;
             _transform3dCreated.OnNext(result.Transform3DInstance);
             _sprite3dCreated.OnNext(result);
@@ -65,33 +65,34 @@ namespace Baku.VMagicMirror
         }
 
         // NOTE: GLBとかVRMには動的読み込み要素しかないので、ファクトリは使わない
-        public BuddyVrmInstance CreateVrmInstance(string buddyId)
+        public BuddyVrmInstance CreateVrmInstance(BuddyFolder buddyFolder)
         {
             var obj = new GameObject(nameof(BuddyVrmInstance));
             var result = obj.AddComponent<BuddyVrmInstance>();
-            result.BuddyId = buddyId;
+            result.BuddyFolder = buddyFolder;
             _transform3dCreated.OnNext(result.GetTransform3D());
             _vrmCreated.OnNext(result);
             return result;
         }
 
-        public BuddyGlbInstance CreateGlbInstance(string buddyId)
+        public BuddyGlbInstance CreateGlbInstance(BuddyFolder buddyFolder)
         {
             var obj = new GameObject(nameof(BuddyGlbInstance));
             var result = obj.AddComponent<BuddyGlbInstance>();
-            result.BuddyId = buddyId;
+            result.BuddyFolder = buddyFolder;
             _transform3dCreated.OnNext(result.GetTransform3D());
             _glbCreated.OnNext(result);
             return result;
         }
 
         // NOTE: VrmAnimationはそれ自体をギズモとかで制御するわけではないが、ロード/アンロードの特性がVRM/GLBに似ているのでここで生成する
-        public BuddyVrmAnimationInstance CreateVrmAnimationInstance(string buddyId)
+        public BuddyVrmAnimationInstance CreateVrmAnimationInstance(BuddyFolder buddyFolder)
         {
             var result = new BuddyVrmAnimationInstance
             {
-                BuddyId = buddyId,
+                BuddyFolder = buddyFolder,
             };
+            _vrmAnimationCreated.OnNext(result);
             return result; 
         }
     }

@@ -7,8 +7,11 @@ namespace Baku.VMagicMirror.Buddy
         void Initialize();
         void Dispose();
         
-        /// <summary>アプリの起動中にBuddyを一意識別できるようなId (Buddyのフォルダの名称であるのが期待値) を取得する。 </summary>
+        /// <summary>アプリの起動中にBuddyを一意識別できるようなId (Buddyのフォルダの名称とほぼ同じ) を取得する。 </summary>
         string BuddyId { get; }
+        
+        /// <summary> アプリの起動中にBuddyを一意識別できるような、Buddyを含むフォルダの情報を取得する。 </summary>
+        BuddyFolder BuddyFolder { get; }
 
         /// <summary> エントリポイントになるスクリプトファイルの絶対パスを取得する </summary>
         string EntryScriptPath { get; }

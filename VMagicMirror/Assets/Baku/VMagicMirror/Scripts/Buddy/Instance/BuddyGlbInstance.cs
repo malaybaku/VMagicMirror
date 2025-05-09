@@ -16,7 +16,7 @@ namespace Baku.VMagicMirror.Buddy
         private Animation _gltfAnimation = null;
         
         // NOTE: setterはコンポーネントを生成するメソッドのみから用いる。InjectするほどでもないのでDIは使ってない
-        public string BuddyId { get; set; }
+        public BuddyFolder BuddyFolder { get; set; }
 
         public BuddyTransform3DInstance GetTransform3D()
         {

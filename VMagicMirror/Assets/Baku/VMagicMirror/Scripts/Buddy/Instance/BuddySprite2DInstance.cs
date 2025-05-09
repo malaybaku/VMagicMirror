@@ -130,7 +130,7 @@ namespace Baku.VMagicMirror.Buddy
         public BuddyDefaultSpritesInstance DefaultSpritesInstance { get; } = new(false);
         public BuddyDefaultSpritesUpdater DefaultSpritesUpdater { get; set; }
 
-        public string BuddyId { get; set; }
+        public BuddyFolder BuddyFolder { get; set; }
 
         /// <summary>
         /// 実際に表示されるテクスチャを更新する。とくに、第二引数によってテクスチャがデフォルト立ち絵のものであるかどうかも明示的に指定する。

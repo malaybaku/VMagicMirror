@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         private readonly string _baseDir;
         private readonly BuddySprite2DInstance _instance;
         private readonly BuddyLogger _logger;
-        private string BuddyId => _instance.BuddyId;
+        private BuddyFolder BuddyFolder => _instance.BuddyFolder;
 
         private bool _fileNotFoundErrorLogged;
         private bool _pathInvalidErrorLogged;
@@ -50,7 +50,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         ISpriteEffect ISprite2D.Effects => _instance.SpriteEffects;
 
-        public void Preload(string path) => ApiUtils.Try(BuddyId, _logger, () =>
+        public void Preload(string path) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
             var fullPath = GetFullPath(path);
             var result = _instance.Load(fullPath);
@@ -61,7 +61,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public void Show(string path, BuddyApi.Sprite2DTransitionStyle style, float duration)
         {
-            ApiUtils.Try(BuddyId, _logger, () =>
+            ApiUtils.Try(BuddyFolder, _logger, () =>
             {
                 var fullPath = GetFullPath(path);
                 var loadResult = _instance.Show(
@@ -81,7 +81,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public void ShowPreset(string name, BuddyApi.Sprite2DTransitionStyle style, float duration)
         {
-            ApiUtils.Try(BuddyId, _logger, () =>
+            ApiUtils.Try(BuddyFolder, _logger, () =>
             {
                 var clamped = UnityEngine.Mathf.Clamp(
                     (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.BottomFlip
@@ -104,7 +104,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             string blinkImagePath,
             string mouthOpenImagePath,
             string blinkMouthOpenImagePath
-            ) => ApiUtils.Try(BuddyId, _logger, () =>
+            ) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
             var setupResult = _instance.SetupDefaultSprites(
                 GetFullPath(defaultImagePath),
@@ -135,7 +135,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             {
                 if (!_pathInvalidErrorLogged)
                 {
-                    _logger.Log(BuddyId, "Specified path is not in Buddy directory: " + fullPath, BuddyLogLevel.Error);
+                    _logger.Log(BuddyFolder, "Specified path is not in Buddy directory: " + fullPath, BuddyLogLevel.Error);
                 }
 
                 _pathInvalidErrorLogged = true;
@@ -144,7 +144,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             {
                 if (!_fileNotFoundErrorLogged)
                 {
-                    _logger.Log(BuddyId, "Specified file does not exist: " + fullPath, BuddyLogLevel.Error);
+                    _logger.Log(BuddyFolder, "Specified file does not exist: " + fullPath, BuddyLogLevel.Error);
                 }
 
                 _fileNotFoundErrorLogged = true;
@@ -155,7 +155,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             if (result is TextureLoadResult.FailureFileNotFound)
             {
-                _logger.Log(BuddyId, "Specified preset does not exist: " + name, BuddyLogLevel.Error);
+                _logger.Log(BuddyFolder, "Specified preset does not exist: " + name, BuddyLogLevel.Error);
             }
         }
 

@@ -10,7 +10,7 @@ namespace Baku.VMagicMirror.Buddy.Api
     {
         private readonly string _baseDir;
         private readonly BuddyVrmInstance _instance;
-        private string BuddyId => _instance.BuddyId;
+        private BuddyFolder BuddyFolder => _instance.BuddyFolder;
 
         public VrmApi(string baseDir, BuddyVrmInstance instance)
         {

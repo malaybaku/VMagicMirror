@@ -37,10 +37,9 @@ namespace Baku.VMagicMirror.Buddy
         public ScriptCallerCSharp(
             string entryScriptPath,
             BuddySettingsRepository settings,
-            BuddySpriteCanvas spriteCanvas,
             ApiImplementBundle apiImplementBundle,
             IFactory<RootApi, ScriptEventInvokerCSharp> scriptEventInvokerFactory
-        ) : base(entryScriptPath, spriteCanvas, apiImplementBundle)
+        ) : base(entryScriptPath, apiImplementBundle)
         {
             _settings = settings;
             _logger = apiImplementBundle.Logger;
@@ -57,7 +56,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             if (!File.Exists(EntryScriptPath))
             {
-                _logger.Log(BuddyId, $"Script does not exist at: {EntryScriptPath}", BuddyLogLevel.Fatal);
+                _logger.Log(BuddyFolder, $"Script does not exist at: {EntryScriptPath}", BuddyLogLevel.Fatal);
                 return;
             }
 
@@ -95,15 +94,15 @@ namespace Baku.VMagicMirror.Buddy
             }
             catch (CompilationErrorException compilationErrorException)
             {
-                _logger.LogCompileError(BuddyId, compilationErrorException);
+                _logger.LogCompileError(BuddyFolder, compilationErrorException);
             }
             catch (Exception ex)
             {
                 // NOTE:
                 // - エラーそのもの + 「最初のロードでコケてますよ」の2トピックがある…という扱いにしたいので2回ログを取る
                 // - 非開発者に対してはエラーそのものの内容がWPF側に表示されるのが期待値
-                _logger.LogRuntimeException(BuddyId, ex);
-                _logger.Log(BuddyId, "Failed to load script at:" + EntryScriptPath, BuddyLogLevel.Fatal);
+                _logger.LogRuntimeException(BuddyFolder, ex);
+                _logger.Log(BuddyFolder, "Failed to load script at:" + EntryScriptPath, BuddyLogLevel.Fatal);
             }
         }
         

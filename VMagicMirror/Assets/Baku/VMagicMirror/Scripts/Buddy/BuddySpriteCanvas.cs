@@ -21,10 +21,10 @@ namespace Baku.VMagicMirror.Buddy
         
         public RectTransform RectTransform => (RectTransform)transform;
 
-        public BuddySprite2DInstance CreateSpriteInstance(string buddyId, BuddySettingsRepository settings, AvatarFacialApiImplement avatarFacialApiImpl)
+        public BuddySprite2DInstance CreateSpriteInstance(BuddyFolder folder, BuddySettingsRepository settings, AvatarFacialApiImplement avatarFacialApiImpl)
         {
             var result = Instantiate(spriteInstancePrefab, RectTransform);
-            result.BuddyId = buddyId;
+            result.BuddyFolder = folder;
             result.PresetResources = _presetResources;
             result.DefaultSpritesUpdater = new BuddyDefaultSpritesUpdater(settings, avatarFacialApiImpl, result);
             result.DefaultSpritesUpdater.Initialize();

@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror.Buddy
         private BuddyVrmAnimationInstance _anim;
 
         // NOTE: setterはコンポーネントを生成するメソッドのみから用いる。InjectするほどでもないのでDIは使ってない
-        public string BuddyId { get; set; }
+        public BuddyFolder BuddyFolder { get; set; }
 
         public BuddyPresetResources PresetResources { get; set; }
         

@@ -23,22 +23,23 @@ namespace Baku.VMagicMirror.Buddy
         }
         
         public void AddSprite2D(BuddySprite2DInstance instance) 
-            => GetOrCreate(instance.BuddyId).AddSprite2D(instance);
+            => GetOrCreate(instance.BuddyFolder).AddSprite2D(instance);
 
         public void AddSprite3D(BuddySprite3DInstance instance)
-            => GetOrCreate(instance.BuddyId).AddSprite3D(instance);
+            => GetOrCreate(instance.BuddyFolder).AddSprite3D(instance);
 
         public void AddGlb(BuddyGlbInstance instance)
-            => GetOrCreate(instance.BuddyId).AddGlb(instance);
+            => GetOrCreate(instance.BuddyFolder).AddGlb(instance);
 
         public void AddVrm(BuddyVrmInstance instance)
-            => GetOrCreate(instance.BuddyId).AddVrm(instance);
+            => GetOrCreate(instance.BuddyFolder).AddVrm(instance);
 
         public void AddVrmAnimation(BuddyVrmAnimationInstance instance)
-            => GetOrCreate(instance.BuddyId).AddVrmAnimation(instance);
+            => GetOrCreate(instance.BuddyFolder).AddVrmAnimation(instance);
 
-        public void DeleteBuddy(string buddyId)
+        public void DeleteBuddy(BuddyFolder buddyFolder)
         {
+            var buddyId = buddyFolder.BuddyId;
             if (Get(buddyId) is { } repo)
             {
                 repo.DeleteAllObjects();
@@ -49,8 +50,9 @@ namespace Baku.VMagicMirror.Buddy
         private SingleBuddyObjectInstanceRepository Get(string buddyId)
             => _repo.GetValueOrDefault(buddyId.ToLower(CultureInfo.InvariantCulture), null);
 
-        private SingleBuddyObjectInstanceRepository GetOrCreate(string buddyId)
+        private SingleBuddyObjectInstanceRepository GetOrCreate(BuddyFolder buddyFolder)
         {
+            var buddyId = buddyFolder.BuddyId;
             buddyId = buddyId.ToLower(CultureInfo.InvariantCulture);
             if (_repo.TryGetValue(buddyId, out var cached))
             {

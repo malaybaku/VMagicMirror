@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror.Buddy
         public bool IsLoaded => _gltfInstance != null;
         
         // NOTE: setterはコンポーネントを生成するメソッドのみから用いる。InjectするほどでもないのでDIは使ってない
-        public string BuddyId { get; set; }
+        public BuddyFolder BuddyFolder { get; set; }
 
         public async UniTask LoadAsync(string fullPath)
         {

@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
             
             _scriptLoader.ScriptDisposing
-                .Subscribe(caller => _repository.DeleteBuddy(caller.BuddyId))
+                .Subscribe(caller => _repository.DeleteBuddy(caller.BuddyFolder))
                 .AddTo(this);
         }
     }

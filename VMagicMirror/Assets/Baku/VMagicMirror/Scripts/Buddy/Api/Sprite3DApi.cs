@@ -8,7 +8,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         private readonly string _baseDir;
         private readonly BuddySprite3DInstance _instance;
         private readonly BuddyLogger _logger;
-        private string BuddyId => _instance.BuddyId; 
+        private BuddyFolder BuddyFolder => _instance.BuddyFolder;
 
         public Sprite3DApi(string baseDir, BuddySprite3DInstance instance, BuddyLogger logger)
         {
@@ -20,19 +20,19 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public ITransform3D Transform { get; }
 
-        public void Preload(string path) => ApiUtils.Try(BuddyId, _logger, () =>
+        public void Preload(string path) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
             var fullPath = Path.Combine(_baseDir, path);
             _instance.Preload(fullPath);
         });
 
-        public void Show(string path) => ApiUtils.Try(BuddyId, _logger, () =>
+        public void Show(string path) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
             var fullPath = Path.Combine(_baseDir, path);
             _instance.Show(fullPath);
         });
         
-        public void ShowPreset(string name) => ApiUtils.Try(BuddyId, _logger, () =>
+        public void ShowPreset(string name) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
             _instance.ShowPreset(name);
         });

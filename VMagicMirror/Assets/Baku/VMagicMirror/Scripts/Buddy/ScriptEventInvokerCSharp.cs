@@ -126,11 +126,11 @@ namespace Baku.VMagicMirror.Buddy
                 
                 // Start/Updateもここで呼ぶことにより、アバター等の状態が完全に確定した状態でのみスクリプトが実行されるのを保証する
                 InvokeStartEventsIfNeeded();
-                ApiUtils.Try(_api.BuddyId, _logger, () => _api.InvokeUpdated(Time.deltaTime));
+                ApiUtils.Try(_api.BuddyFolder, _logger, () => _api.InvokeUpdated(Time.deltaTime));
 
                 while (_callbackQueue.TryDequeue(out var callback))
                 {
-                    ApiUtils.Try(_api.BuddyId, _logger, () => callback());
+                    ApiUtils.Try(_api.BuddyFolder, _logger, () => callback());
                 }
                 
                 // 最後の最後でスプライトの状態を更新する
@@ -173,13 +173,13 @@ namespace Baku.VMagicMirror.Buddy
             }
 
             _startCalled = true;
-            ApiUtils.Try(_api.BuddyId, _logger, () => _api.InvokeStarted());
+            ApiUtils.Try(_api.BuddyFolder, _logger, () => _api.InvokeStarted());
 
             // NOTE: 書いてる通りだが、Scriptの起動時にすでにアバターがロード済みだった場合、明示的にロードイベントのコールバックを呼ぶ。
             // ノリは MonoBehaviour.OnEnable に少し似てるが、Startより後で発火することには注意
             if (_api.AvatarLoadEventInternal.IsLoaded)
             {
-                ApiUtils.Try(_api.BuddyId, _logger, () => _api.AvatarLoadEventInternal.InvokeLoadedInternal());
+                ApiUtils.Try(_api.BuddyFolder, _logger, () => _api.AvatarLoadEventInternal.InvokeLoadedInternal());
             }
         }
         

@@ -23,22 +23,23 @@ namespace Baku.VMagicMirror.Buddy
             Directory.CreateDirectory(dir);
         }
 
-        public void Log(string buddyId, string content)
+        public void Log(BuddyFolder folder, string content)
         {
-            var logger = GetLogger(buddyId);
+            var logger = GetLogger(folder);
             logger.Log(content);
         }
 
-        public void Log(string buddyId, Exception ex)
+        public void Log(BuddyFolder folder, Exception ex)
         {
-            var logger = GetLogger(buddyId);
+            var logger = GetLogger(folder);
             logger.Log(ex);
         }
 
         // NOTE: 1回のアプリケーション実行中にフォルダのリネーム起因で別のBuddyに同じBuddyIdが割り当てられた場合、
         // その2つ(以上)のBuddyのログは同じファイルに記録される。これはby-design
-        private BuddySingleFileLogger GetLogger(string buddyId)
+        private BuddySingleFileLogger GetLogger(BuddyFolder folder)
         {
+            var buddyId = folder.BuddyId;
             // NOTE: ファイルパスとして使うので、トラブル防止のためにlowerに統一してしまう
             buddyId = buddyId.ToLower();
             
@@ -47,7 +48,7 @@ namespace Baku.VMagicMirror.Buddy
                 return cached;
             }
 
-            var logger = new BuddySingleFileLogger(SpecialFiles.GetBuddyLogFilePath(buddyId));
+            var logger = new BuddySingleFileLogger(SpecialFiles.GetBuddyLogFilePath(folder));
             _loggers[buddyId] = logger;
             return logger;
         }

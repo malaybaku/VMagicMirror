@@ -48,7 +48,8 @@ namespace VMagicMirror.Buddy
         /// <remarks>
         /// プリセット画像とは、アプリケーション自体に組み込まれていてサブキャラとして利用可能な画像のことです。
         /// 
-        /// <paramref name="name"/> に指定可能な値の詳細や、画像切り替え時の演出を調整する場合の呼び出しについては <see cref="ISprite2D.ShowPreset(string, Sprite2DTransitionStyle)"/> を参照して下さい。
+        /// <paramref name="name"/> に指定可能な値の詳細や、画像切り替え時の演出を調整する場合の呼び出しについては
+        /// <see cref="ISprite2D.ShowPreset(string, Sprite2DTransitionStyle, float)"/> を参照して下さい。
         /// </remarks>
         void ShowPreset(string name);
         

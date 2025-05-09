@@ -24,7 +24,12 @@ namespace Baku.VMagicMirrorConfig
         public static string LogFileDir { get; }
         public static string LogFilePath { get; }
         public static string AccessoryFileDir { get; }
+        /// <summary>
+        /// BuddyDirはユーザー定義サブキャラのディレクトリ。
+        /// デフォルト用の <see cref="DefaultBuddyDir"/> もあることに注意
+        /// </summary>
         public static string BuddyDir { get; }
+        public static string DefaultBuddyDir { get; }
         public static string UnityAppPath { get; }
         public static string AutoSaveSettingFilePath { get; }
         public static string UpdateCheckFilePath { get; }
@@ -65,6 +70,9 @@ namespace Baku.VMagicMirrorConfig
             PreferenceFilePath = Path.Combine(SaveFileDir, "_preferences");
             GameInputDefaultFilePath = Path.Combine(SaveFileDir, "_game_input");
             BuddySettingsFilePath = Path.Combine(SaveFileDir, "_buddy");
+
+            // NOTE: デフォルトのBuddyがUnity側でStreamingAssetsとして置いてある…という前提の処理。
+            DefaultBuddyDir = Path.Combine(unityAppDir, "VMagicMirror_Data", "StreamingAssets", "DefaultBuddy");
 
             Directory.CreateDirectory(RootDirectory);
             Directory.CreateDirectory(SaveFileDir);

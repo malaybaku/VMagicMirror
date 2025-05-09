@@ -16,20 +16,35 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public static BuddyMetadata[] LoadAllBuddyMetadata()
         {
-            if (!Directory.Exists(SpecialFilePath.BuddyDir))
-            {
-                return Array.Empty<BuddyMetadata>();
-            }
-
-            var dirs = Directory.GetDirectories(SpecialFilePath.BuddyDir);
             var result = new List<BuddyMetadata>();
-            foreach (var dir in dirs)
+
+            // デフォルトサブキャラの取得
+            if (Directory.Exists(SpecialFilePath.DefaultBuddyDir))
             {
-                if (TryGetBuddyMetadata(dir, out var buddyMetadata))
+                var dirs = Directory.GetDirectories(SpecialFilePath.DefaultBuddyDir);
+                foreach (var dir in dirs)
                 {
-                    result.Add(buddyMetadata);
+                    if (TryGetBuddyMetadata(dir, true, out var buddyMetadata))
+                    {
+                        result.Add(buddyMetadata);
+                    }
                 }
             }
+
+
+            // ユーザー定義サブキャラの取得
+            if (Directory.Exists(SpecialFilePath.BuddyDir))
+            {
+                var dirs = Directory.GetDirectories(SpecialFilePath.BuddyDir);
+                foreach (var dir in dirs)
+                {
+                    if (TryGetBuddyMetadata(dir, false, out var buddyMetadata))
+                    {
+                        result.Add(buddyMetadata);
+                    }
+                }
+            }
+
             return result.ToArray();
         }
 
@@ -37,9 +52,10 @@ namespace Baku.VMagicMirrorConfig
         /// フォルダパスを指定して、そのフォルダに定義されたBuddyのメタデータ取得を試みる
         /// </summary>
         /// <param name="folderPath"></param>
+        /// <param name="isDefaultBuddy"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public static bool TryGetBuddyMetadata(string folderPath, [NotNullWhen(true)] out BuddyMetadata? result)
+        public static bool TryGetBuddyMetadata(string folderPath, bool isDefaultBuddy, [NotNullWhen(true)] out BuddyMetadata? result)
         {
             // 書いてる通りだが、GUI側で以下までは検証する
             // - エントリポイントっぽいファイルがある
@@ -65,7 +81,7 @@ namespace Baku.VMagicMirrorConfig
             // ファイルがJSONとしてパースできない場合はNG、キーがちょっと抜けてるとかは基本的に許容する
             try
             {
-                result = LoadBuddyMetadata(folderPath, manifestFilePath);
+                result = LoadBuddyMetadata(folderPath, manifestFilePath, isDefaultBuddy);
                 if (result.Properties.Select(p => p.Name).ToHashSet().Count < result.Properties.Length)
                 {
                     throw new ArgumentException("manifest has properties with same name: " + manifestFilePath);
@@ -80,7 +96,7 @@ namespace Baku.VMagicMirrorConfig
             }
         }
 
-        private static BuddyMetadata LoadBuddyMetadata(string folderPath, string filePath)
+        private static BuddyMetadata LoadBuddyMetadata(string folderPath, string filePath, bool isDefaultBuddy)
         {
             // NOTE: StreamWriterでもよいが、読み込みがさっさと終わることを好んでFile.ReadAllTextしている
             var json = File.ReadAllText(filePath);
@@ -99,6 +115,7 @@ namespace Baku.VMagicMirrorConfig
                 .ToArray();
 
             return new BuddyMetadata(
+                isDefaultBuddy,
                 folderPath,
                 rawMetadata.Id,
                 rawMetadata.DisplayName,

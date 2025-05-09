@@ -27,7 +27,7 @@ namespace Baku.VMagicMirrorConfig
             {
                 // NOTE: stringはカラならnullにしてしまうことにより、
                 // 受信側(Unity)には空文字扱いさせつつJSONのkey:valueの書き込みを省略している
-                BuddyId = buddy.Metadata.FolderName,
+                BuddyId = buddy.Metadata.BuddyId,
                 Properties = buddy.Properties
                     .Select(prop => new BuddySettingsPropertyMessage()
                     {
@@ -62,7 +62,7 @@ namespace Baku.VMagicMirrorConfig
         {
             var msg = new BuddySettingsPropertyMessage()
             {
-                BuddyId = buddy.FolderName,
+                BuddyId = buddy.BuddyId,
                 Name = property.Name,
                 Type = property.ValueType.ToString(),
             };

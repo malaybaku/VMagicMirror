@@ -205,6 +205,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public IReadOnlyList<BuddyPropertyViewModel> Properties { get; }
 
+        // NOTE: デフォルトサブキャラだと ">" のprefixがついて ">Foo" みたいな文字列になるので、UIに表示するには適していない。
+        // publicなのは親VMからアクセスするため
         public string BuddyId => FolderName;
         public string FolderName => _buddyData.Metadata.FolderName;
         public string DisplayName => _buddyData.Metadata.DisplayName;
@@ -310,7 +312,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void OpenLogFile()
         {
-            var filePath = SpecialFilePath.GetBuddyLogFilePath(BuddyId);
+            // TODO: デフォルトサブキャラのログフォルダを分断する場合、ここで分岐させたい
+            var filePath = SpecialFilePath.GetBuddyLogFilePath(FolderName);
             if (!File.Exists(filePath))
             {
                 var snackbarMessage = string.Format(

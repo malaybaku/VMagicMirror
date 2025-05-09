@@ -8,6 +8,7 @@ namespace Baku.VMagicMirrorConfig
     public class BuddyMetadata
     {
         public BuddyMetadata(
+            bool isDefaultBuddy,
             string folderPath,
             string id, 
             string displayName, 
@@ -27,11 +28,14 @@ namespace Baku.VMagicMirrorConfig
             Properties = properties;
         }
 
+        public bool IsDefaultBuddy { get; }
 
         // フォルダだけファイル構造から定まり、かつアプリ上で一意識別子に使おうとする点が特殊
         public string FolderPath { get; }
         public string FolderName { get; }
 
+        // NOTE: Unity側でも同様に、デフォルトサブキャラはprefixをつけてユーザー定義サブキャラと区別できるようにする
+        public string BuddyId => (IsDefaultBuddy ? ">" : "") + FolderName;
 
         // 下記はmanifest.jsonで定義されていれば適用される
 

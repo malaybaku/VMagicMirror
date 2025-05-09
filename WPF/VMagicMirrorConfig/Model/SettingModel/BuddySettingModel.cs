@@ -141,7 +141,7 @@ namespace Baku.VMagicMirrorConfig
                 return;
             }
 
-            if (!BuddyMetadataRepository.TryGetBuddyMetadata(buddy.Metadata.FolderPath, out var buddyMetadata))
+            if (!BuddyMetadataRepository.TryGetBuddyMetadata(buddy.Metadata.FolderPath, buddy.Metadata.IsDefaultBuddy, out var buddyMetadata))
             {
                 // ここを通る場合、リロードしようにもメタデータがもうないので諦める
                 // NOTE: スナックバーか何かでリロード失敗を通知できるとちょっと良さそう
@@ -175,7 +175,7 @@ namespace Baku.VMagicMirrorConfig
         public BuddyProperty? FindProperty(string buddyId, string name)
         {
             return Buddies
-                .FirstOrDefault(b => b.Metadata.FolderName == buddyId)
+                .FirstOrDefault(b => b.Metadata.BuddyId == buddyId)
                 ?.Properties
                 ?.FirstOrDefault(p => p.Metadata.Name == name);
         }
@@ -201,7 +201,7 @@ namespace Baku.VMagicMirrorConfig
             var buddies = new List<BuddyData>();
             foreach (var metadata in metadatas)
             {
-                var savedata = data.Buddies.FirstOrDefault(b => b.Id == metadata.FolderName);
+                var savedata = data.Buddies.FirstOrDefault(b => b.Id == metadata.BuddyId);
                 var buddyData = CreateBuddyData(metadata, savedata);
                 buddies.Add(buddyData);
             }

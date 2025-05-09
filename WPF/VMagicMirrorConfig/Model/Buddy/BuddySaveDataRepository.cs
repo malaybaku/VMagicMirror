@@ -12,7 +12,7 @@ namespace Baku.VMagicMirrorConfig
         {
             return new BuddySaveDataSingleBuddy()
             {
-                Id = buddy.Metadata.FolderName,
+                Id = buddy.Metadata.BuddyId,
                 IsActive = buddy.IsActive.Value,
                 Properties = buddy.Properties.Select(p => new BuddySaveDataProperty()
                 {

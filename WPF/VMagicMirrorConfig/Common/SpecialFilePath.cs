@@ -29,6 +29,9 @@ namespace Baku.VMagicMirrorConfig
         /// デフォルト用の <see cref="DefaultBuddyDir"/> もあることに注意
         /// </summary>
         public static string BuddyDir { get; }
+        /// <summary>
+        /// NOTE: Editor実行の場合、この値は信用できないので代わりに <see cref="GetDefaultBuddyDirByUnityExePath(string)"/> を使う
+        /// </summary>
         public static string DefaultBuddyDir { get; }
         public static string UnityAppPath { get; }
         public static string AutoSaveSettingFilePath { get; }
@@ -46,6 +49,11 @@ namespace Baku.VMagicMirrorConfig
         public static string GetSaveFilePath(int index) => index == 0 
             ? AutoSaveSettingFilePath 
             : Path.Combine(SaveFileDir, SaveSlotFileNamePrefix + index.ToString());
+
+        public static string GetDefaultBuddyDirByStreamingAssetsPath(string streamingAssetsPath)
+        {
+            return Path.Combine(streamingAssetsPath, "DefaultBuddy");
+        }
 
         static SpecialFilePath()
         {

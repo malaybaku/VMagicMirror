@@ -24,5 +24,26 @@ namespace Baku.VMagicMirrorConfig
             result = "";
             return false;
         }
+
+        /// <summary>
+        /// NOTE: v4.0.0でエディタ環境でのデバッグ目的で使うようになった引数。
+        /// Unity側がビルドされている場合はこの引数は取得できない。
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static bool TryGetUnityStreamingAssetsPath(out string result)
+        {
+            var args = Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                if (args[i] == "/streamingAssetsPath")
+                {
+                    result = args[i + 1];
+                    return !string.IsNullOrEmpty(result);
+                }
+            }
+            result = "";
+            return false;
+        }
     }
 }

@@ -18,8 +18,12 @@ namespace Baku.VMagicMirrorConfig
         {
             var result = new List<BuddyMetadata>();
 
+            var defaultBuddyDir = CommandLineArgParser.TryGetUnityStreamingAssetsPath(out var streamingAssetsPath)
+                ? SpecialFilePath.GetDefaultBuddyDirByStreamingAssetsPath(streamingAssetsPath)
+                : SpecialFilePath.DefaultBuddyDir;
+
             // デフォルトサブキャラの取得
-            if (Directory.Exists(SpecialFilePath.DefaultBuddyDir))
+            if (Directory.Exists(defaultBuddyDir))
             {
                 var dirs = Directory.GetDirectories(SpecialFilePath.DefaultBuddyDir);
                 foreach (var dir in dirs)

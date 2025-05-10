@@ -15,7 +15,12 @@ namespace Baku.VMagicMirror.Buddy
 
         public BuddyFileLogger()
         {
-            var dir = SpecialFiles.BuddyLogFileDir;
+            RefreshLogDirectory(SpecialFiles.BuddyLogFileDir);
+            RefreshLogDirectory(SpecialFiles.DefaultBuddyLogFileDir);
+        }
+
+        private void RefreshLogDirectory(string dir)
+        {
             if (Directory.Exists(dir))
             {
                 Directory.Delete(dir, true);

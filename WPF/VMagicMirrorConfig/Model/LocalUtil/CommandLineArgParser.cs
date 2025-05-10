@@ -36,7 +36,7 @@ namespace Baku.VMagicMirrorConfig
             var args = Environment.GetCommandLineArgs();
             for (int i = 0; i < args.Length - 1; i++)
             {
-                if (args[i] == "/streamingAssetsPath")
+                if (args[i] == "/streamingAssetsDir")
                 {
                     result = args[i + 1];
                     return !string.IsNullOrEmpty(result);

@@ -25,7 +25,7 @@ namespace Baku.VMagicMirrorConfig
             // デフォルトサブキャラの取得
             if (Directory.Exists(defaultBuddyDir))
             {
-                var dirs = Directory.GetDirectories(SpecialFilePath.DefaultBuddyDir);
+                var dirs = Directory.GetDirectories(defaultBuddyDir);
                 foreach (var dir in dirs)
                 {
                     if (TryGetBuddyMetadata(dir, true, out var buddyMetadata))

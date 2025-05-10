@@ -37,12 +37,10 @@ namespace Baku.VMagicMirror.Buddy
         {
             if (IsNgPath(Path.GetFullPath(resolvedPath)))
             {
-                Debug.Log($"Open Read Path, resolved path = {resolvedPath}, replace by empty stream");
                 return new MemoryStream();
             }
             else
             {
-                Debug.Log($"Open Read Path, resolved path = {resolvedPath}, use normal stream");
                 return _defaultResolver.OpenRead(resolvedPath);
             }
         }
@@ -50,7 +48,19 @@ namespace Baku.VMagicMirror.Buddy
         private static bool IsNgPath(string fullPath)
         {
             var ngFilePath = Path.GetFullPath(SpecialFiles.BuddyReferenceDataGlobalScriptPath);
-            return fullPath.Equals(ngFilePath, StringComparison.OrdinalIgnoreCase);
+            if (fullPath.Equals(ngFilePath, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            // NOTE: こっちのif文はデフォルトサブキャラが #load したときのみ影響する。普通のサブキャラでの発生はほぼあり得ない
+            var exeDir = Path.GetDirectoryName(Application.dataPath)?.Replace('/', '\\');
+            if (!string.IsNullOrEmpty(exeDir) && fullPath.StartsWith(exeDir, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

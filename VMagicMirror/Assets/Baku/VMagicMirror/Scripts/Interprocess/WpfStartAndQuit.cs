@@ -162,10 +162,21 @@ namespace Baku.VMagicMirror
 
         private void StartProcess(string exePath)
         {
+            var args = "/channelId " + MmfChannelIdSource.ChannelId;
+            if (Application.isEditor)
+            {
+                // NOTE:
+                // - サブキャラのフォルダをWPFがreadできてほしい & Editor実行だとStreamingAssetsの位置が非自明なので伝える
+                //   - ビルドの場合、WPFとUnityのフォルダ構造は確定しているので、伝える必要がなくなる
+                // - WPFから飛んでくるサブキャラ関連のフォルダ名をバックスラッシュ区切りに統一しておきたいので、
+                //   この時点でバックスラッシュ区切りに寄せておく
+                args += " /streamingAssetsDir " + Application.streamingAssetsPath.Replace('/', '\\');
+            }
+
             var startInfo = new ProcessStartInfo()
             {
                 FileName = exePath,
-                Arguments = "/channelId " + MmfChannelIdSource.ChannelId
+                Arguments = args,
             };
             Process.Start(startInfo);
         }

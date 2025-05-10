@@ -170,7 +170,7 @@ namespace Baku.VMagicMirror
                 //   - ビルドの場合、WPFとUnityのフォルダ構造は確定しているので、伝える必要がなくなる
                 // - WPFから飛んでくるサブキャラ関連のフォルダ名をバックスラッシュ区切りに統一しておきたいので、
                 //   この時点でバックスラッシュ区切りに寄せておく
-                args += " /streamingAssetsDir " + Application.streamingAssetsPath.Replace('/', '\\');
+                args += " /streamingAssetsDir \"" + Application.streamingAssetsPath.Replace('/', '\\') + "\"";
             }
 
             var startInfo = new ProcessStartInfo()

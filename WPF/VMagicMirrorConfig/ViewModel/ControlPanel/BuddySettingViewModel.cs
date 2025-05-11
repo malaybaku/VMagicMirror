@@ -312,7 +312,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private void OpenLogFile()
         {
             // TODO: デフォルトサブキャラのログフォルダを分断する場合、ここで分岐させたい
-            var filePath = SpecialFilePath.GetBuddyLogFilePath(FolderName);
+            var filePath = SpecialFilePath.GetBuddyLogFilePath(
+                FolderName,
+                _buddyData.Metadata.IsDefaultBuddy
+                );
             if (!File.Exists(filePath))
             {
                 var snackbarMessage = string.Format(

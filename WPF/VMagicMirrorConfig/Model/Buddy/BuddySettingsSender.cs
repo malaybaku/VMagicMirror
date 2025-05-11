@@ -43,9 +43,8 @@ namespace Baku.VMagicMirrorConfig
                         Transform3DValue = prop.Value.Transform3DValue,
                     }).ToArray(),
             };
-            using var sw = new StringWriter();
-            new JsonSerializer().Serialize(sw, settings);
-            _sender.SendMessage(MessageFactory.BuddyRefreshData(sw.ToString()));
+            var json = JsonConvert.SerializeObject(settings);
+            _sender.SendMessage(MessageFactory.BuddyRefreshData(json));
         }
 
         /// <summary>

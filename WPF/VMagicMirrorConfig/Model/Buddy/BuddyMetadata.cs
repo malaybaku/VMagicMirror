@@ -18,6 +18,7 @@ namespace Baku.VMagicMirrorConfig
             BuddyPropertyMetadata[] properties
             )
         {
+            IsDefaultBuddy = isDefaultBuddy;
             FolderPath = folderPath;
             FolderName = Path.GetFileName(folderPath);
             DisplayName = displayName;

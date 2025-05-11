@@ -205,9 +205,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public IReadOnlyList<BuddyPropertyViewModel> Properties { get; }
 
-        // NOTE: デフォルトサブキャラだと ">" のprefixがついて ">Foo" みたいな文字列になるので、UIに表示するには適していない。
-        // publicなのは親VMからアクセスするため
-        public string BuddyId => FolderName;
+        // NOTE: デフォルトサブキャラではBuddyIdに ">" のprefixがついて ">Foo" みたいな文字列になり、UIに表示するには適さない(のでinternal)
+        internal string BuddyId => _buddyData.Metadata.BuddyId;
         public string FolderName => _buddyData.Metadata.FolderName;
         public string DisplayName => _buddyData.Metadata.DisplayName;
 

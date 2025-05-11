@@ -59,11 +59,7 @@ namespace Baku.VMagicMirrorConfig
 
             try
             {
-                var json = File.ReadAllText(path);
-                var serializer = new JsonSerializer();
-                using var reader = new StringReader(json);
-                using var jsonReader = new JsonTextReader(reader);
-                return serializer.Deserialize<BuddySaveData>(jsonReader) ?? BuddySaveData.Empty;
+                return JsonConvert.DeserializeObject<BuddySaveData>(File.ReadAllText(path)) ?? BuddySaveData.Empty;
             }
             catch (Exception ex) 
             {

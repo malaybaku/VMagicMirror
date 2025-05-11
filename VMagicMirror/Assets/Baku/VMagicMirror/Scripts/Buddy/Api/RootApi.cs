@@ -24,7 +24,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public RootApi(
             string baseDir,
-            string buddyId,
+            BuddyId buddyId,
             ApiImplementBundle apiImplementBundle)
         {
             _baseDir = baseDir;
@@ -67,7 +67,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         /// <summary>
         /// NOTE: IdはRuntimeObjectやLayoutなどでBuddyを特定するときに用いる。
         /// </summary>
-        internal string BuddyId { get; }
+        internal BuddyId BuddyId { get; }
         /// <summary>
         /// NOTE: ログ情報の出力ではBuddyFolderを使う
         /// </summary>

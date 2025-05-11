@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror.Buddy
         /// <summary> ギズモを使ってドラッグ操作によりレイアウトを編集すると、ドラッグ操作の終了時に発火する </summary>
         public IObservable<Unit> LayoutUpdated => _layoutUpdated;
 
-        public string BuddyId { get; set; } = "";
+        public BuddyId BuddyId { get; set; } = BuddyId.Empty;
         public string InstanceName { get; set; } = "";
 
         /// <summary> NOTE: アタッチ先がない場合はnullにしておく </summary>

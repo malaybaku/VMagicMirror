@@ -12,7 +12,7 @@ namespace Baku.VMagicMirror.Buddy
         [Inject]
         public BuddyManifestTransformInstanceRepository() { }
         
-        private readonly Dictionary<string, SingleBuddyTransforms> _transforms = new();
+        private readonly Dictionary<BuddyId, SingleBuddyTransforms> _transforms = new();
 
         private readonly Subject<BuddyManifestTransform2DInstance> _transform2DAdded = new();
         public IObservable<BuddyManifestTransform2DInstance> Transform2DAdded => _transform2DAdded;
@@ -26,7 +26,7 @@ namespace Baku.VMagicMirror.Buddy
         public IEnumerable<BuddyManifestTransform3DInstance> GetTransform3DInstances()
             => _transforms.Values.SelectMany(ts => ts.GetTransform3DInstances());
         
-        public void AddTransform2D(string buddyId, string name, BuddyManifestTransform2DInstance instance)
+        public void AddTransform2D(BuddyId buddyId, string name, BuddyManifestTransform2DInstance instance)
         {
             if (!_transforms.TryGetValue(buddyId, out var transforms))
             {
@@ -37,7 +37,7 @@ namespace Baku.VMagicMirror.Buddy
             _transform2DAdded.OnNext(instance);
         }
         
-        public void AddTransform3D(string buddyId, string name, BuddyManifestTransform3DInstance instance)
+        public void AddTransform3D(BuddyId buddyId, string name, BuddyManifestTransform3DInstance instance)
         {
             if (!_transforms.TryGetValue(buddyId, out var transforms))
             {
@@ -48,7 +48,7 @@ namespace Baku.VMagicMirror.Buddy
             _transform3DAdded.OnNext(instance);
         }
 
-        public bool TryGetTransform2D(string buddyId, string name, out BuddyManifestTransform2DInstance result)
+        public bool TryGetTransform2D(BuddyId buddyId, string name, out BuddyManifestTransform2DInstance result)
         {
             if (_transforms.TryGetValue(buddyId, out var transforms) &&
                 transforms.TryGetTransform2D(name, out var existingResult))
@@ -63,7 +63,7 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
 
-        public bool TryGetTransform3D(string buddyId, string name, out BuddyManifestTransform3DInstance result)
+        public bool TryGetTransform3D(BuddyId buddyId, string name, out BuddyManifestTransform3DInstance result)
         {
             if (_transforms.TryGetValue(buddyId, out var transforms) &&
                 transforms.TryGetTransform3D(name, out var existingResult))
@@ -78,7 +78,7 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
 
-        public void DeleteInstance(string buddyId)
+        public void DeleteInstance(BuddyId buddyId)
         {
             if (!_transforms.TryGetValue(buddyId, out var transforms))
             {

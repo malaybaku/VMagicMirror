@@ -11,9 +11,9 @@ namespace Baku.VMagicMirror
     {
         //NOTE: 「一度作ったインスタンスを消す事がある」という構造だと参照維持が面倒だし、
         //それがメモリ的に不利になるケースは珍しいのでケアは頑張らない
-        private readonly Dictionary<string, SingleBuddyLayoutRepository> _layouts = new();
+        private readonly Dictionary<BuddyId, SingleBuddyLayoutRepository> _layouts = new();
 
-        public SingleBuddyLayoutRepository Get(string buddyId)
+        public SingleBuddyLayoutRepository Get(BuddyId buddyId)
         {
             if (_layouts.TryGetValue(buddyId, out var existingRepository))
             {
@@ -30,7 +30,7 @@ namespace Baku.VMagicMirror
         /// 呼ばないでも基本的には破綻しない
         /// </summary>
         /// <param name="buddyId"></param>
-        public void Remove(string buddyId) => _layouts.Remove(buddyId);
+        public void Remove(BuddyId buddyId) => _layouts.Remove(buddyId);
     }
 
     // NOTE: このクラス自体の戻り値はあくまで設定だけで、これを元に動かしたアイテム一覧がAPIになる

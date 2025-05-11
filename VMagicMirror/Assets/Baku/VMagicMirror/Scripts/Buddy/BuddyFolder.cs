@@ -6,7 +6,7 @@ namespace Baku.VMagicMirror.Buddy
         /// ユーザー定義サブキャラならフォルダ名、デフォルトサブキャラなら ">" + フォルダ名として定義されたID文字列。
         /// NOTE: ログ情報をIPCで送るときに例外的に使っている。それ以外では、BuddyFolderの下位情報としてのIdを参照するのは避けるべき
         /// </summary>
-        public string BuddyId { get; }
+        public BuddyId BuddyId { get; }
 
         /// <summary> フォルダ名を小文字にした文字列 </summary>
         public string FolderName { get; }
@@ -14,20 +14,20 @@ namespace Baku.VMagicMirror.Buddy
         /// <summary> デフォルトサブキャラのフォルダならtrue </summary>
         public bool IsDefaultBuddy { get; }
         
-        public BuddyFolder(string buddyId, string folderName, bool isDefaultBuddy)
+        public BuddyFolder(BuddyId buddyId, string folderName, bool isDefaultBuddy)
         {
             BuddyId = buddyId;
             FolderName = folderName;
             IsDefaultBuddy = isDefaultBuddy;
         }
 
-        public static BuddyFolder Create(string buddyId)
+        public static BuddyFolder Create(BuddyId buddyId)
         {
-            var isDefaultBuddy = buddyId[0] == '>';
-            var folderName = isDefaultBuddy ? buddyId[1..] : buddyId;
+            var isDefaultBuddy = buddyId.Value[0] == '>';
+            var folderName = isDefaultBuddy ? buddyId.Value[1..] : buddyId.Value;
             
-            // NOTE: equalityとかでめんどくさくならないように小文字にしてしまう
-            return new BuddyFolder(buddyId.ToLower(), folderName.ToLower(), isDefaultBuddy);
+            // NOTE: equalityとかでめんどくさくならないように、folderNameのほうも小文字に寄せてしまう
+            return new BuddyFolder(buddyId, folderName.ToLower(), isDefaultBuddy);
         }
     }
 }

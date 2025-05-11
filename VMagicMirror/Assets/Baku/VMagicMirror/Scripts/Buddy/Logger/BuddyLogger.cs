@@ -131,7 +131,7 @@ namespace Baku.VMagicMirror.Buddy
             
             var content = JsonUtility.ToJson(new BuddyLogMessage()
             {
-                BuddyId = folder.BuddyId,
+                BuddyId = folder.BuddyId.Value,
                 Message = message,
                 LogLevel = (int)logLevel,
             });

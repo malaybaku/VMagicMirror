@@ -11,7 +11,7 @@ namespace Baku.VMagicMirror.Buddy
     /// </summary>
     public class BuddyFileLogger 
     {
-        private readonly Dictionary<string, BuddySingleFileLogger> _loggers = new();
+        private readonly Dictionary<BuddyId, BuddySingleFileLogger> _loggers = new();
 
         public BuddyFileLogger()
         {
@@ -44,17 +44,14 @@ namespace Baku.VMagicMirror.Buddy
         // その2つ(以上)のBuddyのログは同じファイルに記録される。これはby-design
         private BuddySingleFileLogger GetLogger(BuddyFolder folder)
         {
-            var buddyId = folder.BuddyId;
-            // NOTE: ファイルパスとして使うので、トラブル防止のためにlowerに統一してしまう
-            buddyId = buddyId.ToLower();
-            
-            if (_loggers.TryGetValue(buddyId, out var cached))
+            var id = folder.BuddyId;
+            if (_loggers.TryGetValue(id, out var cached))
             {
                 return cached;
             }
 
             var logger = new BuddySingleFileLogger(SpecialFiles.GetBuddyLogFilePath(folder));
-            _loggers[buddyId] = logger;
+            _loggers[id] = logger;
             return logger;
         }
     }

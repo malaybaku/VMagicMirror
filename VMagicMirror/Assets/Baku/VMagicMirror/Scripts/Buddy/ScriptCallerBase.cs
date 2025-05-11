@@ -19,7 +19,7 @@ namespace Baku.VMagicMirror.Buddy
         // NOTE: 呼び出し元クラスは、Initialize()が呼ばれる時点でこのパスにlua拡張子のファイルが存在することを保証している
         public string EntryScriptPath { get; }
         public string EntryScriptDirectory { get; }
-        public string BuddyId { get; }
+        public BuddyId BuddyId { get; }
         public BuddyFolder BuddyFolder { get; }
         public bool IsDefaultBuddy => BuddyFolder.IsDefaultBuddy;
         
@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             EntryScriptPath = entryScriptPath;
             EntryScriptDirectory = Path.GetDirectoryName(entryScriptPath);
-            BuddyId = BuddyIdUtil.GetBuddyId(EntryScriptDirectory);
+            BuddyId = BuddyIdGenerator.GetBuddyId(EntryScriptDirectory);
             BuddyFolder = BuddyFolder.Create(BuddyId);
             Api = new RootApi(EntryScriptDirectory, BuddyId, apiImplementBundle);
         }

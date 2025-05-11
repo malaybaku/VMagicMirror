@@ -10,9 +10,9 @@ namespace Baku.VMagicMirror.Buddy
     {
         //NOTE: 「一度作ったインスタンスを消す事がある」という構造だと参照維持が面倒だし、
         //それがメモリ的に不利になるケースは珍しいのでケアは頑張らない
-        private readonly Dictionary<string, PropertyApi> _propertyApis = new();
+        private readonly Dictionary<BuddyId, PropertyApi> _propertyApis = new();
 
-        public PropertyApi Get(string buddyId)
+        public PropertyApi Get(BuddyId buddyId)
         {
             if (_propertyApis.TryGetValue(buddyId, out var existingApi))
             {

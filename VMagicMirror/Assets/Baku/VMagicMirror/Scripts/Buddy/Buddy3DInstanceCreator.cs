@@ -46,7 +46,7 @@ namespace Baku.VMagicMirror
         }
 
         // NOTE: この関数だけScript APIとは別のタイミングで(スクリプトの起動の直前くらいに)呼ばれる
-        public BuddyManifestTransform3DInstance CreateManifestTransform3D(string buddyId, string instanceName)
+        public BuddyManifestTransform3DInstance CreateManifestTransform3D(BuddyId buddyId, string instanceName)
         {
             var result = _transform3DInstanceFactory.Create();
             result.BuddyId = buddyId;

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Object = UnityEngine.Object;
 
@@ -8,7 +7,7 @@ namespace Baku.VMagicMirror.Buddy
     /// <summary> Buddyに対し、Script APIに基づいて生成されたオブジェクトを格納しておくレポジトリ </summary>
     public class BuddyRuntimeObjectRepository
     {
-        private readonly Dictionary<string, SingleBuddyObjectInstanceRepository> _repo = new();
+        private readonly Dictionary<BuddyId, SingleBuddyObjectInstanceRepository> _repo = new();
 
         public IEnumerable<BuddyGlbInstance> GetAllGlbInstances()
             => _repo.Values.SelectMany(r => r.Glbs);
@@ -16,7 +15,7 @@ namespace Baku.VMagicMirror.Buddy
         public IEnumerable<BuddyVrmInstance> GetAllVrmInstances()
             => _repo.Values.SelectMany(r => r.Vrms);
 
-        public bool TryGet(string buddyId, out SingleBuddyObjectInstanceRepository result)
+        public bool TryGet(BuddyId buddyId, out SingleBuddyObjectInstanceRepository result)
         {
             result = Get(buddyId);
             return result != null;
@@ -47,32 +46,31 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
 
-        private SingleBuddyObjectInstanceRepository Get(string buddyId)
-            => _repo.GetValueOrDefault(buddyId.ToLower(CultureInfo.InvariantCulture), null);
+        private SingleBuddyObjectInstanceRepository Get(BuddyId buddyId)
+            => _repo.GetValueOrDefault(buddyId, null);
 
         private SingleBuddyObjectInstanceRepository GetOrCreate(BuddyFolder buddyFolder)
         {
-            var buddyId = buddyFolder.BuddyId;
-            buddyId = buddyId.ToLower(CultureInfo.InvariantCulture);
-            if (_repo.TryGetValue(buddyId, out var cached))
+            var id = buddyFolder.BuddyId;
+            if (_repo.TryGetValue(id, out var cached))
             {
                 return cached;
             }
 
-            var repo = new SingleBuddyObjectInstanceRepository(buddyId);
-            _repo[buddyId] = repo;
+            var repo = new SingleBuddyObjectInstanceRepository(id);
+            _repo[id] = repo;
             return repo;
         }
     }
 
     public class SingleBuddyObjectInstanceRepository
     {
-        public SingleBuddyObjectInstanceRepository(string buddyId)
+        public SingleBuddyObjectInstanceRepository(BuddyId buddyId)
         {
             BuddyId = buddyId;
         }
 
-        public string BuddyId { get; }
+        public BuddyId BuddyId { get; }
 
         private readonly List<BuddySprite2DInstance> _sprite2Ds = new();
         private readonly List<BuddySprite3DInstance> _sprite3Ds = new();

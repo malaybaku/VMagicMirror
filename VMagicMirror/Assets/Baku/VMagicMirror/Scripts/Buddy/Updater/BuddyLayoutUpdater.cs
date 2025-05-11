@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Baku.VMagicMirror.Buddy.Api;
 using UniRx;
 using UnityEngine;
-using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -19,7 +18,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Buddy3DInstanceCreator _buddy3DInstanceCreator;
         private readonly DeviceTransformController _deviceTransformController;
         
-        private ReactiveProperty<bool> _freeLayoutEnabled = new();
+        private readonly ReactiveProperty<bool> _freeLayoutEnabled = new();
         private bool _hasModel;
         private Animator _animator;
         
@@ -129,14 +128,15 @@ namespace Baku.VMagicMirror.Buddy
             try
             {
                 var msg = JsonUtility.FromJson<BuddySettingsPropertyMessage>(json);
+                var buddyId = new BuddyId(msg.BuddyId);
                 
                 // やることは2つ。
                 // - 設定のレポジトリに値を入れておく
                 // - インスタンスがある場合、そのインスタンスに値を適用する
                 if (TryGetBuddyTransform2DLayout(msg, out var layout2d))
                 {
-                    _buddyLayoutRepository.Get(msg.BuddyId).AddOrUpdate(msg.Name, layout2d);
-                    if (_transformInstanceRepository.TryGetTransform2D(msg.BuddyId, msg.Name, out var instance))
+                    _buddyLayoutRepository.Get(buddyId).AddOrUpdate(msg.Name, layout2d);
+                    if (_transformInstanceRepository.TryGetTransform2D(buddyId, msg.Name, out var instance))
                     {
                         instance.Position = layout2d.Position;
                         instance.RotationEuler = layout2d.RotationEuler;
@@ -145,8 +145,8 @@ namespace Baku.VMagicMirror.Buddy
                 }
                 else if (TryGetBuddyTransform3DLayout(msg, out var layout3d))
                 {
-                    _buddyLayoutRepository.Get(msg.BuddyId).AddOrUpdate(msg.Name, layout3d);
-                    if (_transformInstanceRepository.TryGetTransform3D(msg.BuddyId, msg.Name, out var instance))
+                    _buddyLayoutRepository.Get(buddyId).AddOrUpdate(msg.Name, layout3d);
+                    if (_transformInstanceRepository.TryGetTransform3D(buddyId, msg.Name, out var instance))
                     {
                         ApplyLayout3D(instance, layout3d);
                     }
@@ -166,7 +166,7 @@ namespace Baku.VMagicMirror.Buddy
                 var settings = JsonUtility.FromJson<BuddySettingsMessage>(json);
                 // リフレッシュなので、現存するプロパティをクリアして受信値で上書きする。
                 // リフレッシュはBuddyが非アクティブの状態でしか発生しないはずのため、インスタンスは見に行かない 
-                var layouts = _buddyLayoutRepository.Get(settings.BuddyId);
+                var layouts = _buddyLayoutRepository.Get(new BuddyId(settings.BuddyId));
                 layouts.Clear();
                 foreach (var msg in settings.Properties)
                 {

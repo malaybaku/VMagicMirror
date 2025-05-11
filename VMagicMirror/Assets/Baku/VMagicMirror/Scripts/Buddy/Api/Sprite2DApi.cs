@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using UnityEngine;
 using VMagicMirror.Buddy;
 using BuddyApi = VMagicMirror.Buddy;

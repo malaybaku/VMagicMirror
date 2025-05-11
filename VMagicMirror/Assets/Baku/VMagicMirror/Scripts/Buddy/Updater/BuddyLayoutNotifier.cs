@@ -59,7 +59,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             var msg = new BuddySettingsPropertyMessage()
             {
-                BuddyId = instance.BuddyId,
+                BuddyId = instance.BuddyId.Value,
                 Name = instance.InstanceName,
                 Type = nameof(BuddyPropertyType.Transform2D),
                 Transform2DValue = new BuddyTransform2D()
@@ -80,7 +80,7 @@ namespace Baku.VMagicMirror.Buddy
             // NOTE: フリーレイアウトで編集しうるのはPos/Rot/Scaleの3つだけで、ParentBoneは編集はされない想定
             var msg = new BuddySettingsPropertyMessage()
             {
-                BuddyId = instance.BuddyId,
+                BuddyId = instance.BuddyId.Value,
                 Name = instance.InstanceName,
                 Type = nameof(BuddyPropertyType.Transform3D),
                 Transform3DValue = new BuddyTransform3D()

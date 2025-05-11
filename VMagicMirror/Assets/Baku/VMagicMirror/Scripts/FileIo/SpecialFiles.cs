@@ -34,6 +34,11 @@ namespace Baku.VMagicMirror
         public static string BuddyLogFileDir { get; }
         public static string DefaultBuddyLogFileDir { get; }
 
+        // NOTE: いちおう汎用Cacheということにしているが、v4.0.0時点ではBuddyのみが使っている
+        public static string CacheDir { get; }
+        public static string BuddyCacheDir { get; }
+        public static string DefaultBuddyCacheDir { get; }
+
         public static string AutoSaveSettingFilePath { get; }
 
         public static bool AutoSaveSettingFileExists() => File.Exists(AutoSaveSettingFilePath);
@@ -81,6 +86,18 @@ namespace Baku.VMagicMirror
             }
         }
         
+        public static string GetBuddyCacheDirectory(BuddyFolder folder)
+        {
+            if (folder.IsDefaultBuddy)
+            {
+                return Path.Combine(DefaultBuddyCacheDir, folder.FolderName);
+            }
+            else
+            {
+                return Path.Combine(BuddyCacheDir, folder.FolderName);
+            }
+        }
+        
         static SpecialFiles()
         {
             RootDirectory = Path.Combine(
@@ -98,6 +115,10 @@ namespace Baku.VMagicMirror
 
             BuddyLogFileDir = Path.Combine(LogFileDir, "Buddy");
             DefaultBuddyLogFileDir = Path.Combine(LogFileDir, "DefaultBuddy");
+            
+            CacheDir = Path.Combine(RootDirectory, "Cache");
+            BuddyCacheDir = Path.Combine(CacheDir, "Buddy");
+            DefaultBuddyCacheDir = Path.Combine(CacheDir, "DefaultBuddy");
             
             AutoSaveSettingFilePath = Path.Combine(SaveFileDir, AutoSaveSettingFileName);
             LogFilePath = Path.Combine(LogFileDir, LogTextName);

@@ -21,6 +21,18 @@ namespace VMagicMirror.Buddy
         bool AvatarOutputFeatureEnabled { get; }
         
         /// <summary>
+        /// このサブキャラに関する一時的なデータを保存するためのディレクトリの絶対パスを取得します。
+        /// </summary>
+        /// <remarks>
+        /// このディレクトリは "(My Documents)/VMM_Files/Cache/Buddy/{buddy_name}" のような形式のパスになります。
+        /// スクリプトの実行前にディレクトリの生成が保証されます。
+        ///
+        /// ダウンロードしたデータ等、サブキャラ本体と別で動的に取得したデータはこのディレクトリ以下に保存することを推奨します。
+        /// また、ユーザーはこのディレクトリに含まれるファイルを削除する場合があることに注意して下さい。
+        /// </remarks>
+        string CacheDirectory { get; }
+        
+        /// <summary>
         /// サブキャラのロード後に一度呼ばれます。
         /// </summary>
         event Action Start;

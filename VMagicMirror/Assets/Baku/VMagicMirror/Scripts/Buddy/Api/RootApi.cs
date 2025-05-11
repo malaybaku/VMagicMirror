@@ -47,6 +47,9 @@ namespace Baku.VMagicMirror.Buddy.Api
             _spriteCanvas = apiImplementBundle.BuddySpriteCanvas;
             MainThreadContext = SynchronizationContext.Current;
             _gui = new GuiApi(apiImplementBundle.BuddyGuiCanvas);
+
+            // NOTE: Directoryの生成はApiじゃなくてScriptCallerの責任であることに注意
+            CacheDirectory = SpecialFiles.GetBuddyCacheDirectory(BuddyFolder);
         }
 
         internal void Dispose()
@@ -71,6 +74,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         internal BuddyFolder BuddyFolder { get; }
 
         bool IRootApi.AvatarOutputFeatureEnabled => _settingsRepository.MainAvatarOutputActive.Value;
+
+        public string CacheDirectory { get; }
 
         internal void InvokeStarted() => Start?.Invoke();
         public event Action Start;

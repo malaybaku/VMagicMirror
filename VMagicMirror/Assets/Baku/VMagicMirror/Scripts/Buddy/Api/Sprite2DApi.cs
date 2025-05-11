@@ -127,7 +127,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             );
         }
 
-        private string GetFullPath(string path) => Path.Combine(_baseDir, path);
+        private string GetFullPath(string path) => ApiUtils.GetAssetFullPath(BuddyFolder, path);
 
         private void HandleTextureLoadResult(string fullPath, TextureLoadResult loadResult)
         {

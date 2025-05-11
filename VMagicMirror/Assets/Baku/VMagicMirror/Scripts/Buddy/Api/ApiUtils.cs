@@ -26,6 +26,29 @@ namespace Baku.VMagicMirror.Buddy.Api
         public static bool IsInBuddyDirectory(string file)
             => IsChildDirectory(SpecialFiles.BuddyRootDirectory, file);
 
+        /// <summary>
+        /// <see cref="BuddyApi.ISprite2D"/> とか <see cref="BuddyApi.IVrm"/> とかでAPIが使うパスを絶対パスに変換するすごいやつだよ
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string GetAssetFullPath(BuddyFolder folder, string path)
+        {
+            if (Path.IsPathRooted(path))
+            {
+                return path;
+            }
+
+            var rootDirectory = folder.IsDefaultBuddy
+                ? SpecialFiles.BuddyRootDirectory
+                : SpecialFiles.DefaultBuddyRootDirectory;
+            // NOTE: GetFullPathとかToLowerが入るのは、なるべく同一ファイルに対して同一文字列を返すため
+            return Path.GetFullPath(
+                Path.Combine(rootDirectory, folder.FolderName, path)
+                )
+                .ToLower();
+        }
+        
         public static void Try(BuddyFolder folder, BuddyLogger logger, Action act)
         {
             try

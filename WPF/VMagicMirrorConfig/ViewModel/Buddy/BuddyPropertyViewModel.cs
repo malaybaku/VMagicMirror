@@ -144,7 +144,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 Multiselect = false,
             };
 
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() != true)
             {
                 return;
             }
@@ -185,6 +185,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     FloatValue.Value = _metadata.DefaultFloatValue;
                     return;
                 case BuddyPropertyType.String:
+                case BuddyPropertyType.FilePathString:
                     StringValue.Value = _metadata.DefaultStringValue;
                     return;
                 case BuddyPropertyType.Vector2:

@@ -281,6 +281,12 @@ Please open the log file of the buddy to confirm actual logs in this case.
     <sys:String x:Key="Buddy_DeveloperMode_LogLevel">Log Level</sys:String>
     <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">Open Log File</sys:String>
 
+    <sys:String x:Key="Buddy_Transform_Attach">Attach to: </sys:String>    
+    <sys:String x:Key="Buddy_Transform_Position">Position: </sys:String>    
+    <sys:String x:Key="Buddy_Transform_Rotation">Rotation: </sys:String>    
+    <sys:String x:Key="Buddy_Transform_Scale">Scale: </sys:String>    
+
+    
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>
     

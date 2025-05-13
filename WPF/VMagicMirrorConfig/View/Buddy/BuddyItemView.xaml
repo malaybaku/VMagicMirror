@@ -143,6 +143,8 @@
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
                         <TextBox Grid.Column="2" Text="{Binding StringValue.Value}"/>
                         <Button Grid.Column="3"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Padding="2"
                                 Content="{DynamicResource Buddy_FilePathString_OpenFile}"
                                 Command="{Binding SetFilePathStringByDialogCommand}"
                                 />
@@ -215,12 +217,13 @@
             <view:BuddyPropertyDataTemplateSelector.ActionTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
                     <Grid>
-                        <!-- NOTE: Buttonは無理に他と幅を揃えずにボタンの幅を広げるほうが嬉しいかも。要調整 -->
+                        <!-- NOTE: Buttonは無理に他と幅を揃えず、ボタンの幅を広げる -->
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="240" />
                             <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0"
+                                Padding="2"
                                 Command="{Binding InvokeActionCommand}"
                                 >
                             <TextBlock Text="{Binding DisplayName.Value}"/>
@@ -282,7 +285,7 @@
                              />
             </StackPanel>
         </ToggleButton>
-        <StackPanel Margin="15,5"
+        <StackPanel Margin="5"
                 Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanToVisibilityConverter}}"
                 >
             <Grid Margin="0,0,0,5">
@@ -309,7 +312,7 @@
             </Grid>
 
             <!-- 開発者モード: 直近N件のログを並べる-->
-            <Border Margin="-15,10"
+            <Border Margin="-5,10"
                     Background="#F3F4F6"                    
                     Visibility="{Binding IsDeveloperMode.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                     >
@@ -374,7 +377,7 @@
             </Border>
 
             <!-- 開発者モードではない: 直近の重大エラーを1件だけ表示する -->
-            <Border Margin="-15,10"
+            <Border Margin="-5,10"
                     Background="#F3F4F6"                                        
                     Visibility="{Binding HasNonDeveloperError.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                     >

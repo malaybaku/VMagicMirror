@@ -149,10 +149,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            // NOTE: CurrentDirectoryの場所を特に保証してないのでフルパスに寄せとく
+            // NOTE: CurrentDirectoryの場所を特に保証していないので、常にフルパスに寄せておく
             var fullPath = System.IO.Path.GetFullPath(dialog.FileName);
             if (System.IO.File.Exists(fullPath))
-            StringValue.Value = fullPath;
+            {
+                StringValue.Value = fullPath;
+            }
         }
 
 

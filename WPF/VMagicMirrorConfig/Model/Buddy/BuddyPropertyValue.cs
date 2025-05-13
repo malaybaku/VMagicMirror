@@ -45,6 +45,9 @@
             Transform3DValue = value,
         };
 
+        // NOTE: Actionは値がないので、逐一インスタンスを生成しないようにするのもアリ
+        public static BuddyPropertyValue Action() => new(BuddyPropertyType.Action);
+
         public bool BoolValue { get; set; }
         public int IntValue { get; set; }
         public float FloatValue { get; set; }
@@ -53,6 +56,7 @@
         public BuddyVector3 Vector3Value { get; set; }
         public BuddyTransform2D Transform2DValue { get; set; }
         public BuddyTransform3D Transform3DValue { get; set; }
+        // NOTE: ActionはValueを特に保存しない
 
         public BuddyPropertyType Type { get; }
     }

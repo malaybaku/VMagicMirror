@@ -17,6 +17,8 @@ namespace Baku.VMagicMirrorConfig
         Quaternion,
         Transform2D,
         Transform3D,
+        // NOTE: これだけ特殊で、編集可能なデータが存在しない (ただのボタンを表すので)。便宜的にデータはActionであるということにはしてある
+        Action,
     }
 
     public class BuddyPropertyMetadata
@@ -49,6 +51,8 @@ namespace Baku.VMagicMirrorConfig
         public BuddyVector3 DefaultVector3Value { get; private init; }
         public BuddyTransform2D DefaultTransform2DValue { get; private init; }
         public BuddyTransform3D DefaultTransform3DValue { get; private init; }
+        // NOTE: ActionNameがないのはNameをそのまま使うから
+        // public string ActionName { get; private init; } = "";
 
         public int IntRangeMin { get; private init; }
         public int IntRangeMax { get; private init; }
@@ -158,6 +162,11 @@ namespace Baku.VMagicMirrorConfig
                 DefaultTransform3DValue = defaultValue,
             };
         }
+
+        public static BuddyPropertyMetadata Action(string name, BuddyLocalizedText displayName, BuddyLocalizedText description)
+        {
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Action);
+        }
     }
 
     public static class BuddyPropertyTypeExtension
@@ -178,6 +187,7 @@ namespace Baku.VMagicMirrorConfig
                 BuddyPropertyType.Quaternion => BuddyPropertyType.Quaternion,
                 BuddyPropertyType.Transform2D => BuddyPropertyType.Transform2D,
                 BuddyPropertyType.Transform3D => BuddyPropertyType.Transform3D,
+                BuddyPropertyType.Action => BuddyPropertyType.Action,
                 _ => throw new NotSupportedException(),
             };
         }
@@ -198,6 +208,7 @@ namespace Baku.VMagicMirrorConfig
                 BuddyPropertyType.Quaternion => BuddyPropertyValue.Quaternion(metadata.DefaultVector3Value),
                 BuddyPropertyType.Transform2D => BuddyPropertyValue.Transform2D(metadata.DefaultTransform2DValue),
                 BuddyPropertyType.Transform3D => BuddyPropertyValue.Transform3D(metadata.DefaultTransform3DValue),
+                BuddyPropertyType.Action => BuddyPropertyValue.Action(),
                 _ => throw new NotSupportedException(),
             };
         }

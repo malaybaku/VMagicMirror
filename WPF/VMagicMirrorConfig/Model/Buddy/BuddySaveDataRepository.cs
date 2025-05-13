@@ -14,7 +14,9 @@ namespace Baku.VMagicMirrorConfig
             {
                 Id = buddy.Metadata.BuddyId,
                 IsActive = buddy.IsActive.Value,
-                Properties = buddy.Properties.Select(p => new BuddySaveDataProperty()
+                Properties = buddy.Properties
+                    .Where(p => p.Metadata.ValueType != BuddyPropertyType.Action)
+                    .Select(p => new BuddySaveDataProperty()
                 {
                     Name = p.Metadata.Name,
                     Type = p.Metadata.ValueType.ToString(),

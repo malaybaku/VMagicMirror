@@ -245,6 +245,8 @@ namespace Baku.VMagicMirrorConfig
                     return BuddyPropertyMetadata.Transform3D(
                         name, displayName, description, transform3DDefault.ToTransform3D()
                         );
+                case "action":
+                    return BuddyPropertyMetadata.Action(name, displayName, description);
                 default:
                     throw new ArgumentException($"Unsupported type is specified for property: {rawType}");
             }

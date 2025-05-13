@@ -47,6 +47,8 @@ namespace Baku.VMagicMirrorConfig
             nameof(BuddyPropertyType.Quaternion) => BuddyPropertyValue.Quaternion(Vector3Value),
             nameof(BuddyPropertyType.Transform2D) => BuddyPropertyValue.Transform2D(Transform2DValue),
             nameof(BuddyPropertyType.Transform3D) => BuddyPropertyValue.Transform3D(Transform3DValue),
+            // NOTE: そもそもActionは保存されない状態がto-beではあるが、入ってても無害であって欲しいのでswitchの対象にはしている
+            nameof(BuddyPropertyType.Action) => BuddyPropertyValue.Action(),
             _ => throw new NotSupportedException(),
         };
     }

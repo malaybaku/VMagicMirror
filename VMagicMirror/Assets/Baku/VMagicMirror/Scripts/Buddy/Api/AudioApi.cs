@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using VMagicMirror.Buddy;
 using Cysharp.Threading.Tasks;
@@ -14,24 +13,19 @@ namespace Baku.VMagicMirror.Buddy.Api
         // 番号が若いほうが最近使ったclip
         private readonly List<(string path, AudioClip clip)> _clipCache = new(ClipCacheCount);
 
-        private readonly string _baseDir;
+        private readonly BuddyFolder _buddyFolder;
         private readonly AudioApiImplement _impl;
         private readonly CancellationTokenSource _cts = new();
         
-        internal AudioApi(string baseDir, AudioApiImplement impl)
+        internal AudioApi(BuddyFolder buddyFolder, AudioApiImplement impl)
         {
-            _baseDir = baseDir;
+            _buddyFolder = buddyFolder;
             _impl = impl;
         }
 
         public void Play(string path)
         {
-            var fullPath = Path.Combine(_baseDir, path);
-            if (!ApiUtils.IsInBuddyDirectory(fullPath))
-            {
-                LogOutput.Instance.Write("Specified path is not in Buddy directory: " + fullPath);
-                return;
-            }
+            var fullPath = ApiUtils.GetAssetFullPath(_buddyFolder, path);
 
             if (TryPlayFromCache(fullPath))
             {

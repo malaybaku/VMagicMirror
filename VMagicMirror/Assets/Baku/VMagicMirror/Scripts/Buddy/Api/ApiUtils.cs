@@ -21,14 +21,6 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
 
         /// <summary>
-        /// 指定したファイルがBuddyフォルダ内のファイルかどうかを判定する
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public static bool IsInBuddyDirectory(string file)
-            => IsChildDirectory(SpecialFiles.BuddyRootDirectory, file);
-
-        /// <summary>
         /// <see cref="BuddyApi.ISprite2D"/> とか <see cref="BuddyApi.IVrm"/> とかでAPIが使うパスを絶対パスに変換するすごいやつだよ
         /// </summary>
         /// <param name="folder"></param>
@@ -105,15 +97,9 @@ namespace Baku.VMagicMirror.Buddy.Api
         
         public static TextureLoadResult TryGetTexture2D(string fullPath, out Texture2D texture)
         {    
-            if (!IsInBuddyDirectory(fullPath))
-            {
-                texture = default;
-                return TextureLoadResult.FailurePathIsNotInBuddyDirectory;
-            }
-
             if (!File.Exists(fullPath))
             {
-                texture = default;
+                texture = null;
                 return TextureLoadResult.FailureFileNotFound;
             }
 
@@ -131,7 +117,6 @@ namespace Baku.VMagicMirror.Buddy.Api
     public enum TextureLoadResult
     {
         Success,
-        FailurePathIsNotInBuddyDirectory,
         FailureFileNotFound,
     }
 

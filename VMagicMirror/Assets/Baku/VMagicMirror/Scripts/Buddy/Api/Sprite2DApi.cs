@@ -24,7 +24,6 @@ namespace Baku.VMagicMirror.Buddy.Api
         private BuddyFolder BuddyFolder { get; }
 
         private bool _fileNotFoundErrorLogged;
-        private bool _pathInvalidErrorLogged;
 
         internal Sprite2DApi(BuddyFolder buddyFolder, BuddySprite2DInstance instance, BuddyLogger logger)
         {
@@ -128,16 +127,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         private void HandleTextureLoadResult(string fullPath, TextureLoadResult loadResult)
         {
-            if (loadResult is TextureLoadResult.FailurePathIsNotInBuddyDirectory)
-            {
-                if (!_pathInvalidErrorLogged)
-                {
-                    _logger.Log(BuddyFolder, "Specified path is not in Buddy directory: " + fullPath, BuddyLogLevel.Error);
-                }
-
-                _pathInvalidErrorLogged = true;
-            }
-            else if (loadResult is TextureLoadResult.FailureFileNotFound)
+            if (loadResult is TextureLoadResult.FailureFileNotFound)
             {
                 if (!_fileNotFoundErrorLogged)
                 {

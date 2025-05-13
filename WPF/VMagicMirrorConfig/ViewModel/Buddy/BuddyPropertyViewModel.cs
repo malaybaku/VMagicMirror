@@ -131,9 +131,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand InvokeActionCommand => _invokeActionCommand ??= new ActionCommand(InvokeAction);
         private void InvokeAction() => _settingSender.InvokeBuddyAction(_buddyMetadata, _metadata);
 
-        private ActionCommand? _openFileDialogCommand;
-        public ActionCommand OpenFileDialogCommand => _openFileDialogCommand ??= new ActionCommand(SetStringValueByFileDialog);
-        private void SetStringValueByFileDialog()
+        private ActionCommand? _setFilePathStringByDialogCommand;
+        public ActionCommand SetFilePathStringByDialogCommand => _setFilePathStringByDialogCommand ??= new ActionCommand(SetFilePathStringByDialog);
+        private void SetFilePathStringByDialog()
         {
             var isJapanese = LanguageSelector.Instance.LanguageName == LanguageSelector.LangNameJapanese;
             // NOTE: タイトルやファイルのFilter設定をカスタムするように拡張してもいいかも (フィルターを書き損じると困るが…)

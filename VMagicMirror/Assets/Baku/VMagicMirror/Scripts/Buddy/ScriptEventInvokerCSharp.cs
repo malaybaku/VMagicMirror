@@ -9,15 +9,13 @@ using Zenject;
 
 namespace Baku.VMagicMirror.Buddy
 { 
+    // NOTE: このクラス自体はアバター出力イベントの監視をしない。個別の ApiImplement 系のクラスがイベントの発火のon/offを制御している
     /// <summary>
     /// VMMの内部的なイベントを監視して、スクリプトから登録されたコールバック関数の呼び出しにつなげて呼び出すクラス。
     /// <see cref="ScriptCallerCSharp"/>と同じライフサイクルで動くのが期待値
     /// </summary>
     public class ScriptEventInvokerCSharp : PresenterBase
     {
-        // TODO: コールバックの一部を _settings によって遮断する
-        private readonly BuddySettingsRepository _settings;
-
         private readonly RootApi _api;
         private readonly BuddyRuntimeObjectRepository _runtimeObjectRepository;
         private readonly ApiImplementBundle _apiImplements;
@@ -31,15 +29,12 @@ namespace Baku.VMagicMirror.Buddy
         
         [Inject]
         public ScriptEventInvokerCSharp(
-            BuddySettingsRepository settings,
             RootApi api,
             ApiImplementBundle apiImplements,
             BuddySprite2DUpdater spriteUpdater,
             BuddyRuntimeObjectRepository runtimeObjectRepository
             )
         {
-            _settings = settings;
-
             _api = api;
             _apiImplements = apiImplements;
             _logger = apiImplements.Logger;
@@ -47,7 +42,6 @@ namespace Baku.VMagicMirror.Buddy
             _runtimeObjectRepository = runtimeObjectRepository;
         }
         
-        // NOTE: まだC#版は検証段階なので、一部のイベントにのみ対応している
         public override void Initialize()
         {
             ConnectNoArgFunc(
@@ -106,6 +100,13 @@ namespace Baku.VMagicMirror.Buddy
                 _apiImplements.AvatarFacialApi.Blinked,
                 () => _api.AvatarFacialInternal.InvokeOnBlinkedInternal
             );
+            
+            // NOTE: これだけBuddyIdでフィルタして「このサブキャラ用のイベントだけ持ってきたIO<T>」になっている
+            // 他は全イベントが全Buddyに対して発火する
+            ConnectOneArgFunc(
+                _apiImplements.BuddyPropertyActionBroker.ActionRequestedForBuddy(_api.BuddyId),
+                () => _api.PropertyInternal.InvokeActionInternal
+                );
             
             InvokeCallbackAsync(_cts.Token).Forget();
         }

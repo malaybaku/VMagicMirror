@@ -1,3 +1,5 @@
+using System;
+
 namespace VMagicMirror.Buddy
 {
     /// <summary>
@@ -10,6 +12,12 @@ namespace VMagicMirror.Buddy
     /// </remarks>
     public interface IProperty
     {
+        /// <summary>
+        /// action値として定義したプロパティのボタン入力が行われたときに発火します。
+        /// 引数はマニフェストで定義した name の値になります。
+        /// </summary>
+        event Action<string> ActionRequested;
+        
         /// <summary>
         /// bool値として定義したプロパティの現在値を取得します。
         /// </summary>

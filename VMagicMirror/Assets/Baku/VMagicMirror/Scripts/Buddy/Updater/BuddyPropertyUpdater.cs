@@ -9,11 +9,16 @@ namespace Baku.VMagicMirror.Buddy
     {
         private readonly IMessageReceiver _receiver;
         private readonly BuddyPropertyRepository _repository;
+        private readonly BuddyPropertyActionBroker _actionBroker;
 
-        public BuddyPropertyUpdater(IMessageReceiver receiver, BuddyPropertyRepository repository)
+        public BuddyPropertyUpdater(
+            IMessageReceiver receiver,
+            BuddyPropertyRepository repository,
+            BuddyPropertyActionBroker actionBroker)
         {
             _receiver = receiver;
             _repository = repository;
+            _actionBroker = actionBroker;
         }
 
         public override void Initialize()
@@ -27,6 +32,11 @@ namespace Baku.VMagicMirror.Buddy
                 VmmCommands.BuddySetProperty,
                 c => SetBuddyProperty(c.GetStringValue())
             );
+            
+            _receiver.AssignCommandHandler(
+                VmmCommands.BuddyInvokeAction,
+                c => InvokeBuddyAction(c.GetStringValue())
+                );
         }
 
         private void SetBuddyProperty(string json)
@@ -88,6 +98,25 @@ namespace Baku.VMagicMirror.Buddy
                 _ => throw new NotSupportedException(),
             };
             return result != null;
+        }
+        
+        private void InvokeBuddyAction(string json)
+        {
+            try
+            {
+                var actionMessage = JsonUtility.FromJson<BuddyActionMessage>(json);
+                _actionBroker.RequestAction(new BuddyPropertyAction(
+                    new BuddyId(actionMessage.BuddyId),
+                    actionMessage.ActionName
+                    ));
+            }
+            catch (Exception ex)
+            {
+                // NOTE: RequestActionの時点ではスクリプト上の関数呼び出しまではしない(Enqueueして後で解決される)ので、
+                // ここのcatchにユーザースクリプト側が原因であるような例外は飛んでこない。
+                // Json変換があるからやっているだけ(=VMM本体のコーディングエラーがあるとここに到達しうる)
+                LogOutput.Instance.Write(ex);
+            }
         }
     }
 }

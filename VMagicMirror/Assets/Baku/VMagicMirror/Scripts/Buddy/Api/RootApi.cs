@@ -34,7 +34,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             _logger = apiImplementBundle.Logger;
             _apiImplementBundle = apiImplementBundle;
             
-            Property = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
+            PropertyInternal = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
             AvatarLoadEventInternal = new AvatarLoadEventApi(apiImplementBundle.AvatarLoadApi);
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
             AvatarFacialInternal = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
@@ -99,7 +99,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         //「丸ごとOK or 丸ごと塞がってる」となるのが分かりやすさ的には望ましい
 
         //NOTE: プロパティ形式で取得できるAPIは、スクリプトが最初に呼ばれる前に非nullで初期化されるのが期待値
-        public IProperty Property { get; }
+        internal PropertyApi PropertyInternal { get; }
+        public IProperty Property => PropertyInternal;
         public IManifestTransforms Transforms { get; internal set; }
         public IDeviceLayout DeviceLayout { get; }
         

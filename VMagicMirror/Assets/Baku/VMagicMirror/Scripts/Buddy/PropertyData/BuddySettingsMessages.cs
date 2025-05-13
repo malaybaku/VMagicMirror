@@ -73,4 +73,11 @@ namespace Baku.VMagicMirror.Buddy
         // が、もしかしたら処理の都合でbool (HasParentBone)を後付けするかも
         public int ParentBone;
     }
+    
+    [Serializable]
+    public class BuddyActionMessage
+    {
+        public string BuddyId;
+        public string ActionName;
+    }
 }

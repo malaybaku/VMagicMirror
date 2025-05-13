@@ -84,7 +84,7 @@ namespace VMagicMirror.Buddy
         //TODO: FeatureLockについては、ここで記述されるプロパティ単位で
         //「丸ごとOK or 丸ごと塞がってる」となるのが分かりやすさ的には望ましい
 
-        /// <summary> マニフェストで定義されたプロパティの現在値にアクセスできるAPIを取得します。 </summary>
+        /// <summary> マニフェストで定義されたプロパティにアクセスできるAPIを取得します。 </summary>
         IProperty Property { get; }
 
         /// <summary> マニフェストで定義されたTransformの参照にアクセスできるAPIを取得します。 </summary>

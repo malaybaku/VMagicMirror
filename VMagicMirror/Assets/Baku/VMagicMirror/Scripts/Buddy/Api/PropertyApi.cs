@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using BuddyApi = VMagicMirror.Buddy;
@@ -19,8 +20,12 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         internal void Clear() => _values.Clear();
 
+        internal void InvokeActionInternal(string propertyName) => ActionRequested?.Invoke(propertyName);
+        
         private object Get(string key) => _values.GetValueOrDefault(key);
 
+        public event Action<string> ActionRequested;
+        
         // NOTE: boolじゃない場合、一様にfalse扱いされる
         public bool GetBool(string key) => Get(key) is true;
         public int GetInt(string key) => Get(key) is int v ? v : 0;

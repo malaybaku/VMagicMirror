@@ -122,7 +122,7 @@ namespace Baku.VMagicMirrorConfig
                 isDefaultBuddy,
                 folderPath,
                 rawMetadata.Id,
-                rawMetadata.DisplayName,
+                Convert(rawMetadata.DisplayName),
                 rawMetadata.Creator,
                 rawMetadata.CreatorUrl,
                 rawMetadata.Version,
@@ -134,7 +134,8 @@ namespace Baku.VMagicMirrorConfig
         {
             var name = src.Name;
             var rawType = src.Type;
-            var displayName = string.IsNullOrEmpty(src.DisplayName) ? name : src.DisplayName;
+            var displayName = src.DisplayName.HasValue ? Convert(src.DisplayName.Value) : BuddyLocalizedText.Const(name);
+            var description = src.Description.HasValue ? Convert(src.Description.Value) : BuddyLocalizedText.Empty();
 
             switch (rawType)
             {
@@ -142,12 +143,13 @@ namespace Baku.VMagicMirrorConfig
                     return BuddyPropertyMetadata.Bool(
                         name, 
                         displayName,
+                        description,
                         src.BoolData?.DefaultValue ?? false
                         );
                 case "int":
                     if (src.IntData == null)
                     {
-                        return BuddyPropertyMetadata.Int(name, displayName, 0);
+                        return BuddyPropertyMetadata.Int(name, displayName, description, 0);
                     }
 
                     var intData = src.IntData;
@@ -156,6 +158,7 @@ namespace Baku.VMagicMirrorConfig
                         return BuddyPropertyMetadata.Enum(
                             name,
                             displayName,
+                            description,
                             intData.DefaultValue,
                             intData.Options
                             );
@@ -163,32 +166,33 @@ namespace Baku.VMagicMirrorConfig
                     else if (intData.Min.HasValue && intData.Max.HasValue)
                     {
                         return BuddyPropertyMetadata.RangeInt(
-                            name, displayName, intData.DefaultValue, intData.Min.Value, intData.Max.Value);
+                            name, displayName, description, intData.DefaultValue, intData.Min.Value, intData.Max.Value);
                     }
                     else
                     {
-                        return BuddyPropertyMetadata.Int(name, displayName, intData.DefaultValue);
+                        return BuddyPropertyMetadata.Int(name, displayName, description, intData.DefaultValue);
                     }
                 case "float":
                     if (src.FloatData == null)
                     {
-                        return BuddyPropertyMetadata.Float(name, displayName, 0);
+                        return BuddyPropertyMetadata.Float(name, displayName, description, 0);
                     }
 
                     var floatData = src.FloatData;
                     if (floatData.Min.HasValue && floatData.Max.HasValue)
                     {
                         return BuddyPropertyMetadata.RangeFloat(
-                            name, displayName, floatData.DefaultValue, floatData.Min.Value, floatData.Max.Value);
+                            name, displayName, description, floatData.DefaultValue, floatData.Min.Value, floatData.Max.Value);
                     }
                     else
                     {
-                        return BuddyPropertyMetadata.Float(name, displayName, floatData.DefaultValue);
+                        return BuddyPropertyMetadata.Float(name, displayName, description, floatData.DefaultValue);
                     }
                 case "string":
                     return BuddyPropertyMetadata.String(
                         name,
                         displayName,
+                        description,
                         src.StringData?.DefaultValue ?? ""
                         );
                 case "vector2":
@@ -201,6 +205,7 @@ namespace Baku.VMagicMirrorConfig
                     return BuddyPropertyMetadata.Vector2(
                         name,
                         displayName,
+                        description,
                         vector2DefaultValue
                         );
                 case "vector3":
@@ -213,6 +218,7 @@ namespace Baku.VMagicMirrorConfig
                     return BuddyPropertyMetadata.Vector3(
                         name,
                         displayName,
+                        description,
                         vector3DefaultValue
                         );
                 case "quaternion":
@@ -226,21 +232,26 @@ namespace Baku.VMagicMirrorConfig
                     return BuddyPropertyMetadata.Quaternion(
                         name,
                         displayName,
+                        description,
                         eulerAngleDefault
                         );
                 case "transform2D":
                     var transform2DDefault = src.Transform2DData?.DefaultValue ?? RawBuddyTransform2D.CreateDefaultValue();
                     return BuddyPropertyMetadata.Transform2D(
-                        name, displayName, transform2DDefault.ToTransform2D()
+                        name, displayName, description, transform2DDefault.ToTransform2D()
                         );
                 case "transform3D":
                     var transform3DDefault = src.Transform3DData?.DefaultValue ?? RawBuddyTransform3D.CreateDefaultValue();
                     return BuddyPropertyMetadata.Transform3D(
-                        name, displayName, transform3DDefault.ToTransform3D()
+                        name, displayName, description, transform3DDefault.ToTransform3D()
                         );
                 default:
                     throw new ArgumentException($"Unsupported type is specified for property: {rawType}");
             }
         }
+
+
+        private static BuddyLocalizedText Convert(RawBuddyLocalizedText src)
+            => new BuddyLocalizedText(src.Ja ?? "", src.En ?? "");
     }
 }

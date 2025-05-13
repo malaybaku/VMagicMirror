@@ -44,9 +44,17 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     .AddHandler(_model, nameof(_model.ReceivedLog), OnBuddyLogReceived);
 
                 _model.DeveloperModeActive.AddWeakEventHandler(OnModelDeveloperModeChanged);
+
+                WeakEventManager<LanguageSelector, PropertyChangedEventArgs>.AddHandler(
+                    LanguageSelector.Instance, 
+                    nameof(LanguageSelector.PropertyChanged),
+                    OnLanguageSelectorPropertyChanged
+                    );
+
                 OnBuddiesReloaded();
             }
         }
+
         private readonly BuddySettingModel _model;
         private readonly LayoutSettingModel _layoutSettingModel;
         private readonly BuddySettingsSender _buddySettingsSender;
@@ -105,6 +113,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 item.ReloadRequested += ReloadBuddy;
                 _items.Add(item);
             }
+
+            ApplyLanguage();
         }
 
         private void OnBuddyUpdated(object? sender, BuddyDataEventArgs e)
@@ -115,6 +125,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             var item = new BuddyItemViewModel(_buddySettingsSender, e.BuddyData);
             item.ReloadRequested += ReloadBuddy;
             _items.Insert(e.Index, item);
+
+            item.ApplyLanguage(LanguageSelector.Instance.LanguageName == LanguageSelector.LangNameJapanese);
         }
 
         private void OnBuddyLogReceived(object? sender, BuddyLogMessageEventArgs e)
@@ -136,6 +148,25 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             foreach(var item in _items)
             {
                 item.SetDeveloperModeActive(DeveloperModeActive.Value);
+            }
+        }
+
+        private void OnLanguageSelectorPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(LanguageSelector.LanguageName))
+            {
+                return;
+            }
+
+            ApplyLanguage();
+        }
+
+        private void ApplyLanguage()
+        {
+            var isJapanese = LanguageSelector.Instance.LanguageName == LanguageSelector.LangNameJapanese;
+            foreach (var item in _items)
+            {
+                item.ApplyLanguage(isJapanese);
             }
         }
 
@@ -208,14 +239,24 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         // NOTE: デフォルトサブキャラではBuddyIdに ">" のprefixがついて ">Foo" みたいな文字列になり、UIに表示するには適さない(のでinternal)
         internal string BuddyId => _buddyData.Metadata.BuddyId;
         public string FolderName => _buddyData.Metadata.FolderName;
-        public string DisplayName => _buddyData.Metadata.DisplayName;
-
+        public RProperty<string> DisplayName { get; } = new("");
+        
         // TODO: info以下 / warn / error以上 くらいで3色に分けたくなりそう。stringの書式ベースでView側で勝手にやるでもいいが
         private readonly ObservableCollection<BuddyLogMessage> _logMessages = [];
         public ReadOnlyObservableCollection<BuddyLogMessage> LogMessages { get; }
 
         /// <summary> 非開発者に表示する想定の重大エラー </summary>
         public RProperty<BuddyLogMessage?> CurrentFatalError { get; } = new(null);
+
+        public void ApplyLanguage(bool isJapanese)
+        {
+            DisplayName.Value = _buddyData.Metadata.DisplayName.Get(isJapanese);
+            foreach (var property in Properties)
+            {
+                property.ApplyLanguage(isJapanese);
+            }
+        }
+
 
         public void SetDeveloperModeActive(bool active)
         {

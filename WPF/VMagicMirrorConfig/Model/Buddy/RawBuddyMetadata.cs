@@ -9,7 +9,7 @@ namespace Baku.VMagicMirrorConfig.RawData
     public class RawBuddyMetadata
     {
         [JsonProperty("id")] public string Id { get; set; } = "";
-        [JsonProperty("displayName")] public string DisplayName { get; set; } = "";
+        [JsonProperty("displayName")] public RawBuddyLocalizedText DisplayName { get; set; }
         [JsonProperty("creator")] public string Creator { get; set; } = "";
         [JsonProperty("creatorUrl")] public string CreatorUrl { get; set; } = "";
         [JsonProperty("version")] public string Version { get; set; } = "";
@@ -20,8 +20,12 @@ namespace Baku.VMagicMirrorConfig.RawData
     public class RawBuddyPropertyMetadata
     {
         [JsonProperty("name")] public string Name { get; set; } = "";
-        // DisplayNameが定義されていない場合、NameをDisplayNameとしても用いる
-        [JsonProperty("displayName")] public string? DisplayName { get; set; }
+        // NOTE: DisplayNameが無い場合、ローカリゼーションと無関係にNameをDisplayNameとしても用いる
+        [JsonProperty("displayName")] public RawBuddyLocalizedText? DisplayName { get; set; }
+        // NOTE: Descriptionがない場合はUI上にキャプション用のUI部分がそもそも表示されないのが期待値
+        [JsonProperty("description")] public RawBuddyLocalizedText? Description { get; set; }
+
+        // NOTE: "bool", "int" など、特定の文字列だけが想定されている
         [JsonProperty("type")] public string Type { get; set; } = "";
 
         [JsonProperty("boolData")] public RawBuddyBoolPropertyMetadata? BoolData { get; set; }
@@ -181,5 +185,11 @@ namespace Baku.VMagicMirrorConfig.RawData
             Scale = 1f,
             ParentBone = "",
         };
+    }
+
+    public struct RawBuddyLocalizedText
+    {
+        [JsonProperty("ja")] public string Ja { get; set; }
+        [JsonProperty("en")] public string En { get; set; }
     }
 }

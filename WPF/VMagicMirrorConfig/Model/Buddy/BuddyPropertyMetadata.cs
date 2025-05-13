@@ -21,7 +21,11 @@ namespace Baku.VMagicMirrorConfig
 
     public class BuddyPropertyMetadata
     {
-        private BuddyPropertyMetadata(string name, string displayName, BuddyPropertyType visualType)
+        private BuddyPropertyMetadata(
+            string name, 
+            BuddyLocalizedText displayName, 
+            BuddyLocalizedText description,
+            BuddyPropertyType visualType)
         {
             Name = name;
             DisplayName = displayName;
@@ -30,7 +34,8 @@ namespace Baku.VMagicMirrorConfig
         }
 
         public string Name { get; }
-        public string DisplayName { get; }
+        public BuddyLocalizedText DisplayName { get; }
+        public BuddyLocalizedText Description { get; }
 
         public BuddyPropertyType ValueType { get; }
         public BuddyPropertyType VisualType { get; }
@@ -51,25 +56,25 @@ namespace Baku.VMagicMirrorConfig
         public IReadOnlyList<string> EnumOptions { get; private init; } = Array.Empty<string>();
 
         // TODO: VisualTypeの種類と同じだけ生成メソッドを用意したい
-        public static BuddyPropertyMetadata Bool(string name, string displayName, bool defaultValue)
+        public static BuddyPropertyMetadata Bool(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, bool defaultValue)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Bool)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Bool)
             {
                 DefaultBoolValue = defaultValue,
             };
         }
 
-        public static BuddyPropertyMetadata Int(string name, string displayName, int defaultValue)
+        public static BuddyPropertyMetadata Int(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, int defaultValue)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Int)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Int)
             {
                 DefaultIntValue = defaultValue,
             };
         }
 
-        public static BuddyPropertyMetadata RangeInt(string name, string displayName, int defaultValue, int min, int max)
+        public static BuddyPropertyMetadata RangeInt(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, int defaultValue, int min, int max)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.RangeInt)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.RangeInt)
             {
                 DefaultIntValue = defaultValue,
                 IntRangeMin = min,
@@ -77,17 +82,17 @@ namespace Baku.VMagicMirrorConfig
             };
         }
 
-        public static BuddyPropertyMetadata Float(string name, string displayName, float defaultValue)
+        public static BuddyPropertyMetadata Float(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, float defaultValue)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Float)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Float)
             {
                 DefaultFloatValue = defaultValue,
             };
         }
 
-        public static BuddyPropertyMetadata RangeFloat(string name, string displayName, float defaultValue, float min, float max)
+        public static BuddyPropertyMetadata RangeFloat(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, float defaultValue, float min, float max)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.RangeFloat)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.RangeFloat)
             {
                 DefaultFloatValue = defaultValue,
                 FloatRangeMin = min,
@@ -95,59 +100,59 @@ namespace Baku.VMagicMirrorConfig
             };
         }
 
-        public static BuddyPropertyMetadata Enum(string name, string displayName, int defaultValue, string[] options)
+        public static BuddyPropertyMetadata Enum(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, int defaultValue, string[] options)
         {
             //NOTE: enumOptionsは配列コピーはしない(デシリアライズされた値が渡ってきてるはずで、それは再利用しないので)
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Enum)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Enum)
             {
                 DefaultIntValue = defaultValue,
                 EnumOptions = options,
             };
         }
 
-        public static BuddyPropertyMetadata String(string name, string displayName, string defaultValue)
+        public static BuddyPropertyMetadata String(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, string defaultValue)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.String)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.String)
             {
                 DefaultStringValue = defaultValue,
             };
         }
 
-        public static BuddyPropertyMetadata Vector2(string name, string displayName, BuddyVector2 defaultValue)
+        public static BuddyPropertyMetadata Vector2(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, BuddyVector2 defaultValue)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Vector2)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Vector2)
             {
                 DefaultVector2Value = defaultValue,
             };
         }
 
-        public static BuddyPropertyMetadata Vector3(string name, string displayName, BuddyVector3 defaultValue)
+        public static BuddyPropertyMetadata Vector3(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, BuddyVector3 defaultValue)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Vector3)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Vector3)
             {
                 DefaultVector3Value = defaultValue,
             };
         }
 
-        public static BuddyPropertyMetadata Quaternion(string name, string displayName, BuddyVector3 defaultValue)
+        public static BuddyPropertyMetadata Quaternion(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, BuddyVector3 defaultValue)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Quaternion)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Quaternion)
             {
                 DefaultVector3Value = defaultValue,
             };
         }
 
-        public static BuddyPropertyMetadata Transform2D(string name, string displayName, BuddyTransform2D defaultValue)
+        public static BuddyPropertyMetadata Transform2D(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, BuddyTransform2D defaultValue)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Transform2D)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Transform2D)
             {
                 DefaultTransform2DValue = defaultValue,
             };
         }
 
-        public static BuddyPropertyMetadata Transform3D(string name, string displayName, BuddyTransform3D defaultValue)
+        public static BuddyPropertyMetadata Transform3D(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, BuddyTransform3D defaultValue)
         {
-            return new BuddyPropertyMetadata(name, displayName, BuddyPropertyType.Transform3D)
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Transform3D)
             {
                 DefaultTransform3DValue = defaultValue,
             };

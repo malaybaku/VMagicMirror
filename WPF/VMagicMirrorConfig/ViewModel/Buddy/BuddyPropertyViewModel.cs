@@ -17,7 +17,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _buddyMetadata = buddyMetadata;
             _metadata = buddyProperty.Metadata;
             _value = buddyProperty.Value;
-            
+
             switch (_metadata.ValueType)
             {
                 case BuddyPropertyType.Bool:
@@ -101,8 +101,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly BuddyPropertyValue _value;
 
         public BuddyPropertyType VisualType => _metadata.VisualType;
-        public string DisplayName => _metadata.DisplayName;
 
+        // NOTE: この2つはローカライズの対象であり、ApplyLanguage() が呼ばれると実際にローカライズに基づいた値が入る
+        public RProperty<string> DisplayName { get; } = new("");
+        public RProperty<string> Description { get; } = new("");
+        
         // 下記のRPropertyのうち、_metadata.ValueTypeに基づいてどれか一つだけが実際に使われる
         public RProperty<bool> BoolValue { get; } = new RProperty<bool>(false);
         public RProperty<int> IntValue { get; } = new RProperty<int>(0);
@@ -124,6 +127,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public float FloatRangeMin => _metadata.FloatRangeMin;
         public float FloatRangeMax => _metadata.FloatRangeMax;
         public IReadOnlyList<string> EnumOptions => _metadata.EnumOptions;
+
+        public void ApplyLanguage(bool isJapanese)
+        {
+            DisplayName.Value = _metadata.DisplayName.Get(isJapanese);
+            Description.Value = _metadata.Description.Get(isJapanese);
+        }
 
         public void ResetToDefault()
         {

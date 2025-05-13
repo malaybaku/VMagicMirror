@@ -1,5 +1,4 @@
-﻿using Baku.VMagicMirrorConfig.ViewModel;
-using System;
+﻿using System;
 using System.IO;
 
 namespace Baku.VMagicMirrorConfig
@@ -11,7 +10,7 @@ namespace Baku.VMagicMirrorConfig
             bool isDefaultBuddy,
             string folderPath,
             string id, 
-            string displayName, 
+            BuddyLocalizedText displayName, 
             string creator,
             string creatorUrl, 
             string version, 
@@ -41,9 +40,8 @@ namespace Baku.VMagicMirrorConfig
         // NOTE: Unity側でも同様に、デフォルトサブキャラはprefixをつけてユーザー定義サブキャラと区別できるようにする
         public string BuddyId { get; }
 
-        // 下記はmanifest.jsonで定義されていれば適用される
+        public BuddyLocalizedText DisplayName { get; }
 
-        public string DisplayName { get; } = "";
         // NOTE: IdはBuddy間で通信したくなったときに備えた仕様でBuddyIdとは別の概念で、
         // BuddyIdは実行時に一意だが、Idはv4.0.0の時点では一意なことは保証されない。
         // WPFでは基本的に無視する

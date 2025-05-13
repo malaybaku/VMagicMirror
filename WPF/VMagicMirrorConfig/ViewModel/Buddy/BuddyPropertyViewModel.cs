@@ -132,6 +132,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             DisplayName.Value = _metadata.DisplayName.Get(isJapanese);
             Description.Value = _metadata.Description.Get(isJapanese);
+
+            Transform2DValue?.ApplyLanguage(isJapanese);
+            Transform3DValue?.ApplyLanguage(isJapanese);
         }
 
         public void ResetToDefault()

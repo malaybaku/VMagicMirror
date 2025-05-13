@@ -51,7 +51,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void OnTransform2DUpdated(object? sender, EventArgs e) => SetValuesSilently();
 
-        public string Name => _metadata.Name;
+        public RProperty<string> DisplayName { get; } = new RProperty<string>("");
+        public RProperty<string> Description { get; } = new RProperty<string>("");
 
         public RProperty<float> PositionX { get; }
         public RProperty<float> PositionY { get; }
@@ -61,6 +62,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<float> RotationZ { get; }
 
         public RProperty<float> Scale { get; }
+
+        public void ApplyLanguage(bool isJapanese)
+        {
+            DisplayName.Value = _metadata.DisplayName.Get(isJapanese);
+            Description.Value = _metadata.Description.Get(isJapanese);
+        }
 
         public void ResetToDefault()
         {

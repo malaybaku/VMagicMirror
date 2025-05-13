@@ -19,11 +19,12 @@
             <!-- TODO: Template達の見た目はどこかで整形せねばならん… -->
             <view:BuddyPropertyDataTemplateSelector.BoolTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
-                        <CheckBox Content="{Binding DisplayName}" 
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="{Binding DisplayName.Value}" 
                               IsChecked="{Binding BoolValue.Value}"
                               />
-                    </Grid>
+                        <view:BuddyDescriptionMark DataContext="{Binding Description.Value}" />
+                    </StackPanel>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.BoolTemplate>
             <view:BuddyPropertyDataTemplateSelector.IntTemplate>
@@ -31,12 +32,12 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                               Text="{Binding DisplayName}" />
-                        <TextBox Grid.Column="1" 
-                             Text="{Binding IntValue.Value}"/>
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <TextBox Grid.Column="2" Text="{Binding IntValue.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.IntTemplate>
@@ -45,19 +46,19 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                               Text="{Binding DisplayName}" />
-                        <Slider Grid.Column="1"
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <Slider Grid.Column="2"
                             Minimum="{Binding IntRangeMin}"
                             Maximum="{Binding IntRangeMax}"
                             TickFrequency="1"
                             Value="{Binding IntValue.Value}"
                             />
-                        <TextBox Grid.Column="2" 
-                             Text="{Binding IntValue.Value}"/>
+                        <TextBox Grid.Column="3" Text="{Binding IntValue.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.RangeIntTemplate>
@@ -66,11 +67,12 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                               Text="{Binding DisplayName}" />
-                        <ComboBox Grid.Column="1"
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <ComboBox Grid.Column="2"
                               ItemsSource="{Binding EnumOptions}"
                               SelectedIndex="{Binding IntValue.Value}"
                               />
@@ -82,12 +84,12 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                               Text="{Binding DisplayName}" />
-                        <TextBox Grid.Column="1" 
-                             Text="{Binding FloatValue.Value}"/>
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <TextBox Grid.Column="2" Text="{Binding FloatValue.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.FloatTemplate>
@@ -97,24 +99,20 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock 
-                            Grid.Column="0"
-                            Text="{Binding DisplayName}"
-                            />
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
                         <Slider 
-                            Grid.Column="1"
+                            Grid.Column="2"
                             Minimum="{Binding FloatRangeMin}"
                             Maximum="{Binding FloatRangeMax}"
                             Value="{Binding FloatValue.Value}"
                             IsSnapToTickEnabled="False"
                             />
-                        <TextBox
-                            Grid.Column="2" 
-                            Text="{Binding FloatValue.Value}"
-                            />
+                        <TextBox Grid.Column="3" Text="{Binding FloatValue.Value}" />
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.RangeFloatTemplate>
@@ -123,12 +121,12 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                               Text="{Binding DisplayName}" />
-                        <TextBox Grid.Column="1" 
-                             Text="{Binding StringValue.Value}"/>
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <TextBox Grid.Column="2" Text="{Binding StringValue.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.StringTemplate>
@@ -137,16 +135,15 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                               Text="{Binding DisplayName}" />
-                        <TextBox Grid.Column="1" 
-                             Text="{Binding VectorX.Value}"/>
-                        <TextBox Grid.Column="2" 
-                             Text="{Binding VectorY.Value}"/>
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <TextBox Grid.Column="2" Text="{Binding VectorX.Value}"/>
+                        <TextBox Grid.Column="3" Text="{Binding VectorY.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.Vector2Template>
@@ -155,18 +152,16 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                               Text="{Binding DisplayName}" />
-                        <TextBox Grid.Column="1" 
-                             Text="{Binding VectorX.Value}"/>
-                        <TextBox Grid.Column="2" 
-                             Text="{Binding VectorY.Value}"/>
-                        <TextBox Grid.Column="3" 
-                             Text="{Binding VectorZ.Value}"/>
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <TextBox Grid.Column="2" Text="{Binding VectorX.Value}"/>
+                        <TextBox Grid.Column="3" Text="{Binding VectorY.Value}"/>
+                        <TextBox Grid.Column="4" Text="{Binding VectorZ.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.Vector3Template>
@@ -175,18 +170,16 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                               Text="{Binding DisplayName}" />
-                        <TextBox Grid.Column="1" 
-                             Text="{Binding VectorX.Value}"/>
-                        <TextBox Grid.Column="2" 
-                             Text="{Binding VectorY.Value}"/>
-                        <TextBox Grid.Column="3" 
-                             Text="{Binding VectorZ.Value}"/>
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayName}" />
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <TextBox Grid.Column="2" Text="{Binding VectorX.Value}"/>
+                        <TextBox Grid.Column="3" Text="{Binding VectorY.Value}"/>
+                        <TextBox Grid.Column="4" Text="{Binding VectorZ.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.QuaternionTemplate>

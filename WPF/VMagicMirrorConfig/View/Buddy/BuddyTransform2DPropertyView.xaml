@@ -7,12 +7,15 @@
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type={x:Type vm:BuddyTransform2DPropertyViewModel}}"
-             d:DesignHeight="450" d:DesignWidth="800">
-    <!-- TODO: vmを作ってdesignInstanceで入れておく -->
+             d:DesignHeight="150" d:DesignWidth="600">
+    <UserControl.Resources>
+        <view:StringEmptyToVisibilityConverter x:Key="StringEmptyToVisibilityConverter" />
+        <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" />
-            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="40" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
@@ -23,38 +26,48 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
+        <!-- 他のプロパティと違い、フィールド名だけで1行使って2行目から先にPos/Rot/ScaleのUIが入る -->
         <TextBlock Grid.Row="0" Grid.Column="0" 
-                            Text="{Binding Name}" />
-        <TextBlock Grid.Row="0" Grid.Column="1" 
-                            Margin="8,0"
-                            Text="Pos:"
-                            TextAlignment="Right"/>
-        <TextBox Grid.Row="0"
-                        Grid.Column="2" 
-                        Text="{Binding PositionX.Value}"/>
-        <TextBox Grid.Row="0"
-                        Grid.Column="3"
-                        Text="{Binding PositionY.Value}"/>
+                   Text="{Binding DisplayName.Value}"
+                   Visibility="{Binding Description.Value, Converter={StaticResource StringNotEmptyToVisibilityConverter}}"
+                   />
+        <view:BuddyDescriptionMark Grid.Row="0" Grid.Column="1" DataContext="{Binding Description.Value}" />
 
-        <TextBlock Grid.Row="1" Grid.Column="1" 
-                            Margin="8,0"
-                            Text="Rot:"
-                            TextAlignment="Right"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" 
+                   Text="{Binding DisplayName.Value}"
+                   Visibility="{Binding Description.Value, Converter={StaticResource StringEmptyToVisibilityConverter}}"
+                   />
+        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                    Margin="8,0"
+                    Text="{DynamicResource Buddy_Transform_Position}"
+                    TextAlignment="Right"/>
         <TextBox Grid.Row="1"
-                        Grid.Column="2" 
-                        Text="{Binding RotationX.Value}"/>
+                Grid.Column="2" 
+                Text="{Binding PositionX.Value}"/>
         <TextBox Grid.Row="1"
-                        Grid.Column="3"
-                        Text="{Binding RotationY.Value}"/>
-        <TextBox Grid.Row="1"
-                        Grid.Column="4"
-                        Text="{Binding RotationZ.Value}"/>
+                Grid.Column="3"
+                Text="{Binding PositionY.Value}"/>
 
-        <TextBlock Grid.Row="2" Grid.Column="1" 
-                            Margin="8,0"
-                            Text="Scale:"
-                            TextAlignment="Right"/>
-        <TextBox Grid.Row="2" Grid.Column="2" 
+        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+                   Margin="8,0"
+                   Text="{DynamicResource Buddy_Transform_Rotation}"
+                   TextAlignment="Right"/>
+        <TextBox Grid.Row="2"
+                Grid.Column="2" 
+                Text="{Binding RotationX.Value}"/>
+        <TextBox Grid.Row="2"
+                Grid.Column="3"
+                Text="{Binding RotationY.Value}"/>
+        <TextBox Grid.Row="2"
+                Grid.Column="4"
+                Text="{Binding RotationZ.Value}"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                   Margin="8,0"
+                   Text="{DynamicResource Buddy_Transform_Scale}"
+                   TextAlignment="Right"/>
+        <TextBox Grid.Row="3" Grid.Column="2" 
                     Text="{Binding Scale.Value}"/>
     </Grid>
 </UserControl>

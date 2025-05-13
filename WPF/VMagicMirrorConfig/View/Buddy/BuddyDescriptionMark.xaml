@@ -21,10 +21,12 @@
         <md:PackIcon Kind="QuestionMarkCircleOutline"
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"
+                     ToolTipService.InitialShowDelay="0"
                      >
             <md:PackIcon.ToolTip>
                 <TextBlock Text="{Binding}"
-                           Width="300"
+                           MinWidth="100"
+                           MaxWidth="300"
                            TextWrapping="Wrap"
                            />
             </md:PackIcon.ToolTip>

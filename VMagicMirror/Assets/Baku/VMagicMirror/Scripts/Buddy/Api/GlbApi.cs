@@ -1,19 +1,17 @@
 using System;
-using System.IO;
 using VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
     public class GlbApi : IGlb
     {
-        private readonly string _baseDir;
         private readonly BuddyGlbInstance _instance;
         private readonly BuddyLogger _logger;
-        private BuddyFolder BuddyFolder => _instance.BuddyFolder;
+        private BuddyFolder BuddyFolder { get; }
 
-        public GlbApi(string baseDir, BuddyGlbInstance instance, BuddyLogger logger)
+        public GlbApi(BuddyFolder buddyFolder, BuddyGlbInstance instance, BuddyLogger logger)
         {
-            _baseDir = baseDir;
+            BuddyFolder = buddyFolder;
             _instance = instance;
             _logger = logger;
             Transform = new Transform3D(instance.GetTransform3D());
@@ -23,7 +21,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public void Load(string path) => Try(() =>
         {
-            var fullPath = Path.Combine(_baseDir, path);
+            var fullPath = ApiUtils.GetAssetFullPath(BuddyFolder, path);
             _instance.Load(fullPath);
         });
 

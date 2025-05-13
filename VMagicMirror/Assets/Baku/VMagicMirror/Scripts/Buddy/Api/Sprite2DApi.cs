@@ -19,17 +19,16 @@ namespace Baku.VMagicMirror.Buddy.Api
 
     public class Sprite2DApi : ISprite2D
     {
-        private readonly string _baseDir;
         private readonly BuddySprite2DInstance _instance;
         private readonly BuddyLogger _logger;
-        private BuddyFolder BuddyFolder => _instance.BuddyFolder;
+        private BuddyFolder BuddyFolder { get; }
 
         private bool _fileNotFoundErrorLogged;
         private bool _pathInvalidErrorLogged;
 
-        internal Sprite2DApi(string baseDir, BuddySprite2DInstance instance, BuddyLogger logger)
+        internal Sprite2DApi(BuddyFolder buddyFolder, BuddySprite2DInstance instance, BuddyLogger logger)
         {
-            _baseDir = baseDir;
+            BuddyFolder = buddyFolder;
             _instance = instance;
             _logger = logger;
 

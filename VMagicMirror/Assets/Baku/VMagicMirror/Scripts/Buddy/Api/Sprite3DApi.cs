@@ -1,18 +1,16 @@
-using System.IO;
 using VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
     public class Sprite3DApi : ISprite3D
     {
-        private readonly string _baseDir;
         private readonly BuddySprite3DInstance _instance;
         private readonly BuddyLogger _logger;
-        private BuddyFolder BuddyFolder => _instance.BuddyFolder;
+        private BuddyFolder BuddyFolder { get; }
 
-        public Sprite3DApi(string baseDir, BuddySprite3DInstance instance, BuddyLogger logger)
+        public Sprite3DApi(BuddyFolder buddyFolder, BuddySprite3DInstance instance, BuddyLogger logger)
         {
-            _baseDir = baseDir;
+            BuddyFolder = buddyFolder;
             _instance = instance;
             _logger = logger;
             Transform = new Transform3D(instance.Transform3DInstance);
@@ -22,13 +20,13 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public void Preload(string path) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
-            var fullPath = Path.Combine(_baseDir, path);
+            var fullPath = ApiUtils.GetAssetFullPath(BuddyFolder, path);
             _instance.Preload(fullPath);
         });
 
         public void Show(string path) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
-            var fullPath = Path.Combine(_baseDir, path);
+            var fullPath = ApiUtils.GetAssetFullPath(BuddyFolder, path);
             _instance.Show(fullPath);
         });
         

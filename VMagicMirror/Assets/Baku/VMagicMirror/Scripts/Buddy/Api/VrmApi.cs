@@ -1,38 +1,42 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using VMagicMirror.Buddy;
-using Cysharp.Threading.Tasks;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
     public class VrmApi : IVrm
     {
-        private readonly string _baseDir;
         private readonly BuddyVrmInstance _instance;
-        private BuddyFolder BuddyFolder => _instance.BuddyFolder;
+        private readonly BuddyLogger _logger;
+        private BuddyFolder BuddyFolder { get; }
 
-        public VrmApi(string baseDir, BuddyVrmInstance instance)
+        public VrmApi(BuddyFolder buddyFolder, BuddyVrmInstance instance, BuddyLogger logger)
         {
-            _baseDir = baseDir;
+            BuddyFolder = buddyFolder;
             _instance = instance;
+            _logger = logger;
             Transform = new Transform3D(instance.GetTransform3D());
         }
 
         public ITransform3D Transform { get; }
 
-        public async Task LoadAsync(string path)
-        {
-            //TODO: パス不正とかファイルが見つからないとかの場合に1回だけエラーが出したい
-            // Sprite2Dの処理を使い回せるとgood
-            var fullPath = Path.Combine(_baseDir, path);
-            await _instance.LoadAsync(fullPath);
-        }
+        public async Task LoadAsync(string path) => await ApiUtils.TryAsync(
+            BuddyFolder,
+            _logger,
+            async () =>
+            {
+                //TODO: パス不正とかファイルが見つからないとかの場合に1回だけエラーが出したい
+                // Sprite2Dの処理を使い回せるとgood
+                var fullPath = ApiUtils.GetAssetFullPath(BuddyFolder, path);
+                await _instance.LoadAsync(fullPath);
+            });
 
-        public async Task LoadPresetAsync(string name)
-        {
-            await _instance.LoadPresetAsync(name);
-        }
+        // NOTE: こっちのほうが成功しやすいが、スレッド例外とかは普通に出るはずなのでくくっておく
+        public async Task LoadPresetAsync(string name) => await ApiUtils.TryAsync(
+            BuddyFolder,
+            _logger,
+            async () => await _instance.LoadPresetAsync(name)
+            );
 
         public void Show() => _instance.SetActive(true);
         public void Hide() => _instance.SetActive(false);

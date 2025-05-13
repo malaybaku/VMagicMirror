@@ -187,32 +187,32 @@ namespace Baku.VMagicMirror.Buddy.Api
             var instance = _spriteCanvas.CreateSpriteInstance(
                 BuddyFolder, _settingsRepository, _apiImplementBundle.AvatarFacialApi
                 );
-            var result = new Sprite2DApi(_baseDir, instance, _logger);
+            var result = new Sprite2DApi(BuddyFolder, instance, _logger);
             return result;
         }
 
         public ISprite3D Create3DSprite()
         {
             var instance = _buddy3DInstanceCreator.CreateSprite3DInstance(BuddyFolder);
-            return new Sprite3DApi(_baseDir, instance, _logger);
+            return new Sprite3DApi(BuddyFolder, instance, _logger);
         }
 
         public IGlb CreateGlb()
         {
             var instance = _buddy3DInstanceCreator.CreateGlbInstance(BuddyFolder);
-            return new GlbApi(_baseDir, instance, _logger);
+            return new GlbApi(BuddyFolder, instance, _logger);
         }
 
         public IVrm CreateVrm()
         {
             var instance = _buddy3DInstanceCreator.CreateVrmInstance(BuddyFolder);
-            return new VrmApi(_baseDir, instance);
+            return new VrmApi(BuddyFolder, instance, _logger);
         }
 
         public IVrmAnimation CreateVrmAnimation()
         {
             var instance = _buddy3DInstanceCreator.CreateVrmAnimationInstance(BuddyFolder);
-            return new VrmAnimationApi(_baseDir, instance);
+            return new VrmAnimationApi(BuddyFolder, instance, _logger);
         }
     }
 }

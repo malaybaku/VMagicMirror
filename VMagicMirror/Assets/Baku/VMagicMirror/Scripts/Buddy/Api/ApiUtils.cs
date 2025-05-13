@@ -1,5 +1,7 @@
 using System;
+using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 using BuddyApi = VMagicMirror.Buddy;
 
@@ -46,7 +48,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             return Path.GetFullPath(
                 Path.Combine(rootDirectory, folder.FolderName, path)
                 )
-                .ToLower();
+                .ToLower(CultureInfo.InvariantCulture);
         }
         
         public static void Try(BuddyFolder folder, BuddyLogger logger, Action act)
@@ -85,6 +87,22 @@ namespace Baku.VMagicMirror.Buddy.Api
             }
         }
 
+        public static async Task TryAsync(BuddyFolder folder, BuddyLogger logger, Func<Task> task)
+        {
+            try
+            {
+                await task();
+            }
+            catch (Exception ex)
+            {
+                if (Application.isEditor)
+                {
+                    Debug.LogException(ex);
+                }
+                logger.LogRuntimeException(folder, ex);
+            }
+        }
+        
         public static TextureLoadResult TryGetTexture2D(string fullPath, out Texture2D texture)
         {    
             if (!IsInBuddyDirectory(fullPath))
@@ -108,7 +126,6 @@ namespace Baku.VMagicMirror.Buddy.Api
             texture = result;
             return TextureLoadResult.Success;
         }
-
     }
 
     public enum TextureLoadResult

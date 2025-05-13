@@ -204,7 +204,7 @@
                         <Button Grid.Column="0"
                                 Command="{Binding InvokeActionCommand}"
                                 >
-                            <TextBlock Text="{Binding DisplayName}"/>
+                            <TextBlock Text="{Binding DisplayName.Value}"/>
                         </Button>
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
                     </Grid>

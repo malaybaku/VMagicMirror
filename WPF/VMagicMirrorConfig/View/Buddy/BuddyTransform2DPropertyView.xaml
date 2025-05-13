@@ -9,7 +9,6 @@
              d:DataContext="{d:DesignInstance Type={x:Type vm:BuddyTransform2DPropertyViewModel}}"
              d:DesignHeight="150" d:DesignWidth="600">
     <UserControl.Resources>
-        <view:StringEmptyToVisibilityConverter x:Key="StringEmptyToVisibilityConverter" />
         <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
     </UserControl.Resources>
     <Grid>
@@ -34,10 +33,6 @@
                    />
         <view:BuddyDescriptionMark Grid.Row="0" Grid.Column="1" DataContext="{Binding Description.Value}" />
 
-        <TextBlock Grid.Row="1" Grid.Column="0" 
-                   Text="{Binding DisplayName.Value}"
-                   Visibility="{Binding Description.Value, Converter={StaticResource StringEmptyToVisibilityConverter}}"
-                   />
         <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                     Margin="8,0"
                     Text="{DynamicResource Buddy_Transform_Position}"

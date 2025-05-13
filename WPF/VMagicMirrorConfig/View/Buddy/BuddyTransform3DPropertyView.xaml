@@ -9,7 +9,6 @@
              d:DataContext="{d:DesignInstance Type={x:Type vm:BuddyTransform3DPropertyViewModel}}"
              d:DesignHeight="170" d:DesignWidth="600">
     <UserControl.Resources>
-        <view:StringEmptyToVisibilityConverter x:Key="StringEmptyToVisibilityConverter" />
         <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
     </UserControl.Resources>
     <!-- TODO: vmを作ってdesignInstanceで入れておく -->

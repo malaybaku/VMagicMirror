@@ -29,6 +29,7 @@ namespace Baku.VMagicMirrorConfig
         {
             Name = name;
             DisplayName = displayName;
+            Description = description;
             VisualType = visualType;
             ValueType = visualType.ToValueType();
         }

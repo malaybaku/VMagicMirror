@@ -75,6 +75,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         bool IRootApi.AvatarOutputFeatureEnabled => _settingsRepository.MainAvatarOutputActive.Value;
 
+        public string BuddyDirectory => _baseDir;
         public string CacheDirectory { get; }
 
         internal void InvokeStarted() => Start?.Invoke();

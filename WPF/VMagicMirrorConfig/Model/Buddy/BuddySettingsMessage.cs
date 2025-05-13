@@ -53,4 +53,11 @@ namespace Baku.VMagicMirrorConfig.BuddySettingsMessages
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public BuddyTransform3D Transform3DValue { get; set; }
     }
+
+    [Serializable]
+    public class BuddyActionMessage
+    {
+        public string BuddyId { get; set; } = "";
+        public string ActionName { get; set; } = "";
+    }
 }

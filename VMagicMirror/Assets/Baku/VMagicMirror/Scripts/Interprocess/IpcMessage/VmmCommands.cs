@@ -285,6 +285,7 @@
         BuddyDisable,
         BuddyRefreshData,
         BuddySetProperty,
+        BuddyInvokeAction,
 
         // Buddy (開発者モード)
         BuddySetDeveloperModeActive,

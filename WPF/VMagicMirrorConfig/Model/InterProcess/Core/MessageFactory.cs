@@ -397,6 +397,13 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public static Message BuddySetProperty(string valueJson) => StringContent(VmmCommands.BuddySetProperty, valueJson);
 
+        /// <summary>
+        /// Actionを指すBuddyのプロパティ(UI上はボタン)の押下をUnityに通知するやつ
+        /// </summary>
+        /// <param name="valueJson"></param>
+        /// <returns></returns>
+        public static Message BuddyInvokeAction(string valueJson) => StringContent(VmmCommands.BuddyInvokeAction, valueJson);
+
         #endregion
 
         #region VMCP

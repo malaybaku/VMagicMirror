@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
 {
+    // NOTE: SettingsSenderという呼称だが、ボタン押下によるアクションの通知とかも行う
     public class BuddySettingsSender
     {
         private readonly IMessageSender _sender;
@@ -29,6 +30,7 @@ namespace Baku.VMagicMirrorConfig
                 // 受信側(Unity)には空文字扱いさせつつJSONのkey:valueの書き込みを省略している
                 BuddyId = buddy.Metadata.BuddyId,
                 Properties = buddy.Properties
+                    .Where(prop => prop.Metadata.ValueType != BuddyPropertyType.Action)
                     .Select(prop => new BuddySettingsPropertyMessage()
                     {
                         Name = prop.Metadata.Name,
@@ -87,6 +89,17 @@ namespace Baku.VMagicMirrorConfig
             => NotifyProperty(buddy, property, msg => msg.Transform2DValue = value);
         public void NotifyTransform3DProperty(BuddyMetadata buddy, BuddyPropertyMetadata property, BuddyTransform3D value)
             => NotifyProperty(buddy, property, msg => msg.Transform3DValue = value);
+
+        public void InvokeBuddyAction(BuddyMetadata buddy, BuddyPropertyMetadata property)
+        {
+            var json = 
+            JsonConvert.SerializeObject(new BuddyActionMessage()
+            {
+                BuddyId = buddy.BuddyId,
+                ActionName = property.Name,
+            });
+            _sender.SendMessage(MessageFactory.BuddyInvokeAction(json));
+        }
 
         public void SetMainAvatarOutputActive(bool v)
             => _sender.SendMessage(MessageFactory.BuddySetMainAvatarOutputActive(v));

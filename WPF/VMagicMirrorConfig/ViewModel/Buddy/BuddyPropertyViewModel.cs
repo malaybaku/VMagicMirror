@@ -90,6 +90,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 case BuddyPropertyType.Transform3D:
                     Transform3DValue = new BuddyTransform3DPropertyViewModel(_settingSender, _buddyMetadata, buddyProperty);
                     break;
+                case BuddyPropertyType.Action:
+                    // Actionでは値の準備はしないでOKで、その代わりInvokeActionCommandが呼ばれるようになる
+                    break;
                 default:
                     throw new NotSupportedException();
             }
@@ -121,6 +124,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         //NOTE: プロパティの実態がTransform2DやTransform3Dの場合以外はnull
         public BuddyTransform2DPropertyViewModel? Transform2DValue { get; }
         public BuddyTransform3DPropertyViewModel? Transform3DValue { get; }
+
+        private ActionCommand _invokeActionCommand;
+        public ActionCommand InvokeActionComment => _invokeActionCommand ??= new ActionCommand(InvokeAction);
+        private void InvokeAction() => _settingSender.InvokeBuddyAction(_buddyMetadata, _metadata);
 
         public int IntRangeMin => _metadata.IntRangeMin;
         public int IntRangeMax => _metadata.IntRangeMax;

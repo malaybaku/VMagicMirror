@@ -11,6 +11,7 @@ namespace Baku.VMagicMirrorConfig
         RangeInt,
         RangeFloat,
         String,
+        FilePathString,
         Enum,
         Vector2,
         Vector3,
@@ -59,6 +60,7 @@ namespace Baku.VMagicMirrorConfig
         public float FloatRangeMin { get; private init; }
         public float FloatRangeMax { get; private init; }
         public IReadOnlyList<string> EnumOptions { get; private init; } = Array.Empty<string>();
+        public bool IsStringFilePath { get; private init; }
 
         // TODO: VisualTypeの種類と同じだけ生成メソッドを用意したい
         public static BuddyPropertyMetadata Bool(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, bool defaultValue)
@@ -123,6 +125,14 @@ namespace Baku.VMagicMirrorConfig
             };
         }
 
+        public static BuddyPropertyMetadata FilePathString(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, string defaultValue)
+        {
+            return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.FilePathString)
+            {
+                DefaultStringValue = defaultValue,
+            };
+        }
+
         public static BuddyPropertyMetadata Vector2(string name, BuddyLocalizedText displayName, BuddyLocalizedText description, BuddyVector2 defaultValue)
         {
             return new BuddyPropertyMetadata(name, displayName, description, BuddyPropertyType.Vector2)
@@ -181,6 +191,7 @@ namespace Baku.VMagicMirrorConfig
                 BuddyPropertyType.RangeInt => BuddyPropertyType.Int,
                 BuddyPropertyType.RangeFloat => BuddyPropertyType.Float,
                 BuddyPropertyType.String => BuddyPropertyType.String,
+                BuddyPropertyType.FilePathString => BuddyPropertyType.String,
                 BuddyPropertyType.Enum => BuddyPropertyType.Int,
                 BuddyPropertyType.Vector2 => BuddyPropertyType.Vector2,
                 BuddyPropertyType.Vector3 => BuddyPropertyType.Vector3,

@@ -13,6 +13,7 @@ namespace Baku.VMagicMirrorConfig.View
         public DataTemplate? FloatTemplate { get; set; }
         public DataTemplate? RangeFloatTemplate { get; set; }
         public DataTemplate? StringTemplate { get; set; }
+        public DataTemplate? FilePathStringTemplate { get; set; }
         public DataTemplate? EnumTemplate { get; set; }
         public DataTemplate? Vector2Template { get; set; }
         public DataTemplate? Vector3Template { get; set; }
@@ -36,6 +37,7 @@ namespace Baku.VMagicMirrorConfig.View
                 BuddyPropertyType.Float => FloatTemplate,
                 BuddyPropertyType.RangeFloat => RangeFloatTemplate,
                 BuddyPropertyType.String => StringTemplate,
+                BuddyPropertyType.FilePathString => FilePathStringTemplate,
                 BuddyPropertyType.Enum => EnumTemplate,
                 BuddyPropertyType.Vector2 => Vector2Template,
                 BuddyPropertyType.Vector3 => Vector3Template,

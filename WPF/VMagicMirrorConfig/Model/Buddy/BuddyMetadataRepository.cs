@@ -189,12 +189,24 @@ namespace Baku.VMagicMirrorConfig
                         return BuddyPropertyMetadata.Float(name, displayName, description, floatData.DefaultValue);
                     }
                 case "string":
-                    return BuddyPropertyMetadata.String(
-                        name,
-                        displayName,
-                        description,
-                        src.StringData?.DefaultValue ?? ""
-                        );
+                    if (src.StringData?.IsFilePath == true)
+                    {
+                        return BuddyPropertyMetadata.FilePathString(
+                            name,
+                            displayName,
+                            description,
+                            src.StringData?.DefaultValue ?? ""
+                            );
+                    }
+                    else
+                    {
+                        return BuddyPropertyMetadata.String(
+                            name,
+                            displayName,
+                            description,
+                            src.StringData?.DefaultValue ?? ""
+                            );
+                    }
                 case "vector2":
                     var vector2DefaultValue = new BuddyVector2();
                     if (src.Vector2Data != null)

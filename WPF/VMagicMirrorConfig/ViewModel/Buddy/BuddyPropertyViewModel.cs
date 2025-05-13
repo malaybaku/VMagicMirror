@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
@@ -42,6 +43,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     });
                     break;
                 case BuddyPropertyType.String:
+                case BuddyPropertyType.FilePathString:
                     StringValue = new RProperty<string>(_value.StringValue, v =>
                     {
                         _value.StringValue = v;
@@ -128,6 +130,31 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private ActionCommand? _invokeActionCommand;
         public ActionCommand InvokeActionCommand => _invokeActionCommand ??= new ActionCommand(InvokeAction);
         private void InvokeAction() => _settingSender.InvokeBuddyAction(_buddyMetadata, _metadata);
+
+        private ActionCommand? _openFileDialogCommand;
+        public ActionCommand OpenFileDialogCommand => _openFileDialogCommand ??= new ActionCommand(SetStringValueByFileDialog);
+        private void SetStringValueByFileDialog()
+        {
+            var isJapanese = LanguageSelector.Instance.LanguageName == LanguageSelector.LangNameJapanese;
+            // NOTE: タイトルやファイルのFilter設定をカスタムするように拡張してもいいかも (フィルターを書き損じると困るが…)
+            var dialog = new OpenFileDialog()
+            {
+                Title = $"Select File: {DisplayName.Value}",
+                Filter = "All files (*.*)|*.*",
+                Multiselect = false,
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                return;
+            }
+
+            // NOTE: CurrentDirectoryの場所を特に保証してないのでフルパスに寄せとく
+            var fullPath = System.IO.Path.GetFullPath(dialog.FileName);
+            if (System.IO.File.Exists(fullPath))
+            StringValue.Value = fullPath;
+        }
+
 
         public int IntRangeMin => _metadata.IntRangeMin;
         public int IntRangeMax => _metadata.IntRangeMax;

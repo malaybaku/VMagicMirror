@@ -77,6 +77,9 @@ namespace Baku.VMagicMirrorConfig.RawData
     {
         [JsonProperty("defaultValue")]
         public string DefaultValue { get; set; } = "";
+
+        [JsonProperty("isFilePath")]
+        public bool IsFilePath { get; set; } = false;
     }
 
     public class RawBuddyVector2PropertyMetadata

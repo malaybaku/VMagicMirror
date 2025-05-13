@@ -193,6 +193,23 @@
                     <view:BuddyTransform3DPropertyView DataContext="{Binding Transform3DValue}"/>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.Transform3DTemplate>
+            <view:BuddyPropertyDataTemplateSelector.ActionTemplate>
+                <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
+                    <Grid>
+                        <!-- NOTE: Buttonは無理に他と幅を揃えずにボタンの幅を広げるほうが嬉しいかも。要調整 -->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0"
+                                Command="{Binding InvokeActionCommand}"
+                                >
+                            <TextBlock Text="{Binding DisplayName}"/>
+                        </Button>
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                    </Grid>
+                </DataTemplate>
+            </view:BuddyPropertyDataTemplateSelector.ActionTemplate>
         </view:BuddyPropertyDataTemplateSelector>
     </UserControl.Resources>
     <StackPanel>

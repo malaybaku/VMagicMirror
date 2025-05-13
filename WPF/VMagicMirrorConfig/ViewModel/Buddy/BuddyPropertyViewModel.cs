@@ -125,8 +125,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public BuddyTransform2DPropertyViewModel? Transform2DValue { get; }
         public BuddyTransform3DPropertyViewModel? Transform3DValue { get; }
 
-        private ActionCommand _invokeActionCommand;
-        public ActionCommand InvokeActionComment => _invokeActionCommand ??= new ActionCommand(InvokeAction);
+        private ActionCommand? _invokeActionCommand;
+        public ActionCommand InvokeActionCommand => _invokeActionCommand ??= new ActionCommand(InvokeAction);
         private void InvokeAction() => _settingSender.InvokeBuddyAction(_buddyMetadata, _metadata);
 
         public int IntRangeMin => _metadata.IntRangeMin;

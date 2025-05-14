@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
             AvatarFacialInternal = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
             InputInternal = new InputApi(apiImplementBundle.InputApi);
-            _audio = new AudioApi(BuddyFolder, apiImplementBundle.AudioApi);
+            _audio = new AudioApi(BuddyFolder, _logger, apiImplementBundle.AudioApi);
             DeviceLayout = new DeviceLayoutApi(apiImplementBundle.DeviceLayoutApi);
             Screen = new ScreenApi(apiImplementBundle.ScreenApi);
 

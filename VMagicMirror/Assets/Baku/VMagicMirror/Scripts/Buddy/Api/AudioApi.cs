@@ -14,28 +14,53 @@ namespace Baku.VMagicMirror.Buddy.Api
         private readonly List<(string path, AudioClip clip)> _clipCache = new(ClipCacheCount);
 
         private readonly BuddyFolder _buddyFolder;
+        private readonly BuddyLogger _logger;
         private readonly AudioApiImplement _impl;
         private readonly CancellationTokenSource _cts = new();
         
-        internal AudioApi(BuddyFolder buddyFolder, AudioApiImplement impl)
+        internal AudioApi(BuddyFolder buddyFolder, BuddyLogger logger, AudioApiImplement impl)
         {
             _buddyFolder = buddyFolder;
+            _logger = logger;
             _impl = impl;
         }
 
-        public void Play(string path, float volume = 1.0f, float pitch = 1.0f)
-        {
-            var fullPath = ApiUtils.GetAssetFullPath(_buddyFolder, path);
-            var args = new AudioPlayArgs(fullPath, volume, pitch);
-            
-            if (TryPlayFromCache(args))
+        public void Play(string path, float volume = 1.0f, float pitch = 1.0f, string key = "")
+            => ApiUtils.Try(_buddyFolder, _logger, () =>
             {
-                return;
-            }
+                var fullPath = ApiUtils.GetAssetFullPath(_buddyFolder, path);
+                var args = new AudioPlayArgs(fullPath, volume, pitch, key);
 
-            GetClipAndPlayAsync(args, _cts.Token).Forget();
+                if (TryPlayFromCache(args))
+                {
+                    return;
+                }
+
+                GetClipAndPlayAsync(args, _cts.Token).Forget();
+            });
+
+        public void Stop(string key = "")
+        {
+            ApiUtils.Try(_buddyFolder, _logger, () =>
+            {
+                var stoppedKeys = _impl.TryStop(_buddyFolder.BuddyId, key);
+                // イベントを発火させる場合は下記のようにすればよい、はず
+                // for (var i = 0; i < stoppedKeys.Length; i++)
+                // {
+                //     var key = stoppedKeys[i];
+                //     // NOTE: 普通のイベントはScriptEventInvokerに発火させるが、
+                //     //   ここはStop関数自体がスクリプトから呼ばれる & Stopに成功する場合は直ちに停止したはずなので、
+                //     //   ただちにイベントを呼ぶ。
+                //     // NOTE: イベント発火をTryで囲うのもアリだが、そんなに害がない気がするのでパス
+                //     AudioStopped?.Invoke(new AudioStoppedInfo(key, AudioStoppedReason.Stopped));
+                // }
+            });
         }
 
+        // NOTE: IAudioで公開を見送ってるので一旦封鎖している
+        // public event Action<AudioStartedInfo> AudioStarted;
+        // public event Action<AudioStoppedInfo> AudioStopped;
+        
         // NOTE: バイナリを扱う方法もホントは欲しいのだが、mp3のサポートができないうちは頑張らず、「ファイルに一旦保存してもろて…」というスタンスを取る
         // public void Play(byte[] data) => throw new NotImplementedException();
 
@@ -48,7 +73,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                 {
                     _clipCache.RemoveAt(i);
                     _clipCache.Insert(0, (path, clip));
-                    _impl.Play(clip, args);
+                    _impl.Play(clip, _buddyFolder.BuddyId, args);
                     return true;
                 }
             }
@@ -82,7 +107,7 @@ namespace Baku.VMagicMirror.Buddy.Api
                 UnityEngine.Object.Destroy(clipToRemove.clip);
             }
 
-            _impl.Play(audioClip, args);
+            _impl.Play(audioClip, _buddyFolder.BuddyId, args);
         }
 
         internal void Dispose()

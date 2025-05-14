@@ -11,13 +11,15 @@ namespace Baku.VMagicMirror.Buddy
         public readonly string FilePath;
         public readonly float Volume;
         public readonly float Pitch;
+        public readonly string Key;
 
-        public AudioPlayArgs(string filePath, float volume, float pitch)
+        public AudioPlayArgs(string filePath, float volume, float pitch, string key)
         {
             FilePath = filePath;
             // NOTE: ここで範囲制限するのもアリ
             Volume = volume;
             Pitch = pitch;
+            Key = key;
         }
     }
 
@@ -62,13 +64,27 @@ namespace Baku.VMagicMirror.Buddy
             return clip;
         }
 
-        public void Play(AudioClip audioClip, AudioPlayArgs args)
+        public void Play(AudioClip audioClip, BuddyId id, AudioPlayArgs args)
         {
             var audioSource = _audioSources.GetAudioSource();
             audioSource.clip = audioClip;
             audioSource.volume = args.Volume;
             audioSource.pitch = args.Pitch;
             audioSource.Play();
+            _audioSources.MarkAsPlaying(audioSource, id, args.Key);
+        }
+
+        // NOTE: 止めた音源のkeyが入ったstringの一覧を返す
+        public Span<string> TryStop(BuddyId buddyId, string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return _audioSources.Stop(buddyId, key);
+            }
+            else
+            {
+                return _audioSources.Stop(buddyId);
+            }
         }
         
         private static AudioType GetAudioType(string filePath)

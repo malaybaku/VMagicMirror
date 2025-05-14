@@ -50,16 +50,13 @@ namespace Baku.VMagicMirrorConfig
 
         private void TrySetBuddy2DLayout(string json)
         {
-            using var tr = new StringReader(json);
-            using var jr = new JsonTextReader(tr);
-            var serializer = new JsonSerializer();
-            var message = serializer.Deserialize<BuddySettingsPropertyMessage>(jr);
+            var message = JsonConvert.DeserializeObject<BuddySettingsPropertyMessage>(json);
             if (message == null) 
             {
                 throw new InvalidOperationException("Received data is not buddy property message");
             }
 
-            var property = _buddySettingModel.FindProperty(message.BuddyId ?? "", message.Name);
+            var property = _buddySettingModel.FindProperty(new BuddyId(message.BuddyId), message.Name);
             if (property == null || property.Metadata.ValueType != BuddyPropertyType.Transform2D)
             {
                 throw new InvalidOperationException("Received property is not recognized in config window");
@@ -71,16 +68,13 @@ namespace Baku.VMagicMirrorConfig
 
         private void TrySetBuddy3DLayout(string json)
         {
-            using var tr = new StringReader(json);
-            using var jr = new JsonTextReader(tr);
-            var serializer = new JsonSerializer();
-            var message = serializer.Deserialize<BuddySettingsPropertyMessage>(jr);
+            var message = JsonConvert.DeserializeObject<BuddySettingsPropertyMessage>(json);
             if (message == null)
             {
                 throw new InvalidOperationException("Received data is not buddy property message");
             }
 
-            var property = _buddySettingModel.FindProperty(message.BuddyId ?? "", message.Name);
+            var property = _buddySettingModel.FindProperty(new BuddyId(message.BuddyId), message.Name);
             if (property == null || property.Metadata.ValueType != BuddyPropertyType.Transform3D)
             {
                 throw new InvalidOperationException("Received property is not recognized in config window");

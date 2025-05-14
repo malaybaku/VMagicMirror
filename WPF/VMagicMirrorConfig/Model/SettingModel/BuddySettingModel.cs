@@ -172,10 +172,10 @@ namespace Baku.VMagicMirrorConfig
         public void SaveBuddySettings()
             => BuddySaveDataRepository.SaveSetting(MainAvatarOutputActive.Value, _buddies, SpecialFilePath.BuddySettingsFilePath);
 
-        public BuddyProperty? FindProperty(string buddyId, string name)
+        public BuddyProperty? FindProperty(BuddyId buddyId, string name)
         {
             return Buddies
-                .FirstOrDefault(b => b.Metadata.BuddyId == buddyId)
+                .FirstOrDefault(b => b.Metadata.BuddyId.Equals(buddyId))
                 ?.Properties
                 ?.FirstOrDefault(p => p.Metadata.Name == name);
         }
@@ -201,7 +201,7 @@ namespace Baku.VMagicMirrorConfig
             var buddies = new List<BuddyData>();
             foreach (var metadata in metadatas)
             {
-                var savedata = data.Buddies.FirstOrDefault(b => b.Id == metadata.BuddyId);
+                var savedata = data.Buddies.FirstOrDefault(b => b.Id.Equals(metadata.BuddyId));
                 var buddyData = CreateBuddyData(metadata, savedata);
                 buddies.Add(buddyData);
             }

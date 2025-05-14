@@ -137,9 +137,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            // TODO: 各所でEquality気にするのダルすぎるから、Unityと同じようにValueObject作ったほうがいいかも…？
             _items
-                .FirstOrDefault(_items => _items.BuddyId.Equals(e.BuddyId, StringComparison.InvariantCultureIgnoreCase))
+                .FirstOrDefault(_items => _items.BuddyId.Equals(e.BuddyId))
                 ?.EnqueueLogMessage(e.Message);
         }
 
@@ -239,7 +238,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public IReadOnlyList<BuddyPropertyViewModel> Properties { get; }
 
         // NOTE: デフォルトサブキャラではBuddyIdに ">" のprefixがついて ">Foo" みたいな文字列になり、UIに表示するには適さない(のでinternal)
-        internal string BuddyId => _buddyData.Metadata.BuddyId;
+        internal BuddyId BuddyId => _buddyData.Metadata.BuddyId;
         public string FolderName => _buddyData.Metadata.FolderName;
         public RProperty<string> DisplayName { get; } = new("");
         

@@ -28,7 +28,7 @@ namespace Baku.VMagicMirrorConfig
             Properties = properties;
 
             // NOTE: このprefixのつけかたはUnity側も把握していて、prefixの有無でデフォルトサブキャラかどうかが判定される
-            BuddyId = (IsDefaultBuddy ? ">" : "") + FolderName;
+            BuddyId = BuddyId.Create(FolderName, isDefaultBuddy);
         }
 
         public bool IsDefaultBuddy { get; }
@@ -36,13 +36,11 @@ namespace Baku.VMagicMirrorConfig
         // フォルダだけファイル構造から定まり、かつアプリ上で一意識別子に使おうとする点が特殊
         public string FolderPath { get; }
         public string FolderName { get; }
-
-        // NOTE: Unity側でも同様に、デフォルトサブキャラはprefixをつけてユーザー定義サブキャラと区別できるようにする
-        public string BuddyId { get; }
+        public BuddyId BuddyId { get; }
 
         public BuddyLocalizedText DisplayName { get; }
 
-        // NOTE: IdはBuddy間で通信したくなったときに備えた仕様でBuddyIdとは別の概念で、
+        // NOTE: manifest.json上のIdはBuddy間で通信したくなったときに備えた仕様でBuddyIdとは別の概念。
         // BuddyIdは実行時に一意だが、Idはv4.0.0の時点では一意なことは保証されない。
         // WPFでは基本的に無視する
         public string Id { get; } = "";

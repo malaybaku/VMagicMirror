@@ -12,7 +12,7 @@ namespace Baku.VMagicMirrorConfig
         {
             return new BuddySaveDataSingleBuddy()
             {
-                Id = buddy.Metadata.BuddyId,
+                Id = buddy.Metadata.BuddyId.Value,
                 IsActive = buddy.IsActive.Value,
                 Properties = buddy.Properties
                     .Where(p => p.Metadata.ValueType != BuddyPropertyType.Action)

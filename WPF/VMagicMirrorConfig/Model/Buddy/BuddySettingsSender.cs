@@ -28,7 +28,7 @@ namespace Baku.VMagicMirrorConfig
             {
                 // NOTE: stringはカラならnullにしてしまうことにより、
                 // 受信側(Unity)には空文字扱いさせつつJSONのkey:valueの書き込みを省略している
-                BuddyId = buddy.Metadata.BuddyId,
+                BuddyId = buddy.Metadata.BuddyId.Value,
                 Properties = buddy.Properties
                     .Where(prop => prop.Metadata.ValueType != BuddyPropertyType.Action)
                     .Select(prop => new BuddySettingsPropertyMessage()
@@ -63,7 +63,7 @@ namespace Baku.VMagicMirrorConfig
         {
             var msg = new BuddySettingsPropertyMessage()
             {
-                BuddyId = buddy.BuddyId,
+                BuddyId = buddy.BuddyId.Value,
                 Name = property.Name,
                 Type = property.ValueType.ToString(),
             };
@@ -95,7 +95,7 @@ namespace Baku.VMagicMirrorConfig
             var json = 
             JsonConvert.SerializeObject(new BuddyActionMessage()
             {
-                BuddyId = buddy.BuddyId,
+                BuddyId = buddy.BuddyId.Value,
                 ActionName = property.Name,
             });
             _sender.SendMessage(MessageFactory.BuddyInvokeAction(json));

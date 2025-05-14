@@ -137,7 +137,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            _items.FirstOrDefault(_items => _items.BuddyId == e.BuddyId)
+            // TODO: 各所でEquality気にするのダルすぎるから、Unityと同じようにValueObject作ったほうがいいかも…？
+            _items
+                .FirstOrDefault(_items => _items.BuddyId.Equals(e.BuddyId, StringComparison.InvariantCultureIgnoreCase))
                 ?.EnqueueLogMessage(e.Message);
         }
 

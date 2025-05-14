@@ -6,6 +6,21 @@ using UnityEngine.Networking;
 
 namespace Baku.VMagicMirror.Buddy
 {
+    public readonly struct AudioPlayArgs
+    {
+        public readonly string FilePath;
+        public readonly float Volume;
+        public readonly float Pitch;
+
+        public AudioPlayArgs(string filePath, float volume, float pitch)
+        {
+            FilePath = filePath;
+            // NOTE: ここで範囲制限するのもアリ
+            Volume = volume;
+            Pitch = pitch;
+        }
+    }
+
     public class AudioApiImplement
     {
         private readonly BuddyAudioSources _audioSources;
@@ -47,10 +62,12 @@ namespace Baku.VMagicMirror.Buddy
             return clip;
         }
 
-        public void Play(AudioClip audioClip)
+        public void Play(AudioClip audioClip, AudioPlayArgs args)
         {
             var audioSource = _audioSources.GetAudioSource();
             audioSource.clip = audioClip;
+            audioSource.volume = args.Volume;
+            audioSource.pitch = args.Pitch;
             audioSource.Play();
         }
         

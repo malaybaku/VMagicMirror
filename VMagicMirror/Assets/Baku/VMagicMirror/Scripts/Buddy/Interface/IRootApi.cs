@@ -99,9 +99,14 @@ namespace VMagicMirror.Buddy
         IAvatarMotionEvent AvatarMotionEvent { get; }
         IAvatarFacial AvatarFacial { get; }
         IInput Input { get; }
-        
-        // NOTE: まだ実装が安定してないのでダメ
-        //IAudio Audio { get; }
+
+        /// <summary>
+        /// 音声ファイルの再生に関するAPIを取得します。
+        /// </summary>
+        /// <remarks>
+        /// v4.0.0の時点でこのAPIはサウンドエフェクト等、短い音声の再生のみを想定したAPIとなっています。
+        /// </remarks>
+        IAudio Audio { get; }
 
         IScreen Screen { get; }
         

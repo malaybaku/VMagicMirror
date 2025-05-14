@@ -101,12 +101,19 @@ namespace Baku.VMagicMirror.Buddy
                 () => _api.AvatarFacialInternal.InvokeOnBlinkedInternal
             );
             
-            // NOTE: これだけBuddyIdでフィルタして「このサブキャラ用のイベントだけ持ってきたIO<T>」になっている
-            // 他は全イベントが全Buddyに対して発火する
+            // NOTE: このへんはBuddyIdでフィルタして「このサブキャラ用のイベントだけ持ってきたIO<T>」になってる
             ConnectOneArgFunc(
                 _apiImplements.BuddyPropertyActionBroker.ActionRequestedForBuddy(_api.BuddyId),
                 () => _api.PropertyInternal.InvokeActionInternal
                 );
+            ConnectOneArgFunc(
+                _apiImplements.BuddyAudioEventBroker.AudioStartedForBuddy(_api.BuddyId),
+                () => _api.AudioInternal.InvokeAudioStarted
+            );
+            ConnectOneArgFunc(
+                _apiImplements.BuddyAudioEventBroker.AudioStoppedForBuddy(_api.BuddyId),
+                () => _api.AudioInternal.InvokeAudioStopped
+            );
             
             InvokeCallbackAsync(_cts.Token).Forget();
         }

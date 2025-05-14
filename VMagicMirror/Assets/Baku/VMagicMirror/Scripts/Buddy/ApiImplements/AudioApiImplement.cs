@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Cysharp.Threading.Tasks;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -23,13 +24,31 @@ namespace Baku.VMagicMirror.Buddy
         }
     }
 
-    public class AudioApiImplement
+    public class AudioApiImplement : PresenterBase
     {
         private readonly BuddyAudioSources _audioSources;
+        private readonly BuddyAudioEventBroker _eventBroker;
 
-        public AudioApiImplement(BuddyAudioSources buddyAudioSources)
+        public AudioApiImplement(
+            BuddyAudioSources buddyAudioSources,
+            BuddyAudioEventBroker eventBroker
+            )
         {
             _audioSources = buddyAudioSources;
+            _eventBroker = eventBroker;
+        }
+
+        public override void Initialize()
+        {
+            _audioSources.AudioInterrupted
+                .Subscribe(data =>
+                    _eventBroker.InvokeAudioStopped(data.id, data.key, InternalAudioStoppedReason.Interrupted))
+                .AddTo(this);
+            
+            _audioSources.AudioCompleted
+                .Subscribe(data =>
+                    _eventBroker.InvokeAudioStopped(data.id, data.key, InternalAudioStoppedReason.Completed))
+                .AddTo(this);
         }
 
         //NOTE: BuddyごとにAudioClipを適宜キャッシュしてほしいので、
@@ -72,6 +91,7 @@ namespace Baku.VMagicMirror.Buddy
             audioSource.pitch = args.Pitch;
             audioSource.Play();
             _audioSources.MarkAsPlaying(audioSource, id, args.Key);
+            _eventBroker.InvokeAudioStarted(id, args.Key, audioClip.length);
         }
 
         // NOTE: 止めた音源のkeyが入ったstringの一覧を返す

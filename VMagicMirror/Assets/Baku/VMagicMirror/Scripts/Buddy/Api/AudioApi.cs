@@ -44,22 +44,23 @@ namespace Baku.VMagicMirror.Buddy.Api
             ApiUtils.Try(_buddyFolder, _logger, () =>
             {
                 var stoppedKeys = _impl.TryStop(_buddyFolder.BuddyId, key);
-                // イベントを発火させる場合は下記のようにすればよい、はず
-                // for (var i = 0; i < stoppedKeys.Length; i++)
-                // {
-                //     var key = stoppedKeys[i];
-                //     // NOTE: 普通のイベントはScriptEventInvokerに発火させるが、
-                //     //   ここはStop関数自体がスクリプトから呼ばれる & Stopに成功する場合は直ちに停止したはずなので、
-                //     //   ただちにイベントを呼ぶ。
-                //     // NOTE: イベント発火をTryで囲うのもアリだが、そんなに害がない気がするのでパス
-                //     AudioStopped?.Invoke(new AudioStoppedInfo(key, AudioStoppedReason.Stopped));
-                // }
+                foreach (var stoppedKey in stoppedKeys)
+                {
+                    // NOTE: 普通のイベントはScriptEventInvokerで発火させるが、
+                    //   ここはStop関数自体がスクリプトから呼ばれていて、Stopに成功する場合は直ちに停止ししてるはずなので、
+                    //   ただちにイベントを呼んで良い…ということにしている
+
+                    // NOTE: Stop() した側のスクリプトが続行できたほうが嬉しいのでは…と思って個別のTryで囲ってる
+                    ApiUtils.Try(_buddyFolder, _logger, () =>
+                    {
+                        AudioStopped?.Invoke(new AudioStoppedInfo(stoppedKey, AudioStoppedReason.Stopped));
+                    });
+                }
             });
         }
 
-        // NOTE: IAudioで公開を見送ってるので一旦封鎖している
-        // public event Action<AudioStartedInfo> AudioStarted;
-        // public event Action<AudioStoppedInfo> AudioStopped;
+        public event Action<AudioStartedInfo> AudioStarted;
+        public event Action<AudioStoppedInfo> AudioStopped;
         
         // NOTE: バイナリを扱う方法もホントは欲しいのだが、mp3のサポートができないうちは頑張らず、「ファイルに一旦保存してもろて…」というスタンスを取る
         // public void Play(byte[] data) => throw new NotImplementedException();
@@ -110,6 +111,9 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl.Play(audioClip, _buddyFolder.BuddyId, args);
         }
 
+        internal void InvokeAudioStarted(AudioStartedInfo info) => AudioStarted?.Invoke(info);
+        internal void InvokeAudioStopped(AudioStoppedInfo info) => AudioStopped?.Invoke(info);
+        
         internal void Dispose()
         {
             _cts.Cancel();

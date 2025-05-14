@@ -9,6 +9,7 @@ namespace Baku.VMagicMirror.Buddy
             BuddySettingsRepository settingsRepository,
             BuddyPropertyRepository buddyPropertyRepository,
             BuddyPropertyActionBroker buddyPropertyActionBroker,
+            BuddyAudioEventBroker buddyAudioEventBroker,
             BuddyLogger logger,
             AvatarLoadApiImplement loadApi,
             AvatarFacialApiImplement facialApi,
@@ -28,6 +29,7 @@ namespace Baku.VMagicMirror.Buddy
             Logger = logger;
             BuddyPropertyRepository = buddyPropertyRepository;
             BuddyPropertyActionBroker = buddyPropertyActionBroker;
+            BuddyAudioEventBroker = buddyAudioEventBroker;
             AvatarLoadApi = loadApi;
             AvatarFacialApi = facialApi;
             AvatarPoseApi = poseApi;
@@ -46,6 +48,7 @@ namespace Baku.VMagicMirror.Buddy
         public BuddyLogger Logger { get; }
         public BuddyPropertyRepository BuddyPropertyRepository { get; }
         public BuddyPropertyActionBroker BuddyPropertyActionBroker { get; }
+        public BuddyAudioEventBroker BuddyAudioEventBroker { get; }
         public AvatarLoadApiImplement AvatarLoadApi { get; }
         public AvatarFacialApiImplement AvatarFacialApi { get; }
         public AvatarPoseApiImplement AvatarPoseApi { get; }

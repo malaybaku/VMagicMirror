@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
             AvatarFacialInternal = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);
             InputInternal = new InputApi(apiImplementBundle.InputApi);
-            _audio = new AudioApi(BuddyFolder, _logger, apiImplementBundle.AudioApi);
+            AudioInternal = new AudioApi(BuddyFolder, _logger, apiImplementBundle.AudioApi);
             DeviceLayout = new DeviceLayoutApi(apiImplementBundle.DeviceLayoutApi);
             Screen = new ScreenApi(apiImplementBundle.ScreenApi);
 
@@ -55,7 +55,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         internal void Dispose()
         {
             AvatarFacialInternal.Dispose();
-            _audio.Dispose();
+            AudioInternal.Dispose();
 
             _gui.Dispose();
             
@@ -119,8 +119,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         internal InputApi InputInternal { get; }
         public IInput Input => InputInternal;
         
-        private readonly AudioApi _audio;
-        public IAudio Audio => _audio;
+        internal AudioApi AudioInternal { get; }
+        public IAudio Audio => AudioInternal;
         public IScreen Screen { get; }
 
         private readonly GuiApi _gui;

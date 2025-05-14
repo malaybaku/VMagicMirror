@@ -33,9 +33,12 @@ namespace Baku.VMagicMirror.Buddy
         // NOTE: Stopで再生停止した音声のキー情報を返却するときに使うやつだよ
         private readonly string[] _keys = new string[InstanceCount];
         
-        private readonly Subject<(BuddyId, string)> _audioFinished = new();
-        public IObservable<(BuddyId id, string key)> AudioFinished => _audioFinished;
-        
+        private readonly Subject<(BuddyId, string)> _audioCompleted = new();
+        public IObservable<(BuddyId id, string key)> AudioCompleted => _audioCompleted;
+
+        private readonly Subject<(BuddyId, string)> _audioInterrupted = new();
+        public IObservable<(BuddyId id, string key)> AudioInterrupted => _audioInterrupted;
+
         private void Update()
         {
             if (!_initialized) return;
@@ -48,7 +51,7 @@ namespace Baku.VMagicMirror.Buddy
                 if (state.IsPlaying && !audioSource.isPlaying)
                 {
                     _audioPlayStates[i] = AudioPlayState.Empty;
-                    _audioFinished.OnNext((state.Id, state.Key));
+                    _audioCompleted.OnNext((state.Id, state.Key));
                 }
             }
         }
@@ -73,10 +76,20 @@ namespace Baku.VMagicMirror.Buddy
             Initialize();
 
             var result = _audioSources[_index];
+            
+            // 再生中のAudioSourceがぶんどられた == そのAudioSourceをPlayするはずなので、既存の音源の再生中断するのが確定
+            if (_audioPlayStates[_index].IsPlaying)
+            {
+                var state = _audioPlayStates[_index];
+                _audioPlayStates[_index] = AudioPlayState.Empty;
+                _audioInterrupted.OnNext((state.Id, state.Key));
+            }
+
             _index = (_index + 1) % InstanceCount;
             return result;
         }
 
+        // NOTE: AudioSourceの再生処理を記述した呼び出し元が、 GetAudioSource() の後で呼び出す
         public void MarkAsPlaying(AudioSource source, BuddyId id, string key)
         {
             for (var i = 0; i < _audioSources.Length; i++)
@@ -89,7 +102,7 @@ namespace Baku.VMagicMirror.Buddy
             }
         }
         
-        // NOTE: 2引数版と異なり、keyを無視して停止させる
+        // NOTE: 2引数版と異なり、BuddyIdさえ一致してれば停止させる
         public Span<string> Stop(BuddyId buddyId)
         {
             var count = 0;

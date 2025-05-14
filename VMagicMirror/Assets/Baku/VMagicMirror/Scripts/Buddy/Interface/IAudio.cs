@@ -38,65 +38,64 @@ namespace VMagicMirror.Buddy
         /// </remarks>
         void Stop(string key = "");
 
-        // NOTE: 信頼性のあるイベントをいい感じに構成するのが大変なので、v4.0.0時点ではAPIとしては公開していない(内部実装のWIPはある)
-        // /// <summary> <see cref="Play"/> で指定して音声の再生を開始するときに発火します。 </summary>
-        // event Action<AudioStartedInfo> AudioStarted;
-        //
-        // /// <summary> <see cref="Play"/> で指定した音声の再生が停止するときに発火します。 </summary>
-        // event Action<AudioStoppedInfo> AudioStopped;
+        /// <summary> <see cref="Play"/> で指定して音声の再生を開始するときに発火します。 </summary>
+        event Action<AudioStartedInfo> AudioStarted;
+        
+        /// <summary> <see cref="Play"/> で指定した音声の再生が停止するときに発火します。 </summary>
+        event Action<AudioStoppedInfo> AudioStopped;
     }
 
-    // /// <summary>
-    // /// <see cref="IAudio.AudioStarted"/> イベントに付随する情報です。
-    // /// </summary>
-    // public readonly struct AudioStartedInfo
-    // {
-    //     public AudioStartedInfo(string key, float length)
-    //     {
-    //         Key = key;
-    //         Length = length;
-    //     }
-    //
-    //     /// <summary> <see cref="IAudio.Play"/>で指定した <c>key</c> の値を取得します。 </summary>
-    //     public string Key { get; }
-    //     
-    //     /// <summary> 音声の再生時間を秒単位で取得します。 </summary>
-    //     /// <remarks>
-    //     /// この値は <see cref="IAudio.Play"/> で指定した <c>pitch</c> を考慮しない値です。
-    //     /// </remarks>
-    //     public float Length { get; }
-    // }
-    //
-    // /// <summary>
-    // /// <see cref="IAudio.Play"/> で再生した音声が停止した理由を表す値です。
-    // /// </summary>
-    // public enum AudioStoppedReason
-    // {
-    //     /// <summary> 不明な理由 </summary>
-    //     Unknown,
-    //     /// <summary> 音声の終端まで再生を完了した </summary>
-    //     Completed,
-    //     /// <summary> <see cref="IAudio.Stop"/> によって再生を停止した </summary>
-    //     Stopped,
-    //     /// <summary> 他の音源の再生によって、再生が中断された </summary>
-    //     Interrupted,
-    // }
-    //
-    // /// <summary>
-    // /// <see cref="IAudio.AudioStopped"/> イベントに付随する情報です。
-    // /// </summary>
-    // public readonly struct AudioStoppedInfo
-    // {
-    //     public AudioStoppedInfo(string key, AudioStoppedReason reason)
-    //     {
-    //         Key = key;
-    //         Reason = reason;
-    //     }
-    //     
-    //     /// <summary> <see cref="IAudio.Play"/>で指定した <c>key</c> の値を取得します。 </summary>
-    //     public string Key { get; }
-    //
-    //     /// <summary> 音声が停止した理由を取得します。 </summary>
-    //     public AudioStoppedReason Reason { get; }
-    // }
+    /// <summary>
+    /// <see cref="IAudio.AudioStarted"/> イベントに付随する情報です。
+    /// </summary>
+    public readonly struct AudioStartedInfo
+    {
+        public AudioStartedInfo(string key, float length)
+        {
+            Key = key;
+            Length = length;
+        }
+    
+        /// <summary> <see cref="IAudio.Play"/>で指定した <c>key</c> の値を取得します。 </summary>
+        public string Key { get; }
+        
+        /// <summary> 音声の再生時間を秒単位で取得します。 </summary>
+        /// <remarks>
+        /// この値は <see cref="IAudio.Play"/> で指定した <c>pitch</c> を考慮しない値です。
+        /// </remarks>
+        public float Length { get; }
+    }
+    
+    /// <summary>
+    /// <see cref="IAudio.Play"/> で再生した音声が停止した理由を表す値です。
+    /// </summary>
+    public enum AudioStoppedReason
+    {
+        /// <summary> 不明な理由 </summary>
+        Unknown,
+        /// <summary> 音声の終端まで再生を完了した </summary>
+        Completed,
+        /// <summary> <see cref="IAudio.Stop"/> によって再生を停止した </summary>
+        Stopped,
+        /// <summary> 他の音源の再生によって、再生が中断された </summary>
+        Interrupted,
+    }
+    
+    /// <summary>
+    /// <see cref="IAudio.AudioStopped"/> イベントに付随する情報です。
+    /// </summary>
+    public readonly struct AudioStoppedInfo
+    {
+        public AudioStoppedInfo(string key, AudioStoppedReason reason)
+        {
+            Key = key;
+            Reason = reason;
+        }
+        
+        /// <summary> <see cref="IAudio.Play"/>で指定した <c>key</c> の値を取得します。 </summary>
+        public string Key { get; }
+    
+        /// <summary> 音声が停止した理由を取得します。 </summary>
+        public AudioStoppedReason Reason { get; }
+    }
 }

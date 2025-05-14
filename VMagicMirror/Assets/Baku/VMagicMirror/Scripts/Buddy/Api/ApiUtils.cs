@@ -28,15 +28,15 @@ namespace Baku.VMagicMirror.Buddy.Api
         /// <returns></returns>
         public static string GetAssetFullPath(BuddyFolder folder, string path)
         {
-            if (Path.IsPathRooted(path))
+            // NOTE: 同一ファイルを複数の文字列でささないように少し配慮している(徹底はしない)。ガード文のあとのほうも同様 
+            if (Path.IsPathFullyQualified(path))
             {
-                return path;
+                return Path.GetFullPath(path).ToLower(CultureInfo.InvariantCulture);
             }
 
             var rootDirectory = folder.IsDefaultBuddy
-                ? SpecialFiles.BuddyRootDirectory
-                : SpecialFiles.DefaultBuddyRootDirectory;
-            // NOTE: GetFullPathとかToLowerが入るのは、なるべく同一ファイルに対して同一文字列を返すため
+                ? SpecialFiles.DefaultBuddyRootDirectory
+                : SpecialFiles.BuddyRootDirectory;
             return Path.GetFullPath(
                 Path.Combine(rootDirectory, folder.FolderName, path)
                 )

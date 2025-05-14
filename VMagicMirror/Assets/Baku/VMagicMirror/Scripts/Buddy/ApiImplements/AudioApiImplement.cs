@@ -91,6 +91,7 @@ namespace Baku.VMagicMirror.Buddy
             audioSource.pitch = args.Pitch;
             audioSource.Play();
             _audioSources.MarkAsPlaying(audioSource, id, args.Key);
+            // NOTE: lengthがinvalidなケースは今のとこ考慮してない(ローカルのwav/mp3までしか考えてないので)
             _eventBroker.InvokeAudioStarted(id, args.Key, audioClip.length);
         }
 

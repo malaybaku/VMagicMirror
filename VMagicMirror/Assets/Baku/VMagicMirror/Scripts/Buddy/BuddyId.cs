@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace Baku.VMagicMirror.Buddy
         public BuddyId(string value)
         {
             // NOTE: Equalityをわかりやすくしたい && ベースがフォルダ名なので、大文字と小文字を区別しない
-            Value = value?.ToLower() ?? "";
+            Value = value?.ToLower(CultureInfo.InvariantCulture) ?? "";
         }
         
         public string Value { get; }

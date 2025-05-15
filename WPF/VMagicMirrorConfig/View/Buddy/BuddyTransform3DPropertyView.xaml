@@ -14,14 +14,14 @@
     <!-- TODO: vmを作ってdesignInstanceで入れておく -->
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150" />
-            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="24"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -30,8 +30,8 @@
 
         <!-- キャプションがあると「DisplayName / Caption」だけで1行を占有し、ないならDisplayNameのすぐ横にattachの設定UIが入る -->
         <TextBlock Grid.Row="0" Grid.Column="0" 
+                   Style="{StaticResource BuddyPropertyLabel}" 
                    Text="{Binding DisplayName.Value}"
-                   Visibility="{Binding Description.Value, Converter={StaticResource StringNotEmptyToVisibilityConverter}}"
                    />
         <view:BuddyDescriptionMark 
             Grid.Row="0" Grid.Column="1" 
@@ -43,6 +43,10 @@
                     Text="{DynamicResource Buddy_Transform_Attach}"
                     TextAlignment="Right"/>
         <ComboBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"
+                  Style="{StaticResource MahApps.Styles.ComboBox}"
+                  Margin="18,2,4,2"
+                  MinHeight="20"
+                  Height="20"
                   ItemsSource="{Binding AvailableParentBoneNames}"
                   SelectedValue="{Binding ParentBoneName.Value}"
                   />
@@ -51,31 +55,69 @@
                     Margin="8,0"
                     Text="{DynamicResource Buddy_Transform_Position}"
                     TextAlignment="Right"/>
-        <TextBox Grid.Row="2" Grid.Column="2" 
-                 Text="{Binding PositionX.Value}"/>
-        <TextBox Grid.Row="2" Grid.Column="3"
-                 Text="{Binding PositionY.Value}"/>
-        <TextBox Grid.Row="2" Grid.Column="4"
-                 Text="{Binding PositionZ.Value}"/>
+        
+        <Grid Grid.Row="2" Grid.Column="2" Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelX}" />
+            <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding PositionX.Value}"/>
+        </Grid>
+        <Grid Grid.Row="2" Grid.Column="3" Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelY}" />
+            <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding PositionY.Value}"/>
+        </Grid>
+        <Grid Grid.Row="2" Grid.Column="4" Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelZ}" />
+            <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding PositionZ.Value}"/>
+        </Grid>
+
+
         <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                     Margin="8,0"
                     Text="{DynamicResource Buddy_Transform_Rotation}"
                     TextAlignment="Right"/>
-        <TextBox Grid.Row="3"
-                        Grid.Column="2" 
-                        Text="{Binding RotationX.Value}"/>
-        <TextBox Grid.Row="3"
-                        Grid.Column="3"
-                        Text="{Binding RotationY.Value}"/>
-        <TextBox Grid.Row="3"
-                        Grid.Column="4"
-                        Text="{Binding RotationZ.Value}"/>
+
+        <Grid Grid.Row="3" Grid.Column="2" Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelX}" />
+            <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding RotationX.Value}"/>
+        </Grid>
+        <Grid Grid.Row="3" Grid.Column="3" Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelY}" />
+            <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding RotationY.Value}"/>
+        </Grid>
+        <Grid Grid.Row="3" Grid.Column="4" Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelZ}" />
+            <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding RotationZ.Value}"/>
+        </Grid>
 
         <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
                    Margin="8,0"
                    Text="{DynamicResource Buddy_Transform_Scale}"
                    TextAlignment="Right"/>
-        <TextBox Grid.Row="4" Grid.Column="2" 
-                    Text="{Binding Scale.Value}"/>
+        <TextBox Grid.Row="4" Grid.Column="2" Margin="18,2,4,2"
+                 Style="{StaticResource BuddyPropertyTextBox}" 
+                 Text="{Binding Scale.Value}"/>
     </Grid>
 </UserControl>

@@ -10,200 +10,244 @@
              xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
              xmlns:ma="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance Type={x:Type vm:BuddyItemViewModel}}"
-             d:DesignHeight="370" d:DesignWidth="400">
+             d:DataContext="{d:DesignInstance Type={x:Type vm:DesignBuddyItemViewModel}, IsDesignTimeCreatable=True}"
+             d:DesignHeight="1300" d:DesignWidth="550">
     <UserControl.Resources>
+        <!-- Vector3とQuaternionがテンプレ上では完全に一緒の扱いなのでここで定義してる -->
+        <DataTemplate x:Key="BuddyVector3PropertyTemplate" DataType="{x:Type vm:BuddyPropertyViewModel}">
+            <Grid Style="{StaticResource BuddyPropertyGrid}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                    <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabel}" Text="{Binding DisplayName.Value}" />
+                <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                <Grid Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelX}" />
+                    <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding VectorX.Value}"/>
+                </Grid>
+                <Grid Grid.Column="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelY}" />
+                    <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding VectorY.Value}"/>
+                </Grid>
+                <Grid Grid.Column="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelZ}" />
+                    <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding VectorZ.Value}"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
         <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter"/>
         <view:BuddyLogLevelToForegroundConverter x:Key="BuddyLogLevelToForegroundConverter"/>
-        <view:BuddyPropertyDataTemplateSelector x:Key="BuddyPropertyDataTemplateSelector">
+        <view:BuddyPropertyDataTemplateSelector 
+            x:Key="BuddyPropertyDataTemplateSelector"
+            Vector3Template="{StaticResource BuddyVector3PropertyTemplate}"
+            QuaternionTemplate="{StaticResource BuddyVector3PropertyTemplate}"
+            >
             <!-- TODO: Template達の見た目はどこかで整形せねばならん… -->
             <view:BuddyPropertyDataTemplateSelector.BoolTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox Content="{Binding DisplayName.Value}" 
-                              IsChecked="{Binding BoolValue.Value}"
-                              />
-                        <view:BuddyDescriptionMark DataContext="{Binding Description.Value}" />
-                    </StackPanel>
+                    <Grid Style="{StaticResource BuddyPropertyGrid}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <CheckBox 
+                            Grid.Column="2"
+                            Style="{StaticResource MahApps.Styles.CheckBox}"
+                            Margin="4,0"
+                            IsChecked="{Binding BoolValue.Value}"
+                            >
+                            <TextBlock 
+                                Style="{StaticResource BuddyPropertyLabel}" 
+                                Margin="2,0"
+                                Text="{Binding DisplayName.Value}" 
+                                />
+                        </CheckBox>
+                    </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.BoolTemplate>
             <view:BuddyPropertyDataTemplateSelector.IntTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
+                    <Grid Style="{StaticResource BuddyPropertyGrid}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabel}" Text="{Binding DisplayName.Value}" />
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
-                        <TextBox Grid.Column="2" Text="{Binding IntValue.Value}"/>
+                        <TextBox Grid.Column="2" Style="{StaticResource BuddyPropertyTextBox}" Text="{Binding IntValue.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.IntTemplate>
             <view:BuddyPropertyDataTemplateSelector.RangeIntTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
+                    <Grid Style="{StaticResource BuddyPropertyGrid}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabel}" Text="{Binding DisplayName.Value}" />
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
-                        <Slider Grid.Column="2"
-                            Minimum="{Binding IntRangeMin}"
-                            Maximum="{Binding IntRangeMax}"
-                            TickFrequency="1"
-                            Value="{Binding IntValue.Value}"
-                            />
-                        <TextBox Grid.Column="3" Text="{Binding IntValue.Value}"/>
+                        <Slider Grid.Column="2" Style="{StaticResource BuddyPropertySlider}"
+                                TickFrequency="1"
+                                Minimum="{Binding IntRangeMin}"
+                                Maximum="{Binding IntRangeMax}"
+                                Value="{Binding IntValue.Value}"
+                                />
+                        <TextBox Grid.Column="3" Style="{StaticResource BuddyPropertyTextBox}" Text="{Binding IntValue.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.RangeIntTemplate>
             <view:BuddyPropertyDataTemplateSelector.EnumTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
+                    <Grid Style="{StaticResource BuddyPropertyGrid}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabel}" Text="{Binding DisplayName.Value}" />
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
-                        <ComboBox Grid.Column="2"
-                              ItemsSource="{Binding EnumOptions}"
-                              SelectedIndex="{Binding IntValue.Value}"
-                              />
+                        <ComboBox Grid.Column="2" 
+                                  Margin="4,0"
+                                  MinHeight="20" Height="20"
+                                  Style="{StaticResource MahApps.Styles.ComboBox}"
+                                  ItemsSource="{Binding EnumOptions}"
+                                  SelectedIndex="{Binding IntValue.Value}"
+                                  />
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.EnumTemplate>
             <view:BuddyPropertyDataTemplateSelector.FloatTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
+                    <Grid Style="{StaticResource BuddyPropertyGrid}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabel}" Text="{Binding DisplayName.Value}" />
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
-                        <TextBox Grid.Column="2" Text="{Binding FloatValue.Value}"/>
+                        <TextBox Grid.Column="2" Style="{StaticResource BuddyPropertyTextBox}" Text="{Binding FloatValue.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.FloatTemplate>
             <view:BuddyPropertyDataTemplateSelector.RangeFloatTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-
-                    <Grid>
+                    <Grid Style="{StaticResource BuddyPropertyGrid}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabel}" Text="{Binding DisplayName.Value}" />
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
                         <Slider 
-                            Grid.Column="2"
+                            Grid.Column="2" Style="{StaticResource BuddyPropertySlider}"
                             Minimum="{Binding FloatRangeMin}"
                             Maximum="{Binding FloatRangeMax}"
                             Value="{Binding FloatValue.Value}"
                             IsSnapToTickEnabled="False"
                             />
-                        <TextBox Grid.Column="3" Text="{Binding FloatValue.Value}" />
+                        <TextBox Grid.Column="3" Style="{StaticResource BuddyPropertyTextBox}" Text="{Binding FloatValue.Value}" />
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.RangeFloatTemplate>
             <view:BuddyPropertyDataTemplateSelector.StringTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
+                    <Grid Style="{StaticResource BuddyPropertyGrid}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabel}" Text="{Binding DisplayName.Value}" />
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
-                        <TextBox Grid.Column="2" Text="{Binding StringValue.Value}"/>
+                        <TextBox Grid.Column="2" Style="{StaticResource BuddyPropertyTextBox}" Text="{Binding StringValue.Value}"/>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.StringTemplate>
             <view:BuddyPropertyDataTemplateSelector.FilePathStringTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
+                    <Grid Style="{StaticResource BuddyPropertyGrid}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="64" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabel}" Text="{Binding DisplayName.Value}" />
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
-                        <TextBox Grid.Column="2" Text="{Binding StringValue.Value}"/>
+                        <TextBox Grid.Column="2" Style="{StaticResource BuddyPropertyTextBox}" Text="{Binding StringValue.Value}"/>
                         <Button Grid.Column="3"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
-                                Padding="2"
-                                Content="{DynamicResource Buddy_FilePathString_OpenFile}"
+                                Style="{StaticResource MahApps.Styles.Button}"
+                                MinHeight="22" Height="22"
+                                Margin="4,0"
+                                Padding="0"
                                 Command="{Binding SetFilePathStringByDialogCommand}"
+                                >
+                            <TextBlock 
+                                Text="{DynamicResource Buddy_FilePathString_OpenFile}"
+                                Margin="0"
+                                FontSize="12"
                                 />
+                        </Button>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.FilePathStringTemplate>
             <view:BuddyPropertyDataTemplateSelector.Vector2Template>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
+                    <Grid Style="{StaticResource BuddyPropertyGrid}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
+                        <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabel}" Text="{Binding DisplayName.Value}" />
                         <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
-                        <TextBox Grid.Column="2" Text="{Binding VectorX.Value}"/>
-                        <TextBox Grid.Column="3" Text="{Binding VectorY.Value}"/>
+                        <Grid Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelX}" />
+                            <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding VectorX.Value}"/>
+                        </Grid>
+                        <Grid Grid.Column="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Style="{StaticResource BuddyPropertyLabelY}" />
+                            <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding VectorY.Value}"/>
+                        </Grid>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.Vector2Template>
-            <view:BuddyPropertyDataTemplateSelector.Vector3Template>
-                <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
-                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
-                        <TextBox Grid.Column="2" Text="{Binding VectorX.Value}"/>
-                        <TextBox Grid.Column="3" Text="{Binding VectorY.Value}"/>
-                        <TextBox Grid.Column="4" Text="{Binding VectorZ.Value}"/>
-                    </Grid>
-                </DataTemplate>
-            </view:BuddyPropertyDataTemplateSelector.Vector3Template>
-            <view:BuddyPropertyDataTemplateSelector.QuaternionTemplate>
-                <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="40" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayName.Value}" />
-                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
-                        <TextBox Grid.Column="2" Text="{Binding VectorX.Value}"/>
-                        <TextBox Grid.Column="3" Text="{Binding VectorY.Value}"/>
-                        <TextBox Grid.Column="4" Text="{Binding VectorZ.Value}"/>
-                    </Grid>
-                </DataTemplate>
-            </view:BuddyPropertyDataTemplateSelector.QuaternionTemplate>
             <view:BuddyPropertyDataTemplateSelector.Transform2DTemplate>
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
                     <view:BuddyTransform2DPropertyView DataContext="{Binding Transform2DValue}"/>
@@ -215,20 +259,29 @@
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.Transform3DTemplate>
             <view:BuddyPropertyDataTemplateSelector.ActionTemplate>
+                <!-- NOTE: CheckBoxと同じ考え方で、ラベル領域は捨てて右側のエリアにボタンを配置する-->
                 <DataTemplate DataType="{x:Type vm:BuddyPropertyViewModel}">
-                    <Grid>
-                        <!-- NOTE: Buttonは無理に他と幅を揃えず、ボタンの幅を広げる -->
+                    <Grid Style="{StaticResource BuddyPropertyGrid}" Height="40">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="240" />
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyLabelWidth}" />
+                            <ColumnDefinition Width="{StaticResource BuddyPropertyHelpMarkWidth}" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0"
+                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
+                        <Button Grid.Column="2"
+                                Style="{StaticResource MaterialDesignRaisedDarkButton}"
                                 Padding="2"
+                                Margin="4"
+                                Width="NaN"
+                                HorizontalAlignment="Left"
                                 Command="{Binding InvokeActionCommand}"
                                 >
-                            <TextBlock Text="{Binding DisplayName.Value}"/>
+                            <TextBlock 
+                                Text="{Binding DisplayName.Value}"
+                                TextWrapping="NoWrap"
+                                TextTrimming="CharacterEllipsis"
+                                />
                         </Button>
-                        <view:BuddyDescriptionMark Grid.Column="1" DataContext="{Binding Description.Value}" />
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.ActionTemplate>
@@ -247,7 +300,7 @@
             BorderBrush="Transparent" 
             BorderThickness="0"
             Height="25"
-            HorizontalContentAlignment="Left"
+            HorizontalContentAlignment="Stretch"
             Padding="0"                       
             md:ButtonAssist.CornerRadius="0"
             >
@@ -260,30 +313,40 @@
                     </Style.Triggers>
                 </Style>
             </ToggleButton.Style>
-            <StackPanel Orientation="Horizontal">
-                <Grid Width="15" Margin="3,0">
-                    <md:PackIcon Kind="ChevronRight"
-                                 HorizontalAlignment="Left" VerticalAlignment="Center"
-                                 Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanReverseToVisibilityConverter}}"
-                                 />
-                    <md:PackIcon Kind="ChevronDown"
-                                 HorizontalAlignment="Left" VerticalAlignment="Center"
-                                 Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                 />
-                </Grid>
-                <CheckBox Style="{StaticResource MahApps.Styles.CheckBox}"
-                          Width="20" Margin="5,0"
-                          IsChecked="{Binding IsActive.Value}"
-                          />
-                <TextBlock Foreground="{StaticResource MaterialDesignBody}" 
-                           Style="{StaticResource {x:Type TextBlock}}"
-                           Text="{Binding DisplayName.Value, FallbackValue=BuddyName}"/>
+            <Grid>
+                <!-- NOTE: 順序に注意、右端のリセットボタンは(サブキャラの名前 -->
+                <StackPanel Orientation="Horizontal">
+                    <Grid Width="15" Margin="3,0">
+                        <md:PackIcon Kind="ChevronRight"
+                                     HorizontalAlignment="Left" VerticalAlignment="Center"
+                                     Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanReverseToVisibilityConverter}}"
+                                     />
+                        <md:PackIcon Kind="ChevronDown"
+                                     HorizontalAlignment="Left" VerticalAlignment="Center"
+                                     Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                     />
+                    </Grid>
+                    <CheckBox Style="{StaticResource MahApps.Styles.CheckBox}"
+                              Width="20" Margin="5,0"
+                              IsChecked="{Binding IsActive.Value}"
+                              />
+                    <TextBlock Foreground="{StaticResource MaterialDesignBody}" 
+                               Style="{StaticResource {x:Type TextBlock}}"
+                               Text="{Binding DisplayName.Value, FallbackValue=BuddyName}"/>
 
-                <md:PackIcon Kind="WarningOutline" 
-                             VerticalAlignment="Center"
-                             Visibility="{Binding HasError.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
-                             />
-            </StackPanel>
+                    <md:PackIcon Kind="WarningOutline" 
+                                 VerticalAlignment="Center"
+                                 Visibility="{Binding HasError.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 />
+                </StackPanel>
+                <Button HorizontalAlignment="Right"
+                    Margin="4,0"
+                    Style="{StaticResource CategorySettingResetButton}"
+                    Command="{Binding ResetSettingsCommand}"
+                        ToolTip="{DynamicResource Buddy_Item_ResetProperties}"
+                        ToolTipService.InitialShowDelay="0"
+                    />
+            </Grid>
         </ToggleButton>
         <StackPanel Margin="5"
                 Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -293,11 +356,6 @@
                 <Run Text="{DynamicResource Buddy_Item_FolderName}"/>
                 <Run Text="{Binding FolderName, Mode=OneWay, FallbackValue=folderName}"/>
                 </TextBlock>
-                <Button HorizontalAlignment="Right"
-                    Margin="10,0"
-                    Style="{StaticResource CategorySettingResetButton}"
-                    Command="{Binding ResetSettingsCommand}"
-                    />
             </Grid>
 
             <Grid Margin="0">

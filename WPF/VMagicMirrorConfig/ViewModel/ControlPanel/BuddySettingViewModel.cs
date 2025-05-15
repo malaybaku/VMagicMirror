@@ -301,10 +301,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private async void ResetSettingsAsync()
         {
-            //TODO: localize
+            var message = MessageIndication.ResetSingleBuddySettings();
             var result = await MessageBoxWrapper.Instance.ShowAsync(
-                "サブキャラ設定のリセット",
-                $"サブキャラ「{DisplayName}」の設定をデフォルト値に戻しますか？",
+                message.Title,
+                string.Format(message.Content, DisplayName),
                 MessageBoxWrapper.MessageBoxStyle.OKCancel
                 )
                 .ConfigureAwait(true);
@@ -314,8 +314,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 return;
             }
 
-            // プロパティ変更の通知が個別でバシバシ飛ぶのが若干ダサいっちゃダサい
-            // この挙動が気になる場合、明示的に設定の同期をオフにして書き換えてから一括送信…としてもよい
+            // NOTE: プロパティ変更の通知は個別でバシバシ飛んでしまうが許容している
             foreach(var property in Properties)
             {
                 property.ResetToDefault();

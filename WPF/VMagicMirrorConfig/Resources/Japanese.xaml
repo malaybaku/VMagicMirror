@@ -279,7 +279,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 
     <sys:String x:Key="Buddy_Item_Reload">再読み込み</sys:String>
     <sys:String x:Key="Buddy_Item_FolderName">フォルダ名: </sys:String>
-
+    <sys:String x:Key="Buddy_Item_ResetProperties">初期設定にリセット</sys:String>
+    
     <sys:String x:Key="Buddy_Log_FatalError">サブキャラの開始時、または実行中にエラーが発生しました！</sys:String>
 
     <sys:String x:Key="Buddy_MainAvatarOutputActive_StandardEdition">メインアバターAPIを使用 (Standard Editionでオンにするとエフェクトがかかります)</sys:String>
@@ -871,6 +872,9 @@ webカメラでの顔トラッキングを有効にする場合は
 VMCPのデータを送受信中の場合、この操作をすることで送受信はオフになります。
 それ以外の詳細設定は保持されます。</sys:String>    
 
+    <sys:String x:Key="DialogTitle_ResetSingleBuddySettings">サブキャラの設定リセット</sys:String>
+    <sys:String x:Key="DialogMessage_ResetSingleBuddySettings">サブキャラ「{0}」の設定を初期値にリセットしますか？</sys:String>
+    
     <!-- Snackbar Messages -->
     <sys:String x:Key="Snackbar_General_TextCopied">テキストをコピーしました</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>

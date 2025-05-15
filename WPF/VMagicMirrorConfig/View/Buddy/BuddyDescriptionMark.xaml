@@ -7,7 +7,7 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              MinWidth="20" MinHeight="20"
-             Margin="4"
+             Margin="4,0"
              d:DesignHeight="20" d:DesignWidth="20">
     <!-- StringがBindされてることが前提になってる -->
     <UserControl.Resources>

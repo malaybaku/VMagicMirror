@@ -13,12 +13,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private static BuddyData CreateDesignBuddyData()
         {
             var displayName = BuddyLocalizedText.Const("デザイン用の表示名");
+            var displayNameVeryLong = BuddyLocalizedText.Const("デザイン用の表示名の非常に長いサンプルです。プロパティの表示が崩れる可能性があります。");
             var desc = BuddyLocalizedText.Const("デザイン用の説明文");
 
             var propertyMetadata = new BuddyPropertyMetadata[]
             {
                 BuddyPropertyMetadata.Bool("boolSample", displayName, desc, false),
+                BuddyPropertyMetadata.Bool("boolSample2", displayNameVeryLong, desc, false),
                 BuddyPropertyMetadata.Int("intSample", displayName, desc, 42),
+                BuddyPropertyMetadata.Int("intSample2", displayNameVeryLong, desc, 42),
                 BuddyPropertyMetadata.RangeInt("rangeIntSample", displayName, desc, 50, 0, 100),
                 BuddyPropertyMetadata.Float("floatSample", displayName, desc, 3.14f),
                 BuddyPropertyMetadata.RangeFloat("rangeFloatSample", displayName, desc, 5f, -1f, 12f),
@@ -33,6 +36,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     new BuddyVector3(1, 2, 3), new BuddyVector3(10, 20, 30), 1.0f, BuddyParentBone.RightUpperArm
                     )),
                 BuddyPropertyMetadata.Action("actionSample", displayName, desc),
+                BuddyPropertyMetadata.Action("actionSample2", displayNameVeryLong, desc),
             };
 
             var metadata = new BuddyMetadata(
@@ -71,7 +75,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> IsActive => _buddyData.IsActive;
 
-        public RProperty<bool> IsDeveloperMode { get; } = new(false);
+        public RProperty<bool> IsDeveloperMode { get; } = new(true);
 
         // trueの場合、サブキャラのタイトルバー的な部分がエラー表示になる
         public RProperty<bool> HasError { get; } = new(false);

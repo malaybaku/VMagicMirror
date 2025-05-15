@@ -266,6 +266,7 @@ Disable foreground mode, or attach item to another one.</sys:String>
 
     <sys:String x:Key="Buddy_Item_Reload">Reload</sys:String>
     <sys:String x:Key="Buddy_Item_FolderName">Folder: </sys:String>
+    <sys:String x:Key="Buddy_Item_ResetProperties">Reset to Default</sys:String>
 
     <sys:String x:Key="Buddy_Log_FatalError">Fatal Error Happened!</sys:String>
 
@@ -848,6 +849,9 @@ You can revert this setting from current tab.</sys:String>
     <sys:String x:Key="DialogMessage_DisableVMCPTab" xml:space="preserve">Continue to hide VMCP tab on the main control panel window.
 This operation will disable VMCP data send and receive if they are active.
 Detailed settings about VMCP send and receive is kept after the tab is hidden.</sys:String>     
+    
+    <sys:String x:Key="DialogTitle_ResetSingleBuddySettings">Reset Buddy Setting</sys:String>
+    <sys:String x:Key="DialogMessage_ResetSingleBuddySettings">Are you sure to reset the settings of "{0}"?</sys:String>
     
     <!-- Snackbar Messages -->
     <sys:String x:Key="Snackbar_General_TextCopied">Copied to Clipboard</sys:String>

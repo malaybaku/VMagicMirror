@@ -143,6 +143,11 @@ namespace Baku.VMagicMirrorConfig
         /// <returns></returns>
         public static MessageIndication DisableVMCPTab() => Load("DisableVMCPTab");
 
+        /// <summary>
+        /// 特定のサブキャラ1人の設定を初期値に戻すときの確認ダイアログ
+        /// </summary>
+        /// <returns></returns>
+        public static MessageIndication ResetSingleBuddySettings() => Load("ResetSingleBuddySettings");
 
 
     }

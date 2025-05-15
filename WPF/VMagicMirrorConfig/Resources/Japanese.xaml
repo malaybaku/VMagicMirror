@@ -299,10 +299,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
  
     <sys:String x:Key="Buddy_FilePathString_OpenFile">参照...</sys:String>    
 
-    <sys:String x:Key="Buddy_Transform_Attach">ボーンにアタッチ: </sys:String>    
-    <sys:String x:Key="Buddy_Transform_Position">位置: </sys:String>    
-    <sys:String x:Key="Buddy_Transform_Rotation">回転: </sys:String>    
-    <sys:String x:Key="Buddy_Transform_Scale">スケール: </sys:String>    
+    <sys:String x:Key="Buddy_Transform_Attach">ボーンにアタッチ</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Position">位置</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Rotation">回転</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Scale">スケール</sys:String>    
  
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">色を編集 (クリックで展開)</sys:String>

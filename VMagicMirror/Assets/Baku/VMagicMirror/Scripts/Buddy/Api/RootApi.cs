@@ -170,17 +170,6 @@ namespace Baku.VMagicMirror.Buddy.Api
                 }
             });
         }
-
-        // TODO: 親フォルダへの遡りを禁止しても抜け道が多すぎるのでやめていい気がする
-        // どっちかというと現在実行中のフォルダが分かることのほうが価値があるのでは？
-        // - 例: webから画像を取ってきてサブキャラ自身のフォルダに(cache的に)保存する
-        public bool ValidateFilePath(string path)
-        {
-            var fullPath = Path.Combine(_baseDir, path);
-            return
-                ApiUtils.IsChildDirectory(SpecialFiles.BuddyRootDirectory, fullPath) &&
-                File.Exists(path);
-        }
         
         public ISprite2D Create2DSprite()
         {

@@ -108,6 +108,9 @@ namespace VMagicMirror.Buddy
         /// </remarks>
         IAudio Audio { get; }
 
+        /// <summary>
+        /// アバターを表示しているウィンドウに関するAPIを取得します。
+        /// </summary>
         IScreen Screen { get; }
         
         // NOTE: まだ実装が安定してないのでダメ
@@ -202,13 +205,40 @@ namespace VMagicMirror.Buddy
         /// </remarks>
         void InvokeInterval(Action func, float intervalSeconds, float firstDelay);
 
-        // NOTE: Luaじゃないから不要 or 名前もうちょい短くしたい…？
-        bool ValidateFilePath(string path);
-
+        /// <summary>
+        /// アバターウィンドウの最前面に画像を表示するためのスプライトのインスタンスを生成します。
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// 空間上へ3次元的に板状の画像を表示したい場合、代わりに <see cref="Create3DSprite"/> を使用します。
+        /// </remarks>
         ISprite2D Create2DSprite();
+        
+        /// <summary>
+        /// 画像を空間上で板状のオブジェクトとして配置するためのスプライトのインスタンスを生成します。
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// 平面的に画像を表示したい場合、代わりに <see cref="Create2DSprite"/> を使用します。
+        /// </remarks>
         ISprite3D Create3DSprite();
+
+        /// <summary>
+        /// 空間上にGLBオブジェクトを配置するためのインスタンスを生成します。
+        /// </summary>
+        /// <returns></returns>
         IGlb CreateGlb();
+        
+        /// <summary>
+        /// 空間上にVRMアバターを配置するためのインスタンスを生成します。
+        /// </summary>
+        /// <returns></returns>
         IVrm CreateVrm();
+
+        /// <summary>
+        /// <see cref="IVrm"/> として表示したアバターに適用するためのVRMアニメーションのためのインスタンスを生成します。
+        /// </summary>
+        /// <returns></returns>
         IVrmAnimation CreateVrmAnimation();
         
         /// <summary>
@@ -216,11 +246,11 @@ namespace VMagicMirror.Buddy
         /// </summary>
         /// <remarks>
         /// <para>
-        /// VMagicMirrorではローカライズシステムの実装都合により、この値は日英以外の言語選択を正しく判別しません。
-        /// 日英以外の言語が <see cref="AppLanguage.Unknown"/> として判定される場合があることに注意して下さい。
+        /// VMagicMirrorのローカライズシステムの実装都合により、この値は日本語・英語以外の言語選択を行うと <see cref="AppLanguage.Unknown"/> を返します。
         /// </para>
         /// <para>
-        /// 多言語に詳細に対応できるサブキャラを作る場合、 <see cref="IProperty"/> でユーザーが言語選択を選べるようにすることも検討して下さい。
+        /// 多くの言語に対応できるようなサブキャラを作成する場合、このプロパティの代わりに <see cref="IProperty"/> によって
+        /// ユーザーが言語選択を別途選択できるようにすることも検討して下さい。
         /// </para>
         /// </remarks>
         AppLanguage Language { get; }
@@ -229,8 +259,7 @@ namespace VMagicMirror.Buddy
     /// <summary> VMagicMirrorの表示に使用している言語です。 </summary>
     /// <remarks>
     /// <para>
-    /// VMagicMirrorではローカライズシステムの実装都合により、この値は日英以外の言語選択を正しく判別しません。
-    /// 日英以外の言語が <see cref="Unknown"/> として判定される場合があることに注意して下さい。
+    /// VMagicMirrorのローカライズシステムの実装都合により、日本語・英語以外の言語は <see cref="Unknown"/> として扱われます。
     /// </para>
     /// <para>
     /// 多言語に詳細に対応できるサブキャラを作る場合、 <see cref="IProperty"/> でユーザーが言語選択を選べるようにすることも検討して下さい。

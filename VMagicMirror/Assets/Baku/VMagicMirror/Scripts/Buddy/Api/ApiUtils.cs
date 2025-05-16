@@ -10,17 +10,6 @@ namespace Baku.VMagicMirror.Buddy.Api
     public static class ApiUtils
     {
         /// <summary>
-        /// フォルダとファイルの絶対パスを指定して、ファイルがdir以下にあるかどうかを判定する
-        /// </summary>
-        /// <param name="dir"></param>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public static bool IsChildDirectory(string dir, string file)
-        {
-            return file.StartsWith(dir, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        /// <summary>
         /// <see cref="BuddyApi.ISprite2D"/> とか <see cref="BuddyApi.IVrm"/> とかでAPIが使うパスを絶対パスに変換するすごいやつだよ
         /// </summary>
         /// <param name="folder"></param>

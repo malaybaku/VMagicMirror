@@ -17,7 +17,7 @@ namespace VMagicMirror.Buddy
         /// アバターのロードが完了すると発火します。
         /// </summary>
         /// <remarks>
-        /// サブキャラのロード時点ですでにアバターがロード済みだった場合、
+        /// サブキャラが起動した時点ですでにアバターがロード済みだった場合、
         /// このイベントは <see cref="IRootApi.Start"/> よりも後、
         /// かつ <see cref="IRootApi.Update"/> より前に一度発火します。
         /// </remarks>
@@ -25,8 +25,12 @@ namespace VMagicMirror.Buddy
         
         /// <summary>
         /// アバターがアンロードされる時に発火します。
-        /// このイベントは <see cref="IsLoaded"/> が <c>false</c> に切り替わった後で発火します。
         /// </summary>
+        /// <para>
+        /// VMagicMirrorでは異なるアバターを読み込むことでアバターのアンロードが発生します。
+        /// 
+        /// このイベントは <see cref="IsLoaded"/> が <c>false</c> に切り替わった後で発火します。
+        /// </para>
         event Action Unloaded;
     }
     
@@ -133,6 +137,17 @@ namespace VMagicMirror.Buddy
         /// </para>
         /// </remarks>
         Quaternion GetRootRotation();
+        
+        /// <summary>
+        /// 現在ロードされているアバターに、指定したボーンが存在するかどうかを取得します。
+        /// </summary>
+        /// <param name="bone"></param>
+        /// <returns>
+        /// <see cref="HumanBodyBones.RightThumbProximal"/> などのボーンはアバターによっては存在しない事があるため、そのボーンの存在判定が必要な場合にはこの関数を使用します。
+        /// 
+        /// アバターがロードされていない場合、この関数は <paramref name="bone"/> の値と関係なく <c>false</c> を返します。
+        /// </returns>
+        bool HasBone(HumanBodyBones bone);
         
         /// <summary>
         /// 指定したボーンの位置をワールド座標で取得します。

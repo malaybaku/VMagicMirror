@@ -76,16 +76,18 @@ namespace Baku.VMagicMirror.Buddy.Api
         // NOTE: RootPositionはほぼゼロだが、Rotのほうはゲーム入力モードで回ることがあるので公開してもバチ当たらない…というモチベがある
         public Vector3 GetRootPosition() => _impl.GetRootPosition().ToApiValue();
         public Quaternion GetRootRotation() => _impl.GetRootRotation().ToApiValue();
+
+        bool IAvatarPose.HasBone(HumanBodyBones bone) => _impl.HasBone(bone.ToEngineValue());
         
         //TODO: useParentBoneオプションをimplにわたす
         public Vector3 GetBoneGlobalPosition(HumanBodyBones bone, bool useParentBone)
-            => _impl.GetBoneGlobalPosition(bone.ToEngineValue()).ToApiValue();
+            => _impl.GetBoneGlobalPosition(bone.ToEngineValue(), useParentBone).ToApiValue();
         public Quaternion GetBoneGlobalRotation(HumanBodyBones bone, bool useParentBone) 
-            => _impl.GetBoneGlobalRotation(bone.ToEngineValue()).ToApiValue();
+            => _impl.GetBoneGlobalRotation(bone.ToEngineValue(), useParentBone).ToApiValue();
         public Vector3 GetBoneLocalPosition(HumanBodyBones bone, bool useParentBone) 
-            => _impl.GetBoneLocalPosition(bone.ToEngineValue()).ToApiValue();
+            => _impl.GetBoneLocalPosition(bone.ToEngineValue(), useParentBone).ToApiValue();
         public Quaternion GetBoneLocalRotation(HumanBodyBones bone, bool useParentBone) 
-            => _impl.GetBoneLocalRotation(bone.ToEngineValue()).ToApiValue();
+            => _impl.GetBoneLocalRotation(bone.ToEngineValue(), useParentBone).ToApiValue();
     }
 
     public class AvatarMotionEventApi : IAvatarMotionEvent

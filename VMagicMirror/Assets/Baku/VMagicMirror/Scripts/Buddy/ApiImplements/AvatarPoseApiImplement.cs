@@ -10,6 +10,9 @@ namespace Baku.VMagicMirror.Buddy
 
         private Animator _animator;
         private readonly Dictionary<HumanBodyBones, Transform> _bones = new();
+        // NOTE: 全ボーンではなく、_bonesに入ってないキーの分だけが入る
+        private readonly Dictionary<HumanBodyBones, Transform> _bonesAscending = new();
+        
         private readonly BodyMotionModeController _bodyMotionMode;
 
         public AvatarPoseApiImplement(
@@ -31,76 +34,97 @@ namespace Baku.VMagicMirror.Buddy
         public bool UseGameInputMotion =>
             IsMainAvatarOutputActive && 
             _bodyMotionMode.MotionMode.Value is BodyMotionMode.GameInputLocomotion;
+
         public bool UseStandingOnlyMode =>
             IsMainAvatarOutputActive &&
             _bodyMotionMode.MotionMode.Value is BodyMotionMode.StandingOnly;
         
-        public Vector3 GetBoneGlobalPosition(HumanBodyBones bone)
+        public bool HasBone(HumanBodyBones bone)
+        {
+            return 
+                IsMainAvatarOutputActive &&
+                _isLoaded &&
+                _bones.ContainsKey(bone);
+        }
+        
+        public Vector3 GetBoneGlobalPosition(HumanBodyBones bone, bool useParentBone)
         {
             if (!IsMainAvatarOutputActive)
             {
                 return Vector3.zero;
             }
 
-            if (!TryGetBone(bone, out var boneTransform))
+            if (!TryGetBone(bone, useParentBone, out var boneTransform))
             {
                 return Vector3.zero;
             }
             return boneTransform.position;
         }
 
-        public Quaternion GetBoneGlobalRotation(HumanBodyBones bone)
+        public Quaternion GetBoneGlobalRotation(HumanBodyBones bone, bool useParentBone)
         {
             if (!IsMainAvatarOutputActive)
             {
                 return Quaternion.identity;
             }
 
-            if (!TryGetBone(bone, out var boneTransform))
+            if (!TryGetBone(bone, useParentBone, out var boneTransform))
             {
                 return Quaternion.identity;
             }
             return boneTransform.rotation;
         }
 
-        public Vector3 GetBoneLocalPosition(HumanBodyBones bone)
+        public Vector3 GetBoneLocalPosition(HumanBodyBones bone, bool useParentBone)
         {
             if (!IsMainAvatarOutputActive)
             {
                 return Vector3.zero;
             }
 
-            if (!TryGetBone(bone, out var boneTransform))
+            if (!TryGetBone(bone, useParentBone, out var boneTransform))
             {
                 return Vector3.zero;
             }
             return boneTransform.localPosition;
         }
 
-        public Quaternion GetBoneLocalRotation(HumanBodyBones bone)
+        public Quaternion GetBoneLocalRotation(HumanBodyBones bone, bool useParentBone)
         {
             if (!IsMainAvatarOutputActive)
             {
                 return Quaternion.identity;
             }
 
-            if (!TryGetBone(bone, out var boneTransform))
+            if (!TryGetBone(bone, useParentBone, out var boneTransform))
             {
                 return Quaternion.identity;
             }
             return boneTransform.localRotation;
         }
 
-        private bool TryGetBone(HumanBodyBones bone, out Transform result)
+        private bool TryGetBone(HumanBodyBones bone, bool useParentBone, out Transform result)
         {
-            if (!_isLoaded || !_bones.TryGetValue(bone, out var boneTransform))
+            if (!_isLoaded)
             {
                 result = null;
                 return false;
             }
 
-            result = boneTransform;
-            return true;
+            if (_bones.TryGetValue(bone, out var boneTransform))
+            {
+                result = boneTransform;
+                return true;
+            }
+
+            if (useParentBone && _bonesAscending.TryGetValue(bone, out var ascendBoneTransform))
+            {
+                result = ascendBoneTransform;
+                return true;
+            }
+
+            result = null;
+            return false;
         }
         
         private void OnVrmUnloaded()
@@ -108,6 +132,7 @@ namespace Baku.VMagicMirror.Buddy
             _isLoaded = false;
             _animator = null;
             _bones.Clear();
+            _bonesAscending.Clear();
         }
 
         private void OnVrmLoaded(VrmLoadedInfo info)
@@ -117,7 +142,11 @@ namespace Baku.VMagicMirror.Buddy
             {
                 var bone = (HumanBodyBones)i;
                 var boneTransform = _animator.GetBoneTransform(bone);
-                if (boneTransform != null)
+                if (boneTransform == null)
+                {
+                    _bonesAscending[bone] = _animator.GetBoneTransformAscending(bone);
+                }
+                else
                 {
                     _bones[bone] = boneTransform;
                 }

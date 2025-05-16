@@ -351,65 +351,74 @@
         <StackPanel Margin="5"
                 Visibility="{Binding IsChecked, ElementName=ExpanderToggle, Converter={StaticResource BooleanToVisibilityConverter}}"
                 >
-            <Grid Margin="0,0,0,5">
-                <TextBlock>
-                <Run Text="{DynamicResource Buddy_Item_FolderName}"/>
-                <Run Text="{Binding FolderName, Mode=OneWay, FallbackValue=folderName}"/>
-                </TextBlock>
-            </Grid>
-
-            <Grid Margin="0">
-                <Button HorizontalAlignment="Right"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                        Margin="10,0"
-                        Padding="0"
-                        Width="80"
-                        Content="再読み込み"
-                        Command="{Binding ReloadCommand}"
-                        />
-            </Grid>
-
             <!-- 開発者モード: 直近N件のログを並べる-->
-            <Border Margin="-5,10"
+            <Border Margin="-5,5,-5,10"
                     Background="#F3F4F6"                    
                     Visibility="{Binding IsDeveloperMode.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                     >
                 <StackPanel>
+                    <Grid Margin="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   >
+                             <Run Text="{DynamicResource Buddy_Item_FolderName}"/>
+                             <Run Text="{Binding FolderName, Mode=OneWay, FallbackValue=folderName}"/>
+                        </TextBlock>
+                        <Button Grid.Column="1"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Padding="4,0"
+                                Height="28"
+                                Content="{DynamicResource Buddy_Item_Reload}"
+                                Command="{Binding ReloadCommand}"
+                                />
+                    </Grid>
+
+                    <Rectangle Fill="DarkGray"
+                               Height="1"
+                               Margin="5,5,5,0"
+                               />
+
                     <StackPanel Orientation="Horizontal"
-                                Margin="8">
-                        <Button
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Width="24" Height="24"
-                            Padding="0"
+                                Margin="8,4">
+                        <StackPanel.Resources>
+                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                <Setter Property="Width" Value="20"/>
+                                <Setter Property="Height" Value="20"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="2,0" />
+                                <Setter Property="ToolTipService.InitialShowDelay" Value="10" />
+                            </Style>
+                            <Style TargetType="md:PackIcon">
+                                <Setter Property="Width" Value="16" />
+                                <Setter Property="Height" Value="16" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock Text="Log" Margin="0,0,8,0"/>
+                        <Button 
                             Command="{Binding CopyLogMessageCommand}"
-                            ToolTip="Copy to Clipboard"
+                            ToolTip="Copy"
                             >
-                            <md:PackIcon Kind="ContentCopy" Width="16" Height="16" />
+                            <md:PackIcon Kind="ContentCopy" />
                         </Button>
 
                         <Button
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Width="24" Height="24"
-                            Margin="4,0"
-                            Padding="0"
                             Command="{Binding OpenLogFileCommand}"
                             ToolTip="Open Log File"
                             >
-                            <md:PackIcon Kind="File" Width="16" Height="16" />
+                            <md:PackIcon Kind="FileOutline" />
                         </Button>
 
                         <Button
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Width="24" Height="24"
-                            Padding="0"
                             Command="{Binding ClearLogCommand}"
                             ToolTip="Clear Log"
                             >
-                            <md:PackIcon Kind="DeleteOutline" Width="16" Height="16" />
+                            <md:PackIcon Kind="DeleteOutline" />
                         </Button>
-
-                        <TextBlock Text="Log" FontWeight="Bold"
-                                   Margin="8,0"/>
 
                     </StackPanel>
                     <ScrollViewer VerticalScrollBarVisibility="Visible"
@@ -431,50 +440,48 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
-                </StackPanel>                
+                </StackPanel>
             </Border>
 
             <!-- 開発者モードではない: 直近の重大エラーを1件だけ表示する -->
-            <Border Margin="-5,10"
+            <Border Margin="-5,5,-5,10"
                     Background="#F3F4F6"                                        
                     Visibility="{Binding HasNonDeveloperError.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                     >
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="8">
-                        <Button
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Width="24" Height="24"
-                            Padding="0"
-                            Command="{Binding CopyLogMessageCommand}"
-                            ToolTip="Copy to Clipboard"
-                            >
-                            <md:PackIcon Kind="ContentCopy" Width="16" Height="16" />
-                        </Button>
-
-                        <Button
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Width="24" Height="24"
-                            Padding="0"
-                            Margin="4,0"
-                            Command="{Binding ClearLogCommand}"
-                            ToolTip="Ignore Error"
-                            >
-                            <md:PackIcon Kind="EyeOff" Width="16" Height="16" />
-                        </Button>
-
-                        <TextBlock Text="{DynamicResource Buddy_Log_FatalError}"
-                                   Margin="4,0"
+                    <TextBlock Text="{DynamicResource Buddy_Log_FatalError}"
+                                   Margin="8"
                                    FontWeight="Bold"
                                    />
-
-                    </StackPanel>
                     <TextBlock Text="{Binding CurrentFatalError.Value.Message}"
-                               Margin="8"
+                               Margin="8,8,8,4"
                                FontFamily="Consolas"
                                TextWrapping="Wrap"
                                FontSize="12"
                                Foreground="#FF2800"
                                />
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="4,8">
+                        <StackPanel.Resources>
+                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+                                <Setter Property="Height" Value="28"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="4,0" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button 
+                            Command="{Binding CopyLogMessageCommand}"
+                            Content="{DynamicResource Buddy_Log_FatalError_Copy}"
+                            />
+                        <Button
+                            Command="{Binding ClearLogCommand}"
+                            Content="{DynamicResource Buddy_Log_FatalError_Ignore}"
+                            />
+
+                    </StackPanel>
+
+
                 </StackPanel>
             </Border>
 
@@ -484,7 +491,7 @@
                 ItemsSource="{Binding Properties}"
                 ItemTemplateSelector="{StaticResource BuddyPropertyDataTemplateSelector}"
                 />
-            
+
             <!-- todo: 3Dのもガッと作って後でItemTemplateに移動 -->
         </StackPanel>
     </StackPanel>

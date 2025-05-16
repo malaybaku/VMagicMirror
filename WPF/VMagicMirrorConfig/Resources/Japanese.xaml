@@ -280,8 +280,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Buddy_Item_Reload">再読み込み</sys:String>
     <sys:String x:Key="Buddy_Item_FolderName">フォルダ名: </sys:String>
     <sys:String x:Key="Buddy_Item_ResetProperties">初期設定にリセット</sys:String>
-    
-    <sys:String x:Key="Buddy_Log_FatalError">サブキャラの開始時、または実行中にエラーが発生しました！</sys:String>
+
+    <sys:String x:Key="Buddy_Log_FatalError">サブキャラの起動時、または実行中にエラーが発生しました:</sys:String>
+    <sys:String x:Key="Buddy_Log_FatalError_Copy">テキストをコピー</sys:String>
+    <sys:String x:Key="Buddy_Log_FatalError_Ignore">無視して閉じる</sys:String>
 
     <sys:String x:Key="Buddy_MainAvatarOutputActive_StandardEdition">メインアバターAPIを使用 (Standard Editionでオンにするとエフェクトがかかります)</sys:String>
     <sys:String x:Key="Buddy_MainAvatarOutputActive_FullEdition">メインアバターAPIを使用 (通常はオンにします)</sys:String>
@@ -294,6 +296,12 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 ※ログを大量に出力している場合は本ウィンドウでログの一部が表示されないことがあるため、
 各サブキャラのログファイルを直接開いてください。
 </sys:String>
+
+    <sys:String x:Key="Buddy_Item_DeveloperModeUnapplied_Instruction" xml:space="preserve">このサブキャラは開発者モードがオンになる前に起動されたため、
+ログ出力の一部が取得できません。
+
+このサブキャラを一度オフにして再度オンにすることで、より詳細なログが取得できます。</sys:String>
+
     <sys:String x:Key="Buddy_DeveloperMode_SeeMore">開発者モードの詳細…</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_LogLevel">ログの詳細度: </sys:String>
     <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">ログファイルを開く</sys:String>

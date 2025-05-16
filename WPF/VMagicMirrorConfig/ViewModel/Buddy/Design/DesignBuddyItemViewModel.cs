@@ -58,13 +58,24 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public DesignBuddyItemViewModel()
         {
+            // NOTE: 開発者モードUIは見ときたいので
+            IsDeveloperMode = new RProperty<bool>(false);
+            HasError = new RProperty<bool>(true);
+            HasNonDeveloperError = new RProperty<bool>(true);
+            CurrentFatalError = new RProperty<BuddyLogMessage?>(new BuddyLogMessage(
+                "MyBuddy",
+                "不明な重大エラーのテスト用テキストです。コンパイルエラーのテキストが入りうるので、それなりに長いテキストをサンプルに入れてます。",
+                (int) BuddyLogLevel.Fatal
+                ));
+
             var buddyData = CreateDesignBuddyData();
             _buddyData = buddyData;
             LogMessages = new ReadOnlyObservableCollection<BuddyLogMessage>(_logMessages);
 
-            // NOTE: ここでsenderをnullにしてるのがウソだが、Editorなので許容ということで…
+            // NOTE: 本クラスがEditor専用型なので、null許容に対してウソをついておく(BuddyPropertyViewModel自体は実際使うクラスなので、nullは認めないままにしとく)
+            BuddySettingsSender? nullSender = null;
             Properties = buddyData.Properties
-                .Select(p => new BuddyPropertyViewModel(null, buddyData.Metadata, p))
+                .Select(p => new BuddyPropertyViewModel(nullSender!, buddyData.Metadata, p))
                 .ToArray();
 
             foreach(var property in Properties)
@@ -73,15 +84,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
+        // NOTE: ここから下はあまり頻繁にはいじらない想定 (しょっちゅう変えるものはctorまでに変えるように実装しておきたい)
+
         public RProperty<bool> IsActive => _buddyData.IsActive;
 
-        public RProperty<bool> IsDeveloperMode { get; } = new(true);
-
-        // trueの場合、サブキャラのタイトルバー的な部分がエラー表示になる
-        public RProperty<bool> HasError { get; } = new(false);
-
-        // これがtrue、かつ開発者モードがオフの場合、非開発者向けのエラー表示を行う
-        public RProperty<bool> HasNonDeveloperError { get; } = new(false);
+        public RProperty<bool> IsDeveloperMode { get; }
+        public RProperty<bool> HasError { get; }
+        public RProperty<bool> HasNonDeveloperError { get; }
 
 
         private readonly ActionCommand _dummyCommand = new(() => { });
@@ -102,6 +111,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ReadOnlyObservableCollection<BuddyLogMessage> LogMessages { get; }
 
         /// <summary> 非開発者に表示する想定の重大エラー </summary>
-        public RProperty<BuddyLogMessage?> CurrentFatalError { get; } = new(null);
+        public RProperty<BuddyLogMessage?> CurrentFatalError { get; }
     }
 }

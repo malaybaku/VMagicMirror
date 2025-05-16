@@ -10,6 +10,11 @@
              d:DesignHeight="100" d:DesignWidth="600">
     <UserControl.Resources>
         <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
+        <Style TargetType="TextBlock" x:Key="IndentLabel">
+            <Setter Property="Margin" Value="24,0,8,0"/>
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center" /> 
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -33,10 +38,10 @@
                    />
         <view:BuddyDescriptionMark Grid.Row="0" Grid.Column="1" DataContext="{Binding Description.Value}" />
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                    Margin="8,0"
-                    Text="{DynamicResource Buddy_Transform_Position}"
-                    TextAlignment="Right"/>
+        <TextBlock Grid.Row="1" Grid.Column="0"
+                   Style="{StaticResource IndentLabel}"
+                   Text="{DynamicResource Buddy_Transform_Position}"
+                   />
         <Grid Grid.Row="1" Grid.Column="2" Margin="0,2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="16" />
@@ -54,10 +59,10 @@
             <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding PositionY.Value}"/>
         </Grid>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
-                   Margin="8,0"
+        <TextBlock Grid.Row="2" Grid.Column="0"
+                   Style="{StaticResource IndentLabel}"
                    Text="{DynamicResource Buddy_Transform_Rotation}"
-                   TextAlignment="Right"/>
+                   />
         <Grid Grid.Row="2" Grid.Column="2" Margin="0,2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="16" />
@@ -83,10 +88,10 @@
             <TextBox Grid.Column="1" Style="{StaticResource BuddyPropertyTextBoxAxis}" Text="{Binding RotationZ.Value}"/>
         </Grid>
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                   Margin="8,0"
+        <TextBlock Grid.Row="3" Grid.Column="0"
+                   Style="{StaticResource IndentLabel}"
                    Text="{DynamicResource Buddy_Transform_Scale}"
-                   TextAlignment="Right"/>
+                   />
         <TextBox Grid.Row="3" Grid.Column="2" Margin="18,2,4,2"
                  Style="{StaticResource BuddyPropertyTextBox}" 
                  Text="{Binding Scale.Value}"/>

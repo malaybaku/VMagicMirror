@@ -102,7 +102,9 @@
                                   />
                     </Grid>
 
-                    <Border Style="{StaticResource SectionBorder}"
+                    <Border Margin="0,8" Background="#F3F4F6"                    
+                            Padding="4"
+
                             Visibility="{Binding DeveloperModeActive.Value, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -111,38 +113,44 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/>
                             </Grid.RowDefinitions>
 
-                            <Button Grid.Row="0" Grid.RowSpan="4"
-                                    Grid.Column="0" Grid.ColumnSpan="2"
+                            <Button Grid.Row="0" Grid.Column="1"
                                     Style="{StaticResource MaterialDesignFlatButton}"
+                                    Margin="4,0"
                                     HorizontalAlignment="Right"
-                                    VerticalAlignment="Top"
-                                    Margin="5"
+                                    VerticalAlignment="Center"
                                     Command="{Binding OpenDeveloperModeDocUrlCommand}"
                                     Content="{DynamicResource Buddy_DeveloperMode_SeeMore}"
                                     />
 
-                            <TextBlock Style="{StaticResource HeaderText}"
-                                       Margin="10"
-                                       Text="{DynamicResource Buddy_DeveloperMode_Enabled}"
-                                       />
+                            <StackPanel Grid.Row="0" Grid.Column="0"
+                                        Height="32"
+                                        Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource HeaderText}"
+                                           Margin="4,0"
+                                           Text="{DynamicResource Buddy_DeveloperMode_Enabled}"
+                                           />
+                                <md:PackIcon
+                                    Width="20" Height="20"
+                                    HorizontalAlignment="Left"
+                                    Margin="4,0"
+                                    VerticalAlignment="Center"
+                                    Kind="QuestionMarkCircleOutline"
+                                    ToolTip="{DynamicResource Buddy_DeveloperMode_Instruction}"
+                                    />
+                            </StackPanel>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"                               
-                                       Text="{DynamicResource Buddy_DeveloperMode_Instruction}"
-                                       />
-
-                            <TextBlock Grid.Row="2" Grid.Column="0"
+                            <TextBlock Grid.Row="1" Grid.Column="0"
                                        Text="{DynamicResource Buddy_DeveloperMode_LogLevel}"
                                        />
 
-                            <ComboBox Grid.Row="2" Grid.Column="1"
+                            <ComboBox Grid.Row="1" Grid.Column="1"
                                       HorizontalAlignment="Left"
-                                      Width="100"
+                                      Margin="4,0"
+                                      Width="120"
                                       ItemsSource="{Binding AvailableLogLevelNames}"
                                       SelectedIndex="{Binding DeveloperModeLogLevel.Value}"
                                       />
@@ -150,9 +158,7 @@
                     </Border>
 
                     
-                    <Border Margin="5"
-                            BorderBrush="{StaticResource MaterialDesignToolForeground}"
-                            BorderThickness="1">
+                    <Border Margin="5">
                         <ItemsControl ItemsSource="{Binding Items}"
                                       Margin="1,0">
                             <ItemsControl.ItemsPanel>

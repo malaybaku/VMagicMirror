@@ -120,11 +120,11 @@ namespace Baku.VMagicMirrorConfig
 
             foreach (var buddy in _buddies)
             {
-                DisableBuddy(buddy.Metadata);
+                DisableBuddy(buddy);
                 buddy.IsActiveChanged -= OnBuddyActiveChanged;
             }
 
-            // NOTE: Activeだったbuddyはロード処理の一環で再びアクティブになる
+            // NOTE: Activeだったbuddyはロード処理の一環で再びアクティブになり、イベントハンドラも再登録される
             Load(saveDatas);
         }
 
@@ -155,12 +155,13 @@ namespace Baku.VMagicMirrorConfig
             buddy.IsActiveChanged -= OnBuddyActiveChanged;
             _buddies.RemoveAt(buddyIndex);
 
+            // イベントハンドラはCreateBuddyDataの過程で再登録される
             var newBuddyData = CreateBuddyData(buddyMetadata, buddySaveData);
             _buddies.Insert(buddyIndex, newBuddyData);
             _buddySettingsSender.NotifyBuddyProperties(buddy);
             if (newBuddyData.IsActive.Value)
             {
-                EnableBuddy(newBuddyData.Metadata);
+                EnableBuddy(newBuddyData);
             }
 
             BuddyUpdated?.Invoke(this, new BuddyDataEventArgs(newBuddyData, buddyIndex));
@@ -215,7 +216,7 @@ namespace Baku.VMagicMirrorConfig
                 // NOTE: Disableは別にしなくても良い (デフォルトでは非アクティブなので)
                 if (buddy.IsActive.Value)
                 {
-                    EnableBuddy(buddy.Metadata);
+                    EnableBuddy(buddy);
                 }
             }
 
@@ -259,18 +260,27 @@ namespace Baku.VMagicMirrorConfig
 
             if (buddy.IsActive.Value)
             {
-                EnableBuddy(buddy.Metadata);
+                EnableBuddy(buddy);
             }
             else
             {
-                DisableBuddy(buddy.Metadata);
+                DisableBuddy(buddy);
             }
         }
 
-        private void EnableBuddy(BuddyMetadata buddy)
-            => _sender.SendMessage(MessageFactory.BuddyEnable(buddy.FolderPath));
-        
-        private void DisableBuddy(BuddyMetadata buddy)
-            => _sender.SendMessage(MessageFactory.BuddyDisable(buddy.FolderPath));
+        private void EnableBuddy(BuddyData buddy)
+        {
+            _sender.SendMessage(MessageFactory.BuddyEnable(buddy.Metadata.FolderPath));
+            if (!DeveloperModeActive.Value)
+            {
+                buddy.IsEnabledWithoutDeveloperMode.Value = true;
+            }
+        }
+
+        private void DisableBuddy(BuddyData buddy)
+        {
+            _sender.SendMessage(MessageFactory.BuddyDisable(buddy.Metadata.FolderPath));
+            buddy.IsEnabledWithoutDeveloperMode.Value = false;
+        }
     }
 }

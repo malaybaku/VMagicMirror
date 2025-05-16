@@ -210,8 +210,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 .ToArray();
 
             // NOTE: 普通のRxならもっとシンプルに書けるけど、まあコレでも困らないので…
-            IsDeveloperMode.PropertyChanged += (_, __) => HasNonDeveloperError.Value = !IsDeveloperMode.Value && CurrentFatalError.Value != null;
+            IsDeveloperMode.PropertyChanged += (_, __) =>
+            {
+                HasNonDeveloperError.Value = !IsDeveloperMode.Value && CurrentFatalError.Value != null;
+                ShouldRestartToApplyDeveloperMode.Value =
+                    IsDeveloperMode.Value && _buddyData.IsEnabledWithoutDeveloperMode.Value;
+            };
             CurrentFatalError.PropertyChanged += (_, __) => HasNonDeveloperError.Value = !IsDeveloperMode.Value && CurrentFatalError.Value != null;
+
+            _buddyData.IsEnabledWithoutDeveloperMode.AddWeakEventHandler(OnEnableWithDeveloperModeChanged);
         }
 
         public event Action<BuddyData>? ReloadRequested;
@@ -219,7 +226,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> IsActive => _buddyData.IsActive;
 
         public RProperty<bool> IsDeveloperMode { get; } = new(false);
-        
+
+        public RProperty<bool> ShouldRestartToApplyDeveloperMode { get; } = new(false);
+
         // trueの場合、サブキャラのタイトルバー的な部分がエラー表示になる
         public RProperty<bool> HasError { get; } = new(false);
 
@@ -288,6 +297,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     _logMessages.RemoveAt(0);
                 }
             });
+        }
+
+        private void OnEnableWithDeveloperModeChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            ShouldRestartToApplyDeveloperMode.Value =
+                IsDeveloperMode.Value && _buddyData.IsEnabledWithoutDeveloperMode.Value;
         }
 
         private void UpdateHasError()

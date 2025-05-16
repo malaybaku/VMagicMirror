@@ -58,10 +58,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public DesignBuddyItemViewModel()
         {
-            // NOTE: 開発者モードUIは見ときたいので
-            IsDeveloperMode = new RProperty<bool>(false);
+            // NOTE: 開発者モードUIは見ときたいのでこの辺で色々フラグをいじる。本来発生しないような、「全部が表示される」プロパティの組み合わせもDesign専用VMでは許容している
+            IsDeveloperMode = new RProperty<bool>(true);
+            ShouldRestartToApplyDeveloperMode = new RProperty<bool>(true);
             HasError = new RProperty<bool>(true);
-            HasNonDeveloperError = new RProperty<bool>(true);
+            HasNonDeveloperError = new RProperty<bool>(false);
             CurrentFatalError = new RProperty<BuddyLogMessage?>(new BuddyLogMessage(
                 "MyBuddy",
                 "不明な重大エラーのテスト用テキストです。コンパイルエラーのテキストが入りうるので、それなりに長いテキストをサンプルに入れてます。",
@@ -89,6 +90,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> IsActive => _buddyData.IsActive;
 
         public RProperty<bool> IsDeveloperMode { get; }
+        public RProperty<bool> ShouldRestartToApplyDeveloperMode { get; }
         public RProperty<bool> HasError { get; }
         public RProperty<bool> HasNonDeveloperError { get; }
 

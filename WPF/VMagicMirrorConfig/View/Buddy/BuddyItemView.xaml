@@ -362,20 +362,41 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis"
                                    >
                              <Run Text="{DynamicResource Buddy_Item_FolderName}"/>
                              <Run Text="{Binding FolderName, Mode=OneWay, FallbackValue=folderName}"/>
                         </TextBlock>
-                        <Button Grid.Column="1"
+                        <Button Grid.Row="0" Grid.Column="1"
                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Padding="4,0"
                                 Height="28"
                                 Content="{DynamicResource Buddy_Item_Reload}"
                                 Command="{Binding ReloadCommand}"
                                 />
+
+                        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                              Margin="0,8,0,0"
+                              Background="{StaticResource SecondaryAccentBrush}"
+                              Visibility="{Binding ShouldRestartToApplyDeveloperMode.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              >
+                            <StackPanel Orientation="Horizontal" Margin="4">
+                                <md:PackIcon Kind="InfoCircleOutline"
+                                             Width="20" Height="20"
+                                             VerticalAlignment="Center"
+                                             />
+                                <TextBlock 
+                                    Margin="8,4"
+                                    Text="{DynamicResource Buddy_Item_DeveloperModeUnapplied_Instruction}" />
+                            </StackPanel>
+
+                        </Grid>
                     </Grid>
 
                     <Rectangle Fill="DarkGray"

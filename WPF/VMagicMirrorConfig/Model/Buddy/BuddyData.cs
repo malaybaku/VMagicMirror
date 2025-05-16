@@ -16,6 +16,11 @@ namespace Baku.VMagicMirrorConfig
         public IReadOnlyList<BuddyProperty> Properties { get; }
         public RProperty<bool> IsActive { get; } = new(false);
 
+        // NOTE: このフラグは「開発者モードはonだけど、このScriptはデバッグモード無しで実行されてるよ(再起動したほうがいいよ)」と伝える目的で用いる。
+        // - IsActiveがfalse > trueになった瞬間にBuddy自体の開発者モードがオフだったら、trueに切り替える
+        // - IsActiveがfalseになるときは、つねにfalseになる
+        public RProperty<bool> IsEnabledWithoutDeveloperMode { get; } = new(false);
+
         public event EventHandler<EventArgs>? IsActiveChanged;
     }
 

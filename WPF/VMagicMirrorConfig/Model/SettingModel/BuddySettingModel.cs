@@ -202,7 +202,7 @@ namespace Baku.VMagicMirrorConfig
             var buddies = new List<BuddyData>();
             foreach (var metadata in metadatas)
             {
-                var savedata = data.Buddies.FirstOrDefault(b => b.Id.Equals(metadata.BuddyId));
+                var savedata = data.Buddies.FirstOrDefault(b => new BuddyId(b.Id).Equals(metadata.BuddyId));
                 var buddyData = CreateBuddyData(metadata, savedata);
                 buddies.Add(buddyData);
             }

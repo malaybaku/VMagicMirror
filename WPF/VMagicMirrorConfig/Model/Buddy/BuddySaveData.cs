@@ -14,7 +14,7 @@ namespace Baku.VMagicMirrorConfig
 
     public class BuddySaveDataSingleBuddy
     {
-        // note: このidは内部でBuddyIdと呼んでいるフォルダ名を使う想定。ただし、manifest.jsonに載ってるidも後から併設するかも
+        // note: このidは内部でBuddyIdと呼んでいるフォルダ名が入る。manifest.jsonに載ってるidも後から併設するかもしれないが、そっちは別物なので注意
         public string Id { get; set; } = "";
         public bool IsActive { get; set; }
         public BuddySaveDataProperty[] Properties { get; set; } = Array.Empty<BuddySaveDataProperty>();

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Baku.VMagicMirrorConfig
 {
-    public record BuddyLogMessage(string BuddyId, string Message, int LogLevel)
+    public record BuddyLogMessage(BuddyId BuddyId, string Message, int LogLevel)
     {
         public BuddyLogLevel Level
         {
@@ -28,7 +28,7 @@ namespace Baku.VMagicMirrorConfig
         public BuddyLogMessageEventArgs(BuddyLogMessage message) => Message = message;
         public BuddyLogMessage Message { get; }
 
-        public string BuddyId => Message.BuddyId;
+        public BuddyId BuddyId => Message.BuddyId;
         public string LogMessage => Message.Message;
         public BuddyLogLevel BuddyLogLevel => Message.Level;
     }

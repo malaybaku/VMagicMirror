@@ -92,8 +92,7 @@ namespace Baku.VMagicMirrorConfig
 
         public void InvokeBuddyAction(BuddyMetadata buddy, BuddyPropertyMetadata property)
         {
-            var json = 
-            JsonConvert.SerializeObject(new BuddyActionMessage()
+            var json = JsonConvert.SerializeObject(new BuddyActionMessage()
             {
                 BuddyId = buddy.BuddyId.Value,
                 ActionName = property.Name,

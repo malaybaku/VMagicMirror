@@ -64,7 +64,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             HasError = new RProperty<bool>(true);
             HasNonDeveloperError = new RProperty<bool>(false);
             CurrentFatalError = new RProperty<BuddyLogMessage?>(new BuddyLogMessage(
-                "MyBuddy",
+                new BuddyId("MyBuddy"),
                 "不明な重大エラーのテスト用テキストです。コンパイルエラーのテキストが入りうるので、それなりに長いテキストをサンプルに入れてます。",
                 (int) BuddyLogLevel.Fatal
                 ));

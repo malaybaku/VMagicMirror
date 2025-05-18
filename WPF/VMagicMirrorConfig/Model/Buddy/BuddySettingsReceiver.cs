@@ -2,7 +2,6 @@
 using Baku.VMagicMirrorConfig.BuddySettingsMessages;
 using Newtonsoft.Json;
 using System;
-using System.IO;
 
 namespace Baku.VMagicMirrorConfig
 {
@@ -86,11 +85,20 @@ namespace Baku.VMagicMirrorConfig
 
         private void SetBuddyLog(string json)
         {
-            var msg = JsonConvert.DeserializeObject<BuddyLogMessage>(json);
-            if (msg != null)
+            var rawMsg = JsonConvert.DeserializeObject<RawBuddyLogMessage>(json);
+            if (rawMsg == null)
             {
-                _buddySettingModel.NotifyBuddyLog(msg);
+                return;
             }
+
+            var msg = new BuddyLogMessage(
+                new BuddyId(rawMsg.BuddyId), rawMsg.Message, rawMsg.LogLevel
+                );
+            _buddySettingModel.NotifyBuddyLog(msg);
         }
+
+        // NOTE: BuddyLogMessageのほうのBuddyIdはプリミティブ型ではない (BuddyId型である) のでデシリアライズには適してない
+        public record RawBuddyLogMessage(string BuddyId, string Message, int LogLevel);
+
     }
 }

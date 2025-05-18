@@ -1,5 +1,4 @@
 using System;
-using Baku.VMagicMirror.Buddy;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
@@ -44,7 +43,7 @@ namespace Baku.VMagicMirror.Buddy
             try
             {
                 var msg = JsonUtility.FromJson<BuddySettingsPropertyMessage>(json);
-                var api = _repository.Get(new BuddyId(msg.BuddyId));
+                var api = _repository.GetOrCreate(new BuddyId(msg.BuddyId));
                 if (TryConvertToProperty(msg, out var property))
                 {
                     api.AddOrUpdate(property);
@@ -63,7 +62,7 @@ namespace Baku.VMagicMirror.Buddy
             {
                 var msg = JsonUtility.FromJson<BuddySettingsMessage>(json);
                 // リフレッシュなので、現存するプロパティをクリアする。インスタンス自体は消さないことに注意(参照が変わるとめんどいので)
-                var api = _repository.Get(new BuddyId(msg.BuddyId));
+                var api = _repository.GetOrCreate(new BuddyId(msg.BuddyId));
                 api.Clear();
                 // NOTE: property側のBuddyIdは空欄になっているはず & 無視してOK
                 foreach (var property in msg.Properties)

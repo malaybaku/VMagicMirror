@@ -30,8 +30,10 @@ namespace Baku.VMagicMirror.Buddy.Api
             _settingsRepository = apiImplementBundle.SettingsRepository;
             _logger = apiImplementBundle.Logger;
             _apiImplementBundle = apiImplementBundle;
-            
-            PropertyInternal = apiImplementBundle.BuddyPropertyRepository.Get(buddyId);
+
+            PropertyInternal = new PropertyApi(
+                apiImplementBundle.BuddyPropertyRepository.GetOrCreate(buddyId)
+            );
             AvatarLoadEventInternal = new AvatarLoadEventApi(apiImplementBundle.AvatarLoadApi);
             AvatarPose = new AvatarPoseApi(apiImplementBundle.AvatarPoseApi);
             AvatarFacialInternal = new AvatarFacialApi(apiImplementBundle.AvatarFacialApi);

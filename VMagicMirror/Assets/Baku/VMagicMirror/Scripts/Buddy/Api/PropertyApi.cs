@@ -11,36 +11,24 @@ namespace Baku.VMagicMirror.Buddy.Api
     /// </summary>
     public class PropertyApi : BuddyApi.IProperty
     {
+        private readonly SingleBuddyPropertyRepository _impl;
+        
+        public PropertyApi(SingleBuddyPropertyRepository impl)
+        {
+            _impl = impl;
+        }
+        
         public override string ToString() => nameof(BuddyApi.IProperty);
 
-        // NOTE:
-        // - リロードする場合はインスタンスが丸ごと破棄される(べきである)ため、Clear()関数はない
-        // - WPF側で初期化のシーケンスとかメッセージの送信順を担保する前提のため、IsInitialized() みたいなのも不要
-        private readonly Dictionary<string, object> _values = new();
-
-        internal void AddOrUpdate(BuddyProperty property) => _values[property.Name] = property.Value;
-
-        internal void Clear() => _values.Clear();
-
+        public event Action<string> ActionRequested;
         internal void InvokeActionInternal(string propertyName) => ActionRequested?.Invoke(propertyName);
         
-        private object Get(string key) => _values.GetValueOrDefault(key);
-
-        public event Action<string> ActionRequested;
-        
-        // NOTE: boolじゃない場合、一様にfalse扱いされる
-        public bool GetBool(string key) => Get(key) is true;
-        public int GetInt(string key) => Get(key) is int v ? v : 0;
-        public float GetFloat(string key) => Get(key) is float v ? v : 0f;
-        public string GetString(string key) => Get(key) is string v ? v : "";
-
-        public BuddyApi.Vector2 GetVector2(string key) 
-            => Get(key) is Vector2 v ? v.ToApiValue() : BuddyApi.Vector2.zero;
-
-        public BuddyApi.Vector3 GetVector3(string key)
-            => Get(key) is Vector3 v ? v.ToApiValue() : BuddyApi.Vector3.zero;
-
-        public BuddyApi.Quaternion GetQuaternion(string key)
-            => Get(key) is Quaternion v ? v.ToApiValue() : BuddyApi.Quaternion.identity;
+        public bool GetBool(string key) => _impl.GetBool(key);
+        public int GetInt(string key) => _impl.GetInt(key);
+        public float GetFloat(string key) => _impl.GetFloat(key);
+        public string GetString(string key) => _impl.GetString(key);
+        public BuddyApi.Vector2 GetVector2(string key) => _impl.GetVector2(key).ToApiValue();
+        public BuddyApi.Vector3 GetVector3(string key) => _impl.GetVector3(key).ToApiValue();
+        public BuddyApi.Quaternion GetQuaternion(string key) => _impl.GetQuaternion(key).ToApiValue();
     }
 }

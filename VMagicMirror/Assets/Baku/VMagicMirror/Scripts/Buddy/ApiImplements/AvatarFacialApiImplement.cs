@@ -14,10 +14,9 @@ namespace Baku.VMagicMirror.Buddy
         private readonly BlinkDetector _blinkDetector;
         private readonly VoiceOnOffParser _voiceOnOffParser;
         
-        // NOTE: 重要な注意点として、現時点では設定がカラ(「何もしない」)になってるFaceSwitchは条件を満たしても検出できない。
-        // - つまり、漫符みたいなサブキャラを作るのがちょっとムズい
+        // NOTE: 現時点では設定がカラ(「何もしない」)になってるFaceSwitchは条件を満たしても検出できない。
+        // - つまり、漫符みたいなサブキャラはちょっと作りづらい
         // - 「アバターの表情が実際変わるかどうか」という観点で見れば検出できないのも納得感はある
-        private readonly ExternalTrackerDataSource _externalTrackerDataSource;
         private readonly FaceSwitchExtractor _faceSwitchExtractor;
         private readonly FaceControlConfiguration _faceControlConfig;
         private readonly UserOperationBlendShapeResultRepository _userOperationBlendShapeResultRepository;
@@ -27,7 +26,6 @@ namespace Baku.VMagicMirror.Buddy
         public AvatarFacialApiImplement(
             BuddySettingsRepository buddySettingsRepository,
             ExpressionAccumulator expressionAccumulator,
-            ExternalTrackerDataSource externalTrackerDataSource,
             FaceSwitchExtractor faceSwitchExtractor,
             FaceControlConfiguration faceControlConfig,
             UserOperationBlendShapeResultRepository userOperationBlendShapeResultRepository,
@@ -36,7 +34,6 @@ namespace Baku.VMagicMirror.Buddy
         {
             _buddySettingsRepository = buddySettingsRepository;
             _expressionAccumulator = expressionAccumulator;
-            _externalTrackerDataSource = externalTrackerDataSource;
             _faceSwitchExtractor = faceSwitchExtractor;
             _faceControlConfig = faceControlConfig;
             _userOperationBlendShapeResultRepository = userOperationBlendShapeResultRepository;
@@ -140,11 +137,9 @@ namespace Baku.VMagicMirror.Buddy
                 return FaceSwitchAction.None;
             }
 
-            if (!_externalTrackerDataSource.Connected)
-            {
-                return FaceSwitchAction.None;
-            }
-
+            // NOTE: Extractorの挙動がちょっとおもしろい(フレーム内でoff/onが頻繁に切り替わる事もあるような実装になってる)ので、
+            // false-negative でNoneを取得する懸念がある。
+            // ただし、フレーム内の十分遅いタイミングではメインアバターに適用してる値が取れるので問題ない…はず。
             return _faceSwitchExtractor.ActiveItem.Action;
         }
 

@@ -218,6 +218,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     }
                     Transform3DValue.ResetToDefault();
                     break;
+                case BuddyPropertyType.Action:
+                    // アクションには保存するべき値がないので何もしないでOK
+                    break;
                 default:
                     throw new NotSupportedException();
             }

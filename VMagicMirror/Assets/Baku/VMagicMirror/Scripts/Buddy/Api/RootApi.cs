@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using VMagicMirror.Buddy;
@@ -7,8 +6,6 @@ using Cysharp.Threading.Tasks;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
-    // TODO: 一部のAPIの戻り値は _settingsRepository に基づいて制限したい
-    
     public class RootApi : IRootApi
     {
         private readonly BuddySettingsRepository _settingsRepository;
@@ -126,8 +123,12 @@ namespace Baku.VMagicMirror.Buddy.Api
         private readonly GuiApi _gui;
         public IGui Gui => _gui;
         
-        // TODO: 実際に選択中の言語を返す
-        public AppLanguage Language => throw new NotImplementedException();
+        public AppLanguage Language => _apiImplementBundle.LanguageSettingRepository.LanguageName switch
+        {
+            LanguageSettingRepository.LanguageNameJapanese => AppLanguage.Japanese,
+            LanguageSettingRepository.LanguageNameEnglish => AppLanguage.English,
+            _ => AppLanguage.Unknown,
+        };
 
         public void Log(string value) => _logger.Log(BuddyFolder, value, BuddyLogLevel.Info);
         public void LogWarning(string value) => _logger.Log(BuddyFolder, value, BuddyLogLevel.Warning);
@@ -186,19 +187,20 @@ namespace Baku.VMagicMirror.Buddy.Api
             return new Sprite3DApi(BuddyFolder, instance, _logger);
         }
 
-        public IGlb CreateGlb()
+        // NOTE: v4.0.0ではomitしてるがコンパイル出来たほうが嬉しいので、internalにして塞いでおく
+        internal IGlb CreateGlb()
         {
             var instance = _buddy3DInstanceCreator.CreateGlbInstance(BuddyFolder);
             return new GlbApi(BuddyFolder, instance, _logger);
         }
-
-        public IVrm CreateVrm()
+        
+        internal IVrm CreateVrm()
         {
             var instance = _buddy3DInstanceCreator.CreateVrmInstance(BuddyFolder);
             return new VrmApi(BuddyFolder, instance, _logger);
         }
-
-        public IVrmAnimation CreateVrmAnimation()
+        
+        internal IVrmAnimation CreateVrmAnimation()
         {
             var instance = _buddy3DInstanceCreator.CreateVrmAnimationInstance(BuddyFolder);
             return new VrmAnimationApi(BuddyFolder, instance, _logger);

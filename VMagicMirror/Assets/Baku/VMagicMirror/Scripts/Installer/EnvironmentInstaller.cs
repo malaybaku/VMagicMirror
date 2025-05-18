@@ -19,6 +19,7 @@ namespace Baku.VMagicMirror.Installer
             container.Bind<CameraUtilWrapper>().AsSingle();
 
             container.BindInterfacesTo<AntiAliasSettingSetter>().AsSingle();
+            container.BindInterfacesAndSelfTo<LanguageSettingRepository>().AsSingle();
         }
     }
 }

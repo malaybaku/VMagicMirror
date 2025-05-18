@@ -104,6 +104,7 @@ namespace Baku.VMagicMirror
         {
             switch (key)
             {
+                case GamepadKey.Start:
                 case GamepadKey.B:
                 case GamepadKey.A:
                 case GamepadKey.X:
@@ -111,6 +112,7 @@ namespace Baku.VMagicMirror
                 case GamepadKey.RShoulder:
                 case GamepadKey.RTrigger:
                     return ReactedHand.Right;
+                case GamepadKey.Select:
                 case GamepadKey.UP:
                 case GamepadKey.RIGHT:
                 case GamepadKey.DOWN:

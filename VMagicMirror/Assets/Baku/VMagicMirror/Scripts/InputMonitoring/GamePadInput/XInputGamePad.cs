@@ -120,6 +120,7 @@ namespace Baku.VMagicMirror
         private void Start()
         {
             _buttonsList.Add(new ObservableButton(GamepadKey.Start, XInputCapture.Buttons.START, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.Select, XInputCapture.Buttons.BACK, _buttonSubject));
             
             _buttonsList.Add(new ObservableButton(GamepadKey.B, XInputCapture.Buttons.B, _buttonSubject));
             _buttonsList.Add(new ObservableButton(GamepadKey.A, XInputCapture.Buttons.A, _buttonSubject));
@@ -160,7 +161,7 @@ namespace Baku.VMagicMirror
             {
                 //普通にXInputの読み取り
                 _xInputCapture.Update();
-                int buttonFlags = _xInputCapture.GetButtonStates();
+                var buttonFlags = _xInputCapture.GetButtonStates();
                 foreach(var button in _buttons)
                 {
                     button.UpdatePressedState(buttonFlags);
@@ -177,19 +178,20 @@ namespace Baku.VMagicMirror
         {
             //NOTE: ボタンの順序はStart()で初期化してる順番と揃えてます
             _buttonsList[0].IsPressed = state.Start;
+            _buttonsList[1].IsPressed = state.Select;
             
-            _buttonsList[1].IsPressed = state.B;
-            _buttonsList[2].IsPressed = state.A;
-            _buttonsList[3].IsPressed = state.X;
-            _buttonsList[4].IsPressed = state.Y;
+            _buttonsList[2].IsPressed = state.B;
+            _buttonsList[3].IsPressed = state.A;
+            _buttonsList[4].IsPressed = state.X;
+            _buttonsList[5].IsPressed = state.Y;
             
-            _buttonsList[5].IsPressed = state.R1;
-            _buttonsList[6].IsPressed = state.L1;
+            _buttonsList[6].IsPressed = state.R1;
+            _buttonsList[7].IsPressed = state.L1;
             
-            _buttonsList[7].IsPressed = state.Right;
-            _buttonsList[8].IsPressed = state.Down;
-            _buttonsList[9].IsPressed = state.Left;
-            _buttonsList[10].IsPressed = state.Up;
+            _buttonsList[8].IsPressed = state.Right;
+            _buttonsList[9].IsPressed = state.Down;
+            _buttonsList[10].IsPressed = state.Left;
+            _buttonsList[11].IsPressed = state.Up;
             
             var right = new Vector2Int(state.RightX, state.RightY);
             if (Mathf.Abs(right.x - _rightStickPosition.x) + 

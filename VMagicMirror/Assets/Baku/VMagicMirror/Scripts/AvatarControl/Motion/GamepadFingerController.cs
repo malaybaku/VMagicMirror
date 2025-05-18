@@ -104,11 +104,13 @@ namespace Baku.VMagicMirror
         {
             switch (key)
             {
+                case GamepadKey.Start:
                 case GamepadKey.A:
                 case GamepadKey.B:
                 case GamepadKey.X:
                 case GamepadKey.Y:
                     return FingerConsts.RightThumb;
+                case GamepadKey.Select:
                 case GamepadKey.UP:
                 case GamepadKey.RIGHT:
                 case GamepadKey.LEFT:

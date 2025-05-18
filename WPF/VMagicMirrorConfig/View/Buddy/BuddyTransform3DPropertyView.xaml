@@ -52,9 +52,16 @@
                   Margin="18,2,4,2"
                   MinHeight="20"
                   Height="20"
+                  Padding="0"
                   ItemsSource="{Binding AvailableParentBoneNames}"
                   SelectedValue="{Binding ParentBoneName.Value}"
-                  />
+                  >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" FontSize="11" Margin="4,0" VerticalAlignment="Center"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
         <TextBlock Grid.Row="2" Grid.Column="0"
                    Style="{StaticResource IndentLabel}"

@@ -133,9 +133,17 @@
                                   Margin="4,0"
                                   MinHeight="20" Height="20"
                                   Style="{StaticResource MahApps.Styles.ComboBox}"
+                                  Padding="0"
                                   ItemsSource="{Binding EnumOptions}"
                                   SelectedIndex="{Binding IntValue.Value}"
-                                  />
+                                  >
+                            <!-- NOTE: RowのHeightが24に揃うようにするため、やや強引だがテキストを縮めて見えを合わせに行く -->
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" FontSize="11" Margin="4,0" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </DataTemplate>
             </view:BuddyPropertyDataTemplateSelector.EnumTemplate>

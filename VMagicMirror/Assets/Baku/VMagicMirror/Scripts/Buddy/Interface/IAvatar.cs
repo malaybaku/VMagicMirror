@@ -68,7 +68,9 @@ namespace VMagicMirror.Buddy
         /// </para>
         /// </remarks>
         bool IsTalking { get; }
-        // TODO: LipSyncのAIUEOが分かるようなプロパティが欲しい & 声量のdB値も欲しい
+
+        // NOTE: ホントはLipSyncのAIUEOが分かるようなプロパティが欲しい & 声量のdB値も合ったほうがいいと思っている
+        // …が、パーフェクトシンクと相性が悪くて「ちゃんとしたAPI」にしづらいので一旦ボツにしてる
 
         /// <summary>
         /// 外部トラッキング機能を使用し、かつパーフェクトシンクが有効な場合に<c>true</c>、それ以外の場合は<c>false</c>を取得します。
@@ -108,7 +110,7 @@ namespace VMagicMirror.Buddy
         /// </remarks>
         float GetCurrentValue(string name, bool customKey);
         
-        //TODO: CurrentFacialあるから不要かも
+        //NOTE: CurrentFacialあれば不要という説があるが、あって困るほどでもなさそうなので公開している
         /// <summary>
         /// ユーザーが外部トラッキング機能に基づくFace Switch機能を使っている場合に、Face Switch機能で検出した表情の名称を取得します。
         /// </summary>

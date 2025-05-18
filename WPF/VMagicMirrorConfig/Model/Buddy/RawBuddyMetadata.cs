@@ -152,12 +152,13 @@ namespace Baku.VMagicMirrorConfig.RawData
         [JsonProperty("scale")]
         public float Scale { get; set; }
 
-        public BuddyTransform2D ToTransform2D() => new(Position.ToBuddyVector2(), Rotation.ToBuddyVector3(), Scale);
+        // NOTE: Scaleのデフォルト値が0以下の場合、「Positionは定義したがScaleは未定義」のようなケースであるとみなして1を指定したものとして扱う。3Dのほうも同様
+        public BuddyTransform2D ToTransform2D() => new(Position.ToBuddyVector2(), Rotation.ToBuddyVector3(), Scale <= 0f ? 1f : Scale);
 
         public static RawBuddyTransform2D CreateDefaultValue() => new()
         {
-            Position = new RawBuddyVector2(0.3f, 0.5f),
-            Scale = 0.1f,
+            Position = new RawBuddyVector2(200f, 50f),
+            Scale = 1f,
         };
     }
 
@@ -177,8 +178,8 @@ namespace Baku.VMagicMirrorConfig.RawData
 
         public BuddyTransform3D ToTransform3D() => new(
             Position.ToBuddyVector3(),
-            Rotation.ToBuddyVector3(), 
-            Scale, 
+            Rotation.ToBuddyVector3(),
+            Scale <= 0f ? 1f : Scale, 
             Enum.TryParse<BuddyParentBone>(ParentBone, out var bone) ? bone : BuddyParentBone.None
             );
 

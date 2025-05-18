@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Baku.VMagicMirror.Buddy.Api;
 using Microsoft.CodeAnalysis.Scripting;
 using UnityEngine;
 using Zenject;
@@ -65,9 +66,6 @@ namespace Baku.VMagicMirror.Buddy
                 return;
             }
 
-            // NOTE: 開発者モードがオフの状態であらかじめ起動していたBuddyについても
-            // スタックトレースを拾おうとするが、それは拾えないので、その場合はSimple版の挙動に帰着する
-            
             // スタックトレースからスクリプト内の行番号を抽出
             // NOTE: Roslynのスクリプトは "Submission#0" という名前で実行される(らしい)
             var scriptStackFrame = ex.StackTrace?
@@ -79,18 +77,20 @@ namespace Baku.VMagicMirror.Buddy
                 LogRuntimeExceptionSimple(folder, ex);
                 return;
             }
-            
+
+            // 行+列が入ってる場合はそれを拾う
             var parts = scriptStackFrame.Split(' ');
             var lineInfo = parts.FirstOrDefault(p => p.Contains(":line"));
-            if (lineInfo == null)
+            if (lineInfo != null)
             {
-                LogRuntimeExceptionSimple(folder, ex);
+                var message = $"[{lineInfo.Trim()}]: {ex.Message}";
+                LogInternal(folder, message, BuddyLogLevel.Fatal);
+                LogExceptionInternal(folder, ex);
                 return;
             }
 
-            var message = $"Runtime Error [{lineInfo.Trim()}]: {ex.Message}";
-            LogInternal(folder, message, BuddyLogLevel.Fatal);
-            LogExceptionInternal(folder, ex);
+            // NOTE: ココを通過するのは開発者モードがオフのとき + サブキャラが(なぜか)親ディレクトリのスクリプトを読み込んでるとき
+            LogRuntimeExceptionSimple(folder, ex);
         }
         
         private void LogRuntimeExceptionSimple(BuddyFolder folder, Exception ex)
@@ -110,12 +110,25 @@ namespace Baku.VMagicMirror.Buddy
             var currentLogLevel = _settingsRepository.LogLevel.Value;
             if (level > currentLogLevel)
             {
+                // 例えば warningまでのログ出力が要望されているとき、Infoが来てもむしるう
                 return;
             }
 
             var time = _realtimeSinceStartup.Value;
-            // NOTE: 時刻もログ種類も字数が整うようにしてある
-            var content = $"[{time,7:0.000}][{LogLevelString(level)}] {message}";
+            string content;
+            // NOTE: Verboseログはアプリ内部の情報を提示するもの…という扱いにするので、スクリプト側の行数は紐づけない
+            if (_settingsRepository.DeveloperModeActive.Value &&
+                (int)level < (int)BuddyLogLevel.Verbose && 
+                TryGetScriptExecLocation(folder, out var locationInfo))
+            {    
+                // NOTE: 時刻もログ種類も字数が整うようにしてある。else側も同様
+                content = $"[{time,7:0.000}][{LogLevelString(level)}][{locationInfo}] {message}";
+            }
+            else
+            {
+                content = $"[{time,7:0.000}][{LogLevelString(level)}] {message}";
+            }
+            
             _fileLogger.Log(folder, content);
             NotifyBuddyLogMessage(folder, content, level);
         }
@@ -124,8 +137,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             if (!_counter.TrySendLog(logLevel))
             {
-                // ログを送りすぎの場合、ここでガードされる
-                Debug.Log("Guard too many buddy log send");
+                // ログを短時間でWPF側に投げすぎの場合、ここでガードされる
                 return;
             }
             
@@ -147,8 +159,34 @@ namespace Baku.VMagicMirror.Buddy
             BuddyLogLevel.Warning => "Warning",
             BuddyLogLevel.Info => "Info   ",
             BuddyLogLevel.Verbose => "Verbose",
-            _ => throw new NotImplementedException(),
+            // ログでエラーにされてもヤなのでエラーにはしない
+            _ => "Unknown  ",
         };
+
+        // StackTraceを見に行ってユーザースクリプトの実行位置を特定しようとするすごいやつだよ
+        private static bool TryGetScriptExecLocation(BuddyFolder folder, out string result)
+        {
+            result = "";
+            var stackTrace = new System.Diagnostics.StackTrace(true).ToString();
+            var scriptStackFrame = stackTrace
+                .Split('\n')
+                .FirstOrDefault(line => line.Contains("Submission#0"));
+            if (scriptStackFrame == null)
+            {
+                return false;
+            }
+            
+            // こういう記述を探す: "C:\Users\Example\Documents\VMagicMirror_Files\Buddy\ExampleBuddy\main.csx:123"
+            var folderPath = SpecialFiles.GetBuddyDirectoryPath(folder);
+            var folderPathIndex = scriptStackFrame.IndexOf(folderPath, StringComparison.InvariantCultureIgnoreCase);
+            if (folderPathIndex >= 0)
+            {
+                // 上記の例に対して ".\main.csx:123" のような部分だけ取得する。"."は無いと何か気になるので入れているが、深い意味はない
+                result = "." + scriptStackFrame[(folderPathIndex + folderPath.Length)..].Trim();
+                return true;
+            } 
+            return false;
+        }
         
         class BuddyLogCounter
         {
@@ -238,10 +276,7 @@ namespace Baku.VMagicMirror.Buddy
                 }
             }
         }
-                
     }
-
-
     
     [Serializable]
     public class BuddyLogMessage

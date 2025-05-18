@@ -166,6 +166,20 @@ namespace VMagicMirror.Buddy
         void LogError(string value);
         
         /// <summary>
+        /// アプリケーションに適用されている言語を取得します。
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// VMagicMirrorのローカライズシステムの実装都合により、この値は日本語・英語以外の言語選択を行うと <see cref="AppLanguage.Unknown"/> を返します。
+        /// </para>
+        /// <para>
+        /// 多くの言語に対応できるようなサブキャラを作成する場合、このプロパティの代わりに <see cref="IProperty"/> によって
+        /// ユーザーが言語選択を別途選択できるようにすることも検討して下さい。
+        /// </para>
+        /// </remarks>
+        AppLanguage Language { get; }
+        
+        /// <summary>
         /// 0以上、1未満のランダムな値を取得します。
         /// </summary>
         /// <returns></returns>
@@ -223,37 +237,25 @@ namespace VMagicMirror.Buddy
         /// </remarks>
         ISprite3D Create3DSprite();
 
-        /// <summary>
-        /// 空間上にGLBオブジェクトを配置するためのインスタンスを生成します。
-        /// </summary>
-        /// <returns></returns>
-        IGlb CreateGlb();
-        
-        /// <summary>
-        /// 空間上にVRMアバターを配置するためのインスタンスを生成します。
-        /// </summary>
-        /// <returns></returns>
-        IVrm CreateVrm();
+        // NOTE: ISprite3D以外の3D系APIは安定性は検証不十分のためv4.0.0ではオミットされている
 
-        /// <summary>
-        /// <see cref="IVrm"/> として表示したアバターに適用するためのVRMアニメーションのためのインスタンスを生成します。
-        /// </summary>
-        /// <returns></returns>
-        IVrmAnimation CreateVrmAnimation();
-        
-        /// <summary>
-        /// アプリケーションに適用されている言語を取得します。
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// VMagicMirrorのローカライズシステムの実装都合により、この値は日本語・英語以外の言語選択を行うと <see cref="AppLanguage.Unknown"/> を返します。
-        /// </para>
-        /// <para>
-        /// 多くの言語に対応できるようなサブキャラを作成する場合、このプロパティの代わりに <see cref="IProperty"/> によって
-        /// ユーザーが言語選択を別途選択できるようにすることも検討して下さい。
-        /// </para>
-        /// </remarks>
-        AppLanguage Language { get; }
+        // /// <summary>
+        // /// 空間上にGLBオブジェクトを配置するためのインスタンスを生成します。
+        // /// </summary>
+        // /// <returns></returns>
+        // IGlb CreateGlb();
+        //
+        // /// <summary>
+        // /// 空間上にVRMアバターを配置するためのインスタンスを生成します。
+        // /// </summary>
+        // /// <returns></returns>
+        // IVrm CreateVrm();
+        //
+        // /// <summary>
+        // /// <see cref="IVrm"/> として表示したアバターに適用するためのVRMアニメーションのためのインスタンスを生成します。
+        // /// </summary>
+        // /// <returns></returns>
+        // IVrmAnimation CreateVrmAnimation();
     }
 
     /// <summary> VMagicMirrorの表示に使用している言語です。 </summary>
@@ -262,7 +264,7 @@ namespace VMagicMirror.Buddy
     /// VMagicMirrorのローカライズシステムの実装都合により、日本語・英語以外の言語は <see cref="Unknown"/> として扱われます。
     /// </para>
     /// <para>
-    /// 多言語に詳細に対応できるサブキャラを作る場合、 <see cref="IProperty"/> でユーザーが言語選択を選べるようにすることも検討して下さい。
+    /// 多言語に詳細に対応できるサブキャラを作る場合、 <see cref="IProperty"/> を通じて言語選択UIを提供することも検討してください。
     /// </para>
     /// </remarks>
     public enum AppLanguage
@@ -270,8 +272,8 @@ namespace VMagicMirror.Buddy
         /// <summary> 日本語、英語のいずれでもない言語 </summary>
         Unknown = 0,
         /// <summary> 日本語 </summary>
-        Japanese,
+        Japanese = 1,
         /// <summary> 英語 </summary>
-        English,
+        English = 2,
     }
 }

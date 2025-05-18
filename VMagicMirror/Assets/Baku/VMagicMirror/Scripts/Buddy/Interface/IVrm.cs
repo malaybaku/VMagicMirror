@@ -4,8 +4,20 @@ using System.Threading.Tasks;
 namespace VMagicMirror.Buddy
 {
     /// <summary>
-    /// VRMのロードと操作を行うAPIです。
+    /// サブキャラとしてVRMのロードと操作を行うAPIです。
+    /// 本APIは作成途上のものであり、VMagicMirror v4.0.0の時点では本APIは利用できません。
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// 本APIはVRMのロードと操作を行うためのAPIです。
+    /// VMagicMirror v4.0.0の時点では機能整備が完了していないため、本APIの利用手段は提供していません。
+    /// ここでは、想定している機能を提示する目的でドキュメントを公開しています。
+    /// </para>
+    ///
+    /// <para>
+    /// VRMやGLBによる3Dオブジェクトをサブキャラとして表示する機能は、 v4.0.0 以降のマイナーアップデートとして提供予定です。
+    /// </para>
+    /// </remarks>
     public interface IVrm
     {
         /// <summary> オブジェクトの基本姿勢に関する値を取得します。 </summary>
@@ -32,7 +44,9 @@ namespace VMagicMirror.Buddy
         /// </remarks>
         Task LoadPresetAsync(string name);
         
-        // NOTE: LoadAsyncが終わったあとで呼び出すのが期待値
+        /// <summary>
+        /// <see cref="LoadAsync"/> でロードしたモデルを表示します。
+        /// </summary>
         void Show();
 
         /// <summary>
@@ -92,6 +106,10 @@ namespace VMagicMirror.Buddy
         void SetMuscles(float?[] muscles);
         
         // 表情
+        /// <summary>
+        /// モデルに定義されたカスタムブレンドシェイプの名称の一覧を取得します。
+        /// </summary>
+        /// <returns></returns>
         string[] GetCustomBlendShapeNames();
         /// <summary>
         /// ロードしたモデルに指定した名称のカスタムブレンドシェイプが存在するかどうかを取得します。

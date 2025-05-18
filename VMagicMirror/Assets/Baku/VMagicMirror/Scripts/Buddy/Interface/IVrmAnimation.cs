@@ -4,7 +4,18 @@ namespace VMagicMirror.Buddy
 {
     /// <summary>
     /// VRM Animationの読み込み処理に関するAPIです。
+    /// 本APIは作成途上のものであり、VMagicMirror v4.0.0の時点では本APIは利用できません。
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// VMagicMirror v4.0.0の時点では機能整備が完了していないため、本APIの利用手段は提供していません。
+    /// ここでは、想定している機能を提示する目的でドキュメントを公開しています。
+    /// </para>
+    ///
+    /// <para>
+    /// VRMやGLBによる3Dオブジェクトをサブキャラとして表示する機能は、 v4.0.0 以降のマイナーアップデートとして提供予定です。
+    /// </para>
+    /// </remarks>
     public interface IVrmAnimation
     {
         /// <summary>

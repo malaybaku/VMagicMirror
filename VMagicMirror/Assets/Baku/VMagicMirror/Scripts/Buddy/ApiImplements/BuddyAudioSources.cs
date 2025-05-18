@@ -114,6 +114,7 @@ namespace Baku.VMagicMirror.Buddy
                     _audioPlayStates[i] = AudioPlayState.Empty;
                     _keys[i] = "";
                     count++;
+                    _audioSources[i].Stop();
                 }
             }
             return _keys.AsSpan(0, count);
@@ -130,6 +131,7 @@ namespace Baku.VMagicMirror.Buddy
                     _audioPlayStates[i] = AudioPlayState.Empty;
                     _keys[i] = key;
                     count++;
+                    _audioSources[i].Stop();
                 }
             }
             return _keys.AsSpan(0, count);

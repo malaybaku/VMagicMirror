@@ -319,7 +319,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             var message = MessageIndication.ResetSingleBuddySettings();
             var result = await MessageBoxWrapper.Instance.ShowAsync(
                 message.Title,
-                string.Format(message.Content, DisplayName),
+                string.Format(message.Content, DisplayName.Value),
                 MessageBoxWrapper.MessageBoxStyle.OKCancel
                 )
                 .ConfigureAwait(true);

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using Zenject;
 using Object = UnityEngine.Object;
 
 namespace Baku.VMagicMirror.Buddy
@@ -7,14 +7,11 @@ namespace Baku.VMagicMirror.Buddy
     /// <summary> Buddyに対し、Script APIに基づいて生成されたオブジェクトを格納しておくレポジトリ </summary>
     public class BuddyRuntimeObjectRepository
     {
-        private readonly Dictionary<BuddyId, SingleBuddyObjectInstanceRepository> _repo = new();
+        private readonly Dictionary<BuddyId, SingleBuddyObjectInstanceRepository> _repositories = new();
 
-        public IEnumerable<BuddyGlbInstance> GetAllGlbInstances()
-            => _repo.Values.SelectMany(r => r.Glbs);
-
-        public IEnumerable<BuddyVrmInstance> GetAllVrmInstances()
-            => _repo.Values.SelectMany(r => r.Vrms);
-
+        [Inject]
+        public BuddyRuntimeObjectRepository() { }
+        
         public bool TryGet(BuddyId buddyId, out SingleBuddyObjectInstanceRepository result)
         {
             result = Get(buddyId);
@@ -42,23 +39,23 @@ namespace Baku.VMagicMirror.Buddy
             if (Get(buddyId) is { } repo)
             {
                 repo.DeleteAllObjects();
-                _repo.Remove(buddyId);
+                _repositories.Remove(buddyId);
             }
         }
 
         private SingleBuddyObjectInstanceRepository Get(BuddyId buddyId)
-            => _repo.GetValueOrDefault(buddyId, null);
+            => _repositories.GetValueOrDefault(buddyId, null);
 
         private SingleBuddyObjectInstanceRepository GetOrCreate(BuddyFolder buddyFolder)
         {
             var id = buddyFolder.BuddyId;
-            if (_repo.TryGetValue(id, out var cached))
+            if (_repositories.TryGetValue(id, out var cached))
             {
                 return cached;
             }
 
             var repo = new SingleBuddyObjectInstanceRepository(id);
-            _repo[id] = repo;
+            _repositories[id] = repo;
             return repo;
         }
     }

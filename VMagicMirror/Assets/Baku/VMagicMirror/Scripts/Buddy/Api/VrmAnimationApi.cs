@@ -21,6 +21,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _logger = logger;
         }
 
+        public override string ToString() => nameof(IVrmAnimation);
+        
         public async Task LoadAsync(string path) => await ApiUtils.TryAsync(
             _buddyFolder,
             _logger,

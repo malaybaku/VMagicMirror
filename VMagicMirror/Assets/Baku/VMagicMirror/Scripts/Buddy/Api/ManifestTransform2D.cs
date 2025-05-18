@@ -17,6 +17,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         /// <summary> NOTE: Sprite2DApiなど、他のAPIで引数として本APIを受け取ったときに必要に応じて使う </summary>
         /// <returns></returns>
         internal BuddyManifestTransform2DInstance GetInstance() => _instance;
+
+        public override string ToString() => nameof(IReadOnlyTransform2D);
         
         // NOTE: Manifest由来のTransform2Dは常にCanvas直下に配置されるので、Localかどうかは考慮しないでOK
         public Vector2 LocalPosition => Position;

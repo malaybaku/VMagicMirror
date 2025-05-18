@@ -25,6 +25,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl = impl;
         }
 
+        public override string ToString() => nameof(IAudio);
+
         public void Play(string path, float volume = 1.0f, float pitch = 1.0f, string key = "")
             => ApiUtils.Try(_buddyFolder, _logger, () =>
             {

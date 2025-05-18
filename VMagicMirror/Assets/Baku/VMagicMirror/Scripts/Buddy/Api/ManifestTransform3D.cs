@@ -11,6 +11,8 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         private readonly BuddyManifestTransform3DInstance _instance;
         internal BuddyManifestTransform3DInstance GetInstance() => _instance;
+
+        public override string ToString() => nameof(IReadOnlyTransform3D);
         
         public Vector3 LocalPosition => _instance.LocalPosition.ToApiValue();
         public Quaternion LocalRotation => _instance.LocalRotation.ToApiValue();

@@ -26,5 +26,7 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public IReadOnlyTransform2D GetTransform2D(string key) => _transform2d.GetValueOrDefault(key);
         public IReadOnlyTransform3D GetTransform3D(string key) => _transform3d.GetValueOrDefault(key);
+        
+        public override string ToString() => nameof(IManifestTransforms);
     }
 }

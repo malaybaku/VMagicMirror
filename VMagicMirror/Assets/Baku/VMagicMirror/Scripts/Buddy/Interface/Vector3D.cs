@@ -50,6 +50,9 @@ namespace VMagicMirror.Buddy
             (double) this.y == (double) other.y && 
             (double) this.z == (double) other.z;
 
+        // NOTE: 最低限それっぽくするのが目的のため、Format文字列とかは受け取らない
+        public override string ToString() => $"({x:0.00}, {y:0.00}, {z:0.00})";
+
         public static float Distance(Vector3 a, Vector3 b)
         {
             var num1 = a.x - b.x;

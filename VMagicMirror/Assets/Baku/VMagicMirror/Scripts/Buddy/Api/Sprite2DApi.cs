@@ -34,6 +34,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             Transform = new Transform2D(instance.GetTransform2DInstance());
             DefaultSpritesSetting = new DefaultSpritesSettingApi(_instance.DefaultSpritesSetting);
         }
+        
+        public override string ToString() => nameof(ISprite2D);
 
         public ITransform2D Transform { get; }
         public IDefaultSpritesSetting DefaultSpritesSetting { get; }

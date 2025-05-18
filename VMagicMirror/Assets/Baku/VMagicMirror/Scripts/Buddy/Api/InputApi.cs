@@ -14,6 +14,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl = impl;
         }
         
+        public override string ToString() => nameof(IInput);
+        
         internal void InvokeKeyboardKeyDown(string key) => KeyboardKeyDown?.Invoke(key);
         internal void InvokeKeyboardKeyUp(string key) => KeyboardKeyUp?.Invoke(key);
         internal void InvokeGamepadButtonDown(GamepadKey key) => GamepadButtonDown?.Invoke(key.ToApiValue());

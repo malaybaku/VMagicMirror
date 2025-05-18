@@ -88,6 +88,9 @@ namespace VMagicMirror.Buddy
             return this.x.Equals(other.x) && this.y.Equals(other.y) && this.z.Equals(other.z) && this.w.Equals(other.w);
         }
 
+        // NOTE: 最低限それっぽくするのが目的のため、Format文字列とかは受け取らない
+        public override string ToString() => $"({x:0.00}, {y:0.00}, {z:0.00}, {w:0.00})";
+
         /// <summary>
         /// Quaternionをベクトルとして見たときの内積を計算します。
         /// </summary>

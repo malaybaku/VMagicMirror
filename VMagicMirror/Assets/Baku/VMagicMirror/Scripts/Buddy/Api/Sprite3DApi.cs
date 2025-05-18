@@ -16,6 +16,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             Transform = new Transform3D(instance.Transform3DInstance);
         }
 
+        public override string ToString() => nameof(ISprite3D);
+        
         public ITransform3D Transform { get; }
 
         public void Preload(string path) => ApiUtils.Try(BuddyFolder, _logger, () =>

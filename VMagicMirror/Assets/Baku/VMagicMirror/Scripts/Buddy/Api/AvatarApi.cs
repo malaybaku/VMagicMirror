@@ -14,6 +14,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl = impl;
         }
 
+        public override string ToString() => nameof(IAvatarLoadEvent);
+
         // NOTE:
         // これだとイベントの発火より先にフラグが変わるケースが出てくる。
         // - Invoke関数の中でフラグが変わるような書き方もアリ
@@ -36,6 +38,8 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             _impl = impl;
         }
+
+        public override string ToString() => nameof(IAvatarFacial);
 
         internal void InvokeOnBlinkedInternal() => OnBlinked?.Invoke();
 
@@ -73,6 +77,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl = impl;
         }
 
+        public override string ToString() => nameof(IAvatarPose);
+
         // NOTE: RootPositionはほぼゼロだが、Rotのほうはゲーム入力モードで回ることがあるので公開してもバチ当たらない…というモチベがある
         public Vector3 GetRootPosition() => _impl.GetRootPosition().ToApiValue();
         public Quaternion GetRootRotation() => _impl.GetRootRotation().ToApiValue();
@@ -99,6 +105,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             => OnGamepadButtonDown?.Invoke(button.ToApiValue());
         internal void InvokeOnArcadeStickButtonDownInternal(GamepadKey button) 
             => OnArcadeStickButtonDown?.Invoke(button.ToApiValue());
+
+        public override string ToString() => nameof(IAvatarMotionEvent);
         
         public event Action<string> OnKeyboardKeyDown;
         public event Action OnTouchPadMouseButtonDown;

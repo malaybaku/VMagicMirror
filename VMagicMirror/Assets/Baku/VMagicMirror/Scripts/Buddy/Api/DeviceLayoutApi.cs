@@ -10,6 +10,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl = impl;
         }
 
+        public override string ToString() => nameof(BuddyApi.IDeviceLayout);
+
         public BuddyApi.Pose GetCameraPose() => _impl.GetCameraPose().ToApiValue();
         public float GetCameraFov() => _impl.GetCameraFov();
 

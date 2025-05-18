@@ -58,6 +58,9 @@ namespace VMagicMirror.Buddy
         public bool Equals(Vector2 other) 
             => (double) this.x == (double) other.x && (double) this.y == (double) other.y;
 
+        // NOTE: 最低限それっぽくするのが目的のため、Format文字列とかは受け取らない
+        public override string ToString() => $"({x:0.00}, {y:0.00})";
+
         public static float Dot(Vector2 lhs, Vector2 rhs)
         {
             return (float) ((double) lhs.x * rhs.x + (double) lhs.y * rhs.y);

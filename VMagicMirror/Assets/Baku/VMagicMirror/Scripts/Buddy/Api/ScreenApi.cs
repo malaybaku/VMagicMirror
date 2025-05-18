@@ -12,6 +12,8 @@ namespace Baku.VMagicMirror.Buddy.Api
             _impl = impl;
         }
 
+        public override string ToString() => nameof(IScreen);
+
         public int Width => Screen.width;
         public int Height => Screen.height;
         public bool IsTransparent => _impl.IsTransparent;

@@ -72,6 +72,9 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         bool IRootApi.AvatarOutputFeatureEnabled => _settingsRepository.MainAvatarOutputActive.Value;
 
+        // NOTE: Api.Log($"{Api}") のような(ミスで)書いたログに対して長過ぎる出力にならないようにしておく…というのが狙い
+        public override string ToString() => nameof(IRootApi);
+
         public string BuddyDirectory => _baseDir;
         public string CacheDirectory { get; }
 

@@ -11,6 +11,8 @@ namespace Baku.VMagicMirror.Buddy.Api
     /// </summary>
     public class PropertyApi : BuddyApi.IProperty
     {
+        public override string ToString() => nameof(BuddyApi.IProperty);
+
         // NOTE:
         // - リロードする場合はインスタンスが丸ごと破棄される(べきである)ため、Clear()関数はない
         // - WPF側で初期化のシーケンスとかメッセージの送信順を担保する前提のため、IsInitialized() みたいなのも不要

@@ -11,6 +11,9 @@ namespace Baku.VMagicMirror.Buddy.Api
             _instance = instance;
         }
 
+        // NOTE: 厳密にはITransform2Dと1:1対応じゃないが、実体がReadOnlyじゃないよ…という意味でこんくらいにしておく
+        public override string ToString() => nameof(ITransform2D);
+
         IReadOnlyTransform2D ITransform2D.AsReadOnly() => this;
 
         public Vector2 LocalPosition

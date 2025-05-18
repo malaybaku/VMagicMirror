@@ -1,5 +1,6 @@
 using UniRx;
 using UnityEngine;
+using BuddyApi = VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -8,7 +9,7 @@ namespace Baku.VMagicMirror.Buddy
 
     /// <summary>
     /// BuddyのAPIとして生成できる3Dオブジェクトのインスタンスに付随していて、
-    /// 実質的に <see cref="VMagicMirror.Buddy.ITransform3D"/> を実装するようなインスタンス
+    /// 実質的に <see cref="BuddyApi.ITransform3D"/> を実装するようなインスタンス
     /// </summary>
     public class BuddyTransform3DInstance : MonoBehaviour
     {

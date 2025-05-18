@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3562878424831401247}
   - component: {fileID: 3584252159672837817}
   - component: {fileID: 7272758562949004422}
+  - component: {fileID: 1339147196407076264}
   m_Layer: 0
   m_Name: BuddySprite3DInstance
   m_TagString: Untagged
@@ -50,6 +51,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -98,3 +102,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 3584252159672837817}
+  transform3DInstance: {fileID: 1339147196407076264}
+--- !u!114 &1339147196407076264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8031867796596399386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c94b92e7cedfb5e4a81515292714aafc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

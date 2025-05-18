@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
 
 namespace Baku.VMagicMirrorConfig.RawData
 {
@@ -149,11 +150,11 @@ namespace Baku.VMagicMirrorConfig.RawData
         [JsonProperty("rotation")]
         public RawBuddyVector3 Rotation { get; set; }
 
-        [JsonProperty("scale")]
+        [DefaultValue(1.0f)]
+        [JsonProperty("scale", DefaultValueHandling = DefaultValueHandling.Populate)]
         public float Scale { get; set; }
 
-        // NOTE: Scaleのデフォルト値が0以下の場合、「Positionは定義したがScaleは未定義」のようなケースであるとみなして1を指定したものとして扱う。3Dのほうも同様
-        public BuddyTransform2D ToTransform2D() => new(Position.ToBuddyVector2(), Rotation.ToBuddyVector3(), Scale <= 0f ? 1f : Scale);
+        public BuddyTransform2D ToTransform2D() => new(Position.ToBuddyVector2(), Rotation.ToBuddyVector3(), Scale);
 
         public static RawBuddyTransform2D CreateDefaultValue() => new()
         {
@@ -170,7 +171,8 @@ namespace Baku.VMagicMirrorConfig.RawData
         [JsonProperty("rotation")]
         public RawBuddyVector3 Rotation { get; set; }
 
-        [JsonProperty("scale")]
+        [DefaultValue(1.0f)]
+        [JsonProperty("scale", DefaultValueHandling = DefaultValueHandling.Populate)]
         public float Scale { get; set; }
 
         [JsonProperty("parentBone")]
@@ -179,7 +181,7 @@ namespace Baku.VMagicMirrorConfig.RawData
         public BuddyTransform3D ToTransform3D() => new(
             Position.ToBuddyVector3(),
             Rotation.ToBuddyVector3(),
-            Scale <= 0f ? 1f : Scale, 
+            Scale, 
             Enum.TryParse<BuddyParentBone>(ParentBone, out var bone) ? bone : BuddyParentBone.None
             );
 

@@ -61,7 +61,23 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public bool HasClip(string name) => _impl.HasKey(name, true);
         public float GetCurrentValue(string name, bool customKey) => _impl.GetBlendShapeValue(name, customKey);
-        public string GetActiveFaceSwitch() => _impl.GetActiveFaceSwitch();
+
+        public FaceSwitchState GetActiveFaceSwitch()
+        {
+            var rawAction = _impl.GetActiveFaceSwitch();
+            // NOTE: intキャストを使わないのは、内部挙動だけ変えたときに壊れにくくするため
+            return rawAction switch
+            {
+                FaceSwitchAction.MouthSmile => FaceSwitchState.MouthSmile,
+                FaceSwitchAction.EyeSquint => FaceSwitchState.EyeSquint,
+                FaceSwitchAction.EyeWide => FaceSwitchState.EyeWide,
+                FaceSwitchAction.BrowUp => FaceSwitchState.BrowUp,
+                FaceSwitchAction.BrowDown => FaceSwitchState.BrowDown,
+                FaceSwitchAction.CheekPuff => FaceSwitchState.CheekPuff,
+                FaceSwitchAction.TongueOut => FaceSwitchState.TongueOut,
+                _ => FaceSwitchState.None,
+            };
+        } 
 
         internal void Dispose()
         {

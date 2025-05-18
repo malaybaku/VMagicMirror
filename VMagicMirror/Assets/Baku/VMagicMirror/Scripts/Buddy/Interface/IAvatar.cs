@@ -115,7 +115,7 @@ namespace VMagicMirror.Buddy
         /// ユーザーが外部トラッキング機能に基づくFace Switch機能を使っている場合に、Face Switch機能で検出した表情の名称を取得します。
         /// </summary>
         /// <returns></returns>
-        string GetActiveFaceSwitch();
+        FaceSwitchState GetActiveFaceSwitch();
     }
 
     public interface IAvatarPose

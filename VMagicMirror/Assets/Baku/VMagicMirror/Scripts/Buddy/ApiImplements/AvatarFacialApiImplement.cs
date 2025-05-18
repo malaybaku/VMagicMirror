@@ -133,19 +133,19 @@ namespace Baku.VMagicMirror.Buddy
         /// この値が "" 以外の値を返すが実際には表情は適用されていない…という状況も起こり得る。
         /// </summary>
         /// <returns></returns>
-        public string GetActiveFaceSwitch()
+        public FaceSwitchAction GetActiveFaceSwitch()
         {
             if (!IsMainAvatarOutputActive)
             {
-                return "";
+                return FaceSwitchAction.None;
             }
 
             if (!_externalTrackerDataSource.Connected)
             {
-                return "";
+                return FaceSwitchAction.None;
             }
 
-            return ConvertFaceSwitchActionToName(_faceSwitchExtractor.ActiveItem.Action);
+            return _faceSwitchExtractor.ActiveItem.Action;
         }
 
         private static ExpressionKey CreateExpressionKey(string key, bool isCustomKey)
@@ -180,21 +180,5 @@ namespace Baku.VMagicMirror.Buddy
             };
         }
 
-        private static string ConvertFaceSwitchActionToName(FaceSwitchAction action)
-        {
-            // NOTE: None以外は実質ToString()してるのと変わらないが、
-            // enumのrenameでAPIが壊れないようにしたいので(一見冗長でも)リテラルに変換してる
-            return action switch
-            {
-                FaceSwitchAction.MouthSmile => "MouthSmile",
-                FaceSwitchAction.EyeSquint => "EyeSquint",
-                FaceSwitchAction.EyeWide => "EyeWide",
-                FaceSwitchAction.BrowUp => "BrowUp",
-                FaceSwitchAction.BrowDown => "BrowDown",
-                FaceSwitchAction.CheekPuff => "CheekPuff",
-                FaceSwitchAction.TongueOut => "TongueOut",
-                _ => "",
-            };
-        }
     }
 }

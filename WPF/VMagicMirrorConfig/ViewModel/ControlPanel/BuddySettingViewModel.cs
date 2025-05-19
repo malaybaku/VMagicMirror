@@ -119,10 +119,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void OnBuddyUpdated(object? sender, BuddyDataEventArgs e)
         {
-            _items[e.Index].ReloadRequested -= ReloadBuddy;
+            var buddyToRemove = _items[e.Index];
+            buddyToRemove.ReloadRequested -= ReloadBuddy;
             _items.RemoveAt(e.Index);
 
             var item = new BuddyItemViewModel(_buddySettingsSender, e.BuddyData);
+            // Expanderの状態を引き継ぐ: 再読み込みの前後でUIの見えが変化しすぎないようにするのが狙い
+            item.ItemDetailIsVisible.Value = buddyToRemove.ItemDetailIsVisible.Value;
             item.SetDeveloperModeActive(DeveloperModeActive.Value);
             item.ReloadRequested += ReloadBuddy;
             _items.Insert(e.Index, item);
@@ -258,6 +261,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         /// <summary> 非開発者に表示する想定の重大エラー </summary>
         public RProperty<BuddyLogMessage?> CurrentFatalError { get; } = new(null);
+
+        /// <summary>
+        /// NOTE: UI上のExpanderの開閉を覚えておくプロパティ。
+        /// 通常は単にViewと同期しているだけの値だが、Buddy単体をリロードしたときはリロード前後でフラグの値を引き継ぐ
+        /// </summary>
+        public RProperty<bool> ItemDetailIsVisible { get; } = new(false);
 
         public void ApplyLanguage(bool isJapanese)
         {

@@ -298,7 +298,6 @@
     <StackPanel>
 
         <ToggleButton 
-            d:IsChecked="True"
             x:Name="ExpanderToggle"
             ma:ControlsHelper.CornerRadius="0"
             ma:ControlsHelper.FocusBorderBrush="Transparent"
@@ -309,7 +308,8 @@
             BorderThickness="0"
             Height="25"
             HorizontalContentAlignment="Stretch"
-            Padding="0"                       
+            Padding="0"
+            IsChecked="{Binding ItemDetailIsVisible.Value, Mode=TwoWay}"
             md:ButtonAssist.CornerRadius="0"
             >
             <ToggleButton.Style>

@@ -69,6 +69,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 (int) BuddyLogLevel.Fatal
                 ));
 
+            ItemDetailIsVisible = new(true);
+
             var buddyData = CreateDesignBuddyData();
             _buddyData = buddyData;
             LogMessages = new ReadOnlyObservableCollection<BuddyLogMessage>(_logMessages);
@@ -93,6 +95,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> ShouldRestartToApplyDeveloperMode { get; }
         public RProperty<bool> HasError { get; }
         public RProperty<bool> HasNonDeveloperError { get; }
+
+        public RProperty<bool> ItemDetailIsVisible { get; }
 
 
         private readonly ActionCommand _dummyCommand = new(() => { });

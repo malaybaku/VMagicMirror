@@ -69,6 +69,15 @@ namespace VMagicMirror.Buddy
         /// より簡単にメインスレッドへアクセスしたい場合、変わりに <see cref="RunOnMainThread"/> を使用することを検討してください。
         /// </remarks>
         SynchronizationContext MainThreadContext { get; }
+
+        /// <summary>
+        /// サブキャラが終了するときにキャンセル扱いされるようなCancellationTokenを取得します。
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// サブキャラの挙動として非同期処理を実装する場合、この値を使用することで、サブキャラが意図せず実行され続けることを防止できます。
+        /// </remarks>
+        CancellationToken GetCancellationTokenOnDisabled();
         
         /// <summary>
         /// 指定したタスクをメインスレッドで実行します。

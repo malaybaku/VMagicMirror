@@ -123,6 +123,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             _items.RemoveAt(e.Index);
 
             var item = new BuddyItemViewModel(_buddySettingsSender, e.BuddyData);
+            item.SetDeveloperModeActive(DeveloperModeActive.Value);
             item.ReloadRequested += ReloadBuddy;
             _items.Insert(e.Index, item);
 

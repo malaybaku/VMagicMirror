@@ -129,7 +129,7 @@ namespace Baku.VMagicMirrorConfig
         }
 
         /// <summary>
-        /// 特定のBuddyだけをリロードする。このとき、リロードしたBuddyのIndexは維持されるが、インスタンスは新規に生成され直す
+        /// 特定のBuddyだけをリロードする。このとき、リロードしたBuddyのIndexは維持されるが、インスタンスは新規生成する
         /// </summary>
         /// <param name="buddy"></param>
         public void ReloadBuddy(BuddyData buddy)

@@ -11,6 +11,7 @@ namespace Baku.VMagicMirror.Buddy
         // TODO: FreeLayoutのオン/オフは単一のRepositoryで持ちたい…
         private readonly IMessageReceiver _receiver;
         private readonly IMessageSender _sender;
+        private readonly BuddyLayoutRepository _layoutRepository;
         private readonly BuddyManifestTransformInstanceRepository _repository;
 
         private readonly ReactiveProperty<bool> _freeLayoutActive = new();
@@ -18,10 +19,12 @@ namespace Baku.VMagicMirror.Buddy
         public BuddyLayoutEditNotifier(
             IMessageReceiver receiver,
             IMessageSender sender,
+            BuddyLayoutRepository layoutRepository,
             BuddyManifestTransformInstanceRepository repository)
         {
             _sender = sender;
             _receiver = receiver;
+            _layoutRepository = layoutRepository;
             _repository = repository;
         }
         
@@ -29,7 +32,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             _receiver.BindBoolProperty(VmmCommands.EnableDeviceFreeLayout, _freeLayoutActive);
 
-            //NOTE: インスタンスの破棄について、ちゃんとRemovedをチェックするようにしてもそれはそれでOK
+            //NOTE: インスタンスの破棄について、ちゃんとRemovedをチェックするようにしてもそれはそれでOK。ここではAddToによって生存期間を管理している
             _repository.Transform2DAdded
                 .Subscribe(instance =>
                 {
@@ -57,6 +60,16 @@ namespace Baku.VMagicMirror.Buddy
 
         private void Notify2DLayoutUpdated(BuddyManifestTransform2DInstance instance)
         {
+            // NOTE: WPFからデータの送り返しが発生しない前提で、Unity側のレイアウト情報も上書きしておく。3Dも同様
+            _layoutRepository.Get(instance.BuddyId).AddOrUpdate(
+                instance.InstanceName,
+                new BuddyTransform2DLayout(
+                    instance.Position,
+                    instance.RotationEuler,
+                    instance.Scale.x
+                    )
+                );
+            
             var msg = new BuddySettingsPropertyMessage()
             {
                 BuddyId = instance.BuddyId.Value,
@@ -77,6 +90,18 @@ namespace Baku.VMagicMirror.Buddy
         
         private void Notify3DLayoutUpdated(BuddyManifestTransform3DInstance instance)
         {
+            // NOTE: BuddyLayoutUpdaterの受信処理では「ParentBoneが変化したら云々」みたいな処理が入っているので複雑だが、
+            // この関数を通過するケースではParentBoneは変化しないので、単に値を入れておくだけでOK
+            _layoutRepository.Get(instance.BuddyId).AddOrUpdate(
+                instance.InstanceName,
+                new BuddyTransform3DLayout(
+                    instance.LocalPosition,
+                    instance.LocalRotation,
+                    instance.LocalScale.x,
+                    instance.HasParentBone ? instance.ParentBone : null
+                )
+            );
+
             // NOTE: フリーレイアウトで編集しうるのはPos/Rot/Scaleの3つだけで、ParentBoneは編集はされない想定
             var msg = new BuddySettingsPropertyMessage()
             {

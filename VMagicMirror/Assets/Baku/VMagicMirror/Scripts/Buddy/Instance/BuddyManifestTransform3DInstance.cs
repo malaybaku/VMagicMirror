@@ -25,9 +25,6 @@ namespace Baku.VMagicMirror.Buddy
         public BuddyId BuddyId { get; set; } = BuddyId.Empty;
         public string InstanceName { get; set; } = "";
 
-        /// <summary> NOTE: アタッチ先がない場合はnullにしておく </summary>
-        public HumanBodyBones? AttachedBone { get; set; }
-
         public Vector3 LocalPosition
         {
             get => transform.localPosition;

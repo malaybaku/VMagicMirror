@@ -24,9 +24,9 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             get
             {
-                if (_instance.AttachedBone is { } bone)
+                if (_instance.HasParentBone)
                 {
-                    return (HumanBodyBones)bone;
+                    return (HumanBodyBones)_instance.ParentBone;
                 }
                 else
                 {

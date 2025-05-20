@@ -25,10 +25,15 @@ namespace VMagicMirror.Buddy
         public IFloatingSpriteEffect Floating { get; }
 
         /// <summary>
-        /// 跳ねているような視覚効果を適用するエフェクトの設定を取得します。
+        /// ぷにぷにするような視覚効果を適用するエフェクトの設定を取得します。
         /// </summary>
-        public IBounceDeformSpriteEffect BounceDeform { get; }
+        public IPuniSpriteEffect Puni { get; }
         
+        /// <summary>
+        /// 小刻みに振動するような視覚効果を適用するエフェクトの設定を取得します。
+        /// </summary>
+        public IVibrateSpriteEffect Vibrate { get; }
+
         /// <summary>
         /// ジャンプ動作を適用するエフェクトの設定を取得します。
         /// </summary>
@@ -46,11 +51,8 @@ namespace VMagicMirror.Buddy
         public bool IsActive { get; set; }
 
         /// <summary>
-        /// スプライトの上昇幅を画面座標ベースで取得、設定します。値は [0, 1] の範囲で指定でき、デフォルト値は0.05です。
+        /// スプライトの上昇幅を取得します。デフォルト値は 20 です。
         /// </summary>
-        /// <remarks>
-        /// 目安として [0.05, 0.15] 程度を指定すると無理なく動作します。
-        /// </remarks>
         public float Intensity { get; set; }
 
         /// <summary>
@@ -65,9 +67,9 @@ namespace VMagicMirror.Buddy
     }
 
     /// <summary>
-    /// 跳ねているような視覚効果を適用するエフェクトの設定です。
+    /// x軸に伸びながらy軸方向に縮む、またその逆を行うような、ぷにぷにする資格効果を適用するエフェクトの設定です。
     /// </summary>
-    public interface IBounceDeformSpriteEffect
+    public interface IPuniSpriteEffect
     {
         /// <summary>
         /// エフェクトを動作させるかどうかを取得、設定します。<c>true</c> を設定することでエフェクトが動作します。
@@ -79,10 +81,10 @@ namespace VMagicMirror.Buddy
         public bool IsActive { get; set; }
 
         /// <summary>
-        /// エフェクトの強度を取得、設定します。値は [0, 1] の範囲で指定でき、デフォルト値は 0.5 です。
+        /// エフェクトの強度を 0 以上の値として取得、設定します。デフォルト値は 0.1 です。
         /// </summary>
         /// <remarks>
-        /// 1 より大きい値も指定できますが、その場合は挙動が非常に極端になります。
+        /// 値が 0 の場合、このエフェクトは動作しません。
         /// </remarks>
         public float Intensity { get; set; }
 
@@ -93,17 +95,52 @@ namespace VMagicMirror.Buddy
         /// すでにエフェクトが起動しているときに書き換えると動きが不連続になることがあります。
         /// </remarks>
         public float Duration { get; set; }
-
-        /// <summary>
-        /// エフェクトをループ実行するかどうかを取得、設定します。デフォルト値は<c>true</c>です。
-        /// </summary>
-        /// <remarks>
-        /// この値が<c>true</c>の場合、エフェクトは<see cref="IsActive"/>をオフにするまで動作し続けます。
-        /// この値が<c>false</c>の場合、エフェクトが1周期ぶん動作すると自動で<see cref="IsActive"/>が<c>false</c>に切り替わります。
-        /// </remarks>
-        public bool Loop { get; set; }
     }
 
+    public interface IVibrateSpriteEffect
+    {
+        /// <summary>
+        /// エフェクトを動作させるかどうかを取得、設定します。<c>true</c> を設定することでエフェクトが動作します。
+        /// </summary>
+        public bool IsActive { get; set; }
+
+        /// <summary>
+        /// 横方向の揺れ幅を取得、設定します。デフォルト値は 0 です。
+        /// </summary>
+        public float IntensityX { get; set; }
+
+        /// <summary>
+        /// 横方向の揺れの周波数を取得、設定します。デフォルト値は 20 です。
+        /// </summary>
+        public float FrequencyX { get; set; }
+
+        /// <summary>
+        /// 横方向の振動の位相オフセットを [0, 1] の範囲で取得、設定します。デフォルト値は 0 です。
+        /// </summary>
+        /// <remarks>
+        /// x軸とy軸で振動のタイミングをずらしたいとき、このプロパティに値を指定します。
+        /// </remarks>
+        public float PhaseOffsetX { get; set; }
+        
+        /// <summary>
+        /// 縦方向の揺れ幅を取得、設定します。デフォルト値は 0 です。
+        /// </summary>
+        public float IntensityY { get; set; }
+
+        /// <summary>
+        /// 縦方向の揺れの周波数を取得、設定します。デフォルト値は 20 です。
+        /// </summary>
+        public float FrequencyY { get; set; }
+        
+        /// <summary>
+        /// 縦方向の振動の位相オフセットを [0, 1] の範囲で取得、設定します。デフォルト値は 0 です。
+        /// </summary>
+        /// <remarks>
+        /// x軸とy軸で振動のタイミングをずらしたいとき、このプロパティに値を指定します。
+        /// </remarks>
+        public float PhaseOffsetY { get; set; }
+    }
+    
     /// <summary>
     /// ジャンプ動作を適用するエフェクトの設定です。
     /// </summary>
@@ -113,13 +150,13 @@ namespace VMagicMirror.Buddy
         /// ジャンプ動作を行います。
         /// </summary>
         /// <param name="duration">動作を行う時間を秒数として指定します。</param>
-        /// <param name="intensity">ジャンプの高さを、画面座標で指定します。値の範囲は [0, 1] です。</param>
+        /// <param name="height">ジャンプの高さを指定します。この値は <see cref="ISprite2D.Size"/> を参考に指定します。</param>
         /// <param name="count">時間内に行うジャンプの回数</param>
         /// <remarks>
         ///   <paramref name="count"/> が2以上である場合、<paramref name="duration"/> の時間内に複数回のジャンプ動作を行います。
         ///   ジャンプの軌道は放物軌道として、指定したパラメータから自動で計算されます。
         /// </remarks>
-        void Jump(float duration, float intensity, int count);
+        void Jump(float duration, float height, int count);
 
         /// <summary>
         /// ジャンプ動作を停止します。

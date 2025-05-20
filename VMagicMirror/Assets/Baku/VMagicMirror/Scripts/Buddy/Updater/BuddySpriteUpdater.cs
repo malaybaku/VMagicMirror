@@ -52,7 +52,8 @@ namespace Baku.VMagicMirror.Buddy
             var pose = EffectAppliedPose.Default();
             var effects = sprite.SpriteEffects;
             pose = Floating(pose, effects.InternalFloating);
-            pose = Bounce(pose, effects.InternalBounceDeform);
+            pose = Puni(pose, effects.InternalPuni);
+            pose = Vibrate(pose, effects.InternalVibrate);
             pose = Jump(pose, effects.InternalJump);
 
             // NOTE: Transitionのポーズ変形はz軸以外の回転を含むため、これを最後にやる (先にやると回転の合成がヘンになる)
@@ -76,7 +77,7 @@ namespace Baku.VMagicMirror.Buddy
             sprite.EffectorRectTransform.localScale = new Vector3(pose.Scale.x, pose.Scale.y, 1f);
         }
 
-        private EffectAppliedPose Bounce(EffectAppliedPose pose, BounceDeformSpriteEffect effect)
+        private EffectAppliedPose Puni(EffectAppliedPose pose, PuniSpriteEffect effect)
         {
             if (!effect.IsActive)
             {
@@ -90,21 +91,21 @@ namespace Baku.VMagicMirror.Buddy
                 return pose;
             }
 
-            // bounceRate > 0 のとき、横に平べったくなる。マイナスの場合は縦に伸びる
-            var bounceRate = Mathf.Sin(effect.TimeController.Rate * Mathf.PI * 2f);
+            // puniRate > 0 のとき、横に平べったくなる。マイナスの場合は縦に伸びる
+            var puniRate = Mathf.Sin(effect.TimeController.Rate * Mathf.PI * 2f);
             
             // - Intensityは「伸びる側の伸び率」を規定する
             // - 縮むほうはSizeの積が一定になるように決定される(=伸びたぶんの逆数で効かす)
-            // TODO: bounceRateの正負切り替わりの瞬間がキモいかもしれないので様子を見ましょう
-            if (bounceRate > 0)
+            // NOTE: puniRateの正負切り替わりの瞬間がキモいかもなので、気になったら調整してもよい
+            if (puniRate > 0)
             {
-                var x = 1 + bounceRate * effect.Intensity;
+                var x = 1 + puniRate * effect.Intensity;
                 var y = 1 / x;
                 return pose.AddScale(new Vector2(pose.Scale.x * x, pose.Scale.y * y));
             }
             else
             {
-                var y = 1 + (-bounceRate) * effect.Intensity;
+                var y = 1 + (-puniRate) * effect.Intensity;
                 var x = 1 / y;
                 return pose.AddScale(new Vector2(pose.Scale.x * x, pose.Scale.y * y));
             }
@@ -122,6 +123,30 @@ namespace Baku.VMagicMirror.Buddy
             return pose.AddPos(pose.Pos + new Vector2(0, yRate * effect.Intensity));
         }
 
+        private EffectAppliedPose Vibrate(EffectAppliedPose pose, VibrateSpriteEffect effect)
+        {
+            if (!effect.IsActive)
+            {
+                return pose;
+            }
+            
+            effect.TimeController.Update(Time.deltaTime);
+            if (effect.TimeController.ShouldStop)
+            {
+                effect.TimeController.Reset();
+                return pose;
+            }
+
+            // 縦横それぞれを別々に評価する。このとき、
+            var x = effect.IntensityX * Mathf.Sin(
+                (effect.TimeController.ElapsedTime * effect.FrequencyX + effect.PhaseOffsetX) * Mathf.PI * 2f
+                );
+            var y = effect.IntensityY * Mathf.Sin(
+                (effect.TimeController.ElapsedTime * effect.FrequencyY + effect.PhaseOffsetY) * Mathf.PI * 2f
+                );
+            return pose.AddPos(new Vector2(x, y));
+        }
+        
         private EffectAppliedPose Jump(EffectAppliedPose pose, JumpSpriteEffect effect)
         {
             if (!effect.TimeController.IsActive)

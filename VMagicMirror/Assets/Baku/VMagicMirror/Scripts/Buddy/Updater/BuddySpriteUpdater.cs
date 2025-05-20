@@ -234,8 +234,7 @@ namespace Baku.VMagicMirror.Buddy
             
             if (transition.Rate < 0.5f)
             {
-                var yaw = (90f + additionalAngle) * (transition.Rate / 0.5f);
-                yaw *= yawFactor;
+                var yaw = (90f * yawFactor + additionalAngle) * (transition.Rate / 0.5f);
                 return (pose.AddRot(pose.Rot * Quaternion.Euler(0, yaw, 0)), transition);
             }
             else
@@ -247,8 +246,7 @@ namespace Baku.VMagicMirror.Buddy
                 }
 
                 // NOTE: 0 .. 90deg 付近から -90degにジャンプして-90 .. 0 に進める感じ
-                var yaw = Mathf.Lerp(additionalAngle - 90f, 0, (transition.Rate - 0.5f) * 2f);
-                yaw *= yawFactor;
+                var yaw = Mathf.Lerp(-90f * yawFactor + additionalAngle, 0, (transition.Rate - 0.5f) * 2f);
                 return (pose.AddRot(pose.Rot * Quaternion.Euler(0, yaw, 0)), transition);
             }
         }

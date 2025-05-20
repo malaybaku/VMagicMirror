@@ -7,11 +7,13 @@ namespace Baku.VMagicMirror.Buddy.Api
     public class SpriteEffectApi : ISpriteEffect
     {
         public FloatingSpriteEffect InternalFloating { get; } = new();
-        public BounceDeformSpriteEffect InternalBounceDeform { get; } = new();
+        public PuniSpriteEffect InternalPuni { get; } = new();
+        public VibrateSpriteEffect InternalVibrate { get; } = new();
         public JumpSpriteEffect InternalJump { get; } = new();
 
         IFloatingSpriteEffect ISpriteEffect.Floating => InternalFloating;
-        IBounceDeformSpriteEffect ISpriteEffect.BounceDeform => InternalBounceDeform;
+        IPuniSpriteEffect ISpriteEffect.Puni => InternalPuni;
+        IVibrateSpriteEffect ISpriteEffect.Vibrate => InternalVibrate;
         IJumpSpriteEffect ISpriteEffect.Jump => InternalJump;
     }
 
@@ -67,7 +69,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
     }
 
-    public class BounceDeformSpriteEffect : IBounceDeformSpriteEffect
+    public class PuniSpriteEffect : IPuniSpriteEffect
     {
         internal SpriteEffectTimeController TimeController { get; } = new()
         {
@@ -87,14 +89,7 @@ namespace Baku.VMagicMirror.Buddy.Api
             set => TimeController.Duration = Mathf.Max(value, 0.01f);
         }
 
-        public bool Loop
-        {
-            get => TimeController.Loop;
-            set => TimeController.Loop = value;
-        }
-
-        private float _intensity = 24f;
-
+        private float _intensity = 0.1f;
         public float Intensity
         {
             get => _intensity;
@@ -102,6 +97,62 @@ namespace Baku.VMagicMirror.Buddy.Api
         }
     }
 
+    public class VibrateSpriteEffect : IVibrateSpriteEffect
+    {
+        internal SpriteEffectTimeController TimeController { get; } = new()
+        {
+            Loop = true,
+            // NOTE: 精度上問題なさそうな範囲で長周期にしておく。Durationをまたぐ瞬間だけ不自然になるが、そこはまあ許容で…
+            Duration = 1800f,
+        };
+
+        public bool IsActive
+        {
+            get => TimeController.IsActive;
+            set => TimeController.IsActive = value;
+        }
+
+        private float _intensityX = 5f;
+        public float IntensityX
+        {
+            get => _intensityX;
+            set => _intensityX = Mathf.Max(value, 0f);
+        }
+        private float _frequencyX = 20f;
+        public float FrequencyX
+        {
+            get => _frequencyX;
+            set => _frequencyX = Mathf.Max(value, 0f);
+        }
+
+        private float _intensityY = 5f;
+        public float IntensityY
+        {
+            get => _intensityY;
+            set => _intensityY = Mathf.Max(value, 0f);
+        }
+        private float _frequencyY = 20f;
+        public float FrequencyY
+        {
+            get => _frequencyY;
+            set => _frequencyY = Mathf.Max(value, 0f);
+        }
+        
+        private float _phaseOffsetX;
+        public float PhaseOffsetX
+        {
+            get => _phaseOffsetX;
+            set => _phaseOffsetX = Mathf.Clamp01(value);
+        }
+
+        private float _phaseOffsetY;
+        public float PhaseOffsetY
+        {
+            get => _phaseOffsetY;
+            set => _phaseOffsetY = Mathf.Clamp01(value);
+        }
+    }
+    
     public class FloatingSpriteEffect : IFloatingSpriteEffect
     {
         // NOTE: Floating では常時ループのみをサポートし、単発実行はサポートしていない

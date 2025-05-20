@@ -162,7 +162,7 @@ namespace Baku.VMagicMirror.Buddy
 
             foreach (var sprite3d in repo.Sprite3Ds)
             {
-                // TODO: この辺も条件が複雑になったらUpdaterを分けた方がヨサソウ
+                // NOTE: この辺も条件が複雑になったらUpdaterを分けた方がヨサソウ
                 sprite3d.DoTransition(Time.deltaTime);
             }
 

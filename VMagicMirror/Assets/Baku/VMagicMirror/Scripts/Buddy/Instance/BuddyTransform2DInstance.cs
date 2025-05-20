@@ -12,6 +12,10 @@ namespace Baku.VMagicMirror.Buddy
         // Sprite2Dの場合は (Sprite/Effector/Image) の3階層が1セットになったりするので、
         // Imageの部分が登録してあればOK
         [SerializeField] private RectTransform content;
+
+        // NOTE: Effectorの親と子どっちのPos/Rot/Scaleを制御するか…という仕様上ちょっとムズい問題がある。
+        // ScaleについてはEffectorの子のScaleを操作するほうが不都合が少なそうなため、ここにImageのオブジェクトを指定する
+        [SerializeField] private RectTransform scaleControlTarget;
         
         private RectTransform RectTransform => (RectTransform)transform;
 
@@ -49,7 +53,7 @@ namespace Baku.VMagicMirror.Buddy
             set
             {
                 _localScale = value;
-                transform.localScale = new Vector3(value.x, value.y, 1f);
+                scaleControlTarget.localScale = new Vector3(value.x, value.y, 1f);
             }
         }
         

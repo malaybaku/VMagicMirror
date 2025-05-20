@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy
 {
+    // NOTE: 実質的に未使用 (3Dのトランジションってなんや、となって実装していないため)
     public enum Sprite3DTransitionStyle
     {
         None = 0,

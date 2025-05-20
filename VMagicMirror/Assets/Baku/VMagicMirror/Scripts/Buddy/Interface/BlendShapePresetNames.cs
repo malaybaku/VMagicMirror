@@ -33,7 +33,7 @@ namespace VMagicMirror.Buddy
         public static string LookRight { get; } = ToCamelCase(nameof(LookRight));
         public static string Neutral { get; } = ToCamelCase(nameof(Neutral));
 
-        // NOTE: BlinkLeft => blinkLeft とかの変換があるのでToLowerではダメ
+        // NOTE: BlinkLeft => blinkLeft とかの変換があるので、string.ToLowerではダメ
         private static string ToCamelCase(string v) => char.ToLowerInvariant(v[0]) + v[1..];
     }
 }

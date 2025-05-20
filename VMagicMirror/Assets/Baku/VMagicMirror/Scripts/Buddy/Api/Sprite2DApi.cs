@@ -114,16 +114,21 @@ namespace Baku.VMagicMirror.Buddy.Api
         });
 
         // NOTE: このメソッドは内部的なコーディングエラーが無い限り成功するはず
-        public void SetupDefaultSpritesByPreset() => _instance.SetupDefaultSpritesByPreset();
+        public void SetupDefaultSpritesByPreset() => ApiUtils.Try(BuddyFolder, _logger, () =>
+        {
+            _instance.SetupDefaultSpritesByPreset();
+        });
         
         public void ShowDefaultSprites() => ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle.Immediate, 0f);
-        public void ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle style, float duration)
-        {
-            _instance.ShowDefaultSprites(
-                GetClampedStyle(style),
-                Mathf.Max(duration, 0f) 
-            );
-        }
+
+        public void ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle style, float duration) 
+            => ApiUtils.Try(BuddyFolder, _logger, () =>
+            {
+                _instance.ShowDefaultSprites(
+                    GetClampedStyle(style),
+                    Mathf.Max(duration, 0f)
+                );
+            });
 
         private string GetFullPath(string path) => ApiUtils.GetAssetFullPath(BuddyFolder, path);
 

@@ -37,6 +37,9 @@ namespace Baku.VMagicMirror.Buddy.Api
             _instance.ShowPreset(name);
         });
 
-        public void Hide() => _instance.SetActive(false);
+        public void Hide() => ApiUtils.Try(BuddyFolder, _logger, () =>
+        {
+            _instance.SetActive(false);
+        });
     }
 }

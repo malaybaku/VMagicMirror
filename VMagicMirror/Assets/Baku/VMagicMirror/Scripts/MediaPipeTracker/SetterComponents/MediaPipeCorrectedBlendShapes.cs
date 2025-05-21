@@ -29,7 +29,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _eye.RightLookIn = srcEye.RightLookIn;
             _eye.RightLookOut = srcEye.RightLookOut;
 
-            // wideも補正する説あるが、一旦保留している
+            // wideは補正したほうがいい可能性もあるが、見た感じではMediaPipeが有効な値をほぼ喋ってなさそうなので素通しする
             _eye.LeftWide = srcEye.LeftWide;
             _eye.RightWide = srcEye.RightWide;
             
@@ -47,18 +47,18 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // - blinkの値が0, 1いずれかで極端になるように補正する。
             // - blinkの値が0か1付近になるとsquintを0寄りにする(…でいいよね…?)
             var leftBlink = MapClamp(srcEye.LeftBlink, _settings.EyeOpenBlinkValue, _settings.EyeCloseBlinkValue);
-            var rightBlink = MapClamp(srcEye.RightBlink, _settings.EyeOpenBlinkValue, _settings.EyeCloseBlinkValue);
             var leftSquint = SquintWeight(leftBlink) * srcEye.LeftSquint;
+
+            var rightBlink = MapClamp(srcEye.RightBlink, _settings.EyeOpenBlinkValue, _settings.EyeCloseBlinkValue);
             var rightSquint = SquintWeight(rightBlink) * srcEye.RightSquint;
 
-            // 平均値で入れる場合は実際そうする
             if (_settings.EyeUseMeanBlinkValue.Value)
             {
                 var blink = (leftBlink + rightBlink) / 2;
                 var squint = (leftSquint + rightSquint) / 2;
                 _eye.LeftBlink = blink;
-                _eye.RightBlink = blink;
                 _eye.LeftSquint = squint;
+                _eye.RightBlink = blink;
                 _eye.RightSquint = squint;
             }
             else

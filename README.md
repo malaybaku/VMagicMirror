@@ -80,6 +80,7 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
+* Roslyn Scripting (後述)
 
 FinalIK, Dlib FaceLandmark Detectorは有償アセットであることに注意してください。
 
@@ -116,6 +117,33 @@ RawInput.Sharpもほぼ同様の導入手順です。
 //下記を一旦コメントアウト解除したのち、ふたたびコメントアウトする
 #define TEMP_SUPPRESS_ERROR
 ```
+
+Roslyn Scriptingについては、NuGet Packageの下記を取得し、必要なdllをプロジェクト上に配置します。
+
+- `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0`
+- `System.Runtime.Loader-v4.0.0`
+
+メンテナのUnityプロジェクト環境では、Assets以下に下記のようなフォルダ構造でdllを配置しています。
+
+- `Assets/CSharpScripting`
+    - `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0/Plugins`
+        - Microsoft.CodeAnalysis.CSharp.Scripting.dll
+        - Microsoft.CodeAnalysis.dll
+        - Microsoft.CodeAnalysis.Scripting.dll
+        - System.Buffers.dll
+        - System.Collections.Immutable.dll
+        - System.Memory.dll
+        - System.Numerics.Vectors.dll
+        - System.Reflection.Metadata.dll
+        - System.Runtime.CompilerServices.Unsafe.dll
+        - System.Text.Encoding.CodePages.dll
+        - System.Threading.Tasks.Extensions.dll
+        - Microsoft.CodeAnalysis.CSharp.dll
+    - `System.Runtime.Loader-v4.0.0/Plugins`
+        - System.Runtime.Loader.dll
+
+なお、NuGetForUnityでも上記のパッケージは導入できる可能性がありますが、本readmeの記載時点ではNuGetForUnityによる導入は確認していません。
+
 
 ### 4.3. ビルド
 

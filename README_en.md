@@ -81,6 +81,7 @@ Maintainer's environment is as following.
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
+* Roslyn Scripting (see the last part of this section for detail)
 
 Note that `FinalIK` and `Dlib FaceLandmark Detector` are paid assets.
 
@@ -116,6 +117,32 @@ You will get compile errors for the first time. To solve this, confirm `NuGetFor
 //uncomment this line once, and comment out after NAudio is downloaded
 #define TEMP_SUPPRESS_ERROR
 ```
+
+To install Roslyn Scripting library, get following packages from NuGet to introduce .dll files.
+
+- `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0`
+- `System.Runtime.Loader-v4.0.0`
+
+In maintainers' project, the folder and file structure is as following.
+
+- `Assets/CSharpScripting`
+    - `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0/Plugins`
+        - Microsoft.CodeAnalysis.CSharp.Scripting.dll
+        - Microsoft.CodeAnalysis.dll
+        - Microsoft.CodeAnalysis.Scripting.dll
+        - System.Buffers.dll
+        - System.Collections.Immutable.dll
+        - System.Memory.dll
+        - System.Numerics.Vectors.dll
+        - System.Reflection.Metadata.dll
+        - System.Runtime.CompilerServices.Unsafe.dll
+        - System.Text.Encoding.CodePages.dll
+        - System.Threading.Tasks.Extensions.dll
+        - Microsoft.CodeAnalysis.CSharp.dll
+    - `System.Runtime.Loader-v4.0.0/Plugins`
+        - System.Runtime.Loader.dll
+
+Note that NuGetForUnity might get the packages above correctly, though it is not tested yet.
 
 ### 4.3. Build
 

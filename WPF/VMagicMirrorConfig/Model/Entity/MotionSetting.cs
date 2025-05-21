@@ -69,7 +69,7 @@
         public bool EnableWebCameraHighPowerModeLipSync { get; set; } = false;
         public bool EnableWebCameraHighPowerModeMoveZ { get; set; } = false;
 
-        public int WebCamEyeOpenBlinkValue { get; set; } = 0;
+        public int WebCamEyeOpenBlinkValue { get; set; } = 20;
         public int WebCamEyeCloseBlinkValue { get; set; } = 50;
         public bool WebCamEyeApplySameBlinkValueBothEye { get; set; } = false;
         public bool WebCamEyeApplyCorrectionToPerfectSync { get; set; } = true;
@@ -163,8 +163,10 @@
             EnableWebCameraHighPowerModeMoveZ = true;
             // NOTE: ちょっとややこしいが、この設定はトラッキングの設定であってアバターの目に関する設定ではないので、
             // FaceEyeSettingのリセットと紐づける必要はない
-            WebCamEyeOpenBlinkValue = 0;
+            WebCamEyeOpenBlinkValue = 20;
             WebCamEyeCloseBlinkValue = 50;
+            WebCamEyeApplySameBlinkValueBothEye = false;
+            WebCamEyeApplyCorrectionToPerfectSync = false;
         }
 
         public void ResetFaceEyeSetting()

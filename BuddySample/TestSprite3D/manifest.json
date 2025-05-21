@@ -1,0 +1,63 @@
+{
+  "id": "com.baxter.apiTestSprite3D",
+  "displayName": {
+    "ja": "Sprite(3D)のテスト",
+    "en": "Test Sprite(3D)"
+  },
+  "creator": "Baxter",
+  "version": "0.1.0",
+  "creatorUrl": "https://x.com/baku_dreameater",
+  "property": [
+    {
+      "name": "mainImage",
+      "displayName": { "ja": "メイン画像" },
+      "type": "transform3D"
+    },
+    {
+      "name": "showSubSprite",
+      "type": "bool",
+      "displayName": { "ja": "サブ画像を表示" }      
+    },
+    {
+      "name": "subSpritePosition",
+      "type": "vector3",
+      "displayName": { "ja": "サブ画像のローカル位置" },
+      "vector2Data": {
+        "defaultValue": {
+          "x": 0.2,
+          "y": 0.2,
+          "z": 0
+        }
+      }
+    },
+    {
+      "name": "subSpriteRotation",
+      "type": "quaternion",
+      "displayName": { "ja": "サブ画像のローカル回転" }
+    },
+    {
+      "name": "subSpriteScale",
+      "type": "float",
+      "displayName": { "ja": "サブ画像のローカルスケール" },
+      "floatData": { "defaultValue": 0.3 }
+    },
+    {
+      "name": "setDefaultSprite",
+      "type": "action",
+      "displayName": { "ja": "デフォルト画像に戻す" }
+    },
+    {
+      "name": "doTransition",
+      "type": "action",
+      "displayName": { "ja": "指定した画像へ遷移" }
+    },
+    {
+      "name": "transitionImage",
+      "type": "string",
+      "displayName": { "ja": "トランジション先の画像ファイル" },
+      "stringData": {
+        "isFilePath": true
+      }
+    }
+  ]
+}

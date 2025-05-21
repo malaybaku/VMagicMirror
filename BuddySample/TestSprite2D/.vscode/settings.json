@@ -1,0 +1,5 @@
+{
+  "omnisharp.useModernNet": true,
+  "dotnet.server.useOmnisharp": true
+}
+

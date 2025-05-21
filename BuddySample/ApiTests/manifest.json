@@ -1,0 +1,241 @@
+{
+  "id": "com.baxter.apiTestBuddy",
+  "displayName": {
+    "ja": "APIテスト用",
+    "en": "API Test"
+  },
+  "creator": "Baxter",
+  "version": "0.1.0",
+  "creatorUrl": "https://x.com/baku_dreameater",
+  "property": [
+    {
+      "name": "checkFacial",
+      "type": "action",
+      "displayName": { "ja": "Facialチェック" }
+    },
+    {
+      "name": "getAllPropertyValues",
+      "type": "action",
+      "displayName": { "ja": "プロパティの値の取得テスト" }
+    },    
+    {
+      "name": "testLogWarn",
+      "type": "action",
+      "displayName": { "ja": "警告ログ" }
+    },
+    {
+      "name": "testLogError",
+      "type": "action",
+      "displayName": { "ja": "エラーログ" }
+    },
+    {
+      "name": "testThrowException",
+      "type": "action",
+      "displayName": { "ja": "例外スロー" }
+    },
+    {
+      "name": "playLongSound",
+      "type": "action",
+      "displayName": { "ja": "長めの音声を再生" }
+    },
+    {
+      "name": "stopLongSound",
+      "type": "action",
+      "displayName": { "ja": "長めの音声を停止" }
+    },
+    {
+      "name": "getPose",
+      "type": "action",
+      "displayName": { "ja": "アバター姿勢の取得" }
+    },
+    {
+      "name": "getDeviceLayouts",
+      "type": "action",
+      "displayName": { "ja": "デバイスの配置を取得" }
+    },
+    {
+      "name": "getScreen",
+      "type": "action",
+      "displayName": { "ja": "ウィンドウ状態を取得" }
+    },
+    {
+      "name": "testRunTask",
+      "type": "action",
+      "displayName": { "ja": "非同期タスク" }
+    },
+    {
+      "name": "testInput",
+      "type": "action",
+      "displayName": { "ja": "キー/ゲームパッド/マウス入力" }
+    },
+    {
+      "name": "mainImage",
+      "displayName": {
+        "ja": "メイン画像",
+        "en": "Main Image"
+      },
+      "type": "transform2D",
+      "transform2DData": {
+        "defaultValue": {
+          "position": {
+            "x": 150,
+            "y": 30
+          }
+        }
+      }
+    },
+    {
+      "name": "anchor3d",
+      "type": "transform3D",
+      "displayName": {
+        "ja": "(3D) 姿勢のやつ",
+        "en": "(3D) Pose Setting"
+      }
+    },
+    {
+      "name": "flip",
+      "type": "bool",
+      "displayName": {
+        "ja": "反転",
+        "en": "Flip"
+      },
+      "description": {
+        "ja": "反転するかどうか",
+        "en": "Flip or not"
+      },
+      "boolData": {
+        "defaultValue": false
+      }
+    },
+    {
+      "name": "someCount",
+      "type": "int",
+      "displayName": {
+        "ja": "何かのカウント",
+        "en": "Some Count"
+      }
+    },
+    {
+      "name": "myOptions",
+      "type": "int",
+      "displayName": {
+        "ja": "ドロップダウンから選べるオプション",
+        "en": "Options With Dropdown"
+      },
+      "intData": {
+        "options": [
+          "Option A",
+          "Option B",
+          "Option C"
+        ]
+      }
+    },
+    {
+      "name": "someCountWithLimit",
+      "type": "int",
+      "displayName": {
+        "ja": "何かのカウント(上下限あり)",
+        "en": "Ranged Int Count"
+      },
+      "intData": {
+        "min": 2,
+        "max": 10,
+        "defaultValue": 5
+      }
+    },    
+    {
+      "name": "duration",
+      "type": "float",
+      "displayName": {
+        "ja": "なんかの秒数",
+        "en": "Duration"
+      },
+      "floatData": {
+        "defaultValue": 4.2
+      }
+    },
+    {
+      "name": "rangedDuration",
+      "type": "float",
+      "displayName": {
+        "ja": "なんかの秒数(上下限あり)",
+        "en": "Ranged Duration"
+      },
+      "floatData": {
+        "min": 0.2,
+        "max": 10,
+        "defaultValue": 4.5
+      }
+    },
+    {
+      "name": "userName",
+      "type": "string",
+      "displayName": {
+        "ja": "ユーザーの呼び方",
+        "en": "User Name"
+      },
+      "stringData": {
+        "defaultValue": "ユーザー"
+      }
+    },
+    {
+      "name": "someFilePath",
+      "type": "string",
+      "displayName": {
+        "ja": "何かのファイルパス",
+        "en": "Some File Path"
+      },
+      "stringData": {
+        "isFilePath": true
+      }
+    },
+    {
+      "name": "v2sample",
+      "type": "vector2",
+      "displayName": {
+        "ja": "Vector2 サンプル",
+        "en": "Vector2 Sample"
+      },
+      "vector2Data": {
+        "defaultValue": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      }
+    },
+    {
+      "name": "v3sample",
+      "type": "vector3",
+      "displayName": {
+        "ja": "Vector3 サンプル",
+        "en": "Vector3 Sample"
+      },
+      "vector3Data": {
+        "defaultValue": {
+          "x": 0.3,
+          "y": 0.5,
+          "z": 0.7
+        }
+      }
+    },
+    {
+      "name": "myRot",
+      "type": "quaternion",
+      "displayName": {
+        "ja": "Quaternion サンプル",
+        "en": "Quaternion Sample"
+      },
+      "description" : {
+        "ja": "値はオイラー角表現[deg]です",
+        "en": "The value is in Euler angle representation [deg]"
+      },
+      "quaternionData": {
+        "defaultValue": {
+          "x": 10,
+          "y": 20,
+          "z": 30
+        }
+      }
+    }
+  ]
+}

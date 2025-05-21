@@ -146,8 +146,10 @@ namespace Baku.VMagicMirrorConfig
 
         public static Message SetWebCamEyeOpenBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeOpenBlinkValue, value);
         public static Message SetWebCamEyeCloseBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeCloseBlinkValue, value);
-
         public static Message SetEyeBlendShapePreviewActive(bool active) => BoolContent(VmmCommands.SetEyeBlendShapePreviewActive, active);
+        public static Message SetWebCamEyeApplySameBlinkBothEye(bool enable) => BoolContent(VmmCommands.SetWebCamEyeApplySameBlinkBothEye, enable);
+        public static Message SetWebCamEyeApplyCorrectionToPerfectSync(bool enable) 
+            => BoolContent(VmmCommands.SetWebCamEyeApplyBlinkCorrectionToPerfectSync, enable);
 
         /// <summary>
         /// Query.

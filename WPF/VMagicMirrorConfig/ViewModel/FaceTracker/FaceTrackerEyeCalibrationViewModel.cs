@@ -55,6 +55,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<int> EyeOpenBlinkValue => _model.WebCamEyeOpenBlinkValue;
         public RProperty<int> EyeCloseBlinkValue=> _model.WebCamEyeCloseBlinkValue;
+        public RProperty<bool> ApplySameBlinkValue => _model.WebCamEyeApplySameBlinkValueBothEye;
+        public RProperty<bool> ApplyToPerfectSync => _model.WebCamEyeApplyCorrectionToPerfectSync;
 
         public RProperty<bool> EnableEyeBlendShapeValuePreview { get; }
 
@@ -72,5 +74,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         {
             _sender.SendMessage(MessageFactory.SetEyeBlendShapePreviewActive(false));
         }
+
+        private ActionCommand? _openDocUrlCommand;
+        public ICommand OpenDocUrlCommand => _openDocUrlCommand ??= new ActionCommand(OpenDocUrl);
+        private void OpenDocUrl() => UrlNavigate.Open(LocalizedString.GetString("URL_docs_face_tracking"));
     }
 }

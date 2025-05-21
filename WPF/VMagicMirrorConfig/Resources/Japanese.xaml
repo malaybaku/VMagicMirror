@@ -168,13 +168,23 @@
 
     <!-- Face Tracker Eye Calibration -->
     <sys:String x:Key="EyeCalibration_Header">目のトラッキングの詳細設定</sys:String>
-    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">このウィンドウでは、ユーザーの目のトラッキングについて詳細設定を行います。
-ここで行える設定は、顔トラッキングで「Webカメラ (高品質)」を選択している間だけ適用されます。
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">このウィンドウではユーザーの目のトラッキングについて設定します。
+ここで編集した設定は、顔トラッキングで「Webカメラ (高品質)」を選択中にだけ適用されます。
 
-- webカメラの位置を変更したり、めがねを買い替えたりすると再設定が必要な場合があります。
-- アバターを切り替えるだけの場合、通常は再設定は不要です。
-- アバターの目の動きに関する設定は「詳細設定」ウィンドウの「顔・表情」タブから行えます。</sys:String>
+- webカメラを物理的に動かしたり、メガネを買い替えたりしたときは、再設定が必要な場合があります。        
+- アバターの目の動かし方については、「詳細設定」ウィンドウの「顔・表情」タブから設定できます。</sys:String>
 
+    <sys:String x:Key="EyeCalibration_Settings">設定</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeOpenBlinkValue">目を開けているときのまばたき値(%)</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeCloseBlinkValue">目を閉じているときのまばたき値(%)</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplySameValueBothEye">左右のまばたき値の平均を使う</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplyToPerfectSync">パーフェクトシンクのまばたきにも補正を適用</sys:String>
+    <sys:String x:Key="EyeCalibration_ShowPreview">まばたき値のプレビューを表示</sys:String>
+    <sys:String x:Key="EyeCalibration_ResetPreviewValue">プレビュー表示をリセット</sys:String>
+    <sys:String x:Key="EyeCalibration_LeftEyeLabel">左目</sys:String>
+    <sys:String x:Key="EyeCalibration_RightEyeLabel">右目</sys:String>
+    <sys:String x:Key="EyeCalibration_SeeMore">さらに詳しく...</sys:String>
+    
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
     <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションとの間でモーション情報を送受信できます。
@@ -902,11 +912,12 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/docs/vmc_protocol</sys:String>
+    <sys:String x:Key="URL_docs_face_tracking">https://malaybaku.github.io/VMagicMirror/docs/face_tracking</sys:String>
     
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
-    
+
     <!-- TODO: メインのVMMのマニュアルと別のURLに差し替える -->
     <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
     

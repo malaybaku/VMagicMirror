@@ -71,6 +71,8 @@
 
         public int WebCamEyeOpenBlinkValue { get; set; } = 0;
         public int WebCamEyeCloseBlinkValue { get; set; } = 50;
+        public bool WebCamEyeApplySameBlinkValueBothEye { get; set; } = false;
+        public bool WebCamEyeApplyCorrectionToPerfectSync { get; set; } = true;
 
 
         #endregion

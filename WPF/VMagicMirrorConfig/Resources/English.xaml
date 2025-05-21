@@ -163,6 +163,25 @@ Check "Keep LipSync" to make the lipsync continue.</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">Tongue out</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">Cheek puff</sys:String>
     
+    <!-- Face Tracker Eye Calibration -->
+    <sys:String x:Key="EyeCalibration_Header">Eye Tracking Settings</sys:String>
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">This window supports settings about eye tracking input handling.
+The properties here only affects during "Web Camera (High Power)" is selected.
+
+- If you move your webcam or get new glasses, you might need to adjust the settings again.
+- The settings for avatar's eyes are available at Settings Window > Face tab.</sys:String>
+
+    <sys:String x:Key="EyeCalibration_Settings">Settings</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeOpenBlinkValue">Blink Value when Eye Opened (%)</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeCloseBlinkValue">Blink Value when Eye Closed (%)</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplySameValueBothEye">Use Mean Blink Value</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplyToPerfectSync">Use Adjusted Value when Perfect Sync is Enabled</sys:String>
+    <sys:String x:Key="EyeCalibration_ShowPreview">Show Blink Value Preview</sys:String>
+    <sys:String x:Key="EyeCalibration_ResetPreviewValue">Reset Preview</sys:String>
+    <sys:String x:Key="EyeCalibration_LeftEyeLabel">Left Eye</sys:String>
+    <sys:String x:Key="EyeCalibration_RightEyeLabel">Right Eye</sys:String>
+    <sys:String x:Key="EyeCalibration_SeeMore">See More...</sys:String>
+
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
     <sys:String x:Key="VMCP_Instruction" xml:space="preserve">With VMC Protocol (VMCP), the app can receive and send motion data with other apps.

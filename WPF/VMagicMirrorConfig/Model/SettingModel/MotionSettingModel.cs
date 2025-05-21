@@ -95,6 +95,10 @@ namespace Baku.VMagicMirrorConfig
                 setting.WebCamEyeOpenBlinkValue, v => SendMessage(MessageFactory.SetWebCamEyeOpenBlinkValue(v)));
             WebCamEyeCloseBlinkValue = new RProperty<int>(
                 setting.WebCamEyeCloseBlinkValue, v => SendMessage(MessageFactory.SetWebCamEyeCloseBlinkValue(v)));
+            WebCamEyeApplySameBlinkValueBothEye = new RProperty<bool>(
+                setting.WebCamEyeApplySameBlinkValueBothEye, v => SendMessage(MessageFactory.SetWebCamEyeApplySameBlinkBothEye(v)));
+            WebCamEyeApplyCorrectionToPerfectSync = new RProperty<bool>(
+                setting.WebCamEyeApplyCorrectionToPerfectSync, v => SendMessage(MessageFactory.SetWebCamEyeApplyCorrectionToPerfectSync(v)));
 
             //TODO: 排他のタイミング次第でRadioButtonが使えなくなってしまうので要検証
             UseLookAtPointNone = new RProperty<bool>(setting.UseLookAtPointNone, v =>
@@ -236,6 +240,9 @@ namespace Baku.VMagicMirrorConfig
         // NOTE: Openのほうが値としては小さい想定(+0付近)
         public RProperty<int> WebCamEyeOpenBlinkValue { get; }
         public RProperty<int> WebCamEyeCloseBlinkValue { get; }
+        public RProperty<bool> WebCamEyeApplySameBlinkValueBothEye { get; }
+        public RProperty<bool> WebCamEyeApplyCorrectionToPerfectSync { get; }
+
 
         public void RequestCalibrateFace() => SendMessage(MessageFactory.CalibrateFace());
 

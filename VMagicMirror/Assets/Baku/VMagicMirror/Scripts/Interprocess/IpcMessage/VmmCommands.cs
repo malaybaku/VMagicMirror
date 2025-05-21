@@ -122,6 +122,8 @@
         SetWebCamEyeOpenBlinkValue,
         SetWebCamEyeCloseBlinkValue,
         SetEyeBlendShapePreviewActive,
+        SetWebCamEyeApplySameBlinkBothEye,
+        SetWebCamEyeApplyBlinkCorrectionToPerfectSync,
 
         // Motion, Mouth
         EnableLipSync,

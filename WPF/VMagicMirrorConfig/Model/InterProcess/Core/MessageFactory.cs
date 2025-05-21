@@ -1,6 +1,9 @@
 ﻿using Baku.VMagicMirror;
 using System.Collections.Generic;
 
+// NOTE: 「static memberにできます」の警告が出るが、ここは意図してinstance memberなので無視しとく
+#pragma warning disable CA1822
+
 namespace Baku.VMagicMirrorConfig
 {
     // NOTE: できればこのクラスを削除したい。VmmCommandsをenum化したことによってFactoryを使う意義が薄まっているため。
@@ -369,6 +372,40 @@ namespace Baku.VMagicMirrorConfig
 
         #endregion
 
+        #region Buddy
+
+        public static Message BuddySetMainAvatarOutputActive(bool active) => BoolContent(VmmCommands.BuddySetMainAvatarOutputActive, active);
+        public static Message BuddySetDeveloperModeActive(bool active) => BoolContent(VmmCommands.BuddySetDeveloperModeActive, active);
+        public static Message BuddySetDeveloperModeLogLevel(int level) => IntContent(VmmCommands.BuddySetDeveloperModeLogLevel, level);
+
+        // NOTE: 単にon/offすることに加え、同一folderを立て続けにDisable => Enableすると実質リロードとして動くのも期待してる
+        public static Message BuddyDisable(string folder) => StringContent(VmmCommands.BuddyDisable, folder);
+        public static Message BuddyEnable(string folder) => StringContent(VmmCommands.BuddyEnable, folder);
+
+        /// <summary>
+        /// BuddySetPropertyと違い、1Buddyぶんの全プロパティ値をリフレッシュ指示として送る
+        /// プロパティを空配列で渡すと実質的にデータ削除みたいなことも可能
+        /// </summary>
+        /// <param name="valueJson"></param>
+        /// <returns></returns>
+        public static Message BuddyRefreshData(string valueJson) => StringContent(VmmCommands.BuddyRefreshData, valueJson);
+        
+        /// <summary>
+        /// 特定のBuddyの1プロパティだけ編集したときの送信に使うやつ
+        /// </summary>
+        /// <param name="valueJson"></param>
+        /// <returns></returns>
+        public static Message BuddySetProperty(string valueJson) => StringContent(VmmCommands.BuddySetProperty, valueJson);
+
+        /// <summary>
+        /// Actionを指すBuddyのプロパティ(UI上はボタン)の押下をUnityに通知するやつ
+        /// </summary>
+        /// <param name="valueJson"></param>
+        /// <returns></returns>
+        public static Message BuddyInvokeAction(string valueJson) => StringContent(VmmCommands.BuddyInvokeAction, valueJson);
+
+        #endregion
+
         #region VMCP
 
         public static Message EnableVMCP(bool enable) => BoolContent(VmmCommands.EnableVMCP, enable);
@@ -403,3 +440,5 @@ namespace Baku.VMagicMirrorConfig
         #endregion
     }
 }
+
+#pragma warning restore CA1822

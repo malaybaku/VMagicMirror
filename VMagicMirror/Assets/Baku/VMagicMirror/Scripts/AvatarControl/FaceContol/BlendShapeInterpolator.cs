@@ -101,7 +101,9 @@ namespace Baku.VMagicMirror
                 })
                 .AddTo(this);
             
+            // NOTE: コードのリファクタの関係でSkip(1)を入れてるが、別に必要ないかも
             wtmBlendShape.CurrentValue
+                .Skip(1)
                 .Subscribe(v =>
                 {
                     _hasWordToMotionOutput.Value = v.HasValue;

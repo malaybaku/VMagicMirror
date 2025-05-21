@@ -26,8 +26,10 @@
             resolver.Add(new HotKeyModel());
             resolver.Add(new FaceMotionBlendShapeNameStore());
             resolver.Add(new CustomMotionList());
+            resolver.Add(new BuddySettingsSender());
             resolver.Add(new EyeBlendShapePreviewReceiver());
 
+            resolver.Add(new BuddySettingModel());
             resolver.Add(new GameInputSettingModel());
             resolver.Add(new PreferenceSettingModel());
             resolver.Add(new WindowSettingModel());
@@ -57,6 +59,7 @@
             resolver.Add(new LargePointerVisibility());
             resolver.Add(new MicrophoneStatus());
             resolver.Add(new FaceSettingReceiver());
+            resolver.Add(new BuddySettingsReceiver());
 
             resolver.Add(new PreferenceFileManager());
 

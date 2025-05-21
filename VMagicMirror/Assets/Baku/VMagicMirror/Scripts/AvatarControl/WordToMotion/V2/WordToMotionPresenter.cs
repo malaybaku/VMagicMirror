@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly CustomMotionRepository _customMotionRepository;
         private readonly VrmaRepository _vrmaRepository;
         private readonly WordToMotionRequester _requester;
-        private WordToMotionRunner _runner;
+        private readonly WordToMotionRunner _runner;
         private readonly IRequestSource[] _sources;
 
         public WordToMotionPresenter(

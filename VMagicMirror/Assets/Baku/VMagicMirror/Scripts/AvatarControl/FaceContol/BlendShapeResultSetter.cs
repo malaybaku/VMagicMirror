@@ -20,6 +20,7 @@ namespace Baku.VMagicMirror
         private WordToMotionBlendShape _wtmBlendShape;
         private VMCPBlendShape _vmcpBlendShape;
         private ExpressionAccumulator _accumulator;
+        private UserOperationBlendShapeResultRepository _resultRepository;
         private bool _hasModel;
         
         //NOTE: ここのコンポーネントの書き順は実は優先度を表している: 後ろのやつほど上書きの権利が強い
@@ -30,13 +31,15 @@ namespace Baku.VMagicMirror
             FaceSwitchUpdater faceSwitchUpdater,
             WordToMotionBlendShape wtmBlendShape,
             VMCPBlendShape vmcpBlendShape,
-            ExpressionAccumulator accumulator
+            ExpressionAccumulator accumulator,
+            UserOperationBlendShapeResultRepository resultRepository
             )
         {
             _faceSwitchUpdater = faceSwitchUpdater;
             _wtmBlendShape = wtmBlendShape;
             _vmcpBlendShape = vmcpBlendShape;
             _accumulator = accumulator;
+            _resultRepository = resultRepository;
             
             vrmLoadable.VrmLoaded += info => _hasModel = true;
             vrmLoadable.VrmDisposing += () => _hasModel = false;
@@ -52,6 +55,7 @@ namespace Baku.VMagicMirror
             
             if (!_hasModel)
             {
+                _resultRepository.SetAsInactive();
                 return;
             }
 
@@ -67,6 +71,7 @@ namespace Baku.VMagicMirror
                 WriteClips();
             }
             
+            SetUserOperationBlendShape();
             _accumulator.Apply();
         }
 
@@ -231,6 +236,26 @@ namespace Baku.VMagicMirror
             
             neutralClipSettings.AccumulateNeutralClip(_accumulator, blendShapeInterpolator.NonMouthWeight);
             neutralClipSettings.AccumulateOffsetClip(_accumulator);
+        }
+
+        private void SetUserOperationBlendShape()
+        {
+            if (_wtmBlendShape.HasBlendShapeToApply)
+            {
+                _resultRepository.SetWordToMotionResult(_wtmBlendShape.CurrentValue.Value);
+            }
+            else if (_faceSwitchUpdater.HasClipToApply)
+            {
+                _resultRepository.SetFaceSwitchResult(_faceSwitchUpdater.CurrentValue.Value);
+            }
+            else if (_vmcpBlendShape.IsActive.Value)
+            {
+                _resultRepository.SetVmcpResult(_vmcpBlendShape.GetCurrentValues());
+            }
+            else
+            {
+                _resultRepository.SetAsInactive();
+            }
         }
     }
 }

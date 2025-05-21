@@ -5,17 +5,38 @@ using Zenject;
 namespace Baku.VMagicMirror
 {
     /// <summary>
+    /// FaceSwitchが適用されたときにユーザーが行っていたアクションが区別できるようなenum
+    /// </summary>
+    public enum FaceSwitchAction
+    {
+        None,
+        MouthSmile,
+        EyeSquint,
+        EyeWide,
+        BrowUp,
+        BrowDown,
+        CheekPuff,
+        TongueOut,
+    }
+
+    /// <summary>
     /// FaceSwitchで現在指定しているアイテムを表す要素で、キー的に扱えるようなもの
     /// </summary>
     public readonly struct ActiveFaceSwitchItem
     {
-        public ActiveFaceSwitchItem(string clipName, bool keepLipSync, string accessoryName)
+        public ActiveFaceSwitchItem(
+            FaceSwitchAction action,
+            string clipName, 
+            bool keepLipSync,
+            string accessoryName)
         {
+            Action = action;
             ClipName = clipName;
             KeepLipSync = keepLipSync;
             AccessoryName = accessoryName;
         }
         
+        public FaceSwitchAction Action { get; }
         public string ClipName { get; }
         public bool KeepLipSync { get; }
         public string AccessoryName { get; }
@@ -23,9 +44,10 @@ namespace Baku.VMagicMirror
         public bool IsEmpty =>
             string.IsNullOrEmpty(ClipName) && string.IsNullOrEmpty(AccessoryName);
         
-        public static readonly ActiveFaceSwitchItem Empty = new("", false, "");
+        public static readonly ActiveFaceSwitchItem Empty = new(FaceSwitchAction.None, "", false, "");
 
         public bool Equals(ActiveFaceSwitchItem other) =>
+            Action == other.Action &&
             ClipName == other.ClipName &&
             KeepLipSync == other.KeepLipSync && 
             AccessoryName == other.AccessoryName;
@@ -104,12 +126,14 @@ namespace Baku.VMagicMirror
             UpdateCalled = true;
             for (var i = 0; i < _itemsToCheck.Length; i++)
             {
-                if (ExtractSpecifiedBlendShape(source, _itemsToCheck[i].source) > _itemsToCheck[i].threshold * 0.01f)
+                var item = _itemsToCheck[i];
+                if (ExtractSpecifiedBlendShape(source, item.source) > _itemsToCheck[i].threshold * 0.01f)
                 {
                     ActiveItem = new ActiveFaceSwitchItem(
-                        _itemsToCheck[i].ClipName,
-                        _itemsToCheck[i].keepLipSync,
-                        _itemsToCheck[i].accessoryName
+                        GetActionFromKey(item.source),
+                        item.ClipName,
+                        item.keepLipSync,
+                        item.accessoryName
                     );
                     _isFaceSwitchActivatedInThisUpdate = true;
                     return;
@@ -126,6 +150,21 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private static FaceSwitchAction GetActionFromKey(string key)
+        {
+            return key switch
+            {
+                FaceSwitchKeys.MouthSmile => FaceSwitchAction.MouthSmile,
+                FaceSwitchKeys.EyeSquint => FaceSwitchAction.EyeSquint,
+                FaceSwitchKeys.EyeWide => FaceSwitchAction.EyeWide,
+                FaceSwitchKeys.BrowUp => FaceSwitchAction.BrowUp,
+                FaceSwitchKeys.BrowDown => FaceSwitchAction.BrowDown,
+                FaceSwitchKeys.CheekPuff => FaceSwitchAction.CheekPuff,
+                FaceSwitchKeys.TongueOut => FaceSwitchAction.TongueOut,
+                _ => FaceSwitchAction.None,
+            };
+        }
+        
         //NOTE: このキーはWPF側が決め打ちしてるやつです
         private static float ExtractSpecifiedBlendShape(IFaceTrackBlendShapes source, string key)
         {

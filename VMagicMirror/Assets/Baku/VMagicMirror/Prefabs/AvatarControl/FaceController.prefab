@@ -56,6 +56,7 @@ MonoBehaviour:
   lipSyncIntegrator: {fileID: 6125060425342205146}
   autoBlink: {fileID: 2335327280039312852}
   eyeBoneAngleSetter: {fileID: 2373856935009644786}
+  externalTrackerBlink: {fileID: 7456683640387377309}
 --- !u!114 &3748028266611161169
 MonoBehaviour:
   m_ObjectHideFlags: 0

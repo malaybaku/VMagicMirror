@@ -18,3 +18,5 @@ MonoBehaviour:
   poseSetterSettings: {fileID: 11400000, guid: 16fae521289ab104880f09dd81c63888, type: 2}
   landmarksVisualizerPrefab: {fileID: 1263065024300187271, guid: d9ac85f2bac2b334ca5cc9551af1e956,
     type: 3}
+  buddyPresetResources: {fileID: 11400000, guid: 623aead3c9b4b3f4ea255fba3f38428a,
+    type: 2}

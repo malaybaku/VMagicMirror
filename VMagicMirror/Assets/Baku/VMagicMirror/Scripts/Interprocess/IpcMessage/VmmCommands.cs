@@ -278,7 +278,19 @@
         EnableVMCPSend,
         SetVMCPSendSettings,
         ShowEffectDuringVMCPSendEnabled,
-            
+        
+        // Buddy
+        BuddySetMainAvatarOutputActive,
+        BuddyEnable,
+        BuddyDisable,
+        BuddyRefreshData,
+        BuddySetProperty,
+        BuddyInvokeAction,
+
+        // Buddy (開発者モード)
+        BuddySetDeveloperModeActive,
+        BuddySetDeveloperModeLogLevel,
+        
         // VRoidHub
         OpenVRoidSdkUi,
         RequestLoadVRoidWithId,

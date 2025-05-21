@@ -33,6 +33,10 @@ namespace Baku.VMagicMirror
         VRoidModelLoadCompleted,
         VRoidModelLoadCanceled, 
 
+        NotifyBuddy2DLayout,
+        NotifyBuddy3DLayout,
+        NotifyBuddyLog,
+        
         // == LastCommandIdは常に最後尾に定義しておく ==
         LastCommandId,
     }

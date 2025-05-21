@@ -14,11 +14,6 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public class NonImageBasedMotion : MonoBehaviour, IEyeRotationRequestSource
     {
-        private FaceControlConfiguration _faceConfig;
-        private GameInputBodyMotionController _gameInputBodyMotionController;
-        private CarHandleBasedFK _carHandleBasedFk;
-        private VoiceOnOffParser _voiceOnOffParser = null;
-
         //NOTE: 首の動きがeaseされるのを踏まえて気持ちゆっくりめ
         [SerializeField] private float eyeSpeedFactor = 4.0f;
 
@@ -40,7 +35,11 @@ namespace Baku.VMagicMirror
         //active/inactiveが1回切り替わったらしばらくフラグ状態を維持する長さ
         [SerializeField] private float activeSwitchCoolDownDuration = 1.0f;
 
-        private FaceTracker _faceTracker = null;
+        private FaceTracker _faceTracker;
+        private FaceControlConfiguration _faceConfig;
+        private GameInputBodyMotionController _gameInputBodyMotionController;
+        private CarHandleBasedFK _carHandleBasedFk;
+        private VoiceOnOffParser _voiceOnOffParser;
         
         [Inject]
         public void Initialize(
@@ -49,7 +48,8 @@ namespace Baku.VMagicMirror
             FaceTracker faceTracker,
             GameInputBodyMotionController gameInputBodyMotionController,
             CarHandleBasedFK carHandleBasedFk,
-            VmmLipSyncContextBase lipSyncContext
+            VmmLipSyncContextBase lipSyncContext,
+            VoiceOnOffParser voiceOnOffParser
             )
         {
             _faceTracker = faceTracker;
@@ -60,13 +60,7 @@ namespace Baku.VMagicMirror
                 VmmCommands.EnableVoiceBasedMotion,
                 command => _operationEnabled = command.ToBoolean());
 
-            _voiceOnOffParser = new VoiceOnOffParser(lipSyncContext)
-            {
-                //そこそこちゃんと喋ってないと検出しない、という設定のつもり
-                VisemeThreshold = 0.2f,
-                OnCountThreshold = 6,
-                OffCountThreshold = 16,
-            };
+            _voiceOnOffParser = voiceOnOffParser;
             
             _motionApplier = new NonImageBasedMotionApplier(vrmLoadable);
         }
@@ -83,9 +77,9 @@ namespace Baku.VMagicMirror
         /// <summary> 首に追加してほしい回転値(※HeadとNeckの合計値) </summary>
         public Quaternion HeadRotation { get; private set; } = Quaternion.identity;
 
-        private NonImageBasedMotionApplier _motionApplier = null;
-        private readonly Jitter _inactiveJitter = new Jitter();
-        private readonly Jitter _activeJitter = new Jitter();
+        private NonImageBasedMotionApplier _motionApplier;
+        private readonly Jitter _inactiveJitter = new();
+        private readonly Jitter _activeJitter = new();
 
         private Vector2 _rawEyeRot = Vector2.zero;
         private Vector2 _rawEyeRotTarget = Vector2.zero;
@@ -94,15 +88,15 @@ namespace Baku.VMagicMirror
         private float _actionBlendWeight = 0f;
         
         //音声またはキー入力とかによって「ユーザーが何かしら動いてるらしい」と判断できてる間はtrueになる値
-        private bool _rawUseActiveJitter = false;
+        private bool _rawUseActiveJitter;
         //rawActiveをもとに、頻繁なチャタリングが起きないように加工されたフラグ
-        private readonly ReactiveProperty<bool> _useActiveJitter = new ReactiveProperty<bool>();
+        private readonly ReactiveProperty<bool> _useActiveJitter = new();
         private float _activeSwitchCountDown = 0f;
 
         //GUI上からこの処理を許可されてるかどうか
         private bool _operationEnabled = true;
 
-        private readonly ReactiveProperty<bool> _shouldApply = new ReactiveProperty<bool>();
+        private readonly ReactiveProperty<bool> _shouldApply = new();
 
         //外部トラッキングについては接続できてる/できてないが明確なほうがバリューありそうなので、適用しない。
         //いっぽうwebカメラで顔トラが動く前 == 初期インストール直後を意味し、ここは親切にしたいので適用する。
@@ -132,7 +126,7 @@ namespace Baku.VMagicMirror
                 .Skip(1)
                 .Subscribe(_ =>
                 {
-                    _voiceOnOffParser.Reset(false);
+                    _voiceOnOffParser.Reset();
                     _rawUseActiveJitter = false;
                     _useActiveJitter.Value = false;
                     _activeSwitchCountDown = 0f;
@@ -245,9 +239,7 @@ namespace Baku.VMagicMirror
         
         private void CalculateAngles()
         {
-            //NOTE: 初期実装で声パーサーしか使わないのをいいことにこういう実装。
-            _voiceOnOffParser.Update();
-            _rawUseActiveJitter = _voiceOnOffParser.IsTalking;
+            _rawUseActiveJitter = _voiceOnOffParser.IsTalking.Value;
 
             //チャタリングを防ぐようにして_activeに適用
             if (_activeSwitchCountDown > 0)

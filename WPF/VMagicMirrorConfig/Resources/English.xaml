@@ -22,6 +22,7 @@
     <sys:String x:Key="TopBar_FaceTracker">Face Tracking</sys:String>
     <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">Accessory</sys:String>
+    <sys:String x:Key="TopBar_Buddy">Buddy</sys:String>
     <sys:String x:Key="TopBar_HandTrack">Hands</sys:String>
     
     <!-- Top Tab In Setting -->
@@ -256,6 +257,44 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize">Image max size</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize_Unlimited">Unlimited</sys:String>
 
+    <!-- Buddy -->
+    <sys:String x:Key="Buddy_Header">Buddy</sys:String>
+    <sys:String x:Key="Buddy_Instruction" xml:space="preserve">Setup assets and scripts in "Buddy" folder to show buddy characters.</sys:String>
+    <sys:String x:Key="Buddy_OpenFolder">Open Folder</sys:String>
+    <sys:String x:Key="Buddy_SeeMore">See More...</sys:String>
+    <sys:String x:Key="Buddy_ReloadAll">Reload All</sys:String>
+
+    <sys:String x:Key="Buddy_Item_Reload">Reload</sys:String>
+    <sys:String x:Key="Buddy_Item_FolderName">Folder: </sys:String>
+    <sys:String x:Key="Buddy_Item_ResetProperties">Reset to Default</sys:String>
+
+    <sys:String x:Key="Buddy_Log_FatalError">Fatal Error Happened:</sys:String>
+    <sys:String x:Key="Buddy_Log_FatalError_Copy">Copy Text</sys:String>
+    <sys:String x:Key="Buddy_Log_FatalError_Ignore">Ignore Error</sys:String>
+
+    <sys:String x:Key="Buddy_DeveloperMode">Developer Mode</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_Enabled">Developer Mode is Enabled</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_Instruction" xml:space="preserve">When buddies starts after Developer Mode is enabled,
+more detailed log information will be written to the log file.
+
+*Log data may not be appear when there are too many logs.
+Please open the log file of the buddy to confirm actual logs in this case.
+</sys:String>
+
+    <sys:String x:Key="Buddy_Item_DeveloperModeUnapplied_Instruction" xml:space="preserve">Log output is partially unavailable, since the buddy has been enabled before developer mode enabled.
+Restart (turn off and on) the buddy to get more detailed log.</sys:String>
+
+    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">About Developer Mode…</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_LogLevel">Log Level</sys:String>
+    <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">Open Log File</sys:String>
+
+    <sys:String x:Key="Buddy_FilePathString_OpenFile">Browse...</sys:String>    
+
+    <sys:String x:Key="Buddy_Transform_Attach">Attach to</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Position">Position</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Rotation">Rotation</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Scale">Scale</sys:String>    
+    
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>
     
@@ -817,11 +856,16 @@ You can revert this setting from current tab.</sys:String>
 This operation will disable VMCP data send and receive if they are active.
 Detailed settings about VMCP send and receive is kept after the tab is hidden.</sys:String>     
     
+    <sys:String x:Key="DialogTitle_ResetSingleBuddySettings">Reset Buddy Setting</sys:String>
+    <sys:String x:Key="DialogMessage_ResetSingleBuddySettings">Are you sure to reset the settings of "{0}"?</sys:String>
+    
     <!-- Snackbar Messages -->
+    <sys:String x:Key="Snackbar_General_TextCopied">Copied to Clipboard</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">Selected Camera Detected: {0}</sys:String>    
     <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">Body Motion Style is set to: "Default"</sys:String>
+    <sys:String x:Key="Snackbar_Buddy_LogFileNotFound_Format">The log file of the buddy does not exist: {0}</sys:String>
 
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(Do Nothing)</sys:String>
@@ -833,6 +877,7 @@ Detailed settings about VMCP send and receive is kept after the tab is hidden.</
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/en/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/en/docs/setting_files</sys:String>
     <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/en/docs/accessory</sys:String>
+    <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/en/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/en/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/en/docs/vmc_protocol</sys:String>
 

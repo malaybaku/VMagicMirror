@@ -59,7 +59,7 @@ Open Unity project with Unity 6.0.x, and open WPF project with Visual Studio 202
 Maintainer's environment is as following.
 
 * Unity 6.0.33f1 Personal
-* Visual Studio Community 2022 (17.4.4)
+* Visual Studio Community 2022 (17.13.0)
     * Component ".NET Desktop Development" is required.
     * Also Component "C++ Desktop Development" is required, for Unity Burst compiler.
 
@@ -81,6 +81,7 @@ Maintainer's environment is as following.
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
+* Roslyn Scripting (see the last part of this section for detail)
 
 Note that `FinalIK` and `Dlib FaceLandmark Detector` are paid assets.
 
@@ -116,6 +117,32 @@ You will get compile errors for the first time. To solve this, confirm `NuGetFor
 //uncomment this line once, and comment out after NAudio is downloaded
 #define TEMP_SUPPRESS_ERROR
 ```
+
+To install Roslyn Scripting library, get following packages from NuGet to introduce .dll files.
+
+- `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0`
+- `System.Runtime.Loader-v4.0.0`
+
+In maintainers' project, the folder and file structure is as following.
+
+- `Assets/CSharpScripting`
+    - `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0/Plugins`
+        - Microsoft.CodeAnalysis.CSharp.Scripting.dll
+        - Microsoft.CodeAnalysis.dll
+        - Microsoft.CodeAnalysis.Scripting.dll
+        - System.Buffers.dll
+        - System.Collections.Immutable.dll
+        - System.Memory.dll
+        - System.Numerics.Vectors.dll
+        - System.Reflection.Metadata.dll
+        - System.Runtime.CompilerServices.Unsafe.dll
+        - System.Text.Encoding.CodePages.dll
+        - System.Threading.Tasks.Extensions.dll
+        - Microsoft.CodeAnalysis.CSharp.dll
+    - `System.Runtime.Loader-v4.0.0/Plugins`
+        - System.Runtime.Loader.dll
+
+Note that NuGetForUnity might get the packages above correctly, though it is not tested yet.
 
 ### 4.3. Build
 
@@ -161,9 +188,24 @@ Prepare output folder like `Bin`. Following instruction expects the folder name 
 
 When you want to check right folder structure, please see the distributed app.
 
-## 5. Third-Party License
 
-### 5.1. OSS License
+## 5. Note about Missing Assets
+
+VMagicMirror v4.0.0 and later version supports Buddy feature, and `BuddyPresetResources.asset` will have missing binary data (`.bytes`). 
+
+This is because the preset buddy assets were created by a third party on a commissioned basis.
+
+When necessary, please assign dummy assets at `Texture Binary` and `VRM Binary` field of `BuddyPresetResources.asset`.
+
+- `Texture Binary` : 256x256px image png file, with extension changed to `.bytes`
+- `VRM Binary` : Light VRM model, with extension to `.bytes`
+
+ref: (Add URL reference to doc web page, when preset buddy's license note is added)
+
+
+## 6. Third-Party License
+
+### 6.1. OSS License
 
 OSS license is listed in control panel GUI, and the resource text is this file.
 
@@ -175,7 +217,7 @@ https://malaybaku.github.io/VMagicMirror/credit_license
 
 Note that some images are created with [Otomanopee](https://github.com/Gutenberg-Labo/Otomanopee) font. This is not license notice, since the font itself is not redistributed.
 
-### 5.2. About Model data under Creative Commons Attribution
+### 6.2. About Model data under Creative Commons Attribution
 
 This repository includes following model data files under Attribution 4.0 International (CC BY 4.0).
 
@@ -185,6 +227,6 @@ This repository includes following model data files under Attribution 4.0 Intern
 VMagicMirror applies material for visual consistency, and allow texture replacement to support visual customize.
 
 
-## 6. About Localization Contribution
+## 7. About Localization Contribution
 
 Please check [about_localization.md](./about_localization.md), when you plan to contribute by localization activity.

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Baku.VMagicMirror.Mmf;
 using Cysharp.Threading.Tasks;
 using Zenject;
+using Debug = UnityEngine.Debug;
 
 namespace Baku.VMagicMirror
 {
@@ -21,8 +22,8 @@ namespace Baku.VMagicMirror
                 Path.GetDirectoryName(Application.dataPath),
                 ConfigExePath
                 );
-
         private IMessageSender _sender;
+
         private List<IReleaseBeforeQuit> _releaseItems = new();
 
         private readonly Atomic<bool> _releaseRunning = new();
@@ -108,25 +109,76 @@ namespace Baku.VMagicMirror
 
         private async UniTaskVoid ActivateWpfAsync(CancellationToken token)
         {
+            //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
+            await UniTask.DelayFrame(2, cancellationToken: token);
+
+            if (Application.isEditor)
+            {
+                try
+                {
+                    ActivateWpfFromEditor();
+                }
+                catch (Exception ex)
+                {
+                    // ログは出すけど想定内エラーということにする
+                    Debug.LogException(ex);
+                }
+                return;
+            }
+            
             var path = GetWpfPath();
             if (!File.Exists(path))
             {
                 return;
             }
+            
+            StartProcess(path);
+            // WPF側のウィンドウ閉じでUnity側が閉じられるようにProcess Idを教えておく。これはEditorの場合は不要
+            _sender.SendCommand(MessageFactory.SetUnityProcessId(Process.GetCurrentProcess().Id));
+        }
 
-            //他スクリプトの初期化とUpdateが回ってからの方がよいので少しだけ遅らせる
-            await UniTask.DelayFrame(2, cancellationToken: token);
+        private void ActivateWpfFromEditor()
+        {
+            // pj直下にデバッグ用のexeのパスを書いたファイルを置いておき、それを読みに行く
+            var editorWpfExePathFile = Path.Combine(
+                Path.GetDirectoryName(Application.dataPath),
+                "debug_wpf_exe_path.txt"
+            );
+
+            var exePath = "";
+            if (File.Exists(editorWpfExePathFile))
+            {
+                exePath = File.ReadAllText(editorWpfExePathFile);
+            }
+
+            if (!File.Exists(exePath))
+            {
+                return;
+            }
+
+            // NOTE: ビルド版と異なり、Process Idは教えない(= WPF側はUnity Editorを終了させないようにしとく)
+            StartProcess(exePath);
+        }
+
+        private void StartProcess(string exePath)
+        {
+            var args = "/channelId " + MmfChannelIdSource.ChannelId;
+            if (Application.isEditor)
+            {
+                // NOTE:
+                // - サブキャラのフォルダをWPFがreadできてほしい & Editor実行だとStreamingAssetsの位置が非自明なので伝える
+                //   - ビルドの場合、WPFとUnityのフォルダ構造は確定しているので、伝える必要がなくなる
+                // - WPFから飛んでくるサブキャラ関連のフォルダ名をバックスラッシュ区切りに統一しておきたいので、
+                //   この時点でバックスラッシュ区切りに寄せておく
+                args += " /streamingAssetsDir \"" + Application.streamingAssetsPath.Replace('/', '\\') + "\"";
+            }
+
             var startInfo = new ProcessStartInfo()
             {
-                FileName = path,
-                Arguments = "/channelId " + MmfChannelIdSource.ChannelId
+                FileName = exePath,
+                Arguments = args,
             };
-
-            if (!Application.isEditor)
-            {
-                Process.Start(startInfo);
-                _sender.SendCommand(MessageFactory.SetUnityProcessId(Process.GetCurrentProcess().Id));
-            }
+            Process.Start(startInfo);
         }
     }
 }

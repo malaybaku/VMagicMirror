@@ -1,3 +1,5 @@
+using System;
+
 namespace Baku.VMagicMirror
 {
     /// <summary>
@@ -20,5 +22,12 @@ namespace Baku.VMagicMirror
 #else
                 false;
 #endif
+        public static void InvokeWithFeatureLock(Action act)
+        {
+            if (!IsFeatureLocked)
+            {
+                act();
+            }
+        }
     }
 }

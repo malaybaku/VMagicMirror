@@ -1,4 +1,5 @@
 ﻿using System;
+using Baku.VMagicMirror.Buddy;
 using Baku.VMagicMirror.MediaPipeTracker;
 using Baku.VMagicMirror.VMCP;
 using UniRx;
@@ -18,6 +19,7 @@ namespace Baku.VMagicMirror
         private AnimMorphEasedTarget _animMorphEasedTarget;
         private LipSyncIntegrator _lipSyncIntegrator;
         private VMCPBlendShape _vmcpBlendShape;
+        private AvatarFacialApiImplement _buddyAvatarFacialApi;
 
         private readonly ReactiveProperty<string> _microphoneDeviceName = new("");
         private readonly ReactiveProperty<bool> _isMicrophoneLipSyncActive = new(true);
@@ -35,15 +37,17 @@ namespace Baku.VMagicMirror
             IMessageReceiver receiver,
             VMCPBlendShape vmcpBlendShape,
             FaceControlConfiguration faceControlConfig,
-            MediaPipeTrackerRuntimeSettingsRepository mediaPipeTrackerRuntimeSettings
-            )
+            MediaPipeTrackerRuntimeSettingsRepository mediaPipeTrackerRuntimeSettings,
+            AvatarFacialApiImplement buddyAvatarFacialApi)
         {
             _vmcpBlendShape = vmcpBlendShape;
             _faceControlConfig = faceControlConfig;
             _mediaPipeTrackerRuntimeSettings = mediaPipeTrackerRuntimeSettings;
-
+            _buddyAvatarFacialApi = buddyAvatarFacialApi;
+ 
             receiver.BindBoolProperty(VmmCommands.EnableLipSync, _isMicrophoneLipSyncActive);
             receiver.BindStringProperty(VmmCommands.SetMicrophoneDeviceName, _microphoneDeviceName);
+
             // NOTE: [dB]単位であることに注意
             receiver.AssignCommandHandler(
                 VmmCommands.SetMicrophoneSensitivity,
@@ -97,7 +101,8 @@ namespace Baku.VMagicMirror
                 _isMicrophoneLipSyncActive,
                 _isImageBaseLipSyncActive,
                 _vmcpBlendShape.IsActive,
-                (a, b, c, d) => Unit.Default
+                _buddyAvatarFacialApi.RequireMicrophoneRecording,
+                (a, b, c, d, e) => Unit.Default
                 )
                 .Skip(1)
                 .Subscribe(_ => RefreshMicrophoneLipSyncStatus())
@@ -110,9 +115,11 @@ namespace Baku.VMagicMirror
             _lipSyncContext.StopRecording();
 
             var shouldStartReceive =
-                !_vmcpBlendShape.IsActive.Value &&
-                _isMicrophoneLipSyncActive.Value &&
-                !_isImageBaseLipSyncActive.Value;
+                _buddyAvatarFacialApi.RequireMicrophoneRecording.Value || (
+                    !_vmcpBlendShape.IsActive.Value &&
+                    _isMicrophoneLipSyncActive.Value &&
+                    !_isImageBaseLipSyncActive.Value
+                );
 
             _animMorphEasedTarget.ShouldReceiveData = shouldStartReceive;
             

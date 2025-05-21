@@ -22,15 +22,14 @@ namespace Baku.VMagicMirror.WordToMotion
             Container.BindInterfacesAndSelfTo<VrmaMotionSetter>().AsSingle();
             Container.BindInterfacesAndSelfTo<VrmaMotionPlayer>().AsSingle();
 
-            //どっちが良いか微妙なライン…うーん…
             Container.BindInterfacesAndSelfTo<BuiltInMotionPlayer>().AsSingle();
-            //Container.BindInterfacesTo<BuiltInMotionPlayerV2>().AsSingle();
 
             //presenter
             Container.Bind<WordToMotionRequester>().AsSingle();
             Container.BindInterfacesTo<WordToMotionPresenter>().AsSingle();
             Container.BindInterfacesAndSelfTo<WordToMotionRunner>().AsSingle();
-            
+
+            Container.Bind<WordToMotionEventBroker>().AsSingle();
         }
     }
 }

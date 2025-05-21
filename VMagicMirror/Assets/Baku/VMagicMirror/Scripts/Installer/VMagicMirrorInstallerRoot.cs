@@ -1,3 +1,4 @@
+﻿using Baku.VMagicMirror.Buddy;
 ﻿using Baku.VMagicMirror.MediaPipeTracker;
 using UnityEngine;
 using Zenject;
@@ -20,6 +21,12 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private DeformableCounter deformableCounterPrefab = null;
         [SerializeField] private InterProcessCommunicationInstaller interProcess = null;
         [SerializeField] private StartupLoadingCover loadingCoverController = null;
+
+        [SerializeField] private BuddySpriteCanvas buddySpriteCanvas;
+        [SerializeField] private BuddyGuiCanvas buddyGuiCanvas;
+        [SerializeField] private BuddyAudioSources buddyAudioSources;
+        [SerializeField] private BuddyManifestTransform3DInstance buddyTransform3DInstancePrefab;
+        [SerializeField] private BuddySprite3DInstance buddySprite3DInstancePrefab;
         
         public override void InstallBindings()
         {
@@ -59,6 +66,23 @@ namespace Baku.VMagicMirror.Installer
                 .FromComponentInNewPrefab(accessoryControllerPrefab)
                 .AsCached()
                 .NonLazy();
+
+            Container.Bind<BuddySpriteCanvas>()
+                .FromComponentInNewPrefab(buddySpriteCanvas)
+                .AsCached();
+            Container.Bind<BuddyGuiCanvas>()
+                .FromComponentInNewPrefab(buddyGuiCanvas)
+                .AsCached();
+            Container.Bind<BuddyAudioSources>()
+                .FromComponentInNewPrefab(buddyAudioSources)
+                .AsCached();
+            Container.BindIFactory<BuddyManifestTransform3DInstance>()
+                .FromComponentInNewPrefab(buddyTransform3DInstancePrefab)
+                .AsSingle();
+            Container.BindIFactory<BuddySprite3DInstance>()
+                .FromComponentInNewPrefab(buddySprite3DInstancePrefab)
+                .AsSingle();
+            BuddySystemInstaller.Install(Container);
             
             WordToMotion.WordToMotionInstaller.Install(Container);
             

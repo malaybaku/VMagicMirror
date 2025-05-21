@@ -18,40 +18,51 @@ namespace Baku.VMagicMirror
         [Tooltip("目が開く方向へブレンドシェイプ値を変更するとき、60FPSの1フレームあたりで変更できる値の上限")]
         [SerializeField] private float blinkOpenSpeedMax = 0.1f;
         
-        [Inject] private ExternalTrackerDataSource _externalTracker = null;
+        [Inject] private ExternalTrackerDataSource _externalTracker;
         
-        private readonly RecordBlinkSource _blinkSource = new RecordBlinkSource();
+        private readonly RecordBlinkSource _blinkSource = new();
+        // HACK: この値は「パーフェクトシンク使用中にまばたきアクションをしたかどうか」の検出目的でも見に来るため、
+        // アバター自体のまばたき制御をパーフェクトシンクで行っている間も値は更新し続けるのが期待値
         public IBlinkSource BlinkSource => _blinkSource;
-        
-        private void Update()
-        {
-            float subLimit = blinkOpenSpeedMax * Time.deltaTime * 60f;
-            var eye = _externalTracker.CurrentSource.Eye;
 
+        public (float left, float right) CalculateBlinkValues(
+            float rightBlink, float rightSquint, float leftBlink, float leftSquint)
+        {
             //NOTE: ちょっとややこしいが、VMMはミラー的な表示を前提にしているため、
             //eye側のデータはデフォルトが左右反転している。そこまで踏まえつつ場合分けするとこうなる
-            var rawLeftBlink = _externalTracker.DisableHorizontalFlip ? eye.RightBlink : eye.LeftBlink;
-            var rawLeftSquint = _externalTracker.DisableHorizontalFlip ? eye.RightSquint : eye.LeftSquint;
+            var rawLeftBlink = _externalTracker.DisableHorizontalFlip ? rightBlink : leftBlink;
+            var rawLeftSquint = _externalTracker.DisableHorizontalFlip ? rightSquint : leftSquint;
             
-            var rawRightBlink = _externalTracker.DisableHorizontalFlip ? eye.LeftBlink : eye.RightBlink;
-            var rawRightSquint = _externalTracker.DisableHorizontalFlip ? eye.LeftSquint : eye.RightSquint;
-            
+            var rawRightBlink = _externalTracker.DisableHorizontalFlip ? leftBlink : rightBlink;
+            var rawRightSquint = _externalTracker.DisableHorizontalFlip ? leftSquint : rightSquint;
 
-            float left = MapClamp(rawLeftBlink);
+            var left = MapClamp(rawLeftBlink);
             if (left < 0.9f)
             {
                 left = Mathf.Lerp(left, blinkValueOnSquint, rawLeftSquint);
             }
-            //NOTE: 開くほうは速度制限があるけど閉じるほうは一瞬でいい、という方式。右目も同様。
-            left = Mathf.Clamp(left, _blinkSource.Left - subLimit, 1.0f);
-            _blinkSource.Left = Mathf.Clamp01(left);
 
-            float right = MapClamp(rawRightBlink);
+            var right = MapClamp(rawRightBlink);
             if (right < 0.9f)
             {
                 right = Mathf.Lerp(right, blinkValueOnSquint, rawRightSquint);
             }
+            return (left, right);
+        }
+        
+        private void Update()
+        {
+            var eye = _externalTracker.CurrentSource.Eye;
+            var (left, right) = CalculateBlinkValues(
+                eye.RightBlink, eye.RightSquint, eye.LeftBlink, eye.LeftSquint
+            );
+            
+            //NOTE: 開くほうは速度制限があるけど閉じるほうは一瞬でいい、という方式。右目も同様。
+            var subLimit = blinkOpenSpeedMax * Time.deltaTime * 60f;
+            left = Mathf.Clamp(left, _blinkSource.Left - subLimit, 1.0f);
             right = Mathf.Clamp(right, _blinkSource.Right - subLimit, 1.0f);
+
+            _blinkSource.Left = Mathf.Clamp01(left);
             _blinkSource.Right = Mathf.Clamp01(right);
         }
 

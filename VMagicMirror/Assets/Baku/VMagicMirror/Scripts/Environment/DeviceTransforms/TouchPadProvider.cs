@@ -12,6 +12,18 @@ namespace Baku.VMagicMirror
         [SerializeField] private TransformControl transformControl = null;
         public TransformControl TransformControl => transformControl;
 
+        private TouchpadVisibilityView _visibilityView = null;
+        public TouchpadVisibilityView GetVisibilityView()
+        {
+            if (_visibilityView == null)
+            {
+                _visibilityView = GetComponent<TouchpadVisibilityView>();
+            }
+            return _visibilityView;
+        }
+
+        public Pose GetPose() => new(transform.position, transform.rotation); 
+
         [Inject]
         public void Initialize(MousePositionProvider mousePositionProvider, IDevicesRoot parent)
         {

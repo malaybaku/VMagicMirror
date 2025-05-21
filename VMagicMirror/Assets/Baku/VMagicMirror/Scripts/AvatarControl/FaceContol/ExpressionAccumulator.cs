@@ -71,6 +71,8 @@ namespace Baku.VMagicMirror
             }
         }
 
+        // NOTE: HasKeyやGetValueはモデルがロード中じゃないとfalse/0を返す
+        public bool HasKey(ExpressionKey key) => _values.ContainsKey(key);
         public float GetValue(ExpressionKey key) => _values.TryGetValue(key, out var result) ? result : 0f;
         public IReadOnlyDictionary<ExpressionKey, float> GetValues() => _values;
     }

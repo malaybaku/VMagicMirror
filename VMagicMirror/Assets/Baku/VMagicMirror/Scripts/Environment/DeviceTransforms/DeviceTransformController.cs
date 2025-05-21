@@ -291,6 +291,8 @@ namespace Baku.VMagicMirror
         
             try
             {
+                // TODO: Transform編集に関するコードのトレーサビリティが悪いのを直したい
+                // 具体的には、各ControlなりProviderなりのクラスからSetPosition系のメソッドが生えてると嬉しい
                 var data = JsonUtility.FromJson<DeviceLayoutsData>(content);
                 ApplyItem(data.keyboard, _keyboardControl.transform);
                 ApplyItem(data.touchPad, _touchPadControl.transform);

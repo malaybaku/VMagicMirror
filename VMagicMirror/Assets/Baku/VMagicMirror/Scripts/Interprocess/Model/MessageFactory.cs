@@ -43,6 +43,11 @@ namespace Baku.VMagicMirror
         public static Message NotifyVmcpReceiveStatus(string json) => Message.String(VmmServerCommands.NotifyVmcpReceiveStatus, json);
 
         public static Message EyeBlendShapeValues(string json) => Message.String(VmmServerCommands.EyeBlendShapeValues, json);
+
+        public static Message NotifyBuddy2DLayout(string json) => Message.String(VmmServerCommands.NotifyBuddy2DLayout, json);
+        public static Message NotifyBuddy3DLayout(string json) => Message.String(VmmServerCommands.NotifyBuddy3DLayout, json);
+
+        public static Message NotifyBuddyLog(string json) => Message.String(VmmServerCommands.NotifyBuddyLog, json);
         
         #region VRoid
 

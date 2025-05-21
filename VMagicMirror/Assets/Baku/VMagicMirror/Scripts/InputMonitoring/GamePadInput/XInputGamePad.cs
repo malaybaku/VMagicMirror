@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UniRx;
 
@@ -14,10 +15,11 @@ namespace Baku.VMagicMirror
 
         private const int StickPositionDiffThreshold = 1000;
 
-        private readonly XInputCapture _xInputCapture = new XInputCapture();
+        private readonly XInputCapture _xInputCapture = new();
         
         public IObservable<GamepadKeyData> ButtonUpDown => _buttonSubject;
 
+        //TODO: 動作が壊れないことを評価したうえで普通にReactivePropertyに置き換えたい…
         /// <summary>
         /// Position is (x, y), and both x and y are in short (MIN=-32768, MAX=+32767)
         /// </summary>
@@ -48,33 +50,33 @@ namespace Baku.VMagicMirror
         }
 
         //DirectInputによって入力キャプチャをこっそり代行してくれるやつ
-        private readonly DirectInputGamePad _directInputAlternative = new DirectInputGamePad();
+        private readonly DirectInputGamePad _directInputAlternative = new();
         
         //このクラス自身がforeachで使うときはこっち
-        private HashSet<ObservableButton> _buttons = new HashSet<ObservableButton>();
+        private HashSet<ObservableButton> _buttons = new();
         //DirectInput入力で代わりに上書きするときはここからアクセス
-        private readonly List<ObservableButton> _buttonsList = new List<ObservableButton>(16);
-        private readonly Subject<GamepadKeyData> _buttonSubject = new Subject<GamepadKeyData>();
+        private readonly List<ObservableButton> _buttonsList = new(16);
+        private readonly Subject<GamepadKeyData> _buttonSubject = new();
 
-        private readonly Subject<Vector2Int> _rightStick = new Subject<Vector2Int>();
-        private readonly Subject<Vector2Int> _leftStick = new Subject<Vector2Int>();
+        private readonly Subject<Vector2Int> _rightStick = new();
+        private readonly Subject<Vector2Int> _leftStick = new();
 
         private Vector2Int _rightStickPosition = Vector2Int.zero;
         private Vector2Int _leftStickPosition = Vector2Int.zero;
 
-        private bool _hasValidArrowButtons = false;
+        private bool _hasValidArrowButtons;
         private ObservableButton _arrowRight;
         private ObservableButton _arrowDown;
         private ObservableButton _arrowLeft;
         private ObservableButton _arrowUp;
 
-        private bool _isLeftTriggerDown = false;
-        private bool _isRightTriggerDown = false;
+        private bool _isLeftTriggerDown;
+        private bool _isRightTriggerDown;
 
         //Updateで実処理を呼んでもいいかどうか
         private bool _updateEnabled = true;
         //XInputよりもDirectInputで取得できるコントローラを使うべきかどうか(PS4コンではtrue)
-        private bool _preferDirectInput = false;
+        private bool _preferDirectInput;
 
         public void SetEnableGamepad(bool enableGamepad)
         {
@@ -110,11 +112,15 @@ namespace Baku.VMagicMirror
                     _directInputAlternative.Stop();
                 }
             }
-        }        
-        
+        }
+
+        public bool GetButtonDown(GamepadKey key) 
+            => _buttons.FirstOrDefault(b => b.Key == key)?.IsPressed ?? false;
+
         private void Start()
         {
             _buttonsList.Add(new ObservableButton(GamepadKey.Start, XInputCapture.Buttons.START, _buttonSubject));
+            _buttonsList.Add(new ObservableButton(GamepadKey.Select, XInputCapture.Buttons.BACK, _buttonSubject));
             
             _buttonsList.Add(new ObservableButton(GamepadKey.B, XInputCapture.Buttons.B, _buttonSubject));
             _buttonsList.Add(new ObservableButton(GamepadKey.A, XInputCapture.Buttons.A, _buttonSubject));
@@ -155,7 +161,7 @@ namespace Baku.VMagicMirror
             {
                 //普通にXInputの読み取り
                 _xInputCapture.Update();
-                int buttonFlags = _xInputCapture.GetButtonStates();
+                var buttonFlags = _xInputCapture.GetButtonStates();
                 foreach(var button in _buttons)
                 {
                     button.UpdatePressedState(buttonFlags);
@@ -172,19 +178,20 @@ namespace Baku.VMagicMirror
         {
             //NOTE: ボタンの順序はStart()で初期化してる順番と揃えてます
             _buttonsList[0].IsPressed = state.Start;
+            _buttonsList[1].IsPressed = state.Select;
             
-            _buttonsList[1].IsPressed = state.B;
-            _buttonsList[2].IsPressed = state.A;
-            _buttonsList[3].IsPressed = state.X;
-            _buttonsList[4].IsPressed = state.Y;
+            _buttonsList[2].IsPressed = state.B;
+            _buttonsList[3].IsPressed = state.A;
+            _buttonsList[4].IsPressed = state.X;
+            _buttonsList[5].IsPressed = state.Y;
             
-            _buttonsList[5].IsPressed = state.R1;
-            _buttonsList[6].IsPressed = state.L1;
+            _buttonsList[6].IsPressed = state.R1;
+            _buttonsList[7].IsPressed = state.L1;
             
-            _buttonsList[7].IsPressed = state.Right;
-            _buttonsList[8].IsPressed = state.Down;
-            _buttonsList[9].IsPressed = state.Left;
-            _buttonsList[10].IsPressed = state.Up;
+            _buttonsList[8].IsPressed = state.Right;
+            _buttonsList[9].IsPressed = state.Down;
+            _buttonsList[10].IsPressed = state.Left;
+            _buttonsList[11].IsPressed = state.Up;
             
             var right = new Vector2Int(state.RightX, state.RightY);
             if (Mathf.Abs(right.x - _rightStickPosition.x) + 
@@ -262,14 +269,15 @@ namespace Baku.VMagicMirror
         {
             public ObservableButton(GamepadKey key, int flag, Subject<GamepadKeyData> subject)
             {
-                _key = key;
+                Key = key;
                 _flag = flag;
                 _subject = subject;
             }
 
-            private readonly GamepadKey _key;
             private readonly int _flag;
             private readonly Subject<GamepadKeyData> _subject;
+
+            public GamepadKey Key { get; }
 
             private bool _isPressed = false;
             public bool IsPressed
@@ -280,7 +288,7 @@ namespace Baku.VMagicMirror
                     if (_isPressed != value)
                     {
                         _isPressed = value;
-                        _subject.OnNext(new GamepadKeyData(_key, IsPressed));
+                        _subject.OnNext(new GamepadKeyData(Key, IsPressed));
                     }
                 }
             }

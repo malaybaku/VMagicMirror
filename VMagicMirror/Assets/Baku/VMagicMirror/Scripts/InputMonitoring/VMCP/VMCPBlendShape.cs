@@ -157,6 +157,8 @@ namespace Baku.VMagicMirror.VMCP
                 accumulator.Accumulate(pair.Key, pair.Value * weight);
             }
         }
+
+        public IReadOnlyDictionary<ExpressionKey, float> GetCurrentValues() => _values;
         
         private void OnVrmLoaded(VrmLoadedInfo info)
         {

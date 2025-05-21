@@ -23,8 +23,6 @@ namespace Baku.VMagicMirror.Buddy.Api
         private readonly BuddyLogger _logger;
         private BuddyFolder BuddyFolder { get; }
 
-        private bool _fileNotFoundErrorLogged;
-
         internal Sprite2DApi(BuddyFolder buddyFolder, BuddySprite2DInstance instance, BuddyLogger logger)
         {
             BuddyFolder = buddyFolder;
@@ -92,6 +90,10 @@ namespace Baku.VMagicMirror.Buddy.Api
                     Mathf.Max(duration, 0f)
                     );
                 HandlePresetTextureLoadResult(name, loadResult);
+                if (loadResult == TextureLoadResult.Success)
+                {
+                    _instance.SetActive(true);
+                }
             });
         }
 
@@ -110,7 +112,11 @@ namespace Baku.VMagicMirror.Buddy.Api
                 GetFullPath(mouthOpenImagePath),
                 GetFullPath(blinkMouthOpenImagePath)
             );
-            HandleTextureLoadResult(defaultImagePath, setupResult);
+
+            HandleTextureLoadResult(defaultImagePath, setupResult.Item1);
+            HandleTextureLoadResult(blinkImagePath, setupResult.Item2);
+            HandleTextureLoadResult(mouthOpenImagePath, setupResult.Item3);
+            HandleTextureLoadResult(blinkMouthOpenImagePath, setupResult.Item4);
         });
 
         // NOTE: このメソッドは内部的なコーディングエラーが無い限り成功するはず
@@ -124,10 +130,14 @@ namespace Baku.VMagicMirror.Buddy.Api
         public void ShowDefaultSprites(BuddyApi.Sprite2DTransitionStyle style, float duration) 
             => ApiUtils.Try(BuddyFolder, _logger, () =>
             {
-                _instance.ShowDefaultSprites(
+                var willSuccess = _instance.ShowDefaultSprites(
                     GetClampedStyle(style),
                     Mathf.Max(duration, 0f)
                 );
+                if (willSuccess)
+                {
+                    _instance.SetActive(true);
+                }
             });
 
         private string GetFullPath(string path) => ApiUtils.GetAssetFullPath(BuddyFolder, path);
@@ -136,12 +146,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             if (loadResult is TextureLoadResult.FailureFileNotFound)
             {
-                if (!_fileNotFoundErrorLogged)
-                {
-                    _logger.Log(BuddyFolder, "Specified file does not exist: " + fullPath, BuddyLogLevel.Error);
-                }
-
-                _fileNotFoundErrorLogged = true;
+                _logger.Log(BuddyFolder, "Specified file does not exist: " + fullPath, BuddyLogLevel.Fatal);
             }
         }
 
@@ -149,7 +154,7 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             if (result is TextureLoadResult.FailureFileNotFound)
             {
-                _logger.Log(BuddyFolder, "Specified preset does not exist: " + name, BuddyLogLevel.Error);
+                _logger.Log(BuddyFolder, "Specified preset does not exist: " + name, BuddyLogLevel.Fatal);
             }
         }
 

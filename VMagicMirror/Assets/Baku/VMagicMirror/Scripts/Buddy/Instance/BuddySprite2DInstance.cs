@@ -232,33 +232,34 @@ namespace Baku.VMagicMirror.Buddy
         
         public void SetActive(bool active) => gameObject.SetActive(active);
 
-        public TextureLoadResult SetupDefaultSprites(
+        public (TextureLoadResult, TextureLoadResult, TextureLoadResult, TextureLoadResult) SetupDefaultSprites(
             string defaultPath,
             string blinkPath,
             string mouthOpenPath,
             string blinkMouthOpenPath
             )
         {
-            // TODO: 失敗判定
             var defaultResult = ApiUtils.TryGetTexture2D(defaultPath, out var defaultTexture);
             var blinkResult = ApiUtils.TryGetTexture2D(blinkPath, out var blinkTexture);
             var mouthOpenResult =  ApiUtils.TryGetTexture2D(mouthOpenPath, out var mouthOpenTexture);
             var blinkMouthOpenResult = ApiUtils.TryGetTexture2D(blinkMouthOpenPath, out var blinkMouthOpenTexture);
 
-            // 一つでも失敗してたら続行しない (※defaultさえ通ってれば通す…みたいなのもアリかも。)
-            if (defaultResult is not TextureLoadResult.Success) return defaultResult;
-            if (blinkResult is not TextureLoadResult.Success) return blinkResult;
-            if (mouthOpenResult is not TextureLoadResult.Success) return mouthOpenResult;
-            if (blinkMouthOpenResult is not TextureLoadResult.Success) return blinkMouthOpenResult;
-            
-            DefaultSpritesInstance.SetupTexture(
-                true,
-                defaultTexture,
-                blinkTexture,
-                mouthOpenTexture,
-                blinkMouthOpenTexture
+            // 全て成功ならSetupTextureを行ってよい
+            if (defaultResult is TextureLoadResult.Success &&
+                blinkResult is TextureLoadResult.Success &&
+                mouthOpenResult is TextureLoadResult.Success &&
+                blinkMouthOpenResult is TextureLoadResult.Success)
+            {
+                DefaultSpritesInstance.SetupTexture(
+                    true,
+                    defaultTexture,
+                    blinkTexture,
+                    mouthOpenTexture,
+                    blinkMouthOpenTexture
                 );
-            return TextureLoadResult.Success;
+            }
+
+            return (defaultResult, blinkResult, mouthOpenResult, blinkMouthOpenResult);
         }
 
         public void SetupDefaultSpritesByPreset()
@@ -273,11 +274,12 @@ namespace Baku.VMagicMirror.Buddy
                 );
         }
 
-        public void ShowDefaultSprites(Sprite2DTransitionStyle style, float duration)
+        public bool ShowDefaultSprites(Sprite2DTransitionStyle style, float duration)
         {
             Transition = BuddySprite2DInstanceTransition.CreateDefault(
                 style, DefaultSpritesInstance.CurrentTexture, duration
                 );
+            return DefaultSpritesInstance.HasValidSetup;
         }
 
         public void UpdateDefaultSpritesTexture()

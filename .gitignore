@@ -48,6 +48,10 @@ sysinfo.txt
 /VMagicMirror/Assets/StreamingAssets/
 /VMagicMirror/Assets/StreamingAssets.meta
 
+# Default Buddy Scripts are included, though default buddy assets is not in the directory
+!/VMagicMirror/Assets/StreamingAssets/DefaultBuddy/
+!/VMagicMirror/Assets/StreamingAssets/DefaultBuddy.meta
+
 # Assets to ignore
 
 /VMagicMirror/Assets/Baku/VMagicMirror_MotionExporter/
@@ -152,3 +156,10 @@ docs/Gemfile.lock
 # Ignore docfx output (they should be moved to docs repo)
 docs_buddy/_site/
 docs_buddy/api/
+
+# Ignore buddy sample files' asset data
+/BuddySample/**/*.png
+/BuddySample/**/*.vrm
+/BuddySample/**/*.glb
+/BuddySample/**/*.mp3
+/BuddySample/**/*.wav

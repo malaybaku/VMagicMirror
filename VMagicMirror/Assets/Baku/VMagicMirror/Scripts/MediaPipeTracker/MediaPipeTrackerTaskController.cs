@@ -99,6 +99,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 VmmCommands.SetWebCamEyeCloseBlinkValue,
                 m => _settingsRepository.EyeCloseBlinkValue = m.ParseAsPercentage()
                 );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetWebCamEyeApplySameBlinkBothEye,
+                m => _settingsRepository.EyeUseMeanBlinkValue = m.ToBoolean()
+                );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetWebCamEyeApplyBlinkCorrectionToPerfectSync,
+                m => _settingsRepository.EyeApplyCorrectionToPerfectSync.Value = m.ToBoolean()
+                );
 
             // TODO: ハンドトラッキングだけ動いてるときのキャリブレーションの実装 = 一瞬だけFaceTaskを起こす処理の実装
             // NOTE: MediaPipeのトラッキングが動いてない場合、キャリブレーションは実行されない

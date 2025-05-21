@@ -43,6 +43,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         public float EyeOpenBlinkValue { get; set; } = 0.2f;
         public float EyeCloseBlinkValue { get; set; } = 0.5f;
+        public bool EyeUseMeanBlinkValue { get; set; } = false;
+        // NOTE: 考え方によってMediaPipeのタスクから直接使うケースと間接的に見るケース双方あるのでatomicにしておく
+        public Atomic<bool> EyeApplyCorrectionToPerfectSync { get; } = new(false);
         
         // NOTE: ここから下はMediaPipeのタスクから直接使う == メインスレッド外から使うことがある
         public Atomic<bool> IsFaceMirrored { get; } = new(true);

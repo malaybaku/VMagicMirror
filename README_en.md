@@ -188,9 +188,24 @@ Prepare output folder like `Bin`. Following instruction expects the folder name 
 
 When you want to check right folder structure, please see the distributed app.
 
-## 5. Third-Party License
 
-### 5.1. OSS License
+## 5. Note about Missing Assets
+
+VMagicMirror v4.0.0 and later version supports Buddy feature, and `BuddyPresetResources.asset` will have missing binary data (`.bytes`). 
+
+This is because the preset buddy assets were created by a third party on a commissioned basis.
+
+When necessary, please assign dummy assets at `Texture Binary` and `VRM Binary` field of `BuddyPresetResources.asset`.
+
+- `Texture Binary` : 256x256px image png file, with extension changed to `.bytes`
+- `VRM Binary` : Light VRM model, with extension to `.bytes`
+
+ref: (Add URL reference to doc web page, when preset buddy's license note is added)
+
+
+## 6. Third-Party License
+
+### 6.1. OSS License
 
 OSS license is listed in control panel GUI, and the resource text is this file.
 
@@ -202,7 +217,7 @@ https://malaybaku.github.io/VMagicMirror/credit_license
 
 Note that some images are created with [Otomanopee](https://github.com/Gutenberg-Labo/Otomanopee) font. This is not license notice, since the font itself is not redistributed.
 
-### 5.2. About Model data under Creative Commons Attribution
+### 6.2. About Model data under Creative Commons Attribution
 
 This repository includes following model data files under Attribution 4.0 International (CC BY 4.0).
 
@@ -212,6 +227,6 @@ This repository includes following model data files under Attribution 4.0 Intern
 VMagicMirror applies material for visual consistency, and allow texture replacement to support visual customize.
 
 
-## 6. About Localization Contribution
+## 7. About Localization Contribution
 
 Please check [about_localization.md](./about_localization.md), when you plan to contribute by localization activity.

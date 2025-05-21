@@ -187,9 +187,22 @@ job_release_instraller.cmd
 
 フォルダ構成を確認したい場合、実際に配布されているVMagicMirrorも参考にしてください。
 
-## 5. OSS等のライセンス
+## 5. その他のレポジトリに含まれないアセット
 
-### 5.1. OSSライセンス
+VMagicMirror v4.0.0で導入されたサブキャラ機能に関連して、 `BuddyPresetResources.asset` に設定されたプリセット扱いのアセットデータ( `.bytes` )は公開したレポジトリに含まれないため、上記のビルド手順を追ってもデータが適切に読み込めません。
+
+これはプリセットのサブキャラが第三者に制作依頼したものであり、ライセンスの注記も異なるためです。
+
+必要に応じて、`BuddyPresetResources.asset` の `Texture Binary` と `VRM Binary` に下記のような適当なダミーアセットを適用してください。
+
+- `Texture Binary` :256x256px程度の適当なpngファイルの拡張子を `.bytes` に変更したもの
+- `VRM Binary` :軽量な適当なVRMファイルの拡張子を `.bytes` に変更したもの
+
+ref: (docページにサブキャラの取り扱いを追記次第、そのURLへのリンクを追記します)
+
+## 6. OSS等のライセンス
+
+### 6.1. OSSライセンス
 
 GUI中でOSSライセンスを掲載しており、その文面は下記ファイルで管理しています。
 
@@ -202,7 +215,7 @@ https://malaybaku.github.io/VMagicMirror/credit_license
 また、本レポジトリに含む画像の一部は [Otomanopee](https://github.com/Gutenberg-Labo/Otomanopee) フォントを使って作成しています。フォント自体を再配布するものではないため、あくまで補足情報として記載しています。
 
 
-### 5.2. Creative Commons Licenseに基づくモデルについて
+### 6.2. Creative Commons Licenseに基づくモデルについて
 
 このレポジトリに含まれる下記モデルはCreative Commons Attributionライセンスに基づいて使用し、レポジトリに含まれます。
 
@@ -211,7 +224,7 @@ https://malaybaku.github.io/VMagicMirror/credit_license
 
 VMagicMirrorでは元モデルに対し、他のデバイスとの一貫性を保つためにマテリアルを適用しているほか、カスタマイズのためにテクスチャを変更可能にしています。
 
-## 6. ローカリゼーションについて
+## 7. ローカリゼーションについて
 
 日本語、英語以外のローカリゼーションでのContributionに興味がある場合、[about_localization.md](./about_localization.md)を参照して下さい。
 

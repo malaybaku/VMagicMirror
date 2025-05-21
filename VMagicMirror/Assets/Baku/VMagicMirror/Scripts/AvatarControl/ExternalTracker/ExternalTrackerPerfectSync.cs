@@ -171,13 +171,19 @@ namespace Baku.VMagicMirror.ExternalTracker
                 return;
             }
 
-            var source = _faceControlConfig.ControlMode is FaceControlModes.ExternalTracker
+            // HACK: iFacialMocapとMediaPipeでブレンドシェイプの左右で一貫性がうまく取れてないので、if分岐のためにsourceの実体をチェックする
+            // TODO: ホントはこうじゃなくて IFaceTrackBlendShapes の左右の扱いが揃うようになっていてほしい…
+
+            var sourceIsExTracker = _faceControlConfig.ControlMode is FaceControlModes.ExternalTracker;
+            var source = sourceIsExTracker
                 ? _externalTracker.CurrentSource
                 : _mediaPipeFacialValueRepository.BlendShapes;
             
+            var disableHorizontalFlip = _externalTracker.DisableHorizontalFlip;
             //NOTE: 関数レベルで分ける。DistableHorizontalFlipフラグを使って逐次的に三項演算子で書いてもいいんだけど、
             //それよりは関数ごと分けた方がパフォーマンスがいいのでは？という意図で書いてます。何となくです
-            if (_externalTracker.DisableHorizontalFlip)
+            if ((sourceIsExTracker && _externalTracker.DisableHorizontalFlip) ||
+                (!sourceIsExTracker && !disableHorizontalFlip))
             {
                 AccumulateWithFlip(accumulator, source, nonMouthPart, mouthPart, writeExcludedKeys, mouthWeight, nonMouthWeight);
             }

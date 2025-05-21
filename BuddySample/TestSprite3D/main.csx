@@ -34,7 +34,7 @@ Api.Update += (deltaTime) =>
   var showSubSprite = Api.Property.GetBool("showSubSprite");
   if (showSubSprite)
   {
-    subSprite.Show("subSprite_Laugh.png");
+    subSprite.Show("subSprite.png");
   }
   else
   {

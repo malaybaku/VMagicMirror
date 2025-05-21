@@ -40,7 +40,7 @@ Api.Update += (deltaTime) =>
   var showSubSprite = Api.Property.GetBool("showSubSprite");
   if (showSubSprite)
   {
-    subSprite.Show("subSprite_Laugh.png");
+    subSprite.Show("subSprite.png");
     subSprite.Transform.LocalPosition = Api.Property.GetVector2("subSpritePosition");
   }
   else

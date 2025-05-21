@@ -177,7 +177,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             var sourceIsExTracker = _faceControlConfig.ControlMode is FaceControlModes.ExternalTracker;
             var source = sourceIsExTracker
                 ? _externalTracker.CurrentSource
-                : _mediaPipeFacialValueRepository.BlendShapes;
+                : _mediaPipeFacialValueRepository.CorrectedBlendShapes;
             
             var disableHorizontalFlip = _externalTracker.DisableHorizontalFlip;
             //NOTE: 関数レベルで分ける。DistableHorizontalFlipフラグを使って逐次的に三項演算子で書いてもいいんだけど、

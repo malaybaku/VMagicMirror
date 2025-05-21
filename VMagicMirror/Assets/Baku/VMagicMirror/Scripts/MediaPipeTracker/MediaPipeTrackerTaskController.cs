@@ -101,7 +101,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 );
             _receiver.AssignCommandHandler(
                 VmmCommands.SetWebCamEyeApplySameBlinkBothEye,
-                m => _settingsRepository.EyeUseMeanBlinkValue = m.ToBoolean()
+                m => _settingsRepository.EyeUseMeanBlinkValue.Value = m.ToBoolean()
                 );
             _receiver.AssignCommandHandler(
                 VmmCommands.SetWebCamEyeApplyBlinkCorrectionToPerfectSync,

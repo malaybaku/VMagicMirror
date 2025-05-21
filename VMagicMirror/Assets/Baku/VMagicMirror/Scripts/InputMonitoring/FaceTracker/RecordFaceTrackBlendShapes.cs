@@ -27,7 +27,7 @@ namespace Baku.VMagicMirror
         public CheekBlendShape Cheek { get; } = new();
         public NoseBlendShape Nose { get; } = new();
         public TongueBlendShape Tongue { get; } = new();
-    }    
+    }
       
     // NOTE: I/Fにはgetterだけ公開してsetterは実装だけが使えるような建付けだとキレイだが、オーバーエンジニアリングっぽいので無し
     public class EyeBlendShape

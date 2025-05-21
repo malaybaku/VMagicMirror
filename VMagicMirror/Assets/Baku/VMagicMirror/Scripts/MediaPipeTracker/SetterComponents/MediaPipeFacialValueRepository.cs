@@ -204,7 +204,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 case Keys.eyeWideLeft: _blendShapes.Eye.LeftWide = value; break;
                 case Keys.eyeSquintLeft: _blendShapes.Eye.LeftSquint = value; break;
 
-                case Keys.eyeBlinkRight: _blendShapes.Eye.LeftLookDown = value; break;
+                case Keys.eyeBlinkRight: _blendShapes.Eye.RightBlink = value; break;
                 case Keys.eyeLookUpRight: _blendShapes.Eye.RightLookUp = value; break;
                 case Keys.eyeLookDownRight: _blendShapes.Eye.RightLookDown = value; break;
                 case Keys.eyeLookInRight: _blendShapes.Eye.RightLookIn = value; break;

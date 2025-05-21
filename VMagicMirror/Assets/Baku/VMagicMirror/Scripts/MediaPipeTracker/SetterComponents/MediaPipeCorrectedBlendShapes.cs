@@ -70,7 +70,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
 
-        private readonly EyeBlendShape _eye;
+        private readonly EyeBlendShape _eye = new();
         public EyeBlendShape Eye => _eye;
         public BrowBlendShape Brow => _src.Brow;
         public MouthBlendShape Mouth => _src.Mouth;

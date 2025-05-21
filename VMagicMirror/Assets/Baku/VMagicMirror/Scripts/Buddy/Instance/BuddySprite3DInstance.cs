@@ -36,10 +36,6 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Dictionary<string, Sprite> _sprites = new();
         private readonly Dictionary<string, Sprite> _presetSprites = new();
 
-        public void SetActive(bool active) => gameObject.SetActive(active);
-
-        public void Preload(string fullPath) => Load(fullPath);
-
         public TextureLoadResult Show(string fullPath) 
             => Show(fullPath, Sprite3DTransitionStyle.Immediate);
         
@@ -101,7 +97,7 @@ namespace Baku.VMagicMirror.Buddy
         /// </summary>
         /// <param name="fullPath"></param>
         /// <returns></returns>
-        private TextureLoadResult Load(string fullPath)
+        public TextureLoadResult Load(string fullPath)
         {
             if (_sprites.ContainsKey(fullPath))
             {
@@ -117,15 +113,11 @@ namespace Baku.VMagicMirror.Buddy
             return loadResult;
         }        
 
-        private static Sprite CreateSprite(Texture2D texture)
+        public void Hide()
         {
-            // NOTE: 長いほうが常に1mになるようにする。漫符等の装飾ではこのスケールが邪魔になることもあるが、そこは調整してもらう感じで…
-            var pixelsPerUnit = Mathf.Max(texture.width, texture.height);
-            return Sprite.Create(
-                texture,
-                new Rect(0, 0, texture.width, texture.height),
-                new Vector2(0.5f, 0.0f), pixelsPerUnit, 0,
-                SpriteMeshType.FullRect);
+            // NOTE: Show関数と同様に、即時反映ではなくDoTransition() の呼び出し時点で反映されるようにしておく
+            CurrentSprite = null;
+            CurrentTransitionStyle = Sprite3DTransitionStyle.Immediate;
         }
 
         public void DoTransition(float deltaTime)
@@ -152,6 +144,17 @@ namespace Baku.VMagicMirror.Buddy
             }
             
             Destroy(gameObject);
+        }
+        
+        private static Sprite CreateSprite(Texture2D texture)
+        {
+            // NOTE: 長いほうが常に1mになるようにする。これはISprite3DのI/Fのcontractなので、仕様をいじる場合は要注意
+            var pixelsPerUnit = Mathf.Max(texture.width, texture.height);
+            return Sprite.Create(
+                texture,
+                new Rect(0, 0, texture.width, texture.height),
+                new Vector2(0.5f, 0.0f), pixelsPerUnit, 0,
+                SpriteMeshType.FullRect);
         }
     }
 }

@@ -23,23 +23,42 @@ namespace Baku.VMagicMirror.Buddy.Api
         public void Preload(string path) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
             var fullPath = ApiUtils.GetAssetFullPath(BuddyFolder, path);
-            _instance.Preload(fullPath);
+            var result = _instance.Load(fullPath);
+            HandleTextureLoadResult(fullPath, result);
         });
 
         public void Show(string path) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
             var fullPath = ApiUtils.GetAssetFullPath(BuddyFolder, path);
-            _instance.Show(fullPath);
+            var result = _instance.Show(fullPath);
+            HandleTextureLoadResult(fullPath, result);
         });
         
         public void ShowPreset(string name) => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
-            _instance.ShowPreset(name);
+            var result = _instance.ShowPreset(name);
+            HandlePresetTextureLoadResult(name, result);
         });
 
         public void Hide() => ApiUtils.Try(BuddyFolder, _logger, () =>
         {
-            _instance.SetActive(false);
+            _instance.Hide();
         });
+        
+        private void HandleTextureLoadResult(string fullPath, TextureLoadResult loadResult)
+        {
+            if (loadResult is TextureLoadResult.FailureFileNotFound)
+            {
+                _logger.Log(BuddyFolder, "Specified file does not exist: " + fullPath, BuddyLogLevel.Fatal);
+            }
+        }
+        
+        private void HandlePresetTextureLoadResult(string name, TextureLoadResult result)
+        {
+            if (result is TextureLoadResult.FailureFileNotFound)
+            {
+                _logger.Log(BuddyFolder, "Specified preset does not exist: " + name, BuddyLogLevel.Fatal);
+            }
+        }
     }
 }

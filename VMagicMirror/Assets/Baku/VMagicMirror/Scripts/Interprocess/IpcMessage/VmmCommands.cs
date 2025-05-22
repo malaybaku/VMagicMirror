@@ -115,7 +115,6 @@
         // Motion, Face, WebCam high power mode
         EnableWebCamHighPowerMode,
         UsePerfectSyncWithWebCamera,
-        EnableWebCameraHighPowerModeBlink,
         EnableWebCameraHighPowerModeLipSync,
         EnableWebCameraHighPowerModeMoveZ,
 

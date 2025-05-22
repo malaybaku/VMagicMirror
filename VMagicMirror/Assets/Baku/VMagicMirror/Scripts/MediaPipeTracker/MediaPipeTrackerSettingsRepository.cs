@@ -32,10 +32,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public IReadOnlyReactiveProperty<bool> ShouldUseLipSyncResult => _shouldUseLipSyncResult;
         public void SetShouldUseLipSyncResult(bool value) => _shouldUseLipSyncResult.Value = value;
 
-        // NOTE: 現状ではパーフェクトシンク中はこのフラグが無視され、常に目にはパーフェクトシンクベースの値が適用される。
-        // これは「目を適用しないならパーフェクトシンクする意味がない」と思ってそうしているが、フラグを反映したほうが分かりやすいかも
-        public bool ShouldUseEyeResult { get; set; } = true;
-        
         private readonly ReactiveProperty<bool> _shouldUsePerfectSyncResult = new();
         public IReadOnlyReactiveProperty<bool> ShouldUsePerfectSyncResult => _shouldUsePerfectSyncResult;
         public void SetShouldUsePerfectSyncResult(bool value) => _shouldUsePerfectSyncResult.Value = value;

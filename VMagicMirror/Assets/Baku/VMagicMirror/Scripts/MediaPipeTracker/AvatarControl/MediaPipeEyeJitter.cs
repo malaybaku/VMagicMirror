@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _runtimeSettings = runtimeSettings;
         }
 
-        public bool IsEnabledAndTracked => _runtimeSettings.ShouldUseEyeResult && _facialValueRepository.IsTracked;
+        public bool IsEnabledAndTracked => _facialValueRepository.IsTracked;
 
         public bool IsActive { get; set; }
         public Vector2 LeftEyeRotationRate { get; private set; }

@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// <summary>
     /// マルチスレッドを考慮したうえでIK/FKの計算をするすごいやつだよ
     /// </summary>
-    public class MediaPipeKinematicSetter : PresenterBase, ITickable
+    public class MediaPipeKinematicSetter : ITickable
     {        
         private readonly IVRMLoadable _vrmLoadable;
         private readonly BodyScaleCalculator _bodyScaleCalculator;
@@ -25,18 +25,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private bool IsFaceMirrored => _settingsRepository.IsFaceMirrored.Value;
         private bool IsHandMirrored => _settingsRepository.IsHandMirrored.Value;
         private float HandTrackingMotionScale => _settingsRepository.HandTrackingMotionScale.Value;
-
-        // メインスレッドのみから使う値
-        private bool _hasModel;
-        private Animator _targetAnimator;
-        private readonly Dictionary<HumanBodyBones, Transform> _bones = new();
         
-        // マルチスレッドで読み書きする値
-        // Forward Kinematic
-        private readonly Dictionary<HumanBodyBones, Quaternion> _rotationsBeforeIK = new();
-
-        // Inverse Kinematic
-
         // NOTE:
         // - Poseの原点は「キャリブしたときに頭が映ってた位置」が期待値
         // - headPose.position は root位置の移動として反映する
@@ -74,32 +63,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _poseSetterSettings = poseSetterSettings;
         }
 
-        public override void Initialize()
-        {
-            _vrmLoadable.VrmLoaded += OnVrmLoaded;
-            _vrmLoadable.VrmDisposing += OnVrmUnloaded;
-        }
-
-        private void OnVrmLoaded(VrmLoadedInfo info)
-        {
-            _targetAnimator = info.animator;
-            for (var i = 0; i < (int)HumanBodyBones.LastBone; i++)
-            {
-                var bone = (HumanBodyBones)i;
-                var boneTransform = _targetAnimator.GetBoneTransform(bone);
-                if (boneTransform != null)
-                {
-                    _bones[bone] = boneTransform;
-                }
-            }
-        }
-
-        private void OnVrmUnloaded()
-        {
-            _targetAnimator = null;
-            _bones.Clear();
-        }
-        
         #region トラッキング結果のI/O
         
         public bool IsHeadPoseLostEnoughLong()
@@ -269,7 +232,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private void SetLeftHandPoseInternal(Vector2 pos, Quaternion rot)
         {
             _leftHandNormalizedPos = pos;
-            _leftHandRot = rot * MediapipeMathUtil.GetVrmForwardHandRotation(true);
+            _leftHandRot = rot * _poseSetterSettings.ConstHandRotOffset * MediapipeMathUtil.GetVrmForwardHandRotation(true);
             _hasLeftHandPose.Set(true);
             _leftHandResultLostTime = 0f;
         }
@@ -277,39 +240,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private void SetRightHandPoseInternal(Vector2 pos, Quaternion rot)
         {
             _rightHandNormalizedPos = pos;
-            _rightHandRot = rot * MediapipeMathUtil.GetVrmForwardHandRotation(false);
+            _rightHandRot = rot * _poseSetterSettings.ConstHandRotOffset * MediapipeMathUtil.GetVrmForwardHandRotation(false);
             _hasRightHandPose.Set(true);
             _rightHandResultLostTime = 0f;
-        }
-
-        // NOTE: Headについてはこの関数では制御せず、代わりに SetHeadPose の結果を用いる
-        public void SetLocalRotationBeforeIK(HumanBodyBones bone, Quaternion localRotation)
-        {
-            lock (_poseLock)
-            {
-                // 手と頭でmirrorの状態を参照する先が異なるので注意
-                var isMirrored = (int)bone >= (int)HumanBodyBones.LeftThumbProximal
-                    ? IsHandMirrored
-                    : IsFaceMirrored;
-                
-                // note: Clearを呼んでないのを良いことにテキトーにやる。VMMに組み込む場合、mirrorの切り替えで一旦FK情報を捨てる…とかをやってもよい
-                if (isMirrored)
-                {
-                    _rotationsBeforeIK[MathUtil.Mirror(bone)] = MathUtil.Mirror(localRotation);
-                }
-                else
-                {
-                    _rotationsBeforeIK[bone] = localRotation;
-                }
-            }
-        }
-
-        public void ClearLocalRotationBeforeIK(HumanBodyBones bone)
-        {
-            lock (_poseLock)
-            {
-                _rotationsBeforeIK.Remove(bone);
-            }
         }
 
         #endregion
@@ -339,33 +272,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 {
                     _hasRightHandPose.Reset(false);
                     _rightHandResultLostTime = 0f;
-                }
-            }
-
-            // NOTE: ハンドトラッキングの都合で必要なものがあれば復活させてもいいが、多分クラスを分ける感じになるはず
-            return;
-            
-            // TODO: 指の姿勢適用についても別クラスに移行する。
-            // そもそもDictでキャッシュ持つのは相性悪いかもしれないので、それを直してもよい
-            lock (_poseLock)
-            {
-                foreach (var pair in _rotationsBeforeIK)
-                {
-                    if (_bones.TryGetValue(pair.Key, out var boneTransform))
-                    {
-                        if (pair.Key >= HumanBodyBones.LeftThumbProximal)
-                        {
-                            boneTransform.localRotation = Quaternion.Slerp(
-                                boneTransform.localRotation,
-                                pair.Value,
-                                _poseSetterSettings.FingerBoneSmoothRate
-                            );
-                        }
-                        else
-                        {
-                            boneTransform.localRotation = pair.Value;
-                        }
-                    }
                 }
             }
         }
@@ -400,11 +306,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 GetHandAdditionalRotation(scaledNormalizedPos, isLeftHand),
                 _poseSetterSettings.HandRotationModifyWeight
             );
-            
+
             var baseRotation = isLeftHand ? _leftHandRot : _rightHandRot;
-            return new Pose(handPosition, additionalRotation * baseRotation);
-            // 補正計算の結果だけをチェックしたい場合はコッチを有効にする
-            // return new Pose(handPosition, additionalRotation * MediapipeMathUtil.GetVrmForwardHandRotation(isLeftHand));
+            return new Pose(
+                handPosition, 
+                additionalRotation * baseRotation
+                );
         }
         
         // 手の回転をおおよそ肩に対して球面的にするための補正回転を生成する
@@ -413,8 +320,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // NOTE: 左(右)手を画面の真ん中つまり顔や胸元に持っていく場合、手のひらが少し右(左)向きになるはず…という補正値
             var rotWhenHandIsCenter = Quaternion.Euler(0, isLeftHand ? 10 : -10, 0);
 
+            // 手のひらが下向きになると見栄えが悪いので、基本的には正面～ちょっと上になるように仕向ける
+            normalizedPos.y = Mathf.Min(normalizedPos.y + 0.2f, 1.1f);
+
             // 画面の中心から離れると球面的に外向きの回転がつく。この値はアバターの体型には依存せず、画面座標からの変換だけで決めてしまう
-            var forwardRate = Mathf.Sqrt(1 - Mathf.Clamp01(normalizedPos.sqrMagnitude));
+            var forwardRate = Mathf.Sqrt(1.00001f - Mathf.Clamp01(normalizedPos.sqrMagnitude));
 
             var direction = new Vector3(
                 normalizedPos.x, normalizedPos.y, forwardRate * _poseSetterSettings.Hand2DofDepthScale

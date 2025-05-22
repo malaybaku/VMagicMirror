@@ -46,6 +46,8 @@
         public bool EnableImageBasedHandTracking { get; set; } = false;
         public bool ShowEffectDuringHandTracking { get; set; } = false;
         public bool DisableHandTrackingHorizontalFlip { get; set; } = false;
+        public int HandTrackingMotionScale { get; set; } = 100;
+
 
         public string CameraDeviceName { get; set; } = "";
 

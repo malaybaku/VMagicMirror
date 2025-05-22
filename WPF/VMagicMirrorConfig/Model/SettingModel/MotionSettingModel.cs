@@ -66,6 +66,7 @@ namespace Baku.VMagicMirrorConfig
             EnableSendHandTrackingResult = new RProperty<bool>(
                 false,
                 v => SendMessage(MessageFactory.EnableSendHandTrackingResult(v)));
+            HandTrackingMotionScale = new RProperty<int>(setting.HandTrackingMotionScale, v => SendMessage(MessageFactory.SetHandTrackingMotionScale(v)));
 
             CameraDeviceName = new RProperty<string>(setting.CameraDeviceName, v => SendMessage(MessageFactory.SetCameraDeviceName(v)));
             CalibrateFaceData = new RProperty<string>(setting.CalibrateFaceData, v => SendMessage(MessageFactory.SetCalibrateFaceData(v)));
@@ -212,6 +213,8 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> ShowEffectDuringHandTracking { get; }
         public RProperty<bool> DisableHandTrackingHorizontalFlip { get; }
         public RProperty<bool> EnableSendHandTrackingResult { get; }
+
+        public RProperty<int> HandTrackingMotionScale { get; }
 
         public RProperty<string> CameraDeviceName { get; }
 

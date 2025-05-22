@@ -128,6 +128,8 @@ namespace Baku.VMagicMirrorConfig
         //Faceと同じく、disableという言い回しに注意
         public static Message DisableHandTrackingHorizontalFlip(bool disable) => BoolContent(VmmCommands.DisableHandTrackingHorizontalFlip, disable);
         public static Message EnableSendHandTrackingResult(bool enable) => BoolContent(VmmCommands.EnableSendHandTrackingResult, enable);
+        // NOTE: 名称に含まないが、xy軸のみのスケールを指す。z軸はそもそもMediaPipeのHandTrackingではあんまり取れないので
+        public static Message SetHandTrackingMotionScale(int percent) => IntContent(VmmCommands.SetHandTrackingMotionScale, percent);
 
 
         public static Message EnableWebCamHighPowerMode(bool enable) => BoolContent(VmmCommands.EnableWebCamHighPowerMode, enable);

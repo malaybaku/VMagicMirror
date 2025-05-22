@@ -91,6 +91,27 @@
                                 IsEnabled="{Binding EnableImageBasedHandTracking.Value}"
                                 IsChecked="{Binding DisableHandTrackingHorizontalFlip.Value}"
                                 />
+
+                    <Grid Margin="35,0,10,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                    Text="{DynamicResource HandTracking_MotionScale}"/>
+                        <Slider Grid.Row="0" Grid.Column="1"
+                                x:Name="sliderHandTrackingMotionScale"
+                                Minimum="1"
+                                Maximum="300"
+                                Value="{Binding HandTrackingMotionScale.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="0" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderHandTrackingMotionScale}"
+                                 />
+                    </Grid>
+
                     <CheckBox Margin="35,0,10,0" 
                                 VerticalContentAlignment="Center"
                                 Content="{DynamicResource HandTracking_ShowAreaChecker}" 

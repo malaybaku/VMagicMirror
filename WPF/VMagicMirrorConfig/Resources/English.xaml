@@ -143,9 +143,7 @@ During this mode, following features are disabled.
     <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Web Camera (Lite) does not detect facial data for this feature.
 If VMC Protocol is active and it receives perfect sync facial data, then Face Switch will work based on the data.</sys:String>
 
-    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">
-        Web Camera (High Power) does not detect "Tongue Out" and "Cheek puff" data.
-    </sys:String>
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Web Camera (High Power) does not detect "Tongue Out" and "Cheek puff" condition.</sys:String>
     
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">Activates seleceted BlendShape by making specific face expression.
 Check "Keep LipSync" to make the lipsync continue.</sys:String>
@@ -240,6 +238,8 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_Enable">Enable Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
+    <sys:String x:Key="HandTracking_MotionScale">Motion Scale (%)</sys:String>
+    
     <sys:String x:Key="HandTracking_ShowAreaChecker">Show Detection Status (*raw image is not displayed)</sys:String>    
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
 Use "Default" to apply hand tracking result.</sys:String>

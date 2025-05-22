@@ -15,7 +15,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
     /// </summary>
     public class MediaPipeKinematicSetter : ITickable
     {        
-        private readonly IVRMLoadable _vrmLoadable;
         private readonly BodyScaleCalculator _bodyScaleCalculator;
         private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
         private readonly MediapipePoseSetterSettings _poseSetterSettings;
@@ -50,14 +49,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         
         [Inject]
         public MediaPipeKinematicSetter(
-            IVRMLoadable vrmLoadable, 
             MediapipePoseSetterSettings poseSettings,
             MediaPipeTrackerRuntimeSettingsRepository settingsRepository,
             BodyScaleCalculator bodyScaleCalculator,
             MediapipePoseSetterSettings poseSetterSettings
         )
         {
-            _vrmLoadable = vrmLoadable;
             _settingsRepository = settingsRepository;
             _bodyScaleCalculator = bodyScaleCalculator;
             _poseSetterSettings = poseSetterSettings;

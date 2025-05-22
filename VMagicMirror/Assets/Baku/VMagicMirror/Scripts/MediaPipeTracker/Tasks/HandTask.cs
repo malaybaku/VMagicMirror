@@ -45,6 +45,9 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     modelAssetPath: FilePathUtil.GetModelFilePath(ModelFileName)
                 ),
                 Mediapipe.Tasks.Vision.Core.RunningMode.LIVE_STREAM,
+                minHandDetectionConfidence: 0.7f,
+                minHandPresenceConfidence: 0.7f,
+                minTrackingConfidence: 0.7f,
                 numHands: 2,
                 resultCallback: OnResult
             );

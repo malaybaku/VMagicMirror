@@ -73,8 +73,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _useHandTracking);
             _receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _useExternalTracking);
             
+            // NOTE: WPF側ではパーフェクトシンクのon/offフラグは一種類だけである…というスタンスを取っているので、その値を拾う。
+            // が、Unity目線だと「webcamでパーフェクトシンクするか否か」と「ExTrackerでパーフェクトシンクするか否か」が共通のフラグという
+            // 必然性はあまりないので、別のフラグがあるつもりで管理しておく
             _receiver.AssignCommandHandler(
-                VmmCommands.UsePerfectSyncWithWebCamera,
+                VmmCommands.ExTrackerEnablePerfectSync,
                 m => _settingsRepository.SetShouldUsePerfectSyncResult(m.ToBoolean())
                 );
 

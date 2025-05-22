@@ -80,9 +80,7 @@ namespace Baku.VMagicMirrorConfig
                 setting.MoveEyesDuringFaceClipApplied, v => SendMessage(MessageFactory.EnableEyeMotionDuringClipApplied(v)));
             DisableBlendShapeInterpolate = new RProperty<bool>(
                 setting.DisableBlendShapeInterpolate, v => SendMessage(MessageFactory.DisableBlendShapeInterpolate(v)));
-            UsePerfectSyncWithWebCamera = new RProperty<bool>(
-                setting.UsePerfectSyncWithWebCamera, v => SendMessage(MessageFactory.UsePerfectSyncWithWebCamera(v)));
-
+            
             EnableWebCameraHighPowerModeLipSync = new RProperty<bool>(
                 setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(MessageFactory.EnableWebCameraHighPowerModeLipSync(v)));
 
@@ -445,7 +443,7 @@ namespace Baku.VMagicMirrorConfig
         public void ResetWebCameraHighPowerModeSettings()
         {
             var setting = MotionSetting.Default;
-            UsePerfectSyncWithWebCamera.Value = setting.UsePerfectSyncWithWebCamera;
+            DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;
             EnableWebCameraHighPowerModeLipSync.Value = setting.EnableWebCameraHighPowerModeLipSync;
             EnableWebCameraHighPowerModeMoveZ.Value = setting.EnableWebCameraHighPowerModeMoveZ;
         }

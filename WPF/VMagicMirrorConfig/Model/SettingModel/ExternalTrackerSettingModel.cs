@@ -47,6 +47,8 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> EnableExternalTracking { get; }
         public RProperty<bool> EnableExternalTrackerLipSync { get; }
 
+
+        // NOTE: 歴史的経緯により、webcam (高精度)でのパーフェクトシンクのon/offもフラグの実体としてはコレになる
         public RProperty<bool> EnableExternalTrackerPerfectSync { get; }
 
         // アプリ別設定

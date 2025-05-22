@@ -203,11 +203,12 @@
                             <RowDefinition/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
+                        <!-- 外部トラッキングじゃないけど同じLabelを使いまわしてます -->
                         <CheckBox Grid.Row="0" 
                                       Margin="0"
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource ExTracker_Enable_PerfectSync}"                               
-                                      IsChecked="{Binding EnableWebCameraHighPowerModePerfectSync.Value}"
+                                      IsChecked="{Binding EnablePerfectSync.Value}"
                                       />
                         <Button Grid.Row="1"
                                     HorizontalAlignment="Left"
@@ -303,7 +304,7 @@
                                       Margin="0"
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource ExTracker_Enable_PerfectSync}"                               
-                                      IsChecked="{Binding EnableExternalTrackerPerfectSync.Value}"
+                                      IsChecked="{Binding EnablePerfectSync.Value}"
                                       />
                         <Button Grid.Row="1"
                                     HorizontalAlignment="Left"

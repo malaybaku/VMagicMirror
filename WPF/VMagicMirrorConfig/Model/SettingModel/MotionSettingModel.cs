@@ -229,8 +229,6 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> MoveEyesDuringFaceClipApplied { get; }
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
 
-        public RProperty<bool> UsePerfectSyncWithWebCamera { get; }
-
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
         public RProperty<bool> EnableWebCameraHighPowerModeMoveZ { get; }
         

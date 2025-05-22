@@ -160,7 +160,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             if (_mediaPipeKinematicSetter.TryGetLeftHandPose(out var handPose, out var maybeLost))
             {
                 _trackingLostHandCalculator.CancelLeftHand();
-                    var dt = Time.deltaTime;
+                var dt = Time.deltaTime;
 
                 if (maybeLost)
                 {

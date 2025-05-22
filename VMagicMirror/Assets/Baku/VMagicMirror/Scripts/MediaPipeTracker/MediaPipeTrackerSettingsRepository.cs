@@ -39,13 +39,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         public float EyeOpenBlinkValue { get; set; } = 0.2f;
         public float EyeCloseBlinkValue { get; set; } = 0.5f;
-        
+
         // NOTE: ここから下はMediaPipeのタスクからも直接使う == メインスレッド外から使うことがある
         public Atomic<bool> EyeUseMeanBlinkValue { get; } = new(false);
-        public Atomic<bool> EyeApplyCorrectionToPerfectSync { get; } = new(false);
+        public Atomic<bool> EyeApplyCorrectionToPerfectSync { get; } = new(true);
 
         public Atomic<bool> IsFaceMirrored { get; } = new(true);
         public Atomic<bool> IsHandMirrored { get; } = new(true);
+        public Atomic<float> HandTrackingMotionScale { get; } = new(1f);
 
         // NOTE: 手と表情を同時にトラッキングする場合だけtrueになりうる想定だが、そもそも使わなくなるかも。今のところIPCでは受けていない
         public Atomic<bool> UseInterlace { get; } = new(false);

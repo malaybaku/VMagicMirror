@@ -4,7 +4,6 @@ using Zenject;
 
 namespace Baku.VMagicMirror.MediaPipeTracker
 {
-    // TODO: LateUpdateのタイミングの問題の対処だけMonoBehaviourに切り出して、このクラス自体はPresenterBaseか何かにしたい
     // NOTE
     // - このクラスではmirrorの反映、およびトラッキングロストしてるかどうかの判定までを行う
     //   - 特にトラッキングロストに関してステートフルである
@@ -25,6 +24,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // NOTE: ポーズに関しては「トラッキング結果を保存する関数群」の部分で反転を掛けるので、内部計算はあまり反転しない
         private bool IsFaceMirrored => _settingsRepository.IsFaceMirrored.Value;
         private bool IsHandMirrored => _settingsRepository.IsHandMirrored.Value;
+        private float HandTrackingMotionScale => _settingsRepository.HandTrackingMotionScale.Value;
 
         // メインスレッドのみから使う値
         private bool _hasModel;
@@ -377,7 +377,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
             // NOTE: scaled~ のほうは画像座標ベースの計算に使う。 world~ のほうは実際にユーザーが手を動かした量の推定値になっている
             var scaledNormalizedPos = rawNormalizedPos * _poseSetterSettings.Hand2DofNormalizedHorizontalScale;
-            var worldPosDiffXy = rawNormalizedPos * _poseSetterSettings.Hand2DofWorldHorizontalScale;
+            var worldPosDiffXy =
+                rawNormalizedPos * (_poseSetterSettings.Hand2DofWorldHorizontalScale * HandTrackingMotionScale);
             
             // ポイント
             // - 手が伸び切らない程度に前に出すのを基本とする

@@ -104,7 +104,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 m => _settingsRepository.EyeApplyCorrectionToPerfectSync.Value = m.ToBoolean()
                 );
 
-            // TODO: ハンドトラッキングだけ動いてるときのキャリブレーションの実装 = 一瞬だけFaceTaskを起こす処理の実装
+            // TODO: ハンドトラッキングだけ動いてるときのキャリブレーションの実装 = 一瞬だけFaceTaskを起こす処理の実装?
             // NOTE: MediaPipeのトラッキングが動いてない場合、キャリブレーションは実行されない
             _receiver.BindAction(VmmCommands.CalibrateFace, () =>
             {
@@ -119,6 +119,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 VmmCommands.SetCalibrateFaceDataHighPower, 
                 message => _settingsRepository.ApplyReceivedCalibrationData(message.GetStringValue())
                 );
+
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetHandTrackingMotionScale,
+                m => _settingsRepository.HandTrackingMotionScale.Value = m.ParseAsPercentage()
+            );
 
             _horizontalFlipController.DisableFaceHorizontalFlip
                 .Subscribe(disableMirror => _settingsRepository.IsFaceMirrored.Value = !disableMirror)

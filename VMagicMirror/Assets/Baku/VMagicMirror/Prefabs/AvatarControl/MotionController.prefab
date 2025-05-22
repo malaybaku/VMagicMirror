@@ -428,6 +428,7 @@ MonoBehaviour:
   pitchFactor: 0.8
   pitchLimitDeg: 25
   lerpFactor: 18
+  lerpFactorOnLost: 3
 --- !u!1 &5813678810248240003
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,7 +477,7 @@ MonoBehaviour:
   bodyLeanIntegrator: {fileID: 8506340368463674577}
   bodyRollRateToElbowWidthPlusFactor: -0.2
   bodyRollRateToElbowWidthMinusFactor: 1
-  bendGoalZOffset: -0.02
+  bendGoalZOffset: -0.2
 --- !u!1 &5813678810404708600
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,7 +565,6 @@ MonoBehaviour:
   fingerController: {fileID: 2951044793089892564}
   gamepadSetting:
     imageBasedBodyMotion: {fileID: 5813678808713813112}
-  barracudaHand: {fileID: 0}
   elbowMotionModifier: {fileID: 5813678810248240001}
 --- !u!114 &5813678810404708592
 MonoBehaviour:

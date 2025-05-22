@@ -29,13 +29,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _eye.RightLookIn = srcEye.RightLookIn;
             _eye.RightLookOut = srcEye.RightLookOut;
 
-            // wideは補正したほうがいい可能性もあるが、見た感じではMediaPipeが有効な値をほぼ喋ってなさそうなので素通しする
-            _eye.LeftWide = srcEye.LeftWide;
-            _eye.RightWide = srcEye.RightWide;
-            
             // ストレートに適用できるケース: そのまま適用しておしまい
             if (!_settings.EyeApplyCorrectionToPerfectSync.Value)
             {
+                _eye.LeftWide = srcEye.LeftWide;
+                _eye.RightWide = srcEye.RightWide;
                 _eye.LeftBlink = srcEye.LeftBlink;
                 _eye.LeftSquint = srcEye.LeftSquint;
                 _eye.RightBlink = srcEye.RightBlink;
@@ -43,9 +41,15 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
 
+            // NOTE: Wideが0より大きいと目が閉じきらないので、補正するときは切ってしまう
+            // (Blink, Squintと合わせていい感じに調整できたらそのほうが良いが)
+            _eye.LeftWide = 0f;
+            _eye.RightWide = 0f;
+
             // やること
             // - blinkの値が0, 1いずれかで極端になるように補正する。
             // - blinkの値が0か1付近になるとsquintを0寄りにする(…でいいよね…?)
+            //   - コンセプトとしては、Blink + Squint <= 1.0 であることを保証しつつ、C1(微分可能)でもある…みたいなのを意図している
             var leftBlink = MapClamp(srcEye.LeftBlink, _settings.EyeOpenBlinkValue, _settings.EyeCloseBlinkValue);
             var leftSquint = SquintWeight(leftBlink) * srcEye.LeftSquint;
 

@@ -188,7 +188,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<string> WebCameraDeviceName => _motionModel.CameraDeviceName;
 
         public ReadOnlyObservableCollection<string> WebCameraNames => _deviceList.CameraNames;
-        public RProperty<bool> EnableWebCameraHighPowerModeBlink => _motionModel.EnableWebCameraHighPowerModeBlink;
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync => _motionModel.EnableWebCameraHighPowerModeLipSync;
         public RProperty<bool> EnableWebCameraHighPowerModeMoveZ => _motionModel.EnableWebCameraHighPowerModeMoveZ;
 

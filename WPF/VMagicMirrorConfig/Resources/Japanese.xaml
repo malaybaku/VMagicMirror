@@ -105,7 +105,6 @@
 
 これらの表情を検出したい場合は、外部トラッキング機能を使用してください。</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">手前・奥への移動を有効化</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">カメラで検出した目の動きを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">現在はwebカメラ (軽量) が選択されていますが、ハンドトラッキングが有効になっている間は自動で webカメラ (高品質) のトラッキングが適用されます。</sys:String>

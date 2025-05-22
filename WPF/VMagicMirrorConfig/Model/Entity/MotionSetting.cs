@@ -65,7 +65,6 @@
         public bool DisableBlendShapeInterpolate { get; set; } = false;
 
         public bool UsePerfectSyncWithWebCamera { get; set; } = false;
-        public bool EnableWebCameraHighPowerModeBlink { get; set; } = true;
         public bool EnableWebCameraHighPowerModeLipSync { get; set; } = false;
         public bool EnableWebCameraHighPowerModeMoveZ { get; set; } = false;
 
@@ -158,7 +157,6 @@
 
             EnableWebCamHighPowerMode = false;
             UsePerfectSyncWithWebCamera = false;
-            EnableWebCameraHighPowerModeBlink = true;
             EnableWebCameraHighPowerModeLipSync = false;
             EnableWebCameraHighPowerModeMoveZ = true;
             // NOTE: ちょっとややこしいが、この設定はトラッキングの設定であってアバターの目に関する設定ではないので、

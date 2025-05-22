@@ -82,9 +82,6 @@ namespace Baku.VMagicMirrorConfig
             UsePerfectSyncWithWebCamera = new RProperty<bool>(
                 setting.UsePerfectSyncWithWebCamera, v => SendMessage(MessageFactory.UsePerfectSyncWithWebCamera(v)));
 
-            EnableWebCameraHighPowerModeBlink = new RProperty<bool>(
-                setting.EnableWebCameraHighPowerModeBlink, v => SendMessage(MessageFactory.EnableWebCameraHighPowerModeBlink(v)));
-
             EnableWebCameraHighPowerModeLipSync = new RProperty<bool>(
                 setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(MessageFactory.EnableWebCameraHighPowerModeLipSync(v)));
 
@@ -233,7 +230,6 @@ namespace Baku.VMagicMirrorConfig
 
         public RProperty<bool> UsePerfectSyncWithWebCamera { get; }
 
-        public RProperty<bool> EnableWebCameraHighPowerModeBlink { get; }
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
         public RProperty<bool> EnableWebCameraHighPowerModeMoveZ { get; }
         
@@ -447,7 +443,6 @@ namespace Baku.VMagicMirrorConfig
         {
             var setting = MotionSetting.Default;
             UsePerfectSyncWithWebCamera.Value = setting.UsePerfectSyncWithWebCamera;
-            EnableWebCameraHighPowerModeBlink.Value = setting.EnableWebCameraHighPowerModeBlink;
             EnableWebCameraHighPowerModeLipSync.Value = setting.EnableWebCameraHighPowerModeLipSync;
             EnableWebCameraHighPowerModeMoveZ.Value = setting.EnableWebCameraHighPowerModeMoveZ;
         }

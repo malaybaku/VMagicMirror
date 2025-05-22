@@ -195,11 +195,6 @@
 
                     <CheckBox Margin="15,0,10,0" 
                                 VerticalContentAlignment="Center"
-                                Content="{DynamicResource FaceTracker_HighPowerWebCamera_UseImageBasedBlink}" 
-                                IsChecked="{Binding EnableWebCameraHighPowerModeBlink.Value}"
-                                />
-                    <CheckBox Margin="15,0,10,0" 
-                                VerticalContentAlignment="Center"
                                 Content="{DynamicResource FaceTracker_HighPowerWebCamera_UseImageBasedLipSync}" 
                                 IsChecked="{Binding EnableWebCameraHighPowerModeLipSync.Value}"
                                 />

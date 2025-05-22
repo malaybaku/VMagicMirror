@@ -104,7 +104,6 @@ Face Switch feature for these condition does not work.
 
 Use Extarnel Tracker mode to detect and apply these exressions.</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">Enable Forward/Backward Move</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">Apply Eye Motion based on Web Camera</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Current selected mode is Web Camera (Lite), but Web Camera (High Power) is automatically applied during hand tracking is enabled.</sys:String>            

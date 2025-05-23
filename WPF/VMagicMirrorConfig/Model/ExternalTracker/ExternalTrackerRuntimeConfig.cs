@@ -23,8 +23,6 @@ namespace Baku.VMagicMirrorConfig
             MissingBlendShapeNames = new RProperty<string>(
                 "", _ => UpdateShouldNotifyMissingBlendShapeClipNames()
                 );
-            _setting.EnableExternalTracking.PropertyChanged +=
-                (_, __) => UpdateShouldNotifyMissingBlendShapeClipNames();
         }
 
         private readonly ExternalTrackerSettingModel _setting;
@@ -76,9 +74,7 @@ namespace Baku.VMagicMirrorConfig
 
         private void UpdateShouldNotifyMissingBlendShapeClipNames()
         {
-            ShouldNotifyMissingBlendShapeClipNames.Value =
-                _setting.EnableExternalTracking.Value &&
-                !string.IsNullOrEmpty(MissingBlendShapeNames.Value);
+            ShouldNotifyMissingBlendShapeClipNames.Value = !string.IsNullOrEmpty(MissingBlendShapeNames.Value);
         }
     }
 

@@ -181,11 +181,18 @@ The properties here only affects during "Web Camera (High Power)" is selected.
 
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
-    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">With VMC Protocol (VMCP), the app can receive and send motion data with other apps.
-VMagicMirror supports to receive:
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">With VMC Protocol (VMCP), the app can receive / send data with other apps.
+Following features are available.
+        
+Receive:
 
 - Head: Head Pose
 - Hand: Hand Pose
+- Facial: Facial BlendShape
+
+Send: 
+
+- Pose: Full Body Pose
 - Facial: Facial BlendShape
 </sys:String>
     <sys:String x:Key="VMCP_SeeMore">See More...</sys:String>

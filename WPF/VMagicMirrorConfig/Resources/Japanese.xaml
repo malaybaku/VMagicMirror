@@ -183,12 +183,18 @@
     
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
-    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションとの間でモーション情報を送受信できます。
-とくに受信については、VMagicMirrorは以下のモーションを受信して適用できます。
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMC Protocol (VMCP)に対応する他アプリケーションとデータを送受信できます。
+以下の機能が利用できます。
 
-- 頭部モーション
-- 表情 (BlendShape)
-- 両手の位置情報</sys:String>
+受信:         
+    - 頭部モーション
+    - 表情 (BlendShape)
+    - 両手の位置情報
+
+送信:
+    - 全身のポーズ
+    - 表情 (BlendShape)
+</sys:String>
     <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
 
     <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>

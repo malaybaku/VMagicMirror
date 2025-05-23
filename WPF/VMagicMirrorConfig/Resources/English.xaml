@@ -78,6 +78,11 @@
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">Game Input also uses gamepad!</sys:String>
 
     <!-- Face Tracker -->
+    <sys:String x:Key="FaceTracker_SelectType">Face Tracking Type</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">Web Camera (Lite)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">Web Camera (High Power)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_ExTracker">Ex.Tracker</sys:String>
+    
     <sys:String x:Key="FaceTracker_EnableWebCamera">Use Web Camera</sys:String>
     <sys:String x:Key="FaceTracker_EnablePerfectSync">Use Perfect Sync</sys:String>
     <sys:String x:Key="FaceTracker_LiteWebCamera_Title">Web Camera (Lite)</sys:String>
@@ -92,7 +97,7 @@
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with high CPU load.
     
 - This mode is recommended to apply your motion to the avatar with high quality, without additional devices.
-- Note that the mode leads higher CPU load. Change to Lite mode when playing games, etc. 
+- This mode uses higher load on PC than other modes.
 - In this mode, Face Switch and Perfect Sync features are partially available.
 - Some limitations exist for facial expression detection.</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice_Title">Detail...</sys:String>

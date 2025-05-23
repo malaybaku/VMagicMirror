@@ -253,6 +253,7 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
     <sys:String x:Key="HandTracking_MotionScale">動きの大きさ (%)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetY">手の高さを調節 (cm)</sys:String>
     
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*動きかたのオプションで「つねに手下げ」が選択されています。
 ハンドトラッキングの結果を適用するには「デフォルト」に変更して下さい。</sys:String>

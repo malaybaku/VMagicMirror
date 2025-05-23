@@ -142,6 +142,8 @@
         DisableHandTrackingHorizontalFlip,
         EnableSendHandTrackingResult,
         SetHandTrackingMotionScale,
+        // ハンドトラッキングの腕の上下のオフセット (※OffsetXも導入するかもだが、高さよりは重要でなさそうなので見送ってる)
+        SetHandTrackingOffsetY,
 
         // Motion, GameInput
         UseGamepadForGameInput,

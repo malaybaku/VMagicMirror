@@ -78,6 +78,11 @@
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">ゲーム入力でもゲームパッドが使われています！</sys:String>
 
     <!-- Face Tracker -->
+    <sys:String x:Key="FaceTracker_SelectType">顔トラッキングの種類を選択</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">webカメラ (軽量)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">webカメラ (高品質)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_ExTracker">外部トラッキング (iFacialMocap)</sys:String>
+
     <sys:String x:Key="FaceTracker_EnableWebCamera">webカメラをオン</sys:String>
     <sys:String x:Key="FaceTracker_EnablePerfectSync">パーフェクトシンクを使用</sys:String>
     <sys:String x:Key="FaceTracker_LiteWebCamera_Title">webカメラ (軽量)</sys:String>
@@ -92,7 +97,7 @@
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">webカメラを用いて、高品質な顔トラッキングを行います。
     
 - PC単体で、アバターへの動きをなるべく正確に反映したいときに使用します。
-- PC負荷は高くなるため、ゲームなどを起動している場合は注意してください。
+- 処理の負荷は高くなるため、ゲームなどを起動している場合は注意してください。
 - パーフェクトシンクの表情の一部が適用できます。
 - 検出できる表情には制限があります。</sys:String>
 
@@ -105,7 +110,6 @@
 
 これらの表情を検出したい場合は、外部トラッキング機能を使用してください。</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">手前・奥への移動を有効化</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">カメラで検出した目の動きを適用</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">現在はwebカメラ (軽量) が選択されていますが、ハンドトラッキングが有効になっている間は自動で webカメラ (高品質) のトラッキングが適用されます。</sys:String>
@@ -145,10 +149,7 @@
     <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Webカメラ (軽量) では表情を検出できないため、この機能は動作しません。
 ただし、VMC Protocolでパーフェクトシンク用の表情を受信している場合、その表情にもとづいて表情スイッチが適用されます。</sys:String>
 
-    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">
-        Webカメラ (高品質) の顔トラッキングでは「舌を出す」と「頬をふくらませる」の表情は検出できないことに注意してください。
-    </sys:String>
-
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Webカメラ (高品質) の顔トラッキングでは「舌を出す」と「頬をふくらませる」の表情は検出できないことに注意してください。</sys:String>
     
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
 「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。</sys:String>
@@ -168,21 +169,37 @@
 
     <!-- Face Tracker Eye Calibration -->
     <sys:String x:Key="EyeCalibration_Header">目のトラッキングの詳細設定</sys:String>
-    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">このウィンドウでは、ユーザーの目のトラッキングについて詳細設定を行います。
-ここで行える設定は、顔トラッキングで「Webカメラ (高品質)」を選択している間だけ適用されます。
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">このウィンドウではユーザーの目のトラッキングについて設定します。
+ここで編集した設定は、顔トラッキングで「Webカメラ (高品質)」を選択中にだけ適用されます。
 
-- webカメラの位置を変更したり、めがねを買い替えたりすると再設定が必要な場合があります。
-- アバターを切り替えるだけの場合、通常は再設定は不要です。
-- アバターの目の動きに関する設定は「詳細設定」ウィンドウの「顔・表情」タブから行えます。</sys:String>
+- webカメラを物理的に動かしたり、メガネを買い替えたりしたときは、再設定が必要な場合があります。        
+- アバターの目の動かし方については、「詳細設定」ウィンドウの「顔・表情」タブから設定できます。</sys:String>
 
+    <sys:String x:Key="EyeCalibration_Settings">設定</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeOpenBlinkValue">目を開けているときのまばたき値(%)</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeCloseBlinkValue">目を閉じているときのまばたき値(%)</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplySameValueBothEye">左右のまばたき値の平均を使う</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplyToPerfectSync">パーフェクトシンクのまばたきにも補正を適用</sys:String>
+    <sys:String x:Key="EyeCalibration_ShowPreview">まばたき値のプレビューを表示</sys:String>
+    <sys:String x:Key="EyeCalibration_ResetPreviewValue">プレビュー表示をリセット</sys:String>
+    <sys:String x:Key="EyeCalibration_LeftEyeLabel">左目</sys:String>
+    <sys:String x:Key="EyeCalibration_RightEyeLabel">右目</sys:String>
+    <sys:String x:Key="EyeCalibration_SeeMore">さらに詳しく...</sys:String>
+    
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
-    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションとの間でモーション情報を送受信できます。
-とくに受信については、VMagicMirrorは以下のモーションを受信して適用できます。
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMC Protocol (VMCP)に対応する他アプリケーションとデータを送受信できます。
+以下の機能が利用できます。
 
-- 頭部モーション
-- 表情 (BlendShape)
-- 両手の位置情報</sys:String>
+受信:         
+    - 頭部モーション
+    - 表情 (BlendShape)
+    - 両手の位置情報
+
+送信:
+    - 全身のポーズ
+    - 表情 (BlendShape)
+</sys:String>
     <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
 
     <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
@@ -235,6 +252,10 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
     <sys:String x:Key="HandTracking_Enable">ハンドトラッキングを有効化</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
+    <sys:String x:Key="HandTracking_MotionScale">動きの大きさ (%)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetY">手の高さを調整 (cm)</sys:String>
+    
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*動きかたのオプションで「つねに手下げ」が選択されています。
 ハンドトラッキングの結果を適用するには「デフォルト」に変更して下さい。</sys:String>
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
@@ -902,11 +923,12 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/docs/vmc_protocol</sys:String>
+    <sys:String x:Key="URL_docs_face_tracking">https://malaybaku.github.io/VMagicMirror/docs/face_tracking</sys:String>
     
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
-    
+
     <!-- TODO: メインのVMMのマニュアルと別のURLに差し替える -->
     <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
     

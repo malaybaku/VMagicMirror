@@ -46,6 +46,11 @@
         public bool EnableImageBasedHandTracking { get; set; } = false;
         public bool ShowEffectDuringHandTracking { get; set; } = false;
         public bool DisableHandTrackingHorizontalFlip { get; set; } = false;
+        public int HandTrackingMotionScale { get; set; } = 100;
+        // NOTE: X/Yいずれもcentimeter単位
+        public int HandPositionOffsetX { get; set; } = 0;
+        public int HandPositionOffsetY { get; set; } = 0;
+
 
         public string CameraDeviceName { get; set; } = "";
 
@@ -64,13 +69,13 @@
 
         public bool DisableBlendShapeInterpolate { get; set; } = false;
 
-        public bool UsePerfectSyncWithWebCamera { get; set; } = false;
-        public bool EnableWebCameraHighPowerModeBlink { get; set; } = true;
         public bool EnableWebCameraHighPowerModeLipSync { get; set; } = false;
         public bool EnableWebCameraHighPowerModeMoveZ { get; set; } = false;
 
-        public int WebCamEyeOpenBlinkValue { get; set; } = 0;
+        public int WebCamEyeOpenBlinkValue { get; set; } = 20;
         public int WebCamEyeCloseBlinkValue { get; set; } = 50;
+        public bool WebCamEyeApplySameBlinkValueBothEye { get; set; } = false;
+        public bool WebCamEyeApplyCorrectionToPerfectSync { get; set; } = true;
 
 
         #endregion
@@ -155,14 +160,14 @@
             AdjustLipSyncByVolume = true;
 
             EnableWebCamHighPowerMode = false;
-            UsePerfectSyncWithWebCamera = false;
-            EnableWebCameraHighPowerModeBlink = true;
             EnableWebCameraHighPowerModeLipSync = false;
             EnableWebCameraHighPowerModeMoveZ = true;
             // NOTE: ちょっとややこしいが、この設定はトラッキングの設定であってアバターの目に関する設定ではないので、
             // FaceEyeSettingのリセットと紐づける必要はない
-            WebCamEyeOpenBlinkValue = 0;
+            WebCamEyeOpenBlinkValue = 20;
             WebCamEyeCloseBlinkValue = 50;
+            WebCamEyeApplySameBlinkValueBothEye = false;
+            WebCamEyeApplyCorrectionToPerfectSync = false;
         }
 
         public void ResetFaceEyeSetting()

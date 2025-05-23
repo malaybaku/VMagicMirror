@@ -114,14 +114,14 @@
 
         // Motion, Face, WebCam high power mode
         EnableWebCamHighPowerMode,
-        UsePerfectSyncWithWebCamera,
-        EnableWebCameraHighPowerModeBlink,
         EnableWebCameraHighPowerModeLipSync,
         EnableWebCameraHighPowerModeMoveZ,
 
         SetWebCamEyeOpenBlinkValue,
         SetWebCamEyeCloseBlinkValue,
         SetEyeBlendShapePreviewActive,
+        SetWebCamEyeApplySameBlinkBothEye,
+        SetWebCamEyeApplyBlinkCorrectionToPerfectSync,
 
         // Motion, Mouth
         EnableLipSync,
@@ -141,6 +141,10 @@
         // NOTE: HorizontalFlipControllerのみからこの値を参照すること (ゲーム入力モードの状態とかも踏まえて最終的な反転on/offを計算するため)
         DisableHandTrackingHorizontalFlip,
         EnableSendHandTrackingResult,
+        SetHandTrackingMotionScale,
+        // +X: 手を体の横に広げる、+Y: 手を上げる
+        SetHandTrackingOffsetX,
+        SetHandTrackingOffsetY,
 
         // Motion, GameInput
         UseGamepadForGameInput,

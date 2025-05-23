@@ -32,10 +32,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public IReadOnlyReactiveProperty<bool> ShouldUseLipSyncResult => _shouldUseLipSyncResult;
         public void SetShouldUseLipSyncResult(bool value) => _shouldUseLipSyncResult.Value = value;
 
-        // NOTE: 現状ではパーフェクトシンク中はこのフラグが無視され、常に目にはパーフェクトシンクベースの値が適用される。
-        // これは「目を適用しないならパーフェクトシンクする意味がない」と思ってそうしているが、フラグを反映したほうが分かりやすいかも
-        public bool ShouldUseEyeResult { get; set; } = true;
-        
         private readonly ReactiveProperty<bool> _shouldUsePerfectSyncResult = new();
         public IReadOnlyReactiveProperty<bool> ShouldUsePerfectSyncResult => _shouldUsePerfectSyncResult;
         public void SetShouldUsePerfectSyncResult(bool value) => _shouldUsePerfectSyncResult.Value = value;
@@ -43,10 +39,16 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         public float EyeOpenBlinkValue { get; set; } = 0.2f;
         public float EyeCloseBlinkValue { get; set; } = 0.5f;
-        
-        // NOTE: ここから下はMediaPipeのタスクから直接使う == メインスレッド外から使うことがある
+
+        // NOTE: ここから下はMediaPipeのタスクからも直接使う == メインスレッド外から使うことがある
+        public Atomic<bool> EyeUseMeanBlinkValue { get; } = new(false);
+        public Atomic<bool> EyeApplyCorrectionToPerfectSync { get; } = new(true);
+
         public Atomic<bool> IsFaceMirrored { get; } = new(true);
         public Atomic<bool> IsHandMirrored { get; } = new(true);
+        public Atomic<float> HandTrackingMotionScale { get; } = new(1f);
+        public Atomic<float> HandTrackingOffsetX { get; } = new(0f);
+        public Atomic<float> HandTrackingOffsetY { get; } = new(0f);
 
         // NOTE: 手と表情を同時にトラッキングする場合だけtrueになりうる想定だが、そもそも使わなくなるかも。今のところIPCでは受けていない
         public Atomic<bool> UseInterlace { get; } = new(false);

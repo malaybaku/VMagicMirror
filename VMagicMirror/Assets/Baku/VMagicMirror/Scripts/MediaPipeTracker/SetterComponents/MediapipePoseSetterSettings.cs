@@ -22,6 +22,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         [Range(0f, 1f)]
         [SerializeField] private float handRotationModifyWeight = 0.5f;
         
+        // 素のトラッキングで手がちょっと下向きであるように検出されるのを補正するやつ
+        [SerializeField] private Quaternion constHandRotOffset; 
+        
+        public float HandIkSmoothRate => handIkSmoothRate;
+        
         [SerializeField] private float handIkSmoothRate = 18f;
         [SerializeField] private float handInertiaFactorToLogTrackedSpeed = 6f;
         [SerializeField] private float handInertiaFactorWhenLost = 6f;
@@ -53,7 +58,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // トラッキングロスト時にこの秒数だけ待ってから姿勢なり表情なりをゼロ方向にリセットする…という値。
         [SerializeField] private float trackingLostPoseAndFacialResetWait = 0.5f;
         
-        public float HandIkSmoothRate => handIkSmoothRate;
+        // 素のトラッキング結果だとどうしても手のひらがちょっと下に向くので、それを上向きに定数で補正するやつ
         public float HandInertiaFactorToLogTrackedSpeed => handInertiaFactorToLogTrackedSpeed;
         public float HandInertiaFactorWhenLost => handInertiaFactorWhenLost;
         public float FingerBoneSmoothRate => fingerBoneSmoothRate;
@@ -77,6 +82,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         public float Hand2DofWorldHorizontalScale => 0.3f * handHorizontalMoveScale;
         public float Hand2DofDepthScale => handDepthMoveScale;
         public float HandRotationModifyWeight => handRotationModifyWeight;
+        public Quaternion ConstHandRotOffset => constHandRotOffset;
+        
         public float TrackingLostTimeThreshold => trackingLostTimeThreshold;
 
         public float TrackingLostMotionWaitPhaseDuration => trackingLostWaitDuration;

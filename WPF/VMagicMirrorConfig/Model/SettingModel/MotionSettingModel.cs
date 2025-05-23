@@ -66,6 +66,9 @@ namespace Baku.VMagicMirrorConfig
             EnableSendHandTrackingResult = new RProperty<bool>(
                 false,
                 v => SendMessage(MessageFactory.EnableSendHandTrackingResult(v)));
+            HandTrackingMotionScale = new RProperty<int>(setting.HandTrackingMotionScale, v => SendMessage(MessageFactory.SetHandTrackingMotionScale(v)));
+            HandTrackingMotionOffsetX = new RProperty<int>(setting.HandPositionOffsetX, v => SendMessage(MessageFactory.SetHandTrackingPositionOffsetX(v)));
+            HandTrackingMotionOffsetY = new RProperty<int>(setting.HandPositionOffsetY, v => SendMessage(MessageFactory.SetHandTrackingPositionOffsetY(v)));
 
             CameraDeviceName = new RProperty<string>(setting.CameraDeviceName, v => SendMessage(MessageFactory.SetCameraDeviceName(v)));
             CalibrateFaceData = new RProperty<string>(setting.CalibrateFaceData, v => SendMessage(MessageFactory.SetCalibrateFaceData(v)));
@@ -79,12 +82,7 @@ namespace Baku.VMagicMirrorConfig
                 setting.MoveEyesDuringFaceClipApplied, v => SendMessage(MessageFactory.EnableEyeMotionDuringClipApplied(v)));
             DisableBlendShapeInterpolate = new RProperty<bool>(
                 setting.DisableBlendShapeInterpolate, v => SendMessage(MessageFactory.DisableBlendShapeInterpolate(v)));
-            UsePerfectSyncWithWebCamera = new RProperty<bool>(
-                setting.UsePerfectSyncWithWebCamera, v => SendMessage(MessageFactory.UsePerfectSyncWithWebCamera(v)));
-
-            EnableWebCameraHighPowerModeBlink = new RProperty<bool>(
-                setting.EnableWebCameraHighPowerModeBlink, v => SendMessage(MessageFactory.EnableWebCameraHighPowerModeBlink(v)));
-
+            
             EnableWebCameraHighPowerModeLipSync = new RProperty<bool>(
                 setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(MessageFactory.EnableWebCameraHighPowerModeLipSync(v)));
 
@@ -95,6 +93,10 @@ namespace Baku.VMagicMirrorConfig
                 setting.WebCamEyeOpenBlinkValue, v => SendMessage(MessageFactory.SetWebCamEyeOpenBlinkValue(v)));
             WebCamEyeCloseBlinkValue = new RProperty<int>(
                 setting.WebCamEyeCloseBlinkValue, v => SendMessage(MessageFactory.SetWebCamEyeCloseBlinkValue(v)));
+            WebCamEyeApplySameBlinkValueBothEye = new RProperty<bool>(
+                setting.WebCamEyeApplySameBlinkValueBothEye, v => SendMessage(MessageFactory.SetWebCamEyeApplySameBlinkBothEye(v)));
+            WebCamEyeApplyCorrectionToPerfectSync = new RProperty<bool>(
+                setting.WebCamEyeApplyCorrectionToPerfectSync, v => SendMessage(MessageFactory.SetWebCamEyeApplyCorrectionToPerfectSync(v)));
 
             //TODO: 排他のタイミング次第でRadioButtonが使えなくなってしまうので要検証
             UseLookAtPointNone = new RProperty<bool>(setting.UseLookAtPointNone, v =>
@@ -212,6 +214,11 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> DisableHandTrackingHorizontalFlip { get; }
         public RProperty<bool> EnableSendHandTrackingResult { get; }
 
+        public RProperty<int> HandTrackingMotionScale { get; }
+        public RProperty<int> HandTrackingMotionOffsetX { get; }
+        public RProperty<int> HandTrackingMotionOffsetY { get; }
+
+
         public RProperty<string> CameraDeviceName { get; }
 
         /// <summary>
@@ -227,15 +234,15 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> MoveEyesDuringFaceClipApplied { get; }
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
 
-        public RProperty<bool> UsePerfectSyncWithWebCamera { get; }
-
-        public RProperty<bool> EnableWebCameraHighPowerModeBlink { get; }
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
         public RProperty<bool> EnableWebCameraHighPowerModeMoveZ { get; }
         
         // NOTE: Openのほうが値としては小さい想定(+0付近)
         public RProperty<int> WebCamEyeOpenBlinkValue { get; }
         public RProperty<int> WebCamEyeCloseBlinkValue { get; }
+        public RProperty<bool> WebCamEyeApplySameBlinkValueBothEye { get; }
+        public RProperty<bool> WebCamEyeApplyCorrectionToPerfectSync { get; }
+
 
         public void RequestCalibrateFace() => SendMessage(MessageFactory.CalibrateFace());
 
@@ -439,8 +446,7 @@ namespace Baku.VMagicMirrorConfig
         public void ResetWebCameraHighPowerModeSettings()
         {
             var setting = MotionSetting.Default;
-            UsePerfectSyncWithWebCamera.Value = setting.UsePerfectSyncWithWebCamera;
-            EnableWebCameraHighPowerModeBlink.Value = setting.EnableWebCameraHighPowerModeBlink;
+            DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;
             EnableWebCameraHighPowerModeLipSync.Value = setting.EnableWebCameraHighPowerModeLipSync;
             EnableWebCameraHighPowerModeMoveZ.Value = setting.EnableWebCameraHighPowerModeMoveZ;
         }

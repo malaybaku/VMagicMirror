@@ -78,6 +78,11 @@
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">Game Input also uses gamepad!</sys:String>
 
     <!-- Face Tracker -->
+    <sys:String x:Key="FaceTracker_SelectType">Face Tracking Type</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">Web Camera (Lite)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">Web Camera (High Power)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_ExTracker">Ex.Tracker</sys:String>
+    
     <sys:String x:Key="FaceTracker_EnableWebCamera">Use Web Camera</sys:String>
     <sys:String x:Key="FaceTracker_EnablePerfectSync">Use Perfect Sync</sys:String>
     <sys:String x:Key="FaceTracker_LiteWebCamera_Title">Web Camera (Lite)</sys:String>
@@ -92,7 +97,7 @@
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with high CPU load.
     
 - This mode is recommended to apply your motion to the avatar with high quality, without additional devices.
-- Note that the mode leads higher CPU load. Change to Lite mode when playing games, etc. 
+- This mode uses higher load on PC than other modes.
 - In this mode, Face Switch and Perfect Sync features are partially available.
 - Some limitations exist for facial expression detection.</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice_Title">Detail...</sys:String>
@@ -104,7 +109,6 @@ Face Switch feature for these condition does not work.
 
 Use Extarnel Tracker mode to detect and apply these exressions.</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">Enable Forward/Backward Move</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedBlink">Apply Eye Motion based on Web Camera</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Current selected mode is Web Camera (Lite), but Web Camera (High Power) is automatically applied during hand tracking is enabled.</sys:String>            
@@ -144,9 +148,7 @@ During this mode, following features are disabled.
     <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Web Camera (Lite) does not detect facial data for this feature.
 If VMC Protocol is active and it receives perfect sync facial data, then Face Switch will work based on the data.</sys:String>
 
-    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">
-        Web Camera (High Power) does not detect "Tongue Out" and "Cheek puff" data.
-    </sys:String>
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Web Camera (High Power) does not detect "Tongue Out" and "Cheek puff" condition.</sys:String>
     
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">Activates seleceted BlendShape by making specific face expression.
 Check "Keep LipSync" to make the lipsync continue.</sys:String>
@@ -163,13 +165,39 @@ Check "Keep LipSync" to make the lipsync continue.</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">Tongue out</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">Cheek puff</sys:String>
     
+    <!-- Face Tracker Eye Calibration -->
+    <sys:String x:Key="EyeCalibration_Header">Eye Tracking Settings</sys:String>
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">This window supports settings about eye tracking input handling.
+The properties here only affects during "Web Camera (High Power)" is selected.
+
+- If you move your webcam or get new glasses, you might need to adjust the settings again.
+- The settings for avatar's eyes are available at Settings Window > Face tab.</sys:String>
+
+    <sys:String x:Key="EyeCalibration_Settings">Settings</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeOpenBlinkValue">Blink Value when Eye Opened (%)</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeCloseBlinkValue">Blink Value when Eye Closed (%)</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplySameValueBothEye">Use Mean Blink Value</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplyToPerfectSync">Use Adjusted Value when Perfect Sync is Enabled</sys:String>
+    <sys:String x:Key="EyeCalibration_ShowPreview">Show Blink Value Preview</sys:String>
+    <sys:String x:Key="EyeCalibration_ResetPreviewValue">Reset Preview</sys:String>
+    <sys:String x:Key="EyeCalibration_LeftEyeLabel">Left Eye</sys:String>
+    <sys:String x:Key="EyeCalibration_RightEyeLabel">Right Eye</sys:String>
+    <sys:String x:Key="EyeCalibration_SeeMore">See More...</sys:String>
+
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
-    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">With VMC Protocol (VMCP), the app can receive and send motion data with other apps.
-VMagicMirror supports to receive:
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">With VMC Protocol (VMCP), the app can receive / send data with other apps.
+Following features are available.
+        
+Receive:
 
 - Head: Head Pose
 - Hand: Hand Pose
+- Facial: Facial BlendShape
+
+Send: 
+
+- Pose: Full Body Pose
 - Facial: Facial BlendShape
 </sys:String>
     <sys:String x:Key="VMCP_SeeMore">See More...</sys:String>
@@ -222,6 +250,10 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_Enable">Enable Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
+    <sys:String x:Key="HandTracking_MotionScale">Motion Scale (%)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetX">Hand Horizontal Offset (cm)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetY">Hand Vertical Offset (cm)</sys:String>
+    
     <sys:String x:Key="HandTracking_ShowAreaChecker">Show Detection Status (*raw image is not displayed)</sys:String>    
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
 Use "Default" to apply hand tracking result.</sys:String>

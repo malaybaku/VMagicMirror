@@ -26,13 +26,20 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         // NOTE: getterにマルチスレッド対策がないのは意図的。最悪ケースでも値が多少古い程度で済むはずなのでいい加減にしてある
         public IFaceTrackBlendShapes BlendShapes => _blendShapes;
         
+        private readonly MediaPipeCorrectedBlendShapes _correctedBlendShapes;
+        // NOTE: PerfectSyncをアバターに適用するとき用にオプションの補正を適用した値が入っている
+        public IFaceTrackBlendShapes CorrectedBlendShapes => _correctedBlendShapes;
+        
         [Inject]
         public MediaPipeFacialValueRepository(
             FaceControlConfiguration faceControlConfig,
-            MediapipePoseSetterSettings settings)
+            MediapipePoseSetterSettings settings,
+            MediaPipeTrackerRuntimeSettingsRepository runtimeSettings)
         {
             _faceControlConfig = faceControlConfig;
             _settings = settings;
+            
+            _correctedBlendShapes = new MediaPipeCorrectedBlendShapes(_blendShapes, runtimeSettings);
         }
 
         public bool IsTracked
@@ -61,6 +68,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 {
                     SetValue(keyName, value);
                 }
+                _correctedBlendShapes.UpdateEye();
                 
                 _isTracked.Set(true);
                 _trackLostTime = 0f;
@@ -85,7 +93,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // これにより、webカメラを使ってないときのTickの処理がちょっと減る
             _faceControlConfig.FaceControlMode
                 .Where(mode => mode is FaceControlModes.WebCamHighPower)
-                .Subscribe(_ => ResetFacialValues(0f))
+                .Subscribe(_ =>
+                {
+                    ResetFacialValues(0f);
+                    _correctedBlendShapes.UpdateEye();
+                })
                 .AddTo(this);
         }
 
@@ -105,6 +117,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     _trackLostTime > _settings.TrackingLostPoseAndFacialResetWait)
                 {
                     ResetFacialValues(1 - FaceResetLerpFactor * Time.deltaTime);
+                    _correctedBlendShapes.UpdateEye();
                 }
             }
         }

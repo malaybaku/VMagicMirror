@@ -73,15 +73,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             _receiver.BindBoolProperty(VmmCommands.EnableImageBasedHandTracking, _useHandTracking);
             _receiver.BindBoolProperty(VmmCommands.ExTrackerEnable, _useExternalTracking);
             
+            // NOTE: WPF側ではパーフェクトシンクのon/offフラグは一種類だけである…というスタンスを取っているので、その値を拾う。
+            // が、Unity目線だと「webcamでパーフェクトシンクするか否か」と「ExTrackerでパーフェクトシンクするか否か」が共通のフラグという
+            // 必然性はあまりないので、別のフラグがあるつもりで管理しておく
             _receiver.AssignCommandHandler(
-                VmmCommands.UsePerfectSyncWithWebCamera,
+                VmmCommands.ExTrackerEnablePerfectSync,
                 m => _settingsRepository.SetShouldUsePerfectSyncResult(m.ToBoolean())
                 );
 
-            _receiver.AssignCommandHandler(
-                VmmCommands.EnableWebCameraHighPowerModeBlink,
-                m => _settingsRepository.ShouldUseEyeResult = m.ToBoolean()
-                );
             _receiver.AssignCommandHandler(
                 VmmCommands.EnableWebCameraHighPowerModeLipSync,
                 m => _settingsRepository.SetShouldUseLipSyncResult(m.ToBoolean())
@@ -99,8 +98,16 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 VmmCommands.SetWebCamEyeCloseBlinkValue,
                 m => _settingsRepository.EyeCloseBlinkValue = m.ParseAsPercentage()
                 );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetWebCamEyeApplySameBlinkBothEye,
+                m => _settingsRepository.EyeUseMeanBlinkValue.Value = m.ToBoolean()
+                );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetWebCamEyeApplyBlinkCorrectionToPerfectSync,
+                m => _settingsRepository.EyeApplyCorrectionToPerfectSync.Value = m.ToBoolean()
+                );
 
-            // TODO: ハンドトラッキングだけ動いてるときのキャリブレーションの実装 = 一瞬だけFaceTaskを起こす処理の実装
+            // TODO: ハンドトラッキングだけ動いてるときのキャリブレーションの実装 = 一瞬だけFaceTaskを起こす処理の実装?
             // NOTE: MediaPipeのトラッキングが動いてない場合、キャリブレーションは実行されない
             _receiver.BindAction(VmmCommands.CalibrateFace, () =>
             {
@@ -115,6 +122,19 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 VmmCommands.SetCalibrateFaceDataHighPower, 
                 message => _settingsRepository.ApplyReceivedCalibrationData(message.GetStringValue())
                 );
+
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetHandTrackingMotionScale,
+                m => _settingsRepository.HandTrackingMotionScale.Value = m.ParseAsPercentage()
+            );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetHandTrackingOffsetX,
+                m => _settingsRepository.HandTrackingOffsetX.Value = m.ParseAsCentimeter()
+            );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetHandTrackingOffsetY,
+                m => _settingsRepository.HandTrackingOffsetY.Value = m.ParseAsCentimeter()
+            );
 
             _horizontalFlipController.DisableFaceHorizontalFlip
                 .Subscribe(disableMirror => _settingsRepository.IsFaceMirrored.Value = !disableMirror)

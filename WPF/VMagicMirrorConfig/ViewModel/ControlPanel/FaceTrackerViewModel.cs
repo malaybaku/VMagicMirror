@@ -12,7 +12,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
     // - webカメラによる顔トラッキングの機能が増えた過程で、UIが ExternalTracker 専用ではなく、顔トラッキング全般に関するものにシフトした
     public class FaceTrackerViewModel : SettingViewModelBase
     {
-        private readonly ExternalTrackerSettingModel _model;
+        private readonly ExternalTrackerSettingModel _exTrackerModel;
         private readonly ExternalTrackerRuntimeConfig _runtimeConfig;
         private readonly MotionSettingModel _motionModel;
         private readonly DeviceListSource _deviceList;
@@ -29,14 +29,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
 
         internal FaceTrackerViewModel(
-            ExternalTrackerSettingModel model,
+            ExternalTrackerSettingModel exTrackerModel,
             ExternalTrackerRuntimeConfig runtimeConfig,
             MotionSettingModel motionModel,
             AccessorySettingModel accessoryModel,
             DeviceListSource deviceList
             )
         {
-            _model = model;
+            _exTrackerModel = exTrackerModel;
             _runtimeConfig = runtimeConfig;
             _motionModel = motionModel;
             _deviceList = deviceList;
@@ -50,7 +50,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             OpenPerfectSyncTipsUrlCommand = new ActionCommand(OpenPerfectSyncTipsUrl);
             OpenIFMTroubleShootCommand = new ActionCommand(OpenIFMTroubleShoot);
             EndExTrackerIfNeededCommand = new ActionCommand(
-                async () => await model.DisableExternalTrackerWithConfirmAsync()
+                async () => await exTrackerModel.DisableExternalTrackerWithConfirmAsync()
                 );
             ShowMissingBlendShapeNotificationCommand = new ActionCommand(ShowMissingBlendShapeNotification);
 
@@ -64,11 +64,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
 
             UpdateTrackSourceType();
-            model.TrackSourceType.AddWeakEventHandler(UpdateTrackSourceTypeAsHandler);
+            exTrackerModel.TrackSourceType.AddWeakEventHandler(UpdateTrackSourceTypeAsHandler);
 
             WeakEventManager<ExternalTrackerSettingModel, EventArgs>.AddHandler(
-                model, nameof(model.FaceSwitchSettingReloaded), OnFaceSwitchSettingReloaded);
-            WeakEventManager<ExternalTrackerSettingModel, EventArgs>.AddHandler(model, nameof(model.Loaded), OnModelLoaded);
+                exTrackerModel, nameof(exTrackerModel.FaceSwitchSettingReloaded), OnFaceSwitchSettingReloaded);
+            WeakEventManager<ExternalTrackerSettingModel, EventArgs>.AddHandler(exTrackerModel, nameof(exTrackerModel.Loaded), OnModelLoaded);
 
             _motionModel.EnableWebCamHighPowerMode.AddWeakEventHandler(OnWebCamHighPowerModeChanged);
             EnableExternalTracking.AddWeakEventHandler(OnEnableExternalTrackingChanged);
@@ -79,7 +79,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void OnFaceSwitchSettingReloaded(object? sender, EventArgs e)
         {
-            if (!_model.IsLoading)
+            if (!_exTrackerModel.IsLoading)
             {
                 LoadFaceSwitchSetting();
             }
@@ -102,7 +102,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
             FaceSwitchItems.Clear();
 
-            foreach (var item in _model.FaceSwitchSetting.Items)
+            foreach (var item in _exTrackerModel.FaceSwitchSetting.Items)
             {
                 var vm = new FaceSwitchItemViewModel(this, item);
                 vm.SubscribeLanguageSelector();
@@ -120,15 +120,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 _motionModel.EnableWebCamHighPowerMode.Value ||
                 _motionModel.EnableImageBasedHandTracking.Value;
             // NOTE: ハンドトラッキングが有効だと高負荷モードになる (MediaPipeが起動するため)
-            UseLiteWebCamera.Value = !_model.EnableExternalTracking.Value && !preferHighPowerModeInWebCamera;
-            UseHighPowerWebCamera.Value = !_model.EnableExternalTracking.Value && preferHighPowerModeInWebCamera;
+            UseLiteWebCamera.Value = !_exTrackerModel.EnableExternalTracking.Value && !preferHighPowerModeInWebCamera;
+            UseHighPowerWebCamera.Value = !_exTrackerModel.EnableExternalTracking.Value && preferHighPowerModeInWebCamera;
             HighPowerWebCameraAppliedByHandTracking.Value = 
-                _model.EnableExternalTracking.Value &&
+                _exTrackerModel.EnableExternalTracking.Value &&
                 !_motionModel.EnableWebCamHighPowerMode.Value &&
                 _motionModel.EnableImageBasedHandTracking.Value;
 
 
-            FaceSwitchSupported.Value = _model.EnableExternalTracking.Value || UseHighPowerWebCamera.Value;
+            FaceSwitchSupported.Value = _exTrackerModel.EnableExternalTracking.Value || UseHighPowerWebCamera.Value;
             // NOTE: ExTrackerは「このフラグがオンならオン」という優先度なので、ここで更新しないでよい
         }
 
@@ -139,7 +139,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         // 「ExTrackerが有効なら残り2つはオフ扱い」などの暗黙の優先度仕様を踏まえて値を制御するので、Settingの値をそのまま反映するわけではない
         public RProperty<bool> UseLiteWebCamera { get; } = new RProperty<bool>(false);
         public RProperty<bool> UseHighPowerWebCamera { get; } = new RProperty<bool>(false);
-        public RProperty<bool> EnableExternalTracking => _model.EnableExternalTracking;
+        public RProperty<bool> EnableExternalTracking => _exTrackerModel.EnableExternalTracking;
         // 「ハンドトラッキングさえ切ったら低負荷モードになるような組み合わせで高負荷モードになってるとき」だけtrueになるフラグ
         public RProperty<bool> HighPowerWebCameraAppliedByHandTracking { get; } = new RProperty<bool>(false);
 
@@ -165,19 +165,23 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         private void SelectWebCamLowPower()
         {
-            _model.EnableExternalTracking.Value = false;
+            _exTrackerModel.EnableExternalTracking.Value = false;
             _motionModel.EnableWebCamHighPowerMode.Value = false;
         }
         private void SelectWebCamHighPower()
         {
-            _model.EnableExternalTracking.Value = false;
+            _exTrackerModel.EnableExternalTracking.Value = false;
             _motionModel.EnableWebCamHighPowerMode.Value = true;
         }
 
         private void SelectExTracker()
         {
-            _model.EnableExternalTracking.Value = true;
+            _exTrackerModel.EnableExternalTracking.Value = true;
         }
+
+
+        // NOTE: パーフェクトシンクのオン/オフはExTrackerとwebcam(高精度)の双方で同じ値を使う。
+        public RProperty<bool> EnablePerfectSync => _exTrackerModel.EnableExternalTrackerPerfectSync;
 
         #endregion
 
@@ -188,14 +192,11 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<string> WebCameraDeviceName => _motionModel.CameraDeviceName;
 
         public ReadOnlyObservableCollection<string> WebCameraNames => _deviceList.CameraNames;
-        public RProperty<bool> EnableWebCameraHighPowerModeBlink => _motionModel.EnableWebCameraHighPowerModeBlink;
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync => _motionModel.EnableWebCameraHighPowerModeLipSync;
         public RProperty<bool> EnableWebCameraHighPowerModeMoveZ => _motionModel.EnableWebCameraHighPowerModeMoveZ;
 
         // todo: 前後移動のオンオフも欲しいかも
 
-
-        public RProperty<bool> EnableWebCameraHighPowerModePerfectSync => _motionModel.UsePerfectSyncWithWebCamera;
 
         private ActionCommand? _calibrateWebCameraCommand;
         public ActionCommand CalibrateWebCameraCommand => _calibrateWebCameraCommand ??= new ActionCommand(CalibrateWebCamera);
@@ -205,7 +206,12 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         // NOTE: LowPowerモードにはオリジナルの設定がないし、項目数も少ないので、そっち用のリセットコマンドは実装していない
         private ActionCommand? _resetWebCameraHighPowerModeSettingsCommand;
         public ActionCommand ResetWebCameraHighPowerModeSettingsCommand => _resetWebCameraHighPowerModeSettingsCommand ??= new ActionCommand(ResetWebCameraHighPowerModeSettings);
-        private void ResetWebCameraHighPowerModeSettings() => _motionModel.ResetWebCameraHighPowerModeSettings();
+        private void ResetWebCameraHighPowerModeSettings()
+        {
+            _motionModel.ResetWebCameraHighPowerModeSettings();
+            // NOTE: 歴史的経緯により、このフラグはMotionの一部じゃないことになっているのだが、UI上はこの値もリセットされてないと直感に反するのでリセットしておく
+            _exTrackerModel.EnableExternalTrackerPerfectSync.Value = ExternalTrackerSetting.Default.EnableExternalTrackerPerfectSync;
+        }
 
         private ActionCommand? _openEyeCalibrationWindowCommand;
         public ActionCommand OpenEyeCalibrationWindowCommand => _openEyeCalibrationWindowCommand ??= new ActionCommand(OpenEyeCalibrationWindow);
@@ -215,10 +221,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #region Ex.Tracker
 
-        public RProperty<bool> EnableExternalTrackerLipSync => _model.EnableExternalTrackerLipSync;
+        public RProperty<bool> EnableExternalTrackerLipSync => _exTrackerModel.EnableExternalTrackerLipSync;
         //NOTE: ここだけ外部トラッキングではなく、webカメラの顔トラと共通のフラグを触りに行ってることに注意
         public RProperty<bool> DisableFaceTrackingHorizontalFlip => _motionModel.DisableFaceTrackingHorizontalFlip;
-        public RProperty<bool> EnableExternalTrackerPerfectSync => _model.EnableExternalTrackerPerfectSync;
 
 
 
@@ -226,7 +231,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand CalibrateCommand
             => _calibrateCommand ??= new ActionCommand(Calibrate);
 
-        private void Calibrate() => _model.SendCalibrateRequest();
+        private void Calibrate() => _exTrackerModel.SendCalibrateRequest();
 
         private ActionCommand? _resetExternalTrackerSettingsCommand;
 
@@ -234,7 +239,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             => _resetExternalTrackerSettingsCommand ??= new ActionCommand(ResetExternalTrackerSettings);
 
         private void ResetExternalTrackerSettings() 
-            => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetSettingExceptFaceSwitch);
+            => SettingResetUtils.ResetSingleCategoryAsync(_exTrackerModel.ResetSettingExceptFaceSwitch);
 
         #endregion
 
@@ -285,7 +290,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 if (SetValue(ref _isTrackSourceNone, value) && value)
                 {
-                    _model.TrackSourceType.Value = ExternalTrackerSetting.TrackSourceNone;
+                    _exTrackerModel.TrackSourceType.Value = ExternalTrackerSetting.TrackSourceNone;
                 }
             }
         }
@@ -298,7 +303,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 if (SetValue(ref _isTrackSourceIFacialMocap, value) && value)
                 {
-                    _model.TrackSourceType.Value = ExternalTrackerSetting.TrackSourceIFacialMocap;
+                    _exTrackerModel.TrackSourceType.Value = ExternalTrackerSetting.TrackSourceIFacialMocap;
                 }
             }
         }
@@ -306,14 +311,14 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private void UpdateTrackSourceTypeAsHandler(object? sender, PropertyChangedEventArgs e) => UpdateTrackSourceType();
         private void UpdateTrackSourceType()
         {
-            IsTrackSourceNone = _model.TrackSourceType.Value == ExternalTrackerSetting.TrackSourceNone;
-            IsTrackSourceIFacialMocap = _model.TrackSourceType.Value == ExternalTrackerSetting.TrackSourceIFacialMocap;
+            IsTrackSourceNone = _exTrackerModel.TrackSourceType.Value == ExternalTrackerSetting.TrackSourceNone;
+            IsTrackSourceIFacialMocap = _exTrackerModel.TrackSourceType.Value == ExternalTrackerSetting.TrackSourceIFacialMocap;
         }
 
         //NOTE: 上記のbool2つ+UpdateTrackSourceTypeを廃止し、この整数値を読み込んだViewがConverterで頑張るのでもよい。はず
-        public RProperty<int> TrackSourceType => _model.TrackSourceType;
+        public RProperty<int> TrackSourceType => _exTrackerModel.TrackSourceType;
 
-        public RProperty<string> IFacialMocapTargetIpAddress => _model.IFacialMocapTargetIpAddress;
+        public RProperty<string> IFacialMocapTargetIpAddress => _exTrackerModel.IFacialMocapTargetIpAddress;
 
         public ActionCommand RefreshIFacialMocapTargetCommand { get; }
 
@@ -322,7 +327,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private void OpenInstructionUrl() 
             => UrlNavigate.Open(LocalizedString.GetString("URL_docs_ex_tracker"));
 
-        public RProperty<string> CalibrateData => _model.CalibrateData;
+        public RProperty<string> CalibrateData => _exTrackerModel.CalibrateData;
 
         #endregion
 
@@ -335,7 +340,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         /// 子要素になってる<see cref="FaceSwitchItemViewModel"/>から呼び出すことで、
         /// 現在の設定を保存した状態にします。
         /// </summary>
-        public void SaveFaceSwitchSetting() => _model.SaveFaceSwitchSetting();
+        public void SaveFaceSwitchSetting() => _exTrackerModel.SaveFaceSwitchSetting();
 
         /// <summary> UIで個別設定として表示する、表情スイッチの要素です。 </summary>
         public ObservableCollection<FaceSwitchItemViewModel> FaceSwitchItems { get; }
@@ -357,7 +362,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand ResetFaceSwitchSettingCommand
             => _resetFaceSwitchSettingCommand ??= new ActionCommand(ResetFaceSwitchSetting);
         private void ResetFaceSwitchSetting() 
-            => SettingResetUtils.ResetSingleCategoryAsync(() => _model.ResetFaceSwitchSetting());
+            => SettingResetUtils.ResetSingleCategoryAsync(() => _exTrackerModel.ResetFaceSwitchSetting());
 
         #endregion
 

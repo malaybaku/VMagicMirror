@@ -23,7 +23,7 @@
         <StackPanel Margin="10">
             <TextBlock 
                 Text="{DynamicResource VMCP_Header}"                 
-                Style="{StaticResource SectionHeaderText}"
+                Style="{StaticResource HeaderText}"
                 />
             <Grid Margin="10">
                 <TextBlock Text="{DynamicResource VMCP_Instruction}"

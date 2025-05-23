@@ -17,7 +17,8 @@ MonoBehaviour:
   faceDepthMoveScale: 1
   handHorizontalMoveScale: 2
   handDepthMoveScale: 1
-  handRotationModifyWeight: 0.5
+  handRotationModifyWeight: 0.2
+  constHandRotOffset: {x: 0.085764684, y: 0, z: 0, w: -0.9963154}
   handIkSmoothRate: 18
   handInertiaFactorToLogTrackedSpeed: 6
   handInertiaFactorWhenLost: 2

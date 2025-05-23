@@ -27,16 +27,17 @@
         <StackPanel Margin="5,15">
 
             <TextBlock Style="{StaticResource HeaderText}"
-                       Text="顔トラッキングの種類"/>
+                       Text="{DynamicResource FaceTracker_SelectType}"/>
             <StackPanel Orientation="Horizontal" 
                         Margin="5,5,5,15">
-                <Button Content="webカメラ (軽量)"
+                <Button Content="{DynamicResource FaceTracker_SelectType_WebCam_Lite}"
                         Width="NaN"
+                        Margin="4,0"
                         Command="{Binding SelectWebCamLowPowerCommand}"/>
-                <Button Content="webカメラ (高品質)"
+                <Button Content="{DynamicResource FaceTracker_SelectType_WebCam_HighPower}"
                         Width="NaN"
                         Command="{Binding SelectWebCamHighPowerCommand}"/>
-                <Button Content="外部トラッキング"
+                <Button Content="{DynamicResource FaceTracker_SelectType_ExTracker}"
                         Width="NaN"
                         Command="{Binding SelectExTrackerCommand}"/>
             </StackPanel>
@@ -195,11 +196,6 @@
 
                     <CheckBox Margin="15,0,10,0" 
                                 VerticalContentAlignment="Center"
-                                Content="{DynamicResource FaceTracker_HighPowerWebCamera_UseImageBasedBlink}" 
-                                IsChecked="{Binding EnableWebCameraHighPowerModeBlink.Value}"
-                                />
-                    <CheckBox Margin="15,0,10,0" 
-                                VerticalContentAlignment="Center"
                                 Content="{DynamicResource FaceTracker_HighPowerWebCamera_UseImageBasedLipSync}" 
                                 IsChecked="{Binding EnableWebCameraHighPowerModeLipSync.Value}"
                                 />
@@ -208,11 +204,12 @@
                             <RowDefinition/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
+                        <!-- 外部トラッキングじゃないけど同じLabelを使いまわしてます -->
                         <CheckBox Grid.Row="0" 
                                       Margin="0"
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource ExTracker_Enable_PerfectSync}"                               
-                                      IsChecked="{Binding EnableWebCameraHighPowerModePerfectSync.Value}"
+                                      IsChecked="{Binding EnablePerfectSync.Value}"
                                       />
                         <Button Grid.Row="1"
                                     HorizontalAlignment="Left"
@@ -308,7 +305,7 @@
                                       Margin="0"
                                       VerticalContentAlignment="Center"
                                       Content="{DynamicResource ExTracker_Enable_PerfectSync}"                               
-                                      IsChecked="{Binding EnableExternalTrackerPerfectSync.Value}"
+                                      IsChecked="{Binding EnablePerfectSync.Value}"
                                       />
                         <Button Grid.Row="1"
                                     HorizontalAlignment="Left"

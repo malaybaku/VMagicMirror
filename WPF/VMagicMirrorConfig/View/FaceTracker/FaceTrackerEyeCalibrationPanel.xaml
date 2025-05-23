@@ -12,7 +12,7 @@
              MinWidth="500"
              d:DataContext="{d:DesignInstance vm:FaceTrackerEyeCalibrationViewModel}"
              d:DesignWidth="400"
-             d:DesignHeight="600"
+             d:DesignHeight="700"
              >
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
@@ -26,15 +26,21 @@
                        TextWrapping="Wrap"
                        />
 
+
+            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                HorizontalAlignment="Right"
+                                Margin="8,4"
+                                Padding="4,0"
+                                Command="{Binding OpenDocUrlCommand}"
+                                Content="{DynamicResource EyeCalibration_SeeMore}"
+                                />
+
             <Border Style="{StaticResource SectionBorder}" Padding="5" Margin="5">
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource HeaderText}"
-                                    Text="基本設定"
+                    <TextBlock Style="{StaticResource HeaderText}"
+                                    Text="{DynamicResource EyeCalibration_Settings}"
                                     Margin="5"
                                     />
-                        <!-- TODO: ここにリセットボタン置きたいはず。多分 -->
-                    </StackPanel>
 
                     <Grid Margin="10">
                         <Grid.RowDefinitions>
@@ -50,7 +56,7 @@
                         <!-- NOTE: まばたき値の数値反転を検討したり「値が小さいと目が開けやすく～」みたいな注記の調整をまだやる予定のため、ローカライズしていない -->
                         <TextBlock Grid.Row="0"
                                    Grid.Column="0"
-                                   Text="目を開けているときのまばたき値(%)"
+                                   Text="{DynamicResource EyeCalibration_EyeOpenBlinkValue}"
                                    Margin="10,0"/>
                         <Slider Grid.Row="0"
                                 Grid.Column="1"
@@ -68,7 +74,7 @@
 
                         <TextBlock Grid.Row="1"
                                    Grid.Column="0"
-                                   Text="目を閉じたときのまばたき値(%)"
+                                   Text="{DynamicResource EyeCalibration_EyeCloseBlinkValue}"
                                    Margin="10,0"/>
                         <Slider Grid.Row="1"
                                 Grid.Column="1"
@@ -86,17 +92,28 @@
 
                     </Grid>
 
+                    <CheckBox HorizontalAlignment="Left"
+                              Margin="20,5"
+                              IsChecked="{Binding ApplySameBlinkValue.Value}"
+                              Content="{DynamicResource EyeCalibration_ApplySameValueBothEye}"/>
+                    <CheckBox HorizontalAlignment="Left"
+                              Margin="20,5,20,25"
+                              IsChecked="{Binding ApplyToPerfectSync.Value}"
+                              Content="{DynamicResource EyeCalibration_ApplyToPerfectSync}"/>
+
                     <Grid>
                         <CheckBox HorizontalAlignment="Left"
                                   IsChecked="{Binding EnableEyeBlendShapeValuePreview.Value}"
-                                  Content="まばたき値のプレビューを表示"/>
+                                  Content="{DynamicResource EyeCalibration_ShowPreview}"/>
 
-                        <!-- アイコンのみだと何をリセットするか分かりにくいので、テキストつきボタンにしたい -->
-                        <Button HorizontalAlignment="Right" 
-                                Style="{StaticResource CategorySettingResetButton}"
+                        <!-- アイコンのみだと何をリセットするか分かりにくいのでテキストにしてる -->
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                HorizontalAlignment="Right"
+                                Margin="0"
+                                Padding="4,0"
                                 Command="{Binding ResetCurrentBlendShapeValueCommand}"
+                                Content="{DynamicResource EyeCalibration_ResetPreviewValue}"
                                 />
-
                     </Grid>
 
                     <Grid Margin="10" ClipToBounds="False">
@@ -110,10 +127,10 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="左目"
+                                   Text="{DynamicResource EyeCalibration_LeftEyeLabel}"
                                    />
                         <TextBlock Grid.Row="1" Grid.Column="0"
-                                   Text="右目"
+                                   Text="{DynamicResource EyeCalibration_RightEyeLabel}"
                                    />
 
                         <view:FaceTrackerEyeBlendShapeRange 

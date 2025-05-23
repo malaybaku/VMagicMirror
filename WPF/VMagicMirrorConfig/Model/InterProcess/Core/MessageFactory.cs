@@ -128,6 +128,11 @@ namespace Baku.VMagicMirrorConfig
         //Faceと同じく、disableという言い回しに注意
         public static Message DisableHandTrackingHorizontalFlip(bool disable) => BoolContent(VmmCommands.DisableHandTrackingHorizontalFlip, disable);
         public static Message EnableSendHandTrackingResult(bool enable) => BoolContent(VmmCommands.EnableSendHandTrackingResult, enable);
+        // NOTE: 名称に含まないが、xy軸のみのスケールを指す。z軸はそもそもMediaPipeのHandTrackingではあんまり取れないので
+        public static Message SetHandTrackingMotionScale(int percent) => IntContent(VmmCommands.SetHandTrackingMotionScale, percent);
+        public static Message SetHandTrackingPositionOffsetX(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetX, offset);
+        public static Message SetHandTrackingPositionOffsetY(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetY, offset);
+
 
 
         public static Message EnableWebCamHighPowerMode(bool enable) => BoolContent(VmmCommands.EnableWebCamHighPowerMode, enable);
@@ -138,16 +143,15 @@ namespace Baku.VMagicMirrorConfig
 
         public static Message DisableBlendShapeInterpolate(bool enable) => BoolContent(VmmCommands.DisableBlendShapeInterpolate, enable);
         
-        public static Message UsePerfectSyncWithWebCamera(bool enable) => BoolContent(VmmCommands.UsePerfectSyncWithWebCamera, enable);
-        
-        public static Message EnableWebCameraHighPowerModeBlink(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeBlink, enable);
         public static Message EnableWebCameraHighPowerModeLipSync(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeLipSync, enable);
         public static Message EnableWebCameraHighPowerModeMoveZ(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeMoveZ, enable);
 
         public static Message SetWebCamEyeOpenBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeOpenBlinkValue, value);
         public static Message SetWebCamEyeCloseBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeCloseBlinkValue, value);
-
         public static Message SetEyeBlendShapePreviewActive(bool active) => BoolContent(VmmCommands.SetEyeBlendShapePreviewActive, active);
+        public static Message SetWebCamEyeApplySameBlinkBothEye(bool enable) => BoolContent(VmmCommands.SetWebCamEyeApplySameBlinkBothEye, enable);
+        public static Message SetWebCamEyeApplyCorrectionToPerfectSync(bool enable) 
+            => BoolContent(VmmCommands.SetWebCamEyeApplyBlinkCorrectionToPerfectSync, enable);
 
         /// <summary>
         /// Query.

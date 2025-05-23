@@ -90,7 +90,10 @@ FinalIK, Dlib FaceLandmark Detectorは有償アセットであることに注意
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
 
-MediaPipeUnityPluginについては、モデルデータ(`.bytes`拡張子を含むファイル)を `StreamingAssets/MediaPipeTracker` フォルダ以下に移動します。
+MediaPipeUnityPluginについては、モデルデータ(`.bytes`　ファイル)のうち下記のファイルを `StreamingAssets/MediaPipeTracker` フォルダ以下に移動します。
+
+- `face_landmarker_v2_with_blendshapes.bytes`
+- `hand_landmarker.bytes`
 
 SharpDXは次の手順で導入します。
 

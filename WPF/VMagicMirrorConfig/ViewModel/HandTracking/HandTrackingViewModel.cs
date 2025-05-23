@@ -1,7 +1,6 @@
 ﻿using Baku.VMagicMirror;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
 
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
@@ -92,6 +91,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             : _model.ShowEffectDuringHandTracking;
         public bool CanChangeEffectDuringHandTracking => !FeatureLocker.FeatureLocked;
         public RProperty<bool> DisableHandTrackingHorizontalFlip => _model.DisableHandTrackingHorizontalFlip;
+        public RProperty<int> HandTrackingMotionScale => _model.HandTrackingMotionScale;
+        public RProperty<int> HandPositionOffsetX => _model.HandTrackingMotionOffsetX;
+        public RProperty<int> HandPositionOffsetY => _model.HandTrackingMotionOffsetY;
         public RProperty<bool> EnableSendHandTrackingResult => _model.EnableSendHandTrackingResult;
         public HandTrackingResultViewModel HandTrackingResult { get; } = new HandTrackingResultViewModel();
         public ActionCommand OpenFullEditionDownloadUrlCommand { get; }

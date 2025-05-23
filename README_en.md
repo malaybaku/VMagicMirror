@@ -91,7 +91,11 @@ Note that `FinalIK` and `Dlib FaceLandmark Detector` are paid assets.
 
 Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
 
-About MediaPipeUnityPlugin, put `.bytes` files in the package into `StreamingAssets/MediaPipeTracker` folder.
+About MediaPipeUnityPlugin, move following model files (`.bytes`) in the package into `StreamingAssets/MediaPipeTracker` folder.
+
+- `face_landmarker_v2_with_blendshapes.bytes`
+- `hand_landmarker.bytes`
+
 
 Install SharpDX by following steps.
 

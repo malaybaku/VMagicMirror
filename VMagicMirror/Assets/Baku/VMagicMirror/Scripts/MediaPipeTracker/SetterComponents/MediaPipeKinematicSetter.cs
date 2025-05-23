@@ -24,6 +24,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private bool IsFaceMirrored => _settingsRepository.IsFaceMirrored.Value;
         private bool IsHandMirrored => _settingsRepository.IsHandMirrored.Value;
         private float HandTrackingMotionScale => _settingsRepository.HandTrackingMotionScale.Value;
+        private float HandTrackingOffsetX => _settingsRepository.HandTrackingOffsetX.Value;
+        private float HandTrackingOffsetY => _settingsRepository.HandTrackingOffsetY.Value;
         
         // NOTE:
         // - Poseの原点は「キャリブしたときに頭が映ってた位置」が期待値
@@ -281,7 +283,11 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             // NOTE: scaled~ のほうは画像座標ベースの計算に使う。 world~ のほうは実際にユーザーが手を動かした量の推定値になっている
             var scaledNormalizedPos = rawNormalizedPos * _poseSetterSettings.Hand2DofNormalizedHorizontalScale;
             var worldPosDiffXy =
-                rawNormalizedPos * (_poseSetterSettings.Hand2DofWorldHorizontalScale * HandTrackingMotionScale);
+                rawNormalizedPos * (_poseSetterSettings.Hand2DofWorldHorizontalScale * HandTrackingMotionScale) +
+                new Vector2(
+                    isLeftHand ? -HandTrackingOffsetX : HandTrackingOffsetX,
+                    HandTrackingOffsetY
+                );
             
             // ポイント
             // - 手が伸び切らない程度に前に出すのを基本とする

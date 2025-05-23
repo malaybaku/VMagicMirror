@@ -127,6 +127,14 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 VmmCommands.SetHandTrackingMotionScale,
                 m => _settingsRepository.HandTrackingMotionScale.Value = m.ParseAsPercentage()
             );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetHandTrackingOffsetX,
+                m => _settingsRepository.HandTrackingOffsetX.Value = m.ParseAsCentimeter()
+            );
+            _receiver.AssignCommandHandler(
+                VmmCommands.SetHandTrackingOffsetY,
+                m => _settingsRepository.HandTrackingOffsetY.Value = m.ParseAsCentimeter()
+            );
 
             _horizontalFlipController.DisableFaceHorizontalFlip
                 .Subscribe(disableMirror => _settingsRepository.IsFaceMirrored.Value = !disableMirror)

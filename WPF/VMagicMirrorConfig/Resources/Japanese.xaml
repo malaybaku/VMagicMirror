@@ -256,8 +256,10 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
     <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>
     <sys:String x:Key="HandTracking_OffsetY">手の高さを調整 (cm)</sys:String>
     
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*動きかたのオプションで「つねに手下げ」が選択されています。
-ハンドトラッキングの結果を適用するには「デフォルト」に変更して下さい。</sys:String>
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Title">現在のオプションではハンドトラッキングの結果が適用されません！</sys:String>
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Instruction" xml:space="preserve">動きかたのオプションを「つねに手下げ」から「デフォルト」に変更することで、
+ハンドトラッキングの結果が適用されます。</sys:String>
+
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
     
     <sys:String x:Key="HandTracking_ShowAreaChecker">手の検出状況を表示(※カメラ映像は表示されません)</sys:String> 

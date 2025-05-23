@@ -85,9 +85,19 @@
                          HorizontalAlignment="Stretch"
                          Padding="3">
                         <StackPanel HorizontalAlignment="Left">
-                            <TextBlock Text="{DynamicResource HandTracking_BodyMotionModeIncorrect}" 
-                                               TextWrapping="Wrap"
-                                               />
+                            <StackPanel Orientation="Horizontal"
+                                        Background="{StaticResource SecondaryAccentBrush}">
+                                <md:PackIcon Kind="WarningOutline"
+                                             VerticalAlignment="Center"
+                                             Margin="4"
+                                             />
+                                <TextBlock Text="{DynamicResource HandTracking_BodyMotionModeIncorrect_Title}" 
+                                            TextWrapping="Wrap"
+                                            />
+                            </StackPanel>
+                            <TextBlock Text="{DynamicResource HandTracking_BodyMotionModeIncorrect_Instruction}" 
+                                           TextWrapping="Wrap"
+                                           />
                             <Button Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Content="{DynamicResource HandTracking_BodyMotionModeIncorrect_Fix}"
                                 Command="{Binding FixBodyMotionStyleCommand}"

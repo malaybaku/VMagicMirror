@@ -1,0 +1,17 @@
+{
+  "id": "com.baxter.ngExample03",
+  "displayName": {
+    "ja": "NG_03_完全修飾名でSystem.Netを使う",
+    "en": "NG_03_Use System.Net with Fully Qualified Name"
+  },
+  "creator": "Baxter",
+  "version": "0.1.0",
+  "creatorUrl": "https://x.com/baku_dreameater",
+  "property": [
+    {
+      "name": "mainImage",
+      "displayName": { "ja": "メイン画像" },
+      "type": "transform2D"
+    }
+  ]
+}

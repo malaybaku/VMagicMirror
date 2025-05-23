@@ -1,0 +1,17 @@
+{
+  "id": "com.baxter.ngExampleRefDirective",
+  "displayName": {
+    "ja": "NG_01_rディレクティブを使用",
+    "en": "NG_01_r_directive"
+  },
+  "creator": "Baxter",
+  "version": "0.1.0",
+  "creatorUrl": "https://x.com/baku_dreameater",
+  "property": [
+    {
+      "name": "mainImage",
+      "displayName": { "ja": "メイン画像" },
+      "type": "transform2D"
+    }
+  ]
+}

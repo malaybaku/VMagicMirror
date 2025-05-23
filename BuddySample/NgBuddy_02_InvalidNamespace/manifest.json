@@ -1,0 +1,17 @@
+{
+  "id": "com.baxter.ngExampleUsing",
+  "displayName": {
+    "ja": "NG_02_SystemIOをusingする",
+    "en": "NG_02_UsingSystemIO"
+  },
+  "creator": "Baxter",
+  "version": "0.1.0",
+  "creatorUrl": "https://x.com/baku_dreameater",
+  "property": [
+    {
+      "name": "mainImage",
+      "displayName": { "ja": "メイン画像" },
+      "type": "transform2D"
+    }
+  ]
+}

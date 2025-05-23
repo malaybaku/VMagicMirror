@@ -65,14 +65,21 @@ namespace Baku.VMagicMirror.Buddy
             {
                 var code = await File.ReadAllTextAsync(EntryScriptPath, cancellationToken);
                 
+                // NGリストのusing とか #r とかを使っているスクリプトはここで弾く
+                var trivialAnalyzeResult = await CSharpScriptAnalyzer.AnalyzeCodeAsync(code, cancellationToken);
+                if (trivialAnalyzeResult.HasError)
+                {
+                    _logger.LogScriptAnalyzeError(BuddyFolder, trivialAnalyzeResult.Message);
+                    return;
+                }
+                
                 // NOTE: WithImportsについて
-                // - WithImportsをするとスクリプトの編集体験(=インテリセンス回り)を快適にするのが難しいのが既知なため、Importsしない。
-                // - Importsを足すことは破壊的変更になりうる…というのは注意すること
-                // - 自動Importsに関するオプションをmanifest.jsonに足すとかで回避はできるので、まあ程々に…
+                // - WithImportsをするとスクリプトの編集体験(=インテリセンス回り)を快適にしづらいので、Importsしない。
+                // - Importsを足すと破壊的変更になりうるので注意
+                // - 自動Importsに関するオプションをmanifest.jsonに足すとかで将来にわたって何かのメンテは可能そう
                 
                 // NOTE: EmitDebugInformationについて
                 // - 開発者モードの場合だけRuntimeError時の行数とかが言えてほしいため、
-                
                 var scriptOptions = ScriptOptions.Default
                     //.WithImports("System", "VMagicMirror.Buddy")
                     .WithFilePath(EntryScriptPath)
@@ -83,9 +90,21 @@ namespace Baku.VMagicMirror.Buddy
                         typeof(object).Assembly,
                         typeof(BuddyApi.IRootApi).Assembly
                     );
-
+                
                 // NOTE: scriptStateはコールバックの呼び出し結果等を受けて更新されるが、VMMのコードからは直接見に行かない
                 _script = CSharpScript.Create(code, scriptOptions, globalsType: typeof(CSharpScriptGlobals));
+                
+                // コンパイル結果のSematicsModelも使って再度 namespace の想定外アクセスがないかチェック
+                var compilationBasedAnalyzeResult = CSharpScriptAnalyzer.AnalyzeCompileResultAsync(
+                    trivialAnalyzeResult.SyntaxTree,
+                    _script.GetCompilation()
+                    );
+                if (compilationBasedAnalyzeResult.HasError)
+                {
+                    _logger.LogScriptAnalyzeError(BuddyFolder, compilationBasedAnalyzeResult.Message);
+                    return;
+                }
+                
                 _scriptState = await _script.RunAsync(
                     new CSharpScriptGlobals(Api),
                     cancellationToken: cancellationToken);

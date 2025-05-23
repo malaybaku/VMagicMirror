@@ -49,7 +49,12 @@ namespace Baku.VMagicMirror.Buddy
         {
             LogInternal(folder, message, level);
         }
-        
+
+        public void LogScriptAnalyzeError(BuddyFolder folder, string message)
+        {
+            LogInternal(folder, $"Analyzer detected invalid script: {message}", BuddyLogLevel.Fatal);
+        }
+
         public void LogCompileError(BuddyFolder folder, CompilationErrorException ex)
         {
             var message = $"Script has compile error: {ex.Message}";

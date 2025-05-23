@@ -115,6 +115,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <RowDefinition/>
+                            <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -135,8 +136,22 @@
                                  />
 
                         <TextBlock Grid.Row="1" Grid.Column="0"
-                                    Text="{DynamicResource HandTracking_OffsetY}"/>
+                                    Text="{DynamicResource HandTracking_OffsetX}"/>
                         <Slider Grid.Row="1" Grid.Column="1"
+                                x:Name="sliderHandOffsetX"
+                                Minimum="-100"
+                                Maximum="100"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                Value="{Binding HandPositionOffsetX.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="1" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderHandOffsetX}"
+                                 />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                    Text="{DynamicResource HandTracking_OffsetY}"/>
+                        <Slider Grid.Row="2" Grid.Column="1"
                                 x:Name="sliderHandOffsetY"
                                 Minimum="-100"
                                 Maximum="100"
@@ -144,10 +159,9 @@
                                 IsSnapToTickEnabled="True"
                                 Value="{Binding HandPositionOffsetY.Value, Mode=TwoWay}"
                                 />
-                        <TextBox Grid.Row="1" Grid.Column="2"
+                        <TextBox Grid.Row="2" Grid.Column="2"
                                  Text="{Binding Value, ElementName=sliderHandOffsetY}"
                                  />
-
                     </Grid>
 
                     <CheckBox Margin="35,20,10,0" 

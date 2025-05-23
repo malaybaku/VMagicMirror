@@ -251,7 +251,8 @@ Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
     <sys:String x:Key="HandTracking_MotionScale">Motion Scale (%)</sys:String>
-    <sys:String x:Key="HandTracking_OffsetY">Hand Position Offset (cm)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetX">Hand Horizontal Offset (cm)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetY">Hand Vertical Offset (cm)</sys:String>
     
     <sys:String x:Key="HandTracking_ShowAreaChecker">Show Detection Status (*raw image is not displayed)</sys:String>    
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."

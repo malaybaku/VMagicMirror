@@ -142,7 +142,8 @@
         DisableHandTrackingHorizontalFlip,
         EnableSendHandTrackingResult,
         SetHandTrackingMotionScale,
-        // ハンドトラッキングの腕の上下のオフセット (※OffsetXも導入するかもだが、高さよりは重要でなさそうなので見送ってる)
+        // +X: 手を体の横に広げる、+Y: 手を上げる
+        SetHandTrackingOffsetX,
         SetHandTrackingOffsetY,
 
         // Motion, GameInput

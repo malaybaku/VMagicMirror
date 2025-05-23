@@ -47,7 +47,8 @@
         public bool ShowEffectDuringHandTracking { get; set; } = false;
         public bool DisableHandTrackingHorizontalFlip { get; set; } = false;
         public int HandTrackingMotionScale { get; set; } = 100;
-        // NOTE: centimeter単位
+        // NOTE: X/Yいずれもcentimeter単位
+        public int HandPositionOffsetX { get; set; } = 0;
         public int HandPositionOffsetY { get; set; } = 0;
 
 

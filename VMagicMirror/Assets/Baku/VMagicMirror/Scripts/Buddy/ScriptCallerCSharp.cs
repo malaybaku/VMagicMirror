@@ -65,14 +65,6 @@ namespace Baku.VMagicMirror.Buddy
             {
                 var code = await File.ReadAllTextAsync(EntryScriptPath, cancellationToken);
                 
-                // NGリストのusing とか #r とかを使っているスクリプトはここで弾く
-                var trivialAnalyzeResult = await CSharpScriptAnalyzer.AnalyzeCodeAsync(code, cancellationToken);
-                if (trivialAnalyzeResult.HasError)
-                {
-                    _logger.LogScriptAnalyzeError(BuddyFolder, trivialAnalyzeResult.Message);
-                    return;
-                }
-                
                 // NOTE: WithImportsについて
                 // - WithImportsをするとスクリプトの編集体験(=インテリセンス回り)を快適にしづらいので、Importsしない。
                 // - Importsを足すと破壊的変更になりうるので注意
@@ -85,7 +77,10 @@ namespace Baku.VMagicMirror.Buddy
                     .WithFilePath(EntryScriptPath)
                     .WithFileEncoding(Encoding.UTF8)
                     .WithEmitDebugInformation(_settings.DeveloperModeActive.Value)
+                    // Buddysより上のフォルダのスクリプトのロードを塞ぐ
                     .WithSourceResolver(IgnoreFileDefinedScriptSourceResolver.Instance)
+                    // #r を全面的に制限
+                    .WithMetadataResolver(BuddyScriptMetadataReferenceResolver.Instance)
                     .WithReferences(
                         typeof(object).Assembly,
                         typeof(BuddyApi.IRootApi).Assembly
@@ -94,14 +89,11 @@ namespace Baku.VMagicMirror.Buddy
                 // NOTE: scriptStateはコールバックの呼び出し結果等を受けて更新されるが、VMMのコードからは直接見に行かない
                 _script = CSharpScript.Create(code, scriptOptions, globalsType: typeof(CSharpScriptGlobals));
                 
-                // コンパイル結果のSematicsModelも使って再度 namespace の想定外アクセスがないかチェック
-                var compilationBasedAnalyzeResult = CSharpScriptAnalyzer.AnalyzeCompileResultAsync(
-                    trivialAnalyzeResult.SyntaxTree,
-                    _script.GetCompilation()
-                    );
-                if (compilationBasedAnalyzeResult.HasError)
+                // 使っちゃダメな想定の namespace に触っている場合、RunAsync前に停止
+                var analyzeResult = CSharpScriptAnalyzer.AnalyzeCompileResult(_script.GetCompilation());
+                if (analyzeResult.HasError)
                 {
-                    _logger.LogScriptAnalyzeError(BuddyFolder, compilationBasedAnalyzeResult.Message);
+                    _logger.LogScriptAnalyzeError(BuddyFolder, analyzeResult.Message);
                     return;
                 }
                 

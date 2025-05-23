@@ -48,9 +48,11 @@ namespace Baku.VMagicMirror.Buddy
                 sprite.UpdateDefaultSpritesTexture();
             }
 
-            // Effectによるポーズの更新
+            // デフォルト立ち絵 + 各種Effectによるポーズの更新
             var pose = EffectAppliedPose.Default();
             var effects = sprite.SpriteEffects;
+
+            pose = DefaultSpritesBlink(pose, sprite);
             pose = Floating(pose, effects.InternalFloating);
             pose = Puni(pose, effects.InternalPuni);
             pose = Vibrate(pose, effects.InternalVibrate);
@@ -77,6 +79,19 @@ namespace Baku.VMagicMirror.Buddy
             sprite.EffectorRectTransform.localScale = new Vector3(pose.Scale.x, pose.Scale.y, 1f);
         }
 
+        private EffectAppliedPose DefaultSpritesBlink(EffectAppliedPose pose, BuddySprite2DInstance sprite)
+        {
+            if (sprite.IsDefaultSpritesActive && 
+                sprite.DefaultSpritesUpdater.State is BuddyDefaultSpriteState.Blink or BuddyDefaultSpriteState.BlinkMouthOpen)
+            {
+                return pose.AddPos(sprite.DefaultSpritesSetting.LocalPositionOffsetOnBlink);
+            }
+            else
+            {
+                return pose;
+            }
+        }
+        
         private EffectAppliedPose Puni(EffectAppliedPose pose, PuniSpriteEffect effect)
         {
             if (!effect.IsActive)

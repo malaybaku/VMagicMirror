@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Baku.VMagicMirror
 {
     // NOTE: Settings自体は2D/3DのSpriteで流用できるように分けられている。
@@ -8,5 +10,7 @@ namespace Baku.VMagicMirror
         public float BlinkIntervalMax { get; set; } = 20;
         public bool SyncBlinkBlendShapeToMainAvatar { get; set; } = true;
         public bool SyncMouthBlendShapeToMainAvatar { get; set; } = true;
+        
+        public Vector2 LocalPositionOffsetOnBlink { get; set; } = new Vector2(0, -3);
     }
 }

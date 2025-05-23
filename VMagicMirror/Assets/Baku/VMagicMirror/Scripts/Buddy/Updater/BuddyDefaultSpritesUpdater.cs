@@ -72,6 +72,8 @@ namespace Baku.VMagicMirror.Buddy
             _blinkObserver = _facialApiImplement
                 .Blinked
                 .Subscribe(_ => OnBlinked());
+            
+            SetNextBlinkTime();
         }
 
         public void Dispose()
@@ -102,14 +104,18 @@ namespace Baku.VMagicMirror.Buddy
                 _isBlinking = false;
                 _blinkWaitTime = 0f;
                 _nextBlinkIsSyncBased = false;
-                var intervalMin = _instance.DefaultSpritesSetting.BlinkIntervalMin;
-                var intervalMax = _instance.DefaultSpritesSetting.BlinkIntervalMax;
-
-                // NOTE: min/maxをヘンテコにセットしても耐えるようにしている
-                _nextBlinkTime =
-                    (intervalMax <= intervalMin) ? intervalMin :
-                    Random.Range(intervalMin, intervalMax);
+                SetNextBlinkTime();
             }
+        }
+
+        private void SetNextBlinkTime()
+        {
+            var intervalMin = _instance.DefaultSpritesSetting.BlinkIntervalMin;
+            var intervalMax = _instance.DefaultSpritesSetting.BlinkIntervalMax;
+            // NOTE: min/maxをヘンテコにセットしても耐えるようにしている
+            _nextBlinkTime =
+                (intervalMax <= intervalMin) ? intervalMin :
+                    Random.Range(intervalMin, intervalMax);
         }
 
         // メインアバターのまばたきに対し、「ちょっと遅れてまばたきする動作」を一定の確率で予約する。

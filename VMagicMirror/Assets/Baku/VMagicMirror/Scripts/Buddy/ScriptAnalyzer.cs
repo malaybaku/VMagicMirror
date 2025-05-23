@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -49,7 +50,7 @@ namespace Baku.VMagicMirror.Buddy
         {
             foreach (var syntaxTree in compilation.SyntaxTrees)
             {
-                var trivialResult = AnalyzeSingleTrivialResult(syntaxTree);
+                var trivialResult = AnalyzeUsingStatement(syntaxTree);
                 if (trivialResult.HasError)
                 {
                     return trivialResult;
@@ -65,21 +66,26 @@ namespace Baku.VMagicMirror.Buddy
             return AnalyzerResult.Success;
         }
 
-        private static AnalyzerResult AnalyzeSingleTrivialResult(SyntaxTree syntaxTree)
+        // NGリストのnamespaceを使ってたらNGにするようなフィルタ
+        // うっかり使ったケースは基本このチェックに引っかかるはず
+        private static AnalyzerResult AnalyzeUsingStatement(SyntaxTree syntaxTree)
         {
-            // スクリプトを構文解析
             var root = syntaxTree.GetRoot();
-
-            // NGリストのnamespaceを使ってたらNG
-            // usingのほうが検出が trivial に実施できるので、まずはusingをチェックしていく
             var usingDirectives = root.DescendantNodes()
                 .OfType<UsingDirectiveSyntax>()
-                .Select(u => u.Name!.ToString());
-            if (usingDirectives.Any(IsInvalidNamespace))
+                .Select(u =>
+                {
+                    var namespaceLiteral = u.Name!.ToString();
+                    return CheckNamespaceValidity(namespaceLiteral);
+                });
+
+            // NOTE: Defaultにfallbackすると、一見invalidっぽく見えるがnamespaceのほうも空になった値が戻ってくる
+            var invalidUsing = usingDirectives.FirstOrDefault(v => !v.isValid);
+            if (!string.IsNullOrEmpty(invalidUsing.invalidNamespace))
             {
                 return new AnalyzerResult(
                     CSharpScriptAnalyzerResults.ForbiddenUsingStatement,
-                    "Forbidden namespace detected. See detail at developer doc."
+                    $"Access to namespace '{invalidUsing.invalidNamespace}' is not allowed in buddy scripts. See detail at developer doc."
                 );
             }
 
@@ -91,41 +97,62 @@ namespace Baku.VMagicMirror.Buddy
         {
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var root = syntaxTree.GetRoot();
-            // 要はExpression全般でnamespaceにNGリストを適用したいので、ガッとConcatしてしまえばよい
-            var forbiddenNamespaceAccessExists = root.DescendantNodes()
+
+            // 要はExpression全般でnamespaceにNGリストを適用したいので、Concatして見ていく。行の順番はあんまりこだわらない。
+            var checkResult = root.DescendantNodes()
                 .OfType<InvocationExpressionSyntax>().Cast<ExpressionSyntax>()
                 .Concat(root.DescendantNodes().OfType<ObjectCreationExpressionSyntax>())
                 .Concat(root.DescendantNodes().OfType<MemberAccessExpressionSyntax>())
-                .Any(expr => 
+                .Select(expr =>
                 {
                     var symbolInfo = semanticModel.GetSymbolInfo(expr);
-                    return UsesInvalidNamespace(symbolInfo);
-                });
-            if (forbiddenNamespaceAccessExists)
+                    return CheckNamespaceValidity(symbolInfo);
+                })
+                .FirstOrDefault(v => !v.isValid);
+            
+            if (!string.IsNullOrEmpty(checkResult.invalidNamespace))
             {
                 return new AnalyzerResult(
                     CSharpScriptAnalyzerResults.ForbiddenNamespaceAccess,
-                    "Forbidden namespace access detected. See detail at developer doc."
+                    $"Access to namespace '{checkResult.invalidNamespace}' is not allowed in buddy scripts. See detail at developer doc."
                 );
             }
 
             return AnalyzerResult.Success;
         }
 
-        private static bool UsesInvalidNamespace(SymbolInfo symbolInfo)
+        private static (bool isValid, string invalidNamespace) CheckNamespaceValidity(SymbolInfo symbolInfo)
         {
             var symbol = symbolInfo.Symbol;
             if (symbol == null)
             {
-                return false;
+                return (true, "");
             }
 
             var containingNamespace = symbol.ContainingNamespace?.ToDisplayString();
-            return containingNamespace != null && IsInvalidNamespace(containingNamespace);
+            if (containingNamespace == null)
+            {
+                return (true, "");
+            }
+            
+            return CheckNamespaceValidity(containingNamespace);
         }
 
-        private static bool IsInvalidNamespace(string value) 
-            => NgNamespaces.Contains(value) || NgPrefixes.Any(value.StartsWith);
+        private static (bool isValid, string invalidNamespace) CheckNamespaceValidity(string value)
+        {
+            // 問題ないケースがメジャーなので、問題ないほうをさっさと通す
+            if (!NgNamespaces.Contains(value) && !NgPrefixes.Any(value.StartsWith))
+            {
+                return (true, "");
+            }
+
+            // ダメなケース: どれに引っかかったのかチェック
+            var result =
+                NgNamespaces.FirstOrDefault(v => v == value)
+                ?? NgPrefixes.FirstOrDefault(v => v.StartsWith(value))
+                ?? throw new InvalidOperationException("logic error: this line must not be reached");
+            return (false, result.TrimEnd('.'));
+        }
     }
 
     public readonly struct AnalyzerResult

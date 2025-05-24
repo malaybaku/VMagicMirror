@@ -18,6 +18,7 @@ namespace Baku.VMagicMirror.Buddy
             "System.IO",
             "System.Net",
             "System.Reflection",
+            "System.Runtime.InteropServices",
 
             // == 禁止しないでもなんとかなるかもだが、塞いでおく
             "System.Diagnostics", // StackTraceをこの方法で触ってほしくない
@@ -28,6 +29,7 @@ namespace Baku.VMagicMirror.Buddy
             
             // == 意思を持って許可する(のでコメントアウト) ==
             // "System.Threading", 
+            // "System.Threading.Tasks",
         };
 
         private static readonly HashSet<string> NgPrefixes;

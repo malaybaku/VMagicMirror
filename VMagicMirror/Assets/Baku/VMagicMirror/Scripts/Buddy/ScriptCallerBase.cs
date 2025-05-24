@@ -38,9 +38,9 @@ namespace Baku.VMagicMirror.Buddy
         /// </summary>
         public virtual void Initialize()
         {
-            // NOTE: Logは遅延生成するが、Cacheは使われるタイミングが分からないので最初に作ってしまう
-            // (「ApiからCacheDirectoryを取得したタイミングで…」みたいな遅延処理もムダに複雑になるので避けておく)
-            Directory.CreateDirectory(SpecialFiles.GetBuddyCacheDirectory(BuddyFolder));
+            // NOTE: IRootApi.CacheDirectory 自体をAPIとして無効化した & サブキャラのスクリプトでファイル書き込みすることも制限したため、
+            // ディレクトリを事前に作る必要がなくなった
+            // Directory.CreateDirectory(SpecialFiles.GetBuddyCacheDirectory(BuddyFolder));
         }
         
         public virtual void Dispose()

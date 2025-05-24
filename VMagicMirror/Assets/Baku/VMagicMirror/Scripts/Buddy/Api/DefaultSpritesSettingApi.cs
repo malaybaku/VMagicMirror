@@ -1,5 +1,4 @@
 using VMagicMirror.Buddy;
-using UnityEngine;
 
 namespace Baku.VMagicMirror.Buddy.Api
 {
@@ -15,13 +14,13 @@ namespace Baku.VMagicMirror.Buddy.Api
         public float BlinkIntervalMin
         { 
             get => _instance.BlinkIntervalMin;
-            set => _instance.BlinkIntervalMin = Mathf.Max(value, 0f);
+            set => _instance.BlinkIntervalMin = UnityEngine.Mathf.Max(value, 0f);
         }
         
         public float BlinkIntervalMax
         { 
             get => _instance.BlinkIntervalMax;
-            set => _instance.BlinkIntervalMax = Mathf.Max(value, 0f);
+            set => _instance.BlinkIntervalMax = UnityEngine.Mathf.Max(value, 0f);
         }
         
         public bool SyncBlinkBlendShapeToMainAvatar
@@ -34,6 +33,12 @@ namespace Baku.VMagicMirror.Buddy.Api
         {
             get => _instance.SyncMouthBlendShapeToMainAvatar;
             set => _instance.SyncMouthBlendShapeToMainAvatar = value;
+        }
+        
+        public Vector2 LocalPositionOffsetOnBlink
+        {
+            get => _instance.LocalPositionOffsetOnBlink.ToApiValue();
+            set => _instance.LocalPositionOffsetOnBlink = value.ToEngineValue();
         }
     }
 }

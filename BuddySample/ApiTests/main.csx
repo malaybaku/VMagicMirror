@@ -1,7 +1,6 @@
 // NOTE: この #load ステートメントは実行時に無視される
 #load "..\_Reference\Globals.csx"
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using VMagicMirror.Buddy;
 
@@ -34,7 +33,6 @@ Api.Start += () =>
 
   Api.Log($"OutputFeature = {Api.AvatarOutputFeatureEnabled}");
   Api.Log($"Buddy Dir={Api.BuddyDirectory}");
-  Api.Log($"Cache Dir={Api.CacheDirectory}, Dir Exists={Directory.Exists(Api.CacheDirectory)}");
 
   var parent = Api.Transforms.GetTransform2D("mainImage");
   sprite2d.Transform.SetParent(parent);

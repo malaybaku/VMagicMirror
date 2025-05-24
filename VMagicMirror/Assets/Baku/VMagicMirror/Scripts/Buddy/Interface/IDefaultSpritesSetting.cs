@@ -39,5 +39,17 @@ namespace VMagicMirror.Buddy
         /// <see cref="IRootApi.AvatarOutputFeatureEnabled"/> が <c>false</c> の場合、この値を設定していてもメインアバターとの同期は行われません。
         /// </remarks>
         bool SyncMouthBlendShapeToMainAvatar { get; set; }
+
+        /// <summary>
+        /// まばたきを行ったときに一時的に位置を移動させるオフセットを取得、設定します。
+        /// </summary>
+        /// <remarks>
+        /// まばたきの挙動をより分かりするために、まばたきに合わせた位置オフセットを適用できます。
+        /// 既定ではゼロではない値が適用されています。
+        ///
+        /// 画像の差分自体に位置ずれを適用しており、位置オフセットを追加することが望ましくない場合は、
+        /// この値を <see cref="Vector2.zero" /> に設定します。 
+        /// </remarks>
+        Vector2 LocalPositionOffsetOnBlink { get; set; }
     }
 }

@@ -1,10 +1,10 @@
 // NOTE: この #load ステートメントは実行時に無視される
 #load "..\_Reference\Globals.csx"
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using VMagicMirror.Buddy;
+using VMagicMirror.Buddy.IO;
 
 // デフォルトサブキャラの挙動
 // - デフォルト立ち絵が適用され、アプリ本体の実装ベースでまばたき/LipSync同期を行う

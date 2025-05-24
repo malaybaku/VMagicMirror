@@ -1,0 +1,16 @@
+{
+  "id": "com.baxter.ngExample04",
+  "displayName": {
+    "ja": "NG_04_Loadしたスクリプトが#rする"
+  },
+  "creator": "Baxter",
+  "version": "0.1.0",
+  "creatorUrl": "https://x.com/baku_dreameater",
+  "property": [
+    {
+      "name": "mainImage",
+      "displayName": { "ja": "メイン画像" },
+      "type": "transform2D"
+    }
+  ]
+}

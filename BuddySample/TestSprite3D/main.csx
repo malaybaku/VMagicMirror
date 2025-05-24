@@ -3,7 +3,6 @@
 // NOTE: この #load ステートメントは実行時に無視される
 #load "..\_Reference\Globals.csx"
 using System;
-using System.IO;
 using VMagicMirror.Buddy;
 
 // NOTE: 3Dスプライトは現時点で2Dより仕様がめっちゃ少ないのでテストも簡易的。特徴は下記くらい

@@ -49,7 +49,13 @@ namespace Baku.VMagicMirror.Buddy
         {
             LogInternal(folder, message, level);
         }
-        
+
+        // NOTE: 実装がたまたま単なるLog Fatal Errorと共通だが、意味合いとしてはCompileErrorと同格くらいに特殊なのでメソッドは分けてます
+        public void LogScriptAnalyzeError(BuddyFolder folder, string message)
+        {
+            LogInternal(folder, message, BuddyLogLevel.Fatal);
+        }
+
         public void LogCompileError(BuddyFolder folder, CompilationErrorException ex)
         {
             var message = $"Script has compile error: {ex.Message}";

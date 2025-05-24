@@ -68,8 +68,8 @@ namespace Baku.VMagicMirror.Buddy
             return AnalyzerResult.Success;
         }
 
-        // NGリストのnamespaceを使ってたらNGにするようなフィルタ
-        // うっかり使ったケースは基本このチェックに引っかかるはず
+        // NGリストのnamespaceをusingしているかどうか解析する。
+        // うっかりでnamespaceアクセスするケースは基本ここでキャッチする
         private static AnalyzerResult AnalyzeUsingStatement(SyntaxTree syntaxTree)
         {
             var root = syntaxTree.GetRoot();
@@ -81,7 +81,6 @@ namespace Baku.VMagicMirror.Buddy
                     return CheckNamespaceValidity(namespaceLiteral);
                 });
 
-            // NOTE: Defaultにfallbackすると、一見invalidっぽく見えるがnamespaceのほうも空になった値が戻ってくる
             var invalidUsing = usingDirectives.FirstOrDefault(v => !v.isValid);
             if (!string.IsNullOrEmpty(invalidUsing.invalidNamespace))
             {
@@ -91,10 +90,11 @@ namespace Baku.VMagicMirror.Buddy
                 );
             }
 
-            // NOTE: これ以上の解析はCompilationがないとムズいので、一旦通す
             return AnalyzerResult.Success;
         }
         
+        // NGリストのnamespaceにアクセスしているかどうかをExpressionSyntaxの単位で解析する。
+        // 完全修飾名によるアクセスや、usingでエイリアスを使っているケースがここでキャッチされる想定
         private static AnalyzerResult AnalyzeSingleCompileResult(SyntaxTree syntaxTree, Compilation compilation)
         {
             var semanticModel = compilation.GetSemanticModel(syntaxTree);

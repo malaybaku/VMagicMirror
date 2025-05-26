@@ -74,10 +74,6 @@ namespace VMagicMirror.Buddy
         /// <summary>
         /// エフェクトを動作させるかどうかを取得、設定します。<c>true</c> を設定することでエフェクトが動作します。
         /// </summary>
-        /// <remarks>
-        /// この値はスクリプトから直接更新することで変化する以外に、
-        /// <see cref="Loop"/> が <c>false</c> である場合には自動で <c>true</c> から <c>false</c> に切り替わります。
-        /// </remarks>
         public bool IsActive { get; set; }
 
         /// <summary>

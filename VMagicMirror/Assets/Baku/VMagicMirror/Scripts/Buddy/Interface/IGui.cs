@@ -1,14 +1,14 @@
 namespace VMagicMirror.Buddy
 {
     // NOTE: WebViewベースにするかUIで頑張るかでフォントとかガワの様子が変わってくる
+    /// <exclude />
     public interface IGui
     {
         IGuiArea CreateGuiArea();
     }
 
-    // NOTE:
-    // - これはクラスなので、
-    // - 左右=[0, 1], 下上=[0, 1]で画面サイズ比ベースの指定になる(ので、Sizeをキレイに指定するのはちょっと難しい)
+    // TODO: 設計にも仕様がかなり引っ張られるのでもうちょい考える
+    /// <exclude />
     public interface IGuiArea
     {
         ITransform2D Transform { get; }

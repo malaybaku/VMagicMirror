@@ -33,7 +33,8 @@ namespace VMagicMirror.Buddy
         /// </para>
         event Action Unloaded;
     }
-    
+
+    /// <exclude /> 
     public interface IAvatarBodyParameter
     {
         //TODO: 身長っぽい値とかを入れるかもしれないやつ

@@ -5,7 +5,8 @@ namespace VMagicMirror.Buddy
     /// <summary>
     /// 数学的な処理を提供するAPIです。
     /// </summary>
-    public interface IMathUtil
+    /// <exclude />
+    internal interface IMathUtil
     {
         /// <summary>
         /// ワールド上の位置を画面から見た座標に変換します。

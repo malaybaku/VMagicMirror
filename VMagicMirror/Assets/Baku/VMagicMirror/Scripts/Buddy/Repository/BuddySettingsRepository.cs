@@ -14,8 +14,8 @@ namespace Baku.VMagicMirror
         public override void Initialize()
         {
             _receiver.BindBoolProperty(
-                VmmCommands.BuddySetMainAvatarOutputActive,
-                _mainAvatarOutputActive
+                VmmCommands.BuddySetInteractionApiEnabled,
+                _interactionApiEnabled
                 );
             
             _receiver.BindBoolProperty(
@@ -40,10 +40,10 @@ namespace Baku.VMagicMirror
 
         // NOTE: 初期値はEditionで変化する。ちょっと特殊
         // (※「常にGUI側が値を明示する」ということにして常にfalse初期値にしたほうが良いかも)
-        private readonly ReactiveProperty<bool> _mainAvatarOutputActive = new(
+        private readonly ReactiveProperty<bool> _interactionApiEnabled = new(
             !FeatureLocker.IsFeatureLocked
             );
-        public IReadOnlyReactiveProperty<bool> MainAvatarOutputActive => _mainAvatarOutputActive;
+        public IReadOnlyReactiveProperty<bool> InteractionApiEnabled => _interactionApiEnabled;
 
         private readonly ReactiveProperty<bool> _developerModeActive = new(false);
         public IReadOnlyReactiveProperty<bool> DeveloperModeActive => _developerModeActive;

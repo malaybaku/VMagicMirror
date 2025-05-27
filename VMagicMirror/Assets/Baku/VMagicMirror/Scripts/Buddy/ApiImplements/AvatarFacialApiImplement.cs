@@ -41,7 +41,7 @@ namespace Baku.VMagicMirror.Buddy
             _voiceOnOffParser = voiceOnOffParser;
         }
 
-        private bool IsMainAvatarOutputActive => _buddySettingsRepository.MainAvatarOutputActive.Value;
+        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
         
         private readonly ReactiveProperty<bool> _requireMicrophoneRecording = new();
         public IReadOnlyReactiveProperty<bool> RequireMicrophoneRecording => _requireMicrophoneRecording;
@@ -54,7 +54,7 @@ namespace Baku.VMagicMirror.Buddy
         // Blinkに関してはパフォーマンス影響が小さそうだが、他所でも応用が効きそうなので何かは考えてほしい
         public IObservable<Unit> Blinked => _blinkDetector
             .Blinked()
-            .Where(_ => IsMainAvatarOutputActive);
+            .Where(_ => InteractionApiEnabled);
 
         //IsTalkingとか (まだないが) LipSyncの取得APIを呼ぶときに下記のRegisterを呼ぶことで、マイクの録音が止まってたら開始を要求できる
         public void RegisterApiInstanceAsMicrophoneRequire(object obj)
@@ -72,7 +72,7 @@ namespace Baku.VMagicMirror.Buddy
         // NOTE: 下記の関数はモデルのロード前にfalse/0が戻るので、IsLoadedはチェックしないでよい
         public bool HasKey(string key, bool isCustomKey)
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return false;
             }
@@ -83,7 +83,7 @@ namespace Baku.VMagicMirror.Buddy
 
         public float GetBlendShapeValue(string key, bool isCustomKey)
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return 0f;
             }
@@ -104,7 +104,7 @@ namespace Baku.VMagicMirror.Buddy
         /// <returns></returns>
         public ExpressionKey? GetUserOperationActiveBlendShape()
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return null;
             }
@@ -132,7 +132,7 @@ namespace Baku.VMagicMirror.Buddy
         /// <returns></returns>
         public FaceSwitchAction GetActiveFaceSwitch()
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return FaceSwitchAction.None;
             }

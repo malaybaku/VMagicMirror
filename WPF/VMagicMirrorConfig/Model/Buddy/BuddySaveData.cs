@@ -7,7 +7,7 @@ namespace Baku.VMagicMirrorConfig
         public BuddySaveDataSingleBuddy[] Buddies { get; set; } = Array.Empty<BuddySaveDataSingleBuddy>();
 
         // NOTE: この値の初期値はEditionで異なるのがto-be
-        public bool MainAvatarOutputActive { get; set; }
+        public bool InteractionApiEnabled { get; set; }
 
         public static BuddySaveData Empty { get; } = new BuddySaveData();
     }

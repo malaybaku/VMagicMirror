@@ -44,8 +44,8 @@
                     <TextBlock Margin="15,5" 
                                 Text="{DynamicResource Buddy_Instruction}"/>
 
-                    <CheckBox Content="{Binding MainAvatarOutputActiveLabel}"
-                              IsChecked="{Binding MainAvatarOutputActive.Value}"                              
+                    <CheckBox Content="{Binding InteractionApiEnabledLabel}"
+                              IsChecked="{Binding InteractionApiEnabled.Value}"                              
                               />
 
                     <Grid Margin="5">

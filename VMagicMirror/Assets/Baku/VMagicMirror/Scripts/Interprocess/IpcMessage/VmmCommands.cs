@@ -284,7 +284,7 @@
         ShowEffectDuringVMCPSendEnabled,
         
         // Buddy
-        BuddySetMainAvatarOutputActive,
+        BuddySetInteractionApiEnabled,
         BuddyEnable,
         BuddyDisable,
         BuddyRefreshData,

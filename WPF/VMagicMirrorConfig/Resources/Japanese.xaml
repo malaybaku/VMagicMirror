@@ -308,8 +308,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Buddy_Log_FatalError_Copy">テキストをコピー</sys:String>
     <sys:String x:Key="Buddy_Log_FatalError_Ignore">無視して閉じる</sys:String>
 
-    <sys:String x:Key="Buddy_MainAvatarOutputActive_StandardEdition">メインアバターAPIを使用 (Standard Editionでオンにするとエフェクトがかかります)</sys:String>
-    <sys:String x:Key="Buddy_MainAvatarOutputActive_FullEdition">メインアバターAPIを使用 (通常はオンにします)</sys:String>
+    <sys:String x:Key="Buddy_InteractionApiEnabled_StandardEdition">インタラクションAPIを使用 (Standard Editionではオンにするとエフェクトがかかります)</sys:String>
+    <sys:String x:Key="Buddy_InteractionApiEnabled_FullEdition">インタラクションAPIを使用 (通常はオンのままにします)</sys:String>
 
     <sys:String x:Key="Buddy_DeveloperMode">開発者モード</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_Enabled">開発者モードが有効です</sys:String>    

@@ -10,7 +10,7 @@
     xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
     xmlns:vm="clr-namespace:Baku.VMagicMirrorConfig.ViewModel"
     mc:Ignorable="d"
-    Title="VMagicMirror Eye Calibration" 
+    Title="Blink Tracking Settings" 
     Height="600"
     Width="500"
     MinHeight="200" 

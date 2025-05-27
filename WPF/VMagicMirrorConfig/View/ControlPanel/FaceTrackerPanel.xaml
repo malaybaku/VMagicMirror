@@ -259,7 +259,7 @@
                         <Button Width="NaN"
                                 HorizontalAlignment="Right"
                                 Margin="10"
-                                Content="まばたきのトラッキング設定を開く"
+                                Content="{DynamicResource FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow}"
                                 Command="{Binding OpenEyeCalibrationWindowCommand}"
                                 />
                     </Grid>

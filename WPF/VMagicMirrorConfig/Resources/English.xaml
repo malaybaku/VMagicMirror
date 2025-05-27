@@ -113,6 +113,8 @@ Use Extarnel Tracker mode to detect and apply these exressions.</sys:String>
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Current selected mode is Web Camera (Lite), but Web Camera (High Power) is automatically applied during hand tracking is enabled.</sys:String>            
     
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">Open Blink Tracking Settings</sys:String>
+    
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">Feature to use external tracking application.
@@ -166,8 +168,8 @@ Check "Keep LipSync" to make the lipsync continue.</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">Cheek puff</sys:String>
     
     <!-- Face Tracker Eye Calibration -->
-    <sys:String x:Key="EyeCalibration_Header">Eye Tracking Settings</sys:String>
-    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">This window supports settings about eye tracking input handling.
+    <sys:String x:Key="EyeCalibration_Header">Blink Tracking Settings</sys:String>
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">This window supports settings about blink tracking handling.
 The properties here only affects during "Web Camera (High Power)" is selected.
 
 - If you move your webcam or get new glasses, you might need to adjust the settings again.

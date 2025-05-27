@@ -114,6 +114,8 @@
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">現在はwebカメラ (軽量) が選択されていますが、ハンドトラッキングが有効になっている間は自動で webカメラ (高品質) のトラッキングが適用されます。</sys:String>
 
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">まばたきのトラッキング設定を開く</sys:String>
+    
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによる顔トラッキングを行います。

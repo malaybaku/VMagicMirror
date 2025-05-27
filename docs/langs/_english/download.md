@@ -15,14 +15,14 @@ VMagicMirror is Available on [BOOTH](https://booth.pm/ja/items/1272298).
 Please see  [License](../license) if you are not clear the permitted usage.
 You can download source code on [GitHub](https://github.com/malaybaku/VMagicMirror).
 
-For v1.8.0 and later, there are two edition, and 4 options to get them.
+There are two edition, and 4 options to get them.
 
 Editions:
 
 <div class="doc-ul" markdown="1">
 
-- Standard Edition: Basic edition, with almost all feature available.
-- Full Edition: Edition without restriction on hand tracking. Please see next section for detail.
+- Standard Edition: Basic edition, with almost all features available.
+- Full Edition: Edition without some limitations. Please see the next section for detail.
 
 </div>
 
@@ -40,9 +40,7 @@ How to get:
 ### Difference between Standard / Full Edition
 {: .doc-sec1 }
 
-v1.8.0 and later version have two editions, Standard Edition and Full Edition.
-
-The only difference between the editions is the behavior during hand tracking.
+VMagicMirror has two editions, Standard Edition and Full Edition.
 
 In Standard Edition, you will see the special post-process effect during image based hand tracking enabled.
 Full Edition does not have those restriction, so that you can use hand tracking feature completely.
@@ -53,10 +51,21 @@ Full Edition does not have those restriction, so that you can use hand tracking 
 {% include docimg.html file="./images/docs/hand_tracking_edition_difference.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
 
+In v4.0.0 and later version, there are some additional differences in Standard Edition.
+
+<div class="doc-ul" markdown="1">
+
+- During VMC Protocol data send feature is enabled, the special post-process effect will be applied. Note that, data itself is same as Full Edition except following limitation.
+- VMC Protocol data send is disabled when `Game Locomotion` is selected for body motion style option.
+- During `Use Interaction API` option is enabled in Buddy feature, the special post-process effect will be applied. Note again that, Buddy itself behaves same as Full Edition.
+
+</div>
+
+
 All other features works same in both editions.
 
-In most cases standard edition will be enough for what you need.
-When you consider to get the full edition, please understand that the price assumes the value of rather the whole software than hand tracking feature itself. 
+In most cases Standard Edition will be enough for what you need.
+When you consider to get the Full Edition, please understand that the price assumes the value of rather the whole software than hand tracking feature itself. 
 
 Of course there are additional meaning like sharewere / donation, and they will be powerful motivation for the app maintenance.
 
@@ -157,33 +166,3 @@ The developer checks VMagicMirror performance on the following environments. Ple
 When you have failed at first startup of the app, please check third party anti-virus is disable and retry to download / install.
 
 Also there can be a case that zip file is corrupted during download. Check readme file attached in zip file if download seems to unsuccessful.
-
-For v2.0.0 and later, author backups file size and MD5 hash for each zip.
-
-<div class="doc-ul" markdown="1">
-
-- You can see the file size by opening zip file property on Windows Explorer's.
-- MD5 hash can be confirmed by opening Command Prompt on zip file's folder.
-
-</div>
-
-Command Example: (change file name according to actual version you have)
-
-```
-certutil -hashfile VMM_v2.0.2_Standard_Installer.zip MD5
-```
-
-File size and MD5 hash values for each versions:
-
-|--------------------------+-------------------------+----------------------|
-| Version                  | Zip File Size (byte)    | MD5 Hash             |
-|:-------------------------|:------------|:---------------------------------|
-| v2.0.0 Standard Edition  | 126,983,144 | 6610c9b81aa493f02917f68daa275b7d |
-| v2.0.0 Full Edition      | 127,062,779 | b00a734f2548ad0c66025300a0986b6b |
-| v2.0.1 Standard Edition  | 127,187,092 | dc468640e4eb11302a8ca6bcfc83db3e |
-| v2.0.1 Full Edition      | 127,195,414 | 8d6ecb6e4d5bb90585f96bd5144b4a5e |
-| v2.0.2 Standard Edition  | 127,206,743 | 13976a1d60b585bec32bf3c02f90d4ac |
-| v2.0.2 Full Edition      | 127,065,845 | e5d210852116840bc567c16a22d6b014 |
-| v2.0.3 Standard Edition  | 127,206,042 | df9052ef8dd0debccb61d12833943360 |
-| v2.0.3 Full Edition      | 127,038,447 | aff91773799f03a97a0ecf538afbf43e |
-|==========================|=============|==================================|

@@ -67,7 +67,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 if (IsInDesignMode)
                 {
-                    return "メインアバターAPIを使用";
+                    return "インタラクションAPIを使用";
                 }
 
                 return FeatureLocker.FeatureLocked

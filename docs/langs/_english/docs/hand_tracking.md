@@ -6,7 +6,7 @@ lang: en
 
 # Hand Tracking
 
-This page is about webcam based hand tracking feature, supported in VMagicMirror v1.8.0 and later.
+This page is about hand tracking feature with web camera.
 
 <div class="row">
 {% include docimg.html file="./images/docs/hand_tracking.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
@@ -15,12 +15,12 @@ This page is about webcam based hand tracking feature, supported in VMagicMirror
 #### Feature / Expected Usage
 {: .doc-sec2 }
 
-By hand tracking feature, you can
+By hand tracking feature, you can:
 
 <div class="doc-ul" markdown="1">
 
-- Track your hand by webcam, during your hands are next to the face.
-- Finger tracking is also available.
+- Track your hand by web camera, during your hands are next to the face.
+- Track finger motions.
 
 </div>
 
@@ -60,8 +60,8 @@ Also please check following restrictions.
 <div class="doc-ul" markdown="1">
 
 - It does not track quick movement.
-- Precision will decrease when the hand does not face to webcam.
-- Cross hands is not recognized.
+- Precision will decrease when the hand does not face to the camera.
+- App v3.9.1 and older version does not recognize cross hands.
 - Hand detection area is small, in compare to tracking specialized device (like Leap Motion).
 
 </div>
@@ -80,11 +80,18 @@ If you use webcam to face tracking, then single webcam is used for both face and
 
 Also you can use [External Tracker](../external_tracker) with this hand tracking feature.
 
+There are several options available.
+
+<div class="doc-ul" markdown="1">
+
+- `Disable Horizontal Flip`: Turn on to disable flip, so that avatar will raise right hand when you raise the right hand.
+- `Motion Scale(%)`: Specify scale to apply your motion to the avatar by percentage. Default value is 100.
+- `Hand Horizontal Offset (cm)`: A positive value will make the hands spread out to the left and right.
+- `Hand Vertical Offset (cm)`: A positive value will the hands rise higher.
+- `Show Detection Status`: Turn on to show how hand is tracked in control panel window. At the first time using hand tracking feature, I recommend to use the option to see tracking stability and the area where the hand can be tracked.
+
 </div>
 
-You can turn on `Disable Horizontal Flip` to disable flip, so that avatar will raise right hand when you raise the right hand.
-
-During `Show Detection Status` is on, the area below shows detection results. Especially for the first time to try hand tracking, I recommend to turn on this check to see tracking stability and the area size of tracking.
 
 <div class="row">
 {% include docimg.html file="./images/docs/hand_tracking_debug_area.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
@@ -101,8 +108,9 @@ During `Show Detection Status` is on, the area below shows detection results. Es
 - Please put away the objects behind you whose colors are similar to your skin color.
 - For the clothing, please avoid to expose your shoulders and elbows. 
 - Be aware of the distance between your hands and camera. Too far is NG of course, and detection also fails when the hand is too close to camera.
+- In v4.0.0 and later version, single hand tracking is more stable than tracking two hands.
 
 </div>
 
 Another good way to check how thing and lights has effect is to quit VMagicMirror and run Windows built-in `Camera` app.
-When you try this way, please be careful that VMagicMirror can not use webcam during `Camera` app runs, and vice versa.
+Please be careful that both VMagicMirror and other apps will occupy the camera device to use, and other apps cannot access the camera at the same time.

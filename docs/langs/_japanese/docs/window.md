@@ -7,8 +7,6 @@ title: Window
 
 `ウィンドウ`タブではアバター表示ウィンドウの背景が不透明なときの背景色や、最前面表示のオン・オフが切り替えられます。
 
-{% include docimg.html file="/images/docs/word_to_motion_custom_flow.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
-
 <div class="row">
 {% include docimg.html file="/images/docs/window_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>

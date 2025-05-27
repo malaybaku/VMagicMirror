@@ -130,8 +130,8 @@ namespace Baku.VMagicMirrorConfig
         public static Message EnableSendHandTrackingResult(bool enable) => BoolContent(VmmCommands.EnableSendHandTrackingResult, enable);
         // NOTE: 名称に含まないが、xy軸のみのスケールを指す。z軸はそもそもMediaPipeのHandTrackingではあんまり取れないので
         public static Message SetHandTrackingMotionScale(int percent) => IntContent(VmmCommands.SetHandTrackingMotionScale, percent);
-        public static Message SetHandTrackingPositionOffsetX(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetX, offset);
-        public static Message SetHandTrackingPositionOffsetY(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetY, offset);
+        public static Message SetHandTrackingMotionOffsetX(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetX, offset);
+        public static Message SetHandTrackingMotionOffsetY(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetY, offset);
 
 
 

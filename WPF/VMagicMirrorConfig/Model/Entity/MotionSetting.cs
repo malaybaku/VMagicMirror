@@ -48,8 +48,8 @@
         public bool DisableHandTrackingHorizontalFlip { get; set; } = false;
         public int HandTrackingMotionScale { get; set; } = 100;
         // NOTE: X/Yいずれもcentimeter単位
-        public int HandPositionOffsetX { get; set; } = 0;
-        public int HandPositionOffsetY { get; set; } = 0;
+        public int HandTrackingMotionOffsetX { get; set; } = 0;
+        public int HandTrackingMotionOffsetY { get; set; } = 0;
 
 
         public string CameraDeviceName { get; set; } = "";

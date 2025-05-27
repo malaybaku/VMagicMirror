@@ -30,15 +30,3 @@ VMagicMirror自体の基本的な機能や使い方については [メインの
 
 - サブキャラに対する基本設定の一覧を知りたい: [manifest reference](xref:ref-manifest-json)
 - スクリプトから利用できるAPI一覧を知りたい: [API](xref:VMagicMirror.Buddy)
-
-# 見出し1
-
-## 見出し2
-
-### 見出し3
-
-#### 見出し4
-
-##### 見出し5
-
-###### 見出し6

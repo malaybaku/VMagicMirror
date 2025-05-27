@@ -150,7 +150,6 @@ VS Codeのセットアップ: 以下を行います。
 
 上記のほか、サブキャラのスクリプトAPIは以下のような特徴を持ちます。個別の説明は [API](xref:VMagicMirror.Buddy) 以下の各ドキュメントを参照して下さい。
 
-
 #### オブジェクトの親子関係
 
 サブキャラを2D/3Dのオブジェクトとして表示するときは、基本的に下記の親子構造を作成します。
@@ -203,6 +202,21 @@ VMagicMirrorのサブキャラ用スクリプトは下記の制限を受けま�
 なお、今後のVMagicMirrorのアップデートで本制限の緩和を検討しています。
 
 ネットワーク通信を行いたい、ネイティブライブラリと連携したい等、本制限の緩和を必要とするサブキャラの作成を考えている場合、 [このGitHub issue](https://github.com/malaybaku/VMagicMirror/issues/1109) にリアクションを行うか、または具体的な想定ユースケースをコメントする等の方法でcontributeを検討して下さい。
+
+
+#### インタラクションAPIの制限について
+
+メインドキュメントの [サブキャラ](https://malaybaku.github.io/VMagicMirror/docs/buddy) のページや [ダウンロード](https://malaybaku.github.io/VMagicMirror/download/) のページに記載の通り、サブキャラにはエディションに応じた挙動の違いがあります。
+
+現在のサブキャラでインタラクションAPIが利用可能かどうかは [Api.InteractionApiEnabled](xref:VMagicMirror.Buddy.IRootApi.InteractionApiEnabled) で取得できます。
+
+このフラグが `false` の場合、下記のAPI群には引き続きアクセスできますが、値が常にゼロなどの既定値になったり、イベントが発火しない等の制限がかかることに注意してください。
+
+- [IInput](xref:VMagicMirror.Buddy.IInput)
+- [IAvatarFacial](xref:VMagicMirror.Buddy.IAvatarFacial)
+- [IAvatarMotionEvent](xref:VMagicMirror.Buddy.IAvatarMotionEvent)
+- [IAvatarPose](xref:VMagicMirror.Buddy.IAvatarPose)
+
 
 #### 相対パスの取り扱い
 

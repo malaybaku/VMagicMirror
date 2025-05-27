@@ -22,13 +22,13 @@ Setting Window consists of 8 tabs.
 |----------------------------------+----------------------------------------------------------|
 | Tab Name                         | Description                                              |
 |:--------------------------------:|:---------------------------------------------------------|
-| [Window](./window)          | Control avatar window                                      |
-| [Face](./face)              | Adjust facial motion setting except [External Tracker App](./external_tracker).      |
-| [Motion](./motion)          | Adjust avatar size related parameters and motion scale     |
+| [Window](./window)          | Control avatar window                                         |
+| [Face](./face)              | Adjust facial motion settings of the avatar                   |
+| [Motion](./motion)          | Adjust avatar size related parameters and motion scale        |
 | [Layout](./layout)          | Layout of camera and devices, and device based motion setting |
 | [Effects](./effects)        | Light, shadow, bloom, and wind                                |
 | [Devices](./devices)        | Connection settings for gamepad and MIDI controller           |
-| [Expressions](./expressions)| Feature to move the avatar face and motion                 |
+| [Expressions](./expressions)| Feature to move the avatar face and motion                    |
 | [VMC Protocol](./vmc_protocol) | Receive pose / facial data from VMC Protocol               |
 | [Hot Key](./hotkey)         | Customize shortcut key input to control settings              |
 | [Setting Files](./setting_files) | Advanced features to manage setting files                |
@@ -41,11 +41,12 @@ Setting Window consists of 8 tabs.
 Followings are advanced features of VMagicMirror available
 
 |----------------------------------+-------------------------------------------------|
-| Feature                          | What you can                                 |
+| Feature                          | What you can                                    |
 |:--------------------------------:|:------------------------------------------------|
-| [External Tracker App](./external_tracker)      | High quality tracking with iOS app (iFacialMocap) |
-| [VMC Protocol](./vmc_protocol)        | VMC Protocol based motion and facial                   |
-| [Accessory](./accessory)                    | Load image / 3D model and attach to the avatar  |
+| [Face Tracking](./face_tracker)  | Face Tracking with web camera or iOS app (iFacialMocap) |
+| [VMC Protocol](./vmc_protocol)   | VMC Protocol based motion and facial            |
+| [Accessory](./accessory)         | Load image / 3D model and attach to the avatar  |
+| [Buddy](./buddy)                 | Load buddy character                            |
 | [Hand Tracking](./hand_tracking)            | Web camera based hand tracking       |
 | [Game Motion Input](./game_input)                  | Game(FPS)-like motion by your avatar |
 | [Setting File Management](./setting_files)  | Setting file save/load features      |
@@ -54,7 +55,7 @@ Followings are advanced features of VMagicMirror available
 #### External Tracker
 {: .doc-sec2 }
 
-`External Tracker App`, `Accessory` and `Hand Tracking` features are available in the specific tab in control panel.
+`Face Tracking`, `Accessory`, `Buddy` and `Hand Tracking` features are available in the specific tab in control panel.
 
 `Setting File Management` is mainly about feature available in `Home` tab.
 

@@ -32,19 +32,13 @@
                         Margin="5,5,5,15">
                 <Button Content="{DynamicResource FaceTracker_SelectType_WebCam_Lite}"
                         Width="NaN"
-                        Padding="4,0"
-                        VerticalContentAlignment="Center"
                         Margin="4,0,8,0"
                         Command="{Binding SelectWebCamLowPowerCommand}"/>
                 <Button Content="{DynamicResource FaceTracker_SelectType_WebCam_HighPower}"
-                        Padding="4,0"
-                        VerticalContentAlignment="Center"
                         Width="NaN"
                         Command="{Binding SelectWebCamHighPowerCommand}"/>
                 <Button Content="{DynamicResource FaceTracker_SelectType_ExTracker}"
                         Width="NaN"
-                        Padding="4,0"
-                        VerticalContentAlignment="Center"
                         Command="{Binding SelectExTrackerCommand}"/>
             </StackPanel>
 

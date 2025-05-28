@@ -112,10 +112,13 @@ Help about Android App [MeowFace](https://play.google.com/store/apps/details?id=
 <div class="doc-ul" markdown="1">
 
 - `Apply LipSync using External Tracker Data`
-- `Disable horizontal flip`: Enable to turn off horizontal flip process.\
+- `Disable horizontal flip`: Enable to turn off horizontal flip process.
+- `Enable Forward/Backward Move`: Turn on to allow move avatar forward and backward(*).
 - `Use Perfect Sync`: Enable Perfect Sync. See detail at [Perfect Sync Tips](../../tips/perfect_sync).
 
 </div>
+
+*`Enable Forward/Backward Move` option does almost nothing if the avatar touches virtual keyboard, gamepad etc. To use this option, confirm that `Standing Only` option is selected at `Streaming` tab  > `Motion` > `Body Motion Style`.
 
 `Apply LipSync using External Tracker Data` feature turns off microphone based lipsync, which leads less CPU load on the PC.
 

@@ -49,7 +49,9 @@ There are also available tracking way to use VMC Protocol data receive, though t
 
 This section shows how each face tracking will work and what tracking settings are available
 
-Note that, avatar's facial settings is also in [Face](./face/) tab in setting window.
+Each tracking mode supports `Calibrate Face Pose` to adjust avatar's pose.
+
+Note that, avatar's facial settings is also available in [Face](./face/) tab in setting window.
 
 
 #### Web Camera (Lite)
@@ -61,12 +63,13 @@ Note that, avatar's facial settings is also in [Face](./face/) tab in setting wi
 
 `Web Camera (Lite)` does not use blink or lipsync data by web camera input. Head motion and microphone input will generate blink and lipsync behaviors.
 
-In this mode, only simple options are available.
+This mode supports following settings.
 
 <div class="doc-ul" markdown="1">
 
 - `Use Web Camera`: Turn on to use web camera for tracking. Turn off to reduce PC load.
 - `Disable horizontal flip`: Turn on to disable horizontal flip when applying tracking result.
+- `Eye Look Target`: Select where the avatar look to. Available in Streaming tab. Select `Mouse` to makes the avatar look at the orientation mouse pointer exists. Select `Fixed` to fix head motion except face tracking. `User` is similar to `Fixed`, but different when the avatar body does not face straight to the monitor, by `Free Camera Mode`. In this case `User` makes the avatar looks head to straight to monitor.
 
 </div>
 
@@ -89,10 +92,11 @@ Following options are available.
 - `Enable Forward/Backward Move`: Turn on to allow move avatar forward and backward(*).
 - `Apply Lip Sync based on Web Camera`: Turn on to apply mouth motion based on web camera input. When turned off, microphone input based lipsync value is applied instead.
 - `Use Perfect Sync`: Apply the facial data as Perfect Sync blendshape values. Please see detail at [Perfect Sync](../tips/perfect_sync).
+- `Eye Look Target`: Same option in `Web Camera (Lite)`. Note that, this option is only available when camera is disabled in `Web Camera (High Power)` mode.
 
 </div>
 
-*`Enable Forward/Backward Move` option does almost nothing if the avatar touches virtual keyboard, gamepad etc. To utilize this option, confirm that `Standing Only` option is selected at `Streaming` tab  > `Motion` > `Body Motion Style`.
+*`Enable Forward/Backward Move` option does almost nothing if the avatar touches virtual keyboard, gamepad etc. To use this option, confirm that `Standing Only` option is selected at `Streaming` tab  > `Motion` > `Body Motion Style`.
 
 Also, this tracking mode support `Blink Tracking Settings` window.
 

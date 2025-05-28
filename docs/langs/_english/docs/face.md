@@ -32,15 +32,11 @@ This tab is added in v1.6.1. If you use older version, you can see most of these
 
 `Track Face`: Choose WebCam to use face tracking feature. Available in Streaming tab.
 
-`High Power Mode`: Get more robust face tracking result, while getting higher CPU load. Available from v1.7.0.
-
-`Auto blink during face tracking`: Checked by default, and by turn off it, the avatar blinks based on image processing.
+`Auto blink during face tracking`: Checked by default, and by turn off it, the avatar blinks based on image processing. This option has effects when `Web Camera (Lite)` tracking is selected in `Face Tracking` tab on control panel.
 
 `Enable forward / backward motion`: Check to see horizontal forward / backward motion.
 
 `Disable Horizontal Flip`: Check to disable horizontal flip of motion. After changing this option press `Calibrate position` to calibrate.
-
-`Calibrate Position`: Press to calibrate the position by current user position captured by web camera.
 
 `Voice based motion when webcam not used`: When image based head tracking is not used, avatar moves automatically by voice input.
 
@@ -49,8 +45,6 @@ This tab is added in v1.6.1. If you use older version, you can see most of these
 {: .doc-sec2 }
 
 `Blink adjust by head motion and lip sync`: Check to enable auto blink action, when the avatar moves head quickly or detect the end of speech by microphone.
-
-`Eye Look Target`: Select where the avatar look to. Available in Streaming tab. Select `Mouse` to makes the avatar look at the orientation mouse pointer exists. Select `Fixed` to fix head motion except face tracking. `User` is similar to `Fixed`, but different when the avatar body does not face straight to the monitor, by `Free Camera Mode`. In this case `User` makes the avatar looks head to straight to monitor (in other word, keeps to look you).
 
 `Move eyes during facial expression applied`: Turn on to move eyes during [Word to Motion](./docs/expression)
 

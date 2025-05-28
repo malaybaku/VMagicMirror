@@ -232,7 +232,6 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
 
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
-        public RProperty<bool> EnableWebCameraHighPowerModeMoveZ { get; }
         
         // NOTE: Openのほうが値としては小さい想定(+0付近)
         public RProperty<int> WebCamEyeOpenBlinkValue { get; }

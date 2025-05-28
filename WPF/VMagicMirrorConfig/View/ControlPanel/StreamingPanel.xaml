@@ -326,39 +326,6 @@
                                             />
                             </StackPanel>
                         </Button>
-
-                        <Grid Margin="10,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Grid.Column="0"
-                                       Margin="10,5"
-                                       Text="{DynamicResource Motion_Eye_LookAtPoint_Streaming}"
-                                    />
-
-                            <CheckBox Grid.Column="1"
-                                      HorizontalAlignment="Left"
-                                      Margin="3,0"
-                                      Padding="0"
-                                      IsChecked="{Binding UseLookAtPointMousePointer.Value}"
-                                      Content="{DynamicResource Motion_Eye_LookAtPoint_MousePointer}"/>
-                            <CheckBox Grid.Column="2"
-                                      HorizontalAlignment="Left"
-                                      Margin="3,0"
-                                      Padding="0"
-                                      IsChecked="{Binding UseLookAtPointMainCamera.Value}"
-                                      Content="{DynamicResource Motion_Eye_LookAtPoint_MainCamera}"/>
-                            <CheckBox Grid.Column="3"
-                                      HorizontalAlignment="Left"
-                                      Margin="3,0"
-                                      Padding="0"
-                                      IsChecked="{Binding UseLookAtPointNone.Value}"
-                                      Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
-                        </Grid>
                     </StackPanel>
                 </Border>
 

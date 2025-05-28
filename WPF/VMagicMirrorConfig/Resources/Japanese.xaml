@@ -479,7 +479,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
             
     <!-- Face : Eye -->
     <sys:String x:Key="Motion_Eye">目・視線</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint">視線の動き</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint">視線の動き:</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_Streaming">視線:</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_None">固定</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">マウス</sys:String>

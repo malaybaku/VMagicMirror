@@ -130,7 +130,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 // LatestSetValueがfalse = 平滑化の結果には出てないけどロストしてるかも…という状態
                 maybeLost = !_hasLeftHandPose.Value || !_hasLeftHandPose.LatestSetValue;
 
-                if (_hasHeadPose.Value && _hasLeftHandPose.Value)
+                if (_hasLeftHandPose.Value)
                 {
                     result = GetHandPose(true);
                     return true;
@@ -186,7 +186,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             {
                 maybeLost = !_hasRightHandPose.Value || !_hasRightHandPose.LatestSetValue;
 
-                if (_hasHeadPose.Value && _hasRightHandPose.Value)
+                if (_hasRightHandPose.Value)
                 {
                     result = GetHandPose(false);
                     return true;

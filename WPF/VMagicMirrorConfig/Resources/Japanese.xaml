@@ -78,7 +78,8 @@
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">ゲーム入力でもゲームパッドが使われています！</sys:String>
 
     <!-- Face Tracker -->
-    <sys:String x:Key="FaceTracker_SelectType">顔トラッキングの種類を選択</sys:String>
+    <sys:String x:Key="FaceTracker_Title">顔トラッキング</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType">トラッキングの種類を選択</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">webカメラ (軽量)</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">webカメラ (高品質)</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_ExTracker">外部トラッキング (iFacialMocap)</sys:String>

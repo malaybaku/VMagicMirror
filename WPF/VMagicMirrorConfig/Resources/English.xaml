@@ -78,7 +78,8 @@
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">Game Input also uses gamepad!</sys:String>
 
     <!-- Face Tracker -->
-    <sys:String x:Key="FaceTracker_SelectType">Face Tracking Type</sys:String>
+    <sys:String x:Key="FaceTracker_Title">Face Tracking</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType">Tracking Type: </sys:String>
     <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">Web Camera (Lite)</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">Web Camera (High Power)</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_ExTracker">Ex.Tracker</sys:String>

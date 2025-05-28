@@ -42,9 +42,6 @@ namespace Baku.VMagicMirror
 
         // UI上で「手前・奥に移動」がオンかどうか
         private readonly ReactiveProperty<bool> _preferMoveZ = new(false);
-        // 名前の通りだが、z軸方向に大きめに体を動かすかどうかを既定するフラグ。
-        // このフラグに基づいて _scale, _min, _max の値が切り替わる。
-        private readonly ReactiveProperty<bool> _preferLargeOffsetZ = new(false);
 
         [Inject]
         public void Initialize(
@@ -59,9 +56,9 @@ namespace Baku.VMagicMirror
 
             NoHandTrackMode
                 .CombineLatest(
-                    _preferLargeOffsetZ,
-                    (noHandTrackMode, preferLargeOffsetZ) =>
-                        (noHandTrackMode, noHandTrackMode && preferLargeOffsetZ)
+                    _preferMoveZ,
+                    (noHandTrackMode, preferMoveZ) =>
+                        (noHandTrackMode, noHandTrackMode && preferMoveZ)
                     )
                 .DistinctUntilChanged()
                 .Subscribe(value => SetScaleMinMaxTarget(value.noHandTrackMode, value.Item2))

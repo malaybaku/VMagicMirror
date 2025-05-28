@@ -159,12 +159,10 @@ namespace Baku.VMagicMirror
             return Quaternion.Euler(pitch, yaw, roll);
         }
 
-        public void EnableImageBaseBodyLeanZ(bool enable) => imageBasedBodyMotion.EnableBodyLeanZ = enable;
-
         private void SetNoHandTrackMode(bool enable)
         {
             imageBasedBodyMotion.NoHandTrackMode = enable;
-            exTrackerBodyMotion.NoHandTrackMode = enable;
+            exTrackerBodyMotion.NoHandTrackMode.Value = enable;
             mediaPipeBodyMotion.NoHandTrackMode = enable;
         }
 

@@ -71,6 +71,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             WeakEventManager<ExternalTrackerSettingModel, EventArgs>.AddHandler(exTrackerModel, nameof(exTrackerModel.Loaded), OnModelLoaded);
 
             _motionModel.EnableWebCamHighPowerMode.AddWeakEventHandler(OnWebCamHighPowerModeChanged);
+            _motionModel.EnableImageBasedHandTracking.AddWeakEventHandler(OnHandTrackingEnabledChanged);
             EnableExternalTracking.AddWeakEventHandler(OnEnableExternalTrackingChanged);
             UpdateBaseMode();
 
@@ -110,26 +111,33 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             }
         }
 
+        private void OnHandTrackingEnabledChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
+
         private void OnWebCamHighPowerModeChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
 
         private void OnEnableExternalTrackingChanged(object? sender, PropertyChangedEventArgs e) => UpdateBaseMode();
 
         private void UpdateBaseMode()
         {
-            var preferHighPowerModeInWebCamera =
-                _motionModel.EnableWebCamHighPowerMode.Value ||
-                _motionModel.EnableImageBasedHandTracking.Value;
+            // NOTE: どのフラグが参照されるか明記しないとわかりにくいので一旦全て説明変数で受ける。
+            // webcamについて、カメラの使用on/off自体は見に行かないことに注意
+            var exTrackerEnabled = _exTrackerModel.EnableExternalTracking.Value;
+            var webCamHighPowerModeEnabled = _motionModel.EnableWebCamHighPowerMode.Value;
+            var handTrackingEnabled = _motionModel.EnableImageBasedHandTracking.Value;
+
+
+
+            var preferHighPowerModeInWebCamera = webCamHighPowerModeEnabled || handTrackingEnabled;
             // NOTE: ハンドトラッキングが有効だと高負荷モードになる (MediaPipeが起動するため)
-            UseLiteWebCamera.Value = !_exTrackerModel.EnableExternalTracking.Value && !preferHighPowerModeInWebCamera;
-            UseHighPowerWebCamera.Value = !_exTrackerModel.EnableExternalTracking.Value && preferHighPowerModeInWebCamera;
-            HighPowerWebCameraAppliedByHandTracking.Value = 
-                _exTrackerModel.EnableExternalTracking.Value &&
-                !_motionModel.EnableWebCamHighPowerMode.Value &&
-                _motionModel.EnableImageBasedHandTracking.Value;
+            UseLiteWebCamera.Value = !exTrackerEnabled && !preferHighPowerModeInWebCamera;
+            UseHighPowerWebCamera.Value = !exTrackerEnabled && preferHighPowerModeInWebCamera;
+            // 「GUI上で直近で選んだのは軽量トラッキングだが、ハンドトラッキングを有効かしたことで高品質モードに遷移している」の条件を入れている。
+            // ちょっと複雑なので注意
+            HighPowerWebCameraAppliedByHandTracking.Value =
+                !exTrackerEnabled && !webCamHighPowerModeEnabled && handTrackingEnabled;
 
-
-            FaceSwitchSupported.Value = _exTrackerModel.EnableExternalTracking.Value || UseHighPowerWebCamera.Value;
-            // NOTE: ExTrackerは「このフラグがオンならオン」という優先度なので、ここで更新しないでよい
+            FaceSwitchSupported.Value = exTrackerEnabled || UseHighPowerWebCamera.Value;
+            // NOTE: ExTrackerはModelのフラグを素通ししているのでそのまんまでOK
         }
 
 
@@ -152,18 +160,18 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> FaceSwitchHasLimitation => UseHighPowerWebCamera;
 
 
-        private ActionCommand? _selectWebCamLowPowerCommand;
+        private ActionCommand? _selectWebCamLiteCommand;
         private ActionCommand? _selectWebCamHighPowerCommand;
         private ActionCommand? _selectExTrackerCommand;
 
-        public ActionCommand SelectWebCamLowPowerCommand 
-            => _selectWebCamLowPowerCommand ??= new ActionCommand(SelectWebCamLowPower);
+        public ActionCommand SelectWebCamLiteCommand 
+            => _selectWebCamLiteCommand ??= new ActionCommand(SelectWebCamLite);
         public ActionCommand SelectWebCamHighPowerCommand
             => _selectWebCamHighPowerCommand ??= new ActionCommand(SelectWebCamHighPower);
         public ActionCommand SelectExTrackerCommand
             => _selectExTrackerCommand ??= new ActionCommand(SelectExTracker);
 
-        private void SelectWebCamLowPower()
+        private void SelectWebCamLite()
         {
             _exTrackerModel.EnableExternalTracking.Value = false;
             _motionModel.EnableWebCamHighPowerMode.Value = false;

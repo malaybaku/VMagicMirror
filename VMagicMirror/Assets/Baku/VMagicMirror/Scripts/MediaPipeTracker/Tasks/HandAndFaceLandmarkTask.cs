@@ -76,8 +76,12 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 // インターレース無し: 1つのテクスチャから二重に画像を作って2タスクで使う
                 base.OnWebCamImageUpdated(source);
 
-                using var image = source.BuildImage();
-                _landmarker.DetectAsync(image, source.TimestampMilliseconds);
+                if (_landmarker != null)
+                {
+                    using var image = source.BuildImage();
+                    // NOTE: マルチスレッドに留意するため、null checkが冗長に入ってる
+                    _landmarker?.DetectAsync(image, source.TimestampMilliseconds);
+                }
             }
         }
 

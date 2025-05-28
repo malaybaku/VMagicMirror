@@ -62,8 +62,13 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         protected override void OnWebCamImageUpdated(WebCamImageSource source)
         {
+            if (_landmarker == null)
+            {
+                return;
+            }
             using var image = source.BuildImage();
-            _landmarker.DetectAsync(image, source.TimestampMilliseconds);
+            // NOTE: タイミングバグを考慮して、null checkをこっちにも入れる
+            _landmarker?.DetectAsync(image, source.TimestampMilliseconds);
         }
 
         private void OnResult(HandLandmarkerResult result, Image image, long timestamp)

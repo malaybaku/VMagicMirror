@@ -84,7 +84,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 );
             
             _receiver.AssignCommandHandler(
-                VmmCommands.EnableWebCameraHighPowerModeMoveZ,
+                VmmCommands.EnableBodyLeanZ,
                 m => _settingsRepository.EnableBodyMoveZAxis = m.ToBoolean()
                 );
             _receiver.AssignCommandHandler(

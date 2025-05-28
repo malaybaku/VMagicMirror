@@ -92,8 +92,8 @@
                             Margin="25,5,15,10"
                             Command="{Binding CalibrateWebCameraCommand}"
                             >
-                        <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="AutoFix" />
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <md:PackIcon Kind="AutoFix" Margin="2,0" VerticalAlignment="Center" />
                             <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
                         </StackPanel>
                     </Button>
@@ -251,7 +251,7 @@
                             Command="{Binding CalibrateWebCameraCommand}"
                             >
                             <StackPanel Orientation="Horizontal">
-                                <md:PackIcon Kind="AutoFix" />
+                                <md:PackIcon Kind="AutoFix" Margin="2,0" VerticalAlignment="Center" />
                                 <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
                             </StackPanel>
                         </Button>
@@ -435,7 +435,7 @@
                             Command="{Binding CalibrateCommand}"
                             >
                         <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="AutoFix" />
+                            <md:PackIcon Kind="AutoFix" Margin="2,0" VerticalAlignment="Center" />
                             <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
                         </StackPanel>
                     </Button>

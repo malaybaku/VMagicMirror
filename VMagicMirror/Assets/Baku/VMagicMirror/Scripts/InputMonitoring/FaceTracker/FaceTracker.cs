@@ -283,6 +283,12 @@ namespace Baku.VMagicMirror
             }
 
             _isInitWaiting = true;
+            
+            // MediaPipe側でカメラを使っている場合、それの占有解除まで待つ
+            while (!WebCamTextureOccupyStatusProvider.TryOccupyDlib())
+            {
+                yield return null;
+            }
 
             // カメラの取得: 指定したのが無ければ諦める
             if (!string.IsNullOrEmpty(requestedDeviceName))
@@ -348,6 +354,8 @@ namespace Baku.VMagicMirror
                 Destroy(_webCamTexture);
                 _webCamTexture = null;
             }
+
+            WebCamTextureOccupyStatusProvider.ReleaseDlib();
         }
     }
 }

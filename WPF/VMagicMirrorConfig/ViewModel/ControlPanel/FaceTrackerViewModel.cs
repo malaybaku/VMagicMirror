@@ -147,10 +147,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         // 「ExTrackerが有効なら残り2つはオフ扱い」などの暗黙の優先度仕様を踏まえて値を制御するので、Settingの値をそのまま反映するわけではない
         public RProperty<bool> UseLiteWebCamera { get; } = new RProperty<bool>(false);
         public RProperty<bool> UseHighPowerWebCamera { get; } = new RProperty<bool>(false);
+        public RProperty<bool> HandTrackingEnabled => _motionModel.EnableImageBasedHandTracking;
+
         public RProperty<bool> EnableExternalTracking => _exTrackerModel.EnableExternalTracking;
+
+        // NOTE: 実は使ってないが、Unity側の状態の情報をWPF側にもいちおう書いときたいので残している
         // 「ハンドトラッキングさえ切ったら低負荷モードになるような組み合わせで高負荷モードになってるとき」だけtrueになるフラグ
         public RProperty<bool> HighPowerWebCameraAppliedByHandTracking { get; } = new RProperty<bool>(false);
-
 
         public RProperty<bool> FaceSwitchSupported { get; } = new RProperty<bool>(false);
         // NOTE: 制限つきでFace Switchが動くケースは実際にはwebカメラの高負荷モードだけだが、View向けに読み替えを行ってプロパティを公開してる

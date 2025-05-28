@@ -32,7 +32,7 @@
             <StackPanel Orientation="Horizontal" 
                         Margin="5">
                 <Button Content="{DynamicResource FaceTracker_SelectType_WebCam_Lite}"
-                        IsEnabled="{Binding HighPowerWebCameraAppliedByHandTracking, Converter={StaticResource BooleanReverseConverter}}"
+                        IsEnabled="{Binding HandTrackingEnabled.Value, Converter={StaticResource BooleanReverseConverter}}"
                         Width="NaN"
                         Margin="4,0,8,0"
                         Command="{Binding SelectWebCamLiteCommand}"/>
@@ -45,8 +45,8 @@
             </StackPanel>
 
             <md:Card 
-                Margin="10,0,10,15" 
-                Visibility="{Binding HighPowerWebCameraAppliedByHandTracking.Value,
+                Margin="8,0,8,15" 
+                Visibility="{Binding HandTrackingEnabled.Value,
                                      Converter={StaticResource BooleanToVisibilityConverter}}"
                 HorizontalAlignment="Center"
                 Padding="3">

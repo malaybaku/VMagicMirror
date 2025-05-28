@@ -10,14 +10,6 @@ lang: en
 
 {% include docimg.html file="/images/docs/face_top.png" %}
 
-<div class="note-area" markdown="1">
-
-**NOTE**
-
-This tab is added in v1.6.1. If you use older version, you can see most of these options in `Motion` tab `Face` menu.
-
-</div>
-
 
 #### Basic Settings
 {: .doc-sec2 }

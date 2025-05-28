@@ -112,7 +112,7 @@
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">手前・奥への移動を有効化</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
 
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">ハンドトラッキングが有効になっている間は webカメラ(軽量) は選択できず、 webカメラ (高品質) のトラッキングが適用されます。</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">ハンドトラッキングが有効になっている場合は webカメラ(軽量) は選択できません。かわりに webカメラ (高品質) を使用して下さい。</sys:String>
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">まばたきのトラッキング設定を開く</sys:String>
     

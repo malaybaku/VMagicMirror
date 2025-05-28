@@ -196,6 +196,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         #endregion
 
+        // NOTE: webカメラ(高精度) と ExTracker で使う
+        public RProperty<bool> EnableBodyLeanZ => _motionModel.EnableBodyLeanZ;
+
         #region web camera
 
         // NOTE: 歴史的経緯で名前がねじれてるけど意図的です
@@ -204,9 +207,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public ReadOnlyObservableCollection<string> WebCameraNames => _deviceList.CameraNames;
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync => _motionModel.EnableWebCameraHighPowerModeLipSync;
-        public RProperty<bool> EnableWebCameraHighPowerModeMoveZ => _motionModel.EnableWebCameraHighPowerModeMoveZ;
-
-        // todo: 前後移動のオンオフも欲しいかも
 
 
         private ActionCommand? _calibrateWebCameraCommand;

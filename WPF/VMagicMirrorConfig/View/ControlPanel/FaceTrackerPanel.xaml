@@ -195,8 +195,8 @@
                               Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
                               />
                     <CheckBox Margin="15,0,10,0"
-                              IsChecked="{Binding EnableWebCameraHighPowerModeMoveZ.Value}"
-                              Content="{DynamicResource FaceTracker_HighPowerWebCamera_EnableMoveZ}"
+                              IsChecked="{Binding EnableBodyLeanZ.Value}"
+                              Content="{DynamicResource Motion_Face_EnableBodyLeanZ}"
                               />
 
                     <CheckBox Margin="15,0,10,0" 
@@ -295,6 +295,10 @@
                     <CheckBox Margin="15,0,10,0"
                               IsChecked="{Binding DisableFaceTrackingHorizontalFlip.Value}"
                               Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
+                              />
+                    <CheckBox Margin="15,0,10,0"
+                              IsChecked="{Binding EnableBodyLeanZ.Value}"
+                              Content="{DynamicResource FaceTracker_HighPowerWebCamera_EnableMoveZ}"
                               />
                     <CheckBox Margin="15,0,10,0" 
                                 VerticalContentAlignment="Center"

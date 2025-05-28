@@ -144,7 +144,6 @@ namespace Baku.VMagicMirrorConfig
         public static Message DisableBlendShapeInterpolate(bool enable) => BoolContent(VmmCommands.DisableBlendShapeInterpolate, enable);
         
         public static Message EnableWebCameraHighPowerModeLipSync(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeLipSync, enable);
-        public static Message EnableWebCameraHighPowerModeMoveZ(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeMoveZ, enable);
 
         public static Message SetWebCamEyeOpenBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeOpenBlinkValue, value);
         public static Message SetWebCamEyeCloseBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeCloseBlinkValue, value);

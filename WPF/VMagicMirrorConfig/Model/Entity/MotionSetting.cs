@@ -70,7 +70,6 @@
         public bool DisableBlendShapeInterpolate { get; set; } = false;
 
         public bool EnableWebCameraHighPowerModeLipSync { get; set; } = false;
-        public bool EnableWebCameraHighPowerModeMoveZ { get; set; } = false;
 
         public int WebCamEyeOpenBlinkValue { get; set; } = 20;
         public int WebCamEyeCloseBlinkValue { get; set; } = 50;

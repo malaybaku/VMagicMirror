@@ -109,7 +109,6 @@ Face Switch feature for these condition does not work.
 - Tongue Out
 
 Use Extarnel Tracker mode to detect and apply these exressions.</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">Enable Forward/Backward Move</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
 
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Web Camera (Lite) mode is unavailable when hand tracking is enabled. Please use Web Camera (High Power) instead.</sys:String>            

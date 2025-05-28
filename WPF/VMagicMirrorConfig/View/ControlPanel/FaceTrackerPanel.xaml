@@ -117,33 +117,37 @@
                               Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
                               />
 
-                    <TextBlock Text="{DynamicResource Motion_Eye_LookAtPoint}"
-                               Margin="15,10,15,0"
-                               />
-
-                    <Grid Margin="15,0,5,10">
+                    <Grid Margin="15,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <CheckBox Grid.Column="0"
+
+                        <TextBlock Text="{DynamicResource Motion_Eye_LookAtPoint}"
+                                   Margin="0,5"
+                                   />
+
+                        <CheckBox Grid.Row="1" Grid.Column="0"
                                   HorizontalAlignment="Left"
                                   Margin="5"
                                   IsChecked="{Binding UseLookAtPointMousePointer.Value}"
                                   Content="{DynamicResource Motion_Eye_LookAtPoint_MousePointer}"/>
-                        <CheckBox Grid.Column="1"
+                        <CheckBox Grid.Row="1" Grid.Column="1"
                                   HorizontalAlignment="Left"
                                   Margin="5"
                                   IsChecked="{Binding UseLookAtPointMainCamera.Value}"
                                   Content="{DynamicResource Motion_Eye_LookAtPoint_MainCamera}"/>
-                        <CheckBox Grid.Column="2"
+                        <CheckBox Grid.Row="1" Grid.Column="2"
                                   HorizontalAlignment="Left"
                                   Margin="5"
                                   IsChecked="{Binding UseLookAtPointNone.Value}"
                                   Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
                     </Grid>
-
 
                     <Button Width="NaN" 
                             HorizontalAlignment="Left"
@@ -277,6 +281,42 @@
                                     />
                     </Grid>
 
+                    <Grid Margin="15,10"
+                          Visibility="{Binding EnableWebCamera.Value, 
+                                               Converter={StaticResource BooleanReverseToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                   Text="{DynamicResource Motion_Eye_LookAtPoint_WebCamHighPower}"
+                                   Margin="0,5"
+                                   />
+
+                        <CheckBox Grid.Row="1" Grid.Column="0"
+                                  HorizontalAlignment="Left"
+                                  Margin="5"
+                                  IsChecked="{Binding UseLookAtPointMousePointer.Value}"
+                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MousePointer}"/>
+                        <CheckBox Grid.Row="1" Grid.Column="1"
+                                  HorizontalAlignment="Left"
+                                  Margin="5"
+                                  IsChecked="{Binding UseLookAtPointMainCamera.Value}"
+                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MainCamera}"/>
+                        <CheckBox Grid.Row="1" Grid.Column="2"
+                                  HorizontalAlignment="Left"
+                                  Margin="5"
+                                  IsChecked="{Binding UseLookAtPointNone.Value}"
+                                  Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
+                    </Grid>
+
+
                     <Grid>
                         <Button Width="NaN" 
                             HorizontalAlignment="Left"
@@ -326,7 +366,7 @@
                               />
                     <CheckBox Margin="15,0,10,0"
                               IsChecked="{Binding EnableBodyLeanZ.Value}"
-                              Content="{DynamicResource FaceTracker_HighPowerWebCamera_EnableMoveZ}"
+                              Content="{DynamicResource Motion_Face_EnableBodyLeanZ}"
                               />
                     <CheckBox Margin="15,0,10,0" 
                                 VerticalContentAlignment="Center"

@@ -480,7 +480,7 @@ If the face tracking works correctly, please ignore this warning.
     <!-- Face : Eye -->
     <sys:String x:Key="Motion_Eye">Eye</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint">Eye Look Target: </sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_Streaming">Look At:</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_WebCamHighPower">Eye Look Target: The option is applied during camera is disabled</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_None">None</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">Mouse</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">User</sys:String>

@@ -693,8 +693,9 @@ class InputBasedJumper
 // - NOTE: Jumpを削除してコッチのリアクションだけにすることを検討中
 class TalkReactionNod
 {
-    const float NodDuration = 0.5f;
+    const float NodDuration = 0.3f;
     const float NodAngle = 5f;
+    const float NodLocalPositionOffsetY = 5f;
     const float NodProbability = 0.65f;
     const float DoubleNodProbability = 0.3f;
 
@@ -782,6 +783,12 @@ class TalkReactionNod
 
         // 2回うなづくケースがあることに注意
         var rate = (_nodMotionTime % NodDuration) / NodDuration;
+
+        var cosCurve = 0.5f * (1 - (float)Math.Cos(rate * Math.PI * 2));
+        _status.Sprite.Transform.LocalPosition = new Vector2(
+            0, -cosCurve * NodLocalPositionOffsetY
+            ); 
+                   
         var flip = Api.Property.GetBool("flip");
         var rotationAngle = (float)Math.Sin(rate * Math.PI) * NodAngle * (flip ? 1 : -1);
         _status.Sprite.Transform.LocalRotation = Quaternion.Euler(0, 0, rotationAngle);

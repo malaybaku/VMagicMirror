@@ -67,7 +67,7 @@ namespace VMagicMirror.Buddy
     }
 
     /// <summary>
-    /// x軸に伸びながらy軸方向に縮む、またその逆を行うような、ぷにぷにする資格効果を適用するエフェクトの設定です。
+    /// x軸に伸びながらy軸方向に縮む、またその逆を行うような、ぷにぷにする視覚効果を適用するエフェクトの設定です。
     /// </summary>
     public interface IPuniSpriteEffect
     {
@@ -93,6 +93,9 @@ namespace VMagicMirror.Buddy
         public float Duration { get; set; }
     }
 
+    /// <summary>
+    /// x軸とy軸の各方向に振動するような視覚効果を適用するエフェクトの設定です。
+    /// </summary>
     public interface IVibrateSpriteEffect
     {
         /// <summary>

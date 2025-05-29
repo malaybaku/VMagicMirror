@@ -113,10 +113,15 @@ namespace VMagicMirror.Buddy
         IDeviceLayout DeviceLayout { get; }
         
         // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう
+        /// <summary> アバターのロード状態や、ロード状態に関するイベントのAPIを取得します。 </summary>
         IAvatarLoadEvent AvatarLoadEvent { get; }
+        /// <summary> アバターの姿勢に関するAPIを取得します。 </summary>
         IAvatarPose AvatarPose { get; }
+        /// <summary> アバターの動作をイベントとして検出するAPIを取得します。 </summary>
         IAvatarMotionEvent AvatarMotionEvent { get; }
+        /// <summary> アバターの表情に関するAPIを取得します。 </summary>
         IAvatarFacial AvatarFacial { get; }
+        /// <summary> ユーザーの入力に関するAPIを取得します。 </summary>
         IInput Input { get; }
 
         /// <summary>
@@ -135,7 +140,7 @@ namespace VMagicMirror.Buddy
         // NOTE: まだ実装が安定してないのでダメ
         //IGui Gui { get; }
 
-        //TODO: 出力先ファイルがどこなのか説明を書きたい
+        //TODO: ログの出力先ファイルに言及したい。これはxrefをいい感じに書けば動線が作れるはず
         /// <summary>
         /// ログ情報を出力します。
         /// </summary>

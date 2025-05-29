@@ -50,6 +50,12 @@ namespace VMagicMirror.Buddy
     /// </summary>
     public readonly struct AudioStartedInfo
     {
+        /// <summary>
+        /// 開始したオーディオのキー情報と再生時間を指定してインスタンスを初期化します。
+        /// このコンストラクタはアプリケーションが内部的に使用します。スクリプトから直接使用することは推奨していません。
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="length"></param>
         public AudioStartedInfo(string key, float length)
         {
             Key = key;
@@ -86,6 +92,12 @@ namespace VMagicMirror.Buddy
     /// </summary>
     public readonly struct AudioStoppedInfo
     {
+        /// <summary>
+        /// 停止したオーディオのキー情報と、停止した理由を指定してインスタンスを初期化します。
+        /// このコンストラクタはアプリケーションが内部的に使用します。スクリプトから直接使用することは推奨していません。
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="reason"></param>
         public AudioStoppedInfo(string key, AudioStoppedReason reason)
         {
             Key = key;

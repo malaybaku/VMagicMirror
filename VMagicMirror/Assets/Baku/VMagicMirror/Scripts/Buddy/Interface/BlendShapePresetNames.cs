@@ -11,6 +11,9 @@ namespace VMagicMirror.Buddy
     /// </remarks>
     public static class BlendShapePresetNames
     {
+        // ここで定義してるstringはわりと trivial なため、doc commentは書かないでOKという扱いにする
+#pragma warning disable CS1591
+
         public static string Happy { get; } = ToCamelCase(nameof(Happy));
         public static string Angry { get; } = ToCamelCase(nameof(Angry));
         public static string Sad { get; } = ToCamelCase(nameof(Sad));

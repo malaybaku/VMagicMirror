@@ -10,6 +10,9 @@ namespace VMagicMirror.Buddy
     /// <seealso href="https://developer.apple.com/documentation/arkit/arfaceanchor/blendshapelocation">ARFaceAnchor.BlendShapeLocation</seealso>
     public static class PerfectSyncBlendShapeNames
     {
+        // ここで定義してるstringはわりと trivial なため、doc commentは書かないでOKという扱いにする
+#pragma warning disable CS1591
+        
         // 目
         public static string EyeBlinkLeft { get; } = nameof(EyeBlinkLeft);
         public static string EyeLookUpLeft { get; } = nameof(EyeLookUpLeft);

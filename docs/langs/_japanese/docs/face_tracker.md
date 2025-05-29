@@ -8,7 +8,9 @@ title: 顔トラッキング
 
 `VMagicMirror` v4.0.0以降では「顔トラッキング」タブから顔トラッキングの種類を選択し、基本的なセットアップを行うことができます。
 
-(todo: タブのスクリーンショット)
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
 <div class="toc-area" markdown="1">
 
@@ -60,7 +62,10 @@ title: 顔トラッキング
 
 `webカメラ (軽量)` はPC負荷を極力抑えてwebカメラを利用したい場合のためのオプションです。ゲーム中のトラッキングなど、VMagicMirrorによるCPU/GPU負荷を小さくしたい場合はこのオプションを使用します。
 
-(todo: screen shot)
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_webcam_lite.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
+
 
 `webカメラ (軽量)` の使用中は、まばたきのトラッキング情報は使用されず、マイク入力や頭部の動作に基づいてアバターに瞬きが適用されます。また、口元の動作(リップシンク)はマイク入力に基づいて適用されます。そのほか、後述する表情スイッチ機能は本オプションの適用中には動作できません。
 
@@ -80,8 +85,9 @@ title: 顔トラッキング
 
 `webカメラ(高品質)` では、PC負荷が上昇するかわりに高精度なトラッキングを行います。PCスペックに余裕がある場合や、VMagicMirrorのみが高負荷なアプリケーションになるようなケースでは、場合にこのオプションを使用できます。
 
-(todo: screenshot)
-
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_webcam_high_power.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
 このオプションでは `webカメラ(軽量)` と異なり、まばたきや口元の動作についてもカメラで取得したデータが適用されます。
 
@@ -102,7 +108,10 @@ title: 顔トラッキング
 
 とくに、まばたきの動作設定について `まばたきのトラッキング設定を開く` から、調整用のウィンドウを開いて詳細設定を行えます。
 
-(todo: screenshot)
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_eye_calibration_window.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
+
 
 このウィンドウでは `webカメラ(高品質)` を選択しているときの目のトラッキングについて、「まばたき値」という数値を設定します。
 
@@ -131,17 +140,19 @@ title: 顔トラッキング
 
 </div>
 
-セットアップの数値の例として、下記のスクリーンショットでは `Min`が5~10程度であり、`Max`は65~80程度の数値になっています。
+セットアップの数値の例として、下記のスクリーンショットでは `Min`が5~10程度であり、`Max`は70~80程度の数値になっています。
 
-(todo: screenshot)
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_eye_calibration_example.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+</div>
 
-このようなプレビュー結果に対して、次のようなセットアップが有効です。
+このようなプレビュー結果に対して、例えば次のようなセットアップが有効です。
 
 <div class="doc-ul" markdown="1">
 
 - 半目もアバターに反映できるようにしたい場合
     - `目を開けているときのまばたき値 (%)`: 20
-    - `目を閉じているときのまばたき値 (%)`: 50
+    - `目を閉じているときのまばたき値 (%)`: 60
 - 半目にならないようにしたい場合
     - `目を開けているときのまばたき値 (%)`: 35
     - `目を閉じているときのまばたき値 (%)`: 40

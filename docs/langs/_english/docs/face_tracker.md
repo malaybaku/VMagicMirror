@@ -9,7 +9,9 @@ lang: en
 
 In v4.0.0 and later, VMagicMirror provides face tracking option from `Face Tracker` tab in control panel.
 
-(todo: タブのスクリーンショット)
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
 <div class="toc-area" markdown="1">
 
@@ -57,11 +59,13 @@ Note that, avatar's facial settings is also available in [Face](./face/) tab in 
 #### Web Camera (Lite)
 {: .doc-sec2 }
 
-`Web Camera (Lite)` is an option to use face tracking with web camera, while avoiding high PC load. The option is useful if your PC environment has another content like games.
+`Web Camera (Lite)` uses web camera for face tracking, while avoiding high PC load. The option is useful if your PC environment has another performance-critical content like 3D games.
 
-(todo: screen shot)
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_webcam_lite.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
-`Web Camera (Lite)` does not use blink or lipsync data by web camera input. Head motion and microphone input will generate blink and lipsync behaviors.
+`Web Camera (Lite)` does not use blink / lipsync data by web camera input. Instead, head motion and microphone inputs generate blink and lipsync behaviors.
 
 This mode supports following settings.
 
@@ -79,7 +83,9 @@ This mode supports following settings.
 
 `Web Camera (High Power)` mode performs high quality face tracking, while using more PC load than `Web Camera (Lite)` mode. This mode is recommended if your PC resources can run high loaded multiple apps, or VMagicMirror is the only performance-critical app to run on the PC.
 
-(todo: screenshot)
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_webcam_high_power.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
 This tracking gets blink and mouth facial data based on web camera input.
 
@@ -98,13 +104,15 @@ Following options are available.
 
 *`Enable Forward/Backward Move` option does almost nothing if the avatar touches virtual keyboard, gamepad etc. To use this option, confirm that `Standing Only` option is selected at `Streaming` tab  > `Motion` > `Body Motion Style`.
 
-Also, this tracking mode support `Blink Tracking Settings` window.
+Also, this tracking mode support `Blink Tracking Settings`.
 
-(todo: screenshot)
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_eye_calibration_window.jpg" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
-This settings window handles how to handle `Blink Value` which is a part of face tracking result in `Web Camera (High Power)`.
+The settings handle how to control `Blink Value`, which is a part of face tracking result in `Web Camera (High Power)`.
 
-`Blink Value` is a value which get small when your eyes are open, and get large when eyes are closed. The value range is between 0 and 100, though the actual range vary depends o indivisual differences, webcam placement, etc.
+`Blink Value` is a value which get small when your eyes are open, and get large when eyes are closed. The value range is between 0 and 100, and the actual range varies depending on indivisual differences, webcam placement, etc.
 
 <div class="doc-ul" markdown="1">
 
@@ -127,17 +135,19 @@ By using `Show Blink Value Preview` option, you can adjust other options based o
 
 </div>
 
-For example, following screenshot shows `Min`=5~10, and `Max`=65~80.
+For example, following screenshot shows `Min`=5~10, and `Max`=70~80.
 
-(todo: screenshot)
+<div class="row">
+{% include docimg.html file="/images/docs/face_tracker_eye_calibration_example.png" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
+</div>
 
-In such case, there are some setup patterns.
+In this case, there are some setups to make good result.
 
 <div class="doc-ul" markdown="1">
 
 - To apply several tracking result including half-opened eyes:
     - `Blink Value when Eye Opened (%)`: 20
-    - `Blink Value when Eye Closed (%)`: 50
+    - `Blink Value when Eye Closed (%)`: 60
 - To apply blink motion clearly:
     - `Blink Value when Eye Opened (%)`: 35
     - `Blink Value when Eye Closed (%)`: 40

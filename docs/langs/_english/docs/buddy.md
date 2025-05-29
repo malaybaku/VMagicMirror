@@ -12,7 +12,9 @@ This feature shows buddy character in addition to 3D avatar displeyed with basic
 
 In this page, the 3D model normally displayed is referred to as `main avatar`, so that buddy and main avatar is clearly distinguished.
 
-(TODO: 画像差し替え)
+<div class="row">
+{% include docimg.html file="/images/docs/buddy_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
 <div class="row">
 {% include docimg.html file="/images/docs/devices_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
@@ -73,17 +75,13 @@ Please get Full Edition to use the feature without limitation. Please see detail
 
 Open `Buddy` tab and enable the buddy to start.
 
-In v4.0.0 and later version, there are built-in buddy also.
+In v4.0.0 and later version, there are also built-in buddies.
 
-(TODO: スクリーンショット)
-
-Buddy's placement can be edited via `Free Layout` option.
+You can edit buddy's placement in avatar window via `Free Layout` option.
 
 Note that, there is a case that 2D image buddy gets too far from the center of window, and cannot change their layout by `Free Layout` feature. In such case, you can open buddy's setting to edit buddy's position like position `x`, `y` directly.
 
 The coordinate for the buddy displayed in the foreground has size approximately `1280 x 720`, with left bottom point is `(x, y) = (0, 0)`.
-
-(TODO: スクリーンショット)
 
 Following options have effects to all buddies.
 
@@ -124,7 +122,9 @@ Folder structures must be like following. Be careful that unzip files might form
 
 </div>
 
-(TODO: ここにも正しい配置が分かるようなスクリーンショットを用意)
+<div class="row">
+{% include docimg.html file="/images/docs/buddy_folder_structure.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
+</div>
 
 Also, the folder name should be kept same after the buddy introduced. When the folder name changed, then the buddy's setting will be reset to default. 
 

@@ -724,7 +724,7 @@ class TalkReactionNod
         // NOTE: うなずきは禁止する理由が思いつかないので、プロパティによるon/offはサポートしない
         if (_status.CurrentAction != MyBuddyActions.None)
         {
-            if (!_isNodding)
+            if (_isNodding)
             {
                 _status.Sprite.Transform.LocalRotation = Quaternion.identity;
             }

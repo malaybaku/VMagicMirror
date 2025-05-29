@@ -130,8 +130,8 @@ namespace Baku.VMagicMirrorConfig
         public static Message EnableSendHandTrackingResult(bool enable) => BoolContent(VmmCommands.EnableSendHandTrackingResult, enable);
         // NOTE: 名称に含まないが、xy軸のみのスケールを指す。z軸はそもそもMediaPipeのHandTrackingではあんまり取れないので
         public static Message SetHandTrackingMotionScale(int percent) => IntContent(VmmCommands.SetHandTrackingMotionScale, percent);
-        public static Message SetHandTrackingPositionOffsetX(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetX, offset);
-        public static Message SetHandTrackingPositionOffsetY(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetY, offset);
+        public static Message SetHandTrackingMotionOffsetX(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetX, offset);
+        public static Message SetHandTrackingMotionOffsetY(int offset) => IntContent(VmmCommands.SetHandTrackingOffsetY, offset);
 
 
 
@@ -144,7 +144,6 @@ namespace Baku.VMagicMirrorConfig
         public static Message DisableBlendShapeInterpolate(bool enable) => BoolContent(VmmCommands.DisableBlendShapeInterpolate, enable);
         
         public static Message EnableWebCameraHighPowerModeLipSync(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeLipSync, enable);
-        public static Message EnableWebCameraHighPowerModeMoveZ(bool enable) => BoolContent(VmmCommands.EnableWebCameraHighPowerModeMoveZ, enable);
 
         public static Message SetWebCamEyeOpenBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeOpenBlinkValue, value);
         public static Message SetWebCamEyeCloseBlinkValue(int value) => IntContent(VmmCommands.SetWebCamEyeCloseBlinkValue, value);
@@ -378,7 +377,7 @@ namespace Baku.VMagicMirrorConfig
 
         #region Buddy
 
-        public static Message BuddySetMainAvatarOutputActive(bool active) => BoolContent(VmmCommands.BuddySetMainAvatarOutputActive, active);
+        public static Message BuddySetInteractionApiEnabled(bool active) => BoolContent(VmmCommands.BuddySetInteractionApiEnabled, active);
         public static Message BuddySetDeveloperModeActive(bool active) => BoolContent(VmmCommands.BuddySetDeveloperModeActive, active);
         public static Message BuddySetDeveloperModeLogLevel(int level) => IntContent(VmmCommands.BuddySetDeveloperModeLogLevel, level);
 

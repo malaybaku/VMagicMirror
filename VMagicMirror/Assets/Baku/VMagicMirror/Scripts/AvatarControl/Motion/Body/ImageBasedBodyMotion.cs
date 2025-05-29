@@ -26,8 +26,6 @@ namespace Baku.VMagicMirror
         [Range(0.05f, 1.0f)]
         [SerializeField] private float timeScaleFactor = 0.3f;
 
-        [SerializeField] private bool enableBodyLeanZ = false;
-        
         [Inject]
         private FaceTracker _faceTracker = null;
 
@@ -45,13 +43,6 @@ namespace Baku.VMagicMirror
         private Vector3 _currentOffsetAmplifier = Vector3.zero;
         private Vector3 _currentOffsetToRotEuler = Vector3.zero;
         private Sequence _sequence = null;
-
-        /// <summary>体をZ方向に動かしてもよいかどうかを取得、設定します。</summary>
-        public bool EnableBodyLeanZ
-        {
-            get => enableBodyLeanZ;
-            set => enableBodyLeanZ = value;
-        }
         
         /// <summary>顔のx座標を参考に、体のロールをこのくらい曲げたらいいんでない？というのを計算して回転情報にしたやつ </summary>
         public Quaternion BodyLeanSuggest { get; private set; } = Quaternion.identity;
@@ -164,20 +155,13 @@ namespace Baku.VMagicMirror
             }
             
             var amplifier = _currentOffsetAmplifier;
-            float forwardLength = enableBodyLeanZ
-                ? Mathf.Clamp(
-                    _faceTracker.CurrentAnalyzer.Result.ZOffset * amplifier.z,
-                    offsetLowerLimit.z, 
-                    offsetUpperLimit.z
-                    )
-                : 0f;
-
             var center = _faceTracker.CurrentAnalyzer.Result.FacePosition;
 
+            // NOTE: dlibの顔トラッキングでは前後の移動を正確に取れないので、オプションによらず前後に動かないようにする
             var idealPosition = new Vector3(
                 center.x * amplifier.x,
                 center.y * amplifier.y,
-                forwardLength
+                0
                 );
 
             //NOTE: 高負荷モードでスピード上げてもいいかも

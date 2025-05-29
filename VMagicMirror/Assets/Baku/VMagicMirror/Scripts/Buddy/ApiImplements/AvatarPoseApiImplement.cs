@@ -28,28 +28,28 @@ namespace Baku.VMagicMirror.Buddy
         }
 
         private bool _isLoaded;
-        private bool IsMainAvatarOutputActive =>
-            _buddySettingsRepository.MainAvatarOutputActive.Value;
+        private bool InteractionApiEnabled =>
+            _buddySettingsRepository.InteractionApiEnabled.Value;
 
         public bool UseGameInputMotion =>
-            IsMainAvatarOutputActive && 
+            InteractionApiEnabled && 
             _bodyMotionMode.MotionMode.Value is BodyMotionMode.GameInputLocomotion;
 
         public bool UseStandingOnlyMode =>
-            IsMainAvatarOutputActive &&
+            InteractionApiEnabled &&
             _bodyMotionMode.MotionMode.Value is BodyMotionMode.StandingOnly;
         
         public bool HasBone(HumanBodyBones bone)
         {
             return 
-                IsMainAvatarOutputActive &&
+                InteractionApiEnabled &&
                 _isLoaded &&
                 _bones.ContainsKey(bone);
         }
         
         public Vector3 GetBoneGlobalPosition(HumanBodyBones bone, bool useParentBone)
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return Vector3.zero;
             }
@@ -63,7 +63,7 @@ namespace Baku.VMagicMirror.Buddy
 
         public Quaternion GetBoneGlobalRotation(HumanBodyBones bone, bool useParentBone)
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return Quaternion.identity;
             }
@@ -77,7 +77,7 @@ namespace Baku.VMagicMirror.Buddy
 
         public Vector3 GetBoneLocalPosition(HumanBodyBones bone, bool useParentBone)
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return Vector3.zero;
             }
@@ -91,7 +91,7 @@ namespace Baku.VMagicMirror.Buddy
 
         public Quaternion GetBoneLocalRotation(HumanBodyBones bone, bool useParentBone)
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return Quaternion.identity;
             }
@@ -156,7 +156,7 @@ namespace Baku.VMagicMirror.Buddy
 
         public Vector3 GetRootPosition()
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return Vector3.zero;
             }
@@ -171,7 +171,7 @@ namespace Baku.VMagicMirror.Buddy
 
         public Quaternion GetRootRotation()
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return Quaternion.identity;
             }

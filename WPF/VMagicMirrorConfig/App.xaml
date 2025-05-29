@@ -41,6 +41,9 @@
                 <Setter Property="Width" Value="80"/>
                 <Setter Property="Height" Value="30"/>
                 <Setter Property="Margin" Value="10,5"/>
+                <!-- NOTE: 縦paddingを切らないと g,p,q などの文字の下が切れてしまうので明示的に0にしている -->
+                <Setter Property="Padding" Value="4,0" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
             </Style>
 
 

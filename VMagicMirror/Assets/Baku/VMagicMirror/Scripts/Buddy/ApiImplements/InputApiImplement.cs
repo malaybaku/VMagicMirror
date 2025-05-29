@@ -39,7 +39,7 @@ namespace Baku.VMagicMirror.Buddy
         public override void Initialize()
         {
             _keyMouseEventSource.KeyDown
-                .Where(_ => MainAvatarOutputActive)
+                .Where(_ => InteractionApiEnabled)
                 .Subscribe(key =>
                 {
                     var keyName = key.ToLower() == "enter" ? "Enter" : "";
@@ -47,7 +47,7 @@ namespace Baku.VMagicMirror.Buddy
                 })
                 .AddTo(this);
             _keyMouseEventSource.KeyUp
-                .Where(_ => MainAvatarOutputActive)
+                .Where(_ => InteractionApiEnabled)
                 .Subscribe(key =>
                 {
                     var keyName = key.ToLower() == "enter" ? "Enter" : "";
@@ -64,7 +64,7 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
         }
 
-        private bool MainAvatarOutputActive => _buddySettingsRepository.MainAvatarOutputActive.Value;
+        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
 
         /// <summary>
         /// 画面サイズを基準とし、マウスの現在位置をXYいずれも[-0.5, 0.5]くらいに収まる値として表現した値を取得する。
@@ -84,7 +84,7 @@ namespace Baku.VMagicMirror.Buddy
         // スクリプト上で `GamepadButton.A` みたく書かせて実態がintになってるのが無難そうではある
         public bool GetGamepadButton(GamepadKey key)
         {
-            if (!MainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return false;
             }
@@ -97,7 +97,7 @@ namespace Baku.VMagicMirror.Buddy
         private Vector2 _rightStickPosition = Vector2.zero;
         public Vector2 GetGamepadLeftStickPosition()
         {
-            if (!MainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return Vector2.zero;
             }
@@ -107,7 +107,7 @@ namespace Baku.VMagicMirror.Buddy
 
         public Vector2 GetGamepadRightStickPosition()
         {
-            if (!MainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return Vector2.zero;
             }
@@ -117,12 +117,12 @@ namespace Baku.VMagicMirror.Buddy
 
         public IObservable<GamepadKey> GamepadButtonDown => _gamepad
             .ButtonUpDown
-            .Where(_ => MainAvatarOutputActive)
+            .Where(_ => InteractionApiEnabled)
             .Where(data => data.IsPressed)
             .Select(data => data.Key);
         public IObservable<GamepadKey> GamepadButtonUp => _gamepad
             .ButtonUpDown
-            .Where(_ => MainAvatarOutputActive)
+            .Where(_ => InteractionApiEnabled)
             .Where(data => !data.IsPressed)
             .Select(data => data.Key);
         

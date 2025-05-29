@@ -3,10 +3,13 @@ using System;
 namespace VMagicMirror.Buddy
 {
     /// <summary>
-    /// UnityEngineのVector2とほぼ同等のことが出来るようなデータ。
+    /// UnityEngineのVector2とほぼ同等のことが出来るようなデータです。
     /// </summary>
     public struct Vector2 : IEquatable<Vector2>
     {
+        // 基本的なメンバーなので敢えてコメントは書かないでもOK…という扱いにする。
+#pragma warning disable CS1591
+
         public Vector2(float x, float y)
         {
             this.x = x;

@@ -14,6 +14,7 @@
     </UserControl.DataContext>
     <UserControl.Resources>
         <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
+        <view:BooleanReverseConverter x:Key="BooleanReverseConverter" />
         <view:BooleanReverseToVisibilityConverter x:Key="BooleanReverseToVisibilityConverter" />
         <view:WhiteSpaceStringToNullConverter x:Key="WhiteSpaceStringToNullConverter"/>
         <Style TargetType="md:PackIcon" x:Key="HeaderPackIcon">
@@ -27,13 +28,16 @@
         <StackPanel Margin="5,15">
 
             <TextBlock Style="{StaticResource HeaderText}"
+                       Text="{DynamicResource FaceTracker_Title}"/>
+            <TextBlock Margin="15,15,15,0"
                        Text="{DynamicResource FaceTracker_SelectType}"/>
             <StackPanel Orientation="Horizontal" 
-                        Margin="5,5,5,15">
+                        Margin="25,5,5,5">
                 <Button Content="{DynamicResource FaceTracker_SelectType_WebCam_Lite}"
+                        IsEnabled="{Binding HandTrackingEnabled.Value, Converter={StaticResource BooleanReverseConverter}}"
                         Width="NaN"
-                        Margin="4,0"
-                        Command="{Binding SelectWebCamLowPowerCommand}"/>
+                        Margin="4,0,8,0"
+                        Command="{Binding SelectWebCamLiteCommand}"/>
                 <Button Content="{DynamicResource FaceTracker_SelectType_WebCam_HighPower}"
                         Width="NaN"
                         Command="{Binding SelectWebCamHighPowerCommand}"/>
@@ -41,6 +45,32 @@
                         Width="NaN"
                         Command="{Binding SelectExTrackerCommand}"/>
             </StackPanel>
+
+            <md:Card 
+                Margin="24,0,24,15" 
+                Visibility="{Binding HandTrackingEnabled.Value,
+                                     Converter={StaticResource BooleanToVisibilityConverter}}"
+                HorizontalAlignment="Center"
+                Padding="3">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <md:PackIcon 
+                        Grid.Column="0"
+                        Kind="WarningOutline"
+                        Margin="5"
+                        Foreground="{StaticResource PrimaryHueMidBrush}"
+                        VerticalAlignment="Center" />
+                    <TextBlock 
+                        Grid.Column="1"
+                        Text="{DynamicResource FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice}"
+                        TextWrapping="Wrap"
+                        />
+                </Grid>
+            </md:Card>
+
 
             <!-- 「webカメラ (軽量)」のときのUI -->
             <Border Style="{StaticResource SectionBorder}"
@@ -87,13 +117,45 @@
                               Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
                               />
 
+                    <Grid Margin="15,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="{DynamicResource Motion_Eye_LookAtPoint}"
+                                   Margin="0,5"
+                                   />
+
+                        <CheckBox Grid.Row="1" Grid.Column="0"
+                                  HorizontalAlignment="Left"
+                                  Margin="5"
+                                  IsChecked="{Binding UseLookAtPointMousePointer.Value}"
+                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MousePointer}"/>
+                        <CheckBox Grid.Row="1" Grid.Column="1"
+                                  HorizontalAlignment="Left"
+                                  Margin="5"
+                                  IsChecked="{Binding UseLookAtPointMainCamera.Value}"
+                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MainCamera}"/>
+                        <CheckBox Grid.Row="1" Grid.Column="2"
+                                  HorizontalAlignment="Left"
+                                  Margin="5"
+                                  IsChecked="{Binding UseLookAtPointNone.Value}"
+                                  Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
+                    </Grid>
+
                     <Button Width="NaN" 
                             HorizontalAlignment="Left"
                             Margin="25,5,15,10"
                             Command="{Binding CalibrateWebCameraCommand}"
                             >
-                        <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="AutoFix" />
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <md:PackIcon Kind="AutoFix" Margin="2,0" VerticalAlignment="Center" />
                             <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
                         </StackPanel>
                     </Button>
@@ -117,51 +179,8 @@
                                 />
                     </StackPanel>
 
-
-                    <Grid Margin="15,5">
-                        <TextBlock Text="{DynamicResource FaceTracker_HighPowerWebCamera_Instruction}"/>
-                        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                Content="{DynamicResource FaceTracker_HighPowerWebCamera_LimitationNotice_Title}"
-                                Click="OnHighPowerModeLimitationButtonClicked"
-                                MouseLeave="OnHighPowerModeLimitationButtonMouseLeave"
-                                HorizontalAlignment="Right"                    
-                                VerticalAlignment="Bottom"
-                                Width="NaN"
-                                Padding="3"
-                                >
-                            <Button.ToolTip>
-                                <ToolTip>
-                                    <TextBlock Text="{DynamicResource FaceTracker_HighPowerWebCamera_LimitationNotice_Title}"/>
-                                </ToolTip>
-                            </Button.ToolTip>
-                        </Button>
-
-                    </Grid>
-
-
-                    <md:Card Margin="15,5,5,0" 
-                            Visibility="{Binding HighPowerWebCameraAppliedByHandTracking.Value,
-                                                Converter={StaticResource BooleanToVisibilityConverter}}"
-                            HorizontalAlignment="Center"
-                            Padding="3">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <md:PackIcon Grid.Column="0"
-                                         Kind="WarningOutline"
-                                         Margin="5"
-                                         Foreground="{StaticResource PrimaryHueMidBrush}"
-                                         VerticalAlignment="Center" />
-                            <TextBlock 
-                                Grid.Column="1"
-                                Text="{DynamicResource FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice}"
-                                TextWrapping="Wrap"
-                                />
-                        </Grid>
-                    </md:Card>
-
+                    <TextBlock Margin="15,5"
+                                Text="{DynamicResource FaceTracker_HighPowerWebCamera_Instruction}"/>
 
                     <Grid Margin="15,5">
                         <Grid.ColumnDefinitions>
@@ -190,8 +209,8 @@
                               Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
                               />
                     <CheckBox Margin="15,0,10,0"
-                              IsChecked="{Binding EnableWebCameraHighPowerModeMoveZ.Value}"
-                              Content="{DynamicResource FaceTracker_HighPowerWebCamera_EnableMoveZ}"
+                              IsChecked="{Binding EnableBodyLeanZ.Value}"
+                              Content="{DynamicResource Motion_Face_EnableBodyLeanZ}"
                               />
 
                     <CheckBox Margin="15,0,10,0" 
@@ -244,6 +263,42 @@
                                     />
                     </Grid>
 
+                    <Grid Margin="15,10"
+                          Visibility="{Binding EnableWebCamera.Value, 
+                                               Converter={StaticResource BooleanReverseToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                   Text="{DynamicResource Motion_Eye_LookAtPoint_WebCamHighPower}"
+                                   Margin="0,5"
+                                   />
+
+                        <CheckBox Grid.Row="1" Grid.Column="0"
+                                  HorizontalAlignment="Left"
+                                  Margin="5"
+                                  IsChecked="{Binding UseLookAtPointMousePointer.Value}"
+                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MousePointer}"/>
+                        <CheckBox Grid.Row="1" Grid.Column="1"
+                                  HorizontalAlignment="Left"
+                                  Margin="5"
+                                  IsChecked="{Binding UseLookAtPointMainCamera.Value}"
+                                  Content="{DynamicResource Motion_Eye_LookAtPoint_MainCamera}"/>
+                        <CheckBox Grid.Row="1" Grid.Column="2"
+                                  HorizontalAlignment="Left"
+                                  Margin="5"
+                                  IsChecked="{Binding UseLookAtPointNone.Value}"
+                                  Content="{DynamicResource Motion_Eye_LookAtPoint_None}"/>
+                    </Grid>
+
+
                     <Grid>
                         <Button Width="NaN" 
                             HorizontalAlignment="Left"
@@ -251,7 +306,7 @@
                             Command="{Binding CalibrateWebCameraCommand}"
                             >
                             <StackPanel Orientation="Horizontal">
-                                <md:PackIcon Kind="AutoFix" />
+                                <md:PackIcon Kind="AutoFix" Margin="2,0" VerticalAlignment="Center" />
                                 <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
                             </StackPanel>
                         </Button>
@@ -259,7 +314,7 @@
                         <Button Width="NaN"
                                 HorizontalAlignment="Right"
                                 Margin="10"
-                                Content="まばたきのトラッキング設定を開く"
+                                Content="{DynamicResource FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow}"
                                 Command="{Binding OpenEyeCalibrationWindowCommand}"
                                 />
                     </Grid>
@@ -290,6 +345,10 @@
                     <CheckBox Margin="15,0,10,0"
                               IsChecked="{Binding DisableFaceTrackingHorizontalFlip.Value}"
                               Content="{DynamicResource Motion_Face_DisableFaceTrackingHorizontalFlip}"
+                              />
+                    <CheckBox Margin="15,0,10,0"
+                              IsChecked="{Binding EnableBodyLeanZ.Value}"
+                              Content="{DynamicResource Motion_Face_EnableBodyLeanZ}"
                               />
                     <CheckBox Margin="15,0,10,0" 
                                 VerticalContentAlignment="Center"
@@ -435,7 +494,7 @@
                             Command="{Binding CalibrateCommand}"
                             >
                         <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="AutoFix" />
+                            <md:PackIcon Kind="AutoFix" Margin="2,0" VerticalAlignment="Center" />
                             <TextBlock Text="{DynamicResource ExTracker_Calibrate}"/>
                         </StackPanel>
                     </Button>

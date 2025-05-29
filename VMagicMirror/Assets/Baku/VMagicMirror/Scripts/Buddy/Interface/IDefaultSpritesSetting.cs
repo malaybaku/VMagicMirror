@@ -24,7 +24,7 @@ namespace VMagicMirror.Buddy
         /// このフラグが有効な場合、メインアバターの瞬きに合わせてサブキャラが適当なディレイでまばたき動作を行います。
         /// 
         /// このフラグはメインアバターの状態を参照して動作します。
-        /// <see cref="IRootApi.AvatarOutputFeatureEnabled"/> が <c>false</c> の場合、この値を設定していてもメインアバターとの同期は行われません。
+        /// <see cref="IRootApi.InteractionApiEnabled"/> が <c>false</c> の場合、この値を設定していてもメインアバターとの同期は行われません。
         /// </remarks>
         bool SyncBlinkBlendShapeToMainAvatar { get; set; }
         
@@ -36,7 +36,7 @@ namespace VMagicMirror.Buddy
         /// このフラグが有効な場合、メインアバターのリップシンクに対してサブキャラのデフォルト立ち絵をある程度動作させます。
         /// 
         /// このフラグはメインアバターの状態を参照して動作します。
-        /// <see cref="IRootApi.AvatarOutputFeatureEnabled"/> が <c>false</c> の場合、この値を設定していてもメインアバターとの同期は行われません。
+        /// <see cref="IRootApi.InteractionApiEnabled"/> が <c>false</c> の場合、この値を設定していてもメインアバターとの同期は行われません。
         /// </remarks>
         bool SyncMouthBlendShapeToMainAvatar { get; set; }
 

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../VMagicMirror/Assets/Baku/VMagicMirror/Scripts/Buddy/Interface",
+          "files": [
+            "**/*.cs"
+          ],
+          "exclude": [
+            "**/QuaternionInternal.cs"
+          ]
+        }
+      ],
+      "output": "api",
+      "enumSortOrder": "declaringOrder",
+      "disableGitFeatures": true
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**",
+          "static/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appName": "VMagicMirror Buddy",
+      "_appTitle": "VMagicMirror Buddy",
+      "_enableSearch": true,
+      "pdf": false
+    }
+  }
+}

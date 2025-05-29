@@ -1,5 +1,19 @@
 namespace VMagicMirror.Buddy
 {
+    /// <summary>
+    /// 画像をアバターウィンドウの最前面に平面的に表示するAPIです。
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// このAPIでは .jpg または .png ファイル、およびプリセットとしてアプリケーションに組み込まれた画像をロードできます。
+    /// </para>
+    /// 
+    /// <para>
+    /// 画像のサイズ等は画面全体のサイズがおおよそ 1280x720 であるとした場合の値を用いて指定します。
+    /// サイズ調整を直感的に行うために、画像アセットとスプライトはいずれも正方形の形状にしておくことを推奨しています。
+    /// また、サブキャラに表情差分などの画像群がある場合、原則として各画像のサイズを揃えるようにしてください。
+    /// </para>
+    /// </remarks>
     public interface ISprite2D
     {
         /// <summary> 位置や回転などの、オブジェクトの基本的な配置に関するAPIを取得します。 </summary>
@@ -140,8 +154,13 @@ namespace VMagicMirror.Buddy
         /// </summary>
         void Hide();
 
-        // TODO: Sizeのdocをいい感じに書く + そのためにそもそもSizeの扱いをいい感じに定義したい
-        // NOTE: Sprite特有の設定としてはSizeだけがあり、ScaleやPivotはTransformのほうで定義される
+        /// <summary>
+        /// スプライトのサイズを取得、設定します。
+        /// </summary>
+        /// <remarks>
+        /// サイズは、アバターウィンドウ全体のサイズがおおよそ 1280x720 であるとした場合の値として指定します。
+        /// 例えば、<c>new Vector2(150, 150)</c> 程度の値はスプライトの基本的なサイズとして適しています。
+        /// </remarks>
         Vector2 Size { get; set; } 
 
         /// <summary> スプライトに適用するエフェクトの設定を取得します。 </summary>

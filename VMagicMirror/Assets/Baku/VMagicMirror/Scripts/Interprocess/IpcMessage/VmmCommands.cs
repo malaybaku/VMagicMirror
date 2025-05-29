@@ -115,7 +115,6 @@
         // Motion, Face, WebCam high power mode
         EnableWebCamHighPowerMode,
         EnableWebCameraHighPowerModeLipSync,
-        EnableWebCameraHighPowerModeMoveZ,
 
         SetWebCamEyeOpenBlinkValue,
         SetWebCamEyeCloseBlinkValue,
@@ -284,7 +283,7 @@
         ShowEffectDuringVMCPSendEnabled,
         
         // Buddy
-        BuddySetMainAvatarOutputActive,
+        BuddySetInteractionApiEnabled,
         BuddyEnable,
         BuddyDisable,
         BuddyRefreshData,

@@ -61,22 +61,22 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         public RProperty<bool> EnableDeviceFreeLayout => _layoutSettingModel.EnableDeviceFreeLayout;
 
-        public string MainAvatarOutputActiveLabel
+        public string InteractionApiEnabledLabel
         {
             get
             {
                 if (IsInDesignMode)
                 {
-                    return "メインアバターAPIを使用";
+                    return "インタラクションAPIを使用";
                 }
 
                 return FeatureLocker.FeatureLocked
-                    ? LocalizedString.GetString("Buddy_MainAvatarOutputActive_StandardEdition")
-                    : LocalizedString.GetString("Buddy_MainAvatarOutputActive_FullEdition");
+                    ? LocalizedString.GetString("Buddy_InteractionApiEnabled_StandardEdition")
+                    : LocalizedString.GetString("Buddy_InteractionApiEnabled_FullEdition");
             }
         }
 
-        public RProperty<bool> MainAvatarOutputActive => _model.MainAvatarOutputActive;
+        public RProperty<bool> InteractionApiEnabled => _model.InteractionApiEnabled;
         public RProperty<bool> DeveloperModeActive => _model.DeveloperModeActive;
         public RProperty<int> DeveloperModeLogLevel => _model.DeveloperModeLogLevel;
 

@@ -62,9 +62,9 @@ namespace Baku.VMagicMirrorConfig
             _buddySettingsSender = buddySettingsSender;
 
             var defaultSetting = BuddySetting.Default;
-            MainAvatarOutputActive = new RProperty<bool>(
-                defaultSetting.MainAvatarOutputActive, 
-                v => _buddySettingsSender.SetMainAvatarOutputActive(v));
+            InteractionApiEnabled = new RProperty<bool>(
+                defaultSetting.InteractionApiEnabled, 
+                v => _buddySettingsSender.SetInteractionApiEnabled(v));
             DeveloperModeActive = new RProperty<bool>(
                 defaultSetting.DeveloperModeActive,
                 v => _buddySettingsSender.SetDeveloperModeActive(v));
@@ -89,7 +89,7 @@ namespace Baku.VMagicMirrorConfig
         public event EventHandler<BuddyLogMessageEventArgs>? ReceivedLog;
 
         public RProperty<bool> DeveloperModeActive { get; }
-        public RProperty<bool> MainAvatarOutputActive { get; }
+        public RProperty<bool> InteractionApiEnabled { get; }
         public RProperty<int> DeveloperModeLogLevel { get; }
 
         // NOTE: 開発者モードが無効な場合、セーブしてある設定は無視する
@@ -116,7 +116,7 @@ namespace Baku.VMagicMirrorConfig
         public void ReloadAll()
         {
             // 現在メモリ上にある設定をファイルに書かれてたものとみなしてロードする。ファイルI/Oがちょっと減ってオシャレ
-            var saveDatas = BuddySaveDataRepository.ExportSetting(MainAvatarOutputActive.Value, _buddies);
+            var saveDatas = BuddySaveDataRepository.ExportSetting(InteractionApiEnabled.Value, _buddies);
 
             foreach (var buddy in _buddies)
             {
@@ -171,7 +171,7 @@ namespace Baku.VMagicMirrorConfig
         /// アプリケーションの終了時に呼ぶことで、現在<see cref="Buddies"/>にある編集済みのプロパティ値を保存する
         /// </summary>
         public void SaveBuddySettings()
-            => BuddySaveDataRepository.SaveSetting(MainAvatarOutputActive.Value, _buddies, SpecialFilePath.BuddySettingsFilePath);
+            => BuddySaveDataRepository.SaveSetting(InteractionApiEnabled.Value, _buddies, SpecialFilePath.BuddySettingsFilePath);
 
         public BuddyProperty? FindProperty(BuddyId buddyId, string name)
         {
@@ -191,7 +191,7 @@ namespace Baku.VMagicMirrorConfig
             // - UIとして、Buddyのプロパティは各Buddyごとにリセットするほうが望ましいはず
 
             var defaultSetting = BuddySetting.Default;
-            MainAvatarOutputActive.Value = defaultSetting.MainAvatarOutputActive;
+            InteractionApiEnabled.Value = defaultSetting.InteractionApiEnabled;
             DeveloperModeActive.Value = defaultSetting.DeveloperModeActive;
             DeveloperModeLogLevel.Value = defaultSetting.DeveloperModeLogLevel;
         }
@@ -221,7 +221,7 @@ namespace Baku.VMagicMirrorConfig
             }
 
             BuddiesReloaded?.Invoke(this, EventArgs.Empty);
-            MainAvatarOutputActive.Value = data.MainAvatarOutputActive;
+            InteractionApiEnabled.Value = data.InteractionApiEnabled;
         }
 
         /// <summary>

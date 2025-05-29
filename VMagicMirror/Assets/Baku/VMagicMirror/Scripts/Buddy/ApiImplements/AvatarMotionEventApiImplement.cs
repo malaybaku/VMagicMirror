@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror.Buddy
         private readonly HandIKIntegrator _handIKIntegrator;
         private readonly CancellationTokenSource _cts = new();
 
-        private bool IsMainAvatarOutputActive => _buddySettingsRepository.MainAvatarOutputActive.Value;
+        private bool InteractionApiEnabled => _buddySettingsRepository.InteractionApiEnabled.Value;
         
         public AvatarMotionEventApiImplement(
             BuddySettingsRepository buddySettingsRepository,
@@ -69,7 +69,7 @@ namespace Baku.VMagicMirror.Buddy
         public override void Initialize()
         {
             // TODO: 「clap中」を完全に無視したほうがいいかもしれない (空文字じゃなくてnullを入れてWhere句で弾く…とかのworkaroundを取ると行けそう)
-            _buddySettingsRepository.MainAvatarOutputActive
+            _buddySettingsRepository.InteractionApiEnabled
                 .CombineLatest(
                     _handIKIntegrator.LeftTargetType,
                     _bodyMotionModeController.MotionMode,
@@ -84,7 +84,7 @@ namespace Baku.VMagicMirror.Buddy
                 .Subscribe(targetTypeName => _leftHandTargetType.Value = targetTypeName)
                 .AddTo(this);
 
-            _buddySettingsRepository.MainAvatarOutputActive
+            _buddySettingsRepository.InteractionApiEnabled
                 .CombineLatest(
                     _handIKIntegrator.RightTargetType,
                     _bodyMotionModeController.MotionMode,
@@ -112,7 +112,7 @@ namespace Baku.VMagicMirror.Buddy
             // - 体の動作モード + 手IKのモードの実態を見ることで、そのモーションが本当に適用されてそうかを見に行く
             //   - こっちはイベントハンドラっぽい関数の中で随時やってる
             _handIKIntegrator.Typing.KeyDownMotionStarted
-                .Where(_ => IsMainAvatarOutputActive)
+                .Where(_ => InteractionApiEnabled)
                 .Subscribe(value => OnKeyboardKeyDownMotionStarted(value.hand, value.key))
                 .AddTo(this);
 
@@ -127,12 +127,12 @@ namespace Baku.VMagicMirror.Buddy
                 .AddTo(this);
             
             _handIKIntegrator.GamepadHand.ButtonDownMotionStarted
-                .Where(_ => IsMainAvatarOutputActive)
+                .Where(_ => InteractionApiEnabled)
                 .Subscribe(v => OnGamepadButtonDownMotionStarted(v.hand, v.key))
                 .AddTo(this);
 
             _handIKIntegrator.ArcadeStickHand.ButtonDownMotionStarted
-                .Where(_ => IsMainAvatarOutputActive)
+                .Where(_ => InteractionApiEnabled)
                 .Subscribe(OnArcadeStickButtonDownMotionStarted)
                 .AddTo(this);
         }
@@ -167,7 +167,7 @@ namespace Baku.VMagicMirror.Buddy
 
         private bool CanRaiseMouseClickMotionStartEvent(string eventName)
         {
-            if (!IsMainAvatarOutputActive)
+            if (!InteractionApiEnabled)
             {
                 return false;
             }

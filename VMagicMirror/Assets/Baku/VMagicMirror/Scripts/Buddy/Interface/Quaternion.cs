@@ -81,16 +81,6 @@ namespace VMagicMirror.Buddy
             axis = ToVector3(rawAxis);
         }
 
-        public override int GetHashCode() => HashCode.Combine(x, y, z, w);
-        public override bool Equals(object other) => other is Quaternion other1 && Equals(other1);
-        public bool Equals(Quaternion other)
-        {
-            return this.x.Equals(other.x) && this.y.Equals(other.y) && this.z.Equals(other.z) && this.w.Equals(other.w);
-        }
-
-        // NOTE: 最低限それっぽくするのが目的のため、Format文字列とかは受け取らない
-        public override string ToString() => $"({x:0.00}, {y:0.00}, {z:0.00}, {w:0.00})";
-
         /// <summary>
         /// Quaternionをベクトルとして見たときの内積を計算します。
         /// </summary>
@@ -197,7 +187,21 @@ namespace VMagicMirror.Buddy
         /// <returns>回転を適用した状態のベクトル</returns>
         public static Vector3 operator *(Quaternion rotation, Vector3 point) 
             => ToVector3(rotation.ToIQ() * ToIV3(point));
+
+        /// <summary>
+        /// 2つの回転がほぼ等しければ <c>true</c> 、そうでなければ <c>false</c> を返します。
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
         public static bool operator ==(Quaternion lhs, Quaternion rhs) => lhs.ToIQ() == rhs.ToIQ();
+
+        /// <summary>
+        /// 2つの回転が異なれば <c>true</c>、ほぼ等しければ <c>false</c> を返します。
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
         public static bool operator !=(Quaternion lhs, Quaternion rhs) => !(lhs == rhs);
         
         /// <summary>
@@ -225,6 +229,19 @@ namespace VMagicMirror.Buddy
         /// 回転を行わないことを表す値を取得します。
         /// </summary>
         public static Quaternion identity => new(0, 0, 0, 1);
+        
+        // 基本的なメンバーなので敢えてコメントは書かないでもOK…という扱いにする 
+#pragma warning disable CS1591
+
+        public override int GetHashCode() => HashCode.Combine(x, y, z, w);
+        public override bool Equals(object other) => other is Quaternion other1 && Equals(other1);
+        public bool Equals(Quaternion other)
+        {
+            return this.x.Equals(other.x) && this.y.Equals(other.y) && this.z.Equals(other.z) && this.w.Equals(other.w);
+        }
+
+        // NOTE: 最低限それっぽくするのが目的のため、Format文字列とかは受け取らない
+        public override string ToString() => $"({x:0.00}, {y:0.00}, {z:0.00}, {w:0.00})";
     }
 }
 

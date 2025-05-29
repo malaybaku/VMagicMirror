@@ -67,17 +67,13 @@ namespace VMagicMirror.Buddy
     }
 
     /// <summary>
-    /// x軸に伸びながらy軸方向に縮む、またその逆を行うような、ぷにぷにする資格効果を適用するエフェクトの設定です。
+    /// x軸に伸びながらy軸方向に縮む、またその逆を行うような、ぷにぷにする視覚効果を適用するエフェクトの設定です。
     /// </summary>
     public interface IPuniSpriteEffect
     {
         /// <summary>
         /// エフェクトを動作させるかどうかを取得、設定します。<c>true</c> を設定することでエフェクトが動作します。
         /// </summary>
-        /// <remarks>
-        /// この値はスクリプトから直接更新することで変化する以外に、
-        /// <see cref="Loop"/> が <c>false</c> である場合には自動で <c>true</c> から <c>false</c> に切り替わります。
-        /// </remarks>
         public bool IsActive { get; set; }
 
         /// <summary>
@@ -97,6 +93,9 @@ namespace VMagicMirror.Buddy
         public float Duration { get; set; }
     }
 
+    /// <summary>
+    /// x軸とy軸の各方向に振動するような視覚効果を適用するエフェクトの設定です。
+    /// </summary>
     public interface IVibrateSpriteEffect
     {
         /// <summary>

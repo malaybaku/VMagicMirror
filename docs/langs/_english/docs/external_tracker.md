@@ -112,10 +112,13 @@ Help about Android App [MeowFace](https://play.google.com/store/apps/details?id=
 <div class="doc-ul" markdown="1">
 
 - `Apply LipSync using External Tracker Data`
-- `Disable horizontal flip`: Enable to turn off horizontal flip process.\
+- `Disable horizontal flip`: Enable to turn off horizontal flip process.
+- `Enable Forward/Backward Move`: Turn on to allow move avatar forward and backward(*).
 - `Use Perfect Sync`: Enable Perfect Sync. See detail at [Perfect Sync Tips](../../tips/perfect_sync).
 
 </div>
+
+*`Enable Forward/Backward Move` option does almost nothing if the avatar touches virtual keyboard, gamepad etc. To use this option, confirm that `Standing Only` option is selected at `Streaming` tab  > `Motion` > `Body Motion Style`.
 
 `Apply LipSync using External Tracker Data` feature turns off microphone based lipsync, which leads less CPU load on the PC.
 
@@ -124,45 +127,3 @@ There is also another feature that, the external app gets mouth shape by camera,
 On the other hand, the tracking precision decreases when the device cannot see your mouth (mainly because of mic or hop guard).
 
 In this case turn off `Apply LipSync using External Tracker Data` to use conventional microphone based lipsync.
-
-
-### Face Switch
-{: .doc-sec1 }
-
-Face Switch is a feature to switch avatar's face by user expression.
-
-<div class="row">
-{% include docimg.html file="./images/docs/ex_tracker_50_face_switch.png" customclass="col l6 m6 s12" imgclass="fit-doc-img" %}
-</div>
-
-Face switch has parameters to setup.
-
-<div class="doc-ul" markdown="1">
-
-- `Threshold`: Select from 10% to 90%, to specify when the face switch is triggered. Higher value means you have to more clear expression.
-- `BlendShape`: Choose the BlendShape to apply, or select `(Do Nothing)`(*) as empty selection.
-- `Keep LipSync`: You can check it for the BlendShape with only eye motion, so the LipSync still work.
-
-*`(Do Nothing)` indication might incorrect appearance as Japanese expression "`(何もしない)`". In this case you can choose `(何もしない)`.
-
-Note that some face expressions are difficult to be recognized.
-
-Also note that, this feature is not an extension of face tracking, but also considerable as shortcut key assignment via your face.
-
-This means irrelevant assignment will be still useful.
-
-For example, you can assign a special face expression for tongue out condition, even if the expression does not include tongue out motion at all.
-
-<div class="note-area" markdown="1">
-
-**NOTE**
-
-`Word to Motion` feature has higher priority. When face switch and `Word to Motion` input runs simultaneously, then `Word to Motion` output is applied.
-
-</div>
-
-Also v2.0.2 and later version support accessory visibility control during Face Switch is applied.
-
-Check `Show Accessory Option` to show accessory visibility selection.
-
-See [Accessory](../accessory) page for the detail of accessory feature.

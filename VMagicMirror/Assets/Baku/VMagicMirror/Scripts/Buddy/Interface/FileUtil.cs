@@ -19,6 +19,9 @@ namespace VMagicMirror.Buddy.IO
     /// </remarks>
     public static class File
     {
+        // メソッドはSystem.IOの同名のやつ…という建付けなので、わざわざコメントは書かない。以降のクラスでも同様
+#pragma warning disable CS1591
+
         public static bool Exists(string path) => System.IO.File.Exists(path);
         
         public static string ReadAllText(string path) => System.IO.File.ReadAllText(path);
@@ -30,6 +33,8 @@ namespace VMagicMirror.Buddy.IO
             => System.IO.File.ReadAllLines(path, encoding);
 
         public static byte[] ReadAllBytes(string path) => System.IO.File.ReadAllBytes(path);
+
+#pragma warning restore CS1591
     }
 
     /// <summary>
@@ -49,6 +54,8 @@ namespace VMagicMirror.Buddy.IO
     /// </remarks>
     public static class Directory
     {
+#pragma warning disable CS1591
+
         public static bool Exists(string path) => System.IO.Directory.Exists(path);
         
         public static string[] GetFiles(string path) => System.IO.Directory.GetFiles(path);
@@ -58,6 +65,8 @@ namespace VMagicMirror.Buddy.IO
         public static string[] GetDirectories(string path) => System.IO.Directory.GetDirectories(path);
         public static string[] GetDirectories(string path, string searchPattern)
             => System.IO.Directory.GetDirectories(path, searchPattern);
+
+#pragma warning restore CS1591
     }
 
     /// <summary>
@@ -77,6 +86,8 @@ namespace VMagicMirror.Buddy.IO
     /// </remarks>
     public static class Path
     {
+#pragma warning disable CS1591
+
         public static string Combine(string path1, string path2)
             => System.IO.Path.Combine(path1, path2);
         public static string Combine(string path1, string path2, string path3)
@@ -97,6 +108,6 @@ namespace VMagicMirror.Buddy.IO
         public static string GetExtension(string path)
             => System.IO.Path.GetExtension(path);
         
-        
+#pragma warning restore CS1591
     }
 }

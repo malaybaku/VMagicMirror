@@ -67,8 +67,8 @@ namespace Baku.VMagicMirrorConfig
                 false,
                 v => SendMessage(MessageFactory.EnableSendHandTrackingResult(v)));
             HandTrackingMotionScale = new RProperty<int>(setting.HandTrackingMotionScale, v => SendMessage(MessageFactory.SetHandTrackingMotionScale(v)));
-            HandTrackingMotionOffsetX = new RProperty<int>(setting.HandPositionOffsetX, v => SendMessage(MessageFactory.SetHandTrackingPositionOffsetX(v)));
-            HandTrackingMotionOffsetY = new RProperty<int>(setting.HandPositionOffsetY, v => SendMessage(MessageFactory.SetHandTrackingPositionOffsetY(v)));
+            HandTrackingMotionOffsetX = new RProperty<int>(setting.HandTrackingMotionOffsetX, v => SendMessage(MessageFactory.SetHandTrackingMotionOffsetX(v)));
+            HandTrackingMotionOffsetY = new RProperty<int>(setting.HandTrackingMotionOffsetY, v => SendMessage(MessageFactory.SetHandTrackingMotionOffsetY(v)));
 
             CameraDeviceName = new RProperty<string>(setting.CameraDeviceName, v => SendMessage(MessageFactory.SetCameraDeviceName(v)));
             CalibrateFaceData = new RProperty<string>(setting.CalibrateFaceData, v => SendMessage(MessageFactory.SetCalibrateFaceData(v)));
@@ -85,9 +85,6 @@ namespace Baku.VMagicMirrorConfig
             
             EnableWebCameraHighPowerModeLipSync = new RProperty<bool>(
                 setting.EnableWebCameraHighPowerModeLipSync, v => SendMessage(MessageFactory.EnableWebCameraHighPowerModeLipSync(v)));
-
-            EnableWebCameraHighPowerModeMoveZ = new RProperty<bool>(
-                setting.EnableWebCameraHighPowerModeMoveZ, v => SendMessage(MessageFactory.EnableWebCameraHighPowerModeMoveZ(v)));
 
             WebCamEyeOpenBlinkValue = new RProperty<int>(
                 setting.WebCamEyeOpenBlinkValue, v => SendMessage(MessageFactory.SetWebCamEyeOpenBlinkValue(v)));
@@ -235,7 +232,6 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> DisableBlendShapeInterpolate { get; }
 
         public RProperty<bool> EnableWebCameraHighPowerModeLipSync { get; }
-        public RProperty<bool> EnableWebCameraHighPowerModeMoveZ { get; }
         
         // NOTE: Openのほうが値としては小さい想定(+0付近)
         public RProperty<int> WebCamEyeOpenBlinkValue { get; }
@@ -317,7 +313,6 @@ namespace Baku.VMagicMirrorConfig
             EnableFaceTracking.Value = setting.EnableFaceTracking;
             CameraDeviceName.Value = setting.CameraDeviceName;
             AutoBlinkDuringFaceTracking.Value = setting.AutoBlinkDuringFaceTracking;
-            EnableBodyLeanZ.Value = setting.EnableBodyLeanZ;
 
             EnableVoiceBasedMotion.Value = setting.EnableVoiceBasedMotion;
             DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;
@@ -448,7 +443,7 @@ namespace Baku.VMagicMirrorConfig
             var setting = MotionSetting.Default;
             DisableFaceTrackingHorizontalFlip.Value = setting.DisableFaceTrackingHorizontalFlip;
             EnableWebCameraHighPowerModeLipSync.Value = setting.EnableWebCameraHighPowerModeLipSync;
-            EnableWebCameraHighPowerModeMoveZ.Value = setting.EnableWebCameraHighPowerModeMoveZ;
+            EnableBodyLeanZ.Value = setting.EnableBodyLeanZ;
         }
     }
 }

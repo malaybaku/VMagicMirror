@@ -206,7 +206,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 _leftHandState.Position = _trackingLostHandCalculator.LeftHandPose.position;
                 _leftHandState.Rotation = _trackingLostHandCalculator.LeftHandPose.rotation;
                 
-                // 完全にロスト場合
+                // 完全にロストしてるケースで通過する
                 _leftHandTrackedSpeed = Vector3.zero;
             }
         }

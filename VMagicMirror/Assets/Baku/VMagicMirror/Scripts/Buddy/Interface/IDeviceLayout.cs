@@ -1,5 +1,8 @@
 namespace VMagicMirror.Buddy
 {
+    /// <summary>
+    /// アバターがいる空間内のキーボードなどのデバイスや、アバターウィンドウを撮影しているカメラの配置などのレイアウト情報を取得できるAPIです。
+    /// </summary>
     public interface IDeviceLayout
     {
         /// <summary>

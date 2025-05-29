@@ -10,15 +10,16 @@ namespace VMagicMirror.Buddy
     public interface IRootApi
     {
         /// <summary>
-        /// メインアバターの姿勢や表情の状態出力、およびユーザーのマイク入力など、メインアバターの制御に関する情報にアクセス可能かどうかを取得します。
+        /// メインアバターの姿勢や表情、およびユーザーのマイク入力などを取り扱えるインタラクションAPI全般にアクセス可能かどうかを取得します。
         /// </summary>
         /// <remarks>
         /// この値はアプリケーションのEditionおよびユーザー設定によって変化します。
         /// 値が <c>false</c> の場合、 <see cref="AvatarMotionEvent"/> のイベントが発火しなかったり、 <see cref="AvatarPose"/> で有効なポーズが取得できなかったりする状態になります。
         /// 
-        /// ユーザー入力がないとスタックしてしまうような挙動をサブキャラに実装する場合、このフラグを組み合わせて挙動をカスタムすることでスタックを防げます。
+        /// ユーザー入力がないと進行不能になってしまうような挙動をサブキャラに対して実装する場合、
+        /// このフラグも組み合わせて挙動をカスタムすることで意図しないスタックを防げます。
         /// </remarks>
-        bool AvatarOutputFeatureEnabled { get; }
+        bool InteractionApiEnabled { get; }
         
         /// <summary>
         /// このサブキャラのデータが入っているディレクトリの絶対パスを取得します。
@@ -112,10 +113,15 @@ namespace VMagicMirror.Buddy
         IDeviceLayout DeviceLayout { get; }
         
         // NOTE: このへん `api.Avatar.MotionEvent` みたく書けたほうが字面がいいから修正しそう
+        /// <summary> アバターのロード状態や、ロード状態に関するイベントのAPIを取得します。 </summary>
         IAvatarLoadEvent AvatarLoadEvent { get; }
+        /// <summary> アバターの姿勢に関するAPIを取得します。 </summary>
         IAvatarPose AvatarPose { get; }
+        /// <summary> アバターの動作をイベントとして検出するAPIを取得します。 </summary>
         IAvatarMotionEvent AvatarMotionEvent { get; }
+        /// <summary> アバターの表情に関するAPIを取得します。 </summary>
         IAvatarFacial AvatarFacial { get; }
+        /// <summary> ユーザーの入力に関するAPIを取得します。 </summary>
         IInput Input { get; }
 
         /// <summary>
@@ -134,7 +140,7 @@ namespace VMagicMirror.Buddy
         // NOTE: まだ実装が安定してないのでダメ
         //IGui Gui { get; }
 
-        //TODO: 出力先ファイルがどこなのか説明を書きたい
+        //TODO: ログの出力先ファイルに言及したい。これはxrefをいい感じに書けば動線が作れるはず
         /// <summary>
         /// ログ情報を出力します。
         /// </summary>

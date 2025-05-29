@@ -78,7 +78,8 @@
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">Game Input also uses gamepad!</sys:String>
 
     <!-- Face Tracker -->
-    <sys:String x:Key="FaceTracker_SelectType">Face Tracking Type</sys:String>
+    <sys:String x:Key="FaceTracker_Title">Face Tracking</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType">Tracking Type: </sys:String>
     <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">Web Camera (Lite)</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">Web Camera (High Power)</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_ExTracker">Ex.Tracker</sys:String>
@@ -98,30 +99,19 @@
     
 - This mode is recommended to apply your motion to the avatar with high quality, without additional devices.
 - This mode uses higher load on PC than other modes.
-- In this mode, Face Switch and Perfect Sync features are partially available.
-- Some limitations exist for facial expression detection.</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice_Title">Detail...</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice" xml:space="preserve">In this mode, following facial expression cannot be detected.
-Face Switch feature for these condition does not work.
-
-- Cheek Puff
-- Tongue Out
-
-Use Extarnel Tracker mode to detect and apply these exressions.</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">Enable Forward/Backward Move</sys:String>
+- In this mode, Face Switch and Perfect Sync features are partially available.</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
 
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Current selected mode is Web Camera (Lite), but Web Camera (High Power) is automatically applied during hand tracking is enabled.</sys:String>            
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Web Camera (Lite) mode is unavailable when hand tracking is enabled. Please use Web Camera (High Power) instead.</sys:String>            
+    
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">Open Blink Tracking Settings</sys:String>
     
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">Feature to use external tracking application.
 
 - Can apply high quality face tracking data with less PC load.
-- For the avatar with perfect sync support, this mode is most recommended.
-        
-During this mode, following features are disabled.
-- Eye motion to see the mouse pointer</sys:String>
+- For the avatar with perfect sync support, this mode is most recommended.</sys:String>
     <sys:String x:Key="ExTracker_Enable">Enable External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">Apply LipSync using External Tracker Data</sys:String>    
 
@@ -166,8 +156,8 @@ Check "Keep LipSync" to make the lipsync continue.</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">Cheek puff</sys:String>
     
     <!-- Face Tracker Eye Calibration -->
-    <sys:String x:Key="EyeCalibration_Header">Eye Tracking Settings</sys:String>
-    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">This window supports settings about eye tracking input handling.
+    <sys:String x:Key="EyeCalibration_Header">Blink Tracking Settings</sys:String>
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">This window supports settings about blink tracking handling.
 The properties here only affects during "Web Camera (High Power)" is selected.
 
 - If you move your webcam or get new glasses, you might need to adjust the settings again.
@@ -307,6 +297,9 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Buddy_Log_FatalError_Copy">Copy Text</sys:String>
     <sys:String x:Key="Buddy_Log_FatalError_Ignore">Ignore Error</sys:String>
 
+    <sys:String x:Key="Buddy_InteractionApiEnabled_StandardEdition">Use Interaction API (In Standard Edition, it leads visual effect)</sys:String>
+    <sys:String x:Key="Buddy_InteractionApiEnabled_FullEdition">Use Interaction API (Enable in normal case)</sys:String>
+    
     <sys:String x:Key="Buddy_DeveloperMode">Developer Mode</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_Enabled">Developer Mode is Enabled</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_Instruction" xml:space="preserve">When buddies starts after Developer Mode is enabled,
@@ -474,8 +467,8 @@ If the face tracking works correctly, please ignore this warning.
 
     <!-- Face : Eye -->
     <sys:String x:Key="Motion_Eye">Eye</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint">Eye Look Target</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_Streaming">Look At:</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint">Eye Look Target: </sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_WebCamHighPower">Eye Look Target: The option is applied during camera is disabled</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_None">None</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">Mouse</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">User</sys:String>

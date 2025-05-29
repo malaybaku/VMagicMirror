@@ -101,7 +101,12 @@ namespace Baku.VMagicMirror
         {
             foreach (var message in messages)
             {
-                Debug.Log(message.message);
+                // NOTE: CS0436は既存のDLLを改めてビルドしていると発生する警告だが、あんまり意味がないのでメッセージの内訳ベースで弾いておく
+                // (コンパイラオプションで弾くよりコッチで無視するほうがラクなのでこうしている)
+                if (!message.message.Contains("warning CS0436"))
+                {
+                    Debug.Log(message.message);
+                }
             }
 
             if (File.Exists(OutputXmlPath))

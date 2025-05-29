@@ -28,14 +28,14 @@
 
     public class BuddySetting : SettingEntityBase
     {
-        public bool MainAvatarOutputActive { get; set; }
+        public bool InteractionApiEnabled { get; set; }
         public bool DeveloperModeActive { get; set; }
         public int DeveloperModeLogLevel { get; set; }
 
         // NOTE: Standard Editionでは MainAvatar~ をtrueにするとエフェクトがかかる仕様があるため、デフォルトでは無効
         public static BuddySetting Default { get; } = new BuddySetting()
         {
-            MainAvatarOutputActive = FeatureLocker.FeatureLocked ? false : true,
+            InteractionApiEnabled = FeatureLocker.FeatureLocked ? false : true,
             DeveloperModeActive = false,
             DeveloperModeLogLevel = 0,
         };

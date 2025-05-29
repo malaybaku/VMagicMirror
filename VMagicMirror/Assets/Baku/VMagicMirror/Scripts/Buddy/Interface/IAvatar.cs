@@ -33,7 +33,8 @@ namespace VMagicMirror.Buddy
         /// </para>
         event Action Unloaded;
     }
-    
+
+    /// <exclude /> 
     public interface IAvatarBodyParameter
     {
         //TODO: 身長っぽい値とかを入れるかもしれないやつ
@@ -118,6 +119,9 @@ namespace VMagicMirror.Buddy
         FaceSwitchState GetActiveFaceSwitch();
     }
 
+    /// <summary>
+    /// アバターの姿勢情報に関するAPIです。
+    /// </summary>
     public interface IAvatarPose
     {
         // NOTE: RootPositionはほぼゼロだが、Rotのほうはゲーム入力モードで回ることがあるので公開してもバチ当たらない…というモチベがある
@@ -214,6 +218,9 @@ namespace VMagicMirror.Buddy
         Quaternion GetBoneLocalRotation(HumanBodyBones bone, bool useParentBone = true);
     }
 
+    /// <summary>
+    /// アバターの動作をイベントとして検出できるAPIです。
+    /// </summary>
     public interface IAvatarMotionEvent
     {
         /// <summary>
@@ -263,6 +270,8 @@ namespace VMagicMirror.Buddy
     /// </summary>
     public enum HumanBodyBones
     {
+        // UnityEngineのenumと同じ値なので doc comment 無しでOKとする
+#pragma warning disable CS1591
         None = -1,
         Hips = 0,
         LeftUpperLeg,

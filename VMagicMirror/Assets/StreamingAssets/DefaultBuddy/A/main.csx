@@ -277,12 +277,12 @@ class RepeatInput
 class Sleeper
 {
     // NOTE: ある程度短くしないと寝まくる感じになるので注意、(特にアバター出力がオフの場合)
-    const float NoneInputTimeMin = 60f;
-    const float NoneInputTimeMax = 120f;
+    const float NoneInputTimeMin = 30f;
+    const float NoneInputTimeMax = 60f;
 
     const float SleepBahaviorPeriod = 10f;
     // NOTE: アバター出力が取れないときにあんまり長時間寝かせてもいけないので、最長でもあんまり寝ないようにはしておく
-    const float SleepMaxTime = 20f;
+    const float SleepMaxTime = 15f;
     const float SleepMinTime = 5f;
 
     const float MaxTiltAngle = 10f;
@@ -693,8 +693,9 @@ class InputBasedJumper
 // - NOTE: Jumpを削除してコッチのリアクションだけにすることを検討中
 class TalkReactionNod
 {
-    const float NodDuration = 0.5f;
+    const float NodDuration = 0.3f;
     const float NodAngle = 5f;
+    const float NodLocalPositionOffsetY = 5f;
     const float NodProbability = 0.65f;
     const float DoubleNodProbability = 0.3f;
 
@@ -723,7 +724,7 @@ class TalkReactionNod
         // NOTE: うなずきは禁止する理由が思いつかないので、プロパティによるon/offはサポートしない
         if (_status.CurrentAction != MyBuddyActions.None)
         {
-            if (!_isNodding)
+            if (_isNodding)
             {
                 _status.Sprite.Transform.LocalRotation = Quaternion.identity;
             }
@@ -782,6 +783,12 @@ class TalkReactionNod
 
         // 2回うなづくケースがあることに注意
         var rate = (_nodMotionTime % NodDuration) / NodDuration;
+
+        var cosCurve = 0.5f * (1 - (float)Math.Cos(rate * Math.PI * 2));
+        _status.Sprite.Transform.LocalPosition = new Vector2(
+            0, -cosCurve * NodLocalPositionOffsetY
+            ); 
+                   
         var flip = Api.Property.GetBool("flip");
         var rotationAngle = (float)Math.Sin(rate * Math.PI) * NodAngle * (flip ? 1 : -1);
         _status.Sprite.Transform.LocalRotation = Quaternion.Euler(0, 0, rotationAngle);

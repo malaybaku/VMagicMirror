@@ -78,7 +78,8 @@
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">ゲーム入力でもゲームパッドが使われています！</sys:String>
 
     <!-- Face Tracker -->
-    <sys:String x:Key="FaceTracker_SelectType">顔トラッキングの種類を選択</sys:String>
+    <sys:String x:Key="FaceTracker_Title">顔トラッキング</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType">トラッキングの種類を選択</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">webカメラ (軽量)</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">webカメラ (高品質)</sys:String>
     <sys:String x:Key="FaceTracker_SelectType_ExTracker">外部トラッキング (iFacialMocap)</sys:String>
@@ -96,33 +97,22 @@
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">webカメラ (高品質)</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">webカメラを用いて、高品質な顔トラッキングを行います。
     
-- PC単体で、アバターへの動きをなるべく正確に反映したいときに使用します。
-- 処理の負荷は高くなるため、ゲームなどを起動している場合は注意してください。
-- パーフェクトシンクの表情の一部が適用できます。
-- 検出できる表情には制限があります。</sys:String>
+- PC単体で、より正確にアバターへ動きを反映したいときに使用します。
+- 処理の負荷は高まるため、ゲームなどを同時に起動する場合は注意してください。
+- パーフェクトシンクが利用できますが、一部の表情は検出できません。</sys:String>
 
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice_Title">詳しく...</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_LimitationNotice" xml:space="preserve">webカメラ (高品質) の顔トラッキングでは、
-以下の表情はトラッキングできず、表情スイッチ機能も動作しません。
-
-- 頬をふくらませる
-- 舌を出す
-
-これらの表情を検出したい場合は、外部トラッキング機能を使用してください。</sys:String>
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_EnableMoveZ">手前・奥への移動を有効化</sys:String>
     <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
 
-    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">現在はwebカメラ (軽量) が選択されていますが、ハンドトラッキングが有効になっている間は自動で webカメラ (高品質) のトラッキングが適用されます。</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">ハンドトラッキングが有効になっている場合は webカメラ(軽量) は選択できません。かわりに webカメラ (高品質) を使用して下さい。</sys:String>
 
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">まばたきのトラッキング設定を開く</sys:String>
+    
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによる顔トラッキングを行います。
 
 - PCの負荷は抑えながら、高精度な顔トラッキングが利用できます。        
-- アバターがパーフェクトシンクに対応している場合、このモードが最も正確に表情を反映します。
-        
-外部トラッキングをオンにすると、以下の機能は一時的に無効化されます。
-- マウスポインタを目で追従する機能</sys:String>
+- アバターがパーフェクトシンクに対応している場合、このモードが最も正確に表情を反映します。</sys:String>
     <sys:String x:Key="ExTracker_Enable">外部トラッキングを有効化</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">リップシンクも外部トラッキングの値を適用</sys:String>    
 
@@ -308,8 +298,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Buddy_Log_FatalError_Copy">テキストをコピー</sys:String>
     <sys:String x:Key="Buddy_Log_FatalError_Ignore">無視して閉じる</sys:String>
 
-    <sys:String x:Key="Buddy_MainAvatarOutputActive_StandardEdition">メインアバターAPIを使用 (Standard Editionでオンにするとエフェクトがかかります)</sys:String>
-    <sys:String x:Key="Buddy_MainAvatarOutputActive_FullEdition">メインアバターAPIを使用 (通常はオンにします)</sys:String>
+    <sys:String x:Key="Buddy_InteractionApiEnabled_StandardEdition">インタラクションAPIを使用 (Standard Editionではオンにするとエフェクトがかかります)</sys:String>
+    <sys:String x:Key="Buddy_InteractionApiEnabled_FullEdition">インタラクションAPIを使用 (通常はオンのままにします)</sys:String>
 
     <sys:String x:Key="Buddy_DeveloperMode">開発者モード</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_Enabled">開発者モードが有効です</sys:String>    
@@ -455,7 +445,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_Face_EnableFaceTracking">顔をトラッキング</sys:String>
     <sys:String x:Key="Motion_Face_CameraName">カメラ</sys:String>    
     <sys:String x:Key="Motion_Face_Calibration">姿勢・表情を補正</sys:String>    
-    <sys:String x:Key="Motion_Face_EnableBodyLeanZ">顔トラッキング中の前後移動を有効化</sys:String>    
+    <sys:String x:Key="Motion_Face_EnableBodyLeanZ">手前・奥への移動を有効化</sys:String>    
     <sys:String x:Key="Motion_Face_AutoBlinkDuringFaceTracking">顔トラッキング中も自動でまばたき</sys:String>
     <sys:String x:Key="Motion_Face_DisableFaceTrackingHorizontalFlip">左右反転をオフにする</sys:String>
     <sys:String x:Key="Motion_Face_EnableImageBasedHandTracking">顔とセットで手もトラッキング</sys:String>
@@ -477,8 +467,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
             
     <!-- Face : Eye -->
     <sys:String x:Key="Motion_Eye">目・視線</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint">視線の動き</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_Streaming">視線:</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint">視線の動き:</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_WebCamHighPower">視線の動き: Webカメラがオフの場合に適用されます</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_None">固定</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">マウス</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">ユーザー</sys:String>

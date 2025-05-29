@@ -20,9 +20,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private readonly MediaPipeTrackerRuntimeSettingsRepository _settingsRepository;
         private readonly HorizontalFlipController _horizontalFlipController;
-        
-        // TODO: Dlib用のFaceTrackerもWebCamTextureを使っているが、集約したい
-        // 楽観的にはDlibFaceLandmarkも使うのやめれば解決する)
         private readonly WebCamTextureSource _webCamTextureSource;
 
         [Inject]
@@ -87,7 +84,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 );
             
             _receiver.AssignCommandHandler(
-                VmmCommands.EnableWebCameraHighPowerModeMoveZ,
+                VmmCommands.EnableBodyLeanZ,
                 m => _settingsRepository.EnableBodyMoveZAxis = m.ToBoolean()
                 );
             _receiver.AssignCommandHandler(
@@ -217,8 +214,7 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                     _isFaceTaskRunning,
                     (cameraDeviceName, x, y, z) => (cameraDeviceName, useWebCam: x || y || z)
                 )
-                // NOTE: 「ハンドトラッキングを停止し、すぐにハンド + 表情トラッキングを開始」のようなケースがありうるので、
-                // throttleをやっとかないとムダなWebCamTextureの再生成が発生してしまう
+                // NOTE: 「ハンドトラッキングを停止し、すぐにハンド + 表情トラッキングを開始」のようなケースの場合に最後の状態だけ通すようにしたい
                 .ThrottleFrame(1)
                 .DistinctUntilChanged()
                 .Subscribe(value => _webCamTextureSource.SetActive(value.useWebCam, value.cameraDeviceName))

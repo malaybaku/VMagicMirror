@@ -47,6 +47,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
         private readonly WebCamSettings _settings;
         
         private CancellationTokenSource _cts;
+        // NOTE: WebCamTextureはFaceTrackerと取り合いになるので、OccupyStatusProvider経由で調停しながら使う
+        // DlibFaceLandmarkDetectorを完全に廃止できたら調停云々のことは忘れてもOK
         private WebCamTexture _webCamTexture;
         private int _imageUpdatedCount;
         private long _imageUpdatedPrevTimestamp;
@@ -88,7 +90,6 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             }
         }
         
-        // NOTE: start/stopメソッドはVMMへの移植を想定して書いているが、VMMに持ってくまでは使わないでヨイ
         private void StartWebCam(string deviceName)
         {
             StopWebCam();
@@ -106,8 +107,10 @@ namespace Baku.VMagicMirror.MediaPipeTracker
             if (_webCamTexture != null)
             {
                 _webCamTexture.Stop();
+                UnityEngine.Object.Destroy(_webCamTexture);
             }
 
+            WebCamTextureOccupyStatusProvider.ReleaseMediaPipe();
             _webCamTexture = null;
             // NOTE: ここでWidth/Heightをリセットしてもいいが、しないでも破綻しないはずなので放っておく
         }
@@ -116,32 +119,38 @@ namespace Baku.VMagicMirror.MediaPipeTracker
 
         private async UniTaskVoid CaptureWebCamTextureAsync(int deviceIndex, CancellationToken cancellationToken)
         {
-            await PrepareWebCamTextureAsync(deviceIndex, cancellationToken);
-            
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            try
+            {
+                await PrepareWebCamTextureAsync(deviceIndex, cancellationToken);
 
-            // NOTE: 本家？の実装でも1F待ってるので合わせている
-            await UniTask.NextFrame(cancellationToken);
-            using var textureFrame = new Mediapipe.Unity.Experimental.TextureFrame(
-                _webCamTexture.width, _webCamTexture.height, TextureFormat.RGBA32
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                // NOTE: 本家？の実装でも1F待ってるので合わせている
+                await UniTask.NextFrame(cancellationToken);
+                using var textureFrame = new Mediapipe.Unity.Experimental.TextureFrame(
+                    _webCamTexture.width, _webCamTexture.height, TextureFormat.RGBA32
                 );
 
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                if (!_webCamTexture.didUpdateThisFrame)
+                while (!cancellationToken.IsCancellationRequested)
                 {
+                    if (!_webCamTexture.didUpdateThisFrame)
+                    {
+                        await UniTask.DelayFrame(1, PlayerLoopTiming.PreLateUpdate, cancellationToken);
+                        continue;
+                    }
+
+                    LogImageUpdated(stopwatch.ElapsedMilliseconds);
+                    _imageUpdated.OnNext(new WebCamImageSource(textureFrame, _webCamTexture,
+                        stopwatch.ElapsedMilliseconds));
                     await UniTask.DelayFrame(1, PlayerLoopTiming.PreLateUpdate, cancellationToken);
-                    continue;
                 }
-
-                LogImageUpdated(stopwatch.ElapsedMilliseconds);
-                // textureFrame.ReadTextureOnCPU(_webCamTexture, flipHorizontally: false, flipVertically: true);
-                // using var image = textureFrame.BuildCPUImage();
-                // _imageUpdated.OnNext(new WebCamImage(image, stopwatch.ElapsedMilliseconds));
-                _imageUpdated.OnNext(new WebCamImageSource(textureFrame, _webCamTexture, stopwatch.ElapsedMilliseconds));
-
-                await UniTask.DelayFrame(1, PlayerLoopTiming.PreLateUpdate, cancellationToken);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // 未知の例外の場合、とりあえずカメラの再起動がしやすい状態に持ち込んでおく
+                StopWebCam();
+                LogOutput.Instance.Write(ex);
             }
         }
 
@@ -170,6 +179,8 @@ namespace Baku.VMagicMirror.MediaPipeTracker
                 return;
             }
 
+            await WebCamTextureOccupyStatusProvider.OccupyMediaPipeAsync(cancellationToken);
+            
             var webCamDevice = WebCamTexture.devices[deviceIndex];
             _webCamTexture = new WebCamTexture(webCamDevice.name, _settings.Width, _settings.Height, _settings.Fps);
             _webCamTexture.Play();

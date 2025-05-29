@@ -277,12 +277,12 @@ class RepeatInput
 class Sleeper
 {
     // NOTE: ある程度短くしないと寝まくる感じになるので注意、(特にアバター出力がオフの場合)
-    const float NoneInputTimeMin = 60f;
-    const float NoneInputTimeMax = 120f;
+    const float NoneInputTimeMin = 30f;
+    const float NoneInputTimeMax = 60f;
 
     const float SleepBahaviorPeriod = 10f;
     // NOTE: アバター出力が取れないときにあんまり長時間寝かせてもいけないので、最長でもあんまり寝ないようにはしておく
-    const float SleepMaxTime = 20f;
+    const float SleepMaxTime = 15f;
     const float SleepMinTime = 5f;
 
     const float MaxTiltAngle = 10f;

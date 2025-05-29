@@ -34,6 +34,7 @@ The software distributed in binary style includes non-open source resources, lik
 
 - Paid Assets on Unity Asset Store
 - VRoid SDK
+- Comission based Assets for Buddy function (image and VRM files), in v4.0.0 and later
 
 </div>
 
@@ -58,7 +59,21 @@ About full edition:
 
 </div>
 
-#### 3. Refund is Unavailable
+
+#### 3. Assets for Built-in Buddy
+{: .doc-sec2 }
+
+The software distributed in binary style includes non-open source assets image and VRM files, which are for built-in Buddy in v4.0.0 and later.
+
+Copyright of those assets are as following.
+
+© 2025 denjiro99
+赤崎でんじろー (https://x.com/denjiro99)
+
+Those images and 3D data must not be extracted, reverse engineered, or redistributed individually.
+
+
+#### 4. Refund is Unavailable
 
 <div class="doc-ul" markdown="1">
 

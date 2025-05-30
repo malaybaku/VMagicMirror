@@ -86,6 +86,7 @@ namespace Baku.VMagicMirror.Buddy
         [SerializeField] private BuddyTransform2DInstance transform2DInstance;
         [SerializeField] private RectTransform effectorRectTransform;
         [SerializeField] private RawImage rawImage;
+        [SerializeField] private Shadow shadow;
 
         public BuddyTransform2DInstance GetTransform2DInstance() => transform2DInstance;
         
@@ -290,5 +291,9 @@ namespace Baku.VMagicMirror.Buddy
                 SetTexture(DefaultSpritesInstance.CurrentTexture, true);
             }
         }
+        
+        // NOTE: 下記はいずれもScript APIからではなく、BuddySprite2DInstanceの一覧を持ってるrepoから呼び出す想定
+        public void SetShadowEnabled(bool enable) => shadow.enabled = enable;
+        public void SetShadowColor(Color color) => shadow.effectColor = color;
     }
 }

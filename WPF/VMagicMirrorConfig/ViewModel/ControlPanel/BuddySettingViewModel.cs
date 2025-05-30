@@ -59,6 +59,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly LayoutSettingModel _layoutSettingModel;
         private readonly BuddySettingsSender _buddySettingsSender;
 
+        public bool FeatureLocked => FeatureLocker.FeatureLocked;
+
         public RProperty<bool> EnableDeviceFreeLayout => _layoutSettingModel.EnableDeviceFreeLayout;
 
         public string InteractionApiEnabledLabel
@@ -67,7 +69,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 if (IsInDesignMode)
                 {
-                    return "インタラクションAPIを使用";
+                    // NOTE: デザインチェックが目的のため、長いほうのテキストを入れとく
+                    return "インタラクションAPIを使用 (Standard Editionではオンにするとエフェクトがかかります)";
                 }
 
                 return FeatureLocker.FeatureLocked

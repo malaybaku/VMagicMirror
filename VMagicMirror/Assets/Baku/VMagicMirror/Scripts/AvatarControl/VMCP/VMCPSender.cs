@@ -15,7 +15,6 @@ namespace Baku.VMagicMirror.VMCP
     // ポイント
     // - 「開きっぱなし」感のある挙動は避けておく (※Sendだから開くとかあんまないんだけど)
     // - 60FPSで実行中もデータ送信は30FPSにできるようにする
-    
     // - 指のボーン姿勢や非標準ブレンドシェイプなどのデータは省けるようになっている 
     
     /// <summary>
@@ -23,7 +22,8 @@ namespace Baku.VMagicMirror.VMCP
     /// </summary>
     public class VMCPSender : PresenterBase
     {
-        // - Standard Editionではゲーム入力中はモーション送信が停止する (中身が有償アセットになる想定のとこなので、送れると無償再頒布みたくなってしまう)
+        // NOTE: Standard Editionではゲーム入力中はモーション送信が停止する。
+        // 中身が有償アセットになる想定の場所なので、あんま無制限に送れてもちょっと…ということでこうしている
         private const bool BlockMotionSendDuringGameInputLocomotion = FeatureLocker.IsFeatureLocked;
 
         private static readonly string[] BoneNames;
@@ -193,10 +193,9 @@ namespace Baku.VMagicMirror.VMCP
             return true;
         }
         
-        // NOTE: 送信開始に失敗してもUIの通知とかはしない (Serverならいざ知らずClientなら十分レアだと思うので)
+        // NOTE: 送信開始に失敗してもUIでの通知はしない (Serverならいざ知らず、Clientなら十分レアだと思うので)
         private void SetActive(bool active)
         {
-            //TODO: 無効な設定でactiveになったあとで設定が有効化したケースをケアしたい
             try
             {
                 if (active && HasValidSettings())

@@ -313,7 +313,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Buddy_Item_DeveloperModeUnapplied_Instruction" xml:space="preserve">このサブキャラは開発者モードがオフの状態で起動されているため、ログ出力の一部が取得できません。
 サブキャラを一旦オフにしてから再びオンにすると、より詳細なログが取得できます。</sys:String>
 
-    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">開発者モードの詳細…</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">開発者向けページを開く…</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_LogLevel">ログの詳細度: </sys:String>
     <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">ログファイルを開く</sys:String>
  
@@ -921,7 +921,7 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
 
-    <!-- TODO: メインのVMMのマニュアルと別のURLに差し替える -->
-    <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
+    <!-- NOTE: メインのdocとレポジトリが違うので注意 --> 
+    <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirrorBuddyDoc/</sys:String>
     
 </ResourceDictionary>

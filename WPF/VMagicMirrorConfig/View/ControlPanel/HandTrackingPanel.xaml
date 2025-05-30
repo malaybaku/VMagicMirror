@@ -53,7 +53,7 @@
                                 VerticalAlignment="Center"
                                 Margin="5,0"
                                 Command="{Binding OpenFullEditionDownloadUrlCommand}"
-                                Content="{DynamicResource HandTracking_GetFullEdition}"
+                                Content="{DynamicResource Common_GetFullEdition}"
                                 />
                         </Grid>
                     </md:ColorZone>
@@ -202,7 +202,7 @@
                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
-                                Content="{DynamicResource HandTracking_LearnMore}"
+                                Content="{DynamicResource Common_SeeMore}"
                                 Command="{Binding OpenHandTrackingPageUrlCommand}"
                                 />
                     </Grid>

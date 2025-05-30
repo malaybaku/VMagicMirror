@@ -192,8 +192,6 @@
     - 全身のポーズ
     - 表情 (BlendShape)
 </sys:String>
-    <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
-
     <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">受信元の設定</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_Header">詳細設定</sys:String>
@@ -230,7 +228,6 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
 それ以外の送信データはフルエディションと全く同じです。
 フルエディションでは視覚エフェクトを無効化できます。</sys:String>
     <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">データ送信中に視覚エフェクトを適用</sys:String>
-    <sys:String x:Key="VMCP_Send_GetFullEdition">フルエディションを入手</sys:String>
     <sys:String x:Key="VMCP_Send_IpAddressError">* IPアドレスの形式を確認してください。</sys:String>
     <sys:String x:Key="VMCP_Send_PortInputError">* 0 ~ 65535の範囲の値を指定して下さい。</sys:String>
 
@@ -240,7 +237,6 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
 顔トラッキングにもwebカメラを使う場合、顔と手で共通のカメラを使用します。</sys:String>
     <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">※基本エディションではハンドトラッキング中にエフェクトが適用されます。
 フルエディションではエフェクトを無効化できます。</sys:String>
-    <sys:String x:Key="HandTracking_GetFullEdition">フルエディションを入手</sys:String>
     <sys:String x:Key="HandTracking_Enable">ハンドトラッキングを有効化</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
@@ -261,7 +257,6 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
 - 手で顔を隠すことは避けてください。
 - 両手でのトラッキングが安定しない場合、片手だけを映してトラッキングするようにすると安定します。</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">未検出: 顔の横に手を挙げてみて下さい</sys:String>
-    <sys:String x:Key="HandTracking_LearnMore">詳細 (Web)</sys:String>    
     
     <!-- Accessory Panel -->
     <sys:String x:Key="Accessory_Header">アクセサリ</sys:String>

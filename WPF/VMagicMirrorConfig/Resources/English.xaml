@@ -192,8 +192,6 @@ Send:
 - Pose: Full Body Pose
 - Facial: Facial BlendShape
 </sys:String>
-    <sys:String x:Key="VMCP_SeeMore">See More...</sys:String>
-
     <sys:String x:Key="VMCP_Enable">Enable VMC Protocol Data Receive</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">Receive Settings</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_Header">Advanced Settings</sys:String>    
@@ -228,7 +226,6 @@ Use "Default" to apply VMC Protocol based hand pose.</sys:String>
 The data is exactly same as Full Edition, except that motion data will not sent during Game Input feature is active.
 Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">Show Effect</sys:String>
-    <sys:String x:Key="VMCP_Send_GetFullEdition">Get Full Edition</sys:String>
     <sys:String x:Key="VMCP_Send_IpAddressError">*Please check IP address format.</sys:String>
     <sys:String x:Key="VMCP_Send_PortInputError">*Port number must be in 0 - 65535.</sys:String>
 
@@ -238,7 +235,6 @@ Get Full Edition to remove the effect.</sys:String>
 When using webcam face tracking, same camera is used.</sys:String>
     <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">*Standard Edition shows visual effect during hand tracking.
 Get Full Edition to remove the effect.</sys:String>
-    <sys:String x:Key="HandTracking_GetFullEdition">Get Full Edition</sys:String>    
     <sys:String x:Key="HandTracking_Enable">Enable Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
@@ -260,7 +256,6 @@ Use "Default" to apply hand tracking result.</sys:String>
 - Keeping your entire hand within the camera frame helps stable tracking.
 - Avoid to hide the face with hands.
 - Single hand tracking is more stable than tracking two hands at the same time.</sys:String>
-    <sys:String x:Key="HandTracking_LearnMore">More...</sys:String>    
       
     <!-- Accessory Panel -->
     <sys:String x:Key="Accessory_Header">Accessory</sys:String>

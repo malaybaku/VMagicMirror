@@ -32,7 +32,8 @@
         public bool DeveloperModeActive { get; set; }
         public int DeveloperModeLogLevel { get; set; }
 
-        // NOTE: Standard Editionでは MainAvatar~ をtrueにするとエフェクトがかかる仕様があるため、デフォルトでは無効
+        // NOTE: Standard Editionでは InteractionApi == true のときに視覚エフェクトがかかる仕様がある。
+        // この制限がデフォルトでかかっていると邪魔になるので、デフォルトでは無効
         public static BuddySetting Default { get; } = new BuddySetting()
         {
             InteractionApiEnabled = FeatureLocker.FeatureLocked ? false : true,

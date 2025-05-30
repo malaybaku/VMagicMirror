@@ -116,7 +116,7 @@ namespace Baku.VMagicMirrorConfig
         public void ReloadAll()
         {
             // 現在メモリ上にある設定をファイルに書かれてたものとみなしてロードする。ファイルI/Oがちょっと減ってオシャレ
-            var saveDatas = BuddySaveDataRepository.ExportSetting(InteractionApiEnabled.Value, _buddies);
+            var saveDatas = BuddySaveDataRepository.ExportSetting(_buddies);
 
             foreach (var buddy in _buddies)
             {
@@ -171,7 +171,7 @@ namespace Baku.VMagicMirrorConfig
         /// アプリケーションの終了時に呼ぶことで、現在<see cref="Buddies"/>にある編集済みのプロパティ値を保存する
         /// </summary>
         public void SaveBuddySettings()
-            => BuddySaveDataRepository.SaveSetting(InteractionApiEnabled.Value, _buddies, SpecialFilePath.BuddySettingsFilePath);
+            => BuddySaveDataRepository.SaveSetting(_buddies, SpecialFilePath.BuddySettingsFilePath);
 
         public BuddyProperty? FindProperty(BuddyId buddyId, string name)
         {
@@ -221,7 +221,6 @@ namespace Baku.VMagicMirrorConfig
             }
 
             BuddiesReloaded?.Invoke(this, EventArgs.Empty);
-            InteractionApiEnabled.Value = data.InteractionApiEnabled;
         }
 
         /// <summary>

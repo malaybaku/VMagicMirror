@@ -282,9 +282,10 @@
                                Visibility="{Binding IsSendSettingsDirty.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                                />
 
-                    <StackPanel Orientation="Horizontal"
+                    <StackPanel 
+                        Orientation="Horizontal"
                         Margin="0,10,0,5" 
-                        IsEnabled="{Binding VMCPSendEnabled.Value}">
+                        >
 
                         <Button Padding="0"
                                 MinWidth="130"

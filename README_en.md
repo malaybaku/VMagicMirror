@@ -8,7 +8,7 @@ Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 v4.0.0
 
 * Author: Baxter
-* 2025/May/30
+* 2025/May/31
 
 The VRM avatar application without any special device.
 

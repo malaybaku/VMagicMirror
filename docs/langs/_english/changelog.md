@@ -11,7 +11,7 @@ lang: en
 #### v4.0.0
 {: .doc-sec2 }
 
-2025/05/30
+2025/05/31
 
 * Add: New Web Camera (High Power) face tracking option to improve face tracking precision.
 * Add: `Buddy` feature, to show additional characters. See detail at [Buddy](../buddy).

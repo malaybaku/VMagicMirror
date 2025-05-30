@@ -100,9 +100,6 @@ namespace Baku.VMagicMirror.Buddy
         public BuddySprite2DInstanceTransition Transition { get; set; } = BuddySprite2DInstanceTransition.None;
 
         private readonly Dictionary<string, Texture2D> _textures = new();
-        
-        // TODO: 公開しない方向で。
-        public RectTransform RectTransform => (RectTransform)transform;
 
         /// <summary> バウンド効果などのエフェクトを適用可能なRectTransformを取得する </summary>
         public RectTransform EffectorRectTransform => effectorRectTransform;

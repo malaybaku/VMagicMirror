@@ -139,7 +139,7 @@
     <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Webカメラ (軽量) では表情を検出できないため、この機能は動作しません。
 ただし、VMC Protocolでパーフェクトシンク用の表情を受信している場合、その表情にもとづいて表情スイッチが適用されます。</sys:String>
 
-    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Webカメラ (高品質) の顔トラッキングでは「舌を出す」と「頬をふくらませる」の表情は検出できないことに注意してください。</sys:String>
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Webカメラ (高品質) の使用中は、「頬をふくらませる」と「舌を出す」の表情は検出されません。</sys:String>
     
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
 「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。</sys:String>

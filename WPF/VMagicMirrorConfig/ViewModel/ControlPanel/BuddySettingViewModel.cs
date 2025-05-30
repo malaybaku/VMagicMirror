@@ -33,6 +33,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
             OpenDeveloperModeDocUrlCommand = new ActionCommand(OpenDeveloperDocUrl);
             ReloadAllCommand = new ActionCommand(() => _model.ReloadAll());
+            OpenFullEditionDownloadUrlCommand = new ActionCommand(() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040"));
 
             if (!IsInDesignMode)
             {
@@ -99,6 +100,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand OpenDocUrlCommand { get; }
         public ActionCommand OpenDeveloperModeDocUrlCommand { get; }
         public ActionCommand ReloadAllCommand { get; }
+        public ActionCommand OpenFullEditionDownloadUrlCommand { get; }
+
 
         private void OnBuddiesReloaded(object? sender, EventArgs e) => OnBuddiesReloaded();
         private void OnBuddiesReloaded()

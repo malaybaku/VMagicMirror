@@ -6,6 +6,8 @@
     <!-- Common -->
     <sys:String x:Key="Common_Cancel">Cancel</sys:String>
     <sys:String x:Key="Common_Close">Close</sys:String>
+    <sys:String x:Key="Common_SeeMore">See More...</sys:String>
+    <sys:String x:Key="Common_GetFullEdition">Get Full Edition</sys:String>
 
     <!-- Window Title Bar -->
     <sys:String x:Key="TitleBar_Help">Help</sys:String>
@@ -284,9 +286,10 @@ Disable foreground mode, or attach item to another one.</sys:String>
 
     <!-- Buddy -->
     <sys:String x:Key="Buddy_Header">Buddy</sys:String>
-    <sys:String x:Key="Buddy_Instruction" xml:space="preserve">Setup assets and scripts in "Buddy" folder to show buddy characters.</sys:String>
+    <sys:String x:Key="Buddy_Instruction">Setup assets and scripts in "Buddy" folder to show buddy characters.</sys:String>
+    <sys:String x:Key="Buddy_EditionLimitation" xml:space="preserve">*Standard Edition shows visual effect during "Use Interaction API" is enabled.
+Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="Buddy_OpenFolder">Open Folder</sys:String>
-    <sys:String x:Key="Buddy_SeeMore">See More...</sys:String>
     <sys:String x:Key="Buddy_ReloadAll">Reload All</sys:String>
 
     <sys:String x:Key="Buddy_Item_Reload">Reload</sys:String>

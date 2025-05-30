@@ -6,6 +6,8 @@
     <!-- Common -->
     <sys:String x:Key="Common_Cancel">キャンセル</sys:String>
     <sys:String x:Key="Common_Close">閉じる</sys:String>
+    <sys:String x:Key="Common_SeeMore">さらに詳しく...</sys:String>
+    <sys:String x:Key="Common_GetFullEdition">フルエディションを入手</sys:String>
 
     <!-- Window Title Bar -->
     <sys:String x:Key="TitleBar_Help">ヘルプ</sys:String>
@@ -285,9 +287,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     
     <!-- Buddy -->
     <sys:String x:Key="Buddy_Header">サブキャラ</sys:String>
-    <sys:String x:Key="Buddy_Instruction" xml:space="preserve">"Buddy"フォルダ内で適切に画像/3Dモデル/スクリプトを配置することで、サブキャラを表示できます。</sys:String>
+    <sys:String x:Key="Buddy_Instruction">"Buddy"フォルダ内で適切に画像/3Dモデル/スクリプトを配置することで、サブキャラを表示できます。</sys:String>
+    <sys:String x:Key="Buddy_EditionLimitation" xml:space="preserve">※基本エディションでは「インタラクションAPIを使用」をオンにするとエフェクトが適用されます。
+フルエディションではこの制限を解除してサブキャラを使用できます。</sys:String>
     <sys:String x:Key="Buddy_OpenFolder">フォルダを開く</sys:String>
-    <sys:String x:Key="Buddy_SeeMore">さらに詳しく...</sys:String>
     <sys:String x:Key="Buddy_ReloadAll">全て再読み込み</sys:String>
 
     <sys:String x:Key="Buddy_Item_Reload">再読み込み</sys:String>

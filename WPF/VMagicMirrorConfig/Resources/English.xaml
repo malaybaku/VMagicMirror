@@ -284,6 +284,7 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Buddy_Instruction">Setup assets and scripts in "Buddy" folder to show buddy characters.</sys:String>
     <sys:String x:Key="Buddy_EditionLimitation" xml:space="preserve">*Standard Edition shows visual effect during "Use Interaction API" is enabled.
 Get Full Edition to remove the effect.</sys:String>
+    <sys:String x:Key="Buddy_SyncShadowToMainAvatar">Enable Shadow when Avatar's Shadow Enabled</sys:String>
     <sys:String x:Key="Buddy_OpenFolder">Open Folder</sys:String>
     <sys:String x:Key="Buddy_ReloadAll">Reload All</sys:String>
 

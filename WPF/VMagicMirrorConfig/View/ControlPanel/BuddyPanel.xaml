@@ -74,8 +74,11 @@
                               IsChecked="{Binding InteractionApiEnabled.Value}"                              
                               />
 
-                    
-                    
+                    <CheckBox Content="{DynamicResource Buddy_SyncShadowToMainAvatar}"
+                              IsChecked="{Binding SyncShadowToMainAvatar.Value}"                              
+                              />
+
+
                     <Grid Margin="5">
                         <StackPanel Orientation="Horizontal">
                             <Button Style="{StaticResource MaterialDesignOutlinedButton}"

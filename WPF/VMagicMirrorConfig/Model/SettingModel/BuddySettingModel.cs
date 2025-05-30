@@ -65,6 +65,9 @@ namespace Baku.VMagicMirrorConfig
             InteractionApiEnabled = new RProperty<bool>(
                 defaultSetting.InteractionApiEnabled, 
                 v => _buddySettingsSender.SetInteractionApiEnabled(v));
+            SyncShadowToMainAvatar = new RProperty<bool>(
+                defaultSetting.SyncShadowToMainAvatar,
+                v => _buddySettingsSender.SetSyncShadowToMainAvatar(v));
             DeveloperModeActive = new RProperty<bool>(
                 defaultSetting.DeveloperModeActive,
                 v => _buddySettingsSender.SetDeveloperModeActive(v));
@@ -88,6 +91,8 @@ namespace Baku.VMagicMirrorConfig
         /// </summary>
         public event EventHandler<BuddyLogMessageEventArgs>? ReceivedLog;
 
+
+        public RProperty<bool> SyncShadowToMainAvatar { get; }
         public RProperty<bool> DeveloperModeActive { get; }
         public RProperty<bool> InteractionApiEnabled { get; }
         public RProperty<int> DeveloperModeLogLevel { get; }
@@ -186,12 +191,12 @@ namespace Baku.VMagicMirrorConfig
 
         public override void ResetToDefault()
         {
-            // TODO: Buddyのプロパティのリセットはしない、理由は2つ
+            // NOTE: Buddyのプロパティのリセットはしない、理由は2つ
             // - 内部挙動として、各Buddyの設定はメインの設定ファイルとは別である
             // - UIとして、Buddyのプロパティは各Buddyごとにリセットするほうが望ましいはず
-
             var defaultSetting = BuddySetting.Default;
             InteractionApiEnabled.Value = defaultSetting.InteractionApiEnabled;
+            SyncShadowToMainAvatar.Value = defaultSetting.SyncShadowToMainAvatar;
             DeveloperModeActive.Value = defaultSetting.DeveloperModeActive;
             DeveloperModeLogLevel.Value = defaultSetting.DeveloperModeLogLevel;
         }

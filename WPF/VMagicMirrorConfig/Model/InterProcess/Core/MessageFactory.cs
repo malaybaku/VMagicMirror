@@ -378,6 +378,7 @@ namespace Baku.VMagicMirrorConfig
         #region Buddy
 
         public static Message BuddySetInteractionApiEnabled(bool active) => BoolContent(VmmCommands.BuddySetInteractionApiEnabled, active);
+        public static Message BuddySetSyncShadowToMainAvatar(bool enabled) => BoolContent(VmmCommands.BuddySetSyncShadowEnabled, enabled);
         public static Message BuddySetDeveloperModeActive(bool active) => BoolContent(VmmCommands.BuddySetDeveloperModeActive, active);
         public static Message BuddySetDeveloperModeLogLevel(int level) => IntContent(VmmCommands.BuddySetDeveloperModeLogLevel, level);
 

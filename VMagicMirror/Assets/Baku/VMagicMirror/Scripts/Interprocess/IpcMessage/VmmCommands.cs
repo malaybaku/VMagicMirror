@@ -284,6 +284,7 @@
         
         // Buddy
         BuddySetInteractionApiEnabled,
+        BuddySetSyncShadowEnabled,
         BuddyEnable,
         BuddyDisable,
         BuddyRefreshData,

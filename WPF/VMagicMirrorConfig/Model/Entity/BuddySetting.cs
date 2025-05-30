@@ -31,6 +31,7 @@
         // NOTE: Standard Editionでは InteractionApi == true のときに視覚エフェクトがかかる仕様がある。
         // この制限がデフォルトでかかっていると邪魔になってしまうので、デフォルトでは無効にしている
         public bool InteractionApiEnabled { get; set; } = FeatureLocker.FeatureLocked ? false : true;
+        public bool SyncShadowToMainAvatar { get; set; } = true;
         public bool DeveloperModeActive { get; set; } = false;
         public int DeveloperModeLogLevel { get; set; } = (int)BuddyLogLevel.Fatal;
 

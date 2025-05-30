@@ -285,6 +285,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Buddy_Instruction">"Buddy"フォルダ内で適切に画像/3Dモデル/スクリプトを配置することで、サブキャラを表示できます。</sys:String>
     <sys:String x:Key="Buddy_EditionLimitation" xml:space="preserve">※基本エディションでは「インタラクションAPIを使用」をオンにするとエフェクトが適用されます。
 フルエディションではこの制限を解除してサブキャラを使用できます。</sys:String>
+    <sys:String x:Key="Buddy_SyncShadowToMainAvatar">サブキャラにも影を表示 (影がオンの時)</sys:String>
     <sys:String x:Key="Buddy_OpenFolder">フォルダを開く</sys:String>
     <sys:String x:Key="Buddy_ReloadAll">全て再読み込み</sys:String>
 

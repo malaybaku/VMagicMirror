@@ -81,6 +81,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         public RProperty<bool> InteractionApiEnabled => _model.InteractionApiEnabled;
+        public RProperty<bool> SyncShadowToMainAvatar => _model.SyncShadowToMainAvatar;
         public RProperty<bool> DeveloperModeActive => _model.DeveloperModeActive;
         public RProperty<int> DeveloperModeLogLevel => _model.DeveloperModeLogLevel;
 

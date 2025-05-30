@@ -103,6 +103,9 @@ namespace Baku.VMagicMirrorConfig
         public void SetInteractionApiEnabled(bool v)
             => _sender.SendMessage(MessageFactory.BuddySetInteractionApiEnabled(v));
 
+        public void SetSyncShadowToMainAvatar(bool v)
+                => _sender.SendMessage(MessageFactory.BuddySetSyncShadowToMainAvatar(v));
+
         public void SetDeveloperModeActive(bool v)
             => _sender.SendMessage(MessageFactory.BuddySetDeveloperModeActive(v));
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using UniRx;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.IK
@@ -28,6 +29,9 @@ namespace Baku.VMagicMirror.IK
         public AlwaysDownHandIkGenerator DownHand { get; set; } 
         public HandIkGeneratorDependency Dependency { get; private set; }
 
+        private readonly Subject<(ReactedHand hand, string key)> _keyDownMotionStarted = new();
+        public IObservable<(ReactedHand hand, string key)> KeyDownMotionStarted => _keyDownMotionStarted;
+        
         #region settings (WPFから飛んでくる想定のもの)
 
         /// <summary>手首から指先までの距離[m]。キーボードを打ってる位置をそれらしく補正するために使う。</summary>
@@ -166,7 +170,8 @@ namespace Baku.VMagicMirror.IK
             if (hand != ReactedHand.None)
             {
                 Dependency.Reactions.ParticleStore.RequestKeyboardParticleStart(pos);
-            }            
+                _keyDownMotionStarted.OnNext((hand, keyName));
+            }
         }
 
         private void OnKeyUp(string keyName)

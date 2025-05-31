@@ -1,0 +1,183 @@
+{
+  "id": "com.baxter.apiTestSprite2D",
+  "displayName": {
+    "ja": "Sprite(2D)のテスト",
+    "en": "Test Sprite(2D)"
+  },
+  "creator": "Baxter",
+  "version": "0.1.0",
+  "creatorUrl": "https://x.com/baku_dreameater",
+  "property": [
+    {
+      "name": "mainImage",
+      "displayName": { "ja": "メイン画像" },
+      "type": "transform2D"
+    },
+    {
+      "name": "flip",
+      "type": "bool",
+      "displayName": { "ja": "左右を反転" }
+    },
+    {
+      "name": "showSubSprite",
+      "type": "bool",
+      "displayName": { "ja": "サブ画像を表示" }      
+    },
+    {
+      "name": "subSpritePosition",
+      "type": "vector2",
+      "displayName": { "ja": "サブ画像のローカル位置" },
+      "description": { "ja": "flipオプションが有効な場合、左右逆の値が適用されます。" },
+      "vector2Data": {
+        "defaultValue": {
+          "x": 96,
+          "y": 96
+        }
+      }
+    },
+    {
+      "name": "setDefaultSprites",
+      "type": "action",
+      "displayName": { "ja": "デフォルト画像へ遷移" }
+    },
+    {
+      "name": "doTransition",
+      "type": "action",
+      "displayName": { "ja": "指定した画像へ遷移" }
+    },
+    {
+      "name": "transitionImage",
+      "type": "string",
+      "displayName": { "ja": "トランジション先の画像ファイル" },
+      "stringData": {
+        "isFilePath": true
+      }
+    },
+    {
+      "name": "transitionStyle",
+      "type": "int",
+      "displayName": { "ja": "トランジションの方式" },
+      "intData": {
+        "options": [
+          "None",
+          "Immediate",
+          "LeftFlip",
+          "RightFlip",
+          "BottomFlip"
+        ]
+      }
+    },
+    {
+      "name": "transitionDuration",
+      "type": "float",
+      "displayName": { "ja": "トランジションの時間" },
+      "floatData": {
+        "min": 0,
+        "max": 5,
+        "defaultValue": 0.5
+      }
+    },
+    {
+      "name": "applyFloatingEffect",
+      "type": "action",
+      "displayName": { "ja": "浮遊エフェクトの設定を適用" }
+    },
+    {
+      "name": "useFloatingEffect",
+      "type": "bool",
+      "displayName": { "ja": "浮遊エフェクトをオン" }
+    },
+    {
+      "name": "floatingEffectDuration",
+      "type": "float",
+      "displayName": { "ja": "浮遊エフェクトの周期(秒)" }
+    },
+    {
+      "name": "floatingEffectIntensity",
+      "type": "float",
+      "displayName": { "ja": "浮遊エフェクトの強さ" }
+    },
+    {
+      "name": "applyPuniEffect",
+      "type": "action",
+      "displayName": { "ja": "ぷにぷにエフェクトの設定を適用" }
+    },
+    {
+      "name": "usePuniEffect",
+      "type": "bool",
+      "displayName": { "ja": "ぷにぷにエフェクトをオン" }
+    },
+    {
+      "name": "puniEffectDuration",
+      "type": "float",
+      "displayName": { "ja": "ぷにぷにエフェクトの周期(秒)" }
+    },
+    {
+      "name": "puniEffectIntensity",
+      "type": "float",
+      "displayName": { "ja": "ぷにぷにエフェクトの強さ" }
+    },
+    {
+      "name": "puniEffectLoop",
+      "type": "bool",
+      "displayName": { "ja": "ぷにぷにエフェクトをループで実行" }
+    },
+    {
+      "name": "doJump",
+      "type": "action",
+      "displayName": { "ja": "ジャンプ" }
+    },
+    {
+      "name": "jumpDuration",
+      "type": "float",
+      "displayName": { "ja": "ジャンプ動作に使う時間(秒)" }
+    },
+    {
+      "name": "jumpHeight",
+      "type": "float",
+      "displayName": { "ja": "ジャンプの高さ" },
+      "floatData": {
+        "defaultValue": 64
+      }
+    },
+    {
+      "name": "jumpCount",
+      "type": "int",
+      "displayName": { "ja": "ジャンプ回数" }
+    },
+    {
+      "name": "applyVibrateEffect",
+      "type": "action",
+      "displayName": { "ja": "振動エフェクトの設定を適用" }
+    },
+     {
+      "name": "useVibrate",
+      "type": "bool",
+      "displayName": { "ja": "振動エフェクトとをオン" }
+    },
+    {
+      "name": "vibratePropertiesX",
+      "type": "vector3",
+      "displayName": { "ja": "X軸の振動サイズ/周期(hz)/位相オフセット" },
+      "vector3Data": {
+        "defaultValue": {
+          "x": 5,
+          "y": 10,
+          "z": 0
+        }
+      }
+    },
+    {
+      "name": "vibratePropertiesY",
+      "type": "vector3",
+      "displayName": { "ja": "Y軸の振動サイズ/周期(hz)/位相オフセット" },
+      "vector3Data": {
+        "defaultValue": {
+          "x": 5,
+          "y": 10,
+          "z": 0
+        }
+      }
+    }
+  ]
+}

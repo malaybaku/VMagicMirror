@@ -66,11 +66,7 @@ namespace Baku.VMagicMirrorConfig
 
             try
             {
-                //NOTE: ファイルロードではメッセージが凄い量になるので、
-                //コンポジットして「1つの大きいメッセージ」として書き込むためにこうしてます
-                _sender.StartCommandComposite();
                 LoadSettingSub(path, mode, content, fromAutomation);
-                _sender.EndCommandComposite();
             }
             catch (Exception ex)
             {
@@ -152,6 +148,7 @@ namespace Baku.VMagicMirrorConfig
                 ExternalTrackerSetting = _model.ExternalTracker.Save(),
                 AccessorySetting = _model.Accessory.Save(),
                 AutomationSetting = _model.Automation.Save(),
+                BuddySetting = _model.Buddy.Save(),
             };
 
             saveData.LastLoadedVrmName =
@@ -233,6 +230,7 @@ namespace Baku.VMagicMirrorConfig
                     _model.VMCP.Load(saveData.VMCPSetting);
                     _model.ExternalTracker.Load(saveData.ExternalTrackerSetting);
                     _model.Accessory.Load(saveData.AccessorySetting);
+                    _model.Buddy.Load(saveData.BuddySetting);
 
                     //固定スロットからロード/セーブする場合にオートメーション設定をいじってしまうと
                     //「オートメーションで設定変えたらオートメーションがオフになって反応しなくなった」という珍事が起きる。ポート番号が変わる場合も同様。
@@ -268,7 +266,7 @@ namespace Baku.VMagicMirrorConfig
         None,
         /// <summary>ローカルVRMの情報だけ読み込む</summary>
         Character,
-        /// <summary>キャラ以外の情報だけ読み込む</summary>
+        /// <summary>アバター以外の情報だけ読み込む</summary>
         NonCharacter,
         /// <summary>全て読み込む: 普通はこれ</summary>
         All,

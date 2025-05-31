@@ -22,8 +22,7 @@ namespace Baku.VMagicMirror
 
         //補間する場合のフレーム単位で考慮するウェイト。メンドいのでdeltaTimeには依存させない。
         //理想的には0.1secで表情が切り替わる
-        private static readonly float[] WeightCurve = new float[]
-        {
+        private static readonly float[] WeightCurve = {
             0f,
             0.1f,
             0.1f,
@@ -72,22 +71,22 @@ namespace Baku.VMagicMirror
         public float MouthWeight { get; private set; } = 1f;
 
         //NOTE: 何も適用してない状態はIsEmpty == trueになることで表現される
-        private readonly State _fromState = new State();
-        private readonly State _toState = new State();
+        private readonly State _fromState = new();
+        private readonly State _toState = new();
         //FaceSwitchはWtMより優先度が低く、「from/toどちらでも無いけど適用するかも」という状態になることがあるので、
         //必要になったら使えるようにするために値をキャッシュするやつ
-        private readonly State _faceSwitchState = new State();
+        private readonly State _faceSwitchState = new();
         
         //WtMかFace Switchが適用されると0からプラスの値に推移していく。
         //30fpsの場合、1フレームごとに2加算され、最大値は6。
         private int _faceAppliedCount;
 
-        private readonly ReactiveProperty<bool> _hasWordToMotionOutput = new ReactiveProperty<bool>(false);
-        private readonly ReactiveProperty<bool> _hasFaceSwitchOutput = new ReactiveProperty<bool>(false);
+        private readonly ReactiveProperty<bool> _hasWordToMotionOutput = new(false);
+        private readonly ReactiveProperty<bool> _hasFaceSwitchOutput = new(false);
 
-        public void Setup(ExternalTrackerFaceSwitchApplier faceSwitch, WordToMotionBlendShape wtmBlendShape)
+        public void Setup(FaceSwitchUpdater faceSwitchUpdater, WordToMotionBlendShape wtmBlendShape)
         {
-            faceSwitch.CurrentValue
+            faceSwitchUpdater.CurrentValue
                 .Subscribe(v =>
                 {
                     _hasFaceSwitchOutput.Value = v.HasValue;
@@ -102,7 +101,9 @@ namespace Baku.VMagicMirror
                 })
                 .AddTo(this);
             
+            // NOTE: コードのリファクタの関係でSkip(1)を入れてるが、別に必要ないかも
             wtmBlendShape.CurrentValue
+                .Skip(1)
                 .Subscribe(v =>
                 {
                     _hasWordToMotionOutput.Value = v.HasValue;

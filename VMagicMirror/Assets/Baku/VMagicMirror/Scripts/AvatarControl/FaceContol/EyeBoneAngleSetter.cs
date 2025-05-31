@@ -1,3 +1,4 @@
+using Baku.VMagicMirror.MediaPipeTracker;
 using UnityEngine;
 using UniVRM10;
 using Zenject;
@@ -35,10 +36,11 @@ namespace Baku.VMagicMirror
         private EyeBoneAngleMapApplier _boneApplier;
         private EyeBlendShapeMapApplier _blendShapeApplier;
         private EyeLookAt _eyeLookAt;
+        private MediaPipeEyeJitter _mediaPipeEyeJitter;
         private CarHandleBasedFK _carHandleBasedFk;
         //NOTE: BlendShapeResultSetterの更に後処理として呼び出す(ホントは前処理で値を入れたいが、Execution Order的に難しい)
         private ExpressionAccumulator _expressionAccumulator;
-
+        
         private Transform _leftEye;
         private Transform _rightEye;
         private Quaternion _leftEyeInitialLocalRot = Quaternion.identity;
@@ -60,6 +62,9 @@ namespace Baku.VMagicMirror
         /// <summary> 目の移動ウェイトを小さくしたい場合、毎フレーム指定する </summary>
         public float ReserveWeight { get; set; } = 1f;
 
+        public Quaternion LeftEyeLocalRotation { get; private set; } = Quaternion.identity;
+        public Quaternion RightEyeLocalRotation { get; private set; } = Quaternion.identity;
+        
         [Inject]
         public void Initialize(
             IMessageReceiver receiver, 
@@ -67,12 +72,14 @@ namespace Baku.VMagicMirror
             EyeLookAt eyeLookAt,
             NonImageBasedMotion nonImageBasedMotion,
             CarHandleBasedFK carHandleBasedFk,
+            MediaPipeEyeJitter mediaPipeEyeJitter,
             ExpressionAccumulator expressionAccumulator)
         {
             _nonImageBasedMotion = nonImageBasedMotion;
             _boneApplier = new EyeBoneAngleMapApplier(vrmLoadable);
             _blendShapeApplier = new EyeBlendShapeMapApplier(vrmLoadable);
             _carHandleBasedFk = carHandleBasedFk;
+            _mediaPipeEyeJitter = mediaPipeEyeJitter;
             _expressionAccumulator = expressionAccumulator;
             _eyeLookAt = eyeLookAt;
 
@@ -110,7 +117,7 @@ namespace Baku.VMagicMirror
                 //NOTE: UniVRMの適用タイミングに依存したくないので、自前で勝手に仮想ボーンを入れておく
                 _leftEye = leftEyeBone.ControlTarget;
                 _leftEyeInitialLocalRot = _leftEye.localRotation;
-                _leftEyeInitialLocalRot = _leftEye.rotation;
+                _leftEyeInitialGlobalRot = _leftEye.rotation;
             }
             _hasRightEyeBone = controlRigBones.TryGetValue(HumanBodyBones.RightEye, out var rightEyeBone);
             if (_hasRightEyeBone && rightEyeBone != null)
@@ -130,6 +137,9 @@ namespace Baku.VMagicMirror
 
             _leftEye = null;
             _rightEye = null;
+            
+            LeftEyeLocalRotation = Quaternion.identity;
+            RightEyeLocalRotation = Quaternion.identity;
         }
 
         private void Start()
@@ -139,6 +149,7 @@ namespace Baku.VMagicMirror
             {
                 _nonImageBasedMotion,
                 eyeJitter,
+                _mediaPipeEyeJitter,
                 externalTrackerEyeJitter,
                 eyeDownMotionController,
                 _carHandleBasedFk,
@@ -259,6 +270,7 @@ namespace Baku.VMagicMirror
 
         private void ApplyLeftEyeLocalRotation(Quaternion rot)
         {
+            LeftEyeLocalRotation = rot;
             _leftEye.localRotation =
                 _leftEyeInitialLocalRot *
                 Quaternion.Inverse(_leftEyeInitialGlobalRot) *
@@ -267,6 +279,7 @@ namespace Baku.VMagicMirror
 
         private void ApplyRightEyeLocalRotation(Quaternion rot)
         {
+            RightEyeLocalRotation = rot;
             _rightEye.localRotation =
                 _rightEyeInitialLocalRot *
                 Quaternion.Inverse(_rightEyeInitialGlobalRot) *

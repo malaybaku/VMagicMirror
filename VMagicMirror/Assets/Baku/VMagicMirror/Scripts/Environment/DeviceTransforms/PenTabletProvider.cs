@@ -23,6 +23,16 @@ namespace Baku.VMagicMirror
         [SerializeField] private Vector3 baseRotation = new Vector3(60f, 0f, 0f);
         [SerializeField] private Vector3 baseScale = new Vector3(.3f, .2f, 1f);
         
+        private PenTabletVisibilityView _visibilityView = null;
+        public PenTabletVisibilityView GetVisibilityView()
+        {
+            if (_visibilityView == null)
+            {
+                _visibilityView = GetComponent<PenTabletVisibilityView>();
+            }
+            return _visibilityView;
+        }
+        
         private PenController _penController = null;
         
         [Inject]
@@ -67,6 +77,8 @@ namespace Baku.VMagicMirror
         public Vector3 Up => transform.up;
         /// <summary> タブレットの表面と垂直に、タブレットから手を離す方向のベクトルを取得します。 </summary>
         public Vector3 Normal => -transform.forward;
+
+        public Pose GetPose() => new Pose(transform.position, transform.rotation);
 
         /// <summary>
         /// タブレットの現在の回転を、水平上向きを基準として取得します。

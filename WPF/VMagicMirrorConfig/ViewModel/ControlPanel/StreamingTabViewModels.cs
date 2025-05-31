@@ -107,7 +107,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
         public RProperty<bool> EnableFaceTracking => _setting.EnableFaceTracking;
         public RProperty<string> CameraDeviceName { get; }
-        public RProperty<bool> EnableWebCamHighPowerMode => _setting.EnableWebCamHighPowerMode;
 
         public bool ShowInstallPathWarning { get; } 
         public RProperty<bool> ShowMicrophoneVolume => _microphoneStatus.ShowMicrophoneVolume;
@@ -166,6 +165,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel.StreamingTabViewModels
 
         public ActionCommand OpenGameInputSettingWindowCommand { get; }
         public RProperty<bool> EnableTwistBodyMotion => _model.EnableTwistBodyMotion;
+
+        public RProperty<bool> EnableNoHandTrackMode => _model.EnableNoHandTrackMode;
 
         //モデル層から引っ張った方がよいかもしれないが、それは無理に頑張らないでもよいかも
         public MotionModeSelectionViewModel[] KeyboardAndMouseMotions

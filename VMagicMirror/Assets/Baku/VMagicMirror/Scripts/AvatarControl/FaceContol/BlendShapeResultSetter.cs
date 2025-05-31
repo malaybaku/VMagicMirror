@@ -13,46 +13,49 @@ namespace Baku.VMagicMirror
         [SerializeField] private LipSyncIntegrator lipSync = null;
         [SerializeField] private FaceControlManager eyes = null;
         [SerializeField] private ExternalTrackerPerfectSync perfectSync = null;
-        [SerializeField] private ExternalTrackerFaceSwitchApplier faceSwitch = null;
         [SerializeField] private NeutralClipSettings neutralClipSettings = null;
         [SerializeField] private BlendShapeInterpolator blendShapeInterpolator = null;
-        
-        private ExternalTrackerDataSource _exTracker = null;
-        private WordToMotionBlendShape _wtmBlendShape = null;
-        private VMCPBlendShape _vmcpBlendShape = null;
-        private ExpressionAccumulator _accumulator = null;
-        private bool _hasModel = false;
+
+        private FaceSwitchUpdater _faceSwitchUpdater;
+        private WordToMotionBlendShape _wtmBlendShape;
+        private VMCPBlendShape _vmcpBlendShape;
+        private ExpressionAccumulator _accumulator;
+        private UserOperationBlendShapeResultRepository _resultRepository;
+        private bool _hasModel;
         
         //NOTE: ここのコンポーネントの書き順は実は優先度を表している: 後ろのやつほど上書きの権利が強い
         [Inject]
         public void Initialize(
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable, 
-            ExternalTrackerDataSource exTracker,
+            FaceSwitchUpdater faceSwitchUpdater,
             WordToMotionBlendShape wtmBlendShape,
             VMCPBlendShape vmcpBlendShape,
-            ExpressionAccumulator accumulator
+            ExpressionAccumulator accumulator,
+            UserOperationBlendShapeResultRepository resultRepository
             )
         {
-            _exTracker = exTracker;
+            _faceSwitchUpdater = faceSwitchUpdater;
             _wtmBlendShape = wtmBlendShape;
             _vmcpBlendShape = vmcpBlendShape;
             _accumulator = accumulator;
+            _resultRepository = resultRepository;
             
             vrmLoadable.VrmLoaded += info => _hasModel = true;
             vrmLoadable.VrmDisposing += () => _hasModel = false;
             
-            blendShapeInterpolator.Setup(faceSwitch, wtmBlendShape);
+            blendShapeInterpolator.Setup(faceSwitchUpdater, wtmBlendShape);
         }
 
         private void LateUpdate()
         {
-            faceSwitch.UpdateCurrentValue();
+            _faceSwitchUpdater.UpdateCurrentValue(Time.deltaTime);
             _wtmBlendShape.UpdateCurrentValue();
             blendShapeInterpolator.UpdateWeight();
             
             if (!_hasModel)
             {
+                _resultRepository.SetAsInactive();
                 return;
             }
 
@@ -68,6 +71,7 @@ namespace Baku.VMagicMirror
                 WriteClips();
             }
             
+            SetUserOperationBlendShape();
             _accumulator.Apply();
         }
 
@@ -84,7 +88,7 @@ namespace Baku.VMagicMirror
                     //そもそもリップシンクは切ってよいケース: シンプルにゼロ埋め + WtMを適用
                     _wtmBlendShape.Accumulate(_accumulator);
                 }
-                else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                else if (perfectSync.IsConnected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
                     _wtmBlendShape.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);
@@ -107,34 +111,34 @@ namespace Baku.VMagicMirror
             
             //FaceSwitchが適用 > PerfectSync、Blinkは確定で無視。
             //リップシンクは設定しだいで適用。
-            if (faceSwitch.HasClipToApply)
+            if (_faceSwitchUpdater.HasClipToApply)
             {
                 //NOTE: WtMと同じく、パーフェクトシンクの口と組み合わす場合のコストに多少配慮した書き方。
-                if (!faceSwitch.KeepLipSync)
+                if (!_faceSwitchUpdater.KeepLipSync)
                 {
-                    faceSwitch.Accumulate(_accumulator);
+                    _faceSwitchUpdater.Accumulate(_accumulator);
                 }
-                else if (_exTracker.Connected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
+                else if (perfectSync.IsConnected && perfectSync.IsActive && perfectSync.PreferWriteMouthBlendShape)
                 {
-                    faceSwitch.Accumulate(_accumulator);
+                    _faceSwitchUpdater.Accumulate(_accumulator);
                     perfectSync.Accumulate(_accumulator, false, true, false);
                 }
                 else if (_vmcpBlendShape.IsActive.Value)
                 {
-                    faceSwitch.Accumulate(_accumulator);
+                    _faceSwitchUpdater.Accumulate(_accumulator);
                     _vmcpBlendShape.AccumulateLipSyncBlendShape(_accumulator);
                 }
                 else
                 {
                     //FaceSwitch + AIUEOを適用するケース: 重複がAIUEOの5個だけなのでザツにやっちゃう
-                    faceSwitch.Accumulate(_accumulator);
+                    _faceSwitchUpdater.Accumulate(_accumulator);
                     lipSync.Accumulate(_accumulator);
                 }
 
                 neutralClipSettings.AccumulateOffsetClip(_accumulator);
                 return;
             }
-            
+
             //Perfect Syncが適用 > Blinkは確定で無視。
             //リップシンクは…ここも設定しだいで適用。
             if (perfectSync.IsReadyToAccumulate)
@@ -232,6 +236,26 @@ namespace Baku.VMagicMirror
             
             neutralClipSettings.AccumulateNeutralClip(_accumulator, blendShapeInterpolator.NonMouthWeight);
             neutralClipSettings.AccumulateOffsetClip(_accumulator);
+        }
+
+        private void SetUserOperationBlendShape()
+        {
+            if (_wtmBlendShape.HasBlendShapeToApply)
+            {
+                _resultRepository.SetWordToMotionResult(_wtmBlendShape.CurrentValue.Value);
+            }
+            else if (_faceSwitchUpdater.HasClipToApply)
+            {
+                _resultRepository.SetFaceSwitchResult(_faceSwitchUpdater.CurrentValue.Value);
+            }
+            else if (_vmcpBlendShape.IsActive.Value)
+            {
+                _resultRepository.SetVmcpResult(_vmcpBlendShape.GetCurrentValues());
+            }
+            else
+            {
+                _resultRepository.SetAsInactive();
+            }
         }
     }
 }

@@ -9,7 +9,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         public abstract void StopReceive();
 
         public abstract IFaceTrackSource FaceTrackSource { get; }
-        public virtual bool SupportHandTracking => false;
         public virtual bool SupportFacePositionOffset => false;
 
         /// <summary> 顔トラッキング情報が更新されるとUIスレッド上で発火します。 </summary>
@@ -42,8 +41,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         
         /// <summary> 現時点での顔トラッキング情報を取得します </summary>
         IFaceTrackSource FaceTrackSource { get; }
-        /// <summary> このトラッキングがハンドトラッキングをサポートするかどうかを取得します </summary>
-        bool SupportHandTracking { get; }
         /// <summary> このトラッキングが頭部位置のオフセットを取得するかどうかを取得します </summary>
         bool SupportFacePositionOffset { get; }
 
@@ -64,7 +61,6 @@ namespace Baku.VMagicMirror.ExternalTracker
         void Calibrate();
         /// <summary> 文字列としてキャリブレーション情報を取得したり保存したりします。 </summary>
         string CalibrationData { get; set; }
-
         
         /// <summary>
         /// 1付近の値(0.95とか)を指定して、表情や首の姿勢を原点(正面直立 + 無表情)に引き寄せます。

@@ -31,9 +31,9 @@ namespace Baku.VMagicMirrorConfig
 
         /// <summary> 
         /// ユーザーがフォーカスしていると考えられるファイルのインデックスを取得します。
-        /// ソフト起動以降でファイルをセーブするか、あるいはキャラ情報以外をロードしたときに、
+        /// ソフト起動以降でファイルをセーブするか、あるいはアバター情報以外をロードしたときに、
         /// そのファイルのインデックスになります。
-        /// キャラのみをロードした場合、インデックスは変更されません。
+        /// アバターのみをロードした場合、インデックスは変更されません。
         /// </summary>
         public int FocusedFileIndex { get; private set; } = 0;
 
@@ -53,8 +53,8 @@ namespace Baku.VMagicMirrorConfig
         }
 
         /// <summary>
-        /// インデックスと、各情報(キャラとそれ以外)をロードするかどうかを指定してファイルをロードします。
-        /// キャラをロードする場合、必要なら実際のロードメッセージまで実行します。
+        /// インデックスと、各情報(アバターとそれ以外)をロードするかどうかを指定してファイルをロードします。
+        /// アバターをロードする場合、必要なら実際のロードメッセージまで実行します。
         /// </summary>
         /// <param name="index"></param>
         /// <param name="loadCharacter"></param>
@@ -86,7 +86,7 @@ namespace Baku.VMagicMirrorConfig
             var loadedVrmPath = _setting.LastVrmLoadFilePath;
             var loadedVRoidModelId = _setting.LastLoadedVRoidModelId;
 
-            //NOTE: この時点ではキャラを切り替えたわけではないので、実態に合わすため元に戻してから続ける。
+            //NOTE: この時点ではアバターを切り替えたわけではないので、実態に合わすため元に戻してから続ける。
             _setting.LastVrmLoadFilePath = prevVrmPath;
             _setting.LastLoadedVRoidModelId = prevVRoidModelId;
 
@@ -96,7 +96,7 @@ namespace Baku.VMagicMirrorConfig
                 )
             {
                 LogOutput.Instance.Write($"Load Local VRM, setting no={index}, automation={fromAutomation}, path={loadedVrmPath}");
-                _sender.SendMessage(MessageFactory.Instance.OpenVrm(loadedVrmPath));
+                _sender.SendMessage(MessageFactory.OpenVrm(loadedVrmPath));
                 _setting.OnLocalModelLoaded(loadedVrmPath);
             }
             else if(content != SettingFileReadContent.NonCharacter && 
@@ -109,7 +109,7 @@ namespace Baku.VMagicMirrorConfig
                 VRoidModelLoadRequested?.Invoke(loadedVRoidModelId);
             }
 
-            //NOTE: キャラだけ切り替えるのはファイルロード扱いせず、前のファイルがロードされているように見なす。
+            //NOTE: アバターだけ切り替えるのはファイルロード扱いせず、前のファイルがロードされているように見なす。
             if (loadNonCharacter)
             {
                 FocusedFileIndex = index;

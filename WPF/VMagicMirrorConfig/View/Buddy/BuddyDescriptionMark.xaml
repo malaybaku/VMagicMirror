@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="Baku.VMagicMirrorConfig.View.BuddyDescriptionMark"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:view="clr-namespace:Baku.VMagicMirrorConfig.View"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             MinWidth="20" MinHeight="20"
+             Margin="4,0"
+             d:DesignHeight="20" d:DesignWidth="20">
+    <!-- StringがBindされてることが前提になってる -->
+    <UserControl.Resources>
+        <view:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid Width="20" Height="20"
+          Visibility="{Binding 
+              Converter={StaticResource StringNotEmptyToVisibilityConverter}, 
+              FallbackValue=Visible}"
+          >
+        <md:PackIcon Kind="QuestionMarkCircleOutline"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     ToolTipService.InitialShowDelay="0"
+                     >
+            <md:PackIcon.ToolTip>
+                <TextBlock Text="{Binding}"
+                           MinWidth="100"
+                           MaxWidth="300"
+                           TextWrapping="Wrap"
+                           />
+            </md:PackIcon.ToolTip>
+        </md:PackIcon>
+    </Grid>
+</UserControl>

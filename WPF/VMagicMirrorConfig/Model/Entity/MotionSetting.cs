@@ -46,13 +46,21 @@
         public bool EnableImageBasedHandTracking { get; set; } = false;
         public bool ShowEffectDuringHandTracking { get; set; } = false;
         public bool DisableHandTrackingHorizontalFlip { get; set; } = false;
+        public int HandTrackingMotionScale { get; set; } = 100;
+        // NOTE: X/Yいずれもcentimeter単位
+        public int HandTrackingMotionOffsetX { get; set; } = 0;
+        public int HandTrackingMotionOffsetY { get; set; } = 0;
+
 
         public string CameraDeviceName { get; set; } = "";
 
-        /// <summary>
-        /// NOTE: この値はUIに出す必要はないが、起動時に空でなければ送り、Unityからデータが来たら受け取り、終了時にはセーブする。
-        /// </summary>
+        // NOTE: キャリブレーション結果の値は次のような性質を持つ
+        // - GUIに出す必要はない
+        // - 起動時に空でなければUnityへ送る
+        // - Unityからデータが来たら受け取る
+        // - 終了時にはファイルに保存する
         public string CalibrateFaceData { get; set; } = "";
+        public string CalibrateFaceDataHighPower { get; set; } = "";
 
         public int FaceDefaultFun { get; set; } = 0;
 
@@ -60,6 +68,14 @@
         public string FaceOffsetClip { get; set; } = "";
 
         public bool DisableBlendShapeInterpolate { get; set; } = false;
+
+        public bool EnableWebCameraHighPowerModeLipSync { get; set; } = true;
+
+        public int WebCamEyeOpenBlinkValue { get; set; } = 20;
+        public int WebCamEyeCloseBlinkValue { get; set; } = 50;
+        public bool WebCamEyeApplySameBlinkValueBothEye { get; set; } = false;
+        public bool WebCamEyeApplyCorrectionToPerfectSync { get; set; } = true;
+
 
         #endregion
 
@@ -141,6 +157,15 @@
             LipSyncMicrophoneDeviceName = "";
             MicrophoneSensitivity = 0;
             AdjustLipSyncByVolume = true;
+
+            EnableWebCamHighPowerMode = false;
+            EnableWebCameraHighPowerModeLipSync = false;
+            // NOTE: ちょっとややこしいが、この設定はトラッキングの設定であってアバターの目に関する設定ではないので、
+            // FaceEyeSettingのリセットと紐づける必要はない
+            WebCamEyeOpenBlinkValue = 20;
+            WebCamEyeCloseBlinkValue = 50;
+            WebCamEyeApplySameBlinkValueBothEye = false;
+            WebCamEyeApplyCorrectionToPerfectSync = false;
         }
 
         public void ResetFaceEyeSetting()

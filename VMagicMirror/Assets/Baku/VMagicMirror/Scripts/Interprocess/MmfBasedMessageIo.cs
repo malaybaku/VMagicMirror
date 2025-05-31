@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Baku.VMagicMirror.IpcMessage;
 using Baku.VMagicMirror.Mmf;
+using Cysharp.Threading.Tasks;
 using Zenject;
 
 namespace Baku.VMagicMirror.InterProcess
@@ -10,24 +12,22 @@ namespace Baku.VMagicMirror.InterProcess
         IMessageReceiver, IMessageSender, IMessageDispatcher,
         IReleaseBeforeQuit, ITickable
     {
-        private MmfBasedMessageIo()
+        [Inject]
+        public MmfBasedMessageIo()
         {
-            _server = new MemoryMappedFileConnectServer();
+            _server = new MemoryMappedFileConnector();
             _server.ReceiveCommand += OnReceiveCommand;
             _server.ReceiveQuery += OnReceiveQuery;
-            //NOTE: awaitする意味がないのでawaitをつけず、かつコレは警告が出るので止めてます。
-            //コンストラクタでいきなりStartするのがマナー悪い、というのは無くもないです
-#pragma warning disable CS4014
-            _server.Start(MmfChannelIdSource.ChannelId);
-#pragma warning restore CS4014
+            _server.StartAsServer(MmfChannelIdSource.ChannelId);
         }
 
-        private readonly IpcMessageDispatcher _dispatcher = new IpcMessageDispatcher();
-        private readonly MemoryMappedFileConnectServer _server;
+        private readonly IpcMessageDispatcher _dispatcher = new();
+        private readonly MemoryMappedFileConnector _server;
 
         public event Action<Message> SendingMessage;
-
-        public void SendCommand(Message message)
+        public bool LastMessageSent => _server.LastMessageSent;
+        
+        public void SendCommand(Message message, bool isLastMessage = false)
         {
             try
             {
@@ -37,16 +37,20 @@ namespace Baku.VMagicMirror.InterProcess
             {
                 LogOutput.Instance.Write(ex);                
             }
-            _server.SendCommand(message.Command + ":" + message.Content);
+
+            _server.SendCommand(message.Data, isLastMessage);
         }
 
-        public async Task<string> SendQueryAsync(Message message) 
-            => await _server.SendQueryAsync(message.Command + ":" + message.Content);
+        public async Task<string> SendQueryAsync(Message message)
+        {
+            var data = await _server.SendQueryAsync(message.Data);
+            return new ReceivedCommand(data).GetStringValue();
+        }
         
-        public void AssignCommandHandler(string command, Action<ReceivedCommand> handler)
+        public void AssignCommandHandler(VmmCommands command, Action<ReceivedCommand> handler)
             => _dispatcher.AssignCommandHandler(command, handler);
 
-        public void AssignQueryHandler(string query, Action<ReceivedQuery> handler)
+        public void AssignQueryHandler(VmmCommands query, Action<ReceivedQuery> handler)
             => _dispatcher.AssignQueryHandler(query, handler);
 
         public void ReceiveCommand(ReceivedCommand command) => _dispatcher.ReceiveCommand(command);
@@ -58,43 +62,25 @@ namespace Baku.VMagicMirror.InterProcess
 
         public async Task ReleaseResources()
         {
-            await _server.StopAsync();
-        }
-
-        public void Tick() => _dispatcher.Tick();
-
-        private void OnReceiveCommand(object sender, ReceiveCommandEventArgs e)
-        {
-            string rawContent = e.Command;
-            int i = FindColonCharIndex(rawContent);
-            string command = (i == -1) ? rawContent : rawContent.Substring(0, i);
-            string content = (i == -1) ? "" : rawContent.Substring(i + 1);
-
-            _dispatcher.ReceiveCommand(new ReceivedCommand(command, content));
-        }
-        
-        private async void OnReceiveQuery(object sender, ReceiveQueryEventArgs e)
-        {
-            string rawContent = e.Query.Query;
-            int i = FindColonCharIndex(rawContent);
-            string command = (i == -1) ? rawContent : rawContent.Substring(0, i);
-            string content = (i == -1) ? "" : rawContent.Substring(i + 1);
-
-            string res = await _dispatcher.ReceiveQuery(new ReceivedQuery(command, content));
-            e.Query.Reply(res);
-        }
-        
-        //コマンド名と引数名の区切り文字のインデックスを探します。
-        private static int FindColonCharIndex(string s)
-        {
-            for (int i = 0; i < s.Length; i++)
+            // NOTE: MMFの処理はメインスレッドと関係ないとこで走っているので明示的に戻らせる
+            await using (UniTask.ReturnToMainThread())
             {
-                if (s[i] == ':')
-                {
-                    return i;
-                }
+                await _server.StopAsync();
             }
-            return -1;
+        }
+
+        void ITickable.Tick() => _dispatcher.Tick();
+
+        private void OnReceiveCommand(ReadOnlyMemory<byte> data)
+        {
+            _dispatcher.ReceiveCommand(new ReceivedCommand(data));
+        }
+        
+        private async void OnReceiveQuery((ushort id, ReadOnlyMemory<byte> data) value)
+        {
+            var res = await _dispatcher.ReceiveQuery(new ReceivedQuery(value.data));
+            var body = MessageSerializer.String((ushort)VmmCommands.Unknown, res);
+            _server.SendQueryResponse(value.id, body);
         }
     }
 }

@@ -85,7 +85,7 @@ namespace Baku.VMagicMirror
             
             _receiver.AssignCommandHandler(
                 VmmCommands.SetHandDownModeCustomPose,
-                command => ApplyHandDownPose(command.Content)
+                command => ApplyHandDownPose(command.GetStringValue())
             );
 
             _receiver.AssignCommandHandler(
@@ -348,7 +348,7 @@ namespace Baku.VMagicMirror
         private void SendPose()
         {
             _sender.SendCommand(
-                MessageFactory.Instance.UpdateCustomHandDownPose(JsonUtility.ToJson(_currentPose))
+                MessageFactory.UpdateCustomHandDownPose(JsonUtility.ToJson(_currentPose))
                 );
         }
         

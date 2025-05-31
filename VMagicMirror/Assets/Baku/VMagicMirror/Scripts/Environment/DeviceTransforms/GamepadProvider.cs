@@ -34,6 +34,19 @@ namespace Baku.VMagicMirror
         [SerializeField] private Transform modelScaleTarget = null;
         public Transform ModelScaleTarget => modelScaleTarget;
 
+        private GamepadVisibilityView _visibilityView = null;
+        public GamepadVisibilityView GetVisibilityView()
+        {
+            if (_visibilityView == null)
+            {
+                _visibilityView = GetComponent<GamepadVisibilityView>();
+            }
+            return _visibilityView;
+        }
+        
+        // NOTE: ゲームパッドは動きが追加で入っているので、GamepadProvider.transformを返すとビジュアル的にちょっとズレた位置になってしまう
+        public Pose GetModelRootPose() => new(modelRoot.position, modelRoot.rotation); 
+
         [Inject]
         public void Initialize(IDevicesRoot parent) => transform.parent = parent.Transform;
 
@@ -91,6 +104,7 @@ namespace Baku.VMagicMirror
         {
             switch (key)
             {
+                case GamepadKey.Start:
                 case GamepadKey.B:
                 case GamepadKey.A:
                 case GamepadKey.X:
@@ -98,6 +112,7 @@ namespace Baku.VMagicMirror
                 case GamepadKey.RShoulder:
                 case GamepadKey.RTrigger:
                     return ReactedHand.Right;
+                case GamepadKey.Select:
                 case GamepadKey.UP:
                 case GamepadKey.RIGHT:
                 case GamepadKey.DOWN:

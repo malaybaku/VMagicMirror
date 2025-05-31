@@ -22,13 +22,19 @@ namespace Baku.VMagicMirror
 
         private Color _color = Color.white;
         private Bloom _bloom;
+        private AmbientOcclusion _ambientOcclusion;
         private VmmAlphaEdge _vmmAlphaEdge;
         private VmmVhs _vmmVhs;
         private VmmMonochrome _vmmMonochrome;
         private bool _handTrackingEnabled = false;
         //NOTE: この値自体はビルドバージョンによらずfalseがデフォルトで良いことに注意。
-        //制限版でGUI側にtrue相当の値が表示されるが、これはGUI側が別途決め打ちしてくれてる
+        // 制限版でGUI側にtrue相当の値が表示されるが、これはGUI側が別途決め打ちしてくれてる。
+        // ハンドトラッキング以外の条件 (VMCP, サブキャラの一部機能)についても同様
         private bool _showEffectDuringTracking = false;
+
+        private bool _vmcpSendEnabled = false;
+        private bool _showEffectDuringVmcpSendEnabled = false;
+        private bool _buddyInteractionApiEnabled = false;
 
         private bool _windowFrameVisible = true;
         private bool _enableOutlineEffect = false;
@@ -90,7 +96,7 @@ namespace Baku.VMagicMirror
                 VmmCommands.BloomColor,
                 message =>
                 {
-                    float[] bloomRgb = message.ToColorFloats();
+                    var bloomRgb = message.ToColorFloats();
                     SetBloomColor(bloomRgb[0], bloomRgb[1], bloomRgb[2]);
                 });
 
@@ -140,11 +146,54 @@ namespace Baku.VMagicMirror
                     _showEffectDuringTracking = message.ToBoolean();
                     UpdateRetroEffectStatus();
                 });
+
+            receiver.AssignCommandHandler(
+                VmmCommands.AmbientOcclusionEnable,
+                message => _ambientOcclusion.active = message.ToBoolean()
+                );
+
+            receiver.AssignCommandHandler(
+                VmmCommands.AmbientOcclusionIntensity,
+                message => _ambientOcclusion.intensity.value = message.ParseAsPercentage()
+                );
+
+            receiver.AssignCommandHandler(
+                VmmCommands.AmbientOcclusionColor,
+                message =>
+                {
+                    var rgb = message.ToColorFloats();
+                    _ambientOcclusion.color.value = new Color(rgb[0], rgb[1], rgb[2]);
+
+                });
+
+            receiver.AssignCommandHandler(
+                VmmCommands.EnableVMCPSend,
+                message =>
+                {
+                    _vmcpSendEnabled = message.ToBoolean();
+                    UpdateRetroEffectStatus();
+                });
+            receiver.AssignCommandHandler(
+                VmmCommands.ShowEffectDuringVMCPSendEnabled,
+                message =>
+                {
+                    _showEffectDuringVmcpSendEnabled = message.ToBoolean();
+                    UpdateRetroEffectStatus();
+                });
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.BuddySetInteractionApiEnabled,
+                message =>
+                {
+                    _buddyInteractionApiEnabled = message.ToBoolean();
+                    UpdateRetroEffectStatus();
+                });
         }
         
         private void Start()
         {
             _bloom = postProcess.profile.GetSetting<Bloom>();
+            _ambientOcclusion = postProcess.profile.GetSetting<AmbientOcclusion>();
             _vmmAlphaEdge = postProcess.profile.GetSetting<VmmAlphaEdge>();
             _vmmMonochrome = postProcess.profile.GetSetting<VmmMonochrome>();
             _vmmVhs = postProcess.profile.GetSetting<VmmVhs>();
@@ -260,8 +309,12 @@ namespace Baku.VMagicMirror
         
         private void UpdateRetroEffectStatus()
         {
-            bool enableEffect =_handTrackingEnabled &&
-                (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking);
+            // サブキャラは他2つと違って「わざとエフェクトを表示する」のオプションはない
+            // NOTE: 常時エフェクトを利かす独立なオプションを「エフェクト」タブに増設したほうが建て付けが良いかも…
+            var enableEffect =
+                (_handTrackingEnabled && (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking)) ||
+                (_vmcpSendEnabled && (FeatureLocker.IsFeatureLocked || _showEffectDuringVmcpSendEnabled)) ||
+                (_buddyInteractionApiEnabled && FeatureLocker.IsFeatureLocked);
 
             _vmmMonochrome.active = enableEffect;
             _vmmVhs.active = enableEffect;

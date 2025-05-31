@@ -58,7 +58,7 @@ namespace Baku.VMagicMirrorConfig
         private async Task<string[]> GetCustomMotionClipNamesAsync(bool vrmaOnly)
         {
             var rawClipNames = await _sender.QueryMessageAsync(
-                MessageFactory.Instance.GetAvailableCustomMotionClipNames(vrmaOnly));
+                MessageFactory.GetAvailableCustomMotionClipNames(vrmaOnly));
             return rawClipNames.Split('\t')
                 .Where(v => !string.IsNullOrEmpty(v))
                 .ToArray();

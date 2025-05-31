@@ -14,7 +14,7 @@ namespace Baku.VMagicMirrorConfig
         {
             _sender = sender;
             ImageQualityNames = new ReadOnlyObservableCollection<string>(_imageQualityNames);
-            ImageQuality = new RProperty<string>("", s => _sender.SendMessage(MessageFactory.Instance.SetImageQuality(s)));
+            ImageQuality = new RProperty<string>("", s => _sender.SendMessage(MessageFactory.SetImageQuality(s)));
         }
 
         private readonly IMessageSender _sender;
@@ -26,7 +26,7 @@ namespace Baku.VMagicMirrorConfig
 
         public async Task InitializeQualitySelectionsAsync()
         {
-            string res = await _sender.QueryMessageAsync(MessageFactory.Instance.GetQualitySettingsInfo());
+            string res = await _sender.QueryMessageAsync(MessageFactory.GetQualitySettingsInfo());
             var info = ImageQualityInfo.ParseFromJson(res);
             if (info.ImageQualityNames != null &&
                 info.CurrentQualityIndex >= 0 &&
@@ -43,7 +43,7 @@ namespace Baku.VMagicMirrorConfig
 
         public async Task ResetAsync()
         {
-            var qualityName = await _sender.QueryMessageAsync(MessageFactory.Instance.ApplyDefaultImageQuality());
+            var qualityName = await _sender.QueryMessageAsync(MessageFactory.ApplyDefaultImageQuality());
             if (ImageQualityNames.Contains(qualityName))
             {
                 ImageQuality.Value = qualityName;

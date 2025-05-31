@@ -74,12 +74,14 @@ namespace Baku.VMagicMirror.VMCP
             
             _messageReceiver.AssignCommandHandler(
                 VmmCommands.SetVMCPSources,
-                command => RefreshSettings(command.Content)
+                command => RefreshSettings(command.GetStringValue())
                 );
             
             //NOTE: 「複数ソースの受信設定していたのがほぼ同時に始まる」というケースに備えてDebounceしておく
+            // 最初の1回はアプリケーション起動後のやつなので無視
             _connectedValue
                 .Throttle(TimeSpan.FromSeconds(0.5f))
+                .Skip(1)
                 .Subscribe(_ => NotifyConnectStatus())
                 .AddTo(this);
 
@@ -392,7 +394,7 @@ namespace Baku.VMagicMirror.VMCP
         private void NotifyConnectStatus()
         {
             var json = new VMCPReceiveStatus(_connected).ToJson();
-            _messageSender.SendCommand(MessageFactory.Instance.NotifyVmcpReceiveStatus(json));
+            _messageSender.SendCommand(MessageFactory.NotifyVmcpReceiveStatus(json));
         }
     }
 }

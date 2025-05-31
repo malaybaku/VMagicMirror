@@ -41,9 +41,16 @@ sysinfo.txt
 /VMagicMirror/Logs/
 /VMagicMirror/UserSettings/
 
+# Ignore debug wpf file path setting. The file is used in Unity Editor play mode if the file exists
+/VMagicMirror/debug_wpf_exe_path.txt
+
 # Streaming Assets (now only include DlibFaceLandmarkDetector, so it must be ignored)
 /VMagicMirror/Assets/StreamingAssets/
 /VMagicMirror/Assets/StreamingAssets.meta
+
+# Default Buddy Scripts are included, though default buddy assets is not in the directory
+!/VMagicMirror/Assets/StreamingAssets/DefaultBuddy/
+!/VMagicMirror/Assets/StreamingAssets/DefaultBuddy.meta
 
 # Assets to ignore
 
@@ -75,6 +82,8 @@ sysinfo.txt
 /VMagicMirror/Assets/uOSC/
 /VMagicMirror/Assets/NuGet/
 /VMagicMirror/Assets/NuGetPackages/
+/VMagicMirror/Assets/CSharpScripting/
+/VMagicMirror/Assets/BuddyPresetData/
 
 /VMagicMirror/Assets/AniLipSync-VRM.meta
 /VMagicMirror/Assets/OpenCVforUnity.meta
@@ -102,6 +111,8 @@ sysinfo.txt
 /VMagicMirror/uWindowCapture.log
 /VMagicMirror/Assets/NuGet.meta
 /VMagicMirror/Assets/NuGetPackages.meta
+/VMagicMirror/Assets/CSharpScripting.meta
+/VMagicMirror/Assets/BuddyPresetData.meta
 
 
 # Assets to ignore (from BOOTH)
@@ -122,6 +133,9 @@ sysinfo.txt
 /VMagicMirror/Assets/ThirdPartyMotions.meta
 /VMagicMirror/Assets/ThirdPartyMotions/
 
+# Embedded package which should be installed by unitypackage based operation
+/VMagicMirror/Packages/com.github.homuler.mediapipe/
+
 # NOT ignore solution / project files of WPF
 !/WPF/**/*.sln
 !/WPF/**/*.csproj
@@ -138,3 +152,14 @@ sysinfo.txt
 docs/_site/
 docs/.jekyll-cache/
 docs/Gemfile.lock
+
+# Ignore docfx output (they should be moved to docs repo)
+docs_buddy/_site/
+docs_buddy/api/
+
+# Ignore buddy sample files' asset data
+/BuddySample/**/*.png
+/BuddySample/**/*.vrm
+/BuddySample/**/*.glb
+/BuddySample/**/*.mp3
+/BuddySample/**/*.wav

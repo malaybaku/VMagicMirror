@@ -39,8 +39,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                 () => SettingResetUtils.ResetSingleCategoryAsync(_model.ResetFaceBlendShapeSetting)
                 );
 
-            CalibrateFaceCommand = new ActionCommand(() => model.RequestCalibrateFace());
-
             if (IsInDesignMode)
             {
                 LipSyncMicrophoneDeviceName = new RProperty<string>("");
@@ -107,14 +105,10 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public RProperty<bool> EnableBlinkAdjust => _model.EnableBlinkAdjust;
         public RProperty<bool> EnableVoiceBasedMotion => _model.EnableVoiceBasedMotion;
         public RProperty<bool> DisableFaceTrackingHorizontalFlip => _model.DisableFaceTrackingHorizontalFlip;
-        public RProperty<bool> EnableWebCamHighPowerMode => _model.EnableWebCamHighPowerMode;
-
+        
         public RProperty<string> CameraDeviceName { get; }
         public ReadOnlyObservableCollection<string> CameraNames => _deviceListSource.CameraNames;
 
-        public ActionCommand CalibrateFaceCommand { get; }
-
-        public RProperty<string> CalibrateFaceData => _model.CalibrateFaceData;
         public RProperty<int> FaceDefaultFun => _model.FaceDefaultFun;
 
         public ReadOnlyObservableCollection<string> BlendShapeNames => _blendShapeNameStore.BlendShapeNames;
@@ -127,10 +121,6 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         #endregion
 
         #region Eye
-
-        public RProperty<bool> UseLookAtPointNone => _model.UseLookAtPointNone;
-        public RProperty<bool> UseLookAtPointMousePointer => _model.UseLookAtPointMousePointer;
-        public RProperty<bool> UseLookAtPointMainCamera => _model.UseLookAtPointMainCamera;
 
         public RProperty<bool> MoveEyesDuringFaceClipApplied => _model.MoveEyesDuringFaceClipApplied;
         public RProperty<bool> UseAvatarEyeBoneMap => _model.UseAvatarEyeBoneMap;

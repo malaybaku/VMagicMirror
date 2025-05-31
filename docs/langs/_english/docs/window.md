@@ -19,7 +19,7 @@ lang: en
 
 - `BG Image`: Set or clear background image. 
 - `Transparent Window`: Check to make avatar window transparent. Available in Streaming tab. 
-- `(When Transparent) Drag Character`: Check to enable drag-based move the avatar window when transparent. Available in Streaming tab. 
+- `(When Transparent) Drag Avatar`: Check to enable drag-based move the avatar window when transparent. Available in Streaming tab. 
 - `Always Foreground`: Check to place the avatar almost always foreground. Checked by default.
 - `Reset Position`: Press this button to move avatar window just right to the control panel window. Use this function when you lost where the avatar window is.
 

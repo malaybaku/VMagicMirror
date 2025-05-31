@@ -145,28 +145,30 @@ namespace Baku.VMagicMirror
 
             var rootFolder = Path.GetDirectoryName(savePath);
 
-            string streamingAssetDir = Path.Combine(rootFolder, "VMagicMirror_Data", "StreamingAssets");
+            var streamingAssetDir = Path.Combine(rootFolder, "VMagicMirror_Data", "StreamingAssets");
             if (!Directory.Exists(streamingAssetDir))
             {
                 Debug.LogWarning("Folder was not found: " + streamingAssetDir);
                 return;
             }
 
-            //VRMLoaderUI以外のディレクトリは削除
+            // フォルダ: VRMLoaderUI, MediaPipeTrackerだけがruntimeで必要
             foreach (var dir in Directory.GetDirectories(streamingAssetDir))
             {
-                if (Path.GetFileName(dir) != StreamingAssetFileNames.LoaderUiFolder)
+                if (Path.GetFileName(dir) != StreamingAssetFileNames.LoaderUiFolder &&
+                    Path.GetFileName(dir) != StreamingAssetFileNames.MediaPipeTrackerFolder &&
+                    Path.GetFileName(dir) != StreamingAssetFileNames.DefaultBuddyFolder)
                 {
                     Directory.Delete(dir, true);
                 }
             }
             
-            //顔トラッキングのモデルファイル以外のファイルも削除
+            // AllowListベースで、関係ないファイルを削除
             foreach (var file in Directory.GetFiles(streamingAssetDir))
             {
-                string fileName = Path.GetFileName(file);
-                if (fileName != StreamingAssetFileNames.DnnModelFileName &&
-                    fileName != StreamingAssetFileNames.DlibFaceTrackingDataFileName)
+                var fileName = Path.GetFileName(file);
+                if (fileName != StreamingAssetFileNames.DlibFaceTrackingDataFileName &&
+                    fileName != StreamingAssetFileNames.BuddyApiXmlDocFileName)
                 {
                     File.Delete(file);
                 }

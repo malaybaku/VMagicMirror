@@ -1,0 +1,69 @@
+{
+  "id": "com.baxter.default_a",
+  "displayName": {
+    "ja": "リスナー",
+    "en": "Listener"
+  },
+  "creator": "Baxter",
+  "version": "1.0.0",
+  "creatorUrl": "https://x.com/baku_dreameater",
+  "property": [
+    {
+      "name": "mainImage",
+      "type": "transform2D",
+      "displayName": {
+        "ja": "サブキャラの配置",
+        "en": "Character's Layout"
+      },
+      "description": {
+        "ja": "サブキャラの配置を指定します。",
+        "en": "Specify the layout of the sub-character."
+      },
+      "transform2DData": {
+        "defaultValue": {
+          "position": {
+            "x": 200,
+            "y": 50
+          },
+          "scale": 1.0
+        }
+      }
+    },
+    {
+      "name": "flip",
+      "type": "bool",
+      "displayName": {
+        "ja": "左右を反転",
+        "en": "Flip Horizontally"
+      },
+      "description": {
+        "ja": "オンにするとキャラクターの向きが反転します。",
+        "en": "Check to flip the character horizontally."
+      }
+    },
+    {
+      "name": "enableFacialSync",
+      "type": "bool",
+      "displayName": { "ja": "メインアバターの表情に同期", "en": "Enable Facial Reaction" },
+      "boolData": { "defaultValue": true }
+    },
+    {
+      "name": "enableSleep",
+      "type": "bool",
+      "displayName": { "ja": "居眠り動作をオン", "en": "Enable Sleep Behavior" },
+      "boolData": { "defaultValue": true }
+    },
+    {
+      "name": "enableJumpReaction",
+      "type": "bool",
+      "displayName": { "ja": "入力にジャンプで反応", "en": "Jump on Input" },
+      "boolData": { "defaultValue": true }
+    },
+    {
+      "name": "enableRepeatInput",
+      "type": "bool",
+      "displayName": { "ja": "連打での表情切り替えをオン", "en": "React to Repeated Input" },
+      "boolData": { "defaultValue": true }
+    }    
+  ]
+}

@@ -10,6 +10,13 @@ namespace Baku.VMagicMirror
     /// <typeparam name="T"></typeparam>
     public class Atomic<T>
     {
+        public Atomic() : this(default) { }
+
+        public Atomic(T initialValue)
+        {
+            _value = initialValue;
+        }
+        
         private readonly object _lock = new object();
 
         private T _value = default;

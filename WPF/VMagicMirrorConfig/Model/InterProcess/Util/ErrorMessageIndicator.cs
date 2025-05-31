@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Baku.VMagicMirror;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Windows;
 
@@ -12,16 +13,16 @@ namespace Baku.VMagicMirrorConfig
             receiver.ReceivedCommand += OnReceiveCommand;
         }
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
-            if (e.Command != ReceiveMessageNames.RequestShowError)
+            if (e.Command is not VmmServerCommands.RequestShowError)
             {
                 return;
             }
 
             try
             {
-                var jobj = JObject.Parse(e.Args);
+                var jobj = JObject.Parse(e.GetStringValue());
                 var rawLevel = jobj["level"];
                 var rawContent = jobj["content"];
                 var rawTitle = jobj["title"];

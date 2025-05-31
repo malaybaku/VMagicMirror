@@ -9,8 +9,19 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class LateUpdateSourceAfterFinalIK : MonoBehaviour
     {
+        private readonly Subject<Unit> _onPreLateUpdate = new();
+        /// <summary>
+        /// <see cref="OnLateUpdate"/> の直前に発火する。ちょっとだけタイミング早めに実行したいものはここでSubscribeする
+        /// </summary>
+        public IObservable<Unit> OnPreLateUpdate => _onPreLateUpdate;
+
         private readonly Subject<Unit> _onLateUpdate = new();
         public IObservable<Unit> OnLateUpdate => _onLateUpdate;
-        private void LateUpdate() => _onLateUpdate.OnNext(Unit.Default);
+        
+        private void LateUpdate()
+        {
+            _onPreLateUpdate.OnNext(Unit.Default);
+            _onLateUpdate.OnNext(Unit.Default);
+        }
     }
 }

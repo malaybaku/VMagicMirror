@@ -1,4 +1,5 @@
-﻿using Baku.VMagicMirror.ExternalTracker;
+﻿using System.ComponentModel;
+using Baku.VMagicMirror.ExternalTracker;
 using UnityEngine;
 using Zenject;
 
@@ -10,7 +11,6 @@ namespace Baku.VMagicMirror.Installer
         [SerializeField] private RawInputChecker robustRawInputChecker = null;
         [SerializeField] private MousePositionProvider mousePositionProvider = null;
         [SerializeField] private FaceTracker faceTracker = null;
-        [SerializeField] private HandTracker handTracker = null;
         [SerializeField] private ExternalTrackerDataSource externalTracker = null;
         [SerializeField] private XInputGamePad gamepadListener = null;
         [SerializeField] private MidiInputObserver midiInputObserver = null;
@@ -23,12 +23,12 @@ namespace Baku.VMagicMirror.Installer
                 .AsCached();
             container.BindInstance(mousePositionProvider);
             container.BindInstance(faceTracker);
-            container.BindInstance(handTracker);
+            
+            container.Bind<FaceSwitchExtractor>().AsSingle();
             container.BindInstance(externalTracker);
-            container.BindInstance(externalTracker.FaceSwitchExtractor);
+            container.BindInterfacesAndSelfTo<FaceSwitchUpdater>().AsSingle();
             container.BindInstance(gamepadListener);
             container.BindInstance(midiInputObserver);
-            //container.BindInstance(openCvFacePose);
 
             //終了前に監視処理を安全にストップさせたいものは呼んでおく
             container.Bind<IReleaseBeforeQuit>()

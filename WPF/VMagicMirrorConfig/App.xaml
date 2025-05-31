@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              StartupUri="View/Windows/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -40,6 +41,9 @@
                 <Setter Property="Width" Value="80"/>
                 <Setter Property="Height" Value="30"/>
                 <Setter Property="Margin" Value="10,5"/>
+                <!-- NOTE: 縦paddingを切らないと g,p,q などの文字の下が切れてしまうので明示的に0にしている -->
+                <Setter Property="Padding" Value="4,0" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
             </Style>
 
 
@@ -209,7 +213,61 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <!-- この辺はBuddyのプロパティUI関連のスタイル -->
+
+            <GridLength x:Key="BuddyPropertyLabelWidth">180</GridLength>
+            <GridLength x:Key="BuddyPropertyHelpMarkWidth">28</GridLength>
+            <sys:Double x:Key="BuddyPropertyHelpMarkWidthDouble">28</sys:Double>
+            <Style TargetType="Grid" x:Key="BuddyPropertyGrid">
+                <Setter Property="Height" Value="24"/>
+                <Setter Property="Margin" Value="0,2" />
+            </Style>
+
+            <Style TargetType="TextBlock" x:Key="BuddyPropertyLabel">
+                <Setter Property="Margin" Value="4,0" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="TextWrapping" Value="NoWrap" />
+                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            </Style>
+
+            <Style TargetType="TextBlock" x:Key="BuddyPropertyAxisLabelBase">
+                <Setter Property="Margin" Value="2,0,0,0" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
+            <Style TargetType="TextBlock" x:Key="BuddyPropertyLabelX" BasedOn="{StaticResource BuddyPropertyAxisLabelBase}">
+                <Setter Property="Text" Value="X:" />
+            </Style>
+            <Style TargetType="TextBlock" x:Key="BuddyPropertyLabelY" BasedOn="{StaticResource BuddyPropertyAxisLabelBase}">
+                <Setter Property="Text" Value="Y:" />
+            </Style>
+            <Style TargetType="TextBlock" x:Key="BuddyPropertyLabelZ" BasedOn="{StaticResource BuddyPropertyAxisLabelBase}">
+                <Setter Property="Text" Value="Z:" />
+            </Style>
+
+            <Style TargetType="TextBox" x:Key="BuddyPropertyTextBox" BasedOn="{StaticResource MahApps.Styles.TextBox}">
+                <Setter Property="MinHeight" Value="20"/>
+                <Setter Property="Height" Value="20"/>
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Margin" Value="4,0" />
+            </Style>
+
+            <Style TargetType="TextBox" x:Key="BuddyPropertyTextBoxAxis" BasedOn="{StaticResource BuddyPropertyTextBox}">
+                <Setter Property="Margin" Value="2,0,4,0" />
+            </Style>
+
+            <Style TargetType="Slider" x:Key="BuddyPropertySlider" BasedOn="{StaticResource MahApps.Styles.Slider.Flat}">
+                <Setter Property="MinHeight" Value="4"/>
+                <Setter Property="Height" Value="12" />
+                <Setter Property="Margin" Value="4,0" />
+            </Style>
             
+            <!-- Buddyのプロパティ関連はここまで -->
+
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

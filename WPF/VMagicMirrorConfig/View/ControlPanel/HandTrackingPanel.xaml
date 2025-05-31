@@ -53,7 +53,7 @@
                                 VerticalAlignment="Center"
                                 Margin="5,0"
                                 Command="{Binding OpenFullEditionDownloadUrlCommand}"
-                                Content="{DynamicResource HandTracking_GetFullEdition}"
+                                Content="{DynamicResource Common_GetFullEdition}"
                                 />
                         </Grid>
                     </md:ColorZone>
@@ -79,6 +79,35 @@
                                   />
                     </Grid>
 
+                    <md:Card Margin="15,5,5,0" 
+                         Visibility="{Binding BodyMotionStyleIncorrectForHandTracking.Value,
+                                              Converter={StaticResource BooleanToVisibilityConverter}}"
+                         HorizontalAlignment="Stretch"
+                         Padding="3">
+                        <StackPanel HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal"
+                                        Background="{StaticResource SecondaryAccentBrush}">
+                                <md:PackIcon Kind="WarningOutline"
+                                             VerticalAlignment="Center"
+                                             Margin="4"
+                                             />
+                                <TextBlock Text="{DynamicResource HandTracking_BodyMotionModeIncorrect_Title}" 
+                                            TextWrapping="Wrap"
+                                            />
+                            </StackPanel>
+                            <TextBlock Text="{DynamicResource HandTracking_BodyMotionModeIncorrect_Instruction}" 
+                                           TextWrapping="Wrap"
+                                           />
+                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Content="{DynamicResource HandTracking_BodyMotionModeIncorrect_Fix}"
+                                Command="{Binding FixBodyMotionStyleCommand}"
+                                HorizontalAlignment="Left"
+                                Padding="2"
+                                Margin="5"
+                                />
+                        </StackPanel>
+                    </md:Card>
+
                     <CheckBox Margin="35,0,10,0" 
                                 VerticalContentAlignment="Center"
                                 Content="{DynamicResource HandTracking_ShowEffectDuringTracking}" 
@@ -91,32 +120,67 @@
                                 IsEnabled="{Binding EnableImageBasedHandTracking.Value}"
                                 IsChecked="{Binding DisableHandTrackingHorizontalFlip.Value}"
                                 />
-                    <CheckBox Margin="35,0,10,0" 
+
+                    <Grid Margin="35,0,10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                    Text="{DynamicResource HandTracking_MotionScale}"/>
+                        <Slider Grid.Row="0" Grid.Column="1"
+                                x:Name="sliderHandTrackingMotionScale"
+                                Minimum="1"
+                                Maximum="300"
+                                Value="{Binding HandTrackingMotionScale.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="0" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderHandTrackingMotionScale}"
+                                 />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                    Text="{DynamicResource HandTracking_OffsetX}"/>
+                        <Slider Grid.Row="1" Grid.Column="1"
+                                x:Name="sliderHandOffsetX"
+                                Minimum="-100"
+                                Maximum="100"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                Value="{Binding HandPositionOffsetX.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="1" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderHandOffsetX}"
+                                 />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                    Text="{DynamicResource HandTracking_OffsetY}"/>
+                        <Slider Grid.Row="2" Grid.Column="1"
+                                x:Name="sliderHandOffsetY"
+                                Minimum="-100"
+                                Maximum="100"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                Value="{Binding HandPositionOffsetY.Value, Mode=TwoWay}"
+                                />
+                        <TextBox Grid.Row="2" Grid.Column="2"
+                                 Text="{Binding Value, ElementName=sliderHandOffsetY}"
+                                 />
+                    </Grid>
+
+                    <CheckBox Margin="35,20,10,0" 
                                 VerticalContentAlignment="Center"
                                 Content="{DynamicResource HandTracking_ShowAreaChecker}" 
                                 IsEnabled="{Binding EnableImageBasedHandTracking.Value}"
                                 IsChecked="{Binding EnableSendHandTrackingResult.Value}"
                                 />
 
-                    <md:Card Margin="15,5,5,0" 
-                         Visibility="{Binding BodyMotionStyleIncorrectForHandTracking.Value,
-                                              Converter={StaticResource BooleanToVisibilityConverter}}"
-                         HorizontalAlignment="Stretch"
-                         Padding="3">
-                        <StackPanel HorizontalAlignment="Left">
-                            <TextBlock Text="{DynamicResource HandTracking_BodyMotionModeIncorrect}" 
-                                               TextWrapping="Wrap"
-                                               />
-                            <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                                Content="{DynamicResource HandTracking_BodyMotionModeIncorrect_Fix}"
-                                Command="{Binding FixBodyMotionStyleCommand}"
-                                HorizontalAlignment="Left"
-                                Padding="2"
-                                Margin="5"
-                                />
-                        </StackPanel>
-                    </md:Card>                    
-                    
                     <TextBlock Margin="15,20,15,0" 
                                Text="{DynamicResource HandTracking_DetectionResult}"
                                Opacity="{Binding EnableSendHandTrackingResult.Value,
@@ -132,12 +196,13 @@
                                Foreground="{StaticResource MaterialDesignBodyLight}"
                                Opacity="{Binding EnableSendHandTrackingResult.Value,
                                                  Converter={StaticResource BooleanToOpacityConverter}}"
+                               TextWrapping="Wrap"
                                />
                         <Button Grid.Column="1" 
                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
-                                Content="{DynamicResource HandTracking_LearnMore}"
+                                Content="{DynamicResource Common_SeeMore}"
                                 Command="{Binding OpenHandTrackingPageUrlCommand}"
                                 />
                     </Grid>

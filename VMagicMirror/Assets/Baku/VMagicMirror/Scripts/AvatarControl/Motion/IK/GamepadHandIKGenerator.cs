@@ -66,6 +66,8 @@ namespace Baku.VMagicMirror.IK
         public bool ReverseGamepadStickLeanHorizontal { get; set; } = false;
         public bool ReverseGamepadStickLeanVertical { get; set; } = false;
 
+        private readonly Subject<(ReactedHand hand, GamepadKey key)> _buttonDownMotionStarted = new();
+        public IObservable<(ReactedHand hand, GamepadKey key)> ButtonDownMotionStarted => _buttonDownMotionStarted;
         
         public GamepadHandIKGenerator(
             HandIkGeneratorDependency dependency, 
@@ -130,11 +132,19 @@ namespace Baku.VMagicMirror.IK
                 {
                     _leftHandState.RaiseRequest();
                     dependency.Reactions.GamepadFinger.ButtonDown(key);
+                    if (dependency.Config.LeftTarget.Value == HandTargetType.Gamepad)
+                    {
+                        _buttonDownMotionStarted.OnNext((hand, key));
+                    }
                 }
                 else if (hand == ReactedHand.Right)
                 {
                     _rightHandState.RaiseRequest();
                     dependency.Reactions.GamepadFinger.ButtonDown(key);
+                    if (dependency.Config.RightTarget.Value == HandTargetType.Gamepad)
+                    {
+                        _buttonDownMotionStarted.OnNext((hand, key));
+                    }
                 }
             };
 

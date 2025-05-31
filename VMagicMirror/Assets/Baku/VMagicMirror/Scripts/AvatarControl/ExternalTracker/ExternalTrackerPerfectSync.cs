@@ -1,38 +1,58 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Baku.VMagicMirror.MediaPipeTracker;
+using UniRx;
 using UnityEngine;
 using UniVRM10;
 using Zenject;
 
+//TODO: ExternalTrackerと関係ないnamespaceやクラス名に直したい
 namespace Baku.VMagicMirror.ExternalTracker
 {
-    //TODO: 処理順が以下になってると多分正しいので、これがScript Execution Orderで保証されてるかチェック
-    //> 1. (自動まばたき、LookAt、EyeJitter、パーフェクトシンクじゃないExTrackerまばたき)
-    //> 2. このスクリプト
-    //> 3. ExternalTrackerFaceSwitchApplier
-
-    /// <summary> パーフェクトシンクをやるやつです。 </summary>
+    /// <summary> パーフェクトシンクをやるやつ </summary>
     /// <remarks>
-    /// ブレンドシェイプクリップ名はhinzkaさんのセットアップに倣います。
+    /// - ブレンドシェイプクリップ名はhinzkaさんのセットアップに倣う
+    /// - 歴史的経緯で外部トラッキング(≒iFacialMocap連携)の一種のような扱いになってるが、下記3種類に対応を拡張予定で、実際にそうしたらクラスの移動やrenameをする予定
+    ///   - 外部トラッキング
+    ///   - 高負荷モードのwebカメラでのトラッキング
+    ///   - VMCPで十分な数のブレンドシェイプを受信しているときのトラッキング
     /// </remarks>
     public class ExternalTrackerPerfectSync : MonoBehaviour
     {
-        private ExternalTrackerDataSource _externalTracker = null;
-        private FaceControlConfiguration _faceControlConfig = null;
-        private IMessageSender _sender = null;
+        private ExternalTrackerDataSource _externalTracker;
+        private FaceControlConfiguration _faceControlConfig;
+        private IMessageSender _sender;
+
+        private MediaPipeFacialValueRepository _mediaPipeFacialValueRepository;
+        private MediaPipeTrackerRuntimeSettingsRepository _mediaPipeTrackerRuntimeSettings;
 
         //モデル本来のクリップ一覧
         private VRM10ExpressionMap _modelBasedMap = null;
         
         private bool _hasModel = false;
 
-        /// <summary> 口周りのクリップもパーフェクトシンクのを適用するかどうか。デフォルトではtrue </summary>
-        public bool PreferWriteMouthBlendShape { get; private set; }= true;
+        /// <summary> 口周りのクリップについて、マイクの値よりもパーフェクトシンクの値を優先するかどうか </summary>
+        /// <remarks>
+        /// 内部的にはExTrackerとWebCamそれぞれで別のフラグを持っているので、FaceControlConfigの状態次第でこの値が切り替わる
+        /// </remarks>
+        public bool PreferWriteMouthBlendShape { get; private set; } = true;
+
+        // 外部トラッキングの使用時にマイクのリップシンクより外部トラッキングの検出結果を優先する場合はtrue
+        private readonly ReactiveProperty<bool> _preferExternalTrackerLipSyncThanMic = new(true);
+        
 
         /// <summary>  </summary>
         public ExpressionKey[] NonPerfectSyncKeys { get; private set; } = null;
 
         public bool IsActive { get; private set; }
+        
+        public bool IsConnected => 
+            (_faceControlConfig.ControlMode is FaceControlModes.ExternalTracker && _externalTracker.Connected) ||
+            (_faceControlConfig.ControlMode is FaceControlModes.WebCamHighPower && _mediaPipeFacialValueRepository.IsTracked);
+
+        private readonly ReactiveProperty<bool> _isExternalTrackerPerfectSyncEnabled = new();
+        private IReadOnlyReactiveProperty<bool> WebCamHighPowerModePerfectSyncEnabled => 
+            _mediaPipeTrackerRuntimeSettings.ShouldUsePerfectSyncResult;
 
         [Inject]
         public void Initialize(
@@ -40,12 +60,17 @@ namespace Baku.VMagicMirror.ExternalTracker
             IMessageSender sender,
             IVRMLoadable vrmLoadable,
             ExternalTrackerDataSource externalTracker,
+            MediaPipeFacialValueRepository mediaPipeFacialValueRepository,
+            MediaPipeTrackerRuntimeSettingsRepository mediaPipeTrackerRuntimeSettings,
             FaceControlConfiguration faceControlConfig
             )
         {
             _sender = sender;
             _externalTracker = externalTracker;
             _faceControlConfig = faceControlConfig;
+
+            _mediaPipeFacialValueRepository = mediaPipeFacialValueRepository;
+            _mediaPipeTrackerRuntimeSettings = mediaPipeTrackerRuntimeSettings;
 
             vrmLoadable.VrmLoaded += info =>
             {
@@ -62,23 +87,65 @@ namespace Baku.VMagicMirror.ExternalTracker
                 _modelBasedMap = null;
             };
             
-            receiver.AssignCommandHandler(
+            receiver.BindBoolProperty(
                 VmmCommands.ExTrackerEnablePerfectSync,
-                command =>
-                {
-                    IsActive = command.ToBoolean();
-                    _faceControlConfig.UsePerfectSync = IsActive;
-                    //パーフェクトシンク中はまばたき目下げを切る: 切らないと動きすぎになる為
-                    _faceControlConfig.ShouldStopEyeDownOnBlink = IsActive;
-                });
-            receiver.AssignCommandHandler(
-                VmmCommands.ExTrackerEnableLipSync,
-                message => PreferWriteMouthBlendShape = message.ToBoolean()
+                _isExternalTrackerPerfectSyncEnabled
             );
+            receiver.BindBoolProperty(
+                VmmCommands.ExTrackerEnableLipSync,
+                _preferExternalTrackerLipSyncThanMic
+            );
+
+            _isExternalTrackerPerfectSyncEnabled
+                .Subscribe(v => _faceControlConfig.UseExternalTrackerPerfectSync = v)
+                .AddTo(this);
+            WebCamHighPowerModePerfectSyncEnabled
+                .Subscribe(v => _faceControlConfig.UseWebCamHighPowerModePerfectSync = v)
+                .AddTo(this);
+
+            _faceControlConfig.FaceControlMode.CombineLatest(
+                    _isExternalTrackerPerfectSyncEnabled,
+                    WebCamHighPowerModePerfectSyncEnabled,
+                    (mode, exTrackerPerfectSync, webCamPerfectSync) =>
+                        (mode is FaceControlModes.ExternalTracker && exTrackerPerfectSync) ||
+                        (mode is FaceControlModes.WebCamHighPower && webCamPerfectSync)
+                )
+                .Subscribe(isActive =>
+                {
+                    IsActive = isActive;
+                    //パーフェクトシンク中はまばたき目下げを切る: 切らないと動きすぎになる為
+                    _faceControlConfig.ShouldStopEyeDownOnBlink = isActive;
+                })
+                .AddTo(this);
+            
+            _faceControlConfig.FaceControlMode.CombineLatest(
+                    _preferExternalTrackerLipSyncThanMic,
+                    _mediaPipeTrackerRuntimeSettings.ShouldUseLipSyncResult,
+                    (mode, exTrackerLipSync, webCamLipSync) =>
+                        (mode is FaceControlModes.ExternalTracker && exTrackerLipSync) ||
+                        (mode is FaceControlModes.WebCamHighPower && webCamLipSync)
+                )
+                .Subscribe(usePerfectSyncLipSync => PreferWriteMouthBlendShape = usePerfectSyncLipSync)
+                .AddTo(this);
         }
 
-        public bool IsReadyToAccumulate => _hasModel && IsActive && _externalTracker.Connected;
-        
+        public bool IsReadyToAccumulate
+        {
+            get
+            {
+                if (!_hasModel || !IsActive)
+                {
+                    return false;
+                }
+
+                var result = 
+                    (_faceControlConfig.ControlMode is FaceControlModes.ExternalTracker && _externalTracker.Connected) ||
+                    (_faceControlConfig.ControlMode is FaceControlModes.WebCamHighPower &&
+                        _mediaPipeFacialValueRepository.IsTracked);
+                return result;
+            }
+        }
+
         /// <summary>
         /// パーフェクトシンクで取得したブレンドシェイプ値があればそれを適用します。
         /// </summary>
@@ -104,11 +171,19 @@ namespace Baku.VMagicMirror.ExternalTracker
                 return;
             }
 
-            var source = _externalTracker.CurrentSource;
+            // HACK: iFacialMocapとMediaPipeでブレンドシェイプの左右で一貫性がうまく取れてないので、if分岐のためにsourceの実体をチェックする
+            // TODO: ホントはこうじゃなくて IFaceTrackBlendShapes の左右の扱いが揃うようになっていてほしい…
+
+            var sourceIsExTracker = _faceControlConfig.ControlMode is FaceControlModes.ExternalTracker;
+            var source = sourceIsExTracker
+                ? _externalTracker.CurrentSource
+                : _mediaPipeFacialValueRepository.CorrectedBlendShapes;
             
+            var disableHorizontalFlip = _externalTracker.DisableHorizontalFlip;
             //NOTE: 関数レベルで分ける。DistableHorizontalFlipフラグを使って逐次的に三項演算子で書いてもいいんだけど、
             //それよりは関数ごと分けた方がパフォーマンスがいいのでは？という意図で書いてます。何となくです
-            if (_externalTracker.DisableHorizontalFlip)
+            if ((sourceIsExTracker && _externalTracker.DisableHorizontalFlip) ||
+                (!sourceIsExTracker && !disableHorizontalFlip))
             {
                 AccumulateWithFlip(accumulator, source, nonMouthPart, mouthPart, writeExcludedKeys, mouthWeight, nonMouthWeight);
             }
@@ -119,7 +194,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         }
 
         private void AccumulateWithoutFlip(
-            ExpressionAccumulator accumulator, IFaceTrackSource source,
+            ExpressionAccumulator accumulator, IFaceTrackBlendShapes source,
             bool nonMouthPart, bool mouthPart, bool writeExcludedKeys,
             float mouthWeight, float nonMouthWeight
             )
@@ -285,7 +360,7 @@ namespace Baku.VMagicMirror.ExternalTracker
         }
         
         private void AccumulateWithFlip(
-            ExpressionAccumulator accumulator, IFaceTrackSource source,
+            ExpressionAccumulator accumulator, IFaceTrackBlendShapes source,
             bool nonMouthPart, bool mouthPart, bool writeExcludedKeys,
             float mouthWeight, float nonMouthWeight
         )
@@ -463,7 +538,7 @@ namespace Baku.VMagicMirror.ExternalTracker
 
             if (missedBlendShapeNames.Count > 0)
             {
-                _sender.SendCommand(MessageFactory.Instance.ExTrackerSetPerfectSyncMissedClipNames(
+                _sender.SendCommand(MessageFactory.ExTrackerSetPerfectSyncMissedClipNames(
                     $"Missing Count: {missedBlendShapeNames.Count} / 52,\n" + 
                     string.Join("\n", missedBlendShapeNames)
                     ));
@@ -471,7 +546,7 @@ namespace Baku.VMagicMirror.ExternalTracker
             else
             {
                 //空文字列を送ることでエラーが解消したことを通知する
-                _sender.SendCommand(MessageFactory.Instance.ExTrackerSetPerfectSyncMissedClipNames(""));
+                _sender.SendCommand(MessageFactory.ExTrackerSetPerfectSyncMissedClipNames(""));
             }
         }
     

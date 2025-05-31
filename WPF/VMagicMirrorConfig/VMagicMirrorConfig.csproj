@@ -1,16 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <UseWpf>true</UseWpf>
     <RootNamespace>Baku.VMagicMirrorConfig</RootNamespace>
-    <RuntimeIdentifier>win10-x86</RuntimeIdentifier>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Platform>x86</Platform>
     <Nullable>enable</Nullable>
     <TrimMode>link</TrimMode>
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <ApplicationIcon>.\Images\vmmc_logo.ico</ApplicationIcon>
+    <SelfContained>true</SelfContained>
+    <NoWarn>$(NoWarn);IDE0130</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Images\vmmc_logo.ico" />
@@ -18,6 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <Page Remove="Localizations\Chinese_Simplified.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile 
+      Include="..\..\VMagicMirror\Assets\Baku\VMagicMirror\Scripts\Interprocess\MemoryMappedFile\*.cs"
+      Link="Shared/MemoryMappedFile/%(Filename)%(Extension)" />
+    <Compile
+      Include="..\..\VMagicMirror\Assets\Baku\VMagicMirror\Scripts\Interprocess\IpcMessage\*.cs"
+      Link="Shared/IpcMessage/%(Filename)%(Extension)" />
+
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dragablz" Version="0.0.3.223" />

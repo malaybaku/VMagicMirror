@@ -6,6 +6,8 @@
     <!-- Common -->
     <sys:String x:Key="Common_Cancel">キャンセル</sys:String>
     <sys:String x:Key="Common_Close">閉じる</sys:String>
+    <sys:String x:Key="Common_SeeMore">さらに詳しく...</sys:String>
+    <sys:String x:Key="Common_GetFullEdition">フルエディションを入手</sys:String>
 
     <!-- Window Title Bar -->
     <sys:String x:Key="TitleBar_Help">ヘルプ</sys:String>
@@ -19,9 +21,10 @@
     <!-- Top Tab -->
     <sys:String x:Key="TopBar_Home">ホーム</sys:String>
     <sys:String x:Key="TopBar_Streaming">配信</sys:String>
-    <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_FaceTracker">顔トラッキング</sys:String>
     <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">アクセサリー</sys:String>
+    <sys:String x:Key="TopBar_Buddy">サブキャラ</sys:String>
     <sys:String x:Key="TopBar_HandTrack">ハンドトラッキング</sys:String>
     
     <!-- Top Tab in Setting Window -->
@@ -44,7 +47,7 @@
     <sys:String x:Key="Home_VrmDragDropInstruction">ドラッグ &amp; ドロップでVRMをロード</sys:String>
 
     <sys:String x:Key="Home_LoadVrmOnNextStartup">次回の起動時にも同じVRMを読み込む</sys:String>
-    <sys:String x:Key="Home_AutoAdjust">キャラ体格で補正</sys:String>
+    <sys:String x:Key="Home_AutoAdjust">アバター体格で補正</sys:String>
 
     <sys:String x:Key="Home_Manual_Header">使い方</sys:String>
     <sys:String x:Key="Home_Manual_Open">マニュアルのURLにアクセス</sys:String>
@@ -75,13 +78,43 @@
     
     <sys:String x:Key="Streaming_Visibility_OutlineWillNotWorkWarning">「背景を透過」がオフのため縁取りは無効になっています。</sys:String>
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">ゲーム入力でもゲームパッドが使われています！</sys:String>
+
+    <!-- Face Tracker -->
+    <sys:String x:Key="FaceTracker_Title">顔トラッキング</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType">トラッキングの種類を選択</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">webカメラ (軽量)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">webカメラ (高品質)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_ExTracker">外部トラッキング (iFacialMocap)</sys:String>
+
+    <sys:String x:Key="FaceTracker_EnableWebCamera">webカメラをオン</sys:String>
+    <sys:String x:Key="FaceTracker_EnablePerfectSync">パーフェクトシンクを使用</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Title">webカメラ (軽量)</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">webカメラを用いて、低負荷に顔トラッキングを行います。
+
+- PC単体で、CPU負荷を抑えながらアバターにも動きを反映したいときに使用します。
+- このモードでカメラの使用を停止した場合、非常に低負荷で動作します。
+- ハンドトラッキングをオンにすると、自動で高品質モードに切り替わります。
+- 表情スイッチ機能が使えないなどの制限があります。</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">webカメラ (高品質)</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">webカメラを用いて、高品質な顔トラッキングを行います。
+    
+- PC単体で、より正確にアバターへ動きを反映したいときに使用します。
+- 処理の負荷は高まるため、ゲームなどを同時に起動する場合は注意してください。
+- パーフェクトシンクが利用できますが、一部の表情は検出できません。</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">カメラで検出したリップシンクを適用</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">ハンドトラッキングが有効になっている場合は webカメラ(軽量) は選択できません。かわりに webカメラ (高品質) を使用して下さい。</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">まばたきのトラッキング設定を開く</sys:String>
     
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">外部トラッキング</sys:String>
-    <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによるトラッキングを活用する機能です。
-外部トラッキングをオンにすると、以下の機能は一時的に無効化されます。
-- Webカメラでの顔トラッキング
-- マウスポインタを目で追従する機能</sys:String>
+    <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">外部アプリによる顔トラッキングを行います。
+
+- PCの負荷は抑えながら、高精度な顔トラッキングが利用できます。        
+- アバターがパーフェクトシンクに対応している場合、このモードが最も正確に表情を反映します。</sys:String>
     <sys:String x:Key="ExTracker_Enable">外部トラッキングを有効化</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">リップシンクも外部トラッキングの値を適用</sys:String>    
 
@@ -104,6 +137,12 @@
     <sys:String x:Key="ExTracker_iFM_HasTrouble_OpenUrl">トラブルシューティングを開く(webページへ)</sys:String>
 
     <sys:String x:Key="ExTracker_FaceSwitch">表情スイッチ</sys:String>
+    
+    <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Webカメラ (軽量) では表情を検出できないため、この機能は動作しません。
+ただし、VMC Protocolでパーフェクトシンク用の表情を受信している場合、その表情にもとづいて表情スイッチが適用されます。</sys:String>
+
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Webカメラ (高品質) の使用中は、「頬をふくらませる」と「舌を出す」の表情は検出されません。</sys:String>
+    
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
 「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">アクセサリーオプションを表示</sys:String>
@@ -120,16 +159,39 @@
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">舌を出すと</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">頬をふくらませると</sys:String>
 
+    <!-- Face Tracker Eye Calibration -->
+    <sys:String x:Key="EyeCalibration_Header">目のトラッキングの詳細設定</sys:String>
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">このウィンドウではユーザーの目のトラッキングについて設定します。
+ここで編集した設定は、顔トラッキングで「Webカメラ (高品質)」を選択中にだけ適用されます。
+
+- webカメラを物理的に動かしたり、メガネを買い替えたりしたときは、再設定が必要な場合があります。        
+- アバターの目の動かし方については、「詳細設定」ウィンドウの「顔・表情」タブから設定できます。</sys:String>
+
+    <sys:String x:Key="EyeCalibration_Settings">設定</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeOpenBlinkValue">目を開けているときのまばたき値(%)</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeCloseBlinkValue">目を閉じているときのまばたき値(%)</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplySameValueBothEye">左右のまばたき値の平均を使う</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplyToPerfectSync">パーフェクトシンクのまばたきにも補正を適用</sys:String>
+    <sys:String x:Key="EyeCalibration_ShowPreview">まばたき値のプレビューを表示</sys:String>
+    <sys:String x:Key="EyeCalibration_ResetPreviewValue">プレビュー表示をリセット</sys:String>
+    <sys:String x:Key="EyeCalibration_LeftEyeLabel">左目</sys:String>
+    <sys:String x:Key="EyeCalibration_RightEyeLabel">右目</sys:String>
+    <sys:String x:Key="EyeCalibration_SeeMore">さらに詳しく...</sys:String>
+    
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
-    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMCP (VMC Protocol)に対応する他アプリケーションからモーション情報を受信できます。
-VMagicMirrorは以下のモーションを受信して適用できます。
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMC Protocol (VMCP)に対応する他アプリケーションとデータを送受信できます。
+以下の機能が利用できます。
 
-- 頭部モーション
-- 表情 (BlendShape)
-- 両手の位置情報</sys:String>
-    <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
+受信:         
+    - 頭部モーション
+    - 表情 (BlendShape)
+    - 両手の位置情報
 
+送信:
+    - 全身のポーズ
+    - 表情 (BlendShape)
+</sys:String>
     <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">受信元の設定</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_Header">詳細設定</sys:String>
@@ -142,7 +204,7 @@ VMagicMirrorは以下のモーションを受信して適用できます。
     <sys:String x:Key="VMCP_GridLabel_HandPose">手の姿勢</sys:String>
     <sys:String x:Key="VMCP_Notice_Priority">上で設定した受信元ほど優先して適用されます</sys:String>
     <sys:String x:Key="VMCP_PortInputError">*ポート番号には0 ~ 65535の範囲の値を指定して下さい。</sys:String>
-    <sys:String x:Key="VMCP_ShouldApply">*未適用の設定があります</sys:String>
+    <sys:String x:Key="VMCP_ShouldApply">*未適用の変更があります</sys:String>
     <sys:String x:Key="VMCP_Apply">変更を適用</sys:String>
     <sys:String x:Key="VMCP_Revert">キャンセル</sys:String>
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect" xml:space="preserve">*動きかたのオプションで「つねに手下げ」が選択されています。
@@ -150,28 +212,51 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
     <sys:String x:Key="VMCP_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_NaiveBoneTransfer">補正なしで送信元ボーンの姿勢を適用</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">VMCPの受信中はカメラ機能をオフ</sys:String>    
-    
+
+    <sys:String x:Key="VMCP_Send_Enable">VMCPによる送信を有効化</sys:String>
+    <sys:String x:Key="VMCP_Send_Header">データ送信の設定</sys:String>
+    <sys:String x:Key="VMCP_Send_DestAddress">送信先アドレス</sys:String>
+    <sys:String x:Key="VMCP_Send_DestPort">送信先ポート</sys:String>
+    <sys:String x:Key="VMCP_Send_SendBone">姿勢データを送信</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFingerBone">指ボーンの姿勢も送信する</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFacial">表情データを送信</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFacialNonStandard">標準ブレンドシェイプ以外もすべて送信</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFacialVrm0">VRM0.x のブレンドシェイプ名を使用 (送信先がVRM1.0未対応ならオンにします)</sys:String>
+    <sys:String x:Key="VMCP_Send_Prefer30fps">60FPSで実行している時も30FPSで送信</sys:String>    
+    <sys:String x:Key="VMCP_Send_EditionLimitationNote" xml:space="preserve">※基本エディションではVMCPの送信を有効化すると視覚エフェクトが適用されます。
+また、基本エディションでは「ゲーム入力モード」機能を使用中はモーションが送信されません。
+それ以外の送信データはフルエディションと全く同じです。
+フルエディションでは視覚エフェクトを無効化できます。</sys:String>
+    <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">データ送信中に視覚エフェクトを適用</sys:String>
+    <sys:String x:Key="VMCP_Send_IpAddressError">* IPアドレスの形式を確認してください。</sys:String>
+    <sys:String x:Key="VMCP_Send_PortInputError">* 0 ~ 65535の範囲の値を指定して下さい。</sys:String>
+
     <!-- HandTracking -->
     <sys:String x:Key="HandTracking_Header">ハンドトラッキング</sys:String>
     <sys:String x:Key="HandTracking_Instruction" xml:space="preserve">webカメラでのハンドトラッキングです。
 顔トラッキングにもwebカメラを使う場合、顔と手で共通のカメラを使用します。</sys:String>
     <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">※基本エディションではハンドトラッキング中にエフェクトが適用されます。
 フルエディションではエフェクトを無効化できます。</sys:String>
-    <sys:String x:Key="HandTracking_GetFullEdition">フルエディションを入手</sys:String>
     <sys:String x:Key="HandTracking_Enable">ハンドトラッキングを有効化</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
-    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*動きかたのオプションで「つねに手下げ」が選択されています。
-ハンドトラッキングの結果を適用するには「デフォルト」に変更して下さい。</sys:String>
+    <sys:String x:Key="HandTracking_MotionScale">動きの大きさ (%)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetX">手の広げ方を調整 (cm)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetY">手の高さを調整 (cm)</sys:String>
+    
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Title">現在のオプションではハンドトラッキングの結果が適用されません！</sys:String>
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Instruction" xml:space="preserve">動きかたのオプションを「つねに手下げ」から「デフォルト」に変更することで、
+ハンドトラッキングの結果が適用されます。</sys:String>
+
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Fix">オプションを「デフォルト」に変更</sys:String>
     
     <sys:String x:Key="HandTracking_ShowAreaChecker">手の検出状況を表示(※カメラ映像は表示されません)</sys:String> 
     <sys:String x:Key="HandTracking_DetectionResult">手の検出状況:</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">ヒント:
 - 手の全体をカメラ視野に収めるとトラッキングが安定します。
-- カメラの中央を避け、やや左右の位置を使用して下さい。</sys:String>
+- 手で顔を隠すことは避けてください。
+- 両手でのトラッキングが安定しない場合、片手だけを映してトラッキングするようにすると安定します。</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">未検出: 顔の横に手を挙げてみて下さい</sys:String>
-    <sys:String x:Key="HandTracking_LearnMore">詳細 (Web)</sys:String>    
     
     <!-- Accessory Panel -->
     <sys:String x:Key="Accessory_Header">アクセサリ</sys:String>
@@ -195,6 +280,49 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize">画像のサイズ上限</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize_Unlimited">上限なし</sys:String>
     
+    <!-- Buddy -->
+    <sys:String x:Key="Buddy_Header">サブキャラ</sys:String>
+    <sys:String x:Key="Buddy_Instruction">"Buddy"フォルダ内で適切に画像/3Dモデル/スクリプトを配置することで、サブキャラを表示できます。</sys:String>
+    <sys:String x:Key="Buddy_EditionLimitation" xml:space="preserve">※基本エディションでは「インタラクションAPIを使用」をオンにするとエフェクトが適用されます。
+フルエディションではこの制限を解除してサブキャラを使用できます。</sys:String>
+    <sys:String x:Key="Buddy_SyncShadowToMainAvatar">サブキャラにも影を表示 (影がオンの時)</sys:String>
+    <sys:String x:Key="Buddy_OpenFolder">フォルダを開く</sys:String>
+    <sys:String x:Key="Buddy_ReloadAll">全て再読み込み</sys:String>
+
+    <sys:String x:Key="Buddy_Item_Reload">再読み込み</sys:String>
+    <sys:String x:Key="Buddy_Item_FolderName">フォルダ名: </sys:String>
+    <sys:String x:Key="Buddy_Item_ResetProperties">初期設定にリセット</sys:String>
+
+    <sys:String x:Key="Buddy_Log_FatalError">サブキャラの起動時、または実行中にエラーが発生しました:</sys:String>
+    <sys:String x:Key="Buddy_Log_FatalError_Copy">テキストをコピー</sys:String>
+    <sys:String x:Key="Buddy_Log_FatalError_Ignore">無視して閉じる</sys:String>
+
+    <sys:String x:Key="Buddy_InteractionApiEnabled_StandardEdition">インタラクションAPIを使用 (Standard Editionではオンにするとエフェクトがかかります)</sys:String>
+    <sys:String x:Key="Buddy_InteractionApiEnabled_FullEdition">インタラクションAPIを使用 (通常はオンのままにします)</sys:String>
+
+    <sys:String x:Key="Buddy_DeveloperMode">開発者モード</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_Enabled">開発者モードが有効です</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_Instruction" xml:space="preserve">開発者モードをオンにした状態でサブキャラを起動すると、
+エラー情報が詳細に取得できたり、ログの出力レベルを選択したりできます。
+        
+※ログを大量に出力している場合は本ウィンドウでログの一部が表示されないことがあるため、
+各サブキャラのログファイルを直接開いてください。
+</sys:String>
+
+    <sys:String x:Key="Buddy_Item_DeveloperModeUnapplied_Instruction" xml:space="preserve">このサブキャラは開発者モードがオフの状態で起動されているため、ログ出力の一部が取得できません。
+サブキャラを一旦オフにしてから再びオンにすると、より詳細なログが取得できます。</sys:String>
+
+    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">開発者向けページを開く…</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_LogLevel">ログの詳細度: </sys:String>
+    <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">ログファイルを開く</sys:String>
+ 
+    <sys:String x:Key="Buddy_FilePathString_OpenFile">参照...</sys:String>    
+
+    <sys:String x:Key="Buddy_Transform_Attach">ボーンにアタッチ</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Position">位置</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Rotation">回転</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Scale">スケール</sys:String>    
+ 
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">色を編集 (クリックで展開)</sys:String>
     
@@ -203,9 +331,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Window_Basics">基本設定</sys:String>
     <sys:String x:Key="Window_BackgroundColor">背景色</sys:String>
     <sys:String x:Key="Window_Transparent">背景を透過</sys:String>
-    <sys:String x:Key="Window_Draggable">(透過中)キャラ付近を掴んでドラッグ</sys:String>
-    <sys:String x:Key="Window_TopMost">(透過中)キャラクターをつねに最前面で表示</sys:String>
-    <sys:String x:Key="Window_ResetPosition">キャラクター位置のリセット</sys:String>
+    <sys:String x:Key="Window_Draggable">(透過中)アバター付近を掴んでドラッグ</sys:String>
+    <sys:String x:Key="Window_TopMost">(透過中)アバターをつねに最前面で表示</sys:String>
+    <sys:String x:Key="Window_ResetPosition">アバター位置のリセット</sys:String>
     
     <sys:String x:Key="Window_BackgroundImage">背景画像:</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">ロード...</sys:String>
@@ -213,23 +341,29 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 
     <sys:String x:Key="Window_SpoutOutput">Spout出力</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spoutを用いて固定解像度で映像を出力できます。
-出力チャンネル名は"VMagicMirrorSpout"で固定です。</sys:String>
+
+- 出力チャンネル名は"VMagicMirrorSpout"で固定です。
+- 縦長の解像度を選ぶとアバターウィンドウの左右が黒く表示されることがありますが、これは正常な動作です。</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Enable">Spoutを有効化</sys:String>
-    <sys:String x:Key="Window_SpoutOutput_Resolution">解像度:</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution">解像度 (幅 x 高さ):</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_SameAsScreen">ウィンドウと同じ</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1280">1280 x 720 (固定)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920">1920 x 1080 (固定)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560">2560 x 1440 (固定)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840">3840 x 2160 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1280Vertical">720 x 1280 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920Vertical">1080 x 1920 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560Vertical">1440 x 2560 (固定)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840Vertical">2160 x 3840 (固定)</sys:String>
     
-    <sys:String x:Key="Window_TransparencySupport">キャラ透明化の詳細</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level">キャラの透明化レベル</sys:String>
+    <sys:String x:Key="Window_TransparencySupport">アバター透明化の詳細</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level">アバターの透明化レベル</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Alpha">透明になるときの透明度(32-255)</sys:String>
     
     <sys:String x:Key="Window_TransparencySupport_Level_0">レベル0: つねに不透明です。</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_1">レベル1: 「キャラ付近を掴んでドラッグ」がオフで、かつキャラの近くにマウスポインタがあれば、半透明になります。</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_2">レベル2: キャラの近くにマウスポインタがあれば、半透明になります。</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_3">レベル3: 「キャラ付近を掴んでドラッグ」がオフならば、半透明になります。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_1">レベル1: 「アバター付近を掴んでドラッグ」がオフで、かつアバターの近くにマウスポインタがあれば、半透明になります。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_2">レベル2: アバターの近くにマウスポインタがあれば、半透明になります。</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_3">レベル3: 「アバター付近を掴んでドラッグ」がオフならば、半透明になります。</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level_4">レベル4: つねに半透明になります。</sys:String>
         
     <!-- Motion -->
@@ -310,7 +444,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Motion_Face_EnableFaceTracking">顔をトラッキング</sys:String>
     <sys:String x:Key="Motion_Face_CameraName">カメラ</sys:String>    
     <sys:String x:Key="Motion_Face_Calibration">姿勢・表情を補正</sys:String>    
-    <sys:String x:Key="Motion_Face_EnableBodyLeanZ">顔トラッキング中の前後移動を有効化</sys:String>    
+    <sys:String x:Key="Motion_Face_EnableBodyLeanZ">手前・奥への移動を有効化</sys:String>    
     <sys:String x:Key="Motion_Face_AutoBlinkDuringFaceTracking">顔トラッキング中も自動でまばたき</sys:String>
     <sys:String x:Key="Motion_Face_DisableFaceTrackingHorizontalFlip">左右反転をオフにする</sys:String>
     <sys:String x:Key="Motion_Face_EnableImageBasedHandTracking">顔とセットで手もトラッキング</sys:String>
@@ -332,8 +466,8 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
             
     <!-- Face : Eye -->
     <sys:String x:Key="Motion_Eye">目・視線</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint">視線の動き</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_Streaming">視線:</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint">視線の動き:</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_WebCamHighPower">視線の動き: Webカメラがオフの場合に適用されます</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_None">固定</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">マウス</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">ユーザー</sys:String>
@@ -420,7 +554,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Devices_Gamepad_PreferDirectInput">DirectInputを使用 (DUAL SHOCK 4を使う場合オン)</sys:String>
     <sys:String x:Key="Devices_GamepadDeviceNumber">デバイス番号</sys:String>
     
-    <sys:String x:Key="Devices_GamepadLean">キャラ傾き入力</sys:String>
+    <sys:String x:Key="Devices_GamepadLean">アバター傾き入力</sys:String>
     <sys:String x:Key="Devices_GamepadLean_None">なし</sys:String>
     <sys:String x:Key="Devices_GamepadLean_LeftButtons">左十字キー</sys:String>
     <sys:String x:Key="Devices_GamepadLean_LeftStick">左スティック</sys:String>
@@ -452,7 +586,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
 
     <sys:String x:Key="Shadow">影</sys:String>
     <sys:String x:Key="Shadow_Enable">影を有効化</sys:String>
-    <sys:String x:Key="Shadow_Enable_Streaming">キャラの影</sys:String>
+    <sys:String x:Key="Shadow_Enable_Streaming">アバターの影</sys:String>
     <sys:String x:Key="Shadow_Intensity">濃さ[%]</sys:String>
     <sys:String x:Key="Shadow_Yaw">向き(横)[deg]</sys:String>
     <sys:String x:Key="Shadow_Pitch">向き(上下)[deg]</sys:String>
@@ -461,6 +595,10 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Bloom">Bloom</sys:String>
     <sys:String x:Key="Bloom_Intensity">強さ[%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">しきい値[%]</sys:String>
+    
+    <sys:String x:Key="AO_Title">Ambient Occlusion</sys:String>
+    <sys:String x:Key="AO_Enable">エフェクトを有効化</sys:String>
+    <sys:String x:Key="AO_Intensity">エフェクトの強さ[%]</sys:String>
     
     <sys:String x:Key="OutlineEffect">縁取り (背景透過でのみ有効)</sys:String>
     <sys:String x:Key="OutlineEffect_Enable_Short">縁取り (背景透過時のみ)</sys:String>
@@ -482,7 +620,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="WordToMotion_Enable">Word to Motionを有効化</sys:String>
     <sys:String x:Key="WordToMotion_UseGamepadForInput">ゲームパッドのボタンで表情/モーションを実行</sys:String>
     <sys:String x:Key="WordToMotion_Instruction" xml:space="preserve">このタブは `Word to Motion` タブです。
-`Word to Motion`は、単語をタイピングするとキャラクターを動かせる機能です。
+`Word to Motion`は、単語をタイピングするとアバターを動かせる機能です。
 ためしに "joy" とタイピングしてみてください。</sys:String>
     <sys:String x:Key="WordToMotion_AssignDevice">この機能専用にデバイスを割り当て</sys:String>
     <sys:String x:Key="WordToMotion_AssignDevice_None">なし</sys:String>
@@ -522,9 +660,9 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="WordToMotion_Face_PreferLipSync">リップシンクを続行</sys:String>
     
     <sys:String x:Key="WordToMotion_Face_CommonClip_Header">基本の表情</sys:String>
-    <sys:String x:Key="WordToMotion_Face_ExtraClip_Header">キャラ固有の表情</sys:String>
+    <sys:String x:Key="WordToMotion_Face_ExtraClip_Header">モデル固有の表情</sys:String>
     
-    <sys:String x:Key="WordToMotion_EnablePreview">現在のキャラクターでプレビュー</sys:String>    
+    <sys:String x:Key="WordToMotion_EnablePreview">現在のアバターでプレビュー</sys:String>    
         
     <sys:String x:Key="WordToMotion_MidiAssign">MIDIのノート割り当て</sys:String>
     <sys:String x:Key="WordToMotion_MidiAssign_MidiNotActive_Title">MIDI入力を有効化します</sys:String>
@@ -586,14 +724,14 @@ VMCPを使わない場合、「設定タブをメインウィンドウから非�
     <sys:String x:Key="SettingFile_Load">ロード</sys:String>
     <sys:String x:Key="SettingFile_Save_Instruction">保存先を選択して下さい。</sys:String>
     <sys:String x:Key="SettingFile_Load_Instruction">ロードするデータを選択して下さい。</sys:String>
-    <sys:String x:Key="SettingFile_LoadCharacter">キャラをロード</sys:String>
-    <sys:String x:Key="SettingFile_LoadNonCharacter">キャラ以外の情報をロード</sys:String>
+    <sys:String x:Key="SettingFile_LoadCharacter">アバターをロード</sys:String>
+    <sys:String x:Key="SettingFile_LoadNonCharacter">アバター以外の情報をロード</sys:String>
     <sys:String x:Key="SettingFile_Export">エクスポート</sys:String>
     <sys:String x:Key="SettingFile_Import">インポート</sys:String>
     
     <sys:String x:Key="SettingFile_Automation">オートメーション</sys:String>
     <sys:String x:Key="SettingFile_Instruction" xml:space="preserve">注意:
-この機能を使うとGUIを操作せずにキャラクターを切り替えられます。
+この機能を使うとGUIを操作せずにアバターを切り替えられます。
 ライセンスを十分確認したモデルでのみ、この機能を使用して下さい。
 
 また、本機能ではVRoid Hubモデルへの自動切り替えはできません。</sys:String>
@@ -687,7 +825,7 @@ VMCPを使わない場合、「設定タブをメインウィンドウから非�
     <sys:String x:Key="DialogTitle_InvalidIpAddress">無効なIPアドレス</sys:String>
     <sys:String x:Key="DialogMessage_InvalidIpAddress">無効なIPアドレスが指定されています。入力を確認して下さい。</sys:String>
     <sys:String x:Key="DialogTitle_ShowVRoidSdkUi">VRoid Hubに接続中</sys:String>
-    <sys:String x:Key="DialogMessage_ShowVRoidSdkUi">キャラクターウィンドウ上でモデルを選択するか、またはキャンセルしてください。</sys:String>
+    <sys:String x:Key="DialogMessage_ShowVRoidSdkUi">アバターウィンドウ上でモデルを選択するか、またはキャンセルしてください。</sys:String>
     <sys:String x:Key="DialogTitle_LoadPreviousVRoidModel">VRoid Hubに接続中</sys:String>
     <sys:String x:Key="DialogMessage_LoadPreviousVRoidModel">前回使用したモデルのロードを試みています。モデルをロードするか、またはキャンセルしてください。</sys:String>
     <sys:String x:Key="DialogTitle_LoadSavedVRoidModel">VRoid Hubに接続中</sys:String>
@@ -717,7 +855,7 @@ webカメラでの顔トラッキングを有効にする場合は
     <sys:String x:Key="DialogTitle_ConfirmSettingFileLoad">設定をロード</sys:String>
     <sys:String x:Key="DialogMessage_ConfirmSettingFileLoad" xml:space="preserve">設定 No.{0} をロードしますか？
         
-キャラ以外の設定をロードすると、現在の設定が上書きされます。</sys:String>
+アバター以外の設定をロードすると、現在の設定が上書きされます。</sys:String>
 
     <sys:String x:Key="DialogTitle_GuardSettingWindowDuringSaveLoad">セーブ/ロード操作中</sys:String>
     <sys:String x:Key="DialogMessage_GuardSettingWindowDuringSaveLoad">設定ファイルのセーブ/ロード中は設定ウィンドウは操作できません。</sys:String>
@@ -725,7 +863,7 @@ webカメラでの顔トラッキングを有効にする場合は
     <sys:String x:Key="DialogTitle_EnableAutomation">オートメーションの有効化</sys:String>
     <sys:String x:Key="DialogMessage_EnableAutomation" xml:space="preserve">オートメーションを有効化しますか？
 
-オートメーション機能ではGUIを操作せずにキャラクター、設定を切り替えられます。
+オートメーション機能ではGUIを操作せずにアバター、設定を切り替えられます。
 ライセンスを十分よく確認したモデルに対してのみ、この機能を使用して下さい。
 </sys:String>
 
@@ -748,16 +886,21 @@ webカメラでの顔トラッキングを有効にする場合は
     <sys:String x:Key="DialogMessage_EnableVMCPTab">続行するとメインの設定ウィンドウに「VMCP」タブが追加されます。この変更はもとに戻す事ができます。</sys:String>    
 
     <sys:String x:Key="DialogTitle_DisableVMCPTab">VMC Protocolの設定を非表示</sys:String>
-    <sys:String x:Key="DialogMessage_DisableVMCPTab" xml:space="preserve">続行するとメインの設定ウィンドウから「VMCP」タブを非表示にします。
-VMCPのデータが受信中の場合、この操作で受信機能はオフになります。
+    <sys:String x:Key="DialogMessage_DisableVMCPTab" xml:space="preserve">続行すると、メインの設定ウィンドウから「VMCP」タブを非表示にします。
+VMCPのデータを送受信中の場合、この操作をすることで送受信はオフになります。
 それ以外の詳細設定は保持されます。</sys:String>    
 
+    <sys:String x:Key="DialogTitle_ResetSingleBuddySettings">サブキャラの設定リセット</sys:String>
+    <sys:String x:Key="DialogMessage_ResetSingleBuddySettings">サブキャラ「{0}」の設定を初期値にリセットしますか？</sys:String>
+    
     <!-- Snackbar Messages -->
+    <sys:String x:Key="Snackbar_General_TextCopied">テキストをコピーしました</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">選択されたマイクが切断しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">選択されたマイクの接続を検出しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">選択されたカメラの接続を検出しました: {0}</sys:String>
     <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">動きかたのオプションを「デフォルト」に変更しました</sys:String>    
-    
+    <sys:String x:Key="Snackbar_Buddy_LogFileNotFound_Format">指定したサブキャラのログファイルは存在しません: {0}</sys:String>
+
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(何もしない)</sys:String>
     <sys:String x:Key="CommonUi_None">(なし)</sys:String>
@@ -768,11 +911,16 @@ VMCPのデータが受信中の場合、この操作で受信機能はオフに�
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/docs/setting_files</sys:String>
     <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/docs/accessory</sys:String>
+    <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/docs/vmc_protocol</sys:String>
+    <sys:String x:Key="URL_docs_face_tracking">https://malaybaku.github.io/VMagicMirror/docs/face_tracking</sys:String>
     
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
+
+    <!-- NOTE: メインのdocとレポジトリが違うので注意 --> 
+    <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirrorBuddyDoc/</sys:String>
     
 </ResourceDictionary>

@@ -21,6 +21,7 @@ namespace Baku.VMagicMirrorConfig
             ExternalTracker = resolver.Resolve<ExternalTrackerSettingModel>();
             Automation = resolver.Resolve<AutomationSettingModel>();
             Accessory = resolver.Resolve<AccessorySettingModel>();
+            Buddy = resolver.Resolve<BuddySettingModel>();
 
             //NOTE; LanguageSelectorとの二重管理っぽくて若干アレだがこのままで行く
             //初期値Defaultを入れることで、起動直後にPCのカルチャベースで言語を指定しなきゃダメかどうか判別する
@@ -60,6 +61,7 @@ namespace Baku.VMagicMirrorConfig
         public ExternalTrackerSettingModel ExternalTracker { get; }
         public AutomationSettingModel Automation { get; }
         public AccessorySettingModel Accessory { get; }
+        public BuddySettingModel Buddy { get; }
 
         /// <summary>
         /// 自動保存される設定ファイルに言語設定が保存されていなかった場合、

@@ -27,12 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8218640737285604647}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8218640737285604640
 MonoBehaviour:
@@ -96,6 +97,16 @@ MonoBehaviour:
     type: 3}
   interProcess: {fileID: 2683631619848515584}
   loadingCoverController: {fileID: 0}
+  buddySpriteCanvas: {fileID: 3466238353687275096, guid: 441d1d31f0a1c1b45b422205770f483d,
+    type: 3}
+  buddyGuiCanvas: {fileID: 5330777756273787563, guid: f26036ea10910e34db7ffef674426588,
+    type: 3}
+  buddyAudioSources: {fileID: 2740337308457020041, guid: 5b96818834e6ac7439a90d1a624198cf,
+    type: 3}
+  buddyTransform3DInstancePrefab: {fileID: 9112393599949851860, guid: 928fd0582ce6c844ab17ce36c8db6d4f,
+    type: 3}
+  buddySprite3DInstancePrefab: {fileID: 7272758562949004422, guid: 1c1d027c992de744b80bb3951ca98e6b,
+    type: 3}
 --- !u!114 &2683631619848515584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,4 +132,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   oscServerPrefab: {fileID: 3003734258558408633, guid: 7cdb979d19b20e24cac0434a12ce0484,
+    type: 3}
+  oscClientPrefab: {fileID: 4695339249747742599, guid: 5581e835d84347e4884df973878fb653,
     type: 3}

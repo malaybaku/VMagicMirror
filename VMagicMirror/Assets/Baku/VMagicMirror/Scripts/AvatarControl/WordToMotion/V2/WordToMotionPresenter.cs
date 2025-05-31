@@ -13,7 +13,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly CustomMotionRepository _customMotionRepository;
         private readonly VrmaRepository _vrmaRepository;
         private readonly WordToMotionRequester _requester;
-        private WordToMotionRunner _runner;
+        private readonly WordToMotionRunner _runner;
         private readonly IRequestSource[] _sources;
 
         public WordToMotionPresenter(
@@ -39,11 +39,11 @@ namespace Baku.VMagicMirror.WordToMotion
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.ReloadMotionRequests,
-                message => ReloadMotionRequests(message.Content)
+                message => ReloadMotionRequests(message.GetStringValue())
             );
             _receiver.AssignCommandHandler(
                 VmmCommands.PlayWordToMotionItem,
-                message => PlayWordToMotionItem(message.Content)
+                message => PlayWordToMotionItem(message.GetStringValue())
             );
             
             _receiver.AssignCommandHandler(
@@ -53,7 +53,7 @@ namespace Baku.VMagicMirror.WordToMotion
             
             _receiver.AssignCommandHandler(
                 VmmCommands.SendWordToMotionPreviewInfo,
-                message => ReceiveWordToMotionPreviewInfo(message.Content)
+                message => ReceiveWordToMotionPreviewInfo(message.GetStringValue())
             );
             
             _receiver.AssignCommandHandler(
@@ -70,7 +70,7 @@ namespace Baku.VMagicMirror.WordToMotion
             // );
 
             _receiver.AssignQueryHandler(
-                VmmQueries.GetAvailableCustomMotionClipNames,
+                VmmCommands.GetAvailableCustomMotionClipNames,
                 SetAvailableMotionClipNames);
 
             //リクエストは等価に扱う && 頻度は制御する、という話

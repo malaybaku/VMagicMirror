@@ -55,7 +55,6 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="35"/>
@@ -196,16 +195,6 @@
                                   md:HintAssist.Hint="Camera"
                                   />
 
-                        <CheckBox Grid.Row="5" Grid.Column="1"                            
-                                  Grid.ColumnSpan="2"
-                                  Margin="15,0,0,0"
-                                  IsEnabled="{Binding EnableFaceTracking.Value}"
-                                  IsChecked="{Binding EnableWebCamHighPowerMode.Value}"
-                                  >
-                            <CheckBox.Content>
-                                <TextBlock Text="{DynamicResource Motion_Face_EnableWebCamHighPowerMode}"/>
-                            </CheckBox.Content>
-                        </CheckBox>
                         <CheckBox Grid.Row="6" Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"
@@ -217,16 +206,6 @@
                             </CheckBox.Content>
                         </CheckBox>
                         <CheckBox Grid.Row="7" Grid.Column="1"
-                                  Grid.ColumnSpan="2"
-                                  Margin="15,0,0,0"
-                                  IsEnabled="{Binding EnableFaceTracking.Value}"
-                                  IsChecked="{Binding EnableBodyLeanZ.Value}"
-                                  >
-                            <CheckBox.Content>
-                                <TextBlock Text="{DynamicResource Motion_Face_EnableBodyLeanZ}"/>
-                            </CheckBox.Content>
-                        </CheckBox>                        
-                        <CheckBox Grid.Row="8" Grid.Column="1"
                                   Grid.ColumnSpan="2"
                                   Margin="15,0,0,0"
                                   IsEnabled="{Binding EnableFaceTracking.Value}"
@@ -255,25 +234,6 @@
                                          />
                         </StackPanel>
                     </md:Card>
-
-                    <Button HorizontalAlignment="Left"
-                            Margin="15,5"
-                            Width="160"
-                            Command="{Binding CalibrateFaceCommand}"
-                            >
-                        <StackPanel Style="{StaticResource IconTextSetStackPanel}">
-                            <md:PackIcon Style="{StaticResource IconTextSetIcon}"
-                                         Kind="Reload"
-                                         />
-                            <TextBlock Style="{StaticResource IconSetSetText}"
-                                       Text="{DynamicResource Motion_Face_Calibration}"
-                                       />
-                        </StackPanel>
-
-                        <!--<vmm:IconText Text="{DynamicResource Motion_Face_Calibration}"
-                                      IconKind="Reload"
-                                      />-->
-                    </Button>
 
                     <CheckBox Margin="15,0,0,5"
                               IsChecked="{Binding EnableVoiceBasedMotion.Value}"

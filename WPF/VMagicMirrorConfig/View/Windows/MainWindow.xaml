@@ -69,6 +69,12 @@
                         <MenuItem Header="{DynamicResource TitleBar_Check_Update}" 
                                   Command="{Binding CheckUpdateCommand}"
                                   />
+                        <!-- NOTE: 独立なデバッグウィンドウを用意してココから開くようにも改修しうるが、まだ欲しい機能が少ないので無し -->
+                        <MenuItem Header="Debug_SendLargeData"
+                                  Visibility="{Binding IsDebugBuild, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                  Command="{Binding SendLargeDataCommand}"
+                                  />
+
                     </CompositeCollection>
                 </metro:DropDownButton.ItemsSource>
             </metro:DropDownButton>
@@ -125,7 +131,7 @@
             <TabItem>
                 <TabItem.Header>
                     <view:VerticalTabHeaderIconText 
-                        Text="{DynamicResource TopBar_ExternalFaceTrack}"                        
+                        Text="{DynamicResource TopBar_FaceTracker}"                        
                         IconKind="FaceRecognition"                        
                         Foreground="{Binding SelectedIndex,
                                              ElementName=MainTabControl,
@@ -133,7 +139,7 @@
                                              ConverterParameter=2}"                           
                         />
                 </TabItem.Header>
-                <view:ExternalTrackerPanel Background="White" />
+                <view:FaceTrackerPanel Background="White" />
             </TabItem>
             <TabItem x:Name="VmcpTabItem">
                 <TabItem.Header>
@@ -168,11 +174,29 @@
             <TabItem>
                 <TabItem.Header>
                     <view:VerticalTabHeaderIconText 
+                        Text="{DynamicResource TopBar_Buddy}"                        
+                        IconKind="FavoriteFace">
+                        <view:VerticalTabHeaderIconText.Foreground>
+                            <MultiBinding Converter="{StaticResource DecrementableTabSelectionToForegroundConverter}"
+                                          ConverterParameter="5">
+                                <Binding Path="SelectedIndex" ElementName="MainTabControl"/>
+                                <Binding Path="DataContext.ShowVmcpTab.Value" 
+                                         RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=metro:MetroWindow}" />
+                            </MultiBinding>
+                        </view:VerticalTabHeaderIconText.Foreground>
+                    </view:VerticalTabHeaderIconText>
+                </TabItem.Header>
+                <view:BuddyPanel Background="White" />
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <view:VerticalTabHeaderIconText 
                         Text="{DynamicResource TopBar_HandTrack}"                        
                         IconKind="Hand">
                         <view:VerticalTabHeaderIconText.Foreground>
                             <MultiBinding Converter="{StaticResource DecrementableTabSelectionToForegroundConverter}"
-                                          ConverterParameter="5">
+                                          ConverterParameter="6">
                                 <Binding Path="SelectedIndex"
                                          ElementName="MainTabControl" />
                                 <Binding Path="DataContext.ShowVmcpTab.Value" 

@@ -138,7 +138,7 @@ namespace Baku.VMagicMirror
             );
             receiver.AssignCommandHandler(
                 VmmCommands.SetDeviceLayout,
-                command => SetDeviceLayout(command.Content)
+                command => SetDeviceLayout(command.GetStringValue())
             );
             receiver.AssignCommandHandler(
                 VmmCommands.ResetDeviceLayout,
@@ -267,7 +267,7 @@ namespace Baku.VMagicMirror
                 penTablet = ToItem(_penTabletControl.transform),
                 gamepadModelScale = _gamepadModelScaleTarget.localScale.x,
             };
-            _sender?.SendCommand(MessageFactory.Instance.UpdateDeviceLayout(data));
+            _sender?.SendCommand(MessageFactory.UpdateDeviceLayout(data));
 
             DeviceLayoutItem ToItem(Transform t)
             {
@@ -291,6 +291,8 @@ namespace Baku.VMagicMirror
         
             try
             {
+                // TODO: Transform編集に関するコードのトレーサビリティが悪いのを直したい
+                // 具体的には、各ControlなりProviderなりのクラスからSetPosition系のメソッドが生えてると嬉しい
                 var data = JsonUtility.FromJson<DeviceLayoutsData>(content);
                 ApplyItem(data.keyboard, _keyboardControl.transform);
                 ApplyItem(data.touchPad, _touchPadControl.transform);
@@ -314,7 +316,7 @@ namespace Baku.VMagicMirror
                 
                 //タイミングバグを踏むと嫌 + Setによって実際にレイアウトが変わるので、
                 //「確かに受け取ったよ」という主旨で受信値をエコーバック
-                _sender?.SendCommand(MessageFactory.Instance.UpdateDeviceLayout(data));
+                _sender?.SendCommand(MessageFactory.UpdateDeviceLayout(data));
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Baku.VMagicMirror.MediaPipeTracker;
+using UnityEngine;
 using Zenject;
 
 namespace Baku.VMagicMirror
@@ -8,6 +9,7 @@ namespace Baku.VMagicMirror
     {
         [SerializeField] private FaceAttitudeController imageAttitude = null;
         [SerializeField] private ExternalTrackerFaceAttitudeController externalTrackerAttitude = null;
+        [SerializeField] private MediaPipeFaceAttitudeController mediaPipeFaceAttitude = null;
         [SerializeField] private NonImageBasedMotion nonImageBasedMotion = null;
 
         private FaceControlConfiguration _config;
@@ -25,14 +27,22 @@ namespace Baku.VMagicMirror
             {
             case FaceControlModes.ExternalTracker:
                 externalTrackerAttitude.IsActive = true;
+                mediaPipeFaceAttitude.IsActive = false;
                 imageAttitude.IsActive = false;
                 break;
-            case FaceControlModes.WebCam:
+            case FaceControlModes.WebCamLowPower:
                 externalTrackerAttitude.IsActive = false;
+                mediaPipeFaceAttitude.IsActive = false;
                 imageAttitude.IsActive = true;
+                break;
+            case FaceControlModes.WebCamHighPower:
+                externalTrackerAttitude.IsActive = false;
+                mediaPipeFaceAttitude.IsActive = true;
+                imageAttitude.IsActive = false;
                 break;
             default:
                 externalTrackerAttitude.IsActive = false;
+                mediaPipeFaceAttitude.IsActive = false;
                 imageAttitude.IsActive = false;
                 break;
             }

@@ -5,7 +5,6 @@ using System.Threading;
 using Baku.VMagicMirror.VMCP;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UniVRM10;
 
 namespace Baku.VMagicMirror.WordToMotion
 {
@@ -21,6 +20,7 @@ namespace Baku.VMagicMirror.WordToMotion
         private readonly VMCPNaiveBoneTransfer _vmcpNaiveBoneTransfer;
         private readonly FingerController _fingerController;
         private readonly WordToMotionAccessoryRequest _accessoryRequest;
+        private readonly WordToMotionEventBroker _eventBroker;
         
         public WordToMotionRunner(
             IVRMLoadable vrmLoadable,
@@ -29,7 +29,8 @@ namespace Baku.VMagicMirror.WordToMotion
             TaskBasedIkWeightFader ikWeightCrossFade,
             VMCPNaiveBoneTransfer vmcpNaiveBoneTransfer,
             FingerController fingerController,
-            WordToMotionAccessoryRequest accessoryRequest)
+            WordToMotionAccessoryRequest accessoryRequest,
+            WordToMotionEventBroker eventBroker)
         {
             _vrmLoadable = vrmLoadable;
             _players = players.ToArray();
@@ -38,6 +39,7 @@ namespace Baku.VMagicMirror.WordToMotion
             _vmcpNaiveBoneTransfer = vmcpNaiveBoneTransfer;
             _fingerController = fingerController;
             _accessoryRequest = accessoryRequest;
+            _eventBroker = eventBroker;
         }
 
         public override void Initialize()
@@ -142,6 +144,8 @@ namespace Baku.VMagicMirror.WordToMotion
                 }
             }
 
+            NotifyStarted(request, duration);
+            
             //アクセサリの処理
             CancelAccessoryReset();
             _accessoryRequest.SetAccessoryRequest(request.AccessoryName);
@@ -221,8 +225,21 @@ namespace Baku.VMagicMirror.WordToMotion
             _previewUseIkFade = false;
             Stop();
         }
+
+        private void NotifyStarted(MotionRequest request, float duration)
+        {
+            // NOTE: 表情が適用しっぱなしになる場合、通知上では終了時間が無いものとして扱う
+            // NOTE: 「表情を適用しっぱなし → 非ループのモーションのみ実行」のWtMを順に実行すると表情は適用したまま
+            // WtMの適用が終了したかのような通知シーケンスが作れてしまうが、おそらくマイナーケースなので気にしない方向で
+            var notifiedDuration = duration;
+            if (request.UseBlendShape && request.HoldBlendShape)
+            {
+                notifiedDuration = -1f;
+            }
+            _eventBroker.NotifyStarted(request, notifiedDuration);
+        }
         
-        public void Stop()
+        private void Stop()
         {
             CancelBlendShapeReset();
             CancelMotionReset();
@@ -237,6 +254,8 @@ namespace Baku.VMagicMirror.WordToMotion
             _ikWeightCrossFade.SetUpperBodyIkWeight(1f, 0f);
             _vmcpNaiveBoneTransfer.FadeInWeight(0f);
             _restoreIkOnMotionEnd = false;
+            
+            _eventBroker.NotifyStopped();
         }
 
         private async UniTaskVoid ResetMotionAsync(float delay, bool fadeIkAndFinger, CancellationToken cancellationToken)

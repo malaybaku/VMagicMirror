@@ -4,10 +4,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.9.1
+v4.0.0
 
 * 作成: 獏星(ばくすたー)
-* 2024/12/30
+* 2025/05/31
 
 WindowsでVRMを表示し、追加のデバイスなしで動かせるアプリケーションです。
 
@@ -51,12 +51,12 @@ Windows 10/11環境でお使いいただけます。
 
 適当なフォルダに本レポジトリを配置します。配置先について、空白文字を含むようなフォルダパスは避けて下さい。
 
-Unity 2022.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォルダ)を開き、Visual Studio 2022でWPFプロジェクトを開きます。
+Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォルダ)を開き、Visual Studio 2022でWPFプロジェクトを開きます。
 
 メンテナの開発環境は以下の通りです。
 
-* Unity 2022.3.7f1 Personal
-* Visual Studio Community 2022 (17.4.4)
+* Unity 6.0.33f1 Personal
+* Visual Studio Community 2022 (17.13.0)
     * 「.NET Desktop」コンポーネントがインストール済みであること
     * 「C++によるデスクトップ開発」コンポーネントがインストール済みであること
         - UnityのBurstコンパイラ向けに必要なセットアップです。
@@ -66,7 +66,6 @@ Unity 2022.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フ
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
 * [Zenject](https://github.com/svermeulen/Extenject) (アセットストアから)
@@ -80,14 +79,21 @@ Unity 2022.3系でUnityプロジェクト(本レポジトリの`VMagicMirror`フ
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
+* [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
+* Roslyn Scripting (後述)
 
-FinalIK, Dlib FaceLandmark Detector, OpenCV for Unityの3つは有償アセットであることに注意してください。
+FinalIK, Dlib FaceLandmark Detectorは有償アセットであることに注意してください。
 
 [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)は[NAudio](https://github.com/naudio/NAudio)を導入するために使用しています。
 
 "Fly,Baby." および "LaserLightShader"はBOOTHで販売されているアセットで、ビルドに必須ではありませんが、もし導入しない場合、タイピング演出が一部動かなくなります。
 
 Dlib FaceLandmark Detectorについては、アセットに含まれるデータセットを`StreamingAssets`フォルダ以下に移動します。導入にあたっては、Dlib FaceLandmark Detector本体のサンプルプロジェクト(`WebCamTextureExample`)を動かすなどして、ファイルが正しく置けているか確認します。
+
+MediaPipeUnityPluginについては、モデルデータ(`.bytes`　ファイル)のうち下記のファイルを `StreamingAssets/MediaPipeTracker` フォルダ以下に移動します。
+
+- `face_landmarker_v2_with_blendshapes.bytes`
+- `hand_landmarker.bytes`
 
 SharpDXは次の手順で導入します。
 
@@ -98,18 +104,6 @@ RawInput.Sharpもほぼ同様の導入手順です。
 
 - NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
 - 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
-
-OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のように書き換えます。
-
-```
-    abstract public class DisposableOpenCVObject : DisposableObject
-    {
-
-//        internal IntPtr nativeObj;
-        //Change to public member
-        public IntPtr nativeObj;
-
-```
 
 以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
 
@@ -126,6 +120,33 @@ OpenCVforUnityについては導入後、`DisposableOpenCVObject.cs`を次のよ
 //下記を一旦コメントアウト解除したのち、ふたたびコメントアウトする
 #define TEMP_SUPPRESS_ERROR
 ```
+
+Roslyn Scriptingについては、NuGet Packageの下記を取得し、必要なdllをプロジェクト上に配置します。
+
+- `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0`
+- `System.Runtime.Loader-v4.0.0`
+
+メンテナのUnityプロジェクト環境では、Assets以下に下記のようなフォルダ構造でdllを配置しています。
+
+- `Assets/CSharpScripting`
+    - `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0/Plugins`
+        - Microsoft.CodeAnalysis.CSharp.Scripting.dll
+        - Microsoft.CodeAnalysis.dll
+        - Microsoft.CodeAnalysis.Scripting.dll
+        - System.Buffers.dll
+        - System.Collections.Immutable.dll
+        - System.Memory.dll
+        - System.Numerics.Vectors.dll
+        - System.Reflection.Metadata.dll
+        - System.Runtime.CompilerServices.Unsafe.dll
+        - System.Text.Encoding.CodePages.dll
+        - System.Threading.Tasks.Extensions.dll
+        - Microsoft.CodeAnalysis.CSharp.dll
+    - `System.Runtime.Loader-v4.0.0/Plugins`
+        - System.Runtime.Loader.dll
+
+なお、NuGetForUnityでも上記のパッケージは導入できる可能性がありますが、本readmeの記載時点ではNuGetForUnityによる導入は確認していません。
+
 
 ### 4.3. ビルド
 
@@ -169,9 +190,22 @@ job_release_instraller.cmd
 
 フォルダ構成を確認したい場合、実際に配布されているVMagicMirrorも参考にしてください。
 
-## 5. OSS等のライセンス
+## 5. その他のレポジトリに含まれないアセット
 
-### 5.1. OSSライセンス
+VMagicMirror v4.0.0で導入されたサブキャラ機能に関連して、 `BuddyPresetResources.asset` に設定されたプリセット扱いのアセットデータ( `.bytes` )は公開したレポジトリに含まれないため、上記のビルド手順を追ってもデータが適切に読み込めません。
+
+これはプリセットのサブキャラが第三者に制作依頼したものであり、ライセンスの注記も異なるためです。
+
+必要に応じて、`BuddyPresetResources.asset` の `Texture Binary` と `VRM Binary` に下記のような適当なダミーアセットを適用してください。
+
+- `Texture Binary` :256x256px程度の適当なpngファイルの拡張子を `.bytes` に変更したもの
+- `VRM Binary` :軽量な適当なVRMファイルの拡張子を `.bytes` に変更したもの
+
+ref: (docページにサブキャラの取り扱いを追記次第、そのURLへのリンクを追記します)
+
+## 6. OSS等のライセンス
+
+### 6.1. OSSライセンス
 
 GUI中でOSSライセンスを掲載しており、その文面は下記ファイルで管理しています。
 
@@ -184,7 +218,7 @@ https://malaybaku.github.io/VMagicMirror/credit_license
 また、本レポジトリに含む画像の一部は [Otomanopee](https://github.com/Gutenberg-Labo/Otomanopee) フォントを使って作成しています。フォント自体を再配布するものではないため、あくまで補足情報として記載しています。
 
 
-### 5.2. Creative Commons Licenseに基づくモデルについて
+### 6.2. Creative Commons Licenseに基づくモデルについて
 
 このレポジトリに含まれる下記モデルはCreative Commons Attributionライセンスに基づいて使用し、レポジトリに含まれます。
 
@@ -193,7 +227,7 @@ https://malaybaku.github.io/VMagicMirror/credit_license
 
 VMagicMirrorでは元モデルに対し、他のデバイスとの一貫性を保つためにマテリアルを適用しているほか、カスタマイズのためにテクスチャを変更可能にしています。
 
-## 6. ローカリゼーションについて
+## 7. ローカリゼーションについて
 
 日本語、英語以外のローカリゼーションでのContributionに興味がある場合、[about_localization.md](./about_localization.md)を参照して下さい。
 

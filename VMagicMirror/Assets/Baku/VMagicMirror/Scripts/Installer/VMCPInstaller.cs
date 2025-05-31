@@ -8,9 +8,11 @@ namespace Baku.VMagicMirror
     public class VMCPInstaller : MonoInstaller
     {
         [SerializeField] private uOscServer oscServerPrefab;
+        [SerializeField] private uOscClient oscClientPrefab;
 
         public override void InstallBindings()
         {
+            // receiver
             Container.BindIFactory<uOscServer>()
                 .FromComponentInNewPrefab(oscServerPrefab)
                 .AsSingle();
@@ -24,6 +26,15 @@ namespace Baku.VMagicMirror
             Container.BindInterfacesTo<VMCPReceiver>().AsSingle();
             Container.Bind<VMCPFingerController>().FromNewComponentOnNewGameObject().AsSingle();
             Container.Bind<VMCPNaiveBoneTransfer>().FromNewComponentOnNewGameObject().AsSingle();
+            
+            // sender:
+            // NOTE: VMCP有効中のエフェクト表示に対してはLightingControllerも関与してる
+            Container.BindIFactory<uOscClient>()
+                .FromComponentInNewPrefab(oscClientPrefab)
+                .AsSingle();
+            Container.BindInterfacesTo<VMCPSender>().AsSingle();
+
+            Container.BindInterfacesTo<VMCPFaceSwitchSetter>().AsSingle();
         }
     }
 }

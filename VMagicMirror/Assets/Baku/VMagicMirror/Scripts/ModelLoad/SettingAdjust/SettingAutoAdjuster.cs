@@ -1,4 +1,5 @@
 ﻿using System;
+using Baku.VMagicMirror.IpcMessage;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -96,10 +97,12 @@ namespace Baku.VMagicMirror
                 SetHandSizeRelatedParameters(animator, parameters);
                 AdjustCameraPosition(animator);
                 //デバイスレイアウト調整: これは別途調整が終わるとメッセージが飛ぶ
-                _dispatcher.ReceiveCommand(new ReceivedCommand(VmmCommands.ResetDeviceLayout));
+                _dispatcher.ReceiveCommand(new ReceivedCommand(
+                    MessageSerializer.None((ushort) VmmCommands.ResetDeviceLayout)
+                    ));
                 
                 //3. 決定したパラメータをコンフィグ側に送る
-                _sender.SendCommand(MessageFactory.Instance.AutoAdjustResults(parameters));
+                _sender.SendCommand(MessageFactory.AutoAdjustResults(parameters));
             }
             catch(Exception ex)
             {

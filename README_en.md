@@ -5,10 +5,10 @@
 
 Logo: by [@otama_jacksy](https://twitter.com/otama_jacksy)
 
-v3.9.1
+v4.0.0
 
 * Author: Baxter
-* 2024/Dec/30
+* 2025/May/31
 
 The VRM avatar application without any special device.
 
@@ -54,12 +54,12 @@ note: Contact in English or Japanese is very helpful for the author.
 
 Put the repository on your local folder. folder path should not include space character.
 
-Open Unity project with Unity 2022.3.x, and open WPF project with Visual Studio 2022.
+Open Unity project with Unity 6.0.x, and open WPF project with Visual Studio 2022.
 
 Maintainer's environment is as following.
 
-* Unity 2022.3.7f1 Personal
-* Visual Studio Community 2022 (17.4.4)
+* Unity 6.0.33f1 Personal
+* Visual Studio Community 2022 (17.13.0)
     * Component ".NET Desktop Development" is required.
     * Also Component "C++ Desktop Development" is required, for Unity Burst compiler.
 
@@ -67,7 +67,6 @@ Maintainer's environment is as following.
 
 * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [OpenCV for Unity](https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088)
 * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
 * [Zenject](https://github.com/svermeulen/Extenject) (from Asset Store)
@@ -81,14 +80,22 @@ Maintainer's environment is as following.
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
+* [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
+* Roslyn Scripting (see the last part of this section for detail)
 
-Should be noted that `FinalIK`, `Dlib FaceLandmark Detector`, and `OpenCV for Unity` are paid assets.
+Note that `FinalIK` and `Dlib FaceLandmark Detector` are paid assets.
 
 [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity) is necessary to import [NAudio](https://github.com/naudio/NAudio).
 
 "Fly,Baby." and "LaserLightShader" are available on BOOTH, and they are optional. If you do not introduce them, some of typing effects will not work correctly.
 
 Dlib FaceLandmark Detector requires dataset file to be moved into `StreamingAssets` folder. Please check the file is in correct location by running Dlib FaceLandmark Detector example scenes like `WebCamTexture Example`.
+
+About MediaPipeUnityPlugin, move following model files (`.bytes`) in the package into `StreamingAssets/MediaPipeTracker` folder.
+
+- `face_landmarker_v2_with_blendshapes.bytes`
+- `hand_landmarker.bytes`
+
 
 Install SharpDX by following steps.
 
@@ -99,18 +106,6 @@ RawInput.Sharp can be installed with almost same work flow.
 
 - Get `.nupkg` from NuGet gallery and expand as zip to get `lib/netstandard1.1/RawInput.Sharp.dll`
 - Create `RawInputSharp` folder in Unity project's Assets folder, and put dll into the folder.
-
-For OpenCVforUnity, edit `DisposableOpenCVObject.cs`: 
-
-```
-    abstract public class DisposableOpenCVObject : DisposableObject
-    {
-
-//        internal IntPtr nativeObj;
-        //Change to public member
-        public IntPtr nativeObj;
-
-```
 
 Also there are some UPM based dependencies.
 
@@ -126,6 +121,32 @@ You will get compile errors for the first time. To solve this, confirm `NuGetFor
 //uncomment this line once, and comment out after NAudio is downloaded
 #define TEMP_SUPPRESS_ERROR
 ```
+
+To install Roslyn Scripting library, get following packages from NuGet to introduce .dll files.
+
+- `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0`
+- `System.Runtime.Loader-v4.0.0`
+
+In maintainers' project, the folder and file structure is as following.
+
+- `Assets/CSharpScripting`
+    - `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0/Plugins`
+        - Microsoft.CodeAnalysis.CSharp.Scripting.dll
+        - Microsoft.CodeAnalysis.dll
+        - Microsoft.CodeAnalysis.Scripting.dll
+        - System.Buffers.dll
+        - System.Collections.Immutable.dll
+        - System.Memory.dll
+        - System.Numerics.Vectors.dll
+        - System.Reflection.Metadata.dll
+        - System.Runtime.CompilerServices.Unsafe.dll
+        - System.Text.Encoding.CodePages.dll
+        - System.Threading.Tasks.Extensions.dll
+        - Microsoft.CodeAnalysis.CSharp.dll
+    - `System.Runtime.Loader-v4.0.0/Plugins`
+        - System.Runtime.Loader.dll
+
+Note that NuGetForUnity might get the packages above correctly, though it is not tested yet.
 
 ### 4.3. Build
 
@@ -171,9 +192,24 @@ Prepare output folder like `Bin`. Following instruction expects the folder name 
 
 When you want to check right folder structure, please see the distributed app.
 
-## 5. Third-Party License
 
-### 5.1. OSS License
+## 5. Note about Missing Assets
+
+VMagicMirror v4.0.0 and later version supports Buddy feature, and `BuddyPresetResources.asset` will have missing binary data (`.bytes`). 
+
+This is because the preset buddy assets were created by a third party on a commissioned basis.
+
+When necessary, please assign dummy assets at `Texture Binary` and `VRM Binary` field of `BuddyPresetResources.asset`.
+
+- `Texture Binary` : 256x256px image png file, with extension changed to `.bytes`
+- `VRM Binary` : Light VRM model, with extension to `.bytes`
+
+ref: (Add URL reference to doc web page, when preset buddy's license note is added)
+
+
+## 6. Third-Party License
+
+### 6.1. OSS License
 
 OSS license is listed in control panel GUI, and the resource text is this file.
 
@@ -185,7 +221,7 @@ https://malaybaku.github.io/VMagicMirror/credit_license
 
 Note that some images are created with [Otomanopee](https://github.com/Gutenberg-Labo/Otomanopee) font. This is not license notice, since the font itself is not redistributed.
 
-### 5.2. About Model data under Creative Commons Attribution
+### 6.2. About Model data under Creative Commons Attribution
 
 This repository includes following model data files under Attribution 4.0 International (CC BY 4.0).
 
@@ -195,6 +231,6 @@ This repository includes following model data files under Attribution 4.0 Intern
 VMagicMirror applies material for visual consistency, and allow texture replacement to support visual customize.
 
 
-## 6. About Localization Contribution
+## 7. About Localization Contribution
 
 Please check [about_localization.md](./about_localization.md), when you plan to contribute by localization activity.

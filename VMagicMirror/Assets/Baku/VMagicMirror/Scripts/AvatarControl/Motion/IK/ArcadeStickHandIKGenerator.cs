@@ -1,4 +1,5 @@
 ﻿using System;
+using UniRx;
 using UnityEngine;
 using UniVRM10;
 
@@ -41,6 +42,9 @@ namespace Baku.VMagicMirror.IK
         public override IHandIkState LeftHandState => _leftHandState;
         private readonly ArcadeStickHandIkState _rightHandState;
         public override IHandIkState RightHandState => _rightHandState;
+
+        private readonly Subject<GamepadKey> _buttonDownMotionStarted = new();
+        public IObservable<GamepadKey> ButtonDownMotionStarted => _buttonDownMotionStarted;
 
         public ArcadeStickHandIKGenerator(
             HandIkGeneratorDependency dependency, 
@@ -100,6 +104,10 @@ namespace Baku.VMagicMirror.IK
                         var (pos, rot) = _stickProvider.GetRightHandRaw(key);
                         dependency.Reactions.ParticleStore.RequestArcadeStickParticleStart(pos, rot);
                     }
+                    
+                    // NOTE: サブキャラ向けの通知としてはエフェクトの適用対象外のボタンであっても通知する。
+                    // こうする代わりに、すぐ上のif文の中に入れて「見かけ上のボタンがない場合は通知も無し」とするのもアリ
+                    _buttonDownMotionStarted.OnNext(key);
                 }
             };
 

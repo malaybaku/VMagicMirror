@@ -14,14 +14,8 @@ namespace Baku.VMagicMirrorConfig
         public IMessageSender Sender { get; }
         public IMessageReceiver Receiver { get; }
 
-        public void Start()
-        {
-            Receiver.Start();
-        }
+        public void Start() => Receiver.Start();
 
-        public void Dispose()
-        {
-            Receiver.Stop();
-        }
+        public void Dispose() => Receiver.Stop();
     }
 }

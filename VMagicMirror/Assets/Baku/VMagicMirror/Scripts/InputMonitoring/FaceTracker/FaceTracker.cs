@@ -16,8 +16,6 @@ namespace Baku.VMagicMirror
         None,
         /// <summary> DlibFaceLandmarkDetectorによる低負荷な顔トラッキングを回します。 </summary>
         LowPower,
-        /// <summary> OpenCvForUnityのdnnを使った、やや高負荷な顔トラッキングを回します。 </summary>
-        HighPower
     }
     
     /// <summary>
@@ -37,47 +35,33 @@ namespace Baku.VMagicMirror
         [SerializeField] private float notTrackedResetSpeedFactor = 3.0f;
         [Tooltip("検出処理が走る最短間隔をミリ秒単位で規定します。")]
         [SerializeField] private int trackMinIntervalMillisec = 60;
-        [SerializeField] private int trackMinIntervalMillisecOnHighPower = 40;
         
         /// <summary> キャリブレーションの内容 </summary>
-        public CalibrationData CalibrationData { get; } = new CalibrationData();
-
-        /// <summary> 顔検出スレッド上で、顔情報がアップデートされると発火します。 </summary>
-        public event Action<FaceDetectionUpdateStatus> FaceDetectionUpdated;
-
-        /// <summary> WebCamTextureの初期化が完了すると発火します。 </summary>
-        public event Action<WebCamTexture> WebCamTextureInitialized;
-        
-        /// <summary> WebCamTextureを破棄するとき発火します。破棄済みの状態で冗長に呼ばれることもあります。 </summary>
-        public event Action WebCamTextureDisposed;
+        public CalibrationData CalibrationData { get; } = new();
 
         /// <summary> カメラが初期化済みかどうか </summary>
-        public bool HasInitDone { get; private set; } = false;
-        private bool _isInitWaiting = false;
+        public bool HasInitDone { get; private set; }
+        private bool _isInitWaiting;
 
         /// <summary> カメラを起動してから1度以上顔が検出されたかどうか </summary>
-        public bool FaceDetectedAtLeastOnce { get; private set; } = false;
+        public bool FaceDetectedAtLeastOnce { get; private set; }
 
         //実際に接続できてるかどうかはさておき「カメラを使ってるつもり」というあいだはtrueになるフラグ。
         private FaceTrackingMode _trackingMode;
-        private NoneFaceAnalyzer _noneFaceAnalyzer = new NoneFaceAnalyzer();
+        private readonly NoneFaceAnalyzer _noneFaceAnalyzer = new();
         private DlibFaceAnalyzeRoutine _dlibFaceAnalyzer;
-        private DnnFaceAnalyzeRoutine _dnnFaceAnalyzer;
+
         public FaceAnalyzeRoutineBase CurrentAnalyzer
         {
             get
             {
                 switch (_trackingMode)
                 {
-                    case FaceTrackingMode.HighPower: return _dnnFaceAnalyzer;
                     case FaceTrackingMode.LowPower: return _dlibFaceAnalyzer;
                     default: return _noneFaceAnalyzer;
-                    
                 }
             }
         }
-
-        public bool IsHighPowerMode => _trackingMode == FaceTrackingMode.HighPower;
 
         private bool _disableHorizontalFlip;
         public bool DisableHorizontalFlip
@@ -87,15 +71,13 @@ namespace Baku.VMagicMirror
             {
                 _disableHorizontalFlip = value;
                 _dlibFaceAnalyzer.DisableHorizontalFlip = value;
-                _dnnFaceAnalyzer.DisableHorizontalFlip = value;
             } 
         }
 
-        private int TrackMinIntervalMs =>
-            IsHighPowerMode ? trackMinIntervalMillisecOnHighPower : trackMinIntervalMillisec;
+        private int TrackMinIntervalMs => trackMinIntervalMillisec;
 
-        private bool _calibrationRequested = false;
-        private float _faceNotDetectedCountDown = 0.0f;
+        private bool _calibrationRequested;
+        private float _faceNotDetectedCountDown;
 
         private HorizontalFlipController _horizontalFlipController;
         private WebCamTexture _webCamTexture;
@@ -125,15 +107,9 @@ namespace Baku.VMagicMirror
             CalibrationData.SetDefaultValues();
             
             _dlibFaceAnalyzer = new DlibFaceAnalyzeRoutine(StreamingAssetFileNames.DlibFaceTrackingDataFileName);
-            _dnnFaceAnalyzer = new DnnFaceAnalyzeRoutine();
-            //イベントを素通し
-            _dlibFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;
-            _dnnFaceAnalyzer.FaceDetectionUpdated += FaceDetectionUpdated;
-            
             _dlibFaceAnalyzer.SetUp();
-            _dnnFaceAnalyzer.SetUp();
             
-            _horizontalFlipController.DisableHorizontalFlip
+            _horizontalFlipController.DisableFaceHorizontalFlip
                 .Subscribe(disable => DisableHorizontalFlip = disable)
                 .AddTo(this);
         }
@@ -201,7 +177,7 @@ namespace Baku.VMagicMirror
                 {
                     _calibrationRequested = false;
                     _sender.SendCommand(
-                        MessageFactory.Instance.SetCalibrationFaceData(JsonUtility.ToJson(CalibrationData))
+                        MessageFactory.SetCalibrationFaceData(JsonUtility.ToJson(CalibrationData))
                         );
                 }
 
@@ -237,7 +213,6 @@ namespace Baku.VMagicMirror
         private void OnDestroy()
         {
             Dispose();
-            _dnnFaceAnalyzer.Dispose();
             _dlibFaceAnalyzer.Dispose();
         }
 
@@ -260,12 +235,25 @@ namespace Baku.VMagicMirror
             Dispose();
         }
 
-        public void StartCalibration() => _calibrationRequested = true;
+        public void StartCalibration()
+        {
+            // NOTE: dlib用のカメラを起動してないときにのキャリブレーション要求は無視する。
+            // このガードは、主に高負荷モードの顔トラッキング中に適用される
+            if (HasInitDone)
+            {
+                _calibrationRequested = true;
+            }
+        }
 
         public void SetCalibrateData(string data)
         {
             try
             {
+                if (string.IsNullOrEmpty(data))
+                {
+                    return;
+                }
+
                 var calibrationData = JsonUtility.FromJson<CalibrationData>(data);
                 CalibrationData.faceSize = calibrationData.faceSize;
                 CalibrationData.faceCenter = calibrationData.faceCenter;
@@ -295,6 +283,12 @@ namespace Baku.VMagicMirror
             }
 
             _isInitWaiting = true;
+            
+            // MediaPipe側でカメラを使っている場合、それの占有解除まで待つ
+            while (!WebCamTextureOccupyStatusProvider.TryOccupyDlib())
+            {
+                yield return null;
+            }
 
             // カメラの取得: 指定したのが無ければ諦める
             if (!string.IsNullOrEmpty(requestedDeviceName))
@@ -338,7 +332,6 @@ namespace Baku.VMagicMirror
 
             _isInitWaiting = false;
             HasInitDone = true;
-            WebCamTextureInitialized?.Invoke(_webCamTexture);
             _faceNotDetectedCountDown = activeButNotTrackedCount;
 
             if (_colors == null || _colors.Length != _webCamTexture.width * _webCamTexture.height)
@@ -361,8 +354,8 @@ namespace Baku.VMagicMirror
                 Destroy(_webCamTexture);
                 _webCamTexture = null;
             }
-            
-            WebCamTextureDisposed?.Invoke();
+
+            WebCamTextureOccupyStatusProvider.ReleaseDlib();
         }
     }
 }

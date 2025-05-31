@@ -14,55 +14,62 @@ namespace Baku.VMagicMirrorConfig
         public LightSettingModel(IMessageSender sender) : base(sender)
         {
             var s = LightSetting.Default;
-            var factory = MessageFactory.Instance;
 
             //エフェクト関係は設定項目がシンプルなため、例外はほぼ無い(色関係のメッセージ送信がちょっと特殊なくらい)
-            AntiAliasStyle = new RProperty<int>(s.AntiAliasStyle, i => SendMessage(factory.SetAntiAliasStyle(i)));
-            HalfFpsMode = new RProperty<bool>(s.HalfFpsMode, v => SendMessage(factory.SetHalfFpsMode(v)));
+            AntiAliasStyle = new RProperty<int>(s.AntiAliasStyle, i => SendMessage(MessageFactory.SetAntiAliasStyle(i)));
+            HalfFpsMode = new RProperty<bool>(s.HalfFpsMode, v => SendMessage(MessageFactory.SetHalfFpsMode(v)));
             UseFrameReductionEffect = new RProperty<bool>(
-                s.UseFrameReductionEffect, v => SendMessage(factory.UseFrameReductionEffect(v)));
+                s.UseFrameReductionEffect, v => SendMessage(MessageFactory.UseFrameReductionEffect(v)));
 
-            LightIntensity = new RProperty<int>(s.LightIntensity, i => SendMessage(factory.LightIntensity(i)));
-            LightYaw = new RProperty<int>(s.LightYaw, i => SendMessage(factory.LightYaw(i)));
-            LightPitch = new RProperty<int>(s.LightPitch, i => SendMessage(factory.LightPitch(i)));
+            LightIntensity = new RProperty<int>(s.LightIntensity, i => SendMessage(MessageFactory.LightIntensity(i)));
+            LightYaw = new RProperty<int>(s.LightYaw, i => SendMessage(MessageFactory.LightYaw(i)));
+            LightPitch = new RProperty<int>(s.LightPitch, i => SendMessage(MessageFactory.LightPitch(i)));
 
             Action sendLightColor = () =>
-                SendMessage(factory.LightColor(LightR?.Value ?? 255, LightG?.Value ?? 255, LightB?.Value ?? 255));
+                SendMessage(MessageFactory.LightColor(LightR?.Value ?? 255, LightG?.Value ?? 255, LightB?.Value ?? 255));
             LightR = new RProperty<int>(s.LightR, _ => sendLightColor());
             LightG = new RProperty<int>(s.LightG, _ => sendLightColor());
             LightB = new RProperty<int>(s.LightB, _ => sendLightColor());
-            UseDesktopLightAdjust = new RProperty<bool>(s.UseDesktopLightAdjust, b => SendMessage(factory.UseDesktopLightAdjust(b)));
+            UseDesktopLightAdjust = new RProperty<bool>(s.UseDesktopLightAdjust, b => SendMessage(MessageFactory.UseDesktopLightAdjust(b)));
 
-            EnableShadow = new RProperty<bool>(s.EnableShadow, b => SendMessage(factory.ShadowEnable(b)));
-            ShadowIntensity = new RProperty<int>(s.ShadowIntensity, i => SendMessage(factory.ShadowIntensity(i)));
-            ShadowYaw = new RProperty<int>(s.ShadowYaw, i => SendMessage(factory.ShadowYaw(i)));
-            ShadowPitch = new RProperty<int>(s.ShadowPitch, i => SendMessage(factory.ShadowPitch(i)));
-            ShadowDepthOffset = new RProperty<int>(s.ShadowDepthOffset, i => SendMessage(factory.ShadowDepthOffset(i)));
+            EnableShadow = new RProperty<bool>(s.EnableShadow, b => SendMessage(MessageFactory.ShadowEnable(b)));
+            ShadowIntensity = new RProperty<int>(s.ShadowIntensity, i => SendMessage(MessageFactory.ShadowIntensity(i)));
+            ShadowYaw = new RProperty<int>(s.ShadowYaw, i => SendMessage(MessageFactory.ShadowYaw(i)));
+            ShadowPitch = new RProperty<int>(s.ShadowPitch, i => SendMessage(MessageFactory.ShadowPitch(i)));
+            ShadowDepthOffset = new RProperty<int>(s.ShadowDepthOffset, i => SendMessage(MessageFactory.ShadowDepthOffset(i)));
 
-            BloomIntensity = new RProperty<int>(s.BloomIntensity, i => SendMessage(factory.BloomIntensity(i)));
-            BloomThreshold = new RProperty<int>(s.BloomThreshold, i => SendMessage(factory.BloomThreshold(i)));
+            BloomIntensity = new RProperty<int>(s.BloomIntensity, i => SendMessage(MessageFactory.BloomIntensity(i)));
+            BloomThreshold = new RProperty<int>(s.BloomThreshold, i => SendMessage(MessageFactory.BloomThreshold(i)));
             Action sendBloomColor = () =>
-                SendMessage(factory.BloomColor(BloomR?.Value ?? 255, BloomG?.Value ?? 255, BloomB?.Value ?? 255));
+                SendMessage(MessageFactory.BloomColor(BloomR?.Value ?? 255, BloomG?.Value ?? 255, BloomB?.Value ?? 255));
             BloomR = new RProperty<int>(s.BloomR, _ => sendBloomColor());
             BloomG = new RProperty<int>(s.BloomG, _ => sendBloomColor());
             BloomB = new RProperty<int>(s.BloomB, _ => sendBloomColor());
 
-            EnableOutlineEffect = new RProperty<bool>(s.EnableOutlineEffect, v => SendMessage(factory.OutlineEffectEnable(v)));
-            OutlineEffectThickness = new RProperty<int>(s.OutlineEffectThickness, v => SendMessage(factory.OutlineEffectThickness(v)));
+            EnableOutlineEffect = new RProperty<bool>(s.EnableOutlineEffect, v => SendMessage(MessageFactory.OutlineEffectEnable(v)));
+            OutlineEffectThickness = new RProperty<int>(s.OutlineEffectThickness, v => SendMessage(MessageFactory.OutlineEffectThickness(v)));
             Action sendOutlineEffectColor = () =>
-                SendMessage(factory.OutlineEffectColor(OutlineEffectR?.Value ?? 255, OutlineEffectG?.Value ?? 255, OutlineEffectB?.Value ?? 255));
+                SendMessage(MessageFactory.OutlineEffectColor(OutlineEffectR?.Value ?? 255, OutlineEffectG?.Value ?? 255, OutlineEffectB?.Value ?? 255));
             OutlineEffectR = new RProperty<int>(s.OutlineEffectR, _ => sendOutlineEffectColor());
             OutlineEffectG = new RProperty<int>(s.OutlineEffectG, _ => sendOutlineEffectColor());
             OutlineEffectB = new RProperty<int>(s.OutlineEffectB, _ => sendOutlineEffectColor());
             OutlineEffectHighQualityMode = new RProperty<bool>(
                 s.OutlineEffectHighQualityMode,
-                v => SendMessage(factory.OutlineEffectHighQualityMode(v))
+                v => SendMessage(MessageFactory.OutlineEffectHighQualityMode(v))
                 );
 
-            EnableWind = new RProperty<bool>(s.EnableWind, b => SendMessage(factory.WindEnable(b)));
-            WindStrength = new RProperty<int>(s.WindStrength, i => SendMessage(factory.WindStrength(i)));
-            WindInterval = new RProperty<int>(s.WindInterval, i => SendMessage(factory.WindInterval(i)));
-            WindYaw = new RProperty<int>(s.WindYaw, i => SendMessage(factory.WindYaw(i)));
+            EnableWind = new RProperty<bool>(s.EnableWind, b => SendMessage(MessageFactory.WindEnable(b)));
+            WindStrength = new RProperty<int>(s.WindStrength, i => SendMessage(MessageFactory.WindStrength(i)));
+            WindInterval = new RProperty<int>(s.WindInterval, i => SendMessage(MessageFactory.WindInterval(i)));
+            WindYaw = new RProperty<int>(s.WindYaw, i => SendMessage(MessageFactory.WindYaw(i)));
+
+            EnableAmbientOcclusion = new RProperty<bool>(s.EnableAmbientOcclusion, b => SendMessage(MessageFactory.AmbientOcclusionEnable(b)));
+            AmbientOcclusionIntensity = new RProperty<int>(s.AmbientOcclusionIntensity, i => SendMessage(MessageFactory.AmbientOcclusionIntensity(i)));
+            Action sendAmbientOcclusionColor = () =>
+                SendMessage(MessageFactory.AmbientOcclusionColor(AmbientOcclusionR?.Value ?? 0, AmbientOcclusionG?.Value ?? 0, AmbientOcclusionB?.Value ?? 0));
+            AmbientOcclusionR = new RProperty<int>(s.AmbientOcclusionR, _ => sendAmbientOcclusionColor());
+            AmbientOcclusionG = new RProperty<int>(s.AmbientOcclusionG, _ => sendAmbientOcclusionColor());
+            AmbientOcclusionB = new RProperty<int>(s.AmbientOcclusionB, _ => sendAmbientOcclusionColor());
         }
 
         #region Image Quality
@@ -94,6 +101,16 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<int> ShadowYaw { get; }
         public RProperty<int> ShadowPitch { get; }
         public RProperty<int> ShadowDepthOffset { get; }
+
+        #endregion
+
+        #region Ambient Occlusion
+
+        public RProperty<bool> EnableAmbientOcclusion { get; }
+        public RProperty<int> AmbientOcclusionIntensity { get; }
+        public RProperty<int> AmbientOcclusionR { get; }
+        public RProperty<int> AmbientOcclusionG { get; }
+        public RProperty<int> AmbientOcclusionB { get; }
 
         #endregion
 
@@ -162,6 +179,16 @@ namespace Baku.VMagicMirrorConfig
             ShadowDepthOffset.Value = setting.ShadowDepthOffset;
         }
 
+        public void ResetAmbientOcclusionSetting()
+        {
+            var setting = LightSetting.Default;
+            EnableAmbientOcclusion.Value = setting.EnableAmbientOcclusion;
+            AmbientOcclusionIntensity.Value = setting.AmbientOcclusionIntensity;
+            AmbientOcclusionR.Value = setting.AmbientOcclusionR;
+            AmbientOcclusionG.Value = setting.AmbientOcclusionG;
+            AmbientOcclusionB.Value = setting.AmbientOcclusionB;
+        }
+
         public void ResetBloomSetting()
         {
             var setting = LightSetting.Default;
@@ -196,6 +223,7 @@ namespace Baku.VMagicMirrorConfig
         {
             ResetLightSetting();
             ResetShadowSetting();
+            ResetAmbientOcclusionSetting();
             ResetBloomSetting();
             ResetOutlineEffectSetting();
             ResetWindSetting();

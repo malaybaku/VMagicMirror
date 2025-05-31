@@ -7,12 +7,13 @@ namespace Baku.VMagicMirrorConfig
 {
     public class UpdateNotificationModel
     {
-        const string LatestReleaseApiEndPoint = "https://api.github.com/repos/malaybaku/VMagicMirror/releases/latest";
-        const double ApiTimeout = 3.0;
+        private const string LatestReleaseApiEndPoint = "https://api.github.com/repos/malaybaku/VMagicMirror/releases/latest";
+        private const double ApiTimeout = 3.0;
 
         //NOTE: 確かコレ系のClientは使い回すと不幸になるので、単一インスタンスにしておく
         private static readonly HttpClient _httpClient = new HttpClient();
       
+        //TODO: このstatic ctor内で何か例外が出てるらしいので要調査 (dev限定の可能性もあるが)
         static UpdateNotificationModel()
         {
             _httpClient.Timeout = TimeSpan.FromSeconds(ApiTimeout);

@@ -1,0 +1,8 @@
+- name: Getting Started
+  href: getting-started.md
+- name: Edit Buddy Manifest
+  href: buddy-manifest.md
+- name: Write Buddy Script
+  href: write-buddy-script.md
+- name: Debug Buddy
+  href: debug-buddy.md

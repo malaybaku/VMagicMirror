@@ -20,10 +20,6 @@ namespace Baku.VMagicMirror
                 VmmCommands.WaitMotionPeriod,
                 message => SetWaitMotionDuration(message.ToInt())
                 );
-            receiver.AssignCommandHandler(
-                VmmCommands.EnableBodyLeanZ,
-                message => bodyMotionManager.EnableImageBaseBodyLeanZ(message.ToBoolean())
-                );
             _waitingMotionSize = _bodyMotionManager.WaitingBodyMotion.MotionSize;
             SetWaitMotionScale(1.25f);
         }

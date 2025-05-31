@@ -40,15 +40,15 @@ namespace Baku.VMagicMirrorConfig
         public void LoadDefaultItems()
         {
             ExtraBlendShapeClipNames.Clear();
-            //NOTE: 現在ロードされてるキャラがいたら、そのキャラのブレンドシェイプをただちに当て直す
+            //NOTE: 現在ロードされてるアバターがいたら、そのアバターのブレンドシェイプをただちに当て直す
             ExtraBlendShapeClipNames.AddRange(_latestAvaterExtraClipNames);
             
             _setting.LoadDefaultMotionRequests(ExtraBlendShapeClipNames);
         }
 
-        private void OnReceiveCommand(object? sender, CommandReceivedEventArgs e)
+        private void OnReceiveCommand(CommandReceivedData e)
         {
-            if (e.Command != ReceiveMessageNames.ExtraBlendShapeClipNames)
+            if (e.Command is not VMagicMirror.VmmServerCommands.ExtraBlendShapeClipNames)
             {
                 return;
             }
@@ -56,7 +56,7 @@ namespace Baku.VMagicMirrorConfig
             //やることは2つ: 
             // - 知らない名前のブレンドシェイプが飛んできたら記憶する
             // - アバターが持ってるExtraなクリップ名はコレですよ、というのを明示的に与える
-            _latestAvaterExtraClipNames = e.Args
+            _latestAvaterExtraClipNames = e.GetStringValue()
                 .Split(',')
                 .Where(n => !string.IsNullOrEmpty(n))
                 .ToArray();

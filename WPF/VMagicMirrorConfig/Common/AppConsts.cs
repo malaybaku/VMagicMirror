@@ -8,9 +8,12 @@ namespace Baku.VMagicMirrorConfig
         public static string AppName => "VMagicMirror " + AppVersion.ToString();
         public static string EditionName => FeatureLocker.FeatureLocked ? "Standard Edition" : "Full Edition";
         public static string AppFullName => AppName + " " + EditionName;
+
+        // NOTE: この文字列がアプリのMainWindowに表示される。
+        // 開発中のスクリーンショット等でウィンドウ名を変えておいたほうが説明上よい場合、ここをハードコーディングすることで上書きできる。
         public static string AppFullNameWithEnvSuffix => 
             AppFullName + (TargetEnvironmentChecker.CheckDevEnvFlagEnabled() ? "(Dev)" : "");
 
-        public static VmmAppVersion AppVersion => new VmmAppVersion(3, 9, 1);
+        public static VmmAppVersion AppVersion => new(4, 0, 0);
     }
 }

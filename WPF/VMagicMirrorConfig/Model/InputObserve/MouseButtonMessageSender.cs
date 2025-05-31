@@ -27,7 +27,7 @@ namespace Baku.VMagicMirrorConfig
         {
             if (MouseEventNumberToEventName.TryGetValue(code, out var name))
             {
-                _sender.SendMessage(MessageFactory.Instance.MouseButton(name));
+                _sender.SendMessage(MessageFactory.MouseButton(name));
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Baku.VMagicMirror.IK;
+using Baku.VMagicMirror.MediaPipeTracker;
 using UnityEngine;
 using Zenject;
 using UniRx;
@@ -15,6 +16,7 @@ namespace Baku.VMagicMirror
         [SerializeField] private BodyLeanIntegrator bodyLeanIntegrator = null;
         [SerializeField] private ImageBasedBodyMotion imageBasedBodyMotion = null;
         [SerializeField] private ExternalTrackerBodyOffset exTrackerBodyMotion = null;
+        [SerializeField] private MediaPipeTrackerBodyOffset mediaPipeBodyMotion = null;
         [SerializeField] private VMCPBodyOffset vmcpBodyOffset = null;
         [SerializeField] private WaitingBodyMotion waitingBodyMotion = null;
 
@@ -75,6 +77,7 @@ namespace Baku.VMagicMirror
 
             var imageRelatedOffset = _faceControlConfig.ControlMode switch
             {
+                FaceControlModes.WebCamHighPower => mediaPipeBodyMotion.BodyOffset,
                 FaceControlModes.VMCProtocol => vmcpBodyOffset.BodyOffset,
                 FaceControlModes.ExternalTracker => exTrackerBodyMotion.BodyOffset,
                 _ => imageBasedBodyMotion.BodyIkXyOffset,
@@ -98,11 +101,14 @@ namespace Baku.VMagicMirror
             if (!_isVrmLoaded || !_isGameInputMode)
             {
                 return;
-            }            
-            
-            var imageRelatedOffset = _faceControlConfig.ControlMode == FaceControlModes.ExternalTracker
-                ? exTrackerBodyMotion.BodyOffset
-                : imageBasedBodyMotion.BodyIkXyOffset;
+            }
+
+            var imageRelatedOffset = _faceControlConfig.ControlMode switch
+            {
+                FaceControlModes.ExternalTracker => exTrackerBodyMotion.BodyOffset,
+                FaceControlModes.WebCamHighPower => mediaPipeBodyMotion.BodyOffset,
+                _ => imageBasedBodyMotion.BodyIkXyOffset,
+            };
 
             //通常時と同じ角度を参照するが、適用方法が異なり、直接ホネに値が入る
             ApplyRotationsToUpperBody(
@@ -153,12 +159,11 @@ namespace Baku.VMagicMirror
             return Quaternion.Euler(pitch, yaw, roll);
         }
 
-        public void EnableImageBaseBodyLeanZ(bool enable) => imageBasedBodyMotion.EnableBodyLeanZ = enable;
-
         private void SetNoHandTrackMode(bool enable)
         {
             imageBasedBodyMotion.NoHandTrackMode = enable;
-            exTrackerBodyMotion.NoHandTrackMode = enable;
+            exTrackerBodyMotion.NoHandTrackMode.Value = enable;
+            mediaPipeBodyMotion.NoHandTrackMode = enable;
         }
 
         private void ApplyRotationsToUpperBody(Quaternion localRot)

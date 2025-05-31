@@ -14,3 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   locomotionSupportedAnimatorControllers: {fileID: 11400000, guid: a413df28e7349954e98b337e4b841787,
     type: 2}
+  webCamSettings: {fileID: 11400000, guid: b46bb8c5c0a848848a4fb7d13f75898e, type: 2}
+  poseSetterSettings: {fileID: 11400000, guid: 16fae521289ab104880f09dd81c63888, type: 2}
+  landmarksVisualizerPrefab: {fileID: 1263065024300187271, guid: d9ac85f2bac2b334ca5cc9551af1e956,
+    type: 3}
+  buddyPresetResources: {fileID: 11400000, guid: 623aead3c9b4b3f4ea255fba3f38428a,
+    type: 2}

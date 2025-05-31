@@ -73,14 +73,14 @@ namespace Baku.VMagicMirror
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.OpenVrmPreview,
-                message => LoadModelForPreview(message.Content).Forget()
+                message => LoadModelForPreview(message.GetStringValue()).Forget()
             );
             _receiver.AssignCommandHandler(
                 VmmCommands.OpenVrm,
                 message =>
                 {
                     _previewBroker.RequestHide();
-                    LoadModel(message.Content).Forget();
+                    LoadModel(message.GetStringValue()).Forget();
                 });
             _receiver.AssignCommandHandler(
                 VmmCommands.CancelLoadVrm,
@@ -177,7 +177,7 @@ namespace Baku.VMagicMirror
                 }
                 
                 _sender.SendCommand(
-                    MessageFactory.Instance.ModelNameConfirmedOnLoad("VRM File: " + instance.Vrm.Meta.Name)
+                    MessageFactory.ModelNameConfirmedOnLoad("VRM File: " + instance.Vrm.Meta.Name)
                     );
                 SetModel(instance);
                 NotifyLoadModelFromFileEnded();

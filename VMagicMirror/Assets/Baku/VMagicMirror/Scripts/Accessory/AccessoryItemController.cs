@@ -35,7 +35,7 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoader,
             IMessageReceiver receiver,
             IMessageSender sender, 
-            ExternalTrackerDataSource externalTrackerDataSource,
+            FaceSwitchUpdater faceSwitchUpdater,
             DeviceTransformController deviceTransformController,
             WordToMotionAccessoryRequest accessoryRequest,
             BlinkTriggerDetector blinkTriggerDetector
@@ -66,11 +66,11 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.SetAccessoryLayout,
-                c => SetAllAccessoryLayout(c.Content)
+                c => SetAllAccessoryLayout(c.GetStringValue())
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.SetSingleAccessoryLayout,
-                c => SetSingleAccessoryLayout(c.Content)
+                c => SetSingleAccessoryLayout(c.GetStringValue())
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.RequestResetAllAccessoryLayout,
@@ -78,11 +78,12 @@ namespace Baku.VMagicMirror
                 );
             receiver.AssignCommandHandler(
                 VmmCommands.RequestResetAccessoryLayout,
-                c => ResetAccessoryLayout(c.Content)
+                c => ResetAccessoryLayout(c.GetStringValue())
                 );
 
-            externalTrackerDataSource.ActiveFaceSwitchItem
-                .Select(a => a.AccessoryName)
+            faceSwitchUpdater.CurrentValue
+                .Select(value => value.HasValue ? value.AccessoryName : "")
+                .DistinctUntilChanged()
                 .Subscribe(UpdateFaceSwitchStatus)
                 .AddTo(this);
 
@@ -293,7 +294,7 @@ namespace Baku.VMagicMirror
             };
 
             var msg = JsonUtility.ToJson(layouts);
-            _sender.SendCommand(MessageFactory.Instance.UpdateAccessoryLayouts(msg));
+            _sender.SendCommand(MessageFactory.UpdateAccessoryLayouts(msg));
         }
     }
 }

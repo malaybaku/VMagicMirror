@@ -22,9 +22,12 @@ namespace Baku.VMagicMirror
 
         //腰の真横より後ろにbendGoalを持っていくことで肘が前方に行きにくくするための補正値。
         [SerializeField] private float bendGoalZOffset = -0.02f;
+
+        [Range(0f, 1f)] 
+        [SerializeField] private float ikWeightMinOnImageHandTracking = 0.8f;
         
         public float WaistWidthHalf { get; private set; } = 0.15f;
-        public float ElbowCloseStrength { get; private set; } = 0.30f;
+        public float BendGoalIkWeight { get; private set; } = 0.30f;
         
         public Vector3 RightElbowPositionOffset { get; set; }
         public Vector3 LeftElbowPositionOffset { get; set; }
@@ -34,34 +37,50 @@ namespace Baku.VMagicMirror
         /// </summary>
         public float ElbowIkRate { get; set; } = 1.0f;
 
+        private HandIKIntegrator _handIKIntegrator;        
+
         private float _leftWidthFactor = 1.0f;
         private float _rightWidthFactor = 1.0f;
 
-        private bool _isInitialized = false;
+        private bool _hasModel = false;
         private Transform _leftArmBendGoal = null;
         private Transform _rightArmBendGoal = null;
         private FullBodyBipedIK _ik;
 
 
         public void SetWaistWidth(float width) => WaistWidthHalf = width * 0.5f;
-        public void SetElbowCloseStrength(float strength) => ElbowCloseStrength = strength;
+        public void SetBendGoalIkWeight(float weight) => BendGoalIkWeight = weight;
 
         [Inject]
-        public void Initialize(IVRMLoadable vrmLoadable, IMessageReceiver receiver)
+        public void Initialize(
+            IVRMLoadable vrmLoadable,
+            IMessageReceiver receiver,
+            HandIKIntegrator handIKIntegrator)
         {
             vrmLoadable.VrmLoaded += OnVrmLoaded;
             vrmLoadable.VrmDisposing += OnVrmDisposing;
-            var _ = new ElbowMotionModifyReceiver(receiver, this);
+            receiver.AssignCommandHandler(
+                VmmCommands.SetWaistWidth,
+                message => SetWaistWidth(message.ParseAsCentimeter())
+            );
+            
+            // NOTE: Command名を直してもいい (Unity側の内部で使ってる値のほうが実体には近い
+            receiver.AssignCommandHandler(
+                VmmCommands.SetElbowCloseStrength,
+                message => SetBendGoalIkWeight(message.ParseAsPercentage())
+            );
+
+            _handIKIntegrator = handIKIntegrator;
         }
 
         private void Update()
         {
-            if (!_isInitialized)
+            if (!_hasModel)
             {
                 return;
             }
 
-            float leftWidthFactorGoal =
+            var leftWidthFactorGoal =
                 1.0f +
                 (handIkIntegrator.IsLeftHandGripGamepad ? 1 : 0) +
                 (bodyLeanIntegrator.BodyRollRate > 0
@@ -76,7 +95,7 @@ namespace Baku.VMagicMirror
             );
 
             //leftのときとプラスマイナスのファクターのかけかたが逆になることに注意
-            float rightWidthFactorGoal = 
+            var rightWidthFactorGoal = 
                 1.0f + 
                 (handIkIntegrator.IsRightHandGripGamepad ? 1 : 0) + 
                 (bodyLeanIntegrator.BodyRollRate > 0
@@ -90,15 +109,32 @@ namespace Baku.VMagicMirror
                 WidthFactorLerp * Time.deltaTime
             );
 
-            _ik.solver.rightArmChain.bendConstraint.weight = ElbowCloseStrength * ElbowIkRate;
-            _ik.solver.leftArmChain.bendConstraint.weight = ElbowCloseStrength * ElbowIkRate;
+            _ik.solver.leftArmChain.bendConstraint.weight = GetIkWeight(handIkIntegrator.LeftTargetType.Value);
+            _ik.solver.rightArmChain.bendConstraint.weight = GetIkWeight(handIkIntegrator.RightTargetType.Value);
 
-            _rightArmBendGoal.localPosition =
-                new Vector3(WaistWidthHalf * _rightWidthFactor, 0, bendGoalZOffset) + RightElbowPositionOffset;
+            //TODO: とくに画像ベースでハンドトラッキングしているとき、胴体や胸に手が食い込むのをBendGoalの位置調整で対策したい
+            // が、bendGoalだけで頑張るのが結構ムズそうなので一旦見送っている
+
             _leftArmBendGoal.localPosition =
                 new Vector3(-WaistWidthHalf * _leftWidthFactor, 0, bendGoalZOffset) + LeftElbowPositionOffset;
+            _rightArmBendGoal.localPosition =
+                new Vector3(WaistWidthHalf * _rightWidthFactor, 0, bendGoalZOffset) + RightElbowPositionOffset;
         }
 
+        private float GetIkWeight(HandTargetType type)
+        {
+            // NOTE: 画像ベースでハンドトラッキングしている場合、BendGoalのウェイトが小さいとひじが暴れて見栄えがかなり悪化するので、
+            // 強制でweightを大きくする。ただし、もともとIKのweightが高い設定の場合はもとの設定が優先される
+            if (type is HandTargetType.ImageBaseHand)
+            {
+                return Mathf.Max(BendGoalIkWeight, ikWeightMinOnImageHandTracking) * ElbowIkRate;
+            }
+            else
+            {
+                return BendGoalIkWeight * ElbowIkRate;
+            }
+        }
+        
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _ik = info.fbbIk;
@@ -114,7 +150,7 @@ namespace Baku.VMagicMirror
             _leftArmBendGoal.localRotation = Quaternion.identity;
             _ik.solver.leftArmChain.bendConstraint.bendGoal = _leftArmBendGoal;
             
-            _isInitialized = true;
+            _hasModel = true;
         }
 
         private void OnVrmDisposing()
@@ -122,7 +158,7 @@ namespace Baku.VMagicMirror
             _ik = null;
             _rightArmBendGoal = null;
             _leftArmBendGoal = null;
-            _isInitialized = false;
+            _hasModel = false;
         }
     }
 }

@@ -6,6 +6,8 @@
     <!-- Common -->
     <sys:String x:Key="Common_Cancel">Cancel</sys:String>
     <sys:String x:Key="Common_Close">Close</sys:String>
+    <sys:String x:Key="Common_SeeMore">See More...</sys:String>
+    <sys:String x:Key="Common_GetFullEdition">Get Full Edition</sys:String>
 
     <!-- Window Title Bar -->
     <sys:String x:Key="TitleBar_Help">Help</sys:String>
@@ -19,9 +21,10 @@
     <!-- Top Tab -->
     <sys:String x:Key="TopBar_Home">Home</sys:String>
     <sys:String x:Key="TopBar_Streaming">Streaming</sys:String>
-    <sys:String x:Key="TopBar_ExternalFaceTrack">Ex.Tracker</sys:String>
+    <sys:String x:Key="TopBar_FaceTracker">Face Tracking</sys:String>
     <sys:String x:Key="TopBar_VMCP">VMC Protocol</sys:String>
     <sys:String x:Key="TopBar_Accessory">Accessory</sys:String>
+    <sys:String x:Key="TopBar_Buddy">Buddy</sys:String>
     <sys:String x:Key="TopBar_HandTrack">Hands</sys:String>
     
     <!-- Top Tab In Setting -->
@@ -76,12 +79,41 @@
     <sys:String x:Key="Streaming_Visibility_OutlineWillNotWorkWarning">Outline is not applied because "Transparent Window" is off.</sys:String>
     <sys:String x:Key="Streaming_WordToMotion_GameInputActiveWarning">Game Input also uses gamepad!</sys:String>
 
+    <!-- Face Tracker -->
+    <sys:String x:Key="FaceTracker_Title">Face Tracking</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType">Tracking Type: </sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_Lite">Web Camera (Lite)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_WebCam_HighPower">Web Camera (High Power)</sys:String>
+    <sys:String x:Key="FaceTracker_SelectType_ExTracker">Ex.Tracker</sys:String>
+    
+    <sys:String x:Key="FaceTracker_EnableWebCamera">Use Web Camera</sys:String>
+    <sys:String x:Key="FaceTracker_EnablePerfectSync">Use Perfect Sync</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Title">Web Camera (Lite)</sys:String>
+    <sys:String x:Key="FaceTracker_LiteWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with low CPU load.
+
+- This mode is useful to apply your motion to the avatar without additional device, with low PC load.
+- When disabling the camera in this mode, the app will run very light.
+- High power mode is automatically applied during hand tracking is active.
+- The mode has limitation about Face Switch feature, image based blink, etc.</sys:String>
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Title">Web Camera (High Power)</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_Instruction" xml:space="preserve">Face tracking by web camera with high CPU load.
+    
+- This mode is recommended to apply your motion to the avatar with high quality, without additional devices.
+- This mode uses higher load on PC than other modes.
+- In this mode, Face Switch and Perfect Sync features are partially available.</sys:String>
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_UseImageBasedLipSync">Apply LipSync based on Web Camera</sys:String>            
+
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_ActivateByHandTracking_Notice">Web Camera (Lite) mode is unavailable when hand tracking is enabled. Please use Web Camera (High Power) instead.</sys:String>            
+    
+    <sys:String x:Key="FaceTracker_HighPowerWebCamera_OpenEyeCalibrationWindow">Open Blink Tracking Settings</sys:String>
+    
     <!-- Ex.Tracker -->
     <sys:String x:Key="ExTracker_Title">External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Instruction" xml:space="preserve">Feature to use external tracking application.
-During this mode, following features are disabled.
-- Web camera based tracking
-- Eye motion to see the mouse pointer</sys:String>
+
+- Can apply high quality face tracking data with less PC load.
+- For the avatar with perfect sync support, this mode is most recommended.</sys:String>
     <sys:String x:Key="ExTracker_Enable">Enable External Tracker</sys:String>
     <sys:String x:Key="ExTracker_Enable_ImageLipSync">Apply LipSync using External Tracker Data</sys:String>    
 
@@ -104,6 +136,12 @@ During this mode, following features are disabled.
     <sys:String x:Key="ExTracker_iFM_HasTrouble_OpenUrl">Open Troubleshoot web page</sys:String>    
     
     <sys:String x:Key="ExTracker_FaceSwitch">Face Switch</sys:String>
+
+    <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Web Camera (Lite) does not detect facial data for this feature.
+If VMC Protocol is active and it receives perfect sync facial data, then Face Switch will work based on the data.</sys:String>
+
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Web Camera (High Power) does not detect "Cheek puff" and "Tongue Out" conditions.</sys:String>
+    
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">Activates seleceted BlendShape by making specific face expression.
 Check "Keep LipSync" to make the lipsync continue.</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_ShowAccessoryOption">Show Accessory Option</sys:String>
@@ -119,18 +157,42 @@ Check "Keep LipSync" to make the lipsync continue.</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_tongueOut">Tongue out</sys:String>
     <sys:String x:Key="ExTracker_FaceSwitch_Trigger_cheekPuff">Cheek puff</sys:String>
     
+    <!-- Face Tracker Eye Calibration -->
+    <sys:String x:Key="EyeCalibration_Header">Blink Tracking Settings</sys:String>
+    <sys:String x:Key="EyeCalibration_Instruction" xml:space="preserve">This window supports settings about blink tracking handling.
+The properties here only affects during "Web Camera (High Power)" is selected.
+
+- If you move your webcam or get new glasses, you might need to adjust the settings again.
+- The settings for avatar's eyes are available at Settings Window > Face tab.</sys:String>
+
+    <sys:String x:Key="EyeCalibration_Settings">Settings</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeOpenBlinkValue">Blink Value when Eye Opened (%)</sys:String>
+    <sys:String x:Key="EyeCalibration_EyeCloseBlinkValue">Blink Value when Eye Closed (%)</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplySameValueBothEye">Use Mean Blink Value</sys:String>
+    <sys:String x:Key="EyeCalibration_ApplyToPerfectSync">Use Adjusted Value when Perfect Sync is Enabled</sys:String>
+    <sys:String x:Key="EyeCalibration_ShowPreview">Show Blink Value Preview</sys:String>
+    <sys:String x:Key="EyeCalibration_ResetPreviewValue">Reset Preview</sys:String>
+    <sys:String x:Key="EyeCalibration_LeftEyeLabel">Left Eye</sys:String>
+    <sys:String x:Key="EyeCalibration_RightEyeLabel">Right Eye</sys:String>
+    <sys:String x:Key="EyeCalibration_SeeMore">See More...</sys:String>
+
     <!-- VMCP -->
     <sys:String x:Key="VMCP_Header">VMC Protocol</sys:String>
-    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">VMC Protocol (VMCP) can receive motion inputs from other apps.
-VMagicMirror supports to receive:
+    <sys:String x:Key="VMCP_Instruction" xml:space="preserve">With VMC Protocol (VMCP), the app can receive / send data with other apps.
+Following features are available.
+        
+Receive:
 
 - Head: Head Pose
 - Hand: Hand Pose
 - Facial: Facial BlendShape
-</sys:String>
-    <sys:String x:Key="VMCP_SeeMore">See More...</sys:String>
 
-    <sys:String x:Key="VMCP_Enable">Enable VMC Protocol</sys:String>
+Send: 
+
+- Pose: Full Body Pose
+- Facial: Facial BlendShape
+</sys:String>
+    <sys:String x:Key="VMCP_Enable">Enable VMC Protocol Data Receive</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">Receive Settings</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_Header">Advanced Settings</sys:String>    
     <sys:String x:Key="VMCP_GridLabel_AppName">App Name</sys:String>
@@ -151,27 +213,49 @@ Use "Default" to apply VMC Protocol based hand pose.</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_NaiveBoneTransfer">Apply received bone pose without any adjust</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_DisableCameraDuringActive">Disable Camera feature during VMCP is active</sys:String>    
     
+    <sys:String x:Key="VMCP_Send_Enable">Enable VMC Protocol Data Send</sys:String>
+    <sys:String x:Key="VMCP_Send_DestAddress">Target Address</sys:String>
+    <sys:String x:Key="VMCP_Send_DestPort">Target Port</sys:String>
+    <sys:String x:Key="VMCP_Send_SendBone">Send Bone Poses</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFingerBone">Send Finger Bone Poses</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFacial">Send BlendShape Data</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFacialNonStandard">Send Custom BlendShape</sys:String>
+    <sys:String x:Key="VMCP_Send_SendFacialVrm0">Convert to VRM0.x BlendShape Name (Enable when target app cannot load VRM1.0)</sys:String>
+    <sys:String x:Key="VMCP_Send_Prefer30fps">Limit Data Rate to 30/sec</sys:String>    
+    <sys:String x:Key="VMCP_Send_EditionLimitationNote" xml:space="preserve">Standard Edition shows visual effect during VMC Protorol data send feature is active,
+The data is exactly same as Full Edition, except that motion data will not sent during Game Input feature is active.
+Get Full Edition to remove the effect.</sys:String>
+    <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">Show Effect</sys:String>
+    <sys:String x:Key="VMCP_Send_IpAddressError">*Please check IP address format.</sys:String>
+    <sys:String x:Key="VMCP_Send_PortInputError">*Port number must be in 0 - 65535.</sys:String>
+
     <!-- HandTracking -->
     <sys:String x:Key="HandTracking_Header">Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_Instruction" xml:space="preserve">The feature supports webcam based hand tracking.
 When using webcam face tracking, same camera is used.</sys:String>
-    <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">*Standard Edition puts Visual effect during hand tracking.
+    <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">*Standard Edition shows visual effect during hand tracking.
 Get Full Edition to remove the effect.</sys:String>
-    <sys:String x:Key="HandTracking_GetFullEdition">Get Full Edition</sys:String>    
     <sys:String x:Key="HandTracking_Enable">Enable Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
+    <sys:String x:Key="HandTracking_MotionScale">Motion Scale (%)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetX">Hand Horizontal Offset (cm)</sys:String>
+    <sys:String x:Key="HandTracking_OffsetY">Hand Vertical Offset (cm)</sys:String>
+    
     <sys:String x:Key="HandTracking_ShowAreaChecker">Show Detection Status (*raw image is not displayed)</sys:String>    
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect" xml:space="preserve">*Body Motion Style is now "Standing Only."
 Use "Default" to apply hand tracking result.</sys:String>
+
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Title">Hand tracking result will not be applied with current option.</sys:String>
+    <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Instruction">Switch Body Motion Style option to "Default" to apply hand tracking result.</sys:String>
     <sys:String x:Key="HandTracking_BodyMotionModeIncorrect_Fix">Use "Default" Option</sys:String>
     
     <sys:String x:Key="HandTracking_DetectionResult">Detection Status:</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">(Not Detected: Try raising hands next to the face)</sys:String>
     <sys:String x:Key="HandTracking_DetectionResult_Notice" xml:space="preserve">Tips:
-- Put whole hand inside the camera view to stabilize.
-- Put hands slight left or right, than the center.</sys:String>
-    <sys:String x:Key="HandTracking_LearnMore">More...</sys:String>    
+- Keeping your entire hand within the camera frame helps stable tracking.
+- Avoid to hide the face with hands.
+- Single hand tracking is more stable than tracking two hands at the same time.</sys:String>
       
     <!-- Accessory Panel -->
     <sys:String x:Key="Accessory_Header">Accessory</sys:String>
@@ -195,6 +279,49 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize">Image max size</sys:String>
     <sys:String x:Key="Accessory_Item_MaxTextureSize_Unlimited">Unlimited</sys:String>
 
+    <!-- Buddy -->
+    <sys:String x:Key="Buddy_Header">Buddy</sys:String>
+    <sys:String x:Key="Buddy_Instruction">Setup assets and scripts in "Buddy" folder to show buddy characters.</sys:String>
+    <sys:String x:Key="Buddy_EditionLimitation" xml:space="preserve">*Standard Edition shows visual effect during "Use Interaction API" is enabled.
+Get Full Edition to remove the effect.</sys:String>
+    <sys:String x:Key="Buddy_SyncShadowToMainAvatar">Enable Shadow when Avatar's Shadow Enabled</sys:String>
+    <sys:String x:Key="Buddy_OpenFolder">Open Folder</sys:String>
+    <sys:String x:Key="Buddy_ReloadAll">Reload All</sys:String>
+
+    <sys:String x:Key="Buddy_Item_Reload">Reload</sys:String>
+    <sys:String x:Key="Buddy_Item_FolderName">Folder: </sys:String>
+    <sys:String x:Key="Buddy_Item_ResetProperties">Reset to Default</sys:String>
+
+    <sys:String x:Key="Buddy_Log_FatalError">Fatal Error Happened:</sys:String>
+    <sys:String x:Key="Buddy_Log_FatalError_Copy">Copy Text</sys:String>
+    <sys:String x:Key="Buddy_Log_FatalError_Ignore">Ignore Error</sys:String>
+
+    <sys:String x:Key="Buddy_InteractionApiEnabled_StandardEdition">Use Interaction API (In Standard Edition, it leads visual effect)</sys:String>
+    <sys:String x:Key="Buddy_InteractionApiEnabled_FullEdition">Use Interaction API (Enable in normal case)</sys:String>
+    
+    <sys:String x:Key="Buddy_DeveloperMode">Developer Mode</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_Enabled">Developer Mode is Enabled</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_Instruction" xml:space="preserve">When buddies starts after Developer Mode is enabled,
+more detailed log information will be written to the log file.
+
+*Log data may not be appear when there are too many logs.
+Please open the log file of the buddy to confirm actual logs in this case.
+</sys:String>
+
+    <sys:String x:Key="Buddy_Item_DeveloperModeUnapplied_Instruction" xml:space="preserve">Log output is partially unavailable, since the buddy has been enabled before developer mode enabled.
+Restart (turn off and on) the buddy to get more detailed log.</sys:String>
+
+    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">Open Developer Doc...</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_LogLevel">Log Level</sys:String>
+    <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">Open Log File</sys:String>
+
+    <sys:String x:Key="Buddy_FilePathString_OpenFile">Browse...</sys:String>    
+
+    <sys:String x:Key="Buddy_Transform_Attach">Attach to</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Position">Position</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Rotation">Rotation</sys:String>    
+    <sys:String x:Key="Buddy_Transform_Scale">Scale</sys:String>    
+    
     <!-- Settings General -->
     <sys:String x:Key="Setting_Color_Expander_Header">Edit Color (Click to Expand)</sys:String>
     
@@ -203,9 +330,9 @@ Disable foreground mode, or attach item to another one.</sys:String>
     <sys:String x:Key="Window_Basics">Basic Settings</sys:String>
     <sys:String x:Key="Window_BackgroundColor">Background</sys:String>
     <sys:String x:Key="Window_Transparent">Transparent Window</sys:String>
-    <sys:String x:Key="Window_Draggable">(When Transparent) Drag character</sys:String>
+    <sys:String x:Key="Window_Draggable">(When Transparent) Drag avatar</sys:String>
     <sys:String x:Key="Window_TopMost">(When Transparent) Always Foreground</sys:String>
-    <sys:String x:Key="Window_ResetPosition">Reset Character Position</sys:String>
+    <sys:String x:Key="Window_ResetPosition">Reset Avatar Position</sys:String>
     
     <sys:String x:Key="Window_BackgroundImage">BG Image:</sys:String>
     <sys:String x:Key="Window_BackgroundImage_Load">Load...</sys:String>
@@ -213,23 +340,29 @@ Disable foreground mode, or attach item to another one.</sys:String>
 
     <sys:String x:Key="Window_SpoutOutput">Spout</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Instruction" xml:space="preserve">Spout feature support fixed resolution output.
-Output channel name is fixed to "VMagicMirrorSpout".</sys:String>
+
+- Output channel name is fixed to "VMagicMirrorSpout".
+- When using a portrait (vertical) resolution, black bars may appear on the sides of the avatar window.</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Enable">Enable Spout Output</sys:String>
-    <sys:String x:Key="Window_SpoutOutput_Resolution">Resolution:</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution">Resolution (Width x Height):</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_SameAsScreen">Same as Window</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1280">1280 x 720 (Fixed)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920">1920 x 1080 (Fixed)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560">2560 x 1440 (Fixed)</sys:String>
     <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840">3840 x 2160 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1280Vertical">720 x 1280 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed1920Vertical">1080 x 1920 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed2560Vertical">1440 x 2560 (Fixed)</sys:String>
+    <sys:String x:Key="Window_SpoutOutput_Resolution_Fixed3840Vertical">2160 x 3840 (Fixed)</sys:String>
     
-    <sys:String x:Key="Window_TransparencySupport">Character Transparency Support</sys:String>
+    <sys:String x:Key="Window_TransparencySupport">Avatar Transparency Support</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level">Transparency Level</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Alpha">Alpha when Transparent(32-255)</sys:String>
 
     <sys:String x:Key="Window_TransparencySupport_Level_0">Level 0: Always NOT transparent.</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_1">Level 1: Transparent if "Drag character" is off, and mouse pointer is close to the character.</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_2">Level 2: Transparent if mouse pointer is close to the character.</sys:String>
-    <sys:String x:Key="Window_TransparencySupport_Level_3">Level 3: Transparent if "Drag character" is off.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_1">Level 1: Transparent if "Drag avatar" is off, and mouse pointer is close to the avatar.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_2">Level 2: Transparent if mouse pointer is close to the avatar.</sys:String>
+    <sys:String x:Key="Window_TransparencySupport_Level_3">Level 3: Transparent if "Drag avatar" is off.</sys:String>
     <sys:String x:Key="Window_TransparencySupport_Level_4">Level 4: Always transparent.</sys:String>
    
     <!-- Motion -->
@@ -333,8 +466,8 @@ If the face tracking works correctly, please ignore this warning.
 
     <!-- Face : Eye -->
     <sys:String x:Key="Motion_Eye">Eye</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint">Eye Look Target</sys:String>
-    <sys:String x:Key="Motion_Eye_LookAtPoint_Streaming">Look At:</sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint">Eye Look Target: </sys:String>
+    <sys:String x:Key="Motion_Eye_LookAtPoint_WebCamHighPower">Eye Look Target: The option is applied during camera is disabled</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_None">None</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MousePointer">Mouse</sys:String>
     <sys:String x:Key="Motion_Eye_LookAtPoint_MainCamera">User</sys:String>
@@ -462,6 +595,10 @@ Translate (2 way):
     <sys:String x:Key="Bloom_Intensity">Intensity [%]</sys:String>
     <sys:String x:Key="Bloom_Threshold">Threshold [%]</sys:String>
     
+    <sys:String x:Key="AO_Title">Ambient Occlusion</sys:String>
+    <sys:String x:Key="AO_Enable">Enable Effect</sys:String>
+    <sys:String x:Key="AO_Intensity">Intensity [%]</sys:String>
+    
     <sys:String x:Key="OutlineEffect">Outline (require transparent background)</sys:String>
     <sys:String x:Key="OutlineEffect_Enable">Enable Outline Effect</sys:String>
     <sys:String x:Key="OutlineEffect_Enable_Short">Outline if BG Transparent</sys:String>
@@ -482,7 +619,7 @@ Translate (2 way):
     <sys:String x:Key="WordToMotion_Enable">Enable Word to Motion</sys:String>
     <sys:String x:Key="WordToMotion_UseGamepadForInput">Use gamepad as launcher</sys:String>
     <sys:String x:Key="WordToMotion_Instruction" xml:space="preserve">This tab is `Word to Motion` tab.
-`Word to Motion` feature supports character motion by your word input.
+`Word to Motion` feature supports avatar motion by your word input.
 Please test by typing "joy".</sys:String>
     <sys:String x:Key="WordToMotion_AssignDevice">Assign device for this function</sys:String>
     <sys:String x:Key="WordToMotion_AssignDevice_None">None</sys:String>
@@ -585,8 +722,8 @@ Input favorite key combination in text area.
     <sys:String x:Key="SettingFile_Load">Load</sys:String>
     <sys:String x:Key="SettingFile_Save_Instruction">Select target to save.</sys:String>
     <sys:String x:Key="SettingFile_Load_Instruction">Select data to load.</sys:String>
-    <sys:String x:Key="SettingFile_LoadCharacter">Load Character</sys:String>
-    <sys:String x:Key="SettingFile_LoadNonCharacter">Load Non-Character Settings</sys:String>
+    <sys:String x:Key="SettingFile_LoadCharacter">Load Avatar</sys:String>
+    <sys:String x:Key="SettingFile_LoadNonCharacter">Load Non-Avatar Settings</sys:String>
     <sys:String x:Key="SettingFile_Export">Export</sys:String>
     <sys:String x:Key="SettingFile_Import">Import</sys:String>
 
@@ -666,7 +803,7 @@ VRoid Hub model is not supported in this feature.</sys:String>
     
     <!-- Dialog Messages -->
     <sys:String x:Key="DialogTitle_LoadLocalVrm">Load VRM</sys:String>
-    <sys:String x:Key="DialogMessage_LoadLocalVrm">Please confirm the license in viewer window. Do you load the character?</sys:String>
+    <sys:String x:Key="DialogMessage_LoadLocalVrm">Please confirm the license in viewer window. Do you load the avatar?</sys:String>
     <sys:String x:Key="DialogTitle_ResetAllSetting">Reset Setting</sys:String>
     <sys:String x:Key="DialogMessage_ResetAllSetting" xml:space="preserve">Reset process will delete current setting, and VMagicMirror will restart.
 
@@ -711,7 +848,7 @@ Choose 'OK' to enable webcam based tracking.
     <sys:String x:Key="DialogTitle_ConfirmSettingFileLoad">Setting File Load</sys:String>
     <sys:String x:Key="DialogMessage_ConfirmSettingFileLoad" xml:space="preserve">Are you sure to load setting No.{0}?
 
-If you load with non-character option, most of the settings will be overwritten.</sys:String>    
+If you load with non-avatar option, most of the settings will be overwritten.</sys:String>    
 
     <sys:String x:Key="DialogTitle_GuardSettingWindowDuringSaveLoad">Save / Load Process Running</sys:String>
     <sys:String x:Key="DialogMessage_GuardSettingWindowDuringSaveLoad">Setting window is locked during save and load process.</sys:String>
@@ -719,7 +856,7 @@ If you load with non-character option, most of the settings will be overwritten.
     <sys:String x:Key="DialogTitle_EnableAutomation">Enable Automation</sys:String>
     <sys:String x:Key="DialogMessage_EnableAutomation" xml:space="preserve">Are you sure to enable automation feature?
 
-This feature enable switch setting and change character without GUI operation.
+This feature enable switch setting and change avatar without GUI operation.
 Use this only after checking the licenses of VRM you will use.
 </sys:String>    
     <sys:String x:Key="DialogTitle_DisableAutomation">Disable Automation</sys:String>
@@ -743,14 +880,19 @@ You can revert this setting from current tab.</sys:String>
 
     <sys:String x:Key="DialogTitle_DisableVMCPTab">Hide VMC Protocol Tab</sys:String>
     <sys:String x:Key="DialogMessage_DisableVMCPTab" xml:space="preserve">Continue to hide VMCP tab on the main control panel window.
-If VMCP data receive is active, it will stop by this operation.
-VMCP receive settings is kept after the tab hidden.</sys:String>     
+This operation will disable VMCP data send and receive if they are active.
+Detailed settings about VMCP send and receive is kept after the tab is hidden.</sys:String>     
+    
+    <sys:String x:Key="DialogTitle_ResetSingleBuddySettings">Reset Buddy Setting</sys:String>
+    <sys:String x:Key="DialogMessage_ResetSingleBuddySettings">Are you sure to reset the settings of "{0}"?</sys:String>
     
     <!-- Snackbar Messages -->
+    <sys:String x:Key="Snackbar_General_TextCopied">Copied to Clipboard</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneDisconnected_Format">Selected Mic Disconnected: {0}</sys:String>
     <sys:String x:Key="Snackbar_MicrophoneReconnected_Format">Selected Mic Detected: {0}</sys:String>
     <sys:String x:Key="Snackbar_CameraReconnected_Format">Selected Camera Detected: {0}</sys:String>    
     <sys:String x:Key="Snackbar_BodyMotionStyle_Set_Default">Body Motion Style is set to: "Default"</sys:String>
+    <sys:String x:Key="Snackbar_Buddy_LogFileNotFound_Format">The log file of the buddy does not exist: {0}</sys:String>
 
     <!-- Other: Not on Dialog, but used from code -->
     <sys:String x:Key="CommonUi_DoNothing">(Do Nothing)</sys:String>
@@ -762,11 +904,15 @@ VMCP receive settings is kept after the tab hidden.</sys:String>
     <sys:String x:Key="URL_docs_hand_tracking">https://malaybaku.github.io/VMagicMirror/en/docs/hand_tracking</sys:String>
     <sys:String x:Key="URL_docs_setting_files">https://malaybaku.github.io/VMagicMirror/en/docs/setting_files</sys:String>
     <sys:String x:Key="URL_docs_accessory">https://malaybaku.github.io/VMagicMirror/en/docs/accessory</sys:String>
+    <sys:String x:Key="URL_docs_buddy">https://malaybaku.github.io/VMagicMirror/en/docs/buddy</sys:String>
     <sys:String x:Key="URL_docs_game_input">https://malaybaku.github.io/VMagicMirror/en/docs/game_input</sys:String>
     <sys:String x:Key="URL_docs_vmc_protocol">https://malaybaku.github.io/VMagicMirror/en/docs/vmc_protocol</sys:String>
 
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/en/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/en/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/en/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
+    
+    <!-- NOTE: メインのdocとレポジトリが違い、かつローカライズしてない(JP only)ことに注意 --> 
+    <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirrorBuddyDoc/</sys:String>
     
 </ResourceDictionary>

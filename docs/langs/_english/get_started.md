@@ -153,9 +153,9 @@ Also, if your avatar is not shown correctly, try `Adjust size by VRM` button. Yo
 
 Turn on `Transparent Window` to make avatar window to transparent. 
 
-When the window is transparent and `(When Transparent) Drag the character` is turned on, you can left-click and drag to move the avatar.
+When the window is transparent and `(When Transparent) Drag the avatar` is turned on, you can left-click and drag to move the avatar.
 
-If you do not want the dragging feature, then turn off `Drag the character` after placing your avatar.
+If you do not want the dragging feature, then turn off `Drag the avatar` after placing your avatar.
 
 <div class="row">
 {% include docimg.html file="./images/get_started/img00_060_transparent_bg.jpg" customclass="col s12 m6 l4" imgclass="fit-doc-img" %}
@@ -180,35 +180,13 @@ Also you can set background image when `Transparent Window` is turn off, from `L
 - `LipSync`: Select microphone to use LipSync (viseme) feature.
 - `Sensitivity [dB]`: Specify plus value when the microphone input is too small, to obtain good result for lipsync.
 - `Show Volume`: Turn on to see the input volume. Adjust `Sensitivity` such that, the volume bar is green and sometimes red during talking.
-- `Track Face`: Select webcam to track your head motion
-- `High Power Mode`: Get more robust face tracking result, while getting higher CPU load. Available from v1.7.0.
+- `Track Face`: Select webcam to track your head motion.
 
 </div>
 
 If the model's face does not rotate in face tracking, please open [FAQ](../questions) and see "Face not rotate when using face tracking" section.
 
-If your face is not at the center for the web camera, or you are too near/far to the camera, the avatar indication might be unnatural. In this case, click `Calibrate position` to adjust.
-
-<div class="note-area" markdown="1">
-
-**Hint**
-
-When your avatar always look downward then look down and `Calibrate position` to adjust. It makes your avatar to look up always.
-
-</div>
-
-`Eye Look Target` sets where to see. In default you can use `Mouse` so that the avatar looks the orientation mouse pointer exists.
-
-<div class="note-area" markdown="1">
-
-**NOTE** 
-
-VMagicMirror v1.1.0 and later also supports iOS app based face tracking.
-
-See detail at [External Tracker App ](../docs/external_tracker).
-
-</div>
-
+In `Face Tracking` tab more detailed settings are available. See detail at [Face Tracking](../docs/face_tracker).
 
 
 #### 2.3. Motion
@@ -277,10 +255,10 @@ During this setup you can use `Quick Save` and `Quick Load` buttons to save or l
 
 There is another way to setup camera position, keeping `Transparent Window` on.
 
-1. Check on `(When Transparent) Drag Character`
+1. Check on `(When Transparent) Drag Avatar`
 2. Left click the avatar
 3. Adjust camera position
-4. After adjusting, check off `(When Transparent)Drag Character`
+4. After adjusting, check off `(When Transparent)Drag Avatar`
 
 This is useful, but you will be more easily lost the avatar out of the window area.
 

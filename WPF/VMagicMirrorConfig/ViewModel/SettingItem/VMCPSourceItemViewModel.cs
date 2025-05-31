@@ -3,7 +3,7 @@
 namespace Baku.VMagicMirrorConfig.ViewModel
 {
     //NOTE: コマンドベースでApplyしないと適用されんという使い方にする (これはポート番号の編集が絡むため)。
-    //そのため、RPropertyは基本使わず、
+    //そのため、RPropertyは直接モデルには紐づいていない
     public class VMCPSourceItemViewModel : ViewModelBase
     {
         //NOTE: Design Mode中のプレビュー用に定義してる

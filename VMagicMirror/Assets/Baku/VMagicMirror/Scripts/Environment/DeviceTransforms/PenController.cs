@@ -58,7 +58,7 @@ namespace Baku.VMagicMirror
                 _rightThumbIntermediate = info.controlRig.GetBoneTransform(HumanBodyBones.RightThumbDistal);
                 _hasValidFinger = (_rightIndexProximal != null && _rightThumbIntermediate != null);
                 _hasModel = true;
-                _sender.SendCommand(MessageFactory.Instance.SetModelDoesNotSupportPen(!_hasValidFinger));
+                _sender.SendCommand(MessageFactory.SetModelDoesNotSupportPen(!_hasValidFinger));
             };
 
             vrmLoadable.VrmDisposing += () =>
@@ -69,7 +69,7 @@ namespace Baku.VMagicMirror
                 _rightIndexProximal = null;
                 _rightThumbIntermediate = null;
                 //モデルがロードされてないならサポート外警告は不要、とする。分かりやすいので
-                _sender.SendCommand(MessageFactory.Instance.SetModelDoesNotSupportPen(false));
+                _sender.SendCommand(MessageFactory.SetModelDoesNotSupportPen(false));
             };
 
             penMesh.enabled = false;

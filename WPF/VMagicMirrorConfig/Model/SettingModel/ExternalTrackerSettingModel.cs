@@ -13,31 +13,30 @@ namespace Baku.VMagicMirrorConfig
         public ExternalTrackerSettingModel(IMessageSender sender) : base(sender)
         {
             var setting = ExternalTrackerSetting.Default;
-            var factory = MessageFactory.Instance;
 
             //NOTE: ひとまず初期値を入れておくと非null保証できて都合がいい、という話
             _faceSwitchSetting = ExternalTrackerFaceSwitchSetting.LoadDefault();
 
             EnableExternalTracking = new RProperty<bool>(
-                setting.EnableExternalTracking, b => SendMessage(factory.ExTrackerEnable(b))
+                setting.EnableExternalTracking, b => SendMessage(MessageFactory.ExTrackerEnable(b))
                 );
             EnableExternalTrackerLipSync = new RProperty<bool>(
-                setting.EnableExternalTrackerLipSync, b => SendMessage(factory.ExTrackerEnableLipSync(b))
+                setting.EnableExternalTrackerLipSync, b => SendMessage(MessageFactory.ExTrackerEnableLipSync(b))
                 );
             EnableExternalTrackerPerfectSync = new RProperty<bool>(
-                setting.EnableExternalTrackerPerfectSync, b => SendMessage(factory.ExTrackerEnablePerfectSync(b))
+                setting.EnableExternalTrackerPerfectSync, b => SendMessage(MessageFactory.ExTrackerEnablePerfectSync(b))
                 );
 
-            TrackSourceType = new RProperty<int>(setting.TrackSourceType, i => SendMessage(factory.ExTrackerSetSource(i)));
+            TrackSourceType = new RProperty<int>(setting.TrackSourceType, i => SendMessage(MessageFactory.ExTrackerSetSource(i)));
             //NOTE: このアドレスはコマンド実行時に使うため、書き換わってもメッセージは送らない
             IFacialMocapTargetIpAddress = new RProperty<string>(setting.IFacialMocapTargetIpAddress);
 
             CalibrateData = new RProperty<string>(
-                setting.CalibrateData, s => SendMessage(factory.ExTrackerSetCalibrateData(s))
+                setting.CalibrateData, s => SendMessage(MessageFactory.ExTrackerSetCalibrateData(s))
                 );
 
             SerializedFaceSwitchSetting = new RProperty<string>(
-                setting.SerializedFaceSwitchSetting, v => SendMessage(factory.ExTrackerSetFaceSwitchSetting(v))
+                setting.SerializedFaceSwitchSetting, v => SendMessage(MessageFactory.ExTrackerSetFaceSwitchSetting(v))
                 );
 
             //NOTE: この時点で、とりあえずデフォルト設定がUnityに送られる
@@ -48,6 +47,8 @@ namespace Baku.VMagicMirrorConfig
         public RProperty<bool> EnableExternalTracking { get; }
         public RProperty<bool> EnableExternalTrackerLipSync { get; }
 
+
+        // NOTE: 歴史的経緯により、webcam (高精度)でのパーフェクトシンクのon/offもフラグの実体としてはコレになる
         public RProperty<bool> EnableExternalTrackerPerfectSync { get; }
 
         // アプリ別設定
@@ -111,13 +112,27 @@ namespace Baku.VMagicMirrorConfig
         public override void ResetToDefault()
         {
             Load(ExternalTrackerSetting.Default);
+            ResetFaceSwitchSetting();
+        }
 
+        public void ResetSettingExceptFaceSwitch()
+        {
+            var setting = ExternalTrackerSetting.Default;
+            EnableExternalTrackerLipSync.Value = setting.EnableExternalTrackerLipSync;
+            EnableExternalTrackerPerfectSync.Value = setting.EnableExternalTrackerPerfectSync;
+            TrackSourceType.Value = setting.TrackSourceType;
+            IFacialMocapTargetIpAddress.Value = setting.IFacialMocapTargetIpAddress;
+            CalibrateData.Value = setting.CalibrateData;
+        }
+
+        public void ResetFaceSwitchSetting()
+        {
             //NOTE: Entityのデフォルト値ではFaceSwitch設定が空になっているため、明示的にデフォルトを読み直す
             FaceSwitchSetting = ExternalTrackerFaceSwitchSetting.LoadDefault();
             SaveFaceSwitchSetting();
         }
 
-        public void SendCalibrateRequest() => SendMessage(MessageFactory.Instance.ExTrackerCalibrate());
+        public void SendCalibrateRequest() => SendMessage(MessageFactory.ExTrackerCalibrate());
 
         public async Task DisableExternalTrackerWithConfirmAsync()
         {

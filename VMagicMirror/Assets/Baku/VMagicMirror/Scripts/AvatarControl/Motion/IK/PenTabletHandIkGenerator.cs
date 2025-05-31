@@ -1,4 +1,5 @@
 ﻿using System;
+using UniRx;
 using UnityEngine;
 
 namespace Baku.VMagicMirror.IK
@@ -49,7 +50,10 @@ namespace Baku.VMagicMirror.IK
         
         public override IHandIkState LeftHandState => null;
         public override IHandIkState RightHandState => this;
-        
+
+        private readonly Subject<string> _mouseClickMotionStarted = new();
+        public IObservable<string> MouseClickMotionStarted => _mouseClickMotionStarted;
+
         private Vector3 _targetPosition = Vector3.zero;
 
         //左クリック中かどうか。trueの場合、押し込み動作が発生
@@ -137,6 +141,7 @@ namespace Baku.VMagicMirror.IK
                 if (dependency.Config.RightTarget.Value == HandTargetType.PenTablet)
                 {
                     dependency.Reactions.ParticleStore.RequestPenTabletClickParticle();
+                    _mouseClickMotionStarted.OnNext(eventName);
                 }
             };
         }

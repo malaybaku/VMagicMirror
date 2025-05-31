@@ -1,5 +1,6 @@
 ﻿using Baku.VMagicMirror.ExternalTracker;
 using DG.Tweening;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -38,52 +39,62 @@ namespace Baku.VMagicMirror
         private Vector3 _max = Vector3.zero;
         private Sequence _sequence = null;
         private float _currentLerpFactor;
-        
+
+        // UI上で「手前・奥に移動」がオンかどうか
+        private readonly ReactiveProperty<bool> _preferMoveZ = new(false);
+
         [Inject]
-        public void Initialize(FaceControlConfiguration config, ExternalTrackerDataSource externalTracker)
+        public void Initialize(
+            IMessageReceiver receiver,
+            FaceControlConfiguration config,
+            ExternalTrackerDataSource externalTracker)
         {
             _config = config;
             _externalTracker = externalTracker;
+            
+            receiver.BindBoolProperty(VmmCommands.EnableBodyLeanZ, _preferMoveZ);
+
+            NoHandTrackMode
+                .CombineLatest(
+                    _preferMoveZ,
+                    (noHandTrackMode, preferMoveZ) =>
+                        (noHandTrackMode, noHandTrackMode && preferMoveZ)
+                    )
+                .DistinctUntilChanged()
+                .Subscribe(value => SetScaleMinMaxTarget(value.noHandTrackMode, value.Item2))
+                .AddTo(this);
         }
         
         public Vector3 BodyOffset { get; private set; }
 
-        private bool _noHandTrackMode = false;
+        public ReactiveProperty<bool> NoHandTrackMode { get; } = new(false);
 
-        public bool NoHandTrackMode
+        private void SetScaleMinMaxTarget(bool noHandTrackMode, bool applyLargeOffsetZ)
         {
-            get => _noHandTrackMode;
-            set
-            {
-                if (_noHandTrackMode == value)
-                {
-                    return;
-                }
+            var targetScale = noHandTrackMode ? applyScaleWhenNoHandTrack : applyScale;
+            var targetMin = noHandTrackMode ? applyMinWhenNoHandTrack : applyMin;
+            var targetMax = noHandTrackMode ? applyMaxWhenNoHandTrack : applyMax;
 
-                _noHandTrackMode = value;
-                _sequence?.Kill();
-                _sequence = DOTween.Sequence()
-                    .Append(DOTween.To(
-                        () => _scale,
-                        v => _scale = v,
-                        value ? applyScaleWhenNoHandTrack : applyScale,
-                        TweenDuration
-                    ))
-                    .Join(DOTween.To(
-                        () => _min,
-                        v => _min = v,
-                        value ? applyMinWhenNoHandTrack : applyMin,
-                        TweenDuration
-                    ))
-                    .Join(DOTween.To(
-                        () => _max,
-                        v => _max = v,
-                        value ? applyMaxWhenNoHandTrack : applyMax,
-                        TweenDuration
-                    ));
-                _sequence.Play();
+            // 手下げモードの場合に、前後の移動は大きいかどうかは追加オプションでジャッジされる
+            if (noHandTrackMode && !applyLargeOffsetZ)
+            {
+                targetScale.z = applyScale.z;
+                targetMin.z = applyMin.z;
+                targetMax.z = applyMax.z;
             }
             
+            _sequence?.Kill();
+            _sequence = DOTween.Sequence()
+                .Append(DOTween.To(
+                    () => _scale, v => _scale = v, targetScale, TweenDuration
+                ))
+                .Join(DOTween.To(
+                    () => _min, v => _min = v, targetMin, TweenDuration
+                ))
+                .Join(DOTween.To(
+                    () => _max, v => _max = v, targetMax, TweenDuration
+                ));
+            _sequence.Play();
         }
 
         private void Start()

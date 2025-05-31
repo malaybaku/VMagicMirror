@@ -14,7 +14,7 @@ lang: en
 2025/05/31
 
 * Add: New Web Camera (High Power) face tracking option to improve face tracking precision.
-* Add: `Buddy` feature, to show additional characters. See detail at [Buddy](../buddy).
+* Add: `Buddy` feature, to show additional characters. See detail at [Buddy](../docs/buddy).
 * Add: Options for hand tracking to adjust hand motion.
 * Add: Data send feature via VMC Protocol.
 * Add: Ambient Occlusion effect support in settings window > `Effect` tab.
@@ -31,7 +31,7 @@ lang: en
 * Removed: Dependency to BarracudaHand and related OSS, since hand tracking implementation changed.
 * Other: [VMagicMirror Buddy Doc](https://malaybaku.github.io/VMagicMirrorBuddyDoc/) is available to make your own buddy. Note that the page is only in Japanese at the time of v4.0.0 release.
 
-Note that the update includes several features (VMC Protocol data send, Buddy, Hand Tracking) which has some limitation in Standard Edition. Please see detail at [Download](../downloads).
+Note that the update includes several features (VMC Protocol data send, Buddy, Hand Tracking) which has some limitation in Standard Edition. Please see detail at [Download](../download).
 
 
 #### v3.9.1

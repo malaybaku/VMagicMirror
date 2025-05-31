@@ -42,7 +42,7 @@ You can also disable web camera with web camera tracking option selected. In thi
 
 **NOTE**
 
-There are also available tracking way to use VMC Protocol data receive, though the setup steps might be more complicated. Please see detail at  [VMC Protocol](./vmc_protocol).
+There are also available tracking way to use VMC Protocol data receive, though the setup steps might be more complicated. Please see detail at  [VMC Protocol](../vmc_protocol).
 
 </div>
 
@@ -53,7 +53,7 @@ This section shows how each face tracking will work and what tracking settings a
 
 Each tracking mode supports `Calibrate Face Pose` to adjust avatar's pose.
 
-Note that, avatar's facial settings is also available in [Face](./face/) tab in setting window.
+Note that, avatar's facial settings is also available in [Face](../face) tab in setting window.
 
 
 #### Web Camera (Lite)
@@ -97,7 +97,7 @@ Following options are available.
 - `Disable horizontal flip`: Turn on to disable horizontal flip when applying tracking result.
 - `Enable Forward/Backward Move`: Turn on to allow move avatar forward and backward(*).
 - `Apply Lip Sync based on Web Camera`: Turn on to apply mouth motion based on web camera input. When turned off, microphone input based lipsync value is applied instead.
-- `Use Perfect Sync`: Apply the facial data as Perfect Sync blendshape values. Please see detail at [Perfect Sync](../tips/perfect_sync).
+- `Use Perfect Sync`: Apply the facial data as Perfect Sync blendshape values. Please see detail at [Perfect Sync](../../tips/perfect_sync).
 - `Eye Look Target`: Same option in `Web Camera (Lite)`. Note that, this option is only available when camera is disabled in `Web Camera (High Power)` mode.
 
 </div>
@@ -163,7 +163,7 @@ External Tracker is a feature to collaborate with iOS app [iFacialMocap](https:/
 
 If you have supported device, the option will perform very good tracking result while keeping low PC load.
 
-See detail at  [Exteral Tracker App](./external_tracker) and [Connect to iFacialMocap](./external_tracker_ifacialmocap). 
+See detail at  [Exteral Tracker App](../external_tracker) and [Connect to iFacialMocap](../external_tracker_ifacialmocap). 
 
 
 ### Face Switch

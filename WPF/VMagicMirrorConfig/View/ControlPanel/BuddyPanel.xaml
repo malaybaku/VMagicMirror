@@ -41,12 +41,43 @@
                                 />-->
                     </Grid>
 
+                    <md:ColorZone Mode="Dark"
+                                  Margin="-5,5" 
+                                  Padding="5"
+                                  Visibility="{Binding FeatureLocked, 
+                                                       Converter={StaticResource BooleanToVisibilityConverter}}"
+                                  >
+                        <Grid Margin="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                   FontWeight="Bold"
+                                   Text="{DynamicResource HandTracking_EditionLimitationNote}"
+                                   />
+                            <Button Grid.Column="1" 
+                                    Width="NaN"
+                                Padding="4"
+                                VerticalAlignment="Center"
+                                Margin="5,0"
+                                Command="{Binding OpenFullEditionDownloadUrlCommand}"
+                                Content="{DynamicResource Common_GetFullEdition}"
+                                />
+                        </Grid>
+                    </md:ColorZone>
+
                     <TextBlock Margin="15,5" 
                                 Text="{DynamicResource Buddy_Instruction}"/>
 
                     <CheckBox Content="{Binding InteractionApiEnabledLabel}"
                               IsChecked="{Binding InteractionApiEnabled.Value}"                              
                               />
+
+                    <CheckBox Content="{DynamicResource Buddy_SyncShadowToMainAvatar}"
+                              IsChecked="{Binding SyncShadowToMainAvatar.Value}"                              
+                              />
+
 
                     <Grid Margin="5">
                         <StackPanel Orientation="Horizontal">
@@ -84,7 +115,7 @@
                                 HorizontalAlignment="Right"
                                 Margin="0,0,10,0"
                                 Command="{Binding OpenDocUrlCommand}"
-                                Content="{DynamicResource Buddy_SeeMore}"
+                                Content="{DynamicResource Common_SeeMore}"
                                 />
                     </Grid>
 

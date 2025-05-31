@@ -38,7 +38,7 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
                         Command="{Binding OpenDocUrlCommand}"
-                        Content="{DynamicResource VMCP_SeeMore}"
+                        Content="{DynamicResource Common_SeeMore}"
                         />
 
             </Grid>
@@ -227,7 +227,7 @@
                                     VerticalAlignment="Center"
                                     Margin="5,0"
                                     Command="{Binding OpenFullEditionDownloadUrlCommand}"
-                                    Content="{DynamicResource HandTracking_GetFullEdition}"
+                                    Content="{DynamicResource Common_GetFullEdition}"
                                     />
                         </Grid>
                     </md:ColorZone>
@@ -282,9 +282,10 @@
                                Visibility="{Binding IsSendSettingsDirty.Value, Converter={StaticResource BooleanToVisibilityConverter}}"
                                />
 
-                    <StackPanel Orientation="Horizontal"
+                    <StackPanel 
+                        Orientation="Horizontal"
                         Margin="0,10,0,5" 
-                        IsEnabled="{Binding VMCPSendEnabled.Value}">
+                        >
 
                         <Button Padding="0"
                                 MinWidth="130"

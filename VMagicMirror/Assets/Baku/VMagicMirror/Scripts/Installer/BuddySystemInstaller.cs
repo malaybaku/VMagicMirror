@@ -30,6 +30,7 @@ namespace Baku.VMagicMirror
             Container.BindInterfacesTo<BuddyLayoutUpdater>().AsSingle();
             Container.BindInterfacesTo<BuddyTransform3DBoneAttachUpdater>().AsSingle();
             Container.BindInterfacesTo<BuddyRuntimeObjectUpdater>().AsSingle();
+            Container.BindInterfacesTo<BuddySpriteShadowSettingUpdater>().AsSingle();
             Container.Bind<BuddySprite2DUpdater>().AsSingle();
 
             Container.BindInterfacesTo<BuddyLayoutEditNotifier>().AsSingle();

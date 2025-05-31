@@ -11,6 +11,8 @@ namespace Baku.VMagicMirror.Buddy
 
         [Inject]
         public BuddyRuntimeObjectRepository() { }
+
+        public IEnumerable<SingleBuddyObjectInstanceRepository> GetRepositories() => _repositories.Values;
         
         public bool TryGet(BuddyId buddyId, out SingleBuddyObjectInstanceRepository result)
         {

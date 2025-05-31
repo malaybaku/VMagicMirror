@@ -33,6 +33,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             OpenDocUrlCommand = new ActionCommand(OpenDocUrl);
             OpenDeveloperModeDocUrlCommand = new ActionCommand(OpenDeveloperDocUrl);
             ReloadAllCommand = new ActionCommand(() => _model.ReloadAll());
+            OpenFullEditionDownloadUrlCommand = new ActionCommand(() => UrlNavigate.Open("https://baku-dreameater.booth.pm/items/3064040"));
 
             if (!IsInDesignMode)
             {
@@ -59,6 +60,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly LayoutSettingModel _layoutSettingModel;
         private readonly BuddySettingsSender _buddySettingsSender;
 
+        public bool FeatureLocked => FeatureLocker.FeatureLocked;
+
         public RProperty<bool> EnableDeviceFreeLayout => _layoutSettingModel.EnableDeviceFreeLayout;
 
         public string InteractionApiEnabledLabel
@@ -67,7 +70,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             {
                 if (IsInDesignMode)
                 {
-                    return "インタラクションAPIを使用";
+                    // NOTE: デザインチェックが目的のため、長いほうのテキストを入れとく
+                    return "インタラクションAPIを使用 (Standard Editionではオンにするとエフェクトがかかります)";
                 }
 
                 return FeatureLocker.FeatureLocked
@@ -77,6 +81,7 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         }
 
         public RProperty<bool> InteractionApiEnabled => _model.InteractionApiEnabled;
+        public RProperty<bool> SyncShadowToMainAvatar => _model.SyncShadowToMainAvatar;
         public RProperty<bool> DeveloperModeActive => _model.DeveloperModeActive;
         public RProperty<int> DeveloperModeLogLevel => _model.DeveloperModeLogLevel;
 
@@ -96,6 +101,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         public ActionCommand OpenDocUrlCommand { get; }
         public ActionCommand OpenDeveloperModeDocUrlCommand { get; }
         public ActionCommand ReloadAllCommand { get; }
+        public ActionCommand OpenFullEditionDownloadUrlCommand { get; }
+
 
         private void OnBuddiesReloaded(object? sender, EventArgs e) => OnBuddiesReloaded();
         private void OnBuddiesReloaded()

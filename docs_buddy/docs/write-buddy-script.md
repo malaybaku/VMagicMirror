@@ -244,3 +244,13 @@ sprite.Show("C:\\example\\path\\to\\image\\myImage.png");
 
 もし `Task` で非同期的な処理を記述しながらサブキャラを制御したい場合、 [IRootApi.RunOnMainThread](xref:VMagicMirror.Buddy.IRootApi.RunOnMainThread(System.Func{System.Threading.Tasks.Task})) の使用により、タスクをメインスレッド上で実行することを検討してください。
 
+
+## デフォルトサブキャラの実装について
+
+[VMagicMirrorのGitHubレポジトリ](https://github.com/malaybaku/VMagicMirror) で `main.csx` スクリプトを検索することにより、デフォルトのサブキャラを動かしているスクリプトの実装が確認できます。
+
+コード量がやや多いですが、基本的には通常のサブキャラにも転用できる実装になっています。ただし、デフォルトサブキャラに特有の特徴として、下記の点に注意してください。
+
+- 画像を表示するとき、 [ISprite2D.Show](xref:VMagicMirror.Buddy.ISprite2D.Show(System.String)) の代わりにアプリケーションに埋め込んだ画像を読み込む [ISprite2D.ShowPreset](xref:VMagicMirror.Buddy.ISprite2D.ShowPreset(System.String)) を使用しています。
+- 同様に、立ち絵のセットアップ処理にあたって `ISprite2D.SetupDefaultSprites` 関数の代わりに `ISprite2D.SetupDefaultSpritesByPreset` を使用しています。
+- これらの特徴に関連して、`Show` 関数で画像ファイルが見つからないケースは考慮されていません。

@@ -34,6 +34,7 @@ namespace Baku.VMagicMirror
 
         private bool _vmcpSendEnabled = false;
         private bool _showEffectDuringVmcpSendEnabled = false;
+        private bool _buddyInteractionApiEnabled = false;
 
         private bool _windowFrameVisible = true;
         private bool _enableOutlineEffect = false;
@@ -179,6 +180,14 @@ namespace Baku.VMagicMirror
                     _showEffectDuringVmcpSendEnabled = message.ToBoolean();
                     UpdateRetroEffectStatus();
                 });
+            
+            receiver.AssignCommandHandler(
+                VmmCommands.BuddySetInteractionApiEnabled,
+                message =>
+                {
+                    _buddyInteractionApiEnabled = message.ToBoolean();
+                    UpdateRetroEffectStatus();
+                });
         }
         
         private void Start()
@@ -300,9 +309,12 @@ namespace Baku.VMagicMirror
         
         private void UpdateRetroEffectStatus()
         {
+            // サブキャラは他2つと違って「わざとエフェクトを表示する」のオプションはない
+            // NOTE: 常時エフェクトを利かす独立なオプションを「エフェクト」タブに増設したほうが建て付けが良いかも…
             var enableEffect =
                 (_handTrackingEnabled && (FeatureLocker.IsFeatureLocked || _showEffectDuringTracking)) ||
-                (_vmcpSendEnabled && (FeatureLocker.IsFeatureLocked || _showEffectDuringVmcpSendEnabled));
+                (_vmcpSendEnabled && (FeatureLocker.IsFeatureLocked || _showEffectDuringVmcpSendEnabled)) ||
+                (_buddyInteractionApiEnabled && FeatureLocker.IsFeatureLocked);
 
             _vmmMonochrome.active = enableEffect;
             _vmmVhs.active = enableEffect;

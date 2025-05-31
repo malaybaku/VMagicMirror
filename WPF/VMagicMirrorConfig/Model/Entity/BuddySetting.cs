@@ -28,16 +28,13 @@
 
     public class BuddySetting : SettingEntityBase
     {
-        public bool InteractionApiEnabled { get; set; }
-        public bool DeveloperModeActive { get; set; }
-        public int DeveloperModeLogLevel { get; set; }
+        // NOTE: Standard Editionでは InteractionApi == true のときに視覚エフェクトがかかる仕様がある。
+        // この制限がデフォルトでかかっていると邪魔になってしまうので、デフォルトでは無効にしている
+        public bool InteractionApiEnabled { get; set; } = FeatureLocker.FeatureLocked ? false : true;
+        public bool SyncShadowToMainAvatar { get; set; } = true;
+        public bool DeveloperModeActive { get; set; } = false;
+        public int DeveloperModeLogLevel { get; set; } = (int)BuddyLogLevel.Fatal;
 
-        // NOTE: Standard Editionでは MainAvatar~ をtrueにするとエフェクトがかかる仕様があるため、デフォルトでは無効
-        public static BuddySetting Default { get; } = new BuddySetting()
-        {
-            InteractionApiEnabled = FeatureLocker.FeatureLocked ? false : true,
-            DeveloperModeActive = false,
-            DeveloperModeLogLevel = 0,
-        };
+        public static BuddySetting Default { get; } = new BuddySetting();
     }
 }

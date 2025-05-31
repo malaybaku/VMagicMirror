@@ -37,7 +37,7 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
                         Command="{Binding OpenDocUrlCommand}"
-                        Content="{DynamicResource VMCP_SeeMore}"
+                        Content="{DynamicResource Common_SeeMore}"
                         />
             </Grid>
 

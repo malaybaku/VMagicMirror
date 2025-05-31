@@ -104,9 +104,9 @@ namespace Baku.VMagicMirrorConfig.ViewModel
         private readonly RProperty<bool> _alwaysTrue = new(true);
 
         // Sendのうち機能制限とは関係ない部分
+        public RProperty<bool> VMCPSendEnabled => _model.VMCPSendEnabled;
         public RProperty<string> SendAddress { get; }
         public RProperty<int> SendPort { get; }
-        public RProperty<bool> VMCPSendEnabled => _model.VMCPSendEnabled;
         public RProperty<bool> SendBonePose { get; }
         public RProperty<bool> SendFingerBonePose { get; }
         public RProperty<bool> SendFacial { get; }

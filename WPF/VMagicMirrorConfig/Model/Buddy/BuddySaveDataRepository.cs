@@ -32,19 +32,17 @@ namespace Baku.VMagicMirrorConfig
             };
         }
 
-        public static BuddySaveData ExportSetting(bool interactionApiEnabled, IEnumerable<BuddyData> buddies)
+        public static BuddySaveData ExportSetting(IEnumerable<BuddyData> buddies)
         {
-            // TODO: FeatureLocker絡みのプロパティもここで保存対象にしたい(し、ロード時にも同様にケアしたい)
             return new BuddySaveData()
             {
-                InteractionApiEnabled = interactionApiEnabled,
                 Buddies = buddies.Select(ExportSetting).ToArray(),
             };
         }
 
-        public static void SaveSetting(bool interactionApiEnabled, IEnumerable<BuddyData> buddies, string path)
+        public static void SaveSetting(IEnumerable<BuddyData> buddies, string path)
         {
-            var saveData = ExportSetting(interactionApiEnabled, buddies);
+            var saveData = ExportSetting(buddies);
             using var sw = new StringWriter();
             new JsonSerializer().Serialize(sw, saveData);
             File.WriteAllText(path, sw.ToString());

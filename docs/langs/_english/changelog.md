@@ -8,6 +8,32 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v4.0.0
+{: .doc-sec2 }
+
+2025/05/31
+
+* Add: New Web Camera (High Power) face tracking option to improve face tracking precision.
+* Add: `Buddy` feature, to show additional characters. See detail at [Buddy](../buddy).
+* Add: Options for hand tracking to adjust hand motion.
+* Add: Data send feature via VMC Protocol.
+* Add: Ambient Occlusion effect support in settings window > `Effect` tab.
+* Change: Unity version changed to Unity 6.0.33f1. According to the change, Unity logo splash screen is skipped.
+* Change: Replaced hand tracking feature implement to detect larger area.
+* Change: VMC Protocol receiver based facial data is considered to be one of Face Switch input.
+* Change: Add portrait resolution support in Spout, in settings window `Window` tab. Note that, the both side of the avatar window side will get black during portrait Spout output is active.
+* Change: Internal implement changed so that interprocess communication between GUI and avatar window will be faster and stable for large data.
+* Change: Internal build settings changed so that GUI is based on .NET 8.
+* Fixed: Bug that VRM1.0 avatar with specific eye bone coordinate led bad appearance.
+* Fixed: Unify term to call loaded VRM model as `Avatar`.
+* Removed: Dependency to NLua, which had been introcuded from v3.8.4.
+* Removed: Dependency to OpenCVForUnity, since face tracking implementation changed.
+* Removed: Dependency to BarracudaHand and related OSS, since hand tracking implementation changed.
+* Other: [VMagicMirror Buddy Doc](https://malaybaku.github.io/VMagicMirrorBuddyDoc/) is available to make your own buddy. Note that the page is only in Japanese at the time of v4.0.0 release.
+
+Note that the update includes several features (VMC Protocol data send, Buddy, Hand Tracking) which has some limitation in Standard Edition. Please see detail at [Download](../downloads).
+
+
 #### v3.9.1
 {: .doc-sec2 }
 

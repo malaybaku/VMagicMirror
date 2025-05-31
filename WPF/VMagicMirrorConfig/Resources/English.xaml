@@ -6,6 +6,8 @@
     <!-- Common -->
     <sys:String x:Key="Common_Cancel">Cancel</sys:String>
     <sys:String x:Key="Common_Close">Close</sys:String>
+    <sys:String x:Key="Common_SeeMore">See More...</sys:String>
+    <sys:String x:Key="Common_GetFullEdition">Get Full Edition</sys:String>
 
     <!-- Window Title Bar -->
     <sys:String x:Key="TitleBar_Help">Help</sys:String>
@@ -138,7 +140,7 @@
     <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Web Camera (Lite) does not detect facial data for this feature.
 If VMC Protocol is active and it receives perfect sync facial data, then Face Switch will work based on the data.</sys:String>
 
-    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Web Camera (High Power) does not detect "Tongue Out" and "Cheek puff" condition.</sys:String>
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Web Camera (High Power) does not detect "Cheek puff" and "Tongue Out" conditions.</sys:String>
     
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">Activates seleceted BlendShape by making specific face expression.
 Check "Keep LipSync" to make the lipsync continue.</sys:String>
@@ -190,8 +192,6 @@ Send:
 - Pose: Full Body Pose
 - Facial: Facial BlendShape
 </sys:String>
-    <sys:String x:Key="VMCP_SeeMore">See More...</sys:String>
-
     <sys:String x:Key="VMCP_Enable">Enable VMC Protocol Data Receive</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">Receive Settings</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_Header">Advanced Settings</sys:String>    
@@ -226,7 +226,6 @@ Use "Default" to apply VMC Protocol based hand pose.</sys:String>
 The data is exactly same as Full Edition, except that motion data will not sent during Game Input feature is active.
 Get Full Edition to remove the effect.</sys:String>
     <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">Show Effect</sys:String>
-    <sys:String x:Key="VMCP_Send_GetFullEdition">Get Full Edition</sys:String>
     <sys:String x:Key="VMCP_Send_IpAddressError">*Please check IP address format.</sys:String>
     <sys:String x:Key="VMCP_Send_PortInputError">*Port number must be in 0 - 65535.</sys:String>
 
@@ -236,7 +235,6 @@ Get Full Edition to remove the effect.</sys:String>
 When using webcam face tracking, same camera is used.</sys:String>
     <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">*Standard Edition shows visual effect during hand tracking.
 Get Full Edition to remove the effect.</sys:String>
-    <sys:String x:Key="HandTracking_GetFullEdition">Get Full Edition</sys:String>    
     <sys:String x:Key="HandTracking_Enable">Enable Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">Show Effect During Hand Tracking</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">Disable Horizontal Flip</sys:String>    
@@ -258,7 +256,6 @@ Use "Default" to apply hand tracking result.</sys:String>
 - Keeping your entire hand within the camera frame helps stable tracking.
 - Avoid to hide the face with hands.
 - Single hand tracking is more stable than tracking two hands at the same time.</sys:String>
-    <sys:String x:Key="HandTracking_LearnMore">More...</sys:String>    
       
     <!-- Accessory Panel -->
     <sys:String x:Key="Accessory_Header">Accessory</sys:String>
@@ -284,9 +281,11 @@ Disable foreground mode, or attach item to another one.</sys:String>
 
     <!-- Buddy -->
     <sys:String x:Key="Buddy_Header">Buddy</sys:String>
-    <sys:String x:Key="Buddy_Instruction" xml:space="preserve">Setup assets and scripts in "Buddy" folder to show buddy characters.</sys:String>
+    <sys:String x:Key="Buddy_Instruction">Setup assets and scripts in "Buddy" folder to show buddy characters.</sys:String>
+    <sys:String x:Key="Buddy_EditionLimitation" xml:space="preserve">*Standard Edition shows visual effect during "Use Interaction API" is enabled.
+Get Full Edition to remove the effect.</sys:String>
+    <sys:String x:Key="Buddy_SyncShadowToMainAvatar">Enable Shadow when Avatar's Shadow Enabled</sys:String>
     <sys:String x:Key="Buddy_OpenFolder">Open Folder</sys:String>
-    <sys:String x:Key="Buddy_SeeMore">See More...</sys:String>
     <sys:String x:Key="Buddy_ReloadAll">Reload All</sys:String>
 
     <sys:String x:Key="Buddy_Item_Reload">Reload</sys:String>
@@ -312,7 +311,7 @@ Please open the log file of the buddy to confirm actual logs in this case.
     <sys:String x:Key="Buddy_Item_DeveloperModeUnapplied_Instruction" xml:space="preserve">Log output is partially unavailable, since the buddy has been enabled before developer mode enabled.
 Restart (turn off and on) the buddy to get more detailed log.</sys:String>
 
-    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">About Developer Mode…</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">Open Developer Doc...</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_LogLevel">Log Level</sys:String>
     <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">Open Log File</sys:String>
 
@@ -912,5 +911,8 @@ Detailed settings about VMCP send and receive is kept after the tab is hidden.</
     <sys:String x:Key="URL_tips_perfect_sync">https://malaybaku.github.io/VMagicMirror/en/tips/perfect_sync</sys:String>
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/en/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/en/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
+    
+    <!-- NOTE: メインのdocとレポジトリが違い、かつローカライズしてない(JP only)ことに注意 --> 
+    <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirrorBuddyDoc/</sys:String>
     
 </ResourceDictionary>

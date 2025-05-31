@@ -6,6 +6,8 @@
     <!-- Common -->
     <sys:String x:Key="Common_Cancel">キャンセル</sys:String>
     <sys:String x:Key="Common_Close">閉じる</sys:String>
+    <sys:String x:Key="Common_SeeMore">さらに詳しく...</sys:String>
+    <sys:String x:Key="Common_GetFullEdition">フルエディションを入手</sys:String>
 
     <!-- Window Title Bar -->
     <sys:String x:Key="TitleBar_Help">ヘルプ</sys:String>
@@ -139,7 +141,7 @@
     <sys:String x:Key="FaceSwitch_Notice_WebCamLowPower" xml:space="preserve">Webカメラ (軽量) では表情を検出できないため、この機能は動作しません。
 ただし、VMC Protocolでパーフェクトシンク用の表情を受信している場合、その表情にもとづいて表情スイッチが適用されます。</sys:String>
 
-    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Webカメラ (高品質) の顔トラッキングでは「舌を出す」と「頬をふくらませる」の表情は検出できないことに注意してください。</sys:String>
+    <sys:String x:Key="FaceSwitch_Notice_WebCamHighPower">Webカメラ (高品質) の使用中は、「頬をふくらませる」と「舌を出す」の表情は検出されません。</sys:String>
     
     <sys:String x:Key="ExTracker_FaceSwitch_Instruction" xml:space="preserve">顔をはっきりと特定の表情にすることでアバターの表情を切り替えます。
 「リップシンクを続行」をオンにすると、表情を切り替えたままリップシンクを動かせます。</sys:String>
@@ -190,8 +192,6 @@
     - 全身のポーズ
     - 表情 (BlendShape)
 </sys:String>
-    <sys:String x:Key="VMCP_SeeMore">さらに詳しく...</sys:String>
-
     <sys:String x:Key="VMCP_Enable">VMCPによる受信を有効化</sys:String>
     <sys:String x:Key="VMCP_ReceiveSetting_Header">受信元の設定</sys:String>
     <sys:String x:Key="VMCP_AdvancedSetting_Header">詳細設定</sys:String>
@@ -228,7 +228,6 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
 それ以外の送信データはフルエディションと全く同じです。
 フルエディションでは視覚エフェクトを無効化できます。</sys:String>
     <sys:String x:Key="VMCP_Send_ShowEffectDuringEnabled">データ送信中に視覚エフェクトを適用</sys:String>
-    <sys:String x:Key="VMCP_Send_GetFullEdition">フルエディションを入手</sys:String>
     <sys:String x:Key="VMCP_Send_IpAddressError">* IPアドレスの形式を確認してください。</sys:String>
     <sys:String x:Key="VMCP_Send_PortInputError">* 0 ~ 65535の範囲の値を指定して下さい。</sys:String>
 
@@ -238,7 +237,6 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
 顔トラッキングにもwebカメラを使う場合、顔と手で共通のカメラを使用します。</sys:String>
     <sys:String x:Key="HandTracking_EditionLimitationNote" xml:space="preserve">※基本エディションではハンドトラッキング中にエフェクトが適用されます。
 フルエディションではエフェクトを無効化できます。</sys:String>
-    <sys:String x:Key="HandTracking_GetFullEdition">フルエディションを入手</sys:String>
     <sys:String x:Key="HandTracking_Enable">ハンドトラッキングを有効化</sys:String>
     <sys:String x:Key="HandTracking_ShowEffectDuringTracking">トラッキング中にエフェクトを適用</sys:String>
     <sys:String x:Key="HandTracking_DisableHorizontalFlip">左右反転をオフ</sys:String> 
@@ -259,7 +257,6 @@ VMC Protocolによる手の姿勢を適用するには「デフォルト」に�
 - 手で顔を隠すことは避けてください。
 - 両手でのトラッキングが安定しない場合、片手だけを映してトラッキングするようにすると安定します。</sys:String>
     <sys:String x:Key="HandTracking_NotDetected">未検出: 顔の横に手を挙げてみて下さい</sys:String>
-    <sys:String x:Key="HandTracking_LearnMore">詳細 (Web)</sys:String>    
     
     <!-- Accessory Panel -->
     <sys:String x:Key="Accessory_Header">アクセサリ</sys:String>
@@ -285,9 +282,11 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     
     <!-- Buddy -->
     <sys:String x:Key="Buddy_Header">サブキャラ</sys:String>
-    <sys:String x:Key="Buddy_Instruction" xml:space="preserve">"Buddy"フォルダ内で適切に画像/3Dモデル/スクリプトを配置することで、サブキャラを表示できます。</sys:String>
+    <sys:String x:Key="Buddy_Instruction">"Buddy"フォルダ内で適切に画像/3Dモデル/スクリプトを配置することで、サブキャラを表示できます。</sys:String>
+    <sys:String x:Key="Buddy_EditionLimitation" xml:space="preserve">※基本エディションでは「インタラクションAPIを使用」をオンにするとエフェクトが適用されます。
+フルエディションではこの制限を解除してサブキャラを使用できます。</sys:String>
+    <sys:String x:Key="Buddy_SyncShadowToMainAvatar">サブキャラにも影を表示 (影がオンの時)</sys:String>
     <sys:String x:Key="Buddy_OpenFolder">フォルダを開く</sys:String>
-    <sys:String x:Key="Buddy_SeeMore">さらに詳しく...</sys:String>
     <sys:String x:Key="Buddy_ReloadAll">全て再読み込み</sys:String>
 
     <sys:String x:Key="Buddy_Item_Reload">再読み込み</sys:String>
@@ -313,7 +312,7 @@ png画像やglb/gltfモデルが利用可能です。</sys:String>
     <sys:String x:Key="Buddy_Item_DeveloperModeUnapplied_Instruction" xml:space="preserve">このサブキャラは開発者モードがオフの状態で起動されているため、ログ出力の一部が取得できません。
 サブキャラを一旦オフにしてから再びオンにすると、より詳細なログが取得できます。</sys:String>
 
-    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">開発者モードの詳細…</sys:String>    
+    <sys:String x:Key="Buddy_DeveloperMode_SeeMore">開発者向けページを開く…</sys:String>    
     <sys:String x:Key="Buddy_DeveloperMode_LogLevel">ログの詳細度: </sys:String>
     <sys:String x:Key="Buddy_DeveloperMode_OpenLogFile">ログファイルを開く</sys:String>
  
@@ -921,7 +920,7 @@ VMCPのデータを送受信中の場合、この操作をすることで送受�
     <sys:String x:Key="URL_tips_texture_replace">https://malaybaku.github.io/VMagicMirror/tips/change_textures</sys:String>
     <sys:String x:Key="URL_ifacialmocap_troubleshoot">https://malaybaku.github.io/VMagicMirror/docs/external_tracker_ifacialmocap#troubleshoot</sys:String>
 
-    <!-- TODO: メインのVMMのマニュアルと別のURLに差し替える -->
-    <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirror/docs/buddy</sys:String>
+    <!-- NOTE: メインのdocとレポジトリが違うので注意 --> 
+    <sys:String x:Key="URL_docs_buddy_developer">https://malaybaku.github.io/VMagicMirrorBuddyDoc/</sys:String>
     
 </ResourceDictionary>

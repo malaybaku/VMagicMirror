@@ -16,10 +16,6 @@ In this page, the 3D model normally displayed is referred to as `main avatar`, s
 {% include docimg.html file="/images/docs/buddy_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
 </div>
 
-<div class="row">
-{% include docimg.html file="/images/docs/devices_top.png" customclass="col s12 m6 l6" imgclass="fit-doc-img" %}
-</div>
-
 <div class="note-area" markdown="1">
 
 **NOTE**

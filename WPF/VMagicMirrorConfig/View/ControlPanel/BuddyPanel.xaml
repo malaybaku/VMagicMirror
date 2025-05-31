@@ -54,7 +54,8 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0"
                                    FontWeight="Bold"
-                                   Text="{DynamicResource HandTracking_EditionLimitationNote}"
+                                   Text="{DynamicResource Buddy_EditionLimitation}"
+                                   TextWrapping="Wrap"  
                                    />
                             <Button Grid.Column="1" 
                                     Width="NaN"

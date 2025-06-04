@@ -21,6 +21,8 @@ namespace Baku.VMagicMirror
             var controlRigRoot = controlRig.GetBoneTransform(HumanBodyBones.Hips).parent;
             var bipedReferences = LoadReferencesFromVrm(controlRig, controlRigRoot);
             _ = AddFBBIK(controlRig.GetBoneTransform(HumanBodyBones.Hips).parent.gameObject, ikTargets, bipedReferences);
+            
+            // TODO: この辺でTwistRelaxerのセットアップコードを入れたい
 
             //NOTE: 要するに勝手にLookAt結果を代入しなければいい、という話.
             //VRM0ではCurveMapを勝手にいじってたが、これはモデルを尊重してない行為だと思うので廃止

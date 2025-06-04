@@ -14,12 +14,6 @@ namespace Baku.VMagicMirror
 
         /// <summary> VRMのバイナリです。 </summary>
         public byte[] GetData();
-
-        /// <summary>
-        /// 対象のVRMが1.0かどうかを取得します。不明な場合、nullを返します。
-        /// </summary>
-        /// <returns></returns>
-        public bool? IsVrm10();
     }
 
     /// <summary>
@@ -32,6 +26,5 @@ namespace Baku.VMagicMirror
     {
         public bool HasData => false;
         public byte[] GetData() => Array.Empty<byte>();
-        public bool? IsVrm10() => null;
     }
 }

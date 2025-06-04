@@ -39,14 +39,14 @@ namespace Baku.VMagicMirror
         private readonly ErrorIndicateSender _errorSender;
         private readonly ErrorInfoFactory _errorInfoFactory;
         private readonly LocomotionSupportedAnimatorControllers _animatorControllers;
+        private readonly VRMPreloadDataOverrider _preloadData;
 
-        private readonly CompositeDisposable _disposable = new CompositeDisposable();
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private readonly CompositeDisposable _disposable = new();
+        private readonly CancellationTokenSource _cts = new();
 
         private Vrm10Instance _instance = null;
         
-        private readonly ReactiveProperty<CurrentModelVersion> _modelVersion =
-            new ReactiveProperty<CurrentModelVersion>(CurrentModelVersion.Unloaded);
+        private readonly ReactiveProperty<CurrentModelVersion> _modelVersion = new(CurrentModelVersion.Unloaded);
         public IReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion => _modelVersion;
         
         [Inject]
@@ -57,7 +57,8 @@ namespace Baku.VMagicMirror
             IKTargetTransforms ikTargets,
             ErrorIndicateSender errorSender,
             ErrorInfoFactory errorInfoFactory,
-            LocomotionSupportedAnimatorControllers animatorControllers
+            LocomotionSupportedAnimatorControllers animatorControllers,
+            VRMPreloadDataOverrider preloadDataOverrider
             )
         {
             _sender = sender;
@@ -92,6 +93,10 @@ namespace Baku.VMagicMirror
                 {
                     OnVrmLoadedFromVRoidHub(v.modelId, v.instance, v.isVrm10);
                 })
+                .AddTo(_disposable);
+
+            _preloadData.LoadRequested
+                .Subscribe(value => LoadModelFromBytesAsync(value.Data).Forget())
                 .AddTo(_disposable);
         }
 

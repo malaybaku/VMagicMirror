@@ -58,7 +58,7 @@ namespace Baku.VMagicMirror
             ErrorIndicateSender errorSender,
             ErrorInfoFactory errorInfoFactory,
             LocomotionSupportedAnimatorControllers animatorControllers,
-            VRMPreloadDataOverrider preloadDataOverrider
+            VRMPreloadDataOverrider preloadData
             )
         {
             _sender = sender;
@@ -68,6 +68,7 @@ namespace Baku.VMagicMirror
             _errorSender = errorSender;
             _errorInfoFactory = errorInfoFactory;
             _animatorControllers = animatorControllers;
+            _preloadData = preloadData;
         }
 
         public void Initialize()
@@ -76,7 +77,7 @@ namespace Baku.VMagicMirror
                 VmmCommands.OpenVrmPreview,
                 message =>
                 {
-                    if (!_preloadData.ShouldIgnoreNonPreloadData)
+                    if (_preloadData.ShouldIgnoreNonPreloadData)
                     {
                         return;
                     }
@@ -87,7 +88,7 @@ namespace Baku.VMagicMirror
                 VmmCommands.OpenVrm,
                 message =>
                 {
-                    if (!_preloadData.ShouldIgnoreNonPreloadData)
+                    if (_preloadData.ShouldIgnoreNonPreloadData)
                     {
                         return;
                     }

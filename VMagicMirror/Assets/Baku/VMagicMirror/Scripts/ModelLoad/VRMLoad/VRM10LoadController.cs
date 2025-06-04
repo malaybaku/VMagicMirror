@@ -80,7 +80,7 @@ namespace Baku.VMagicMirror
                 message =>
                 {
                     _previewBroker.RequestHide();
-                    LoadModel(message.GetStringValue()).Forget();
+                    LoadModelFromFileAsync(message.GetStringValue()).Forget();
                 });
             _receiver.AssignCommandHandler(
                 VmmCommands.CancelLoadVrm,
@@ -143,7 +143,7 @@ namespace Baku.VMagicMirror
 
         private void NotifyLoadModelFromFileEnded() => LocalVrmLoadEnded?.Invoke();
 
-        private async UniTaskVoid LoadModel(string path)
+        private async UniTaskVoid LoadModelFromFileAsync(string path)
         {
             if (!File.Exists(path))
             {
@@ -158,9 +158,25 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            byte[] bytes;
+            try
+            { 
+                bytes = File.ReadAllBytes(path);
+            }
+            catch (Exception ex)
+            {
+                NotifyLoadModelFromFileEnded();
+                HandleLoadError(ex);
+                return;
+            }
+
+            await LoadModelFromBytesAsync(bytes);
+        }
+
+        private async UniTask LoadModelFromBytesAsync(byte[] bytes)
+        {
             try
             {
-                var bytes = File.ReadAllBytes(path);
                 var instance = await Vrm10.LoadBytesAsync(bytes,
                     true,
                     ControlRigGenerationOption.Generate,
@@ -178,7 +194,7 @@ namespace Baku.VMagicMirror
                 
                 _sender.SendCommand(
                     MessageFactory.ModelNameConfirmedOnLoad("VRM File: " + instance.Vrm.Meta.Name)
-                    );
+                );
                 SetModel(instance);
                 NotifyLoadModelFromFileEnded();
             }
@@ -188,7 +204,7 @@ namespace Baku.VMagicMirror
                 HandleLoadError(ex);
             }
         }
-
+        
         private void OnMetaDetectedForPreview(Texture2D thumbnail, Meta vrm10meta, Vrm0Meta vrm0meta)
         {
             if (vrm10meta == null && vrm0meta == null)

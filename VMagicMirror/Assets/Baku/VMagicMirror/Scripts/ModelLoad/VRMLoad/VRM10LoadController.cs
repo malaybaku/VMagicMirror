@@ -74,12 +74,24 @@ namespace Baku.VMagicMirror
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.OpenVrmPreview,
-                message => LoadModelForPreview(message.GetStringValue()).Forget()
-            );
+                message =>
+                {
+                    if (!_preloadData.ShouldIgnoreNonPreloadData)
+                    {
+                        return;
+                    }
+
+                    LoadModelForPreview(message.GetStringValue()).Forget();
+                });
             _receiver.AssignCommandHandler(
                 VmmCommands.OpenVrm,
                 message =>
                 {
+                    if (!_preloadData.ShouldIgnoreNonPreloadData)
+                    {
+                        return;
+                    }
+
                     _previewBroker.RequestHide();
                     LoadModelFromFileAsync(message.GetStringValue()).Forget();
                 });
@@ -91,6 +103,7 @@ namespace Baku.VMagicMirror
             _previewBroker.VRoidModelLoaded
                 .Subscribe(v =>
                 {
+                    // OpenVrm/OpenVrmPreviewと異なり、VRoidのデータはロードまで進んでたら通す(通してしまうほうがリークとかも起きにくいので)
                     OnVrmLoadedFromVRoidHub(v.modelId, v.instance, v.isVrm10);
                 })
                 .AddTo(_disposable);

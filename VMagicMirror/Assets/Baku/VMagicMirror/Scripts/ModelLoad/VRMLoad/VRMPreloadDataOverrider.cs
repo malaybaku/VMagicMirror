@@ -43,12 +43,22 @@ namespace Baku.VMagicMirror
         
         public override void Initialize()
         {
+            // NOTE: このSubscribeは起動直後よりも後で発火するぶんを処理する
+            PreloadData.ReloadRequested
+                .Subscribe(_ =>
+                {
+                    var request = new PreloadDataLoadRequest(PreloadData.GetData());
+                    _loadRequested.OnNext(request);
+                })
+                .AddTo(this);
+
+            // ここから下では起動時にすでにロード要求があった場合を処理する
             if (!PreloadData.HasData)
             {
                 return;
             }
 
-            // WPFの起動時に投げられたVRMのロードリクエストは無視する(プリロードデータのほうが偉い)が、その後にモデルを交代するのはOK
+            // WPFの起動時に投げられたVRMのロードリクエストは無視する(プリロードデータのほうを優先する)。その後にモデルを交代するのはOK
             _receiver.AssignCommandHandler(
                 VmmCommands.StartupEnded,
                 _ => ShouldIgnoreNonPreloadData = false

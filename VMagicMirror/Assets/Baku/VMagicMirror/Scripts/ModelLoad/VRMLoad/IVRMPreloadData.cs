@@ -1,4 +1,5 @@
 using System;
+using UniRx;
 
 namespace Baku.VMagicMirror
 {
@@ -10,10 +11,13 @@ namespace Baku.VMagicMirror
     /// </remarks>
     public interface IVRMPreloadData
     {
-        public bool HasData { get; }
+        bool HasData { get; }
 
         /// <summary> VRMのバイナリです。 </summary>
-        public byte[] GetData();
+        byte[] GetData();
+
+        /// <summary> MainViewerシーンの起動よりも後でVRMの再読み込みが要求されると発火します。 </summary>
+        IObservable<Unit> ReloadRequested { get; }
     }
 
     /// <summary>
@@ -26,5 +30,6 @@ namespace Baku.VMagicMirror
     {
         public bool HasData => false;
         public byte[] GetData() => Array.Empty<byte>();
+        public IObservable<Unit> ReloadRequested => Observable.Empty<Unit>();
     }
 }

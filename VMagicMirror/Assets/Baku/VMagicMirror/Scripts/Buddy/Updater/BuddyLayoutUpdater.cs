@@ -172,12 +172,14 @@ namespace Baku.VMagicMirror.Buddy
                 {
                     if (TryGetBuddyTransform2DLayout(msg, out var layout2d))
                     {
-                        Debug.Log($"AddOrUpdate Layout2D, {json}");
+                        //NOTE: BuddyLoggerにVerboseで流すようにして復活するのもアリ
+                        //Debug.Log($"AddOrUpdate Layout2D, {json}");
                         layouts.AddOrUpdate(msg.Name, layout2d);
                     }
                     else if (TryGetBuddyTransform3DLayout(msg, out var layout3d))
                     {
-                        Debug.Log($"AddOrUpdate Layout3D, {json}");
+                        //NOTE: BuddyLoggerにVerboseで流すようにして復活するのもアリ
+                        //Debug.Log($"AddOrUpdate Layout3D, {json}");
                         layouts.AddOrUpdate(msg.Name, layout3d);
                     }
                 }

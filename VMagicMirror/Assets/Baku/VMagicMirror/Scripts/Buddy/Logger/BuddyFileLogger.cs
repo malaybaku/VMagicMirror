@@ -21,11 +21,18 @@ namespace Baku.VMagicMirror.Buddy
 
         private void RefreshLogDirectory(string dir)
         {
-            if (Directory.Exists(dir))
+            if (!Directory.Exists(dir))
             {
-                Directory.Delete(dir, true);
+                Directory.CreateDirectory(dir);
+                return;
             }
-            Directory.CreateDirectory(dir);
+
+            // ディレクトリが存在する場合、直下のファイルのみ削除
+            var files = Directory.GetFiles(dir);
+            foreach (var file in files)
+            {
+                File.Delete(file);
+            }
         }
 
         public void Log(BuddyFolder folder, string content)

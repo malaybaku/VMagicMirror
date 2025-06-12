@@ -716,6 +716,9 @@ VMCPを使わない場合、「設定タブをメインウィンドウから非�
     <sys:String x:Key="Hotkey_Action_ToggleShadowVisibility">表示on/off: 影</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleOutlineVisibility">表示on/off: 縁取り</sys:String>
     <sys:String x:Key="Hotkey_Action_ToggleWindVisibility">表示on/off: 風</sys:String>
+    <sys:String x:Key="Hotkey_Action_ToggleHandTracking">ハンドトラッキングon/off切り替え</sys:String>
+    <sys:String x:Key="Hotkey_Action_DisableHandTracking">ハンドトラッキングon</sys:String>
+    <sys:String x:Key="Hotkey_Action_EnableHandTracking">ハンドトラッキングoff</sys:String>
 
     <!-- Save/Load -->
     <sys:String x:Key="SettingFile_Header">設定ファイルの操作</sys:String>

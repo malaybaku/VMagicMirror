@@ -20,7 +20,8 @@ namespace Baku.VMagicMirrorConfig.ViewModel
 
         static HotKeySupportedActionsViewModel()
         {
-            ConstAvailableHotKeyActions = new HotKeySupportedActionViewModel[14 + 40];
+            const int WtmActionOffset = 17;
+            ConstAvailableHotKeyActions = new HotKeySupportedActionViewModel[WtmActionOffset + 40];
             ConstAvailableHotKeyActions[0] = new(new(HotKeyActions.None, 0, ""));
             ConstAvailableHotKeyActions[1] = new(new(HotKeyActions.SetCamera, 1, ""));
             ConstAvailableHotKeyActions[2] = new(new(HotKeyActions.SetCamera, 2, ""));
@@ -37,10 +38,13 @@ namespace Baku.VMagicMirrorConfig.ViewModel
             ConstAvailableHotKeyActions[12] = new(new(HotKeyActions.ToggleOutlineVisibility, 0, ""));
             ConstAvailableHotKeyActions[13] = new(new(HotKeyActions.ToggleWindVisibility, 0, ""));
 
+            ConstAvailableHotKeyActions[14] = new(new(HotKeyActions.EnableHandTracking, 0, ""));
+            ConstAvailableHotKeyActions[15] = new(new(HotKeyActions.DisableHandTracking, 0, ""));
+            ConstAvailableHotKeyActions[16] = new(new(HotKeyActions.ToggleHandTracking, 0, ""));
 
             for (var i = 0; i < 40; i++)
             {
-                ConstAvailableHotKeyActions[14 + i] = new(new(HotKeyActions.CallWtm, i + 1, ""));
+                ConstAvailableHotKeyActions[WtmActionOffset + i] = new(new(HotKeyActions.CallWtm, i + 1, ""));
             }
         }
 
@@ -228,6 +232,15 @@ namespace Baku.VMagicMirrorConfig.ViewModel
                     break;
                 case HotKeyActions.ToggleWindVisibility:
                     DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleWindVisibility));
+                    break;
+                case HotKeyActions.EnableHandTracking:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.EnableHandTracking));
+                    break;
+                case HotKeyActions.DisableHandTracking:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.DisableHandTracking));
+                    break;
+                case HotKeyActions.ToggleHandTracking:
+                    DisplayName = LocalizedString.GetString(DisplayNameKeyPrefix + nameof(HotKeyActions.ToggleHandTracking));
                     break;
                 case HotKeyActions.None:
                 default:

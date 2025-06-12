@@ -9,21 +9,25 @@ namespace Baku.VMagicMirror
         private readonly IMessageReceiver _receiver;
         private readonly IVRMLoadable _vrmLoadable;
         private readonly StartupLoadingCover _cover;
+        private readonly IVRMPreloadData _preloadData;
+        
         private bool _fadeOutCalled;
         private bool _delayFadeout;
 
         //アプリ起動後に1回でもファイルからのVRMロードを試みた処理が終わってれば、その成否によらずtrue
-        private readonly ReactiveProperty<bool> _localVrmLoadEndedAtLeastOnce = new ReactiveProperty<bool>();
+        private readonly ReactiveProperty<bool> _localVrmLoadEndedAtLeastOnce = new();
 
         [Inject]
         public StartupLoadingCoverController(
             IMessageReceiver receiver,
             IVRMLoadable vrmLoadable,
-            StartupLoadingCover cover)
+            StartupLoadingCover cover,
+            [InjectOptional] IVRMPreloadData preloadData)
         {
             _receiver = receiver;
             _vrmLoadable = vrmLoadable;
             _cover = cover;
+            _preloadData = preloadData ?? new EmptyVRMPreloadData();
         }
         
         public override void Initialize()
@@ -40,6 +44,11 @@ namespace Baku.VMagicMirror
                 _ => FadeOutLoadingCover()
             );
             
+            // AssignCommandのほうもpreloadDataのほうもモチベは同様で、ローカルファイル(的なもの)を読み込んでいる間はカバーUIを残す
+            if (_preloadData.HasData && !_fadeOutCalled)
+            {
+                _delayFadeout = true;
+            }
             _receiver.AssignCommandHandler(
                 VmmCommands.OpenVrm,
                 _ =>

@@ -31,7 +31,16 @@ namespace Baku.VMagicMirror.Buddy
             var files = Directory.GetFiles(dir);
             foreach (var file in files)
             {
-                File.Delete(file);
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception ex)
+                {
+                    // NOTE: ここを通る場合LogOutput側でも似た問題(=ファイルのリフレッシュ失敗)が起こってログが出せないことがありうるが、
+                    // 本クラスではとくにケアしない
+                    LogOutput.Instance.Write(ex);
+                }
             }
         }
 

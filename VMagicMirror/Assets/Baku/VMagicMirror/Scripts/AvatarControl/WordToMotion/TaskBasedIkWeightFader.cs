@@ -23,7 +23,10 @@ namespace Baku.VMagicMirror
                 float bodyPos,
 
                 float leftFootPos,
-                float rightFootPos
+                float rightFootPos,
+                
+                float leftWristTwist,
+                float rightWristTwist
                 )
             {
                 LeftShoulderPos = leftShoulderPos;
@@ -37,6 +40,9 @@ namespace Baku.VMagicMirror
                 BodyPos = bodyPos;
                 LeftFootPos = leftFootPos;
                 RightFootPos = rightFootPos;
+                
+                LeftWristTwist = leftWristTwist;
+                RightWristTwist = rightWristTwist;
             }
             
             public float LeftShoulderPos { get; }
@@ -52,10 +58,15 @@ namespace Baku.VMagicMirror
             public float LeftFootPos { get; }
             public float RightFootPos { get; }
 
+            public float LeftWristTwist { get; }
+            public float RightWristTwist { get; }
+
             public static Weights Default { get; } = new Weights(
                 1f, 1f, 1f, 
                 1f, 1f, 1f, 
-                1f, 1f, 1f
+                1f, 1f, 1f,
+                //NOTE: twistのweightはVRM10LoadControllerHelperで決めている
+                0.4f, 0.4f
                 );
         }
 
@@ -70,6 +81,8 @@ namespace Baku.VMagicMirror
         
         //モデルに関連する数値
         private FullBodyBipedIK _ik;
+        private TwistRelaxer _leftTwistRelaxer;
+        private TwistRelaxer _rightTwistRelaxer;
         private SimpleAnimation _simpleAnimation;
         private bool _hasModel = false;
         private bool _simpleAnimationActive = true;
@@ -89,6 +102,18 @@ namespace Baku.VMagicMirror
 
         //何かのweightが変化したらtrueになるようなフラグ
         private bool _weightIsDirty = false;
+
+        private float LeftTwistRelaxerWeight
+        {
+            get => _leftTwistRelaxer.twistSolvers[0].weight;
+            set => _leftTwistRelaxer.twistSolvers[0].weight = value;
+        }
+        
+        private float RightTwistRelaxerWeight
+        {
+            get => _rightTwistRelaxer.twistSolvers[0].weight;
+            set => _rightTwistRelaxer.twistSolvers[0].weight = value;
+        }
 
         public void Initialize()
         {
@@ -121,6 +146,9 @@ namespace Baku.VMagicMirror
         private void OnVrmLoaded(VrmLoadedInfo info)
         {
             _ik = info.fbbIk;
+            _leftTwistRelaxer = info.leftArmTwistRelaxer;
+            _rightTwistRelaxer = info.rightArmTwistRelaxer;
+
             var s = _ik.solver;
             _originWeight = new Weights(
                 s.leftShoulderEffector.positionWeight,
@@ -131,7 +159,9 @@ namespace Baku.VMagicMirror
                 s.rightHandEffector.rotationWeight,
                 s.bodyEffector.positionWeight,
                 s.leftFootEffector.positionWeight,
-                s.rightFootEffector.positionWeight
+                s.rightFootEffector.positionWeight,
+                LeftTwistRelaxerWeight,
+                RightTwistRelaxerWeight
             );
             _simpleAnimation = info.vrmRoot.GetComponent<SimpleAnimation>();
             if (!_simpleAnimationActive)
@@ -257,6 +287,9 @@ namespace Baku.VMagicMirror
             s.rightHandEffector.rotationWeight = _originWeight.RightHandRot * upperFactor;
             _elbowMotionModifier.ElbowIkRate = upperFactor;
 
+            LeftTwistRelaxerWeight = _originWeight.LeftWristTwist * upperFactor;
+            RightTwistRelaxerWeight = _originWeight.RightWristTwist * upperFactor;
+            
             //下半身
             s.bodyEffector.positionWeight = _originWeight.BodyPos * lowerFactor;
             s.leftFootEffector.positionWeight = _originWeight.LeftFootPos * lowerFactor;

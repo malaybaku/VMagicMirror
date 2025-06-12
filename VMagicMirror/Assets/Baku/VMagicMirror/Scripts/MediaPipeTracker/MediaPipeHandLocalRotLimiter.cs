@@ -4,16 +4,13 @@ using Zenject;
 
 namespace Baku.VMagicMirror
 {
-    // NOTE: 発火タイミングの調整がしたい(TwistRelaxerのちょっと後くらいにLateUpateが走ってほしい)のでMonoBehaviourでやる
+    // TODO: もうちょっと堅牢に動くようになったら復活してもよい。現在は回転値のジャンプが目につくのでBindしてない
     public class MediaPipeHandLocalRotLimiter : PresenterBase
     {
         // bye byeとかで手をふる方向の制限
         private const float ClampYaw = 30f;
         // come onみたいな動きのときにひねる方向
         private const float ClampRoll = 60f;
-        
-        // 左(右)上腕を右(左)に向けていい角度の上限
-        private const float UpperArmInsideAngleLimit = 0f;
         
         private readonly IVRMLoadable _vrmLoadable;
         private readonly LateUpdateSourceAfterFinalIK _lateUpdateSource;
@@ -22,8 +19,6 @@ namespace Baku.VMagicMirror
         private bool _hasModel;
         private Transform _leftHandBone;
         private Transform _rightHandBone;
-        private Transform _leftUpperArmBone;
-        private Transform _rightUpperArmBone;
         
         [Inject]
         public MediaPipeHandLocalRotLimiter(
@@ -43,8 +38,6 @@ namespace Baku.VMagicMirror
             {
                 _leftHandBone = info.animator.GetBoneTransform(HumanBodyBones.LeftHand);
                 _rightHandBone = info.animator.GetBoneTransform(HumanBodyBones.RightHand);
-                _leftUpperArmBone = info.animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
-                _rightUpperArmBone = info.animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
                 _hasModel = true;
             };
 
@@ -53,10 +46,9 @@ namespace Baku.VMagicMirror
                 _hasModel = false;
                 _leftHandBone = null;
                 _rightHandBone = null;
-                _leftUpperArmBone = null;
-                _rightUpperArmBone = null;
             };
             
+            // NOTE: 発火タイミングの調整がしたい(TwistRelaxerのちょっと後くらいにLateUpateが走ってほしい)のでMonoBehaviourでやる
             _lateUpdateSource.OnPreLateUpdate
                 .Subscribe(_ => LateUpdate())
                 .AddTo(this);

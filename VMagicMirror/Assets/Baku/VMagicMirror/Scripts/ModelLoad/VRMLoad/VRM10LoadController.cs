@@ -304,7 +304,7 @@ namespace Baku.VMagicMirror
             var go = instance.gameObject;
 
             //セットアップのうちFinalIKに思い切り依存した所が別スクリプトになってます
-            VRM10LoadControllerHelper.SetupVrm(instance, _ikTargets);
+            var setupResult = VRM10LoadControllerHelper.SetupVrm(instance, _ikTargets);
 
             var animator = go.GetComponent<Animator>();
             animator.runtimeAnimatorController = _animatorControllers.DefaultController;
@@ -322,7 +322,9 @@ namespace Baku.VMagicMirror
                 vrmRoot = go.transform,
                 animator = animator,
                 instance = instance,
-                fbbIk = go.GetComponentInChildren<FullBodyBipedIK>(),
+                fbbIk = setupResult.Fbbik,
+                leftArmTwistRelaxer = setupResult.LeftArmTwistRelaxer,
+                rightArmTwistRelaxer = setupResult.RightArmTwistRelaxer,
                 //NOTE: このbsがないことでエラーが起こるのはイベント購読側が悪い。
                 //blendShape = blendShapeProxy,
                 renderers = renderers,

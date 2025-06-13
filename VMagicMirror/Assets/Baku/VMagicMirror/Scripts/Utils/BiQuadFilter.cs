@@ -8,11 +8,11 @@ namespace Baku.VMagicMirror
     /// </summary>
     public class BiQuadFilterVector3
     {
-        private readonly BiQuadFilter _x = new BiQuadFilter();
-        private readonly BiQuadFilter _y = new BiQuadFilter();
-        private readonly BiQuadFilter _z = new BiQuadFilter();
+        private readonly BiQuadFilter _x = new();
+        private readonly BiQuadFilter _y = new();
+        private readonly BiQuadFilter _z = new();
 
-        public Vector3 Output => new Vector3(_x.Output, _y.Output, _z.Output);
+        public Vector3 Output => new(_x.Output, _y.Output, _z.Output);
         
         public void SetUpAsLowPassFilter(float samplingRate, Vector3 cutOffFrequency, Vector3 q)
         {

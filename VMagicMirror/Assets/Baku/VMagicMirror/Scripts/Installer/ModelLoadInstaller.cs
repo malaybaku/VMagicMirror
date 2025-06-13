@@ -26,6 +26,7 @@ namespace Baku.VMagicMirror.Installer
             
             container.BindInterfacesAndSelfTo<VRM10LoadController>().AsSingle();
             container.BindInterfacesTo<VRMPreviewPresenter>().AsSingle();
+            container.BindInterfacesAndSelfTo<VRMPreloadDataOverrider>().AsSingle();
             
             container.Bind<SettingAutoAdjuster>().AsCached();
         }

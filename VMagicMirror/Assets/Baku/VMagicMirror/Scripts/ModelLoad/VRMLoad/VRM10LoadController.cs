@@ -39,14 +39,14 @@ namespace Baku.VMagicMirror
         private readonly ErrorIndicateSender _errorSender;
         private readonly ErrorInfoFactory _errorInfoFactory;
         private readonly LocomotionSupportedAnimatorControllers _animatorControllers;
+        private readonly VRMPreloadDataOverrider _preloadData;
 
-        private readonly CompositeDisposable _disposable = new CompositeDisposable();
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private readonly CompositeDisposable _disposable = new();
+        private readonly CancellationTokenSource _cts = new();
 
         private Vrm10Instance _instance = null;
         
-        private readonly ReactiveProperty<CurrentModelVersion> _modelVersion =
-            new ReactiveProperty<CurrentModelVersion>(CurrentModelVersion.Unloaded);
+        private readonly ReactiveProperty<CurrentModelVersion> _modelVersion = new(CurrentModelVersion.Unloaded);
         public IReadOnlyReactiveProperty<CurrentModelVersion> ModelVersion => _modelVersion;
         
         [Inject]
@@ -57,7 +57,8 @@ namespace Baku.VMagicMirror
             IKTargetTransforms ikTargets,
             ErrorIndicateSender errorSender,
             ErrorInfoFactory errorInfoFactory,
-            LocomotionSupportedAnimatorControllers animatorControllers
+            LocomotionSupportedAnimatorControllers animatorControllers,
+            VRMPreloadDataOverrider preloadData
             )
         {
             _sender = sender;
@@ -67,20 +68,33 @@ namespace Baku.VMagicMirror
             _errorSender = errorSender;
             _errorInfoFactory = errorInfoFactory;
             _animatorControllers = animatorControllers;
+            _preloadData = preloadData;
         }
 
         public void Initialize()
         {
             _receiver.AssignCommandHandler(
                 VmmCommands.OpenVrmPreview,
-                message => LoadModelForPreview(message.GetStringValue()).Forget()
-            );
+                message =>
+                {
+                    if (_preloadData.ShouldIgnoreNonPreloadData)
+                    {
+                        return;
+                    }
+
+                    LoadModelForPreview(message.GetStringValue()).Forget();
+                });
             _receiver.AssignCommandHandler(
                 VmmCommands.OpenVrm,
                 message =>
                 {
+                    if (_preloadData.ShouldIgnoreNonPreloadData)
+                    {
+                        return;
+                    }
+
                     _previewBroker.RequestHide();
-                    LoadModel(message.GetStringValue()).Forget();
+                    LoadModelFromFileAsync(message.GetStringValue()).Forget();
                 });
             _receiver.AssignCommandHandler(
                 VmmCommands.CancelLoadVrm,
@@ -90,8 +104,13 @@ namespace Baku.VMagicMirror
             _previewBroker.VRoidModelLoaded
                 .Subscribe(v =>
                 {
+                    // OpenVrm/OpenVrmPreviewと異なり、VRoidのデータはロードまで進んでたら通す(通してしまうほうがリークとかも起きにくいので)
                     OnVrmLoadedFromVRoidHub(v.modelId, v.instance, v.isVrm10);
                 })
+                .AddTo(_disposable);
+
+            _preloadData.LoadRequested
+                .Subscribe(value => LoadModelFromBytesAsync(value.Data).Forget())
                 .AddTo(_disposable);
         }
 
@@ -143,7 +162,7 @@ namespace Baku.VMagicMirror
 
         private void NotifyLoadModelFromFileEnded() => LocalVrmLoadEnded?.Invoke();
 
-        private async UniTaskVoid LoadModel(string path)
+        private async UniTaskVoid LoadModelFromFileAsync(string path)
         {
             if (!File.Exists(path))
             {
@@ -158,9 +177,25 @@ namespace Baku.VMagicMirror
                 return;
             }
 
+            byte[] bytes;
+            try
+            { 
+                bytes = File.ReadAllBytes(path);
+            }
+            catch (Exception ex)
+            {
+                NotifyLoadModelFromFileEnded();
+                HandleLoadError(ex);
+                return;
+            }
+
+            await LoadModelFromBytesAsync(bytes);
+        }
+
+        private async UniTask LoadModelFromBytesAsync(byte[] bytes)
+        {
             try
             {
-                var bytes = File.ReadAllBytes(path);
                 var instance = await Vrm10.LoadBytesAsync(bytes,
                     true,
                     ControlRigGenerationOption.Generate,
@@ -178,7 +213,7 @@ namespace Baku.VMagicMirror
                 
                 _sender.SendCommand(
                     MessageFactory.ModelNameConfirmedOnLoad("VRM File: " + instance.Vrm.Meta.Name)
-                    );
+                );
                 SetModel(instance);
                 NotifyLoadModelFromFileEnded();
             }
@@ -188,7 +223,7 @@ namespace Baku.VMagicMirror
                 HandleLoadError(ex);
             }
         }
-
+        
         private void OnMetaDetectedForPreview(Texture2D thumbnail, Meta vrm10meta, Vrm0Meta vrm0meta)
         {
             if (vrm10meta == null && vrm0meta == null)
@@ -269,7 +304,7 @@ namespace Baku.VMagicMirror
             var go = instance.gameObject;
 
             //セットアップのうちFinalIKに思い切り依存した所が別スクリプトになってます
-            VRM10LoadControllerHelper.SetupVrm(instance, _ikTargets);
+            var setupResult = VRM10LoadControllerHelper.SetupVrm(instance, _ikTargets);
 
             var animator = go.GetComponent<Animator>();
             animator.runtimeAnimatorController = _animatorControllers.DefaultController;
@@ -287,7 +322,9 @@ namespace Baku.VMagicMirror
                 vrmRoot = go.transform,
                 animator = animator,
                 instance = instance,
-                fbbIk = go.GetComponentInChildren<FullBodyBipedIK>(),
+                fbbIk = setupResult.Fbbik,
+                leftArmTwistRelaxer = setupResult.LeftArmTwistRelaxer,
+                rightArmTwistRelaxer = setupResult.RightArmTwistRelaxer,
                 //NOTE: このbsがないことでエラーが起こるのはイベント購読側が悪い。
                 //blendShape = blendShapeProxy,
                 renderers = renderers,

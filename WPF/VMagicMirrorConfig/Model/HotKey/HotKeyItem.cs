@@ -16,6 +16,9 @@ namespace Baku.VMagicMirrorConfig
         ToggleShadowVisibility,
         ToggleOutlineVisibility,
         ToggleWindVisibility, // NOTE: Windに対してVisibilityという言い方をするのは「表示」タブにあるから
+        EnableHandTracking,
+        DisableHandTracking,
+        ToggleHandTracking,
     }
 
     public enum HotKeyActionBodyMotionStyle : int

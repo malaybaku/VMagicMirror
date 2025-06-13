@@ -22,7 +22,7 @@ namespace Baku.VMagicMirror
             }
         }
 
-        private readonly object _writeLock = new object();
+        private readonly object _writeLock = new();
         private readonly string _logFilePath;
 
         public static string ExToString(Exception ex)

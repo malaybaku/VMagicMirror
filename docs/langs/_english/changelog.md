@@ -8,6 +8,16 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v4.0.1
+{: .doc-sec2 }
+
+2025/06/13
+
+* Fixed: An issue where the application could sometimes get stuck at "Load Settings..." on startup. This issue is specific in v4.0.0.
+* Fixed: An issue where the wrist angle would change abruptly during hand tracking.
+* Fixed: Improved wrist twisting behavior for avatars, particularly enhancing appearance during hand tracking.
+
+
 #### v4.0.0
 {: .doc-sec2 }
 

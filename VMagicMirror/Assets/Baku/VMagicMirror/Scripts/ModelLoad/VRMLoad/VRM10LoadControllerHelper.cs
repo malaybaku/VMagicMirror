@@ -11,7 +11,21 @@ namespace Baku.VMagicMirror
     /// <summary> <see cref="VRMLoadControllerHelper"/>の後継版で、VRM1.0形式に対応したもの </summary>
     public static class VRM10LoadControllerHelper
     {
-        public static void SetupVrm(Vrm10Instance instance, IKTargetTransforms ikTargets)
+        public readonly struct SetupResult
+        {
+            public SetupResult(FullBodyBipedIK fbbik, TwistRelaxer leftArmTwistRelaxer, TwistRelaxer rightArmTwistRelaxer)
+            {
+                Fbbik = fbbik;
+                LeftArmTwistRelaxer = leftArmTwistRelaxer;
+                RightArmTwistRelaxer = rightArmTwistRelaxer;
+            }
+
+            public FullBodyBipedIK Fbbik { get; }
+            public TwistRelaxer LeftArmTwistRelaxer { get; }
+            public TwistRelaxer RightArmTwistRelaxer { get; }
+        }
+        
+        public static SetupResult SetupVrm(Vrm10Instance instance, IKTargetTransforms ikTargets)
         {
             
             var animator = instance.GetComponent<Animator>();
@@ -20,7 +34,9 @@ namespace Baku.VMagicMirror
             var controlRig = instance.Runtime.ControlRig;
             var controlRigRoot = controlRig.GetBoneTransform(HumanBodyBones.Hips).parent;
             var bipedReferences = LoadReferencesFromVrm(controlRig, controlRigRoot);
-            _ = AddFBBIK(controlRig.GetBoneTransform(HumanBodyBones.Hips).parent.gameObject, ikTargets, bipedReferences);
+            var fbbik = AddFBBIK(controlRig.GetBoneTransform(HumanBodyBones.Hips).parent.gameObject, ikTargets, bipedReferences);
+            
+            var (leftTwistRelaxer, rightTwistRelaxer) = AddTwistRelaxer(animator, fbbik);
 
             //NOTE: 要するに勝手にLookAt結果を代入しなければいい、という話.
             //VRM0ではCurveMapを勝手にいじってたが、これはモデルを尊重してない行為だと思うので廃止
@@ -29,6 +45,8 @@ namespace Baku.VMagicMirror
             
             AddLookAtIK(controlRigRoot.gameObject, ikTargets.LookAt, controlRig, bipedReferences.root);
             AddFingerRigToRightIndex(controlRig, ikTargets);
+            
+            return new SetupResult(fbbik, leftTwistRelaxer, rightTwistRelaxer);
         }
 
         private static FullBodyBipedIK AddFBBIK(GameObject go, IKTargetTransforms ikTargets, BipedReferences reference)
@@ -154,6 +172,42 @@ namespace Baku.VMagicMirror
             fingerRig.fingers[0].rotationDOF = Finger.DOF.One;
             fingerRig.fingers[0].weight = 1.0f;
             fingerRig.fingers[0].rotationWeight = 0;
+        }
+
+        // NOTE: とくにハンドトラッキング中のねじれの対策として追加する。
+        // Word To Motionが動いてるときだけオフにし、それ以外ではつねに動作させて良い想定
+        private static (TwistRelaxer left, TwistRelaxer right) AddTwistRelaxer(Animator animator, FullBodyBipedIK fbbik)
+        {
+            const float Weight = 0.4f;
+            const float ParentChildCrossfade = 0.5f;
+            
+            var leftLowerArm = animator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+            var leftRelaxer = leftLowerArm.gameObject.AddComponent<TwistRelaxer>();
+            leftRelaxer.ik = fbbik;
+            leftRelaxer.twistSolvers = new[]
+            {
+                new TwistSolver()
+                {
+                    transform = leftRelaxer.transform,
+                    weight = Weight,
+                    parentChildCrossfade = ParentChildCrossfade,
+                },
+            };
+
+            var rightLowerArm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+            var rightRelaxer = rightLowerArm.gameObject.AddComponent<TwistRelaxer>();
+            rightRelaxer.ik = fbbik;
+            rightRelaxer.twistSolvers = new[] 
+            { 
+                new TwistSolver()
+                {
+                    transform = rightRelaxer.transform,
+                    weight = Weight,
+                    parentChildCrossfade = ParentChildCrossfade,
+                },
+            };
+            
+            return (leftRelaxer, rightRelaxer);
         }
     }
 }

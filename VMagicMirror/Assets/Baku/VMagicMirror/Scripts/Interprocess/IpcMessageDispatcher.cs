@@ -1,34 +1,18 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Baku.VMagicMirror.InterProcess
 {
     public class IpcMessageDispatcher : IMessageReceiver, IMessageDispatcher
     {
-        // NOTE: VmmCommandsの実体が整数値であり数が有限であることを踏まえて、配列で管理してしまう。
-        // Queryのほうがスカスカで、Commandはだいたい埋まる…という想定
-        // NOTE: QueryとCommandsが同一のVmmCommandsから採番されてるのをやめて、双方の配列がほぼ埋まるようにしてもOK
-        private readonly Action<ReceivedCommand>[] _commandHandlers;
-        private readonly Action<ReceivedQuery>[] _queryHandlers;
+        // NOTE: 配列 vs. Dictの2通りがあるが、どっちも配列だと歯抜けになるのが気になるため、Dictにしている
+        private readonly Dictionary<ushort, Action<ReceivedCommand>> _commandHandlers = new();
+        private readonly Dictionary<ushort, Action<ReceivedQuery>> _queryHandlers=  new();
         
         private readonly ConcurrentQueue<ReceivedCommand> _receivedCommands = new();
         private readonly ConcurrentQueue<QueryQueueItem> _receivedQueries = new();
-
-        public IpcMessageDispatcher()
-        {
-            _commandHandlers = new Action<ReceivedCommand>[(int)VmmCommands.LastCommandId];
-            for (var i = 0; i < _commandHandlers.Length; i++)
-            {
-                _commandHandlers[i] = null!;
-            }
-            
-            _queryHandlers = new Action<ReceivedQuery>[(int)VmmCommands.LastCommandId];
-            for (var i = 0; i < _queryHandlers.Length; i++)
-            {
-                _queryHandlers[i] = null!;
-            }
-        }
         
         //NOTE: ITickableっぽいからTickにしてるだけで、メインスレッド保証があるならどこで呼んでもいい。
         public void Tick()
@@ -47,12 +31,8 @@ namespace Baku.VMagicMirror.InterProcess
         public void AssignCommandHandler(VmmCommands command, Action<ReceivedCommand> handler)
         {
             //NOTE: 同じコマンドを複数のハンドラが読む場合、Actionの加算をする(差し替えない)。クエリのほうも同様
-            var index = (int)command;
-            if (_commandHandlers[index] == null)
-            {
-                _commandHandlers[index] = handler;
-            }
-            else
+            var index = (ushort)command;
+            if (!_commandHandlers.TryAdd(index, handler))
             {
                 _commandHandlers[index] += handler;
             }
@@ -60,12 +40,8 @@ namespace Baku.VMagicMirror.InterProcess
 
         public void AssignQueryHandler(VmmCommands query, Action<ReceivedQuery> handler)
         {
-            var index = (int)query;
-            if (_queryHandlers[index] == null)
-            {
-                _queryHandlers[index] = handler;
-            }
-            else
+            var index = (ushort)query;
+            if (!_queryHandlers.TryAdd(index, handler))
             {
                 _queryHandlers[index] += handler;
             }
@@ -83,13 +59,21 @@ namespace Baku.VMagicMirror.InterProcess
             return item.ResultSource.Task;
         }
 
-        private void ProcessCommand(ReceivedCommand command) 
-            => _commandHandlers[(int)command.Command]?.Invoke(command);
+        private void ProcessCommand(ReceivedCommand command)
+        {
+            if (_commandHandlers.TryGetValue((ushort)command.Command, out var handler))
+            {
+                handler(command);
+            }
+        }
 
         private void ProcessQuery(QueryQueueItem item)
         {
-            _queryHandlers[(int)item.Query.Command]?.Invoke(item.Query);
-            item.ResultSource.SetResult(item.Query.Result);
+            if (_queryHandlers.TryGetValue((ushort)item.Query.Command, out var handler))
+            {
+                handler(item.Query);
+                item.ResultSource.SetResult(item.Query.Result);
+            }
         }
 
         private class QueryQueueItem

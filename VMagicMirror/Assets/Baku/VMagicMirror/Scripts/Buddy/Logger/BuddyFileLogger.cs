@@ -21,11 +21,27 @@ namespace Baku.VMagicMirror.Buddy
 
         private void RefreshLogDirectory(string dir)
         {
-            if (Directory.Exists(dir))
+            if (!Directory.Exists(dir))
             {
-                Directory.Delete(dir, true);
+                Directory.CreateDirectory(dir);
+                return;
             }
-            Directory.CreateDirectory(dir);
+
+            // ディレクトリが存在する場合、直下のファイルのみ削除
+            var files = Directory.GetFiles(dir);
+            foreach (var file in files)
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception ex)
+                {
+                    // NOTE: ここを通る場合LogOutput側でも似た問題(=ファイルのリフレッシュ失敗)が起こってログが出せないことがありうるが、
+                    // 本クラスではとくにケアしない
+                    LogOutput.Instance.Write(ex);
+                }
+            }
         }
 
         public void Log(BuddyFolder folder, string content)

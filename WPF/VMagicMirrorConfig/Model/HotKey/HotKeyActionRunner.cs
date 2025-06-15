@@ -96,6 +96,15 @@ namespace Baku.VMagicMirrorConfig
                 case HotKeyActions.ToggleWindVisibility:
                     _lightSetting.EnableWind.Value = !_lightSetting.EnableWind.Value;
                     break;
+                case HotKeyActions.EnableHandTracking:
+                    _motionSetting.EnableImageBasedHandTracking.Value = true;
+                    break;
+                case HotKeyActions.DisableHandTracking:
+                    _motionSetting.EnableImageBasedHandTracking.Value = false;
+                    break;
+                case HotKeyActions.ToggleHandTracking:
+                    _motionSetting.EnableImageBasedHandTracking.Value = !_motionSetting.EnableImageBasedHandTracking.Value;
+                    break;
                 case HotKeyActions.None:
                 default:
                     //何もしない

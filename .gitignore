@@ -54,6 +54,10 @@ sysinfo.txt
 
 # Assets to ignore
 
+/VMagicMirror/Assets/Ignored/
+/VMagicMirror/Assets/Ignored.meta
+
+
 /VMagicMirror/Assets/Baku/VMagicMirror_MotionExporter/
 /VMagicMirror/Assets/Baku/VMagicMirror_MotionExporter.meta
 

@@ -33,6 +33,20 @@
         "com.unity.test-framework": "1.0.0"
       }
     },
+    "com.hecomi.uosc": {
+      "version": "https://github.com/hecomi/uOSC.git#upm@2.2.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "3788ab28702c44330bfea7323b2e05bc4d23c213"
+    },
+    "com.hecomi.uwindowcapture": {
+      "version": "https://github.com/hecomi/uWindowCapture.git#upm@1.1.2",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0412fe09e11d3720197707a935f8114cc2454639"
+    },
     "com.malaybaku.managed-midijack": {
       "version": "https://github.com/malaybaku/MidiJack.git?path=/Assets/MidiJack",
       "depth": 0,

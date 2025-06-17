@@ -57,51 +57,35 @@ sysinfo.txt
 /VMagicMirror/Assets/Baku/VMagicMirror_MotionExporter/
 /VMagicMirror/Assets/Baku/VMagicMirror_MotionExporter.meta
 
-/VMagicMirror/Assets/AniLipSync-VRM/
-/VMagicMirror/Assets/OpenCVforUnity/
 /VMagicMirror/Assets/DlibFaceLandmarkDetector/
-/VMagicMirror/Assets/Demigiant/
 /VMagicMirror/Assets/Deform/
 /VMagicMirror/Assets/Oculus/
 /VMagicMirror/Assets/Plugins/
-/VMagicMirror/Assets/Raw Mocap Data/
 /VMagicMirror/Assets/TextMesh Pro/
-/VMagicMirror/Assets/VRM/
 /VMagicMirror/Assets/VRMModels/
 /VMagicMirror/Assets/VRMLoaderUI/
 /VMagicMirror/Assets/VRoidSDK/
 /VMagicMirror/Assets/VRoidSDK_Custom/
-/VMagicMirror/Assets/XinputGamepad/
 /VMagicMirror/Assets/MidiJack/
 /VMagicMirror/Assets/SharpDX/
 /VMagicMirror/Assets/RawInputSharp/
-/VMagicMirror/Assets/VRMShaders/
-/VMagicMirror/Assets/MeshUtility/
 /VMagicMirror/Assets/Misc/
 /VMagicMirror/Assets/MiscAssets/
 /VMagicMirror/Assets/CSharpScripting/
 /VMagicMirror/Assets/BuddyPresetData/
 
-/VMagicMirror/Assets/AniLipSync-VRM.meta
-/VMagicMirror/Assets/OpenCVforUnity.meta
 /VMagicMirror/Assets/DlibFaceLandmarkDetector.meta
-/VMagicMirror/Assets/Demigiant.meta
 /VMagicMirror/Assets/Deform.meta
 /VMagicMirror/Assets/Oculus.meta
 /VMagicMirror/Assets/Plugins.meta
-/VMagicMirror/Assets/Raw Mocap Data.meta
 /VMagicMirror/Assets/TextMesh Pro.meta
-/VMagicMirror/Assets/VRM.meta
 /VMagicMirror/Assets/VRMModels.meta
 /VMagicMirror/Assets/VRMLoaderUI.meta
 /VMagicMirror/Assets/VRoidSDK.meta
 /VMagicMirror/Assets/VRoidSDK_Custom.meta
-/VMagicMirror/Assets/XinputGamepad.meta
 /VMagicMirror/Assets/MidiJack.meta
 /VMagicMirror/Assets/SharpDX.meta
 /VMagicMirror/Assets/RawInputSharp.meta
-/VMagicMirror/Assets/VRMShaders.meta
-/VMagicMirror/Assets/MeshUtility.meta
 /VMagicMirror/Assets/Misc.meta
 /VMagicMirror/Assets/MiscAssets.meta
 /VMagicMirror/uWindowCapture.log
@@ -116,11 +100,6 @@ sysinfo.txt
 
 /VMagicMirror/Assets/noribenLaserlight.meta
 /VMagicMirror/Assets/Butterfly.meta
-
-# Assets to ignore (for DEBUG purpose installed asset in author's env)
-
-/VMagicMirror/Assets/UnityChan/
-/VMagicMirror/Assets/UnityChan.meta
 
 # Assets to ignore: the folder can include purchased assets (for game input locomotion custom)
 

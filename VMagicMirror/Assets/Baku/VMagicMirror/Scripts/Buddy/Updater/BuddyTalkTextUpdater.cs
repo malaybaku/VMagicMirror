@@ -54,5 +54,17 @@ namespace Baku.VMagicMirror.Buddy
                 tt.UpdateTextState(dt);
             }
         }
+
+        /// <summary>
+        /// とくにウィンドウの背景が透過しているときに呼ぶことで、セリフUIにマウスが被っているかどうかを判定する。
+        /// 呼び出し元ではメインアバターへのマウスオーバーと同様、この関数がtrueを返すときはクリックスルーを無効化することが望ましい
+        /// </summary>
+        /// <param name="mousePosition"></param>
+        /// <returns></returns>
+        public bool IsPointerOnTalkTextUI(Vector2 mousePosition)
+        {
+            //TODO: implement
+            return false;
+        }
     }
 }

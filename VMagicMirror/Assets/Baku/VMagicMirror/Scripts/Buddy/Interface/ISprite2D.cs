@@ -26,6 +26,11 @@ namespace VMagicMirror.Buddy
         IDefaultSpritesSetting DefaultSpritesSetting { get; }
         
         /// <summary>
+        /// この画像に紐づけたテキスト表示を行うAPIを取得します。
+        /// </summary>
+        ITalkText TalkText { get; }
+        
+        /// <summary>
         /// ファイルパスを指定して画像を事前にロードします。
         /// </summary>
         /// <param name="path">画像ファイルのパス</param>

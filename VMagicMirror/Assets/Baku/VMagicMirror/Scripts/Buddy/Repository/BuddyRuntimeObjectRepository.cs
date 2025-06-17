@@ -23,6 +23,9 @@ namespace Baku.VMagicMirror.Buddy
         public void AddSprite2D(BuddySprite2DInstance instance) 
             => GetOrCreate(instance.BuddyFolder).AddSprite2D(instance);
 
+        public void AddTalkText(BuddyTalkTextInstance instance)
+            => GetOrCreate(instance.BuddyFolder).AddTalkText(instance);
+        
         public void AddSprite3D(BuddySprite3DInstance instance)
             => GetOrCreate(instance.BuddyFolder).AddSprite3D(instance);
 
@@ -72,6 +75,7 @@ namespace Baku.VMagicMirror.Buddy
         public BuddyId BuddyId { get; }
 
         private readonly List<BuddySprite2DInstance> _sprite2Ds = new();
+        private readonly List<BuddyTalkTextInstance> _talkTexts = new();
         private readonly List<BuddySprite3DInstance> _sprite3Ds = new();
         private readonly List<BuddyGlbInstance> _glbs = new();
         private readonly List<BuddyVrmInstance> _vrms = new();
@@ -82,8 +86,11 @@ namespace Baku.VMagicMirror.Buddy
         public IReadOnlyList<BuddyGlbInstance> Glbs => _glbs;
         public IReadOnlyList<BuddyVrmInstance> Vrms => _vrms;
         public IReadOnlyList<BuddyVrmAnimationInstance> VrmAnimations => _vrmAnimations;
+        public IReadOnlyList<BuddyTalkTextInstance> TalkTexts => _talkTexts;
 
         public void AddSprite2D(BuddySprite2DInstance instance) => _sprite2Ds.Add(instance);
+        
+        public void AddTalkText(BuddyTalkTextInstance instance) => _talkTexts.Add(instance);
         public void AddSprite3D(BuddySprite3DInstance instance) => _sprite3Ds.Add(instance);
         public void AddGlb(BuddyGlbInstance instance) => _glbs.Add(instance);
         public void AddVrm(BuddyVrmInstance instance) => _vrms.Add(instance);
@@ -101,6 +108,16 @@ namespace Baku.VMagicMirror.Buddy
                     Object.Destroy(i.gameObject);
                 }
             }
+            
+            foreach (var i in _talkTexts)
+            {
+                i.Dispose();
+                if (i != null)
+                {
+                    Object.Destroy(i.gameObject);
+                }
+            }
+            
             foreach (var i in _sprite3Ds)
             {
                 i.Dispose();

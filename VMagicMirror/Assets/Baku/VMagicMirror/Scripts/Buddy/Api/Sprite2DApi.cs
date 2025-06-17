@@ -37,6 +37,22 @@ namespace Baku.VMagicMirror.Buddy.Api
 
         public ITransform2D Transform { get; }
         public IDefaultSpritesSetting DefaultSpritesSetting { get; }
+
+        private TalkTextApi _talkText = null;
+        public ITalkText TalkText
+        {
+            get
+            {
+                if (_talkText == null)
+                {
+                    var talkTextInstance = _instance.CreateTalkTextInstance();
+                    talkTextInstance.Sprite2DInstance = _instance;
+                    _talkText = new TalkTextApi(talkTextInstance);
+                }
+                
+                return _talkText;
+            }    
+        }
         
         BuddyApi.Vector2 ISprite2D.Size
         {

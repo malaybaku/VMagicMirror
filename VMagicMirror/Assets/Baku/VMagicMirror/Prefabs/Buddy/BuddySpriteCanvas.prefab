@@ -84,7 +84,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &3466238353687275096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101,6 +101,8 @@ MonoBehaviour:
   spriteInstancePrefab: {fileID: 3893454672750628633, guid: 7a3c7ab65dcdb04458cd69ac53171ae8,
     type: 3}
   transform2DInstancePrefab: {fileID: 2625639068454743990, guid: 8f5c90451ee895349912b2e41fb2221a,
+    type: 3}
+  talkTextInstancePrefab: {fileID: 3836521276430209770, guid: bb2f5fa89431e0a429cae5b6d25950a4,
     type: 3}
   distanceFromCamera: 0.1
   canvasWidth: 1280

@@ -3,20 +3,10 @@ using System.Collections.Generic;
 using NAudio.Wave;
 using Zenject;
 
-//Uncomment #define line for the first time to pass NuGetForUnity's package download process.
-//After download complete, then comment out the line to enable actual implementation.
-//#define TEMP_SUPPRESS_ERROR
-
 namespace Baku.VMagicMirror
 {
     public class NAudioLipSyncContext : VmmLipSyncContextBase
     {
-#if TEMP_SUPPRESS_ERROR
-        public override void StopRecording() { }
-        public override void StartRecording(string microphoneName) { }
-        public override string DeviceName { get; } = "";
-        public override string[] GetAvailableDeviceNames() => Array.Empty<string>();
-#else
         private const float ShortToSingle = 1.0f / 32768f;
 
         //ほぼ全ての環境でアップサンプリングになる
@@ -248,6 +238,5 @@ namespace Baku.VMagicMirror
             }
             return -1;
         }
-#endif
     }
 }

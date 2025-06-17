@@ -17,6 +17,13 @@
       "dependencies": {},
       "hash": "33d32baea4d50040e0601b725a694dcf3dcf6640"
     },
+    "com.github-glitchenzo.nugetforunity": {
+      "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity#v4.4.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f8f1902ebec77284fd4ac83d043e0ef664d31831"
+    },
     "com.github.homuler.mediapipe": {
       "version": "file:com.github.homuler.mediapipe",
       "depth": 0,
@@ -264,6 +271,12 @@
         "com.unity.modules.screencapture": "1.0.0"
       },
       "url": "https://registry.npmjs.com"
+    },
+    "nuget-packages": {
+      "version": "file:nuget-packages",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

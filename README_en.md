@@ -79,13 +79,10 @@ Maintainer's environment is as following.
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
-* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
 * Roslyn Scripting (see the last part of this section for detail)
 
 Note that `FinalIK` and `Dlib FaceLandmark Detector` are paid assets.
-
-[NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity) is necessary to import [NAudio](https://github.com/naudio/NAudio).
 
 "Fly,Baby." and "LaserLightShader" are available on BOOTH, and they are optional. If you do not introduce them, some of typing effects will not work correctly.
 
@@ -109,18 +106,16 @@ RawInput.Sharp can be installed with almost same work flow.
 
 Also there are some UPM based dependencies.
 
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [KlakSpout](https://github.com/keijiro/KlakSpout)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * This is fork repository and not the original.
 
-You will get compile errors for the first time. To solve this, confirm `NuGetForUnity` is installed, and open `NAudioLipSyncContext.cs` to uncomment `#define` line at the start of the script. This will solve compile errors and NuGet download will start. After download completed, comment out the line to enable actual lipsync implementation.
+Following packages are installed via NuGetForUnity.
 
-```
-//uncomment this line once, and comment out after NAudio is downloaded
-#define TEMP_SUPPRESS_ERROR
-```
+* [NAudio](https://github.com/naudio/NAudio)
 
 To install Roslyn Scripting library, get following packages from NuGet to introduce .dll files.
 

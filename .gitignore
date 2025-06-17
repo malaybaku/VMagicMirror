@@ -81,8 +81,6 @@ sysinfo.txt
 /VMagicMirror/Assets/MiscAssets/
 /VMagicMirror/Assets/uWindowCapture/
 /VMagicMirror/Assets/uOSC/
-/VMagicMirror/Assets/NuGet/
-/VMagicMirror/Assets/NuGetPackages/
 /VMagicMirror/Assets/CSharpScripting/
 /VMagicMirror/Assets/BuddyPresetData/
 
@@ -111,8 +109,6 @@ sysinfo.txt
 /VMagicMirror/Assets/uWindowCapture.meta
 /VMagicMirror/Assets/uOSC.meta
 /VMagicMirror/uWindowCapture.log
-/VMagicMirror/Assets/NuGet.meta
-/VMagicMirror/Assets/NuGetPackages.meta
 /VMagicMirror/Assets/CSharpScripting.meta
 /VMagicMirror/Assets/BuddyPresetData.meta
 
@@ -137,6 +133,9 @@ sysinfo.txt
 
 # Embedded package which should be installed by unitypackage based operation
 /VMagicMirror/Packages/com.github.homuler.mediapipe/
+
+# Embedded package which should be resolved by NuGetForUnity
+/VMagicMirror/Packages/nuget-packages/InstalledPackages/
 
 # NOT ignore solution / project files of WPF
 !/WPF/**/*.sln

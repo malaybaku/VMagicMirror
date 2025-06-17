@@ -69,12 +69,10 @@ Maintainer's environment is as following.
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
-* [Zenject](https://github.com/svermeulen/Extenject) (from Asset Store)
 * SharpDX.DirectInput 4.2.0
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
-* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.0.2
 * DOTween (from Asset Store)
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
@@ -106,12 +104,15 @@ RawInput.Sharp can be installed with almost same work flow.
 
 Also there are some UPM based dependencies.
 
+* [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [KlakSpout](https://github.com/keijiro/KlakSpout)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * This is fork repository and not the original.
+* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.1.2
+* [uOSC](https://github.com/hecomi/uOSC) v2.2.0
 
 Following packages are installed via NuGetForUnity.
 

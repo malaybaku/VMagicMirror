@@ -68,12 +68,10 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
 * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
 * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
 * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
-* [Zenject](https://github.com/svermeulen/Extenject) (アセットストアから)
 * SharpDX.DirectInput 4.2.0
     * [SharpDX](https://www.nuget.org/packages/SharpDX)
     * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
 * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
-* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.0.2
 * DOTween (アセットストアから)
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
@@ -104,12 +102,15 @@ RawInput.Sharpもほぼ同様の導入手順です。
 
 以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
 
+* [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
 * [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [KlakSpout](https://github.com/keijiro/KlakSpout)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * オリジナルのMidiJackではなく、Forkレポジトリです。
+* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.1.2
+* [uOSC](https://github.com/hecomi/uOSC) v2.2.0
 
 NuGetForUnityからは下記を参照しています。ライブラリはPackagesフォルダ内に格納されます。
 

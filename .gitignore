@@ -79,8 +79,6 @@ sysinfo.txt
 /VMagicMirror/Assets/MeshUtility/
 /VMagicMirror/Assets/Misc/
 /VMagicMirror/Assets/MiscAssets/
-/VMagicMirror/Assets/uWindowCapture/
-/VMagicMirror/Assets/uOSC/
 /VMagicMirror/Assets/CSharpScripting/
 /VMagicMirror/Assets/BuddyPresetData/
 
@@ -106,8 +104,6 @@ sysinfo.txt
 /VMagicMirror/Assets/MeshUtility.meta
 /VMagicMirror/Assets/Misc.meta
 /VMagicMirror/Assets/MiscAssets.meta
-/VMagicMirror/Assets/uWindowCapture.meta
-/VMagicMirror/Assets/uOSC.meta
 /VMagicMirror/uWindowCapture.log
 /VMagicMirror/Assets/CSharpScripting.meta
 /VMagicMirror/Assets/BuddyPresetData.meta

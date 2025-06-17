@@ -78,13 +78,10 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
 * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
 * [LaserLightShader](https://noriben.booth.pm/items/2141514)
 * [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
-* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
 * Roslyn Scripting (後述)
 
 FinalIK, Dlib FaceLandmark Detectorは有償アセットであることに注意してください。
-
-[NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)は[NAudio](https://github.com/naudio/NAudio)を導入するために使用しています。
 
 "Fly,Baby." および "LaserLightShader"はBOOTHで販売されているアセットで、ビルドに必須ではありませんが、もし導入しない場合、タイピング演出が一部動かなくなります。
 
@@ -107,19 +104,16 @@ RawInput.Sharpもほぼ同様の導入手順です。
 
 以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
 
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
 * [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
 * [UniRx](https://github.com/neuecc/UniRx)
 * [KlakSpout](https://github.com/keijiro/KlakSpout)
 * [MidiJack](https://github.com/malaybaku/MidiJack)
     * オリジナルのMidiJackではなく、Forkレポジトリです。
 
-特に初回にプロジェクトを開くとコンパイルエラーになります。これを解決するには`NuGetForUnity`の導入後に`NAudioLipSyncContext.cs`冒頭の`#define`のコメントアウトを解除し、一時的にコンパイルエラーを抑制します。
-するとNAudioがNuGetから取得できます。取得後、`#define`の行をコメントアウトすることで、リップシンクが有効な状態になります。
+NuGetForUnityからは下記を参照しています。ライブラリはPackagesフォルダ内に格納されます。
 
-```
-//下記を一旦コメントアウト解除したのち、ふたたびコメントアウトする
-#define TEMP_SUPPRESS_ERROR
-```
+* [NAudio](https://github.com/naudio/NAudio)
 
 Roslyn Scriptingについては、NuGet Packageの下記を取得し、必要なdllをプロジェクト上に配置します。
 

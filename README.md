@@ -100,22 +100,6 @@ RawInput.Sharpもほぼ同様の導入手順です。
 - NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
 - 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
 
-以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
-
-* [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
-* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
-* [UniRx](https://github.com/neuecc/UniRx)
-* [KlakSpout](https://github.com/keijiro/KlakSpout)
-* [MidiJack](https://github.com/malaybaku/MidiJack)
-    * オリジナルのMidiJackではなく、Forkレポジトリです。
-* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.1.2
-* [uOSC](https://github.com/hecomi/uOSC) v2.2.0
-
-NuGetForUnityからは下記を参照しています。ライブラリはPackagesフォルダ内に格納されます。
-
-* [NAudio](https://github.com/naudio/NAudio)
-
 Roslyn Scriptingについては、NuGet Packageの下記を取得し、必要なdllをプロジェクト上に配置します。
 
 - `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0`
@@ -140,7 +124,25 @@ Roslyn Scriptingについては、NuGet Packageの下記を取得し、必要な
     - `System.Runtime.Loader-v4.0.0/Plugins`
         - System.Runtime.Loader.dll
 
-なお、NuGetForUnityでも上記のパッケージは導入できる可能性がありますが、本readmeの記載時点ではNuGetForUnityによる導入は確認していません。
+なお、NuGetForUnityでもRoslyn Scriptingに関するパッケージを導入できる可能性がありますが、本readmeの記載時点では動作は確認していません。
+
+以上のインストールで `Assets` 直下に追加されたフォルダについては、`Assets/Ignored` フォルダを作成し、この `Ignored` フォルダ内に移動することを推奨しています(ソース管理の対象から外れます)。
+
+そのほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
+
+* [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
+* [UniRx](https://github.com/neuecc/UniRx)
+* [KlakSpout](https://github.com/keijiro/KlakSpout)
+* [MidiJack](https://github.com/malaybaku/MidiJack)
+    * オリジナルのMidiJackではなく、Forkレポジトリです。
+* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.1.2
+* [uOSC](https://github.com/hecomi/uOSC) v2.2.0
+
+NuGetForUnityからは下記を参照しています。ライブラリはPackagesフォルダ内に格納されます。
+
+* [NAudio](https://github.com/naudio/NAudio)
 
 
 ### 4.3. ビルド

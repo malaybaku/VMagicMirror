@@ -102,22 +102,6 @@ RawInput.Sharp can be installed with almost same work flow.
 - Get `.nupkg` from NuGet gallery and expand as zip to get `lib/netstandard1.1/RawInput.Sharp.dll`
 - Create `RawInputSharp` folder in Unity project's Assets folder, and put dll into the folder.
 
-Also there are some UPM based dependencies.
-
-* [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
-* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
-* [UniRx](https://github.com/neuecc/UniRx)
-* [KlakSpout](https://github.com/keijiro/KlakSpout)
-* [MidiJack](https://github.com/malaybaku/MidiJack)
-    * This is fork repository and not the original.
-* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.1.2
-* [uOSC](https://github.com/hecomi/uOSC) v2.2.0
-
-Following packages are installed via NuGetForUnity.
-
-* [NAudio](https://github.com/naudio/NAudio)
-
 To install Roslyn Scripting library, get following packages from NuGet to introduce .dll files.
 
 - `Microsoft.CodeAnalysis.CSharp.Scripting-v4.8.0`
@@ -142,7 +126,26 @@ In maintainers' project, the folder and file structure is as following.
     - `System.Runtime.Loader-v4.0.0/Plugins`
         - System.Runtime.Loader.dll
 
-Note that NuGetForUnity might get the packages above correctly, though it is not tested yet.
+*NuGetForUnity might get the packages related to Roslyn Scripting correctly, though it is not tested yet.
+
+I recommend to create `Assets/Ignored` folder and move `Assets/*` folders introduced by above steps. You should do this if you want to ignore those 3rd party assets in version control.
+
+Also there are some UPM based dependencies.
+
+* [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
+* [UniRx](https://github.com/neuecc/UniRx)
+* [KlakSpout](https://github.com/keijiro/KlakSpout)
+* [MidiJack](https://github.com/malaybaku/MidiJack)
+    * This is fork repository and not the original.
+* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.1.2
+* [uOSC](https://github.com/hecomi/uOSC) v2.2.0
+
+Following packages are installed via NuGetForUnity.
+
+* [NAudio](https://github.com/naudio/NAudio)
+
 
 ### 4.3. Build
 

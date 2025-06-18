@@ -42,7 +42,6 @@ Windows 10/11環境でお使いいただけます。
 ## 3. 質問など
 
 * [Twitter](https://twitter.com/baku_dreameater)
-* [Blog](https://www.baku-dreameater.net/)
 
 
 ## 4. (開発者向け)ビルド手順
@@ -64,22 +63,21 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
 
 ### 4.2. アセットの導入
 
-* [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
-* [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
-* [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
-* [Zenject](https://github.com/svermeulen/Extenject) (アセットストアから)
-* SharpDX.DirectInput 4.2.0
-    * [SharpDX](https://www.nuget.org/packages/SharpDX)
-    * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
-* [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
-* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.0.2
-* DOTween (アセットストアから)
-* [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
-* [LaserLightShader](https://noriben.booth.pm/items/2141514)
-* [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
-* [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
-* Roslyn Scripting (後述)
+* Unity Asset Storeから:
+    * DOTween
+    * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
+    * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
+* Asset Store以外から:
+    * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
+    * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
+    * SharpDX.DirectInput 4.2.0
+        * [SharpDX](https://www.nuget.org/packages/SharpDX)
+        * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
+    * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
+    * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
+    * [LaserLightShader](https://noriben.booth.pm/items/2141514)
+    * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
+    * Roslyn Scripting (後述)
 
 FinalIK, Dlib FaceLandmark Detectorは有償アセットであることに注意してください。
 
@@ -101,19 +99,6 @@ RawInput.Sharpもほぼ同様の導入手順です。
 
 - NuGetギャラリーから取得した`.nupkg`を展開し、中の`lib/netstandard1.1/RawInput.Sharp.dll`を取得します。
 - 取得したDLLを、Unityプロジェクト上でAssets以下に`RawInputSharp`というフォルダを作り、その下に追加します。
-
-以上のほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
-
-* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
-* [UniVRM](https://github.com/vrm-c/UniVRM) v0.66.0
-* [UniRx](https://github.com/neuecc/UniRx)
-* [KlakSpout](https://github.com/keijiro/KlakSpout)
-* [MidiJack](https://github.com/malaybaku/MidiJack)
-    * オリジナルのMidiJackではなく、Forkレポジトリです。
-
-NuGetForUnityからは下記を参照しています。ライブラリはPackagesフォルダ内に格納されます。
-
-* [NAudio](https://github.com/naudio/NAudio)
 
 Roslyn Scriptingについては、NuGet Packageの下記を取得し、必要なdllをプロジェクト上に配置します。
 
@@ -139,7 +124,25 @@ Roslyn Scriptingについては、NuGet Packageの下記を取得し、必要な
     - `System.Runtime.Loader-v4.0.0/Plugins`
         - System.Runtime.Loader.dll
 
-なお、NuGetForUnityでも上記のパッケージは導入できる可能性がありますが、本readmeの記載時点ではNuGetForUnityによる導入は確認していません。
+なお、NuGetForUnityでもRoslyn Scriptingに関するパッケージを導入できる可能性がありますが、本readmeの記載時点では動作は確認していません。
+
+以上のインストールで `Assets` 直下に追加されたフォルダについては、`Assets/Ignored` フォルダを作成し、この `Ignored` フォルダ内に移動することを推奨しています(ソース管理の対象から外れます)。
+
+そのほか、手作業での導入は不要ですが、Unity Package Managerで下記を参照しています。
+
+* [Zenject](https://github.com/svermeulen/Extenject) v9.3.1
+* [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
+* [UniVRM](https://github.com/vrm-c/UniVRM) v0.121.0
+* [UniRx](https://github.com/neuecc/UniRx)
+* [KlakSpout](https://github.com/keijiro/KlakSpout)
+* [MidiJack](https://github.com/malaybaku/MidiJack)
+    * オリジナルのMidiJackではなく、Forkレポジトリです。
+* [uWindowCapture](https://github.com/hecomi/uWindowCapture) v1.1.2
+* [uOSC](https://github.com/hecomi/uOSC) v2.2.0
+
+NuGetForUnityからは下記を参照しています。ライブラリはPackagesフォルダ内に格納されます。
+
+* [NAudio](https://github.com/naudio/NAudio)
 
 
 ### 4.3. ビルド
@@ -188,7 +191,7 @@ job_release_instraller.cmd
 
 VMagicMirror v4.0.0で導入されたサブキャラ機能に関連して、 `BuddyPresetResources.asset` に設定されたプリセット扱いのアセットデータ( `.bytes` )は公開したレポジトリに含まれないため、上記のビルド手順を追ってもデータが適切に読み込めません。
 
-これはプリセットのサブキャラが第三者に制作依頼したものであり、ライセンスの注記も異なるためです。
+これはプリセットのサブキャラが第三者に制作依頼したものであり、ライセンスも異なるためです。
 
 必要に応じて、`BuddyPresetResources.asset` の `Texture Binary` と `VRM Binary` に下記のような適当なダミーアセットを適用してください。
 

@@ -44,7 +44,6 @@ Please see [Manual](https://malaybaku.github.io/VMagicMirror/) for the detail.
 ## 3. Contact
 
 * [Twitter](https://twitter.com/baku_dreameater)
-* [Blog](https://www.baku-dreameater.net/)
 
 note: Contact in English or Japanese is very helpful for the author.
 
@@ -65,20 +64,21 @@ Maintainer's environment is as following.
 
 ### 4.2. Asset install
 
-* [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
-* [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
-* [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
-* SharpDX.DirectInput 4.2.0
-    * [SharpDX](https://www.nuget.org/packages/SharpDX)
-    * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
-* [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
-* DOTween (from Asset Store)
-* [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
-* [LaserLightShader](https://noriben.booth.pm/items/2141514)
-* [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
-* [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
-* Roslyn Scripting (see the last part of this section for detail)
+* From Asset Store:
+    * DOTween
+    * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
+    * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
+* Other
+    * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
+    * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
+    * SharpDX.DirectInput 4.2.0
+        * [SharpDX](https://www.nuget.org/packages/SharpDX)
+        * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
+    * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
+    * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
+    * [LaserLightShader](https://noriben.booth.pm/items/2141514)
+    * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
+    * Roslyn Scripting (see the last part of this section for detail)
 
 Note that `FinalIK` and `Dlib FaceLandmark Detector` are paid assets.
 

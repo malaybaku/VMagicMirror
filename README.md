@@ -42,7 +42,6 @@ Windows 10/11環境でお使いいただけます。
 ## 3. 質問など
 
 * [Twitter](https://twitter.com/baku_dreameater)
-* [Blog](https://www.baku-dreameater.net/)
 
 
 ## 4. (開発者向け)ビルド手順
@@ -64,20 +63,21 @@ Unity 6.0系でUnityプロジェクト(本レポジトリの`VMagicMirror`フォ
 
 ### 4.2. アセットの導入
 
-* [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
-* [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
-* [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
-* [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
-* SharpDX.DirectInput 4.2.0
-    * [SharpDX](https://www.nuget.org/packages/SharpDX)
-    * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
-* [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
-* DOTween (アセットストアから)
-* [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
-* [LaserLightShader](https://noriben.booth.pm/items/2141514)
-* [VMagicMirror_MotionExporter](https://github.com/malaybaku/VMagicMirror_MotionExporter)
-* [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
-* Roslyn Scripting (後述)
+* Unity Asset Storeから:
+    * DOTween
+    * [FinalIK](https://assetstore.unity.com/packages/tools/animation/final-ik-14290)
+    * [Dlib FaceLandmark Detector](https://assetstore.unity.com/packages/tools/integration/dlib-facelandmark-detector-64314)
+* Asset Store以外から:
+    * [Oculus LipSync Unity Integration v29](https://developer.oculus.com/downloads/package/oculus-lipsync-unity/)
+    * [VRMLoaderUI](https://github.com/m2wasabi/VRMLoaderUI/releases) v0.3
+    * SharpDX.DirectInput 4.2.0
+        * [SharpDX](https://www.nuget.org/packages/SharpDX)
+        * [SharpDX.DirectInput](https://www.nuget.org/packages/SharpDX.DirectInput/)
+    * [RawInput.Sharp](https://www.nuget.org/packages/RawInput.Sharp/) 0.0.3
+    * [Fly,Baby. ver1.2](https://nanakorobi-hi.booth.pm/items/1629266)
+    * [LaserLightShader](https://noriben.booth.pm/items/2141514)
+    * [MediaPipeUnityPlugin](https://github.com/homuler/MediaPipeUnityPlugin), [v1.16.1](https://github.com/homuler/MediaPipeUnityPlugin/releases/tag/v0.16.1) or later
+    * Roslyn Scripting (後述)
 
 FinalIK, Dlib FaceLandmark Detectorは有償アセットであることに注意してください。
 
@@ -189,7 +189,7 @@ job_release_instraller.cmd
 
 VMagicMirror v4.0.0で導入されたサブキャラ機能に関連して、 `BuddyPresetResources.asset` に設定されたプリセット扱いのアセットデータ( `.bytes` )は公開したレポジトリに含まれないため、上記のビルド手順を追ってもデータが適切に読み込めません。
 
-これはプリセットのサブキャラが第三者に制作依頼したものであり、ライセンスの注記も異なるためです。
+これはプリセットのサブキャラが第三者に制作依頼したものであり、ライセンスも異なるためです。
 
 必要に応じて、`BuddyPresetResources.asset` の `Texture Binary` と `VRM Binary` に下記のような適当なダミーアセットを適用してください。
 

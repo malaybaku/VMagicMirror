@@ -120,6 +120,57 @@ namespace Baku.VMagicMirror.Buddy
             set => rawImage.rectTransform.sizeDelta = value;
         }
 
+        /// <summary>
+        /// 下記のような特徴のRectを返すことで、セリフの基準位置を与える
+        /// - 基準位置は原則としてparentの位置、なければ自分自身の位置
+        /// - LocalRotationがない状態に相当
+        /// - Size, Scale, Pivotは考慮される
+        /// </summary>
+        /// <returns></returns>
+        public Rect GetStableRect()
+        {
+            // NOTE: かなり荒っぽいが。いったん基準姿勢を取らせることで大筋の基準位置を取りにいく
+            var rot = transform2DInstance.LocalRotation;
+            var pos = transform2DInstance.LocalPosition;
+            
+            var effectorPos = effectorRectTransform.anchoredPosition;
+            var effectorRot = effectorRectTransform.localRotation;
+            var effectorScale = effectorRectTransform.localScale;
+            
+            try
+            {
+                // NOTE: 親要素をまったく使わずに位置制御しているサブキャラの場合は現在位置をリスペクトする
+                if (transform2DInstance.HasParentTransform2DInstance())
+                {
+                    transform2DInstance.LocalPosition = Vector2.zero;
+                }
+                transform2DInstance.LocalRotation = Quaternion.identity;
+
+                effectorRectTransform.anchoredPosition = Vector2.zero;
+                effectorRectTransform.localRotation = Quaternion.identity;
+                effectorRectTransform.localScale = Vector3.one;
+                
+                var rect = RectTransformAreaUtil.GetLocalRectForWorldSpaceUi(
+                    transform2DInstance.ParentCanvas, transform2DInstance.ContentTransform
+                );
+
+                return new Rect(
+                    rect.position + 
+                        new Vector2(BuddySpriteCanvas.CanvasWidthDefault / 2, BuddySpriteCanvas.CanvasHeightDefault / 2),
+                    rect.size
+                );
+            }
+            finally
+            {
+                transform2DInstance.LocalPosition = pos;
+                transform2DInstance.LocalRotation = rot;
+                
+                effectorRectTransform.anchoredPosition = effectorPos;
+                effectorRectTransform.localRotation = effectorRot;
+                effectorRectTransform.localScale = effectorScale;
+            }
+        }
+
         // NOTE: ここだけEffectApi自体がデータ的に定義されてるので素朴にnew()してよい
         public SpriteEffectApi SpriteEffects { get; } = new();
 
@@ -295,5 +346,86 @@ namespace Baku.VMagicMirror.Buddy
         // NOTE: 下記はいずれもScript APIからではなく、BuddySprite2DInstanceの一覧を持ってるrepoから呼び出す想定
         public void SetShadowEnabled(bool enable) => shadow.enabled = enable;
         public void SetShadowColor(Color color) => shadow.effectColor = color;
+        
+        public BuddyTalkTextInstance CreateTalkTextInstance()
+        {
+            // NOTE: ちょっと手段が汚いが、prefabを持っているのが親Canvasなので親に任す方向で…
+            return GetComponentInParent<BuddySpriteCanvas>()
+                .CreateTalkTextInstance(this);
+        }
+    }
+
+    public static class RectTransformAreaUtil
+    {
+        private static readonly Vector3[] WorldCorners = new Vector3[4];
+
+        public static Rect GetLocalRectForWorldSpaceUi(Canvas canvas, RectTransform rt)
+        {
+            var canvasRT = (RectTransform)canvas.transform;
+            // worldCorners: [0]=BL, [1]=TL, [2]=TR, [3]=BR
+            rt.GetWorldCorners(WorldCorners);
+
+            var min = new Vector2(float.MaxValue, float.MaxValue);
+            var max = new Vector2(float.MinValue, float.MinValue);
+            for (var i = 0; i < 4; i++)
+            {
+                var local = canvasRT.InverseTransformPoint(WorldCorners[i]);
+                min = Vector2.Min(min, local);
+                max = Vector2.Max(max, local);
+            }
+
+            // 左下 (min) を原点に、幅・高さを計算
+            var localRect = new Rect(min, max - min);
+            return localRect;
+        }        
+        
+        /// <summary>
+        /// World Space の Canvas 内に、RectTransform rt がマージンを考慮して完全に収まっているかを判定します。
+        /// margin はピクセル単位で指定し、Canvas.scaleFactor を用いてローカル単位に変換されます。
+        /// </summary>
+        public static bool IsContainedInCanvas(Canvas canvas, RectTransform rt, float margin)
+        {
+            var canvasRectT = (RectTransform)canvas.transform;
+            // Canvas のローカル矩形を取得し、マージン分だけ内側に縮小
+            var localRect = canvasRectT.rect;
+            var localMargin = margin / canvas.scaleFactor;
+            localRect.xMin += localMargin;
+            localRect.yMin += localMargin;
+            localRect.xMax -= localMargin;
+            localRect.yMax -= localMargin;
+
+            // 各コーナーを Canvas のローカル座標に変換し、内包判定
+            rt.GetWorldCorners(WorldCorners);
+            for (var i = 0; i < 4; i++)
+            {
+                var worldPt = WorldCorners[i];
+                var localPt = canvasRectT.InverseTransformPoint(worldPt);
+                if (!localRect.Contains((Vector2)localPt))
+                {
+                    Debug.Log($"local rect {localRect} does not contain point {localPt} from world point {worldPt}");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        
+        /// <summary>
+        /// 指定した RectTransform の中心が、Canvas のローカル座標系で右側にあるかを判定します。
+        /// </summary>
+        /// <param name="canvas">対象の Canvas</param>
+        /// <param name="rt">判定したい RectTransform（Canvas の子階層にあること）</param>
+        /// <returns>
+        /// 中心点が Canvas のローカル X = 0 の位置より大きければ true（右側）、それ以外は false（左側またはちょうど中央）
+        /// </returns>
+        public static bool IsOnRightSide(Canvas canvas, RectTransform rt)
+        {
+            var canvasRectT = (RectTransform)canvas.transform;
+            var worldCenter = rt.TransformPoint(rt.rect.center);
+            var localCenter = canvasRectT.InverseTransformPoint(worldCenter);
+
+            // ローカル X が正なら右側
+            return localCenter.x > 0f;
+        }
     }
 }

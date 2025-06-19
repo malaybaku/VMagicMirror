@@ -28,6 +28,9 @@ namespace Baku.VMagicMirror.Buddy
             _spriteCanvas.SpriteCreated
                 .Subscribe(instance => _repository.AddSprite2D(instance))
                 .AddTo(this);
+            _spriteCanvas.TalkTextCreated
+                .Subscribe(instance => _repository.AddTalkText(instance))
+                .AddTo(this);
             
             _instanceCreator.Sprite3DCreated
                 .Subscribe(instance => _repository.AddSprite3D(instance))

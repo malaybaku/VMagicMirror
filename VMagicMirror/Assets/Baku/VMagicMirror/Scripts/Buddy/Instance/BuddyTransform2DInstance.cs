@@ -31,6 +31,8 @@ namespace Baku.VMagicMirror.Buddy
                 return _parentSpriteCanvas;
             }
         }
+        
+        public Canvas ParentCanvas => ParentSpriteCanvas.GetComponent<Canvas>();
 
         public RectTransform ContentTransform => content != null ? content : RectTransform; 
 
@@ -124,5 +126,9 @@ namespace Baku.VMagicMirror.Buddy
             // TODO: SetParentと同様、不要そうなら削除してOK
             LocalPosition = localPosition;
         }
+
+        public bool HasParentTransform2DInstance() =>
+            GetComponentInParent<BuddyManifestTransform2DInstance>() != null ||
+            GetComponentInParent<BuddyTransform2DInstance>() != null;
     }
 }

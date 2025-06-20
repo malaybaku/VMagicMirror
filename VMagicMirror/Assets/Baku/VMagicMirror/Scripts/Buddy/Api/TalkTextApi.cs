@@ -45,8 +45,8 @@ namespace Baku.VMagicMirror.Buddy
         public event Action<ITalkTextItem> ItemDequeued;
         public event Action<ITalkTextItem> ItemFinished;
         
-        internal void OnItemDequeued(ITalkTextItem item) => ItemDequeued?.Invoke(item);
-        internal void OnItemFinished(ITalkTextItem item) => ItemFinished?.Invoke(item);
+        internal void InvokeItemDequeued(ITalkTextItem item) => ItemDequeued?.Invoke(item);
+        internal void InvokeItemFinished(ITalkTextItem item) => ItemFinished?.Invoke(item);
 
         public ITalkTextItem GetCurrentPlayingItem()
         {

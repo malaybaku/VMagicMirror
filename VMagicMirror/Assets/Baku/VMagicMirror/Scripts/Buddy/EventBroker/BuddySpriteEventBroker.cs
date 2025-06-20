@@ -1,6 +1,7 @@
 using System;
 using Baku.VMagicMirror.Buddy.Api;
 using UniRx;
+using VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -28,11 +29,15 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Subject<SpriteEventData> _onPointerEnter = new();
         private readonly Subject<SpriteEventData> _onPointerLeave = new();
 
-        public IObservable<SpriteEventData> OnPointerDown => _onPointerDown;
-        public IObservable<SpriteEventData> OnPointerUp => _onPointerUp;
-        public IObservable<SpriteEventData> OnPointerClick => _onPointerClick;
-        public IObservable<SpriteEventData> OnPointerEnter => _onPointerEnter;
-        public IObservable<SpriteEventData> OnPointerLeave => _onPointerLeave;
+        public IObservable<(Sprite2DApi api, Pointer2DData data)> OnPointerDownForBuddy(BuddyId buddyId) => ForBuddy(_onPointerDown, buddyId);
+        public IObservable<(Sprite2DApi api, Pointer2DData data)> OnPointerUpForBuddy(BuddyId buddyId) => ForBuddy(_onPointerUp, buddyId);
+        public IObservable<(Sprite2DApi api, Pointer2DData data)> OnPointerClickForBuddy(BuddyId buddyId) => ForBuddy(_onPointerClick, buddyId);
+        public IObservable<(Sprite2DApi api, Pointer2DData data)> OnPointerEnterForBuddy(BuddyId buddyId) => ForBuddy(_onPointerEnter, buddyId);
+        public IObservable<(Sprite2DApi api, Pointer2DData data)> OnPointerLeaveForBuddy(BuddyId buddyId) => ForBuddy(_onPointerLeave, buddyId);
+
+        private IObservable<(Sprite2DApi api, Pointer2DData data)> ForBuddy(IObservable<SpriteEventData> src, BuddyId buddyId) => src
+            .Where(item => item.BuddyId.Equals(buddyId))
+            .Select(item => (item.Api, item.PointerData.ToApiValue()));
         
         public void InvokeOnPointerDown(Sprite2DApi api, Pointer2DDataInternal pointerData) 
             => _onPointerDown.OnNext(new SpriteEventData(api, pointerData));

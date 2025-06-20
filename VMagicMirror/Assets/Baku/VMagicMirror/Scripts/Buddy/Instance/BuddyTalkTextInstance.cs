@@ -37,15 +37,15 @@ namespace Baku.VMagicMirror.Buddy
         public BuddyFolder BuddyFolder => Sprite2DInstance.BuddyFolder;
         private BuddyId BuddyId => BuddyFolder.BuddyId;
         
-        private readonly List<ITalkTextItemInternal> _queuedItems = new();
-        public IReadOnlyList<ITalkTextItemInternal> QueuedItems => _queuedItems;
+        private readonly List<TalkTextItemInternal> _queuedItems = new();
+        public IReadOnlyList<TalkTextItemInternal> QueuedItems => _queuedItems;
 
         // NOTE: IO<T>を最終的にScriptEventInvokerの発火に帰着させたい
-        private readonly Subject<ITalkTextItemInternal> _itemDequeued = new();
-        public IObservable<ITalkTextItemInternal> ItemDequeued => _itemDequeued;
+        private readonly Subject<TalkTextItemInternal> _itemDequeued = new();
+        public IObservable<TalkTextItemInternal> ItemDequeued => _itemDequeued;
 
-        private readonly Subject<ITalkTextItemInternal> _itemFinished = new();
-        public IObservable<ITalkTextItemInternal> ItemFinished => _itemFinished;
+        private readonly Subject<TalkTextItemInternal> _itemFinished = new();
+        public IObservable<TalkTextItemInternal> ItemFinished => _itemFinished;
 
         public void Dispose()
         {
@@ -172,10 +172,10 @@ namespace Baku.VMagicMirror.Buddy
         }
 
         public void AddTalkItem(string content, string key, float textDuration) 
-            => _queuedItems.Add(new TextTalkItemInternal(null, BuddyId, content, key, textDuration));
+            => _queuedItems.Add(TalkTextItemInternal.CreateText(BuddyId, content, key, textDuration));
 
         public void AddWaitItem(string key, float duration)
-            => _queuedItems.Add(new WaitTalkItemInternal(null, BuddyId, key, duration));
+            => _queuedItems.Add(TalkTextItemInternal.CreateWait(BuddyId, key, duration));
 
         public void Clear(bool includeCurrentItem)
         {

@@ -8,60 +8,45 @@ namespace Baku.VMagicMirror.Buddy
         Wait,
     }
     
-    public interface ITalkTextItemInternal
+    public readonly struct TalkTextItemInternal
     {
-        TalkTextApi Api { get; }
-        BuddyId BuddyId { get; }
-        TalkTextItemTypeInternal Type { get; }
-        string Key { get; }
-        string Text { get; }
-        float ScheduledDuration { get; }
-        
-        ITalkTextItemInternal WithApi(TalkTextApi api);
-    }
-
-    public readonly struct TextTalkItemInternal : ITalkTextItemInternal
-    {
-        public TextTalkItemInternal(TalkTextApi api, BuddyId buddyId, string text, string key, float duration)
-        {
-            Api = api;
-            BuddyId = buddyId;
-            Text = text;
-            Key = key;
-            ScheduledDuration = duration;
-        }
-        
         public TalkTextApi Api { get; }
         public BuddyId BuddyId { get; }
-
-        public TalkTextItemTypeInternal Type => TalkTextItemTypeInternal.Text;
+        public TalkTextItemTypeInternal Type { get; }
+        public string Key { get; }
         public string Text { get; }
-        public string Key { get; }
         public float ScheduledDuration { get; }
-        
-        public ITalkTextItemInternal WithApi(TalkTextApi api) 
-            => new TextTalkItemInternal(api, BuddyId, Text, Key, ScheduledDuration);
-    }
-    
-    public readonly struct WaitTalkItemInternal : ITalkTextItemInternal
-    {
-        public WaitTalkItemInternal(TalkTextApi api, BuddyId buddyId, string key, float duration)
+
+        public TalkTextItemInternal(
+            TalkTextApi api,
+            BuddyId buddyId,
+            TalkTextItemTypeInternal type,
+            string key,
+            string text,
+            float scheduledDuration
+            )
         {
             Api = api;
             BuddyId = buddyId;
+            Type = type;
             Key = key;
-            ScheduledDuration = duration;
+            Text = text;
+            ScheduledDuration = scheduledDuration;
         }
 
-        public TalkTextApi Api { get; }
-        public BuddyId BuddyId { get; }
-        public TalkTextItemTypeInternal Type => TalkTextItemTypeInternal.Wait;
-        public string Text => "";
-        public string Key { get; }
-        public float ScheduledDuration { get; }
+        public static TalkTextItemInternal CreateText(BuddyId buddyId, string text, string key, float duration)
+            => new(null, buddyId, TalkTextItemTypeInternal.Text, key, text, duration);
+
+        public static TalkTextItemInternal CreateWait(BuddyId buddyId, string key, float duration)
+            => new(null, buddyId, TalkTextItemTypeInternal.Wait, key, "", duration);
         
-        public ITalkTextItemInternal WithApi(TalkTextApi api) 
-            => new WaitTalkItemInternal(api, BuddyId, Key, ScheduledDuration);
+        public TalkTextItemInternal WithApi(TalkTextApi api) => new(
+            api,
+            BuddyId,
+            Type,
+            Key,
+            Text,
+            ScheduledDuration
+        );
     }
-    
 }

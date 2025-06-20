@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using VMagicMirror.Buddy;
+using UniRx;
 using BuddyApi = VMagicMirror.Buddy;
 
 namespace Baku.VMagicMirror.Buddy.Api
@@ -20,17 +22,27 @@ namespace Baku.VMagicMirror.Buddy.Api
     public class Sprite2DApi : ISprite2D
     {
         private readonly BuddySprite2DInstance _instance;
+        private readonly BuddySpriteEventBroker _eventBroker;
+        private readonly BuddyTalkTextEventBroker _talkTextEventBroker;
         private readonly BuddyLogger _logger;
-        private BuddyFolder BuddyFolder { get; }
+        internal BuddyFolder BuddyFolder { get; }
 
-        internal Sprite2DApi(BuddyFolder buddyFolder, BuddySprite2DInstance instance, BuddyLogger logger)
+        internal Sprite2DApi(
+            BuddyFolder buddyFolder,
+            BuddySprite2DInstance instance,
+            BuddySpriteEventBroker eventBroker, 
+            BuddyTalkTextEventBroker talkTextEventBroker,
+            BuddyLogger logger)
         {
             BuddyFolder = buddyFolder;
             _instance = instance;
+            _eventBroker = eventBroker;
+            _talkTextEventBroker = talkTextEventBroker;
             _logger = logger;
 
             Transform = new Transform2D(instance.GetTransform2DInstance());
             DefaultSpritesSetting = new DefaultSpritesSettingApi(_instance.DefaultSpritesSetting);
+            SubscribeInstancePointerEvents();
         }
         
         public override string ToString() => nameof(ISprite2D);
@@ -47,13 +59,19 @@ namespace Baku.VMagicMirror.Buddy.Api
                 {
                     var talkTextInstance = _instance.CreateTalkTextInstance();
                     talkTextInstance.Sprite2DInstance = _instance;
-                    _talkText = new TalkTextApi(talkTextInstance);
+                    _talkText = new TalkTextApi(talkTextInstance, _talkTextEventBroker);
                 }
                 
                 return _talkText;
             }    
         }
-        
+
+        public event Action<Pointer2DData> OnPointerDown;
+        public event Action<Pointer2DData> OnPointerUp;
+        public event Action<Pointer2DData> OnPointerClick;
+        public event Action<Pointer2DData> OnPointerEnter;
+        public event Action<Pointer2DData> OnPointerLeave;
+
         BuddyApi.Vector2 ISprite2D.Size
         {
             get => _instance.Size.ToApiValue();
@@ -180,6 +198,25 @@ namespace Baku.VMagicMirror.Buddy.Api
                 (int)style, (int)Sprite2DTransitionStyle.None, (int)Sprite2DTransitionStyle.BottomFlip
             );
             return (Sprite2DTransitionStyle)clamped;
+        }
+
+        private void SubscribeInstancePointerEvents()
+        {
+            _instance.PointerDown
+                .Subscribe(_ => _eventBroker.InvokeOnPointerDown(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
+            _instance.PointerUp
+                .Subscribe(_ => _eventBroker.InvokeOnPointerUp(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
+            _instance.PointerClick
+                .Subscribe(_ => _eventBroker.InvokeOnPointerClick(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
+            _instance.PointerEnter
+                .Subscribe(_ => _eventBroker.InvokeOnPointerEnter(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
+            _instance.PointerLeave
+                .Subscribe(_ => _eventBroker.InvokeOnPointerLeave(this, new Pointer2DDataInternal()))
+                .AddTo(_instance);
         }
     }
 }

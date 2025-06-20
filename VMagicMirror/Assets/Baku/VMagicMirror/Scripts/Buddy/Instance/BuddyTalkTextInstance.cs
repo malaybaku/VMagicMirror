@@ -172,10 +172,10 @@ namespace Baku.VMagicMirror.Buddy
         }
 
         public void AddTalkItem(string content, string key, float textDuration) 
-            => _queuedItems.Add(new TextTalkItemInternal(BuddyId, content, key, textDuration));
+            => _queuedItems.Add(new TextTalkItemInternal(null, BuddyId, content, key, textDuration));
 
         public void AddWaitItem(string key, float duration)
-            => _queuedItems.Add(new WaitTalkItemInternal(BuddyId, key, duration));
+            => _queuedItems.Add(new WaitTalkItemInternal(null, BuddyId, key, duration));
 
         public void Clear(bool includeCurrentItem)
         {

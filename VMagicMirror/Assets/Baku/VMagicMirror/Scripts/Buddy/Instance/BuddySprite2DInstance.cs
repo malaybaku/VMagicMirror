@@ -81,7 +81,7 @@ namespace Baku.VMagicMirror.Buddy
     }
     
     public class BuddySprite2DInstance : MonoBehaviour, 
-        IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerMoveHandler
+        IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
     {
         [SerializeField] private BuddyTransform2DInstance transform2DInstance;
         [SerializeField] private RectTransform effectorRectTransform;
@@ -105,14 +105,17 @@ namespace Baku.VMagicMirror.Buddy
         /// <summary> バウンド効果などのエフェクトを適用可能なRectTransformを取得する </summary>
         public RectTransform EffectorRectTransform => effectorRectTransform;
         
-        private readonly Subject<Unit> _pointerEntered = new();
-        public IObservable<Unit> PointerEntered => _pointerEntered;
+        private readonly Subject<Unit> _pointerEnter = new();
+        private readonly Subject<Unit> _pointerLeave = new();
+        private readonly Subject<Unit> _pointerDown = new();
+        private readonly Subject<Unit> _pointerUp = new();
+        private readonly Subject<Unit> _pointerClick = new();
 
-        private readonly Subject<Unit> _pointerExit = new();
-        public IObservable<Unit> PointerExit => _pointerExit;
-
-        private readonly Subject<Unit> _pointerClicked = new();
-        public IObservable<Unit> PointerClicked => _pointerClicked;
+        public IObservable<Unit> PointerEnter => _pointerEnter;
+        public IObservable<Unit> PointerLeave => _pointerLeave;
+        public IObservable<Unit> PointerDown => _pointerDown;
+        public IObservable<Unit> PointerUp => _pointerUp;
+        public IObservable<Unit> PointerClick => _pointerClick;
 
         public Vector2 Size
         {
@@ -192,19 +195,12 @@ namespace Baku.VMagicMirror.Buddy
             IsDefaultSpritesActive = isDefaultSpritesTexture;
         }
 
-        //TODO: なでなでに反応できてほしい気がするので、PointerMoveも検討したほうがいいかも
-        // メインアバターに無いんかい！となるかもだが、アバターは自分だから撫でれんでも…という思想で行くとサブキャラだけ撫でられるのもアリそう
-        void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData) 
-            => _pointerEntered.OnNext(Unit.Default);
-        void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
-            => _pointerExit.OnNext(Unit.Default);
-        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-            => _pointerClicked.OnNext(Unit.Default);
-
-        void IPointerMoveHandler.OnPointerMove(PointerEventData eventData)
-        {
-            //do nothing: 移動量が分かることが必要なような…
-        }
+        //NOTE: このコンポーネントじゃなくてRawImageのあるオブジェクト上で何かやらないとダメかも
+        void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData) => _pointerEnter.OnNext(Unit.Default);
+        void IPointerExitHandler.OnPointerExit(PointerEventData eventData) => _pointerLeave.OnNext(Unit.Default);
+        void IPointerDownHandler.OnPointerDown(PointerEventData eventData) => _pointerDown.OnNext(Unit.Default);
+        void IPointerUpHandler.OnPointerUp(PointerEventData eventData) => _pointerUp.OnNext(Unit.Default);
+        void IPointerClickHandler.OnPointerClick(PointerEventData eventData) => _pointerClick.OnNext(Unit.Default);
 
         public void Dispose()
         {

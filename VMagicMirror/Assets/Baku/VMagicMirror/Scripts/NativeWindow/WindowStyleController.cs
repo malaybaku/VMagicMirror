@@ -65,6 +65,7 @@ namespace Baku.VMagicMirror
         const float AlphaLerpFactor = 0.2f;
 
         private CameraUtilWrapper _camera;
+        private Buddy.BuddyObjectRaycastChecker _buddyObjectRaycastChecker;
         private IDisposable _mouseObserve;
 
         private readonly WindowAreaIo _windowAreaIo = new WindowAreaIo();
@@ -74,10 +75,12 @@ namespace Baku.VMagicMirror
             IVRMLoadable vrmLoadable, 
             IMessageReceiver receiver, 
             IKeyMouseEventSource keyboardEventSource,
-            CameraUtilWrapper cameraUtilWrapper
+            CameraUtilWrapper cameraUtilWrapper,
+            Buddy.BuddyObjectRaycastChecker buddyObjectRaycastChecker
             )
         {
             _camera = cameraUtilWrapper;
+            _buddyObjectRaycastChecker = buddyObjectRaycastChecker;
 
             receiver.AssignCommandHandler(
                 VmmCommands.Chromakey,
@@ -197,6 +200,13 @@ namespace Baku.VMagicMirror
             if (!_windowDraggableWhenFrameHidden && _preferIgnoreMouseInput)
             {
                 //透明であり、明示的にクリック無視が指定されている = 指定通りにクリックを無視
+                SetClickThrough(true);
+                return;
+            }
+
+            if (_buddyObjectRaycastChecker.IsPointerOnBuddyObject())
+            {
+                // 透明であり、サブキャラの画像やテキスト上にマウスが載っている = クリックを取る
                 SetClickThrough(true);
                 return;
             }

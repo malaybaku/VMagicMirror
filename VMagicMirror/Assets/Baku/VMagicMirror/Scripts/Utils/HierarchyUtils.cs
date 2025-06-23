@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Baku.VMagicMirror
@@ -25,6 +26,34 @@ namespace Baku.VMagicMirror
                 {
                     yield return t;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Scene直下側から順に `/` で区切ったオブジェクトの名称を返す。デバッグで使う想定
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string GetHierarchyIncludedGameObjectName(GameObject obj)
+        {
+            if (obj == null) return "";
+
+            var sb = new StringBuilder();
+            GetHierarchyIncludedGameObjectName(obj.transform, sb);
+            return sb.ToString();
+        }
+
+        private static void GetHierarchyIncludedGameObjectName(Transform t, StringBuilder result)
+        {
+            while (t != null)
+            {
+                if (result.Length > 0)
+                {
+                    result.Insert(0, '/');
+                }
+                result.Insert(0, t.name);
+
+                t = t.parent;
             }
         }
     }

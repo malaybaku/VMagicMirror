@@ -56,7 +56,7 @@ namespace Baku.VMagicMirror
         // アクセサリーやサブキャラの不透明部分に対して反応することは保証されない
         private bool _isOnAvatarBoundingBoxOpaquePixel;
         // NOTE: こっちのフラグはcameraのRaycastベースで判定できるようなものに対する判定
-        private bool _isOnNonAvatarOpaqueArea = false;
+        private bool _isOnNonAvatarOpaqueArea;
         private bool _isClickThrough;
         //既定値がtrueになる(デフォルトでは常時最前面である)ことに注意
         private bool _isTopMost = true;
@@ -168,6 +168,7 @@ namespace Baku.VMagicMirror
 
         private void Update()
         {
+            UpdatePointerOnNonAvatarOpaqueArea();
             UpdateClickThrough();
             UpdateDragStatus();
             UpdateWindowPositionCheck();
@@ -195,6 +196,18 @@ namespace Baku.VMagicMirror
             }
         }
 
+        private void UpdatePointerOnNonAvatarOpaqueArea()
+        {
+            if (!_isTransparent)
+            {
+                // 不透明ウィンドウの場合、フラグが使われないので判定をサボっておく
+                _isOnNonAvatarOpaqueArea = false;
+                return;
+            }
+
+            _isOnNonAvatarOpaqueArea = _buddyObjectRaycastChecker.IsPointerOnBuddyObject();
+        }
+        
         private void UpdateClickThrough()
         {
             if (!_isTransparent)
@@ -211,15 +224,8 @@ namespace Baku.VMagicMirror
                 return;
             }
 
-            if (_buddyObjectRaycastChecker.IsPointerOnBuddyObject())
-            {
-                // 透明であり、サブキャラの画像やテキスト上にマウスが載っている = クリックを取る
-                SetClickThrough(true);
-                return;
-            }
-
             //透明であり、クリックはとってほしい = マウス直下のピクセル状態で判断
-            SetClickThrough(!_isOnAvatarBoundingBoxOpaquePixel);
+            SetClickThrough(!_isOnAvatarBoundingBoxOpaquePixel || !_isOnNonAvatarOpaqueArea);
         }
 
         private void UpdateDragStatus()

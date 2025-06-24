@@ -53,7 +53,11 @@ namespace Baku.VMagicMirror
         private Renderer[] _renderers = new Renderer[0];
 
         private Texture2D _colorPickerTexture = null;
-        private bool _isOnOpaquePixel = false;
+        // NOTE: このフラグはアバターのバウンディングボックス内の不透明ピクセルにのみ反応し、
+        // アクセサリーやサブキャラの不透明部分に対して反応することは保証されない
+        private bool _isOnAvatarBoundingBoxOpaquePixel = false;
+        // NOTE: こっちのフラグはcameraのRaycastベースで判定できるようなものに対する判定
+        private bool _isOnNonAvatarOpaqueArea = false;
         private bool _isClickThrough = false;
         //既定値がtrueになる(デフォルトでは常時最前面である)ことに注意
         private bool _isTopMost = true;
@@ -212,7 +216,7 @@ namespace Baku.VMagicMirror
             }
 
             //透明であり、クリックはとってほしい = マウス直下のピクセル状態で判断
-            SetClickThrough(!_isOnOpaquePixel);
+            SetClickThrough(!_isOnAvatarBoundingBoxOpaquePixel);
         }
 
         private void UpdateDragStatus()
@@ -220,7 +224,7 @@ namespace Baku.VMagicMirror
             if (_isWindowFrameHidden &&
                 _windowDraggableWhenFrameHidden &&
                 _hitTestJudgeCountDown == 1 &&
-                _isOnOpaquePixel
+                (_isOnAvatarBoundingBoxOpaquePixel || _isOnNonAvatarOpaqueArea)
                 )
             {
                 _hitTestJudgeCountDown = 0;
@@ -282,13 +286,13 @@ namespace Baku.VMagicMirror
                     break;
                 case TransparencyLevel.WhenDragDisabledAndOnCharacter:
                     if (!_windowDraggableWhenFrameHidden &&
-                        _isOnOpaquePixel)
+                        _isOnAvatarBoundingBoxOpaquePixel)
                     {
                         alpha = _wholeWindowAlphaWhenTransparent;
                     }
                     break;
                 case TransparencyLevel.WhenOnCharacter:
-                    if (_isOnOpaquePixel)
+                    if (_isOnAvatarBoundingBoxOpaquePixel)
                     {
                         alpha = _wholeWindowAlphaWhenTransparent;
                     }
@@ -446,7 +450,7 @@ namespace Baku.VMagicMirror
             if (!_camera.PixelRectContains(mousePos) ||
                 !CheckMouseMightBeOnCharacter(mousePos))
             {
-                _isOnOpaquePixel = false;
+                _isOnAvatarBoundingBoxOpaquePixel = false;
                 return;
             }
 
@@ -457,7 +461,7 @@ namespace Baku.VMagicMirror
                 Color color = _colorPickerTexture.GetPixel(0, 0);
 
                 // アルファ値がしきい値以上ならば不透過
-                _isOnOpaquePixel = (color.a >= opaqueThreshold);
+                _isOnAvatarBoundingBoxOpaquePixel = (color.a >= opaqueThreshold);
             }
 #if UNITY_EDITOR
             catch (Exception ex)
@@ -469,7 +473,7 @@ namespace Baku.VMagicMirror
             {
                 // こっちのケースではex使う用事がないので、コンパイラのご機嫌為にこう書いてます
 #endif
-                _isOnOpaquePixel = false;
+                _isOnAvatarBoundingBoxOpaquePixel = false;
             }
         }
 

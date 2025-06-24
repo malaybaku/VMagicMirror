@@ -299,13 +299,16 @@ namespace Baku.VMagicMirror
                     //何もしない: 0xFFで不透明になればOK
                     break;
                 case TransparencyLevel.WhenDragDisabledAndOnCharacter:
-                    if (!_windowDraggableWhenFrameHidden &&
-                        _isOnAvatarBoundingBoxOpaquePixel)
+                    //NOTE: ここではalphaが変わるときサブキャラにインタラクトできないので、
+                    //ポインターがメインアバターとサブキャラどちらにポインターが当たっても半透明にし、「操作できなさそう」感を出す
+                    if (!_windowDraggableWhenFrameHidden && IsOnOpaquePixel)
                     {
                         alpha = _wholeWindowAlphaWhenTransparent;
                     }
                     break;
                 case TransparencyLevel.WhenOnCharacter:
+                    //NOTE: この条件ではIsOnOpaquePixelは使わず、サブキャラやセリフにポインターが当たったときは不透明のままにする。
+                    // これにより、サブキャラやセリフUIへマウスオーバーしたときの「操作できそう」感を残す
                     if (_isOnAvatarBoundingBoxOpaquePixel)
                     {
                         alpha = _wholeWindowAlphaWhenTransparent;

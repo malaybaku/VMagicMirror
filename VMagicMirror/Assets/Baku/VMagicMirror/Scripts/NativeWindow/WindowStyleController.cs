@@ -29,50 +29,49 @@ namespace Baku.VMagicMirror
 
         [SerializeField] private float opaqueThreshold = 0.1f;
         [SerializeField] private float windowPositionCheckInterval = 5.0f;
-        [SerializeField] private CameraController cameraController = null;
+        [SerializeField] private CameraController cameraController;
 
-        private float _windowPositionCheckCount = 0;
-        private Vector2Int _prevWindowPosition = Vector2Int.zero;
+        private float _windowPositionCheckCount;
 
-        private uint defaultWindowStyle = 0;
-        private uint defaultExWindowStyle = 0;
+        private uint _defaultWindowStyle;
+        private uint _defaultExWindowStyle;
 
-        private bool _isTransparent = false;
-        private bool _isWindowFrameHidden = false;
+        private bool _isTransparent;
+        private bool _isWindowFrameHidden;
         private bool _windowDraggableWhenFrameHidden = true;
-        private bool _preferIgnoreMouseInput = false;
+        private bool _preferIgnoreMouseInput;
 
-        private int _hitTestJudgeCountDown = 0;
+        private int _hitTestJudgeCountDown;
         //private bool _isMouseLeftButtonDownPreviousFrame = false;
-        private bool _isDragging = false;
+        private bool _isDragging;
         private Vector2Int _dragStartMouseOffset = Vector2Int.zero;
 
-        private bool _prevMousePositionInitialized = false;
+        private bool _prevMousePositionInitialized;
         private Vector2 _prevMousePosition = Vector2.zero;
 
-        private Renderer[] _renderers = new Renderer[0];
+        private Renderer[] _renderers = Array.Empty<Renderer>();
 
-        private Texture2D _colorPickerTexture = null;
+        private Texture2D _colorPickerTexture;
         // NOTE: このフラグはアバターのバウンディングボックス内の不透明ピクセルにのみ反応し、
         // アクセサリーやサブキャラの不透明部分に対して反応することは保証されない
-        private bool _isOnAvatarBoundingBoxOpaquePixel = false;
+        private bool _isOnAvatarBoundingBoxOpaquePixel;
         // NOTE: こっちのフラグはcameraのRaycastベースで判定できるようなものに対する判定
         private bool _isOnNonAvatarOpaqueArea = false;
-        private bool _isClickThrough = false;
+        private bool _isClickThrough;
         //既定値がtrueになる(デフォルトでは常時最前面である)ことに注意
         private bool _isTopMost = true;
 
-        int _wholeWindowTransparencyLevel = TransparencyLevel.WhenOnCharacter;
-        byte _wholeWindowAlphaWhenTransparent = 0x80;
+        private int _wholeWindowTransparencyLevel = TransparencyLevel.WhenOnCharacter;
+        private byte _wholeWindowAlphaWhenTransparent = 0x80;
         //ふつうに起動したら不透明ウィンドウ
-        byte _currentWindowAlpha = 0xFF;
-        const float AlphaLerpFactor = 0.2f;
+        private byte _currentWindowAlpha = 0xFF;
+        private const float AlphaLerpFactor = 0.2f;
 
         private CameraUtilWrapper _camera;
         private Buddy.BuddyObjectRaycastChecker _buddyObjectRaycastChecker;
         private IDisposable _mouseObserve;
 
-        private readonly WindowAreaIo _windowAreaIo = new WindowAreaIo();
+        private readonly WindowAreaIo _windowAreaIo = new();
 
         [Inject]
         public void Initialize(
@@ -146,11 +145,11 @@ namespace Baku.VMagicMirror
             var hWnd = GetUnityWindowHandle();
             if (!Application.isEditor)
             {
-                defaultWindowStyle = GetWindowLong(hWnd, GWL_STYLE);
-                defaultExWindowStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+                _defaultWindowStyle = GetWindowLong(hWnd, GWL_STYLE);
+                _defaultExWindowStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
                 //半透明許可のため、デフォルトで常時レイヤードウィンドウにしておく
-                defaultExWindowStyle |= WS_EX_LAYERED;
-                SetWindowLong(hWnd, GWL_EXSTYLE, defaultExWindowStyle);
+                _defaultExWindowStyle |= WS_EX_LAYERED;
+                SetWindowLong(hWnd, GWL_EXSTYLE, _defaultExWindowStyle);
             }
 
             CheckSettingFileDirect();
@@ -313,8 +312,6 @@ namespace Baku.VMagicMirror
                 case TransparencyLevel.Always:
                     alpha = _wholeWindowAlphaWhenTransparent;
                     break;
-                default:
-                    break;
             }
 
             //ウィンドウが矩形なままになっているときは透けさせない
@@ -348,7 +345,7 @@ namespace Baku.VMagicMirror
         {
             _isWindowFrameHidden = !isVisible;
             var hwnd = GetUnityWindowHandle();
-            uint windowStyle = isVisible ? defaultWindowStyle : WS_POPUP | WS_VISIBLE;
+            uint windowStyle = isVisible ? _defaultWindowStyle : WS_POPUP | WS_VISIBLE;
             if (!Application.isEditor)
             {
                 SetWindowLong(hwnd, GWL_STYLE, windowStyle);
@@ -494,9 +491,9 @@ namespace Baku.VMagicMirror
         {
             var ray = _camera.ScreenPointToRay(mousePosition);
             //個別のメッシュでバウンディングボックスを調べることで大まかな判定になる仕組み。
-            for (var i = 0; i < _renderers.Length; i++)
+            foreach (var r in _renderers)
             {
-                if (_renderers[i].bounds.IntersectRay(ray))
+                if (r.bounds.IntersectRay(ray))
                 {
                     return true;
                 }
@@ -516,7 +513,7 @@ namespace Baku.VMagicMirror
             var hwnd = GetUnityWindowHandle();
             uint exWindowStyle = _isClickThrough ?
                 WS_EX_LAYERED | WS_EX_TRANSPARENT :
-                defaultExWindowStyle;
+                _defaultExWindowStyle;
 
             if (!Application.isEditor)
             {

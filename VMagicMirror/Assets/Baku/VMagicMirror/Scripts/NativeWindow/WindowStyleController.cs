@@ -57,6 +57,8 @@ namespace Baku.VMagicMirror
         private bool _isOnAvatarBoundingBoxOpaquePixel;
         // NOTE: こっちのフラグはcameraのRaycastベースで判定できるようなものに対する判定
         private bool _isOnNonAvatarOpaqueArea;
+        private bool IsOnOpaquePixel => _isOnAvatarBoundingBoxOpaquePixel || _isOnNonAvatarOpaqueArea;
+        
         private bool _isClickThrough;
         //既定値がtrueになる(デフォルトでは常時最前面である)ことに注意
         private bool _isTopMost = true;
@@ -207,7 +209,7 @@ namespace Baku.VMagicMirror
 
             _isOnNonAvatarOpaqueArea = _buddyObjectRaycastChecker.IsPointerOnBuddyObject();
         }
-        
+
         private void UpdateClickThrough()
         {
             if (!_isTransparent)
@@ -225,7 +227,7 @@ namespace Baku.VMagicMirror
             }
 
             //透明であり、クリックはとってほしい = マウス直下のピクセル状態で判断
-            SetClickThrough(!_isOnAvatarBoundingBoxOpaquePixel || !_isOnNonAvatarOpaqueArea);
+            SetClickThrough(!IsOnOpaquePixel);
         }
 
         private void UpdateDragStatus()
@@ -233,7 +235,7 @@ namespace Baku.VMagicMirror
             if (_isWindowFrameHidden &&
                 _windowDraggableWhenFrameHidden &&
                 _hitTestJudgeCountDown == 1 &&
-                (_isOnAvatarBoundingBoxOpaquePixel || _isOnNonAvatarOpaqueArea)
+                IsOnOpaquePixel
                 )
             {
                 _hitTestJudgeCountDown = 0;

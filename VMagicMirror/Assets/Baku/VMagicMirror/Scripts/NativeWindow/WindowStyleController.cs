@@ -178,6 +178,8 @@ namespace Baku.VMagicMirror
         private void OnDestroy()
         {
             _windowAreaIo.Save();
+            _mouseObserve?.Dispose();
+            _mouseObserve = null;
         }
 
         private void CheckSettingFileDirect()

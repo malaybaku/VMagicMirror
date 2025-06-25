@@ -66,17 +66,17 @@ namespace Baku.VMagicMirror.Buddy.Api
             }    
         }
 
-        public event Action<Pointer2DData> OnPointerEnter;
-        public event Action<Pointer2DData> OnPointerLeave;
-        public event Action<Pointer2DData> OnPointerDown;
-        public event Action<Pointer2DData> OnPointerUp;
-        public event Action<Pointer2DData> OnPointerClick;
+        public event Action<Pointer2DData> PointerEnter;
+        public event Action<Pointer2DData> PointerLeave;
+        public event Action<Pointer2DData> PointerDown;
+        public event Action<Pointer2DData> PointerUp;
+        public event Action<Pointer2DData> PointerClick;
 
-        internal void InvokePointerEnter(Pointer2DData data) => OnPointerEnter?.Invoke(data);
-        internal void InvokePointerLeave(Pointer2DData data) => OnPointerLeave?.Invoke(data);
-        internal void InvokePointerDown(Pointer2DData data) => OnPointerDown?.Invoke(data);
-        internal void InvokePointerUp(Pointer2DData data) => OnPointerUp?.Invoke(data);
-        internal void InvokePointerClick(Pointer2DData data) => OnPointerClick?.Invoke(data);
+        internal void InvokePointerEnter(Pointer2DData data) => PointerEnter?.Invoke(data);
+        internal void InvokePointerLeave(Pointer2DData data) => PointerLeave?.Invoke(data);
+        internal void InvokePointerDown(Pointer2DData data) => PointerDown?.Invoke(data);
+        internal void InvokePointerUp(Pointer2DData data) => PointerUp?.Invoke(data);
+        internal void InvokePointerClick(Pointer2DData data) => PointerClick?.Invoke(data);
         
         BuddyApi.Vector2 ISprite2D.Size
         {

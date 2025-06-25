@@ -43,10 +43,10 @@ namespace VMagicMirror.Buddy
         /// 
         /// <para>
         /// このイベントはボタン等のクリックと異なり、クリックの開始の瞬間に発火します。
-        /// クリックを検出したい場合には <see cref="OnPointerClick"/> を使用します。
+        /// クリックを検出したい場合には <see cref="PointerClick"/> を使用します。
         /// </para>
         /// </remarks>
-        event Action<Pointer2DData> OnPointerDown;
+        event Action<Pointer2DData> PointerDown;
 
         /// <summary>
         /// この画像上でポインター(マウスカーソルなど)の左クリックに相当するボタンを離すと発火します。
@@ -59,10 +59,10 @@ namespace VMagicMirror.Buddy
         /// 
         /// <para>
         /// このイベントはドラッグ操作を含むような操作の後でも発火します。
-        /// クリックを検出したい場合には <see cref="OnPointerClick"/> を使用します。
+        /// クリックを検出したい場合には <see cref="PointerClick"/> を使用します。
         /// </para>
         /// </remarks>
-        event Action<Pointer2DData> OnPointerUp;
+        event Action<Pointer2DData> PointerUp;
 
         /// <summary>
         /// この画像上でポインター(マウスカーソルなど)で左クリックに相当するボタンでクリック操作を行うと発火します。
@@ -75,10 +75,10 @@ namespace VMagicMirror.Buddy
         /// 
         /// <para>
         /// このイベントは、ボタンを押した場所でドラッグ操作を行わずに離すことで発火します。
-        /// ボタンを押した瞬間が検出したい場合などは、代わりに <see cref="OnPointerDown"/> を使用します。
+        /// ボタンを押した瞬間が検出したい場合などは、代わりに <see cref="PointerDown"/> を使用します。
         /// </para>
         /// </remarks>
-        event Action<Pointer2DData> OnPointerClick;
+        event Action<Pointer2DData> PointerClick;
         
         /// <summary>
         /// この画像の領域にポインター(マウスカーソルなど)が進入すると発火します。
@@ -89,7 +89,7 @@ namespace VMagicMirror.Buddy
         /// 透過部分の多い画像を表示している場合、画像がないエリアでの操作にも反応することに注意して下さい。
         /// </para>
         /// </remarks>
-        event Action<Pointer2DData> OnPointerEnter;
+        event Action<Pointer2DData> PointerEnter;
         
         /// <summary>
         /// この画像の領域からポインター(マウスカーソルなど)が離れると発火します。
@@ -100,7 +100,7 @@ namespace VMagicMirror.Buddy
         /// 透過部分の多い画像を表示している場合、画像がないエリアでの操作にも反応することに注意して下さい。
         /// </para>
         /// </remarks>
-        event Action<Pointer2DData> OnPointerLeave;
+        event Action<Pointer2DData> PointerLeave;
         
         /// <summary>
         /// ファイルパスを指定して画像を事前にロードします。

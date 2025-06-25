@@ -1,0 +1,6 @@
+[*.cs]
+# Buddy APIのinterfaceメンバーについて未使用警告が出ないようにする
+resharper_unused_member_global_highlighting = none
+resharper_event_never_subscribed_to_global_highlighting = none
+# 「実装されたメンバーが具象型でのみ呼ばれていてinterfaceからは呼んでいない」も未使用に準ずるものと見なして許容
+resharper_unused_member_in_super_global_highlighting = none

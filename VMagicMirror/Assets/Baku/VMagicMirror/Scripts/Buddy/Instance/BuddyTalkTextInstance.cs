@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UniRx;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Baku.VMagicMirror.Buddy
 {
@@ -11,13 +10,15 @@ namespace Baku.VMagicMirror.Buddy
     /// 実質的に ITalkText の実装をするクラス。
     /// <see cref="BuddySprite2DInstance"/> 1つに対して1インスタンスが存在するのが期待値だが、ヒエラルキーの関係性は保証しない。
     /// </summary>
-    public class BuddyTalkTextInstance : MonoBehaviour, IPointerClickHandler
+    public class BuddyTalkTextInstance : MonoBehaviour
     {
         private const float DefaultWindowWidth = 1920f;
 
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private RectTransform rt;
         [SerializeField] private RectTransform visualAnchor;
+        [SerializeField] private BuddyTalkTextClickArea clickArea;
+        [SerializeField] private BuddyTalkTextScroller talkTextScroller;
         
         // アイテムをDequeue扱いするとtrueになり、そのアイテムの処理が終わるとfalseに戻る。
         // 連続でアイテムを処理する場合も一瞬だけfalseになってtrueに戻る
@@ -47,6 +48,13 @@ namespace Baku.VMagicMirror.Buddy
         private readonly Subject<TalkTextItemInternal> _itemFinished = new();
         public IObservable<TalkTextItemInternal> ItemFinished => _itemFinished;
 
+        private void Start()
+        {
+            clickArea.Clicked
+                .Subscribe(_ => FinishCurrentItem())
+                .AddTo(this);
+        }
+        
         public void Dispose()
         {
             //NOTE: 今のところ何もない (gameObject自体が破棄されればOKなため)
@@ -76,6 +84,10 @@ namespace Baku.VMagicMirror.Buddy
             {
                 _itemDequeued.OnNext(currentItem);
                 _hasCurrentItem = true;
+                if (currentItem.Type is TalkTextItemTypeInternal.Text)
+                {
+                    talkTextScroller.ProceedToNextText();
+                }
             }
             
             _currentTextElapsedTime += deltaTime;
@@ -145,11 +157,6 @@ namespace Baku.VMagicMirror.Buddy
             {
                 PlaceTextArea(rect, TextAreaPlacement.TopRight);
             }
-        }
-        
-        void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
-        {
-            FinishCurrentItem();
         }
 
         private void FinishCurrentItem()

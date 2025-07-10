@@ -8,6 +8,16 @@ lang: en
 
 <div class="doc-ul" markdown="1">
 
+#### v4.1.0
+{: .doc-sec2 }
+
+2025/07/13
+
+* Add: Buddy API to show text. Note that the API is not use yet in default buddy.
+* Add: Buddy API to detect mouse pointer on buddy image area.
+* Change: When application's background is transparent, buddy image area is treated as draggable area.
+
+
 #### v4.0.1
 {: .doc-sec2 }
 
